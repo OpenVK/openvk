@@ -123,7 +123,7 @@ return (function() {
 
     $showCommitHash = true; # plz remove when release
     if(is_dir($gitDir = OPENVK_ROOT . "/.git") && $showCommitHash)
-        $ver = "nightly-" . `git --git-dir="$gitDir" log --pretty="%h" -n1 HEAD`;
+        $ver = trim(`git --git-dir="$gitDir" log --pretty="%h" -n1 HEAD`) . "-nightly";
     else
 	$ver = "Build 15";
 
