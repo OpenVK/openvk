@@ -120,8 +120,14 @@ return (function() {
     require __DIR__ . "/vendor/autoload.php";
     
     setlocale(LC_TIME, "POSIX");
-    
-    define("OPENVK_VERSION", "Altair Preview (Build 10)", false);
+
+    $showCommitHash = true; # plz remove when release
+    if(is_dir($gitDir = OPENVK_ROOT . "/.git") && $showCommitHash)
+        $ver = trim(`git --git-dir="$gitDir" log --pretty="%h" -n1 HEAD`) . "-nightly";
+    else
+	$ver = "Build 15";
+
+    define("OPENVK_VERSION", "Altair Preview ($ver)", false);
     define("OPENVK_DEFAULT_PER_PAGE", 10, false);
     define("__OPENVK_ERROR_CLOCK_IN_FUTURE", "Server clock error: FK1200-DTF", false);
 });
