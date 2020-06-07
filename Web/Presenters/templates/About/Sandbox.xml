@@ -1,0 +1,10 @@
+{extends "../@layout.xml"}
+{block title}Sandbox{/block}
+
+{block header}
+    Sandbox для разработчиков
+{/block}
+
+{block content}
+    {$manager->getUser()->getFullName()}
+{/block}

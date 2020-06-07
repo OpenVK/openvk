@@ -1,0 +1,236 @@
+"home" = "Басты бет";
+"log_in" = "Кіру";
+"welcome" = "Қош келдіңіз";
+"password" = "Пароль";
+"registration" = "Тіркеу";
+"select_language" = "Тілді таңдау";
+"edit" = "редакциялау";
+"birth_date" = "Туған күні";
+"registration_date" = "Тіркеу күні";
+"hometown" = "Туған қаласы";
+"this_is_you" = "бұл сіз";
+"post_writes_m" = "жазған";
+"post_writes_f" = "жазды";
+"wall" = "Қабырға";
+"post" = "Жазба";
+"write" = "Жазу";
+"publish" = "Жариялау";
+"edit_page" = "Бетті өңдеу";
+"edit_group" = "Топты өңдеу";
+"change_status" = "мәртебені өзгерту";
+"name" = "Аты";
+"surname" = "Тегі";
+"gender" = "Жынысы";
+"male" = "ерлер";
+"female" = "қыздар";
+"description" = "Сипаттамасы";
+"save" = "Сақтау";
+"main_information" = "Негізгі ақпарат";
+"friends" = "Достар";
+"friends_add" = "Достар қосу";
+"friends_delete" = "Өшіру достар";
+"friends_reject" = "Өтінімді болдырмау";
+"friends_accept" = "Қабылдауға өтінім";
+"send_message" = "Хабар жіберу";
+"nickname" = "Никнейм";
+"online" = "Онлайн";
+"was_online_m" = "желіде болды";
+"was_online_f" = "желіде болды";
+"delete" = "Өшіру";
+"comments" = "Комментарии";
+"share" = "Бөлісу";
+"comments_tip" = "Пікір қалдыратын бірінші болыңыз!";
+"incoming_req" = "Жазылушылар";
+"outcoming_req" = "Өтінімдер";
+"req" = "Өтінімдер";
+"you_have" = "Сізде бар";
+"all_title" = "Барлық";
+"your_comment" = "Пікір қалдыру";
+"comments" = "Комментарии";
+"name_group" = "Атауы";
+"subscribe" = "Подписаться";
+"unsubscribe" = "Отписаться";
+"join_community" = "Топқа кіру";
+"leave_community" = "Топтан шығу";
+"min_6_community" = "Атауы 1 таңбадан кем болмауы тиіс";
+"participants" = "Қатысушылар";
+"groups" = "Топтар";
+"create_group" = "Топты құру";
+"group_managers" = "Басшылық";
+"group_type" = "Топ түрі";
+"group_type_open" = "Бұл ашық топ оған кез келген адам кіре алады";
+"creator" = "Жасаушы";
+"create" = "Құру";
+"albums" = "Альбомы";
+"create_album" = "Құру альбом";
+"edit_album" = "Альбомды өңдеу";
+"creating_album" = "Альбомды жасау";
+"upload_photo" = "Фотосуретті жүктеу";
+"photo" = "Фотосурет";
+"notes" = "Жазбалар";
+"name_note" = "Атауы";
+"text_note" = "Мазмұны";
+"create_notes" = "Құру заметку";
+"acl_welcome" = "Топтық саясат редакторы";
+"status" = "Мәртебесі";
+"actions" = "Әрекеттер";
+"upload_button" = "Жүктеу";
+"feed" = "Жаңалықтар";
+"publish_post" = "Жазбаны қосу";
+
+"edit_button" = "ред.";
+"my_page" = "Менің Бетім";
+"my_friends" = "Менің Достар";
+"my_photos" = "Менің Суреттер";
+"my_videos" = "Менің Бейнежазбалар";
+"my_messages" = "Менің Хабарламалар";
+"my_notes" = "Менің Жазбалар";
+"my_groups" = "Менің Топтар";
+"my_feed" = "Менің Жаңалықтар";
+"my_settings" = "Менің Параметрлері";
+
+"header_home" = "Басты бет";
+"header_groups" = "топтар";
+"header_donate" = "қолдау";
+"header_people" = "адамдар";
+"header_invite" = "шақыру";
+"header_help" = "көмек";
+"header_log_out" = "шығу";
+"header_search" = "Іздеу";
+
+
+"friends_one" = "%1 досым";
+"friends_few" = "%1 досым";
+"friends_many" = "%1 дос";
+"friends_other" = "%1 достар";
+"wall_one" = "%1 жазба";
+"wall_few" = "%1 жазба";
+"wall_many" = "%1 жазбалар";
+"wall_other" = "%1 жазба";
+"participants_one" = "%1 қатысушы";
+"participants_few" = "%1 қатысушы";
+"participants_many" = "%1 қатысушы";
+"participants_other" = "%1 қатысушы";
+"groups_one" = "%1 тобы";
+"groups_few" = "%1 тобы";
+"groups_many" = "%1 тобы";
+"groups_other" = "%1 тобы";
+"notes_one" = "%1 ескерту";
+"notes_few" = "%1 ескерту";
+"notes_many" = "%1 ескерту";
+"notes_other" = "%1 ескерту";
+"albums_one" = "%1 альбом";
+"albums_few" = "%1 альбома";
+"albums_many" = "%1 альбома";
+"albums_other" = "%1 альбомов";
+
+"information" = "Ақпарат";
+
+"relationship" = "Отбасы жағдайы";
+
+"relationship_0" = "Таңдалмаған";
+"relationship_1" = "Үйленген жоқ";
+"relationship_2" = "Кездесулерді өткізу";
+"relationship_3" = "Ұнтақталған";
+"relationship_4" = "Үйленген";
+"relationship_5" = "Үйленген";
+"relationship_6" = "Оған ғашықпын";
+"relationship_7" = "Барлығы қиын";
+"relationship_8" = "В активном поиске";
+
+"politViews" = "Саяси көзқарастар";
+
+"politViews_0" = "Таңдалмаған";
+"politViews_1" = "Индифферентті";
+"politViews_2" = "Коммунистік";
+"politViews_3" = "Социалистік";
+"politViews_4" = "Қалыпты";
+"politViews_5" = "Либералды";
+"politViews_6" = "Консервативті";
+"politViews_7" = "Монархиялық";
+"politViews_8" = "Ультраконсервативные";
+"politViews_9" = "Либертариандық";
+
+"contact_information" = "Байланыс ақпараты";
+
+"email" = "Электрондық пошта";
+"telegram" = "Telegram";
+"city" = "Қаласы";
+"address" = "Мекен жайы";
+
+"personal_information" = "Жеке ақпарат";
+
+"interests" = "Мүдделері";
+"favorite_music" = "Сүйікті музыка";
+"favorite_films" = "Сүйікті фильмдер";
+"favorite_shows" = "Сүйікті ТВ-шоу";
+"favorite_books" = "Сүйікті кітаптар";
+"favorite_quotes" = "Сүйікті дәйексөздер";
+"information_about" = "Өзі туралы";
+
+"main" = "Негізгі";
+"contacts" = "Контакты";
+"avatar" = "Аватар";
+
+"profile_picture" = "Бет бейнесі";
+
+"picture" = "Сурет";
+
+"sort_randomly" = "Рандомно сұрыптау";
+"sort_up" = "Жасау күні бойынша жоғары сұрыптау";
+"sort_down" = "Төмен жасау күні бойынша сұрыптау";
+
+"videos" = "Бейнежазбалар";
+"video" = "Бейнежазбал";
+"upload_video" = "Бейнені жүктеу";
+"video_uploaded" = "Загружено";
+"video_updated" = "Жаңартылды";
+"video_link_to_yt" = "Сілтеме YT";
+
+"video_name" = "Атауы";
+"video_description" = "Сипаттамасы";
+"video_uploaded_by" = "Загрузил";
+"video_upload_date" = "Жүктеу күні";
+
+"privacy" = "Құпиялылық";
+"interface" = "Сыртқы түрі";
+
+"change_password" = "Парольді өзгерту";
+"old_password" = "Ескі пароль";
+"new_password" = "Жаңа пароль";
+"repeat_password" = "Парольді қайталаңыз";
+
+"avatars_style" = "Аватарды көрсету";
+"style" = "Стилі";
+
+"default" = "Әдетті";
+"cut" = "Кесу";
+"round_avatars" = "Дөңгелек аватар";
+
+
+"date_format_1" = "%1 %2 %3 г.";
+"date_format_2" = "%1 %2 %3 г. в %4";
+"date_month_1" = "қаңтар";
+"date_month_2" = "ақпан";
+"date_month_3" = "наурыз";
+"date_month_4" = "сәуір";
+"date_month_5" = "мамыр";
+"date_month_6" = "маусым";
+"date_month_7" = "шілде";
+"date_month_8" = "тамыз";
+"date_month_9" = "қыркүйек";
+"date_month_10" = "қазан";
+"date_month_11" = "қараша";
+"date_month_12" = "желтоқсан";
+
+"error_1" = "Қате сұрау";
+"error_2" = "Қате логин немесе пароль";
+"error_3" = "Авторизацияланған жоқ";
+"error_4" = "Пайдаланушы жоқ";
+"information_-1" = "Операция сәтті орындалды";
+"information_-2" = "Кіріс сәтті орындалды";
+
+"interface_translation" = "Интерфейсті аудару";
+"translations" = "Аударымдар";
+"no_translation" = "АУДАРЫЛМАҒАН!!!";
+"languages" = "Тілі";

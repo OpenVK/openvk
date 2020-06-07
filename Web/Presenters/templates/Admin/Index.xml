@@ -1,0 +1,13 @@
+{extends "@layout.xml"}
+
+{block title}
+    Сводка
+{/block}
+
+{block heading}
+    Сводка
+{/block}
+
+{block content}
+    Да!
+{/block}

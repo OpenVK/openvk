@@ -1,0 +1,85 @@
+{extends "../@layout.xml"}
+{block title}Помощь{/block}
+
+{block header}
+    {$ticket->getName()}
+{/block}
+
+{block content}
+<div class="post-author">
+    <a href="#" style="font-size:13px;">
+        <b>
+            {$ticket->getName()}
+        </b>
+    </a>
+    <br></b>Автор: <a href="/id{$ticket->getUser()->getId()}">{$ticket->getUser()->getFullName()}</a> | {$ticket->getUser()->getRegistrationIP()} | Статус: {$ticket->getStatus()}
+</div>
+<div class="text" style="padding-top: 10px;border-bottom: #ECECEC solid 1px;">
+    {$ticket->getContext()}
+    <br></br>
+</div>
+<div style="padding-top: 5px;">
+    {$ticket->getTime()}&nbsp;|&nbsp;
+    <a href="/support/delete/{$id}?hash={$csrfToken}">Удалить</a>
+</div><br/>
+<div>
+    <form action="/al_comments.pl/create/support/reply/{$id}" method="post" style="margin:0;">
+        <textarea name="text" style="width: 100%;resize: vertical;"></textarea>
+        <div>
+            <!-- padding to fix <br/> bug -->
+        </div>
+        <input type="hidden" name="hash" value="{$csrfToken}" />
+        <br>
+        <input type="submit" value="Ответить" class="button">
+        <select name="status" style="width: unset;">
+          <option value="1">Есть ответ</option>
+          <option value="2">Закрыто</option>
+          <option value="0">Вопрос на рассмотрении</option>
+        </select>
+    </form>
+</div>
+<br/>
+<p n:if="!$comments">Комментарии отсутствуют</p>
+<table n:foreach="$comments as $comment" border="0" style="font-size: 11px;" class="post">
+   <tbody>
+      <tr>
+          {if $comment->getUType() === 0}
+         <td width="54" valign="top">
+            <img src="{$comment->getUser()->getAvatarUrl()}" width="50">
+         </td>
+         {else}
+         <td width="54" valign="top">
+            <img src="https://avatars.mds.yandex.net/get-zen_doc/164147/pub_5b60816e2dc67000a862253e_5b6081d4e9151400a9f48625/scale_1200" width="50">
+         </td>
+         {/if}
+         <td width="645" valign="top">
+             {if $comment->getUType() === 0}
+            <div class="post-author">
+               <a href="{$comment->getUser()->getURL()}"><b>
+               {$comment->getUser()->getFullName()}
+               </b></a> написал<br>
+               <a href="#" class="date">{$comment->getTime()}</a>
+            </div>
+            {elseif ($comment->getUType() === 1)}
+            <div class="post-author">
+               <a href="#"><b>
+               Андрей Спиридонов
+               </b></a> написал<br>
+               <a href="#" class="date">{$comment->getTime()}</a>
+            </div>
+            {/if}
+            <div class="post-content" id="{$comment->getId()}">
+               <div class="text" id="text{$comment->getId()}">
+                      {$comment->getContext()|noescape}
+               </div>
+               {if $comment->getUType() === 0}
+               <div class="post-menu">
+                  <a href="/support/comment/{$comment->getId()}/delete">Удалить</a>
+               </div>
+               {/if}
+            </div>
+         </td>
+      </tr>
+   </tbody>
+</table>
+{/block}

@@ -1,0 +1,7 @@
+<center>
+    <img src="/assets/packages/static/openvk/img/error.png" alt="Ошибка" />
+    <h1>{$title}</h1>
+    <p>
+        {$description}
+    </p>
+</center>

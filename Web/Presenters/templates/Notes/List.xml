@@ -1,0 +1,37 @@
+{extends "../@listView.xml"}
+{var iterator = iterator_to_array($notes)}
+{var page     = $paginatorConf->page}
+
+{block title}{_notes}{/block}
+
+{block header}
+    <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
+    »
+    {_notes}
+    
+    <div n:if="isset($thisUser) && $thisUser->getId() == $owner->getId()" style="float:right;">
+        <a href="/notes/create">{_create_note}</a>
+    </div>
+{/block}
+
+{block actions}
+    
+{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block link|strip|stripHtml}
+    /note{$x->getOwner()->getId()}_{$x->getId()}
+{/block}
+
+{block preview}
+    <center><img src="/assets/packages/static/openvk/img/note_icon.png" alt="{_note}" style="margin-top: 17px;" /></center>
+{/block}
+
+{block name}
+    {$x->getName()}
+{/block}
+
+{block description}
+    {$x->getPreview(250)}
+{/block}

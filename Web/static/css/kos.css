@@ -1,0 +1,136 @@
+@import "style.css";
+
+.page_header {
+    position: relative;
+    background: linear-gradient(to top, #1b4692, #2358b8);
+    height: 86px;
+}
+
+.page_header > .header_navigation {
+    box-sizing: border-box;
+    position: absolute;
+    background: linear-gradient(to left, #2050a7, #2358b8);
+    width: 100%;
+    bottom: 0;
+    float: unset;
+    text-align: right;
+    border-bottom: solid 1px #fff;
+}
+
+.page_header > .header_navigation > .link {
+    background: none;
+    padding: 0 10px;
+    padding-top: 5px;
+}
+
+.page_header::before {content: "OpenSpace";position: absolute;margin: 12px;color: #fff;font-size: x-large;}
+
+.sidebar {
+    box-sizing: border-box;
+    margin: 0;
+    margin-bottom: 2px;
+    float: unset;
+    width: 791px;
+    background: linear-gradient(to top, #1b4692, #2050a7);
+    color: #fff !important;
+}
+
+img.psa-poster {
+    display: none;
+}
+
+.navigation .link {
+    display: inline-block;
+    color: #fff;
+    border: none;
+    height: 24px;
+    padding: 0 5px;
+    padding-top: 10px;
+}
+
+.edit-button {
+    display: none !important;
+}
+
+.navigation > div {
+    display: none;
+}
+
+.navigation .link:hover {
+    background-color: unset;
+    border-top: none;
+    font-style: oblique;
+}
+
+.page_body {
+    box-sizing: border-box;
+    width: 791px;
+    float: unset;
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 1px 1px 20px #8a8a8a;
+}
+
+div#wrapH {
+    border-right: none;
+    border-left: none;
+}
+
+div#wrapHI {
+    border-right: none;
+    border-left: none;
+}
+
+.wrap2 {
+    border-right: none;
+    border-left: none;
+}
+
+.wrap1 {
+    border-right: none;
+    border-left: none;
+    width: 100%;
+    box-sizing: b;
+}
+
+div#auth {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.page_content {
+    width: 100%;
+}
+
+.page_yellowheader {
+    width: unset;
+    background: #aed5ff url(https://web.archive.org/web/20081001225238im_/http://x.myspacecdn.com/modules/common/static/img/header/bkg_menubar.png) top left repeat-x;
+    padding: 4px 11px 6px;
+    background-blend-mode: color-burn;
+    font-size: 11px;
+    color: #fff;
+    border: .5px solid #4a7db1;
+    margin: 0 0 10px;
+}
+
+.page_yellowheader span {
+    color: whitesmoke;
+}
+
+.right_big_block {
+    width: 540px;
+}
+
+.content_subtitle {
+    background-color: #f0f4fe;
+    color: #2256b5;
+}
+
+.content_title_expanded {
+    background-color: #fff;
+    background-image: none;
+    color: #45688e;
+    border-top: navajowhite;
+    padding-left: 8px;
+}

@@ -1,0 +1,97 @@
+{extends "@layout.xml"}
+
+{block title}
+    Редактировать {$user->getCanonicalName()}
+{/block}
+
+{block heading}
+    {$user->getCanonicalName()}
+{/block}
+
+{block content}
+    <div class="aui-tabs horizontal-tabs">
+        <ul class="tabs-menu">
+            <li class="menu-item active-tab">
+                <a href="#info">Информация</a>
+            </li>
+            <li class="menu-item">
+                <a href="#pass">Пароль</a>
+            </li>
+            <li class="menu-item">
+                <a href="#moderation">Модерация</a>
+            </li>
+            <li class="menu-item">
+                <a href="#actions">Операции</a>
+            </li>
+        </ul>
+    
+        <
+    <form class="aui" method="POST" enctype="multipart/form-data">
+        <div class="field-group">
+            <label for="avatar">
+                Аватарка
+            </label>
+            <span id="avatar" class="aui-avatar aui-avatar-project aui-avatar-xlarge">
+                <span class="aui-avatar-inner">
+                    <img src="{$user->getAvatarUrl()}"></img>
+                </span>
+            </span>
+        </div>
+        <div class="field-group">
+            <label for="id">
+                ID
+            </label>
+            <input class="text medium-field" type="number" id="id" disabled value="{$user->getId()}" />
+        </div>
+        <div class="field-group">
+            <label for="guid">
+                GUID
+            </label>
+            <input class="text medium-field" id="guid" disabled value="{$user->getChandlerUser()->getId()}" />
+        </div>
+        <div class="field-group">
+            <label for="first_name">
+                Имя
+            </label>
+            <input class="text medium-field" type="text" id="first_name" name="first_name" value="{$user->getFirstName()}" />
+        </div>
+        <div class="field-group">
+            <label for="last_name">
+                Фамилия
+            </label>
+            <input class="text medium-field" type="text" id="last_name" name="last_name" value="{$user->getLastName()}" />
+        </div>
+        <div class="field-group">
+            <label for="nickname">
+                Никнейм
+            </label>
+            <input class="text medium-field" type="text" id="nickname" name="nickname" value="{$user->getPseudo()}" />
+        </div>
+        <div class="field-group">
+            <label for="status">
+                Статус
+            </label>
+            <input class="text medium-field" type="text" id="status" name="status" value="{$user->getStatus()}" />
+        </div>
+        <div class="field-group">
+            <label for="email">
+                E-Mail
+            </label>
+            <input class="text medium-field" type="email" id="email" name="email" value="{$user->getEmail()}" />
+        </div>
+        <div class="field-group">
+            <label for="tg">
+                Telegram
+            </label>
+            <input class="text medium-field" type="text" id="tg" name="tg" value="{$user->getTelegram()}" />
+        </div>
+        <div class="field-group">
+            <label for="city">
+                Город
+            </label>
+            <input class="text medium-field" type="text" id="city" name="city" value="{$user->getCity()}" />
+        </div>
+    </form>
+    
+    </div>
+{/block}

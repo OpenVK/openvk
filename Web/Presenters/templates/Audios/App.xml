@@ -1,0 +1,52 @@
+{extends "../@layout.xml"}
+{block title}Аудиопроигрыватель{/block}
+
+{block header}
+    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>
+    »
+    Аудиозаписи
+{/block}
+
+
+
+{block content}
+<div id="page_act">
+    <a href="javascript:void(0)">
+        <b><span>-1</span> аудиозапись</b>
+    </a>
+    
+    &nbsp;|&nbsp;
+    <a href="/audios/upload">Новая аудиозапись</a>
+</div>
+<div class="music-app">
+    <div class="music-app--player">
+        <button class="play">
+            ►
+        </button>
+        
+        <div class="info">
+            <div class="song-name">
+                <span><b>Track</b> - <span>not selected</span></span>
+                <time>--:--</time>
+            </div>
+            <div class="track">
+                <div class="inner-track"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="music-app--gallery">
+        <div class="song">
+            <button class="play">
+                ►
+            </button>
+            
+            <div class="info">
+                <div class="song-name" style="margin-top: 7px;">
+                    <span><b>Track</b> - <span>not selected</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

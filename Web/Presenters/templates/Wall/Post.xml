@@ -1,0 +1,26 @@
+{extends "../@layout.xml"}
+{block title}{_"post"}{/block}
+
+{block header}
+    {_"post"}
+{/block}
+
+{block content}
+    {include "../components/post.xml", post => $post, forceNoCommentsLink => TRUE, forceNoDeleteLink => TRUE}
+    <hr/>
+    <div style="float: left; min-height: 100px; width: 68%;">
+        {include "../components/comments.xml",
+                 comments => $comments,
+                 count => $cCount,
+                 page => $cPage,
+                 model => "posts",
+                 parent => $post }
+    </div>
+    <div style="float: left; min-height: 100px; width: 32%;">
+        <h4>Действия</h4>
+        {if $post->getOwnerPost() == $thisUser->getId() || $post->getTargetWall() == $thisUser->getId()}
+            <a class="profile_link" style="display:block;width:96%;" href="/wall{$post->getPrettyId()}/delete">Удалить</a>
+        {/if}
+        <a class="profile_link" style="display:block;width:96%;" href="/report.pl/{$post->getId()}?type=post">Пожаловаться</a>
+    </div>
+{/block}

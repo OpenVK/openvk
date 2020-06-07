@@ -1,0 +1,20 @@
+{extends "../@layout.xml"}
+
+{block title}Удалить фотографию?{/block}
+
+{block header}
+    Удаление фотографии
+{/block}
+
+{block content}
+    Вы уверены что хотите удалить эту фотографию?
+    <br/>
+    <br/>
+    <form method="POST">
+        <input type="hidden" value="{$csrfToken}" name="hash" />
+        
+        <a href="{$_SERVER['HTTP_REFERER']}" class="button">Нет</a>
+        &nbsp;
+        <button class="button">Да</button>
+    </form>
+{/block}

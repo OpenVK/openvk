@@ -1,0 +1,44 @@
+{extends "../@listView.xml"}
+
+{block title}
+    Helpdesk
+{/block}
+
+{block header}
+    Helpdesk » Тикеты
+{/block}
+
+{block tabs}
+    <div n:attr="id => ($act === 'open' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($act === 'open' ? 'act_tab_a' : 'ki')" href="?">Открытые</a>
+    </div>
+    <div n:attr="id => ($act === 'answered' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($act === 'answered' ? 'act_tab_a' : 'ki')" href="?act=answered">С ответом</a>
+    </div>
+    <div n:attr="id => ($act === 'closed' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($act === 'closed' ? 'act_tab_a' : 'ki')" href="?act=closed">Закрытые</a>
+    </div>
+{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block link|strip|stripHtml}
+    /support/reply/{$x->getId()}
+{/block}
+
+{block preview}
+    <center>
+        <img src="/assets/packages/static/openvk/img/note_icon.png" alt="Тикет" style="margin-top: 8px;">
+    </center>
+{/block}
+
+{block name}
+    {$x->getName()}
+{/block}
+
+{block description}
+    {var author = $x->getUser()}
+    
+    {ovk_proc_strtr($x->getContext(), 50)}<br/>
+    <span class="nobold">Автор: </span> <a href="{$author->getURL()}">{$author->getCanonicalName()}</a>
+{/block}

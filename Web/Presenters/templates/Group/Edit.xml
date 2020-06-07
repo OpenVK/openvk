@@ -1,0 +1,86 @@
+{extends "../@layout.xml"}
+{block title}{_edit_group}{/block}
+
+{block header}
+    <a href="{$club->getURL()}">{$club->getName()}</a> » {_edit_group}
+{/block}
+
+{block content}
+    <div class="tabs">
+        <div id="activetabs" class="tab">
+            <a id="act_tab_a" href="javascript:void(0)">
+                Настройки
+            </a>
+        </div>
+        <div class="tab">
+            <a href="/club{$club->getId()}/followers">
+                {_followers}
+            </a>
+        </div>
+        <div class="tab">
+            <a href="/club{$club->getId()}/stats">
+                Статистика
+            </a>
+        </div>
+    </div>
+    
+    <div class="container_gray">
+        <h4>Основная информация</h4>
+        <form method="POST" enctype="multipart/form-data">
+            <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"name"}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="name" value="{$club->getName()}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"description"}: </span>
+                        </td>
+                        <td>
+                            <textarea type="text" name="about" style="resize:vertical;">{$club->getDescription()}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">Адрес группы: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="shortcode" value="{$club->getShortcode()}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">Аватар: </span>
+                        </td>
+                        <td>
+                            <input type="file" name="ava" accept="image/*" />
+                        </td>
+                    </tr>
+		    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">Стена: </span>
+                        </td>
+                        <td>
+                            <input type="checkbox" name="wall" value="1" {if $club->canPost()}checked{/if}/> Разрешить постить обычным пользователям
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_'save'}" class="button" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+{/block}

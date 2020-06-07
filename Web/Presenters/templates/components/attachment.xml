@@ -1,0 +1,22 @@
+{if $attachment instanceof \openvk\Web\Models\Entities\Photo}
+    {if !$attachment->isDeleted()}
+        <a href="/photo{$attachment->getPrettyId()}">
+            <img class="media" src="{$attachment->getURL()}" alt="{$attachment->getDescription()}" />
+        </a>
+    {else}
+        <a href="javascript:alert('Это вложение более недоступно');">
+            <img class="media" src="/assets/packages/static/openvk/img/camera_200.png" alt="Фотография недоступна" />
+        </a>
+    {/if}
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Post}
+    {php $GLOBALS["_nesAttGloCou"] = (isset($GLOBALS["_nesAttGloCou"]) ? $GLOBALS["_nesAttGloCou"] : 0) + 1}
+    {if $GLOBALS["_nesAttGloCou"] > 2}
+        <a href="/wall{$attachment->getPrettyId()}">Смотреть запись</a>
+    {else}
+        {include "post.xml", post => $attachment, compact => true}
+    {/if}
+{else}
+    <span style="color:red;">Не удалось отобразить это вложение. Возможно, БД несовместима с этой версией OpenVK.</span>
+{/if}
+
+{php $GLOBALS["_nesAttGloCou"] = NULL}

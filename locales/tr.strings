@@ -1,0 +1,378 @@
+"__locale" = "tr_TR.UTF-8;Tur";
+
+%{ Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html %}
+
+%{ Main page %}
+
+"home" = "Ana ekran";
+"welcome" = "Hoşgeldin";
+
+%{ Login %}
+
+"log_in" = "Giriş yap";
+"password" = "Parola";
+"registration" = "Kayıt";
+
+%{ Profile information %}
+
+"select_language" = "Dil seç";
+"edit" = "dznl";
+"birth_date" = "Doğum tarihi";
+"registration_date" = "Kayıt tarihi";
+"hometown" = "Memleket";
+"this_is_you" = "bu Sensin";
+"edit_page" = "Sayfayı düzenle";
+"edit_group" = "Grubu düzenle";
+"change_status" = "durumu değiştir";
+"name" = "İsim";
+"surname" = "Soyisim";
+"gender" = "Cinsiyet";
+"male" = "bay";
+"female" = "bayan";
+"description" = "Açıklama";
+"save" = "Kaydet";
+"main_information" = "Ana bilgi";
+"nickname" = "Takma ad";
+"online" = "Çevrimiçi";
+"was_online" = "çevrimiçiydi";
+"was_online_m" = "çevrimiçiydi"; 
+%{ For male and femail %}
+
+"was_online_f" = "çevrimiçiydi";
+"all_title" = "Tümü";
+"information" = "Bilgi";
+"status" = "Durum";
+
+"relationship" = "İlişki durumu";
+
+"relationship_0" = "Seçilmedi";
+"relationship_1" = "Evli değil";
+"relationship_2" = "Çıkıyor";
+"relationship_3" = "Nişanlı";
+"relationship_4" = "Evli";
+"relationship_5" = "Medeni evli";
+"relationship_6" = "Aşık";
+"relationship_7" = "Her şey karışık";
+"relationship_8" = "Aktif arayışta";
+
+"politViews" = "Politik grşlr";
+
+"politViews_0" = "Seçilmedi";
+"politViews_1" = "Kayıtsız";
+"politViews_2" = "Komünist";
+"politViews_3" = "Sosyalist";
+"politViews_4" = "Ilımlı";
+"politViews_5" = "Liberal";
+"politViews_6" = "Muhafazakar";
+"politViews_7" = "Monarşik";
+"politViews_8" = "Ultra-Muhafazakar";
+"politViews_9" = "Özgürlükçü";
+
+"contact_information" = "İletişim bilgileri";
+
+"email" = "E-posta";
+"phone" = "Telefon";
+"telegram" = "Telegram";
+"city" = "Şehir";
+"address" = "Adres";
+
+"personal_information" = "Kişisel bilgi";
+
+"interests" = "İlgiler";
+"favorite_music" = "Favori müzik";
+"favorite_films" = "Favori filmler";
+"favorite_shows" = "Favori TV şovları";
+"favorite_books" = "Favori kitaplar";
+"favorite_quotes" = "Favori sözler";
+"information_about" = "Hakkında";
+
+%{ Wall %}
+
+"post_writes_m" = "yazdı";
+"post_writes_f" = "yazdı";
+"wall" = "Duvar";
+"post" = "Gönderi";
+"write" = "Yaz";
+"publish" = "Yayınla";
+"delete" = "Sil";
+"comments" = "Yorumlar";
+"share" = "Paylaş";
+"comments_tip" = "Bu gönderiye yorum bırakan ilk kişi sen ol!";
+"your_comment" = "Yorumun";
+"comments" = "Yorumlar";
+"shown" = "Gösterildi";
+"x_out_of" = "$1 of";
+"wall_zero" = "gönderi yok";
+"wall_one" = "$1 gönderi";
+"wall_other" = "$1 gönderi";
+"feed" = "Haberler";
+"publish_post" = "Gönderi ekle";
+
+"nsfw_warning" = "Bu gönderinin +18 içeriii olabilir";
+
+%{ Friends %}
+
+"friends" = "Arkadaşlar";
+"followers" = "Takipçiler";
+"follower" = "Takipçi";
+"friends_add" = "Arkadaşlara ekle";
+"friends_delete" = "Arkadaşlardan kaldır";
+"friends_reject" = "İsteği reddet";
+"friends_accept" = "İsteği onayla";
+"send_message" = "Mesaj gönder";
+"incoming_req" = "Aboneler";
+"outcoming_req" = "İstekler";
+"req" = "İstekler";
+
+"firends_zero" = "Arkadaş yok";
+"friends_one" = "$1 arkadaş";
+"friends_other" = "$1 arkadaş";
+
+"followers_zero" = "Takipçi yok";
+"followers_one" = "$1 takipçi";
+"followers_other" = "$1 takipçi";
+
+"subscriptions_zero" = "Abonelik yok";
+"subscriptions_one" = "$1 abonelik";
+"subscriptions_other" = "$1 abonelik";
+
+%{ Group %}
+
+"name_group" = "Grup adı";
+"subscribe" = "Abone ol";
+"unsubscribe" = "Abonelikten çık";
+"subscriptions" = "Abonelikler";
+"join_community" = "Topluluğa katıl";
+"leave_community" = "Topluluktan ayrıl";
+"min_6_community" = "Grup adının 6 karakterden uzun olması gerekir.";
+"participants" = "Katılımcılar";
+"groups" = "Gruplar";
+"meetings" = "Toplantılar";
+"create_group" = "Grup oluştur";
+"group_managers" = "Yöneticiler";
+"group_type" = "Grup türü";
+"group_type_open" = "Bu herkese açık bir gruptur, herkes girebilir.";
+"group_type_closed" = "Bu herkese kapalı bir gruptur, girmek için izin istemelisin.";
+"creator" = "Oluşturan";
+
+"role" = "Rol";
+"administrator" = "Yönetici";
+"promote_to_admin" = "Yöneticiliğe yükselt";
+"devote" = "Yetkisini kaldır";
+
+
+"participants_zero" = "Katılımcı yok";
+"participants_one" = "$1 katılımcı";
+"participants_other" = "$1 katılımcı";
+
+"groups_zero" = "Grup yok";
+"groups_one" = "$1 grup";
+"groups_other" = "$1 grup";
+
+"meetings_zero" = "Toplantı yok";
+"meetings_one" = "$1 toplantı";
+"meetings_other" = "$1 toplantı";
+
+%{ Albums %}
+
+"create" = "Oluştur";
+"albums" = "Albümler";
+"create_album" = "Albüm oluştur";
+"edit_album" = "Albümü düzenle";
+"creating_album" = "Albüm oluşturuluyor";
+"upload_photo" = "Fotoğraf yükle";
+"photo" = "Fotoğraf";
+"upload_button" = "Yükle";
+
+"albums_zero" = "Albüm yok";
+"albums_one" = "$1 albüm";
+"albums_other" = "$1 albüm";
+
+%{ Notes %}
+
+"notes" = "Notlar";
+"note" = "Not";
+"name_note" = "Başlık";
+"text_note" = "İçerik";
+"create_note" = "Not oluştur";
+"actions" = "İşlemler";
+
+"notes_zero" = "Not yok";
+"notes_one" = "$1 not";
+"notes_other" = "$1 not";
+
+%{ Menus %}
+
+%{ Note that is string need to fit into the "My Page" link %}
+
+"edit_button" = "dznl";
+"my_page" = "Sayfam";
+"my_friends" = "Arkadaşlarım";
+"my_photos" = "Fotoğraflarım";
+"my_videos" = "Videolarım";
+"my_messages" = "Mesajlarım";
+"my_notes" = "Notlarım";
+"my_groups" = "Gruplarım";
+"my_feed" = "Haber Kaynağım";
+"my_feedback" = "Geri bildirimim";
+"my_settings" = "Ayarlarım";
+"bug_tracker" = "Hata-tkpçsi";
+
+"menu_login" = "Giriş yap";
+"menu_registration" = "Kayıt";
+"menu_help" = "Yardım";
+
+"header_home" = "ana menü";
+"header_groups" = "gruplar";
+"header_donate" = "bağış yap";
+"header_people" = "kişiler";
+"header_invite" = "davet et";
+"header_help" = "yardım";
+"header_log_out" = "çıkış yap";
+"header_search" = "ara";
+
+"header_login" = "giriş yap";
+"header_registration" = "kayıt";
+"header_help" = "yardım";
+
+"footer_blog" = "blog";
+"footer_help" = "yardım";
+"footer_developers" = "geliştiriciler";
+"footer_choose_language" = "dil seç";
+"footer_privacy" = "gizlilik";
+
+%{ Settings %}
+
+"main" = "Ana";
+"contacts" = "Kişiler";
+"avatar" = "Avatar";
+"privacy" = "Gizlilik";
+"interface" = "Arayüz";
+
+"profile_picture" = "Profil resmi";
+
+"picture" = "Resim";
+
+"change_password" = "Parolayı değiştir";
+"old_password" = "Eski parola";
+"new_password" = "Yeni parola";
+"repeat_password" = "Parolayı tekrarla";
+
+"avatars_style" = "Avatar tarzı";
+"style" = "Tarz";
+
+"default" = "Varsayılan";
+"cut" = "Kes";
+"round_avatars" = "Avatarı yuvarla";
+
+"search_for_groups" = "Grup ara";
+"search_for_people" = "Kişi ara";
+"search_button" = "Ara";
+"privacy_setting_access_page" = "Sayfamı kim görebilir";
+"privacy_setting_read_info" = "Sayfamın ana bilgisini kim görebilir";
+"privacy_setting_see_groups" = "Gruplarımı ve toplantılarımı kim görebilir";
+"privacy_setting_see_photos" = "Fotoğraflarımı kim görebilir";
+"privacy_setting_see_videos" = "Videolarımı kim görebilir";
+"privacy_setting_see_notes" = "Notlarımı kin görebilir";
+"privacy_setting_see_friends" = "Arkadaşlarımı kim görebilir";
+"privacy_setting_add_to_friends" = "Beni arkadaşlarına kim ekleyebilir";
+"privacy_setting_write_wall" = "Duvarımda kim gönderi yayınlayabilir";
+"privacy_value_anybody" = "Hiç kimse";
+"privacy_value_anybody_dative" = "Hiç kimse";
+"privacy_value_users" = "OpenVK kullanıcıları";
+"privacy_value_friends" = "Arkadaşlarım";
+"privacy_value_friends_dative" = "Arkadaşlarım";
+"privacy_value_only_me" = "Sadece ben";
+"privacy_value_only_me_dative" = "Sadece ben";
+
+"your_email_address" = "E-posta adresin";
+"your_page_address" = "Adres sayfan";
+"page_address" = "Adres sayfası";
+"current_email_address" = "Mevcut e-posta adresin";
+"page_id" = "Sayfa ID'si";
+"you_can_also" = "Ayrıca";
+"delete_your_page" = "sayfanı silebilirsin";
+"delete_album" = "albümü silebilirsin";
+
+"ui_settings_interface" = "Arayüz";
+"ui_settings_sidebar" = "Sol menü";
+"ui_settings_rating" = "Oylama";
+"ui_settings_rating_show" = "Göster";
+"ui_settings_rating_hide" = "Gizle";
+
+%{ Sorting %}
+
+"sort_randomly" = "Rastgele sırala";
+"sort_up" = "ID'ye göre yukarı doğru sırayla";
+"sort_down" = "ID'ye göre aşağı doğru sırala";
+
+%{ Videos %}
+
+"videos" = "Videolar";
+"video" = "Video";
+"upload_video" = "Video yükle";
+"video_uploaded" = "Yüklendi";
+"video_updated" = "Güncellendi";
+"video_link_to_yt" = "YT linki";
+
+"video_name" = "Başlık";
+"video_description" = "Açıklama";
+"video_uploaded_by" = "Yükleyen";
+"video_upload_date" = "Yükleme tarihi";
+
+"videos_zero" = "Video yok";
+"videos_one" = "$1 video";
+"videos_other" = "$1 video";
+
+%{ Notifications %}
+
+"feedback" = "Geri bildirim";
+"unread" = "Okunmamış";
+"archive" = "Arşivle";
+
+"notifications_like" = "$1, $4 üzerinden $2gönderini$3 beğendi";
+"notifications_repost" = "$1, $4 üzerinden $2gönderini$3 paylaştı";
+"notifications_comment_under" = "$1, $2 içinde bir yorum yaptı";
+"notifications_under_note" = "$3notun$4";
+"notifications_under_photo" = "$3fotoğrafın$4";
+"notifications_under_post" = "$5 üzerinden $3gönderin$4";
+"notifications_under_video" = "$3videon$4";
+"notifications_post" = "$1, duvarında $2bir gönderi$3 paylaştı: $4";
+"notifications_appoint" = "$1, seni $2 topluluğunda bir yönetici olarak atadı";
+
+"nt_liked_yours" = "seninkini beğendi";
+"nt_shared_yours" = "seninkini paylaştı";
+"nt_commented_yours" = "seninkine yorum yaptı";
+"nt_written_on_your_wall" = "duvarında yazdı";
+"nt_made_you_admin" = "toplulukta yönetici yaptı";
+
+"nt_from" = "üzerinden";
+"nt_yours_adjective" = "senin";
+"nt_yours_feminitive_adjective" = "senin";
+"nt_post_nominative" = "gönderi";
+"nt_post_instrumental" = "gönderi";
+"nt_note_instrumental" = "not";
+"nt_photo_instrumental" = "fotoğraf";
+
+%{ Time %}
+
+"time_at_sp" = " saat ";
+"time_just_now" = "daha şimdi";
+"time_exactly_five_minutes_ago" = "tam 5 dakika önce";
+"time_minutes_ago" = "$1 dakika önce";
+"time_today" = "bugün";
+"time_yesterday" = "dün";
+
+%{ Errors %}
+
+"error_1" = "Yanlış sorgu";
+"error_2" = "Yanlış kullanıcı adı ve parola";
+"error_3" = "İzin verilmedi";
+"error_4" = "Böyle bir kullanıcı yok";
+"information_-1" = "Başarılı";
+"information_-2" = "Giriş başarılı";
+
+"no_data" = "Veri yok";
+"no_data_description" = "Böyle bir veri yok.";
+
+%{ Translations by @WindowZytch - Çeviriler @WindowZytch'den %}

@@ -1,0 +1,42 @@
+{var author = $comment->getOwner()}
+
+<a name="cid={$comment->getId()}"></a>
+<table border="0" style="font-size: 11px;" class="post">
+    <tbody>
+        <tr>
+            <td width="54" valign="top">
+                <img
+                    src="{$author->getAvatarURL()}"
+                    width="50" />
+            </td>
+            <td width="345" valign="top">
+                <div class="post-author">
+                    <a href="{$author->getURL()}"><b>
+                        {$author->getCanonicalName()}
+                    </b></a> {$author->isFemale() ? tr("post_writes_f") : tr("post_writes_m")}<br/>
+                    <a href="/comment{$comment->getId()}" class="date">{$comment->getPublicationTime()}</a>
+                </div>
+                <div class="post-content" id="{$comment->getId()}">
+                    <div class="text" id="text{$comment->getId()}">
+                        {$comment->getText()|noescape}
+                    </div>
+                    <div n:if="isset($thisUser) &&! ($compact ?? false)" class="post-menu">
+                        {var canDelete = $comment->getOwner()->getId() == $thisUser->getId()}
+                        {var canDelete = $canDelete || $comment->getTarget()->getOwner()->getId() == $thisUser->getId()}
+                        {if $canDelete}
+                            <a href="/comment{$comment->getId()}/delete">{_"delete"}</a>
+                        {/if}
+                        
+                        <div style="float: right; font-size: .7rem;">
+                            <a href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}">
+                                <text style="{if $comment->hasLikeFrom($thisUser)}color: red;{else}filter: sepia(1){/if}">&#10084;</text>
+                                {$comment->getLikesCount()}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+            </td>
+        </tr>
+    </tbody>
+</table>

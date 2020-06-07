@@ -1,0 +1,40 @@
+{extends "../@layout.xml"}
+{block title}Создать альбом{/block}
+
+{block header}
+    {ifset $club}
+        <a href="{$club->getURL()}">{$club->getName()}</a>
+        » 
+        <a href="/albums{$club->getId() * -1}">{_"albums"}</a>
+    {else}
+        <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
+        » 
+        <a href="/albums{$thisUser->getId()}">{_"albums"}</a>
+    {/ifset}
+    » 
+    {_"creating_album"}
+{/block}
+
+{block content}
+    <form method="post" enctype="multipart/form-data">
+      <table cellspacing="6">
+        <tbody>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_"name"}:</span></td>
+            <td><input type="text" name="name" /></td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_"description"}:</span></td>
+            <td><textarea style="margin: 0px; height: 50px; width: 159px; resize: none;" name="desc"></textarea></td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"></td>
+            <td>
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" class="button" name="submit" value="{_'create'}" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+{/block}

@@ -1,0 +1,38 @@
+{extends "../@layout.xml"}
+{block title}{_"upload_photo"}{/block}
+
+{block header}
+    <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
+    » 
+    <a href="/albums{$thisUser->getId()}">{_"albums"}</a>
+    » 
+    <a href="/album{$album->getPrettyId()}">{$album->getName()}</a>
+    » 
+    {_"upload_photo"}
+{/block}
+
+{block content}
+    <form action="/photos/upload?album={$album->getPrettyId()}" method="post" enctype="multipart/form-data">
+      <table cellspacing="6">
+        <tbody>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_"description"}:</span></td>
+            <td><textarea style="margin: 0px; height: 50px; width: 159px; resize: none;" name="desc"></textarea></td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_"photo"}:</span></td>
+            <td><input type="file" name="blob" accept="image/*" /></td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"></td>
+            <td>
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" class="button" name="submit" value="Загрузить" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      
+      <input n:ifset="$_GET['album']" type="hidden" name="album" value="{$_GET['album']}" />
+    </form>
+{/block}

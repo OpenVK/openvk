@@ -1,0 +1,30 @@
+<h4>{_"comments"} ({$count})</h4>
+
+<div n:ifset="$thisUser">
+    <form action="/al_comments.pl/create/{$model}/{$parent->getId()}" method="POST" style="margin-top: 2pt;">
+        <textarea name="text" style="width: 411px; margin: 0px; height: 53px; resize: none;"></textarea>
+        <br/>
+        <input type="hidden" value="{$csrfToken}" name="hash" />
+        <input type="submit" value="{_'write'}" class="button" style="bottom-right: 50px;" />
+     </form>
+</div>
+
+{if sizeof($comments) > 0}
+    {foreach $comments as $comment}
+        {include "comment.xml", comment => $comment}
+    {/foreach}
+    {include "paginator.xml", conf => (object) ["page" => $page, "count" => $count, "amount" => sizeof($comments), "perPage" => 10]}
+{else}
+    <!-- {if $model === "photos"}
+        <p>Будьте первым, кто оставит комментарий к этой фотографии</p>
+    {elseif $model === "posts"}
+        <p>Будьте первым, кто оставит комментарий к этой записи</p>
+    {elseif $model === "notes"}
+        <p>Будьте первым, кто оставит комментарий к этой заметке</p>
+    {elseif $model === "videos"}
+        <p>Будьте первым, кто оставит комментарий к этой видеозаписи</p>
+    {else}
+        <p>Будьте первым кто оставит комментарий к этой хуйне!</p>
+    {/if} -->
+    {_"comments_tip"}
+{/if}

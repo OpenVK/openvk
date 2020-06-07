@@ -1,0 +1,63 @@
+/*
+By WerySkok (@WerySkok)
+*/
+
+.left_small_block > div > div > div > table > tbody > tr > td > a > img,
+table.User > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > a:nth-child(1) > img:nth-child(1)
+{
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 100px;
+}
+
+.post > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > img:nth-child(1)
+{
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 100px;
+}
+
+div.content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > a:nth-child(1) > img:nth-child(1)
+{
+    width: 75px;
+    height: 75px;
+    object-fit: cover;
+    border-radius: 100px;
+}
+
+.post-menu > div > a,
+.post-menu > a
+{
+    border-radius: 3px;
+}
+
+.crp-entry--image > img
+{
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+    border-radius: 100px;
+}
+
+.crp-entry--message---av > img,
+.ava
+{
+    width: 46px;
+    height: 46px;
+    object-fit: cover;
+    border-radius: 100px;
+}
+
+.messenger-app--messages---message:hover
+{
+    border-radius: 3px;
+}
+
+.right_small_block > a:nth-child(1) > img,
+.left_small_block > div:nth-child(1) > a > img,
+div.ovk-video > div > img
+{
+    border-radius: 2px;
+}

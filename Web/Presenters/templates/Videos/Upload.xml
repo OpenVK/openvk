@@ -1,0 +1,42 @@
+{extends "../@layout.xml"}
+{block title}Загрузить видео{/block}
+
+{block header}
+    <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
+    »
+    <a href="/videos{$thisUser->getId()}">{_"videos"}</a>
+    » 
+    {_"upload_video"}
+{/block}
+
+{block content}
+    <form method="post" enctype="multipart/form-data">
+      <table cellspacing="6">
+        <tbody>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_"name"}:</span></td>
+            <td><input type="text" name="name" /></td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_"description"}:</span></td>
+            <td><textarea style="margin: 0px; height: 50px; width: 159px; resize: none;" name="desc"></textarea></td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_"video"}:</span></td>
+            <td><input type="file" name="blob" accept="video/*" /></td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_"video_link_to_yt"}:</span></td>
+            <td><input type="text" name="link" placeholder="https://www.youtube.com/watch?v=9FWSRQEqhKE" /></td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"></td>
+            <td>
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" class="button" name="submit" value="{_"upload_button"}" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+{/block}

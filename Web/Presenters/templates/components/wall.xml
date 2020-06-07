@@ -1,0 +1,30 @@
+<div class="content_divider">
+    <div class="content_title_expanded" onclick="hidePanel(this, {$count});">
+        {_"wall"}
+    </div>
+    <div>
+        <div class="content_subtitle">
+            {l18n_number("wall", $count)}
+            <div style="float: right;">
+                <a onclick="show_write_textarea()">{_'write'}</a>
+            </div>
+        </div>
+        <div id="write" style="padding: 8px; display: none;">
+            <form action="/actions/add_post" method="post">
+                <textarea name="text" style="width: 100%;"></textarea>
+                <input type="hidden" name="id"   value="{$owner}" />
+                <input type="hidden" name="type" value="1" />
+                <div style="float: right;">
+                    <input type="submit" value="{_'write'}" class="button" />
+                </div>
+            </form>
+        </div>
+        <div class="content">
+            {foreach $posts->page($__page, 10) as $post}
+                {include "post.xml", post => $post}
+            {/foreach}
+            
+            {include "paginator.xml", page => $__page, bag => $posts}
+        </div>
+    </div>
+</div>

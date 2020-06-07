@@ -1,0 +1,70 @@
+{extends "@layout.xml"}
+{var search = true}
+
+{block title}
+    Пользователи
+{/block}
+
+{block heading}
+    Пиздюки
+{/block}
+
+{block searchTitle}Поиск пиздюков{/block}
+
+{block content}
+    {var users  = iterator_to_array($users)}
+    {var amount = sizeof($users)}
+    
+    <table class="aui aui-table-list">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Имя</th>
+                <th>Пол</th>
+                <th>Короткий адрес</th>
+                <th>Дата регистрации</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr n:foreach="$users as $user">
+                <td>{$user->getId()}</td>
+                <td>
+                    <span class="aui-avatar aui-avatar-xsmall">
+                        <span class="aui-avatar-inner">
+                            <img src="{$user->getAvatarUrl()}" alt="{$user->getCanonicalName()}" role="presentation" />
+                        </span>
+                    </span>
+                    
+                    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>
+                    
+                    <span n:if="$user->isBanned()" class="aui-lozenge aui-lozenge-subtle aui-lozenge-removed">
+                        заблокирован
+                    </span>
+                </td>
+                <td>{$user->isFemale() ? "Женский" : "Мужской"}</td>
+                <td>{$user->getShortCode() ?? "(отсутствует)"}</td>
+                <td>{$user->getRegistrationTime()}</td>
+                <td>
+                    <a class="aui-button aui-button-primary" href="/admin/users/id{$user->getId()}">
+                        <span class="aui-icon aui-icon-small aui-iconfont-new-edit">Редактировать</span>
+                    </a>
+                    <a class="aui-button" href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}">
+                        <span class="aui-icon aui-icon-small aui-iconfont-sign-in">Войти как</span>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <div align="right">
+        {var isLast = ((10 * (($_GET['p'] ?? 1) - 1)) + $amount) < $count}
+        
+        <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">
+            ⭁ туда
+        </a>
+        <a n:if="$isLast" class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">
+            ⭇  сюда
+        </a>
+    </div>
+{/block}

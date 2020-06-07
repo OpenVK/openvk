@@ -1,0 +1,19 @@
+{extends "../@layout.xml"}
+{block title}#{$hashtag}{/block}
+
+{block header}
+    #{$hashtag}
+{/block}
+
+{block content}
+    <center>
+        {foreach $posts as $post}
+            <a name="postGarter={$post->getId()}"></a>
+            
+            {include "../components/post.xml", post => $post, onWallOf => true}
+            
+            {php $paginatorConf->count++}
+        {/foreach}
+        {include "../components/paginator.xml", conf => $paginatorConf}
+    </center>
+{/block}

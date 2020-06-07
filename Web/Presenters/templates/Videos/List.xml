@@ -1,0 +1,41 @@
+{extends "../@listView.xml"}
+{var iterator = $videos}
+{var count    = $paginatorConf->count}
+{var page     = $paginatorConf->page}
+
+{block title}{_"videos"} {$user->getCanonicalName()}{/block}
+
+{block header}
+    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>
+    » {_"videos"}
+    
+    <div n:if="isset($thisUser) && $thisUser->getId() == $user->getId()" style="float: right;">
+        <a href="/videos/upload">{_"upload_video"}</a>
+    </div>
+{/block}
+
+{block actions}
+    
+{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block link|strip|stripHtml}
+    /video{$x->getPrettyId()}
+{/block}
+
+{block preview}
+    <img src="{$x->getThumbnailURL()}"
+         alt="{$x->getName()}"
+         style="max-height: 43pt; max-width: 140px; height: unset; width: unset; border-radius: unset;" />
+{/block}
+
+{block name}
+    {$x->getName()}
+{/block}
+
+{block description}
+    <span>{$x->getDescription() ?? ""}</span><br/>
+    <span style="color: grey;">{_"video_uploaded"} {$x->getPublicationTime()}</span><br/>
+    <span style="color: grey;">{_"video_updated"} {$x->getEditTime() ?? $x->getPublicationTime()}</span>
+{/block}

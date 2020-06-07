@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Произошёл троллинг... | OpenVK</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, user-scalable=no" />
+        <style>
+            @keyframes gradient {
+                0% {
+                    background-position:0% 50%
+                }
+                
+                50% {
+                    background-position:100% 50%
+                }
+                
+                100% {
+                    background-position:0% 50%
+                }
+            }
+            
+            body {
+                background: linear-gradient(-30deg, #2b2b2b, #f479ff);
+                color: #fff;
+                font-family: sans-serif;
+                font-weight: 900;
+                animation: gradient 30s ease-in-out infinite;
+                background-size: 400% 400%;
+            }
+            
+            #error {
+                width: 35rem;
+                max-width: 85vw;
+            }
+            
+            main {
+                display: flex;
+                justify-content: space-evenly;
+                align-items: center;
+                height: 97vh;
+            }
+            
+            @media screen and (max-width: 768px) {
+                main {
+                    flex-direction: column;
+                    justify-content: center;
+                }
+                
+                main > p:first-of-type {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- OpenVK ERROR REPORT: -->
+        <!-- HTTP {$code}         -->
+        <!-- {$msg}               -->
+        
+        <main>
+            <p>{$desc}</p>
+            <a href="/"><img src="/assets/packages/static/openvk/img/oof.apng" alt="Ouch" id="error" /></a>
+            <p>{$desc}</p>
+        </main>
+    </body>
+</html>

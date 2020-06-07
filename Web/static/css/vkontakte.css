@@ -1,0 +1,30 @@
+.page_header {
+    background: url(../img/xhead2.gif);
+}
+
+.header_navigation .link {
+    background: url(../img/header_divider.gif) no-repeat;
+}
+
+.content_title_expanded {
+    border-top: #45688e solid 1px;
+    background-color: #dae2e8;
+    color: #45688e;
+}
+.navigation .link {
+color:#2B587A;
+}
+.navigation .link:hover {
+    background: 
+#DAE1E8;
+border-top: 1px solid
+    #CAD1D9;
+}
+.tabs {
+    border-bottom: 1px solid 
+    #36638E;
+}
+#activetabs {
+    background: 
+    #36638E;
+}

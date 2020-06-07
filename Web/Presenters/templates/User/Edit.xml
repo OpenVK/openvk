@@ -1,0 +1,300 @@
+{extends "../@layout.xml"}
+{block title}{_"edit_page"}{/block}
+
+{block header}
+    {_"edit_page"}
+{/block}
+
+{block content}
+
+{var isMain      = $mode === 'main'}
+{var isContacts  = $mode === 'contacts'}
+{var isInterests = $mode === 'interests'}
+{var isAvatar    = $mode === 'avatar'}
+    <div n:if="$user->hasPendingNumberChange()" class="msg">
+        <b>Подтверждение номера телефона</b><br/>
+        Введите код для подтверждения смены номера: <a href="/edit/verify_phone.pl">ввести код</a>.
+    </div>
+    
+    <div class="tabs">
+        <div n:attr="id => ($isMain ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => ($isMain ? 'act_tab_a' : 'ki')" href="/edit">{_"main"}</a>
+        </div>
+        <div n:attr="id => ($isContacts ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => ($isContacts ? 'act_tab_a' : 'ki')" href="/edit?act=contacts">{_"contacts"}</a>
+        </div>
+        <div n:attr="id => ($isInterests ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => ($isInterests ? 'act_tab_a' : 'ki')" href="/edit?act=interests">{_"interests"}</a>
+        </div>
+        <div n:attr="id => ($isAvatar ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => ($isAvatar ? 'act_tab_a' : 'ki')" href="/edit?act=avatar">{_"avatar"}</a>
+        </div>
+    </div>
+    
+    <div class="container_gray">
+        {if $isMain}
+        
+        <h4>{_"main_information"}</h4>
+        <form action="/edit?act=main" method="POST" enctype="multipart/form-data">
+            <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"name"}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="first_name" value="{$user->getFirstName()}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"surname"}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="last_name" value="{$user->getLastName()}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"nickname"}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="pseudo" value="{$user->getPseudo()}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">Телефон: </span>
+                        </td>
+                        <td>
+                            <input type="phone" name="phone" value="{$user->getPhone()}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"status"}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="status" value="{$user->getStatus()}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"relationship"}: </span>
+                        </td>
+                        <td>
+                            <select name="marialstatus">
+                                <option value="0" {if $user->getMaritalStatus() == 0}selected{/if}>{_"relationship_0"}</option>
+                                <option value="1" {if $user->getMaritalStatus() == 1}selected{/if}>{_"relationship_1"}</option>
+                                <option value="2" {if $user->getMaritalStatus() == 2}selected{/if}>{_"relationship_2"}</option>
+                                <option value="3" {if $user->getMaritalStatus() == 3}selected{/if}>{_"relationship_3"}</option>
+                                <option value="4" {if $user->getMaritalStatus() == 4}selected{/if}>{_"relationship_4"}</option>
+                                <option value="5" {if $user->getMaritalStatus() == 5}selected{/if}>{_"relationship_5"}</option>
+                                <option value="6" {if $user->getMaritalStatus() == 6}selected{/if}>{_"relationship_6"}</option>
+                                <option value="7" {if $user->getMaritalStatus() == 7}selected{/if}>{_"relationship_7"}</option>
+                                <option value="8" {if $user->getMaritalStatus() == 8}selected{/if}>{_"relationship_8"}</option>
+                                
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"politViews"}: </span>
+                        </td>
+                        <td>
+                            <select name="politViews">
+                                <option value="0" {if $user->getPoliticalViews() == 0}selected{/if}>{_"politViews_0"}</option>
+                                <option value="1" {if $user->getPoliticalViews() == 1}selected{/if}>{_"politViews_1"}</option>
+                                <option value="2" {if $user->getPoliticalViews() == 2}selected{/if}>{_"politViews_2"}</option>
+                                <option value="3" {if $user->getPoliticalViews() == 3}selected{/if}>{_"politViews_3"}</option>
+                                <option value="4" {if $user->getPoliticalViews() == 4}selected{/if}>{_"politViews_4"}</option>
+                                <option value="5" {if $user->getPoliticalViews() == 5}selected{/if}>{_"politViews_5"}</option>
+                                <option value="6" {if $user->getPoliticalViews() == 6}selected{/if}>{_"politViews_6"}</option>
+                                <option value="7" {if $user->getPoliticalViews() == 7}selected{/if}>{_"politViews_7"}</option>
+                                <option value="8" {if $user->getPoliticalViews() == 8}selected{/if}>{_"politViews_8"}</option>
+                                <option value="9" {if $user->getPoliticalViews() == 9}selected{/if}>{_"politViews_9"}</option>
+                                
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"gender"}: </span>
+                        </td>
+                        <td>
+                            <select name="gender">
+                                <option value="1" {if $user->isFemale() == true}selected{/if}>{_"female"}</option>
+                                <option value="0" {if $user->isFemale() == false}selected{/if}>{_"male"}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_'save'}" class="button" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+        
+        {elseif $isContacts}
+            
+        <h4>{_"contact_information"}</h4>
+        <form action="/edit?act=contacts" method="POST" enctype="multipart/form-data">
+            <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"email"}: </span>
+                        </td>
+                        <td>
+                            <input type="email" name="email_contact" value="{$user->getContactEmail()}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"telegram"}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="telegram" value="{$user->getTelegram()}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"city"}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="city" value="{$user->getCity()}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"address"}: </span>
+                        </td>
+                        <td>
+                                <input type="text" name="address" value="{$user->getPhysicalAddress()}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_'save'}" class="button" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+        
+        {elseif $isInterests}
+        
+        <h4>{_"personal_information"}</h4>
+        <form action="/edit?act=interests" method="POST" enctype="multipart/form-data">
+            <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"interests"}: </span>
+                        </td>
+                        <td>
+                            <textarea type="text" name="interests" style="resize:none;width:159px;">{$user->getInterests()}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"favorite_music"}: </span>
+                        </td>
+                        <td>
+                            <textarea type="text" name="fav_music" style="resize:none;width:159px;">{$user->getFavoriteMusic()}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"favorite_films"}: </span>
+                        </td>
+                        <td>
+                            <textarea type="text" name="fav_films" style="resize:none;width:159px;">{$user->getFavoriteFilms()}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"favorite_shows"}: </span>
+                        </td>
+                        <td>
+                            <textarea type="text" name="fav_shows" style="resize:none;width:159px;">{$user->getFavoriteShows()}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"favorite_books"}: </span>
+                        </td>
+                        <td>
+                            <textarea type="text" name="fav_books" style="resize:none;width:159px;">{$user->getFavoriteBooks()}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"favorite_quotes"}: </span>
+                        </td>
+                        <td>
+                            <textarea type="text" name="fav_quote" style="resize:none;width:159px;">{$user->getFavoriteQuote()}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"information_about"}: </span>
+                        </td>
+                        <td>
+                            <textarea type="text" name="about" style="resize:none;width:159px;">{$user->getDescription()}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_'save'}" class="button" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+        
+        {elseif $isAvatar}
+        
+        <h4>{_"profile_picture"}</h4>
+        <form action="/al_avatars.pl" method="POST" enctype="multipart/form-data">
+            <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"picture"}: </span>
+                        </td>
+                        <td>
+                            <input type="file" name="blob" accept="image/*" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_'save'}" class="button" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+        
+        {/if}
+    </div>
+    
+{/block}

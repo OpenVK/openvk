@@ -1,0 +1,47 @@
+{extends "../@listView.xml"}
+{var iterator = iterator_to_array($albums)}
+{var page     = $paginatorConf->page}
+
+{block title}Альбомы {$owner->getCanonicalName()}{/block}
+
+{block header}
+    <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
+    » {_"albums"}
+    
+    <div n:if="$canEdit" style="float: right;">
+        {var isClub = ($owner instanceof openvk\Web\Models\Entities\Club)}
+        <a href="/albums/create{$isClub ? '?gpid=' . $owner->getId() : ''}">{_"create_album"}</a>
+    </div>
+{/block}
+
+{block actions}
+    
+{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block link|strip|stripHtml}
+    /album{$x->getPrettyId()}
+{/block}
+
+{block preview}
+    {var cover   = $x->getCoverPhoto()}
+    {var preview = is_null($cover) ? "/assets/packages/static/openvk/img/camera_200.png" : $cover->getURL()}
+    
+    <center style="height: 54pt; width: 140px;">
+        <a href="/album{$x->getPrettyId()}">
+            <img src="{$preview}" alt="{$x->getName()}" style="max-height: 100%; max-width: 100%;" />
+        </a>
+    </center>
+{/block}
+
+{block name}
+    {$x->getName()}
+{/block}
+
+{block description}
+    <span>{$x->getDescription() ?? $x->getName()}</span><br/>
+    <span style="color: grey;">{$x->getPhotosCount()} фотографий</span><br/>
+    <span style="color: grey;">Создан {$x->getCreationTime()}</span><br/>
+    <span style="color: grey;">Изменён {$x->getEditTime() ?? $x->getCreationTime()}</span>
+{/block}

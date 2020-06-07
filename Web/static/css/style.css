@@ -1,0 +1,1137 @@
+/* 
+
+Website's Style
+Developers: Veselcraft
+
+*/ 
+html {
+  overflow-y: scroll;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    text-align: left;
+    font-family: tahoma, verdana, arial, sans-serif;
+    font-size: 11px;
+    /* cursor: url('/style/pizda1.cur'), pointer; */
+}
+
+span {
+    padding: 0 0 2px;
+    color: gray;
+    font-weight: bold;
+}
+
+.nobold {
+
+    font-weight: normal;
+    color: gray;
+
+}
+
+a {
+    text-decoration: none;
+    color: #2B587A;
+    cursor: pointer;
+}
+
+.layout {
+    width: 791px;
+    margin: 0 auto;
+}
+
+/* header crap */
+
+.page_header {
+    position: relative;
+    width: 791px;
+    height: 45px;
+    background-repeat: no-repeat;
+    background-position: 0;
+    background: url(../img/header.png);
+}
+
+#page_act {
+    border-bottom: 1px solid 
+#d5dde6;
+padding: 2px 10px 5px 10px;
+color:
+    #2B587A;
+    width: 608px;
+    margin-left: -10px;
+}
+
+.home_button {
+    position: absolute;
+    width: 232px;    
+    text-indent: -999px;
+    height: 42px;
+}
+
+.header_navigation {
+    text-align: center;
+    line-height: 20px;
+    padding-right: 8px;
+    text-transform: lowercase;
+    float: right;
+}
+
+.header_navigation .link {
+    display: inline-block;
+    height: 29px;
+    padding: 11px 4px 0 7px;
+    background-size: 1.5px 41px;
+    background: url(../img/divider.png) no-repeat;
+}
+
+.header_navigation .link a {
+  color: #D7D7D7;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.header_navigation .link a:hover {
+  text-decoration: underline;
+  color: #fff;
+}
+
+/* Sidebar crap */
+
+.sidebar {
+
+    width: 118px;
+    margin: 4px 0 0 4px;
+    float: left;
+
+}
+
+.navigation {
+    position: relative;
+    padding: 0;
+}
+
+.navigation .link {
+
+    display: block;
+    padding: 3px 3px 3px 6px;
+    text-decoration: none;
+    border-top: 1px solid #fff;
+    color: #000;
+    border-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+    font-size: 11px;
+    text-align: left;
+    cursor: pointer;
+    background: none;
+    margin-bottom: 1px;
+
+
+}
+
+.navigation .link:hover {
+    background-color: #E4E4E4;
+    border-top: 1px solid #CCCCCC;
+}
+
+.navigation .edit-button {
+    background-color: #fff !important;
+    color: gray !important;
+    position: absolute;
+    right: 0;
+}
+
+.navigation_footer {
+    padding: 0;
+}
+
+.navigation_footer .link {
+    display: block;
+    padding: 3px 3px 3px 6px;
+    text-decoration: none;
+    border-top: 1px solid #fff; /* fix */
+    color: #000;
+}
+
+.navigation_footer .link:hover {
+    background-color: #E4E4E4;
+    border-top: 1px solid #CCCCCC;
+}
+
+/* page crap */
+
+.page_body {
+
+    width: 632px;
+    float: right;
+    margin-right: 15px;
+    margin-top: -2px;
+    font-size: 11px;
+    text-align: left;
+
+}
+
+.wrap1 {
+
+    border: 1px solid #EBF0F4;
+    border-top: 0px;
+    width: 626px;
+}
+
+.wrap2 {
+
+    border-right: 1px solid #F6F8FA;
+    border-top: 0px;
+
+}
+
+
+.page_yellowheader {
+    padding: 4px 10px 5px;
+    font-weight: bold;
+    background: url(../img/header_yellow.png) repeat-x;
+    background-color: #EEE5B8;
+    border-right: solid 1px #DCD4A4;
+    border-left: solid 1px #E4DDB4;
+    border-bottom: solid 1px #D7CF9E;
+    overflow: hidden;
+}
+
+#wrapHI {
+
+    border-right: solid 1px #D5DDE6;
+    border-left: solid 1px #D5DDE6;
+
+}
+#wrapH {
+
+    border-right: solid 1px #EAEEF3;
+    border-left: solid 1px #EAEEF3;
+
+}
+
+.page_yellowheader span {
+    color: #C8BF85;
+}
+
+.page_yellowheader a {
+    color: #C8BF85;
+}
+
+.page_content {
+    display: inline-block;
+    width: 610px;
+}
+
+.page_wrap {
+    border-bottom: solid 1px #c4c4c4;
+    border-left: solid 1px #E1E1E1;
+    border-right: solid 1px #E1E1E1;
+    padding: 12px;
+}
+
+.content-main-tile {
+    margin: -10px;
+    margin-top: 3pt;
+    padding: 7pt;
+    border-top: 1px solid #ebf0f4;
+    background-color: #fbfbfb;
+}
+
+.album {
+    margin: 8px;
+    padding: 8px;
+    width: 95%;
+    background-color: #fff;
+    border: 1px solid #ebf0f4;
+}
+
+.album-photo {
+    position: relative;
+    background-color: darkgrey;
+    margin: 5pt;
+    width: calc(33% - 10pt);
+    height: 82px;
+    text-align: center;
+    vertical-align: text-top;
+}
+
+.album-photo img {
+    width: 100%;
+    max-height: 82px;
+    vertical-align: top;
+}
+
+.album-photo > .album-photo--delete {
+    position: absolute;
+    right: 0;
+    padding: 5px;
+    margin: 4px;
+    color: #fff;
+    background-color: hsla(0, 0%, 0%, 0.3);
+    width: 10px;
+    height: 10px;
+    line-height: 10px;
+    opacity: 0;
+    transition: .1s opacity ease-out;
+}
+
+.album-photo:hover > .album-photo--delete {
+    opacity: 1;
+}
+
+.name-checkmark {
+    margin-left: 2pt;
+}
+
+#profile_link, .profile_link {
+    display: block;
+    box-sizing: border-box;
+    padding: 3px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #CCC;
+    font-size: 11px;
+    color: #2b587a;
+    width: 200px;
+    text-align: left;
+    cursor: pointer;
+
+}
+#profile_links {
+
+    margin: 10px 0;
+
+}
+
+#profile_link:hover, .profile_link:hover {
+
+    background: #ECECEC;
+
+}
+
+/* на этом месте я заплакал */
+
+.page_footer {
+    margin-left: 95px;
+    padding-top: 5px;
+    clear: both;
+    text-align: center;
+}
+
+table {
+    font-size: 11px;
+    text-align: left; 
+    /* ненавижу, блять, костыли */
+}
+
+.information {
+    padding: 9px;
+    background-color: #c3e4ff;
+}
+
+.error {
+    padding: 9px;
+    background-color: #ffc3c3;
+}
+
+/* kun vi tre agrable pensi pri morto 
+
+кстати это из песни дельфина взято 
+вдруг кто не знал
+я просто влюблён, извините за 
+пиздобляские комментарии в CSS коде 
+<3                                      */
+
+.page_footer .link {
+    padding: 3px 7px;
+    display: inline-block;
+    color: #444;
+    text-decoration: none;
+}
+
+.page_footer .link:hover {
+    background-color: #DFDFDF;
+}
+
+.content_divider {
+    margin-bottom: 6px;
+}
+
+.page_info {
+
+    margin-top: 3px;
+    margin-left: 5px;
+    margin-bottom: 20px;
+
+}
+
+.page_status {
+    font-weight: normal;
+    font-size: 11px;
+    padding: 3px 1px 3px;
+    color: #000;
+    width: 380px;
+    max-height: 39px;
+    height: auto !important;
+}
+/* 
+
+у тебя спид
+и значит мы умрём
+
+*/
+
+/* and we begin to make some graphic crap */
+
+.button {
+    border-radius: 2px;
+    border: #595959;
+    font-size: 11px;
+    outline: none;
+    white-space: nowrap;
+    background: #595959;
+    background-position: 0px -16px;
+    color: #fff;
+    padding: 4px 8px 4px;
+    text-shadow: 0 1px 0 #686868;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+input[class=button] {
+    padding: 5px 7px 4px;
+}
+
+input[type=checkbox] {
+  background-image: url("data:image/gif;base64,R0lGODlhDwA4AKIHANrh6P///8DK1a22wF+DpbfAy9/l6v///yH5BAEAAAcALAAAAAAPADgAAAOzKLrMJyHKGcWjOFiY5+7eBVbi+I1aCZ6m2rGrm21NrTx2LWMEwYE93yho+PF6gmKHyCJIiEVRMABNcQzBnsFAumK13K5kS9iGjNuwBPbC5RyDuHw+PwwA+LweP7Dv/wB9d4B6goSFfod8iYqGioGMh46NkYSTkpWAgnSccXadnJl/PYOHQaWAQQWoe6qrhK6MBHmujkEArpCDBVkEBQWLu7w9v3mTv77AxpG/ysusmp+gdQkAOw==");
+  background-color: transparent;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  -ms-appearance: none;
+  height: 14px;
+  width: 14px;
+  outline: none;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+input[type=checkbox]:hover {
+  background-position: 0 -28px;
+}
+
+input[type=checkbox]:checked {
+  background-position: 0 -14px;
+}
+
+#auth {
+    padding: 10px;
+}
+
+.left_small_block {
+    float: left;
+    width: 200px;
+    margin-right: 10px;
+    border-right: 1px #eeeeee solid;
+}
+
+.left_big_block {
+    width: 397px;
+    float: left;
+    margin-right: 13px;
+}
+
+.right_small_block {
+    float: right;
+    width: 200px;
+}
+
+.right_big_block {
+    width: 399px;
+    float: right;
+}
+
+.content_title_expanded {
+    background-image: url('../img/flex_arrow_open.gif');
+    background-repeat: no-repeat;
+    background-color: #e6e6e6;
+    border-top: #8B8B8B solid 1px;
+    padding: 3px 24px;
+    font-weight: bold;
+    color: #626262;
+    font-size: 11px;
+    cursor: pointer;
+    display: block;
+}
+
+.content_title_unexpanded {
+    background-image: url('../img/flex_arrow_shut.gif');
+    background-repeat: no-repeat;
+    background-color: #e6e6e6;
+    border-top: #8B8B8B solid 1px;
+    padding: 3px 24px;
+    font-weight: bold;
+    color: #626262;
+    font-size: 11px;
+    cursor: pointer;
+    display: block;
+}
+
+.content_subtitle {
+    background-color: #F0F0F0;
+    padding: 0;
+    display: block;
+    font-size: 11px;
+    border-bottom: 1px solid #EEEEEE;
+    color: #777777;
+    padding: 3px 8px;
+    border-top: #ccc solid 1px;
+}
+
+.content {
+    padding: 8px;
+}
+
+.content-withouttop {
+    padding-top: 0px;
+}
+
+input[type="text"], input[type="password"], input[type~="text"], input[type~="password"], input[type="email"], input[type="phone"], input[type~="email"], input[type~="phone"], input[type="search"], input[type~="search"], select {
+    border: 1px solid #C0CAD5;
+    padding: 3px;
+    font-size: 11px;
+    font-family: tahoma, verdana, arial, sans-serif;
+    width: 100%;
+}
+
+h4 {
+    border-bottom: 1px solid #E8EBEE;
+    color: #45688E;
+    font-size: 12px;
+    font-weight: bold;
+    margin: 0px;
+    padding: 0px 0px 3px;
+    font-family: verdana, arial, sans-serif;
+}
+
+/* post */
+
+.post-author {
+    background-color: #F6F6F6;
+    border-top: #8B8B8B solid 1px;
+    border-bottom: #ECECEC solid 1px;
+    font-size: 11px;
+    padding: 3px 5px 3px;
+}
+
+.post-author .date {
+    font-size: 9px;
+    color: black;
+}
+
+.post-content {
+    border-bottom: #ECECEC solid 1px;
+    font-size: 9px;
+}
+
+.post-content .text {
+    padding: 4px;
+    font-size: 11px;
+    word-break: break-word;
+    word-wrap: break-word;
+    hyphens: manual;
+}
+
+.post-content .attachments_b {
+    margin-top: 8px;
+}
+
+.attachment .post {
+    width: 102%;
+}
+
+.post-content img.media {
+    max-width: 100%;
+    image-rendering: -webkit-optimize-contrast;
+}
+
+.post-signature {
+	margin: 4px;
+	margin-bottom: 2px;
+}
+
+.post-signature span {
+	color: grey;
+}
+
+.post-signature a {
+	font-weight: 700;
+}
+
+.post-menu {
+    height: 12px;
+    padding: 4px;
+    font-size: 9px;
+    color: #bcbcbc;
+}
+
+ul {
+    list-style-type: square;
+    color: #a2a2a2;
+}
+
+span {
+    padding: 0 0 2px;
+    color: black;
+    font-weight: normal;
+}
+
+#logininput {
+    width: 123px;
+    height: 21px;
+    padding: 3px;
+    border: 1px solid #C0CAD5;
+    font-size: 11;
+    margin: 3px 0;
+}
+
+#fastLogin {
+    min-width: 122px;
+}
+
+#fastLogin input {
+  margin-bottom: 5px;
+}
+
+#fastLogin input[type=submit] {
+  margin-top: 5px;
+}
+
+#fastlogin input[type=text], #fastlogin input[type=password] {
+    width: 100%;
+}
+
+.ovk-avView {
+    padding: 8px;
+}
+
+.ovk-avView--el {
+    width: 32%;
+    max-height: 90px;
+    text-align: center;
+    display: inline-block;
+    vertical-align: text-top;
+}
+
+.ovk-avView--el .ava {
+    max-width: 80%;
+    max-height: 63px;
+}
+
+table.User {
+    vertical-align: text-top;
+}
+
+.container_gray {
+    background: #F7F7F7;
+    width: 602px;
+    padding: 12px;
+    border-top: #EBEBEB solid 1px;
+    margin-left: -12px;
+    margin-bottom: -12px;
+}
+
+#auth .container_gray {
+    margin-left: -10px;
+    margin-bottom: -10px;
+}
+
+/* МОНТИРУЮ МОНТИРУЮ БЛЯТЬ */
+
+.container_gray .content {
+    background: #fff;
+    padding: 5px;
+    border: #DEDEDE solid 1px;
+    clear: both;
+}
+.tabs {
+    border-bottom: 1px solid #707070;
+    margin-left: -12px;
+    margin-right: -6px;
+
+}
+#activetabs {
+
+    background: #707070;
+    border-radius: 3px 3px 0px 0px;
+
+}
+.tab {
+
+    display: inline-block;
+    padding: 4px 6px;
+    margin-left: 15px;
+
+}
+#act_tab_a {
+
+    color: white;
+
+}
+.container_gray .content {
+
+    background: #fff;
+    padding: 4px;
+    border: #DEDEDE solid 1px;
+    clear: both;
+    margin-bottom: 12px;
+}
+
+.gray-block {
+    background: #F7F7F7;
+    border: #DEDEDE solid 1px;
+    padding: 6px;
+    margin-top:6px;
+
+}
+
+.ovk-album {
+    width: 100%;
+}
+
+.ovk-album:not(:first-child), .ovk-note:not(:first-child) {
+    display: inline-block;
+    margin-top: 10px;
+} 
+
+.msg {
+    width: 70%;
+    margin: auto;
+    margin-bottom: 5pt;
+    padding: 8pt;
+    border: 1pt solid #667e96;
+    background-color: #e6f2f3;
+}
+
+#wrapHI > .msg {
+    margin-top: 15pt;
+}
+
+.msg.msg_succ {
+    border-color: #3b584f;
+    background-color: #ddf3d7;
+}
+
+.msg.msg_err {
+    border-color: #9a205e;
+    background-color: #f5e9ec;
+}
+
+.edit_link {
+    color: #c5c5c5;
+    font-family: verdana, arial, sans-serif;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.crp-list {
+    margin: 10px -6px 0 -11px;
+    display: flex;
+    flex-direction: column;
+    border-top: 1px solid #d6d6d6;
+    max-height: 70%;
+    overflow-y: auto;
+}
+
+.crp-entry {
+    display: flex;
+    padding: 8px;
+    border-bottom: 1px solid #d6d6d6;
+    cursor: pointer;
+}
+
+.crp-entry--image, .crp-entry--info {
+    margin-right: 15px;
+}
+
+.crp-entry--info {
+    width: 190px;
+}
+
+.crp-entry--image > img {
+    max-width: 64px;
+}
+
+.crp-entry:hover {
+    background-color: #f9f9f9;
+}
+
+.crp-entry--info span {
+    color: grey;
+}
+
+.crp-entry--info a {
+    font-weight: 900;
+}
+
+.crp-entry--message---av img {
+    max-width: 42px;
+}
+
+.crp-entry--message---av, .crp-entry--message---text {
+    display: inline-block;
+    vertical-align: top;
+}
+
+.crp-entry--message---text, .messenger-app--messages---message .time {
+    color: #404036;
+}
+
+.messenger-app--messages, .messenger-app--input {
+    padding: 10px 70px;
+}
+
+.messenger-app--messages {
+    height: 360px;
+    overflow-y: auto;
+}
+
+.messenger-app--messages---message, .messenger-app--input {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.messenger-app--messages---message {
+    margin-bottom: 1.2rem;
+}
+
+.messenger-app--messages---message .ava, .messenger-app--input > .ava {
+    max-width: 64px;
+}
+
+.messenger-app--messages---message .ava, .messenger-app--input > .ava {
+    width: 52px;
+    height: 52px;
+}
+
+.messenger-app--messages---message ._content {
+    padding-left: 20px;
+    width: 300px;
+}
+
+.messenger-app--messages---message ._content span, .messenger-app--messages---message ._content a {
+    display: block;
+}
+
+.messenger-app--messages---message ._content span {
+    width: 100%;
+    height: fit-content;
+    overflow: hidden;
+}
+
+.messenger-app--messages---message .time {
+    width: 100px;
+}
+
+.messenger-app--input {
+    background-color: #f9f9f9;
+    height: 80px !important;
+    border-top: 1px solid #d6d6d6;
+}
+
+.messenger-app--input---messagebox {
+    box-sizing: border-box;
+    padding: 0 10px;
+    width: calc(100% - 128px);
+}
+
+.messenger-app--input---messagebox textarea {
+    width: 100%;
+    height: 50px !important;
+    resize: none;
+    margin-bottom: 8px !important;
+}
+
+.messenger-app--input---messagebox .button {
+    float: right;
+}
+
+.messenger-app--input .blocked {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.messenger-app--input .blocked::after {
+    content: attr(data-localized-text);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    font-weight: 900;
+}
+
+.music-app {
+    display: grid;
+}
+
+.music-app--player {
+    display: grid;
+    grid-template-columns: 32px 32px 32px 1fr;
+    padding: 8px;
+    border-bottom: 1px solid
+#c1c1c1;
+    border-bottom-style: solid;
+border-bottom-style: dashed;
+}
+
+
+.music-app--player .play, .music-app--player .perv, .music-app--player .next {
+
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: 
+
+#507597;
+
+color:
+
+    #fff;
+    height: 20px;
+    margin: 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    padding: 0;
+    font-size: 10px;
+
+}
+
+.music-app--player .info {
+    margin-left: 10px;
+    width: 550px;
+}
+
+.music-app--player .info .song-name * {
+    color: black;
+}
+
+.music-app--player .info .song-name time {
+    float: right;
+}
+
+.music-app--player .info .track {
+
+    margin-top: 8px;
+    height: 5px;
+    width: 70%;
+    background-color: 
+
+#fff;
+
+border-top: 1px solid
+
+    #507597;
+    float: left;
+
+}
+
+.music-app--player .info .track .inner-track {
+
+    background-color: 
+
+    #507597;
+    height: inherit;
+    width: 15px;
+    opacity: .7;
+
+}
+
+.settings_delete {
+    margin: -12px;
+    padding: 12px;
+    margin-top: -8px;
+    background: #fff;
+    text-align: center;
+}
+
+textarea {
+    font-family: unset;
+    border: 1px solid #C0CAD5;
+    font-size: 9pt;
+    min-height: 42px;
+}
+
+#faqhead {
+    background: #fbf3c3;
+    margin: 0px 5px 0px 5px;
+    padding: 5px;
+    font-weight: bold;
+    border: 1px solid #d7cf9e;
+    border-bottom: 0px;
+}
+
+#faqcontent {
+    background: #fafafa;
+    margin: 0px 5px 10px 5px;
+    padding: 5px 5px 5px 10px;
+    border: 1px solid #ddd;
+}
+
+.ovk-lw-container {
+    display: flex;
+    border-bottom: solid 1px #c4c4c4;
+}
+
+.ovk-lw-container > .ovk-lw--list {
+    flex: 9;
+    border-right: 1px solid #BEBEBE;
+}
+
+.ovk-lw-container > .ovk-lw--list > .post {
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.ovk-lw-container > .ovk-lw--actions {
+    flex: 5;
+}
+
+.ovk-lw-container > .ovk-lw--actions > .tile {
+    display: flex;
+    flex-direction: column;
+    padding: 10px 5px;
+}
+
+.ovk-lw-container > .ovk-lw--actions > .tile > .profile_link {
+    width: auto!important;
+}
+
+.ovk-lw-container > .ovk-lw--actions > hr {
+    margin: 0;
+}
+
+.profile-hints a {
+    display: block;
+    margin-bottom: 2px;
+}
+
+.profile-hints a img {
+    vertical-align: bottom;
+}
+
+.completeness-gauge {
+    position: relative;
+    width: 95%;
+    height: 20px;
+    background-color: #e6e6e6;
+}
+
+.completeness-gauge > div {
+    height: 100%;
+    background-color: #d4d4d4;
+}
+
+.completeness-gauge > span {
+    position: absolute;
+    top: 55%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+
+.toTop {
+    position: fixed;
+    padding: 20px;
+    width: 100px;
+    height: 100%;
+    background-color: #f3f3f3;
+    font-weight: 900;
+    color: #2b2b2b;
+    box-sizing: border-box;
+    opacity: 0;
+    transition: .1s all;
+}
+
+body.scrolled .toTop:hover {
+    opacity: .5;
+    cursor: pointer;
+}
+
+/* бля чуваки я извиняюсь
+за пиздострадательские комментарии
+в коде мне одиноко просто было 
+(да и в принципе и сейчас) */
+
+/* Vriska-chan was here */
+
+.ugc-table.slim {
+    width: 100%;
+}
+
+.ugc-table tr > td {
+    word-break: break-word;
+}
+
+.ugc-table tr > td:nth-of-type(1) {
+    width: 120px;
+    vertical-align: super;
+}
+
+.ugc-table tr > td:nth-of-type(2) {
+    display: block;
+    width: 270px;
+    overflow: hidden;
+}
+
+.ugc-table.slim tr > td:nth-of-type(1) {
+    width: unset;
+}
+
+.ugc-table.slim tr > td:nth-of-type(2) {
+    width: 75%;
+}
+
+#sudo-banner {
+    background: #fffae6;
+    border-color: #fffae6;
+    color: #172b4d;
+    padding: 8px;
+    text-align: center;
+}
+
+#sudo-banner p {
+    margin: 0;
+    font-size: 15px;
+}
+
+.post-upload {
+    margin-top: 11px;
+    margin-left: 3px;
+    color: #3c3c3c;
+    display: none;
+}
+
+.post-upload::before {
+    content: " ";
+    width: 8px;
+    height: 8px;
+    display: inline-block;
+    vertical-align: bottom;
+    background-color: #4f4f4f;
+    margin: 3px;
+    margin-left: 2px;
+}
+
+.post-opts {
+    margin-top: 10px;
+}
+
+.post-opts label {
+    width: 100%;
+    display: block;
+}

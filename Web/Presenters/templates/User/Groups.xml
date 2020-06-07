@@ -1,0 +1,43 @@
+{extends "../@listView.xml"}
+{var iterator = $user->getClubs($page)}
+{var count    = $user->getClubCount()}
+
+{block title}Группы{/block} 
+
+{block header}
+    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> » {_"groups"}
+    
+    <div n:if="!is_null($thisUser) && $user->getId() === $thisUser->getId()" style="float:right;">
+        <span>
+            <b>
+                <a href="/groups_create">
+                    {_"create_group"}
+                </a>
+            </b>
+        </span>
+    </div>
+{/block}
+
+{block actions}
+    <div class="tile">
+        <a href="javascript:alert('Не запилил')" class="profile_link">Поиск групп</a>
+    </div>
+{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block link|strip|stripHtml}
+    {$x->getURL()}
+{/block}
+
+{block preview}
+    <img src="{$x->getAvatarUrl()}" width="75" alt="Фотография группы" />
+{/block}
+
+{block name}
+    {$x->getName()}
+{/block}
+
+{block description}
+    {$x->getDescription()}
+{/block}

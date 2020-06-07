@@ -1,0 +1,1 @@
+{include "error.xml", title => tr("no_data"), description => tr("no_data_description")}

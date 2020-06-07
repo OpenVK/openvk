@@ -1,0 +1,6 @@
+{var club = $notification->getModel(0)}
+{var user = $notification->getModel(1)}
+
+<a href="{$user->getURL()}"><b>{$user->getCanonicalName()}</b></a>
+{_nt_made_you_admin}
+<a href="{$club->getURL()}"><b>{$club->getCanonicalName()}</b></a> {$notification->getDateTime()}.

@@ -1,0 +1,53 @@
+{extends "../@layout.xml"}
+{block title}{_my_messages}{/block}
+
+{block header}{/block}
+
+{block content}
+    <div class="tabs">
+        <div id="activetabs" class="tab">
+            <a id="act_tab_a" href="javascript:false">Все сообщения</a>
+        </div>
+    </div>
+    
+    <div class="container_gray">
+        <form action="/im/search.pl" method="POST" style="margin: 0;">
+            <input type="text" name="pattern" placeholder="Поиск сообщений" required />
+        </form>
+    </div>
+    
+    {if sizeof($corresps) > 0}
+        <div class="crp-list">
+            <div n:foreach="$corresps as $coresp"
+                 class="crp-entry"
+                 onmousedown="window.location.href = {$coresp->getURL()};" >
+                {var recipient = $coresp->getCorrespondents()[1]}
+                {var lastMsg   = $coresp->getPreviewMessage()}
+                
+                <div class="crp-entry--image">
+                    <img src="{$recipient->getAvatarURL()}"
+                    alt="Фотография пользователя" />
+                </div>
+                <div class="crp-entry--info">
+                    <a href="{$recipient->getURL()}">{$recipient->getCanonicalName()}</a><br/>
+                    <span>{$lastMsg->getSendTime()->format("%e %B %G" . tr("time_at_sp") . "%X")}</span>
+                </div>
+                <div class="crp-entry--message">
+                    {var _author = $lastMsg->getSender()}
+                    
+                    <div class="crp-entry--message---av">
+                        <img src="{$_author->getAvatarURL()}"
+                        alt="Фотография пользователя" />
+                    </div>
+                    <div class="crp-entry--message---text">
+                        {$lastMsg->getText()|truncate:60}
+                    </div>
+                </div>
+            </div>
+        </div>
+    {else}
+        <br/>
+        <br/>
+        <center>Вам никто не писал. Пока что.</center>
+    {/if}
+{/block}

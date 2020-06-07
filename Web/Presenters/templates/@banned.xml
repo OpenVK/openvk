@@ -1,0 +1,22 @@
+{extends "@layout.xml"}
+{block title}Вам бан{/block}
+
+{block header}
+    Вы были верискокнуты
+{/block}
+
+{block content}
+    <center>
+        <img src="/assets/packages/static/openvk/img/oof.apng" alt="Пользователь заблокирован." style="width: 20%;" />
+    </center>
+    <p>
+        Извините, <b>{$thisUser->getCanonicalName()}</b>, но вы были верискокнуты.<br/>
+        А причина этому проста: <b>{$thisUser->getBanReason()}</b>. К сожалению, на этот раз
+        нам пришлось заблокировать вас навсегда.
+    </p>
+    <hr/>
+    <p>
+        Вы всё ещё можете <a href="/support?act=new">написать в службу поддержки</a>, если считаете что произошла ошибка
+        или <a href="/logout">выйти</a>.
+    </p>
+{/block}

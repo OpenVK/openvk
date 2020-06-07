@@ -1,0 +1,49 @@
+.page_header {
+    background: url(../img/xhead2006.gif) no-repeat;
+    background-position: 12px 9px;
+}
+
+.header_navigation .link {
+    font-size: 12px;
+    padding: 4px 4px 0 7px;
+    background: none;
+}
+
+.header_navigation .link a {
+    font-weight: normal;
+}
+
+.header_navigation {
+    margin-top: 11px;
+    margin-right: 11px;
+}
+
+.sidebar {
+    margin: 4px 0 0 17px;
+}
+
+.page_yellowheader {
+    background-image: none;
+    font-size: 12px;
+    background-color: #F1EBCD;
+    border-right: solid 1px #d2bea7;
+    border-left: solid 1px #d2bea7;
+    border-bottom: solid 1px #D7CF9E;
+}
+.navigation .link {
+color:#2B587A;
+}
+.navigation .link:hover {
+    background: 
+#DAE1E8;
+border-top: 1px solid
+    #CAD1D9;
+}
+.tabs {
+    border-bottom: 1px solid 
+    #36638E;
+}
+#activetabs {
+    background: 
+    #36638E;
+}

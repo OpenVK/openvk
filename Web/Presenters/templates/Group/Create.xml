@@ -1,0 +1,41 @@
+{extends "../@layout.xml"}
+{block title}Создать группу{/block}
+
+{block header}
+    Создать группу
+{/block}
+
+{block content}
+    <h4>Основная информация</h4>
+    <form method="POST" enctype="multipart/form-data">
+        <table cellspacing="7" cellpadding="0" width="40%" border="0">
+            <tbody>
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_"name"}: </span>
+                    </td>
+                    <td>
+                        <input type="text" name="name" value="" />
+                    </td>
+                </tr>
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_"description"}: </span>
+                    </td>
+                    <td>
+                        <textarea type="text" name="about" style="resize:none;width:159px;"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        
+                    </td>
+                    <td>
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="submit" value="{_'create'}" class="button" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+{/block}

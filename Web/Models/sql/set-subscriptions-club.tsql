@@ -1,0 +1,6 @@
+  (SELECT target AS __id FROM
+    (SELECT follower FROM subscriptions WHERE target=? AND model="openvk\\Web\\Models\\Entities\\Club") u0
+    RIGHT JOIN
+    (SELECT target FROM subscriptions WHERE follower=? AND model="openvk\\Web\\Models\\Entities\\Club") u1
+  ON u0.follower = u1.target WHERE u0.follower IS NULL) u2
+INNER JOIN profiles ON profiles.id = u2.__id

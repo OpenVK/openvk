@@ -1,0 +1,62 @@
+{extends "../@listView.xml"}
+{var iterator = $followers}
+{var count    = $paginatorConf->count}
+{var page     = $paginatorConf->page}
+
+{block title}{_followers} {$club->getCanonicalName()}{/block}
+
+{block header}
+    <a href="{$club->getURL()}">{$club->getCanonicalName()}</a>
+    » {_followers}
+{/block}
+
+{block actions}
+    
+{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block link|strip|stripHtml}
+    /id{$x->getId()}
+{/block}
+
+{block preview}
+    <img src="{$x->getAvatarURL()}" alt="{$x->getCanonicalName()}" width=75 />
+{/block}
+
+{block name}
+    {$x->getCanonicalName()}
+{/block}
+
+{block description}
+    <table>
+        <tbody>
+            <tr>
+                <td width="120" valign="top"><span class="nobold">{_"gender"}: </span></td>
+                <td>{$x->isFemale() ? "женский" : "мужской"}</td>
+            </tr>
+            <tr>
+                <td width="120" valign="top"><span class="nobold">{_"registration_date"}: </span></td>
+                <td>{$x->getRegistrationTime()}</td>
+            </tr>
+            <tr>
+                <td width="120" valign="top"><span class="nobold">{_role}: </span></td>
+                <td>
+                    {$club->canBeModifiedBy($x) ? tr("administrator") : tr("follower")}
+                </td>
+            </tr>
+            <tr n:if="$club->canBeModifiedBy($thisUser ?? NULL) && $club->getOwner()->getId() !== $x->getId()">
+                <td width="120" valign="top"><span class="nobold">{_actions}: </span></td>
+                <td>
+                    <a href="/club{$club->getId()}/setAdmin.jsp?user={$x->getId()}">
+                        {if $club->canBeModifiedBy($x)}
+                            {_devote}
+                        {else}
+                            {_promote_to_admin}
+                        {/if}
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{/block}

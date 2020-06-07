@@ -1,0 +1,6 @@
+{var post = $notification->getModel(0)}
+{var user = $notification->getModel(1)}
+
+<a href="{$user->getURL()}"><b>{$user->getCanonicalName()}</b></a>
+{$notification->getDateTime()} {_nt_shared_yours}
+<a href="/wall{$post->getPrettyId()}"><b>{_nt_post_instrumental}</b></a> {_nt_from} {$post->getPublicationTime()}.

@@ -1,0 +1,78 @@
+{extends "../@layout.xml"}
+{block title}{_"registration"}{/block}
+
+{block header}
+    {_"registration"}
+{/block}
+
+{block content}
+    <form method="POST" enctype="multipart/form-data">
+        <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
+            <tbody>
+                <tr>
+                    <td>
+                        <span>{_"name"}: </span>
+                    </td>
+                    <td>
+                        <input type="text" name="first_name" required />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>{_"surname"}: </span>
+                    </td>
+                    <td>
+                        <input type="text" name="last_name" required />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>{_"gender"}: </span>
+                    </td>
+                    <td>
+                        {var femalePreferred = OPENVK_ROOT_CONF["openvk"]["preferences"]["femaleGenderPriority"]}
+                        <select name="sex" required>
+                            <option n:attr="selected => !$femalePreferred" value="male">{_"male"}</option>
+                            <option n:attr="selected => $femalePreferred" value="female">{_"female"}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr></tr>
+                <tr>
+                    <td>
+                        <span>{_"email"}: </span>
+                    </td>
+                    <td>
+                        <input type="email" name="email" required />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>{_"password"}: </span>
+                    </td>
+                    <td>
+                        <input type="password" name="password" required />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>CAPTCHA: </span>
+                    </td>
+                    <td>
+                        {captcha_template()|noescape}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        
+                    </td>
+                    <td>
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="submit" value="{_'registration'}" class="button" />
+                        <a href="/login">{_"log_in"}</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+{/block}

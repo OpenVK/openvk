@@ -1,0 +1,11 @@
+{extends "../@layout.xml"}
+{block title}Приватность{/block}
+
+{block header}
+    Политика приватности
+{/block}
+
+{block content}
+<p>Hello guys DeSinc here</p><br/>
+<p>Последняя дата редактирования: 21 апреля 2020</p>
+{/block}

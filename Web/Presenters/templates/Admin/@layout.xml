@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+        <style>
+            {var css = file_get_contents(OPENVK_ROOT . "/Web/static/js/node_modules/@atlassian/aui/dist/aui/aui-prototyping.css")}
+            {str_replace("fonts/", "/assets/packages/static/openvk/js/node_modules/@atlassian/aui/dist/aui/fonts/", $css)|noescape}
+        </style>
+        <title>{include title}</title>
+    </head>
+    <body>
+        <div id="page">
+            <header id="header" role="banner">
+                <nav class="aui-header aui-dropdown2-trigger-group" role="navigation">
+                    <div class="aui-header-inner">
+                        <div class="aui-header-primary">
+                            <h1 id="logo" class="aui-header-logo aui-header-logo-textonly">
+                                <a href="/admin">
+                                    <span class="aui-header-logo-device">OVK</span>
+                                </a>
+                            </h1>
+                        </div>
+                        <div n:if="$search ?? false" class="aui-header-secondary">
+                            <ul class="aui-nav">
+                                <form class="aui-quicksearch dont-default-focus ajs-dirty-warning-exempt">
+                                    <input
+                                          id="quickSearchInput"
+                                          autocomplete="off"
+                                          class="search"
+                                          type="text"
+                                          placeholder="{include searchTitle}"
+                                          value="{$_GET['q'] ?? ''}"
+                                          name="q"
+                                          accesskey="Q" />
+                                     <input type="hidden" value=1 name=p />
+                                </form>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </header>
+            <div class="aui-page-panel">
+                <div class="aui-page-panel-inner">
+                    <div class="aui-page-panel-nav" style="background-color: #fff;">
+                        <nav class="aui-navgroup aui-navgroup-vertical">
+                            <div class="aui-navgroup-inner">
+                                <div class="aui-navgroup-primary">
+                                    <div class="aui-nav-heading">
+                                        <strong>Обзор</strong>
+                                    </div>
+                                    <ul class="aui-nav">
+                                        <li>
+                                            <a href="/admin">
+                                                Сводка
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <div class="aui-nav-heading">
+                                        <strong>Пользовательский контент</strong>
+                                    </div>
+                                    <ul class="aui-nav">
+                                        <li>
+                                            <a href="/admin/users">
+                                                Пользователи
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/admin/clubs">
+                                                Группы
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/admin/files">
+                                                Загруженные файлы
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <div class="aui-nav-heading">
+                                        <strong>Настройки</strong>
+                                    </div>
+                                    <ul class="aui-nav">
+                                        <li>
+                                            <a href="/admin/settings/tuning">
+                                                Общие
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/admin/settings/appearance">
+                                                Внешний вид
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/admin/settings/security">
+                                                Безопасность
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/admin/settings/integrations">
+                                                Интеграции
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/admin/settings/system">
+                                                Система
+                                            </a>
+                                        </li>
+                                    </ul>
+                                    <div class="aui-nav-heading">
+                                        <strong>Об OpenVK</strong>
+                                    </div>
+                                    <ul class="aui-nav">
+                                        <li>
+                                            <a href="/about:openvk">
+                                                Версия
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </nav>
+                    </div>
+                    <section class="aui-page-panel-content">
+                        <header class="aui-page-header">
+                            <div class="aui-page-header-inner">
+                                <div class="aui-page-header-main">
+                                    <h1>{include heading}</h1>
+                                </div>
+                            </div>
+                        </header>
+                        <main>
+                            {include content}
+                        </main>
+                    </section>
+                </div>
+            </div>
+            <footer id="footer" role="contentinfo">
+                <section class="footer-body">
+                    <div id="footer-logo">
+                        OpenVK
+                    </div>
+                </section>
+            </footer>
+        </div>
+    </body>
+</html>

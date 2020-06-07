@@ -1,0 +1,81 @@
+{extends "../@listView.xml"}
+{var perPage = 6} {* Why 6? Check User::_abstractRelationGenerator *}
+
+{var act = $_GET["act"] ?? "friends"}
+
+{if $act == "incoming"}
+    {var iterator = iterator_to_array($user->getFollowers($page))}
+    {var count    = $user->getFollowersCount()}
+{elseif $act == "outcoming"}
+    {var iterator = iterator_to_array($user->getSubscriptions($page))}
+    {var count    = $user->getSubscriptionsCount()}
+{else}
+    {var iterator = iterator_to_array($user->getFriends($page))}
+    {var count    = $user->getFriendsCount()}
+{/if}
+
+{block title}
+    {if $act == "incoming"}
+        {_"incoming_req"}
+    {elseif $act == "outcoming"}
+        {_"outcoming_req"}
+    {else}
+        {_"friends"}
+    {/if}
+{/block} 
+
+{block header}
+    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> »
+    {if $act == "incoming"}
+        {_"incoming_req"}
+    {elseif $act == "outcoming"}
+        {_"outcoming_req"}
+    {else}
+        {_"friends"}
+    {/if}
+{/block}
+
+{block tabs}
+    <div n:attr="id => ($act === 'friends' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($act === 'friends' ? 'act_tab_a' : 'ki')" href="?">{_friends}</a>
+    </div>
+    <div n:attr="id => ($act === 'incoming' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($act === 'incoming' ? 'act_tab_a' : 'ki')" href="?act=incoming">{_incoming_req}</a>
+    </div>
+    <div n:attr="id => ($act === 'outcoming' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($act === 'outcoming' ? 'act_tab_a' : 'ki')" href="?act=outcoming">{_outcoming_req}</a>
+    </div>
+{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block link|strip|stripHtml}
+    {$x->getURL()}
+{/block}
+
+{block preview}
+    <img src="{$x->getAvatarUrl()}" width="75" alt="Фотография группы" />
+{/block}
+
+{block name}
+    {$x->getCanonicalName()}
+{/block}
+
+{block description}
+    <table>
+        <tbody>
+            <tr>
+                <td width="120" valign="top"><span class="nobold">{_"gender"}: </span></td>
+                <td>{$x->isFemale() ? "женский" : "мужской"}</td>
+            </tr>
+            <tr>
+                <td width="120" valign="top"><span class="nobold">{_"relationship"}:</span></td>
+                <td>{var $marialStatus = $x->getMaritalStatus()}{_"relationship_$marialStatus"}</td>
+            </tr>
+            <tr>
+                <td width="120" valign="top"><span class="nobold">{_"registration_date"}: </span></td>
+                <td>{$x->getRegistrationTime()}</td>
+            </tr>
+        </tbody>
+    </table>
+{/block}

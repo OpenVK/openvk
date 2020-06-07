@@ -1,0 +1,734 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "6b164abf6cdb4d7b7e3af3f86bb86439",
+    "packages": [
+        {
+            "name": "guzzlehttp/guzzle",
+            "version": "6.5.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/guzzle.git",
+                "reference": "400cefd25a23a3098486bfb52685b5367a464171"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/400cefd25a23a3098486bfb52685b5367a464171",
+                "reference": "400cefd25a23a3098486bfb52685b5367a464171",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/promises": "^1.0",
+                "guzzlehttp/psr7": "^1.6.1",
+                "php": ">=5.5"
+            },
+            "require-dev": {
+                "ext-curl": "*",
+                "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.4 || ^7.0",
+                "psr/log": "^1.1"
+            },
+            "suggest": {
+                "ext-intl": "Required for Internationalized Domain Name (IDN) support",
+                "psr/log": "Required for using the Log middleware"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "6.5-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\": "src/"
+                },
+                "files": [
+                    "src/functions_include.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Guzzle is a PHP HTTP client library",
+            "homepage": "http://guzzlephp.org/",
+            "keywords": [
+                "client",
+                "curl",
+                "framework",
+                "http",
+                "http client",
+                "rest",
+                "web service"
+            ],
+            "time": "2019-12-30T04:52:42+00:00"
+        },
+        {
+            "name": "guzzlehttp/promises",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/promises.git",
+                "reference": "ac2529fc650684c5cd687e2b462d046cdbed556e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/ac2529fc650684c5cd687e2b462d046cdbed556e",
+                "reference": "ac2529fc650684c5cd687e2b462d046cdbed556e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^5.7.27 || ^7.5"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.4-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Promise\\": "src/"
+                },
+                "files": [
+                    "src/functions_include.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                }
+            ],
+            "description": "Guzzle promises library",
+            "keywords": [
+                "promise"
+            ],
+            "time": "2019-12-17T17:19:17+00:00"
+        },
+        {
+            "name": "guzzlehttp/psr7",
+            "version": "1.x-dev",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/guzzle/psr7.git",
+                "reference": "e193ff330a0f28b5e5f65ed3d804f5e2a89376e3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/e193ff330a0f28b5e5f65ed3d804f5e2a89376e3",
+                "reference": "e193ff330a0f28b5e5f65ed3d804f5e2a89376e3",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "psr/http-message": "~1.0",
+                "ralouphie/getallheaders": "^2.0.5 || ^3.0.0"
+            },
+            "provide": {
+                "psr/http-message-implementation": "1.0"
+            },
+            "require-dev": {
+                "ext-zlib": "*",
+                "phpunit/phpunit": "~4.8.36 || ^5.7.27 || ^6.5.8"
+            },
+            "suggest": {
+                "zendframework/zend-httphandlerrunner": "Emit PSR-7 responses"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.6-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "GuzzleHttp\\Psr7\\": "src/"
+                },
+                "files": [
+                    "src/functions_include.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Michael Dowling",
+                    "email": "mtdowling@gmail.com",
+                    "homepage": "https://github.com/mtdowling"
+                },
+                {
+                    "name": "Tobias Schultze",
+                    "homepage": "https://github.com/Tobion"
+                }
+            ],
+            "description": "PSR-7 message implementation that also provides common utility methods",
+            "keywords": [
+                "http",
+                "message",
+                "psr-7",
+                "request",
+                "response",
+                "stream",
+                "uri",
+                "url"
+            ],
+            "time": "2020-02-04T14:54:51+00:00"
+        },
+        {
+            "name": "james-heinrich/getid3",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/JamesHeinrich/getID3.git",
+                "reference": "9c679416351c286aa90001fbb55309f6542371b4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/JamesHeinrich/getID3/zipball/9c679416351c286aa90001fbb55309f6542371b4",
+                "reference": "9c679416351c286aa90001fbb55309f6542371b4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "jakub-onderka/php-parallel-lint": "^0.9 || ^1.0"
+            },
+            "suggest": {
+                "ext-SimpleXML": "SimpleXML extension is required to analyze RIFF/WAV/BWF audio files (also requires `ext-libxml`).",
+                "ext-com_dotnet": "COM extension is required when loading files larger than 2GB on Windows.",
+                "ext-ctype": "ctype extension is required when loading files larger than 2GB on 32-bit PHP (also on 64-bit PHP on Windows) or executing `getid3_lib::CopyTagsToComments`.",
+                "ext-dba": "DBA extension is required to use the DBA database as a cache storage.",
+                "ext-exif": "EXIF extension is required for graphic modules.",
+                "ext-iconv": "iconv extension is required to work with different character sets (when `ext-mbstring` is not available).",
+                "ext-json": "JSON extension is required to analyze Apple Quicktime videos.",
+                "ext-libxml": "libxml extension is required to analyze RIFF/WAV/BWF audio files.",
+                "ext-mbstring": "mbstring extension is required to work with different character sets.",
+                "ext-mysql": "MySQL extension is required to use the MySQL database as a cache storage (deprecated in PHP 5.5, removed in PHP >= 7.0, use `ext-mysqli` instead).",
+                "ext-mysqli": "MySQLi extension is required to use the MySQL database as a cache storage.",
+                "ext-rar": "RAR extension is required for RAR archive module.",
+                "ext-sqlite3": "SQLite3 extension is required to use the SQLite3 database as a cache storage.",
+                "ext-xml": "XML extension is required for graphic modules to analyze the XML metadata.",
+                "ext-zlib": "Zlib extension is required for archive modules and compressed metadata."
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.9.x-dev"
+                }
+            },
+            "autoload": {
+                "classmap": [
+                    "getid3/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-1.0-or-later",
+                "LGPL-3.0-only",
+                "MPL-2.0"
+            ],
+            "description": "PHP script that extracts useful information from popular multimedia file formats",
+            "homepage": "https://www.getid3.org/",
+            "keywords": [
+                "codecs",
+                "php",
+                "tags"
+            ],
+            "time": "2020-03-15T13:38:58+00:00"
+        },
+        {
+            "name": "komeiji-satori/curl",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/komeiji-satori/curl.git",
+                "reference": "687d8fa621823809f5e90a7f5d2fd6a59b7e7948"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/komeiji-satori/curl/zipball/687d8fa621823809f5e90a7f5d2fd6a59b7e7948",
+                "reference": "687d8fa621823809f5e90a7f5d2fd6a59b7e7948",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.6"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/cURL.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Satori",
+                    "email": "i@ttt.moe"
+                }
+            ],
+            "description": "一个轻量级的PHP网络操作类，实现GET、POST、UPLOAD、DOWNLOAD常用操作，出错自动重试，支持链式写法",
+            "homepage": "https://github.com/komeiji-satori/curl",
+            "keywords": [
+                "PHP cURL",
+                "curl download",
+                "curl library",
+                "curl lightweight",
+                "curl post",
+                "curl upload"
+            ],
+            "time": "2019-04-20T16:06:47+00:00"
+        },
+        {
+            "name": "p3k/emoji-detector",
+            "version": "0.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/aaronpk/emoji-detector-php.git",
+                "reference": "fb0765845e554f04ccd2b594a7ab8ca44d804bab"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/aaronpk/emoji-detector-php/zipball/fb0765845e554f04ccd2b594a7ab8ca44d804bab",
+                "reference": "fb0765845e554f04ccd2b594a7ab8ca44d804bab",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.8"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/Emoji.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Aaron Parecki",
+                    "email": "aaron@parecki.com",
+                    "homepage": "https://aaronparecki.com/"
+                }
+            ],
+            "description": "Detect and return all emoji found in a string",
+            "homepage": "https://github.com/aaronpk/emoji-detector-php",
+            "time": "2017-11-30T21:02:53+00:00"
+        },
+        {
+            "name": "psr/cache",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/cache.git",
+                "reference": "b9aa2cd4dd36cec02779bee07ee9dab8bd2d07d7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/cache/zipball/b9aa2cd4dd36cec02779bee07ee9dab8bd2d07d7",
+                "reference": "b9aa2cd4dd36cec02779bee07ee9dab8bd2d07d7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Cache\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for caching libraries",
+            "keywords": [
+                "cache",
+                "psr",
+                "psr-6"
+            ],
+            "time": "2019-10-04T14:04:41+00:00"
+        },
+        {
+            "name": "psr/http-message",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/php-fig/http-message.git",
+                "reference": "efd67d1dc14a7ef4fc4e518e7dee91c271d524e4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/php-fig/http-message/zipball/efd67d1dc14a7ef4fc4e518e7dee91c271d524e4",
+                "reference": "efd67d1dc14a7ef4fc4e518e7dee91c271d524e4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Psr\\Http\\Message\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "PHP-FIG",
+                    "homepage": "http://www.php-fig.org/"
+                }
+            ],
+            "description": "Common interface for HTTP messages",
+            "homepage": "https://github.com/php-fig/http-message",
+            "keywords": [
+                "http",
+                "http-message",
+                "psr",
+                "psr-7",
+                "request",
+                "response"
+            ],
+            "time": "2019-08-29T13:16:46+00:00"
+        },
+        {
+            "name": "ralouphie/getallheaders",
+            "version": "3.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ralouphie/getallheaders.git",
+                "reference": "120b605dfeb996808c31b6477290a714d356e822"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ralouphie/getallheaders/zipball/120b605dfeb996808c31b6477290a714d356e822",
+                "reference": "120b605dfeb996808c31b6477290a714d356e822",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.6"
+            },
+            "require-dev": {
+                "php-coveralls/php-coveralls": "^2.1",
+                "phpunit/phpunit": "^5 || ^6.5"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/getallheaders.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ralph Khattar",
+                    "email": "ralph.khattar@gmail.com"
+                }
+            ],
+            "description": "A polyfill for getallheaders.",
+            "time": "2019-03-08T08:55:37+00:00"
+        },
+        {
+            "name": "rybakit/msgpack",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rybakit/msgpack.php.git",
+                "reference": "23292371282e6fe17c6c94f51c3a8a0254fb0f27"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rybakit/msgpack.php/zipball/23292371282e6fe17c6c94f51c3a8a0254fb0f27",
+                "reference": "23292371282e6fe17c6c94f51c3a8a0254fb0f27",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1.1"
+            },
+            "require-dev": {
+                "ext-decimal": "*",
+                "ext-gmp": "*",
+                "friendsofphp/php-cs-fixer": "^2.14",
+                "phpunit/phpunit": "^7.1|^8.0"
+            },
+            "suggest": {
+                "ext-decimal": "For converting overflowed integers to Decimal objects",
+                "ext-gmp": "For converting overflowed integers to GMP objects"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "MessagePack\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Eugene Leonovich",
+                    "email": "gen.work@gmail.com"
+                }
+            ],
+            "description": "A pure PHP implementation of the MessagePack serialization format.",
+            "keywords": [
+                "messagepack",
+                "msgpack",
+                "pure",
+                "streaming"
+            ],
+            "time": "2020-02-24T18:59:16+00:00"
+        },
+        {
+            "name": "wapmorgan/binary-stream",
+            "version": "0.4.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wapmorgan/BinaryStream.git",
+                "reference": "ca4989c15801635d79f65426b1b0fc6fe803b620"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wapmorgan/BinaryStream/zipball/ca4989c15801635d79f65426b1b0fc6fe803b620",
+                "reference": "ca4989c15801635d79f65426b1b0fc6fe803b620",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.8.35"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "wapmorgan\\BinaryStream\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "A handy tool for working with binary data",
+            "keywords": [
+                "binary",
+                "binary-data",
+                "reader",
+                "writer"
+            ],
+            "time": "2017-06-18T01:02:52+00:00"
+        },
+        {
+            "name": "wapmorgan/cab-archive",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wapmorgan/CabArchive.git",
+                "reference": "c79134eaaf679cf27148d749359b3dd4a67d2960"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wapmorgan/CabArchive/zipball/c79134eaaf679cf27148d749359b3dd4a67d2960",
+                "reference": "c79134eaaf679cf27148d749359b3dd4a67d2960",
+                "shasum": ""
+            },
+            "require": {
+                "wapmorgan/binary-stream": "~0.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "wapmorgan\\CabArchive\\": "src/"
+                },
+                "psr-0": {
+                    "CabArchive": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Reading and extraction of .cab-files",
+            "keywords": [
+                "archive",
+                "cab",
+                "cabinet"
+            ],
+            "time": "2018-09-18T18:54:37+00:00"
+        },
+        {
+            "name": "whichbrowser/parser",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/WhichBrowser/Parser-PHP.git",
+                "reference": "c7b71a46f5f51b5b7284ed36a5b16c62b6f9dc8c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/WhichBrowser/Parser-PHP/zipball/c7b71a46f5f51b5b7284ed36a5b16c62b6f9dc8c",
+                "reference": "c7b71a46f5f51b5b7284ed36a5b16c62b6f9dc8c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0",
+                "psr/cache": "^1.0"
+            },
+            "require-dev": {
+                "icomefromthenet/reverse-regex": "0.0.6.3",
+                "phpunit/php-code-coverage": "^2.2 || ^3.0",
+                "phpunit/phpunit": "^4.0 || ^5.0 || ^6.0 || ^7.0 || ^8.0",
+                "satooshi/php-coveralls": "^1.0",
+                "squizlabs/php_codesniffer": "2.5.*",
+                "symfony/yaml": "~2.8 || ~3.4 || ~4.2 || ~5.0"
+            },
+            "suggest": {
+                "cache/array-adapter": "Allows testing of the caching functionality"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "WhichBrowser\\": [
+                        "src/",
+                        "tests/src/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Niels Leenheer",
+                    "email": "niels@leenheer.nl",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Useragent sniffing library for PHP",
+            "homepage": "http://whichbrowser.net",
+            "keywords": [
+                "browser",
+                "sniffing",
+                "ua",
+                "useragent"
+            ],
+            "time": "2020-01-02T14:36:46+00:00"
+        },
+        {
+            "name": "zadarma/user-api-v1",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zadarma/user-api-v1.git",
+                "reference": "0006bddbe6395de982e20ecc5bb3e70051a0db82"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zadarma/user-api-v1/zipball/0006bddbe6395de982e20ecc5bb3e70051a0db82",
+                "reference": "0006bddbe6395de982e20ecc5bb3e70051a0db82",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.5.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Zadarma_API\\": "lib/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Zadarma",
+                    "email": "github@zadarma.com"
+                }
+            ],
+            "description": "PHP class for Zadarma API",
+            "homepage": "https://github.com/zadarma/user-api-v1",
+            "keywords": [
+                "api",
+                "free calls",
+                "pbx",
+                "sip",
+                "zadarma"
+            ],
+            "time": "2020-03-23T06:03:47+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "komeiji-satori/curl": 20,
+        "wapmorgan/cab-archive": 20,
+        "whichbrowser/parser": 20,
+        "zadarma/user-api-v1": 20,
+        "james-heinrich/getid3": 20,
+        "rybakit/msgpack": 20
+    },
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "1.1.0"
+}

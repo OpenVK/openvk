@@ -1,0 +1,411 @@
+{extends "../@layout.xml"}
+{block title}{_"my_settings"}{/block}
+
+{block header}
+    {_"my_settings"}
+{/block}
+
+{block content}
+
+{var isMain       = $mode === 'main'}
+{var isPrivacy    = $mode === 'privacy'}
+{var isInterface  = $mode === 'interface'}
+
+       <div class="tabs">
+        <div n:attr="id => ($isMain ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => ($isMain ? 'act_tab_a' : 'ki')" href="/settings">{_"main"}</a>
+        </div>
+        <div n:attr="id => ($isPrivacy ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => ($isPrivacy ? 'act_tab_a' : 'ki')" href="/settings?act=privacy">{_"privacy"}</a>
+        </div>
+        <div n:attr="id => ($isInterface ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => ($isInterface ? 'act_tab_a' : 'ki')" href="/settings?act=interface">{_"interface"}</a>
+        </div>
+    </div>
+    
+    <div class="container_gray">
+        {if $isMain}
+        
+        <form action="/settings?act=main" method="POST" enctype="multipart/form-data">
+            <h4>{_"change_password"}</h4>
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"old_password"}</span>
+                        </td>
+                        <td>
+                            <input type="password" name="old_pass" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"new_password"}</span>
+                        </td>
+                        <td>
+                            <input type="password" name="new_pass" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"repeat_password"}</span>
+                        </td>
+                        <td>
+                            <input type="password" name="repeat_pass" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_"change_password"}" class="button" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/>
+            <h4>{_your_email_address}</h4>
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_current_email_address}</span>
+                        </td>
+                        <td>
+                            {$user->getEmail()}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/>
+            <h4>{_your_page_address}</h4>
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_page_id}</span>
+                        </td>
+                        <td>
+                            {$user->getId()}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_page_address}</span>
+                        </td>
+                        <td>
+                            <input type="text" name="sc" value="{$user->getShortCode()}" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_'save'}" class="button" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+        
+        <div class="settings_delete">
+            {_you_can_also} <a href="#" onclick="alert('Не реализовали ждите')">{_delete_your_page}</a>.
+        </div>
+        
+        {elseif $isPrivacy}
+        
+        <form action="/settings?act=privacy" method="POST" enctype="multipart/form-data">
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_privacy_setting_access_page}</span>
+                    </td>
+                    <td>
+                        <select name="page.read" style="width: 164px;">
+                            <option value="3" {if $user->getPrivacySetting('page.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
+                            <option value="2" {if $user->getPrivacySetting('page.read') == 2}selected{/if}>{_privacy_value_users}</option>
+                            <option value="1" {if $user->getPrivacySetting('page.read') == 1}selected{/if}>{_privacy_value_friends_dative}</option>
+                            <option value="0" {if $user->getPrivacySetting('page.read') == 0}selected{/if}>{_privacy_value_only_me_and_super_capite_dative}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_privacy_setting_read_info}</span>
+                    </td>
+                    <td>
+                        <select name="page.info.read" style="width: 164px;">
+                            <option value="3" {if $user->getPrivacySetting('page.info.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
+                            <option value="2" {if $user->getPrivacySetting('page.info.read') == 2}selected{/if}>{_privacy_value_users}</option>
+                            <option value="1" {if $user->getPrivacySetting('page.info.read') == 1}selected{/if}>{_privacy_value_friends_dative}</option>
+                            <option value="0" {if $user->getPrivacySetting('page.info.read') == 0}selected{/if}>{_privacy_value_only_me_and_super_capite_dative}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_privacy_setting_see_groups}</span>
+                    </td>
+                    <td>
+                        <select name="groups.read" style="width: 164px;">
+                            <option value="3" {if $user->getPrivacySetting('groups.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
+                            <option value="2" {if $user->getPrivacySetting('groups.read') == 2}selected{/if}>{_privacy_value_users}</option>
+                            <option value="1" {if $user->getPrivacySetting('groups.read') == 1}selected{/if}>{_privacy_value_friends_dative}</option>
+                            <option value="0" {if $user->getPrivacySetting('groups.read') == 0}selected{/if}>{_privacy_value_only_me_and_super_capite_dative}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_privacy_setting_see_photos}</span>
+                    </td>
+                    <td>
+                        <select name="photos.read" style="width: 164px;">
+                            <option value="3" {if $user->getPrivacySetting('photos.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
+                            <option value="2" {if $user->getPrivacySetting('photos.read') == 2}selected{/if}>{_privacy_value_users}</option>
+                            <option value="1" {if $user->getPrivacySetting('photos.read') == 1}selected{/if}>{_privacy_value_friends_dative}</option>
+                            <option value="0" {if $user->getPrivacySetting('photos.read') == 0}selected{/if}>{_privacy_value_only_me_and_super_capite_dative}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_privacy_setting_see_videos}</span>
+                    </td>
+                    <td>
+                        <select name="videos.read" style="width: 164px;">
+                            <option value="3" {if $user->getPrivacySetting('videos.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
+                            <option value="2" {if $user->getPrivacySetting('videos.read') == 2}selected{/if}>{_privacy_value_users}</option>
+                            <option value="1" {if $user->getPrivacySetting('videos.read') == 1}selected{/if}>{_privacy_value_friends_dative}</option>
+                            <option value="0" {if $user->getPrivacySetting('videos.read') == 0}selected{/if}>{_privacy_value_only_me_and_super_capite_dative}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_privacy_setting_see_notes}</span>
+                    </td>
+                    <td>
+                        <select name="notes.read" style="width: 164px;">
+                            <option value="3" {if $user->getPrivacySetting('notes.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
+                            <option value="2" {if $user->getPrivacySetting('notes.read') == 2}selected{/if}>{_privacy_value_users}</option>
+                            <option value="1" {if $user->getPrivacySetting('notes.read') == 1}selected{/if}>{_privacy_value_friends_dative}</option>
+                            <option value="0" {if $user->getPrivacySetting('notes.read') == 0}selected{/if}>{_privacy_value_only_me_and_super_capite_dative}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_privacy_setting_see_friends}</span>
+                    </td>
+                    <td>
+                        <select name="friends.read" style="width: 164px;">
+                            <option value="3" {if $user->getPrivacySetting('friends.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
+                            <option value="2" {if $user->getPrivacySetting('friends.read') == 2}selected{/if}>{_privacy_value_users}</option>
+                            <option value="1" {if $user->getPrivacySetting('friends.read') == 1}selected{/if}>{_privacy_value_friends_dative}</option>
+                            <option value="0" {if $user->getPrivacySetting('friends.read') == 0}selected{/if}>{_privacy_value_only_me_and_super_capite_dative}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_privacy_setting_add_to_friends}</span>
+                    </td>
+                    <td>
+                        <select name="friends.add" style="width: 164px;">
+                            <option value="3" {if $user->getPrivacySetting('friends.add') == 2}selected{/if}>{_privacy_value_anybody}</option>
+                            <option value="0" {if $user->getPrivacySetting('friends.add') == 0}selected{/if}>{_privacy_value_super_capite}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_privacy_setting_write_wall}</span>
+                    </td>
+                    <td>
+                        <select name="wall.write" style="width: 164px;">
+                            <option value="2" {if $user->getPrivacySetting('wall.write') == 2}selected{/if}>{_privacy_value_anybody}</option>
+                            <option value="1" {if $user->getPrivacySetting('wall.write') == 1}selected{/if}>{_privacy_value_friends}</option>
+                            <option value="0" {if $user->getPrivacySetting('wall.write') == 0}selected{/if}>{_privacy_value_only_me_and_super_capite}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        
+                    </td>
+                    <td>
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="submit" value="{_'save'}" class="button" />
+                    </td>
+                </tr>
+            </table>
+        </form>
+        
+        {elseif $isInterface}
+        
+        <h4>{_ui_settings_interface}</h4>
+        <form action="/settings?act=interface" method="POST" enctype="multipart/form-data">
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"avatars_style"}</span>
+                        </td>
+                        <td>
+                            <select name="style_avatar">
+                                <option value="0" {if $user->getStyleAvatar() == 0}selected{/if}>{_"default"}</option>
+                                <option value="1" {if $user->getStyleAvatar() == 1}selected{/if}>{_"cut"}</option>
+                                <option value="2" {if $user->getStyleAvatar() == 2}selected{/if}>{_"round_avatars"}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"style"}</span>
+                        </td>
+                        <td>
+                            <select name="style">
+                                <optgroup label="OpenVK">
+                                    <option value="0" {if $user->getStyle() == 0}selected{/if}>OpenVK ({_"default"})</option>
+                                    <option value="2" {if $user->getStyle() == 2}selected{/if}>OpenVK [by Daniel Myslivets]</option>
+                                    <option value="16" {if $user->getStyle() == 16}selected{/if}>OpenVK Night [by Ash Defenders]</option>
+                                    <option value="5" {if $user->getStyle() == 5}selected{/if}>OpenVK Black [by Daniel Myslivets]</option>
+                                    <option value="7" {if $user->getStyle() == 7}selected{/if}>OpenVK SpacePink [by Ash Defenders]</option>
+                                </optgroup>
+                                <optgroup label="VKontakte">
+                                    <option value="3" {if $user->getStyle() == 3}selected{/if}>ВКонтакте (2006)</option>
+                                    <option value="1" {if $user->getStyle() == 1}selected{/if}>ВКонтакте (2007)</option>
+                                    <option value="8" {if $user->getStyle() == 8}selected{/if}>ВКонтакте (2015) [by Ash Defenders]</option>
+                                    <option value="19" {if $user->getStyle() == 19}selected{/if}>VK.COM [by Ash Defenders]</option>
+                                    <option value="6" {if $user->getStyle() == 6}selected{/if} disabled>VK.com (не работает)</option>
+                                    <option value="10" {if $user->getStyle() == 10}selected{/if}>ВСоюзе</option>
+                                    <option value="17" {if $user->getStyle() == 17}selected{/if}>ВТлену [by Ash Defenders]</option>
+                                </optgroup>
+                                <optgroup label="Сайты">
+                                    <option value="11" {if $user->getStyle() == 11}selected{/if}>TheFacebook (2005) [by Ash Defenders]</option>
+                                    <option value="18" {if $user->getStyle() == 18}selected{/if}>Facebook (2006) [by Ash Defenders]</option>
+                                    <option value="13" {if $user->getStyle() == 13}selected{/if}>Twitter (2007) [by Ash Defenders]</option>
+                                    <option value="4" {if $user->getStyle() == 4}selected{/if}>IVinete.ru [by Daniel Myslivets]</option>
+                                    <option value="15" {if $user->getStyle() == 15}selected{/if}>Пейджер [by Ash Defenders]</option>
+                                    <option value="20" {if $user->getStyle() == 20}selected{/if}>TLENTA.RU [by Ash Defenders]</option>
+                                    <option value="14" {if $user->getStyle() == 14}selected{/if}>kosSpace</option>
+                                    <option value="9" {if $user->getStyle() == 9}selected{/if}>vriska.ru</option>
+                                    <option value="12" {if $user->getStyle() == 12}selected{/if}>r/Ooer</option>
+                                </optgroup>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_ui_settings_rating}</span>
+                        </td>
+                        <td>
+                            <select name="rating">
+                                <option value="1" {if !$user->prefersNotToSeeRating()}selected{/if}>{_ui_settings_rating_show}</option>
+                                <option value="0" {if $user->prefersNotToSeeRating()}selected{/if}>{_ui_settings_rating_hide}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_'save'}" class="button" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+        
+        <h4>{_ui_settings_sidebar}</h4>
+        <form action="/settings?act=lMenu" method="POST" enctype="multipart/form-data">
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top" align="right">
+                            <input
+                                  n:attr="checked => $user->getLeftMenuItemStatus('photos')"
+                                  type="checkbox"
+                                  name="menu_bildoj" />
+                        </td>
+                        <td>
+                            <span class="nobold">{_my_photos}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top" align="right">
+                            <input
+                                  n:attr="checked => $user->getLeftMenuItemStatus('videos')"
+                                  type="checkbox"
+                                  name="menu_filmetoj" />
+                        </td>
+                        <td>
+                            <span class="nobold">{_my_videos}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top" align="right">
+                            <input
+                                  n:attr="checked => $user->getLeftMenuItemStatus('messages')"
+                                  type="checkbox"
+                                  name="menu_mesagoj" />
+                        </td>
+                        <td>
+                            <span class="nobold">{_my_messages}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top" align="right">
+                            <input
+                                  n:attr="checked => $user->getLeftMenuItemStatus('notes')"
+                                  type="checkbox"
+                                  name="menu_notatoj" />
+                        </td>
+                        <td>
+                            <span class="nobold">{_my_notes}</span>
+                        </td>
+                    </tr><tr>
+                        <td width="120" valign="top" align="right">
+                            <input
+                                  n:attr="checked => $user->getLeftMenuItemStatus('groups')"
+                                  type="checkbox"
+                                  name="menu_grupoj" />
+                        </td>
+                        <td>
+                            <span class="nobold">{_my_groups}</span>
+                        </td>
+                    </tr><tr>
+                        <td width="120" valign="top" align="right" align="right">
+                            <input
+                                  n:attr="checked => $user->getLeftMenuItemStatus('news')"
+                                  type="checkbox"
+                                  name="menu_novajoj" />
+                        </td>
+                        <td>
+                            <span class="nobold">{_my_feed}</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_'save'}" class="button" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+        
+        {/if}
+    </div>
+    
+{/block}

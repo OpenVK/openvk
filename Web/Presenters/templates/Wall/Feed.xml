@@ -1,0 +1,59 @@
+{extends "../@layout.xml"}
+{block title}{_"feed"}{/block}
+
+{block header}
+    {_"feed"}
+{/block}
+
+{block content}
+    <div>
+        <div class="content_title_expanded" onclick="hidePanel(this);">
+            {_"publish_post"}
+        </div>
+        <div style="margin: 0 5px;"><br>
+            <form action="/wall{$thisUser->getId()}/makePost" method="POST" enctype="multipart/form-data" style="margin:0;">
+                <textarea id="wall-post-input" name="text" style="width: 100%;resize: none;"></textarea>
+                <input type="file" name="_pic_attachment" accept="image/*" style="display:none;" />
+                <input type="hidden" name="type" value="1" />
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <div></div>
+                <br/>
+                <input type="submit" value="{_'write'}" class="button" />
+                <div style="float: right;">
+                    <a href="javascript:void(document.querySelector(`input[name=_pic_attachment]`).click());">
+                        Прикрепить изображение
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <br/>
+    
+    <center>
+        {foreach $posts as $post}
+            <a name="postGarter={$post->getId()}"></a>
+            
+            {include "../components/post.xml", post => $post, onWallOf => true}
+        {/foreach}
+        {include "../components/paginator.xml", conf => $paginatorConf}
+        <br/>
+        Количество постов на странице:
+        <select id="pageSelect">
+            <option value="1">1</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="30">30</option>
+            <option value="40">40</option>
+            <option value="50">50</option>
+        </select>
+        <script>
+            u("#pageSelect").nodes[0].value = {$paginatorConf->perPage};
+            
+            u("#pageSelect").on("change", function(e) {
+                let url = "?" + {http_build_query(array_merge($_GET, ['posts' => '__padding']))};
+                window.location.assign(url.replace("__padding", e.target.value));
+            });
+        </script>
+    </center>
+{/block}

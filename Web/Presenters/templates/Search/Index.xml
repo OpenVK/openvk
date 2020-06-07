@@ -1,0 +1,73 @@
+{extends "../@listView.xml"}
+
+{block title}
+    {if $type === "users"}
+        {tr("search_for_people")}
+    {else}
+        {tr("search_for_groups")}
+    {/if}
+{/block}
+
+{block header}
+    OpenVK »
+    {if $type === "users"}
+        {tr("search_for_people")}
+    {else}
+        {tr("search_for_groups")}
+    {/if}
+{/block}
+
+{block tabs}
+    <form style="margin-left: 12px;">
+        <input name="type" type="hidden" value="{$_GET['type'] ?? 'users'}" />
+        <input name="query" type="text" placeholder="Поиск" value="{$_GET['query'] ?? ''}" style="width: 90%" />
+        <input type="submit" class="button" value="Поиск!" style="width: 9%" />
+    </form>
+    
+    <p style="margin-left: 15px;">
+        <b>{$count} результатов</b>
+    </p>
+{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block link|strip|stripHtml}
+    {$x->getURL()}
+{/block}
+
+{block preview}
+    <img src="{$x->getAvatarUrl()}" width="75" alt="Фотография" />
+{/block}
+
+{block name}
+    <text style="overflow: hidden;">&nbsp;{$x->getCanonicalName()}</text>
+{/block}
+
+{block description}
+    <table class="ugc-table slim">
+        <tbody>
+            {if $type === "users"}
+                <tr>
+                    <td><span class="nobold">{_"gender"}: </span></td>
+                    <td>{$x->isFemale() ? "женский" : "мужской"}</td>
+                </tr>
+                <tr>
+                    <td><span class="nobold">{_"relationship"}:</span></td>
+                    <td>{var $marialStatus = $x->getMaritalStatus()}{_"relationship_$marialStatus"}</td>
+                </tr>
+                <tr>
+                    <td><span class="nobold">{_"registration_date"}: </span></td>
+                    <td>{$x->getRegistrationTime()}</td>
+                </tr>
+            {/if}
+            <tr>
+                <td>
+                    <span class="nobold">Описание:</span>
+                </td>
+                <td>
+                    {$x->getDescription() ?? "(отсутствует)"}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{/block}

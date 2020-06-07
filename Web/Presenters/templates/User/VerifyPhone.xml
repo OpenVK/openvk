@@ -1,0 +1,17 @@
+{extends "../@layout.xml"}
+{block title}Подтвердить номер телефона{/block}
+
+{block header}
+    Подтвердить номер телефона
+{/block}
+
+{block content}
+    <center>
+        <p>Мы отправили SMS с кодом на номер <b>{substr_replace($change->number, "*****", 5, 5)}</b>, введите его сюда:</p>
+        
+        <form method="POST">
+            <input type="text" name="code" placeholder="34156, например" required />
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+        </form>
+    </center>
+{/block}

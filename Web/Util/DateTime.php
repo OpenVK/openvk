@@ -1,0 +1,86 @@
+<?php declare(strict_types=1);
+namespace openvk\Web\Util;
+
+class DateTime
+{
+    const RELATIVE_FORMAT_NORMAL = 0;
+    const RELATIVE_FORMAT_LOWER  = 1;
+    const RELATIVE_FORMAT_SHORT  = 2;
+    
+    private $timestamp;
+    private $localizator;
+    
+    function __construct(?int $timestamp = NULL)
+    {
+        $this->timestamp   = $timestamp ?? time();
+        $this->localizator = Localizator::i();
+    }
+    
+    protected function zmdate(): string
+    {
+        $then = date_create("@" . $this->timestamp);
+        $now  = date_create();
+        $diff = date_diff($now, $then);
+        if($diff->invert === 0) return __OPENVK_ERROR_CLOCK_IN_FUTURE;
+        
+        if($this->timestamp >= strtotime("midnight")) { # Today
+            if($diff->h >= 1)
+                return tr("time_today") . tr("time_at_sp") . strftime("%X", $this->timestamp);
+            else if($diff->i < 2)
+                return tr("time_just_now");
+            else
+                return $diff->i === 5 ? tr("time_exactly_five_minutes_ago") : tr("time_minutes_ago", $diff->i);
+        } else if($this->timestamp >= strtotime("-1day midnight")) { # Yesterday
+            return tr("time_yesterday") . tr("time_at_sp") . strftime("%X", $this->timestamp);
+        } else if(strftime("%G", $this->timestamp) === strftime("%G")) { # In this year
+            return strftime("%e %h ", $this->timestamp) . tr("time_at_sp") . strftime(" %R %p", $this->timestamp);
+        } else {
+            return strftime("%e %B %G ", $this->timestamp) . tr("time_at_sp") . strftime(" %X", $this->timestamp);
+        }
+    }
+    
+    function format(string $format, bool $useDate = false): string
+    {
+        if(!$useDate)
+            return strftime($format, $this->timestamp);
+        else
+            return date($format, $this->timestamp);
+    }
+    
+    function relative(int $type = 0): string
+    {
+        switch($type) {
+            case static::RELATIVE_FORMAT_NORMAL:
+                return mb_convert_case($this->zmdate(), MB_CASE_TITLE_SIMPLE);
+                break;
+            case static::RELATIVE_FORMAT_LOWER:
+                return $this->zmdate();
+                break;
+            case static::RELATIVE_FORMAT_SHORT:
+                return "";
+                break;
+        }
+    }
+    
+    function html(bool $capitalize = false, bool $short = false): string
+    {
+        if($short)
+            $dt = $this->relative(static::RELATIVE_FORMAT_SHORT);
+        else if($capitalize)
+            $dt = $this->relative(static::RELATIVE_FORMAT_NORMAL);
+        else
+            $dt = $this->relative(static::RELATIVE_FORMAT_LOWER);
+        
+        return "<time>$dt</time>";
+    }
+    
+    function timestamp(): int
+    {
+        return $this->timestamp;
+    }
+    
+    function __toString(): string
+    {
+        return $this->relative(static::RELATIVE_FORMAT_LOWER);
+    }
+}

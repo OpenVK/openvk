@@ -1,0 +1,59 @@
+{extends "../@layout.xml"}
+
+{block title}Видеозапись{/block}
+
+{block header}
+    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>
+    »
+    <a href="/videos{$user->getId()}">{_"videos"}</a>
+    »
+    {_"video"}
+{/block}
+
+{block content}
+    <center style="margin-bottom: 8pt;">
+        {if $video->getType() === 0}
+            <video width="610" src="{$video->getURL()}" controls></video>
+        {else}
+            {var driver = $video->getVideoDriver()}
+            {if !$driver}
+                Эта видеозапись не поддерживается в вашей версии OpenVK.
+            {else}
+                {$driver->getEmbed()|noescape}
+            {/if}
+        {/if}
+    </center>
+    
+    <hr/>
+    
+    <div style="width: 100%; min-height: 100px;">
+        <div style="float: left; min-height: 100px; width: 70%;">
+            {include "../components/comments.xml",
+                     comments => $comments,
+                     count => $cCount,
+                     page => $cPage,
+                     model => "videos",
+                     parent => $video}
+        </div>
+        <div style="float: left; min-height: 100px; width: 30%;">
+            <div>
+                <h4>{_"information"}</h4>
+                <span style="color: grey;">{_"video_name"}:</span>
+                {$video->getName()}<br/>
+                <span style="color: grey;">{_"video_description"}:</span>
+                {$video->getDescription() ?? "(отсутствует)"}<br/>
+                <span style="color: grey;">{_"video_uploaded_by"}:</span>
+                <a href="{$user->getURL()}">{$user->getFullName()}</a><br/>
+                <span style="color: grey;">{_"video_upload_date"}:</span>
+                {$video->getPublicationTime()}
+            </div>
+            <br/>
+            <div n:if="isset($thisUser) && $thisUser->getId() === $user->getId()">
+                <h4>{_"actions"}</h4>
+                <a href="/video{$video->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">
+                    {_"edit"}
+                </a>
+            </div>
+        </div>
+    </div>
+{/block}

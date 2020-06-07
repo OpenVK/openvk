@@ -1,0 +1,26 @@
+{extends "../@layout.xml"}
+
+{block title}Об OpenVK{/block}
+
+{block header}
+    Об OpenVK
+{/block}
+
+{block content}
+    <img src="/assets/packages/static/openvk/img/logo.png"
+         alt="OpenVK 2"
+         style="max-width: 40%; float: left; margin-right: 50px;" />
+    
+    <table>
+        <tbody>
+            <tr>
+                <td width="120" valign="top"><span class="nobold">Версия: </span></td>
+                <td>{php echo OPENVK_VERSION}</td>
+            </tr>
+            <tr>
+                <td width="120" valign="top"><span class="nobold">Chandlerd: </span></td>
+                <td>{php echo CHANDLER_VER}</td>
+            </tr>
+        </tbody>
+    </table>
+{/block}

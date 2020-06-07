@@ -1,0 +1,13 @@
+{
+    "require": {
+        "p3k/emoji-detector": "^0.2.1",
+        "guzzlehttp/guzzle": "^6.5",
+        "komeiji-satori/curl": "dev-master",
+        "wapmorgan/cab-archive": "dev-master",
+        "whichbrowser/parser": "dev-master",
+        "zadarma/user-api-v1": "dev-master",
+        "james-heinrich/getid3": "^1.9@dev",
+        "rybakit/msgpack": "dev-master"
+    },
+    "minimum-stability": "dev"
+}

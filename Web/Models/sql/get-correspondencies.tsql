@@ -1,0 +1,31 @@
+SELECT DISTINCT id, class FROM
+(
+  (
+    SELECT
+      recipient_id AS id,
+      recipient_type AS class,
+      created AS time
+    FROM messages
+    WHERE
+      sender_id = ?
+    AND
+      sender_type = ?
+  ) UNION (
+    SELECT
+      sender_id AS id,
+      sender_type AS class,
+      created AS time
+    FROM messages
+    WHERE
+      recipient_id = ?
+    AND
+      recipient_type = ?
+  )
+  ORDER BY
+    time
+  DESC
+) dt
+LIMIT
+  ?
+OFFSET
+  ?

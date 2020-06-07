@@ -1,0 +1,28 @@
+.post-nsfw .post-content img.media {
+    filter: saturate(0.8) blur(5px);
+}
+
+.post-nsfw .post-content .attachment {
+    overflow: hidden;
+    position: relative;
+}
+
+.post-nsfw .post-content .attachment:hover img.media {
+    filter: none;
+}
+
+.post-nsfw .post-content .attachment::after {
+    position: absolute;
+    top: calc(50% - 16px);
+    left: 0;
+    width: 100%;
+    padding: 8px 0;
+    background-color: hsla(0, 0%, 0%, .5);
+    color: #fff;
+    text-align: center;
+    content: attr(data-localized-nsfw-text);
+}
+
+.post-nsfw .post-content .attachment:hover::after {
+    display: none;
+}

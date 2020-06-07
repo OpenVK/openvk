@@ -1,0 +1,48 @@
+{extends "../@layout.xml"}
+{block title}Изменить альбом{/block}
+
+{block header}
+    <a href="{$album->getOwner()->getURL()}">{$album->getOwner()->getCanonicalName()}</a>
+    » 
+    {if $album->getOwner() instanceof openvk\Web\Models\Entities\Club}
+        <a href="/albums{$album->getOwner()->getId() * -1}">{_"albums"}</a>
+    {else}
+        <a href="/albums{$album->getOwner()->getId()}">{_"albums"}</a>
+    {/if}
+    » 
+    {$album->getName()}
+{/block}
+
+{block content}
+    <form method="post" enctype="multipart/form-data">
+      <table cellspacing="6">
+        <tbody>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_"name"}:</span></td>
+            <td><input type="text" name="name" value="{$album->getName()}" /></td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_"description"}:</span></td>
+            <td>
+                <textarea style="margin: 0px; height: 50px; width: 159px; resize: none;" name="desc">{$album->getDescription()}</textarea>
+            </td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"></td>
+            <td>
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" class="button" name="submit" value="{_'save'}" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+    <hr/>
+    <center>
+        Вы также можете
+        <a href="/album{$album->getOwner()->getId()}_{$album->getId()}/delete.pl?hash={rawurlencode($csrfToken)}">
+            удалить
+        </a>
+        альбом.
+    </center>
+{/block}

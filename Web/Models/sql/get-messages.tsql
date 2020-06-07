@@ -1,0 +1,25 @@
+SELECT
+  *
+FROM
+  `messages`
+WHERE
+  (`deleted` = 0)
+  AND (`id` < ?)
+  AND (
+    (
+      (`sender_type` = ?)
+      AND (`recipient_type` = ?)
+      AND (`sender_id` = ?)
+      AND (`recipient_id` = ?)
+    )
+    OR (
+      (`sender_type` = ?)
+      AND (`recipient_type` = ?)
+      AND (`sender_id` = ?)
+      AND (`recipient_id` = ?)
+    )
+  )
+ORDER BY
+  `created` DESC
+LIMIT
+?

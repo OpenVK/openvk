@@ -1,0 +1,1 @@
+%^(?:(?:http[s]?:\/\/)?)(?:w{3}\.)?(?:yt\.be\/watch\?v=|youtu\.be\/(?:watch\?v=)?|youtube\.com\/watch\?v=)([A-z0-9\-_]{11})$%

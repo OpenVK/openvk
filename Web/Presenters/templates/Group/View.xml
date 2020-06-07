@@ -1,0 +1,151 @@
+{extends "../@layout.xml"}
+
+{block title}{$club->getName()}{/block} 
+
+{block header}
+    {$club->getName()}
+    
+    <img n:if="$club->isVerified()"
+         class="name-checkmark"
+         src="/assets/packages/static/openvk/img/checkmark.png"
+         alt="Подтверждённая страница"
+         />
+{/block}
+
+{block content}
+<div class="left_big_block">
+    <div class="content_title_expanded" onclick="hidePanel(this);">
+        {_"information"}
+    </div>
+    
+    <div class="page_info">
+        <table class="ugc-table">
+            <tbody>
+                <tr>
+                    <td><span class="nobold">{_"name_group"}:</span></td>
+                    <td><b>{$club->getName()}</b></td>    
+                </tr>
+                <tr>
+                    <td><span class="nobold">{_"description"}:</span></td>
+                    <td>{$club->getDescription()}</td>  
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div n:if="$club->getFollowersCount() > 0">
+            {var followersCount = $club->getFollowersCount()}
+            
+            <div class="content_title_expanded" onclick="hidePanel(this, {$followersCount});">
+                Подписчики
+            </div>
+            <div>
+                <div class="content_subtitle">
+                    {$followersCount} подписчиков
+                    <div style="float:right;">
+                        <a href="/club{$club->getId()}/followers">Все</a>
+                    </div>
+                </div>
+                <div style="padding-left: 5px;">
+                    <table 
+                          n:foreach="$club->getFollowers(1) as $follower"
+                          n:class="User"
+                          style="text-align:center;display:inline-block;width:62px"
+                          cellspacing=4>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <a href="{$follower->getURL()}">
+                                        <img src="{$follower->getAvatarUrl()}" width="50" />
+                                    </a>    
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href="{$follower->getURL()}">{$follower->getFirstName()}</a>    
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    
+    {presenter "openvk!Wall->wall", -$club->getId()}
+    
+</div>
+<div class="right_small_block">
+    <a href="{$club->getAvatarLink()|nocheck}">
+        <img src="{$club->getAvatarUrl()}" style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
+    </a>
+    <div n:ifset="$thisUser" id="profile_links">
+        {if $club->canBeModifiedBy($thisUser)}
+            <a href="/club{$club->getId()}/edit" id="profile_link">{_"edit_group"}</a>
+        {/if}
+        {if $club->getSubscriptionStatus($thisUser) == false}
+            <form action="/setSub/club" method="post">
+                <input type="hidden" name="act" value="add" />
+                <input type="hidden" name="id"  value="{$club->getId()}" />
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" id="profile_link" value="{_"join_community"}" />
+            </form>
+        {else}
+            <form action="/setSub/club" method="post">
+                <input type="hidden" name="act" value="rem" />
+                <input type="hidden" name="id"  value="{$club->getId()}" />
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" id="profile_link" value="{_"leave_community"}" />
+            </form>
+        {/if}
+    </div>
+    <div>
+        <div class="content_title_expanded" onclick="hidePanel(this);">
+            {_"group_type"}
+        </div>
+        <div style="padding:4px">
+            {_"group_type_open"}
+        </div>
+    </div>
+    <div>
+        <div class="content_title_expanded" onclick="hidePanel(this);">
+            {_"creator"}
+        </div>
+        <div style="padding:4px">
+            {var author = $club->getOwner()}
+            <ul>
+                <li>
+                    <a href="{$author->getURL()}"><b>{$author->getCanonicalName()}</b></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div n:if="$albumsCount > 0">
+        <div class="content_title_expanded" onclick="hidePanel(this, {$albumsCount});">
+            {_"albums"}
+        </div>
+        <div>
+            <div class="content_subtitle">
+                {$albumsCount} альбомов
+                <div style="float:right;">
+                    <a href="/albums{$club->getId() * -1}">{_"all_title"}</a>
+                </div>
+            </div>
+            <div style="padding: 5px;">
+                <div class="ovk-album" style="display: inline-block;" n:foreach="$albums as $album">
+                    <div style="text-align: center;float: left;height: 54pt;width: 100px;">
+                        {var cover = $album->getCoverPhoto()}
+                        
+                        <img
+                            src="{is_null($cover)?'/assets/packages/static/openvk/img/camera_200.png':$cover->getURL()}"
+                            style="max-width: 80px; max-height: 54pt;" />
+                    </div>
+                    <div>
+                        <b><a href="/album{$album->getPrettyId()}">{$album->getName()}</a></b><br>
+                        <span class="nobold">Обновлён {$album->getEditTime() ?? $album->getCreationTime()}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{/block}

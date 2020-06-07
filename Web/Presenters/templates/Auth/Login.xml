@@ -1,0 +1,41 @@
+{extends "../@layout.xml"}
+{block title}{_"log_in"}{/block}
+
+{block header}
+    {_"log_in"}
+{/block}
+
+{block content}
+    <form method="POST" enctype="multipart/form-data">
+        <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
+            <tbody>
+                <tr>
+                    <td>
+                        <span>{_"email"}: </span>
+                    </td>
+                    <td>
+                        <input type="text" name="login" required />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>{_"password"}: </span>
+                    </td>
+                    <td>
+                        <input type="password" name="password" required />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        
+                    </td>
+                    <td>
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="submit" value="{_'log_in'}" class="button" />
+                        <a href="/reg">{_"registration"}</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+{/block}

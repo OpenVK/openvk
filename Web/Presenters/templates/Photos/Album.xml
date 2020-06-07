@@ -1,0 +1,51 @@
+{extends "../@layout.xml"}
+
+{block title}Альбом {$album->getName()}{/block}
+
+{block header}
+    {var isClub = ($album->getOwner() instanceof openvk\Web\Models\Entities\Club)}
+    
+    <a href="{$album->getOwner()->getURL()}">
+        {$album->getOwner()->getCanonicalName()}
+    </a>
+    {if $isClub}
+        » <a href="/albums{$album->getOwner()->getId() * -1}">{_"albums"}</a>
+    {else}
+        » <a href="/albums{$album->getOwner()->getId()}">{_"albums"}</a>
+    {/if}
+    » {$album->getName()}
+{/block}
+
+{block content}
+    <a href="/album{$album->getPrettyId()}">
+        <b>{$album->getPhotosCount()} фотографий</b>
+    </a>
+    
+    {if !is_null($thisUser) && $album->canBeModifiedBy($thisUser) && !$album->isCreatedBySystem()}
+        &nbsp;|&nbsp;
+        <a href="/photos/upload?album={$album->getPrettyId()}">{_"upload_photo"}</a>
+        &nbsp;|&nbsp;
+        <a href="/album{$album->getPrettyId()}/edit">{_"edit_album"}</a>
+    {/if}
+    <br/>
+    {if $album->getPhotosCount() > 0}
+        {foreach $photos as $photo}
+            {php if($photo->isDeleted()) continue; }
+            <div class="album-photo" style="display: inline-table;">
+                <a
+                  n:if="!is_null($thisUser) && $album->canBeModifiedBy($thisUser)"
+                  href="/album{$album->getPrettyId()}/remove_photo.pl/{$photo->getId()}" class="album-photo--delete">
+                    &times;
+                </a>
+                
+                <a href="/photo{$photo->getPrettyId()}?from=album{$album->getId()}">
+                    <img src="{$photo->getURL()}" alt="{$photo->getDescription()}" style="width:unset;max-height:unset;max-width: 188px;" />
+                </a>
+            </div>
+        {/foreach}
+        
+        {include "../components/paginator.xml", conf => $paginatorConf}
+    {else}
+        {include "../components/nothing.xml"}
+    {/if}
+{/block}

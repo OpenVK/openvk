@@ -1,0 +1,10 @@
+{extends "../@layout.xml"}
+{block title}Пожертвование{/block}
+
+{block header}
+    Пожертвование
+{/block}
+
+{block content}
+    это заглушка пока ок
+{/block}

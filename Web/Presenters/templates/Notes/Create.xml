@@ -1,0 +1,42 @@
+{extends "../@layout.xml"}
+
+{block title}{_create_note}{/block}
+
+{block header}
+    {_create_note}
+{/block}
+
+{block content}
+    <form method="POST">
+        <input type="text" name="name" placeholder="{_name_note}" style="width:603px;" />
+        <br/><br/>
+        <textarea name="html" style="display:none;"></textarea>
+        <div id="editor" style="width:600px;height:300px;border:1px solid grey"></div>
+        
+        <p><i><a href="/wall-21_1">Кое-что</a> из (X)HTML поддерживается.</i></p>
+        
+        <input type="hidden" name="hash" value="{$csrfToken}" />
+        <button class="button">{_save}</button>
+    </form>
+    
+    {script "js/node_modules/monaco-editor/min/vs/loader.js"}
+    {script "js/node_modules/requirejs/bin/r.js"}
+    <script>
+        require.config({
+            paths: {
+                'vs': '/assets/packages/static/openvk/js/vendor/monaco/min/vs' 
+            }
+        });
+        require(['vs/editor/editor.main'], function() {
+            window._editor = monaco.editor.create(document.getElementById('editor'), {
+                value: "",
+                lineNumbers: "off",
+                language: "html"
+            });
+        });
+        
+        document.querySelector("form").addEventListener("submit", function() {
+            document.querySelector("textarea").value = window._editor.getValue();
+        });
+    </script>
+{/block}

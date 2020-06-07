@@ -1,0 +1,26 @@
+{extends "../@layout.xml"}
+{block title}{_"welcome"}{/block}
+
+{block header}
+    {_"welcome"}
+{/block}
+
+{block content}
+    <b>OpenVK - универсальное средство поиска коллег основанное на структуре ВКонтакте.</b><br>
+    <p>Мы хотим, чтобы друзья, однокурсники, одноклассники, соседи и коллеги всегда могли быть в контакте.</p>
+    <p>
+        Нас уже <b>{$stats->all}</b> пользователя и <b>{$stats->online}</b> из
+        <b>{$stats->active}</b> активных сейчас в сети.
+    </p>
+    <p>С помощью этого сайта Вы можете:</p>
+    <ul>
+        <li><span>Найти людей, с которыми Вы когда-либо учились, работали или отдыхали.</span></li>
+        <li><span>Узнать больше о людях, которые Вас окружают, и найти новых друзей.</span></li>
+        <li><span>Всегда оставаться в контакте с теми, кто Вам дорог.</span></li>
+        <li><span>Продвигать своё творчество и/или мнение.</span></li>
+    </ul>
+    <center>
+        <a class="button" style="margin-right: 5px;cursor: pointer;" href="/login">{_"log_in"}</a>
+        <a class="button" style="cursor: pointer;" href="/reg">{_"registration"}</a></center>
+    </div>
+{/block}

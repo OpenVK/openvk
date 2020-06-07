@@ -1,0 +1,91 @@
+<?php declare(strict_types=1);
+namespace openvk\Web\Models\Entities;
+use openvk\Web\Models\Repositories\Clubs;
+use openvk\Web\Models\RowModel;
+
+class Post extends Postable
+{
+    protected $tableName = "posts";
+    protected $upperNodeReferenceColumnName = "wall";
+    
+    /**
+     * May return fake owner (group), if flags are [1, (*)]
+     * 
+     * @param bool $honourFlags - check flags
+     */
+    function getOwner(bool $honourFlags = true): RowModel
+    {
+        if($honourFlags && ( ($this->getRecord()->flags & 0b10000000) > 0 )) {
+            if($this->getRecord()->wall < 0)
+                return (new Clubs)->get(abs($this->getRecord()->wall));
+        }
+        
+        return parent::getOwner();
+    }
+    
+    function getPrettyId(): string
+    {
+        return $this->getRecord()->wall . "_" . $this->getVirtualId();
+    }
+    
+    function getTargetWall(): int
+    {
+        return $this->getRecord()->wall;
+    }
+    
+    function getRepostCount(): int
+    {
+        return sizeof(
+            $this->getRecord()
+                 ->related("attachments.attachable_id")
+                 ->where("attachable_type", get_class($this))
+        );
+    }
+    
+    function isAd(): bool
+    {
+        return (bool) $this->getRecord()->ad;
+    }
+    
+    function isPostedOnBehalfOfGroup(): bool
+    {
+        return ($this->getRecord()->flags & 0b10000000) > 0;
+    }
+    
+    function isSigned(): bool
+    {
+        return ($this->getRecord()->flags & 0b01000000) > 0;
+    }
+    
+    function isExplicit(): bool
+    {
+        return ($this->getRecord()->flags & 0b00100000) > 0;
+    }
+    
+    function isDeleted(): bool
+    {
+        return (bool) $this->getRecord()->deleted;
+    }
+    
+    function getOwnerPost(): int
+    {
+        return $this->getRecord()->owner;
+    }
+    
+    function setContent(string $content): void
+    {
+        if(ctype_space($content))
+            throw new \LengthException("Content length must be at least 1 character (not counting whitespaces).");
+        
+        $this->stateChanges("content", $content);
+    }
+    
+    function deletePost(): void 
+    {
+        $this->setDeleted(1);
+        $this->unwire();
+        $this->save();
+    }
+    
+    use Traits\TRichText;
+}

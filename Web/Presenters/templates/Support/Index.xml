@@ -1,0 +1,68 @@
+{extends "../@layout.xml"}
+{block title}Помощь{/block}
+
+{block header}
+    Помощь
+{/block}
+
+{block content}
+
+{var isMain       = $mode === 'faq'}
+{var isNew        = $mode === 'new'}
+{var isList       = $mode === 'list'}
+
+{if $thisUser}
+       <div class="tabs">
+        <div n:attr="id => ($isMain ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => ($isMain ? 'act_tab_a' : 'ki')" href="/support">Часто задаваемые вопросы</a>
+        </div>
+        <div n:attr="id => ($isList ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => ($isList ? 'act_tab_a' : 'ki')" href="/support?act=list">Список обращений</a>
+        </div>
+        <div n:attr="id => ($isNew ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => ($isNew ? 'act_tab_a' : 'ki')" href="/support?act=new">Новое обращение</a>
+        </div>
+    </div>
+    <br>
+    
+{if $isNew}
+<div class="new">
+    <form action="/support" method="post" style="margin:0;">
+    <center><input name="name" style="width: 80%;resize: vertical;" placeholder="Введите тему вашего обращения"></center><br>
+    <center><textarea name="text" style="width: 80%;resize: vertical;" placeholder="Опишите проблему или предложение"></textarea></center><br>
+    <input type="hidden" name="hash" value="{$csrfToken}" />
+    <center><input type="submit" value="Написать" class="button" style="margin-left:70%;"></center><br>
+    </form>
+    </div>
+{/if}{/if}
+
+{if $isMain}
+    <h4>Часто задаваемые вопросы</h4><br>
+    <div class="faq">
+        <div id="faqhead">Для кого этот сайт?</div>
+        <div id="faqcontent">Сайт предназначен для поиска друзей и знакомых, а также просмотр данных пользователя. Это как справочник города, с помощью которого люди могут быстро найти актуальную информацию о человеке. Также этот сайт подойдёт для ностальгираторов и тех, кто решил слезть с трубы "ВКонтакте", которого клон и является.<br></div>
+    </div>
+{/if}
+
+{if $isList}
+<table n:foreach="$tickets as $ticket" border="0" style="font-size:11px;width: 610px;" class="post">
+   <tbody>
+      <tr>
+         <td width="54" valign="top">
+            <center><img src="/assets/packages/static/openvk/img/note_icon.png" alt="Заметка" style="margin-top: 17px;"></center>
+         </td>
+         <td width="345" valign="top">
+            <div class="post-author">
+               <a href="/support/view/{$ticket->getId()}">
+               <b>{$ticket->getName()}</b>
+               </a>
+            </div>
+            <div class="post-content" style="padding: 4px;font-size: 11px;">
+                Статус: {$ticket->getStatus()}
+            </div>
+         </td>
+      </tr>
+   </tbody>
+</table>
+{/if}
+{/block}

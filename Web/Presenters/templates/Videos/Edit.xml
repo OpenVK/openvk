@@ -1,0 +1,36 @@
+{extends "../@layout.xml"}
+{block title}Изменить видеозапись{/block}
+
+{block header}
+    <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
+    » 
+    Видеозапись
+{/block}
+
+{block content}
+    <form method="post" enctype="multipart/form-data">
+      <table cellspacing="6">
+        <tbody>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_"name"}:</span></td>
+            <td>
+                <input type="text" value="{$video->getName()}" name="name" />
+            </td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_"description"}:</span></td>
+            <td>
+                <textarea style="margin: 0px; height: 50px; width: 159px; resize: none;" name="desc">{$video->getDescription()}</textarea>
+            </td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"></td>
+            <td>
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" class="button" name="submit" value="{_'save'}" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+{/block}

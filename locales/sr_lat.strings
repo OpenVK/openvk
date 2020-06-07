@@ -1,0 +1,430 @@
+"__locale" = "sr_CS.UTF-8;Srb_Latin";
+
+%{ Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html %}
+
+%{ Main page %}
+
+"home" = "Poćetna";
+"welcome" = "Dobro došli";
+
+%{ Login %}
+
+"log_in" = "Prijava";
+"password" = "Šifra";
+"registration" = "Registracija";
+
+%{ Profile information %}
+
+"select_language" = "Promena jezika";
+"edit" = "urediti";
+"birth_date" = "Rođendan";
+"registration_date" = "Datum registracije";
+"hometown" = "Rodni grad";
+"this_is_you" = "to ste Vi";
+"edit_page" = "Urediti stranicu";
+"edit_group" = "Urediti grupu";
+"change_status" = "promeniti status";
+"name" = "Ime";
+"surname" = "Prezime";
+"gender" = "Pol";
+"male" = "muški";
+"female" = "ženski";
+"description" = "Opis";
+"save" = "Saćuvati";
+"main_information" = "Osnovna informacija";
+"nickname" = "Korisnićko ime";
+"online" = "U mreži";
+"was_online" = "bio na mreži";
+"was_online_m" = "bio na mreži";
+"was_online_f" = "bila na mreži";
+"all_title" = "Sve";
+"information" = "Informacija";
+"status" = "Status";
+
+"relationship" = "Porodićni status";
+
+"relationship_0" = "Nemam";
+"relationship_1" = "Nisam oženjen";
+"relationship_2" = "Upoznajem se";
+"relationship_3" = "Angažovan";
+"relationship_4" = "Oženjen";
+"relationship_5" = "U građanskom braku";
+"relationship_6" = "Zaljubljen";
+"relationship_7" = "Sve je teško";
+"relationship_8" = "Nalazim se u aktivnom pretraživanju";
+
+"politViews" = "Politički pogledi";
+
+"politViews_0" = "Nemam";
+"politViews_1" = "Ravnodušan";
+"politViews_2" = "Komunistićki";
+"politViews_3" = "Socijalistićki";
+"politViews_4" = "Umereni";
+"politViews_5" = "Liberalni";
+"politViews_6" = "Konzervativne";
+"politViews_7" = "Monarhistićki";
+"politViews_8" = "Ultrakonzervativne";
+"politViews_9" = "Libertarijanske";
+
+"contact_information" = "Kontakt informacije";
+
+"email" = "Elektronska pošta";
+"phone" = "Broj telefona";
+"telegram" = "Telegram";
+"city" = "Ime grada";
+"address" = "Adresa";
+
+"personal_information" = "Personalna informacija";
+
+"interests" = "Interesi";
+"favorite_music" = "Omiljena muzika";
+"favorite_films" = "Omiljeni filmovi";
+"favorite_shows" = "Omiljena TV emisija";
+"favorite_books" = "Omiljene knjige";
+"favorite_quotes" = "Omiljeni citati";
+"information_about" = "Lična informacija";
+
+%{ Wall %}
+
+"post_writes_m" = "je napisao";
+"post_writes_f" = "je napisala";
+"wall" = "Zid";
+"post" = "Zapis";
+"write" = "Napisati";
+"publish" = "Objaviti";
+"delete" = "Obrisati";
+"comments" = "Komentarije";
+"share" = "Podeliti se informacijom";
+"comments_tip" = "Ćete biti prvi, ko će ostaviti komentar!";
+"your_comment" = "Vaš komentar";
+"comments" = "Komentari";
+"shown" = "Predstavljeno";
+"x_out_of" = "$1 od";
+"wall_zero" = "nema zapisa";
+"wall_one" = "jedina zapis";
+"wall_few" = "$1 zapisa";
+"wall_many" = "$1 zapisa";
+"wall_other" = "$1 zapisa";
+
+"nsfw_warning" = "Ova post ima sadržaj za osobe od 18 godina i više";
+
+%{ Friends %}
+
+"friends" = "Prijatelji";
+"followers" = "Pretplatnici";
+"follower" = "Pretplatnik";
+"friends_add" = "Dodati u prijatelje";
+"friends_delete" = "Izbrisati od prijatelja";
+"friends_reject" = "Odjaviti zahtev";
+"friends_accept" = "Prihvatiti zahtev";
+"send_message" = "Pošaljiti poruku";
+"incoming_req" = "Pretplatnici";
+"outcoming_req" = "Zahtevi";
+"req" = "Zahtevi";
+
+"firends_zero" = "Nema nijednog prijatelja";
+"friends_one" = "$1 prijatelj";
+"friends_few" = "$1 prijatelja";
+"friends_many" = "$1 prijatelja";
+"friends_other" = "$1 prijatelja";
+
+"followers_zero" = "Nema nijednog sledbenika";
+"followers_one" = "$1 sledbenik";
+"followers_few" = "$1 sledbenika";
+"followers_many" = "$1 sledbenika";
+"followers_other" = "$1 sledbenika";
+
+"subscriptions_zero" = "Nema nijedne prijave";
+"subscriptions_one" = "$1 prijava";
+"subscriptions_few" = "$1 prijava";
+"subscriptions_many" = "$1 prijava";
+"subscriptions_other" = "$1 prijava";
+
+%{ Group %}
+
+"name_group" = "Naziv";
+"subscribe" = "Prijaviti se";
+"unsubscribe" = "Odjaviti se";
+"subscriptions" = "Sledbenici";
+"join_community" = "Ući u grupu";
+"leave_community" = "Izaći iz grupe";
+"min_6_community" = "Naziv se mora da sadr?i 6 simbola";
+"participants" = "Učesnici";
+"groups" = "Grupi";
+"meetings" = "Sastanci";
+"create_group" = "Stvoriti grupu";
+"group_managers" = "Vođstvo";
+"group_type" = "Tipovi grupa";
+"group_type_open" = "To je otvorena grupa. Svaka persona može se pridružiti prilikom nje.";
+"group_type_closed" = "To je zatvorena grupa. Morate se prijaviti.";
+"creator" = "Stvaralac";
+
+"role" = "Uloga";
+"administrator" = "Administrator";
+"promote_to_admin" = "Promovisati do administatora";
+"devote" = "Ražalovati ulogu";
+
+"participants_zero" = "Nema učesnika";
+"participants_one" = "Jedan učesnik";
+"participants_few" = "$1 učesnika";
+"participants_many" = "$1 učesnika";
+"participants_other" = "$1 učesnika";
+
+"groups_zero" = "Nema grupe";
+"groups_one" = "Jedna grupa";
+"groups_few" = "$1 grupa";
+"groups_many" = "$1 grupa";
+"groups_other" = "$1 grupa";
+
+"meetings_zero" = "Nema sastanka";
+"meetings_one" = "Jedan sastanak";
+"meetings_few" = "$1 sastanka";
+"meetings_many" = "$1 sastanka";
+"meetings_other" = "$1 sastanka";
+
+%{ Albums %}
+
+"create" = "Stvoriti";
+"albums" = "Albumi";
+"create_album" = "Kreirati album";
+"edit_album" = "Urediti album";
+"creating_album" = "Stvorenje albuma";
+"upload_photo" = "Otpremiti foto";
+"photo" = "Foto";
+"upload_button" = "Otpremanje";
+
+"albums_zero" = "Nema albuma";
+"albums_one" = "Jedan album";
+"albums_few" = "$1 albuma";
+"albums_many" = "$1 albuma";
+"albums_other" = "$1 albuma";
+
+%{ Notes %}
+
+"notes" = "Belešci";
+"note" = "Beleška";
+"name_note" = "Naziv";
+"text_note" = "Sadržaj";
+"create_note" = "Kreirati belešku";
+"actions" = "Aktivnosti";
+"feed" = "Vesti";
+"publish_post" = "Objaviti post";
+
+"notes_zero" = "Nema beleška";
+"notes_one" = "Jedna beleška";
+"notes_few" = "$1 beleška";
+"notes_many" = "$1 beleška";
+"notes_other" = "$1 beleška";
+
+%{ Menus %}
+
+"edit_button" = "ured.";
+"my_page" = "Moja Stranica";
+"my_friends" = "Moji drugovi";
+"my_photos" = "Moje slike";
+"my_videos" = "Moje video";
+"my_messages" = "Moji poruke";
+"my_notes" = "Moji belešci";
+"my_groups" = "Moji grupi";
+"my_feed" = "Moji vesti";
+"my_feedback" = "Moji odgovare";
+"my_settings" = "Moja podešavanja";
+"bug_tracker" = "Praćenje grešaka";
+
+"menu_login" = "Prijaviti se";
+"menu_registration" = "Registracija";
+"menu_help" = "Pomoć";
+
+"header_home" = "naslovna strana";
+"header_groups" = "grupi";
+"header_donate" = "podrška";
+"header_people" = "ljudi";
+"header_invite" = "pozvati";
+"header_help" = "pomoć";
+"header_log_out" = "odjaviti se";
+"header_search" = "Istraživanje";
+
+"header_login" = "Prijava";
+"header_registration" = "Registracija";
+"header_help" = "Pomoć";
+
+"footer_blog" = "blog";
+"footer_help" = "pomoć";
+"footer_developers" = "obraćanje programerima";
+"footer_choose_language" = "izabrati jezik";
+"footer_privacy" = "privatnost";
+
+"notes_zero" = "Nema beleška";
+"notes_one" = "Jedna beleška";
+"notes_few" = "$1 beleška";
+"notes_many" = "$1 beleška";
+"notes_other" = "$1 belešci";
+
+%{ Settings %}
+
+"main" = "Naslovna strana";
+"contacts" = "Kontakti";
+"avatar" = "Slika";
+"privacy" = "Privatnost";
+"interface" = "Izgled";
+
+"profile_picture" = "Slika profila";
+
+"picture" = "Slika";
+
+"change_password" = "Promena šifre";
+"old_password" = "Stara šifra";
+"new_password" = "Nova šifra";
+"repeat_password" = "Ponoviti šifru";
+
+"avatars_style" = "Prikazati avatar";
+"style" = "Stil";
+
+"default" = "Uobićajeno";
+"cut" = "Uređivanje slike";
+"round_avatars" = "Okrugli avatar";
+
+"search_for_groups" = "Istraživanje grupa";
+"search_for_people" = "Istraživanje ljudi";
+"search_button" = "Pronaći";
+"privacy_setting_access_page" = "Ko može videti moju stranicu na Internetu";
+"privacy_setting_read_info" = "Ko može videti osnovnu informaciju od moje stranice";
+"privacy_setting_see_groups" = "Ko može videti informaciju o mojim grupovima i sastanku";
+"privacy_setting_see_photos" = "Ko može videti moje slike";
+"privacy_setting_see_videos" = "Ko može pogledati moje video";
+"privacy_setting_see_notes" = "Ko može videti moje bile?ke";
+"privacy_setting_see_friends" = "Ko može da upozna sa mojim prijateljima";
+"privacy_setting_add_to_friends" = "Ko ima mogućnost da doda me u prijatelje";
+"privacy_setting_write_wall" = "Ko ima mogućnost da piši na mojem zidu";
+"privacy_value_anybody" = "Bilo ko";
+"privacy_value_anybody_dative" = "Bilo ko";
+"privacy_value_users" = "Korisnici OpenVK";
+"privacy_value_friends" = "Prijatelje";
+"privacy_value_friends_dative" = "Prijatelje";
+"privacy_value_only_me_and_super_capite" = "Ja sam i Vitalina Pavlenko";
+"privacy_value_only_me_and_super_capite_dative" = "Za mene i Vitalinu Pavlenko";
+"privacy_value_super_capite" = "Vitalini Pavlenko";
+
+"your_email_address" = "Vaša e-mail adresa";
+"your_page_address" = "Adresa Vaše stranice";
+"page_address" = "Adresa stranice";
+"current_email_address" = "Sadašnja e-mail adresa";
+"page_id" = "ID stranice";
+"you_can_also" = "Vi takođe imate mogućnost";
+"delete_your_page" = "da izbrišite svoju stranicu";
+"delete_album" = "da izbrišite album";
+
+"ui_settings_interface" = "Interfejs";
+"ui_settings_sidebar" = "Levi meni";
+"ui_settings_rating" = "Rejting";
+"ui_settings_rating_show" = "Pokazati";
+"ui_settings_rating_hide" = "Sakriti";
+
+%{ Sorting %}
+
+"sort_randomly" = "Porediti nasumnično";
+"sort_up" = "Porediti po datumu kreiranja prema gore";
+"sort_down" = "Porediti po datumu kreiranja prema dole";
+
+%{ Videos %}
+
+"videos" = "Video";
+"video" = "Video";
+"upload_video" = "Otpremati svoje video";
+"video_uploaded" = "Otpremljeno";
+"video_updated" = "Ažurirano";
+"video_link_to_yt" = "YT Adresa";
+
+"video_name" = "Naziv";
+"video_description" = "Opis";
+"video_uploaded_by" = "Video je preuzeo";
+"video_upload_date" = "Datum preuzimanja";
+
+"videos_zero" = "Nema nijednog video";
+"videos_one" = "Jedno video";
+"videos_few" = "$1 video";
+"videos_many" = "$1 video";
+"videos_other" = "$1 video";
+
+%{ Notifications %}
+
+"feedback" = "Povratna veza";
+"unread" = "Nepročitano";
+"archive" = "Arhiva";
+
+"notifications_like" = "$1 je procenio vašu $2zapis$3 ispod $4";
+"notifications_repost" = "$1 podelio(-lila) se vašim $2postom$3 ispod $4";
+"notifications_comment_under" = "$1 ostavio(-la) komentar ispod $2";
+"notifications_under_note" = "vaših $3beleška$4";
+"notifications_under_photo" = "vašeg $3foto$4";
+"notifications_under_post" = "vašeg $3posta$4 od $5";
+"notifications_under_video" = "vašeg $3video$4";
+"notifications_post" = "$1 napisao(-la) je $2nešto$3 na vašem zidu: $4";
+"notifications_appoint" = "$1 odredio je vas za vođu zajednice $2";
+
+"nt_liked_yours" = "sviđalo je vaše";
+"nt_shared_yours" = "podelio(-ila) je sa vašim";
+"nt_commented_yours" = "napisao(la) je komentar ispod";
+"nt_written_on_your_wall" = "napisao(la) je nešto na vašem zidu";
+"nt_made_you_admin" = "odredio(la) je vas za vođu zajednice";
+
+"nt_from" = "od";
+"nt_yours_adjective" = "vašeg";
+"nt_yours_feminitive_adjective" = "vašeg";
+"nt_post_nominative" = "post";
+"nt_post_instrumental" = "postom";
+"nt_note_instrumental" = "beleškom";
+"nt_photo_instrumental" = "fotografijom";
+
+%{ Time %}
+
+"time_at_sp" = " u ";
+"time_just_now" = "sadašnje vrijeme";
+"time_exactly_five_minutes_ago" = "pre 5 minuta";
+"time_minutes_ago" = "$pre 1 minuti";
+"time_today" = "danas";
+"time_yesterday" = "juće";
+
+"privacy_setting_access_page" = "Ko može videti moju stranicu na Internetu";
+"privacy_setting_read_info" = "Ko može videti osnovnu informaciju od moje stranice";
+"privacy_setting_see_groups" = "Ko može videti informaciju o mojim grupovima i sastanku";
+"privacy_setting_see_photos" = "Ko može videti moje slike";
+"privacy_setting_see_videos" = "Ko može pogledati moje video";
+"privacy_setting_see_notes" = "Ko može videti moje bile?ke";
+"privacy_setting_see_friends" = "Ko može da upozna sa mojim prijateljima";
+"privacy_setting_add_to_friends" = "Ko ima mogućnost da doda me u prijatelje";
+"privacy_setting_write_wall" = "Ko ima mogućnost da piši na mojem zidu";
+"privacy_value_anybody" = "Bilo ko";
+"privacy_value_anybody_dative" = "Bilo ko";
+"privacy_value_users" = "Korisnici OpenVK";
+"privacy_value_friends" = "Prijatelje";
+"privacy_value_friends_dative" = "Prijatelje";
+"privacy_value_only_me_and_super_capite" = "Ja sam";
+"privacy_value_only_me_and_super_capite_dative" = "Za mene";
+
+"your_email_address" = "Adresa Vaše elektronske pošte";
+"your_page_address" = "Adresa Vaše stranice";
+"page_address" = "Adresa stranice";
+"current_email_address" = "Tekuća adresa";
+"page_id" = "ID stranice";
+"you_can_also" = "Vi takođe možete";
+"delete_your_page" = "da izbrišite svoju stranicu";
+"delete_album" = "da izbrišite album";
+
+"ui_settings_interface" = "Interfejs";
+"ui_settings_sidebar" = "Levi meni";
+"ui_settings_rating" = "Rejting";
+"ui_settings_rating_show" = "Pokazati";
+"ui_settings_rating_hide" = "Sakriti";
+
+%{ Errors %}
+
+"error_1" = "Nije taćan zahtev";
+"error_2" = "Korisnićko ime ili lozinka nisu tačni";
+"error_3" = "Nije ovlašćen";
+"error_4" = "Ne postoji onog korisnika";
+"information_-1" = "Operacija je uspešno završena";
+"information_-2" = "Prijavili ste uspešno";
+
+"no_data" = "Nema podatka";
+"no_data_description" = "Nedostaju podaci u ovoj odredbi.";

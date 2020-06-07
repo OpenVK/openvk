@@ -1,0 +1,4 @@
+{var user = $notification->getModel(1)}
+
+<a href="{$user->getURL()}"><b>{$user->getCanonicalName()}</b></a>
+{$notification->getDateTime()} {_nt_commented_yours} {include under}: "{$notification->getData()}".

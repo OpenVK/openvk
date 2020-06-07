@@ -1,0 +1,49 @@
+{extends "../@layout.xml"}
+
+{block title}{$note->getName()}{/block}
+
+{block header}
+    {var author = $note->getOwner()}
+    <a href="{$author->getURL()}">{$author->getCanonicalName()}</a>
+    »
+    <a href="/notes{$author->getId()}">{_notes}</a>
+    »
+    {$note->getName()}
+{/block}
+
+{block content}
+    <style>
+        #userContent img {
+            max-width: 245pt;
+            max-height: 200pt;
+        }
+        
+        #userContent blockquote {
+            background-color: #f3f3f3;
+            border-bottom: 5px solid #969696;
+            padding: 1;
+        }
+            
+        #userContent cite {
+            margin-top: 1em;
+            display: block;
+        }
+            
+        #userContent cite::before {
+            content: "— ";
+        }
+    </style>
+    
+    <article id="userContent" style="min-height: 300pt;">
+        {$note->getText()|noescape}
+    </article>
+    
+    <div style="width: 100%; min-height: 100px;">
+        {include "../components/comments.xml",
+                 comments => $comments,
+                 count => $cCount,
+                 page => $cPage,
+                 model => "notes",
+                 parent => $note}
+    </div>
+{/block}

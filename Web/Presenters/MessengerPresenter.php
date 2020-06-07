@@ -1,0 +1,107 @@
+<?php declare(strict_types=1);
+namespace openvk\Web\Presenters;
+use Chandler\Signaling\SignalManager;
+use openvk\Web\Events\NewMessageEvent;
+use openvk\Web\Models\Repositories\{Users, Clubs, Messages};
+use openvk\Web\Models\Entities\{Message, Correspondence};
+
+final class MessengerPresenter extends OpenVKPresenter
+{
+    private $messages;
+    private $signaler;
+    
+    function __construct(Messages $messages)
+    {
+        $this->messages = $messages;
+        $this->signaler = SignalManager::i();
+        parent::__construct();
+    }
+    
+    private function getCorrespondent(int $id): object
+    {
+        if($id > 0)
+            return (new Users)->get($id);
+        else if($id < 0)
+            return (new Clubs)->get(abs($id));
+        else if($id === 0)
+            return $this->user->identity;
+    }
+    
+    function renderIndex(): void
+    {
+        $this->assertUserLoggedIn();
+        
+        if(isset($_GET["sel"]))
+            $this->pass("openvk!Messenger->app", $_GET["sel"]);
+        
+        $page = $_GET["p"] ?? 1;
+        $correspondences = iterator_to_array($this->messages->getCorrespondencies($this->user->identity, $page));
+        
+        $this->template->corresps = $correspondences;
+    }
+    
+    function renderApp(int $sel): void
+    {
+        $this->assertUserLoggedIn();
+        
+        $correspondent = $this->getCorrespondent($sel);
+        if(!$correspondent)
+            $this->notFound();
+        
+        $this->template->selId         = $sel;
+        $this->template->correspondent = $correspondent;
+    }
+    
+    function renderEvents(int $randNum): void
+    {
+    $this->assertUserLoggedIn();
+        
+        header("Content-Type: application/json");   
+    $this->signaler->listen(function($event, $id) {
+            exit(json_encode([[
+                "UUID"  => $id,
+                "event" => $event->getLongPoolSummary(),
+            ]]));
+        }, $this->user->id);
+    }
+    
+    function renderApiGetMessages(int $sel, int $offset): void
+    {
+        $this->assertUserLoggedIn();
+        
+        $correspondent = $this->getCorrespondent($sel);
+        if(!$correspondent)
+            $this->notFound();
+        
+        $messages       = [];
+        $correspondence = new Correspondence($this->user->identity, $correspondent);
+        foreach($correspondence->getMessages($offset === 0 ? null : $offset) as $message)
+            $messages[] = $message->simplify();
+        
+        header("Content-Type: application/json");
+        exit(json_encode($messages));
+    }
+    
+    function renderApiWriteMessage(int $sel): void
+    {
+        $this->assertUserLoggedIn();
+        
+        if(empty($this->postParam("content"))) {
+            header("HTTP/1.1 400 Bad Request");
+            exit("<b>Argument error</b>: param 'content' expected to be string, undefined given.");
+        }
+        
+        $sel = $this->getCorrespondent($sel);
+        if($sel->getId() !== $this->user->id && $sel->getSubscriptionStatus($this->user->identity) !== 3)
+            exit(header("HTTP/1.1 403 Forbidden"));
+        
+        $cor = new Correspondence($this->user->identity, $sel);
+        $msg = new Message;
+        $msg->setContent($this->postParam("content"));
+        $cor->sendMessage($msg);
+        
+        header("HTTP/1.1 202 Accepted");
+        header("Content-Type: application/json");
+        exit(json_encode($msg->simplify()));
+    }
+}

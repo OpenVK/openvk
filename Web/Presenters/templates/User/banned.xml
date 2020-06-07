@@ -1,0 +1,7 @@
+<center>
+    <img src="/assets/packages/static/openvk/img/oof.apng" alt="Пользователь заблокирован." style="width: 20%;" />
+    <p>
+        К сожалению, нам пришлось заблокировать страницу пользователя <b>{$user->getFirstName()}</b>.<br/>
+        Комментарий модератора: <b>{$user->getBanReason()}</b>.
+    </p>
+</center>

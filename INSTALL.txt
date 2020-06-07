@@ -1,0 +1,9 @@
+OpenVK Install Instructions
+-----------
+1) Import OVK DB
+2) Import OVK EventDB to MySQL (you can also use Ya.Clickhouse lul)
+3) Set up dependencies with composer
+4) Set up dependencies with yarn (Web/static/js)
+5) Create new user and give him admin permissions
+6) ???
+7) Profit!

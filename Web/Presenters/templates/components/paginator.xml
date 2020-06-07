@@ -1,0 +1,14 @@
+<div n:if="!($conf->page === 1 && $conf->count <= $conf->perPage)" class="paginator">
+    <hr/>
+    <center>
+        <a n:if="$conf->page != 1"
+           href="?{http_build_query(array_merge($_GET, ['p' => ($conf->page - 1)]), 'k', '&', PHP_QUERY_RFC3986)}"
+           style="float: left;">&lt;&lt; Назад</a>
+        
+        Страница {$conf->page}
+        
+        <a n:if="$conf->count > (($conf->page - 1) * $conf->perPage + $conf->amount) && $conf->amount > 0"
+           href="?{http_build_query(array_merge($_GET, ['p' => ($conf->page + 1)]), 'k', '&', PHP_QUERY_RFC3986)}"
+           style="float: right;">Вперёд &gt;&gt;</a>
+    </center>
+</div>

@@ -1,0 +1,45 @@
+{extends "../@listView.xml"}
+{var sorting = false}
+
+{block title}
+    {_feedback}
+{/block}
+
+{block header}
+    <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a> »
+    {_feedback}
+{/block}
+
+{block tabs}
+    <div n:attr="id => ($mode === 'new' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($mode === 'new' ? 'act_tab_a' : 'ki')" href="?">{_unread}</a>
+    </div>
+    <div n:attr="id => ($mode === 'archived' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($mode === 'archived' ? 'act_tab_a' : 'ki')" href="?act=archived">{_archive}</a>
+    </div>
+{/block}
+
+{block actions}
+    <div class="tile">
+        <a class="profile_link" href="?">{_unreaded}</a>
+        <a class="profile_link" href="?act=archived">{_archive}</a>
+    </div>
+{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block link|strip|stripHtml}
+    javascript:void(0)
+{/block}
+
+{block preview}
+    <img src="{$x->getModel(1)->getAvatarUrl()}" width=64 />
+{/block}
+
+{block name}
+    <span style="color: #000; font-weight: 100;"></span>
+{/block}
+
+{block description}
+    {include $x->getTemplatePath(), notification => $x}
+{/block}

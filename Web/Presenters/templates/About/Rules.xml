@@ -1,0 +1,10 @@
+{extends "../@layout.xml"}
+{block title}Правила{/block}
+
+{block header}
+    Правила
+{/block}
+
+{block content}
+    {$rules|noescape}
+{/block}
