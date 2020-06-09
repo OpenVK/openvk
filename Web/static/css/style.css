@@ -791,6 +791,13 @@ table.User {
     vertical-align: top;
 }
 
+.crp-entry--message---text {
+    max-height: 45px;
+    max-width: 260px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .crp-entry--message---text, .messenger-app--messages---message .time {
     color: #404036;
 }
@@ -828,7 +835,7 @@ table.User {
     width: 300px;
 }
 
-.messenger-app--messages---message ._content span, .messenger-app--messages---message ._content a {
+.messenger-app--messages---message ._content span, .messenger-app--messages---message ._content > a {
     display: block;
 }
 

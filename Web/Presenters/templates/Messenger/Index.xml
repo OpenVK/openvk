@@ -40,7 +40,7 @@
                         alt="Фотография пользователя" />
                     </div>
                     <div class="crp-entry--message---text">
-                        {$lastMsg->getText()|truncate:60}
+                        {$lastMsg->getText()|noescape}
                     </div>
                 </div>
             </div>
