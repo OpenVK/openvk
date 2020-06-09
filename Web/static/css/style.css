@@ -518,6 +518,12 @@ h4 {
 
 /* post */
 
+.post {
+    width: 100%;
+    overflow: hidden;
+    display: block;
+}
+
 .post-author {
     background-color: #F6F6F6;
     border-top: #8B8B8B solid 1px;
