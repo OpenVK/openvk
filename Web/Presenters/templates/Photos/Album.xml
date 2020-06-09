@@ -39,7 +39,7 @@
                 </a>
                 
                 <a href="/photo{$photo->getPrettyId()}?from=album{$album->getId()}">
-                    <img src="{$photo->getURL()}" alt="{$photo->getDescription()}" style="width:unset;max-height:unset;max-width: 188px;" />
+                    <img class="album-photo--image" src="{$photo->getURL()}" alt="{$photo->getDescription()}" style="width:unset;max-height:unset;max-width: 188px;" />
                 </a>
             </div>
         {/foreach}

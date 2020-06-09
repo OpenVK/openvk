@@ -251,7 +251,7 @@ color:
 .album-photo {
     position: relative;
     background-color: darkgrey;
-    margin: 5pt;
+    margin: 4pt;
     width: calc(33% - 10pt);
     height: 82px;
     text-align: center;
