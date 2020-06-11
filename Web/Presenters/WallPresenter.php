@@ -50,11 +50,11 @@ final class WallPresenter extends OpenVKPresenter
         else if($user > 0)
             $canPost = $owner->getPrivacyPermission("wall.write", $this->user->identity);
         else if($user < 0)
-	    if($owner->canBeModifiedBy($this->user->identity))
+            if($owner->canBeModifiedBy($this->user->identity))
                 $canPost = true;
-	    else
-	        $canPost = $owner->canPost();
-	else
+            else
+                $canPost = $owner->canPost();
+        else
             $canPost = false; 
         
         $this->template->oObj    = $owner;
@@ -158,9 +158,9 @@ final class WallPresenter extends OpenVKPresenter
         else if($wall < 0)
             if($wallOwner->canBeModifiedBy($this->user->identity))
                 $canPost = true;
-	    else
-	        $canPost = $wallOwner->canPost();
-	else
+            else
+                $canPost = $wallOwner->canPost();
+        else
             $canPost = false; 
 
         
@@ -178,14 +178,6 @@ final class WallPresenter extends OpenVKPresenter
         
         if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
             try {
-                $post = new Post;
-                $post->setOwner($this->user->id);
-                $post->setWall($wall);
-                $post->setCreated(time());
-                $post->setContent($this->postParam("text"));
-                $post->setFlags($flags);
-                $post->save();
-                
                 $photo = new Photo;
                 $photo->setOwner($this->user->id);
                 $photo->setDescription(iconv_substr($this->postParam("text"), 0, 36) . "...");
@@ -200,6 +192,13 @@ final class WallPresenter extends OpenVKPresenter
                 $this->flashFail("err", "Не удалось опубликовать пост", "Файл повреждён.");
             }
             
+            $post = new Post;
+            $post->setOwner($this->user->id);
+            $post->setWall($wall);
+            $post->setCreated(time());
+            $post->setContent($this->postParam("text"));
+            $post->setFlags($flags);
+            $post->save();
             $post->attach($photo);
         } elseif($this->postParam("text")) {
             try {
