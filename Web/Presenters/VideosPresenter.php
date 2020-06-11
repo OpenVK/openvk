@@ -51,7 +51,7 @@ final class VideosPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
-            if(empty($this->postParam("name"))) {
+            if(!empty($this->postParam("name"))) {
                 $video = new Video;
                 $video->setOwner($this->user->id);
                 $video->setName($this->postParam("name"));
@@ -72,7 +72,7 @@ final class VideosPresenter extends OpenVKPresenter
                 $video->save();
                 
                 $this->redirect("/video" . $video->getPrettyId(), static::REDIRECT_TEMPORARY);
-            }else{
+            } else {
                 $this->flashFail("err", "Произошла ошибка", "Видео не может быть опубликовано без названия.");
             }
         }
