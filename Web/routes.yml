@@ -71,6 +71,8 @@ routes:
       handler: "Notification->feed"
     - url: "/feed"
       handler: "Wall->feed"
+    - url: "/feed/all"
+      handler: "Wall->globalFeed"
     - url: "/feed/hashtag/{?hashTag}"
       handler: "Wall->hashtagFeed"
       placeholders:

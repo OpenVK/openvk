@@ -105,6 +105,30 @@ final class WallPresenter extends OpenVKPresenter
             $this->template->posts[] = $this->posts->get($post->id);
     }
     
+    function renderGlobalFeed(): void
+    {
+        $this->assertUserLoggedIn();
+        
+        $page  = (int) ($_GET["p"] ?? 1);
+        $pPage = (int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE);
+        $posts = DatabaseConnection::i()
+                   ->getContext()
+                   ->table("posts")
+                   ->where("deleted", 0)
+                   ->order("created DESC");
+        
+        $this->template->_template     = "Wall/Feed.xml";
+        $this->template->globalFeed    = true;
+        $this->template->paginatorConf = (object) [
+            "count"   => sizeof($posts),
+            "page"    => (int) ($_GET["p"] ?? 1),
+            "amount"  => sizeof($posts->page($page, $pPage)),
+            "perPage" => $pPage,
+        ];
+        foreach($posts->page($page, $pPage) as $post)
+            $this->template->posts[] = $this->posts->get($post->id);
+    }
+    
     function renderHashtagFeed(string $hashtag): void
     {
         $hashtag = rawurldecode($hashtag);

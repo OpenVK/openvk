@@ -3,6 +3,14 @@
 
 {block header}
     {_"feed"}
+    
+    <div n:if="!isset($globalFeed)" style="float: right;">
+        <span>
+            <b>
+                <a href="/feed/all">Все новости</a>
+            </b>
+        </span>
+    </div>
 {/block}
 
 {block content}
