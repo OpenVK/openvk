@@ -17,9 +17,10 @@ trait TAttachmentHost
     
     function getChildren(): \Traversable
     {
-        $sel = $this->getRecord()
-                    ->related("attachments.target_id")
-                    ->where("attachments.target_type", get_class($this));
+        $sel = DatabaseConnection::i()->getContext()
+                                      ->table("attachments")
+                                      ->where("target_id", $this->getId())
+                                      ->where("attachments.target_type", get_class($this));
         foreach($sel as $rel) {
             $repoName = $rel->attachable_type . "s";
             $repoName = str_replace("Entities", "Repositories", $repoName);

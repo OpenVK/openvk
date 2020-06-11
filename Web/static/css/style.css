@@ -845,6 +845,18 @@ table.User {
     overflow: hidden;
 }
 
+.messenger-app--messages---message ._content .attachments {
+    width: 100%;
+}
+
+.messenger-app--messages---message ._content .attachments > .msg-attach-j * {
+    max-width: 86%;
+}
+
+.messenger-app--messages---message ._content .attachments:not(:empty) {
+    margin-top: 15px;
+}
+
 .messenger-app--messages---message .time {
     width: 100px;
 }

@@ -2,6 +2,7 @@
 namespace openvk\Web\Models\Entities;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Users;
+use openvk\Web\Models\Entities\Photo;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Util\DateTime;
 
@@ -86,6 +87,22 @@ class Message extends RowModel
     {
         $author = $this->getSender();
         
+        $attachments = [];
+        foreach($this->getChildren() as $attachment) {
+            if($attachment instanceof Photo) {
+                $attachments[] = [
+                    "type"  => "photo",
+                    "link"  => "/photo" . $attachment->getPrettyId(),
+                    "photo" => [
+                        "url"     => $attachment->getURL(),
+                        "caption" => $attachment->getDescription(),
+                    ],
+                ];
+            } else {
+                throw new \Exception("Unknown attachment type: " . get_class($attachment));
+            }
+        }
+        
         return [
             "uuid"   => $this->getId(),
             "sender" => [
@@ -98,9 +115,11 @@ class Message extends RowModel
                 "sent"   => (string) $this->getSendTime()->format("%e %B %G" . tr("time_at_sp") . "%X"),
                 "edited" => is_null($this->getEditTime()) ? null : (string) $this->getEditTime(),
             ],
-            "text" => $this->getText(),
+            "text"        => $this->getText(),
+            "attachments" => $attachments,
         ];
     }
     
     use Traits\TRichText;
+    use Traits\TAttachmentHost;
 }

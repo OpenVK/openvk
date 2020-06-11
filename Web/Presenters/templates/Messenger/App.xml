@@ -23,12 +23,21 @@
                     <img class="ava" data-bind="attr: { src: sender.avatar, alt: sender.name }" />
                     <div class="_content">
                         <a href="#" data-bind="attr: { href: sender.link }">
-                            <strong data-bind="text: sender.name">Целестина Неонова {* lulz *}</strong>
+                            <strong data-bind="text: sender.name"></strong>
                         </a>
-                        <span class="text" data-bind="html: text">...</span>
+                        <span class="text" data-bind="html: text"></span>
+                        <div data-bind="foreach: attachments" class="attachments">
+                            <div class="msg-attach-j">
+                                <div data-bind="if: type === 'photo'" class="msg-attach-j-photo">
+                                    <a data-bind="attr: { href: link }">
+                                        <img data-bind="attr: { src: photo.url, alt: photo.caption  }" />
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="time" align="right">
-                        <span data-bind="text: timing.sent">Monday, the 1st of January 1970 00:00:00</span>
+                        <span data-bind="text: timing.sent"></span>
                     </div>
                 </div>
             </div>
@@ -171,6 +180,7 @@
                         "edited": null
                     },
                     "text": content,
+                    "attachments": [],
                     "_tuid": Math.ceil(performance.now())
                 };
             }
