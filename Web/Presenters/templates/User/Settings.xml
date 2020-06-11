@@ -305,33 +305,12 @@ Block chain PRIZM был запущен 17 февраля 2017-го года. П
                         </td>
                         <td>
                             <select name="style">
-                                <optgroup label="OpenVK">
-                                    <option value="0" {if $user->getStyle() == 0}selected{/if}>OpenVK ({_"default"})</option>
-                                    <option value="2" {if $user->getStyle() == 2}selected{/if}>OpenVK [by Daniel Myslivets]</option>
-                                    <option value="16" {if $user->getStyle() == 16}selected{/if}>OpenVK Night [by Ash Defenders]</option>
-                                    <option value="5" {if $user->getStyle() == 5}selected{/if}>OpenVK Black [by Daniel Myslivets]</option>
-                                    <option value="7" {if $user->getStyle() == 7}selected{/if}>OpenVK SpacePink [by Ash Defenders]</option>
-                                </optgroup>
-                                <optgroup label="VKontakte">
-                                    <option value="3" {if $user->getStyle() == 3}selected{/if}>ВКонтакте (2006)</option>
-                                    <option value="1" {if $user->getStyle() == 1}selected{/if}>ВКонтакте (2007)</option>
-                                    <option value="8" {if $user->getStyle() == 8}selected{/if}>ВКонтакте (2015) [by Ash Defenders]</option>
-                                    <option value="19" {if $user->getStyle() == 19}selected{/if}>VK.COM [by Ash Defenders]</option>
-                                    <option value="6" {if $user->getStyle() == 6}selected{/if} disabled>VK.com (не работает)</option>
-                                    <option value="10" {if $user->getStyle() == 10}selected{/if}>ВСоюзе</option>
-                                    <option value="17" {if $user->getStyle() == 17}selected{/if}>ВТлену [by Ash Defenders]</option>
-                                </optgroup>
-                                <optgroup label="Сайты">
-                                    <option value="11" {if $user->getStyle() == 11}selected{/if}>TheFacebook (2005) [by Ash Defenders]</option>
-                                    <option value="18" {if $user->getStyle() == 18}selected{/if}>Facebook (2006) [by Ash Defenders]</option>
-                                    <option value="13" {if $user->getStyle() == 13}selected{/if}>Twitter (2007) [by Ash Defenders]</option>
-                                    <option value="4" {if $user->getStyle() == 4}selected{/if}>IVinete.ru [by Daniel Myslivets]</option>
-                                    <option value="15" {if $user->getStyle() == 15}selected{/if}>Пейджер [by Ash Defenders]</option>
-                                    <option value="20" {if $user->getStyle() == 20}selected{/if}>TLENTA.RU [by Ash Defenders]</option>
-                                    <option value="14" {if $user->getStyle() == 14}selected{/if}>kosSpace</option>
-                                    <option value="9" {if $user->getStyle() == 9}selected{/if}>vriska.ru</option>
-                                    <option value="12" {if $user->getStyle() == 12}selected{/if}>r/Ooer</option>
-                                </optgroup>
+                                <option value="ovk" {if $user->getStyle() == 'ovk'}selected{/if}>OpenVK ({_"default"})</option>
+                                <option n:foreach="$themes as $id => $theme"
+                                        n:attr="selected => $user->getStyle() === $id"
+                                        value="{$id}">
+                                            {$theme}
+                                </option>
                             </select>
                         </td>
                     </tr>

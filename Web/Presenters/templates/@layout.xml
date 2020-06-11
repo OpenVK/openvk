@@ -12,74 +12,9 @@
         {script "js/node_modules/umbrellajs/umbrella.min.js"}
         {script "js/openvk.cls.js"}
         {ifset $thisUser}
-            {var style = (int) ($_GET['__ovkStyleOverride'] ?? $thisUser->getStyle())}
-            
-            {if $style == 1}
-                {css "css/vkontakte.css"}
-            {/if}
-            {if $style == 2}
-                {css "css/ovkdan.5.css"}
-            {/if}
-            {if $style == 3}
-                {css "css/vkontakte.css"}
-                {css "css/vkontakte2006.css"}
-            {/if}
-            {if $style == 4}
-                {css "css/ovkg.css"}
-            {/if}
-            {if $style == 5}
-                {css "css/black.css"}
-            {/if}
-            {if $style == 6}
-                {css "css/ash_oss_themes/vk2015.2.css"}
-            {/if}
-            {if $style == 7}
-                {css "css/spacepink.css"}
-            {/if}
-            {if $style == 9}
-                {css "css/vriska.css"}
-            {/if}
-            {if $style == 8}
-                {css "css/ash_oss_themes/vk2015.2.css"}
-            {/if}
-            {if $style == 10}
-                {css "css/ash_oss_themes/ВСоюзе.css"}
-            {/if}
-            {if $style == 11}
-                {css "css/ash_oss_themes/fb2005.css"}
-            {/if}
-            {if $style == 12}
-                {css "css/ooer.css"}
-            {/if}
-            {if $style == 13}
-                {css "css/ash_oss_themes/Twitter2007.css"}
-            {/if}
-            {if $style == 14}
-                {css "css/kos.css"}
-            {/if}
-            {if $style == 15}
-                {css "css/ash_oss_themes/pager.css"}
-            {/if}
-            {if $style == 16}
-                {css "css/ash_oss_themes/vkdark.css"}
-            {/if}
-            {if $style == 17}
-                {css "css/ash_oss_themes/vtlenu.css"}
-            {/if}
-            {if $style == 18}
-                {css "css/ash_oss_themes/Fb2006.css"}
-            {/if}
-            {if $style == 19}
-                {css "css/ash_oss_themes/vkdefenders08.css"}
-            {/if}
-            {if $style == 20}
-                {css "css/ash_oss_themes/tlenta.css"}
-            {/if}
-            {if $thisUser->getStyleAvatar() == 1}
-                {css "css/avatar.1.css"}
-            {/if}
-            {if $thisUser->getStyleAvatar() == 2}
-                {css "css/avatar.2.css"}
+            {if !is_null($thisUser->getTheme())}
+                {var theme = $thisUser->getTheme()}
+                <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/styles.css" />
             {/if}
         {/ifset}
         
@@ -105,11 +40,7 @@
         </div>
         
         <div class="layout">
-            {ifset $thisUser}
-                {if in_array($thisUser->getStyle(), [4, 5, 6, 20])}
-                    <div id="xhead" class="dm"></div>
-                {/if}
-            {/ifset}
+            <div id="xhead" class="dm"></div>
             <div class="page_header">
                 <a href="/" class="home_button" title="OpenVK">openvk</a>
                 <div n:if="isset($thisUser) ? !$thisUser->isBanned() : true" class="header_navigation">

@@ -6,5 +6,8 @@ Web/static/js/node_modules
 
 tmp/*
 !tmp/.gitkeep
+!tmp/themepack_artifacts/.gitkeep
+themepacks/*
+!themepacks/.gitkeep
 storage/*
 !storage/.gitkeep

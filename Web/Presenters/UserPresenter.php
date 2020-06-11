@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
 use openvk\Web\Util\Sms;
+use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Entities\Photo;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Repositories\Albums;
@@ -91,7 +92,7 @@ final class UserPresenter extends OpenVKPresenter
         
         if(!$id)
             $this->notFound();
-        else
+        
             $user = $this->users->get($id);
             if($_SERVER["REQUEST_METHOD"] === "POST") {
                 if($_GET['act'] === "main" || $_GET['act'] == NULL) {
@@ -215,78 +216,79 @@ final class UserPresenter extends OpenVKPresenter
         
         if(!$id)
             $this->notFound();
-        else
-            $user = $this->users->get($id);
-            if($_SERVER["REQUEST_METHOD"] === "POST") {
-                if($_GET['act'] === "main" || $_GET['act'] == NULL) {
-                    if($this->postParam("old_pass") && $this->postParam("new_pass") && $this->postParam("repeat_pass")) {
-                        if($this->postParam("new_pass") === $this->postParam("repeat_pass")) {
-                            if(!$this->user->identity->getChandlerUser()->updatePassword($this->postParam("new_pass"), $this->postParam("old_pass")))
-                                $this->flashFail("err", "Ошибка", "Старый пароль не совпадает.");
-                        } else {
-                            $this->flashFail("err", "Ошибка", "Новые пароли не совпадают.");
-                        }
+        
+        $user = $this->users->get($id);
+        if($_SERVER["REQUEST_METHOD"] === "POST") {
+            if($_GET['act'] === "main" || $_GET['act'] == NULL) {
+                if($this->postParam("old_pass") && $this->postParam("new_pass") && $this->postParam("repeat_pass")) {
+                    if($this->postParam("new_pass") === $this->postParam("repeat_pass")) {
+                        if(!$this->user->identity->getChandlerUser()->updatePassword($this->postParam("new_pass"), $this->postParam("old_pass")))
+                            $this->flashFail("err", "Ошибка", "Старый пароль не совпадает.");
+                    } else {
+                        $this->flashFail("err", "Ошибка", "Новые пароли не совпадают.");
                     }
-                    
-                    if(!$user->setShortCode(empty($this->postParam("sc")) ? NULL : $this->postParam("sc")))
-                        $this->flashFail("err", "Ошибка", "Короткий адрес имеет некорректный формат.");
-                }elseif($_GET['act'] === "privacy") {
-                    $settings = [
-                        "page.read",
-                        "page.info.read",
-                        "groups.read",
-                        "photos.read",
-                        "videos.read",
-                        "notes.read",
-                        "friends.read",
-                        "friends.add",
-                        "wall.write",
-                    ];
-                    foreach($settings as $setting) {
-                        $input = $this->postParam(str_replace(".", "_", $setting));
-                        $user->setPrivacySetting($setting, min(3, abs($input ?? $user->getPrivacySetting($setting))));
-                    }
-                }elseif($_GET['act'] === "interface") {
-                    if ($this->postParam("style") <= 20 && $this->postParam("style") >= 0)
-                        $user->setStyle((int)$this->postParam("style"));
-                    
-                    if ($this->postParam("style_avatar") <= 2 && $this->postParam("style_avatar") >= 0)
-                        $user->setStyle_Avatar((int)$this->postParam("style_avatar"));
-                    
-                    if (in_array($this->postParam("rating"), [0, 1]))
-                        $user->setShow_Rating((int) $this->postParam("rating"));
-                }elseif($_GET['act'] === "lMenu") {
-                    $settings = [
-                        "menu_bildoj"   => "photos",
-                        "menu_filmetoj" => "videos",
-                        "menu_mesagoj"  => "messages",
-                        "menu_notatoj"  => "notes",
-                        "menu_grupoj"   => "groups",
-                        "menu_novajoj"  => "news",
-                    ];
-                    foreach($settings as $checkbox => $setting)
-                        $user->setLeftMenuItemStatus($setting, $this->checkbox($checkbox));
                 }
                 
-                try {
-                    $user->save();
-                } catch(\PDOException $ex) {
-                    if($ex->getCode() == 23000)
-                        $this->flashFail("err", "Ошибка", "Данный короткий адрес уже занят.");
-                    else
-                        throw $ex;
+                if(!$user->setShortCode(empty($this->postParam("sc")) ? NULL : $this->postParam("sc")))
+                    $this->flashFail("err", "Ошибка", "Короткий адрес имеет некорректный формат.");
+            }elseif($_GET['act'] === "privacy") {
+                $settings = [
+                    "page.read",
+                    "page.info.read",
+                    "groups.read",
+                    "photos.read",
+                    "videos.read",
+                    "notes.read",
+                    "friends.read",
+                    "friends.add",
+                    "wall.write",
+                ];
+                foreach($settings as $setting) {
+                    $input = $this->postParam(str_replace(".", "_", $setting));
+                    $user->setPrivacySetting($setting, min(3, abs($input ?? $user->getPrivacySetting($setting))));
                 }
+            }elseif($_GET['act'] === "interface") {
+                if (isset(Themepacks::i()[$this->postParam("style")]) || $this->postParam("style") === Themepacks::DEFAULT_THEME_ID)
+                    $user->setStyle($this->postParam("style"));
                 
-                $this->flash(
-                    "succ",
-                    "Изменения сохранены",
-                    "Новые данные появятся на вашей странице.<br/>Если вы изменили стиль, перезагрузите страницу."
-                );
+                if ($this->postParam("style_avatar") <= 2 && $this->postParam("style_avatar") >= 0)
+                    $user->setStyle_Avatar((int)$this->postParam("style_avatar"));
+                
+                if (in_array($this->postParam("rating"), [0, 1]))
+                    $user->setShow_Rating((int) $this->postParam("rating"));
+            }elseif($_GET['act'] === "lMenu") {
+                $settings = [
+                    "menu_bildoj"   => "photos",
+                    "menu_filmetoj" => "videos",
+                    "menu_mesagoj"  => "messages",
+                    "menu_notatoj"  => "notes",
+                    "menu_grupoj"   => "groups",
+                    "menu_novajoj"  => "news",
+                ];
+                foreach($settings as $checkbox => $setting)
+                    $user->setLeftMenuItemStatus($setting, $this->checkbox($checkbox));
             }
-            $this->template->mode = in_array($this->queryParam("act"), [
-                "main", "privacy", "finance", "interface"
-            ]) ? $this->queryParam("act")
-               : "main";
-            $this->template->user = $user;
+            
+            try {
+                $user->save();
+            } catch(\PDOException $ex) {
+                if($ex->getCode() == 23000)
+                    $this->flashFail("err", "Ошибка", "Данный короткий адрес уже занят.");
+                else
+                    throw $ex;
+            }
+            
+            $this->flash(
+                "succ",
+                "Изменения сохранены",
+                "Новые данные появятся на вашей странице.<br/>Если вы изменили стиль, перезагрузите страницу."
+            );
+        }
+        $this->template->mode = in_array($this->queryParam("act"), [
+            "main", "privacy", "finance", "interface"
+        ]) ? $this->queryParam("act")
+            : "main";
+        $this->template->user   = $user;
+        $this->template->themes = Themepacks::i()->getThemeList();
     }
 }

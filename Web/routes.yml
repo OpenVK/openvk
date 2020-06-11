@@ -91,6 +91,12 @@ routes:
       handler: "Wall->delete"
     - url: "/blob_{text}/{text}.{text}"
       handler: "Blob->file"
+    - url: "/themepack/{text}/{?version}/{?resClass}/{?any}"
+      handler: "Themepacks->resource"
+      placeholders:
+          version: "(?:[0-9]+\\.?)+"
+          resClass: "stylesheet|resource"
+          any: ".+"
     - url: "/albums{num}"
       handler: "Photos->albumList"
     - url: "/albums/create"

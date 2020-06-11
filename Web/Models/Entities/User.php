@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
+use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{Photo, Message, Correspondence};
@@ -53,9 +54,14 @@ class User extends RowModel
         return $this->getRecord()->id;
     }
     
-    function getStyle(): int
+    function getStyle(): string
     {
         return $this->getRecord()->style;
+    }
+    
+    function getTheme(): ?Themepack
+    {
+        return Themepacks::i()[$this->getStyle()] ?? NULL;
     }
     
     function getStyleAvatar(): int
