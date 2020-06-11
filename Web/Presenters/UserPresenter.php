@@ -284,7 +284,7 @@ final class UserPresenter extends OpenVKPresenter
                 );
             }
             $this->template->mode = in_array($this->queryParam("act"), [
-                "main", "privacy", "interface"
+                "main", "privacy", "finance", "interface"
             ]) ? $this->queryParam("act")
                : "main";
             $this->template->user = $user;

@@ -9,6 +9,7 @@
 
 {var isMain       = $mode === 'main'}
 {var isPrivacy    = $mode === 'privacy'}
+{var isFinance    = $mode === 'finance'}
 {var isInterface  = $mode === 'interface'}
 
        <div class="tabs">
@@ -17,6 +18,9 @@
         </div>
         <div n:attr="id => ($isPrivacy ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isPrivacy ? 'act_tab_a' : 'ki')" href="/settings?act=privacy">{_"privacy"}</a>
+        </div>
+        <div n:attr="id => ($isFinance ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => ($isFinance ? 'act_tab_a' : 'ki')" href="/settings?act=finance">Голоса</a>
         </div>
         <div n:attr="id => ($isInterface ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isInterface ? 'act_tab_a' : 'ki')" href="/settings?act=interface">{_"interface"}</a>
@@ -245,6 +249,37 @@
                 </tr>
             </table>
         </form>
+        
+        {elseif $isFinance}
+        
+        <div style="width: 75%; display: inline-block;">
+            <h4>Что такое PRIZM?</h4>
+            <p>
+                PRIZM (PZM) — полностью децентрализованная и саморегулируемая криптовалюта . Новая реализация концепции цифровой валюты, позволяющая любому пользователю легко и надежно хранить финансы или производить транзакции напрямую - аналогично передаче наличных денег из рук в руки. Проект создан с целью создания нового подхода к архитектуре справедливых финансовых отношений: перебалансировка и честное распределение средств между людьми всего мира, также решения актуальной проблемы – постепенного центрирования криптовалют.
+
+Block chain PRIZM был запущен 17 февраля 2017-го года. При разработке проекта криптовалюты вместо бинарного хранилища применена СУБД H2Databas. Ядро системы – NXT-core , с преобразованным механизмом подтверждения транзакций, с линейной аддикцией депозитарных процентов (по псевдо-сложному механизму), направленной на реализацию P2P системы финансового взаиморасчёта. Общее количество (10 миллионов доступных монет), было распределено в блоке генезиса. Криптография Curve25519 используется для обеспечения баланса безопасности и требуемой вычислительной мощности наряду с более часто используемыми алгоритмами хеширования SHA256.
+
+В системе присутствует комиссия за операцию, направленная на защиту P2P сети от хакерских DDoS -атак (отказ в обслуживании).
+
+В концепции криптовалюты применён двухфакторный механизм генерации монет: форжинг и майнинг посредством текущего баланса аккаунта. Система безопасности предусматривает форжинг , построенный на современных и энергоэффективных ЭКО-технологиях криптовалют. 
+
+<img src="https://ru.bitcoinwiki.org/upload/ru/images/6/61/Prizm.png"> <img src="https://i.ytimg.com/vi/7eu5Y5E6j7Q/maxresdefault.jpg"> <img src="https://avatars.mds.yandex.net/get-zen_doc/1899275/pub_5d660dc6a660d700ad2c48a6_5d661073998ed600ad85d130/scale_1200"> <img src="https://im.kommersant.ru/ISSUES.PHOTO/REGIONS/SARATOV_ONLINE/2019/01/16/przm_m.jpg"> <img src="https://teletype.in/files/3b/3bc90cf8-2a30-40fc-9df0-d2d385477228.png">
+            </p>
+            
+            <h4>Как купить голоса?</h4>
+            <p>
+                хз
+            </p>
+        </div>
+        <div style="width: 22%; float: right;">
+            <p style="margin: 0; font-size: medium; text-align: center;">
+                <b>
+                    на вашем счету<br/>
+                    <span style="font-size: 50px;">{$thisUser->getCoins()}</span><br/>
+                    PRIZM
+                </b>
+            </p>
+        </div>
         
         {elseif $isInterface}
         
