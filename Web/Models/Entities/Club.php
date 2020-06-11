@@ -137,6 +137,12 @@ class Club extends RowModel
                 return false;
             if(in_array($code, OPENVK_ROOT_CONF["openvk"]["preferences"]["shortcodes"]["forbiddenNames"]))
                 return false;
+            if(\Chandler\MVC\Routing\Router::i()->getMatchingRoute("/$code")[0]->presenter !== "UnknownTextRouteStrategy")
+                return false;
+            
+            $pUser = DB::i()->getContext()->table("profiles")->where("shortcode", $code)->fetch();
+            if(!is_null($pUser))
+                return false;
         }
         
         $this->stateChanges("shortcode", $code);
