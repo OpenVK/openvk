@@ -17,6 +17,7 @@ final class BlobPresenter extends OpenVKPresenter
     function renderFile(/*string*/ $dir, string $name, string $format)
     {
         $dir  = $this->getDirName($dir);
+        $name = preg_replace("%[^a-zA-Z0-9_\-]++%", "", $name);
         $path = OPENVK_ROOT . "/storage/$dir/$name.$format";
         if(!file_exists($path)) {
             $this->notFound();
