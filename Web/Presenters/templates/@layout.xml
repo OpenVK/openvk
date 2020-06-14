@@ -17,7 +17,12 @@
                 <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/styles.css" />
             {/if}
         {/ifset}
-        
+        {if $thisUser->getStyleAvatar() == 1}
+                {css "css/avatar.1.css"}
+            {/if}
+            {if $thisUser->getStyleAvatar() == 2}
+                {css "css/avatar.2.css"}
+        {/if}
         {if true}
             {css "css/nsfw-posts.css"}
         {/if}
