@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6b164abf6cdb4d7b7e3af3f86bb86439",
+    "content-hash": "61c3f4330692983a999c84dee65684a2",
     "packages": [
         {
             "name": "guzzlehttp/guzzle",
@@ -534,17 +534,27 @@
             "time": "2020-02-24T18:59:16+00:00"
         },
         {
+            "name": "wapmorgan-alter/cab-archive",
+            "version": "0.0.7.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/fkwa/CabArchive",
+                "reference": "origin/master"
+            },
+            "type": "library"
+        },
+        {
             "name": "wapmorgan/binary-stream",
-            "version": "0.4.0",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wapmorgan/BinaryStream.git",
-                "reference": "ca4989c15801635d79f65426b1b0fc6fe803b620"
+                "reference": "cfe40bc12a5d5a446f9b20131957bae78fc47a12"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wapmorgan/BinaryStream/zipball/ca4989c15801635d79f65426b1b0fc6fe803b620",
-                "reference": "ca4989c15801635d79f65426b1b0fc6fe803b620",
+                "url": "https://api.github.com/repos/wapmorgan/BinaryStream/zipball/cfe40bc12a5d5a446f9b20131957bae78fc47a12",
+                "reference": "cfe40bc12a5d5a446f9b20131957bae78fc47a12",
                 "shasum": ""
             },
             "require": {
@@ -570,45 +580,7 @@
                 "reader",
                 "writer"
             ],
-            "time": "2017-06-18T01:02:52+00:00"
-        },
-        {
-            "name": "wapmorgan/cab-archive",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/wapmorgan/CabArchive.git",
-                "reference": "c79134eaaf679cf27148d749359b3dd4a67d2960"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/wapmorgan/CabArchive/zipball/c79134eaaf679cf27148d749359b3dd4a67d2960",
-                "reference": "c79134eaaf679cf27148d749359b3dd4a67d2960",
-                "shasum": ""
-            },
-            "require": {
-                "wapmorgan/binary-stream": "~0.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "wapmorgan\\CabArchive\\": "src/"
-                },
-                "psr-0": {
-                    "CabArchive": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Reading and extraction of .cab-files",
-            "keywords": [
-                "archive",
-                "cab",
-                "cabinet"
-            ],
-            "time": "2018-09-18T18:54:37+00:00"
+            "time": "2018-09-26T17:10:59+00:00"
         },
         {
             "name": "whichbrowser/parser",
@@ -720,11 +692,11 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "komeiji-satori/curl": 20,
-        "wapmorgan/cab-archive": 20,
         "whichbrowser/parser": 20,
         "zadarma/user-api-v1": 20,
         "james-heinrich/getid3": 20,
-        "rybakit/msgpack": 20
+        "rybakit/msgpack": 20,
+        "wapmorgan/binary-stream": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
