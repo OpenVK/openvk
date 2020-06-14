@@ -14,7 +14,7 @@ final class ThemepacksPresenter extends OpenVKPresenter
             $theme = Themepacks::i()[$themepack];
         
         if($resClass === "resource") {
-            $data = $theme->fetchStaticResource($resource);
+            $data = $theme->fetchStaticResource(chandler_escape_url($resource));
         } else if($resClass === "stylesheet") {
             if($resource !== "styles.css")
                 $this->notFound();
@@ -27,7 +27,7 @@ final class ThemepacksPresenter extends OpenVKPresenter
         if(!$data)
             $this->notFound();
         
-        header("Content-Type: " . system_extension_mime_type($resource));
+        header("Content-Type: " . system_extension_mime_type($resource) ?? "text/plain; charset=unknown-8bit");
         header("Content-Size: " . strlen($data));
         header("Cache-Control: public, no-transform, max-age=31536000");
         exit($data);
