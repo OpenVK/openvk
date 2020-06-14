@@ -46,7 +46,8 @@ class Themepacks implements \ArrayAccess
     function getThemeList(): \Traversable
     {
         foreach($this->loadedThemepacks as $id => $theme)
-            yield $id => ($theme->getName(Session::i()->get("lang", "ru")));
+            if($theme->isEnabled())
+                yield $id => ($theme->getName(Session::i()->get("lang", "ru")));
     }
     
     /* ArrayAccess */

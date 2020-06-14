@@ -7,18 +7,25 @@ class Themepack
     private $ver;
     private $meta;
     private $home;
+    private $enabled;
     
-    function __construct(string $id, string $ver, object $meta)
+    function __construct(string $id, string $ver, bool $enabled, object $meta)
     {
-        $this->id   = $id;
-        $this->ver  = $ver;
-        $this->meta = $meta;
-        $this->home = OPENVK_ROOT . "/themepacks/$id";
+        $this->id      = $id;
+        $this->ver     = $ver;
+        $this->meta    = $meta;
+        $this->home    = OPENVK_ROOT . "/themepacks/$id";
+        $this->enabled = $enabled;
     }
     
     function getId(): string
     {
         return $this->id;
+    }
+    
+    function isEnabled(): bool
+    {
+        return $this->enabled;
     }
     
     function getName(?string $lang = NULL): string
@@ -71,6 +78,6 @@ class Themepack
         if($manifest->openvk_version > Themepacks::THEMPACK_ENGINE_VERSION)
             throw new Exceptions\IncompatibleThemeException("Theme is built for newer OVK (themeEngine" . $manifest->openvk_version . ")");
         
-        return new static($manifest->id, $manifest->version, (object) $manifest->metadata);
+        return new static($manifest->id, $manifest->version, (bool) ($manifest->enabled ?? true), (object) $manifest->metadata);
     }
 }
