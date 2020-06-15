@@ -63,7 +63,7 @@
             {elseif ($comment->getUType() === 1)}
             <div class="post-author">
                <a href="#"><b>
-               Андрей Спиридонов
+               {=OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["supportName"]}
                </b></a> написал<br>
                <a href="#" class="date">{$comment->getTime()}</a>
             </div>
