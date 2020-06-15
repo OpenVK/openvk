@@ -25,6 +25,11 @@ final class AdminPresenter extends OpenVKPresenter
         return $repo->find($query, $page);
     }
     
+    function onStartup(): void
+    {
+        exit("Не реализовано...");
+    }
+    
     function renderIndex(): void
     {
         
