@@ -17,7 +17,7 @@
 
 {block wrap}
     <div class="messenger-app">
-        <div class="messenger-app--messages">
+        <div class="messenger-app--messages" data-bind="event: { scroll: onMessagesScroll }">
             <div data-bind="foreach: messages">
                 <div class="messenger-app--messages---message">
                     <img class="ava" data-bind="attr: { src: sender.avatar, alt: sender.name }" />
@@ -65,13 +65,21 @@
             window.messages     = ko.observableArray(initialMessages);
             this.messages       = window.messages;
             this.messageContent = ko.observable("");
-            this.sendMessage    = model => {
+            
+            this.sendMessage = model => {
                 if(model.messageContent() === "") return false;
                 
                 window.Msg.sendMessage(model.messageContent());
                 model.messageContent("");
-            }
+            };
+            this.loadHistory = _ => {
+                window.Msg._loadHistory();
+            };
             
+            this.onMessagesScroll   = (model, e) => {
+                if(e.target.scrollTop < 21)
+                    model.loadHistory();
+            };
             this.onTextareaKeyPress = (model, e) => {
                 if(e.which === 13) {
                     if(!e.metaKey && !e.shiftKey) {
