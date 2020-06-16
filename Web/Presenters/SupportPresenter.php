@@ -9,8 +9,8 @@ use openvk\Web\Models\Repositories\TicketComments;
 use openvk\Web\Models\RowModel;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
-use Composer\Factory;
-use Composer\IO\NullIO;
+use Chandler\Session\Session;
+use Netcarver\Textile;
 
 final class SupportPresenter extends OpenVKPresenter
 {
@@ -187,5 +187,31 @@ final class SupportPresenter extends OpenVKPresenter
             $this->flashFail("succ", "Тикет изменён", "Изменения вступят силу через несколько секунд.");
         }
         
+    }
+    
+    function renderKnowledgeBaseArticle(string $name): void
+    {
+        $lang = Session::i()->get("lang", "ru");
+        $base = OPENVK_ROOT . "/data/knowledgebase";
+        if(file_exists("$base/$name.$lang.textile"))
+            $file = "$base/$name.$lang.textile";
+        else if(file_exists("$base/$name.textile"))
+            $file = "$base/$name.textile";
+        else
+            $this->notFound();
+        
+        $lines = file($file);
+        if(!preg_match("%^OpenVK-KB-Heading: (.+)$%", $lines[0], $matches)) {
+            $heading = "Article $name";
+        } else {
+            $heading = $matches[1];
+            array_shift($lines);
+        }
+        
+        $content = implode("\r\n", $lines);
+        
+        $parser = new Textile\Parser;
+        $this->template->heading = $heading;
+        $this->template->content = $parser->parse($content);
     }
 }

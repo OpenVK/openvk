@@ -25,6 +25,8 @@ routes:
       handler: "About->language"
     - url: "/donate"
       handler: "About->donate"
+    - url: "/kb/{slug}"
+      handler: "Support->knowledgeBaseArticle"
     - url: "/about:{?!productName}"
       handler: "About->version"
       placeholders:

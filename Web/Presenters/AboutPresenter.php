@@ -22,7 +22,7 @@ final class AboutPresenter extends OpenVKPresenter
     
     function renderRules(): void
     {
-        $this->template->rules = file_get_contents(__DIR__ . "/../../data/rules.xhtml");
+        $this->pass("openvk!Support->knowledgeBaseArticle", "rules");
     }
     
     function renderHelp(): void
@@ -38,7 +38,9 @@ final class AboutPresenter extends OpenVKPresenter
     {}
     
     function renderPrivacy(): void
-    {}
+    {
+        $this->pass("openvk!Support->knowledgeBaseArticle", "privacy");
+    }
     
     function renderVersion(): void
     {

@@ -22,7 +22,8 @@
         "james-heinrich/getid3": "^1.9@dev",
         "rybakit/msgpack": "dev-master",
         "wapmorgan-alter/cab-archive": "0.0.7.1",
-        "wapmorgan/binary-stream": "dev-master"
+        "wapmorgan/binary-stream": "dev-master",
+        "netcarver/textile": "^3.7@dev"
     },
     "minimum-stability": "dev"
 }

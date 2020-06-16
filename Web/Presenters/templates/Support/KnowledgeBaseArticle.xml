@@ -1,0 +1,11 @@
+{extends "../@layout.xml"}
+
+{block title}{$heading}{/block}
+
+{block header}
+    {$heading}
+{/block}
+
+{block content}
+    {$content|noescape}
+{/block}
