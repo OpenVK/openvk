@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
+use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Repositories\{Users, Managers};
-use Composer\Factory;
-use Composer\IO\NullIO;
 use Chandler\Session\Session;
 
 final class AboutPresenter extends OpenVKPresenter
@@ -44,8 +43,7 @@ final class AboutPresenter extends OpenVKPresenter
     
     function renderVersion(): void
     {
-        //$composerFactory = new Factory();
-        //$composer        = $composerFactory->createComposer(new NullIO(), OPENVK_ROOT . "/composer.json", false);
+        $this->template->themes = Themepacks::i()->getAllThemes();
     }
     
     function renderLanguage(): void

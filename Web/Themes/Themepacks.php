@@ -50,6 +50,11 @@ class Themepacks implements \ArrayAccess
                 yield $id => ($theme->getName(Session::i()->get("lang", "ru")));
     }
     
+    function getAllThemes(): array
+    {
+        return $this->loadedThemepacks;
+    }
+    
     /* ArrayAccess */
     
     function offsetExists($offset): bool
