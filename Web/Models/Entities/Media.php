@@ -44,7 +44,9 @@ abstract class Media extends Postable
         $hash = $this->getRecord()->hash;
         
         switch(OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["mode"]) {
+            default:
             case "default":
+            case "basic":
                 return "http://" . $_SERVER['HTTP_HOST'] . "/blob_" . substr($hash, 0, 2) . "/$hash.$this->fileExtension";
             break;
             case "accelerated":
