@@ -1,0 +1,47 @@
+openvk:
+    debug: true
+    appearance:
+        name: "OpenVK"
+        motd: "Yet another OpenVK instance"
+    preferences:
+        femaleGenderPriority: true
+        uploads:
+            disableLargeUploads: false
+            mode: "basic"
+        shortcodes:
+            forbiddenNames:
+                - "index.php"
+        security:
+            requireEmail: false
+            requirePhone: false
+            forcePhoneVerification: false
+            forceEmailVerification: false
+            enableSu: true
+        support:
+            supportName: "Moderator"
+            adminAccount: 1 # Change this ok
+        messages:
+            strict: false
+        menu:
+            links:
+                
+        adPoster:
+            enable: false
+            src: "https://example.org/ad_poster.jpeg"
+            caption: "Ad caption"
+            link: "https://example.org/product.aspx?id=10&from=ovk"
+        bellsAndWhistles:
+            fartscroll: false
+            testLabel: false
+    credentials:
+        zadarma:
+            enable: false
+            callerId: ""
+            key: ""
+            secret: ""
+        eventDB:
+            enable: false # Better enable this
+            database:
+                dsn: "mysql:unix_socket=/tmp/mysql.sock;dbname=openvk-eventdb"
+                user: ""
+                password: ""
