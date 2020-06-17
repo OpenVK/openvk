@@ -69,6 +69,11 @@ class Video extends Media
             return $this->getVideoDriver()->getThumbnailURL();
         }
     }
+
+    function getOwnerVideo(): int
+    {
+        return $this->getRecord()->owner;
+    }
     
     function setLink(string $link): string
     {
@@ -83,5 +88,20 @@ class Video extends Media
         $this->stateChanges("link", $pointer);
         
         return $pointer;
+    }
+
+    function isDeleted(): bool
+    {
+	if ($this->getRecord()->deleted == 1)
+	    return TRUE;
+	else
+        return FALSE;
+    }
+
+    function deleteVideo(): void 
+    {
+        $this->setDeleted(1);
+        $this->unwire();
+        $this->save();
     }
 }

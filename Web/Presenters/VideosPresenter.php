@@ -38,6 +38,8 @@ final class VideosPresenter extends OpenVKPresenter
     {
         $user = $this->users->get($owner);
         if(!$user) $this->notFound();
+
+        if($this->videos->getByOwnerAndVID($owner, $vId)->isDeleted()) $this->notFound();
         
         $this->template->user     = $user;
         $this->template->video    = $this->videos->getByOwnerAndVID($owner, $vId);
@@ -98,5 +100,26 @@ final class VideosPresenter extends OpenVKPresenter
         } 
         
         $this->template->video = $video;
+    }
+
+    function renderRemove(int $owner, int $vid): void
+    {
+        $this->assertUserLoggedIn();
+        
+        $video = $this->videos->getByOwnerAndVID($owner, $vid);
+        if(!$video)
+            $this->notFound();
+        $user = $this->user->id;
+        
+        if(!is_null($user)) {
+            if($video->getOwnerVideo() == $user) {
+                $video->deleteVideo($owner, $vid);
+            }
+        } else {
+            $this->flashFail("err", "Не удалось удалить пост", "Вы не вошли в аккаунт.");
+        }
+        
+        $this->redirect("/videos".$owner, static::REDIRECT_TEMPORARY);
+        exit;
     }
 }
