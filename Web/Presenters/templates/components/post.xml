@@ -61,7 +61,7 @@
                     </div>
                 </div>
                 <div n:if="isset($thisUser) &&! ($compact ?? false)" class="post-menu">
-                    {if ($post->getOwnerPost() == $thisUser->getId() || $post->getTargetWall() == $thisUser->getId()) && !($forceNoDeleteLink ?? false)}
+                    {if $post->canBeDeletedBy($thisUser) && !($forceNoDeleteLink ?? false)}
                         <a href="/wall{$post->getPrettyId()}/delete">{_"delete"}</a>&nbsp;|&nbsp;
                     {/if}
                     

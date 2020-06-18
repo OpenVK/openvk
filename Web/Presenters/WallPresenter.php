@@ -295,9 +295,15 @@ final class WallPresenter extends OpenVKPresenter
         if(!$post)
             $this->notFound();
         $user = $this->user->id;
-        
+
+        $wallOwner = ($wall > 0 ? (new Users)->get($wall) : (new Clubs)->get($wall * -1))
+                     ?? $this->flashFail("err", "Не удалось удалить пост", "Такого пользователя не существует.");
+
+        if($wall < 0) $canBeDeletedByOtherUser = $wallOwner->canBeModifiedBy($this->user->identity);
+            else $canBeDeletedByOtherUser = false;
+
         if(!is_null($user)) {
-            if($post->getOwnerPost() == $user || $post->getTargetWall() == $user) {
+            if($post->getOwnerPost() == $user || $post->getTargetWall() == $user || $canBeDeletedByOtherUser) {
                 $post->unwire();
                 $post->delete(false);
             }
@@ -305,7 +311,7 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", "Не удалось удалить пост", "Вы не вошли в аккаунт.");
         }
         
-        $this->redirect($_SERVER["HTTP_REFERER"], static::REDIRECT_TEMPORARY);
+        $this->redirect($wall < 0 ? "/club".($wall*-1) : "/id".$wall, static::REDIRECT_TEMPORARY);
         exit;
     }
 }

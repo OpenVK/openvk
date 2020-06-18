@@ -18,8 +18,11 @@
     </div>
     <div style="float: left; min-height: 100px; width: 32%;">
         <h4>Действия</h4>
-        {if $post->getOwnerPost() == $thisUser->getId() || $post->getTargetWall() == $thisUser->getId()}
-            <a class="profile_link" style="display:block;width:96%;" href="/wall{$post->getPrettyId()}/delete">Удалить</a>
+        {if isset($thisUser)}
+            {var canDelete = $post->canBeDeletedBy($thisUser)}
+        {/if}
+        
+        <a n:if="$canDelete ?? false" class="profile_link" style="display:block;width:96%;" href="/wall{$post->getPrettyId()}/delete">Удалить</a>
         {/if}
         <a class="profile_link" style="display:block;width:96%;" href="/report.pl/{$post->getId()}?type=post">Пожаловаться</a>
     </div>

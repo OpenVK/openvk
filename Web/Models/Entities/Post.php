@@ -72,6 +72,16 @@ class Post extends Postable
         return $this->getRecord()->owner;
     }
     
+    function canBeDeletedBy(User $user): bool
+    {
+        if($this->getTargetWall() < 0)
+            $cDel = (new Clubs)->get(abs($this->getTargetWall()))->canBeModifiedBy($user);
+        else
+            $cDel = $this->getTargetWall() === $user->getId();
+        
+        return $this->getOwnerPost() === $user->getId() || $cDel;
+    }
+    
     function setContent(string $content): void
     {
         if(ctype_space($content))
