@@ -121,13 +121,13 @@ return (function() {
     
     setlocale(LC_TIME, "POSIX");
 
-    $showCommitHash = true; # plz remove when release
+    $showCommitHash = false; # plz remove when release
     if(is_dir($gitDir = OPENVK_ROOT . "/.git") && $showCommitHash)
         $ver = trim(`git --git-dir="$gitDir" log --pretty="%h" -n1 HEAD`) . "-nightly";
     else
-	$ver = "Build 15";
+	$ver = "Technical Preview 1";
 
-    define("OPENVK_VERSION", "Altair Preview ($ver)", false);
+    define("OPENVK_VERSION", "Altair ($ver)", false);
     define("OPENVK_DEFAULT_PER_PAGE", 10, false);
     define("__OPENVK_ERROR_CLOCK_IN_FUTURE", "Server clock error: FK1200-DTF", false);
 });
