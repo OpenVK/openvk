@@ -49,11 +49,14 @@
             </div>
             <br/>
             <div n:if="isset($thisUser) && $thisUser->getId() === $user->getId()">
-                <h4>{_"actions"}</h4>
+                <h4>{_actions}</h4>
                 <a href="/video{$video->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">
-                    {_"edit"}
+                    {_edit}
                 </a>
-            </div>
+                <a href="/video{$video->getPrettyId()}/remove" class="profile_link" style="display:block;width:96%;">
+                    {_delete}
+                </a>
+            <div>
         </div>
     </div>
 {/block}
