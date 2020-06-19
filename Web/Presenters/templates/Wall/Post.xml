@@ -23,7 +23,6 @@
         {/if}
         
         <a n:if="$canDelete ?? false" class="profile_link" style="display:block;width:96%;" href="/wall{$post->getPrettyId()}/delete">Удалить</a>
-        {/if}
         <a class="profile_link" style="display:block;width:96%;" href="/report.pl/{$post->getId()}?type=post">Пожаловаться</a>
     </div>
 {/block}
