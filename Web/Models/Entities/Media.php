@@ -14,7 +14,7 @@ abstract class Media extends Postable
             unlink($this->pathFromHash($this->changes["hash"]));
     }
     
-    private function getBaseDir(): string
+    protected function getBaseDir(): string
     {
         $uploadSettings = OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"];
         if($uploadSettings["mode"] === "server" && $uploadSettings["server"]["kind"] === "cdn")
