@@ -584,7 +584,7 @@ class User extends RowModel
             if(\Chandler\MVC\Routing\Router::i()->getMatchingRoute("/$code")[0]->presenter !== "UnknownTextRouteStrategy")
                 return false;
 	    
-	    $pClub = DB::i()->getContext()->table("groups")->where("shortcode", $code)->fetch();
+	    $pClub = DatabaseConnection::i()->getContext()->table("groups")->where("shortcode", $code)->fetch();
             if(!is_null($pClub))
                 return false;
         }
