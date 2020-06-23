@@ -403,9 +403,9 @@
 "privacy_value_users" = "Пользователям OpenVK";
 "privacy_value_friends" = "Друзья";
 "privacy_value_friends_dative" = "Друзьям";
-"privacy_value_only_me_and_super_capite" = "Я и Виталина Павленко";
-"privacy_value_only_me_and_super_capite_dative" = "Мне и Виталине Павленко";
-"privacy_value_super_capite" = "Виталине Павленко";
+"privacy_value_only_me_and_super_capite" = "Только я";
+"privacy_value_only_me_and_super_capite_dative" = "Только мне";
+"privacy_value_super_capite" = "Никто";
 
 "your_email_address" = "Адрес Вашей электронной почты";
 "your_page_address" = "Адрес Вашей страницы";
