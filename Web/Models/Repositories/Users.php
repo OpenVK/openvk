@@ -38,16 +38,16 @@ class Users
     
     function find(string $query, int $page = 1, ?int $perPage = NULL): \Traversable
     {
-        $query   = "$query%";
+        $query   = "%$query%";
         $perPage = $perPage ?? OPENVK_DEFAULT_PER_PAGE;
-        foreach($this->users->where("first_name LIKE ? OR last_name LIKE ?", $query,$query)->page($page, $perPage) as $result)
+        foreach($this->users->where("CONCAT_WS(' ', first_name, last_name) LIKE ?", $query)->page($page, $perPage) as $result)
             yield new User($result);
     }
     
     function getFoundCount(string $query): int
     {
-        $query = "$query%";
-        return sizeof($this->users->where("first_name LIKE ? OR last_name LIKE ?", $query, $query));
+        $query = "%$query%";
+        return sizeof($this->users->where("CONCAT_WS(' ', first_name, last_name) LIKE ?", $query));
     }
     
     function getStatistics(): object

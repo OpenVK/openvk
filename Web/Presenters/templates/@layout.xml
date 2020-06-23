@@ -69,7 +69,7 @@
                         <a href="/logout">{_"header_log_out"}</a>
                     </div>
                     <div class="link">
-                        <form action="search" method="get">
+                        <form action="/search" method="get">
                             <input type="search" name="query" placeholder="{_"header_search"}" style="background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; background-color: #fff; padding-left: 18px;width: 120px;" />
                         </form>
                     </div>
