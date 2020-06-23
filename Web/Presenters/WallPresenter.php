@@ -305,7 +305,7 @@ final class WallPresenter extends OpenVKPresenter
         if(!is_null($user)) {
             if($post->getOwnerPost() == $user || $post->getTargetWall() == $user || $canBeDeletedByOtherUser) {
                 $post->unwire();
-                $post->delete(false);
+                $post->delete();
             }
         } else {
             $this->flashFail("err", "Не удалось удалить пост", "Вы не вошли в аккаунт.");
