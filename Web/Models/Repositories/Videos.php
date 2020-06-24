@@ -37,13 +37,12 @@ class Videos
     function getByUser(User $user, int $page = 1, ?int $perPage = NULL): \Traversable
     {
         $perPage = $perPage ?? OPENVK_DEFAULT_PER_PAGE;
-        foreach($this->videos->where("owner", $user->getId())->page($page, $perPage) as $video)
-            if(!$video->deleted)
-                yield new Video($video);
+        foreach($this->videos->where("owner", $user->getId())->where("deleted", 0)->page($page, $perPage) as $video)
+            yield new Video($video);
     }
     
     function getUserVideosCount(User $user): int
     {
-        return sizeof($this->videos->where("owner", $user->getId()));
+        return sizeof($this->videos->where("owner", $user->getId())->where("deleted", 0));
     }
 }

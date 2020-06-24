@@ -24,13 +24,13 @@ final class VideosPresenter extends OpenVKPresenter
         if(!$user) $this->notFound();
         
         $this->template->user   = $user;
-        $this->template->videos = $this->videos->getByUser($user, $this->queryParam("p") ?? 1);
+        $this->template->videos = $this->videos->getByUser($user, (int) ($this->queryParam("p") ?? 1));
         $this->template->count  = $this->videos->getUserVideosCount($user);
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
-            "page"    => $this->queryParam("p") ?? 1,
+            "page"    => (int) ($this->queryParam("p") ?? 1),
             "amount"  => NULL,
-            "perPage" => OPENVK_DEFAULT_PER_PAGE,
+            "perPage" => 7,
         ];
     }
     
