@@ -24,7 +24,7 @@
     <script>
         require.config({
             paths: {
-                'vs': '/assets/packages/static/openvk/js/vendor/monaco/min/vs' 
+                'vs': '/assets/packages/static/openvk/js/node_modules/monaco-editor/min/vs' 
             }
         });
         require(['vs/editor/editor.main'], function() {
