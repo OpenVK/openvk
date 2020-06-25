@@ -85,21 +85,22 @@
                         {/if}
                     </a>
                     
-                    <div style="float: right; font-size: .7rem;">
-                        {var liked = $post->hasLikeFrom($thisUser)}
-                        
-                        <a
-                          href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}"
-                          class="post-like-button"
+
+					
+					
+					<div class="like_wrap">
+					{var liked = $post->hasLikeFrom($thisUser)}
+					<a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}"
+					class="post-like-button"
                           data-liked="{(int) $liked}"
                           data-likes="{$post->getLikesCount()}">
-                            <text class="heart" style="{if $liked}color: red;{else}filter: sepia(1){/if}">
-                                &#10084;
-                            </text>
-                            
-                            <text class="likeCnt">{$post->getLikesCount()}</text>
-                        </a>
-                    </div>
+						  
+  
+  <div class="heart" style="{if $liked}opacity: 1;{else}opacity: 0.4;{/if}"></div>
+  <span class="likeCnt">{$post->getLikesCount()}</span>
+</a></div>
+
+
                 </div>
             </td>
         </tr>

@@ -1160,3 +1160,24 @@ body.scrolled .toTop:hover {
     width: 100%;
     display: block;
 }
+.like_wrap {
+    color: #2F5879;
+    font-size: 10px;
+    cursor: pointer;
+    float: right;
+}
+.heart {
+    background: url(/assets/packages/static/openvk/img/like.gif) no-repeat 1px 0px;
+    height: 10px;
+    margin: 2px 3px 0px;
+    width: 11px;
+    float: left;
+}
+.likeCnt {
+    font-size: 10px;
+    margin-right: 3px;
+    float: left;
+}
+.heart:hover {
+    opacity: 1 !important;
+}

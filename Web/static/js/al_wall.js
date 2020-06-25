@@ -51,10 +51,10 @@ u(".post-like-button").on("click", function(e) {
     var heart   = u(".heart", thisBtn);
     var counter = u(".likeCnt", thisBtn);
     var likes   = counter.text();
-    var isLiked = heart.attr("style") === 'color: red;';
+    var isLiked = heart.attr("style") === 'opacity: 1;';
     
     ky(link);
-    heart.attr("style", isLiked ? 'filter: sepia(1);' : 'color: red;');
+    heart.attr("style", isLiked ? 'opacity: 0.4;' : 'opacity: 1;');
     counter.text(parseInt(likes) + (isLiked ? -1 : 1));
     
     return false;
