@@ -9,6 +9,7 @@
         <meta n:ifset="$csrfToken" name="csrf" value="{$csrfToken}" />
         {css "css/style.css"}
         {css "css/dialog.css"}
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         {script "js/node_modules/umbrellajs/umbrella.min.js"}
         {script "js/openvk.cls.js"}
         {ifset $thisUser}
@@ -73,6 +74,8 @@
                             <input type="search" name="query" placeholder="{_"header_search"}" style="background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; background-color: #fff; padding-left: 18px;width: 120px;" />
                         </form>
                     </div>
+					
+
                     {else}
                         <div class="link">
                             <a href="/login">вход</a>
@@ -132,6 +135,7 @@
                                 class="psa-poster"
                                 style="max-width: 100%; margin-top: 50px;" />
                         </a>
+
                     {else}
                         <a href="/support" class="link">Поддержка</a>
                         <a href="/logout" class="link">Выйти</a>
@@ -159,8 +163,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="wrapH">
-                    <div id="wrapHI">
+                
                             {ifset wrap}
                                 {ifset $flashMessage}
                                     <div class="msg msg_{$flashMessage->type}">
@@ -188,8 +191,7 @@
                                     </div>
                                 </div>
                             {/ifset}
-                    </div>
-                </div>
+                
             </div>
         </div>
         
