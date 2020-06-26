@@ -5,9 +5,15 @@ trait TRichText
 {
     private function formatEmojis(string $text): string
     {
-        $emojis = \Emoji\detect_emoji($text);
+        $emojis   = \Emoji\detect_emoji($text);
+		$replaced = []; # OVK-113
         foreach($emojis as $emoji) {
-            $point  = strtolower($emoji["hex_str"]);
+			$point = strtolower($emoji["hex_str"]);
+			if(in_array($point, $replaced))
+				continue;
+			else
+				$replaced[] = $point;
+			
             $image  = "https://cdn.jsdelivr.net/npm/emojione-assets@4.5.0/png/32/$point.png";
             $image  = "<img src='$image' alt='$emoji[emoji]' ";
             $image .= "style='max-height:10pt; padding-left: 2pt; padding-right: 2pt; vertical-align: bottom;' />";
@@ -15,7 +21,7 @@ trait TRichText
             $text = str_replace($emoji["emoji"], $image, $text);
         }
         
-        return $text;
+		return $text;
     }
     
     private function removeZalgo(string $text): string
