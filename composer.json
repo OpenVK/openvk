@@ -14,7 +14,6 @@
         }
     },
     "require": {
-        "p3k/emoji-detector": "^0.2.1",
         "guzzlehttp/guzzle": "^6.5",
         "komeiji-satori/curl": "dev-master",
         "whichbrowser/parser": "dev-master",
@@ -23,7 +22,8 @@
         "rybakit/msgpack": "dev-master",
         "wapmorgan-alter/cab-archive": "0.0.7.1",
         "wapmorgan/binary-stream": "dev-master",
-        "netcarver/textile": "^3.7@dev"
+        "netcarver/textile": "^3.7@dev",
+        "al/emoji-detector": "9999999-dev"
     },
     "minimum-stability": "dev"
 }
