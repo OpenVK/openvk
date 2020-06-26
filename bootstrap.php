@@ -121,11 +121,11 @@ return (function() {
     
     setlocale(LC_TIME, "POSIX");
 
-    $showCommitHash = true; # plz remove when release
+    $showCommitHash = false; # plz remove when release
     if(is_dir($gitDir = OPENVK_ROOT . "/.git") && $showCommitHash)
         $ver = trim(`git --git-dir="$gitDir" log --pretty="%h" -n1 HEAD`) . "-nightly";
     else
-	$ver = "Build 15";
+	$ver = "Technical Preview 2";
 
     define("OPENVK_VERSION", "Altair Preview ($ver)", false);
     define("OPENVK_DEFAULT_PER_PAGE", 10, false);
