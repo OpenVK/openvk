@@ -1,0 +1,51 @@
+h1. OpenVK 2
+
+*OpenVK* is an attempt to create a simple CMS that -cosplays- imitates old VK. Code provided here is not stable yet.
+To be honest, we don't even know whether it even works. However, this version (unlike classic) is maintained and we will be happy to accept your bugreports "in our bug-tracker":http://jirakitsu.wormixtest.ru/projects/OVK/issues/. You should also be able to submit them using "ticketing system":https://openvk2.veselcraft.ru/support?act=new (you will need an OVK account for this).
+
+h2. Can I create my own OpenVK instance?
+
+Yes. And you're very welcome to.
+However, OVK makes use of Chandler Application Server. This software requires extensions, that may not be provided by your hosting provider (namely, sodium and yaml. this extensions are available on most of ISPManager hostings).
+Simply put, we would recommend you to use latest CentOS (running on your own VDS/Dedicated) with latest PHP from EPEL. We use this configuration on our "testing instance":https://openvk2.veselcraft.ru/ and thus will be able to provide quicker support for OVK running in this environment.
+
+h3. Installation procedure
+
+# Install Composer
+# Install Node.js
+# Install Yarn
+# Install Chandler
+# Import install/init-static-db.sql to *same db* you installed Chandler to
+# Import install/init-event-db.sql to *separate db*
+# Rename openvk-example.yml to openvk.yml and change options
+# Run %composer install% in OpenVK directory
+# Move to Web/static/js and execute %yarn install%
+# Set openvk as your root app in chandler.yml
+
+h3. Can I upgrade my OpenVK Classic installation?
+
+Right now not. But we will add upgrading script soon.
+
+h3. If my website uses OpenVK, should I publish it's soures?
+
+You are encouraged to do so. We don't enforce this though. You can keep your sources to yourself (unless you distribute your OpenVK distro to other people).
+You also not required to publish source texts of your themepacks and plugins.
+
+h2. Where can I get assistance?
+
+You may reach out to us via:
+* "Bug-tracker":http://jirakitsu.wormixtest.ru/projects/OVK/issues/
+* "Ticketing system":https://openvk2.veselcraft.ru/support?act=new
+* "Telegram chat":https://t.me/openvkchat
+
+*Attention*: bug tracker and telegram chat are public places. And ticketing system is being served by volounteers. If you need to report something, that shouldn't be immediately disclosed to general public (for instance, vulnerability report), *please use contact us directly*:
+* *Head of OpenVK Security Commitee*: stingray@jill.pl or "@jill_senpai":https://t.me/jill_senpai
+* *Backend developer*: "@saddyteirusu":https://t.me/saddyteirusu
+
+h2. Release. When.
+
+February 2021?
+
+h2. Somewhat useful links
+
+* "A working OpenVK instance":https://openvk2.veselcraft.ru/
