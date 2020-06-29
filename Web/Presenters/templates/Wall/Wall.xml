@@ -36,9 +36,11 @@
                         </label>
                     {/if}
                     
-                    <label>
+                    {*
+					<label>
                         <input type="checkbox" name="nsfw" /> Содержит NSFW-контент
                     </label>
+					*}
                 </div>
                 <input type="file" name="_pic_attachment" accept="image/*" style="display:none;" />
                 <input type="hidden" name="type" value="1" />

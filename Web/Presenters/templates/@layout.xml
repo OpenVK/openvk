@@ -9,7 +9,7 @@
         <meta n:ifset="$csrfToken" name="csrf" value="{$csrfToken}" />
         {css "css/style.css"}
         {css "css/dialog.css"}
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		{script "js/node_modules/jquery/dist/jquery.min.js"}
         {script "js/node_modules/umbrellajs/umbrella.min.js"}
         {script "js/openvk.cls.js"}
         {ifset $thisUser}
@@ -25,8 +25,6 @@
                     {css "css/avatar.2.css"}
             {/if}
         {/ifset}
-        
-        {css "css/nsfw-posts.css"}
         
         {ifset headIncludes}{include headIncludes}{/ifset}
     </head>
