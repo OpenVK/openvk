@@ -7,5 +7,7 @@
 {/block}
 
 {block content}
-    {$content|noescape}
+	<div class="knowledgeBaseArticle">
+		{$content|noescape}
+	</div>
 {/block}
