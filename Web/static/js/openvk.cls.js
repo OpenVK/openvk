@@ -1,15 +1,4 @@
-function hidePanel(el,count=null) {
-    var info = el.parentNode.children[1];
-    if (info.style.display=="none") {
-        info.style.display="block";
-        el.className = "content_title_expanded";
-        if (count) el.innerHTML=el.innerHTML.replace(" ("+count+")","");
-    } else {
-        info.style.display="none";
-        el.className = "content_title_unexpanded";
-        if (count) el.innerHTML+=" ("+count+")";
-    }
-}
+
 
 function show_write_textarea() {
     var el = document.getElementById('write');
@@ -31,6 +20,18 @@ function edit_post(id, wid) {
         ed.style.display = "block";
     }
 }
+
+
+
+
+        $(function () {
+$('.content_title_expanded').click(function(){
+	$(this).toggleClass("content_title_expanded content_title_unexpanded");
+    $(this).next('div').slideToggle(300);
+});});
+
+
+
 
 document.addEventListener("DOMContentLoaded", function() { //BEGIN
 
