@@ -360,13 +360,7 @@ table {
     margin-bottom: 6px;
 }
 
-.page_info {
 
-    margin-top: 3px;
-    margin-left: 5px;
-    margin-bottom: 20px;
-
-}
 
 .page_status {
     font-weight: normal;
@@ -467,16 +461,17 @@ input[type=checkbox]:checked {
 }
 
 .content_title_unexpanded {
-    background-image: url('../img/flex_arrow_shut.gif');
+    background-image: url(../img/flex_arrow_shut.gif);
     background-repeat: no-repeat;
-    background-color: #e6e6e6;
-    border-top: #8B8B8B solid 1px;
+    background-color: #eee;
+    border-top: solid 1px #ccc;
     padding: 3px 24px;
     font-weight: bold;
-    color: #626262;
+    color: #888;
     font-size: 11px;
     cursor: pointer;
     display: block;
+    margin-top: 5px;
 }
 
 .content_subtitle {
@@ -1180,4 +1175,104 @@ body.scrolled .toTop:hover {
 }
 .heart:hover {
     opacity: 1 !important;
+}
+.content_title_expanded {
+    margin-top: 5px;
+}
+.page-wrap {
+    border-bottom: solid 1px #C3CAD2;
+    border-left: solid 1px #DAE1E8;
+    border-right: solid 1px #DAE1E8;
+    padding: 10px;
+}
+.wrap1 {
+    width: auto;
+    border: 1px solid #EBF0F4;
+    border-top: 0px;
+}
+.wrap2 {
+    border-right: 1px solid #F6F8FA;
+    border-top: 0px;
+}
+#wrapH {
+    border-right: solid 1px #EAEEF3;
+    border-left: solid 1px #EAEEF3;
+}
+#wrapHI {
+    border-right: solid 1px #D5DDE6;
+    border-left: solid 1px #D5DDE6;
+}
+.ugc-table td {
+    vertical-align: top !important;
+    font-size: 11px;
+    line-height: 13px;
+    margin: 0px;
+    padding: 1px 0px 1px 0px;
+}
+.label {
+    width: 120px !important;
+    color: gray;
+}
+.ugc-table tr > td:nth-of-type(2) {
+    display: block;
+    width: unset;
+    overflow: hidden;
+}
+.right_big_block {
+    width: 396px;
+    float: right;
+}
+#basicInfo {
+    padding: 5px 0px 15px 8px;
+}
+.accountInfo {
+    padding: 0px;
+    margin: 0px 0px 0px 8px;
+    border-bottom: solid 1px #DAE1E8;
+	display: block;
+}
+.profileName {
+    width: 225px;
+    color: #45688E;
+    font-size: 11px;
+    font-weight: bold;
+    margin: 0px;
+    padding: 2px 5px 0px 0px;
+}
+.profileName h2 {
+    color: #45688E;
+    font-size: 13px;
+    padding-bottom: 0px;
+	margin: 0px;
+    padding: 0px;
+}
+.notes_titles {
+    margin: 0px;
+    padding: 0px;
+    list-style: none;
+}
+.written {
+    background: url(/assets/packages/static/openvk/img/note.gif) no-repeat 0px 1px;
+    padding: 0px 0px 6px 22px;
+}
+.written a {
+    display: block;
+    padding: 0px 0px 1px 0px;
+}
+.notes_titles small {
+    color: #333;
+    font-weight: normal;
+    display: block;
+    font-size: 9px;
+}
+.notes_titles small a {
+    display: inline;
+    font-weight: normal;
+}
+.data {
+    width: 260px !important;
+}
+
+.knowledgeBaseArticle ul {
+	color: unset;
 }
