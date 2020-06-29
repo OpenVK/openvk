@@ -39,27 +39,29 @@ class Albums
     function getUserAlbums(User $user, int $page = 1, ?int $perPage = NULL): \Traversable
     {
         $perPage = $perPage ?? OPENVK_DEFAULT_PER_PAGE;
-        $albums  = $this->albums->where("owner", $user->getId())->where("special_type", 0)->where("deleted", false);
+        $albums  = $this->albums->where("owner", $user->getId())->where("deleted", false);
         foreach($albums->page($page, $perPage) as $album)
             yield new Album($album);
     }
     
     function getUserAlbumsCount(User $user): int
     {
-        $albums = $this->albums->where("owner", $user->getId())->where("special_type", 0)->where("deleted", false);
+        $albums = $this->albums->where("owner", $user->getId())->where("deleted", false);
         return sizeof($albums);
     }
     
     function getClubAlbums(Club $club, int $page = 1, ?int $perPage = NULL): \Traversable
     {
         $perPage = $perPage ?? OPENVK_DEFAULT_PER_PAGE;
-        foreach($this->albums->where("owner", $club->getId() * -1)->where("deleted", false)->page($page, $perPage) as $album)
+		$albums  = $this->albums->where("owner", $club->getId() * -1)->where("special_type", 0)->where("deleted", false);
+        foreach($albums->page($page, $perPage) as $album)
             yield new Album($album);
     }
     
     function getClubAlbumsCount(Club $club): int
     {
-        return sizeof($this->albums->where("owner", $club->getId() * -1)->where("deleted", false));
+		$albums = $this->albums->where("owner", $club->getId() * -1)->where("special_type", 0)->where("deleted", false);
+        return sizeof($albums);
     }
     
     function getAvatarAlbumById(int $id, int $regTime): Album
@@ -90,7 +92,7 @@ class Albums
     
     function getClubAvatarAlbum(Club $club): Album
     {
-        return $this->getAvatarAlbumById($club->getId() * -1, 0);
+        return $this->getAvatarAlbumById($club->getId() * -1, time());
     }
     
     function getUserWallAlbum(User $user): Album
