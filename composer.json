@@ -22,8 +22,7 @@
         "rybakit/msgpack": "dev-master",
         "wapmorgan-alter/cab-archive": "0.0.7.1",
         "wapmorgan/binary-stream": "dev-master",
-        "netcarver/textile": "^3.7@dev",
-        "al/emoji-detector": "9999999-dev"
+        "netcarver/textile": "^3.7@dev"
     },
     "minimum-stability": "dev"
 }
