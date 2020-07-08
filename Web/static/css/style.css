@@ -798,101 +798,40 @@ table.User {
 }
 
 .messenger-app--messages, .messenger-app--input {
-    padding: 10px 70px;
+    padding: 10px;
 }
-
-.messenger-app--messages {
-    height: 360px;
-    overflow-y: auto;
-}
-
-.messenger-app--messages---message, .messenger-app--input {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-}
-
-.messenger-app--messages---message {
-    margin-bottom: 1.2rem;
-}
-
 .messenger-app--messages---message .ava, .messenger-app--input > .ava {
-    max-width: 64px;
+    width: 40px;
+    height: 40px;
+    object-fit: cover;
 }
-
-.messenger-app--messages---message .ava, .messenger-app--input > .ava {
-    width: 52px;
-    height: 52px;
+.dialogi td {
+    vertical-align: top;
+    padding: 5px;
 }
-
-.messenger-app--messages---message ._content {
-    padding-left: 20px;
-    width: 300px;
+.dialogi {
+    border-collapse: collapse;
 }
-
-.messenger-app--messages---message ._content span, .messenger-app--messages---message ._content > a {
-    display: block;
+.dialogi tr:first-child {
+    border: none;
 }
-
-.messenger-app--messages---message ._content span {
+.dialogi tr {
+    border-top: 1px solid #ddd;
+}
+.messenger-app--input---messagebox textarea {
     width: 100%;
-    height: fit-content;
-    overflow: hidden;
-}
-
-.messenger-app--messages---message ._content .attachments {
-    width: 100%;
-}
-
-.messenger-app--messages---message ._content .attachments > .msg-attach-j * {
-    max-width: 86%;
-}
-
-.messenger-app--messages---message ._content .attachments:not(:empty) {
-    margin-top: 15px;
-}
-
-.messenger-app--messages---message .time {
-    width: 100px;
+    height: 40px !important;
+    resize: none;
+    margin-bottom: 10px !important;
 }
 
 .messenger-app--input {
     background-color: #f9f9f9;
-    height: 80px !important;
+    height: 72px !important;
     border-top: 1px solid #d6d6d6;
 }
-
-.messenger-app--input---messagebox {
-    box-sizing: border-box;
-    padding: 0 10px;
-    width: calc(100% - 128px);
-}
-
-.messenger-app--input---messagebox textarea {
-    width: 100%;
-    height: 50px !important;
-    resize: none;
-    margin-bottom: 8px !important;
-}
-
 .messenger-app--input---messagebox .button {
     float: right;
-}
-
-.messenger-app--input .blocked {
-    width: 100%;
-    height: 100%;
-    position: relative;
-}
-
-.messenger-app--input .blocked::after {
-    content: attr(data-localized-text);
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-    font-weight: 900;
 }
 
 .music-app {
@@ -1272,7 +1211,11 @@ body.scrolled .toTop:hover {
 .data {
     width: 260px !important;
 }
+.right_big_block h4 {
+    margin: 1px 0px 0px;
+    padding: 4px 0px 2px !important;
+}
 
 .knowledgeBaseArticle ul {
-	color: unset;
+    color: unset;
 }

@@ -109,7 +109,7 @@ class Message extends RowModel
                 "id"     => $author->getId(),
                 "link"   => $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST'] . $author->getURL(),
                 "avatar" => $author->getAvatarUrl(),
-                "name"   => $author->getFullName(),
+                "name"   => $author->getFirstName(),
             ],
             "timing" => [
                 "sent"   => (string) $this->getSendTime()->format("%e %B %G" . tr("time_at_sp") . "%X"),
