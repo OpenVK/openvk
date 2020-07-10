@@ -800,6 +800,13 @@ table.User {
 .messenger-app--messages, .messenger-app--input {
     padding: 10px;
 }
+
+.messenger-app--messages {
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
 .messenger-app--messages---message .ava, .messenger-app--input > .ava {
     width: 40px;
     height: 40px;
