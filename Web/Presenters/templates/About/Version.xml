@@ -385,9 +385,9 @@
                 </tr>
                 <tr>
                     <td class="e">
-                        Vladimir Barinov (veselcraft), Alexandra Katunina (jill_sempai), Konstantin Kichulkin (kosfurler),
-                        Nikita Volkov (sup_ban), Daniil Myslivets (myslivets), Alexander Kotov (llacker),
-                        Alexey Assemblerov (BiosNod), Ponywka and Illya Prokopenko (DSRev)
+                        Vladimir Barinov (veselcraft), Alexandra Katunina (jill_senpai), Konstantin Kichulkin (kosfurler),
+                        Nikita Volkov (sup_ban), Daniil Myslivets (myslivets), Alexander Kotov (l-lacker),
+                        Alexey Assemblerov (BiosNod), Ponywka and Ilya Prokopenko (dsrev)
                     </td>
                 </tr>
             </tbody>
@@ -457,7 +457,7 @@
                 </tr>
                 <tr>
                     <td class="e">Initial hosting</td>
-                    <td class="v">Illya Prokopenko (DSRev) and Alexandra Katunina (jill_sempai)</td>
+                    <td class="v">Ilya Prokopenko (dsrev) and Alexandra Katunina (jill_senpai)</td>
                 </tr>
                 <tr>
                     <td class="e">Bug-tracker hosting</td>
@@ -493,10 +493,10 @@
                 </tr>
                 <tr class="e">
                     <td>
-                        kovaltim, Vladimir Lapskiy (TeQuiero), Alexander Minkin (WerySkok), Polina Katunina (RousPhaul), tojevth,
-                        Egor Shevchenko, <del>Vadim Korovin (vadimkin)</del>, <del>Ash Defenders</del>,
-                        <del>Pavel Silaev</del>, Dmitriy Daemon (Dimas_NT), Illya Prokopenko (DSRev),
-                        cmed404 and unkown tester, who died shortly after trying to upload post with cat.
+                        kovaltim, Vladimir Lapskiy (TeQuiero), Alexander Minkin (WerySkok), Polina Katunina (RousPhaul), tojeveth,
+                        Egor Shevchenko, <del>Vadim Korovin (vadimkn)</del>, <del>Ash Defenders</del>,
+                        <del>Pavel Silaev</del>, Dmitriy Daemon (Dimas_NT), Ilya Prokopenko (dsrev),
+                        cmed404 and unknown tester, who died shortly after trying to upload post with cat.
                     </td>
                 </tr>
             </tbody>
