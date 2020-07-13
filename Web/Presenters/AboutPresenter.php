@@ -16,6 +16,12 @@ final class AboutPresenter extends OpenVKPresenter
             exit;
         }
         
+        if($_SERVER['REQUEST_URI'] == "/id0") {
+            header("HTTP/1.1 302 Found");
+            header("Location: /");
+            exit;
+        }
+        
         $this->template->stats = (new Users)->getStatistics();
     }
     

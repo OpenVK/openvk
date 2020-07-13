@@ -3,6 +3,8 @@ static: "static"
 routes:
     - url: "/"
       handler: "About->index"
+    - url: "/id0"
+      handler: "About->index"
     - url: "/terms"
       handler: "About->rules"
     - url: "/rpc"
