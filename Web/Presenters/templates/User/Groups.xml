@@ -2,7 +2,7 @@
 {var iterator = $user->getClubs($page)}
 {var count    = $user->getClubCount()}
 
-{block title}Группы{/block} 
+{block title}{_"groups"}{/block} 
 
 {block header}
     <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> » {_"groups"}

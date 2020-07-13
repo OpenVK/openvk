@@ -3,13 +3,19 @@
 
 {block header}
     <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
-    » 
-    Видеозапись
+    »
+    <a href="/videos{$thisUser->getId()}">{_"videos"}</a>
+    »
+    <a href="/video{$thisUser->getId()}_{$video->getId()}">{_"video"}</a>
+    »
+    Изменить видеозапись
 {/block}
 
 {block content}
+<div class="container_gray">
+    <h4>Изменить видеозапись</h4>
     <form method="post" enctype="multipart/form-data">
-      <table cellspacing="6">
+      <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
         <tbody>
           <tr>
             <td width="120" valign="top"><span class="nobold">{_"name"}:</span></td>
@@ -20,7 +26,7 @@
           <tr>
             <td width="120" valign="top"><span class="nobold">{_"description"}:</span></td>
             <td>
-                <textarea style="margin: 0px; height: 50px; width: 159px; resize: none;" name="desc">{$video->getDescription()}</textarea>
+                <textarea name="desc">{$video->getDescription()}</textarea>
             </td>
           </tr>
           <tr>
@@ -33,4 +39,5 @@
         </tbody>
       </table>
     </form>
+</div>
 {/block}

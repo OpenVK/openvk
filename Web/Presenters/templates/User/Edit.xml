@@ -36,7 +36,7 @@
         
         <h4>{_"main_information"}</h4>
         <form action="/edit?act=main" method="POST" enctype="multipart/form-data">
-            <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
@@ -145,7 +145,7 @@
             
         <h4>{_"contact_information"}</h4>
         <form action="/edit?act=contacts" method="POST" enctype="multipart/form-data">
-            <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
@@ -196,14 +196,14 @@
         
         <h4>{_"personal_information"}</h4>
         <form action="/edit?act=interests" method="POST" enctype="multipart/form-data">
-            <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
                             <span class="nobold">{_"interests"}: </span>
                         </td>
                         <td>
-                            <textarea type="text" name="interests" style="resize:none;width:159px;">{$user->getInterests()}</textarea>
+                            <textarea type="text" name="interests">{$user->getInterests()}</textarea>
                         </td>
                     </tr>
                     <tr>
@@ -211,7 +211,7 @@
                             <span class="nobold">{_"favorite_music"}: </span>
                         </td>
                         <td>
-                            <textarea type="text" name="fav_music" style="resize:none;width:159px;">{$user->getFavoriteMusic()}</textarea>
+                            <textarea type="text" name="fav_music">{$user->getFavoriteMusic()}</textarea>
                         </td>
                     </tr>
                     <tr>
@@ -219,7 +219,7 @@
                             <span class="nobold">{_"favorite_films"}: </span>
                         </td>
                         <td>
-                            <textarea type="text" name="fav_films" style="resize:none;width:159px;">{$user->getFavoriteFilms()}</textarea>
+                            <textarea type="text" name="fav_films">{$user->getFavoriteFilms()}</textarea>
                         </td>
                     </tr>
                     <tr>
@@ -227,7 +227,7 @@
                             <span class="nobold">{_"favorite_shows"}: </span>
                         </td>
                         <td>
-                            <textarea type="text" name="fav_shows" style="resize:none;width:159px;">{$user->getFavoriteShows()}</textarea>
+                            <textarea type="text" name="fav_shows">{$user->getFavoriteShows()}</textarea>
                         </td>
                     </tr>
                     <tr>
@@ -235,7 +235,7 @@
                             <span class="nobold">{_"favorite_books"}: </span>
                         </td>
                         <td>
-                            <textarea type="text" name="fav_books" style="resize:none;width:159px;">{$user->getFavoriteBooks()}</textarea>
+                            <textarea type="text" name="fav_books">{$user->getFavoriteBooks()}</textarea>
                         </td>
                     </tr>
                     <tr>
@@ -243,7 +243,7 @@
                             <span class="nobold">{_"favorite_quotes"}: </span>
                         </td>
                         <td>
-                            <textarea type="text" name="fav_quote" style="resize:none;width:159px;">{$user->getFavoriteQuote()}</textarea>
+                            <textarea type="text" name="fav_quote">{$user->getFavoriteQuote()}</textarea>
                         </td>
                     </tr>
                     <tr>
@@ -251,7 +251,7 @@
                             <span class="nobold">{_"information_about"}: </span>
                         </td>
                         <td>
-                            <textarea type="text" name="about" style="resize:none;width:159px;">{$user->getDescription()}</textarea>
+                            <textarea type="text" name="about">{$user->getDescription()}</textarea>
                         </td>
                     </tr>
                     <tr>
@@ -271,7 +271,7 @@
         
         <h4>{_"profile_picture"}</h4>
         <form action="/al_avatars.pl" method="POST" enctype="multipart/form-data">
-            <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tbody>
                     <tr>
                         <td width="120" valign="top">

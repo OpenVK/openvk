@@ -1,14 +1,15 @@
 {extends "../@layout.xml"}
-{block title}Создать группу{/block}
+{block title}{_"create_group"}{/block}
 
 {block header}
-    Создать группу
+    {_"create_group"}
 {/block}
 
 {block content}
-    <h4>Основная информация</h4>
+<div class="container_gray">
+    <h4>{_"create_group"}</h4>
     <form method="POST" enctype="multipart/form-data">
-        <table cellspacing="7" cellpadding="0" width="40%" border="0">
+        <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
             <tbody>
                 <tr>
                     <td width="120" valign="top">
@@ -23,7 +24,7 @@
                         <span class="nobold">{_"description"}: </span>
                     </td>
                     <td>
-                        <textarea type="text" name="about" style="resize:none;width:159px;"></textarea>
+                        <textarea type="text" name="about"></textarea>
                     </td>
                 </tr>
                 <tr>
@@ -38,4 +39,5 @@
             </tbody>
         </table>
     </form>
+</div>
 {/block}

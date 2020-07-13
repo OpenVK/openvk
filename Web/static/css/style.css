@@ -1,9 +1,10 @@
-/* 
+/*
 
 Website's Style
 Developers: Veselcraft
 
-*/ 
+*/
+
 html {
   overflow-y: scroll;
 }
@@ -15,7 +16,6 @@ body {
     text-align: left;
     font-family: tahoma, verdana, arial, sans-serif;
     font-size: 11px;
-    /* cursor: url('/style/pizda1.cur'), pointer; */
 }
 
 span {
@@ -25,10 +25,8 @@ span {
 }
 
 .nobold {
-
     font-weight: normal;
     color: gray;
-
 }
 
 a {
@@ -42,23 +40,19 @@ a {
     margin: 0 auto;
 }
 
-/* header crap */
-
 .page_header {
     position: relative;
     width: 791px;
     height: 45px;
     background-repeat: no-repeat;
     background-position: 0;
-    background: url(../img/header.png);
+    background: url('../img/header.png');
 }
 
 #page_act {
-    border-bottom: 1px solid 
-#d5dde6;
-padding: 2px 10px 5px 10px;
-color:
-    #2B587A;
+    border-bottom: 1px solid #d5dde6;
+    padding: 2px 10px 5px 10px;
+    color: #2B587A;
     width: 608px;
     margin-left: -10px;
 }
@@ -83,7 +77,7 @@ color:
     height: 29px;
     padding: 11px 4px 0 7px;
     background-size: 1.5px 41px;
-    background: url(../img/divider.png) no-repeat;
+    background: url('../img/divider.png') no-repeat;
 }
 
 .header_navigation .link a {
@@ -97,14 +91,10 @@ color:
   color: #fff;
 }
 
-/* Sidebar crap */
-
 .sidebar {
-
     width: 118px;
     margin: 4px 0 0 4px;
     float: left;
-
 }
 
 .navigation {
@@ -113,7 +103,6 @@ color:
 }
 
 .navigation .link {
-
     display: block;
     padding: 3px 3px 3px 6px;
     text-decoration: none;
@@ -127,8 +116,6 @@ color:
     cursor: pointer;
     background: none;
     margin-bottom: 1px;
-
-
 }
 
 .navigation .link:hover {
@@ -160,38 +147,30 @@ color:
     border-top: 1px solid #CCCCCC;
 }
 
-/* page crap */
-
 .page_body {
-
     width: 632px;
     float: right;
     margin-right: 15px;
     margin-top: -2px;
     font-size: 11px;
     text-align: left;
-
 }
 
 .wrap1 {
-
     border: 1px solid #EBF0F4;
     border-top: 0px;
-    width: 626px;
+    width: auto;
 }
 
 .wrap2 {
-
     border-right: 1px solid #F6F8FA;
     border-top: 0px;
-
 }
-
 
 .page_yellowheader {
     padding: 4px 10px 5px;
     font-weight: bold;
-    background: url(../img/header_yellow.png) repeat-x;
+    background: url('../img/header_yellow.png') repeat-x;
     background-color: #EEE5B8;
     border-right: solid 1px #DCD4A4;
     border-left: solid 1px #E4DDB4;
@@ -200,16 +179,13 @@ color:
 }
 
 #wrapHI {
-
     border-right: solid 1px #D5DDE6;
     border-left: solid 1px #D5DDE6;
-
 }
-#wrapH {
 
+#wrapH {
     border-right: solid 1px #EAEEF3;
     border-left: solid 1px #EAEEF3;
-
 }
 
 .page_yellowheader span {
@@ -298,21 +274,15 @@ color:
     width: 200px;
     text-align: left;
     cursor: pointer;
-
 }
+
 #profile_links {
-
     margin: 10px 0;
-
 }
 
 #profile_link:hover, .profile_link:hover {
-
     background: #ECECEC;
-
 }
-
-/* на этом месте я заплакал */
 
 .page_footer {
     margin-left: 95px;
@@ -323,8 +293,7 @@ color:
 
 table {
     font-size: 11px;
-    text-align: left; 
-    /* ненавижу, блять, костыли */
+    text-align: left;
 }
 
 .information {
@@ -336,14 +305,6 @@ table {
     padding: 9px;
     background-color: #ffc3c3;
 }
-
-/* kun vi tre agrable pensi pri morto 
-
-кстати это из песни дельфина взято 
-вдруг кто не знал
-я просто влюблён, извините за 
-пиздобляские комментарии в CSS коде 
-<3                                      */
 
 .page_footer .link {
     padding: 3px 7px;
@@ -360,8 +321,6 @@ table {
     margin-bottom: 6px;
 }
 
-
-
 .page_status {
     font-weight: normal;
     font-size: 11px;
@@ -371,14 +330,6 @@ table {
     max-height: 39px;
     height: auto !important;
 }
-/* 
-
-у тебя спид
-и значит мы умрём
-
-*/
-
-/* and we begin to make some graphic crap */
 
 .button {
     border-radius: 2px;
@@ -461,7 +412,7 @@ input[type=checkbox]:checked {
 }
 
 .content_title_unexpanded {
-    background-image: url(../img/flex_arrow_shut.gif);
+    background-image: url('../img/flex_arrow_shut.gif');
     background-repeat: no-repeat;
     background-color: #eee;
     border-top: solid 1px #ccc;
@@ -510,8 +461,6 @@ h4 {
     padding: 0px 0px 3px;
     font-family: verdana, arial, sans-serif;
 }
-
-/* post */
 
 .post {
     width: 100%;
@@ -649,40 +598,35 @@ table.User {
     margin-bottom: -10px;
 }
 
-/* МОНТИРУЮ МОНТИРУЮ БЛЯТЬ */
-
 .container_gray .content {
     background: #fff;
     padding: 5px;
     border: #DEDEDE solid 1px;
     clear: both;
 }
+
 .tabs {
     border-bottom: 1px solid #707070;
     margin-left: -12px;
     margin-right: -6px;
-
 }
-#activetabs {
 
+#activetabs {
     background: #707070;
     border-radius: 3px 3px 0px 0px;
-
 }
-.tab {
 
+.tab {
     display: inline-block;
     padding: 4px 6px;
     margin-left: 15px;
-
 }
+
 #act_tab_a {
-
     color: white;
-
 }
-.container_gray .content {
 
+.container_gray .content {
     background: #fff;
     padding: 4px;
     border: #DEDEDE solid 1px;
@@ -695,7 +639,6 @@ table.User {
     border: #DEDEDE solid 1px;
     padding: 6px;
     margin-top:6px;
-
 }
 
 .ovk-album {
@@ -812,19 +755,24 @@ table.User {
     height: 40px;
     object-fit: cover;
 }
+
 .dialogi td {
     vertical-align: top;
     padding: 5px;
 }
+
 .dialogi {
     border-collapse: collapse;
 }
+
 .dialogi tr:first-child {
     border: none;
 }
+
 .dialogi tr {
     border-top: 1px solid #ddd;
 }
+
 .messenger-app--input---messagebox textarea {
     width: 100%;
     height: 40px !important;
@@ -837,6 +785,7 @@ table.User {
     height: 72px !important;
     border-top: 1px solid #d6d6d6;
 }
+
 .messenger-app--input---messagebox .button {
     float: right;
 }
@@ -849,24 +798,16 @@ table.User {
     display: grid;
     grid-template-columns: 32px 32px 32px 1fr;
     padding: 8px;
-    border-bottom: 1px solid
-#c1c1c1;
+    border-bottom: 1px solid #c1c1c1;
     border-bottom-style: solid;
-border-bottom-style: dashed;
+    border-bottom-style: dashed;
 }
 
-
 .music-app--player .play, .music-app--player .perv, .music-app--player .next {
-
     -webkit-appearance: none;
     -moz-appearance: none;
-    background-color: 
-
-#507597;
-
-color:
-
-    #fff;
+    background-color: #507597;
+    color: #fff;
     height: 20px;
     margin: 5px;
     border: none;
@@ -874,7 +815,6 @@ color:
     cursor: pointer;
     padding: 0;
     font-size: 10px;
-
 }
 
 .music-app--player .info {
@@ -891,30 +831,19 @@ color:
 }
 
 .music-app--player .info .track {
-
     margin-top: 8px;
     height: 5px;
     width: 70%;
-    background-color: 
-
-#fff;
-
-border-top: 1px solid
-
-    #507597;
+    background-color: #fff;
+    border-top: 1px solid #507597;
     float: left;
-
 }
 
 .music-app--player .info .track .inner-track {
-
-    background-color: 
-
-    #507597;
+    background-color: #507597;
     height: inherit;
     width: 15px;
     opacity: .7;
-
 }
 
 .settings_delete {
@@ -930,6 +859,8 @@ textarea {
     border: 1px solid #C0CAD5;
     font-size: 9pt;
     min-height: 42px;
+    width: 100%;
+    resize: none;
 }
 
 #faqhead {
@@ -1028,13 +959,6 @@ body.scrolled .toTop:hover {
     cursor: pointer;
 }
 
-/* бля чуваки я извиняюсь
-за пиздострадательские комментарии
-в коде мне одиноко просто было 
-(да и в принципе и сейчас) */
-
-/* Vriska-chan was here */
-
 .ugc-table.slim {
     width: 100%;
 }
@@ -1101,53 +1025,64 @@ body.scrolled .toTop:hover {
     width: 100%;
     display: block;
 }
+
 .like_wrap {
     color: #2F5879;
     font-size: 10px;
     cursor: pointer;
     float: right;
 }
+
 .heart {
-    background: url(/assets/packages/static/openvk/img/like.gif) no-repeat 1px 0px;
+    background: url('/assets/packages/static/openvk/img/like.gif') no-repeat 1px 0px;
     height: 10px;
     margin: 2px 3px 0px;
     width: 11px;
     float: left;
 }
+
 .likeCnt {
     font-size: 10px;
     margin-right: 3px;
     float: left;
 }
+
 .heart:hover {
     opacity: 1 !important;
 }
+
 .content_title_expanded {
     margin-top: 5px;
 }
+
 .page-wrap {
     border-bottom: solid 1px #C3CAD2;
     border-left: solid 1px #DAE1E8;
     border-right: solid 1px #DAE1E8;
     padding: 10px;
 }
+
 .wrap1 {
     width: auto;
     border: 1px solid #EBF0F4;
     border-top: 0px;
 }
+
 .wrap2 {
     border-right: 1px solid #F6F8FA;
     border-top: 0px;
 }
+
 #wrapH {
     border-right: solid 1px #EAEEF3;
     border-left: solid 1px #EAEEF3;
 }
+
 #wrapHI {
     border-right: solid 1px #D5DDE6;
     border-left: solid 1px #D5DDE6;
 }
+
 .ugc-table td {
     vertical-align: top !important;
     font-size: 11px;
@@ -1155,28 +1090,34 @@ body.scrolled .toTop:hover {
     margin: 0px;
     padding: 1px 0px 1px 0px;
 }
+
 .label {
     width: 120px !important;
     color: gray;
 }
+
 .ugc-table tr > td:nth-of-type(2) {
     display: block;
     width: unset;
     overflow: hidden;
 }
+
 .right_big_block {
     width: 396px;
     float: right;
 }
+
 #basicInfo {
     padding: 5px 0px 15px 8px;
 }
+
 .accountInfo {
     padding: 0px;
     margin: 0px 0px 0px 8px;
     border-bottom: solid 1px #DAE1E8;
-	display: block;
+    display: block;
 }
+
 .profileName {
     width: 225px;
     color: #45688E;
@@ -1185,6 +1126,7 @@ body.scrolled .toTop:hover {
     margin: 0px;
     padding: 2px 5px 0px 0px;
 }
+
 .profileName h2 {
     color: #45688E;
     font-size: 13px;
@@ -1192,32 +1134,39 @@ body.scrolled .toTop:hover {
 	margin: 0px;
     padding: 0px;
 }
+
 .notes_titles {
     margin: 0px;
     padding: 0px;
     list-style: none;
 }
+
 .written {
-    background: url(/assets/packages/static/openvk/img/note.gif) no-repeat 0px 1px;
+    background: url('/assets/packages/static/openvk/img/note.gif') no-repeat 0px 1px;
     padding: 0px 0px 6px 22px;
 }
+
 .written a {
     display: block;
     padding: 0px 0px 1px 0px;
 }
+
 .notes_titles small {
     color: #333;
     font-weight: normal;
     display: block;
     font-size: 9px;
 }
+
 .notes_titles small a {
     display: inline;
     font-weight: normal;
 }
+
 .data {
     width: 260px !important;
 }
+
 .right_big_block h4 {
     margin: 1px 0px 0px;
     padding: 4px 0px 2px !important;

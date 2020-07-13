@@ -1,5 +1,5 @@
 {extends "../@layout.xml"}
-{block title}Загрузить видео{/block}
+{block title}{_"upload_video"}{/block}
 
 {block header}
     <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
@@ -10,8 +10,10 @@
 {/block}
 
 {block content}
+<div class="container_gray">
+    <h4>{_"upload_video"}</h4>
     <form method="post" enctype="multipart/form-data">
-      <table cellspacing="6">
+      <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
         <tbody>
           <tr>
             <td width="120" valign="top"><span class="nobold">{_"name"}:</span></td>
@@ -19,7 +21,7 @@
           </tr>
           <tr>
             <td width="120" valign="top"><span class="nobold">{_"description"}:</span></td>
-            <td><textarea style="margin: 0px; height: 50px; width: 159px; resize: none;" name="desc"></textarea></td>
+            <td><textarea name="desc"></textarea></td>
           </tr>
           <tr>
             <td width="120" valign="top"><span class="nobold">{_"video"}:</span></td>
@@ -39,4 +41,5 @@
         </tbody>
       </table>
     </form>
+</div>
 {/block}

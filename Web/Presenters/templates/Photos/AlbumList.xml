@@ -2,7 +2,7 @@
 {var iterator = iterator_to_array($albums)}
 {var page     = $paginatorConf->page}
 
-{block title}Альбомы {$owner->getCanonicalName()}{/block}
+{block title}{_"albums"} {$owner->getCanonicalName()}{/block}
 
 {block header}
     <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
