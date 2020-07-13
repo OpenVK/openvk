@@ -46,6 +46,7 @@ h2. Release. When.
 
 February 2021?
 
-h2. Somewhat useful links
+h2. Instances
 
-* "A working OpenVK instance":https://openvk2.veselcraft.ru/
+* *"openvk2.veselcraft.ru":https://openvk2.veselcraft.ru/*
+* "openvk.dsrev.ru":https://openvk.dsrev.ru/
