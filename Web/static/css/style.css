@@ -744,50 +744,102 @@ table.User {
     padding: 10px;
 }
 
+.messenger-app--messages, .messenger-app--input {
+    padding: 10px 70px;
+}
+
 .messenger-app--messages {
-    max-height: 400px;
+    height: 360px;
     overflow-y: auto;
-    overflow-x: hidden;
+}
+
+.messenger-app--messages---message, .messenger-app--input {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+}
+
+.messenger-app--messages---message {
+    margin-bottom: 1.2rem;
 }
 
 .messenger-app--messages---message .ava, .messenger-app--input > .ava {
-    width: 40px;
-    height: 40px;
-    object-fit: cover;
+    max-width: 64px;
 }
 
-.dialogi td {
-    vertical-align: top;
-    padding: 5px;
+.messenger-app--messages---message .ava, .messenger-app--input > .ava {
+    width: 52px;
+    height: 52px;
 }
 
-.dialogi {
-    border-collapse: collapse;
+.messenger-app--messages---message ._content {
+    padding-left: 20px;
+    width: 300px;
 }
 
-.dialogi tr:first-child {
-    border: none;
+.messenger-app--messages---message ._content span, .messenger-app--messages---message ._content > a {
+    display: block;
 }
 
-.dialogi tr {
-    border-top: 1px solid #ddd;
-}
-
-.messenger-app--input---messagebox textarea {
+.messenger-app--messages---message ._content span {
     width: 100%;
-    height: 40px !important;
-    resize: none;
-    margin-bottom: 10px !important;
+    height: fit-content;
+    overflow: hidden;
+}
+
+.messenger-app--messages---message ._content .attachments {
+    width: 100%;
+}
+
+.messenger-app--messages---message ._content .attachments > .msg-attach-j * {
+    max-width: 86%;
+}
+
+.messenger-app--messages---message ._content .attachments:not(:empty) {
+    margin-top: 15px;
+}
+
+.messenger-app--messages---message .time {
+    width: 100px;
 }
 
 .messenger-app--input {
     background-color: #f9f9f9;
-    height: 72px !important;
+    height: 80px !important;
     border-top: 1px solid #d6d6d6;
+}
+
+.messenger-app--input---messagebox {
+    box-sizing: border-box;
+    padding: 0 10px;
+    width: calc(100% - 128px);
+}
+
+.messenger-app--input---messagebox textarea {
+    width: 100%;
+    height: 50px !important;
+    resize: none;
+    margin-bottom: 8px !important;
 }
 
 .messenger-app--input---messagebox .button {
     float: right;
+}
+
+.messenger-app--input .blocked {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.messenger-app--input .blocked::after {
+    content: attr(data-localized-text);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    font-weight: 900;
 }
 
 .music-app {
