@@ -13,6 +13,7 @@ class Notification
     private $data;
     
     protected $actionCode = NULL;
+    protected $threshold  = -1;
     
     function __construct(User $recipient, $originModel, $targetModel, ?int $time = NULL, string $data = "")
     {
@@ -78,8 +79,7 @@ class Notification
         if(!($e = eventdb()))
             return false;
         
-        $edb = $e->getConnection();
-        $edb->query("INSERT INTO notifications VALUES (0, ?, ?, ?, ?, ?, ?, ?, ?)", ...[
+        $data = [
             $this->recipient->getId(),
             $this->encodeType($this->originModel),
             $this->originModel->getId(),
@@ -88,7 +88,20 @@ class Notification
             $this->actionCode,
             $this->data,
             $this->time,
-        ]);
+        ];
+        
+        $edb = $e->getConnection();
+        if($this->threshold !== -1) {
+            # Event is thersholded, check if there is similar event
+            $query = <<<'QUERY'
+                SELECT * FROM `notifications` WHERE `recipientType`=0 AND `recipientId`=? AND `originModelType`=? AND `originModelId`=? AND `targetModelType`=? AND `targetModelId`=? AND `modelAction`=? AND `additionalData`=? AND `timestamp` > (? - ?)
+QUERY;
+            $result = $edb->query($query, ...array_merge($data, [ $this->threshold ]));
+            if($result->getRowCount() > 0)
+                return false;
+        }
+        
+        $edb->query("INSERT INTO notifications VALUES (0, ?, ?, ?, ?, ?, ?, ?, ?)", ...$data);
         
         return true;
     }
