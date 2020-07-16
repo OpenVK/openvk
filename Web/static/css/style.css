@@ -1171,12 +1171,12 @@ body.scrolled .toTop:hover {
 }
 
 .profileName {
-    width: 225px;
+    /* width: 225px; */
     color: #45688E;
     font-size: 11px;
     font-weight: bold;
     margin: 0px;
-    padding: 2px 5px 0px 0px;
+    /* padding: 2px 5px 0px 0px; */
 }
 
 .profileName h2 {
