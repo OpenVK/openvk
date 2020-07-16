@@ -15,7 +15,7 @@
                             {$author->getCanonicalName()}
                         </b>
                     </a>
-		    {if $author->isVerified()}<img class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">{/if}
+                    {if $author->isVerified()}<img class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">{/if}
                     {$post->isPostedOnBehalfOfGroup() ? "опубликовали" : ($author->isFemale() ? tr("post_writes_f") : tr("post_writes_m"))}
                     {if ($onWallOf ?? false) &&!$post->isPostedOnBehalfOfGroup() && $post->getOwnerPost() !== $post->getTargetWall()}
                         {var wallId  = $post->getTargetWall()}
@@ -86,21 +86,19 @@
                     </a>
                     
 
-					
-					
-					<div class="like_wrap">
-					{var liked = $post->hasLikeFrom($thisUser)}
-					<a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}"
-					class="post-like-button"
-                          data-liked="{(int) $liked}"
-                          data-likes="{$post->getLikesCount()}">
-						  
-  
-  <div class="heart" style="{if $liked}opacity: 1;{else}opacity: 0.4;{/if}"></div>
-  <span class="likeCnt">{$post->getLikesCount()}</span>
-</a></div>
-
-
+                    <div class="like_wrap">
+                        {var liked = $post->hasLikeFrom($thisUser)}
+                        <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}"
+                        class="post-like-button"
+                                data-liked="{(int) $liked}"
+                                data-likes="{$post->getLikesCount()}">
+                            <div class="heart" style="{if $liked}opacity: 1;{else}opacity: 0.4;{/if}"></div>
+                            <span class="likeCnt">{$post->getLikesCount()}</span>
+                        </a>
+                    </div>
+                </div>
+                <div n:if="isset($thisUser) &&! ($compact ?? false)" class="post-menu-s">
+                    <!-- kosfurler -->
                 </div>
             </td>
         </tr>
