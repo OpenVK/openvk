@@ -48,7 +48,9 @@
          </td>
          {else}
          <td width="54" valign="top">
-            <img src="https://avatars.mds.yandex.net/get-zen_doc/164147/pub_5b60816e2dc67000a862253e_5b6081d4e9151400a9f48625/scale_1200" width="50">
+            <img
+                src="https://avatars.mds.yandex.net/get-zen_doc/164147/pub_5b60816e2dc67000a862253e_5b6081d4e9151400a9f48625/scale_1200"
+                style="max-width: 50px; filter: hue-rotate({$comment->getColorRotation()}deg);" />
          </td>
          {/if}
          <td width="645" valign="top">
@@ -62,7 +64,7 @@
             {elseif ($comment->getUType() === 1)}
             <div class="post-author">
                <a href="#"><b>
-               {=OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["supportName"]}
+               {=OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["supportName"]} №{$comment->getAgentNumber()}
                </b></a> написал<br>
                <a href="#" class="date">{$comment->getTime()}</a>
             </div>
