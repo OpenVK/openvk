@@ -44,7 +44,7 @@
 {/block}
 
 {block description}
-    <table class="ugc-table slim">
+    <table class="ugc-table">
         <tbody>
             {if $type === "users"}
                 <tr>
