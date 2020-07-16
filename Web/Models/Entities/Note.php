@@ -20,7 +20,6 @@ class Note extends Postable
         $config->set("URI.MakeAbsolute", true);
         $config->set("HTML.Doctype", "XHTML 1.1");
         $config->set("HTML.TidyLevel", "heavy");
-        $config->set("HTML.TidyLevel", "heavy");
         $config->set("HTML.AllowedElements", [
             "div",
             "h3",
