@@ -27,7 +27,9 @@ final class AdminPresenter extends OpenVKPresenter
     
     function onStartup(): void
     {
-        exit("Не реализовано...");
+        parent::onStartup();
+        
+        $this->assertPermission("admin", "access", -1);
     }
     
     function renderIndex(): void
@@ -81,5 +83,15 @@ final class AdminPresenter extends OpenVKPresenter
     function renderFiles(): void
     {
         
+    }
+    
+    function renderQuickBan(int $id): void
+    {
+        $user = $this->users->get($id);
+        if(!$user)
+            exit(json_encode([ "error" => "User does not exist" ]));
+        
+        $user->ban($this->queryParam("reason"));
+        exit(json_encode([ "reason" => $this->queryParam("reason") ]));
     }
 }

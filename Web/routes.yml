@@ -191,6 +191,8 @@ routes:
       handler: "Admin->clubs"
     - url: "/admin/clubs/id{num}"
       handler: "Admin->club"
+    - url: "/admin/ban.pl/{num}"
+      handler: "Admin->quickBan"
     - url: "/sandbox_cocksex"
       handler: "About->sandbox"
     - url: "/{?shortCode}"

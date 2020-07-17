@@ -517,6 +517,21 @@ class User extends RowModel
         return !is_null($this->getPendingPhoneVerification());
     }
     
+    function ban(string $reason): void
+    {
+        $subs = DatabaseConnection::i()->getContext()->table("subscriptions");
+        $subs = $subs->where(
+            "follower = ? OR (target = ? AND model = ?)",
+            $this->getId(),
+            $this->getId(),
+            get_class($this),
+        );
+        $subs->delete();
+        
+        $this->setBlock_Reason($reason);
+        $this->save();
+    }
+    
     function verifyNumber(string $code): bool
     {
         $ver = $this->getPendingPhoneVerification();

@@ -72,6 +72,12 @@
                     </a>
                 {/if}
                 
+                {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+                    <a href="javascript:banUser()" class="profile_link">
+                        Забанить пользователя
+                    </a>
+                {/if}
+                
                 {var subStatus = $user->getSubscriptionStatus($thisUser)}
                 {if $subStatus === 0}
                     <form action="/setSub/user" method="post">
@@ -445,6 +451,30 @@
         </div>
         
         {presenter "openvk!Wall->wall", $user->getId()}
+        
+        <script n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL)">
+            function banUser() {
+                uBanMsgTxt  = "Вы собираетесь забанить пользователя " + {$user->getCanonicalName()} + ".";
+                uBanMsgTxt += "<br/><b>Предупреждение</b>: Это действие удалит все подписки пользователя и отпишет всех от него.";
+                uBanMsgTxt += "<br/><br/><b>Причина бана</b>: <input type='text' id='uBanMsgInput' placeholder='насрал в штаны' />"
+                
+                MessageBox("Забанить " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
+                    (function() {
+                        res = document.querySelector("#uBanMsgInput").value;
+                        xhr = new XMLHttpRequest();
+                        xhr.open("GET", "/admin/ban.pl/" + {$user->getId()} + "?reason=" + res, true);
+                        xhr.onload = (function() {
+                            if(xhr.responseText.indexOf("reason") === -1)
+                                MessageBox("Ошибка", "Не удалось забанить пользователя...", ["OK"], [Function.noop]);
+                            else
+                                MessageBox("Операция успешна", "Пользователь заблокирован", ["OK"], [Function.noop]);
+                        });
+                        xhr.send(null);
+                    }),
+                    Function.noop
+                ])
+            }
+        </script>
     </div>
     
     {/if}
