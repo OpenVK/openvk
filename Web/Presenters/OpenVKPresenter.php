@@ -72,7 +72,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             return ($action === "register" || $action === "login");
         }
         
-        return (bool) $this->user->raw->can($action)->model($model)->whichBelongsTo($context);
+        return (bool) $this->user->raw->can($action)->model($model)->whichBelongsTo($context === -1 ? null : $context);
     }
     
     protected function assertPermission(string $model, string $action, int $context, bool $throw = false): void
