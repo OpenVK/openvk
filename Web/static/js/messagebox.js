@@ -24,7 +24,7 @@ function MessageBox(title, body, buttons, callbacks) {
             };
             
             Reflect.apply(callbacks[callback], {
-                closeDialog: __closeDialog()
+                closeDialog: () => __closeDialog()
             }, [e]);
         
             __closeDialog();
