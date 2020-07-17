@@ -40,7 +40,9 @@ final class AboutPresenter extends OpenVKPresenter
     {}
     
     function renderDonate(): void
-    {}
+    {
+        $this->pass("openvk!Support->knowledgeBaseArticle", "donate");
+    }
     
     function renderPrivacy(): void
     {
