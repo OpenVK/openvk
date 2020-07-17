@@ -193,6 +193,8 @@ routes:
       handler: "Admin->club"
     - url: "/admin/ban.pl/{num}"
       handler: "Admin->quickBan"
+    - url: "/admin/warn.pl/{num}"
+      handler: "Admin->quickWarn"
     - url: "/sandbox_cocksex"
       handler: "About->sandbox"
     - url: "/{?shortCode}"

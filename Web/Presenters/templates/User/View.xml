@@ -76,6 +76,9 @@
                     <a href="javascript:banUser()" class="profile_link">
                         Забанить пользователя
                     </a>
+                    <a href="javascript:warnUser()" class="profile_link">
+                        Предупредить пользователя
+                    </a>
                 {/if}
                 
                 {var subStatus = $user->getSubscriptionStatus($thisUser)}
@@ -456,7 +459,7 @@
             function banUser() {
                 uBanMsgTxt  = "Вы собираетесь забанить пользователя " + {$user->getCanonicalName()} + ".";
                 uBanMsgTxt += "<br/><b>Предупреждение</b>: Это действие удалит все подписки пользователя и отпишет всех от него.";
-                uBanMsgTxt += "<br/><br/><b>Причина бана</b>: <input type='text' id='uBanMsgInput' placeholder='насрал в штаны' />"
+                uBanMsgTxt += "<br/><br/><b>Причина бана</b>: <input type='text' id='uBanMsgInput' placeholder='придумайте что-нибудь крутое' />"
                 
                 MessageBox("Забанить " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
                     (function() {
@@ -472,7 +475,29 @@
                         xhr.send(null);
                     }),
                     Function.noop
-                ])
+                ]);
+            }
+            
+            function warnUser() {
+                uBanMsgTxt  = "Вы собираетесь предупредить пользователя " + {$user->getCanonicalName()} + ".";
+                uBanMsgTxt += "<br/>Мы отправим уведомление пользователю в личные сообщения от имени аккаунта администратора.";
+                uBanMsgTxt += "<br/><br/><b>Текст предупреждения</b>: <input type='text' id='uWarnMsgInput' placeholder='придумайте что-нибудь крутое' />"
+                
+                MessageBox("Выдать предупреждение " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
+                    (function() {
+                        res = document.querySelector("#uWarnMsgInput").value;
+                        xhr = new XMLHttpRequest();
+                        xhr.open("GET", "/admin/warn.pl/" + {$user->getId()} + "?message=" + res, true);
+                        xhr.onload = (function() {
+                            if(xhr.responseText.indexOf("message") === -1)
+                                MessageBox("Ошибка", "Не удалось отправить предупреждение...", ["OK"], [Function.noop]);
+                            else
+                                MessageBox("Операция успешна", "Предупреждение отправлено", ["OK"], [Function.noop]);
+                        });
+                        xhr.send(null);
+                    }),
+                    Function.noop
+                ]);
             }
         </script>
     </div>

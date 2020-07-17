@@ -94,4 +94,14 @@ final class AdminPresenter extends OpenVKPresenter
         $user->ban($this->queryParam("reason"));
         exit(json_encode([ "reason" => $this->queryParam("reason") ]));
     }
+    
+    function renderQuickWarn(int $id): void
+    {
+        $user = $this->users->get($id);
+        if(!$user)
+            exit(json_encode([ "error" => "User does not exist" ]));
+        
+        $user->adminNotify("⚠️ " . $this->queryParam("message"));
+        exit(json_encode([ "message" => $this->queryParam("message") ]));
+    }
 }
