@@ -465,7 +465,7 @@
                     (function() {
                         res = document.querySelector("#uBanMsgInput").value;
                         xhr = new XMLHttpRequest();
-                        xhr.open("GET", "/admin/ban.pl/" + {$user->getId()} + "?reason=" + res, true);
+                        xhr.open("GET", "/admin/ban.pl/" + {$user->getId()} + "?reason=" + res + "&hash=" + {rawurlencode($csrfToken)}, true);
                         xhr.onload = (function() {
                             if(xhr.responseText.indexOf("reason") === -1)
                                 MessageBox("Ошибка", "Не удалось забанить пользователя...", ["OK"], [Function.noop]);
@@ -487,7 +487,7 @@
                     (function() {
                         res = document.querySelector("#uWarnMsgInput").value;
                         xhr = new XMLHttpRequest();
-                        xhr.open("GET", "/admin/warn.pl/" + {$user->getId()} + "?message=" + res, true);
+                        xhr.open("GET", "/admin/warn.pl/" + {$user->getId()} + "?message=" + res + "&hash=" + {rawurlencode($csrfToken)}, true);
                         xhr.onload = (function() {
                             if(xhr.responseText.indexOf("message") === -1)
                                 MessageBox("Ошибка", "Не удалось отправить предупреждение...", ["OK"], [Function.noop]);

@@ -87,6 +87,8 @@ final class AdminPresenter extends OpenVKPresenter
     
     function renderQuickBan(int $id): void
     {
+        $this->assertNoCSRF();
+        
         $user = $this->users->get($id);
         if(!$user)
             exit(json_encode([ "error" => "User does not exist" ]));
@@ -97,6 +99,8 @@ final class AdminPresenter extends OpenVKPresenter
     
     function renderQuickWarn(int $id): void
     {
+        $this->assertNoCSRF();
+        
         $user = $this->users->get($id);
         if(!$user)
             exit(json_encode([ "error" => "User does not exist" ]));
