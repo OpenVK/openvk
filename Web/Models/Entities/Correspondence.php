@@ -110,7 +110,7 @@ class Correspondence
     }
     
     /**
-     * Send message as user, who is currently logged in.
+     * Send message.
      * 
      * @deprecated
      * @returns Message|false - resulting message, or false in case of non-successful transaction
@@ -122,7 +122,6 @@ class Correspondence
         
         $ids     = [$this->correspondents[0]->getId(), $this->correspondents[1]->getId()];
         $classes = [get_class($this->correspondents[0]), get_class($this->correspondents[1])];
-        if(!in_array($user->getId(), $ids)) return false;
         if($ids[1] === $user->getId() && !$dontReverse) {
             $ids     = array_reverse($ids);
             $classes = array_reverse($classes);
