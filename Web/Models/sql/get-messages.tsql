@@ -4,7 +4,7 @@ FROM
   `messages`
 WHERE
   (`deleted` = 0)
-  AND (`id` < ?)
+  AND (`id` > ?)
   AND (
     (
       (`sender_type` = ?)
@@ -22,4 +22,6 @@ WHERE
 ORDER BY
   `created` DESC
 LIMIT
+?
+OFFSET
 ?
