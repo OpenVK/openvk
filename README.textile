@@ -39,7 +39,7 @@ You may reach out to us via:
 * "Telegram chat":https://t.me/openvkchat
 
 *Attention*: bug tracker and telegram chat are public places. And ticketing system is being served by volounteers. If you need to report something, that shouldn't be immediately disclosed to general public (for instance, vulnerability report), *please use contact us directly*:
-* *Head of OpenVK Security Commitee*: stingray@jill.pl or "@DorothyHazeBot":https://t.me/DorothyHazeBot
+* *Head of OpenVK Security Commitee*: stingray@jill.pl or "@id155":https://t.me/id155
 * *Backend developer*: "@saddyteirusu":https://t.me/saddyteirusu
 
 h2. Release. When.
