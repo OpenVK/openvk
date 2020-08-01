@@ -54,10 +54,10 @@ final class MessengerPresenter extends OpenVKPresenter
     
     function renderEvents(int $randNum): void
     {
-    $this->assertUserLoggedIn();
+        $this->assertUserLoggedIn();
         
-        header("Content-Type: application/json");   
-    $this->signaler->listen(function($event, $id) {
+        header("Content-Type: application/json");
+        $this->signaler->listen(function($event, $id) {
             exit(json_encode([[
                 "UUID"  => $id,
                 "event" => $event->getLongPoolSummary(),
@@ -65,7 +65,37 @@ final class MessengerPresenter extends OpenVKPresenter
         }, $this->user->id);
     }
     
-    function renderApiGetMessages(int $sel, int $offset): void
+    function renderVKEvents(int $id): void
+    {
+        header("Content-Type: application/json");
+        
+        if($this->queryParam("act") !== "a_check")
+            exit(header("HTTP/1.1 400 Bad Request"));
+        else if(!$this->queryParam("key"))
+            exit(header("HTTP/1.1 403 Forbidden"));
+        
+        $key       = $this->queryParam("key");
+        $payload   = hex2bin(substr($key, 0, 16));
+        $signature = hex2bin(substr($key, 16));
+        if(($signature ^ ( ~CHANDLER_ROOT_CONF["security"]["secret"] | ((string) $id))) !== $payload) {
+            exit(json_encode([
+                "failed" => 3,
+            ]));
+        }
+        
+        $legacy = $this->queryParam("version") < 3;
+        
+        $this->signaler->listen(function($event, $eId) use ($id) {
+            exit(json_encode([
+                "ts"      => time(),
+                "updates" => [
+                    $event->getVKAPISummary($id),
+                ],
+            ]));
+        }, $id);
+    }
+    
+    function renderApiGetMessages(int $sel, int $lastMsg): void
     {
         $this->assertUserLoggedIn();
         
@@ -75,7 +105,7 @@ final class MessengerPresenter extends OpenVKPresenter
         
         $messages       = [];
         $correspondence = new Correspondence($this->user->identity, $correspondent);
-        foreach($correspondence->getMessages($offset === 0 ? null : $offset) as $message)
+        foreach($correspondence->getMessages(1, $lastMsg === 0 ? null : $lastMsg) as $message)
             $messages[] = $message->simplify();
         
         header("Content-Type: application/json");
