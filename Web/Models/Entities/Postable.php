@@ -70,6 +70,11 @@ abstract class Postable extends Attachable
     {
         return (new Comments)->getCommentsCountByTarget($this);
     }
+	
+	function getLastComments()
+    {
+        return (new Comments)->getLastCommentsByTarget($this);
+    }
     
     function getLikesCount(): int
     {
