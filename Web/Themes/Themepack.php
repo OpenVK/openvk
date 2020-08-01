@@ -38,6 +38,11 @@ class Themepack
             return $this->meta->name;
     }
     
+    function getBaseDir(): string
+    {
+        return $this->home;
+    }
+    
     function getVersion(): string
     {
         return $this->ver;
