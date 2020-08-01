@@ -2,8 +2,8 @@
 namespace openvk\Web\Models\Entities;
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
-use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Repositories\{Users, Clubs, Albums};
+use openvk\Web\Models\Entities\{User, Manager};
+use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Managers};
 use Nette\Database\Table\{ActiveRow, GroupedSelection};
 use Chandler\Database\DatabaseConnection as DB;
 use Chandler\Security\User as ChandlerUser;
@@ -265,12 +265,31 @@ class Club extends RowModel
         foreach($rels as $rel) {
             $rel = (new Users)->get($rel->user);
             if(!$rel) continue;
+
+            yield $rel;
+        }
+    }
+
+    function getManagersWithComment(int $page = 1): \Traversable
+    {
+        $rels = $this->getRecord()->related("group_coadmins.club")->where("comment IS NOT NULL")->page($page, 10);
+        
+        foreach($rels as $rel) {
+            $rel = (new Managers)->get($rel->id);
+            if(!$rel) continue;
+
+            yield $rel;
         }
     }
     
     function getManagersCount(): int
     {
         return sizeof($this->getRecord()->related("group_coadmins.club")) + 1;
+    }
+
+    function getManagersCountWithComment(): int
+    {
+        return sizeof($this->getRecord()->related("group_coadmins.club")->where("comment IS NOT NULL")) + 1;
     }
     
     function addManager(User $user, ?string $comment = NULL): void
@@ -293,7 +312,7 @@ class Club extends RowModel
     function canBeModifiedBy(User $user): bool
     {
         $id = $user->getId();
-        if($this->getRecord()->owner === $id)
+        if($this->getOwner()->getId() === $id)
             return true;
         
         return !is_null($this->getRecord()->related("group_coadmins.club")->where("user", $id)->fetch());
