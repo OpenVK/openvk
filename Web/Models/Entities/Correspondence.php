@@ -27,6 +27,9 @@ class Correspondence
      */
     private $messages;
     
+    const CAP_BEHAVIOUR_END_MESSAGE_ID   = 1;
+    const CAP_BEHAVIOUR_START_MESSAGE_ID = 2;
+    
     /**
      * Correspondence constructor.
      * 
@@ -69,24 +72,36 @@ class Correspondence
      * 
      * Fetch messages on per page basis.
      * 
-     * @param $page - page (defaults to first)
-     * @param $perPage - messages per page (defaults to default per page count)
+     * @param $cap - page (defaults to first)
+     * @param $limit  - messages per page (defaults to default per page count)
      * @returns \Traversable - iterable messages cursor
      */
-    function getMessages(?float $offset = NULL, ?int $perPage = NULL): array
+    function getMessages(int $capBehavior = 1, ?int $cap = NULL, ?int $limit = NULL, ?int $padding = NULL, bool $reverse = false): array
     {
         $query  = file_get_contents(__DIR__ . "/../sql/get-messages.tsql");
         $params = [
             [get_class($this->correspondents[0]), get_class($this->correspondents[1])],
             [$this->correspondents[0]->getId(), $this->correspondents[1]->getId()],
-            [$perPage ?? OPENVK_DEFAULT_PER_PAGE]
+            [$limit ?? OPENVK_DEFAULT_PER_PAGE]
         ];
         $params = array_merge($params[0], $params[1], array_reverse($params[0]), array_reverse($params[1]), $params[2]);
         
-        if(is_null($offset))
-            $query = str_replace("\n  AND (`id` < ?)", "", $query);
+        if(is_null($cap)) {
+            $query = str_replace("\n  AND (`id` > ?)", "", $query);
+        } else {
+            if($capBehavior === 1)
+                $query = str_replace("\n  AND (`id` > ?)", "\n  AND (`id` < ?)", $query);
+            
+            array_unshift($params, $cap);
+        }
+        
+        if(is_null($padding))
+            $query = str_replace("\nOFFSET\n?", "", $query);
         else
-            array_unshift($params, $offset);
+            $params[] = $padding;
+        
+        if($reverse)
+            $query = str_replace("`created` DESC", "`created` ASC", $query);
         
         $msgs   = DatabaseConnection::i()->getConnection()->query($query, ...$params);
         $msgs   = array_map(function($message) {
@@ -105,7 +120,7 @@ class Correspondence
      */
     function getPreviewMessage(): ?Message
     {
-        $messages = $this->getMessages(null, 1);
+        $messages = $this->getMessages(1, null, 1);
         return $messages[0] ?? NULL;
     }
     
@@ -117,12 +132,15 @@ class Correspondence
      */
     function sendMessage(Message $message, bool $dontReverse = false)
     {
-        $user = (new Users)->getByChandlerUser(Authenticator::i()->getUser());
-        if(!$user) return false;
+        if(!$dontReverse) {
+            $user = (new Users)->getByChandlerUser(Authenticator::i()->getUser());
+            if(!$user)
+                return false;
+        }
         
         $ids     = [$this->correspondents[0]->getId(), $this->correspondents[1]->getId()];
         $classes = [get_class($this->correspondents[0]), get_class($this->correspondents[1])];
-        if($ids[1] === $user->getId() && !$dontReverse) {
+        if(!$dontReverse && $ids[1] === $user->getId()) {
             $ids     = array_reverse($ids);
             $classes = array_reverse($classes);
         }
