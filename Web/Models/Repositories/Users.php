@@ -36,12 +36,13 @@ class Users
         return $this->toUser($this->users->where("user", $user->getId())->fetch());
     }
     
-    function find(string $query, int $page = 1, ?int $perPage = NULL): \Traversable
+    function find(string $query): \Traversable
     {
         $query   = "%$query%";
         $perPage = $perPage ?? OPENVK_DEFAULT_PER_PAGE;
-        foreach($this->users->where("CONCAT_WS(' ', first_name, last_name) LIKE ?", $query)->page($page, $perPage) as $result)
-            yield new User($result);
+        $result  = $this->users->where("CONCAT_WS(' ', first_name, last_name) LIKE ?", $query);
+        
+        return new Util\EntityStream("User", $result);
     }
     
     function getFoundCount(string $query): int

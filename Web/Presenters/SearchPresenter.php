@@ -33,8 +33,8 @@ final class SearchPresenter extends OpenVKPresenter
                 $count    = $this->clubs->getFoundCount($query);
                 break;
             case "users":
-                $iterator = $this->users->find($query, $page);
-                $count    = $this->users->getFoundCount($query);
+                $iterator = $this->users->find($query)->page($page);
+                $count    = $this->users->find($query)->size();
                 break;
         }
         
