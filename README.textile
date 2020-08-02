@@ -3,24 +3,32 @@ h1. OpenVK 2
 *OpenVK* is an attempt to create a simple CMS that -cosplays- imitates old VK. Code provided here is not stable yet.
 To be honest, we don't even know whether it even works. However, this version (unlike classic) is maintained and we will be happy to accept your bugreports "in our bug-tracker":http://jirakitsu.wormixtest.ru/projects/OVK/issues/. You should also be able to submit them using "ticketing system":https://openvk2.veselcraft.ru/support?act=new (you will need an OVK account for this).
 
+h2. Instances
+
+* *"openvk2.veselcraft.ru":https://openvk2.veselcraft.ru/*
+* "openvk.dsrev.ru":https://openvk.dsrev.ru/
+
 h2. Can I create my own OpenVK instance?
 
-Yes. And you're very welcome to.
+Yes! And you're very welcome to.
 However, OVK makes use of Chandler Application Server. This software requires extensions, that may not be provided by your hosting provider (namely, sodium and yaml. this extensions are available on most of ISPManager hostings).
 Simply put, we would recommend you to use latest CentOS (running on your own VDS/Dedicated) with latest PHP from EPEL. We use this configuration on our "testing instance":https://openvk2.veselcraft.ru/ and thus will be able to provide quicker support for OVK running in this environment.
+If you want, you can add your instance to the list above so that people can register there.
 
 h3. Installation procedure
 
-# Install Composer
-# Install Node.js
-# Install Yarn
-# Install Chandler
+# Install Composer, Node.js, Yarn and "Chandler":https://github.com/openvk/chandler
 # Import install/init-static-db.sql to *same db* you installed Chandler to
 # Import install/init-event-db.sql to *separate db*
 # Rename openvk-example.yml to openvk.yml and change options
-# Run %composer install% in OpenVK directory
-# Move to Web/static/js and execute %yarn install%
+# Run @composer install@ in OpenVK directory
+# Move to Web/static/js and execute @yarn install@
 # Set openvk as your root app in chandler.yml
+
+Once you are done, you can login as a system administrator on the network itself (no registration required):
+* *Login*: admin@localhost.localdomain6
+* *Password*: admin
+It is recommended to change the password before using the built-in account.
 
 h3. Can I upgrade my OpenVK Classic installation?
 
@@ -45,8 +53,3 @@ You may reach out to us via:
 h2. Release. When.
 
 February 2021?
-
-h2. Instances
-
-* *"openvk2.veselcraft.ru":https://openvk2.veselcraft.ru/*
-* "openvk.dsrev.ru":https://openvk.dsrev.ru/

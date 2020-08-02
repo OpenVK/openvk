@@ -1,9 +1,14 @@
 OpenVK Install Instructions
 -----------
-1) Import OVK DB
-2) Import OVK EventDB to MySQL (you can also use Ya.Clickhouse lul)
-3) Set up dependencies with composer
-4) Set up dependencies with yarn (Web/static/js)
-5) Create new user and give him admin permissions
-6) ???
-7) Profit!
+1) Install Composer, Node.js, Yarn and Chandler (https://github.com/openvk/chandler)
+2) Import install/init-static-db.sql to same db you installed Chandler to
+3) Import install/init-event-db.sql to separate db
+4) Rename openvk-example.yml to openvk.yml and change options
+5) Run "composer install" in OpenVK directory
+6) Move to Web/static/js and execute "yarn install"
+7) Set openvk as your root app in chandler.yml
+
+Once you are done, you can login as a system administrator on the network itself (no registration required):
+- Login: admin@localhost.localdomain6
+- Password: admin
+It is recommended to change the password before using the built-in account.

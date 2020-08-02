@@ -236,7 +236,7 @@ CREATE TABLE `profiles` (
   `fav_quote` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `city` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `address` varchar(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `style` int(30) DEFAULT 0,
+  `style` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT 'ovk',
   `style_avatar` int(30) DEFAULT 0,
   `show_rating` tinyint(1) DEFAULT 1,
   `milkshake` tinyint(1) NOT NULL DEFAULT 0,
@@ -474,4 +474,4 @@ INSERT INTO `ChandlerGroups` VALUES ("a8ced6a3-49d8-11ea-bf2f-424d781d39ac", "OV
 
 INSERT INTO `ChandlerACLRelations` VALUES ("ffffffff-ffff-ffff-ffff-ffffffffffff", "a8ced6a3-49d8-11ea-bf2f-424d781d39ac", 16);
 
-INSERT INTO `profiles` (`id`, `user`, `first_name`, `last_name`, `pseudo`, `info`, `about`, `status`, `privacy`, `left_menu`, `sex`, `type`, `phone`, `email`, `coins`, `since`, `block_reason`, `verified`, `reputation`, `shortcode`, `registering_ip`, `online`, `birthday`, `hometown`, `polit_views`, `marital_status`, `email_contact`, `telegram`, `interests`, `fav_music`, `fav_films`, `fav_shows`, `fav_books`, `fav_quote`, `city`, `address`, `style`, `style_avatar`, `show_rating`, `milkshake`, `notification_offset`, `deleted`) VALUES ('1', 'ffffffff-ffff-ffff-ffff-ffffffffffff', 'System', 'Administrator', 'sysop', NULL, NULL, NULL, '1099511627775', '1099511627775', '1', '0', NULL, 'admin@localhost.localdomain6', '0', '2018-10-31 15:15:15', NULL, '1', '1000', 'sysop', '::1', '0', '0', NULL, '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '0', '0', '0', '1', '0', '0');
+INSERT INTO `profiles` (`id`, `user`, `first_name`, `last_name`, `pseudo`, `info`, `about`, `status`, `privacy`, `left_menu`, `sex`, `type`, `phone`, `email`, `coins`, `since`, `block_reason`, `verified`, `reputation`, `shortcode`, `registering_ip`, `online`, `birthday`, `hometown`, `polit_views`, `marital_status`, `email_contact`, `telegram`, `interests`, `fav_music`, `fav_films`, `fav_shows`, `fav_books`, `fav_quote`, `city`, `address`, `style`, `style_avatar`, `show_rating`, `milkshake`, `notification_offset`, `deleted`) VALUES ('1', 'ffffffff-ffff-ffff-ffff-ffffffffffff', 'System', 'Administrator', 'sysop', NULL, NULL, NULL, '1099511627775', '1099511627775', '1', '0', NULL, 'admin@localhost.localdomain6', '0', '2018-10-31 15:15:15', NULL, '1', '1000', 'sysop', '::1', '0', '0', NULL, '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'ovk', '0', '0', '1', '0', '0');
