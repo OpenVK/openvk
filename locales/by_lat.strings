@@ -1,0 +1,432 @@
+"__locale" = "by_BY.utf8;Bel_Latin";
+
+%{ Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html %}
+
+%{ Main page %}
+
+"home" = "Hałoŭnaja";
+"welcome" = "Sardeczna zapraszajem";
+
+%{ Login %}
+
+"log_in" = "Uwachod";
+"password" = "Parol";
+"registration" = "Rehistracyja";
+
+%{ Profile information %}
+
+"select_language" = "Abrać mowu";
+"edit" = "Redagawać";
+"birth_date" = "Dzień naradżeńnia";
+"registration_date" = "Data rehistracyi";
+"hometown" = "Rodny horad";
+"this_is_you" = "heta Wy";
+"edit_page" = "Redagawać staronku";
+"edit_group" = "Redagawać hrupu";
+"change_status" = "źmianić status";
+"name" = "Imia";
+"surname" = "Proźwiszcza";
+"gender" = "Poł";
+"male" = "mużczynski";
+"female" = "żanoczy";
+"description" = "Apisańnie";
+"save" = "Zachawać";
+"main_information" = "Asnoŭnaja infarmacyja";
+"nickname" = "Mianuszka";
+"online" = "Tut";
+"was_online" = "byŭ tut";
+"was_online_m" = "byŭ tut";
+"was_online_f" = "była tut";
+"all_title" = "Usie";
+"information" = "Infarmacyja";
+"status" = "Status";
+
+"relationship" = "Siamiejnaje stanowiszcza";
+
+"relationship_0" = "Nie abrana";
+"relationship_1" = "Nia żanaty";
+"relationship_2" = "Sustrakajusia";
+"relationship_3" = "Zaruczana";
+"relationship_4" = "Żanaty";
+"relationship_5" = "U hramadzianskim szlubie";
+"relationship_6" = "Zakachany";
+"relationship_7" = "Usio składana";
+"relationship_8" = "U aktyŭnym poszuku";
+
+"politViews" = "Palit. pohlady";
+
+"politViews_0" = "Nia abranyja";
+"politViews_1" = "Indyfierentnyja";
+"politViews_2" = "Kamunistycznyja";
+"politViews_3" = "Sacyjalistycznyja";
+"politViews_4" = "Pamiarkoŭnyja";
+"politViews_5" = "Liberalnyja";
+"politViews_6" = "Kansierwatyŭnyja";
+"politViews_7" = "Manarchicznyja";
+"politViews_8" = "Wielmi kanserwatyŭnyja";
+"politViews_9" = "Libierataryjanskija";
+
+"contact_information" = "Kantaktnaja infarmacyja";
+
+"email" = "Poszta";
+"phone" = "Telefon";
+"telegram" = "Telegram";
+"city" = "Horad";
+"address" = "Adras";
+
+"personal_information" = "Asabistaja infarmacyja";
+
+"interests" = "Intaresy";
+"favorite_music" = "Ulubionaja muzyka";
+"favorite_films" = "Ulubionyja filmy";
+"favorite_shows" = "Ulubionyja TB-szou";
+"favorite_books" = "Ulubionyja knihi";
+"favorite_quotes" = "Lubimyja cytaty";
+"information_about" = "Pra siabie";
+
+%{ Wall %}
+
+"post_writes_m" = "napisaŭ";
+"post_writes_f" = "napisała";
+"wall" = "Ściana";
+"post" = "Zapis";
+"write" = "Napisać";
+"publish" = "Apublikavać";
+"delete" = "Wydalić";
+"comments" = "Kamentary";
+"share" = "Padzialicca";
+"comments_tip" = "Budźcie pierszym, chto pakinie kamentaryj!";
+"your_comment" = "Wasz kamentaryj";
+"comments" = "Kamentary";
+"shown" = "Pakazana";
+"x_out_of" = "$1 z";
+"wall_zero" = "niama zapisaŭ";
+"wall_one" = "adzinaja zapis";
+"wall_few" = "$1 zapis";
+"wall_many" = "$1 zapisaŭ";
+"wall_other" = "$1 zapisaŭ";
+
+"nsfw_warning" = "Dadzieny post moża ŭtrymliwać 18+ kantent";
+
+%{ Friends %}
+
+"friends" = "Siabry";
+"followers" = "Padpisanty";
+"follower" = "Padpisanty";
+"friends_add" = "Dadać u list siabroŭ";
+"friends_delete" = "Wydalić z siabroŭ";
+"friends_reject" = "Admianić zajaŭku";
+"friends_accept" = "Pryniać zajaŭku";
+"send_message" = "Adprawić pawiedamleńnie";
+"incoming_req" = "Padpisanty";
+"outcoming_req" = "Zajaŭki";
+"req" = "Zajaŭki";
+
+"firends_zero" = "Niama siabroŭ";
+"friends_one" = "$1 siabar";
+"friends_few" = "$1  adnaho";
+"friends_many" = "$1 siabroŭ";
+"friends_other" = "$1 siabroŭ";
+
+"followers_zero" = "Niama padpisantaŭ";
+"followers_one" = "$1 padpisant";
+"followers_few" = "$1 padpisanta";
+"followers_many" = "$1 padpisantaŭ";
+"followers_other" = "$1 padpisantaŭ";
+
+"subscriptions_zero" = "Ni adnoj padpiski";
+"subscriptions_one" = "$1 padpiska";
+"subscriptions_few" = "$1 padpiski";
+"subscriptions_many" = "$1 padpisak";
+"subscriptions_other" = "$1 padpisak";
+
+%{ Group %}
+
+"name_group" = "Nazwa";
+"subscribe" = "Padpisacca";
+"unsubscribe" = "Adpisacca";
+"subscriptions" = "Padpiski";
+"join_community" = "Ustupić u hrupu";
+"leave_community" = "Wyjści z hrupy";
+"min_6_community" = "Nazwa pawinna być nia miensz za 6 symbalaŭ";
+"participants" = "Udzielniki";
+"groups" = "Hrupy";
+"meetings" = "Sustreczy";
+"create_group" = "Stwaryć hrupu";
+"group_managers" = "Kiraŭnictwa";
+"group_type" = "Typ hrupy";
+"group_type_open" = "Heta adkrytaja hrupa. U jaje moża ŭstupić luby achwoczy.";
+"group_type_closed" = "Heta zakrytaja hrupa. Dla ŭstupleńnia nieabchodna padawać zajaŭku.";
+"creator" = "Stwaralnik";
+
+"role" = "Rola";
+"administrator" = "Administratar";
+"promote_to_admin" = "Padwysić da administratara";
+"devote" = "Razżaławać";
+
+"participants_zero" = "Niwodnaha ŭdzielnika";
+"participants_one" = "Adzin udzielnik";
+"participants_few" = "$1 udzielnika";
+"participants_many" = "$1 udzielnikaŭ";
+"participants_other" = "$1 udzielnikaŭ";
+
+"groups_zero" = "Ni adnoj hrupy";
+"groups_one" = "Adna hrupa";
+"groups_few" = "$1 hrupy";
+"groups_many" = "$1 hurtoŭ";
+"groups_other" = "$1 hurtoŭ";
+
+"meetings_zero" = "Ni adnoj sustreczy";
+"meetings_one" = "Adna sustrecza";
+"meetings_few" = "$1 sustreczy";
+"meetings_many" = "$1 sustrecz";
+"meetings_other" = "$1 sustrecz";
+
+%{ Albums %}
+
+"create" = "Stwaryć";
+"albums" = "Albomy";
+"create_album" = "Stwaryć albom";
+"edit_album" = "Redagawać albom";
+"creating_album" = "Stwareńnie alboma";
+"upload_photo" = "Zahruzić fatazdymak";
+"photo" = "Fatazdymak";
+"upload_button" = "Zahruzić";
+
+"albums_zero" = "Niama albomaŭ";
+"albums_one" = "Adzin albom";
+"albums_few" = "$1 alboma";
+"albums_many" = "$1 albomaŭ";
+"albums_other" = "$1 albomaŭ";
+
+%{ Notes %}
+
+"notes" = "Natatki";
+"note" = "Natatka";
+"name_note" = "Nazwa";
+"text_note" = "Zmiest";
+"create_note" = "Stwaryć natatku";
+"actions" = "Dziejańni";
+"feed" = "Nawiny";
+"publish_post" = "Dadać zapis";
+
+"notes_zero" = "Ni adnoj natatki";
+"notes_one" = "Adna natatka";
+"notes_few" = "$1 natatki";
+"notes_many" = "$1 natatak";
+"notes_other" = "$1 natatak";
+
+%{ Menus %}
+
+"edit_button" = "red.";
+"my_page" = "Maja Staronka";
+"my_friends" = "Maje Siabry";
+"my_photos" = "Maje Fotazdymki";
+"my_videos" = "Maje Wideazapisy";
+"my_messages" = "Maje Pawiedamleńni";
+"my_notes" = "Maje Natatki";
+"my_groups" = "Maje Hrupy";
+"my_feed" = "Maje Nawiny";
+"my_feedback" = "Maje Adkazy";
+"my_settings" = "Maje Nałady";
+"bug_tracker" = "Bug-trekier";
+
+"menu_login" = "Uwachod";
+"menu_registration" = "Rehistracyja";
+"menu_help" = "Dapamoha";
+
+"header_home" = "hałoŭnaja";
+"header_groups" = "hrupy";
+"header_donate" = "padtrymać";
+"header_people" = "ludzi";
+"header_invite" = "zaprasić";
+"header_help" = "dapamoha";
+"header_log_out" = "wyjści";
+"header_search" = "Poszuk";
+
+"header_login" = "Uwachod";
+"header_registration" = "Rehistracyja";
+"header_help" = "Dapamoha";
+
+"footer_blog" = "błoh";
+"footer_help" = "dapamoha";
+"footer_developers" = "raspracoŭnikam";
+"footer_choose_language" = "abrać mowu";
+"footer_privacy" = "prywatnaść";
+
+"notes_zero" = "Ni adnoj natatki";
+"notes_one" = "Adna natatka";
+"notes_few" = "$1 natatki";
+"notes_many" = "$1 natatak";
+"notes_other" = "$1 natatak";
+
+%{ Settings %}
+
+"main" = "Asnoŭnaje";
+"contacts" = "Kantakty";
+"avatar" = "Awatar";
+"privacy" = "Prywatnaść";
+"interface" = "Znieszni wyhlad";
+
+"profile_picture" = "Malunak staronki";
+
+"picture" = "Malunak";
+
+"change_password" = "Źmianić parol";
+"old_password" = "Stary parol";
+"new_password" = "Nowy parol";
+"repeat_password" = "Paŭtarycie parol";
+
+"avatars_style" = "Adlustrawańnie awatara";
+"style" = "Styl";
+
+"default" = "Pa zmaŭczańni";
+"cut" = "Farmat adlustrawańnia";
+"round_avatars" = "Kruhły awatar";
+
+"search_for_groups" = "Poszuk hrup";
+"search_for_people" = "Poszuk ludziej";
+"search_button" = "Znajści";
+"privacy_setting_access_page" = "Kamu ŭ internecie widać maju staronku";
+"privacy_setting_read_info" = "Kamu widać asnoŭnuju infarmacyju majoj staronki";
+"privacy_setting_see_groups" = "Kamu widać maje supołki i sustreczy";
+"privacy_setting_see_photos" = "Kamu widać maje fatazdymki;
+"privacy_setting_see_videos" = "Kamu widać maje wideazapisy";
+"privacy_setting_see_notes" = "Kamu widać maje natatki";
+"privacy_setting_see_friends" = "Kamu widać maich siabroŭ";
+"privacy_setting_add_to_friends" = "Chto moża dadać mianie ŭ śpis siabraŭ";
+"privacy_setting_write_wall" = "Chto moża pisać u mianie na ścianie";
+"privacy_value_anybody" = "Usie żadajuczyja";
+"privacy_value_anybody_dative" = "Usim żadajuczym";
+"privacy_value_users" = "Karystalnikam OpenVK";
+"privacy_value_friends" = "Siabry";
+"privacy_value_friends_dative" = "Siabram";
+"privacy_value_only_me_and_super_capite" = "Ja dy Daniił Marywiec";
+"privacy_value_only_me_and_super_capite_dative" = "Mianie dy Daniiłu Maryŭcu";
+"privacy_value_super_capite" = "Daniiłu Maryŭcu";
+
+"your_email_address" = "Adras Waszaj elektronnaj poszty";
+"your_page_address" = "Adras Waszaj staronki";
+"page_address" = "Adras staronki";
+"current_email_address" = "Ciapieraszni adras";
+"page_id" = "ID staronki";
+"you_can_also" = "Wy taksama możacie";
+"delete_your_page" = "wydalić swaju staronku";
+"delete_album" = "wydalić albom";
+
+"ui_settings_interface" = "Interfiejs";
+"ui_settings_sidebar" = "Lewaje mieniu";
+"ui_settings_rating" = "Rejtynh";
+"ui_settings_rating_show" = "Pakazwać";
+"ui_settings_rating_hide" = "Chawać";
+
+%{ Sorting %}
+
+"sort_randomly" = "Sartawać randomnyja";
+"sort_up" = "Sartawać pa dacie stwareńnia uwierch";
+"sort_down" = "Sartawać pa dacie stwareńnia ŭniz";
+
+%{ Videos %}
+
+"videos" = "Wideazapisy";
+"video" = "Wideazapis";
+"upload_video" = "Zahruzić widea";
+"video_uploaded" = "Zahrużana";
+"video_updated" = "Abnaŭleńnie";
+"video_link_to_yt" = "Spasyłka na YT";
+
+"video_name" = "Nazwa";
+"video_description" = "Apisańnie";
+"video_uploaded_by" = "Zahruziŭ";
+"video_upload_date" = "Data zahruzki";
+
+"videos_zero" = "Ni adnoho wideazapisu";
+"videos_one" = "Adna wideazapis";
+"videos_few" = "$1 wideazapisy";
+"videos_many" = "$1 wideazapisaŭ";
+"videos_other" = "$1 wideazapisaŭ";
+
+
+%{ Notifications %}
+
+"feedback" = "Adkazy";
+"unread" = "Niepraczytanyja";
+"archive" = "Archiŭ";
+
+"notifications_like" = "$1 spadabałasia wasza $2zapis$3 ad $4";
+"notifications_repost" = "$1 padzialiŭsia(-łaś) waszym $2zapisam$3 ad $4";
+"notifications_comment_under" = "$1 pakinuł(-ła) kommentaryj pad $2";
+"notifications_under_note" = "waszaj $3natatkaj$4";
+"notifications_under_photo" = "waszym $3fatazdymkam$4";
+"notifications_under_post" = "waszym $3zapisam$4 ad $5";
+"notifications_under_video" = "waszym $3widea$4";
+"notifications_post" = "$1 napisaŭ(-ła) $2zapis$3 na waszaj ścianie: $4";
+"notifications_appoint" = "$1 naznaczyŭ was kiraŭnikom supołki $2";
+
+"nt_liked_yours" = "spadabaŭsia wasz";
+"nt_shared_yours" = "padzialiŭsia(-aś) waszym";
+"nt_commented_yours" = "pakinuŭ(-ła) kamentar pad";
+"nt_written_on_your_wall" = "napisał(a) na waszaj ścianie";
+"nt_made_you_admin" = "pryznaczyŭ(ła) was kiraŭnikom supołki";
+
+"nt_from" = "ad";
+"nt_yours_adjective" = "waszym";
+"nt_yours_feminitive_adjective" = "waszaj";
+"nt_post_nominative" = "post";
+"nt_post_instrumental" = "pastom";
+"nt_note_instrumental" = "natatkaj";
+"nt_photo_instrumental" = "fatahrafijaj";
+
+%{ Time %}
+
+"Time_at_sp" = " u ";
+"Time_just_now" = "tolki szto";
+"Time_exactly_five_minutes_ago" = "roŭna 5 chwilinaŭ tamu";
+"Time_minutes_ago" = "$1 chwilin tamu";
+"Time_today" = "siońnia";
+"Time_yesterday" = "uczora";
+
+"privacy_setting_access_page" = "Kamu ŭ internecie widać maju staronku";
+"privacy_setting_read_info" = "Kamu widać asnoŭnuju infarmacyju majoj staronki";
+"privacy_setting_see_groups" = "Kamu widać maje supołki i sustreczy";
+"privacy_setting_see_photos" = "Kamu widać maje fatazdymki";
+"privacy_setting_see_videos" = "Kamu widać maje wideazapisy";
+"privacy_setting_see_notes" = "Kamu widać maje natatki";
+"privacy_setting_see_friends" = "Kamu widać maich siabroŭ";
+"privacy_setting_add_to_friends" = "Chto moża nazywać mianie siabram";
+"privacy_setting_write_wall" = "Chto moża pisać u mianie na ścianie";
+"privacy_value_anybody" = "Usie żadajuczyja";
+"privacy_value_anybody_dative" = "Usim żadajuczym";
+"privacy_value_users" = "Karystalnikam OpenVK";
+"privacy_value_friends" = "Siabry";
+"privacy_value_friends_dative" = "Siabram";
+"privacy_value_only_me_and_super_capite" = "Ja i Daniiłu Marywiec";
+"privacy_value_only_me_and_super_capite_dative" = "Mianie i Daniiłu Maryŭcu";
+"privacy_value_super_capite" = "Daniiłu Maryŭcu";
+
+"your_email_address" = "Adras Waszaj elektronnaj poszty";
+"your_page_address" = "Adras Waszaj staronki";
+"page_address" = "Adras staronki";
+"current_email_address" = "Ciapieraszni adras";
+"page_id" = "ID staronki";
+"you_can_also" = "Wy taksama możacie";
+"delete_your_page" = "wydalić swaju staronku";
+"delete_album" = "wydalić albom";
+
+"ui_settings_interface" = "Interfiejs";
+"ui_settings_sidebar" = "Lewaje mieniu";
+"ui_settings_rating" = "Rejtynh";
+"ui_settings_rating_show" = "Pakazwać";
+"ui_settings_rating_hide" = "Chawać";
+
+%{ Errors %}
+
+"error_1" = "Niawierny zapyt";
+"error_2" = "Niawierny imia albo parol";
+"error_3" = "Nia aŭtaryzawany";
+"error_4" = "Karystalnik nie isnuje";
+"information_-1" = "Aperacyja wykanana paśpiachowa";
+"information_-2" = "Uwachod wykanany paśpiachowa";
+
+"no_data" = "Niama dadzienych";
+"no_data_description" = "U hetym pradstaŭleńni adsutniczajuć dadzienyja.";
