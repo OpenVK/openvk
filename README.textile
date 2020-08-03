@@ -18,8 +18,11 @@ If you want, you can add your instance to the list above so that people can regi
 h3. Installation procedure
 
 # Install Composer, Node.js, Yarn and "Chandler":https://github.com/openvk/chandler
-# Import install/init-static-db.sql to *same db* you installed Chandler to
-# Import install/init-event-db.sql to *separate db*
+# Install "commitcaptcha":https://github.com/openvk/commitcaptcha and OpenVK as Chandler extensions and enable them like this:
+@ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/extensions/enabled/@
+@ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/@
+# Import install/init-static-db.sql to *same database* you installed Chandler to
+# Import install/init-event-db.sql to *separate database*
 # Rename openvk-example.yml to openvk.yml and change options
 # Run @composer install@ in OpenVK directory
 # Move to Web/static/js and execute @yarn install@
