@@ -54,19 +54,19 @@
         }
 
         .e {
-            background-color: #fcc;
+            background-color: #b7cde2;
             width: 300px;
             font-weight: bold;
         }
 
         .h {
-            background-color: #d00;
+            background-color: #13599f;
             font-weight: bold;
             color: #fff
         }
 
         .v {
-            background-color: #fff7f7;
+            background-color: #f1f5f9;
             max-width: 300px;
             overflow-x: auto;
             word-wrap: break-word;
