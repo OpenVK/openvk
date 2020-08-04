@@ -80,7 +80,13 @@ function tr(string $stringId, ...$variables): string
             }
             
             $newOutput = $localizer->_($numberedStringId, $lang);
-            $output    = $newOutput === "@$numberedStringId" ? $output : $newOutput;
+            if($newOutput === "@$numberedStringId") {
+                $newOutput = $localizer->_($stringId . "_other", $lang);
+                if($newOutput === ("@" . $stringId . "_other"))
+                    $newOutput = $output;
+            }
+
+            $output = $newOutput;
         }
         
         for($i = 0; $i < sizeof($variables); $i++)
