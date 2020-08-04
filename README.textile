@@ -45,7 +45,7 @@ You also not required to publish source texts of your themepacks and plugins.
 h2. Where can I get assistance?
 
 You may reach out to us via:
-* "Bug-tracker":http://jirakitsu.wormixtest.ru/projects/OVK/issues/
+* "Bug-tracker":https://phabricator.dsrev.ru/project/view/1/
 * "Ticketing system":https://openvk2.veselcraft.ru/support?act=new
 * "Telegram chat":https://t.me/openvkchat
 
