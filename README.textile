@@ -1,7 +1,7 @@
 h1. OpenVK 2
 
 *OpenVK* is an attempt to create a simple CMS that -cosplays- imitates old VK. Code provided here is not stable yet.
-To be honest, we don't even know whether it even works. However, this version (unlike classic) is maintained and we will be happy to accept your bugreports "in our bug-tracker":http://jirakitsu.wormixtest.ru/projects/OVK/issues/. You should also be able to submit them using "ticketing system":https://openvk2.veselcraft.ru/support?act=new (you will need an OVK account for this).
+To be honest, we don't even know whether it even works. However, this version (unlike classic) is maintained and we will be happy to accept your bugreports "in our bug-tracker":https://phabricator.dsrev.ru/project/view/1/. You should also be able to submit them using "ticketing system":https://openvk2.veselcraft.ru/support?act=new (you will need an OVK account for this).
 
 h2. Instances
 
