@@ -1,0 +1,121 @@
+#!/bin/tcsh
+
+##########################################################################################################\
+#         OpenVK AutoInstallation Script for FreeBSD 12         #               /(        )`               #
+# ------------------------------------------------------------- #               \ \___   / |               #
+#                                                               #               /- _  `-/  '               #
+# This script installs OpenVK 2 on an empty FreeBSD 12 box.     #              (/\/ \ \   /\               #
+# Copyright (c) 2020 OpenVK contributors                        #              / /   | `    \              #
+# ------------------------------------------------------------- #              O O   ) /    |              #
+#                                                               #              `-^--'`<     '              #
+# This scropt is free software; you can redistribute it and/or  #             (_.)  _  )   /               #
+# modify it under the terms of the GNU Lesser General Public    #              `.___/`    /                #
+# License as published by the Free Software Foundation; ver 2.1 #                `-----' /                 #
+#                                                               #   <----.     __ / __   \                 #
+# This script is distributed in the hope that it will be        #  <----|====O)))==) \) /====|             #
+# useful, but WITHOUT ANY WARRANTY; without even the implied    #   <----'    `--' `.__,' \                #
+# warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR       #                |        |                #
+# PURPOSE. See the GNU Lesser General Public License for more   #                 \       /       /\       #
+# details.                                                      #            ______( (_  / \______/        #
+###########################################################################################################/
+
+# Verify compatability
+command -v freebsd-version
+if ($? == 1) then
+    echo "Fatal Error: This installation script is for FreeBSD only."
+    exit 200
+endif
+
+set osVer = `freebsd-version -r`
+if ($osVer !~ "12.*") then
+    echo "Fatal Error: This installation supports only FreeBSD 12, but you have FreeBSD $osVer installed."
+    exit 201
+endif
+
+# Update system
+pkg update
+pkg upgrade
+
+# Install programming languages and Git
+yes | pkg install git
+yes | pkg install php74
+yes | pkg install mod_php74 # will also install Apache2.4
+yes | pkg install php74-gd php74-mbstring php74-iconv php74-json php74-sodium php74-calendar php74-curl php74-brotli php74-zip php74-openssl php74-ctype php74-dom php74-fileinfo php74-PDO php74-pdo_mysql php74-sqlite3 php74-pdo_sqlite php74-sockets php74-tokenizer php74-opcache php74-posix php74-pecl-yaml php74-phar php74-filter php74-zlib php74-session
+curl -LO https://getcomposer.org/installer
+php ./installer --install-dir=/bin --filename=composer --preview
+rm -f ./installer
+yes | pkg install node npm
+npm i -g yarn
+
+# Download OVK distro
+cd /tmp
+git clone https://github.com/openvk/openvk.git
+
+# Install chandler
+mkdir /opt
+cd /opt
+git clone https://github.com/openvk/chandler.git
+
+cd chandler
+yes | composer install
+cp /tmp/openvk/install/automated/common/chandler.yml /opt/chandler/chandler.yml
+chown -R www: .
+chmod -R 777 .
+
+# Install CommitCaptcha
+cd ./extensions/available
+git clone https://github.com/openvk/commitcaptcha.git
+
+cd commitcaptcha
+yes | composer install
+chown -R www: .
+chmod -R 777 .
+
+cd /opt/chandler
+ln -s /opt/chandler/extensions/available/commitcaptcha /opt/chandler/extensions/enabled/commitcaptcha
+
+# Install OpenVK
+cp -r /tmp/openvk /opt/chandler/extensions/available/openvk
+ln -s /opt/chandler/extensions/available/openvk /opt/chandler/extensions/enabled/openvk
+
+cd ./extensions/available/openvk
+yes | composer install
+
+cd Web/static/js
+yarn install
+
+cp /tmp/openvk/install/automated/common/openvk.yml /opt/chandler/extensions/available/openvk/openvk.yml
+
+cd ../../../
+chown -R www: .
+chmod -R 777 .
+
+# Install MySQL
+yes | pkg install mariadb105-server mariadb105-client
+sysrc mysql_enable="yes"
+service mysql-server start
+nohup /usr/local/libexec/mariadbd >& /dev/null & # service mysql-server start doesn't work
+sleep 15
+
+# Mount databases
+cd /opt/chandler
+mysql < /tmp/openvk/install/automated/common/mk_db.sql
+mysql -p'justMonika' openvk < install/init-db.sql
+mysql -p'justMonika' openvk < /tmp/openvk/install/init-static-db.sql
+mysql -p'justMonika' openvk-eventdb < /tmp/openvk/install/init-event-db.sql
+
+# Alias folders
+rm -rf /usr/local/www/apache24/data
+ln -s /opt/chandler/htdocs /usr/local/www/apache24/data
+
+# Configure Apache
+cp /tmp/openvk/install/automated/common/httpd.conf /usr/local/etc/apache24/httpd.conf
+cp /tmp/openvk/install/automated/common/httpd-php.conf /usr/local/etc/apache24/Includes/php.conf
+sysrc apache24_enable="yes"
+service apache24 start
+
+# Enjoy
+echo "~================= OpenVK 2 Installed =================~"
+echo "               Use it: http://localhost:80/             "
+echo "       (for vagrant users: http://localhost:4000/)      "
+echo "~======================================================~"

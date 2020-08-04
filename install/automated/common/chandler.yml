@@ -1,0 +1,18 @@
+chandler:
+    debug: true
+    websiteUrl: null
+    rootApp:    "openvk"
+    
+    preferences:
+        appendExtension: "xhtml"
+        adminUrl: "/chandlerd"
+        exposeChandler: true
+    
+    database:
+        dsn: "mysql:unix_socket=/var/run/mysql/mysql.sock;dbname=openvk"
+        user: "root"
+        password: "justMonika"
+    
+    security:
+        secret: "081906e04f2921e48751fbc5df44dbbcd7f6ecba065ade3d8ea28034cb8d6db24da10965845b5f3376847674e3bce61b5c0e439d12eef3c00d30f3b953657cac"
+        sessionDuration: 14

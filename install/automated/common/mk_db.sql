@@ -1,0 +1,6 @@
+FLUSH PRIVILEGES;
+ALTER USER 'root'@'localhost' IDENTIFIED BY 'justMonika';
+FLUSH PRIVILEGES;
+
+CREATE DATABASE openvk;
+CREATE DATABASE `openvk-eventdb`;
