@@ -494,8 +494,7 @@
                 <tr class="e">
                     <td>
                         kovaltim, Vladimir Lapskiy (TeQuiero), Alexander Minkin (WerySkok), Polina Katunina (RousPhaul), tojeveth,
-                        Egor Shevchenko, <del>Vadim Korovin (vadimkn)</del>, <del>Ash Defenders</del>,
-                        <del>Pavel Silaev</del>, Dmitriy Daemon (Dimas_NT), Ilya Prokopenko (dsrev),
+                        Egor Shevchenko, <del>Dmitriy Daemon (Dimas_NT)</del>, Ilya Prokopenko (dsrev), Mamkin_Xakep_bot,
                         cmed404 and unknown tester, who died shortly after trying to upload post with cat.
                     </td>
                 </tr>
@@ -510,7 +509,7 @@
             <tbody>
                 <tr class="v">
                     <td>
-                        This program is free sofrware; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+                        This program is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
                         License (version 2.1) as published by the Free Software Foundation.<br/>
                         This program is distributed in the hope that it will be useful,
                         but WITHOUT ANY WARRANTY; without even the implied warranty of
