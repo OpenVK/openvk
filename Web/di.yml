@@ -20,6 +20,7 @@ services:
     - openvk\Web\Presenters\AdminPresenter
     - openvk\Web\Presenters\MessengerPresenter
     - openvk\Web\Presenters\ThemepacksPresenter
+    - openvk\Web\Presenters\VKAPIPresenter
     - openvk\Web\Models\Repositories\Users
     - openvk\Web\Models\Repositories\Posts
     - openvk\Web\Models\Repositories\Photos
