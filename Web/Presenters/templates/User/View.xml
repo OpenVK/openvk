@@ -30,7 +30,7 @@
          class="name-checkmark"
          src="/assets/packages/static/openvk/img/checkmark.png"
          />
-    <span n:if="!is_null($thisUser) && $user->getId() == $thisUser->getId()"><b>({_"this_is_you"})</b></span>
+    <span n:if="isset($thisUser) && $user->getId() == $thisUser->getId()"><b>({_"this_is_you"})</b></span>
     
     <!-- DEBUG: ONLINE REPORT: static {$user->getOnline()->timestamp()}s adjusted {$user->getOnline()->timestamp() + 2505600}s real {time()}s -->
     <div n:if="$user->getOnline()->timestamp() + 2505600 > time()" style="float:right;">
@@ -114,7 +114,7 @@
                 {/if}
             {/if}
         </div>
-        <div n:if="!is_null($thisUser) && !$thisUser->prefersNotToSeeRating()" class="profile-hints">
+        <div n:if="isset($thisUser) && !$thisUser->prefersNotToSeeRating()" class="profile-hints">
             {var completeness = $user->getProfileCompletenessReport()}
             
             <div class="completeness-gauge">
@@ -122,7 +122,7 @@
                 <span>{$completeness->total}%</span>
             </div>
             
-            {if !is_null($thisUser) && $user->getId() === $thisUser->getId() && sizeof($completeness->unfilled) > 0}
+            {if isset($thisUser) && $user->getId() === $thisUser->getId() && sizeof($completeness->unfilled) > 0}
                 <br/>
                 <a n:if="in_array('interests', $completeness->unfilled)" href="/edit">
                     <img src="https://openvk.veselcraft.ru/img/images/icon1.gif" alt="Указать интересы" />
@@ -325,7 +325,7 @@
     <h2>{$user->getFullName()}</h2>
 	{if !is_null($user->getStatus())}
                     <div class="page_status">{$user->getStatus()}</div>
-                {elseif !is_null($thisUser) && $user->getId() == $thisUser->getId()}
+                {elseif isset($thisUser) && $user->getId() == $thisUser->getId()}
                     <div class="page_status">
                         <a href="/edit" class="edit_link">[ {_"change_status"} ]</a>
                     </div>
