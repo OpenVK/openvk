@@ -20,7 +20,7 @@
             <a n:attr="id => ($isPrivacy ? 'act_tab_a' : 'ki')" href="/settings?act=privacy">{_"privacy"}</a>
         </div>
         <div n:attr="id => ($isFinance ? 'activetabs' : 'ki')" class="tab">
-            <a n:attr="id => ($isFinance ? 'act_tab_a' : 'ki')" href="/settings?act=finance">Голоса</a>
+            <a n:attr="id => ($isFinance ? 'act_tab_a' : 'ki')" href="/settings?act=finance">{_points}</a>
         </div>
         <div n:attr="id => ($isInterface ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isInterface ? 'act_tab_a' : 'ki')" href="/settings?act=interface">{_"interface"}</a>
@@ -257,22 +257,14 @@
         {elseif $isFinance}
         
         <div style="width: 75%; display: inline-block;">
-            <h4>Что такое голоса?</h4>
-            <p>
-                4
-            </p>
-            
-            <h4>Как купить голоса?</h4>
-            <p>
-                хз
-            </p>
+            {presenter "openvk!Support->knowledgeBaseArticle", "points"}
         </div>
         <div style="width: 22%; float: right;">
             <p style="margin: 0; font-size: medium; text-align: center;">
                 <b>
-                    на вашем счету<br/>
+                    {_on_your_account}<br/>
                     <span style="font-size: 50px;">{$thisUser->getCoins()}</span><br/>
-                    PRIZM
+                    {_points_count}
                 </b>
             </p>
         </div>

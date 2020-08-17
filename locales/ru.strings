@@ -422,6 +422,10 @@
 "ui_settings_rating_show" = "Показывать";
 "ui_settings_rating_hide" = "Скрывать";
 
+"points" = "Голоса";
+"points_count" = "голосов";
+"on_your_account" = "на вашем счету";
+
 %{ Errors %}
 
 "error_1" = "Некорректный запрос";
