@@ -13,6 +13,15 @@ class EntityStream implements \IteratorAggregate
         $this->entityClass = "openvk\\Web\\Models\\Entities\\$class";
     }
     
+    /**
+     * Almost shorthand for (clone $this->dbStream)
+     * Needed because it's used often in this class. And it's used often to prevent changing mutable dbStream.
+     */
+    private function dbs(): \Traversable
+    {
+        return (clone $this->dbStream);
+    }
+    
     private function getEntity(ActiveRow $result)
     {
         return new $this->entityClass($result);
@@ -28,21 +37,21 @@ class EntityStream implements \IteratorAggregate
     {
         trigger_error("Trying to use EntityStream as iterator directly. Are you sure this is what you want?", E_USER_WARNING);
         
-        return $this->stream($this->dbStream);
+        return $this->stream($this->dbs());
     }
     
     function page(int $page, ?int $perPage = NULL): \Traversable
     {
-        return $this->stream($this->dbStream->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE));
+        return $this->stream($this->dbs()->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE));
     }
     
     function offsetLimit(int $offset = 0, ?int $limit = NULL): \Traversable
     {
-        return $this->stream($this->dbStream->limit($limit ?? OPENVK_DEFAULT_PER_PAGE, $offset));
+        return $this->stream($this->dbs()->limit($limit ?? OPENVK_DEFAULT_PER_PAGE, $offset));
     }
     
     function size(): int
     {
-        return sizeof(clone $this->dbStream);
+        return sizeof($this->dbs());
     }
 }
