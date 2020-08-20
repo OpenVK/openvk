@@ -125,24 +125,24 @@
             {if isset($thisUser) && $user->getId() === $thisUser->getId() && sizeof($completeness->unfilled) > 0}
                 <br/>
                 <a n:if="in_array('interests', $completeness->unfilled)" href="/edit">
-                    <img src="https://openvk.veselcraft.ru/img/images/icon1.gif" alt="Указать интересы" />
-                    Указать {_interests} (+20%)
+                    <img src="/assets/packages/static/openvk/img/icon1.gif" />
+                    {_interests} (+20%)
                 </a>
                 <a n:if="in_array('email', $completeness->unfilled)" href="/edit?act=contacts">
-                    <img src="https://openvk.veselcraft.ru/img/images/icon2.gif" alt="Указать email" />
-                    Указать Email (+20%)
+                    <img src="/assets/packages/static/openvk/img/icon2.gif" />
+                    Email (+20%)
                 </a>
                 <a n:if="in_array('phone', $completeness->unfilled)" href="/edit?act=contacts">
-                    <img src="https://openvk.veselcraft.ru/img/images/icon2.gif" alt="Указать номер телефона" />
-                    Указать {_phone} (+20%)
+                    <img src="/assets/packages/static/openvk/img/icon2.gif" />
+                    {_phone} (+20%)
                 </a>
                 <a n:if="in_array('telegram', $completeness->unfilled)" href="/edit?act=contacts">
-                    <img src="https://openvk.veselcraft.ru/img/images/icon2.gif" alt="Указать Telegram" />
-                    Указать Telegram (+10%)
+                    <img src="/assets/packages/static/openvk/img/icon2.gif" />
+                    Telegram (+10%)
                 </a>
                 <a n:if="in_array('status', $completeness->unfilled)" href="/edit">
-                    <img src="https://openvk.veselcraft.ru/img/images/icon5.gif" alt="Написать статус" />
-                    Написать {_status} (+10%)
+                    <img src="/assets/packages/static/openvk/img/icon3.gif" />
+                    {_status} (+10%)
                 </a>
             {/if}
         </div>
