@@ -49,7 +49,7 @@
                 <input type="submit" value="{_'write'}" class="button" />
                 <div style="float: right;">
                     <a href="javascript:void(document.querySelector(`input[name=_pic_attachment]`).click());">
-                        Прикрепить изображение
+                        {_attach_photo}
                     </a>
                 </div>
             </form>
@@ -63,7 +63,7 @@
                 {/foreach}
                 {include "../components/paginator.xml", conf => $paginatorConf}
             {else}
-                Здесь никто ничего не написал... Пока.
+                {_no_posts_abstract}
             {/if}
         </div>
     </div>

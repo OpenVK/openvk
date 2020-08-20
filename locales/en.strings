@@ -42,6 +42,7 @@
 "all_title" = "All";
 "information" = "Information";
 "status" = "Status";
+"no_information_provided" = "No information provided.";
 
 "relationship" = "Relationship";
 
@@ -86,6 +87,8 @@
 "favorite_quotes" = "Favorite quotes";
 "information_about" = "About";
 
+"updated_at" = "Updated at $1";
+
 %{ Wall %}
 
 "post_writes_m" = "wrote";
@@ -109,6 +112,9 @@
 "publish_post" = "Add post";
 
 "nsfw_warning" = "This post may have NSFW-content";
+"report" = "Report";
+"attach_photo" = "Attach photo";
+"no_posts_abstract" = "Nobody wrote anything here... At least.";
 
 %{ Friends %}
 
@@ -374,3 +380,32 @@
 
 "no_data" = "No data";
 "no_data_description" = "There is no data.";
+
+"error" = "Error";
+"error_shorturl" = "This short address is already owned.";
+"error_segmentation" = "Segmentation error";
+"error_upload_failed" = "Failed to upload a photo";
+"error_old_password" = "Old password does not match";
+"error_new_password" = "New password does not match";
+"error_shorturl_incorrect" = "The short address has an incorrect format.";
+
+"forbidden" = "Access error";
+"forbidden_comment" = "This user\'s privacy settings do not allow you to look at his page.";
+
+"changes_saved" = "Changes saved";
+"changes_saved_comment" = "New data will appear on your page";
+
+"photo_saved" = "Photo saved";
+"photo_saved_comment" = "New profile picture will appear on your page";
+
+%{ Admin actions %}
+
+"login_as" = "Login as $1";
+"ban_user_action" = "Ban user";
+"warn_user_action" = "Warn user";
+
+%{ Paginator %}
+
+"paginator_back" = "Back";
+"paginator_page" = "Page $1";
+"paginator_next" = "Next";

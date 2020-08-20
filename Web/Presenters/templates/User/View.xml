@@ -47,8 +47,8 @@
     
     {if !$user->getPrivacyPermission('page.read', $thisUser ?? NULL)}
         <div class="msg msg_err">
-            <b>Ошибка доступа</b><br/>
-            Настройки приватности этого пользователя не разрешают вам смотреть на его страницу.
+            <b>{_forbidden}</b><br/>
+            {_forbidden_comment}
         </div>
     {else}
     
@@ -56,7 +56,7 @@
         <div>
             <a href="{$user->getAvatarLink()|nocheck}">
                 <img src="{$user->getAvatarUrl()}"
-                     alt="Фотография пользователя {$user->getCanonicalName()}"
+                     alt="{$user->getCanonicalName()}"
                      style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
             </a>
         </div>
@@ -68,16 +68,16 @@
             {else}
                 {if $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
                     <a href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}" class="profile_link">
-                        Войти как {$user->getFirstName()}
+                        {tr("login_as", $user->getFirstName())}
                     </a>
                 {/if}
                 
                 {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
                     <a href="javascript:banUser()" class="profile_link">
-                        Забанить пользователя
+                        {_ban_user_action}
                     </a>
                     <a href="javascript:warnUser()" class="profile_link">
-                        Предупредить пользователя
+                        {_warn_user_action}
                     </a>
                 {/if}
                 
@@ -217,7 +217,7 @@
                         </div>
                         <div>
                             <b><a href="/album{$album->getPrettyId()}">{$album->getName()}</a></b><br>
-                            <span class="nobold">Обновлён {$album->getEditTime() ?? $album->getPublicationTime()}</span>
+                            <span class="nobold">{tr("updated_at", $album->getEditTime() ?? $album->getPublicationTime())}</span>
                         </div>
                     </div>
                 </div>
@@ -436,7 +436,7 @@
                     {if !empty($contactInfo_Tmp)}
                         {$contactInfo_Tmp|noescape}
                     {else}
-                        <div style="padding: 15px;color:gray;text-align: center;">Информация отсутствует.</div>
+                        <div style="padding: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
                     {/if}
                     <br>
                 {/if}
@@ -444,7 +444,7 @@
                     {if !empty($uInfo_Tmp)}
                         {$uInfo_Tmp|noescape}
                     {else}
-                        <div style="padding-top: 15px;color:gray;text-align: center;">Информация отсутствует.</div>
+                        <div style="padding-top: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
                     {/if}
             </div>
             </div>

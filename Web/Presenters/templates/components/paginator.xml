@@ -3,12 +3,12 @@
     <center>
         <a n:if="$conf->page != 1"
            href="?{http_build_query(array_merge($_GET, ['p' => ($conf->page - 1)]), 'k', '&', PHP_QUERY_RFC3986)}"
-           style="float: left;">&lt;&lt; Назад</a>
+           style="float: left;">&lt;&lt; {_paginator_back}</a>
         
-        Страница {$conf->page}
+        {tr("paginator_page", $conf->page)}
         
         <a n:if="$conf->count > (($conf->page - 1) * $conf->perPage + $conf->amount) && $conf->amount > 0"
            href="?{http_build_query(array_merge($_GET, ['p' => ($conf->page + 1)]), 'k', '&', PHP_QUERY_RFC3986)}"
-           style="float: right;">Вперёд &gt;&gt;</a>
+           style="float: right;">{_paginator_next} &gt;&gt;</a>
     </center>
 </div>

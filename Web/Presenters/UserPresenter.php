@@ -112,12 +112,12 @@ final class UserPresenter extends OpenVKPresenter
                     
                     if(!empty($this->postParam("phone")) && $this->postParam("phone") !== $user->getPhone()) {
                         if(!OPENVK_ROOT_CONF["openvk"]["credentials"]["zadarma"]["enable"])
-                            $this->flashFail("err", "Ошибка сегментации", "котлетки");
+                            $this->flashFail("err", tr("error_segmentation"), "котлетки");
                         
                         $code = $user->setPhoneWithVerification($this->postParam("phone"));
                         
                         if(!Sms::send($this->postParam("phone"), "OPENVK | Your verification code is: $code"))
-                            $this->flashFail("err", "Ошибка сегментации", "котлетки: Remote err!");
+                            $this->flashFail("err", tr("error_segmentation"), "котлетки: Remote err!");
                     }
                 } elseif($_GET['act'] === "contacts") {
                     $user->setEmail_Contact(empty($this->postParam("email_contact")) ? NULL : $this->postParam("email_contact"));
@@ -138,12 +138,12 @@ final class UserPresenter extends OpenVKPresenter
                     $user->save();
                 } catch(\PDOException $ex) {
                     if($ex->getCode() == 23000)
-                        $this->flashFail("err", "Ошибка", "Данный короткий адрес уже занят.");
+                        $this->flashFail("err", tr("error"), tr("error_shorturl"));
                     else
                         throw $ex;
                 }
                 
-                $this->flash("succ", "Изменения сохранены", "Новые данные появятся на вашей странице.");
+                $this->flash("succ", tr("changes_saved"), tr("changes_saved_comment"));
             }
             
             $this->template->mode = in_array($this->queryParam("act"), [
@@ -168,7 +168,7 @@ final class UserPresenter extends OpenVKPresenter
             if(!$user->verifyNumber($this->postParam("code") ?? 0))
                 $this->flashFail("err", "Ошибка", "Не удалось подтвердить номер телефона: неверный код.");
         
-            $this->flash("succ", "Изменения сохранены", "Новые данные появятся на вашей странице.");
+            $this->flash("succ", tr("changes_saved"), tr("changes_saved_comment"));
         }
     }
     
@@ -201,11 +201,11 @@ final class UserPresenter extends OpenVKPresenter
             $photo->save();
         } catch(ISE $ex) {
             $name = $album->getName();
-            $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию.");
+            $this->flashFail("err", tr("error"), tr("error_upload_failed"));
         }
         
         (new Albums)->getUserAvatarAlbum($this->user->identity)->addPhoto($photo);
-        $this->flashFail("succ", "Фотография сохранена", "Новое изображения профиля появится у вас на странице.");
+        $this->flashFail("succ", tr("photo_saved"), tr("photo_saved_comment"));
     }
     
     function renderSettings(): void
@@ -223,14 +223,14 @@ final class UserPresenter extends OpenVKPresenter
                 if($this->postParam("old_pass") && $this->postParam("new_pass") && $this->postParam("repeat_pass")) {
                     if($this->postParam("new_pass") === $this->postParam("repeat_pass")) {
                         if(!$this->user->identity->getChandlerUser()->updatePassword($this->postParam("new_pass"), $this->postParam("old_pass")))
-                            $this->flashFail("err", "Ошибка", "Старый пароль не совпадает.");
+                            $this->flashFail("err", tr("error"), tr("error_old_password"));
                     } else {
-                        $this->flashFail("err", "Ошибка", "Новые пароли не совпадают.");
+                        $this->flashFail("err", tr("error"), tr("error_new_password"));
                     }
                 }
                 
                 if(!$user->setShortCode(empty($this->postParam("sc")) ? NULL : $this->postParam("sc")))
-                    $this->flashFail("err", "Ошибка", "Короткий адрес имеет некорректный формат.");
+                    $this->flashFail("err", tr("error"), tr("error_shorturl_incorrect"));
             }elseif($_GET['act'] === "privacy") {
                 $settings = [
                     "page.read",
@@ -273,7 +273,7 @@ final class UserPresenter extends OpenVKPresenter
                 $user->save();
             } catch(\PDOException $ex) {
                 if($ex->getCode() == 23000)
-                    $this->flashFail("err", "Ошибка", "Данный короткий адрес уже занят.");
+                    $this->flashFail("err", tr("error"), tr("error_shorturl"));
                 else
                     throw $ex;
             }

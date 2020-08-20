@@ -40,6 +40,7 @@
 "all_title" = "Все";
 "information" = "Информация";
 "status" = "Статус";
+"no_information_provided" = "Информация отсутствует.";
 
 "relationship" = "Семейное положение";
 
@@ -84,6 +85,8 @@
 "favorite_quotes" = "Любимые цитаты";
 "information_about" = "О себе";
 
+"updated_at" = "Обновлено $1";
+
 %{ Wall %}
 
 "post_writes_m" = "написал";
@@ -108,6 +111,9 @@
 "wall_other" = "$1 записей";
 
 "nsfw_warning" = "Данный пост может содержать 18+ контент";
+"report" = "Пожаловаться";
+"attach_photo" = "Прикрепить фото";
+"no_posts_abstract" = "Здесь никто ничего не написал... Пока.";
 
 %{ Friends %}
 
@@ -437,3 +443,32 @@
 
 "no_data" = "Нет данных";
 "no_data_description" = "В этом представлении отсутствуют данные.";
+
+"error" = "Ошибка";
+"error_shorturl" = "Данный короткий адрес уже занят.";
+"error_segmentation" = "Ошибка сегментации";
+"error_upload_failed" = "Не удалось загрузить фото";
+"error_old_password" = "Старый пароль не совпадает";
+"error_new_password" = "Новые пароли не совпадает";
+"error_shorturl_incorrect" = "Короткий адрес имеет некорректный формат.";
+
+"forbidden" = "Ошибка доступа";
+"forbidden_comment" = "Настройки приватности этого пользователя не разрешают вам смотреть на его страницу.";
+
+"changes_saved" = "Изменения сохранены";
+"changes_saved_comment" = "Новый данные появятся на вашей странице";
+
+"photo_saved" = "Фотография сохранена";
+"photo_saved_comment" = "Новое изображние профиля появится у вас на странице";
+
+%{ Admin actions %}
+
+"login_as" = "Войти как $1";
+"ban_user_action" = "Забанить пользователя";
+"warn_user_action" = "Предупредить пользователя";
+
+%{ Paginator %}
+
+"paginator_back" = "Назад";
+"paginator_page" = "Страница $1";
+"paginator_next" = "Дальше";

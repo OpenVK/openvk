@@ -66,7 +66,7 @@
         <tbody>
             <tr>
                 <td width="120" valign="top"><span class="nobold">{_"gender"}: </span></td>
-                <td>{$x->isFemale() ? "женский" : "мужской"}</td>
+                <td>{$x->isFemale() ? tr("female") : tr("male")}</td>
             </tr>
             <tr>
                 <td width="120" valign="top"><span class="nobold">{_"relationship"}:</span></td>
