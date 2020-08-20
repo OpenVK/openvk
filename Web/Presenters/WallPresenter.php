@@ -162,10 +162,12 @@ final class WallPresenter extends OpenVKPresenter
                 $canPost = $wallOwner->canPost();
         else
             $canPost = false; 
-
         
         if(!$canPost)
             $this->flashFail("err", "Ошибка доступа", "Вам нельзя писать на эту стену.");
+        
+        if(iconv_strlen($this->postParam("text") ?? "") > 280)
+            $this->flashFail("err", "Не удалось опубликовать пост", "Пост слишком большой.");
         
         $flags = 0;
         if($this->postParam("as_group") === "on")
@@ -189,7 +191,7 @@ final class WallPresenter extends OpenVKPresenter
                     (new Albums)->getUserWallAlbum($wallOwner)->addPhoto($photo);
                 }
             } catch(ISE $ex) {
-                $this->flashFail("err", "Не удалось опубликовать пост", "Файл повреждён.");
+                $this->flashFail("err", "Не удалось опубликовать пост", "Файл изображения повреждён, слишком велик или одна сторона изображения в разы больше другой.");
             }
             
             $post = new Post;
@@ -210,10 +212,10 @@ final class WallPresenter extends OpenVKPresenter
                 $post->setFlags($flags);
                 $post->save();
             } catch(\LogicException $ex) {
-                $this->flashFail("err", "Не удалось опубликовать пост", "Нельзя опубликовать пустой пост.");
+                $this->flashFail("err", "Не удалось опубликовать пост", "Пост пустой или слишком большой.");
             }
         } else {
-            $this->flashFail("err", "Не удалось опубликовать пост", "Нельзя опубликовать пустой пост.");
+            $this->flashFail("err", "Не удалось опубликовать пост", "Пост пустой или слишком большой.");
         }
         
         if($wall > 0 && $wall !== $this->user->identity->getId())
