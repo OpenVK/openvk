@@ -47,7 +47,7 @@ class Notifications
     {
         $db = $this->getEDB(false);
         if(!$db)
-            return 1;
+            return 0;
         
         $results = $db->query($this->getQuery($user, true, $offset, $archived));
         
@@ -56,6 +56,12 @@ class Notifications
     
     function getNotificationsByUser(User $user, int $offset, bool $archived = false, int $page = 1, ?int $perPage = NULL): \Traversable
     {
+        $db = $this->getEDB(false);
+        if(!$db) {
+            yield from [];
+            return;
+        }
+        
         $results  = $this->getEDB()->query($this->getQuery($user, false, $offset, $archived, $page, $perPage));
         foreach($results->fetchAll() as $notif) {
             $originModel = $this->getModel($notif->originModelType, $notif->originModelId);

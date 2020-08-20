@@ -86,6 +86,8 @@ class Post extends Postable
     {
         if(ctype_space($content))
             throw new \LengthException("Content length must be at least 1 character (not counting whitespaces).");
+        else if(iconv_strlen($content) > OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxSize"])
+            throw new \LengthException("Content is too large.");
         
         $this->stateChanges("content", $content);
     }

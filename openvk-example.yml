@@ -22,6 +22,11 @@ openvk:
             adminAccount: 1 # Change this ok
         messages:
             strict: false
+        wall:
+            postSizes:
+                maxSize: 60000
+                processingLimit: 3000
+                emojiProcessingLimit: 1000
         menu:
             links:
                 
