@@ -430,3 +430,32 @@
 
 "no_data" = "Няма дадзеных";
 "no_data_description" = "У гэтым прадстаўленні адсутнічаюць дадзеныя.";
+
+"error" = "Памылка";
+"error_shorturl" = "Дадзены кароткі адрас ужо заняты.";
+"error_segmentation" = "Памылка сегментацыі";
+"error_upload_failed" = "Не атрымалася загрузіць фота";
+"error_old_password" = "Стары пароль не супадае";
+"error_new_password" = "Новы пароль не супадае";
+"error_shorturl_incorrect" = "Кароткі адрас мае некарэктны фармат.";
+
+"forbidden" = "Памылка доступу";
+"forbidden_comment" = "Налады прыватнасці гэтага карыстальніка не дазваляюць вам глядзець на яго старонку.";
+
+"changes_saved" = "Змены захаваныя";
+"changes_saved_comment" = "Новыя дадзеныя з'явяцца на вашай старонцы";
+
+"photo_saved" = "Фатаграфія захаваная";
+"photo_saved_comment" = "Новае фатаграфія профілю з'явіцца ў вас на старонцы";
+
+%{ Admin actions %}
+
+"login_as" = "Увайсці як $1";
+"ban_user_action" = "Забаніць карыстальніка";
+"warn_user_action" = "Папярэдзіць карыстальніка";
+
+%{ Paginator %}
+
+"paginator_back" = "Назад";
+"paginator_page" = "Старонка $1";
+"paginator_next" = "Далей";
