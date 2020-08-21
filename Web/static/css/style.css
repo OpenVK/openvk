@@ -600,6 +600,7 @@ table.User {
 #auth .container_gray {
     margin-left: -10px;
     margin-bottom: -10px;
+	width: 603px;
 }
 
 .container_gray .content {
@@ -692,6 +693,7 @@ table.User {
     border-top: 1px solid #d6d6d6;
     max-height: 70%;
     overflow-y: auto;
+	width: 628px;
 }
 
 .crp-entry {
@@ -699,6 +701,8 @@ table.User {
     padding: 8px;
     border-bottom: 1px solid #d6d6d6;
     cursor: pointer;
+width: 592px;
+margin-left: 1px;
 }
 
 .crp-entry--image, .crp-entry--info {
@@ -715,7 +719,9 @@ table.User {
 
 .crp-entry:hover {
     background-color: #f9f9f9;
-	width: 609px;
+
+	width: 592px;
+
 	margin-left: 1px;
 }
 
