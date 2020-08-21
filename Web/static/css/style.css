@@ -168,7 +168,7 @@ a {
 }
 
 .page_yellowheader {
-    padding: 4px 10px 5px;
+    padding: 4px 10px 4px;
     font-weight: bold;
     background: url('../img/header_yellow.png') repeat-x;
     background-color: #EEE5B8;
@@ -344,6 +344,10 @@ table {
     text-shadow: 0 1px 0 #686868;
     cursor: pointer;
     text-decoration: none;
+}
+
+.button:hover {
+	color: #e8e8e8;
 }
 
 input[class=button] {
@@ -586,7 +590,7 @@ table.User {
 
 .container_gray {
     background: #F7F7F7;
-    width: 602px;
+    width: 606px;
     padding: 12px;
     border-top: #EBEBEB solid 1px;
     margin-left: -12px;
@@ -607,8 +611,9 @@ table.User {
 
 .tabs {
     border-bottom: 1px solid #707070;
-    margin-left: -12px;
+    margin-left: -10px;
     margin-right: -6px;
+	width: 627px;
 }
 
 #activetabs {
@@ -710,6 +715,8 @@ table.User {
 
 .crp-entry:hover {
     background-color: #f9f9f9;
+	width: 609px;
+	margin-left: 1px;
 }
 
 .crp-entry--info span {
@@ -822,7 +829,7 @@ table.User {
     margin-bottom: 8px !important;
 }
 
-.messenger-app--input---messagebox .button {
+.messenger-app--input---messagebox {
     float: right;
 }
 
@@ -840,6 +847,14 @@ table.User {
     margin-right: -50%;
     transform: translate(-50%, -50%);
     font-weight: 900;
+}
+
+.messenger-app {
+	width: 628px;
+	border-right: 1px solid #d5dde6;
+	border-left: 1px solid #d5dde6;
+	margin-left: 1px;
+	border-bottom: 1px solid #c3cad2;
 }
 
 .music-app {
