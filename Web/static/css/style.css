@@ -403,7 +403,7 @@ input[type=checkbox]:checked {
 }
 
 .content_title_expanded {
-    background-image: url('../img/flex_arrow_open.gif');
+    background-image: url('../img/flex_arrow_open2.png');
     background-repeat: no-repeat;
     background-color: #e6e6e6;
     border-top: #8B8B8B solid 1px;
@@ -620,6 +620,11 @@ table.User {
 #activetabs {
     background: #707070;
     border-radius: 3px 3px 0px 0px;
+}
+
+
+#activetabs:hover {
+    color: #e8e8e8;
 }
 
 .tab {
