@@ -202,10 +202,12 @@ a {
 }
 
 .page_wrap {
-    border-bottom: solid 1px #c4c4c4;
-    border-left: solid 1px #E1E1E1;
-    border-right: solid 1px #E1E1E1;
+    border-bottom: solid 1px #c3cad2;
+    border-left: solid 1px #d5dde6;
+    border-right: solid 1px #d5dde6;
     padding: 12px;
+    width: 604px;
+    margin-left: 1px;
 }
 
 .content-main-tile {
@@ -590,7 +592,7 @@ table.User {
 
 .container_gray {
     background: #F7F7F7;
-    width: 606px;
+    width: 604px;
     padding: 12px;
     border-top: #EBEBEB solid 1px;
     margin-left: -12px;
