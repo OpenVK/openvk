@@ -26,6 +26,21 @@ trait TRichText
         
         return $text;
     }
+	
+	private function formatLinks(string &$text): string
+	{
+		return preg_replace_callback(
+			"%(([A-z]++):\/\/(\S*?\.\S*?))([\s)\[\]{},;\"\'<]|\.\s|$)%",
+			(function (array $matches): string {
+				$href = str_replace("#", "&num;", $matches[1]);
+				$link = str_replace("#", "&num;", $matches[3]);
+				$rel  = $this->isAd() ? "sponsored" : "ugc";
+				
+				return "<a href='$href' rel='$rel' target='_blank'>$link</a>" . htmlentities($matches[4]);
+			}),
+			$text
+		);
+	}
     
     private function removeZalgo(string $text): string
     {
@@ -39,11 +54,7 @@ trait TRichText
         if($html) {
             if($proc) {
                 $rel  = $this->isAd() ? "sponsored" : "ugc";
-                $text = preg_replace(
-                    "%((https?|ftp):\/\/(\S*?\.\S*?))([\s)\[\]{},;\"\':<]|\.\s|$)%",
-                    "<a href='$1' rel='$rel' target='_blank'>$3</a>$4",
-                    $text
-                );
+                $text = $this->formatLinks($text);
                 $text = preg_replace("%@(id|club)([0-9]++) \(([\p{L} 0-9]+)\)%Xu", "[$1$2|$3]", $text);
                 $text = preg_replace("%@(id|club)([0-9]++)%Xu", "[$1$2|@$1$2]", $text);
                 $text = preg_replace("%\[(id|club)([0-9]++)\|([\p{L} 0-9@]+)\]%Xu", "<a href='/$1$2'>$3</a>", $text);
