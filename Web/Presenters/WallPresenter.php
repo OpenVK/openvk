@@ -86,7 +86,7 @@ final class WallPresenter extends OpenVKPresenter
         }, iterator_to_array($subs));
         $ids[] = $this->user->id;
         
-        $perPage = (int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE);
+        $perPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
         $posts   = DatabaseConnection::i()
                    ->getContext()
                    ->table("posts")
@@ -110,7 +110,7 @@ final class WallPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         
         $page  = (int) ($_GET["p"] ?? 1);
-        $pPage = (int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE);
+        $pPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
         $posts = DatabaseConnection::i()
                    ->getContext()
                    ->table("posts")
