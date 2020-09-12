@@ -48,6 +48,7 @@ You may reach out to us via:
 * "Bug-tracker":https://phabricator.dsrev.ru/project/view/1/
 * "Ticketing system":https://openvk2.veselcraft.ru/support?act=new
 * "Telegram chat":https://t.me/openvkchat
+* "Reddit":https://www.reddit.com/r/openvk/
 
 *Attention*: bug tracker and telegram chat are public places. And ticketing system is being served by volounteers. If you need to report something, that shouldn't be immediately disclosed to general public (for instance, vulnerability report), *please use contact us directly*:
 * *Head of OpenVK Security Commitee*: stingray@jill.pl or "@id155":https://t.me/id155
