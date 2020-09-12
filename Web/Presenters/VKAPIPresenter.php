@@ -12,7 +12,7 @@ final class VKAPIPresenter extends OpenVKPresenter
     {
         $date   = date(DATE_COOKIE);
         $params = json_encode($_REQUEST);
-        $log    = "[$date] $object.$method called with $params";
+        $log    = "[$date] $object.$method called with $params\r\n";
         file_put_contents(OPENVK_ROOT . "/VKAPI/debug.log", $log, FILE_APPEND | LOCK_EX);
     }
     
@@ -50,6 +50,20 @@ final class VKAPIPresenter extends OpenVKPresenter
     private function badMethodCall(string $object, string $method, string $param): void
     {
         $this->fail(100, "Required parameter '$param' missing.", $object, $method);
+    }
+    
+    function onStartup(): void
+    {
+        parent::onStartup();
+        
+        # idk, but in case we will ever support non-standard HTTP credential authflow
+        $origin = "*";
+        if(isset($_SERVER["HTTP_REFERER"])) {
+            $refOrigin = parse_url($_SERVER["HTTP_REFERER"], PHP_URL_SCHEME) . "://" . parse_url($_SERVER["HTTP_REFERER"], PHP_URL_HOST);
+            if($refOrigin !== false)
+                $origin = $refOrigin;
+        }
+        header("Access-Control-Allow-Origin: $origin");
     }
     
     function renderRoute(string $object, string $method): void
@@ -151,4 +165,4 @@ final class VKAPIPresenter extends OpenVKPresenter
         header("Content-Length: $size");
         exit($payload);
     }
-} 
+}
