@@ -208,7 +208,7 @@ final class Messages extends VKAPIRequestHandler
     {
         $this->requireUser();
         
-        if($user_id = $this->resolvePeer($user_id, $peer_id))
+        if(is_null($user_id = $this->resolvePeer($user_id, $peer_id)))
             $this->fail(-151, "Chats are not implemented");
         
         $peer = (new USRRepo)->get($user_id);
