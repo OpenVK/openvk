@@ -121,6 +121,22 @@ function ovk_proc_strtrim(string $string, int $length = 0): string
     return ovk_proc_strtr($string, $length);
 }
 
+function ovk_strftime_safe(string $format, ?int $timestamp = NULL): string
+{
+    $str = strftime($format, $timestamp ?? time());
+    if(PHP_SHLIB_SUFFIX === "dll") {
+        $enc = tr("__WinEncoding");
+        if($enc === "@__WinEncoding")
+            $enc = "Windows-1251";
+        
+        $nStr = iconv($enc, "UTF-8", $str);
+        if(!is_null($nStr))
+            $str = $nStr;
+    }
+    
+    return $str;
+}
+
 return (function() {
     _ovk_check_environment();
     require __DIR__ . "/vendor/autoload.php";

@@ -25,24 +25,24 @@ class DateTime
         
         if($this->timestamp >= strtotime("midnight")) { # Today
             if($diff->h >= 1)
-                return tr("time_today") . tr("time_at_sp") . strftime("%X", $this->timestamp);
+                return tr("time_today") . tr("time_at_sp") . ovk_strftime_safe("%X", $this->timestamp);
             else if($diff->i < 2)
                 return tr("time_just_now");
             else
                 return $diff->i === 5 ? tr("time_exactly_five_minutes_ago") : tr("time_minutes_ago", $diff->i);
         } else if($this->timestamp >= strtotime("-1day midnight")) { # Yesterday
-            return tr("time_yesterday") . tr("time_at_sp") . strftime("%X", $this->timestamp);
-        } else if(strftime("%G", $this->timestamp) === strftime("%G")) { # In this year
-            return strftime("%e %h ", $this->timestamp) . tr("time_at_sp") . strftime(" %R %p", $this->timestamp);
+            return tr("time_yesterday") . tr("time_at_sp") . ovk_strftime_safe("%X", $this->timestamp);
+        } else if(ovk_strftime_safe("%G", $this->timestamp) === ovk_strftime_safe("%G")) { # In this year
+            return ovk_strftime_safe("%e %h ", $this->timestamp) . tr("time_at_sp") . ovk_strftime_safe(" %R %p", $this->timestamp);
         } else {
-            return strftime("%e %B %G ", $this->timestamp) . tr("time_at_sp") . strftime(" %X", $this->timestamp);
+            return ovk_strftime_safe("%e %B %G ", $this->timestamp) . tr("time_at_sp") . ovk_strftime_safe(" %X", $this->timestamp);
         }
     }
     
     function format(string $format, bool $useDate = false): string
     {
         if(!$useDate)
-            return strftime($format, $this->timestamp);
+            return ovk_strftime_safe($format, $this->timestamp);
         else
             return date($format, $this->timestamp);
     }
