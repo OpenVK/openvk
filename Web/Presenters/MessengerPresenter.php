@@ -67,6 +67,7 @@ final class MessengerPresenter extends OpenVKPresenter
     
     function renderVKEvents(int $id): void
     {
+        header("Access-Control-Allow-Origin: *");
         header("Content-Type: application/json");
         
         if($this->queryParam("act") !== "a_check")
