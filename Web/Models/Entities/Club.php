@@ -40,9 +40,11 @@ class Club extends RowModel
     
     function getAvatarUrl(): string
     {
-        $avPhoto = $this->getAvatarPhoto();
+        $serverUrl  = "http" . ($_SERVER["HTTPS"] === "on" ? "s" : "") . "://";
+        $serverUrl .= $_SERVER["HTTP_HOST"];
+        $avPhoto    = $this->getAvatarPhoto();
         
-        return is_null($avPhoto) ? "/assets/packages/static/openvk/img/camera_200.png" : $avPhoto->getURL();
+        return is_null($avPhoto) ? "$serverUrl/assets/packages/static/openvk/img/camera_200.png" : $avPhoto->getURL();
     }
     
     function getAvatarLink(): string

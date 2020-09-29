@@ -94,14 +94,17 @@ class User extends RowModel
     
     function getAvatarUrl(): string
     {
+        $serverUrl  = "http" . ($_SERVER["HTTPS"] === "on" ? "s" : "") . "://";
+        $serverUrl .= $_SERVER["HTTP_HOST"];
+        
         if($this->getRecord()->deleted)
-            return "/assets/packages/static/openvk/img/camera_200.png";
+            return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
         else if($this->isBanned())
-            return "/assets/packages/static/openvk/img/banned.jpg";
+            return "$serverUrl/assets/packages/static/openvk/img/banned.jpg";
         
         $avPhoto = $this->getAvatarPhoto();
         if(is_null($avPhoto))
-            return "/assets/packages/static/openvk/img/camera_200.png";
+            return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
         else
             return $avPhoto->getURL();
     }
