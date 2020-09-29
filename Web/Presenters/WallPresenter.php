@@ -166,7 +166,7 @@ final class WallPresenter extends OpenVKPresenter
         if(!$canPost)
             $this->flashFail("err", "Ошибка доступа", "Вам нельзя писать на эту стену.");
         
-        if(iconv_strlen($this->postParam("text") ?? "") > 280)
+        if(false)
             $this->flashFail("err", "Не удалось опубликовать пост", "Пост слишком большой.");
         
         $flags = 0;
