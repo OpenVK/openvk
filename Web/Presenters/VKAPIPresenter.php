@@ -63,7 +63,18 @@ final class VKAPIPresenter extends OpenVKPresenter
             if($refOrigin !== false)
                 $origin = $refOrigin;
         }
+        
+        if(!is_null($this->queryParam("requestPort")))
+            $origin .= ":" . ((int) $this->queryParam("requestPort"));
+        
         header("Access-Control-Allow-Origin: $origin");
+        
+        if($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
+            header("Access-Control-Allow-Methods: POST, PUT, DELETE");
+            header("Access-Control-Allow-Headers: " . $_SERVER["HTTP_ACCESS_CONTROL_REQUEST_HEADERS"]);
+            header("Access-Control-Max-Age: -1");
+            exit; # Terminate request processing as this is definitely a CORS preflight request.
+        }
     }
     
     function renderRoute(string $object, string $method): void
