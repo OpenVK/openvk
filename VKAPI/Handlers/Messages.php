@@ -96,7 +96,7 @@ final class Messages extends VKAPIRequestHandler
         if(!$peer)
             $this->fail(936, "There is no peer with this id");
         
-        if($peer->getSubscriptionStatus($this->getUser()) !== 3)
+        if($this->getUser()->getId() !== $peer->getId() && $peer->getSubscriptionStatus($this->getUser()) !== 3)
             $this->fail(945, "This chat is disabled because of privacy settings");
         
         # Finally we get to send a message!
