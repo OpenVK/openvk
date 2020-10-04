@@ -7,7 +7,7 @@
 {/block}
 
 {block content}
-    <form method="POST">
+    <form id="noteFactory" method="POST">
         <input type="text" name="name" placeholder="{_name_note}" style="width:603px;" />
         <br/><br/>
         <textarea name="html" style="display:none;"></textarea>
@@ -35,7 +35,7 @@
             });
         });
         
-        document.querySelector("form").addEventListener("submit", function() {
+        document.querySelector("#noteFactory").addEventListener("submit", function() {
             document.querySelector("textarea").value = window._editor.getValue();
         });
     </script>
