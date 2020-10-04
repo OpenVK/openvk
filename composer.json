@@ -1,18 +1,4 @@
 {
-    "repositories": {
-        "cab-archive": {
-            "type": "package",
-            "package": {
-                "name": "wapmorgan-alter/cab-archive",
-                "version": "0.0.7.1",
-                "source": {
-                    "url": "https://github.com/fkwa/CabArchive",
-                    "type": "git",
-                    "reference": "origin/master"
-                }
-            }
-        }
-    },
     "require": {
         "guzzlehttp/guzzle": "^6.5",
         "komeiji-satori/curl": "dev-master",
@@ -20,9 +6,9 @@
         "zadarma/user-api-v1": "dev-master",
         "james-heinrich/getid3": "^1.9@dev",
         "rybakit/msgpack": "dev-master",
-        "wapmorgan-alter/cab-archive": "0.0.7.1",
         "wapmorgan/binary-stream": "dev-master",
-        "netcarver/textile": "^3.7@dev"
+        "netcarver/textile": "^3.7@dev",
+        "al/emoji-detector": "dev-master"
     },
     "minimum-stability": "dev"
 }
