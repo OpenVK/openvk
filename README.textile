@@ -5,7 +5,7 @@ To be honest, we don't even know whether it even works. However, this version (u
 
 h2. Instances
 
-* *"openvk2.veselcraft.ru":https://openvk.su/*
+* *"openvk.su":https://openvk.su/*
 * "openvk.dsrev.ru":https://openvk.dsrev.ru/
 
 h2. Can I create my own OpenVK instance?
