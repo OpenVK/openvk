@@ -5,7 +5,7 @@ To be honest, we don't even know whether it even works. However, this version (u
 
 h2. Instances
 
-* *"openvk2.veselcraft.ru":https://openvk2.veselcraft.ru/*
+* *"openvk.su":https://openvk.su/*
 * "openvk.dsrev.ru":https://openvk.dsrev.ru/
 
 h2. Can I create my own OpenVK instance?
@@ -46,7 +46,7 @@ h2. Where can I get assistance?
 
 You may reach out to us via:
 * "Bug-tracker":https://phabricator.dsrev.ru/project/view/1/
-* "Ticketing system":https://openvk2.veselcraft.ru/support?act=new
+* "Ticketing system":https://openvk.su/support?act=new
 * "Telegram chat":https://t.me/openvkchat
 * "Reddit":https://www.reddit.com/r/openvk/
 
