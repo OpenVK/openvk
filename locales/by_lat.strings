@@ -430,3 +430,11 @@
 
 "no_data" = "Niama dadzienych";
 "no_data_description" = "U hetym pradstaŭleńni adsutniczajuć dadzienyja.";
+
+%{ Additional fixes %}
+
+"time_today" = "Siońnia"
+"time_at_sp" = "a"
+"points" = "Hałasy"
+"on_your_account" = "na vašym rachunku"
+"points_count" = "hałasoŭ"
