@@ -7,15 +7,22 @@
         <link rel="shortcut icon" href="/assets/packages/static/openvk/img/icon.ico" />
         <meta name="application-name" content="OpenVK" />
         <meta n:ifset="$csrfToken" name="csrf" value="{$csrfToken}" />
-        {css "css/style.css"}
-        {css "css/dialog.css"}
 		{script "js/node_modules/jquery/dist/jquery.min.js"}
         {script "js/node_modules/umbrellajs/umbrella.min.js"}
         {script "js/openvk.cls.js"}
+        
         {ifset $thisUser}
             {if !is_null($thisUser->getTheme())}
                 {var theme = $thisUser->getTheme()}
+                {if $theme->inheritDefault()}
+                    {css "css/style.css"}
+                    {css "css/dialog.css"}
+                {/if}
+                
                 <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/styles.css" />
+            {else}
+                {css "css/style.css"}
+                {css "css/dialog.css"}
             {/if}
             
             {if $thisUser->getStyleAvatar() == 1}
@@ -24,6 +31,9 @@
             {if $thisUser->getStyleAvatar() == 2}
                     {css "css/avatar.2.css"}
             {/if}
+        {else}
+            {css "css/style.css"}
+            {css "css/dialog.css"}
         {/ifset}
         
         {ifset headIncludes}{include headIncludes}{/ifset}
@@ -48,6 +58,11 @@
             <div class="page_header">
                 <a href="/" class="home_button" title="OpenVK">openvk</a>
                 <div n:if="isset($thisUser) ? !$thisUser->isBanned() : true" class="header_navigation">
+                    {if $_SERVER['SERVER_NAME'] == "openvk2.veselcraft.ru"}
+                        <div class="link">
+                            <a href="https://openvk.su/"><b>new domain!</b></a>
+                        </div>
+                    {/if}
                     {ifset $thisUser}
                     <div class="link">
                         <a href="/">{_"header_home"}</a>

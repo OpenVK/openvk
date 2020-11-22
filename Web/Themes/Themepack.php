@@ -5,14 +5,16 @@ class Themepack
 {
     private $id;
     private $ver;
+    private $inh;
     private $meta;
     private $home;
     private $enabled;
     
-    function __construct(string $id, string $ver, bool $enabled, object $meta)
+    function __construct(string $id, string $ver, bool $inh, bool $enabled, object $meta)
     {
         $this->id      = $id;
         $this->ver     = $ver;
+        $this->inh     = $inh;
         $this->meta    = $meta;
         $this->home    = OPENVK_ROOT . "/themepacks/$id";
         $this->enabled = $enabled;
@@ -58,6 +60,11 @@ class Themepack
         return $this->meta->author ?? $this->getName() . " authors";
     }
     
+    function inheritDefault(): bool
+    {
+        return $this->inh;
+    }
+    
     function fetchStyleSheet(): ?string
     {
         $file = "$this->home/stylesheet.css";
@@ -83,6 +90,6 @@ class Themepack
         if($manifest->openvk_version > Themepacks::THEMPACK_ENGINE_VERSION)
             throw new Exceptions\IncompatibleThemeException("Theme is built for newer OVK (themeEngine" . $manifest->openvk_version . ")");
         
-        return new static($manifest->id, $manifest->version, (bool) ($manifest->enabled ?? true), (object) $manifest->metadata);
+        return new static($manifest->id, $manifest->version, (bool) ($manifest->inherit_master ?? true), (bool) ($manifest->enabled ?? true), (object) $manifest->metadata);
     }
 }
