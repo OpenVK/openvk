@@ -32,16 +32,10 @@ class Clubs
     
     function find(string $query, int $page = 1, ?int $perPage = NULL): \Traversable
     {
-        $query   = '%'.$query.'%';
-        $perPage = $perPage ?? OPENVK_DEFAULT_PER_PAGE;
-        foreach($this->clubs->where("name LIKE ? OR about LIKE ?", $query, $query)->page($page, $perPage) as $result)
-            yield new Club($result);
-    }
-    
-    function getFoundCount(string $query): int
-    {
-        $query = '%'.$query.'%';
-        return sizeof($this->clubs->where("name LIKE ? OR about LIKE ?", $query, $query));
+        $query  = "%$query%";
+        $result = $this->clubs->where("name LIKE ? OR about LIKE ?", $query, $query);
+        
+        return new Util\EntityStream("Club", $result);
     }
     
     use \Nette\SmartObject;

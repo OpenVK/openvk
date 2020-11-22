@@ -27,16 +27,12 @@ final class SearchPresenter extends OpenVKPresenter
         
         // https://youtu.be/pSAWM5YuXx8
         
-        switch($type) {
-            case "groups":
-                $iterator = $this->clubs->find($query, $page);
-                $count    = $this->clubs->getFoundCount($query);
-                break;
-            case "users":
-                $iterator = $this->users->find($query)->page($page);
-                $count    = $this->users->find($query)->size();
-                break;
-        }
+        $repos = [ "groups" => "clubs", "users" => "users" ];
+        $repo  = $repos[$type] or $this->throwError(400, "Bad Request", "Invalid search entity $type.");
+        
+        $results  = $this->{$repo}->find($query);
+        $iterator = $results->page($page);
+        $count    = $results->size();
         
         $this->template->iterator = iterator_to_array($iterator);
         $this->template->count    = $count;
