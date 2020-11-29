@@ -74,4 +74,55 @@ final class Account extends VKAPIRequestHandler
 
         // TODO: Filter
     }
+    
+    function saveInfo(?string $First_name, ?string $Last_name, ?int $cancel_request_id = 0, ?int $sex = 0, ?int $relation = 0, ?string $status = "", ?string $screen_name = ""): object
+    {
+        $this->requireUser();
+
+        $user = $this->getUser();
+
+        $answer = (object) [ "changed" => 1 ];
+
+        if ($First_name != "")
+        {
+            $user->setfirst_name($First_name);
+            $answer->name_request = [
+                "status" => "success",
+                "first_name" => $First_name,
+                "last_name" => $this->getUser()->getLastName()
+            ];
+        }
+
+        if ($Last_name != "")
+        {
+            $user->setlast_name($Last_name);
+            $answer->name_request = [
+                "status" => "success",
+                "first_name" => $First_name,
+                "last_name" => $Last_name
+            ];
+        }
+
+        if ($sex != 0)
+            $user->setsex($sex);
+
+        if ($relation != 0)
+            $user->setrelation($relation);
+
+        if ($status != "")
+            $user->setstatus($status);
+
+        if ($screen_name != "")
+            $user->setShortCode($screen_name);
+
+        if ($First_name == "" && $Last_name == "" && $sex == 0 && $status == "" && $relation == 0 && $screen_name == "")
+        {
+            $answer->changed = 0;
+            return $answer;
+        }
+
+        $user->save();
+
+        return $answer;
+    }
 }
