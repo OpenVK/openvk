@@ -75,7 +75,7 @@ final class Account extends VKAPIRequestHandler
         // TODO: Filter
     }
     
-    function saveInfo(?string $First_name, ?string $Last_name, ?int $cancel_request_id = 0, ?int $sex = 0, ?int $relation = 0, ?string $status = "", ?string $screen_name = ""): object
+    function saveProfileInfo(?string $First_name, ?string $Last_name, ?int $cancel_request_id = 0, ?int $sex = 0, ?int $relation = 0, ?string $status = "", ?string $screen_name = ""): object
     {
         $this->requireUser();
 
