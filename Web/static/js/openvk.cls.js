@@ -1,12 +1,12 @@
 
 
-function show_write_textarea() {
-    var el = document.getElementById('write');
-    if (el.style.display == "none") {
-        el.style.display = "block";
-    } else {
-        el.style.display = "none";
-    }
+function expand_wall_textarea() {
+    var el = document.getElementById('post-buttons');
+    var wi = document.getElementById('wall-post-input');
+    el.style.display = "block";
+    wi.className = "expanded-textarea";
+
+
 }
 
 function edit_post(id, wid) {

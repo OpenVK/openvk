@@ -29,6 +29,10 @@ span {
     color: gray;
 }
 
+nobold {
+    font-weight: normal;
+}
+
 a {
     text-decoration: none;
     color: #2B587A;
@@ -533,6 +537,14 @@ h4 {
     color: #bcbcbc;
 }
 
+.small-textarea {
+    height: 24px;
+}
+
+.expanded-textarea {
+    min-height: 48px;
+}
+
 ul {
     list-style-type: square;
     color: #a2a2a2;
@@ -938,8 +950,9 @@ textarea {
     font-family: unset;
     border: 1px solid #C0CAD5;
     font-size: 9pt;
-    min-height: 42px;
+    min-height: 24px;
     width: 100%;
+    padding: 4px;
     resize: none;
 }
 

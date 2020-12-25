@@ -1,59 +1,57 @@
 <div class="content_divider">
     <div class="content_title_expanded" onclick="hidePanel(this, {$count});">
-        {_"wall"}
+        {_"wall"} <nobold>{tr("wall", $count)}</nobold>
     </div>
     <div>
         <div class="content_subtitle">
-            {tr("wall", $count)}
-            
-            <div n:if="$canPost" style="float: right;">
-                <a n:ifset="$thisUser" onclick="show_write_textarea()">{_'write'}</a>
+            <div n:if="$canPost" id="write" style="padding: 5px 0;"  onfocusin="expand_wall_textarea();">
+                <form action="/wall{$owner}/makePost" method="post" enctype="multipart/form-data" style="margin:0;">
+                    <textarea id="wall-post-input" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="small-textarea"></textarea>
+                    <div>
+                        <!-- padding to fix <br/> bug -->
+                    </div>
+                    <div id="post-buttons" style="display: none;">
+                        <div class="post-upload">
+                            Вложение: <span>(unknown)</span>
+                        </div>
+                        <div class="post-opts">
+                            {if !is_null($thisUser) && $owner < 0 && $club->canBeModifiedBy($thisUser)}
+                                <script>
+                                    function onWallAsGroupClick(el) {
+                                        _display = el.checked ? "block" : "none";
+                                        document.querySelector("#forceSignOpt").style.display = _display;
+                                    }
+                                </script>
+                                
+                                <label>
+                                    <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" /> От имени сообщества
+                                </label>
+                                <label id="forceSignOpt" style="display: none;">
+                                    <input type="checkbox" name="force_sign" /> Подпись автора
+                                </label>
+                            {/if}
+                            
+                            {*
+                            <label>
+                                <input type="checkbox" name="nsfw" /> Содержит NSFW-контент
+                            </label>
+                            *}
+                        </div>
+                        <input type="file" name="_pic_attachment" accept="image/*" style="display:none;" />
+                        <input type="hidden" name="type" value="1" />
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <br/>
+                        <input type="submit" value="{_'write'}" class="button" />
+                        <div style="float: right;">
+                            <a href="javascript:void(document.querySelector(`input[name=_pic_attachment]`).click());">
+                                {_attach_photo}
+                            </a>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
-        <div n:if="$canPost" id="write" style="padding: 8px; display: none;">
-            <form action="/wall{$owner}/makePost" method="post" enctype="multipart/form-data" style="margin:0;">
-                <textarea id="wall-post-input" name="text" style="width: 100%;resize: none;"></textarea>
-                <div>
-                    <!-- padding to fix <br/> bug -->
-                </div>
-                <div class="post-upload">
-                    Вложение: <span>(unknown)</span>
-                </div>
-                <div class="post-opts">
-                    {if !is_null($thisUser) && $owner < 0 && $club->canBeModifiedBy($thisUser)}
-                        <script>
-                            function onWallAsGroupClick(el) {
-                                _display = el.checked ? "block" : "none";
-                                document.querySelector("#forceSignOpt").style.display = _display;
-                            }
-                        </script>
-                        
-                        <label>
-                            <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" /> От имени сообщества
-                        </label>
-                        <label id="forceSignOpt" style="display: none;">
-                            <input type="checkbox" name="force_sign" /> Подпись автора
-                        </label>
-                    {/if}
-                    
-                    {*
-					<label>
-                        <input type="checkbox" name="nsfw" /> Содержит NSFW-контент
-                    </label>
-					*}
-                </div>
-                <input type="file" name="_pic_attachment" accept="image/*" style="display:none;" />
-                <input type="hidden" name="type" value="1" />
-                <input type="hidden" name="hash" value="{$csrfToken}" />
-                <br/>
-                <input type="submit" value="{_'write'}" class="button" />
-                <div style="float: right;">
-                    <a href="javascript:void(document.querySelector(`input[name=_pic_attachment]`).click());">
-                        {_attach_photo}
-                    </a>
-                </div>
-            </form>
-        </div>
+        
         <div class="content">
             {if sizeof($posts) > 0}
                 {foreach $posts as $post}
