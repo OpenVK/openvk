@@ -222,6 +222,14 @@ a {
     background-color: #fbfbfb;
 }
 
+.float-right {
+    float: right;
+}
+
+.lowercase {
+    text-transform: lowercase;
+}
+
 .album {
     margin: 8px;
     padding: 8px;
@@ -413,7 +421,7 @@ input[type=checkbox]:checked {
     background-repeat: no-repeat;
     background-color: #e6e6e6;
     border-top: #8B8B8B solid 1px;
-    padding: 3px 24px;
+    padding: 3px 8px 3px 24px;
     font-weight: bold;
     color: #626262;
     font-size: 11px;
@@ -426,7 +434,7 @@ input[type=checkbox]:checked {
     background-repeat: no-repeat;
     background-color: #eee;
     border-top: solid 1px #ccc;
-    padding: 3px 24px;
+    padding: 3px 8px 3px 24px;
     font-weight: bold;
     color: #888;
     font-size: 11px;
