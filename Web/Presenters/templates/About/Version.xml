@@ -133,7 +133,7 @@
                 <tr class="v">
                     <td>
                         This program makes use of the Chandler open-source web application server:<br/>
-                        libchandler {=CHANDLER_VER}, Copyright (c) @fkwa
+                        libchandler {=CHANDLER_VER} by @rem-pai
                     </td>
                 </tr>
             </tbody>
