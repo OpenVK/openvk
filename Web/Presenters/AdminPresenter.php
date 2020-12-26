@@ -21,7 +21,7 @@ final class AdminPresenter extends OpenVKPresenter
         $query = $this->queryParam("q") ?? "";
         $page  = (int) ($this->queryParam("p") ?? 1);
         
-        $count = $repo->getFoundCount($query);
+        $count = $repo->findCount($query);
         return $repo->find($query, $page);
     }
     

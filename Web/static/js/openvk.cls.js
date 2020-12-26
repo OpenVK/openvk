@@ -22,15 +22,18 @@ function edit_post(id, wid) {
 }
 
 
+function hidePanel(panel, count = 0)
+{
+    $(panel).toggleClass("content_title_expanded content_title_unexpanded");
+    $(panel).next('div').slideToggle(300);
+    if(count != 0){
+        if($(panel).hasClass("content_title_expanded"))
+            $(panel).html($(panel).html().replaceAll(" ("+count+")", ""));
+        else
+            $(panel).html($(panel).html() + " ("+count+")");
+    }
 
-
-        $(function () {
-$('.content_title_expanded').click(function(){
-	$(this).toggleClass("content_title_expanded content_title_unexpanded");
-    $(this).next('div').slideToggle(300);
-});});
-
-
+}
 
 
 document.addEventListener("DOMContentLoaded", function() { //BEGIN
