@@ -165,7 +165,8 @@
 "administrator" = "Administrator";
 "promote_to_admin" = "Promote to admin";
 "devote" = "Devote";
-
+"group_allow_post_for_everyone" = "Allow posting for everyone";
+"statistics" = "Statistics";
 
 "participants_zero" = "No participants";
 "participants_one" = "$1 participant";

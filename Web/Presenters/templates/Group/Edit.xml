@@ -9,7 +9,7 @@
     <div class="tabs">
         <div id="activetabs" class="tab">
             <a id="act_tab_a" href="javascript:void(0)">
-                Настройки
+                {_main}
             </a>
         </div>
         <div class="tab">
@@ -19,13 +19,13 @@
         </div>
         <div class="tab">
             <a href="/club{$club->getId()}/stats">
-                Статистика
+                {_statistics}
             </a>
         </div>
     </div>
     
     <div class="container_gray">
-        <h4>Основная информация</h4>
+        <h4>{_main_information}</h4>
         <form method="POST" enctype="multipart/form-data">
             <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
                 <tbody>
@@ -47,7 +47,7 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">Адрес группы: </span>
+                            <span class="nobold">{_page_address}: </span>
                         </td>
                         <td>
                             <input type="text" name="shortcode" value="{$club->getShortcode()}" />
@@ -55,7 +55,7 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">Аватар: </span>
+                            <span class="nobold">{_avatar}: </span>
                         </td>
                         <td>
                             <input type="file" name="ava" accept="image/*" />
@@ -63,10 +63,10 @@
                     </tr>
 		    <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">Стена: </span>
+                            <span class="nobold">{_wall}: </span>
                         </td>
                         <td>
-                            <input type="checkbox" name="wall" value="1" {if $club->canPost()}checked{/if}/> Разрешить постить обычным пользователям
+                            <input type="checkbox" name="wall" value="1" {if $club->canPost()}checked{/if}/> {_group_allow_post_for_everyone}
                         </td>
                     </tr>
 

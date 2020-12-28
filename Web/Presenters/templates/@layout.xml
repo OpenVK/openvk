@@ -110,13 +110,13 @@
                         <a href="/edit" class="link edit-button">{_"edit_button"}</a>
                         <a href="{$thisUser->getURL()}" class="link">{_"my_page"}</a>
                         <a href="/friends{$thisUser->getId()}" class="link">{_"my_friends"}
-                {if $thisUser->getFollowersCount() > 0} 
-                <object type="internal/link">
-                    <a href="/friends{$thisUser->getId()}?act=incoming">
-                        (<b>{$thisUser->getFollowersCount()}</b>)
-                    </a>
-                </object>
-            {/if}</a>
+                        {if $thisUser->getFollowersCount() > 0} 
+                        <object type="internal/link">
+                            <a href="/friends{$thisUser->getId()}?act=incoming">
+                                (<b>{$thisUser->getFollowersCount()}</b>)
+                            </a>
+                        </object>
+                        {/if}</a>
                         <a n:if="$thisUser->getLeftMenuItemStatus('photos')" href="/albums{$thisUser->getId()}" class="link">{_"my_photos"}</a>
                         <a n:if="$thisUser->getLeftMenuItemStatus('videos')" href="/videos{$thisUser->getId()}" class="link">{_"my_videos"}</a>
                         <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link">{_"my_messages"}</a>

@@ -36,13 +36,13 @@
             {var followersCount = $club->getFollowersCount()}
             
             <div class="content_title_expanded" onclick="hidePanel(this, {$followersCount});">
-                Подписчики
+                {_participants}
             </div>
             <div>
                 <div class="content_subtitle">
-                    {$followersCount} подписчиков
+                    {tr("participants", $followersCount)}
                     <div style="float:right;">
-                        <a href="/club{$club->getId()}/followers">Все</a>
+                        <a href="/club{$club->getId()}/followers">{_all_title}</a>
                     </div>
                 </div>
                 <div style="padding-left: 5px;">
@@ -124,7 +124,7 @@
         </div>
         <div>
             <div class="content_subtitle">
-                {$albumsCount} альбомов
+                {tr("albums", $albumsCount)}
                 <div style="float:right;">
                     <a href="/albums{$club->getId() * -1}">{_"all_title"}</a>
                 </div>
