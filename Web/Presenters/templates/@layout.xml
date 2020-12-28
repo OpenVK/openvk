@@ -17,12 +17,21 @@
                 {if $theme->inheritDefault()}
                     {css "css/style.css"}
                     {css "css/dialog.css"}
+                    {if $isXmas}
+                        {css "css/xmas.css"}
+                    {/if}
                 {/if}
                 
                 <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/styles.css" />
+                {if $isXmas}
+                    <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/xmas.css" />
+                {/if}
             {else}
                 {css "css/style.css"}
                 {css "css/dialog.css"}
+                {if $isXmas}
+                    {css "css/xmas.css"}
+                {/if}
             {/if}
             
             {if $thisUser->getStyleAvatar() == 1}
@@ -34,6 +43,9 @@
         {else}
             {css "css/style.css"}
             {css "css/dialog.css"}
+            {if $isXmas}
+                {css "css/xmas.css"}
+            {/if}
         {/ifset}
         
         {ifset headIncludes}{include headIncludes}{/ifset}

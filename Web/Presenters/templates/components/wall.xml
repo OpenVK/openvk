@@ -4,7 +4,7 @@
     </div>
     <div>
         <div class="content_subtitle">
-            {l18n_number("wall", $count)}
+            {tr("wall", $count)}
             <div style="float: right;">
                 <a onclick="show_write_textarea()">{_'write'}</a>
             </div>
