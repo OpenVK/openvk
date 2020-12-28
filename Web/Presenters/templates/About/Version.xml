@@ -133,7 +133,7 @@
                 <tr class="v">
                     <td>
                         This program makes use of the Chandler open-source web application server:<br/>
-                        libchandler {=CHANDLER_VER}, Copyright (c) @fkwa
+                        libchandler {=CHANDLER_VER} by @rem-pai
                     </td>
                 </tr>
             </tbody>
@@ -400,7 +400,8 @@
                 </tr>
                 <tr>
                     <td class="e">
-                        Vladimir Barinov (veselcraft) and Konstantin Kichulkin (kosfurler)
+                        Vladimir Barinov (veselcraft) and Konstantin Kichulkin (kosfurler)<br/>
+                        OpenVK is a free open-source software that "cosplays" (or imitates) older versions of russian website VKontakte. VKontakte belongs to Pavel Durov and mail.ru.
                     </td>
                 </tr>
             </tbody>
