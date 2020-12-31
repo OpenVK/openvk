@@ -17,6 +17,12 @@ openvk:
             forcePhoneVerification: false
             forceEmailVerification: false
             enableSu: true
+            rateLimits:
+                actions: 5
+                time: 20
+                maxViolations: 50
+                maxViolationsAge: 120
+                autoban: true
         support:
             supportName: "Moderator"
             adminAccount: 1 # Change this ok

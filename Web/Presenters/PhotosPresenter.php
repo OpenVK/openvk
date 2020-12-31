@@ -57,6 +57,7 @@ final class PhotosPresenter extends OpenVKPresenter
     function renderCreateAlbum(): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         if(!is_null($gpid = $this->queryParam("gpid"))) {
             $club = (new Clubs)->get((int) $gpid);
@@ -81,6 +82,7 @@ final class PhotosPresenter extends OpenVKPresenter
     function renderEditAlbum(int $owner, int $id): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         $album = $this->albums->get($id);
         if(!$album) $this->notFound();
@@ -102,6 +104,7 @@ final class PhotosPresenter extends OpenVKPresenter
     function renderDeleteAlbum(int $owner, int $id): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         $this->assertNoCSRF();
         
         $album = $this->albums->get($id);
@@ -156,6 +159,7 @@ final class PhotosPresenter extends OpenVKPresenter
     function renderEditPhoto(int $ownerId, int $photoId): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         $photo = $this->photos->getByOwnerAndVID($ownerId, $photoId);
         if(!$photo) $this->notFound();
@@ -176,6 +180,7 @@ final class PhotosPresenter extends OpenVKPresenter
     function renderUploadPhoto(): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         if(is_null($this->queryParam("album")))
             $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в <b>DELETED</b>.");
@@ -213,6 +218,7 @@ final class PhotosPresenter extends OpenVKPresenter
     function renderUnlinkPhoto(int $owner, int $albumId, int $photoId): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         $album = $this->albums->get($albumId);
         $photo = $this->photos->get($photoId);
@@ -233,6 +239,7 @@ final class PhotosPresenter extends OpenVKPresenter
     function renderDeletePhoto(int $ownerId, int $photoId): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         $this->assertNoCSRF();
         
         $photo = $this->photos->getByOwnerAndVID($ownerId, $photoId);

@@ -16,6 +16,7 @@ final class CommentPresenter extends OpenVKPresenter
     function renderLike(int $id): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         $comment = (new Comments)->get($id);
         if(!$comment || $comment->isDeleted()) $this->notFound();
@@ -28,6 +29,7 @@ final class CommentPresenter extends OpenVKPresenter
     function renderMakeComment(string $repo, int $eId): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         $repoClass = $this->models[$repo] ?? NULL;
         if(!$repoClass) chandler_http_panic(400, "Bad Request", "Unexpected $repo.");
@@ -58,6 +60,7 @@ final class CommentPresenter extends OpenVKPresenter
     function renderDeleteComment(int $id): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         $comment = (new Comments)->get($id);
         if(!$comment) $this->notFound();

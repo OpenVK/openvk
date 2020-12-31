@@ -150,6 +150,7 @@ final class WallPresenter extends OpenVKPresenter
     function renderMakePost(int $wall): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         $wallOwner = ($wall > 0 ? (new Users)->get($wall) : (new Clubs)->get($wall * -1))
                      ?? $this->flashFail("err", "Не удалось опубликовать пост", "Такого пользователя не существует.");
@@ -247,6 +248,7 @@ final class WallPresenter extends OpenVKPresenter
     function renderLike(int $wall, int $post_id): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         $this->assertNoCSRF();
         
         $post = $this->posts->getPostById($wall, $post_id);
@@ -268,6 +270,7 @@ final class WallPresenter extends OpenVKPresenter
     function renderShare(int $wall, int $post_id): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         $this->assertNoCSRF();
         
         $post = $this->posts->getPostById($wall, $post_id);
@@ -292,6 +295,7 @@ final class WallPresenter extends OpenVKPresenter
     function renderDelete(int $wall, int $post_id): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         $post = $this->posts->getPostById($wall, $post_id);
         if(!$post)

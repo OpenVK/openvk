@@ -34,6 +34,7 @@ final class GroupPresenter extends OpenVKPresenter
     function renderCreate(): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             if(!empty($this->postParam("name")))
@@ -64,6 +65,7 @@ final class GroupPresenter extends OpenVKPresenter
     function renderSub(): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         if($_SERVER["REQUEST_METHOD"] !== "POST") exit("Invalid state");
         
@@ -135,6 +137,7 @@ final class GroupPresenter extends OpenVKPresenter
     function renderEdit(int $id): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         $club = $this->clubs->get($id);
         if(!$club->canBeModifiedBy($this->user->identity))

@@ -5,6 +5,8 @@ use Chandler\MVC\SimplePresenter;
 use Chandler\Session\Session;
 use Chandler\Security\Authenticator;
 use Latte\Engine as TemplatingEngine;
+use openvk\Web\Models\Entities\IP;
+use openvk\Web\Models\Repositories\IPs;
 use openvk\Web\Models\Repositories\Users;
 
 abstract class OpenVKPresenter extends SimplePresenter
@@ -87,8 +89,23 @@ abstract class OpenVKPresenter extends SimplePresenter
     
     protected function assertCaptchaCheckPassed(): void
     {
-        if(!check_captcha($_POST["captcha"]))
+        if(!check_captcha())
             $this->flashFail("err", "Неправильно введены символы", "Пожалуйста, убедитесь, что вы правильно заполнили поле с капчей.");
+    }
+    
+    protected function willExecuteWriteAction(): void
+    {
+        $ip  = (new IPs)->get(CONNECTING_IP);
+        $res = $ip->rateLimit();
+        
+        if(!($res === IP::RL_RESET || $res === IP::RL_CANEXEC)) {
+            if($res === IP::RL_BANNED && OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["autoban"]) {
+                $this->user->identity->ban("Account has possibly been stolen");
+                exit("Хакеры? Интересно...");
+            }
+            
+            $this->flashFail("err", "Чумба, ты совсем ёбнутый?", "Сходи к мозгоправу, попей колёсики. В OpenVK нельзя вбрасывать щитпосты так часто. Код исключения: $res.");
+        }
     }
     
     protected function signal(object $event): bool

@@ -34,4 +34,5 @@ services:
     - openvk\Web\Models\Repositories\Restores
     - openvk\Web\Models\Repositories\Notifications
     - openvk\Web\Models\Repositories\TicketComments
+    - openvk\Web\Models\Repositories\IPs
     - openvk\Web\Models\Repositories\ContentSearchRepository

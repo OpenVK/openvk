@@ -116,6 +116,7 @@ final class MessengerPresenter extends OpenVKPresenter
     function renderApiWriteMessage(int $sel): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         if(empty($this->postParam("content"))) {
             header("HTTP/1.1 400 Bad Request");

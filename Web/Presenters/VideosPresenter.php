@@ -51,6 +51,7 @@ final class VideosPresenter extends OpenVKPresenter
     function renderUpload(): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             if(!empty($this->postParam("name"))) {
@@ -83,6 +84,7 @@ final class VideosPresenter extends OpenVKPresenter
     function renderEdit(int $owner, int $vId): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         $video = $this->videos->getByOwnerAndVID($owner, $vId);
         if(!$video)
@@ -105,6 +107,7 @@ final class VideosPresenter extends OpenVKPresenter
     function renderRemove(int $owner, int $vid): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         $video = $this->videos->getByOwnerAndVID($owner, $vid);
         if(!$video)

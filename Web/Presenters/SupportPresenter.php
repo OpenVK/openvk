@@ -40,10 +40,11 @@ final class SupportPresenter extends OpenVKPresenter
             
         if($_SERVER["REQUEST_METHOD"] === "POST") 
         {
-            
             if(!empty($this->postParam("name")) && !empty($this->postParam("text")))
             {
                 $this->assertNoCSRF();
+                $this->willExecuteWriteAction();
+                
                 $ticket = new Ticket;
                 $ticket->setType(0);
                 $ticket->setUser_id($this->user->id);
@@ -101,6 +102,7 @@ final class SupportPresenter extends OpenVKPresenter
     function renderDelete(int $id): void 
     {
             $this->assertUserLoggedIn();
+            $this->willExecuteWriteAction();
             if (!empty($id)) {
                 $ticket = $this->tickets->get($id);
                 if (!$ticket || $ticket->isDeleted() != 0 || $ticket->authorId() !== $this->user->id)
@@ -132,6 +134,8 @@ final class SupportPresenter extends OpenVKPresenter
                 $ticket->save();
                 
                 $this->assertNoCSRF();
+                $this->willExecuteWriteAction();
+                
                 $comment = new TicketComment;
                 $comment->setUser_id($this->user->id);
                 $comment->setUser_type(0);
@@ -166,6 +170,8 @@ final class SupportPresenter extends OpenVKPresenter
         
         if($_SERVER["REQUEST_METHOD"] === "POST") 
         {
+            $this->willExecuteWriteAction();
+            
             if(!empty($this->postParam("text")) && !empty($this->postParam("status")))
             {
                 $ticket->setType($this->postParam("status"));

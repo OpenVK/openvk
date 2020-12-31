@@ -95,6 +95,8 @@ final class UserPresenter extends OpenVKPresenter
         
             $user = $this->users->get($id);
             if($_SERVER["REQUEST_METHOD"] === "POST") {
+                $this->willExecuteWriteAction();
+                
                 if($_GET['act'] === "main" || $_GET['act'] == NULL) {
                     $user->setFirst_Name(empty($this->postParam("first_name")) ? $user->getFirstName() : $this->postParam("first_name"));
                     $user->setLast_Name(empty($this->postParam("last_name")) ? "" : $this->postParam("last_name"));
@@ -157,6 +159,7 @@ final class UserPresenter extends OpenVKPresenter
     function renderVerifyPhone(): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         $user = $this->user->identity;
         if(!$user->hasPendingNumberChange())
@@ -175,6 +178,7 @@ final class UserPresenter extends OpenVKPresenter
     function renderSub(): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         if($_SERVER["REQUEST_METHOD"] !== "POST") exit("Invalid state");
         
@@ -191,6 +195,7 @@ final class UserPresenter extends OpenVKPresenter
     function renderSetAvatar(): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         $photo = new Photo;
         try {
@@ -219,6 +224,8 @@ final class UserPresenter extends OpenVKPresenter
         
         $user = $this->users->get($id);
         if($_SERVER["REQUEST_METHOD"] === "POST") {
+            $this->willExecuteWriteAction();
+            
             if($_GET['act'] === "main" || $_GET['act'] == NULL) {
                 if($this->postParam("old_pass") && $this->postParam("new_pass") && $this->postParam("repeat_pass")) {
                     if($this->postParam("new_pass") === $this->postParam("repeat_pass")) {

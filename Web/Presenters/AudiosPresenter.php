@@ -30,6 +30,7 @@ class AudiosPresenter extends OpenVKPresenter
     function renderUpload(): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             if(!isset($_FILES["blob"]))

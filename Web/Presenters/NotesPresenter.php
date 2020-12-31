@@ -46,6 +46,7 @@ final class NotesPresenter extends OpenVKPresenter
     function renderCreate(): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
         
         $id = $this->user->id; #TODO: when ACL'll be done, allow admins to edit users via ?GUID=(chandler guid)
         

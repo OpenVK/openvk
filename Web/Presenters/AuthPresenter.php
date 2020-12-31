@@ -1,7 +1,9 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
+use openvk\Web\Models\Entities\IP;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Entities\PasswordReset;
+use openvk\Web\Models\Repositories\IPs;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Repositories\Restores;
 use Chandler\Session\Session;
@@ -40,6 +42,14 @@ final class AuthPresenter extends OpenVKPresenter
         return checkdnsrr($domain, "MX");
     }
     
+    private function ipValid(): bool
+    {
+        $ip  = (new IPs)->get(CONNECTING_IP);
+        $res = $ip->rateLimit(0);
+        
+        return $res === IP::RL_RESET || $res === IP::RL_CANEXEC;
+    }
+    
     function renderRegister(): void
     {
         if(!is_null($this->user))
@@ -49,6 +59,9 @@ final class AuthPresenter extends OpenVKPresenter
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->assertCaptchaCheckPassed();
+            
+            if(!$this->ipValid())
+                $this->flashFail("err", "Подозрительная попытка регистрации", "Вы пытались зарегистрироваться из подозрительного места.");
             
             if(!$this->emailValid($this->postParam("email")))
                 $this->flashFail("err", "Неверный email адрес", "Email, который вы ввели, не является корректным.");
