@@ -7,8 +7,8 @@
         </nobold>
     </div>
     <div>
-        <div class="content_subtitle">
-            <div n:if="$canPost" id="write" style="padding: 5px 0;"  onfocusin="expand_wall_textarea();">
+        <div n:if="$canPost" class="content_subtitle">
+            <div id="write" style="padding: 5px 0;"  onfocusin="expand_wall_textarea();">
                 <form action="/wall{$owner}/makePost" method="post" enctype="multipart/form-data" style="margin:0;">
                     <textarea id="wall-post-input" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="small-textarea"></textarea>
                     <div>
