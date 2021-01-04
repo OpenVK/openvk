@@ -70,11 +70,6 @@
             <div class="page_header">
                 <a href="/" class="home_button" title="OpenVK">openvk</a>
                 <div n:if="isset($thisUser) ? !$thisUser->isBanned() : true" class="header_navigation">
-                    {if $_SERVER['SERVER_NAME'] == "openvk2.veselcraft.ru"}
-                        <div class="link">
-                            <a href="https://openvk.su/"><b>new domain!</b></a>
-                        </div>
-                    {/if}
                     {ifset $thisUser}
                     <div class="link">
                         <a href="/">{_"header_home"}</a>
