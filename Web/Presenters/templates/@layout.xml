@@ -40,6 +40,11 @@
             {if $thisUser->getStyleAvatar() == 2}
                     {css "css/avatar.2.css"}
             {/if}
+
+            
+            {if $thisUser->hasMicroblogEnabled() == 1}
+                    {css "css/microblog.css"}
+            {/if}
         {else}
             {css "css/style.css"}
             {css "css/dialog.css"}

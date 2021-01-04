@@ -1,0 +1,94 @@
+{var author = $post->getOwner()}
+
+<table border="0" style="font-size: 11px;" n:class="post, !$compact ? post-divider, $post->isExplicit() ? post-nsfw">
+    <tbody>
+        <tr>
+            <td width="54" valign="top">
+                <img
+                    src="{$author->getAvatarURL()}"
+                    width="{ifset $compact}25{else}50{/ifset}" />
+            </td>
+            <td width="100%" valign="top">
+                <div class="post-author">
+                    <a href="{$author->getURL()}">
+                        <b>
+                            {$author->getCanonicalName()}
+                        </b>
+                    </a>
+                    {if $author->isVerified()}<img class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">{/if}
+                    {ifset $compact}<br>
+                    <a href="/wall{$post->getPrettyId()}" class="date">{$post->getPublicationTime()}</a>
+
+                    {/ifset}
+                    {if $post->canBeDeletedBy($thisUser) && !($forceNoDeleteLink ?? false) && !isset($compact)}
+                        <a class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
+                    {/if}
+                </div>
+                <div class="post-content" id="{$post->getPrettyId()}">
+                    <div class="text" id="text{$post->getPrettyId()}">
+                        {$post->getText()|noescape}
+                        
+                        <div n:ifcontent class="attachments_b">
+                            <div class="attachment" n:foreach="$post->getChildren() as $attachment" data-localized-nsfw-text="{_nsfw_warning}">
+                                {include "../attachment.xml", attachment => $attachment}
+                            </div>
+                        </div>
+                    </div>
+                    <div n:if="$post->isAd()" style="color:grey;">
+                        <br/>
+                        &nbsp;! Этот пост был размещён за взятку.
+                    </div>
+                    <div n:if="$post->isSigned()" class="post-signature">
+                        {var acutalAuthor = $post->getOwner(false)}
+                        <span>
+                            Автор:
+                            <a href="{$acutalAuthor->getURL()}">
+                               {$acutalAuthor->getCanonicalName()}
+                            </a>
+                        </span>
+                    </div>
+                </div>
+                <div class="post-menu" n:if="!isset($compact)">
+                    <a href="/wall{$post->getPrettyId()}" class="date">{$post->getPublicationTime()}</a>
+                    {if isset($thisUser)}
+                        &nbsp;
+                        
+                        {if !($forceNoCommentsLink ?? false)}
+                            <a href="/wall{$post->getPrettyId()}#comments">
+                                {if $post->getCommentsCount() > 0}
+                                    {_"comments"} (<b>{$post->getCommentsCount()}</b>)
+                                {else}
+                                    {_"comments"}
+                                {/if}
+                            </a>
+                            &nbsp;|&nbsp;
+                        {/if}
+                        
+                        
+                        
+
+                        <div class="like_wrap">
+                            <a class="post-share-button" href="/wall{$post->getPrettyId()}/repost?hash={rawurlencode($csrfToken)}"
+                            class="post-like-button">
+                                <div class="repost-icon" style="opacity: 0.4;"></div>
+                                <span class="likeCnt">{$post->getRepostCount()}</span>
+                            </a>
+
+                            {var liked = $post->hasLikeFrom($thisUser)}
+                            <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}"
+                            class="post-like-button"
+                                    data-liked="{(int) $liked}"
+                                    data-likes="{$post->getLikesCount()}">
+                                <div class="heart" style="{if $liked}opacity: 1;{else}opacity: 0.4;{/if}"></div>
+                                <span class="likeCnt">{$post->getLikesCount()}</span>
+                            </a>
+                        </div>
+                    {/if}
+                </div>
+                <div n:if="isset($thisUser) &&! ($compact ?? false)" class="post-menu-s">
+                    <!-- kosfurler -->
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>

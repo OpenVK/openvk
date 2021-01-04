@@ -73,6 +73,11 @@ class User extends RowModel
     {
         return (bool) $this->getRecord()->milkshake;
     }
+
+    function hasMicroblogEnabled(): bool
+    {
+        return (bool) $this->getRecord()->microblog;
+    }
     
     function getChandlerGUID(): string
     {

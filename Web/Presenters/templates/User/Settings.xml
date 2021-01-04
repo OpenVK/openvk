@@ -315,6 +315,17 @@
                         </td>
                     </tr>
                     <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">Вид постов</span>
+                        </td>
+                        <td>
+                            <select name="microblog">
+                                <option value="0" {if !$user->hasMicroblogEnabled()}selected{/if}>Старый</option>
+                                <option value="1" {if $user->hasMicroblogEnabled()}selected{/if}>Микроблог</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
                         <td>
                             
                         </td>
