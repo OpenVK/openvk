@@ -40,8 +40,9 @@ class Club extends RowModel
     
     function getAvatarUrl(): string
     {
-        $serverUrl  = "http" . ($_SERVER["HTTPS"] === "on" ? "s" : "") . "://";
-        $serverUrl .= $_SERVER["HTTP_HOST"];
+        $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['SERVER_NAME'] . '/';
+        $url = explode('?', $url);
+        $serverUrl = $url[0];
         $avPhoto    = $this->getAvatarPhoto();
         
         return is_null($avPhoto) ? "$serverUrl/assets/packages/static/openvk/img/camera_200.png" : $avPhoto->getURL();
