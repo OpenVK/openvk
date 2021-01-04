@@ -1,0 +1,106 @@
+{var author = $post->getOwner()}
+
+<table border="0" style="font-size: 11px;" n:class="post, $post->isExplicit() ? post-nsfw">
+    <tbody>
+        <tr>
+            <td width="54" valign="top">
+                <img
+                    src="{$author->getAvatarURL()}"
+                    width="50" />
+            </td>
+            <td width="100%" valign="top">
+                <div class="post-author">
+                    <a href="{$author->getURL()}">
+                        <b>
+                            {$author->getCanonicalName()}
+                        </b>
+                    </a>
+                    {if $author->isVerified()}<img class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">{/if}
+                    {$post->isPostedOnBehalfOfGroup() ? "опубликовали" : ($author->isFemale() ? tr("post_writes_f") : tr("post_writes_m"))}
+                    {if ($onWallOf ?? false) &&!$post->isPostedOnBehalfOfGroup() && $post->getOwnerPost() !== $post->getTargetWall()}
+                        {var wallId  = $post->getTargetWall()}
+                        {var wallURL = $wallId > -1 ? "/id$wallId" : "/club" . abs($wallId)}
+                        на
+                        <a href="{$wallURL}">
+                            <b>
+                                {if isset($thisUser) && $thisUser->getId() === $wallId}
+                                    вашей
+                                {/if}
+                                стене
+                                {if $wallId < 0}
+                                    группы
+                                {/if}
+                            </b>
+                        </a>
+                    {/if}
+                    <br/>
+                    <a href="/wall{$post->getPrettyId()}" class="date">{$post->getPublicationTime()}</a>
+                </div>
+                <div class="post-content" id="{$post->getPrettyId()}">
+                    <div class="text" id="text{$post->getPrettyId()}">
+                        {$post->getText()|noescape}
+                        
+                        <div n:ifcontent class="attachments_b">
+                            <div class="attachment" n:foreach="$post->getChildren() as $attachment" data-localized-nsfw-text="{_nsfw_warning}">
+                                {include "../attachment.xml", attachment => $attachment}
+                            </div>
+                        </div>
+                    </div>
+                    <div n:if="$post->isAd()" style="color:grey;">
+                        <br/>
+                        &nbsp;! Этот пост был размещён за взятку.
+                    </div>
+                    <div n:if="$post->isSigned()" class="post-signature">
+                        {var acutalAuthor = $post->getOwner(false)}
+                        <span>
+                            Автор:
+                            <a href="{$acutalAuthor->getURL()}">
+                               {$acutalAuthor->getCanonicalName()}
+                            </a>
+                        </span>
+                    </div>
+                </div>
+                <div n:if="isset($thisUser) &&! ($compact ?? false)" class="post-menu">
+                    {if $post->canBeDeletedBy($thisUser) && !($forceNoDeleteLink ?? false)}
+                        <a href="/wall{$post->getPrettyId()}/delete">{_"delete"}</a>&nbsp;|&nbsp;
+                    {/if}
+                    
+                    {if !($forceNoCommentsLink ?? false)}
+                        <a href="/wall{$post->getPrettyId()}#comments">
+                            {if $post->getCommentsCount() > 0}
+                                {_"comments"} (<b>{$post->getCommentsCount()}</b>)
+                            {else}
+                                {_"comments"}
+                            {/if}
+                        </a>
+                        &nbsp;|&nbsp;
+                    {/if}
+                    
+                    <a class="post-share-button" href="/wall{$post->getPrettyId()}/repost?hash={rawurlencode($csrfToken)}">
+                        {if $post->getRepostCount() > 0}
+                            {_"share"}
+                            (<b>{$post->getRepostCount()}</b>)
+                        {else}
+                            {_"share"}
+                        {/if}
+                    </a>
+                    
+
+                    <div class="like_wrap">
+                        {var liked = $post->hasLikeFrom($thisUser)}
+                        <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}"
+                        class="post-like-button"
+                                data-liked="{(int) $liked}"
+                                data-likes="{$post->getLikesCount()}">
+                            <div class="heart" style="{if $liked}opacity: 1;{else}opacity: 0.4;{/if}"></div>
+                            <span class="likeCnt">{$post->getLikesCount()}</span>
+                        </a>
+                    </div>
+                </div>
+                <div n:if="isset($thisUser) &&! ($compact ?? false)" class="post-menu-s">
+                    <!-- kosfurler -->
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>

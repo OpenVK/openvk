@@ -263,6 +263,9 @@ final class UserPresenter extends OpenVKPresenter
                 
                 if (in_array($this->postParam("rating"), [0, 1]))
                     $user->setShow_Rating((int) $this->postParam("rating"));
+
+                if (in_array($this->postParam("microblog"), [0, 1]))
+                    $user->setMicroblog((int) $this->postParam("microblog"));
             }elseif($_GET['act'] === "lMenu") {
                 $settings = [
                     "menu_bildoj"   => "photos",
