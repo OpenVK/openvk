@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{Post, Photo, Club};
+use openvk\Web\Models\Entities\{Post, Photo, Club, User};
 use openvk\Web\Models\Entities\Notifications\{LikeNotification, RepostNotification, WallPostNotification};
 use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums};
 use Chandler\Database\DatabaseConnection;
@@ -117,6 +117,9 @@ final class WallPresenter extends OpenVKPresenter
                    ->where("deleted", 0)
                    ->order("created DESC");
         
+        if($this->user->identity->getNsfwTolerance() === User::NSFW_INTOLERANT)
+            $posts = $posts->where("nsfw", false);
+        
         $this->template->_template     = "Wall/Feed.xml";
         $this->template->globalFeed    = true;
         $this->template->paginatorConf = (object) [
@@ -175,8 +178,6 @@ final class WallPresenter extends OpenVKPresenter
             $flags |= 0b10000000;
         if($this->postParam("force_sign") === "on")
             $flags |= 0b01000000;
-        if($this->postParam("nsfw") === "on")
-            $flags |= 0b00100000;
         
         
         if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
@@ -201,6 +202,7 @@ final class WallPresenter extends OpenVKPresenter
             $post->setCreated(time());
             $post->setContent($this->postParam("text"));
             $post->setFlags($flags);
+            $post->setNsfw($this->postParam("nsfw") === "on");
             $post->save();
             $post->attach($photo);
         } elseif($this->postParam("text")) {
@@ -211,6 +213,7 @@ final class WallPresenter extends OpenVKPresenter
                 $post->setCreated(time());
                 $post->setContent($this->postParam("text"));
                 $post->setFlags($flags);
+                $post->setNsfw($this->postParam("nsfw") === "on");
                 $post->save();
             } catch(\LogicException $ex) {
                 $this->flashFail("err", "Не удалось опубликовать пост", "Пост пустой или слишком большой.");

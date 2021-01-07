@@ -12,6 +12,10 @@
         {script "js/openvk.cls.js"}
         
         {ifset $thisUser}
+            {if $thisUser->getNsfwTolerance() < 2}
+                {css "css/nsfw-posts.css"}
+            {/if}
+            
             {if !is_null($thisUser->getTheme())}
                 {var theme = $thisUser->getTheme()}
                 {if $theme->inheritDefault()}
@@ -48,6 +52,8 @@
         {else}
             {css "css/style.css"}
             {css "css/dialog.css"}
+            {css "css/nsfw-posts.css"}
+            
             {if $isXmas}
                 {css "css/xmas.css"}
             {/if}
@@ -131,7 +137,14 @@
                         {/if}</a>
                         <a n:if="$thisUser->getLeftMenuItemStatus('photos')" href="/albums{$thisUser->getId()}" class="link">{_"my_photos"}</a>
                         <a n:if="$thisUser->getLeftMenuItemStatus('videos')" href="/videos{$thisUser->getId()}" class="link">{_"my_videos"}</a>
-                        <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link">{_"my_messages"}</a>
+                        <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link">{_"my_messages"}
+                        {if $thisUser->getUnreadMessagesCount() > 0}
+                        <object type="internal/link">
+                            (<b>{$thisUser->getUnreadMessagesCount()}</b>)
+                        </object>
+
+                        {/if}
+                        </a>
                         <a n:if="$thisUser->getLeftMenuItemStatus('notes')" href="/notes{$thisUser->getId()}" class="link">{_"my_notes"}</a>
                         <a n:if="$thisUser->getLeftMenuItemStatus('groups')" href="/groups{$thisUser->getId()}" class="link">{_"my_groups"}</a>
                         <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link">{_"my_feed"}</a>

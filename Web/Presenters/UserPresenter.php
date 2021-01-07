@@ -113,12 +113,12 @@ final class UserPresenter extends OpenVKPresenter
                     $user->setSex($this->postParam("gender"));
                     
                     if(!empty($this->postParam("phone")) && $this->postParam("phone") !== $user->getPhone()) {
-                        if(!OPENVK_ROOT_CONF["openvk"]["credentials"]["zadarma"]["enable"])
+                        if(!OPENVK_ROOT_CONF["openvk"]["credentials"]["smsc"]["enable"])
                             $this->flashFail("err", tr("error_segmentation"), "котлетки");
                         
                         $code = $user->setPhoneWithVerification($this->postParam("phone"));
                         
-                        if(!Sms::send($this->postParam("phone"), "OPENVK | Your verification code is: $code"))
+                        if(!Sms::send($this->postParam("phone"), "OPENVK - Your verification code is: $code"))
                             $this->flashFail("err", tr("error_segmentation"), "котлетки: Remote err!");
                     }
                 } elseif($_GET['act'] === "contacts") {
@@ -266,6 +266,9 @@ final class UserPresenter extends OpenVKPresenter
 
                 if (in_array($this->postParam("microblog"), [0, 1]))
                     $user->setMicroblog((int) $this->postParam("microblog"));
+                
+                if(in_array($this->postParam("nsfw"), [0, 1, 2]))
+                    $user->setNsfwTolerance((int) $this->postParam("nsfw"));
             }elseif($_GET['act'] === "lMenu") {
                 $settings = [
                     "menu_bildoj"   => "photos",

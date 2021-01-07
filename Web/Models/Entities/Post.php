@@ -59,7 +59,7 @@ class Post extends Postable
     
     function isExplicit(): bool
     {
-        return ($this->getRecord()->flags & 0b00100000) > 0;
+        return (bool) $this->getRecord()->nsfw;
     }
     
     function isDeleted(): bool

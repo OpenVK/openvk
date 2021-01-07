@@ -316,6 +316,18 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
+                            <span class="nobold">NSFW-контент</span>
+                        </td>
+                        <td>
+                            <select name="nsfw">
+                                <option value="0" {if $user->getNsfwTolerance() === 0}selected{/if}>Не показывать в глобальной ленте</option>
+                                <option value="1" {if $user->getNsfwTolerance() === 1}selected{/if}>Только замазывать</option>
+                                <option value="2" {if $user->getNsfwTolerance() === 2}selected{/if}>Показывать</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
                             <span class="nobold">Вид постов</span>
                         </td>
                         <td>

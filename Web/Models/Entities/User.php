@@ -26,6 +26,10 @@ class User extends RowModel
     const PRIVACY_ONLY_REGISTERED = 2;
     const PRIVACY_EVERYONE        = 3;
     
+    const NSFW_INTOLERANT    = 0;
+    const NSFW_TOLERANT      = 1;
+    const NSFW_FULL_TOLERANT = 2;
+    
     protected function _abstractRelationGenerator(string $filename, int $page = 1): \Traversable
     {
         $id     = $this->getId();
@@ -99,7 +103,7 @@ class User extends RowModel
     
     function getAvatarUrl(): string
     {
-        $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['SERVER_NAME'] . '/';
+        $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['SERVER_NAME'];
         $url = explode('?', $url);
         $serverUrl = $url[0];
         
@@ -424,6 +428,11 @@ class User extends RowModel
     {
         return $this->_abstractRelationCount("get-subscriptions-user");
     }
+
+    function getUnreadMessagesCount(): int
+    {
+        return sizeof(DatabaseConnection::i()->getContext()->table("messages")->where(["recipient_id" => $this->getId(), "unread" => 1]));
+    }
     
     function getClubs(int $page = 1): \Traversable
     {
@@ -501,6 +510,11 @@ class User extends RowModel
         return bin2hex($rand) . bin2hex(sodium_crypto_stream_xor((string) $this->getId(), $rand, $key));
     }
     
+    function getNsfwTolerance(): int
+    {
+        return $this->getRecord()->nsfw_tolerance;
+    }
+    
     function isFemale(): bool
     {
         return (bool) $this->getRecord()->sex;
@@ -561,6 +575,11 @@ class User extends RowModel
                                ->delete();
         
         return true;
+    }
+    
+    function setNsfwTolerance(int $tolerance): void
+    {
+        $this->stateChanges("nsfw_tolerance", $tolerance);
     }
     
     function setPrivacySetting(string $id, int $status): void
