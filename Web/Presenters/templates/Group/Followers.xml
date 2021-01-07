@@ -2,6 +2,7 @@
 {var iterator = $followers}
 {var count    = $paginatorConf->count}
 {var page     = $paginatorConf->page}
+{var perPage  = 6}
 
 {block title}{_followers} {$club->getCanonicalName()}{/block}
 
