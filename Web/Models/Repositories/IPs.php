@@ -20,7 +20,7 @@ class IPs
         if(!$bip)
             throw new \UnexpectedValueException("Malformed IP address");
         
-        $res = $this->ips->get($bip);
+        $res = $this->ips->where("ip", $bip)->fetch();
         if(!$res) {
             $res = new IP;
             $res->setIp($ip);
