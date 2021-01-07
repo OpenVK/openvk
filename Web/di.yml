@@ -7,7 +7,6 @@ services:
     - openvk\Web\Presenters\CommentPresenter
     - openvk\Web\Presenters\PhotosPresenter
     - openvk\Web\Presenters\VideosPresenter
-    - openvk\Web\Presenters\AudiosPresenter
     - openvk\Web\Presenters\BlobPresenter
     - openvk\Web\Presenters\GroupPresenter
     - openvk\Web\Presenters\SearchPresenter
@@ -28,7 +27,6 @@ services:
     - openvk\Web\Models\Repositories\Clubs
     - openvk\Web\Models\Repositories\Videos
     - openvk\Web\Models\Repositories\Notes
-    - openvk\Web\Models\Repositories\Audios
     - openvk\Web\Models\Repositories\Tickets
     - openvk\Web\Models\Repositories\Messages
     - openvk\Web\Models\Repositories\Restores

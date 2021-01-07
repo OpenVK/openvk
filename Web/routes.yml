@@ -133,12 +133,6 @@ routes:
       handler: "Videos->edit"
     - url: "/video{num}_{num}/remove"
       handler: "Videos->remove"
-    - url: "/audios{num}"
-      handler: "Audios->app"
-    - url: "/audios/upload"
-      handler: "Audios->upload"
-    - url: "/audios/api/list{num}/{num}.json"
-      handler: "Audios->apiList"
     - url: "/{?!club}{num}"
       handler: "Group->view"
       placeholders:
