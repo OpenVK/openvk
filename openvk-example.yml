@@ -45,10 +45,9 @@ openvk:
             fartscroll: false
             testLabel: false
     credentials:
-        zadarma:
+        smsc:
             enable: false
-            callerId: ""
-            key: ""
+            client: ""
             secret: ""
         eventDB:
             enable: false # Better enable this
