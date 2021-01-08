@@ -5,7 +5,7 @@ use openvk\Web\Models\Repositories\Users as UsersRepo;
 
 final class Users extends VKAPIRequestHandler
 {
-    function get(string $user_ids, string $fields = "", int $offset = 0, int $count = 100, bool $online = false): array 
+    function get(string $user_ids, string $fields = "", int $offset = 0, int $count = 100): array 
     {
         $this->requireUser();
 
@@ -66,7 +66,7 @@ final class Users extends VKAPIRequestHandler
                 }
 
 		// НУЖЕН фикс - либо из-за моего дебилизма, либо из-за сегментации котлеток некоторые пользовали отображаются как онлайн, хотя лол, если зайти на страницу, то оный уже офлайн
-		if($online == true && $usr->getOnline()->timestamp() + 2505600 > time()) {
+		if($usr->getOnline()->timestamp() + 2505600 > time()) {
 		    $response[$i]->online = 1;
 		}else{
 		    $response[$i]->online = 0;
