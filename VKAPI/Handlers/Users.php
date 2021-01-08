@@ -60,7 +60,7 @@ final class Users extends VKAPIRequestHandler
                             $response[$i]->photo_max = $usr->getAvatarURL();
                             break;
 			case 'status':
-			    $responce[$i]->status = $usr->getStatus();
+			    $response[$i]->status = $usr->getStatus();
 			    break;
                     }
                 }
