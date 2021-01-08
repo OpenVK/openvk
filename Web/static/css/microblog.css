@@ -24,6 +24,10 @@
     border: none;
 }
 
+.post-content .text {
+    padding: 0 4px 0 4px;
+}
+
 .post-menu {
     font-size: 10px;
 }
