@@ -62,6 +62,27 @@ final class Users extends VKAPIRequestHandler
 			case 'status':
 			    $response[$i]->status = $usr->getStatus();
 			    break;
+			case 'screen_name':
+                            $response[$i]->screen_name = $usr->getShortCode();
+                            break;
+                        case 'music':
+                            $response[$i]->music = $usr->getFavoriteMusic();
+                            break;
+                        case 'movies':
+                            $response[$i]->movies = $usr->getFavoriteFilms();
+                            break;
+                        case 'tv':
+                            $response[$i]->tv = $usr->getFavoriteShows();
+                            break;
+                        case 'books':
+                            $response[$i]->books = $usr->getFavoriteBooks();
+                            break;
+                        case 'city':
+                            $response[$i]->city = $usr->getCity();
+                            break;
+                        case 'interests':
+                            $response[$i]->interests = $usr->getInterests();
+                            break;	    
                     }
                 }
 
