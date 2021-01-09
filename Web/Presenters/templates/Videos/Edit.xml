@@ -6,7 +6,7 @@
     »
     <a href="/videos{$thisUser->getId()}">{_"videos"}</a>
     »
-    <a href="/video{$thisUser->getId()}_{$video->getId()}">{_"video"}</a>
+    <a href="/video{$video->getPrettyId()}">{_"video"}</a>
     »
     Изменить видеозапись
 {/block}
