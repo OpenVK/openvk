@@ -54,6 +54,10 @@ final class NotesPresenter extends OpenVKPresenter
             $this->notFound();
             
         if($_SERVER["REQUEST_METHOD"] === "POST") {
+            if(empty($this->postParam("name"))) {
+                $this->flashFail("err", tr("error"), tr("error_segmentation")); 
+            }
+            
             $note = new Note;
             $note->setOwner($this->user->id);
             $note->setCreated(time());
