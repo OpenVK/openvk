@@ -6,7 +6,7 @@ trait TOwnable
 {
     function canBeModifiedBy(User $user): bool
     {
-        if(is_callable([$this, "isCreatedBySystem"]))
+        if(method_exists($this, "isCreatedBySystem"))
             if($this->isCreatedBySystem())
                 return false;
         

@@ -57,7 +57,7 @@ final class NotesPresenter extends OpenVKPresenter
             if(empty($this->postParam("name"))) {
                 $this->flashFail("err", tr("error"), tr("error_segmentation")); 
             }
-            
+
             $note = new Note;
             $note->setOwner($this->user->id);
             $note->setCreated(time());
@@ -67,5 +67,23 @@ final class NotesPresenter extends OpenVKPresenter
             
             $this->redirect("/note" . $this->user->id . "_" . $note->getId());
         }
+    }
+    
+    function renderDelete(int $owner, int $id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+        $this->assertNoCSRF();
+        
+        $note = $this->notes->get($id);
+        if(!$note) $this->notFound();
+        if($note->getOwner()->getId() . "_" . $note->getId() !== $owner . "_" . $id || $note->isDeleted()) $this->notFound();
+        if(is_null($this->user) || !$note->canBeModifiedBy($this->user->identity))
+            $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+        
+        $name = $note->getName();
+        $note->delete();
+        $this->flash("succ", "Заметка удалена", "Заметка \"$name\" была успешно удалена.");
+        $this->redirect("/notes" . $this->user->id);
     }
 }
