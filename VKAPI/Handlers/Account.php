@@ -69,7 +69,8 @@ final class Account extends VKAPIRequestHandler
     {
         return (object) [
             "friends" => $this->getUser()->getFollowersCount(),
-            "notifications" => $this->getUser()->getNotificationsCount()
+            "notifications" => $this->getUser()->getNotificationsCount(),
+            "messages" => $this->getUser()->getUnreadMessagesCount()
         ];
 
         // TODO: Filter

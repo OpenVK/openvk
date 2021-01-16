@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
 use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Repositories\clubs as clubsRepo;
 use openvk\Web\Models\Entities\Clubs;
 use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
 use openvk\Web\Models\Entities\Post;
