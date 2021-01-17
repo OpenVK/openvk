@@ -8,7 +8,8 @@
         "rybakit/msgpack": "dev-master",
         "wapmorgan/binary-stream": "dev-master",
         "netcarver/textile": "^3.7@dev",
-        "al/emoji-detector": "dev-master"
+        "al/emoji-detector": "dev-master",
+        "ezyang/htmlpurifier": "dev-master"
     },
     "minimum-stability": "dev"
 }

@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
-require __DIR__ . "/../../../3rdparty/HTMLPurifier/HTMLPurifier.standalone.php";
 use HTMLPurifier_Config;
 use HTMLPurifier;
 

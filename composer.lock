@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "21e40d8d5222c99fb8ad7205015ed70b",
+    "content-hash": "6188ae124a67b6cf9d5283904dadc141",
     "packages": [
         {
             "name": "al/emoji-detector",
@@ -47,6 +47,61 @@
             "description": "Detect and return all emoji found in a string",
             "homepage": "https://github.com/aaronpk/emoji-detector-php",
             "time": "2020-06-26T09:10:17+00:00"
+        },
+        {
+            "name": "ezyang/htmlpurifier",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ezyang/htmlpurifier.git",
+                "reference": "2512f595e0f4c5235e99ef97603a8db902b3cc5f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/2512f595e0f4c5235e99ef97603a8db902b3cc5f",
+                "reference": "2512f595e0f4c5235e99ef97603a8db902b3cc5f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2"
+            },
+            "require-dev": {
+                "simpletest/simpletest": "dev-master#72de02a7b80c6bb8864ef9bf66d41d2f58f826bd"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "HTMLPurifier": "library/"
+                },
+                "files": [
+                    "library/HTMLPurifier.composer.php"
+                ],
+                "exclude-from-classmap": [
+                    "/library/HTMLPurifier/Language/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Edward Z. Yang",
+                    "email": "admin@htmlpurifier.org",
+                    "homepage": "http://ezyang.com"
+                }
+            ],
+            "description": "Standards compliant HTML filter written in PHP",
+            "homepage": "http://htmlpurifier.org/",
+            "keywords": [
+                "html"
+            ],
+            "support": {
+                "issues": "https://github.com/ezyang/htmlpurifier/issues",
+                "source": "https://github.com/ezyang/htmlpurifier/tree/master"
+            },
+            "time": "2020-10-01T00:19:10+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -1150,11 +1205,12 @@
         "rybakit/msgpack": 20,
         "wapmorgan/binary-stream": 20,
         "netcarver/textile": 20,
-        "al/emoji-detector": 20
+        "al/emoji-detector": 20,
+        "ezyang/htmlpurifier": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "1.1.0"
+    "plugin-api-version": "2.0.0"
 }
