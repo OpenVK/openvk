@@ -29,8 +29,8 @@
                         
                         <div style="float: right; font-size: .7rem;">
                             <a href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}">
-                                <text style="{if $comment->hasLikeFrom($thisUser)}color: red;{else}filter: sepia(1){/if}">&#10084;</text>
-                                {$comment->getLikesCount()}
+                                <div class="heart" style="{if $comment->hasLikeFrom($thisUser)}opacity: 1;{else}opacity: 0.4;{/if}"></div>
+                                <span class="likeCnt">{$comment->getLikesCount()}</span>
                             </a>
                         </div>
                     </div>

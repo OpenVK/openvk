@@ -68,6 +68,9 @@ final class PhotosPresenter extends OpenVKPresenter
         }
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
+            if(empty($this->postParam("name"))) {
+                $this->flashFail("err", tr("error"), tr("error_segmentation")); 
+            }
             $album = new Album;
             $album->setOwner(isset($club) ? $club->getId() * -1 : $this->user->id);
             $album->setName($this->postParam("name"));

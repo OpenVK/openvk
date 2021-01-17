@@ -39,11 +39,19 @@
     </article>
     
     <div style="width: 100%; min-height: 100px;">
+        <div style="float: left; min-height: 100px; width: 70%;">
         {include "../components/comments.xml",
                  comments => $comments,
                  count => $cCount,
                  page => $cPage,
                  model => "notes",
                  parent => $note}
+        </div>
+        <div style="float: right; min-height: 100px; width: 30%;">
+            <h4>{_actions}</h4>
+            <div n:if="isset($thisUser) && $thisUser->getId() === $note->getOwner()->getId()">
+                <a id="_noteDelete" href="/note{$note->getOwner()->getId()}_{$note->getId()}/delete" class="profile_link" style="display:block;width:96%;">{_delete}</a>
+            </div>
+        </div>
     </div>
 {/block}

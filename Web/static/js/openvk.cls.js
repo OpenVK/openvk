@@ -59,4 +59,27 @@ u("#_photoDelete").on("click", function(e) {
     return e.preventDefault();
 });
 
+/* @rem-pai why this func wasn't named as "#_deleteDialog"? It looks universal IMO */
+
+u("#_noteDelete").on("click", function(e) {
+    var formHtml = "<form id='tmpPhDelF' action='" + u(this).attr("href") + "' >";
+    formHtml    += "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />";
+    formHtml    += "</form>";
+    u("body").append(formHtml);
+    
+    MessageBox("Внимание", "Удаление нельзя отменить. Вы действительно уверены в том что хотите сделать?", [
+        "Да",
+        "Нет"
+    ], [
+        (function() {
+            u("#tmpPhDelF").nodes[0].submit();
+        }),
+        (function() {
+            u("#tmpPhDelF").remove();
+        }),
+    ]);
+    
+    return e.preventDefault();
+});
+
 }); //END ONREADY DECLS
