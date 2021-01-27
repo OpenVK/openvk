@@ -714,7 +714,7 @@ table.User {
 }
 
 .crp-list {
-    margin: 10px -6px 0 -11px;
+    margin: 10px -6px -10px -11px;
     display: flex;
     flex-direction: column;
     border-top: 1px solid #d6d6d6;
@@ -726,10 +726,18 @@ table.User {
 .crp-entry {
     display: flex;
     padding: 8px;
-    border-bottom: 1px solid #d6d6d6;
     cursor: pointer;
-width: 592px;
-margin-left: 1px;
+    width: 611px;
+    margin-left: 1px;
+    border-bottom: 1px solid #d6d6d6;
+}
+
+.crp-entry:hover {
+    background-color: #f9f9f9;
+}
+
+.crp-entry:first-of-type {
+    border-top: 1px solid #d6d6d6;
 }
 
 .crp-entry--image, .crp-entry--info {
@@ -744,20 +752,41 @@ margin-left: 1px;
     max-width: 64px;
 }
 
-.crp-entry:hover {
-    background-color: #f9f9f9;
-
-	width: 592px;
-
-	margin-left: 1px;
-}
-
 .crp-entry--info span {
     color: grey;
 }
 
 .crp-entry--info a {
     font-weight: 900;
+}
+
+.crp-entry--message.unread {
+    background-color: #dcdcdc;
+    padding: 5px;
+    width: 346px;
+    border-radius: 3px;
+}
+
+.messenger-app--messages---message.unread {
+    background-color: #dcdcdc;
+    padding: 5px;
+    margin: -5px;
+    padding-bottom: 1.2rem;
+    margin-bottom: 0;
+}
+
+.messenger-app--messages---message.unread:first-of-type {
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    padding-bottom: 5px;
+    margin-bottom: 1.2rem;
+}
+
+.messenger-app--messages---message.unread:last-of-type {
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    padding-bottom: 5px;
+    margin-bottom: 1.2rem;
 }
 
 .crp-entry--message---av img {

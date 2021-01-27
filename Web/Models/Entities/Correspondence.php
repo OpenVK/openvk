@@ -57,6 +57,14 @@ class Correspondence
         return "/im?sel=$id";
     }
     
+    function getID(): int
+    {
+        $id = $this->correspondents[1]->getId();
+        $id = get_class($this->correspondents[1]) === 'openvk\Web\Models\Entities\Club' ? $id * -1 : $id;
+        
+        return $id;
+    }
+    
     /**
      * Get correspondents as array.
      * 
@@ -86,6 +94,9 @@ class Correspondence
         ];
         $params = array_merge($params[0], $params[1], array_reverse($params[0]), array_reverse($params[1]), $params[2]);
         
+        if ($limit === NULL)
+            DatabaseConnection::i()->getConnection()->query("UPDATE messages SET unread = 0 WHERE sender_id = ".$this->correspondents[1]->getId());
+        
         if(is_null($cap)) {
             $query = str_replace("\n  AND (`id` > ?)", "", $query);
         } else {
@@ -102,7 +113,7 @@ class Correspondence
         
         if($reverse)
             $query = str_replace("`created` DESC", "`created` ASC", $query);
-        
+            
         $msgs   = DatabaseConnection::i()->getConnection()->query($query, ...$params);
         $msgs   = array_map(function($message) {
             $message = new ActiveRow((array) $message, $this->messages); #Directly creating ActiveRow is faster than making query
@@ -150,7 +161,10 @@ class Correspondence
         $message->setSender_Type($classes[0]);
         $message->setRecipient_Type($classes[1]);
         $message->setCreated(time());
+        $message->setUnread(1);
         $message->save();
+        
+        DatabaseConnection::i()->getConnection()->query("UPDATE messages SET unread = 0 WHERE sender_id = ".$this->correspondents[1]->getId());
         
         # да
         if($ids[0] !== $ids[1]) {

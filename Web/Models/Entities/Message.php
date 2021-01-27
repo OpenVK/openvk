@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
+use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Entities\Photo;
@@ -43,6 +44,13 @@ class Message extends RowModel
             return (new Clubs)->get($this->getRecord()->recipient_id);
     }
     
+    function getUnreadState(): int
+    {
+        trigger_error("TODO: use isUnread", E_USER_DEPRECATED);
+        
+        return (int) $this->isUnread();
+    }
+    
     /**
      * Get date of initial publication.
      * 
@@ -78,6 +86,11 @@ class Message extends RowModel
         return false;
     }
     
+    function isUnread(): bool
+    {
+        return (bool) $this->getRecord()->unread;
+    }
+    
     /**
      * Simplify to array
      * 
@@ -109,13 +122,14 @@ class Message extends RowModel
                 "id"     => $author->getId(),
                 "link"   => $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST'] . $author->getURL(),
                 "avatar" => $author->getAvatarUrl(),
-                "name"   => $author->getFirstName(),
+                "name"   => $author->getFirstName().$unreadmsg,
             ],
             "timing" => [
                 "sent"   => (string) $this->getSendTime()->format("%e %B %G" . tr("time_at_sp") . "%X"),
                 "edited" => is_null($this->getEditTime()) ? null : (string) $this->getEditTime(),
             ],
             "text"        => $this->getText(),
+            "read"        => !$this->isUnread(),
             "attachments" => $attachments,
         ];
     }

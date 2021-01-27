@@ -32,10 +32,10 @@
                     <a href="{$recipient->getURL()}">{$recipient->getCanonicalName()}</a><br/>
                     <span>{$lastMsg->getSendTime()->format("%e %B %G" . tr("time_at_sp") . "%X")}</span>
                 </div>
-                <div class="crp-entry--message">
+                <div n:class="crp-entry--message, $lastMsg->getUnreadState() ? unread">
                     {var _author = $lastMsg->getSender()}
                     
-                    <div class="crp-entry--message---av">
+                    <div class="crp-entry--message---av" n:if="$_author->getId() === $thisUser->getId()">
                         <img src="{$_author->getAvatarURL()}"
                         alt="Фотография пользователя" />
                     </div>

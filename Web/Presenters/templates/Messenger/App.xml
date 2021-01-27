@@ -19,7 +19,7 @@
     <div class="messenger-app">
         <div class="messenger-app--messages" data-bind="event: { scroll: onMessagesScroll }">
             <div data-bind="foreach: messages">
-                <div class="messenger-app--messages---message">
+                <div class="messenger-app--messages---message" data-bind="css: { unread: !read }">
                     <img class="ava" data-bind="attr: { src: sender.avatar, alt: sender.name }" />
                     <div class="_content">
                         <a href="#" data-bind="attr: { href: sender.link }">
@@ -188,6 +188,7 @@
                         "edited": null
                     },
                     "text": content,
+                    "read": false,
                     "attachments": [],
                     "_tuid": Math.ceil(performance.now())
                 };
@@ -205,6 +206,7 @@
                         "edited": null
                     },
                     "text": content,
+                    "read": true,
                     "_tuid": Math.ceil(performance.now())
                 };
             }
