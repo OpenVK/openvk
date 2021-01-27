@@ -137,6 +137,30 @@ function ovk_strftime_safe(string $format, ?int $timestamp = NULL): string
     return $str;
 }
 
+function ovk_is_ssl(): bool
+{
+    if(!isset($GLOBALS["requestIsSSL"])) {
+        $GLOBALS["requestIsSSL"] = false;
+        
+        if(isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] !== "off") {
+            $GLOBALS["requestIsSSL"] = true;
+        } else {
+            $forwardedProto = $_SERVER["HTTP_X_FORWARDED_PROTO"] ?? ($_SERVER["HTTP_X_FORWARDED_PROTOCOL"] ?? ($_SERVER["HTTP_X_URL_SCHEME"] ?? ""));
+            if($forwardedProto === "https")
+                $GLOBALS["requestIsSSL"] = true;
+            else if(($_SERVER["HTTP_X_FORWARDED_SSL"] ?? "") === "on")
+                $GLOBALS["requestIsSSL"] = true;
+        }
+    }
+    
+    return $GLOBALS["requestIsSSL"];
+}
+
+function ovk_scheme(): string
+{
+    return ovk_is_ssl() ? "https" : "http";
+}
+
 return (function() {
     _ovk_check_environment();
     require __DIR__ . "/vendor/autoload.php";

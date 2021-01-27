@@ -39,6 +39,6 @@ class Photo extends Media
         if(is_null($this->getRecord()))
             throw new ISE("Cannot isolate unpresisted image. Please save() it first.");
         
-        DB::i()->getContext()->table("album_relations")->where("photo", $this->getRecord()->id)->delete();
+        DB::i()->getContext()->table("album_relations")->where("media", $this->getRecord()->id)->delete();
     }
 }
