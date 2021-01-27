@@ -1,48 +1,30 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
-use openvk\Web\Util\DateTime;
-use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Repositories\Photos;
-use openvk\Web\Models\Repositories\Clubs;
-use openvk\Web\Models\Repositories\Users;
-use Chandler\Database\DatabaseConnection;
 
-class Album extends RowModel
+class Album extends MediaCollection
 {
     const SPECIAL_AVATARS = 16;
     const SPECIAL_WALL    = 32;
     
-    protected $tableName = "albums";
+    protected $tableName       = "albums";
+    protected $relTableName    = "album_relations";
+    protected $entityTableName = "photos";
+    protected $entityClassName = 'openvk\Web\Models\Entities\Photo';
     
-    function getOwner(): RowModel
-    {
-        $oid = $this->getRecord()->owner;
-        if($oid > 0)
-            return (new Users)->get($oid);
-        else
-            return (new Clubs)->get($oid * -1);
-    }
+    protected $specialNames = [
+        16 => "_avatar_album",
+        32 => "_wall_album",
+        64 => "_saved_photos_album",
+    ];
     
-    function getPrettyId(): string
+    function getCoverURL(): ?string
     {
-        return $this->getRecord()->owner . "_" . $this->getRecord()->id;
-    }
-    
-    function getName(): string
-    {
-        switch($this->getRecord()->special_type) {
-            case Album::SPECIAL_AVATARS:
-                return "Изображения со страницы";
-            case Album::SPECIAL_WALL:
-                return "Изображения со стены";
-            default:
-                return $this->getRecord()->name;
-        }
-    }
-    
-    function getDescription(): ?string
-    {
-        return $this->getRecord()->description;
+        $coverPhoto = $this->getCoverPhoto();
+        if(!$coverPhoto)
+            return "/assets/packages/static/openvk/img/camera_200.png";
+        
+        return $coverPhoto->getURL();
     }
     
     function getCoverPhoto(): ?Photo
@@ -62,69 +44,26 @@ class Album extends RowModel
     
     function getPhotos(int $page = 1, ?int $perPage = NULL): \Traversable
     {
-        $perPage = $perPage ?? OPENVK_DEFAULT_PER_PAGE;
-        
-        foreach($this->getRecord()->related("album_relations.album")->page($page, $perPage)->order("photo ASC") as $rel) {
-            $photo = $rel->ref("photos", "photo");
-            if(!$photo) continue;
-            
-            yield new Photo($photo);
-        }
+        return $this->fetch($page, $perPage);
     }
     
     function getPhotosCount(): int
     {
-        return sizeof($this->getRecord()->related("album_relations.album"));
-    }
-    
-    function getCreationTime(): DateTime
-    {
-        return new DateTime($this->getRecord()->created);
-    }
-    
-    function getPublicationTime(): DateTime
-    {
-        return $this->getCreationTime();
-    }
-    
-    function getEditTime(): ?DateTime
-    {
-        $edited = $this->getRecord()->edited;
-        if(is_null($edited)) return NULL;
-        
-        return new DateTime($edited);
-    }
-    
-    function isCreatedBySystem(): bool
-    {
-        return $this->getRecord()->special_type !== 0;
+        return $this->size();
     }
     
     function addPhoto(Photo $photo): void
     {
-        DatabaseConnection::i()->getContext()->table("album_relations")->insert([
-            "album" => $this->getRecord()->id,
-            "photo" => $photo->getId(),
-        ]);
+        $this->add($photo);
     }
     
     function removePhoto(Photo $photo): void
     {
-        DatabaseConnection::i()->getContext()->table("album_relations")->where([
-            "album" => $this->getRecord()->id,
-            "photo" => $photo->getId(),
-        ])->delete();
+        $this->remove($photo);
     }
     
     function hasPhoto(Photo $photo): bool
     {
-        $rel = DatabaseConnection::i()->getContext()->table("album_relations")->where([
-            "album" => $this->getRecord()->id,
-            "photo" => $photo->getId(),
-        ])->fetch();
-        
-        return !is_null($rel);
+        return $this->has($photo);
     }
-    
-    use Traits\TOwnable;
 }
