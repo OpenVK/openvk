@@ -6,8 +6,7 @@ use Chandler\Session\Session;
 use Chandler\Security\Authenticator;
 use Latte\Engine as TemplatingEngine;
 use openvk\Web\Models\Entities\IP;
-use openvk\Web\Models\Repositories\IPs;
-use openvk\Web\Models\Repositories\Users;
+use openvk\Web\Models\Repositories\{IPs, Users, APITokens};
 
 abstract class OpenVKPresenter extends SimplePresenter
 {
@@ -42,6 +41,28 @@ abstract class OpenVKPresenter extends SimplePresenter
         header("HTTP/1.1 302 Found");
         header("Location: $referer");
         exit;
+    }
+    
+    protected function logInUserWithToken(): void
+    {
+        $header = $_SERVER["HTTP_AUTHORIZATION"] ?? "";
+        $token;
+        
+        preg_match("%Bearer (.*)$%", $header, $matches);
+        $token = $matches[1] ?? "";
+        $token = (new APITokens)->getByCode($token);
+        if(!$token) {
+            header("HTTP/1.1 401 Unauthorized");
+            header("Content-Type: application/json");
+            exit(json_encode(["error" => "The access token is invalid"]));
+        }
+        
+        $this->user                  = (object) [];
+        $this->user->identity        = $token->getUser();
+        $this->user->raw             = $this->user->identity->getChandlerUser();
+        $this->user->id              = $this->user->identity->getId();
+        $this->template->thisUser    = $this->user->identity;
+        $this->template->userTainted = false;
     }
     
     protected function assertUserLoggedIn(bool $returnUrl = true): void

@@ -87,8 +87,10 @@ final class AuthPresenter extends OpenVKPresenter
     
     function renderLogin(): void
     {
+        $redirUrl = $this->requestParam("jReturnTo");
+        
         if(!is_null($this->user))
-            $this->redirect("/id" . $this->user->id, static::REDIRECT_TEMPORARY);
+            $this->redirect($redirUrl ?? "/id" . $this->user->id, static::REDIRECT_TEMPORARY);
         
         if(!$this->hasPermission("user", "login", -1)) exit("Вас забанили");
         
@@ -101,8 +103,7 @@ final class AuthPresenter extends OpenVKPresenter
             if(!$this->authenticator->login($user->id, $this->postParam("password")))
                 $this->flashFail("err", "Не удалось войти", "Неверное имя пользователя или пароль. <a href='/restore.pl'>Забыли пароль?</a>");
             
-            $redirUrl = $_GET["jReturnTo"] ?? "/id" . $user->related("profiles.user")->fetch()->id;
-            $this->redirect($redirUrl, static::REDIRECT_TEMPORARY);
+            $this->redirect($redirUrl ?? "/id" . $user->related("profiles.user")->fetch()->id, static::REDIRECT_TEMPORARY);
             exit;
         }
     }

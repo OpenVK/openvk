@@ -179,11 +179,12 @@
                         <a href="/logout" class="link">Выйти</a>
                     {/if}
                 {else}
-                    <form id="fastLogin" action="login" method="POST" enctype="multipart/form-data">
+                    <form id="fastLogin" action="/login" method="POST" enctype="multipart/form-data">
                         <label for="login"><span>{_"email"}:</span></label>
                         <input id="login" type="text" name="login" required />
                         <label for="password"><span>{_"password"}:</span></label>
                         <input id="password" type="password" name="password" required />
+                        <input type="hidden" name="jReturnTo" value="{$_SERVER['REQUEST_URI']}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
                         <input type="submit" value="{_'log_in'}" class="button" style="display: inline-block;" />
                         <a href="/reg" class="button" style="display: inline-block;" >{_registration}</a><br><br>
