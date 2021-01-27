@@ -1,7 +1,7 @@
-{ifset $thisUser}
-    {if $thisUser->hasMicroblogEnabled()}
-        {include "post/microblogpost.xml", post => $post}
-    {else}
-        {include "post/oldpost.xml", post => $post}
-    {/if}
-{/ifset}
+{var microblogEnabled = isset($thisUser) ? $thisUser->hasMicroblogEnabled() : false}
+
+{if $microblogEnabled}
+    {include "post/microblogpost.xml", post => $post}
+{else}
+    {include "post/oldpost.xml", post => $post}
+{/if}
