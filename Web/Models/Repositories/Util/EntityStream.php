@@ -10,7 +10,7 @@ class EntityStream implements \IteratorAggregate
     function __construct(string $class, \Traversable $dbStream)
     {
         $this->dbStream    = $dbStream;
-        $this->entityClass = "openvk\\Web\\Models\\Entities\\$class";
+        $this->entityClass = $class[0] === "\\" ? $class : "openvk\\Web\\Models\\Entities\\$class";
     }
     
     /**
