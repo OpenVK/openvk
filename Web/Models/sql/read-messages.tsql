@@ -1,0 +1,20 @@
+UPDATE
+  `messages`
+SET
+  `unread` = 0
+WHERE
+  (`id` > ?)
+  AND (
+    (
+      (`sender_type` = ?)
+      AND (`recipient_type` = ?)
+      AND (`sender_id` = ?)
+      AND (`recipient_id` = ?)
+    )
+    OR (
+      (`sender_type` = ?)
+      AND (`recipient_type` = ?)
+      AND (`sender_id` = ?)
+      AND (`recipient_id` = ?)
+    )
+  )
