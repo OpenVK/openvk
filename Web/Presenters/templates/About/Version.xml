@@ -80,7 +80,7 @@
             float: right;
             border: 0;
             width: 30%;
-            top: 6px;
+            padding-top: 6px;
             position: relative;
         }
 
