@@ -21,6 +21,7 @@ Once you are done, you can login as a system administrator on the network itself
 
 -   **Login**: `admin@localhost.localdomain6`
 -   **Password**: `admin`
-    It is recommended to change the password before using the built-in account.
+
+It is recommended to change the password before using the built-in account.
 
 Full example installation instruction for CentOS 8 is also available [here](docs/centos8_install.md).
