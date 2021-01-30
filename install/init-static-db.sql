@@ -23,8 +23,8 @@ CREATE TABLE `albums` (
 
 
 CREATE TABLE `album_relations` (
-  `album` bigint(20) UNSIGNED NOT NULL,
-  `photo` bigint(20) UNSIGNED NOT NULL,
+  `collection` bigint(20) UNSIGNED NOT NULL,
+  `media` bigint(20) UNSIGNED NOT NULL,
   `index` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
 
@@ -495,6 +495,10 @@ ALTER TABLE `videos`
 
 ALTER TABLE `albums`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+ALTER TABLE `album_relations`
+  ADD PRIMARY KEY (`index`),
+  ADD KEY `album` (`collection`);
 
 ALTER TABLE `album_relations`
   MODIFY `index` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
