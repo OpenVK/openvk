@@ -103,9 +103,7 @@ class User extends RowModel
     
     function getAvatarUrl(): string
     {
-        $url = ((!empty($_SERVER['HTTPS'])) ? 'https' : 'http') . '://' . $_SERVER['SERVER_NAME'];
-        $url = explode('?', $url);
-        $serverUrl = $url[0];
+        $serverUrl = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
         
         if($this->getRecord()->deleted)
             return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
@@ -370,18 +368,14 @@ class User extends RowModel
         
         if(!$this->getRecord()->status) {
             $unfilled[]      = "status";
-            $incompleteness += 10;
+            $incompleteness += 15;
         }
         if(!$this->getRecord()->telegram) {
             $unfilled[]      = "telegram";
-            $incompleteness += 10;
+            $incompleteness += 15;
         }
         if(!$this->getRecord()->email) {
             $unfilled[]      = "email";
-            $incompleteness += 20;
-        }
-        if(!$this->getRecord()->phone) {
-            $unfilled[]      = "phone";
             $incompleteness += 20;
         }
         if(!$this->getRecord()->city) {

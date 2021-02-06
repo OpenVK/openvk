@@ -156,9 +156,13 @@ function ovk_is_ssl(): bool
     return $GLOBALS["requestIsSSL"];
 }
 
-function ovk_scheme(): string
+function ovk_scheme(bool $with_slashes = false): string
 {
-    return ovk_is_ssl() ? "https" : "http";
+    $scheme = ovk_is_ssl() ? "https" : "http";
+    if($with_slashes)
+        $scheme .= "://";
+    
+    return $scheme;
 }
 
 return (function() {
