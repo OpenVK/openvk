@@ -1,11 +1,12 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
+
+START TRANSACTION;
 
 CREATE TABLE `albums` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -20,15 +21,11 @@ CREATE TABLE `albums` (
   `deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
 
-
-
 CREATE TABLE `album_relations` (
   `collection` bigint(20) UNSIGNED NOT NULL,
   `media` bigint(20) UNSIGNED NOT NULL,
   `index` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-
 
 CREATE TABLE `api_tokens` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -36,8 +33,6 @@ CREATE TABLE `api_tokens` (
   `secret` char(72) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
   `deleted` bit(1) NOT NULL DEFAULT b'0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-
 
 CREATE TABLE `approval_queue` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -51,8 +46,6 @@ CREATE TABLE `approval_queue` (
   `deleted` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
 
-
-
 CREATE TABLE `attachments` (
   `attachable_type` varchar(64) COLLATE utf8mb4_unicode_nopad_ci DEFAULT NULL,
   `attachable_id` bigint(20) UNSIGNED DEFAULT NULL,
@@ -60,8 +53,6 @@ CREATE TABLE `attachments` (
   `target_id` bigint(20) UNSIGNED DEFAULT NULL,
   `index` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-
 
 CREATE TABLE `audios` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -78,15 +69,68 @@ CREATE TABLE `audios` (
   `explicit` tinyint(4) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
 
-
-
 CREATE TABLE `audio_relations` (
   `user` bigint(20) UNSIGNED NOT NULL,
   `audio` bigint(20) UNSIGNED NOT NULL,
   `index` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
 
+CREATE TABLE `ChandlerACLGroupsPermissions` (
+  `group` varchar(36) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `model` varchar(1000) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `context` int(10) UNSIGNED DEFAULT NULL,
+  `permission` varchar(36) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
 
+CREATE TABLE `ChandlerACLPermissionAliases` (
+  `alias` varchar(190) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `model` varchar(255) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `context` varchar(255) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `permission` varchar(255) COLLATE utf8mb4_unicode_nopad_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
+
+CREATE TABLE `ChandlerACLRelations` (
+  `user` varchar(36) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `group` varchar(36) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `priority` bigint(20) UNSIGNED NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
+
+CREATE TABLE `ChandlerACLUsersPermissions` (
+  `user` varchar(36) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `model` varchar(1000) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `context` int(10) UNSIGNED NOT NULL,
+  `permission` int(10) UNSIGNED NOT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
+
+CREATE TABLE `ChandlerGroups` (
+  `id` varchar(36) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `color` mediumint(8) UNSIGNED DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
+
+CREATE TABLE `ChandlerTokens` (
+  `token` varchar(64) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `user` varchar(36) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `ip` varchar(255) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `ua` varchar(1000) COLLATE utf8mb4_unicode_nopad_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
+DELIMITER $$
+CREATE TRIGGER `bfiu_tokens` BEFORE INSERT ON `ChandlerTokens` FOR EACH ROW SET new.token = uuid()
+$$
+DELIMITER ;
+
+CREATE TABLE `ChandlerUsers` (
+  `id` varchar(36) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `login` varchar(64) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `passwordHash` varchar(136) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
+  `deleted` tinyint(1) NOT NULL DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
+DELIMITER $$
+CREATE TRIGGER `bfiu_users` BEFORE INSERT ON `ChandlerUsers` FOR EACH ROW SET new.id = uuid()
+$$
+DELIMITER ;
 
 CREATE TABLE `comments` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -102,8 +146,6 @@ CREATE TABLE `comments` (
   `virtual_id` bigint(20) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
 
-
-
 CREATE TABLE `conv_sockets` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `origin` bigint(20) UNSIGNED NOT NULL,
@@ -113,14 +155,10 @@ CREATE TABLE `conv_sockets` (
   `visible` bit(1) NOT NULL DEFAULT b'1'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
 
-
-
 CREATE TABLE `event_turnouts` (
   `user` bigint(20) UNSIGNED NOT NULL,
   `event` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-
 
 CREATE TABLE `groups` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -131,10 +169,9 @@ CREATE TABLE `groups` (
   `verified` tinyint(1) NOT NULL DEFAULT 0,
   `type` int(10) UNSIGNED DEFAULT 1,
   `closed` tinyint(3) UNSIGNED NOT NULL DEFAULT 0,
+  `block_reason` text COLLATE utf8mb4_unicode_nopad_ci DEFAULT NULL,
   `wall` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-
 
 CREATE TABLE `group_coadmins` (
   `user` bigint(20) UNSIGNED NOT NULL,
@@ -142,8 +179,6 @@ CREATE TABLE `group_coadmins` (
   `comment` varchar(36) COLLATE utf8mb4_unicode_nopad_ci DEFAULT NULL,
   `id` bigint(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-
 
 CREATE TABLE `ip` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -156,16 +191,12 @@ CREATE TABLE `ip` (
   `banned` tinyint(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
 
-
-
 CREATE TABLE `likes` (
   `origin` bigint(20) UNSIGNED NOT NULL,
   `model` varchar(128) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
   `target` bigint(20) NOT NULL,
   `index` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-
 
 CREATE TABLE `messages` (
   `id` bigint(20) NOT NULL,
@@ -181,8 +212,6 @@ CREATE TABLE `messages` (
   `unread` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
 
-
-
 CREATE TABLE `msg_descriptors` (
   `message` bigint(20) UNSIGNED NOT NULL,
   `socket` bigint(20) UNSIGNED NOT NULL,
@@ -191,8 +220,6 @@ CREATE TABLE `msg_descriptors` (
   `visible` tinyint(3) UNSIGNED NOT NULL DEFAULT 1,
   `index` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-
 
 CREATE TABLE `notes` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -206,15 +233,11 @@ CREATE TABLE `notes` (
   `deleted` tinyint(4) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
 
-
-
 CREATE TABLE `number_verification` (
   `user` bigint(20) UNSIGNED NOT NULL,
   `number` varchar(48) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
   `code` mediumint(9) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-
 
 CREATE TABLE `password_resets` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -222,8 +245,6 @@ CREATE TABLE `password_resets` (
   `key` char(64) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
   `timestamp` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-
 
 CREATE TABLE `photos` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -235,8 +256,6 @@ CREATE TABLE `photos` (
   `deleted` tinyint(1) NOT NULL DEFAULT 0,
   `description` longtext COLLATE utf8mb4_unicode_nopad_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-
 
 CREATE TABLE `posts` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -251,8 +270,6 @@ CREATE TABLE `posts` (
   `ad` tinyint(1) NOT NULL DEFAULT 0,
   `deleted` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-
 
 CREATE TABLE `profiles` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -301,8 +318,6 @@ CREATE TABLE `profiles` (
   `microblog` tinyint(3) UNSIGNED NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
 
-
-
 CREATE TABLE `stickerpacks` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `slug` varchar(36) COLLATE utf8mb4_unicode_nopad_ci DEFAULT NULL,
@@ -312,15 +327,11 @@ CREATE TABLE `stickerpacks` (
   `price` bigint(20) UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
 
-
-
 CREATE TABLE `stickers` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `hash` char(128) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
   `emojis` longtext COLLATE utf8mb4_unicode_nopad_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-
 
 CREATE TABLE `sticker_relations` (
   `sticker` bigint(20) UNSIGNED NOT NULL,
@@ -328,30 +339,11 @@ CREATE TABLE `sticker_relations` (
   `index` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
 
-
-
 CREATE TABLE `subscriptions` (
   `follower` bigint(20) UNSIGNED NOT NULL,
   `model` longtext COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
   `target` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-
-
-CREATE TABLE `subscriptions_new` (
-  `handle` bigint(20) UNSIGNED NOT NULL,
-  `initiator` bigint(20) UNSIGNED NOT NULL,
-  `targetModel` varchar(128) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `targetId` bigint(20) NOT NULL,
-  `targetWallHandle` bigint(20) NOT NULL,
-  `shortStatus` tinyint(3) UNSIGNED NOT NULL DEFAULT 1,
-  `detailedStatus` tinyint(3) UNSIGNED NOT NULL DEFAULT 1,
-  `listName` varchar(64) COLLATE utf8mb4_unicode_nopad_ci DEFAULT NULL,
-  `created` bigint(20) UNSIGNED NOT NULL,
-  `updated` bigint(20) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-
 
 CREATE TABLE `tickets` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -363,8 +355,6 @@ CREATE TABLE `tickets` (
   `created` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
 
-
-
 CREATE TABLE `tickets_comments` (
   `id` int(11) NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
@@ -374,8 +364,6 @@ CREATE TABLE `tickets_comments` (
   `deleted` tinyint(4) NOT NULL DEFAULT 0,
   `ticket_id` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-
 
 CREATE TABLE `videos` (
   `id` bigint(20) UNSIGNED NOT NULL,
@@ -395,7 +383,8 @@ ALTER TABLE `albums`
   ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `album_relations`
-  ADD PRIMARY KEY (`index`);
+  ADD PRIMARY KEY (`index`),
+  ADD KEY `album` (`collection`);
 
 ALTER TABLE `api_tokens`
   ADD PRIMARY KEY (`id`),
@@ -414,6 +403,27 @@ ALTER TABLE `audios`
 
 ALTER TABLE `audio_relations`
   ADD UNIQUE KEY `index` (`index`);
+
+ALTER TABLE `ChandlerACLGroupsPermissions`
+  ADD KEY `group` (`group`);
+
+ALTER TABLE `ChandlerACLPermissionAliases`
+  ADD PRIMARY KEY (`alias`);
+
+ALTER TABLE `ChandlerACLRelations`
+  ADD KEY `user` (`user`),
+  ADD KEY `group` (`group`);
+
+ALTER TABLE `ChandlerACLUsersPermissions`
+  ADD KEY `user` (`user`);
+
+ALTER TABLE `ChandlerTokens`
+  ADD PRIMARY KEY (`token`),
+  ADD KEY `user` (`user`);
+
+ALTER TABLE `ChandlerUsers`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `login` (`login`);
 
 ALTER TABLE `comments`
   ADD PRIMARY KEY (`id`);
@@ -497,10 +507,6 @@ ALTER TABLE `albums`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `album_relations`
-  ADD PRIMARY KEY (`index`),
-  ADD KEY `album` (`collection`);
-
-ALTER TABLE `album_relations`
   MODIFY `index` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `api_tokens`
@@ -566,9 +572,6 @@ ALTER TABLE `stickers`
 ALTER TABLE `sticker_relations`
   MODIFY `index` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
-ALTER TABLE `subscriptions_new`
-  MODIFY `handle` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
 ALTER TABLE `tickets`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
@@ -581,8 +584,8 @@ ALTER TABLE `videos`
 
 ALTER TABLE `approval_queue`
   ADD CONSTRAINT `approval_queue_ibfk_1` FOREIGN KEY (`assignee`) REFERENCES `profiles` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
-COMMIT;
 
+COMMIT;
 
 START TRANSACTION;
 
