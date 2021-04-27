@@ -1,3 +1,4 @@
+#From https://gist.github.com/WerySkok/77f9c9ec134e98b0fef2b63655ba13d2 instruction
 FROM centos:8
 
 #update and install httpd
