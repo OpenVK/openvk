@@ -38,13 +38,17 @@ RUN dnf -y localinstall --nogpgcheck https://pkgs.dyn.su/el8/base/x86_64/raven-r
 dnf -y --enablerepo=epel-testing,raven-extras,raven-multimedia install --nogpgcheck SDL2 && \
 dnf -y install ffmpeg
 
-#Install Chandler and OpenVk-extention in /opt:
+#Install Chandler and OpenVk/Capcha-extention in /opt:
 RUN cd /opt && \
 git clone https://github.com/samuhin/chandler.git && \
 cd chandler/ && \
 composer2 install && \
 mv chandler-example.yml chandler.yml && \
 cd extensions/available/ && \
+git clone https://github.com/samuhin/commitcaptcha.git && \
+cd commitcaptcha/ && \
+composer2 install && \
+cd .. && \
 git clone -b microblog https://github.com/samuhin/openvk.git && \
 cd openvk/ && \
 composer2 install && \
