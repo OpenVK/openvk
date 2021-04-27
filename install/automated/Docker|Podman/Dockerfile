@@ -56,6 +56,7 @@ cd Web/static/js && \
 yarn install && \
 cd ../../../ && \
 mv openvk-example.yml openvk.yml && \
+ln -s /opt/chandler/extensions/available/commitcaptcha/ /opt/chandler/extensions/enabled/commitcaptcha && \
 ln -s /opt/chandler/extensions/available/openvk/ /opt/chandler/extensions/enabled/openvk
 
 #Create database
