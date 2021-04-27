@@ -1,0 +1,9 @@
+[Unit]
+Description=Foo
+After=mysql.service
+
+[Service]
+ExecStart=/bin/bash /opt/openvk/install/automated/common/autoexec
+
+[Install]
+WantedBy=multi-user.target
