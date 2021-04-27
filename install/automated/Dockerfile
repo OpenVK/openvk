@@ -56,8 +56,8 @@ ln -s /opt/chandler/extensions/available/openvk/ /opt/chandler/extensions/enable
 #Create database
 RUN cp /opt/chandler/extensions/available/openvk/install/automated/common/create_db.service /etc/systemd/system/ && \
 chmod 644 /etc/systemd/system/create_db.service && \
-chmod 777 /opt/chandler/extensions/available/openvk/install/automated/common/autoexec
-#systemctl enable create_db
+chmod 777 /opt/chandler/extensions/available/openvk/install/automated/common/autoexec && \
+systemctl enable create_db
 
 #Make the user apache owner of the chandler folder:
 RUN cd /opt && \
@@ -73,7 +73,7 @@ RUN mkdir /var/log/openvk && \
 chown apache: /var/log/openvk/
 
 #And start Apache:
-#RUN systemctl enable httpd
+RUN systemctl enable httpd
 
 #Start systemd
 CMD ["/sbin/init"]
