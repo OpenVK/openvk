@@ -1,8 +1,9 @@
 [Unit]
-Description=Foo
+Description=Create MySQL DB
 After=mysql.service
 
 [Service]
+Type=exec
 ExecStart=/bin/bash /opt/chandler/extensions/available/openvk/install/automated/common/autoexec
 
 [Install]
