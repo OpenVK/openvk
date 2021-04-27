@@ -1,6 +1,6 @@
 cd /opt/chandler && \
-mysql -e "CREATE DATABASE openvk" && \
-mysql -e "CREATE DATABASE openvk_eventdb" && \
+mysql -p'DATABASE_PASSWORD' -e "CREATE DATABASE openvk" && \
+mysql -p'DATABASE_PASSWORD' -e "CREATE DATABASE openvk_eventdb" && \
 mysql -p'DATABASE_PASSWORD' openvk < install/init-db.sql && \
 cd extensions/available/openvk/ && \
 mysql -p'DATABASE_PASSWORD' openvk < install/init-static-db.sql && \
