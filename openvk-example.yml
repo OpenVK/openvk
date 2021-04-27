@@ -48,7 +48,7 @@ openvk:
         smsc:
             enable: false
             client: ""
-            secret: ""
+            secret: "SECRET_KEY_HERE"
         eventDB:
             enable: false # Better enable this
             database:
