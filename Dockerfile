@@ -2,7 +2,7 @@
 FROM centos:8
 
 #update and install httpd
-RUN dnf -y update && dnf install -y httpd && dnf -y autoremove
+RUN dnf -y update && dnf -y autoremove && dnf install -y httpd 
 
 #Let's install EPEL and Remi repos for PHP 7.4:
 RUN dnf -y install epel-release && \
