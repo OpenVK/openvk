@@ -79,7 +79,7 @@ RUN mkdir /var/log/openvk && \
 chown apache: /var/log/openvk/
 
 #And start Apache:
-RUN systemctl enable httpd
+#RUN systemctl enable httpd
 
 #Start systemd
 CMD ["/sbin/init"]
