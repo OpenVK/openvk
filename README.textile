@@ -21,7 +21,7 @@ If you want, you can add your instance to the list above so that people can regi
 
 h3. Installation procedure
 
-"samukhin":https://github.com/samuhin is working on a Docker container that contains a microblog version of OpenVK, see "#76":https://github.com/openvk/openvk/pull/76 for details. (Experimental)
+"samukhin":https://github.com/samukhin is working on a Docker container that contains a microblog version of OpenVK, see "#76":https://github.com/openvk/openvk/pull/76 for details. (Experimental)
 
 # Install Composer, Node.js, Yarn and "Chandler":https://github.com/openvk/chandler
 # Install "commitcaptcha":https://github.com/openvk/commitcaptcha and OpenVK as Chandler extensions and enable them like this:
