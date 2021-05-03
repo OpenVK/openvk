@@ -40,16 +40,16 @@ dnf -y install ffmpeg
 
 #Install Chandler and OpenVk/Capcha-extention in /opt:
 RUN cd /opt && \
-git clone https://github.com/samuhin/chandler.git && \
+git clone https://github.com/samukhin/chandler.git && \
 cd chandler/ && \
 composer2 install && \
 mv chandler-example.yml chandler.yml && \
 cd extensions/available/ && \
-git clone https://github.com/samuhin/commitcaptcha.git && \
+git clone https://github.com/samukhin/commitcaptcha.git && \
 cd commitcaptcha/ && \
 composer2 install && \
 cd .. && \
-git clone https://github.com/samuhin/openvk.git && \
+git clone https://github.com/samukhin/openvk.git && \
 cd openvk/ && \
 composer2 install && \
 cd Web/static/js && \
