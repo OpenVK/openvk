@@ -75,63 +75,6 @@ CREATE TABLE `audio_relations` (
   `index` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
 
-CREATE TABLE `ChandlerACLGroupsPermissions` (
-  `group` varchar(36) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `model` varchar(1000) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `context` int(10) UNSIGNED DEFAULT NULL,
-  `permission` varchar(36) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-CREATE TABLE `ChandlerACLPermissionAliases` (
-  `alias` varchar(190) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `model` varchar(255) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `context` varchar(255) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `permission` varchar(255) COLLATE utf8mb4_unicode_nopad_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-CREATE TABLE `ChandlerACLRelations` (
-  `user` varchar(36) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `group` varchar(36) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `priority` bigint(20) UNSIGNED NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-CREATE TABLE `ChandlerACLUsersPermissions` (
-  `user` varchar(36) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `model` varchar(1000) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `context` int(10) UNSIGNED NOT NULL,
-  `permission` int(10) UNSIGNED NOT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-CREATE TABLE `ChandlerGroups` (
-  `id` varchar(36) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `color` mediumint(8) UNSIGNED DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
-CREATE TABLE `ChandlerTokens` (
-  `token` varchar(64) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `user` varchar(36) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `ip` varchar(255) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `ua` varchar(1000) COLLATE utf8mb4_unicode_nopad_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-DELIMITER $$
-CREATE TRIGGER `bfiu_tokens` BEFORE INSERT ON `ChandlerTokens` FOR EACH ROW SET new.token = uuid()
-$$
-DELIMITER ;
-
-CREATE TABLE `ChandlerUsers` (
-  `id` varchar(36) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `login` varchar(64) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `passwordHash` varchar(136) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `deleted` tinyint(1) NOT NULL DEFAULT 0
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-DELIMITER $$
-CREATE TRIGGER `bfiu_users` BEFORE INSERT ON `ChandlerUsers` FOR EACH ROW SET new.id = uuid()
-$$
-DELIMITER ;
-
 CREATE TABLE `comments` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `owner` bigint(20) NOT NULL,
@@ -404,27 +347,6 @@ ALTER TABLE `audios`
 ALTER TABLE `audio_relations`
   ADD UNIQUE KEY `index` (`index`);
 
-ALTER TABLE `ChandlerACLGroupsPermissions`
-  ADD KEY `group` (`group`);
-
-ALTER TABLE `ChandlerACLPermissionAliases`
-  ADD PRIMARY KEY (`alias`);
-
-ALTER TABLE `ChandlerACLRelations`
-  ADD KEY `user` (`user`),
-  ADD KEY `group` (`group`);
-
-ALTER TABLE `ChandlerACLUsersPermissions`
-  ADD KEY `user` (`user`);
-
-ALTER TABLE `ChandlerTokens`
-  ADD PRIMARY KEY (`token`),
-  ADD KEY `user` (`user`);
-
-ALTER TABLE `ChandlerUsers`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `login` (`login`);
-
 ALTER TABLE `comments`
   ADD PRIMARY KEY (`id`);
 
@@ -501,7 +423,6 @@ ALTER TABLE `tickets_comments`
 
 ALTER TABLE `videos`
   ADD PRIMARY KEY (`id`);
-
 
 ALTER TABLE `albums`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
