@@ -1,8 +1,14 @@
-h1. OpenVK 2
+h1. OpenVK [inactive]
 
-*OpenVK* is an attempt to create a simple CMS that -cosplays- imitates old VK. Code provided here is not stable yet.
+*Statement*: Our members have lost enthusiasm and interest in developing OpenVK, so a decision has been made to freeze our project. Main website and source code will still be available. If you are ready to handle both chandler and OVK, we can accept you as a project maintainer (contact "@saddyteirusu":https://t.me/saddyteirusu or "@dsrev":https://t.me/dsrev directly on Telegram).
+
+*OpenVK* is (was?) an attempt to create a simple CMS that -cosplays- imitates old VK. Code provided here is not stable yet.
 VKontakte belongs to Pavel Durov and mail.ru.
 To be honest, we don't even know whether it even works. However, this version is maintained and we will be happy to accept your bugreports "in our bug-tracker":https://github.com/openvk/openvk/projects/1. You should also be able to submit them using "ticketing system":https://openvk.su/support?act=new (you will need an OVK account for this).
+
+h2. When's the release?
+
+Please use the master branch, as it has the most changes.
 
 h2. Instances
 
@@ -17,13 +23,13 @@ If you want, you can add your instance to the list above so that people can regi
 
 h3. Installation procedure
 
+"samukhin":https://github.com/samukhin is working on a Docker container that contains a microblog version of OpenVK, see "#76":https://github.com/openvk/openvk/pull/76 for details. (Experimental)
+
 1. Install Composer, Node.js, Yarn and "Chandler":https://github.com/openvk/chandler
 2. Install "commitcaptcha":https://github.com/openvk/commitcaptcha and OpenVK as Chandler extensions and enable them like this:
 
-
-* ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/extensions/enabled/
-* ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
-
+ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/extensions/enabled/
+ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
 
 3. Import install/init-static-db.sql to *same database* you installed Chandler to
 4. Import install/init-event-db.sql to *separate database*
@@ -37,11 +43,7 @@ Once you are done, you can login as a system administrator on the network itself
 * *Password*: admin
 It is recommended to change the password before using the built-in account.
 
-h3. Can I upgrade my OpenVK Classic installation?
-
-Right now not. But we will add upgrading script soon.
-
-h3. If my website uses OpenVK, should I publish it's soures?
+h3. If my website uses OpenVK, should I publish it's sources?
 
 You are encouraged to do so. We don't enforce this though. You can keep your sources to yourself (unless you distribute your OpenVK distro to other people).
 You also not required to publish source texts of your themepacks and plugins.
@@ -51,14 +53,10 @@ h2. Where can I get assistance?
 You may reach out to us via:
 * "Bug-tracker":https://github.com/openvk/openvk/projects/1
 * "Ticketing system":https://openvk.su/support?act=new
-* "Telegram chat":https://t.me/openvkchat
+* Telegram chat: Go to "our channel":https://t.me/openvkch and open discussion in our channel menu.
 * "Reddit":https://www.reddit.com/r/openvk/
 * "Discussions":https://github.com/openvk/openvk/discussions
 
-*Attention*: bug tracker and telegram chat are public places. And ticketing system is being served by volounteers. If you need to report something, that shouldn't be immediately disclosed to general public (for instance, vulnerability report), *please use contact us directly*:
+*Attention*: bug tracker and telegram chat are public places. And ticketing system is being served by volunteers. If you need to report something, that shouldn't be immediately disclosed to general public (for instance, vulnerability report), *please use contact us directly*:
 * *Head of OpenVK Security Commitee*: stingray@jill.pl or "@id155":https://t.me/id155
 * *Backend developer*: "@saddyteirusu":https://t.me/saddyteirusu
-
-h2. Release. When.
-
-February 2021?
