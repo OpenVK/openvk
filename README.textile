@@ -1,12 +1,14 @@
-h1. OpenVK
+h1. OpenVK [inactive]
 
-*OpenVK* is an attempt to create a simple CMS that -cosplays- imitates old VK. Code provided here is not stable yet.
+*Statement*: Our members have lost enthusiasm and interest in developing OpenVK, so a decision has been made to freeze our project. Main website and source code will still be available. If you are ready to handle both chandler and OVK, we can accept you as a project maintainer (contact "@saddyteirusu":https://t.me/saddyteirusu or "@dsrev":https://t.me/dsrev directly on Telegram).
+
+*OpenVK* is (was?) an attempt to create a simple CMS that -cosplays- imitates old VK. Code provided here is not stable yet.
 VKontakte belongs to Pavel Durov and mail.ru.
 To be honest, we don't even know whether it even works. However, this version is maintained and we will be happy to accept your bugreports "in our bug-tracker":https://github.com/openvk/openvk/projects/1. You should also be able to submit them using "ticketing system":https://openvk.su/support?act=new (you will need an OVK account for this).
 
 h2. When's the release?
 
-OVK is far from perfect, but it already has enough features to deploy its instance. There is no exact release date.
+Please use the master branch, as it has the most changes.
 
 h2. Instances
 
