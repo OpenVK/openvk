@@ -19,8 +19,8 @@ h3. Installation procedure
 
 1. Install Composer, Node.js, Yarn and "Chandler":https://github.com/openvk/chandler
 2. Install "commitcaptcha":https://github.com/openvk/commitcaptcha and OpenVK as Chandler extensions and enable them like this:
-- ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/extensions/enabled/
-- ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
+* ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/extensions/enabled/
+* ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
 3. Import install/init-static-db.sql to *same database* you installed Chandler to
 4. Import install/init-event-db.sql to *separate database*
 5. Rename openvk-example.yml to openvk.yml and change options
