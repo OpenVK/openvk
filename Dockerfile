@@ -1,12 +1,10 @@
-#From https://gist.github.com/WerySkok/77f9c9ec134e98b0fef2b63655ba13d2 instruction
-FROM centos:8
+FROM fedora:33
 
 #update and install httpd
 RUN dnf -y update && dnf -y autoremove && dnf install -y httpd 
 
-#Let's install EPEL and Remi repos for PHP 7.4:
-RUN dnf -y install epel-release && \
-dnf -y install https://rpms.remirepo.net/enterprise/remi-release-8.rpm
+#Let's install Remi repos for PHP 7.4:
+RUN dnf -y install https://rpms.remirepo.net/fedora/remi-release-$(rpm -E %fedora).rpm
 
 #Then enable modules that we need:
 RUN dnf -y module enable php:remi-7.4 && \
@@ -21,22 +19,18 @@ php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
 php composer-setup.php --filename=composer2 --install-dir=/bin --snapshot && \
 rm composer-setup.php
 
-#We will use Percona Server for DB:
-RUN dnf -y install https://repo.percona.com/yum/percona-release-latest.noarch.rpm && \
-percona-release setup -y ps80 && \
-dnf -y install percona-server-server percona-toolkit && \
-systemctl enable mysqld && \
+#We will use Mariadb for DB:
+RUN dnf -y install mysql mysql-server && \
+systemctl enable mariadb && \
 echo 'skip-grant-tables' >> /etc/my.cnf
 
 #Additionally, you can install ffmpeg for processing videos.
 #You will need to use RPMFusion repo to install it:
-RUN dnf -y localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm && \
-dnf -y install --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm
+RUN dnf -y install --nogpgcheck https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm && \
+dnf -y install --nogpgcheck https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm
 
 #Then install SDL2 and ffmpeg:
-RUN dnf -y localinstall --nogpgcheck https://pkgs.dyn.su/el8/base/x86_64/raven-release-1.0-2.el8.noarch.rpm && \
-dnf -y --enablerepo=epel-testing,raven-extras,raven-multimedia install --nogpgcheck SDL2 && \
-dnf -y install ffmpeg
+RUN dnf -y install --nogpgcheck SDL2 ffmpeg
 
 #Install Chandler and OpenVk/Capcha-extention in /opt:
 RUN cd /opt && \
