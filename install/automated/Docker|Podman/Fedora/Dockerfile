@@ -76,5 +76,8 @@ chown apache: /var/log/openvk/
 #And start Apache:
 #RUN systemctl enable httpd
 
+#For login
+RUN dnf -y install passwd && passwd -d root
+
 #Start systemd
 CMD ["/sbin/init"]
