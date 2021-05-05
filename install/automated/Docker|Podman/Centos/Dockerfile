@@ -29,7 +29,7 @@ systemctl enable mysqld && \
 echo 'skip-grant-tables' >> /etc/my.cnf
 
 #Additionally, you can install ffmpeg for processing videos.
-#Then install SDL2 and ffmpeg:
+#You will need to use RPMFusion repo to install it:
 RUN dnf -y localinstall --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm && \
 dnf -y install --nogpgcheck https://download1.rpmfusion.org/free/el/rpmfusion-free-release-8.noarch.rpm
 
