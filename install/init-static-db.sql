@@ -301,19 +301,6 @@ CREATE TABLE subscriptions_new (
   `updated` bigint(20) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
-CREATE TABLE subscriptions_new (
-  `handle` bigint(20) UNSIGNED NOT NULL,
-  `initiator` bigint(20) UNSIGNED NOT NULL,
-  `targetModel` varchar(128) COLLATE utf8mb4_unicode_nopad_ci NOT NULL,
-  `targetId` bigint(20) NOT NULL,
-  `targetWallHandle` bigint(20) NOT NULL,
-  `shortStatus` tinyint(3) UNSIGNED NOT NULL DEFAULT 1,
-  `detailedStatus` tinyint(3) UNSIGNED NOT NULL DEFAULT 1,
-  `listName` varchar(64) COLLATE utf8mb4_unicode_nopad_ci DEFAULT NULL,
-  `created` bigint(20) UNSIGNED NOT NULL,
-  `updated` bigint(20) UNSIGNED NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_nopad_ci;
-
 CREATE TABLE `tickets` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `type` bigint(20) UNSIGNED NOT NULL,
