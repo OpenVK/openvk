@@ -196,8 +196,11 @@ abstract class OpenVKPresenter extends SimplePresenter
                 exit;
             }
             
-            $this->user->identity->setOnline(time());
-            $this->user->identity->save();
+            if ($this->user->identity->onlineStatus() == 0) {
+                $this->user->identity->setOnline(time());
+                $this->user->identity->save();
+            }
+            
         }
         
         setlocale(LC_TIME, ...(explode(";", tr("__locale"))));

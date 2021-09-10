@@ -40,6 +40,9 @@
         <span>{_was_online} {$user->getOnline()}</span>
         {/if}
     </div>
+    <div n:if="$user->onlineStatus() == 2" style="float:right;">
+        <span><b>{_deceased_person}</b></span>
+    </div>
 {/block}
 
 {block content}

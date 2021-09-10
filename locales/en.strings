@@ -36,13 +36,14 @@
 "online" = "Online";
 "was_online" = "was online";
 "was_online_m" = "was online"; 
-%{ For male and femail %}
+%{ For male and female %}
 
 "was_online_f" = "was online";
 "all_title" = "All";
 "information" = "Information";
 "status" = "Status";
 "no_information_provided" = "No information provided.";
+"deceased_person" = "Deceased person";
 
 "relationship" = "Relationship";
 

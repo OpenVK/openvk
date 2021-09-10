@@ -683,6 +683,28 @@ class User extends RowModel
         return FALSE;
     }
 
+    /**
+     * 0 - Default status
+     * 1 - Incognito online status
+     * 2 - Page of a dead person
+     */
+    function onlineStatus(): int
+    {
+        switch ($this->getRecord()->online) {
+            case 1:
+                return 1;
+                break;
+
+            case 2:
+                return 2;
+                break;
+            
+            default:
+                return 0;
+                break;
+        }
+    }
+
     
     use Traits\TSubscribable;
 }
