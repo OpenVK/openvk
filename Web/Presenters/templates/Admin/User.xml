@@ -10,23 +10,7 @@
 
 {block content}
     <div class="aui-tabs horizontal-tabs">
-        <ul class="tabs-menu">
-            <li class="menu-item active-tab">
-                <a href="#info">Информация</a>
-            </li>
-            <li class="menu-item">
-                <a href="#pass">Пароль</a>
-            </li>
-            <li class="menu-item">
-                <a href="#moderation">Модерация</a>
-            </li>
-            <li class="menu-item">
-                <a href="#actions">Операции</a>
-            </li>
-        </ul>
-    
-        <
-    <form class="aui" method="POST" enctype="multipart/form-data">
+    <form class="aui" method="POST">
         <div class="field-group">
             <label for="avatar">
                 Аватарка
@@ -79,17 +63,28 @@
             </label>
             <input class="text medium-field" type="email" id="email" name="email" value="{$user->getEmail()}" />
         </div>
+        <hr>
         <div class="field-group">
-            <label for="tg">
-                Telegram
+            <label for="city">
+                Верификация
             </label>
-            <input class="text medium-field" type="text" id="tg" name="tg" value="{$user->getTelegram()}" />
+            <input class="toggle-large" type="checkbox" id="verify" name="verify" value="1" {if $user->isVerified()} checked {/if} />
         </div>
         <div class="field-group">
             <label for="city">
-                Город
+                Онлайн статус
             </label>
-            <input class="text medium-field" type="text" id="city" name="city" value="{$user->getCity()}" />
+            <select name="online" class="select">
+                <option value="0" {if $user->onlineStatus() > 2}selected{/if}>По-умолчанию</option>
+                <option value="1" {if $user->onlineStatus() == 1}selected{/if}>Инкогнито</option>
+                <option value="2" {if $user->onlineStatus() == 2}selected{/if}>Юзер умер</option>
+            </select>
+        </div>
+        <div class="buttons-container">
+            <div class="buttons">
+                <input type="hidden" name="case" value="info">
+                <input class="button submit" type="submit" value="Сохранить">
+            </div>
         </div>
     </form>
     

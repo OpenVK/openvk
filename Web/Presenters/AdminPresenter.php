@@ -56,6 +56,13 @@ final class AdminPresenter extends OpenVKPresenter
         switch($_POST["act"] ?? "info") {
             default:
             case "info":
+                $user->setFirst_Name($this->postParam("first_name"));
+                $user->setLast_Name($this->postParam("last_name"));
+                $user->setPseudo($this->postParam("nickname"));
+                $user->setStatus($this->postParam("status"));
+                $user->setVerified(empty($this->postParam("verify") ? 0 : 1));
+                if($user->onlineStatus() != $this->postParam("online")) $user->setOnline(intval($this->postParam("online")));
+                $user->save();
                 break;
             
             
