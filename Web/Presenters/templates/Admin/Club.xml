@@ -1,0 +1,78 @@
+{extends "@layout.xml"}
+
+{block title}
+    Редактировать {$club->getCanonicalName()}
+{/block}
+
+{block heading}
+    {$club->getCanonicalName()}
+{/block}
+
+
+{block content}
+<div class="aui-tabs horizontal-tabs">
+     <ul/>
+    <form class="aui" method="POST">
+        <div class="field-group">
+            <label for="avatar">
+                Аватарка
+            </label>
+            <span id="avatar" class="aui-avatar aui-avatar-project aui-avatar-xlarge">
+                <span class="aui-avatar-inner">
+                    <img src="{$club->getAvatarUrl()}"></img>
+                </span>
+            </span>
+        </div>
+         <div class="field-group">
+            <label for="id">
+                ID
+            </label>
+            <input class="text medium-field" type="number" id="id" disabled value="{$club->getId()}" />
+        </div>
+         <div class="field-group">
+            <label for="id_owner">
+                ID владельца
+            </label>
+            <input class="text medium-field" type="text" id="id_owner" name="id_owner" value="{$club->getOwner()->getId()}" />
+        </div>
+        <div class="field-group">
+            <label for="name">
+                Название
+            </label>
+            <input class="text medium-field" type="text" id="name" name="name" value="{$club->getName()}" />
+        </div>
+        <div class="field-group">
+            <label for="about">
+                Описание
+            </label>
+            <input class="text medium-field" type="text" id="about" name="about" value="{$club->getDescription()}" />
+        </div>
+         <div class="field-group">
+            <label for="shortcode">
+                Адрес
+            </label>
+            <input class="text medium-field" type="text" id="shortcode" name="shortcode" value="{$club->getShortCode()}" />
+        </div>
+        <hr/>
+        <div class="field-group">
+            <label for="verify">
+                Верификация
+            </label>
+            <input class="toggle-large" type="checkbox" id="verify" name="verify" value="1" {if $club->isVerified()} checked {/if} />
+        </div>
+        <hr/>
+        <div class="field-group">
+            <label for="ban_reason">
+                Причина бана
+            </label>
+            <input class="text medium-field" type="text" id="ban_reason" name="ban_reason" value="{$club->getBanReason()}" />
+        </div>
+        <div class="buttons-container">
+            <div class="buttons">
+                <input type="hidden" name="case" value="info">
+                <input class="button submit" type="submit" value="Сохранить">
+            </div>
+        </div>
+    </form>
+</div>
+{/block}
