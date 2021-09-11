@@ -1,107 +1,137 @@
-"__locale" = "de_DE.utf8";
+"__locale" = "de_DE.UTF-8;Deu";
+
+%{ Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html %}
+
+%{ Main page %}
 
 "home" = "Home";
-"log_in" = "Einloggen";
 "welcome" = "Willkommen";
+
+%{ Login %}
+
+"log_in" = "Einloggen";
 "password" = "Passwort";
 "registration" = "Registrierung";
+
+%{ Profile information %}
+
 "select_language" = "Sprache auswählen";
 "edit" = "bearbeiten";
 "birth_date" = "Geburtstag";
 "registration_date" = "Registrierungsdatum";
 "hometown" = "Heimatstadt";
 "this_is_you" = "das bist du";
-"post_writes_m" = "gepostet";
-"post_writes_f" = "gepostet";
-"wall" = "Feed";
-"post" = "Post";
-"write" = "Schreiben";
-"publish" = "Veröffentlichen";
 "edit_page" = "Seite bearbeiten";
 "edit_group" = "Gruppe bearbeiten";
 "change_status" = "Status ändern";
-"name" = "Vorame";
+"name" = "Name";
 "surname" = "Nachname";
 "gender" = "Geschlecht";
-"male" = "Männlich";
-"female" = "Weiblich";
+"male" = "männlich";
+"female" = "weiblich";
 "description" = "Beschreibung";
 "save" = "Speichern";
 "main_information" = "Hauptinformationen";
-"friends" = "Freunde";
-"friends_add" = "Freund hinzufügen";
-"friends_delete" = "Freund entfernen";
-"friends_reject" = "Anfrage ablehnen";
-"friends_accept" = "Anfrage annehmen";
-"send_message" = "Nachricht senden";
-"nickname" = "Nickname";
+"nickname" = "Spitzname";
 "online" = "Online";
+"was_online" = "war online";
+"was_online_m" = "war online"; 
+%{ For male and female %}
+
+"was_online_f" = "war online";
+"all_title" = "Alle";
+"information" = "Information";
+"status" = "Status";
+"no_information_provided" = "Keine Informationen angegeben.";
+"deceased_person" = "Gestorbene Person";
+
+"relationship" = Beziehung";
+
+"relationship_0" = "Nicht ausgewählt";
+"relationship_1" = "Nicht verheiratet";
+"relationship_2" = "Datet jemanden";
+"relationship_3" = "Vergeben";
+"relationship_4" = "Verheiratet";
+"relationship_5" = "Offiziell verheiratet";
+"relationship_6" = "Verliebt";
+"relationship_7" = "Es ist kompliziert";
+"relationship_8" = "Aktiv am suchen";
+
+"politViews" = "Politische Ansichten";
+
+"politViews_0" = "Nicht ausgewählt";
+"politViews_1" = "Egal";
+"politViews_2" = "Kommunist";
+"politViews_3" = "Sozialist";
+"politViews_4" = "Moderat";
+"politViews_5" = "Liberal";
+"politViews_6" = "Konservativ";
+"politViews_7" = "Monarchisch";
+"politViews_8" = "Ultra-Konservativ";
+"politViews_9" = "Libertär";
+
+"contact_information" = "Kontaktinformationen";
+
+"email" = "E-Mail";
+"phone" = "Telefonnummer";
+"telegram" = "Telegram";
+"city" = "Stadt";
+"address" = "Adresse";
+
+"personal_information" = "Persönliche Informationen";
+
+"interests" = "Interessen";
+"favorite_music" = "Lieblingsmusik";
+"favorite_films" = "Lieblingsfilme";
+"favorite_shows" = "Lieblingsserien";
+"favorite_books" = "Lieblingsbücher";
+"favorite_quotes" = "Lieblingszitate";
+"information_about" = "Über";
+
+"updated_at" = "Zuletzt aktualisiert am $1";
+
+%{ Wall %}
+
+"post_writes_m" = "schrieb";
+"post_writes_f" = "schrieb";
+"wall" = "Pinnwand";
+"post" = "Post";
+"write" = "Schreiben";
+"publish" = "Veröffentlichen";
 "delete" = "Löschen";
 "comments" = "Kommentare";
 "share" = "Teilen";
-"comments_tip" = "Sei der erste der einen Kommentar schreibt!";
-"incoming_req" = "Einkommende Anfragen";
-"outcoming_req" = "Ausgehende Anfragen";
-"req" = "Anfrage";
-"you_have" = "Du hast";
-"all_title" = "Alle";
+"comments_tip" = "Sei der erste, der einen Kommentar schreibt!";
 "your_comment" = "Dein Kommentar";
 "comments" = "Kommentare";
-"name_group" = "Name";
-"subscribe" = "Abonnieren";
-"unsubscribe" = "Deabonnieren";
-"join_community" = "Community beitreten";
-"leave_community" = "Community verlassen";
-"participants" = "Mitglieder";
-"groups" = "Gruppen";
-"create_group" = "Gruppe erstellen";
-"create" = "Erstellen";
-"albums" = "Alben";
-"create_album" = "Album erstellen";
-"edit_album" = "Album bearbeiten";
-"creating_album" = "Erstelle Album";
-"upload_photo" = "Foto hochladen";
-"photo" = "Foto";
-"notes" = "Notizen";
-"name_note" = "Name";
-"text_note" = "Inhalt";
-"create_notes" = "Notiz erstellen";
-"status" = "Status";
-"actions" = "Aktionen";
-"upload_button" = "Hochladen";
-"feed" = "Feed";
-"publish_post" = "Post veröffentlichen";
-"was_online" = "war online";
+"shown" = "Angezeigt";
+"x_out_of" = "$1 von";
+"wall_zero" = "Keine Posts";
+"wall_one" = "$1 Post";
+"wall_other" = "$1 Posts";
+"feed" = "Nachrichten";
+"publish_post" = "Post hinzufügen";
 
-"edit_button" = "bearb.";
-"my_page" = "Meine Seite";
-"my_friends" = "Meine Freunde";
-"my_photos" = "Meine Fotos";
-"my_videos" = "Meine Videos";
-"my_messages" = "Meine Nachrichten";
-"my_notes" = "Meine Notizen";
-"my_groups" = "Meine Gruppen";
-"my_feed" = "Mein Feed";
-"my_feedback" = "Mein Feedback";
-"my_settings" = "Meine Einstellungen";
-"bug_tracker" = "Bugtracker";
+"nsfw_warning" = "Dieser Post enthält möglicherweise NSFW-Inhalte";
+"report" = "Melden";
+"attach_photo" = "Foto anhängen";
+"no_posts_abstract" = "Niemand hat etwas geschrieben...Hier zumindestens nicht.";
 
-"header_home" = "home";
-"header_groups" = "gruppen";
-"header_donate" = "spenden";
-"header_people" = "personen";
-"header_invite" = "einladen";
-"header_help" = "hilfe";
-"header_log_out" = "ausloggen";
-"header_search" = "Suchen";
+%{ Friends %}
 
-"footer_blog" = "blog";
-"footer_help" = "hilfe";
-"footer_developers" = "entwickler";
-"footer_choose_language" = "sprache auswählen";
-"footer_privacy" = "privatsphäre";
+"friends" = "Freunde";
+"followers" = "Follower";
+"follower" = "Follower";
+"friends_add" = "Freund hinzufügen";
+"friends_delete" = "Freund entfernen";
+"friends_reject" = "Anfrage ablehnen";
+"friends_accept" = "Anfrage akzeptieren";
+"send_message" = "Nachricht senden";
+"incoming_req" = "Abonennten";
+"outcoming_req" = "Anfragen";
+"req" = "Anfragen";
 
-"friends_zero" = "Keine Freunde";
+"firends_zero" = "Keine Freunde";
 "friends_one" = "$1 Freund";
 "friends_other" = "$1 Freunde";
 
@@ -109,161 +139,275 @@
 "followers_one" = "$1 Follower";
 "followers_other" = "$1 Follower";
 
-"subscriptions_zero" = "Keine Abonnements";
-"subscriptions_one" = "$1 Abonnement";
-"subscriptions_other" = "$1 Abonnements";
+"subscriptions_zero" = "No subscriptions";
+"subscriptions_one" = "$1 subscription";
+"subscriptions_other" = "$1 subscriptions";
 
-"wall_zero" = "Keine Posts";
-"wall_one" = "$1 Post";
-"wall_other" = "$1 Posts";
+%{ Group %}
+
+"name_group" = "Name";
+"subscribe" = "Subscribe";
+"unsubscribe" = "Unsubscribe";
+"subscriptions" = "Subscriptions";
+"join_community" = "Join community";
+"leave_community" = "Leave community";
+"min_6_community" = "Name of the group must have more that 6 characters";
+"participants" = "Participants";
+"groups" = "Groups";
+"meetings" = "Meetings";
+"create_group" = "Create group";
+"group_managers" = "Managers";
+"group_type" = "Group type";
+"group_type_open" = "This is an open group, anyone can enter it.";
+"group_type_closed" = "This is an closed group. To enter, you must submit an request.";
+"creator" = "Creator";
+
+"role" = "Role";
+"administrator" = "Administrator";
+"promote_to_admin" = "Promote to admin";
+"devote" = "Devote";
+"group_allow_post_for_everyone" = "Allow posting for everyone";
+"statistics" = "Statistics";
 
 "participants_zero" = "No participants";
 "participants_one" = "$1 participant";
-"participants_other" = "$1 participants";
+"participants_other" = "$1 participant";
 
-"groups_zero" = "Keine Gruppen";
-"groups_one" = "$1 Gruppe";
-"groups_other" = "$1 Gruppen";
+"groups_zero" = "No groups";
+"groups_one" = "$1 group";
+"groups_other" = "$1 groups";
 
-"meetings_zero" = "Keine Meetings";
-"meetings_one" = "$1 Meeting";
-"meetings_other" = "$1 Meetings";
+"meetings_zero" = "No meetings";
+"meetings_one" = "$1 meeting";
+"meetings_other" = "$1 meetings";
 
-"notes_zero" = "Keine Notizen";
-"notes_one" = "$1 Notiz";
-"notes_other" = "$1 Notizen";
+%{ Albums %}
 
-"albums_zero" = "Keine Alben";
-"albums_one" = "$1 Album";
-"albums_other" = "$1 Alben";
+"create" = "Create";
+"albums" = "Albums";
+"create_album" = "Create album";
+"edit_album" = "Edit album";
+"creating_album" = "Creating album";
+"upload_photo" = "Upload photo";
+"photo" = "Photo";
+"upload_button" = "Upload";
 
-"videos_zero" = "Keine Videos";
-"videos_one" = "$1 Video";
-"videos_other" = "$1 Videos";
+"albums_zero" = "No albums";
+"albums_one" = "$1 album";
+"albums_other" = "$1 albums";
 
-"relationship" = "Beziehung";
+%{ Notes %}
 
-"relationship_0" = "Nicht ausgewählt";
-"relationship_1" = "Nicht verheiratet";
-"relationship_2" = "Dating";
-"relationship_3" = "Engagiert";
-"relationship_4" = "Verlobt";
-"relationship_5" = "In einer standesamtlichen Ehe";
-"relationship_6" = "Verliebt";
-"relationship_7" = "Alles ist kompliziert";
-"relationship_8" = "Sucht aktiv";
+"notes" = "Notes";
+"note" = "Note";
+"name_note" = "Title";
+"text_note" = "Content";
+"create_note" = "Create note";
+"actions" = "Actions";
 
-"politViews" = "Politische Ansichten";
+"notes_zero" = "No notes";
+"notes_one" = "$1 note";
+"notes_other" = "$1 notes";
 
-"politViews_0" = "Nicht ausgewählt";
-"politViews_1" = "Gleichgültig";
-"politViews_2" = "Kommunist";
-"politViews_3" = "Sozialist";
-"politViews_4" = "Gemäßigt";
-"politViews_5" = "Liberal";
-"politViews_6" = "Konservativ";
-"politViews_7" = "Monarchisch";
-"politViews_8" = "Ultra-konservativ";
-"politViews_9" = "Libertär";
+%{ Menus %}
 
-"information" = "Information";
+%{ Note that is string need to fit into the "My Page" link %}
 
-"contact_information" = "Kontaktinformationen";
+"edit_button" = "edit";
+"my_page" = "My Page";
+"my_friends" = "My Friends";
+"my_photos" = "My Photos";
+"my_videos" = "My Videos";
+"my_messages" = "My Messages";
+"my_notes" = "My Notes";
+"my_groups" = "My Groups";
+"my_feed" = "My Feed";
+"my_feedback" = "My Feedback";
+"my_settings" = "My Settings";
+"bug_tracker" = "Bug-tracker";
 
-"email" = "E-Mail";
-"telegram" = "Telegram";
-"city" = "Stadt";
-"address" = "Adresse";
+"menu_login" = "Login";
+"menu_registration" = "Registration";
+"menu_help" = "Help";
 
-"personal_information" = "Persönliche Informationen";
+"header_home" = "home";
+"header_groups" = "groups";
+"header_donate" = "donate";
+"header_people" = "people";
+"header_invite" = "invite";
+"header_help" = "help";
+"header_log_out" = "log out";
+"header_search" = "Search";
 
-"interests" = "Interessem";
-"favorite_music" = "Lieblingsmusik";
-"favorite_films" = "Lieblingsfilme";
-"favorite_shows" = "Lieblings TV-Serien";
-"favorite_books" = "Lieblingsbücher";
-"favorite_quotes" = "Lieblingssprüche";
-"information_about" = "Über";
+"header_login" = "login";
+"header_registration" = "registration";
+"header_help" = "help";
 
-"main" = "Hauptseite";
-"contacts" = "Kontakte";
+"footer_blog" = "blog";
+"footer_help" = "help";
+"footer_developers" = "developers";
+"footer_choose_language" = "choose language";
+"footer_privacy" = "privacy";
+
+%{ Settings %}
+
+"main" = "Main";
+"contacts" = "Contacts";
 "avatar" = "Avatar";
+"privacy" = "privacy";
+"interface" = "Interface";
 
-"profile_picture" = "Profilbild";
+"profile_picture" = "Profile picture";
 
-"picture" = "Bild";
+"picture" = "Picture";
 
-"sort_randomly" = "Zufällig sortieren";
-"sort_up" = "Nach Erstellungsdatum aufsteigend sortieren";
-"sort_down" = "Nach Erstellungsdatum absteigend sortieren";
+"change_password" = "Change password";
+"old_password" = "Old password";
+"new_password" = "New password";
+"repeat_password" = "Repeat password";
+
+"avatars_style" = "Avatar style";
+"style" = "Style";
+
+"default" = "Default";
+"cut" = "Cut";
+"round_avatars" = "Round avatars";
+
+"search_for_groups" = "Search for groups";
+"search_for_people" = "Search for people";
+"search_button" = "Find";
+"privacy_setting_access_page" = "Who can view my page";
+"privacy_setting_read_info" = "Who can see main information of my page";
+"privacy_setting_see_groups" = "Who can see my groups and meetings";
+"privacy_setting_see_photos" = "Who can see my photos";
+"privacy_setting_see_videos" = "Who can see my videos";
+"privacy_setting_see_notes" = "Who can see my notes";
+"privacy_setting_see_friends" = "Who can see my friends";
+"privacy_setting_add_to_friends" = "Who can add me to friends";
+"privacy_setting_write_wall" = "Who can publish post on my wall";
+"privacy_value_anybody" = "Anybody";
+"privacy_value_anybody_dative" = "Anybody";
+"privacy_value_users" = "OpenVK users";
+"privacy_value_friends" = "Friends";
+"privacy_value_friends_dative" = "Friends";
+"privacy_value_only_me" = "Only me";
+"privacy_value_only_me_dative" = "Only me";
+
+"your_email_address" = "Your Email address";
+"your_page_address" = "Your address page";
+"page_address" = "Address page";
+"current_email_address" = "Current email address";
+"page_id" = "Page ID";
+"you_can_also" = "You can also";
+"delete_your_page" = "delete your page";
+"delete_album" = "delete album";
+
+"ui_settings_interface" = "Interface";
+"ui_settings_sidebar" = "Left menu";
+"ui_settings_rating" = "Rating";
+"ui_settings_rating_show" = "Show";
+"ui_settings_rating_hide" = "Hide";
+
+%{ Sorting %}
+
+"sort_randomly" = "Sort randomly";
+"sort_up" = "Sort by ID up";
+"sort_down" = "Sort by ID down";
+
+%{ Videos %}
 
 "videos" = "Videos";
 "video" = "Video";
-"upload_video" = "Video hochladen";
-"video_uploaded" = "Hochladen";
-"video_updated" = "Aktualisiert";
-"video_link_to_yt" = "Link zu YT";
+"upload_video" = "Upload video";
+"video_uploaded" = "Uploaded";
+"video_updated" = "Updated";
+"video_link_to_yt" = "YT link";
 
-"video_name" = "Name";
-"video_description" = "Beschreibung";
-"video_uploaded_by" = "Hochgeladen von";
-"video_upload_date" = "Hochladedatum";
+"video_name" = "Title";
+"video_description" = "Description";
+"video_uploaded_by" = "Uploaded by";
+"video_upload_date" = "Upload date";
 
-"privacy" = "Datenschutz";
-"interface" = "Interface";
+"videos_zero" = "No videos";
+"videos_one" = "$1 video";
+"videos_other" = "$1 videos";
 
-"change_password" = "Passwort ändern";
-"old_password" = "Altes Passwort";
-"new_password" = "Neues Passwort";
-"repeat_password" = "Passwort wiederholen";
-
-"avatars_style" = "Avatarstil";
-"style" = "Stil";
-
-"default" = "Standard";
-"cut" = "Zuschneiden";
-"round_avatars" = "Avatar abrunden";
-
-"search_for_groups" = "Nach Gruppen suchen";
-"search_for_people" = "Nach Personen suchen";
-"search_button" = "Suchen";
-
-"interface_translation" = "Oberfächenübersetung";
-"translations" = "Übersetzungen";
-"no_translation" = "(nicht übersetzt)";
-"languages" = "Sprachen";
-
-"notifications_like" = "$1 hat deinen $2Post$3 geliket, veröffentlicht am $4";
-"notifications_repost" = "$1 hat deinen $2Post$3 repostet, veröffentlicht am $4";
-"notifications_comment_under" = "$1 hat einen Kommentar bei $2 hinterlassen";
-"notifications_under_note" = "deiner $3Notiz$4";
-"notifications_under_photo" = "deinem $3Foto$4";
-"notifications_under_post" = "deinem $3Post$4, veröffentlicht am $5";
-"notifications_under_video" = "deinem $3Video$4";
-"notifications_post" = "$1 hat einen $2Post$3 an deiner Pinnwand geliket: $4";
-"notifications_appoint" = "$1 hat dich zum Besitzer der Community $2 gemacht";
+%{ Notifications %}
 
 "feedback" = "Feedback";
-"unread" = "Ungelesen";
-"archive" = "Archiv";
+"unread" = "Unread";
+"archive" = "Archive";
 
-"date_format_1" = "%1 %2, %3";
-"date_format_2" = "%2 %1, %3 um %4";
-"date_month_1" = "Januar";
-"date_month_2" = "Februar";
-"date_month_3" = "März";
-"date_month_4" = "April";
-"date_month_5" = "Mai";
-"date_month_6" = "Juni";
-"date_month_7" = "Juli";
-"date_month_8" = "August";
-"date_month_9" = "September";
-"date_month_10" = "Oktober";
-"date_month_11" = "November";
-"date_month_12" = "Dezember";
-"error_1" = "Ungültige Anfrage";
-"error_2" = "Ungültiger Nutzername oder Passwort";
-"error_3" = "Nicht autorisiert";
-"error_4" = "Dieser Nutzer existiert nicht";
-"information_-1" = "Operation war erfolgreich";
-"information_-2" = "Erfolgreich angemeldet";
+"notifications_like" = "$1 liked your $2post$3 from $4";
+"notifications_repost" = "$1 shared your $2post$3 from $4";
+"notifications_comment_under" = "$1 leaved a comment on $2";
+"notifications_under_note" = "your $3note$4";
+"notifications_under_photo" = "your $3photo$4";
+"notifications_under_post" = "your $3post$4 from $5";
+"notifications_under_video" = "your $3video$4";
+"notifications_post" = "$1 published $2a post$3 on your wall: $4";
+"notifications_appoint" = "$1 appointed you as community manager $2";
+
+"nt_liked_yours" = "liked yours";
+"nt_shared_yours" = "shared yours";
+"nt_commented_yours" = "commented yours";
+"nt_written_on_your_wall" = "wrote on your wall";
+"nt_made_you_admin" = "appointed you in the community";
+
+"nt_from" = "from";
+"nt_yours_adjective" = "yours";
+"nt_yours_feminitive_adjective" = "yours";
+"nt_post_nominative" = "post";
+"nt_post_instrumental" = "post";
+"nt_note_instrumental" = "note";
+"nt_photo_instrumental" = "photo";
+
+%{ Time %}
+
+"time_at_sp" = " at ";
+"time_just_now" = "just now";
+"time_exactly_five_minutes_ago" = "5 minutes ago";
+"time_minutes_ago" = "$1 minutes ago";
+"time_today" = "today";
+"time_yesterday" = "yesterday";
+
+%{ Errors %}
+
+"error_1" = "Incorrect query";
+"error_2" = "Incorrect login and password";
+"error_3" = "Non authorized";
+"error_4" = "User does not exist";
+"information_-1" = "Success";
+"information_-2" = "Login success";
+
+"no_data" = "No data";
+"no_data_description" = "There is no data.";
+
+"error" = "Error";
+"error_shorturl" = "This short address is already owned.";
+"error_segmentation" = "Segmentation error";
+"error_upload_failed" = "Failed to upload a photo";
+"error_old_password" = "Old password does not match";
+"error_new_password" = "New password does not match";
+"error_shorturl_incorrect" = "The short address has an incorrect format.";
+
+"forbidden" = "Access error";
+"forbidden_comment" = "This user\'s privacy settings do not allow you to look at his page.";
+
+"changes_saved" = "Changes saved";
+"changes_saved_comment" = "New data will appear on your page";
+
+"photo_saved" = "Photo saved";
+"photo_saved_comment" = "New profile picture will appear on your page";
+
+%{ Admin actions %}
+
+"login_as" = "Login as $1";
+"ban_user_action" = "Ban user";
+"warn_user_action" = "Warn user";
+
+%{ Paginator %}
+
+"paginator_back" = "Back";
+"paginator_page" = "Page $1";
+"paginator_next" = "Next";
