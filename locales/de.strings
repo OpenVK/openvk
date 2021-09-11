@@ -213,7 +213,7 @@
 
 %{ Note that is string need to fit into the "My Page" link %}
 
-"edit_button" = "bearbeiten";
+"edit_button" = "bearb.";
 "my_page" = "Meine Seite";
 "my_friends" = "Meine Freunde";
 "my_photos" = "Meine Fotos";
