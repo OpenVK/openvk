@@ -205,209 +205,209 @@
 "create_note" = "Notiz erstellen";
 "actions" = "Aktionen";
 
-"notes_zero" = "No notes";
-"notes_one" = "$1 note";
-"notes_other" = "$1 notes";
+"notes_zero" = "Keine Notizen";
+"notes_one" = "$1 Notiz";
+"notes_other" = "$1 Notizen";
 
 %{ Menus %}
 
 %{ Note that is string need to fit into the "My Page" link %}
 
-"edit_button" = "edit";
-"my_page" = "My Page";
-"my_friends" = "My Friends";
-"my_photos" = "My Photos";
-"my_videos" = "My Videos";
-"my_messages" = "My Messages";
-"my_notes" = "My Notes";
-"my_groups" = "My Groups";
-"my_feed" = "My Feed";
-"my_feedback" = "My Feedback";
-"my_settings" = "My Settings";
-"bug_tracker" = "Bug-tracker";
+"edit_button" = "bearbeiten";
+"my_page" = "Meine Seite";
+"my_friends" = "Meine Freunde";
+"my_photos" = "Meine Fotos";
+"my_videos" = "Meine Videos";
+"my_messages" = "Meine Nachrichten";
+"my_notes" = "Meine Notizen";
+"my_groups" = "Meine Gruppen";
+"my_feed" = "Mein Feed";
+"my_feedback" = "Mein Feedback";
+"my_settings" = "Meine Einstellungen";
+"bug_tracker" = "Bugtracker";
 
-"menu_login" = "Login";
-"menu_registration" = "Registration";
-"menu_help" = "Help";
+"menu_login" = "Einloggen";
+"menu_registration" = "Registrieren";
+"menu_help" = "Hilfe";
 
 "header_home" = "home";
-"header_groups" = "groups";
-"header_donate" = "donate";
-"header_people" = "people";
-"header_invite" = "invite";
-"header_help" = "help";
-"header_log_out" = "log out";
-"header_search" = "Search";
+"header_groups" = "gruppen";
+"header_donate" = "spenden";
+"header_people" = "personen";
+"header_invite" = "einladen";
+"header_help" = "hilfe";
+"header_log_out" = "abmelden";
+"header_search" = "Suchen";
 
-"header_login" = "login";
-"header_registration" = "registration";
-"header_help" = "help";
+"header_login" = "einloggen";
+"header_registration" = "registrieren";
+"header_help" = "hilfe";
 
 "footer_blog" = "blog";
-"footer_help" = "help";
-"footer_developers" = "developers";
-"footer_choose_language" = "choose language";
-"footer_privacy" = "privacy";
+"footer_help" = "hilfe";
+"footer_developers" = "entwickler";
+"footer_choose_language" = "sprache auswählen";
+"footer_privacy" = "privatsphäre";
 
 %{ Settings %}
 
-"main" = "Main";
-"contacts" = "Contacts";
+"main" = "Hauptseite";
+"contacts" = "Kontakte";
 "avatar" = "Avatar";
-"privacy" = "privacy";
-"interface" = "Interface";
+"privacy" = "privatsphäre";
+"interface" = "oberfläche";
 
-"profile_picture" = "Profile picture";
+"profile_picture" = "Profilbild";
 
-"picture" = "Picture";
+"picture" = "Bild";
 
-"change_password" = "Change password";
-"old_password" = "Old password";
-"new_password" = "New password";
-"repeat_password" = "Repeat password";
+"change_password" = "Passwort ändern";
+"old_password" = "Altes Psswort";
+"new_password" = "Neues Passwort";
+"repeat_password" = "Passwort wiederholen";
 
-"avatars_style" = "Avatar style";
-"style" = "Style";
+"avatars_style" = "Avatarstil";
+"style" = "Stil";
 
-"default" = "Default";
-"cut" = "Cut";
-"round_avatars" = "Round avatars";
+"default" = "Standard";
+"cut" = "Ausschneiden";
+"round_avatars" = "Runde Avatare";
 
-"search_for_groups" = "Search for groups";
-"search_for_people" = "Search for people";
-"search_button" = "Find";
-"privacy_setting_access_page" = "Who can view my page";
-"privacy_setting_read_info" = "Who can see main information of my page";
-"privacy_setting_see_groups" = "Who can see my groups and meetings";
-"privacy_setting_see_photos" = "Who can see my photos";
-"privacy_setting_see_videos" = "Who can see my videos";
-"privacy_setting_see_notes" = "Who can see my notes";
-"privacy_setting_see_friends" = "Who can see my friends";
-"privacy_setting_add_to_friends" = "Who can add me to friends";
-"privacy_setting_write_wall" = "Who can publish post on my wall";
-"privacy_value_anybody" = "Anybody";
-"privacy_value_anybody_dative" = "Anybody";
-"privacy_value_users" = "OpenVK users";
-"privacy_value_friends" = "Friends";
-"privacy_value_friends_dative" = "Friends";
-"privacy_value_only_me" = "Only me";
-"privacy_value_only_me_dative" = "Only me";
+"search_for_groups" = "Nach Gruppen suchen";
+"search_for_people" = "Nach Personen suchen";
+"search_button" = "Suchen";
+"privacy_setting_access_page" = "Wer darf meine Seite sehen";
+"privacy_setting_read_info" = "Wer darf meine Hauptinformationen sehen";
+"privacy_setting_see_groups" = "Wer darf meine Gruppen und Meetings sehen";
+"privacy_setting_see_photos" = "Wer darf meine Fotos sehen";
+"privacy_setting_see_videos" = "Wer darf meine Videos sehen";
+"privacy_setting_see_notes" = "Wer darf meine Notizen sehen";
+"privacy_setting_see_friends" = "Wer darf meine Freunde sehen";
+"privacy_setting_add_to_friends" = "Wer darf mich als Freund hinzufügen";
+"privacy_setting_write_wall" = "Wer darf einen Post auf meine Pinnwand schreiben";
+"privacy_value_anybody" = "Jeder";
+"privacy_value_anybody_dative" = "Jeder";
+"privacy_value_users" = "OpenVK-Nutzer";
+"privacy_value_friends" = "Freunde";
+"privacy_value_friends_dative" = "Freunde";
+"privacy_value_only_me" = "Nur ich";
+"privacy_value_only_me_dative" = "Nur ich";
 
-"your_email_address" = "Your Email address";
-"your_page_address" = "Your address page";
-"page_address" = "Address page";
-"current_email_address" = "Current email address";
-"page_id" = "Page ID";
-"you_can_also" = "You can also";
-"delete_your_page" = "delete your page";
-"delete_album" = "delete album";
+"your_email_address" = "Deine E-Mail-Adresse";
+"your_page_address" = "Deine Profil-URL";
+"page_address" = "Profil-URL";
+"current_email_address" = "Aktuelle E-Mail-Adresse";
+"page_id" = "Seiten-ID";
+"you_can_also" = "Du kannst auch";
+"delete_your_page" = "deine seite löschen";
+"delete_album" = "album löschen";
 
-"ui_settings_interface" = "Interface";
-"ui_settings_sidebar" = "Left menu";
-"ui_settings_rating" = "Rating";
-"ui_settings_rating_show" = "Show";
-"ui_settings_rating_hide" = "Hide";
+"ui_settings_interface" = "Oberfläche";
+"ui_settings_sidebar" = "Linkes Menü";
+"ui_settings_rating" = "Bewertung";
+"ui_settings_rating_show" = "Anzeigen";
+"ui_settings_rating_hide" = "Verstecken";
 
 %{ Sorting %}
 
-"sort_randomly" = "Sort randomly";
-"sort_up" = "Sort by ID up";
-"sort_down" = "Sort by ID down";
+"sort_randomly" = "Zufällig sortieren";
+"sort_up" = "Nach ID aufsteigend sortieren";
+"sort_down" = "Nach ID absteigend sortieren";
 
 %{ Videos %}
 
 "videos" = "Videos";
 "video" = "Video";
-"upload_video" = "Upload video";
-"video_uploaded" = "Uploaded";
-"video_updated" = "Updated";
-"video_link_to_yt" = "YT link";
+"upload_video" = "Video hochladen";
+"video_uploaded" = "Hochgeladen";
+"video_updated" = "Aktualisiert";
+"video_link_to_yt" = "YT-Link";
 
-"video_name" = "Title";
-"video_description" = "Description";
-"video_uploaded_by" = "Uploaded by";
-"video_upload_date" = "Upload date";
+"video_name" = "Titel";
+"video_description" = "Beschreibung";
+"video_uploaded_by" = "Hochgeladen von";
+"video_upload_date" = "Hochgeladen am:";
 
-"videos_zero" = "No videos";
-"videos_one" = "$1 video";
-"videos_other" = "$1 videos";
+"videos_zero" = "Keine Videos";
+"videos_one" = "$1 Video";
+"videos_other" = "$1 Videos";
 
 %{ Notifications %}
 
 "feedback" = "Feedback";
-"unread" = "Unread";
-"archive" = "Archive";
+"unread" = "Ungelesen";
+"archive" = "Archiv";
 
-"notifications_like" = "$1 liked your $2post$3 from $4";
-"notifications_repost" = "$1 shared your $2post$3 from $4";
-"notifications_comment_under" = "$1 leaved a comment on $2";
-"notifications_under_note" = "your $3note$4";
-"notifications_under_photo" = "your $3photo$4";
-"notifications_under_post" = "your $3post$4 from $5";
-"notifications_under_video" = "your $3video$4";
-"notifications_post" = "$1 published $2a post$3 on your wall: $4";
-"notifications_appoint" = "$1 appointed you as community manager $2";
+"notifications_like" = "$1 hat deinem $2Post$3 vom $4 einen Like gegeben";
+"notifications_repost" = "$1 hat deinen $2Post$3 vom $4 geteilt";
+"notifications_comment_under" = "$1 hat einen Kommentar unter $2 hinterlassen";
+"notifications_under_note" = "deiner $3Notiz$4";
+"notifications_under_photo" = "deinem $3Foto$4";
+"notifications_under_post" = "deinem $3Post$4 vom $5";
+"notifications_under_video" = "deinem $3Video$4";
+"notifications_post" = "$1 hat $2einen Post$3 an deiner Pinnwand hinterlassen: $4";
+"notifications_appoint" = "$1 hat dich zum Community-Manager befördert $2";
 
-"nt_liked_yours" = "liked yours";
-"nt_shared_yours" = "shared yours";
-"nt_commented_yours" = "commented yours";
-"nt_written_on_your_wall" = "wrote on your wall";
-"nt_made_you_admin" = "appointed you in the community";
+"nt_liked_yours" = "hat deins geliket";
+"nt_shared_yours" = "hat deins geteilt";
+"nt_commented_yours" = "hat deins kommentiert";
+"nt_written_on_your_wall" = "hat auf deine Pinnwand geschrieben";
+"nt_made_you_admin" = "hat dich zum Admin in einer Community gemacht";
 
-"nt_from" = "from";
-"nt_yours_adjective" = "yours";
-"nt_yours_feminitive_adjective" = "yours";
-"nt_post_nominative" = "post";
-"nt_post_instrumental" = "post";
-"nt_note_instrumental" = "note";
-"nt_photo_instrumental" = "photo";
+"nt_from" = "von";
+"nt_yours_adjective" = "deinen";
+"nt_yours_feminitive_adjective" = "deinen";
+"nt_post_nominative" = "Post";
+"nt_post_instrumental" = "Post";
+"nt_note_instrumental" = "Notiz";
+"nt_photo_instrumental" = "Foto";
 
 %{ Time %}
 
-"time_at_sp" = " at ";
-"time_just_now" = "just now";
-"time_exactly_five_minutes_ago" = "5 minutes ago";
-"time_minutes_ago" = "$1 minutes ago";
-"time_today" = "today";
-"time_yesterday" = "yesterday";
+"time_at_sp" = " um ";
+"time_just_now" = "jetzt";
+"time_exactly_five_minutes_ago" = "vor 5 Minuten";
+"time_minutes_ago" = "vor $1 Minuten";
+"time_today" = "Heute";
+"time_yesterday" = "Gestern";
 
 %{ Errors %}
 
-"error_1" = "Incorrect query";
-"error_2" = "Incorrect login and password";
-"error_3" = "Non authorized";
-"error_4" = "User does not exist";
-"information_-1" = "Success";
-"information_-2" = "Login success";
+"error_1" = "Fehlerhafte Anfrage";
+"error_2" = "Fehlerhafter Login und Passwort";
+"error_3" = "Nicht autorisiert";
+"error_4" = "Dieser Nutzer existiert nicht";
+"information_-1" = "Erfolgreich";
+"information_-2" = "Login erfolgreich";
 
-"no_data" = "No data";
-"no_data_description" = "There is no data.";
+"no_data" = "Keine Daten";
+"no_data_description" = "Es gibt keine Daten.";
 
-"error" = "Error";
-"error_shorturl" = "This short address is already owned.";
-"error_segmentation" = "Segmentation error";
-"error_upload_failed" = "Failed to upload a photo";
-"error_old_password" = "Old password does not match";
-"error_new_password" = "New password does not match";
-"error_shorturl_incorrect" = "The short address has an incorrect format.";
+"error" = "Fehler";
+"error_shorturl" = "Diese Kurz-URL ist bereits vergeben.";
+"error_segmentation" = "Segmentierungsfehler";
+"error_upload_failed" = "Konnte Foto nicht hochladen";
+"error_old_password" = "Altes Passwort stimmt nicht überein";
+"error_new_password" = "Neues Passwort stimmt nicht überein";
+"error_shorturl_incorrect" = "Die Kurz-URL hat ein fehlerhaftes Format.";
 
-"forbidden" = "Access error";
-"forbidden_comment" = "This user\'s privacy settings do not allow you to look at his page.";
+"forbidden" = "Zugriffsfehler";
+"forbidden_comment" = "Die Privatsphäreeinstellungen des Nutzers erlauben dir nicht, seine Seite anzusehen.";
 
-"changes_saved" = "Changes saved";
-"changes_saved_comment" = "New data will appear on your page";
+"changes_saved" = "Änderungen gespeichert";
+"changes_saved_comment" = "Neue Informationen werden nun auf deiner Seite angezeigt";
 
-"photo_saved" = "Photo saved";
-"photo_saved_comment" = "New profile picture will appear on your page";
+"photo_saved" = "Foto gespeichert";
+"photo_saved_comment" = "Dein neues Profilbild wird nun auf deiner Seite angezeigt";
 
 %{ Admin actions %}
 
-"login_as" = "Login as $1";
-"ban_user_action" = "Ban user";
-"warn_user_action" = "Warn user";
+"login_as" = "Als $1 einloggen";
+"ban_user_action" = "Nutzer sperren";
+"warn_user_action" = "Nutzer verwarnen";
 
 %{ Paginator %}
 
-"paginator_back" = "Back";
-"paginator_page" = "Page $1";
-"paginator_next" = "Next";
+"paginator_back" = "Zurück";
+"paginator_page" = "Seite $1";
+"paginator_next" = "Nächste";
