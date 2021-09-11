@@ -49,7 +49,7 @@
                     <a class="aui-button aui-button-primary" href="/admin/users/id{$user->getId()}">
                         <span class="aui-icon aui-icon-small aui-iconfont-new-edit">Редактировать</span>
                     </a>
-                    {if $user->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
+                    {if $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
                         <a class="aui-button" href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}">
                             <span class="aui-icon aui-icon-small aui-iconfont-sign-in">Войти как</span>
                         </a>
