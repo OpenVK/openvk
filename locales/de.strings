@@ -139,71 +139,71 @@
 "followers_one" = "$1 Follower";
 "followers_other" = "$1 Follower";
 
-"subscriptions_zero" = "No subscriptions";
-"subscriptions_one" = "$1 subscription";
-"subscriptions_other" = "$1 subscriptions";
+"subscriptions_zero" = "Keine Abonnements";
+"subscriptions_one" = "$1 Abonnement";
+"subscriptions_other" = "$1 Abonnements";
 
 %{ Group %}
 
 "name_group" = "Name";
-"subscribe" = "Subscribe";
-"unsubscribe" = "Unsubscribe";
-"subscriptions" = "Subscriptions";
-"join_community" = "Join community";
-"leave_community" = "Leave community";
-"min_6_community" = "Name of the group must have more that 6 characters";
-"participants" = "Participants";
-"groups" = "Groups";
+"subscribe" = "Abonnieren";
+"unsubscribe" = "Deabonnieren";
+"subscriptions" = "Abonnements";
+"join_community" = "Community beitreten";
+"leave_community" = "Community verlassen";
+"min_6_community" = "Der Name der Gruppe muss mindestens 6 Zeichen enthalten";
+"participants" = "Teilnehmer";
+"groups" = "Gruppen";
 "meetings" = "Meetings";
-"create_group" = "Create group";
-"group_managers" = "Managers";
-"group_type" = "Group type";
-"group_type_open" = "This is an open group, anyone can enter it.";
-"group_type_closed" = "This is an closed group. To enter, you must submit an request.";
-"creator" = "Creator";
+"create_group" = "Gruppe erstellen";
+"group_managers" = "Manager";
+"group_type" = "Gruppentyp";
+"group_type_open" = "Dies ist eine offene Gruppe, jeder kann dieser beitreten.";
+"group_type_closed" = "Dies ist eine geschlossene Grupe. Um beizutreten musst du eine Anfrage senden.";
+"creator" = "Ersteller";
 
-"role" = "Role";
+"role" = "Rolle";
 "administrator" = "Administrator";
-"promote_to_admin" = "Promote to admin";
-"devote" = "Devote";
-"group_allow_post_for_everyone" = "Allow posting for everyone";
-"statistics" = "Statistics";
+"promote_to_admin" = "Zum Administrator befördern";
+"devote" = "Herabstufens";
+"group_allow_post_for_everyone" = "Jedem erlauben zu posten";
+"statistics" = "Statistiken";
 
-"participants_zero" = "No participants";
-"participants_one" = "$1 participant";
-"participants_other" = "$1 participant";
+"participants_zero" = "Keine Teilnehmer";
+"participants_one" = "$1 Teilnehmer";
+"participants_other" = "$1 Teilnehmer";
 
-"groups_zero" = "No groups";
-"groups_one" = "$1 group";
-"groups_other" = "$1 groups";
+"groups_zero" = "Keine Gruppen";
+"groups_one" = "$1 Gruppe";
+"groups_other" = "$1 Gruppen";
 
-"meetings_zero" = "No meetings";
-"meetings_one" = "$1 meeting";
-"meetings_other" = "$1 meetings";
+"meetings_zero" = "Keine Meetings";
+"meetings_one" = "$1 Meeting";
+"meetings_other" = "$1 Meetings";
 
 %{ Albums %}
 
-"create" = "Create";
-"albums" = "Albums";
-"create_album" = "Create album";
-"edit_album" = "Edit album";
-"creating_album" = "Creating album";
-"upload_photo" = "Upload photo";
-"photo" = "Photo";
-"upload_button" = "Upload";
+"create" = "Erstellen";
+"albums" = "Alben";
+"create_album" = "Album erstellen";
+"edit_album" = "Album bearbeiten";
+"creating_album" = "Album wird erstellt";
+"upload_photo" = "Foto hochladen";
+"photo" = "Foto";
+"upload_button" = "Hochladen";
 
-"albums_zero" = "No albums";
-"albums_one" = "$1 album";
-"albums_other" = "$1 albums";
+"albums_zero" = "Keine Alben";
+"albums_one" = "$1 Album";
+"albums_other" = "$1 Alben";
 
 %{ Notes %}
 
-"notes" = "Notes";
-"note" = "Note";
-"name_note" = "Title";
-"text_note" = "Content";
-"create_note" = "Create note";
-"actions" = "Actions";
+"notes" = "Notizen";
+"note" = "Notiz";
+"name_note" = "Titel";
+"text_note" = "Inhalt";
+"create_note" = "Notiz erstellen";
+"actions" = "Aktionen";
 
 "notes_zero" = "No notes";
 "notes_one" = "$1 note";
