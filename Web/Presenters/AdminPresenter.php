@@ -81,9 +81,22 @@ final class AdminPresenter extends OpenVKPresenter
             $this->notFound();
         
         $this->template->club = $club;
+
+        if($_SERVER["REQUEST_METHOD"] !== "POST")
+            return;
         
-        if($_SERVER["REQUEST_METHOD"] === "POST") {
-            
+        switch($_POST["act"] ?? "info") {
+            default:
+            case "info":
+                $club->setOwner($this->postParam("id_owner"));
+                $club->setName($this->postParam("name"));
+                $club->setAbout($this->postParam("about"));
+                $club->setShortCode($this->postParam("shortcode"));
+                $club->setVerified(empty($this->postParam("verify") ? 0 : 1));
+                $club->setBlock_reason($this->postParam("ban_reason"));
+                $club->save();
+                break;
+
         }
     }
     
