@@ -155,6 +155,9 @@
                         </a>
                         <a href="/settings" class="link">{_"my_settings"}</a>
                         <div style="height: 1px;background: #CCC;margin: 4px 0 2px;"></div>
+                        {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+                            <a href="/admin" class="link">Админ-панель</a>
+                        {/if}
                         {if $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
                             <a href="/support/tickets" class="link">Helpdesk</a>
                         {/if}
