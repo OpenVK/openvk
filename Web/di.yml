@@ -2,6 +2,7 @@ services:
     - openvk\Web\Presenters\AwayPresenter
     - openvk\Web\Presenters\AboutPresenter
     - openvk\Web\Presenters\AuthPresenter
+    - openvk\Web\Presenters\AudiosPresenter
     - openvk\Web\Presenters\UserPresenter
     - openvk\Web\Presenters\WallPresenter
     - openvk\Web\Presenters\CommentPresenter

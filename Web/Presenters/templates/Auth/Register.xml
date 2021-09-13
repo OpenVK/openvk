@@ -5,7 +5,23 @@
     {_"registration"}
 {/block}
 
+{block headIncludes}
+    {if !$referer}
+        <meta name="description" content="Зарегистрируйтесь в OpenVK прямо сейчас!" />
+    {else}
+        <meta property="og:title" content="{$referer->getFullName()} приглашает вас в OpenVK!" />
+        <meta property="og:image" content="{$referer->getAvatarUrl()}" />
+        
+        <meta name="description"
+              content="Присоединяйтесь к {$referer->getFullName()} и множеству других пользователей в OpenVK!" />
+    {/if}
+{/block}
+
 {block content}
+    <p n:if="!is_null($referer)" align="center">
+        <strong>{$referer->getFullName()}</strong> приглашает вас в OpenVK!
+    </p>
+    
     <form method="POST" enctype="multipart/form-data">
         <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
             <tbody>

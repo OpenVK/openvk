@@ -498,10 +498,9 @@ class User extends RowModel
     
     function getRefLinkId(): string
     {
-        $rand = openssl_random_pseudo_bytes(SODIUM_CRYPTO_STREAM_NONCEBYTES); # anime :)
-        $key  = substr(hex2bin(CHANDLER_ROOT_CONF["security"]["secret"]), 0, SODIUM_CRYPTO_STREAM_KEYBYTES);
+        $hash = hash_hmac("Snefru", (string) $this->getId(), CHANDLER_ROOT_CONF["security"]["secret"], true);
         
-        return bin2hex($rand) . bin2hex(sodium_crypto_stream_xor((string) $this->getId(), $rand, $key));
+        return dechex($this->getId()) . " " . base64_encode($hash);
     }
     
     function getNsfwTolerance(): int

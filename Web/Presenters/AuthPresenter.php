@@ -57,6 +57,26 @@ final class AuthPresenter extends OpenVKPresenter
         
         if(!$this->hasPermission("user", "register", -1)) exit("Вас забанили");
         
+        $referer = NULL;
+        if(!is_null($refLink = $this->queryParam("ref"))) {
+            $pieces = explode(" ", $refLink, 2);
+            if(sizeof($pieces) !== 2)
+                $this->flashFail("err", "Пригласительная ссылка кривая", "Пригласительная ссылка недействительна.");
+            
+            [$ref, $hash] = $pieces;
+            $ref  = hexdec($ref);
+            $hash = base64_decode($hash);
+            
+            $referer = (new Users)->get($ref);
+            if(!$referer)
+                $this->flashFail("err", "Пригласительная ссылка кривая", "Пригласительная ссылка недействительна.");
+            
+            if($referer->getRefLinkId() !== $refLink)
+                $this->flashFail("err", "Пригласительная ссылка кривая", "Пригласительная ссылка недействительна.");
+        }
+        
+        $this->template->referer = $referer;
+        
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->assertCaptchaCheckPassed();
             
@@ -79,6 +99,11 @@ final class AuthPresenter extends OpenVKPresenter
             $user->setSince(date("Y-m-d H:i:s"));
             $user->setRegistering_Ip(CONNECTING_IP);
             $user->save();
+            
+            if(!is_null($referer)) {
+                $user->toggleSubscription($referer);
+                $referer->toggleSubscription($user);
+            }
             
             $this->authenticator->authenticate($chUser->getId());
             $this->redirect("/id" . $user->getId(), static::REDIRECT_TEMPORARY);

@@ -37,7 +37,9 @@ final class AboutPresenter extends OpenVKPresenter
     {}
     
     function renderInvite(): void
-    {}
+    {
+        $this->assertUserLoggedIn();
+    }
     
     function renderDonate(): void
     {

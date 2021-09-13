@@ -8,11 +8,7 @@
 {block content}
     Вы можете пригласить своих друзей или знакомых в сеть с помощью индивидуальной ссылки:<br><br>
     <center>
-        <input type="text" readonly value="https://{$_SERVER["HTTP_HOST"]}/reg?ref={$thisUser->getRefLinkId()}" size="50" />
+        <input type="text" readonly value="https://{$_SERVER["HTTP_HOST"]}/reg?ref={rawurlencode($thisUser->getRefLinkId())}" size="50" />
     </center>
     <p>Приложите эту ссылку к вашему сообщению. Пользователь зарегистрируется, и он сразу появится у вас в друзьях.</p>
-    <div class="msg msg_err">
-        <b>Пока не работает</b><br>
-        Надо индивидуальный токен создать для такой ссылки, а то пиздец будет.
-    </div>
 {/block}
