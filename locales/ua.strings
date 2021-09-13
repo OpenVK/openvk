@@ -1,20 +1,20 @@
 "__locale" = "uk_UA.utf8;Ukr";
 "__WinEncoding" = "Windows-1251";
 
-%{ Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html %}
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 
-%{ Main page %}
+/* Main page */
 
 "home" = "Головна";
 "welcome" = "Ласкаво просимо";
 
-%{ Login %}
+/* Login */
 
 "log_in" = "Вхід";
 "password" = "Пароль";
 "registration" = "Реєстрація";
 
-%{ Profile information %}
+/* Profile information */
 
 "select_language" = "Вибрати мову";
 "edit" = "редагувати";
@@ -89,7 +89,7 @@
 
 "updated_at" = "Оновлено $1";
 
-%{ Wall %}
+/* Wall */
 
 "post_writes_m" = "написав";
 "post_writes_f" = "написала";
@@ -117,7 +117,7 @@
 "attach_photo" = "Прикріпити фото";
 "no_posts_abstract" = "Тут ніхто нічого не написав... Поки.";
 
-%{ Friends %}
+/* Friends */
 
 "friends" = "Друзі";
 "followers" = "Підписники";
@@ -152,7 +152,7 @@
 "subscriptions_many" = "$1 підписок";
 "subscriptions_other" = "$1 підписок";
 
-%{ Group %}
+/* Group */
 
 "name_group" = "Назва";
 "subscribe" = "Підписатися";
@@ -196,7 +196,7 @@
 "meetings_many" = "$1 зустрічів";
 "meetings_other" = "$1 зустрічів";
 
-%{ Albums %}
+/* Albums */
 
 "create" = "Створити";
 "albums" = "Альбоми";
@@ -216,7 +216,7 @@
 "albums_many" = "$1 альбомів";
 "albums_other" = "$1 альбомів";
 
-%{ Notes %}
+/* Notes */
 
 "notes" = "Нотатки";
 "note" = "Нотатка";
@@ -233,7 +233,7 @@
 "notes_many" = "$1 нотаток";
 "notes_other" = "$1 нотаток";
 
-%{ Menus %}
+/* Menus */
 
 "edit_button" = "ред.";
 "my_page" = "Моя Сторінка";
@@ -277,7 +277,7 @@
 "notes_many" = "$1 нотаток";
 "notes_other" = "$1 нотаток";
 
-%{ Settings %}
+/* Settings */
 
 "main" = "Основе";
 "contacts" = "Контакти";
@@ -337,13 +337,13 @@
 "ui_settings_rating_show" = "Показувати";
 "ui_settings_rating_hide" = "Приховувати";
 
-%{ Sorting %}
+/* Sorting */
 
 "sort_randomly" = "Сортувати рандомно";
 "sort_up" = "Сортувати по даті створення вверх";
 "sort_down" = "Сортувати по даті створення вниз";
 
-%{ Videos %}
+/* Videos */
 
 "videos" = "Відеозаписи";
 "video" = "Відеозапис";
@@ -363,7 +363,7 @@
 "videos_many" = "$1 відеозаписів";
 "videos_other" = "$1 відеозаписів";
 
-%{ Notifications %}
+/* Notifications */
 
 "feedback" = "відповіді";
 "unread" = "Непрочитане";
@@ -393,7 +393,7 @@
 "nt_note_instrumental" = "нотаткою";
 "nt_photo_instrumental" = "фотографією";
 
-%{ Time %}
+/* Time */
 
 "time_at_sp" = " в ";
 "time_just_now" = "щойно";
@@ -439,7 +439,7 @@
 "points_count" = "голосів";
 "on_your_account" = "на вашому рахунку";
 
-%{ Errors %}
+/* Errors */
 
 "error_1" = "Некоректний запит";
 "error_2" = "Невірний логін чи пароль";
@@ -468,13 +468,13 @@
 "photo_saved" = "Фотографія збережена";
 "photo_saved_comment" = "Нова фотограція профілю появиться у вас на сторінці";
 
-%{ Admin actions %}
+/* Admin actions */
 
 "login_as" = "Зайти як $1";
 "ban_user_action" = "Заблокувати користувача";
 "warn_user_action" = "Попередити користувача";
 
-%{ Paginator %}
+/* Paginator */
 
 "paginator_back" = "Назад";
 "paginator_page" = "Сторінка $1";
