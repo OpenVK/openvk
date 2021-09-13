@@ -32,7 +32,7 @@
                 <td>
                     <span class="aui-avatar aui-avatar-xsmall">
                         <span class="aui-avatar-inner">
-                            <img src="{$club->getAvatarUrl()}" alt="{$club->getCanonicalName()}" role="presentation" />
+                            <img src="{$club->getAvatarUrl()}" alt="{$club->getCanonicalName()}" style="object-fit: cover;" role="presentation" />
                         </span>
                     </span>
                     
