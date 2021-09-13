@@ -1,8 +1,9 @@
 "__locale" = "tr_TR.UTF-8;Tur";
+"__WinEncoding" = "Windows-1251";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
-
 /* Main page */
+
 
 "home" = "Ana ekran";
 "welcome" = "Hoşgeldin";
@@ -35,13 +36,13 @@
 "nickname" = "Takma ad";
 "online" = "Çevrimiçi";
 "was_online" = "çevrimiçiydi";
-"was_online_m" = "çevrimiçiydi"; 
-/* For male and femail */
-
+"was_online_m" = "çevrimiçiydi";
 "was_online_f" = "çevrimiçiydi";
 "all_title" = "Tümü";
 "information" = "Bilgi";
 "status" = "Durum";
+"no_information_provided" = "Информация отсутствует.";
+"deceased_person" = "Страница покойного человека";
 
 "relationship" = "İlişki durumu";
 
@@ -86,10 +87,13 @@
 "favorite_quotes" = "Favori sözler";
 "information_about" = "Hakkında";
 
+"updated_at" = "Обновлено $1";
+
 /* Wall */
 
 "post_writes_m" = "yazdı";
 "post_writes_f" = "yazdı";
+"post_writes_g" = "опубликовали";
 "wall" = "Duvar";
 "post" = "Gönderi";
 "write" = "Yaz";
@@ -99,22 +103,28 @@
 "share" = "Paylaş";
 "comments_tip" = "Bu gönderiye yorum bırakan ilk kişi sen ol!";
 "your_comment" = "Yorumun";
-"comments" = "Yorumlar";
+"comments" = "Комментарии";
 "shown" = "Gösterildi";
 "x_out_of" = "$1 of";
 "wall_zero" = "gönderi yok";
 "wall_one" = "$1 gönderi";
+"wall_few" = "$1 записи";
+"wall_many" = "$1 записей";
 "wall_other" = "$1 gönderi";
-"feed" = "Haberler";
-"publish_post" = "Gönderi ekle";
 
 "nsfw_warning" = "Bu gönderinin +18 içeriii olabilir";
+"report" = "Пожаловаться";
+"attach_photo" = "Прикрепить фото";
+"no_posts_abstract" = "Здесь никто ничего не написал... Пока.";
 
 /* Friends */
 
 "friends" = "Arkadaşlar";
 "followers" = "Takipçiler";
 "follower" = "Takipçi";
+"login_as" = "Войти как";
+"ban_fast" = "Забанить";
+"adm_notify" = "Предупредить";
 "friends_add" = "Arkadaşlara ekle";
 "friends_delete" = "Arkadaşlardan kaldır";
 "friends_reject" = "İsteği reddet";
@@ -126,14 +136,20 @@
 
 "firends_zero" = "Arkadaş yok";
 "friends_one" = "$1 arkadaş";
+"friends_few" = "$1 друга";
+"friends_many" = "$1 друзей";
 "friends_other" = "$1 arkadaş";
 
 "followers_zero" = "Takipçi yok";
 "followers_one" = "$1 takipçi";
+"followers_few" = "$1 подписчика";
+"followers_many" = "$1 подписчиков";
 "followers_other" = "$1 takipçi";
 
 "subscriptions_zero" = "Abonelik yok";
 "subscriptions_one" = "$1 abonelik";
+"subscriptions_few" = "$1 подписки";
+"subscriptions_many" = "$1 подписок";
 "subscriptions_other" = "$1 abonelik";
 
 /* Group */
@@ -159,18 +175,25 @@
 "administrator" = "Yönetici";
 "promote_to_admin" = "Yöneticiliğe yükselt";
 "devote" = "Yetkisini kaldır";
-
+"group_allow_post_for_everyone" = "Разрешить публиковать записи всем";
+"statistics" = "Статистика";
 
 "participants_zero" = "Katılımcı yok";
 "participants_one" = "$1 katılımcı";
+"participants_few" = "$1 участника";
+"participants_many" = "$1 участников";
 "participants_other" = "$1 katılımcı";
 
 "groups_zero" = "Grup yok";
 "groups_one" = "$1 grup";
+"groups_few" = "$1 группы";
+"groups_many" = "$1 групп";
 "groups_other" = "$1 grup";
 
 "meetings_zero" = "Toplantı yok";
 "meetings_one" = "$1 toplantı";
+"meetings_few" = "$1 встречи";
+"meetings_many" = "$1 встреч";
 "meetings_other" = "$1 toplantı";
 
 /* Albums */
@@ -184,8 +207,13 @@
 "photo" = "Fotoğraf";
 "upload_button" = "Yükle";
 
+"avatar_album" = "Фотографии со страницы";
+"wall_album" = "Фотографии со стены";
+
 "albums_zero" = "Albüm yok";
 "albums_one" = "$1 albüm";
+"albums_few" = "$1 альбома";
+"albums_many" = "$1 альбомов";
 "albums_other" = "$1 albüm";
 
 /* Notes */
@@ -196,14 +224,16 @@
 "text_note" = "İçerik";
 "create_note" = "Not oluştur";
 "actions" = "İşlemler";
+"feed" = "Haberler";
+"publish_post" = "Gönderi ekle";
 
 "notes_zero" = "Not yok";
 "notes_one" = "$1 not";
+"notes_few" = "$1 заметки";
+"notes_many" = "$1 заметок";
 "notes_other" = "$1 not";
 
 /* Menus */
-
-/* Note that is string need to fit into the "My Page" link */
 
 "edit_button" = "dznl";
 "my_page" = "Sayfam";
@@ -233,13 +263,19 @@
 
 "header_login" = "giriş yap";
 "header_registration" = "kayıt";
-"header_help" = "yardım";
+"header_help" = "Помощь";
 
 "footer_blog" = "blog";
 "footer_help" = "yardım";
 "footer_developers" = "geliştiriciler";
 "footer_choose_language" = "dil seç";
 "footer_privacy" = "gizlilik";
+
+"notes_zero" = "Ни одной заметки";
+"notes_one" = "Одна заметка";
+"notes_few" = "$1 заметки";
+"notes_many" = "$1 заметок";
+"notes_other" = "$1 заметок";
 
 /* Settings */
 
@@ -282,8 +318,9 @@
 "privacy_value_users" = "OpenVK kullanıcıları";
 "privacy_value_friends" = "Arkadaşlarım";
 "privacy_value_friends_dative" = "Arkadaşlarım";
-"privacy_value_only_me" = "Sadece ben";
-"privacy_value_only_me_dative" = "Sadece ben";
+"privacy_value_only_me_and_super_capite" = "Я и Виталина Павленко";
+"privacy_value_only_me_and_super_capite_dative" = "Мне и Виталине Павленко";
+"privacy_value_super_capite" = "Виталине Павленко";
 
 "your_email_address" = "E-posta adresin";
 "your_page_address" = "Adres sayfan";
@@ -322,6 +359,8 @@
 
 "videos_zero" = "Video yok";
 "videos_one" = "$1 video";
+"videos_few" = "$1 видеозаписи";
+"videos_many" = "$1 видеозаписей";
 "videos_other" = "$1 video";
 
 /* Notifications */
@@ -363,6 +402,43 @@
 "time_today" = "bugün";
 "time_yesterday" = "dün";
 
+"privacy_setting_access_page" = "Кому в интернете видно мою страницу";
+"privacy_setting_read_info" = "Кому видно основную информацию моей страницы";
+"privacy_setting_see_groups" = "Кому видно мои группы и встречи";
+"privacy_setting_see_photos" = "Кому видно мои фотографии";
+"privacy_setting_see_videos" = "Кому видно мои видеозаписи";
+"privacy_setting_see_notes" = "Кому видно мои заметки";
+"privacy_setting_see_friends" = "Кому видно моих друзей";
+"privacy_setting_add_to_friends" = "Кто может называть меня другом";
+"privacy_setting_write_wall" = "Кто может писать у меня на стене";
+"privacy_value_anybody" = "Все желающие";
+"privacy_value_anybody_dative" = "Всем желающим";
+"privacy_value_users" = "Пользователям OpenVK";
+"privacy_value_friends" = "Друзья";
+"privacy_value_friends_dative" = "Друзьям";
+"privacy_value_only_me_and_super_capite" = "Только я";
+"privacy_value_only_me_and_super_capite_dative" = "Только мне";
+"privacy_value_super_capite" = "Никто";
+
+"your_email_address" = "Адрес Вашей электронной почты";
+"your_page_address" = "Адрес Вашей страницы";
+"page_address" = "Адрес страницы";
+"current_email_address" = "Текущий адрес";
+"page_id" = "ID страницы";
+"you_can_also" = "Вы также можете";
+"delete_your_page" = "удалить свою страницу";
+"delete_album" = "удалить альбом";
+
+"ui_settings_interface" = "Интерфейс";
+"ui_settings_sidebar" = "Левое меню";
+"ui_settings_rating" = "Рейтинг";
+"ui_settings_rating_show" = "Показывать";
+"ui_settings_rating_hide" = "Скрывать";
+
+"points" = "Голоса";
+"points_count" = "голосов";
+"on_your_account" = "на вашем счету";
+
 /* Errors */
 
 "error_1" = "Yanlış sorgu";
@@ -375,4 +451,31 @@
 "no_data" = "Veri yok";
 "no_data_description" = "Böyle bir veri yok.";
 
-/* Translations by @WindowZytch - Çeviriler @WindowZytch'den */
+"error" = "Ошибка";
+"error_shorturl" = "Данный короткий адрес уже занят.";
+"error_segmentation" = "Ошибка сегментации";
+"error_upload_failed" = "Не удалось загрузить фото";
+"error_old_password" = "Старый пароль не совпадает";
+"error_new_password" = "Новые пароли не совпадает";
+"error_shorturl_incorrect" = "Короткий адрес имеет некорректный формат.";
+
+"forbidden" = "Ошибка доступа";
+"forbidden_comment" = "Настройки приватности этого пользователя не разрешают вам смотреть на его страницу.";
+
+"changes_saved" = "Изменения сохранены";
+"changes_saved_comment" = "Новый данные появятся на вашей странице";
+
+"photo_saved" = "Фотография сохранена";
+"photo_saved_comment" = "Новое изображние профиля появится у вас на странице";
+
+/* Admin actions */
+
+"login_as" = "Войти как $1";
+"ban_user_action" = "Забанить пользователя";
+"warn_user_action" = "Предупредить пользователя";
+
+/* Paginator */
+
+"paginator_back" = "Назад";
+"paginator_page" = "Страница $1";
+"paginator_next" = "Дальше";
