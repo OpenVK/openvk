@@ -79,6 +79,9 @@ final class AuthPresenter extends OpenVKPresenter
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->assertCaptchaCheckPassed();
+
+            if(!OPENVK_ROOT_CONF['openvk']['preferences']['registration']['enable'] && !$referer)
+                $this->flashFail("err", "Подозрительная попытка регистрации", "Регистрация отключена системным администратором.");
             
             if(!$this->ipValid())
                 $this->flashFail("err", "Подозрительная попытка регистрации", "Вы пытались зарегистрироваться из подозрительного места.");

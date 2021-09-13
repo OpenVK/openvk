@@ -111,7 +111,7 @@
                         <div class="link">
                             <a href="/login">вход</a>
                         </div>
-                        <div class="link">
+                        <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['registration']['enable']" class="link">
                             <a href="/reg">регистрация</a>
                         </div>
                         <div class="link">
@@ -190,7 +190,7 @@
                         <input type="hidden" name="jReturnTo" value="{$_SERVER['REQUEST_URI']}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
                         <input type="submit" value="{_'log_in'}" class="button" style="display: inline-block;" />
-                        <a href="/reg" class="button" style="display: inline-block;" >{_registration}</a><br><br>
+                        <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['registration']['enable']" href="/reg" class="button" style="display: inline-block;" >{_registration}</a><br><br>
                         <a href="/restore.pl">Забыли пароль?</a>
                     </form>
                 {/ifset}
