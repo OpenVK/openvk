@@ -1,19 +1,19 @@
 "__locale" = "by_BY.utf8;Bel";
 
-%{ Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html %}
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 
-%{ Main page %}
+/* Main page */
 
 "home" = "Галоўная";
 "welcome" = "Сардэчна запрашаем";
 
-%{ Login %}
+/* Login */
 
 "log_in" = "Уваход";
 "password" = "Пароль";
 "registration" = "Рэгістрацыя";
 
-%{ Profile information %}
+/* Profile information */
 
 "select_language" = "Выбраць мову";
 "edit" = "рэдагаваць";
@@ -84,7 +84,7 @@
 "favorite_quotes" = "Любимыя цытаты";
 "information_about" = "Пра сябе";
 
-%{ Wall %}
+/* Wall */
 
 "post_writes_m" = "напісаў";
 "post_writes_f" = "напісала";
@@ -108,7 +108,7 @@
 
 "nsfw_warning" = "Дадзены пост можа ўтрымліваць 18+ кантэнт";
 
-%{ Friends %}
+/* Friends */
 
 "friends" = "Сябры";
 "followers" = "Падпісчыкі";
@@ -140,7 +140,7 @@
 "subscriptions_many" = "$1 падпісак";
 "subscriptions_other" = "$1 падпісак";
 
-%{ Group %}
+/* Group */
 
 "name_group" = "Назва";
 "subscribe" = "Падпісацца";
@@ -182,7 +182,7 @@
 "meetings_many" = "$1 сустрэч";
 "meetings_other" = "$1 сустрэч";
 
-%{ Albums %}
+/* Albums */
 
 "create" = "Стварыць";
 "albums" = "Альбомы";
@@ -199,7 +199,7 @@
 "albums_many" = "$1 альбомаў";
 "albums_other" = "$1 альбомаў";
 
-%{ Notes %}
+/* Notes */
 
 "notes" = "Нататкі";
 "note" = "Нататка";
@@ -216,7 +216,7 @@
 "notes_many" = "$1 нататак";
 "notes_other" = "$1 нататак";
 
-%{ Menus %}
+/* Menus */
 
 "edit_button" = "рэд.";
 "my_page" = "Мая Старонка";
@@ -260,7 +260,7 @@
 "notes_many" = "$1 нататак";
 "notes_other" = "$1 нататак";
 
-%{ Settings %}
+/* Settings */
 
 "main" = "Асноўнае";
 "contacts" = "Кантакты";
@@ -320,13 +320,13 @@
 "ui_settings_rating_show" = "Паказваць";
 "ui_settings_rating_hide" = "Хаваць";
 
-%{ Sorting %}
+/* Sorting */
 
 "sort_randomly" = "Сартаваць рандомные";
 "sort_up" = "Сартаваць па даце стварэння уверх";
 "sort_down" = "Сартаваць па даце стварэння ўніз";
 
-%{ Videos %}
+/* Videos */
 
 "videos" = "Відэазапісы";
 "video" = "Відэазапіс";
@@ -347,7 +347,7 @@
 "videos_other" = "$1 відэазапісаў";
 
 
-%{ Notifications %}
+/* Notifications */
 
 "feedback" = "Адказы";
 "unread" = "Непрачытаныя";
@@ -377,7 +377,7 @@
 "nt_note_instrumental" = "нататкай";
 "nt_photo_instrumental" = "фатаграфіяй";
 
-%{ Time %}
+/* Time */
 
 "Time_at_sp" = " у ";
 "Time_just_now" = "толькі што";
@@ -419,7 +419,7 @@
 "ui_settings_rating_show" = "Паказваць";
 "ui_settings_rating_hide" = "Хаваць";
 
-%{ Errors %}
+/* Errors */
 
 "error_1" = "Няправільны запыт";
 "error_2" = "Няправільны імя або пароль";
@@ -448,13 +448,13 @@
 "photo_saved" = "Фатаграфія захаваная";
 "photo_saved_comment" = "Новае фатаграфія профілю з'явіцца ў вас на старонцы";
 
-%{ Admin actions %}
+/* Admin actions */
 
 "login_as" = "Увайсці як $1";
 "ban_user_action" = "Забаніць карыстальніка";
 "warn_user_action" = "Папярэдзіць карыстальніка";
 
-%{ Paginator %}
+/* Paginator */
 
 "paginator_back" = "Назад";
 "paginator_page" = "Старонка $1";

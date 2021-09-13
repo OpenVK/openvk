@@ -1,19 +1,19 @@
 "__locale" = "de_DE.UTF-8;Deu";
 
-%{ Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html %}
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 
-%{ Main page %}
+/* Main page */
 
 "home" = "Home";
 "welcome" = "Willkommen";
 
-%{ Login %}
+/* Login */
 
 "log_in" = "Einloggen";
 "password" = "Passwort";
 "registration" = "Registrierung";
 
-%{ Profile information %}
+/* Profile information */
 
 "select_language" = "Sprache auswählen";
 "edit" = "bearbeiten";
@@ -36,7 +36,7 @@
 "online" = "Online";
 "was_online" = "war online";
 "was_online_m" = "war online"; 
-%{ For male and female %}
+/* For male and female */
 
 "was_online_f" = "war online";
 "all_title" = "Alle";
@@ -90,7 +90,7 @@
 
 "updated_at" = "Zuletzt aktualisiert am $1";
 
-%{ Wall %}
+/* Wall */
 
 "post_writes_m" = "schrieb";
 "post_writes_f" = "schrieb";
@@ -117,7 +117,7 @@
 "attach_photo" = "Foto anhängen";
 "no_posts_abstract" = "Niemand hat etwas geschrieben...Hier zumindestens nicht.";
 
-%{ Friends %}
+/* Friends */
 
 "friends" = "Freunde";
 "followers" = "Follower";
@@ -143,7 +143,7 @@
 "subscriptions_one" = "$1 Abonnement";
 "subscriptions_other" = "$1 Abonnements";
 
-%{ Group %}
+/* Group */
 
 "name_group" = "Name";
 "subscribe" = "Abonnieren";
@@ -181,7 +181,7 @@
 "meetings_one" = "$1 Meeting";
 "meetings_other" = "$1 Meetings";
 
-%{ Albums %}
+/* Albums */
 
 "create" = "Erstellen";
 "albums" = "Alben";
@@ -196,7 +196,7 @@
 "albums_one" = "$1 Album";
 "albums_other" = "$1 Alben";
 
-%{ Notes %}
+/* Notes */
 
 "notes" = "Notizen";
 "note" = "Notiz";
@@ -209,9 +209,9 @@
 "notes_one" = "$1 Notiz";
 "notes_other" = "$1 Notizen";
 
-%{ Menus %}
+/* Menus */
 
-%{ Note that is string need to fit into the "My Page" link %}
+/* Note that is string need to fit into the "My Page" link */
 
 "edit_button" = "bearb.";
 "my_page" = "Meine Seite";
@@ -249,7 +249,7 @@
 "footer_choose_language" = "sprache auswählen";
 "footer_privacy" = "privatsphäre";
 
-%{ Settings %}
+/* Settings */
 
 "main" = "Hauptseite";
 "contacts" = "Kontakte";
@@ -308,13 +308,13 @@
 "ui_settings_rating_show" = "Anzeigen";
 "ui_settings_rating_hide" = "Verstecken";
 
-%{ Sorting %}
+/* Sorting */
 
 "sort_randomly" = "Zufällig sortieren";
 "sort_up" = "Nach ID aufsteigend sortieren";
 "sort_down" = "Nach ID absteigend sortieren";
 
-%{ Videos %}
+/* Videos */
 
 "videos" = "Videos";
 "video" = "Video";
@@ -332,7 +332,7 @@
 "videos_one" = "$1 Video";
 "videos_other" = "$1 Videos";
 
-%{ Notifications %}
+/* Notifications */
 
 "feedback" = "Feedback";
 "unread" = "Ungelesen";
@@ -362,7 +362,7 @@
 "nt_note_instrumental" = "Notiz";
 "nt_photo_instrumental" = "Foto";
 
-%{ Time %}
+/* Time */
 
 "time_at_sp" = " um ";
 "time_just_now" = "jetzt";
@@ -371,7 +371,7 @@
 "time_today" = "Heute";
 "time_yesterday" = "Gestern";
 
-%{ Errors %}
+/* Errors */
 
 "error_1" = "Fehlerhafte Anfrage";
 "error_2" = "Fehlerhafter Login und Passwort";
@@ -400,13 +400,13 @@
 "photo_saved" = "Foto gespeichert";
 "photo_saved_comment" = "Dein neues Profilbild wird nun auf deiner Seite angezeigt";
 
-%{ Admin actions %}
+/* Admin actions */
 
 "login_as" = "Als $1 einloggen";
 "ban_user_action" = "Nutzer sperren";
 "warn_user_action" = "Nutzer verwarnen";
 
-%{ Paginator %}
+/* Paginator */
 
 "paginator_back" = "Zurück";
 "paginator_page" = "Seite $1";
