@@ -1,20 +1,20 @@
 "__locale" = "ru_UA.utf8;ru_RU.UTF-8;Rus";
 "__WinEncoding" = "Windows-1251";
 
-%{ Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html %}
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 
-%{ Main page %}
+/* Main page */
 
 "home" = "Главная";
 "welcome" = "Добро пожаловать";
 
-%{ Login %}
+/* Login */
 
 "log_in" = "Вход";
 "password" = "Пароль";
 "registration" = "Регистрация";
 
-%{ Profile information %}
+/* Profile information */
 
 "select_language" = "Выбрать язык";
 "edit" = "редактировать";
@@ -90,7 +90,7 @@
 
 "updated_at" = "Обновлено $1";
 
-%{ Wall %}
+/* Wall */
 
 "post_writes_m" = "написал";
 "post_writes_f" = "написала";
@@ -118,7 +118,7 @@
 "attach_photo" = "Прикрепить фото";
 "no_posts_abstract" = "Здесь никто ничего не написал... Пока.";
 
-%{ Friends %}
+/* Friends */
 
 "friends" = "Друзья";
 "followers" = "Подписчики";
@@ -153,7 +153,7 @@
 "subscriptions_many" = "$1 подписок";
 "subscriptions_other" = "$1 подписок";
 
-%{ Group %}
+/* Group */
 
 "name_group" = "Название";
 "subscribe" = "Подписаться";
@@ -197,7 +197,7 @@
 "meetings_many" = "$1 встреч";
 "meetings_other" = "$1 встреч";
 
-%{ Albums %}
+/* Albums */
 
 "create" = "Создать";
 "albums" = "Альбомы";
@@ -217,7 +217,7 @@
 "albums_many" = "$1 альбомов";
 "albums_other" = "$1 альбомов";
 
-%{ Notes %}
+/* Notes */
 
 "notes" = "Заметки";
 "note" = "Заметка";
@@ -234,7 +234,7 @@
 "notes_many" = "$1 заметок";
 "notes_other" = "$1 заметок";
 
-%{ Menus %}
+/* Menus */
 
 "edit_button" = "ред.";
 "my_page" = "Моя Страница";
@@ -278,7 +278,7 @@
 "notes_many" = "$1 заметок";
 "notes_other" = "$1 заметок";
 
-%{ Settings %}
+/* Settings */
 
 "main" = "Основное";
 "contacts" = "Контакты";
@@ -338,13 +338,13 @@
 "ui_settings_rating_show" = "Показывать";
 "ui_settings_rating_hide" = "Скрывать";
 
-%{ Sorting %}
+/* Sorting */
 
 "sort_randomly" = "Сортировать рандомно";
 "sort_up" = "Сортировать по дате создания вверх";
 "sort_down" = "Сортировать по дате создания вниз";
 
-%{ Videos %}
+/* Videos */
 
 "videos" = "Видеозаписи";
 "video" = "Видеозапись";
@@ -364,7 +364,7 @@
 "videos_many" = "$1 видеозаписей";
 "videos_other" = "$1 видеозаписей";
 
-%{ Notifications %}
+/* Notifications */
 
 "feedback" = "Ответы";
 "unread" = "Непрочитанное";
@@ -394,7 +394,7 @@
 "nt_note_instrumental" = "заметкой";
 "nt_photo_instrumental" = "фотографией";
 
-%{ Time %}
+/* Time */
 
 "time_at_sp" = " в ";
 "time_just_now" = "только что";
@@ -440,7 +440,7 @@
 "points_count" = "голосов";
 "on_your_account" = "на вашем счету";
 
-%{ Errors %}
+/* Errors */
 
 "error_1" = "Некорректный запрос";
 "error_2" = "Неверный логин или пароль";
@@ -469,13 +469,13 @@
 "photo_saved" = "Фотография сохранена";
 "photo_saved_comment" = "Новое изображние профиля появится у вас на странице";
 
-%{ Admin actions %}
+/* Admin actions */
 
 "login_as" = "Войти как $1";
 "ban_user_action" = "Забанить пользователя";
 "warn_user_action" = "Предупредить пользователя";
 
-%{ Paginator %}
+/* Paginator */
 
 "paginator_back" = "Назад";
 "paginator_page" = "Страница $1";

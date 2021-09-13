@@ -1,19 +1,19 @@
 "__locale" = "sr_CS.UTF-8;Srb";
 
-%{ Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html %}
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 
-%{ Main page %}
+/* Main page */
 
 "home" = "Поћетна";
 "welcome" = "Добро дошли";
 
-%{ Login %}
+/* Login */
 
 "log_in" = "Пријава";
 "password" = "Шифра";
 "registration" = "Регистрација";
 
-%{ Profile information %}
+/* Profile information */
 
 "select_language" = "Промена језика";
 "edit" = "уредити";
@@ -84,7 +84,7 @@
 "favorite_quotes" = "Омиљени цитати";
 "information_about" = "Лична информација";
 
-%{ Wall %}
+/* Wall */
 
 "post_writes_m" = "је написао";
 "post_writes_f" = "је написала";
@@ -108,7 +108,7 @@
 
 "nsfw_warning" = "Овај пост има садржај за особе од 18 година и више";
 
-%{ Friends %}
+/* Friends */
 
 "friends" = "Пријатељи";
 "followers" = "Следбеници";
@@ -140,7 +140,7 @@
 "subscriptions_many" = "$1 пријава";
 "subscriptions_other" = "$1 пријава";
 
-%{ Group %}
+/* Group */
 
 "name_group" = "Назив";
 "subscribe" = "Пријавити се";
@@ -182,7 +182,7 @@
 "meetings_many" = "$1 састанка";
 "meetings_other" = "$1 састанка";
 
-%{ Albums %}
+/* Albums */
 
 "create" = "Створити";
 "albums" = "Албуми";
@@ -199,7 +199,7 @@
 "albums_many" = "$1 албума";
 "albums_other" = "$1 албума";
 
-%{ Notes %}
+/* Notes */
 
 "notes" = "Белешци";
 "note" = "Белешка";
@@ -216,7 +216,7 @@
 "notes_many" = "$1 белешка";
 "notes_other" = "$1 белешка";
 
-%{ Menus %}
+/* Menus */
 
 "edit_button" = "уред.";
 "my_page" = "Моја Страница";
@@ -260,7 +260,7 @@
 "notes_many" = "$1 белешка";
 "notes_other" = "$1 белешци";
 
-%{ Settings %}
+/* Settings */
 
 "main" = "Насловна страна";
 "contacts" = "Контакти";
@@ -320,13 +320,13 @@
 "ui_settings_rating_show" = "Показати";
 "ui_settings_rating_hide" = "Сакрити";
 
-%{ Sorting %}
+/* Sorting */
 
 "sort_randomly" = "Поредити насумнично";
 "sort_up" = "Поредити по датуму креирања према горе";
 "sort_down" = "Поредити по датуму креирања према доле";
 
-%{ Videos %}
+/* Videos */
 
 "videos" = "Видео";
 "video" = "Видео";
@@ -346,7 +346,7 @@
 "videos_many" = "$1 видео";
 "videos_other" = "$1 видео";
 
-%{ Notifications %}
+/* Notifications */
 
 "feedback" = "Повратна веза";
 "unread" = "Непрочитано";
@@ -376,7 +376,7 @@
 "nt_note_instrumental" = "белешком";
 "nt_photo_instrumental" = "фотографијом";
 
-%{ Time %}
+/* Time */
 
 "time_at_sp" = " у ";
 "time_just_now" = "садашње вријеме";
@@ -417,7 +417,7 @@
 "ui_settings_rating_show" = "Показати";
 "ui_settings_rating_hide" = "Сакрити";
 
-%{ Errors %}
+/* Errors */
 
 "error_1" = "Није тачан захтев";
 "error_2" = "Корисничко име или лозинка нису тачни";

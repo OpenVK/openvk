@@ -1,19 +1,19 @@
 "__locale" = "sr_CS.UTF-8;Srb_Latin";
 
-%{ Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html %}
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 
-%{ Main page %}
+/* Main page */
 
 "home" = "Poćetna";
 "welcome" = "Dobro došli";
 
-%{ Login %}
+/* Login */
 
 "log_in" = "Prijava";
 "password" = "Šifra";
 "registration" = "Registracija";
 
-%{ Profile information %}
+/* Profile information */
 
 "select_language" = "Promena jezika";
 "edit" = "urediti";
@@ -84,7 +84,7 @@
 "favorite_quotes" = "Omiljeni citati";
 "information_about" = "Lična informacija";
 
-%{ Wall %}
+/* Wall */
 
 "post_writes_m" = "je napisao";
 "post_writes_f" = "je napisala";
@@ -108,7 +108,7 @@
 
 "nsfw_warning" = "Ova post ima sadržaj za osobe od 18 godina i više";
 
-%{ Friends %}
+/* Friends */
 
 "friends" = "Prijatelji";
 "followers" = "Pretplatnici";
@@ -140,7 +140,7 @@
 "subscriptions_many" = "$1 prijava";
 "subscriptions_other" = "$1 prijava";
 
-%{ Group %}
+/* Group */
 
 "name_group" = "Naziv";
 "subscribe" = "Prijaviti se";
@@ -182,7 +182,7 @@
 "meetings_many" = "$1 sastanka";
 "meetings_other" = "$1 sastanka";
 
-%{ Albums %}
+/* Albums */
 
 "create" = "Stvoriti";
 "albums" = "Albumi";
@@ -199,7 +199,7 @@
 "albums_many" = "$1 albuma";
 "albums_other" = "$1 albuma";
 
-%{ Notes %}
+/* Notes */
 
 "notes" = "Belešci";
 "note" = "Beleška";
@@ -216,7 +216,7 @@
 "notes_many" = "$1 beleška";
 "notes_other" = "$1 beleška";
 
-%{ Menus %}
+/* Menus */
 
 "edit_button" = "ured.";
 "my_page" = "Moja Stranica";
@@ -260,7 +260,7 @@
 "notes_many" = "$1 beleška";
 "notes_other" = "$1 belešci";
 
-%{ Settings %}
+/* Settings */
 
 "main" = "Naslovna strana";
 "contacts" = "Kontakti";
@@ -320,13 +320,13 @@
 "ui_settings_rating_show" = "Pokazati";
 "ui_settings_rating_hide" = "Sakriti";
 
-%{ Sorting %}
+/* Sorting */
 
 "sort_randomly" = "Porediti nasumnično";
 "sort_up" = "Porediti po datumu kreiranja prema gore";
 "sort_down" = "Porediti po datumu kreiranja prema dole";
 
-%{ Videos %}
+/* Videos */
 
 "videos" = "Video";
 "video" = "Video";
@@ -346,7 +346,7 @@
 "videos_many" = "$1 video";
 "videos_other" = "$1 video";
 
-%{ Notifications %}
+/* Notifications */
 
 "feedback" = "Povratna veza";
 "unread" = "Nepročitano";
@@ -376,7 +376,7 @@
 "nt_note_instrumental" = "beleškom";
 "nt_photo_instrumental" = "fotografijom";
 
-%{ Time %}
+/* Time */
 
 "time_at_sp" = " u ";
 "time_just_now" = "sadašnje vrijeme";
@@ -417,7 +417,7 @@
 "ui_settings_rating_show" = "Pokazati";
 "ui_settings_rating_hide" = "Sakriti";
 
-%{ Errors %}
+/* Errors */
 
 "error_1" = "Nije taćan zahtev";
 "error_2" = "Korisnićko ime ili lozinka nisu tačni";
