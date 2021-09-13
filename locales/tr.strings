@@ -42,6 +42,8 @@
 "all_title" = "Tümü";
 "information" = "Bilgi";
 "status" = "Durum";
+"no_information_provided" = "Verilen bilgi yok.";
+"deceased_person" = "Vefat eden kişi";
 
 "relationship" = "İlişki durumu";
 
@@ -86,6 +88,8 @@
 "favorite_quotes" = "Favori sözler";
 "information_about" = "Hakkında";
 
+"updated_at" = "Güncelleme: $1";
+
 %{ Wall %}
 
 "post_writes_m" = "yazdı";
@@ -108,7 +112,10 @@
 "feed" = "Haberler";
 "publish_post" = "Gönderi ekle";
 
-"nsfw_warning" = "Bu gönderinin +18 içeriii olabilir";
+"nsfw_warning" = "Bu gönderinin +18 içeriği olabilir";
+"report" = "Bildir";
+"attach_photo" = "Resim ekle";
+"no_posts_abstract" = "Kimse buraya bir şey yazmadı... Şimdilik.";
 
 %{ Friends %}
 
@@ -375,4 +382,26 @@
 "no_data" = "Veri yok";
 "no_data_description" = "Böyle bir veri yok.";
 
-%{ Translations by @WindowZytch - Çeviriler @WindowZytch'den %}
+"error" = "Hata";
+"error_shorturl" = "Bu kısa adresin zaten bir sahibi var.";
+"error_segmentation" = "Segment hatası";
+"error_upload_failed" = "Resim yüklerken hata oluştu";
+"error_old_password" = "Eski parola uyuşmuyor";
+"error_new_password" = "Yeni parola uyuşmuyor";
+"error_shorturl_incorrect" = "Kısa adresin hatalı bir formatı var.";
+
+"forbidden" = "Erişim hatası";
+"forbidden_comment" = "Bu kullanıcının gizlilik ayarları onun sayfasına bakmanıza izin vermiyor.";
+
+"changes_saved" = "Değişiklikler kaydedildi";
+"changes_saved_comment" = "Yeni veriler sayfanızda görünecek";
+
+"photo_saved" = "Resim kaydedildi";
+"photo_saved_comment" = "Yeni resim sayfanızda görünecek";
+
+%{ Admin actions %}                                                   -                                                                      -"login_as" = "Login as $1";                                           -"ban_user_action" = "Ban user";                                       -"warn_user_action" = "Warn user";                                     -                                                                      -%{ Paginator %}                                                       -
+"paginator_back" = "Geri";
+"paginator_page" = "Sayfa $1";
+"paginator_next" = "İleri";
+
+%{ Translations by @WindowZ414 - Çeviriler @WindowZ414'ten %}
