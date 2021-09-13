@@ -1,0 +1,3 @@
+files:
+  - source: /locales/ru.strings
+    translation: /locales/%two_letters_code%.strings
