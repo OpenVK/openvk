@@ -1,8 +1,9 @@
 "__locale" = "sr_CS.UTF-8;Srb";
+"__WinEncoding" = "Windows-1251";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
-
 /* Main page */
+
 
 "home" = "Поћетна";
 "welcome" = "Добро дошли";
@@ -40,6 +41,9 @@
 "all_title" = "Све";
 "information" = "Информација";
 "status" = "Статус";
+"no_information_provided" = "Информация отсутствует.";
+"deceased_person" = "Страница покойного человека";
+"years" = "лет";
 
 "relationship" = "Породични статус";
 
@@ -84,16 +88,19 @@
 "favorite_quotes" = "Омиљени цитати";
 "information_about" = "Лична информација";
 
+"updated_at" = "Обновлено $1";
+
 /* Wall */
 
 "post_writes_m" = "је написао";
 "post_writes_f" = "је написала";
+"post_writes_g" = "опубликовали";
 "wall" = "Зид";
 "post" = "Запис";
 "write" = "Написати";
 "publish" = "Објавити";
 "delete" = "Обрисати";
-"comments" = "Коментарије";
+"comments" = "Коментари";
 "share" = "Поделити се информацијом";
 "comments_tip" = "Ћете бити први, ко ће оставити коментар!";
 "your_comment" = "Ваш коментар";
@@ -107,12 +114,18 @@
 "wall_other" = "$1 записа";
 
 "nsfw_warning" = "Овај пост има садржај за особе од 18 година и више";
+"report" = "Пожаловаться";
+"attach_photo" = "Прикрепить фото";
+"no_posts_abstract" = "Здесь никто ничего не написал... Пока.";
 
 /* Friends */
 
 "friends" = "Пријатељи";
 "followers" = "Следбеници";
 "follower" = "Следбеник";
+"login_as" = "Войти как";
+"ban_fast" = "Забанить";
+"adm_notify" = "Предупредить";
 "friends_add" = "Додати у пријатеље";
 "friends_delete" = "Избрисати од пријатеља";
 "friends_reject" = "Одјавити захтев";
@@ -163,6 +176,8 @@
 "administrator" = "Администратор";
 "promote_to_admin" = "Промовисати до администратора";
 "devote" = "Ражаловати улогу";
+"group_allow_post_for_everyone" = "Разрешить публиковать записи всем";
+"statistics" = "Статистика";
 
 "participants_zero" = "Нема учесника";
 "participants_one" = "Један учесник";
@@ -193,6 +208,9 @@
 "photo" = "Фото";
 "upload_button" = "Отпремање";
 
+"avatar_album" = "Фотографии со страницы";
+"wall_album" = "Фотографии со стены";
+
 "albums_zero" = "Нема албума";
 "albums_one" = "Један албум";
 "albums_few" = "$1 албума";
@@ -214,7 +232,7 @@
 "notes_one" = "Једна белешка";
 "notes_few" = "$1 белешка";
 "notes_many" = "$1 белешка";
-"notes_other" = "$1 белешка";
+"notes_other" = "$1 белешци";
 
 /* Menus */
 
@@ -240,13 +258,13 @@
 "header_donate" = "подршка";
 "header_people" = "људи";
 "header_invite" = "позвати";
-"header_help" = "помоћ";
+"header_help" = "Помоћ";
 "header_log_out" = "одјавити се";
 "header_search" = "Истраживање";
 
 "header_login" = "Пријава";
 "header_registration" = "Регистрација";
-"header_help" = "Помоћ";
+"header_help" = "Помощь";
 
 "footer_blog" = "блог";
 "footer_help" = "помоћ";
@@ -301,16 +319,16 @@
 "privacy_value_users" = "Корисници OpenVK";
 "privacy_value_friends" = "Пријатеље";
 "privacy_value_friends_dative" = "Пријатеље";
-"privacy_value_only_me_and_super_capite" = "Ја сам и Виталина Павленко";
-"privacy_value_only_me_and_super_capite_dative" = "За мене и Виталину Павленко";
+"privacy_value_only_me_and_super_capite" = "Ја сам";
+"privacy_value_only_me_and_super_capite_dative" = "За мене";
 "privacy_value_super_capite" = "Виталини Павленко";
 
-"your_email_address" = "Ваша e-mail адреса";
+"your_email_address" = "Адреса Ваше електронске поште";
 "your_page_address" = "Адреса Ваше странице";
 "page_address" = "Адреса странице";
-"current_email_address" = "Тренутна e-mail адреса";
+"current_email_address" = "Текућа адреса";
 "page_id" = "ID странице";
-"you_can_also" = "Ви такође имате могућност";
+"you_can_also" = "Ви такође можете";
 "delete_your_page" = "да избришите своју страницу";
 "delete_album" = "да избришите албум";
 
@@ -399,8 +417,9 @@
 "privacy_value_users" = "Корисници OpenVK";
 "privacy_value_friends" = "Пријатеље";
 "privacy_value_friends_dative" = "Пријатеље";
-"privacy_value_only_me_and_super_capite" = "Ја сам";
-"privacy_value_only_me_and_super_capite_dative" = "За мене";
+"privacy_value_only_me_and_super_capite" = "Только я";
+"privacy_value_only_me_and_super_capite_dative" = "Только мне";
+"privacy_value_super_capite" = "Никто";
 
 "your_email_address" = "Адреса Ваше електронске поште";
 "your_page_address" = "Адреса Ваше странице";
@@ -417,6 +436,10 @@
 "ui_settings_rating_show" = "Показати";
 "ui_settings_rating_hide" = "Сакрити";
 
+"points" = "Голоса";
+"points_count" = "голосов";
+"on_your_account" = "на вашем счету";
+
 /* Errors */
 
 "error_1" = "Није тачан захтев";
@@ -428,3 +451,32 @@
 
 "no_data" = "Нема податка";
 "no_data_description" = "Недостају подаци у овој одредби.";
+
+"error" = "Ошибка";
+"error_shorturl" = "Данный короткий адрес уже занят.";
+"error_segmentation" = "Ошибка сегментации";
+"error_upload_failed" = "Не удалось загрузить фото";
+"error_old_password" = "Старый пароль не совпадает";
+"error_new_password" = "Новые пароли не совпадает";
+"error_shorturl_incorrect" = "Короткий адрес имеет некорректный формат.";
+
+"forbidden" = "Ошибка доступа";
+"forbidden_comment" = "Настройки приватности этого пользователя не разрешают вам смотреть на его страницу.";
+
+"changes_saved" = "Изменения сохранены";
+"changes_saved_comment" = "Новый данные появятся на вашей странице";
+
+"photo_saved" = "Фотография сохранена";
+"photo_saved_comment" = "Новое изображние профиля появится у вас на странице";
+
+/* Admin actions */
+
+"login_as" = "Войти как $1";
+"ban_user_action" = "Забанить пользователя";
+"warn_user_action" = "Предупредить пользователя";
+
+/* Paginator */
+
+"paginator_back" = "Назад";
+"paginator_page" = "Страница $1";
+"paginator_next" = "Дальше";
