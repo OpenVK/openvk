@@ -218,7 +218,7 @@
                                 src="{is_null($cover)?'/assets/packages/static/openvk/img/camera_200.png':$cover->getURL()}"
                                 style="max-width: 80px; max-height: 54pt;" />
                         </div>
-                        <div>
+                        <div style="overflow: hidden; overflow-wrap: break-word;">
                             <b><a href="/album{$album->getPrettyId()}">{$album->getName()}</a></b><br>
                             <span class="nobold">{tr("updated_at", $album->getEditTime() ?? $album->getPublicationTime())}</span>
                         </div>
