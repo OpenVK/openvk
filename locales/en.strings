@@ -109,8 +109,8 @@
 "x_out_of" = "$1 of";
 "wall_zero" = "no posts";
 "wall_one" = "$1 post";
-"wall_few" = "$1 записи";
-"wall_many" = "$1 записей";
+"wall_few" = "$1 posts";
+"wall_many" = "$1 posts";
 "wall_other" = "$1 posts";
 
 "nsfw_warning" = "This post may have NSFW-content";
@@ -124,8 +124,8 @@
 "followers" = "Followers";
 "follower" = "Follower";
 "login_as" = "Login as $1";
-"ban_fast" = "Забанить";
-"adm_notify" = "Предупредить";
+"ban_fast" = "Ban";
+"adm_notify" = "Warn";
 "friends_add" = "Add to friends";
 "friends_delete" = "Remove from friends";
 "friends_reject" = "Reject request";
@@ -137,20 +137,20 @@
 
 "firends_zero" = "No friends";
 "friends_one" = "$1 friend";
-"friends_few" = "$1 друга";
-"friends_many" = "$1 друзей";
+"friends_few" = "$1 friends";
+"friends_many" = "$1 friends";
 "friends_other" = "$1 friends";
 
 "followers_zero" = "No followers";
 "followers_one" = "$1 follower";
-"followers_few" = "$1 подписчика";
-"followers_many" = "$1 подписчиков";
+"followers_few" = "$1 followers";
+"followers_many" = "$1 followers";
 "followers_other" = "$1 followers";
 
 "subscriptions_zero" = "No subscriptions";
 "subscriptions_one" = "$1 subscription";
-"subscriptions_few" = "$1 подписки";
-"subscriptions_many" = "$1 подписок";
+"subscriptions_few" = "$1 subscriptions";
+"subscriptions_many" = "$1 subscriptions";
 "subscriptions_other" = "$1 subscriptions";
 
 /* Group */
@@ -181,20 +181,20 @@
 
 "participants_zero" = "No participants";
 "participants_one" = "$1 participant";
-"participants_few" = "$1 участника";
-"participants_many" = "$1 участников";
+"participants_few" = "$1 participants";
+"participants_many" = "$1 participants";
 "participants_other" = "$1 participant";
 
 "groups_zero" = "No groups";
 "groups_one" = "$1 group";
-"groups_few" = "$1 группы";
-"groups_many" = "$1 групп";
+"groups_few" = "$1 groups";
+"groups_many" = "$1 groups";
 "groups_other" = "$1 groups";
 
 "meetings_zero" = "No meetings";
 "meetings_one" = "$1 meeting";
-"meetings_few" = "$1 встречи";
-"meetings_many" = "$1 встреч";
+"meetings_few" = "$1 meetings";
+"meetings_many" = "$1 meetings";
 "meetings_other" = "$1 meetings";
 
 /* Albums */
@@ -208,13 +208,13 @@
 "photo" = "Photo";
 "upload_button" = "Upload";
 
-"avatar_album" = "Фотографии со страницы";
-"wall_album" = "Фотографии со стены";
+"avatar_album" = "Page photos";
+"wall_album" = "Wall photos";
 
 "albums_zero" = "No albums";
 "albums_one" = "$1 album";
-"albums_few" = "$1 альбома";
-"albums_many" = "$1 альбомов";
+"albums_few" = "$1 albums";
+"albums_many" = "$1 albums";
 "albums_other" = "$1 albums";
 
 /* Notes */
@@ -230,8 +230,8 @@
 
 "notes_zero" = "No notes";
 "notes_one" = "$1 note";
-"notes_few" = "$1 заметки";
-"notes_many" = "$1 заметок";
+"notes_few" = "$1 notes";
+"notes_many" = "$1 notes";
 "notes_other" = "$1 notes";
 
 /* Menus */
@@ -264,7 +264,7 @@
 
 "header_login" = "login";
 "header_registration" = "registration";
-"header_help" = "Помощь";
+"header_help" = "Help";
 
 "footer_blog" = "blog";
 "footer_help" = "help";
@@ -274,8 +274,8 @@
 
 "notes_zero" = "No notes";
 "notes_one" = "$1 note";
-"notes_few" = "$1 заметки";
-"notes_many" = "$1 заметок";
+"notes_few" = "$1 notes";
+"notes_many" = "$1 notes";
 "notes_other" = "$1 notes";
 
 /* Settings */
@@ -319,9 +319,9 @@
 "privacy_value_users" = "OpenVK users";
 "privacy_value_friends" = "Friends";
 "privacy_value_friends_dative" = "Friends";
-"privacy_value_only_me_and_super_capite" = "Я и Виталина Павленко";
-"privacy_value_only_me_and_super_capite_dative" = "Мне и Виталине Павленко";
-"privacy_value_super_capite" = "Виталине Павленко";
+"privacy_value_only_me_and_super_capite" = "Only me and admins";
+"privacy_value_only_me_and_super_capite_dative" = "Only me and admins";
+"privacy_value_super_capite" = "Admins";
 
 "your_email_address" = "Your Email address";
 "your_page_address" = "Your address page";
@@ -360,8 +360,8 @@
 
 "videos_zero" = "No videos";
 "videos_one" = "$1 video";
-"videos_few" = "$1 видеозаписи";
-"videos_many" = "$1 видеозаписей";
+"videos_few" = "$1 videos";
+"videos_many" = "$1 videos";
 "videos_other" = "$1 videos";
 
 /* Notifications */
@@ -417,9 +417,9 @@
 "privacy_value_users" = "OpenVK users";
 "privacy_value_friends" = "Friends";
 "privacy_value_friends_dative" = "Friends";
-"privacy_value_only_me_and_super_capite" = "Только я";
-"privacy_value_only_me_and_super_capite_dative" = "Только мне";
-"privacy_value_super_capite" = "Никто";
+"privacy_value_only_me_and_super_capite" = "Only me";
+"privacy_value_only_me_and_super_capite_dative" = "Only me";
+"privacy_value_super_capite" = "Nobody";
 
 "your_email_address" = "Your Email address";
 "your_page_address" = "Your address page";
@@ -436,9 +436,9 @@
 "ui_settings_rating_show" = "Show";
 "ui_settings_rating_hide" = "Hide";
 
-"points" = "Голоса";
-"points_count" = "голосов";
-"on_your_account" = "на вашем счету";
+"points" = "Credits";
+"points_count" = "credits";
+"on_your_account" = "Your balance is";
 
 /* Errors */
 
@@ -471,7 +471,7 @@
 
 /* Admin actions */
 
-"login_as" = "Войти как $1";
+"login_as" = "Login as $1";
 "ban_user_action" = "Ban user";
 "warn_user_action" = "Warn user";
 
