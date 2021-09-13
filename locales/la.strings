@@ -1,165 +1,63 @@
-"acl_welcome" = "Coetus consilium editor";
-"actions" = "Actio";
-"address" = "Oratio";
-"administrator" = "Curagendarius";
-"albums" = "Albums";
-"albums_few" = "$1 album";
-"albums_many" = "$1 albums";
-"albums_one" = "Unum album";
-"albums_other" = "$1 albums";
-"albums_zero" = "Quis album";
-"all_title" = "Totum";
-"archive" = "Lorem ipsum dolor sit";
-"avatar" = "Avatar";
-"avatars_style" = "Propono avatar";
-"birth_date" = "Natalis";
-"bug_tracker" = "Bug tracker";
-"change_password" = "Mutare password";
-"change_status" = "mutare status";
-"city" = "Urbs";
-"comments" = "Comments";
-"comments_tip" = "Esse primum ad leave a comment!";
-"contact_information" = "Contactus notitia";
-"contacts" = "Contactus";
-"create" = "Creare";
-"create_album" = "Ut creare an album";
-"create_group" = "Ut lobortis dolor";
-"create_notes" = "Mauris ut enim ad minim";
-"creating_album" = "Faciendum album";
-"creator" = "Effector";
-"cut" = "Putationis";
-"default" = "Per defaltam";
-"delete" = "Ad tollendam";
-"description" = "Description";
-"devote" = "Demoted";
-"edit" = "recensere / fontem recensere";
-"edit_album" = "Edit album";
-"edit_button" = "ed.";
-"edit_group" = "Recensere / fontem recensere coetus";
-"edit_page" = "Edit page";
-"email" = "Email";
-"error_1" = "Recte petentibus";
-"error_2" = "Irritum aut nomen usoris password";
-"error_3" = "Non auctoritate";
-"error_4" = "User non esse";
-"favorite_books" = "Favorite books";
-"favorite_films" = "Ventus movies";
-"favorite_music" = "Ventus musica";
-"favorite_quotes" = "Ventus quotes";
-"favorite_shows" = "Ventus TV ostendo";
-"feed" = "Nuntius";
-"feedback" = "Respondet";
-"female" = "muliebris";
-"firends_zero" = "Nulla alia";
-"follower" = "Subscriber";
-"followers" = "Signatores";
-"followers_few" = "$1 a subscriber";
-"followers_many" = "$1 signatores";
-"followers_one" = "Unum subscriber";
-"followers_other" = "$1 signatores";
-"followers_zero" = "Uno subscriber";
-"footer_blog" = "blog";
-"footer_choose_language" = "lego lingua";
-"footer_developers" = "tincidunt";
-"footer_help" = "auxilium";
-"footer_privacy" = "privacy";
-"friends" = "Friends";
-"friends_accept" = "Accipere application";
-"friends_add" = "Adde amicis";
-"friends_delete" = "Aufero ex amicis";
-"friends_few" = "$1 singulis";
-"friends_many" = "$1 amicis";
-"friends_one" = "Unus amicus";
-"friends_other" = "$1 amicis";
-"friends_reject" = "Ad inrita ordo";
-"gender" = "Solum";
-"group_managers" = "Dux";
-"group_type" = "Coetus genus";
-"group_type_open" = "Hoc est a publicis coetus. Potest intrare quis.";
-"groups" = "Coetus";
-"groups_few" = "$1 coetus";
-"groups_many" = "$1 coetibus";
-"groups_one" = "Unum coetus";
-"groups_other" = "$1 coetibus";
-"groups_zero" = "Quis coetus";
-"header_donate" = "support";
-"header_groups" = "coetus";
-"header_help" = "auxilium";
-"header_home" = "consectetur";
-"header_invite" = "duis";
-"header_log_out" = "ex";
-"header_people" = "homo";
-"header_search" = "Investigatio";
+"__locale" = "ru_UA.utf8;ru_RU.UTF-8;Rus";
+"__WinEncoding" = "Windows-1251";
+
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
+/* Main page */
+
+
 "home" = "Consectetur";
-"hometown" = "Patria";
-"incoming_req" = "Signatores";
-"information" = "Informatio";
-"information_-1" = "Operatio peracta feliciter";
-"information_-2" = "Praesent sit amet";
-"information_about" = "De te";
-"interests" = "Commodis";
-"interface" = "Filum";
-"interface_translation" = "Translatio dapibus";
-"join_community" = "Ad coniungere coetus";
-"languages" = "Linguis";
-"leave_community" = "Relinquere coetus";
+"welcome" = "Grata";
+
+/* Login */
+
 "log_in" = "Ostium";
-"main" = "Consectetur";
-"main_information" = "Basic notitia";
-"male" = "masculinus";
-"meetings" = "Conventus";
-"meetings_few" = "$1 sessio";
-"meetings_many" = "$1 conventus";
-"meetings_one" = "Unus conventus";
-"meetings_other" = "$1 conventus";
-"meetings_zero" = "Nulla conventus";
-"min_6_community" = "Titulus debet esse saltem 1 moribus";
-"my_feed" = "Mea News";
-"my_feedback" = "Responsa Mea";
-"my_friends" = "Amici Mei";
-"my_groups" = "Mea Coetus";
-"my_messages" = "Verba Mea";
-"my_notes" = "Notis Meis";
-"my_page" = "Mea Page";
-"my_photos" = "Mea Imaginibus";
-"my_settings" = "Meus Occasus";
-"my_videos" = "Mea Videos";
-"name" = "Nomen";
-"name_group" = "Nomen";
-"name_note" = "Nomen";
-"new_password" = "New password";
-"nickname" = "Cognomen";
-"no_translation" = "NON EST TRANSLATUM!!!";
-"notes" = "Notes";
-"notes_few" = "$1 notes";
-"notes_many" = "$1 notes";
-"notes_one" = "Una nota";
-"notes_other" = "$1 notes";
-"notes_zero" = "Nulla notis";
-"notifications_appoint" = "$1 nesvacil te Director communitatis $2";
-"notifications_comment_under" = "$1 reliquit (La) review sub $2";
-"notifications_like" = "$1 sima $2запись$3 a $4";
-"notifications_post" = "$1 scriptum (La) $2запись$3 in pariete $4";
-"notifications_repost" = "$1 communis(-Las) tua $2записью$3 a $4";
-"notifications_under_note" = "vestra $3заметкой$4";
-"notifications_under_photo" = "vestra $3фото$4";
-"notifications_under_post" = "vestra $3записью$4 a $5";
-"notifications_under_video" = "vestra $3видео$4";
-"old_password" = "Vetus signum";
-"online" = "Online";
-"outcoming_req" = "Applications";
-"participants" = "Participes";
-"participants_few" = "$1 pars";
-"participants_many" = "$1 participes";
-"participants_one" = "Unum particeps";
-"participants_other" = "$1 participes";
-"participants_zero" = "Quis particeps";
 "password" = "Tessera";
-"personal_information" = "Alio notitia";
-"phone" = "Telephonum";
-"photo" = "Photographia";
-"picture" = "Imago";
+"registration" = "Reprehendo";
+
+/* Profile information */
+
+"select_language" = "Lego lingua";
+"edit" = "recensere / fontem recensere";
+"birth_date" = "Natalis";
+"registration_date" = "Registration date";
+"hometown" = "Patria";
+"this_is_you" = "suus ' Vos";
+"edit_page" = "Edit page";
+"edit_group" = "Recensere / fontem recensere coetus";
+"change_status" = "mutare status";
+"name" = "Nomen";
+"surname" = "Cōgnōmen";
+"gender" = "Solum";
+"male" = "masculinus";
+"female" = "muliebris";
+"description" = "Description";
+"save" = "Nisi";
+"main_information" = "Basic notitia";
+"nickname" = "Cognomen";
+"online" = "Online";
+"was_online" = "erat online";
+"was_online_m" = "erat online";
+"was_online_f" = "erat online";
+"all_title" = "Totum";
+"information" = "Informatio";
+"status" = "Status";
+"no_information_provided" = "Информация отсутствует.";
+"deceased_person" = "Страница покойного человека";
+
+"relationship" = "Maritali status";
+
+"relationship_0" = "Non delectus";
+"relationship_1" = "Non nupta";
+"relationship_2" = "Dignum";
+"relationship_3" = "Versantur";
+"relationship_4" = "Uxorem";
+"relationship_5" = "In civili matrimonio";
+"relationship_6" = "Amor";
+"relationship_7" = "Praesent rhoncus";
+"relationship_8" = "In activa quaerere";
+
 "politViews" = "Polit. views";
+
 "politViews_0" = "Non delectus";
 "politViews_1" = "Indifferens";
 "politViews_2" = "Communistarum";
@@ -170,83 +68,414 @@
 "politViews_7" = "Monarchical";
 "politViews_8" = "Ultra-conservative";
 "politViews_9" = "Libertarian";
-"post" = "Entry";
-"post_writes_f" = "scripsit";
-"post_writes_m" = "scripsit";
-"privacy" = "Privacy";
-"profile_picture" = "Imago page";
-"promote_to_admin" = "Ad promovere ad administrator";
-"publish" = "Ad auditum";
-"publish_post" = "Adde introitu";
-"registration" = "Reprehendo";
-"registration_date" = "Registration date";
-"relationship" = "Maritali status";
-"relationship_0" = "Non delectus";
-"relationship_1" = "Non nupta";
-"relationship_2" = "Dignum";
-"relationship_3" = "Versantur";
-"relationship_4" = "Uxorem";
-"relationship_5" = "In civili matrimonio";
-"relationship_6" = "Amor";
-"relationship_7" = "Praesent rhoncus";
-"relationship_8" = "In activa quaerere";
-"repeat_password" = "Repetere signum";
-"req" = "Applications";
-"role" = "Munus";
-"round_avatars" = "Per avatar";
-"save" = "Nisi";
-"search_button" = "Invenire";
-"search_for_groups" = "Quaerere coetus";
-"search_for_people" = "Populus quaerere";
-"select_language" = "Lego lingua";
-"send_message" = "Ad mittite";
-"share" = "Partem";
-"sort_down" = "Sort by date descendit";
-"sort_randomly" = "Exstat passim";
-"sort_up" = "Sort by date usque";
-"status" = "Status";
-"style" = "Still";
-"subscribe" = "Aliquam";
-"subscriptions" = "Subscriptione";
-"subscriptions_few" = "$1 subscriptione";
-"subscriptions_many" = "$1 subscriptiones";
-"subscriptions_one" = "Unum subscriptione";
-"subscriptions_other" = "$1 subscriptiones";
-"subscriptions_zero" = "Nulla subscriptiones";
-"surname" = "Cōgnōmen";
+
+"contact_information" = "Contactus notitia";
+
+"email" = "Email";
+"phone" = "Telephonum";
 "telegram" = "Telegram";
-"text_note" = "Contenta";
-"this_is_you" = "suus ' Vos";
-"translations" = "Translationes";
-"unread" = "Intactum,";
-"unsubscribe" = "Ad unsubscribe";
-"upload_button" = "Download";
-"upload_photo" = "Upload a photo";
-"upload_video" = "Download video";
-"video" = "Video";
-"video_description" = "Description";
-"video_link_to_yt" = "Donec YT";
-"video_name" = "Nomen";
-"video_updated" = "Amet";
-"video_upload_date" = "Upload date";
-"video_uploaded" = "Lorem";
-"video_uploaded_by" = "Lorem";
-"videos" = "Videos";
-"videos_few" = "$1 video";
-"videos_many" = "$1 movies";
-"videos_one" = "Unum video";
-"videos_other" = "$1 movies";
-"videos_zero" = "Nulla videos";
+"city" = "Urbs";
+"address" = "Oratio";
+
+"personal_information" = "Alio notitia";
+
+"interests" = "Commodis";
+"favorite_music" = "Ventus musica";
+"favorite_films" = "Ventus movies";
+"favorite_shows" = "Ventus TV ostendo";
+"favorite_books" = "Favorite books";
+"favorite_quotes" = "Ventus quotes";
+"information_about" = "De te";
+
+"updated_at" = "Обновлено $1";
+
+/* Wall */
+
+"post_writes_m" = "scripsit";
+"post_writes_f" = "scripsit";
+"post_writes_g" = "опубликовали";
 "wall" = "Murus";
+"post" = "Entry";
+"write" = "Exaro";
+"publish" = "Ad auditum";
+"delete" = "Ad tollendam";
+"comments" = "Comments";
+"share" = "Partem";
+"comments_tip" = "Esse primum ad leave a comment!";
+"your_comment" = "Comment";
+"comments" = "Комментарии";
+"shown" = "Показано";
+"x_out_of" = "$1 из";
+"wall_zero" = "nulla monumentis";
+"wall_one" = "tantum introitu";
 "wall_few" = "$1 monumentis";
 "wall_many" = "$1 monumentis";
-"wall_one" = "tantum introitu";
 "wall_other" = "$1 monumentis";
-"wall_zero" = "nulla monumentis";
-"was_online" = "erat online";
-"was_online_f" = "erat online";
-"was_online_m" = "erat online";
-"welcome" = "Grata";
-"write" = "Exaro";
-"you_have" = "Vos";
-"your_comment" = "Comment";
+
+"nsfw_warning" = "Данный пост может содержать 18+ контент";
+"report" = "Пожаловаться";
+"attach_photo" = "Прикрепить фото";
+"no_posts_abstract" = "Здесь никто ничего не написал... Пока.";
+
+/* Friends */
+
+"friends" = "Friends";
+"followers" = "Signatores";
+"follower" = "Subscriber";
+"login_as" = "Войти как";
+"ban_fast" = "Забанить";
+"adm_notify" = "Предупредить";
+"friends_add" = "Adde amicis";
+"friends_delete" = "Aufero ex amicis";
+"friends_reject" = "Ad inrita ordo";
+"friends_accept" = "Accipere application";
+"send_message" = "Ad mittite";
+"incoming_req" = "Signatores";
+"outcoming_req" = "Applications";
+"req" = "Applications";
+
+"firends_zero" = "Nulla alia";
+"friends_one" = "Unus amicus";
+"friends_few" = "$1 singulis";
+"friends_many" = "$1 amicis";
+"friends_other" = "$1 amicis";
+
+"followers_zero" = "Uno subscriber";
+"followers_one" = "Unum subscriber";
+"followers_few" = "$1 a subscriber";
+"followers_many" = "$1 signatores";
+"followers_other" = "$1 signatores";
+
+"subscriptions_zero" = "Nulla subscriptiones";
+"subscriptions_one" = "Unum subscriptione";
+"subscriptions_few" = "$1 subscriptione";
+"subscriptions_many" = "$1 subscriptiones";
+"subscriptions_other" = "$1 subscriptiones";
+
+/* Group */
+
+"name_group" = "Nomen";
+"subscribe" = "Aliquam";
+"unsubscribe" = "Ad unsubscribe";
+"subscriptions" = "Subscriptione";
+"join_community" = "Ad coniungere coetus";
+"leave_community" = "Relinquere coetus";
+"min_6_community" = "Titulus debet esse saltem 1 moribus";
+"participants" = "Participes";
+"groups" = "Coetus";
+"meetings" = "Conventus";
+"create_group" = "Ut lobortis dolor";
+"group_managers" = "Dux";
+"group_type" = "Coetus genus";
+"group_type_open" = "Hoc est a publicis coetus. Potest intrare quis.";
+"group_type_closed" = "Это закрытая группа. Для вступления необходимо подавать заявку.";
+"creator" = "Effector";
+
+"role" = "Munus";
+"administrator" = "Curagendarius";
+"promote_to_admin" = "Ad promovere ad administrator";
+"devote" = "Demoted";
+"group_allow_post_for_everyone" = "Разрешить публиковать записи всем";
+"statistics" = "Статистика";
+
+"participants_zero" = "Quis particeps";
+"participants_one" = "Unum particeps";
+"participants_few" = "$1 pars";
+"participants_many" = "$1 participes";
+"participants_other" = "$1 participes";
+
+"groups_zero" = "Quis coetus";
+"groups_one" = "Unum coetus";
+"groups_few" = "$1 coetus";
+"groups_many" = "$1 coetibus";
+"groups_other" = "$1 coetibus";
+
+"meetings_zero" = "Nulla conventus";
+"meetings_one" = "Unus conventus";
+"meetings_few" = "$1 sessio";
+"meetings_many" = "$1 conventus";
+"meetings_other" = "$1 conventus";
+
+/* Albums */
+
+"create" = "Creare";
+"albums" = "Albums";
+"create_album" = "Ut creare an album";
+"edit_album" = "Edit album";
+"creating_album" = "Faciendum album";
+"upload_photo" = "Upload a photo";
+"photo" = "Photographia";
+"upload_button" = "Download";
+
+"avatar_album" = "Фотографии со страницы";
+"wall_album" = "Фотографии со стены";
+
+"albums_zero" = "Quis album";
+"albums_one" = "Unum album";
+"albums_few" = "$1 album";
+"albums_many" = "$1 albums";
+"albums_other" = "$1 albums";
+
+/* Notes */
+
+"notes" = "Notes";
+"note" = "Заметка";
+"name_note" = "Nomen";
+"text_note" = "Contenta";
+"create_note" = "Создать заметку";
+"actions" = "Actio";
+"feed" = "Nuntius";
+"publish_post" = "Adde introitu";
+
+"notes_zero" = "Nulla notis";
+"notes_one" = "Una nota";
+"notes_few" = "$1 notes";
+"notes_many" = "$1 notes";
+"notes_other" = "$1 notes";
+
+/* Menus */
+
+"edit_button" = "ed.";
+"my_page" = "Mea Page";
+"my_friends" = "Amici Mei";
+"my_photos" = "Mea Imaginibus";
+"my_videos" = "Mea Videos";
+"my_messages" = "Verba Mea";
+"my_notes" = "Notis Meis";
+"my_groups" = "Mea Coetus";
+"my_feed" = "Mea News";
+"my_feedback" = "Responsa Mea";
+"my_settings" = "Meus Occasus";
+"bug_tracker" = "Bug tracker";
+
+"menu_login" = "Вход";
+"menu_registration" = "Регистрация";
+"menu_help" = "Помощь";
+
+"header_home" = "consectetur";
+"header_groups" = "coetus";
+"header_donate" = "support";
+"header_people" = "homo";
+"header_invite" = "duis";
+"header_help" = "auxilium";
+"header_log_out" = "ex";
+"header_search" = "Investigatio";
+
+"header_login" = "Вход";
+"header_registration" = "Регистрация";
+"header_help" = "Помощь";
+
+"footer_blog" = "blog";
+"footer_help" = "auxilium";
+"footer_developers" = "tincidunt";
+"footer_choose_language" = "lego lingua";
+"footer_privacy" = "privacy";
+
+"notes_zero" = "Ни одной заметки";
+"notes_one" = "Одна заметка";
+"notes_few" = "$1 заметки";
+"notes_many" = "$1 заметок";
+"notes_other" = "$1 заметок";
+
+/* Settings */
+
+"main" = "Consectetur";
+"contacts" = "Contactus";
+"avatar" = "Avatar";
+"privacy" = "Privacy";
+"interface" = "Filum";
+
+"profile_picture" = "Imago page";
+
+"picture" = "Imago";
+
+"change_password" = "Mutare password";
+"old_password" = "Vetus signum";
+"new_password" = "New password";
+"repeat_password" = "Repetere signum";
+
+"avatars_style" = "Propono avatar";
+"style" = "Still";
+
+"default" = "Per defaltam";
+"cut" = "Putationis";
+"round_avatars" = "Per avatar";
+
+"search_for_groups" = "Quaerere coetus";
+"search_for_people" = "Populus quaerere";
+"search_button" = "Invenire";
+"privacy_setting_access_page" = "Кому в интернете видно мою страницу";
+"privacy_setting_read_info" = "Кому видно основную информацию моей страницы";
+"privacy_setting_see_groups" = "Кому видно мои группы и встречи";
+"privacy_setting_see_photos" = "Кому видно мои фотографии";
+"privacy_setting_see_videos" = "Кому видно мои видеозаписи";
+"privacy_setting_see_notes" = "Кому видно мои заметки";
+"privacy_setting_see_friends" = "Кому видно моих друзей";
+"privacy_setting_add_to_friends" = "Кто может называть меня другом";
+"privacy_setting_write_wall" = "Кто может писать у меня на стене";
+"privacy_value_anybody" = "Все желающие";
+"privacy_value_anybody_dative" = "Всем желающим";
+"privacy_value_users" = "Пользователям OpenVK";
+"privacy_value_friends" = "Друзья";
+"privacy_value_friends_dative" = "Друзьям";
+"privacy_value_only_me_and_super_capite" = "Я и Виталина Павленко";
+"privacy_value_only_me_and_super_capite_dative" = "Мне и Виталине Павленко";
+"privacy_value_super_capite" = "Виталине Павленко";
+
+"your_email_address" = "Адрес Вашей электронной почты";
+"your_page_address" = "Адрес Вашей страницы";
+"page_address" = "Адрес страницы";
+"current_email_address" = "Текущий адрес";
+"page_id" = "ID страницы";
+"you_can_also" = "Вы также можете";
+"delete_your_page" = "удалить свою страницу";
+"delete_album" = "удалить альбом";
+
+"ui_settings_interface" = "Интерфейс";
+"ui_settings_sidebar" = "Левое меню";
+"ui_settings_rating" = "Рейтинг";
+"ui_settings_rating_show" = "Показывать";
+"ui_settings_rating_hide" = "Скрывать";
+
+/* Sorting */
+
+"sort_randomly" = "Exstat passim";
+"sort_up" = "Sort by date usque";
+"sort_down" = "Sort by date descendit";
+
+/* Videos */
+
+"videos" = "Videos";
+"video" = "Video";
+"upload_video" = "Download video";
+"video_uploaded" = "Lorem";
+"video_updated" = "Amet";
+"video_link_to_yt" = "Donec YT";
+
+"video_name" = "Nomen";
+"video_description" = "Description";
+"video_uploaded_by" = "Lorem";
+"video_upload_date" = "Upload date";
+
+"videos_zero" = "Nulla videos";
+"videos_one" = "Unum video";
+"videos_few" = "$1 video";
+"videos_many" = "$1 movies";
+"videos_other" = "$1 movies";
+
+/* Notifications */
+
+"feedback" = "Respondet";
+"unread" = "Intactum,";
+"archive" = "Lorem ipsum dolor sit";
+
+"notifications_like" = "$1 sima $2запись$3 a $4";
+"notifications_repost" = "$1 communis(-Las) tua $2записью$3 a $4";
+"notifications_comment_under" = "$1 reliquit (La) review sub $2";
+"notifications_under_note" = "vestra $3заметкой$4";
+"notifications_under_photo" = "vestra $3фото$4";
+"notifications_under_post" = "vestra $3записью$4 a $5";
+"notifications_under_video" = "vestra $3видео$4";
+"notifications_post" = "$1 scriptum (La) $2запись$3 in pariete $4";
+"notifications_appoint" = "$1 nesvacil te Director communitatis $2";
+
+"nt_liked_yours" = "понравился ваш";
+"nt_shared_yours" = "поделился(-ась) вашим";
+"nt_commented_yours" = "оставил(а) комментарий под";
+"nt_written_on_your_wall" = "написал(а) на вашей стене";
+"nt_made_you_admin" = "назначил(а) вас руководителем сообщества";
+
+"nt_from" = "от";
+"nt_yours_adjective" = "вашим";
+"nt_yours_feminitive_adjective" = "вашей";
+"nt_post_nominative" = "пост";
+"nt_post_instrumental" = "постом";
+"nt_note_instrumental" = "заметкой";
+"nt_photo_instrumental" = "фотографией";
+
+/* Time */
+
+"time_at_sp" = " в ";
+"time_just_now" = "только что";
+"time_exactly_five_minutes_ago" = "ровно 5 минут назад";
+"time_minutes_ago" = "$1 минут назад";
+"time_today" = "сегодня";
+"time_yesterday" = "вчера";
+
+"privacy_setting_access_page" = "Кому в интернете видно мою страницу";
+"privacy_setting_read_info" = "Кому видно основную информацию моей страницы";
+"privacy_setting_see_groups" = "Кому видно мои группы и встречи";
+"privacy_setting_see_photos" = "Кому видно мои фотографии";
+"privacy_setting_see_videos" = "Кому видно мои видеозаписи";
+"privacy_setting_see_notes" = "Кому видно мои заметки";
+"privacy_setting_see_friends" = "Кому видно моих друзей";
+"privacy_setting_add_to_friends" = "Кто может называть меня другом";
+"privacy_setting_write_wall" = "Кто может писать у меня на стене";
+"privacy_value_anybody" = "Все желающие";
+"privacy_value_anybody_dative" = "Всем желающим";
+"privacy_value_users" = "Пользователям OpenVK";
+"privacy_value_friends" = "Друзья";
+"privacy_value_friends_dative" = "Друзьям";
+"privacy_value_only_me_and_super_capite" = "Только я";
+"privacy_value_only_me_and_super_capite_dative" = "Только мне";
+"privacy_value_super_capite" = "Никто";
+
+"your_email_address" = "Адрес Вашей электронной почты";
+"your_page_address" = "Адрес Вашей страницы";
+"page_address" = "Адрес страницы";
+"current_email_address" = "Текущий адрес";
+"page_id" = "ID страницы";
+"you_can_also" = "Вы также можете";
+"delete_your_page" = "удалить свою страницу";
+"delete_album" = "удалить альбом";
+
+"ui_settings_interface" = "Интерфейс";
+"ui_settings_sidebar" = "Левое меню";
+"ui_settings_rating" = "Рейтинг";
+"ui_settings_rating_show" = "Показывать";
+"ui_settings_rating_hide" = "Скрывать";
+
+"points" = "Голоса";
+"points_count" = "голосов";
+"on_your_account" = "на вашем счету";
+
+/* Errors */
+
+"error_1" = "Recte petentibus";
+"error_2" = "Irritum aut nomen usoris password";
+"error_3" = "Non auctoritate";
+"error_4" = "User non esse";
+"information_-1" = "Operatio peracta feliciter";
+"information_-2" = "Praesent sit amet";
+
+"no_data" = "Нет данных";
+"no_data_description" = "В этом представлении отсутствуют данные.";
+
+"error" = "Ошибка";
+"error_shorturl" = "Данный короткий адрес уже занят.";
+"error_segmentation" = "Ошибка сегментации";
+"error_upload_failed" = "Не удалось загрузить фото";
+"error_old_password" = "Старый пароль не совпадает";
+"error_new_password" = "Новые пароли не совпадает";
+"error_shorturl_incorrect" = "Короткий адрес имеет некорректный формат.";
+
+"forbidden" = "Ошибка доступа";
+"forbidden_comment" = "Настройки приватности этого пользователя не разрешают вам смотреть на его страницу.";
+
+"changes_saved" = "Изменения сохранены";
+"changes_saved_comment" = "Новый данные появятся на вашей странице";
+
+"photo_saved" = "Фотография сохранена";
+"photo_saved_comment" = "Новое изображние профиля появится у вас на странице";
+
+/* Admin actions */
+
+"login_as" = "Войти как $1";
+"ban_user_action" = "Забанить пользователя";
+"warn_user_action" = "Предупредить пользователя";
+
+/* Paginator */
+
+"paginator_back" = "Назад";
+"paginator_page" = "Страница $1";
+"paginator_next" = "Дальше";
