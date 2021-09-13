@@ -303,6 +303,11 @@ class User extends RowModel
     {
         return $this->getRecord()->notification_offset;
     }
+
+    function getBirthday(): int
+    {
+        return $this->getRecord()->birthday;
+    }
     
     function updateNotificationOffset(): void
     {

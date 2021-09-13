@@ -357,6 +357,10 @@
                         <td class="label"><span class="nobold">{_"politViews"}:</span></td>
                         <td class="data">{var $pviews = $user->getPoliticalViews()}{_"politViews_$pviews"}</td>
                     </tr>
+                    <tr>
+                        <td class="label"><span class="nobold">{_"birth_date"}:</span></td>
+                        <td class="data">{date('d F Y',$user->getBirthday())}, {date('Y') - date('Y', $user->getBirthday())} {_"years"}</td>
+                    </tr>
                 </tbody>
             </table>
 			</div>

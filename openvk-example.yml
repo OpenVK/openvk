@@ -23,6 +23,9 @@ openvk:
                 maxViolations: 50
                 maxViolationsAge: 120
                 autoban: true
+        registration:
+            enable: true
+            reason: "" # reason for disabling registration
         support:
             supportName: "Moderator"
             adminAccount: 1 # Change this ok

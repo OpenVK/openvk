@@ -21,6 +21,6 @@
     </ul>
     <center>
         <a class="button" style="margin-right: 5px;cursor: pointer;" href="/login">{_"log_in"}</a>
-        <a class="button" style="cursor: pointer;" href="/reg">{_"registration"}</a></center>
+        <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['registration']['enable']" class="button" style="cursor: pointer;" href="/reg">{_"registration"}</a></center>
     </div>
 {/block}

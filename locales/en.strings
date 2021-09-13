@@ -38,6 +38,8 @@
 "was_online_m" = "was online"; 
 /* For male and female */
 
+"years" = "y.o";
+
 "was_online_f" = "was online";
 "all_title" = "All";
 "information" = "Information";

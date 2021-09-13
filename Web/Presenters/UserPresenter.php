@@ -102,7 +102,9 @@ final class UserPresenter extends OpenVKPresenter
                     $user->setLast_Name(empty($this->postParam("last_name")) ? "" : $this->postParam("last_name"));
                     $user->setPseudo(empty($this->postParam("pseudo")) ? NULL : $this->postParam("pseudo"));
                     $user->setStatus(empty($this->postParam("status")) ? NULL : $this->postParam("status"));
-                    
+                    if (strtotime($this->postParam("birthday")) > 10)
+                    $user->setBirthday(strtotime($this->postParam("birthday")));
+
                     if ($this->postParam("marialstatus") <= 8 && $this->postParam("marialstatus") >= 0)
                     $user->setMarital_Status($this->postParam("marialstatus"));
                     
