@@ -1,415 +1,415 @@
-"__locale" = "ploc_us.UTF-8;Eng";
-
-%{ Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html %}
-
-%{ Main page %}
-
-"home" = "[!!! Hô₥è  !!!]";
-"welcome" = "[!!! Wèℓçô₥è ℓ !!!]";
-
-%{ Login %}
-
-"log_in" = "[!!! £ôϱ ïñ ℓ !!!]";
-"password" = "[!!! Þáƨƨωôřδ ℓ !!!]";
-"registration" = "[!!! Rèϱïƨƭřáƭïôñ ℓôř !!!]";
-
-%{ Profile information %}
-
-"select_language" = "[!!! Çλôôƨè ℓáñϱúáϱè ℓôřè !!!]";
-"edit" = "[!!! èδïƭ  !!!]";
-"birth_date" = "[!!! ßïřƭλ δáƭè ℓô !!!]";
-"registration_date" = "[!!! Rèϱïƨƭřáƭïôñ δáƭè ℓôřè !!!]";
-"hometown" = "[!!! Hô₥èƭôωñ ℓ !!!]";
-"this_is_you" = "[!!! ƭλáƭ ïƨ Ýôú ℓô !!!]";
-"edit_page" = "Edit page";
-"edit_group" = "Edit group";
-"change_status" = "change status";
-"name" = "Name";
-"surname" = "Surname";
-"gender" = "Gender";
-"male" = "male";
-"female" = "female";
-"description" = "Description";
-"save" = "Save";
-"main_information" = "Main information";
-"nickname" = "Nickname";
-"online" = "Online";
-"was_online" = "was online";
-"was_online_m" = "was online"; 
-"years" = "y.o";
-
-%{ For male and female %}
-
-"was_online_f" = "was online";
-"all_title" = "All";
-"information" = "Information";
-"status" = "Status";
-"no_information_provided" = "No information provided.";
-"deceased_person" = "Deceased person";
-
-"relationship" = "Relationship";
-
-"relationship_0" = "Not selected";
-"relationship_1" = "Not married";
-"relationship_2" = "Dating";
-"relationship_3" = "Engaged";
-"relationship_4" = "Married";
-"relationship_5" = "In a civil marriage";
-"relationship_6" = "In love";
-"relationship_7" = "Everything is complicated";
-"relationship_8" = "Actively searching";
-
-"politViews" = "Polit. Views";
-
-"politViews_0" = "Not Selected";
-"politViews_1" = "Indifferent";
-"politViews_2" = "Communist";
-"politViews_3" = "Socialist";
-"politViews_4" = "Moderate";
-"politViews_5" = "Liberal";
-"politViews_6" = "Conservative";
-"politViews_7" = "Monarchical";
-"politViews_8" = "Ultra-Conservative";
-"politViews_9" = "Libertarian";
-
-"contact_information" = "Contact information";
-
-"email" = "Email";
-"phone" = "Phone";
-"telegram" = "Telegram";
-"city" = "City";
-"address" = "Address";
-
-"personal_information" = "Personal information";
-
-"interests" = "Interests";
-"favorite_music" = "Favorite music";
-"favorite_films" = "Favorite flims";
-"favorite_shows" = "Favorite TV-shows";
-"favorite_books" = "Favorite books";
-"favorite_quotes" = "Favorite quotes";
-"information_about" = "About";
-
-"updated_at" = "Updated at $1";
-
-%{ Wall %}
-
-"post_writes_m" = "wrote";
-"post_writes_f" = "wrote";
-"wall" = "Wall";
-"post" = "Post";
-"write" = "Write";
-"publish" = "Publish";
-"delete" = "Delete";
-"comments" = "Comments";
-"share" = "Share";
-"comments_tip" = "Be first, who leaves a comment at this post!";
-"your_comment" = "Your comment";
-"comments" = "Comments";
-"shown" = "Shown";
-"x_out_of" = "$1 of";
-"wall_zero" = "no posts";
-"wall_one" = "$1 post";
-"wall_other" = "$1 posts";
-"feed" = "News";
-"publish_post" = "Add post";
-
-"nsfw_warning" = "This post may have NSFW-content";
-"report" = "Report";
-"attach_photo" = "Attach photo";
-"no_posts_abstract" = "Nobody wrote anything here... At least.";
-
-%{ Friends %}
-
-"friends" = "Friends";
-"followers" = "Followers";
-"follower" = "Follower";
-"friends_add" = "Add to friends";
-"friends_delete" = "Remove from friends";
-"friends_reject" = "Reject request";
-"friends_accept" = "Accept request";
-"send_message" = "Send a message";
-"incoming_req" = "Subscribers";
-"outcoming_req" = "Requests";
-"req" = "Requests";
-
-"firends_zero" = "No friends";
-"friends_one" = "$1 friend";
-"friends_other" = "$1 friends";
-
-"followers_zero" = "No followers";
-"followers_one" = "$1 follower";
-"followers_other" = "$1 followers";
-
-"subscriptions_zero" = "No subscriptions";
-"subscriptions_one" = "$1 subscription";
-"subscriptions_other" = "$1 subscriptions";
-
-%{ Group %}
-
-"name_group" = "Name";
-"subscribe" = "Subscribe";
-"unsubscribe" = "Unsubscribe";
-"subscriptions" = "Subscriptions";
-"join_community" = "Join community";
-"leave_community" = "Leave community";
-"min_6_community" = "Name of the group must have more that 6 characters";
-"participants" = "Participants";
-"groups" = "Groups";
-"meetings" = "Meetings";
-"create_group" = "Create group";
-"group_managers" = "Managers";
-"group_type" = "Group type";
-"group_type_open" = "This is an open group, anyone can enter it.";
-"group_type_closed" = "This is an closed group. To enter, you must submit an request.";
-"creator" = "Creator";
-
-"role" = "Role";
-"administrator" = "Administrator";
-"promote_to_admin" = "Promote to admin";
-"devote" = "Devote";
-"group_allow_post_for_everyone" = "Allow posting for everyone";
-"statistics" = "Statistics";
-
-"participants_zero" = "No participants";
-"participants_one" = "$1 participant";
-"participants_other" = "$1 participant";
-
-"groups_zero" = "No groups";
-"groups_one" = "$1 group";
-"groups_other" = "$1 groups";
-
-"meetings_zero" = "No meetings";
-"meetings_one" = "$1 meeting";
-"meetings_other" = "$1 meetings";
-
-%{ Albums %}
-
-"create" = "Create";
-"albums" = "Albums";
-"create_album" = "Create album";
-"edit_album" = "Edit album";
-"creating_album" = "Creating album";
-"upload_photo" = "Upload photo";
-"photo" = "Photo";
-"upload_button" = "Upload";
-
-"albums_zero" = "No albums";
-"albums_one" = "$1 album";
-"albums_other" = "$1 albums";
-
-%{ Notes %}
-
-"notes" = "Notes";
-"note" = "Note";
-"name_note" = "Title";
-"text_note" = "Content";
-"create_note" = "Create note";
-"actions" = "Actions";
-
-"notes_zero" = "No notes";
-"notes_one" = "$1 note";
-"notes_other" = "$1 notes";
-
-%{ Menus %}
-
-%{ Note that is string need to fit into the "My Page" link %}
-
-"edit_button" = "edit";
-"my_page" = "My Page";
-"my_friends" = "My Friends";
-"my_photos" = "My Photos";
-"my_videos" = "My Videos";
-"my_messages" = "My Messages";
-"my_notes" = "My Notes";
-"my_groups" = "My Groups";
-"my_feed" = "My Feed";
-"my_feedback" = "My Feedback";
-"my_settings" = "My Settings";
-"bug_tracker" = "Bug-tracker";
-
-"menu_login" = "Login";
-"menu_registration" = "Registration";
-"menu_help" = "Help";
-
-"header_home" = "home";
-"header_groups" = "groups";
-"header_donate" = "donate";
-"header_people" = "people";
-"header_invite" = "invite";
-"header_help" = "help";
-"header_log_out" = "log out";
-"header_search" = "Search";
-
-"header_login" = "login";
-"header_registration" = "registration";
-"header_help" = "help";
-
-"footer_blog" = "blog";
-"footer_help" = "help";
-"footer_developers" = "developers";
-"footer_choose_language" = "choose language";
-"footer_privacy" = "privacy";
-
-%{ Settings %}
-
-"main" = "Main";
-"contacts" = "Contacts";
-"avatar" = "Avatar";
-"privacy" = "privacy";
-"interface" = "Interface";
-
-"profile_picture" = "Profile picture";
-
-"picture" = "Picture";
-
-"change_password" = "Change password";
-"old_password" = "Old password";
-"new_password" = "New password";
-"repeat_password" = "Repeat password";
-
-"avatars_style" = "Avatar style";
-"style" = "Style";
-
-"default" = "Default";
-"cut" = "Cut";
-"round_avatars" = "Round avatars";
-
-"search_for_groups" = "Search for groups";
-"search_for_people" = "Search for people";
-"search_button" = "Find";
-"privacy_setting_access_page" = "Who can view my page";
-"privacy_setting_read_info" = "Who can see main information of my page";
-"privacy_setting_see_groups" = "Who can see my groups and meetings";
-"privacy_setting_see_photos" = "Who can see my photos";
-"privacy_setting_see_videos" = "Who can see my videos";
-"privacy_setting_see_notes" = "Who can see my notes";
-"privacy_setting_see_friends" = "Who can see my friends";
-"privacy_setting_add_to_friends" = "Who can add me to friends";
-"privacy_setting_write_wall" = "Who can publish post on my wall";
-"privacy_value_anybody" = "Anybody";
-"privacy_value_anybody_dative" = "Anybody";
-"privacy_value_users" = "OpenVK users";
-"privacy_value_friends" = "Friends";
-"privacy_value_friends_dative" = "Friends";
-"privacy_value_only_me" = "Only me";
-"privacy_value_only_me_dative" = "Only me";
-
-"your_email_address" = "Your Email address";
-"your_page_address" = "Your address page";
-"page_address" = "Address page";
-"current_email_address" = "Current email address";
-"page_id" = "Page ID";
-"you_can_also" = "You can also";
-"delete_your_page" = "delete your page";
-"delete_album" = "delete album";
-
-"ui_settings_interface" = "Interface";
-"ui_settings_sidebar" = "Left menu";
-"ui_settings_rating" = "Rating";
-"ui_settings_rating_show" = "Show";
-"ui_settings_rating_hide" = "Hide";
-
-%{ Sorting %}
-
-"sort_randomly" = "Sort randomly";
-"sort_up" = "Sort by ID up";
-"sort_down" = "Sort by ID down";
-
-%{ Videos %}
-
-"videos" = "Videos";
-"video" = "Video";
-"upload_video" = "Upload video";
-"video_uploaded" = "Uploaded";
-"video_updated" = "Updated";
-"video_link_to_yt" = "YT link";
-
-"video_name" = "Title";
-"video_description" = "Description";
-"video_uploaded_by" = "Uploaded by";
-"video_upload_date" = "Upload date";
-
-"videos_zero" = "No videos";
-"videos_one" = "$1 video";
-"videos_other" = "$1 videos";
-
-%{ Notifications %}
-
-"feedback" = "Feedback";
-"unread" = "Unread";
-"archive" = "Archive";
-
-"notifications_like" = "$1 liked your $2post$3 from $4";
-"notifications_repost" = "$1 shared your $2post$3 from $4";
-"notifications_comment_under" = "$1 leaved a comment on $2";
-"notifications_under_note" = "your $3note$4";
-"notifications_under_photo" = "your $3photo$4";
-"notifications_under_post" = "your $3post$4 from $5";
-"notifications_under_video" = "your $3video$4";
-"notifications_post" = "$1 published $2a post$3 on your wall: $4";
-"notifications_appoint" = "$1 appointed you as community manager $2";
-
-"nt_liked_yours" = "liked yours";
-"nt_shared_yours" = "shared yours";
-"nt_commented_yours" = "commented yours";
-"nt_written_on_your_wall" = "wrote on your wall";
-"nt_made_you_admin" = "appointed you in the community";
-
-"nt_from" = "from";
-"nt_yours_adjective" = "yours";
-"nt_yours_feminitive_adjective" = "yours";
-"nt_post_nominative" = "post";
-"nt_post_instrumental" = "post";
-"nt_note_instrumental" = "note";
-"nt_photo_instrumental" = "photo";
-
-%{ Time %}
-
-"time_at_sp" = " at ";
-"time_just_now" = "just now";
-"time_exactly_five_minutes_ago" = "5 minutes ago";
-"time_minutes_ago" = "$1 minutes ago";
-"time_today" = "today";
-"time_yesterday" = "yesterday";
-
-%{ Errors %}
-
-"error_1" = "Incorrect query";
-"error_2" = "Incorrect login and password";
-"error_3" = "Non authorized";
-"error_4" = "User does not exist";
-"information_-1" = "Success";
-"information_-2" = "Login success";
-
-"no_data" = "No data";
-"no_data_description" = "There is no data.";
-
-"error" = "Error";
-"error_shorturl" = "This short address is already owned.";
-"error_segmentation" = "Segmentation error";
-"error_upload_failed" = "Failed to upload a photo";
-"error_old_password" = "Old password does not match";
-"error_new_password" = "New password does not match";
-"error_shorturl_incorrect" = "The short address has an incorrect format.";
-
-"forbidden" = "Access error";
-"forbidden_comment" = "This user\'s privacy settings do not allow you to look at his page.";
-
-"changes_saved" = "Changes saved";
-"changes_saved_comment" = "New data will appear on your page";
-
-"photo_saved" = "Photo saved";
-"photo_saved_comment" = "New profile picture will appear on your page";
-
-%{ Admin actions %}
-
-"login_as" = "Login as $1";
-"ban_user_action" = "Ban user";
-"warn_user_action" = "Warn user";
-
-%{ Paginator %}
-
-"paginator_back" = "Back";
-"paginator_page" = "Page $1";
-"paginator_next" = "Next";
+"__locale" = "en_US.UTF-8;Eng";
+
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
+
+/* Main page */
+
+"home" = "Hô₥è";
+"welcome" = "Wèℓçô₥è";
+
+/* Login */
+
+"log_in" = "£ôϱ ïñ";
+"password" = "Þáƨƨωôřδ";
+"registration" = "Rèϱïƨƭřáƭïôñ";
+
+/* Profile information */
+
+"select_language" = "Çλôôƨè ℓáñϱúáϱè";
+"edit" = "èδïƭ";
+"birth_date" = "ßïřƭλ δáƭè";
+"registration_date" = "Rèϱïƨƭřáƭïôñ δáƭè";
+"hometown" = "Hô₥èƭôωñ";
+"this_is_you" = "ƭλáƭ ïƨ Ýôú";
+"edit_page" = "Éδïƭ ƥáϱè";
+"edit_group" = "Éδïƭ ϱřôúƥ";
+"change_status" = "çλáñϱè ƨƭáƭúƨ";
+"name" = "Ná₥è";
+"surname" = "§úřñá₥è";
+"gender" = "Gèñδèř";
+"male" = "₥áℓè";
+"female" = "ƒè₥áℓè";
+"description" = "Ðèƨçřïƥƭïôñ";
+"save" = "§áƲè";
+"main_information" = "Máïñ ïñƒôř₥áƭïôñ";
+"nickname" = "Nïçƙñá₥è";
+"online" = "Óñℓïñè";
+"was_online" = "ωáƨ ôñℓïñè";
+"was_online_m" = "ωáƨ ôñℓïñè"; 
+/* For male and female */
+
+"years" = "¥.ô";
+
+"was_online_f" = "ωáƨ ôñℓïñè";
+"all_title" = "Âℓℓ";
+"information" = "Ìñƒôř₥áƭïôñ";
+"status" = "§ƭáƭúƨ";
+"no_information_provided" = "Nô ïñƒôř₥áƭïôñ ƥřôƲïδèδ.";
+"deceased_person" = "Ðèçèáƨèδ ƥèřƨôñ";
+
+"relationship" = "Rèℓáƭïôñƨλïƥ";
+
+"relationship_0" = "Nôƭ ƨèℓèçƭèδ";
+"relationship_1" = "Nôƭ ₥ářřïèδ";
+"relationship_2" = "Ðáƭïñϱ";
+"relationship_3" = "Éñϱáϱèδ";
+"relationship_4" = "Mářřïèδ";
+"relationship_5" = "Ìñ á çïƲïℓ ₥ářřïáϱè";
+"relationship_6" = "Ìñ ℓôƲè";
+"relationship_7" = "ÉƲèř¥ƭλïñϱ ïƨ çô₥ƥℓïçáƭèδ";
+"relationship_8" = "ÂçƭïƲèℓ¥ ƨèářçλïñϱ";
+
+"politViews" = "Þôℓïƭ. Vïèωƨ";
+
+"politViews_0" = "Nôƭ §èℓèçƭèδ";
+"politViews_1" = "Ìñδïƒƒèřèñƭ";
+"politViews_2" = "Çô₥₥úñïƨƭ";
+"politViews_3" = "§ôçïáℓïƨƭ";
+"politViews_4" = "Môδèřáƭè";
+"politViews_5" = "£ïβèřáℓ";
+"politViews_6" = "ÇôñƨèřƲáƭïƲè";
+"politViews_7" = "Môñářçλïçáℓ";
+"politViews_8" = "Ûℓƭřá-ÇôñƨèřƲáƭïƲè";
+"politViews_9" = "£ïβèřƭářïáñ";
+
+"contact_information" = "Çôñƭáçƭ ïñƒôř₥áƭïôñ";
+
+"email" = "É₥áïℓ";
+"phone" = "Þλôñè";
+"telegram" = "Tèℓèϱřá₥";
+"city" = "Çïƭ¥";
+"address" = "Âδδřèƨƨ";
+
+"personal_information" = "Þèřƨôñáℓ ïñƒôř₥áƭïôñ";
+
+"interests" = "Ìñƭèřèƨƭƨ";
+"favorite_music" = "FáƲôřïƭè ₥úƨïç";
+"favorite_films" = "FáƲôřïƭè ƒℓï₥ƨ";
+"favorite_shows" = "FáƲôřïƭè TV-ƨλôωƨ";
+"favorite_books" = "FáƲôřïƭè βôôƙƨ";
+"favorite_quotes" = "FáƲôřïƭè 9úôƭèƨ";
+"information_about" = "Âβôúƭ";
+
+"updated_at" = "Ûƥδáƭèδ áƭ $1";
+
+/* Wall */
+
+"post_writes_m" = "ωřôƭè";
+"post_writes_f" = "ωřôƭè";
+"wall" = "Wáℓℓ";
+"post" = "Þôƨƭ";
+"write" = "Wřïƭè";
+"publish" = "Þúβℓïƨλ";
+"delete" = "Ðèℓèƭè";
+"comments" = "Çô₥₥èñƭƨ";
+"share" = "§λářè";
+"comments_tip" = "ßè ƒïřƨƭ, ωλô ℓèáƲèƨ á çô₥₥èñƭ áƭ ƭλïƨ ƥôƨƭ!";
+"your_comment" = "Ýôúř çô₥₥èñƭ";
+"comments" = "Çô₥₥èñƭƨ";
+"shown" = "§λôωñ";
+"x_out_of" = "$1 ôƒ";
+"wall_zero" = "ñô ƥôƨƭƨ";
+"wall_one" = "$1 ƥôƨƭ";
+"wall_other" = "$1 ƥôƨƭƨ";
+"feed" = "Nèωƨ";
+"publish_post" = "Âδδ ƥôƨƭ";
+
+"nsfw_warning" = "Tλïƨ ƥôƨƭ ₥á¥ λáƲè N§FW-çôñƭèñƭ";
+"report" = "Rèƥôřƭ";
+"attach_photo" = "Âƭƭáçλ ƥλôƭô";
+"no_posts_abstract" = "Nôβôδ¥ ωřôƭè áñ¥ƭλïñϱ λèřè... Âƭ ℓèáƨƭ.";
+
+/* Friends */
+
+"friends" = "Fřïèñδƨ";
+"followers" = "Fôℓℓôωèřƨ";
+"follower" = "Fôℓℓôωèř";
+"friends_add" = "Âδδ ƭô ƒřïèñδƨ";
+"friends_delete" = "Rè₥ôƲè ƒřô₥ ƒřïèñδƨ";
+"friends_reject" = "RèJèçƭ řè9úèƨƭ";
+"friends_accept" = "Âççèƥƭ řè9úèƨƭ";
+"send_message" = "§èñδ á ₥èƨƨáϱè";
+"incoming_req" = "§úβƨçřïβèřƨ";
+"outcoming_req" = "Rè9úèƨƭƨ";
+"req" = "Rè9úèƨƭƨ";
+
+"firends_zero" = "Nô ƒřïèñδƨ";
+"friends_one" = "$1 ƒřïèñδ";
+"friends_other" = "$1 ƒřïèñδƨ";
+
+"followers_zero" = "Nô ƒôℓℓôωèřƨ";
+"followers_one" = "$1 ƒôℓℓôωèř";
+"followers_other" = "$1 ƒôℓℓôωèřƨ";
+
+"subscriptions_zero" = "Nô ƨúβƨçřïƥƭïôñƨ";
+"subscriptions_one" = "$1 ƨúβƨçřïƥƭïôñ";
+"subscriptions_other" = "$1 ƨúβƨçřïƥƭïôñƨ";
+
+/* Group */
+
+"name_group" = "Ná₥è";
+"subscribe" = "§úβƨçřïβè";
+"unsubscribe" = "Ûñƨúβƨçřïβè";
+"subscriptions" = "§úβƨçřïƥƭïôñƨ";
+"join_community" = "Jôïñ çô₥₥úñïƭ¥";
+"leave_community" = "£èáƲè çô₥₥úñïƭ¥";
+"min_6_community" = "Ná₥è ôƒ ƭλè ϱřôúƥ ₥úƨƭ λáƲè ₥ôřè ƭλáƭ 6 çλářáçƭèřƨ";
+"participants" = "Þářƭïçïƥáñƭƨ";
+"groups" = "Gřôúƥƨ";
+"meetings" = "Mèèƭïñϱƨ";
+"create_group" = "Çřèáƭè ϱřôúƥ";
+"group_managers" = "Máñáϱèřƨ";
+"group_type" = "Gřôúƥ ƭ¥ƥè";
+"group_type_open" = "Tλïƨ ïƨ áñ ôƥèñ ϱřôúƥ, áñ¥ôñè çáñ èñƭèř ïƭ.";
+"group_type_closed" = "Tλïƨ ïƨ áñ çℓôƨèδ ϱřôúƥ. Tô èñƭèř, ¥ôú ₥úƨƭ ƨúβ₥ïƭ áñ řè9úèƨƭ.";
+"creator" = "Çřèáƭôř";
+
+"role" = "Rôℓè";
+"administrator" = "Âδ₥ïñïƨƭřáƭôř";
+"promote_to_admin" = "Þřô₥ôƭè ƭô áδ₥ïñ";
+"devote" = "ÐèƲôƭè";
+"group_allow_post_for_everyone" = "Âℓℓôω ƥôƨƭïñϱ ƒôř èƲèř¥ôñè";
+"statistics" = "§ƭáƭïƨƭïçƨ";
+
+"participants_zero" = "Nô ƥářƭïçïƥáñƭƨ";
+"participants_one" = "$1 ƥářƭïçïƥáñƭ";
+"participants_other" = "$1 ƥářƭïçïƥáñƭ";
+
+"groups_zero" = "Nô ϱřôúƥƨ";
+"groups_one" = "$1 ϱřôúƥ";
+"groups_other" = "$1 ϱřôúƥƨ";
+
+"meetings_zero" = "Nô ₥èèƭïñϱƨ";
+"meetings_one" = "$1 ₥èèƭïñϱ";
+"meetings_other" = "$1 ₥èèƭïñϱƨ";
+
+/* Albums */
+
+"create" = "Çřèáƭè";
+"albums" = "Âℓβú₥ƨ";
+"create_album" = "Çřèáƭè áℓβú₥";
+"edit_album" = "Éδïƭ áℓβú₥";
+"creating_album" = "Çřèáƭïñϱ áℓβú₥";
+"upload_photo" = "Ûƥℓôáδ ƥλôƭô";
+"photo" = "Þλôƭô";
+"upload_button" = "Ûƥℓôáδ";
+
+"albums_zero" = "Nô áℓβú₥ƨ";
+"albums_one" = "$1 áℓβú₥";
+"albums_other" = "$1 áℓβú₥ƨ";
+
+/* Notes */
+
+"notes" = "Nôƭèƨ";
+"note" = "Nôƭè";
+"name_note" = "Tïƭℓè";
+"text_note" = "Çôñƭèñƭ";
+"create_note" = "Çřèáƭè ñôƭè";
+"actions" = "Âçƭïôñƨ";
+
+"notes_zero" = "Nô ñôƭèƨ";
+"notes_one" = "$1 ñôƭè";
+"notes_other" = "$1 ñôƭèƨ";
+
+/* Menus */
+
+/* Note that is string need to fit into the "My Page" link */
+
+"edit_button" = "èδïƭ";
+"my_page" = "M¥ Þáϱè";
+"my_friends" = "M¥ Fřïèñδƨ";
+"my_photos" = "M¥ Þλôƭôƨ";
+"my_videos" = "M¥ Vïδèôƨ";
+"my_messages" = "M¥ Mèƨƨáϱèƨ";
+"my_notes" = "M¥ Nôƭèƨ";
+"my_groups" = "M¥ Gřôúƥƨ";
+"my_feed" = "M¥ Fèèδ";
+"my_feedback" = "M¥ Fèèδβáçƙ";
+"my_settings" = "M¥ §èƭƭïñϱƨ";
+"bug_tracker" = "ßúϱ-ƭřáçƙèř";
+
+"menu_login" = "£ôϱïñ";
+"menu_registration" = "Rèϱïƨƭřáƭïôñ";
+"menu_help" = "Hèℓƥ";
+
+"header_home" = "λô₥è";
+"header_groups" = "ϱřôúƥƨ";
+"header_donate" = "δôñáƭè";
+"header_people" = "ƥèôƥℓè";
+"header_invite" = "ïñƲïƭè";
+"header_help" = "λèℓƥ";
+"header_log_out" = "ℓôϱ ôúƭ";
+"header_search" = "§èářçλ";
+
+"header_login" = "ℓôϱïñ";
+"header_registration" = "řèϱïƨƭřáƭïôñ";
+"header_help" = "λèℓƥ";
+
+"footer_blog" = "βℓôϱ";
+"footer_help" = "λèℓƥ";
+"footer_developers" = "δèƲèℓôƥèřƨ";
+"footer_choose_language" = "çλôôƨè ℓáñϱúáϱè";
+"footer_privacy" = "ƥřïƲáç¥";
+
+/* Settings */
+
+"main" = "Máïñ";
+"contacts" = "Çôñƭáçƭƨ";
+"avatar" = "ÂƲáƭář";
+"privacy" = "ƥřïƲáç¥";
+"interface" = "Ìñƭèřƒáçè";
+
+"profile_picture" = "Þřôƒïℓè ƥïçƭúřè";
+
+"picture" = "Þïçƭúřè";
+
+"change_password" = "Çλáñϱè ƥáƨƨωôřδ";
+"old_password" = "Óℓδ ƥáƨƨωôřδ";
+"new_password" = "Nèω ƥáƨƨωôřδ";
+"repeat_password" = "Rèƥèáƭ ƥáƨƨωôřδ";
+
+"avatars_style" = "ÂƲáƭář ƨƭ¥ℓè";
+"style" = "§ƭ¥ℓè";
+
+"default" = "Ðèƒáúℓƭ";
+"cut" = "Çúƭ";
+"round_avatars" = "Rôúñδ áƲáƭářƨ";
+
+"search_for_groups" = "§èářçλ ƒôř ϱřôúƥƨ";
+"search_for_people" = "§èářçλ ƒôř ƥèôƥℓè";
+"search_button" = "Fïñδ";
+"privacy_setting_access_page" = "Wλô çáñ Ʋïèω ₥¥ ƥáϱè";
+"privacy_setting_read_info" = "Wλô çáñ ƨèè ₥áïñ ïñƒôř₥áƭïôñ ôƒ ₥¥ ƥáϱè";
+"privacy_setting_see_groups" = "Wλô çáñ ƨèè ₥¥ ϱřôúƥƨ áñδ ₥èèƭïñϱƨ";
+"privacy_setting_see_photos" = "Wλô çáñ ƨèè ₥¥ ƥλôƭôƨ";
+"privacy_setting_see_videos" = "Wλô çáñ ƨèè ₥¥ Ʋïδèôƨ";
+"privacy_setting_see_notes" = "Wλô çáñ ƨèè ₥¥ ñôƭèƨ";
+"privacy_setting_see_friends" = "Wλô çáñ ƨèè ₥¥ ƒřïèñδƨ";
+"privacy_setting_add_to_friends" = "Wλô çáñ áδδ ₥è ƭô ƒřïèñδƨ";
+"privacy_setting_write_wall" = "Wλô çáñ ƥúβℓïƨλ ƥôƨƭ ôñ ₥¥ ωáℓℓ";
+"privacy_value_anybody" = "Âñ¥βôδ¥";
+"privacy_value_anybody_dative" = "Âñ¥βôδ¥";
+"privacy_value_users" = "ÓƥèñVK úƨèřƨ";
+"privacy_value_friends" = "Fřïèñδƨ";
+"privacy_value_friends_dative" = "Fřïèñδƨ";
+"privacy_value_only_me" = "Óñℓ¥ ₥è";
+"privacy_value_only_me_dative" = "Óñℓ¥ ₥è";
+
+"your_email_address" = "Ýôúř É₥áïℓ áδδřèƨƨ";
+"your_page_address" = "Ýôúř áδδřèƨƨ ƥáϱè";
+"page_address" = "Âδδřèƨƨ ƥáϱè";
+"current_email_address" = "Çúřřèñƭ è₥áïℓ áδδřèƨƨ";
+"page_id" = "Þáϱè ÌÐ";
+"you_can_also" = "Ýôú çáñ áℓƨô";
+"delete_your_page" = "δèℓèƭè ¥ôúř ƥáϱè";
+"delete_album" = "δèℓèƭè áℓβú₥";
+
+"ui_settings_interface" = "Ìñƭèřƒáçè";
+"ui_settings_sidebar" = "£èƒƭ ₥èñú";
+"ui_settings_rating" = "Ráƭïñϱ";
+"ui_settings_rating_show" = "§λôω";
+"ui_settings_rating_hide" = "Hïδè";
+
+/* Sorting */
+
+"sort_randomly" = "§ôřƭ řáñδô₥ℓ¥";
+"sort_up" = "§ôřƭ β¥ ÌÐ úƥ";
+"sort_down" = "§ôřƭ β¥ ÌÐ δôωñ";
+
+/* Videos */
+
+"videos" = "Vïδèôƨ";
+"video" = "Vïδèô";
+"upload_video" = "Ûƥℓôáδ Ʋïδèô";
+"video_uploaded" = "Ûƥℓôáδèδ";
+"video_updated" = "Ûƥδáƭèδ";
+"video_link_to_yt" = "ÝT ℓïñƙ";
+
+"video_name" = "Tïƭℓè";
+"video_description" = "Ðèƨçřïƥƭïôñ";
+"video_uploaded_by" = "Ûƥℓôáδèδ β¥";
+"video_upload_date" = "Ûƥℓôáδ δáƭè";
+
+"videos_zero" = "Nô Ʋïδèôƨ";
+"videos_one" = "$1 Ʋïδèô";
+"videos_other" = "$1 Ʋïδèôƨ";
+
+/* Notifications */
+
+"feedback" = "Fèèδβáçƙ";
+"unread" = "Ûñřèáδ";
+"archive" = "ÂřçλïƲè";
+
+"notifications_like" = "$1 ℓïƙèδ ¥ôúř $2ƥôƨƭ$3 ƒřô₥ $4";
+"notifications_repost" = "$1 ƨλářèδ ¥ôúř $2ƥôƨƭ$3 ƒřô₥ $4";
+"notifications_comment_under" = "$1 ℓèáƲèδ á çô₥₥èñƭ ôñ $2";
+"notifications_under_note" = "¥ôúř $3ñôƭè$4";
+"notifications_under_photo" = "¥ôúř $3ƥλôƭô$4";
+"notifications_under_post" = "¥ôúř $3ƥôƨƭ$4 ƒřô₥ $5";
+"notifications_under_video" = "¥ôúř $3Ʋïδèô$4";
+"notifications_post" = "$1 ƥúβℓïƨλèδ $2á ƥôƨƭ$3 ôñ ¥ôúř ωáℓℓ: $4";
+"notifications_appoint" = "$1 áƥƥôïñƭèδ ¥ôú áƨ çô₥₥úñïƭ¥ ₥áñáϱèř $2";
+
+"nt_liked_yours" = "ℓïƙèδ ¥ôúřƨ";
+"nt_shared_yours" = "ƨλářèδ ¥ôúřƨ";
+"nt_commented_yours" = "çô₥₥èñƭèδ ¥ôúřƨ";
+"nt_written_on_your_wall" = "ωřôƭè ôñ ¥ôúř ωáℓℓ";
+"nt_made_you_admin" = "áƥƥôïñƭèδ ¥ôú ïñ ƭλè çô₥₥úñïƭ¥";
+
+"nt_from" = "ƒřô₥";
+"nt_yours_adjective" = "¥ôúřƨ";
+"nt_yours_feminitive_adjective" = "¥ôúřƨ";
+"nt_post_nominative" = "ƥôƨƭ";
+"nt_post_instrumental" = "ƥôƨƭ";
+"nt_note_instrumental" = "ñôƭè";
+"nt_photo_instrumental" = "ƥλôƭô";
+
+/* Time */
+
+"time_at_sp" = " áƭ ";
+"time_just_now" = "Júƨƭ ñôω";
+"time_exactly_five_minutes_ago" = "5 ₥ïñúƭèƨ áϱô";
+"time_minutes_ago" = "$1 ₥ïñúƭèƨ áϱô";
+"time_today" = "ƭôδá¥";
+"time_yesterday" = "¥èƨƭèřδá¥";
+
+/* Errors */
+
+"error_1" = "Ìñçôřřèçƭ 9úèř¥";
+"error_2" = "Ìñçôřřèçƭ ℓôϱïñ áñδ ƥáƨƨωôřδ";
+"error_3" = "Nôñ áúƭλôřïƺèδ";
+"error_4" = "Ûƨèř δôèƨ ñôƭ èжïƨƭ";
+"information_-1" = "§úççèƨƨ";
+"information_-2" = "£ôϱïñ ƨúççèƨƨ";
+
+"no_data" = "Nô δáƭá";
+"no_data_description" = "Tλèřè ïƨ ñô δáƭá.";
+
+"error" = "Éřřôř";
+"error_shorturl" = "Tλïƨ ƨλôřƭ áδδřèƨƨ ïƨ áℓřèáδ¥ ôωñèδ.";
+"error_segmentation" = "§èϱ₥èñƭáƭïôñ èřřôř";
+"error_upload_failed" = "Fáïℓèδ ƭô úƥℓôáδ á ƥλôƭô";
+"error_old_password" = "Óℓδ ƥáƨƨωôřδ δôèƨ ñôƭ ₥áƭçλ";
+"error_new_password" = "Nèω ƥáƨƨωôřδ δôèƨ ñôƭ ₥áƭçλ";
+"error_shorturl_incorrect" = "Tλè ƨλôřƭ áδδřèƨƨ λáƨ áñ ïñçôřřèçƭ ƒôř₥áƭ.";
+
+"forbidden" = "Âççèƨƨ èřřôř";
+"forbidden_comment" = "Tλïƨ úƨèř\'ƨ ƥřïƲáç¥ ƨèƭƭïñϱƨ δô ñôƭ áℓℓôω ¥ôú ƭô ℓôôƙ áƭ λïƨ ƥáϱè.";
+
+"changes_saved" = "Çλáñϱèƨ ƨáƲèδ";
+"changes_saved_comment" = "Nèω δáƭá ωïℓℓ áƥƥèář ôñ ¥ôúř ƥáϱè";
+
+"photo_saved" = "Þλôƭô ƨáƲèδ";
+"photo_saved_comment" = "Nèω ƥřôƒïℓè ƥïçƭúřè ωïℓℓ áƥƥèář ôñ ¥ôúř ƥáϱè";
+
+/* Admin actions */
+
+"login_as" = "£ôϱïñ áƨ $1";
+"ban_user_action" = "ßáñ úƨèř";
+"warn_user_action" = "Wářñ úƨèř";
+
+/* Paginator */
+
+"paginator_back" = "ßáçƙ";
+"paginator_page" = "Þáϱè $1";
+"paginator_next" = "Nèжƭ";
