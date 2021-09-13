@@ -36,6 +36,8 @@
 "online" = "Online";
 "was_online" = "was online";
 "was_online_m" = "was online"; 
+"years" = "y.o";
+
 %{ For male and female %}
 
 "was_online_f" = "was online";

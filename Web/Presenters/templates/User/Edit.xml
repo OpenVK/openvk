@@ -131,6 +131,14 @@
                         </td>
                     </tr>
                     <tr>
+                        <td width="120" valign="top">
+                             <span class="nobold">День рождения: </span>    
+                        </td>
+                        <td>
+                         <input name="birthday" value={gmdate("Y-m-d", $user->getBirthday())} type="date"/>
+                        </td>
+                    </tr>
+                    <tr>
                         <td>
                             
                         </td>
