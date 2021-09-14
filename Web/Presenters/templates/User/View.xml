@@ -245,7 +245,7 @@
                                 style="max-width: 170px; margin: auto;" />
                         </div>
                         <div>
-                            <b><a href="/video{$video->getPrettyId()}">{$video->getName()}</a></b>
+                            <b><a href="/video{$video->getPrettyId()}">{ovk_proc_strtr($video->getName(), 30)}</a></b>
                         </div>
                     </div>
                 </div>

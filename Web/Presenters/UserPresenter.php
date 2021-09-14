@@ -129,7 +129,7 @@ final class UserPresenter extends OpenVKPresenter
                     $user->setCity(empty($this->postParam("city")) ? NULL : $this->postParam("city"));
                     $user->setAddress(empty($this->postParam("address")) ? NULL : $this->postParam("address"));
                 } elseif($_GET['act'] === "interests") {
-                    $user->setInterests(empty($this->postParam("interests")) ? NULL : $this->postParam("interests"));
+                    $user->setInterests(empty($this->postParam("interests")) ? NULL : ovk_proc_strtr($this->postParam("interests"), 300));
                     $user->setFav_Music(empty($this->postParam("fav_music")) ? NULL : $this->postParam("fav_music"));
                     $user->setFav_Films(empty($this->postParam("fav_films")) ? NULL : $this->postParam("fav_films"));
                     $user->setFav_Shows(empty($this->postParam("fav_shows")) ? NULL : $this->postParam("fav_shows"));
