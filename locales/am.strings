@@ -1,4 +1,4 @@
-"__locale" = "am_UA.utf8;am_AM.UTF-8;Arm";
+"__locale" = "am_AM.utf8;am_AM.UTF-8;Arm";
 "__WinEncoding" = "Windows-1251";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
@@ -43,6 +43,7 @@
 "status" = "Ստատուս";
 "no_information_provided" = "Ինֆորմացիան բացակայում է";
 "deceased_person" = "Մահացած մարդ";
+"years" = "տարեկան";
 
 "relationship" = "Ընտանեկան դրություն";
 
