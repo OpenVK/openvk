@@ -129,13 +129,13 @@ final class UserPresenter extends OpenVKPresenter
                     $user->setCity(empty($this->postParam("city")) ? NULL : $this->postParam("city"));
                     $user->setAddress(empty($this->postParam("address")) ? NULL : $this->postParam("address"));
                 } elseif($_GET['act'] === "interests") {
-                    $user->setInterests(empty($this->postParam("interests")) ? NULL : ovk_proc_strtr($this->postParam("interests"), 300);
-                    $user->setFav_Music(empty($this->postParam("fav_music")) ? NULL : ovk_proc_strtr($this->postParam("fav_music"), 300);
-                    $user->setFav_Films(empty($this->postParam("fav_films")) ? NULL : ovk_proc_strtr($this->postParam("fav_films"), 300);
-                    $user->setFav_Shows(empty($this->postParam("fav_shows")) ? NULL : ovk_proc_strtr($this->postParam("fav_shows"), 300);
-                    $user->setFav_Books(empty($this->postParam("fav_books")) ? NULL : ovk_proc_strtr($this->postParam("fav_books"), 300);
-                    $user->setFav_Quote(empty($this->postParam("fav_quote")) ? NULL : ovk_proc_strtr($this->postParam("fav_quote"), 300);
-                    $user->setAbout(empty($this->postParam("about")) ? NULL : ovk_proc_strtr($this->postParam("about"), 300);
+                    $user->setInterests(empty($this->postParam("interests"))) ? NULL : ovk_proc_strtr($this->postParam("interests"), 300);
+                    $user->setFav_Music(empty($this->postParam("fav_music"))) ? NULL : ovk_proc_strtr($this->postParam("fav_music"), 300);
+                    $user->setFav_Films(empty($this->postParam("fav_films"))) ? NULL : ovk_proc_strtr($this->postParam("fav_films"), 300);
+                    $user->setFav_Shows(empty($this->postParam("fav_shows"))) ? NULL : ovk_proc_strtr($this->postParam("fav_shows"), 300);
+                    $user->setFav_Books(empty($this->postParam("fav_books"))) ? NULL : ovk_proc_strtr($this->postParam("fav_books"), 300);
+                    $user->setFav_Quote(empty($this->postParam("fav_quote"))) ? NULL : ovk_proc_strtr($this->postParam("fav_quote"), 300);
+                    $user->setAbout(empty($this->postParam("about"))) ? NULL : ovk_proc_strtr($this->postParam("about"), 300);
                 }
                 
                 try {
