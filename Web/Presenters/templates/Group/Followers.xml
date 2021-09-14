@@ -49,7 +49,7 @@
             <tr n:if="$club->canBeModifiedBy($thisUser ?? NULL) && $club->getOwner()->getId() !== $x->getId()">
                 <td width="120" valign="top"><span class="nobold">{_actions}: </span></td>
                 <td>
-                    <a href="/club{$club->getId()}/setAdmin.jsp?user={$x->getId()}">
+                    <a href="/club{$club->getId()}/setAdmin.jsp?user={$x->getId()}&hash={rawurlencode($csrfToken)}">
                         {if $club->canBeModifiedBy($x)}
                             {_devote}
                         {else}
