@@ -304,13 +304,9 @@ class User extends RowModel
         return $this->getRecord()->notification_offset;
     }
 
-    function getBirthday(): int
+    function getBirthday(): ?int
     {
-        try {
-            return $this->getRecord()->birthday;
-        } catch (Exception $xe) {
-            return 0;
-        }
+        return $this->getRecord()->birthday;
     }
     
     function updateNotificationOffset(): void
