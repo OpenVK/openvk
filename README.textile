@@ -23,7 +23,8 @@ h3. Installation procedure
 
 "samukhin":https://github.com/samukhin is working on a Docker container that contains a microblog version of OpenVK, see "#76":https://github.com/openvk/openvk/pull/76 for details. (Experimental)
 
-# Install Composer, Node.js, Yarn and "Chandler":https://github.com/openvk/chandler
+# Install PHP 7, web-server, Composer, Node.js, Yarn and "Chandler":https://github.com/openvk/chandler
+PHP 8 has *not* yet been tested, so you should not expect it to work.
 # Install "commitcaptcha":https://github.com/openvk/commitcaptcha and OpenVK as Chandler extensions and enable them like this:
 @ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/extensions/enabled/@
 @ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/@
