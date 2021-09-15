@@ -462,7 +462,7 @@
             </p>
         </div>
         
-        {presenter "openvk!Wall->wall", $user->getId()}
+        {presenter "openvk!Wall->wallEmbedded", $user->getId()}
         
         <script n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL)">
             function banUser() {
