@@ -1,4 +1,4 @@
-h1. OpenVK
+h1. <img align="right" src="https://github.com/openvk/openvk/raw/master/Web/static/img/logo.png" alt="openvk" title="openvk" width="15%">OpenVK
 
 *OpenVK* is an attempt to create a simple CMS that -cosplays- imitates old VK. Code provided here is not stable yet.
 VKontakte belongs to Pavel Durov and mail.ru.
