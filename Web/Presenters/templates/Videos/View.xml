@@ -35,7 +35,7 @@
                      model => "videos",
                      parent => $video}
         </div>
-        <div style="float: left; min-height: 100px; width: 30%;">
+        <div style="float: left; min-height: 100px; width: 30%; overflow: hidden; overflow-wrap: break-word;">
             <div>
                 <h4>{_"information"}</h4>
                 <span style="color: grey;">{_"video_name"}:</span>

@@ -1,20 +1,20 @@
-"__locale" = "am_UA.utf8;am_AM.UTF-8;Arm";
+"__locale" = "am_AM.utf8;am_AM.UTF-8;Arm";
 "__WinEncoding" = "Windows-1251";
 
-%{ Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html %}
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 
-%{ Main page %}
+/* Main page */
 
 "home" = "Գլխավոր";
 "welcome" = "Բարի գալուստ";
 
-%{ Login %}
+/* Login */
 
 "log_in" = "Մուտք";
 "password" = "Գաղտնաբառ";
 "registration" = "Գրանցում";
 
-%{ Profile information %}
+/* Profile information */
 
 "select_language" = "Ընտրել լեզուն";
 "edit" = "խմբագրել";
@@ -43,6 +43,7 @@
 "status" = "Ստատուս";
 "no_information_provided" = "Ինֆորմացիան բացակայում է";
 "deceased_person" = "Մահացած մարդ";
+"years" = "տարեկան";
 
 "relationship" = "Ընտանեկան դրություն";
 
@@ -89,7 +90,7 @@
 
 "updated_at" = "Թարմացված է $1";
 
-%{ Wall %}
+/* Wall */
 
 "post_writes_m" = "գրել է";
 "post_writes_f" = "գրել է";
@@ -117,7 +118,7 @@
 "attach_photo" = "Ամրացնել նկար";
 "no_posts_abstract" = "Այստեղ ոչ ոք, ոչինչ․․․ դեռ չի գրել․․․";
 
-%{ Friends %}
+/* Friends */
 
 "friends" = "Ընկերներ";
 "followers" = "Բաժանորդներ";
@@ -152,7 +153,7 @@
 "subscriptions_many" = "$1 հատ բաժանորդագրություն";
 "subscriptions_other" = "$1 հատ բաժանորդագրություն";
 
-%{ Group %}
+/* Group */
 
 "name_group" = "Անվանում";
 "subscribe" = "Բաժանորդագրվել";
@@ -196,7 +197,7 @@
 "meetings_many" = "$1 հատ հանդիպում";
 "meetings_other" = "$1 հատ հանդիպում";
 
-%{ Albums %}
+/* Albums */
 
 "create" = "Ստեղծել";
 "albums" = "Ալբոմներ";
@@ -216,7 +217,7 @@
 "albums_many" = "$1 հատ ալբոմ";
 "albums_other" = "$1 հատ ալբոմ";
 
-%{ Notes %}
+/* Notes */
 
 "notes" = "Նշումներ";
 "note" = "Նշում";
@@ -233,7 +234,7 @@
 "notes_many" = "$1 հատ նշում";
 "notes_other" = "$1 հատ նշում";
 
-%{ Menus %}
+/* Menus */
 
 "edit_button" = "խմբ.";
 "my_page" = "Իմ էջը";
@@ -277,7 +278,7 @@
 "notes_many" = "$1 հատ նշում";
 "notes_other" = "$1 հատ նշում";
 
-%{ Settings %}
+/* Settings */
 
 "main" = "Հիմնական";
 "contacts" = "Կոնտակտներ";
@@ -337,13 +338,13 @@
 "ui_settings_rating_show" = "Ցուցադրել";
 "ui_settings_rating_hide" = "Թաքցնել";
 
-%{ Sorting %}
+/* Sorting */
 
 "sort_randomly" = "Դասավորել պատահական";
 "sort_up" = "Դասավորել ըստ ստեղծման ամսաթվի դեպի վերև";
 "sort_down" = "Դասավորել ըստ ստեղծման ամսաթվի դեպի ներքև";
 
-%{ Videos %}
+/* Videos */
 
 "videos" = "Տեսանյութեր";
 "video" = "Տեսանյութ";
@@ -363,7 +364,7 @@
 "videos_many" = "$1 հատ տեսանյութ";
 "videos_other" = "$1 հատ տեսանյութ";
 
-%{ Notifications %}
+/* Notifications */
 
 "feedback" = "Պատասխաններ";
 "unread" = "Չկարդացված";
@@ -393,7 +394,7 @@
 "nt_note_instrumental" = "նշումով";
 "nt_photo_instrumental" = "նկարով";
 
-%{ Time %}
+/* Time */
 
 "time_at_sp" = " –ի մեջ․ ";
 "time_just_now" = "հենց նոր";
@@ -439,7 +440,7 @@
 "points_count" = "ձայն";
 "on_your_account" = "ձեր հաշվի վրա";
 
-%{ Errors %}
+/* Errors */
 
 "error_1" = "Սխալ հարցում";
 "error_2" = "Սխալ օգտանուն կամ գաղտնաբառ";
@@ -468,13 +469,13 @@
 "photo_saved" = "Լուսանկարը պահպանված է";
 "photo_saved_comment" = "Նոր նկարը կհայտնվի ձեր էջում";
 
-%{ Admin actions %}
+/* Admin actions */
 
 "login_as" = "Մտնել ինչպես $1";
 "ban_user_action" = "Բլոկավորել օգտվողին";
 "warn_user_action" = "Զգուշացնել օգտվողին";
 
-%{ Paginator %}
+/* Paginator */
 
 "paginator_back" = "Առաջ";
 "paginator_page" = "$1 էջ";

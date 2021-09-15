@@ -665,6 +665,8 @@ table.User {
     border: #DEDEDE solid 1px;
     clear: both;
     margin-bottom: 12px;
+    overflow: hidden;
+    word-break: break-word;
 }
 
 .gray-block {

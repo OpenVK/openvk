@@ -218,7 +218,7 @@
                                 src="{is_null($cover)?'/assets/packages/static/openvk/img/camera_200.png':$cover->getURL()}"
                                 style="max-width: 80px; max-height: 54pt;" />
                         </div>
-                        <div>
+                        <div style="overflow: hidden; overflow-wrap: break-word;">
                             <b><a href="/album{$album->getPrettyId()}">{$album->getName()}</a></b><br>
                             <span class="nobold">{tr("updated_at", $album->getEditTime() ?? $album->getPublicationTime())}</span>
                         </div>
@@ -245,7 +245,7 @@
                                 style="max-width: 170px; margin: auto;" />
                         </div>
                         <div>
-                            <b><a href="/video{$video->getPrettyId()}">{$video->getName()}</a></b>
+                            <b><a href="/video{$video->getPrettyId()}">{ovk_proc_strtr($video->getName(), 30)}</a></b>
                         </div>
                     </div>
                 </div>
@@ -357,6 +357,12 @@
                         <td class="label"><span class="nobold">{_"politViews"}:</span></td>
                         <td class="data">{var $pviews = $user->getPoliticalViews()}{_"politViews_$pviews"}</td>
                     </tr>
+                    {if $user->getBirthday() != 0}
+                    <tr>
+                        <td class="label"><span class="nobold">{_"birth_date"}:</span></td>
+                        <td class="data">{date('d F Y',$user->getBirthday())}, {date('Y') - date('Y', $user->getBirthday())} {_"years"}</td>
+                    </tr>
+                    {/if}
                 </tbody>
             </table>
 			</div>
@@ -456,7 +462,7 @@
             </p>
         </div>
         
-        {presenter "openvk!Wall->wall", $user->getId()}
+        {presenter "openvk!Wall->wallEmbedded", $user->getId()}
         
         <script n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL)">
             function banUser() {

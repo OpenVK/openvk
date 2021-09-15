@@ -1,19 +1,19 @@
 "__locale" = "en_US.UTF-8;Eng";
 
-%{ Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html %}
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 
-%{ Main page %}
+/* Main page */
 
 "home" = "Home";
 "welcome" = "Welcome";
 
-%{ Login %}
+/* Login */
 
 "log_in" = "Log in";
 "password" = "Password";
 "registration" = "Registration";
 
-%{ Profile information %}
+/* Profile information */
 
 "select_language" = "Choose language";
 "edit" = "edit";
@@ -36,7 +36,9 @@
 "online" = "Online";
 "was_online" = "was online";
 "was_online_m" = "was online"; 
-%{ For male and female %}
+/* For male and female */
+
+"years" = "y.o";
 
 "was_online_f" = "was online";
 "all_title" = "All";
@@ -90,7 +92,7 @@
 
 "updated_at" = "Updated at $1";
 
-%{ Wall %}
+/* Wall */
 
 "post_writes_m" = "wrote";
 "post_writes_f" = "wrote";
@@ -117,7 +119,7 @@
 "attach_photo" = "Attach photo";
 "no_posts_abstract" = "Nobody wrote anything here... At least.";
 
-%{ Friends %}
+/* Friends */
 
 "friends" = "Friends";
 "followers" = "Followers";
@@ -143,7 +145,7 @@
 "subscriptions_one" = "$1 subscription";
 "subscriptions_other" = "$1 subscriptions";
 
-%{ Group %}
+/* Group */
 
 "name_group" = "Name";
 "subscribe" = "Subscribe";
@@ -181,7 +183,7 @@
 "meetings_one" = "$1 meeting";
 "meetings_other" = "$1 meetings";
 
-%{ Albums %}
+/* Albums */
 
 "create" = "Create";
 "albums" = "Albums";
@@ -196,7 +198,7 @@
 "albums_one" = "$1 album";
 "albums_other" = "$1 albums";
 
-%{ Notes %}
+/* Notes */
 
 "notes" = "Notes";
 "note" = "Note";
@@ -209,9 +211,9 @@
 "notes_one" = "$1 note";
 "notes_other" = "$1 notes";
 
-%{ Menus %}
+/* Menus */
 
-%{ Note that is string need to fit into the "My Page" link %}
+/* Note that is string need to fit into the "My Page" link */
 
 "edit_button" = "edit";
 "my_page" = "My Page";
@@ -249,7 +251,7 @@
 "footer_choose_language" = "choose language";
 "footer_privacy" = "privacy";
 
-%{ Settings %}
+/* Settings */
 
 "main" = "Main";
 "contacts" = "Contacts";
@@ -308,13 +310,13 @@
 "ui_settings_rating_show" = "Show";
 "ui_settings_rating_hide" = "Hide";
 
-%{ Sorting %}
+/* Sorting */
 
 "sort_randomly" = "Sort randomly";
 "sort_up" = "Sort by ID up";
 "sort_down" = "Sort by ID down";
 
-%{ Videos %}
+/* Videos */
 
 "videos" = "Videos";
 "video" = "Video";
@@ -332,7 +334,7 @@
 "videos_one" = "$1 video";
 "videos_other" = "$1 videos";
 
-%{ Notifications %}
+/* Notifications */
 
 "feedback" = "Feedback";
 "unread" = "Unread";
@@ -362,7 +364,7 @@
 "nt_note_instrumental" = "note";
 "nt_photo_instrumental" = "photo";
 
-%{ Time %}
+/* Time */
 
 "time_at_sp" = " at ";
 "time_just_now" = "just now";
@@ -371,7 +373,7 @@
 "time_today" = "today";
 "time_yesterday" = "yesterday";
 
-%{ Errors %}
+/* Errors */
 
 "error_1" = "Incorrect query";
 "error_2" = "Incorrect login and password";
@@ -400,13 +402,13 @@
 "photo_saved" = "Photo saved";
 "photo_saved_comment" = "New profile picture will appear on your page";
 
-%{ Admin actions %}
+/* Admin actions */
 
 "login_as" = "Login as $1";
 "ban_user_action" = "Ban user";
 "warn_user_action" = "Warn user";
 
-%{ Paginator %}
+/* Paginator */
 
 "paginator_back" = "Back";
 "paginator_page" = "Page $1";

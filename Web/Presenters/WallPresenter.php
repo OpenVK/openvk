@@ -39,7 +39,7 @@ final class WallPresenter extends OpenVKPresenter
             $this->logPostView($post, $wall);
     }
     
-    function renderWall(int $user): void
+    function renderWall(int $user, bool $embedded = false): void
     {
         if(false)
             exit("Ошибка доступа: " . (string) random_int(0, 255));
@@ -57,6 +57,7 @@ final class WallPresenter extends OpenVKPresenter
         else
             $canPost = false; 
         
+        if ($embedded == true) $this->template->_template = "components/wall.xml";
         $this->template->oObj    = $owner;
         $this->template->owner   = $user;
         $this->template->canPost = $canPost;
@@ -68,8 +69,14 @@ final class WallPresenter extends OpenVKPresenter
             "amount"  => sizeof($this->template->posts),
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
         ];
+
         
         $this->logPostsViewed($this->template->posts, $user);
+    }
+
+    function renderWallEmbedded(int $user): void
+    {
+        $this->renderWall($user, true);
     }
     
     function renderFeed(): void

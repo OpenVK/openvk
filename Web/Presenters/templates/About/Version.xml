@@ -79,7 +79,7 @@
         #ovkLogo {
             float: right;
             border: 0;
-            width: 30%;
+            width: 5%;
             padding-top: 6px;
             position: relative;
         }
@@ -97,7 +97,7 @@
                 <tr class="h">
                     <td>
                         <h1 class="p" style="float: left;">OpenVK {=OPENVK_VERSION}</h1>
-                        <img id="ovkLogo" src="/assets/packages/static/openvk/img/logo_white.png" alt="OpenVK Logo" />
+                        <img id="ovkLogo" src="/assets/packages/static/openvk/img/logo.png" alt="OpenVK Logo" />
                     </td>
                 </tr>
             </tbody>
@@ -387,7 +387,7 @@
                     <td class="e">
                         Vladimir Barinov (veselcraft), Alexandra Katunina (jill_senpai), Konstantin Kichulkin (kosfurler),
                         Nikita Volkov (sup_ban), Daniil Myslivets (myslivets), Alexander Kotov (l-lacker),
-                        Alexey Assemblerov (BiosNod), Ponywka and Ilya Prokopenko (dsrev)
+                        Alexey Assemblerov (BiosNod), Ponywka and Ilya Prokopenko (dsrev), Vladimir Lapskiy (0x7d5)
                     </td>
                 </tr>
             </tbody>
@@ -447,6 +447,11 @@
 				<tr>
 					<td class="e">German</td>
 					<td class="v">SamyoFox</td>
+                </tr>
+				<tr>
+					<td class="e">Ukrainian</td>
+					<td class="v">Andrej Lenťaj</td>
+                </tr>
             </tbody>
         </table>
         

@@ -1,19 +1,19 @@
 "__locale" = "tr_TR.UTF-8;Tur";
 
-%{ Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html %}
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 
-%{ Main page %}
+/* Main page */
 
 "home" = "Ana ekran";
 "welcome" = "Hoşgeldin";
 
-%{ Login %}
+/* Login */
 
 "log_in" = "Giriş yap";
 "password" = "Parola";
 "registration" = "Kayıt";
 
-%{ Profile information %}
+/* Profile information */
 
 "select_language" = "Dil seç";
 "edit" = "dznl";
@@ -36,7 +36,7 @@
 "online" = "Çevrimiçi";
 "was_online" = "çevrimiçiydi";
 "was_online_m" = "çevrimiçiydi"; 
-%{ For male and femail %}
+/* For male and femail */
 
 "was_online_f" = "çevrimiçiydi";
 "all_title" = "Tümü";
@@ -88,9 +88,7 @@
 "favorite_quotes" = "Favori sözler";
 "information_about" = "Hakkında";
 
-"updated_at" = "Güncelleme: $1";
-
-%{ Wall %}
+/* Wall */
 
 "post_writes_m" = "yazdı";
 "post_writes_f" = "yazdı";
@@ -117,7 +115,7 @@
 "attach_photo" = "Resim ekle";
 "no_posts_abstract" = "Kimse buraya bir şey yazmadı... Şimdilik.";
 
-%{ Friends %}
+/* Friends */
 
 "friends" = "Arkadaşlar";
 "followers" = "Takipçiler";
@@ -143,7 +141,7 @@
 "subscriptions_one" = "$1 abonelik";
 "subscriptions_other" = "$1 abonelik";
 
-%{ Group %}
+/* Group */
 
 "name_group" = "Grup adı";
 "subscribe" = "Abone ol";
@@ -180,7 +178,7 @@
 "meetings_one" = "$1 toplantı";
 "meetings_other" = "$1 toplantı";
 
-%{ Albums %}
+/* Albums */
 
 "create" = "Oluştur";
 "albums" = "Albümler";
@@ -195,7 +193,7 @@
 "albums_one" = "$1 albüm";
 "albums_other" = "$1 albüm";
 
-%{ Notes %}
+/* Notes */
 
 "notes" = "Notlar";
 "note" = "Not";
@@ -208,9 +206,9 @@
 "notes_one" = "$1 not";
 "notes_other" = "$1 not";
 
-%{ Menus %}
+/* Menus */
 
-%{ Note that is string need to fit into the "My Page" link %}
+/* Note that is string need to fit into the "My Page" link */
 
 "edit_button" = "dznl";
 "my_page" = "Sayfam";
@@ -248,7 +246,7 @@
 "footer_choose_language" = "dil seç";
 "footer_privacy" = "gizlilik";
 
-%{ Settings %}
+/* Settings */
 
 "main" = "Ana";
 "contacts" = "Kişiler";
@@ -307,13 +305,13 @@
 "ui_settings_rating_show" = "Göster";
 "ui_settings_rating_hide" = "Gizle";
 
-%{ Sorting %}
+/* Sorting */
 
 "sort_randomly" = "Rastgele sırala";
 "sort_up" = "ID'ye göre yukarı doğru sırayla";
 "sort_down" = "ID'ye göre aşağı doğru sırala";
 
-%{ Videos %}
+/* Videos */
 
 "videos" = "Videolar";
 "video" = "Video";
@@ -331,7 +329,7 @@
 "videos_one" = "$1 video";
 "videos_other" = "$1 video";
 
-%{ Notifications %}
+/* Notifications */
 
 "feedback" = "Geri bildirim";
 "unread" = "Okunmamış";
@@ -361,7 +359,7 @@
 "nt_note_instrumental" = "not";
 "nt_photo_instrumental" = "fotoğraf";
 
-%{ Time %}
+/* Time */
 
 "time_at_sp" = " saat ";
 "time_just_now" = "daha şimdi";
@@ -370,7 +368,7 @@
 "time_today" = "bugün";
 "time_yesterday" = "dün";
 
-%{ Errors %}
+/* Errors */
 
 "error_1" = "Yanlış sorgu";
 "error_2" = "Yanlış kullanıcı adı ve parola";
@@ -399,9 +397,14 @@
 "photo_saved" = "Resim kaydedildi";
 "photo_saved_comment" = "Yeni resim sayfanızda görünecek";
 
-%{ Admin actions %}                                                   -                                                                      -"login_as" = "Login as $1";                                           -"ban_user_action" = "Ban user";                                       -"warn_user_action" = "Warn user";                                     -                                                                      -%{ Paginator %}                                                       -
+/* Admin actions */
+"login_as" = "Login as $1";
+"ban_user_action" = "Ban user";
+"warn_user_action" = "Warn user";
+
+/* Paginator */
 "paginator_back" = "Geri";
 "paginator_page" = "Sayfa $1";
 "paginator_next" = "İleri";
 
-%{ Translations by @WindowZ414 - Çeviriler @WindowZ414'ten %}
+/* Translations by @WindowZytch - Çeviriler @WindowZytch'den */

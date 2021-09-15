@@ -1,20 +1,20 @@
 "__locale" = "by_BY.utf8;Bel_Lat";
 "__WinEncoding" = "Windows-1251";
 
-%{ Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html %}
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 
-%{ Main page %}
+/* Main page */
 
 "home" = "Hałoŭnaja";
 "welcome" = "Sardečna zaprašajem";
 
-%{ Login %}
+/* Login */
 
 "log_in" = "Uvachod";
 "password" = "Parol";
 "registration" = "Rejestracyja";
 
-%{ Profile information %}
+/* Profile information */
 
 "select_language" = "Abrać movu";
 "edit" = "redahavać";
@@ -88,7 +88,7 @@
 
 "updated_at" = "Adnoŭlena $1";
 
-%{ Wall %}
+/* Wall */
 
 "post_writes_m" = "napisaŭ";
 "post_writes_f" = "napisała";
@@ -116,7 +116,7 @@
 "attach_photo" = "Dadać fota";
 "no_posts_abstract" = "Tut jašče nichto ničoha nie pisaŭ... Pakul što.";
 
-%{ Friends %}
+/* Friends */
 
 "friends" = "Siabry";
 "followers" = "Padpisanty";
@@ -151,7 +151,7 @@
 "subscriptions_many" = "$1 padpisak";
 "subscriptions_other" = "$1 padpisak";
 
-%{ Group %}
+/* Group */
 
 "name_group" = "Nazva";
 "subscribe" = "Dadać padpisku";
@@ -193,7 +193,7 @@
 "meetings_many" = "$1 sustreč";
 "meetings_other" = "$1 sustreč";
 
-%{ Albums %}
+/* Albums */
 
 "create" = "Stvaryć";
 "albums" = "Albomy";
@@ -210,7 +210,7 @@
 "albums_many" = "$1 albomaŭ";
 "albums_other" = "$1 albomaŭ";
 
-%{ Notes %}
+/* Notes */
 
 "notes" = "Natatki";
 "note" = "Natatka";
@@ -227,7 +227,7 @@
 "notes_many" = "$1 natatak";
 "notes_other" = "$1 natatak";
 
-%{ Menus %}
+/* Menus */
 
 "edit_button" = "red.";
 "my_page" = "Maja Staronka";
@@ -271,7 +271,7 @@
 "notes_many" = "$1 natatak";
 "notes_other" = "$1 natatak";
 
-%{ Settings %}
+/* Settings */
 
 "main" = "Asnoŭnaje";
 "contacts" = "Kantakty";
@@ -331,13 +331,13 @@
 "ui_settings_rating_show" = "Pakazvać";
 "ui_settings_rating_hide" = "Chavać";
 
-%{ Sorting %}
+/* Sorting */
 
 "sort_randomly" = "Sartavać vypadkovym čynam";
 "sort_up" = "Sartavać pa času stvarańnia ŭvierch";
 "sort_down" = "Sartavać pa času stvarańnia ŭniz";
 
-%{ Videos %}
+/* Videos */
 
 "videos" = "Videazapisy";
 "video" = "Videazapis";
@@ -357,7 +357,7 @@
 "videos_many" = "$1 videazapisaŭ";
 "videos_other" = "$1 videazapisaŭ";
 
-%{ Notifications %}
+/* Notifications */
 
 "feedback" = "Adkazy";
 "unread" = "Niepračytanyja";
@@ -387,7 +387,7 @@
 "nt_note_instrumental" = "natatkaj";
 "nt_photo_instrumental" = "fotazdymkam";
 
-%{ Time %}
+/* Time */
 
 "time_at_sp" = " a ";
 "time_just_now" = "tolki što";
@@ -433,7 +433,7 @@
 "points_count" = "hałasoŭ";
 "on_your_account" = "na vašym rachunku";
 
-%{ Errors %}
+/* Errors */
 
 "error_1" = "Niezrazumieły zapyt";
 "error_2" = "Niapravilny łohin albo parol";
@@ -462,13 +462,13 @@
 "photo_saved" = "Fotazdymak zachavany";
 "photo_saved_comment" = "Novy malunak zjavicca na vašaj staroncy";
 
-%{ Admin actions %}
+/* Admin actions */
 
 "login_as" = "Uvajści jak $1";
 "ban_user_action" = "Zabanić karystalnika";
 "warn_user_action" = "Papiaredzić karystalnika";
 
-%{ Paginator %}
+/* Paginator */
 
 "paginator_back" = "Nazad";
 "paginator_page" = "Staronka $1";

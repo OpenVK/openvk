@@ -9,10 +9,11 @@
     <div class="navigation">
     <a href="language?lg=ru" class="link"><img src="/assets/packages/static/openvk/img/flags/ru.gif"> Русский</a>
     <a href="language?lg=en" class="link"><img src="/assets/packages/static/openvk/img/flags/us.gif"> English</a>
-    <a href="language?lg=de" class="link"><img src="/assets/packages/static/openvk/img/flags/de.gif"> Deutsch</a>
-    <a href="language?lg=am" class="link"><img src="/assets/packages/static/openvk/img/flags/am.gif"> Հայերեն</a>
+    <a href="language?lg=ua" class="link"><img src="/assets/packages/static/openvk/img/flags/ua.gif"> Україньска</a>
     <a href="language?lg=by" class="link"><img src="/assets/packages/static/openvk/img/flags/by.gif"> Беларуская (Наркамоўка)</a>
     <a href="language?lg=by_lat" class="link"><img src="/assets/packages/static/openvk/img/flags/by.gif"> Biełaruskaja (Łacinka)</a>
+    <a href="language?lg=de" class="link"><img src="/assets/packages/static/openvk/img/flags/de.gif"> Deutsch</a>
+    <a href="language?lg=am" class="link"><img src="/assets/packages/static/openvk/img/flags/am.gif"> Հայերեն</a>
     <a href="language?lg=sr_cyr" class="link"><img src="/assets/packages/static/openvk/img/flags/rs.gif"> Спрски (Ћирилица)</a>
     <a href="language?lg=sr_lat" class="link"><img src="/assets/packages/static/openvk/img/flags/rs.gif"> Sprski (Latinica)</a>
     <a href="language?lg=tr" class="link"><img src="/assets/packages/static/openvk/img/flags/tr.gif"> Türkçe</a>

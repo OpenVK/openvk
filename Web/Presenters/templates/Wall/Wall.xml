@@ -1,20 +1,29 @@
-<div class="content_divider">
-    <div class="content_title_expanded" onclick="hidePanel(this);">
-        {_"wall"} 
-        <nobold>
-        {tr("wall", $count)}
-        <a href="/wall{$owner}" class="float-right lowercase">{_all_title}</a>
-        </nobold>
+{extends "../@layout.xml"}
+{block title}{_"wall"}{/block}
+
+{block header}
+    <a href="{$oObj->getURL()}">{$oObj->getCanonicalName()}</a>
+    »
+    {_"wall"} 
+    <div style="float:right;">
+        <span>
+            <b>{tr("wall", $count)}</b>
+        </span>
     </div>
+{/block}
+
+{block content}
+<div class="content_divider">
     <div>
+        <!-- TODO: Move the creating post form to dedicated file -->
         <div n:if="$canPost" class="content_subtitle">
-            <div id="write" style="padding: 5px 0;"  onfocusin="expand_wall_textarea();">
+            <div id="write" style="padding: 5px 0;" >
                 <form action="/wall{$owner}/makePost" method="post" enctype="multipart/form-data" style="margin:0;">
-                    <textarea id="wall-post-input" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="small-textarea"></textarea>
+                    <textarea id="wall-post-input" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="expanded-textarea"></textarea>
                     <div>
                         <!-- padding to fix <br/> bug -->
                     </div>
-                    <div id="post-buttons" style="display: none;">
+                    <div id="post-buttons">
                         <div class="post-upload">
                             Вложение: <span>(unknown)</span>
                         </div>
@@ -68,3 +77,4 @@
         </div>
     </div>
 </div>
+{/block}

@@ -57,8 +57,8 @@ final class VideosPresenter extends OpenVKPresenter
             if(!empty($this->postParam("name"))) {
                 $video = new Video;
                 $video->setOwner($this->user->id);
-                $video->setName($this->postParam("name"));
-                $video->setDescription($this->postParam("desc"));
+                $video->setName(ovk_proc_strtr($this->postParam("name"), 61));
+                $video->setDescription(ovk_proc_strtr($this->postParam("desc"), 300));
                 $video->setCreated(time());
                 
                 try {
