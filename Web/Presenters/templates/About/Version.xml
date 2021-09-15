@@ -410,48 +410,26 @@
         <table>
             <tbody>
                 <tr class="h">
-                    <th colspan="2">Languagepacks</th>
+                    <th colspan="3">Languagepacks</th>
                 </tr>
                 <tr class="h">
                     <td>
                         Language
                     </td>
                     <td>
+                        Native name
+                    </td>
+                    <td>
                         Author
                     </td>
                 </tr>
-                <tr>
-                    <td class="e">Russian</td>
-                    <td class="v">Vladimir Barinov (veselcraft)</td>
-                </tr>
-                <tr>
-                    <td class="e">English</td>
-                    <td class="v">Vladimir Barinov (veselcraft)</td>
-                </tr>
-                <tr>
-                    <td class="e">Belarussian</td>
-                    <td class="v">Daniil Myslivets (myslivets) and MoccoCoffee</td>
-                </tr>
-                <tr>
-                    <td class="e">Serbian</td>
-                    <td class="v">Ivan Denisov (Dma Games)</td>
-                </tr>
-                <tr>
-                    <td class="e">Turkish</td>
-                    <td class="v">Bedirhan Kurt (WindOWZ)</td>
-                </tr>
-                <tr>
-                    <td class="e">Armenian</td>
-                    <td class="v">apeeh</td>
-                </tr>
-				<tr>
-					<td class="e">German</td>
-					<td class="v">SamyoFox</td>
-                </tr>
-				<tr>
-					<td class="e">Ukrainian</td>
-					<td class="v">Andrej Lenťaj</td>
-                </tr>
+                {foreach $languages as $language}
+                    <tr>
+                        <td class="e">{$language['name']}</td>
+                        <td class="v">{$language['native_name']}</td>
+                        <td class="v">{$language['author']}</td>
+                    </tr>
+                {/foreach}
             </tbody>
         </table>
         

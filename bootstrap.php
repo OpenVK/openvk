@@ -96,6 +96,16 @@ function tr(string $stringId, ...$variables): string
     return $output;
 }
 
+function setLanguage($lg): void
+{
+    Session::i()->set("lang", $lg);
+}
+
+function getLanguages(): array
+{
+    return yaml_parse_file(OPENVK_ROOT . "/locales/list.yml")['list'];
+}
+
 function eventdb(): ?DatabaseConnection
 {
     $conf = OPENVK_ROOT_CONF["openvk"]["credentials"]["eventDB"];

@@ -6,5 +6,5 @@
 {/block}
 
 {block content}
-    {$manager->getUser()->getFullName()}
+    {php var_dump($languages)}
 {/block}

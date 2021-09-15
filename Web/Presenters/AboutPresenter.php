@@ -54,17 +54,20 @@ final class AboutPresenter extends OpenVKPresenter
     function renderVersion(): void
     {
         $this->template->themes = Themepacks::i()->getAllThemes();
+        $this->template->languages = getLanguages();
     }
     
     function renderLanguage(): void
     {
+        $this->template->languages = getLanguages();
+        
         if(!is_null($_GET['lg'])){
-            Session::i()->set("lang", $_GET['lg']);
+            setLanguage($_GET['lg']);
         }
     }
 
     function renderSandbox(): void
     {
-        $this->template->manager = (new Managers)->get(4);
+        $this->template->languages = getLanguages();
     }
 }
