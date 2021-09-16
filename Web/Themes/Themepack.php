@@ -1,5 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Themes;
+use ScssPhp\ScssPhp\Compiler as CSSCompiler;
+use ScssPhp\ScssPhp\OutputStyle;
 
 class Themepack
 {
@@ -10,6 +12,11 @@ class Themepack
     private $meta;
     private $home;
     private $enabled;
+    
+    private $cssExtensions = [
+        "css",
+        "scss",
+    ];
     
     function __construct(string $id, string $ver, bool $inh, bool $tpl, bool $enabled, object $meta)
     {
@@ -72,16 +79,31 @@ class Themepack
         return $this->tpl;                                                                                                                                                     
     }
     
+    function fetchResource(string $resource, bool $processCSS = false): ?string
+    {
+        $file = "$this->home/$resource";
+        if(!file_exists($file))
+            return NULL;
+        
+        $result = file_get_contents($file);
+        if(in_array(@end(explode(".", $resource)), $this->cssExtensions) && $processCSS) {
+            $compiler = new CSSCompiler([ "cacheDir" => OPENVK_ROOT . "/tmp" ]);
+            $compiler->setOutputStyle(OutputStyle::COMPRESSED);
+            
+            $result = $compiler->compileString($result, $file)->getCSS();
+        }
+        
+        return $result;
+    }
+    
     function fetchStyleSheet(): ?string
     {
-        $file = "$this->home/stylesheet.css";
-        return file_exists($file) ? file_get_contents($file) : NULL;
+        return $this->fetchResource("stylesheet.scss", true) ?? $this->fetchResource("stylesheet.css", true);
     }
     
     function fetchStaticResource(string $name): ?string
     {
-        $file = "$this->home/res/$name";
-        return file_exists($file) ? file_get_contents($file) : NULL;
+        return $this->fetchResource("res/$name");
     }
     
     static function themepackFromDir(string $dirname): Themepack

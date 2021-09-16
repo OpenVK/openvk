@@ -9,7 +9,8 @@
         "wapmorgan/binary-stream": "dev-master",
         "netcarver/textile": "^3.7@dev",
         "al/emoji-detector": "dev-master",
-        "ezyang/htmlpurifier": "dev-master"
+        "ezyang/htmlpurifier": "dev-master",
+        "scssphp/scssphp": "dev-master"
     },
     "minimum-stability": "dev"
 }
