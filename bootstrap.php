@@ -106,6 +106,20 @@ function getLanguages(): array
     return yaml_parse_file(OPENVK_ROOT . "/locales/list.yml")['list'];
 }
 
+function isLanguageAvailable($lg): bool
+{
+	$lg_temp = false;
+	foreach(getLanguages() as $lang) {
+		if ($lang['code'] == $lg) $lg_temp = true;
+	}
+	return $lg_temp;
+}
+
+function getBrowsersLanguage(): array
+{
+	return mb_split(",", mb_split(";", $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0]);
+}
+
 function eventdb(): ?DatabaseConnection
 {
     $conf = OPENVK_ROOT_CONF["openvk"]["credentials"]["eventDB"];
@@ -178,8 +192,16 @@ function ovk_scheme(bool $with_slashes = false): string
 return (function() {
     _ovk_check_environment();
     require __DIR__ . "/vendor/autoload.php";
-    
+
     setlocale(LC_TIME, "POSIX");
+
+	// TODO: Default language in config
+    if(Session::i()->get("lang") == null) {
+    	$languages = array_reverse(getBrowsersLanguage());
+    	foreach($languages as $lg) {
+    		if(isLanguageAvailable($lg)) setLanguage($lg);	
+    	}
+    }
     
     if(empty($_SERVER["REQUEST_SCHEME"]))
         $_SERVER["REQUEST_SCHEME"] = empty($_SERVER["HTTPS"]) ? "HTTP" : "HTTPS";
