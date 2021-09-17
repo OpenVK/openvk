@@ -17,7 +17,7 @@
 /* Profile information */
 
 "select_language" = "Dil seç";
-"edit" = "Редактировать";
+"edit" = "Dznl";
 "birth_date" = "Doğum tarihi";
 "registration_date" = "Kayıt tarihi";
 "hometown" = "Memleket";
@@ -41,8 +41,8 @@
 "all_title" = "Tümü";
 "information" = "Bilgi";
 "status" = "Durum";
-"no_information_provided" = "Информация отсутствует.";
-"deceased_person" = "Страница покойного человека";
+"no_information_provided" = "Verilen bilgi yok.";
+"deceased_person" = "Vefat eden kişi";
 "years" = "лет";
 
 "relationship" = "İlişki durumu";
@@ -113,17 +113,17 @@
 "wall_many" = "$1 записей";
 "wall_other" = "$1 gönderi";
 
-"nsfw_warning" = "Bu gönderinin +18 içeriii olabilir";
-"report" = "Пожаловаться";
-"attach_photo" = "Прикрепить фото";
-"no_posts_abstract" = "Здесь никто ничего не написал... Пока.";
+"nsfw_warning" = "Bu gönderinin +18 içeriği olabilir";
+"report" = "Bildir";
+"attach_photo" = "Resim ekle";
+"no_posts_abstract" = "Kimse buraya bir şey yazmadı... Şimdilik.";
 
 /* Friends */
 
 "friends" = "Arkadaşlar";
 "followers" = "Takipçiler";
 "follower" = "Takipçi";
-"login_as" = "Войти как";
+"login_as" = "Login as $1";
 "ban_fast" = "Забанить";
 "adm_notify" = "Предупредить";
 "friends_add" = "Arkadaşlara ekle";
@@ -452,31 +452,31 @@
 "no_data" = "Veri yok";
 "no_data_description" = "Böyle bir veri yok.";
 
-"error" = "Ошибка";
-"error_shorturl" = "Данный короткий адрес уже занят.";
-"error_segmentation" = "Ошибка сегментации";
-"error_upload_failed" = "Не удалось загрузить фото";
-"error_old_password" = "Старый пароль не совпадает";
-"error_new_password" = "Новые пароли не совпадает";
-"error_shorturl_incorrect" = "Короткий адрес имеет некорректный формат.";
+"error" = "Hata";
+"error_shorturl" = "Bu kısa adresin zaten bir sahibi var.";
+"error_segmentation" = "Segment hatası";
+"error_upload_failed" = "Resim yüklerken hata oluştu";
+"error_old_password" = "Eski parola uyuşmuyor";
+"error_new_password" = "Yeni parola uyuşmuyor";
+"error_shorturl_incorrect" = "Kısa adresin hatalı bir formatı var.";
 
-"forbidden" = "Ошибка доступа";
-"forbidden_comment" = "Настройки приватности этого пользователя не разрешают вам смотреть на его страницу.";
+"forbidden" = "Erişim hatası";
+"forbidden_comment" = "Bu kullanıcının gizlilik ayarları onun sayfasına bakmanıza izin vermiyor.";
 
-"changes_saved" = "Изменения сохранены";
-"changes_saved_comment" = "Новый данные появятся на вашей странице";
+"changes_saved" = "Değişiklikler kaydedildi";
+"changes_saved_comment" = "Yeni veriler sayfanızda görünecek";
 
-"photo_saved" = "Фотография сохранена";
-"photo_saved_comment" = "Новое изображние профиля появится у вас на странице";
+"photo_saved" = "Resim kaydedildi";
+"photo_saved_comment" = "Yeni resim sayfanızda görünecek";
 
 /* Admin actions */
 
 "login_as" = "Войти как $1";
-"ban_user_action" = "Забанить пользователя";
-"warn_user_action" = "Предупредить пользователя";
+"ban_user_action" = "Ban user";
+"warn_user_action" = "Warn user";
 
 /* Paginator */
 
-"paginator_back" = "Назад";
-"paginator_page" = "Страница $1";
-"paginator_next" = "Дальше";
+"paginator_back" = "Geri";
+"paginator_page" = "Sayfa $1";
+"paginator_next" = "İleri";
