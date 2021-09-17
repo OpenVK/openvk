@@ -94,7 +94,7 @@
 
 "post_writes_m" = "wrote";
 "post_writes_f" = "wrote";
-"post_writes_g" = "опубликовали";
+"post_writes_g" = "posted";
 "wall" = "Wall";
 "post" = "Post";
 "write" = "Write";
@@ -208,7 +208,7 @@
 "photo" = "Photo";
 "upload_button" = "Upload";
 
-"open_original" = "Открыть оригинал";
+"open_original" = "Open original";
 
 "avatar_album" = "Page photos";
 "wall_album" = "Wall photos";
@@ -355,10 +355,10 @@
 "video_updated" = "Updated";
 "video_link_to_yt" = "YT link";
 
-"info_name" = "Название";
-"info_description" = "Описание";
-"info_uploaded_by" = "Загрузил";
-"info_upload_date" = "Дата загрузки";
+"info_name" = "Title";
+"info_description" = "Description";
+"info_uploaded_by" = "Uploaded by";
+"info_upload_date" = "Upload date";
 
 "videos_zero" = "No videos";
 "videos_one" = "$1 video";
