@@ -208,6 +208,8 @@
 "photo" = "Fotoğraf";
 "upload_button" = "Yükle";
 
+"open_original" = "Открыть оригинал";
+
 "avatar_album" = "Фотографии со страницы";
 "wall_album" = "Фотографии со стены";
 
@@ -353,10 +355,10 @@
 "video_updated" = "Güncellendi";
 "video_link_to_yt" = "YT linki";
 
-"video_name" = "Başlık";
-"video_description" = "Açıklama";
-"video_uploaded_by" = "Yükleyen";
-"video_upload_date" = "Yükleme tarihi";
+"info_name" = "Название";
+"info_description" = "Описание";
+"info_uploaded_by" = "Загрузил";
+"info_upload_date" = "Дата загрузки";
 
 "videos_zero" = "Video yok";
 "videos_one" = "$1 video";
