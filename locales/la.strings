@@ -208,6 +208,8 @@
 "photo" = "Photographia";
 "upload_button" = "Download";
 
+"open_original" = "Открыть оригинал";
+
 "avatar_album" = "Фотографии со страницы";
 "wall_album" = "Фотографии со стены";
 
@@ -353,10 +355,10 @@
 "video_updated" = "Amet";
 "video_link_to_yt" = "Donec YT";
 
-"video_name" = "Nomen";
-"video_description" = "Description";
-"video_uploaded_by" = "Lorem";
-"video_upload_date" = "Upload date";
+"info_name" = "Название";
+"info_description" = "Описание";
+"info_uploaded_by" = "Загрузил";
+"info_upload_date" = "Дата загрузки";
 
 "videos_zero" = "Nulla videos";
 "videos_one" = "Unum video";
