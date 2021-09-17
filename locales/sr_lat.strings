@@ -16,7 +16,7 @@
 /* Profile information */
 
 "select_language" = "Promena jezika";
-"edit" = "urediti";
+"edit" = "Urediti";
 "birth_date" = "Rođendan";
 "registration_date" = "Datum registracije";
 "hometown" = "Rodni grad";

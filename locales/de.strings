@@ -16,7 +16,7 @@
 /* Profile information */
 
 "select_language" = "Sprache auswählen";
-"edit" = "bearbeiten";
+"edit" = "Bearbeiten";
 "birth_date" = "Geburtstag";
 "registration_date" = "Registrierungsdatum";
 "hometown" = "Heimatstadt";
