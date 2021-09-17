@@ -17,7 +17,7 @@
 /* Profile information */
 
 "select_language" = "Dil seç";
-"edit" = "dznl";
+"edit" = "Редактировать";
 "birth_date" = "Doğum tarihi";
 "registration_date" = "Kayıt tarihi";
 "hometown" = "Memleket";
