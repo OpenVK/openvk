@@ -208,6 +208,8 @@
 "photo" = "Zdjęcie";
 "upload_button" = "Pobrać";
 
+"open_original" = "Открыть оригинал";
+
 "avatar_album" = "Zdjęcia ze strony";
 "wall_album" = "Zdjęcia ze ściany";
 
@@ -353,10 +355,10 @@
 "video_updated" = "Aktualizacja";
 "video_link_to_yt" = "Link na YT";
 
-"video_name" = "Nazwa";
-"video_description" = "Opis";
-"video_uploaded_by" = "Pobrał";
-"video_upload_date" = "Data pobrania";
+"info_name" = "Название";
+"info_description" = "Описание";
+"info_uploaded_by" = "Загрузил";
+"info_upload_date" = "Дата загрузки";
 
 "videos_zero" = "Brak nagrania wideo";
 "videos_one" = "Jedno nagranie wideo";
