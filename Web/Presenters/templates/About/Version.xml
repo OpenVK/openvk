@@ -236,6 +236,17 @@
                 </tr>
                 <tr>
                     <td class="e">
+                        Registration
+                    </td>
+                    <td class="v">
+                        {php echo OPENVK_ROOT_CONF["openvk"]["preferences"]["registration"]["enable"] ? "Enabled" : "Disabled"}
+                    </td>
+                    <td class="v">
+                        Enabled
+                    </td>
+                </tr>
+                <tr>
+                    <td class="e">
                         Ads
                     </td>
                     <td class="v">
