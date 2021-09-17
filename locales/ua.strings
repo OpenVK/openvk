@@ -17,7 +17,7 @@
 /* Profile information */
 
 "select_language" = "Вибрати мову";
-"edit" = "редагувати";
+"edit" = "Редагувати";
 "birth_date" = "День нарождення";
 "registration_date" = "Дата реєстрації";
 "hometown" = "Рідне місто";
