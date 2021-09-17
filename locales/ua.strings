@@ -17,12 +17,12 @@
 /* Profile information */
 
 "select_language" = "Вибрати мову";
-"edit" = "Редагувати";
+"edit" = "редагувати";
 "birth_date" = "День нарождення";
 "registration_date" = "Дата реєстрації";
 "hometown" = "Рідне місто";
 "this_is_you" = "це Ви";
-"edit_page" = "Редагувати строрінку";
+"edit_page" = "Редагувати сторінку";
 "edit_group" = "Редагувати групу";
 "change_status" = "змінити статус";
 "name" = "Імя";
@@ -66,8 +66,8 @@
 "politViews_5" = "Ліберальні";
 "politViews_6" = "Консервативні";
 "politViews_7" = "Монархічні";
-"politViews_8" = "Ультраконсервативніе";
-"politViews_9" = "Лібертаріанська";
+"politViews_8" = "Ультраконсервативні";
+"politViews_9" = "Лібертаріанські";
 
 "contact_information" = "Контактна інформація";
 
@@ -82,7 +82,7 @@
 "interests" = "Інтереси";
 "favorite_music" = "Улюблена музика";
 "favorite_films" = "Улюблені фільми";
-"favorite_shows" = "Улюблене ТВ-шоу";
+"favorite_shows" = "Улюблене ТБ-шоу";
 "favorite_books" = "Улюблені книги";
 "favorite_quotes" = "Улюблені цитати";
 "information_about" = "Про себе";
@@ -99,9 +99,9 @@
 "write" = "Написати";
 "publish" = "опублікувати";
 "delete" = "Видалити";
-"comments" = "Коментарії";
+"comments" = "Коментарі";
 "share" = "Поділитися";
-"comments_tip" = "Будьте першим, хто залишить коментарій!";
+"comments_tip" = "Будьте першим, хто залишить коментар!";
 "your_comment" = "Ваш коментарій";
 "comments" = "Коментарії";
 "shown" = "Показано";
@@ -125,7 +125,7 @@
 "login_as" = "Зайти як";
 "ban_fast" = "Заблокувати";
 "adm_notify" = "Попередити";
-"friends_add" = "Добавити у друзі";
+"friends_add" = "Додати в друзі";
 "friends_delete" = "Видалити з друзів";
 "friends_reject" = "Скасувати заявку";
 "friends_accept" = "Прийняти заявку";
@@ -294,10 +294,10 @@
 "new_password" = "Новий пароль";
 "repeat_password" = "Повторіть пароль";
 
-"avatars_style" = "Відображення аватар";
+"avatars_style" = "Відображення аватарів";
 "style" = "Стиль";
 
-"default" = "По умовчання";
+"default" = "За замовчанням";
 "cut" = "Обрізка";
 "round_avatars" = "Круглий аватар";
 
@@ -456,7 +456,7 @@
 "error_segmentation" = "Помилка сегментації";
 "error_upload_failed" = "Не вдалось завантажити фото";
 "error_old_password" = "Старий пароль не співпадає";
-"error_new_password" = "Нові паролі не співпадає";
+"error_new_password" = "Нові паролі не співпадають";
 "error_shorturl_incorrect" = "Короткий адрес має некоректний формат.";
 
 "forbidden" = "Помилка доступа";
@@ -478,4 +478,4 @@
 
 "paginator_back" = "Назад";
 "paginator_page" = "Сторінка $1";
-"paginator_next" = "Дальше";
+"paginator_next" = "Далі";
