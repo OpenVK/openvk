@@ -133,7 +133,7 @@
                 <tr class="v">
                     <td>
                         This program makes use of the Chandler open-source web application server:<br/>
-                        libchandler {=CHANDLER_VER} by @rem-pai
+                        libchandler {=CHANDLER_VER} by rem-pai
                     </td>
                 </tr>
             </tbody>
@@ -385,7 +385,7 @@
                 </tr>
                 <tr>
                     <td class="e">
-                        Vladimir Barinov (veselcraft), Alexandra Katunina (jill_senpai), Konstantin Kichulkin (kosfurler),
+                        Vladimir Barinov (veselcraft), Alexandra Katunina (rem-pai), Konstantin Kichulkin (kosfurler),
                         Nikita Volkov (sup_ban), Daniil Myslivets (myslivets), Alexander Kotov (l-lacker),
                         Alexey Assemblerov (BiosNod), Ilya Prokopenko (dsrev) and Vladimir Lapskiy (0x7d5)
                     </td>
@@ -448,10 +448,10 @@
                 </tr>
                 <tr>
                     <td class="e">Initial hosting</td>
-                    <td class="v">Ilya Prokopenko (dsrev) and Alexandra Katunina (jill_senpai)</td>
+                    <td class="v">Ilya Prokopenko (dsrev) and Alexandra Katunina (rem-pai)</td>
                 </tr>
                 <tr>
-                    <td class="e">Bug-tracker hosting</td>
+                    <td class="e">Initial bug-tracker hosting</td>
                     <td class="v">Alexey Assemblerov (BiosNod)</td>
                 </tr>
                 <tr>
@@ -484,9 +484,8 @@
                 </tr>
                 <tr class="e">
                     <td>
-                        kovaltim, Vladimir Lapskiy (TeQuiero), Alexander Minkin (WerySkok), Polina Katunina (RousPhaul), tojeveth,
-                        Egor Shevchenko, Vadim Korovin (yuni), <del>Dmitriy Daemon (Dimas_NT)</del>, Ilya Prokopenko (dsrev), Mamkin_Xakep_bot,
-                        cmed404 and unknown tester, who died shortly after trying to upload post with cat.
+                        Vladimir Lapskiy (0x7d5), Alexander Minkin (WerySkok), Polina Katunina (RousPhaul),
+                        Egor Shevchenko, Dmitriy Daemon and Ilya Prokopenko (dsrev).
                     </td>
                 </tr>
             </tbody>
