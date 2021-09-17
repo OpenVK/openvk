@@ -17,7 +17,7 @@
 /* Profile information */
 
 "select_language" = "Lego lingua";
-"edit" = "recensere / fontem recensere";
+"edit" = "Редактировать";
 "birth_date" = "Natalis";
 "registration_date" = "Registration date";
 "hometown" = "Patria";
