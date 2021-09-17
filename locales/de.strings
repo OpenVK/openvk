@@ -323,10 +323,10 @@
 "video_updated" = "Aktualisiert";
 "video_link_to_yt" = "YT-Link";
 
-"video_name" = "Titel";
-"video_description" = "Beschreibung";
-"video_uploaded_by" = "Hochgeladen von";
-"video_upload_date" = "Hochgeladen am:";
+"info_name" = "Titel";
+"info_description" = "Beschreibung";
+"info_uploaded_by" = "Hochgeladen von";
+"info_upload_date" = "Hochgeladen am:";
 
 "videos_zero" = "Keine Videos";
 "videos_one" = "$1 Video";

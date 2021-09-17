@@ -353,10 +353,10 @@
 "video_updated" = "Թարմացված է";
 "video_link_to_yt" = "YouTube-յան հղում";
 
-"video_name" = "Անվանում";
-"video_description" = "Նկարագրություն";
-"video_uploaded_by" = "Վերբեռնել է";
-"video_upload_date" = "Վերբեռնման ամսաթիվ";
+"info_name" = "Անվանում";
+"info_description" = "Նկարագրություն";
+"info_uploaded_by" = "Վերբեռնել է";
+"info_upload_date" = "Վերբեռնման ամսաթիվ";
 
 "videos_zero" = "Ոչ մի տեսանյութ չկա";
 "videos_one" = "Մեկ տեսանյութ";

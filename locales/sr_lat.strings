@@ -335,10 +335,10 @@
 "video_updated" = "Ažurirano";
 "video_link_to_yt" = "YT Adresa";
 
-"video_name" = "Naziv";
-"video_description" = "Opis";
-"video_uploaded_by" = "Video je preuzeo";
-"video_upload_date" = "Datum preuzimanja";
+"info_name" = "Naziv";
+"info_description" = "Opis";
+"info_uploaded_by" = "Video je preuzeo";
+"info_upload_date" = "Datum preuzimanja";
 
 "videos_zero" = "Nema nijednog video";
 "videos_one" = "Jedno video";

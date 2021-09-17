@@ -335,10 +335,10 @@
 "video_updated" = "Абнаўленне";
 "video_link_to_yt" = "Спасылка на YT";
 
-"video_name" = "Назва";
-"video_description" = "Апісанне";
-"video_uploaded_by" = "Загрузіў";
-"video_upload_date" = "Дата загрузкі";
+"info_name" = "Назва";
+"info_description" = "Апісанне";
+"info_uploaded_by" = "Загрузіў";
+"info_upload_date" = "Дата загрузкі";
 
 "videos_zero" = "Ні адной відэазапісы";
 "videos_one" = "Адна відэазапіс";

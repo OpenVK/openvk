@@ -346,10 +346,10 @@
 "video_updated" = "Adnoŭlena";
 "video_link_to_yt" = "Syłka na YT";
 
-"video_name" = "Nazva";
-"video_description" = "Apisańnie";
-"video_uploaded_by" = "Zapampavaŭ";
-"video_upload_date" = "Kali zapampovana";
+"info_name" = "Nazva";
+"info_description" = "Apisańnie";
+"info_uploaded_by" = "Zapampavaŭ";
+"info_upload_date" = "Kali zapampovana";
 
 "videos_zero" = "Niama videazapisaŭ";
 "videos_one" = "Adziny videazapis";

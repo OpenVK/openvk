@@ -1,6 +1,6 @@
 {extends "../@layout.xml"}
 
-{block title}Фотография{/block}
+{block title}{_"photo"}{/block}
 
 {block header}
     {ifset $album}
@@ -16,7 +16,7 @@
     {else}
         <a href="{$photo->getOwner()->getURL()}">{$photo->getOwner()->getCanonicalName()}</a>
     {/ifset}
-    » Фотография
+    » {_"photo"}
 {/block}
 
 {block content}
@@ -32,21 +32,21 @@
         </div>
         <div style="float: left; min-height: 100px; width: 30%;">
             <div>
-                <h4>Информация</h4>
-                <span style="color: grey;">Описание:</span>
+                <h4>{_"information"}</h4>
+                <span style="color: grey;">{_"info_description"}:</span>
                 {$photo->getDescription() ?? "(отсутствует)"}<br/>
-                <span style="color: grey;">Загрузил:</span>
+                <span style="color: grey;">{_"info_uploaded_by"}:</span>
                 <a href="{$photo->getOwner()->getURL()}">{$photo->getOwner()->getFullName()}</a><br/>
-                <span style="color: grey;">Дата создания:</span>
+                <span style="color: grey;">{_"info_upload_date"}:</span>
                 {$photo->getPublicationTime()}
             </div>
             <br/>
-            <h4>Действия</h4>
+            <h4>{_actions}</h4>
             <div n:if="isset($thisUser) && $thisUser->getId() === $photo->getOwner()->getId()">
-                <a href="/photo{$photo->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">Редактировать</a>
-                <a id="_photoDelete" href="/photo{$photo->getPrettyId()}/delete" class="profile_link" style="display:block;width:96%;">Удалить</a>
+                <a href="/photo{$photo->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">{_"edit"}</a>
+                <a id="_photoDelete" href="/photo{$photo->getPrettyId()}/delete" class="profile_link" style="display:block;width:96%;">{_"delete"}</a>
             </div>
-            <a href="{$photo->getURL()}" class="profile_link" target="_blank" style="display:block;width:96%;">Открыть оригинал</a>
+            <a href="{$photo->getURL()}" class="profile_link" target="_blank" style="display:block;width:96%;">{_"open_original"}</a>
         </div>
     </div>
 {/block}

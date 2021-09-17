@@ -320,10 +320,10 @@
 "video_updated" = "Güncellendi";
 "video_link_to_yt" = "YT linki";
 
-"video_name" = "Başlık";
-"video_description" = "Açıklama";
-"video_uploaded_by" = "Yükleyen";
-"video_upload_date" = "Yükleme tarihi";
+"info_name" = "Başlık";
+"info_description" = "Açıklama";
+"info_uploaded_by" = "Yükleyen";
+"info_upload_date" = "Yükleme tarihi";
 
 "videos_zero" = "Video yok";
 "videos_one" = "$1 video";

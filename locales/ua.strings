@@ -352,10 +352,10 @@
 "video_updated" = "Оновлено";
 "video_link_to_yt" = "Посилання на YT";
 
-"video_name" = "Назва";
-"video_description" = "Опис";
-"video_uploaded_by" = "Завантажив";
-"video_upload_date" = "Дата завантаження";
+"info_name" = "Назва";
+"info_description" = "Опис";
+"info_uploaded_by" = "Завантажив";
+"info_upload_date" = "Дата завантаження";
 
 "videos_zero" = "Жодної відеозаписи";
 "videos_one" = "Одна відеозапис";

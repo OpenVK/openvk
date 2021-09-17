@@ -335,10 +335,10 @@
 "video_updated" = "Ажурирано";
 "video_link_to_yt" = "YT Адреса";
 
-"video_name" = "Назив";
-"video_description" = "Опис";
-"video_uploaded_by" = "Видео је преузео";
-"video_upload_date" = "Датум преузимања";
+"info_name" = "Назив";
+"info_description" = "Опис";
+"info_uploaded_by" = "Видео је преузео";
+"info_upload_date" = "Датум преузимања";
 
 "videos_zero" = "Нема ниједног видео";
 "videos_one" = "Једно видео";
