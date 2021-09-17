@@ -208,6 +208,8 @@
 "photo" = "Photo";
 "upload_button" = "Upload";
 
+"open_original" = "Открыть оригинал";
+
 "avatar_album" = "Page photos";
 "wall_album" = "Wall photos";
 
@@ -353,10 +355,10 @@
 "video_updated" = "Updated";
 "video_link_to_yt" = "YT link";
 
-"video_name" = "Title";
-"video_description" = "Description";
-"video_uploaded_by" = "Uploaded by";
-"video_upload_date" = "Upload date";
+"info_name" = "Название";
+"info_description" = "Описание";
+"info_uploaded_by" = "Загрузил";
+"info_upload_date" = "Дата загрузки";
 
 "videos_zero" = "No videos";
 "videos_one" = "$1 video";
