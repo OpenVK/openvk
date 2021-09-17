@@ -250,8 +250,14 @@ final class WallPresenter extends OpenVKPresenter
         $this->logPostView($post, $wall);
         
         $this->template->post     = $post;
-        if ($post->getTargetWall() > 0) $this->template->wallOwner = (new Users)->get($post->getTargetWall());
-        else $this->template->wallOwner = (new Clubs)->get($post->getTargetWall());
+        if ($post->getTargetWall() > 0) 
+        {
+        	$this->template->wallOwner = (new Users)->get($post->getTargetWall());
+			$this->template->isWallOfGroup = false;
+		} else {
+			$this->template->wallOwner = (new Clubs)->get(abs($post->getTargetWall()));
+			$this->template->isWallOfGroup = true;
+		}
         $this->template->cCount   = $post->getCommentsCount();
         $this->template->cPage    = (int) ($_GET["p"] ?? 1);
         $this->template->comments = iterator_to_array($post->getComments($this->template->cPage));

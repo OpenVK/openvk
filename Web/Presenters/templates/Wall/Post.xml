@@ -6,7 +6,7 @@
 		{$wallOwner->getCanonicalName()}
 	</a>
 	»
-	<a href="/wall{$wallOwner->getId()}">
+	<a href="/wall{$wallOwner->getId() * ($isWallOfGroup ? -1 : 1)}">
 		{_wall}
 	</a>
 	»
