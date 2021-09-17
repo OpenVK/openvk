@@ -208,6 +208,8 @@
 "photo" = "Foto";
 "upload_button" = "Otpremanje";
 
+"open_original" = "Открыть оригинал";
+
 "avatar_album" = "Фотографии со страницы";
 "wall_album" = "Фотографии со стены";
 
@@ -353,10 +355,10 @@
 "video_updated" = "Ažurirano";
 "video_link_to_yt" = "YT Adresa";
 
-"video_name" = "Naziv";
-"video_description" = "Opis";
-"video_uploaded_by" = "Video je preuzeo";
-"video_upload_date" = "Datum preuzimanja";
+"info_name" = "Название";
+"info_description" = "Описание";
+"info_uploaded_by" = "Загрузил";
+"info_upload_date" = "Дата загрузки";
 
 "videos_zero" = "Nema nijednog video";
 "videos_one" = "Jedno video";
