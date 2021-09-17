@@ -2,7 +2,15 @@
 {block title}{_"post"}{/block}
 
 {block header}
-    {_"post"}
+	<a href="{$wallOwner->getURL()}">
+		{$wallOwner->getCanonicalName()}
+	</a>
+	»
+	<a href="/wall{$wallOwner->getId()}">
+		{_wall}
+	</a>
+	»
+	{_"post"}
 {/block}
 
 {block content}
