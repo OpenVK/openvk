@@ -13,6 +13,7 @@
 "log_in" = "Пријава";
 "password" = "Шифра";
 "registration" = "Регистрација";
+"forgot_password" = "Забыли пароль?";
 
 /* Profile information */
 
@@ -264,9 +265,8 @@
 "header_log_out" = "одјавити се";
 "header_search" = "Истраживање";
 
-"header_login" = "Пријава";
-"header_registration" = "Регистрација";
-"header_help" = "Помощь";
+"header_login" = "вход";
+"header_registration" = "регистрация";
 
 "footer_blog" = "блог";
 "footer_help" = "помоћ";
