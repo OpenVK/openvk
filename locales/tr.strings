@@ -13,6 +13,7 @@
 "log_in" = "Giriş yap";
 "password" = "Parola";
 "registration" = "Kayıt";
+"forgot_password" = "Забыли пароль?";
 
 /* Profile information */
 
@@ -264,9 +265,8 @@
 "header_log_out" = "çıkış yap";
 "header_search" = "ara";
 
-"header_login" = "giriş yap";
-"header_registration" = "kayıt";
-"header_help" = "Помощь";
+"header_login" = "вход";
+"header_registration" = "регистрация";
 
 "footer_blog" = "blog";
 "footer_help" = "yardım";
