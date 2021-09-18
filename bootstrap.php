@@ -117,7 +117,8 @@ function isLanguageAvailable($lg): bool
 
 function getBrowsersLanguage(): array
 {
-	return mb_split(",", mb_split(";", $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0]);
+	if ($_SERVER['HTTP_ACCEPT_LANGUAGE'] != null) return mb_split(",", mb_split(";", $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0]);
+	else return array();
 }
 
 function eventdb(): ?DatabaseConnection
