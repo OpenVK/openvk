@@ -20,12 +20,12 @@
 {block tabs}
     <form style="margin-left: 12px;">
         <input name="type" type="hidden" value="{$_GET['type'] ?? 'users'}" />
-        <input name="query" type="text" placeholder="Поиск" value="{$_GET['query'] ?? ''}" style="width: 90%" />
-        <input type="submit" class="button" value="Поиск!" style="width: 9%" />
+        <input name="query" type="text" placeholder="{_"header_search"}" value="{$_GET['query'] ?? ''}" style="width: 90%" />
+        <input type="submit" class="button" value="{_"search_button"}" style="width: 9%" />
     </form>
     
     <p style="margin-left: 15px;">
-        <b>{$count} результатов</b>
+        <b>{tr("results", $count)}</b>
     </p>
 {/block}
 
@@ -36,7 +36,7 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getAvatarUrl()}" width="75" alt="Фотография" />
+    <img src="{$x->getAvatarUrl()}" width="75" alt="{_"photo"}" />
 {/block}
 
 {block name}
@@ -49,7 +49,7 @@
             {if $type === "users"}
                 <tr>
                     <td><span class="nobold">{_"gender"}: </span></td>
-                    <td>{$x->isFemale() ? "женский" : "мужской"}</td>
+                    <td>{$x->isFemale() ? tr("female") : tr("male")}</td>
                 </tr>
                 <tr>
                     <td><span class="nobold">{_"relationship"}:</span></td>
@@ -62,10 +62,10 @@
             {/if}
             <tr>
                 <td>
-                    <span class="nobold">Описание:</span>
+                    <span class="nobold">{_"description"}:</span>
                 </td>
                 <td>
-                    {$x->getDescription() ?? "(отсутствует)"}
+                    {$x->getDescription() ?? '(' . tr("none") . ')'}
                 </td>
             </tr>
         </tbody>

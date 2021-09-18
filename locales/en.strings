@@ -47,6 +47,7 @@
 "status" = "Status";
 "no_information_provided" = "No information provided.";
 "deceased_person" = "Deceased person";
+"none" = "none";
 
 "relationship" = "Relationship";
 
@@ -115,10 +116,21 @@
 "feed" = "News";
 "publish_post" = "Add post";
 
+"all_news" = "All news";
+"posts_per_page" = "Number of posts per page";
+
+"attachment" = "Attachment";
+"post_as_group" = "Post as group";
+"add_signature" = "Add signature";
+/* ^ can be translated as "author's signature". ^ */
+"contains_nsfw" = "Contains NSFW content";
 "nsfw_warning" = "This post may have NSFW-content";
 "report" = "Report";
 "attach_photo" = "Attach photo";
 "no_posts_abstract" = "Nobody wrote anything here... At least.";
+"attach_no_longer_available" = "This attachment is no longer available.";
+"open_post" = "Open post";
+"version_incompatibility" = "This attachment could not be displayed. Probably the database is incompatible with the current version of OpenVK.";
 
 /* Friends */
 
@@ -262,7 +274,7 @@
 "main" = "Main";
 "contacts" = "Contacts";
 "avatar" = "Avatar";
-"privacy" = "privacy";
+"privacy" = "Privacy";
 "interface" = "Interface";
 
 "profile_picture" = "Profile picture";
@@ -284,6 +296,10 @@
 "search_for_groups" = "Search for groups";
 "search_for_people" = "Search for people";
 "search_button" = "Find";
+"results_zero" = "No results";
+"results_one" = "$1 result";
+"results_other" = "$1 results";
+
 "privacy_setting_access_page" = "Who can view my page";
 "privacy_setting_read_info" = "Who can see main information of my page";
 "privacy_setting_see_groups" = "Who can see my groups and meetings";

@@ -44,6 +44,7 @@
 "status" = "Статус";
 "no_information_provided" = "Информация отсутствует.";
 "deceased_person" = "Страница покойного человека";
+"none" = "отсутствует";
 "years" = "лет";
 
 "relationship" = "Семейное положение";
@@ -114,10 +115,20 @@
 "wall_many" = "$1 записей";
 "wall_other" = "$1 записей";
 
+"all_news" = "Все новости";
+"posts_per_page" = "Количество записей на странице";
+
+"attachment" = "Вложение";
+"post_as_group" = "От имени сообщества";
+"add_signature" = "Подпись автора";
+"contains_nsfw" = "Содержит NSFW-контент";
 "nsfw_warning" = "Данный пост может содержать 18+ контент";
 "report" = "Пожаловаться";
 "attach_photo" = "Прикрепить фото";
 "no_posts_abstract" = "Здесь никто ничего не написал... Пока.";
+"attach_no_longer_available" = "Это вложение больше недоступно.";
+"open_post" = "Открыть запись";
+"version_incompatibility" = "Не удалось отобразить это вложение. Возможно, база данных несовместима с текущей версией OpenVK.";
 
 /* Friends */
 
@@ -307,6 +318,12 @@
 "search_for_groups" = "Поиск групп";
 "search_for_people" = "Поиск людей";
 "search_button" = "Найти";
+"results_zero" = "Ни одного результата";
+"results_one" = "Один результат";
+"results_few" = "$1 результата";
+"results_many" = "$1 результатов";
+"results_other" = "$1 результатов";
+
 "privacy_setting_access_page" = "Кому в интернете видно мою страницу";
 "privacy_setting_read_info" = "Кому видно основную информацию моей страницы";
 "privacy_setting_see_groups" = "Кому видно мои группы и встречи";

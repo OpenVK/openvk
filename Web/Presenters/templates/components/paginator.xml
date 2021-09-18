@@ -1,5 +1,5 @@
 <div n:if="!($conf->page === 1 && $conf->count <= $conf->perPage)" class="paginator">
-    <hr/>
+    <br/>
     <center>
         <a n:if="$conf->page != 1"
            href="?{http_build_query(array_merge($_GET, ['p' => ($conf->page - 1)]), 'k', '&', PHP_QUERY_RFC3986)}"
