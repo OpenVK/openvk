@@ -44,6 +44,7 @@
 "status" = "Статус";
 "no_information_provided" = "Информация отсутствует.";
 "deceased_person" = "Страница покойного человека";
+"none" = "отсутствует";
 "years" = "лет";
 
 "relationship" = "Породични статус";
@@ -114,10 +115,20 @@
 "wall_many" = "$1 записа";
 "wall_other" = "$1 записа";
 
+"all_news" = "Все новости";
+"posts_per_page" = "Количество записей на странице";
+
+"attachment" = "Вложение";
+"post_as_group" = "От имени сообщества";
+"add_signature" = "Подпись автора";
+"contains_nsfw" = "Содержит NSFW-контент";
 "nsfw_warning" = "Овај пост има садржај за особе од 18 година и више";
 "report" = "Пожаловаться";
 "attach_photo" = "Прикрепить фото";
 "no_posts_abstract" = "Здесь никто ничего не написал... Пока.";
+"attach_no_longer_available" = "Это вложение больше недоступно.";
+"open_post" = "Открыть запись";
+"version_incompatibility" = "Не удалось отобразить это вложение. Возможно, база данных несовместима с текущей версией OpenVK.";
 
 /* Friends */
 
@@ -307,6 +318,12 @@
 "search_for_groups" = "Истраживање група";
 "search_for_people" = "Истраживање људи";
 "search_button" = "Пронаћи";
+"results_zero" = "Ни одного результата";
+"results_one" = "Один результат";
+"results_few" = "$1 результата";
+"results_many" = "$1 результатов";
+"results_other" = "$1 результатов";
+
 "privacy_setting_access_page" = "Ко може видјети моју страницу на Интернету";
 "privacy_setting_read_info" = "Ко може видјети основну информацију од моје странице";
 "privacy_setting_see_groups" = "Ко може видјети информацију о мојим груповима и састанку";
