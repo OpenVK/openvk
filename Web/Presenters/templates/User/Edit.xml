@@ -65,7 +65,7 @@
                     {if OPENVK_ROOT_CONF['openvk']['credentials']['zadarma']['enable']}
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">Телефон: </span>
+                            <span class="nobold">{_"phone"}: </span>
                         </td>
                         <td>
                             <input type="phone" name="phone" value="{$user->getPhone()}" />
@@ -132,7 +132,7 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
-                             <span class="nobold">День рождения: </span>    
+                             <span class="nobold">{_"birth_date"}: </span>
                         </td>
                         <td>
                          <input max={date('Y-m-d')} name="birthday" value={gmdate("Y-m-d", $user->getBirthday())} type="date"/>

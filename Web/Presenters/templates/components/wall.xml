@@ -16,7 +16,7 @@
                     </div>
                     <div id="post-buttons" style="display: none;">
                         <div class="post-upload">
-                            Вложение: <span>(unknown)</span>
+                            {_"attachment"}: <span>(unknown)</span>
                         </div>
                         <div class="post-opts">
                             {if !is_null($thisUser) && $owner < 0 && $club->canBeModifiedBy($thisUser)}
@@ -28,15 +28,15 @@
                                 </script>
                                 
                                 <label>
-                                    <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" /> От имени сообщества
+                                    <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" /> {_"post_as_group"}
                                 </label>
                                 <label id="forceSignOpt" style="display: none;">
-                                    <input type="checkbox" name="force_sign" /> Подпись автора
+                                    <input type="checkbox" name="force_sign" /> {_"add_signature"}
                                 </label>
                             {/if}
                             
                             <label>
-                                <input type="checkbox" name="nsfw" /> Содержит NSFW-контент
+                                <input type="checkbox" name="nsfw" /> {_"contains_nsfw"}
                             </label>
                         </div>
                         <input type="file" name="_pic_attachment" accept="image/*" style="display:none;" />

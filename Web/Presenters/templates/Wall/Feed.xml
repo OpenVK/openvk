@@ -7,7 +7,7 @@
     <div n:if="!isset($globalFeed)" style="float: right;">
         <span>
             <b>
-                <a href="/feed/all">Все новости</a>
+                <a href="/feed/all">{_"all_news"}</a>
             </b>
         </span>
     </div>
@@ -29,7 +29,7 @@
                 <input type="submit" value="{_'write'}" class="button" />
                 <div style="float: right;">
                     <a href="javascript:void(document.querySelector(`input[name=_pic_attachment]`).click());">
-                        Прикрепить изображение
+                        {_"attach_photo"}
                     </a>
                 </div>
             </form>
@@ -45,7 +45,7 @@
         {/foreach}
         {include "../components/paginator.xml", conf => $paginatorConf}
         <br/>
-        Количество постов на странице:
+        {_"posts_per_page"}:
         <select id="pageSelect">
             <option value="1">1</option>
             <option value="5">5</option>
