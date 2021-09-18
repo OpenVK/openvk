@@ -13,6 +13,7 @@
 "log_in" = "Log in";
 "password" = "Password";
 "registration" = "Registration";
+"forgot_password" = "Забыли пароль?";
 
 /* Profile information */
 
@@ -264,9 +265,8 @@
 "header_log_out" = "log out";
 "header_search" = "Search";
 
-"header_login" = "login";
-"header_registration" = "registration";
-"header_help" = "Help";
+"header_login" = "вход";
+"header_registration" = "регистрация";
 
 "footer_blog" = "blog";
 "footer_help" = "help";
