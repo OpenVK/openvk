@@ -12,6 +12,7 @@
 "log_in" = "Log in";
 "password" = "Password";
 "registration" = "Registration";
+"forgot_password" = "Forgot your password?";
 
 /* Profile information */
 
