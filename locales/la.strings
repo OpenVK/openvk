@@ -13,6 +13,7 @@
 "log_in" = "Ostium";
 "password" = "Tessera";
 "registration" = "Reprehendo";
+"forgot_password" = "Забыли пароль?";
 
 /* Profile information */
 
@@ -264,9 +265,8 @@
 "header_log_out" = "ex";
 "header_search" = "Investigatio";
 
-"header_login" = "Вход";
-"header_registration" = "Регистрация";
-"header_help" = "Помощь";
+"header_login" = "вход";
+"header_registration" = "регистрация";
 
 "footer_blog" = "blog";
 "footer_help" = "auxilium";
