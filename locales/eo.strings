@@ -13,6 +13,7 @@
 "log_in" = "Ensaluti";
 "password" = "Pasvorto";
 "registration" = "Registriĝo";
+"forgot_password" = "Забыли пароль?";
 
 /* Profile information */
 
@@ -264,9 +265,8 @@
 "header_log_out" = "выйти";
 "header_search" = "Поиск";
 
-"header_login" = "Вход";
-"header_registration" = "Регистрация";
-"header_help" = "Помощь";
+"header_login" = "вход";
+"header_registration" = "регистрация";
 
 "footer_blog" = "блог";
 "footer_help" = "помощь";
