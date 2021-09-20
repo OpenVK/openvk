@@ -104,6 +104,9 @@
 "delete" = "Forigi";
 "comments" = "Komentoj";
 "share" = "Поделиться";
+"pin" = "Закрепить";
+"unpin" = "Открепить";
+"pinned" = "закреплено";
 "comments_tip" = "Будьте первым, кто оставит комментарий!";
 "your_comment" = "Via komento";
 "comments" = "Komentoj";
