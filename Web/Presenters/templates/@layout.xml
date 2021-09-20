@@ -266,8 +266,8 @@
         </script>
         
         <script n:if="OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['enable']"
-                async defer data-domain="{OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['domain']}"
-                src="{OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['server']}js/plausible.js"></script>
+                async defer data-domain="{php echo OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['domain']}"
+                src="{php echo OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['server']}js/plausible.js"></script>
     </body>
 </html>
 
