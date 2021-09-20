@@ -103,7 +103,7 @@ function setLanguage($lg): void
 
 function getLanguages(): array
 {
-    return yaml_parse_file(OPENVK_ROOT . "/locales/list.yml")['list'];
+    return chandler_parse_yaml(OPENVK_ROOT . "/locales/list.yml")['list'];
 }
 
 function isLanguageAvailable($lg): bool
