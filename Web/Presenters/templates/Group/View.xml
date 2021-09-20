@@ -70,7 +70,7 @@
             </div>
         </div>
     
-    {presenter "openvk!Wall->wall", -$club->getId()}
+    {presenter "openvk!Wall->wallEmbedded", -$club->getId()}
     
 </div>
 <div class="right_small_block">
