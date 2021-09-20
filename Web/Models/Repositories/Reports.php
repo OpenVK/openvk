@@ -35,6 +35,16 @@ class Reports
     {
         return $this->toTicket($this->tickets->get($id));
     }
+    
+    function getByContentId(int $id): ?Ticket
+    {
+        $post = $this->reports->where(["deleted" => 0, "content_id" => $id])->fetch();
+
+        if($post)
+            return new Report($post);
+        else
+            return null; 
+    }
    
     use \Nette\SmartObject;
 }
