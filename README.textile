@@ -8,6 +8,8 @@ h2. When's the release?
 
 Please use the master branch, as it has the most changes.
 
+Updating the source code is done with this command: @git pull@
+
 h2. Instances
 
 * *"openvk.su":https://openvk.su/*
@@ -16,7 +18,7 @@ h2. Can I create my own OpenVK instance?
 
 Yes! And you're very welcome to.
 However, OVK makes use of Chandler Application Server. This software requires extensions, that may not be provided by your hosting provider (namely, sodium and yaml. this extensions are available on most of ISPManager hostings).
-Simply put, we would recommend you to use latest CentOS (running on your own VDS/Dedicated) with latest PHP from EPEL. We used to have this configuration on our "testing instance":https://openvk.su/ and thus will be able to provide quicker support for OVK running in this environment.
+Simply put, we would recommend you to use latest CentOS (running on your own VDS/Dedicated) with latest PHP from EPEL. We used to have this configuration on our "main instance":https://openvk.su/ and thus will be able to provide quicker support for OVK running in this environment.
 If you want, you can add your instance to the list above so that people can register there.
 
 h3. Installation procedure
@@ -25,15 +27,18 @@ h3. Installation procedure
 
 # Install PHP 7, web-server, Composer, Node.js, Yarn and "Chandler":https://github.com/openvk/chandler
 PHP 8 has *not* yet been tested, so you should not expect it to work.
-# Install "commitcaptcha":https://github.com/openvk/commitcaptcha and OpenVK as Chandler extensions and enable them like this:
+# Install "commitcaptcha":https://github.com/openvk/commitcaptcha and OpenVK as Chandler extensions like this:
+@git clone --recursive https://github.com/openvk/openvk /path/to/chandler/extensions/available/openvk@
+@git clone https://github.com/openvk/commitcaptcha /path/to/chandler/extensions/available/commitcaptcha@
+# And enable them:
 @ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/extensions/enabled/@
 @ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/@
-# Import install/init-static-db.sql to *same database* you installed Chandler to
-# Import install/init-event-db.sql to *separate database*
-# Rename openvk-example.yml to openvk.yml and change options
+# Import @install/init-static-db.sql@ to *same database* you installed Chandler to
+# Import @install/init-event-db.sql@ to *separate database*
+# Copy openvk-example.yml to openvk.yml and change options
 # Run @composer install@ in OpenVK directory
-# Move to Web/static/js and execute @yarn install@
-# Set openvk as your root app in chandler.yml
+# Move to @Web/static/js@ and execute @yarn install@
+# Set @openvk@ as your root app in @chandler.yml@
 
 Once you are done, you can login as a system administrator on the network itself (no registration required):
 * *Login*: admin@localhost.localdomain6
