@@ -104,6 +104,9 @@
 "delete" = "Sil";
 "comments" = "Yorumlar";
 "share" = "Paylaş";
+"pin" = "Закрепить";
+"unpin" = "Открепить";
+"pinned" = "закреплено";
 "comments_tip" = "Bu gönderiye yorum bırakan ilk kişi sen ol!";
 "your_comment" = "Yorumun";
 "comments" = "Yorumlar";
