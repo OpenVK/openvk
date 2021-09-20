@@ -17,11 +17,24 @@
                     </a>
                     {if $author->isVerified()}<img class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">{/if}
                     {ifset $compact}<br>
-                    <a href="/wall{$post->getPrettyId()}" class="date">{$post->getPublicationTime()}</a>
+                    <a href="/wall{$post->getPrettyId()}" class="date">
+                        {if $post->isPinned()}
+                            {$post->getPublicationTime()},
+                            {_pinned}
+                        {else}
+                            {$post->getPublicationTime()}
+                        {/if}
+                    </a>
 
                     {/ifset}
                     {if $post->canBeDeletedBy($thisUser) && !($forceNoDeleteLink ?? false) && !isset($compact)}
                         <a class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
+                        
+                        {if $post->isPinned()}
+                            <a class="delete" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}"></a>
+                        {else}
+                            <a class="delete" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}"></a>
+                        {/if}
                     {/if}
                 </div>
                 <div class="post-content" id="{$post->getPrettyId()}">

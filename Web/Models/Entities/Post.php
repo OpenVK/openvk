@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
+use Chandler\Database\DatabaseConnection as DB;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\RowModel;
 
@@ -42,6 +43,11 @@ class Post extends Postable
         );
     }
     
+    function isPinned(): bool
+    {
+        return (bool) $this->getRecord()->pinned;
+    }
+    
     function isAd(): bool
     {
         return (bool) $this->getRecord()->ad;
@@ -70,6 +76,27 @@ class Post extends Postable
     function getOwnerPost(): int
     {
         return $this->getRecord()->owner;
+    }
+    
+    function pin(): void
+    {
+        DB::i()
+            ->getContext()
+            ->table("posts")
+            ->where([
+                "wall"   => $this->getTargetWall(),
+                "pinned" => true,
+            ])
+            ->update(["pinned" => false]);
+        
+        $this->stateChanges("pinned", true);
+        $this->save();
+    }
+    
+    function unpin(): void
+    {
+        $this->stateChanges("pinned", false);
+        $this->save();
     }
     
     function canBeDeletedBy(User $user): bool

@@ -338,4 +338,26 @@ final class WallPresenter extends OpenVKPresenter
         $this->redirect($wall < 0 ? "/club".($wall*-1) : "/id".$wall, static::REDIRECT_TEMPORARY);
         exit;
     }
+    
+    function renderPin(int $wall, int $post_id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+        
+        $post = $this->posts->getPostById($wall, $post_id);
+        if(!$post)
+            $this->notFound();
+        
+        if(!$post->canBeDeletedBy($this->user->identity))
+            $this->flashFail("err", "Ошибка доступа", "Вам нельзя закреплять этот пост.");
+        
+        if(($this->queryParam("act") ?? "pin") === "pin") {
+            $post->pin();
+        } else {
+            $post->unpin();
+        }
+        
+        // TODO localize message based on language and ?act=(un)pin
+        $this->flashFail("succ", "Операция успешна", "Операция успешна.");
+    }
 }

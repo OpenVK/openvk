@@ -34,7 +34,14 @@
                         </a>
                     {/if}
                     <br/>
-                    <a href="/wall{$post->getPrettyId()}" class="date">{$post->getPublicationTime()}</a>
+                    <a href="/wall{$post->getPrettyId()}" class="date">
+                        {if $post->isPinned()}
+                            {$post->getPublicationTime()},
+                            {_pinned}
+                        {else}
+                            {$post->getPublicationTime()}
+                        {/if}
+                    </a>
                 </div>
                 <div class="post-content" id="{$post->getPrettyId()}">
                     <div class="text" id="text{$post->getPrettyId()}">
@@ -63,6 +70,12 @@
                 <div n:if="isset($thisUser) &&! ($compact ?? false)" class="post-menu">
                     {if $post->canBeDeletedBy($thisUser) && !($forceNoDeleteLink ?? false)}
                         <a href="/wall{$post->getPrettyId()}/delete">{_"delete"}</a>&nbsp;|&nbsp;
+                        
+                        {if $post->isPinned()}
+                            <a href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}">{_unpin}</a>&nbsp;|&nbsp;
+                        {else}
+                            <a href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}">{_pin}</a>&nbsp;|&nbsp;
+                        {/if}
                     {/if}
                     
                     {if !($forceNoCommentsLink ?? false)}

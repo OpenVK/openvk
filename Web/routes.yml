@@ -93,6 +93,8 @@ routes:
       handler: "Wall->share"
     - url: "/wall{num}_{num}/delete"
       handler: "Wall->delete"
+    - url: "/wall{num}_{num}/pin"
+      handler: "Wall->pin"
     - url: "/blob_{text}/{text}.{text}"
       handler: "Blob->file"
     - url: "/themepack/{text}/{?version}/{?resClass}/{?any}"

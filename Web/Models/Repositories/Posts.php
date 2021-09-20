@@ -26,9 +26,38 @@ class Posts
         return $this->toPost($this->posts->get($id));
     }
     
+    function getPinnedPost(int $user): ?Post
+    {
+        $post = (clone $this->posts)->where([
+            "wall"    => $user,
+            "pinned"  => true,
+            "deleted" => false,
+        ])->fetch();
+        
+        return $this->toPost($post);
+    }
+    
     function getPostsFromUsersWall(int $user, int $page = 1, ?int $perPage = NULL): \Traversable
     {
-        $sel = $this->posts->where(["wall" => $user, "deleted" => 0])->order("created DESC")->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
+        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
+        $offset    = $perPage * ($page - 1);
+        
+        $pinPost = $this->getPinnedPost($user);
+        if(!is_null($pinPost)) {
+            if($page === 1) {
+                $perPage--;
+                
+                yield $pinPost;
+            } else {
+                $offset--;
+            }
+        }
+        
+        $sel = $this->posts->where([
+            "wall"    => $user,
+            "pinned"  => false,
+            "deleted" => false,
+        ])->order("created DESC")->limit($perPage, $offset);
         
         foreach($sel as $post)
             yield new Post($post);
