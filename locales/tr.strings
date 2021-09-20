@@ -12,6 +12,7 @@
 "log_in" = "Giriş yap";
 "password" = "Parola";
 "registration" = "Kayıt";
+"forgot_password" = "Parolanızı mı unuttunuz?";
 
 /* Profile information */
 
@@ -44,6 +45,7 @@
 "status" = "Durum";
 "no_information_provided" = "Verilen bilgi yok.";
 "deceased_person" = "Vefat eden kişi";
+"none" = "hiçbiri"
 
 "relationship" = "İlişki durumu";
 
@@ -88,6 +90,8 @@
 "favorite_quotes" = "Favori sözler";
 "information_about" = "Hakkında";
 
+"updated_at" = "Güncelleme: $1";
+
 /* Wall */
 
 "post_writes_m" = "yazdı";
@@ -99,6 +103,9 @@
 "delete" = "Sil";
 "comments" = "Yorumlar";
 "share" = "Paylaş";
+"pin" = "Sabitle";
+"unpin" = "Sabitlemeyi kaldır";
+"pinned" = "sabitlendi";
 "comments_tip" = "Bu gönderiye yorum bırakan ilk kişi sen ol!";
 "your_comment" = "Yorumun";
 "comments" = "Yorumlar";
@@ -110,10 +117,22 @@
 "feed" = "Haberler";
 "publish_post" = "Gönderi ekle";
 
+"all_news" = "Tüm haberler";
+"posts_per_page" = "Sayfa başına yapılan gönderiler";
+
+"attachment" = "Ek";
+"post_as_group" = "Grup olarak gönder";
+"add_signature" = "İmza ekle";
+/* ^ can be translated as "author's signature". ^ */
+"contains_nsfw" = "+18 içeriyor";
 "nsfw_warning" = "Bu gönderinin +18 içeriği olabilir";
 "report" = "Bildir";
 "attach_photo" = "Resim ekle";
 "no_posts_abstract" = "Kimse buraya bir şey yazmadı... Şimdilik.";
+"attach_no_longer_available" = "Ek artık mevcut değil.";
+"open_post" = "Gönderiyi aç";
+"version_incompatibility" = "Bu ek gösterilemiyor. Veritabanı OpenVK'in mevcut sürümüyle uyumlu olmayabilir.";
+
 
 /* Friends */
 
@@ -164,7 +183,8 @@
 "administrator" = "Yönetici";
 "promote_to_admin" = "Yöneticiliğe yükselt";
 "devote" = "Yetkisini kaldır";
-
+"group_allow_post_for_everyone" = "Herkesin gönderi yapmasına izin ver";
+"statistics" = "İstatistikler";
 
 "participants_zero" = "Katılımcı yok";
 "participants_one" = "$1 katılımcı";
@@ -188,6 +208,8 @@
 "upload_photo" = "Fotoğraf yükle";
 "photo" = "Fotoğraf";
 "upload_button" = "Yükle";
+
+"open_original" = "Orijinali aç";
 
 "albums_zero" = "Albüm yok";
 "albums_one" = "$1 albüm";
@@ -398,13 +420,14 @@
 "photo_saved_comment" = "Yeni resim sayfanızda görünecek";
 
 /* Admin actions */
-"login_as" = "Login as $1";
-"ban_user_action" = "Ban user";
-"warn_user_action" = "Warn user";
+
+"login_as" = "$1 olarak giriş yap";
+"ban_user_action" = "Kullanıcıyı yasakla";
+"warn_user_action" = "Kullanıcıyı uyar";
 
 /* Paginator */
 "paginator_back" = "Geri";
 "paginator_page" = "Sayfa $1";
 "paginator_next" = "İleri";
 
-/* Translations by @WindowZytch - Çeviriler @WindowZytch'den */
+/* Translated by @WindowZ414 - @WindowZ414 tarafından çevirildi */
