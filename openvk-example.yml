@@ -3,6 +3,7 @@ openvk:
     appearance:
         name: "OpenVK"
         motd: "Yet another OpenVK instance"
+    
     preferences:
         femaleGenderPriority: true
         uploads:
@@ -47,6 +48,13 @@ openvk:
         bellsAndWhistles:
             fartscroll: false
             testLabel: false
+    
+    telemetry:
+        plausible:
+            enable: false
+            domain: ""
+            server: ""
+    
     credentials:
         smsc:
             enable: false

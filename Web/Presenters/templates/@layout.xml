@@ -264,6 +264,10 @@
         <script n:if="OPENVK_ROOT_CONF['openvk']['preferences']['bellsAndWhistles']['fartscroll']">
             fartscroll(400);
         </script>
+        
+        <script n:if="OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['enable']"
+                async defer data-domain="{OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['domain']}"
+                src="{OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['server']}js/plausible.js"></script>
     </body>
 </html>
 
