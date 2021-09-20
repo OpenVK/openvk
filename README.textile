@@ -35,10 +35,12 @@ PHP 8 has *not* yet been tested, so you should not expect it to work.
 @ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/@
 # Import @install/init-static-db.sql@ to *same database* you installed Chandler to
 # Import @install/init-event-db.sql@ to *separate database*
-# Copy openvk-example.yml to openvk.yml and change options
+# Copy @openvk-example.yml@ to @openvk.yml@ and change options
 # Run @composer install@ in OpenVK directory
 # Move to @Web/static/js@ and execute @yarn install@
 # Set @openvk@ as your root app in @chandler.yml@
+
+*Note*: If OVK submodules were not downloaded beforehand (i.e. @--recursive@ was not used during cloning), this command *must be* executed in the @openvk@ folder: @git submodule update --init@
 
 Once you are done, you can login as a system administrator on the network itself (no registration required):
 * *Login*: admin@localhost.localdomain6
