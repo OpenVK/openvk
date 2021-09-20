@@ -104,6 +104,9 @@
 "delete" = "Obrisati";
 "comments" = "Komentari";
 "share" = "Podeliti se informacijom";
+"pin" = "Закрепить";
+"unpin" = "Открепить";
+"pinned" = "закреплено";
 "comments_tip" = "Ćete biti prvi, ko će ostaviti komentar!";
 "your_comment" = "Vaš komentar";
 "comments" = "Komentari";
