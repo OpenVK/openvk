@@ -45,7 +45,7 @@
 "status" = "Durum";
 "no_information_provided" = "Verilen bilgi yok.";
 "deceased_person" = "Vefat eden kişi";
-"none" = "hiçbiri"
+"none" = "hiçbiri";
 
 "relationship" = "İlişki durumu";
 
