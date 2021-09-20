@@ -104,6 +104,9 @@
 "delete" = "Ad tollendam";
 "comments" = "Comments";
 "share" = "Partem";
+"pin" = "Закрепить";
+"unpin" = "Открепить";
+"pinned" = "закреплено";
 "comments_tip" = "Esse primum ad leave a comment!";
 "your_comment" = "Comment";
 "comments" = "Comments";
