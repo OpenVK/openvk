@@ -104,6 +104,9 @@
 "delete" = "Usunąć";
 "comments" = "Komentarz";
 "share" = "Podzielić się";
+"pin" = "Закрепить";
+"unpin" = "Открепить";
+"pinned" = "закреплено";
 "comments_tip" = "Bądź pierwszym, który pozostawi komentarz!";
 "your_comment" = "Twój komentarz";
 "comments" = "Komentarz";
