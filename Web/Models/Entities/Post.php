@@ -99,14 +99,17 @@ class Post extends Postable
         $this->save();
     }
     
-    function canBeDeletedBy(User $user): bool
+    function canBePinnedBy(User $user): bool
     {
         if($this->getTargetWall() < 0)
-            $cDel = (new Clubs)->get(abs($this->getTargetWall()))->canBeModifiedBy($user);
-        else
-            $cDel = $this->getTargetWall() === $user->getId();
+            return (new Clubs)->get(abs($this->getTargetWall()))->canBeModifiedBy($user);
         
-        return $this->getOwnerPost() === $user->getId() || $cDel;
+        return $this->getTargetWall() === $user->getId();
+    }
+    
+    function canBeDeletedBy(User $user): bool
+    {
+        return $this->getOwnerPost() === $user->getId() || $this->canBePinnedBy($user);
     }
     
     function setContent(string $content): void

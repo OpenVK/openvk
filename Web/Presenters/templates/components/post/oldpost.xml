@@ -70,7 +70,9 @@
                 <div n:if="isset($thisUser) &&! ($compact ?? false)" class="post-menu">
                     {if $post->canBeDeletedBy($thisUser) && !($forceNoDeleteLink ?? false)}
                         <a href="/wall{$post->getPrettyId()}/delete">{_"delete"}</a>&nbsp;|&nbsp;
-                        
+                    {/if}
+                    
+                    {if $post->canBePinnedBy($thisUser) && !($forceNoPinLink ?? false)}
                         {if $post->isPinned()}
                             <a href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}">{_unpin}</a>&nbsp;|&nbsp;
                         {else}

@@ -348,7 +348,7 @@ final class WallPresenter extends OpenVKPresenter
         if(!$post)
             $this->notFound();
         
-        if(!$post->canBeDeletedBy($this->user->identity))
+        if(!$post->canBePinnedBy($this->user->identity))
             $this->flashFail("err", "Ошибка доступа", "Вам нельзя закреплять этот пост.");
         
         if(($this->queryParam("act") ?? "pin") === "pin") {

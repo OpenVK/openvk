@@ -29,7 +29,9 @@
                     {/ifset}
                     {if $post->canBeDeletedBy($thisUser) && !($forceNoDeleteLink ?? false) && !isset($compact)}
                         <a class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
-                        
+                    {/if}
+                    
+                    {if $post->canBePinnedBy($thisUser) && !($forceNoPinLink ?? false) && !isset($compact)}
                         {if $post->isPinned()}
                             <a class="delete" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}"></a>
                         {else}
