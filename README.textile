@@ -8,7 +8,7 @@ h2. When's the release?
 
 Please use the master branch, as it has the most changes.
 
-Updating the source code is done with this command: @git pull@
+Updating the source code is done with this command: @git pull;git submodule update --remote@
 
 h2. Instances
 
