@@ -11,7 +11,7 @@ RUN dnf -y module enable php:remi-7.4 && \
 dnf -y module enable nodejs:14
 
 #And install dependencies:
-RUN dnf -y install php php-cli php-common unzip php-zip php-yaml php-gd php-pdo_mysql nodejs git
+RUN dnf -y --skip-broken install php php-cli php-common unzip php-zip php-yaml php-gd php-pdo_mysql nodejs git
 
 #Don't forget about Yarn and Composer:
 RUN npm i -g yarn && \
