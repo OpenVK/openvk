@@ -16,6 +16,7 @@ services:
     - openvk\Web\Presenters\UnknownTextRouteStrategyPresenter
     - openvk\Web\Presenters\NotificationPresenter
     - openvk\Web\Presenters\SupportPresenter
+    - openvk\Web\Presenters\ReportPresenter
     - openvk\Web\Presenters\AdminPresenter
     - openvk\Web\Presenters\MessengerPresenter
     - openvk\Web\Presenters\ThemepacksPresenter
@@ -30,6 +31,7 @@ services:
     - openvk\Web\Models\Repositories\Tickets
     - openvk\Web\Models\Repositories\Messages
     - openvk\Web\Models\Repositories\Restores
+    - openvk\Web\Models\Repositories\Reports
     - openvk\Web\Models\Repositories\Notifications
     - openvk\Web\Models\Repositories\TicketComments
     - openvk\Web\Models\Repositories\IPs

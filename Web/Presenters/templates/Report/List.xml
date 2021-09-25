@@ -1,0 +1,31 @@
+{extends "../@listView.xml"}
+{var iterator = iterator_to_array($reports)}
+{var page     = $paginatorConf->page}
+
+{block title}Список жалоб{/block}
+
+{block header}
+    Список жалоб
+{/block}
+
+{block actions}
+    
+{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block link|strip|stripHtml}
+    /admin/report{$x->getId()}
+{/block}
+
+{block preview}
+    <center><img src="/assets/packages/static/openvk/img/note_icon.png" alt="" style="margin-top: 17px;" /></center>
+{/block}
+
+{block name}
+    {$x->getReason()}
+{/block}
+
+{block description}
+    Текст поста: {$x->getContentObject()->getText()}
+{/block}

@@ -23,20 +23,20 @@ class Reports
     function getReports(int $state = 0, int $page = 1): \Traversable
     {
         foreach($this->reports->where(["deleted" => 0])->page($page, 15) as $t)
-            yield new Ticket($t);
+            yield new Report($t);
     }
     
     function getReportsCount(int $state = 0): int
     {
-        return sizeof($this->tickets->where(["deleted" => 0, "type" => $state]));
+        return sizeof($this->reports->where(["deleted" => 0, "type" => $state]));
     }
     
-    function get(int $id): ?Ticket
+    function get(int $id): ?Report
     {
-        return $this->toTicket($this->tickets->get($id));
+        return $this->toReport($this->reports->get($id));
     }
     
-    function getByContentId(int $id): ?Ticket
+    function getByContentId(int $id): ?Report
     {
         $post = $this->reports->where(["deleted" => 0, "content_id" => $id])->fetch();
 

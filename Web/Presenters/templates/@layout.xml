@@ -160,6 +160,7 @@
                         {/if}
                         {if $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
                             <a href="/support/tickets" class="link">Helpdesk</a>
+                            <a href="/admin/reports" class="link">Reports</a>
                         {/if}
                         <a
                           n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem"

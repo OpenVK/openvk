@@ -21,7 +21,7 @@ final class ReportPresenter extends OpenVKPresenter
         $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
 
         $this->template->reports = $this->reports->getReports(0, (int)($this->queryParam("p") ?? 1));
-        $this->template->count = $this->notes->getReportsCount();
+        $this->template->count = $this->reports->getReportsCount();
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
             "page"    => $this->queryParam("p") ?? 1,
@@ -35,7 +35,7 @@ final class ReportPresenter extends OpenVKPresenter
         $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
 
         $report = $this->reports->get($id);
-        if(!$report || $note->isDeleted())
+        if(!$report || $report->isDeleted())
             $this->notFound();
         
         $this->template->report = $report;
@@ -63,10 +63,6 @@ final class ReportPresenter extends OpenVKPresenter
                 if(!$post) 
                     $this->flashFail("err", "Ага! Попался, гадёныш блядь!", "Нельзя отправить жалобу на несуществующий контент");
 
-                $postDublicate = $this->reports->getByContentId($post->getId());
-                if($postDublicate)
-                    $this->flashFail("err", tr("error"), "На этот контент уже пожаловался один из пользователей");
-
                 $report = new Report;
                 $report->setUser_id($this->user->id);
                 $note->setContent_id($this->postParam("id"));
@@ -77,61 +73,47 @@ final class ReportPresenter extends OpenVKPresenter
                 
                 $this->flashFail("suc", "Жалоба отправлена", "Скоро её рассмотрят модераторы");
             } else {
-                $this->flashFail("err", "Пока низя", "Нельзя отправить жалобу на данный тип контент");
+                $this->flashFail("err", "Пока низя", "Нельзя отправить жалобу на данный тип контента");
             }
 
         }
     }
     
-    function renderBan(int $id): void
+    function renderAction(int $id): void
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
         $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
 
-        $report = $this->report->get($id);
-        if(!$report) $this->notFound();
-        if($note->isDeleted()) $this->notFound();
-        if(is_null($this->user))
-            $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
-        
-        $report->banUser();
-        $report->deleteContent();
-        $this->flash("suc", "Смэрть...", "Пользователь успешно забанен.");
-        $this->redirect("/report/list");
-    }
-
-    function renderDeleteContent(int $id): void
-    {
-        $this->assertUserLoggedIn();
-        $this->willExecuteWriteAction();
-        $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
-
-        $report = $this->report->get($id);
-        if(!$report) $this->notFound();
-        if($note->isDeleted()) $this->notFound();
-        if(is_null($this->user))
-            $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
-        
-        $report->deleteContent();
-        $this->flash("suc", "Нехай живе!", "Контент удалён, а пользователю прилетело предупреждение.");
-        $this->redirect("/report/list");
-    }
-
-    function renderIgnoreReport(int $id): void
-    {
-        $this->assertUserLoggedIn();
-        $this->willExecuteWriteAction();
-        $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
-
-        $report = $this->report->get($id);
-        if(!$report) $this->notFound();
-        if($note->isDeleted()) $this->notFound();
-        if(is_null($this->user))
-            $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
-        
-        $report->delete();
-        $this->flash("suc", "Нехай живе!", "Жалоба проигнорирована.");
+        if($this->postParam("ban")) {    
+            $report = $this->report->get($id);
+            if(!$report) $this->notFound();
+            if($note->isDeleted()) $this->notFound();
+            if(is_null($this->user))
+                $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+            
+            $report->banUser();
+            $report->deleteContent();
+            $this->flash("suc", "Смэрть...", "Пользователь успешно забанен.");
+        }else if($this->postParam("delete")){
+            $report = $this->report->get($id);
+            if(!$report) $this->notFound();
+            if($note->isDeleted()) $this->notFound();
+            if(is_null($this->user))
+                $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+            
+            $report->deleteContent();
+            $this->flash("suc", "Нехай живе!", "Контент удалён, а пользователю прилетело предупреждение.");
+        }else if($this->postParam("ignore")){
+            $report = $this->report->get($id);
+            if(!$report) $this->notFound();
+            if($report->isDeleted()) $this->notFound();
+            if(is_null($this->user))
+                $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+            
+            $report->setDeleted();
+            $this->flash("suc", "Нехай живе!", "Жалоба проигнорирована.");
+        }
         $this->redirect("/report/list");
     }
 }

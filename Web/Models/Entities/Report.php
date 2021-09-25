@@ -85,7 +85,7 @@ class Report extends RowModel
         $this->save();
     }
 
-    function delete()
+    function setDeleted()
     {
         $this->setDeleted(1);
         $this->unwire();

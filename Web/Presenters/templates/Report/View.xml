@@ -1,0 +1,22 @@
+{extends "../@layout.xml"}
+
+{block title}{$report->getReason()}{/block}
+
+{block header}
+    <a href="/admin/reports">Список репортов</a>
+    »
+    Жалоба №{$report->getId()}
+{/block}
+
+{block content}
+<p><b>Комментарий: </b>{$report->getReason()}</p>
+{include "../components/post/oldpost.xml", post => $report->getContentObject()}
+<center>
+    <form action="/admin/reportAction{$report->getId()}">
+        <input type="hidden" name="hash" value="{$csrfToken}" />
+        <input type="submit" name="ban" value="Забанить пользователя" class="button">
+        <input type="submit" name="delete" value="Удалить контент" class="button">
+        <input type="submit" name="ignore" value="Проигнорировать" class="button">
+    </form>
+</center>
+{/block}
