@@ -41,41 +41,31 @@ final class ReportPresenter extends OpenVKPresenter
         $this->template->report = $report;
     }
     
-    function renderCreate(): void
+    function renderCreate(int $id): void
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
 
-        // ЛАПСКИЙ Я НЕ ДО КОНЦА ДОДЕЛАЛ Я ПРОСТО МЫТЬСЯ ПОШЁЛ
-        // А ВОТ ЩА ДОДЕЛАЮ
-        // апд 01:00 по мск доделал фронт вроде!!!!
         if(!$id)
-            $this->notFound();
+            exit(json_encode([ "error" => tr("error_segmentation") ]));
+
+        // At this moment, only Posts will be implemented
+        if($this->queryParam("type") == 'posts') {
+            $post = (new Posts)->get(intval($id));
+            if(!$post)
+                exit(json_encode([ "error" => "Unable to report nonexistent content" ]));
+
+            $report = new Report;
+            $report->setUser_id($this->user->id);
+            $report->setTarget_id($id);
+            $report->setType($this->queryParam("type"));
+            $report->setReason($this->queryParam("reason"));
+            $report->setCreated(time());
+            $report->save();
             
-        if($_SERVER["REQUEST_METHOD"] === "POST") {
-            if(empty($this->postParam("type")) && empty($this->postParam('id'))) {
-                $this->flashFail("err", tr("error"), tr("error_segmentation")); 
-            }
-
-            // At this moment, only Posts will be implemented
-            if($this->postParam("type") == 'posts') {
-                $post = (new Posts)->get(intval($this->postParam("id")));
-                if(!$post) 
-                    $this->flashFail("err", "Ага! Попался, гадёныш блядь!", "Нельзя отправить жалобу на несуществующий контент");
-
-                $report = new Report;
-                $report->setUser_id($this->user->id);
-                $note->setContent_id($this->postParam("id"));
-                $note->setReason($this->postParam("reason"));
-                $note->setCreated(time());
-                $note->setType($this->postParam("type"));
-                $note->save();
-                
-                $this->flashFail("suc", "Жалоба отправлена", "Скоро её рассмотрят модераторы");
-            } else {
-                $this->flashFail("err", "Пока низя", "Нельзя отправить жалобу на данный тип контента");
-            }
-
+            exit(json_encode([ "reason" => $this->queryParam("reason") ]));
+        } else {
+            exit(json_encode([ "error" => "Unable to submit a report on this content type" ]));
         }
     }
     
@@ -88,7 +78,7 @@ final class ReportPresenter extends OpenVKPresenter
         if($this->postParam("ban")) {    
             $report = $this->report->get($id);
             if(!$report) $this->notFound();
-            if($note->isDeleted()) $this->notFound();
+            if($report->isDeleted()) $this->notFound();
             if(is_null($this->user))
                 $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
             
@@ -98,7 +88,7 @@ final class ReportPresenter extends OpenVKPresenter
         }else if($this->postParam("delete")){
             $report = $this->report->get($id);
             if(!$report) $this->notFound();
-            if($note->isDeleted()) $this->notFound();
+            if($report->isDeleted()) $this->notFound();
             if(is_null($this->user))
                 $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
             

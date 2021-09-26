@@ -219,6 +219,8 @@ routes:
       handler: "Report->view"
     - url: "/admin/reportAction{num}"
       handler: "Report->action"
+    - url: "/report.pl/{num}"
+      handler: "Report->create"
     - url: "/method/{text}.{text}"
       handler: "VKAPI->route"
     - url: "/token"
