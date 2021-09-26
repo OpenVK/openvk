@@ -46,7 +46,7 @@
                 (function() {
                     res = document.querySelector("#uReportMsgInput").value;
                     xhr = new XMLHttpRequest();
-                    xhr.open("GET", "/report.pl/" + {$post->getId()} + "?reason=" + res + "&type=posts", true);
+                    xhr.open("GET", "/report.pl/" + {$post->getId()} + "?reason=" + res + "&type=post", true);
                     xhr.onload = (function() {
                         if(xhr.responseText.indexOf("reason") === -1)
                             MessageBox("Ошибка", "Не удалось подать жалобу...", ["OK"], [Function.noop]);

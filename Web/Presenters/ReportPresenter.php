@@ -50,7 +50,7 @@ final class ReportPresenter extends OpenVKPresenter
             exit(json_encode([ "error" => tr("error_segmentation") ]));
 
         // At this moment, only Posts will be implemented
-        if($this->queryParam("type") == 'posts') {
+        if($this->queryParam("type") == 'post') {
             $post = (new Posts)->get(intval($id));
             if(!$post)
                 exit(json_encode([ "error" => "Unable to report nonexistent content" ]));
