@@ -81,14 +81,6 @@ class Report extends RowModel
         $this->getUser()->adminNotify("Ваш контент, который вы опубликовали " . $this->getContentObject()->getPublicationTime() . " был удалён модераторами инстанса. За повторные или серьёзные нарушения вас могут заблокировать.");
         $this->getContentObject()->delete();
         $this->setDeleted(1);
-        $this->unwire();
-        $this->save();
-    }
-
-    function setDeleted()
-    {
-        $this->setDeleted(1);
-        $this->unwire();
         $this->save();
     }
 }

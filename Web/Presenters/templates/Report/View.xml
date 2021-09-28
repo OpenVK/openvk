@@ -12,7 +12,7 @@
 <p><b>Комментарий: </b>{$report->getReason()}</p>
 {include "../components/post/oldpost.xml", post => $report->getContentObject()}
 <center>
-    <form action="/admin/reportAction{$report->getId()}">
+    <form action="/admin/reportAction{$report->getId()}" method="post">
         <input type="hidden" name="hash" value="{$csrfToken}" />
         <input type="submit" name="ban" value="Забанить пользователя" class="button">
         <input type="submit" name="delete" value="Удалить контент" class="button">

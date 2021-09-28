@@ -76,7 +76,7 @@ final class ReportPresenter extends OpenVKPresenter
         $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
 
         if($this->postParam("ban")) {    
-            $report = $this->report->get($id);
+            $report = $this->reports->get($id);
             if(!$report) $this->notFound();
             if($report->isDeleted()) $this->notFound();
             if(is_null($this->user))
@@ -86,7 +86,7 @@ final class ReportPresenter extends OpenVKPresenter
             $report->deleteContent();
             $this->flash("suc", "Смэрть...", "Пользователь успешно забанен.");
         }else if($this->postParam("delete")){
-            $report = $this->report->get($id);
+            $report = $this->reports->get($id);
             if(!$report) $this->notFound();
             if($report->isDeleted()) $this->notFound();
             if(is_null($this->user))
@@ -95,7 +95,7 @@ final class ReportPresenter extends OpenVKPresenter
             $report->deleteContent();
             $this->flash("suc", "Нехай живе!", "Контент удалён, а пользователю прилетело предупреждение.");
         }else if($this->postParam("ignore")){
-            $report = $this->report->get($id);
+            $report = $this->reports->get($id);
             if(!$report) $this->notFound();
             if($report->isDeleted()) $this->notFound();
             if(is_null($this->user))
@@ -104,6 +104,6 @@ final class ReportPresenter extends OpenVKPresenter
             $report->setDeleted();
             $this->flash("suc", "Нехай живе!", "Жалоба проигнорирована.");
         }
-        $this->redirect("/report/list");
+        $this->redirect("/admin/reports");
     }
 }
