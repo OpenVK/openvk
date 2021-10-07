@@ -219,6 +219,11 @@ class User extends RowModel
         return $this->getRecord()->coins;
     }
     
+    function getRating(): int
+    {
+        return $this->getRecord()->rating;
+    }
+    
     function getReputation(): int
     {
         return $this->getRecord()->reputation;
@@ -393,7 +398,8 @@ class User extends RowModel
         }
         
         return (object) [
-            "total"    => 100 - $incompleteness,
+            "total"    => 100 - $incompleteness + $this->getRating(),
+            "percent"  => min(100 - $incompleteness + $this->getRating(), 100),
             "unfilled" => $unfilled,
         ];
     }

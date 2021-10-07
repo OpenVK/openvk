@@ -1,17 +1,19 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Repositories\{Users, Clubs};
+use openvk\Web\Models\Entities\{Voucher, User};
+use openvk\Web\Models\Repositories\{Users, Clubs, Vouchers};
 
 final class AdminPresenter extends OpenVKPresenter
 {
     private $users;
     private $clubs;
+    private $vouchers;
     
-    function __construct(Users $users, Clubs $clubs)
+    function __construct(Users $users, Clubs $clubs, Vouchers $vouchers)
     {
-        $this->users = $users;
-        $this->clubs = $clubs;
+        $this->users    = $users;
+        $this->clubs    = $clubs;
+        $this->vouchers = $vouchers;
         
         parent::__construct();
     }
@@ -104,6 +106,57 @@ final class AdminPresenter extends OpenVKPresenter
                 $club->save();
                 break;
         }
+    }
+    
+    function renderVouchers(): void
+    {
+        $this->template->count    = $this->vouchers->size();
+        $this->template->vouchers = iterator_to_array($this->vouchers->enumerate((int) ($this->queryParam("p") ?? 1)));
+    }
+    
+    function renderVoucher(int $id): void
+    {
+        $voucher = NULL;
+        $this->template->form = (object) [];
+        if($id === 0) {
+            $this->template->form->id     = 0;
+            $this->template->form->token  = NULL;
+            $this->template->form->coins  = 0;
+            $this->template->form->rating = 0;
+            $this->template->form->usages = -1;
+            $this->template->form->users  = [];
+        } else {
+            $voucher = $this->vouchers->get($id);
+            if(!$voucher)
+                $this->notFound();
+            
+            $this->template->form->id     = $voucher->getId();
+            $this->template->form->token  = $voucher->getToken();
+            $this->template->form->coins  = $voucher->getCoins();
+            $this->template->form->rating = $voucher->getRating();
+            $this->template->form->usages = $voucher->getRemainingUsages();
+            $this->template->form->users  = iterator_to_array($voucher->getUsers());
+            
+            if($this->template->form->usages === INF)
+                $this->template->form->usages = -1;
+            else
+                $this->template->form->usages = (int) $this->template->form->usages;
+        }
+        
+        if($_SERVER["REQUEST_METHOD"] !== "POST")
+            return;
+        
+        $voucher ??= new Voucher;
+        $voucher->setCoins((int) $this->postParam("coins"));
+        $voucher->setRating((int) $this->postParam("rating"));
+        $voucher->setRemainingUsages($this->postParam("usages") === '-1' ? INF : ((int) $this->postParam("usages")));
+        if(!empty($tok = $this->postParam("token")) && strlen($tok) === 24)
+            $voucher->setToken($tok);
+        
+        $voucher->save();
+        
+        $this->redirect("/admin/vouchers/id" . $voucher->getId(), static::REDIRECT_TEMPORARY);
+        exit;
     }
     
     function renderFiles(): void

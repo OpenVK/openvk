@@ -7,6 +7,7 @@ use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Repositories\Albums;
 use openvk\Web\Models\Repositories\Videos;
 use openvk\Web\Models\Repositories\Notes;
+use openvk\Web\Models\Repositories\Vouchers;
 
 final class UserPresenter extends OpenVKPresenter
 {
@@ -240,7 +241,7 @@ final class UserPresenter extends OpenVKPresenter
                 
                 if(!$user->setShortCode(empty($this->postParam("sc")) ? NULL : $this->postParam("sc")))
                     $this->flashFail("err", tr("error"), tr("error_shorturl_incorrect"));
-            }elseif($_GET['act'] === "privacy") {
+            } else if($_GET['act'] === "privacy") {
                 $settings = [
                     "page.read",
                     "page.info.read",
@@ -256,7 +257,22 @@ final class UserPresenter extends OpenVKPresenter
                     $input = $this->postParam(str_replace(".", "_", $setting));
                     $user->setPrivacySetting($setting, min(3, abs($input ?? $user->getPrivacySetting($setting))));
                 }
-            }elseif($_GET['act'] === "interface") {
+            } else if($_GET['act'] === "finance.top-up") {
+                $token   = $this->postParam("key0") . $this->postParam("key1") . $this->postParam("key2") . $this->postParam("key3");
+                $voucher = (new Vouchers)->getByToken($token);
+                if(!$voucher)
+                    $this->flashFail("err", tr("invalid_voucher"), tr("voucher_bad"));
+                
+                $perm = $voucher->willUse($user);
+                if(!$perm)
+                    $this->flashFail("err", tr("invalid_voucher"), tr("voucher_bad"));
+                
+                $user->setCoins($user->getCoins() + $voucher->getCoins());
+                $user->setRating($user->getRating() + $voucher->getRating());
+                $user->save();
+                
+                $this->flashFail("succ", tr("voucher_good"), tr("voucher_redeemed"));
+            } else if($_GET['act'] === "interface") {
                 if (isset(Themepacks::i()[$this->postParam("style")]) || $this->postParam("style") === Themepacks::DEFAULT_THEME_ID)
                     $user->setStyle($this->postParam("style"));
                 
@@ -271,7 +287,7 @@ final class UserPresenter extends OpenVKPresenter
                 
                 if(in_array($this->postParam("nsfw"), [0, 1, 2]))
                     $user->setNsfwTolerance((int) $this->postParam("nsfw"));
-            }elseif($_GET['act'] === "lMenu") {
+            } else if($_GET['act'] === "lMenu") {
                 $settings = [
                     "menu_bildoj"   => "photos",
                     "menu_filmetoj" => "videos",
@@ -300,7 +316,7 @@ final class UserPresenter extends OpenVKPresenter
             );
         }
         $this->template->mode = in_array($this->queryParam("act"), [
-            "main", "privacy", "finance", "interface"
+            "main", "privacy", "finance", "finance.top-up", "interface"
         ]) ? $this->queryParam("act")
             : "main";
         $this->template->user   = $user;

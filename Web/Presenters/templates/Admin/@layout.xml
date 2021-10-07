@@ -69,9 +69,14 @@
                                                 Группы
                                             </a>
                                         </li>
+                                    </ul>
+                                    <div class="aui-nav-heading">
+                                        <strong>Платные услуги</strong>
+                                    </div>
+                                    <ul class="aui-nav">
                                         <li>
-                                            <a href="/admin/files">
-                                                Загруженные файлы
+                                            <a href="/admin/vouchers">
+                                                {_vouchers}
                                             </a>
                                         </li>
                                     </ul>
@@ -141,5 +146,9 @@
                 </section>
             </footer>
         </div>
+        
+        {script "js/node_modules/jquery/dist/jquery.min.js"}
+        {script "js/node_modules/@atlassian/aui/dist/aui/aui-prototyping.js"}
+        <script>AJS.tabs.setup();</script>
     </body>
 </html>

@@ -121,7 +121,7 @@
             {var completeness = $user->getProfileCompletenessReport()}
             
             <div class="completeness-gauge">
-                <div style="width: {$completeness->total}%"></div>
+                <div style="width: {$completeness->percent}%"></div>
                 <span>{$completeness->total}%</span>
             </div>
             
