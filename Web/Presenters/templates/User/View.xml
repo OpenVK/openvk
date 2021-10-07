@@ -122,8 +122,8 @@
         <div n:if="isset($thisUser) && !$thisUser->prefersNotToSeeRating()" class="profile-hints">
             {var completeness = $user->getProfileCompletenessReport()}
             
-            <div class="completeness-gauge">
-                <div style="width: {$completeness->percent}%"></div>
+            <div class="completeness-gauge {if $completeness->total >= 100}completeness-gauge-gold{/if}">
+                <div style="width: {if ($completeness->total >= 100)}{round(($completeness->total / 10**strlen(strval($completeness->total))) * 100, 0)}{else}{$completeness->percent}{/if}%"></div>
                 <span>{$completeness->total}%</span>
             </div>
             
