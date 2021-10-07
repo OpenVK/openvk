@@ -1,32 +1,32 @@
 {extends "../@layout.xml"}
 
 {block title}
-    Выбрать подарок
+    {_gift_select}
 {/block}
 
 {block header}
     <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> »
-    <a href="/gifts?act=pick&user={$user->getId()}">Выбор подарка</a> »
-    <a href="/gifts?act=pick&user={$user->getId()}">Коллекции</a> »
+    <a href="/gifts?act=pick&user={$user->getId()}">{_gift_select}</a> »
+    <a href="/gifts?act=pick&user={$user->getId()}">{_collections}</a> »
     {$cat->getName(tr("__lang"))}
 {/block}
 
 {block content}
     <div class="gift_grid">
         <div n:foreach="$gifts as $gift" n:class="gift_sel, !$gift->canUse($thisUser) ? disabled" data-gift="{$gift->getId()}">
-            <img class="gift_pic" src="{$gift->getImage(2)}" alt="Подарок" />
+            <img class="gift_pic" src="{$gift->getImage(2)}" alt="{_gift}" />
             
             <strong class="gift_price">
                 {if $gift->isFree()}
-                    бесплатный
+                    {_free_gift}
                 {else}
-                    {$gift->getPrice()} голосов
+                    {tr('coins', $gift->getPrice())}
                 {/if}
             </strong>
             
             <strong class="gift_limit">
                 {if $gift->getUsagesLeft($thisUser) !== INF}
-                    осталось {$gift->getUsagesLeft($thisUser)} штук
+                    {tr("gifts_left", $gift->getUsagesLeft($thisUser))}
                 {/if}&nbsp;
             </strong>
         </div>

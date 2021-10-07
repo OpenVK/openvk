@@ -1,13 +1,13 @@
 {extends "../@listView.xml"}
 
 {block title}
-    Выбрать подарок
+    {_gift_select}
 {/block}
 
 {block header}
     <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> »
-    <a href="/gifts?act=pick&user={$user->getId()}">Выбор подарка</a> »
-    Коллекции
+    <a href="/gifts?act=pick&user={$user->getId()}">{_gift_select}</a> »
+    {_collections}
 {/block}
 
 {* BEGIN ELEMENTS DESCRIPTION *}

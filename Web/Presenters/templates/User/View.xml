@@ -84,7 +84,7 @@
                     </a>
                 {/if}
                 
-                <a href="/gifts?act=pick&user={$user->getId()}" class="profile_link">Подарить подарок</a>
+                <a href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
                 
                 {var subStatus = $user->getSubscriptionStatus($thisUser)}
                 {if $subStatus === 0}
@@ -170,7 +170,7 @@
                         <a href="{$hideInfo ? 'javascript:false' : $giftDescriptor->sender->getURL()}">
                             <img class="ava"
                                  src="{$giftDescriptor->gift->getImage(2)}"
-                                 alt="{$hideInfo ? 'Подарок' : ($giftDescriptor->caption ?? 'Подарок')}" />
+                                 alt="{$hideInfo ? tr('gift') : ($giftDescriptor->caption ?? tr('gift'))}" />
                         </a>  
                     </div>
                 </div>
