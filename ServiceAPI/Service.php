@@ -14,7 +14,7 @@ class Service implements Handler
     
     function getTime(callable $resolve, callable $reject): void
     {
-        $resolve((new DateTime)->format("%e %B %G" . tr("time_at_sp") . "%X"));
+        $resolve(trim((new DateTime)->format("%e %B %G" . tr("time_at_sp") . "%X")));
     }
     
     function getServerVersion(callable $resolve, callable $reject): void
