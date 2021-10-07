@@ -62,8 +62,10 @@ function tr(string $stringId, ...$variables): string
 {
     $localizer = Localizator::i();
     $lang      = Session::i()->get("lang", "ru");
-    $output    = $localizer->_($stringId, $lang);
+    if($stringId === "__lang")
+        return $lang;
     
+    $output = $localizer->_($stringId, $lang);
     if(sizeof($variables) > 0) {
         if(gettype($variables[0]) === "integer") {
             $numberedStringId = NULL;
@@ -108,17 +110,17 @@ function getLanguages(): array
 
 function isLanguageAvailable($lg): bool
 {
-	$lg_temp = false;
-	foreach(getLanguages() as $lang) {
-		if ($lang['code'] == $lg) $lg_temp = true;
-	}
-	return $lg_temp;
+    $lg_temp = false;
+    foreach(getLanguages() as $lang) {
+        if ($lang['code'] == $lg) $lg_temp = true;
+    }
+    return $lg_temp;
 }
 
 function getBrowsersLanguage(): array
 {
-	if ($_SERVER['HTTP_ACCEPT_LANGUAGE'] != null) return mb_split(",", mb_split(";", $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0]);
-	else return array();
+    if ($_SERVER['HTTP_ACCEPT_LANGUAGE'] != null) return mb_split(",", mb_split(";", $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0]);
+    else return array();
 }
 
 function eventdb(): ?DatabaseConnection
@@ -196,12 +198,12 @@ return (function() {
 
     setlocale(LC_TIME, "POSIX");
 
-	// TODO: Default language in config
+    // TODO: Default language in config
     if(Session::i()->get("lang") == null) {
-    	$languages = array_reverse(getBrowsersLanguage());
-    	foreach($languages as $lg) {
-    		if(isLanguageAvailable($lg)) setLanguage($lg);	
-    	}
+        $languages = array_reverse(getBrowsersLanguage());
+        foreach($languages as $lg) {
+            if(isLanguageAvailable($lg)) setLanguage($lg);    
+        }
     }
     
     if(empty($_SERVER["REQUEST_SCHEME"]))
@@ -213,6 +215,7 @@ return (function() {
     else
         $ver = "Build 15";
 
+    define("nullptr", NULL);
     define("OPENVK_VERSION", "Altair Preview ($ver)", false);
     define("OPENVK_DEFAULT_PER_PAGE", 10, false);
     define("__OPENVK_ERROR_CLOCK_IN_FUTURE", "Server clock error: FK1200-DTF", false);

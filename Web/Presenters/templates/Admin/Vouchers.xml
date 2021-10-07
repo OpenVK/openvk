@@ -4,8 +4,12 @@
     {_vouchers}
 {/block}
 
-{block heading}
-    {_vouchers}
+{block headingWrap}
+    <a style="float: right;" class="aui-button aui-button-primary" href="/admin/vouchers/id0">
+        {_create}
+    </a>
+    
+    <h1>{_vouchers}</h1>
 {/block}
 
 {block content}
@@ -46,10 +50,6 @@
     <br/>
     
     <div align="right">
-        <a style="float: left;" class="aui-button aui-button-primary" href="/admin/vouchers/id0">
-            {_create}
-        </a>
-        
         {var isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + sizeof($vouchers)) < $count}
         <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">
             ⭁ туда

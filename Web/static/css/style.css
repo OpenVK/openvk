@@ -1307,3 +1307,42 @@ body.scrolled .toTop:hover {
 .knowledgeBaseArticle ul {
     color: unset;
 }
+
+.gift_grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+
+.gift_sel {
+    display: grid;
+    box-sizing: border-box;
+    padding: 15px 8px;
+    justify-items: center;
+    cursor: pointer;
+    border-radius: 10px;
+}
+
+.gift_pic {
+    max-width: 70%;
+}
+
+.gift_sel:hover {
+    background-color: #f1f1f1;
+}
+
+.gift_sel.disabled:hover {
+    cursor: not-allowed;
+}
+
+.gift_sel > .gift_price, .gift_sel > .gift_limit {
+    visibility: hidden;
+}
+
+.gift_sel:hover > .gift_price, .gift_sel:hover > .gift_limit {
+    visibility: unset;
+}
+
+.gift_sel.disabled {
+    opacity: .5;
+}

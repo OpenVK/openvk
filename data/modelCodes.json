@@ -16,5 +16,6 @@
     "openvk\\Web\\Models\\Entities\\Ticket":16,
     "openvk\\Web\\Models\\Entities\\TicketComment":17,
     "openvk\\Web\\Models\\Entities\\User":18,
-    "openvk\\Web\\Models\\Entities\\Video":19
+    "openvk\\Web\\Models\\Entities\\Video":19,
+    "openvk\\Web\\Models\\Entities\\Gift":20
 }

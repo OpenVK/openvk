@@ -1,0 +1,43 @@
+{extends "../@listView.xml"}
+
+{block title}
+    Подарки {$user->getFirstName()}
+{/block}
+
+{block header}
+    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> »
+    Подарки
+{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block link|strip|stripHtml}
+    javascript:false
+{/block}
+
+{block preview}
+    <img src="{$x->gift->getImage(2)}" width="75" alt="Подарок" />
+{/block}
+
+{block name}
+    Подарок
+{/block}
+
+{block description}
+    <table class="ugc-table" n:if="$hideInfo ? !$x->anon : true">
+        <tbody>
+            <tr>
+                <td><span class="nobold">Даритель: </span></td>
+                <td>
+                    <a href="{$x->sender->getURL()}">
+                        {$x->sender->getFullName()}
+                    </a>
+                </td>
+            </tr>
+            <tr n:if="!empty($x->caption)">
+                <td><span class="nobold">Комментарий: </span></td>
+                <td>{$x->caption}</td>
+            </tr>
+        </tbody>
+    </table>
+{/block}

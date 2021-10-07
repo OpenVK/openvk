@@ -84,6 +84,8 @@
                     </a>
                 {/if}
                 
+                <a href="/gifts?act=pick&user={$user->getId()}" class="profile_link">Подарить подарок</a>
+                
                 {var subStatus = $user->getSubscriptionStatus($thisUser)}
                 {if $subStatus === 0}
                     <form action="/setSub/user" method="post">
@@ -150,6 +152,30 @@
             {/if}
         </div>
         <br />
+        <div n:if="($giftCount = $user->getGiftCount()) > 0">
+            <div class="content_title_expanded" onclick="hidePanel(this, {$giftCount});">
+                {_gifts}
+            </div>
+            <div>
+                <div class="content_subtitle">
+                    {tr("gifts", $giftCount)}
+                    <div style="float:right;">
+                        <a href="/gifts{$user->getId()}">{_all_title}</a>
+                    </div>
+                </div>
+                <div class="ovk-avView">
+                    <div class="ovk-avView--el" n:foreach="$user->getGifts(1, 3) as $giftDescriptor">
+                        {var hideInfo = $giftDescriptor->anon ? $thisUser->getId() !== $user->getId() : false}
+                        
+                        <a href="{$hideInfo ? 'javascript:false' : $giftDescriptor->sender->getURL()}">
+                            <img class="ava"
+                                 src="{$giftDescriptor->gift->getImage(2)}"
+                                 alt="{$hideInfo ? 'Подарок' : ($giftDescriptor->caption ?? 'Подарок')}" />
+                        </a>  
+                    </div>
+                </div>
+            </div>
+        </div>
         <div n:if="$user->getFriendsCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)">
             {var friendCount = $user->getFriendsCount()}
             

@@ -1,0 +1,30 @@
+{extends "../@layout.xml"}
+
+{block title}
+    Подарить подарок
+{/block}
+
+{block header}
+    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> »
+    <a href="/gifts?act=pick&user={$user->getId()}">Выбор подарка</a> »
+    <a href="/gifts?act=pick&user={$user->getId()}">Коллекции</a> »
+    <a href="/gifts?act=menu&user={$user->getId()}&pack={$cat->getId()}">{$cat->getName(tr("__lang"))}</a> »
+    Подтверждение
+{/block}
+
+{block content}
+    <center>
+        <img class="gift_confirm_pic" style="max-width: 256px;" src="{$gift->getImage(2)}" alt="Подарок" />
+    
+        <form style="width: 65%;" method="POST">
+            <textarea name="comment" style="resize: vertical; height: 65px;" placeholder="Ваше сообщение, которое будет доставлено вместе с подарком"></textarea>
+            <br/><br/>
+            
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+            <input type="submit" value="Отправить" class="button" />
+            <label>
+                <input type="checkbox" name="anonymous"> Анонимно
+            </label>
+        </form>
+    </center>
+{/block}

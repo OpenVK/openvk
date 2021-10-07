@@ -3,8 +3,8 @@ namespace openvk\Web\Models\Entities;
 use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
-use openvk\Web\Models\Entities\{Photo, Message, Correspondence};
-use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Notifications};
+use openvk\Web\Models\Entities\{Photo, Message, Correspondence, Gift};
+use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Gifts, Notifications};
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 use Chandler\Security\User as ChandlerUser;
@@ -474,6 +474,25 @@ class User extends RowModel
         return sizeof($this->getRecord()->related("event_turnouts.user"));
     }
     
+    function getGifts(int $page = 1, ?int $perPage = NULL): \Traversable
+    {
+        $gifts = $this->getRecord()->related("gift_user_relations.receiver")->order("sent DESC")->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
+        foreach($gifts as $rel) {
+            yield (object) [
+                "sender"  => (new Users)->get($rel->sender),
+                "gift"    => (new Gifts)->get($rel->gift),
+                "caption" => $rel->comment,
+                "anon"    => $rel->anonymous,
+                "sent"    => new DateTime($rel->sent),
+            ];
+        }
+    }
+    
+    function getGiftCount(): int
+    {
+        return sizeof($this->getRecord()->related("gift_user_relations.receiver"));
+    }
+    
     function getSubscriptionStatus(User $user): int
     {
         $subbed = !is_null($this->getRecord()->related("subscriptions.follower")->where([
@@ -542,6 +561,18 @@ class User extends RowModel
     function hasPendingNumberChange(): bool
     {
         return !is_null($this->getPendingPhoneVerification());
+    }
+    
+    function gift(User $sender, Gift $gift, ?string $comment = NULL, bool $anonymous = false): void
+    {
+        DatabaseConnection::i()->getContext()->table("gift_user_relations")->insert([
+            "sender"    => $sender->getId(),
+            "receiver"  => $this->getId(),
+            "gift"      => $gift->getId(),
+            "comment"   => $comment,
+            "anonymous" => $anonymous,
+            "sent"      => time(),
+        ]);
     }
     
     function ban(string $reason): void
