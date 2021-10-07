@@ -271,7 +271,7 @@
                                 style="max-width: 170px; max-height: 127px; margin: auto;" />
                         </a>
                         <div>
-                            <b><a href="/video{$video->getPrettyId()}">{ovk_proc_strtr($video->getName(), 30)}</a></b>
+                            <b><a href="/video{$video->getPrettyId()}">{ovk_proc_strtr($video->getName(), 30)}</a></b><br>
                             <span style="font-size: 10px;">{$video->getPublicationTime()} | {_comments} ({$video->getCommentsCount()})</span>
                         </div>
                     </div>
