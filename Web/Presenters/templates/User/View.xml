@@ -264,14 +264,15 @@
                     </div>
                 </div>
                 <div style="padding: 5px;">
-                    <div class="ovk-video" style="margin-bottom: 1rem; padding: 0 11px;" n:foreach="$videos as $video">
-                        <div style="width: 170px;" align="center">
+                    <div class="ovk-video" n:foreach="$videos as $video">
+                        <a href="/video{$video->getPrettyId()}" class="preview" align="center">
                             <img
                                 src="{$video->getThumbnailURL()}"
-                                style="max-width: 170px; margin: auto;" />
-                        </div>
+                                style="max-width: 170px; max-height: 127px; margin: auto;" />
+                        </a>
                         <div>
                             <b><a href="/video{$video->getPrettyId()}">{ovk_proc_strtr($video->getName(), 30)}</a></b>
+                            <span style="font-size: 10px;">{$video->getPublicationTime()} | {_comments} ({$video->getCommentsCount()})</span>
                         </div>
                     </div>
                 </div>

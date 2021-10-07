@@ -1356,3 +1356,17 @@ body.scrolled .toTop:hover {
 .gift_sel.disabled {
     opacity: .5;
 }
+
+.ovk-video {
+	margin-bottom: 1rem;
+	padding: 0 6px;
+}
+
+.ovk-video > .preview {
+	width: 170px;
+	height: 127px;
+	border: 1px solid #ccc;
+	align-content: center;
+	display: flex;
+	padding: 1px;
+}
