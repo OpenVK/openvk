@@ -84,6 +84,18 @@ abstract class Postable extends Attachable
         ]));
     }
     
+    // TODO add pagination
+    function getLikers(): \Traversable
+    {
+        $sel = DB::i()->getContext()->table("likes")->where([
+            "model"  => static::class,
+            "target" => $this->getRecord()->id,
+        ]);
+        
+        foreach($sel as $like)
+            yield (new Users)->get($like->origin);
+    }
+    
     function toggleLike(User $user): void
     {
         $searchData = [
