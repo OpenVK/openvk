@@ -1,5 +1,3 @@
-
-
 function expand_wall_textarea() {
     var el = document.getElementById('post-buttons');
     var wi = document.getElementById('wall-post-input');
@@ -83,3 +81,26 @@ u("#_noteDelete").on("click", function(e) {
 });
 
 }); //END ONREADY DECLS
+
+function repostPost(id, hash) {
+	uRepostMsgTxt  = "Ваш комментарий: <textarea id='uRepostMsgInput_"+id+"'></textarea><br/><br/>";
+	
+	MessageBox("Поделиться", uRepostMsgTxt, ["Отправить", "Отменить"], [
+		(function() {
+			text = document.querySelector("#uRepostMsgInput_"+id).value;
+			xhr = new XMLHttpRequest();
+			xhr.open("POST", "/wall"+id+"/repost?hash="+hash, true);
+			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+			xhr.onload = (function() {
+				if(xhr.responseText.indexOf("wall_owner") === -1)
+					MessageBox("Помилка", "Не удалось поделиться записью...", ["OK"], [Function.noop]);
+				else {
+					let jsonR = JSON.parse(xhr.responseText);
+					MessageBox("Успешно", "Запись появится на вашей стене. <a href='wall" + jsonR.wall_owner + "'>Перейти на свою стену.</a>", ["OK"], [Function.noop]);
+				}
+			});
+			xhr.send('text=' + encodeURI(text));
+		}),
+		Function.noop
+	]);
+}

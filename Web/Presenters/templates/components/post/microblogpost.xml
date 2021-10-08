@@ -82,7 +82,7 @@
                         
 
                         <div class="like_wrap">
-                            <a class="post-share-button" href="/wall{$post->getPrettyId()}/repost?hash={rawurlencode($csrfToken)}"
+                            <a class="post-share-button" href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')"
                             class="post-like-button">
                                 <div class="repost-icon" style="opacity: 0.4;"></div>
                                 <span class="likeCnt">{$post->getRepostCount()}</span>

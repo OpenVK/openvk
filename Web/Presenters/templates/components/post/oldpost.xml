@@ -91,7 +91,7 @@
                         &nbsp;|&nbsp;
                     {/if}
                     
-                    <a class="post-share-button" href="/wall{$post->getPrettyId()}/repost?hash={rawurlencode($csrfToken)}">
+                    <a class="post-share-button" href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')">
                         {if $post->getRepostCount() > 0}
                             {_"share"}
                             (<b>{$post->getRepostCount()}</b>)

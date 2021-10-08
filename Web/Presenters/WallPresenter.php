@@ -298,7 +298,7 @@ final class WallPresenter extends OpenVKPresenter
             $nPost = new Post;
             $nPost->setOwner($this->user->id);
             $nPost->setWall($this->user->id);
-            $nPost->setContent("");
+            $nPost->setContent($this->postParam("text"));
             $nPost->save();
             $nPost->attach($post);
             
@@ -306,8 +306,7 @@ final class WallPresenter extends OpenVKPresenter
                 (new RepostNotification($post->getOwner(false), $post, $this->user->identity))->emit();
         };
         
-        $this->flash("succ", "Успешно", "Запись появится на вашей стене. <a href='/wall" . $wall . "_" . $post_id . "'>Вернуться к записи.</a>");
-        $this->redirect($this->user->identity->getURL());
+        exit(json_encode(["wall_owner" => $this->user->identity->getId()]));
     }
     
     function renderDelete(int $wall, int $post_id): void
