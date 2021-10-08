@@ -42,7 +42,7 @@ final class Account extends VKAPIRequestHandler
         ];
     }
 
-    function setOnline(): object
+    function setOnline(): int
     {
         $this->requireUser();
 
