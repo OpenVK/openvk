@@ -88,6 +88,7 @@ function repostPost(id, hash) {
 	MessageBox("Поделиться", uRepostMsgTxt, ["Отправить", "Отменить"], [
 		(function() {
 			text = document.querySelector("#uRepostMsgInput_"+id).value;
+			hash = encodeURIComponent(hash);
 			xhr = new XMLHttpRequest();
 			xhr.open("POST", "/wall"+id+"/repost?hash="+hash, true);
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
