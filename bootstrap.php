@@ -52,7 +52,7 @@ function ovkGetQuirk(string $quirk): int
     if(!$quirks)
         $quirks = chandler_parse_yaml(__DIR__ . "/quirks.yml");
     
-    return isset($v = $quirks[$quirk]) ? (int) $v : 0;
+    return is_null($v = $quirks[$quirk]) ? (int) $v : 0;
 }
 
 function ovk_proc_strtr(string $string, int $length = 0): string
