@@ -33,9 +33,9 @@
                     
                     {if $post->canBePinnedBy($thisUser) && !($forceNoPinLink ?? false) && !isset($compact)}
                         {if $post->isPinned()}
-                            <a class="delete" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}"></a>
+                            <a class="pin" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}"></a>
                         {else}
-                            <a class="delete" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}"></a>
+                            <a class="pin" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}"></a>
                         {/if}
                     {/if}
                 </div>
