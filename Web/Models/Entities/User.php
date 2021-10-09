@@ -397,9 +397,15 @@ class User extends RowModel
             $incompleteness += 20;
         }
         
+        $total = max(100 - $incompleteness + $this->getRating(), 0);
+        if(quirk("profile.rating-bar-behaviour") === 0)
+            $percent = intval(substr(strval($total), -2));
+        else
+            $percent = min($total, 100);
+        
         return (object) [
-            "total"    => 100 - $incompleteness + $this->getRating(),
-            "percent"  => min(100 - $incompleteness + $this->getRating(), 100),
+            "total"    => $total,
+            "percent"  => $percent,
             "unfilled" => $unfilled,
         ];
     }

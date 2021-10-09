@@ -1,0 +1,14 @@
+# Rating bar behaviour
+# If rating overflows 100 older versions of OpenVK
+# used to render a full bar, but original VK used to
+# treat last two digits of rating as % of bar fullness.
+# 
+# Example:
+# Rating 20 - Old OVK: 20%, VK: 20%
+# Rating 100 - Old OVK: 100%, VK: 100%
+# Rating 1983 - Old OVK: 100%, VK: 83%
+# 
+# Possible values:
+# + Set this option to 1 if you want to use quirky OpenVK behaviour
+# + Set this option to 0 if you want to use the canonical VK behaviour
+profile.rating-bar-behaviour: 0
