@@ -398,7 +398,7 @@ class User extends RowModel
         }
         
         $total = max(100 - $incompleteness + $this->getRating(), 0);
-        if(quirk("profile.rating-bar-behaviour") === 0)
+        if(ovkGetQuirk("profile.rating-bar-behaviour") === 0)
             $percent = intval(substr(strval($total), -2));
         else
             $percent = min($total, 100);
