@@ -75,5 +75,10 @@ class Ticket extends RowModel
         return (new Users)->get($this->getRecord()->user_id);
     }
 
+    function isAd(): bool /* Эх, костыли... */
+    {
+    	return false;
+    }
+
     use Traits\TRichText;
 }

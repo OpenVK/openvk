@@ -11,13 +11,13 @@ use Nette\Database\Table\Selection;
 
 class TicketComment extends RowModel
 {
-    
     protected $tableName = "tickets_comments";
 
     function getId(): int
     {
         return $this->getRecord()->id;
     }
+
     function getUType(): int
     {
         return $this->getRecord()->user_type;
@@ -70,6 +70,11 @@ class TicketComment extends RowModel
     {
         return new DateTime($this->getRecord()->created);
     }
+
+	function isAd(): bool
+	{
+		return false; # Кооостыыыль!!!
+	}
 
     use Traits\TRichText;
 }
