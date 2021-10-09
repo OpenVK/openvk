@@ -3,6 +3,7 @@ namespace openvk\Web\Models\Entities;
 use Chandler\Database\DatabaseConnection as DB;
 use openvk\Web\Models\Repositories\Gifts;
 use openvk\Web\Models\RowModel;
+use Transliterator;
 
 class GiftCategory extends RowModel
 {
@@ -30,7 +31,7 @@ class GiftCategory extends RowModel
     
     function getSlug(): string
     {
-        return \Transliterator::createFromRules(
+        return str_replace("ʹ", "-", Transliterator::createFromRules(
             ":: Any-Latin;"
             . ":: NFD;"
             . ":: [:Nonspacing Mark:] Remove;"
@@ -38,7 +39,7 @@ class GiftCategory extends RowModel
             . ":: [:Punctuation:] Remove;"
             . ":: Lower();"
             . "[:Separator:] > '-'"
-        )->transliterate($this->getName());
+        )->transliterate($this->getName()));
     }
     
     function getThumbnailURL(): string
