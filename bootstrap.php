@@ -48,7 +48,9 @@ function _ovk_check_environment(): void
 
 function ovkGetQuirk(string $quirk): int
 {
-    static $quirks = chandler_parse_yaml(__DIR__ . "/quirks.yml");
+    static $quirks = NULL;
+    if(!$quirks)
+        $quirks = chandler_parse_yaml(__DIR__ . "/quirks.yml");
     
     return isset($v = $quirks[$quirk]) ? (int) $v : 0;
 }
