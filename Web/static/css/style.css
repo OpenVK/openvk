@@ -337,6 +337,7 @@ table {
     color: #000;
     width: 380px;
     height: auto !important;
+    overflow: hidden;
 }
 
 .button {
