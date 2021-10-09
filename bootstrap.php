@@ -46,6 +46,13 @@ function _ovk_check_environment(): void
     }
 }
 
+function ovkGetQuirk(string $quirk): int
+{
+    static $quirks = chandler_parse_yaml(__DIR__ . "/quirks.yml");
+    
+    return isset($v = $quirks[$quirk]) ? (int) $v : 0;
+}
+
 function ovk_proc_strtr(string $string, int $length = 0): string
 {
     $newString = iconv_substr($string, 0, $length);
