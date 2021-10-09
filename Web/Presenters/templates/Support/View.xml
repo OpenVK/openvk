@@ -16,7 +16,7 @@
     <br></b>Статус: {$ticket->getStatus()}
 </div>
 <div class="text" style="padding-top: 10px;border-bottom: #ECECEC solid 1px;">
-    {$ticket->getContext()}
+    {$ticket->getContext()|noescape}
     <br></br>
 </div>
 <div style="padding-top: 5px;">
