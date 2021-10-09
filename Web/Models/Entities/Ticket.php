@@ -43,7 +43,11 @@ class Ticket extends RowModel
     
     function getContext(): string
     {
-        return $this->getRecord()->text;
+        $text = $this->getRecord()->text;
+        $text = $this->formatLinks($text);
+        $text = $this->removeZalgo($text);
+        $text = nl2br($text);
+        return $text;
     }
     
     function getTime(): DateTime
@@ -70,4 +74,6 @@ class Ticket extends RowModel
     {
         return (new Users)->get($this->getRecord()->user_id);
     }
+
+    use Traits\TRichText;
 }

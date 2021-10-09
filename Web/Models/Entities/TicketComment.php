@@ -59,12 +59,17 @@ class TicketComment extends RowModel
     
     function getContext(): string
     {
-        return $this->getRecord()->text;
+        $text = $this->getRecord()->text;
+        $text = $this->formatLinks($text);
+        $text = $this->removeZalgo($text);
+        $text = nl2br($text);
+        return $text;
     }
     
     function getTime(): DateTime
     {
         return new DateTime($this->getRecord()->created);
     }
-    
+
+    use Traits\TRichText;
 }
