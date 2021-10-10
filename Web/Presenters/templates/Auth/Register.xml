@@ -24,7 +24,7 @@
         </p>
         
         <form method="POST" enctype="multipart/form-data">
-            <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
+            <table cellspacing="7" cellpadding="0" width="52%" border="0" align="center">
                 <tbody>
                     <tr>
                         <td>
@@ -52,6 +52,14 @@
                                 <option n:attr="selected => !$femalePreferred" value="male">{_"male"}</option>
                                 <option n:attr="selected => $femalePreferred" value="female">{_"female"}</option>
                             </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <span>{_"birth_date"}: </span>
+                        </td>
+                        <td>
+                            <input max={date('Y-m-d')} name="birthday" type="date"/>
                         </td>
                     </tr>
                     <tr></tr>
