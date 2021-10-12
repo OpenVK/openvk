@@ -1,7 +1,7 @@
 {var author = $comment->getOwner()}
 
 <a name="cid={$comment->getId()}"></a>
-<table border="0" style="font-size: 11px;" class="post" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}">
+<table border="0" style="font-size: 11px;" class="post" id="_comment{$comment->getId()}" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}">
     <tbody>
         <tr>
             <td width="54" valign="top">
@@ -14,7 +14,7 @@
                     <a href="{$author->getURL()}"><b>
                         {$author->getCanonicalName()}
                     </b></a> {$author->isFemale() ? tr("post_writes_f") : tr("post_writes_m")}<br/>
-                    <a href="/comment{$comment->getId()}" class="date">{$comment->getPublicationTime()}</a>
+                    <a href="#_comment{$comment->getId()}" class="date">{$comment->getPublicationTime()}</a>
                 </div>
                 <div class="post-content" id="{$comment->getId()}">
                     <div class="text" id="text{$comment->getId()}">
