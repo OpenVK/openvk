@@ -165,7 +165,7 @@
                 </div>
                 <div class="ovk-avView">
                     <div class="ovk-avView--el" n:foreach="$user->getGifts(1, 3) as $giftDescriptor">
-                        {var hideInfo = $giftDescriptor->anon ? $thisUser->getId() !== $user->getId() : false}
+                        {var hideInfo = !is_null($thisUser) ? ($giftDescriptor->anon ? $thisUser->getId() !== $user->getId() : false) : false}
                         
                         <a href="{$hideInfo ? 'javascript:false' : $giftDescriptor->sender->getURL()}">
                             <img class="ava"
