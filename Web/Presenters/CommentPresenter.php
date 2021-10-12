@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{Comment, User};
+use openvk\Web\Models\Entities\{Comment, Photo, User};
 use openvk\Web\Models\Entities\Notifications\CommentNotification;
 use openvk\Web\Models\Repositories\Comments;
 
@@ -46,6 +46,15 @@ final class CommentPresenter extends OpenVKPresenter
             $comment->setContent($this->postParam("text"));
             $comment->setCreated(time());
             $comment->save();
+            
+            if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
+                try {
+                    $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"]);
+                    $comment->attach($photo);
+                } catch(ISE $ex) {
+                    $this->flashFail("err", "Не удалось опубликовать пост", "Файл изображения повреждён, слишком велик или одна сторона изображения в разы больше другой.");
+                }
+            }
         } catch(\LogicException $ex) {
             $this->flashFail("err", "Не удалось опубликовать комментарий", "Нельзя опубликовать пустой комментарий.");
         }

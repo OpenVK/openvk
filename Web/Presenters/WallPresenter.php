@@ -189,16 +189,11 @@ final class WallPresenter extends OpenVKPresenter
         
         if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
             try {
-                $photo = new Photo;
-                $photo->setOwner($this->user->id);
-                $photo->setDescription(iconv_substr($this->postParam("text"), 0, 36) . "...");
-                $photo->setCreated(time());
-                $photo->setFile($_FILES["_pic_attachment"]);
-                $photo->save();
+                $album = NULL;
+                if($wall > 0 && $wall === $this->user->id)
+                    $album = (new Albums)->getUserWallAlbum($wallOwner);
                 
-                if($wall > 0 && $wall === $this->user->id) {
-                    (new Albums)->getUserWallAlbum($wallOwner)->addPhoto($photo);
-                }
+                $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album);
             } catch(ISE $ex) {
                 $this->flashFail("err", "Не удалось опубликовать пост", "Файл изображения повреждён, слишком велик или одна сторона изображения в разы больше другой.");
             }

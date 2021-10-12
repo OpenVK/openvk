@@ -19,6 +19,12 @@
                 <div class="post-content" id="{$comment->getId()}">
                     <div class="text" id="text{$comment->getId()}">
                         {$comment->getText()|noescape}
+                        
+                        <div n:ifcontent class="attachments_b">
+                            <div class="attachment" n:foreach="$comment->getChildren() as $attachment" data-localized-nsfw-text="{_nsfw_warning}">
+                                {include "attachment.xml", attachment => $attachment}
+                            </div>
+                        </div>
                     </div>
                     <div n:if="isset($thisUser) &&! ($compact ?? false)" class="post-menu">
                         {var canDelete = $comment->getOwner()->getId() == $thisUser->getId()}
