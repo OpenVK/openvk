@@ -225,6 +225,9 @@ final class UserPresenter extends OpenVKPresenter
         if(!$id)
             $this->notFound();
         
+        if(in_array($this->queryParam("act"), ["finance", "finance.top-up"]) && !OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"])
+            $this->flashFail("err", tr("error"), tr("feature_disabled"));
+        
         $user = $this->users->get($id);
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->willExecuteWriteAction();

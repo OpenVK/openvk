@@ -20,6 +20,12 @@ final class AdminPresenter extends OpenVKPresenter
         parent::__construct();
     }
     
+    private function warnIfNoCommerce(): void
+    {
+        if(!OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"])
+            $this->flash("warn", "Коммерция отключена системным администратором", "Настройки ваучеров и подарков будут сохранены, но не будут оказывать никакого влияния.");
+    }
+    
     private function searchResults(object $repo, &$count)
     {
         $query = $this->queryParam("q") ?? "";
@@ -112,12 +118,16 @@ final class AdminPresenter extends OpenVKPresenter
     
     function renderVouchers(): void
     {
+        $this->warnIfNoCommerce();
+        
         $this->template->count    = $this->vouchers->size();
         $this->template->vouchers = iterator_to_array($this->vouchers->enumerate((int) ($this->queryParam("p") ?? 1)));
     }
     
     function renderVoucher(int $id): void
     {
+        $this->warnIfNoCommerce();
+        
         $voucher = NULL;
         $this->template->form = (object) [];
         if($id === 0) {
@@ -163,12 +173,16 @@ final class AdminPresenter extends OpenVKPresenter
     
     function renderGiftCategories(): void
     {
+        $this->warnIfNoCommerce();
+        
         $this->template->act        = $this->queryParam("act") ?? "list";
         $this->template->categories = iterator_to_array($this->gifts->getCategories((int) ($this->queryParam("p") ?? 1), NULL, $this->template->count));
     }
     
     function renderGiftCategory(string $slug, int $id): void
     {
+        $this->warnIfNoCommerce();
+        
         $cat;
         $gen = false;
         if($id !== 0) {
@@ -222,6 +236,8 @@ final class AdminPresenter extends OpenVKPresenter
     
     function renderGifts(string $catSlug, int $catId): void
     {
+        $this->warnIfNoCommerce();
+        
         $cat = $this->gifts->getCat($catId);
         if(!$cat)
             $this->notFound();
@@ -234,6 +250,8 @@ final class AdminPresenter extends OpenVKPresenter
     
     function renderGift(int $id): void
     {
+        $this->warnIfNoCommerce();
+        
         $gift = $this->gifts->get($id);
         $act  = $this->queryParam("act") ?? "edit";
         switch($act) {

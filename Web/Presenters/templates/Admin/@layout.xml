@@ -140,6 +140,10 @@
                             </div>
                         {/ifset}
                         
+                        {ifset preHeader}
+                            {include preHeader}
+                        {/ifset}
+                        
                         <header class="aui-page-header">
                             <div class="aui-page-header-inner">
                                 <div class="aui-page-header-main">

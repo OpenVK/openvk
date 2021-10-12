@@ -129,4 +129,12 @@ final class GiftsPresenter extends OpenVKPresenter
         header("Content-Type: image/png");
         exit($image);
     }
+    
+    function onStartup(): void
+    {
+        if(!OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"])
+            $this->flashFail("err", tr("error"), tr("feature_disabled"));
+        
+        parent::onStartup();
+    }
 }

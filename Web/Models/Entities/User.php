@@ -216,12 +216,15 @@ class User extends RowModel
     
     function getCoins(): int
     {
+        if(!OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"])
+            return 0;
+        
         return $this->getRecord()->coins;
     }
     
     function getRating(): int
     {
-        return $this->getRecord()->rating;
+        return OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"] ? $this->getRecord()->rating : 0;
     }
     
     function getReputation(): int
@@ -400,11 +403,9 @@ class User extends RowModel
         $total = max(100 - $incompleteness + $this->getRating(), 0);
         if(ovkGetQuirk("profile.rating-bar-behaviour") === 0)
 	    if ($total >= 100)
-            	$percent = round(($total / 10**strlen(strval($total))) * 100, 0);
-	    else
-		$percent = min($total, 100);
+            $percent = round(($total / 10**strlen(strval($total))) * 100, 0);
         else
-            $percent = min($total, 100);
+		    $percent = min($total, 100);
         
         return (object) [
             "total"    => $total,

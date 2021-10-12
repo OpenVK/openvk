@@ -20,7 +20,7 @@
         <div n:attr="id => ($isPrivacy ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isPrivacy ? 'act_tab_a' : 'ki')" href="/settings?act=privacy">{_"privacy"}</a>
         </div>
-        <div n:attr="id => (($isFinance || $isFinanceTU) ? 'activetabs' : 'ki')" class="tab">
+        <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce']" n:attr="id => (($isFinance || $isFinanceTU) ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => (($isFinance || $isFinanceTU) ? 'act_tab_a' : 'ki')" href="/settings?act=finance">{_points}</a>
         </div>
         <div n:attr="id => ($isInterface ? 'activetabs' : 'ki')" class="tab">
