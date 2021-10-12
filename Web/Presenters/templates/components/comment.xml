@@ -1,7 +1,7 @@
 {var author = $comment->getOwner()}
 
 <a name="cid={$comment->getId()}"></a>
-<table border="0" style="font-size: 11px;" class="post">
+<table border="0" style="font-size: 11px;" class="post" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}">
     <tbody>
         <tr>
             <td width="54" valign="top">
@@ -30,8 +30,10 @@
                         {var canDelete = $comment->getOwner()->getId() == $thisUser->getId()}
                         {var canDelete = $canDelete || $comment->getTarget()->getOwner()->getId() == $thisUser->getId()}
                         {if $canDelete}
-                            <a href="/comment{$comment->getId()}/delete">{_"delete"}</a>
+                            <a href="/comment{$comment->getId()}/delete">{_"delete"}</a>&nbsp;|&nbsp;
                         {/if}
+                        
+                        <a class="comment-reply">Ответить</a>
                         
                         <div style="float: right; font-size: .7rem;">
                             <a href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}">

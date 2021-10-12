@@ -38,26 +38,28 @@ final class CommentPresenter extends OpenVKPresenter
         $entity = $repo->get($eId);
         if(!$entity) $this->notFound();
         
-        try {
-            $comment = new Comment;
-            $comment->setOwner($this->user->id);
-            $comment->setModel(get_class($entity));
-            $comment->setTarget($entity->getId());
-            $comment->setContent($this->postParam("text"));
-            $comment->setCreated(time());
-            $comment->save();
-            
-            if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
-                try {
-                    $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"]);
-                    $comment->attach($photo);
-                } catch(ISE $ex) {
-                    $this->flashFail("err", "Не удалось опубликовать пост", "Файл изображения повреждён, слишком велик или одна сторона изображения в разы больше другой.");
-                }
+        $photo = NULL;
+        if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
+            try {
+                $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"]);
+            } catch(ISE $ex) {
+                $this->flashFail("err", "Не удалось опубликовать пост", "Файл изображения повреждён, слишком велик или одна сторона изображения в разы больше другой.");
             }
-        } catch(\LogicException $ex) {
-            $this->flashFail("err", "Не удалось опубликовать комментарий", "Нельзя опубликовать пустой комментарий.");
         }
+        
+        if(empty($this->postParam("text")) && is_null($photo))
+            $this->flashFail("err", "Не удалось опубликовать комментарий", "Нельзя опубликовать пустой комментарий.");
+        
+        $comment = new Comment;
+        $comment->setOwner($this->user->id);
+        $comment->setModel(get_class($entity));
+        $comment->setTarget($entity->getId());
+        $comment->setContent($this->postParam("text"));
+        $comment->setCreated(time());
+        $comment->save();
+        
+        if(!is_null($photo))
+            $comment->attach($photo);
         
         if($entity->getOwner()->getId() !== $this->user->identity->getId())
             if(($owner = $entity->getOwner()) instanceof User)

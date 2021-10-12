@@ -34,3 +34,7 @@
         <a class="profile_link" style="display:block;width:96%;" href="/report.pl/{$post->getId()}?type=post">{_report}</a>
     </div>
 {/block}
+
+{block bodyScripts}
+    {script "js/al_comments.js"}
+{/block}
