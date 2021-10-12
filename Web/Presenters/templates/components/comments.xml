@@ -1,13 +1,8 @@
 <h4>{_"comments"} ({$count})</h4>
 
 <div n:ifset="$thisUser">
-    <form action="/al_comments.pl/create/{$model}/{$parent->getId()}" method="POST" style="margin-top: 2pt;">
-        <textarea name="text" style="width: 411px; margin: 0px; height: 53px; resize: none;"></textarea>
-        <br/>
-        <input type="hidden" value="{$csrfToken}" name="hash" />
-        <br/>
-        <input type="submit" value="{_'write'}" class="button" style="bottom-right: 50px;" />
-     </form>
+    {var commentsURL = "/al_comments.pl/create/$model/" . $parent->getId()}
+    {include "textArea.xml", route => $commentsURL, postOpts => false}
 </div>
 
 {if sizeof($comments) > 0}
