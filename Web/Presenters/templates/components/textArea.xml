@@ -44,6 +44,10 @@
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
                         {_attach_photo}
                     </a>
+                    <a n:if="$graffiti ?? false" href="javascript:initGraffiti();">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
+                        Нарисовать граффити
+                    </a>
                 </div>
             </div>
         </div>

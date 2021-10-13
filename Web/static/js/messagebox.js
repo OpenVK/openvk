@@ -24,10 +24,13 @@ function MessageBox(title, body, buttons, callbacks) {
             };
             
             Reflect.apply(callbacks[callback], {
-                closeDialog: () => __closeDialog()
+                closeDialog: () => __closeDialog(),
+                $dialog:     () => u(".ovk-diag-cont")
             }, [e]);
         
             __closeDialog();
         });
     });
+    
+    return u(".ovk-diag-cont");
 }

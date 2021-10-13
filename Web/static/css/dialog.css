@@ -23,13 +23,13 @@ body.dimmed > .dimmer {
     margin: auto;
     margin-top: 10px;
     margin-bottom: 10px;
-    width: 400px;
+    width: calc(100% - 20px);
     background-color: #fff;
     border: 1px solid #505050;
 }
 
 .ovk-diag-head, .ovk-diag-body, .ovk-diag-action {
-    width: 400px;
+    width: 100%;
     box-sizing: border-box;
 }
 

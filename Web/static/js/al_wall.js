@@ -34,12 +34,48 @@ function handleUpload() {
     }
 }
 
+function initGraffiti() {
+    let canvas = null;
+    let msgbox = MessageBox("Нарисовать граффити", "<div id='ovkDraw'></div>", ["Сохранить", "Отменить"], [function() {
+        canvas.getImage({includeWatermark: false}).toBlob(blob => {
+            let fName = "Graffiti-" + Math.ceil(performance.now()).toString() + ".jpeg";
+            let image = new File([blob], fName, {type: "image/jpeg", lastModified: new Date().getTime()});
+            let trans = new DataTransfer();
+            trans.items.add(image);
+            
+            let fileSelect = document.querySelector("input[name='_pic_attachment']");
+            fileSelect.files = trans.files;
+            
+            u(fileSelect).trigger("change");
+            u("#write textarea").trigger("focusin");
+        }, "image/jpeg", 0.92);
+        
+        canvas.teardown();
+    }, function() {
+        canvas.teardown();
+    }]);
+    
+    let watermarkImage = new Image();
+    watermarkImage.src = "/assets/packages/static/openvk/img/logo_watermark.gif";
+    
+    msgbox.attr("style", "width: 750px;");
+    canvas = LC.init(document.querySelector("#ovkDraw"), {
+        backgroundColor: "#fff",
+        imageURLPrefix: "/assets/packages/static/openvk/js/node_modules/literallycanvas/lib/img",
+        watermarkImage: watermarkImage,
+        imageSize: {
+            width: 640,
+            height: 480
+        }
+    });
+}
+
 u("#wall-post-input").on("paste", function(e) {
     if(e.clipboardData.files.length === 1) {
         var input = u("input[name=_pic_attachment]").nodes[0];
         input.files = e.clipboardData.files;
         
-        Reflect.apply(handleUpload, input, []);
+        u(fileSelect).trigger("change");
     }
 });
 

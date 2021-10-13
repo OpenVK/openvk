@@ -1399,3 +1399,28 @@ body.scrolled .toTop:hover {
 #wallAttachmentMenu > a:hover {
     background-color: #f0f0f0;
 }
+
+#ovkDraw {
+    border: 1px solid #757575;
+}
+
+#ovkDraw .lc-drawing.with-gui {
+    background-color: white !important;
+}
+
+#ovkDraw .literally {
+    border-radius: 0;
+}
+
+#ovkDraw .literally .lc-picker, .literally .lc-options.horz-toolbar {
+    background-color: #f7f7f7;
+    border-color: rgba(0, 0, 0, 0.15);
+}
+
+#ovkDraw .literally .lc-picker .toolbar-button.selected:not(.disabled), #ovkDraw .literally .horz-toolbar .square-toolbar-button.selected:not(.disabled) {
+    background-color: #cdcdcd;
+}
+
+#ovkDraw .literally .lc-picker .toolbar-button:hover:not(.disabled), #ovkDraw .literally .horz-toolbar .square-toolbar-button:hover:not(.disabled) {
+    border-color: #cdcdcd;
+}
