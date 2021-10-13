@@ -89,4 +89,21 @@ abstract class Media extends Postable
         
         $this->stateChanges("hash", $hash);
     }
+    
+    function delete(bool $softly = true): void
+    {
+        $deleteQuirk = ovkGetQuirk("blobs.erase-upon-deletion");
+        if($deleteQuirk === 2 || ($deleteQuirk === 1 && !$softly))
+            @unlink($this->getFileName());
+        
+        parent::delete($softly);
+    }
+    
+    function undelete(): void
+    {
+        if(ovkGetQuirk("blobs.erase-upon-deletion") === 2)
+            throw new \LogicException("Can't undelete model which is tied to blob, because of config constraint (quriks.yml:blobs.erase-upon-deletion)");
+        
+        parent::undelete();
+    }
 }
