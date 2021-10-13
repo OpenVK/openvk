@@ -9,20 +9,22 @@
                 Вложение: <span>(unknown)</span>
             </div>
             <div n:if="$postOpts ?? true" class="post-opts">
-                {if !is_null($thisUser) && !is_null($club) && $owner < 0 && $club->canBeModifiedBy($thisUser)}
-                    <script>
-                        function onWallAsGroupClick(el) {
-                            _display = el.checked ? "block" : "none";
-                            document.querySelector("#forceSignOpt").style.display = _display;
-                        }
-                    </script>
-                    
-                    <label>
-                        <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" /> {_"post_as_group"}
-                    </label>
-                    <label id="forceSignOpt" style="display: none;">
-                        <input type="checkbox" name="force_sign" /> {_"add_signature"}
-                    </label>
+                {if !is_null($thisUser) && !is_null($club) && $owner < 0}
+                    {if $club->canBeModifiedBy($thisUser)}
+                        <script>
+                            function onWallAsGroupClick(el) {
+                                _display = el.checked ? "block" : "none";
+                                document.querySelector("#forceSignOpt").style.display = _display;
+                            }
+                        </script>
+                        
+                        <label>
+                            <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" /> {_"post_as_group"}
+                        </label>
+                        <label id="forceSignOpt" style="display: none;">
+                            <input type="checkbox" name="force_sign" /> {_"add_signature"}
+                        </label>
+                    {/if}
                 {/if}
                 
                 <label>
