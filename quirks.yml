@@ -25,3 +25,12 @@ profile.rating-bar-behaviour: 0
 #  (this option most likely won't have any meaningful effect, please use option 2)
 # + Set this option to 0 if you want to use quirky VK and OpenVK behaviour
 blobs.erase-upon-deletion: 0
+
+# Allow graffiti in comments?
+# VK used to provide ability to post graffitis in comments, but only via
+# mobile client.
+# 
+# Possible values:
+# + Set this option to 1 if you want to use quirky VK Mobile behaviour (yes graffiti in comments)
+# + Set this option to 0 if you want to use VK Desktop behaviour (no graffiti in comments)
+comments.allow-graffiti: 0

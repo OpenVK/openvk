@@ -2,7 +2,7 @@
 
 <div n:ifset="$thisUser">
     {var commentsURL = "/al_comments.pl/create/$model/" . $parent->getId()}
-    {include "textArea.xml", route => $commentsURL, postOpts => false}
+    {include "textArea.xml", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti")}
 </div>
 
 {if sizeof($comments) > 0}
