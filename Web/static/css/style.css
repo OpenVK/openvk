@@ -1384,6 +1384,7 @@ body.scrolled .toTop:hover {
     margin-top: 20px;
     border: 1px solid darkgrey;
     background-color: white;
+    z-index: 32;
 }
 
 #wallAttachmentMenu > a {
