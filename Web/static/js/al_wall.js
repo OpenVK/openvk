@@ -75,7 +75,7 @@ u("#wall-post-input").on("paste", function(e) {
         var input = u("input[name=_pic_attachment]").nodes[0];
         input.files = e.clipboardData.files;
         
-        u(fileSelect).trigger("change");
+        u(input).trigger("change");
     }
 });
 
