@@ -24,3 +24,5 @@
     {/if} -->
     {_"comments_tip"}
 {/if}
+
+{script "js/al_comments.js"}

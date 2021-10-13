@@ -9,7 +9,7 @@
                 Вложение: <span>(unknown)</span>
             </div>
             <div n:if="$postOpts ?? true" class="post-opts">
-                {if !is_null($thisUser) && !is_null($club) && $owner < 0}
+                {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0}
                     {if $club->canBeModifiedBy($thisUser)}
                         <script>
                             function onWallAsGroupClick(el) {
