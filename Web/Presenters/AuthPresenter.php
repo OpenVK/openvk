@@ -93,7 +93,7 @@ final class AuthPresenter extends OpenVKPresenter
             if(!$chUser)
                 $this->flashFail("err", "Не удалось зарегистрироваться", "Пользователь с таким email уже существует.");
 
-            if (!strtotime($this->postParam("birthday")) < time())
+            if (strtotime($this->postParam("birthday")) > time())
                 $this->flashFail("err", "Неверная дата рождения", "Дату рождения, которую вы ввели, не является корректным.");
             
             $user = new User;
