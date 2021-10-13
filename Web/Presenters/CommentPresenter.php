@@ -81,7 +81,7 @@ final class CommentPresenter extends OpenVKPresenter
             $comment->attach($photo);
         
         if(!is_null($video))
-            $post->attach($video);
+            $comment->attach($video);
         
         if($entity->getOwner()->getId() !== $this->user->identity->getId())
             if(($owner = $entity->getOwner()) instanceof User)
