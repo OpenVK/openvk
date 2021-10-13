@@ -24,8 +24,8 @@ span {
     color: gray;
 }
 
-nobold {
-    font-weight: normal;
+.hidden {
+    display: none;
 }
 
 a {
@@ -1377,4 +1377,25 @@ body.scrolled .toTop:hover {
 	align-content: center;
 	display: flex;
 	padding: 1px;
+}
+
+#wallAttachmentMenu {
+    position: absolute;
+    margin-top: 20px;
+    border: 1px solid darkgrey;
+    background-color: white;
+}
+
+#wallAttachmentMenu > a {
+    display: block;
+    padding: 2px 6px;
+    cursor: pointer;
+}
+
+#wallAttachmentMenu > a > img {
+    vertical-align: middle;
+}
+
+#wallAttachmentMenu > a:hover {
+    background-color: #f0f0f0;
 }

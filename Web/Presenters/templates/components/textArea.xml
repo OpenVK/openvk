@@ -34,10 +34,17 @@
             <input type="hidden" name="hash" value="{$csrfToken}" />
             <br/>
             <input type="submit" value="{_'write'}" class="button" />
-            <div style="float: right;">
-                <a href="javascript:void(document.querySelector('input[name=_pic_attachment]').click());">
-                    {_attach_photo}
+            <div style="float: right; display: flex; flex-direction: column;">
+                <a href="javascript:void(u('#wallAttachmentMenu').toggleClass('hidden'));">
+                    Прикрепить
                 </a>
+                
+                <div id="wallAttachmentMenu" class="hidden">
+                    <a href="javascript:void(document.querySelector('input[name=_pic_attachment]').click());">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
+                        {_attach_photo}
+                    </a>
+                </div>
             </div>
         </div>
     </form>
