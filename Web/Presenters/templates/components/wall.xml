@@ -25,8 +25,3 @@
         </div>
     </div>
 </div>
-
-{script "js/node_modules/react/dist/react-with-addons.min.js"}
-{script "js/node_modules/react-dom/dist/react-dom.min.js"}
-{script "js/vnd_literallycanvas.js"}
-{css "js/node_modules/literallycanvas/lib/css/literallycanvas.css"}
