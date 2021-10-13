@@ -513,7 +513,7 @@ h4 {
     width: 102%;
 }
 
-.post-content img.media {
+.post-content .media {
     max-width: 100%;
     image-rendering: -webkit-optimize-contrast;
 }

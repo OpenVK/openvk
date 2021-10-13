@@ -24,6 +24,9 @@ function trim(string) {
 
 function handleUpload() {
     console.warn("блять...");
+    
+    u(".postFileSel").not("#" + this.id).each(input => input.value = null);
+    
     var indicator = u(".post-upload");
     var file      = this.files[0];
     if(typeof file === "undefined") {
@@ -108,4 +111,4 @@ u("#wall-post-input").on("input", function(e) {
     // textArea.style.height = (newHeight > originalHeight ? (newHeight + boost) : originalHeight) + "px";
 });
 
-u("input[name=_pic_attachment]").on("change", handleUpload);
+u(".postFileSel").on("change", handleUpload);

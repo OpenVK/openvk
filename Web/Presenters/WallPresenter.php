@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{Post, Photo, Club, User};
+use openvk\Web\Models\Entities\{Post, Photo, Video, Club, User};
 use openvk\Web\Models\Entities\Notifications\{LikeNotification, RepostNotification, WallPostNotification};
 use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums};
 use Chandler\Database\DatabaseConnection;
@@ -186,43 +186,41 @@ final class WallPresenter extends OpenVKPresenter
         if($this->postParam("force_sign") === "on")
             $flags |= 0b01000000;
         
-        
-        if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
-            try {
+        try {
+            $photo = NULL;
+            $video = NULL;
+            if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
                 $album = NULL;
                 if($wall > 0 && $wall === $this->user->id)
                     $album = (new Albums)->getUserWallAlbum($wallOwner);
                 
                 $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album);
-            } catch(ISE $ex) {
-                $this->flashFail("err", "Не удалось опубликовать пост", "Файл изображения повреждён, слишком велик или одна сторона изображения в разы больше другой.");
             }
             
-            $post = new Post;
-            $post->setOwner($this->user->id);
-            $post->setWall($wall);
-            $post->setCreated(time());
-            $post->setContent($this->postParam("text"));
-            $post->setFlags($flags);
-            $post->setNsfw($this->postParam("nsfw") === "on");
-            $post->save();
-            $post->attach($photo);
-        } elseif($this->postParam("text")) {
-            try {
-                $post = new Post;
-                $post->setOwner($this->user->id);
-                $post->setWall($wall);
-                $post->setCreated(time());
-                $post->setContent($this->postParam("text"));
-                $post->setFlags($flags);
-                $post->setNsfw($this->postParam("nsfw") === "on");
-                $post->save();
-            } catch(\LogicException $ex) {
-                $this->flashFail("err", "Не удалось опубликовать пост", "Пост пустой или слишком большой.");
+            if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK) {
+                $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"]);
             }
-        } else {
-            $this->flashFail("err", "Не удалось опубликовать пост", "Пост пустой или слишком большой.");
+        } catch(ISE $ex) {
+            $this->flashFail("err", "Не удалось опубликовать пост", "Файл медиаконтента повреждён или слишком велик.");
         }
+        
+        if(empty($this->postParam("text")) && !$photo && !$video)
+            $this->flashFail("err", "Не удалось опубликовать пост", "Пост пустой или слишком большой.");
+        
+        $post = new Post;
+        $post->setOwner($this->user->id);
+        $post->setWall($wall);
+        $post->setCreated(time());
+        $post->setContent($this->postParam("text"));
+        $post->setFlags($flags);
+        $post->setNsfw($this->postParam("nsfw") === "on");
+        $post->save();
+        
+        if(!is_null($photo))
+            $post->attach($photo);
+        
+        if(!is_null($video))
+            $post->attach($video);
         
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();

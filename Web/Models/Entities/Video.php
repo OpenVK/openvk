@@ -93,10 +93,10 @@ class Video extends Media
 
     function isDeleted(): bool
     {
-	if ($this->getRecord()->deleted == 1)
-	    return TRUE;
-	else
-        return FALSE;
+        if ($this->getRecord()->deleted == 1)
+            return TRUE;
+        else
+            return FALSE;
     }
 
     function deleteVideo(): void 
@@ -104,5 +104,19 @@ class Video extends Media
         $this->setDeleted(1);
         $this->unwire();
         $this->save();
+    }
+    
+    static function fastMake(int $owner, string $description = "", array $file, bool $unlisted = true): Video
+    {
+        $video = new Video;
+        $video->setOwner($owner);
+        $video->setName("Unnamed Video.ogv");
+        $video->setDescription(ovk_proc_strtr($description, 300));
+        $video->setCreated(time());
+        $video->setFile($file);
+        $video->setUnlisted($unlisted);
+        $video->save();
+        
+        return $video;
     }
 }

@@ -31,7 +31,8 @@
                     <input type="checkbox" name="nsfw" /> {_"contains_nsfw"}
                 </label>
             </div>
-            <input type="file" name="_pic_attachment" accept="image/*" style="display:none;" />
+            <input type="file" class="postFileSel" id="postFilePic" name="_pic_attachment" accept="image/*" style="display:none;" />
+            <input type="file" class="postFileSel" id="postFileVid" name="_vid_attachment" accept="video/*" style="display:none;" />
             <input type="hidden" name="type" value="1" />
             <input type="hidden" name="hash" value="{$csrfToken}" />
             <br/>
@@ -45,6 +46,10 @@
                     <a href="javascript:void(document.querySelector('input[name=_pic_attachment]').click());">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
                         {_attach_photo}
+                    </a>
+                    <a href="javascript:void(document.querySelector('input[name=_vid_attachment]').click());">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
+                        Прикрепить видео
                     </a>
                     <a n:if="$graffiti ?? false" href="javascript:initGraffiti();">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
