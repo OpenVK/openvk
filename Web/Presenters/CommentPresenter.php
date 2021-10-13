@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{Comment, Photo, User};
+use openvk\Web\Models\Entities\{Comment, Photo, Video, User};
 use openvk\Web\Models\Entities\Notifications\CommentNotification;
 use openvk\Web\Models\Repositories\Comments;
 
@@ -47,8 +47,27 @@ final class CommentPresenter extends OpenVKPresenter
             }
         }
         
-        if(empty($this->postParam("text")) && is_null($photo))
-            $this->flashFail("err", "Не удалось опубликовать комментарий", "Нельзя опубликовать пустой комментарий.");
+        // TODO move to trait
+        try {
+            $photo = NULL;
+            $video = NULL;
+            if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
+                $album = NULL;
+                if($wall > 0 && $wall === $this->user->id)
+                    $album = (new Albums)->getUserWallAlbum($wallOwner);
+                
+                $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album);
+            }
+            
+            if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK) {
+                $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"]);
+            }
+        } catch(ISE $ex) {
+            $this->flashFail("err", "Не удалось опубликовать комментарий", "Файл медиаконтента повреждён или слишком велик.");
+        }
+        
+        if(empty($this->postParam("text")) && !$photo && !$video)
+            $this->flashFail("err", "Не удалось опубликовать комментарий", "Комментарий пустой или слишком большой.");
         
         $comment = new Comment;
         $comment->setOwner($this->user->id);
@@ -60,6 +79,9 @@ final class CommentPresenter extends OpenVKPresenter
         
         if(!is_null($photo))
             $comment->attach($photo);
+        
+        if(!is_null($video))
+            $post->attach($video);
         
         if($entity->getOwner()->getId() !== $this->user->identity->getId())
             if(($owner = $entity->getOwner()) instanceof User)
