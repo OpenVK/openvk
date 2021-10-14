@@ -1,0 +1,100 @@
+.notifications_global_wrap {
+    bottom: 0;
+    position: fixed;
+    display: flex;
+    flex-direction: column-reverse;
+    overflow: hidden;
+    width: 330px;
+    z-index: 1000;
+}
+
+.notification_ballon_wrap {
+    margin: 0 0 14px 14px;
+}
+
+.notification_ballon {
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.7);
+    width: 300px;
+    height: 90px;
+    color: white !important;
+    display: inline-block;
+    animation-name: notification_ballon_appears;
+    animation-duration: 0.5s;
+    cursor: pointer;
+}
+
+.notification_ballon.disappears {
+    animation-name: notification_ballon_disappears;
+    animation-duration: 0.5s;
+}
+
+.notification_ballon notification_title {
+    margin: 6px 10px;
+    font-size: 10pt;
+    font-weight: bold;
+    display: block;
+}
+
+.notification_ballon notification_title .close {
+    width: 10px;
+    height: 16px;
+    float: right;
+    overflow: auto;
+    opacity: 0.1;
+    color: #fff;
+    transition-duration: 0.3s;
+}
+
+.notification_ballon notification_title .close:hover {
+    opacity: 0.5;
+}
+
+.notification_ballon wrap {
+    /* uuuuh */
+    display: flex;
+    flex-direction: row;
+    padding: 0 10px 0 10px;
+}
+
+.notification_ballon wrap avatar {
+    width: 50px;
+    padding-right: 10px;
+}
+
+.notification_ballon wrap avatar img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.notification_ballon wrap content {
+    font-size: 11px;
+
+}
+
+.notification_ballon wrap content a {
+    color: rgb(94, 165, 231);
+    font-weight: bold;
+}
+
+@keyframes notification_ballon_appears {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes notification_ballon_disappears {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
+}

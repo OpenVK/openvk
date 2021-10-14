@@ -21,6 +21,7 @@
                 {if $theme->inheritDefault()}
                     {css "css/style.css"}
                     {css "css/dialog.css"}
+                    {css "css/notifications.css"}
                     {if $isXmas}
                         {css "css/xmas.css"}
                     {/if}
@@ -33,6 +34,7 @@
             {else}
                 {css "css/style.css"}
                 {css "css/dialog.css"}
+                {css "css/notifications.css"}
                 {if $isXmas}
                     {css "css/xmas.css"}
                 {/if}
@@ -53,6 +55,7 @@
             {css "css/style.css"}
             {css "css/dialog.css"}
             {css "css/nsfw-posts.css"}
+            {css "css/notifications.css"}
             
             {if $isXmas}
                 {css "css/xmas.css"}
@@ -71,6 +74,7 @@
         </div>
         
         <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['bellsAndWhistles']['testLabel']" id="test-label">FOR TESTING PURPOSES ONLY</div>
+		<div class="notifications_global_wrap"></div>
         <div class="dimmer"></div>
         <div class="toTop">
             ⬆ Вверх
@@ -256,6 +260,7 @@
         <script src="https://rawgit.com/kawanet/msgpack-lite/master/dist/msgpack.min.js"></script>
         {script "js/node_modules/ky/umd.js"}
         {script "js/messagebox.js"}
+        {script "js/notifications.js"}
         {script "js/scroll.js"}
         {script "js/al_wall.js"}
         {script "js/al_api.js"}
