@@ -4,7 +4,7 @@ use openvk\Web\Util\DateTime;
 use Nette\Database\Table\ActiveRow;
 use openvk\Web\Models\RowModel;
 use Chandler\Database\DatabaseConnection;
-use openvk\Web\Models\Repositories\Users;
+use openvk\Web\Models\Repositories\{Users, SupportAliases};
 use Chandler\Database\DatabaseConnection as DB;
 use Nette\InvalidStateException as ISE;
 use Nette\Database\Table\Selection;
@@ -12,7 +12,12 @@ use Nette\Database\Table\Selection;
 class TicketComment extends RowModel
 {
     protected $tableName = "tickets_comments";
-
+    
+    private function getSupportAlias(): ?SupportAlias
+    {
+        return (new SupportAliases)->get($this->getUser()->getId());
+    }
+    
     function getId(): int
     {
         return $this->getRecord()->id;
@@ -26,7 +31,34 @@ class TicketComment extends RowModel
     function getUser(): User 
     { 
         return (new Users)->get($this->getRecord()->user_id);
-    } 
+    }
+    
+    function getAuthorName(): string
+    {
+        if($this->getUType() === 0)
+            return $this->getUser()->getCanonicalName();
+        
+        $alias = $this->getSupportAlias();
+        if(!$alias)
+            return OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["supportName"] . " №" . $this->getAgentNumber();
+        
+        $name = $alias->getName();
+        if($alias->shouldAppendNumber())
+            $name .= " №" . $this->getAgentNumber();
+        
+        return $name;
+    }
+    
+    function getAvatar(): string
+    {
+        if($this->getUType() === 0)
+            return $this->getUser()->getAvatarUrl();
+        
+        $default = "/assets/packages/static/openvk/img/support.jpeg";
+        $alias   = $this->getSupportAlias();
+        
+        return is_null($alias) ? $default : ($alias->getIcon() ?? $default);
+    }
     
     function getAgentNumber(): ?string
     {
@@ -45,6 +77,9 @@ class TicketComment extends RowModel
     {
         if(is_null($agent = $this->getAgentNumber()))
             return NULL;
+        
+        if(!is_null($this->getSupportAlias()))
+            return 0;
         
         $agent    = (int) $agent;
         $rotation = $agent > 500 ? ( ($agent * 360) / 999 ) : $agent; # cap at 360deg
