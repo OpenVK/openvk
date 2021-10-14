@@ -13,6 +13,7 @@ Updating the source code is done with this command: @git pull --recurse-submodul
 h2. Instances
 
 * *"openvk.su":https://openvk.su/*
+* "openvk.zavsc.pw":http://openvk.zavsc.pw/
 
 h2. Can I create my own OpenVK instance?
 
