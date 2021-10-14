@@ -9,11 +9,13 @@ class Photo extends Media
     protected $tableName     = "photos";
     protected $fileExtension = "jpeg";
     
+    const ALLOWED_SIDE_MULTIPLIER = 7;
+    
     protected function saveFile(string $filename, string $hash): bool
     {
         $image = Image::fromFile($filename);
-        if(($image->height >= ($image->width * pi())) || ($image->width >= ($image->height * pi())))
-            throw new ISE("Invalid layout: expected layout that matches (x, ?!>3x)");
+        if(($image->height >= ($image->width * Photo::ALLOWED_SIDE_MULTIPLIER)) || ($image->width >= ($image->height * Photo::ALLOWED_SIDE_MULTIPLIER)))
+            throw new ISE("Invalid layout: image is too wide/short");
         
         $image->save($this->pathFromHash($hash), 92, Image::JPEG);
         
