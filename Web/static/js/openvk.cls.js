@@ -97,7 +97,7 @@ function repostPost(id, hash) {
 					MessageBox("Помилка", "Не удалось поделиться записью...", ["OK"], [Function.noop]);
 				else {
 					let jsonR = JSON.parse(xhr.responseText);
-					MessageBox("Успешно", "Запись появится на вашей стене. <a href='wall" + jsonR.wall_owner + "'>Перейти на свою стену.</a>", ["OK"], [Function.noop]);
+                    NewNotification("Успешно поделились", "Запись появится на вашей стене. Нажмите на уведомление, чтобы перейти к своей стене.", null, () => {window.location.href = "/wall" + jsonR.wall_owner});
 				}
 			});
 			xhr.send('text=' + encodeURI(text));
