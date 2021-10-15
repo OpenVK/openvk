@@ -68,3 +68,9 @@ openvk:
                 dsn: "mysql:unix_socket=/tmp/mysql.sock;dbname=openvk-eventdb"
                 user: "root"
                 password: "DATABASE_PASSWORD"
+        notificationsBroker:
+            enable: false
+            kafka:
+                addr: "127.0.0.1"
+                port: 9092
+                topic: "OvkEvents"
