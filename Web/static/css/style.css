@@ -481,6 +481,14 @@ h4 {
     display: block;
 }
 
+.post-online {
+    color: #AAA;
+    text-align: center;
+    width: 50px;
+    padding-top: 5px;
+    display: block;
+}
+
 .post-author {
     background-color: #F6F6F6;
     border-top: #8B8B8B solid 1px;
