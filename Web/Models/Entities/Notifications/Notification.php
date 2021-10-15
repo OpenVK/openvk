@@ -3,6 +3,7 @@ namespace openvk\Web\Models\Entities\Notifications;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{User};
 use openvk\Web\Util\DateTime;
+use RdKafka\{Conf, Producer};
 
 class Notification
 {
@@ -80,14 +81,14 @@ class Notification
             return false;
         
         $data = [
-            $this->recipient->getId(),
-            $this->encodeType($this->originModel),
-            $this->originModel->getId(),
-            $this->encodeType($this->targetModel),
-            $this->targetModel->getId(),
-            $this->actionCode,
-            $this->data,
-            $this->time,
+            "recipient"         => $this->recipient->getId(),
+            "originModelType"   => $this->encodeType($this->originModel),
+            "originModelId"     => $this->originModel->getId(),
+            "targetModelType"   => $this->encodeType($this->targetModel),
+            "targetModelId"     => $this->targetModel->getId(),
+            "actionCode"        => $this->actionCode,
+            "additionalPayload" => $this->data,
+            "timestamp"         => $this->time,
         ];
         
         $edb = $e->getConnection();
@@ -96,12 +97,33 @@ class Notification
             $query = <<<'QUERY'
                 SELECT * FROM `notifications` WHERE `recipientType`=0 AND `recipientId`=? AND `originModelType`=? AND `originModelId`=? AND `targetModelType`=? AND `targetModelId`=? AND `modelAction`=? AND `additionalData`=? AND `timestamp` > (? - ?)
 QUERY;
-            $result = $edb->query($query, ...array_merge($data, [ $this->threshold ]));
+            $result = $edb->query($query, ...array_merge(array_values($data), [ $this->threshold ]));
             if($result->getRowCount() > 0)
                 return false;
         }
+         
+        $edb->query("INSERT INTO notifications VALUES (0, ?, ?, ?, ?, ?, ?, ?, ?)", ...array_values($data));
         
-        $edb->query("INSERT INTO notifications VALUES (0, ?, ?, ?, ?, ?, ?, ?, ?)", ...$data);
+        $kafkaConf = OPENVK_ROOT_CONF["openvk"]["credentials"]["notificationsBroker"];
+        if($kafkaConf["enable"]) {
+            $kafkaConf  = $kafkaConf["kafka"];
+            $brokerConf = new Conf();
+            $brokerConf->set("log_level", (string) LOG_DEBUG);
+            $brokerConf->set("debug", "all");
+            
+            $producer = new Producer($brokerConf);
+            $producer->addBrokers($kafkaConf["addr"] . ":" . $kafkaConf["port"]);
+            
+            $descriptor = implode(",", [
+                str_replace("\\", ".", get_class($this)),
+                $this->recipient->getId(),
+                base64_encode(serialize((object) $data)),
+            ]);
+            
+            $notifTopic = $producer->newTopic($kafkaConf["topic"]);
+            $notifTopic->produce(RD_KAFKA_PARTITION_UA, RD_KAFKA_MSG_F_BLOCK, $descriptor);
+            $producer->flush(100);
+        }
         
         return true;
     }

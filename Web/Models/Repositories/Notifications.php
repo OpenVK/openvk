@@ -43,6 +43,19 @@ class Notifications
         return $query;
     }
     
+    private function assemble(int $act, int $originModelType, int $originModelId, int $targetModelType, int $targetModelId, int $recipientId, int $timestamp, $data, ?string $class = NULL): Notification
+    {
+        $class ??= 'openvk\Web\Models\Entities\Notifications\Notification';
+        
+        $originModel = $this->getModel($originModelType, $originModelId);
+        $targetModel = $this->getModel($targetModelType, $targetModelId);
+        $recipient   = (new Users)->get($recipientId);
+        
+        $notification = new $class($recipient, $originModel, $targetModel, $timestamp, $data);
+        $notification->setActionCode($act);
+        return $notification;
+    }
+    
     function getNotificationCountByUser(User $user, int $offset, bool $archived = false): int
     {
         $db = $this->getEDB(false);
@@ -64,13 +77,38 @@ class Notifications
         
         $results  = $this->getEDB()->query($this->getQuery($user, false, $offset, $archived, $page, $perPage));
         foreach($results->fetchAll() as $notif) {
-            $originModel = $this->getModel($notif->originModelType, $notif->originModelId);
-            $targetModel = $this->getModel($notif->targetModelType, $notif->targetModelId);
-            $recipient   = (new Users)->get($notif->recipientId);
-            
-            $notification = new Notification($recipient, $originModel, $targetModel, $notif->timestamp, $notif->additionalData);
-            $notification->setActionCode($notif->modelAction);
-            yield $notification;
+            yield $this->assemble(
+                $notif->modelAction,
+                $notif->originModelType,
+                $notif->originModelId,
+                
+                $notif->targetModelType,
+                $notif->targetModelId,
+                
+                $notif->recipientId,
+                $notif->timestamp,
+                $notif->additionalData
+            );
         }
+    }
+    
+    function fromDescriptor(string $descriptor, ?object &$parsedData = nullptr)
+    {
+        [$class, $recv, $data] = explode(",", $descriptor);
+        $class = str_replace(".", "\\", $class);
+        
+        $parsedData = unserialize(base64_decode($data));
+        return $this->assemble(
+            $parsedData->actionCode,
+            $parsedData->originModelType,
+            $parsedData->originModelId,
+            
+            $parsedData->targetModelType,
+            $parsedData->targetModelId,
+            
+            $parsedData->recipient,
+            $parsedData->timestamp,
+            $parsedData->additionalPayload,
+        );
     }
 }
