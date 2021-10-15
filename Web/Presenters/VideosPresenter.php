@@ -68,6 +68,8 @@ final class VideosPresenter extends OpenVKPresenter
                         $video->setLink($this->postParam("link"));
                     else
                         $this->flashFail("err", "Нету видеозаписи", "Выберите файл или укажите ссылку.");
+                } catch(\DomainException $ex) {
+                    $this->flashFail("err", "Произошла ошибка", "Файл повреждён или не содержит видео." );
                 } catch(ISE $ex) {
                     $this->flashFail("err", "Произошла ошибка", "Возможно, ссылка некорректна.");
                 }

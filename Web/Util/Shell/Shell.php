@@ -16,14 +16,16 @@ class Shell
     
     static function commandAvailable(string $name): bool
     {
-        if(!Shell::shellAvailable()) throw new Exceptions\ShellUnavailableException;
+        if(!Shell::shellAvailable())
+            throw new Exceptions\ShellUnavailableException;
         
         return !is_null(`command -v $name`);
     }
     
     static function __callStatic(string $name, array $arguments): object
     {
-        if(!Shell::commandAvailable($name)) throw new Exceptions\UnknownCommandException($name);
+        if(!Shell::commandAvailable($name))
+            throw new Exceptions\UnknownCommandException($name);
         
         $command = implode(" ", array_merge([$name], $arguments));
         
@@ -36,14 +38,17 @@ class Shell
                 $this->command = $cmd;
             }
             
-            function execute(): string
+            function execute(?int &$result = nullptr): string
             {
-                return shell_exec($this->command);
+                $stdout = [];
+                exec($this->command, $stdout, $result);
+                
+                return implode(PHP_EOL, $stdout);
             }
             
             function start(): string
             {
-                shell_exec("nohup " . $this->command . " > /dev/null 2>/dev/null &");
+                system("nohup " . $this->command . " > /dev/null 2>/dev/null &");
                 
                 return $this->command;
             }
