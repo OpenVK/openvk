@@ -104,6 +104,29 @@
         <div style="padding:4px">
             {_"group_type_open"}
         </div>
+    </div><div>
+        <div class="content_title_expanded" onclick="hidePanel(this);">
+            Контакты
+        </div>
+        <div>
+            {var contacts = $club->getContacts()}
+            <div class="content_subtitle">
+                {$contacts->size()}
+                <div style="float:right;">
+                    <a href="/club{$club->getId()}/contacts">{_"all_title"}</a>
+                </div>
+            </div>
+
+            <div class="group_contact" n:foreach="$contacts->page(1, 5) as $contact">
+                <avatar>
+                    <img src="{$contact->getUser()->getAvatarUrl()}" style="image-rendering: -webkit-optimize-contrast;" />
+                </avatar>
+                <description>
+                    <a href="{$contact->getUser()->getURL()}"><b>{$contact->getUser()->getFullName()}</b></a><br>
+                    {$contact->getDescription()}
+                </description>
+            </div>
+        </div>
     </div>
     <div>
         <div class="content_title_expanded" onclick="hidePanel(this);">

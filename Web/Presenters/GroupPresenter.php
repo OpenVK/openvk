@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{Club, Photo};
+use openvk\Web\Models\Entities\{Club, Photo, Contact};
 use openvk\Web\Models\Entities\Notifications\ClubModeratorNotification;
-use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers};
+use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers, Contacts};
 
 final class GroupPresenter extends OpenVKPresenter
 {
@@ -131,7 +131,6 @@ final class GroupPresenter extends OpenVKPresenter
                 $this->flashFail("succ", "Операция успешна", $user->getCanonicalName() . " назначен(а) администратором.");
             }
         }
-        
     }
     
     function renderEdit(int $id): void
@@ -195,6 +194,62 @@ final class GroupPresenter extends OpenVKPresenter
         
         $this->template->reach = $club->getPostViewStats(true);
         $this->template->views = $club->getPostViewStats(false);
+    }
+
+    function renderContacts(int $id): void
+    {
+        $this->assertUserLoggedIn();
+        
+        $club = $this->clubs->get($id);
+        $this->template->club = $club;
+        $this->template->contacts = $club->getContacts()->page($this->queryParam("p") ?? 1);
+        $this->template->count    = $club->getContacts()->size();
+        $this->template->paginatorConf = (object) [
+            "count"   => $this->template->count,
+            "page"    => $this->queryParam("p") ?? 1,
+            "amount"  => NULL,
+            "perPage" => OPENVK_DEFAULT_PER_PAGE,
+        ];
+    }
+
+    function renderActionContact(): void
+    {
+        $contact;
+        $id = $this->queryParam("id");
+
+        if($this->queryParam("type") == 'delete' || $this->queryParam("type") == 'edit') {
+            if(!$id)
+                exit(json_encode([ "error" => tr("error_segmentation") ]));
+            
+            $contact = (new Contacts)->get($id);
+
+            if(!$contact)
+                exit(json_encode([ "error" => "Contact does not exist" ]));
+            
+            if(!$contact->getClub()->canBeModifiedBy($this->user->identity ?? NULL) && $contact->getClub()->getOwner()->getId() !== $user->getId())
+                exit(json_encode([ "error" => "You have no permissions to modify this contact" ]));
+        }
+
+        if($this->queryParam("type") == 'delete') {
+            $contact->setDeleted(1);
+            $contact->save();
+            exit(json_encode([ "status" => 'ok' ]));
+        } else if ($this->queryParam("type") == 'edit') {
+            if(!empty($this->queryParam("desc"))) {
+                $contact->setContent($this->queryParam("desc"));
+                $contact->save();
+                exit(json_encode([ "status" => 'ok' ]));
+            } else 
+                exit(json_encode([ "error" => "Description cannot be empty" ]));
+
+        } else if ($this->queryParam("type") == 'create') {
+            /* ну тут мне впринципе дальше лень делать
+
+            $contact = new Contact;
+            $contact->setGroup();
+            $contact->save(); */
+            exit(json_encode([ "error" => "Not implemented yet" ]));
+        }
     }
 
     function renderAdmin(int $clb, int $id): void

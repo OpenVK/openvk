@@ -7,7 +7,7 @@
 
 {block content}
     <div class="tabs">
-        <div id="activetabs" class="tab">
+        <div class="tab">
             <a id="act_tab_a" href="javascript:void(0)">
                 {_main}
             </a>
@@ -15,6 +15,11 @@
         <div class="tab">
             <a href="/club{$club->getId()}/followers">
                 {_followers}
+            </a>
+        </div>
+        <div class="tab">
+            <a href="/club{$club->getId()}/contacts">
+                {_contacts}
             </a>
         </div>
         <div class="tab">

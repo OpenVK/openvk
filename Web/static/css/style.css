@@ -1425,3 +1425,18 @@ body.scrolled .toTop:hover {
 #ovkDraw .literally .lc-picker .toolbar-button:hover:not(.disabled), #ovkDraw .literally .horz-toolbar .square-toolbar-button:hover:not(.disabled) {
     border-color: #cdcdcd;
 }
+
+.group_contact {
+    font-size: 10px;
+    display: flex;
+    padding: 5px;
+}
+
+.group_contact avatar {
+    width: 30px;
+    margin-right: 5px;
+}
+
+.group_contact avatar img {
+    width: 30px;
+}

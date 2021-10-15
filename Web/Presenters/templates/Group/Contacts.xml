@@ -1,14 +1,14 @@
 {extends "../@listView.xml"}
-{var iterator = $followers}
+{var iterator = $contacts}
 {var count    = $paginatorConf->count}
 {var page     = $paginatorConf->page}
 {var perPage  = 6}
 
-{block title}{_followers} {$club->getCanonicalName()}{/block}
+{block title}{_contacts} {$club->getCanonicalName()}{/block}
 
 {block header}
     <a href="{$club->getURL()}">{$club->getCanonicalName()}</a>
-    » {_followers}
+    » {_contacts}
 {/block}
 
 {block actions}
@@ -24,13 +24,13 @@
                 {_main}
             </a>
         </div>
-        <div id="activetabs" class="tab">
-            <a id="act_tab_a" href="/club{$club->getId()}/followers">
+        <div class="tab">
+            <a href="/club{$club->getId()}/followers">
                 {_followers}
             </a>
         </div>
-        <div class="tab">
-            <a href="/club{$club->getId()}/contacts">
+        <div id="activetabs" class="tab">
+            <a id="act_tab_a" href="/club{$club->getId()}/contacts">
                 {_contacts}
             </a>
         </div>
@@ -47,11 +47,11 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getAvatarURL()}" alt="{$x->getCanonicalName()}" width=75 />
+    <img src="{$x->getUser()->getAvatarURL()}" alt="{$x->getUser()->getCanonicalName()}" width=75 />
 {/block}
 
 {block name}
-    {$x->getCanonicalName()}
+    {$x->getUser()->getCanonicalName()}
 {/block}
 
 {block description}
@@ -59,27 +59,28 @@
         <tbody>
             <tr>
                 <td width="120" valign="top"><span class="nobold">{_"gender"}: </span></td>
-                <td>{$x->isFemale() ? "женский" : "мужской"}</td>
+                <td>{$x->getUser()->isFemale() ? "женский" : "мужской"}</td>
             </tr>
             <tr>
-                <td width="120" valign="top"><span class="nobold">{_"registration_date"}: </span></td>
-                <td>{$x->getRegistrationTime()}</td>
+                <td width="120" valign="top"><span class="nobold">{_description}: </span></td>
+                <td>
+                    {$x->getDescription()}
+                </td>
             </tr>
             <tr>
                 <td width="120" valign="top"><span class="nobold">{_role}: </span></td>
                 <td>
-                    {$club->canBeModifiedBy($x) ? tr("administrator") : tr("follower")}
+                    {$club->canBeModifiedBy($x->getUser()) ? tr("administrator") : tr("follower")}
                 </td>
             </tr>
-            <tr n:if="$club->canBeModifiedBy($thisUser ?? NULL) && $club->getOwner()->getId() !== $x->getId()">
+            <tr n:if="$club->canBeModifiedBy($thisUser ?? NULL) && $club->getOwner()->getId() !== $x->getUser()->getId()">
                 <td width="120" valign="top"><span class="nobold">{_actions}: </span></td>
                 <td>
-                    <a href="/club{$club->getId()}/setAdmin.jsp?user={$x->getId()}&hash={rawurlencode($csrfToken)}">
-                        {if $club->canBeModifiedBy($x)}
-                            {_devote}
-                        {else}
-                            {_promote_to_admin}
-                        {/if}
+                    <a href="javascript:contactEdit({$x->getUser()->getId()}, {rawurlencode($csrfToken)})">
+                        {_edit}
+                    </a>,
+                    <a href="javascript:contactDelete({$x->getUser()->getId()}, {rawurlencode($csrfToken)})">
+                        {_delete}
                     </a>
                 </td>
             </tr>
