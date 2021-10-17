@@ -43,6 +43,6 @@ class Videos
     
     function getUserVideosCount(User $user): int
     {
-        return sizeof($this->videos->where("owner", $user->getId())->where("deleted", 0));
+        return sizeof($this->videos->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0]));
     }
 }
