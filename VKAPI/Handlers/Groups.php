@@ -3,19 +3,35 @@ namespace openvk\VKAPI\Handlers;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Entities\Clubs;
 use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
+use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Entities\Post;
 use openvk\Web\Models\Entities\Postable;
 use openvk\Web\Models\Repositories\Posts as PostsRepo;
 
 final class Groups extends VKAPIRequestHandler
 {
-    function get(string $group_ids, string $fields = "", int $offset = 0, int $count = 100, bool $online = false): array 
+    function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 6, bool $online = false): object 
     {
         $this->requireUser();
 
-        $clubs = new ClubsRepo;
-        $clbs = explode(',', $group_ids);
-        $response;
+        if ($user_id == 0) {
+        	foreach($this->getUser()->getClubs($offset+1) as $club) {
+        		$clbs[] = $club;
+        	}
+        	$clbsCount = $this->getUser()->getClubCount();
+        } else {
+        	$users = new UsersRepo;
+        	$user = $users->get($user_id);
+        	if (is_null($user)) {
+        		$this->fail(15, "Access denied");
+        	}
+        	foreach($user->getClubs($offset+1) as $club) {
+        		$clbs[] = $club;
+        	}
+        	$clbsCount = $user->getClubCount();
+        }
+        
+        $rClubs;
 
         $ic = sizeof($clbs);
 
@@ -24,22 +40,21 @@ final class Groups extends VKAPIRequestHandler
         $clbs = array_slice($clbs, $offset * $count);
 
         for ($i=0; $i < $ic; $i++) { 
-            $usr = $clubs->get((int) $clbs[$i]);
+            $usr = $clbs[$i];
             if(is_null($usr))
             {
-                $response[$i] = (object)[
+                $rClubs[$i] = (object)[
                     "id" => $clbs[$i],
-                    "first_name" => "DELETED",
-                    "last_name" => "",
+                    "name" => "DELETED",
                     "deactivated" => "deleted"
                 ];   
             }else if($clbs[$i] == null){
 
             }else{
-                $response[$i] = (object)[
+                $rClubs[$i] = (object)[
                     "id" => $usr->getId(),
-                    "first_name" => $usr->getFirstName(),
-                    "last_name" => $usr->getLastName(),
+                    "name" => $usr->getName(),
+                    "screen_name" => $usr->getShortCode(),
                     "is_closed" => false,
                     "can_access_closed" => true,
                 ];
@@ -49,34 +64,28 @@ final class Groups extends VKAPIRequestHandler
                 foreach($flds as $field) { 
                     switch ($field) {
                         case 'verified':
-                            $response[$i]->verified = intval($usr->isVerified());
-                            break;
-                        case 'sex':
-                            $response[$i]->sex = $this->getUser()->isFemale() ? 1 : 2;
+                            $rClubs[$i]->verified = intval($usr->isVerified());
                             break;
                         case 'has_photo':
-                            $response[$i]->has_photo = is_null($usr->getAvatarPhoto()) ? 0 : 1;
+                            $rClubs[$i]->has_photo = is_null($usr->getAvatarPhoto()) ? 0 : 1;
                             break;
                         case 'photo_max_orig':
-                            $response[$i]->photo_max_orig = $usr->getAvatarURL();
+                            $rClubs[$i]->photo_max_orig = $usr->getAvatarURL();
                             break;
                         case 'photo_max':
-                            $response[$i]->photo_max = $usr->getAvatarURL();
+                            $rClubs[$i]->photo_max = $usr->getAvatarURL();
                             break;
-
+						case 'members_count':
+							$rClubs[$i]->members_count = $usr->getFollowersCount();
+							break;
                     }
                 }
-
-		// НУЖЕН фикс - либо из-за моего дебилизма, либо из-за сегментации котлеток некоторые пользовали отображаются как онлайн, хотя лол, если зайти на страницу, то оный уже офлайн
-		if($online == true && $usr->getOnline()->timestamp() + 2505600 > time()) {
-		    $response[$i]->online = 1;
-		}else{
-		    $response[$i]->online = 0;
-		}
-
             }
         }
 
-        return $response;
+        return (object) [
+        	"count" => $clbsCount,
+        	"items" => $rClubs
+        ];
     }
 }
