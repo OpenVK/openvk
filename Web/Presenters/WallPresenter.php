@@ -200,6 +200,8 @@ final class WallPresenter extends OpenVKPresenter
             if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK) {
                 $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"]);
             }
+        } catch(\DomainException $ex) {
+            $this->flashFail("err", "Не удалось опубликовать пост", "Файл медиаконтента повреждён.");
         } catch(ISE $ex) {
             $this->flashFail("err", "Не удалось опубликовать пост", "Файл медиаконтента повреждён или слишком велик.");
         }

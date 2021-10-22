@@ -58,8 +58,8 @@ final class InternalAPIPresenter extends OpenVKPresenter
         try {
             $params = array_merge($input->params ?? [], [function($data) {
                 $this->succ($data);
-            }, function($data) {
-                $this->fail($data);
+            }, function(int $errno, string $errstr) {
+                $this->fail($errno, $errstr);
             }]);
             $handler->{$method}(...$params);
         } catch(\TypeError $te) {

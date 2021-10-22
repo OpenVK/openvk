@@ -252,18 +252,23 @@
                 <a href="/privacy" class="link">{_footer_privacy}</a>
             </div>
             <p>OpenVK <a href="/about:openvk2">{php echo OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {$dbVersion}</p>
-            <p n:ifcontent>
+            <p n:ifcontent="ifcontent">
                 {php echo OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]}
             </p>
         </div>
         
-        <script src="https://rawgit.com/kawanet/msgpack-lite/master/dist/msgpack.min.js"></script>
+        {script "js/node_modules/msgpack-lite/dist/msgpack.min.js"}
+        {script "js/node_modules/soundjs/lib/soundjs.min.js"}
         {script "js/node_modules/ky/umd.js"}
         {script "js/messagebox.js"}
         {script "js/notifications.js"}
         {script "js/scroll.js"}
         {script "js/al_wall.js"}
         {script "js/al_api.js"}
+        
+        {ifset $thisUser}
+            {script "js/al_notifs.js"}
+        {/ifset}
         
         <script src="https://unpkg.com/fartscroll@1.0.0/fartscroll.js"></script>
         <script n:if="OPENVK_ROOT_CONF['openvk']['preferences']['bellsAndWhistles']['fartscroll']">
