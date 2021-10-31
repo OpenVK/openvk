@@ -4,7 +4,7 @@
 #         OpenVK AutoInstallation Script for FreeBSD 12         #               /(        )`               #
 # ------------------------------------------------------------- #               \ \___   / |               #
 #                                                               #               /- _  `-/  '               #
-# This script installs OpenVK 2 on an empty FreeBSD 12 box.     #              (/\/ \ \   /\               #
+# This script installs OpenVK on an empty FreeBSD 12 box.       #              (/\/ \ \   /\               #
 # Copyright (c) 2020 OpenVK contributors                        #              / /   | `    \              #
 # ------------------------------------------------------------- #              O O   ) /    |              #
 #                                                               #              `-^--'`<     '              #
