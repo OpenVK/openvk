@@ -97,7 +97,7 @@
                 <tr class="h">
                     <td>
                         <h1 class="p" style="float: left;">OpenVK {=OPENVK_VERSION}</h1>
-                        <img id="ovkLogo" src="/assets/packages/static/openvk/img/logo.svg" alt="OpenVK Logo" />
+                        <img id="ovkLogo" src="/assets/packages/static/openvk/img/logo_full.svg" alt="OpenVK Logo" />
                     </td>
                 </tr>
             </tbody>
