@@ -79,7 +79,7 @@
         #ovkLogo {
             float: right;
             border: 0;
-            width: 30px;
+            height: 30px;
             padding-top: 6px;
             position: relative;
         }
