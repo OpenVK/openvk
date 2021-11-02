@@ -1433,3 +1433,13 @@ body.scrolled .toTop:hover {
 #ovkDraw .literally .lc-picker .toolbar-button:hover:not(.disabled), #ovkDraw .literally .horz-toolbar .square-toolbar-button:hover:not(.disabled) {
     border-color: #cdcdcd;
 }
+
+.user-alert {
+    margin-left: 9px;
+    margin-bottom: 8px;
+    padding: 4px;
+    border: 1px solid #c3a476;
+    font-weight: 900;
+    background-color: #f3ddbd;
+    color: #58462a;
+}

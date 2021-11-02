@@ -204,6 +204,11 @@ class User extends RowModel
         return $this->getRecord()->shortcode;
     }
     
+    function getAlert(): ?string
+    {
+        return $this->getRecord()->alert;
+    }
+    
     function getBanReason(): ?string
     {
         return $this->getRecord()->block_reason;

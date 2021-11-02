@@ -1,0 +1,1 @@
+ALTER TABLE `profiles` ADD `alert` TEXT NULL DEFAULT NULL AFTER `since`;
