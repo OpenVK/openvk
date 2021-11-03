@@ -219,10 +219,10 @@ class User extends RowModel
         return $this->getRecord()->type;
     }
     
-    function getCoins(): int
+    function getCoins(): float
     {
         if(!OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"])
-            return 0;
+            return 0.0;
         
         return $this->getRecord()->coins;
     }
