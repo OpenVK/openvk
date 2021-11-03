@@ -204,6 +204,11 @@ class User extends RowModel
         return $this->getRecord()->shortcode;
     }
     
+    function getAlert(): ?string
+    {
+        return $this->getRecord()->alert;
+    }
+    
     function getBanReason(): ?string
     {
         return $this->getRecord()->block_reason;
@@ -214,10 +219,10 @@ class User extends RowModel
         return $this->getRecord()->type;
     }
     
-    function getCoins(): int
+    function getCoins(): float
     {
         if(!OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"])
-            return 0;
+            return 0.0;
         
         return $this->getRecord()->coins;
     }
@@ -561,6 +566,11 @@ class User extends RowModel
     function isBanned(): bool
     {
         return !is_null($this->getBanReason());
+    }
+    
+    function isOnline(): bool
+    {
+        return time() - $this->getRecord()->online <= 300;
     }
     
     function prefersNotToSeeRating(): bool

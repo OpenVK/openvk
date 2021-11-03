@@ -65,3 +65,8 @@ You may reach out to us via:
 *Attention*: bug tracker and telegram chat are public places. And ticketing system is being served by volunteers. If you need to report something, that shouldn't be immediately disclosed to general public (for instance, vulnerability report), *please use contact us directly*:
 * *Head of OpenVK Security Commitee*: stingray@jill.pl or "@id155":https://t.me/id155
 * *Backend developer*: "@saddyteirusu":https://t.me/saddyteirusu
+
+Codeberg repository clone:
+<a href="https://codeberg.org/OpenVK/openvk">
+    <img alt="Get it on Codeberg" src="https://codeberg.org/Codeberg/GetItOnCodeberg/media/branch/main/get-it-on-blue-on-white.png" height="60">
+</a>
