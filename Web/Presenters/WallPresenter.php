@@ -45,20 +45,21 @@ final class WallPresenter extends OpenVKPresenter
             exit("Ошибка доступа: " . (string) random_int(0, 255));
         
         $owner = ($user < 0 ? (new Clubs) : (new Users))->get(abs($user));
-        if(is_null($this->user))
+        if(is_null($this->user)) {
             $canPost = false;
-        else if($user > 0)
+        } else if($user > 0) {
             if(!$owner->isBanned())
                 $canPost = $owner->getPrivacyPermission("wall.write", $this->user->identity);
             else
                 $this->flashFail("err", tr("error"), "Ошибка доступа");
-        else if($user < 0)
+	} else if($user < 0) {
             if($owner->canBeModifiedBy($this->user->identity))
                 $canPost = true;
             else
                 $canPost = $owner->canPost();
-        else
-            $canPost = false; 
+        } else {
+            $canPost = false;
+	}
         
         if ($embedded == true) $this->template->_template = "components/wall.xml";
         $this->template->oObj    = $owner;
@@ -167,19 +168,20 @@ final class WallPresenter extends OpenVKPresenter
         
         $wallOwner = ($wall > 0 ? (new Users)->get($wall) : (new Clubs)->get($wall * -1))
                      ?? $this->flashFail("err", "Не удалось опубликовать пост", "Такого пользователя не существует.");
-        if($wall > 0)
+        if($wall > 0) {
             if(!$wallOwner->isBanned())
                 $canPost = $wallOwner->getPrivacyPermission("wall.write", $this->user->identity);
             else
                 $this->flashFail("err", "Ошибка доступа", "Вам нельзя писать на эту стену.");
-        else if($wall < 0)
+        } else if($wall < 0) {
             if($wallOwner->canBeModifiedBy($this->user->identity))
                 $canPost = true;
             else
                 $canPost = $wallOwner->canPost();
-        else
+        } else {
             $canPost = false; 
-        
+        }
+	
         if(!$canPost)
             $this->flashFail("err", "Ошибка доступа", "Вам нельзя писать на эту стену.");
         
