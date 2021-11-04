@@ -48,7 +48,10 @@ final class WallPresenter extends OpenVKPresenter
         if(is_null($this->user))
             $canPost = false;
         else if($user > 0)
-            $canPost = $owner->getPrivacyPermission("wall.write", $this->user->identity);
+            if(!$owner->isBanned())
+                $canPost = $owner->getPrivacyPermission("wall.write", $this->user->identity);
+            else
+                $this->flashFail("err", tr("error"), "Ошибка доступа");
         else if($user < 0)
             if($owner->canBeModifiedBy($this->user->identity))
                 $canPost = true;
@@ -165,7 +168,10 @@ final class WallPresenter extends OpenVKPresenter
         $wallOwner = ($wall > 0 ? (new Users)->get($wall) : (new Clubs)->get($wall * -1))
                      ?? $this->flashFail("err", "Не удалось опубликовать пост", "Такого пользователя не существует.");
         if($wall > 0)
-            $canPost = $wallOwner->getPrivacyPermission("wall.write", $this->user->identity);
+            if(!$wallOwner->isBanned())
+                $canPost = $wallOwner->getPrivacyPermission("wall.write", $this->user->identity);
+            else
+                $this->flashFail("err", "Ошибка доступа", "Вам нельзя писать на эту стену.");
         else if($wall < 0)
             if($wallOwner->canBeModifiedBy($this->user->identity))
                 $canPost = true;
@@ -245,10 +251,11 @@ final class WallPresenter extends OpenVKPresenter
         $this->logPostView($post, $wall);
         
         $this->template->post     = $post;
-        if ($post->getTargetWall() > 0) 
-        {
+        if ($post->getTargetWall() > 0) {
         	$this->template->wallOwner = (new Users)->get($post->getTargetWall());
 			$this->template->isWallOfGroup = false;
+            if($this->template->wallOwner->isBanned())
+                $this->flashFail("err", tr("error"), "Ошибка доступа");
 		} else {
 			$this->template->wallOwner = (new Clubs)->get(abs($post->getTargetWall()));
 			$this->template->isWallOfGroup = true;
