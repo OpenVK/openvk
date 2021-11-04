@@ -568,6 +568,11 @@ class User extends RowModel
         return !is_null($this->getBanReason());
     }
     
+    function isOnline(): bool
+    {
+        return time() - $this->getRecord()->online <= 300;
+    }
+    
     function prefersNotToSeeRating(): bool
     {
         return !((bool) $this->getRecord()->show_rating);

@@ -30,18 +30,14 @@ final class UserPresenter extends OpenVKPresenter
                 if(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) !== "/" . $user->getShortCode())
                     $this->redirect("/" . $user->getShortCode(), static::REDIRECT_TEMPORARY_PRESISTENT);
             
-            $then = date_create("@" . $user->getOnline()->timestamp());
-            $now  = date_create();
-            $diff = date_diff($now, $then);
-            
             $this->template->albums      = (new Albums)->getUserAlbums($user);
             $this->template->albumsCount = (new Albums)->getUserAlbumsCount($user);
             $this->template->videos      = (new Videos)->getByUser($user, 1, 2);
             $this->template->videosCount = (new Videos)->getUserVideosCount($user);
             $this->template->notes       = (new Notes)->getUserNotes($user, 1, 4);
             $this->template->notesCount  = (new Notes)->getUserNotesCount($user);
+            
             $this->template->user = $user;
-            $this->template->diff = $diff;
         }
     }
     

@@ -7,13 +7,11 @@
                 <img
                     src="{$author->getAvatarURL()}"
                     width="50" />
-                {if !$post->isPostedOnBehalfOfGroup() && !$compact}
-                    <span n:if="$author->getOnline()->timestamp() + 2505600 > time()" class="post-online">
-                        {if $diff->i <= 5}
-                            {_online}
+                       {if !$post->isPostedOnBehalfOfGroup() && !$compact}
+                            <span n:if="$author->isOnline()" class="post-online">
+                                {_online}
+                            </span>
                         {/if}
-                    </span>
-                {/if}
             </td>
             <td width="100%" valign="top">
                 <div class="post-author">
