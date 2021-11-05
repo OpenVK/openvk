@@ -109,6 +109,11 @@ class Club extends RowModel
     {
         return $this->getRecord()->closed;
     }
+
+    function getAdministratorsListDisplay(): int
+    {
+        return $this->getRecord()->administrators_list_display;
+    }
     
     function getType(): int
     {
