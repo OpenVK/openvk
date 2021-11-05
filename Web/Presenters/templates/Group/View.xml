@@ -105,44 +105,39 @@
             {_"group_type_open"}
         </div>
     </div>
-    {if $club->getAdministratorsListDisplay() == 0}
-        <div>
-            <div class="content_title_expanded" onclick="hidePanel(this);">
-                {_"creator"}
-            </div>
-            <div style="padding:4px">
-                {var author = $club->getOwner()}
-                <ul>
-                    <li>
-                        <a href="{$author->getURL()}"><b>{$author->getCanonicalName()}</b></a>
-                    </li>
-                </ul>
-            </div>
+    <div n:if="$club->getAdministratorsListDisplay() == 0">
+        <div class="content_title_expanded" onclick="hidePanel(this);">
+            {_"creator"}
         </div>
-    {elseif $club->getAdministratorsListDisplay() == 1}
-        <div>
-            <div class="content_title_expanded" onclick="hidePanel(this);">
-                {_"administrators"}
-            </div>
-            <div style="padding:4px">
-                {var author = $club->getOwner()}
-                <ul>
-                    <li>
-                        <a href="{$author->getURL()}"><b>{$author->getCanonicalName()}</b></a>
-                    </li>
-                    <li n:foreach="$club->getManagers(1) as $manager">
-                        <a href="{$manager->getURL()}"><b>{$manager->getCanonicalName()}</b></a>
-                    </li>
-                    {var managersCount = $club->getManagersCount()}
-                    {if $managersCount > 7}
-                        <li>
-                            <b>{tr("and_more", $managersCount - 7)}</b>
-                        </li>
-                    {/if}
-                </ul>
-            </div>
+        <div style="padding:4px">
+            {var author = $club->getOwner()}
+            <ul>
+                <li>
+                    <a href="{$author->getURL()}"><b>{$author->getCanonicalName()}</b></a>
+                </li>
+            </ul>
         </div>
-    {/if}
+    </div>
+    <div n:if="$club->getAdministratorsListDisplay() == 1">
+        <div class="content_title_expanded" onclick="hidePanel(this);">
+            {_"administrators"}
+        </div>
+        <div style="padding:4px">
+            {var author = $club->getOwner()}
+            <ul>
+                <li>
+                    <a href="{$author->getURL()}"><b>{$author->getCanonicalName()}</b></a>
+                </li>
+                <li n:foreach="$club->getManagers(1) as $manager">
+                    <a href="{$manager->getURL()}"><b>{$manager->getCanonicalName()}</b></a>
+                </li>
+                {var managersCount = $club->getManagersCount()}
+                <li n:if="$managersCount > 7">
+                    <b>{tr("and_more", $managersCount - 7)}</b>
+                </li>
+            </ul>
+        </div>
+    </div>
     <div n:if="$albumsCount > 0">
         <div class="content_title_expanded" onclick="hidePanel(this, {$albumsCount});">
             {_"albums"}
