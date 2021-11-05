@@ -363,7 +363,7 @@ input[class=button] {
     padding: 5px 7px 4px;
 }
 
-input[type=checkbox] {
+input[type=checkbox], input[type=radio] {
   background-image: url("data:image/gif;base64,R0lGODlhDwA4AKIHANrh6P///8DK1a22wF+DpbfAy9/l6v///yH5BAEAAAcALAAAAAAPADgAAAOzKLrMJyHKGcWjOFiY5+7eBVbi+I1aCZ6m2rGrm21NrTx2LWMEwYE93yho+PF6gmKHyCJIiEVRMABNcQzBnsFAumK13K5kS9iGjNuwBPbC5RyDuHw+PwwA+LweP7Dv/wB9d4B6goSFfod8iYqGioGMh46NkYSTkpWAgnSccXadnJl/PYOHQaWAQQWoe6qrhK6MBHmujkEArpCDBVkEBQWLu7w9v3mTv77AxpG/ysusmp+gdQkAOw==");
   background-color: transparent;
   -webkit-appearance: none;
@@ -374,13 +374,14 @@ input[type=checkbox] {
   outline: none;
   cursor: pointer;
   vertical-align: middle;
+  margin: 4px 3px 3px 3px;
 }
 
-input[type=checkbox]:hover {
+input[type=checkbox]:hover, input[type=radio]:hover {
   background-position: 0 -28px;
 }
 
-input[type=checkbox]:checked {
+input[type=checkbox]:checked, input[type=radio]:checked {
   background-position: 0 -14px;
 }
 
