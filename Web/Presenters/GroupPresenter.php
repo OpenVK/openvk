@@ -150,6 +150,7 @@ final class GroupPresenter extends OpenVKPresenter
             $club->setAbout(empty($this->postParam("about")) ? NULL : $this->postParam("about"));
             $club->setShortcode(empty($this->postParam("shortcode")) ? NULL : $this->postParam("shortcode"));
 	        $club->setWall(empty($this->postParam("wall")) ? 0 : 1);
+            $club->setAdministrators_List_Display(empty($this->postParam("administrators_list_display")) ? 0 : $this->postParam("administrators_list_display"));
             
             if($_FILES["ava"]["error"] === UPLOAD_ERR_OK) {
                 $photo = new Photo;
