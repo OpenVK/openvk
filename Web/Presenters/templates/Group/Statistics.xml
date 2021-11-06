@@ -1,15 +1,15 @@
 {extends "../@layout.xml"}
-{block title}Статистика группы{/block}
+{block title}{$club->getName()} » {_statistics}{/block}
 
 {block header}
-    <a href="{$club->getURL()}">{$club->getName()}</a> » Статистика
+    <a href="{$club->getURL()}">{$club->getName()}</a> » {_statistics}
 {/block}
 
 {block content}
     <div class="tabs">
         <div class="tab">
             <a href="/club{$club->getId()}/edit">
-                Настройки
+                {_main}
             </a>
         </div>
         <div class="tab">
@@ -19,7 +19,7 @@
         </div>
         <div id="activetabs" class="tab">
             <a id="act_tab_a" href="javascript:void(0)">
-                Статистика
+                {_statistics}
             </a>
         </div>
     </div>

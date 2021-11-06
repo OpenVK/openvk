@@ -17,6 +17,26 @@
 
 {* BEGIN ELEMENTS DESCRIPTION *}
 
+{block tabs}
+	{if $club->canBeModifiedBy($thisUser)}
+		<div class="tab">
+			<a href="/club{$club->getId()}/edit">
+				{_main}
+			</a>
+		</div>
+		<div id="activetabs" class="tab">
+			<a id="act_tab_a" href="/club{$club->getId()}/followers">
+				{_followers}
+			</a>
+		</div>
+		<div class="tab">
+			<a href="/club{$club->getId()}/stats">
+				{_statistics}
+			</a>
+		</div>
+	{/if}
+{/block}
+
 {block link|strip|stripHtml}
     /id{$x->getId()}
 {/block}
