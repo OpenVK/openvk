@@ -1444,3 +1444,47 @@ body.scrolled .toTop:hover {
     background-color: #f3ddbd;
     color: #58462a;
 }
+
+.avatar-list {
+    padding: 4px 8px 4px 8px;
+}
+
+.avatar-list-item {
+    padding: 4px 0 4px 0;
+}
+
+.avatar-list-item::after {
+    content: '.';
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+.avatar-list-item .avatar {
+    float: left;
+}
+
+.avatar-list-item .avatar img {
+    width: 32px;
+    height: 32px;
+    object-fit: cover;
+}
+
+.avatar-list-item .info {
+    float: left;
+    padding-left: 8px;
+}
+
+.avatar-list-item .info-without-subtitle-centered {
+    padding-top: 8px;
+}
+
+.avatar-list-item .info .title {
+    font-size: 11px;
+}
+
+.avatar-list-item .info .subtitle {
+    color: rgb(128, 128, 128);
+    font-size: 10px;
+}
