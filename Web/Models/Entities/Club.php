@@ -89,6 +89,11 @@ class Club extends RowModel
     {
         return (new Users)->get($this->getRecord()->owner);
     }
+
+    function getOwnerComment(): string
+    {
+        return is_null($this->getRecord()->owner_comment) ? "" : $this->getRecord()->owner_comment;
+    }
     
     function getDescription(): ?string
     {
@@ -269,33 +274,21 @@ class Club extends RowModel
         $rels = $this->getRecord()->related("group_coadmins.club")->page($page, 6);
         
         foreach($rels as $rel) {
-            $rel = (new Users)->get($rel->user);
-            if(!$rel) continue;
-
-            yield $rel;
-        }
-    }
-
-    function getManagersWithComment(int $page = 1): \Traversable
-    {
-        $rels = $this->getRecord()->related("group_coadmins.club")->where("comment IS NOT NULL")->page($page, 10);
-        
-        foreach($rels as $rel) {
             $rel = (new Managers)->get($rel->id);
             if(!$rel) continue;
 
             yield $rel;
         }
     }
+
+    function getManager(User $user): ?Manager
+    {
+        return (new Managers)->getByUserAndClub($user->getId(), $this->getId());
+    }
     
     function getManagersCount(): int
     {
         return sizeof($this->getRecord()->related("group_coadmins.club")) + 1;
-    }
-
-    function getManagersCountWithComment(): int
-    {
-        return sizeof($this->getRecord()->related("group_coadmins.club")->where("comment IS NOT NULL")) + 1;
     }
     
     function addManager(User $user, ?string $comment = NULL): void

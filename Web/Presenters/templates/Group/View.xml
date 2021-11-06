@@ -109,33 +109,56 @@
         <div class="content_title_expanded" onclick="hidePanel(this);">
             {_"creator"}
         </div>
-        <div style="padding:4px">
+        <div class="avatar-list-item" style="padding: 8px;">
             {var author = $club->getOwner()}
-            <ul>
-                <li>
-                    <a href="{$author->getURL()}"><b>{$author->getCanonicalName()}</b></a>
-                </li>
-            </ul>
+            <div class="avatar">
+                <a href="{$author->getURL()}">
+                    <img class="ava" src="{$author->getAvatarUrl()}" />
+                </a>
+            </div>
+            <div class="info info-without-subtitle-centered" n:if="empty($club->getOwnerComment())">
+                <a href="{$author->getURL()}" class="title">{$author->getCanonicalName()}</a>
+            </div>
+            <div class="info" n:if="!empty($club->getOwnerComment())">
+                <a href="{$author->getURL()}" class="title">{$author->getCanonicalName()}</a>
+                <div class="subtitle">{$club->getOwnerComment()}</div>
+            </div>
         </div>
     </div>
     <div n:if="$club->getAdministratorsListDisplay() == 1">
         <div class="content_title_expanded" onclick="hidePanel(this);">
             {_"administrators"}
         </div>
-        <div style="padding:4px">
-            {var author = $club->getOwner()}
-            <ul>
-                <li>
-                    <a href="{$author->getURL()}"><b>{$author->getCanonicalName()}</b></a>
-                </li>
-                <li n:foreach="$club->getManagers(1) as $manager">
-                    <a href="{$manager->getURL()}"><b>{$manager->getCanonicalName()}</b></a>
-                </li>
-                {var managersCount = $club->getManagersCount()}
-                <li n:if="$managersCount > 7">
-                    <b>{tr("and_more", $managersCount - 7)}</b>
-                </li>
-            </ul>
+        <div>
+            <div class="content_subtitle">
+                {tr("administrators", $club->getManagersCount() + 1)}
+            </div>
+            <div class="avatar-list">
+                <div class="avatar-list-item">
+                    {var author = $club->getOwner()}
+                    <div class="avatar">
+                        <a href="{$author->getURL()}">
+                            <img class="ava" src="{$author->getAvatarUrl()}" />
+                        </a>
+                    </div>
+                    <div class="info">
+                        <a href="{$author->getURL()}" class="title">{$author->getCanonicalName()}</a>
+                        <div class="subtitle" n:if="!empty($club->getOwnerComment())">{$club->getOwnerComment()}</div>
+                    </div>
+                </div>
+                <div class="avatar-list-item" n:foreach="$club->getManagers(1) as $manager">
+                    {var user = $manager->getUser()}
+                    <div class="avatar">
+                        <a href="{$user->getURL()}">
+                            <img height="32" class="ava" src="{$user->getAvatarUrl()}" />
+                        </a>
+                    </div>
+                    <div class="info">
+                        <a href="{$user->getURL()}" class="title">{$user->getCanonicalName()}</a>
+                        <div class="subtitle" n:if="!empty($manager->getComment())">{$manager->getComment()}</div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div n:if="$albumsCount > 0">

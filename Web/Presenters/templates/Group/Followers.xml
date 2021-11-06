@@ -46,15 +46,35 @@
                     {$club->canBeModifiedBy($x) ? tr("administrator") : tr("follower")}
                 </td>
             </tr>
-            <tr n:if="$club->canBeModifiedBy($thisUser ?? NULL) && $club->getOwner()->getId() !== $x->getId()">
+            {var manager = $club->getManager($x)}
+            <tr n:if="$manager && !empty($manager->getComment()) || $club->getOwner()->getId() === $x->getId() && !empty($club->getOwnerComment())">
+                <td width="120" valign="top"><span class="nobold">{_comment}: </span></td>
+                <td>
+                    {if $club->getOwner()->getId() === $x->getId()}
+                        {$club->getOwnerComment()}
+                    {else}
+                        {$manager->getComment()}
+                    {/if}
+                </td>
+            </tr>
+            <tr n:if="$club->canBeModifiedBy($thisUser ?? NULL) && $club->getOwner()->getId() !== $x->getId() || $club->getOwner()->getId() == $x->getId()">
                 <td width="120" valign="top"><span class="nobold">{_actions}: </span></td>
                 <td>
-                    <a href="/club{$club->getId()}/setAdmin.jsp?user={$x->getId()}&hash={rawurlencode($csrfToken)}">
-                        {if $club->canBeModifiedBy($x)}
+                    <a href="/club{$club->getId()}/setAdmin.jsp?user={$x->getId()}&hash={rawurlencode($csrfToken)}" n:if="$club->getOwner()->getId() !== $x->getId()">
+                        {if $manager}
                             {_devote}
                         {else}
                             {_promote_to_admin}
                         {/if}
+                    </a>
+                    {if $manager}
+                         | 
+                        <a href="javascript:setClubAdminComment('{$club->getId()}', '{$manager->getUserId()}', '{rawurlencode($csrfToken)}')">
+                            {_set_comment}
+                        </a>
+                    {/if}
+                    <a n:if="$club->getOwner()->getId() === $x->getId()" href="javascript:setClubAdminComment('{$club->getId()}', '{$club->getOwner()->getId()}', '{rawurlencode($csrfToken)}')">
+                        {_set_comment}
                     </a>
                 </td>
             </tr>
