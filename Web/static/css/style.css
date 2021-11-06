@@ -496,6 +496,7 @@ h4 {
     border-bottom: #ECECEC solid 1px;
     font-size: 11px;
     padding: 3px 5px 3px;
+    line-height: 125%;
 }
 
 .post-author .date {
@@ -512,6 +513,7 @@ h4 {
     padding: 4px;
     font-size: 11px;
     hyphens: manual;
+	line-height: 160%;
 }
 
 .post-content .attachments_b {
@@ -1443,6 +1445,10 @@ body.scrolled .toTop:hover {
     font-weight: 900;
     background-color: #f3ddbd;
     color: #58462a;
+}
+
+.knowledgeBaseArticle {
+	margin-top: -11px; /* this is very stupid fix but nah */
 }
 
 .avatar-list {
