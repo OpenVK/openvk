@@ -98,6 +98,7 @@ final class GroupPresenter extends OpenVKPresenter
     {
         $user = is_null($this->queryParam("user")) ? $this->postParam("user") : $this->queryParam("user");
         $comment = $this->postParam("comment");
+        $removeComment = $this->postParam("removeComment") === "1";
         //$index = $this->queryParam("index");
         if(!$user)
             $this->badRequest();
@@ -110,16 +111,34 @@ final class GroupPresenter extends OpenVKPresenter
         if(!$club->canBeModifiedBy($this->user->identity ?? NULL) && $club->getOwner()->getId() !== $user->getId())
             $this->flashFail("err", "Ошибка доступа", "У вас недостаточно прав, чтобы изменять этот ресурс.");
 
-        /* if(!empty($index)){
-            $manager = (new Managers)->get($index);
-            $manager->setComment($comment);
+        if($removeComment) {
+            if($club->getOwner()->getId() == $user->getId()) {
+                $club->setOwner_Comment(null);
+                $club->save();
+            } else {
+                $manager = (new Managers)->getByUserAndClub($user->getId(), $club->getId());
+                $manager->setComment(null);
+                $manager->save();
+            }
+
+            $this->flashFail("succ", "Операция успешна", "Комментарий к администратору удален");
+        } elseif($comment) {
+            if(strlen($comment) > 36) {
+                $commentLength = (string) strlen($comment);
+                $this->flashFail("err", "Ошибка", "Комментарий слишком длинный ($commentLength символов вместо 36 символов)");
+                return;
+            }
+
+            if($club->getOwner()->getId() == $user->getId()) {
+                $club->setOwner_Comment($comment);
+                $club->save();
+            } else {
+                $manager = (new Managers)->getByUserAndClub($user->getId(), $club->getId());
+                $manager->setComment($comment);
+                $manager->save();
+            }
+
             $this->flashFail("succ", "Операция успешна", "Комментарий к администратору изменён");
-         }else{ */
-        if($comment) {
-            $manager = (new Managers)->getByUserAndClub($user->getId(), $club->getId());
-            $manager->setComment($comment);
-            $manager->save();
-            $this->flashFail("succ", "Операция успешна", ".");
         }else{
             if($club->canBeModifiedBy($user)) {
                 $club->removeManager($user);

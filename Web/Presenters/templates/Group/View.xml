@@ -114,6 +114,10 @@
             <ul>
                 <li>
                     <a href="{$author->getURL()}"><b>{$author->getCanonicalName()}</b></a>
+                    {if !empty($club->getOwnerComment())}
+                        <br>
+                        <b>{$club->getOwnerComment()}</b>
+                    {/if}
                 </li>
             </ul>
         </div>
@@ -127,9 +131,17 @@
             <ul>
                 <li>
                     <a href="{$author->getURL()}"><b>{$author->getCanonicalName()}</b></a>
+                    {if !empty($club->getOwnerComment())}
+                        <br>
+                        <b>{$club->getOwnerComment()}</b>
+                    {/if}
                 </li>
                 <li n:foreach="$club->getManagers(1) as $manager">
-                    <a href="{$manager->getURL()}"><b>{$manager->getCanonicalName()}</b></a>
+                    <a href="{$manager->getUser()->getURL()}"><b>{$manager->getUser()->getCanonicalName()}</b></a>
+                    {if !empty($manager->getComment())}
+                        <br>
+                        <b>{$manager->getComment()}</b>
+                    {/if}
                 </li>
                 {var managersCount = $club->getManagersCount()}
                 <li n:if="$managersCount > 7">

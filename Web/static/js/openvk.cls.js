@@ -105,3 +105,23 @@ function repostPost(id, hash) {
 		Function.noop
 	]);
 }
+
+function setClubAdminComment(clubId, adminId, hash) {
+    MessageBox("Изменить комментарий к администратору", `
+        <form action="/club${clubId}/setAdmin.jsp" method="post" id="uClubAdminCommentForm_${clubId}_${adminId}">
+            <input type="hidden" name="user" value="${adminId}">
+            <input type="hidden" name="hash" value="${hash}">
+            <input type="hidden" name="removeComment" id="uClubAdminCommentRemoveCommentInput_${clubId}_${adminId}" value="0">
+            <textarea name="comment" id="uClubAdminCommentTextArea_${clubId}_${adminId}"></textarea><br><br>
+        </form>
+    `, ["Изменить", "Отменить"], [
+        () => {
+            if (document.querySelector(`#uClubAdminCommentTextArea_${clubId}_${adminId}`).value === "") {
+                document.querySelector(`#uClubAdminCommentRemoveCommentInput_${clubId}_${adminId}`).value = "1";
+            }
+
+            document.querySelector(`#uClubAdminCommentForm_${clubId}_${adminId}`).submit();
+        },
+        Function.noop
+    ]);
+}
