@@ -234,7 +234,7 @@ abstract class OpenVKPresenter extends SimplePresenter
            	$this->template->theme = Themepacks::i()[Session::i()->get("_tempTheme", "ovk")];
 		else if($this->requestParam("themePreview"))
 			$this->template->theme = Themepacks::i()[$this->requestParam("themePreview")];
-        else if($this->user->identity->getTheme())
+        else if($this->user->identity !== null && $this->user->identity->getTheme())
 			$this->template->theme = $this->user->identity->getTheme();
 
 		// Знаю, каша ебаная, целестора рефактор всё равно сделает :)))
