@@ -16,9 +16,8 @@
                 {css "css/nsfw-posts.css"}
             {/if}
             
-            {if !is_null($thisUser->getTheme())}
-                {var theme = $thisUser->getTheme()}
-                {if $theme->inheritDefault()}
+            {if $theme !== null}
+            	{if $theme->inheritDefault()}
                     {css "css/style.css"}
                     {css "css/dialog.css"}
                     {css "css/notifications.css"}

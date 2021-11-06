@@ -273,7 +273,10 @@ final class UserPresenter extends OpenVKPresenter
                 $this->flashFail("succ", tr("voucher_good"), tr("voucher_redeemed"));
             } else if($_GET['act'] === "interface") {
                 if (isset(Themepacks::i()[$this->postParam("style")]) || $this->postParam("style") === Themepacks::DEFAULT_THEME_ID)
-                    $user->setStyle($this->postParam("style"));
+				{
+					$user->setStyle($this->postParam("style"));
+					$this->setTempTheme($this->postParam("style"));
+				}
                 
                 if ($this->postParam("style_avatar") <= 2 && $this->postParam("style_avatar") >= 0)
                     $user->setStyle_Avatar((int)$this->postParam("style_avatar"));
@@ -308,10 +311,10 @@ final class UserPresenter extends OpenVKPresenter
                     throw $ex;
             }
             
-            $this->flash(
+			$this->flash(
                 "succ",
                 "Изменения сохранены",
-                "Новые данные появятся на вашей странице.<br/>Если вы изменили стиль, перезагрузите страницу."
+                "Новые данные появятся на вашей странице."
             );
         }
         $this->template->mode = in_array($this->queryParam("act"), [
