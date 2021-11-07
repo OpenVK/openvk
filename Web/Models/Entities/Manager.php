@@ -41,6 +41,11 @@ class Manager extends RowModel
     {
         return is_null($this->getRecord()->comment) ? "" : $this->getRecord()->comment;
     }
+
+    function isHidden(): bool
+    {
+        return (bool) $this->getRecord()->hidden;
+    }
         
     use Traits\TSubscribable;
 }

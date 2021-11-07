@@ -83,9 +83,23 @@ final class GroupPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
         
-        $this->template->club      = $this->clubs->get($id);
-        $this->template->followers = $this->template->club->getFollowers((int) ($this->queryParam("p") ?? 1));
-        $this->template->count     = $this->template->club->getFollowersCount();
+        $this->template->club              = $this->clubs->get($id);
+        $this->template->onlyShowManagers  = $this->queryParam("onlyAdmins") == "1";
+        if($this->template->onlyShowManagers) {
+            $this->template->followers     = null;
+
+            $this->template->managers     = $this->template->club->getManagers((int) ($this->queryParam("p") ?? 1), !$this->template->club->canBeModifiedBy($this->user->identity));
+            if($this->template->club->canBeModifiedBy($this->user->identity) || !$this->template->club->isOwnerHidden()) {
+                $this->template->managers  = array_merge(array($this->template->club->getOwner()), iterator_to_array($this->template->managers));
+            }
+
+            $this->template->count         = $this->template->club->getManagersCount();
+        } else {
+            $this->template->followers     = $this->template->club->getFollowers((int) ($this->queryParam("p") ?? 1));
+            $this->template->managers      = null;
+            $this->template->count         = $this->template->club->getFollowersCount();
+        }
+
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
             "page"    => $this->queryParam("p") ?? 1,
@@ -99,6 +113,7 @@ final class GroupPresenter extends OpenVKPresenter
         $user = is_null($this->queryParam("user")) ? $this->postParam("user") : $this->queryParam("user");
         $comment = $this->postParam("comment");
         $removeComment = $this->postParam("removeComment") === "1";
+        $hidden = $this->queryParam("hidden") === "1" ? true : ($this->queryParam("hidden") === "0" ? false : null);
         //$index = $this->queryParam("index");
         if(!$user)
             $this->badRequest();
@@ -111,7 +126,27 @@ final class GroupPresenter extends OpenVKPresenter
         if(!$club->canBeModifiedBy($this->user->identity ?? NULL) && $club->getOwner()->getId() !== $user->getId())
             $this->flashFail("err", "Ошибка доступа", "У вас недостаточно прав, чтобы изменять этот ресурс.");
 
-        if($removeComment) {
+        if($hidden !== null) {
+            if($club->getOwner()->getId() == $user->getId()) {
+                $club->setOwner_Hidden($hidden);
+                $club->save();
+            } else {
+                $manager = (new Managers)->getByUserAndClub($user->getId(), $club->getId());
+                $manager->setHidden($hidden);
+                $manager->save();
+            }
+
+            if($club->getManagersCount(true) == 0) {
+                $club->setAdministrators_List_Display(2);
+                $club->save();
+            }
+
+            if($hidden) {
+                $this->flashFail("succ", "Операция успешна", "Теперь " . $user->getCanonicalName() . " будет показываться как обычный подписчик всем кроме других администраторов");
+            } else {
+                $this->flashFail("succ", "Операция успешна", "Теперь все будут знать про то что " . $user->getCanonicalName() . " - администратор");
+            }
+        } elseif($removeComment) {
             if($club->getOwner()->getId() == $user->getId()) {
                 $club->setOwner_Comment(null);
                 $club->save();
