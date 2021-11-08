@@ -55,6 +55,14 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
+                            <span class="nobold">{_website}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="website" value="{$club->getWebsite()}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
                             <span class="nobold">{_avatar}: </span>
                         </td>
                         <td>

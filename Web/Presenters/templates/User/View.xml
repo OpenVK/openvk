@@ -424,6 +424,14 @@
                                 </a>
                             </td>
                         </tr>
+                        <tr n:if="!is_null($user->getWebsite())">
+                            <td class="label"><span class="nobold">{_"personal_website"}: </span></td>
+                            <td>
+                                <a href="{$user->getWebsite()}" rel="ugc" target="_blank">
+                                    {$user->getWebsite()}
+                                </a>
+                            </td>
+                        </tr>
                     <!--/sse-->
                     <tr n:if="!is_null($user->getCity())">
                         <td class="label"><span class="nobold">{_"city"}:</span></td>
