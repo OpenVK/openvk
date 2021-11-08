@@ -303,11 +303,10 @@ class Club extends RowModel
     
     function getManagersCount(bool $ignoreHidden = false): int
     {
-        if ($ignoreHidden) {
+        if($ignoreHidden)
             return sizeof($this->getRecord()->related("group_coadmins.club")->where("hidden", false)) + (int) !$this->isOwnerHidden();
-        } else {
-            return sizeof($this->getRecord()->related("group_coadmins.club")) + 1;
-        }
+
+        return sizeof($this->getRecord()->related("group_coadmins.club")) + 1;
     }
     
     function addManager(User $user, ?string $comment = NULL): void

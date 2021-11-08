@@ -74,10 +74,10 @@
                             <span class="nobold">{_group_administrators_list}: </span>
                         </td>
                         <td>
-                            {var isAllAdminsHidden = $club->getManagersCount(true) == 0}
-                            <input type="radio" name="administrators_list_display" value="0" {if $club->getAdministratorsListDisplay() == 0}checked{/if} {if $isAllAdminsHidden}disabled{/if}/> {_group_display_only_creator}<br>
-                            <input type="radio" name="administrators_list_display" value="1" {if $club->getAdministratorsListDisplay() == 1}checked{/if} {if $isAllAdminsHidden}disabled{/if}/> {_group_display_all_administrators}<br>
-                            <input type="radio" name="administrators_list_display" value="2" {if $club->getAdministratorsListDisplay() == 2}checked{/if}/> {_group_dont_display_administrators_list}<br>
+                            {var areAllAdminsHidden = $club->getManagersCount(true) == 0}
+                            <input type="radio" name="administrators_list_display" value="0" n:attr="checked => $club->getAdministratorsListDisplay() == 0, disabled => $areAllAdminsHidden" /> {_group_display_only_creator}<br>
+                            <input type="radio" name="administrators_list_display" value="1" n:attr="checked => $club->getAdministratorsListDisplay() == 1, disabled => $areAllAdminsHidden" /> {_group_display_all_administrators}<br>
+                            <input type="radio" name="administrators_list_display" value="2" n:attr="checked => $club->getAdministratorsListDisplay() == 2, disabled => $areAllAdminsHidden" /> {_group_dont_display_administrators_list}<br>
                         </td>
                     </tr>
 

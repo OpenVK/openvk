@@ -117,7 +117,7 @@
                 </a>
             </div>
             {* Это наверное костыль, ну да ладно *}
-            <div class="info{if strlen($author->getCanonicalName()) < 22} info-centered{/if}" n:if="empty($club->getOwnerComment())">
+            <div n:class="info, strlen($author->getCanonicalName()) < 22 ? info-centered" n:if="empty($club->getOwnerComment())">
                 <a href="{$author->getURL()}" class="title">{$author->getCanonicalName()}</a>
             </div>
             <div class="info" n:if="!empty($club->getOwnerComment())">
@@ -133,7 +133,7 @@
         <div>
             <div class="content_subtitle">
                 {tr("administrators", $club->getManagersCount(true))}
-                <div style="float:right;">
+                <div style="float: right;">
                     <a href="/club{$club->getId()}/followers?onlyAdmins=1">{_"all_title"}</a>
                 </div>
             </div>
