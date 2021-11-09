@@ -124,7 +124,7 @@ final class GroupPresenter extends OpenVKPresenter
         if(!$user || !$club)
             $this->notFound();
         
-        if(!$club->canBeModifiedBy($this->user->identity ?? NULL) && $club->getOwner()->getId() !== $user->getId())
+        if(!$club->canBeModifiedBy($this->user->identity ?? NULL))
             $this->flashFail("err", "Ошибка доступа", "У вас недостаточно прав, чтобы изменять этот ресурс.");
 
         if(!is_null($hidden)) {
