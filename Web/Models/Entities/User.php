@@ -473,6 +473,38 @@ class User extends RowModel
         return sizeof($sel);
     }
     
+    function getPinnedClubs(): \Traversable
+    {
+        foreach($this->getRecord()->related("groups.owner")->where("owner_club_pinned", true) as $target) {
+            $target = (new Clubs)->get($target->id);
+            if(!$target) continue;
+
+            yield $target;
+        }
+
+        foreach($this->getRecord()->related("group_coadmins.user")->where("club_pinned", true) as $target) {
+            $target = (new Clubs)->get($target->club);
+            if(!$target) continue;
+
+            yield $target;
+        }
+    }
+
+    function getPinnedClubCount(): int
+    {
+        return sizeof($this->getRecord()->related("groups.owner")->where("owner_club_pinned", true)) + sizeof($this->getRecord()->related("group_coadmins.user")->where("club_pinned", true));
+    }
+
+    function isClubPinned(Club $club): bool
+    {
+        if($club->getOwner()->getId() === $this->getId())
+            return $club->isOwnerClubPinned();
+
+        $manager = $club->getManager($this);
+        if(!is_null($manager))
+            return $manager->isClubPinned();
+    }
+
     function getMeetings(int $page = 1): \Traversable
     {
         $sel = $this->getRecord()->related("event_turnouts.user")->page($page, OPENVK_DEFAULT_PER_PAGE);

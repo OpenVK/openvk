@@ -40,4 +40,23 @@
 
 {block description}
     {$x->getDescription()}
+    {if $x->canBeModifiedBy($thisUser ?? NULL)}
+        {var clubPinned = $thisUser->isClubPinned($x)}
+        <table n:if="$clubPinned || $thisUser->getPinnedClubCount() <= 10">
+            <tbody>
+                <tr>
+                    <td width="120" valign="top"><span class="nobold">{_actions}: </span></td>
+                    <td>
+                        <a href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}">
+                            {if $clubPinned}
+                                {_remove_from_sidebar}
+                            {else}
+                                {_add_to_sidebar}
+                            {/if}
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    {/if}
 {/block}
