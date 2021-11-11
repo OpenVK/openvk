@@ -41,6 +41,11 @@ class Manager extends RowModel
     {
         return is_null($this->getRecord()->comment) ? "" : $this->getRecord()->comment;
     }
+
+    function isClubPinned(): bool
+    {
+        return (bool) $this->getRecord()->club_pinned;
+    }
         
     use Traits\TSubscribable;
 }

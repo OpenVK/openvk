@@ -151,6 +151,8 @@ routes:
       handler: "Group->modifyAdmin"
     - url: "/groups{num}"
       handler: "User->groups"
+    - url: "/groups_pin"
+      handler: "User->pinClub"
     - url: "/groups_create"
       handler: "Group->create"
     - url: "/audios{num}"

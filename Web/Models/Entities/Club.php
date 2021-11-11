@@ -95,6 +95,11 @@ class Club extends RowModel
         return is_null($this->getRecord()->owner_comment) ? "" : $this->getRecord()->owner_comment;
     }
     
+    function isOwnerClubPinned(): bool
+    {
+        return (bool) $this->getRecord()->owner_club_pinned;
+    }
+
     function getDescription(): ?string
     {
         return $this->getRecord()->about;
