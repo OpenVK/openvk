@@ -3,6 +3,7 @@ namespace openvk\Web\Models\Entities;
 use Chandler\Database\DatabaseConnection as DB;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\RowModel;
+use openvk\Web\Models\Entities\Notifications\LikeNotification;
 
 class Post extends Postable
 {
@@ -120,6 +121,42 @@ class Post extends Postable
             throw new \LengthException("Content is too large.");
         
         $this->stateChanges("content", $content);
+    }
+
+    function toggleLike(User $user): bool
+    {
+        $liked = parent::toggleLike($user);
+
+        if($this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club))
+            (new LikeNotification($this->getOwner(false), $this, $user))->emit();
+
+        foreach($this->getChildren() as $attachment) {
+            if($attachment instanceof Post)
+                $attachment->setLike($liked, $user);
+        }
+
+        return $liked;
+    }
+
+    function setLike(bool $liked, User $user): void
+    {
+        $searchData = [
+            "origin" => $user->getId(),
+            "model"  => static::class,
+            "target" => $this->getRecord()->id,
+        ];
+
+        if((sizeof(DB::i()->getContext()->table("likes")->where($searchData)) > 0) !== $liked) {
+            if($this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club))
+                (new LikeNotification($this->getOwner(false), $this, $user))->emit();
+
+            parent::setLike($liked, $user);
+        }
+
+        foreach($this->getChildren() as $attachment) {
+            if($attachment instanceof Post)
+                $attachment->setLike($liked, $user);
+        }
     }
     
     function deletePost(): void 

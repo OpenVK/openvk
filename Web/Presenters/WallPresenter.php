@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Post, Photo, Video, Club, User};
-use openvk\Web\Models\Entities\Notifications\{LikeNotification, RepostNotification, WallPostNotification};
+use openvk\Web\Models\Entities\Notifications\{RepostNotification, WallPostNotification};
 use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums};
 use Chandler\Database\DatabaseConnection;
 use Nette\InvalidStateException as ISE;
@@ -278,9 +278,6 @@ final class WallPresenter extends OpenVKPresenter
         
         if(!is_null($this->user)) {
             $post->toggleLike($this->user->identity);
-            
-            if($post->getOwner(false)->getId() !== $this->user->identity->getId() && !($post->getOwner() instanceof Club))
-                (new LikeNotification($post->getOwner(false), $post, $this->user->identity))->emit();
         }
         
         $this->redirect(

@@ -96,17 +96,35 @@ abstract class Postable extends Attachable
             yield (new Users)->get($like->origin);
     }
     
-    function toggleLike(User $user): void
+    function toggleLike(User $user): bool
     {
         $searchData = [
             "origin" => $user->getId(),
             "model"  => static::class,
             "target" => $this->getRecord()->id,
         ];
-        if(sizeof(DB::i()->getContext()->table("likes")->where($searchData)) > 0)
+
+        if(sizeof(DB::i()->getContext()->table("likes")->where($searchData)) > 0) {
             DB::i()->getContext()->table("likes")->where($searchData)->delete();
-        else
+            return false;
+        }
+
+        DB::i()->getContext()->table("likes")->insert($searchData);
+        return true;
+    }
+
+    function setLike(bool $liked, User $user): void
+    {
+        $searchData = [
+            "origin" => $user->getId(),
+            "model"  => static::class,
+            "target" => $this->getRecord()->id,
+        ];
+
+        if($liked)
             DB::i()->getContext()->table("likes")->insert($searchData);
+        else
+            DB::i()->getContext()->table("likes")->where($searchData)->delete();
     }
     
     function hasLikeFrom(User $user): bool
