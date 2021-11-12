@@ -276,11 +276,9 @@ class Club extends RowModel
     
     function getManagers(int $page = 1, bool $ignoreHidden = false): \Traversable
     {
-        if($ignoreHidden) {
-            $rels = $this->getRecord()->related("group_coadmins.club")->where("hidden", false)->page($page, 6);
-        } else {
-            $rels = $this->getRecord()->related("group_coadmins.club")->page($page, 6);
-        }
+        $rels = $this->getRecord()->related("group_coadmins.club")->page($page, 6);
+        if($ignoreHidden)
+            $rels = $rels->where("hidden", false);
         
         foreach($rels as $rel) {
             $rel = (new Managers)->get($rel->id);
@@ -294,9 +292,8 @@ class Club extends RowModel
     {
         $manager = (new Managers)->getByUserAndClub($user->getId(), $this->getId());
 
-        if ($ignoreHidden && $manager !== null && $manager->isHidden()) {
-            $manager = null;
-        }
+        if ($ignoreHidden && $manager !== null && $manager->isHidden())
+            return null;
 
         return $manager;
     }
