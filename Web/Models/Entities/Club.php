@@ -100,6 +100,11 @@ class Club extends RowModel
         return (bool) $this->getRecord()->owner_hidden;
     }
     
+    function isOwnerClubPinned(): bool
+    {
+        return (bool) $this->getRecord()->owner_club_pinned;
+    }
+
     function getDescription(): ?string
     {
         return $this->getRecord()->about;

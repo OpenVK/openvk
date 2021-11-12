@@ -169,6 +169,12 @@
                           href="{$menuItem['url']}"
                           target="_blank"
                           class="link">{$menuItem["name"]}</a>
+                        <div n:if="$thisUser->getPinnedClubCount() > 0" style="height: 1px;background: #CCC;margin: 4px 0 2px;"></div>
+                        <a
+                          n:foreach="$thisUser->getPinnedClubs() as $club"
+                          href="{$club->getURL()}"
+                          style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
+                          class="link">{$club->getName()}</a>
                         
                         <a
                           n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable']"

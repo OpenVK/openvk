@@ -46,6 +46,11 @@ class Manager extends RowModel
     {
         return (bool) $this->getRecord()->hidden;
     }
+
+    function isClubPinned(): bool
+    {
+        return (bool) $this->getRecord()->club_pinned;
+    }
         
     use Traits\TSubscribable;
 }
