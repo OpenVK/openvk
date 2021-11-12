@@ -158,6 +158,12 @@ final class UserPresenter extends OpenVKPresenter
                     $user->setTelegram(empty($this->postParam("telegram")) ? NULL : $this->postParam("telegram"));
                     $user->setCity(empty($this->postParam("city")) ? NULL : $this->postParam("city"));
                     $user->setAddress(empty($this->postParam("address")) ? NULL : $this->postParam("address"));
+                    
+                    $website = $this->postParam("website") ?? "";
+                    if(empty($website))
+                        $user->setWebsite(NULL);
+                    else
+                        $user->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website);
                 } elseif($_GET['act'] === "interests") {
                     $user->setInterests(empty($this->postParam("interests")) ? NULL : ovk_proc_strtr($this->postParam("interests"), 300));
                     $user->setFav_Music(empty($this->postParam("fav_music")) ? NULL : ovk_proc_strtr($this->postParam("fav_music"), 300));

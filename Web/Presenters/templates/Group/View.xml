@@ -29,6 +29,14 @@
                     <td><span class="nobold">{_"description"}:</span></td>
                     <td>{$club->getDescription()}</td>  
                 </tr>
+                <tr n:if="!is_null($club->getWebsite())">
+                    <td><span class="nobold">{_"website"}: </span></td>
+                    <td>
+                        <a href="{$club->getWebsite()}" rel="ugc" target="_blank">
+                            {$club->getWebsite()}
+                        </a>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>
