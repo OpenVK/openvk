@@ -116,7 +116,8 @@
                     <img class="ava" src="{$author->getAvatarUrl()}" />
                 </a>
             </div>
-            <div class="info info-without-subtitle-centered" n:if="empty($club->getOwnerComment())">
+            {* Это наверное костыль, ну да ладно *}
+            <div n:class="info, strlen($author->getCanonicalName()) < 22 ? info-centered" n:if="empty($club->getOwnerComment())">
                 <a href="{$author->getURL()}" class="title">{$author->getCanonicalName()}</a>
             </div>
             <div class="info" n:if="!empty($club->getOwnerComment())">
@@ -131,10 +132,13 @@
         </div>
         <div>
             <div class="content_subtitle">
-                {tr("administrators", $club->getManagersCount() + 1)}
+                {tr("administrators", $club->getManagersCount(true))}
+                <div style="float: right;">
+                    <a href="/club{$club->getId()}/followers?onlyAdmins=1">{_"all_title"}</a>
+                </div>
             </div>
             <div class="avatar-list">
-                <div class="avatar-list-item">
+                <div class="avatar-list-item" n:if="!$club->isOwnerHidden()">
                     {var author = $club->getOwner()}
                     <div class="avatar">
                         <a href="{$author->getURL()}">
@@ -146,7 +150,7 @@
                         <div class="subtitle" n:if="!empty($club->getOwnerComment())">{$club->getOwnerComment()}</div>
                     </div>
                 </div>
-                <div class="avatar-list-item" n:foreach="$club->getManagers(1) as $manager">
+                <div class="avatar-list-item" n:foreach="$club->getManagers(1, true) as $manager">
                     {var user = $manager->getUser()}
                     <div class="avatar">
                         <a href="{$user->getURL()}">
