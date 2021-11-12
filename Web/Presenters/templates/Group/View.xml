@@ -117,7 +117,7 @@
                 </a>
             </div>
             {* Это наверное костыль, ну да ладно *}
-            <div n:class="info, strlen($author->getCanonicalName()) < 22 ? info-centered" n:if="empty($club->getOwnerComment())">
+            <div n:class="info, mb_strlen($author->getCanonicalName()) < 22 ? info-centered" n:if="empty($club->getOwnerComment())">
                 <a href="{$author->getURL()}" class="title">{$author->getCanonicalName()}</a>
             </div>
             <div class="info" n:if="!empty($club->getOwnerComment())">
