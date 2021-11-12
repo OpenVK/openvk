@@ -94,7 +94,17 @@ class Club extends RowModel
     {
         return is_null($this->getRecord()->owner_comment) ? "" : $this->getRecord()->owner_comment;
     }
+
+    function isOwnerHidden(): bool
+    {
+        return (bool) $this->getRecord()->owner_hidden;
+    }
     
+    function isOwnerClubPinned(): bool
+    {
+        return (bool) $this->getRecord()->owner_club_pinned;
+    }
+
     function getDescription(): ?string
     {
         return $this->getRecord()->about;
@@ -269,9 +279,11 @@ class Club extends RowModel
         }
     }
     
-    function getManagers(int $page = 1): \Traversable
+    function getManagers(int $page = 1, bool $ignoreHidden = false): \Traversable
     {
         $rels = $this->getRecord()->related("group_coadmins.club")->page($page, 6);
+        if($ignoreHidden)
+            $rels = $rels->where("hidden", false);
         
         foreach($rels as $rel) {
             $rel = (new Managers)->get($rel->id);
@@ -281,13 +293,21 @@ class Club extends RowModel
         }
     }
 
-    function getManager(User $user): ?Manager
+    function getManager(User $user, bool $ignoreHidden = false): ?Manager
     {
-        return (new Managers)->getByUserAndClub($user->getId(), $this->getId());
+        $manager = (new Managers)->getByUserAndClub($user->getId(), $this->getId());
+
+        if ($ignoreHidden && $manager !== null && $manager->isHidden())
+            return null;
+
+        return $manager;
     }
     
-    function getManagersCount(): int
+    function getManagersCount(bool $ignoreHidden = false): int
     {
+        if($ignoreHidden)
+            return sizeof($this->getRecord()->related("group_coadmins.club")->where("hidden", false)) + (int) !$this->isOwnerHidden();
+
         return sizeof($this->getRecord()->related("group_coadmins.club")) + 1;
     }
     

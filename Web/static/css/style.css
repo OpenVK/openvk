@@ -1480,9 +1480,10 @@ body.scrolled .toTop:hover {
 .avatar-list-item .info {
     float: left;
     padding-left: 8px;
+    width: 134px;
 }
 
-.avatar-list-item .info-without-subtitle-centered {
+.avatar-list-item .info-centered {
     padding-top: 8px;
 }
 

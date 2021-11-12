@@ -4,6 +4,7 @@ use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Entities\Photo;
 use openvk\Web\Models\Repositories\Users;
+use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Albums;
 use openvk\Web\Models\Repositories\Videos;
 use openvk\Web\Models\Repositories\Notes;
@@ -79,6 +80,38 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->user = $user;
             $this->template->page = $this->queryParam("p") ?? 1;
         }
+    }
+
+    function renderPinClub(): void
+    {
+        $this->assertUserLoggedIn();
+
+        $club = (new Clubs)->get((int) $this->queryParam("club"));
+        if(!$club)
+            $this->notFound();
+
+        if(!$club->canBeModifiedBy($this->user->identity ?? NULL))
+            $this->flashFail("err", "Ошибка доступа", "У вас недостаточно прав, чтобы изменять этот ресурс.");
+
+        $isClubPinned = $this->user->identity->isClubPinned($club);
+        if(!$isClubPinned && $this->user->identity->getPinnedClubCount() > 10)
+            $this->flashFail("err", "Ошибка", "Находится в левом меню могут максимум 10 групп");
+
+        if($club->getOwner()->getId() === $this->user->identity->getId()) {
+            $club->setOwner_Club_Pinned(!$isClubPinned);
+            $club->save();
+        } else {
+            $manager = $club->getManager($this->user->identity);
+            if(!is_null($manager)) {
+                $manager->setClub_Pinned(!$isClubPinned);
+                $manager->save();
+            }
+        }
+
+        if($isClubPinned)
+            $this->flashFail("succ", "Операция успешна", "Группа " . $club->getName() . " была успешно удалена из левого меню");
+        else
+            $this->flashFail("succ", "Операция успешна", "Группа " . $club->getName() . " была успешно добавлена в левое меню");
     }
     
     function renderEdit(): void
