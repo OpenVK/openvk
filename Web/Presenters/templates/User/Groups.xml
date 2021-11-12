@@ -49,9 +49,9 @@
                     <td>
                         <a href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}">
                             {if $clubPinned}
-                                {_remove_from_sidebar}
+                                {_remove_from_left_menu}
                             {else}
-                                {_add_to_sidebar}
+                                {_add_to_left_menu}
                             {/if}
                         </a>
                     </td>
