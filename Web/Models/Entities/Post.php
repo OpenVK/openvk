@@ -9,6 +9,27 @@ class Post extends Postable
 {
     protected $tableName = "posts";
     protected $upperNodeReferenceColumnName = "wall";
+
+    private function setLikeRecursively(bool $liked, User $user, int $depth): void
+    {
+        $searchData = [
+            "origin" => $user->getId(),
+            "model"  => static::class,
+            "target" => $this->getRecord()->id,
+        ];
+
+        if((sizeof(DB::i()->getContext()->table("likes")->where($searchData)) > 0) !== $liked) {
+            if($this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club))
+                (new LikeNotification($this->getOwner(false), $this, $user))->emit();
+
+            parent::setLike($liked, $user);
+        }
+
+        if($depth < ovkGetQuirk("wall.repost-liking-recursion-limit"))
+            foreach($this->getChildren() as $attachment)
+                if($attachment instanceof Post)
+                    $attachment->setLikeRecursively($liked, $user, $depth + 1);
+    }
     
     /**
      * May return fake owner (group), if flags are [1, (*)]
@@ -130,33 +151,16 @@ class Post extends Postable
         if($this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club))
             (new LikeNotification($this->getOwner(false), $this, $user))->emit();
 
-        foreach($this->getChildren() as $attachment) {
+        foreach($this->getChildren() as $attachment)
             if($attachment instanceof Post)
-                $attachment->setLike($liked, $user);
-        }
+                $attachment->setLikeRecursively($liked, $user, 2);
 
         return $liked;
     }
 
     function setLike(bool $liked, User $user): void
     {
-        $searchData = [
-            "origin" => $user->getId(),
-            "model"  => static::class,
-            "target" => $this->getRecord()->id,
-        ];
-
-        if((sizeof(DB::i()->getContext()->table("likes")->where($searchData)) > 0) !== $liked) {
-            if($this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club))
-                (new LikeNotification($this->getOwner(false), $this, $user))->emit();
-
-            parent::setLike($liked, $user);
-        }
-
-        foreach($this->getChildren() as $attachment) {
-            if($attachment instanceof Post)
-                $attachment->setLike($liked, $user);
-        }
+        $this->setLikeRecursively($liked, $user, 1);
     }
     
     function deletePost(): void 
