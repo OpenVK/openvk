@@ -172,10 +172,10 @@ final class GroupPresenter extends OpenVKPresenter
             $club->setAdministrators_List_Display(empty($this->postParam("administrators_list_display")) ? 0 : $this->postParam("administrators_list_display"));
             
             $website = $this->postParam("website") ?? "";
-            if(strpos($website, "https://") === 0 || strpos($website, "http://") === 0)
-                $user->setWebsite(empty($this->postParam("website")) ? NULL : $this->postParam("website"));
+            if(empty($website))
+                $user->setWebsite(NULL);
             else
-                $user->setWebsite(empty($this->postParam("website")) ? NULL : "http://" . $this->postParam("website"));
+                $user->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website);
             
             if($_FILES["ava"]["error"] === UPLOAD_ERR_OK) {
                 $photo = new Photo;
