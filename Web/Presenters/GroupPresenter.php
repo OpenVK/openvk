@@ -82,13 +82,6 @@ final class GroupPresenter extends OpenVKPresenter
     function renderFollowers(int $id): void
     {
         $this->assertUserLoggedIn();
-        
-        $this->template->paginatorConf = (object) [
-            "count"   => $this->template->count,
-            "page"    => $this->queryParam("p") ?? 1,
-            "amount"  => NULL,
-            "perPage" => OPENVK_DEFAULT_PER_PAGE,
-        ];
 
         $this->template->club              = $this->clubs->get($id);
         $this->template->onlyShowManagers  = $this->queryParam("onlyAdmins") == "1";
@@ -101,12 +94,18 @@ final class GroupPresenter extends OpenVKPresenter
             }
 
             $this->template->count         = $this->template->club->getManagersCount();
-            return;
+        } else {
+            $this->template->followers     = $this->template->club->getFollowers((int) ($this->queryParam("p") ?? 1));
+            $this->template->managers      = null;
+            $this->template->count         = $this->template->club->getFollowersCount();
         }
 
-        $this->template->followers         = $this->template->club->getFollowers((int) ($this->queryParam("p") ?? 1));
-        $this->template->managers          = null;
-        $this->template->count             = $this->template->club->getFollowersCount();
+        $this->template->paginatorConf = (object) [
+            "count"   => $this->template->count,
+            "page"    => $this->queryParam("p") ?? 1,
+            "amount"  => NULL,
+            "perPage" => OPENVK_DEFAULT_PER_PAGE,
+        ];
     }
     
     function renderModifyAdmin(int $id): void
