@@ -208,9 +208,9 @@ final class GroupPresenter extends OpenVKPresenter
             
             $website = $this->postParam("website") ?? "";
             if(empty($website))
-                $user->setWebsite(NULL);
+                $club->setWebsite(NULL);
             else
-                $user->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website);
+                $club->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website);
             
             if($_FILES["ava"]["error"] === UPLOAD_ERR_OK) {
                 $photo = new Photo;
