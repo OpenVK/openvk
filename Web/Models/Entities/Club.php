@@ -336,6 +336,11 @@ class Club extends RowModel
         
         return !is_null($this->getRecord()->related("group_coadmins.club")->where("user", $id)->fetch());
     }
+
+    function getWebsite(): ?string
+	{
+		return $this->getRecord()->website;
+	}
     
     use Traits\TSubscribable;
 }
