@@ -800,6 +800,10 @@ class User extends RowModel
         }
     }
 
+	function getWebsite(): ?string
+	{
+		return $this->getRecord()->website;
+	}
     
     use Traits\TSubscribable;
 }
