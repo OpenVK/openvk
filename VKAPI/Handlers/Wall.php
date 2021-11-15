@@ -65,7 +65,7 @@ final class Wall extends VKAPIRequestHandler
         ];
     }
 
-    function post(string $owner_id, string $message, int $from_group = 0): object
+    function post(string $owner_id, string $message, int $from_group = 0, int $signed = 0): object
     {
         $this->requireUser();
 
@@ -88,6 +88,8 @@ final class Wall extends VKAPIRequestHandler
         $flags = 0;
         if($from_group == 1)
             $flags |= 0b10000000;
+        if($signed == 1)
+            $flags |= 0b01000000;
 
         try {
             $post = new Post;
