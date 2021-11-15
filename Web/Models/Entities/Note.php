@@ -72,6 +72,16 @@ class Note extends Postable
         $purifier = new HTMLPurifier($config);
         return $purifier->purify($this->getRecord()->source);
     }
+
+    function getVirtualId(): int
+    {
+        return $this->getRecord()->virtual_id;
+    }
+
+    function getPrettyId(): string
+    {
+        return $this->getRecord()->owner . "_" . $this->getVirtualId();
+    }
     
     function getName(): string
     {

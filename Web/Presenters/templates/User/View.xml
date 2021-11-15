@@ -296,13 +296,13 @@
 				<div style="padding: 5px 8px 15px 8px;">
                     <ul class="notes_titles" n:foreach="$notes as $note">
 						<li class="written">
-							<a href="/note{$user->getId()}_{$note->getId()}">
+							<a href="/note{$note->getPrettyId()}">
 								{$note->getName()}
 							</a>
 							<small>
 								{$note->getPublicationTime()}
 								<span class="divide">|</span>
-								<a href="/note{$user->getId()}_{$note->getId()}">{_comments}</a>
+								<a href="/note{$note->getPrettyId()}">{_comments}</a>
 							</small>
 						</li>
 					</ul>

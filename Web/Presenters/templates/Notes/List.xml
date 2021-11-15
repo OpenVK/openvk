@@ -21,7 +21,7 @@
 {* BEGIN ELEMENTS DESCRIPTION *}
 
 {block link|strip|stripHtml}
-    /note{$x->getOwner()->getId()}_{$x->getId()}
+    /note{$x->getPrettyId()}
 {/block}
 
 {block preview}
