@@ -34,6 +34,9 @@ openvk:
         messages:
             strict: false
         wall:
+            anonymousPosting:
+                enable: true
+                account: 2
             postSizes:
                 maxSize: 60000
                 processingLimit: 3000

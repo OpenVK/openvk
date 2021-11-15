@@ -9,12 +9,17 @@
                 Вложение: <span>(unknown)</span>
             </div>
             <div n:if="$postOpts ?? true" class="post-opts">
+                {var anonEnabled = OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
+                
                 {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0}
                     {if $club->canBeModifiedBy($thisUser)}
                         <script>
                             function onWallAsGroupClick(el) {
-                                _display = el.checked ? "block" : "none";
-                                document.querySelector("#forceSignOpt").style.display = _display;
+                                document.querySelector("#forceSignOpt").style.display = el.checked ? "block" : "none";
+                                
+                                {if $anonEnabled}
+                                    document.querySelector("#octoberAnonOpt").style.display = el.checked ? "none" : "block";
+                                {/if}
                             }
                         </script>
                         
@@ -26,6 +31,10 @@
                         </label>
                     {/if}
                 {/if}
+                
+                <label n:if="$anonEnabled" id="octoberAnonOpt">
+                    <input type="checkbox" name="anon" /> Анонимно
+                </label>
                 
                 <label>
                     <input type="checkbox" name="nsfw" /> {_"contains_nsfw"}

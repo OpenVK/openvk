@@ -44,11 +44,12 @@ class Photo extends Media
         DB::i()->getContext()->table("album_relations")->where("media", $this->getRecord()->id)->delete();
     }
     
-    static function fastMake(int $owner, string $description = "", array $file, ?Album $album = NULL): Photo
+    static function fastMake(int $owner, string $description = "", array $file, ?Album $album = NULL, bool $anon = false): Photo
     {
         $photo = new static;
         $photo->setOwner($owner);
         $photo->setDescription(iconv_substr($description, 0, 36) . "...");
+        $photo->setAnonymous($anon);
         $photo->setCreated(time());
         $photo->setFile($file);
         $photo->save();

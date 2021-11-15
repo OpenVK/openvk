@@ -29,9 +29,12 @@ abstract class Postable extends Attachable
         return DB::i()->getContext()->table($this->tableName);
     }
     
-    function getOwner(): RowModel
+    function getOwner(bool $real = false): RowModel
     {
         $oid = (int) $this->getRecord()->owner;
+        if(!$real && $this->isAnonymous())
+            $oid = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["account"];
+        
         if($oid > 0)
             return (new Users)->get($oid);
         else
@@ -94,6 +97,11 @@ abstract class Postable extends Attachable
         
         foreach($sel as $like)
             yield (new Users)->get($like->origin);
+    }
+    
+    function isAnonymous(): bool
+    {
+        return (bool) $this->getRecord()->anonymous;
     }
     
     function toggleLike(User $user): bool

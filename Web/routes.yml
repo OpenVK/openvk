@@ -119,6 +119,8 @@ routes:
       handler: "Photos->uploadPhoto"
     - url: "/photo{num}_{num}"
       handler: "Photos->photo"
+    - url: "/photos/{text}"
+      handler: "Photos->absolutePhoto"
     - url: "/photo{num}_{num}/edit"
       handler: "Photos->editPhoto"
     - url: "/photo{num}_{num}/delete"

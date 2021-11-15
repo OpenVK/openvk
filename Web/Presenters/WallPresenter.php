@@ -188,6 +188,8 @@ final class WallPresenter extends OpenVKPresenter
         if(false)
             $this->flashFail("err", "Не удалось опубликовать пост", "Пост слишком большой.");
         
+        $anon = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"] && $this->postParam("anon") === "on";
+        
         $flags = 0;
         if($this->postParam("as_group") === "on")
             $flags |= 0b10000000;
@@ -199,14 +201,14 @@ final class WallPresenter extends OpenVKPresenter
             $video = NULL;
             if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
                 $album = NULL;
-                if($wall > 0 && $wall === $this->user->id)
+                if(!$anon && $wall > 0 && $wall === $this->user->id)
                     $album = (new Albums)->getUserWallAlbum($wallOwner);
                 
-                $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album);
+                $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album, $anon);
             }
             
             if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK) {
-                $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"]);
+                $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"], $anon);
             }
         } catch(\DomainException $ex) {
             $this->flashFail("err", "Не удалось опубликовать пост", "Файл медиаконтента повреждён.");
@@ -222,6 +224,7 @@ final class WallPresenter extends OpenVKPresenter
         $post->setWall($wall);
         $post->setCreated(time());
         $post->setContent($this->postParam("text"));
+        $post->setAnonymous($anon);
         $post->setFlags($flags);
         $post->setNsfw($this->postParam("nsfw") === "on");
         $post->save();
