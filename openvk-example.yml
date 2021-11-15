@@ -35,8 +35,8 @@ openvk:
             strict: false
         wall:
             anonymousPosting:
-                enable: true
-                account: 2
+                enable: false
+                account: 100
             postSizes:
                 maxSize: 60000
                 processingLimit: 3000
