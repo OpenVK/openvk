@@ -256,7 +256,7 @@
             </div>
         </div>
         <div n:if="$videosCount > 0 && $user->getPrivacyPermission('videos.read', $thisUser ?? NULL)">
-            <div class="content_title_expanded" onclick="hidePanel(this, {$albumsCount});">
+            <div class="content_title_expanded" onclick="hidePanel(this, {$videosCount});">
                 {_videos}
             </div>
             <div>
@@ -282,7 +282,7 @@
             </div>
         </div>
         <div n:if="$notesCount > 0 && $user->getPrivacyPermission('notes.read', $thisUser ?? NULL)">
-            <div class="content_title_expanded" onclick="hidePanel(this, {$albumsCount});">
+            <div class="content_title_expanded" onclick="hidePanel(this, {$notesCount});">
                 {_notes}
             </div>
             <div>
