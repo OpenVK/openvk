@@ -135,12 +135,14 @@
         </div>
     </div>
     <div n:if="$club->getAdministratorsListDisplay() == 1">
-        <div class="content_title_expanded" onclick="hidePanel(this);">
+        {var managersCount = $club->getManagersCount(true)}
+
+        <div class="content_title_expanded" onclick="hidePanel(this, {$managersCount});">
             {_"administrators"}
         </div>
         <div>
             <div class="content_subtitle">
-                {tr("administrators", $club->getManagersCount(true))}
+                {tr("administrators", $managersCount)}
                 <div style="float: right;">
                     <a href="/club{$club->getId()}/followers?onlyAdmins=1">{_"all_title"}</a>
                 </div>
