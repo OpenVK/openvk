@@ -159,9 +159,9 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->template->comments = iterator_to_array($photo->getComments($this->template->cPage));
     }
     
-    function renderAbsolutePhoto(string $id): void
+    function renderAbsolutePhoto($id): void
     {
-        $id    = (int) base_convert($id, 32, 10);
+        $id    = (int) base_convert((string) $id, 32, 10);
         $photo = $this->photos->get($id);
         if(!$photo || $photo->isDeleted())
             $this->notFound();
