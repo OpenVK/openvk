@@ -187,8 +187,17 @@ final class WallPresenter extends OpenVKPresenter
         
         if(false)
             $this->flashFail("err", "Не удалось опубликовать пост", "Пост слишком большой.");
-        
-        $anon = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"] && $this->postParam("anon") === "on";
+
+        $anon = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"];
+        if($wallOwner instanceof Club && $this->postParam("as_group") === "on" && $this->postParam("force_sign") !== "on" && $anon) {
+            $manager = $wallOwner->getManager($this->user->identity);
+            if($manager)
+                $anon = $manager->isHidden();
+            elseif($this->user->identity->getId() === $wallOwner->getOwner()->getId())
+                $anon = $wallOwner->isOwnerHidden();
+        } else {
+            $anon = $anon && $this->postParam("anon") === "on";
+        }
         
         $flags = 0;
         if($this->postParam("as_group") === "on")
