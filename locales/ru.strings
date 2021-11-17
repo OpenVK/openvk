@@ -1,0 +1,568 @@
+"__locale" = "ru_UA.utf8;ru_RU.UTF-8;Rus";
+"__WinEncoding" = "Windows-1251";
+
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
+
+/* Main page */
+
+"home" = "Главная";
+"welcome" = "Добро пожаловать";
+
+/* Login */
+
+"log_in" = "Вход";
+"password" = "Пароль";
+"registration" = "Регистрация";
+"forgot_password" = "Забыли пароль?";
+
+/* Profile information */
+
+"select_language" = "Выбрать язык";
+"edit" = "Редактировать";
+"birth_date" = "День рождения";
+"registration_date" = "Дата регистрации";
+"hometown" = "Родной город";
+"this_is_you" = "это Вы";
+"edit_page" = "Редактировать страницу";
+"edit_group" = "Редактировать группу";
+"change_status" = "изменить статус";
+"name" = "Имя";
+"surname" = "Фамилия";
+"gender" = "Пол";
+"male" = "мужской";
+"female" = "женский";
+"description" = "Описание";
+"save" = "Сохранить";
+"main_information" = "Основная информация";
+"nickname" = "Никнейм";
+"online" = "Онлайн";
+"was_online" = "был в сети";
+"was_online_m" = "был в сети";
+"was_online_f" = "была в сети";
+"all_title" = "Все";
+"information" = "Информация";
+"status" = "Статус";
+"no_information_provided" = "Информация отсутствует.";
+"deceased_person" = "Страница покойного человека";
+"none" = "отсутствует";
+"years" = "лет";
+"send" = "Отправить";
+
+"relationship" = "Семейное положение";
+
+"relationship_0" = "Не выбрано";
+"relationship_1" = "Не женат";
+"relationship_2" = "Встречаюсь";
+"relationship_3" = "Помолвлен";
+"relationship_4" = "Женат";
+"relationship_5" = "В гражданском браке";
+"relationship_6" = "Влюблен";
+"relationship_7" = "Всё сложно";
+"relationship_8" = "В активном поиске";
+
+"politViews" = "Полит. взгляды";
+
+"politViews_0" = "Не выбраны";
+"politViews_1" = "Индифферентные";
+"politViews_2" = "Коммунистические";
+"politViews_3" = "Социалистические";
+"politViews_4" = "Умеренные";
+"politViews_5" = "Либеральные";
+"politViews_6" = "Консервативные";
+"politViews_7" = "Монархические";
+"politViews_8" = "Ультраконсервативные";
+"politViews_9" = "Либертарианские";
+
+"contact_information" = "Контактная информация";
+
+"email" = "Электронная почта";
+"phone" = "Телефон";
+"telegram" = "Telegram";
+"personal_website" = "Личный сайт";
+"city" = "Город";
+"address" = "Адрес";
+
+"personal_information" = "Личная информация";
+
+"interests" = "Интересы";
+"favorite_music" = "Любимая музыка";
+"favorite_films" = "Любимые фильмы";
+"favorite_shows" = "Любимые ТВ-шоу";
+"favorite_books" = "Любимые книги";
+"favorite_quotes" = "Любимые цитаты";
+"information_about" = "О себе";
+
+"updated_at" = "Обновлено $1";
+
+/* Wall */
+
+"post_writes_m" = "написал";
+"post_writes_f" = "написала";
+"post_writes_g" = "опубликовали";
+"wall" = "Стена";
+"post" = "Запись";
+"write" = "Написать";
+"publish" = "Опубликовать";
+"delete" = "Удалить";
+"comments" = "Комментарии";
+"share" = "Поделиться";
+"pin" = "Закрепить";
+"unpin" = "Открепить";
+"pinned" = "закреплено";
+"comments_tip" = "Будьте первым, кто оставит комментарий!";
+"your_comment" = "Ваш комментарий";
+"comments" = "Комментарии";
+"shown" = "Показано";
+"x_out_of" = "$1 из";
+"wall_zero" = "нет записей";
+"wall_one" = "единственная запись";
+"wall_few" = "$1 записи";
+"wall_many" = "$1 записей";
+"wall_other" = "$1 записей";
+
+"all_news" = "Все новости";
+"posts_per_page" = "Количество записей на странице";
+
+"attachment" = "Вложение";
+"post_as_group" = "От имени сообщества";
+"add_signature" = "Подпись автора";
+"contains_nsfw" = "Содержит NSFW-контент";
+"nsfw_warning" = "Данный пост может содержать 18+ контент";
+"report" = "Пожаловаться";
+"attach_photo" = "Прикрепить фото";
+"no_posts_abstract" = "Здесь никто ничего не написал... Пока.";
+"attach_no_longer_available" = "Это вложение больше недоступно.";
+"open_post" = "Открыть запись";
+"version_incompatibility" = "Не удалось отобразить это вложение. Возможно, база данных несовместима с текущей версией OpenVK.";
+
+/* Friends */
+
+"friends" = "Друзья";
+"followers" = "Подписчики";
+"follower" = "Подписчик";
+"login_as" = "Войти как";
+"ban_fast" = "Забанить";
+"adm_notify" = "Предупредить";
+"friends_add" = "Добавить в друзья";
+"friends_delete" = "Удалить из друзей";
+"friends_reject" = "Отменить заявку";
+"friends_accept" = "Принять заявку";
+"send_message" = "Отправить сообщение";
+"incoming_req" = "Подписчики";
+"outcoming_req" = "Заявки";
+"req" = "Заявки";
+
+"firends_zero" = "Ни одного друга";
+"friends_one" = "$1 друг";
+"friends_few" = "$1 друга";
+"friends_many" = "$1 друзей";
+"friends_other" = "$1 друзей";
+
+"followers_zero" = "Ни одного подписчика";
+"followers_one" = "$1 подписчик";
+"followers_few" = "$1 подписчика";
+"followers_many" = "$1 подписчиков";
+"followers_other" = "$1 подписчиков";
+
+"subscriptions_zero" = "Ни одной подписки";
+"subscriptions_one" = "$1 подписка";
+"subscriptions_few" = "$1 подписки";
+"subscriptions_many" = "$1 подписок";
+"subscriptions_other" = "$1 подписок";
+
+/* Group */
+
+"name_group" = "Название";
+"subscribe" = "Подписаться";
+"unsubscribe" = "Отписаться";
+"subscriptions" = "Подписки";
+"join_community" = "Вступить в группу";
+"leave_community" = "Выйти из группы";
+"min_6_community" = "Название должно быть не менее 6 символов";
+"participants" = "Участники";
+"groups" = "Группы";
+"meetings" = "Встречи";
+"create_group" = "Создать группу";
+"group_managers" = "Руководство";
+"group_type" = "Тип группы";
+"group_type_open" = "Это открытая группа. В неё может вступить любой желающий.";
+"group_type_closed" = "Это закрытая группа. Для вступления необходимо подавать заявку.";
+"creator" = "Создатель";
+"administrators" = "Администраторы";
+"add_to_left_menu" = "Добавить в левое меню";
+"remove_from_left_menu" = "Удалить из левого меню";
+"all_followers" = "Все подписчики";
+"only_administrators" = "Только администраторы";
+"website" = "Сайт";
+
+"administrators_one" = "$1 администратор";
+"administrators_few" = "$1 администратора";
+"administrators_other" = "$1 администраторов";
+
+"role" = "Роль";
+"administrator" = "Администратор";
+"promote_to_admin" = "Повысить до администратора";
+"devote" = "Разжаловать";
+"set_comment" = "Изменить комментарий";
+"hidden_yes" = "Скрыт: Да";
+"hidden_no" = "Скрыт: Нет";
+"group_allow_post_for_everyone" = "Разрешить публиковать записи всем";
+"statistics" = "Статистика";
+"group_administrators_list" = "Список админов";
+"group_display_only_creator" = "Отображать только создателя группы";
+"group_display_all_administrators" = "Отображать всех администраторов";
+"group_dont_display_administrators_list" = "Ничего не отображать";
+
+"participants_zero" = "Ни одного участника";
+"participants_one" = "Один участник";
+"participants_few" = "$1 участника";
+"participants_many" = "$1 участников";
+"participants_other" = "$1 участников";
+
+"groups_zero" = "Ни одной группы";
+"groups_one" = "Одна группа";
+"groups_few" = "$1 группы";
+"groups_many" = "$1 групп";
+"groups_other" = "$1 групп";
+
+"meetings_zero" = "Ни одной встречи";
+"meetings_one" = "Одна встреча";
+"meetings_few" = "$1 встречи";
+"meetings_many" = "$1 встреч";
+"meetings_other" = "$1 встреч";
+
+/* Albums */
+
+"create" = "Создать";
+"albums" = "Альбомы";
+"create_album" = "Создать альбом";
+"edit_album" = "Редактировать альбом";
+"creating_album" = "Создание альбома";
+"upload_photo" = "Загрузить фотографию";
+"photo" = "Фотография";
+"upload_button" = "Загрузить";
+
+"open_original" = "Открыть оригинал";
+
+"avatar_album" = "Фотографии со страницы";
+"wall_album" = "Фотографии со стены";
+
+"albums_zero" = "Ни одного альбома";
+"albums_one" = "Один альбом";
+"albums_few" = "$1 альбома";
+"albums_many" = "$1 альбомов";
+"albums_other" = "$1 альбомов";
+
+/* Notes */
+
+"notes" = "Заметки";
+"note" = "Заметка";
+"name_note" = "Название";
+"text_note" = "Содержание";
+"create_note" = "Создать заметку";
+"actions" = "Действия";
+"feed" = "Новости";
+"publish_post" = "Добавить запись";
+
+"notes_zero" = "Ни одной заметки";
+"notes_one" = "Одна заметка";
+"notes_few" = "$1 заметки";
+"notes_many" = "$1 заметок";
+"notes_other" = "$1 заметок";
+
+/* Menus */
+
+"edit_button" = "ред.";
+"my_page" = "Моя Страница";
+"my_friends" = "Мои Друзья";
+"my_photos" = "Мои Фотографии";
+"my_videos" = "Мои Видеозаписи";
+"my_messages" = "Мои Сообщения";
+"my_notes" = "Мои Заметки";
+"my_groups" = "Мои Группы";
+"my_feed" = "Мои Новости";
+"my_feedback" = "Мои Ответы";
+"my_settings" = "Мои Настройки";
+"bug_tracker" = "Баг-трекер";
+
+"menu_login" = "Вход";
+"menu_registration" = "Регистрация";
+"menu_help" = "Помощь";
+
+"header_home" = "главная";
+"header_groups" = "группы";
+"header_donate" = "поддержать";
+"header_people" = "люди";
+"header_invite" = "пригласить";
+"header_help" = "помощь";
+"header_log_out" = "выйти";
+"header_search" = "Поиск";
+
+"header_login" = "вход";
+"header_registration" = "регистрация";
+
+"footer_blog" = "блог";
+"footer_help" = "помощь";
+"footer_developers" = "разработчикам";
+"footer_choose_language" = "выбрать язык";
+"footer_privacy" = "приватность";
+
+"notes_zero" = "Ни одной заметки";
+"notes_one" = "Одна заметка";
+"notes_few" = "$1 заметки";
+"notes_many" = "$1 заметок";
+"notes_other" = "$1 заметок";
+
+/* Settings */
+
+"main" = "Основное";
+"contacts" = "Контакты";
+"avatar" = "Аватар";
+"privacy" = "Приватность";
+"interface" = "Внешний вид";
+
+"profile_picture" = "Изображение страницы";
+
+"picture" = "Изображение";
+
+"change_password" = "Изменить пароль";
+"old_password" = "Старый пароль";
+"new_password" = "Новый пароль";
+"repeat_password" = "Повторите пароль";
+
+"avatars_style" = "Отображение аватар";
+"style" = "Стиль";
+
+"default" = "По умолчанию";
+"cut" = "Обрезка";
+"round_avatars" = "Круглый аватар";
+
+"search_for_groups" = "Поиск групп";
+"search_for_people" = "Поиск людей";
+"search_button" = "Найти";
+"results_zero" = "Ни одного результата";
+"results_one" = "Один результат";
+"results_few" = "$1 результата";
+"results_many" = "$1 результатов";
+"results_other" = "$1 результатов";
+
+"privacy_setting_access_page" = "Кому в интернете видно мою страницу";
+"privacy_setting_read_info" = "Кому видно основную информацию моей страницы";
+"privacy_setting_see_groups" = "Кому видно мои группы и встречи";
+"privacy_setting_see_photos" = "Кому видно мои фотографии";
+"privacy_setting_see_videos" = "Кому видно мои видеозаписи";
+"privacy_setting_see_notes" = "Кому видно мои заметки";
+"privacy_setting_see_friends" = "Кому видно моих друзей";
+"privacy_setting_add_to_friends" = "Кто может называть меня другом";
+"privacy_setting_write_wall" = "Кто может писать у меня на стене";
+"privacy_value_anybody" = "Все желающие";
+"privacy_value_anybody_dative" = "Всем желающим";
+"privacy_value_users" = "Пользователям OpenVK";
+"privacy_value_friends" = "Друзья";
+"privacy_value_friends_dative" = "Друзьям";
+"privacy_value_only_me_and_super_capite" = "Я и Виталина Павленко";
+"privacy_value_only_me_and_super_capite_dative" = "Мне и Виталине Павленко";
+"privacy_value_super_capite" = "Виталине Павленко";
+
+"your_email_address" = "Адрес Вашей электронной почты";
+"your_page_address" = "Адрес Вашей страницы";
+"page_address" = "Адрес страницы";
+"current_email_address" = "Текущий адрес";
+"page_id" = "ID страницы";
+"you_can_also" = "Вы также можете";
+"delete_your_page" = "удалить свою страницу";
+"delete_album" = "удалить альбом";
+
+"ui_settings_interface" = "Интерфейс";
+"ui_settings_sidebar" = "Левое меню";
+"ui_settings_rating" = "Рейтинг";
+"ui_settings_rating_show" = "Показывать";
+"ui_settings_rating_hide" = "Скрывать";
+
+/* Sorting */
+
+"sort_randomly" = "Сортировать рандомно";
+"sort_up" = "Сортировать по дате создания вверх";
+"sort_down" = "Сортировать по дате создания вниз";
+
+/* Videos */
+
+"videos" = "Видеозаписи";
+"video" = "Видеозапись";
+"upload_video" = "Загрузить видео";
+"video_uploaded" = "Загружено";
+"video_updated" = "Обновлено";
+"video_link_to_yt" = "Ссылка на YT";
+
+"info_name" = "Название";
+"info_description" = "Описание";
+"info_uploaded_by" = "Загрузил";
+"info_upload_date" = "Дата загрузки";
+
+"videos_zero" = "Ни одной видеозаписи";
+"videos_one" = "Одна видеозапись";
+"videos_few" = "$1 видеозаписи";
+"videos_many" = "$1 видеозаписей";
+"videos_other" = "$1 видеозаписей";
+
+/* Notifications */
+
+"feedback" = "Ответы";
+"unread" = "Непрочитанное";
+"archive" = "Архив";
+
+"notifications_like" = "$1 оценил вашу $2запись$3 от $4";
+"notifications_repost" = "$1 поделился(-лась) вашей $2записью$3 от $4";
+"notifications_comment_under" = "$1 оставил(-ла) комментарий под $2";
+"notifications_under_note" = "вашей $3заметкой$4";
+"notifications_under_photo" = "вашим $3фото$4";
+"notifications_under_post" = "вашей $3записью$4 от $5";
+"notifications_under_video" = "вашим $3видео$4";
+"notifications_post" = "$1 написал(-ла) $2запись$3 на вашей стене: $4";
+"notifications_appoint" = "$1 назвачил вас руководителем сообщества $2";
+
+"nt_liked_yours" = "понравился ваш";
+"nt_shared_yours" = "поделился(-ась) вашим";
+"nt_commented_yours" = "оставил(а) комментарий под";
+"nt_written_on_your_wall" = "написал(а) на вашей стене";
+"nt_made_you_admin" = "назначил(а) вас руководителем сообщества";
+
+"nt_from" = "от";
+"nt_yours_adjective" = "вашим";
+"nt_yours_feminitive_adjective" = "вашей";
+"nt_post_nominative" = "пост";
+"nt_post_instrumental" = "постом";
+"nt_note_instrumental" = "заметкой";
+"nt_photo_instrumental" = "фотографией";
+
+/* Time */
+
+"time_at_sp" = " в ";
+"time_just_now" = "только что";
+"time_exactly_five_minutes_ago" = "ровно 5 минут назад";
+"time_minutes_ago" = "$1 минут назад";
+"time_today" = "сегодня";
+"time_yesterday" = "вчера";
+
+"privacy_setting_access_page" = "Кому в интернете видно мою страницу";
+"privacy_setting_read_info" = "Кому видно основную информацию моей страницы";
+"privacy_setting_see_groups" = "Кому видно мои группы и встречи";
+"privacy_setting_see_photos" = "Кому видно мои фотографии";
+"privacy_setting_see_videos" = "Кому видно мои видеозаписи";
+"privacy_setting_see_notes" = "Кому видно мои заметки";
+"privacy_setting_see_friends" = "Кому видно моих друзей";
+"privacy_setting_add_to_friends" = "Кто может называть меня другом";
+"privacy_setting_write_wall" = "Кто может писать у меня на стене";
+"privacy_value_anybody" = "Все желающие";
+"privacy_value_anybody_dative" = "Всем желающим";
+"privacy_value_users" = "Пользователям OpenVK";
+"privacy_value_friends" = "Друзья";
+"privacy_value_friends_dative" = "Друзьям";
+"privacy_value_only_me_and_super_capite" = "Только я";
+"privacy_value_only_me_and_super_capite_dative" = "Только мне";
+"privacy_value_super_capite" = "Никто";
+
+"your_email_address" = "Адрес Вашей электронной почты";
+"your_page_address" = "Адрес Вашей страницы";
+"page_address" = "Адрес страницы";
+"current_email_address" = "Текущий адрес";
+"page_id" = "ID страницы";
+"you_can_also" = "Вы также можете";
+"delete_your_page" = "удалить свою страницу";
+"delete_album" = "удалить альбом";
+
+"ui_settings_interface" = "Интерфейс";
+"ui_settings_sidebar" = "Левое меню";
+"ui_settings_rating" = "Рейтинг";
+"ui_settings_rating_show" = "Показывать";
+"ui_settings_rating_hide" = "Скрывать";
+
+"points" = "Голоса";
+"points_count" = "голосов";
+"on_your_account" = "на вашем счету";
+
+"vouchers" = "Ваучеры";
+"have_voucher" = "Есть ваучер";
+"voucher_token" = "Код ваучера";
+"voucher_activators" = "Воспользовавшиеся";
+"voucher_explanation" = "Введите серийный номер ваучера. Обычно он указан в чеке или в сообщении.";
+"voucher_explanation_ex" = "Обратите внимание, что ваучеры могут истекать и воспользоваться ими можно только один раз.";
+"invalid_voucher" = "Ваучер недействительный";
+"voucher_bad" = "Возможно, вы ввели неверный серийный номер, уже использовали данный ваучер или же он просто истёк.";
+"voucher_good" = "Ваучер активирован";
+"voucher_redeemed" = "Ваучер был успешно активирован. Вам будут начислены голоса, но этим кодом вы больше не сможете активировать его.";
+"redeem" = "Активировать ваучер";
+"deactivate" = "Деактивировать";
+"usages_total" = "Количество использований";
+"usages_left" = "Осталось использований";
+
+/* Gifts */
+
+"gift" = "Подарок";
+"gifts" = "Подарки";
+"gifts_zero" = "Нет подарков";
+"gifts_one" = "Один подарок";
+"gifts_few" = "$1 подарка";
+"gifts_many" = "$1 подарков";
+"gifts_other" = "$1 подарков";
+
+"send_gift" = "Отправить подарок";
+
+"gift_select" = "Выбрать подарок";
+"collections" = "Коллекции";
+"confirm" = "Подтверждение";
+"as_anonymous" = "Анонимно";
+"gift_your_message" = "Ваше сообщение";
+
+"free_gift" = "Бесплатно";
+"coins" = "Голоса";
+"coins_zero" = "0 голосов";
+"coins_one" = "Один голос";
+"coins_few" = "$1 голоса";
+"coins_many" = "$1 голосов";
+"coins_other" = "$1 голосов";
+
+"comment" = "Комментарий";
+"sender" = "Отправитель";
+
+/* Errors */
+
+"error_1" = "Некорректный запрос";
+"error_2" = "Неверный логин или пароль";
+"error_3" = "Не авторизован";
+"error_4" = "Пользователь не существует";
+"information_-1" = "Операция выполнена успешно";
+"information_-2" = "Вход выполнен успешно";
+
+"no_data" = "Нет данных";
+"no_data_description" = "В этом представлении отсутствуют данные.";
+
+"error" = "Ошибка";
+"error_shorturl" = "Данный короткий адрес уже занят.";
+"error_segmentation" = "Ошибка сегментации";
+"error_upload_failed" = "Не удалось загрузить фото";
+"error_old_password" = "Старый пароль не совпадает";
+"error_new_password" = "Новые пароли не совпадает";
+"error_shorturl_incorrect" = "Короткий адрес имеет некорректный формат.";
+
+"forbidden" = "Ошибка доступа";
+"forbidden_comment" = "Настройки приватности этого пользователя не разрешают вам смотреть на его страницу.";
+
+"changes_saved" = "Изменения сохранены";
+"changes_saved_comment" = "Новый данные появятся на вашей странице";
+
+"photo_saved" = "Фотография сохранена";
+"photo_saved_comment" = "Новое изображние профиля появится у вас на странице";
+
+/* Admin actions */
+
+"login_as" = "Войти как $1";
+"manage_user_action" = "Управление пользователем";
+"ban_user_action" = "Заблокировать пользователя";
+"warn_user_action" = "Предупредить пользователя";
+
+/* Paginator */
+
+"paginator_back" = "Назад";
+"paginator_page" = "Страница $1";
+"paginator_next" = "Дальше";
