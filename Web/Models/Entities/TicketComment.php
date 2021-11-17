@@ -13,6 +13,8 @@ class TicketComment extends RowModel
 {
     protected $tableName = "tickets_comments";
     
+    private $overrideContentColumn = "text";
+    
     private function getSupportAlias(): ?SupportAlias
     {
         return (new SupportAliases)->get($this->getUser()->getId());

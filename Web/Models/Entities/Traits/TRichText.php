@@ -49,8 +49,10 @@ trait TRichText
     
     function getText(bool $html = true): string
     {
-        $text = htmlentities($this->getRecord()->content, ENT_DISALLOWED | ENT_XHTML);
-        $proc = iconv_strlen($this->getRecord()->content) <= OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["processingLimit"];
+        $contentColumn = property_exists($this, "overrideContentColumn") ? $this->overrideContentColumn : "content";
+        
+        $text = htmlentities($this->getRecord()->{$contentColumn}, ENT_DISALLOWED | ENT_XHTML);
+        $proc = iconv_strlen($this->getRecord()->{$contentColumn}) <= OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["processingLimit"];
         if($html) {
             if($proc) {
                 $rel  = $this->isAd() ? "sponsored" : "ugc";

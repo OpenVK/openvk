@@ -11,8 +11,9 @@ use Nette\Database\Table\Selection;
 
 class Ticket extends RowModel
 {
-    
     protected $tableName = "tickets";
+    
+    private $overrideContentColumn = "text";
 
     function getId(): int
     {

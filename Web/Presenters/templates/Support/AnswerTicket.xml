@@ -15,7 +15,7 @@
     <br></b>Автор: <a href="/id{$ticket->getUser()->getId()}">{$ticket->getUser()->getFullName()}</a> | {$ticket->getUser()->getRegistrationIP()} | Статус: {$ticket->getStatus()}
 </div>
 <div class="text" style="padding-top: 10px;border-bottom: #ECECEC solid 1px;">
-    {$ticket->getContext()|noescape}
+    {$ticket->getText()|noescape}
     <br></br>
 </div>
 <div style="padding-top: 5px;">
@@ -82,7 +82,7 @@
             {/if}
             <div class="post-content" id="{$comment->getId()}">
                <div class="text" id="text{$comment->getId()}">
-                      {$comment->getContext()|noescape}
+                      {$comment->getText()|noescape}
                </div>
                {if $comment->getUType() === 0}
                <div class="post-menu">
