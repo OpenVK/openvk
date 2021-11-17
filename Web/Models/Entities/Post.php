@@ -97,7 +97,7 @@ class Post extends Postable
     
     function getOwnerPost(): int
     {
-        return $this->getRecord()->owner;
+        return $this->getOwner(false)->getId();
     }
     
     function pin(): void
