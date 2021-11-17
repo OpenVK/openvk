@@ -5,7 +5,8 @@ trait TRichText
 {
     private function formatEmojis(string $text): string
     {
-        if(iconv_strlen($this->getRecord()->content) > OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["emojiProcessingLimit"])
+        $contentColumn = property_exists($this, "overrideContentColumn") ? $this->overrideContentColumn : "content";
+        if(iconv_strlen($this->getRecord()->{$contentColumn}) > OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["emojiProcessingLimit"])
             return $text;
         
         $emojis   = \Emoji\detect_emoji($text);
@@ -26,21 +27,21 @@ trait TRichText
         
         return $text;
     }
-	
-	private function formatLinks(string &$text): string
-	{
-		return preg_replace_callback(
-			"%(([A-z]++):\/\/(\S*?\.\S*?))([\s)\[\]{},;\"\'<]|\.\s|$)%",
-			(function (array $matches): string {
-				$href = str_replace("#", "&num;", $matches[1]);
-				$link = str_replace("#", "&num;", $matches[3]);
-				$rel  = $this->isAd() ? "sponsored" : "ugc";
-				
-				return "<a href='$href' rel='$rel' target='_blank'>$link</a>" . htmlentities($matches[4]);
-			}),
-			$text
-		);
-	}
+    
+    private function formatLinks(string &$text): string
+    {
+        return preg_replace_callback(
+            "%(([A-z]++):\/\/(\S*?\.\S*?))([\s)\[\]{},;\"\'<]|\.\s|$)%",
+            (function (array $matches): string {
+                $href = str_replace("#", "&num;", $matches[1]);
+                $link = str_replace("#", "&num;", $matches[3]);
+                $rel  = $this->isAd() ? "sponsored" : "ugc";
+                
+                return "<a href='$href' rel='$rel' target='_blank'>$link</a>" . htmlentities($matches[4]);
+            }),
+            $text
+        );
+    }
     
     private function removeZalgo(string $text): string
     {
