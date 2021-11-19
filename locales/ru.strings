@@ -505,6 +505,11 @@
 "gifts_few" = "$1 подарка";
 "gifts_many" = "$1 подарков";
 "gifts_other" = "$1 подарков";
+"gifts_left_zero" = "0 подарков осталось";
+"gifts_left_one" = "Один подарок остался";
+"gifts_left_few" = "$1 подарка осталось";
+"gifts_left_many" = "$1 подарков осталось";
+"gifts_left_other" = "$1 подарков осталось";
 
 "send_gift" = "Отправить подарок";
 

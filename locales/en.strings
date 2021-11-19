@@ -437,6 +437,9 @@
 "gifts_zero" = "Zero gifts";
 "gifts_one" = "One gift";
 "gifts_other" = "$1 gifts";
+"gifts_left_zero" = "Zero gifts left";
+"gifts_left_one" = "One gift left";
+"gifts_left_other" = "$1 gifts left";
 
 "send_gift" = "Send gift";
 
