@@ -184,9 +184,6 @@ final class WallPresenter extends OpenVKPresenter
 	
         if(!$canPost)
             $this->flashFail("err", "Ошибка доступа", "Вам нельзя писать на эту стену.");
-        
-        if(false)
-            $this->flashFail("err", "Не удалось опубликовать пост", "Пост слишком большой.");
 
         $anon = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"];
         if($wallOwner instanceof Club && $this->postParam("as_group") === "on" && $this->postParam("force_sign") !== "on" && $anon) {
@@ -228,15 +225,19 @@ final class WallPresenter extends OpenVKPresenter
         if(empty($this->postParam("text")) && !$photo && !$video)
             $this->flashFail("err", "Не удалось опубликовать пост", "Пост пустой или слишком большой.");
         
-        $post = new Post;
-        $post->setOwner($this->user->id);
-        $post->setWall($wall);
-        $post->setCreated(time());
-        $post->setContent($this->postParam("text"));
-        $post->setAnonymous($anon);
-        $post->setFlags($flags);
-        $post->setNsfw($this->postParam("nsfw") === "on");
-        $post->save();
+        try {
+            $post = new Post;
+            $post->setOwner($this->user->id);
+            $post->setWall($wall);
+            $post->setCreated(time());
+            $post->setContent($this->postParam("text"));
+            $post->setAnonymous($anon);
+            $post->setFlags($flags);
+            $post->setNsfw($this->postParam("nsfw") === "on");
+            $post->save();
+        } catch (\LengthException $ex) {
+            $this->flashFail("err", "Не удалось опубликовать пост", "Пост слишком большой.");
+        }
         
         if(!is_null($photo))
             $post->attach($photo);
