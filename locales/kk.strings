@@ -390,10 +390,10 @@
 "notifications_like" = "$1 сіздің $4 жазған $2жазбаңызды$3 ұнатады";
 "notifications_repost" = "$1 сіздің $4 жазған $2жазбаңызбен$3 бөлісті";
 "notifications_comment_under" = "$1 $2 астына пікір жазды";
-"notifications_under_note" = "сіздің $3жолжазбаңызбен$4";
-"notifications_under_photo" = "сіздің $3фотоңызбен$4";
-"notifications_under_post" = "сіздің $5 жазған $3жазбаңызбен$4";
-"notifications_under_video" = "сіздің $3видеожазбаңызмен$4";
+"notifications_under_note" = "сіздің $3жолжазбаңызға$4";
+"notifications_under_photo" = "сіздің $3фотоңызға$4";
+"notifications_under_post" = "сіздің $5 жазған $3жазбаңызға$4";
+"notifications_under_video" = "сіздің $3видеожазбаңызға$4";
 "notifications_post" = "$1 сіздің қабырғаңызға $2жазба$3 қойды: $4";
 "notifications_appoint" = "$1 сізді қоғамның менеджері етіп тағайындады $2";
 
@@ -442,6 +442,11 @@
 "gifts_zero" = "Нөл сыйлық";
 "gifts_one" = "Бір сыйлық";
 "gifts_other" = "$1 сыйлық";
+"gifts_left" = "Қалған сыйлық саны: $1";
+"gifts_left_zero" = "Нөл сыйлық қалды;
+"gifts_left_one" = "Бір сыйлық қалды";
+"gifts_left_other" = "$1 сыйлық қалды";
+"gifts_left_other" = "$1 сыйлық";
 
 "send_gift" = "Сыйлық жіберу";
 
