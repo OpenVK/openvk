@@ -472,8 +472,8 @@ class User extends RowModel
         $sel = $this->getRecord()->related("subscriptions.follower");
         foreach($sel->where("model", "openvk\\Web\\Models\\Entities\\Club") as $target) {
             $target = (new Clubs)->get($target->target);
-            if($admin && !$target->canBeModifiedBy($this)) continue;
             if(!$target) continue;
+            if($admin && !$target->canBeModifiedBy($this)) continue;
 
             $result[] = $target;
         }
