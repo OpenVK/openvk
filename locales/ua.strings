@@ -194,6 +194,7 @@
 "all_followers" = "Всі підписники";
 "only_administrators" = "Тільки адміністратори";
 "website" = "Сайт";
+"managed" = "Керовані";
 
 "administrators_one" = "$1 адміністратор";
 "administrators_few" = "$1 адміністратора";
