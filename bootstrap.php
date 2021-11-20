@@ -109,7 +109,10 @@ function tr(string $stringId, ...$variables): string
 
 function setLanguage($lg): void
 {
-    Session::i()->set("lang", $lg);
+    if (isLanguageAvailable($lg))
+        Session::i()->set("lang", $lg);
+    else
+        trigger_error("The language '$lg' is not available", E_USER_NOTICE);
 }
 
 function getLanguages(): array
