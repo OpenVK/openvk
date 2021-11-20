@@ -354,9 +354,9 @@
         <div class="page_info">
             <div n:if="!is_null($alert = $user->getAlert())" class="user-alert">{$alert}</div>
 			<div class="accountInfo clearFix">
-   <div class="profileName">
-    <h2>{$user->getFullName()}</h2>
-	{if !is_null($user->getStatus())}
+            <div class="profileName">
+                <h2>{$user->getFullName()}</h2>
+                {if !is_null($user->getStatus())}
                     <div class="page_status">{$user->getStatus()}</div>
                 {elseif isset($thisUser) && $user->getId() == $thisUser->getId()}
                     <div class="page_status">
@@ -365,7 +365,7 @@
                 {/if}
    </div>
   </div><div>
-            <table id="basicInfo" class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:if=" $user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
+            <table id="basicInfo" class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:if="$user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
                 <tbody>
                     <tr>
                         <td class="label"><span class="nobold">{_"gender"}: </span></td>
@@ -399,7 +399,7 @@
             </table>
 			</div>
         </div>
-        <div n:if=" $user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
+        <div n:if="$user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this);">
                 {_"information"}
             </div>
@@ -407,7 +407,6 @@
             {capture $contactInfo_Tmp}
                 <table class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:ifcontent>
                   <tbody n:ifcontent>
-                    <!--sse-->
                         <tr n:if="!is_null($user->getContactEmail())">
                             <td class="label"><span class="nobold">{_"email"}: </span></td>
                             <td>
@@ -432,7 +431,6 @@
                                 </a>
                             </td>
                         </tr>
-                    <!--/sse-->
                     <tr n:if="!is_null($user->getCity())">
                         <td class="label"><span class="nobold">{_"city"}:</span></td>
                         <td class="data">{$user->getCity()}</td>
@@ -480,26 +478,21 @@
             {/capture}
             <div>
             <div style="padding: 10px 8px 15px 8px;" n:ifcontent>
+                <h4 style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_"contact_information"} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=contacts" class="edit_link">[ {_"edit"} ]</a>{/if}{/ifset}</h4>
                 {if !empty($contactInfo_Tmp)}
-                    <h4 style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_"contact_information"} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=contacts" class="edit_link">[ {_"edit"} ]</a>{/if}{/ifset}</h4>
-                    {if !empty($contactInfo_Tmp)}
-                        {$contactInfo_Tmp|noescape}
-                    {else}
-                        <div style="padding: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
-                    {/if}
-                    <br>
+                    {$contactInfo_Tmp|noescape}
+                {else}
+                    <div style="padding: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
                 {/if}
-                    <h4 style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_"personal_information"} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=interests" class="edit_link">[ {_"edit"} ]</a>{/if}{/ifset}</h4>
-                    {if !empty($uInfo_Tmp)}
-                        {$uInfo_Tmp|noescape}
-                    {else}
-                        <div style="padding-top: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
-                    {/if}
+                <br>
+                <h4 style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_"personal_information"} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=interests" class="edit_link">[ {_"edit"} ]</a>{/if}{/ifset}</h4>
+                {if !empty($uInfo_Tmp)}
+                    {$uInfo_Tmp|noescape}
+                {else}
+                    <div style="padding-top: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
+                {/if}
             </div>
             </div>
-            <p n:if="empty($contactInfo_Tmp) && empty($uInfo_Tmp)">
-                Пользователь предпочёл оставить о себе только воздух тайны.
-            </p>
         </div>
         
         {presenter "openvk!Wall->wallEmbedded", $user->getId()}
