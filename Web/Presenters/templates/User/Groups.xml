@@ -1,6 +1,6 @@
 {extends "../@listView.xml"}
-{var iterator = $user->getClubs($page)}
-{var count    = $user->getClubCount()}
+{var iterator = $user->getClubs($page, $admin)}
+{var count    = $user->getClubCount($admin)}
 
 {block title}{_"groups"}{/block} 
 
@@ -25,6 +25,21 @@
 {/block}
 
 {* BEGIN ELEMENTS DESCRIPTION *}
+
+{block tabs}
+	{if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+		<div {if !$admin}id="activetabs"{/if} class="tab">
+			<a {if !$admin}id="act_tab_a"{/if} href="/groups{$user->getId()}">
+				{_groups}
+			</a>
+		</div>
+		<div {if $admin}id="activetabs"{/if} class="tab">
+			<a {if $admin}id="act_tab_a"{/if} href="/groups{$user->getId()}?act=managed">
+				{_managed}
+			</a>
+		</div>
+	{/if}
+{/block}
 
 {block link|strip|stripHtml}
     {$x->getURL()}

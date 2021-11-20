@@ -79,6 +79,7 @@ final class UserPresenter extends OpenVKPresenter
         } else {
             $this->template->user = $user;
             $this->template->page = $this->queryParam("p") ?? 1;
+            $this->template->admin = $this->queryParam("act") == "managed";
         }
     }
 

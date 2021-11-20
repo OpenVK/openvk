@@ -186,6 +186,7 @@
 "all_followers" = "All followers";
 "only_administrators" = "Only administrators";
 "website" = "Website";
+"managed" = "Managed";
 
 "administrators_one" = "$1 administrator";
 "administrators_other" = "$1 administrators";

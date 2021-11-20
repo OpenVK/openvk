@@ -454,23 +454,31 @@ class User extends RowModel
         return sizeof(DatabaseConnection::i()->getContext()->table("messages")->where(["recipient_id" => $this->getId(), "unread" => 1]));
     }
     
-    function getClubs(int $page = 1): \Traversable
+    function getClubs(int $page = 1, bool $admin = false): \Traversable
     {
         $sel = $this->getRecord()->related("subscriptions.follower")->page($page, OPENVK_DEFAULT_PER_PAGE);
         foreach($sel->where("model", "openvk\\Web\\Models\\Entities\\Club") as $target) {
             $target = (new Clubs)->get($target->target);
+            if($admin && !$target->canBeModifiedBy($this)) continue;
             if(!$target) continue;
             
             yield $target;
         }
     }
     
-    function getClubCount(): int
+    function getClubCount(bool $admin = false): int
     {
+        $result = [];
         $sel = $this->getRecord()->related("subscriptions.follower");
-        $sel = $sel->where("model", "openvk\\Web\\Models\\Entities\\Club");
+        foreach($sel->where("model", "openvk\\Web\\Models\\Entities\\Club") as $target) {
+            $target = (new Clubs)->get($target->target);
+            if($admin && !$target->canBeModifiedBy($this)) continue;
+            if(!$target) continue;
+
+            $result[] = $target;
+        }
         
-        return sizeof($sel);
+        return sizeof($result);
     }
     
     function getPinnedClubs(): \Traversable

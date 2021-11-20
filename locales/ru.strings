@@ -194,6 +194,7 @@
 "all_followers" = "Все подписчики";
 "only_administrators" = "Только администраторы";
 "website" = "Сайт";
+"managed" = "Управляемые";
 
 "administrators_one" = "$1 администратор";
 "administrators_few" = "$1 администратора";
