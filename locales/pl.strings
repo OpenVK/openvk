@@ -78,6 +78,7 @@
 "email" = "E-mail";
 "phone" = "Telefon";
 "telegram" = "Telegram";
+"personal_website" = "Witryna osobista";
 "city" = "Miasto";
 "address" = "Adres";
 
@@ -187,13 +188,31 @@
 "group_type_open" = "To otwarta grupa. Każdy może do niej dołączyć.";
 "group_type_closed" = "To grupa zamknięta. Aby dołączyć, musisz złożyć wniosek.";
 "creator" = "Twórca";
+"administrators" = "Administrator";
+"add_to_left_menu" = "Dodaj do lewego menu";
+"remove_from_left_menu" = "Usuń z lewego menu";
+"all_followers" = "Wszyscy subskrybenci";
+"only_administrators" = "Tylko administratorzy";
+"website" = "Witryna";
+"managed" = "Kierowany";
+
+"administrators_one" = "$1 administrator";
+"administrators_few" = "$1 adminów";
+"administrators_other" = "$1 adminów";
 
 "role" = "Rola";
 "administrator" = "Administrator";
 "promote_to_admin" = "Awans do admina";
 "devote" = "Zdegradować";
+"set_comment" = "Edytuj Komentarz";
+"hidden_yes" = "Ukryty: Tak";
+"hidden_no" = "Ukryty: Nie";
 "group_allow_post_for_everyone" = "Zezwalaj na publikowanie wpisów wszystkim";
 "statistics" = "Statystyk";
+"group_administrators_list" = "Lista adminów";
+"group_display_only_creator" = "Wyświetl tylko twórcę grupy";
+"group_display_all_administrators" = "Wyświetl wszystkich administratorów";
+"group_dont_display_administrators_list" = "Nic nie wyświetla";
 
 "participants_zero" = "Brak uczestnika";
 "participants_one" = "Jeden uczestnik";
@@ -487,6 +506,11 @@
 "gifts_few" = "$1 prezenty";
 "gifts_many" = "$1 prezentów";
 "gifts_other" = "$1 prezentów";
+"gifts_left" = "Prezentów zostało: $1";
+"gifts_left_one" = "Jeden prezent został";
+"gifts_left_few" = "$1 pozostały prezenty";
+"gifts_left_many" = "$1 pozostało prezentów";
+"gifts_left_other" = "$1 pozostało prezentów";
 
 "send_gift" = "Wyślij prezent";
 
@@ -539,6 +563,7 @@
 /* Admin actions */
 
 "login_as" = "Zaloguj się jako $1";
+"manage_user_action" = "Zarządzanie użytkownikiem";
 "ban_user_action" = "Zbanuj użytkownika";
 "warn_user_action" = "Ostrzec użytkownika";
 
