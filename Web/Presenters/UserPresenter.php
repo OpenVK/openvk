@@ -156,7 +156,7 @@ final class UserPresenter extends OpenVKPresenter
                     }
                 } elseif($_GET['act'] === "contacts") {
                     $user->setEmail_Contact(empty($this->postParam("email_contact")) ? NULL : $this->postParam("email_contact"));
-                    $user->setTelegram(empty($this->postParam("telegram")) ? NULL : $this->postParam("telegram"));
+                    $user->setTelegram(empty($this->postParam("telegram")) ? NULL : ltrim($this->postParam("telegram"), "@"));
                     $user->setCity(empty($this->postParam("city")) ? NULL : $this->postParam("city"));
                     $user->setAddress(empty($this->postParam("address")) ? NULL : $this->postParam("address"));
                     
