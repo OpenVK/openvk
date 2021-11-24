@@ -161,7 +161,6 @@ final class GroupPresenter extends OpenVKPresenter
             if(mb_strlen($comment) > 36) {
                 $commentLength = (string) mb_strlen($comment);
                 $this->flashFail("err", "Ошибка", "Комментарий слишком длинный ($commentLength символов вместо 36 символов)");
-                return;
             }
 
             if($club->getOwner()->getId() == $user->getId()) {
