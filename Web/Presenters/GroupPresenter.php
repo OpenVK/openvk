@@ -158,8 +158,8 @@ final class GroupPresenter extends OpenVKPresenter
 
             $this->flashFail("succ", "Операция успешна", "Комментарий к администратору удален");
         } elseif($comment) {
-            if(strlen($comment) > 36) {
-                $commentLength = (string) strlen($comment);
+            if(mb_strlen($comment) > 36) {
+                $commentLength = (string) mb_strlen($comment);
                 $this->flashFail("err", "Ошибка", "Комментарий слишком длинный ($commentLength символов вместо 36 символов)");
                 return;
             }
