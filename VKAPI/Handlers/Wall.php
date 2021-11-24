@@ -16,20 +16,25 @@ final class Wall extends VKAPIRequestHandler
         $posts = new PostsRepo;
 
         $items = [];
+        $profiles = [];
+        $groups = [];
+        $count = $posts->getPostCountOnUserWall((int) $owner_id);
 
-        foreach ($posts->getPostsFromUsersWall((int)$owner_id) as $post) {
+        foreach ($posts->getPostsFromUsersWall((int)$owner_id, 1, $count, $offset) as $post) {
+            $from_id = get_class($post->getOwner()) == "openvk\Web\Models\Entities\Club" ? $post->getOwner()->getId() * (-1) : $post->getOwner()->getId();
             $items[] = (object)[
                 "id" => $post->getVirtualId(),
-                "from_id" => $post->getOwner()->getId(),
+                "from_id" => $from_id,
                 "owner_id" => $post->getTargetWall(),
                 "date" => $post->getPublicationTime()->timestamp(),
                 "post_type" => "post",
                 "text" => $post->getText(),
                 "can_edit" => 0, // TODO
                 "can_delete" => $post->canBeDeletedBy($this->getUser()),
-                "can_pin" => 0, // TODO
+                "can_pin" => $post->canBePinnedBy($this->getUser()),
                 "can_archive" => false, // TODO MAYBE
                 "is_archived" => false,
+                "is_pinned" => $post->isPinned(),
                 "post_source" => (object)["type" => "vk"],
                 "comments" => (object)[
                     "count" => $post->getCommentsCount(),
@@ -46,23 +51,63 @@ final class Wall extends VKAPIRequestHandler
                     "user_reposted" => 0
                 ]
             ];
+            
+            if ($from_id > 0)
+                $profiles[] = $from_id;
+            else
+                $groups[] = $from_id * -1;
         }
 
-        $profiles = [];
-        $groups = [];
+        if($extended == 1) 
+        {
+            $profiles = array_unique($profiles);
+            $groups = array_unique($groups);
 
-        $groups[0] = 'lol';
-        $groups[2] = 'cec';
+            $profilesFormatted = [];
+            $groupsFormatted = [];
 
-        if($extended == 1)
-        return (object)[
-            "items" => (array)$items,
-            "cock" => (array)$groups
-        ];
+            foreach ($profiles as $prof) {
+                $user = (new UsersRepo)->get($prof);
+                $profilesFormatted[] = (object)[
+                    "first_name" => $user->getFirstName(),
+                    "id" => $user->getId(),
+                    "last_name" => $user->getLastName(),
+                    "can_access_closed" => false,
+                    "is_closed" => false,
+                    "sex" => $user->isFemale() ? 1 : 2,
+                    "screen_name" => $user->getShortCode(),
+                    "photo_50" => $user->getAvatarUrl(),
+                    "photo_100" => $user->getAvatarUrl(),
+                    "online" => $user->isOnline()
+                ];
+            }
+
+            foreach($groups as $g) {
+                $group = (new ClubsRepo)->get($g);
+                $groupsFormatted[] = (object)[
+                    "id" => $group->getId(),
+                    "name" => $group->getName(),
+                    "screen_name" => $group->getShortCode(),
+                    "is_closed" => 0,
+                    "type" => "group",
+                    "photo_50" => $group->getAvatarUrl(),
+                    "photo_100" => $group->getAvatarUrl(),
+                    "photo_200" => $group->getAvatarUrl(),
+                ];
+            }
+
+            return (object)[
+                "count" => $count,
+                "items" => (array)$items,
+                "profiles" => (array)$profilesFormatted,
+                "groups" => (array)$groupsFormatted
+            ];
+        }
         else
-        return (object)[
-            "items" => (array)$items
-        ];
+            return (object)[
+                "count" => $count,
+                "items" => (array)$items
+            ];
     }
 
     function post(string $owner_id, string $message, int $from_group = 0, int $signed = 0): object

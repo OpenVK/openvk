@@ -38,7 +38,7 @@ class Post extends Postable
      */
     function getOwner(bool $honourFlags = true, bool $real = false): RowModel
     {
-        if($honourFlags && ( ($this->getRecord()->flags & 0b10000000) > 0 )) {
+        if($honourFlags && $this->isPostedOnBehalfOfGroup()) {
             if($this->getRecord()->wall < 0)
                 return (new Clubs)->get(abs($this->getRecord()->wall));
         }
