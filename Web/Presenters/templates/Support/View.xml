@@ -75,7 +75,7 @@
             {/if}
             <div class="post-content" id="{$comment->getId()}">
                <div class="text" id="text{$comment->getId()}">
-                   {if $comment->getUType() === 1 && !$printedSupportGreeting)
+                   {if $comment->getUType() === 1 && !$printedSupportGreeting}
                        {var $printedSupportGreeting = true}
                        {_support_greeting_hi}, {$ticket->getUser()->getFullName()}!
                        <br/>
