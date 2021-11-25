@@ -552,19 +552,19 @@
                     Function.noop
                 ]);
             }
+        </script>
 
-            {if isset($thisUser) && $user->getId() == $thisUser->getId()}
-                function setStatusEditorShown(shown) {
-                    document.getElementById("status_editor").style.display = shown ? "block" : "none";
-                }
+        <script n:if="isset($thisUser) && $user->getId() == $thisUser->getId()">
+            function setStatusEditorShown(shown) {
+                document.getElementById("status_editor").style.display = shown ? "block" : "none";
+            }
 
-                document.addEventListener("click", event => {
-                    if(!event.target.closest("#status_editor") && !event.target.closest("#page_status_text"))
-                        setStatusEditorShown(false);
-                });
+            document.addEventListener("click", event => {
+                if(!event.target.closest("#status_editor") && !event.target.closest("#page_status_text"))
+                    setStatusEditorShown(false);
+            });
 
-                document.getElementById("page_status_text").onclick = setStatusEditorShown.bind(this, true);
-            {/if}
+            document.getElementById("page_status_text").onclick = setStatusEditorShown.bind(this, true);
         </script>
     </div>
     
