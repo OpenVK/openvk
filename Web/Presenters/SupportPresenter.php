@@ -181,7 +181,7 @@ final class SupportPresenter extends OpenVKPresenter
                 $comment = new TicketComment;
                 $comment->setUser_id($this->user->id);
                 $comment->setUser_type(1);
-                $comment->setText('Здравствуйте, '.$ticket->getUser()->getFirstName().'!<br></br>'.$this->postParam("text").'<br></br>С уважением,<br/> Команда поддержки OpenVK.');
+                $comment->setText($this->postParam("text"));
                 $comment->setTicket_id($id);
                 $comment->setCreated(time());
                 $comment->save();

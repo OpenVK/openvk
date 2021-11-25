@@ -39,6 +39,7 @@
 {/if}
 </br>
 <p n:if="!$comments">Комментарии отсутствуют</p>
+{var $printedSupportGreeting = false}
 <table n:foreach="$comments as $comment" border="0" style="font-size: 11px;" class="post">
    <tbody>
       <tr>
@@ -74,7 +75,20 @@
             {/if}
             <div class="post-content" id="{$comment->getId()}">
                <div class="text" id="text{$comment->getId()}">
-                      {$comment->getText()|noescape}
+                   {if $comment->getUType() === 1 && !$printedSupportGreeting)
+                       {var $printedSupportGreeting = true}
+                       {_support_greeting_hi}, {$ticket->getUser()->getFullName()}!
+                       <br/>
+                       <br/>
+                       
+                       {$comment->getText()|noescape}
+                       <br/>
+                       <br/>
+                       
+                       {_support_greeting_regargs} {=OPENVK_ROOT_CONF["openvk"]["appearance"]["name"]}.
+                   {else}
+                       {$comment->getText()|noescape}
+                   {/if}
                </div>
                {if $comment->getUType() === 0}
                <div class="post-menu">

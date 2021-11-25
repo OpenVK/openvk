@@ -528,6 +528,9 @@
 "coins_many" = "$1 голосов";
 "coins_other" = "$1 голосов";
 
+"support_greeting_hi" = "Здравствуйте";
+"support_greeting_regargs" = "С уважением,<br/>команда поддержки";
+
 "comment" = "Комментарий";
 "sender" = "Отправитель";
 
