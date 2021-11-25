@@ -173,6 +173,18 @@ final class UserPresenter extends OpenVKPresenter
                     $user->setFav_Books(empty($this->postParam("fav_books")) ? NULL : ovk_proc_strtr($this->postParam("fav_books"), 300));
                     $user->setFav_Quote(empty($this->postParam("fav_quote")) ? NULL : ovk_proc_strtr($this->postParam("fav_quote"), 300));
                     $user->setAbout(empty($this->postParam("about")) ? NULL : ovk_proc_strtr($this->postParam("about"), 300));
+                } elseif($_GET['act'] === "status") {
+                    if(mb_strlen($this->postParam("status")) > 255) {
+                        $statusLength = (string) mb_strlen($this->postParam("status"));
+                        $this->flashFail("err", "Ошибка", "Статус слишком длинный ($statusLength символов вместо 255 символов)");
+                    }
+
+                    $user->setStatus(empty($this->postParam("status")) ? NULL : $this->postParam("status"));
+                    $user->save();
+
+                    header("HTTP/1.1 302 Found");
+                    header("Location: /id" . $user->getId());
+                    exit;
                 }
                 
                 try {

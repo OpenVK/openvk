@@ -340,6 +340,29 @@ table {
     overflow: hidden;
 }
 
+.page_status_edit_button {
+    cursor: pointer;
+}
+
+.page_status_edit_button:hover {
+    text-decoration: underline;
+}
+
+.page_status_popup {
+    position: absolute;
+    border: 1px solid #CCC;
+    background-color: #f7f7f7;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);;
+    padding: 10px;
+    float: right;
+    margin-top: 6px;
+    margin-left: -6px;
+}
+
+.page_status_popup form {
+    margin: 0;
+}
+
 .button {
     border-radius: 2px;
     border: #595959;
