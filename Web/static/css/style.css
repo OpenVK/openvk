@@ -1472,6 +1472,14 @@ body.scrolled .toTop:hover {
     border-color: #cdcdcd;
 }
 
+.postFeedWrapper {
+    margin: -10px;
+    width: 611px;
+    padding: 4px 8px;
+    background-color: rgb(240, 240, 240);
+    border-bottom: 1px solid #ccc;
+}
+
 .user-alert {
     margin-left: 8px;
     margin-bottom: 8px;

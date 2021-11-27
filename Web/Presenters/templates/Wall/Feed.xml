@@ -14,10 +14,7 @@
 {/block}
 
 {block content}
-    <div>
-        <div class="content_title_expanded" onclick="hidePanel(this);">
-            {_"publish_post"}
-        </div>
+    <div class="postFeedWrapper">
         {include "../components/textArea.xml", route => "/wall" . $thisUser->getId() . "/makePost"}
     </div>
     <br/>
