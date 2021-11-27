@@ -1,14 +1,16 @@
+{var $space = 2}
+{var $pageCount = ceil($conf->count / $conf->perPage)}
+
 <div n:if="!($conf->page === 1 && $conf->count <= $conf->perPage)" class="paginator">
-    <br/>
-    <center>
-        <a n:if="$conf->page != 1"
-           href="?{http_build_query(array_merge($_GET, ['p' => ($conf->page - 1)]), 'k', '&', PHP_QUERY_RFC3986)}"
-           style="float: left;">&lt;&lt; {_paginator_back}</a>
-        
-        {tr("paginator_page", $conf->page)}
-        
-        <a n:if="$conf->count > (($conf->page - 1) * $conf->perPage + $conf->amount) && $conf->amount > 0"
-           href="?{http_build_query(array_merge($_GET, ['p' => ($conf->page + 1)]), 'k', '&', PHP_QUERY_RFC3986)}"
-           style="float: right;">{_paginator_next} &gt;&gt;</a>
-    </center>
+    {if $conf->page > $space}
+        <a n:attr="class => ($conf->page === 1 ? 'active')" href="?{http_build_query(array_merge($_GET, ['p' => 1]), 'k', '&', PHP_QUERY_RFC3986)}">«</a>
+    {/if}
+    {for $j = $conf->page - ($space-1); $j <= $conf->page + ($space-1); $j++}
+        {if $j > 0 && $j <= $pageCount}
+            <a n:attr="class => ($conf->page === $j ? 'active')" href="?{http_build_query(array_merge($_GET, ['p' => $j]), 'k', '&', PHP_QUERY_RFC3986)}">{$j}</a>
+        {/if}
+    {/for}
+    {if $conf->page <= $pageCount-$space}
+        <a n:attr="class => ($conf->page === $pageCount ? 'active')" href="?{http_build_query(array_merge($_GET, ['p' => $pageCount]), 'k', '&', PHP_QUERY_RFC3986)}">»</a>
+    {/if}
 </div>
