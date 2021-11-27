@@ -1230,6 +1230,7 @@ body.scrolled .toTop:hover {
     margin: 2px 3px 0px;
     width: 11px;
     float: left;
+    opacity: 0.4;
 }
 
 .likeCnt {
@@ -1239,6 +1240,10 @@ body.scrolled .toTop:hover {
 }
 
 .heart:hover {
+    opacity: 1 !important;
+}
+
+#liked {
     opacity: 1 !important;
 }
 

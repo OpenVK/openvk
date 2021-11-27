@@ -112,8 +112,8 @@
                         class="post-like-button"
                                 data-liked="{(int) $liked}"
                                 data-likes="{$post->getLikesCount()}">
-                            <div class="heart" style="{if $liked}opacity: 1;{else}opacity: 0.4;{/if}"></div>
-                            <span class="likeCnt">{$post->getLikesCount()}</span>
+                            <div class="heart" id="{if $liked}liked{/if}"></div>
+                            <span class="likeCnt">{if $post->getLikesCount() > 0}{$post->getLikesCount()}{/if}</span>
                         </a>
                     </div>
                 </div>

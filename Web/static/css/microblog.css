@@ -36,16 +36,43 @@
     color: grey;
 }
 
+.like_wrap {
+    display: flex;
+}
+
 .repost-icon {
     background: url('/assets/packages/static/openvk/img/published.gif') no-repeat 0px 0px;
     height: 12px;
     margin: 2px 3px 0px;
     width: 11px;
-    float: left;
 }
 
-.repost-icon:hover {
+.heart {
+    background: url('/assets/packages/static/openvk/img/like.gif') no-repeat 1px 0px;
+    height: 10px;
+    margin: 2px 3px 0px;
+    width: 11px;
+    float: none;
+    opacity: 0.4;
+}
+
+#liked {
     opacity: 1 !important;
+}
+
+.heart:hover {
+    opacity: 0.4 !important;
+}
+
+.post-share-button, .post-like-button {
+    display: flex;
+    padding: 2px;
+    border-radius: 2px;
+    transition-duration: 0.2s;
+}
+
+.post-share-button:hover, .post-like-button:hover {
+    background-color: rgb(240, 240, 240);
 }
 
 .post-author .delete {

@@ -89,12 +89,15 @@ u(".post-like-button").on("click", function(e) {
     var link    = u(this).attr("href");
     var heart   = u(".heart", thisBtn);
     var counter = u(".likeCnt", thisBtn);
-    var likes   = counter.text();
-    var isLiked = heart.attr("style") === 'opacity: 1;';
+    var likes   = counter.text() === "" ? 0 : counter.text();
+    var isLiked = heart.attr("id") === 'liked';
     
     ky(link);
-    heart.attr("style", isLiked ? 'opacity: 0.4;' : 'opacity: 1;');
+    heart.attr("id", isLiked ? '' : 'liked');
     counter.text(parseInt(likes) + (isLiked ? -1 : 1));
+    if (counter.text() === "0") {
+        counter.text("");
+    }
     
     return false;
 });
