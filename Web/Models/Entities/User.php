@@ -321,6 +321,11 @@ class User extends RowModel
     {
         return $this->getRecord()->birthday;
     }
+
+    function getAge(): ?int
+    {
+        return (int)floor((time() - $this->getBirthday()) / mktime(0, 0, 0, 1, 1, 1971));
+    }
     
     function updateNotificationOffset(): void
     {

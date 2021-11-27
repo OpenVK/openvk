@@ -45,8 +45,13 @@
 "no_information_provided" = "Информация отсутствует.";
 "deceased_person" = "Страница покойного человека";
 "none" = "отсутствует";
-"years" = "лет";
 "send" = "Отправить";
+
+"years_zero" = "0 лет";
+"years_one" = "1 год";
+"years_few" = "$1 года фю";
+"years_many" = "$1 лет мани";
+"years_other" = "$1 лет";
 
 "relationship" = "Семейное положение";
 

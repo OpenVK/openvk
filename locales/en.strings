@@ -39,7 +39,9 @@
 "was_online_m" = "was online"; 
 /* For male and female */
 
-"years" = "y.o";
+"years_zero" = "0 year old";
+"years_one" = "1 year old";
+"years_other" = "$1 years old";
 
 "was_online_f" = "was online";
 "all_title" = "All";

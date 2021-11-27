@@ -402,8 +402,7 @@
                             <tr>
                                 <td class="label"><span class="nobold">{_"birth_date"}:</span></td>
                                 <td class="data">{date('d F Y',$user->getBirthday())},
-                                {date('m d') >= date('m d', $user->getBirthday()) ? date('Y') - date('Y', $user->getBirthday()) : 
-                                (date('m d') < date('m d', $user->getBirthday()) ? date('Y') - date('Y', $user->getBirthday()) - 1)} {_"years"}</td>
+                                {tr("years", $user->getAge())}</td>
                             </tr>
                         {/if}
                     </tbody>
