@@ -98,7 +98,10 @@
                         <a href="/search">{_"header_search"}</a>
                     </div>
                     <div class="link">
-                        <a href="/support">{_"header_help"}</a>
+                        <a href="/support">
+                            {_"header_help"}
+                            <b n:if="$ticketAnsweredCount > 0">({$ticketAnsweredCount})</b>    
+                        </a>
                     </div>
                     <div class="link">
                         <a href="/logout">{_"header_log_out"}</a>

@@ -35,6 +35,11 @@ class Tickets
     {
         foreach($this->tickets->where(['user_id' => $user_id, 'deleted' => 0]) as $ticket) yield new Ticket($ticket);
     }
+
+    function getTicketsCountByuId(int $user_id, int $type = 0): int
+    {
+        return sizeof($this->tickets->where(['user_id' => $user_id, 'deleted' => 0, 'type' => $type]));
+    }
     
     function getRequestById(int $req_id): ?Ticket
     {
