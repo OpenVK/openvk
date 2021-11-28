@@ -102,7 +102,6 @@
 "write" = "Yaz";
 "publish" = "Yayınla";
 "delete" = "Sil";
-"comments" = "Yorumlar";
 "share" = "Paylaş";
 "pin" = "Sabitle";
 "unpin" = "Sabitlemeyi kaldır";
@@ -117,6 +116,9 @@
 "wall_other" = "$1 gönderi";
 "feed" = "Haberler";
 "publish_post" = "Gönderi ekle";
+"view_other_comments" = "Diğer yorumları görüntüle";
+
+"no_comments" = "Yorum yok";
 
 "all_news" = "Tüm haberler";
 "posts_per_page" = "Sayfa başına yapılan gönderiler";
@@ -129,7 +131,7 @@
 "nsfw_warning" = "Bu gönderinin +18 içeriği olabilir";
 "report" = "Bildir";
 "attach_photo" = "Resim ekle";
-"no_posts_abstract" = "Kimse buraya bir şey yazmadı... Şimdilik.";
+"no_posts_abstract" = "Kimse buraya bir şey yazmadı... Henüz.";
 "attach_no_longer_available" = "Ek artık mevcut değil.";
 "open_post" = "Gönderiyi aç";
 "version_incompatibility" = "Bu ek gösterilemiyor. Veritabanı OpenVK'in mevcut sürümüyle uyumlu olmayabilir.";
@@ -444,8 +446,33 @@
 "coins_one" = "1 voice";
 "coins_other" = "$1 voice";
 
+/* Support */
+
+"support_opened" = "Açık";
+"support_answered" = "Yanıt almış";
+"support_closed" = "Kapalı";
+"support_ticket" = "Bilet";
+"support_tickets" = "Bilet";
+"support_status_0" = "Sorun gözden geçiriliyor";
+"support_status_1" = "Bir yanıt var";
+"support_status_2" = "Kapandı";
+"support_greeting_hi" = "Merhaba, $1!";
+"support_greeting_regards" = "Saygılar,<br/>$1 destek ekibi.";
+
+"support_faq" = "Sık Sorulan Sorular";
+"support_list" = "Bilet listesi";
+"support_new" = "Yeni bilet";
+
+"support_faq_title" = "Bu websitesi kim içindir?";
+"support_faq_content" = "Bu site arkadaşlarınızı ve tanıdıklarınızı bulmak için, aynı zamanda kullanıcı verisini görebilmek için tasarlanmıştır. Bu, kişilerin bir kişi hakkında hızlıca ilgili bilgileri bulunabildiği bir şehir defteri gibidir.";
+
+"support_new_title" = "Biletinizin konusunu girin";
+"support_new_content" = "Sorununuzu ya da önerinizi açıklayın";
+
 "comment" = "Yorum";
 "sender" = "Gönderen";
+
+"author" = "Yazan";
 
 /* Errors */
 
