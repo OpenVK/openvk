@@ -121,6 +121,7 @@
 "wall_other" = "$1 posts";
 "feed" = "News";
 "publish_post" = "Add post";
+"view_other_comments" = "View other comments";
 
 "all_news" = "All news";
 "posts_per_page" = "Number of posts per page";

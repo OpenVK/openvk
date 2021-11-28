@@ -100,7 +100,7 @@
                 </div>
                 <div n:if="$commentSection == true && $compact == false" class="post-menu-s">
                     {if $commentsCount > 3}
-                        <a href="/wall{$post->getPrettyId()}" class="expand_button">Посмотреть остальные комментарии</a>
+                        <a href="/wall{$post->getPrettyId()}" class="expand_button">{_view_other_comments}</a>
                     {/if}
                     {foreach $comments as $comment}
                         {include "../comment.xml", comment => $comment, $compact => true}
