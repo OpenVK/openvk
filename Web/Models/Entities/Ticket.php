@@ -24,11 +24,11 @@ class Ticket extends RowModel
     {
         if ($this->getRecord()->type === 0) 
         {
-            return 'Вопрос находится на рассмотрении.';
+            return tr("support_status_0");
         } elseif ($this->getRecord()->type === 1) {
-            return 'Есть ответ.';
+            return tr("support_status_1");
         } elseif ($this->getRecord()->type === 2) {
-            return 'Закрыто.';
+            return tr("support_status_2");
         }
     }
     

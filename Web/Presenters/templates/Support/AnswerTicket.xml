@@ -1,5 +1,5 @@
 {extends "../@layout.xml"}
-{block title}Помощь{/block}
+{block title}{_menu_help}{/block}
 
 {block header}
     {$ticket->getName()}
@@ -12,7 +12,7 @@
             {$ticket->getName()}
         </b>
     </a>
-    <br></b>Автор: <a href="/id{$ticket->getUser()->getId()}">{$ticket->getUser()->getFullName()}</a> | {$ticket->getUser()->getRegistrationIP()} | Статус: {$ticket->getStatus()}
+    <br></b>{_author}: <a href="/id{$ticket->getUser()->getId()}">{$ticket->getUser()->getFullName()}</a> | {$ticket->getUser()->getRegistrationIP()} | {_status}: {$ticket->getStatus()}.
 </div>
 <div class="text" style="padding-top: 10px;border-bottom: #ECECEC solid 1px;">
     {$ticket->getText()|noescape}
@@ -20,7 +20,7 @@
 </div>
 <div style="padding-top: 5px;">
     {$ticket->getTime()}&nbsp;|&nbsp;
-    <a href="/support/delete/{$id}?hash={$csrfToken}">Удалить</a>
+    <a href="/support/delete/{$id}?hash={$csrfToken}">{_delete}</a>
 </div><br/>
 <div>
     <form action="/al_comments.pl/create/support/reply/{$id}" method="post" style="margin:0;">
@@ -30,16 +30,16 @@
         </div>
         <input type="hidden" name="hash" value="{$csrfToken}" />
         <br>
-        <input type="submit" value="Ответить" class="button">
+        <input type="submit" value="{_write}" class="button">
         <select name="status" style="width: unset;">
-          <option value="1">Есть ответ</option>
-          <option value="2">Закрыто</option>
-          <option value="0">Вопрос на рассмотрении</option>
+          <option value="1">{_support_status_1}</option>
+          <option value="2">{_support_status_2}</option>
+          <option value="0">{_support_status_0}</option>
         </select>
     </form>
 </div>
 <br/>
-<p n:if="!$comments">Комментарии отсутствуют</p>
+<p n:if="!$comments">{_no_comments}</p>
 {var $printedSupportGreeting = false}
 <table n:foreach="$comments as $comment" border="0" style="font-size: 11px;" class="post">
    <tbody>
@@ -60,7 +60,7 @@
             <div class="post-author">
                <a href="{$comment->getUser()->getURL()}"><b>
                {$comment->getUser()->getFullName()}
-               </b></a> написал<br>
+               </b></a> {($comment->getUser()->isFemale() ? tr("post_writes_f") : tr("post_writes_m"))}<br>
                <a href="#" class="date">{$comment->getTime()}</a>
             </div>
             {elseif ($comment->getUType() === 1)}
@@ -77,7 +77,7 @@
                        </span>
                    </a>
                {/if}
-               написал<br>
+               {_post_writes_m}<br>
                <a href="#" class="date">{$comment->getTime()}</a>
             </div>
             {/if}
@@ -85,7 +85,7 @@
                <div class="text" id="text{$comment->getId()}">
                    {if $comment->getUType() === 1 && !$printedSupportGreeting}
                        {var $printedSupportGreeting = true}
-                       {_support_greeting_hi}, {$ticket->getUser()->getFullName()}!
+                       {tr("support_greeting_hi", $ticket->getUser()->getFullName())}
                        <br/>
                        <br/>
                        
@@ -93,7 +93,7 @@
                        <br/>
                        <br/>
                        
-                       {_support_greeting_regargs} {=OPENVK_ROOT_CONF["openvk"]["appearance"]["name"]}.
+                       {tr("support_greeting_regards", OPENVK_ROOT_CONF["openvk"]["appearance"]["name"])|noescape}
                    {else}
                        {$comment->getText()|noescape}
                    {/if}
@@ -101,7 +101,7 @@
                
                {if $comment->getUType() === 0}
                 <div class="post-menu">
-                    <a href="/support/comment/{$comment->getId()}/delete">Удалить</a>
+                    <a href="/support/comment/{$comment->getId()}/delete">{_delete}</a>
                 </div>
                {/if}
             </div>

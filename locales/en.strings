@@ -113,7 +113,6 @@
 "pinned" = "pinned";
 "comments_tip" = "Be first, who leaves a comment at this post!";
 "your_comment" = "Your comment";
-"comments" = "Comments";
 "shown" = "Shown";
 "x_out_of" = "$1 of";
 "wall_zero" = "no posts";
@@ -122,6 +121,8 @@
 "feed" = "News";
 "publish_post" = "Add post";
 "view_other_comments" = "View other comments";
+
+"no_comments" = "No comments";
 
 "all_news" = "All news";
 "posts_per_page" = "Number of posts per page";
@@ -134,7 +135,7 @@
 "nsfw_warning" = "This post may have NSFW-content";
 "report" = "Report";
 "attach_photo" = "Attach photo";
-"no_posts_abstract" = "Nobody wrote anything here... At least.";
+"no_posts_abstract" = "Nobody wrote anything here... So far.";
 "attach_no_longer_available" = "This attachment is no longer available.";
 "open_post" = "Open post";
 "version_incompatibility" = "This attachment could not be displayed. Probably the database is incompatible with the current version of OpenVK.";
@@ -460,8 +461,33 @@
 "coins_one" = "One voice";
 "coins_other" = "$1 voices";
 
+/* Support */
+
+"support_opened" = "Opened";
+"support_answered" = "With a response";
+"support_closed" = "Closed";
+"support_ticket" = "Ticket";
+"support_tickets" = "Tickets";
+"support_status_0" = "Issue under consideration";
+"support_status_1" = "There's a response";
+"support_status_2" = "Closed";
+"support_greeting_hi" = "Greetings, $1!";
+"support_greeting_regards" = "Best regards,<br/>$1 support team.";
+
+"support_faq" = "Frequently Asked Questions";
+"support_list" = "List of tickets";
+"support_new" = "New ticket";
+
+"support_faq_title" = "Who is this website for?";
+"support_faq_content" = "The site is designed to find friends and acquaintances, as well as view user data. It is like a city directory, through which people can quickly find relevant information about a person.";
+
+"support_new_title" = "Enter the topic of your ticket";
+"support_new_content" = "Describe the issue or suggestion";
+
 "comment" = "Comment";
 "sender" = "Sender";
+
+"author" = "Author";
 
 /* Errors */
 

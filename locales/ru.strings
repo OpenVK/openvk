@@ -116,7 +116,6 @@
 "pinned" = "закреплено";
 "comments_tip" = "Будьте первым, кто оставит комментарий!";
 "your_comment" = "Ваш комментарий";
-"comments" = "Комментарии";
 "shown" = "Показано";
 "x_out_of" = "$1 из";
 "wall_zero" = "нет записей";
@@ -125,6 +124,8 @@
 "wall_many" = "$1 записей";
 "wall_other" = "$1 записей";
 "view_other_comments" = "Посмотреть остальные комментарии";
+
+"no_comments" = "Комментарии отсутствуют";
 
 "all_news" = "Все новости";
 "posts_per_page" = "Количество записей на странице";
@@ -534,11 +535,33 @@
 "coins_many" = "$1 голосов";
 "coins_other" = "$1 голосов";
 
-"support_greeting_hi" = "Здравствуйте";
-"support_greeting_regargs" = "С уважением,<br/>команда поддержки";
+/* Support */
+
+"support_opened" = "Открытые";
+"support_answered" = "С ответом";
+"support_closed" = "Закрытые";
+"support_ticket" = "Обращение";
+"support_tickets" = "Обращения";
+"support_status_0" = "Вопрос на рассмотрении";
+"support_status_1" = "Есть ответ";
+"support_status_2" = "Закрыто";
+"support_greeting_hi" = "Здравствуйте, $1!";
+"support_greeting_regards" = "С уважением,<br/>команда поддержки $1.";
+
+"support_faq" = "Часто задаваемые вопросы";
+"support_list" = "Список обращений";
+"support_new" = "Новое обращение";
+
+"support_faq_title" = "Для кого этот сайт?";
+"support_faq_content" = "Сайт предназначен для поиска друзей и знакомых, а также просмотр данных пользователя. Это как справочник города, с помощью которого люди могут быстро найти актуальную информацию о человеке.";
+
+"support_new_title" = "Введите тему вашего обращения";
+"support_new_content" = "Опишите проблему или предложение";
 
 "comment" = "Комментарий";
 "sender" = "Отправитель";
+
+"author" = "Автор";
 
 /* Errors */
 
