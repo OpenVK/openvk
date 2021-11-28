@@ -443,7 +443,7 @@
 "gifts_one" = "Бір сыйлық";
 "gifts_other" = "$1 сыйлық";
 "gifts_left" = "Қалған сыйлық саны: $1";
-"gifts_left_zero" = "Нөл сыйлық қалды;
+"gifts_left_zero" = "Нөл сыйлық қалды";
 "gifts_left_one" = "Бір сыйлық қалды";
 "gifts_left_other" = "$1 сыйлық қалды";
 "gifts_left_other" = "$1 сыйлық";
