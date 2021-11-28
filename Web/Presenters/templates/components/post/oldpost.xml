@@ -40,11 +40,9 @@
                     {/if}
                     <br/>
                     <a href="/wall{$post->getPrettyId()}" class="date">
+                        {$post->getPublicationTime()}
                         {if $post->isPinned()}
-                            {$post->getPublicationTime()},
-                            {_pinned}
-                        {else}
-                            {$post->getPublicationTime()}
+                        , {_pinned}
                         {/if}
                     </a>
                 </div>

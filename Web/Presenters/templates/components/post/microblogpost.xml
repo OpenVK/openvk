@@ -23,15 +23,13 @@
                     {if $author->isVerified()}<img class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">{/if}
                     {ifset $compact}<br>
                     <a href="/wall{$post->getPrettyId()}" class="date">
-                        {if $post->isPinned()}
-                            {$post->getPublicationTime()},
-                            {_pinned}
-                        {else}
-                            {$post->getPublicationTime()}
-                        {/if}
+                        {$post->getPublicationTime()}
                     </a>
 
                     {/ifset}
+                    {if $post->isPinned()}
+                        <span class="nobold">{_pinned}</span>
+                    {/if}
                     {if $post->canBeDeletedBy($thisUser) && !($forceNoDeleteLink ?? false) && !isset($compact)}
                         <a class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
                     {/if}
