@@ -45,8 +45,13 @@
 "no_information_provided" = "Інформація відсутня.";
 "deceased_person" = "Сторінка покійної людини";
 "none" = "відсутній";
-"years" = "років";
 "send" = "Відправити";
+
+"years_zero" = "0 років";
+"years_one" = "1 рік";
+"years_few" = "$1 роки";
+"years_many" = "$1 років";
+"years_other" = "$1 років";
 
 "relationship" = "Сімейний стан";
 
@@ -111,14 +116,16 @@
 "pinned" = "прикріплено";
 "comments_tip" = "Будьте першим, хто залишить коментар!";
 "your_comment" = "Ваш коментарій";
-"comments" = "Коментарії";
 "shown" = "Показано";
 "x_out_of" = "$1 з";
-"wall_zero" = "немає запису";
+"wall_zero" = "немає записів";
 "wall_one" = "єдиний запис";
 "wall_few" = "$1 записи";
 "wall_many" = "$1 записів";
 "wall_other" = "$1 записів";
+"view_other_comments" = "Переглянути інші коментарі";
+
+"no_comments" = "Коментарі відсутні";
 
 "all_news" = "Усі новини";
 "posts_per_page" = "Кількість записів на сторінці";
@@ -528,8 +535,33 @@
 "coins_many" = "$1 голосів";
 "coins_other" = "$1 голосів";
 
+/* Support */
+
+"support_opened" = "Відкриті";
+"support_answered" = "З відповіддю";
+"support_closed" = "Закриті";
+"support_ticket" = "Звернення";
+"support_tickets" = "Звернення";
+"support_status_0" = "Питання на розгляді";
+"support_status_1" = "Є відповідь";
+"support_status_2" = "Закрито";
+"support_greeting_hi" = "Вітаю, $1!";
+"support_greeting_regards" = "З повагою,<br/>команда підтримки $1.";
+
+"support_faq" = "ЧаПи";
+"support_list" = "Список звернень";
+"support_new" = "Нове звернення";
+
+"support_faq_title" = "Для кого цей сайт?";
+"support_faq_content" = "Сайт призначений для пошуку друзів і знайомих, а також для перегляду даних користувача. Це як довідник міста, за допомогою якого люди можуть швидко знайти актуальну інформацію про людину.";
+
+"support_new_title" = "Введіть тему вашого звернення";
+"support_new_content" = "Опишіть проблему або пропозицію";
+
 "comment" = "Коментар";
 "sender" = "Відправник";
+
+"author" = "Автор";
 
 /* Errors */
 
@@ -563,6 +595,7 @@
 /* Admin actions */
 
 "login_as" = "Зайти як $1";
+"manage_user_action" = "Керування користувачем";
 "ban_user_action" = "Заблокувати користувача";
 "warn_user_action" = "Попередити користувача";
 
