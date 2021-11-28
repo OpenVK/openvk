@@ -61,3 +61,8 @@ div.ovk-video > div > img
 {
     border-radius: 2px;
 }
+
+.cCompactAvatars {
+    width: 30px !important;
+    height: 30px !important;
+}

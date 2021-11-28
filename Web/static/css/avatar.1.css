@@ -34,3 +34,8 @@ div.content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth
     height: 42px;
     object-fit: cover;
 }
+
+.cCompactAvatars {
+    width: 30px !important;
+    height: 30px !important;
+}

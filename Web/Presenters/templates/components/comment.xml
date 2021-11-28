@@ -7,7 +7,8 @@
             <td width="30" valign="top">
                 <img
                     src="{$author->getAvatarURL()}"
-                    width="30" />
+                    width="30"
+                    class="cCompactAvatars" />
             </td>
             <td width="345" valign="top">
                 <div class="post-author">
