@@ -36,6 +36,11 @@
     color: grey;
 }
 
+.comment {
+    padding: 5px 0 0 0;
+    border-top: 1px #ddd solid;
+}
+
 .like_wrap {
     display: flex;
 }
@@ -54,6 +59,10 @@
     width: 11px;
     float: none;
     opacity: 0.4;
+}
+
+.likeCnt {
+    float: none;
 }
 
 #liked {
@@ -103,4 +112,25 @@
 
 .post-author .pin:hover {
     opacity: 0.4;
+}
+
+.expand_button {
+    background-color: #eee;
+    width: 100%;
+    display: inline-block;;
+    height: 30px;
+    line-height: 28px;
+    text-align: center;
+}
+
+.expand_button:hover {
+    background-color: #e5e5e5;
+}
+
+.commentsTextFieldWrap {
+    padding: 0 7px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-left: 0;
+    border-right: 0;
 }

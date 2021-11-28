@@ -6,7 +6,7 @@
 {/if}
 
 {if $microblogEnabled}
-    {include "post/microblogpost.xml", post => $post, diff => $diff}
+    {include "post/microblogpost.xml", post => $post, diff => $diff, commentSection => $commentSection}
 {else}
     {include "post/oldpost.xml", post => $post, diff => $diff}
 {/if}

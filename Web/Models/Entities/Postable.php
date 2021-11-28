@@ -73,10 +73,10 @@ abstract class Postable extends Attachable
     {
         return (new Comments)->getCommentsCountByTarget($this);
     }
-	
-	function getLastComments()
+
+    function getLastComments(int $count): \Traversable
     {
-        return (new Comments)->getLastCommentsByTarget($this);
+        return (new Comments)->getLastCommentsByTarget($this, $count);
     }
     
     function getLikesCount(): int

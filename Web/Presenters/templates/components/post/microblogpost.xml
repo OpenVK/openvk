@@ -1,4 +1,8 @@
 {var author = $post->getOwner()}
+{var comments = $post->getLastComments(3)}
+{var commentsCount = $post->getCommentsCount()}
+
+{var commentTextAreaId = $post === null ? rand(1,300) : $post->getId()}
 
 <table border="0" style="font-size: 11px;" n:class="post, !$compact ? post-divider, $post->isExplicit() ? post-nsfw">
     <tbody>
@@ -72,18 +76,11 @@
                         &nbsp;
                         
                         {if !($forceNoCommentsLink ?? false)}
-                            <a href="/wall{$post->getPrettyId()}#comments">
-                                {if $post->getCommentsCount() > 0}
-                                    {_"comments"} (<b>{$post->getCommentsCount()}</b>)
-                                {else}
-                                    {_"comments"}
-                                {/if}
+                            <a n:if="$commentsCount == 0" href="javascript:expand_comment_textarea({$commentTextAreaId})">
+                                {_"comment"}
                             </a>
                         {/if}
                         
-                        
-                        
-
                         <div class="like_wrap">
                             <a class="post-share-button" href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')">
                                 <div class="repost-icon" style="opacity: 0.4;"></div>
@@ -101,8 +98,17 @@
                         </div>
                     {/if}
                 </div>
-                <div n:if="isset($thisUser) &&! ($compact ?? false)" class="post-menu-s">
-                    <!-- kosfurler -->
+                <div n:if="$commentSection == true && $compact == false" class="post-menu-s">
+                    {if $commentsCount > 3}
+                        <a href="/wall{$post->getPrettyId()}" class="expand_button">Посмотреть остальные комментарии</a>
+                    {/if}
+                    {foreach $comments as $comment}
+                        {include "../comment.xml", comment => $comment, $compact => true}
+                    {/foreach}
+                    <div n:ifset="$thisUser" id="commentTextArea{$commentTextAreaId}" n:attr="style => ($commentsCount == 0 ? 'display: none;')" class="commentsTextFieldWrap">
+                        {var commentsURL = "/al_comments.pl/create/posts/" . $post->getId()}
+                        {include "../textArea.xml", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), post => $post}
+                    </div>
                 </div>
             </td>
         </tr>

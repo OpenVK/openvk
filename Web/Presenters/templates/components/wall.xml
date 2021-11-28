@@ -16,7 +16,7 @@
                 {foreach $posts as $post}
                     <a name="postGarter={$post->getId()}"></a>
                     
-                    {include "../components/post.xml", post => $post}
+                    {include "../components/post.xml", post => $post, commentSection => true}
                 {/foreach}
                 {include "../components/paginator.xml", conf => $paginatorConf}
             {else}

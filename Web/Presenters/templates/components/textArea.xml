@@ -1,10 +1,12 @@
-<div id="write" style="padding: 5px 0;" onfocusin="expand_wall_textarea();">
+{var textAreaId = $post === null ? rand(1,300) : $post->getId()}
+
+<div id="write" style="padding: 5px 0;" onfocusin="expand_wall_textarea({$textAreaId});">
     <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
-        <textarea id="wall-post-input" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="small-textarea"></textarea>
+        <textarea id="wall-post-input{$textAreaId}" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="small-textarea"></textarea>
         <div>
             <!-- padding to fix <br/> bug -->
         </div>
-        <div id="post-buttons" style="display: none;">
+        <div id="post-buttons{$textAreaId}" style="display: none;">
             <div class="post-upload">
                 Вложение: <span>(unknown)</span>
             </div>

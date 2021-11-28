@@ -37,6 +37,19 @@ class Comments
         foreach($comments as $comment)
             yield $this->toComment($comment);
     }
+
+    function getLastCommentsByTarget(Postable $target, ?int $count = NULL): \Traversable
+    {
+        $comments = $this->comments->where([
+            "model"   => get_class($target),
+            "target"  => $target->getId(),
+            "deleted" => false,
+        ])->page(1, $count ?? OPENVK_DEFAULT_PER_PAGE)->order("created DESC");
+        
+        $comments = array_reverse(iterator_to_array($comments));
+        foreach($comments as $comment)
+            yield $this->toComment($comment);
+    }
     
     function getCommentsCountByTarget(Postable $target): int
     {

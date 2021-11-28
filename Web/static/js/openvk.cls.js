@@ -1,10 +1,15 @@
-function expand_wall_textarea() {
-    var el = document.getElementById('post-buttons');
-    var wi = document.getElementById('wall-post-input');
+function expand_wall_textarea(id) {
+    var el = document.getElementById('post-buttons'+id);
+    var wi = document.getElementById('wall-post-input'+id);
     el.style.display = "block";
     wi.className = "expanded-textarea";
+}
 
-
+function expand_comment_textarea(id) {
+    var el = document.getElementById('commentTextArea'+id);
+    var wi = document.getElementById('wall-post-input'+id);
+    el.style.display = "block";
+    wi.focus();
 }
 
 function edit_post(id, wid) {
