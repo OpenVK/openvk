@@ -39,7 +39,9 @@
 "was_online_m" = "Желіде болған"; 
 /* For male and female */
 
-"years" = "ж.";
+"years_zero" = "0 жаста";
+"years_one" = "1 жаста";
+"years_other" = "$1 жаста";
 
 "was_online_f" = "желіде болған";
 "all_title" = "Барлығы";
@@ -119,6 +121,9 @@
 "wall_other" = "$1 жазба";
 "feed" = "Жаңалықтар";
 "publish_post" = "жазба жариялау";
+"view_other_comments" = "Басқа пікірлерді қарау";
+
+"no_comments" = "Пікірлер жоқ";
 
 "all_news" = "Барлық жаңалықтар";
 "posts_per_page" = "Бір беттегі жазбалар саны";
@@ -324,24 +329,6 @@
 "results_one" = "$1 нәтиже";
 "results_other" = "$1 нәтиже";
 
-"privacy_setting_access_page" = "Кім менің парақшамды көре алады";
-"privacy_setting_read_info" = "Кім менің парақшамдағы басты ақпаратты көре алады";
-"privacy_setting_see_groups" = "Кім менің топтарым мен кездесулерімді көре алады";
-"privacy_setting_see_photos" = "Кім менің фотоларымды көре алады";
-"privacy_setting_see_videos" = "Кім менің видеожазбаларымды көре алады";
-"privacy_setting_see_notes" = "Кім менің жолжазбаларымды көре алады";
-"privacy_setting_see_friends" = "Кім менің достарларымды көре алады";
-"privacy_setting_add_to_friends" = "Кім мені достарыма қоса алады";
-"privacy_setting_write_wall" = "Кім менің қабырғама жазба жаза алады";
-"privacy_value_anybody" = "Әркім";
-"privacy_value_anybody_dative" = "Әркім";
-"privacy_value_users" = "OpenVK қолданушылары";
-"privacy_value_friends" = "Достарым";
-"privacy_value_friends_dative" = "Достарым";
-"privacy_value_only_me_and_super_capite" = "Мен ғана";
-"privacy_value_only_me_and_super_capite_dative" = "Мен ғана";
-"privacy_value_super_capite" = "Ешкім";
-
 "your_email_address" = "Сіздің Email-мекенжайыңыз";
 "your_page_address" = "Сіздің мекенжай бетіңіз";
 "page_address" = "Мекенжай беті";
@@ -420,8 +407,30 @@
 "time_today" = "бүгін";
 "time_yesterday" = "кеше";
 
+"privacy_setting_access_page" = "Кім менің парақшамды көре алады";
+"privacy_setting_read_info" = "Кім менің парақшамдағы басты ақпаратты көре алады";
+"privacy_setting_see_groups" = "Кім менің топтарым мен кездесулерімді көре алады";
+"privacy_setting_see_photos" = "Кім менің фотоларымды көре алады";
+"privacy_setting_see_videos" = "Кім менің видеожазбаларымды көре алады";
+"privacy_setting_see_notes" = "Кім менің жолжазбаларымды көре алады";
+"privacy_setting_see_friends" = "Кім менің достарларымды көре алады";
+"privacy_setting_add_to_friends" = "Кім мені достарыма қоса алады";
+"privacy_setting_write_wall" = "Кім менің қабырғама жазба жаза алады";
+"privacy_value_anybody" = "Әркім";
+"privacy_value_anybody_dative" = "Әркім";
+"privacy_value_users" = "OpenVK қолданушылары";
+"privacy_value_friends" = "Достарым";
+"privacy_value_friends_dative" = "Достарым";
+"privacy_value_only_me_and_super_capite" = "Мен ғана";
+"privacy_value_only_me_and_super_capite_dative" = "Мен ғана";
+"privacy_value_super_capite" = "Ешкім";
+
+"points" = "Дауыс";
+"points_count" = "дауыс";
+"on_your_account" = "сіздің шотыңызда";
+
 "vouchers" = "Ваучерлер";
-"have_voucher" = "Ваучер бар";
+"have_voucher" = "Ваучер бар ма";
 "voucher_token" = "Ваучер коды";
 "voucher_activators" = "Қолданғандар";
 "voucher_explanation" = "Ваучердің сериялық нөмірін енгізіңіз. Ол әдетте түбіртекте немесе хабарламада көрсетіледі.";
@@ -433,7 +442,7 @@
 "redeem" = "Ваучерді сатып алу";
 "deactivate" = "Өшіру";
 "usages_total" = "Қолдану саны";
-"usages_left" = "Қалған қолдану";
+"usages_left" = "Қалған қолдану саны";
 
 /* Gifts */
 
@@ -443,7 +452,6 @@
 "gifts_one" = "Бір сыйлық";
 "gifts_other" = "$1 сыйлық";
 "gifts_left" = "Қалған сыйлық саны: $1";
-"gifts_left_zero" = "Нөл сыйлық қалды";
 "gifts_left_one" = "Бір сыйлық қалды";
 "gifts_left_other" = "$1 сыйлық қалды";
 "gifts_left_other" = "$1 сыйлық";
@@ -462,8 +470,32 @@
 "coins_one" = "Бір дауыс";
 "coins_other" = "$1 дауыс";
 
+/* Support */
+
+"support_opened" = "Ашық";
+"support_answered" = "Жауап бар";
+"support_closed" = "Жабық";
+"support_ticket" = "Cұрақ";
+"support_tickets" = "Сұрақтар";
+"support_status_0" = "Қаралатын мәселе";
+"support_status_1" = "Сұраққа жауап бар";
+"support_status_2" = "Жабық";
+"support_greeting_hi" = "Сәлеметсіз бе, $1!";
+"support_greeting_regards" = "Құрметпен,<br/>$1 қолдау көрсету тобы.";
+
+"support_faq" = "Жиі қойылатын сұрақтар";
+"support_list" = "Сұрақтар тізімі";
+"support_new" = "Сұрақ қою";
+
+"support_faq_title" = "Бұл сайт кімге арналған?";
+"support_faq_content" = "Сайт достар мен таныстарды табуға, сондай-ақ пайдаланушы деректерін көруге арналған. Қалалық анықтамалық секілді, осы сайт арқылы адамдар басқа адам туралы қажетті ақпаратты тез таба алады.";
+
+"support_new_title" = "Мәселені қысқаша сипаттап беріңіз";
+"support_new_content" = "Мәселе туралы толық жазып беріңіз";
+
 "comment" = "Пікір";
 "sender" = "Жіберуші";
+"author" = "Автор";
 
 /* Errors */
 
