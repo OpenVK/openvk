@@ -19,7 +19,7 @@ class Post extends Postable
         ];
 
         if((sizeof(DB::i()->getContext()->table("likes")->where($searchData)) > 0) !== $liked) {
-            if($this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club))
+            if($this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club) && !$this instanceof Comment)
                 (new LikeNotification($this->getOwner(false), $this, $user))->emit();
 
             parent::setLike($liked, $user);
@@ -148,7 +148,7 @@ class Post extends Postable
     {
         $liked = parent::toggleLike($user);
 
-        if($this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club))
+        if($this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club) && !$this instanceof Comment)
             (new LikeNotification($this->getOwner(false), $this, $user))->emit();
 
         foreach($this->getChildren() as $attachment)
