@@ -327,6 +327,16 @@ class User extends RowModel
         return (int)floor((time() - $this->getBirthday()) / mktime(0, 0, 0, 1, 1, 1971));
     }
     
+    function get2faSecret(): ?string
+    {
+        return $this->getRecord()["2fa_secret"];
+    }
+
+    function is2faEnabled(): bool
+    {
+        return !is_null($this->get2faSecret());
+    }
+
     function updateNotificationOffset(): void
     {
         $this->stateChanges("notification_offset", time());
@@ -551,6 +561,38 @@ class User extends RowModel
     function getGiftCount(): int
     {
         return sizeof($this->getRecord()->related("gift_user_relations.receiver"));
+    }
+
+    function get2faBackupCodes(): \Traversable
+    {
+        $sel = $this->getRecord()->related("2fa_backup_codes.owner");
+        foreach($sel as $target)
+            yield $target->code;
+    }
+
+    function get2faBackupCodeCount(): int
+    {
+        return sizeof($this->getRecord()->related("2fa_backup_codes.owner"));
+    }
+
+    function generate2faBackupCodes(): void
+    {
+        $codes = [];
+
+        for($i = 0; $i < 10 - $this->get2faBackupCodeCount(); $i++) {
+            $codes[] = [
+                owner => $this->getId(),
+                code => random_int(10000000, 99999999)
+            ];
+        }
+
+        if(sizeof($codes) > 0)
+            DatabaseConnection::i()->getContext()->table("2fa_backup_codes")->insert($codes);
+    }
+
+    function use2faBackupCode(int $code): bool
+    {
+        return (bool) $this->getRecord()->related("2fa_backup_codes.owner")->where("code", $code)->delete();   
     }
     
     function getSubscriptionStatus(User $user): int

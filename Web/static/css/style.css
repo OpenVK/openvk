@@ -1559,3 +1559,10 @@ body.scrolled .toTop:hover {
     border-top: 3px solid rgb(130, 130, 130);
     font-weight: bold;
 }
+
+.accent-box {
+    background-color: white;
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #C0CAD5;
+}

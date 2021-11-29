@@ -5,6 +5,7 @@ use Chandler\Database\DatabaseConnection as DB;
 use openvk\VKAPI\Exceptions\APIErrorException;
 use openvk\Web\Models\Entities\{User, APIToken};
 use openvk\Web\Models\Repositories\{Users, APITokens};
+use lfkeitel\phptotp\{Base32, Totp};
 
 final class VKAPIPresenter extends OpenVKPresenter
 {
@@ -160,6 +161,10 @@ final class VKAPIPresenter extends OpenVKPresenter
         
         $uId  = $chUser->related("profiles.user")->fetch()->id;
         $user = (new Users)->get($uId);
+
+        $code = $this->requestParam("code");
+        if($user->is2faEnabled() && !($code === (new Totp)->GenerateToken(Base32::decode($user->get2faSecret())) || $user->use2faBackupCode((int) $code)))
+            $this->fail(28, "Invalid 2FA code", "internal", "acquireToken");
         
         $token = new APIToken;
         $token->setUser($user);

@@ -357,6 +357,37 @@
 "ui_settings_rating_show" = "Show";
 "ui_settings_rating_hide" = "Hide";
 
+/* Two-factor authentication */
+
+"two_factor_authentication" = "Two-factor authentication";
+"two_factor_authentication_disabled" = "Provides reliable protection against hacking: to enter the page, you must enter the code obtained in the 2FA application.";
+"two_factor_authentication_enabled" = "Two-factor authentication is enabled. Your page is protected.";
+"two_factor_authentication_login" = "You have two-factor authentication enabled. To login, enter the code received in the application.";
+
+"two_factor_authentication_settings_1" = "Two-factor authentication via TOTP can be used even without internet. To do this, you need a code generation app. For example, <b>Google Authenticator</b> for Android and iOS or <b>FOSS Aegis and andOTP</b> for Android.";
+"two_factor_authentication_settings_2" = "Using the app for two-factor authentication, scan the QR code below:";
+"two_factor_authentication_settings_3" = "or manually enter the given secret key: <b>$1</b>.";
+"two_factor_authentication_settings_4" = "Now enter the code that the application gave you and the password for your page so that we can confirm that you really are.";
+
+"connect" = "Connect";
+"enable" = "Enable";
+"disable" = "Disable";
+"code" = "Code";
+"2fa_code" = "2FA code";
+
+"incorrect_password" = "Incorrect password";
+"incorrect_code" = "Incorrect code";
+"incorrect_2fa_code" = "Incorrect two-factor authentication code";
+"two_factor_authentication_enabled_message" = "Two-factor authentication enabled";
+"two_factor_authentication_enabled_message_description" = "Your page has become more difficult to hack. We recommend that you download <a href='javascript:viewBackupCodes()'>backup codes</a>";
+"two_factor_authentication_disabled_message" = "Two-factor authentication disabled";
+
+"view_backup_codes" = "View backup codes";
+"backup_codes" = "Backup codes for login confirmation";
+"two_factor_authentication_backup_codes_1" = "Backup codes allow you to validate your login when you don't have access to your phone, for example, while traveling.";
+"two_factor_authentication_backup_codes_2" = "You have <b>10 more codes</b>, each code can only be used once. Print them out, put them away in a safe place and use them when you need codes to validate your login.";
+"two_factor_authentication_backup_codes_3" = "You can get new codes if they run out. Only the last created backup codes are valid.";
+
 /* Sorting */
 
 "sort_randomly" = "Sort randomly";
