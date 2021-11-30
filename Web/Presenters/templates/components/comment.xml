@@ -10,7 +10,7 @@
                     width="30"
                     class="cCompactAvatars" />
             </td>
-            <td width="345" valign="top">
+            <td width="100%" valign="top">
                 <div class="post-author">
                     <a href="{$author->getURL()}"><b>
                         {$author->getCanonicalName()}
@@ -37,7 +37,7 @@
                         <div style="float: right; font-size: .7rem;">
                             <a class="post-like-button" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}">
                                 <div class="heart" style="{if $comment->hasLikeFrom($thisUser)}opacity: 1;{else}opacity: 0.4;{/if}"></div>
-                                <span class="likeCnt">{$comment->getLikesCount()}</span>
+                                <span class="likeCnt">{if $comment->getLikesCount() > 0}{$comment->getLikesCount()}{/if}</span>
                             </a>
                         </div>
                     </div>
