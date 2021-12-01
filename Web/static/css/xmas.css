@@ -3,3 +3,7 @@
 .page_header {
     background: url('../img/xheader.png');
 }
+
+.page_custom_header {
+    background: url('../img/xheader_custom.png');
+}
