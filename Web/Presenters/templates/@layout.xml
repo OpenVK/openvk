@@ -1,11 +1,13 @@
+{var instance_name = OPENVK_ROOT_CONF['openvk']['appearance']['name']}
+
 <html n:if="!isset($parentModule) || substr($parentModule, 0, 21) === 'libchandler:absolute.'">
     <head>
         <title>
-            {ifset title}{include title} - {/ifset}OpenVK
+            {ifset title}{include title} - {/ifset}{$instance_name}
         </title>
         <meta charset="utf-8" />
         <link rel="shortcut icon" href="/assets/packages/static/openvk/img/icon.ico" />
-        <meta name="application-name" content="OpenVK" />
+        <meta name="application-name" content="{$instance_name}" />
         <meta n:ifset="$csrfToken" name="csrf" value="{$csrfToken}" />
 		{script "js/node_modules/jquery/dist/jquery.min.js"}
         {script "js/node_modules/umbrellajs/umbrella.min.js"}
@@ -81,8 +83,8 @@
         
         <div class="layout">
             <div id="xhead" class="dm"></div>
-            <div class="page_header">
-                <a href="/" class="home_button" title="OpenVK">openvk</a>
+            <div class="page_header {if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME}page_custom_header{/if}">
+                <a href="/" class="home_button {if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME}home_button_custom{/if}" title="{$instance_name}">{$instance_name}</a>
                 <div n:if="isset($thisUser) ? !$thisUser->isBanned() : true" class="header_navigation">
                     {ifset $thisUser}
                     <div class="link">

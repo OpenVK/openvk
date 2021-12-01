@@ -48,6 +48,10 @@ a {
     background: url('../img/header.png');
 }
 
+.page_custom_header {
+    background: url('../img/header_custom.png');
+}
+
 #page_act {
     border-bottom: 1px solid #d5dde6;
     padding: 2px 10px 5px 10px;
@@ -61,6 +65,18 @@ a {
     width: 145px;    
     text-indent: -999px;
     height: 42px;
+}
+
+.home_button_custom {
+    width: 175px;
+    text-indent: 58px;
+    line-height: 41px;
+    text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.5);
+    font-weight: bold;
+    color: white;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .header_navigation {
