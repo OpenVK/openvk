@@ -73,9 +73,13 @@
 </div>
 
 <script>
-    $(document).ready(() => u("#post-buttons{$textAreaId} .postFileSel").on("change", function() {
-        handleUpload.bind(this, {$textAreaId})();
-    }));
+    $(document).ready(() => {
+        u("#post-buttons{$textAreaId} .postFileSel").on("change", function() {
+            handleUpload.bind(this, {$textAreaId})();
+        });
+
+        setupWallPostInputHandlers({$textAreaId});
+    });
 </script>
 
 {if $graffiti}

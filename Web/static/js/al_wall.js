@@ -25,8 +25,7 @@ function trim(string) {
 function handleUpload(id) {
     console.warn("блять...");
     
-    document.querySelector("input[name='_poll_attachment']").value = "";
-    u(".postFileSel" + id).not("#" + this.id).each(input => input.value = null);
+    u("#post-buttons" + id + " .postFileSel").not("#" + this.id).each(input => input.value = null);
     
     var indicator = u("#post-buttons" + id + " .post-upload");
     var file      = this.files[0];
@@ -74,15 +73,6 @@ function initGraffiti(id) {
     });
 }
 
-u("#wall-post-input").on("paste", function(e) {
-    if(e.clipboardData.files.length === 1) {
-        var input = u("input[name=_pic_attachment]").nodes[0];
-        input.files = e.clipboardData.files;
-        
-        u(input).trigger("change");
-    }
-});
-
 u(".post-like-button").on("click", function(e) {
     e.preventDefault();
     
@@ -103,14 +93,25 @@ u(".post-like-button").on("click", function(e) {
     return false;
 });
 
-u("#wall-post-input").on("input", function(e) {
-    var boost             = 5;
-    var textArea          = e.target;
-    textArea.style.height = "5px";
-    var newHeight = textArea.scrollHeight;
-    textArea.style.height = newHeight + boost;
-    return;
+function setupWallPostInputHandlers(id) {
+    u("#wall-post-input" + id).on("paste", function(e) {
+        if(e.clipboardData.files.length === 1) {
+            var input = u("#post-buttons" + id + " input[name=_pic_attachment]").nodes[0];
+            input.files = e.clipboardData.files;
+            
+            u(input).trigger("change");
+        }
+    });
     
-    // revert to original size if it is larger (possibly changed by user)
-    // textArea.style.height = (newHeight > originalHeight ? (newHeight + boost) : originalHeight) + "px";
-});
+    u("#wall-post-input" + id).on("input", function(e) {
+        var boost             = 5;
+        var textArea          = e.target;
+        textArea.style.height = "5px";
+        var newHeight = textArea.scrollHeight;
+        textArea.style.height = newHeight + boost;
+        return;
+        
+        // revert to original size if it is larger (possibly changed by user)
+        // textArea.style.height = (newHeight > originalHeight ? (newHeight + boost) : originalHeight) + "px";
+    });
+}
