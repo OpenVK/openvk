@@ -22,7 +22,7 @@ class Themepacks implements \ArrayAccess
                 else
                     $this->loadedThemepacks[$tid] = $theme;
             } catch(\Exception $e) {
-                trigger_error("Could not load theme at $themeDir, skipping...", E_USER_WARNING);
+                trigger_error("Could not load theme at $themeDir. Exception: $e", E_USER_WARNING);
             }
         }
     }

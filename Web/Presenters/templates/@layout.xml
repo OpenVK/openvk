@@ -30,7 +30,7 @@
                 
                 <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/styles.css" />
                 {if $isXmas}
-                    <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/xmas.css" />
+                    <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/xmas.css" />
                 {/if}
             {else}
                 {css "css/style.css"}
