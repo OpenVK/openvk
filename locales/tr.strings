@@ -353,7 +353,7 @@
 "two_factor_authentication_enabled" = "İki adımlı doğrulama etkinleştirildi. Sayfanız koruma altında.";
 "two_factor_authentication_login" = "İki adımlı doğrulamanız var. Giriş yapmak için uygulamadan aldığınız kodu girin.";
 
-"two_factor_authentication_settings_1" = "ZTSP (Zamana-bağlı Tek Seferlik Parola) aracılığıyla iki adımlı doğrulama internetsiz bile kullanılabilir. Bunu yapmak için kod oluşturma uygulamasına ihtiyacınız var. Mesela, Android ve iOS için <b>Google Authenticator</b> veya Android için <b>FOSSAegis veya andOTP</b>. Telefonunuzun tarih ve saatinin doğru ayarlandığından emin olun.";
+"two_factor_authentication_settings_1" = "TOTP aracılığıyla iki adımlı doğrulama internetsiz bile kullanılabilir. Bunu yapmak için kod oluşturma uygulamasına ihtiyacınız var. Mesela, Android ve iOS için <b>Google Authenticator</b> veya Android için <b>FOSS Aegis veya andOTP</b>. Telefonunuzun tarih ve saatinin doğru ayarlandığından emin olun.";
 "two_factor_authentication_settings_2" = "İki adımlı doğrulama uygulamasından aşağıdaki QR kodunu okutun:";
 "two_factor_authentication_settings_3" = "ya da verilen gizli anahtarı kendiniz girin: <b>$1</b>.";
 "two_factor_authentication_settings_4" = "Şimdi uygulamanın verdiği kodu ve sayfanızın parolasını girin ki bunu yapan kişinin gerçekten siz olduğunu doğrulayabilelim.";
