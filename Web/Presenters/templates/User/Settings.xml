@@ -467,17 +467,6 @@
                     <tr>
                         <td width="120" valign="top" align="right">
                             <input
-                                  n:attr="checked => $user->getLeftMenuItemStatus('audios')"
-                                  type="checkbox"
-                                  name="menu_audioj" />
-                        </td>
-                        <td>
-                            <span class="nobold">{_my_audios}</span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="120" valign="top" align="right">
-                            <input
                                   n:attr="checked => $user->getLeftMenuItemStatus('messages')"
                                   type="checkbox"
                                   name="menu_mesagoj" />

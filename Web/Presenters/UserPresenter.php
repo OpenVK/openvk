@@ -11,7 +11,7 @@ use openvk\Web\Models\Repositories\Notes;
 use openvk\Web\Models\Repositories\Vouchers;
 use Chandler\Security\Authenticator;
 use lfkeitel\phptotp\{Base32, Totp};
-use chillerlan\QRCode\QRCode;
+use chillerlan\QRCode\{QRCode, QROptions};
 
 final class UserPresenter extends OpenVKPresenter
 {
@@ -418,7 +418,7 @@ final class UserPresenter extends OpenVKPresenter
                 $this->user->identity->set2fa_secret($secret);
                 $this->user->identity->save();
 
-                $this->flash("succ", tr("two_factor_authentication_enabled"), tr("two_factor_authentication_enabled_description"));
+                $this->flash("succ", tr("two_factor_authentication_enabled_message"), tr("two_factor_authentication_enabled_message_description"));
                 $this->redirect("/settings");
             }
 
@@ -430,7 +430,9 @@ final class UserPresenter extends OpenVKPresenter
 
         $issuer                 = OPENVK_ROOT_CONF["openvk"]["appearance"]["name"];
         $email                  = $this->user->identity->getEmail();
-        $this->template->qrCode = substr((new QRCode)->render("otpauth://totp/$issuer:$email?secret=$secret&issuer=$issuer"), 22);
+        $this->template->qrCode = substr((new QRCode(new QROptions([
+            "imageTransparent" => false
+        ])))->render("otpauth://totp/$issuer:$email?secret=$secret&issuer=$issuer"), 22);
     }
 
     function renderDisableTwoFactorAuth(): void
