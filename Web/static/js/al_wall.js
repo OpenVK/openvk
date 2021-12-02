@@ -22,12 +22,13 @@ function trim(string) {
     return newStr;
 }
 
-function handleUpload() {
+function handleUpload(id) {
     console.warn("блять...");
     
-    u(".postFileSel").not("#" + this.id).each(input => input.value = null);
+    document.querySelector("input[name='_poll_attachment']").value = "";
+    u(".postFileSel" + id).not("#" + this.id).each(input => input.value = null);
     
-    var indicator = u(".post-upload");
+    var indicator = u("#post-buttons" + id + " .post-upload");
     var file      = this.files[0];
     if(typeof file === "undefined") {
         indicator.attr("style", "display: none;");
@@ -37,7 +38,7 @@ function handleUpload() {
     }
 }
 
-function initGraffiti() {
+function initGraffiti(id) {
     let canvas = null;
     let msgbox = MessageBox("Нарисовать граффити", "<div id='ovkDraw'></div>", ["Сохранить", "Отменить"], [function() {
         canvas.getImage({includeWatermark: false}).toBlob(blob => {
@@ -46,11 +47,11 @@ function initGraffiti() {
             let trans = new DataTransfer();
             trans.items.add(image);
             
-            let fileSelect = document.querySelector("input[name='_pic_attachment']");
+            let fileSelect = document.querySelector("#post-buttons" + id + " input[name='_pic_attachment']");
             fileSelect.files = trans.files;
             
             u(fileSelect).trigger("change");
-            u("#write textarea").trigger("focusin");
+            u("#post-buttons" + id + " #write textarea").trigger("focusin");
         }, "image/jpeg", 0.92);
         
         canvas.teardown();
@@ -113,5 +114,3 @@ u("#wall-post-input").on("input", function(e) {
     // revert to original size if it is larger (possibly changed by user)
     // textArea.style.height = (newHeight > originalHeight ? (newHeight + boost) : originalHeight) + "px";
 });
-
-u(".postFileSel").on("change", handleUpload);

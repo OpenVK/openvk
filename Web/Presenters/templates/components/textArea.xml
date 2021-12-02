@@ -49,20 +49,20 @@
             <br/>
             <input type="submit" value="{_'write'}" class="button" />
             <div style="float: right; display: flex; flex-direction: column;">
-                <a href="javascript:void(u('#wallAttachmentMenu').toggleClass('hidden'));">
+                <a href="javascript:void(u('#post-buttons{$textAreaId} #wallAttachmentMenu').toggleClass('hidden'));">
                     Прикрепить
                 </a>
                 
                 <div id="wallAttachmentMenu" class="hidden">
-                    <a href="javascript:void(document.querySelector('input[name=_pic_attachment]').click());">
+                    <a href="javascript:void(document.querySelector('#post-buttons{$textAreaId} input[name=_pic_attachment]').click());">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
                         {_attach_photo}
                     </a>
-                    <a href="javascript:void(document.querySelector('input[name=_vid_attachment]').click());">
+                    <a href="javascript:void(document.querySelector('#post-buttons{$textAreaId} input[name=_vid_attachment]').click());">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
                         Прикрепить видео
                     </a>
-                    <a n:if="$graffiti ?? false" href="javascript:initGraffiti();">
+                    <a n:if="$graffiti ?? false" href="javascript:initGraffiti({$textAreaId});">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
                         Нарисовать граффити
                     </a>
@@ -71,6 +71,12 @@
         </div>
     </form>
 </div>
+
+<script>
+    $(document).ready(() => u("#post-buttons{$textAreaId} .postFileSel").on("change", function() {
+        handleUpload.bind(this, {$textAreaId})();
+    }));
+</script>
 
 {if $graffiti}
     {script "js/node_modules/react/dist/react-with-addons.min.js"}
