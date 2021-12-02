@@ -346,6 +346,37 @@
 "ui_settings_rating_show" = "Göster";
 "ui_settings_rating_hide" = "Gizle";
 
+/* Two-factor authentication */
+
+"two_factor_authentication" = "İki adımlı doğrulama";
+"two_factor_authentication_disabled" = "Saldırılara karşı güvenilir koruma sağlar: Sayfaya girmek için, 2AD uygulamasından alınan kodu girmeniz gerekir.";
+"two_factor_authentication_enabled" = "İki adımlı doğrulama etkinleştirildi. Sayfanız koruma altında.";
+"two_factor_authentication_login" = "İki adımlı doğrulamanız var. Giriş yapmak için uygulamadan aldığınız kodu girin.";
+
+"two_factor_authentication_settings_1" = "ZTSP (Zamana-bağlı Tek Seferlik Parola) aracılığıyla iki adımlı doğrulama internetsiz bile kullanılabilir. Bunu yapmak için kod oluşturma uygulamasına ihtiyacınız var. Mesela, Android ve iOS için <b>Google Authenticator</b> veya Android için <b>FOSSAegis veya andOTP</b>. Telefonunuzun tarih ve saatinin doğru ayarlandığından emin olun.";
+"two_factor_authentication_settings_2" = "İki adımlı doğrulama uygulamasından aşağıdaki QR kodunu okutun:";
+"two_factor_authentication_settings_3" = "ya da verilen gizli anahtarı kendiniz girin: <b>$1</b>.";
+"two_factor_authentication_settings_4" = "Şimdi uygulamanın verdiği kodu ve sayfanızın parolasını girin ki bunu yapan kişinin gerçekten siz olduğunu doğrulayabilelim.";
+
+"connect" = "Bağlan";
+"enable" = "Etkinleştir";
+"disable" = "Devre dışı bırak";
+"code" = "Kod";
+"2fa_code" = "2AD kodu";
+
+"incorrect_password" = "Yanlış parola";
+"incorrect_code" = "Yanlış kod";
+"incorrect_2fa_code" = "Yanlış iki adımlı doğrulama kodu";
+"two_factor_authentication_enabled_message" = "İki adımlı doğrulama etkinleştirildi";
+"two_factor_authentication_enabled_message_description" = "Sayfanızın ele geçirilmesi daha zor hale geldi. <a href='javascript:viewBackupCodes()'>Yedek kodları</a> indirmenizi tavsiye ederiz";
+"two_factor_authentication_disabled_message" = "İki adımlı doğrulama devre dışı bırakıldı";
+
+"view_backup_codes" = "Yedek kodları göster";
+"backup_codes" = "Giriş doğrulamaso için yedek kodlar";
+"two_factor_authentication_backup_codes_1" = "Yedek kodlar mesela dolaşırken telefonunuza erişiminiz olmadığında girişinizi doğrulamanızı sağlar.";
+"two_factor_authentication_backup_codes_2" = "<b>10 kodunuz</b> daha var, her kod sadece bir defa kullanılabilir. Yazdırın, güvenli bir yerde saklayın ve girişinizi doğrularken koda ihtiyacınız olduğunda kullanın.";
+"two_factor_authentication_backup_codes_3" = "Tamamen bittiklerinde yeni kodlar alabilirsiniz. Sadece son oluşturulan kodlar geçerlidir.";
+
 /* Sorting */
 
 "sort_randomly" = "Rastgele sırala";
