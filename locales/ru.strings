@@ -387,6 +387,35 @@
 "ui_settings_rating_show" = "Показывать";
 "ui_settings_rating_hide" = "Скрывать";
 
+"two_factor_authentication" = "Двухфакторная аутентификация";
+"two_factor_authentication_disabled" = "Обеспечивает надежную защиту от взлома: для входа на страницу необходимо ввести код, полученный в приложении 2FA.";
+"two_factor_authentication_enabled" = "Двухфакторная аутентификация включена. Ваша страница защищена.";
+"two_factor_authentication_login" = "У вас включена двухфакторная аутентификация. Для входа введите код полученный в приложении.";
+
+"two_factor_authentication_settings_1" = "Двухфакторную аутентификацию через TOTP можно использовать даже без интернета. Для этого вам понадобится приложение для генерации кодов. Например, <b>Google Authenticator</b> для Android и iOS или свободные <b>Aegis и andOTP</b> для Android.";
+"two_factor_authentication_settings_2" = "Используя приложение для двухфакторной аутентификации, отсканируйте приведенный ниже QR-код:";
+"two_factor_authentication_settings_3" = "или вручную введите секретный ключ: <b>$1</b>.";
+"two_factor_authentication_settings_4" = "Теперь введите код, который вам предоставило приложение, и пароль от вашей страницы, чтобы мы могли подтвердить, что вы действительно вы.";
+
+"connect" = "Подключить";
+"enable" = "Включить";
+"disable" = "Отключить";
+"code" = "Код";
+"2fa_code" = "Код 2FA";
+
+"incorrect_password" = "Неверный пароль";
+"incorrect_code" = "Неверный код";
+"incorrect_2fa_code" = "Неверный код двухфакторной аутентификации";
+"two_factor_authentication_enabled_message" = "Двухфакторная аутентификация включена";
+"two_factor_authentication_enabled_message_description" = "Вашу страницу стало труднее взломать. Рекомендуем вам скачать <a href='javascript:viewBackupCodes()'>резервные коды</a>";
+"two_factor_authentication_disabled_message" = "Двухфакторная аутентификация отключена";
+
+"view_backup_codes" = "Посмотреть резервные коды";
+"backup_codes" = "Резервные коды для подтверждения входа";
+"two_factor_authentication_backup_codes_1" = "Резервные коды позволяют подтверждать вход, когда у вас нет доступа к телефону, например, в путешествии.";
+"two_factor_authentication_backup_codes_2" = "У вас есть ещё <b>10 кодов</b>, каждым кодом можно воспользоваться только один раз. Распечатайте их, уберите в надежное место и используйте, когда потребуются коды для подтверждения входа.";
+"two_factor_authentication_backup_codes_3" = "Вы можете получить новые коды, если они заканчиваются. Действительны только последние созданные резервные коды.";
+
 /* Sorting */
 
 "sort_randomly" = "Сортировать рандомно";

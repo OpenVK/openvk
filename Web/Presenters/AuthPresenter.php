@@ -10,6 +10,7 @@ use Chandler\Session\Session;
 use Chandler\Security\User as ChandlerUser;
 use Chandler\Security\Authenticator;
 use Chandler\Database\DatabaseConnection;
+use lfkeitel\phptotp\{Base32, Totp};
 
 final class AuthPresenter extends OpenVKPresenter
 {
@@ -132,9 +133,27 @@ final class AuthPresenter extends OpenVKPresenter
             if(!$user)
                 $this->flashFail("err", "Не удалось войти", "Неверное имя пользователя или пароль. <a href='/restore.pl'>Забыли пароль?</a>");
             
-            if(!$this->authenticator->login($user->id, $this->postParam("password")))
+            if(!$this->authenticator->verifyCredentials($user->id, $this->postParam("password")))
                 $this->flashFail("err", "Не удалось войти", "Неверное имя пользователя или пароль. <a href='/restore.pl'>Забыли пароль?</a>");
+
+            $secret = $user->related("profiles.user")->fetch()["2fa_secret"];
+            $code   = $this->postParam("code");
+            if(!is_null($secret)) {
+                $this->template->_template = "Auth/LoginSecondFactor.xml";
+                $this->template->login     = $this->postParam("login");
+                $this->template->password  = $this->postParam("password");
+
+                if(is_null($code))
+                    return;
+
+                $ovkUser = new User($user->related("profiles.user")->fetch());
+                if(!($code === (new Totp)->GenerateToken(Base32::decode($secret)) || $ovkUser->use2faBackupCode((int) $code))) {
+                    $this->flash("err", "Не удалось войти", tr("incorrect_2fa_code"));
+                    return;
+                }
+            }
             
+            $this->authenticator->authenticate($user->id);
             $this->redirect($redirUrl ?? "/id" . $user->related("profiles.user")->fetch()->id, static::REDIRECT_TEMPORARY);
             exit;
         }
@@ -176,8 +195,20 @@ final class AuthPresenter extends OpenVKPresenter
             $this->flash("err", "Ошибка манипулирования токеном", "Токен недействителен или истёк");
             $this->redirect("/");
         }
+
+        $this->template->is2faEnabled = $request->getUser()->is2faEnabled();
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
+            if($request->getUser()->is2faEnabled()) {
+                $user = $request->getUser();
+                $code = $this->postParam("code");
+                $secret = $user->get2faSecret();
+                if(!($code === (new Totp)->GenerateToken(Base32::decode($secret)) || $user->use2faBackupCode((int) $code))) {
+                    $this->flash("err", tr("error"), tr("incorrect_2fa_code"));
+                    return;
+                }
+            }
+
             $user = $request->getUser()->getChandlerUser();
             $this->db->table("ChandlerTokens")->where("user", $user->getId())->delete(); #Logout from everywhere
             

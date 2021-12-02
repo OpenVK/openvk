@@ -9,6 +9,9 @@ use openvk\Web\Models\Repositories\Albums;
 use openvk\Web\Models\Repositories\Videos;
 use openvk\Web\Models\Repositories\Notes;
 use openvk\Web\Models\Repositories\Vouchers;
+use Chandler\Security\Authenticator;
+use lfkeitel\phptotp\{Base32, Totp};
+use chillerlan\QRCode\QRCode;
 
 final class UserPresenter extends OpenVKPresenter
 {
@@ -283,6 +286,12 @@ final class UserPresenter extends OpenVKPresenter
             if($_GET['act'] === "main" || $_GET['act'] == NULL) {
                 if($this->postParam("old_pass") && $this->postParam("new_pass") && $this->postParam("repeat_pass")) {
                     if($this->postParam("new_pass") === $this->postParam("repeat_pass")) {
+                        if($this->user->identity->is2faEnabled()) {
+                            $code = $this->postParam("code");
+                            if(!($code === (new Totp)->GenerateToken(Base32::decode($this->user->identity->get2faSecret())) || $this->user->identity->use2faBackupCode((int) $code)))
+                                $this->flashFail("err", tr("error"), tr("incorrect_2fa_code"));
+                        }
+
                         if(!$this->user->identity->getChandlerUser()->updatePassword($this->postParam("new_pass"), $this->postParam("old_pass")))
                             $this->flashFail("err", tr("error"), tr("error_old_password"));
                     } else {
@@ -375,5 +384,65 @@ final class UserPresenter extends OpenVKPresenter
             : "main";
         $this->template->user   = $user;
         $this->template->themes = Themepacks::i()->getThemeList();
+    }
+
+    function renderTwoFactorAuthSettings(): void
+    {
+        $this->assertUserLoggedIn();
+
+        if($this->user->identity->is2faEnabled()) {
+            if($_SERVER["REQUEST_METHOD"] === "POST") {
+                if(!Authenticator::verifyHash($this->postParam("password"), $this->user->identity->getChandlerUser()->getRaw()->passwordHash))
+                    $this->flashFail("err", tr("error"), tr("incorrect_password"));
+
+                $this->user->identity->generate2faBackupCodes();
+                $this->template->_template = "User/TwoFactorAuthCodes.xml";
+                $this->template->codes = $this->user->identity->get2faBackupCodes();
+                return;
+            }
+
+            $this->redirect("/settings");
+        }
+
+        $secret = Base32::encode(Totp::GenerateSecret(16));
+        if($_SERVER["REQUEST_METHOD"] === "POST") {
+            $this->willExecuteWriteAction();
+
+            if(!Authenticator::verifyHash($this->postParam("password"), $this->user->identity->getChandlerUser()->getRaw()->passwordHash))
+                $this->flashFail("err", tr("error"), tr("incorrect_password"));
+
+            $secret = $this->postParam("secret");
+            $code   = $this->postParam("code");
+
+            if($code === (new Totp)->GenerateToken(Base32::decode($secret))) {
+                $this->user->identity->set2fa_secret($secret);
+                $this->user->identity->save();
+
+                $this->flash("succ", tr("two_factor_authentication_enabled"), tr("two_factor_authentication_enabled_description"));
+                $this->redirect("/settings");
+            }
+
+            $this->template->secret = $secret;
+            $this->flash("err", tr("error"), tr("incorrect_code"));
+        } else {
+            $this->template->secret = $secret;
+        }
+
+        $issuer                 = OPENVK_ROOT_CONF["openvk"]["appearance"]["name"];
+        $email                  = $this->user->identity->getEmail();
+        $this->template->qrCode = substr((new QRCode)->render("otpauth://totp/$issuer:$email?secret=$secret&issuer=$issuer"), 22);
+    }
+
+    function renderDisableTwoFactorAuth(): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        if(!Authenticator::verifyHash($this->postParam("password"), $this->user->identity->getChandlerUser()->getRaw()->passwordHash))
+            $this->flashFail("err", tr("error"), tr("incorrect_password"));
+
+        $this->user->identity->set2fa_secret(NULL);
+        $this->user->identity->save();
+        $this->flashFail("succ", tr("information_-1"), tr("two_factor_authentication_disabled_message"));
     }
 }
