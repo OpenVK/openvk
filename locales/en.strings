@@ -364,7 +364,7 @@
 "two_factor_authentication_enabled" = "Two-factor authentication is enabled. Your page is protected.";
 "two_factor_authentication_login" = "You have two-factor authentication enabled. To login, enter the code received in the application.";
 
-"two_factor_authentication_settings_1" = "Two-factor authentication via TOTP can be used even without internet. To do this, you need a code generation app. For example, <b>Google Authenticator</b> for Android and iOS or <b>FOSS Aegis and andOTP</b> for Android.";
+"two_factor_authentication_settings_1" = "Two-factor authentication via TOTP can be used even without internet. To do this, you need a code generation app. For example, <b>Google Authenticator</b> for Android and iOS or <b>FOSS Aegis and andOTP</b> for Android. Make sure the date and time is set correctly on your phone.";
 "two_factor_authentication_settings_2" = "Using the app for two-factor authentication, scan the QR code below:";
 "two_factor_authentication_settings_3" = "or manually enter the given secret key: <b>$1</b>.";
 "two_factor_authentication_settings_4" = "Now enter the code that the application gave you and the password for your page so that we can confirm that you really are.";
