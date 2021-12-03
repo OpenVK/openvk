@@ -471,29 +471,42 @@ class User extends RowModel
     
     function getClubs(int $page = 1, bool $admin = false): \Traversable
     {
-        $sel = $this->getRecord()->related("subscriptions.follower")->page($page, OPENVK_DEFAULT_PER_PAGE);
-        foreach($sel->where("model", "openvk\\Web\\Models\\Entities\\Club") as $target) {
-            $target = (new Clubs)->get($target->target);
-            if($admin && !$target->canBeModifiedBy($this)) continue;
-            if(!$target) continue;
-            
-            yield $target;
+        if($admin) {
+            $id     = $this->getId();
+            $query  = "SELECT `id` FROM `groups` WHERE `owner` = ? UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?";
+            $query .= " LIMIT " . OPENVK_DEFAULT_PER_PAGE . " OFFSET " . ($page - 1) * OPENVK_DEFAULT_PER_PAGE;
+
+            $sel = DatabaseConnection::i()->getConnection()->query($query, $id, $id);
+            foreach($sel as $target) {
+                $target = (new Clubs)->get($target->id);
+                if(!$target) continue;
+
+                yield $target;
+            }
+        } else {
+            $sel = $this->getRecord()->related("subscriptions.follower")->page($page, OPENVK_DEFAULT_PER_PAGE);
+            foreach($sel->where("model", "openvk\\Web\\Models\\Entities\\Club") as $target) {
+                $target = (new Clubs)->get($target->target);
+                if(!$target) continue;
+
+                yield $target;
+            }
         }
     }
     
     function getClubCount(bool $admin = false): int
     {
-        $result = [];
-        $sel = $this->getRecord()->related("subscriptions.follower");
-        foreach($sel->where("model", "openvk\\Web\\Models\\Entities\\Club") as $target) {
-            $target = (new Clubs)->get($target->target);
-            if(!$target) continue;
-            if($admin && !$target->canBeModifiedBy($this)) continue;
+        if($admin) {
+            $id    = $this->getId();
+            $query = "SELECT COUNT(*) AS `cnt` FROM (SELECT `id` FROM `groups` WHERE `owner` = ? UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?) u0;";
 
-            $result[] = $target;
+            return (int) DatabaseConnection::i()->getConnection()->query($query, $id, $id)->fetch()->cnt;
+        } else {
+            $sel = $this->getRecord()->related("subscriptions.follower");
+            $sel = $sel->where("model", "openvk\\Web\\Models\\Entities\\Club");
+
+            return sizeof($sel);
         }
-        
-        return sizeof($result);
     }
     
     function getPinnedClubs(): \Traversable
