@@ -162,11 +162,14 @@
                             {/if}
                         </a>
                         <a href="/settings" class="link">{_"my_settings"}</a>
-                        <div style="height: 1px;background: #CCC;margin: 4px 0 2px;"></div>
-                        {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+                        {var canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+                        {var canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
+                        {var menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0}
+                        <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $menuLinksAvaiable" style="height: 1px;background: #CCC;margin: 4px 0 2px;"></div>
+                        {if $canAccessAdminPanel}
                             <a href="/admin" class="link">Админ-панель</a>
                         {/if}
-                        {if $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
+                        {if $canAccessHelpdesk}
                             <a href="/support/tickets" class="link">Helpdesk</a>
                         {/if}
                         <a
