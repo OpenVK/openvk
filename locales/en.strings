@@ -492,6 +492,8 @@
 "coins_one" = "One voice";
 "coins_other" = "$1 voices";
 
+"users_gifts" = "Gifts";
+
 /* Support */
 
 "support_opened" = "Opened";
