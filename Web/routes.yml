@@ -25,6 +25,8 @@ routes:
       handler: "Support->delete"
     - url: "/language"
       handler: "About->language"
+    - url: "/language/{text}.js"
+      handler: "About->exportJSLanguage"
     - url: "/donate"
       handler: "About->donate"
     - url: "/kb/{slug}"

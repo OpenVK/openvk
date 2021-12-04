@@ -9,8 +9,10 @@
         <link rel="shortcut icon" href="/assets/packages/static/openvk/img/icon.ico" />
         <meta name="application-name" content="{$instance_name}" />
         <meta n:ifset="$csrfToken" name="csrf" value="{$csrfToken}" />
+        <script src="/language/{php echo getLanguage()}.js" crossorigin="anonymous"></script>
 		{script "js/node_modules/jquery/dist/jquery.min.js"}
         {script "js/node_modules/umbrellajs/umbrella.min.js"}
+        {script "js/l10n.js"}
         {script "js/openvk.cls.js"}
         
         {ifset $thisUser}

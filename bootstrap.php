@@ -115,6 +115,11 @@ function setLanguage($lg): void
         trigger_error("The language '$lg' is not available", E_USER_NOTICE);
 }
 
+function getLanguage(): string
+{
+    return Session::i()->get("lang", "ru");
+}
+
 function getLanguages(): array
 {
     return chandler_parse_yaml(OPENVK_ROOT . "/locales/list.yml")['list'];

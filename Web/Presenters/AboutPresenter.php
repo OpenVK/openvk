@@ -2,6 +2,7 @@
 namespace openvk\Web\Presenters;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Repositories\{Users, Managers};
+use openvk\Web\Util\Localizator;
 use Chandler\Session\Session;
 
 final class AboutPresenter extends OpenVKPresenter
@@ -64,6 +65,17 @@ final class AboutPresenter extends OpenVKPresenter
         if(!is_null($_GET['lg'])){
             setLanguage($_GET['lg']);
         }
+    }
+
+    function renderExportJSLanguage($lg = NULL): void
+    {
+        $localizer = Localizator::i();
+        $lang      = $lg;
+        if(is_null($lg))
+            $this->throwError(404, "Not found", "Language is not found");
+        header("Content-Type: application/javascript");
+        echo "window.lang = " . json_encode($localizer->export($lang)) . ";"; // привет хардкод :DDD
+        exit;
     }
 
     function renderSandbox(): void
