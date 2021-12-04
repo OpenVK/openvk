@@ -564,6 +564,8 @@
 "coins_many" = "$1 голосов";
 "coins_other" = "$1 голосов";
 
+"users_gifts" = "Подарки";
+
 /* Support */
 
 "support_opened" = "Открытые";
