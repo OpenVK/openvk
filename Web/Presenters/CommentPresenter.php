@@ -38,6 +38,10 @@ final class CommentPresenter extends OpenVKPresenter
         $entity = $repo->get($eId);
         if(!$entity) $this->notFound();
         
+        $flags = 0;
+        if($this->postParam("as_group") === "on")
+            $flags |= 0b10000000;
+
         $photo = NULL;
         if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
             try {
@@ -75,6 +79,7 @@ final class CommentPresenter extends OpenVKPresenter
         $comment->setTarget($entity->getId());
         $comment->setContent($this->postParam("text"));
         $comment->setCreated(time());
+        $comment->setFlags($flags);
         $comment->save();
         
         if(!is_null($photo))
