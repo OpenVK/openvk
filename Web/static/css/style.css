@@ -145,6 +145,12 @@ a {
     right: 0;
 }
 
+.navigation .group_link {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .navigation_footer {
     padding: 0;
 }
@@ -344,6 +350,12 @@ table {
 
 .content_divider {
     margin-bottom: 6px;
+}
+
+.menu_divider {
+    height: 1px;
+    background: #CCC;
+    margin: 4px 0 2px;
 }
 
 .page_status {

@@ -18,12 +18,6 @@
     </div>
 {/block}
 
-{block actions}
-    <div class="tile">
-        <a href="javascript:alert('Не запилил')" class="profile_link">Поиск групп</a>
-    </div>
-{/block}
-
 {* BEGIN ELEMENTS DESCRIPTION *}
 
 {block tabs}
@@ -62,7 +56,7 @@
                 <tr>
                     <td width="120" valign="top"><span class="nobold">{_actions}: </span></td>
                     <td>
-                        <a href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}">
+                        <a href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" id="_pinGroup" data-group-name="{$x->getName()}" data-group-id="{$x->getId()}">
                             {if $clubPinned}
                                 {_remove_from_left_menu}
                             {else}

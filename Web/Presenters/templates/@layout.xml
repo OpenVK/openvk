@@ -167,7 +167,7 @@
                         {var canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
                         {var canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
                         {var menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0}
-                        <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $menuLinksAvaiable" style="height: 1px;background: #CCC;margin: 4px 0 2px;"></div>
+                        <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $menuLinksAvaiable" class="menu_divider"></div>
                         {if $canAccessAdminPanel}
                             <a href="/admin" class="link">Админ-панель</a>
                         {/if}
@@ -179,23 +179,22 @@
                           href="{$menuItem['url']}"
                           target="_blank"
                           class="link">{$menuItem["name"]}</a>
-                        <div n:if="$thisUser->getPinnedClubCount() > 0" style="height: 1px;background: #CCC;margin: 4px 0 2px;"></div>
-                        <a
-                          n:foreach="$thisUser->getPinnedClubs() as $club"
-                          href="{$club->getURL()}"
-                          style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"
-                          class="link">{$club->getName()}</a>
-                        
-                        <a
-                          n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable']"
-                          href="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
-                            <img
-                                src="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}"
-                                alt="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}"
-                                class="psa-poster"
-                                style="max-width: 100%; margin-top: 50px;" />
-                        </a>
+                        <div id="_groupListPinnedGroups">
+                            <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
+                            <a
+                            n:foreach="$thisUser->getPinnedClubs() as $club"
+                            href="{$club->getURL()}"
+                            class="link group_link">{$club->getName()}</a>
 
+                            <a
+                            n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable']"
+                            href="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
+                                <img
+                                    src="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}"
+                                    alt="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}"
+                                    class="psa-poster group_link" />
+                            </a>
+                        </div>
                     {else}
                         <a href="/support" class="link">Поддержка</a>
                         <a href="/logout" class="link">Выйти</a>

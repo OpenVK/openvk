@@ -85,6 +85,47 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
         return e.preventDefault();
     });
 
+    u("#_pinGroup").on("click", async function(e) {
+        e.preventDefault();
+
+        let link = u(this).attr("href");
+        let thisButton = u(this);
+        let groupName = u(this).attr("data-group-name");
+        let groupId = u(this).attr("data-group-id");
+        let list = u('#_groupListPinnedGroups');
+
+        let req = await ky(link);
+        if(req.ok == false) {
+            NewNotification(tr('error'), tr('error_1'), null);
+        }
+
+        // Adding a divider if not already there
+        if(list.nodes[0].children.length == 0) {
+            list.nodes[0].append(u('<div class="menu_divider"></div>').first());
+        }
+
+        // Changing the button name
+        if(thisButton.html().trim() == tr('remove_from_left_menu')) {
+            thisButton.html(tr('add_to_left_menu'));
+            for(let i = 0; i < list.nodes[0].children.length; i++) {
+                let element = list.nodes[0].children[i];
+                if(element.pathname == '/club'+groupId) {
+                    element.remove();
+                }
+            }
+        }else{
+            thisButton.html(tr('remove_from_left_menu'));
+            list.nodes[0].append(u('<a href="/club' + groupId + '" class="link group_link">' + groupName + '</a>').first());
+        }
+
+        // Adding the group to the left group list
+        if(list.nodes[0].children[0].className != "menu_divider" || list.nodes[0].children.length == 1) {
+            list.nodes[0].children[0].remove();
+        }
+
+        return false;
+    });
+
 }); //END ONREADY DECLS
 
 function repostPost(id, hash) {
