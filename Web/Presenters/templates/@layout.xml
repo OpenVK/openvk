@@ -108,7 +108,7 @@
                         </a>
                     </div>
                     <div class="link">
-                        <a href="/logout">{_"header_log_out"}</a>
+                        <a href="/logout?hash={urlencode($csrfToken)}">{_"header_log_out"}</a>
                     </div>
                     <div class="link">
                         <form action="/search" method="get">
