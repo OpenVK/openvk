@@ -1560,6 +1560,10 @@ body.scrolled .toTop:hover {
     margin-top: -1px;
 }
 
+.paginator-at-bottom {
+    margin-top: -6px;
+}
+
 .paginator a {
     border-top: 3px solid transparent;
     display: inline-block;
