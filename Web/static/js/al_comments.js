@@ -7,6 +7,6 @@ u(".comment-reply").on("click", function(e) {
     let postId    = comment.data("post-id");
     console.log(postId)
     
-    inputbox.text("[" + (fromGroup ? "club" : "id") + "" + authorId + "|" + authorNm + "], ");
+    inputbox.text("[" + (fromGroup ? "club" : "id") + authorId + "|" + authorNm + "], ");
     inputbox.trigger("focusin");
 });
