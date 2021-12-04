@@ -56,7 +56,7 @@
                 <tr>
                     <td width="120" valign="top"><span class="nobold">{_actions}: </span></td>
                     <td>
-                        <a href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" id="_pinGroup" data-group-name="{$x->getName()}" data-group-id="{$x->getId()}">
+                        <a href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
                             {if $clubPinned}
                                 {_remove_from_left_menu}
                             {else}

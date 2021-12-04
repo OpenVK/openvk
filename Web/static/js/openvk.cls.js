@@ -91,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
         let link = u(this).attr("href");
         let thisButton = u(this);
         let groupName = u(this).attr("data-group-name");
-        let groupId = u(this).attr("data-group-id");
+        let groupUrl = u(this).attr("data-group-url");
         let list = u('#_groupListPinnedGroups');
 
         let req = await ky(link);
@@ -109,13 +109,13 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
             thisButton.html(tr('add_to_left_menu'));
             for(let i = 0; i < list.nodes[0].children.length; i++) {
                 let element = list.nodes[0].children[i];
-                if(element.pathname == '/club'+groupId) {
+                if(element.pathname == groupUrl) {
                     element.remove();
                 }
             }
         }else{
             thisButton.html(tr('remove_from_left_menu'));
-            list.nodes[0].append(u('<a href="/club' + groupId + '" class="link group_link">' + groupName + '</a>').first());
+            list.nodes[0].append(u('<a href="' + groupUrl + '" class="link group_link">' + groupName + '</a>').first());
         }
 
         // Adding the group to the left group list
