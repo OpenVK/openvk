@@ -208,8 +208,8 @@ abstract class OpenVKPresenter extends SimplePresenter
             }
             
             $this->template->ticketAnsweredCount = (new Tickets)->getTicketsCountByuId($this->user->id, 1);
-            if($user->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0))
-                $this->template->helpdeskTicketAnsweredCount = (new Tickets)->getTicketCount(0);
+            if($user->can("write")->model("openvk\Web\Models\Entities\TicketReply")->whichBelongsTo(0))
+                $this->template->helpdeskTicketNotAnsweredCount = (new Tickets)->getTicketCount(0);
         }
         
         setlocale(LC_TIME, ...(explode(";", tr("__locale"))));
