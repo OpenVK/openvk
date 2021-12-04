@@ -34,11 +34,10 @@
     
     <div style="padding: 8px;">
         {include "../components/paginator.xml", conf => (object) [
-            "page"     => $page,
-            "count"    => $count,
-            "amount"   => sizeof($gifts),
-            "perPage"  => OPENVK_DEFAULT_PER_PAGE,
-            "atBottom" => true,
+            "page"    => $page,
+            "count"   => $count,
+            "amount"  => sizeof($gifts),
+            "perPage" => OPENVK_DEFAULT_PER_PAGE,
         ]}
     </div>
 {/block}

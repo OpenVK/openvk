@@ -172,7 +172,11 @@
                             <a href="/admin" class="link">Админ-панель</a>
                         {/if}
                         {if $canAccessHelpdesk}
-                            <a href="/support/tickets" class="link">Helpdesk</a>
+                            <a href="/support/tickets" class="link">Helpdesk
+                                {if $helpdeskTicketAnsweredCount > 0}
+                                    (<b>{$helpdeskTicketAnsweredCount}</b>)
+                                {/if}
+                            </a>
                         {/if}
                         <a
                           n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem"

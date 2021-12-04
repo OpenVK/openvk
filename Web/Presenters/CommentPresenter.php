@@ -38,6 +38,10 @@ final class CommentPresenter extends OpenVKPresenter
         $entity = $repo->get($eId);
         if(!$entity) $this->notFound();
         
+        $flags = 0;
+        if($this->postParam("as_group") === "on")
+            $flags |= 0b10000000;
+
         $photo = NULL;
         if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
             try {
@@ -69,13 +73,18 @@ final class CommentPresenter extends OpenVKPresenter
         if(empty($this->postParam("text")) && !$photo && !$video)
             $this->flashFail("err", "Не удалось опубликовать комментарий", "Комментарий пустой или слишком большой.");
         
-        $comment = new Comment;
-        $comment->setOwner($this->user->id);
-        $comment->setModel(get_class($entity));
-        $comment->setTarget($entity->getId());
-        $comment->setContent($this->postParam("text"));
-        $comment->setCreated(time());
-        $comment->save();
+        try {
+            $comment = new Comment;
+            $comment->setOwner($this->user->id);
+            $comment->setModel(get_class($entity));
+            $comment->setTarget($entity->getId());
+            $comment->setContent($this->postParam("text"));
+            $comment->setCreated(time());
+            $comment->setFlags($flags);
+            $comment->save();
+        } catch (\LengthException $ex) {
+            $this->flashFail("err", "Не удалось опубликовать комментарий", "Комментарий слишком большой.");
+        }
         
         if(!is_null($photo))
             $comment->attach($photo);

@@ -42,6 +42,11 @@
                     <input type="checkbox" name="nsfw" /> {_"contains_nsfw"}
                 </label>
             </div>
+            <div n:if="!($postOpts ?? true) && !is_null($thisUser) && !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)" class="post-opts">
+                <label>
+                    <input type="checkbox" name="as_group" /> {_"comment_as_group"}
+                </label>
+            </div>
             <input type="file" class="postFileSel" id="postFilePic" name="_pic_attachment" accept="image/*" style="display:none;" />
             <input type="file" class="postFileSel" id="postFileVid" name="_vid_attachment" accept="video/*" style="display:none;" />
             <input type="hidden" name="type" value="1" />
