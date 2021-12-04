@@ -541,6 +541,7 @@
 "error_old_password" = "Old password does not match";
 "error_new_password" = "New password does not match";
 "error_shorturl_incorrect" = "The short address has an incorrect format.";
+"error_repost_fail" = "Failed to share post";
 
 "forbidden" = "Access error";
 "forbidden_comment" = "This user\'s privacy settings do not allow you to look at his page.";
@@ -551,6 +552,8 @@
 "photo_saved" = "Photo saved";
 "photo_saved_comment" = "New profile picture will appear on your page";
 
+"shared_succ" = "The post will appear on your wall. Click on the notification to go to your wall.";
+
 /* Admin actions */
 
 "login_as" = "Login as $1";
@@ -558,8 +561,20 @@
 "ban_user_action" = "Ban user";
 "warn_user_action" = "Warn user";
 
-/* Paginator */
+/* Paginator (deprecated) */
 
 "paginator_back" = "Back";
 "paginator_page" = "Page $1";
 "paginator_next" = "Next";
+
+/* Dialogs */
+
+"ok" = "OK";
+"yes" = "Yes";
+"no" = "No";
+"cancel" = "Cancel";
+"edit_action" = "Change";
+
+"warning" = "Warning";
+"question_confirm" = "This action can't be undone. Do you really wanna do it?";
+
