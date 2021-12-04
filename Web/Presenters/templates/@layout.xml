@@ -197,7 +197,8 @@
                             <img
                                 src="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}"
                                 alt="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}"
-                                class="psa-poster" />
+                                class="psa-poster" 
+                                style="max-width: 100%; margin-top: 50px;" />
                         </a>
                     {else}
                         <a href="/support" class="link">Поддержка</a>
