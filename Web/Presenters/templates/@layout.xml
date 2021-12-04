@@ -190,15 +190,15 @@
                             href="{$club->getURL()}"
                             class="link group_link">{$club->getName()}</a>
 
-                            <a
-                            n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable']"
-                            href="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
-                                <img
-                                    src="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}"
-                                    alt="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}"
-                                    class="psa-poster group_link" />
-                            </a>
                         </div>
+                        <a
+                        n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable']"
+                        href="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
+                            <img
+                                src="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}"
+                                alt="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}"
+                                class="psa-poster" />
+                        </a>
                     {else}
                         <a href="/support" class="link">Поддержка</a>
                         <a href="/logout" class="link">Выйти</a>
