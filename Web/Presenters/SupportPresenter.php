@@ -56,6 +56,7 @@ final class SupportPresenter extends OpenVKPresenter
 
                 $helpdeskChat = OPENVK_ROOT_CONF["openvk"]["credentials"]["telegram"]["helpdeskChat"];
                 if($helpdeskChat) {
+                    $serverUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
                     $ticketText    = ovk_proc_strtr($this->postParam("text"), 1500);
                     $telegramText  = "<b>📬 Новый тикет!</b>\n\n";
                     $telegramText .= "<a href='$serverUrl/support/reply/{$ticket->getId()}'>{$ticket->getName()}</a>\n";
