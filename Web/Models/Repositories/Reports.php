@@ -22,7 +22,7 @@ class Reports
     
     function getReports(int $state = 0, int $page = 1): \Traversable
     {
-        foreach($this->reports->where(["deleted" => 0])->page($page, 15) as $t)
+        foreach($this->reports->where(["deleted" => 0])->order("created DESC")->page($page, 15) as $t)
             yield new Report($t);
     }
     

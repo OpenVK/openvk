@@ -70,15 +70,20 @@ class Report extends RowModel
         else return null;
     }
 
+    function getAuthor(): RowModel
+    {
+        return (new Posts)->get($this->getContentId())->getOwner();
+    }
+
     // TODO: Localize that
     function banUser()
     {
-        $this->getUser()->ban("Banned by report. Ask Technical support for ban reason");
+        $this->getAuthor()->ban("Banned by report. Ask Technical support for ban reason");
     }
 
     function deleteContent()
     {
-        $this->getUser()->adminNotify("Ваш контент, который вы опубликовали " . $this->getContentObject()->getPublicationTime() . " был удалён модераторами инстанса. За повторные или серьёзные нарушения вас могут заблокировать.");
+        $this->getAuthor()->adminNotify("Ваш контент, который вы опубликовали " . $this->getContentObject()->getPublicationTime() . " был удалён модераторами инстанса. За повторные или серьёзные нарушения вас могут заблокировать.");
         $this->getContentObject()->delete();
         $this->setDeleted(1);
         $this->save();

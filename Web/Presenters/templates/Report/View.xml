@@ -3,20 +3,20 @@
 {block title}{$report->getReason()}{/block}
 
 {block header}
-    <a href="/admin/reports">Список репортов</a>
+    <a href="/admin/reports">{_list_of_reports}</a>
     »
-    Жалоба №{$report->getId()}
+    {_report_number}{$report->getId()}
 {/block}
 
 {block content}
-<p><b>Комментарий: </b>{$report->getReason()}</p>
+<p><b>{_comment}: </b>{$report->getReason()}</p>
 {include "../components/post/oldpost.xml", post => $report->getContentObject()}
 <center>
     <form action="/admin/reportAction{$report->getId()}" method="post">
         <input type="hidden" name="hash" value="{$csrfToken}" />
-        <input type="submit" name="ban" value="Забанить пользователя" class="button">
-        <input type="submit" name="delete" value="Удалить контент" class="button">
-        <input type="submit" name="ignore" value="Проигнорировать" class="button">
+        <input type="submit" name="ban" value="{_ban_user_action}" class="button">
+        <input type="submit" name="delete" value="{_delete}" class="button">
+        <input type="submit" name="ignore" value="{_ignore_report}" class="button">
     </form>
 </center>
 {/block}

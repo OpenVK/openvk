@@ -518,6 +518,11 @@
 "support_new_title" = "Enter the topic of your ticket";
 "support_new_content" = "Describe the issue or suggestion";
 
+"ignore_report" = "Ignore report";
+"report_number" = "Report #";
+"list_of_reports" = "List of reports";
+"text_of_the_post" = "Text of the post";
+
 "comment" = "Comment";
 "sender" = "Sender";
 

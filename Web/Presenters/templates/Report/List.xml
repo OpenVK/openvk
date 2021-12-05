@@ -2,10 +2,10 @@
 {var iterator = iterator_to_array($reports)}
 {var page     = $paginatorConf->page}
 
-{block title}Список жалоб{/block}
+{block title}{_list_of_reports}{/block}
 
 {block header}
-    Список жалоб
+    {_list_of_reports}
 {/block}
 
 {block actions}
@@ -19,13 +19,13 @@
 {/block}
 
 {block preview}
-    <center><img src="/assets/packages/static/openvk/img/note_icon.png" alt="" style="margin-top: 17px;" /></center>
+    <center><img src="/assets/packages/static/openvk/img/note_icon.png" style="margin-top: 17px;" /></center>
 {/block}
 
 {block name}
-    {$x->getReason()}
+    {$x->getAuthor()->getCanonicalName()}
 {/block}
 
 {block description}
-    Текст поста: {$x->getContentObject()->getText()}
+    {_text_of_the_post}: {$x->getContentObject()->getText()}
 {/block}

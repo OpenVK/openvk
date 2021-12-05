@@ -18,6 +18,7 @@ final class ReportPresenter extends OpenVKPresenter
     
     function renderList(): void
     {
+        $this->assertUserLoggedIn();
         $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
 
         $this->template->reports = $this->reports->getReports(0, (int)($this->queryParam("p") ?? 1));
@@ -32,6 +33,7 @@ final class ReportPresenter extends OpenVKPresenter
     
     function renderView(int $id): void
     {
+        $this->assertUserLoggedIn();
         $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
 
         $report = $this->reports->get($id);
