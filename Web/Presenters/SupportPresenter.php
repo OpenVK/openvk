@@ -7,6 +7,7 @@ use openvk\Web\Models\Entities\TicketComment;
 use openvk\Web\Models\Repositories\TicketComments;
 // use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\RowModel;
+use openvk\Web\Util\Telegram;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 use Chandler\Session\Session;
@@ -52,6 +53,17 @@ final class SupportPresenter extends OpenVKPresenter
                 $ticket->setText($this->postParam("text"));
                 $ticket->setcreated(time());
                 $ticket->save();
+
+                $helpdeskChat = OPENVK_ROOT_CONF["openvk"]["credentials"]["telegram"]["helpdeskChat"];
+                if($helpdeskChat) {
+                    $ticketText    = ovk_proc_strtr($this->postParam("text"), 1500);
+                    $telegramText  = "<b>📬 Новый тикет!</b>\n\n";
+                    $telegramText .= "<a href='$serverUrl/support/reply/{$ticket->getId()}'>{$ticket->getName()}</a>\n";
+                    $telegramText .= "$ticketText\n\n";
+                    $telegramText .= "Автор: <a href='$serverUrl{$ticket->getUser()->getURL()}'>{$ticket->getUser()->getCanonicalName()}</a> ({$ticket->getUser()->getRegistrationIP()})\n";
+                    Telegram::send($helpdeskChat, $telegramText);
+                }
+
                 header("HTTP/1.1 302 Found");
                 header("Location: /support/view/" . $ticket->getId());
             } else {
