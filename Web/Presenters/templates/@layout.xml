@@ -173,7 +173,7 @@
                         {/if}
                         {if $canAccessHelpdesk}
                             <a href="/support/tickets" class="link">Helpdesk
-                                {if $helpdeskTicketAnsweredCount > 0}
+                                {if $helpdeskTicketNotAnsweredCount > 0}
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
                                 {/if}
                             </a>
