@@ -175,6 +175,14 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
+                            <span class="nobold">{_"personal_website"}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="website" value="{$user->getWebsite()}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
                             <span class="nobold">{_"city"}: </span>
                         </td>
                         <td>

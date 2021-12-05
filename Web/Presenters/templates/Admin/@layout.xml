@@ -69,9 +69,19 @@
                                                 Группы
                                             </a>
                                         </li>
+                                    </ul>
+                                    <div class="aui-nav-heading">
+                                        <strong>Платные услуги</strong>
+                                    </div>
+                                    <ul class="aui-nav">
                                         <li>
-                                            <a href="/admin/files">
-                                                Загруженные файлы
+                                            <a href="/admin/vouchers">
+                                                {_vouchers}
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="/admin/gifts">
+                                                Подарки
                                             </a>
                                         </li>
                                     </ul>
@@ -120,10 +130,28 @@
                         </nav>
                     </div>
                     <section class="aui-page-panel-content">
+                        {ifset $flashMessage}
+                            {var type = ["err" => "error", "warn" => "warning", "info" => "basic", "succ" => "success"][$flashMessage->type]}
+                            <div class="aui-message aui-message-{$type}" style="margin-bottom: 15px;">
+                                <p class="title">
+                                    <strong>{$flashMessage->title}</strong>
+                                </p>
+                                <p>{$flashMessage->msg|noescape}</p>
+                            </div>
+                        {/ifset}
+                        
+                        {ifset preHeader}
+                            {include preHeader}
+                        {/ifset}
+                        
                         <header class="aui-page-header">
                             <div class="aui-page-header-inner">
                                 <div class="aui-page-header-main">
-                                    <h1>{include heading}</h1>
+                                    {ifset headingWrap}
+                                        {include headingWrap}
+                                    {else}
+                                        <h1>{include heading}</h1>
+                                    {/ifset}
                                 </div>
                             </div>
                         </header>
@@ -141,5 +169,13 @@
                 </section>
             </footer>
         </div>
+        
+        {script "js/node_modules/jquery/dist/jquery.min.js"}
+        {script "js/node_modules/@atlassian/aui/dist/aui/aui-prototyping.js"}
+        <script>AJS.tabs.setup();</script>
+        
+        {ifset scripts}
+            {include scripts}
+        {/ifset}
     </body>
 </html>

@@ -6,7 +6,8 @@ use Chandler\Session\Session;
 use Chandler\Security\Authenticator;
 use Latte\Engine as TemplatingEngine;
 use openvk\Web\Models\Entities\IP;
-use openvk\Web\Models\Repositories\{IPs, Users, APITokens};
+use openvk\Web\Themes\Themepacks;
+use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets};
 
 abstract class OpenVKPresenter extends SimplePresenter
 {
@@ -32,6 +33,11 @@ abstract class OpenVKPresenter extends SimplePresenter
             "code"  => $code,
         ]));
     }
+
+	protected function setTempTheme(string $theme): void
+	{
+		Session::i()->set("_tempTheme", $theme);
+	}
     
     protected function flashFail(string $type, string $title, ?string $message = NULL, ?int $code = NULL): void
     {
@@ -178,7 +184,7 @@ abstract class OpenVKPresenter extends SimplePresenter
     {
         $user = Authenticator::i()->getUser();
         
-        $this->template->isXmas = intval(date('d')) >= 15 && date('m') == 12 || intval(date('d')) <= 15 && date('m') == 1 ? true : false;
+        $this->template->isXmas = intval(date('d')) >= 1 && date('m') == 12 || intval(date('d')) <= 15 && date('m') == 1 ? true : false;
         
         if(!is_null($user)) {
             $this->user = (object) [];
@@ -201,6 +207,9 @@ abstract class OpenVKPresenter extends SimplePresenter
                 $this->user->identity->save();
             }
             
+            $this->template->ticketAnsweredCount = (new Tickets)->getTicketsCountByuId($this->user->id, 1);
+            if($user->can("write")->model("openvk\Web\Models\Entities\TicketReply")->whichBelongsTo(0))
+                $this->template->helpdeskTicketNotAnsweredCount = (new Tickets)->getTicketCount(0);
         }
         
         setlocale(LC_TIME, ...(explode(";", tr("__locale"))));
@@ -216,12 +225,21 @@ abstract class OpenVKPresenter extends SimplePresenter
             $theme = $this->user->identity->getTheme();                                                                                                                        
             if(!is_null($theme) && $theme->overridesTemplates()) {                                                                                                             
                 $this->template->_templatePath = $theme->getBaseDir() . "/tpl";                                                                                                
-            }                                                                                                                                                                  
+            }                                                                                                                 
         }
         
         if(!is_null(Session::i()->get("_error"))) {
             $this->template->flashMessage = json_decode(Session::i()->get("_error"));
             Session::i()->set("_error", NULL);
         }
+
+		if(Session::i()->get("_tempTheme"))
+           	$this->template->theme = Themepacks::i()[Session::i()->get("_tempTheme", "ovk")];
+		else if($this->requestParam("themePreview"))
+			$this->template->theme = Themepacks::i()[$this->requestParam("themePreview")];
+        else if($this->user->identity !== null && $this->user->identity->getTheme())
+			$this->template->theme = $this->user->identity->getTheme();
+
+		// Знаю, каша ебаная, целестора рефактор всё равно сделает :)))
     }
 } 

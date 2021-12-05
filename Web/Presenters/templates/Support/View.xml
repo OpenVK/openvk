@@ -1,5 +1,5 @@
 {extends "../@layout.xml"}
-{block title}Помощь{/block}
+{block title}{_menu_help}{/block}
 
 {block header}
     {$ticket->getName()}
@@ -13,15 +13,15 @@
             {$ticket->getName()}
         </b>
     </a>
-    <br></b>Статус: {$ticket->getStatus()}
+    <br></b>{_status}: {$ticket->getStatus()}
 </div>
 <div class="text" style="padding-top: 10px;border-bottom: #ECECEC solid 1px;">
-    {$ticket->getContext()}
+    {$ticket->getText()|noescape}
     <br></br>
 </div>
 <div style="padding-top: 5px;">
     {$ticket->getTime()}&nbsp;|&nbsp;
-    <a href="/support/delete/{$id}?hash={$csrfToken}">Удалить</a>
+    <a href="/support/delete/{$id}?hash={$csrfToken}">{_delete}</a>
 </div>
 {if $ticket->getType() !== 2}
 <br>
@@ -33,12 +33,13 @@
                 </div>
                 <input type="hidden" name="hash" value="{$csrfToken}" />
                 <br>
-                <input type="submit" value="Написать" class="button">
+                <input type="submit" value="{_write}" class="button">
             </form>
         </div>
 {/if}
 </br>
-<p n:if="!$comments">Комментарии отсутствуют</p>
+<p n:if="!$comments">{_no_comments}</p>
+{var $printedSupportGreeting = false}
 <table n:foreach="$comments as $comment" border="0" style="font-size: 11px;" class="post">
    <tbody>
       <tr>
@@ -49,7 +50,7 @@
          {else}
          <td width="54" valign="top">
             <img
-                src="https://avatars.mds.yandex.net/get-zen_doc/164147/pub_5b60816e2dc67000a862253e_5b6081d4e9151400a9f48625/scale_1200"
+                src="{$comment->getAvatar()}"
                 style="max-width: 50px; filter: hue-rotate({$comment->getColorRotation()}deg);" />
          </td>
          {/if}
@@ -58,24 +59,40 @@
             <div class="post-author">
                <a href="{$comment->getUser()->getURL()}"><b>
                {$comment->getUser()->getFullName()}
-               </b></a> написал<br>
+               </b></a> {($comment->getUser()->isFemale() ? tr("post_writes_f") : tr("post_writes_m"))}<br>
                <a href="#" class="date">{$comment->getTime()}</a>
             </div>
             {elseif ($comment->getUType() === 1)}
             <div class="post-author">
-               <a href="#"><b>
-               {=OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["supportName"]} №{$comment->getAgentNumber()}
-               </b></a> написал<br>
+               <a href="javascript:false">
+                   <b>
+                       {$comment->getAuthorName()}
+                   </b>
+               </a>
+               {_post_writes_m}<br>
                <a href="#" class="date">{$comment->getTime()}</a>
             </div>
             {/if}
             <div class="post-content" id="{$comment->getId()}">
                <div class="text" id="text{$comment->getId()}">
-                      {$comment->getContext()|noescape}
+                   {if $comment->getUType() === 1 && !$printedSupportGreeting}
+                       {var $printedSupportGreeting = true}
+                       {tr("support_greeting_hi", $ticket->getUser()->getFullName())}
+                       <br/>
+                       <br/>
+                       
+                       {$comment->getText()|noescape}
+                       <br/>
+                       <br/>
+                       
+                       {tr("support_greeting_regards", OPENVK_ROOT_CONF["openvk"]["appearance"]["name"])|noescape}
+                   {else}
+                       {$comment->getText()|noescape}
+                   {/if}
                </div>
                {if $comment->getUType() === 0}
                <div class="post-menu">
-                  <a href="/support/comment/{$comment->getId()}/delete">Удалить</a>
+                  <a href="/support/comment/{$comment->getId()}/delete">{_delete}</a>
                </div>
                {/if}
             </div>

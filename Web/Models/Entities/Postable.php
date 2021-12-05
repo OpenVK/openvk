@@ -29,9 +29,12 @@ abstract class Postable extends Attachable
         return DB::i()->getContext()->table($this->tableName);
     }
     
-    function getOwner(): RowModel
+    function getOwner(bool $real = false): RowModel
     {
         $oid = (int) $this->getRecord()->owner;
+        if(!$real && $this->isAnonymous())
+            $oid = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["account"];
+        
         if($oid > 0)
             return (new Users)->get($oid);
         else
@@ -70,10 +73,10 @@ abstract class Postable extends Attachable
     {
         return (new Comments)->getCommentsCountByTarget($this);
     }
-	
-	function getLastComments()
+
+    function getLastComments(int $count): \Traversable
     {
-        return (new Comments)->getLastCommentsByTarget($this);
+        return (new Comments)->getLastCommentsByTarget($this, $count);
     }
     
     function getLikesCount(): int
@@ -84,17 +87,52 @@ abstract class Postable extends Attachable
         ]));
     }
     
-    function toggleLike(User $user): void
+    // TODO add pagination
+    function getLikers(): \Traversable
+    {
+        $sel = DB::i()->getContext()->table("likes")->where([
+            "model"  => static::class,
+            "target" => $this->getRecord()->id,
+        ]);
+        
+        foreach($sel as $like)
+            yield (new Users)->get($like->origin);
+    }
+    
+    function isAnonymous(): bool
+    {
+        return (bool) $this->getRecord()->anonymous;
+    }
+    
+    function toggleLike(User $user): bool
     {
         $searchData = [
             "origin" => $user->getId(),
             "model"  => static::class,
             "target" => $this->getRecord()->id,
         ];
-        if(sizeof(DB::i()->getContext()->table("likes")->where($searchData)) > 0)
+
+        if(sizeof(DB::i()->getContext()->table("likes")->where($searchData)) > 0) {
             DB::i()->getContext()->table("likes")->where($searchData)->delete();
-        else
+            return false;
+        }
+
+        DB::i()->getContext()->table("likes")->insert($searchData);
+        return true;
+    }
+
+    function setLike(bool $liked, User $user): void
+    {
+        $searchData = [
+            "origin" => $user->getId(),
+            "model"  => static::class,
+            "target" => $this->getRecord()->id,
+        ];
+
+        if($liked)
             DB::i()->getContext()->table("likes")->insert($searchData);
+        else
+            DB::i()->getContext()->table("likes")->where($searchData)->delete();
     }
     
     function hasLikeFrom(User $user): bool

@@ -10,6 +10,7 @@
 {var isMain       = $mode === 'main'}
 {var isPrivacy    = $mode === 'privacy'}
 {var isFinance    = $mode === 'finance'}
+{var isFinanceTU  = $mode === 'finance.top-up'}
 {var isInterface  = $mode === 'interface'}
 
        <div class="tabs">
@@ -19,8 +20,8 @@
         <div n:attr="id => ($isPrivacy ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isPrivacy ? 'act_tab_a' : 'ki')" href="/settings?act=privacy">{_"privacy"}</a>
         </div>
-        <div n:attr="id => ($isFinance ? 'activetabs' : 'ki')" class="tab">
-            <a n:attr="id => ($isFinance ? 'act_tab_a' : 'ki')" href="/settings?act=finance">{_points}</a>
+        <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce']" n:attr="id => (($isFinance || $isFinanceTU) ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => (($isFinance || $isFinanceTU) ? 'act_tab_a' : 'ki')" href="/settings?act=finance">{_points}</a>
         </div>
         <div n:attr="id => ($isInterface ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isInterface ? 'act_tab_a' : 'ki')" href="/settings?act=interface">{_"interface"}</a>
@@ -58,6 +59,14 @@
                             <input type="password" name="repeat_pass" style="width: 100%;" />
                         </td>
                     </tr>
+                    <tr n:if="$user->is2faEnabled()">
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"2fa_code"}</span>
+                        </td>
+                        <td>
+                            <input type="text" name="code" style="width: 100%;" />
+                        </td>
+                    </tr>
                     <tr>
                         <td>
                             
@@ -67,6 +76,70 @@
                             <input type="submit" value="{_"change_password"}" class="button" />
                         </td>
                     </tr>
+                </tbody>
+            </table>
+            <br/>
+            <h4>{_two_factor_authentication}</h4>
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                <tbody>
+                    {if $user->is2faEnabled()}
+                        <tr>
+                            <td>
+                                <div class="accent-box">
+                                    {_two_factor_authentication_enabled}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">
+                                <a class="button" href="javascript:viewBackupCodes()">{_view_backup_codes}</a>
+                                <a class="button" href="javascript:disableTwoFactorAuth()">{_disable}</a>
+                            </td>
+                        </tr>
+
+                        <script>
+                            function viewBackupCodes() {
+                                MessageBox("Просмотр резервных кодов", `
+                                    <form id="back-codes-view-form" method="post" action="/settings/2fa">
+                                        <label for="password">Пароль</label>
+                                        <input type="password" id="password" name="password" required />
+                                        <input type="hidden" name="hash" value={$csrfToken} />
+                                    </form>
+                                `, ["Просмотреть", "Отменить"], [
+                                    () => {
+                                        document.querySelector("#back-codes-view-form").submit();
+                                    }, Function.noop
+                                ]);
+                            }
+
+                            function disableTwoFactorAuth() {
+                                MessageBox("Отключить 2FA", `
+                                    <form id="two-factor-auth-disable-form" method="post" action="/settings/2fa/disable">
+                                        <label for="password">Пароль</label>
+                                        <input type="password" id="password" name="password" required />
+                                        <input type="hidden" name="hash" value={$csrfToken} />
+                                    </form>
+                                `, ["Отключить", "Отменить"], [
+                                    () => {
+                                        document.querySelector("#two-factor-auth-disable-form").submit();
+                                    }, Function.noop
+                                ]);
+                            }
+                        </script>
+                    {else}
+                        <tr>
+                            <td>
+                                <div class="accent-box">
+                                    {_two_factor_authentication_disabled}
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">
+                                <a class="button" href="/settings/2fa">{_connect}</a>
+                            </td>
+                        </tr>
+                    {/if}
                 </tbody>
             </table>
             <br/>
@@ -265,10 +338,25 @@
                 <b>
                     {_on_your_account}<br/>
                     <span style="font-size: 50px;">{$thisUser->getCoins()}</span><br/>
-                    {_points_count}
+                    {_points_count}<br/><br/>
+                    <small><a href="?act=finance.top-up">[{_have_voucher}?]</a></small>
                 </b>
             </p>
         </div>
+        
+        {elseif $isFinanceTU}
+        
+        <p>{_voucher_explanation} {_voucher_explanation_ex}</p>
+        <form action="/settings?act=finance.top-up" method="POST" enctype="multipart/form-data">
+            <input type="text" name="key0" size="6" placeholder="123456" required="required" style="display: inline-block; width: 50px; text-align: center;" /> -
+            <input type="text" name="key1" size="6" placeholder="789012" required="required" style="display: inline-block; width: 50px; text-align: center;" /> -
+            <input type="text" name="key2" size="6" placeholder="345678" required="required" style="display: inline-block; width: 50px; text-align: center;" /> -
+            <input type="text" name="key3" size="6" placeholder="90ABCD" required="required" style="display: inline-block; width: 50px; text-align: center;" />
+            <br/><br/>
+            
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+            <input type="submit" value="{_redeem}" class="button" />
+        </form>
         
         {elseif $isInterface}
         

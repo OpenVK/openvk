@@ -29,6 +29,9 @@ CREATE TABLE `postViews` (
   `timestamp` bigint(20) UNSIGNED NOT NULL,
   `verified` tinyint(3) UNSIGNED NOT NULL DEFAULT 1
 ) ENGINE=Aria DEFAULT CHARSET=utf8;
+
+ALTER TABLE `postViews` ADD INDEX(`owner`, `group`, `subscribed`);
+ALTER TABLE `notifications` ADD INDEX(`recipientType`, `recipientId`, `timestamp`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

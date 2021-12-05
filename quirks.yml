@@ -1,0 +1,46 @@
+# Rating bar behaviour
+# If rating overflows 100 older versions of OpenVK
+# used to render a full bar, but original VK used to
+# treat last two digits of rating as % of bar fullness.
+# 
+# Example:
+# Rating 20 - Old OVK: 20%, VK: 20%
+# Rating 100 - Old OVK: 100%, VK: 100%
+# Rating 1983 - Old OVK: 100%, VK: 83%
+# 
+# Possible values:
+# + Set this option to 1 if you want to use quirky OpenVK behaviour
+# + Set this option to 0 if you want to use the canonical VK behaviour
+profile.rating-bar-behaviour: 0
+
+# Blob deletion behaviour
+# Current VK and old OpenVK don't delete files automatically,
+# thus leaving ability to access user-deleted medias by direct URL.
+# This config option allows to change this.
+# 
+# Possible values:
+# + Set this option to 2 if you want to delete files upon user-initiated deletion
+#  (this option will prohibit restoring any deleted media)
+# + Set this option to 1 if you want to delete files once they're removed from DB completely
+#  (this option most likely won't have any meaningful effect, please use option 2)
+# + Set this option to 0 if you want to use quirky VK and OpenVK behaviour
+blobs.erase-upon-deletion: 0
+
+# Allow graffiti in comments?
+# VK used to provide ability to post graffitis in comments, but only via
+# mobile client.
+# 
+# Possible values:
+# + Set this option to 1 if you want to use quirky VK Mobile behaviour (yes graffiti in comments)
+# + Set this option to 0 if you want to use VK Desktop behaviour (no graffiti in comments)
+comments.allow-graffiti: 0
+
+# Maximum recursion depth of likes on reposts
+# Restriction on the recursion depth of repost likes.
+# For example, if the value is 5, likes will be set for a maximum of 5 posts, even if there are more posts in the repost hierarchy.
+# Needed to protect against attacks
+# 
+# Possible values:
+# + Set this option to -1 if you want to disable the limit
+# + Set this option to any non-negative number to be this limit
+wall.repost-liking-recursion-limit: 10

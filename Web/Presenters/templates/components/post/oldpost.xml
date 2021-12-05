@@ -7,6 +7,11 @@
                 <img
                     src="{$author->getAvatarURL()}"
                     width="50" />
+                       {if !$post->isPostedOnBehalfOfGroup() && !$compact}
+                            <span n:if="$author->isOnline()" class="post-online">
+                                {_online}
+                            </span>
+                        {/if}
             </td>
             <td width="100%" valign="top">
                 <div class="post-author">
@@ -35,11 +40,9 @@
                     {/if}
                     <br/>
                     <a href="/wall{$post->getPrettyId()}" class="date">
+                        {$post->getPublicationTime()}
                         {if $post->isPinned()}
-                            {$post->getPublicationTime()},
-                            {_pinned}
-                        {else}
-                            {$post->getPublicationTime()}
+                        , {_pinned}
                         {/if}
                     </a>
                 </div>
@@ -91,7 +94,7 @@
                         &nbsp;|&nbsp;
                     {/if}
                     
-                    <a class="post-share-button" href="/wall{$post->getPrettyId()}/repost?hash={rawurlencode($csrfToken)}">
+                    <a class="post-share-button" href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')">
                         {if $post->getRepostCount() > 0}
                             {_"share"}
                             (<b>{$post->getRepostCount()}</b>)
@@ -107,8 +110,8 @@
                         class="post-like-button"
                                 data-liked="{(int) $liked}"
                                 data-likes="{$post->getLikesCount()}">
-                            <div class="heart" style="{if $liked}opacity: 1;{else}opacity: 0.4;{/if}"></div>
-                            <span class="likeCnt">{$post->getLikesCount()}</span>
+                            <div class="heart" id="{if $liked}liked{/if}"></div>
+                            <span class="likeCnt">{if $post->getLikesCount() > 0}{$post->getLikesCount()}{/if}</span>
                         </a>
                     </div>
                 </div>

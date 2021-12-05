@@ -17,7 +17,7 @@ class Manager extends RowModel
         return $this->getRecord()->id;
     }
         
-    function getUserId(): string
+    function getUserId(): int
     {
         return $this->getRecord()->user;
     }
@@ -27,7 +27,7 @@ class Manager extends RowModel
         return (new Users)->get($this->getRecord()->user);
     }
 
-    function getClubId(): string
+    function getClubId(): int
     {
         return $this->getRecord()->club;
     }
@@ -40,6 +40,16 @@ class Manager extends RowModel
     function getComment(): string
     {
         return is_null($this->getRecord()->comment) ? "" : $this->getRecord()->comment;
+    }
+
+    function isHidden(): bool
+    {
+        return (bool) $this->getRecord()->hidden;
+    }
+
+    function isClubPinned(): bool
+    {
+        return (bool) $this->getRecord()->club_pinned;
     }
         
     use Traits\TSubscribable;

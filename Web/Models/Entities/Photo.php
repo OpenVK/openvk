@@ -9,11 +9,13 @@ class Photo extends Media
     protected $tableName     = "photos";
     protected $fileExtension = "jpeg";
     
+    const ALLOWED_SIDE_MULTIPLIER = 7;
+    
     protected function saveFile(string $filename, string $hash): bool
     {
         $image = Image::fromFile($filename);
-        if(($image->height >= ($image->width * pi())) || ($image->width >= ($image->height * pi())))
-            throw new ISE("Invalid layout: expected layout that matches (x, ?!>3x)");
+        if(($image->height >= ($image->width * Photo::ALLOWED_SIDE_MULTIPLIER)) || ($image->width >= ($image->height * Photo::ALLOWED_SIDE_MULTIPLIER)))
+            throw new ISE("Invalid layout: image is too wide/short");
         
         $image->save($this->pathFromHash($hash), 92, Image::JPEG);
         
@@ -40,5 +42,21 @@ class Photo extends Media
             throw new ISE("Cannot isolate unpresisted image. Please save() it first.");
         
         DB::i()->getContext()->table("album_relations")->where("media", $this->getRecord()->id)->delete();
+    }
+    
+    static function fastMake(int $owner, string $description = "", array $file, ?Album $album = NULL, bool $anon = false): Photo
+    {
+        $photo = new static;
+        $photo->setOwner($owner);
+        $photo->setDescription(iconv_substr($description, 0, 36) . "...");
+        $photo->setAnonymous($anon);
+        $photo->setCreated(time());
+        $photo->setFile($file);
+        $photo->save();
+        
+        if(!is_null($album))
+            $album->addPhoto($photo);
+        
+        return $photo;
     }
 }

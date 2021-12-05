@@ -5,11 +5,14 @@ use openvk\Web\Models\Repositories\Users as UsersRepo;
 
 final class Users extends VKAPIRequestHandler
 {
-    function get(string $user_ids, string $fields = "", int $offset = 0, int $count = 100): array 
+    function get(string $user_ids = "0", string $fields = "", int $offset = 0, int $count = 100): array 
     {
         $this->requireUser();
 
         $users = new UsersRepo;
+		if($user_ids == "0")
+			$user_ids = (string) $this->getUser()->getId();
+		
         $usrs = explode(',', $user_ids);
         $response;
 
@@ -44,54 +47,76 @@ final class Users extends VKAPIRequestHandler
 
                 foreach($flds as $field) { 
                     switch ($field) {
-                        case 'verified':
-                            $response[$i]->verified = intval($usr->isVerified());
-                            break;
-                        case 'sex':
-                            $response[$i]->sex = $this->getUser()->isFemale() ? 1 : 2;
-                            break;
-                        case 'has_photo':
-                            $response[$i]->has_photo = is_null($usr->getAvatarPhoto()) ? 0 : 1;
-                            break;
-                        case 'photo_max_orig':
-                            $response[$i]->photo_max_orig = $usr->getAvatarURL();
-                            break;
-                        case 'photo_max':
-                            $response[$i]->photo_max = $usr->getAvatarURL();
-                            break;
-			case 'status':
-			    $response[$i]->status = $usr->getStatus();
-			    break;
-			case 'screen_name':
-                            $response[$i]->screen_name = $usr->getShortCode();
-                            break;
-                        case 'music':
-                            $response[$i]->music = $usr->getFavoriteMusic();
-                            break;
-                        case 'movies':
-                            $response[$i]->movies = $usr->getFavoriteFilms();
-                            break;
-                        case 'tv':
-                            $response[$i]->tv = $usr->getFavoriteShows();
-                            break;
-                        case 'books':
-                            $response[$i]->books = $usr->getFavoriteBooks();
-                            break;
-                        case 'city':
-                            $response[$i]->city = $usr->getCity();
-                            break;
-                        case 'interests':
-                            $response[$i]->interests = $usr->getInterests();
-                            break;	    
+			            case 'verified':
+			                $response[$i]->verified = intval($usr->isVerified());
+			                break;
+			            case 'sex':
+			                $response[$i]->sex = $this->getUser()->isFemale() ? 1 : 2;
+			                break;
+			            case 'has_photo':
+			                $response[$i]->has_photo = is_null($usr->getAvatarPhoto()) ? 0 : 1;
+			                break;
+			            case 'photo_max_orig':
+			                $response[$i]->photo_max_orig = $usr->getAvatarURL();
+			                break;
+			            case 'photo_max':
+			                $response[$i]->photo_max = $usr->getAvatarURL();
+			                break;
+						case 'status':
+							if($usr->getStatus() != null)
+						    	$response[$i]->status = $usr->getStatus();
+						    break;
+						case 'screen_name':
+							if($usr->getShortCode() != null)
+			                	$response[$i]->screen_name = $usr->getShortCode();
+			                break;
+			            case 'friend_status':
+							switch($usr->getSubscriptionStatus($this->getUser())) {
+								case 3:
+								case 0:
+									$response[$i]->friend_status = $usr->getSubscriptionStatus($this->getUser());
+									break;
+								case 1:
+									$response[$i]->friend_status = 2;
+									break;
+								case 2:
+									$response[$i]->friend_status = 1;
+									break;
+							}
+			            	break;
+			            case 'last_seen':
+			            	if ($usr->onlineStatus() == 0) {
+				            	$response[$i]->last_seen = (object) [
+				            		"platform" => 1,
+				            		"time" => $usr->getOnline()->timestamp()
+				            	];
+			            	}
+			            case 'music':
+			                $response[$i]->music = $usr->getFavoriteMusic();
+			                break;
+			            case 'movies':
+			                $response[$i]->movies = $usr->getFavoriteFilms();
+			                break;
+			            case 'tv':
+			                $response[$i]->tv = $usr->getFavoriteShows();
+			                break;
+			            case 'books':
+			                $response[$i]->books = $usr->getFavoriteBooks();
+			                break;
+			            case 'city':
+			                $response[$i]->city = $usr->getCity();
+			                break;
+			            case 'interests':
+			                $response[$i]->interests = $usr->getInterests();
+			                break;	    
                     }
                 }
 
-		// НУЖЕН фикс - либо из-за моего дебилизма, либо из-за сегментации котлеток некоторые пользовали отображаются как онлайн, хотя лол, если зайти на страницу, то оный уже офлайн
-		if($usr->getOnline()->timestamp() + 2505600 > time()) {
-		    $response[$i]->online = 1;
-		}else{
-		    $response[$i]->online = 0;
-		}
+				if($usr->getOnline()->timestamp() + 300 > time()) {
+				    $response[$i]->online = 1;
+				}else{
+				    $response[$i]->online = 0;
+				}
 
             }
         }

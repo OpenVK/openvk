@@ -89,7 +89,22 @@ class Club extends RowModel
     {
         return (new Users)->get($this->getRecord()->owner);
     }
+
+    function getOwnerComment(): string
+    {
+        return is_null($this->getRecord()->owner_comment) ? "" : $this->getRecord()->owner_comment;
+    }
+
+    function isOwnerHidden(): bool
+    {
+        return (bool) $this->getRecord()->owner_hidden;
+    }
     
+    function isOwnerClubPinned(): bool
+    {
+        return (bool) $this->getRecord()->owner_club_pinned;
+    }
+
     function getDescription(): ?string
     {
         return $this->getRecord()->about;
@@ -108,6 +123,11 @@ class Club extends RowModel
     function getOpennesStatus(): int
     {
         return $this->getRecord()->closed;
+    }
+
+    function getAdministratorsListDisplay(): int
+    {
+        return $this->getRecord()->administrators_list_display;
     }
     
     function getType(): int
@@ -259,21 +279,11 @@ class Club extends RowModel
         }
     }
     
-    function getManagers(int $page = 1): \Traversable
+    function getManagers(int $page = 1, bool $ignoreHidden = false): \Traversable
     {
         $rels = $this->getRecord()->related("group_coadmins.club")->page($page, 6);
-        
-        foreach($rels as $rel) {
-            $rel = (new Users)->get($rel->user);
-            if(!$rel) continue;
-
-            yield $rel;
-        }
-    }
-
-    function getManagersWithComment(int $page = 1): \Traversable
-    {
-        $rels = $this->getRecord()->related("group_coadmins.club")->where("comment IS NOT NULL")->page($page, 10);
+        if($ignoreHidden)
+            $rels = $rels->where("hidden", false);
         
         foreach($rels as $rel) {
             $rel = (new Managers)->get($rel->id);
@@ -282,15 +292,23 @@ class Club extends RowModel
             yield $rel;
         }
     }
-    
-    function getManagersCount(): int
-    {
-        return sizeof($this->getRecord()->related("group_coadmins.club")) + 1;
-    }
 
-    function getManagersCountWithComment(): int
+    function getManager(User $user, bool $ignoreHidden = false): ?Manager
     {
-        return sizeof($this->getRecord()->related("group_coadmins.club")->where("comment IS NOT NULL")) + 1;
+        $manager = (new Managers)->getByUserAndClub($user->getId(), $this->getId());
+
+        if ($ignoreHidden && $manager !== null && $manager->isHidden())
+            return null;
+
+        return $manager;
+    }
+    
+    function getManagersCount(bool $ignoreHidden = false): int
+    {
+        if($ignoreHidden)
+            return sizeof($this->getRecord()->related("group_coadmins.club")->where("hidden", false)) + (int) !$this->isOwnerHidden();
+
+        return sizeof($this->getRecord()->related("group_coadmins.club")) + 1;
     }
     
     function addManager(User $user, ?string $comment = NULL): void
@@ -318,6 +336,11 @@ class Club extends RowModel
         
         return !is_null($this->getRecord()->related("group_coadmins.club")->where("user", $id)->fetch());
     }
+
+    function getWebsite(): ?string
+	{
+		return $this->getRecord()->website;
+	}
     
     use Traits\TSubscribable;
 }

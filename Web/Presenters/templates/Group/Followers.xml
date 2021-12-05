@@ -1,5 +1,6 @@
 {extends "../@listView.xml"}
-{var iterator = $followers}
+{var $Manager = openvk\Web\Models\Entities\Manager::class}
+{var iterator = $onlyShowManagers ? $managers : $followers}
 {var count    = $paginatorConf->count}
 {var page     = $paginatorConf->page}
 {var perPage  = 6}
@@ -9,6 +10,8 @@
 {block header}
     <a href="{$club->getURL()}">{$club->getCanonicalName()}</a>
     » {_followers}
+    <a n:if="!$onlyShowManagers" href="/club{$club->getId()}/followers?onlyAdmins=1" style="float: right;">{_all_followers}</a>
+    <a n:if="$onlyShowManagers" href="/club{$club->getId()}/followers" style="float: right;">{_only_administrators}</a>
 {/block}
 
 {block actions}
@@ -17,45 +20,98 @@
 
 {* BEGIN ELEMENTS DESCRIPTION *}
 
+{block tabs}
+	{if $club->canBeModifiedBy($thisUser)}
+		<div class="tab">
+			<a href="/club{$club->getId()}/edit">
+				{_main}
+			</a>
+		</div>
+		<div id="activetabs" class="tab">
+			<a id="act_tab_a" href="/club{$club->getId()}/followers">
+				{_followers}
+			</a>
+		</div>
+		<div class="tab">
+			<a href="/club{$club->getId()}/stats">
+				{_statistics}
+			</a>
+		</div>
+	{/if}
+{/block}
+
 {block link|strip|stripHtml}
-    /id{$x->getId()}
+    /id{$x instanceof $Manager ? $x->getUserId() : $x->getId()}
 {/block}
 
 {block preview}
-    <img src="{$x->getAvatarURL()}" alt="{$x->getCanonicalName()}" width=75 />
+    <img src="{$x instanceof $Manager ? $x->getUser()->getAvatarURL() : $x->getAvatarURL()}" alt="{$x instanceof $Manager ? $x->getUser()->getCanonicalName() : $x->getCanonicalName()}" width=75 />
 {/block}
 
 {block name}
-    {$x->getCanonicalName()}
+    {$x instanceof $Manager ? $x->getUser()->getCanonicalName() : $x->getCanonicalName()}
 {/block}
 
 {block description}
+    {var user    = $x instanceof $Manager ? $x->getUser() : $x}
+    {var manager = $x instanceof $Manager ? $x : $club->getManager($user, !$club->canBeModifiedBy($thisUser))}
     <table>
         <tbody>
             <tr>
                 <td width="120" valign="top"><span class="nobold">{_"gender"}: </span></td>
-                <td>{$x->isFemale() ? "женский" : "мужской"}</td>
+                <td>{$user->isFemale() ? "женский" : "мужской"}</td>
             </tr>
             <tr>
                 <td width="120" valign="top"><span class="nobold">{_"registration_date"}: </span></td>
-                <td>{$x->getRegistrationTime()}</td>
+                <td>{$user->getRegistrationTime()}</td>
             </tr>
             <tr>
                 <td width="120" valign="top"><span class="nobold">{_role}: </span></td>
                 <td>
-                    {$club->canBeModifiedBy($x) ? tr("administrator") : tr("follower")}
+                    {$club->getOwner()->getId() == $user->getId() ? !$club->isOwnerHidden() || $club->canBeModifiedBy($thisUser) : !is_null($manager) ? tr("administrator") : tr("follower")}
                 </td>
             </tr>
-            <tr n:if="$club->canBeModifiedBy($thisUser ?? NULL) && $club->getOwner()->getId() !== $x->getId()">
+            <tr n:if="$manager && !empty($manager->getComment()) || $club->getOwner()->getId() === $user->getId() && !empty($club->getOwnerComment()) && (!$club->isOwnerHidden() || $club->canBeModifiedBy($thisUser))">
+                <td width="120" valign="top"><span class="nobold">{_comment}: </span></td>
+                <td>
+                    {if $club->getOwner()->getId() === $user->getId()}
+                        {$club->getOwnerComment()}
+                    {else}
+                        {$manager->getComment()}
+                    {/if}
+                </td>
+            </tr>
+            <tr n:if="$club->canBeModifiedBy($thisUser ?? NULL)">
                 <td width="120" valign="top"><span class="nobold">{_actions}: </span></td>
                 <td>
-                    <a href="/club{$club->getId()}/setAdmin.jsp?user={$x->getId()}&hash={rawurlencode($csrfToken)}">
-                        {if $club->canBeModifiedBy($x)}
+                    <a href="/club{$club->getId()}/setAdmin.jsp?user={$user->getId()}&hash={rawurlencode($csrfToken)}" n:if="$club->getOwner()->getId() !== $user->getId()">
+                        {if $manager}
                             {_devote}
                         {else}
                             {_promote_to_admin}
                         {/if}
                     </a>
+                    {if $manager}
+                         | 
+                        <a href="javascript:setClubAdminComment('{$club->getId()}', '{$manager->getUserId()}', '{rawurlencode($csrfToken)}')">
+                            {_set_comment}
+                        </a>
+                    {/if}
+                    <a n:if="$club->getOwner()->getId() === $user->getId()" href="javascript:setClubAdminComment('{$club->getId()}', '{$club->getOwner()->getId()}', '{rawurlencode($csrfToken)}')">
+                        {_set_comment}
+                    </a>
+                    {if $manager}
+                         | 
+                        <a href="/club{$club->getId()}/setAdmin.jsp?user={$user->getId()}&hidden={(int) !$manager->isHidden()}&hash={rawurlencode($csrfToken)}">
+                            {if $manager->isHidden()}{_hidden_yes}{else}{_hidden_no}{/if}
+                        </a>
+                    {/if}
+                    {if $club->getOwner()->getId() == $user->getId()}
+                         | 
+                        <a href="/club{$club->getId()}/setAdmin.jsp?user={$user->getId()}&hidden={(int) !$club->isOwnerHidden()}&hash={rawurlencode($csrfToken)}">
+                            {if $club->isOwnerHidden()}{_hidden_yes}{else}{_hidden_no}{/if}
+                        </a>
+                    {/if}
                 </td>
             </tr>
         </tbody>

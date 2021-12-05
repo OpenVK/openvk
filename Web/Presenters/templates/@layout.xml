@@ -1,14 +1,18 @@
+{var instance_name = OPENVK_ROOT_CONF['openvk']['appearance']['name']}
+
 <html n:if="!isset($parentModule) || substr($parentModule, 0, 21) === 'libchandler:absolute.'">
     <head>
         <title>
-            {ifset title}{include title} - {/ifset}OpenVK
+            {ifset title}{include title} - {/ifset}{$instance_name}
         </title>
         <meta charset="utf-8" />
         <link rel="shortcut icon" href="/assets/packages/static/openvk/img/icon.ico" />
-        <meta name="application-name" content="OpenVK" />
+        <meta name="application-name" content="{$instance_name}" />
         <meta n:ifset="$csrfToken" name="csrf" value="{$csrfToken}" />
+        <script src="/language/{php echo getLanguage()}.js" crossorigin="anonymous"></script>
 		{script "js/node_modules/jquery/dist/jquery.min.js"}
         {script "js/node_modules/umbrellajs/umbrella.min.js"}
+        {script "js/l10n.js"}
         {script "js/openvk.cls.js"}
         
         {ifset $thisUser}
@@ -16,11 +20,11 @@
                 {css "css/nsfw-posts.css"}
             {/if}
             
-            {if !is_null($thisUser->getTheme())}
-                {var theme = $thisUser->getTheme()}
-                {if $theme->inheritDefault()}
+            {if $theme !== null}
+            	{if $theme->inheritDefault()}
                     {css "css/style.css"}
                     {css "css/dialog.css"}
+                    {css "css/notifications.css"}
                     {if $isXmas}
                         {css "css/xmas.css"}
                     {/if}
@@ -28,11 +32,12 @@
                 
                 <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/styles.css" />
                 {if $isXmas}
-                    <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/xmas.css" />
+                    <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/xmas.css" />
                 {/if}
             {else}
                 {css "css/style.css"}
                 {css "css/dialog.css"}
+                {css "css/notifications.css"}
                 {if $isXmas}
                     {css "css/xmas.css"}
                 {/if}
@@ -53,6 +58,7 @@
             {css "css/style.css"}
             {css "css/dialog.css"}
             {css "css/nsfw-posts.css"}
+            {css "css/notifications.css"}
             
             {if $isXmas}
                 {css "css/xmas.css"}
@@ -71,6 +77,7 @@
         </div>
         
         <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['bellsAndWhistles']['testLabel']" id="test-label">FOR TESTING PURPOSES ONLY</div>
+		<div class="notifications_global_wrap"></div>
         <div class="dimmer"></div>
         <div class="toTop">
             ⬆ Вверх
@@ -78,8 +85,8 @@
         
         <div class="layout">
             <div id="xhead" class="dm"></div>
-            <div class="page_header">
-                <a href="/" class="home_button" title="OpenVK">openvk</a>
+            <div class="page_header {if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME}page_custom_header{/if}">
+                <a href="/" class="home_button {if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME}home_button_custom{/if}" title="{$instance_name}">{$instance_name}</a>
                 <div n:if="isset($thisUser) ? !$thisUser->isBanned() : true" class="header_navigation">
                     {ifset $thisUser}
                     <div class="link">
@@ -95,14 +102,17 @@
                         <a href="/search">{_"header_search"}</a>
                     </div>
                     <div class="link">
-                        <a href="/support">{_"header_help"}</a>
+                        <a href="/support">
+                            {_"header_help"}
+                            <b n:if="$ticketAnsweredCount > 0">({$ticketAnsweredCount})</b>    
+                        </a>
                     </div>
                     <div class="link">
-                        <a href="/logout">{_"header_log_out"}</a>
+                        <a href="/logout?hash={urlencode($csrfToken)}">{_"header_log_out"}</a>
                     </div>
                     <div class="link">
                         <form action="/search" method="get">
-                            <input type="search" name="query" placeholder="{_"header_search"}" style="background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; background-color: #fff; padding-left: 18px;width: 120px;" />
+                            <input type="search" name="query" placeholder="{_"header_search"}" style="height: 20px;background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; background-color: #fff; padding-left: 18px;width: 120px;" />
                         </form>
                     </div>
 					
@@ -154,12 +164,19 @@
                             {/if}
                         </a>
                         <a href="/settings" class="link">{_"my_settings"}</a>
-                        <div style="height: 1px;background: #CCC;margin: 4px 0 2px;"></div>
-                        {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+                        {var canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+                        {var canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
+                        {var menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0}
+                        <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $menuLinksAvaiable" class="menu_divider"></div>
+                        {if $canAccessAdminPanel}
                             <a href="/admin" class="link">Админ-панель</a>
                         {/if}
-                        {if $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
-                            <a href="/support/tickets" class="link">Helpdesk</a>
+                        {if $canAccessHelpdesk}
+                            <a href="/support/tickets" class="link">Helpdesk
+                                {if $helpdeskTicketAnsweredCount > 0}
+                                    (<b>{$helpdeskTicketNotAnsweredCount}</b>)
+                                {/if}
+                            </a>
                             <a href="/admin/reports" class="link">Reports</a>
                         {/if}
                         <a
@@ -167,17 +184,23 @@
                           href="{$menuItem['url']}"
                           target="_blank"
                           class="link">{$menuItem["name"]}</a>
-                        
+                        <div id="_groupListPinnedGroups">
+                            <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
+                            <a
+                            n:foreach="$thisUser->getPinnedClubs() as $club"
+                            href="{$club->getURL()}"
+                            class="link group_link">{$club->getName()}</a>
+
+                        </div>
                         <a
-                          n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable']"
-                          href="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
+                        n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable']"
+                        href="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
                             <img
                                 src="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}"
                                 alt="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}"
-                                class="psa-poster"
+                                class="psa-poster" 
                                 style="max-width: 100%; margin-top: 50px;" />
                         </a>
-
                     {else}
                         <a href="/support" class="link">Поддержка</a>
                         <a href="/logout" class="link">Выйти</a>
@@ -248,18 +271,24 @@
                 <a href="/language" class="link">{_footer_choose_language}</a>
                 <a href="/privacy" class="link">{_footer_privacy}</a>
             </div>
-            <p>OpenVK <a href="/about:openvk2">{php echo OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {$dbVersion}</p>
-            <p n:ifcontent>
+            <p>OpenVK <a href="/about:openvk">{php echo OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {$dbVersion}</p>
+            <p n:ifcontent="ifcontent">
                 {php echo OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]}
             </p>
         </div>
         
-        <script src="https://rawgit.com/kawanet/msgpack-lite/master/dist/msgpack.min.js"></script>
+        {script "js/node_modules/msgpack-lite/dist/msgpack.min.js"}
+        {script "js/node_modules/soundjs/lib/soundjs.min.js"}
         {script "js/node_modules/ky/umd.js"}
         {script "js/messagebox.js"}
+        {script "js/notifications.js"}
         {script "js/scroll.js"}
         {script "js/al_wall.js"}
         {script "js/al_api.js"}
+        
+        {ifset $thisUser}
+            {script "js/al_notifs.js"}
+        {/ifset}
         
         <script src="https://unpkg.com/fartscroll@1.0.0/fartscroll.js"></script>
         <script n:if="OPENVK_ROOT_CONF['openvk']['preferences']['bellsAndWhistles']['fartscroll']">
@@ -269,6 +298,10 @@
         <script n:if="OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['enable']"
                 async defer data-domain="{php echo OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['domain']}"
                 src="{php echo OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['server']}js/plausible.js"></script>
+        
+        {ifset bodyScripts}
+            {include bodyScripts}
+        {/ifset}
     </body>
 </html>
 

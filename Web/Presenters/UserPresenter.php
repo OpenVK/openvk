@@ -4,9 +4,14 @@ use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Entities\Photo;
 use openvk\Web\Models\Repositories\Users;
+use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Albums;
 use openvk\Web\Models\Repositories\Videos;
 use openvk\Web\Models\Repositories\Notes;
+use openvk\Web\Models\Repositories\Vouchers;
+use Chandler\Security\Authenticator;
+use lfkeitel\phptotp\{Base32, Totp};
+use chillerlan\QRCode\{QRCode, QROptions};
 
 final class UserPresenter extends OpenVKPresenter
 {
@@ -29,18 +34,14 @@ final class UserPresenter extends OpenVKPresenter
                 if(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) !== "/" . $user->getShortCode())
                     $this->redirect("/" . $user->getShortCode(), static::REDIRECT_TEMPORARY_PRESISTENT);
             
-            $then = date_create("@" . $user->getOnline()->timestamp());
-            $now  = date_create();
-            $diff = date_diff($now, $then);
-            
             $this->template->albums      = (new Albums)->getUserAlbums($user);
             $this->template->albumsCount = (new Albums)->getUserAlbumsCount($user);
             $this->template->videos      = (new Videos)->getByUser($user, 1, 2);
             $this->template->videosCount = (new Videos)->getUserVideosCount($user);
             $this->template->notes       = (new Notes)->getUserNotes($user, 1, 4);
             $this->template->notesCount  = (new Notes)->getUserNotesCount($user);
+            
             $this->template->user = $user;
-            $this->template->diff = $diff;
         }
     }
     
@@ -81,7 +82,40 @@ final class UserPresenter extends OpenVKPresenter
         } else {
             $this->template->user = $user;
             $this->template->page = $this->queryParam("p") ?? 1;
+            $this->template->admin = $this->queryParam("act") == "managed";
         }
+    }
+
+    function renderPinClub(): void
+    {
+        $this->assertUserLoggedIn();
+
+        $club = (new Clubs)->get((int) $this->queryParam("club"));
+        if(!$club)
+            $this->notFound();
+
+        if(!$club->canBeModifiedBy($this->user->identity ?? NULL))
+            $this->flashFail("err", "Ошибка доступа", "У вас недостаточно прав, чтобы изменять этот ресурс.");
+
+        $isClubPinned = $this->user->identity->isClubPinned($club);
+        if(!$isClubPinned && $this->user->identity->getPinnedClubCount() > 10)
+            $this->flashFail("err", "Ошибка", "Находится в левом меню могут максимум 10 групп");
+
+        if($club->getOwner()->getId() === $this->user->identity->getId()) {
+            $club->setOwner_Club_Pinned(!$isClubPinned);
+            $club->save();
+        } else {
+            $manager = $club->getManager($this->user->identity);
+            if(!is_null($manager)) {
+                $manager->setClub_Pinned(!$isClubPinned);
+                $manager->save();
+            }
+        }
+
+        if($isClubPinned)
+            $this->flashFail("succ", "Операция успешна", "Группа " . $club->getName() . " была успешно удалена из левого меню");
+        else
+            $this->flashFail("succ", "Операция успешна", "Группа " . $club->getName() . " была успешно добавлена в левое меню");
     }
     
     function renderEdit(): void
@@ -108,7 +142,7 @@ final class UserPresenter extends OpenVKPresenter
                     if ($this->postParam("marialstatus") <= 8 && $this->postParam("marialstatus") >= 0)
                     $user->setMarital_Status($this->postParam("marialstatus"));
                     
-                    if ($this->postParam("politViews") <= 8 && $this->postParam("politViews") >= 0)
+                    if ($this->postParam("politViews") <= 9 && $this->postParam("politViews") >= 0)
                     $user->setPolit_Views($this->postParam("politViews"));
                     
                     if ($this->postParam("gender") <= 1 && $this->postParam("gender") >= 0)
@@ -125,9 +159,15 @@ final class UserPresenter extends OpenVKPresenter
                     }
                 } elseif($_GET['act'] === "contacts") {
                     $user->setEmail_Contact(empty($this->postParam("email_contact")) ? NULL : $this->postParam("email_contact"));
-                    $user->setTelegram(empty($this->postParam("telegram")) ? NULL : $this->postParam("telegram"));
+                    $user->setTelegram(empty($this->postParam("telegram")) ? NULL : ltrim($this->postParam("telegram"), "@"));
                     $user->setCity(empty($this->postParam("city")) ? NULL : $this->postParam("city"));
                     $user->setAddress(empty($this->postParam("address")) ? NULL : $this->postParam("address"));
+                    
+                    $website = $this->postParam("website") ?? "";
+                    if(empty($website))
+                        $user->setWebsite(NULL);
+                    else
+                        $user->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website);
                 } elseif($_GET['act'] === "interests") {
                     $user->setInterests(empty($this->postParam("interests")) ? NULL : ovk_proc_strtr($this->postParam("interests"), 300));
                     $user->setFav_Music(empty($this->postParam("fav_music")) ? NULL : ovk_proc_strtr($this->postParam("fav_music"), 300));
@@ -136,6 +176,18 @@ final class UserPresenter extends OpenVKPresenter
                     $user->setFav_Books(empty($this->postParam("fav_books")) ? NULL : ovk_proc_strtr($this->postParam("fav_books"), 300));
                     $user->setFav_Quote(empty($this->postParam("fav_quote")) ? NULL : ovk_proc_strtr($this->postParam("fav_quote"), 300));
                     $user->setAbout(empty($this->postParam("about")) ? NULL : ovk_proc_strtr($this->postParam("about"), 300));
+                } elseif($_GET['act'] === "status") {
+                    if(mb_strlen($this->postParam("status")) > 255) {
+                        $statusLength = (string) mb_strlen($this->postParam("status"));
+                        $this->flashFail("err", "Ошибка", "Статус слишком длинный ($statusLength символов вместо 255 символов)");
+                    }
+
+                    $user->setStatus(empty($this->postParam("status")) ? NULL : $this->postParam("status"));
+                    $user->save();
+
+                    header("HTTP/1.1 302 Found");
+                    header("Location: /id" . $user->getId());
+                    exit;
                 }
                 
                 try {
@@ -224,6 +276,9 @@ final class UserPresenter extends OpenVKPresenter
         if(!$id)
             $this->notFound();
         
+        if(in_array($this->queryParam("act"), ["finance", "finance.top-up"]) && !OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"])
+            $this->flashFail("err", tr("error"), tr("feature_disabled"));
+        
         $user = $this->users->get($id);
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->willExecuteWriteAction();
@@ -231,6 +286,12 @@ final class UserPresenter extends OpenVKPresenter
             if($_GET['act'] === "main" || $_GET['act'] == NULL) {
                 if($this->postParam("old_pass") && $this->postParam("new_pass") && $this->postParam("repeat_pass")) {
                     if($this->postParam("new_pass") === $this->postParam("repeat_pass")) {
+                        if($this->user->identity->is2faEnabled()) {
+                            $code = $this->postParam("code");
+                            if(!($code === (new Totp)->GenerateToken(Base32::decode($this->user->identity->get2faSecret())) || $this->user->identity->use2faBackupCode((int) $code)))
+                                $this->flashFail("err", tr("error"), tr("incorrect_2fa_code"));
+                        }
+
                         if(!$this->user->identity->getChandlerUser()->updatePassword($this->postParam("new_pass"), $this->postParam("old_pass")))
                             $this->flashFail("err", tr("error"), tr("error_old_password"));
                     } else {
@@ -240,7 +301,7 @@ final class UserPresenter extends OpenVKPresenter
                 
                 if(!$user->setShortCode(empty($this->postParam("sc")) ? NULL : $this->postParam("sc")))
                     $this->flashFail("err", tr("error"), tr("error_shorturl_incorrect"));
-            }elseif($_GET['act'] === "privacy") {
+            } else if($_GET['act'] === "privacy") {
                 $settings = [
                     "page.read",
                     "page.info.read",
@@ -256,9 +317,27 @@ final class UserPresenter extends OpenVKPresenter
                     $input = $this->postParam(str_replace(".", "_", $setting));
                     $user->setPrivacySetting($setting, min(3, abs($input ?? $user->getPrivacySetting($setting))));
                 }
-            }elseif($_GET['act'] === "interface") {
+            } else if($_GET['act'] === "finance.top-up") {
+                $token   = $this->postParam("key0") . $this->postParam("key1") . $this->postParam("key2") . $this->postParam("key3");
+                $voucher = (new Vouchers)->getByToken($token);
+                if(!$voucher)
+                    $this->flashFail("err", tr("invalid_voucher"), tr("voucher_bad"));
+                
+                $perm = $voucher->willUse($user);
+                if(!$perm)
+                    $this->flashFail("err", tr("invalid_voucher"), tr("voucher_bad"));
+                
+                $user->setCoins($user->getCoins() + $voucher->getCoins());
+                $user->setRating($user->getRating() + $voucher->getRating());
+                $user->save();
+                
+                $this->flashFail("succ", tr("voucher_good"), tr("voucher_redeemed"));
+            } else if($_GET['act'] === "interface") {
                 if (isset(Themepacks::i()[$this->postParam("style")]) || $this->postParam("style") === Themepacks::DEFAULT_THEME_ID)
-                    $user->setStyle($this->postParam("style"));
+				{
+					$user->setStyle($this->postParam("style"));
+					$this->setTempTheme($this->postParam("style"));
+				}
                 
                 if ($this->postParam("style_avatar") <= 2 && $this->postParam("style_avatar") >= 0)
                     $user->setStyle_Avatar((int)$this->postParam("style_avatar"));
@@ -271,7 +350,7 @@ final class UserPresenter extends OpenVKPresenter
                 
                 if(in_array($this->postParam("nsfw"), [0, 1, 2]))
                     $user->setNsfwTolerance((int) $this->postParam("nsfw"));
-            }elseif($_GET['act'] === "lMenu") {
+            } else if($_GET['act'] === "lMenu") {
                 $settings = [
                     "menu_bildoj"   => "photos",
                     "menu_filmetoj" => "videos",
@@ -293,17 +372,79 @@ final class UserPresenter extends OpenVKPresenter
                     throw $ex;
             }
             
-            $this->flash(
+			$this->flash(
                 "succ",
                 "Изменения сохранены",
-                "Новые данные появятся на вашей странице.<br/>Если вы изменили стиль, перезагрузите страницу."
+                "Новые данные появятся на вашей странице."
             );
         }
         $this->template->mode = in_array($this->queryParam("act"), [
-            "main", "privacy", "finance", "interface"
+            "main", "privacy", "finance", "finance.top-up", "interface"
         ]) ? $this->queryParam("act")
             : "main";
         $this->template->user   = $user;
         $this->template->themes = Themepacks::i()->getThemeList();
+    }
+
+    function renderTwoFactorAuthSettings(): void
+    {
+        $this->assertUserLoggedIn();
+
+        if($this->user->identity->is2faEnabled()) {
+            if($_SERVER["REQUEST_METHOD"] === "POST") {
+                if(!Authenticator::verifyHash($this->postParam("password"), $this->user->identity->getChandlerUser()->getRaw()->passwordHash))
+                    $this->flashFail("err", tr("error"), tr("incorrect_password"));
+
+                $this->user->identity->generate2faBackupCodes();
+                $this->template->_template = "User/TwoFactorAuthCodes.xml";
+                $this->template->codes = $this->user->identity->get2faBackupCodes();
+                return;
+            }
+
+            $this->redirect("/settings");
+        }
+
+        $secret = Base32::encode(Totp::GenerateSecret(16));
+        if($_SERVER["REQUEST_METHOD"] === "POST") {
+            $this->willExecuteWriteAction();
+
+            if(!Authenticator::verifyHash($this->postParam("password"), $this->user->identity->getChandlerUser()->getRaw()->passwordHash))
+                $this->flashFail("err", tr("error"), tr("incorrect_password"));
+
+            $secret = $this->postParam("secret");
+            $code   = $this->postParam("code");
+
+            if($code === (new Totp)->GenerateToken(Base32::decode($secret))) {
+                $this->user->identity->set2fa_secret($secret);
+                $this->user->identity->save();
+
+                $this->flash("succ", tr("two_factor_authentication_enabled_message"), tr("two_factor_authentication_enabled_message_description"));
+                $this->redirect("/settings");
+            }
+
+            $this->template->secret = $secret;
+            $this->flash("err", tr("error"), tr("incorrect_code"));
+        } else {
+            $this->template->secret = $secret;
+        }
+
+        $issuer                 = OPENVK_ROOT_CONF["openvk"]["appearance"]["name"];
+        $email                  = $this->user->identity->getEmail();
+        $this->template->qrCode = substr((new QRCode(new QROptions([
+            "imageTransparent" => false
+        ])))->render("otpauth://totp/$issuer:$email?secret=$secret&issuer=$issuer"), 22);
+    }
+
+    function renderDisableTwoFactorAuth(): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        if(!Authenticator::verifyHash($this->postParam("password"), $this->user->identity->getChandlerUser()->getRaw()->passwordHash))
+            $this->flashFail("err", tr("error"), tr("incorrect_password"));
+
+        $this->user->identity->set2fa_secret(NULL);
+        $this->user->identity->save();
+        $this->flashFail("succ", tr("information_-1"), tr("two_factor_authentication_disabled_message"));
     }
 }

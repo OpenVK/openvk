@@ -154,7 +154,7 @@ composer2 install
 
 ```bash
 cd ..
-git clone https://github.com/openvk/openvk.git
+git clone --recursive https://github.com/openvk/openvk.git
 cd openvk/
 composer2 install
 cd Web/static/js

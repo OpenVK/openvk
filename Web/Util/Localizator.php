@@ -60,5 +60,13 @@ class Localizator
         return $array[$id] ?? "@$id";
     }
     
+    function export($lang = NULL): ?array
+    {
+        $lang  = is_null($lang) ? static::DEFAULT_LANG : $lang;
+        $array = @self::parse(dirname(__FILE__) . "/../../locales/$lang.strings");
+
+        return $array;
+    }
+    
     use TSimpleSingleton;
 }

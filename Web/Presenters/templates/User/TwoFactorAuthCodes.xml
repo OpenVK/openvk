@@ -1,0 +1,18 @@
+{extends "../@layout.xml"}
+{block title}{_"my_settings"} - {_"two_factor_authentication"}{/block}
+
+{block header}
+    <a href="/settings">{_"my_settings"}</a> » {_"two_factor_authentication"}
+{/block}
+
+{block content}
+    <h4>{_"backup_codes"}</h4>
+    <p>{_"two_factor_authentication_backup_codes_1"}</p>
+    <p>{_"two_factor_authentication_backup_codes_2"|noescape}</p>
+    
+    <ol style="columns: 2; text-align: center;">
+        <li n:foreach="$codes as $code">{$code}</li>
+    </ol>
+    
+    <p>{_"two_factor_authentication_backup_codes_3"}</p>
+{/block}

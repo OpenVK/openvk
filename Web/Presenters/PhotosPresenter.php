@@ -159,6 +159,17 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->template->comments = iterator_to_array($photo->getComments($this->template->cPage));
     }
     
+    function renderAbsolutePhoto($id): void
+    {
+        $id    = (int) base_convert((string) $id, 32, 10);
+        $photo = $this->photos->get($id);
+        if(!$photo || $photo->isDeleted())
+            $this->notFound();
+        
+        $this->template->_template = "Photos/Photo.xml";
+        $this->renderPhoto($photo->getOwner(true)->getId(), $photo->getVirtualId());
+    }
+    
     function renderEditPhoto(int $ownerId, int $photoId): void
     {
         $this->assertUserLoggedIn();

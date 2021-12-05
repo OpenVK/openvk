@@ -34,10 +34,10 @@
     
     <!-- DEBUG: ONLINE REPORT: static {$user->getOnline()->timestamp()}s adjusted {$user->getOnline()->timestamp() + 2505600}s real {time()}s -->
     <div n:if="$user->getOnline()->timestamp() + 2505600 > time()" style="float:right;">
-        {if $diff->i <= 5}
-        <span><b>{_online}</b></span>
+        {if $user->isOnline()}
+            <span><b>{_online}</b></span>
         {else}
-        <span>{_was_online} {$user->getOnline()}</span>
+            <span>{_was_online} {$user->getOnline()}</span>
         {/if}
     </div>
     <div n:if="$user->onlineStatus() == 2" style="float:right;">
@@ -76,6 +76,9 @@
                 {/if}
                 
                 {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+                    <a href="/admin/users/id{$user->getId()}" class="profile_link">
+                        {_manage_user_action}
+                    </a>
                     <a href="javascript:banUser()" class="profile_link">
                         {_ban_user_action}
                     </a>
@@ -83,6 +86,8 @@
                         {_warn_user_action}
                     </a>
                 {/if}
+                
+                <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce']" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
                 
                 {var subStatus = $user->getSubscriptionStatus($thisUser)}
                 {if $subStatus === 0}
@@ -120,8 +125,8 @@
         <div n:if="isset($thisUser) && !$thisUser->prefersNotToSeeRating()" class="profile-hints">
             {var completeness = $user->getProfileCompletenessReport()}
             
-            <div class="completeness-gauge">
-                <div style="width: {$completeness->total}%"></div>
+            <div n:class="completeness-gauge, $completeness->total >= 100 ? completeness-gauge-gold">
+                <div style="width: {$completeness->percent}%"></div>
                 <span>{$completeness->total}%</span>
             </div>
             
@@ -150,6 +155,30 @@
             {/if}
         </div>
         <br />
+        <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0">
+            <div class="content_title_expanded" onclick="hidePanel(this, {$giftCount});">
+                {_gifts}
+            </div>
+            <div>
+                <div class="content_subtitle">
+                    {tr("gifts", $giftCount)}
+                    <div style="float:right;">
+                        <a href="/gifts{$user->getId()}">{_all_title}</a>
+                    </div>
+                </div>
+                <div class="ovk-avView">
+                    <div class="ovk-avView--el" n:foreach="$user->getGifts(1, 3) as $giftDescriptor">
+                        {var hideInfo = !is_null($thisUser) ? ($giftDescriptor->anon ? $thisUser->getId() !== $user->getId() : false) : false}
+                        
+                        <a href="{$hideInfo ? 'javascript:false' : $giftDescriptor->sender->getURL()}">
+                            <img class="ava"
+                                 src="{$giftDescriptor->gift->getImage(2)}"
+                                 alt="{$hideInfo ? tr('gift') : ($giftDescriptor->caption ?? tr('gift'))}" />
+                        </a>  
+                    </div>
+                </div>
+            </div>
+        </div>
         <div n:if="$user->getFriendsCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)">
             {var friendCount = $user->getFriendsCount()}
             
@@ -227,7 +256,7 @@
             </div>
         </div>
         <div n:if="$videosCount > 0 && $user->getPrivacyPermission('videos.read', $thisUser ?? NULL)">
-            <div class="content_title_expanded" onclick="hidePanel(this, {$albumsCount});">
+            <div class="content_title_expanded" onclick="hidePanel(this, {$videosCount});">
                 {_videos}
             </div>
             <div>
@@ -238,21 +267,22 @@
                     </div>
                 </div>
                 <div style="padding: 5px;">
-                    <div class="ovk-video" style="margin-bottom: 1rem; padding: 0 11px;" n:foreach="$videos as $video">
-                        <div style="width: 170px;" align="center">
+                    <div class="ovk-video" n:foreach="$videos as $video">
+                        <a href="/video{$video->getPrettyId()}" class="preview" align="center">
                             <img
                                 src="{$video->getThumbnailURL()}"
-                                style="max-width: 170px; margin: auto;" />
-                        </div>
+                                style="max-width: 170px; max-height: 127px; margin: auto;" />
+                        </a>
                         <div>
-                            <b><a href="/video{$video->getPrettyId()}">{ovk_proc_strtr($video->getName(), 30)}</a></b>
+                            <b><a href="/video{$video->getPrettyId()}">{ovk_proc_strtr($video->getName(), 30)}</a></b><br>
+                            <span style="font-size: 10px;">{$video->getPublicationTime()} | {_comments} ({$video->getCommentsCount()})</span>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
         <div n:if="$notesCount > 0 && $user->getPrivacyPermission('notes.read', $thisUser ?? NULL)">
-            <div class="content_title_expanded" onclick="hidePanel(this, {$albumsCount});">
+            <div class="content_title_expanded" onclick="hidePanel(this, {$notesCount});">
                 {_notes}
             </div>
             <div>
@@ -266,13 +296,13 @@
 				<div style="padding: 5px 8px 15px 8px;">
                     <ul class="notes_titles" n:foreach="$notes as $note">
 						<li class="written">
-							<a href="/note{$user->getId()}_{$note->getId()}">
+							<a href="/note{$note->getPrettyId()}">
 								{$note->getName()}
 							</a>
 							<small>
 								{$note->getPublicationTime()}
 								<span class="divide">|</span>
-								<a href="/note{$user->getId()}_{$note->getId()}">{_comments}</a>
+								<a href="/note{$note->getPrettyId()}">{_comments}</a>
 							</small>
 						</li>
 					</ul>
@@ -322,52 +352,64 @@
     
     <div class="right_big_block">
         <div class="page_info">
-      
-			<div class="accountInfo clearFix">
-   <div class="profileName">
-    <h2>{$user->getFullName()}</h2>
-	{if !is_null($user->getStatus())}
-                    <div class="page_status">{$user->getStatus()}</div>
-                {elseif isset($thisUser) && $user->getId() == $thisUser->getId()}
-                    <div class="page_status">
-                        <a href="/edit" class="edit_link">[ {_"change_status"} ]</a>
+            <div n:if="!is_null($alert = $user->getAlert())" class="user-alert">{$alert}</div>
+            {var thatIsThisUser = isset($thisUser) && $user->getId() == $thisUser->getId()}
+            <div n:if="$thatIsThisUser" class="page_status_popup" id="status_editor" style="display: none;">
+                <form method="post" action="/edit?act=status">
+                    <div style="margin-bottom: 10px;">
+                        <input type="text" name="status" size="50" value="{$user->getStatus()}" />
                     </div>
-                {/if}
-   </div>
-  </div><div>
-            <table id="basicInfo" class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:if=" $user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
-                <tbody>
-                    <tr>
-                        <td class="label"><span class="nobold">{_"gender"}: </span></td>
-                        <td class="data">{$user->isFemale() ? tr("female") : tr("male")}</td>
-                    </tr>
-                    <tr>
-                        <td class="label"><span class="nobold">{_"relationship"}:</span></td>
-                        <td class="data">{var $marialStatus = $user->getMaritalStatus()}{_"relationship_$marialStatus"}</td>
-                    </tr>
-                    <tr>
-                        <td class="label"><span class="nobold">{_"registration_date"}: </span></td>
-                        <td class="data">{$user->getRegistrationTime()}</td>
-                    </tr>
-                    <tr n:if="!is_null($user->getHometown())">
-                        <td class="label"><span class="nobold">{_"hometown"}:</span></td>
-                        <td class="data">{$user->getHometown()}</td>
-                    </tr>
-                    <tr>
-                        <td class="label"><span class="nobold">{_"politViews"}:</span></td>
-                        <td class="data">{var $pviews = $user->getPoliticalViews()}{_"politViews_$pviews"}</td>
-                    </tr>
-                    {if $user->getBirthday() != 0}
-                    <tr>
-                        <td class="label"><span class="nobold">{_"birth_date"}:</span></td>
-                        <td class="data">{date('d F Y',$user->getBirthday())}, {date('Y') - date('Y', $user->getBirthday())} {_"years"}</td>
-                    </tr>
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    <input type="submit" class="button" value="{_'save'}" />
+                </form>
+            </div>
+			<div class="accountInfo clearFix">
+                <div class="profileName">
+                    <h2>{$user->getFullName()}</h2>
+                    {if !is_null($user->getStatus())}
+                        <div n:class="page_status, $thatIsThisUser ? page_status_edit_button" n:attr="id => $thatIsThisUser ? page_status_text : NULL">{$user->getStatus()}</div>
+                    {elseif $thatIsThisUser}
+                        <div class="page_status">
+                            <div n:class="edit_link, $thatIsThisUser ? page_status_edit_button" id="page_status_text">[ {_"change_status"} ]</div>
+                        </div>
                     {/if}
-                </tbody>
-            </table>
+                </div>
+            </div>
+            <div>
+                <table id="basicInfo" class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:if=" $user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
+                    <tbody>
+                        <tr>
+                            <td class="label"><span class="nobold">{_"gender"}: </span></td>
+                            <td class="data">{$user->isFemale() ? tr("female") : tr("male")}</td>
+                        </tr>
+                        <tr>
+                            <td class="label"><span class="nobold">{_"relationship"}:</span></td>
+                            <td class="data">{var $marialStatus = $user->getMaritalStatus()}{_"relationship_$marialStatus"}</td>
+                        </tr>
+                        <tr>
+                            <td class="label"><span class="nobold">{_"registration_date"}: </span></td>
+                            <td class="data">{$user->getRegistrationTime()}</td>
+                        </tr>
+                        <tr n:if="!is_null($user->getHometown())">
+                            <td class="label"><span class="nobold">{_"hometown"}:</span></td>
+                            <td class="data">{$user->getHometown()}</td>
+                        </tr>
+                        <tr>
+                            <td class="label"><span class="nobold">{_"politViews"}:</span></td>
+                            <td class="data">{var $pviews = $user->getPoliticalViews()}{_"politViews_$pviews"}</td>
+                        </tr>
+                        {if $user->getBirthday() > 0}
+                            <tr>
+                                <td class="label"><span class="nobold">{_"birth_date"}:</span></td>
+                                <td class="data">{date('d F Y',$user->getBirthday())},
+                                {tr("years", $user->getAge())}</td>
+                            </tr>
+                        {/if}
+                    </tbody>
+                </table>
 			</div>
         </div>
-        <div n:if=" $user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
+        <div n:if="$user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this);">
                 {_"information"}
             </div>
@@ -375,7 +417,6 @@
             {capture $contactInfo_Tmp}
                 <table class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:ifcontent>
                   <tbody n:ifcontent>
-                    <!--sse-->
                         <tr n:if="!is_null($user->getContactEmail())">
                             <td class="label"><span class="nobold">{_"email"}: </span></td>
                             <td>
@@ -392,7 +433,14 @@
                                 </a>
                             </td>
                         </tr>
-                    <!--/sse-->
+                        <tr n:if="!is_null($user->getWebsite())">
+                            <td class="label"><span class="nobold">{_"personal_website"}: </span></td>
+                            <td>
+                                <a href="{$user->getWebsite()}" rel="ugc" target="_blank">
+                                    {$user->getWebsite()}
+                                </a>
+                            </td>
+                        </tr>
                     <tr n:if="!is_null($user->getCity())">
                         <td class="label"><span class="nobold">{_"city"}:</span></td>
                         <td class="data">{$user->getCity()}</td>
@@ -440,26 +488,21 @@
             {/capture}
             <div>
             <div style="padding: 10px 8px 15px 8px;" n:ifcontent>
+                <h4 style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_"contact_information"} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=contacts" class="edit_link">[ {_"edit"} ]</a>{/if}{/ifset}</h4>
                 {if !empty($contactInfo_Tmp)}
-                    <h4 style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_"contact_information"} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=contacts" class="edit_link">[ {_"edit"} ]</a>{/if}{/ifset}</h4>
-                    {if !empty($contactInfo_Tmp)}
-                        {$contactInfo_Tmp|noescape}
-                    {else}
-                        <div style="padding: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
-                    {/if}
-                    <br>
+                    {$contactInfo_Tmp|noescape}
+                {else}
+                    <div style="padding: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
                 {/if}
-                    <h4 style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_"personal_information"} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=interests" class="edit_link">[ {_"edit"} ]</a>{/if}{/ifset}</h4>
-                    {if !empty($uInfo_Tmp)}
-                        {$uInfo_Tmp|noescape}
-                    {else}
-                        <div style="padding-top: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
-                    {/if}
+                <br>
+                <h4 style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_"personal_information"} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=interests" class="edit_link">[ {_"edit"} ]</a>{/if}{/ifset}</h4>
+                {if !empty($uInfo_Tmp)}
+                    {$uInfo_Tmp|noescape}
+                {else}
+                    <div style="padding-top: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
+                {/if}
             </div>
             </div>
-            <p n:if="empty($contactInfo_Tmp) && empty($uInfo_Tmp)">
-                Пользователь предпочёл оставить о себе только воздух тайны.
-            </p>
         </div>
         
         {presenter "openvk!Wall->wallEmbedded", $user->getId()}
@@ -508,6 +551,19 @@
                     Function.noop
                 ]);
             }
+        </script>
+
+        <script n:if="isset($thisUser) && $user->getId() == $thisUser->getId()">
+            function setStatusEditorShown(shown) {
+                document.getElementById("status_editor").style.display = shown ? "block" : "none";
+            }
+
+            document.addEventListener("click", event => {
+                if(!event.target.closest("#status_editor") && !event.target.closest("#page_status_text"))
+                    setStatusEditorShown(false);
+            });
+
+            document.getElementById("page_status_text").onclick = setStatusEditorShown.bind(this, true);
         </script>
     </div>
     

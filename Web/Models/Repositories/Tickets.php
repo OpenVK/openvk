@@ -22,7 +22,7 @@ class Tickets
     
     function getTickets(int $state = 0, int $page = 1): \Traversable
     {
-        foreach($this->tickets->where(["deleted" => 0, "type" => $state])->page($page, OPENVK_DEFAULT_PER_PAGE) as $t)
+        foreach($this->tickets->where(["deleted" => 0, "type" => $state])->order("created DESC")->page($page, OPENVK_DEFAULT_PER_PAGE) as $t)
             yield new Ticket($t);
     }
     
@@ -33,7 +33,12 @@ class Tickets
     
     function getTicketsByuId(int $user_id): \Traversable
     {
-        foreach($this->tickets->where(['user_id' => $user_id, 'deleted' => 0]) as $ticket) yield new Ticket($ticket);
+        foreach($this->tickets->where(['user_id' => $user_id, 'deleted' => 0])->order("created DESC") as $ticket) yield new Ticket($ticket);
+    }
+
+    function getTicketsCountByuId(int $user_id, int $type = 0): int
+    {
+        return sizeof($this->tickets->where(['user_id' => $user_id, 'deleted' => 0, 'type' => $type]));
     }
     
     function getRequestById(int $req_id): ?Ticket

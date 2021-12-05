@@ -37,20 +37,24 @@ class Posts
         return $this->toPost($post);
     }
     
-    function getPostsFromUsersWall(int $user, int $page = 1, ?int $perPage = NULL): \Traversable
+    function getPostsFromUsersWall(int $user, int $page = 1, ?int $perPage = NULL, ?int $offset = NULL): \Traversable
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
-        $offset    = $perPage * ($page - 1);
+        $offset ??= $perPage * ($page - 1);
         
         $pinPost = $this->getPinnedPost($user);
-        if(!is_null($pinPost)) {
-            if($page === 1) {
-                $perPage--;
-                
-                yield $pinPost;
-            } else {
-                $offset--;
+        if(is_null($offset) || $offset == 0) {
+            if(!is_null($pinPost)) {
+                if($page === 1) {
+                    $perPage--;
+                    
+                    yield $pinPost;
+                } else {
+                    $offset--;
+                }
             }
+        } else if(!is_null($offset)) {
+            $offset--;
         }
         
         $sel = $this->posts->where([

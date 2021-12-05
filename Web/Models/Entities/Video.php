@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
 use openvk\Web\Util\Shell\Shell;
-use openvk\Web\Util\Shell\Shell\Exceptions\ShellUnavailableException;
-use openvk\Web\Util\Shell\Shell\Exceptions\UnknownCommandException;
+use openvk\Web\Util\Shell\Shell\Exceptions\{ShellUnavailableException, UnknownCommandException};
 use openvk\Web\Models\VideoDrivers\VideoDriver;
 use Nette\InvalidStateException as ISE;
 
@@ -18,7 +17,24 @@ class Video extends Media
     
     protected function saveFile(string $filename, string $hash): bool
     {
-        if(!Shell::commandAvailable("ffmpeg")) exit(VIDEOS_FRIENDLY_ERROR);
+        if(!Shell::commandAvailable("ffmpeg") || !Shell::commandAvailable("ffprobe"))
+            exit(VIDEOS_FRIENDLY_ERROR);
+        
+        $error     = NULL;
+        $streams   = Shell::ffprobe("-i", $filename, "-show_streams", "-select_streams v", "-loglevel error")->execute($error);
+        if($error !== 0)
+            throw new \DomainException("$filename is not a valid video file");
+        else if(empty($streams) || ctype_space($streams))
+            throw new \DomainException("$filename does not contain any video streams");
+        
+        $durations = [];
+        preg_match('%duration=([0-9\.]++)%', $streams, $durations);
+        if(sizeof($durations[1]) === 0)
+            throw new \DomainException("$filename does not contain any meaningful video streams");
+        
+        foreach($durations[1] as $duration)
+            if(floatval($duration) < 1.0)
+                throw new \DomainException("$filename does not contain any meaningful video streams");
         
         try {
             if(!is_dir($dirId = $this->pathFromHash($hash)))
@@ -93,10 +109,10 @@ class Video extends Media
 
     function isDeleted(): bool
     {
-	if ($this->getRecord()->deleted == 1)
-	    return TRUE;
-	else
-        return FALSE;
+        if ($this->getRecord()->deleted == 1)
+            return TRUE;
+        else
+            return FALSE;
     }
 
     function deleteVideo(): void 
@@ -104,5 +120,20 @@ class Video extends Media
         $this->setDeleted(1);
         $this->unwire();
         $this->save();
+    }
+    
+    static function fastMake(int $owner, string $description = "", array $file, bool $unlisted = true, bool $anon = false): Video
+    {
+        $video = new Video;
+        $video->setOwner($owner);
+        $video->setName("Unnamed Video.ogv");
+        $video->setDescription(ovk_proc_strtr($description, 300));
+        $video->setAnonymous($anon);
+        $video->setCreated(time());
+        $video->setFile($file);
+        $video->setUnlisted($unlisted);
+        $video->save();
+        
+        return $video;
     }
 }

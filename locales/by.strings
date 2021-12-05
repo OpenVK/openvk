@@ -1,0 +1,487 @@
+"__locale" = "be_BY.UTF-8;Bel";
+
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
+
+/* Main page */
+
+"home" = "Галоўная";
+"welcome" = "Сардэчна запрашаем";
+
+/* Login */
+
+"log_in" = "Уваход";
+"password" = "Пароль";
+"registration" = "Рэгістрацыя";
+
+/* Profile information */
+
+"select_language" = "Выбраць мову";
+"edit" = "Рэдагаваць";
+"birth_date" = "Дзень нараджэння";
+"registration_date" = "Дата рэгістрацыі";
+"hometown" = "Родны горад";
+"this_is_you" = "гэта Вы";
+"edit_page" = "Рэдагаваць старонку";
+"edit_group" = "Рэдагаваць групу";
+"change_status" = "змяніць статус";
+"name" = "Імя";
+"surname" = "Прозвішча";
+"gender" = "Пол";
+"male" = "мужчынскі";
+"female" = "жаночы";
+"description" = "Апісанне";
+"save" = "Захаваць";
+"main_information" = "Асноўная інфармацыя";
+"nickname" = "Нікнэйм";
+"online" = "Анлайн";
+"was_online" = "быў у сетцы";
+"was_online_m" = "быў у сетцы";
+"was_online_f" = "была у сетцы";
+"all_title" = "Усе";
+"information" = "Інфармацыя";
+"status" = "Статус";
+
+"relationship" = "Сямейнае становішча";
+
+"relationship_0" = "Не выбрана";
+"relationship_1" = "Ня женаты";
+"relationship_2" = "Сустракаюся";
+"relationship_3" = "Заручана";
+"relationship_4" = "Жанаты";
+"relationship_5" = "У грамадзянскім шлюбе";
+"relationship_6" = "Закаханы";
+"relationship_7" = "Усё складана";
+"relationship_8" = "У актыўным пошуку";
+
+"politViews" = "Паліт. погляды";
+
+"politViews_0" = "На выбраныя";
+"politViews_1" = "індыферэнтнага";
+"politViews_2" = "Камуністычныя";
+"politViews_3" = "Сацыялістычныя";
+"politViews_4" = "Памяркоўныя";
+"politViews_5" = "Ліберальныя";
+"politViews_6" = "Кансерватыўныя";
+"politViews_7" = "Манархічныя";
+"politViews_8" = "Ультраконсервативные";
+"politViews_9" = "Либертарианские";
+
+"contact_information" = "Кантактная інфармацыя";
+
+"email" = "Пошта";
+"phone" = "Тэлефон";
+"telegram" = "Telegram";
+"city" = "Горад";
+"address" = "Адрас";
+
+"personal_information" = "Асабістая інфармацыя";
+
+"interests" = "Інтарэсы";
+"favorite_music" = "Любімая музыка";
+"favorite_films" = "Любімыя фільмы";
+"favorite_shows" = "Любимыя ТБ-шоу";
+"favorite_books" = "Любімыя кнігі";
+"favorite_quotes" = "Любимыя цытаты";
+"information_about" = "Пра сябе";
+
+/* Wall */
+
+"post_writes_m" = "напісаў";
+"post_writes_f" = "напісала";
+"wall" = "Сцяна";
+"post" = "Запіс";
+"write" = "Напісаць";
+"publish" = "Апублікаваць";
+"delete" = "Выдаліць";
+"comments" = "Каментары";
+"share" = "Падзяліцца";
+"comments_tip" = "Будзьце першым, хто пакіне каментарый!";
+"your_comment" = "Ваш каментарый";
+"comments" = "Каментары";
+"shown" = "Паказана";
+"x_out_of" = "$1 з";
+"wall_zero" = "няма запісаў";
+"wall_one" = "адзіная запіс";
+"wall_few" = "$1 складнік";
+"wall_many" = "$1 складнікаў";
+"wall_other" = "$1 складнікаў";
+
+"nsfw_warning" = "Дадзены пост можа ўтрымліваць 18+ кантэнт";
+
+/* Friends */
+
+"friends" = "Сябры";
+"followers" = "Падпісчыкі";
+"follower" = "Падпісчык";
+"friends_add" = "Дадаць у ліст сяброў";
+"friends_delete" = "Выдаліць з сяброў";
+"friends_reject" = "Адмяніць заяўку";
+"friends_accept" = "Прыняць заяўку";
+"send_message" = "Адправіць паведамленне";
+"incoming_req" = "Падпісанты";
+"outcoming_req" = "Заяўкі";
+"req" = "Заяўкі";
+
+"firends_zero" = "Няма сяброў";
+"friends_one" = "$1 сябар";
+"friends_few" = "$1  аднаго";
+"friends_many" = "$1 сяброў";
+"friends_other" = "$1 сяброў";
+
+"followers_zero" = "Няма падпісчыкаў";
+"followers_one" = "$1 падпісант";
+"followers_few" = "$1 падпісчыка";
+"followers_many" = "$1 падпісчыкаў";
+"followers_other" = "$1 падпісчыкаў";
+
+"subscriptions_zero" = "Ні адной падпіскі";
+"subscriptions_one" = "$1 падпіска";
+"subscriptions_few" = "$1 падпіскі";
+"subscriptions_many" = "$1 падпісак";
+"subscriptions_other" = "$1 падпісак";
+
+/* Group */
+
+"name_group" = "Назва";
+"subscribe" = "Падпісацца";
+"unsubscribe" = "Адпісацца";
+"subscriptions" = "Падпіскі";
+"join_community" = "Уступіць у групу";
+"leave_community" = "Выхад з групы";
+"min_6_community" = "Назва павінна быць не менш за 6 сімвалаў";
+"participants" = "Удзельнікі";
+"groups" = "Групы";
+"meetings" = "Сустрэчы";
+"create_group" = "Стварыць групу";
+"group_managers" = "Кіраўніцтва";
+"group_type" = "Тып групы";
+"group_type_open" = "Гэта адкрытая група. У яе можа ўступіць любы ахвочы.";
+"group_type_closed" = "Гэта закрытая група. Для ўступлення неабходна падаваць заяўку.";
+"creator" = "Стваральнік";
+
+"role" = "Роля";
+"administrator" = "Адміністратар";
+"promote_to_admin" = "Падвысіць да адміністратара";
+"devote" = "Разжалаваць";
+
+"participants_zero" = "Ніводнага ўдзельніка";
+"participants_one" = "Адзін удзельнік";
+"participants_few" = "$1 удзельніка";
+"participants_many" = "$1 удзельнікаў";
+"participants_other" = "$1 удзельнікаў";
+
+"groups_zero" = "Ні адной групы";
+"groups_one" = "Адна група";
+"groups_few" = "$1 групы";
+"groups_many" = "$1 гуртоў";
+"groups_other" = "$1 гуртоў";
+
+"meetings_zero" = "Ні адной сустрэчы";
+"meetings_one" = "Адна сустрэча";
+"meetings_few" = "$1 сустрэчы";
+"meetings_many" = "$1 сустрэч";
+"meetings_other" = "$1 сустрэч";
+
+/* Albums */
+
+"create" = "Стварыць";
+"albums" = "Альбомы";
+"create_album" = "Стварыць альбом";
+"edit_album" = "Рэдагаваць альбом";
+"creating_album" = "Стварэнне альбома";
+"upload_photo" = "Загрузіць фатаграфію";
+"photo" = "Фатаграфія";
+"upload_button" = "Загрузіць";
+
+"albums_zero" = "Няма альбомаў";
+"albums_one" = "Адзін альбом";
+"albums_few" = "$1 альбома";
+"albums_many" = "$1 альбомаў";
+"albums_other" = "$1 альбомаў";
+
+/* Notes */
+
+"notes" = "Нататкі";
+"note" = "Нататка";
+"name_note" = "Назва";
+"text_note" = "Змест";
+"create_note" = "Стварыць нататку";
+"actions" = "Дзеянні";
+"feed" = "Навіны";
+"publish_post" = "Дадаць запіс";
+
+"notes_zero" = "Ні адной нататкі";
+"notes_one" = "Адна нататка";
+"notes_few" = "$1 нататкі";
+"notes_many" = "$1 нататак";
+"notes_other" = "$1 нататак";
+
+/* Menus */
+
+"edit_button" = "рэд.";
+"my_page" = "Мая Старонка";
+"my_friends" = "Мае Сябры";
+"my_photos" = "Мае Фотаздымкі";
+"my_videos" = "Мае Відэазапісы";
+"my_messages" = "Мае Паведамленні";
+"my_notes" = "Мае Нататкі";
+"my_groups" = "Мае Групы";
+"my_feed" = "Мае Навіны";
+"my_feedback" = "Мае Адказы";
+"my_settings" = "Мае Налады";
+"bug_tracker" = "Баг-трэкер";
+
+"menu_login" = "Уваход";
+"menu_registration" = "Рэгістрацыя";
+"menu_help" = "Дапамога";
+
+"header_home" = "галоўная";
+"header_groups" = "групы";
+"header_donate" = "падтрымаць";
+"header_people" = "людзі";
+"header_invite" = "запрасіць";
+"header_help" = "дапамога";
+"header_log_out" = "выйсці";
+"header_search" = "Пошук";
+
+"header_login" = "Уваход";
+"header_registration" = "Рэгістрацыя";
+"header_help" = "Дапамога";
+
+"footer_blog" = "блог";
+"footer_help" = "дапамога";
+"footer_developers" = "распрацоўнікам";
+"footer_choose_language" = "выбраць мову";
+"footer_privacy" = "прыватнасць";
+
+"notes_zero" = "Ні адной нататкі";
+"notes_one" = "Адна нататка";
+"notes_few" = "$1 нататкі";
+"notes_many" = "$1 нататак";
+"notes_other" = "$1 нататак";
+
+/* Settings */
+
+"main" = "Асноўнае";
+"contacts" = "Кантакты";
+"avatar" = "Аватар";
+"privacy" = "Прыватнасць";
+"interface" = "Знешні выгляд";
+
+"profile_picture" = "Малюнак старонкі";
+
+"picture" = "Малюнак";
+
+"change_password" = "Змяніць пароль";
+"old_password" = "Стары пароль";
+"new_password" = "Новы пароль";
+"repeat_password" = "Паўтарыце пароль";
+
+"avatars_style" = "Адлюстраванне аватара";
+"style" = "Стыль";
+
+"default" = "Па змаўчанні";
+"cut" = "Абразанне";
+"round_avatars" = "Круглы аватар";
+
+"search_for_groups" = "Пошук груп";
+"search_for_people" = "Пошук людзей";
+"search_button" = "Знайсці";
+"privacy_setting_access_page" = "Каму ў інтэрнэце відаць маю старонку";
+"privacy_setting_read_info" = "Каму відаць асноўную інфармацыю маёй старонкі";
+"privacy_setting_see_groups" = "Каму відаць мае суполкі і сустрэчы";
+"privacy_setting_see_photos" = "Каму відаць мае фатаграфіі";
+"privacy_setting_see_videos" = "Каму відаць мае відэазапісы";
+"privacy_setting_see_notes" = "Каму відаць мае нататкі";
+"privacy_setting_see_friends" = "Каму відаць маіх сяброў";
+"privacy_setting_add_to_friends" = "Хто можа называць мяне сябрам";
+"privacy_setting_write_wall" = "Хто можа пісаць у мяне на сцяне";
+"privacy_value_anybody" = "Усе жадаючыя";
+"privacy_value_anybody_dative" = "Усім жадаючым";
+"privacy_value_users" = "Карыстальнікам OpenVK";
+"privacy_value_friends" = "Сябры";
+"privacy_value_friends_dative" = "Сябрам";
+"privacy_value_only_me_and_super_capite" = "Я і Даніілу Мысліўцу";
+"privacy_value_only_me_and_super_capite_dative" = "Мне і Даніілу Мысліўцу";
+"privacy_value_super_capite" = "Даніілу Мысліўцу";
+
+"your_email_address" = "Адрас Вашай электроннай пошты";
+"your_page_address" = "Адрас Вашай старонкі";
+"page_address" = "Адрас старонкі";
+"current_email_address" = "Ныняшні адрас";
+"page_id" = "ID старонкі";
+"you_can_also" = "Вы таксама можаце";
+"delete_your_page" = "выдаліць сваю старонку";
+"delete_album" = "выдаліць альбом";
+
+"ui_settings_interface" = "Інтэрфейс";
+"ui_settings_sidebar" = "Левае меню";
+"ui_settings_rating" = "Рэйтынг";
+"ui_settings_rating_show" = "Паказваць";
+"ui_settings_rating_hide" = "Хаваць";
+
+/* Sorting */
+
+"sort_randomly" = "Сартаваць рандомные";
+"sort_up" = "Сартаваць па даце стварэння уверх";
+"sort_down" = "Сартаваць па даце стварэння ўніз";
+
+/* Videos */
+
+"videos" = "Відэазапісы";
+"video" = "Відэазапіс";
+"upload_video" = "Загрузіць відэа";
+"video_uploaded" = "Загружана";
+"video_updated" = "Абнаўленне";
+"video_link_to_yt" = "Спасылка на YT";
+
+"info_name" = "Назва";
+"info_description" = "Апісанне";
+"info_uploaded_by" = "Загрузіў";
+"info_upload_date" = "Дата загрузкі";
+
+"videos_zero" = "Ні адной відэазапісы";
+"videos_one" = "Адна відэазапіс";
+"videos_few" = "$1 відэазапісы";
+"videos_many" = "$1 відэазапісаў";
+"videos_other" = "$1 відэазапісаў";
+
+
+/* Notifications */
+
+"feedback" = "Адказы";
+"unread" = "Непрачытаныя";
+"archive" = "Архіў";
+
+"notifications_like" = "$1 спадабалася ваша $2запіс$3 ад $4";
+"notifications_repost" = "$1 падзяліўся(-лась) вашай $2запісью$3 от $4";
+"notifications_comment_under" = "$1 пакінул(-ла) комментарый пад $2";
+"notifications_under_note" = "вашай $3нататкай$4";
+"notifications_under_photo" = "вашым $3фота$4";
+"notifications_under_post" = "вашай $3запісью$4 ад $5";
+"notifications_under_video" = "вашым $3видэа$4";
+"notifications_post" = "$1 напісаў(-ла) $2запіс$3 на вашай сцяне: $4";
+"notifications_appoint" = "$1 назначыў вас кіраўніком суполкі $2";
+
+"nt_liked_yours" = "спадабаўся ваш";
+"nt_shared_yours" = "падзяліўся(-ась) вашым";
+"nt_commented_yours" = "пакінуў(а) каментар пад";
+"nt_written_on_your_wall" = "напісал(а) на вашай сцяне";
+"nt_made_you_admin" = "прызначыў(ла) вас кіраўніком суполкі";
+
+"nt_from" = "ад";
+"nt_yours_adjective" = "вашым";
+"nt_yours_feminitive_adjective" = "вашай";
+"nt_post_nominative" = "пост";
+"nt_post_instrumental" = "пастом";
+"nt_note_instrumental" = "нататкай";
+"nt_photo_instrumental" = "фатаграфіяй";
+
+/* Time */
+
+"Time_at_sp" = " у ";
+"Time_just_now" = "толькі што";
+"Time_exactly_five_minutes_ago" = "роўна 5 хвілін таму";
+"Time_minutes_ago" = "$1 хвілін таму";
+"Time_today" = "сёння";
+"Time_yesterday" = "учора";
+
+"privacy_setting_access_page" = "Каму ў інтэрнэце відаць маю старонку";
+"privacy_setting_read_info" = "Каму відаць асноўную інфармацыю маёй старонкі";
+"privacy_setting_see_groups" = "Каму відаць мае суполкі і сустрэчы";
+"privacy_setting_see_photos" = "Каму відаць мае фатаграфіі";
+"privacy_setting_see_videos" = "Каму відаць мае відэазапісы";
+"privacy_setting_see_notes" = "Каму відаць мае нататкі";
+"privacy_setting_see_friends" = "Каму відаць маіх сяброў";
+"privacy_setting_add_to_friends" = "Хто можа называць мяне сябрам";
+"privacy_setting_write_wall" = "Хто можа пісаць у мяне на сцяне";
+"privacy_value_anybody" = "Усе жадаючыя";
+"privacy_value_anybody_dative" = "Усім жадаючым";
+"privacy_value_users" = "Карыстальнікам OpenVK";
+"privacy_value_friends" = "Сябры";
+"privacy_value_friends_dative" = "Сябрам";
+"privacy_value_only_me_and_super_capite" = "Я і Даніілу Мысліўцу";
+"privacy_value_only_me_and_super_capite_dative" = "Мне і Даніілу Мысліўцу";
+"privacy_value_super_capite" = "Даніілу Мысліўцу";
+
+"your_email_address" = "Адрас Вашай электроннай пошты";
+"your_page_address" = "Адрас Вашай старонкі";
+"page_address" = "Адрас старонкі";
+"current_email_address" = "Ныняшні адрас";
+"page_id" = "ID старонкі";
+"you_can_also" = "Вы таксама можаце";
+"delete_your_page" = "выдаліць сваю старонку";
+"delete_album" = "выдаліць альбом";
+
+"ui_settings_interface" = "Інтэрфейс";
+"ui_settings_sidebar" = "Левае меню";
+"ui_settings_rating" = "Рэйтынг";
+"ui_settings_rating_show" = "Паказваць";
+"ui_settings_rating_hide" = "Хаваць";
+
+/* Errors */
+
+"error_1" = "Няправільны запыт";
+"error_2" = "Няправільны імя або пароль";
+"error_3" = "Ня аўтарызаваны";
+"error_4" = "Карыстальнік не існуе";
+"information_-1" = "Аперацыя выканана паспяхова";
+"information_-2" = "Уваход выкананы паспяхова";
+
+"no_data" = "Няма дадзеных";
+"no_data_description" = "У гэтым прадстаўленні адсутнічаюць дадзеныя.";
+
+"error" = "Памылка";
+"error_shorturl" = "Дадзены кароткі адрас ужо заняты.";
+"error_segmentation" = "Памылка сегментацыі";
+"error_upload_failed" = "Не атрымалася загрузіць фота";
+"error_old_password" = "Стары пароль не супадае";
+"error_new_password" = "Новы пароль не супадае";
+"error_shorturl_incorrect" = "Кароткі адрас мае некарэктны фармат.";
+
+"forbidden" = "Памылка доступу";
+"forbidden_comment" = "Налады прыватнасці гэтага карыстальніка не дазваляюць вам глядзець на яго старонку.";
+
+"changes_saved" = "Змены захаваныя";
+"changes_saved_comment" = "Новыя дадзеныя з'явяцца на вашай старонцы";
+
+"photo_saved" = "Фатаграфія захаваная";
+"photo_saved_comment" = "Новае фатаграфія профілю з'явіцца ў вас на старонцы";
+
+/* Admin actions */
+
+"login_as" = "Увайсці як $1";
+"ban_user_action" = "Забаніць карыстальніка";
+"warn_user_action" = "Папярэдзіць карыстальніка";
+
+/* Paginator */
+
+"paginator_back" = "Назад";
+"paginator_page" = "Старонка $1";
+"paginator_next" = "Далей";
+
+/* Gifts */
+"gift" = "Падарунак";
+"gifts" = "Падарункі";
+"gifts_zero" = "Няма падарункаў";
+"gifts_one" = "Адзін падарунак";
+"gifts_other" = "$1 падарункаў";
+
+"send_gift" = "Адправіць падарунак";
+
+"gift_select" = "Выбраць падарунак";
+"collections" = "Калекцыі";
+"confirm" = "Пацвердзіць";
+"as_anonymous" = "Ананімна";
+"gift_your_message" = "Ваша паведамленне";
+
+"free_gift" = "Бясплатна";
+"coins" = "Галасы";
+"coins_zero" = "0 галасоў";
+"coins_few" = "$1 голаса";
+"coins_one" = "Адзін голас";
+"coins_other" = "$1 галасоў";
+
+"comment" = "Каментарый";
+"sender" = "Адпраўнік";
+

@@ -1,6 +1,6 @@
 {extends "../@listView.xml"}
-{var iterator = $user->getClubs($page)}
-{var count    = $user->getClubCount()}
+{var iterator = $user->getClubs($page, $admin)}
+{var count    = $user->getClubCount($admin)}
 
 {block title}{_"groups"}{/block} 
 
@@ -18,13 +18,22 @@
     </div>
 {/block}
 
-{block actions}
-    <div class="tile">
-        <a href="javascript:alert('Не запилил')" class="profile_link">Поиск групп</a>
-    </div>
-{/block}
-
 {* BEGIN ELEMENTS DESCRIPTION *}
+
+{block tabs}
+	{if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+		<div {if !$admin}id="activetabs"{/if} class="tab">
+			<a {if !$admin}id="act_tab_a"{/if} href="/groups{$user->getId()}">
+				{_groups}
+			</a>
+		</div>
+		<div {if $admin}id="activetabs"{/if} class="tab">
+			<a {if $admin}id="act_tab_a"{/if} href="/groups{$user->getId()}?act=managed">
+				{_managed}
+			</a>
+		</div>
+	{/if}
+{/block}
 
 {block link|strip|stripHtml}
     {$x->getURL()}
@@ -40,4 +49,23 @@
 
 {block description}
     {$x->getDescription()}
+    {if $x->canBeModifiedBy($thisUser ?? NULL)}
+        {var clubPinned = $thisUser->isClubPinned($x)}
+        <table n:if="$clubPinned || $thisUser->getPinnedClubCount() <= 10">
+            <tbody>
+                <tr>
+                    <td width="120" valign="top"><span class="nobold">{_actions}: </span></td>
+                    <td>
+                        <a href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
+                            {if $clubPinned}
+                                {_remove_from_left_menu}
+                            {else}
+                                {_add_to_left_menu}
+                            {/if}
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    {/if}
 {/block}

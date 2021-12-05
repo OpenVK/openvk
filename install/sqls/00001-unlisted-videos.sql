@@ -1,0 +1,1 @@
+ALTER TABLE `videos` ADD `unlisted` BOOLEAN NOT NULL DEFAULT FALSE AFTER `link`, ADD INDEX (`unlisted`);

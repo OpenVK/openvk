@@ -11,8 +11,9 @@ use Nette\Database\Table\Selection;
 
 class Ticket extends RowModel
 {
-    
     protected $tableName = "tickets";
+    
+    private $overrideContentColumn = "text";
 
     function getId(): int
     {
@@ -23,11 +24,11 @@ class Ticket extends RowModel
     {
         if ($this->getRecord()->type === 0) 
         {
-            return 'Вопрос находится на рассмотрении.';
+            return tr("support_status_0");
         } elseif ($this->getRecord()->type === 1) {
-            return 'Есть ответ.';
+            return tr("support_status_1");
         } elseif ($this->getRecord()->type === 2) {
-            return 'Закрыто.';
+            return tr("support_status_2");
         }
     }
     
@@ -43,7 +44,11 @@ class Ticket extends RowModel
     
     function getContext(): string
     {
-        return $this->getRecord()->text;
+        $text = $this->getRecord()->text;
+        $text = $this->formatLinks($text);
+        $text = $this->removeZalgo($text);
+        $text = nl2br($text);
+        return $text;
     }
     
     function getTime(): DateTime
@@ -70,4 +75,11 @@ class Ticket extends RowModel
     {
         return (new Users)->get($this->getRecord()->user_id);
     }
+
+    function isAd(): bool /* Эх, костыли... */
+    {
+    	return false;
+    }
+
+    use Traits\TRichText;
 }

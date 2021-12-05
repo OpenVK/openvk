@@ -31,10 +31,10 @@ final class NotesPresenter extends OpenVKPresenter
         ];
     }
     
-    function renderView(int $owner, int $id): void
+    function renderView(int $owner, int $note_id): void
     {
-        $note = $this->notes->get($id);
-        if(!$note || $note->getOwner()->getId() !== $owner)
+        $note = $this->notes->getNoteById($owner, $note_id);
+        if(!$note || $note->getOwner()->getId() !== $owner || $note->isDeleted())
             $this->notFound();
         
         $this->template->cCount   = $note->getCommentsCount();
@@ -65,7 +65,7 @@ final class NotesPresenter extends OpenVKPresenter
             $note->setSource($this->postParam("html"));
             $note->save();
             
-            $this->redirect("/note" . $this->user->id . "_" . $note->getId());
+            $this->redirect("/note" . $this->user->id . "_" . $note->getVirtualId());
         }
     }
     

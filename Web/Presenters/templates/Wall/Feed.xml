@@ -14,26 +14,8 @@
 {/block}
 
 {block content}
-    <div>
-        <div class="content_title_expanded" onclick="hidePanel(this);">
-            {_"publish_post"}
-        </div>
-        <div style="margin: 0 5px;"><br>
-            <form action="/wall{$thisUser->getId()}/makePost" method="POST" enctype="multipart/form-data" style="margin:0;">
-                <textarea id="wall-post-input" name="text" style="width: 100%;resize: none;"></textarea>
-                <input type="file" name="_pic_attachment" accept="image/*" style="display:none;" />
-                <input type="hidden" name="type" value="1" />
-                <input type="hidden" name="hash" value="{$csrfToken}" />
-                <div></div>
-                <br/>
-                <input type="submit" value="{_'write'}" class="button" />
-                <div style="float: right;">
-                    <a href="javascript:void(document.querySelector(`input[name=_pic_attachment]`).click());">
-                        {_"attach_photo"}
-                    </a>
-                </div>
-            </form>
-        </div>
+    <div class="postFeedWrapper">
+        {include "../components/textArea.xml", route => "/wall" . $thisUser->getId() . "/makePost"}
     </div>
     <br/>
     
@@ -41,7 +23,7 @@
         {foreach $posts as $post}
             <a name="postGarter={$post->getId()}"></a>
             
-            {include "../components/post.xml", post => $post, onWallOf => true}
+            {include "../components/post.xml", post => $post, onWallOf => true, commentSection => true}
         {/foreach}
         {include "../components/paginator.xml", conf => $paginatorConf}
         <br/>

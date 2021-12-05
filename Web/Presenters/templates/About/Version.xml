@@ -79,7 +79,7 @@
         #ovkLogo {
             float: right;
             border: 0;
-            width: 30px;
+            height: 30px;
             padding-top: 6px;
             position: relative;
         }
@@ -97,7 +97,7 @@
                 <tr class="h">
                     <td>
                         <h1 class="p" style="float: left;">OpenVK {=OPENVK_VERSION}</h1>
-                        <img id="ovkLogo" src="/assets/packages/static/openvk/img/logo.svg" alt="OpenVK Logo" />
+                        <img id="ovkLogo" src="/assets/packages/static/openvk/img/logo_full.svg" alt="OpenVK Logo" />
                     </td>
                 </tr>
             </tbody>
@@ -397,8 +397,8 @@
                 <tr>
                     <td class="e">
                         Vladimir Barinov (veselcraft), Alexandra Katunina (rem-pai), Konstantin Kichulkin (kosfurler),
-                        Nikita Volkov (sup_ban), Daniil Myslivets (myslivets), Alexander Kotov (l-lacker),
-                        Alexey Assemblerov (BiosNod), Ilya Prokopenko (dsrev) and Vladimir Lapskiy (0x7d5)
+                        Nikita Volkov (sup_ban), Daniel Myslivets (myslivets), Alexander Kotov (l-lacker),
+                        Alexey Assemblerov (BiosNod), Ilya Prokopenko (dsrev) and Maxim Leshchenko (maksales / maksalees)
                     </td>
                 </tr>
             </tbody>
@@ -412,7 +412,7 @@
                 <tr>
                     <td class="e">
                         Vladimir Barinov (veselcraft) and Konstantin Kichulkin (kosfurler)<br/>
-                        OpenVK is a free open-source software that "cosplays" (or imitates) older versions of russian website VKontakte. VKontakte belongs to Pavel Durov and mail.ru.
+                        OpenVK is a free open-source software that "cosplays" (or imitates) older versions of russian website VKontakte. VKontakte belongs to Pavel Durov and VK Group.
                     </td>
                 </tr>
             </tbody>

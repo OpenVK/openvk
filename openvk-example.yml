@@ -10,6 +10,7 @@ openvk:
             disableLargeUploads: false
             mode: "basic"
         shortcodes:
+            minLength: 3 # won't affect existing short urls or the ones set via admin panel
             forbiddenNames:
                 - "index.php"
         security:
@@ -33,10 +34,14 @@ openvk:
         messages:
             strict: false
         wall:
+            anonymousPosting:
+                enable: false
+                account: 100
             postSizes:
                 maxSize: 60000
                 processingLimit: 3000
                 emojiProcessingLimit: 1000
+        commerce: false
         menu:
             links:
                 
@@ -66,3 +71,9 @@ openvk:
                 dsn: "mysql:unix_socket=/tmp/mysql.sock;dbname=openvk-eventdb"
                 user: "root"
                 password: "DATABASE_PASSWORD"
+        notificationsBroker:
+            enable: false
+            kafka:
+                addr: "127.0.0.1"
+                port: 9092
+                topic: "OvkEvents"

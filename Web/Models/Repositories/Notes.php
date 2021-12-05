@@ -32,6 +32,15 @@ class Notes
         foreach($this->notes->where("owner", $user->getId())->where("deleted", 0)->page($page, $perPage) as $album)
             yield new Note($album);
     }
+
+    function getNoteById(int $owner, int $note): ?Note
+    {
+        $note = $this->notes->where(['owner' => $owner, 'virtual_id' => $note])->fetch();
+        if(!is_null($note))
+            return new Note($note);
+        else
+            return null;
+    }
     
     function getUserNotesCount(User $user): int
     {

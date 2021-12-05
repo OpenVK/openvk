@@ -1,4 +1,4 @@
-.post-nsfw .post-content img.media {
+.post-nsfw .post-content .media {
     filter: saturate(0.8) blur(15px);
 }
 
@@ -7,7 +7,7 @@
     position: relative;
 }
 
-.post-nsfw .post-content .attachment:active img.media {
+.post-nsfw .post-content .attachment:active .media {
     filter: none;
 }
 

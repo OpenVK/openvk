@@ -1,5 +1,5 @@
 /* VK's Microblog CSS */
-/* Design belongs to Pavel Durov & mail.ru */
+/* Design belongs to Pavel Durov & VK Group */
 
 .post {
     padding: 5px 0 5px 0;
@@ -36,16 +36,52 @@
     color: grey;
 }
 
+.comment {
+    padding: 5px 0 0 0;
+    border-top: 1px #ddd solid;
+}
+
+.like_wrap {
+    display: flex;
+}
+
 .repost-icon {
     background: url('/assets/packages/static/openvk/img/published.gif') no-repeat 0px 0px;
     height: 12px;
     margin: 2px 3px 0px;
     width: 11px;
-    float: left;
 }
 
-.repost-icon:hover {
+.heart {
+    background: url('/assets/packages/static/openvk/img/like.gif') no-repeat 1px 0px;
+    height: 10px;
+    margin: 2px 3px 0px;
+    width: 11px;
+    float: none;
+    opacity: 0.4;
+}
+
+.likeCnt {
+    float: none;
+}
+
+#liked {
     opacity: 1 !important;
+}
+
+.heart:hover {
+    opacity: 0.4 !important;
+}
+
+.post-share-button, .post-like-button {
+    display: flex;
+    padding: 2px;
+    border-radius: 2px;
+    transition-duration: 0.2s;
+}
+
+.post-share-button:hover, .post-like-button:hover {
+    background-color: rgb(240, 240, 240);
 }
 
 .post-author .delete {
@@ -61,4 +97,40 @@
 
 .post-author .delete:hover {
     opacity: 0.4;
+}
+
+.post-author .pin {
+    float: right;
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    overflow: auto;
+    background: url("/assets/packages/static/openvk/img/pin.png") no-repeat 0px 0px;
+    opacity: 0.1;
+    transition-duration: 0.3s;
+}
+
+.post-author .pin:hover {
+    opacity: 0.4;
+}
+
+.expand_button {
+    background-color: #eee;
+    width: 100%;
+    display: inline-block;;
+    height: 30px;
+    line-height: 28px;
+    text-align: center;
+}
+
+.expand_button:hover {
+    background-color: #e5e5e5;
+}
+
+.commentsTextFieldWrap {
+    padding: 0 7px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-left: 0;
+    border-right: 0;
 }

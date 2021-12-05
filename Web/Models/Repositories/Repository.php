@@ -6,8 +6,8 @@ use Nette\Database\Table\ActiveRow;
 
 abstract class Repository
 {
-    private $context;
-    private $table;
+    protected $context;
+    protected $table;
     
     protected $tableName;
     protected $modelName;
@@ -27,6 +27,19 @@ abstract class Repository
     function get(int $id)
     {
         return $this->toEntity($this->table->get($id));
+    }
+    
+    function size(bool $withDeleted = false): int
+    {
+        return sizeof($this->table->where("deleted", $withDeleted));
+    }
+    
+    function enumerate(int $page, ?int $perPage = NULL, bool $withDeleted = false): \Traversable
+    {
+        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
+        
+        foreach($this->table->where("deleted", $withDeleted)->page($page, $perPage) as $entity)
+            yield $this->toEntity($entity);
     }
     
     use \Nette\SmartObject;

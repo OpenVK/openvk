@@ -3,8 +3,8 @@ namespace openvk\Web\Models\Entities;
 use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
-use openvk\Web\Models\Entities\{Photo, Message, Correspondence};
-use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Notifications};
+use openvk\Web\Models\Entities\{Photo, Message, Correspondence, Gift};
+use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Gifts, Notifications};
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 use Chandler\Security\User as ChandlerUser;
@@ -204,6 +204,11 @@ class User extends RowModel
         return $this->getRecord()->shortcode;
     }
     
+    function getAlert(): ?string
+    {
+        return $this->getRecord()->alert;
+    }
+    
     function getBanReason(): ?string
     {
         return $this->getRecord()->block_reason;
@@ -214,9 +219,17 @@ class User extends RowModel
         return $this->getRecord()->type;
     }
     
-    function getCoins(): int
+    function getCoins(): float
     {
+        if(!OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"])
+            return 0.0;
+        
         return $this->getRecord()->coins;
+    }
+    
+    function getRating(): int
+    {
+        return OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"] ? $this->getRecord()->rating : 0;
     }
     
     function getReputation(): int
@@ -308,7 +321,22 @@ class User extends RowModel
     {
         return $this->getRecord()->birthday;
     }
+
+    function getAge(): ?int
+    {
+        return (int)floor((time() - $this->getBirthday()) / mktime(0, 0, 0, 1, 1, 1971));
+    }
     
+    function get2faSecret(): ?string
+    {
+        return $this->getRecord()["2fa_secret"];
+    }
+
+    function is2faEnabled(): bool
+    {
+        return !is_null($this->get2faSecret());
+    }
+
     function updateNotificationOffset(): void
     {
         $this->stateChanges("notification_offset", time());
@@ -392,8 +420,16 @@ class User extends RowModel
             $incompleteness += 20;
         }
         
+        $total = max(100 - $incompleteness + $this->getRating(), 0);
+        if(ovkGetQuirk("profile.rating-bar-behaviour") === 0)
+	    if ($total >= 100)
+            $percent = round(($total / 10**strlen(strval($total))) * 100, 0);
+        else
+		    $percent = min($total, 100);
+        
         return (object) [
-            "total"    => 100 - $incompleteness,
+            "total"    => $total,
+            "percent"  => $percent,
             "unfilled" => $unfilled,
         ];
     }
@@ -433,25 +469,78 @@ class User extends RowModel
         return sizeof(DatabaseConnection::i()->getContext()->table("messages")->where(["recipient_id" => $this->getId(), "unread" => 1]));
     }
     
-    function getClubs(int $page = 1): \Traversable
+    function getClubs(int $page = 1, bool $admin = false): \Traversable
     {
-        $sel = $this->getRecord()->related("subscriptions.follower")->page($page, OPENVK_DEFAULT_PER_PAGE);
-        foreach($sel->where("model", "openvk\\Web\\Models\\Entities\\Club") as $target) {
-            $target = (new Clubs)->get($target->target);
-            if(!$target) continue;
-            
-            yield $target;
+        if($admin) {
+            $id     = $this->getId();
+            $query  = "SELECT `id` FROM `groups` WHERE `owner` = ? UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?";
+            $query .= " LIMIT " . OPENVK_DEFAULT_PER_PAGE . " OFFSET " . ($page - 1) * OPENVK_DEFAULT_PER_PAGE;
+
+            $sel = DatabaseConnection::i()->getConnection()->query($query, $id, $id);
+            foreach($sel as $target) {
+                $target = (new Clubs)->get($target->id);
+                if(!$target) continue;
+
+                yield $target;
+            }
+        } else {
+            $sel = $this->getRecord()->related("subscriptions.follower")->page($page, OPENVK_DEFAULT_PER_PAGE);
+            foreach($sel->where("model", "openvk\\Web\\Models\\Entities\\Club") as $target) {
+                $target = (new Clubs)->get($target->target);
+                if(!$target) continue;
+
+                yield $target;
+            }
         }
     }
     
-    function getClubCount(): int
+    function getClubCount(bool $admin = false): int
     {
-        $sel = $this->getRecord()->related("subscriptions.follower");
-        $sel = $sel->where("model", "openvk\\Web\\Models\\Entities\\Club");
-        
-        return sizeof($sel);
+        if($admin) {
+            $id    = $this->getId();
+            $query = "SELECT COUNT(*) AS `cnt` FROM (SELECT `id` FROM `groups` WHERE `owner` = ? UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?) u0;";
+
+            return (int) DatabaseConnection::i()->getConnection()->query($query, $id, $id)->fetch()->cnt;
+        } else {
+            $sel = $this->getRecord()->related("subscriptions.follower");
+            $sel = $sel->where("model", "openvk\\Web\\Models\\Entities\\Club");
+
+            return sizeof($sel);
+        }
     }
     
+    function getPinnedClubs(): \Traversable
+    {
+        foreach($this->getRecord()->related("groups.owner")->where("owner_club_pinned", true) as $target) {
+            $target = (new Clubs)->get($target->id);
+            if(!$target) continue;
+
+            yield $target;
+        }
+
+        foreach($this->getRecord()->related("group_coadmins.user")->where("club_pinned", true) as $target) {
+            $target = (new Clubs)->get($target->club);
+            if(!$target) continue;
+
+            yield $target;
+        }
+    }
+
+    function getPinnedClubCount(): int
+    {
+        return sizeof($this->getRecord()->related("groups.owner")->where("owner_club_pinned", true)) + sizeof($this->getRecord()->related("group_coadmins.user")->where("club_pinned", true));
+    }
+
+    function isClubPinned(Club $club): bool
+    {
+        if($club->getOwner()->getId() === $this->getId())
+            return $club->isOwnerClubPinned();
+
+        $manager = $club->getManager($this);
+        if(!is_null($manager))
+            return $manager->isClubPinned();
+    }
+
     function getMeetings(int $page = 1): \Traversable
     {
         $sel = $this->getRecord()->related("event_turnouts.user")->page($page, OPENVK_DEFAULT_PER_PAGE);
@@ -466,6 +555,57 @@ class User extends RowModel
     function getMeetingCount(): int
     {
         return sizeof($this->getRecord()->related("event_turnouts.user"));
+    }
+    
+    function getGifts(int $page = 1, ?int $perPage = NULL): \Traversable
+    {
+        $gifts = $this->getRecord()->related("gift_user_relations.receiver")->order("sent DESC")->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
+        foreach($gifts as $rel) {
+            yield (object) [
+                "sender"  => (new Users)->get($rel->sender),
+                "gift"    => (new Gifts)->get($rel->gift),
+                "caption" => $rel->comment,
+                "anon"    => $rel->anonymous,
+                "sent"    => new DateTime($rel->sent),
+            ];
+        }
+    }
+    
+    function getGiftCount(): int
+    {
+        return sizeof($this->getRecord()->related("gift_user_relations.receiver"));
+    }
+
+    function get2faBackupCodes(): \Traversable
+    {
+        $sel = $this->getRecord()->related("2fa_backup_codes.owner");
+        foreach($sel as $target)
+            yield $target->code;
+    }
+
+    function get2faBackupCodeCount(): int
+    {
+        return sizeof($this->getRecord()->related("2fa_backup_codes.owner"));
+    }
+
+    function generate2faBackupCodes(): void
+    {
+        $codes = [];
+
+        for($i = 0; $i < 10 - $this->get2faBackupCodeCount(); $i++) {
+            $codes[] = [
+                owner => $this->getId(),
+                code => random_int(10000000, 99999999)
+            ];
+        }
+
+        if(sizeof($codes) > 0)
+            DatabaseConnection::i()->getContext()->table("2fa_backup_codes")->insert($codes);
+    }
+
+    function use2faBackupCode(int $code): bool
+    {
+        return (bool) $this->getRecord()->related("2fa_backup_codes.owner")->where("code", $code)->delete();   
     }
     
     function getSubscriptionStatus(User $user): int
@@ -528,6 +668,11 @@ class User extends RowModel
         return !is_null($this->getBanReason());
     }
     
+    function isOnline(): bool
+    {
+        return time() - $this->getRecord()->online <= 300;
+    }
+    
     function prefersNotToSeeRating(): bool
     {
         return !((bool) $this->getRecord()->show_rating);
@@ -536,6 +681,18 @@ class User extends RowModel
     function hasPendingNumberChange(): bool
     {
         return !is_null($this->getPendingPhoneVerification());
+    }
+    
+    function gift(User $sender, Gift $gift, ?string $comment = NULL, bool $anonymous = false): void
+    {
+        DatabaseConnection::i()->getContext()->table("gift_user_relations")->insert([
+            "sender"    => $sender->getId(),
+            "receiver"  => $this->getId(),
+            "gift"      => $gift->getId(),
+            "comment"   => $comment,
+            "anonymous" => $anonymous,
+            "sent"      => time(),
+        ]);
     }
     
     function ban(string $reason): void
@@ -615,9 +772,11 @@ class User extends RowModel
         $this->stateChanges("left_menu", $mask);
     }
     
-    function setShortCode(?string $code = NULL): ?bool
+    function setShortCode(?string $code = NULL, bool $force = false): ?bool
     {
         if(!is_null($code)) {
+            if(strlen($code) < OPENVK_ROOT_CONF["openvk"]["preferences"]["shortcodes"]["minLength"] && !$force)
+                return false;
             if(!preg_match("%^[a-z][a-z0-9\\.\\_]{0,30}[a-z0-9]$%", $code))
                 return false;
             if(in_array($code, OPENVK_ROOT_CONF["openvk"]["preferences"]["shortcodes"]["forbiddenNames"]))
@@ -625,9 +784,9 @@ class User extends RowModel
             if(\Chandler\MVC\Routing\Router::i()->getMatchingRoute("/$code")[0]->presenter !== "UnknownTextRouteStrategy")
                 return false;
 	    
-	    $pClub = DatabaseConnection::i()->getContext()->table("groups")->where("shortcode", $code)->fetch();
-            if(!is_null($pClub))
-                return false;
+            $pClub = DatabaseConnection::i()->getContext()->table("groups")->where("shortcode", $code)->fetch();
+                if(!is_null($pClub))
+                    return false;
         }
         
         $this->stateChanges("shortcode", $code);
@@ -709,6 +868,10 @@ class User extends RowModel
         }
     }
 
+	function getWebsite(): ?string
+	{
+		return $this->getRecord()->website;
+	}
     
     use Traits\TSubscribable;
 }

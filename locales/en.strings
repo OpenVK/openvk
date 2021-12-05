@@ -1,0 +1,581 @@
+"__locale" = "en_US.UTF-8;Eng";
+
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
+
+/* Main page */
+
+"home" = "Home";
+"welcome" = "Welcome";
+
+/* Login */
+
+"log_in" = "Log in";
+"password" = "Password";
+"registration" = "Registration";
+"forgot_password" = "Forgot your password?";
+
+/* Profile information */
+
+"select_language" = "Choose language";
+"edit" = "Edit";
+"birth_date" = "Birth date";
+"registration_date" = "Registration date";
+"hometown" = "Hometown";
+"this_is_you" = "that is You";
+"edit_page" = "Edit page";
+"edit_group" = "Edit group";
+"change_status" = "change status";
+"name" = "Name";
+"surname" = "Surname";
+"gender" = "Gender";
+"male" = "male";
+"female" = "female";
+"description" = "Description";
+"save" = "Save";
+"main_information" = "Main information";
+"nickname" = "Nickname";
+"online" = "Online";
+"was_online" = "was online";
+"was_online_m" = "was online"; 
+/* For male and female */
+
+"years_zero" = "0 year old";
+"years_one" = "1 year old";
+"years_other" = "$1 years old";
+
+"was_online_f" = "was online";
+"all_title" = "All";
+"information" = "Information";
+"status" = "Status";
+"no_information_provided" = "No information provided.";
+"deceased_person" = "Deceased person";
+"none" = "none";
+
+"relationship" = "Relationship";
+
+"relationship_0" = "Not selected";
+"relationship_1" = "Not married";
+"relationship_2" = "Dating";
+"relationship_3" = "Engaged";
+"relationship_4" = "Married";
+"relationship_5" = "In a civil marriage";
+"relationship_6" = "In love";
+"relationship_7" = "Everything is complicated";
+"relationship_8" = "Actively searching";
+
+"politViews" = "Polit. Views";
+
+"politViews_0" = "Not Selected";
+"politViews_1" = "Indifferent";
+"politViews_2" = "Communist";
+"politViews_3" = "Socialist";
+"politViews_4" = "Moderate";
+"politViews_5" = "Liberal";
+"politViews_6" = "Conservative";
+"politViews_7" = "Monarchical";
+"politViews_8" = "Ultra-Conservative";
+"politViews_9" = "Libertarian";
+
+"contact_information" = "Contact information";
+
+"email" = "Email";
+"phone" = "Phone";
+"telegram" = "Telegram";
+"personal_website" = "Personal website";
+"city" = "City";
+"address" = "Address";
+
+"personal_information" = "Personal information";
+
+"interests" = "Interests";
+"favorite_music" = "Favorite music";
+"favorite_films" = "Favorite flims";
+"favorite_shows" = "Favorite TV-shows";
+"favorite_books" = "Favorite books";
+"favorite_quotes" = "Favorite quotes";
+"information_about" = "About";
+
+"updated_at" = "Updated at $1";
+
+/* Wall */
+
+"post_writes_m" = "wrote";
+"post_writes_f" = "wrote";
+"wall" = "Wall";
+"post" = "Post";
+"write" = "Write";
+"publish" = "Publish";
+"delete" = "Delete";
+"comments" = "Comments";
+"share" = "Share";
+"pin" = "Pin";
+"unpin" = "Unpin";
+"pinned" = "pinned";
+"comments_tip" = "Be first, who leaves a comment at this post!";
+"your_comment" = "Your comment";
+"shown" = "Shown";
+"x_out_of" = "$1 of";
+"wall_zero" = "no posts";
+"wall_one" = "$1 post";
+"wall_other" = "$1 posts";
+"feed" = "News";
+"publish_post" = "Add post";
+"view_other_comments" = "View other comments";
+
+"no_comments" = "No comments";
+
+"all_news" = "All news";
+"posts_per_page" = "Number of posts per page";
+
+"attachment" = "Attachment";
+"post_as_group" = "Post as group";
+"comment_as_group" = "Comment as group";
+"add_signature" = "Add signature";
+/* ^ can be translated as "author's signature". ^ */
+"contains_nsfw" = "Contains NSFW content";
+"nsfw_warning" = "This post may have NSFW-content";
+"report" = "Report";
+"attach_photo" = "Attach photo";
+"no_posts_abstract" = "Nobody wrote anything here... So far.";
+"attach_no_longer_available" = "This attachment is no longer available.";
+"open_post" = "Open post";
+"version_incompatibility" = "This attachment could not be displayed. Probably the database is incompatible with the current version of OpenVK.";
+
+/* Friends */
+
+"friends" = "Friends";
+"followers" = "Followers";
+"follower" = "Follower";
+"friends_add" = "Add to friends";
+"friends_delete" = "Remove from friends";
+"friends_reject" = "Reject request";
+"friends_accept" = "Accept request";
+"send_message" = "Send a message";
+"incoming_req" = "Subscribers";
+"outcoming_req" = "Requests";
+"req" = "Requests";
+
+"firends_zero" = "No friends";
+"friends_one" = "$1 friend";
+"friends_other" = "$1 friends";
+
+"followers_zero" = "No followers";
+"followers_one" = "$1 follower";
+"followers_other" = "$1 followers";
+
+"subscriptions_zero" = "No subscriptions";
+"subscriptions_one" = "$1 subscription";
+"subscriptions_other" = "$1 subscriptions";
+
+/* Group */
+
+"name_group" = "Name";
+"subscribe" = "Subscribe";
+"unsubscribe" = "Unsubscribe";
+"subscriptions" = "Subscriptions";
+"join_community" = "Join community";
+"leave_community" = "Leave community";
+"min_6_community" = "Name of the group must have more that 6 characters";
+"participants" = "Participants";
+"groups" = "Groups";
+"meetings" = "Meetings";
+"create_group" = "Create group";
+"group_managers" = "Managers";
+"group_type" = "Group type";
+"group_type_open" = "This is an open group, anyone can enter it.";
+"group_type_closed" = "This is an closed group. To enter, you must submit an request.";
+"creator" = "Creator";
+"administrators" = "Administrators";
+"add_to_left_menu" = "Add to left menu";
+"remove_from_left_menu" = "Remove from left menu";
+"all_followers" = "All followers";
+"only_administrators" = "Only administrators";
+"website" = "Website";
+"managed" = "Managed";
+
+"administrators_one" = "$1 administrator";
+"administrators_other" = "$1 administrators";
+
+"role" = "Role";
+"administrator" = "Administrator";
+"promote_to_admin" = "Promote to admin";
+"devote" = "Devote";
+"set_comment" = "Set comment";
+"hidden_yes" = "Hidden: Yes";
+"hidden_no" = "Hidden: No";
+"group_allow_post_for_everyone" = "Allow posting for everyone";
+"statistics" = "Statistics";
+"group_administrators_list" = "Admins list";
+"group_display_only_creator" = "Display only group creator";
+"group_display_all_administrators" = "Display all administrators";
+"group_dont_display_administrators_list" = "Display nothing";
+
+"participants_zero" = "No participants";
+"participants_one" = "$1 participant";
+"participants_other" = "$1 participant";
+
+"groups_zero" = "No groups";
+"groups_one" = "$1 group";
+"groups_other" = "$1 groups";
+
+"meetings_zero" = "No meetings";
+"meetings_one" = "$1 meeting";
+"meetings_other" = "$1 meetings";
+
+/* Albums */
+
+"create" = "Create";
+"albums" = "Albums";
+"create_album" = "Create album";
+"edit_album" = "Edit album";
+"creating_album" = "Creating album";
+"upload_photo" = "Upload photo";
+"photo" = "Photo";
+"upload_button" = "Upload";
+
+"open_original" = "Open original";
+
+"avatar_album" = "Profile photos";
+"wall_album" = "Wall photos";
+
+"albums_zero" = "No albums";
+"albums_one" = "$1 album";
+"albums_other" = "$1 albums";
+
+/* Notes */
+
+"notes" = "Notes";
+"note" = "Note";
+"name_note" = "Title";
+"text_note" = "Content";
+"create_note" = "Create note";
+"actions" = "Actions";
+
+"notes_zero" = "No notes";
+"notes_one" = "$1 note";
+"notes_other" = "$1 notes";
+
+/* Menus */
+
+/* Note that is string need to fit into the "My Page" link */
+
+"edit_button" = "edit";
+"my_page" = "My Page";
+"my_friends" = "My Friends";
+"my_photos" = "My Photos";
+"my_videos" = "My Videos";
+"my_messages" = "My Messages";
+"my_notes" = "My Notes";
+"my_groups" = "My Groups";
+"my_feed" = "My Feed";
+"my_feedback" = "My Feedback";
+"my_settings" = "My Settings";
+"bug_tracker" = "Bug-tracker";
+
+"menu_login" = "Login";
+"menu_registration" = "Registration";
+"menu_help" = "Help";
+
+"header_home" = "home";
+"header_groups" = "groups";
+"header_donate" = "donate";
+"header_people" = "people";
+"header_invite" = "invite";
+"header_help" = "help";
+"header_log_out" = "log out";
+"header_search" = "Search";
+
+"header_login" = "login";
+"header_registration" = "registration";
+"header_help" = "help";
+
+"footer_blog" = "blog";
+"footer_help" = "help";
+"footer_developers" = "developers";
+"footer_choose_language" = "choose language";
+"footer_privacy" = "privacy";
+
+/* Settings */
+
+"main" = "Main";
+"contacts" = "Contacts";
+"avatar" = "Avatar";
+"privacy" = "Privacy";
+"interface" = "Interface";
+
+"profile_picture" = "Profile picture";
+
+"picture" = "Picture";
+
+"change_password" = "Change password";
+"old_password" = "Old password";
+"new_password" = "New password";
+"repeat_password" = "Repeat password";
+
+"avatars_style" = "Avatar style";
+"style" = "Style";
+
+"default" = "Default";
+"cut" = "Cut";
+"round_avatars" = "Round avatars";
+
+"search_for_groups" = "Search for groups";
+"search_for_people" = "Search for people";
+"search_button" = "Find";
+"results_zero" = "No results";
+"results_one" = "$1 result";
+"results_other" = "$1 results";
+
+"privacy_setting_access_page" = "Who can view my page";
+"privacy_setting_read_info" = "Who can see main information of my page";
+"privacy_setting_see_groups" = "Who can see my groups and meetings";
+"privacy_setting_see_photos" = "Who can see my photos";
+"privacy_setting_see_videos" = "Who can see my videos";
+"privacy_setting_see_notes" = "Who can see my notes";
+"privacy_setting_see_friends" = "Who can see my friends";
+"privacy_setting_add_to_friends" = "Who can add me to friends";
+"privacy_setting_write_wall" = "Who can publish post on my wall";
+"privacy_value_anybody" = "Anybody";
+"privacy_value_anybody_dative" = "Anybody";
+"privacy_value_users" = "OpenVK users";
+"privacy_value_friends" = "Friends";
+"privacy_value_friends_dative" = "Friends";
+"privacy_value_only_me" = "Only me";
+"privacy_value_only_me_dative" = "Only me";
+
+"your_email_address" = "Your Email address";
+"your_page_address" = "Your address page";
+"page_address" = "Address page";
+"current_email_address" = "Current email address";
+"page_id" = "Page ID";
+"you_can_also" = "You can also";
+"delete_your_page" = "delete your page";
+"delete_album" = "delete album";
+
+"ui_settings_interface" = "Interface";
+"ui_settings_sidebar" = "Left menu";
+"ui_settings_rating" = "Rating";
+"ui_settings_rating_show" = "Show";
+"ui_settings_rating_hide" = "Hide";
+
+/* Two-factor authentication */
+
+"two_factor_authentication" = "Two-factor authentication";
+"two_factor_authentication_disabled" = "Provides reliable protection against hacking: to enter the page, you must enter the code obtained in the 2FA application.";
+"two_factor_authentication_enabled" = "Two-factor authentication is enabled. Your page is protected.";
+"two_factor_authentication_login" = "You have two-factor authentication enabled. To login, enter the code received in the application.";
+
+"two_factor_authentication_settings_1" = "Two-factor authentication via TOTP can be used even without internet. To do this, you need a code generation app. For example, <b>Google Authenticator</b> for Android and iOS or <b>FOSS Aegis and andOTP</b> for Android. Make sure the date and time is set correctly on your phone.";
+"two_factor_authentication_settings_2" = "Using the app for two-factor authentication, scan the QR code below:";
+"two_factor_authentication_settings_3" = "or manually enter the given secret key: <b>$1</b>.";
+"two_factor_authentication_settings_4" = "Now enter the code that the application gave you and the password for your page so that we can confirm that you really are.";
+
+"connect" = "Connect";
+"enable" = "Enable";
+"disable" = "Disable";
+"code" = "Code";
+"2fa_code" = "2FA code";
+
+"incorrect_password" = "Incorrect password";
+"incorrect_code" = "Incorrect code";
+"incorrect_2fa_code" = "Incorrect two-factor authentication code";
+"two_factor_authentication_enabled_message" = "Two-factor authentication enabled";
+"two_factor_authentication_enabled_message_description" = "Your page has become more difficult to hack. We recommend that you download <a href='javascript:viewBackupCodes()'>backup codes</a>";
+"two_factor_authentication_disabled_message" = "Two-factor authentication disabled";
+
+"view_backup_codes" = "View backup codes";
+"backup_codes" = "Backup codes for login confirmation";
+"two_factor_authentication_backup_codes_1" = "Backup codes allow you to validate your login when you don't have access to your phone, for example, while traveling.";
+"two_factor_authentication_backup_codes_2" = "You have <b>10 more codes</b>, each code can only be used once. Print them out, put them away in a safe place and use them when you need codes to validate your login.";
+"two_factor_authentication_backup_codes_3" = "You can get new codes if they run out. Only the last created backup codes are valid.";
+
+/* Sorting */
+
+"sort_randomly" = "Sort randomly";
+"sort_up" = "Sort by ID up";
+"sort_down" = "Sort by ID down";
+
+/* Videos */
+
+"videos" = "Videos";
+"video" = "Video";
+"upload_video" = "Upload video";
+"video_uploaded" = "Uploaded";
+"video_updated" = "Updated";
+"video_link_to_yt" = "YT link";
+
+"info_name" = "Title";
+"info_description" = "Description";
+"info_uploaded_by" = "Uploaded by";
+"info_upload_date" = "Upload date";
+
+"videos_zero" = "No videos";
+"videos_one" = "$1 video";
+"videos_other" = "$1 videos";
+
+/* Notifications */
+
+"feedback" = "Feedback";
+"unread" = "Unread";
+"archive" = "Archive";
+
+"notifications_like" = "$1 liked your $2post$3 from $4";
+"notifications_repost" = "$1 shared your $2post$3 from $4";
+"notifications_comment_under" = "$1 leaved a comment on $2";
+"notifications_under_note" = "your $3note$4";
+"notifications_under_photo" = "your $3photo$4";
+"notifications_under_post" = "your $3post$4 from $5";
+"notifications_under_video" = "your $3video$4";
+"notifications_post" = "$1 published $2a post$3 on your wall: $4";
+"notifications_appoint" = "$1 appointed you as community manager $2";
+
+"nt_liked_yours" = "liked yours";
+"nt_shared_yours" = "shared yours";
+"nt_commented_yours" = "commented yours";
+"nt_written_on_your_wall" = "wrote on your wall";
+"nt_made_you_admin" = "appointed you in the community";
+
+"nt_from" = "from";
+"nt_yours_adjective" = "yours";
+"nt_yours_feminitive_adjective" = "yours";
+"nt_post_nominative" = "post";
+"nt_post_instrumental" = "post";
+"nt_note_instrumental" = "note";
+"nt_photo_instrumental" = "photo";
+
+/* Time */
+
+"time_at_sp" = " at ";
+"time_just_now" = "just now";
+"time_exactly_five_minutes_ago" = "5 minutes ago";
+"time_minutes_ago" = "$1 minutes ago";
+"time_today" = "today";
+"time_yesterday" = "yesterday";
+
+"vouchers" = "Vouchers";
+"have_voucher" = "Have voucher";
+"voucher_token" = "Voucher token";
+"voucher_activators" = "Users";
+"voucher_explanation" = "Enter the voucher serial number. It is usually listed on the receipt or in the message.";
+"voucher_explanation_ex" = "Note that vouchers can expire and can only be used once.";
+"invalid_voucher" = "Voucher is invalid";
+"voucher_bad" = "You may have entered the wrong serial number, already used voucher, or the voucher has simply expired.";
+"voucher_good" = "Voucher activated";
+"voucher_redeemed" = "The voucher has been successfully activated. You will receive points, but you will no longer be able to activate it with this code.";
+"redeem" = "Redeem voucher";
+"deactivate" = "Deactivate";
+"usages_total" = "Number of uses";
+"usages_left" = "Uses left";
+
+/* Gifts */
+
+"gift" = "Gift";
+"gifts" = "Gifts";
+"gifts_zero" = "Zero gifts";
+"gifts_one" = "One gift";
+"gifts_other" = "$1 gifts";
+"gifts_left" = "Gifts left: $1";
+"gifts_left_zero" = "Zero gifts left";
+"gifts_left_one" = "One gift left";
+"gifts_left_other" = "$1 gifts left";
+
+"send_gift" = "Send gift";
+
+"gift_select" = "Select gift";
+"collections" = "Collections";
+"confirm" = "Confirm";
+"as_anonymous" = "As anonymous";
+"gift_your_message" = "Your message";
+
+"free_gift" = "Free";
+"coins" = "Voices";
+"coins_zero" = "0 voices";
+"coins_one" = "One voice";
+"coins_other" = "$1 voices";
+
+"users_gifts" = "Gifts";
+
+/* Support */
+
+"support_opened" = "Opened";
+"support_answered" = "With a response";
+"support_closed" = "Closed";
+"support_ticket" = "Ticket";
+"support_tickets" = "Tickets";
+"support_status_0" = "Issue under consideration";
+"support_status_1" = "There's a response";
+"support_status_2" = "Closed";
+"support_greeting_hi" = "Greetings, $1!";
+"support_greeting_regards" = "Best regards,<br/>$1 support team.";
+
+"support_faq" = "Frequently Asked Questions";
+"support_list" = "List of tickets";
+"support_new" = "New ticket";
+
+"support_faq_title" = "Who is this website for?";
+"support_faq_content" = "The site is designed to find friends and acquaintances, as well as view user data. It is like a city directory, through which people can quickly find relevant information about a person.";
+
+"support_new_title" = "Enter the topic of your ticket";
+"support_new_content" = "Describe the issue or suggestion";
+
+"comment" = "Comment";
+"sender" = "Sender";
+
+"author" = "Author";
+
+/* Errors */
+
+"error_1" = "Incorrect query";
+"error_2" = "Incorrect login and password";
+"error_3" = "Non authorized";
+"error_4" = "User does not exist";
+"information_-1" = "Success";
+"information_-2" = "Login success";
+
+"no_data" = "No data";
+"no_data_description" = "There is no data.";
+
+"error" = "Error";
+"error_shorturl" = "This short address is already owned.";
+"error_segmentation" = "Segmentation error";
+"error_upload_failed" = "Failed to upload a photo";
+"error_old_password" = "Old password does not match";
+"error_new_password" = "New password does not match";
+"error_shorturl_incorrect" = "The short address has an incorrect format.";
+"error_repost_fail" = "Failed to share post";
+
+"forbidden" = "Access error";
+"forbidden_comment" = "This user\'s privacy settings do not allow you to look at his page.";
+
+"changes_saved" = "Changes saved";
+"changes_saved_comment" = "New data will appear on your page";
+
+"photo_saved" = "Photo saved";
+"photo_saved_comment" = "New profile picture will appear on your page";
+
+"shared_succ" = "The post will appear on your wall. Click on the notification to go to your wall.";
+
+/* Admin actions */
+
+"login_as" = "Login as $1";
+"manage_user_action" = "Manage user";
+"ban_user_action" = "Ban user";
+"warn_user_action" = "Warn user";
+
+/* Paginator (deprecated) */
+
+"paginator_back" = "Back";
+"paginator_page" = "Page $1";
+"paginator_next" = "Next";
+
+/* Dialogs */
+
+"ok" = "OK";
+"yes" = "Yes";
+"no" = "No";
+"cancel" = "Cancel";
+"edit_action" = "Change";
+
+"warning" = "Warning";
+"question_confirm" = "This action can't be undone. Do you really wanna do it?";
+

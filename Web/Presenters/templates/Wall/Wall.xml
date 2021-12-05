@@ -15,52 +15,8 @@
 {block content}
 <div class="content_divider">
     <div>
-        <!-- TODO: Move the creating post form to dedicated file -->
         <div n:if="$canPost" class="content_subtitle">
-            <div id="write" style="padding: 5px 0;" >
-                <form action="/wall{$owner}/makePost" method="post" enctype="multipart/form-data" style="margin:0;">
-                    <textarea id="wall-post-input" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="expanded-textarea"></textarea>
-                    <div>
-                        <!-- padding to fix <br/> bug -->
-                    </div>
-                    <div id="post-buttons">
-                        <div class="post-upload">
-                            Вложение: <span>(unknown)</span>
-                        </div>
-                        <div class="post-opts">
-                            {if !is_null($thisUser) && $owner < 0 && $club->canBeModifiedBy($thisUser)}
-                                <script>
-                                    function onWallAsGroupClick(el) {
-                                        _display = el.checked ? "block" : "none";
-                                        document.querySelector("#forceSignOpt").style.display = _display;
-                                    }
-                                </script>
-                                
-                                <label>
-                                    <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" /> От имени сообщества
-                                </label>
-                                <label id="forceSignOpt" style="display: none;">
-                                    <input type="checkbox" name="force_sign" /> Подпись автора
-                                </label>
-                            {/if}
-                            
-                            <label>
-                                <input type="checkbox" name="nsfw" /> Содержит NSFW-контент
-                            </label>
-                        </div>
-                        <input type="file" name="_pic_attachment" accept="image/*" style="display:none;" />
-                        <input type="hidden" name="type" value="1" />
-                        <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <br/>
-                        <input type="submit" value="{_'write'}" class="button" />
-                        <div style="float: right;">
-                            <a href="javascript:void(document.querySelector(`input[name=_pic_attachment]`).click());">
-                                {_attach_photo}
-                            </a>
-                        </div>
-                    </div>
-                </form>
-            </div>
+            {include "../components/textArea.xml", route => "/wall$owner/makePost"}
         </div>
         
         <div class="content">
@@ -68,7 +24,7 @@
                 {foreach $posts as $post}
                     <a name="postGarter={$post->getId()}"></a>
                     
-                    {include "../components/post.xml", post => $post}
+                    {include "../components/post.xml", post => $post, commentSection => true}
                 {/foreach}
                 {include "../components/paginator.xml", conf => $paginatorConf}
             {else}

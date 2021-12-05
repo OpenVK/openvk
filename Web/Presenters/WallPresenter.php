@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{Post, Photo, Club, User};
-use openvk\Web\Models\Entities\Notifications\{LikeNotification, RepostNotification, WallPostNotification};
+use openvk\Web\Models\Entities\{Post, Photo, Video, Club, User};
+use openvk\Web\Models\Entities\Notifications\{RepostNotification, WallPostNotification};
 use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums};
 use Chandler\Database\DatabaseConnection;
 use Nette\InvalidStateException as ISE;
@@ -45,17 +45,21 @@ final class WallPresenter extends OpenVKPresenter
             exit("Ошибка доступа: " . (string) random_int(0, 255));
         
         $owner = ($user < 0 ? (new Clubs) : (new Users))->get(abs($user));
-        if(is_null($this->user))
+        if(is_null($this->user)) {
             $canPost = false;
-        else if($user > 0)
-            $canPost = $owner->getPrivacyPermission("wall.write", $this->user->identity);
-        else if($user < 0)
+        } else if($user > 0) {
+            if(!$owner->isBanned())
+                $canPost = $owner->getPrivacyPermission("wall.write", $this->user->identity);
+            else
+                $this->flashFail("err", tr("error"), "Ошибка доступа");
+	} else if($user < 0) {
             if($owner->canBeModifiedBy($this->user->identity))
                 $canPost = true;
             else
                 $canPost = $owner->canPost();
-        else
-            $canPost = false; 
+        } else {
+            $canPost = false;
+	}
         
         if ($embedded == true) $this->template->_template = "components/wall.xml";
         $this->template->oObj    = $owner;
@@ -164,21 +168,33 @@ final class WallPresenter extends OpenVKPresenter
         
         $wallOwner = ($wall > 0 ? (new Users)->get($wall) : (new Clubs)->get($wall * -1))
                      ?? $this->flashFail("err", "Не удалось опубликовать пост", "Такого пользователя не существует.");
-        if($wall > 0)
-            $canPost = $wallOwner->getPrivacyPermission("wall.write", $this->user->identity);
-        else if($wall < 0)
+        if($wall > 0) {
+            if(!$wallOwner->isBanned())
+                $canPost = $wallOwner->getPrivacyPermission("wall.write", $this->user->identity);
+            else
+                $this->flashFail("err", "Ошибка доступа", "Вам нельзя писать на эту стену.");
+        } else if($wall < 0) {
             if($wallOwner->canBeModifiedBy($this->user->identity))
                 $canPost = true;
             else
                 $canPost = $wallOwner->canPost();
-        else
+        } else {
             $canPost = false; 
-        
+        }
+	
         if(!$canPost)
             $this->flashFail("err", "Ошибка доступа", "Вам нельзя писать на эту стену.");
-        
-        if(false)
-            $this->flashFail("err", "Не удалось опубликовать пост", "Пост слишком большой.");
+
+        $anon = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"];
+        if($wallOwner instanceof Club && $this->postParam("as_group") === "on" && $this->postParam("force_sign") !== "on" && $anon) {
+            $manager = $wallOwner->getManager($this->user->identity);
+            if($manager)
+                $anon = $manager->isHidden();
+            elseif($this->user->identity->getId() === $wallOwner->getOwner()->getId())
+                $anon = $wallOwner->isOwnerHidden();
+        } else {
+            $anon = $anon && $this->postParam("anon") === "on";
+        }
         
         $flags = 0;
         if($this->postParam("as_group") === "on")
@@ -186,48 +202,48 @@ final class WallPresenter extends OpenVKPresenter
         if($this->postParam("force_sign") === "on")
             $flags |= 0b01000000;
         
-        
-        if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
-            try {
-                $photo = new Photo;
-                $photo->setOwner($this->user->id);
-                $photo->setDescription(iconv_substr($this->postParam("text"), 0, 36) . "...");
-                $photo->setCreated(time());
-                $photo->setFile($_FILES["_pic_attachment"]);
-                $photo->save();
+        try {
+            $photo = NULL;
+            $video = NULL;
+            if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
+                $album = NULL;
+                if(!$anon && $wall > 0 && $wall === $this->user->id)
+                    $album = (new Albums)->getUserWallAlbum($wallOwner);
                 
-                if($wall > 0 && $wall === $this->user->id) {
-                    (new Albums)->getUserWallAlbum($wallOwner)->addPhoto($photo);
-                }
-            } catch(ISE $ex) {
-                $this->flashFail("err", "Не удалось опубликовать пост", "Файл изображения повреждён, слишком велик или одна сторона изображения в разы больше другой.");
+                $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album, $anon);
             }
             
+            if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK) {
+                $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"], $anon);
+            }
+        } catch(\DomainException $ex) {
+            $this->flashFail("err", "Не удалось опубликовать пост", "Файл медиаконтента повреждён.");
+        } catch(ISE $ex) {
+            $this->flashFail("err", "Не удалось опубликовать пост", "Файл медиаконтента повреждён или слишком велик.");
+        }
+        
+        if(empty($this->postParam("text")) && !$photo && !$video)
+            $this->flashFail("err", "Не удалось опубликовать пост", "Пост пустой или слишком большой.");
+        
+        try {
             $post = new Post;
             $post->setOwner($this->user->id);
             $post->setWall($wall);
             $post->setCreated(time());
             $post->setContent($this->postParam("text"));
+            $post->setAnonymous($anon);
             $post->setFlags($flags);
             $post->setNsfw($this->postParam("nsfw") === "on");
             $post->save();
-            $post->attach($photo);
-        } elseif($this->postParam("text")) {
-            try {
-                $post = new Post;
-                $post->setOwner($this->user->id);
-                $post->setWall($wall);
-                $post->setCreated(time());
-                $post->setContent($this->postParam("text"));
-                $post->setFlags($flags);
-                $post->setNsfw($this->postParam("nsfw") === "on");
-                $post->save();
-            } catch(\LogicException $ex) {
-                $this->flashFail("err", "Не удалось опубликовать пост", "Пост пустой или слишком большой.");
-            }
-        } else {
-            $this->flashFail("err", "Не удалось опубликовать пост", "Пост пустой или слишком большой.");
+        } catch (\LengthException $ex) {
+            $this->flashFail("err", "Не удалось опубликовать пост", "Пост слишком большой.");
         }
+        
+        if(!is_null($photo))
+            $post->attach($photo);
+        
+        if(!is_null($video))
+            $post->attach($video);
         
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
@@ -250,10 +266,11 @@ final class WallPresenter extends OpenVKPresenter
         $this->logPostView($post, $wall);
         
         $this->template->post     = $post;
-        if ($post->getTargetWall() > 0) 
-        {
+        if ($post->getTargetWall() > 0) {
         	$this->template->wallOwner = (new Users)->get($post->getTargetWall());
 			$this->template->isWallOfGroup = false;
+            if($this->template->wallOwner->isBanned())
+                $this->flashFail("err", tr("error"), "Ошибка доступа");
 		} else {
 			$this->template->wallOwner = (new Clubs)->get(abs($post->getTargetWall()));
 			$this->template->isWallOfGroup = true;
@@ -274,9 +291,6 @@ final class WallPresenter extends OpenVKPresenter
         
         if(!is_null($this->user)) {
             $post->toggleLike($this->user->identity);
-            
-            if($post->getOwner(false)->getId() !== $this->user->identity->getId() && !($post->getOwner() instanceof Club))
-                (new LikeNotification($post->getOwner(false), $post, $this->user->identity))->emit();
         }
         
         $this->redirect(
@@ -298,7 +312,7 @@ final class WallPresenter extends OpenVKPresenter
             $nPost = new Post;
             $nPost->setOwner($this->user->id);
             $nPost->setWall($this->user->id);
-            $nPost->setContent("");
+            $nPost->setContent($this->postParam("text"));
             $nPost->save();
             $nPost->attach($post);
             
@@ -306,8 +320,7 @@ final class WallPresenter extends OpenVKPresenter
                 (new RepostNotification($post->getOwner(false), $post, $this->user->identity))->emit();
         };
         
-        $this->flash("succ", "Успешно", "Запись появится на вашей стене. <a href='/wall" . $wall . "_" . $post_id . "'>Вернуться к записи.</a>");
-        $this->redirect($this->user->identity->getURL());
+        exit(json_encode(["wall_owner" => $this->user->identity->getId()]));
     }
     
     function renderDelete(int $wall, int $post_id): void
