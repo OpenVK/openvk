@@ -36,20 +36,20 @@
 "nickname" = "Nickname";
 "online" = "Online";
 "was_online" = "was online";
-"was_online_m" = "was online"; 
-/* For male and female */
-
-"years_zero" = "0 year old";
-"years_one" = "1 year old";
-"years_other" = "$1 years old";
-
+"was_online_m" = "was online";
 "was_online_f" = "was online";
+/* For male and female */
 "all_title" = "All";
 "information" = "Information";
 "status" = "Status";
 "no_information_provided" = "No information provided.";
 "deceased_person" = "Deceased person";
 "none" = "none";
+"send" = "Send";
+
+"years_zero" = "0 year old";
+"years_one" = "1 year old";
+"years_other" = "$1 years old";
 
 "relationship" = "Relationship";
 
@@ -99,8 +99,11 @@
 
 /* Wall */
 
+"feed" = "News";
+
 "post_writes_m" = "wrote";
 "post_writes_f" = "wrote";
+"post_writes_g" = "published";
 "wall" = "Wall";
 "post" = "Post";
 "write" = "Write";
@@ -118,7 +121,6 @@
 "wall_zero" = "no posts";
 "wall_one" = "$1 post";
 "wall_other" = "$1 posts";
-"feed" = "News";
 "publish_post" = "Add post";
 "view_other_comments" = "View other comments";
 
@@ -287,7 +289,6 @@
 
 "header_login" = "login";
 "header_registration" = "registration";
-"header_help" = "help";
 
 "footer_blog" = "blog";
 "footer_help" = "help";
@@ -342,6 +343,7 @@
 "privacy_value_friends_dative" = "Friends";
 "privacy_value_only_me" = "Only me";
 "privacy_value_only_me_dative" = "Only me";
+"privacy_value_nobody" = "Nobody";
 
 "your_email_address" = "Your Email address";
 "your_page_address" = "Your address page";
@@ -402,7 +404,7 @@
 "upload_video" = "Upload video";
 "video_uploaded" = "Uploaded";
 "video_updated" = "Updated";
-"video_link_to_yt" = "YT link";
+"video_link_to_yt" = "Link to YouTube";
 
 "info_name" = "Title";
 "info_description" = "Description";
@@ -452,6 +454,10 @@
 "time_today" = "today";
 "time_yesterday" = "yesterday";
 
+"points" = "Votes";
+"points_count" = "votes";
+"on_your_account" = "on your account";
+
 "vouchers" = "Vouchers";
 "have_voucher" = "Have voucher";
 "voucher_token" = "Voucher token";
@@ -488,10 +494,10 @@
 "gift_your_message" = "Your message";
 
 "free_gift" = "Free";
-"coins" = "Voices";
-"coins_zero" = "0 voices";
-"coins_one" = "One voice";
-"coins_other" = "$1 voices";
+"coins" = "Votes";
+"coins_zero" = "0 vote";
+"coins_one" = "One vote";
+"coins_other" = "$1 votes";
 
 "users_gifts" = "Gifts";
 

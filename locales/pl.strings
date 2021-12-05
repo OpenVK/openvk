@@ -140,9 +140,6 @@
 "friends" = "Przyjaciel";
 "followers" = "Subskrybent";
 "follower" = "Subskrybent";
-"login_as" = "Zaloguj się jako";
-"ban_fast" = "Zablokować";
-"adm_notify" = "Ostrzec";
 "friends_add" = "Dodaj do znajomych";
 "friends_delete" = "Usuń z znajomych";
 "friends_reject" = "Anuluj wniosek";
@@ -347,7 +344,7 @@
 "results_many" = "$1 wyniki";
 "results_other" = "$1 wyników";
 
-"privacy_setting_access_page" = "Kto w internecie widzi moją stronę";
+"privacy_setting_access_page" = "Kto w Internecie widzi moją stronę";
 "privacy_setting_read_info" = "Kto widzi podstawowe informacje o mojej stronie";
 "privacy_setting_see_groups" = "Kto widzi moje grupy i spotkania";
 "privacy_setting_see_photos" = "Kto widzi moje zdjęcia";
@@ -361,9 +358,9 @@
 "privacy_value_users" = "Przez użytkownika  OpenVK";
 "privacy_value_friends" = "Przyjaciel";
 "privacy_value_friends_dative" = "Przyjaciel";
-"privacy_value_only_me_and_super_capite" = "Ja i Witalina Pawlenko";
-"privacy_value_only_me_and_super_capite_dative" = "Ja i Witalinie Pawlenko";
-"privacy_value_super_capite" = "Witalinie Pawlenko";
+"privacy_value_only_me" = "Tylko ja";
+"privacy_value_only_me_dative" = "Tylko mnie";
+"privacy_value_nobody" = "Nikt";
 
 "your_email_address" = "Twój adres e-mail";
 "your_page_address" = "Adres Twojej strony";
@@ -444,24 +441,6 @@
 "time_minutes_ago" = "$1 minut temu";
 "time_today" = "dziś";
 "time_yesterday" = "wczo";
-
-"privacy_setting_access_page" = "Kto w Internecie widzi moją stronę";
-"privacy_setting_read_info" = "Kto widzi podstawowe informacje o mojej stronie";
-"privacy_setting_see_groups" = "Kto widzi moje grupy i spotkania";
-"privacy_setting_see_photos" = "Kto widzi moje zdjęcia";
-"privacy_setting_see_videos" = "Kto widzi moje nagrania";
-"privacy_setting_see_notes" = "Kto widzi moje notatki";
-"privacy_setting_see_friends" = "Kto widzi moich przyjaciół";
-"privacy_setting_add_to_friends" = "Kto może nazywać mnie przyjacielem";
-"privacy_setting_write_wall" = "Kto może pisać na mojej ścianie";
-"privacy_value_anybody" = "Wszyscy chętni";
-"privacy_value_anybody_dative" = "Wszystkim chętnym";
-"privacy_value_users" = "Przez użytkownika  OpenVK";
-"privacy_value_friends" = "Przyjaciel";
-"privacy_value_friends_dative" = "Przyjaciel";
-"privacy_value_only_me_and_super_capite" = "Tylko ja";
-"privacy_value_only_me_and_super_capite_dative" = "Tylko mnie";
-"privacy_value_super_capite" = "Nikt";
 
 "your_email_address" = "Twój adres e-mail";
 "your_page_address" = "Adres Twojej strony";

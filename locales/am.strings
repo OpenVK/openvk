@@ -137,9 +137,6 @@
 "friends" = "Ընկերներ";
 "followers" = "Բաժանորդներ";
 "follower" = "Բաժանորդ";
-"login_as" = "Մուտք գործել ինչպես";
-"ban_fast" = "Բլոկավորել";
-"adm_notify" = "Զգուշացնել";
 "friends_add" = "Ավելացնել դեպի ընկերներ";
 "friends_delete" = "Հեռացնել ընկերներից";
 "friends_reject" = "Չեղարկել հայտը";
@@ -358,9 +355,9 @@
 "privacy_value_users" = "OpenVK–ի օգտատերերին";
 "privacy_value_friends" = "Ընկերներ";
 "privacy_value_friends_dative" = "Ընկերներին";
-"privacy_value_only_me_and_super_capite" = "Ինձ և Կառլեն Դանիելյանին";
-"privacy_value_only_me_and_super_capite_dative" = "Ինձ և Կառլեն Դանիելյանին";
-"privacy_value_super_capite" = "Կառլեն Դանիելյանին";
+"privacy_value_only_me" = "Միայն ես";
+"privacy_value_only_me_dative" = "Միայն ինձ";
+"privacy_value_nobody" = "Ոչ ոք";
 
 "your_email_address" = "Ձեր էլեկտրոնային հասցեն";
 "your_page_address" = "Ձեր էջի հասցեն";
@@ -441,24 +438,6 @@
 "time_minutes_ago" = "$1 րոպե առաջ";
 "time_today" = "այսօր";
 "time_yesterday" = "երեկ";
-
-"privacy_setting_access_page" = "Ով կարող է տեսնել ինտերնետում իմ էջը";
-"privacy_setting_read_info" = "Ում է տեսանելի իմ էջի հիմնական ինֆորմացիան";
-"privacy_setting_see_groups" = "Ով կարող է տեսնել իմ խմբերը և հանդիպումները";
-"privacy_setting_see_photos" = "Ով կարող է տեսնել իմ նկարները";
-"privacy_setting_see_videos" = "Ով կարող է տեսնել իմ տեսանյութերը";
-"privacy_setting_see_notes" = "Ում են երևում իմ նշումները";
-"privacy_setting_see_friends" = "Ում են երևում իմ ընկերները";
-"privacy_setting_add_to_friends" = "Ով կարող է ինձ ընկեր կոչել";
-"privacy_setting_write_wall" = "Ով կարող է գրել իմ պատին";
-"privacy_value_anybody" = "Բոլոր ցանկացողները";
-"privacy_value_anybody_dative" = "Բոլոր ցանկացողներին";
-"privacy_value_users" = "OpenVK–ի օգտատերերին";
-"privacy_value_friends" = "Ընկերներ";
-"privacy_value_friends_dative" = "Ընկերներին";
-"privacy_value_only_me_and_super_capite" = "Միայն ես";
-"privacy_value_only_me_and_super_capite_dative" = "Միայն ինձ";
-"privacy_value_super_capite" = "Ոչ ոք";
 
 "your_email_address" = "Ձեր էլեկտրոնային հասցեն";
 "your_page_address" = "Ձեր էջի հասցեն";

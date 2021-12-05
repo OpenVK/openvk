@@ -147,9 +147,6 @@
 "followers" = "Жазылмандар";
 "follower" = "Жазылман";
 "login_as" = "Кім ретінде кіру:";
-"ban_fast" = "Блоктау";
-"adm_notify" = "Ескерту";
-"friends_add" = "Достарыма қосу";
 "friends_delete" = "Достарымнан жою";
 "friends_reject" = "Өтінімді қабылдамау";
 "friends_accept" = "Өтінімді қабылдау";
@@ -421,9 +418,9 @@
 "privacy_value_users" = "OpenVK қолданушылары";
 "privacy_value_friends" = "Достарым";
 "privacy_value_friends_dative" = "Достарым";
-"privacy_value_only_me_and_super_capite" = "Мен ғана";
-"privacy_value_only_me_and_super_capite_dative" = "Мен ғана";
-"privacy_value_super_capite" = "Ешкім";
+"privacy_value_only_me" = "Мен ғана";
+"privacy_value_only_me_dative" = "Мен ғана";
+"privacy_value_nobody" = "Ешкім";
 
 "points" = "Дауыс";
 "points_count" = "дауыс";

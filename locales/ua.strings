@@ -147,9 +147,6 @@
 "friends" = "Друзі";
 "followers" = "Підписники";
 "follower" = "Підписник";
-"login_as" = "Увійти як";
-"ban_fast" = "Заблокувати";
-"adm_notify" = "Попередити";
 "friends_add" = "Додати в друзі";
 "friends_delete" = "Видалити з друзів";
 "friends_reject" = "Скасувати заявку";
@@ -466,9 +463,9 @@
 "privacy_value_users" = "Користувачам OpenVK";
 "privacy_value_friends" = "Друзі";
 "privacy_value_friends_dative" = "Друзям";
-"privacy_value_only_me_and_super_capite" = "Тільки я";
-"privacy_value_only_me_and_super_capite_dative" = "Тільки мені";
-"privacy_value_super_capite" = "Ніхто";
+"privacy_value_only_me" = "Тільки я";
+"privacy_value_only_me_dative" = "Тільки мені";
+"privacy_value_nobody" = "Ніхто";
 
 "your_email_address" = "Адрес Вашої електронної пошти";
 "your_page_address" = "Адрес Вашої сторінки";

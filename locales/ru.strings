@@ -101,6 +101,8 @@
 
 /* Wall */
 
+"feed" = "Новости";
+
 "post_writes_m" = "написал";
 "post_writes_f" = "написала";
 "post_writes_g" = "опубликовали";
@@ -123,6 +125,7 @@
 "wall_few" = "$1 записи";
 "wall_many" = "$1 записей";
 "wall_other" = "$1 записей";
+"publish_post" = "Добавить запись";
 "view_other_comments" = "Посмотреть остальные комментарии";
 
 "no_comments" = "Комментарии отсутствуют";
@@ -148,9 +151,6 @@
 "friends" = "Друзья";
 "followers" = "Подписчики";
 "follower" = "Подписчик";
-"login_as" = "Войти как";
-"ban_fast" = "Забанить";
-"adm_notify" = "Предупредить";
 "friends_add" = "Добавить в друзья";
 "friends_delete" = "Удалить из друзей";
 "friends_reject" = "Отменить заявку";
@@ -270,8 +270,6 @@
 "text_note" = "Содержание";
 "create_note" = "Создать заметку";
 "actions" = "Действия";
-"feed" = "Новости";
-"publish_post" = "Добавить запись";
 
 "notes_zero" = "Ни одной заметки";
 "notes_one" = "Одна заметка";
@@ -315,12 +313,6 @@
 "footer_developers" = "разработчикам";
 "footer_choose_language" = "выбрать язык";
 "footer_privacy" = "приватность";
-
-"notes_zero" = "Ни одной заметки";
-"notes_one" = "Одна заметка";
-"notes_few" = "$1 заметки";
-"notes_many" = "$1 заметок";
-"notes_other" = "$1 заметок";
 
 /* Settings */
 
@@ -369,9 +361,9 @@
 "privacy_value_users" = "Пользователям OpenVK";
 "privacy_value_friends" = "Друзья";
 "privacy_value_friends_dative" = "Друзьям";
-"privacy_value_only_me_and_super_capite" = "Я и Виталина Павленко";
-"privacy_value_only_me_and_super_capite_dative" = "Мне и Виталине Павленко";
-"privacy_value_super_capite" = "Виталине Павленко";
+"privacy_value_only_me" = "Только я";
+"privacy_value_only_me_dative" = "Только мне";
+"privacy_value_nobody" = "Никто";
 
 "your_email_address" = "Адрес Вашей электронной почты";
 "your_page_address" = "Адрес Вашей страницы";
@@ -419,7 +411,7 @@
 
 /* Sorting */
 
-"sort_randomly" = "Сортировать рандомно";
+"sort_randomly" = "Сортировать случайно";
 "sort_up" = "Сортировать по дате создания вверх";
 "sort_down" = "Сортировать по дате создания вниз";
 
@@ -430,7 +422,7 @@
 "upload_video" = "Загрузить видео";
 "video_uploaded" = "Загружено";
 "video_updated" = "Обновлено";
-"video_link_to_yt" = "Ссылка на YT";
+"video_link_to_yt" = "Ссылка на YouTube";
 
 "info_name" = "Название";
 "info_description" = "Описание";
@@ -481,39 +473,6 @@
 "time_minutes_ago" = "$1 минут назад";
 "time_today" = "сегодня";
 "time_yesterday" = "вчера";
-
-"privacy_setting_access_page" = "Кому в интернете видно мою страницу";
-"privacy_setting_read_info" = "Кому видно основную информацию моей страницы";
-"privacy_setting_see_groups" = "Кому видно мои группы и встречи";
-"privacy_setting_see_photos" = "Кому видно мои фотографии";
-"privacy_setting_see_videos" = "Кому видно мои видеозаписи";
-"privacy_setting_see_notes" = "Кому видно мои заметки";
-"privacy_setting_see_friends" = "Кому видно моих друзей";
-"privacy_setting_add_to_friends" = "Кто может называть меня другом";
-"privacy_setting_write_wall" = "Кто может писать у меня на стене";
-"privacy_value_anybody" = "Все желающие";
-"privacy_value_anybody_dative" = "Всем желающим";
-"privacy_value_users" = "Пользователям OpenVK";
-"privacy_value_friends" = "Друзья";
-"privacy_value_friends_dative" = "Друзьям";
-"privacy_value_only_me_and_super_capite" = "Только я";
-"privacy_value_only_me_and_super_capite_dative" = "Только мне";
-"privacy_value_super_capite" = "Никто";
-
-"your_email_address" = "Адрес Вашей электронной почты";
-"your_page_address" = "Адрес Вашей страницы";
-"page_address" = "Адрес страницы";
-"current_email_address" = "Текущий адрес";
-"page_id" = "ID страницы";
-"you_can_also" = "Вы также можете";
-"delete_your_page" = "удалить свою страницу";
-"delete_album" = "удалить альбом";
-
-"ui_settings_interface" = "Интерфейс";
-"ui_settings_sidebar" = "Левое меню";
-"ui_settings_rating" = "Рейтинг";
-"ui_settings_rating_show" = "Показывать";
-"ui_settings_rating_hide" = "Скрывать";
 
 "points" = "Голоса";
 "points_count" = "голосов";

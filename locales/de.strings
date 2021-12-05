@@ -335,6 +335,7 @@
 "privacy_value_friends_dative" = "Freunde";
 "privacy_value_only_me" = "Nur ich";
 "privacy_value_only_me_dative" = "Nur ich";
+"privacy_value_nobody" = "Niemand";
 
 "your_email_address" = "Deine E-Mail-Adresse";
 "your_page_address" = "Deine Profil-URL";
