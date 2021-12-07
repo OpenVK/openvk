@@ -287,6 +287,7 @@
 "search_for_groups" = "Истраживање група";
 "search_for_people" = "Истраживање људи";
 "search_button" = "Пронаћи";
+
 "privacy_setting_access_page" = "Ко може видјети моју страницу на Интернету";
 "privacy_setting_read_info" = "Ко може видјети основну информацију од моје странице";
 "privacy_setting_see_groups" = "Ко може видјети информацију о мојим груповима и састанку";
@@ -301,9 +302,9 @@
 "privacy_value_users" = "Корисници OpenVK";
 "privacy_value_friends" = "Пријатеље";
 "privacy_value_friends_dative" = "Пријатеље";
-"privacy_value_only_me_and_super_capite" = "Ја сам и Виталина Павленко";
-"privacy_value_only_me_and_super_capite_dative" = "За мене и Виталину Павленко";
-"privacy_value_super_capite" = "Виталини Павленко";
+"privacy_value_only_me" = "Ја сам";
+"privacy_value_only_me_dative" = "За мене";
+"privacy_value_nobody" = "Нико";
 
 "your_email_address" = "Ваша e-mail адреса";
 "your_page_address" = "Адреса Ваше странице";
@@ -384,23 +385,6 @@
 "time_minutes_ago" = "$пре 1 минути";
 "time_today" = "данас";
 "time_yesterday" = "јуће";
-
-"privacy_setting_access_page" = "Ко може видјети моју страницу на Интернету";
-"privacy_setting_read_info" = "Ко може видјети основну информацију од моје странице";
-"privacy_setting_see_groups" = "Ко може видјети информацију о мојим груповима и састанку";
-"privacy_setting_see_photos" = "Ко може видјети моје слике";
-"privacy_setting_see_videos" = "Ко може погледати моје видео";
-"privacy_setting_see_notes" = "Ко може видјети моје билешке";
-"privacy_setting_see_friends" = "Ко може да упозна са мојим пријатељима";
-"privacy_setting_add_to_friends" = "Ко има могућност да дода ме у пријатеље";
-"privacy_setting_write_wall" = "Ко има могућност да пиши на мојем зиду";
-"privacy_value_anybody" = "Било ко";
-"privacy_value_anybody_dative" = "Било ко";
-"privacy_value_users" = "Корисници OpenVK";
-"privacy_value_friends" = "Пријатеље";
-"privacy_value_friends_dative" = "Пријатеље";
-"privacy_value_only_me_and_super_capite" = "Ја сам";
-"privacy_value_only_me_and_super_capite_dative" = "За мене";
 
 "your_email_address" = "Адреса Ваше електронске поште";
 "your_page_address" = "Адреса Ваше странице";

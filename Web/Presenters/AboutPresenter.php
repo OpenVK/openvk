@@ -63,6 +63,7 @@ final class AboutPresenter extends OpenVKPresenter
         $this->template->languages = getLanguages();
         
         if(!is_null($_GET['lg'])){
+            $this->assertNoCSRF();
             setLanguage($_GET['lg']);
         }
     }

@@ -65,6 +65,10 @@ openvk:
             enable: false
             client: ""
             secret: "SECRET_KEY_HERE"
+        telegram:
+            enable: false
+            token: "TOKEN_HERE"
+            helpdeskChat: ""
         eventDB:
             enable: false # Better enable this
             database:

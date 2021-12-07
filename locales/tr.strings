@@ -330,6 +330,7 @@
 "privacy_value_friends_dative" = "Arkadaşlarım";
 "privacy_value_only_me" = "Sadece ben";
 "privacy_value_only_me_dative" = "Sadece ben";
+"privacy_value_nobody" = "Kimse";
 
 "your_email_address" = "E-posta adresin";
 "your_page_address" = "Adres sayfan";

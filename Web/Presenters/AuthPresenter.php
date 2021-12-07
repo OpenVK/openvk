@@ -182,6 +182,7 @@ final class AuthPresenter extends OpenVKPresenter
     function renderLogout(): void
     {
         $this->assertUserLoggedIn();
+        $this->assertNoCSRF();
         $this->authenticator->logout();
         Session::i()->set("_su", NULL);
         

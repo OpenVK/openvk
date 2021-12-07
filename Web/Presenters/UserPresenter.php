@@ -142,7 +142,7 @@ final class UserPresenter extends OpenVKPresenter
                     if ($this->postParam("marialstatus") <= 8 && $this->postParam("marialstatus") >= 0)
                     $user->setMarital_Status($this->postParam("marialstatus"));
                     
-                    if ($this->postParam("politViews") <= 8 && $this->postParam("politViews") >= 0)
+                    if ($this->postParam("politViews") <= 9 && $this->postParam("politViews") >= 0)
                     $user->setPolit_Views($this->postParam("politViews"));
                     
                     if ($this->postParam("gender") <= 1 && $this->postParam("gender") >= 0)
