@@ -130,6 +130,7 @@
 
 "attachment" = "Тіркемелер";
 "post_as_group" = "Топ ретінде жазу";
+"comment_as_group" = "Топ ретінде пікір жазу";
 "add_signature" = "Автордың қолтаңбасы";
 /* ^ can be translated as "author's signature". ^ */
 "contains_nsfw" = "NSFW-контент бар";
@@ -341,6 +342,36 @@
 "ui_settings_rating_show" = "Көрсету";
 "ui_settings_rating_hide" = "Жасыру";
 
+"two_factor_authentication" = "Екі факторлы аутентификация";
+"two_factor_authentication_disabled" = "Бұзылудан сенімді қорғаныс қызметін қамтамасыз етеді: парақшаға кіру үшін 2FA қосымшасында алынған кодты енгізу керек.";
+"two_factor_authentication_enabled" = "Екі факторлы аутентификация қосулы. Сіздің парақшаңыз қорғалған.";
+"two_factor_authentication_login" = "Сізде екі факторлы аутентификация қосылған. Кіру үшін арнайы қолданбадағы кодты енгізіңіз.";
+
+"two_factor_authentication_settings_1" = "TOTP арқылы екі факторлы аутентификацияны интернетсіз де пайдалануға болады. Мұны істеу үшін сізге кодты жасау қолданбасы қажет. Мысалы Android пен iOS-ке арналған <b>Google Authenticator</b> немесе <b>Aegis және andOTP</b> - Android ОЖ-не арналған тегін қолданбалар. Телефоныңызда күн мен уақыт дұрыс орнатылғанын тексеріңіз.";
+"two_factor_authentication_settings_2" = "Екі факторлы аутентификация қолданбасын пайдаланып, төмендегі QR кодын сканерлеңіз:";
+"two_factor_authentication_settings_3" = "немесе өзіңіз құпия кілтті енгізіңіз: <b>$1</b>.";
+"two_factor_authentication_settings_4" = "Енді кіріп отырған шынымен сіз екеніңізді растау үшін қолданба сізге берген кодты және парақшаның құпиясөзін енгізіңіз.";
+
+"connect" = "Қосу";
+"enable" = "Қосу";
+"disable" = "Сөндіру";
+"code" = "Код";
+"2fa_code" = "2FA код";
+
+"incorrect_password" = "Құпиясөз дұрыс емес";
+"incorrect_code" = "Код дұрыс емес";
+"incorrect_2fa_code" = "Екі факторлы аутентификацияның коды дұрыс емес";
+"two_factor_authentication_enabled_message" = "Екі факторлы аутентификация қосулы";
+"two_factor_authentication_enabled_message_description" = "Сіздің парағыңызды бұзу қиынырақ болды. <a href='javascript:viewBackupCodes()'>Сақтық көшірме кодтарын</a> жүктеп алуды ұсынамыз";
+"two_factor_authentication_disabled_message" = "Екі факторлы аутентификация өшірулі";
+
+"view_backup_codes" = "Сақтық көшірме кодтарын көру";
+"backup_codes" = "Кіруді растауға арналған сақтық көшірме кодтары";
+"two_factor_authentication_backup_codes_1" = "Сақтық көшірме кодтары телефонға кіру мүмкіндігіңіз болмаған кезде, мысалы, саяхат кезінде парақшаға кіруге растауға мүмкіндік береді.";
+"two_factor_authentication_backup_codes_2" = "Сізде тағы <b>10 код</b> бар, әр кодты тек бір рет пайдалануға болады. Оларды басып шығарыңыз, қауіпсіз жерге қойыңыз және кіруіңізді растау үшін кодтар қажет болғанда пайдаланыңыз.";
+"two_factor_authentication_backup_codes_3" = "Таусылған жағдайда жаңа кодтарды алуға болады. Соңғы жасалған сақтық көшірме кодтары ғана жарамды.";
+
+
 /* Sorting */
 
 "sort_randomly" = "Кездейсоқ сұрыптау";
@@ -467,6 +498,8 @@
 "coins_one" = "Бір дауыс";
 "coins_other" = "$1 дауыс";
 
+"users_gifts" = "Сыйлықтар";
+
 /* Support */
 
 "support_opened" = "Ашық";
@@ -492,6 +525,7 @@
 
 "comment" = "Пікір";
 "sender" = "Жіберуші";
+
 "author" = "Автор";
 
 /* Errors */
@@ -507,12 +541,13 @@
 "no_data_description" = "Мұнда деректер жоқ.";
 
 "error" = "Қателік";
-"error_shorturl" = "Бұл мекенжай қазірдің өзінде тиесілі.";
+"error_shorturl" = "Бұл мекенжай бос емес.";
 "error_segmentation" = "Сегментация қателігі";
 "error_upload_failed" = "Фотосурет жүктелмеді";
 "error_old_password" = "Бұрынғы құпиясөз сәйкес келмейді";
 "error_new_password" = "Жаңа құпиясөз сәйкес келмейді";
-"error_shorturl_incorrect" = "Мекенжайдың пішімі дұрыс емес.";
+"error_shorturl_incorrect" = "Мекенжайдың форматы дұрыс емес.";
+"error_repost_fail" = "Жазбамен бөлісу мүмкін болмады";
 
 "forbidden" = "Рұқсат қателігі";
 "forbidden_comment" = "Бұл қолданушының құпиялық баптаулары сізге осы парақты қарауға рұқсат бермейді";
@@ -522,6 +557,8 @@
 
 "photo_saved" = "Фото сақталды";
 "photo_saved_comment" = "Сіздің жаңа парақша суретіңіз сіздің парақта пайда болады";
+
+"shared_succ" = "Жазба сіздің қабырғаңызда пайда болады. Қабырғаңызға өту үшін хабарландыруды басыңыз.";
 
 /* Admin actions */
 
@@ -535,3 +572,14 @@
 "paginator_back" = "Артқа";
 "paginator_page" = "$1 бет";
 "paginator_next" = "Алға";
+
+/* Dialogs */
+
+"ok" = "ОК";
+"yes" = "Ия";
+"no" = "Жоқ";
+"cancel" = "Бас тарту";
+"edit_action" = "Өзгерту";
+
+"warning" = "Назар аударыңыз";
+"question_confirm" = "Бұл әрекетті болдырмауға мүмкін емес. Шынымен осы әрекетті жасауға сенімдісіз бе?";
