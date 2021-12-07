@@ -74,8 +74,8 @@
                    <a href="{$comment->getUser()->getURL()}">
                        <span class="nobold">
                            {var lastName = $comment->getUser()->getLastName()}
-                           {if empty($lastName)}
-                                {$comment->getUser()->getFirstName()}
+                           {if empty($lastName) || $lastName == " "}
+                                ({$comment->getUser()->getFirstName()})
                            {else}
                                 ({$comment->getUser()->getFirstName()} {iconv_substr($lastName, 0, 1)}.)
                            {/if}
