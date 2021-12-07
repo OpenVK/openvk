@@ -36,7 +36,7 @@ Next, in `stylesheet.css` you can insert any CSS code, with which you can change
 
 To support the New Year's mood, which turns on automatically from December 1st to January 15th, create the file `xmas.css` in the `res` folder, and make the necessary changes.
 
-**After all, the directory hierarchy with the topic should look like this:**
+**After all, the directory hierarchy should look like this:**
 
 ```
 vk2007:
