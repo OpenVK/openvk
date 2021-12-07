@@ -47,8 +47,8 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 **Note**: If OVK submodules were not downloaded beforehand (i.e. `--recursive` was not used during cloning), this command *must be* executed in the `openvk` folder: `git submodule update --init`
 
 Once you are done, you can login as a system administrator on the network itself (no registration required):
-* *Login*: `admin@localhost.localdomain6`
-* *Password*: `admin`
+* **Login**: `admin@localhost.localdomain6`
+* **Password**: `admin`
   *  It is recommended to change the password before using the built-in account.
 
 Full example installation instruction for CentOS 8 is also available [here](docs/centos8_install.md).
