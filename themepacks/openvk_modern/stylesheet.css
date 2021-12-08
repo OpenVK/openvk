@@ -54,7 +54,7 @@ body {
     border: 1px solid #f3ddbd;
 }
 
-.navigation.link:hover {
+.navigation .link:hover {
     border-top: 1px solid #E4E4E4;
 }
 
@@ -127,7 +127,7 @@ input[type~="search"], select {
     border: 1px solid #E5E5E5;
 }
 
-.page_footer.link:hover {
+.page_footer .link:hover {
     border-top: 0px;
 }
 
