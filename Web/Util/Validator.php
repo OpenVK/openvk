@@ -19,7 +19,7 @@ class Validator
 
     function telegramValid(string $telegram): bool
     {
-        return (bool) preg_match("/^(?:t.me\/|@)?([a-zA-Z0-9]{0,32})$/", $telegram);
+        return (bool) preg_match("/^(?:t.me\/|@)?([a-zA-Z0-9_]{0,32})$/", $telegram);
     }
 
     use TSimpleSingleton;
