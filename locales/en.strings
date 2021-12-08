@@ -561,6 +561,12 @@
 
 "shared_succ" = "The post will appear on your wall. Click on the notification to go to your wall.";
 
+"invalid_email_address" = "Invalid Email address";
+"invalid_email_address_comment" = "The Email you entered is not correct.";
+
+"invalid_telegram_name" = "Invalid Telegram account name";
+"invalid_telegram_name_comment" = "The Telegram account name you entered is not correct.";
+
 /* Admin actions */
 
 "login_as" = "Login as $1";

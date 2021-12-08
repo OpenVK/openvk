@@ -9,6 +9,7 @@ use openvk\Web\Models\Repositories\Albums;
 use openvk\Web\Models\Repositories\Videos;
 use openvk\Web\Models\Repositories\Notes;
 use openvk\Web\Models\Repositories\Vouchers;
+use openvk\Web\Util\Validator;
 use Chandler\Security\Authenticator;
 use lfkeitel\phptotp\{Base32, Totp};
 use chillerlan\QRCode\{QRCode, QROptions};
@@ -158,8 +159,20 @@ final class UserPresenter extends OpenVKPresenter
                             $this->flashFail("err", tr("error_segmentation"), "котлетки: Remote err!");
                     }
                 } elseif($_GET['act'] === "contacts") {
-                    $user->setEmail_Contact(empty($this->postParam("email_contact")) ? NULL : $this->postParam("email_contact"));
-                    $user->setTelegram(empty($this->postParam("telegram")) ? NULL : ltrim($this->postParam("telegram"), "@"));
+                    if(empty($this->postParam("email_contact")) || Validator::i()->emailValid($this->postParam("email_contact")))
+                        $user->setEmail_Contact(empty($this->postParam("email_contact")) ? NULL : $this->postParam("email_contact"));
+                    else
+                        $this->flashFail("err", tr("invalid_email_address"), tr("invalid_email_address_comment"));
+
+                    $telegram = $this->postParam("telegram");
+                    if(empty($telegram) || Validator::i()->telegramValid($telegram))
+                        if(strpos($telegram, "t.me/") === 0)
+                            $user->setTelegram(empty($telegram) ? NULL : substr($telegram, 5));
+                        else
+                            $user->setTelegram(empty($telegram) ? NULL : ltrim($telegram, "@"));
+                    else
+                        $this->flashFail("err", tr("invalid_telegram_name"), tr("invalid_telegram_name_comment"));
+
                     $user->setCity(empty($this->postParam("city")) ? NULL : $this->postParam("city"));
                     $user->setAddress(empty($this->postParam("address")) ? NULL : $this->postParam("address"));
                     

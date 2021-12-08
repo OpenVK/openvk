@@ -586,6 +586,12 @@
 
 "shared_succ" = "Запись появится на вашей стене. Нажмите на уведомление, чтобы перейти к своей стене.";
 
+"invalid_email_address" = "Неверный Email адрес";
+"invalid_email_address_comment" = "Email, который вы ввели, не является корректным.";
+
+"invalid_telegram_name" = "Неверное имя Telegram аккаунта";
+"invalid_telegram_name_comment" = "Вы ввели неверное имя аккаунта Telegram.";
+
 /* Admin actions */
 
 "login_as" = "Войти как $1";

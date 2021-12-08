@@ -6,6 +6,7 @@ use openvk\Web\Models\Entities\PasswordReset;
 use openvk\Web\Models\Repositories\IPs;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Repositories\Restores;
+use openvk\Web\Util\Validator;
 use Chandler\Session\Session;
 use Chandler\Security\User as ChandlerUser;
 use Chandler\Security\Authenticator;
@@ -30,17 +31,6 @@ final class AuthPresenter extends OpenVKPresenter
         $this->restores = $restores;
         
         parent::__construct();
-    }
-    
-    private function emailValid(string $email): bool
-    {
-        if(empty($email)) return false;
-        
-        $email = trim($email);
-        [$user, $domain] = explode("@", $email);
-        $domain = idn_to_ascii($domain) . ".";
-        
-        return checkdnsrr($domain, "MX");
     }
     
     private function ipValid(): bool
@@ -87,7 +77,7 @@ final class AuthPresenter extends OpenVKPresenter
             if(!$this->ipValid())
                 $this->flashFail("err", "Подозрительная попытка регистрации", "Вы пытались зарегистрироваться из подозрительного места.");
             
-            if(!$this->emailValid($this->postParam("email")))
+            if(!Validator::i()->emailValid($this->postParam("email")))
                 $this->flashFail("err", "Неверный email адрес", "Email, который вы ввели, не является корректным.");
             
             if (strtotime($this->postParam("birthday")) > time())
