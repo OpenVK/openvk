@@ -15,6 +15,34 @@
 "registration" = "Регистрация";
 "forgot_password" = "Забыли пароль?";
 
+"login_failed" = "Не удалось войти";
+"invalid_username_or_password" = "Неверное имя пользователя или пароль. <a href='/restore.pl'>Забыли пароль?</a>";
+
+"failed_to_register" = "Не удалось зарегистрироваться";
+"referral_link_invalid" = "Пригласительная ссылка недействительна.";
+"registration_disabled" = "Регистрация отключена системным администратором.";
+"user_already_exists" = "Пользователь с таким email уже существует.";
+
+"access_recovery" = "Восстановление доступа";
+"page_access_recovery" = "Восстановить доступ к странице";
+"access_recovery_info" = "Забыли пароль? Не волнуйтесь, введите ваши данные и мы отправим вам email с инструкциями по восстановлению аккаунта.";
+"access_recovery_info_2" = "Введите ваш новый пароль. Все текущие сеансы будут приостановлены и токены доступа будут аннулированы.";
+"reset_password" = "Сбросить пароль";
+"2fa_code_2" = "Код двухфакторной аутентификации";
+
+"password_successfully_reset" = "Ваш пароль был успешно сброшен.";
+"password_reset_email_sent" = "Если вы зарегистрированы, вы получите инструкции на email.";
+"password_reset_error" = "Непредвиденная ошибка при сбросе пароля.";
+"password_reset_rate_limit_error" = "Нельзя делать это так часто, извините.";
+
+"registration_disabled_info" = "Регистрация отключена системным администратором. При возможности попросите приглашение у вашего знакомого, если он зарегистрирован на этом сайте.";
+"registration_closed" = "Регистрация закрыта.";
+"invites_you_to" = "<strong>$1</strong> приглашает вас в $2";
+
+"register_meta_desc" = "Зарегистрируйтесь в $1 прямо сейчас!";
+"register_referer_meta_title" = "$1 приглашает вас в $2!";
+"register_referer_meta_desc" = "Присоединяйтесь к $1 и множеству других пользователей в $2!";
+
 /* Profile information */
 
 "select_language" = "Выбрать язык";
@@ -554,6 +582,11 @@
 
 "author" = "Автор";
 
+/* Invite */
+"invite" = "Пригласить";
+"you_can_invite" = "Вы можете пригласить своих друзей или знакомых в сеть с помощью индивидуальной ссылки:";
+"you_can_invite_2" = "Приложите эту ссылку к вашему сообщению. Пользователь зарегистрируется, и он сразу появится у вас в друзьях.";
+
 /* Errors */
 
 "error_1" = "Некорректный запрос";
@@ -591,6 +624,19 @@
 
 "invalid_telegram_name" = "Неверное имя Telegram аккаунта";
 "invalid_telegram_name_comment" = "Вы ввели неверное имя аккаунта Telegram.";
+
+"invalid_birth_date" = "Неверная дата рождения";
+"invalid_birth_date_comment" = "Дата рождения, которую вы ввели, не является корректной.";
+
+"token_manipulation_error" = "Ошибка манипулирования токеном";
+"token_manipulation_error_comment" = "Токен недействителен или истёк";
+
+"profile_changed" = "Профиль изменён";
+"profile_changed_comment" = "Ваш активный профиль был изменён.";
+"profile_not_found" = "Пользователь не найден.";
+
+"suspicious_registration_attempt" = "Подозрительная попытка регистрации";
+"suspicious_registration_attempt_comment" = "Вы пытались зарегистрироваться из подозрительного места.";
 
 /* Admin actions */
 

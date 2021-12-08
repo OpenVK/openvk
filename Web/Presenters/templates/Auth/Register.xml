@@ -7,20 +7,20 @@
 
 {block headIncludes}
     {if !$referer}
-        <meta name="description" content="Зарегистрируйтесь в OpenVK прямо сейчас!" />
+        <meta name="description" content="{tr('register_meta_desc', OPENVK_ROOT_CONF['openvk']['appearance']['name'])}" />
     {else}
-        <meta property="og:title" content="{$referer->getFullName()} приглашает вас в OpenVK!" />
+        <meta property="og:title" content="{tr('register_referer_meta_title', $referer->getFullName(), OPENVK_ROOT_CONF['openvk']['appearance']['name'])}" />
         <meta property="og:image" content="{$referer->getAvatarUrl()}" />
         
         <meta name="description"
-              content="Присоединяйтесь к {$referer->getFullName()} и множеству других пользователей в OpenVK!" />
+              content="{tr('register_referer_meta_desc', $referer->getFullName(), OPENVK_ROOT_CONF['openvk']['appearance']['name'])}" />
     {/if}
 {/block}
 
 {block content}
     {if OPENVK_ROOT_CONF['openvk']['preferences']['registration']['enable'] || $referer}
         <p n:if="!is_null($referer)" align="center">
-            <strong>{$referer->getFullName()}</strong> приглашает вас в OpenVK!
+            {tr("invites_you_to", $referer->getFullName(), OPENVK_ROOT_CONF['openvk']['appearance']['name'])|noescape}
         </p>
         
         <form method="POST" enctype="multipart/form-data">
@@ -102,9 +102,9 @@
         </form>
     {else}
         <center>
-            <img src="/assets/packages/static/openvk/img/oof.apng" alt="Регистрация закрыта." style="width: 20%;" />
+            <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_'registration_closed'}" style="width: 20%;" />
             <p>
-                Регистрация отключена системным администратором. При возможности попросите приглашение у вашего знакомого, если он зарегистрирован на этом сайте.
+                {_"registration_disabled_info"}
                 {if OPENVK_ROOT_CONF['openvk']['preferences']['registration']['reason']}
                     <br/><br/><b>{php echo OPENVK_ROOT_CONF['openvk']['preferences']['registration']['reason']}</b>
                 {/if}

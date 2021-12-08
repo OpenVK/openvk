@@ -14,6 +14,34 @@
 "registration" = "Registration";
 "forgot_password" = "Forgot your password?";
 
+"login_failed" = "Login failed";
+"invalid_username_or_password" = "The username or password you entered is incorrect. <a href='/restore.pl'>Forgot your password?</a>";
+
+"failed_to_register" = "Failed to register";
+"referral_link_invalid" = "The referral link is invalid.";
+"registration_disabled" = "Registration has been disabled by the system administrator.";
+"user_already_exists" = "A user with this email already exists.";
+
+"access_recovery" = "Access recovery";
+"page_access_recovery" = "Restore access to the page";
+"access_recovery_info" = "Forgot your password? Don't worry, enter your details and we'll send you an email with instructions on how to recover your account.";
+"access_recovery_info_2" = "Enter your new password. All current sessions will be suspended and access tokens will be revoked.";
+"reset_password" = "Reset the password";
+"2fa_code_2" = "Two-factor authentication code";
+
+"password_successfully_reset" = "Your password has been successfully reset.";
+"password_reset_email_sent" = "If you are registered, you will receive instructions by email.";
+"password_reset_error" = "An unexpected error occurred while resetting the password.";
+"password_reset_rate_limit_error" = "You can't do it that often, sorry.";
+
+"registration_disabled_info" = "Registration has been disabled by the system administrator. If possible, ask for an invitation from your friend, if he is registered on this site.";
+"registration_closed" = "Registration is closed.";
+"invites_you_to" = "<strong>$1</strong> invites you to $2";
+
+"register_meta_desc" = "Register in $1 now!";
+"register_referer_meta_title" = "$1 invites you to $2!";
+"register_referer_meta_desc" = "Join $1 and many other users at $2!";
+
 /* Profile information */
 
 "select_language" = "Choose language";
@@ -529,6 +557,11 @@
 
 "author" = "Author";
 
+/* Invite */
+"invite" = "Invite";
+"you_can_invite" = "You can invite your friends or acquaintances to the network using an individual link:";
+"you_can_invite_2" = "Attach this link to your post. When the user signs up, he will immediately appear in your friends.";
+
 /* Errors */
 
 "error_1" = "Incorrect query";
@@ -564,8 +597,21 @@
 "invalid_email_address" = "Invalid Email address";
 "invalid_email_address_comment" = "The Email you entered is not correct.";
 
+"invalid_birth_date" = "Invalid date of birth";
+"invalid_birth_date_comment" = "The date of birth you entered is not correct.";
+
 "invalid_telegram_name" = "Invalid Telegram account name";
 "invalid_telegram_name_comment" = "The Telegram account name you entered is not correct.";
+
+"token_manipulation_error" = "Token manipulation error";
+"token_manipulation_error_comment" = "The token is invalid or expired";
+
+"profile_changed" = "Profile changed";
+"profile_changed_comment" = "Your active profile has been changed.";
+"profile_not_found" = "User is not found.";
+
+"suspicious_registration_attempt" = "Suspicious registration attempt";
+"suspicious_registration_attempt_comment" = "You tried to register from a suspicious location.";
 
 /* Admin actions */
 
