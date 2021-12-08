@@ -25,6 +25,22 @@
                         </b>
                     </a>
                     {if $author->isVerified()}<img class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">{/if}
+                    {if ($onWallOf ?? false) &&!$post->isPostedOnBehalfOfGroup() && $post->getOwnerPost() !== $post->getTargetWall()}
+                        {var wallId  = $post->getTargetWall()}
+                        {var wallURL = $wallId > -1 ? "/id$wallId" : "/club" . abs($wallId)}
+                        на
+                        <a href="{$wallURL}">
+                            <b>
+                                {if isset($thisUser) && $thisUser->getId() === $wallId}
+                                    вашей
+                                {/if}
+                                стене
+                                {if $wallId < 0}
+                                    группы
+                                {/if}
+                            </b>
+                        </a>
+                    {/if}
                     {ifset $compact}<br>
                     <a href="/wall{$post->getPrettyId()}" class="date">
                         {$post->getPublicationTime()}
