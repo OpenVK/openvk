@@ -112,7 +112,7 @@ body {
     border-top: #EBEBEB solid 1px;
 }
 
-.container_gray.content {
+.container_gray .content {
     border: #fff solid 1px;
 }
 
