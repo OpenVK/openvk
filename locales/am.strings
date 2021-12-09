@@ -15,6 +15,34 @@
 "registration" = "Գրանցում";
 "forgot_password" = "Մոռացե՞լ եք գաղտնաբառը";
 
+"login_failed" = "Не удалось войти";
+"invalid_username_or_password" = "Неверное имя пользователя или пароль. <a href='/restore.pl'>Забыли пароль?</a>";
+
+"failed_to_register" = "Չհաջողվեց գրանցվել";
+"referral_link_invalid" = "Հրավերքային հղումը սխալ է։";
+"registration_disabled" = "Գրանցումները անջատված են համակարգային ադմինիստրատորի կողմից։";
+"user_already_exists" = "Այդ E-Mail-ով օգտատեր արդեն գոյություն ունի։";
+
+"access_recovery" = "Հասանելիության վերականգնում";
+"page_access_recovery" = "Վերադարձնել էջի հասանելիությունը";
+"access_recovery_info" = "Մոռացել եք գաղտնաբա՞ռը, մի՛ անհանգստացեք։ Ձեր E-Mail-ին կուղարկվեն վերականգնման հրահանգները։";
+"access_recovery_info_2" = "Մուտքագրե՛ք ձեր նոր գաղտնաբառը։ Ձեր բոլոր սեանսները և հասանելիության տոկենները կանուլլացվեն։";
+"reset_password" = "Զրոյացնել գաղտնաբառը";
+"2fa_code_2" = "Երկքայլ աուտենտիֆիկացիայի կոդ";
+
+"password_successfully_reset" = "Ձեր գաղտնաբառը հաջողությամբ զրոյացվել է։";
+"password_reset_email_sent" = "Եթե Դուք գրանցված եք, ապա Դուք";
+"password_reset_error" = "Անկանխատեսելի սխալ գաղտնաբառի զրոյացման ժամանակ։";
+"password_reset_rate_limit_error" = "Հազար ներողություն, բայց այդպես շատ հաճախ չի կարելի անել։";
+
+"registration_disabled_info" = "Գրանցումները անջատված են համակարգային ադմինիստրատորի կողմից։ Հնարավորության դեպքում, խնդրեք հրավերք արդեն գրանցված օգտատերերից։";
+"registration_closed" = "Գրանցումը փակ է։";
+"invites_you_to" = "<strong>$1</strong> ձեզ հրավիրում է $2";
+
+"register_meta_desc" = "Գրանցվեք $1 -ում հենց հիմա՛";
+"register_referer_meta_title" = "$1 -ն հրավիրում է ձեզ դեպի $2";
+"register_referer_meta_desc" = "Միացե՛ք $1 -ին և բազմաթիվ օգտատերերին $2 -ու՛մ";
+
 /* Profile information */
 
 "select_language" = "Ընտրել լեզուն";
@@ -47,6 +75,12 @@
 "none" = "բացակայում է";
 "years" = "տարեկան";
 "send" = "ուղարկել";
+
+"years_zero" = "Զրո տարեկան";
+"years_one" = "Մի տարեկան";
+"years_few" = "$1 տարեկան";
+"years_many" = "$1 տարեկան";
+"years_other" = "$1 տարեկան";
 
 "relationship" = "Ընտանեկան դրություն";
 
@@ -116,6 +150,11 @@
 "wall_few" = "$1 գրություն";
 "wall_many" = "$1 գրություն";
 "wall_other" = "$1 գրություն";
+
+"publish_post" = "Ավելացնել գրություն";
+"view_other_comments" = "Կարդալ մեկնաբանությունները";
+
+"no_comments" = "Մեկնաբանություններ չկան";
 
 "all_news" = "Ամբողջ լուրերը";
 "posts_per_page" = "Գրությունների քանակը էջում";
@@ -188,6 +227,7 @@
 "all_followers" = "Բոլոր բաժանորդները";
 "only_administrators" = "Միայն ադմինիստրատորները";
 "website" = "Վեբկայք";
+"managed" = "Կառավարվում է";
 
 "administrators_one" = "$1 ադմինիստրատոր";
 "administrators_few" = "$1 ադմինիստրատոր";
@@ -374,6 +414,35 @@
 "ui_settings_rating_show" = "Ցուցադրել";
 "ui_settings_rating_hide" = "Թաքցնել";
 
+"two_factor_authentication" = "Երկքայլ աուտենտիֆիկացիա";
+"two_factor_authentication_disabled" = "Ապահովում է հուսալի պաշտպանում ջարդումից․ անհրաժեշտ է ներմուծել 2FA-ով ստացված կոդը։";
+"two_factor_authentication_enabled" = "Երկքայլ աուտենտիֆիկացիան միացված է։ Ձեր էջը պաշտպանված է։";
+"two_factor_authentication_login" = "Ձեր մոտ առկա է երկքայլ աուտենտիֆիկացիան։ Ներմուծե՛ք հավելվածից ստացած կոդը։";
+
+"two_factor_authentication_settings_1" = "Երկքայլ աուտենտիֆիկացիան TOTP-ի միջոցով կարելի է օգտագործել անգամ առանձ ինտերնետի առկայության։ Դրա համար պետք է ներբեռնել հատուկ հավելված կոդերի գեներացիայի համար, օրինակ, Անդրոիդի և iOS-ի համար ՝ <b>Google Authenticator</b>, կամ էլ <b>Aegis և andOTP</b> ՝ Անդրոիդի համար։ Համոզվե՛ք որ Ձեր հեռախոսի վրա ճիշտ ամսաթիվ է տեղադրված։";
+"two_factor_authentication_settings_2" = "Սկանավորե՛ք տրված QR-կոդը երկքայլ աուտենտիֆիկացիայի համար նախատեսված հավելվածի միջոցով․";
+"two_factor_authentication_settings_3" = ", կամ էլ ինքնուրույն ներմուծե՛ք գաղտնի բանալին․ <b>$1</b>.";
+"two_factor_authentication_settings_4" = "Հիմա մուտքագրե՛ք հավելվածի կողմից տրված կոդը և ձեր էջի գաղտնաբառը, որպեսզի մենք կարողանանք հաստատել, որ դա դուք եք։"
+
+"connect" = "Կապել";
+"enable" = "Միացնել";
+"disable" = "Անջատել";
+"code" = "Կոդ";
+"2fa_code" = "2FA կոդ";
+
+"incorrect_password" = "Սխալ գաղտնաբառ";
+"incorrect_code" = "Սխալ կոդ";
+"incorrect_2fa_code" = "Սխալ կոդ երկքայլ աուտենտիֆիկացիայի համար";
+"two_factor_authentication_enabled_message" = "Երկքայլ աուտենտիֆիկացիան միացված է";
+"two_factor_authentication_enabled_message_description" = "Ձեր էջը ջարդելը հիմա բարդ գործ է․․․ Խորհուրդ ենք տալիս ներբեռնել <a href='javascript:viewBackupCodes()'>ռեզերվային կոդերը</a>";
+"two_factor_authentication_disabled_message" = "Երկքայլ աուտենտիֆիկացիան անջատված է";
+
+"view_backup_codes" = "Դիտել ռեզերվային կոդերը";
+"backup_codes" = "Մուտքի հաստատման ռեզերվային կոդեր";
+"two_factor_authentication_backup_codes_1" = "Ռեզերվային կոդերը թույլ են տալիս հաստատել մուտքը, երբ դուք չունեք հասանելիություն հեռախոսին, օրինակ՝ ճանապարհորդելիս կամ աշխատանքի վայրում։";
+"two_factor_authentication_backup_codes_2" = "Դուք ունեք դեռ <b>10 կոդ</b>, որոնցից ամեն մեկը կարելի է օգտագործել միայն մեկ անգամ։ Պահե՛ք կոդերը ապահով տեղում և չկորցնե՛ք։";
+"two_factor_authentication_backup_codes_3" = "Դուք կարող եք էլի ստանալ ռեզերվային կոդեր։ Վավեր են միայն վերջերս ստեղծված ռեզերվային կոդերը։";
+
 /* Sorting */
 
 "sort_randomly" = "Դասավորել պատահական";
@@ -499,8 +568,44 @@
 "coins_many" = "$1 ձայն";
 "coins_other" = "$1 ձայն";
 
+"users_gifts" = "Նվերներ";
+
 "comment" = "Մեկնաբանություն";
 "sender" = "Ուղարկող";
+
+/* Support */
+
+"support_opened" = "Բաց";
+"support_answered" = "Պատասխանած";
+"support_closed" = "Փակ";
+"support_ticket" = "Դիմում";
+"support_tickets" = "Դիմումներ";
+"support_status_0" = "Հարցը դիտարկման տակ է";
+"support_status_1" = "Կա պատասխան";
+"support_status_2" = "Փակ է";
+"support_greeting_hi" = "Բարև ձեզ, $1!";
+"support_greeting_regards" = "Հարգանքով, <br/>$1 -ի աջակցման թիմ։";
+
+"support_faq" = "Հաճախ տրվող հարցեր";
+"support_list" = "Դիմումների ցուցակ";
+"support_new" = "Նոր դիմում";
+
+"support_faq_title" = "Ու՞մ համար է այս կայքը";
+"support_faq_content" = "Կայքը նախատեսված է ընկերների և ծանոթների որոնման և նաև օգտատերների տվյալների դիտման համար։ Սա քաղաքային տեղեկատույի նման բան է, որի օգնությամբ մարդիկ կարող են գտնել ինչ-որ մեկի մասին ակտուալ ինֆորմացիա։";
+
+"support_new_title" = "Գրե՛ք ձեր դիմումի վերնագիրը";
+"support_new_content" = "Նկարագրե՛ք խնդիրը կամ առաջարկը";
+
+"comment" = "Մեկնաբանություն";
+"sender" = "Ուղարկող";
+
+"author" = "Հեղինակ";
+
+/* Invite */
+
+"invite" = "Հրավիրել";
+"you_can_invite" = "Դուք կարող եք հրավիրել ձեր ընկերներին կամ բարեկամներին հատուկ հղման միջոցով․";
+"you_can_invite_2" = "Ամրացրե՛ք այս հղումը ձեր նամակի մեջ։ Գրանցումից հետո օգտատերը անմիջապես կհայտնվի ձեր ընկերների ցուցակում։";
 
 /* Errors */
 
@@ -531,14 +636,46 @@
 "photo_saved" = "Լուսանկարը պահպանված է";
 "photo_saved_comment" = "Նոր նկարը կհայտնվի ձեր էջում";
 
+"shared_succ" = "Գրությունը կհայտնվի ձեր պատում։ Սեղմե՛ք ծանուցման վրա որպեսզի հայտնվեք այնտեղ։";
+
+"invalid_email_address" = "Սխալ E-Mail հասցե";
+"invalid_email_address_comment" = "E-Mail-ը, որը դուք ներմուծել եք, սխալ է։";
+
+"invalid_telegram_name" = "Սխալ Telegram օգտատեր";
+"invalid_telegram_name_comment" = "Դուք սխալ Telegram-ի օգտատեր եք նշել։";
+
+"invalid_birth_date" = "Սխալ ծննդյան ամսաթիվ";
+"invalid_birth_date_comment" = "Ծննդյան օրը, որը դուք նշել եք, ոչ կորրեկտ Է։";
+
+"token_manipulation_error" = "Տոկենի մանիպուլյացիայի խնդիր";
+"token_manipulation_error_comment" = "Տոկենը սպառված է կամ անվավեր։";
+
+"profile_changed" = "Պրոֆիլը փոխված է";
+"profile_changed_comment" = "Ձեր ներկայիս գաղտնաբառը փոփոխված է։";
+"profile_not_found" = "Օգտատերը չի գտնվել։";
+
+"suspicious_registration_attempt" = "Գրանցման կասկածելի փորձ";
+"suspicious_registration_attempt_comment" = "Դուք մի տեսակ փորձել եք սխալ տեղից գրանցվել։";
+
 /* Admin actions */
 
 "login_as" = "Մտնել ինչպես $1";
 "ban_user_action" = "Բլոկավորել օգտվողին";
 "warn_user_action" = "Զգուշացնել օգտվողին";
 
-/* Paginator */
+/* Paginator (subject to delete) */
 
 "paginator_back" = "Հետ";
 "paginator_page" = "$1 էջ";
 "paginator_next" = "Առաջ";
+
+/* Dialogs */
+
+"ok" = "ОК";
+"yes" = "Այո";
+"no" = "Ոչ";
+"cancel" = "Չեղարկել";
+"edit_action" = "Փոփոխել";
+
+"warning" = "Ուշադրություն";
+"question_confirm" = "Այս գործողությունը էլ երբեք հետ չի բերվի։ Դուք վստա՞հ եք որ ուզում եք շարունակել։";
