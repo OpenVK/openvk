@@ -1,13 +1,8 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
 use openvk\Web\Util\DateTime;
-use Nette\Database\Table\ActiveRow;
 use openvk\Web\Models\RowModel;
-use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Repositories\{Users, SupportAliases};
-use Chandler\Database\DatabaseConnection as DB;
-use Nette\InvalidStateException as ISE;
-use Nette\Database\Table\Selection;
 
 class TicketComment extends RowModel
 {
