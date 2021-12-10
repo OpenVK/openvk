@@ -114,19 +114,22 @@ final class SupportPresenter extends OpenVKPresenter
     
     function renderDelete(int $id): void 
     {
-            $this->assertUserLoggedIn();
-            $this->willExecuteWriteAction();
-            if (!empty($id)) {
-                $ticket = $this->tickets->get($id);
-                if (!$ticket || $ticket->isDeleted() != 0 || $ticket->authorId() !== $this->user->id)
-                {
-                    $this->notFound();
-                } else {
-                    $ticket->delete();
-                    header("HTTP/1.1 302 Found");
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        if(!empty($id)) {
+            $ticket = $this->tickets->get($id);
+            if(!$ticket || $ticket->isDeleted() != 0 || $ticket->authorId() !== $this->user->id && !$this->hasPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0)) {
+                $this->notFound();
+            } else {
+                header("HTTP/1.1 302 Found");
+                if($ticket->authorId() !== $this->user->id && $this->hasPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0))
+                    header("Location: /support/tickets");
+                else
                     header("Location: /support");
-                }
+                $ticket->delete();
             }
+        }
     }
     
     function renderMakeComment(int $id): void 
