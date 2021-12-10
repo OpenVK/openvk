@@ -582,6 +582,12 @@
 
 "author" = "Автор";
 
+"you_have_not_entered_text" = "Вы не ввели текст";
+"you_have_not_entered_name_or_text" = "Вы не ввели имя или текст";
+
+"support_ticket_changed" = "Тикет изменён";
+"support_ticket_changed_comment" = "Изменения вступят силу через несколько секунд.";
+
 /* Invite */
 "invite" = "Пригласить";
 "you_can_invite" = "Вы можете пригласить своих друзей или знакомых в сеть с помощью индивидуальной ссылки:";

@@ -4,10 +4,7 @@ use openvk\Web\Models\Entities\Ticket;
 use openvk\Web\Models\Repositories\Tickets;
 use openvk\Web\Models\Entities\TicketComment;
 use openvk\Web\Models\Repositories\TicketComments;
-use openvk\Web\Models\RowModel;
 use openvk\Web\Util\Telegram;
-use Nette\Database\Table\ActiveRow;
-use Chandler\Database\DatabaseConnection;
 use Chandler\Session\Session;
 use Netcarver\Textile;
 
@@ -62,7 +59,7 @@ final class SupportPresenter extends OpenVKPresenter
                 header("HTTP/1.1 302 Found");
                 header("Location: /support/view/" . $ticket->getId());
             } else {
-                $this->flashFail("err", "Ошибка", "Вы не ввели имя или текст");
+                $this->flashFail("err", tr("error"), tr("you_have_not_entered_name_or_text"));
             }
         }
     }
@@ -154,7 +151,7 @@ final class SupportPresenter extends OpenVKPresenter
                 header("HTTP/1.1 302 Found");
                 header("Location: /support/view/" . $id);
             } else {
-                $this->flashFail("err", "Ошибка", "Вы не ввели текст");
+                $this->flashFail("err", tr("error"), tr("you_have_not_entered_text"));
             }
         }
     }
@@ -199,7 +196,7 @@ final class SupportPresenter extends OpenVKPresenter
                 $ticket->save();
             }
             
-            $this->flashFail("succ", "Тикет изменён", "Изменения вступят силу через несколько секунд.");
+            $this->flashFail("succ", tr("ticket_changed"), tr("ticket_changed_comment"));
         }
     }
     
