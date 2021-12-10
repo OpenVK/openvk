@@ -80,7 +80,7 @@ abstract class OpenVKPresenter extends SimplePresenter
                 $loginUrl  .= "?jReturnTo=" . rawurlencode($currentUrl);
             }
             
-            $this->flash("err", "Недостаточно прав", "Чтобы просматривать эту страницу, нужно зайти на сайт.");
+            $this->flash("err", tr("login_required_error"), tr("login_required_error_comment"));
             header("HTTP/1.1 302 Found");
             header("Location: $loginUrl");
             exit;
@@ -91,7 +91,7 @@ abstract class OpenVKPresenter extends SimplePresenter
     {
         if(is_null($this->user)) {
             if($model !== "user") {
-                $this->flash("info", "Недостаточно прав", "Чтобы просматривать эту страницу, нужно зайти на сайт.");
+                $this->flash("info", tr("login_required_error"), tr("login_required_error_comment"));
                 
                 header("HTTP/1.1 302 Found");
                 header("Location: /login");
@@ -111,13 +111,13 @@ abstract class OpenVKPresenter extends SimplePresenter
         if($throw)
             throw new SecurityPolicyViolationException("Permission error");
         else
-            $this->flashFail("err", "Недостаточно прав", "У вас недостаточно прав чтобы выполнять это действие.");
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
     }
     
     protected function assertCaptchaCheckPassed(): void
     {
         if(!check_captcha())
-            $this->flashFail("err", "Неправильно введены символы", "Пожалуйста, убедитесь, что вы правильно заполнили поле с капчей.");
+            $this->flashFail("err", tr("captcha_error"), tr("captcha_error_comment"));
     }
     
     protected function willExecuteWriteAction(): void
@@ -131,7 +131,7 @@ abstract class OpenVKPresenter extends SimplePresenter
                 exit("Хакеры? Интересно...");
             }
             
-            $this->flashFail("err", "Чумба, ты совсем ёбнутый?", "Сходи к мозгоправу, попей колёсики. В OpenVK нельзя вбрасывать щитпосты так часто. Код исключения: $res.");
+            $this->flashFail("err", tr("rate_limit_error"), tr("rate_limit_error_comment", OPENVK_ROOT_CONF["openvk"]["appearance"]["name"], $res));
         }
     }
     

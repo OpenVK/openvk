@@ -644,6 +644,18 @@
 "suspicious_registration_attempt" = "Подозрительная попытка регистрации";
 "suspicious_registration_attempt_comment" = "Вы пытались зарегистрироваться из подозрительного места.";
 
+"rate_limit_error" = "Чумба, ты совсем ёбнутый?";
+"rate_limit_error_comment" = "Сходи к мозгоправу, попей колёсики. В $1 нельзя вбрасывать щитпосты так часто. Код исключения: $2.";
+
+"not_enough_permissions" = "Недостаточно прав";
+"not_enough_permissions_comment" = "У вас недостаточно прав чтобы выполнять это действие.";
+
+"login_required_error" = "Недостаточно прав";
+"login_required_error_comment" = "Чтобы просматривать эту страницу, нужно зайти на сайт.";
+
+"captcha_error" = "Неправильно введены символы";
+"captcha_error_comment" = "Пожалуйста, убедитесь, что вы правильно заполнили поле с капчей.";
+
 /* Admin actions */
 
 "login_as" = "Войти как $1";

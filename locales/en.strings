@@ -619,6 +619,18 @@
 "suspicious_registration_attempt" = "Suspicious registration attempt";
 "suspicious_registration_attempt_comment" = "You tried to register from a suspicious location.";
 
+"rate_limit_error" = "Choomba, are you completely fucked up?";
+"rate_limit_error_comment" = "Go to the brainwrap, drink the wheels. In $1, you cannot drop shitposts as often. Exception code: $2.";
+
+"not_enough_permissions" = "Not enough permissions";
+"not_enough_permissions_comment" = "You do not have sufficient permissions to perform this action.";
+
+"login_required_error" = "Not enough permissions";
+"login_required_error_comment" = "To view this page, you need to sign in to your account.";
+
+"captcha_error" = "Incorrect characters entered";
+"captcha_error_comment" = "Please make sure you fill in the captcha field correctly.";
+
 /* Admin actions */
 
 "login_as" = "Login as $1";
