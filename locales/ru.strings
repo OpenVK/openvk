@@ -585,8 +585,8 @@
 "you_have_not_entered_text" = "Вы не ввели текст";
 "you_have_not_entered_name_or_text" = "Вы не ввели имя или текст";
 
-"support_ticket_changed" = "Тикет изменён";
-"support_ticket_changed_comment" = "Изменения вступят силу через несколько секунд.";
+"ticket_changed" = "Тикет изменён";
+"ticket_changed_comment" = "Изменения вступят силу через несколько секунд.";
 
 /* Invite */
 "invite" = "Пригласить";
