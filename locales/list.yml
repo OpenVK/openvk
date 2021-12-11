@@ -67,5 +67,5 @@ list:
   - code: "eo"
     flag: "eo"
     name: "Esperanto"
-    native_name: "Эсперанто"
+    native_name: "Esperanto"
     author: "n1rwana"
