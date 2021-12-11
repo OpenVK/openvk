@@ -54,6 +54,18 @@ body {
     border: 1px solid #f3ddbd;
 }
 
+.msg  {
+    border: 1pt solid #e6f2f3;
+}
+
+.msg.msg_succ {
+    border-color: #ddf3d7;
+}
+
+.msg.msg_err {
+    border-color: #f5e9ec;
+}
+
 .navigation .link:hover {
     border-top: 1px solid #E4E4E4;
 }
