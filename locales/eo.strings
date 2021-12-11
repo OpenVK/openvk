@@ -1,0 +1,587 @@
+"__locale" = "eo_EO.utf8;eo_EO.UTF-8;Esp";
+"__WinEncoding" = "Windows-1251";
+
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
+
+/* Main page */
+
+"home" = "Hejmo";
+"welcome" = "Bonvenon";
+
+/* Login */
+
+"log_in" = "Ensaluti";
+"password" = "Pasvorto";
+"registration" = "Registrado";
+"forgot_password" = "Ĉu vi forgesis vian pasvorton?";
+
+/* Profile information */
+
+"select_language" = "Elektu lingvon";
+"edit" = "Redakti";
+"birth_date" = "Naskiĝdato";
+"registration_date" = "Dato de registriĝo";
+"hometown" = "Hejmurbo";
+"this_is_you" = "tio estas Vi";
+"edit_page" = "Redakti paĝon";
+"edit_group" = "Redakti grupon";
+"change_status" = "ŝanĝi statuson";
+"name" = "Nomo";
+"surname" = "Familia nomo";
+"gender" = "Sekso";
+"male" = "vira";
+"female" = "ino";
+"description" = "Priskribo";
+"save" = "Savi";
+"main_information" = "Ĉefaj informoj";
+"nickname" = "Kromnomo";
+"online" = "Enreta";
+"was_online" = "estis enreta";
+"was_online_m" = "estis enreta";
+"was_online_f" = "estis enreta";
+/* For male and female */
+"all_title" = "Ĉiuj";
+"information" = "Informo";
+"status" = "Statuso";
+"no_information_provided" = "Neniu informo provizis.";
+"deceased_person" = "Forpasinta persono";
+"none" = "neniu";
+"send" = "Sendi";
+
+"years_zero" = "0 jaro malnova";
+"years_one" = "1 jaro malnova";
+"years_other" = "$1 jaroj malnova";
+
+"relationship" = "Rilato";
+
+"relationship_0" = "Ne elektita";
+"relationship_1" = "Ne geedziĝis";
+"relationship_2" = "Datado";
+"relationship_3" = "Engaĝita";
+"relationship_4" = "Edziĝinta";
+"relationship_5" = "En civila geedzeco";
+"relationship_6" = "Enamiĝinta";
+"relationship_7" = "Ĉio estas komplika";
+"relationship_8" = "Aktive serĉante";
+
+"politViews" = "Politikaj vidoj";
+
+"politViews_0" = "Ne elektita";
+"politViews_1" = "Indiferenta";
+"politViews_2" = "Komunisto";
+"politViews_3" = "Socialisto";
+"politViews_4" = "Moderulo";
+"politViews_5" = "Liberalulo";
+"politViews_6" = "Konservativa";
+"politViews_7" = "Monarchical";
+"politViews_8" = "Ultra-Konservativa";
+"politViews_9" = "Libervolisma";
+
+"contact_information" = "Contact information";
+
+"email" = "Email";
+"phone" = "Phone";
+"telegram" = "Telegram";
+"personal_website" = "Personal website";
+"city" = "City";
+"address" = "Address";
+
+"personal_information" = "Persona informo";
+
+"interests" = "Interesoj";
+"favorite_music" = "Preferata muziko";
+"favorite_films" = "Preferataj filmoj";
+"favorite_shows" = "Plej ŝatataj televidaj programoj";
+"favorite_books" = "Preferataj libroj";
+"favorite_quotes" = "Ŝatataj citaĵoj";
+"information_about" = "Pri";
+
+"updated_at" = "Ĝisdatigita je $1";
+
+/* Wall */
+
+"feed" = "Novaĵoj";
+
+"post_writes_m" = "verkis";
+"post_writes_f" = "verkis";
+"post_writes_g" = "eldonita";
+"wall" = "Muro";
+"post" = "Afiŝu";
+"write" = "Skribu";
+"publish" = "Publikigi";
+"delete" = "Forigi";
+"comments" = "Komentoj";
+"share" = "Kunhavigi";
+"pin" = "Pinglo";
+"unpin" = "Unpin";
+"pinned" = "alpinglita";
+"comments_tip" = "Estu unua, kiu lasas komenton ĉe ĉi tiu afiŝo!";
+"your_comment" = "Via komento";
+"shown" = "Montrita";
+"x_out_of" = "$1 el";
+"wall_zero" = "neniuj afiŝoj";
+"wall_one" = "$1 afiŝo";
+"wall_other" = "$1 afiŝoj";
+"publish_post" = "Aldonu afiŝon";
+"view_other_comments" = "Rigardu aliajn komentojn";
+
+"no_comments" = "Sen komentoj";
+
+"all_news" = "Ĉiuj novaĵoj";
+"posts_per_page" = "Nombro da afiŝoj po paĝo";
+
+"attachment" = "Alligiteco";
+"post_as_group" = "Afiŝu kiel grupo";
+"comment_as_group" = "Komentu kiel grupo";
+"add_signature" = "Aldonu subskribon";
+/* ^ can be translated as "author's signature". ^ */
+"contains_nsfw" = "Enhavas NSFW-enhavon";
+"nsfw_warning" = "Ĉi tiu afiŝo povas havi NSFW-enhavon";
+"report" = "Raporto";
+"attach_photo" = "Aligu foton";
+"no_posts_abstract" = "Neniu skribis ion ĉi tie... Ĝis nun.";
+"attach_no_longer_available" = "Ĉi tiu aldonaĵo ne plu disponeblas.";
+"open_post" = "Open post";
+"version_incompatibility" = "Ĉi tiu aldonaĵo ne povis esti montrata. Verŝajne la datumbazo estas nekongrua kun la nuna versio de OpenVK.";
+
+/* Friends */
+
+"friends" = "Amikoj";
+"followers" = "Sekvantoj";
+"follower" = "Sekvanto";
+"friends_add" = "Aldonu al amikoj";
+"friends_delete" = "Forigi el amikoj";
+"friends_reject" = "Malakcepti peton";
+"friends_accept" = "Akceptu peton";
+"send_message" = "Sendu mesaĝon";
+"incoming_req" = "Abonantoj";
+"outcoming_req" = "Petoj";
+"req" = "Petoj";
+
+"firends_zero" = "Neniuj amikoj";
+"friends_one" = "$1 amiko";
+"friends_other" = "$1 amikoj";
+
+"followers_zero" = "Neniuj sekvantoj";
+"followers_one" = "$1 sekvanto";
+"followers_other" = "$1 sekvantoj";
+
+"subscriptions_zero" = "Neniuj abonoj";
+"subscriptions_one" = "$1 abono";
+"subscriptions_other" = "$1 abonoj";
+
+/* Group */
+
+"name_group" = "Nomo";
+"subscribe" = "Abonu";
+"unsubscribe" = "Malaliĝi";
+"subscriptions" = "Abonoj";
+"join_community" = "Aliĝu al komunumo";
+"leave_community" = "Forlasu komunumon";
+"min_6_community" = "Nomo de la grupo devas havi pli ol 6 signojn";
+"participants" = "Partoprenantoj";
+"groups" = "Grupoj";
+"meetings" = "Renkontiĝoj";
+"create_group" = "Krei grupon";
+"group_managers" = "Perantoj";
+"group_type" = "Grupo tipo";
+"group_type_open" = "Ĉi tio estas malfermita grupo, ĉiu povas eniri ĝin.";
+"group_type_closed" = "Ĉi tio estas fermita grupo. Por eniri, vi devas sendi peton.";
+"creator" = "Kreinto";
+"administrators" = "Administrantoj";
+"add_to_left_menu" = "Aldoni al maldekstra menuo";
+"remove_from_left_menu" = "Forigi el maldekstra menuo";
+"all_followers" = "Ĉiuj sekvantoj";
+"only_administrators" = "Nur administrantoj";
+"website" = "Retejo";
+"managed" = "Administrita";
+
+"administrators_one" = "$1 administranto";
+"administrators_other" = "$1 administrantoj";
+
+"role" = "Rolo";
+"administrator" = "Administranto";
+"promote_to_admin" = "Promocii al administranto";
+"devote" = "Dediĉi";
+"set_comment" = "Agordu komenton";
+"hidden_yes" = "Kaŝita: Jes";
+"hidden_no" = "Kaŝita: Ne";
+"group_allow_post_for_everyone" = "Permesu afiŝadon por ĉiuj";
+"statistics" = "Statistiko";
+"group_administrators_list" = "Listo de administrantoj";
+"group_display_only_creator" = "Montru nur grupkreinto";
+"group_display_all_administrators" = "Montru ĉiujn administrantojn";
+"group_dont_display_administrators_list" = "Montru nenion";
+
+"participants_zero" = "Neniuj partoprenantoj";
+"participants_one" = "$1 partoprenanto";
+"participants_other" = "$1 partoprenantoj";
+
+"groups_zero" = "Neniuj grupoj";
+"groups_one" = "$1 grupo";
+"groups_other" = "$1 grupoj";
+
+"meetings_zero" = "Neniuj kunvenoj";
+"meetings_one" = "$1 kunveno";
+"meetings_other" = "$1 kunvenoj";
+
+/* Albums */
+
+"create" = "Krei";
+"albums" = "Albumoj";
+"create_album" = "Krei albumon";
+"edit_album" = "Redakti albumon";
+"creating_album" = "Kreante albumon";
+"upload_photo" = "Alŝutu foton";
+"photo" = "Foto";
+"upload_button" = "Alŝutu";
+
+"open_original" = "Malfermu originalon";
+
+"avatar_album" = "Profilaj fotoj";
+"wall_album" = "Muraj fotoj";
+
+"albums_zero" = "Neniuj albumoj";
+"albums_one" = "$1 albumo";
+"albums_other" = "$1 albumoj";
+
+/* Notes */
+
+"notes" = "Notoj";
+"note" = "Noto";
+"name_note" = "Titolo";
+"text_note" = "Enhavo";
+"create_note" = "Kreu noton";
+"actions" = "Agoj";
+
+"notes_zero" = "Neniuj notoj";
+"notes_one" = "$1 noto";
+"notes_other" = "$1 notoj";
+
+/* Menus */
+
+/* Note that is string need to fit into the "My Page" link */
+
+"edit_button" = "redakti";
+"my_page" = "Mia Paĝo";
+"my_friends" = "Miaj Amikoj";
+"my_photos" = "Miaj Fotoj";
+"my_videos" = "Miaj Videoj";
+"my_messages" = "Miaj Mesaĝoj";
+"my_notes" = "Miaj Notoj";
+"my_groups" = "Miaj Grupoj";
+"my_feed" = "Mia Fluo";
+"my_feedback" = "Miaj Sugestoj";
+"my_settings" = "Miaj Agordoj";
+"bug_tracker" = "Cimo-spurilo";
+
+"menu_login" = "Ensaluti";
+"menu_registration" = "Registrado";
+"menu_help" = "Helpu";
+
+"header_home" = "hejmen";
+"header_groups" = "grupoj";
+"header_donate" = "donate";
+"header_people" = "homoj";
+"header_invite" = "inviti";
+"header_help" = "helpo";
+"header_log_out" = "log out";
+"header_search" = "Serĉu";
+
+"header_login" = "ensaluti";
+"header_registration" = "registriĝo";
+
+"footer_blog" = "blogo";
+"footer_help" = "helpo";
+"footer_developers" = "programistoj";
+"footer_choose_language" = "elektu lingvon";
+"footer_privacy" = "privateco";
+
+/* Settings */
+
+"main" = "Ĉefa";
+"contacts" = "Kontaktoj";
+"avatar" = "Avataro";
+"privacy" = "Privateco";
+"interface" = "Interfaco";
+
+"profile_picture" = "Profila bildo";
+
+"picture" = "Bildo";
+
+"change_password" = "Ŝanĝi pasvorton";
+"old_password" = "Malnova pasvorto";
+"new_password" = "Nova pasvorto";
+"repeat_password" = "Ripetu pasvorton";
+
+"avatars_style" = "Stilo avataro";
+"style" = "Stilo";
+
+"default" = "Default";
+"cut" = "Tranĉi";
+"round_avatars" = "Rondaj avataroj";
+
+"search_for_groups" = "Serĉu grupojn";
+"search_for_people" = "Serĉi homojn";
+"search_button" = "Trovi";
+"results_zero" = "Neniuj rezultoj";
+"results_one" = "$1 rezulto";
+"results_other" = "$1 rezultoj";
+
+"privacy_setting_access_page" = "Kiu povas vidi mian paĝon";
+"privacy_setting_read_info" = "Kiu povas vidi ĉefajn informojn de mia paĝo";
+"privacy_setting_see_groups" = "Kiu povas vidi miajn grupojn kaj renkontiĝojn";
+"privacy_setting_see_photos" = "Kiu povas vidi miajn fotojn";
+"privacy_setting_see_videos" = "Kiu povas vidi miajn videojn";
+"privacy_setting_see_notes" = "Kiu povas vidi miajn notojn";
+"privacy_setting_see_friends" = "Kiu povas vidi miajn amikojn";
+"privacy_setting_add_to_friends" = "Kiu povas aldoni min al amikoj";
+"privacy_setting_write_wall" = "Kiu povas publikigi afiŝon sur mia muro";
+"privacy_value_anybody" = "Iu ajn";
+"privacy_value_anybody_dative" = "Iu ajn";
+"privacy_value_users" = "OpenVK-uzantoj";
+"privacy_value_friends" = "Amikoj";
+"privacy_value_friends_dative" = "Amikoj";
+"privacy_value_only_me" = "Nur mi";
+"privacy_value_only_me_dative" = "Nur mi";
+"privacy_value_nobody" = "Neniu";
+
+"your_email_address" = "Via retpoŝta adreso";
+"your_page_address" = "Via adrespaĝo";
+"page_address" = "Adrespaĝo";
+"current_email_address" = "Aktuala retadreso";
+"page_id" = "Paĝa ID";
+"you_can_also" = "Vi povas anka";
+"delete_your_page" = "forigu vian paĝon";
+"delete_album" = "forigi albumon";
+
+"ui_settings_interface" = "Interfaco";
+"ui_settings_sidebar" = "Maldekstra menuo";
+"ui_settings_rating" = "Taksado";
+"ui_settings_rating_show" = "Montru";
+"ui_settings_rating_hide" = "Kaŝi";
+
+/* Two-factor authentication */
+
+"two_factor_authentication" = "Dufaktora aŭtentigo";
+"two_factor_authentication_disabled" = "Provizas fidindan protekton kontraŭ hakado: por eniri la paĝon, vi devas enigi la kodon akiritan en la aplikaĵo 2FA.";
+"two_factor_authentication_enabled" = "Dufaktora aŭtentigo estas ebligita. Via paĝo estas protektita.";
+"two_factor_authentication_login" = "Vi havas dufaktoran aŭtentikigon ebligita. Por ensaluti, enigu la kodon ricevitan en la aplikaĵo.";
+
+"two_factor_authentication_settings_1" = "Dufaktora aŭtentigo per TOTP povas esti uzata eĉ sen interreto. Por fari tion, vi bezonas kodon-generadan apon. Ekzemple, <b>Google Authenticator</b> por Android kaj iOS aŭ <b>FOSS Aegis kaj andOTP</b> por Android. Certigu, ke la dato kaj horo estas ĝuste agordita en via telefono.";
+"two_factor_authentication_settings_2" = "Uzante la apon por dufaktora aŭtentigo, skanu la QR-kodon sube:";
+"two_factor_authentication_settings_3" = "aŭ mane enigu la donitan sekretan ŝlosilon: <b>$1</b>.";
+"two_factor_authentication_settings_4" = "Nun enigu la kodon, kiun la aplikaĵo donis al vi, kaj la pasvorton por via paĝo, por ke ni povu konfirmi, ke vi vere estas.";
+
+"connect" = "Konekti";
+"enable" = "Ebligu";
+"disable" = "Malebligu";
+"code" = "Kodo";
+"2fa_code" = "2FA-kodo";
+
+"incorrect_password" = "Malĝusta pasvorto";
+"incorrect_code" = "Malĝusta kodo";
+"incorrect_2fa_code" = "Malĝusta dufaktora aŭtentikigkodo";
+"two_factor_authentication_enabled_message" = "Dufaktora aŭtentigo ebligita";
+"two_factor_authentication_enabled_message_description" = "Via paĝo fariĝis pli malfacila por haki. Ni rekomendas, ke vi elŝutu <a href='javascript:viewBackupCodes()'> rezervajn kodojn </a>";
+"two_factor_authentication_disabled_message" = "Dufaktora aŭtentigo malŝaltita";
+
+"view_backup_codes" = "Rigardu rezervajn kodojn";
+"backup_codes" = "Rezervaj kodoj por ensaluta konfirmo";
+"two_factor_authentication_backup_codes_1" = "Rezervaj kodoj permesas vin validigi vian ensaluton kiam vi ne havas aliron al via telefono, ekzemple, dum vojaĝado.";
+"two_factor_authentication_backup_codes_2" = "Vi havas <b>10 pliajn kodojn</b>, ĉiu kodo povas esti uzata nur unufoje. Presu ilin, metu ilin en sekuran lokon kaj uzu ilin kiam vi bezonas kodojn por validigi vian ensaluton.";
+"two_factor_authentication_backup_codes_3" = "Vi povas akiri novajn kodojn se ili finiĝas. Nur la lastaj kreitaj rezervaj kodoj validas.";
+
+/* Sorting */
+
+"sort_randomly" = "Ordigi hazarde";
+"sort_up" = "Ordigu laŭ ID supren";
+"sort_down" = "Ordigu laŭ ID malsupren";
+
+/* Videos */
+
+"videos" = "Videoj";
+"video" = "Video";
+"upload_video" = "Alŝutu videon";
+"video_uploaded" = "Alŝutita";
+"video_updated" = "Ĝisdatigita";
+"video_link_to_yt" = "Ligo al YouTube";
+
+"info_name" = "Titolo";
+"info_description" = "Priskribo";
+"info_uploaded_by" = "Alŝutite de";
+"info_upload_date" = "Upload date";
+
+"videos_zero" = "Neniuj filmetoj";
+"videos_one" = "$1 video";
+"videos_other" = "$1 videoj";
+
+/* Notifications */
+
+"feedback" = "Retrosciigo";
+"unread" = "Nelegita";
+"archive" = "Arkivo";
+
+"notifications_like" = "$1 ŝatis vian $2afiŝon$3 de $4";
+"notifications_repost" = "$1 dividis vian $2post$3 de $4";
+"notifications_comment_under" = "$1 lasis komenton pri $2";
+"notifications_under_note" = "vian $3note$4";
+"notifications_under_photo" = "vian $3photo$4";
+"notifications_under_post" = "vian $3post$4 de $5";
+"notifications_under_video" = "vian $3video$4";
+"notifications_post" = "$1 publikigis $2a afiŝon$3 sur via muro: $4";
+"notifications_appoint" = "$1 nomumis vin kiel komunuma administranto $2";
+
+"nt_liked_yours" = "ŝatis la vian";
+"nt_shared_yours" = "dividis la vian";
+"nt_commented_yours" = "komentis la vian";
+"nt_written_on_your_wall" = "skribis sur via muro";
+"nt_made_you_admin" = "nomumis vin en la komunumo";
+
+"nt_from" = "de";
+"nt_yours_adjective" = "via";
+"nt_yours_feminitive_adjective" = "via";
+"nt_post_nominative" = "post";
+"nt_post_instrumental" = "post";
+"nt_note_instrumental" = "notu";
+"nt_photo_instrumental" = "foto";
+
+/* Time */
+
+"time_at_sp" = " ĉe ";
+"time_just_now" = "ĵus nun";
+"time_exactly_five_minutes_ago" = "antaŭ 5 minutoj";
+"time_minutes_ago" = "antaŭ $1 minutoj";
+"time_today" = "hodiaŭ";
+"time_yesterday" = "hieraŭ";
+
+"points" = "Voĉdonoj";
+"points_count" = "voĉoj";
+"on_your_account" = "sur via konto";
+
+"vouchers" = "Kuponoj";
+"have_voucher" = "Havu kuponon";
+"voucher_token" = "Kupona ĵetono";
+"voucher_activators" = "Uzantoj";
+"voucher_explanation" = "Enigu la kuponan serian numeron. Ĝi estas kutime listigita sur la kvitanco aŭ en la mesaĝo.";
+"voucher_explanation_ex" = "Notu, ke kuponoj povas eksvalidiĝi kaj povas esti uzataj nur unufoje.";
+"invalid_voucher" = "Kupono estas nevalida";
+"voucher_bad" = "Vi eble enigis la malĝustan serian numeron, jam uzitan kuponon, aŭ la kuponon simple eksvalidiĝis.";
+"voucher_good" = "Kupono aktivigita";
+"voucher_redeemed" = "La kupono estas sukcese aktivigita. Vi ricevos poentojn, sed vi ne plu povos aktivigi ĝin per ĉi tiu kodo.";
+"redeem" = "Elaĉetu kuponon";
+"deactivate" = "Malaktivigi";
+"usages_total" = "Nombro de uzoj";
+"usages_left" = "Uzoj maldekstra";
+
+/* Gifts */
+
+"gift" = "Donaco";
+"gifts" = "Donacoj";
+"gifts_zero" = "Nulaj donacoj";
+"gifts_one" = "Unu donaco";
+"gifts_other" = "$1 gifts";
+"gifts_left" = "Restas donacoj: $1";
+"gifts_left_zero" = "Restas nulaj donacoj";
+"gifts_left_one" = "Restas unu donaco";
+"gifts_left_other" = "Restas $1 donacoj";
+
+"send_gift" = "Sendu donacon";
+
+"gift_select" = "Elektu donacon";
+"collections" = "Kolektoj";
+"confirm" = "Konfirmu";
+"as_anonymous" = "Kiel anonima";
+"gift_your_message" = "Via mesaĝo";
+
+"free_gift" = "Senpaga";
+"coins" = "Voĉdonoj";
+"coins_zero" = "0 voĉdono";
+"coins_one" = "Unu voĉdono";
+"coins_other" = "$1 voĉoj";
+
+"users_gifts" = "Donacoj";
+
+/* Support */
+
+"support_opened" = "Malfermita";
+"support_answered" = "Kun respondo";
+"support_closed" = "Fermita";
+"support_ticket" = "Bileto";
+"support_tickets" = "Biletoj";
+"support_status_0" = "Temo sub konsidero";
+"support_status_1" = "Tie estas respondo";
+"support_status_2" = "Fermita";
+"support_greeting_hi" = "Saluton, $1!";
+"support_greeting_regards" = "Komplenajn salutojn,<br/>$1 subtena teamo.";
+
+"support_faq" = "Oftaj Demandoj";
+"support_list" = "Listo de biletoj";
+"support_new" = "Nova bileto";
+
+"support_faq_title" = "Por kiu ĉi tiu retejo estas?";
+"support_faq_content" = "La retejo estas desegnita por trovi amikojn kaj konatojn, kaj ankaŭ vidi datumojn de uzantoj. Ĝi estas kiel urba adresaro, per kiu homoj povas rapide trovi koncernajn informojn pri homo.";
+
+"support_new_title" = "Eniri la temon de via bileto";
+"support_new_content" = "Describe the issue or suggestion";
+
+"comment" = "Komento";
+"sender" = "Sendanto";
+
+"author" = "Aŭtoro";
+
+/* Errors */
+
+"error_1" = "Malĝusta demando";
+"error_2" = "Malĝusta ensaluto kaj pasvorto";
+"error_3" = "Ne rajtigita";
+"error_4" = "Uzanto ne ekzistas";
+"information_-1" = "Sukceso";
+"information_-2" = "Sukceso de ensaluto";
+
+"no_data" = "Neniuj datumoj";
+"no_data_description" = "Ne estas datumoj.";
+
+"error" = "Eraro";
+"error_shorturl" = "Ĉi tiu mallonga adreso jam estas posedata.";
+"error_segmentation" = "Segmentación eraro";
+"error_upload_failed" = "Malsukcesis alŝuti foton";
+"error_old_password" = "Malnova pasvorto ne kongruas";
+"error_new_password" = "Nova pasvorto ne kongruas";
+"error_shorturl_incorrect" = "La mallonga adreso havas malĝustan formaton.";
+"error_repost_fail" = "Malsukcesis kunhavigi afiŝon";
+
+"forbidden" = "Eraro de aliro";
+"forbidden_comment" = "La privatecaj agordoj de ĉi tiu uzanto ne permesas al vi rigardi lian paĝon.";
+
+"changes_saved" = "Ŝanĝoj konservitaj";
+"changes_saved_comment" = "Novaj datumoj aperos sur via paĝo";
+
+"photo_saved" = "Foto konservita";
+"photo_saved_comment" = "Nova profilbildo aperos sur via paĝo";
+
+"shared_succ" = "La afiŝo aperos sur via muro. Alklaku la sciigon por iri al via muro.";
+
+/* Admin actions */
+
+"login_as" = "Ensalutu kiel $1";
+"manage_user_action" = "Administri uzanton";
+"ban_user_action" = "Uzanto malpermeso";
+"warn_user_action" = "Averti uzanto";
+
+/* Paginator (deprecated) */
+
+"paginator_back" = "Reen";
+"paginator_page" = "Paĝo $1";
+"paginator_next" = "Venonta";
+
+/* Dialogs */
+
+"ok" = "OK";
+"yes" = "Jes";
+"no" = "Ne";
+"cancel" = "Nuligi";
+"edit_action" = "Ŝanĝi";
+
+"warning" = "Averto";
+"question_confirm" = "Ĉi tiu ago ne povas esti malfarita. Ĉu vi vere volas fari ĝin?";
