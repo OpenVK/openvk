@@ -6,6 +6,16 @@
 {/block}
 
 {block content}
+<script>
+  function markAnswer(id, mark) {
+    xhr = new XMLHttpRequest();
+    xhr.open("POST", "/support/comment/" + id + "/rate/" + mark);
+    xhr.send();
+
+    location.reload();
+    return false;
+  }
+</script>
 {if $ticket->isDeleted() == 0 }
 <div class="post-author">
     <a href="#" style="font-size:13px;">
@@ -108,9 +118,9 @@
                       {/if}
                     </strong>
                   {else}
-                    <a href="/support/comment/{$comment->getId()}/rate/1">{_support_rate_good_answer}</a>
+                    <a onClick="markAnswer({$comment->getId()}, 1)">{_support_rate_good_answer}</a>
                     |
-                    <a href="/support/comment/{$comment->getId()}/rate/2">{_support_rate_bad_answer}</a>
+                    <a onClick="markAnswer({$comment->getId()}, 2)">{_support_rate_bad_answer}</a>
                   {/if}
                  </div>
                {/if}
