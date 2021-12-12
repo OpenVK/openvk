@@ -64,4 +64,8 @@ list:
     name: "Pre-revolutionary"
     native_name: "Дореволюцiонный"
     author: "Mikitko Wiśniewski (rudzik8)"
-
+  - code: "eo"
+    flag: "eo"
+    name: "Esperanto"
+    native_name: "Esperanto"
+    author: "n1rwana"
