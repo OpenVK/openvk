@@ -14,6 +14,34 @@
 "registration" = "Registrado";
 "forgot_password" = "Ĉu vi forgesis vian pasvorton?";
 
+"login_failed" = "Ensaluto malsukcesis";
+"invalid_username_or_password" = "La uzantnomo aŭ pasvorto, kiun vi enigis, estas malĝusta. <a href='/restore.pl'>Ĉu vi forgesis vian pasvorton?</a>";
+
+"failed_to_register" = "Malsukcesis registri";
+"referral_link_invalid" = "La invito ligilo estas malvalida.";
+"registration_disabled" = "Registrado estis malŝaltita de la sistemadministranto.";
+"user_already_exists" = "Uzanto kun ĉi tiu retpoŝto jam ekzistas.";
+
+"access_recovery" = "Aliro reakiro";
+"page_access_recovery" = "Restarigu aliron al la paĝo";
+"access_recovery_info" = "Ĉu vi forgesis vian pasvorton? Ne maltrankviliĝu, enigu viajn detalojn kaj ni sendos al vi retpoŝton kun instrukcioj pri kiel reakiri vian konton.";
+"access_recovery_info_2" = "Enigu vian novan pasvorton. Ĉiuj nunaj sesioj estos suspenditaj kaj alirĵetonoj estos revokitaj.";
+"reset_password" = "Reset Pasvorto";
+"2fa_code_2" = "Dufaktora aŭtentikigkodo";
+
+"password_successfully_reset" = "Via pasvorto estis sukcese rekomencigita.";
+"password_reset_email_sent" = "Se vi estas registrita, vi ricevos instrukciojn retpoŝte.";
+"password_reset_error" = "Neatendita eraro okazis dum restarigo de la pasvorto.";
+"password_reset_rate_limit_error" = "Vi ne povas fari tion tiel ofte, pardonu.";
+
+"registration_disabled_info" = "Registrado estis malŝaltita de la sistemadministranto. Se eble, petu inviton de via amiko, se li estas registrita en ĉi tiu retejo.";
+"registration_closed" = "Registrado estas fermita.";
+"invites_you_to" = "<strong>$1</strong> invitas vin al $2";
+
+"register_meta_desc" = "Aliĝu por $1 nun!";
+"register_referer_meta_title" = "$1 invitas vin al $2!";
+"register_referer_meta_desc" = "Aliĝu $1 kaj tunoj da aliaj uzantoj por $2!";
+
 /* Profile information */
 
 "select_language" = "Elektu lingvon";
@@ -38,7 +66,6 @@
 "was_online" = "estis enreta";
 "was_online_m" = "estis enreta";
 "was_online_f" = "estis enreta";
-/* For male and female */
 "all_title" = "Ĉiuj";
 "information" = "Informo";
 "status" = "Statuso";
@@ -49,6 +76,8 @@
 
 "years_zero" = "0 jara";
 "years_one" = "1 jara";
+"years_few" = "$1 jara";
+"years_many" = "$1 jara";
 "years_other" = "$1 jara";
 
 "relationship" = "Rilato";
@@ -135,7 +164,6 @@
 "post_as_group" = "Afiŝu kiel grupo";
 "comment_as_group" = "Komentu kiel grupo";
 "add_signature" = "Aldonu subskribon";
-/* ^ can be translated as "author's signature". ^ */
 "contains_nsfw" = "Enhavas NSFW-enhavon";
 "nsfw_warning" = "Ĉi tiu afiŝo povas havi NSFW-enhavon";
 "report" = "Raporto";
@@ -278,8 +306,6 @@
 
 /* Menus */
 
-/* Note that is string need to fit into the "My Page" link */
-
 "edit_button" = "red.";
 "my_page" = "Mia Paĝo";
 "my_friends" = "Miaj Amikoj";
@@ -344,6 +370,8 @@
 "search_button" = "Trovi";
 "results_zero" = "Neniuj rezultoj";
 "results_one" = "$1 rezulto";
+"results_few" = "$1 rezultoj";
+"results_many" = "$1 rezultoj";
 "results_other" = "$1 rezultoj";
 
 "privacy_setting_access_page" = "Kiu povas vidi mian paĝon";
@@ -378,8 +406,6 @@
 "ui_settings_rating" = "Taksado";
 "ui_settings_rating_show" = "Montru";
 "ui_settings_rating_hide" = "Kaŝi";
-
-/* Two-factor authentication */
 
 "two_factor_authentication" = "Dufaktora aŭtentigo";
 "two_factor_authentication_disabled" = "Provizas fidindan protekton kontraŭ hakado: por eniri la paĝon, vi devas enigi la kodon akiritan en la aplikaĵo 2FA.";
@@ -432,6 +458,8 @@
 
 "videos_zero" = "Neniuj filmetoj";
 "videos_one" = "$1 video";
+"videos_few" = "$1 videoj";
+"videos_many" = "$1 videoj";
 "videos_other" = "$1 videoj";
 
 /* Notifications */
@@ -502,8 +530,9 @@
 "gifts_many" = "$1 donacoj";
 "gifts_other" = "$1 gifts";
 "gifts_left" = "Restas donacoj: $1";
-"gifts_left_zero" = "Restas nulaj donacoj";
 "gifts_left_one" = "Restas unu donaco";
+"gifts_left_few" = "Restas $1 donacoj";
+"gifts_left_many" = "Restas $1 donacoj";
 "gifts_left_other" = "Restas $1 donacoj";
 
 "send_gift" = "Sendu donacon";
@@ -552,6 +581,17 @@
 
 "author" = "Aŭtoro";
 
+"you_have_not_entered_text" = "Vi enigis neniun tekston";
+"you_have_not_entered_name_or_text" = "Vi ne enigis nomon aŭ tekston";
+
+"ticket_changed" = "Bileto ŝanĝiĝis";
+"ticket_changed_comment" = "La ŝanĝoj efektiviĝos post kelkaj sekundoj.";
+
+/* Invite */
+"invite" = "Inviti";
+"you_can_invite" = "Vi povas inviti viajn amikojn aŭ konatojn al la reto per individua ligilo:";
+"you_can_invite_2" = "Aligu ĉi tiun ligon al via afiŝo. La uzanto registriĝos, kaj li tuj aperos en viaj amikoj.";
+
 /* Errors */
 
 "error_1" = "Malĝusta demando";
@@ -584,6 +624,37 @@
 
 "shared_succ" = "La afiŝo aperos sur via muro. Alklaku la sciigon por iri al via muro.";
 
+"invalid_email_address" = "Nevalida Retpoŝta Adreso";
+"invalid_email_address_comment" = "La retpoŝto kiun vi enigis ne estas ĝusta.";
+
+"invalid_telegram_name" = "Nevalida Telegram-kontonomo";
+"invalid_telegram_name_comment" = "Vi enigis nevalidan nomon de la konto de Telegramo.";
+
+"invalid_birth_date" = "Nevalida naskiĝdato";
+"invalid_birth_date_comment" = "La naskiĝdato, kiun vi enigis, ne estas ĝusta.";
+
+"token_manipulation_error" = "Eraro pri manipulado de ĵetonoj";
+"token_manipulation_error_comment" = "Token estas nevalida aŭ eksvalidiĝis";
+
+"profile_changed" = "Profilo ŝanĝita";
+"profile_changed_comment" = "Via aktiva profilo estis ŝanĝita.";
+"profile_not_found" = "Uzanto ne estas trovita.";
+
+"suspicious_registration_attempt" = "Suspektinda provo registri";
+"suspicious_registration_attempt_comment" = "Vi provis registriĝi de suspektinda loko.";
+
+"rate_limit_error" = "Choomba, ĉu vi estas tute fucked up?";
+"rate_limit_error_comment" = "Go to the brainwrap, drink the wheels. In $1, you cannot drop shitposts as often. Exception code: $2.";
+
+"not_enough_permissions" = "Ne sufiĉaj rajtoj";
+"not_enough_permissions_comment" = "Vi ne havas sufiĉajn rajtojn por plenumi ĉi tiun agon.";
+
+"login_required_error" = "Ne sufiĉaj rajtoj";
+"login_required_error_comment" = "Vi devas esti ensalutinta por vidi ĉi tiun paĝon.";
+
+"captcha_error" = "Karakteroj eniris malĝuste";
+"captcha_error_comment" = "Bonvolu fari certe ke vi plenigis en la captcha kampo korekte.";
+
 /* Admin actions */
 
 "login_as" = "Ensalutu kiel $1";
@@ -593,7 +664,7 @@
 
 /* Dialogs */
 
-"ok" = "OK";
+"ok" = "Bone";
 "yes" = "Jes";
 "no" = "Ne";
 "cancel" = "Nuligi";
