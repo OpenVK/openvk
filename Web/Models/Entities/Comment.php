@@ -44,6 +44,6 @@ class Comment extends Post
     {
         return $this->getOwner()->getId() == $user->getId() ||
                $this->getTarget()->getOwner()->getId() == $user->getId() ||
-               $this->getTarget() instanceof Post && $this->getTarget()->getTargetWall() < 0;
+               $this->getTarget() instanceof Post && $this->getTarget()->getTargetWall() < 0 && (new Clubs)->get(abs($this->getTarget()->getTargetWall()))->canBeModifiedBy($user);
     }
 }
