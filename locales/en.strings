@@ -560,7 +560,7 @@
 "support_bad_answer_agent" = "User left a negative feedback.";
 "support_rated_good" = "You have left a positive feedback about the answer.";
 "support_rated_bad" = "You have left a negative feedback about the answer.";
-"wrong_parameters" = "Неверные параметры запроса.";
+"wrong_parameters" = "Invalid request parameters.";
 
 "comment" = "Comment";
 "sender" = "Sender";
