@@ -34,11 +34,16 @@ class Comment extends Post
      */
     function getOwner(bool $honourFlags = true, bool $real = false): RowModel
     {
-        if($honourFlags && $this->isPostedOnBehalfOfGroup()) {
-            if($this->getTarget() instanceof Post)
-                return (new Clubs)->get(abs($this->getTarget()->getTargetWall()));
-        }
+        if($honourFlags && $this->isPostedOnBehalfOfGroup() && $this->getTarget() instanceof Post)
+            return (new Clubs)->get(abs($this->getTarget()->getTargetWall()));
 
         return parent::getOwner($honourFlags, $real);
+    }
+
+    function canBeDeletedBy(User $user): bool
+    {
+        return $this->getOwner()->getId() == $user->getId() ||
+               $this->getTarget()->getOwner()->getId() == $user->getId() ||
+               $this->getTarget() instanceof Post && $this->getTarget()->getTargetWall() < 0;
     }
 }
