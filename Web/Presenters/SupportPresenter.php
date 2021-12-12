@@ -226,35 +226,26 @@ final class SupportPresenter extends OpenVKPresenter
         $this->template->content = $parser->parse($content);
     }
 
-    function renderRateAnswerGood(int $id): void
+    function renderRateAnswer(int $id, int $mark): void
     {
         $this->willExecuteWriteAction();
         $this->assertUserLoggedIn();
 
         $comment = $this->comments->get($id);
-        if ($this->user->id === $this->tickets->get($comment->getTicketId()->getUser()->getId())) {
-            $comment->setMark(1);
-            $comment->save();
-
-            $this->flashFail("succ", "Успешно", "Вы оставили положительный отзыв об ответе");
+        if ($this->user->id === $this->tickets->get($comment->getTicketId())->getUser()->getId()) {
+        	if ($mark === 1 || $mark === 2) {}
+	        	$comments->setMark($mark);
+        		$comments->save();
+        		if ($mark === 1) {
+        			$this->flashFail("succ", tr("information_-1"), tr("support_rated_good"));
+        		} elseif ($mark === 2) {
+        			$this->flashFail("succ", tr("information_-1"), tr("support_rated_bad"));
+        		}
+        	} else {
+        		$this->flashFail("err", tr("error"), tr("wrong_parameters"));
+        	}
         } else {
-            $this->flashFail("err", "Ошибка", "Ошибка доступа");
-        }
-    }
-
-    function renderRateAnswerBad(int $id): void
-    {
-        $this->willExecuteWriteAction();
-        $this->assertUserLoggedIn();
-
-        $comment = $this->comments->get($id);
-        if ($this->user->id === $this->tickets->get($comment->getTicketId()->getUser()->getId())) {
-            $comment->setMark(2);
-            $comment->save();
-
-            $this->flashFail("succ", "Успешно", "Вы оставили положительный отзыв об ответе");
-        } else {
-            $this->flashFail("err", "Ошибка", "Ошибка доступа");
+        	$this->flashFail("err", tr("error"), tr("forbidden"));
         }
     }
 }

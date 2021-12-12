@@ -109,16 +109,19 @@
                     <a href="/support/comment/{$comment->getId()}/delete">{_delete}</a>
                 </div>
                {/if}
-                {elseif $comment->getUType() === 1}
-                    {if $comment->getMark() === 1}
-                    <div class="post-menu">
-                    <strong>{_support_good_answer_agent}</strong>
-                    </div>
-                    {elseif $comment->getMark() === 2}
-                    <div class="post-menu">
-                    <strong>{_support_bad_answer_agent}</strong>
-                    </div>
-                {/if}
+               
+               {if $comment->getUType() === 1}
+                  <div class="post-menu">
+                      <strong>
+                        {if $comment->getMark() != null}
+                          {if $comment->getMark() === 1}
+                            {_support_good_answer_agent}
+                          {elseif $comment->getMark() === 2}
+                            {_support_bad_answer_agent}
+                          {/if}
+                        {/if}
+                      </strong>
+                  </div>
                {/if}
             </div>
          </td>

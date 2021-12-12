@@ -90,27 +90,30 @@
                        {$comment->getText()|noescape}
                    {/if}
                </div>
+
                {if $comment->getUType() === 0}
-               <div class="post-menu">
-                  <a href="/support/comment/{$comment->getId()}/delete">{_delete}</a>
-               </div>
+                <div class="post-menu">
+                    <a href="/support/comment/{$comment->getId()}/delete">{_delete}</a>
+                </div>
                {/if}
 
-               {if $comment->getUType() === 1 && $comment->getMark() === 0}
-               <div class="post-menu">
-                  <a href="/support/comment/{$comment->getId()}/rateGood">{_support_rate_good_answer}}</a>
-                  |
-                  <a href="/support/comment/{$comment->getId()}/rateBad">{_support_rate_bad_answer}}</a>
-                </div>
-                {elseif $comment->getMark() === 1}
-                <div class="post-menu">
-                    <strong>{_support_good_answer_user}</strong>
-                </div>
-                {elseif $comment->getMark() === 2}
-                <div class="post-menu">
-                    <strong>{_support_bad_answer_user}</strong>
-                </div>
-                {/if}
+               {if $comment->getUType() === 1}
+                 <div class="post-menu">
+                  {if $comment->getMark() != null}
+                    <strong>
+                      {if $comment->getMark() === 1}
+                        {_support_good_answer_user}
+                      {elseif $comment->getMark() === 2}
+                        {_support_bad_answer_user}
+                      {/if}
+                    </strong>
+                  {else}
+                    <a href="/support/comment/{$comment->getId()}/rate/1">{_support_rate_good_answer}</a>
+                    |
+                    <a href="/support/comment/{$comment->getId()}/rate/2">{_support_rate_bad_answer}</a>
+                  {/if}
+                 </div>
+               {/if}
             </div>
          </td>
       </tr>

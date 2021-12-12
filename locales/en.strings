@@ -552,6 +552,16 @@
 "support_new_title" = "Enter the topic of your ticket";
 "support_new_content" = "Describe the issue or suggestion";
 
+"support_rate_good_answer" = "This is good answer";
+"support_rate_bad_answer" = "This is bad answer";
+"support_good_answer_user" = "You have left a positive feedback.";
+"support_bad_answer_user" = "You have left a negative feedback.";
+"support_good_answer_agent" = "User left a positive feedback.";
+"support_bad_answer_agent" = "User left a negative feedback.";
+"support_rated_good" = "You have left a positive feedback about the answer.";
+"support_rated_bad" = "You have left a negative feedback about the answer.";
+"wrong_parameters" = "Неверные параметры запроса.";
+
 "comment" = "Comment";
 "sender" = "Sender";
 
