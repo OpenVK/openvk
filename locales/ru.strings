@@ -577,6 +577,13 @@
 "support_new_title" = "Введите тему вашего обращения";
 "support_new_content" = "Опишите проблему или предложение";
 
+"support_rate_good_answer" = "Это хороший ответ";
+"support_rate_bad_answer" = "Это плохой ответ";
+"support_good_answer_user" = "Вы оставили положительный отзыв.";
+"support_bad_answer_user" = "Вы оставили негативный отзыв.";
+"support_good_answer_agent" = "Пользователь оставил положительный отзыв";
+"support_bad_answer_agent" = "Пользователь оставил негативный отзыв";
+
 "comment" = "Комментарий";
 "sender" = "Отправитель";
 

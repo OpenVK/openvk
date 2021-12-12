@@ -225,4 +225,36 @@ final class SupportPresenter extends OpenVKPresenter
         $this->template->heading = $heading;
         $this->template->content = $parser->parse($content);
     }
+
+    function renderRateAnswerGood(int $id): void
+    {
+        $this->willExecuteWriteAction();
+        $this->assertUserLoggedIn();
+
+        $comment = $this->comments->get($id);
+        if ($this->user->id === $this->tickets->get($comment->getTicketId()->getUser()->getId())) {
+            $comment->setMark(1);
+            $comment->save();
+
+            $this->flashFail("succ", "Успешно", "Вы оставили положительный отзыв об ответе");
+        } else {
+            $this->flashFail("err", "Ошибка", "Ошибка доступа");
+        }
+    }
+
+    function renderRateAnswerBad(int $id): void
+    {
+        $this->willExecuteWriteAction();
+        $this->assertUserLoggedIn();
+
+        $comment = $this->comments->get($id);
+        if ($this->user->id === $this->tickets->get($comment->getTicketId()->getUser()->getId())) {
+            $comment->setMark(2);
+            $comment->save();
+
+            $this->flashFail("succ", "Успешно", "Вы оставили положительный отзыв об ответе");
+        } else {
+            $this->flashFail("err", "Ошибка", "Ошибка доступа");
+        }
+    }
 }

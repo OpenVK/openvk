@@ -48,6 +48,16 @@ class TicketComments
     // {
     //     return $this->toTicket($this->tickets->get($id));
     // }
+
+    // We can get comment by it's ID using this function
+    function get(int $id): TicketComment
+    {
+        $comm = $this->comments->where(['id' => $id])->fetch();
+        if (!is_null($comm))
+            return new TicketComment($comm);
+        else
+            return null;
+    }
    
     use \Nette\SmartObject;
 }

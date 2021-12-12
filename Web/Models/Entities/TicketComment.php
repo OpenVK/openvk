@@ -108,5 +108,10 @@ class TicketComment extends RowModel
 		return false; # Кооостыыыль!!!
 	}
 
+    function getMark(): int 
+    {
+        return $this->getRecord()->mark;
+    }
+
     use Traits\TRichText;
 }
