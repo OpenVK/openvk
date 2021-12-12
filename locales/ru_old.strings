@@ -294,16 +294,16 @@
 
 /* Notes */
 
-"notes" = "​Заметки";
-"note" = "​Заметка";
+"notes" = "​Замѣтки";
+"note" = "​Замѣтка";
 "name_note" = "Названіе";
 "text_note" = "Содержаніе";
-"create_note" = "Создать ​заметку";
+"create_note" = "Создать ​замѣтку";
 "actions" = "Дѣйствія";
 
-"notes_zero" = "Ни одной ​заметки";
-"notes_one" = "Одна ​заметка";
-"notes_few" = "$1 ​заметки";
+"notes_zero" = "Ни одной ​замѣтки";
+"notes_one" = "Одна ​замѣтка";
+"notes_few" = "$1 ​замѣтки";
 "notes_many" = "$1 замѣтокъ";
 "notes_other" = "$1 замѣтокъ";
 
@@ -315,7 +315,7 @@
 "my_photos" = "Мои Фотокарточки";
 "my_videos" = "Мой Синематографъ";
 "my_messages" = "Мои Письма";
-"my_notes" = "Мои ​Заметки";
+"my_notes" = "Мои ​Замѣтки";
 "my_groups" = "Мои Общества";
 "my_feed" = "Мои Извѣстiя";
 "my_feedback" = "Мои Отвѣты";
@@ -382,7 +382,7 @@
 "privacy_setting_see_groups" = "Кому видно мои группы и встрѣчи";
 "privacy_setting_see_photos" = "Кому видно мои фотографіи";
 "privacy_setting_see_videos" = "Кому видно мои видеозаписи";
-"privacy_setting_see_notes" = "Кому видно мои ​заметки";
+"privacy_setting_see_notes" = "Кому видно мои ​замѣтки";
 "privacy_setting_see_friends" = "Кому видно моихъ друзей";
 "privacy_setting_add_to_friends" = "Кто можетъ называть меня другомъ";
 "privacy_setting_write_wall" = "Кто можетъ писать у меня на стѣнѣ";
@@ -474,7 +474,7 @@
 "notifications_like" = "$1 оцѣнилъ вашу $2запись$3 отъ $4";
 "notifications_repost" = "$1 подѣлился(-​лась) вашей $2записью$3 отъ $4";
 "notifications_comment_under" = "$1 оставилъ(-​ла) комментарій подъ $2";
-"notifications_under_note" = "вашей $3​заметкой$4";
+"notifications_under_note" = "вашей $3​замѣткой$4";
 "notifications_under_photo" = "вашимъ $3фото$4";
 "notifications_under_post" = "вашей $3записью$4 отъ $5";
 "notifications_under_video" = "вашимъ $3видео$4";
@@ -492,7 +492,7 @@
 "nt_yours_feminitive_adjective" = "вашей";
 "nt_post_nominative" = "постъ";
 "nt_post_instrumental" = "постомъ";
-"nt_note_instrumental" = "​заметкой";
+"nt_note_instrumental" = "​замѣткой";
 "nt_photo_instrumental" = "фотографіей";
 
 /* Time */
