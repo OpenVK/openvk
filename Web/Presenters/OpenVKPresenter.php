@@ -198,6 +198,7 @@ abstract class OpenVKPresenter extends SimplePresenter
                 header("HTTP/1.1 403 Forbidden");
                 $this->getTemplatingEngine()->render(__DIR__ . "/templates/@banned.xml", [
                     "thisUser" => $this->user->identity,
+                    "csrfToken" => $GLOBALS["csrfToken"],
                 ]);
                 exit;
             }

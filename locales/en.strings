@@ -125,6 +125,9 @@
 
 "updated_at" = "Updated at $1";
 
+"user_banned" = "Unfortunately, we had to block the <b>$1</b> user page.";
+"user_banned_comment" = "Moderator's comment:";
+
 /* Wall */
 
 "feed" = "News";
@@ -305,6 +308,9 @@
 "menu_login" = "Login";
 "menu_registration" = "Registration";
 "menu_help" = "Help";
+
+"menu_logout" = "Logout";
+"menu_support" = "Support";
 
 "header_home" = "home";
 "header_groups" = "groups";
@@ -564,9 +570,19 @@
 "support_ticket_changed_comment" = "The changes will take effect in a few seconds.";
 
 /* Invite */
+
 "invite" = "Invite";
 "you_can_invite" = "You can invite your friends or acquaintances to the network using an individual link:";
 "you_can_invite_2" = "Attach this link to your post. When the user signs up, he will immediately appear in your friends.";
+
+/* Banned */
+
+"banned_title" = "You are banned";
+"banned_header" = "You are banned";
+"banned_alt" = "The user is blocked.";
+"banned_1" = "Sorry <b>$1</b>, but you have been banned.";
+"banned_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to block you forever.";
+"banned_3" = "You can still <a href=\"/support?act=new\">write to the support</a> if you think there was an error or <a href=\"/logout?hash=$1\">logout</a>.";
 
 /* Errors */
 
