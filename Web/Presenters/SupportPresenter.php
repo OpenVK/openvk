@@ -232,20 +232,24 @@ final class SupportPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $comment = $this->comments->get($id);
-        if ($this->user->id === $this->tickets->get($comment->getTicketId())->getUser()->getId()) {
-        	if ($mark === 1 || $mark === 2) {}
+        if($this->user->id === $this->tickets->get($comment->getTicketId())->getUser()->getId()) {
+        	if($mark === 1 || $mark === 2) {}
 	        	$comments->setMark($mark);
         		$comments->save();
-        		if ($mark === 1) {
-        			$this->flashFail("succ", tr("information_-1"), tr("support_rated_good"));
-        		} elseif ($mark === 2) {
-        			$this->flashFail("succ", tr("information_-1"), tr("support_rated_bad"));
+        		if($mark === 1) {
+        			// $this->flashFail("succ", tr("information_-1"), tr("support_rated_good"));
+                    exit(header("HTTP/1.1 200 OK"));
+        		} elseif($mark === 2) {
+        			// $this->flashFail("succ", tr("information_-1"), tr("support_rated_bad"));
+                    exit(header("HTTP/1.1 200 OK"));
         		}
         	} else {
-        		$this->flashFail("err", tr("error"), tr("wrong_parameters"));
+        		// $this->flashFail("err", tr("error"), tr("wrong_parameters"));
+                exit(header("HTTP/1.1 400 Bad Request"));
         	}
         } else {
-        	$this->flashFail("err", tr("error"), tr("forbidden"));
+        	// $this->flashFail("err", tr("error"), tr("forbidden"));
+            exit(header("HTTP/1.1 403 Forbidden"));
         }
     }
 }
