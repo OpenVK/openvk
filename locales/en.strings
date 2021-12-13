@@ -168,7 +168,10 @@
 "contains_nsfw" = "Contains NSFW content";
 "nsfw_warning" = "This post may have NSFW-content";
 "report" = "Report";
+"attach" = "Attach";
 "attach_photo" = "Attach photo";
+"attach_video" = "Attach video";
+"draw_graffiti" = "Draw graffiti";
 "no_posts_abstract" = "Nobody wrote anything here... So far.";
 "attach_no_longer_available" = "This attachment is no longer available.";
 "open_post" = "Open post";
