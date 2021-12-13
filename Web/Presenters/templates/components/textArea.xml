@@ -35,7 +35,7 @@
                 {/if}
                 
                 <label n:if="$anonEnabled" id="octoberAnonOpt">
-                    <input type="checkbox" name="anon" /> Анонимно
+                    <input type="checkbox" name="anon" /> {_"as_anonymous"}
                 </label>
                 
                 <label>
