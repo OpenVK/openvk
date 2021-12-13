@@ -1598,3 +1598,15 @@ body.scrolled .toTop:hover {
     margin: 5px;
     border: 1px solid #C0CAD5;
 }
+
+article#userContent {
+    overflow-x: hidden;
+}
+
+article#userContent a {
+    font-weight: 600;
+}
+
+article#userContent a.nonexistent {
+    color: #d90000;
+}

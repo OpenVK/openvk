@@ -2,8 +2,8 @@
 namespace openvk\Web\Models\Entities;
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
-use openvk\Web\Models\Entities\{User, Manager};
-use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Managers};
+use openvk\Web\Models\Entities\{User, Manager, WikiPage};
+use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Managers, WikiPages};
 use Nette\Database\Table\{ActiveRow, GroupedSelection};
 use Chandler\Database\DatabaseConnection as DB;
 use Chandler\Security\User as ChandlerUser;
@@ -326,6 +326,31 @@ class Club extends RowModel
             "club" => $this->getId(),
             "user" => $user->getId(),
         ])->delete();
+    }
+    
+    function containsWiki(): bool
+    {
+        return (bool) $this->getRecord()->pages;
+    }
+    
+    function getWikiHomePage(): ?WikiPage
+    {
+        return (new WikiPages)->getByOwnerAndVID($this->getId() * -1, 1);
+    }
+    
+    function setWikiEnabled(bool $enable = true): void
+    {
+        if($enable) {
+            if(is_null((new WikiPages)->getByOwnerAndVID($this->getId() * -1, 1))) {
+                $page = new WikiPage;
+                $page->setOwner($this->getId() * -1);
+                $page->setTitle("Fresh News");
+                $page->setSource("");
+                $page->save();
+            }
+        }
+        
+        $this->stateChanges("pages", (int) $enable);
     }
     
     function canBeModifiedBy(User $user): bool

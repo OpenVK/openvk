@@ -18,6 +18,7 @@ services:
     - openvk\Web\Presenters\SupportPresenter
     - openvk\Web\Presenters\AdminPresenter
     - openvk\Web\Presenters\GiftsPresenter
+    - openvk\Web\Presenters\WikiPresenter
     - openvk\Web\Presenters\MessengerPresenter
     - openvk\Web\Presenters\ThemepacksPresenter
     - openvk\Web\Presenters\VKAPIPresenter
@@ -36,4 +37,5 @@ services:
     - openvk\Web\Models\Repositories\IPs
     - openvk\Web\Models\Repositories\Vouchers
     - openvk\Web\Models\Repositories\Gifts
+    - openvk\Web\Models\Repositories\WikiPages
     - openvk\Web\Models\Repositories\ContentSearchRepository

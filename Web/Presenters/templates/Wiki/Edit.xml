@@ -1,0 +1,42 @@
+{extends "../@layout.xml"}
+
+{block title}{_create_note}{/block}
+
+{block header}
+    {_create_note}
+{/block}
+
+{block content}
+    <form id="wikiFactory" method="POST">
+        <input type="text" name="title" value="{$form->title}" placeholder="{_name_note}" style="width:603px;" />
+        <br/><br/>
+        <textarea name="source" style="display:none;"></textarea>
+        <div id="editor" style="width:600px;height:300px;border:1px solid grey"></div>
+        
+        <input type="hidden" name="elid" value="{$form->pId}" />
+        <input type="hidden" name="hash" value="{$csrfToken}" />
+        <button class="button">{_save}</button>
+    </form>
+    
+    {script "js/node_modules/monaco-editor/min/vs/loader.js"}
+    {script "js/node_modules/requirejs/bin/r.js"}
+    <script>
+        require.config({
+            paths: {
+                'vs': '/assets/packages/static/openvk/js/node_modules/monaco-editor/min/vs' 
+            }
+        });
+        require(['vs/editor/editor.main'], function() {
+            window._editor = monaco.editor.create(document.getElementById('editor'), {
+                value: {$form->source},
+                lineNumbers: "on",
+                wordWrap: "on",
+                language: "html"
+            });
+        });
+        
+        document.querySelector("#wikiFactory").addEventListener("submit", function() {
+            document.querySelector("textarea").value = window._editor.getValue();
+        });
+    </script>
+{/block}

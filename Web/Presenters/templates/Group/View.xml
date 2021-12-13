@@ -41,42 +41,64 @@
         </table>
     </div>
     <div n:if="$club->getFollowersCount() > 0">
-            {var followersCount = $club->getFollowersCount()}
-            
-            <div class="content_title_expanded" onclick="hidePanel(this, {$followersCount});">
-                {_participants}
+        {var followersCount = $club->getFollowersCount()}
+        
+        <div class="content_title_expanded" onclick="hidePanel(this, {$followersCount});">
+            {_participants}
+        </div>
+        <div>
+            <div class="content_subtitle">
+                {tr("participants", $followersCount)}
+                <div style="float:right;">
+                    <a href="/club{$club->getId()}/followers">{_all_title}</a>
+                </div>
             </div>
-            <div>
-                <div class="content_subtitle">
-                    {tr("participants", $followersCount)}
-                    <div style="float:right;">
-                        <a href="/club{$club->getId()}/followers">{_all_title}</a>
-                    </div>
-                </div>
-                <div style="padding-left: 5px;">
-                    <table 
-                          n:foreach="$club->getFollowers(1) as $follower"
-                          n:class="User"
-                          style="text-align:center;display:inline-block;width:62px"
-                          cellspacing=4>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <a href="{$follower->getURL()}">
-                                        <img src="{$follower->getAvatarUrl()}" width="50" />
-                                    </a>    
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <a href="{$follower->getURL()}">{$follower->getFirstName()}</a>    
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            <div style="padding-left: 5px;">
+                <table 
+                        n:foreach="$club->getFollowers(1) as $follower"
+                        n:class="User"
+                        style="text-align:center;display:inline-block;width:62px"
+                        cellspacing='4'>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <a href="{$follower->getURL()}">
+                                    <img src="{$follower->getAvatarUrl()}" width="50" />
+                                </a>    
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <a href="{$follower->getURL()}">{$follower->getFirstName()}</a>    
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
+    </div>
+    
+    <div n:if="$club->containsWiki()">
+        {var page = $club->getWikiHomePage()}
+        
+        <div class="content_title_expanded" onclick="hidePanel(this);">
+            {$page->getTitle()}
+        </div>
+        <div>
+            <div class="content_subtitle">
+                {_wiki_page}
+                <div n:if="$club->canBeModifiedBy($thisUser)" style="float:right;">
+                    <a href="/pages?gid={$club->getId()}&elid=1" target="_blank">{_edit}</a>
+                </div>
+            </div>
+            <div style="padding-left: 5px;">
+                <article id="userContent" style="overflow-y: scroll; height: 200px;">
+                    {$page->getText()|noescape}
+                </article>
+            </div>
+        </div>
+    </div>
+    <br/>
     
     {presenter "openvk!Wall->wallEmbedded", -$club->getId()}
     

@@ -1,0 +1,15 @@
+{extends "../@layout.xml"}
+
+{block title}{$title} - {$oName}{/block}
+
+{block header}
+    <a href="{$oURL}">{$oName}</a>
+    »
+    {$title}
+{/block}
+
+{block content}
+    <article id="userContent" style="min-height: 300pt;">
+        {$html|noescape}
+    </article>
+{/block}
