@@ -8,7 +8,7 @@
         </div>
         <div id="post-buttons{$textAreaId}" style="display: none;">
             <div class="post-upload">
-                Вложение: <span>(unknown)</span>
+                {_attachment}: <span>(unknown)</span>
             </div>
             <div n:if="$postOpts ?? true" class="post-opts">
                 {var anonEnabled = OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
