@@ -24,7 +24,7 @@
   }
 
   function errorHandler(id, mark) {
-      document.getElementById("markText" + id).innerHTML = {_error};
+      document.getElementById("markText-" + id).innerHTML = {_error};
   }
 </script>
 {if $ticket->isDeleted() == 0 }
