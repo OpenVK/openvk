@@ -106,7 +106,7 @@ final class CommentPresenter extends OpenVKPresenter
         
         $comment = (new Comments)->get($id);
         if(!$comment) $this->notFound();
-        if(!$comment->canBeDeletedBy($this->user))
+        if(!$comment->canBeDeletedBy($this->user->identity))
             $this->throwError(403, "Forbidden", "У вас недостаточно прав чтобы редактировать этот ресурс.");
         
         $comment->delete();
