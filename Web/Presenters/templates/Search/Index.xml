@@ -21,7 +21,7 @@
     <form style="margin-left: 12px;">
         <input name="type" type="hidden" value="{$_GET['type'] ?? 'users'}" />
         <input name="query" type="text" placeholder="{_"header_search"}" value="{$_GET['query'] ?? ''}" style="width: 90%" />
-        <input type="submit" class="button" value="{_"search_button"}" style="width: 9%" />
+        <input type="submit" class="button" value="{_"search_button"}" style="width: 7%" />
     </form>
     
     <p style="margin-left: 15px;">
