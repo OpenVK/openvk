@@ -9,7 +9,7 @@
 {/block}
 
 {block header}
-    OpenVK »
+    {=OPENVK_ROOT_CONF["openvk"]["appearance"]["name"]} »
     {if $type === "users"}
         {tr("search_for_people")}
     {else}
