@@ -117,12 +117,16 @@ class TicketComment extends RowModel
     {
         $mark = $this->getMark();
 
-        if($mark === 0) {
-            return false;
-        } elseif ($mark === 1) {
-            return true;
-        } elseif ($mark === null) {
-            return null;
+        switch ($mark) {
+            case 0 :
+                return false;
+                break;
+            case 1 :
+                return true;
+                break;
+            default :
+                return null;
+                break;
         }
     }
 

@@ -51,11 +51,11 @@ class TicketComments
 
     function get(int $id): ?TicketComment
     {
-        $comment = $this->comments->where(['id' => $id])->fetch();
+        $comment = $this->comments->get($id);;
         if (!is_null($comment))
             return new TicketComment($comment);
         else
-            return null;
+            return NULL;
     }
    
     use \Nette\SmartObject;
