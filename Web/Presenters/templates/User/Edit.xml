@@ -135,7 +135,7 @@
                              <span class="nobold">{_"birth_date"}: </span>
                         </td>
                         <td>
-                         <input max={date('Y-m-d')} name="birthday" value={gmdate("Y-m-d", $user->getBirthday())} type="date"/>
+                         <input max={date('Y-m-d')} name="birthday" value={$user->getBirthday()->format('%Y-%m-%d')} type="date"/>
                         </td>
                     </tr>
                     <tr>

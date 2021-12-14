@@ -402,10 +402,10 @@
                             <td class="label"><span class="nobold">{_"politViews"}:</span></td>
                             <td class="data">{var $pviews = $user->getPoliticalViews()}{_"politViews_$pviews"}</td>
                         </tr>
-                        {if $user->getBirthday() > 0}
+                        {if $user->getBirthday()->timestamp() > 0}
                             <tr>
                                 <td class="label"><span class="nobold">{_"birth_date"}:</span></td>
-                                <td class="data">{date('d F Y',$user->getBirthday())},
+                                <td class="data">{$user->getBirthday()->format('%e %B %Y')},
                                 {tr("years", $user->getAge())}</td>
                             </tr>
                         {/if}
