@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4d1d3d279e0f7adca1e7035ddd41797b",
+    "content-hash": "770bb7b5fdc8074bb03f5c2a762914fe",
     "packages": [
         {
             "name": "al/emoji-detector",
@@ -51,6 +51,157 @@
                 "source": "https://github.com/AlmaArmas/emoji-detector-php/tree/0.2.3"
             },
             "time": "2020-06-26T09:10:17+00:00"
+        },
+        {
+            "name": "chillerlan/php-qrcode",
+            "version": "dev-main",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/chillerlan/php-qrcode.git",
+                "reference": "0c1f322476a090b945108e6df960ee381a8c352e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/chillerlan/php-qrcode/zipball/0c1f322476a090b945108e6df960ee381a8c352e",
+                "reference": "0c1f322476a090b945108e6df960ee381a8c352e",
+                "shasum": ""
+            },
+            "require": {
+                "chillerlan/php-settings-container": "^2.1",
+                "ext-mbstring": "*",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "phan/phan": "^5.3",
+                "phpunit/phpunit": "^9.5",
+                "setasign/fpdf": "^1.8.2"
+            },
+            "suggest": {
+                "chillerlan/php-authenticator": "Yet another Google authenticator! Also creates URIs for mobile apps.",
+                "setasign/fpdf": "Required to use the QR FPDF output."
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "chillerlan\\QRCode\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Kazuhiko Arase",
+                    "homepage": "https://github.com/kazuhikoarase/qrcode-generator"
+                },
+                {
+                    "name": "ZXing Authors",
+                    "homepage": "https://github.com/zxing/zxing"
+                },
+                {
+                    "name": "Ashot Khanamiryan",
+                    "homepage": "https://github.com/khanamiryan/php-qrcode-detector-decoder"
+                },
+                {
+                    "name": "Smiley",
+                    "email": "smiley@chillerlan.net",
+                    "homepage": "https://github.com/codemasher"
+                },
+                {
+                    "name": "Contributors",
+                    "homepage": "https://github.com/chillerlan/php-qrcode/graphs/contributors"
+                }
+            ],
+            "description": "A QR code generator. PHP 7.4+",
+            "homepage": "https://github.com/chillerlan/php-qrcode",
+            "keywords": [
+                "phpqrcode",
+                "qr",
+                "qr code",
+                "qrcode",
+                "qrcode-generator",
+                "qrcode-reader"
+            ],
+            "support": {
+                "issues": "https://github.com/chillerlan/php-qrcode/issues",
+                "source": "https://github.com/chillerlan/php-qrcode/tree/main"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.com/donate?hosted_button_id=WLYUNAT9ZTJZ4",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://ko-fi.com/codemasher",
+                    "type": "ko_fi"
+                }
+            ],
+            "time": "2021-12-12T23:34:10+00:00"
+        },
+        {
+            "name": "chillerlan/php-settings-container",
+            "version": "2.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/chillerlan/php-settings-container.git",
+                "reference": "ec834493a88682dd69652a1eeaf462789ed0c5f5"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/chillerlan/php-settings-container/zipball/ec834493a88682dd69652a1eeaf462789ed0c5f5",
+                "reference": "ec834493a88682dd69652a1eeaf462789ed0c5f5",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "php": "^7.4 || ^8.0"
+            },
+            "require-dev": {
+                "phan/phan": "^4.0",
+                "phpunit/phpunit": "^9.5"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "chillerlan\\Settings\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Smiley",
+                    "email": "smiley@chillerlan.net",
+                    "homepage": "https://github.com/codemasher"
+                }
+            ],
+            "description": "A container class for immutable settings objects. Not a DI container. PHP 7.4+",
+            "homepage": "https://github.com/chillerlan/php-settings-container",
+            "keywords": [
+                "PHP7",
+                "Settings",
+                "container",
+                "helper"
+            ],
+            "support": {
+                "issues": "https://github.com/chillerlan/php-settings-container/issues",
+                "source": "https://github.com/chillerlan/php-settings-container"
+            },
+            "funding": [
+                {
+                    "url": "https://www.paypal.com/donate?hosted_button_id=WLYUNAT9ZTJZ4",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://ko-fi.com/codemasher",
+                    "type": "ko_fi"
+                }
+            ],
+            "time": "2021-09-06T15:17:01+00:00"
         },
         {
             "name": "ezyang/htmlpurifier",
@@ -513,6 +664,47 @@
                 "source": "https://github.com/komeiji-satori/curl/tree/master"
             },
             "time": "2019-04-20T16:06:47+00:00"
+        },
+        {
+            "name": "lfkeitel/phptotp",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lfkeitel/php-totp.git",
+                "reference": "2211fb6e025d3c10362771c54c9a9ad5593a3469"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lfkeitel/php-totp/zipball/2211fb6e025d3c10362771c54c9a9ad5593a3469",
+                "reference": "2211fb6e025d3c10362771c54c9a9ad5593a3469",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^5.6 || ^7.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "lfkeitel\\phptotp\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "TOTP/HOTP library for PHP",
+            "keywords": [
+                "Authentication",
+                "hotp",
+                "totp",
+                "two-factor"
+            ],
+            "support": {
+                "issues": "https://github.com/lfkeitel/php-totp/issues",
+                "source": "https://github.com/lfkeitel/php-totp/tree/v1.0.0"
+            },
+            "time": "2017-02-06T17:46:14+00:00"
         },
         {
             "name": "netcarver/textile",
@@ -1106,6 +1298,59 @@
             "time": "2021-05-27T09:17:38+00:00"
         },
         {
+            "name": "vearutop/php-obscene-censor-rus",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vearutop/php-obscene-censor-rus.git",
+                "reference": "ff0baca1aa0c4caba875773115f50d8252487b31"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vearutop/php-obscene-censor-rus/zipball/ff0baca1aa0c4caba875773115f50d8252487b31",
+                "reference": "ff0baca1aa0c4caba875773115f50d8252487b31",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Wkhooy\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Viacheslav Poturaev",
+                    "email": "vearutop@gmail.com",
+                    "homepage": "https://github.com/vearutop"
+                }
+            ],
+            "description": "Класс для фильтрации нецензурных выражений (матов).",
+            "homepage": "https://github.com/vearutop/php-obscene-censor-rus/",
+            "keywords": [
+                "censor",
+                "антимат",
+                "модерация",
+                "хуй",
+                "цензура"
+            ],
+            "support": {
+                "issues": "https://github.com/vearutop/php-obscene-censor-rus/issues",
+                "source": "https://github.com/vearutop/php-obscene-censor-rus/tree/master"
+            },
+            "time": "2019-06-19T20:04:05+00:00"
+        },
+        {
             "name": "wapmorgan/binary-stream",
             "version": "dev-master",
             "source": {
@@ -1278,11 +1523,14 @@
         "netcarver/textile": 20,
         "al/emoji-detector": 20,
         "ezyang/htmlpurifier": 20,
-        "scssphp/scssphp": 20
+        "scssphp/scssphp": 20,
+        "lfkeitel/phptotp": 20,
+        "chillerlan/php-qrcode": 20,
+        "vearutop/php-obscene-censor-rus": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.1.0"
 }

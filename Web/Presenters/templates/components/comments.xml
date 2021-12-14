@@ -10,7 +10,9 @@
     {foreach $comments as $comment}
         {include "comment.xml", comment => $comment}
     {/foreach}
-    {include "paginator.xml", conf => (object) ["page" => $page, "count" => $count, "amount" => sizeof($comments), "perPage" => 10]}
+    <div style="margin-top: 11px;">
+        {include "paginator.xml", conf => (object) ["page" => $page, "count" => $count, "amount" => sizeof($comments), "perPage" => 10]}
+    </div>
 {else}
     <!-- {if $model === "photos"}
         <p>Будьте первым, кто оставит комментарий к этой фотографии</p>

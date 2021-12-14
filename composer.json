@@ -12,7 +12,8 @@
         "ezyang/htmlpurifier": "dev-master",
         "scssphp/scssphp": "dev-master",
         "lfkeitel/phptotp": "dev-master",
-        "chillerlan/php-qrcode": "dev-main"
+        "chillerlan/php-qrcode": "dev-main",
+        "vearutop/php-obscene-censor-rus": "dev-master"
     },
     "minimum-stability": "dev"
 }

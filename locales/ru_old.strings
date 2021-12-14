@@ -1,0 +1,684 @@
+"__locale" = "ru_UA.utf8;ru_RU.UTF-8;Rus";
+"__WinEncoding" = "Windows-1251";
+"__fallback" = "ru";
+
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
+
+/* Main page */
+
+"home" = "Главная";
+"welcome" = "Добро пожаловать";
+
+/* Login */
+
+"log_in" = "Входъ";
+"password" = "Шифръ";
+"registration" = "Регистрація";
+"forgot_password" = "Запамятовали шифръ?";
+
+"login_failed" = "Не удалось войти";
+"invalid_username_or_password" = "Невѣрное имя пользователя или шифръ. <a href='/restore.pl'>Забыли шифръ?</a>";
+
+"failed_to_register" = "Не удалось зарегистрироваться";
+"referral_link_invalid" = "Пригласительная ссылка недѣйствительна.";
+"registration_disabled" = "Регистрація отключена системнымъ администраторомъ.";
+"user_already_exists" = "Пользователь съ такимъ email уже существуетъ.";
+
+"access_recovery" = "Возстановленіе доступа";
+"page_access_recovery" = "Возстановить доступъ къ страницѣ";
+"access_recovery_info" = "Запамятовали шифръ? Не волнуйтесь, введите ваши данные и мы отправимъ вамъ email съ инструкціями по возстановленію аккаунта.";
+"access_recovery_info_2" = "Введите вашъ новый шифръ. Все текущіе сеансы будутъ пріостановлены и токены доступа будутъ аннулированы.";
+"reset_password" = "Сбросить шифръ";
+"2fa_code_2" = "Кодъ двухфакторной аутентификаціи";
+
+"password_successfully_reset" = "Вашъ шифръ былъ успѣшно сброшенъ.";
+"password_reset_email_sent" = "Если вы зарегистрированы, вы получите инструкціи на email.";
+"password_reset_error" = "Непредвидѣнная ошибка при сбросѣ шифра.";
+"password_reset_rate_limit_error" = "Нельзя дѣлать это такъ часто, извините.";
+
+"registration_disabled_info" = "Регистрація отключена системнымъ администраторомъ. При возможности попросите приглашеніе у вашего знакомаго, если онъ зарегистрированъ на этомъ сайтѣ.";
+"registration_closed" = "Регистрація закрыта.";
+"invites_you_to" = "<strong>$1</strong> приглашаетъ васъ въ $2";
+
+"register_meta_desc" = "Зарегистрируйтесь въ $1 прямо сейчасъ!";
+"register_referer_meta_title" = "$1 приглашаетъ васъ въ $2!";
+"register_referer_meta_desc" = "Присоединяйтесь къ $1 и множеству другихъ пользователей въ $2!";
+
+/* Profile information */
+
+"select_language" = "Выбрать языкъ";
+"edit" = "Измѣнить";
+"birth_date" = "День рожденія";
+"registration_date" = "Дата регистраціи";
+"hometown" = "Родной городъ";
+"this_is_you" = "это Вы";
+"edit_page" = "Измѣнить паспортъ";
+"edit_group" = "Измѣнить группу";
+"change_status" = "измѣнить статусъ";
+"name" = "Имя";
+"surname" = "Фамилія";
+"gender" = "Полъ";
+"male" = "мужской";
+"female" = "женскій";
+"description" = "Описаніе";
+"save" = "Запомнить";
+"main_information" = "Основная информація";
+"nickname" = "Никнеймъ";
+"online" = "Тутъ";
+"was_online" = "былъ тутъ";
+"was_online_m" = "былъ тутъ";
+"was_online_f" = "была тутъ";
+"all_title" = "Всѣ";
+"information" = "Информація";
+"status" = "Статусъ";
+"no_information_provided" = "Нѣтъ свѣдѣній.";
+"deceased_person" = "Страница покойнаго человѣка";
+"none" = "отсутствуетъ";
+"send" = "Отправить";
+
+"years_zero" = "0 летъ";
+"years_one" = "1 годъ";
+"years_few" = "$1 года";
+"years_many" = "$1 летъ";
+"years_other" = "$1 летъ";
+
+"relationship" = "Семейное положеніе";
+
+"relationship_0" = "Не выбрано";
+"relationship_1" = "Холостъ";
+"relationship_2" = "Имѣю свиданія";
+"relationship_3" = "Помолвленъ";
+"relationship_4" = "Женатъ";
+"relationship_5" = "Въ гражданскомъ бракѣ";
+"relationship_6" = "Влюбленъ";
+"relationship_7" = "Чортъ разберетъ";
+"relationship_8" = "Въ метаніяхъ";
+
+"politViews" = "Политъ. предпочтенiя";
+
+"politViews_0" = "Не выбраны";
+"politViews_1" = "Безразличныя";
+"politViews_2" = "Коммунистическія";
+"politViews_3" = "Соціалистическія";
+"politViews_4" = "Умѣренныя";
+"politViews_5" = "Либеральныя";
+"politViews_6" = "Консервативныя";
+"politViews_7" = "Монархическія";
+"politViews_8" = "Ультраконсервативныя";
+"politViews_9" = "Либертаріанскія";
+
+"contact_information" = "Контактная информація";
+
+"email" = "Электронная почта";
+"phone" = "Телефонъ";
+"telegram" = "Telegram";
+"personal_website" = "Личный сайтъ";
+"city" = "Городъ";
+"address" = "Адресъ";
+
+"personal_information" = "Личная информація";
+
+"interests" = "Интересы";
+"favorite_music" = "Любимыя композицiи";
+"favorite_films" = "Любимыя ленты";
+"favorite_shows" = "Любимыя телешоу";
+"favorite_books" = "Любимыя книги";
+"favorite_quotes" = "Любимыя высказыванiя";
+"information_about" = "О себѣ";
+
+"updated_at" = "Новыя данные отражены $1";
+
+/* Wall */
+
+"feed" = "Извѣстiя";
+
+"post_writes_m" = "написалъ";
+"post_writes_f" = "написала";
+"post_writes_g" = "опубликовали";
+"wall" = "Высказыванія";
+"post" = "Высказываніе";
+"write" = "Написать";
+"publish" = "Опубликовать";
+"delete" = "Устранить";
+"comments" = "Замѣчанiя";
+"share" = "Подѣлиться";
+"pin" = "На самый верхъ";
+"unpin" = "Опустить въ салонъ";
+"pinned" = "высказыванiе наверху";
+"comments_tip" = "Будьте первымъ, кто оставитъ замѣчанiе.";
+"your_comment" = "Вашъ комментарій";
+"shown" = "Показано";
+"x_out_of" = "$1 изъ";
+"wall_zero" = "Нѣтъ извѣстій";
+"wall_one" = "единственное высказываніе";
+"wall_few" = "$1 высказыванія";
+"wall_many" = "$1 высказываній";
+"wall_other" = "$1 высказываній";
+"publish_post" = "Добавить высказываніе";
+"view_other_comments" = "Посмотрѣть остальные замѣчанія";
+
+"no_comments" = "Замѣчанія отсутствуютъ";
+
+"all_news" = "Всѣ извѣстiя";
+"posts_per_page" = "Количество высказываній на страницѣ";
+
+"attachment" = "Вложеніе";
+"post_as_group" = "Отъ имени общества";
+"comment_as_group" = "Отъ имени общества";
+"add_signature" = "Подпись автора";
+"contains_nsfw" = "Присутствуетъ непріемлимое содержаніе";
+"nsfw_warning" = "Въ данномъ высказываніи можетъ присутствовать непріемлемое содержаніе.";
+"report" = "Оставить кляузу";
+"attach_photo" = "Прикрѣпить фото";
+"no_posts_abstract" = "Здѣсь никто ничего не написалъ... Пока.";
+"attach_no_longer_available" = "Это вложеніе больше недоступно.";
+"open_post" = "Открыть высказываніе";
+"version_incompatibility" = "Не удалось отобразить это вложеніе. Возможно, база данныхъ несовмѣстима съ текущей версіей OpenVK.";
+
+/* Friends */
+
+"friends" = "Знакомцы";
+"followers" = "Почитатели";
+"follower" = "Почитатель";
+"friends_add" = "Завязать знакомство";
+"friends_delete" = "Удалить изъ знакомыхъ";
+"friends_reject" = "Отмѣнить заявку";
+"friends_accept" = "Одобрить прошеніе";
+"send_message" = "Отослать письмо";
+"incoming_req" = "Почитатели";
+"outcoming_req" = "Входящіе прошенія";
+"req" = "Исходящіе прошенія";
+
+"firends_zero" = "Ни одного знакомца";
+"friends_one" = "$1 знакомецъ";
+"friends_few" = "$1 знакомца";
+"friends_many" = "$1 знакомцевъ";
+"friends_other" = "$1 знакомцевъ";
+
+"followers_zero" = "Ни одного почитателя";
+"followers_one" = "$1 почитатель";
+"followers_few" = "$1 почитателя";
+"followers_many" = "$1 почитателей";
+"followers_other" = "$1 почитателей";
+
+"subscriptions_zero" = "Ни одной подписки";
+"subscriptions_one" = "$1 подписка";
+"subscriptions_few" = "$1 подписки";
+"subscriptions_many" = "$1 подписокъ";
+"subscriptions_other" = "$1 подписокъ";
+
+/* Group */
+
+"name_group" = "Названіе";
+"subscribe" = "Подписаться";
+"unsubscribe" = "Отписаться";
+"subscriptions" = "Подписки";
+"join_community" = "Вступить въ группу";
+"leave_community" = "Выйти изъ группы";
+"min_6_community" = "Названіе должно быть не менѣе 6 знаковъ";
+"participants" = "Участники";
+"groups" = "Группы";
+"meetings" = "Встрѣчи";
+"create_group" = "Устроить группу";
+"group_managers" = "Руководство";
+"group_type" = "Типъ группы";
+"group_type_open" = "Это открытая группа. Въ нея можетъ вступить любой желающій.";
+"group_type_closed" = "Это закрытая группа. Для вступленія необходимо подавать заявку.";
+"creator" = "Создатель";
+"administrators" = "Администраторы";
+"add_to_left_menu" = "Добавить въ лѣвое меню";
+"remove_from_left_menu" = "Удалить изъ лѣваго меню";
+"all_followers" = "Всѣ  подписчики";
+"only_administrators" = "Только администраторы";
+"website" = "Сайтъ";
+"managed" = "Управляемые";
+
+"administrators_one" = "$1 администраторъ";
+"administrators_few" = "$1 администратора";
+"administrators_other" = "$1 администраторовъ";
+
+"role" = "Роль";
+"administrator" = "Член правленія";
+"promote_to_admin" = "Повысить до члена правленія";
+"devote" = "Разжаловать";
+"set_comment" = "Измѣнить комментарій";
+"hidden_yes" = "Скрытъ: Да";
+"hidden_no" = "Скрытъ: Нѣтъ";
+"group_allow_post_for_everyone" = "Разрѣшить публиковать записи всемъ";
+"statistics" = "Статистика";
+"group_administrators_list" = "Списокъ правителей";
+"group_display_only_creator" = "Отображать только владыко общества";
+"group_display_all_administrators" = "Отображать всѣхъ членов правленія";
+"group_dont_display_administrators_list" = "Ничего не отображать";
+
+"participants_zero" = "Ни одного участника";
+"participants_one" = "Одинъ участникъ";
+"participants_few" = "$1 участника";
+"participants_many" = "$1 участниковъ";
+"participants_other" = "$1 участниковъ";
+
+"groups_zero" = "Ни одной группы";
+"groups_one" = "Одна группа";
+"groups_few" = "$1 группы";
+"groups_many" = "$1 группъ";
+"groups_other" = "$1 группъ";
+
+"meetings_zero" = "Ни одной встрѣчи";
+"meetings_one" = "Одна встрѣча";
+"meetings_few" = "$1 встрѣчи";
+"meetings_many" = "$1 встрѣчъ";
+"meetings_other" = "$1 встрѣчъ";
+
+/* Albums */
+
+"create" = "Создать";
+"albums" = "Альбомы";
+"create_album" = "Создать альбомъ";
+"edit_album" = "Редактировать альбомъ";
+"creating_album" = "Созданіе альбома";
+"upload_photo" = "Загрузить фотокарточку";
+"photo" = "Фотокарточка";
+"upload_button" = "Вклеить";
+
+"open_original" = "Открыть оригиналъ";
+
+"avatar_album" = "Фотографіи с паспорта";
+"wall_album" = "Фотографіи с салона";
+
+"albums_zero" = "Ни одного альбома";
+"albums_one" = "Одинъ альбомъ";
+"albums_few" = "$1 альбома";
+"albums_many" = "$1 альбомовъ";
+"albums_other" = "$1 альбомовъ";
+
+/* Notes */
+
+"notes" = "Очерки";
+"note" = "Очерка";
+"name_note" = "Названіе";
+"text_note" = "Содержаніе";
+"create_note" = "Создать очерку";
+"actions" = "Дѣйствія";
+
+"notes_zero" = "Ни одной очерки";
+"notes_one" = "Одна очерка";
+"notes_few" = "$1 очерки";
+"notes_many" = "$1 очерок";
+"notes_other" = "$1 очерок";
+
+/* Menus */
+
+"edit_button" = "ред.";
+"my_page" = "Мой Паспортъ";
+"my_friends" = "Мои Знакомцы";
+"my_photos" = "Мои Фотокарточки";
+"my_videos" = "Мой Синематографъ";
+"my_messages" = "Мои Письма";
+"my_notes" = "Мои Очерки";
+"my_groups" = "Мои Общества";
+"my_feed" = "Мои Извѣстiя";
+"my_feedback" = "Мои Отвѣты";
+"my_settings" = "Мои Настройки";
+"bug_tracker" = "Багъ-трекеръ";
+
+"menu_login" = "Входъ";
+"menu_registration" = "Регистрація";
+"menu_help" = "Помощь";
+
+"header_home" = "главная";
+"header_groups" = "общества";
+"header_donate" = "поддержать";
+"header_people" = "люди";
+"header_invite" = "пригласить";
+"header_help" = "помощь";
+"header_log_out" = "выйти";
+"header_search" = "Поискъ";
+
+"header_login" = "входъ";
+"header_registration" = "регистрація";
+
+"footer_blog" = "блогъ";
+"footer_help" = "помощь";
+"footer_developers" = "разработчикамъ";
+"footer_choose_language" = "выбрать языкъ";
+"footer_privacy" = "приватность";
+
+/* Settings */
+
+"main" = "Основное";
+"contacts" = "Контакты";
+"avatar" = "Портретъ";
+"privacy" = "Конфиденціальность";
+"interface" = "Внѣшній видъ";
+
+"profile_picture" = "Изображеніе страницы";
+
+"picture" = "Изображеніе";
+
+"change_password" = "Измѣнить шифръ";
+"old_password" = "Старый шифръ";
+"new_password" = "Новый шифръ";
+"repeat_password" = "Повторите шифръ";
+
+"avatars_style" = "Отображеніе портрета";
+"style" = "Стиль";
+
+"default" = "По умолчанію";
+"cut" = "Обрѣзка";
+"round_avatars" = "Круглый портретъ";
+
+"search_for_groups" = "Поискъ обществъ";
+"search_for_people" = "Поискъ людей";
+"search_button" = "Найти";
+"results_zero" = "Ни одного результата";
+"results_one" = "Одинъ результатъ";
+"results_few" = "$1 результата";
+"results_many" = "$1 результатовъ";
+"results_other" = "$1 результатовъ";
+
+"privacy_setting_access_page" = "Кому въ интернетѣ видно мою страницу";
+"privacy_setting_read_info" = "Кому видно основную информацію моей страницы";
+"privacy_setting_see_groups" = "Кому дозволено видеть мои общества и встрѣчи";
+"privacy_setting_see_photos" = "Кому дозволено видеть мои фотокарточки";
+"privacy_setting_see_videos" = "Кому дозволено видеть мой синематографъ";
+"privacy_setting_see_notes" = "Кому дозволено видеть мои очерки";
+"privacy_setting_see_friends" = "Кому дозволено видеть моихъ друзей";
+"privacy_setting_add_to_friends" = "Кому дозволено называть меня знакомцемъ";
+"privacy_setting_write_wall" = "Кому дозволено оставлять извѣстія у меня в салоне";
+"privacy_value_anybody" = "Всѣм желающімъ";
+"privacy_value_anybody_dative" = "Всемъ желающимъ";
+"privacy_value_users" = "Пользователямъ OpenVK";
+"privacy_value_friends" = "Знакомцамъ";
+"privacy_value_friends_dative" = "Знакомцамъ";
+"privacy_value_only_me" = "Мнѣ одному";
+"privacy_value_only_me_dative" = "Мнѣ одному";
+"privacy_value_nobody" = "Никому";
+
+"your_email_address" = "Адресъ Вашей электронной почты";
+"your_page_address" = "Адресъ Вашей страницы";
+"page_address" = "Адресъ страницы";
+"current_email_address" = "Текущій адресъ";
+"page_id" = "ID страницы";
+"you_can_also" = "Вы вольны";
+"delete_your_page" = "порвать Вашъ паспортъ";
+"delete_album" = "устранить альбомъ";
+
+"ui_settings_interface" = "Внѣшній видъ";
+"ui_settings_sidebar" = "Лѣвое меню";
+"ui_settings_rating" = "Рейтингъ";
+"ui_settings_rating_show" = "Показывать";
+"ui_settings_rating_hide" = "Скрывать";
+
+"two_factor_authentication" = "Двухфакторная аутентификація";
+"two_factor_authentication_disabled" = "Обезпечиваетъ надежную защиту отъ взлома: для входа на страницу необходимо ввести кодъ, полученный въ приложеніи 2FA.";
+"two_factor_authentication_enabled" = "Двухфакторная аутентификація включена. Ваша страница защищена.";
+"two_factor_authentication_login" = "У васъ включена двухфакторная аутентификація. Для входа введите кодъ полученный въ приложеніи.";
+
+"two_factor_authentication_settings_1" = "Двухфакторную аутентификацію черезъ TOTP можно использовать даже безъ интернета. Для этого вамъ понадобится приложеніе для генераціи кодовъ. Напримѣръ, <b>Google Authenticator</b> для Android и iOS или ​свободные <b>Aegis и andOTP</b> для Android. Убѣдитесь, что на телефонѣ точно установлена дата и время.";
+"two_factor_authentication_settings_2" = "Используя приложеніе для двухфакторной аутентификаціи, ​отсканируйте приведенный ниже QR-кодъ:";
+"two_factor_authentication_settings_3" = "или вручную введите секретный ключъ: <b>$1</b>.";
+"two_factor_authentication_settings_4" = "Теперь введите кодъ, который вамъ предоставило приложеніе, и шифръ отъ вашей страницы, чтобы мы могли подтвердить, что вы дѣйствительно вы.";
+
+"connect" = "Подключить";
+"enable" = "Включить";
+"disable" = "Отключить";
+"code" = "Кодъ";
+"2fa_code" = "Кодъ 2FA";
+
+"incorrect_password" = "Невѣрный шифръ";
+"incorrect_code" = "Невѣрный кодъ";
+"incorrect_2fa_code" = "Невѣрный кодъ двухфакторной аутентификаціи";
+"two_factor_authentication_enabled_message" = "Двухфакторная аутентификація включена";
+"two_factor_authentication_enabled_message_description" = "Вашу страницу стало труднѣе взломать. Рекомендуемъ вамъ скачать <a href='javascript:viewBackupCodes()'>​резервные коды</a>";
+"two_factor_authentication_disabled_message" = "Двухфакторная аутентификація отключена";
+
+"view_backup_codes" = "Посмотрѣть резервные коды";
+"backup_codes" = "Резервные коды для подтвержденія входа";
+"two_factor_authentication_backup_codes_1" = "Резервные коды позволяютъ подтверждать входъ, когда у васъ нѣтъ доступа къ телефону, напримѣръ, въ путешествіи.";
+"two_factor_authentication_backup_codes_2" = "У васъ есть еще <b>10 кодовъ</b>, каждымъ кодомъ можно воспользоваться только одинъ разъ. Распечатайте ихъ, уберите въ надежное мѣсто и используйте, когда потребуются коды для подтвержденія входа.";
+"two_factor_authentication_backup_codes_3" = "Вы можете получить новые коды, если они заканчиваются. Дѣйствительны только послѣдніе созданные резервные коды.";
+
+/* Sorting */
+
+"sort_randomly" = "Сортировать случайно";
+"sort_up" = "Сортировать по датѣ созданія вверхъ";
+"sort_down" = "Сортировать по датѣ созданія внизъ";
+
+/* Videos */
+
+"videos" = "Видеозаписи";
+"video" = "Видеозапись";
+"upload_video" = "Загрузить видео";
+"video_uploaded" = "Загружено";
+"video_updated" = "Обновлено";
+"video_link_to_yt" = "Ссылка на YouTube";
+
+"info_name" = "Названіе";
+"info_description" = "Описаніе";
+"info_uploaded_by" = "Загрузилъ";
+"info_upload_date" = "Дата загрузки";
+
+"videos_zero" = "Ни одного экземпляра";
+"videos_one" = "Один экземпляръ";
+"videos_few" = "$1 экземпляра";
+"videos_many" = "$1 экземпляровъ";
+"videos_other" = "$1 экземпляровъ";
+
+/* Notifications */
+
+"feedback" = "Отвѣты";
+"unread" = "Непрочитанное";
+"archive" = "Архивъ";
+
+"notifications_like" = "$1 оцѣнилъ вашу $2запись$3 отъ $4";
+"notifications_repost" = "$1 подѣлился(-лась) вашей $2записью$3 отъ $4";
+"notifications_comment_under" = "$1 оставилъ(-ла) замѣчаніе подъ $2";
+"notifications_under_note" = "вашей $3заметкой$4";
+"notifications_under_photo" = "вашей $3фотокарточкой$4";
+"notifications_under_post" = "вашей $3записью$4 отъ $5";
+"notifications_under_video" = "вашимъ $3экземпляромъ$4";
+"notifications_post" = "$1 написалъ(-ла) $2запись$3 на вашей стѣнѣ: $4";
+"notifications_appoint" = "$1 назвачилъ васъ руководителемъ общества $2";
+
+"nt_liked_yours" = "оценил вашъ";
+"nt_shared_yours" = "подѣлился(-ась) вашимъ";
+"nt_commented_yours" = "оставилъ(а) замѣчаніе подъ";
+"nt_written_on_your_wall" = "написалъ(а) на вашей стѣнѣ";
+"nt_made_you_admin" = "назначилъ(а) васъ руководителемъ сообщества";
+
+"nt_from" = "отъ";
+"nt_yours_adjective" = "вашимъ";
+"nt_yours_feminitive_adjective" = "вашей";
+"nt_post_nominative" = "постъ";
+"nt_post_instrumental" = "постомъ";
+"nt_note_instrumental" = "заметкой";
+"nt_photo_instrumental" = "фотографіей";
+
+/* Time */
+
+"time_at_sp" = " въ ";
+"time_just_now" = "только что";
+"time_exactly_five_minutes_ago" = "ровно 5 минутъ какъ";
+"time_minutes_ago" = "$1 минутъ какъ";
+"time_today" = "сегодня";
+"time_yesterday" = "вчера";
+
+"points" = "Голоса";
+"points_count" = "голосовъ";
+"on_your_account" = "на вашемъ счету";
+
+"vouchers" = "Ваучеры";
+"have_voucher" = "Есть ваучеръ";
+"voucher_token" = "Кодъ ваучера";
+"voucher_activators" = "Воспользовавшіеся";
+"voucher_explanation" = "Введите серійный номеръ ваучера. Обычно онъ указанъ въ чекѣ или въ сообщеніи.";
+"voucher_explanation_ex" = "Обратите вниманіе, что ваучеры могутъ истекать и воспользоваться ими можно только одинъ разъ.";
+"invalid_voucher" = "Ваучеръ недѣйствительный";
+"voucher_bad" = "Возможно, вы ввели невѣрный серійный номеръ, уже использовали данный ваучеръ или же онъ просто истекъ.";
+"voucher_good" = "Ваучеръ активированъ";
+"voucher_redeemed" = "Ваучеръ былъ успѣшно активированъ. Вамъ будутъ начислены голоса, но этимъ кодомъ вы больше не сможете активировать его.";
+"redeem" = "Активировать ваучеръ";
+"deactivate" = "Деактивировать";
+"usages_total" = "Количество использованій";
+"usages_left" = "Осталось использованій";
+
+/* Gifts */
+
+"gift" = "Подарокъ";
+"gifts" = "Подарки";
+"gifts_zero" = "Нѣтъ подарковъ";
+"gifts_one" = "Одинъ подарокъ";
+"gifts_few" = "$1 подарка";
+"gifts_many" = "$1 подарковъ";
+"gifts_other" = "$1 подарковъ";
+"gifts_left" = "Подарковъ осталось: $1";
+"gifts_left_one" = "Одинъ подарокъ остался";
+"gifts_left_few" = "$1 подарка осталось";
+"gifts_left_many" = "$1 подарковъ осталось";
+"gifts_left_other" = "$1 подарковъ осталось";
+
+"send_gift" = "Отправить подарокъ";
+
+"gift_select" = "Выбрать подарокъ";
+"collections" = "Коллекціи";
+"confirm" = "Подтвержденіе";
+"as_anonymous" = "Анонимно";
+"gift_your_message" = "Ваше сообщеніе";
+
+"free_gift" = "Безплатно";
+"coins" = "Голоса";
+"coins_zero" = "0 голосовъ";
+"coins_one" = "Одинъ голосъ";
+"coins_few" = "$1 голоса";
+"coins_many" = "$1 голосовъ";
+"coins_other" = "$1 голосовъ";
+
+"users_gifts" = "Подарки";
+
+/* Support */
+
+"support_opened" = "​Открытые";
+"support_answered" = "Съ отвѣтомъ";
+"support_closed" = "​Закрытые";
+"support_ticket" = "Обращеніе";
+"support_tickets" = "Обращенія";
+"support_status_0" = "Вопросъ на разсмотрѣніи";
+"support_status_1" = "​Есть отвѣтъ";
+"support_status_2" = "Закрыто";
+"support_greeting_hi" = "Здравствуйте, $1!";
+"support_greeting_regards" = "Съ уваженіемъ,<br/>команда поддержки $1.";
+
+"support_faq" = "Часто ​задаваемые вопросы";
+"support_list" = "Списокъ обращеній";
+"support_new" = "Новое обращеніе";
+
+"support_faq_title" = "Для кого этотъ сайтъ?";
+"support_faq_content" = "Сайтъ предназначенъ для поиска друзей и знакомыхъ, а также для просмотра данныхъ пользователя. Это какъ справочникъ города, съ помощью котораго люди могутъ быстро найти актуальную информацію о человѣкѣ.";
+
+"support_new_title" = "Введите тему вашего обращенія";
+"support_new_content" = "Опишите проблему или предложеніе";
+
+"comment" = "Комментарій";
+"sender" = "Отправитель";
+
+"author" = "Авторъ";
+
+"you_have_not_entered_text" = "Вы не ввели текстъ";
+"you_have_not_entered_name_or_text" = "Вы не ввели имя или текстъ";
+
+"support_ticket_changed" = "​Тикетъ​ измѣненъ";
+"support_ticket_changed_comment" = "Измѣненія вступятъ силу черезъ нѣсколько секундъ.";
+
+/* Invite */
+
+"invite" = "Пригласить";
+"you_can_invite" = "Вы можете пригласить своихъ друзей или знакомыхъ въ сѣть съ помощью индивидуальной ссылки:";
+"you_can_invite_2" = "​Приложите эту ссылку къ вашему сообщенію. Пользователь зарегистрируется, и онъ сразу появится у васъ въ друзьяхъ.";
+
+/* Errors */
+
+"error_1" = "Некорректный запросъ";
+"error_2" = "Невѣрный ​логинъ или пароль";
+"error_3" = "Не авторизованъ";
+"error_4" = "Пользователь не существуетъ";
+"information_-1" = "Операція выполнена успѣшно";
+"information_-2" = "Входъ выполненъ успѣшно";
+
+"no_data" = "Нѣтъ данныхъ";
+"no_data_description" = "Въ этомъ представленіи отсутствуютъ данные.";
+
+"error" = "Ошибка";
+"error_shorturl" = "Данный короткій адресъ уже занятъ.";
+"error_segmentation" = "Ошибка сегментаціи";
+"error_upload_failed" = "Не удалось загрузить фото";
+"error_old_password" = "Старый пароль не совпадаетъ";
+"error_new_password" = "​Новые пароли не совпадаетъ";
+"error_shorturl_incorrect" = "Короткій адресъ имѣетъ некорректный форматъ.";
+"error_repost_fail" = "Не удалось подѣлиться записью";
+
+"forbidden" = "Ошибка доступа";
+"forbidden_comment" = "Настройки приватности этого пользователя не разрѣшаютъ вамъ смотрѣть на его страницу.";
+
+"changes_saved" = "Измѣненія сохранены";
+"changes_saved_comment" = "Новый ​данные появятся на вашей страницѣ";
+
+"photo_saved" = "Фотографія сохранена";
+"photo_saved_comment" = "Новое ​изображніе профиля появится у васъ на страницѣ";
+
+"shared_succ" = "Запись появится на вашей стѣнѣ. Нажмите на увѣдомленіе, чтобы перейти къ своей стѣнѣ.";
+
+"invalid_email_address" = "Невѣрный Email адресъ";
+"invalid_email_address_comment" = "Email, который вы ввели, не является корректнымъ.";
+
+"invalid_telegram_name" = "Невѣрное имя Telegram аккаунта";
+"invalid_telegram_name_comment" = "Вы ввели невѣрное имя аккаунта Telegram.";
+
+"invalid_birth_date" = "Невѣрная дата рожденія";
+"invalid_birth_date_comment" = "Дата рожденія, которую вы ввели, не является корректной.";
+
+"token_manipulation_error" = "Ошибка манипулированія ​токеномъ";
+"token_manipulation_error_comment" = "​Токенъ недѣйствителенъ или истекъ";
+
+"profile_changed" = "Профиль измѣненъ";
+"profile_changed_comment" = "Вашъ активный профиль былъ измѣненъ.";
+"profile_not_found" = "Пользователь не найденъ.";
+
+"suspicious_registration_attempt" = "Подозрительная попытка регистраціи";
+"suspicious_registration_attempt_comment" = "Вы пытались зарегистрироваться изъ подозрительнаго мѣста.";
+
+"rate_limit_error" = "​Чумба, ты совсѣмъ ебнутый?";
+"rate_limit_error_comment" = "Сходи къ мозгоправу, попей колесики. ВЪ $1 нельзя вбрасывать щитпосты такъ часто. Кодъ исключенія: $2.";
+
+"not_enough_permissions" = "Недостаточно правъ";
+"not_enough_permissions_comment" = "У васъ недостаточно правъ чтобы выполнять это дѣйствіе.";
+
+"login_required_error" = "Недостаточно правъ";
+"login_required_error_comment" = "Чтобы просматривать эту страницу, нужно зайти на сайтъ.";
+
+"captcha_error" = "Неправильно введены ​символы";
+"captcha_error_comment" = "Пожалуйста, убѣдитесь, что вы правильно заполнили ​поле съ ​капчей.";
+
+/* Admin actions */
+
+"login_as" = "Войти какъ $1";
+"manage_user_action" = "Управленіе пользователемъ";
+"ban_user_action" = "Заблокировать пользователя";
+"warn_user_action" = "Предупредить пользователя";
+
+/* Paginator (deprecated) */
+
+"paginator_back" = "Назадъ";
+"paginator_page" = "Страница $1";
+"paginator_next" = "Дальше";
+
+/* Dialogs */
+
+"ok" = "​ОКЪ";
+"yes" = "Да";
+"no" = "Нѣтъ";
+"cancel" = "Отмѣна";
+"edit_action" = "Измѣнить";
+
+"warning" = "Вниманіе";
+"question_confirm" = "Это дѣйствіе нельзя отмѣнить. Вы дѣйствительно увѣрены въ томъ что хотите сдѣлать?";
+ 

@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities\Traits;
+use Wkhooy\ObsceneCensorRus;
 
 trait TRichText
 {
@@ -68,6 +69,9 @@ trait TRichText
             $text = $this->removeZalgo($text);
             $text = nl2br($text);
         }
+        
+        if(OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["christian"])
+            ObsceneCensorRus::filterText($text);
         
         return $text;
     }
