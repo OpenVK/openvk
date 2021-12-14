@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS `topics` (
   `title` varchar(128) COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `closed` boolean NOT NULL DEFAULT FALSE,
   `pinned` boolean NOT NULL DEFAULT FALSE,
+  `anonymous` boolean NOT NULL DEFAULT FALSE,
   `flags` tinyint(3) unsigned DEFAULT NULL,
   `deleted` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
