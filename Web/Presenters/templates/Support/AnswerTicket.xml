@@ -113,9 +113,9 @@
                {if $comment->getUType() === 1}
                   <div class="post-menu">
                       <strong>
-                        {if $comment->isLikedByUser() === true}
+                        {if $comment->isLikedByUser()}
                             {_support_good_answer_agent}
-                        {elseif $comment->isLikedByUser() === false}
+                        {else}
                             {_support_bad_answer_agent}
                         {/if}
                       </strong>

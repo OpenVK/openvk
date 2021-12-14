@@ -121,9 +121,9 @@
                {if $comment->getUType() === 1}
                  <div class="post-menu">
                     <strong id="markText-{$comment->getId()}">
-                      {if $comment->isLikedByUser() === true}
+                      {if $comment->isLikedByUser()}
                         {_support_good_answer_user}
-                      {elseif $comment->isLikedByUser() === false}
+                      {else}
                         {_support_bad_answer_user}
                       {/if}
                     </strong>
