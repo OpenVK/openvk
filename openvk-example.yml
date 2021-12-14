@@ -34,7 +34,7 @@ openvk:
         messages:
             strict: false
         wall:
-            christian: true
+            christian: false
             anonymousPosting:
                 enable: false
                 account: 100
