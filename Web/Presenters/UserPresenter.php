@@ -54,6 +54,8 @@ final class UserPresenter extends OpenVKPresenter
         $page = abs($this->queryParam("p") ?? 1);
         if(!$user)
             $this->notFound();
+        elseif (!$user->getPrivacyPermission('friends.read', $this->user->identity ?? NULL))
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         else
             $this->template->user = $user;
         
@@ -78,9 +80,11 @@ final class UserPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         
         $user = $this->users->get($id);
-        if(!$user) {
+        if(!$user)
             $this->notFound();
-        } else {
+        elseif (!$user->getPrivacyPermission('groups.read', $this->user->identity ?? NULL))
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        else {
             $this->template->user = $user;
             $this->template->page = $this->queryParam("p") ?? 1;
             $this->template->admin = $this->queryParam("act") == "managed";

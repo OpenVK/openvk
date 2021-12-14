@@ -3,6 +3,7 @@
 {block title}{$user->getCanonicalName()}{/block} 
 
 {block headIncludes}
+    {if $user->getPrivacyPermission('page.read', $thisUser ?? NULL)}
     <!-- openGraph -->
     <meta property="og:title" content="{$user->getCanonicalName()}" />
     <meta property="og:url" content="http://{$_SERVER['HTTP_HOST']}{$user->getURL()}" />
@@ -22,6 +23,9 @@
             "url": {('http://') . $_SERVER['HTTP_HOST'] . $user->getURL()}
         }
     </script>
+    {else} 
+    <meta name="robots" content="noindex, noarchive">
+    {/if}
 {/block}
 
 {block header}
