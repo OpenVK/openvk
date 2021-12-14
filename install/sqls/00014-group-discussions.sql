@@ -11,12 +11,12 @@ CREATE TABLE IF NOT EXISTS `topics` (
   `closed` boolean NOT NULL DEFAULT FALSE,
   `pinned` boolean NOT NULL DEFAULT FALSE,
   `flags` tinyint(3) unsigned DEFAULT NULL,
-  `deleted` tinyint(1) DEFAULT 0,
+  `deleted` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 ALTER TABLE `topics`
-  PRIMARY KEY (`id`),
-  KEY `group` (`group`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `group` (`group`);
 
 ALTER TABLE `topics`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
