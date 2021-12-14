@@ -1,16 +1,17 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{Comment, Photo, Video, User};
+use openvk\Web\Models\Entities\{Comment, Photo, Video, User, Topic};
 use openvk\Web\Models\Entities\Notifications\CommentNotification;
 use openvk\Web\Models\Repositories\Comments;
 
 final class CommentPresenter extends OpenVKPresenter
 {
     private $models = [
-        "posts"  => "openvk\\Web\\Models\\Repositories\\Posts",
-        "photos" => "openvk\\Web\\Models\\Repositories\\Photos",
-        "videos" => "openvk\\Web\\Models\\Repositories\\Videos",
-        "notes"  => "openvk\\Web\\Models\\Repositories\\Notes",
+        "posts"   => "openvk\\Web\\Models\\Repositories\\Posts",
+        "photos"  => "openvk\\Web\\Models\\Repositories\\Photos",
+        "videos"  => "openvk\\Web\\Models\\Repositories\\Videos",
+        "notes"   => "openvk\\Web\\Models\\Repositories\\Notes",
+        "topics"  => "openvk\\Web\\Models\\Repositories\\Topics",
     ];
     
     function renderLike(int $id): void
@@ -37,6 +38,9 @@ final class CommentPresenter extends OpenVKPresenter
         $repo   = new $repoClass;
         $entity = $repo->get($eId);
         if(!$entity) $this->notFound();
+
+        if($entity instanceof Topic && $entity->isClosed())
+            $this->notFound();
         
         $flags = 0;
         if($this->postParam("as_group") === "on")

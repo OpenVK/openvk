@@ -484,6 +484,7 @@
 "nt_post_instrumental" = "post";
 "nt_note_instrumental" = "note";
 "nt_photo_instrumental" = "photo";
+"nt_topic_instrumental" = "topic";
 
 /* Time */
 
@@ -589,6 +590,39 @@
 "banned_1" = "Sorry <b>$1</b>, but you have been banned.";
 "banned_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to block you forever.";
 "banned_3" = "You can still <a href=\"/support?act=new\">write to the support</a> if you think there was an error or <a href=\"/logout?hash=$1\">logout</a>.";
+
+/* Discussions */
+
+"discussions" = "Discussions";
+
+"messages_one" = "One message";
+"messages_other" = "$1 messages";
+
+"replied" = "replied";
+"create_topic" = "Create a topic";
+
+"new_topic" = "New topic";
+"title" = "Title";
+"text" = "Text";
+
+"view_topic" = "View topic";
+"edit_topic_action" = "Edit topic";
+"edit_topic" = "Edit topic";
+"topic_settings" = "Topic settings";
+"pin_topic" = "Pin topic";
+"close_topic" = "Close topic";
+"delete_topic" = "Delete topic";
+
+"topics_one" = "One topic";
+"topics_other" = "$1 topics";
+
+"everyone_can_create_topics" = "Everyone can create topics";
+
+"topic_changes_saved_comment" = "The updated title and settings will appear on the topic page.";
+
+"failed_to_create_topic" = "Failed to create topic";
+"failed_to_change_topic" = "Failed to change topic";
+"no_title_specified" = "No title specified.";
 
 /* Errors */
 

@@ -504,6 +504,7 @@
 "nt_post_instrumental" = "постом";
 "nt_note_instrumental" = "заметкой";
 "nt_photo_instrumental" = "фотографией";
+"nt_topic_instrumental" = "темой";
 
 /* Time */
 
@@ -614,6 +615,43 @@
 "banned_1" = "Извините, <b>$1</b>, но вы были верискокнуты.";
 "banned_2" = "А причина этому проста: <b>$1</b>. К сожалению, на этот раз нам пришлось заблокировать вас навсегда.";
 "banned_3" = "Вы всё ещё можете <a href=\"/support?act=new\">написать в службу поддержки</a>, если считаете что произошла ошибка или <a href=\"/logout?hash=$1\">выйти</a>.";
+
+/* Discussions */
+
+"discussions" = "Обсуждения";
+
+"messages_one" = "Одно сообщение";
+"messages_few" = "$1 сообщения";
+"messages_many" = "$1 сообщений";
+"messages_other" = "$1 сообщений";
+
+"replied" = "ответил";
+"create_topic" = "Создать тему";
+
+"new_topic" = "Новая тема";
+"title" = "Заголовок";
+"text" = "Текст";
+
+"view_topic" = "Просмотр темы";
+"edit_topic_action" = "Редактировать тему";
+"edit_topic" = "Редактирование темы";
+"topic_settings" = "Настройки темы";
+"pin_topic" = "Закрепить тему";
+"close_topic" = "Закрыть тему";
+"delete_topic" = "Удалить тему";
+
+"topics_one" = "Одна тема";
+"topics_few" = "$1 темы";
+"topics_many" = "$1 тема";
+"topics_other" = "$1 тем";
+
+"everyone_can_create_topics" = "Все могут создавать темы";
+
+"topic_changes_saved_comment" = "Обновлённый заголовок и настройки появятся на странице с темой.";
+
+"failed_to_create_topic" = "Не удалось создать тему";
+"failed_to_change_topic" = "Не удалось изменить тему";
+"no_title_specified" = "Заголовок не указан.";
 
 /* Errors */
 

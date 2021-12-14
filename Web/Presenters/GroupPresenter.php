@@ -2,7 +2,7 @@
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Club, Photo};
 use openvk\Web\Models\Entities\Notifications\ClubModeratorNotification;
-use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers};
+use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers, Topics};
 
 final class GroupPresenter extends OpenVKPresenter
 {
@@ -28,6 +28,8 @@ final class GroupPresenter extends OpenVKPresenter
             $this->template->club        = $club;
             $this->template->albums      = (new Albums)->getClubAlbums($club, 1, 3);
             $this->template->albumsCount = (new Albums)->getClubAlbumsCount($club);
+            $this->template->topics      = (new Topics)->getLastTopics($club, 3);
+            $this->template->topicsCount = (new Topics)->getClubTopicsCount($club);
         }
     }
     
@@ -204,6 +206,7 @@ final class GroupPresenter extends OpenVKPresenter
             $club->setShortcode(empty($this->postParam("shortcode")) ? NULL : $this->postParam("shortcode"));
 	        $club->setWall(empty($this->postParam("wall")) ? 0 : 1);
             $club->setAdministrators_List_Display(empty($this->postParam("administrators_list_display")) ? 0 : $this->postParam("administrators_list_display"));
+            $club->setEveryone_Can_Create_Topics(empty($this->postParam("everyone_can_create_topics")) ? 0 : 1);
             
             $website = $this->postParam("website") ?? "";
             if(empty($website))

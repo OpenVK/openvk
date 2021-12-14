@@ -1673,3 +1673,12 @@ body.scrolled .toTop:hover {
     color: #7b7b7b;
     margin-top: 5px;
 }
+
+.pinned-mark {
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    overflow: auto;
+    background: url("/assets/packages/static/openvk/img/pin.png") no-repeat 0px 0px;
+    vertical-align: middle;
+}
