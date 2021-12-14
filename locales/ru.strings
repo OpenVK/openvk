@@ -380,6 +380,7 @@
 "search_for_groups" = "Поиск групп";
 "search_for_people" = "Поиск людей";
 "search_button" = "Найти";
+"search_placeholder" = "Начните вводить любое имя, название или слово";
 "results_zero" = "Ни одного результата";
 "results_one" = "Один результат";
 "results_few" = "$1 результата";

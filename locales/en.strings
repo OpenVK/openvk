@@ -362,6 +362,7 @@
 "search_for_groups" = "Search for groups";
 "search_for_people" = "Search for people";
 "search_button" = "Find";
+"search_placeholder" = "Start typing any name, title or word";
 "results_zero" = "No results";
 "results_one" = "$1 result";
 "results_other" = "$1 results";

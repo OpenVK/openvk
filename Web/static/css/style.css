@@ -1610,6 +1610,7 @@ body.scrolled .toTop:hover {
     padding: 10px;
     border-top: 1px solid #ebebeb;
     display: flex;
+    margin-bottom: 0;
 }
 
 .header_search_input {
@@ -1638,6 +1639,7 @@ body.scrolled .toTop:hover {
     cursor: pointer;
     text-decoration: none;
     margin-left: 10px;
+    width: 7.5%;
 }
 
 .content_search {

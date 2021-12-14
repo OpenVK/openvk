@@ -31,11 +31,15 @@
         </a>
     </div>
 
-    <div class="header_search_inputbt">
+    <form class="header_search_inputbt">
         <input name="type" type="hidden" value="{$type ?? 'users'}" />
-        <input type="" name="" class="header_search_input" placeholder="Начните вводить любое имя, название или слово">
+        <input name="query" class="header_search_input" placeholder="{_search_placeholder}" value="{$_GET['query'] ?? ''}" />
         <button class="button_search">{_search_button}</button>
-    </div>
+    </form>
+
+    <p style="margin-left: 15px; margin-top: 0;">
+        <b>{tr("results", $count)}</b>
+    </p>
 {/block}
 
 {block link|strip|stripHtml}
