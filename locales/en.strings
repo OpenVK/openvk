@@ -473,7 +473,7 @@
 
 "nt_liked_yours" = "liked yours";
 "nt_shared_yours" = "shared yours";
-"nt_commented_yours" = "commented yours";
+"nt_commented_yours" = "commented";
 "nt_written_on_your_wall" = "wrote on your wall";
 "nt_made_you_admin" = "appointed you in the community";
 
