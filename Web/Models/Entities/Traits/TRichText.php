@@ -71,7 +71,7 @@ trait TRichText
         }
         
         if(OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["christian"])
-            $text = ObsceneCensorRus::filterText($text);
+            ObsceneCensorRus::filterText($text);
         
         return $text;
     }
