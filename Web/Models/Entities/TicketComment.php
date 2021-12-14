@@ -116,16 +116,15 @@ class TicketComment extends RowModel
     function isLikedByUser(): ?bool
     {
         $mark = $this->getMark();
-
         switch ($mark) {
-            case 0 :
+            case 0:
                 return false;
                 break;
-            case 1 :
+            case 1:
                 return true;
                 break;
-            default :
-                return null;
+            default:
+                return NULL;
                 break;
         }
     }
