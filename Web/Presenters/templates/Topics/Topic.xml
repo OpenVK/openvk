@@ -18,6 +18,9 @@
         <b>{$topic->getTitle()}</b>
         <br />
         <a href="{$topic->getOwner()->getURL()}">{$topic->getOwner()->getCanonicalName()}</a>
+        <div class="nobold" style="float: right;">
+            {_created} {$topic->getPublicationTime()}
+        </div>
     </div>
     <div style="margin-top: 20px;">
         {include "../components/comments.xml", comments => $comments, count => $count, page => $page, model => "topics", club => $club, readOnly => $topic->isClosed(), parent => $topic}

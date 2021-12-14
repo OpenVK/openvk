@@ -655,6 +655,8 @@
 "topics_many" = "$1 тема";
 "topics_other" = "$1 тем";
 
+"created" = "Создано";
+
 "everyone_can_create_topics" = "Все могут создавать темы";
 
 "topic_changes_saved_comment" = "Обновлённый заголовок и настройки появятся на странице с темой.";

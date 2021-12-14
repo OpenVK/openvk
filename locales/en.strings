@@ -626,6 +626,8 @@
 "topics_one" = "One topic";
 "topics_other" = "$1 topics";
 
+"created" = "Created";
+
 "everyone_can_create_topics" = "Everyone can create topics";
 
 "topic_changes_saved_comment" = "The updated title and settings will appear on the topic page.";
