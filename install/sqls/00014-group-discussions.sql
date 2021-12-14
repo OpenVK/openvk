@@ -1,4 +1,4 @@
-ALTER TABLE `groups` ADD COLUMN `everyone_can_create_topics` boolean NOT NULL AFTER `administrators_list_display`;
+ALTER TABLE `groups` ADD COLUMN `everyone_can_create_topics` boolean NOT NULL DEFAULT FALSE AFTER `administrators_list_display`;
 
 CREATE TABLE IF NOT EXISTS `topics` (
   `id` bigint(20) unsigned NOT NULL,
