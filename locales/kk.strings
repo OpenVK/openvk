@@ -42,6 +42,8 @@
 "register_referer_meta_title" = "$1 сізді $2 желіне шақырады!";
 "register_referer_meta_desc" = "$1 және одан көп пайдаланушылармен $2 желісінде қосылыңыз!";
 
+"users" = "Қолданушылар";
+
 /* Profile information */
 
 "select_language" = "Тілді таңдау";
@@ -124,6 +126,9 @@
 "information_about" = "Өзі туралы";
 
 "updated_at" = "Соңғы жаңартылған: $1";
+
+"user_banned" = "Өкінішке орай біз <b>$1</b> қолданушының парақшасың блоктауға мәжбүр болдық.";
+"user_banned_comment" = "Модератордың пікірі:";
 
 /* Wall */
 
