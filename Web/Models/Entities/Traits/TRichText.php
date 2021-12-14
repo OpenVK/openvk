@@ -59,9 +59,9 @@ trait TRichText
             if($proc) {
                 $rel  = $this->isAd() ? "sponsored" : "ugc";
                 $text = $this->formatLinks($text);
-                $text = preg_replace("%@(id|club)([0-9]++) \(([\p{L} 0-9]+)\)%Xu", "[$1$2|$3]", $text);
-                $text = preg_replace("%@(id|club)([0-9]++)%Xu", "[$1$2|@$1$2]", $text);
-                $text = preg_replace("%\[(id|club)([0-9]++)\|([\p{L} 0-9@]+)\]%Xu", "<a href='/$1$2'>$3</a>", $text);
+                $text = preg_replace("%@([A-Za-z0-9]++) \(([\p{L} 0-9]+)\)%Xu", "[$1|$2]", $text);
+                $text = preg_replace("%@([A-Za-z0-9]++)%Xu", "[$1|@$1]", $text);
+                $text = preg_replace("%\[([A-Za-z0-9]++)\|([\p{L} 0-9@]+)\]%Xu", "<a href='/$1'>$2</a>", $text);
                 $text = preg_replace("%(#([\p{L}_-]++[0-9]*[\p{L}_-]*))%Xu", "<a href='/feed/hashtag/$2'>$1</a>", $text);
                 $text = $this->formatEmojis($text);
             }
