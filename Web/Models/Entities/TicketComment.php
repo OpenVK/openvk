@@ -108,5 +108,26 @@ class TicketComment extends RowModel
 		return false; # Кооостыыыль!!!
 	}
 
+    function getMark(): ?int
+    {
+        return $this->getRecord()->mark;
+    }
+
+    function isLikedByUser(): ?bool
+    {
+        $mark = $this->getMark();
+        switch ($mark) {
+            case 0:
+                return false;
+                break;
+            case 1:
+                return true;
+                break;
+            default:
+                return NULL;
+                break;
+        }
+    }
+
     use Traits\TRichText;
 }

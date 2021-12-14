@@ -1,0 +1,1 @@
+ALTER TABLE `tickets_comments` ADD `mark` BOOLEAN NULL DEFAULT NULL;

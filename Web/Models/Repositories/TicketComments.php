@@ -48,6 +48,15 @@ class TicketComments
     // {
     //     return $this->toTicket($this->tickets->get($id));
     // }
+
+    function get(int $id): ?TicketComment
+    {
+        $comment = $this->comments->get($id);;
+        if (!is_null($comment))
+            return new TicketComment($comment);
+        else
+            return NULL;
+    }
    
     use \Nette\SmartObject;
 }

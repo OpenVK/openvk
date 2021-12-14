@@ -109,6 +109,18 @@
                     <a href="/support/comment/{$comment->getId()}/delete">{_delete}</a>
                 </div>
                {/if}
+               
+               {if $comment->getUType() === 1}
+                  <div class="post-menu">
+                      <strong>
+                        {if $comment->isLikedByUser()}
+                            {_support_good_answer_agent}
+                        {else}
+                            {_support_bad_answer_agent}
+                        {/if}
+                      </strong>
+                  </div>
+               {/if}
             </div>
          </td>
       </tr>

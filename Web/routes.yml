@@ -17,6 +17,8 @@ routes:
       handler: "Support->AnswerTicket"
     - url: "/support/view/{num}"
       handler: "Support->view"
+    - url: "/support/comment/{num}/rate/{num}"
+      handler: "Support->rateAnswer"
     - url: "/al_comments.pl/create/support/{num}"
       handler: "Support->makeComment"
     - url: "/al_comments.pl/create/support/reply/{num}"

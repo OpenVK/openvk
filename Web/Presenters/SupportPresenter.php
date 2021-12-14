@@ -225,4 +225,23 @@ final class SupportPresenter extends OpenVKPresenter
         $this->template->heading = $heading;
         $this->template->content = $parser->parse($content);
     }
+
+    function renderRateAnswer(int $id, int $mark): void
+    {
+        $this->willExecuteWriteAction();
+        $this->assertUserLoggedIn();
+
+        $comment = $this->comments->get($id);
+
+        if($this->user->id !== $this->tickets->get($comment->getTicketId())->getUser()->getId())
+            exit(header("HTTP/1.1 403 Forbidden"));
+
+        if($mark === 1 || $mark === 2)
+            header("HTTP/1.1 200 OK");
+        else
+            exit(header("HTTP/1.1 400 Bad Request"));
+
+        $comment->setMark($mark);
+        $comment->save();
+    }
 }
