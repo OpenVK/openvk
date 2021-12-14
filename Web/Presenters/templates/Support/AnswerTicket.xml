@@ -110,12 +110,12 @@
                 </div>
                {/if}
                
-               {if $comment->getUType() === 1 && $comment->getMark() != null}}
+               {if $comment->getUType() === 1}
                   <div class="post-menu">
                       <strong>
-                        {if $comment->getMark() === 1}
+                        {if $comment->isLikedByUser() === true}
                             {_support_good_answer_agent}
-                        {elseif $comment->getMark() === 2}
+                        {elseif $comment->isLikedByUser() === false}
                             {_support_bad_answer_agent}
                         {/if}
                       </strong>

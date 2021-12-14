@@ -1,1 +1,1 @@
-ALTER TABLE `tickets_comments` ADD `mark` TINYINT NOT NULL DEFAULT '0';
+ALTER TABLE `tickets_comments` ADD `mark` BOOLEAN NULL DEFAULT NULL;

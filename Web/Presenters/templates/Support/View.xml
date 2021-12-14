@@ -118,16 +118,16 @@
                 </div>
                {/if}
 
-               {if $comment->getUType() === 1 && $comment->getMark() != null}}
+               {if $comment->getUType() === 1}
                  <div class="post-menu">
                     <strong id="markText-{$comment->getId()}">
-                      {if $comment->getMark() === 1}
+                      {if $comment->isLikedByUser() === true}
                         {_support_good_answer_user}
-                      {elseif $comment->getMark() === 2}
+                      {elseif $comment->isLikedByUser() === false}
                         {_support_bad_answer_user}
                       {/if}
                     </strong>
-                    {if $comment->getMark() === 0}
+                    {if $comment->isLikedByUser() === null}
                         <a onClick="markAnswer({$comment->getId()}, 1)">{_support_rate_good_answer}</a>
                         |
                         <a onClick="markAnswer({$comment->getId()}, 2)">{_support_rate_bad_answer}</a>
