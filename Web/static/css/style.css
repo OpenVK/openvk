@@ -19,7 +19,7 @@ span {
     font-weight: bold;
 }
 
-.nobold {
+.nobold, nobold {
     font-weight: normal;
     color: gray;
 }
