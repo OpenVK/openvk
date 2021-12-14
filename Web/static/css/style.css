@@ -1682,3 +1682,8 @@ body.scrolled .toTop:hover {
     background: url("/assets/packages/static/openvk/img/pin.png") no-repeat 0px 0px;
     vertical-align: middle;
 }
+
+.topic-list-item {
+    border-bottom: #e6e6e6 solid 1px;
+    padding: 4px;
+}

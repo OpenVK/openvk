@@ -215,7 +215,7 @@
                 </div>
             </div>
             <div>
-                <div n:foreach="$topics as $topic" style="border-bottom: #e6e6e6 solid 1px; padding: 2px;">
+                <div n:foreach="$topics as $topic" class="topic-list-item">
                     <b><a href="/topic{$topic->getPrettyId()}">{$topic->getTitle()}</a></b><br>
                     <span class="nobold">{tr("updated_at", $topic->getUpdateTime())}</span>
                 </div>
