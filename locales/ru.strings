@@ -43,6 +43,8 @@
 "register_referer_meta_title" = "$1 приглашает вас в $2!";
 "register_referer_meta_desc" = "Присоединяйтесь к $1 и множеству других пользователей в $2!";
 
+"users" = "Пользователи";
+
 /* Profile information */
 
 "select_language" = "Выбрать язык";

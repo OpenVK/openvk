@@ -17,19 +17,26 @@
     {/if}
 {/block}
 
-{block tabs}
-    <form style="margin-left: 12px;">
-        <input name="type" type="hidden" value="{$_GET['type'] ?? 'users'}" />
-        <input name="query" type="text" placeholder="{_"header_search"}" value="{$_GET['query'] ?? ''}" style="width: 90%" />
-        <input type="submit" class="button" value="{_"search_button"}" style="width: 7%" />
-    </form>
-    
-    <p style="margin-left: 15px;">
-        <b>{tr("results", $count)}</b>
-    </p>
-{/block}
-
 {* BEGIN ELEMENTS DESCRIPTION *}
+
+{block tabs}
+    <div {if $type === "users"}id="activetabs"{/if} class="tab">
+        <a {if $type === "users"}id="act_tab_a"{/if} href="/search?type=users">
+            {_users}
+        </a>
+    </div>
+    <div {if $type === "groups"}id="activetabs"{/if} class="tab">
+        <a {if $type === "groups"}id="act_tab_a"{/if} href="/search?type=groups">
+            {_groups}
+        </a>
+    </div>
+
+    <div class="header_search_inputbt">
+        <input name="type" type="hidden" value="{$type ?? 'users'}" />
+        <input type="" name="" class="header_search_input" placeholder="Начните вводить любое имя, название или слово">
+        <button class="button_search">{_search_button}</button>
+    </div>
+{/block}
 
 {block link|strip|stripHtml}
     {$x->getURL()}

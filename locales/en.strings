@@ -42,6 +42,8 @@
 "register_referer_meta_title" = "$1 invites you to $2!";
 "register_referer_meta_desc" = "Join $1 and many other users at $2!";
 
+"users" = "Users";
+
 /* Profile information */
 
 "select_language" = "Choose language";
