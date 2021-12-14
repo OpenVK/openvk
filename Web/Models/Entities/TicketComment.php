@@ -108,7 +108,7 @@ class TicketComment extends RowModel
 		return false; # Кооостыыыль!!!
 	}
 
-    function getMark(): int 
+    function getMark(): ?int
     {
         return $this->getRecord()->mark;
     }

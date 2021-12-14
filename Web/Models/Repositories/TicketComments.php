@@ -49,7 +49,7 @@ class TicketComments
     //     return $this->toTicket($this->tickets->get($id));
     // }
 
-    function get(int $id): TicketComment
+    function get(int $id): ?TicketComment
     {
         $comment = $this->comments->where(['id' => $id])->fetch();
         if (!is_null($comment))

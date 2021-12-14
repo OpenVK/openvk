@@ -233,17 +233,15 @@ final class SupportPresenter extends OpenVKPresenter
 
         $comment = $this->comments->get($id);
 
-        if($this->user->id === $this->tickets->get($comment->getTicketId())->getUser()->getId()) {
-            $comments->setMark($mark);
-            $comments->save();
-
-            if($mark === 1 || $mark === 2) {
-                exit(header("HTTP/1.1 200 OK"));
-            } else {
-                exit(header("HTTP/1.1 400 Bad Request"));
-            }
-        } else {
+        if($this->user->id !== $this->tickets->get($comment->getTicketId())->getUser()->getId())
             exit(header("HTTP/1.1 403 Forbidden"));
-        }
+
+        if($mark === 1 || $mark === 2)
+            header("HTTP/1.1 200 OK");
+        else
+            exit(header("HTTP/1.1 400 Bad Request"));
+
+        $comment->setMark($mark);
+        $comment->save();
     }
 }
