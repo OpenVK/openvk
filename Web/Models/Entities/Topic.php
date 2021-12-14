@@ -59,7 +59,7 @@ class Topic extends Postable
 
     function canBeModifiedBy(User $user): bool
     {
-        return $this->getOwner(false)->getId() === $user->getId() || $this->club->canBeModifiedBy($user);
+        return $this->getOwner(false)->getId() === $user->getId() || $this->getClub()->canBeModifiedBy($user);
     }
 
     function getLastComment(): ?Comment
