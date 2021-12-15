@@ -102,6 +102,11 @@
                         <a href="/search">{_"header_search"}</a>
                     </div>
                     <div class="link">
+                        <a href="/invite">
+                            {_"header_invite"}
+                        </a>
+                    </div>
+                    <div class="link">
                         <a href="/support">
                             {_"header_help"}
                             <b n:if="$ticketAnsweredCount > 0">({$ticketAnsweredCount})</b>    
