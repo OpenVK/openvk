@@ -91,6 +91,12 @@
                             {_promote_to_admin}
                         {/if}
                     </a>
+                    {if $club->getOwner()->getId() != $user->getId() && $manager && $thisUser->getId() == $club->getOwner()->getId()}
+                        |
+                        <a href="/groups/{$club->getId()}/setNewOwner/{$user->getId()}">
+                            {_promote_to_owner}
+                        </a>
+                    {/if}
                     {if $manager}
                          | 
                         <a href="javascript:setClubAdminComment('{$club->getId()}', '{$manager->getUserId()}', '{rawurlencode($csrfToken)}')">

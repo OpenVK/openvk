@@ -269,4 +269,20 @@ final class GroupPresenter extends OpenVKPresenter
             $this->notFound();
         }
     }
+
+    function renderChangeOwner(int $id, int $newOwnerID): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        $club = $this->clubs->get($id);
+        $newOwner = (new Users)->get($newOwnerID);
+        if($this->user->id !== $club->getOwner()->getId())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+
+        $club->setOwner($newOwnerID);
+        $club->save();
+
+        $this->flashFail("succ", tr("information_-1"), tr("group_owner_setted", $newOwner->getCanonicalName(), $club->getName()));
+    }
 }

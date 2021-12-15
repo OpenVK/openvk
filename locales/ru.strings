@@ -239,6 +239,7 @@
 "role" = "Роль";
 "administrator" = "Администратор";
 "promote_to_admin" = "Повысить до администратора";
+"promote_to_owner" = "Назначить владельцем";
 "devote" = "Разжаловать";
 "set_comment" = "Изменить комментарий";
 "hidden_yes" = "Скрыт: Да";
@@ -249,6 +250,8 @@
 "group_display_only_creator" = "Отображать только создателя группы";
 "group_display_all_administrators" = "Отображать всех администраторов";
 "group_dont_display_administrators_list" = "Ничего не отображать";
+
+"group_owner_setted" = "Новый владелец ($1) успешно назначен в сообщество $2. Если Вы хотите вернуть сообщество, обратитесь в техническую поддержку сайта.";
 
 "participants_zero" = "Ни одного участника";
 "participants_one" = "Один участник";

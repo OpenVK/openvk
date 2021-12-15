@@ -229,6 +229,7 @@
 "role" = "Role";
 "administrator" = "Administrator";
 "promote_to_admin" = "Promote to admin";
+"promote_to_owner" = "Promote to owner";
 "devote" = "Devote";
 "set_comment" = "Set comment";
 "hidden_yes" = "Hidden: Yes";
@@ -239,6 +240,8 @@
 "group_display_only_creator" = "Display only group creator";
 "group_display_all_administrators" = "Display all administrators";
 "group_dont_display_administrators_list" = "Display nothing";
+
+"group_owner_setted" = "New owner ($1) has been successfully assigned to community $2. If you want to return the community, please contact the technical support of the site.";
 
 "participants_zero" = "No participants";
 "participants_one" = "$1 participant";
