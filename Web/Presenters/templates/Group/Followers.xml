@@ -93,7 +93,7 @@
                     </a>
                     {if $club->getOwner()->getId() != $user->getId() && $manager && $thisUser->getId() == $club->getOwner()->getId()}
                         |
-                        <a href="/groups/{$club->getId()}/setNewOwner/{$user->getId()}">
+                        <a href="javascript:changeOwner({$club->getId()}, {$user->getId()})">
                             {_promote_to_owner}
                         </a>
                     {/if}
@@ -122,4 +122,25 @@
             </tr>
         </tbody>
     </table>
+
+    <script>
+        function changeOwner(club, newOwner) {
+            let action = "/groups/" + club + "/setNewOwner/" + newOwner;
+
+            MessageBox("Передача прав владельца", `
+                Внимание! Вы передаёте права владельца пользователю {$user->getFullName()}. После передачи Вы получите роль администратора в сообществе.
+                <br/><br/>
+                <form id="transfer-owner-permissions-form" method="post">
+                    <label for="password">Пароль</label>
+                    <input type="password" id="password" name="password" required />
+                    <input type="hidden" name="hash" value={$csrfToken} />
+                </form>
+            `, ["Передать", "Отмена"], [
+                () => {
+                    $('#transfer-owner-permissions-form').attr('action', action);
+                    document.querySelector("#transfer-owner-permissions-form").submit();
+                }, Function.noop
+            ]);
+        }
+    </script>
 {/block}

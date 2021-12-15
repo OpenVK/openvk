@@ -3,7 +3,7 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Club, Photo};
 use openvk\Web\Models\Entities\Notifications\ClubModeratorNotification;
 use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers};
-
+use Chandler\Security\Authenticator;
 final class GroupPresenter extends OpenVKPresenter
 {
     private $clubs;
@@ -275,12 +275,19 @@ final class GroupPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
 
+        if($_SERVER['REQUEST_METHOD'] !== "POST")
+            $this->redirect("/groups".$this->user->id);
+
+        if(!Authenticator::verifyHash($this->postParam("password"), $this->user->identity->getChandlerUser()->getRaw()->passwordHash))
+            $this->flashFail("err", tr("error"), tr("incorrect_password"));
+
         $club = $this->clubs->get($id);
         $newOwner = (new Users)->get($newOwnerID);
         if($this->user->id !== $club->getOwner()->getId())
             $this->flashFail("err", tr("error"), tr("forbidden"));
 
         $club->setOwner($newOwnerID);
+        $club->addManager($this->user->id);
         $club->save();
 
         $this->flashFail("succ", tr("information_-1"), tr("group_owner_setted", $newOwner->getCanonicalName(), $club->getName()));
