@@ -127,8 +127,8 @@
         function changeOwner(club, newOwner) {
             let action = "/groups/" + club + "/setNewOwner/" + newOwner;
 
-            MessageBox("Передача прав владельца", `
-                Внимание! Вы передаёте права владельца пользователю {$user->getFullName()}. После передачи Вы получите роль администратора в сообществе.
+            MessageBox(tr("group_changeowner_modal_title"), `
+                tr("group_changeowner_modal_text", {$user->getFullName()})
                 <br/><br/>
                 <form id="transfer-owner-permissions-form" method="post">
                     <label for="password">Пароль</label>

@@ -4,6 +4,7 @@ use openvk\Web\Models\Entities\{Club, Photo};
 use openvk\Web\Models\Entities\Notifications\ClubModeratorNotification;
 use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers};
 use Chandler\Security\Authenticator;
+
 final class GroupPresenter extends OpenVKPresenter
 {
     private $clubs;
