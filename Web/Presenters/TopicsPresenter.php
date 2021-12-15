@@ -160,7 +160,10 @@ final class TopicsPresenter extends OpenVKPresenter
 
             $topic->setTitle(ovk_proc_strtr($title, 127));
             $topic->setClosed(empty($this->postParam("close")) ? 0 : 1);
-            $topic->setPinned(empty($this->postParam("pin")) ? 0 : 1);
+
+            if($topic->getClub()->canBeModifiedBy($this->user->identity))
+                $topic->setPinned(empty($this->postParam("pin")) ? 0 : 1);
+
             $topic->save();
             
             $this->flash("succ", tr("changes_saved"), tr("topic_changes_saved_comment"));

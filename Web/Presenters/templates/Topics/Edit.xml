@@ -32,7 +32,9 @@
                         <span class="nobold">{_topic_settings}</span>
                     </td>
                     <td>
-                        <input type="checkbox" name="pin" n:attr="checked => $topic->isPinned()" /> {_pin_topic}<br />
+                        {if $topic->getClub()->canBeModifiedBy($thisUser)}
+                            <input type="checkbox" name="pin" n:attr="checked => $topic->isPinned()" /> {_pin_topic}<br />
+                        {/if}
                         <input type="checkbox" name="close" n:attr="checked => $topic->isClosed()" /> {_close_topic}
                     </td>
                 </tr>
