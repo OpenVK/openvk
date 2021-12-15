@@ -41,9 +41,14 @@ final class CommentPresenter extends OpenVKPresenter
 
         if($entity instanceof Topic && $entity->isClosed())
             $this->notFound();
+
+        if($entity instanceof Post && $entity->getTargetWall() > 0)
+            $club = (new Clubs)->get(abs($entity->getTargetWall()));
+        else if($entity instanceof Topic)
+            $club = $entity->getClub();
         
         $flags = 0;
-        if($this->postParam("as_group") === "on")
+        if($this->postParam("as_group") === "on" && !is_null($club) && $club->canBeModifiedBy($this->user->identity))
             $flags |= 0b10000000;
 
         $photo = NULL;

@@ -80,7 +80,7 @@ final class TopicsPresenter extends OpenVKPresenter
                 $this->flashFail("err", tr("failed_to_create_topic"), tr("no_title_specified"));
 
             $flags = 0;
-            if($this->postParam("as_group") === "on")
+            if($this->postParam("as_group") === "on" && $club->canBeModifiedBy($this->user->identity))
                 $flags |= 0b10000000;
 
             $topic = new Topic;
