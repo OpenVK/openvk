@@ -271,23 +271,23 @@ final class GroupPresenter extends OpenVKPresenter
         }
     }
 
-    function renderChangeOwner(int $id, int $newOwnerID): void
+    function renderChangeOwner(int $id, int $newOwnerId): void
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
 
         if($_SERVER['REQUEST_METHOD'] !== "POST")
-            $this->redirect("/groups".$this->user->id);
+            $this->redirect("/groups" . $this->user->id);
 
         if(!Authenticator::verifyHash($this->postParam("password"), $this->user->identity->getChandlerUser()->getRaw()->passwordHash))
             $this->flashFail("err", tr("error"), tr("incorrect_password"));
 
         $club = $this->clubs->get($id);
-        $newOwner = (new Users)->get($newOwnerID);
+        $newOwner = (new Users)->get($newOwnerId);
         if($this->user->id !== $club->getOwner()->getId())
             $this->flashFail("err", tr("error"), tr("forbidden"));
 
-        $club->setOwner($newOwnerID);
+        $club->setOwner($newOwnerId);
         $club->addManager($this->user->id);
         $club->save();
 
