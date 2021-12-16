@@ -42,6 +42,8 @@
 "register_referer_meta_title" = "$1 invites you to $2!";
 "register_referer_meta_desc" = "Join $1 and many other users at $2!";
 
+"users" = "Users";
+
 /* Profile information */
 
 "select_language" = "Choose language";
@@ -125,6 +127,9 @@
 
 "updated_at" = "Updated at $1";
 
+"user_banned" = "Unfortunately, we had to block the <b>$1</b> user page.";
+"user_banned_comment" = "Moderator's comment:";
+
 /* Wall */
 
 "feed" = "News";
@@ -165,7 +170,10 @@
 "contains_nsfw" = "Contains NSFW content";
 "nsfw_warning" = "This post may have NSFW-content";
 "report" = "Report";
+"attach" = "Attach";
 "attach_photo" = "Attach photo";
+"attach_video" = "Attach video";
+"draw_graffiti" = "Draw graffiti";
 "no_posts_abstract" = "Nobody wrote anything here... So far.";
 "attach_no_longer_available" = "This attachment is no longer available.";
 "open_post" = "Open post";
@@ -311,6 +319,9 @@
 "menu_registration" = "Registration";
 "menu_help" = "Help";
 
+"menu_logout" = "Logout";
+"menu_support" = "Support";
+
 "header_home" = "home";
 "header_groups" = "groups";
 "header_donate" = "donate";
@@ -356,6 +367,7 @@
 "search_for_groups" = "Search for groups";
 "search_for_people" = "Search for people";
 "search_button" = "Find";
+"search_placeholder" = "Start typing any name, title or word";
 "results_zero" = "No results";
 "results_one" = "$1 result";
 "results_other" = "$1 results";
@@ -466,7 +478,7 @@
 
 "nt_liked_yours" = "liked yours";
 "nt_shared_yours" = "shared yours";
-"nt_commented_yours" = "commented yours";
+"nt_commented_yours" = "commented";
 "nt_written_on_your_wall" = "wrote on your wall";
 "nt_made_you_admin" = "appointed you in the community";
 
@@ -477,6 +489,7 @@
 "nt_post_instrumental" = "post";
 "nt_note_instrumental" = "note";
 "nt_photo_instrumental" = "photo";
+"nt_topic_instrumental" = "topic";
 
 /* Time */
 
@@ -557,6 +570,16 @@
 "support_new_title" = "Enter the topic of your ticket";
 "support_new_content" = "Describe the issue or suggestion";
 
+"support_rate_good_answer" = "This is good answer";
+"support_rate_bad_answer" = "This is bad answer";
+"support_good_answer_user" = "You left a positive feedback.";
+"support_bad_answer_user" = "You left a negative feedback.";
+"support_good_answer_agent" = "User left a positive feedback.";
+"support_bad_answer_agent" = "User left a negative feedback.";
+"support_rated_good" = "You left a positive feedback about the answer.";
+"support_rated_bad" = "You left a negative feedback about the answer.";
+"wrong_parameters" = "Invalid request parameters.";
+
 "comment" = "Comment";
 "sender" = "Sender";
 
@@ -569,9 +592,58 @@
 "support_ticket_changed_comment" = "The changes will take effect in a few seconds.";
 
 /* Invite */
+
 "invite" = "Invite";
 "you_can_invite" = "You can invite your friends or acquaintances to the network using an individual link:";
 "you_can_invite_2" = "Attach this link to your post. When the user signs up, he will immediately appear in your friends.";
+
+/* Banned */
+
+"banned_title" = "You are banned";
+"banned_header" = "You are banned";
+"banned_alt" = "The user is blocked.";
+"banned_1" = "Sorry <b>$1</b>, but you have been banned.";
+"banned_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to block you forever.";
+"banned_3" = "You can still <a href=\"/support?act=new\">write to the support</a> if you think there was an error or <a href=\"/logout?hash=$1\">logout</a>.";
+
+/* Discussions */
+
+"discussions" = "Discussions";
+
+"messages_one" = "One message";
+"messages_other" = "$1 messages";
+
+"topic_messages_count_zero" = "Topic has no messages";
+"topic_messages_count_one" = "There are one message in the topic";
+"topic_messages_count_other" = "There are $1 messages in the topic";
+
+"replied" = "replied";
+"create_topic" = "Create a topic";
+
+"new_topic" = "New topic";
+"title" = "Title";
+"text" = "Text";
+
+"view_topic" = "View topic";
+"edit_topic_action" = "Edit topic";
+"edit_topic" = "Edit topic";
+"topic_settings" = "Topic settings";
+"pin_topic" = "Pin topic";
+"close_topic" = "Close topic";
+"delete_topic" = "Delete topic";
+
+"topics_one" = "One topic";
+"topics_other" = "$1 topics";
+
+"created" = "Created";
+
+"everyone_can_create_topics" = "Everyone can create topics";
+
+"topic_changes_saved_comment" = "The updated title and settings will appear on the topic page.";
+
+"failed_to_create_topic" = "Failed to create topic";
+"failed_to_change_topic" = "Failed to change topic";
+"no_title_specified" = "No title specified.";
 
 /* Errors */
 

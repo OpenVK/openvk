@@ -197,8 +197,27 @@
                     </div>
                     <div>
                         <b><a href="/album{$album->getPrettyId()}">{$album->getName()}</a></b><br>
-                        <span class="nobold">Обновлён {$album->getEditTime() ?? $album->getCreationTime()}</span>
+                        <span class="nobold">{tr("updated_at", $album->getEditTime() ?? $album->getCreationTime())}</span>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div n:if="$topicsCount > 0 || $club->isEveryoneCanCreateTopics() || $club->canBeModifiedBy($thisUser)">
+        <div class="content_title_expanded" onclick="hidePanel(this, {$topicsCount});">
+            {_discussions}
+        </div>
+        <div>
+            <div class="content_subtitle">
+                {tr("topics", $topicsCount)}
+                <div style="float: right;">
+                    <a href="/board{$club->getId()}">{_"all_title"}</a>
+                </div>
+            </div>
+            <div>
+                <div n:foreach="$topics as $topic" class="topic-list-item">
+                    <b><a href="/topic{$topic->getPrettyId()}">{$topic->getTitle()}</a></b><br>
+                    <span class="nobold">{tr("updated_at", $topic->getUpdateTime())}</span>
                 </div>
             </div>
         </div>

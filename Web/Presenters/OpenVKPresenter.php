@@ -34,10 +34,10 @@ abstract class OpenVKPresenter extends SimplePresenter
         ]));
     }
 
-	protected function setTempTheme(string $theme): void
-	{
-		Session::i()->set("_tempTheme", $theme);
-	}
+    protected function setTempTheme(string $theme): void
+    {
+        Session::i()->set("_tempTheme", $theme);
+    }
     
     protected function flashFail(string $type, string $title, ?string $message = NULL, ?int $code = NULL): void
     {
@@ -198,6 +198,7 @@ abstract class OpenVKPresenter extends SimplePresenter
                 header("HTTP/1.1 403 Forbidden");
                 $this->getTemplatingEngine()->render(__DIR__ . "/templates/@banned.xml", [
                     "thisUser" => $this->user->identity,
+                    "csrfToken" => $GLOBALS["csrfToken"],
                 ]);
                 exit;
             }
@@ -221,25 +222,23 @@ abstract class OpenVKPresenter extends SimplePresenter
     {
         parent::onBeforeRender();
         
-        if(!is_null($this->user)) {                                                                                                                                            
-            $theme = $this->user->identity->getTheme();                                                                                                                        
-            if(!is_null($theme) && $theme->overridesTemplates()) {                                                                                                             
-                $this->template->_templatePath = $theme->getBaseDir() . "/tpl";                                                                                                
-            }                                                                                                                 
+        $theme = NULL;
+        if(Session::i()->get("_tempTheme")) {
+            $theme = Themepacks::i()[Session::i()->get("_tempTheme", "ovk")];
+            Session::i()->set("_tempTheme", NULL);
+        } else if($this->requestParam("themePreview")) {
+            $theme = Themepacks::i()[$this->requestParam("themePreview")];
+        } else if($this->user->identity !== null && $this->user->identity->getTheme()) {
+            $theme = $this->user->identity->getTheme();
         }
+        
+        $this->template->theme = $theme;
+        if(!is_null($theme) && $theme->overridesTemplates())                                                                                                   
+            $this->template->_templatePath = $theme->getBaseDir() . "/tpl";
         
         if(!is_null(Session::i()->get("_error"))) {
             $this->template->flashMessage = json_decode(Session::i()->get("_error"));
             Session::i()->set("_error", NULL);
         }
-
-		if(Session::i()->get("_tempTheme"))
-           	$this->template->theme = Themepacks::i()[Session::i()->get("_tempTheme", "ovk")];
-		else if($this->requestParam("themePreview"))
-			$this->template->theme = Themepacks::i()[$this->requestParam("themePreview")];
-        else if($this->user->identity !== null && $this->user->identity->getTheme())
-			$this->template->theme = $this->user->identity->getTheme();
-
-		// Знаю, каша ебаная, целестора рефактор всё равно сделает :)))
     }
 } 

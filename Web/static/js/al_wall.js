@@ -39,7 +39,7 @@ function handleUpload(id) {
 
 function initGraffiti(id) {
     let canvas = null;
-    let msgbox = MessageBox("Нарисовать граффити", "<div id='ovkDraw'></div>", ["Сохранить", "Отменить"], [function() {
+    let msgbox = MessageBox(tr("draw_graffiti"), "<div id='ovkDraw'></div>", [tr("save"), tr("cancel")], [function() {
         canvas.getImage({includeWatermark: false}).toBlob(blob => {
             let fName = "Graffiti-" + Math.ceil(performance.now()).toString() + ".jpeg";
             let image = new File([blob], fName, {type: "image/jpeg", lastModified: new Date().getTime()});

@@ -317,14 +317,14 @@ class User extends RowModel
         return $this->getRecord()->notification_offset;
     }
 
-    function getBirthday(): ?int
+    function getBirthday(): ?DateTime
     {
-        return $this->getRecord()->birthday;
+        return new DateTime($this->getRecord()->birthday);
     }
 
     function getAge(): ?int
     {
-        return (int)floor((time() - $this->getBirthday()) / mktime(0, 0, 0, 1, 1, 1971));
+        return (int)floor((time() - $this->getBirthday()->timestamp()) / mktime(0, 0, 0, 1, 1, 1971));
     }
     
     function get2faSecret(): ?string

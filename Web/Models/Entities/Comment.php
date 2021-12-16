@@ -37,8 +37,19 @@ class Comment extends Post
         if($honourFlags && $this->isPostedOnBehalfOfGroup()) {
             if($this->getTarget() instanceof Post)
                 return (new Clubs)->get(abs($this->getTarget()->getTargetWall()));
+
+            if($this->getTarget() instanceof Topic)
+                return $this->getTarget()->getClub();
         }
 
         return parent::getOwner($honourFlags, $real);
+    }
+
+    function canBeDeletedBy(User $user): bool
+    {
+        return $this->getOwner()->getId() == $user->getId() ||
+               $this->getTarget()->getOwner()->getId() == $user->getId() ||
+               $this->getTarget() instanceof Post && $this->getTarget()->getTargetWall() < 0 && (new Clubs)->get(abs($this->getTarget()->getTargetWall()))->canBeModifiedBy($user) ||
+               $this->getTarget() instanceof Topic && $this->getTarget()->canBeModifiedBy($user);
     }
 }

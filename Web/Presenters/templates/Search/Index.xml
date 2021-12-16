@@ -9,7 +9,7 @@
 {/block}
 
 {block header}
-    OpenVK »
+    {=OPENVK_ROOT_CONF["openvk"]["appearance"]["name"]} »
     {if $type === "users"}
         {tr("search_for_people")}
     {else}
@@ -17,19 +17,30 @@
     {/if}
 {/block}
 
+{* BEGIN ELEMENTS DESCRIPTION *}
+
 {block tabs}
-    <form style="margin-left: 12px;">
-        <input name="type" type="hidden" value="{$_GET['type'] ?? 'users'}" />
-        <input name="query" type="text" placeholder="{_"header_search"}" value="{$_GET['query'] ?? ''}" style="width: 90%" />
-        <input type="submit" class="button" value="{_"search_button"}" style="width: 9%" />
+    <div {if $type === "users"}id="activetabs"{/if} class="tab">
+        <a {if $type === "users"}id="act_tab_a"{/if} href="/search?type=users">
+            {_users}
+        </a>
+    </div>
+    <div {if $type === "groups"}id="activetabs"{/if} class="tab">
+        <a {if $type === "groups"}id="act_tab_a"{/if} href="/search?type=groups">
+            {_groups}
+        </a>
+    </div>
+
+    <form class="header_search_inputbt">
+        <input name="type" type="hidden" value="{$type ?? 'users'}" />
+        <input name="query" class="header_search_input" placeholder="{_search_placeholder}" value="{$_GET['query'] ?? ''}" />
+        <button class="button_search">{_search_button}</button>
     </form>
-    
-    <p style="margin-left: 15px;">
+
+    <p style="margin-left: 15px; margin-top: 0;">
         <b>{tr("results", $count)}</b>
     </p>
 {/block}
-
-{* BEGIN ELEMENTS DESCRIPTION *}
 
 {block link|strip|stripHtml}
     {$x->getURL()}

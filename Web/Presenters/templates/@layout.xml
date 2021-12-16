@@ -206,8 +206,8 @@
                                 style="max-width: 100%; margin-top: 50px;" />
                         </a>
                     {else}
-                        <a href="/support" class="link">Поддержка</a>
-                        <a href="/logout" class="link">Выйти</a>
+                        <a href="/support" class="link">{_"menu_support"}</a>
+                        <a href="/logout?hash={urlencode($csrfToken)}" class="link">{_"menu_logout"}</a>
                     {/if}
                 {else}
                     <form id="fastLogin" action="/login" method="POST" enctype="multipart/form-data">
