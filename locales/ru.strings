@@ -635,6 +635,12 @@
 "messages_many" = "$1 сообщений";
 "messages_other" = "$1 сообщений";
 
+"topic_messages_count_zero" = "В теме нет сообщений";
+"topic_messages_count_one" = "В теме одно сообщение";
+"topic_messages_count_few" = "В теме $1 сообщения";
+"topic_messages_count_many" = "В теме $1 сообщений";
+"topic_messages_count_other" = "В теме $1 сообщений";
+
 "replied" = "ответил";
 "create_topic" = "Создать тему";
 

@@ -608,6 +608,10 @@
 "messages_one" = "One message";
 "messages_other" = "$1 messages";
 
+"topic_messages_count_zero" = "Topic has no messages";
+"topic_messages_count_one" = "There are one message in the topic";
+"topic_messages_count_other" = "There are $1 messages in the topic";
+
 "replied" = "replied";
 "create_topic" = "Create a topic";
 

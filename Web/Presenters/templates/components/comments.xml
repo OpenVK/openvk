@@ -1,4 +1,4 @@
-<h4>{_"comments"} ({$count})</h4>
+<h4 n:if="$showTitle ?? true">{_"comments"} ({$count})</h4>
 
 <div n:ifset="$thisUser">
     {var commentsURL = "/al_comments.pl/create/$model/" . $parent->getId()}

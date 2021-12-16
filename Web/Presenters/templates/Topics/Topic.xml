@@ -23,6 +23,7 @@
         </div>
     </div>
     <div style="margin-top: 20px;">
-        {include "../components/comments.xml", comments => $comments, count => $count, page => $page, model => "topics", club => $club, readOnly => $topic->isClosed(), parent => $topic}
+        <h4>{tr("topic_messages_count", $count)}</h4>
+        {include "../components/comments.xml", comments => $comments, count => $count, page => $page, model => "topics", club => $club, readOnly => $topic->isClosed(), showTitle => false, parent => $topic}
     </div>
 {/block}
