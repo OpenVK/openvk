@@ -75,6 +75,8 @@ routes:
       handler: "Group->attend"
     - url: "/al_comments.pl/create/{text}/{num}"
       handler: "Comment->makeComment"
+    - url: "/groups/{num}/setNewOwner/{num}"
+      handler: "Group->changeOwner"
     - url: "/comment{num}/like"
       handler: "Comment->like"
     - url: "/comment{num}/delete"

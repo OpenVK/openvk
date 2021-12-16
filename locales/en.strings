@@ -237,6 +237,7 @@
 "role" = "Role";
 "administrator" = "Administrator";
 "promote_to_admin" = "Promote to admin";
+"promote_to_owner" = "Promote to owner";
 "devote" = "Devote";
 "set_comment" = "Set comment";
 "hidden_yes" = "Hidden: Yes";
@@ -247,6 +248,10 @@
 "group_display_only_creator" = "Display only group creator";
 "group_display_all_administrators" = "Display all administrators";
 "group_dont_display_administrators_list" = "Display nothing";
+
+"group_changeowner_modal_title" = "Owner's permissions transfer";
+"group_changeowner_modal_text" = "Attention! You are transferring owner rights to user $1. This action is irreversible. After the transfer, you will remain an administrator, but you can easily stop being one.";
+"group_owner_setted" = "The new owner ($1) has been successfully assigned to the community $2. You have been granted administrator rights in the community. If you want to return the owner role, contact <a href='/support?act=new'>site technical support</a>.";
 
 "participants_zero" = "No participants";
 "participants_one" = "$1 participant";
@@ -723,6 +728,7 @@
 "no" = "No";
 "cancel" = "Cancel";
 "edit_action" = "Change";
+"transfer" = "Transfer";
 
 "warning" = "Warning";
 "question_confirm" = "This action can't be undone. Do you really wanna do it?";
