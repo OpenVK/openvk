@@ -31,12 +31,11 @@ final class SupportPresenter extends OpenVKPresenter
         $tickets = $this->tickets->getTicketsByuId($this->user->id);
         if($tickets)
             $this->template->tickets = $tickets;
-
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             if(!empty($this->postParam("name")) && !empty($this->postParam("text"))) {
                 $this->assertNoCSRF();
                 $this->willExecuteWriteAction();
-                
+
                 $ticket = new Ticket;
                 $ticket->setType(0);
                 $ticket->setUser_id($this->user->id);
@@ -230,18 +229,19 @@ final class SupportPresenter extends OpenVKPresenter
     {
         $this->willExecuteWriteAction();
         $this->assertUserLoggedIn();
+        $this->assertNoCSRF();
 
         $comment = $this->comments->get($id);
 
-        if($this->user->id !== $this->tickets->get($comment->getTicketId())->getUser()->getId())
+        if($this->user->id !== $comment->getTicket()->getUser()->getId())
             exit(header("HTTP/1.1 403 Forbidden"));
 
-        if($mark === 1 || $mark === 2)
-            header("HTTP/1.1 200 OK");
-        else
+        if($mark !== 1 && $mark !== 2)
             exit(header("HTTP/1.1 400 Bad Request"));
 
         $comment->setMark($mark);
         $comment->save();
+
+        exit(header("HTTP/1.1 200 OK"));
     }
 }

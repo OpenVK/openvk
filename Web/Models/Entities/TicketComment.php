@@ -2,7 +2,7 @@
 namespace openvk\Web\Models\Entities;
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
-use openvk\Web\Models\Repositories\{Users, SupportAliases};
+use openvk\Web\Models\Repositories\{Users, SupportAliases, Tickets};
 
 class TicketComment extends RowModel
 {
@@ -28,6 +28,11 @@ class TicketComment extends RowModel
     function getUser(): User 
     { 
         return (new Users)->get($this->getRecord()->user_id);
+    }
+
+    function getTicket(): Ticket
+    {
+        return (new Tickets)->get($this->getRecord()->ticket_id);
     }
     
     function getAuthorName(): string
@@ -116,17 +121,10 @@ class TicketComment extends RowModel
     function isLikedByUser(): ?bool
     {
         $mark = $this->getMark();
-        switch ($mark) {
-            case 0:
-                return false;
-                break;
-            case 1:
-                return true;
-                break;
-            default:
-                return NULL;
-                break;
-        }
+        if(is_null($mark))
+            return NULL;
+        else
+            return $mark === 1;
     }
 
     use Traits\TRichText;
