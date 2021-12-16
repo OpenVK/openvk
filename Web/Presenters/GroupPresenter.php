@@ -291,7 +291,18 @@ final class GroupPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
 
         $club->setOwner($newOwnerId);
-        $club->addManager($this->user->id);
+
+        $club->addManager($this->user->identity);
+        $oldOwnerManager = $club->getManager($this->user->identity);
+        $oldOwnerManager->setHidden($club->isOwnerHidden());
+        $oldOwnerManager->setComment($club->getOwnerComment());
+        $oldOwnerManager->save();
+
+        $newOwnerManager = $club->getManager($newOwner);
+        $club->setOwner_Hidden($newOwnerManager->isHidden());
+        $club->setOwner_Comment($newOwnerManager->getComment());
+        $club->removeManager($newOwner);
+
         $club->save();
 
         $this->flashFail("succ", tr("information_-1"), tr("group_owner_setted", $newOwner->getCanonicalName(), $club->getName()));
