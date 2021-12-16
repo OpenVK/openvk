@@ -656,6 +656,7 @@
 "no" = "No";
 "cancel" = "Cancel";
 "edit_action" = "Change";
+"transfer" = "Transfer";
 
 "warning" = "Warning";
 "question_confirm" = "This action can't be undone. Do you really wanna do it?";

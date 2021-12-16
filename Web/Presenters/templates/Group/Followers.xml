@@ -131,11 +131,11 @@
                 tr("group_changeowner_modal_text", {$user->getFullName()})
                 <br/><br/>
                 <form id="transfer-owner-permissions-form" method="post">
-                    <label for="password">Пароль</label>
+                    <label for="password">tr("password")</label>
                     <input type="password" id="password" name="password" required />
                     <input type="hidden" name="hash" value={$csrfToken} />
                 </form>
-            `, ["Передать", "Отмена"], [
+            `, [tr("transfer"), tr("cancel")], [
                 () => {
                     $('#transfer-owner-permissions-form').attr('action', action);
                     document.querySelector("#transfer-owner-permissions-form").submit();
