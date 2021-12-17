@@ -96,9 +96,6 @@
                         <a href="/search?type=groups">{_"header_groups"}</a>
                     </div>
                     <div class="link">
-                        <a href="/donate">{_"header_donate"}</a>
-                    </div>
-                    <div class="link">
                         <a href="/search">{_"header_search"}</a>
                     </div>
                     <div class="link">

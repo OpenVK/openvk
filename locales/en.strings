@@ -324,7 +324,6 @@
 
 "header_home" = "home";
 "header_groups" = "groups";
-"header_donate" = "donate";
 "header_people" = "people";
 "header_invite" = "invite";
 "header_help" = "help";
@@ -333,6 +332,8 @@
 
 "header_login" = "login";
 "header_registration" = "registration";
+
+"left_menu_donate" = "Donate";
 
 "footer_blog" = "blog";
 "footer_help" = "help";

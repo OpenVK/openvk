@@ -326,7 +326,6 @@
 
 "header_home" = "головна";
 "header_groups" = "групи";
-"header_donate" = "підтримати";
 "header_people" = "люди";
 "header_invite" = "запросити";
 "header_help" = "допомога";
@@ -335,6 +334,8 @@
 
 "header_login" = "вхід";
 "header_registration" = "реєстрація";
+
+"left_menu_donate" = "Підтримати";
 
 "footer_blog" = "блог";
 "footer_help" = "допомога";
