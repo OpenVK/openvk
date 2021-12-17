@@ -81,6 +81,9 @@ final class CommentPresenter extends OpenVKPresenter
         
         if(empty($this->postParam("text")) && !$photo && !$video)
             $this->flashFail("err", "Не удалось опубликовать комментарий", "Комментарий пустой или слишком большой.");
+
+        if($entity->getOwner()->getBanReason() !== NULL)
+            $this->flashFail("err", "Не удалось опубликовать комментарий", "Автор публикации заблокирован.");
         
         try {
             $comment = new Comment;
