@@ -426,6 +426,10 @@
 "ui_settings_rating_show" = "Показывать";
 "ui_settings_rating_hide" = "Скрывать";
 
+"additional_links" = "Дополнительные ссылки";
+
+/* Two-factor authentication */
+
 "two_factor_authentication" = "Двухфакторная аутентификация";
 "two_factor_authentication_disabled" = "Обеспечивает надежную защиту от взлома: для входа на страницу необходимо ввести код, полученный в приложении 2FA.";
 "two_factor_authentication_enabled" = "Двухфакторная аутентификация включена. Ваша страница защищена.";

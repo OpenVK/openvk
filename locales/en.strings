@@ -406,6 +406,8 @@
 "ui_settings_rating_show" = "Show";
 "ui_settings_rating_hide" = "Hide";
 
+"additional_links" = "Additional links";
+
 /* Two-factor authentication */
 
 "two_factor_authentication" = "Two-factor authentication";

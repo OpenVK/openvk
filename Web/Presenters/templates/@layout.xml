@@ -168,7 +168,7 @@
                         <a href="/settings" class="link">{_"my_settings"}</a>
                         {var canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
                         {var canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
-                        {var menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0}
+                        {var menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
                         <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $menuLinksAvaiable" class="menu_divider"></div>
                         {if $canAccessAdminPanel}
                             <a href="/admin" class="link">Админ-панель</a>
@@ -181,6 +181,7 @@
                             </a>
                         {/if}
                         <a
+                          n:if="$thisUser->getLeftMenuItemStatus('links')"
                           n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem"
                           href="{$menuItem['url']}"
                           target="_blank"
