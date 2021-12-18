@@ -203,7 +203,7 @@
             </div>
         </div>
     </div>
-    <div n:if="$topicsCount > 0 || $club->isEveryoneCanCreateTopics() || $club->canBeModifiedBy($thisUser)">
+    <div n:if="$topicsCount > 0 || $club->isEveryoneCanCreateTopics() || ($thisUser && $club->canBeModifiedBy($thisUser))">
         <div class="content_title_expanded" onclick="hidePanel(this, {$topicsCount});">
             {_discussions}
         </div>
