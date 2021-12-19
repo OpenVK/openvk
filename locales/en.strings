@@ -524,6 +524,31 @@
 "usages_total" = "Number of uses";
 "usages_left" = "Uses left";
 
+"points_transfer_dialog_header_1" = "You can send as a gift or transfer part of the votes to another person.";
+"points_transfer_dialog_header_2" = "Your current balance:";
+
+"points_amount_one" = "1 vote";
+"points_amount_other" = "$1 votes";
+
+"transfer_poins" = "Transfer votes";
+"transfer_poins_button" = "Transfer votes";
+"also_you_can_transfer_points" = "You can also <a href=\"javascript:showCoinsTransferDialog($1, '$2')\">transfer votes</a> to another person.";
+
+"transferred_to_you" = "transferred to you";
+
+"receiver_address" = "Receiver address";
+"coins_count" = "Number of votes";
+"message" = "Message";
+
+"failed_to_tranfer_points" = "Failed to transfer votes";
+
+"points_transfer_successful" = "You have successfully transferred <b>$1</b> to <b><a href=\"$2\">$3</a></b>.";
+"not_all_information_has_been_entered" = "Not all information has been entered.";
+"negative_transfer_value" = "We cannot steal votes from another person, sorry.";
+"message_is_too_long" = "The message is too long.";
+"receiver_not_found" = "The receiver was not found.";
+"you_dont_have_enough_points" = "You don't have enough votes.";
+
 /* Gifts */
 
 "gift" = "Gift";

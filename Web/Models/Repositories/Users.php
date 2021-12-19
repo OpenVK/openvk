@@ -52,6 +52,23 @@ class Users
             "online" => sizeof((clone $this->users)->where("online >= ?", time() - 900)),
         ];
     }
+
+    function getByAddress(string $address): ?User
+    {
+        if(substr_compare($address, "/", -1) === 0)
+            $address = substr($address, 0, iconv_strlen($address) - 1);
+
+        $serverUrl = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
+        if(strpos($address, $serverUrl . "/") === 0)
+            $address = substr($address, iconv_strlen($serverUrl) + 1);
+
+        if(strpos($address, "id") === 0) {
+            $user = $this->get((int) substr($address, 2));
+            if($user) return $user;
+        }
+
+        return $this->getByShortUrl($address);
+    }
     
     use \Nette\SmartObject;
 }

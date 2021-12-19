@@ -10,6 +10,7 @@ use openvk\Web\Models\Repositories\Videos;
 use openvk\Web\Models\Repositories\Notes;
 use openvk\Web\Models\Repositories\Vouchers;
 use openvk\Web\Util\Validator;
+use openvk\Web\Models\Entities\Notifications\CoinsTransferNotification;
 use Chandler\Security\Authenticator;
 use lfkeitel\phptotp\{Base32, Totp};
 use chillerlan\QRCode\{QRCode, QROptions};
@@ -464,5 +465,43 @@ final class UserPresenter extends OpenVKPresenter
         $this->user->identity->set2fa_secret(NULL);
         $this->user->identity->save();
         $this->flashFail("succ", tr("information_-1"), tr("two_factor_authentication_disabled_message"));
+    }
+
+    function renderCoinsTransfer(): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        $receiverAddress = $this->postParam("receiver");
+        $value           = (int) $this->postParam("value");
+        $message         = $this->postParam("message");
+
+        if(!$receiverAddress || !$value)
+            $this->flashFail("err", tr("failed_to_tranfer_points"), tr("not_all_information_has_been_entered"));
+
+        if($value < 0)
+            $this->flashFail("err", tr("failed_to_tranfer_points"), tr("negative_transfer_value"));
+
+        if(iconv_strlen($message) > 255)
+            $this->flashFail("err", tr("failed_to_tranfer_points"), tr("message_is_too_long"));
+
+        $receiver = $this->users->getByAddress($receiverAddress);
+        if(!$receiver)
+        $this->flashFail("err", tr("failed_to_tranfer_points"), tr("receiver_not_found"));
+
+        if($this->user->identity->getCoins() < $value)
+            $this->flashFail("err", tr("failed_to_tranfer_points"), tr("you_dont_have_enough_points"));
+
+        if($this->user->id !== $receiver->getId()) {
+            $this->user->identity->setCoins($this->user->identity->getCoins() - $value);
+            $this->user->identity->save();
+
+            $receiver->setCoins($receiver->getCoins() + $value);
+            $receiver->save();
+
+            (new CoinsTransferNotification($receiver, $this->user->identity, $value, $message))->emit();
+        }
+
+        $this->flashFail("succ", tr("information_-1"), tr("points_transfer_successful", tr("points_amount", $value), $receiver->getURL(), htmlentities($receiver->getCanonicalName())));
     }
 }

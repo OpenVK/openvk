@@ -1687,3 +1687,9 @@ body.scrolled .toTop:hover {
     border-bottom: #e6e6e6 solid 1px;
     padding: 4px;
 }
+
+.messagebox-content-header {
+    background: #F7F7F7;
+    margin: -20px;
+    padding: 10px;
+}
