@@ -149,11 +149,11 @@
                 </a>
                 <a n:if="in_array('telegram', $completeness->unfilled)" href="/edit?act=contacts">
                     <img src="/assets/packages/static/openvk/img/icon2.gif" />
-                    Telegram (+10%)
+                    Telegram (+15%)
                 </a>
                 <a n:if="in_array('status', $completeness->unfilled)" href="/edit">
                     <img src="/assets/packages/static/openvk/img/icon3.gif" />
-                    {_status} (+10%)
+                    {_status} (+15%)
                 </a>
             {/if}
         </div>
