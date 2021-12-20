@@ -10,7 +10,8 @@
             <td width="54" valign="top">
                 <img
                     src="{$author->getAvatarURL()}"
-                    width="{ifset $compact}25{else}50{/ifset}" />
+                    width="{ifset $compact}25{else}50{/ifset}" 
+                    {ifset $compact}class="cCompactAvatars"{/ifset} />
                         {if !$post->isPostedOnBehalfOfGroup() && !$compact}
                             <span n:if="$author->isOnline()" class="post-online">
                                 {_online}
