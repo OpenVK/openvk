@@ -53,27 +53,18 @@
                         <a href="/club{$club->getId()}/followers">{_all_title}</a>
                     </div>
                 </div>
-                <div style="padding-left: 5px;">
-                    <table 
-                          n:foreach="$club->getFollowers(1) as $follower"
-                          n:class="User"
-                          style="text-align:center;display:inline-block;width:62px"
-                          cellspacing=4>
-                        <tbody>
-                            <tr>
-                                <td>
-                                    <a href="{$follower->getURL()}">
-                                        <img src="{$follower->getAvatarUrl()}" width="50" />
-                                    </a>    
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <a href="{$follower->getURL()}">{$follower->getFirstName()}</a>    
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div style="padding-left: 5px;" class="content_list long">
+                    <div class="cl_element" n:foreach="$club->getFollowers(1) as $follower">
+                        <div class="cl_avatar">
+                            <a href="{$follower->getURL()}">
+                                <img class="ava" src="{$follower->getAvatarUrl()}" />
+                            </a>
+                        </div>
+                        <a href="{$follower->getURL()}" class="cl_name">
+                            <text class="cl_fname">{$follower->getFirstName()}</text>
+                            <text class="cl_lname">{$follower->getLastName()}</text>
+                        </a>    
+                    </div>
                 </div>
             </div>
         </div>

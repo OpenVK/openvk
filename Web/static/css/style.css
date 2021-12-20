@@ -307,6 +307,10 @@ a {
     cursor: pointer;
 }
 
+.profile_link_form {
+    margin-bottom: 0;
+}
+
 #profile_links {
     margin: 10px 0;
 }
@@ -681,6 +685,44 @@ span {
 .ovk-avView--el .ava {
     max-width: 80%;
     max-height: 63px;
+}
+
+.content_list {
+    display: flex;
+    width: 200px;
+    flex-wrap: wrap;
+}
+
+.content_list.long {
+    width: 397px;
+}
+
+.content_list .cl_element {
+    width: 33%;
+}
+
+.content_list.long .cl_element {
+    width: 16.5%;
+}
+
+.content_list .cl_element .cl_avatar {
+    padding: 7px 7px 0 7px;
+    text-align: center;
+}
+
+.content_list .cl_element .cl_name {
+    padding: 0 3px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.content_list .cl_element .cl_name .cl_lname {
+    font-size: 7pt;
+}
+
+.ava {
+    width: 45px;
 }
 
 table.User {

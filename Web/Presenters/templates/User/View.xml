@@ -95,21 +95,21 @@
                 
                 {var subStatus = $user->getSubscriptionStatus($thisUser)}
                 {if $subStatus === 0}
-                    <form action="/setSub/user" method="post">
+                    <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="add" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
                         <input type="submit" class="profile_link" value="{_"friends_add"}" />
                     </form>
                 {elseif $subStatus === 1}
-                    <form action="/setSub/user" method="post">
+                    <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="add" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
                         <input type="submit" class="profile_link" value="{_"friends_accept"}" />
                     </form>
                 {elseif $subStatus === 2}
-                    <form action="/setSub/user" method="post">
+                    <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="rem" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
@@ -117,7 +117,7 @@
                     </form>
                 {elseif $subStatus === 3}
                     <a href="/im?sel={$user->getId()}" class="profile_link">{_"send_message"}</a>
-                    <form action="/setSub/user" method="post">
+                    <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="rem" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
@@ -125,6 +125,7 @@
                     </form>
                 {/if}
             {/if}
+            <a n:if="$user->getFollowersCount() > 0" href="/friends{$user->getId()}?act=incoming" class="profile_link">{tr("followers", $user->getFollowersCount())}</a>
         </div>
         <div n:if="isset($thisUser) && !$thisUser->prefersNotToSeeRating()" class="profile-hints">
             {var completeness = $user->getProfileCompletenessReport()}
@@ -196,37 +197,17 @@
                         <a href="/friends{$user->getId()}">{_"all_title"}</a>
                     </div>
                 </div>
-                <div class="ovk-avView">
-                    <div class="ovk-avView--el" n:foreach="$user->getFriends(1) as $friend">
-                        <a href="{$friend->getURL()}">
-                            <img class="ava" src="{$friend->getAvatarUrl()}" />
-                        </a>
-                        <br/>
-                        <a href="{$friend->getURL()}">{$friend->getFirstName()}</a>    
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div n:if="$user->getFollowersCount() > 0">
-            {var followersCount = $user->getFollowersCount()}
-            
-            <div class="content_title_expanded" onclick="hidePanel(this, {$followersCount});">
-                {_followers}
-            </div>
-            <div>
-                <div class="content_subtitle">
-                    {tr("followers", $followersCount)}
-                    <div style="float:right;">
-                        <a href="/friends{$user->getId()}?act=incoming">{_"all_title"}</a>
-                    </div>
-                </div>
-                <div class="ovk-avView">
-                    <div class="ovk-avView--el" n:foreach="$user->getFollowers(1) as $follower">
-                        <a href="{$follower->getURL()}">
-                            <img class="ava" src="{$follower->getAvatarUrl()}" />
-                        </a>
-                        <br/>
-                        <a href="{$follower->getURL()}">{$follower->getFirstName()}</a>    
+                <div class="content_list">
+                    <div class="cl_element" n:foreach="$user->getFriends(1) as $friend">
+                        <div class="cl_avatar">
+                            <a href="{$friend->getURL()}">
+                                <img class="ava" src="{$friend->getAvatarUrl()}" />
+                            </a>
+                        </div>
+                        <a href="{$friend->getURL()}" class="cl_name">
+                            <text class="cl_fname">{$friend->getFirstName()}</text>
+                            <text class="cl_lname">{$friend->getLastName()}</text>
+                        </a>    
                     </div>
                 </div>
             </div>
