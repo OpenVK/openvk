@@ -27,23 +27,24 @@
         &nbsp;|&nbsp;
         <a href="/album{$album->getPrettyId()}/edit">{_"edit_album"}</a>
     {/if}
-    <br/>
+    <br/><br/>
     {if $album->getPhotosCount() > 0}
-        {foreach $photos as $photo}
-            {php if($photo->isDeleted()) continue; }
-            <div class="album-photo" style="display: inline-table;">
-                <a
-                  n:if="!is_null($thisUser) && $album->canBeModifiedBy($thisUser)"
-                  href="/album{$album->getPrettyId()}/remove_photo.pl/{$photo->getId()}" class="album-photo--delete">
-                    &times;
-                </a>
-                
-                <a href="/photo{$photo->getPrettyId()}?from=album{$album->getId()}">
-                    <img class="album-photo--image" src="{$photo->getURL()}" alt="{$photo->getDescription()}" style="width:unset;max-height:unset;max-width: 188px;" />
-                </a>
-            </div>
-        {/foreach}
-        
+        <div class="container_gray album-flex">
+            {foreach $photos as $photo}
+                {php if($photo->isDeleted()) continue; }
+                <div class="album-photo">
+                    <a
+                    n:if="!is_null($thisUser) && $album->canBeModifiedBy($thisUser)"
+                    href="/album{$album->getPrettyId()}/remove_photo.pl/{$photo->getId()}" class="album-photo--delete">
+                        &times;
+                    </a>
+                    
+                    <a href="/photo{$photo->getPrettyId()}?from=album{$album->getId()}">
+                        <img class="album-photo--image" src="{$photo->getURL()}" alt="{$photo->getDescription()}" />
+                    </a>
+                </div>
+            {/foreach}
+        </div>
         {include "../components/paginator.xml", conf => $paginatorConf}
     {else}
         {include "../components/nothing.xml"}

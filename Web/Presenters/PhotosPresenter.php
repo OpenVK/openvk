@@ -138,12 +138,13 @@ final class PhotosPresenter extends OpenVKPresenter
         }
         
         $this->template->album  = $album;
-        $this->template->photos = iterator_to_array( $album->getPhotos( (int) ($this->queryParam("p") ?? 1) ) );
+        $this->template->photos = iterator_to_array( $album->getPhotos( (int) ($this->queryParam("p") ?? 1), 20) );
         $this->template->paginatorConf = (object) [
             "count"   => $album->getPhotosCount(),
             "page"    => $this->queryParam("p") ?? 1,
             "amount"  => sizeof($this->template->photos),
-            "perPage" => OPENVK_DEFAULT_PER_PAGE,
+            "perPage" => 20,
+            "atBottom" => true
         ];
     }
     

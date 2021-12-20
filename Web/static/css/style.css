@@ -257,23 +257,29 @@ a {
 
 .album-photo {
     position: relative;
-    background-color: darkgrey;
-    margin: 4pt;
-    width: calc(33% - 10pt);
-    height: 82px;
+    width: 25%;
+    max-height: 140px;
+    margin-bottom: 8px;
     text-align: center;
-    vertical-align: text-top;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .album-photo img {
-    width: 100%;
-    max-height: 82px;
+    width: unset;
+    max-height: 120px !important;
+    max-width: 83%;
     vertical-align: top;
+    border: 1px #ccc solid;
+    padding: 8px;
+    background-color: #fff;
 }
 
 .album-photo > .album-photo--delete {
     position: absolute;
     right: 0;
+    top: 0;
     padding: 5px;
     margin: 4px;
     color: #fff;
@@ -287,6 +293,11 @@ a {
 
 .album-photo:hover > .album-photo--delete {
     opacity: 1;
+}
+
+.album-flex {
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .name-checkmark {
@@ -736,6 +747,10 @@ table.User {
     border-top: #EBEBEB solid 1px;
     margin-left: -12px;
     margin-bottom: -12px;
+}
+
+.container_gray.bottom {
+    border-bottom: #ebebeb solid 1px;
 }
 
 #auth .container_gray {
