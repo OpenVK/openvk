@@ -1,5 +1,6 @@
 "__locale" = "hy_AM.utf8;hy_AM.UTF-8;Arm";
 "__WinEncoding" = "Windows-1251";
+"__fallback" = "en";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 

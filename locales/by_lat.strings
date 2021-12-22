@@ -1,5 +1,6 @@
 "__locale" = "be_BY@latin;Bel_Lat";
 "__WinEncoding" = "Windows-1251";
+"__fallback" = "ru";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 
