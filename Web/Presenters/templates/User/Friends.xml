@@ -81,35 +81,37 @@
 {/block}
 
 {block actions}
-    {var subStatus = $x->getSubscriptionStatus($thisUser)}
-    {if $subStatus === 0}
-        <form action="/setSub/user" method="post" class="profile_link_form">
-            <input type="hidden" name="act" value="add" />
-            <input type="hidden" name="id"  value="{$x->getId()}" />
-            <input type="hidden" name="hash" value="{$csrfToken}" />
-            <input type="submit" class="profile_link" value="{_"friends_add"}" />
-        </form>
-    {elseif $subStatus === 1}
-        <form action="/setSub/user" method="post" class="profile_link_form">
-            <input type="hidden" name="act" value="add" />
-            <input type="hidden" name="id"  value="{$x->getId()}" />
-            <input type="hidden" name="hash" value="{$csrfToken}" />
-            <input type="submit" class="profile_link" value="{_"friends_accept"}" />
-        </form>
-    {elseif $subStatus === 2}
-        <form action="/setSub/user" method="post" class="profile_link_form">
-            <input type="hidden" name="act" value="rem" />
-            <input type="hidden" name="id"  value="{$x->getId()}" />
-            <input type="hidden" name="hash" value="{$csrfToken}" />
-            <input type="submit" class="profile_link" value="{_"friends_reject"}" />
-        </form>
-    {elseif $subStatus === 3}
-        <a href="/im?sel={$x->getId()}" class="profile_link">{_"send_message"}</a>
-        <form action="/setSub/user" method="post" class="profile_link_form">
-            <input type="hidden" name="act" value="rem" />
-            <input type="hidden" name="id"  value="{$x->getId()}" />
-            <input type="hidden" name="hash" value="{$csrfToken}" />
-            <input type="submit" class="profile_link" value="{_"friends_delete"}" />
-        </form>
+    {if $x->getId() !== $thisUser->getId()}
+        {var subStatus = $x->getSubscriptionStatus($thisUser)}
+        {if $subStatus === 0}
+            <form action="/setSub/user" method="post" class="profile_link_form">
+                <input type="hidden" name="act" value="add" />
+                <input type="hidden" name="id"  value="{$x->getId()}" />
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" class="profile_link" value="{_"friends_add"}" />
+            </form>
+        {elseif $subStatus === 1}
+            <form action="/setSub/user" method="post" class="profile_link_form">
+                <input type="hidden" name="act" value="add" />
+                <input type="hidden" name="id"  value="{$x->getId()}" />
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" class="profile_link" value="{_"friends_accept"}" />
+            </form>
+        {elseif $subStatus === 2}
+            <form action="/setSub/user" method="post" class="profile_link_form">
+                <input type="hidden" name="act" value="rem" />
+                <input type="hidden" name="id"  value="{$x->getId()}" />
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" class="profile_link" value="{_"friends_reject"}" />
+            </form>
+        {elseif $subStatus === 3}
+            <a href="/im?sel={$x->getId()}" class="profile_link">{_"send_message"}</a>
+            <form action="/setSub/user" method="post" class="profile_link_form">
+                <input type="hidden" name="act" value="rem" />
+                <input type="hidden" name="id"  value="{$x->getId()}" />
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" class="profile_link" value="{_"friends_delete"}" />
+            </form>
+        {/if}
     {/if}
 {/block}

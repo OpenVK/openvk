@@ -52,7 +52,7 @@
 {/block}
 
 {var clubPinned = $thisUser->isClubPinned($x)}
-{if $clubPinned || $thisUser->getPinnedClubCount() <= 10 || $x->canBeModifiedBy($thisUser ?? NULL)}
+{if $x->canBeModifiedBy($thisUser ?? NULL) || $clubPinned || $thisUser->getPinnedClubCount() <= 10}
     {block actions}
         <a class="profile_link" href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
             {if $clubPinned}
