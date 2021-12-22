@@ -49,23 +49,10 @@
 
 {block description}
     {$x->getDescription()}
-    {if $x->canBeModifiedBy($thisUser ?? NULL)}
-        
-        <table n:if="$clubPinned || $thisUser->getPinnedClubCount() <= 10">
-            <tbody>
-                <tr>
-                    <td width="120" valign="top"><span class="nobold">{_actions}: </span></td>
-                    <td>
-                        
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    {/if}
 {/block}
 
 {var clubPinned = $thisUser->isClubPinned($x)}
-{if $clubPinned || $thisUser->getPinnedClubCount() <= 10}
+{if $clubPinned || $thisUser->getPinnedClubCount() <= 10 || $x->canBeModifiedBy($thisUser ?? NULL)}
     {block actions}
         <a class="profile_link" href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
             {if $clubPinned}
