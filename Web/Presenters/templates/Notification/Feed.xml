@@ -19,13 +19,6 @@
     </div>
 {/block}
 
-{block actions}
-    <div class="tile">
-        <a class="profile_link" href="?">{_unreaded}</a>
-        <a class="profile_link" href="?act=archived">{_archive}</a>
-    </div>
-{/block}
-
 {* BEGIN ELEMENTS DESCRIPTION *}
 
 {block link|strip|stripHtml}
