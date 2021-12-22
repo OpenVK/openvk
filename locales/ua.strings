@@ -1,6 +1,7 @@
+#include <ru>
+
 "__locale" = "uk_UA.utf8;Ukr";
 "__WinEncoding" = "Windows-1251";
-"__fallback" = "ru";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 

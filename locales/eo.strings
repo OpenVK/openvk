@@ -1,5 +1,6 @@
+#include <en>
+
 "__locale" = "eo.utf8";
-"__fallback" = "en";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 

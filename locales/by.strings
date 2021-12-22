@@ -1,5 +1,6 @@
+#include <ru>
+
 "__locale" = "be_BY.UTF-8;Bel";
-"__fallback" = "ru";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 

@@ -57,7 +57,7 @@ class Localizator
         $lang  = is_null($lang) ? static::DEFAULT_LANG : $lang;
         $array = @self::parse(dirname(__FILE__) . "/../../locales/$lang.strings");
         
-        return $array[$id] ?? (!empty($array["__fallback"]) ? $this->_($id, $array["__fallback"]) : "@$id");
+        return $array[$id] ?? "@$id";
     }
     
     function export($lang = NULL): ?array
