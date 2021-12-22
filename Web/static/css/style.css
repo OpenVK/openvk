@@ -330,6 +330,10 @@ a {
     background: #ECECEC;
 }
 
+.action_links > .profile_link, .action_links > .profile_link_form > .profile_link {
+    width: 150px;
+}
+
 .page_footer {
     margin-left: 95px;
     padding-top: 5px;

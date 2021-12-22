@@ -14,10 +14,6 @@
     <a n:if="$onlyShowManagers" href="/club{$club->getId()}/followers" style="float: right;">{_only_administrators}</a>
 {/block}
 
-{block actions}
-    
-{/block}
-
 {* BEGIN ELEMENTS DESCRIPTION *}
 
 {block tabs}
@@ -81,50 +77,13 @@
                     {/if}
                 </td>
             </tr>
-            <tr n:if="$club->canBeModifiedBy($thisUser ?? NULL)">
-                <td width="120" valign="top"><span class="nobold">{_actions}: </span></td>
-                <td>
-                    <a href="/club{$club->getId()}/setAdmin.jsp?user={$user->getId()}&hash={rawurlencode($csrfToken)}" n:if="$club->getOwner()->getId() !== $user->getId()">
-                        {if $manager}
-                            {_devote}
-                        {else}
-                            {_promote_to_admin}
-                        {/if}
-                    </a>
-                    {if $club->getOwner()->getId() != $user->getId() && $manager && $thisUser->getId() == $club->getOwner()->getId()}
-                        |
-                        <a href="javascript:changeOwner({$club->getId()}, {$user->getId()})">
-                            {_promote_to_owner}
-                        </a>
-                    {/if}
-                    {if $manager}
-                         | 
-                        <a href="javascript:setClubAdminComment('{$club->getId()}', '{$manager->getUserId()}', '{rawurlencode($csrfToken)}')">
-                            {_set_comment}
-                        </a>
-                    {/if}
-                    <a n:if="$club->getOwner()->getId() === $user->getId()" href="javascript:setClubAdminComment('{$club->getId()}', '{$club->getOwner()->getId()}', '{rawurlencode($csrfToken)}')">
-                        {_set_comment}
-                    </a>
-                    {if $manager}
-                         | 
-                        <a href="/club{$club->getId()}/setAdmin.jsp?user={$user->getId()}&hidden={(int) !$manager->isHidden()}&hash={rawurlencode($csrfToken)}">
-                            {if $manager->isHidden()}{_hidden_yes}{else}{_hidden_no}{/if}
-                        </a>
-                    {/if}
-                    {if $club->getOwner()->getId() == $user->getId()}
-                         | 
-                        <a href="/club{$club->getId()}/setAdmin.jsp?user={$user->getId()}&hidden={(int) !$club->isOwnerHidden()}&hash={rawurlencode($csrfToken)}">
-                            {if $club->isOwnerHidden()}{_hidden_yes}{else}{_hidden_no}{/if}
-                        </a>
-                    {/if}
-                </td>
-            </tr>
+            
         </tbody>
     </table>
 
     <script n:if="$club->getOwner()->getId() != $user->getId() && $manager && $thisUser->getId() == $club->getOwner()->getId()">
-        console.log("gayshit")
+        console.log("gayshit");
+        console.log("сам такой");
         function changeOwner(club, newOwner) {
             const action = "/groups/" + club + "/setNewOwner/" + newOwner;
 
@@ -144,4 +103,41 @@
             ]);
         }
     </script>
+{/block}
+
+{block actions}
+    {var user    = $x instanceof $Manager ? $x->getUser() : $x}
+    {var manager = $x instanceof $Manager ? $x : $club->getManager($user, !$club->canBeModifiedBy($thisUser))}
+    {if $club->canBeModifiedBy($thisUser ?? NULL)}
+        <a class="profile_link" href="/club{$club->getId()}/setAdmin.jsp?user={$user->getId()}&hash={rawurlencode($csrfToken)}" n:if="$club->getOwner()->getId() !== $user->getId()">
+            {if $manager}
+                {_devote}
+            {else}
+                {_promote_to_admin}
+            {/if}
+        </a>
+        {if $club->getOwner()->getId() != $user->getId() && $manager && $thisUser->getId() == $club->getOwner()->getId()}
+            <a class="profile_link" href="javascript:changeOwner({$club->getId()}, {$user->getId()})">
+                {_promote_to_owner}
+            </a>
+        {/if}
+        {if $manager}
+            <a class="profile_link" href="javascript:setClubAdminComment('{$club->getId()}', '{$manager->getUserId()}', '{rawurlencode($csrfToken)}')">
+                {_set_comment}
+            </a>
+        {/if}
+        <a class="profile_link" n:if="$club->getOwner()->getId() === $user->getId()" href="javascript:setClubAdminComment('{$club->getId()}', '{$club->getOwner()->getId()}', '{rawurlencode($csrfToken)}')">
+            {_set_comment}
+        </a>
+        {if $manager}
+            <a class="profile_link" href="/club{$club->getId()}/setAdmin.jsp?user={$user->getId()}&hidden={(int) !$manager->isHidden()}&hash={rawurlencode($csrfToken)}">
+                {if $manager->isHidden()}{_hidden_yes}{else}{_hidden_no}{/if}
+            </a>
+        {/if}
+        {if $club->getOwner()->getId() == $user->getId()}
+            <a class="profile_link" href="/club{$club->getId()}/setAdmin.jsp?user={$user->getId()}&hidden={(int) !$club->isOwnerHidden()}&hash={rawurlencode($csrfToken)}">
+                {if $club->isOwnerHidden()}{_hidden_yes}{else}{_hidden_no}{/if}
+            </a>
+        {/if}
+    {/if}
 {/block}
