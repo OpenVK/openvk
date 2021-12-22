@@ -703,6 +703,7 @@
 "created" = "Создано";
 
 "everyone_can_create_topics" = "Все могут создавать темы";
+"display_list_of_topics_above_wall" = "Отображать список тем над стеной";
 
 "topic_changes_saved_comment" = "Обновлённый заголовок и настройки появятся на странице с темой.";
 

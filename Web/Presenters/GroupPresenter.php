@@ -208,6 +208,7 @@ final class GroupPresenter extends OpenVKPresenter
 	        $club->setWall(empty($this->postParam("wall")) ? 0 : 1);
             $club->setAdministrators_List_Display(empty($this->postParam("administrators_list_display")) ? 0 : $this->postParam("administrators_list_display"));
             $club->setEveryone_Can_Create_Topics(empty($this->postParam("everyone_can_create_topics")) ? 0 : 1);
+            $club->setDisplay_Topics_Above_Wall(empty($this->postParam("display_topics_above_wall")) ? 0 : 1);;
             
             $website = $this->postParam("website") ?? "";
             if(empty($website))

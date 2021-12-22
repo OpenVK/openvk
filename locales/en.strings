@@ -668,6 +668,7 @@
 "created" = "Created";
 
 "everyone_can_create_topics" = "Everyone can create topics";
+"display_list_of_topics_above_wall" = "Display a list of topics above the wall";
 
 "topic_changes_saved_comment" = "The updated title and settings will appear on the topic page.";
 

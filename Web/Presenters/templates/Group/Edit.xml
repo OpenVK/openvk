@@ -82,7 +82,8 @@
                             <span class="nobold">{_discussions}: </span>
                         </td>
                         <td>
-                            <input type="checkbox" name="everyone_can_create_topics" value="1" n:attr="checked => $club->isEveryoneCanCreateTopics()" /> {_everyone_can_create_topics}
+                            <input type="checkbox" name="everyone_can_create_topics" value="1" n:attr="checked => $club->isEveryoneCanCreateTopics()" /> {_everyone_can_create_topics}<br>
+                            <input type="checkbox" name="display_topics_above_wall" value="1" n:attr="checked => $club->isDisplayTopicsAboveWallEnabled()" /> {_display_list_of_topics_above_wall}
                         </td>
                     </tr>
                     <tr>
