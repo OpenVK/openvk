@@ -752,6 +752,10 @@
 "paginator_page" = "Page $1";
 "paginator_next" = "Next";
 
+/* About */
+
+"about_openvk" = "About OpenVK";
+
 /* Dialogs */
 
 "ok" = "OK";

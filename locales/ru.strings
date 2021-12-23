@@ -787,6 +787,10 @@
 "paginator_page" = "Страница $1";
 "paginator_next" = "Дальше";
 
+/* About */
+
+"about_openvk" = "Об OpenVK";
+
 /* Dialogs */
 
 "ok" = "ОК";
