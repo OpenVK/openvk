@@ -1,3 +1,5 @@
+#include <ru>
+
 "__locale" = "kk_KZ.UTF-8;Kaz";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */

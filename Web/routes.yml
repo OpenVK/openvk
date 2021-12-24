@@ -59,6 +59,8 @@ routes:
       handler: "User->twoFactorAuthSettings"
     - url: "/settings/2fa/disable"
       handler: "User->disableTwoFactorAuth"
+    - url: "/coins_transfer"
+      handler: "User->coinsTransfer"
     - url: "/id{num}"
       handler: "User->view"
     - url: "/friends{num}"

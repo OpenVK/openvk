@@ -1,3 +1,5 @@
+#include <en>
+
 "__locale" = "hy_AM.utf8;hy_AM.UTF-8;Arm";
 "__WinEncoding" = "Windows-1251";
 

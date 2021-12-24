@@ -10,7 +10,7 @@ To be honest, we don't even know whether it even works. However, this version is
 
 Please use the master branch, as it has the most changes.
 
-Updating the source code is done with this command: `git pull --recurse-submodules`
+Updating the source code is done with this command: `git pull`
 
 ## Instances
 
@@ -29,7 +29,7 @@ If you want, you can add your instance to the list above so that people can regi
   * PHP 8 has **not** yet been tested, so you should not expect it to work.
 2. Install [commitcaptcha](https://github.com/openvk/commitcaptcha) and OpenVK as Chandler extensions like this:
 ```
-git clone --recursive https://github.com/openvk/openvk /path/to/chandler/extensions/available/openvk
+git clone https://github.com/openvk/openvk /path/to/chandler/extensions/available/openvk
 git clone https://github.com/openvk/commitcaptcha /path/to/chandler/extensions/available/commitcaptcha
 ```
 3. And enable them:
@@ -43,8 +43,6 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 7. Run `composer install` in OpenVK directory
 8. Move to `Web/static/js` and execute `yarn install`
 9. Set `openvk` as your root app in `chandler.yml`
-
-**Note**: If OVK submodules were not downloaded beforehand (i.e. `--recursive` was not used during cloning), this command *must be* executed in the `openvk` folder: `git submodule update --init`
 
 Once you are done, you can login as a system administrator on the network itself (no registration required):
 * **Login**: `admin@localhost.localdomain6`

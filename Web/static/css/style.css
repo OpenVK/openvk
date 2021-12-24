@@ -257,23 +257,29 @@ a {
 
 .album-photo {
     position: relative;
-    background-color: darkgrey;
-    margin: 4pt;
-    width: calc(33% - 10pt);
-    height: 82px;
+    width: 25%;
+    max-height: 140px;
+    margin-bottom: 8px;
     text-align: center;
-    vertical-align: text-top;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .album-photo img {
-    width: 100%;
-    max-height: 82px;
+    width: unset;
+    max-height: 120px !important;
+    max-width: 83%;
     vertical-align: top;
+    border: 1px #ccc solid;
+    padding: 8px;
+    background-color: #fff;
 }
 
 .album-photo > .album-photo--delete {
     position: absolute;
     right: 0;
+    top: 0;
     padding: 5px;
     margin: 4px;
     color: #fff;
@@ -287,6 +293,11 @@ a {
 
 .album-photo:hover > .album-photo--delete {
     opacity: 1;
+}
+
+.album-flex {
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .name-checkmark {
@@ -307,12 +318,20 @@ a {
     cursor: pointer;
 }
 
+.profile_link_form {
+    margin-bottom: 0;
+}
+
 #profile_links {
     margin: 10px 0;
 }
 
 #profile_link:hover, .profile_link:hover {
     background: #ECECEC;
+}
+
+.action_links > .profile_link, .action_links > .profile_link_form > .profile_link {
+    width: 150px;
 }
 
 .page_footer {
@@ -683,6 +702,44 @@ span {
     max-height: 63px;
 }
 
+.content_list {
+    display: flex;
+    width: 200px;
+    flex-wrap: wrap;
+}
+
+.content_list.long {
+    width: 397px;
+}
+
+.content_list .cl_element {
+    width: 33%;
+}
+
+.content_list.long .cl_element {
+    width: 16.5%;
+}
+
+.content_list .cl_element .cl_avatar {
+    padding: 7px 7px 0 7px;
+    text-align: center;
+}
+
+.content_list .cl_element .cl_name {
+    padding: 0 3px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.content_list .cl_element .cl_name .cl_lname {
+    font-size: 7pt;
+}
+
+.ava {
+    width: 45px;
+}
+
 table.User {
     vertical-align: text-top;
 }
@@ -694,6 +751,10 @@ table.User {
     border-top: #EBEBEB solid 1px;
     margin-left: -12px;
     margin-bottom: -12px;
+}
+
+.container_gray.bottom {
+    border-bottom: #ebebeb solid 1px;
 }
 
 #auth .container_gray {
@@ -1686,4 +1747,10 @@ body.scrolled .toTop:hover {
 .topic-list-item {
     border-bottom: #e6e6e6 solid 1px;
     padding: 4px;
+}
+
+.messagebox-content-header {
+    background: #F7F7F7;
+    margin: -20px;
+    padding: 10px;
 }

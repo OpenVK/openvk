@@ -24,7 +24,7 @@
 {/block}
 
 {block description}
-    <table class="ugc-table" n:if="$hideInfo ? !$x->anon : true">
+    <table class="ugc-table" n:if="$hideInfo ? (!$x->anon || $x->sender->getId() === $thisUser->getId()) : true">
         <tbody>
             <tr>
                 <td><span class="nobold">{_sender}: </span></td>

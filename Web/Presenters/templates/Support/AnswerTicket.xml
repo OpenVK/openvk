@@ -110,7 +110,7 @@
                 </div>
                {/if}
                
-               {if $comment->getUType() === 1}
+               {if $comment->getUType() === 1 && !is_null($comment->isLikedByUser())}
                   <div class="post-menu">
                       <strong>
                         {if $comment->isLikedByUser()}

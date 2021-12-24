@@ -33,7 +33,7 @@
                         {if $comment->canBeDeletedBy($thisUser)}
                             <a href="/comment{$comment->getId()}/delete">{_"delete"}</a>&nbsp;|
                         {/if}
-                        <a class="comment-reply">Ответить</a>
+                        <a class="comment-reply">{_"reply"}</a>
                         <div style="float: right; font-size: .7rem;">
                             <a class="post-like-button" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}">
                                 <div class="heart" style="{if $comment->hasLikeFrom($thisUser)}opacity: 1;{else}opacity: 0.4;{/if}"></div>

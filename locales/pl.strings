@@ -1,3 +1,5 @@
+#include <en>
+
 "__locale" = "pl_PL.utf8;pl_PL.UTF-8;Pol";
 "__WinEncoding" = "Windows-1251";
 

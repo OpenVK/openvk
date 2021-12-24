@@ -1,3 +1,5 @@
+#include <ru>
+
 "__locale" = "be_BY@latin;Bel_Lat";
 "__WinEncoding" = "Windows-1251";
 

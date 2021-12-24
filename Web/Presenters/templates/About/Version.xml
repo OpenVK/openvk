@@ -1,9 +1,9 @@
 {extends "../@layout.xml"}
 
-{block title}Об OpenVK{/block}
+{block title}{_about_openvk}{/block}
 
 {block header}
-    Об OpenVK
+    {_about_openvk}
 {/block}
 
 {block content}
@@ -343,7 +343,7 @@
             <tbody>
                 <tr class="h">
                     <th>Name</th>
-                    <th>Status</th>
+                    <th style="width: 50px;">Status</th>
                     <th>Version</th>
                     <th>Description</th>
                     <th>Author</th>

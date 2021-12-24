@@ -1,3 +1,5 @@
+#include <ru>
+
 "__locale" = "sr_CS.UTF-8;Srb";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */

@@ -29,6 +29,9 @@
                                     
                                     {include description, x => $dat}
                                 </td>
+                                <td n:ifset="actions" valign="top" class="action_links" style="width: 150px">
+                                    {include actions, x => $dat}
+                                </td>
                             </tr>
                         </tbody>
                     </table>

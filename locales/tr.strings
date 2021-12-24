@@ -1,3 +1,5 @@
+#include <en>
+
 "__locale" = "tr_TR.UTF-8;Tur";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */

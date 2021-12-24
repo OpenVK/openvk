@@ -182,6 +182,8 @@
 "open_post" = "Открыть запись";
 "version_incompatibility" = "Не удалось отобразить это вложение. Возможно, база данных несовместима с текущей версией OpenVK.";
 
+"reply" = "Ответить";
+
 /* Friends */
 
 "friends" = "Друзья";
@@ -544,6 +546,33 @@
 "usages_total" = "Количество использований";
 "usages_left" = "Осталось использований";
 
+"points_transfer_dialog_header_1" = "Вы можете отправить в подарок или передать часть голосов другому человеку.";
+"points_transfer_dialog_header_2" = "Ваш текущий баланс:";
+
+"points_amount_one" = "1 голос";
+"points_amount_few" = "$1 голоса";
+"points_amount_many" = "$1 голосов";
+"points_amount_other" = "$1 голосов";
+
+"transfer_poins" = "Передача голосов";
+"transfer_poins_button" = "Передать голоса";
+"also_you_can_transfer_points" = "Также вы можете <a href=\"javascript:showCoinsTransferDialog($1, '$2')\">передать голоса</a> другому человеку.";
+
+"transferred_to_you" = "передал вам";
+
+"receiver_address" = "Адрес получателя";
+"coins_count" = "Количество голосов";
+"message" = "Сообщение";
+
+"failed_to_tranfer_points" = "Не удалось передать голоса";
+
+"points_transfer_successful" = "Вы успешно передали <b>$1 <a href=\"$2\">$3</a></b>.";
+"not_all_information_has_been_entered" = "Введена не вся информация.";
+"negative_transfer_value" = "Мы не можем украсть голоса у другого человека, извините.";
+"message_is_too_long" = "Сообщение слишком длинное.";
+"receiver_not_found" = "Получатель не найден.";
+"you_dont_have_enough_points" = "У вас недостаточно голосов.";
+
 /* Gifts */
 
 "gift" = "Подарок";
@@ -674,6 +703,7 @@
 "created" = "Создано";
 
 "everyone_can_create_topics" = "Все могут создавать темы";
+"display_list_of_topics_above_wall" = "Отображать список тем над стеной";
 
 "topic_changes_saved_comment" = "Обновлённый заголовок и настройки появятся на странице с темой.";
 
@@ -756,6 +786,10 @@
 "paginator_back" = "Назад";
 "paginator_page" = "Страница $1";
 "paginator_next" = "Дальше";
+
+/* About */
+
+"about_openvk" = "Об OpenVK";
 
 /* Dialogs */
 

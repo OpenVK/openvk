@@ -171,3 +171,49 @@ function setClubAdminComment(clubId, adminId, hash) {
         Function.noop
     ]);
 }
+
+function showCoinsTransferDialog(coinsCount, hash) {
+    MessageBox(tr("transfer_poins"), `
+        <div class="messagebox-content-header">
+            ${tr("points_transfer_dialog_header_1")}
+            ${tr("points_transfer_dialog_header_2")} <b>${tr("points_amount", coinsCount)}</b>
+        </div>
+        <form action="/coins_transfer" method="post" id="coins_transfer_form" style="margin-top: 30px">
+            <table cellspacing="7" cellpadding="0" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">${tr("receiver_address")}:</span>
+                        </td>
+                        <td>
+                            <input type="text" name="receiver" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">${tr("coins_count")}:</span>
+                        </td>
+                        <td>
+                            <input type="text" name="value" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">${tr("message")}:</span>
+                        </td>
+                        <td>
+                            <textarea name="message" style="width: 100%;"></textarea>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <input type="hidden" name="hash" value="${hash}" />
+        </form>
+    `, [tr("transfer_poins_button"), tr("cancel")], [
+        () => {
+            document.querySelector("#coins_transfer_form").submit();
+        },
+        Function.noop
+    ]);
+}
+
