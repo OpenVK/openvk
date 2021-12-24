@@ -87,7 +87,7 @@ final class UserPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         else {
             $this->template->user = $user;
-            $this->template->page = $this->queryParam("p") ?? 1;
+            $this->template->page = (int) ($this->queryParam("p") ?? 1);
             $this->template->admin = $this->queryParam("act") == "managed";
         }
     }
