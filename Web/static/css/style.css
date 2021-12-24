@@ -908,7 +908,7 @@ table.User {
 }
 
 .messenger-app--messages---message.unread {
-    background-color: #dcdcdc;
+    background-color: #ededed;
     padding: 5px;
     margin: -5px;
     padding-bottom: 1.2rem;
