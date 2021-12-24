@@ -540,6 +540,8 @@ class User extends RowModel
         $manager = $club->getManager($this);
         if(!is_null($manager))
             return $manager->isClubPinned();
+
+        return false;
     }
 
     function getMeetings(int $page = 1): \Traversable

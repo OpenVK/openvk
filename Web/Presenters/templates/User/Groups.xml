@@ -51,9 +51,9 @@
     {$x->getDescription()}
 {/block}
 
-{var clubPinned = $thisUser->isClubPinned($x)}
-{if $x->canBeModifiedBy($thisUser ?? NULL) || $clubPinned || $thisUser->getPinnedClubCount() <= 10}
-    {block actions}
+{block actions}
+    {var clubPinned = $thisUser->isClubPinned($x)}
+    {if $x->canBeModifiedBy($thisUser ?? NULL) && ($clubPinned || $thisUser->getPinnedClubCount() <= 10)}
         <a class="profile_link" href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
             {if $clubPinned}
                 {_remove_from_left_menu}
@@ -61,5 +61,5 @@
                 {_add_to_left_menu}
             {/if}
         </a>
-    {/block}
-{/if}
+    {/if}
+{/block}
