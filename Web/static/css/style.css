@@ -867,7 +867,6 @@ table.User {
     display: flex;
     padding: 8px;
     cursor: pointer;
-    width: 611px;
     margin-left: 1px;
     border-bottom: 1px solid #d6d6d6;
 }
