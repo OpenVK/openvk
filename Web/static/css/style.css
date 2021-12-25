@@ -19,7 +19,7 @@ span {
     font-weight: bold;
 }
 
-.nobold {
+.nobold, nobold {
     font-weight: normal;
     color: gray;
 }
@@ -257,23 +257,29 @@ a {
 
 .album-photo {
     position: relative;
-    background-color: darkgrey;
-    margin: 4pt;
-    width: calc(33% - 10pt);
-    height: 82px;
+    width: 25%;
+    max-height: 140px;
+    margin-bottom: 8px;
     text-align: center;
-    vertical-align: text-top;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .album-photo img {
-    width: 100%;
-    max-height: 82px;
+    width: unset;
+    max-height: 120px !important;
+    max-width: 83%;
     vertical-align: top;
+    border: 1px #ccc solid;
+    padding: 8px;
+    background-color: #fff;
 }
 
 .album-photo > .album-photo--delete {
     position: absolute;
     right: 0;
+    top: 0;
     padding: 5px;
     margin: 4px;
     color: #fff;
@@ -287,6 +293,11 @@ a {
 
 .album-photo:hover > .album-photo--delete {
     opacity: 1;
+}
+
+.album-flex {
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .name-checkmark {
@@ -307,12 +318,34 @@ a {
     cursor: pointer;
 }
 
+.profile_link_form {
+    margin-bottom: 0;
+}
+
 #profile_links {
     margin: 10px 0;
 }
 
 #profile_link:hover, .profile_link:hover {
     background: #ECECEC;
+}
+
+.action_links > .profile_link, .action_links > .profile_link_form > .profile_link {
+    width: 150px;
+}
+
+.profile_link.disable > a, .profile_link.disable {
+    cursor: not-allowed;
+    color: grey;
+}
+
+.profile_link.loading > a::after, .profile_link.loading::after {
+    content: "";
+    display: inline-block;
+    background-image: url('/assets/packages/static/openvk/img/loading_mini.gif');
+    width: 30px;
+    height: 7px;
+    margin-left: 5px;
 }
 
 .page_footer {
@@ -683,6 +716,44 @@ span {
     max-height: 63px;
 }
 
+.content_list {
+    display: flex;
+    width: 200px;
+    flex-wrap: wrap;
+}
+
+.content_list.long {
+    width: 397px;
+}
+
+.content_list .cl_element {
+    width: 33%;
+}
+
+.content_list.long .cl_element {
+    width: 16.5%;
+}
+
+.content_list .cl_element .cl_avatar {
+    padding: 7px 7px 0 7px;
+    text-align: center;
+}
+
+.content_list .cl_element .cl_name {
+    padding: 0 3px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.content_list .cl_element .cl_name .cl_lname {
+    font-size: 7pt;
+}
+
+.ava {
+    width: 45px;
+}
+
 table.User {
     vertical-align: text-top;
 }
@@ -694,6 +765,10 @@ table.User {
     border-top: #EBEBEB solid 1px;
     margin-left: -12px;
     margin-bottom: -12px;
+}
+
+.container_gray.bottom {
+    border-bottom: #ebebeb solid 1px;
 }
 
 #auth .container_gray {
@@ -847,7 +922,7 @@ table.User {
 }
 
 .messenger-app--messages---message.unread {
-    background-color: #dcdcdc;
+    background-color: #ededed;
     padding: 5px;
     margin: -5px;
     padding-bottom: 1.2rem;
@@ -1597,4 +1672,99 @@ body.scrolled .toTop:hover {
     padding: 10px;
     margin: 5px;
     border: 1px solid #C0CAD5;
+}
+
+.header_search {
+    background: #f7f7f7;
+    width: 607px;
+    padding: 10px;
+    border-bottom: 1px solid #e1e1e1;
+}
+
+.header_search_inputbt {
+    padding: 10px;
+    border-top: 1px solid #ebebeb;
+    display: flex;
+    margin-bottom: 0;
+}
+
+.header_search_input {
+    border: 1px solid #C0CAD5;
+    padding: 3px;
+    padding-left: 19px;
+    font-size: 11px;
+    font-family: tahoma, verdana, arial, sans-serif;
+    width: 549px;
+    background: #fff url('/assets/packages/static/openvk/img/search_icon.png') no-repeat;
+    background-position-x: 4px;
+    background-position-y: 4px;
+}
+
+.button_search {
+    border-radius: 2px;
+    border: #595959;
+    font-size: 11px;
+    outline: none;
+    white-space: nowrap;
+    background: #595959;
+    background-position: 0px -16px;
+    color: #fff;
+    padding: 4px 8px 4px;
+    text-shadow: 0 1px 0 #686868;
+    cursor: pointer;
+    text-decoration: none;
+    margin-left: 10px;
+    width: 7.5%;
+}
+
+.content_search {
+    width: 607px;
+}
+
+.content_search_list {
+    display: flex;
+    width: 100%;
+    padding: 10px;
+}
+
+.content_search_list:hover {
+    background: #f5f5f5;
+}
+
+.content_search_list_ava img{
+    width: 75px;
+}
+
+.content_search_list_ava{
+    width: 85px;
+}
+
+.content_search_list_name_h4 {
+    color: #2b587a;
+    font-weight: bold;
+}
+
+.content_search_list_span {
+    color: #7b7b7b;
+    margin-top: 5px;
+}
+
+.pinned-mark {
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    overflow: auto;
+    background: url("/assets/packages/static/openvk/img/pin.png") no-repeat 0px 0px;
+    vertical-align: middle;
+}
+
+.topic-list-item {
+    border-bottom: #e6e6e6 solid 1px;
+    padding: 4px;
+}
+
+.messagebox-content-header {
+    background: #F7F7F7;
+    margin: -20px;
+    padding: 10px;
 }

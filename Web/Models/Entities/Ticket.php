@@ -1,13 +1,8 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
 use openvk\Web\Util\DateTime;
-use Nette\Database\Table\ActiveRow;
 use openvk\Web\Models\RowModel;
-use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Repositories\Users;
-use Chandler\Database\DatabaseConnection as DB;
-use Nette\InvalidStateException as ISE;
-use Nette\Database\Table\Selection;
 
 class Ticket extends RowModel
 {
@@ -22,14 +17,7 @@ class Ticket extends RowModel
     
     function getStatus(): string
     {
-        if ($this->getRecord()->type === 0) 
-        {
-            return tr("support_status_0");
-        } elseif ($this->getRecord()->type === 1) {
-            return tr("support_status_1");
-        } elseif ($this->getRecord()->type === 2) {
-            return tr("support_status_2");
-        }
+        return tr("support_status_" . $this->getRecord()->type);
     }
     
     function getType(): int
@@ -58,22 +46,17 @@ class Ticket extends RowModel
     
     function isDeleted(): bool
     {
-        if ($this->getRecord()->deleted === 0) 
-        {
-            return false;
-        } elseif ($this->getRecord()->deleted === 1) {
-            return true;
-        }
-    }
-    
-    function authorId(): int
-    {
-        return $this->getRecord()->user_id;
+        return (bool) $this->getRecord()->deleted;
     }
     
     function getUser(): user
     {
         return (new Users)->get($this->getRecord()->user_id);
+    }
+
+    function getUserId(): int
+    {
+        return $this->getRecord()->user_id;
     }
 
     function isAd(): bool /* Эх, костыли... */

@@ -9,6 +9,8 @@ use openvk\Web\Models\Repositories\Albums;
 use openvk\Web\Models\Repositories\Videos;
 use openvk\Web\Models\Repositories\Notes;
 use openvk\Web\Models\Repositories\Vouchers;
+use openvk\Web\Util\Validator;
+use openvk\Web\Models\Entities\Notifications\CoinsTransferNotification;
 use Chandler\Security\Authenticator;
 use lfkeitel\phptotp\{Base32, Totp};
 use chillerlan\QRCode\{QRCode, QROptions};
@@ -53,6 +55,8 @@ final class UserPresenter extends OpenVKPresenter
         $page = abs($this->queryParam("p") ?? 1);
         if(!$user)
             $this->notFound();
+        elseif (!$user->getPrivacyPermission('friends.read', $this->user->identity ?? NULL))
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         else
             $this->template->user = $user;
         
@@ -77,11 +81,13 @@ final class UserPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         
         $user = $this->users->get($id);
-        if(!$user) {
+        if(!$user)
             $this->notFound();
-        } else {
+        elseif (!$user->getPrivacyPermission('groups.read', $this->user->identity ?? NULL))
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        else {
             $this->template->user = $user;
-            $this->template->page = $this->queryParam("p") ?? 1;
+            $this->template->page = (int) ($this->queryParam("p") ?? 1);
             $this->template->admin = $this->queryParam("act") == "managed";
         }
     }
@@ -127,87 +133,99 @@ final class UserPresenter extends OpenVKPresenter
         if(!$id)
             $this->notFound();
         
-            $user = $this->users->get($id);
-            if($_SERVER["REQUEST_METHOD"] === "POST") {
-                $this->willExecuteWriteAction();
-                
-                if($_GET['act'] === "main" || $_GET['act'] == NULL) {
-                    $user->setFirst_Name(empty($this->postParam("first_name")) ? $user->getFirstName() : $this->postParam("first_name"));
-                    $user->setLast_Name(empty($this->postParam("last_name")) ? "" : $this->postParam("last_name"));
-                    $user->setPseudo(empty($this->postParam("pseudo")) ? NULL : $this->postParam("pseudo"));
-                    $user->setStatus(empty($this->postParam("status")) ? NULL : $this->postParam("status"));
-                    if (strtotime($this->postParam("birthday")) < time())
-                    $user->setBirthday(strtotime($this->postParam("birthday")));
+        $user = $this->users->get($id);
+        if($_SERVER["REQUEST_METHOD"] === "POST") {
+            $this->willExecuteWriteAction();
+            
+            if($_GET['act'] === "main" || $_GET['act'] == NULL) {
+                $user->setFirst_Name(empty($this->postParam("first_name")) ? $user->getFirstName() : $this->postParam("first_name"));
+                $user->setLast_Name(empty($this->postParam("last_name")) ? "" : $this->postParam("last_name"));
+                $user->setPseudo(empty($this->postParam("pseudo")) ? NULL : $this->postParam("pseudo"));
+                $user->setStatus(empty($this->postParam("status")) ? NULL : $this->postParam("status"));
+                if (strtotime($this->postParam("birthday")) < time())
+                $user->setBirthday(strtotime($this->postParam("birthday")));
 
-                    if ($this->postParam("marialstatus") <= 8 && $this->postParam("marialstatus") >= 0)
-                    $user->setMarital_Status($this->postParam("marialstatus"));
+                if ($this->postParam("marialstatus") <= 8 && $this->postParam("marialstatus") >= 0)
+                $user->setMarital_Status($this->postParam("marialstatus"));
+                
+                if ($this->postParam("politViews") <= 9 && $this->postParam("politViews") >= 0)
+                $user->setPolit_Views($this->postParam("politViews"));
+                
+                if ($this->postParam("gender") <= 1 && $this->postParam("gender") >= 0)
+                $user->setSex($this->postParam("gender"));
+                
+                if(!empty($this->postParam("phone")) && $this->postParam("phone") !== $user->getPhone()) {
+                    if(!OPENVK_ROOT_CONF["openvk"]["credentials"]["smsc"]["enable"])
+                        $this->flashFail("err", tr("error_segmentation"), "котлетки");
                     
-                    if ($this->postParam("politViews") <= 9 && $this->postParam("politViews") >= 0)
-                    $user->setPolit_Views($this->postParam("politViews"));
+                    $code = $user->setPhoneWithVerification($this->postParam("phone"));
                     
-                    if ($this->postParam("gender") <= 1 && $this->postParam("gender") >= 0)
-                    $user->setSex($this->postParam("gender"));
-                    
-                    if(!empty($this->postParam("phone")) && $this->postParam("phone") !== $user->getPhone()) {
-                        if(!OPENVK_ROOT_CONF["openvk"]["credentials"]["smsc"]["enable"])
-                            $this->flashFail("err", tr("error_segmentation"), "котлетки");
-                        
-                        $code = $user->setPhoneWithVerification($this->postParam("phone"));
-                        
-                        if(!Sms::send($this->postParam("phone"), "OPENVK - Your verification code is: $code"))
-                            $this->flashFail("err", tr("error_segmentation"), "котлетки: Remote err!");
-                    }
-                } elseif($_GET['act'] === "contacts") {
+                    if(!Sms::send($this->postParam("phone"), "OPENVK - Your verification code is: $code"))
+                        $this->flashFail("err", tr("error_segmentation"), "котлетки: Remote err!");
+                }
+            } elseif($_GET['act'] === "contacts") {
+                if(empty($this->postParam("email_contact")) || Validator::i()->emailValid($this->postParam("email_contact")))
                     $user->setEmail_Contact(empty($this->postParam("email_contact")) ? NULL : $this->postParam("email_contact"));
-                    $user->setTelegram(empty($this->postParam("telegram")) ? NULL : ltrim($this->postParam("telegram"), "@"));
-                    $user->setCity(empty($this->postParam("city")) ? NULL : $this->postParam("city"));
-                    $user->setAddress(empty($this->postParam("address")) ? NULL : $this->postParam("address"));
-                    
-                    $website = $this->postParam("website") ?? "";
-                    if(empty($website))
-                        $user->setWebsite(NULL);
-                    else
-                        $user->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website);
-                } elseif($_GET['act'] === "interests") {
-                    $user->setInterests(empty($this->postParam("interests")) ? NULL : ovk_proc_strtr($this->postParam("interests"), 300));
-                    $user->setFav_Music(empty($this->postParam("fav_music")) ? NULL : ovk_proc_strtr($this->postParam("fav_music"), 300));
-                    $user->setFav_Films(empty($this->postParam("fav_films")) ? NULL : ovk_proc_strtr($this->postParam("fav_films"), 300));
-                    $user->setFav_Shows(empty($this->postParam("fav_shows")) ? NULL : ovk_proc_strtr($this->postParam("fav_shows"), 300));
-                    $user->setFav_Books(empty($this->postParam("fav_books")) ? NULL : ovk_proc_strtr($this->postParam("fav_books"), 300));
-                    $user->setFav_Quote(empty($this->postParam("fav_quote")) ? NULL : ovk_proc_strtr($this->postParam("fav_quote"), 300));
-                    $user->setAbout(empty($this->postParam("about")) ? NULL : ovk_proc_strtr($this->postParam("about"), 300));
-                } elseif($_GET['act'] === "status") {
-                    if(mb_strlen($this->postParam("status")) > 255) {
-                        $statusLength = (string) mb_strlen($this->postParam("status"));
-                        $this->flashFail("err", "Ошибка", "Статус слишком длинный ($statusLength символов вместо 255 символов)");
-                    }
+                else
+                    $this->flashFail("err", tr("invalid_email_address"), tr("invalid_email_address_comment"));
 
-                    $user->setStatus(empty($this->postParam("status")) ? NULL : $this->postParam("status"));
-                    $user->save();
-
-                    header("HTTP/1.1 302 Found");
-                    header("Location: /id" . $user->getId());
-                    exit;
-                }
-                
-                try {
-                    $user->save();
-                } catch(\PDOException $ex) {
-                    if($ex->getCode() == 23000)
-                        $this->flashFail("err", tr("error"), tr("error_shorturl"));
+                $telegram = $this->postParam("telegram");
+                if(empty($telegram) || Validator::i()->telegramValid($telegram))
+                    if(strpos($telegram, "t.me/") === 0)
+                        $user->setTelegram(empty($telegram) ? NULL : substr($telegram, 5));
                     else
-                        throw $ex;
-                }
+                        $user->setTelegram(empty($telegram) ? NULL : ltrim($telegram, "@"));
+                else
+                    $this->flashFail("err", tr("invalid_telegram_name"), tr("invalid_telegram_name_comment"));
+
+                $user->setCity(empty($this->postParam("city")) ? NULL : $this->postParam("city"));
+                $user->setAddress(empty($this->postParam("address")) ? NULL : $this->postParam("address"));
                 
-                $this->flash("succ", tr("changes_saved"), tr("changes_saved_comment"));
+                $website = $this->postParam("website") ?? "";
+                if(empty($website))
+                    $user->setWebsite(NULL);
+                else
+                    $user->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website);
+            } elseif($_GET['act'] === "interests") {
+                $user->setInterests(empty($this->postParam("interests")) ? NULL : ovk_proc_strtr($this->postParam("interests"), 300));
+                $user->setFav_Music(empty($this->postParam("fav_music")) ? NULL : ovk_proc_strtr($this->postParam("fav_music"), 300));
+                $user->setFav_Films(empty($this->postParam("fav_films")) ? NULL : ovk_proc_strtr($this->postParam("fav_films"), 300));
+                $user->setFav_Shows(empty($this->postParam("fav_shows")) ? NULL : ovk_proc_strtr($this->postParam("fav_shows"), 300));
+                $user->setFav_Books(empty($this->postParam("fav_books")) ? NULL : ovk_proc_strtr($this->postParam("fav_books"), 300));
+                $user->setFav_Quote(empty($this->postParam("fav_quote")) ? NULL : ovk_proc_strtr($this->postParam("fav_quote"), 300));
+                $user->setAbout(empty($this->postParam("about")) ? NULL : ovk_proc_strtr($this->postParam("about"), 300));
+            } elseif($_GET['act'] === "status") {
+                if(mb_strlen($this->postParam("status")) > 255) {
+                    $statusLength = (string) mb_strlen($this->postParam("status"));
+                    $this->flashFail("err", "Ошибка", "Статус слишком длинный ($statusLength символов вместо 255 символов)");
+                }
+
+                $user->setStatus(empty($this->postParam("status")) ? NULL : $this->postParam("status"));
+                $user->save();
+
+                header("HTTP/1.1 302 Found");
+                header("Location: /id" . $user->getId());
+                exit;
             }
             
-            $this->template->mode = in_array($this->queryParam("act"), [
-                "main", "contacts", "interests", "avatar"
-            ]) ? $this->queryParam("act")
-               : "main";
+            try {
+                $user->save();
+            } catch(\PDOException $ex) {
+                if($ex->getCode() == 23000)
+                    $this->flashFail("err", tr("error"), tr("error_shorturl"));
+                else
+                    throw $ex;
+            }
             
-            $this->template->user = $user;
+            $this->flash("succ", tr("changes_saved"), tr("changes_saved_comment"));
+        }
+        
+        $this->template->mode = in_array($this->queryParam("act"), [
+            "main", "contacts", "interests", "avatar"
+        ]) ? $this->queryParam("act")
+            : "main";
+        
+        $this->template->user = $user;
     }
     
     function renderVerifyPhone(): void
@@ -358,6 +376,7 @@ final class UserPresenter extends OpenVKPresenter
                     "menu_notatoj"  => "notes",
                     "menu_grupoj"   => "groups",
                     "menu_novajoj"  => "news",
+                    "menu_ligiloj"  => "links",
                 ];
                 foreach($settings as $checkbox => $setting)
                     $user->setLeftMenuItemStatus($setting, $this->checkbox($checkbox));
@@ -446,5 +465,43 @@ final class UserPresenter extends OpenVKPresenter
         $this->user->identity->set2fa_secret(NULL);
         $this->user->identity->save();
         $this->flashFail("succ", tr("information_-1"), tr("two_factor_authentication_disabled_message"));
+    }
+
+    function renderCoinsTransfer(): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        $receiverAddress = $this->postParam("receiver");
+        $value           = (int) $this->postParam("value");
+        $message         = $this->postParam("message");
+
+        if(!$receiverAddress || !$value)
+            $this->flashFail("err", tr("failed_to_tranfer_points"), tr("not_all_information_has_been_entered"));
+
+        if($value < 0)
+            $this->flashFail("err", tr("failed_to_tranfer_points"), tr("negative_transfer_value"));
+
+        if(iconv_strlen($message) > 255)
+            $this->flashFail("err", tr("failed_to_tranfer_points"), tr("message_is_too_long"));
+
+        $receiver = $this->users->getByAddress($receiverAddress);
+        if(!$receiver)
+        $this->flashFail("err", tr("failed_to_tranfer_points"), tr("receiver_not_found"));
+
+        if($this->user->identity->getCoins() < $value)
+            $this->flashFail("err", tr("failed_to_tranfer_points"), tr("you_dont_have_enough_points"));
+
+        if($this->user->id !== $receiver->getId()) {
+            $this->user->identity->setCoins($this->user->identity->getCoins() - $value);
+            $this->user->identity->save();
+
+            $receiver->setCoins($receiver->getCoins() + $value);
+            $receiver->save();
+
+            (new CoinsTransferNotification($receiver, $this->user->identity, $value, $message))->emit();
+        }
+
+        $this->flashFail("succ", tr("information_-1"), tr("points_transfer_successful", tr("points_amount", $value), $receiver->getURL(), htmlentities($receiver->getCanonicalName())));
     }
 }

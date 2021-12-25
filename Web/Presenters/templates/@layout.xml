@@ -96,10 +96,12 @@
                         <a href="/search?type=groups">{_"header_groups"}</a>
                     </div>
                     <div class="link">
-                        <a href="/donate">{_"header_donate"}</a>
+                        <a href="/search">{_"header_search"}</a>
                     </div>
                     <div class="link">
-                        <a href="/search">{_"header_search"}</a>
+                        <a href="/invite">
+                            {_"header_invite"}
+                        </a>
                     </div>
                     <div class="link">
                         <a href="/support">
@@ -166,24 +168,25 @@
                         <a href="/settings" class="link">{_"my_settings"}</a>
                         {var canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
                         {var canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
-                        {var menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0}
+                        {var menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
                         <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $menuLinksAvaiable" class="menu_divider"></div>
                         {if $canAccessAdminPanel}
                             <a href="/admin" class="link">Админ-панель</a>
                         {/if}
                         {if $canAccessHelpdesk}
                             <a href="/support/tickets" class="link">Helpdesk
-                                {if $helpdeskTicketAnsweredCount > 0}
+                                {if $helpdeskTicketNotAnsweredCount > 0}
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
                                 {/if}
                             </a>
                             <a href="/admin/reports" class="link">Reports</a>
                         {/if}
                         <a
+                          n:if="$thisUser->getLeftMenuItemStatus('links')"
                           n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem"
                           href="{$menuItem['url']}"
                           target="_blank"
-                          class="link">{$menuItem["name"]}</a>
+                          class="link">{strpos($menuItem["name"], "@") === 0 ? tr(substr($menuItem["name"], 1)) : $menuItem["name"]}</a>
                         <div id="_groupListPinnedGroups">
                             <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
                             <a
@@ -202,8 +205,8 @@
                                 style="max-width: 100%; margin-top: 50px;" />
                         </a>
                     {else}
-                        <a href="/support" class="link">Поддержка</a>
-                        <a href="/logout" class="link">Выйти</a>
+                        <a href="/support" class="link">{_"menu_support"}</a>
+                        <a href="/logout?hash={urlencode($csrfToken)}" class="link">{_"menu_logout"}</a>
                     {/if}
                 {else}
                     <form id="fastLogin" action="/login" method="POST" enctype="multipart/form-data">

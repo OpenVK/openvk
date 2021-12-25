@@ -6,6 +6,28 @@
 {/block}
 
 {block content}
+<script>
+  function markAnswer(id, mark) {
+    let url = "/support/comment/" + id + "/rate/" + mark + "?hash=" + {urlencode($csrfToken)};
+    $.ajax(url, {
+        error: errorHandler,
+        success: success(id, mark)
+    });
+  }
+
+  function success(id, mark) {
+      if(mark == 1)
+          document.getElementById("markText-" + id).innerHTML = {_support_good_answer_user};
+      else
+          document.getElementById("markText-" + id).innerHTML = {_support_bad_answer_user};
+
+      document.getElementById("markLinks-" + id).remove();
+  }
+
+  function errorHandler(id, mark) {
+      document.getElementById("markText-" + id).innerHTML = {_error};
+  }
+</script>
 {if $ticket->isDeleted() == 0 }
 <div class="post-author">
     <a href="#" style="font-size:13px;">
@@ -90,11 +112,34 @@
                        {$comment->getText()|noescape}
                    {/if}
                </div>
+
                {if $comment->getUType() === 0}
-               <div class="post-menu">
-                  <a href="/support/comment/{$comment->getId()}/delete">{_delete}</a>
-               </div>
+                <div class="post-menu">
+                    <a href="/support/comment/{$comment->getId()}/delete">{_delete}</a>
+                </div>
                {/if}
+
+               {if $comment->getUType() === 1}
+                 <div class="post-menu">
+                    {var isLikedByUser = $comment->isLikedByUser()}
+                    <strong id="markText-{$comment->getId()}">
+                      {if !is_null($isLikedByUser)}
+                        {if $comment->isLikedByUser()}
+                            {_support_good_answer_user}
+                        {else}
+                            {_support_bad_answer_user}
+                        {/if}
+                      {/if}
+                    </strong>
+                    <div id="markLinks-{$comment->getId()}">
+                        {if is_null($isLikedByUser)}
+                            <a onClick="markAnswer({$comment->getId()}, 1)">{_support_rate_good_answer}</a>
+                            |
+                            <a onClick="markAnswer({$comment->getId()}, 2)">{_support_rate_bad_answer}</a>
+                        {/if}
+                    </div>
+                  {/if}
+                 </div>
             </div>
          </td>
       </tr>

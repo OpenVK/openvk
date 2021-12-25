@@ -3,6 +3,7 @@
 {block title}{$user->getCanonicalName()}{/block} 
 
 {block headIncludes}
+    {if $user->getPrivacyPermission('page.read', $thisUser ?? NULL)}
     <!-- openGraph -->
     <meta property="og:title" content="{$user->getCanonicalName()}" />
     <meta property="og:url" content="http://{$_SERVER['HTTP_HOST']}{$user->getURL()}" />
@@ -22,6 +23,9 @@
             "url": {('http://') . $_SERVER['HTTP_HOST'] . $user->getURL()}
         }
     </script>
+    {else} 
+    <meta name="robots" content="noindex, noarchive">
+    {/if}
 {/block}
 
 {block header}
@@ -87,25 +91,25 @@
                     </a>
                 {/if}
                 
-                <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce']" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
-                
+                <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() == 0" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
+
                 {var subStatus = $user->getSubscriptionStatus($thisUser)}
                 {if $subStatus === 0}
-                    <form action="/setSub/user" method="post">
+                    <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="add" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
                         <input type="submit" class="profile_link" value="{_"friends_add"}" />
                     </form>
                 {elseif $subStatus === 1}
-                    <form action="/setSub/user" method="post">
+                    <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="add" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
                         <input type="submit" class="profile_link" value="{_"friends_accept"}" />
                     </form>
                 {elseif $subStatus === 2}
-                    <form action="/setSub/user" method="post">
+                    <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="rem" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
@@ -113,7 +117,7 @@
                     </form>
                 {elseif $subStatus === 3}
                     <a href="/im?sel={$user->getId()}" class="profile_link">{_"send_message"}</a>
-                    <form action="/setSub/user" method="post">
+                    <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="rem" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
@@ -121,6 +125,7 @@
                     </form>
                 {/if}
             {/if}
+            <a n:if="$user->getFollowersCount() > 0" href="/friends{$user->getId()}?act=incoming" class="profile_link">{tr("followers", $user->getFollowersCount())}</a>
         </div>
         <div n:if="isset($thisUser) && !$thisUser->prefersNotToSeeRating()" class="profile-hints">
             {var completeness = $user->getProfileCompletenessReport()}
@@ -146,39 +151,15 @@
                 </a>
                 <a n:if="in_array('telegram', $completeness->unfilled)" href="/edit?act=contacts">
                     <img src="/assets/packages/static/openvk/img/icon2.gif" />
-                    Telegram (+10%)
+                    Telegram (+15%)
                 </a>
                 <a n:if="in_array('status', $completeness->unfilled)" href="/edit">
                     <img src="/assets/packages/static/openvk/img/icon3.gif" />
-                    {_status} (+10%)
+                    {_status} (+15%)
                 </a>
             {/if}
         </div>
         <br />
-        <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0">
-            <div class="content_title_expanded" onclick="hidePanel(this, {$giftCount});">
-                {_gifts}
-            </div>
-            <div>
-                <div class="content_subtitle">
-                    {tr("gifts", $giftCount)}
-                    <div style="float:right;">
-                        <a href="/gifts{$user->getId()}">{_all_title}</a>
-                    </div>
-                </div>
-                <div class="ovk-avView">
-                    <div class="ovk-avView--el" n:foreach="$user->getGifts(1, 3) as $giftDescriptor">
-                        {var hideInfo = !is_null($thisUser) ? ($giftDescriptor->anon ? $thisUser->getId() !== $user->getId() : false) : false}
-                        
-                        <a href="{$hideInfo ? 'javascript:false' : $giftDescriptor->sender->getURL()}">
-                            <img class="ava"
-                                 src="{$giftDescriptor->gift->getImage(2)}"
-                                 alt="{$hideInfo ? tr('gift') : ($giftDescriptor->caption ?? tr('gift'))}" />
-                        </a>  
-                    </div>
-                </div>
-            </div>
-        </div>
         <div n:if="$user->getFriendsCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)">
             {var friendCount = $user->getFriendsCount()}
             
@@ -192,37 +173,17 @@
                         <a href="/friends{$user->getId()}">{_"all_title"}</a>
                     </div>
                 </div>
-                <div class="ovk-avView">
-                    <div class="ovk-avView--el" n:foreach="$user->getFriends(1) as $friend">
-                        <a href="{$friend->getURL()}">
-                            <img class="ava" src="{$friend->getAvatarUrl()}" />
-                        </a>
-                        <br/>
-                        <a href="{$friend->getURL()}">{$friend->getFirstName()}</a>    
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div n:if="$user->getFollowersCount() > 0">
-            {var followersCount = $user->getFollowersCount()}
-            
-            <div class="content_title_expanded" onclick="hidePanel(this, {$followersCount});">
-                {_followers}
-            </div>
-            <div>
-                <div class="content_subtitle">
-                    {tr("followers", $followersCount)}
-                    <div style="float:right;">
-                        <a href="/friends{$user->getId()}?act=incoming">{_"all_title"}</a>
-                    </div>
-                </div>
-                <div class="ovk-avView">
-                    <div class="ovk-avView--el" n:foreach="$user->getFollowers(1) as $follower">
-                        <a href="{$follower->getURL()}">
-                            <img class="ava" src="{$follower->getAvatarUrl()}" />
-                        </a>
-                        <br/>
-                        <a href="{$follower->getURL()}">{$follower->getFirstName()}</a>    
+                <div class="content_list">
+                    <div class="cl_element" n:foreach="$user->getFriends(1) as $friend">
+                        <div class="cl_avatar">
+                            <a href="{$friend->getURL()}">
+                                <img class="ava" src="{$friend->getAvatarUrl()}" />
+                            </a>
+                        </div>
+                        <a href="{$friend->getURL()}" class="cl_name">
+                            <text class="cl_fname">{$friend->getFirstName()}</text>
+                            <text class="cl_lname">{$friend->getLastName()}</text>
+                        </a>    
                     </div>
                 </div>
             </div>
@@ -398,10 +359,10 @@
                             <td class="label"><span class="nobold">{_"politViews"}:</span></td>
                             <td class="data">{var $pviews = $user->getPoliticalViews()}{_"politViews_$pviews"}</td>
                         </tr>
-                        {if $user->getBirthday() > 0}
+                        {if $user->getBirthday()->timestamp() > 0}
                             <tr>
                                 <td class="label"><span class="nobold">{_"birth_date"}:</span></td>
-                                <td class="data">{date('d F Y',$user->getBirthday())},
+                                <td class="data">{$user->getBirthday()->format('%e %B %Y')},
                                 {tr("years", $user->getAge())}</td>
                             </tr>
                         {/if}
@@ -502,6 +463,35 @@
                     <div style="padding-top: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
                 {/if}
             </div>
+            </div>
+        </div>
+
+        <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0">
+            <div class="content_title_expanded" onclick="hidePanel(this, {$giftCount});">
+                {_gifts}
+            </div>
+            <div>
+                <div class="content_subtitle">
+                    {tr("gifts", $giftCount)}
+                    <div style="float:right;">
+                        {if OPENVK_ROOT_CONF['openvk']['preferences']['commerce']}
+                        <a href="/gifts?act=pick&user={$user->getId()}">{_send_gift}</a> |
+                        {/if}
+                        <a href="/gifts{$user->getId()}">{_all_title}</a>
+                    </div>
+                </div>
+                <div class="content_list long">
+                    <div class="cl_element" style="width: 25%;" n:foreach="$user->getGifts(1, 4) as $giftDescriptor">
+                        {var hideInfo = !is_null($thisUser) ? ($giftDescriptor->anon ? $thisUser->getId() !== $user->getId() : false) : false}
+                        <div class="cl_avatar">
+                            <a href="{$hideInfo ? 'javascript:false' : $giftDescriptor->sender->getURL()}">
+                                <img style="width: 70px; max-height: 70px;"
+                                    src="{$giftDescriptor->gift->getImage(2)}"
+                                    alt="{$hideInfo ? tr('gift') : ($giftDescriptor->caption ?? tr('gift'))}" />
+                            </a>  
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         

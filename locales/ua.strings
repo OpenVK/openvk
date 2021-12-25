@@ -1,3 +1,5 @@
+#include <ru>
+
 "__locale" = "uk_UA.utf8;Ukr";
 "__WinEncoding" = "Windows-1251";
 
@@ -14,6 +16,34 @@
 "password" = "Пароль";
 "registration" = "Реєстрація";
 "forgot_password" = "Забули пароль?";
+
+"login_failed" = "Не вдалося увійти";
+"invalid_username_or_password" = "Неправильне ім'я користувача або пароль. <a href='/restore.pl'>Забули пароль?</a>";
+
+"failed_to_register" = "Не вдалося зареєструватися";
+"referral_link_invalid" = "Посилання на запрошення недійсне.";
+"registration_disabled" = "Реєстрація відключена системним адміністратором.";
+"user_already_exists" = "Користувач з таким email вже існує.";
+
+"access_recovery" = "Відновлення доступу";
+"page_access_recovery" = "Відновити доступ до сторінки";
+"access_recovery_info" = "Забули пароль? Не хвилюйтеся, введіть ваші дані і ми відправимо вам email з інструкціями по відновленню аккаунта.";
+"access_recovery_info_2" = "Введіть ваш новий пароль. Всі поточні сеанси будуть припинені і токени доступу будуть анульовані.";
+"reset_password" = "Скинути пароль";
+"2fa_code_2" = "Код двофакторної аутентифікації";
+
+"password_successfully_reset" = "Ваш пароль був успішно скинутий.";
+"password_reset_email_sent" = "Якщо ви зареєстровані, Ви отримаєте інструкції на email.";
+"password_reset_error" = "Непередбачена помилка при скиданні пароля.";
+"password_reset_rate_limit_error" = "Не можна робити це так часто, вибачте.";
+
+"registration_disabled_info" = "Реєстрація відключена системним адміністратором. При можливостіпопросіть запрошення у вашого знайомого, якщо він зареєстрований на цьому сайті.";
+"registration_closed" = ".";
+"invites_you_to" = "<strong>$1</strong> запрошує вас в $2";
+
+"register_meta_desc" = "Зарегистрируйтесь в $1 прямо сейчас!";
+"register_referer_meta_title" = "$1 запрошує вас в $2!";
+"register_referer_meta_desc" = "Приєднуйтесь до $1 і безлічі інших користувачів у $2!";
 
 /* Profile information */
 
@@ -101,6 +131,8 @@
 
 /* Wall */
 
+"feed" = "Новини";
+
 "post_writes_m" = "написав";
 "post_writes_f" = "написала";
 "post_writes_g" = "опублікували";
@@ -123,6 +155,7 @@
 "wall_few" = "$1 записи";
 "wall_many" = "$1 записів";
 "wall_other" = "$1 записів";
+"publish_post" = "Додати запис";
 "view_other_comments" = "Переглянути інші коментарі";
 
 "no_comments" = "Коментарі відсутні";
@@ -132,6 +165,7 @@
 
 "attachment" = "Вкладення";
 "post_as_group" = "Від імені суспільства";
+"comment_as_group" = "Від іимені суспільства";
 "add_signature" = "Підпис автора";
 "contains_nsfw" = "Містить NSFW-контент";
 "nsfw_warning" = "Даний запис може містити контент 18+";
@@ -147,9 +181,6 @@
 "friends" = "Друзі";
 "followers" = "Підписники";
 "follower" = "Підписник";
-"login_as" = "Увійти як";
-"ban_fast" = "Заблокувати";
-"adm_notify" = "Попередити";
 "friends_add" = "Додати в друзі";
 "friends_delete" = "Видалити з друзів";
 "friends_reject" = "Скасувати заявку";
@@ -269,8 +300,6 @@
 "text_note" = "Вміст";
 "create_note" = "Створити нотатку";
 "actions" = "Дії";
-"feed" = "Новини";
-"publish_post" = "Добавити запис";
 
 "notes_zero" = "Жодної нотатки";
 "notes_one" = "Одна нотатка";
@@ -299,7 +328,6 @@
 
 "header_home" = "головна";
 "header_groups" = "групи";
-"header_donate" = "підтримати";
 "header_people" = "люди";
 "header_invite" = "запросити";
 "header_help" = "допомога";
@@ -309,17 +337,13 @@
 "header_login" = "вхід";
 "header_registration" = "реєстрація";
 
+"left_menu_donate" = "Підтримати";
+
 "footer_blog" = "блог";
 "footer_help" = "допомога";
 "footer_developers" = "розробникам";
 "footer_choose_language" = "вибрати мову";
 "footer_privacy" = "приватність";
-
-"notes_zero" = "Жодної нотатки";
-"notes_one" = "Одна нотатка";
-"notes_few" = "$1 нотатки";
-"notes_many" = "$1 нотаток";
-"notes_other" = "$1 нотаток";
 
 /* Settings */
 
@@ -387,6 +411,35 @@
 "ui_settings_rating_show" = "Показувати";
 "ui_settings_rating_hide" = "Приховувати";
 
+"two_factor_authentication" = "Двофакторна аутентифікація";
+"two_factor_authentication_disabled" = "Забезпечує надійний захист від злому: для входу на сторінку необхідно ввести код, отриманий в додатку 2FA.";
+"two_factor_authentication_enabled" = "Двофакторна аутентифікація увімкнена. Ваша сторінка захищена.";
+"two_factor_authentication_login" = "У вас увімкнена двофакторна аутентифікація. Для входу введіть код отриманий в додатку.";
+
+"two_factor_authentication_settings_1" = "Двофакторну аутентифікацію через TOTP можна використовувати навіть без Інтернету. Для цього вам знадобиться додаток для генерації кодів. Наприклад, Google Authenticator </b> для Android і iOS або вільні<b>Aegis І and OTP </b> для Android. Переконайтеся, що на телефоні точно встановлена дата і час.";
+"two_factor_authentication_settings_2" = "Використовуючи додаток для двофакторної аутентифікації, відскануйте наведений нижче QR-код:";
+"two_factor_authentication_settings_3" = "або вручну введіть секретний ключ: <b>$1</b>.";
+"two_factor_authentication_settings_4" = "Тепер введіть код, який вам надав додаток, і пароль від вашої сторінки, щоб ми могли підтвердити, що ви дійсно ви.";
+
+"connect" = "Підключити";
+"enable" = "Включити";
+"disable" = "Відключити";
+"code" = "Код";
+"2fa_code" = "Код 2FA";
+
+"incorrect_password" = "Неправильний пароль";
+"incorrect_code" = "Неправильний код";
+"incorrect_2fa_code" = "Неправильний код двофакторної аутентифікації";
+"two_factor_authentication_enabled_message" = "Двофакторна аутентифікація увімкнена";
+"two_factor_authentication_enabled_message_description" = "Вашу сторінку стало важче зламати. Рекомендуємо вам завантажити <a href='javascript:viewBackupCodes()'>резервні коди</a>";
+"two_factor_authentication_disabled_message" = "Двофакторна аутентифікація вимкнена";
+
+"view_backup_codes" = "Переглянути резервні коди";
+"backup_codes" = "Резервні коди для підтвердження входу";
+"two_factor_authentication_backup_codes_1" = "Резервні коди дозволяють підтверджувати вхід, коли у вас немає доступу до телефону, наприклад, в подорожі.";
+"two_factor_authentication_backup_codes_2" = "У вас є ще <b>10 кодів</b>, кожним кодом можна скористатися тільки один раз. Роздрукуйте їх, приберіть в надійне місце і використовуйте, коли будуть потрібні коди для підтвердження входу.";
+"two_factor_authentication_backup_codes_3" = "Ви можете отримати нові коди, якщо вони закінчуються. Дійсні тільки останні створені резервні коди.";
+
 /* Sorting */
 
 "sort_randomly" = "Сортувати випадково";
@@ -452,40 +505,7 @@
 "time_today" = "сьогодні";
 "time_yesterday" = "вчора";
 
-"privacy_setting_access_page" = "Кому в інтернеті видно мою сторінку";
-"privacy_setting_read_info" = "Кому видно основну інформацію моєї сторінки";
-"privacy_setting_see_groups" = "Кому видно мої групи і зустрічі";
-"privacy_setting_see_photos" = "Кому видно мої фотографії";
-"privacy_setting_see_videos" = "Кому видно мої відеозаписи";
-"privacy_setting_see_notes" = "Кому видно мої нотатки";
-"privacy_setting_see_friends" = "Кому видно моїх друзів";
-"privacy_setting_add_to_friends" = "Хто може назвати мене другом";
-"privacy_setting_write_wall" = "Хто може писати у мене на стіні";
-"privacy_value_anybody" = "Всі бажаючі";
-"privacy_value_anybody_dative" = "Всім бажаючим";
-"privacy_value_users" = "Користувачам OpenVK";
-"privacy_value_friends" = "Друзі";
-"privacy_value_friends_dative" = "Друзям";
-"privacy_value_only_me_and_super_capite" = "Тільки я";
-"privacy_value_only_me_and_super_capite_dative" = "Тільки мені";
-"privacy_value_super_capite" = "Ніхто";
-
-"your_email_address" = "Адрес Вашої електронної пошти";
-"your_page_address" = "Адрес Вашої сторінки";
-"page_address" = "Адрес сторінки";
-"current_email_address" = "Поточний адрес";
-"page_id" = "ID сторінки";
-"you_can_also" = "Ви також зможете";
-"delete_your_page" = "видалили свою сторінку";
-"delete_album" = "видалити альбом";
-
-"ui_settings_interface" = "Інтерфейс";
-"ui_settings_sidebar" = "Ліве меню";
-"ui_settings_rating" = "Рейтинг";
-"ui_settings_rating_show" = "Показувати";
-"ui_settings_rating_hide" = "Приховувати";
-
-"points" = "Голоса";
+"points" = "Голоси";
 "points_count" = "голосів";
 "on_your_account" = "на вашому рахунку";
 
@@ -535,6 +555,8 @@
 "coins_many" = "$1 голосів";
 "coins_other" = "$1 голосів";
 
+"users_gifts" = "Подарунки";
+
 /* Support */
 
 "support_opened" = "Відкриті";
@@ -563,6 +585,11 @@
 
 "author" = "Автор";
 
+/* Invite */
+"invite" = "Запросити";
+"you_can_invite" = "Ви можете запросити своїх друзів або знайомих в мережу за допомогою індивідуального посилання:";
+"you_can_invite_2" = "Додайте це посилання до вашого повідомлення. Користувач зареєструється, і він відразу з'явиться у вас в друзях.";
+
 /* Errors */
 
 "error_1" = "Некоректний запит";
@@ -576,31 +603,64 @@
 "no_data_description" = "У цьому поданні відсутні дані.";
 
 "error" = "Помилка";
-"error_shorturl" = "Даний короткий адрес вже занятий.";
+"error_shorturl" = "Цей короткий адрес вже зайнятий.";
 "error_segmentation" = "Помилка сегментації";
 "error_upload_failed" = "Не вдалось завантажити фото";
 "error_old_password" = "Старий пароль не співпадає";
 "error_new_password" = "Нові паролі не співпадають";
 "error_shorturl_incorrect" = "Короткий адрес має некоректний формат.";
+"error_repost_fail" = "Не вдалося поділитися записом";
 
 "forbidden" = "Помилка доступу";
-"forbidden_comment" = "Налаштування приватності цього користувача не дозволяють вам дивитись на його сторінку.";
+"forbidden_comment" = "Налаштування приватності цього користувача не дозволяють вам дивитися на його сторінку.";
 
 "changes_saved" = "Зміни збережені";
 "changes_saved_comment" = "Нові дані з'являться на вашій сторінці";
 
 "photo_saved" = "Фотографія збережена";
-"photo_saved_comment" = "Нова фотограція профілю появиться у вас на сторінці";
+"photo_saved_comment" = "Нове зображення профілю з'явиться у вас на сторінці";
+
+"shared_succ" = "Запис з'явиться на вашій стіні. Натисніть на повідомлення, щоб перейти до своєї стіни.";
+
+"invalid_email_address" = "Неправильна Email адреса";
+"invalid_email_address_comment" = "Email, який ви ввели, не є коректним.";
+
+"invalid_telegram_name" = "Неправильне ім'я Telegram аккаунта";
+"invalid_telegram_name_comment" = "Ви ввели неправильне ім'я облікового запису Telegram.";
+
+"invalid_birth_date" = "Неправильна дата народження";
+"invalid_birth_date_comment" = "Дата народження, яку ви ввели, не є коректною.";
+
+"token_manipulation_error" = "Помилка маніпулювання токеном";
+"token_manipulation_error_comment" = "Токен недійсний або його термін дії закінчився";
+
+"profile_changed" = "Профіль змінено";
+"profile_changed_comment" = "Ваш активний профіль було змінено.";
+"profile_not_found" = "Користувач не знайдений.";
+
+"suspicious_registration_attempt" = "Підозріла спроба реєстрації";
+"suspicious_registration_attempt_comment" = "Ви намагалися зареєструватися з підозрілого місця.";
 
 /* Admin actions */
 
-"login_as" = "Зайти як $1";
+"login_as" = "Увійти як $1";
 "manage_user_action" = "Керування користувачем";
 "ban_user_action" = "Заблокувати користувача";
 "warn_user_action" = "Попередити користувача";
 
-/* Paginator */
+/* Paginator (deprecated) */
 
 "paginator_back" = "Назад";
 "paginator_page" = "Сторінка $1";
 "paginator_next" = "Далі";
+
+/* Dialogs */
+
+"ok" = "ОК";
+"yes" = "Так";
+"no" = "Ні";
+"cancel" = "Скасування";
+"edit_action" = "Змінити";
+
+"warning" = "Увага";
+"question_confirm" = "Цю дію не можна скасувати. Ви дійсно впевнені в тому, що хочете зробити?";

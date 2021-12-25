@@ -10,7 +10,8 @@
             <td width="54" valign="top">
                 <img
                     src="{$author->getAvatarURL()}"
-                    width="{ifset $compact}25{else}50{/ifset}" />
+                    width="{ifset $compact}25{else}50{/ifset}" 
+                    {ifset $compact}class="cCompactAvatars"{/ifset} />
                         {if !$post->isPostedOnBehalfOfGroup() && !$compact}
                             <span n:if="$author->isOnline()" class="post-online">
                                 {_online}
@@ -25,6 +26,22 @@
                         </b>
                     </a>
                     {if $author->isVerified()}<img class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">{/if}
+                    {if ($onWallOf ?? false) &&!$post->isPostedOnBehalfOfGroup() && $post->getOwnerPost() !== $post->getTargetWall()}
+                        {var wallId  = $post->getTargetWall()}
+                        {var wallURL = $wallId > -1 ? "/id$wallId" : "/club" . abs($wallId)}
+                        на
+                        <a href="{$wallURL}">
+                            <b>
+                                {if isset($thisUser) && $thisUser->getId() === $wallId}
+                                    вашей
+                                {/if}
+                                стене
+                                {if $wallId < 0}
+                                    группы
+                                {/if}
+                            </b>
+                        </a>
+                    {/if}
                     {ifset $compact}<br>
                     <a href="/wall{$post->getPrettyId()}" class="date">
                         {$post->getPublicationTime()}

@@ -130,6 +130,16 @@ class Club extends RowModel
         return $this->getRecord()->administrators_list_display;
     }
     
+    function isEveryoneCanCreateTopics(): bool
+    {
+        return (bool) $this->getRecord()->everyone_can_create_topics;
+    }
+
+    function isDisplayTopicsAboveWallEnabled(): bool
+    {
+        return (bool) $this->getRecord()->display_topics_above_wall;
+    }
+
     function getType(): int
     {
         return $this->getRecord()->type;

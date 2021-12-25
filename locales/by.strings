@@ -1,3 +1,5 @@
+#include <ru>
+
 "__locale" = "be_BY.UTF-8;Bel";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
@@ -287,6 +289,7 @@
 "search_for_groups" = "Пошук груп";
 "search_for_people" = "Пошук людзей";
 "search_button" = "Знайсці";
+
 "privacy_setting_access_page" = "Каму ў інтэрнэце відаць маю старонку";
 "privacy_setting_read_info" = "Каму відаць асноўную інфармацыю маёй старонкі";
 "privacy_setting_see_groups" = "Каму відаць мае суполкі і сустрэчы";
@@ -301,9 +304,9 @@
 "privacy_value_users" = "Карыстальнікам OpenVK";
 "privacy_value_friends" = "Сябры";
 "privacy_value_friends_dative" = "Сябрам";
-"privacy_value_only_me_and_super_capite" = "Я і Даніілу Мысліўцу";
-"privacy_value_only_me_and_super_capite_dative" = "Мне і Даніілу Мысліўцу";
-"privacy_value_super_capite" = "Даніілу Мысліўцу";
+"privacy_value_only_me" = "Толькі я";
+"privacy_value_only_me_dative" = "Толькі мне";
+"privacy_value_nobody" = "Ніхто";
 
 "your_email_address" = "Адрас Вашай электроннай пошты";
 "your_page_address" = "Адрас Вашай старонкі";
@@ -385,24 +388,6 @@
 "Time_minutes_ago" = "$1 хвілін таму";
 "Time_today" = "сёння";
 "Time_yesterday" = "учора";
-
-"privacy_setting_access_page" = "Каму ў інтэрнэце відаць маю старонку";
-"privacy_setting_read_info" = "Каму відаць асноўную інфармацыю маёй старонкі";
-"privacy_setting_see_groups" = "Каму відаць мае суполкі і сустрэчы";
-"privacy_setting_see_photos" = "Каму відаць мае фатаграфіі";
-"privacy_setting_see_videos" = "Каму відаць мае відэазапісы";
-"privacy_setting_see_notes" = "Каму відаць мае нататкі";
-"privacy_setting_see_friends" = "Каму відаць маіх сяброў";
-"privacy_setting_add_to_friends" = "Хто можа называць мяне сябрам";
-"privacy_setting_write_wall" = "Хто можа пісаць у мяне на сцяне";
-"privacy_value_anybody" = "Усе жадаючыя";
-"privacy_value_anybody_dative" = "Усім жадаючым";
-"privacy_value_users" = "Карыстальнікам OpenVK";
-"privacy_value_friends" = "Сябры";
-"privacy_value_friends_dative" = "Сябрам";
-"privacy_value_only_me_and_super_capite" = "Я і Даніілу Мысліўцу";
-"privacy_value_only_me_and_super_capite_dative" = "Мне і Даніілу Мысліўцу";
-"privacy_value_super_capite" = "Даніілу Мысліўцу";
 
 "your_email_address" = "Адрас Вашай электроннай пошты";
 "your_page_address" = "Адрас Вашай старонкі";

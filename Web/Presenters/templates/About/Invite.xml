@@ -1,14 +1,14 @@
 {extends "../@layout.xml"}
-{block title}Пригласить{/block}
+{block title}{_invite}{/block}
 
 {block header}
-    Пригласить
+    {_invite}
 {/block}
 
 {block content}
-    Вы можете пригласить своих друзей или знакомых в сеть с помощью индивидуальной ссылки:<br><br>
+    {_"you_can_invite"}<br><br>
     <center>
         <input type="text" readonly value="https://{$_SERVER["HTTP_HOST"]}/reg?ref={rawurlencode($thisUser->getRefLinkId())}" size="50" />
     </center>
-    <p>Приложите эту ссылку к вашему сообщению. Пользователь зарегистрируется, и он сразу появится у вас в друзьях.</p>
+    <p>{_"you_can_invite_2"}</p>
 {/block}

@@ -2,13 +2,9 @@
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\Ticket;
 use openvk\Web\Models\Repositories\Tickets;
-//
 use openvk\Web\Models\Entities\TicketComment;
 use openvk\Web\Models\Repositories\TicketComments;
-// use openvk\Web\Models\Repositories\Users;
-use openvk\Web\Models\RowModel;
-use Nette\Database\Table\ActiveRow;
-use Chandler\Database\DatabaseConnection;
+use openvk\Web\Util\Telegram;
 use Chandler\Session\Session;
 use Netcarver\Textile;
 
@@ -21,7 +17,7 @@ final class SupportPresenter extends OpenVKPresenter
     
     function __construct(Tickets $tickets, TicketComments $ticketComments)
     {
-        $this->tickets = $tickets;
+        $this->tickets  = $tickets;
         $this->comments = $ticketComments;
         
         parent::__construct();
@@ -29,22 +25,17 @@ final class SupportPresenter extends OpenVKPresenter
     
     function renderIndex(): void
     {
-         $this->assertUserLoggedIn();
-         $this->template->mode = in_array($this->queryParam("act"), ["faq", "new", "list"]) ? $this->queryParam("act") : "faq";
-            
-         $tickets = $this->tickets->getTicketsByuId($this->user->id);
-         if ($tickets) {
-             $this->template->tickets = $tickets;
-         }
-               
-            
-        if($_SERVER["REQUEST_METHOD"] === "POST") 
-        {
-            if(!empty($this->postParam("name")) && !empty($this->postParam("text")))
-            {
+        $this->assertUserLoggedIn();
+        $this->template->mode = in_array($this->queryParam("act"), ["faq", "new", "list"]) ? $this->queryParam("act") : "faq";
+
+        $tickets = $this->tickets->getTicketsByuId($this->user->id);
+        if($tickets)
+            $this->template->tickets = $tickets;
+        if($_SERVER["REQUEST_METHOD"] === "POST") {
+            if(!empty($this->postParam("name")) && !empty($this->postParam("text"))) {
                 $this->assertNoCSRF();
                 $this->willExecuteWriteAction();
-                
+
                 $ticket = new Ticket;
                 $ticket->setType(0);
                 $ticket->setUser_id($this->user->id);
@@ -52,12 +43,23 @@ final class SupportPresenter extends OpenVKPresenter
                 $ticket->setText($this->postParam("text"));
                 $ticket->setcreated(time());
                 $ticket->save();
+
+                $helpdeskChat = OPENVK_ROOT_CONF["openvk"]["credentials"]["telegram"]["helpdeskChat"];
+                if($helpdeskChat) {
+                    $serverUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
+                    $ticketText    = ovk_proc_strtr($this->postParam("text"), 1500);
+                    $telegramText  = "<b>📬 Новый тикет!</b>\n\n";
+                    $telegramText .= "<a href='$serverUrl/support/reply/{$ticket->getId()}'>{$ticket->getName()}</a>\n";
+                    $telegramText .= "$ticketText\n\n";
+                    $telegramText .= "Автор: <a href='$serverUrl{$ticket->getUser()->getURL()}'>{$ticket->getUser()->getCanonicalName()}</a> ({$ticket->getUser()->getRegistrationIP()})\n";
+                    Telegram::send($helpdeskChat, $telegramText);
+                }
+
                 header("HTTP/1.1 302 Found");
                 header("Location: /support/view/" . $ticket->getId());
             } else {
-                $this->flashFail("err", "Ошибка", "Вы не ввели имя или текст ");
+                $this->flashFail("err", tr("error"), tr("you_have_not_entered_name_or_text"));
             }
-            // $this->template->test = 'cool post';
         }
     }
     
@@ -88,48 +90,49 @@ final class SupportPresenter extends OpenVKPresenter
     function renderView(int $id): void
     {
         $this->assertUserLoggedIn();
-        $ticket = $this->tickets->get($id);
-        $ticketComments1 = $this->comments->getCommentsById($id);
-        if(!$ticket || $ticket->isDeleted() != 0 || $ticket->authorId() !== $this->user->id) {
+        $ticket         = $this->tickets->get($id);
+        $ticketComments = $this->comments->getCommentsById($id);
+        if(!$ticket || $ticket->isDeleted() != 0 || $ticket->getUserId() !== $this->user->id) {
             $this->notFound();
         } else {
-                $this->template->ticket        = $ticket;
-                $this->template->comments     = $ticketComments1;
-                $this->template->id         = $id;
+                $this->template->ticket   = $ticket;
+                $this->template->comments = $ticketComments;
+                $this->template->id       = $id;
         }
     }
     
     function renderDelete(int $id): void 
     {
-            $this->assertUserLoggedIn();
-            $this->willExecuteWriteAction();
-            if (!empty($id)) {
-                $ticket = $this->tickets->get($id);
-                if (!$ticket || $ticket->isDeleted() != 0 || $ticket->authorId() !== $this->user->id)
-                {
-                    $this->notFound();
-                } else {
-                    $ticket->delete();
-                    header("HTTP/1.1 302 Found");
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        if(!empty($id)) {
+            $ticket = $this->tickets->get($id);
+            if(!$ticket || $ticket->isDeleted() != 0 || $ticket->getUserId() !== $this->user->id && !$this->hasPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0)) {
+                $this->notFound();
+            } else {
+                header("HTTP/1.1 302 Found");
+                if($ticket->getUserId() !== $this->user->id && $this->hasPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0))
+                    header("Location: /support/tickets");
+                else
                     header("Location: /support");
-                }
+                $ticket->delete();
             }
+        }
     }
     
     function renderMakeComment(int $id): void 
     {
         $ticket = $this->tickets->get($id);
         
-        if($ticket->isDeleted() === 1 || $ticket->getType() === 2 || $ticket->authorId() !== $this->user->id) {
+        if($ticket->isDeleted() === 1 || $ticket->getType() === 2 || $ticket->getUserId() !== $this->user->id) {
             header("HTTP/1.1 403 Forbidden");
             header("Location: /support/view/" . $id);
             exit;
         }
         
-        if($_SERVER["REQUEST_METHOD"] === "POST") 
-        {
-            if(!empty($this->postParam("text")))
-            {
+        if($_SERVER["REQUEST_METHOD"] === "POST") {
+            if(!empty($this->postParam("text"))) {
                 $ticket->setType(0);
                 $ticket->save();
                 
@@ -147,7 +150,7 @@ final class SupportPresenter extends OpenVKPresenter
                 header("HTTP/1.1 302 Found");
                 header("Location: /support/view/" . $id);
             } else {
-                $this->flashFail("err", "Ошибка", "Вы не ввели текст");
+                $this->flashFail("err", tr("error"), tr("you_have_not_entered_text"));
             }
         }
     }
@@ -156,10 +159,14 @@ final class SupportPresenter extends OpenVKPresenter
     {
         $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
         $ticket = $this->tickets->get($id);
+
+        if(!$ticket || $ticket->isDeleted() != 0)
+            $this->notFound();
+
         $ticketComments = $this->comments->getCommentsById($id);
-        $this->template->ticket        = $ticket;
-        $this->template->comments     = $ticketComments;
-        $this->template->id         = $id;
+        $this->template->ticket   = $ticket;
+        $this->template->comments = $ticketComments;
+        $this->template->id       = $id;
     }
     
     function renderAnswerTicketReply(int $id): void
@@ -168,12 +175,10 @@ final class SupportPresenter extends OpenVKPresenter
         
         $ticket = $this->tickets->get($id);
         
-        if($_SERVER["REQUEST_METHOD"] === "POST") 
-        {
+        if($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->willExecuteWriteAction();
             
-            if(!empty($this->postParam("text")) && !empty($this->postParam("status")))
-            {
+            if(!empty($this->postParam("text")) && !empty($this->postParam("status"))) {
                 $ticket->setType($this->postParam("status"));
                 $ticket->save();
                 
@@ -185,14 +190,13 @@ final class SupportPresenter extends OpenVKPresenter
                 $comment->setTicket_id($id);
                 $comment->setCreated(time());
                 $comment->save();
-            } elseif (empty($this->postParam("text"))) {
+            } elseif(empty($this->postParam("text"))) {
                 $ticket->setType($this->postParam("status"));
                 $ticket->save();
             }
             
-            $this->flashFail("succ", "Тикет изменён", "Изменения вступят силу через несколько секунд.");
+            $this->flashFail("succ", tr("ticket_changed"), tr("ticket_changed_comment"));
         }
-        
     }
     
     function renderKnowledgeBaseArticle(string $name): void
@@ -219,5 +223,25 @@ final class SupportPresenter extends OpenVKPresenter
         $parser = new Textile\Parser;
         $this->template->heading = $heading;
         $this->template->content = $parser->parse($content);
+    }
+
+    function renderRateAnswer(int $id, int $mark): void
+    {
+        $this->willExecuteWriteAction();
+        $this->assertUserLoggedIn();
+        $this->assertNoCSRF();
+
+        $comment = $this->comments->get($id);
+
+        if($this->user->id !== $comment->getTicket()->getUser()->getId())
+            exit(header("HTTP/1.1 403 Forbidden"));
+
+        if($mark !== 1 && $mark !== 2)
+            exit(header("HTTP/1.1 400 Bad Request"));
+
+        $comment->setMark($mark);
+        $comment->save();
+
+        exit(header("HTTP/1.1 200 OK"));
     }
 }

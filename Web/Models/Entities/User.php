@@ -317,14 +317,14 @@ class User extends RowModel
         return $this->getRecord()->notification_offset;
     }
 
-    function getBirthday(): ?int
+    function getBirthday(): ?DateTime
     {
-        return $this->getRecord()->birthday;
+        return new DateTime($this->getRecord()->birthday);
     }
 
     function getAge(): ?int
     {
-        return (int)floor((time() - $this->getBirthday()) / mktime(0, 0, 0, 1, 1, 1971));
+        return (int)floor((time() - $this->getBirthday()->timestamp()) / YEAR);
     }
     
     function get2faSecret(): ?string
@@ -353,6 +353,7 @@ class User extends RowModel
                 "notes",
                 "groups",
                 "news",
+                "links",
             ],
         ])->get($id);
     }
@@ -539,6 +540,8 @@ class User extends RowModel
         $manager = $club->getManager($this);
         if(!is_null($manager))
             return $manager->isClubPinned();
+
+        return false;
     }
 
     function getMeetings(int $page = 1): \Traversable
@@ -766,6 +769,7 @@ class User extends RowModel
                 "notes",
                 "groups",
                 "news",
+                "links",
             ],
         ])->set($id, (int) $status)->toInteger();
         

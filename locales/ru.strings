@@ -15,6 +15,36 @@
 "registration" = "Регистрация";
 "forgot_password" = "Забыли пароль?";
 
+"login_failed" = "Не удалось войти";
+"invalid_username_or_password" = "Неверное имя пользователя или пароль. <a href='/restore.pl'>Забыли пароль?</a>";
+
+"failed_to_register" = "Не удалось зарегистрироваться";
+"referral_link_invalid" = "Пригласительная ссылка недействительна.";
+"registration_disabled" = "Регистрация отключена системным администратором.";
+"user_already_exists" = "Пользователь с таким email уже существует.";
+
+"access_recovery" = "Восстановление доступа";
+"page_access_recovery" = "Восстановить доступ к странице";
+"access_recovery_info" = "Забыли пароль? Не волнуйтесь, введите ваши данные и мы отправим вам email с инструкциями по восстановлению аккаунта.";
+"access_recovery_info_2" = "Введите ваш новый пароль. Все текущие сеансы будут приостановлены и токены доступа будут аннулированы.";
+"reset_password" = "Сбросить пароль";
+"2fa_code_2" = "Код двухфакторной аутентификации";
+
+"password_successfully_reset" = "Ваш пароль был успешно сброшен.";
+"password_reset_email_sent" = "Если вы зарегистрированы, вы получите инструкции на email.";
+"password_reset_error" = "Непредвиденная ошибка при сбросе пароля.";
+"password_reset_rate_limit_error" = "Нельзя делать это так часто, извините.";
+
+"registration_disabled_info" = "Регистрация отключена системным администратором. При возможности попросите приглашение у вашего знакомого, если он зарегистрирован на этом сайте.";
+"registration_closed" = "Регистрация закрыта.";
+"invites_you_to" = "<strong>$1</strong> приглашает вас в $2";
+
+"register_meta_desc" = "Зарегистрируйтесь в $1 прямо сейчас!";
+"register_referer_meta_title" = "$1 приглашает вас в $2!";
+"register_referer_meta_desc" = "Присоединяйтесь к $1 и множеству других пользователей в $2!";
+
+"users" = "Пользователи";
+
 /* Profile information */
 
 "select_language" = "Выбрать язык";
@@ -99,7 +129,12 @@
 
 "updated_at" = "Обновлено $1";
 
+"user_banned" = "К сожалению, нам пришлось заблокировать страницу пользователя <b>$1</b>.";
+"user_banned_comment" = "Комментарий модератора:";
+
 /* Wall */
+
+"feed" = "Новости";
 
 "post_writes_m" = "написал";
 "post_writes_f" = "написала";
@@ -123,6 +158,7 @@
 "wall_few" = "$1 записи";
 "wall_many" = "$1 записей";
 "wall_other" = "$1 записей";
+"publish_post" = "Добавить запись";
 "view_other_comments" = "Посмотреть остальные комментарии";
 
 "no_comments" = "Комментарии отсутствуют";
@@ -137,20 +173,22 @@
 "contains_nsfw" = "Содержит NSFW-контент";
 "nsfw_warning" = "Данный пост может содержать 18+ контент";
 "report" = "Пожаловаться";
+"attach" = "Прикрепить";
 "attach_photo" = "Прикрепить фото";
+"attach_video" = "Прикрепить видео";
+"draw_graffiti" = "Нарисовать граффити";
 "no_posts_abstract" = "Здесь никто ничего не написал... Пока.";
 "attach_no_longer_available" = "Это вложение больше недоступно.";
 "open_post" = "Открыть запись";
 "version_incompatibility" = "Не удалось отобразить это вложение. Возможно, база данных несовместима с текущей версией OpenVK.";
+
+"reply" = "Ответить";
 
 /* Friends */
 
 "friends" = "Друзья";
 "followers" = "Подписчики";
 "follower" = "Подписчик";
-"login_as" = "Войти как";
-"ban_fast" = "Забанить";
-"adm_notify" = "Предупредить";
 "friends_add" = "Добавить в друзья";
 "friends_delete" = "Удалить из друзей";
 "friends_reject" = "Отменить заявку";
@@ -211,6 +249,7 @@
 "role" = "Роль";
 "administrator" = "Администратор";
 "promote_to_admin" = "Повысить до администратора";
+"promote_to_owner" = "Назначить владельцем";
 "devote" = "Разжаловать";
 "set_comment" = "Изменить комментарий";
 "hidden_yes" = "Скрыт: Да";
@@ -221,6 +260,10 @@
 "group_display_only_creator" = "Отображать только создателя группы";
 "group_display_all_administrators" = "Отображать всех администраторов";
 "group_dont_display_administrators_list" = "Ничего не отображать";
+
+"group_changeowner_modal_title" = "Передача прав владельца";
+"group_changeowner_modal_text" = "Внимание! Вы передаёте права владельца пользователю $1. Это действие необратимо. После передави вы останетесь адмиинстратором, но сможете легко перестать им быть.";
+"group_owner_setted" = "Новый владелец ($1) успешно назначен в сообщество $2. Вам выданы права администратора в сообществе. Если Вы хотите вернуть роль владельца, обратитесь в <a href='/support?act=new'>техническую поддержку сайта</a>.";
 
 "participants_zero" = "Ни одного участника";
 "participants_one" = "Один участник";
@@ -270,8 +313,6 @@
 "text_note" = "Содержание";
 "create_note" = "Создать заметку";
 "actions" = "Действия";
-"feed" = "Новости";
-"publish_post" = "Добавить запись";
 
 "notes_zero" = "Ни одной заметки";
 "notes_one" = "Одна заметка";
@@ -298,9 +339,11 @@
 "menu_registration" = "Регистрация";
 "menu_help" = "Помощь";
 
+"menu_logout" = "Выйти";
+"menu_support" = "Поддержка";
+
 "header_home" = "главная";
 "header_groups" = "группы";
-"header_donate" = "поддержать";
 "header_people" = "люди";
 "header_invite" = "пригласить";
 "header_help" = "помощь";
@@ -310,17 +353,13 @@
 "header_login" = "вход";
 "header_registration" = "регистрация";
 
+"left_menu_donate" = "Поддержать";
+
 "footer_blog" = "блог";
 "footer_help" = "помощь";
 "footer_developers" = "разработчикам";
 "footer_choose_language" = "выбрать язык";
 "footer_privacy" = "приватность";
-
-"notes_zero" = "Ни одной заметки";
-"notes_one" = "Одна заметка";
-"notes_few" = "$1 заметки";
-"notes_many" = "$1 заметок";
-"notes_other" = "$1 заметок";
 
 /* Settings */
 
@@ -349,6 +388,7 @@
 "search_for_groups" = "Поиск групп";
 "search_for_people" = "Поиск людей";
 "search_button" = "Найти";
+"search_placeholder" = "Начните вводить любое имя, название или слово";
 "results_zero" = "Ни одного результата";
 "results_one" = "Один результат";
 "results_few" = "$1 результата";
@@ -369,9 +409,9 @@
 "privacy_value_users" = "Пользователям OpenVK";
 "privacy_value_friends" = "Друзья";
 "privacy_value_friends_dative" = "Друзьям";
-"privacy_value_only_me_and_super_capite" = "Я и Виталина Павленко";
-"privacy_value_only_me_and_super_capite_dative" = "Мне и Виталине Павленко";
-"privacy_value_super_capite" = "Виталине Павленко";
+"privacy_value_only_me" = "Только я";
+"privacy_value_only_me_dative" = "Только мне";
+"privacy_value_nobody" = "Никто";
 
 "your_email_address" = "Адрес Вашей электронной почты";
 "your_page_address" = "Адрес Вашей страницы";
@@ -387,6 +427,10 @@
 "ui_settings_rating" = "Рейтинг";
 "ui_settings_rating_show" = "Показывать";
 "ui_settings_rating_hide" = "Скрывать";
+
+"additional_links" = "Дополнительные ссылки";
+
+/* Two-factor authentication */
 
 "two_factor_authentication" = "Двухфакторная аутентификация";
 "two_factor_authentication_disabled" = "Обеспечивает надежную защиту от взлома: для входа на страницу необходимо ввести код, полученный в приложении 2FA.";
@@ -419,7 +463,7 @@
 
 /* Sorting */
 
-"sort_randomly" = "Сортировать рандомно";
+"sort_randomly" = "Сортировать случайно";
 "sort_up" = "Сортировать по дате создания вверх";
 "sort_down" = "Сортировать по дате создания вниз";
 
@@ -430,7 +474,7 @@
 "upload_video" = "Загрузить видео";
 "video_uploaded" = "Загружено";
 "video_updated" = "Обновлено";
-"video_link_to_yt" = "Ссылка на YT";
+"video_link_to_yt" = "Ссылка на YouTube";
 
 "info_name" = "Название";
 "info_description" = "Описание";
@@ -472,6 +516,7 @@
 "nt_post_instrumental" = "постом";
 "nt_note_instrumental" = "заметкой";
 "nt_photo_instrumental" = "фотографией";
+"nt_topic_instrumental" = "темой";
 
 /* Time */
 
@@ -481,39 +526,6 @@
 "time_minutes_ago" = "$1 минут назад";
 "time_today" = "сегодня";
 "time_yesterday" = "вчера";
-
-"privacy_setting_access_page" = "Кому в интернете видно мою страницу";
-"privacy_setting_read_info" = "Кому видно основную информацию моей страницы";
-"privacy_setting_see_groups" = "Кому видно мои группы и встречи";
-"privacy_setting_see_photos" = "Кому видно мои фотографии";
-"privacy_setting_see_videos" = "Кому видно мои видеозаписи";
-"privacy_setting_see_notes" = "Кому видно мои заметки";
-"privacy_setting_see_friends" = "Кому видно моих друзей";
-"privacy_setting_add_to_friends" = "Кто может называть меня другом";
-"privacy_setting_write_wall" = "Кто может писать у меня на стене";
-"privacy_value_anybody" = "Все желающие";
-"privacy_value_anybody_dative" = "Всем желающим";
-"privacy_value_users" = "Пользователям OpenVK";
-"privacy_value_friends" = "Друзья";
-"privacy_value_friends_dative" = "Друзьям";
-"privacy_value_only_me_and_super_capite" = "Только я";
-"privacy_value_only_me_and_super_capite_dative" = "Только мне";
-"privacy_value_super_capite" = "Никто";
-
-"your_email_address" = "Адрес Вашей электронной почты";
-"your_page_address" = "Адрес Вашей страницы";
-"page_address" = "Адрес страницы";
-"current_email_address" = "Текущий адрес";
-"page_id" = "ID страницы";
-"you_can_also" = "Вы также можете";
-"delete_your_page" = "удалить свою страницу";
-"delete_album" = "удалить альбом";
-
-"ui_settings_interface" = "Интерфейс";
-"ui_settings_sidebar" = "Левое меню";
-"ui_settings_rating" = "Рейтинг";
-"ui_settings_rating_show" = "Показывать";
-"ui_settings_rating_hide" = "Скрывать";
 
 "points" = "Голоса";
 "points_count" = "голосов";
@@ -533,6 +545,33 @@
 "deactivate" = "Деактивировать";
 "usages_total" = "Количество использований";
 "usages_left" = "Осталось использований";
+
+"points_transfer_dialog_header_1" = "Вы можете отправить в подарок или передать часть голосов другому человеку.";
+"points_transfer_dialog_header_2" = "Ваш текущий баланс:";
+
+"points_amount_one" = "1 голос";
+"points_amount_few" = "$1 голоса";
+"points_amount_many" = "$1 голосов";
+"points_amount_other" = "$1 голосов";
+
+"transfer_poins" = "Передача голосов";
+"transfer_poins_button" = "Передать голоса";
+"also_you_can_transfer_points" = "Также вы можете <a href=\"javascript:showCoinsTransferDialog($1, '$2')\">передать голоса</a> другому человеку.";
+
+"transferred_to_you" = "передал вам";
+
+"receiver_address" = "Адрес получателя";
+"coins_count" = "Количество голосов";
+"message" = "Сообщение";
+
+"failed_to_tranfer_points" = "Не удалось передать голоса";
+
+"points_transfer_successful" = "Вы успешно передали <b>$1 <a href=\"$2\">$3</a></b>.";
+"not_all_information_has_been_entered" = "Введена не вся информация.";
+"negative_transfer_value" = "Мы не можем украсть голоса у другого человека, извините.";
+"message_is_too_long" = "Сообщение слишком длинное.";
+"receiver_not_found" = "Получатель не найден.";
+"you_dont_have_enough_points" = "У вас недостаточно голосов.";
 
 /* Gifts */
 
@@ -590,6 +629,16 @@
 "support_new_title" = "Введите тему вашего обращения";
 "support_new_content" = "Опишите проблему или предложение";
 
+"support_rate_good_answer" = "Это хороший ответ";
+"support_rate_bad_answer" = "Это плохой ответ";
+"support_good_answer_user" = "Вы оставили положительный отзыв.";
+"support_bad_answer_user" = "Вы оставили негативный отзыв.";
+"support_good_answer_agent" = "Пользователь оставил положительный отзыв";
+"support_bad_answer_agent" = "Пользователь оставил негативный отзыв";
+"support_rated_good" = "Вы оставили положительный отзыв об ответе.";
+"support_rated_bad" = "Вы оставили негативный отзыв об ответе.";
+"wrong_parameters" = "Неверные параметры запроса.";
+
 "ignore_report" = "Игнорировать жалобу";
 "report_number" = "Жалоба №";
 "list_of_reports" = "Список жалоб";
@@ -599,6 +648,73 @@
 "sender" = "Отправитель";
 
 "author" = "Автор";
+
+"you_have_not_entered_text" = "Вы не ввели текст";
+"you_have_not_entered_name_or_text" = "Вы не ввели имя или текст";
+
+"ticket_changed" = "Тикет изменён";
+"ticket_changed_comment" = "Изменения вступят силу через несколько секунд.";
+
+/* Invite */
+
+"invite" = "Пригласить";
+"you_can_invite" = "Вы можете пригласить своих друзей или знакомых в сеть с помощью индивидуальной ссылки:";
+"you_can_invite_2" = "Приложите эту ссылку к вашему сообщению. Пользователь зарегистрируется, и он сразу появится у вас в друзьях.";
+
+/* Banned */
+
+"banned_title" = "Вам бан";
+"banned_header" = "Вы были верискокнуты";
+"banned_alt" = "Пользователь заблокирован.";
+"banned_1" = "Извините, <b>$1</b>, но вы были верискокнуты.";
+"banned_2" = "А причина этому проста: <b>$1</b>. К сожалению, на этот раз нам пришлось заблокировать вас навсегда.";
+"banned_3" = "Вы всё ещё можете <a href=\"/support?act=new\">написать в службу поддержки</a>, если считаете что произошла ошибка или <a href=\"/logout?hash=$1\">выйти</a>.";
+
+/* Discussions */
+
+"discussions" = "Обсуждения";
+
+"messages_one" = "Одно сообщение";
+"messages_few" = "$1 сообщения";
+"messages_many" = "$1 сообщений";
+"messages_other" = "$1 сообщений";
+
+"topic_messages_count_zero" = "В теме нет сообщений";
+"topic_messages_count_one" = "В теме одно сообщение";
+"topic_messages_count_few" = "В теме $1 сообщения";
+"topic_messages_count_many" = "В теме $1 сообщений";
+"topic_messages_count_other" = "В теме $1 сообщений";
+
+"replied" = "ответил";
+"create_topic" = "Создать тему";
+
+"new_topic" = "Новая тема";
+"title" = "Заголовок";
+"text" = "Текст";
+
+"view_topic" = "Просмотр темы";
+"edit_topic_action" = "Редактировать тему";
+"edit_topic" = "Редактирование темы";
+"topic_settings" = "Настройки темы";
+"pin_topic" = "Закрепить тему";
+"close_topic" = "Закрыть тему";
+"delete_topic" = "Удалить тему";
+
+"topics_one" = "Одна тема";
+"topics_few" = "$1 темы";
+"topics_many" = "$1 тема";
+"topics_other" = "$1 тем";
+
+"created" = "Создано";
+
+"everyone_can_create_topics" = "Все могут создавать темы";
+"display_list_of_topics_above_wall" = "Отображать список тем над стеной";
+
+"topic_changes_saved_comment" = "Обновлённый заголовок и настройки появятся на странице с темой.";
+
+"failed_to_create_topic" = "Не удалось создать тему";
+"failed_to_change_topic" = "Не удалось изменить тему";
+"no_title_specified" = "Заголовок не указан.";
 
 /* Errors */
 
@@ -632,6 +748,37 @@
 
 "shared_succ" = "Запись появится на вашей стене. Нажмите на уведомление, чтобы перейти к своей стене.";
 
+"invalid_email_address" = "Неверный Email адрес";
+"invalid_email_address_comment" = "Email, который вы ввели, не является корректным.";
+
+"invalid_telegram_name" = "Неверное имя Telegram аккаунта";
+"invalid_telegram_name_comment" = "Вы ввели неверное имя аккаунта Telegram.";
+
+"invalid_birth_date" = "Неверная дата рождения";
+"invalid_birth_date_comment" = "Дата рождения, которую вы ввели, не является корректной.";
+
+"token_manipulation_error" = "Ошибка манипулирования токеном";
+"token_manipulation_error_comment" = "Токен недействителен или истёк";
+
+"profile_changed" = "Профиль изменён";
+"profile_changed_comment" = "Ваш активный профиль был изменён.";
+"profile_not_found" = "Пользователь не найден.";
+
+"suspicious_registration_attempt" = "Подозрительная попытка регистрации";
+"suspicious_registration_attempt_comment" = "Вы пытались зарегистрироваться из подозрительного места.";
+
+"rate_limit_error" = "Чумба, ты совсем ёбнутый?";
+"rate_limit_error_comment" = "Сходи к мозгоправу, попей колёсики. В $1 нельзя вбрасывать щитпосты так часто. Код исключения: $2.";
+
+"not_enough_permissions" = "Недостаточно прав";
+"not_enough_permissions_comment" = "У вас недостаточно прав чтобы выполнять это действие.";
+
+"login_required_error" = "Недостаточно прав";
+"login_required_error_comment" = "Чтобы просматривать эту страницу, нужно зайти на сайт.";
+
+"captcha_error" = "Неправильно введены символы";
+"captcha_error_comment" = "Пожалуйста, убедитесь, что вы правильно заполнили поле с капчей.";
+
 /* Admin actions */
 
 "login_as" = "Войти как $1";
@@ -645,6 +792,10 @@
 "paginator_page" = "Страница $1";
 "paginator_next" = "Дальше";
 
+/* About */
+
+"about_openvk" = "Об OpenVK";
+
 /* Dialogs */
 
 "ok" = "ОК";
@@ -652,6 +803,7 @@
 "no" = "Нет";
 "cancel" = "Отмена";
 "edit_action" = "Изменить";
+"transfer" = "Передать";
 
 "warning" = "Внимание";
 "question_confirm" = "Это действие нельзя отменить. Вы действительно уверены в том что хотите сделать?";

@@ -8,7 +8,7 @@
     <div n:if="($online = $correspondent->getOnline()->timestamp()) < time() + 2678400" style="float: right;">
         {var diff = date_diff(date_create(), date_create('@' . $online))}
         {if 5 >= $diff->i}
-            <span><b>Online</b></span>
+            <span><b>{_online}</b></span>
         {else}
             <span>{$correspondent->isFemale() ? "заходила" : "заходил"} {$correspondent->getOnline()}</span>
         {/if}

@@ -1,7 +1,7 @@
 {extends "../@layout.xml"}
 {block title}{_my_messages}{/block}
 
-{block header}{/block}
+{block header}{_my_messages}{/block}
 
 {block content}
     <div class="tabs">

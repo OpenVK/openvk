@@ -8,7 +8,7 @@
         </div>
         <div id="post-buttons{$textAreaId}" style="display: none;">
             <div class="post-upload">
-                Вложение: <span>(unknown)</span>
+                {_attachment}: <span>(unknown)</span>
             </div>
             <div n:if="$postOpts ?? true" class="post-opts">
                 {var anonEnabled = OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
@@ -35,7 +35,7 @@
                 {/if}
                 
                 <label n:if="$anonEnabled" id="octoberAnonOpt">
-                    <input type="checkbox" name="anon" /> Анонимно
+                    <input type="checkbox" name="anon" /> {_"as_anonymous"}
                 </label>
                 
                 <label>
@@ -55,7 +55,7 @@
             <input type="submit" value="{_'write'}" class="button" />
             <div style="float: right; display: flex; flex-direction: column;">
                 <a href="javascript:void(u('#post-buttons{$textAreaId} #wallAttachmentMenu').toggleClass('hidden'));">
-                    Прикрепить
+                    {_attach}
                 </a>
                 
                 <div id="wallAttachmentMenu" class="hidden">
@@ -65,11 +65,11 @@
                     </a>
                     <a href="javascript:void(document.querySelector('#post-buttons{$textAreaId} input[name=_vid_attachment]').click());">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
-                        Прикрепить видео
+                        {_attach_video}
                     </a>
                     <a n:if="$graffiti ?? false" href="javascript:initGraffiti({$textAreaId});">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
-                        Нарисовать граффити
+                        {_draw_graffiti}
                     </a>
                 </div>
             </div>

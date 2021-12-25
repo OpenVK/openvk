@@ -46,4 +46,8 @@
             });
         </script>
     </center>
+
+    {if isset($thisUser) && $thisUser->hasMicroblogEnabled()}
+        {script "js/al_comments.js"}
+    {/if}
 {/block}

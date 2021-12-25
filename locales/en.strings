@@ -14,6 +14,36 @@
 "registration" = "Registration";
 "forgot_password" = "Forgot your password?";
 
+"login_failed" = "Login failed";
+"invalid_username_or_password" = "The username or password you entered is incorrect. <a href='/restore.pl'>Forgot your password?</a>";
+
+"failed_to_register" = "Failed to register";
+"referral_link_invalid" = "The referral link is invalid.";
+"registration_disabled" = "Registration has been disabled by the system administrator.";
+"user_already_exists" = "A user with this email already exists.";
+
+"access_recovery" = "Access recovery";
+"page_access_recovery" = "Restore access to the page";
+"access_recovery_info" = "Forgot your password? Don't worry, enter your details and we'll send you an email with instructions on how to recover your account.";
+"access_recovery_info_2" = "Enter your new password. All current sessions will be suspended and access tokens will be revoked.";
+"reset_password" = "Reset the password";
+"2fa_code_2" = "Two-factor authentication code";
+
+"password_successfully_reset" = "Your password has been successfully reset.";
+"password_reset_email_sent" = "If you are registered, you will receive instructions by email.";
+"password_reset_error" = "An unexpected error occurred while resetting the password.";
+"password_reset_rate_limit_error" = "You can't do it that often, sorry.";
+
+"registration_disabled_info" = "Registration has been disabled by the system administrator. If possible, ask for an invitation from your friend, if he is registered on this site.";
+"registration_closed" = "Registration is closed.";
+"invites_you_to" = "<strong>$1</strong> invites you to $2";
+
+"register_meta_desc" = "Register in $1 now!";
+"register_referer_meta_title" = "$1 invites you to $2!";
+"register_referer_meta_desc" = "Join $1 and many other users at $2!";
+
+"users" = "Users";
+
 /* Profile information */
 
 "select_language" = "Choose language";
@@ -36,20 +66,20 @@
 "nickname" = "Nickname";
 "online" = "Online";
 "was_online" = "was online";
-"was_online_m" = "was online"; 
-/* For male and female */
-
-"years_zero" = "0 year old";
-"years_one" = "1 year old";
-"years_other" = "$1 years old";
-
+"was_online_m" = "was online";
 "was_online_f" = "was online";
+/* For male and female */
 "all_title" = "All";
 "information" = "Information";
 "status" = "Status";
 "no_information_provided" = "No information provided.";
 "deceased_person" = "Deceased person";
 "none" = "none";
+"send" = "Send";
+
+"years_zero" = "0 year old";
+"years_one" = "1 year old";
+"years_other" = "$1 years old";
 
 "relationship" = "Relationship";
 
@@ -97,10 +127,16 @@
 
 "updated_at" = "Updated at $1";
 
+"user_banned" = "Unfortunately, we had to block the <b>$1</b> user page.";
+"user_banned_comment" = "Moderator's comment:";
+
 /* Wall */
+
+"feed" = "News";
 
 "post_writes_m" = "wrote";
 "post_writes_f" = "wrote";
+"post_writes_g" = "published";
 "wall" = "Wall";
 "post" = "Post";
 "write" = "Write";
@@ -118,7 +154,6 @@
 "wall_zero" = "no posts";
 "wall_one" = "$1 post";
 "wall_other" = "$1 posts";
-"feed" = "News";
 "publish_post" = "Add post";
 "view_other_comments" = "View other comments";
 
@@ -135,11 +170,16 @@
 "contains_nsfw" = "Contains NSFW content";
 "nsfw_warning" = "This post may have NSFW-content";
 "report" = "Report";
+"attach" = "Attach";
 "attach_photo" = "Attach photo";
+"attach_video" = "Attach video";
+"draw_graffiti" = "Draw graffiti";
 "no_posts_abstract" = "Nobody wrote anything here... So far.";
 "attach_no_longer_available" = "This attachment is no longer available.";
 "open_post" = "Open post";
 "version_incompatibility" = "This attachment could not be displayed. Probably the database is incompatible with the current version of OpenVK.";
+
+"reply" = "Reply";
 
 /* Friends */
 
@@ -199,6 +239,7 @@
 "role" = "Role";
 "administrator" = "Administrator";
 "promote_to_admin" = "Promote to admin";
+"promote_to_owner" = "Promote to owner";
 "devote" = "Devote";
 "set_comment" = "Set comment";
 "hidden_yes" = "Hidden: Yes";
@@ -209,6 +250,10 @@
 "group_display_only_creator" = "Display only group creator";
 "group_display_all_administrators" = "Display all administrators";
 "group_dont_display_administrators_list" = "Display nothing";
+
+"group_changeowner_modal_title" = "Owner's permissions transfer";
+"group_changeowner_modal_text" = "Attention! You are transferring owner rights to user $1. This action is irreversible. After the transfer, you will remain an administrator, but you can easily stop being one.";
+"group_owner_setted" = "The new owner ($1) has been successfully assigned to the community $2. You have been granted administrator rights in the community. If you want to return the owner role, contact <a href='/support?act=new'>site technical support</a>.";
 
 "participants_zero" = "No participants";
 "participants_one" = "$1 participant";
@@ -276,9 +321,11 @@
 "menu_registration" = "Registration";
 "menu_help" = "Help";
 
+"menu_logout" = "Logout";
+"menu_support" = "Support";
+
 "header_home" = "home";
 "header_groups" = "groups";
-"header_donate" = "donate";
 "header_people" = "people";
 "header_invite" = "invite";
 "header_help" = "help";
@@ -287,7 +334,8 @@
 
 "header_login" = "login";
 "header_registration" = "registration";
-"header_help" = "help";
+
+"left_menu_donate" = "Donate";
 
 "footer_blog" = "blog";
 "footer_help" = "help";
@@ -322,6 +370,7 @@
 "search_for_groups" = "Search for groups";
 "search_for_people" = "Search for people";
 "search_button" = "Find";
+"search_placeholder" = "Start typing any name, title or word";
 "results_zero" = "No results";
 "results_one" = "$1 result";
 "results_other" = "$1 results";
@@ -342,6 +391,7 @@
 "privacy_value_friends_dative" = "Friends";
 "privacy_value_only_me" = "Only me";
 "privacy_value_only_me_dative" = "Only me";
+"privacy_value_nobody" = "Nobody";
 
 "your_email_address" = "Your Email address";
 "your_page_address" = "Your address page";
@@ -357,6 +407,8 @@
 "ui_settings_rating" = "Rating";
 "ui_settings_rating_show" = "Show";
 "ui_settings_rating_hide" = "Hide";
+
+"additional_links" = "Additional links";
 
 /* Two-factor authentication */
 
@@ -402,7 +454,7 @@
 "upload_video" = "Upload video";
 "video_uploaded" = "Uploaded";
 "video_updated" = "Updated";
-"video_link_to_yt" = "YT link";
+"video_link_to_yt" = "Link to YouTube";
 
 "info_name" = "Title";
 "info_description" = "Description";
@@ -431,7 +483,7 @@
 
 "nt_liked_yours" = "liked yours";
 "nt_shared_yours" = "shared yours";
-"nt_commented_yours" = "commented yours";
+"nt_commented_yours" = "commented";
 "nt_written_on_your_wall" = "wrote on your wall";
 "nt_made_you_admin" = "appointed you in the community";
 
@@ -442,6 +494,7 @@
 "nt_post_instrumental" = "post";
 "nt_note_instrumental" = "note";
 "nt_photo_instrumental" = "photo";
+"nt_topic_instrumental" = "topic";
 
 /* Time */
 
@@ -451,6 +504,10 @@
 "time_minutes_ago" = "$1 minutes ago";
 "time_today" = "today";
 "time_yesterday" = "yesterday";
+
+"points" = "Votes";
+"points_count" = "votes";
+"on_your_account" = "on your account";
 
 "vouchers" = "Vouchers";
 "have_voucher" = "Have voucher";
@@ -466,6 +523,31 @@
 "deactivate" = "Deactivate";
 "usages_total" = "Number of uses";
 "usages_left" = "Uses left";
+
+"points_transfer_dialog_header_1" = "You can send as a gift or transfer part of the votes to another person.";
+"points_transfer_dialog_header_2" = "Your current balance:";
+
+"points_amount_one" = "1 vote";
+"points_amount_other" = "$1 votes";
+
+"transfer_poins" = "Transfer votes";
+"transfer_poins_button" = "Transfer votes";
+"also_you_can_transfer_points" = "You can also <a href=\"javascript:showCoinsTransferDialog($1, '$2')\">transfer votes</a> to another person.";
+
+"transferred_to_you" = "transferred to you";
+
+"receiver_address" = "Receiver address";
+"coins_count" = "Number of votes";
+"message" = "Message";
+
+"failed_to_tranfer_points" = "Failed to transfer votes";
+
+"points_transfer_successful" = "You have successfully transferred <b>$1</b> to <b><a href=\"$2\">$3</a></b>.";
+"not_all_information_has_been_entered" = "Not all information has been entered.";
+"negative_transfer_value" = "We cannot steal votes from another person, sorry.";
+"message_is_too_long" = "The message is too long.";
+"receiver_not_found" = "The receiver was not found.";
+"you_dont_have_enough_points" = "You don't have enough votes.";
 
 /* Gifts */
 
@@ -488,10 +570,10 @@
 "gift_your_message" = "Your message";
 
 "free_gift" = "Free";
-"coins" = "Voices";
-"coins_zero" = "0 voices";
-"coins_one" = "One voice";
-"coins_other" = "$1 voices";
+"coins" = "Votes";
+"coins_zero" = "0 vote";
+"coins_one" = "One vote";
+"coins_other" = "$1 votes";
 
 "users_gifts" = "Gifts";
 
@@ -518,6 +600,16 @@
 "support_new_title" = "Enter the topic of your ticket";
 "support_new_content" = "Describe the issue or suggestion";
 
+"support_rate_good_answer" = "This is good answer";
+"support_rate_bad_answer" = "This is bad answer";
+"support_good_answer_user" = "You left a positive feedback.";
+"support_bad_answer_user" = "You left a negative feedback.";
+"support_good_answer_agent" = "User left a positive feedback.";
+"support_bad_answer_agent" = "User left a negative feedback.";
+"support_rated_good" = "You left a positive feedback about the answer.";
+"support_rated_bad" = "You left a negative feedback about the answer.";
+"wrong_parameters" = "Invalid request parameters.";
+
 "ignore_report" = "Ignore report";
 "report_number" = "Report #";
 "list_of_reports" = "List of reports";
@@ -527,6 +619,67 @@
 "sender" = "Sender";
 
 "author" = "Author";
+
+"you_have_not_entered_text" = "You have not entered any text";
+"you_have_not_entered_name_or_text" = "You did not enter a name or text";
+
+"support_ticket_changed" = "Ticket changed";
+"support_ticket_changed_comment" = "The changes will take effect in a few seconds.";
+
+/* Invite */
+
+"invite" = "Invite";
+"you_can_invite" = "You can invite your friends or acquaintances to the network using an individual link:";
+"you_can_invite_2" = "Attach this link to your post. When the user signs up, he will immediately appear in your friends.";
+
+/* Banned */
+
+"banned_title" = "You are banned";
+"banned_header" = "You are banned";
+"banned_alt" = "The user is blocked.";
+"banned_1" = "Sorry <b>$1</b>, but you have been banned.";
+"banned_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to block you forever.";
+"banned_3" = "You can still <a href=\"/support?act=new\">write to the support</a> if you think there was an error or <a href=\"/logout?hash=$1\">logout</a>.";
+
+/* Discussions */
+
+"discussions" = "Discussions";
+
+"messages_one" = "One message";
+"messages_other" = "$1 messages";
+
+"topic_messages_count_zero" = "Topic has no messages";
+"topic_messages_count_one" = "There are one message in the topic";
+"topic_messages_count_other" = "There are $1 messages in the topic";
+
+"replied" = "replied";
+"create_topic" = "Create a topic";
+
+"new_topic" = "New topic";
+"title" = "Title";
+"text" = "Text";
+
+"view_topic" = "View topic";
+"edit_topic_action" = "Edit topic";
+"edit_topic" = "Edit topic";
+"topic_settings" = "Topic settings";
+"pin_topic" = "Pin topic";
+"close_topic" = "Close topic";
+"delete_topic" = "Delete topic";
+
+"topics_one" = "One topic";
+"topics_other" = "$1 topics";
+
+"created" = "Created";
+
+"everyone_can_create_topics" = "Everyone can create topics";
+"display_list_of_topics_above_wall" = "Display a list of topics above the wall";
+
+"topic_changes_saved_comment" = "The updated title and settings will appear on the topic page.";
+
+"failed_to_create_topic" = "Failed to create topic";
+"failed_to_change_topic" = "Failed to change topic";
+"no_title_specified" = "No title specified.";
 
 /* Errors */
 
@@ -560,6 +713,37 @@
 
 "shared_succ" = "The post will appear on your wall. Click on the notification to go to your wall.";
 
+"invalid_email_address" = "Invalid Email address";
+"invalid_email_address_comment" = "The Email you entered is not correct.";
+
+"invalid_birth_date" = "Invalid date of birth";
+"invalid_birth_date_comment" = "The date of birth you entered is not correct.";
+
+"invalid_telegram_name" = "Invalid Telegram account name";
+"invalid_telegram_name_comment" = "The Telegram account name you entered is not correct.";
+
+"token_manipulation_error" = "Token manipulation error";
+"token_manipulation_error_comment" = "The token is invalid or expired";
+
+"profile_changed" = "Profile changed";
+"profile_changed_comment" = "Your active profile has been changed.";
+"profile_not_found" = "User is not found.";
+
+"suspicious_registration_attempt" = "Suspicious registration attempt";
+"suspicious_registration_attempt_comment" = "You tried to register from a suspicious location.";
+
+"rate_limit_error" = "Choomba, are you completely fucked up?";
+"rate_limit_error_comment" = "Go to the brainwrap, drink the wheels. In $1, you cannot drop shitposts as often. Exception code: $2.";
+
+"not_enough_permissions" = "Not enough permissions";
+"not_enough_permissions_comment" = "You do not have sufficient permissions to perform this action.";
+
+"login_required_error" = "Not enough permissions";
+"login_required_error_comment" = "To view this page, you need to sign in to your account.";
+
+"captcha_error" = "Incorrect characters entered";
+"captcha_error_comment" = "Please make sure you fill in the captcha field correctly.";
+
 /* Admin actions */
 
 "login_as" = "Login as $1";
@@ -573,6 +757,10 @@
 "paginator_page" = "Page $1";
 "paginator_next" = "Next";
 
+/* About */
+
+"about_openvk" = "About OpenVK";
+
 /* Dialogs */
 
 "ok" = "OK";
@@ -580,6 +768,7 @@
 "no" = "No";
 "cancel" = "Cancel";
 "edit_action" = "Change";
+"transfer" = "Transfer";
 
 "warning" = "Warning";
 "question_confirm" = "This action can't be undone. Do you really wanna do it?";

@@ -1,3 +1,5 @@
+#include <en>
+
 "__locale" = "sr_CS.UTF-8;Srb_Latin";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
@@ -287,6 +289,7 @@
 "search_for_groups" = "Istraživanje grupa";
 "search_for_people" = "Istraživanje ljudi";
 "search_button" = "Pronaći";
+
 "privacy_setting_access_page" = "Ko može videti moju stranicu na Internetu";
 "privacy_setting_read_info" = "Ko može videti osnovnu informaciju od moje stranice";
 "privacy_setting_see_groups" = "Ko može videti informaciju o mojim grupovima i sastanku";
@@ -301,9 +304,9 @@
 "privacy_value_users" = "Korisnici OpenVK";
 "privacy_value_friends" = "Prijatelje";
 "privacy_value_friends_dative" = "Prijatelje";
-"privacy_value_only_me_and_super_capite" = "Ja sam i Vitalina Pavlenko";
-"privacy_value_only_me_and_super_capite_dative" = "Za mene i Vitalinu Pavlenko";
-"privacy_value_super_capite" = "Vitalini Pavlenko";
+"privacy_value_only_me" = "Ja sam";
+"privacy_value_only_me_dative" = "Za mene";
+"privacy_value_nobody" = "Niko";
 
 "your_email_address" = "Vaša e-mail adresa";
 "your_page_address" = "Adresa Vaše stranice";
@@ -384,23 +387,6 @@
 "time_minutes_ago" = "$pre 1 minuti";
 "time_today" = "danas";
 "time_yesterday" = "juće";
-
-"privacy_setting_access_page" = "Ko može videti moju stranicu na Internetu";
-"privacy_setting_read_info" = "Ko može videti osnovnu informaciju od moje stranice";
-"privacy_setting_see_groups" = "Ko može videti informaciju o mojim grupovima i sastanku";
-"privacy_setting_see_photos" = "Ko može videti moje slike";
-"privacy_setting_see_videos" = "Ko može pogledati moje video";
-"privacy_setting_see_notes" = "Ko može videti moje bile?ke";
-"privacy_setting_see_friends" = "Ko može da upozna sa mojim prijateljima";
-"privacy_setting_add_to_friends" = "Ko ima mogućnost da doda me u prijatelje";
-"privacy_setting_write_wall" = "Ko ima mogućnost da piši na mojem zidu";
-"privacy_value_anybody" = "Bilo ko";
-"privacy_value_anybody_dative" = "Bilo ko";
-"privacy_value_users" = "Korisnici OpenVK";
-"privacy_value_friends" = "Prijatelje";
-"privacy_value_friends_dative" = "Prijatelje";
-"privacy_value_only_me_and_super_capite" = "Ja sam";
-"privacy_value_only_me_and_super_capite_dative" = "Za mene";
 
 "your_email_address" = "Adresa Vaše elektronske pošte";
 "your_page_address" = "Adresa Vaše stranice";

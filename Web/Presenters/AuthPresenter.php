@@ -6,6 +6,7 @@ use openvk\Web\Models\Entities\PasswordReset;
 use openvk\Web\Models\Repositories\IPs;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Repositories\Restores;
+use openvk\Web\Util\Validator;
 use Chandler\Session\Session;
 use Chandler\Security\User as ChandlerUser;
 use Chandler\Security\Authenticator;
@@ -32,17 +33,6 @@ final class AuthPresenter extends OpenVKPresenter
         parent::__construct();
     }
     
-    private function emailValid(string $email): bool
-    {
-        if(empty($email)) return false;
-        
-        $email = trim($email);
-        [$user, $domain] = explode("@", $email);
-        $domain = idn_to_ascii($domain) . ".";
-        
-        return checkdnsrr($domain, "MX");
-    }
-    
     private function ipValid(): bool
     {
         $ip  = (new IPs)->get(CONNECTING_IP);
@@ -62,7 +52,7 @@ final class AuthPresenter extends OpenVKPresenter
         if(!is_null($refLink = $this->queryParam("ref"))) {
             $pieces = explode(" ", $refLink, 2);
             if(sizeof($pieces) !== 2)
-                $this->flashFail("err", "Пригласительная ссылка кривая", "Пригласительная ссылка недействительна.");
+                $this->flashFail("err", tr("error"), tr("referral_link_invalid"));
             
             [$ref, $hash] = $pieces;
             $ref  = hexdec($ref);
@@ -70,10 +60,10 @@ final class AuthPresenter extends OpenVKPresenter
             
             $referer = (new Users)->get($ref);
             if(!$referer)
-                $this->flashFail("err", "Пригласительная ссылка кривая", "Пригласительная ссылка недействительна.");
+                $this->flashFail("err", tr("error"), tr("referral_link_invalid"));
             
             if($referer->getRefLinkId() !== $refLink)
-                $this->flashFail("err", "Пригласительная ссылка кривая", "Пригласительная ссылка недействительна.");
+                $this->flashFail("err", tr("error"), tr("referral_link_invalid"));
         }
         
         $this->template->referer = $referer;
@@ -82,20 +72,20 @@ final class AuthPresenter extends OpenVKPresenter
             $this->assertCaptchaCheckPassed();
 
             if(!OPENVK_ROOT_CONF['openvk']['preferences']['registration']['enable'] && !$referer)
-                $this->flashFail("err", "Подозрительная попытка регистрации", "Регистрация отключена системным администратором.");
+                $this->flashFail("err", tr("failed_to_register"), tr("registration_disabled"));
             
             if(!$this->ipValid())
-                $this->flashFail("err", "Подозрительная попытка регистрации", "Вы пытались зарегистрироваться из подозрительного места.");
+                $this->flashFail("err", tr("suspicious_registration_attempt"), tr("suspicious_registration_attempt_comment"));
             
-            if(!$this->emailValid($this->postParam("email")))
-                $this->flashFail("err", "Неверный email адрес", "Email, который вы ввели, не является корректным.");
+            if(!Validator::i()->emailValid($this->postParam("email")))
+                $this->flashFail("err", tr("invalid_email_address"), tr("invalid_email_address_comment"));
             
             if (strtotime($this->postParam("birthday")) > time())
-                $this->flashFail("err", "Неверная дата рождения", "Дату рождения, которую вы ввели, не является корректным.");    
+                $this->flashFail("err", tr("invalid_birth_date"), tr("invalid_birth_date_comment"));    
 
             $chUser = ChandlerUser::create($this->postParam("email"), $this->postParam("password"));
             if(!$chUser)
-                $this->flashFail("err", "Не удалось зарегистрироваться", "Пользователь с таким email уже существует.");
+                $this->flashFail("err", tr("failed_to_register"), tr("user_already_exists"));
             
             $user = new User;
             $user->setUser($chUser->getId());
@@ -131,10 +121,10 @@ final class AuthPresenter extends OpenVKPresenter
             
             $user = $this->db->table("ChandlerUsers")->where("login", $this->postParam("login"))->fetch();
             if(!$user)
-                $this->flashFail("err", "Не удалось войти", "Неверное имя пользователя или пароль. <a href='/restore.pl'>Забыли пароль?</a>");
+                $this->flashFail("err", tr("login_failed"), tr("invalid_username_or_password"));
             
             if(!$this->authenticator->verifyCredentials($user->id, $this->postParam("password")))
-                $this->flashFail("err", "Не удалось войти", "Неверное имя пользователя или пароль. <a href='/restore.pl'>Забыли пароль?</a>");
+                $this->flashFail("err", tr("login_failed"), tr("invalid_username_or_password"));
 
             $secret = $user->related("profiles.user")->fetch()["2fa_secret"];
             $code   = $this->postParam("code");
@@ -148,7 +138,7 @@ final class AuthPresenter extends OpenVKPresenter
 
                 $ovkUser = new User($user->related("profiles.user")->fetch());
                 if(!($code === (new Totp)->GenerateToken(Base32::decode($secret)) || $ovkUser->use2faBackupCode((int) $code))) {
-                    $this->flash("err", "Не удалось войти", tr("incorrect_2fa_code"));
+                    $this->flash("err", tr("login_failed"), tr("incorrect_2fa_code"));
                     return;
                 }
             }
@@ -170,11 +160,11 @@ final class AuthPresenter extends OpenVKPresenter
         }
         
         if(!$this->db->table("ChandlerUsers")->where("id", $uuid))
-            $this->flashFail("err", "Ошибка манипуляции токенами", "Пользователь не найден.");
+            $this->flashFail("err", tr("token_manipulation_error"), tr("profile_not_found"));
         
         $this->assertPermission('openvk\Web\Models\Entities\User', 'substitute', 0);
         Session::i()->set("_su", $uuid);
-        $this->flash("succ", "Профиль изменён", "Ваш активный профиль был изменён.");
+        $this->flash("succ", tr("profile_changed"), tr("profile_changed_comment"));
         $this->redirect("/", static::REDIRECT_TEMPORARY);
         exit;
     }
@@ -193,8 +183,9 @@ final class AuthPresenter extends OpenVKPresenter
     {
         $request = $this->restores->getByToken(str_replace(" ", "+", $this->queryParam("key")));
         if(!$request || !$request->isStillValid()) {
-            $this->flash("err", "Ошибка манипулирования токеном", "Токен недействителен или истёк");
+            $this->flash("err", tr("token_manipulation_error"), tr("token_manipulation_error_comment"));
             $this->redirect("/");
+            return;
         }
 
         $this->template->is2faEnabled = $request->getUser()->is2faEnabled();
@@ -217,7 +208,7 @@ final class AuthPresenter extends OpenVKPresenter
             $this->authenticator->authenticate($user->getId());
             
             $request->delete(false);
-            $this->flash("succ", "Успешно", "Ваш пароль был успешно сброшен.");
+            $this->flash("succ", tr("information_-1"), tr("password_successfully_reset"));
             $this->redirect("/settings");
         }
     }
@@ -231,16 +222,16 @@ final class AuthPresenter extends OpenVKPresenter
             $uRow = $this->db->table("ChandlerUsers")->where("login", $this->postParam("login"))->fetch();
             if(!$uRow) {
                 #Privacy of users must be protected. We will not tell if email is bound to a user or not.
-                $this->flashFail("succ", "Успешно", "Если вы зарегистрированы, вы получите инструкции на email.");
+                $this->flashFail("succ", tr("information_-1"), tr("password_reset_email_sent"));
             }
             
             $user = $this->users->getByChandlerUser(new ChandlerUser($uRow));
             if(!$user)
-                $this->flashFail("err", "Ошибка", "Непредвиденная ошибка при сбросе пароля.");
+                $this->flashFail("err", tr("error"), tr("password_reset_error"));
             
             $request = $this->restores->getLatestByUser($user);
             if(!is_null($request) && $request->isNew())
-                $this->flashFail("err", "Ошибка доступа", "Нельзя делать это так часто, извините.");
+                $this->flashFail("err", tr("forbidden"), tr("password_reset_rate_limit_error"));
             
             $resetObj = new PasswordReset;
             $resetObj->setProfile($user->getId());
@@ -253,7 +244,7 @@ final class AuthPresenter extends OpenVKPresenter
             $this->sendmail($uRow->login, "password-reset", $params); #Vulnerability possible
             
             
-            $this->flashFail("succ", "Успешно", "Если вы зарегистрированы, вы получите инструкции на email.");
+            $this->flashFail("succ", tr("information_-1"), tr("password_reset_email_sent"));
         }
     }
 } 

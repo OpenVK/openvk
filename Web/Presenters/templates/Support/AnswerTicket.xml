@@ -73,7 +73,12 @@
                {if $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
                    <a href="{$comment->getUser()->getURL()}">
                        <span class="nobold">
-                           ({$comment->getUser()->getFirstName()} {iconv_substr($comment->getUser()->getLastName(), 0, 1)}.)
+                           {var lastName = $comment->getUser()->getLastName()}
+                           {if empty(trim($lastName))}
+                                ({$comment->getUser()->getFirstName()})
+                           {else}
+                                ({$comment->getUser()->getFirstName()} {iconv_substr($lastName, 0, 1)}.)
+                           {/if}
                        </span>
                    </a>
                {/if}
@@ -103,6 +108,18 @@
                 <div class="post-menu">
                     <a href="/support/comment/{$comment->getId()}/delete">{_delete}</a>
                 </div>
+               {/if}
+               
+               {if $comment->getUType() === 1 && !is_null($comment->isLikedByUser())}
+                  <div class="post-menu">
+                      <strong>
+                        {if $comment->isLikedByUser()}
+                            {_support_good_answer_agent}
+                        {else}
+                            {_support_bad_answer_agent}
+                        {/if}
+                      </strong>
+                  </div>
                {/if}
             </div>
          </td>

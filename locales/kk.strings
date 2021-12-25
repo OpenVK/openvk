@@ -1,3 +1,5 @@
+#include <ru>
+
 "__locale" = "kk_KZ.UTF-8;Kaz";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
@@ -13,6 +15,36 @@
 "password" = "Құпиясөз";
 "registration" = "Тіркелу";
 "forgot_password" = "Құпиясөзіңізді ұмыттыңыз ба?";
+
+"login_failed" = "Жүйеге кіру сәтті аяқталмады";
+"invalid_username_or_password" = "Қолданушы аты немесе құпиясөз дұрыс емес.<a href='/restore.pl'>Құпиясөзді ұмыттыңыз ба?</a>";
+
+"failed_to_register" = "Жүйеге тіркелу сәтті аяқталмады";
+"referral_link_invalid" = "Реферал сілтемесі жарамсыз.";
+"registration_disabled" = "Жүйе әкімшісі тіркеуді өшірді.";
+"user_already_exists" = "Бұл Email-мекенжайы әлдеқашан басқа пайдаланушыға тіркелген.";
+
+"access_recovery" = "Қатынастауды қалпына келтіру";
+"page_access_recovery" = "Парақшаға қатынастауды қалпына келтіру";
+"access_recovery_info" = "Құпиясөзіңізді ұмыттыңыз ба? Уайымдамаңыз, мәліметтеріңізді енгізіңіз, содан кейін біз сізге қатынастауды қалпына келтіру туралы нұсқаулары бар электрондық хат жібереміз.";
+"access_recovery_info_2" = "Жаңа құпиясөзіңізді енгізіңіз. Барлық ағымдағы сеанстар тоқтатылады және кіру токендері жойылады.";
+"reset_password" = "Құпиясөзді ысыру";
+"2fa_code_2" = "Екі факторлы аутентификация коды";
+
+"password_successfully_reset" = "Сіздің құпиясөзіңіз сәтті ысырылды.";
+"password_reset_email_sent" = "Тіркелген болсаңыз, электрондық пошта арқылы нұсқаулар аласыз.";
+"password_reset_error" = "Құпиясөзді қалпына келтіру кезінде күтпеген қате орын алды.";
+"password_reset_rate_limit_error" = "Кешіріңіз, бірақ осы әрекетті сонай жиі жасай алмайсыз.";
+
+"registration_disabled_info" = "Жүйе әкімшісі тіркеуді өшірді. Мүмкіндігінше, егер досыңыз сайтта тіркелген болса одан шақыру сілтемесін сұраңыз.";
+"registration_closed" = "Тіркелу жабық";
+"invites_you_to" = "<strong>$1</strong> сізді $2 желіне шақырады.";
+
+"register_meta_desc" = "$1 желісіне тіркеліңіз!";
+"register_referer_meta_title" = "$1 сізді $2 желіне шақырады!";
+"register_referer_meta_desc" = "$1 және одан көп пайдаланушылармен $2 желісінде қосылыңыз!";
+
+"users" = "Қолданушылар";
 
 /* Profile information */
 
@@ -97,6 +129,9 @@
 
 "updated_at" = "Соңғы жаңартылған: $1";
 
+"user_banned" = "Өкінішке орай біз <b>$1</b> қолданушының парақшасың блоктауға мәжбүр болдық.";
+"user_banned_comment" = "Модератордың пікірі:";
+
 /* Wall */
 
 "post_writes_m" = "жазды";
@@ -130,13 +165,17 @@
 
 "attachment" = "Тіркемелер";
 "post_as_group" = "Топ ретінде жазу";
+"comment_as_group" = "Топ ретінде пікір жазу";
 "add_signature" = "Автордың қолтаңбасы";
 /* ^ can be translated as "author's signature". ^ */
 "contains_nsfw" = "NSFW-контент бар";
 "nsfw_warning" = "Бұл жазбада NSFW-контент болуы мүмкін";
 "report" = "Шағымдану";
-"attach_photo" = "Сурет тіркеу";
-"no_posts_abstract" = "Бұл жерде ешкім ештеңе жазбады.";
+"attach" = "Тіркеу";
+"attach_photo" = "Фото тіркеу";
+"attach_video" = "Видео тіркеу";
+"draw_graffiti" = "Граффити салу";
+"no_posts_abstract" = "Бұл жерде әлі ешкім ештеңе жазбады.";
 "attach_no_longer_available" = "Бұл тіркеме бұдан былай қол жетімді емес.";
 "open_post" = "Жазбаны ашу";
 "version_incompatibility" = "Бұл тіркемені көрсете алмадық. Мәліметтер базасы OpenVK-дің қазіргі нұсқасымен үйлеспелмеуі мүмкін.";
@@ -147,9 +186,6 @@
 "followers" = "Жазылмандар";
 "follower" = "Жазылман";
 "login_as" = "Кім ретінде кіру:";
-"ban_fast" = "Блоктау";
-"adm_notify" = "Ескерту";
-"friends_add" = "Достарыма қосу";
 "friends_delete" = "Достарымнан жою";
 "friends_reject" = "Өтінімді қабылдамау";
 "friends_accept" = "Өтінімді қабылдау";
@@ -344,6 +380,36 @@
 "ui_settings_rating_show" = "Көрсету";
 "ui_settings_rating_hide" = "Жасыру";
 
+"two_factor_authentication" = "Екі факторлы аутентификация";
+"two_factor_authentication_disabled" = "Бұзылудан сенімді қорғаныс қызметін қамтамасыз етеді: парақшаға кіру үшін 2FA қосымшасында алынған кодты енгізу керек.";
+"two_factor_authentication_enabled" = "Екі факторлы аутентификация қосулы. Сіздің парақшаңыз қорғалған.";
+"two_factor_authentication_login" = "Сізде екі факторлы аутентификация қосылған. Кіру үшін арнайы қолданбадағы кодты енгізіңіз.";
+
+"two_factor_authentication_settings_1" = "TOTP арқылы екі факторлы аутентификацияны интернетсіз де пайдалануға болады. Мұны істеу үшін сізге кодты жасау қолданбасы қажет. Мысалы Android пен iOS-ке арналған <b>Google Authenticator</b> немесе <b>Aegis және andOTP</b> - Android ОЖ-не арналған тегін қолданбалар. Телефоныңызда күн мен уақыт дұрыс орнатылғанын тексеріңіз.";
+"two_factor_authentication_settings_2" = "Екі факторлы аутентификация қолданбасын пайдаланып, төмендегі QR кодын сканерлеңіз:";
+"two_factor_authentication_settings_3" = "немесе өзіңіз құпия кілтті енгізіңіз: <b>$1</b>.";
+"two_factor_authentication_settings_4" = "Енді кіріп отырған шынымен сіз екеніңізді растау үшін қолданба сізге берген кодты және парақшаның құпиясөзін енгізіңіз.";
+
+"connect" = "Қосу";
+"enable" = "Қосу";
+"disable" = "Сөндіру";
+"code" = "Код";
+"2fa_code" = "2FA код";
+
+"incorrect_password" = "Құпиясөз дұрыс емес";
+"incorrect_code" = "Код дұрыс емес";
+"incorrect_2fa_code" = "Екі факторлы аутентификацияның коды дұрыс емес";
+"two_factor_authentication_enabled_message" = "Екі факторлы аутентификация қосулы";
+"two_factor_authentication_enabled_message_description" = "Сіздің парағыңызды бұзу қиынырақ болды. <a href='javascript:viewBackupCodes()'>Сақтық көшірме кодтарын</a> жүктеп алуды ұсынамыз";
+"two_factor_authentication_disabled_message" = "Екі факторлы аутентификация өшірулі";
+
+"view_backup_codes" = "Сақтық көшірме кодтарын көру";
+"backup_codes" = "Кіруді растауға арналған сақтық көшірме кодтары";
+"two_factor_authentication_backup_codes_1" = "Сақтық көшірме кодтары телефонға кіру мүмкіндігіңіз болмаған кезде, мысалы, саяхат кезінде парақшаға кіруге растауға мүмкіндік береді.";
+"two_factor_authentication_backup_codes_2" = "Сізде тағы <b>10 код</b> бар, әр кодты тек бір рет пайдалануға болады. Оларды басып шығарыңыз, қауіпсіз жерге қойыңыз және кіруіңізді растау үшін кодтар қажет болғанда пайдаланыңыз.";
+"two_factor_authentication_backup_codes_3" = "Таусылған жағдайда жаңа кодтарды алуға болады. Соңғы жасалған сақтық көшірме кодтары ғана жарамды.";
+
+
 /* Sorting */
 
 "sort_randomly" = "Кездейсоқ сұрыптау";
@@ -421,9 +487,9 @@
 "privacy_value_users" = "OpenVK қолданушылары";
 "privacy_value_friends" = "Достарым";
 "privacy_value_friends_dative" = "Достарым";
-"privacy_value_only_me_and_super_capite" = "Мен ғана";
-"privacy_value_only_me_and_super_capite_dative" = "Мен ғана";
-"privacy_value_super_capite" = "Ешкім";
+"privacy_value_only_me" = "Мен ғана";
+"privacy_value_only_me_dative" = "Мен ғана";
+"privacy_value_nobody" = "Ешкім";
 
 "points" = "Дауыс";
 "points_count" = "дауыс";
@@ -470,6 +536,8 @@
 "coins_one" = "Бір дауыс";
 "coins_other" = "$1 дауыс";
 
+"users_gifts" = "Сыйлықтар";
+
 /* Support */
 
 "support_opened" = "Ашық";
@@ -495,7 +563,29 @@
 
 "comment" = "Пікір";
 "sender" = "Жіберуші";
+
 "author" = "Автор";
+
+"you_have_not_entered_text" = "Cіз ешқандай мәтін енгізбедіңіз";
+"you_have_not_entered_name_or_text" = "Сіз ат немесе мәтін енгізген жоқсыз";
+
+"support_ticket_changed" = "Мәселе өзгерілді";
+"support_ticket_changed_comment" = "Өзгерістер бірнеше секундтан кейін күшіне енеді.";
+
+/* Invite */
+
+"invite" = "Шақыру";
+"you_can_invite" = "Сіз желіге достарыңызды немесе танысқандарыңызды осы индивидуал сілтемемен шақыра аласыз:";
+"you_can_invite_2" = "Осы сілтемені постыңызға тіркеңіз. Қолданушы желіге тіркелгенде ол бірден сіздің достарыңызға қосылады.";
+
+/* Banned */
+
+"banned_title" = "Сізді верискок жазалады";
+"banned_header" = "Сіз әлеуметтік желіде блокталғансыз";
+"banned_alt" = "Бұл қолданушы блокталған.";
+"banned_1" = "Кешіріңіз, <b>$1</b>, бірақ сіз әлеуметтік желіден блокталған болдыңыз.";
+"banned_2" = "Мұның себебі қарапайым: <b>$1</b>. Өкінішке орай, осы жолы сізді мәңгілікке блоктауға мәжбүр болдық.";
+"banned_3" = "Егер сізді қателесіп блоктады деп ойласаңыз, <a href=\"/support?act=new\">қолдау қызметіне жаза аласыз</a> немесе <a href=\"/logout?hash=$1\">жүйеден шыға аласыз</a>.";
 
 /* Errors */
 
@@ -510,12 +600,13 @@
 "no_data_description" = "Мұнда деректер жоқ.";
 
 "error" = "Қателік";
-"error_shorturl" = "Бұл мекенжай қазірдің өзінде тиесілі.";
+"error_shorturl" = "Бұл мекенжай бос емес.";
 "error_segmentation" = "Сегментация қателігі";
 "error_upload_failed" = "Фотосурет жүктелмеді";
 "error_old_password" = "Бұрынғы құпиясөз сәйкес келмейді";
 "error_new_password" = "Жаңа құпиясөз сәйкес келмейді";
-"error_shorturl_incorrect" = "Мекенжайдың пішімі дұрыс емес.";
+"error_shorturl_incorrect" = "Мекенжайдың форматы дұрыс емес.";
+"error_repost_fail" = "Жазбамен бөлісу мүмкін болмады";
 
 "forbidden" = "Рұқсат қателігі";
 "forbidden_comment" = "Бұл қолданушының құпиялық баптаулары сізге осы парақты қарауға рұқсат бермейді";
@@ -525,6 +616,39 @@
 
 "photo_saved" = "Фото сақталды";
 "photo_saved_comment" = "Сіздің жаңа парақша суретіңіз сіздің парақта пайда болады";
+
+"shared_succ" = "Жазба сіздің қабырғаңызда пайда болады. Қабырғаңызға өту үшін хабарландыруды басыңыз.";
+
+"invalid_email_address" = "Email-мекенжай қате";
+"invalid_email_address_comment" = "Сіз енгізген электрондық пошта дұрыс емес.";
+
+"invalid_birth_date" = "Туған жылы қате";
+"invalid_birth_date_comment" = "Сіз енгізген туған жыл дұрыс емес.";
+
+"invalid_telegram_name" = "Telegram парақшаның аты қате";
+"invalid_telegram_name_comment" = "Сіз енгізген Telegram-дағы парақшаның аты дұрыс емес.";
+
+"token_manipulation_error" = "Токенді өңдеу қатесі";
+"token_manipulation_error_comment" = "Токен жарамсыз немесе мерзімі өтіп кеткен";
+
+"profile_changed" = "Парақша өзгерілді";
+"profile_changed_comment" = "Белсенді профиліңіз өзгертілді.";
+"profile_not_found" = "Пайдаланушы табылмады.";
+
+"suspicious_registration_attempt" = "Күдікті тіркелу әрекеті";
+"suspicious_registration_attempt_comment" = "Сіз күдікті жерден тіркелгіңіз келді.";
+
+"rate_limit_error" = "Бауырым, сәл қойсай!";
+"rate_limit_error_comment" = "Мемдерің күлкілі, келісем, бірақ оларды сәл баяуырақ жібере аласың ба? Ерекшелік код: $2.";
+
+"not_enough_permissions" = "Рұқсаттар жеткіліксіз";
+"not_enough_permissions_comment" = "Бұл әрекетті орындау үшін жеткілікті рұқсаттарыңыз жоқ.";
+
+"login_required_error" = "Рұқсаттар жеткіліксіз";
+"login_required_error_comment" = "Осы бетті қарау үшін өз парақшаңызға кіруіңіз қажет.";
+
+"captcha_error" = "Қате таңбалар енгізілді";
+"captcha_error_comment" = "Капча өрісін дұрыс толтырғаныңызға көз жеткізіңіз.";
 
 /* Admin actions */
 
@@ -538,3 +662,14 @@
 "paginator_back" = "Артқа";
 "paginator_page" = "$1 бет";
 "paginator_next" = "Алға";
+
+/* Dialogs */
+
+"ok" = "ОК";
+"yes" = "Ия";
+"no" = "Жоқ";
+"cancel" = "Бас тарту";
+"edit_action" = "Өзгерту";
+
+"warning" = "Назар аударыңыз";
+"question_confirm" = "Бұл әрекетті болдырмауға мүмкін емес. Шынымен осы әрекетті жасауға сенімдісіз бе?";

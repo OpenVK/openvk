@@ -1,16 +1,17 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{Comment, Photo, Video, User};
+use openvk\Web\Models\Entities\{Comment, Photo, Video, User, Topic, Post};
 use openvk\Web\Models\Entities\Notifications\CommentNotification;
-use openvk\Web\Models\Repositories\Comments;
+use openvk\Web\Models\Repositories\{Comments, Clubs};
 
 final class CommentPresenter extends OpenVKPresenter
 {
     private $models = [
-        "posts"  => "openvk\\Web\\Models\\Repositories\\Posts",
-        "photos" => "openvk\\Web\\Models\\Repositories\\Photos",
-        "videos" => "openvk\\Web\\Models\\Repositories\\Videos",
-        "notes"  => "openvk\\Web\\Models\\Repositories\\Notes",
+        "posts"   => "openvk\\Web\\Models\\Repositories\\Posts",
+        "photos"  => "openvk\\Web\\Models\\Repositories\\Photos",
+        "videos"  => "openvk\\Web\\Models\\Repositories\\Videos",
+        "notes"   => "openvk\\Web\\Models\\Repositories\\Notes",
+        "topics"  => "openvk\\Web\\Models\\Repositories\\Topics",
     ];
     
     function renderLike(int $id): void
@@ -37,9 +38,17 @@ final class CommentPresenter extends OpenVKPresenter
         $repo   = new $repoClass;
         $entity = $repo->get($eId);
         if(!$entity) $this->notFound();
+
+        if($entity instanceof Topic && $entity->isClosed())
+            $this->notFound();
+
+        if($entity instanceof Post && $entity->getTargetWall() < 0)
+            $club = (new Clubs)->get(abs($entity->getTargetWall()));
+        else if($entity instanceof Topic)
+            $club = $entity->getClub();
         
         $flags = 0;
-        if($this->postParam("as_group") === "on")
+        if($this->postParam("as_group") === "on" && !is_null($club) && $club->canBeModifiedBy($this->user->identity))
             $flags |= 0b10000000;
 
         $photo = NULL;
@@ -106,9 +115,8 @@ final class CommentPresenter extends OpenVKPresenter
         
         $comment = (new Comments)->get($id);
         if(!$comment) $this->notFound();
-        if($comment->getOwner()->getId() !== $this->user->id)
-            if($comment->getTarget()->getOwner()->getId() !== $this->user->id)
-                $this->throwError(403, "Forbidden", "У вас недостаточно прав чтобы редактировать этот ресурс.");
+        if(!$comment->canBeDeletedBy($this->user->identity))
+            $this->throwError(403, "Forbidden", "У вас недостаточно прав чтобы редактировать этот ресурс.");
         
         $comment->delete();
         $this->flashFail(

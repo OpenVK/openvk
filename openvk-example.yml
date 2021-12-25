@@ -34,6 +34,7 @@ openvk:
         messages:
             strict: false
         wall:
+            christian: false
             anonymousPosting:
                 enable: false
                 account: 100
@@ -44,7 +45,8 @@ openvk:
         commerce: false
         menu:
             links:
-                
+                - name: "@left_menu_donate"
+                  url: "/donate"
         adPoster:
             enable: false
             src: "https://example.org/ad_poster.jpeg"
@@ -65,6 +67,10 @@ openvk:
             enable: false
             client: ""
             secret: "SECRET_KEY_HERE"
+        telegram:
+            enable: false
+            token: "TOKEN_HERE"
+            helpdeskChat: ""
         eventDB:
             enable: false # Better enable this
             database:
