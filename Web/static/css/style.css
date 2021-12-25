@@ -901,10 +901,9 @@ table.User {
 }
 
 .crp-entry--message.unread {
-    background-color: #dcdcdc;
+    background-color: #ededed;
     padding: 5px;
     width: 346px;
-    border-radius: 3px;
 }
 
 .messenger-app--messages---message.unread {
@@ -923,8 +922,6 @@ table.User {
 }
 
 .messenger-app--messages---message.unread:last-of-type {
-    border-bottom-left-radius: 3px;
-    border-bottom-right-radius: 3px;
     padding-bottom: 5px;
     margin-bottom: 1.2rem;
 }
