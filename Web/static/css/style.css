@@ -334,6 +334,20 @@ a {
     width: 150px;
 }
 
+.profile_link.disable > a, .profile_link.disable {
+    cursor: not-allowed;
+    color: grey;
+}
+
+.profile_link.loading > a::after, .profile_link.loading::after {
+    content: "";
+    display: inline-block;
+    background-image: url('/assets/packages/static/openvk/img/loading_mini.gif');
+    width: 30px;
+    height: 7px;
+    margin-left: 5px;
+}
+
 .page_footer {
     margin-left: 95px;
     padding-top: 5px;

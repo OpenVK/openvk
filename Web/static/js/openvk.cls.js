@@ -93,6 +93,9 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
         let groupName = u(this).attr("data-group-name");
         let groupUrl = u(this).attr("data-group-url");
         let list = u('#_groupListPinnedGroups');
+        
+        thisButton.nodes[0].classList.add('loading');
+        thisButton.nodes[0].classList.add('disable');
 
         let req = await ky(link);
         if(req.ok == false) {
@@ -122,6 +125,9 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
         if(list.nodes[0].children[0].className != "menu_divider" || list.nodes[0].children.length == 1) {
             list.nodes[0].children[0].remove();
         }
+        
+        thisButton.nodes[0].classList.remove('loading');
+        thisButton.nodes[0].classList.remove('disable');
 
         return false;
     });
