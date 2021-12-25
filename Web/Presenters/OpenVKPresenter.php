@@ -139,7 +139,7 @@ abstract class OpenVKPresenter extends SimplePresenter
         
         if(!($res === IP::RL_RESET || $res === IP::RL_CANEXEC)) {
             if($res === IP::RL_BANNED && OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["autoban"]) {
-                $this->user->identity->ban("Account has possibly been stolen");
+                $this->user->identity->ban("Account has possibly been stolen", false);
                 exit("Хакеры? Интересно...");
             }
             
