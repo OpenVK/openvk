@@ -561,6 +561,7 @@
                 const status = document.status_popup_form.status.value;
 
                 document.status_popup_form.submit.innerHTML = "<div class=\"button-loading\"></div>";
+                document.status_popup_form.submit.disabled = true;
 
                 const formData = new FormData();
                 formData.append("status", status);
@@ -569,12 +570,14 @@
 
                 if(!parseAjaxResponse(await response.text())) {
                     document.status_popup_form.submit.innerHTML = tr("send");
+                    document.status_popup_form.submit.disabled = false;
                     return;
                 }
 
                 document.querySelector("#page_status_text").innerHTML = status;
                 setStatusEditorShown(false);
                 document.status_popup_form.submit.innerHTML = tr("send");
+                document.status_popup_form.submit.disabled = false;
             }
         </script>
     </div>
