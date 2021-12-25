@@ -91,29 +91,35 @@
                                 {_"comments"}
                             {/if}
                         </a>
+                    {/if}
+
+                    {if !($forceNoCommentsLink ?? false) && !($forceNoShareLink ?? false)}
                         &nbsp;|&nbsp;
                     {/if}
                     
-                    <a class="post-share-button" href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')">
-                        {if $post->getRepostCount() > 0}
-                            {_"share"}
-                            (<b>{$post->getRepostCount()}</b>)
-                        {else}
-                            {_"share"}
-                        {/if}
-                    </a>
-                    
-
-                    <div class="like_wrap">
-                        {var liked = $post->hasLikeFrom($thisUser)}
-                        <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}"
-                        class="post-like-button"
-                                data-liked="{(int) $liked}"
-                                data-likes="{$post->getLikesCount()}">
-                            <div class="heart" id="{if $liked}liked{/if}"></div>
-                            <span class="likeCnt">{if $post->getLikesCount() > 0}{$post->getLikesCount()}{/if}</span>
+                    {if !($forceNoShareLink ?? false)}
+                        <a class="post-share-button" href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')">
+                            {if $post->getRepostCount() > 0}
+                                {_"share"}
+                                (<b>{$post->getRepostCount()}</b>)
+                            {else}
+                                {_"share"}
+                            {/if}
                         </a>
-                    </div>
+                    {/if}
+
+                    {if !($forceNoLike ?? false)}
+                        <div class="like_wrap">
+                            {var liked = $post->hasLikeFrom($thisUser)}
+                            <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}"
+                            class="post-like-button"
+                                    data-liked="{(int) $liked}"
+                                    data-likes="{$post->getLikesCount()}">
+                                <div class="heart" id="{if $liked}liked{/if}"></div>
+                                <span class="likeCnt">{if $post->getLikesCount() > 0}{$post->getLikesCount()}{/if}</span>
+                            </a>
+                        </div>
+                    {/if}
                 </div>
                 <div n:if="isset($thisUser) &&! ($compact ?? false)" class="post-menu-s">
                     <!-- kosfurler -->

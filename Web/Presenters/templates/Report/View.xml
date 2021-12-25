@@ -10,7 +10,7 @@
 
 {block content}
 <p><b>{_comment}: </b>{$report->getReason()}</p>
-{include "../components/post/oldpost.xml", post => $report->getContentObject()}
+{include "../components/post/oldpost.xml", post => $report->getContentObject(), forceNoDeleteLink => TRUE, forceNoShareLink => TRUE, forceNoLike => TRUE}
 <center>
     <form action="/admin/reportAction{$report->getId()}" method="post">
         <input type="hidden" name="hash" value="{$csrfToken}" />
