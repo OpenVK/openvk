@@ -134,7 +134,7 @@ final class UserPresenter extends OpenVKPresenter
         
         $user = $this->users->get($id);
         if($_SERVER["REQUEST_METHOD"] === "POST") {
-            $this->willExecuteWriteAction();
+            $this->willExecuteWriteAction($_GET['act'] === "status");
             
             if($_GET['act'] === "main" || $_GET['act'] == NULL) {
                 $user->setFirst_Name(empty($this->postParam("first_name")) ? $user->getFirstName() : $this->postParam("first_name"));
@@ -196,15 +196,15 @@ final class UserPresenter extends OpenVKPresenter
             } elseif($_GET['act'] === "status") {
                 if(mb_strlen($this->postParam("status")) > 255) {
                     $statusLength = (string) mb_strlen($this->postParam("status"));
-                    $this->flashFail("err", "Ошибка", "Статус слишком длинный ($statusLength символов вместо 255 символов)");
+                    $this->flashFail("err", "Ошибка", "Статус слишком длинный ($statusLength символов вместо 255 символов)", NULL, true);
                 }
 
                 $user->setStatus(empty($this->postParam("status")) ? NULL : $this->postParam("status"));
                 $user->save();
 
-                header("HTTP/1.1 302 Found");
-                header("Location: /id" . $user->getId());
-                exit;
+                $this->returnJson([
+                    "success" => true
+                ]);
             }
             
             try {
@@ -376,6 +376,7 @@ final class UserPresenter extends OpenVKPresenter
                     "menu_grupoj"   => "groups",
                     "menu_novajoj"  => "news",
                     "menu_ligiloj"  => "links",
+                    "menu_audioj"   => "audios",
                 ];
                 foreach($settings as $checkbox => $setting)
                     $user->setLeftMenuItemStatus($setting, $this->checkbox($checkbox));

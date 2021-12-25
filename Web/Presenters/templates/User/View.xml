@@ -316,12 +316,12 @@
             <div n:if="!is_null($alert = $user->getAlert())" class="user-alert">{$alert}</div>
             {var thatIsThisUser = isset($thisUser) && $user->getId() == $thisUser->getId()}
             <div n:if="$thatIsThisUser" class="page_status_popup" id="status_editor" style="display: none;">
-                <form method="post" action="/edit?act=status">
+                <form name="status_popup_form" onsubmit="changeStatus(); return false;">
                     <div style="margin-bottom: 10px;">
                         <input type="text" name="status" size="50" value="{$user->getStatus()}" />
                     </div>
                     <input type="hidden" name="hash" value="{$csrfToken}" />
-                    <input type="submit" class="button" value="{_'save'}" />
+                    <button type="submit" name="submit" class="button" style="width: 43px; height: 22px;">{_send}</button>
                 </form>
             </div>
 			<div class="accountInfo clearFix">
@@ -543,7 +543,7 @@
             }
         </script>
 
-        <script n:if="isset($thisUser) && $user->getId() == $thisUser->getId()">
+        <script n:if="isset($thisUser) && $user->getId() == $thisUser->getId()" n:syntax="off">
             function setStatusEditorShown(shown) {
                 document.getElementById("status_editor").style.display = shown ? "block" : "none";
             }
@@ -554,6 +554,26 @@
             });
 
             document.getElementById("page_status_text").onclick = setStatusEditorShown.bind(this, true);
+
+            async function changeStatus() {
+                const status = document.status_popup_form.status.value;
+
+                document.status_popup_form.submit.innerHTML = "<div class=\"button-loading\"></div>";
+
+                const formData = new FormData();
+                formData.append("status", status);
+                formData.append("hash", document.status_popup_form.hash.value);
+                const response = await ky.post("/edit?act=status", {body: formData});
+
+                if(!parseAjaxResponse(await response.text())) {
+                    document.status_popup_form.submit.innerHTML = tr("send");
+                    return;
+                }
+
+                document.querySelector("#page_status_text").innerHTML = status;
+                setStatusEditorShown(false);
+                document.status_popup_form.submit.innerHTML = tr("send");
+            }
         </script>
     </div>
     
