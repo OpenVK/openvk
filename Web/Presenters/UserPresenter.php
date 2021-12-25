@@ -101,11 +101,11 @@ final class UserPresenter extends OpenVKPresenter
             $this->notFound();
 
         if(!$club->canBeModifiedBy($this->user->identity ?? NULL))
-            $this->flashFail("err", "Ошибка доступа", "У вас недостаточно прав, чтобы изменять этот ресурс.");
+            $this->flashFail("err", "Ошибка доступа", "У вас недостаточно прав, чтобы изменять этот ресурс.", NULL, true);
 
         $isClubPinned = $this->user->identity->isClubPinned($club);
         if(!$isClubPinned && $this->user->identity->getPinnedClubCount() > 10)
-            $this->flashFail("err", "Ошибка", "Находится в левом меню могут максимум 10 групп");
+            $this->flashFail("err", "Ошибка", "Находится в левом меню могут максимум 10 групп", NULL, true);
 
         if($club->getOwner()->getId() === $this->user->identity->getId()) {
             $club->setOwner_Club_Pinned(!$isClubPinned);
@@ -118,10 +118,9 @@ final class UserPresenter extends OpenVKPresenter
             }
         }
 
-        if($isClubPinned)
-            $this->flashFail("succ", "Операция успешна", "Группа " . $club->getName() . " была успешно удалена из левого меню");
-        else
-            $this->flashFail("succ", "Операция успешна", "Группа " . $club->getName() . " была успешно добавлена в левое меню");
+        $this->returnJson([
+            "success" => true
+        ]);
     }
     
     function renderEdit(): void

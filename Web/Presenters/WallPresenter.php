@@ -320,7 +320,7 @@ final class WallPresenter extends OpenVKPresenter
                 (new RepostNotification($post->getOwner(false), $post, $this->user->identity))->emit();
         };
         
-        exit(json_encode(["wall_owner" => $this->user->identity->getId()]));
+        $this->returnJson(["wall_owner" => $this->user->identity->getId()]);
     }
     
     function renderDelete(int $wall, int $post_id): void
