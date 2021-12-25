@@ -321,7 +321,7 @@
                         <input type="text" name="status" size="50" value="{$user->getStatus()}" />
                     </div>
                     <input type="hidden" name="hash" value="{$csrfToken}" />
-                    <button type="submit" name="submit" class="button" style="width: 43px; height: 22px;">{_send}</button>
+                    <button type="submit" name="submit" class="button" style="height: 22px;">{_send}</button>
                 </form>
             </div>
 			<div class="accountInfo clearFix">
@@ -546,6 +546,8 @@
         <script n:if="isset($thisUser) && $user->getId() == $thisUser->getId()" n:syntax="off">
             function setStatusEditorShown(shown) {
                 document.getElementById("status_editor").style.display = shown ? "block" : "none";
+                if(!document.status_popup_form.submit.style.width)
+                    document.status_popup_form.submit.style.width = document.status_popup_form.submit.offsetWidth + 4 + "px"
             }
 
             document.addEventListener("click", event => {
