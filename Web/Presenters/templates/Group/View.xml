@@ -98,6 +98,9 @@
         {if $club->canBeModifiedBy($thisUser)}
             <a href="/club{$club->getId()}/edit" id="profile_link">{_"edit_group"}</a>
         {/if}
+        {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+            <a href="/admin/clubs/id{$club->getId()}" id="profile_link">{_"manage_group_action"}</a>
+        {/if}
         {if $club->getSubscriptionStatus($thisUser) == false}
             <form action="/setSub/club" method="post">
                 <input type="hidden" name="act" value="add" />

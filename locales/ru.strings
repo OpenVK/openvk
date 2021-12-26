@@ -780,6 +780,7 @@
 
 "login_as" = "Войти как $1";
 "manage_user_action" = "Управление пользователем";
+"manage_group_action" = "Управление группой";
 "ban_user_action" = "Заблокировать пользователя";
 "warn_user_action" = "Предупредить пользователя";
 
