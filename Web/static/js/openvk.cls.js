@@ -247,3 +247,21 @@ function showCoinsTransferDialog(coinsCount, hash) {
         Function.noop
     ]);
 }
+
+function chunkSubstr(string, size) {
+    const numChunks = Math.ceil(string.length / size);
+    const chunks = new Array(numChunks);
+
+    for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
+        chunks[i] = string.substr(o, size);
+    }
+
+    return chunks;
+}
+
+function autoTab(original, next, previous) {
+    if(original.getAttribute && original.value.length == original.getAttribute("maxlength") && next !== undefined)
+        next.focus();
+    else if(original.value.length == 0 && previous !== undefined)
+        previous.focus();
+}
