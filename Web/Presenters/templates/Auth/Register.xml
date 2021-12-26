@@ -39,7 +39,7 @@
                             <span>{_"surname"}: </span>
                         </td>
                         <td>
-                            <input type="text" name="last_name" required />
+                            <input type="text" name="last_name" />
                         </td>
                     </tr>
                     <tr>
