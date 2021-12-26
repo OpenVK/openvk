@@ -1776,3 +1776,16 @@ body.scrolled .toTop:hover {
     margin: -20px;
     padding: 10px;
 }
+
+.hover-box {
+    background-color: white;
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #C0CAD5;
+    cursor: pointer;
+    user-select: none;
+}
+
+.hover-box:hover {
+    background-color: #C0CAD5;
+}

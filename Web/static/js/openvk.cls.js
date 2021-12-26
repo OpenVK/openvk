@@ -265,3 +265,27 @@ function autoTab(original, next, previous) {
     else if(original.value.length == 0 && previous !== undefined)
         previous.focus();
 }
+
+function showSupportFastAnswerDialog(answers) {
+    let html = "";
+    for(const [index, answer] of Object.entries(answers)) {
+        html += `
+            <div class="hover-box" onclick="supportFastAnswerDialogOnClick(fastAnswers[${index}])">
+                ${answer.replace(/\n/g, "<br />")}
+            </div>
+        `;
+    }
+
+    MessageBox(tr("fast_answers"), html, [tr("close")], [
+        Function.noop
+    ]);
+}
+
+function supportFastAnswerDialogOnClick(answer) {
+    u("body").removeClass("dimmed");
+    u(".ovk-diag-cont").remove();
+
+    const answerInput = document.querySelector("#answer_text");
+    answerInput.value = answer;
+    answerInput.focus();
+}
