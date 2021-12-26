@@ -99,40 +99,34 @@
                         {/if}
                         
                         <div class="like_wrap">
-                            {if !($forceNoShareLink ?? false)}
-                                <a class="post-share-button" href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')">
-                                    <div class="repost-icon" style="opacity: 0.4;"></div>
-                                    <span class="likeCnt">{if $post->getRepostCount() > 0}{$post->getRepostCount()}{/if}</span>
-                                </a>
-                            {/if}
+                            <a class="post-share-button" href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')">
+                                <div class="repost-icon" style="opacity: 0.4;"></div>
+                                <span class="likeCnt">{if $post->getRepostCount() > 0}{$post->getRepostCount()}{/if}</span>
+                            </a>
 
-                            {if !($forceNoLike ?? false)}
-                                {var liked = $post->hasLikeFrom($thisUser)}
-                                <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}"
-                                class="post-like-button"
-                                        data-liked="{(int) $liked}"
-                                        data-likes="{$post->getLikesCount()}">
-                                    <div class="heart" id="{if $liked}liked{/if}"></div>
-                                    <span class="likeCnt">{if $post->getLikesCount() > 0}{$post->getLikesCount()}{/if}</span>
-                                </a>
-                            {/if}
+                            {var liked = $post->hasLikeFrom($thisUser)}
+                            <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}"
+                            class="post-like-button"
+                                    data-liked="{(int) $liked}"
+                                    data-likes="{$post->getLikesCount()}">
+                                <div class="heart" id="{if $liked}liked{/if}"></div>
+                                <span class="likeCnt">{if $post->getLikesCount() > 0}{$post->getLikesCount()}{/if}</span>
+                            </a>
                         </div>
                     {/if}
                 </div>
-                {if !($forceNoCommentsLink ?? false)}
-                    <div n:if="$commentSection == true && $compact == false" class="post-menu-s">
-                        {if $commentsCount > 3}
-                            <a href="/wall{$post->getPrettyId()}" class="expand_button">{_view_other_comments}</a>
-                        {/if}
-                        {foreach $comments as $comment}
-                            {include "../comment.xml", comment => $comment, $compact => true}
-                        {/foreach}
-                        <div n:ifset="$thisUser" id="commentTextArea{$commentTextAreaId}" n:attr="style => ($commentsCount == 0 ? 'display: none;')" class="commentsTextFieldWrap">
-                            {var commentsURL = "/al_comments.pl/create/posts/" . $post->getId()}
-                            {include "../textArea.xml", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), post => $post}
-                        </div>
+                <div n:if="$commentSection == true && $compact == false" class="post-menu-s">
+                    {if $commentsCount > 3}
+                        <a href="/wall{$post->getPrettyId()}" class="expand_button">{_view_other_comments}</a>
+                    {/if}
+                    {foreach $comments as $comment}
+                        {include "../comment.xml", comment => $comment, $compact => true}
+                    {/foreach}
+                    <div n:ifset="$thisUser" id="commentTextArea{$commentTextAreaId}" n:attr="style => ($commentsCount == 0 ? 'display: none;')" class="commentsTextFieldWrap">
+                        {var commentsURL = "/al_comments.pl/create/posts/" . $post->getId()}
+                        {include "../textArea.xml", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), post => $post}
                     </div>
-                {/if}
+                </div>
             </td>
         </tr>
     </tbody>
