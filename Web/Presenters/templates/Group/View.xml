@@ -92,7 +92,7 @@
 </div>
 <div class="right_small_block">
     {var avatarPhoto = $club->getAvatarPhoto()}
-    {var avatarLink  = ($avatarPhoto->isAnonymous() ? "/photo" . ("s/" . base_convert((string) $avatarPhoto->getId(), 10, 32)) : $club->getAvatarLink())}
+    {var avatarLink = ((is_null($avatarPhoto) ? FALSE : $avatarPhoto->isAnonymous()) ? "/photo" . ("s/" . base_convert((string) $avatarPhoto->getId(), 10, 32)) : $club->getAvatarLink())}
     <a href="{$avatarLink|nocheck}">
         <img src="{$club->getAvatarUrl()}" style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
     </a>
