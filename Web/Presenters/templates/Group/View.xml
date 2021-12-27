@@ -91,7 +91,9 @@
     {presenter "openvk!Wall->wallEmbedded", -$club->getId()}
 </div>
 <div class="right_small_block">
-    <a href="{$club->getAvatarLink()|nocheck}">
+    {var avatarPhoto = $club->getAvatarPhoto()}
+    {var avatarLink  = ($avatarPhoto->isAnonymous() ? "/photo" . ("s/" . base_convert((string) $avatarPhoto->getId(), 10, 32)) : $club->getAvatarLink())}
+    <a href="{$avatarLink|nocheck}">
         <img src="{$club->getAvatarUrl()}" style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
     </a>
     <div n:ifset="$thisUser" id="profile_links">
