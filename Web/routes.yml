@@ -265,6 +265,10 @@ routes:
       handler: "About->sandbox"
     - url: "/internal/wall{num}"
       handler: "Wall->wallEmbedded"
+    - url: "/.well-known/{?uri}"
+      handler: "ActivityPub->WellKnown"
+      placeholders:
+          uri: ".+"
     - url: "/{?shortCode}"
       handler: "UnknownTextRouteStrategy->delegate"
       placeholders:

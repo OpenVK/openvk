@@ -22,6 +22,7 @@ services:
     - openvk\Web\Presenters\TopicsPresenter
     - openvk\Web\Presenters\ThemepacksPresenter
     - openvk\Web\Presenters\VKAPIPresenter
+    - openvk\Web\Presenters\ActivityPubPresenter
     - openvk\Web\Models\Repositories\Users
     - openvk\Web\Models\Repositories\Posts
     - openvk\Web\Models\Repositories\Photos
