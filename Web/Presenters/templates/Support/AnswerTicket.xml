@@ -24,18 +24,24 @@
 </div><br/>
 <div>
     <form action="/al_comments.pl/create/support/reply/{$id}" method="post" style="margin:0;">
-        <textarea name="text" style="width: 100%;resize: vertical;"></textarea>
+        <textarea name="text" id="answer_text" style="width: 100%;resize: vertical;"></textarea>
         <div>
             <!-- padding to fix <br/> bug -->
         </div>
         <input type="hidden" name="hash" value="{$csrfToken}" />
-        <br>
-        <input type="submit" value="{_write}" class="button">
-        <select name="status" style="width: unset;">
-          <option value="1">{_support_status_1}</option>
-          <option value="2">{_support_status_2}</option>
-          <option value="0">{_support_status_0}</option>
-        </select>
+        <br />
+        <div style="float: left;">
+            <input type="submit" value="{_write}" class="button">
+            <select name="status" style="width: unset;">
+                <option value="1">{_support_status_1}</option>
+                <option value="2">{_support_status_2}</option>
+                <option value="0">{_support_status_0}</option>
+            </select>
+        </div>
+        <div n:if="!is_null($fastAnswers)" style="float: right;">
+            <a class="button" href="javascript:showSupportFastAnswerDialog(fastAnswers)">{_fast_answers}</a>
+        </div>
+        <br />
     </form>
 </div>
 <br/>
@@ -93,17 +99,17 @@
                        {tr("support_greeting_hi", $ticket->getUser()->getFullName())}
                        <br/>
                        <br/>
-                       
+
                        {$comment->getText()|noescape}
                        <br/>
                        <br/>
-                       
+
                        {tr("support_greeting_regards", OPENVK_ROOT_CONF["openvk"]["appearance"]["name"])|noescape}
                    {else}
                        {$comment->getText()|noescape}
                    {/if}
                </div>
-               
+                
                {if $comment->getUType() === 0}
                 <div class="post-menu">
                     <a href="/support/comment/{$comment->getId()}/delete">{_delete}</a>
@@ -126,4 +132,12 @@
       </tr>
    </tbody>
 </table>
+
+<script>
+    const fastAnswers = [
+        {foreach $fastAnswers as $answer}
+            {$answer},
+        {/foreach}
+    ];
+</script>
 {/block}

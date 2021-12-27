@@ -164,9 +164,10 @@ final class SupportPresenter extends OpenVKPresenter
             $this->notFound();
 
         $ticketComments = $this->comments->getCommentsById($id);
-        $this->template->ticket   = $ticket;
-        $this->template->comments = $ticketComments;
-        $this->template->id       = $id;
+        $this->template->ticket      = $ticket;
+        $this->template->comments    = $ticketComments;
+        $this->template->id          = $id;
+        $this->template->fastAnswers = OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["fastAnswers"];
     }
     
     function renderAnswerTicketReply(int $id): void

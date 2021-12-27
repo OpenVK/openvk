@@ -2,6 +2,10 @@
 
 Based on [@rem-pai](https://github.com/rem-pai)'s way to install OpenVK modified using my experience.
 
+!!WARNING!!
+
+CentOS 8 is reaching it's end-of-life soon. There are other supported similar distributions like Rocky Linux or AlmaLinux.
+
 ## SELinux
 
 🖥Run the command:

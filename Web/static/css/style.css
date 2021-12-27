@@ -440,7 +440,15 @@ table {
 }
 
 .button:hover {
-	color: #e8e8e8;
+    color: #e8e8e8;
+}
+
+.button-loading {
+    display: inline-block;
+    background-image: url('/assets/packages/static/openvk/img/loading_mini.gif');
+    width: 30px;
+    height: 7px;
+    margin-left: -3px;
 }
 
 input[class=button] {
@@ -1767,4 +1775,17 @@ body.scrolled .toTop:hover {
     background: #F7F7F7;
     margin: -20px;
     padding: 10px;
+}
+
+.hover-box {
+    background-color: white;
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #C0CAD5;
+    cursor: pointer;
+    user-select: none;
+}
+
+.hover-box:hover {
+    background-color: #C0CAD5;
 }

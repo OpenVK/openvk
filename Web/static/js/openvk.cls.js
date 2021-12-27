@@ -38,6 +38,22 @@ function hidePanel(panel, count = 0)
 
 }
 
+function parseAjaxResponse(responseString) {
+    try {
+        const response = JSON.parse(responseString);
+        if(response.flash)
+            NewNotification(response.flash.title, response.flash.message || "", null);
+
+        return response.success || false;
+    } catch(error) {
+        if(responseString === "Хакеры? Интересно...") {
+            location.reload();
+            return false;
+        } else {
+            throw error;
+        }
+    }
+}
 
 document.addEventListener("DOMContentLoaded", function() { //BEGIN
 
@@ -100,6 +116,15 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
         let req = await ky(link);
         if(req.ok == false) {
             NewNotification(tr('error'), tr('error_1'), null);
+            thisButton.nodes[0].classList.remove('loading');
+            thisButton.nodes[0].classList.remove('disable');
+            return;
+        }
+
+        if(!parseAjaxResponse(await req.text())) {
+            thisButton.nodes[0].classList.remove('loading');
+            thisButton.nodes[0].classList.remove('disable');
+            return;
         }
 
         // Adding a divider if not already there
@@ -145,7 +170,7 @@ function repostPost(id, hash) {
 			xhr.open("POST", "/wall"+id+"/repost?hash="+hash, true);
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.onload = (function() {
-				if(xhr.responseText.indexOf("wall_owner") === -1)
+                if(xhr.responseText.indexOf("wall_owner") === -1)
 					MessageBox(tr('error'), tr('error_repost_fail'), tr('ok'), [Function.noop]);
 				else {
 					let jsonR = JSON.parse(xhr.responseText);
@@ -223,3 +248,44 @@ function showCoinsTransferDialog(coinsCount, hash) {
     ]);
 }
 
+function chunkSubstr(string, size) {
+    const numChunks = Math.ceil(string.length / size);
+    const chunks = new Array(numChunks);
+
+    for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
+        chunks[i] = string.substr(o, size);
+    }
+
+    return chunks;
+}
+
+function autoTab(original, next, previous) {
+    if(original.getAttribute && original.value.length == original.getAttribute("maxlength") && next !== undefined)
+        next.focus();
+    else if(original.value.length == 0 && previous !== undefined)
+        previous.focus();
+}
+
+function showSupportFastAnswerDialog(answers) {
+    let html = "";
+    for(const [index, answer] of Object.entries(answers)) {
+        html += `
+            <div class="hover-box" onclick="supportFastAnswerDialogOnClick(fastAnswers[${index}])">
+                ${answer.replace(/\n/g, "<br />")}
+            </div>
+        `;
+    }
+
+    MessageBox(tr("fast_answers"), html, [tr("close")], [
+        Function.noop
+    ]);
+}
+
+function supportFastAnswerDialogOnClick(answer) {
+    u("body").removeClass("dimmed");
+    u(".ovk-diag-cont").remove();
+
+    const answerInput = document.querySelector("#answer_text");
+    answerInput.value = answer;
+    answerInput.focus();
+}
