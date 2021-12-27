@@ -610,6 +610,8 @@
 "support_rated_bad" = "You left a negative feedback about the answer.";
 "wrong_parameters" = "Invalid request parameters.";
 
+"fast_answers" = "Fast answers";
+
 "comment" = "Comment";
 "sender" = "Sender";
 
@@ -743,6 +745,7 @@
 
 "login_as" = "Login as $1";
 "manage_user_action" = "Manage user";
+"manage_group_action" = "Manage group";
 "ban_user_action" = "Ban user";
 "warn_user_action" = "Warn user";
 
@@ -764,6 +767,7 @@
 "cancel" = "Cancel";
 "edit_action" = "Change";
 "transfer" = "Transfer";
+"close" = "Close";
 
 "warning" = "Warning";
 "question_confirm" = "This action can't be undone. Do you really wanna do it?";

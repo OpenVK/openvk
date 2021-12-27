@@ -31,6 +31,10 @@ openvk:
         support:
             supportName: "Moderator"
             adminAccount: 1 # Change this ok
+            fastAnswers:
+                - "This is a list of quick answers to common questions for support. Post your responses here and agents can send it quickly with just 3 clicks"
+                - "There can be as many answers as you want, but it is best to have a maximum of 10.\n\nYou can also remove all answers from the list to disable this feature"
+                - "Good luck filling! If you are a regular support agent, inform the administrator that he forgot to fill the config"
         messages:
             strict: false
         wall:

@@ -698,16 +698,18 @@ class User extends RowModel
         ]);
     }
     
-    function ban(string $reason): void
+    function ban(string $reason, bool $deleteSubscriptions = true): void
     {
-        $subs = DatabaseConnection::i()->getContext()->table("subscriptions");
-        $subs = $subs->where(
-            "follower = ? OR (target = ? AND model = ?)",
-            $this->getId(),
-            $this->getId(),
-            get_class($this),
-        );
-        $subs->delete();
+        if($deleteSubscriptions) {
+            $subs = DatabaseConnection::i()->getContext()->table("subscriptions");
+            $subs = $subs->where(
+                "follower = ? OR (target = ? AND model = ?)",
+                $this->getId(),
+                $this->getId(),
+                get_class($this),
+            );
+            $subs->delete();
+        }
         
         $this->setBlock_Reason($reason);
         $this->save();
