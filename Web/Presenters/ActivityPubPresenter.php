@@ -14,6 +14,13 @@ final class ActivityPubPresenter extends OpenVKPresenter
 
             header("Content-Type: application/xrd+xml; charset=utf-8");
             exit($data);
+        } else if ($_SERVER['REQUEST_URI'] == "/.well-known/nodeinfo") {
+            $response->links = array(array(
+                "href" => ovk_scheme(true) . $_SERVER["SERVER_NAME"] . '/nodeinfo/2.0',
+                'rel' => "http://nodeinfo.diaspora.software/ns/schema/2.0"
+            ));
+            
+            $this->returnJson((array) $response);
         } else if ($this->startsWith($_SERVER["REQUEST_URI"], '/.well-known/webfinger') && $this->startsWith($this->requestParam("resource"), 'acct:')) {
             $username = array();
             $subject = substr($this->requestParam("resource"), 5, strlen($this->requestParam("resource")));
@@ -41,6 +48,25 @@ final class ActivityPubPresenter extends OpenVKPresenter
             header("HTTP/2 404 Not Found");
             exit();
         }
+    }
+
+    function renderNodeinfo()
+    {
+        $stats = (new Users)->getStatistics();
+
+        $response->version = '2.0';
+        $response->protocols = array('activitypub');
+        $response->openRegistrations = OPENVK_ROOT_CONF['openvk']['preferences']['registration']['enable'];
+        $response->software = array('name' => 'openvk',
+                                    'version' => OPENVK_VERSION);
+        $response->usage = array('localPosts' => $stats->posts,
+                                'localComments' => $stats->comments,
+                                'users' => array(
+                                    'total' => $stats->all
+                                ));
+        $response->metadata = (object)array();
+
+        $this->returnJson((array) $response);
     }
 
     private function startsWith($string, $startString)

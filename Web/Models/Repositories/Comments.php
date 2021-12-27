@@ -59,4 +59,9 @@ class Comments
             "deleted" => false,
         ]));
     }
+
+    function getCountOfAllComments(): int
+    {
+        return sizeof($this->comments->where(["deleted" => false]));
+    }
 }

@@ -269,6 +269,8 @@ routes:
       handler: "ActivityPub->WellKnown"
       placeholders:
           uri: ".+"
+    - url: "/nodeinfo/2.0"
+      handler: "ActivityPub->nodeinfo"
     - url: "/{?shortCode}"
       handler: "UnknownTextRouteStrategy->delegate"
       placeholders:

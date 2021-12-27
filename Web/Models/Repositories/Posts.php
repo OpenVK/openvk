@@ -105,4 +105,9 @@ class Posts
     {
         return sizeof($this->posts->where(["wall" => $user, "deleted" => 0]));
     }
+
+    function getCountOfAllPosts(): int
+    {
+        return sizeof($this->posts->where(["deleted" => 0]));
+    }
 }

@@ -1,6 +1,8 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Repositories;
 use openvk\Web\Models\Entities\User;
+use openvk\Web\Models\Repositories\Posts;
+use openvk\Web\Models\Repositories\Comments;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 use Chandler\Security\User as ChandlerUser;
@@ -47,9 +49,11 @@ class Users
     function getStatistics(): object
     {
         return (object) [
-            "all"    => sizeof(clone $this->users),
-            "active" => sizeof((clone $this->users)->where("online > 0")),
-            "online" => sizeof((clone $this->users)->where("online >= ?", time() - 900)),
+            "all"      => sizeof(clone $this->users),
+            "active"   => sizeof((clone $this->users)->where("online > 0")),
+            "online"   => sizeof((clone $this->users)->where("online >= ?", time() - 900)),
+            "posts"    => (new Posts)->getCountOfAllPosts(),
+            "comments" => (new Comments)->getCountOfAllComments()
         ];
     }
 
