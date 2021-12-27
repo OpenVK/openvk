@@ -265,6 +265,10 @@ routes:
       handler: "About->sandbox"
     - url: "/internal/wall{num}"
       handler: "Wall->wallEmbedded"
+    - url: "/robots.txt"
+      handler: "About->robotsTxt"
+    - url: "/humans.txt"
+      handler: "About->humansTxt"
     - url: "/{?shortCode}"
       handler: "UnknownTextRouteStrategy->delegate"
       placeholders:

@@ -83,4 +83,38 @@ final class AboutPresenter extends OpenVKPresenter
     {
         $this->template->languages = getLanguages();
     }
+
+    function renderRobotsTxt(): void
+    {
+        $data = "# robots.txt file for openvk\n"
+        . "#\n"
+        . "# this includes only those links that are not in any way\n"
+        . "# covered from unauthorized persons (for example, due to\n"
+        . "# lack of rights to access the admin panel)\n\n"
+        . "User-Agent: *\n"
+        . "Disallow: /rpc\n"
+        . "Disallow: /language\n"
+        . "Disallow: /badbrowser.php\n"
+        . "Disallow: /logout\n"
+        . "Disallow: /away.php\n"
+        . "Disallow: /im?\n"
+        . "Disallow: *query=\n"
+        . "Disallow: *?lg=\n"
+        . "Disallow: *hash=\n"
+        . "Disallow: *?jReturnTo=\n"
+        . "Disallow: /wall*\n"
+        . "Disallow: /method/*\n"
+        . "Disallow: /token*";
+        header("Content-Type: text/plain");
+        exit($data);
+    }
+
+    function renderHumansTxt(): void
+    {
+        // :D
+
+        header("HTTP/1.1 302 Found");
+        header("Location: https://github.com/openvk/openvk#readme");
+        exit;
+    }
 }
