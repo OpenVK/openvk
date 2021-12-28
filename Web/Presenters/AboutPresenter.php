@@ -86,7 +86,7 @@ final class AboutPresenter extends OpenVKPresenter
 
     function renderRobotsTxt(): void
     {
-        $data = "# robots.txt file for openvk\n"
+        $text = "# robots.txt file for openvk\n"
         . "#\n"
         . "# this includes only those links that are not in any way\n"
         . "# covered from unauthorized persons (for example, due to\n"
@@ -102,11 +102,10 @@ final class AboutPresenter extends OpenVKPresenter
         . "Disallow: *?lg=\n"
         . "Disallow: *hash=\n"
         . "Disallow: *?jReturnTo=\n"
-        . "Disallow: /wall*\n"
         . "Disallow: /method/*\n"
         . "Disallow: /token*";
         header("Content-Type: text/plain");
-        exit($data);
+        exit($text);
     }
 
     function renderHumansTxt(): void
