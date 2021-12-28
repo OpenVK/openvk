@@ -100,6 +100,14 @@ class User extends RowModel
         else
             return "/id" . $this->getId();
     }
+
+    function getFullURL(bool $numberic = false): string
+    {
+        if(!$numberic && !is_null($this->getShortCode()))
+            return ovk_scheme(true) . $_SERVER["SERVER_NAME"] . "/" . $this->getShortCode();
+        else
+            return ovk_scheme(true) . $_SERVER["SERVER_NAME"] . "/id" . $this->getId();
+    }
     
     function getAvatarUrl(): string
     {

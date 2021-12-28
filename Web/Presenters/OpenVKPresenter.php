@@ -262,4 +262,45 @@ abstract class OpenVKPresenter extends SimplePresenter
         header("Content-Length: $size");
         exit($payload);
     }
+
+    function isActivityPubClient(): bool
+    {
+        return $_SERVER['HTTP_ACCEPT'] == 'application/activity+json';
+    }
+
+    function getPersonContext()
+    {
+        // Sometimes i being lazy...
+        return json_decode('[
+            "https://www.w3.org/ns/activitystreams",
+            {
+              "sm": "http://smithereen.software/ns#",
+              "wall": {
+                "@id": "sm:wall",
+                "@type": "@id"
+              },
+              "sc": "http://schema.org#",
+              "firstName": "sc:givenName",
+              "lastName": "sc:familyName",
+              "middleName": "sc:additionalName",
+              "gender": {
+                "@id": "sc:gender",
+                "@type": "sc:GenderType"
+              },
+              "supportsFriendRequests": "sm:supportsFriendRequests",
+              "maidenName": "sm:maidenName",
+              "friends": {
+                "@id": "sm:friends",
+                "@type": "@id"
+              },
+              "groups": {
+                "@id": "sm:groups",
+                "@type": "@id"
+              },
+              "vcard": "http://www.w3.org/2006/vcard/ns#"
+            },
+            "https://w3id.org/security/v1"
+          ]');
+        // Гришк)
+    }
 } 

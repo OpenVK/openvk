@@ -32,6 +32,33 @@ final class UserPresenter extends OpenVKPresenter
         if(!$user || $user->isDeleted())
             $this->notFound();
         else {
+            /* ActivityPub quirks :DDDD */
+            if($this->isActivityPubClient()) {
+                $objUser = array(
+                    "type" => "Person",
+                    "id" => $user->getFullURL(true),
+                    "name" => $user->getFullName(),
+                    "summary" => $user->getDescription(),
+                    "url" => $user->getFullURL(),
+                    "prefferedUsername" => $user->getShortCode(),
+                    "inbox" => $user->getFullURL() . "/inbox",
+                    "outbox" => $user->getFullURL() . "/outbox",
+                    "endpoints" => array("sharedInbox" => ovk_scheme(true) . $_SERVER['SERVER_NAME']),
+                    "wall" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/wall" . $user->getId(),
+                    "firstName" => $user->getFirstName(),
+                    "lastName" => $user->getLastName(),
+                    "middleName" => $user->getPseudo(), // Unlike Smithereen, the Middle name in OpenVK is a Nickname
+                    "vcard:bday" => $user->getBirthday()->format('%d-%m-%Y'),
+                    "gender" => "http://schema.org#" . $user->isFemale() ? "Male" : "Female",
+                    "supportsFriendRequests" => true,
+                    "friends" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/friends" . $user->getId(),
+                    "groups" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/groups" . $user->getId(),
+                    "@context" => $this->getPersonContext()
+                );
+                
+                $this->returnJson($objUser);
+            }
+
             if($user->getShortCode())
                 if(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) !== "/" . $user->getShortCode())
                     $this->redirect("/" . $user->getShortCode(), static::REDIRECT_TEMPORARY_PRESISTENT);
