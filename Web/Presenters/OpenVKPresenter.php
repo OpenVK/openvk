@@ -8,6 +8,7 @@ use Latte\Engine as TemplatingEngine;
 use openvk\Web\Models\Entities\IP;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets};
+use Nette\InvalidStateException as ISE;
 
 abstract class OpenVKPresenter extends SimplePresenter
 {
@@ -315,9 +316,6 @@ abstract class OpenVKPresenter extends SimplePresenter
         if(!file_exists(OPENVK_ROOT . ($private ? "/data/private.pem" : "/data/public.pem")))
             throw new ISE("private.pem and public.pem files are missing. Please, check 10th step for a installation guide in README file.");
         
-        $key = file(OPENVK_ROOT . ($private ? "/data/private.pem" : "/data/public.pem"));
-        $key[0] = null;
-        $key[count($key)-1] = null;
-        return "-----BEGIN PUBLIC KEY-----\n" . str_replace("\n", '', implode('', $key)) . "\n-----END PUBLIC KEY-----\n";
+        return file(OPENVK_ROOT . ($private ? "/data/private.pem" : "/data/public.pem"));
     }
 } 
