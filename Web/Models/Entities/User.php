@@ -109,7 +109,7 @@ class User extends RowModel
             return ovk_scheme(true) . $_SERVER["SERVER_NAME"] . "/id" . $this->getId();
     }
     
-    function getAvatarUrl(bool $nullForDel = false): string
+    function getAvatarUrl(bool $nullForDel = false): ?string
     {
         $serverUrl = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
         
