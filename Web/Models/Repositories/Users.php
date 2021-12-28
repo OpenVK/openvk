@@ -32,7 +32,7 @@ class Users
     {
         $user = $this->toUser($this->users->where("shortcode", $url)->fetch());
         if($user)
-            return $user
+            return $user;
         else if ($handleId == true)
         {
             preg_match("/id([0-9]+)/", $url, $id);
