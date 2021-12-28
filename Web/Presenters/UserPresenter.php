@@ -64,7 +64,7 @@ final class UserPresenter extends OpenVKPresenter
                 );
 
                 if($user->getAvatarUrl(true) !== null) {
-                    $objUser['image'] = array(
+                    $objUser['icon'] = array(
                         "type" => "Image",
                         "mediaType" => "image/jpg",
                         "url" => $user->getAvatarUrl(true)
