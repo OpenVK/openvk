@@ -27,7 +27,7 @@ final class ActivityPubPresenter extends OpenVKPresenter
             preg_match('/([a-zA-Z0-9-_]+)@([a-zA-Z0-9-_\.]+)/', $subject, $username);
             $username = $username[1];
 
-            $user = (new Users)->getByShortURL($username);
+            $user = (new Users)->getByShortURL($username, true);
 
             if($user !== null) {
                 $response->subject = $this->requestParam("resource");

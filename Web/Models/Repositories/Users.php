@@ -28,9 +28,17 @@ class Users
         return $this->toUser($this->users->get($id));
     }
     
-    function getByShortURL(string $url): ?User
+    function getByShortURL(string $url, bool $handleId = false): ?User
     {
-        return $this->toUser($this->users->where("shortcode", $url)->fetch());
+        $user = $this->toUser($this->users->where("shortcode", $url)->fetch());
+        if($user)
+            return $user
+        else if ($handleId == true)
+        {
+            preg_match("/id([0-9]+)/", $url, $id);
+            return $this->toUser($this->users->get($id[1]));
+        }
+        return null;
     }
     
     function getByChandlerUser(ChandlerUser $user): ?User
