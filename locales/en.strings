@@ -384,6 +384,7 @@
 "privacy_setting_see_friends" = "Who can see my friends";
 "privacy_setting_add_to_friends" = "Who can add me to friends";
 "privacy_setting_write_wall" = "Who can publish post on my wall";
+"privacy_setting_write_messages" = "Who can write messages to me";
 "privacy_value_anybody" = "Anybody";
 "privacy_value_anybody_dative" = "Anybody";
 "privacy_value_users" = "OpenVK users";

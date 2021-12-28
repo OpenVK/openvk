@@ -404,6 +404,7 @@
 "privacy_setting_see_friends" = "Кому видно моих друзей";
 "privacy_setting_add_to_friends" = "Кто может называть меня другом";
 "privacy_setting_write_wall" = "Кто может писать у меня на стене";
+"privacy_setting_write_messages" = "Кто может писать мне сообщения";
 "privacy_value_anybody" = "Все желающие";
 "privacy_value_anybody_dative" = "Всем желающим";
 "privacy_value_users" = "Пользователям OpenVK";

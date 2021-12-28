@@ -372,6 +372,7 @@ class User extends RowModel
                 "friends.read",
                 "friends.add",
                 "wall.write",
+                "messages.write",
             ],
         ])->get($id);
     }
@@ -756,6 +757,7 @@ class User extends RowModel
                 "friends.read",
                 "friends.add",
                 "wall.write",
+                "messages.write",
             ],
         ])->set($id, $status)->toInteger());
     }

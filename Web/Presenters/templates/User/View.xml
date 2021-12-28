@@ -92,6 +92,7 @@
                 {/if}
                 
                 <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() == 0" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
+                <a n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" class="profile_link">{_"send_message"}</a>
 
                 {var subStatus = $user->getSubscriptionStatus($thisUser)}
                 {if $subStatus === 0}
@@ -116,7 +117,6 @@
                         <input type="submit" class="profile_link" value="{_"friends_reject"}" />
                     </form>
                 {elseif $subStatus === 3}
-                    <a href="/im?sel={$user->getId()}" class="profile_link">{_"send_message"}</a>
                     <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="rem" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />

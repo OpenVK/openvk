@@ -317,6 +317,18 @@
                     </td>
                 </tr>
                 <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_privacy_setting_write_messages}</span>
+                    </td>
+                    <td>
+                        <select name="messages.write", style="width: 164px;">
+                            <option value="2" {if $user->getPrivacySetting('messages.write') == 2}selected{/if}>{_privacy_value_anybody}</option>
+                            <option value="1" {if $user->getPrivacySetting('messages.write') == 1}selected{/if}>{_privacy_value_friends}</option>
+                            <option value="0" {if $user->getPrivacySetting('messages.write') == 0}selected{/if}>{_privacy_value_nobody}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
                     <td>
                         
                     </td>
