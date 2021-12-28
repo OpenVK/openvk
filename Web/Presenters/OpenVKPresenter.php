@@ -316,6 +316,6 @@ abstract class OpenVKPresenter extends SimplePresenter
         if(!file_exists(OPENVK_ROOT . ($private ? "/data/private.pem" : "/data/public.pem")))
             throw new ISE("private.pem and public.pem files are missing. Please, check 10th step for a installation guide in README file.");
         
-        return file(OPENVK_ROOT . ($private ? "/data/private.pem" : "/data/public.pem"));
+        return implode('', file(OPENVK_ROOT . ($private ? "/data/private.pem" : "/data/public.pem")));
     }
 } 
