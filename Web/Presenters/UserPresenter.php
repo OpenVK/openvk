@@ -53,7 +53,7 @@ final class UserPresenter extends OpenVKPresenter
                     "firstName" => $user->getFirstName(),
                     "lastName" => $user->getLastName(),
                     "middleName" => $user->getPseudo(), // Unlike Smithereen, the Middle name in OpenVK is a Nickname
-                    "vcard:bday" => $user->getBirthday()->format('%d-%m-%Y'),
+                    "vcard:bday" => $user->getBirthday()->format('%Y-%m-%d'),
                     "gender" => "http://schema.org#" . $user->isFemale() ? "Male" : "Female",
                     "supportsFriendRequests" => true,
                     "friends" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/friends" . $user->getId(),
