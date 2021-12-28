@@ -265,7 +265,8 @@ abstract class OpenVKPresenter extends SimplePresenter
 
     function isActivityPubClient(): bool
     {
-        return $_SERVER['HTTP_ACCEPT'] == 'application/activity+json';
+        $accept = explode(";", $_SERVER['HTTP_ACCEPT']);
+        return (bool) preg_match("/(application\/(ld\+json|activity\+json))/gm", $accept[0]);
     }
 
     function getPersonContext()
