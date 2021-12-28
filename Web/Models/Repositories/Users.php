@@ -30,14 +30,15 @@ class Users
     
     function getByShortURL(string $url, bool $handleId = false): ?User
     {
-        $user = $this->toUser($this->users->where("shortcode", $url)->fetch());
-        if($user)
+        $user = $this->toUser((clone $this->users)->where("shortcode", $url)->fetch());
+        if($user !== null)
             return $user;
         else if ($handleId == true)
         {
             $id = array();
             preg_match("/id([0-9]+)/", $url, $id);
-            return $this->toUser($this->users->get($id[1]));
+            $id = intval($id[1]);
+            return $this->get($id);
         }
         return null;
     }
