@@ -256,12 +256,14 @@ abstract class OpenVKPresenter extends SimplePresenter
 
     protected function returnJson(array $json): void
     {
-        $payload = json_encode($json);
+        $payload = json_encode($json, JSON_UNESCAPED_UNICODE);
         $size = strlen($payload);
         header("Content-Type: application/json");
         header("Content-Length: $size");
         exit($payload);
     }
+
+    /* ActivityPub quicks :DDD */
 
     function isActivityPubClient(): bool
     {
@@ -303,5 +305,19 @@ abstract class OpenVKPresenter extends SimplePresenter
             "https://w3id.org/security/v1"
           ]');
         // Гришк)
+    }
+
+    /**
+     * @param private If true, it will return the private key. Otherwise, it will return the public key.
+     */
+    function getKey(bool $private = false)
+    {
+        if(!file_exists(OPENVK_ROOT . ($private ? "/data/private.pem" : "/data/public.pem")))
+            throw new ISE("private.pem and public.pem files are missing. Please, check 10th step for a installation guide in README file.");
+        
+        $key = file(OPENVK_ROOT . ($private ? "/data/private.pem" : "/data/public.pem"));
+        $key[0] = null;
+        $key[count($key)-1] = null;
+        return "-----BEGIN PUBLIC KEY-----\n" . str_replace("\n", '', implode('', $key)) . "\n-----END PUBLIC KEY-----\n";
     }
 } 
