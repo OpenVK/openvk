@@ -773,3 +773,6 @@
 "warning" = "Warning";
 "question_confirm" = "This action can't be undone. Do you really wanna do it?";
 
+/* User alerts */
+
+"user_alert_scam" = "This account has been reported a lot for scam. Please be careful, especially if he asked for money.";

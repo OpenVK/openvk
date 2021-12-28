@@ -313,7 +313,7 @@
     
     <div class="right_big_block">
         <div class="page_info">
-            <div n:if="!is_null($alert = $user->getAlert())" class="user-alert">{$alert}</div>
+            <div n:if="!is_null($alert = $user->getAlert())" class="user-alert">{strpos($alert, "@") === 0 ? tr(substr($alert, 1)) : $alert}</div>
             {var thatIsThisUser = isset($thisUser) && $user->getId() == $thisUser->getId()}
             <div n:if="$thatIsThisUser" class="page_status_popup" id="status_editor" style="display: none;">
                 <form name="status_popup_form" onsubmit="changeStatus(); return false;">
