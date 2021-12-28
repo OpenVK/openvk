@@ -42,7 +42,7 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 6. Copy `openvk-example.yml` to `openvk.yml` and change options
 7. Run `composer install` in OpenVK directory
 8. Move to `Web/static/js` and execute `yarn install`
-9. Generate the private and public OpenSSL keys by running `openssl genrsa -out data/private.pem 2048` and `openssl rsa -in private.pem -outform PEM -pubout -out data/public.pem` in OpenVK directory
+9. Generate the private and public OpenSSL keys by running `openssl genrsa -out data/private.pem 2048` and `openssl rsa -in data/private.pem -outform PEM -pubout -out data/public.pem` in OpenVK directory
 10. Set `openvk` as your root app in `chandler.yml`
 
 Once you are done, you can login as a system administrator on the network itself (no registration required):
