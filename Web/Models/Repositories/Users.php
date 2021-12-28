@@ -35,6 +35,7 @@ class Users
             return $user;
         else if ($handleId == true)
         {
+            $id = array();
             preg_match("/id([0-9]+)/", $url, $id);
             return $this->toUser($this->users->get($id[1]));
         }
