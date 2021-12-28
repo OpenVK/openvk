@@ -59,11 +59,9 @@ final class ActivityPubPresenter extends OpenVKPresenter
         $response->openRegistrations = OPENVK_ROOT_CONF['openvk']['preferences']['registration']['enable'];
         $response->software = array('name' => 'openvk',
                                     'version' => OPENVK_VERSION);
-        $response->usage = array('localPosts' => $stats->posts,
-                                'localComments' => $stats->comments,
-                                'users' => array(
-                                    'total' => $stats->all
-                                ));
+        $response->usage    = array('localPosts' => $stats->posts,
+                                    'localComments' => $stats->comments,
+                                    'users' => array('total' => $stats->all));
         $response->metadata = (object)array();
 
         $this->returnJson((array) $response);

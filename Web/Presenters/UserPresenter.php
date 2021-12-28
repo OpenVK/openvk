@@ -35,6 +35,7 @@ final class UserPresenter extends OpenVKPresenter
             /* ActivityPub quirks :DDDD */
             if($this->isActivityPubClient()) {
                 $objUser = array(
+                    "@context" => $this->getPersonContext(),
                     "type" => "Person",
                     "id" => $user->getFullURL(true),
                     "name" => $user->getFullName(),
@@ -55,11 +56,20 @@ final class UserPresenter extends OpenVKPresenter
                     "middleName" => $user->getPseudo(), // Unlike Smithereen, the Middle name in OpenVK is a Nickname
                     "vcard:bday" => $user->getBirthday()->format('%Y-%m-%d'),
                     "gender" => "http://schema.org#" . $user->isFemale() ? "Male" : "Female",
+                    "verified" => $user->isVerified(),
+                    "status" => $user->getStatus(),
                     "supportsFriendRequests" => true,
                     "friends" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/friends" . $user->getId(),
-                    "groups" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/groups" . $user->getId(),
-                    "@context" => $this->getPersonContext()
+                    "groups" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/groups" . $user->getId()
                 );
+
+                if($user->getAvatarUrl(true) !== null) {
+                    $objUser['image'] = array(
+                        "type" => "Image",
+                        "mediaType" => "image/jpg",
+                        "url" => $user->getAvatarUrl(true)
+                    );
+                }
                 
                 $this->returnJson($objUser);
             }

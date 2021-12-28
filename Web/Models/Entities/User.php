@@ -109,18 +109,18 @@ class User extends RowModel
             return ovk_scheme(true) . $_SERVER["SERVER_NAME"] . "/id" . $this->getId();
     }
     
-    function getAvatarUrl(): string
+    function getAvatarUrl(bool $nullForDel = false): string
     {
         $serverUrl = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
         
         if($this->getRecord()->deleted)
-            return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
+            return $nullForDel ? null : "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
         else if($this->isBanned())
             return "$serverUrl/assets/packages/static/openvk/img/banned.jpg";
         
         $avPhoto = $this->getAvatarPhoto();
         if(is_null($avPhoto))
-            return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
+            return $nullForDel ? null : "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
         else
             return $avPhoto->getURL();
     }

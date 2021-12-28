@@ -301,6 +301,8 @@ abstract class OpenVKPresenter extends SimplePresenter
                 "@id": "sm:groups",
                 "@type": "@id"
               },
+              "verified": "sm:verified",
+              "status": "sm:status",
               "vcard": "http://www.w3.org/2006/vcard/ns#"
             },
             "https://w3id.org/security/v1"
