@@ -384,6 +384,7 @@
 "privacy_setting_see_friends" = "Who can see my friends";
 "privacy_setting_add_to_friends" = "Who can add me to friends";
 "privacy_setting_write_wall" = "Who can publish post on my wall";
+"privacy_setting_write_messages" = "Who can write messages to me";
 "privacy_value_anybody" = "Anybody";
 "privacy_value_anybody_dative" = "Anybody";
 "privacy_value_users" = "OpenVK users";
@@ -610,6 +611,8 @@
 "support_rated_bad" = "You left a negative feedback about the answer.";
 "wrong_parameters" = "Invalid request parameters.";
 
+"fast_answers" = "Fast answers";
+
 "comment" = "Comment";
 "sender" = "Sender";
 
@@ -743,6 +746,7 @@
 
 "login_as" = "Login as $1";
 "manage_user_action" = "Manage user";
+"manage_group_action" = "Manage group";
 "ban_user_action" = "Ban user";
 "warn_user_action" = "Warn user";
 
@@ -764,7 +768,11 @@
 "cancel" = "Cancel";
 "edit_action" = "Change";
 "transfer" = "Transfer";
+"close" = "Close";
 
 "warning" = "Warning";
 "question_confirm" = "This action can't be undone. Do you really wanna do it?";
 
+/* User alerts */
+
+"user_alert_scam" = "This account has been reported a lot for scam. Please be careful, especially if he asked for money.";

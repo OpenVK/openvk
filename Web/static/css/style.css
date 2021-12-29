@@ -334,6 +334,20 @@ a {
     width: 150px;
 }
 
+.profile_link.disable > a, .profile_link.disable {
+    cursor: not-allowed;
+    color: grey;
+}
+
+.profile_link.loading > a::after, .profile_link.loading::after {
+    content: "";
+    display: inline-block;
+    background-image: url('/assets/packages/static/openvk/img/loading_mini.gif');
+    width: 30px;
+    height: 7px;
+    margin-left: 5px;
+}
+
 .page_footer {
     margin-left: 95px;
     padding-top: 5px;
@@ -426,7 +440,15 @@ table {
 }
 
 .button:hover {
-	color: #e8e8e8;
+    color: #e8e8e8;
+}
+
+.button-loading {
+    display: inline-block;
+    background-image: url('/assets/packages/static/openvk/img/loading_mini.gif');
+    width: 30px;
+    height: 7px;
+    margin-left: -3px;
 }
 
 input[class=button] {
@@ -867,7 +889,6 @@ table.User {
     display: flex;
     padding: 8px;
     cursor: pointer;
-    width: 611px;
     margin-left: 1px;
     border-bottom: 1px solid #d6d6d6;
 }
@@ -901,14 +922,13 @@ table.User {
 }
 
 .crp-entry--message.unread {
-    background-color: #dcdcdc;
+    background-color: #ededed;
     padding: 5px;
     width: 346px;
-    border-radius: 3px;
 }
 
 .messenger-app--messages---message.unread {
-    background-color: #dcdcdc;
+    background-color: #ededed;
     padding: 5px;
     margin: -5px;
     padding-bottom: 1.2rem;
@@ -923,8 +943,6 @@ table.User {
 }
 
 .messenger-app--messages---message.unread:last-of-type {
-    border-bottom-left-radius: 3px;
-    border-bottom-right-radius: 3px;
     padding-bottom: 5px;
     margin-bottom: 1.2rem;
 }
@@ -1753,4 +1771,17 @@ body.scrolled .toTop:hover {
     background: #F7F7F7;
     margin: -20px;
     padding: 10px;
+}
+
+.hover-box {
+    background-color: white;
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #C0CAD5;
+    cursor: pointer;
+    user-select: none;
+}
+
+.hover-box:hover {
+    background-color: #C0CAD5;
 }

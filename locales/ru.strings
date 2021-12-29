@@ -404,6 +404,7 @@
 "privacy_setting_see_friends" = "Кому видно моих друзей";
 "privacy_setting_add_to_friends" = "Кто может называть меня другом";
 "privacy_setting_write_wall" = "Кто может писать у меня на стене";
+"privacy_setting_write_messages" = "Кто может писать мне сообщения";
 "privacy_value_anybody" = "Все желающие";
 "privacy_value_anybody_dative" = "Всем желающим";
 "privacy_value_users" = "Пользователям OpenVK";
@@ -639,6 +640,8 @@
 "support_rated_bad" = "Вы оставили негативный отзыв об ответе.";
 "wrong_parameters" = "Неверные параметры запроса.";
 
+"fast_answers" = "Быстрые ответы";
+
 "comment" = "Комментарий";
 "sender" = "Отправитель";
 
@@ -778,6 +781,7 @@
 
 "login_as" = "Войти как $1";
 "manage_user_action" = "Управление пользователем";
+"manage_group_action" = "Управление группой";
 "ban_user_action" = "Заблокировать пользователя";
 "warn_user_action" = "Предупредить пользователя";
 
@@ -799,6 +803,11 @@
 "cancel" = "Отмена";
 "edit_action" = "Изменить";
 "transfer" = "Передать";
+"close" = "Закрыть";
 
 "warning" = "Внимание";
 "question_confirm" = "Это действие нельзя отменить. Вы действительно уверены в том что хотите сделать?";
+
+/* User alerts */
+
+"user_alert_scam" = "На этот аккаунт много жаловались в связи с мошенничеством. Пожалуйста, будьте осторожны, особенно если у вас попросят денег.";

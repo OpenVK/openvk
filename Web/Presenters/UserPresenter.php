@@ -87,7 +87,7 @@ final class UserPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         else {
             $this->template->user = $user;
-            $this->template->page = $this->queryParam("p") ?? 1;
+            $this->template->page = (int) ($this->queryParam("p") ?? 1);
             $this->template->admin = $this->queryParam("act") == "managed";
         }
     }
@@ -101,11 +101,11 @@ final class UserPresenter extends OpenVKPresenter
             $this->notFound();
 
         if(!$club->canBeModifiedBy($this->user->identity ?? NULL))
-            $this->flashFail("err", "Ошибка доступа", "У вас недостаточно прав, чтобы изменять этот ресурс.");
+            $this->flashFail("err", "Ошибка доступа", "У вас недостаточно прав, чтобы изменять этот ресурс.", NULL, true);
 
         $isClubPinned = $this->user->identity->isClubPinned($club);
         if(!$isClubPinned && $this->user->identity->getPinnedClubCount() > 10)
-            $this->flashFail("err", "Ошибка", "Находится в левом меню могут максимум 10 групп");
+            $this->flashFail("err", "Ошибка", "Находится в левом меню могут максимум 10 групп", NULL, true);
 
         if($club->getOwner()->getId() === $this->user->identity->getId()) {
             $club->setOwner_Club_Pinned(!$isClubPinned);
@@ -118,10 +118,9 @@ final class UserPresenter extends OpenVKPresenter
             }
         }
 
-        if($isClubPinned)
-            $this->flashFail("succ", "Операция успешна", "Группа " . $club->getName() . " была успешно удалена из левого меню");
-        else
-            $this->flashFail("succ", "Операция успешна", "Группа " . $club->getName() . " была успешно добавлена в левое меню");
+        $this->returnJson([
+            "success" => true
+        ]);
     }
     
     function renderEdit(): void
@@ -135,7 +134,7 @@ final class UserPresenter extends OpenVKPresenter
         
         $user = $this->users->get($id);
         if($_SERVER["REQUEST_METHOD"] === "POST") {
-            $this->willExecuteWriteAction();
+            $this->willExecuteWriteAction($_GET['act'] === "status");
             
             if($_GET['act'] === "main" || $_GET['act'] == NULL) {
                 $user->setFirst_Name(empty($this->postParam("first_name")) ? $user->getFirstName() : $this->postParam("first_name"));
@@ -197,15 +196,15 @@ final class UserPresenter extends OpenVKPresenter
             } elseif($_GET['act'] === "status") {
                 if(mb_strlen($this->postParam("status")) > 255) {
                     $statusLength = (string) mb_strlen($this->postParam("status"));
-                    $this->flashFail("err", "Ошибка", "Статус слишком длинный ($statusLength символов вместо 255 символов)");
+                    $this->flashFail("err", "Ошибка", "Статус слишком длинный ($statusLength символов вместо 255 символов)", NULL, true);
                 }
 
                 $user->setStatus(empty($this->postParam("status")) ? NULL : $this->postParam("status"));
                 $user->save();
 
-                header("HTTP/1.1 302 Found");
-                header("Location: /id" . $user->getId());
-                exit;
+                $this->returnJson([
+                    "success" => true
+                ]);
             }
             
             try {
@@ -330,6 +329,7 @@ final class UserPresenter extends OpenVKPresenter
                     "friends.read",
                     "friends.add",
                     "wall.write",
+                    "messages.write",
                 ];
                 foreach($settings as $setting) {
                     $input = $this->postParam(str_replace(".", "_", $setting));

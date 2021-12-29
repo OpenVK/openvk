@@ -324,7 +324,7 @@ class User extends RowModel
 
     function getAge(): ?int
     {
-        return (int)floor((time() - $this->getBirthday()->timestamp()) / mktime(0, 0, 0, 1, 1, 1971));
+        return (int)floor((time() - $this->getBirthday()->timestamp()) / YEAR);
     }
     
     function get2faSecret(): ?string
@@ -372,6 +372,7 @@ class User extends RowModel
                 "friends.read",
                 "friends.add",
                 "wall.write",
+                "messages.write",
             ],
         ])->get($id);
     }
@@ -540,6 +541,8 @@ class User extends RowModel
         $manager = $club->getManager($this);
         if(!is_null($manager))
             return $manager->isClubPinned();
+
+        return false;
     }
 
     function getMeetings(int $page = 1): \Traversable
@@ -696,16 +699,18 @@ class User extends RowModel
         ]);
     }
     
-    function ban(string $reason): void
+    function ban(string $reason, bool $deleteSubscriptions = true): void
     {
-        $subs = DatabaseConnection::i()->getContext()->table("subscriptions");
-        $subs = $subs->where(
-            "follower = ? OR (target = ? AND model = ?)",
-            $this->getId(),
-            $this->getId(),
-            get_class($this),
-        );
-        $subs->delete();
+        if($deleteSubscriptions) {
+            $subs = DatabaseConnection::i()->getContext()->table("subscriptions");
+            $subs = $subs->where(
+                "follower = ? OR (target = ? AND model = ?)",
+                $this->getId(),
+                $this->getId(),
+                get_class($this),
+            );
+            $subs->delete();
+        }
         
         $this->setBlock_Reason($reason);
         $this->save();
@@ -752,6 +757,7 @@ class User extends RowModel
                 "friends.read",
                 "friends.add",
                 "wall.write",
+                "messages.write",
             ],
         ])->set($id, $status)->toInteger());
     }

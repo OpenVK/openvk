@@ -39,14 +39,26 @@ abstract class OpenVKPresenter extends SimplePresenter
         Session::i()->set("_tempTheme", $theme);
     }
     
-    protected function flashFail(string $type, string $title, ?string $message = NULL, ?int $code = NULL): void
+    protected function flashFail(string $type, string $title, ?string $message = NULL, ?int $code = NULL, bool $json = false): void
     {
-        $this->flash($type, $title, $message, $code);
-        $referer = $_SERVER["HTTP_REFERER"] ?? "/";
-        
-        header("HTTP/1.1 302 Found");
-        header("Location: $referer");
-        exit;
+        if($json) {
+            $this->returnJson([
+                "success" => $type !== "err",
+                "flash" => [
+                    "type"    => $type,
+                    "title"   => $title,
+                    "message" => $message,
+                    "code"    => $code,
+                ],
+            ]);
+        } else {
+            $this->flash($type, $title, $message, $code);
+            $referer = $_SERVER["HTTP_REFERER"] ?? "/";
+            
+            header("HTTP/1.1 302 Found");
+            header("Location: $referer");
+            exit;
+        }
     }
     
     protected function logInUserWithToken(): void
@@ -120,18 +132,18 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->flashFail("err", tr("captcha_error"), tr("captcha_error_comment"));
     }
     
-    protected function willExecuteWriteAction(): void
+    protected function willExecuteWriteAction(bool $json = false): void
     {
         $ip  = (new IPs)->get(CONNECTING_IP);
         $res = $ip->rateLimit();
         
         if(!($res === IP::RL_RESET || $res === IP::RL_CANEXEC)) {
             if($res === IP::RL_BANNED && OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["autoban"]) {
-                $this->user->identity->ban("Account has possibly been stolen");
+                $this->user->identity->ban("Account has possibly been stolen", false);
                 exit("Хакеры? Интересно...");
             }
             
-            $this->flashFail("err", tr("rate_limit_error"), tr("rate_limit_error_comment", OPENVK_ROOT_CONF["openvk"]["appearance"]["name"], $res));
+            $this->flashFail("err", tr("rate_limit_error"), tr("rate_limit_error_comment", OPENVK_ROOT_CONF["openvk"]["appearance"]["name"], $res), NULL, $json);
         }
     }
     
@@ -240,5 +252,14 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->template->flashMessage = json_decode(Session::i()->get("_error"));
             Session::i()->set("_error", NULL);
         }
+    }
+
+    protected function returnJson(array $json): void
+    {
+        $payload = json_encode($json);
+        $size = strlen($payload);
+        header("Content-Type: application/json");
+        header("Content-Length: $size");
+        exit($payload);
     }
 } 

@@ -219,10 +219,17 @@ final class GroupPresenter extends OpenVKPresenter
             if($_FILES["ava"]["error"] === UPLOAD_ERR_OK) {
                 $photo = new Photo;
                 try {
+                    $anon = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"];
+                    if($anon && $this->user->id === $club->getOwner()->getId())
+                        $anon = $club->isOwnerHidden();  
+                    else if($anon)
+                        $anon = $club->getManager($this->user->identity)->isHidden();
+
                     $photo->setOwner($this->user->id);
                     $photo->setDescription("Profile image");
                     $photo->setFile($_FILES["ava"]);
                     $photo->setCreated(time());
+                    $photo->setAnonymous($anon);
                     $photo->save();
                     
                     (new Albums)->getClubAvatarAlbum($club)->addPhoto($photo);

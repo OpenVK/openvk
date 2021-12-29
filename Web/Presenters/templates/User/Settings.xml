@@ -317,6 +317,18 @@
                     </td>
                 </tr>
                 <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_privacy_setting_write_messages}</span>
+                    </td>
+                    <td>
+                        <select name="messages.write", style="width: 164px;">
+                            <option value="2" {if $user->getPrivacySetting('messages.write') == 2}selected{/if}>{_privacy_value_anybody}</option>
+                            <option value="1" {if $user->getPrivacySetting('messages.write') == 1}selected{/if}>{_privacy_value_friends}</option>
+                            <option value="0" {if $user->getPrivacySetting('messages.write') == 0}selected{/if}>{_privacy_value_nobody}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
                     <td>
                         
                     </td>
@@ -348,16 +360,40 @@
         {elseif $isFinanceTU}
         
         <p>{_voucher_explanation} {_voucher_explanation_ex}</p>
-        <form action="/settings?act=finance.top-up" method="POST" enctype="multipart/form-data">
-            <input type="text" name="key0" size="6" placeholder="123456" required="required" style="display: inline-block; width: 50px; text-align: center;" /> -
-            <input type="text" name="key1" size="6" placeholder="789012" required="required" style="display: inline-block; width: 50px; text-align: center;" /> -
-            <input type="text" name="key2" size="6" placeholder="345678" required="required" style="display: inline-block; width: 50px; text-align: center;" /> -
-            <input type="text" name="key3" size="6" placeholder="90ABCD" required="required" style="display: inline-block; width: 50px; text-align: center;" />
+        <form name="vouncher_form" action="/settings?act=finance.top-up" method="POST" enctype="multipart/form-data">
+            <input type="text" name="key0" class="vouncher_input" size="6" maxlength="6" placeholder="123456" required="required" oninput="autoTab(this, document.vouncher_form.key1, undefined)" style="display: inline-block; width: 50px; text-align: center;" /> -
+            <input type="text" name="key1" class="vouncher_input" size="6" maxlength="6" placeholder="789012" required="required" oninput="autoTab(this, document.vouncher_form.key2, document.vouncher_form.key0)" style="display: inline-block; width: 50px; text-align: center;" /> -
+            <input type="text" name="key2" class="vouncher_input" size="6" maxlength="6" placeholder="345678" required="required" oninput="autoTab(this, document.vouncher_form.key3, document.vouncher_form.key1)" style="display: inline-block; width: 50px; text-align: center;" /> -
+            <input type="text" name="key3" class="vouncher_input" size="6" maxlength="6" placeholder="90ABCD" required="required" oninput="autoTab(this, undefined, document.vouncher_form.key2)" style="display: inline-block; width: 50px; text-align: center;" />
             <br/><br/>
             
             <input type="hidden" name="hash" value="{$csrfToken}" />
             <input type="submit" value="{_redeem}" class="button" />
         </form>
+        <script>
+            u(".vouncher_input").on("paste", function(event) {
+                const vouncher = event.clipboardData.getData("text");
+
+                let segments;
+                if(vouncher.length === 27) {
+                    segments = vouncher.split("-");
+                    if(segments.length !== 4)
+                        segments = undefined;
+                } else if(vouncher.length === 24) {
+                    segments = chunkSubstr(vouncher, 6);
+                }
+
+                if(segments !== undefined) {
+                    document.vouncher_form.key0.value = segments[0];
+                    document.vouncher_form.key1.value = segments[1];
+                    document.vouncher_form.key2.value = segments[2];
+                    document.vouncher_form.key3.value = segments[3];
+                    document.vouncher_form.key3.focus();
+                }
+
+                event.preventDefault();
+            });
+        </script>
         
         {elseif $isInterface}
         

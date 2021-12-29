@@ -17,10 +17,10 @@ function tr(string, ...args) {
             }
 
             let newOutput = window.lang[numberedString];
-            if(newOutput === null)
+            if(newOutput == null)
                 newOutput = window.lang[string + "_other"];
 
-            if(newOutput === null)
+            if(newOutput == null)
                 newOutput = output;
 
             output = newOutput;
