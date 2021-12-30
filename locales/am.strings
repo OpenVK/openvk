@@ -45,6 +45,8 @@
 "register_referer_meta_title" = "$1 -ն հրավիրում է ձեզ դեպի $2";
 "register_referer_meta_desc" = "Միացե՛ք $1 -ին և բազմաթիվ օգտատերերին $2 -ու՛մ";
 
+"users" = "Օգտատերեր";
+
 /* Profile information */
 
 "select_language" = "Ընտրել լեզուն";
@@ -130,6 +132,9 @@
 
 "updated_at" = "Թարմացված է $1";
 
+"user_banned" = "Ցավո՛ք, մենք ստիպված <b>$1</b>-ի էջը կասեցրել ենք։";
+"user_banned_comment" = "Մոդերատորի մեկնաբանությունը․ ";
+
 /* Wall */
 
 "post_writes_m" = "գրել է";
@@ -172,6 +177,8 @@
 "attach_no_longer_available" = "Այս հավելվածը այլևս հասանելի չէ";
 "open_post" = "Բացել գրությունը";
 "version_incompatibility" = "Չհաջողվեց ցույց տալ հավելվածը։ Հնարավոր է, բազաների տվյալները հասանելի չեն OpenVK–ի այս տարբերակի հետ։";
+
+"reply" = "Պատասխանել";
 
 /* Friends */
 
@@ -249,6 +256,10 @@
 "group_display_only_creator" = "Ցույց տալ միայն խմբի ստեղծողին";
 "group_display_all_administrators" = "Ցուցադրել բոլոր ադմինիստրատորներին";
 "group_dont_display_administrators_list" = "Ոչ մեկին ցույց չտալ";
+
+"group_changeowner_modal_title" = "Օգտատերի իրավասությունների փոխանցում";
+"group_changeowner_modal_text" = "<b>Ուշադրությու՛ն։</b> Դուք փոխանցում եք խմբի բոլոր իրավունքները $1-ին։ Այս գործողությունը անդառնալի է։ Դուք էլի կմնաք ադմինիստրատոր, բայց հեշտությամբ դա ձեզնից կարող են խլել։";
+"group_owner_setted" = "Նոր տերը ($1) նշանակված է $2 միությունում։ Ձեզ տրված են ադմինիստրատորի իրավասություններ։ Եթե ուզում եք հետ բերել իրավասությունները, <a href='/support?act=new'>գրե՛ք կայքի տեխնիկական աջակցությանը</a>։";
 
 "participants_zero" = "Ոչ մի մասնակից";
 "participants_one" = "Միայն մեկ մասնակից";
@@ -337,6 +348,8 @@
 
 "header_login" = "Մուտք";
 "header_registration" = "Գրանցում";
+
+"left_menu_donate" = "Աջակցել";
 
 "footer_blog" = "բլոգ";
 "footer_help" = "օգնություն";
@@ -544,6 +557,33 @@
 "usages_total" = "Օգտագործումների քանակ";
 "usages_left" = "Մնացին օգտագործումներ";
 
+"points_transfer_dialog_header_1" = "Դուք կարող եք ուղարկել ձայները և նվերների մի մասը այլ մարդուն։";
+"points_transfer_dialog_header_2" = "Ձեր ներկայիս բալանսը․ ";
+
+"points_amount_one" = "Մեկ ձայն";
+"points_amount_few" = "$1 ձայն";
+"points_amount_many" = "$1 ձայն";
+"points_amount_other" = "$1 ձայն";
+
+"transfer_poins" = "Ձայների փոխանցում";
+"transfer_poins_button" = "Փոխանցել ձայներ";
+"also_you_can_transfer_points" = "Նաև դուք կարող եք <a href=\"javascript:showCoinsTransferDialog($1, '$2')\">փոխանցել ձայներ</a> այլ մարդուն։";
+
+"transferred_to_you" = "ձեզ փոխանցեց";
+
+"receiver_address" = "Ստացողի հասցե";
+"coins_count" = "Ձայների քանակ";
+"message" = "Նամակ";
+
+"failed_to_tranfer_points" = "Չհաջողվեց ձայներ փոխանցել";
+
+"points_transfer_successful" = "Դուք հաջողությամբ <b>$1</b>-ին փոխանցեցիք <b><a href=\"$2\">$3</a></b>.";
+"not_all_information_has_been_entered" = "Ոչ բոլոր ինֆորմացիան է ներմուծված";
+"negative_transfer_value" = "Կներեք, լավ տղություն չի ուրիշից ձայներ գողանալը։";
+"message_is_too_long" = "Նամակը շատ երկար է։";
+"receiver_not_found" = "Ստացողը չի գտնվել։";
+"you_dont_have_enough_points" = "Դուք չունե՛ք բավական ձայն։";
+
 /* Gifts */
 
 "gift" = "Նվեր";
@@ -609,6 +649,61 @@
 "you_can_invite" = "Դուք կարող եք հրավիրել ձեր ընկերներին կամ բարեկամներին հատուկ հղման միջոցով․";
 "you_can_invite_2" = "Ամրացրե՛ք այս հղումը ձեր նամակի մեջ։ Գրանցումից հետո օգտատերը անմիջապես կհայտնվի ձեր ընկերների ցուցակում։";
 
+/* Banned */
+
+"banned_title" = "Բլոկավորված եք";
+"banned_header" = "Ձեզ կասեցրել է կառլենի անհաջող բոցը։";
+"banned_alt" = "Օգտատերը բլոկավորված է";
+"banned_1" = "Կներե՛ք, <b>$1</b>, բայց Դուք կասեցված եք։";
+"banned_2" = "Պատճառը հետևյալն է․ <b>$1</b>. Ափսոս, բայց մենք ստիպված Ձեզ հավերժ ենք կասեցրել;";
+"banned_3" = "Դուք դեռ կարող եք <a href=\"/support?act=new\">գրել նամակ աջակցության ծառայությանը</a>, եթե համարում եք որ դա սխալմունք է, կամ էլ կարող եք <a href=\"/logout?hash=$1\">դուրս գալ</a>։";
+
+/* Discussions */
+
+"discussions" = "Քննարկումներ";
+
+"messages_one" = "Մեկ նամակ";
+"messages_few" = "$1 նամակ";
+"messages_many" = "$1 նամակ";
+"messages_other" = "$1 նամակ";
+
+"topic_messages_count_zero" = "Թեմայում նամակ չկա";
+"topic_messages_count_one" = "Թեմայում մեկ նամակ է";
+"topic_messages_count_few" = "Թեմայում $1 նամակ կա";
+"topic_messages_count_many" = "Թեմայում $1 նամակ կա";
+"topic_messages_count_other" = "Թեմայում $1 նամակ կա";
+
+"replied" = "պատասխանել է";
+"create_topic" = "Ստեղծել թեմա";
+
+"new_topic" = "Նոր թեմա";
+"title" = "Անվանում";
+"text" = "Տեքստ";
+
+"view_topic" = "Թեմայի դիտարկում";
+"edit_topic_action" = "Խմբագրել թեման";
+"edit_topic" = "Թեմայի խմբագրում";
+"topic_settings" = "Թեմայի կարգավորումներ";
+"pin_topic" = "Ամրացնել թեման";
+"close_topic" = "Փակել թեման";
+"delete_topic" = "Ջնջել թեման";
+
+"topics_one" = "Մեկ թեմա";
+"topics_few" = "$1 թեմա";
+"topics_many" = "$1 թեմա";
+"topics_other" = "$1 թեմա";
+
+"created" = "Ստեղծված է";
+
+"everyone_can_create_topics" = "Բոլորը կարող են թեմաներ սարքել";
+"display_list_of_topics_above_wall" = "Ցուցադրել պատի տակ թեմաների ցուցակը";
+
+"topic_changes_saved_comment" = "Թարմացված անվանումն ու կարգավորումները կհայտնվեն թեմայի էջում։";
+
+"failed_to_create_topic" = "Չհաջողվեց թեմա ստեղծել";
+"failed_to_change_topic" = "Չհաջողվեց խմբագրել թեման";
+"no_title_specified" = "Անվանումը նշված չէ";
+
 /* Errors */
 
 "error_1" = "Սխալ հարցում";
@@ -628,6 +723,7 @@
 "error_old_password" = "Հին գաղտնաբառը չի համընկնում";
 "error_new_password" = "Նոր գաղտնաբառերը չեն համընկնում";
 "error_shorturl_incorrect" = "Կարճ հասցեն ունի սխալ ֆորմատ";
+"error_repost_fail" = "Չհաջողվեց կիսվել գրության հետ";
 
 "forbidden" = "Հասանելիության սխալ";
 "forbidden_comment" = "Այս օգտատիրոջ գաղտնիության կարգավորումները ձեզ թույլ չեն տալիս դիտել օգտատերի էջը։";
@@ -659,9 +755,23 @@
 "suspicious_registration_attempt" = "Գրանցման կասկածելի փորձ";
 "suspicious_registration_attempt_comment" = "Դուք մի տեսակ փորձել եք սխալ տեղից գրանցվել։";
 
+"rate_limit_error" = "Արա Կառլեն, կարող ա՞ խառնել ես։";
+"rate_limit_error_comment" = "Ա՛յ $1, չի՛ կարելի այսքան հաճախ սպամ հրապարակել։ Հո դու Կառլենը չե՞ս։ Բացառության կոդ․ $2։";
+
+"not_enough_permissions" = "Այդքան իրավասություն չկա";
+"not_enough_permissions_comment" = "Դուք բավական իրավասություն չունեք այս գործողությունը կատարելու համար։";
+
+"login_required_error" = "Պահանջվում է մուտք գործել";
+"login_required_error_comment" = "Այս էջը դիտելու համար պետք է մուտք գործել դեպի կայք։";
+
+"captcha_error" = "Սխալ են գրված սիմվոլները";
+"captcha_error_comment" = "Խնդրում ենք համոզվել, որ ճիշտ եք ներմուծել կապտչայի սիմվոլները։";
+
 /* Admin actions */
 
 "login_as" = "Մտնել ինչպես $1";
+"manage_user_action" = "Օգտատերի կառավարում";
+"manage_group_action" = "Խմբի կառավարում";
 "ban_user_action" = "Բլոկավորել օգտվողին";
 "warn_user_action" = "Զգուշացնել օգտվողին";
 
@@ -671,6 +781,10 @@
 "paginator_page" = "$1 էջ";
 "paginator_next" = "Առաջ";
 
+/* About */
+
+"about_openvk" = "OpenVK-ի մասին";
+
 /* Dialogs */
 
 "ok" = "ОК";
@@ -678,6 +792,12 @@
 "no" = "Ոչ";
 "cancel" = "Չեղարկել";
 "edit_action" = "Փոփոխել";
+"transfer" = "Փոխանցել";
+"close" = "Փակել";
 
 "warning" = "Ուշադրություն";
 "question_confirm" = "Այս գործողությունը էլ երբեք հետ չի բերվի։ Դուք վստա՞հ եք որ ուզում եք շարունակել։";
+
+/* User alerts */
+
+"user_alert_scam" = "Այս հաշվի վրա բազմաթիվ բողոքներ են եկել խարդախության հետ կապված։ Խնդրվում է զգույշ լինել, հատկապես եթե Ձեզնից փորձեն գումար խնդրել և շորթել։";
