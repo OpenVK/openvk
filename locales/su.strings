@@ -189,11 +189,11 @@
 "friends" = "Товарищи";
 "followers" = "Подписчики";
 "follower" = "Подписчик";
-"friends_add" = "Добавить в друзья";
-"friends_delete" = "Удалить из друзей";
-"friends_reject" = "Отменить заявку";
-"friends_accept" = "Принять заявку";
-"send_message" = "Отправить сообщение";
+"friends_add" = "Добавить в товарищи";
+"friends_delete" = "Удалить из товарищей";
+"friends_reject" = "Порвать приглашение в товарищи";
+"friends_accept" = "Прочитать приглашение в товарищи";
+"send_message" = "Отправить телеграмму";
 "incoming_req" = "Подписчики";
 "outcoming_req" = "Заявки";
 "req" = "Заявки";
