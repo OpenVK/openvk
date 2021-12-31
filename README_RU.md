@@ -47,7 +47,7 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 После этого вы можете войти как системный администратор в саму сеть (регистрация не требуется):
 * **Логин**: `admin@localhost.localdomain6`
 * **Пароль**: `admin`
-  *  It is recommended to change the password before using the built-in account.
+  *  Перед использованием встроенной учетной записи рекомендуется сменить пароль.
 
 Полный пример инструкции по установке CentOS 8 также доступен [здесь](docs/centos8_install.md).
 
