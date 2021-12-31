@@ -215,6 +215,9 @@ final class AuthPresenter extends OpenVKPresenter
     
     function renderRestore(): void
     {
+        if(!is_null($this->user))
+            $this->redirect("/id" . $this->user->id, static::REDIRECT_TEMPORARY);
+
         if(($this->queryParam("act") ?? "default") === "finish")
             $this->pass("openvk!Auth->finishRestoringPassword");
         
