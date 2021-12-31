@@ -72,6 +72,8 @@ final class AdminPresenter extends OpenVKPresenter
                 $user->setStatus($this->postParam("status"));
                 $user->setVerified(empty($this->postParam("verify") ? 0 : 1));
                 if($user->onlineStatus() != $this->postParam("online")) $user->setOnline(intval($this->postParam("online")));
+                if(!$user->setShortCode(empty($this->postParam("shortcode")) ? NULL : $this->postParam("shortcode")))
+                    $this->flash("err", tr("error"), tr("error_shorturl_incorrect"));
                 $user->save();
                 break;
             

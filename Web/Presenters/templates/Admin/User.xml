@@ -63,6 +63,12 @@
             </label>
             <input class="text medium-field" type="email" id="email" name="email" value="{$user->getEmail()}" />
         </div>
+        <div class="field-group">
+            <label for="shortcode">
+                Адрес страницы
+            </label>
+            <input class="text medium-field" type="text" id="shortcode" name="shortcode" value="{$user->getShortCode()}" />
+        </div>
         <hr>
         <div class="field-group">
             <label for="city">
