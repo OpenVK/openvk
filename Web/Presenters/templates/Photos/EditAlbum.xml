@@ -39,6 +39,6 @@
     </form>
     <hr/>
     <center>
-        {_"you_can_also"} <a href="/album{$album->getOwner()->getId()}_{$album->getId()}/delete.pl?hash={rawurlencode($csrfToken)}">{_"delete_album"}</a>.
+        {_"you_can_also"} <a href="/album{$album->getOwner()->getId()}_{$album->getId()}/delete?hash={rawurlencode($csrfToken)}">{_"delete_album"}</a>.
     </center>
 {/block}

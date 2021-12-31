@@ -288,7 +288,7 @@
         {elseif $isAvatar}
         
         <h4>{_"profile_picture"}</h4>
-        <form action="/al_avatars.pl" method="POST" enctype="multipart/form-data">
+        <form action="/al_avatars" method="POST" enctype="multipart/form-data">
             <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tbody>
                     <tr>

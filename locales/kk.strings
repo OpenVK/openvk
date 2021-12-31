@@ -17,7 +17,7 @@
 "forgot_password" = "Құпиясөзіңізді ұмыттыңыз ба?";
 
 "login_failed" = "Жүйеге кіру сәтті аяқталмады";
-"invalid_username_or_password" = "Қолданушы аты немесе құпиясөз дұрыс емес.<a href='/restore.pl'>Құпиясөзді ұмыттыңыз ба?</a>";
+"invalid_username_or_password" = "Қолданушы аты немесе құпиясөз дұрыс емес.<a href='/restore'>Құпиясөзді ұмыттыңыз ба?</a>";
 
 "failed_to_register" = "Жүйеге тіркелу сәтті аяқталмады";
 "referral_link_invalid" = "Реферал сілтемесі жарамсыз.";

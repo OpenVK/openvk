@@ -23,7 +23,7 @@
     <a href="/support/delete/{$id}?hash={$csrfToken}">{_delete}</a>
 </div><br/>
 <div>
-    <form action="/al_comments.pl/create/support/reply/{$id}" method="post" style="margin:0;">
+    <form action="/al_comments/create/support/reply/{$id}" method="post" style="margin:0;">
         <textarea name="text" id="answer_text" style="width: 100%;resize: vertical;"></textarea>
         <div>
             <!-- padding to fix <br/> bug -->

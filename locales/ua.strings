@@ -18,7 +18,7 @@
 "forgot_password" = "Забули пароль?";
 
 "login_failed" = "Не вдалося увійти";
-"invalid_username_or_password" = "Неправильне ім'я користувача або пароль. <a href='/restore.pl'>Забули пароль?</a>";
+"invalid_username_or_password" = "Неправильне ім'я користувача або пароль. <a href='/restore'>Забули пароль?</a>";
 
 "failed_to_register" = "Не вдалося зареєструватися";
 "referral_link_invalid" = "Посилання на запрошення недійсне.";

@@ -17,7 +17,7 @@
 "forgot_password" = "Ĉu vi forgesis vian pasvorton?";
 
 "login_failed" = "Ensaluto malsukcesis";
-"invalid_username_or_password" = "La uzantnomo aŭ pasvorto, kiun vi enigis, estas malĝusta. <a href='/restore.pl'>Ĉu vi forgesis vian pasvorton?</a>";
+"invalid_username_or_password" = "La uzantnomo aŭ pasvorto, kiun vi enigis, estas malĝusta. <a href='/restore'>Ĉu vi forgesis vian pasvorton?</a>";
 
 "failed_to_register" = "Malsukcesis registri";
 "referral_link_invalid" = "La invito ligilo estas malvalida.";

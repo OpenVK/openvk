@@ -7,7 +7,7 @@
 
 {block content}
     <div class="container_gray">
-        <form method="POST" enctype="multipart/form-data" action="/club{$club->getId()}/setAdmin.jsp">
+        <form method="POST" enctype="multipart/form-data" action="/club{$club->getId()}/setAdmin">
             <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
                 <tbody>
                     <tr>

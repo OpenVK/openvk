@@ -15,7 +15,7 @@
 "forgot_password" = "Forgot your password?";
 
 "login_failed" = "Login failed";
-"invalid_username_or_password" = "The username or password you entered is incorrect. <a href='/restore.pl'>Forgot your password?</a>";
+"invalid_username_or_password" = "The username or password you entered is incorrect. <a href='/restore'>Forgot your password?</a>";
 
 "failed_to_register" = "Failed to register";
 "referral_link_invalid" = "The referral link is invalid.";

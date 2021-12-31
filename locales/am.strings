@@ -18,7 +18,7 @@
 "forgot_password" = "Մոռացե՞լ եք գաղտնաբառը";
 
 "login_failed" = "Չհաջողվեց մուտք գործել";
-"invalid_username_or_password" = "Սխալ օգտատիրոջ անուն կամ գաղտնաբառ։ Դուք կարող եք <a href='/restore.pl'>վերականգնել ձեր գաղտնաբառը</a>։";
+"invalid_username_or_password" = "Սխալ օգտատիրոջ անուն կամ գաղտնաբառ։ Դուք կարող եք <a href='/restore'>վերականգնել ձեր գաղտնաբառը</a>։";
 
 "failed_to_register" = "Չհաջողվեց գրանցվել";
 "referral_link_invalid" = "Հրավերքային հղումը սխալ է։";

@@ -48,7 +48,7 @@
 {if $ticket->getType() !== 2}
 <br>
     <div>
-            <form action="/al_comments.pl/create/support/{$id}" method="post" style="margin:0;">
+            <form action="/al_comments/create/support/{$id}" method="post" style="margin:0;">
                 <textarea name="text" style="width: 100%;resize: vertical;"></textarea>
                 <div>
                     <!-- padding to fix <br/> bug -->

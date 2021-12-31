@@ -35,7 +35,7 @@
                 <div class="album-photo">
                     <a
                     n:if="!is_null($thisUser) && $album->canBeModifiedBy($thisUser)"
-                    href="/album{$album->getPrettyId()}/remove_photo.pl/{$photo->getId()}" class="album-photo--delete">
+                    href="/album{$album->getPrettyId()}/remove_photo/{$photo->getId()}" class="album-photo--delete">
                         &times;
                     </a>
                     
