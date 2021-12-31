@@ -167,30 +167,30 @@
 "posts_per_page" = "Количество записей на странице";
 
 "attachment" = "Вложение";
-"post_as_group" = "От имени сообщества";
-"comment_as_group" = "От имени сообщества";
-"add_signature" = "Подпись автора";
-"contains_nsfw" = "Содержит NSFW-контент";
-"nsfw_warning" = "Данный пост может содержать 18+ контент";
-"report" = "Пожаловаться";
-"attach" = "Прикрепить";
-"attach_photo" = "Прикрепить фото";
-"attach_video" = "Прикрепить видео";
-"draw_graffiti" = "Нарисовать граффити";
-"no_posts_abstract" = "Здесь никто ничего не написал... Пока.";
-"attach_no_longer_available" = "Это вложение больше недоступно.";
-"open_post" = "Открыть запись";
-"version_incompatibility" = "Не удалось отобразить это вложение. Возможно, база данных несовместима с текущей версией OpenVK.";
+"post_as_group" = "Нимысьтыз сообщество";
+"comment_as_group" = "Нимысьтыз сообщество";
+"add_signature" = "Авторен гожтэм";
+"contains_nsfw" = "Вордскем NSFW-контент";
+"nsfw_warning" = "Сётэм визь сюдыны-вордыны быгато 18+ контент";
+"report" = "Урттылӥськиз";
+"attach" = "Юнматӥзы";
+"attach_photo" = "Туспуктэмез юнматэмын";
+"attach_video" = "Видео юнматӥзы";
+"draw_graffiti" = "Граффити суредамын";
+"no_posts_abstract" = "Татын нокин номыр уг гожтӥськы.";
+"attach_no_longer_available" = "Та вложение трос валантэмез.";
+"open_post" = "Усьты запись";
+"version_incompatibility" = "Та вложение возьматытэк ӧйлась. Оло, юри несовместимый версия OpenVK базаын бызиз.";
 
 "reply" = "Ответить";
 
 /* Friends */
 
-"friends" = "Друзья";
+"friends" = "Эшъёс";
 "followers" = "Подписчики";
 "follower" = "Подписчик";
-"friends_add" = "Добавить в друзья";
-"friends_delete" = "Удалить из друзей";
+"friends_add" = "Ог ватсаны";
+"friends_delete" = "Эшъёсы пӧлысь палэнтыны";
 "friends_reject" = "Отменить заявку";
 "friends_accept" = "Принять заявку";
 "send_message" = "Отправить сообщение";
@@ -198,11 +198,11 @@
 "outcoming_req" = "Заявки";
 "req" = "Заявки";
 
-"firends_zero" = "Ни одного друга";
-"friends_one" = "$1 друг";
-"friends_few" = "$1 друга";
-"friends_many" = "$1 друзей";
-"friends_other" = "$1 друзей";
+"firends_zero" = "Одӥг но эшъёс";
+"friends_one" = "$1 эшъёс";
+"friends_few" = "$1 эшъёс";
+"friends_many" = "$1 эшъёс";
+"friends_other" = "$1 эшъёс";
 
 "followers_zero" = "Ни одного подписчика";
 "followers_one" = "$1 подписчик";
