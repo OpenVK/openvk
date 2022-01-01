@@ -245,6 +245,7 @@
 "hidden_yes" = "Hidden: Yes";
 "hidden_no" = "Hidden: No";
 "group_allow_post_for_everyone" = "Allow posting for everyone";
+"group_hide_from_global_feed" = "Don't display posts in the global feed";
 "statistics" = "Statistics";
 "group_administrators_list" = "Admins list";
 "group_display_only_creator" = "Display only group creator";

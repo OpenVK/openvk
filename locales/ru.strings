@@ -255,6 +255,7 @@
 "hidden_yes" = "Скрыт: Да";
 "hidden_no" = "Скрыт: Нет";
 "group_allow_post_for_everyone" = "Разрешить публиковать записи всем";
+"group_hide_from_global_feed" = "Не отображать публикации в глобальной ленте";
 "statistics" = "Статистика";
 "group_administrators_list" = "Список админов";
 "group_display_only_creator" = "Отображать только создателя группы";
