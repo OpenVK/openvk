@@ -1,7 +1,7 @@
 {var $space = 2}
 {var $pageCount = ceil($conf->count / $conf->perPage)}
 
-<div n:if="!($conf->page === 1 && $conf->count <= $conf->perPage)" n:class="paginator, $conf->atBottom ? paginator-at-bottom">
+<div n:if="!($conf->page === 1 && $conf->count <= $conf->perPage)" n:class="paginator, ($conf->atBottom ?? false) ? paginator-at-bottom">
     {if $conf->page > $space}
         <a n:attr="class => ($conf->page === 1 ? 'active')" href="?{http_build_query(array_merge($_GET, ['p' => 1]), 'k', '&', PHP_QUERY_RFC3986)}">«</a>
     {/if}

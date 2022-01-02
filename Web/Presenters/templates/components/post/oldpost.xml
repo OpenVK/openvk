@@ -7,7 +7,7 @@
                 <img
                     src="{$author->getAvatarURL()}"
                     width="50" />
-                       {if !$post->isPostedOnBehalfOfGroup() && !$compact}
+                       {if !$post->isPostedOnBehalfOfGroup() && !($compact ?? false)}
                             <span n:if="$author->isOnline()" class="post-online">
                                 {_online}
                             </span>
