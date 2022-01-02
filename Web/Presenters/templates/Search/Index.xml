@@ -6,6 +6,9 @@
     {else}
         {tr("search_for_groups")}
     {/if}
+    {if $_GET['query']}
+        - {$_GET['query']}
+    {/if}
 {/block}
 
 {block header}
@@ -21,12 +24,12 @@
 
 {block tabs}
     <div {if $type === "users"}id="activetabs"{/if} class="tab">
-        <a {if $type === "users"}id="act_tab_a"{/if} href="/search?type=users">
+        <a {if $type === "users"}id="act_tab_a"{/if} href="/search?type=users{if $_GET['query']}&query={urlencode($_GET['query'])}{/if}">
             {_users}
         </a>
     </div>
     <div {if $type === "groups"}id="activetabs"{/if} class="tab">
-        <a {if $type === "groups"}id="act_tab_a"{/if} href="/search?type=groups">
+        <a {if $type === "groups"}id="act_tab_a"{/if} href="/search?type=groups{if $_GET['query']}&query={urlencode($_GET['query'])}{/if}">
             {_groups}
         </a>
     </div>
