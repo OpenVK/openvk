@@ -70,9 +70,9 @@ final class PhotosPresenter extends OpenVKPresenter
         }
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
-            if(empty($this->postParam("name"))) {
+            if(empty($this->postParam("name")))
                 $this->flashFail("err", tr("error"), tr("error_segmentation")); 
-            }
+
             $album = new Album;
             $album->setOwner(isset($club) ? $club->getId() * -1 : $this->user->id);
             $album->setName($this->postParam("name"));
@@ -80,7 +80,10 @@ final class PhotosPresenter extends OpenVKPresenter
             $album->setCreated(time());
             $album->save();
             
-            $this->redirect("/album" . $album->getOwner()->getId() . "_" . $album->getId(), static::REDIRECT_TEMPORARY);
+            if(isset($club))
+                $this->redirect("/album-" . $album->getOwner()->getId() . "_" . $album->getId(), static::REDIRECT_TEMPORARY);
+            else
+                $this->redirect("/album" . $album->getOwner()->getId() . "_" . $album->getId(), static::REDIRECT_TEMPORARY);
         }
     }
     
@@ -118,10 +121,11 @@ final class PhotosPresenter extends OpenVKPresenter
         if(is_null($this->user) || !$album->canBeModifiedBy($this->user->identity))
             $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
         
-        $name = $album->getName();
+        $name  = $album->getName();
+        $owner = $album->getOwner();
         $album->delete();
         $this->flash("succ", "Альбом удалён", "Альбом $name был успешно удалён.");
-        $this->redirect("/albums" . $this->user->id);
+        $this->redirect("/albums" . ($owner instanceof Club ? "-" : "") . $owner->getId());
     }
     
     function renderAlbum(int $owner, int $id): void
