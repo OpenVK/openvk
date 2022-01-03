@@ -356,6 +356,7 @@
 
 "left_menu_donate" = "Поддержать";
 
+"footer_about_instance" = "об инстанции";
 "footer_blog" = "блог";
 "footer_help" = "помощь";
 "footer_developers" = "разработчикам";
@@ -795,6 +796,36 @@
 /* About */
 
 "about_openvk" = "Об OpenVK";
+
+"about_this_instance" = "Об этой инстанции";
+"rules" = "Правила";
+"most_popular_groups" = "Самые популярные группы";
+"on_this_instance_are" = "На этой инстанции:";
+
+"about_users_one" = "<b>1</b> пользователь";
+"about_users_few" = "<b>$1</b> пользователя";
+"about_users_many" = "<b>$1</b> пользователей";
+"about_users_other" = "<b>$1</b> пользователей";
+
+"about_online_users_one" = "<b>1</b> пользователь в сети";
+"about_online_users_few" = "<b>$1</b> пользователя в сети";
+"about_online_users_many" = "<b>$1</b> пользователей в сети";
+"about_online_users_other" = "<b>$1</b> пользователей в сети";
+
+"about_active_users_one" = "<b>1</b> активный пользователь";
+"about_active_users_few" = "<b>$1</b> активных пользователя";
+"about_active_users_many" = "<b>$1</b> активных пользователей";
+"about_active_users_other" = "<b>$1</b> активных пользователей";
+
+"about_groups_one" = "<b>1</b> группа";
+"about_groups_few" = "<b>$1</b> группы";
+"about_groups_many" = "<b>$1</b> групп";
+"about_groups_other" = "<b>$1</b> групп";
+
+"about_wall_posts_one" = "<b>1</b> запись на стенах";
+"about_wall_posts_few" = "<b>$1</b> записи на стенах";
+"about_wall_posts_many" = "<b>$1</b> записей на стенах";
+"about_wall_posts_other" = "<b>$1</b> записей на стенах";
 
 /* Dialogs */
 

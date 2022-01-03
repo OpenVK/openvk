@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
 use openvk\Web\Themes\Themepacks;
-use openvk\Web\Models\Repositories\{Users, Managers};
+use openvk\Web\Models\Repositories\{Users, Managers, Clubs, Posts};
 use openvk\Web\Util\Localizator;
 use Chandler\Session\Session;
 
@@ -56,6 +56,15 @@ final class AboutPresenter extends OpenVKPresenter
     {
         $this->template->themes = Themepacks::i()->getAllThemes();
         $this->template->languages = getLanguages();
+    }
+
+    function renderAboutInstance(): void
+    {
+        $this->template->usersStats   = (new Users)->getStatistics();
+        $this->template->clubsCount   = (new Clubs)->getCount();
+        $this->template->postsCount   = (new Posts)->getCount();
+        $this->template->popularClubs = (new Clubs)->getPopularClubs();
+        $this->template->admins       = iterator_to_array((new Users)->getInstanceAdmins());
     }
     
     function renderLanguage(): void

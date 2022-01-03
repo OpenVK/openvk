@@ -39,6 +39,8 @@ routes:
       handler: "About->version"
       placeholders:
           productName: "openvk[2]?|libresoc"
+    - url: "/about"
+      handler: "About->aboutInstance"
     - url: "/privacy"
       handler: "About->Privacy"
     - url: "/badbrowser.php"

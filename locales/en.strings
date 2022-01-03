@@ -338,6 +338,7 @@
 
 "left_menu_donate" = "Donate";
 
+"footer_about_instance" = "about instance";
 "footer_blog" = "blog";
 "footer_help" = "help";
 "footer_developers" = "developers";
@@ -760,6 +761,26 @@
 /* About */
 
 "about_openvk" = "About OpenVK";
+
+"about_this_instance" = "About this instance";
+"rules" = "Rules";
+"most_popular_groups" = "Most popular groups";
+"on_this_instance_are" = "On this instance are:";
+
+"about_users_one" = "<b>1</b> user";
+"about_users_other" = "<b>$1</b> users";
+
+"about_online_users_one" = "<b>1</b> online user";
+"about_online_users_other" = "<b>$1</b> online users";
+
+"about_active_users_one" = "<b>1</b> active user";
+"about_active_users_other" = "<b>$1</b> active users";
+
+"about_groups_one" = "<b>1</b> group";
+"about_groups_other" = "<b>$1</b> groups";
+
+"about_wall_posts_one" = "<b>1</b> wall post";
+"about_wall_posts_other" = "<b>$1</b> wall posts";
 
 /* Dialogs */
 
