@@ -195,7 +195,7 @@
 
                         </div>
                         <a
-                        n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable']"
+                        n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable'] && $thisUser->getLeftMenuItemStatus('poster')"
                         href="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
                             <img
                                 src="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}"

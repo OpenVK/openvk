@@ -370,13 +370,14 @@ final class UserPresenter extends OpenVKPresenter
                     $user->setNsfwTolerance((int) $this->postParam("nsfw"));
             } else if($_GET['act'] === "lMenu") {
                 $settings = [
-                    "menu_bildoj"   => "photos",
-                    "menu_filmetoj" => "videos",
-                    "menu_mesagoj"  => "messages",
-                    "menu_notatoj"  => "notes",
-                    "menu_grupoj"   => "groups",
-                    "menu_novajoj"  => "news",
-                    "menu_ligiloj"  => "links",
+                    "menu_bildoj"    => "photos",
+                    "menu_filmetoj"  => "videos",
+                    "menu_mesagoj"   => "messages",
+                    "menu_notatoj"   => "notes",
+                    "menu_grupoj"    => "groups",
+                    "menu_novajoj"   => "news",
+                    "menu_ligiloj"   => "links",
+                    "menu_standardo" => "poster",
                 ];
                 foreach($settings as $checkbox => $setting)
                     $user->setLeftMenuItemStatus($setting, $this->checkbox($checkbox));
