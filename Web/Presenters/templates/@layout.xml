@@ -293,10 +293,12 @@
             {script "js/al_notifs.js"}
         {/ifset}
         
-        <script src="https://unpkg.com/fartscroll@1.0.0/fartscroll.js"></script>
-        <script n:if="OPENVK_ROOT_CONF['openvk']['preferences']['bellsAndWhistles']['fartscroll']">
-            fartscroll(400);
-        </script>
+        {if OPENVK_ROOT_CONF['openvk']['preferences']['bellsAndWhistles']['fartscroll']}
+            <script src="https://unpkg.com/fartscroll@1.0.0/fartscroll.js"></script>
+            <script>
+                fartscroll(400);
+            </script>
+        {/if}
         
         <script n:if="OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['enable']"
                 async defer data-domain="{php echo OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['domain']}"
