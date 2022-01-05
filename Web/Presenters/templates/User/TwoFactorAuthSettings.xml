@@ -9,7 +9,7 @@
     {_"two_factor_authentication_settings_1"|noescape}
     <p>{_"two_factor_authentication_settings_2"}</p>
     <div style="text-align: center;">
-        <img src="data:image/png;base64,{$qrCode}">
+        <img width="225" height="225" src="data:{$qrCodeType};base64,{$qrCodeData}">
     </div>
     <p>{tr("two_factor_authentication_settings_3", $secret)|noescape}</p>
     <p>{_"two_factor_authentication_settings_4"}</p>
