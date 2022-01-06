@@ -18,6 +18,7 @@ _[English](README.md)_
 
 * **[openvk.su](https://openvk.su/)**
 * [social.fetbuk.ru](http://social.fetbuk.ru/)
+* [openvk.zavsc.pw](https://openvk.zavsc.pw/)
 
 ## Могу ли я создать свою собственную инстанцию OpenVK?
 
