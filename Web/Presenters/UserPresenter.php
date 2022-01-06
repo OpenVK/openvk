@@ -35,7 +35,6 @@ final class UserPresenter extends OpenVKPresenter
             /* ActivityPub quirks :DDDD */
             if($this->isActivityPubClient()) {
                 $objUser = array(
-                    "@context" => $this->getPersonContext(),
                     "type" => "Person",
                     "id" => $user->getFullURL(true),
                     "name" => $user->getFullName(),
@@ -44,7 +43,9 @@ final class UserPresenter extends OpenVKPresenter
                     "prefferedUsername" => $user->getShortCode(),
                     "inbox" => $user->getFullURL() . "/inbox",
                     "outbox" => $user->getFullURL() . "/outbox",
-                    "endpoints" => array("sharedInbox" => ovk_scheme(true) . $_SERVER['SERVER_NAME']),
+                    "followers" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/friends" . $user->getId() . '?act=incoming',
+                    "following" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/friends" . $user->getId() . '?act=outcoming',
+                    "endpoints" => array("sharedInbox" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/activitypub/sharedInbox"),
                     "publicKey" => array(
                         "id" => $user->getFullURL(true) . "#main-key",
                         "owner" => $user->getFullURL(true),
@@ -70,6 +71,8 @@ final class UserPresenter extends OpenVKPresenter
                         "url" => $user->getAvatarUrl(true)
                     );
                 }
+
+                $objUser['@context'] = $this->getPersonContext();
                 
                 $this->returnJson($objUser, CT_AP);
             }
