@@ -17,6 +17,36 @@
 "registration" = "Rejestracja";
 "forgot_password" = "Zapomniałem hasła?";
 
+"login_failed" = "Nie można się zalogować";
+"invalid_username_or_password" = "Niepoprawna nazwa użytkownika lub hasło. <a href='/restore'>Zapomniałeś hasła?</a>";
+
+"failed_to_register" = "Nie można się zarejestrować";
+"referral_link_invalid" = "Link zaproszenia jest nieprawidłowy.";
+"registration_disabled" = "Rejestracja wyłączona przez administratora systemu.";
+"user_already_exists" = "Użytkownik z takim e-mailem już istnieje.";
+
+"access_recovery" = "Przywracanie dostępu";
+"page_access_recovery" = "Przywróć dostęp do strony";
+"access_recovery_info" = "Zapomniałeś hasła? Nie martw się, Wprowadź swoje dane, a my wyślemy ci e-mail z instrukcjami odzyskiwania konta.";
+"access_recovery_info_2" = "Wprowadź nowe hasło. Wszystkie trwające sesje zostaną zawieszone, a tokeny dostępu zostaną anulowane.";
+"reset_password" = "Zresetuj hasło";
+"2fa_code_2" = "Kod uwierzytelniania dwuskładnikowego";
+
+"password_successfully_reset" = "Twoje hasło zostało pomyślnie zresetowane.";
+"password_reset_email_sent" = "Jeśli jesteś zarejestrowany, otrzymasz instrukcje na e-mail.";
+"password_reset_error" = "Nieoczekiwany błąd podczas resetowania hasła.";
+"password_reset_rate_limit_error" = "Nie możesz tego robić tak często, przepraszam.";
+
+"registration_disabled_info" = "Rejestracja jest wyłączona przez administratora systemu. Jeśli to możliwe, poproś znajomego o zaproszenie, jeśli jest zarejestrowany na tej stronie.";
+"registration_closed" = "Rejestracja zamknięta.";
+"invites_you_to" = "<strong>$1</strong> zaprasza do $2";
+
+"register_meta_desc" = "Zarejestruj się w $1 już teraz!";
+"register_referer_meta_title" = "$1 zaprasza do $2!";
+"register_referer_meta_desc" = "Dołącz do $1 i wielu innych użytkowników w$2!";
+
+"users" = "Пользователи";
+
 /* Profile information */
 
 "select_language" = "Wybierz język";
@@ -47,8 +77,13 @@
 "no_information_provided" = "Brak informacji.";
 "deceased_person" = "Strona zmarłego człowieka";
 "none" = "brakuje";
-"years" = "lat";
 "send" = "Wysłać";
+
+"years_zero" = "0 lat";
+"years_one" = "1 rok";
+"years_few" = "$1 roku";
+"years_many" = "$1 lat";
+"years_other" = "$1 lat";
 
 "relationship" = "Stan cywilny";
 
@@ -96,7 +131,12 @@
 
 "updated_at" = "Aktualizacja $1";
 
+"user_banned" = "Niestety musieliśmy zablokować stronę użytkownika <b>$1</b>.";
+"user_banned_comment" = "Komentarz moderatora:";
+
 /* Wall */
+
+"feed" = "Nowość";
 
 "post_writes_m" = "napisał";
 "post_writes_f" = "napisała";
@@ -113,7 +153,6 @@
 "pinned" = "stały";
 "comments_tip" = "Bądź pierwszym, który pozostawi komentarz!";
 "your_comment" = "Twój komentarz";
-"comments" = "Komentarz";
 "shown" = "Wskazany";
 "x_out_of" = "$1 z";
 "wall_zero" = "brak wpisów";
@@ -121,21 +160,31 @@
 "wall_few" = "$1 wpis";
 "wall_many" = "$1 wpis";
 "wall_other" = "$1 wpis";
+"publish_post" = "Dodaj wpis";
+"view_other_comments" = "Zobacz pozostałe komentarze";
+
+"no_comments" = "Brak komentarzy";
 
 "all_news" = "Wszystkie aktualności";
 "posts_per_page" = "Ilość wpisów na stronie";
 
 "attachment" = "Włożenie";
 "post_as_group" = "W imieniu Wspólnoty";
+"comment_as_group" = "W imieniu Wspólnoty";
 "add_signature" = "Podpis autora";
 "contains_nsfw" = "Zawiera treści NSFW";
 "nsfw_warning" = "Ten post może zawierać ponad 18+ treści";
 "report" = "Poskarżyć";
-"attach_photo" = "Załącz zdjęcie";
+"attach" = "Przymocować";
+"attach_photo" = "Przymocować zdjęcie";
+"attach_video" = "Przymocować wideo";
+"draw_graffiti" = "Narysować Graffiti";
 "no_posts_abstract" = "Nikt tu nic nie napisał... Dopóki.";
 "attach_no_longer_available" = "Ten załącznik nie jest już dostępny.";
 "open_post" = "Otwórz wpis";
 "version_incompatibility" = "Nie można wyświetlić tego załącznika. Być może baza danych nie jest zgodna z bieżącą wersją OpenVK.";
+
+"reply" = "Odpowiedzieć";
 
 /* Friends */
 
@@ -202,16 +251,22 @@
 "role" = "Rola";
 "administrator" = "Administrator";
 "promote_to_admin" = "Awans do admina";
+"promote_to_owner" = "Wyznaczyć właściciela";
 "devote" = "Zdegradować";
 "set_comment" = "Edytuj Komentarz";
 "hidden_yes" = "Ukryty: Tak";
 "hidden_no" = "Ukryty: Nie";
 "group_allow_post_for_everyone" = "Zezwalaj na publikowanie wpisów wszystkim";
+"group_hide_from_global_feed" = "Nie wyświetlaj publikacji w kanale globalnym";
 "statistics" = "Statystyk";
 "group_administrators_list" = "Lista adminów";
 "group_display_only_creator" = "Wyświetl tylko twórcę grupy";
 "group_display_all_administrators" = "Wyświetl wszystkich administratorów";
 "group_dont_display_administrators_list" = "Nic nie wyświetla";
+
+"group_changeowner_modal_title" = "Przeniesienie praw właściciela";
+"group_changeowner_modal_text" = "Uwaga! Użytkownik przekazuje prawa właściciela użytkownikowi $1. To działanie jest nieodwracalne. Po przeniesieniu pozostaniesz administratorem, ale możesz łatwo przestać nim być.";
+"group_owner_setted" = "Nowy właściciel ($1) został pomyślnie przypisany do społeczności $2. Otrzymujesz uprawnienia administratora w społeczności. Jeśli chcesz odzyskać rolę właściciela, skontaktuj się z <a href='/support?act=new'>wsparcie techniczne strony</a>.";
 
 "participants_zero" = "Brak uczestnika";
 "participants_one" = "Jeden uczestnik";
@@ -261,8 +316,6 @@
 "text_note" = "Treść";
 "create_note" = "Utwórz notatkę";
 "actions" = "Postępowanie";
-"feed" = "Nowości";
-"publish_post" = "Dodaj wpis";
 
 "notes_zero" = "Brak notatek";
 "notes_one" = "Jedna notka";
@@ -289,29 +342,28 @@
 "menu_registration" = "Rejestracja";
 "menu_help" = "Pomoc";
 
+"menu_logout" = "Wyjść";
+"menu_support" = "Pomoc";
+
 "header_home" = "główny";
 "header_groups" = "grupy";
-"header_donate" = "poprzeć";
 "header_people" = "ludzie";
 "header_invite" = "zaprosić";
 "header_help" = "pomoc";
 "header_log_out" = "wyjść";
-"header_search" = "Wyszukiwanie";
+"header_search" = "wyszukiwanie";
 
 "header_login" = "Zaloguj się";
 "header_registration" = "Rejestracja";
 
+"left_menu_donate" = "Poprzeć";
+
+"footer_about_instance" = "o instancji";
 "footer_blog" = "blog";
 "footer_help" = "pomoc";
 "footer_developers" = "programistom";
 "footer_choose_language" = "wybierz język";
 "footer_privacy" = "prywatność";
-
-"notes_zero" = "Brak notatek";
-"notes_one" = "Jedna notka";
-"notes_few" = "$1 notki";
-"notes_many" = "$1 notatek";
-"notes_other" = "$1 notatek";
 
 /* Settings */
 
@@ -340,6 +392,7 @@
 "search_for_groups" = "Szukaj grup";
 "search_for_people" = "Wyszukiwanie osób";
 "search_button" = "Znaleźć";
+"search_placeholder" = "Zacznij wpisywać dowolne imię, tytuł lub słowo";
 "results_zero" = "Brak wyników";
 "results_one" = "Jeden wynik";
 "results_few" = "$1 wynik";
@@ -355,6 +408,7 @@
 "privacy_setting_see_friends" = "Kto widzi moich przyjaciół";
 "privacy_setting_add_to_friends" = "Kto może nazywać mnie przyjacielem";
 "privacy_setting_write_wall" = "Kto może pisać na mojej ścianie";
+"privacy_setting_write_messages" = "Kto może pisać do mnie wiadomości";
 "privacy_value_anybody" = "Wszyscy chętni";
 "privacy_value_anybody_dative" = "Wszystkim chętnym";
 "privacy_value_users" = "Przez użytkownika  OpenVK";
@@ -378,6 +432,40 @@
 "ui_settings_rating" = "Ranking";
 "ui_settings_rating_show" = "Pokazać";
 "ui_settings_rating_hide" = "Ukrywać";
+
+"additional_links" = "Dodatkowe linki";
+"ad_poster" = "Plakat reklamowy";
+
+/* Two-factor authentication */
+
+"two_factor_authentication" = "Uwierzytelnianie dwuskładnikowe";
+"two_factor_authentication_disabled" = "Zapewnia niezawodną ochronę przed włamaniem: aby wejść na stronę, musisz wprowadzić kod otrzymany w aplikacji 2FA.";
+"two_factor_authentication_enabled" = "Uwierzytelnianie dwuskładnikowe jest włączone. Twoja strona jest chroniona.";
+"two_factor_authentication_login" = "Masz włączone uwierzytelnianie dwuskładnikowe. Aby się zalogować, wprowadź kod otrzymany w aplikacji.";
+
+"two_factor_authentication_settings_1" = "Uwierzytelnianie dwuskładnikowe za pośrednictwem TOTP może być używane nawet bez Internetu. Aby to zrobić, potrzebujesz aplikacji do generowania kodów. Na przykład,<b>Google Authenticator</b> Dla Androida i iOS lub wolne<b>Aegis I andOTP</B> dla Androida. Upewnij się, że telefon ma dokładną datę i godzinę.";
+"two_factor_authentication_settings_2" = "Korzystając z aplikacji do uwierzytelniania dwuskładnikowego, zeskanuj poniższy kod QR:";
+"two_factor_authentication_settings_3" = "lub ręcznie wprowadź tajny klucz:<b>$1</b>.";
+"two_factor_authentication_settings_4" = "Teraz wprowadź kod dostarczony przez aplikację i hasło ze strony, abyśmy mogli potwierdzić, że naprawdę jesteś sobą.";
+
+"connect" = "Podłączyć";
+"enable" = "Włączyć";
+"disable" = "Wyłączyć";
+"code" = "Kod";
+"2fa_code" = "Kod 2FA";
+
+"incorrect_password" = "Nieprawidłowe hasło";
+"incorrect_code" = "Nieprawidłowy kod";
+"incorrect_2fa_code" = "Nieprawidłowy kod uwierzytelniania dwuskładnikowego";
+"two_factor_authentication_enabled_message" = "Uwierzytelnianie dwuskładnikowe włączone";
+"two_factor_authentication_enabled_message_description" = "Twoja strona stała się trudniejsza do zhakowania. Zachęcamy do pobrania <a href='javascript:viewBackupCodes()'>kody zapasowe</a>";
+"two_factor_authentication_disabled_message" = "Uwierzytelnianie dwuskładnikowe wyłączone";
+
+"view_backup_codes" = "Zobacz kody zapasowe";
+"backup_codes" = "Kody zapasowe do potwierdzenia logowania";
+"two_factor_authentication_backup_codes_1" = "Kody zapasowe pozwalają potwierdzić logowanie, gdy nie masz dostępu do telefonu, na przykład podczas podróży.";
+"two_factor_authentication_backup_codes_2" = "Masz jeszcze <b>10 kodów</b>, każdy kod może być użyty tylko raz. Wydrukuj je, odłóż w bezpieczne miejsce i użyj, gdy potrzebne są kody, aby potwierdzić wejście.";
+"two_factor_authentication_backup_codes_3" = "Możesz uzyskać nowe kody, jeśli się skończą. Ważne są tylko ostatnio utworzone kody kopii zapasowych.";
 
 /* Sorting */
 
@@ -434,6 +522,7 @@
 "nt_post_instrumental" = "postem";
 "nt_note_instrumental" = "notką";
 "nt_photo_instrumental" = "zdjęciem";
+"nt_topic_instrumental" = "tematem";
 
 /* Time */
 
@@ -443,21 +532,6 @@
 "time_minutes_ago" = "$1 minut temu";
 "time_today" = "dziś";
 "time_yesterday" = "wczo";
-
-"your_email_address" = "Twój adres e-mail";
-"your_page_address" = "Adres Twojej strony";
-"page_address" = "Adres strony";
-"current_email_address" = "Aktualny adres";
-"page_id" = "ID strony";
-"you_can_also" = "Możesz także";
-"delete_your_page" = "usuń swoją stronę";
-"delete_album" = "usuń album";
-
-"ui_settings_interface" = "Interface";
-"ui_settings_sidebar" = "Lewe menu";
-"ui_settings_rating" = "Ranking";
-"ui_settings_rating_show" = "Pokazać";
-"ui_settings_rating_hide" = "Ukrywać";
 
 "points" = "Głos";
 "points_count" = "głos";
@@ -477,6 +551,33 @@
 "deactivate" = "Dezaktywować";
 "usages_total" = "Ilość zastosowań";
 "usages_left" = "Pozostało zastosowań";
+
+"points_transfer_dialog_header_1" = "Możesz wysłać jako prezent lub przekazać część głosów innej osobie.";
+"points_transfer_dialog_header_2" = "Twoje bieżące saldo:";
+
+"points_amount_one" = "1 głos";
+"points_amount_few" = "$1 głosy";
+"points_amount_many" = "$1 głosów";
+"points_amount_other" = "$1 głosów";
+
+"transfer_poins" = "Przekazywanie głosów";
+"transfer_poins_button" = "Oddaj głosy";
+"also_you_can_transfer_points" = "Możesz także <a href=\"javascript:showCoinsTransferDialog($1, '$2')\">przekazać głosy</a> innej osobie.";
+
+"transferred_to_you" = "przekazał ci";
+
+"receiver_address" = "Adres odbiorcy";
+"coins_count" = "Liczba głosów";
+"message" = "Wiadomość";
+
+"failed_to_tranfer_points" = "Nie udało się oddać głosów";
+
+"points_transfer_successful" = "Pomyślnie przekazałeś <b>$1 <a href=\"$2\">$3</a></b>.";
+"not_all_information_has_been_entered" = "Nie wszystkie informacje zostały wprowadzone.";
+"negative_transfer_value" = "Nie możemy ukraść głosów innej osobie, przepraszam.";
+"message_is_too_long" = "Wiadomość jest za długa.";
+"receiver_not_found" = "Nie znaleziono odbiorcy.";
+"you_dont_have_enough_points" = "Masz za mało głosów.";
 
 /* Gifts */
 
@@ -509,8 +610,114 @@
 "coins_many" = "$1 głosów";
 "coins_other" = "$1 głosów";
 
+"users_gifts" = "Prezent";
+
+/* Support */
+
+"support_opened" = "Odsłonięty";
+"support_answered" = "Z odpowiedzią";
+"support_closed" = "Zasłonięty";
+"support_ticket" = "Obchodzenie się";
+"support_tickets" = "Obchodzenie się";
+"support_status_0" = "Pytanie w toku";
+"support_status_1" = "Jest odpowiedź";
+"support_status_2" = "Zasłonięty";
+"support_greeting_hi" = "Witajcie, $1!";
+"support_greeting_regards" = "Pozdrawiam,<br/>zespół wsparcia $1.";
+
+"support_faq" = "Najczęściej zadawane pytania";
+"support_list" = "Lista zgłoszeń";
+"support_new" = "Nowy apel";
+
+"support_faq_title" = "Dla kogo ta strona?";
+"support_faq_content" = "Witryna służy do wyszukiwania znajomych i znajomych, a także do przeglądania danych użytkownika. To jak przewodnik po mieście, dzięki któremu ludzie mogą szybko znaleźć aktualne informacje o osobie.";
+
+"support_new_title" = "Wpisz temat swojego apelu";
+"support_new_content" = "Opisz problem lub sugestię";
+
+"support_rate_good_answer" = "To dobra odpowiedź";
+"support_rate_bad_answer" = "To zła odpowiedź";
+"support_good_answer_user" = "Zostawiłeś pozytywną opinię.";
+"support_bad_answer_user" = "Zostawiłeś negatywną opinię.";
+"support_good_answer_agent" = "Użytkownik zostawił pozytywną opinię";
+"support_bad_answer_agent" = "Użytkownik zostawił negatywną opinię";
+"support_rated_good" = "Zostawiłeś pozytywną opinię na temat odpowiedzi.";
+"support_rated_bad" = "Zostawiłeś negatywną opinię na temat odpowiedzi.";
+"wrong_parameters" = "Nieprawidłowe parametry zapytania.";
+
+"fast_answers" = "Szybkie odpowiedzi";
+
 "comment" = "Komentarz";
 "sender" = "Nadawca";
+
+"author" = "Autor";
+
+"you_have_not_entered_text" = "Nie wpisałeś tekstu";
+"you_have_not_entered_name_or_text" = "Nie wpisałeś nazwy ani tekstu";
+
+"ticket_changed" = "Ticket zmieniony";
+"ticket_changed_comment" = "Zmiany wejdą w życie za kilka sekund.";
+
+/* Invite */
+
+"invite" = "Zaprosić";
+"you_can_invite" = "Możesz zaprosić znajomych lub znajomych do sieci za pomocą spersonalizowanego linku:";
+"you_can_invite_2" = "Dołącz ten link do swojego postu. Użytkownik zarejestruje się i natychmiast pojawi się w twoich znajomych.";
+
+/* Banned */
+
+"banned_title" = "Ci ban";
+"banned_header" = "Zostałeś zablokowany";
+"banned_alt" = "Użytkownik jest zablokowany.";
+"banned_1" = "Przepraszam, <b>$1</b>, ale zostałeś zablokowany";
+"banned_2" = "A powód tego jest prosty: <b>$1</b>. Niestety, tym razem musieliśmy Cię zablokować na dobre.";
+"banned_3" = "Nadal możesz <a href=\"/support?act=new\">napisz do działu obsługi</a>, jeśli uważasz, że wystąpił błąd lub <a href=\"/logout?hash=$1\">wyjść</a>.";
+
+/* Discussions */
+
+"discussions" = "Dyskusja";
+
+"messages_one" = "Jedna post";
+"messages_few" = "$1 postów";
+"messages_many" = "$1 postów";
+"messages_other" = "$1 postów";
+
+"topic_messages_count_zero" = "W temacie brak postów";
+"topic_messages_count_one" = "W temacie jeden post";
+"topic_messages_count_few" = "W temacie $1 postów";
+"topic_messages_count_many" = "W temacie $1 postów";
+"topic_messages_count_other" = "W temacie $1 postów";
+
+"replied" = "odpowiedzieć";
+"create_topic" = "Utwórz temat";
+
+"new_topic" = "Nowy temat";
+"title" = "Nagłówek";
+"text" = "Teskt";
+
+"view_topic" = "Zobacz temat";
+"edit_topic_action" = "Edytuj temat";
+"edit_topic" = "Edycja tematu";
+"topic_settings" = "Ustawienia temat";
+"pin_topic" = "Przypnij temat";
+"close_topic" = "Zamknij temat";
+"delete_topic" = "Usuń temat";
+
+"topics_one" = "Jeden temat";
+"topics_few" = "$1 tematy";
+"topics_many" = "$1 tematy";
+"topics_other" = "$1 tematów";
+
+"created" = "Powstały";
+
+"everyone_can_create_topics" = "Każdy może tworzyć tematy";
+"display_list_of_topics_above_wall" = "Wyświetl listę tematów nad ścianą";
+
+"topic_changes_saved_comment" = "Zaktualizowany tytuł i ustawienia pojawią się na stronie z motywem.";
+
+"failed_to_create_topic" = "Nie można utworzyć tematu";
+"failed_to_change_topic" = "Nie można zmienić tematu";
+"no_title_specified" = "Nie podano tytułu.";
 
 /* Errors */
 
@@ -531,6 +738,7 @@
 "error_old_password" = "Stare hasło nie pasuje";
 "error_new_password" = "Nowe hasła nie pasują";
 "error_shorturl_incorrect" = "Krótki adres ma nieprawidłowy format.";
+"error_repost_fail" = "Nie można udostępnić wpisu";
 
 "forbidden" = "Błąd dostępu";
 "forbidden_comment" = "Ustawienia prywatności tego użytkownika nie pozwalają na przeglądanie jego strony.";
@@ -541,15 +749,100 @@
 "photo_saved" = "Zdjęcie zapisane";
 "photo_saved_comment" = "Nowe zdjęcie profilowe pojawi się na twojej stronie";
 
+"shared_succ" = "Wpis pojawi się na Twojej ścianie. Stuknij powiadomienie, aby przejść do ściany.";
+
+"invalid_email_address" = "Nieprawidłowy adres e-mail";
+"invalid_email_address_comment" = "Podany przez Ciebie adres e-mail nie jest poprawny.";
+
+"invalid_telegram_name" = "Nieprawidłowa nazwa konta Telegram";
+"invalid_telegram_name_comment" = "Wpisałeś niepoprawną nazwę konta Telegram.";
+
+"invalid_birth_date" = "Nieprawidłowa data urodzenia";
+"invalid_birth_date_comment" = "Podana data urodzenia nie jest poprawna.";
+
+"token_manipulation_error" = "Błąd manipulacji tokenem";
+"token_manipulation_error_comment" = "Token jest nieprawidłowy lub wygasł";
+
+"profile_changed" = "Profil zmieniony";
+"profile_changed_comment" = "Twój aktywny profil został zmieniony.";
+"profile_not_found" = "Nie znaleziono użytkownika.";
+
+"suspicious_registration_attempt" = "Podejrzana próba rejestracji";
+"suspicious_registration_attempt_comment" = "Próbowałeś zarejestrować się z podejrzanego miejsca.";
+
+"rate_limit_error" = "Chumba, jesteś pojebany?";
+"rate_limit_error_comment" = "Idź do psychiatry, napij się kółek. W $1 nie możesz tak często rzucać shitpostu. Kod wyjątku: $2.";
+
+"not_enough_permissions" = "Za mało praw";
+"not_enough_permissions_comment" = "Nie masz wystarczających uprawnień, aby wykonać tę czynność.";
+
+"login_required_error" = "Za mało praw";
+"login_required_error_comment" = "Aby wyświetlić tę stronę, musisz przejść do witryny.";
+
+"captcha_error" = "Niepoprawnie wprowadzone znaki";
+"captcha_error_comment" = "Upewnij się, że poprawnie wypełniłeś pole captcha.";
+
 /* Admin actions */
 
 "login_as" = "Zaloguj się jako $1";
 "manage_user_action" = "Zarządzanie użytkownikiem";
-"ban_user_action" = "Zbanuj użytkownika";
+"manage_group_action" = "Zarządzanie grupą";
+"ban_user_action" = "Zablokuj użytkownika";
 "warn_user_action" = "Ostrzec użytkownika";
 
-/* Paginator */
+/* Paginator (deprecated) */
 
 "paginator_back" = "Do tyłu";
 "paginator_page" = "Strona $1";
 "paginator_next" = "Dalej";
+
+/* About */
+
+"about_openvk" = "O OpenVK";
+
+"about_this_instance" = "O tej instancji";
+"rules" = "Zasada";
+"most_popular_groups" = "Najpopularniejsze grupy";
+"on_this_instance_are" = "W tej instancji:";
+
+"about_users_one" = "<b>1</b> użytkownik";
+"about_users_few" = "<b>$1</b> użytkowników";
+"about_users_many" = "<b>$1</b> użytkowników";
+"about_users_other" = "<b>$1</b> użytkowników";
+
+"about_online_users_one" = "<b>1</b> użytkownik online";
+"about_online_users_few" = "<b>$1</b> użytkowników online";
+"about_online_users_many" = "<b>$1</b> użytkowników online";
+"about_online_users_other" = "<b>$1</b> użytkowników online";
+
+"about_active_users_one" = "<b>1</b> aktywny użytkownik";
+"about_active_users_few" = "<b>$1</b> aktywnych użytkowników";
+"about_active_users_many" = "<b>$1</b> aktywnych użytkowników";
+"about_active_users_other" = "<b>$1</b> aktywnych użytkowników";
+
+"about_groups_one" = "<b>1</b> grupa";
+"about_groups_few" = "<b>$1</b> grupy";
+"about_groups_many" = "<b>$1</b> grup";
+"about_groups_other" = "<b>$1</b> grup";
+
+"about_wall_posts_one" = "<b>1</b> wpis na ścianach";
+"about_wall_posts_few" = "<b>$1</b> wpisy na ścianach";
+"about_wall_posts_many" = "<b>$1</b> wpisów na ścianach";
+"about_wall_posts_other" = "<b>$1</b> wpisów na ścianach";
+
+/* Dialogs */
+
+"ok" = "ОК";
+"yes" = "Tak";
+"no" = "Nie";
+"cancel" = "Odwołanie";
+"edit_action" = "Zmienić";
+"transfer" = "Przekazać";
+"close" = "Zamknąć";
+
+"warning" = "Uwaga";
+"question_confirm" = "Tej akcji nie można cofnąć. Czy naprawdę jesteś pewien tego, co chcesz zrobić?";
+
+/* User alerts */
+
+"user_alert_scam" = "Wiele osób skarżyło się na to konto w związku z oszustwem. Zachowaj ostrożność, zwłaszcza jeśli zostaniesz poproszony o pieniądze.";
