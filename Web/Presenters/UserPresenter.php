@@ -71,7 +71,7 @@ final class UserPresenter extends OpenVKPresenter
                     );
                 }
                 
-                $this->returnJson($objUser);
+                $this->returnJson($objUser, CT_AP);
             }
 
             if($user->getShortCode())

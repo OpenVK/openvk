@@ -255,11 +255,11 @@ abstract class OpenVKPresenter extends SimplePresenter
         }
     }
 
-    protected function returnJson(array $json): void
+    protected function returnJson(array $json, string $ct = "application/json"): void
     {
         $payload = json_encode($json, JSON_UNESCAPED_UNICODE);
         $size = strlen($payload);
-        header("Content-Type: application/json");
+        header("Content-Type: " . $ct);
         header("Content-Length: $size");
         exit($payload);
     }

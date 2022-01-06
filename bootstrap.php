@@ -240,6 +240,8 @@ return (function() {
     define('MONTH', 30 * DAY);
     define('YEAR', 365 * DAY);
 
+    define('CT_AP', 'application/activity+json'); // Content-type of ActivityPub protocol
+
     define("nullptr", NULL);
     define("OPENVK_DEFAULT_INSTANCE_NAME", "OpenVK", false);
     define("OPENVK_VERSION", "Altair Preview ($ver)", false);
