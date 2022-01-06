@@ -31,6 +31,7 @@ final class SupportPresenter extends OpenVKPresenter
         $tickets = $this->tickets->getTicketsByuId($this->user->id);
         if($tickets)
             $this->template->tickets = $tickets;
+
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             if(!empty($this->postParam("name")) && !empty($this->postParam("text"))) {
                 $this->assertNoCSRF();
@@ -111,11 +112,11 @@ final class SupportPresenter extends OpenVKPresenter
             if(!$ticket || $ticket->isDeleted() != 0 || $ticket->getUserId() !== $this->user->id && !$this->hasPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0)) {
                 $this->notFound();
             } else {
-                header("HTTP/1.1 302 Found");
                 if($ticket->getUserId() !== $this->user->id && $this->hasPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0))
-                    header("Location: /support/tickets");
+                    $this->redirect("/support/tickets");
                 else
-                    header("Location: /support");
+                    $this->redirect("/support");
+
                 $ticket->delete();
             }
         }
@@ -182,13 +183,12 @@ final class SupportPresenter extends OpenVKPresenter
             if(!empty($this->postParam("text")) && !empty($this->postParam("status"))) {
                 $ticket->setType($this->postParam("status"));
                 $ticket->save();
-                
-                $this->assertNoCSRF();
+
                 $comment = new TicketComment;
                 $comment->setUser_id($this->user->id);
                 $comment->setUser_type(1);
                 $comment->setText($this->postParam("text"));
-                $comment->setTicket_id($id);
+                $comment->setTicket_Id($id);
                 $comment->setCreated(time());
                 $comment->save();
             } elseif(empty($this->postParam("text"))) {
