@@ -28,18 +28,19 @@ final class SupportPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->template->mode = in_array($this->queryParam("act"), ["faq", "new", "list"]) ? $this->queryParam("act") : "faq";
 
-        $tickets = $this->tickets->getTicketsByuId($this->user->id);
-        if($tickets)
-            $this->template->tickets = $tickets;
+        $this->template->count = $this->tickets->getTicketsCountByUserId($this->user->id);
+        if($this->template->mode === "list") {
+            $this->template->page    = (int) ($this->queryParam("p") ?? 1);
+            $this->template->tickets = $this->tickets->getTicketsByUserId($this->user->id, $this->template->page);
+        }
 
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             if(!empty($this->postParam("name")) && !empty($this->postParam("text"))) {
-                $this->assertNoCSRF();
                 $this->willExecuteWriteAction();
 
                 $ticket = new Ticket;
                 $ticket->setType(0);
-                $ticket->setUser_id($this->user->id);
+                $ticket->setUser_Id($this->user->id);
                 $ticket->setName($this->postParam("name"));
                 $ticket->setText($this->postParam("text"));
                 $ticket->setcreated(time());
@@ -136,8 +137,7 @@ final class SupportPresenter extends OpenVKPresenter
             if(!empty($this->postParam("text"))) {
                 $ticket->setType(0);
                 $ticket->save();
-                
-                $this->assertNoCSRF();
+
                 $this->willExecuteWriteAction();
                 
                 $comment = new TicketComment;

@@ -220,7 +220,7 @@ abstract class OpenVKPresenter extends SimplePresenter
                 $this->user->identity->save();
             }
             
-            $this->template->ticketAnsweredCount = (new Tickets)->getTicketsCountByuId($this->user->id, 1);
+            $this->template->ticketAnsweredCount = (new Tickets)->getTicketsCountByUserId($this->user->id, 1);
             if($user->can("write")->model("openvk\Web\Models\Entities\TicketReply")->whichBelongsTo(0))
                 $this->template->helpdeskTicketNotAnsweredCount = (new Tickets)->getTicketCount(0);
         }
