@@ -36,9 +36,12 @@ class Tickets
         foreach($this->tickets->where(["user_id" => $userId, "deleted" => 0])->order("created DESC")->page($page, OPENVK_DEFAULT_PER_PAGE) as $ticket) yield new Ticket($ticket);
     }
 
-    function getTicketsCountByUserId(int $userId, int $type = 0): int
+    function getTicketsCountByUserId(int $userId, int $type = NULL): int
     {
-        return sizeof($this->tickets->where(["user_id" => $userId, "deleted" => 0, "type" => $type]));
+        if(is_null($type))
+            return sizeof($this->tickets->where(["user_id" => $userId, "deleted" => 0]));
+        else
+            return sizeof($this->tickets->where(["user_id" => $userId, "deleted" => 0, "type" => $type]));
     }
     
     function getRequestById(int $requestId): ?Ticket
