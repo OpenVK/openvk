@@ -15,7 +15,7 @@
             <div n:attr="id => ($isMain ? 'activetabs' : 'ki')" class="tab">
                 <a n:attr="id => ($isMain ? 'act_tab_a' : 'ki')" href="/support">{_support_faq}</a>
             </div>
-            <div n:attr="id => ($isList ? 'activetabs' : 'ki')" class="tab">
+            <div n:if="$count > 0" n:attr="id => ($isList ? 'activetabs' : 'ki')" class="tab">
                 <a n:attr="id => ($isList ? 'act_tab_a' : 'ki')" href="/support?act=list">{_support_list}</a>
             </div>
             <div n:attr="id => ($isNew ? 'activetabs' : 'ki')" class="tab">
@@ -69,6 +69,10 @@
                 </tr>
             </tbody>
         </table>
+
+        {if $count < 1}
+            {include "../components/nothing.xml"}
+        {/if}
 
         <div style="padding: 8px;">
             {include "../components/paginator.xml", conf => (object) [
