@@ -624,8 +624,8 @@
 "you_have_not_entered_text" = "You have not entered any text";
 "you_have_not_entered_name_or_text" = "You did not enter a name or text";
 
-"support_ticket_changed" = "Ticket changed";
-"support_ticket_changed_comment" = "The changes will take effect in a few seconds.";
+"ticket_changed" = "Ticket changed";
+"ticket_changed_comment" = "The changes will take effect in a few seconds.";
 
 /* Invite */
 
