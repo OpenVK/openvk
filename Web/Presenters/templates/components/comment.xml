@@ -16,7 +16,8 @@
                 <div class="post-author">
                     <a href="{$author->getURL()}"><b>
                         {$author->getCanonicalName()}
-                    </b></a><br/>
+                    </b></a>
+                    {if $author->isVerified()}<img class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">{/if}<br/>
                 </div>
                 <div class="post-content" id="{$comment->getId()}">
                     <div class="text" id="text{$comment->getId()}">
