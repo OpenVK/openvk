@@ -1,6 +1,6 @@
 {var instance_name = OPENVK_ROOT_CONF['openvk']['appearance']['name']}
 
-<!DOCTYPE html n:if="!isset($parentModule) || substr($parentModule, 0, 21) === 'libchandler:absolute.'">
+<!DOCTYPE html>
 <html n:if="!isset($parentModule) || substr($parentModule, 0, 21) === 'libchandler:absolute.'">
     <head>
         <title>
