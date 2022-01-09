@@ -71,7 +71,7 @@ routes:
       handler: "User->friends"
     - url: "/edit"
       handler: "User->edit"
-    - url: "/edit/verify_phone.pl"
+    - url: "/edit/verify_phone"
       handler: "User->verifyPhone"
     - url: "/setSub/user"
       handler: "User->sub"

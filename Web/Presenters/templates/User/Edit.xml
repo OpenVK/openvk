@@ -13,7 +13,7 @@
 {var isAvatar    = $mode === 'avatar'}
     <div n:if="$user->hasPendingNumberChange()" class="msg">
         <b>Подтверждение номера телефона</b><br/>
-        Введите код для подтверждения смены номера: <a href="/edit/verify_phone.pl">ввести код</a>.
+        Введите код для подтверждения смены номера: <a href="/edit/verify_phone">ввести код</a>.
     </div>
     
     <div class="tabs">
