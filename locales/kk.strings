@@ -619,8 +619,8 @@
 "you_have_not_entered_text" = "Cіз ешқандай мәтін енгізбедіңіз";
 "you_have_not_entered_name_or_text" = "Сіз ат немесе мәтін енгізген жоқсыз";
 
-"support_ticket_changed" = "Мәселе өзгерілді";
-"support_ticket_changed_comment" = "Өзгерістер бірнеше секундтан кейін күшіне енеді.";
+"ticket_changed" = "Мәселе өзгерілді";
+"ticket_changed_comment" = "Өзгерістер бірнеше секундтан кейін күшіне енеді.";
 
 /* Invite */
 

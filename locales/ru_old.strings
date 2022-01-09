@@ -587,8 +587,8 @@
 "you_have_not_entered_text" = "Вы не ввели текстъ";
 "you_have_not_entered_name_or_text" = "Вы не ввели имя или текстъ";
 
-"support_ticket_changed" = "​Тикетъ​ измѣненъ";
-"support_ticket_changed_comment" = "Измѣненія вступятъ силу черезъ нѣсколько секундъ.";
+"ticket_changed" = "​Тикетъ​ измѣненъ";
+"ticket_changed_comment" = "Измѣненія вступятъ силу черезъ нѣсколько секундъ.";
 
 /* Invite */
 
