@@ -472,14 +472,14 @@
 
 "videos" = "Видеозапись";
 "video" = "Видеозапись";
-"upload_video" = "Загрузить видео";
-"video_uploaded" = "Загружено";
+"upload_video" = "Ватсаны видео";
+"video_uploaded" = "Ватсаны";
 "video_updated" = "- лэн выльдэм";
 "video_link_to_yt" = "вылэ Ссылка YouTube";
 
 "info_name" = "Нимыза";
 "info_description" = "Кылсуред";
-"info_uploaded_by" = "Загрузил";
+"info_uploaded_by" = "Ватсаны";
 "info_upload_date" = "загрузка Дыр";
 
 "videos_zero" = "одӥг но видеозапись";
