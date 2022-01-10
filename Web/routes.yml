@@ -265,7 +265,7 @@ routes:
       handler: "Report->view"
     - url: "/admin/reportAction{num}"
       handler: "Report->action"
-    - url: "/report.pl/{num}"
+    - url: "/report/{num}"
       handler: "Report->create"
     - url: "/method/{text}.{text}"
       handler: "VKAPI->route"
