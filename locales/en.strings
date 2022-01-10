@@ -15,7 +15,7 @@
 "forgot_password" = "Forgot your password?";
 
 "login_failed" = "Login failed";
-"invalid_username_or_password" = "The username or password you entered is incorrect. <a href='/restore.pl'>Forgot your password?</a>";
+"invalid_username_or_password" = "The username or password you entered is incorrect. <a href='/restore'>Forgot your password?</a>";
 
 "failed_to_register" = "Failed to register";
 "referral_link_invalid" = "The referral link is invalid.";
@@ -245,6 +245,7 @@
 "hidden_yes" = "Hidden: Yes";
 "hidden_no" = "Hidden: No";
 "group_allow_post_for_everyone" = "Allow posting for everyone";
+"group_hide_from_global_feed" = "Don't display posts in the global feed";
 "statistics" = "Statistics";
 "group_administrators_list" = "Admins list";
 "group_display_only_creator" = "Display only group creator";
@@ -337,6 +338,7 @@
 
 "left_menu_donate" = "Donate";
 
+"footer_about_instance" = "about instance";
 "footer_blog" = "blog";
 "footer_help" = "help";
 "footer_developers" = "developers";
@@ -384,6 +386,7 @@
 "privacy_setting_see_friends" = "Who can see my friends";
 "privacy_setting_add_to_friends" = "Who can add me to friends";
 "privacy_setting_write_wall" = "Who can publish post on my wall";
+"privacy_setting_write_messages" = "Who can write messages to me";
 "privacy_value_anybody" = "Anybody";
 "privacy_value_anybody_dative" = "Anybody";
 "privacy_value_users" = "OpenVK users";
@@ -409,6 +412,7 @@
 "ui_settings_rating_hide" = "Hide";
 
 "additional_links" = "Additional links";
+"ad_poster" = "Ad poster";
 
 /* Two-factor authentication */
 
@@ -625,8 +629,8 @@
 "you_have_not_entered_text" = "You have not entered any text";
 "you_have_not_entered_name_or_text" = "You did not enter a name or text";
 
-"support_ticket_changed" = "Ticket changed";
-"support_ticket_changed_comment" = "The changes will take effect in a few seconds.";
+"ticket_changed" = "Ticket changed";
+"ticket_changed_comment" = "The changes will take effect in a few seconds.";
 
 /* Invite */
 
@@ -764,6 +768,26 @@
 
 "about_openvk" = "About OpenVK";
 
+"about_this_instance" = "About this instance";
+"rules" = "Rules";
+"most_popular_groups" = "Most popular groups";
+"on_this_instance_are" = "On this instance are:";
+
+"about_users_one" = "<b>1</b> user";
+"about_users_other" = "<b>$1</b> users";
+
+"about_online_users_one" = "<b>1</b> online user";
+"about_online_users_other" = "<b>$1</b> online users";
+
+"about_active_users_one" = "<b>1</b> active user";
+"about_active_users_other" = "<b>$1</b> active users";
+
+"about_groups_one" = "<b>1</b> group";
+"about_groups_other" = "<b>$1</b> groups";
+
+"about_wall_posts_one" = "<b>1</b> wall post";
+"about_wall_posts_other" = "<b>$1</b> wall posts";
+
 /* Dialogs */
 
 "ok" = "OK";
@@ -777,3 +801,6 @@
 "warning" = "Warning";
 "question_confirm" = "This action can't be undone. Do you really wanna do it?";
 
+/* User alerts */
+
+"user_alert_scam" = "This account has been reported a lot for scam. Please be careful, especially if he asked for money.";

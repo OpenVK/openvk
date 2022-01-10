@@ -109,7 +109,7 @@
     {var user    = $x instanceof $Manager ? $x->getUser() : $x}
     {var manager = $x instanceof $Manager ? $x : $club->getManager($user, !$club->canBeModifiedBy($thisUser))}
     {if $club->canBeModifiedBy($thisUser ?? NULL)}
-        <a class="profile_link" href="/club{$club->getId()}/setAdmin.jsp?user={$user->getId()}&hash={rawurlencode($csrfToken)}" n:if="$club->getOwner()->getId() !== $user->getId()">
+        <a class="profile_link" href="/club{$club->getId()}/setAdmin?user={$user->getId()}&hash={rawurlencode($csrfToken)}" n:if="$club->getOwner()->getId() !== $user->getId()">
             {if $manager}
                 {_devote}
             {else}
@@ -130,12 +130,12 @@
             {_set_comment}
         </a>
         {if $manager}
-            <a class="profile_link" href="/club{$club->getId()}/setAdmin.jsp?user={$user->getId()}&hidden={(int) !$manager->isHidden()}&hash={rawurlencode($csrfToken)}">
+            <a class="profile_link" href="/club{$club->getId()}/setAdmin?user={$user->getId()}&hidden={(int) !$manager->isHidden()}&hash={rawurlencode($csrfToken)}">
                 {if $manager->isHidden()}{_hidden_yes}{else}{_hidden_no}{/if}
             </a>
         {/if}
         {if $club->getOwner()->getId() == $user->getId()}
-            <a class="profile_link" href="/club{$club->getId()}/setAdmin.jsp?user={$user->getId()}&hidden={(int) !$club->isOwnerHidden()}&hash={rawurlencode($csrfToken)}">
+            <a class="profile_link" href="/club{$club->getId()}/setAdmin?user={$user->getId()}&hidden={(int) !$club->isOwnerHidden()}&hash={rawurlencode($csrfToken)}">
                 {if $club->isOwnerHidden()}{_hidden_yes}{else}{_hidden_no}{/if}
             </a>
         {/if}

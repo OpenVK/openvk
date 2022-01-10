@@ -13,7 +13,7 @@
 {var isAvatar    = $mode === 'avatar'}
     <div n:if="$user->hasPendingNumberChange()" class="msg">
         <b>Подтверждение номера телефона</b><br/>
-        Введите код для подтверждения смены номера: <a href="/edit/verify_phone.pl">ввести код</a>.
+        Введите код для подтверждения смены номера: <a href="/edit/verify_phone">ввести код</a>.
     </div>
     
     <div class="tabs">
@@ -288,7 +288,7 @@
         {elseif $isAvatar}
         
         <h4>{_"profile_picture"}</h4>
-        <form action="/al_avatars.pl" method="POST" enctype="multipart/form-data">
+        <form action="/al_avatars" method="POST" enctype="multipart/form-data">
             <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tbody>
                     <tr>

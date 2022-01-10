@@ -8,7 +8,7 @@
 {block content}
     <div class="navigation">
     {foreach $languages as $language}
-        <a href="language?lg={$language['code']}&hash={urlencode($csrfToken)}" class="link"><img src="/assets/packages/static/openvk/img/flags/{$language['flag']}.gif"> {$language['native_name']}</a>
+        <a href="language?lg={$language['code']}&hash={urlencode($csrfToken)}" class="link" rel="nofollow"><img src="/assets/packages/static/openvk/img/flags/{$language['flag']}.gif"> {$language['native_name']}</a>
     {/foreach}
     </div>
 {/block}

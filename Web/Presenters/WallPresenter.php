@@ -122,24 +122,24 @@ final class WallPresenter extends OpenVKPresenter
         
         $page  = (int) ($_GET["p"] ?? 1);
         $pPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
-        $posts = DatabaseConnection::i()
-                   ->getContext()
-                   ->table("posts")
-                   ->where("deleted", 0)
-                   ->order("created DESC");
-        
+
+        $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND `posts`.`deleted` = 0";
+
         if($this->user->identity->getNsfwTolerance() === User::NSFW_INTOLERANT)
-            $posts = $posts->where("nsfw", false);
+            $queryBase .= " AND `nsfw` = 0";
+
+        $posts = DatabaseConnection::i()->getConnection()->query("SELECT `posts`.`id` " . $queryBase . " ORDER BY `created` DESC LIMIT " . $pPage . " OFFSET " . ($page - 1) * $pPage);
+        $count = DatabaseConnection::i()->getConnection()->query("SELECT COUNT(*) " . $queryBase)->fetch()->{"COUNT(*)"};
         
         $this->template->_template     = "Wall/Feed.xml";
         $this->template->globalFeed    = true;
         $this->template->paginatorConf = (object) [
-            "count"   => sizeof($posts),
+            "count"   => $count,
             "page"    => (int) ($_GET["p"] ?? 1),
-            "amount"  => sizeof($posts->page($page, $pPage)),
+            "amount"  => sizeof($posts),
             "perPage" => $pPage,
         ];
-        foreach($posts->page($page, $pPage) as $post)
+        foreach($posts as $post)
             $this->template->posts[] = $this->posts->get($post->id);
     }
     

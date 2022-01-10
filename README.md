@@ -1,5 +1,7 @@
 # <img align="right" src="https://github.com/openvk/openvk/raw/master/Web/static/img/logo_shadow.png" alt="openvk" title="openvk" width="15%">OpenVK
 
+_[Русский](README_RU.md)_
+
 **OpenVK** is an attempt to create a simple CMS that ~~cosplays~~ imitates old VK. Code provided here is not stable yet.
 
 VKontakte belongs to Pavel Durov and VK Group.
@@ -16,16 +18,19 @@ Updating the source code is done with this command: `git pull`
 
 * **[openvk.su](https://openvk.su/)**
 * [social.fetbuk.ru](http://social.fetbuk.ru/)
+* [openvk.zavsc.pw](https://openvk.zavsc.pw/)
 
 ## Can I create my own OpenVK instance?
 
 Yes! And you're very welcome to.
+
 However, OVK makes use of Chandler Application Server. This software requires extensions, that may not be provided by your hosting provider (namely, sodium and yaml. this extensions are available on most of ISPManager hostings).
+
 If you want, you can add your instance to the list above so that people can register there.
 
 ### Installation procedure
 
-1. Install PHP 7, web-server, Composer, Node.js, Yarn and [Chandler](https://github.com/openvk/chandler)
+1. Install PHP 7.4, web-server, Composer, Node.js, Yarn and [Chandler](https://github.com/openvk/chandler)
   * PHP 8 has **not** yet been tested, so you should not expect it to work.
 2. Install [commitcaptcha](https://github.com/openvk/commitcaptcha) and OpenVK as Chandler extensions like this:
 ```
@@ -54,6 +59,7 @@ Full example installation instruction for CentOS 8 is also available [here](docs
 ### If my website uses OpenVK, should I publish it's sources?
 
 You are encouraged to do so. We don't enforce this though. You can keep your sources to yourself (unless you distribute your OpenVK distro to other people).
+
 You also not required to publish source texts of your themepacks and plugins.
 
 ## Where can I get assistance?

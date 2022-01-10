@@ -18,7 +18,7 @@
 "forgot_password" = "Запамятовали шифръ?";
 
 "login_failed" = "Не удалось войти";
-"invalid_username_or_password" = "Невѣрное имя пользователя или шифръ. <a href='/restore.pl'>Забыли шифръ?</a>";
+"invalid_username_or_password" = "Невѣрное имя пользователя или шифръ. <a href='/restore'>Забыли шифръ?</a>";
 
 "failed_to_register" = "Не удалось зарегистрироваться";
 "referral_link_invalid" = "Пригласительная ссылка недѣйствительна.";
@@ -587,8 +587,8 @@
 "you_have_not_entered_text" = "Вы не ввели текстъ";
 "you_have_not_entered_name_or_text" = "Вы не ввели имя или текстъ";
 
-"support_ticket_changed" = "​Тикетъ​ измѣненъ";
-"support_ticket_changed_comment" = "Измѣненія вступятъ силу черезъ нѣсколько секундъ.";
+"ticket_changed" = "​Тикетъ​ измѣненъ";
+"ticket_changed_comment" = "Измѣненія вступятъ силу черезъ нѣсколько секундъ.";
 
 /* Invite */
 

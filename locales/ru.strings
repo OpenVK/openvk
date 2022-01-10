@@ -16,7 +16,7 @@
 "forgot_password" = "Забыли пароль?";
 
 "login_failed" = "Не удалось войти";
-"invalid_username_or_password" = "Неверное имя пользователя или пароль. <a href='/restore.pl'>Забыли пароль?</a>";
+"invalid_username_or_password" = "Неверное имя пользователя или пароль. <a href='/restore'>Забыли пароль?</a>";
 
 "failed_to_register" = "Не удалось зарегистрироваться";
 "referral_link_invalid" = "Пригласительная ссылка недействительна.";
@@ -255,6 +255,7 @@
 "hidden_yes" = "Скрыт: Да";
 "hidden_no" = "Скрыт: Нет";
 "group_allow_post_for_everyone" = "Разрешить публиковать записи всем";
+"group_hide_from_global_feed" = "Не отображать публикации в глобальной ленте";
 "statistics" = "Статистика";
 "group_administrators_list" = "Список админов";
 "group_display_only_creator" = "Отображать только создателя группы";
@@ -262,7 +263,7 @@
 "group_dont_display_administrators_list" = "Ничего не отображать";
 
 "group_changeowner_modal_title" = "Передача прав владельца";
-"group_changeowner_modal_text" = "Внимание! Вы передаёте права владельца пользователю $1. Это действие необратимо. После передави вы останетесь адмиинстратором, но сможете легко перестать им быть.";
+"group_changeowner_modal_text" = "Внимание! Вы передаёте права владельца пользователю $1. Это действие необратимо. После передачи вы останетесь адмиинстратором, но сможете легко перестать им быть.";
 "group_owner_setted" = "Новый владелец ($1) успешно назначен в сообщество $2. Вам выданы права администратора в сообществе. Если Вы хотите вернуть роль владельца, обратитесь в <a href='/support?act=new'>техническую поддержку сайта</a>.";
 
 "participants_zero" = "Ни одного участника";
@@ -355,6 +356,7 @@
 
 "left_menu_donate" = "Поддержать";
 
+"footer_about_instance" = "об инстанции";
 "footer_blog" = "блог";
 "footer_help" = "помощь";
 "footer_developers" = "разработчикам";
@@ -404,6 +406,7 @@
 "privacy_setting_see_friends" = "Кому видно моих друзей";
 "privacy_setting_add_to_friends" = "Кто может называть меня другом";
 "privacy_setting_write_wall" = "Кто может писать у меня на стене";
+"privacy_setting_write_messages" = "Кто может писать мне сообщения";
 "privacy_value_anybody" = "Все желающие";
 "privacy_value_anybody_dative" = "Всем желающим";
 "privacy_value_users" = "Пользователям OpenVK";
@@ -429,6 +432,7 @@
 "ui_settings_rating_hide" = "Скрывать";
 
 "additional_links" = "Дополнительные ссылки";
+"ad_poster" = "Рекламный плакат";
 
 /* Two-factor authentication */
 
@@ -799,6 +803,36 @@
 
 "about_openvk" = "Об OpenVK";
 
+"about_this_instance" = "Об этой инстанции";
+"rules" = "Правила";
+"most_popular_groups" = "Самые популярные группы";
+"on_this_instance_are" = "На этой инстанции:";
+
+"about_users_one" = "<b>1</b> пользователь";
+"about_users_few" = "<b>$1</b> пользователя";
+"about_users_many" = "<b>$1</b> пользователей";
+"about_users_other" = "<b>$1</b> пользователей";
+
+"about_online_users_one" = "<b>1</b> пользователь в сети";
+"about_online_users_few" = "<b>$1</b> пользователя в сети";
+"about_online_users_many" = "<b>$1</b> пользователей в сети";
+"about_online_users_other" = "<b>$1</b> пользователей в сети";
+
+"about_active_users_one" = "<b>1</b> активный пользователь";
+"about_active_users_few" = "<b>$1</b> активных пользователя";
+"about_active_users_many" = "<b>$1</b> активных пользователей";
+"about_active_users_other" = "<b>$1</b> активных пользователей";
+
+"about_groups_one" = "<b>1</b> группа";
+"about_groups_few" = "<b>$1</b> группы";
+"about_groups_many" = "<b>$1</b> групп";
+"about_groups_other" = "<b>$1</b> групп";
+
+"about_wall_posts_one" = "<b>1</b> запись на стенах";
+"about_wall_posts_few" = "<b>$1</b> записи на стенах";
+"about_wall_posts_many" = "<b>$1</b> записей на стенах";
+"about_wall_posts_other" = "<b>$1</b> записей на стенах";
+
 /* Dialogs */
 
 "ok" = "ОК";
@@ -811,3 +845,7 @@
 
 "warning" = "Внимание";
 "question_confirm" = "Это действие нельзя отменить. Вы действительно уверены в том что хотите сделать?";
+
+/* User alerts */
+
+"user_alert_scam" = "На этот аккаунт много жаловались в связи с мошенничеством. Пожалуйста, будьте осторожны, особенно если у вас попросят денег.";

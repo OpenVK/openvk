@@ -5,7 +5,7 @@
     
 <a href="/im">{_my_messages}</a> »
 <a href="{$correspondent->getURL()}">{$correspondent->getCanonicalName()}</a>    
-    <div n:if="($online = $correspondent->getOnline()->timestamp()) < time() + 2678400" style="float: right;">
+    <div n:if="($online = $correspondent->getOnline()->timestamp()) + 2505600 > time()" style="float: right;">
         {var diff = date_diff(date_create(), date_create('@' . $online))}
         {if 5 >= $diff->i}
             <span><b>{_online}</b></span>
@@ -43,7 +43,7 @@
             </div>
         </div>
         <div class="messenger-app--input">
-            {if $correspondent->getId() === $thisUser->getId() || ($correspondent->getSubscriptionStatus($thisUser) === 3)}
+            {if $correspondent->getId() === $thisUser->getId() || $correspondent->getPrivacyPermission('messages.write', $thisUser)}
                 <img class="ava" src="{$thisUser->getAvatarUrl()}" alt="{$thisUser->getCanonicalName()}" />
                 <div class="messenger-app--input---messagebox">
                     <textarea
@@ -54,7 +54,7 @@
                 </div>
                 <img class="ava" src="{$correspondent->getAvatarUrl()}" alt="{$correspondent->getCanonicalName()}" />
             {else}
-                <div class="blocked" data-localized-text="Вы не можете писать сообщения {$correspondent->getCanonicalName()}, так как его нет в вашем списке друзей."></div>
+                <div class="blocked" data-localized-text="Вы не можете писать сообщения {$correspondent->getCanonicalName()} из-за его настроек приватности."></div>
             {/if}
         </div>
     </div>

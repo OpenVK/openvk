@@ -329,6 +329,7 @@ final class UserPresenter extends OpenVKPresenter
                     "friends.read",
                     "friends.add",
                     "wall.write",
+                    "messages.write",
                 ];
                 foreach($settings as $setting) {
                     $input = $this->postParam(str_replace(".", "_", $setting));
@@ -369,13 +370,14 @@ final class UserPresenter extends OpenVKPresenter
                     $user->setNsfwTolerance((int) $this->postParam("nsfw"));
             } else if($_GET['act'] === "lMenu") {
                 $settings = [
-                    "menu_bildoj"   => "photos",
-                    "menu_filmetoj" => "videos",
-                    "menu_mesagoj"  => "messages",
-                    "menu_notatoj"  => "notes",
-                    "menu_grupoj"   => "groups",
-                    "menu_novajoj"  => "news",
-                    "menu_ligiloj"  => "links",
+                    "menu_bildoj"    => "photos",
+                    "menu_filmetoj"  => "videos",
+                    "menu_mesagoj"   => "messages",
+                    "menu_notatoj"   => "notes",
+                    "menu_grupoj"    => "groups",
+                    "menu_novajoj"   => "news",
+                    "menu_ligiloj"   => "links",
+                    "menu_standardo" => "poster",
                 ];
                 foreach($settings as $checkbox => $setting)
                     $user->setLeftMenuItemStatus($setting, $this->checkbox($checkbox));
@@ -446,11 +448,16 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->secret = $secret;
         }
 
-        $issuer                 = OPENVK_ROOT_CONF["openvk"]["appearance"]["name"];
-        $email                  = $this->user->identity->getEmail();
-        $this->template->qrCode = substr((new QRCode(new QROptions([
+        // Why are these crutch? For some reason, the QR code is not displayed if you just pass the render output to the view
+
+        $issuer = OPENVK_ROOT_CONF["openvk"]["appearance"]["name"];
+        $email  = $this->user->identity->getEmail();
+        $qrCode = explode("base64,", (new QRCode(new QROptions([
             "imageTransparent" => false
-        ])))->render("otpauth://totp/$issuer:$email?secret=$secret&issuer=$issuer"), 22);
+        ])))->render("otpauth://totp/$issuer:$email?secret=$secret&issuer=$issuer"));
+
+        $this->template->qrCodeType = substr($qrCode[0], 5);
+        $this->template->qrCodeData = $qrCode[1];
     }
 
     function renderDisableTwoFactorAuth(): void

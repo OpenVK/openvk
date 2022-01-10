@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
 use openvk\Web\Themes\Themepacks;
-use openvk\Web\Models\Repositories\{Users, Managers};
+use openvk\Web\Models\Repositories\{Users, Managers, Clubs, Posts};
 use openvk\Web\Util\Localizator;
 use Chandler\Session\Session;
 
@@ -57,6 +57,15 @@ final class AboutPresenter extends OpenVKPresenter
         $this->template->themes = Themepacks::i()->getAllThemes();
         $this->template->languages = getLanguages();
     }
+
+    function renderAboutInstance(): void
+    {
+        $this->template->usersStats   = (new Users)->getStatistics();
+        $this->template->clubsCount   = (new Clubs)->getCount();
+        $this->template->postsCount   = (new Posts)->getCount();
+        $this->template->popularClubs = (new Clubs)->getPopularClubs();
+        $this->template->admins       = iterator_to_array((new Users)->getInstanceAdmins());
+    }
     
     function renderLanguage(): void
     {
@@ -82,5 +91,38 @@ final class AboutPresenter extends OpenVKPresenter
     function renderSandbox(): void
     {
         $this->template->languages = getLanguages();
+    }
+
+    function renderRobotsTxt(): void
+    {
+        $text = "# robots.txt file for openvk\n"
+        . "#\n"
+        . "# this includes only those links that are not in any way\n"
+        . "# covered from unauthorized persons (for example, due to\n"
+        . "# lack of rights to access the admin panel)\n\n"
+        . "User-Agent: *\n"
+        . "Disallow: /rpc\n"
+        . "Disallow: /language\n"
+        . "Disallow: /badbrowser.php\n"
+        . "Disallow: /logout\n"
+        . "Disallow: /away.php\n"
+        . "Disallow: /im?\n"
+        . "Disallow: *query=\n"
+        . "Disallow: *?lg=\n"
+        . "Disallow: *hash=\n"
+        . "Disallow: *?jReturnTo=\n"
+        . "Disallow: /method/*\n"
+        . "Disallow: /token*";
+        header("Content-Type: text/plain");
+        exit($text);
+    }
+
+    function renderHumansTxt(): void
+    {
+        // :D
+
+        header("HTTP/1.1 302 Found");
+        header("Location: https://github.com/openvk/openvk#readme");
+        exit;
     }
 }

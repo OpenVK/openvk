@@ -124,7 +124,7 @@ final class MessengerPresenter extends OpenVKPresenter
         }
         
         $sel = $this->getCorrespondent($sel);
-        if($sel->getId() !== $this->user->id && $sel->getSubscriptionStatus($this->user->identity) !== 3)
+        if($sel->getId() !== $this->user->id && !$sel->getPrivacyPermission('messages.write', $this->user->identity))
             exit(header("HTTP/1.1 403 Forbidden"));
         
         $cor = new Correspondence($this->user->identity, $sel);
