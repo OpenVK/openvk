@@ -788,6 +788,62 @@
 "ban_user_action" = "Заблокировать пользователя";
 "warn_user_action" = "Предупредить пользователя";
 
+/* Admin panel */
+
+"admin" = "Админ панель";
+
+"admin_ownerid" = "ID владельца";
+"admin_author" = "Автор";
+"admin_name" = "Имя";
+"admin_title" = "Название";
+"admin_description" = "Описание";
+"admin_shortcode" = "Короткий адрес";
+"admin_verification" = "Верификация";
+"admin_banreason" = "Причина блокировки";
+"admin_banned" = "заблокирован";
+"admin_actions" = "Действия";
+"admin_image" = "Изображение";
+"admin_image_replace" = "Заменить изображение?";
+"admin_uses" = "Использований";
+"admin_uses_reset" = "Сбросить количество использований?";
+"admin_limits" = "Ограничения";
+"admin_limits_reset" = "Сбросить количество ограничений";
+"admin_open" = "Открыть";
+"admin_commonsettings" = "Общие настройки";
+"admin_langsettings" = "Языко-зависимые настройки";
+
+"admin_tab_main" = "Главное";
+"admin_tab_ban" = "Блокировка";
+"admin_tab_followers" = "Участники";
+
+"admin_overview" = "Обзор";
+"admin_overview_summary" = "Сводка";
+
+"admin_content" = "Пользовательский контент";
+"admin_club_search" = "Поиск групп";
+
+"admin_services" = "Платные услуги";
+"admin_newgift" = "Новый подарок";
+"admin_price" = "Цена";
+"admin_giftset" = "Набор подарков";
+"admin_giftsets" = "Наборы подарков";
+"admin_giftsets_none" = "Нет наборов подарков. Создайте набор, чтобы создать подарок.";
+"admin_giftsets_create" = "Создать набор подарков";
+"admin_giftsets_title" = "Внутреннее название набора, которое будет использоваться, если не удаётся найти название на языке пользователя.";
+"admin_giftsets_description" = "Внутреннее описание набора, которое будет использоваться, если не удаётся найти название на языке пользователя.";
+"admin_price_free" = "бесплатный";
+
+"admin_settings" = "Настройки";
+"admin_settings_tuning" = "Общее";
+"admin_settings_appearance" = "Внешний вид";
+"admin_settings_security" = "Безопасность";
+"admin_settings_integrations" = "Интеграции";
+"admin_settings_system" = "Система";
+
+"admin_about" = "Об OpenVK";
+"admin_about_version" = "Версия";
+"admin_about_instance" = "Инстанция";
+
 /* Paginator (deprecated) */
 
 "paginator_back" = "Назад";

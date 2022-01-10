@@ -753,6 +753,62 @@
 "ban_user_action" = "Ban user";
 "warn_user_action" = "Warn user";
 
+/* Admin panel */
+
+"admin" = "Admin panel";
+
+"admin_ownerid" = "Owner ID";
+"admin_author" = "Author";
+"admin_name" = "Name";
+"admin_title" = "Title";
+"admin_description" = "Description";
+"admin_shortcode" = "Short code";
+"admin_verification" = "Verification";
+"admin_banreason" = "Ban reason";
+"admin_banned" = "banned";
+"admin_actions" = "Actions";
+"admin_image" = "Image";
+"admin_image_replace" = "Replace the image?";
+"admin_uses" = "Uses";
+"admin_uses_reset" = "Reset the number of uses?";
+"admin_limits" = "Limits";
+"admin_limits_reset" = "Reset the number of limits";
+"admin_open" = "Open";
+"admin_commonsettings" = "Common settings";
+"admin_langsettings" = "Language-dependent settings";
+
+"admin_tab_main" = "General";
+"admin_tab_ban" = "Ban";
+"admin_tab_followers" = "Followers";
+
+"admin_overview" = "Overview";
+"admin_overview_summary" = "Summary";
+
+"admin_content" = "User-generated content";
+"admin_club_search" = "Search for groups";
+
+"admin_services" = "Paid services";
+"admin_newgift" = "New gift";
+"admin_price" = "Price";
+"admin_giftset" = "Gift set";
+"admin_giftsets" = "Gift sets";
+"admin_giftsets_none" = "There are no gift sets. Create a set to create a gift.";
+"admin_giftsets_create" = "Create a gift set";
+"admin_giftsets_title" = "The internal name of the set, which will be used if no name can be found in the user's language.";
+"admin_giftsets_description" = "The internal description of the set, which will be used if no name can be found in the user's language.";
+"admin_price_free" = "free";
+
+"admin_settings" = "Settings";
+"admin_settings_tuning" = "General";
+"admin_settings_appearance" = "Appearance";
+"admin_settings_security" = "Security";
+"admin_settings_integrations" = "Интеграции";
+"admin_settings_system" = "System";
+
+"admin_about" = "About OpenVK";
+"admin_about_version" = "Version";
+"admin_about_instance" = "Instance";
+
 /* Paginator (deprecated) */
 
 "paginator_back" = "Back";

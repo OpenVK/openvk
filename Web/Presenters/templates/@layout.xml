@@ -1,5 +1,4 @@
 {var instance_name = OPENVK_ROOT_CONF['openvk']['appearance']['name']}
-
 <!DOCTYPE html>
 <html n:if="!isset($parentModule) || substr($parentModule, 0, 21) === 'libchandler:absolute.'">
     <head>
@@ -169,7 +168,7 @@
                             {var canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
                             {var menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
                             <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $menuLinksAvaiable" class="menu_divider"></div>
-                            <a href="/admin" class="link" n:if="$canAccessAdminPanel">Админ-панель</a>
+                            <a href="/admin" class="link" n:if="$canAccessAdminPanel">{_admin}</a>
                             <a href="/support/tickets" class="link" n:if="$canAccessHelpdesk">Helpdesk
                                 {if $helpdeskTicketNotAnsweredCount > 0}
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
@@ -251,7 +250,7 @@
                 <a href="/language" class="link">{_footer_choose_language}</a>
                 <a href="/privacy" class="link">{_footer_privacy}</a>
             </div>
-            <p>OpenVK <a href="/about:openvk">{php echo OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {$dbVersion}</p>
+            <p>OpenVK <a href="/about:openvk">{=OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {$dbVersion}</p>
             <p n:ifcontent="ifcontent">
                 {php echo OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]}
             </p>

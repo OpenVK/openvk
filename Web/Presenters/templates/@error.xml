@@ -1,9 +1,7 @@
-{var instance_name = OPENVK_ROOT_CONF['openvk']['appearance']['name']}
-
 <!DOCTYPE html>
 <html>
     <head>
-        <title>An error occurred - {$instance_name}</title>
+        <title>An error occurred - {=OPENVK_ROOT_CONF['openvk']['appearance']['name']}</title>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, user-scalable=no" />
         <style>
