@@ -472,14 +472,14 @@
 
 "videos" = "Видеозапись";
 "video" = "Видеозапись";
-"upload_video" = "video Etkileşimli";
-"video_uploaded" = "Etkileşimli";
+"upload_video" = "Загрузить видео";
+"video_uploaded" = "Загружено";
 "video_updated" = "- лэн выльдэм";
 "video_link_to_yt" = "вылэ Ссылка YouTube";
 
 "info_name" = "Нимыза";
 "info_description" = "Кылсуред";
-"info_uploaded_by" = "Etkileşimli";
+"info_uploaded_by" = "Загрузил";
 "info_upload_date" = "загрузка Дыр";
 
 "videos_zero" = "одӥг но видеозапись";
@@ -627,8 +627,8 @@
 "support_faq_title" = "Для кого этот сайт?";
 "support_faq_content" = "Сайт предназначен для поиска друзей и знакомых, а также для просмотра данных пользователя. Это как справочник города, с помощью которого люди могут быстро найти актуальную информацию о человеке.";
 
-"support_new_title" = "Введите тему вашего обращения";
-"support_new_content" = "Опишите проблему или предложение";
+"support_new_title" = "Темая-лэсь вазиськонэ пыртӥзы";
+"support_new_content" = "Гожтэмын яке предложениосты ужпум";
 
 "support_rate_good_answer" = "та умой ответ";
 "support_rate_bad_answer" = "уродзэ та ответ";
