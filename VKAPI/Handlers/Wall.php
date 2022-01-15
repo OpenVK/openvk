@@ -142,7 +142,7 @@ final class Wall extends VKAPIRequestHandler
         }
 
         $flags = 0;
-        if($from_group == 1)
+        if($from_group == 1 && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->getUser()))
             $flags |= 0b10000000;
         if($signed == 1)
             $flags |= 0b01000000;
