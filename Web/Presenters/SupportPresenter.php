@@ -219,7 +219,7 @@ final class SupportPresenter extends OpenVKPresenter
             array_shift($lines);
         }
         
-        $content = implode("\r\n", $lines);
+        $content = implode($lines);
         
         $parser = new Textile\Parser;
         $this->template->heading = $heading;
