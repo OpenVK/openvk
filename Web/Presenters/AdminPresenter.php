@@ -109,6 +109,7 @@ final class AdminPresenter extends OpenVKPresenter
                 $club->setAbout($this->postParam("about"));
                 $club->setShortCode($this->postParam("shortcode"));
                 $club->setVerified(empty($this->postParam("verify") ? 0 : 1));
+                $club->setHide_From_Global_Feed(empty($this->postParam("hide_from_global_feed") ? 0 : 1));
                 $club->save();
                 break;
             case "ban":

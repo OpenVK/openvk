@@ -1149,6 +1149,7 @@ textarea {
     width: 100%;
     padding: 4px;
     resize: none;
+    box-sizing: border-box;
 }
 
 #faqhead {

@@ -61,6 +61,10 @@
                     <input class="toggle-large" type="checkbox" id="verify" name="verify" value="1" {if $club->isVerified()} checked {/if} />
                     <label for="verify">{_admin_verification}</label>
                 </div>
+                <div class="group">
+                    <input class="toggle-large" type="checkbox" id="hide_from_global_feed" name="hide_from_global_feed" value="1" {if $club->isHideFromGlobalFeedEnabled()} checked {/if} />
+                    <label for="hide_from_global_feed">Не отображать записи в глобальной ленте</label>
+                </div>
                 <hr/>
                 <div class="buttons-container">
                     <div class="buttons">
@@ -69,6 +73,7 @@
                     </div>
                 </div>
             </form>
+
         </div>
     {/if}
 
