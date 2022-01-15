@@ -1,3 +1,43 @@
 OpenVK-KB-Heading: Rules
 
-Sample rules
+The site administration allows you to use the site on the terms specified in these rules.
+You can do everything that does not apply to prohibited actions, but they include:
+
+# Refusing to obey the rules or ignoring them,
+# Waiver of the mandatory presence of representatives of tech support agents or administration,
+# Using other people's pages without the permission of the owner,
+# Impersonating other people for gain. Exceptions:
+## The person has allowed the use of his identity,
+## The person is an original character belonging to you
+# Creation of mass mailings in any way,
+# Creating situations that in any way interfere with the operation of OpenVK,
+# The publication and storage on the resource of any content that:
+## Is illegal in France or your country of residence,
+## Contains pornographic scenes involving persons under the age of 18,
+## Contains advertisements for drugs banned in France or your country of residence or instructions for their preparation,
+## Contains information prohibited in France or your country of residence,
+## Contains scenes of inhuman treatment of people or animals,
+## Violates copyright and related rights,
+## Violates human rights
+## Prevents users from following the rules or from properly using the services provided by the OpenVK project.
+
+The administration is the highest authority that has the full right to make decisions about disputes that are not described in the rules.
+
+The administration may issue a punishment if users:
+
+# Post prohibited content on the pages of other users,
+# They deceive the administration or tech support agents,
+# Mislead website users,
+# Publicly criticize OpenVK or the administration in order to humiliate or insult project participants or its leaders
+# Banned from official OpenVK chats on Telegram,
+# They do not respect the Project administration or tech support agents.
+
+In case of violation of the rules, the administration can:
+
+# Ignore a violation that is minor,
+# Issue a warning to the user
+# Issue a temporary or permanent ban,
+# Prohibit future use of this site,
+# Remove account or prohibited content.
+
+The administration can issue punishments without giving a reason (even if there is one).
