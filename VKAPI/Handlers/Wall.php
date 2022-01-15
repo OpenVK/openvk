@@ -110,7 +110,7 @@ final class Wall extends VKAPIRequestHandler
             ];
     }
 
-    function post(string $owner_id, string $message, int $from_group = 0, int $signed = 0): object
+    function post(string $owner_id, string $message = "", int $from_group = 0, int $signed = 0): object
     {
         $this->requireUser();
 
@@ -166,6 +166,9 @@ final class Wall extends VKAPIRequestHandler
         } catch(ISE $ex) {
             $this->fail(-156, "The media file is corrupted or too large ");
         }
+
+        if(empty($message) && !$photo && !$video)
+            $this->fail(100, "Required parameter 'message' missing.");
 
         try {
             $post = new Post;
