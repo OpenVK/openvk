@@ -130,11 +130,42 @@ final class Wall extends VKAPIRequestHandler
 
         if($canPost == false) $this->fail(15, "Access denied");
 
+        $anon = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"];
+        if($wallOwner instanceof Club && $from_group == 1 && $signed != 1 && $anon) {
+            $manager = $wallOwner->getManager($this->getUser());
+            if($manager)
+                $anon = $manager->isHidden();
+            elseif($this->getUser()->getId() === $wallOwner->getOwner()->getId())
+                $anon = $wallOwner->isOwnerHidden();
+        } else {
+            $anon = false;
+        }
+
         $flags = 0;
         if($from_group == 1)
             $flags |= 0b10000000;
         if($signed == 1)
             $flags |= 0b01000000;
+
+        // TODO: Compatible implementation of this
+        try {
+            $photo = null;
+            $video = null;
+            if($_FILES["photo"]["error"] === UPLOAD_ERR_OK) {
+                $album = null;
+                if(!$anon && $owner_id > 0 && $owner_id === $this->getUser()->getId())
+                    $album = (new AlbumsRepo)->getUserWallAlbum($wallOwner);
+
+                $photo = Photo::fastMake($this->getUser()->getId(), $message, $_FILES["photo"], $album, $anon);
+            }
+
+            if($_FILES["video"]["error"] === UPLOAD_ERR_OK)
+                $video = Video::fastMake($this->getUser()->getId(), $message, $_FILES["video"], $anon);
+        } catch(\DomainException $ex) {
+            $this->fail(-156, "The media file is corrupted");
+        } catch(ISE $ex) {
+            $this->fail(-156, "The media file is corrupted or too large ");
+        }
 
         try {
             $post = new Post;
@@ -147,6 +178,12 @@ final class Wall extends VKAPIRequestHandler
         } catch(\LogicException $ex) {
             $this->fail(100, "One of the parameters specified was missing or invalid");
         }
+
+        if(!is_null($photo))
+            $post->attach($photo);
+
+        if(!is_null($video))
+            $post->attach($video);
 
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
