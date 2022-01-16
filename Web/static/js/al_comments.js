@@ -5,7 +5,9 @@ u(".comment-reply").on("click", function(e) {
     let fromGroup = Boolean(comment.data("from-group"));
     let postId    = comment.data("post-id");
     let inputbox  = postId == null ? u("#write textarea") : u("#wall-post-input" + (postId || ""));
+    let mention   = ("[" + (fromGroup ? "club" : "id") + authorId + "|" + authorNm + "], ");
     
-    inputbox.text("[" + (fromGroup ? "club" : "id") + authorId + "|" + authorNm + "], ");
+    // Substitute pervious mention if present, prepend otherwise
+    inputbox.nodes[0].value = s.nodes[0].value.replace(/(^\[([A-Za-z0-9]+)\|([\p{L} 0-9@]+)\], |^)/u, mention);
     inputbox.trigger("focusin");
 });
