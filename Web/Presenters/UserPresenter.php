@@ -354,7 +354,7 @@ final class UserPresenter extends OpenVKPresenter
                 if (isset(Themepacks::i()[$this->postParam("style")]) || $this->postParam("style") === Themepacks::DEFAULT_THEME_ID)
 				{
 					$user->setStyle($this->postParam("style"));
-					$this->setTempTheme($this->postParam("style"));
+					$this->setSessionTheme($this->postParam("style"));
 				}
                 
                 if ($this->postParam("style_avatar") <= 2 && $this->postParam("style_avatar") >= 0)

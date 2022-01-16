@@ -59,6 +59,7 @@ openvk:
         bellsAndWhistles:
             fartscroll: false
             testLabel: false
+        defaultMobileTheme: ""
     
     telemetry:
         plausible:
