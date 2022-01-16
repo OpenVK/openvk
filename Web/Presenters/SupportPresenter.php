@@ -6,7 +6,7 @@ use openvk\Web\Models\Entities\TicketComment;
 use openvk\Web\Models\Repositories\TicketComments;
 use openvk\Web\Util\Telegram;
 use Chandler\Session\Session;
-use Netcarver\Textile;
+use Parsedown;
 
 final class SupportPresenter extends OpenVKPresenter
 {
@@ -204,10 +204,10 @@ final class SupportPresenter extends OpenVKPresenter
     {
         $lang = Session::i()->get("lang", "ru");
         $base = OPENVK_ROOT . "/data/knowledgebase";
-        if(file_exists("$base/$name.$lang.textile"))
-            $file = "$base/$name.$lang.textile";
-        else if(file_exists("$base/$name.textile"))
-            $file = "$base/$name.textile";
+        if(file_exists("$base/$name.$lang.md"))
+            $file = "$base/$name.$lang.md";
+        else if(file_exists("$base/$name.md"))
+            $file = "$base/$name.md";
         else
             $this->notFound();
         
@@ -221,9 +221,10 @@ final class SupportPresenter extends OpenVKPresenter
         
         $content = implode($lines);
         
-        $parser = new Textile\Parser;
+        $parser = new Parsedown();
+        $parser->setSafeMode(true);
         $this->template->heading = $heading;
-        $this->template->content = $parser->parse($content);
+        $this->template->content = $parser->text($content);
     }
 
     function renderRateAnswer(int $id, int $mark): void
