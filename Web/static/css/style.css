@@ -563,6 +563,7 @@ input[type="text"], input[type="password"], input[type~="text"], input[type~="pa
     font-size: 11px;
     font-family: tahoma, verdana, arial, sans-serif;
     width: 100%;
+    box-sizing: border-box;
 }
 
 h4 {
