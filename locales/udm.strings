@@ -497,7 +497,7 @@
 "notifications_comment_under" = "$1 кельтыса(-ла) улэ комментарий $2";
 "notifications_under_note" = "тон $3заметкой$4";
 "notifications_under_photo" = "тон $туспуктэм 3$4";
-"notifications_under_post" = "тон $гожъян 3$4 $5s - лы";
+"notifications_under_post" = "тон $гожъян 3$4 $5 - лы";
 "notifications_under_video" = "тон $video 3$4";
 "notifications_post" = "$1 гожтэ(-ла) $2 гожъямъёсыз$борддоръёсыз вылэ-тонэ 3: $4";
 "notifications_appoint" = "$1 сообщество тон дасямын кивалтӥсез $2";
