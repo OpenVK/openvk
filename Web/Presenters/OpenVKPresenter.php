@@ -37,8 +37,10 @@ abstract class OpenVKPresenter extends SimplePresenter
 
     protected function setSessionTheme(string $theme, bool $once = false): void
     {
-        if(once) Session::i()->set("_tempTheme", $theme);
-        else Session::i()->set("_sessionTheme", $theme);
+        if($once)
+            Session::i()->set("_tempTheme", $theme);
+        else
+            Session::i()->set("_sessionTheme", $theme);
     }
     
     protected function flashFail(string $type, string $title, ?string $message = NULL, ?int $code = NULL, bool $json = false): void
