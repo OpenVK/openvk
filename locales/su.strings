@@ -365,7 +365,7 @@
 
 "main" = "Основное";
 "contacts" = "Контакты";
-"avatar" = Картинка";
+"avatar" = "Картинка";
 "privacy" = "Приватность";
 "interface" = "Внешний вид";
 
@@ -760,7 +760,7 @@
 "token_manipulation_error_comment" = "Токен недействителен или истёк";
 
 "profile_changed" = "Паспорт изменён";
-"profile_changed_comment" = Товарищ, орган одобрил изменение вашего паспорта.";
+"profile_changed_comment" = "Товарищ, орган одобрил изменение вашего паспорта.";
 "profile_not_found" = "Гражданин не найден.";
 
 "suspicious_registration_attempt" = "Подозрительная попытка регистрации в орган";
