@@ -1,8 +1,6 @@
 "__locale" = "ru_UDM.utf8;ru_UDM.UTF-8;Udm";
 "__WinEncoding" = "Windows-1251";
 
-/*
-
 /* Main page */
 
 "home" = "Валтӥсь";
@@ -300,7 +298,7 @@
 "wall_album" = "Борддорысь туспуктэмъёсты";
 
 "albums_zero" = "Одӥг но альбом";
-"albums_one" = "Одӥг альбом;
+"albums_one" = "Одӥг альбом";
 "albums_few" = "$1 альбома";
 "albums_many" = "$1 альбомов";
 "albums_other" = "$1 альбомов";
@@ -494,12 +492,12 @@
 "unread" = "Непрочитанный";
 "archive" = "Архив";
 
-"notifications_like" = "$1 "тон дунъяны $2 гожъямъёсыз$3 $4";
+"notifications_like" = "$1 тон дунъяны $2 гожъямъёсыз$3 $4";
 "notifications_repost" = "$1 paylaş(-лася) тон $2 гожъямъёсыз$3 $4";
 "notifications_comment_under" = "$1 кельтыса(-ла) улэ комментарий $2";
 "notifications_under_note" = "тон $3заметкой$4";
 "notifications_under_photo" = "тон $туспуктэм 3$4";
-"notifications_under_post" = "тон $гожъян 3$4 $5" - лы";
+"notifications_under_post" = "тон $гожъян 3$4 $5s - лы";
 "notifications_under_video" = "тон $video 3$4";
 "notifications_post" = "$1 гожтэ(-ла) $2 гожъямъёсыз$борддоръёсыз вылэ-тонэ 3: $4";
 "notifications_appoint" = "$1 сообщество тон дасямын кивалтӥсез $2";
