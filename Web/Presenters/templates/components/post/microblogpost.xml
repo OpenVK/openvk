@@ -129,7 +129,8 @@
                         {/foreach}
                         <div n:ifset="$thisUser" id="commentTextArea{$commentTextAreaId}" n:attr="style => ($commentsCount == 0 ? 'display: none;')" class="commentsTextFieldWrap">
                             {var commentsURL = "/al_comments/create/posts/" . $post->getId()}
-                            {include "../textArea.xml", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), post => $post}
+                            {var club = is_null($club) ? ($post->getTargetWall() < 0 ? (new openvk\Web\Models\Repositories\Clubs)->get(abs($post->getTargetWall())) : NULL) : $club}
+                            {include "../textArea.xml", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), post => $post, club => $club}
                         </div>
                     </div>
                 {/if}
