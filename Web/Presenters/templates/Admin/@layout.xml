@@ -6,7 +6,7 @@
             {var css = file_get_contents(OPENVK_ROOT . "/Web/static/js/node_modules/@atlassian/aui/dist/aui/aui-prototyping.css")}
             {str_replace("fonts/", "/assets/packages/static/openvk/js/node_modules/@atlassian/aui/dist/aui/fonts/", $css)|noescape}
         </style>
-        <title>{include title}</title>
+        <title>{include title} - Админ-панель {=OPENVK_ROOT_CONF['openvk']['appearance']['name']}</title>
     </head>
     <body>
         <div id="page">
@@ -16,7 +16,7 @@
                         <div class="aui-header-primary">
                             <h1 id="logo" class="aui-header-logo aui-header-logo-textonly">
                                 <a href="/admin">
-                                    <span class="aui-header-logo-device">OVK</span>
+                                    <span class="aui-header-logo-device">{=OPENVK_ROOT_CONF['openvk']['appearance']['name']}</span>
                                 </a>
                             </h1>
                         </div>
