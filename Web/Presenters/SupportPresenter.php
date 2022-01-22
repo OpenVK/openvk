@@ -222,7 +222,6 @@ final class SupportPresenter extends OpenVKPresenter
         $content = implode($lines);
         
         $parser = new Parsedown();
-        $parser->setSafeMode(true);
         $this->template->heading = $heading;
         $this->template->content = $parser->text($content);
     }
