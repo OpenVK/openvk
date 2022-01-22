@@ -8,6 +8,7 @@ use Latte\Engine as TemplatingEngine;
 use openvk\Web\Models\Entities\IP;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets};
+use WhichBrowser;
 
 abstract class OpenVKPresenter extends SimplePresenter
 {
@@ -34,9 +35,12 @@ abstract class OpenVKPresenter extends SimplePresenter
         ]));
     }
 
-    protected function setTempTheme(string $theme): void
+    protected function setSessionTheme(string $theme, bool $once = false): void
     {
-        Session::i()->set("_tempTheme", $theme);
+        if($once)
+            Session::i()->set("_tempTheme", $theme);
+        else
+            Session::i()->set("_sessionTheme", $theme);
     }
     
     protected function flashFail(string $type, string $title, ?string $message = NULL, ?int $code = NULL, bool $json = false): void
@@ -234,10 +238,17 @@ abstract class OpenVKPresenter extends SimplePresenter
     {
         parent::onBeforeRender();
         
+        $whichbrowser = new WhichBrowser\Parser(getallheaders());
+        $mobiletheme = OPENVK_ROOT_CONF["openvk"]["preferences"]["defaultMobileTheme"];
+        if($mobiletheme && $whichbrowser->isType('mobile') && Session::i()->get("_tempTheme") == null)
+            $this->setSessionTheme($mobiletheme);
+
         $theme = NULL;
         if(Session::i()->get("_tempTheme")) {
             $theme = Themepacks::i()[Session::i()->get("_tempTheme", "ovk")];
             Session::i()->set("_tempTheme", NULL);
+        } else if(Session::i()->get("_sessionTheme")) {
+            $theme = Themepacks::i()[Session::i()->get("_sessionTheme", "ovk")];
         } else if($this->requestParam("themePreview")) {
             $theme = Themepacks::i()[$this->requestParam("themePreview")];
         } else if($this->user->identity !== null && $this->user->identity->getTheme()) {

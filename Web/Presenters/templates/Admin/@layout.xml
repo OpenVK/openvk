@@ -6,7 +6,7 @@
             {var css = file_get_contents(OPENVK_ROOT . "/Web/static/js/node_modules/@atlassian/aui/dist/aui/aui-prototyping.css")}
             {str_replace("fonts/", "/assets/packages/static/openvk/js/node_modules/@atlassian/aui/dist/aui/fonts/", $css)|noescape}
         </style>
-        <title>{include title} - {_admin}</title>
+        <title>{include title} - {_admin} {=OPENVK_ROOT_CONF['openvk']['appearance']['name']}</title>
     </head>
     <body>
         <div id="page">
@@ -136,9 +136,7 @@
             </div>
             <footer id="footer" role="contentinfo">
                 <section class="footer-body">
-                    <div id="footer-logo">
-                        OpenVK {=OPENVK_VERSION} | libchandler {=CHANDLER_VER}
-                    </div>
+                    OpenVK <a href="/about:openvk">{php echo OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {\Chandler\Database\DatabaseConnection::i()->getConnection()->getPdo()->getAttribute(\PDO::ATTR_SERVER_VERSION)}
                 </section>
             </footer>
         </div>

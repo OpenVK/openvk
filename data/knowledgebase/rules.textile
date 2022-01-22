@@ -1,3 +1,0 @@
-OpenVK-KB-Heading: Rules
-
-Sample rules
