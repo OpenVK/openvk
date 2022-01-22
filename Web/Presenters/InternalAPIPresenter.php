@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
 use MessagePack\MessagePack;
+use Chandler\Session\Session;
 
 final class InternalAPIPresenter extends OpenVKPresenter
 {
@@ -66,6 +67,30 @@ final class InternalAPIPresenter extends OpenVKPresenter
             $this->fail(-32602, "Invalid params");
         } catch(\Exception $ex) {
             $this->fail(-32603, "Uncaught " . get_class($ex));
+        }
+    }
+
+    function renderTimezone() {
+        if($_SERVER["REQUEST_METHOD"] !== "POST")
+            exit("ты дебил это метод апи");
+
+        $sessionOffset = Session::i()->get("_timezoneOffset");
+        if(is_numeric($this->postParam("timezone"))) {
+            $postTZ = intval($this->postParam("timezone"));
+            if ($postTZ != $sessionOffset || $sessionOffset == null) {
+                Session::i()->set("_timezoneOffset", $postTZ ? $postTZ : 3 * MINUTE );
+                $this->returnJson([
+                    "success" => 1 // If it's new value
+                ]);
+            } else {
+                $this->returnJson([
+                    "success" => 2 // If it's the same value (if for some reason server will call this func)
+                ]);
+            }
+        } else {
+            $this->returnJson([
+                "success" => 0
+            ]);
         }
     }
 }

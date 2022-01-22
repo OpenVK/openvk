@@ -9,6 +9,8 @@ routes:
       handler: "About->rules"
     - url: "/rpc"
       handler: "InternalAPI->route"
+    - url: "/iapi/timezone"
+      handler: "InternalAPI->timezone"
     - url: "/support"
       handler: "Support->index"
     - url: "/support/tickets"

@@ -167,7 +167,8 @@ function ovk_proc_strtrim(string $string, int $length = 0): string
 
 function ovk_strftime_safe(string $format, ?int $timestamp = NULL): string
 {
-    $str = strftime($format, $timestamp ?? time());
+    $sessionOffset = intval(Session::i()->get("_timezoneOffset"));
+    $str = strftime($format, $timestamp + ($sessionOffset * MINUTE) * -1 ?? time() + ($sessionOffset * MINUTE) * -1);
     if(PHP_SHLIB_SUFFIX === "dll") {
         $enc = tr("__WinEncoding");
         if($enc === "@__WinEncoding")

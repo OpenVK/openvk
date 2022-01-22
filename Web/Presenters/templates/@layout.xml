@@ -17,6 +17,10 @@
         {script "js/l10n.js"}
         {script "js/openvk.cls.js"}
 
+        {if $isTimezoned == null}
+            {script "js/timezone.js"}
+        {/if}
+
         {ifset $thisUser}
             {if $thisUser->getNsfwTolerance() < 2}
                 {css "css/nsfw-posts.css"}
