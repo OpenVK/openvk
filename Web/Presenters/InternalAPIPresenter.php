@@ -75,8 +75,8 @@ final class InternalAPIPresenter extends OpenVKPresenter
             exit("ты дебил это метод апи");
 
         $sessionOffset = Session::i()->get("_timezoneOffset");
-        if(is_numeric($this->postParam("timezone"))) {
-            $postTZ = intval($this->postParam("timezone"));
+        if(is_numeric($this->postParam("timezone", false))) {
+            $postTZ = intval($this->postParam("timezone", false));
             if ($postTZ != $sessionOffset || $sessionOffset == null) {
                 Session::i()->set("_timezoneOffset", $postTZ ? $postTZ : 3 * MINUTE );
                 $this->returnJson([
