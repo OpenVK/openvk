@@ -794,10 +794,9 @@ table.User {
 }
 
 .tabs {
-    border-bottom: 1px solid #707070;
-    margin-left: -10px;
-    margin-right: -6px;
-	width: 627px;
+  border-bottom: 1px solid #707070;
+  margin-right: -12px;
+  margin-left: -12px;
 }
 
 #activetabs {
@@ -1804,4 +1803,21 @@ body.scrolled .toTop:hover {
   font-weight: bold;
   padding-top: 3px;
   padding-bottom: 4px;
+}
+.note_header {
+  background: #f7f7f7;
+  border-bottom: solid 1px #DAE1E8;
+  border-top: solid 1px #45688E;
+  padding: 4px 6px 5px 6px;
+}
+.note_header .note_title {
+  color: #45688E;
+  font-size: 13px;
+  font-weight: bold;
+  line-height: 15px;
+  margin: 0px;
+  padding: 0px 0px 1px 0px;
+}
+.page_yellowheader a {
+  color: #696029;
 }
