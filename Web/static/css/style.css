@@ -1787,3 +1787,21 @@ body.scrolled .toTop:hover {
 .hover-box:hover {
     background-color: #C0CAD5;
 }
+.summaryBar {
+  border-bottom: 1px solid #DAE2E8;
+  clear: both;
+  padding: 11px 10px 0 10px;
+    padding-top: 11px;
+  padding-top: 11px;
+  color: black;
+  font-weight: normal;
+  line-height: normal;
+  margin-left: -12px;
+  margin-right: -12px;
+}
+.summaryBar .summary {
+  color: #45688E;
+  font-weight: bold;
+  padding-top: 3px;
+  padding-bottom: 4px;
+}
