@@ -34,8 +34,20 @@
         }
     </style>
     
-    <article id="userContent" style="min-height: 300pt;">
+    <article id="userContent" style="min-height: 300pt;margin: 10px;">
+	<div class="note_header">
+     <div class="note_title">
+      <div class="note_title">
+       <a>{$note->getName()}</a>
+      </div>
+     </div>
+     <div class="byline">
+      <span><a href="{$author->getURL()}">{$author->getCanonicalName()}</a></span> {$note->getPublicationTime()}
+     </div>
+    </div>
+	<div style="margin-left: 6px;">
         {$note->getText()|noescape}
+		</div>
     </article>
     
     <div style="width: 100%; min-height: 100px;">
