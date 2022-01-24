@@ -28,11 +28,9 @@
     {var cover   = $x->getCoverPhoto()}
     {var preview = is_null($cover) ? "/assets/packages/static/openvk/img/camera_200.png" : $cover->getURL()}
     
-    <center style="height: 54pt; width: 140px;">
         <a href="/album{$x->getPrettyId()}">
-            <img src="{$preview}" alt="{$x->getName()}" style="max-height: 100%; max-width: 100%;" />
+            <img src="{$preview}" alt="{$x->getName()}" style="height: 130px;width: 170px;object-fit: cover;margin-right: 15px;" />
         </a>
-    </center>
 {/block}
 
 {block name}
@@ -42,6 +40,6 @@
 {block description}
     <span>{$x->getDescription() ?? $x->getName()}</span><br/>
     <span style="color: grey;">{$x->getPhotosCount()} фотографий</span><br/>
+	<span style="color: grey;">Обновлен {$x->getEditTime() ?? $x->getCreationTime()}</span>
     <span style="color: grey;">Создан {$x->getCreationTime()}</span><br/>
-    <span style="color: grey;">Изменён {$x->getEditTime() ?? $x->getCreationTime()}</span>
 {/block}

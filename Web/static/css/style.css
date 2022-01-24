@@ -1581,11 +1581,10 @@ body.scrolled .toTop:hover {
 }
 
 .postFeedWrapper {
-    margin: -10px;
-    width: 611px;
-    padding: 4px 8px;
-    background-color: rgb(240, 240, 240);
-    border-bottom: 1px solid #ccc;
+  padding: 4px 8px;
+  background-color: rgb(240, 240, 240);
+  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #ccc;
 }
 
 .user-alert {
@@ -1803,6 +1802,7 @@ body.scrolled .toTop:hover {
   font-weight: bold;
   padding-top: 3px;
   padding-bottom: 4px;
+  display: inline-block;
 }
 .note_header {
   background: #f7f7f7;
