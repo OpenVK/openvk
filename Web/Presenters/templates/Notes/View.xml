@@ -12,6 +12,7 @@
 {/block}
 
 {block content}
+    {var author = $note->getOwner()}
     <style>
         #userContent img {
             max-width: 245pt;
