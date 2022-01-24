@@ -214,7 +214,7 @@ a {
 }
 
 .page_yellowheader a {
-    color: #C8BF85;
+    color: #696029;
 }
 
 .page_content {
@@ -1786,38 +1786,37 @@ body.scrolled .toTop:hover {
 .hover-box:hover {
     background-color: #C0CAD5;
 }
+
 .summaryBar {
   border-bottom: 1px solid #DAE2E8;
   clear: both;
-  padding: 0 10px;
-    padding-top: 11px;
-  padding-top: 11px;
+  padding: 11px 10px;
   color: black;
   font-weight: normal;
   line-height: normal;
   margin-left: -12px;
   margin-right: -12px;
 }
+
 .summaryBar .summary {
   color: #45688E;
   font-weight: bold;
   padding-top: 3px;
   padding-bottom: 4px;
 }
+
 .note_header {
   background: #f7f7f7;
   border-bottom: solid 1px #DAE1E8;
   border-top: solid 1px #45688E;
   padding: 4px 6px 5px 6px;
 }
+
 .note_header .note_title {
   color: #45688E;
   font-size: 13px;
   font-weight: bold;
   line-height: 15px;
-  margin: 0px;
-  padding: 0px 0px 1px 0px;
-}
-.page_yellowheader a {
-  color: #696029;
+  margin: 0;
+  padding: 0 0 1px 0;
 }
