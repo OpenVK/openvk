@@ -25,7 +25,7 @@ class DateTime
         
         if($this->timestamp >= strtotime("midnight")) { # Today
             if($diff->h >= 1)
-                return tr("time_today") . tr("time_at_sp") . ovk_strftime_safe("%X", $this->timestamp);
+                return tr("time_today") . tr("time_at_sp") . ovk_strftime_safe(" %R %p", $this->timestamp);
             else if($diff->i < 2)
                 return tr("time_just_now");
             else
