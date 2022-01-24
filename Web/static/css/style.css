@@ -794,9 +794,9 @@ table.User {
 }
 
 .tabs {
-  border-bottom: 1px solid #707070;
-  margin-right: -12px;
-  margin-left: -12px;
+    border-bottom: 1px solid #707070;
+    margin-right: -12px;
+    margin-left: -12px;
 }
 
 #activetabs {
@@ -1581,10 +1581,10 @@ body.scrolled .toTop:hover {
 }
 
 .postFeedWrapper {
-  padding: 4px 8px;
-  background-color: rgb(240, 240, 240);
-  border-bottom: 1px solid #ccc;
-  border-top: 1px solid #ccc;
+    padding: 4px 8px;
+    background-color: rgb(240, 240, 240);
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
 }
 
 .user-alert {
@@ -1787,36 +1787,36 @@ body.scrolled .toTop:hover {
 }
 
 .summaryBar {
-  border-bottom: 1px solid #DAE2E8;
-  clear: both;
-  padding: 11px 10px;
-  color: black;
-  font-weight: normal;
-  line-height: normal;
-  margin-left: -12px;
-  margin-right: -12px;
+    border-bottom: 1px solid #DAE2E8;
+    clear: both;
+    padding: 11px 10px;
+    color: black;
+    font-weight: normal;
+    line-height: normal;
+    margin-left: -12px;
+    margin-right: -12px;
 }
 
 .summaryBar .summary {
-  color: #45688E;
-  font-weight: bold;
-  padding-top: 3px;
-  padding-bottom: 4px;
-  display: inline-block;
+    color: #45688E;
+    font-weight: bold;
+    padding-top: 3px;
+    padding-bottom: 4px;
+    display: inline-block;
 }
 
 .note_header {
-  background: #f7f7f7;
-  border-bottom: solid 1px #DAE1E8;
-  border-top: solid 1px #45688E;
-  padding: 4px 6px 5px 6px;
+    background: #f7f7f7;
+    border-bottom: solid 1px #DAE1E8;
+    border-top: solid 1px #45688E;
+    padding: 4px 6px 5px 6px;
 }
 
 .note_header .note_title {
-  color: #45688E;
-  font-size: 13px;
-  font-weight: bold;
-  line-height: 15px;
-  margin: 0;
-  padding: 0 0 1px 0;
+    color: #45688E;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 15px;
+    margin: 0;
+    padding: 0 0 1px 0;
 }
