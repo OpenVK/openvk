@@ -69,6 +69,7 @@
                  count => $cCount,
                  page => $cPage,
                  model => "notes",
-                 parent => $note}
+                 parent => $note,
+				 showTitle => false}
         </div>
 {/block}
