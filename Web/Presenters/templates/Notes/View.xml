@@ -51,16 +51,19 @@
 		</div>
     </article>
 	
-	<div class="note_footer">
-     <div class="comments_count">Комментарии ({$note->getCommentsCount()})
+	<div class="note_footer" style="margin: 10px 10px 0;">
+     <div class="comments_count">
+     {if sizeof($comments) > 0}
+     Комментарии ({$note->getCommentsCount()})
+     {else}
+     Нет комментариев
+     {/if}
 	 <span n:if="isset($thisUser) && $thisUser->getId() === $note->getOwner()->getId()">&nbsp;|&nbsp;
         <a id="_noteDelete" href="/note{$note->getOwner()->getId()}_{$note->getId()}/delete">удалить</a>
 		</span>
 		</div>
     </div>
-    
-    <div style="width: 100%; min-height: 100px;">
-        <div style="float: left; min-height: 100px; width: 70%;">
+        <div style="margin: 6px 10px 10px;border-top: 1px solid #ddd;">
         {include "../components/comments.xml",
                  comments => $comments,
                  count => $cCount,
@@ -68,5 +71,4 @@
                  model => "notes",
                  parent => $note}
         </div>
-    </div>
 {/block}
