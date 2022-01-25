@@ -1820,3 +1820,12 @@ body.scrolled .toTop:hover {
   margin: 0;
   padding: 0 0 1px 0;
 }
+.note_footer {
+  border-top: 1px solid #ddd;
+  clear: both;
+  margin-top: 10px;
+  padding: 0px 2px 0px 6px;
+}
+.comments_count {
+  padding: 5px 0px 0px 0px;
+}

@@ -35,7 +35,7 @@
         }
     </style>
     
-    <article id="userContent" style="min-height: 300pt;margin: 10px;">
+    <article id="userContent" style="margin: 10px 10px 0;">
 	<div class="note_header">
      <div class="note_title">
       <div class="note_title">
@@ -46,10 +46,18 @@
       <span><a href="{$author->getURL()}">{$author->getCanonicalName()}</a></span> {$note->getPublicationTime()}
      </div>
     </div>
-	<div style="margin-left: 6px;">
+	<div style="margin-left: 6px; width: 535px;">
         {$note->getText()|noescape}
 		</div>
     </article>
+	
+	<div class="note_footer">
+     <div class="comments_count">Комментарии ({$note->getCommentsCount()})
+	 <span n:if="isset($thisUser) && $thisUser->getId() === $note->getOwner()->getId()">&nbsp;|&nbsp;
+        <a id="_noteDelete" href="/note{$note->getOwner()->getId()}_{$note->getId()}/delete">удалить</a>
+		</span>
+		</div>
+    </div>
     
     <div style="width: 100%; min-height: 100px;">
         <div style="float: left; min-height: 100px; width: 70%;">
@@ -59,12 +67,6 @@
                  page => $cPage,
                  model => "notes",
                  parent => $note}
-        </div>
-        <div style="float: right; min-height: 100px; width: 30%;">
-            <h4>{_actions}</h4>
-            <div n:if="isset($thisUser) && $thisUser->getId() === $note->getOwner()->getId()">
-                <a id="_noteDelete" href="/note{$note->getOwner()->getId()}_{$note->getId()}/delete" class="profile_link" style="display:block;width:96%;">{_delete}</a>
-            </div>
         </div>
     </div>
 {/block}
