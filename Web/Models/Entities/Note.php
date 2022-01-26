@@ -94,4 +94,9 @@ class Note extends Postable
         
         return $cached;
     }
+
+    function getSource(): string
+    {
+        return $this->getRecord()->source;
+    }
 }

@@ -44,6 +44,7 @@
             </div>
             <div class="byline">
                 <span><a href="{$author->getURL()}">{$author->getCanonicalName()}</a></span> {$note->getPublicationTime()}
+                <span n:if="$note->getEditTime() > $note->getPublicationTime()">({_edited} {$note->getEditTime()})</span>
             </div>
         </div>
         <div style="margin-left: 6px; width: 535px;">
@@ -60,6 +61,8 @@
             {/if}
             <span n:if="isset($thisUser) && $thisUser->getId() === $note->getOwner()->getId()">&nbsp;|&nbsp;
                 <a id="_noteDelete" href="/note{$note->getOwner()->getId()}_{$note->getId()}/delete">{_delete}</a>
+                &nbsp;|&nbsp;
+                <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}/edit">{_edit}</a>
             </span>
         </div>
     </div>

@@ -223,6 +223,8 @@ routes:
       handler: "Notes->view"
     - url: "/notes/create"
       handler: "Notes->create"
+    - url: "/note{num}_{num}/edit"
+      handler: "Notes->edit"
     - url: "/note{num}_{num}/delete"
       handler: "Notes->delete"
     - url: "/invite"

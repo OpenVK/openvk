@@ -295,7 +295,10 @@
 "name_note" = "Title";
 "text_note" = "Content";
 "create_note" = "Create note";
+"edit_note" = "Edit note";
 "actions" = "Actions";
+
+"edited" = "Edited";
 
 "notes_zero" = "No notes";
 "notes_one" = "$1 note";
