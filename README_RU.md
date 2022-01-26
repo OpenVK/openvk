@@ -31,17 +31,23 @@ _[English](README.md)_
 ### Процедура установки
 
 1. Установите PHP 7.4, веб-сервер, Composer, Node.js, Yarn и [Chandler](https://github.com/openvk/chandler)
-  * PHP 8 еще **не** тестировался, поэтому не стоит ожидать, что он будет работать.
+
+* PHP 8 еще **не** тестировался, поэтому не стоит ожидать, что он будет работать.
+
 2. Установите [commitcaptcha](https://github.com/openvk/commitcaptcha) и OpenVK в качестве расширений Chandler следующим образом:
-```
+
+```bash
 git clone https://github.com/openvk/openvk /path/to/chandler/extensions/available/openvk
 git clone https://github.com/openvk/commitcaptcha /path/to/chandler/extensions/available/commitcaptcha
 ```
+
 3. И включите их:
-```
+
+```bash
 ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/extensions/enabled/
 ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
 ```
+
 4. Импортируйте `install/init-static-db.sql` в **ту же базу данных**, в которую вы установили Chandler
 5. Импортируйте `install/init-event-db.sql` в **отдельную базу данных**
 6. Скопируйте `openvk-example.yml` в `openvk.yml` и измените параметры
@@ -50,9 +56,10 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 9. Установите `openvk` в качестве корневого приложения в файле `chandler.yml`
 
 После этого вы можете войти как системный администратор в саму сеть (регистрация не требуется):
+
 * **Логин**: `admin@localhost.localdomain6`
 * **Пароль**: `admin`
-  *  Перед использованием встроенной учетной записи рекомендуется сменить пароль.
+  * Перед использованием встроенной учетной записи рекомендуется сменить пароль.
 
 Полный пример инструкции по установке CentOS 8 также доступен [здесь](docs/centos8_install.md).
 
@@ -65,6 +72,7 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 ## Где я могу получить помощь?
 
 Вы можете связаться с нами через:
+
 * [Баг-трекер](https://github.com/openvk/openvk/projects/1)
 * [Помощь в OVK](https://openvk.su/support?act=new)
 * Telegram-чат: Перейдите на [наш канал](https://t.me/openvkch) и откройте обсуждение в меню нашего канала.
