@@ -792,7 +792,7 @@
 
 /* Admin panel */
 
-"admin" = "Админ панель";
+"admin" = "Админ-панель";
 
 "admin_ownerid" = "ID владельца";
 "admin_author" = "Автор";
@@ -811,6 +811,7 @@
 "admin_limits" = "Ограничения";
 "admin_limits_reset" = "Сбросить количество ограничений";
 "admin_open" = "Открыть";
+"admin_loginas" = "Войти как...";
 "admin_commonsettings" = "Общие настройки";
 "admin_langsettings" = "Языко-зависимые настройки";
 
@@ -822,7 +823,13 @@
 "admin_overview_summary" = "Сводка";
 
 "admin_content" = "Пользовательский контент";
+"admin_user_search" = "Поиск пользователей";
+"admin_user_online" = "Онлайн статус";
+"admin_user_online_default" = "По-умолчанию";
+"admin_user_online_incognito" = "Инкогнито";
+"admin_user_online_deceased" = "Покойник";
 "admin_club_search" = "Поиск групп";
+"admin_club_excludeglobalfeed" = "Не отображать записи в глобальной ленте";
 
 "admin_services" = "Платные услуги";
 "admin_newgift" = "Новый подарок";

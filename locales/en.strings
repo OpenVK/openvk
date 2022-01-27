@@ -768,6 +768,8 @@
 "admin_verification" = "Verification";
 "admin_banreason" = "Ban reason";
 "admin_banned" = "banned";
+"admin_gender" = "Gender";
+"admin_registrationdate" = "Registration date";
 "admin_actions" = "Actions";
 "admin_image" = "Image";
 "admin_image_replace" = "Replace the image?";
@@ -776,6 +778,7 @@
 "admin_limits" = "Limits";
 "admin_limits_reset" = "Reset the number of limits";
 "admin_open" = "Open";
+"admin_loginas" = "Login as...";
 "admin_commonsettings" = "Common settings";
 "admin_langsettings" = "Language-dependent settings";
 
@@ -787,7 +790,13 @@
 "admin_overview_summary" = "Summary";
 
 "admin_content" = "User-generated content";
+"admin_user_search" = "Search for users";
+"admin_user_online" = "Online status";
+"admin_user_online_default" = "Default";
+"admin_user_online_incognito" = "Incognito";
+"admin_user_online_deceased" = "Deceased";
 "admin_club_search" = "Search for groups";
+"admin_club_excludeglobalfeed" = "Do not display posts in the global feed";
 
 "admin_services" = "Paid services";
 "admin_newgift" = "New gift";
