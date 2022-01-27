@@ -175,7 +175,11 @@
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
                                 {/if}
                             </a>
-                            <a href="/support/reports" class="link" n:if="$canAccessHelpdesk">Reports</a>
+                            <a href="/support/reports" class="link" n:if="$canAccessHelpdesk">Reports
+                                {if $reportNotAnsweredCount > 0}
+                                    (<b>{$reportNotAnsweredCount}</b>)
+                                {/if}
+                            </a>
 
                             <a n:if="$thisUser->getLeftMenuItemStatus('links')" n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem" href="{$menuItem['url']}" target="_blank" class="link">{strpos($menuItem["name"], "@") === 0 ? tr(substr($menuItem["name"], 1)) : $menuItem["name"]}</a>
 

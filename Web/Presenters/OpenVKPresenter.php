@@ -7,7 +7,7 @@ use Chandler\Security\Authenticator;
 use Latte\Engine as TemplatingEngine;
 use openvk\Web\Models\Entities\IP;
 use openvk\Web\Themes\Themepacks;
-use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets};
+use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets, Reports};
 
 abstract class OpenVKPresenter extends SimplePresenter
 {
@@ -221,8 +221,10 @@ abstract class OpenVKPresenter extends SimplePresenter
             }
             
             $this->template->ticketAnsweredCount = (new Tickets)->getTicketsCountByUserId($this->user->id, 1);
-            if($user->can("write")->model("openvk\Web\Models\Entities\TicketReply")->whichBelongsTo(0))
+            if($user->can("write")->model("openvk\Web\Models\Entities\TicketReply")->whichBelongsTo(0)) {
                 $this->template->helpdeskTicketNotAnsweredCount = (new Tickets)->getTicketCount(0);
+                $this->template->reportNotAnsweredCount = (new Reports)->getReportsCount(0);
+            }
         }
         
         setlocale(LC_TIME, ...(explode(";", tr("__locale"))));
