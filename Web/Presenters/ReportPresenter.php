@@ -106,6 +106,6 @@ final class ReportPresenter extends OpenVKPresenter
             $report->setDeleted();
             $this->flash("suc", "Нехай живе!", "Жалоба проигнорирована.");
         }
-        $this->redirect("/admin/reports");
+        $this->redirect("/support/reports");
     }
 }
