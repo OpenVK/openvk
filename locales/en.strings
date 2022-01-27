@@ -804,7 +804,7 @@
 "admin_settings_tuning" = "General";
 "admin_settings_appearance" = "Appearance";
 "admin_settings_security" = "Security";
-"admin_settings_integrations" = "Интеграции";
+"admin_settings_integrations" = "Integrations";
 "admin_settings_system" = "System";
 
 "admin_about" = "About OpenVK";
