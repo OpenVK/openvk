@@ -126,6 +126,10 @@ final class AuthPresenter extends OpenVKPresenter
             if(!$this->authenticator->verifyCredentials($user->id, $this->postParam("password")))
                 $this->flashFail("err", tr("login_failed"), tr("invalid_username_or_password"));
 
+            $ovkUser = new User($user->related("profiles.user")->fetch());
+            if($ovkUser->isDeleted())
+                $this->flashFail("err", tr("login_failed"), tr("invalid_username_or_password"));
+
             $secret = $user->related("profiles.user")->fetch()["2fa_secret"];
             $code   = $this->postParam("code");
             if(!is_null($secret)) {
@@ -136,7 +140,6 @@ final class AuthPresenter extends OpenVKPresenter
                 if(is_null($code))
                     return;
 
-                $ovkUser = new User($user->related("profiles.user")->fetch());
                 if(!($code === (new Totp)->GenerateToken(Base32::decode($secret)) || $ovkUser->use2faBackupCode((int) $code))) {
                     $this->flash("err", tr("login_failed"), tr("incorrect_2fa_code"));
                     return;
@@ -229,7 +232,7 @@ final class AuthPresenter extends OpenVKPresenter
             }
             
             $user = $this->users->getByChandlerUser(new ChandlerUser($uRow));
-            if(!$user)
+            if(!$user || $user->isDeleted())
                 $this->flashFail("err", tr("error"), tr("password_reset_error"));
             
             $request = $this->restores->getLatestByUser($user);

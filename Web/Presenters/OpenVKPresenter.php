@@ -210,6 +210,13 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->user->id              = $this->user->identity->getId();
             $this->template->thisUser    = $this->user->identity;
             $this->template->userTainted = $user->isTainted();
+
+            if($this->user->identity->isDeleted()) {
+                Authenticator::i()->logout();
+                Session::i()->set("_su", NULL);
+                $this->flashFail("err", tr("error"), tr("profile_not_found"));
+                $this->redirect("/", static::REDIRECT_TEMPORARY);
+            }
             
             if($this->user->identity->isBanned() && !$this->banTolerant) {
                 header("HTTP/1.1 403 Forbidden");
