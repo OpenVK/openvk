@@ -4,7 +4,6 @@ namespace openvk\Web\Models\Repositories;
 // use openvk\Web\Models\Entities\User;
 // use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Entities\TicketComment;
-use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 
 class TicketComments
@@ -20,7 +19,7 @@ class TicketComments
     
     function getCommentsById(int $ticket_id): \Traversable
     {
-        foreach($this->comments->where(['ticket_id' => $ticket_id]) as $comment) yield new TicketComment($comment);
+        foreach($this->comments->where(['ticket_id' => $ticket_id, 'deleted' => 0]) as $comment) yield new TicketComment($comment);
     }
     
     // private function toTicket(?ActiveRow $ar): ?Ticket

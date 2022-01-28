@@ -25,6 +25,8 @@ routes:
       handler: "Support->makeComment"
     - url: "/al_comments/create/support/reply/{num}"
       handler: "Support->AnswerTicketReply"
+    - url: "/support/comment/{num}/delete"
+      handler: "Support->deleteComment"
     - url: "/al_comments/create/{text}/{num}"
       handler: "Comment->makeComment"
     - url: "/support/delete/{num}"

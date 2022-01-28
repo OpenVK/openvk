@@ -127,5 +127,10 @@ class TicketComment extends RowModel
             return $mark === 1;
     }
 
+    function isDeleted(): bool
+    {
+        return (bool) $this->getRecord()->deleted;
+    }
+
     use Traits\TRichText;
 }
