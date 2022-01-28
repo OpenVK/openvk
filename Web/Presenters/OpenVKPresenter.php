@@ -223,6 +223,7 @@ abstract class OpenVKPresenter extends SimplePresenter
                 $this->getTemplatingEngine()->render(__DIR__ . "/templates/@banned.xml", [
                     "thisUser" => $this->user->identity,
                     "csrfToken" => $GLOBALS["csrfToken"],
+                    "isTimezoned" => Session::i()->get("_timezoneOffset"),
                 ]);
                 exit;
             }
