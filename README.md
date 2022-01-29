@@ -61,7 +61,7 @@ Once you are done, you can login as a system administrator on the network itself
 * **Password**: `admin`
   * It is recommended to change the password before using the built-in account.
 
-Full example installation instruction for CentOS 8 is also available [here](docs/centos8_install.md).
+Full example installation instruction for CentOS 8 is also available [here](https://docs.openvk.su/openvk_engine/centos8_installation/).
 
 ### If my website uses OpenVK, should I publish it's sources?
 

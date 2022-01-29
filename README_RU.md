@@ -61,7 +61,7 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 * **Пароль**: `admin`
   * Перед использованием встроенной учетной записи рекомендуется сменить пароль.
 
-Полный пример инструкции по установке CentOS 8 также доступен [здесь](docs/centos8_install.md).
+Полный пример инструкции по установке CentOS 8 также доступен [здесь](https://docs.openvk.su/openvk_engine/centos8_installation/).
 
 ### Если мой сайт использует OpenVK, должен ли я публиковать его исходные тексты?
 
