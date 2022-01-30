@@ -3,8 +3,8 @@
 xhr = new XMLHttpRequest();
 xhr.open("POST", "/iapi/timezone", true);
 xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-xhr.onload = () => {
-    if(JSON.parse(response.originalTarget.responseText).response == 1) {
+xhr.onload = (response) => {
+    if(JSON.parse(response.originalTarget.responseText).success == 1) {
         window.location.reload();
     }
 };
