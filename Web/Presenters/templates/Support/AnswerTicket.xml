@@ -101,11 +101,9 @@
                             {/if}
                         </div>
 
-                        {if $comment->getUType() === 0}
-                            <div class="post-menu">
-                                <a href="/support/comment/{$comment->getId()}/delete">{_delete}</a>
-                            </div>
-                        {/if}
+                        <div class="post-menu">
+                            <a href="/support/comment/{$comment->getId()}/delete?hash={urlencode($csrfToken)}">{_delete}</a>
+                        </div>
                         
                         {if $comment->getUType() === 1 && !is_null($comment->isLikedByUser())}
                             <div class="post-menu">

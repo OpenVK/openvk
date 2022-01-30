@@ -226,6 +226,29 @@ final class SupportPresenter extends OpenVKPresenter
         $this->template->content = $parser->text($content);
     }
 
+    function renderDeleteComment(int $id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->assertNoCSRF();
+
+        $comment = $this->comments->get($id);
+        if(is_null($comment))
+            $this->notFound();
+
+        $ticket = $comment->getTicket();
+
+        if($ticket->isDeleted())
+            $this->notFound();
+
+        if(!($ticket->getUserId() === $this->user->id && $comment->getUType() === 0))
+            $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+
+        $this->willExecuteWriteAction();
+        $comment->delete();
+
+        $this->flashFail("succ", tr("ticket_changed"), tr("ticket_changed_comment"));
+    }
+
     function renderRateAnswer(int $id, int $mark): void
     {
         $this->willExecuteWriteAction();

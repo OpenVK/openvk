@@ -42,15 +42,17 @@
         </tbody>
     </table>
 
-    <h4>{_most_popular_groups}</h4>
-    <ol>
-        <li n:foreach="$popularClubs as $entry" style="margin-top: 5px;">
-            <a href="{$entry->club->getURL()}">{$entry->club->getName()}</a>
-            <div>
-                {tr("participants", $entry->subscriptions)}
-            </div>
-        </li>
-    </ol>
+    {if sizeof($popularClubs) !== 0}
+        <h4>{_most_popular_groups}</h4>
+        <ol>
+            <li n:foreach="$popularClubs as $entry" style="margin-top: 5px;">
+                <a href="{$entry->club->getURL()}">{$entry->club->getName()}</a>
+                <div>
+                    {tr("participants", $entry->subscriptions)}
+                </div>
+            </li>
+        </ol>
+    {/if}
 
     <h4>{_rules}</h4>
     <div style="margin-top: 16px;">
