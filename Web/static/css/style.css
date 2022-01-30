@@ -1831,3 +1831,24 @@ body.scrolled .toTop:hover {
 .comments_count {
     padding: 5px 0px 0px 0px;
 }
+
+.groups_options {
+    padding: 10px 20px 20px;
+    border-top: #DEDEDE solid 1px;
+    margin-top: 12px;
+    margin-left: -12px;
+    margin-right: -12px;
+  }
+
+  #gp_container {
+    display: inline-block;
+  }
+
+  #gp_container span {
+    display: block;
+    margin: 10px 0 15px;
+  }
+
+  #gp_container h4 {
+    font-size: 11px;
+  }

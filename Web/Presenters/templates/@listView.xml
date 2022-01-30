@@ -5,7 +5,11 @@
         <div n:ifset="tabs" class="tabs">
             {include tabs}
         </div>
-        
+
+        {ifset size}
+        {include size, x => $dat}
+        {/ifset}
+
         <div class="container_gray">
             {var data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
             
@@ -54,5 +58,10 @@
                 {/ifset}
             {/if}
         </div>
+
+        {ifset bottom}
+        {include bottom}
+        {/ifset}
+        
     </div>
 {/block}

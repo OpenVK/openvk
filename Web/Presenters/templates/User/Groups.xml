@@ -5,16 +5,12 @@
 {block title}{_"groups"}{/block} 
 
 {block header}
+{if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+    {_my_groups}
+    {else}
     <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> » {_"groups"}
-    
+    {/if}
     <div n:if="!is_null($thisUser) && $user->getId() === $thisUser->getId()" style="float:right;">
-        <span>
-            <b>
-                <a href="/groups_create">
-                    {_"create_group"}
-                </a>
-            </b>
-        </span>
     </div>
 {/block}
 
@@ -33,6 +29,12 @@
 			</a>
 		</div>
 	{/if}
+{/block}
+
+{block size}
+<div style="padding-bottom: 0px;border-bottom: 0;" class="summaryBar">
+        <div class="summary">Найдено групп ({$thisUser->getClubCount()})</div>
+        </div>
 {/block}
 
 {block link|strip|stripHtml}
@@ -62,4 +64,25 @@
             {/if}
         </a>
     {/if}
+{/block}
+
+{block bottom}
+{if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+<div class="groups_options">
+<div id="gp_container" style="width: 200px;margin-right: 40px;">
+  <h4>{_"open_new_group"}</h4>
+  <span>{_"open_group_desc"}</span>
+<form action="/groups_create">
+<button class="button">{_"create_group"}</button></div>
+</form>
+<div id="gp_container" style="width: 344px;">
+  <h4>{_"search_group"}</h4>
+  <span>{_"search_group_desc"}</span>
+<form action="/search">
+        <input name="type" type="hidden" value="groups">
+        <input name="query" class="header_search_input" value="" style="background: none;width: 155px;padding-left: 3px;">
+        <button class="button">{_"search_by_groups"}</button>
+    </form></div>
+</div>
+{/if}
 {/block}
