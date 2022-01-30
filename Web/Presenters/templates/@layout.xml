@@ -93,7 +93,7 @@
         <div class="dimmer"></div>
 
         <div class="toTop">
-            ⬆ Вверх
+            ⬆ {_to_top}
         </div>
 
         <div class="layout">
