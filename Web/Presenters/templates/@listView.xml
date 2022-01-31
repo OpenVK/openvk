@@ -24,24 +24,25 @@
                                     </a>
                                 </td>
                                 <td valign="top" style="width: 100%">
+                                    {ifset infotable}
+                                        {include infotable, x => $dat}
+                                    {else}
                                     <a href="{include link, x => $dat}">
                                         <b>
                                             {include name, x => $dat}
                                         </b>
                                     </a>
                                     <br/>
-
-                                    {include description, x => $dat}
+                                        {include description, x => $dat}
+                                    {/ifset}
                                 </td>
-                                <td n:ifset="actions" valign="top" class="action_links" style="width: 150px">
+                                <td n:ifset="actions" valign="top" class="action_links" style="width: 150px; text-transform: lowercase;">
                                     {include actions, x => $dat}
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-
-                <div style="padding: 8px;">
                     {include "components/paginator.xml", conf => (object) [
                         "page"     => $page,
                         "count"    => $count,
@@ -49,7 +50,6 @@
                         "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
                         "atBottom" => true,
                     ]}
-                </div>
             {else}
                 {ifset customErrorMessage}
                     {include customErrorMessage}

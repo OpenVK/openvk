@@ -1852,3 +1852,16 @@ body.scrolled .toTop:hover {
 #gp_container h4 {
     font-size: 11px;
 }
+
+.container_gray .content:last-child {
+    margin-bottom: 0;
+  }
+
+.group_info {
+    padding: 0 0 0 5px !important;
+ }
+
+.group_info .label {
+    width: auto !important;
+    padding-right: 5px;
+}
