@@ -27,12 +27,12 @@
                                     {ifset infotable}
                                         {include infotable, x => $dat}
                                     {else}
-                                    <a href="{include link, x => $dat}">
-                                        <b>
-                                            {include name, x => $dat}
-                                        </b>
-                                    </a>
-                                    <br/>
+                                        <a href="{include link, x => $dat}">
+                                            <b>
+                                                {include name, x => $dat}
+                                            </b>
+                                        </a>
+                                        <br/>
                                         {include description, x => $dat}
                                     {/ifset}
                                 </td>
@@ -43,13 +43,13 @@
                         </tbody>
                     </table>
                 </div>
-                    {include "components/paginator.xml", conf => (object) [
-                        "page"     => $page,
-                        "count"    => $count,
-                        "amount"   => sizeof($data),
-                        "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
-                        "atBottom" => true,
-                    ]}
+                {include "components/paginator.xml", conf => (object) [
+                    "page"     => $page,
+                    "count"    => $count,
+                    "amount"   => sizeof($data),
+                    "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+                    "atBottom" => true,
+                ]}
             {else}
                 {ifset customErrorMessage}
                     {include customErrorMessage}
