@@ -1,8 +1,6 @@
 <center style="background: white;border: #DEDEDE solid 1px;">
     <span style="color: #707070;margin: 60px 0;display: block;">
-    <b>{$title}</b>
-    <br>
-    <br>
-     {$description}
+        <b>{$title}</b><br><br>
+        {$description}
     </span>
 </center>

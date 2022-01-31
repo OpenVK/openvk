@@ -1838,17 +1838,17 @@ body.scrolled .toTop:hover {
     margin-top: 12px;
     margin-left: -12px;
     margin-right: -12px;
-  }
+}
 
-  #gp_container {
+#gp_container {
     display: inline-block;
-  }
+}
 
-  #gp_container span {
+#gp_container span {
     display: block;
     margin: 10px 0 15px;
-  }
+}
 
-  #gp_container h4 {
+#gp_container h4 {
     font-size: 11px;
-  }
+}

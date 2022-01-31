@@ -7,12 +7,12 @@
         </div>
 
         {ifset size}
-        {include size, x => $dat}
+            {include size, x => $dat}
         {/ifset}
 
         <div class="container_gray">
             {var data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
-            
+
             {if sizeof($data) > 0}
                 <div class="content" n:foreach="$data as $dat">
                     <table>
@@ -30,7 +30,7 @@
                                         </b>
                                     </a>
                                     <br/>
-                                    
+
                                     {include description, x => $dat}
                                 </td>
                                 <td n:ifset="actions" valign="top" class="action_links" style="width: 150px">
@@ -40,7 +40,7 @@
                         </tbody>
                     </table>
                 </div>
-                
+
                 <div style="padding: 8px;">
                     {include "components/paginator.xml", conf => (object) [
                         "page"     => $page,
@@ -60,8 +60,7 @@
         </div>
 
         {ifset bottom}
-        {include bottom}
+            {include bottom}
         {/ifset}
-        
     </div>
 {/block}
