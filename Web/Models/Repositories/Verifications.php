@@ -5,15 +5,15 @@ use openvk\Web\Models\Entities\EmailVerification;
 use openvk\Web\Models\Entities\User;
 use Nette\Database\Table\ActiveRow;
 
-class Confirmations
+class Verifications
 {
     private $context;
-    private $confirmations;
+    private $verifications;
     
     function __construct()
     {
         $this->context  = DatabaseConnection::i()->getContext();
-        $this->confirmations = $this->context->table("email_verifications");
+        $this->verifications = $this->context->table("email_verifications");
     }
 
     function toEmailVerification(?ActiveRow $ar): ?EmailVerification
@@ -23,11 +23,11 @@ class Confirmations
     
     function getByToken(string $token): ?EmailVerification
     {
-        return $this->toEmailVerification($this->confirmations->where("key", $token)->fetch());
+        return $this->toEmailVerification($this->verifications->where("key", $token)->fetch());
     }
     
     function getLatestByUser(User $user): ?EmailVerification
     {
-        return $this->toEmailVerification($this->confirmations->where("profile", $user->getId())->order("timestamp DESC")->fetch());
+        return $this->toEmailVerification($this->verifications->where("profile", $user->getId())->order("timestamp DESC")->fetch());
     }
 }

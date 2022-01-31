@@ -32,7 +32,7 @@ services:
     - openvk\Web\Models\Repositories\Tickets
     - openvk\Web\Models\Repositories\Messages
     - openvk\Web\Models\Repositories\Restores   
-    - openvk\Web\Models\Repositories\Confirmations
+    - openvk\Web\Models\Repositories\Verifications
     - openvk\Web\Models\Repositories\Notifications
     - openvk\Web\Models\Repositories\TicketComments
     - openvk\Web\Models\Repositories\IPs

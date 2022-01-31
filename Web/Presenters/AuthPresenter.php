@@ -7,7 +7,7 @@ use openvk\Web\Models\Entities\EmailVerification;
 use openvk\Web\Models\Repositories\IPs;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Repositories\Restores;
-use openvk\Web\Models\Repositories\Confirmations;
+use openvk\Web\Models\Repositories\Verifications;
 use openvk\Web\Util\Validator;
 use Chandler\Session\Session;
 use Chandler\Security\User as ChandlerUser;
@@ -24,16 +24,16 @@ final class AuthPresenter extends OpenVKPresenter
     private $db;
     private $users;
     private $restores;
-    private $confirmations;
+    private $verifications;
     
-    function __construct(Users $users, Restores $restores, Confirmations $confirmations)
+    function __construct(Users $users, Restores $restores, Verifications $verifications)
     {
         $this->authenticator = Authenticator::i();
         $this->db = DatabaseConnection::i()->getContext();
         
         $this->users    = $users;
         $this->restores = $restores;
-        $this->confirmations = $confirmations;
+        $this->verifications = $verifications;
         
         parent::__construct();
     }
@@ -110,12 +110,12 @@ final class AuthPresenter extends OpenVKPresenter
             }
 
             if (OPENVK_ROOT_CONF['openvk']['preferences']['security']['requireEmail']) {
-                $verifObj = new EmailVerification;
-                $verifObj->setProfile($user->getId());
-                $verifObj->save();
+                $verification = new EmailVerification;
+                $verification->setProfile($user->getId());
+                $verification->save();
                 
                 $params = [
-                    "key"   => $verifObj->getKey(),
+                    "key"   => $verification->getKey(),
                     "name"  => $user->getCanonicalName(),
                 ];
                 $this->sendmail($user->getEmail(), "verify-email", $params); #Vulnerability possible
@@ -282,16 +282,16 @@ final class AuthPresenter extends OpenVKPresenter
             if(!$user || $user->isDeleted() || $user->isActivated())
                 $this->flashFail("err", tr("error"), tr("email_error"));
             
-            $request = $this->confirmations->getLatestByUser($user);
+            $request = $this->verifications->getLatestByUser($user);
             if(!is_null($request) && $request->isNew())
                 $this->flashFail("err", tr("forbidden"), tr("email_rate_limit_error"));
             
-            $verifObj = new EmailVerification;
-            $verifObj->setProfile($user->getId());
-            $verifObj->save();
+            $verification = new EmailVerification;
+            $verification->setProfile($user->getId());
+            $verification->save();
             
             $params = [
-                "key"   => $verifObj->getKey(),
+                "key"   => $verification->getKey(),
                 "name"  => $user->getCanonicalName(),
             ];
             $this->sendmail($user->getEmail(), "verify-email", $params); #Vulnerability possible
@@ -302,12 +302,11 @@ final class AuthPresenter extends OpenVKPresenter
 
     function renderVerifyEmail(): void
     {
-        $request = $this->confirmations->getByToken(str_replace(" ", "+", $this->queryParam("key")));
+        $request = $this->verifications->getByToken(str_replace(" ", "+", $this->queryParam("key")));
         if(!$request || !$request->isStillValid()) {
             $this->flash("err", tr("token_manipulation_error"), tr("token_manipulation_error_comment"));
             $this->redirect("/");
-            return;
-        }else{
+        } else {
             $user = $request->getUser();
             $user->setActivated(1);
             $user->save();
