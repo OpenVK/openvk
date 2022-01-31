@@ -34,6 +34,13 @@
 "password_reset_error" = "An unexpected error occurred while resetting the password.";
 "password_reset_rate_limit_error" = "You can't do it that often, sorry.";
 
+"email_sent" = "Mail has been successfully sent.";
+"email_sent_desc" = "If your email addess exists, you will receive instructions.";
+"email_error" = "An unexpected error occurred while sending the email.";
+"email_rate_limit_error" = "You can't do it that often, sorry.";
+
+"email_verify_success" = "Your Email has been verified. Have a great time!";
+
 "registration_disabled_info" = "Registration has been disabled by the system administrator. If possible, ask for an invitation from your friend, if he is registered on this site.";
 "registration_closed" = "Registration is closed.";
 "invites_you_to" = "<strong>$1</strong> invites you to $2";
@@ -646,6 +653,14 @@
 "banned_1" = "Sorry <b>$1</b>, but you have been banned.";
 "banned_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to block you forever.";
 "banned_3" = "You can still <a href=\"/support?act=new\">write to the support</a> if you think there was an error or <a href=\"/logout?hash=$1\">logout</a>.";
+
+/* Registration confirm */
+
+"ec_header" = "Registration confirmation";
+"ec_title" = "Thanks!";
+"ec_1" = "<b>$1</b>, your registration is almost done. In a few minutes you should receive an mail with a link to confirm your email address.";
+"ec_2" = "If for some reason you don't get the mail, check your spam folder. If you don't find the email there, you can resend it.";
+"ec_resend" = "Resend mail";
 
 /* Discussions */
 
