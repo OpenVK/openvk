@@ -34,12 +34,15 @@ class PasswordReset extends RowModel
      */
     function isNew(): bool
     {
-        return $this->getRecord()->timestamp > (time() - 301);
+        return $this->getRecord()->timestamp > (time() - (5 * MINUTE));
     }
     
+    /**
+     * Token is valid only for 3 days.
+     */
     function isStillValid(): bool
     {
-        return $this->getRecord()->timestamp > (time() - 172801);
+        return $this->getRecord()->timestamp > (time() - (3 * DAY));
     }
     
     function verify(string $token): bool

@@ -93,14 +93,14 @@
         <div class="dimmer"></div>
 
         <div class="toTop">
-            ⬆ Вверх
+            ⬆ {_to_top}
         </div>
 
         <div class="layout">
             <div id="xhead" class="dm"></div>
             <div class="page_header {if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME}page_custom_header{/if}">
                 <a href="/" class="home_button {if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME}home_button_custom{/if}" title="{$instance_name}">{$instance_name}</a>
-                <div n:if="isset($thisUser) ? !$thisUser->isBanned() : true" class="header_navigation">
+                <div n:if="isset($thisUser) ? (!$thisUser->isBanned() XOR !$thisUser->isActivated()) : true" class="header_navigation">
                     {ifset $thisUser}
                         <div class="link">
                             <a href="/">{_header_home}</a>
@@ -142,7 +142,7 @@
             <div class="sidebar">
                 <div class="navigation">
                     {ifset $thisUser}
-                        {if !$thisUser->isBanned()}
+                        {if !$thisUser->isBanned() XOR !$thisUser->isActivated()}
                             <a href="/edit" class="link edit-button">{_edit_button}</a>
                             <a href="{$thisUser->getURL()}" class="link">{_my_page}</a>
                             <a href="/friends{$thisUser->getId()}" class="link">{_my_friends}
@@ -189,6 +189,8 @@
                             <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable'] && $thisUser->getLeftMenuItemStatus('poster')" href="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
                                 <img src="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}" alt="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}" class="psa-poster" style="max-width: 100%; margin-top: 50px;" />
                             </a>
+                        {elseif !$thisUser->isActivated()}
+                            <a href="/logout?hash={urlencode($csrfToken)}" class="link">{_menu_logout}</a>
                         {else}
                             <a href="/support" class="link">{_menu_support}
                                 {if $ticketAnsweredCount > 0}
