@@ -216,6 +216,7 @@
 "subscriptions" = "Subscriptions";
 "join_community" = "Join community";
 "leave_community" = "Leave community";
+"check_community" = "View community";
 "min_6_community" = "Name of the group must have more that 6 characters";
 "participants" = "Participants";
 "groups" = "Groups";
@@ -264,6 +265,10 @@
 "groups_zero" = "No groups";
 "groups_one" = "$1 group";
 "groups_other" = "$1 groups";
+
+"groups_list_zero" = "You are not a participant in any group";
+"groups_list_one" = "You are participating in one group";
+"groups_list_other" = "You are a participant of $1 groups";
 
 "meetings_zero" = "No meetings";
 "meetings_one" = "$1 meeting";
