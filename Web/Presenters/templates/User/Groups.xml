@@ -2,39 +2,39 @@
 {var iterator = $user->getClubs($page, $admin)}
 {var count    = $user->getClubCount($admin)}
 
-{block title}{_"groups"}{/block} 
+{block title}
+    {_groups}
+{/block} 
 
 {block header}
-{if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
-    {_my_groups}
+    {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+        {_my_groups}
     {else}
-    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> » {_"groups"}
+        <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> » {_groups}
     {/if}
-    <div n:if="!is_null($thisUser) && $user->getId() === $thisUser->getId()" style="float:right;">
-    </div>
 {/block}
 
 {* BEGIN ELEMENTS DESCRIPTION *}
 
 {block tabs}
-	{if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
-		<div {if !$admin}id="activetabs"{/if} class="tab">
-			<a {if !$admin}id="act_tab_a"{/if} href="/groups{$user->getId()}">
-				{_groups}
-			</a>
-		</div>
-		<div {if $admin}id="activetabs"{/if} class="tab">
-			<a {if $admin}id="act_tab_a"{/if} href="/groups{$user->getId()}?act=managed">
-				{_managed}
-			</a>
-		</div>
-	{/if}
+    {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+        <div {if !$admin}id="activetabs"{/if} class="tab">
+            <a {if !$admin}id="act_tab_a"{/if} href="/groups{$user->getId()}">
+                {_groups}
+            </a>
+        </div>
+        <div {if $admin}id="activetabs"{/if} class="tab">
+            <a {if $admin}id="act_tab_a"{/if} href="/groups{$user->getId()}?act=managed">
+                {_managed}
+            </a>
+        </div>
+    {/if}
 {/block}
 
 {block size}
-<div style="padding-bottom: 0px;border-bottom: 0;" class="summaryBar">
+    <div style="padding-bottom: 0px;border-bottom: 0;" class="summaryBar">
         <div class="summary">Найдено групп ({$thisUser->getClubCount()})</div>
-        </div>
+    </div>
 {/block}
 
 {block link|strip|stripHtml}
@@ -67,22 +67,24 @@
 {/block}
 
 {block bottom}
-{if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
-<div class="groups_options">
-<div id="gp_container" style="width: 200px;margin-right: 40px;">
-  <h4>{_"open_new_group"}</h4>
-  <span>{_"open_group_desc"}</span>
-<form action="/groups_create">
-<button class="button">{_"create_group"}</button></div>
-</form>
-<div id="gp_container" style="width: 344px;">
-  <h4>{_"search_group"}</h4>
-  <span>{_"search_group_desc"}</span>
-<form action="/search">
-        <input name="type" type="hidden" value="groups">
-        <input name="query" class="header_search_input" value="" style="background: none;width: 155px;padding-left: 3px;">
-        <button class="button">{_"search_by_groups"}</button>
-    </form></div>
-</div>
-{/if}
+    {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+        <div class="groups_options">
+            <div id="gp_container" style="width: 200px;margin-right: 40px;">
+                <h4>{_open_new_group}</h4>
+                <span>{_open_group_desc}</span>
+                <form action="/groups_create">
+                    <button class="button">{_create_group}</button>
+                </form>
+            </div>
+            <div id="gp_container" style="width: 344px;">
+                <h4>{_search_group}</h4>
+                <span>{_search_group_desc}</span>
+                <form action="/search">
+                    <input name="type" type="hidden" value="groups">
+                    <input name="query" class="header_search_input" value="" style="background: none;width: 155px;padding-left: 3px;">
+                    <button class="button">{_search_by_groups}</button>
+                </form>
+            </div>
+        </div>
+    {/if}
 {/block}
