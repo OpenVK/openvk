@@ -1865,3 +1865,13 @@ body.scrolled .toTop:hover {
     width: auto !important;
     padding-right: 5px;
 }
+
+.border-block {
+    box-shadow: inset 0px 0 0px 1px #b6bfca, inset 0px 0 0px 10px #d8dfe7;
+    width: 300px;
+    padding: 20px;
+}
+
+.center {
+    margin: 0 auto;
+}
