@@ -269,6 +269,12 @@
 "meetings_one" = "$1 meeting";
 "meetings_other" = "$1 meetings";
 
+"open_new_group" = "Open a new group";
+"open_group_desc" = "Can't find the right group? Open your own...";
+"search_group" = "Search group";
+"search_by_groups" = "Search by groups";
+"search_group_desc" = "Here you can browse through the existing groups and choose a group to suit your needs...";
+
 /* Albums */
 
 "create" = "Create";
