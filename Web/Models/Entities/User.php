@@ -850,10 +850,10 @@ class User extends RowModel
 
     function isDeleted(): bool
     {
-	if ($this->getRecord()->deleted == 1)
-	return TRUE;
-	else
-        return FALSE;
+        if ($this->getRecord()->deleted == 1)
+            return TRUE;
+        else
+            return FALSE;
     }
 
     /**
@@ -882,6 +882,12 @@ class User extends RowModel
 	{
 		return $this->getRecord()->website;
 	}
+
+    // ты устрица
+    function isActivated(): bool
+    {
+        return (bool) $this->getRecord()->activated;
+    }
     
     use Traits\TSubscribable;
 }

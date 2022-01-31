@@ -8,6 +8,7 @@ use Chandler\Session\Session;
 final class AboutPresenter extends OpenVKPresenter
 {
     protected $banTolerant = true;
+    protected $activationTolerant = true;
     
     function renderIndex(): void
     {
