@@ -5,10 +5,14 @@
         <div n:ifset="tabs" class="tabs">
             {include tabs}
         </div>
-        
+
+        {ifset size}
+            {include size, x => $dat}
+        {/ifset}
+
         <div class="container_gray">
             {var data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
-            
+
             {if sizeof($data) > 0}
                 <div class="content" n:foreach="$data as $dat">
                     <table>
@@ -20,32 +24,32 @@
                                     </a>
                                 </td>
                                 <td valign="top" style="width: 100%">
-                                    <a href="{include link, x => $dat}">
-                                        <b>
-                                            {include name, x => $dat}
-                                        </b>
-                                    </a>
-                                    <br/>
-                                    
-                                    {include description, x => $dat}
+                                    {ifset infotable}
+                                        {include infotable, x => $dat}
+                                    {else}
+                                        <a href="{include link, x => $dat}">
+                                            <b>
+                                                {include name, x => $dat}
+                                            </b>
+                                        </a>
+                                        <br/>
+                                        {include description, x => $dat}
+                                    {/ifset}
                                 </td>
-                                <td n:ifset="actions" valign="top" class="action_links" style="width: 150px">
+                                <td n:ifset="actions" valign="top" class="action_links" style="width: 150px; text-transform: lowercase;">
                                     {include actions, x => $dat}
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                
-                <div style="padding: 8px;">
-                    {include "components/paginator.xml", conf => (object) [
-                        "page"     => $page,
-                        "count"    => $count,
-                        "amount"   => sizeof($data),
-                        "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
-                        "atBottom" => true,
-                    ]}
-                </div>
+                {include "components/paginator.xml", conf => (object) [
+                    "page"     => $page,
+                    "count"    => $count,
+                    "amount"   => sizeof($data),
+                    "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+                    "atBottom" => true,
+                ]}
             {else}
                 {ifset customErrorMessage}
                     {include customErrorMessage}
@@ -54,5 +58,9 @@
                 {/ifset}
             {/if}
         </div>
+
+        {ifset bottom}
+            {include bottom}
+        {/ifset}
     </div>
 {/block}

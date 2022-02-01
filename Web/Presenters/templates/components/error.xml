@@ -1,7 +1,6 @@
-<center>
-    <img src="/assets/packages/static/openvk/img/error.png" alt="Ошибка" />
-    <h1>{$title}</h1>
-    <p>
+<center style="background: white;border: #DEDEDE solid 1px;">
+    <span style="color: #707070;margin: 60px 0;display: block;">
+        <b>{$title}</b><br><br>
         {$description}
-    </p>
+    </span>
 </center>
