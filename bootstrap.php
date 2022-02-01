@@ -227,7 +227,7 @@ return (function() {
     if(empty($_SERVER["REQUEST_SCHEME"]))
         $_SERVER["REQUEST_SCHEME"] = empty($_SERVER["HTTPS"]) ? "HTTP" : "HTTPS";
 
-    $showCommitHash = true; # plz remove when release
+    $showCommitHash = false; # plz remove when release
     if(is_dir($gitDir = OPENVK_ROOT . "/.git") && $showCommitHash)
         $ver = trim(`git --git-dir="$gitDir" log --pretty="%h" -n1 HEAD` ?? "Unknown version") . "-nightly";
     else
