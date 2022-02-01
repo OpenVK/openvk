@@ -23,8 +23,8 @@
                 {_groups}
             </a>
         </div>
-        <div n:attr='id => ($admin ? false : "activetabs")' class="tab">
-            <a n:attr='id => ($admin ? false : "act_tab_a")' href="/groups{$user->getId()}?act=managed">
+        <div n:attr='id => (!$admin ? false : "activetabs")' class="tab">
+            <a n:attr='id => (!$admin ? false : "act_tab_a")' href="/groups{$user->getId()}?act=managed">
                 {_managed}
             </a>
         </div>
@@ -32,7 +32,7 @@
 {/block}
 
 {block size}
-    <div style="padding-bottom: 0px;border-bottom: 0;" class="summaryBar">
+    <div n:if="!is_null($thisUser) && $user->getId() === $thisUser->getId()" style="padding-bottom: 0px; border-bottom: 0;" class="summaryBar">
         <div class="summary">
             {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
                 {tr("groups_list", $thisUser->getClubCount())}
@@ -51,15 +51,15 @@
     <img src="{$x->getAvatarUrl()}" width="75" alt="Фотография группы" />
 {/block}
 
-{block infotable}
+{block infoTable}
     <table id="basicInfo" class="ugc-table group_info" cellspacing="0" cellpadding="0" border="0">
         <tbody>
             <tr>
-                <td class="label"><span class="nobold">Название: </span></td>
+                <td class="label"><span class="nobold">{_name}: </span></td>
                 <td class="data"><a href="{$x->getURL()}">{$x->getName()}</a></td>
             </tr>
             <tr>
-                <td class="label"><span class="nobold">Размер:</span></td>
+                <td class="label"><span class="nobold">{_size}:</span></td>
                 <td class="data"><a href="/club{$x->getId()}/followers">{tr("participants", $x->getFollowersCount())}</a></td>
             </tr>
         </tbody>
@@ -73,11 +73,11 @@
 {block actions}
     {var clubPinned = $thisUser->isClubPinned($x)}
     {if $x->canBeModifiedBy($thisUser ?? NULL) && ($clubPinned || $thisUser->getPinnedClubCount() <= 10)}
-        <a style="border-bottom: none; width: 140px;" class="profile_link" href="{$x->getURL()}">
+        <a style="width: 140px;" class="profile_link" href="{$x->getURL()}">
             {_check_community}
         </a>
         
-        <a style="border-bottom: none; width: 140px;" class="profile_link" href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
+        <a style="width: 140px;" class="profile_link" href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
             {if $clubPinned}
                 {_remove_from_left_menu}
             {else}
@@ -89,16 +89,15 @@
             <input type="hidden" name="act" value="rem" />
             <input type="hidden" name="id"  value="{$x->getId()}" />
             <input type="hidden" name="hash" value="{$csrfToken}" />
-            <input style="text-transform: lowercase; border-bottom: none; width: 140px;" type="submit" id="profile_link" value="{_leave_community}" />
+            <input style="width: 140px; text-transform: lowercase;" type="submit" id="profile_link" value="{_leave_community}" />
         </form>
-
     {/if}
 {/block}
 
 {block bottom}
     {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
         <div class="groups_options">
-            <div id="gp_container" style="width: 200px;margin-right: 40px;">
+            <div id="gp_container" style="width: 200px; margin-right: 40px;">
                 <h4>{_open_new_group}</h4>
                 <span>{_open_group_desc}</span>
                 <form action="/groups_create">
@@ -110,7 +109,7 @@
                 <span>{_search_group_desc}</span>
                 <form action="/search">
                     <input name="type" type="hidden" value="groups">
-                    <input name="query" class="header_search_input" value="" style="background: none;width: 155px;padding-left: 3px;">
+                    <input name="query" class="header_search_input" value="" style="background: none; width: 155px; padding-left: 3px;">
                     <button class="button">{_search_by_groups}</button>
                 </form>
             </div>

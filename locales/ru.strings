@@ -250,6 +250,7 @@
 "only_administrators" = "Только администраторы";
 "website" = "Сайт";
 "managed" = "Управляемые";
+"size" = "Размер";
 
 "administrators_one" = "$1 администратор";
 "administrators_few" = "$1 администратора";
