@@ -72,19 +72,19 @@
 
 {block actions}
     {var clubPinned = $thisUser->isClubPinned($x)}
-    {if $x->canBeModifiedBy($thisUser ?? NULL) && ($clubPinned || $thisUser->getPinnedClubCount() <= 10)}
+    {if $x->canBeModifiedBy($thisUser ?? NULL)}
         <a style="border-bottom: none; width: 140px;" class="profile_link" href="{$x->getURL()}">
             {_check_community}
         </a>
-        
-        <a style="border-bottom: none; width: 140px;" class="profile_link" href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
-            {if $clubPinned}
-                {_remove_from_left_menu}
-            {else}
-                {_add_to_left_menu}
-            {/if}
-        </a>
-
+        {if ($clubPinned || $thisUser->getPinnedClubCount() <= 10)}
+            <a style="border-bottom: none; width: 140px;" class="profile_link" href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
+                {if $clubPinned}
+                    {_remove_from_left_menu}
+                {else}
+                    {_add_to_left_menu}
+                {/if}
+            </a>
+        {/if}
         <form action="/setSub/club" method="post">
             <input type="hidden" name="act" value="rem" />
             <input type="hidden" name="id"  value="{$x->getId()}" />
