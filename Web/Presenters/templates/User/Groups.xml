@@ -89,7 +89,7 @@
             <input type="hidden" name="act" value="rem" />
             <input type="hidden" name="id"  value="{$x->getId()}" />
             <input type="hidden" name="hash" value="{$csrfToken}" />
-            <input style="text-transform: lowercase; border-bottom: none; width: 140px;" type="submit" id="profile_link" value="{_"leave_community"}" />
+            <input style="text-transform: lowercase; border-bottom: none; width: 140px;" type="submit" id="profile_link" value="{_leave_community}" />
         </form>
 
     {/if}
