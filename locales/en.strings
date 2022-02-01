@@ -310,6 +310,7 @@
 "notes_zero" = "No notes";
 "notes_one" = "$1 note";
 "notes_other" = "$1 notes";
+"notes_start_screen" = "With notes, you can share your events with friends and see what's going on with them.";
 
 /* Menus */
 

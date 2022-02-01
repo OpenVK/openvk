@@ -1865,3 +1865,14 @@ body.scrolled .toTop:hover {
     width: auto !important;
     padding-right: 5px;
 }
+
+table td[width="120"] {
+    text-align: right;
+}
+
+.profile_thumb {
+    padding: 0px 10px 0px 0px;
+    width: 50px;
+    display: inline-block;
+    vertical-align: top;
+}

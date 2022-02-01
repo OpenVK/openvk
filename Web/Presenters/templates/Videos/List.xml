@@ -8,9 +8,17 @@
 {block header}
     <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>
     » {_"videos"}
-    
-    <div n:if="isset($thisUser) && $thisUser->getId() == $user->getId()" style="float: right;">
-        <a href="/videos/upload">{_"upload_video"}</a>
+{/block}
+
+{block size}
+    <div style="padding-bottom: 0px;border-bottom: 0; padding-top: 0;" class="summaryBar">
+        <div class="summary">
+                {tr("videos", $count)}
+                <span n:if="isset($thisUser) && $thisUser->getId() == $user->getId()">
+                    &nbsp;|&nbsp;
+                    <a href="/videos/upload">{_upload_video}</a>
+                </span>
+        </div>
     </div>
 {/block}
 
