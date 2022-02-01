@@ -48,7 +48,7 @@ class Comment extends Post
     function canBeDeletedBy(User $user): bool
     {
         return $this->getOwner()->getId() == $user->getId() ||
-               $this->getTarget()->getOwner()->getId() == $user->getId() ||
+               (new Users)->get(abs($this->getTarget()))->getId() == $user->getId() ||
                $this->getTarget() instanceof Post && $this->getTarget()->getTargetWall() < 0 && (new Clubs)->get(abs($this->getTarget()->getTargetWall()))->canBeModifiedBy($user) ||
                $this->getTarget() instanceof Topic && $this->getTarget()->canBeModifiedBy($user);
     }
