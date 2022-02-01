@@ -18,13 +18,13 @@
 
 {block tabs}
     {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
-        <div n:attr='id: ($admin ? false : "activetabs")' class="tab">
-            <a n:attr='id: ($admin ? false : "act_tab_a")' href="/groups{$user->getId()}">
+        <div n:attr='id => ($admin ? false : "activetabs")' class="tab">
+            <a n:attr='id => ($admin ? false : "act_tab_a")' href="/groups{$user->getId()}">
                 {_groups}
             </a>
         </div>
-        <div {if $admin}id="activetabs"{/if} class="tab">
-            <a {if $admin}id="act_tab_a"{/if} href="/groups{$user->getId()}?act=managed">
+        <div n:attr='id => ($admin ? false : "activetabs")' class="tab">
+            <a n:attr='id => ($admin ? false : "act_tab_a")' href="/groups{$user->getId()}?act=managed">
                 {_managed}
             </a>
         </div>
