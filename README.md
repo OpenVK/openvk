@@ -48,8 +48,7 @@ ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/ext
 ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
 ```
 
-4. Import `install/init-static-db.sql` to **same database** you installed Chandler to
-4.1. Import all sqls from `install/sqls` to **same database**
+4. Import `install/init-static-db.sql` to **same database** you installed Chandler to and import all sqls from `install/sqls` to **same database**
 5. Import `install/init-event-db.sql` to **separate database**
 6. Copy `openvk-example.yml` to `openvk.yml` and change options
 7. Run `composer install` in OpenVK directory
