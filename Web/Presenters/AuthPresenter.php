@@ -3,9 +3,11 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\IP;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Entities\PasswordReset;
+use openvk\Web\Models\Entities\EmailVerification;
 use openvk\Web\Models\Repositories\IPs;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Repositories\Restores;
+use openvk\Web\Models\Repositories\Verifications;
 use openvk\Web\Util\Validator;
 use Chandler\Session\Session;
 use Chandler\Security\User as ChandlerUser;
@@ -16,19 +18,22 @@ use lfkeitel\phptotp\{Base32, Totp};
 final class AuthPresenter extends OpenVKPresenter
 {
     protected $banTolerant = true;
+    protected $activationTolerant = true;
     
     private $authenticator;
     private $db;
     private $users;
     private $restores;
+    private $verifications;
     
-    function __construct(Users $users, Restores $restores)
+    function __construct(Users $users, Restores $restores, Verifications $verifications)
     {
         $this->authenticator = Authenticator::i();
         $this->db = DatabaseConnection::i()->getContext();
         
         $this->users    = $users;
         $this->restores = $restores;
+        $this->verifications = $verifications;
         
         parent::__construct();
     }
@@ -81,7 +86,7 @@ final class AuthPresenter extends OpenVKPresenter
                 $this->flashFail("err", tr("invalid_email_address"), tr("invalid_email_address_comment"));
             
             if (strtotime($this->postParam("birthday")) > time())
-                $this->flashFail("err", tr("invalid_birth_date"), tr("invalid_birth_date_comment"));    
+                $this->flashFail("err", tr("invalid_birth_date"), tr("invalid_birth_date_comment"));
 
             $chUser = ChandlerUser::create($this->postParam("email"), $this->postParam("password"));
             if(!$chUser)
@@ -96,11 +101,24 @@ final class AuthPresenter extends OpenVKPresenter
             $user->setSince(date("Y-m-d H:i:s"));
             $user->setRegistering_Ip(CONNECTING_IP);
             $user->setBirthday(strtotime($this->postParam("birthday")));
+            $user->setActivated((int) !OPENVK_ROOT_CONF['openvk']['preferences']['security']['requireEmail']);
             $user->save();
             
             if(!is_null($referer)) {
                 $user->toggleSubscription($referer);
                 $referer->toggleSubscription($user);
+            }
+
+            if (OPENVK_ROOT_CONF['openvk']['preferences']['security']['requireEmail']) {
+                $verification = new EmailVerification;
+                $verification->setProfile($user->getId());
+                $verification->save();
+                
+                $params = [
+                    "key"   => $verification->getKey(),
+                    "name"  => $user->getCanonicalName(),
+                ];
+                $this->sendmail($user->getEmail(), "verify-email", $params); #Vulnerability possible
             }
             
             $this->authenticator->authenticate($chUser->getId());
@@ -126,6 +144,10 @@ final class AuthPresenter extends OpenVKPresenter
             if(!$this->authenticator->verifyCredentials($user->id, $this->postParam("password")))
                 $this->flashFail("err", tr("login_failed"), tr("invalid_username_or_password"));
 
+            $ovkUser = new User($user->related("profiles.user")->fetch());
+            if($ovkUser->isDeleted())
+                $this->flashFail("err", tr("login_failed"), tr("invalid_username_or_password"));
+
             $secret = $user->related("profiles.user")->fetch()["2fa_secret"];
             $code   = $this->postParam("code");
             if(!is_null($secret)) {
@@ -136,7 +158,6 @@ final class AuthPresenter extends OpenVKPresenter
                 if(is_null($code))
                     return;
 
-                $ovkUser = new User($user->related("profiles.user")->fetch());
                 if(!($code === (new Totp)->GenerateToken(Base32::decode($secret)) || $ovkUser->use2faBackupCode((int) $code))) {
                     $this->flash("err", tr("login_failed"), tr("incorrect_2fa_code"));
                     return;
@@ -229,7 +250,7 @@ final class AuthPresenter extends OpenVKPresenter
             }
             
             $user = $this->users->getByChandlerUser(new ChandlerUser($uRow));
-            if(!$user)
+            if(!$user || $user->isDeleted())
                 $this->flashFail("err", tr("error"), tr("password_reset_error"));
             
             $request = $this->restores->getLatestByUser($user);
@@ -248,6 +269,50 @@ final class AuthPresenter extends OpenVKPresenter
             
             
             $this->flashFail("succ", tr("information_-1"), tr("password_reset_email_sent"));
+        }
+    }
+
+    function renderResendEmail(): void
+    {
+        if(!is_null($this->user) && $this->user->identity->isActivated())
+            $this->redirect("/id" . $this->user->id, static::REDIRECT_TEMPORARY);
+
+        if($_SERVER["REQUEST_METHOD"] === "POST") {
+            $user = $this->user->identity;
+            if(!$user || $user->isDeleted() || $user->isActivated())
+                $this->flashFail("err", tr("error"), tr("email_error"));
+            
+            $request = $this->verifications->getLatestByUser($user);
+            if(!is_null($request) && $request->isNew())
+                $this->flashFail("err", tr("forbidden"), tr("email_rate_limit_error"));
+            
+            $verification = new EmailVerification;
+            $verification->setProfile($user->getId());
+            $verification->save();
+            
+            $params = [
+                "key"   => $verification->getKey(),
+                "name"  => $user->getCanonicalName(),
+            ];
+            $this->sendmail($user->getEmail(), "verify-email", $params); #Vulnerability possible
+            
+            $this->flashFail("succ", tr("information_-1"), tr("email_sent"));
+        }
+    }
+
+    function renderVerifyEmail(): void
+    {
+        $request = $this->verifications->getByToken(str_replace(" ", "+", $this->queryParam("key")));
+        if(!$request || !$request->isStillValid()) {
+            $this->flash("err", tr("token_manipulation_error"), tr("token_manipulation_error_comment"));
+            $this->redirect("/");
+        } else {
+            $user = $request->getUser();
+            $user->setActivated(1);
+            $user->save();
+
+            $this->flash("success", tr("email_verify_success"));
+            $this->redirect("/");
         }
     }
 } 

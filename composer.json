@@ -7,13 +7,13 @@
         "james-heinrich/getid3": "^1.9@dev",
         "rybakit/msgpack": "dev-master",
         "wapmorgan/binary-stream": "dev-master",
-        "netcarver/textile": "^3.7@dev",
         "al/emoji-detector": "dev-master",
         "ezyang/htmlpurifier": "dev-master",
         "scssphp/scssphp": "dev-master",
         "lfkeitel/phptotp": "dev-master",
         "chillerlan/php-qrcode": "dev-main",
-        "vearutop/php-obscene-censor-rus": "dev-master"
+        "vearutop/php-obscene-censor-rus": "dev-master",
+        "erusev/parsedown": "dev-master"
     },
     "minimum-stability": "dev"
 }

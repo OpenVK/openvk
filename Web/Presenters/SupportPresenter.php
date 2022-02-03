@@ -6,7 +6,7 @@ use openvk\Web\Models\Entities\TicketComment;
 use openvk\Web\Models\Repositories\TicketComments;
 use openvk\Web\Util\Telegram;
 use Chandler\Session\Session;
-use Netcarver\Textile;
+use Parsedown;
 
 final class SupportPresenter extends OpenVKPresenter
 {
@@ -204,10 +204,10 @@ final class SupportPresenter extends OpenVKPresenter
     {
         $lang = Session::i()->get("lang", "ru");
         $base = OPENVK_ROOT . "/data/knowledgebase";
-        if(file_exists("$base/$name.$lang.textile"))
-            $file = "$base/$name.$lang.textile";
-        else if(file_exists("$base/$name.textile"))
-            $file = "$base/$name.textile";
+        if(file_exists("$base/$name.$lang.md"))
+            $file = "$base/$name.$lang.md";
+        else if(file_exists("$base/$name.md"))
+            $file = "$base/$name.md";
         else
             $this->notFound();
         
@@ -219,11 +219,34 @@ final class SupportPresenter extends OpenVKPresenter
             array_shift($lines);
         }
         
-        $content = implode("\r\n", $lines);
+        $content = implode($lines);
         
-        $parser = new Textile\Parser;
+        $parser = new Parsedown();
         $this->template->heading = $heading;
-        $this->template->content = $parser->parse($content);
+        $this->template->content = $parser->text($content);
+    }
+
+    function renderDeleteComment(int $id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->assertNoCSRF();
+
+        $comment = $this->comments->get($id);
+        if(is_null($comment))
+            $this->notFound();
+
+        $ticket = $comment->getTicket();
+
+        if($ticket->isDeleted())
+            $this->notFound();
+
+        if(!($ticket->getUserId() === $this->user->id && $comment->getUType() === 0))
+            $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+
+        $this->willExecuteWriteAction();
+        $comment->delete();
+
+        $this->flashFail("succ", tr("ticket_changed"), tr("ticket_changed_comment"));
     }
 
     function renderRateAnswer(int $id, int $mark): void

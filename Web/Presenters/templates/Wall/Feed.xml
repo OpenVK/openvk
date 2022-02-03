@@ -4,10 +4,14 @@
 {block header}
     {_"feed"}
     
-    <div n:if="!isset($globalFeed)" style="float: right;">
+    <div style="float: right;">
         <span>
             <b>
-                <a href="/feed/all">{_"all_news"}</a>
+                {if !isset($globalFeed)}
+                    <a href="/feed/all">{_"all_news"}</a>
+                {else}
+                    <a href="/feed">{_"my_feed"}</a>
+                {/if}
             </b>
         </span>
     </div>

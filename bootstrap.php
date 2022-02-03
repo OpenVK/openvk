@@ -167,7 +167,8 @@ function ovk_proc_strtrim(string $string, int $length = 0): string
 
 function ovk_strftime_safe(string $format, ?int $timestamp = NULL): string
 {
-    $str = strftime($format, $timestamp ?? time());
+    $sessionOffset = intval(Session::i()->get("_timezoneOffset"));
+    $str = strftime($format, $timestamp + ($sessionOffset * MINUTE) * -1 ?? time() + ($sessionOffset * MINUTE) * -1);
     if(PHP_SHLIB_SUFFIX === "dll") {
         $enc = tr("__WinEncoding");
         if($enc === "@__WinEncoding")
@@ -230,7 +231,7 @@ return (function() {
     if(is_dir($gitDir = OPENVK_ROOT . "/.git") && $showCommitHash)
         $ver = trim(`git --git-dir="$gitDir" log --pretty="%h" -n1 HEAD` ?? "Unknown version") . "-nightly";
     else
-        $ver = "Build 15";
+        $ver = "Public Technical Preview 3";
 
     // Unix time constants
     define('MINUTE', 60);

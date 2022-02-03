@@ -1,5 +1,5 @@
 window.addEventListener("scroll", function(e) {
-    if(document.body.scrollTop < 100) {
+    if(window.scrollY < 100) {
         document.body.classList.toggle("scrolled", false);
     } else {
         document.body.classList.toggle("scrolled", true);

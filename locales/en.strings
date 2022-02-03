@@ -6,6 +6,7 @@
 
 "home" = "Home";
 "welcome" = "Welcome";
+"to_top" = "To top";
 
 /* Login */
 
@@ -33,6 +34,13 @@
 "password_reset_email_sent" = "If you are registered, you will receive instructions by email.";
 "password_reset_error" = "An unexpected error occurred while resetting the password.";
 "password_reset_rate_limit_error" = "You can't do it that often, sorry.";
+
+"email_sent" = "Mail has been successfully sent.";
+"email_sent_desc" = "If your email addess exists, you will receive instructions.";
+"email_error" = "An unexpected error occurred while sending the email.";
+"email_rate_limit_error" = "You can't do it that often, sorry.";
+
+"email_verify_success" = "Your Email has been verified. Have a great time!";
 
 "registration_disabled_info" = "Registration has been disabled by the system administrator. If possible, ask for an invitation from your friend, if he is registered on this site.";
 "registration_closed" = "Registration is closed.";
@@ -215,6 +223,7 @@
 "subscriptions" = "Subscriptions";
 "join_community" = "Join community";
 "leave_community" = "Leave community";
+"check_community" = "View community";
 "min_6_community" = "Name of the group must have more that 6 characters";
 "participants" = "Participants";
 "groups" = "Groups";
@@ -232,6 +241,7 @@
 "only_administrators" = "Only administrators";
 "website" = "Website";
 "managed" = "Managed";
+"size" = "Size";
 
 "administrators_one" = "$1 administrator";
 "administrators_other" = "$1 administrators";
@@ -264,9 +274,19 @@
 "groups_one" = "$1 group";
 "groups_other" = "$1 groups";
 
+"groups_list_zero" = "You are not a participant in any group";
+"groups_list_one" = "You are participating in one group";
+"groups_list_other" = "You are a participant of $1 groups";
+
 "meetings_zero" = "No meetings";
 "meetings_one" = "$1 meeting";
 "meetings_other" = "$1 meetings";
+
+"open_new_group" = "Open a new group";
+"open_group_desc" = "Can't find the right group? Open your own...";
+"search_group" = "Search group";
+"search_by_groups" = "Search by groups";
+"search_group_desc" = "Here you can browse through the existing groups and choose a group to suit your needs...";
 
 /* Albums */
 
@@ -295,7 +315,10 @@
 "name_note" = "Title";
 "text_note" = "Content";
 "create_note" = "Create note";
+"edit_note" = "Edit note";
 "actions" = "Actions";
+
+"edited" = "Edited";
 
 "notes_zero" = "No notes";
 "notes_one" = "$1 note";
@@ -368,6 +391,8 @@
 "default" = "Default";
 "cut" = "Cut";
 "round_avatars" = "Round avatars";
+
+"apply_style_for_this_device" = "Apply style only for this device";
 
 "search_for_groups" = "Search for groups";
 "search_for_people" = "Search for people";
@@ -646,6 +671,14 @@
 "banned_1" = "Sorry <b>$1</b>, but you have been banned.";
 "banned_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to block you forever.";
 "banned_3" = "You can still <a href=\"/support?act=new\">write to the support</a> if you think there was an error or <a href=\"/logout?hash=$1\">logout</a>.";
+
+/* Registration confirm */
+
+"ec_header" = "Registration confirmation";
+"ec_title" = "Thanks!";
+"ec_1" = "<b>$1</b>, your registration is almost done. In a few minutes you should receive an mail with a link to confirm your email address.";
+"ec_2" = "If for some reason you don't get the mail, check your spam folder. If you don't find the email there, you can resend it.";
+"ec_resend" = "Resend mail";
 
 /* Discussions */
 

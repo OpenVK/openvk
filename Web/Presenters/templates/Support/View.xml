@@ -103,7 +103,7 @@
 
                             {if $comment->getUType() === 0}
                                 <div class="post-menu">
-                                    <a href="/support/comment/{$comment->getId()}/delete">{_delete}</a>
+                                    <a href="/support/comment/{$comment->getId()}/delete?hash={urlencode($csrfToken)}">{_delete}</a>
                                 </div>
                             {/if}
 
