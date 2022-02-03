@@ -49,6 +49,7 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 ```
 
 4. Импортируйте `install/init-static-db.sql` в **ту же базу данных**, в которую вы установили Chandler
+4.1. Импортируйте все SQL файлы из папки `install/sqls` в **ту же базу данных**
 5. Импортируйте `install/init-event-db.sql` в **отдельную базу данных**
 6. Скопируйте `openvk-example.yml` в `openvk.yml` и измените параметры
 7. Запустите `composer install` в директории OpenVK
