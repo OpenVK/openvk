@@ -76,7 +76,7 @@ You may reach out to us via:
 
 * [Bug-tracker](https://github.com/openvk/openvk/projects/1)
 * [Ticketing system](https://openvk.su/support?act=new)
-* Telegram chat: Go to [our channel](https://t.me/openvkch) and open discussion in our channel menu.
+* Telegram chat: Go to [our channel](https://t.me/openvkenglish) and open discussion in our channel menu.
 * [Reddit](https://www.reddit.com/r/openvk/)
 * [Discussions](https://github.com/openvk/openvk/discussions)
 
