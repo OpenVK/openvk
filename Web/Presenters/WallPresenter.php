@@ -202,48 +202,45 @@ final class WallPresenter extends OpenVKPresenter
         if($this->postParam("force_sign") === "on")
             $flags |= 0b01000000;
         
-        try {
-            $photo = NULL;
-            $video = NULL;
-            if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
-                $album = NULL;
-                if(!$anon && $wall > 0 && $wall === $this->user->id)
-                    $album = (new Albums)->getUserWallAlbum($wallOwner);
-                
-                $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album, $anon);
+        $photos = [];
+        $_FILES["_pic_attachment"] = null;
+        foreach($_FILES as $file) {
+        	bdump($file);
+            try {
+                if($file["error"] === UPLOAD_ERR_OK && preg_match('/^image\//', $file['type'])) {
+                    $album = NULL;
+                    if(!$anon && $wall > 0 && $wall === $this->user->id)
+                        $album = (new Albums)->getUserWallAlbum($wallOwner);
+                    
+                    $photos[] = Photo::fastMake($this->user->id, $this->postParam("text"), $file, $album, $anon);
+                }
+            } catch(\DomainException $ex) {
+                $this->flashFail("err", "Не удалось опубликовать пост", "Файл медиаконтента повреждён.");
+            } catch(ISE $ex) {
+                $this->flashFail("err", "Не удалось опубликовать пост", "Файл медиаконтента повреждён или слишком велик.");
             }
-            
-            if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK) {
-                $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"], $anon);
-            }
-        } catch(\DomainException $ex) {
-            $this->flashFail("err", "Не удалось опубликовать пост", "Файл медиаконтента повреждён.");
-        } catch(ISE $ex) {
-            $this->flashFail("err", "Не удалось опубликовать пост", "Файл медиаконтента повреждён или слишком велик.");
         }
-        
-        if(empty($this->postParam("text")) && !$photo && !$video)
+                
+        if(empty($this->postParam("text")) && empty($photos))
             $this->flashFail("err", "Не удалось опубликовать пост", "Пост пустой или слишком большой.");
         
         try {
-            $post = new Post;
-            $post->setOwner($this->user->id);
-            $post->setWall($wall);
-            $post->setCreated(time());
-            $post->setContent($this->postParam("text"));
-            $post->setAnonymous($anon);
-            $post->setFlags($flags);
-            $post->setNsfw($this->postParam("nsfw") === "on");
+	        $post = new Post;
+	        $post->setOwner($this->user->id);
+	        $post->setWall($wall);
+	        $post->setCreated(time());
+	        $post->setContent($this->postParam("text"));
+	        $post->setAnonymous($anon);
+	        $post->setFlags($flags);
+	        $post->setNsfw($this->postParam("nsfw") === "on");
             $post->save();
         } catch (\LengthException $ex) {
             $this->flashFail("err", "Не удалось опубликовать пост", "Пост слишком большой.");
         }
-        
-        if(!is_null($photo))
-            $post->attach($photo);
-        
-        if(!is_null($video))
-            $post->attach($video);
+
+        foreach($photos as $photo) {
+        	$post->attach($photo);
+        }
         
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
