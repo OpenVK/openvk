@@ -750,6 +750,8 @@
 "invalid_email_address" = "Invalid Email address";
 "invalid_email_address_comment" = "The Email you entered is not correct.";
 
+"invalid_real_name" = "Please, enter your real name. It'll be easier for your friends to find you like this.";
+
 "invalid_birth_date" = "Invalid date of birth";
 "invalid_birth_date_comment" = "The date of birth you entered is not correct.";
 
