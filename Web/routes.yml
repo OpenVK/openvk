@@ -105,6 +105,8 @@ routes:
           hashTag: ".++"
     - url: "/wall{num}"
       handler: "Wall->wall"
+    - url: "/wall{num}/rss"
+      handler: "Wall->rss"
     - url: "/wall{num}/makePost"
       handler: "Wall->makePost"
     - url: "/wall{num}_{num}"
