@@ -223,6 +223,7 @@
 "subscriptions" = "Subscriptions";
 "join_community" = "Join community";
 "leave_community" = "Leave community";
+"check_community" = "View community";
 "min_6_community" = "Name of the group must have more that 6 characters";
 "participants" = "Participants";
 "groups" = "Groups";
@@ -240,6 +241,7 @@
 "only_administrators" = "Only administrators";
 "website" = "Website";
 "managed" = "Managed";
+"size" = "Size";
 
 "administrators_one" = "$1 administrator";
 "administrators_other" = "$1 administrators";
@@ -272,9 +274,19 @@
 "groups_one" = "$1 group";
 "groups_other" = "$1 groups";
 
+"groups_list_zero" = "You are not a participant in any group";
+"groups_list_one" = "You are participating in one group";
+"groups_list_other" = "You are a participant of $1 groups";
+
 "meetings_zero" = "No meetings";
 "meetings_one" = "$1 meeting";
 "meetings_other" = "$1 meetings";
+
+"open_new_group" = "Open a new group";
+"open_group_desc" = "Can't find the right group? Open your own...";
+"search_group" = "Search group";
+"search_by_groups" = "Search by groups";
+"search_group_desc" = "Here you can browse through the existing groups and choose a group to suit your needs...";
 
 /* Albums */
 
