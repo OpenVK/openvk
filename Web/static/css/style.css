@@ -1855,11 +1855,11 @@ body.scrolled .toTop:hover {
 
 .container_gray .content:last-child {
     margin-bottom: 0;
-  }
+}
 
 .group_info {
     padding: 0 0 0 5px !important;
- }
+}
 
 .group_info .label {
     width: auto !important;
@@ -1875,4 +1875,14 @@ table td[width="120"] {
     width: 50px;
     display: inline-block;
     vertical-align: top;
+}
+
+.border-block {
+    box-shadow: inset 0px 0 0px 1px #b6bfca, inset 0px 0 0px 10px #d8dfe7;
+    width: 300px;
+    padding: 20px;
+}
+
+.center {
+    margin: 0 auto;
 }
