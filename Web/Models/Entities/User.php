@@ -104,7 +104,7 @@ class User extends RowModel
     
     function getAvatarUrl(): string
     {
-        $serverUrl = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
+        $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
         
         if($this->getRecord()->deleted)
             return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
