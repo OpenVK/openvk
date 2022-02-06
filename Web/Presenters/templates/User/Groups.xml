@@ -32,7 +32,7 @@
 {/block}
 
 {block size}
-    <div n:if="!is_null($thisUser) && $user->getId() === $thisUser->getId()" style="padding-bottom: 0px; border-bottom: 0;" class="summaryBar">
+    <div style="padding-bottom: 0px;border-bottom: 0;" class="summaryBar">
         <div class="summary">
             {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
                 {tr("groups_list", $thisUser->getClubCount())}
@@ -72,19 +72,19 @@
 
 {block actions}
     {var clubPinned = $thisUser->isClubPinned($x)}
-    {if $x->canBeModifiedBy($thisUser ?? NULL) && ($clubPinned || $thisUser->getPinnedClubCount() <= 10)}
-        <a style="width: 140px;" class="profile_link" href="{$x->getURL()}">
+    {if $x->canBeModifiedBy($thisUser ?? NULL)}
+        <a style="border-bottom: none; width: 140px;" class="profile_link" href="{$x->getURL()}">
             {_check_community}
         </a>
-        
-        <a style="width: 140px;" class="profile_link" href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
-            {if $clubPinned}
-                {_remove_from_left_menu}
-            {else}
-                {_add_to_left_menu}
-            {/if}
-        </a>
-
+        {if ($clubPinned || $thisUser->getPinnedClubCount() <= 10)}
+            <a style="border-bottom: none; width: 140px;" class="profile_link" href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
+                {if $clubPinned}
+                    {_remove_from_left_menu}
+                {else}
+                    {_add_to_left_menu}
+                {/if}
+            </a>
+        {/if}
         <form action="/setSub/club" method="post">
             <input type="hidden" name="act" value="rem" />
             <input type="hidden" name="id"  value="{$x->getId()}" />
@@ -110,6 +110,29 @@
                 <form action="/search">
                     <input name="type" type="hidden" value="groups">
                     <input name="query" class="header_search_input" value="" style="background: none; width: 155px; padding-left: 3px;">
+                    <button class="button">{_search_by_groups}</button>
+                </form>
+            </div>
+        </div>
+    {/if}
+{/block}
+
+{block bottom}
+    {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+        <div class="groups_options">
+            <div id="gp_container" style="width: 200px;margin-right: 40px;">
+                <h4>{_open_new_group}</h4>
+                <span>{_open_group_desc}</span>
+                <form action="/groups_create">
+                    <button class="button">{_create_group}</button>
+                </form>
+            </div>
+            <div id="gp_container" style="width: 344px;">
+                <h4>{_search_group}</h4>
+                <span>{_search_group_desc}</span>
+                <form action="/search">
+                    <input name="type" type="hidden" value="groups">
+                    <input name="query" class="header_search_input" value="" style="background: none;width: 155px;padding-left: 3px;">
                     <button class="button">{_search_by_groups}</button>
                 </form>
             </div>
