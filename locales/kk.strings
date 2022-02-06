@@ -9,6 +9,8 @@
 "home" = "Басты бет";
 "welcome" = "Қош келдіңіз!";
 
+"to_top" = "Жоғарыға";
+
 /* Login */
 
 "log_in" = "Логин";
@@ -35,6 +37,13 @@
 "password_reset_email_sent" = "Тіркелген болсаңыз, электрондық пошта арқылы нұсқаулар аласыз.";
 "password_reset_error" = "Құпиясөзді қалпына келтіру кезінде күтпеген қате орын алды.";
 "password_reset_rate_limit_error" = "Кешіріңіз, бірақ осы әрекетті сонай жиі жасай алмайсыз.";
+
+"email_sent" = "Хат сәтті жіберілді.";
+"email_sent_desc" = "Сіз енгізген электрондық пошта бар болса оған нұсқаулар келеді.";
+"email_error" = "Электрондық хатты жіберу кезінде күтпеген қате орын алды.";
+"email_rate_limit_error" = "Бұл әрекетті жиі жасай алмайсыз.";
+
+"email_verify_success" = "Электрондық поштаңыз расталды. Осы әлеуметтік желіде жақсы уақыт өткізуді тілейміз!";
 
 "registration_disabled_info" = "Жүйе әкімшісі тіркеуді өшірді. Мүмкіндігінше, егер досыңыз сайтта тіркелген болса одан шақыру сілтемесін сұраңыз.";
 "registration_closed" = "Тіркелу жабық";
@@ -216,6 +225,7 @@
 "subscriptions" = "Жазылымдар";
 "join_community" = "Топқа кіру";
 "leave_community" = "Топтан шығу";
+"check_community" = "Топты қарау";
 "min_6_community" = "Топтың аты тым болмаса 6 әріптен көп болу керек";
 "participants" = "Қатысушылар";
 "groups" = "Топтар";
@@ -232,6 +242,8 @@
 "all_followers" = "Барлық жазылмандар";
 "only_administrators" = "Тек әкімшілер";
 "website" = "Сайт";
+"managed" = "Басқаратын";
+"size" = "Көлемі";
 
 "administrators_one" = "$1 әкімші";
 "administrators_other" = "$1 әкімші";
@@ -245,6 +257,7 @@
 "hidden_yes" = "Жасырылған: Ия";
 "hidden_no" = "Жасырылған: Жоқ";
 "group_allow_post_for_everyone" = "Бәріне жазба жазуға рұқсат ету";
+"group_hide_from_global_feed" = "Жаһандық арнада жазбаларды көрсетпеу";
 "statistics" = "Статистика";
 "group_administrators_list" = "Әкімшілер тізімі";
 "group_display_only_creator" = "Тек топты құрған кісіні көрсету";
@@ -263,9 +276,19 @@
 "groups_one" = "$1 топ";
 "groups_other" = "$1 топ";
 
+"groups_list_zero" = "Сіз ешқандай топқа қатыспайсыз.";
+"groups_list_one" = "Сіз бір топқа қатысасыз";
+"groups_list_other" = "Сіз $1 топтардың қатысушысысыз";
+
 "meetings_zero" = "Кездесулер жоқ";
 "meetings_one" = "$1 кездесу";
 "meetings_other" = "$1 кездесу";
+
+"open_new_group" = "Жаңа топ ашу";
+"open_group_desc" = "Өзіңізге сай топ таба алмай жүрсіз бе? Өзіңіз ашып алыңыз!";
+"search_group" = "Топ іздеу";
+"search_by_groups" = "Топтардан іздеу";
+"search_group_desc" = "Мұнда сіз бар топтарға шолу жасай аласыз және қажеттіліктеріңізге сай топты таңдай аласыз...";
 
 /* Albums */
 
@@ -294,9 +317,12 @@
 "name_note" = "Тақырыбы";
 "text_note" = "Мазмұны";
 "create_note" = "Жолжазба жазу";
+"edit_note" = "Жолжазбаны өндеу";
 "actions" = "Әрекеттер";
 "feed" = "Жаңалықтар";
 "publish_post" = "Жазба қосу";
+
+"edited" = "Өнделген";
 
 "notes_zero" = "Жолжазбалар жоқ";
 "notes_one" = "$1 жолжазба";
@@ -337,6 +363,7 @@
 
 "left_menu_donate" = "Қайырымдылық жасау";
 
+"footer_about_instance" = "инстанция туралы";
 "footer_blog" = "блог";
 "footer_help" = "көмек";
 "footer_developers" = "әзірлеушілерге";
@@ -367,6 +394,8 @@
 "cut" = "Кесілген";
 "round_avatars" = "Дөңгелектелген";
 
+"apply_style_for_this_device" = "Стильді тек осы девайс үшін қосу";
+
 "search_for_groups" = "Топтар іздеу";
 "search_for_people" = "Кісілер іздеу";
 "search_button" = "Іздеу";
@@ -391,6 +420,7 @@
 "ui_settings_rating_hide" = "Жасыру";
 
 "additional_links" = "Қосымша сілтемелер";
+"ad_poster" = "Жарнама постері";
 
 "two_factor_authentication" = "Екі факторлы аутентификация";
 "two_factor_authentication_disabled" = "Бұзылудан сенімді қорғаныс қызметін қамтамасыз етеді: парақшаға кіру үшін 2FA қосымшасында алынған кодты енгізу керек.";
@@ -637,6 +667,14 @@
 "banned_2" = "Мұның себебі қарапайым: <b>$1</b>. Өкінішке орай, осы жолы сізді мәңгілікке блоктауға мәжбүр болдық.";
 "banned_3" = "Егер сізді қателесіп блоктады деп ойласаңыз, <a href=\"/support?act=new\">қолдау қызметіне жаза аласыз</a> немесе <a href=\"/logout?hash=$1\">жүйеден шыға аласыз</a>.";
 
+/* Registration confirm */
+
+"ec_header" = "Тіркеуді растау";
+"ec_title" = "Рахмет!";
+"ec_1" = "<b>$1</b>, тіркелуіңіз аяқталуға жақын. Бірнеше минуттан кейін электрондық поштаңызға растау сілтемесі бар хат келуі керек.";
+"ec_2" = "Егер қандай да бір себептермен хат келмесе, спам қалтасын тексеріңіз. Хатты ол жерден таппасаңыз, оны қайта жіберуге болады.";
+"ec_resend" = "Қайта жіберу";
+
 /* Discussions */
 
 "discussions" = "Талқылаулар";
@@ -718,7 +756,7 @@
 "invalid_telegram_name" = "Telegram парақшаның аты қате";
 "invalid_telegram_name_comment" = "Сіз енгізген Telegram-дағы парақшаның аты дұрыс емес.";
 
-"token_manipulation_error" = "Токенді өңдеу қатесі";
+"token_manipulation_error" = "Токенді өндеу қатесі";
 "token_manipulation_error_comment" = "Токен жарамсыз немесе мерзімі өтіп кеткен";
 
 "profile_changed" = "Парақша өзгерілді";
@@ -757,6 +795,26 @@
 /* About */
 
 "about_openvk" = "OpenVK туралы";
+
+"about_this_instance" = "Инстанция туралы";
+"rules" = "Ережелер";
+"most_popular_groups" = "Ең танымал топтар";
+"on_this_instance_are" = "Осы инстанцияда:";
+
+"about_users_one" = "<b>1</b> қолданушы";
+"about_users_other" = "<b>$1</b> қолданушы";
+
+"about_online_users_one" = "<b>1</b> желідегі пайдаланушы";
+"about_online_users_other" = "<b>$1</b> желідегі пайдаланушы";
+
+"about_active_users_one" = "<b>1</b> белсенді пайдаланушы";
+"about_active_users_other" = "<b>$1</b> белсенді пайдаланушы";
+
+"about_groups_one" = "<b>1</b> топ";
+"about_groups_other" = "<b>$1</b> топ";
+
+"about_wall_posts_one" = "<b>1</b> жазба";
+"about_wall_posts_other" = "<b>$1</b> жазба";
 
 /* Dialogs */
 
