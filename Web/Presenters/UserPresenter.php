@@ -147,6 +147,9 @@ final class UserPresenter extends OpenVKPresenter
                 
                 $user->setPseudo(empty($this->postParam("pseudo")) ? NULL : $this->postParam("pseudo"));
                 $user->setStatus(empty($this->postParam("status")) ? NULL : $this->postParam("status"));
+				$user->setHometown(empty($this->postParam("hometown")) ? NULL : $this->postParam("hometown"));
+                
+
                 if (strtotime($this->postParam("birthday")) < time())
                 $user->setBirthday(strtotime($this->postParam("birthday")));
 
@@ -185,7 +188,7 @@ final class UserPresenter extends OpenVKPresenter
 
                 $user->setCity(empty($this->postParam("city")) ? NULL : $this->postParam("city"));
                 $user->setAddress(empty($this->postParam("address")) ? NULL : $this->postParam("address"));
-                
+				
                 $website = $this->postParam("website") ?? "";
                 if(empty($website))
                     $user->setWebsite(NULL);
