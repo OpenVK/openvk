@@ -314,7 +314,7 @@
 "note" = "Note";
 "name_note" = "Title";
 "text_note" = "Content";
-"create_note" = "Create note";
+"create_note" = "Add note";
 "edit_note" = "Edit note";
 "actions" = "Actions";
 
@@ -324,6 +324,10 @@
 "notes_one" = "$1 note";
 "notes_other" = "$1 notes";
 "notes_start_screen" = "With notes, you can share your events with friends and see what's going on with them.";
+
+"notes_list_zero" = "No notes found";
+"notes_list_one" = "$1 note found";
+"notes_list_other" = "$1 notes found";
 
 /* Menus */
 
