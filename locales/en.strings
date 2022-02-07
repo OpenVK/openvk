@@ -583,6 +583,21 @@
 "receiver_not_found" = "The receiver was not found.";
 "you_dont_have_enough_points" = "You don't have enough votes.";
 
+"increase_rating" = "Increase rating";
+"increase_rating_button" = "Increase";
+"to_whom" = "To whom";
+"increase_by" = "Increase by";
+"price" = "Price";
+
+"you_have_unused_votes" = "You have $1 unused votes on your balance.";
+"apply_voucher" = "Apply voucher";
+
+"failed_to_increase_rating" = "Failed to increase rating";
+"rating_increase_successful" = "You have successfully increased rating of <b><a href=\"$1\">$2</a></b> by <b>$3%</b>.";
+"negative_rating_value" = "We cannot steal rating from another person, sorry.";
+
+"increased_your_rating_by" = "increased your rating by";
+
 /* Gifts */
 
 "gift" = "Gift";

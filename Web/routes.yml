@@ -73,6 +73,8 @@ routes:
       handler: "User->disableTwoFactorAuth"
     - url: "/coins_transfer"
       handler: "User->coinsTransfer"
+    - url: "/increase_social_credits"
+      handler: "User->increaseRating"
     - url: "/id{num}"
       handler: "User->view"
     - url: "/friends{num}"

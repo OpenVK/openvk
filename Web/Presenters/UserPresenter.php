@@ -11,7 +11,7 @@ use openvk\Web\Models\Repositories\Notes;
 use openvk\Web\Models\Repositories\Vouchers;
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
-use openvk\Web\Models\Entities\Notifications\CoinsTransferNotification;
+use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
 use Chandler\Security\Authenticator;
 use lfkeitel\phptotp\{Base32, Totp};
 use chillerlan\QRCode\{QRCode, QROptions};
@@ -518,5 +518,45 @@ final class UserPresenter extends OpenVKPresenter
         }
 
         $this->flashFail("succ", tr("information_-1"), tr("points_transfer_successful", tr("points_amount", $value), $receiver->getURL(), htmlentities($receiver->getCanonicalName())));
+    }
+
+    function renderIncreaseRating(): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        if(!OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"])
+            $this->flashFail("err", tr("error"), tr("feature_disabled"));
+
+        $receiverAddress = $this->postParam("receiver");
+        $value           = (int) $this->postParam("value");
+        $message         = $this->postParam("message");
+
+        if(!$receiverAddress || !$value)
+            $this->flashFail("err", tr("failed_to_increase_rating"), tr("not_all_information_has_been_entered"));
+
+        if($value < 0)
+            $this->flashFail("err", tr("failed_to_increase_rating"), tr("negative_rating_value"));
+
+        if(iconv_strlen($message) > 255)
+            $this->flashFail("err", tr("failed_to_increase_rating"), tr("message_is_too_long"));
+
+        $receiver = $this->users->getByAddress($receiverAddress);
+        if(!$receiver)
+            $this->flashFail("err", tr("failed_to_increase_rating"), tr("receiver_not_found"));
+
+        if($this->user->identity->getCoins() < $value)
+            $this->flashFail("err", tr("failed_to_increase_rating"), tr("you_dont_have_enough_points"));
+
+        $this->user->identity->setCoins($this->user->identity->getCoins() - $value);
+        $this->user->identity->save();
+
+        $receiver->setRating($receiver->getRating() + $value);
+        $receiver->save();
+
+        if($this->user->id !== $receiver->getId())
+            (new RatingUpNotification($receiver, $this->user->identity, $value, $message))->emit();
+
+        $this->flashFail("succ", tr("information_-1"), tr("rating_increase_successful", $receiver->getURL(), htmlentities($receiver->getCanonicalName()), $value));
     }
 }

@@ -609,6 +609,21 @@
 "receiver_not_found" = "Получатель не найден.";
 "you_dont_have_enough_points" = "У вас недостаточно голосов.";
 
+"increase_rating" = "Повысить рейтинг";
+"increase_rating_button" = "Повысить";
+"to_whom" = "Кому";
+"increase_by" = "Повысить на";
+"price" = "Стоимость";
+
+"you_have_unused_votes" = "У Вас $1 неиспользованных голоса на балансе.";
+"apply_voucher" = "Применить ваучер";
+
+"failed_to_increase_rating" = "Не удалось повысить рейтинг";
+"rating_increase_successful" = "Вы успешно повысыли рейтинг <b><a href=\"$1\">$2</a></b> на <b>$3%</b>.";
+"negative_rating_value" = "Мы не можем украсть рейтинг у другого человека, извините.";
+
+"increased_your_rating_by" = "повысил ваш рейтинг на";
+
 /* Gifts */
 
 "gift" = "Подарок";
