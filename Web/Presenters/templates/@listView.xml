@@ -27,8 +27,8 @@
                                         </a>
                                     </td>
                                     <td valign="top" style="width: 100%">
-                                        {ifset infotable}
-                                            {include infotable, x => $dat}
+                                        {ifset infoTable}
+                                            {include infoTable, x => $dat}
                                         {else}
                                             <a href="{include link, x => $dat}">
                                                 <b>
