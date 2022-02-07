@@ -59,7 +59,6 @@ openvk:
         bellsAndWhistles:
             fartscroll: false
             testLabel: false
-            showCommitHash: true
         defaultMobileTheme: ""
     
     telemetry:
