@@ -751,9 +751,12 @@ class User extends RowModel
     
     function setLast_Name(string $lastName): void
     {
-        $lastName = mb_convert_case($lastName, MB_CASE_TITLE);
-        if(!preg_match('%^\p{Lu}\p{Mn}?(\p{L&}\p{Mn}?){1,16}(\-\g<1>+)?$%u', $lastName))
-            throw new InvalidUserNameException;
+        if(!empty($lastName))
+        {
+	        $lastName = mb_convert_case($lastName, MB_CASE_TITLE);
+	        if(!preg_match('%^\p{Lu}\p{Mn}?(\p{L&}\p{Mn}?){1,16}(\-\g<1>+)?$%u', $lastName))
+	            throw new InvalidUserNameException;
+        }
         
         $this->stateChanges("last_name", $lastName);
     }
