@@ -9,6 +9,7 @@ use openvk\Web\Models\Repositories\Albums;
 use openvk\Web\Models\Repositories\Videos;
 use openvk\Web\Models\Repositories\Notes;
 use openvk\Web\Models\Repositories\Vouchers;
+use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
 use openvk\Web\Models\Entities\Notifications\CoinsTransferNotification;
 use Chandler\Security\Authenticator;
@@ -137,8 +138,13 @@ final class UserPresenter extends OpenVKPresenter
             $this->willExecuteWriteAction($_GET['act'] === "status");
             
             if($_GET['act'] === "main" || $_GET['act'] == NULL) {
-                $user->setFirst_Name(empty($this->postParam("first_name")) ? $user->getFirstName() : $this->postParam("first_name"));
-                $user->setLast_Name(empty($this->postParam("last_name")) ? "" : $this->postParam("last_name"));
+                try {
+                    $user->setFirst_Name(empty($this->postParam("first_name")) ? $user->getFirstName() : $this->postParam("first_name"));
+                    $user->setLast_Name(empty($this->postParam("last_name")) ? "" : $this->postParam("last_name"));
+                } catch(InvalidUserNameException $ex) {
+                    $this->flashFail("err", tr("error"), tr("invalid_real_name"));
+                }
+                
                 $user->setPseudo(empty($this->postParam("pseudo")) ? NULL : $this->postParam("pseudo"));
                 $user->setStatus(empty($this->postParam("status")) ? NULL : $this->postParam("status"));
                 if (strtotime($this->postParam("birthday")) < time())
