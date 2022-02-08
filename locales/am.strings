@@ -245,6 +245,7 @@
 "role" = "Դեր";
 "administrator" = "Ադմինիստրատոր";
 "promote_to_admin" = "Բարձրացնել դեպի ադմինիստրատոր";
+"promote_to_owner" = "Դարձնել տեր";
 "devote" = "Հետ բողոքարկել";
 "group_allow_post_for_everyone" = "Թույլ տար գրություններ թողնել բոլորին";
 "set_comment" = "Փոփոխել մեկնաբանությունը";
