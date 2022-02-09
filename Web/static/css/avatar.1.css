@@ -38,4 +38,5 @@ div.content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth
 .cCompactAvatars {
     width: 30px !important;
     height: 30px !important;
+    object-fit: cover;
 }

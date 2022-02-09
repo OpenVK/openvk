@@ -65,4 +65,5 @@ div.ovk-video > div > img
 .cCompactAvatars {
     width: 30px !important;
     height: 30px !important;
+    object-fit: cover;
 }
