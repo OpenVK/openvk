@@ -232,6 +232,7 @@
 "subscriptions" = "Подписки";
 "join_community" = "Вступить в группу";
 "leave_community" = "Выйти из группы";
+"check_community" = "Просмотр группы";
 "min_6_community" = "Название должно быть не менее 6 символов";
 "participants" = "Участники";
 "groups" = "Группы";
@@ -249,6 +250,7 @@
 "only_administrators" = "Только администраторы";
 "website" = "Сайт";
 "managed" = "Управляемые";
+"size" = "Размер";
 
 "administrators_one" = "$1 администратор";
 "administrators_few" = "$1 администратора";
@@ -286,11 +288,21 @@
 "groups_many" = "$1 групп";
 "groups_other" = "$1 групп";
 
+"groups_list_zero" = "Вы не состоите ни в одной группе";
+"groups_list_one" = "Вы состоите в одной группе";
+"groups_list_other" = "Вы состоите в $1 группах";
+
 "meetings_zero" = "Ни одной встречи";
 "meetings_one" = "Одна встреча";
 "meetings_few" = "$1 встречи";
 "meetings_many" = "$1 встреч";
 "meetings_other" = "$1 встреч";
+
+"open_new_group" = "Открыть новую группу";
+"open_group_desc" = "Не можете найти нужную группу? Откройте свою...";
+"search_group" = "Поиск группы";
+"search_by_groups" = "Поиск по группам";
+"search_group_desc" = "Здесь Вы можете просмотреть существующие группы и выбрать группу себе по вкусу...";
 
 /* Albums */
 
@@ -320,9 +332,10 @@
 "note" = "Заметка";
 "name_note" = "Название";
 "text_note" = "Содержание";
-"create_note" = "Создать заметку";
+"create_note" = "Добавить запись";
 "edit_note" = "Редактировать заметку";
 "actions" = "Действия";
+"notes_start_screen" = "С помощью заметок Вы можете делиться событиями из жизни с друзьями, а так же быть в курсе того, что происходит у них.";
 
 "edited" = "Отредактировано";
 
@@ -331,6 +344,12 @@
 "notes_few" = "$1 заметки";
 "notes_many" = "$1 заметок";
 "notes_other" = "$1 заметок";
+
+"notes_list_zero" = "Не найдено ни одной заметки";
+"notes_list_one" = "Найдена одна заметка";
+"notes_list_few" = "Найдено $1 заметки";
+"notes_list_many" = "Найдено $1 заметок";
+"notes_list_other" = "Найдено $1 заметок";
 
 /* Menus */
 
@@ -498,7 +517,7 @@
 "info_uploaded_by" = "Загрузил";
 "info_upload_date" = "Дата загрузки";
 
-"videos_zero" = "Ни одной видеозаписи";
+"videos_zero" = "Нет видео";
 "videos_one" = "Одна видеозапись";
 "videos_few" = "$1 видеозаписи";
 "videos_many" = "$1 видеозаписей";
@@ -589,6 +608,21 @@
 "message_is_too_long" = "Сообщение слишком длинное.";
 "receiver_not_found" = "Получатель не найден.";
 "you_dont_have_enough_points" = "У вас недостаточно голосов.";
+
+"increase_rating" = "Повысить рейтинг";
+"increase_rating_button" = "Повысить";
+"to_whom" = "Кому";
+"increase_by" = "Повысить на";
+"price" = "Стоимость";
+
+"you_have_unused_votes" = "У Вас $1 неиспользованных голоса на балансе.";
+"apply_voucher" = "Применить ваучер";
+
+"failed_to_increase_rating" = "Не удалось повысить рейтинг";
+"rating_increase_successful" = "Вы успешно повысыли рейтинг <b><a href=\"$1\">$2</a></b> на <b>$3%</b>.";
+"negative_rating_value" = "Мы не можем украсть рейтинг у другого человека, извините.";
+
+"increased_your_rating_by" = "повысил ваш рейтинг на";
 
 /* Gifts */
 
@@ -772,6 +806,8 @@
 
 "invalid_email_address" = "Неверный Email адрес";
 "invalid_email_address_comment" = "Email, который вы ввели, не является корректным.";
+
+"invalid_real_name" = "Пожалуйста, используйте реальные имена. Так вашим тульпам будет легче найти вас.";
 
 "invalid_telegram_name" = "Неверное имя Telegram аккаунта";
 "invalid_telegram_name_comment" = "Вы ввели неверное имя аккаунта Telegram.";

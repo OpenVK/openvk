@@ -1832,6 +1832,51 @@ body.scrolled .toTop:hover {
     padding: 5px 0px 0px 0px;
 }
 
+.groups_options {
+    padding: 10px 20px 20px;
+    border-top: #DEDEDE solid 1px;
+    margin-top: 12px;
+    margin-left: -12px;
+    margin-right: -12px;
+}
+
+#gp_container {
+    display: inline-block;
+}
+
+#gp_container span {
+    display: block;
+    margin: 10px 0 15px;
+}
+
+#gp_container h4 {
+    font-size: 11px;
+}
+
+.container_gray .content:last-child {
+    margin-bottom: 0;
+}
+
+.group_info {
+    padding: 0 0 0 5px !important;
+}
+
+.group_info .label {
+    width: auto !important;
+    padding-right: 5px;
+}
+
+table td[width="120"] {
+    text-align: right;
+}
+
+.profile_thumb {
+    padding: 0px 10px 0px 0px;
+    width: 50px;
+    display: inline-block;
+    vertical-align: top;
+}
+
 .border-block {
     box-shadow: inset 0px 0 0px 1px #b6bfca, inset 0px 0 0px 10px #d8dfe7;
     width: 300px;

@@ -48,7 +48,7 @@ ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/ext
 ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
 ```
 
-4. Импортируйте `install/init-static-db.sql` в **ту же базу данных**, в которую вы установили Chandler
+4. Импортируйте `install/init-static-db.sql` в **ту же базу данных**, в которую вы установили Chandler, и импортируйте все SQL файлы из папки `install/sqls` в **ту же базу данных**
 5. Импортируйте `install/init-event-db.sql` в **отдельную базу данных**
 6. Скопируйте `openvk-example.yml` в `openvk.yml` и измените параметры
 7. Запустите `composer install` в директории OpenVK
@@ -78,8 +78,9 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 * Telegram-чат: Перейдите на [наш канал](https://t.me/openvkch) и откройте обсуждение в меню нашего канала.
 * [Reddit](https://www.reddit.com/r/openvk/)
 * [Обсуждения](https://github.com/openvk/openvk/discussions)
+* Чат в Matrix: #ovk:matrix.org
 
-**Внимание**: баг-трекер и телеграм-чат являются публичными местами, и жалобы в OVK обслуживается волонтерами. Если вам нужно сообщить о чем-то, что не должно быть раскрыто широкой публике (например, сообщение об уязвимости), пожалуйста, свяжитесь с нами напрямую по этому адресу: **openvk [at] tutanota [dot] com**.
+**Внимание**: баг-трекер, телеграм- и matrix-чат являются публичными местами, и жалобы в OVK обслуживается волонтерами. Если вам нужно сообщить о чем-то, что не должно быть раскрыто широкой публике (например, сообщение об уязвимости), пожалуйста, свяжитесь с нами напрямую по этому адресу: **openvk [at] tutanota [dot] com**.
 
 <a href="https://codeberg.org/OpenVK/openvk">
     <img alt="Get it on Codeberg" src="https://codeberg.org/Codeberg/GetItOnCodeberg/media/branch/main/get-it-on-blue-on-white.png" height="60">
