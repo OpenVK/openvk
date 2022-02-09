@@ -393,9 +393,9 @@
 "avatars_style" = "Avatar style";
 "style" = "Style";
 
-"default" = "Default";
-"cut" = "Cut";
-"round_avatars" = "Round avatars";
+"default" = "Arbitrary (default)";
+"cut" = "Square";
+"round_avatars" = "Round";
 
 "apply_style_for_this_device" = "Apply style only for this device";
 
