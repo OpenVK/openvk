@@ -800,6 +800,14 @@
 "captcha_error" = "Incorrect characters entered";
 "captcha_error_comment" = "Please make sure you fill in the captcha field correctly.";
 
+"failed_to_publish_post" = "Failed to publish post";
+"failed_to_delete_post" = "Failed to delete post";
+
+"media_file_corrupted" = "The media content file is corrupted.";
+"media_file_corrupted_or_too_large" = "The media content file is corrupted or too large.";
+"post_is_empty_or_too_big" = "The post is empty or too big.";
+"post_is_too_big" = "The post is too big.";
+
 /* Admin actions */
 
 "login_as" = "Login as $1";

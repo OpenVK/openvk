@@ -837,6 +837,14 @@
 "captcha_error" = "Неправильно введены символы";
 "captcha_error_comment" = "Пожалуйста, убедитесь, что вы правильно заполнили поле с капчей.";
 
+"failed_to_publish_post" = "Не удалось опубликовать пост";
+"failed_to_delete_post" = "Не удалось удалить пост";
+
+"media_file_corrupted" = "Файл медиаконтента повреждён.";
+"media_file_corrupted_or_too_large" = "Файл медиаконтента повреждён или слишком велик.";
+"post_is_empty_or_too_big" = "Пост пустой или слишком большой.";
+"post_is_too_big" = "Пост слишком большой.";
+
 /* Admin actions */
 
 "login_as" = "Войти как $1";
