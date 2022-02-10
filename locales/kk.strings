@@ -198,7 +198,8 @@
 "follower" = "Жазылман";
 "login_as" = "Кім ретінде кіру:";
 "friends_delete" = "Достарымнан жою";
-"friends_reject" = "Өтінімді қабылдамау";
+"friends_add" = "Достарыма қосу";
+"friends_reject" = "Өтінімнен бас тарту";
 "friends_accept" = "Өтінімді қабылдау";
 "send_message" = "Хабарлама жазу";
 "incoming_req" = "Жазылушылар";
