@@ -190,7 +190,7 @@
         </form>
         <br/>
         <div class="settings_delete">
-            {_you_can_also} <a href="/settings/deactivate">{_delete_your_page}</a>.
+            {_you_can_also} <a onClick="showProfileDeactivateDialog({$csrfToken})">{_delete_your_page}</a>.
         </div>
         
         {elseif $isPrivacy}

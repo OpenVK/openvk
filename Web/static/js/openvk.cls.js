@@ -295,6 +295,72 @@ function ovk_proc_strtr(string, length = 0) {
     return newString + (string !== newString ? "…" : "");
 }
 
+function showProfileDeactivateDialog(hash) {
+    MessageBox(tr("profile_deactivate"), `
+        <div class="messagebox-content-header">
+            ${tr("profile_deactivate_header")}
+        </div>
+        <form action="/settings/deactivate" method="post" id="profile_deactivate_dialog" style="margin-top: 30px">
+            <table>
+                <tbody>
+                    <tr>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_1"></td>
+                        <td><label for="deactivate_1">${tr("profile_deactivate_reason_1")}</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_2"></td>
+                        <td><label for="deactivate_2">${tr("profile_deactivate_reason_2")}</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_3"></td>
+                        <td><label for="deactivate_3">${tr("profile_deactivate_reason_3")}</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_4"></td>
+                        <td><label for="deactivate_4">${tr("profile_deactivate_reason_4")}</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_5"></td>
+                        <td><label for="deactivate_5">${tr("profile_deactivate_reason_5")}</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_6"></td>
+                        <td><label for="deactivate_6">${tr("profile_deactivate_reason_6")}</label></td>
+                    </tr>
+                </tbody>
+            </table>
+            <textarea name="deactivate_reason" id="deactivate_reason"></textarea><br><br>
+            <input type="checkbox" name="deactivate_share" id="deactivate_share">
+            <label for="deactivate_share">${tr("share_with_friends")}</label>
+            <input type="hidden" name="hash" value="${hash}" />
+        </form>
+    `, [tr("profile_deactivate_button"), tr("cancel")], [
+        () => {
+            document.querySelector("#profile_deactivate_dialog").submit();
+        },
+        Function.noop
+    ]);
+
+    document.querySelector("#deactivate_1").onclick = function () {
+        document.getElementById('deactivate_reason').value = tr("profile_deactivate_reason_1_text");
+    };
+    document.querySelector("#deactivate_2").onclick = function () {
+        document.getElementById('deactivate_reason').value = tr("profile_deactivate_reason_2_text");
+    };
+    document.querySelector("#deactivate_3").onclick = function () {
+        document.getElementById('deactivate_reason').value = tr("profile_deactivate_reason_3_text");
+    };
+    document.querySelector("#deactivate_4").onclick = function () {
+        document.getElementById('deactivate_reason').value = tr("profile_deactivate_reason_4_text");
+    };
+    document.querySelector("#deactivate_5").onclick = function () {
+        document.getElementById('deactivate_reason').value = tr("profile_deactivate_reason_5_text");
+    };
+    document.querySelector("#deactivate_6").onclick = function () {
+        document.getElementById('deactivate_reason').value = '';
+    };
+}
+
 function showIncreaseRatingDialog(coinsCount, userUrl, hash) {
     MessageBox(tr("increase_rating"), `
         <div class="messagebox-content-header">

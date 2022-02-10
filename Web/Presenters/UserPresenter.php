@@ -418,6 +418,7 @@ final class UserPresenter extends OpenVKPresenter
     function renderDeactivate(): void
     {
         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
     }
 
     function renderTwoFactorAuthSettings(): void

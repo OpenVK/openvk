@@ -466,6 +466,23 @@
 "additional_links" = "Дополнительные ссылки";
 "ad_poster" = "Рекламный плакат";
 
+"profile_deactivate" = "Удаление страницы";
+"profile_deactivate_button" = "Удалить страницу";
+"profile_deactivate_header" = "Пожалуйста, укажите причину удаления вашей страницы";
+"profile_deactivate_reason_1" = "У меня есть другая страница";
+"profile_deactivate_reason_1_text" = "Я создал новую страницу и теперь хочу подтереть своё прошлое.";
+"profile_deactivate_reason_2" = "Веб-сайт отнимает у меня слишком много времени";
+"profile_deactivate_reason_2_text" = "Пусть этот сайт хорош и прекрасен, но он отнимает у меня время, которое мне нужно для работы и жизни.";
+"profile_deactivate_reason_3" = "На веб-сайте слишком много неприемлемых материалов";
+"profile_deactivate_reason_3_text" = "Я нашёл достаточно порнографии и пиратского контента - хватит на всю жизнь. Теперь я ухожу.";
+"profile_deactivate_reason_4" = "Меня беспокоит безопасность моих данных";
+"profile_deactivate_reason_4_text" = "За мной следят и мне страшно здесь находится. Извините, я вынужден уйти.";
+"profile_deactivate_reason_5" = "Мою страницу не комментируют";
+"profile_deactivate_reason_5_text" = "Меня никто не смотрит здесь и это грустно. Вы пожалеете о том, что я ушёл.";
+"profile_deactivate_reason_6" = "Другая причина";
+
+"share_with_friends" = "Рассказать друзьям";
+
 /* Two-factor authentication */
 
 "two_factor_authentication" = "Двухфакторная аутентификация";

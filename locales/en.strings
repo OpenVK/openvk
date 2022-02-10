@@ -444,6 +444,23 @@
 "additional_links" = "Additional links";
 "ad_poster" = "Ad poster";
 
+"profile_deactivate" = "Delete account";
+"profile_deactivate_button" = "Delete account";
+"profile_deactivate_header" = "Please select a reason why you are leaving";
+"profile_deactivate_reason_1" = "I have another profile and don't need this one";
+"profile_deactivate_reason_1_text" = "I created a new page and now I want to wipe my past.";
+"profile_deactivate_reason_2" = "Website takes away too much of my time";
+"profile_deactivate_reason_2_text" = "Even though this site is nice and beautiful, it takes away my time that I need for work and life.";
+"profile_deactivate_reason_3" = "Website harbors too much inappropriate content";
+"profile_deactivate_reason_3_text" = "I have found enough porn and pirated content to last me a lifetime, I'm leaving now.";
+"profile_deactivate_reason_4" = "I am worried about the safety of my data";
+"profile_deactivate_reason_4_text" = "I'm being watched and I'm scared to be here. I'm sorry, I have to leave.";
+"profile_deactivate_reason_5" = "No one comments on my posts";
+"profile_deactivate_reason_5_text" = "No one watches me here and it's sad. You will regret that I left.";
+"profile_deactivate_reason_6" = "Other reason";
+
+"share_with_friends" = "Share with friends";
+
 /* Two-factor authentication */
 
 "two_factor_authentication" = "Two-factor authentication";
