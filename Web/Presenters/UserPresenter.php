@@ -415,6 +415,11 @@ final class UserPresenter extends OpenVKPresenter
         $this->template->themes = Themepacks::i()->getThemeList();
     }
 
+    function renderDeactivate(): void
+    {
+        $this->assertUserLoggedIn();
+    }
+
     function renderTwoFactorAuthSettings(): void
     {
         $this->assertUserLoggedIn();

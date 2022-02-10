@@ -71,6 +71,8 @@ routes:
       handler: "User->twoFactorAuthSettings"
     - url: "/settings/2fa/disable"
       handler: "User->disableTwoFactorAuth"
+    - url: "/settings/deactivate"
+      handler: "User->deactivate"
     - url: "/coins_transfer"
       handler: "User->coinsTransfer"
     - url: "/increase_social_credits"
