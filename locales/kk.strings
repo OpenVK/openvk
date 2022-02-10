@@ -327,6 +327,11 @@
 "notes_zero" = "Жолжазбалар жоқ";
 "notes_one" = "$1 жолжазба";
 "notes_other" = "$1 жолжазба";
+"notes_start_screen" = "Жолжазбалар арқылы оқиғаларды достарыңызбен бөлісуге және олармен не болып жатқанын көруге болады.";
+
+"notes_list_zero" = "Еш жолжазба табылған жоқ";
+"notes_list_one" = "$1 жолжазба табылды";
+"notes_list_other" = "$1 жолжазба табылды";
 
 /* Menus */
 
@@ -387,12 +392,12 @@
 "new_password" = "Жаңа құпиясөз";
 "repeat_password" = "Қайталап жазыңызшы";
 
-"avatars_style" = "Аватар стилі";
+"avatars_style" = "Аватарлардың стилі";
 "style" = "Стилі";
 
-"default" = "Әдепкі";
-"cut" = "Кесілген";
-"round_avatars" = "Дөңгелектелген";
+"default" = "Ерікті (әдепкі)";
+"cut" = "Шаршы";
+"round_avatars" = "Дөңгелек";
 
 "apply_style_for_this_device" = "Стильді тек осы девайс үшін қосу";
 
@@ -573,10 +578,25 @@
 
 "points_transfer_successful" = "Сіз сәтті <b>$1</b> <b><a href=\"$2\">$3</a></b> аталатын пайдаланушыға аудардыңыз.";
 "not_all_information_has_been_entered" = "Барлық мәлімет терілген жоқ";
-"negative_transfer_value" = "Өкінішке орай біз басқа кісіден дауыс ұрлай алмаймыз.";
+"negative_transfer_value" = "Кешіріңіз, бірақ біз басқа адамнан дауыс ұрлай алмаймыз.";
 "message_is_too_long" = "Хабар тым ұзын.";
 "receiver_not_found" = "Қабылдаушы табылған жоқ.";
 "you_dont_have_enough_points" = "Сізде жеткілікті дауыс саны жоқ.";
+
+"increase_rating" = "Рейтингті көтеру";
+"increase_rating_button" = "Көтеру";
+"to_whom" = "Кімге";
+"increase_by" = "Неше есе көтеру";
+"price" = "Бағасы";
+
+"you_have_unused_votes" = "Сіздің шотыңызда $1 қолданылмаған дауыс бар.";
+"apply_voucher" = "Ваучерді қолдану";
+
+"failed_to_increase_rating" = "Рейтингті көтеру мүмкін болмады";
+"rating_increase_successful" = "Сіз <b><a href=\"$1\">$2</a></b> атты пайдаланушының рейтингің сәтті <b>$3%</b> есе көтердіңіз.";
+"negative_rating_value" = "Кешіріңіз, бірақ біз басқа адамның рейтингің ұрлай алмаймыз.";
+
+"increased_your_rating_by" = "сіздің рейтингіңізді көтерді";
 
 /* Gifts */
 
@@ -777,6 +797,14 @@
 
 "captcha_error" = "Қате таңбалар енгізілді";
 "captcha_error_comment" = "Капча өрісін дұрыс толтырғаныңызға көз жеткізіңіз.";
+
+"failed_to_publish_post" = "Постты жариялау мүмкін болмады";
+"failed_to_delete_post" = "Постты жоюға мүмкін болмады";
+
+"media_file_corrupted" = "Медиа мазмұн файлы бүлінген.";
+"media_file_corrupted_or_too_large" = "Медиа мазмұн файлы бүлінген немесе тым үлкен.";
+"post_is_empty_or_too_big" = "Жазбаңызда түк те жоқ немесе ол тым үлкен.";
+"post_is_too_big" = "Жазбаңыз тым үлкен.";
 
 /* Admin actions */
 
