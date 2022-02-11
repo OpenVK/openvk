@@ -53,7 +53,7 @@
 "registration_date" = "Дата регистрации";
 "hometown" = "Родной город";
 "this_is_you" = "это Вы";
-"edit_page" = "Изменить информацию паспорта";
+"edit_page" = "Изменить информацию досье";
 "edit_group" = "Изменить информацию клуба";
 "change_status" = "изменить ";
 "name" = "Имя";
@@ -164,7 +164,7 @@
 "no_comments" = "Отзывы отсутствуют";
 
 "all_news" = "Все новостные газеты";
-"posts_per_page" = "Количество записей в паспорте";
+"posts_per_page" = "Количество записей в досье";
 
 "attachment" = "Вложение";
 "post_as_group" = "От имени клуба";
@@ -255,6 +255,7 @@
 "hidden_yes" = "Скрыт: Да";
 "hidden_no" = "Скрыт: Нет";
 "group_allow_post_for_everyone" = "Разрешить публиковать записи всем";
+group_hide_from_global_feed" = "Не отображать записи в публичной доске";
 "statistics" = "Статистика";
 "group_administrators_list" = "Список админов";
 "group_display_only_creator" = "Отображать только создателя группы";
@@ -296,7 +297,7 @@
 
 "open_original" = "Посмотреть оригинал картинки";
 
-"avatar_album" = "Картинки с паспорта";
+"avatar_album" = "Картинки из досье";
 "wall_album" = "Картинки с доски";
 
 "albums_zero" = "Ни одного альбома с картинками";
@@ -322,22 +323,22 @@
 
 /* Menus */
 
-"edit_button" = "ред.";
-"my_page" = "Мой Паспорт";
+"edit_button" = "корр.";
+"my_page" = "Мое Досье";
 "my_friends" = "Мои Товарищи";
 "my_photos" = "Мои Фотокартинки";
 "my_videos" = "Мои Киноленты";
-"my_messages" = "Мои Письма";
-"my_notes" = "Мои Черновики";
+"my_messages" = "Мои Телеграмы";
+"my_notes" = "Мои Записки";
 "my_groups" = "Мои Клубы";
-"my_feed" = "Мои Газеты";
-"my_feedback" = "Мои Ответы";
+"my_feed" = "Мое Информбюро";
+"my_feedback" = "Мои Сводки";
 "my_settings" = "Мои Настройки";
 "bug_tracker" = "Доска задач";
 
 "menu_login" = "Вход";
 "menu_registration" = "Регистрация";
-"menu_help" = "Помощь";
+"menu_help" = "Справка";
 
 "menu_logout" = "Выйти";
 "menu_support" = "Поддержка";
@@ -346,9 +347,9 @@
 "header_groups" = "клубы";
 "header_people" = "граждане";
 "header_invite" = "пригласить";
-"header_help" = "помощь";
-"header_log_out" = "выйти";
-"header_search" = "Поиск";
+"header_help" = "справка";
+"header_log_out" = "эмиграция";
+"header_search" = "Розыск";
 
 "header_login" = "вход";
 "header_registration" = "регистрация";
@@ -359,14 +360,14 @@
 "footer_help" = "помощь";
 "footer_developers" = "госслужащим";
 "footer_choose_language" = "выбрать язык";
-"footer_privacy" = "приватность";
+"footer_privacy" = "секретность";
 
 /* Settings */
 
 "main" = "Основное";
 "contacts" = "Контакты";
-"avatar" = Картинка";
-"privacy" = "Приватность";
+"avatar" = "Картинка";
+"privacy" = "Секретность";
 "interface" = "Внешний вид";
 
 "profile_picture" = "Изображение страницы";
@@ -385,8 +386,8 @@
 "cut" = "Обрезка";
 "round_avatars" = "Круглая картинка";
 
-"search_for_groups" = "Поиск клубов";
-"search_for_people" = "Поиск гражданинов";
+"search_for_groups" = "Розыск клубов";
+"search_for_people" = "Розыск граждан";
 "search_button" = "Найти";
 "search_placeholder" = "Начните вводить любое имя, название или слово";
 "results_zero" = "Ни одного результата";
@@ -395,7 +396,7 @@
 "results_many" = "$1 результатов";
 "results_other" = "$1 результатов";
 
-"privacy_setting_access_page" = "Кому из граждан виден мой паспорт";
+"privacy_setting_access_page" = "Кому из граждан видно мое досье";
 "privacy_setting_read_info" = "Кому видно основную информацию моей страницы";
 "privacy_setting_see_groups" = "Кому разрешено просматривать мои картинки и встречи";
 "privacy_setting_see_photos" = "Кому разрешено просматривать мои картинки";
@@ -410,17 +411,17 @@
 "privacy_value_users" = "Участникам органа OpenVK";
 "privacy_value_friends" = "Товарищи";
 "privacy_value_friends_dative" = "Товарищам";
-"privacy_value_only_me" = "Только я";
-"privacy_value_only_me_dative" = "Только мне";
+"privacy_value_only_me" = "Только я и КГБ";
+"privacy_value_only_me_dative" = "Только мне и КГБ";
 "privacy_value_nobody" = "Никто";
 
 "your_email_address" = "Адрес Вашего почтового ящика";
-"your_page_address" = "Адрес Вашего паспорта";
-"page_address" = "Адрес паспорта";
+"your_page_address" = "Адрес Вашего досье";
+"page_address" = "Адрес досье";
 "current_email_address" = "Текущий адрес";
-"page_id" = "Номер паспорта";
+"page_id" = "Номер досье";
 "you_can_also" = "Вы также можете";
-"delete_your_page" = "порвать свой паспорт";
+"delete_your_page" = "порвать свое досье";
 "delete_album" = "выкинуть свой альбом с картинками";
 
 "ui_settings_interface" = "Интерфейс";
@@ -430,7 +431,7 @@
 "ui_settings_rating_hide" = "Скрывать";
 
 "additional_links" = "Дополнительные ссылки";
-
+"ad_poster" = "Рекламный плакат";
 /* Two-factor authentication */
 
 "two_factor_authentication" = "Двухфакторная аутентификация";
@@ -561,7 +562,7 @@
 
 "transferred_to_you" = "передал вам";
 
-"receiver_address" = "Адрес паспорта получателя";
+"receiver_address" = "Адрес досье получателя";
 "coins_count" = "Количество рублей";
 "message" = "Сообщение";
 
@@ -608,6 +609,21 @@
 "users_gifts" = "Подарки";
 
 /* Support */
+
+"increase_rating" = "Увеличить рейтинг";
+"increase_rating_button" = "Увеличить";
+"to_whom" = "Кому";
+"increase_by" = "Увеличить на";
+"price" = "Ценник";
+
+"you_have_unused_votes" = "У Вас $1 неиспользованных рубля на кошельке.";
+"apply_voucher" = "Применить купон";
+
+"failed_to_increase_rating" = "Не удалось увеличить рейтинг";
+"rating_increase_successful" = "Вы успешно увеличили рейтинг <b><a href=\"$1\">$2</a></b> на <b>$3%</b>.";
+"negative_rating_value" = "Орган не может украсть баллы рейтинга у другого гражданина, так не положено.";
+
+"increased_your_rating_by" = "увеличил ваш рейтинг на";
 
 "support_opened" = "Открытые";
 "support_answered" = "С ответом";
@@ -740,10 +756,10 @@
 "forbidden_comment" = "Настройки приватности этого пользователя не разрешают вам смотреть на его страницу.";
 
 "changes_saved" = "Изменения сохранены";
-"changes_saved_comment" = "Товарищ, обоновлённые данные появятся на вашем паспорте.";
+"changes_saved_comment" = "Товарищ, обоновлённые данные появятся на вашем досье.";
 
 "photo_saved" = "Картинка сохранена";
-"photo_saved_comment" = "Товарищ, орган одобрил новую картинку в вашем паспорте.";
+"photo_saved_comment" = "Товарищ, орган одобрил новую картинку в вашем досье.";
 
 "shared_succ" = "Запись появится на вашей доске. Нажмите на уведомление, чтобы перейти к своей стене.";
 
@@ -759,8 +775,8 @@
 "token_manipulation_error" = "Ошибка манипулирования токеном";
 "token_manipulation_error_comment" = "Токен недействителен или истёк";
 
-"profile_changed" = "Паспорт изменён";
-"profile_changed_comment" = Товарищ, орган одобрил изменение вашего паспорта.";
+"profile_changed" = "Досье изменёно";
+"profile_changed_comment" = "Товарищ, орган одобрил изменение вашего досье.";
 "profile_not_found" = "Гражданин не найден.";
 
 "suspicious_registration_attempt" = "Подозрительная попытка регистрации в орган";
@@ -795,6 +811,36 @@
 /* About */
 
 "about_openvk" = "Об органе OpenVK";
+"footer_about_instance" = "о стране";
+"about_this_instance" = "Об этой стране";
+"rules" = "Правила";
+"most_popular_groups" = "Самые популярные клубы";
+"on_this_instance_are" = "На этой стране";
+
+"about_users_one" = "<b>1</b> гражданин";
+"about_users_few" = "<b>$1</b> гражданина";
+"about_users_many" = "<b>$1</b> гражданинов";
+"about_users_other" = "<b>$1</b> гражданинов";
+
+"about_online_users_one" = "<b>1</b> пользователь в сети";
+"about_online_users_few" = "<b>$1</b> пользователя в сети";
+"about_online_users_many" = "<b>$1</b> гражданинов в сети";
+"about_online_users_other" = "<b>$1</b> гражданинов в сети";
+
+"about_active_users_one" = "<b>1</b> активный пользователь";
+"about_active_users_few" = "<b>$1</b> активных пользователя";
+"about_active_users_many" = "<b>$1</b> активных гражданинов";
+"about_active_users_other" = "<b>$1</b> активных гражданинов";
+
+"about_groups_one" = "<b>1</b> клуб";
+"about_groups_few" = "<b>$1</b> клубы";
+"about_groups_many" = "<b>$1</b> клубов";
+"about_groups_other" = "<b>$1</b> клубов";
+
+"about_wall_posts_one" = "<b>1</b> заметка на досках";
+"about_wall_posts_few" = "<b>$1</b> заметки на досках";
+"about_wall_posts_many" = "<b>$1</b> заметки на досках";
+"about_wall_posts_other" = "<b>$1</b> заметки на досках";
 
 /* Dialogs */
 
@@ -810,5 +856,20 @@
 "question_confirm" = "Товарищ, будьте внимательны с выбором. Вы согласны с вашим выбором? Отменить не представляется возможным.";
 
 /* User alerts */
+"apply_style_for_this_device" = "Применить стиль только для этой ЭВМ";
 
 "user_alert_scam" = "Органу управления было дозволено, что данный гражданин обманывает товарищей на денежные средства. Будьте осторожны при разговоре с ним.";
+
+
+"ec_header" = "Подтверждение регистрации прописки";
+"ec_title" = "Спасибо!";
+"ec_1" = "<b>$1</b>, на ваш почтовый ящик должно придти письмо с подтверждением регистрации.";
+"ec_2" = "Если по каким-то причинам вам не пришло письмо, то проверьте мусорный бак. Если письма не окажется и там, то вы можете переотправить письмо.";
+"ec_resend" = "Переотправить письмо";
+
+"email_sent" = "Письмо было успешно отправлено.";
+"email_sent_desc" = "Если ваш почтовый ящик существует, вы получите письмо.";
+"email_error" = "Непредвиденная ошибка при отправке письма.";
+"email_rate_limit_error" = "Нельзя делать это так часто, извините.";
+
+"email_verify_success" = "Ваша регистрация была подтверждена. Приятного времяпрепровождения!";
