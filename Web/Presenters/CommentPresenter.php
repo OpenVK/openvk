@@ -122,7 +122,7 @@ final class CommentPresenter extends OpenVKPresenter
         $this->flashFail(
             "succ",
             "Успешно",
-            "Этот комментарий больше не будет показыватся.<br/><a href='/al_comments.pl/spam?$id'>Отметить как спам</a>?"
+            "Этот комментарий больше не будет показыватся.<br/><a href='/al_comments/spam?$id'>Отметить как спам</a>?"
         );
     }
 }

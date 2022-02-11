@@ -6,144 +6,132 @@
 {/block}
 
 {block content}
-<script>
-  function markAnswer(id, mark) {
-    let url = "/support/comment/" + id + "/rate/" + mark + "?hash=" + {urlencode($csrfToken)};
-    $.ajax(url, {
-        error: errorHandler,
-        success: success(id, mark)
-    });
-  }
+    <script>
+        function markAnswer(id, mark) {
+            let url = "/support/comment/" + id + "/rate/" + mark + "?hash=" + {urlencode($csrfToken)};
+            $.ajax(url, {
+                error: errorHandler,
+                success: success(id, mark)
+            });
+        }
 
-  function success(id, mark) {
-      if(mark == 1)
-          document.getElementById("markText-" + id).innerHTML = {_support_good_answer_user};
-      else
-          document.getElementById("markText-" + id).innerHTML = {_support_bad_answer_user};
+        function success(id, mark) {
+            if(mark == 1)
+                document.getElementById("markText-" + id).innerHTML = {_support_good_answer_user};
+            else
+                document.getElementById("markText-" + id).innerHTML = {_support_bad_answer_user};
 
-      document.getElementById("markLinks-" + id).remove();
-  }
+            document.getElementById("markLinks-" + id).remove();
+        }
 
-  function errorHandler(id, mark) {
-      document.getElementById("markText-" + id).innerHTML = {_error};
-  }
-</script>
-{if $ticket->isDeleted() == 0 }
-<div class="post-author">
-    <a href="#" style="font-size:13px;">
-        <b>
-            {$ticket->getName()}
-        </b>
-    </a>
-    <br></b>{_status}: {$ticket->getStatus()}
-</div>
-<div class="text" style="padding-top: 10px;border-bottom: #ECECEC solid 1px;">
-    {$ticket->getText()|noescape}
-    <br></br>
-</div>
-<div style="padding-top: 5px;">
-    {$ticket->getTime()}&nbsp;|&nbsp;
-    <a href="/support/delete/{$id}?hash={$csrfToken}">{_delete}</a>
-</div>
-{if $ticket->getType() !== 2}
-<br>
-    <div>
-            <form action="/al_comments.pl/create/support/{$id}" method="post" style="margin:0;">
-                <textarea name="text" style="width: 100%;resize: vertical;"></textarea>
-                <div>
-                    <!-- padding to fix <br/> bug -->
-                </div>
-                <input type="hidden" name="hash" value="{$csrfToken}" />
-                <br>
-                <input type="submit" value="{_write}" class="button">
-            </form>
+        function errorHandler(id, mark) {
+            document.getElementById("markText-" + id).innerHTML = {_error};
+        }
+    </script>
+
+    {if $ticket->isDeleted() == 0}
+        <div class="post-author">
+            <a href="#" style="font-size:13px;"><b>{$ticket->getName()}</b></a>
+            <br />{_status}: {$ticket->getStatus()}
         </div>
-{/if}
-</br>
-<p n:if="!$comments">{_no_comments}</p>
-{var $printedSupportGreeting = false}
-<table n:foreach="$comments as $comment" border="0" style="font-size: 11px;" class="post">
-   <tbody>
-      <tr>
-          {if $comment->getUType() === 0}
-         <td width="54" valign="top">
-            <img src="{$comment->getUser()->getAvatarUrl()}" width="50">
-         </td>
-         {else}
-         <td width="54" valign="top">
-            <img
-                src="{$comment->getAvatar()}"
-                style="max-width: 50px; filter: hue-rotate({$comment->getColorRotation()}deg);" />
-         </td>
-         {/if}
-         <td width="645" valign="top">
-             {if $comment->getUType() === 0}
-            <div class="post-author">
-               <a href="{$comment->getUser()->getURL()}"><b>
-               {$comment->getUser()->getFullName()}
-               </b></a> {($comment->getUser()->isFemale() ? tr("post_writes_f") : tr("post_writes_m"))}<br>
-               <a href="#" class="date">{$comment->getTime()}</a>
+        <div class="text" style="padding-top: 10px; border-bottom: #ECECEC solid 1px;">
+            {$ticket->getText()|noescape}
+            <br /></br>
+        </div>
+        <div style="padding-top: 5px;">
+            {$ticket->getTime()}&nbsp;|&nbsp;
+            <a href="/support/delete/{$id}?hash={$csrfToken}">{_delete}</a>
+        </div>
+        {if $ticket->getType() !== 2}
+            <br />
+            <div>
+                <form action="/al_comments/create/support/{$id}" method="post" style="margin:0;">
+                    <textarea name="text" style="width: 100%;resize: vertical;"></textarea><br />
+                    <input type="hidden" name="hash" value="{$csrfToken}" /><br />
+                    <input type="submit" value="{_write}" class="button" />
+                </form>
             </div>
-            {elseif ($comment->getUType() === 1)}
-            <div class="post-author">
-               <a href="javascript:false">
-                   <b>
-                       {$comment->getAuthorName()}
-                   </b>
-               </a>
-               {_post_writes_m}<br>
-               <a href="#" class="date">{$comment->getTime()}</a>
-            </div>
-            {/if}
-            <div class="post-content" id="{$comment->getId()}">
-               <div class="text" id="text{$comment->getId()}">
-                   {if $comment->getUType() === 1 && !$printedSupportGreeting}
-                       {var $printedSupportGreeting = true}
-                       {tr("support_greeting_hi", $ticket->getUser()->getFullName())}
-                       <br/>
-                       <br/>
-                       
-                       {$comment->getText()|noescape}
-                       <br/>
-                       <br/>
-                       
-                       {tr("support_greeting_regards", OPENVK_ROOT_CONF["openvk"]["appearance"]["name"])|noescape}
-                   {else}
-                       {$comment->getText()|noescape}
-                   {/if}
-               </div>
-
-               {if $comment->getUType() === 0}
-                <div class="post-menu">
-                    <a href="/support/comment/{$comment->getId()}/delete">{_delete}</a>
-                </div>
-               {/if}
-
-               {if $comment->getUType() === 1}
-                 <div class="post-menu">
-                    {var isLikedByUser = $comment->isLikedByUser()}
-                    <strong id="markText-{$comment->getId()}">
-                      {if !is_null($isLikedByUser)}
-                        {if $comment->isLikedByUser()}
-                            {_support_good_answer_user}
-                        {else}
-                            {_support_bad_answer_user}
+        {/if}
+        <br />
+        <p n:if="!$comments">{_no_comments}</p>
+        {var $printedSupportGreeting = false}
+        <table n:foreach="$comments as $comment" border="0" style="font-size: 11px;" class="post">
+            <tbody>
+                <tr>
+                    {if $comment->getUType() === 0}
+                        <td width="54" valign="top">
+                            <img src="{$comment->getUser()->getAvatarUrl()}" width="50" />
+                        </td>
+                    {else}
+                        <td width="54" valign="top">
+                            <img
+                                src="{$comment->getAvatar()}"
+                                style="max-width: 50px; filter: hue-rotate({$comment->getColorRotation()}deg);" />
+                        </td>
+                    {/if}
+                    <td width="645" valign="top">
+                        {if $comment->getUType() === 0}
+                            <div class="post-author">
+                                <a href="{$comment->getUser()->getURL()}"><b>{$comment->getUser()->getFullName()}</b></a>
+                                {($comment->getUser()->isFemale() ? tr("post_writes_f") : tr("post_writes_m"))}<br />
+                                <a href="#" class="date">{$comment->getTime()}</a>
+                            </div>
+                        {elseif ($comment->getUType() === 1)}
+                            <div class="post-author">
+                                <a><b>{$comment->getAuthorName()}</b></a>
+                                {_post_writes_m}<br />
+                                <a href="#" class="date">{$comment->getTime()}</a>
+                            </div>
                         {/if}
-                      {/if}
-                    </strong>
-                    <div id="markLinks-{$comment->getId()}">
-                        {if is_null($isLikedByUser)}
-                            <a onClick="markAnswer({$comment->getId()}, 1)">{_support_rate_good_answer}</a>
-                            |
-                            <a onClick="markAnswer({$comment->getId()}, 2)">{_support_rate_bad_answer}</a>
-                        {/if}
-                    </div>
-                  {/if}
-                 </div>
-            </div>
-         </td>
-      </tr>
-   </tbody>
-</table>
-{/if}
+                        <div class="post-content" id="{$comment->getId()}">
+                            <div class="text" id="text{$comment->getId()}">
+                                {if $comment->getUType() === 1 && !$printedSupportGreeting}
+                                    {var $printedSupportGreeting = true}
+                                    {tr("support_greeting_hi", $ticket->getUser()->getFullName())}
+                                    <br />
+                                    <br />
+                                    
+                                    {$comment->getText()|noescape}
+                                    <br />
+                                    <br />
+                                    
+                                    {tr("support_greeting_regards", OPENVK_ROOT_CONF["openvk"]["appearance"]["name"])|noescape}
+                                {else}
+                                    {$comment->getText()|noescape}
+                                {/if}
+                            </div>
+
+                            {if $comment->getUType() === 0}
+                                <div class="post-menu">
+                                    <a href="/support/comment/{$comment->getId()}/delete?hash={urlencode($csrfToken)}">{_delete}</a>
+                                </div>
+                            {/if}
+
+                            {if $comment->getUType() === 1}
+                                <div class="post-menu">
+                                    {var isLikedByUser = $comment->isLikedByUser()}
+                                    <strong id="markText-{$comment->getId()}">
+                                    {if !is_null($isLikedByUser)}
+                                        {if $comment->isLikedByUser()}
+                                            {_support_good_answer_user}
+                                        {else}
+                                            {_support_bad_answer_user}
+                                        {/if}
+                                    {/if}
+                                    </strong>
+                                    <div id="markLinks-{$comment->getId()}">
+                                        {if is_null($isLikedByUser)}
+                                            <a onClick="markAnswer({$comment->getId()}, 1)">{_support_rate_good_answer}</a>
+                                            |
+                                            <a onClick="markAnswer({$comment->getId()}, 2)">{_support_rate_bad_answer}</a>
+                                        {/if}
+                                    </div>
+                                </div>
+                            {/if}
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    {/if}
 {/block}

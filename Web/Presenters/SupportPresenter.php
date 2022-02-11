@@ -6,7 +6,7 @@ use openvk\Web\Models\Entities\TicketComment;
 use openvk\Web\Models\Repositories\TicketComments;
 use openvk\Web\Util\Telegram;
 use Chandler\Session\Session;
-use Netcarver\Textile;
+use Parsedown;
 
 final class SupportPresenter extends OpenVKPresenter
 {
@@ -28,17 +28,19 @@ final class SupportPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->template->mode = in_array($this->queryParam("act"), ["faq", "new", "list"]) ? $this->queryParam("act") : "faq";
 
-        $tickets = $this->tickets->getTicketsByuId($this->user->id);
-        if($tickets)
-            $this->template->tickets = $tickets;
+        $this->template->count = $this->tickets->getTicketsCountByUserId($this->user->id);
+        if($this->template->mode === "list") {
+            $this->template->page    = (int) ($this->queryParam("p") ?? 1);
+            $this->template->tickets = $this->tickets->getTicketsByUserId($this->user->id, $this->template->page);
+        }
+
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             if(!empty($this->postParam("name")) && !empty($this->postParam("text"))) {
-                $this->assertNoCSRF();
                 $this->willExecuteWriteAction();
 
                 $ticket = new Ticket;
                 $ticket->setType(0);
-                $ticket->setUser_id($this->user->id);
+                $ticket->setUser_Id($this->user->id);
                 $ticket->setName($this->postParam("name"));
                 $ticket->setText($this->postParam("text"));
                 $ticket->setcreated(time());
@@ -111,11 +113,11 @@ final class SupportPresenter extends OpenVKPresenter
             if(!$ticket || $ticket->isDeleted() != 0 || $ticket->getUserId() !== $this->user->id && !$this->hasPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0)) {
                 $this->notFound();
             } else {
-                header("HTTP/1.1 302 Found");
                 if($ticket->getUserId() !== $this->user->id && $this->hasPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0))
-                    header("Location: /support/tickets");
+                    $this->redirect("/support/tickets");
                 else
-                    header("Location: /support");
+                    $this->redirect("/support");
+
                 $ticket->delete();
             }
         }
@@ -135,8 +137,7 @@ final class SupportPresenter extends OpenVKPresenter
             if(!empty($this->postParam("text"))) {
                 $ticket->setType(0);
                 $ticket->save();
-                
-                $this->assertNoCSRF();
+
                 $this->willExecuteWriteAction();
                 
                 $comment = new TicketComment;
@@ -182,13 +183,12 @@ final class SupportPresenter extends OpenVKPresenter
             if(!empty($this->postParam("text")) && !empty($this->postParam("status"))) {
                 $ticket->setType($this->postParam("status"));
                 $ticket->save();
-                
-                $this->assertNoCSRF();
+
                 $comment = new TicketComment;
                 $comment->setUser_id($this->user->id);
                 $comment->setUser_type(1);
                 $comment->setText($this->postParam("text"));
-                $comment->setTicket_id($id);
+                $comment->setTicket_Id($id);
                 $comment->setCreated(time());
                 $comment->save();
             } elseif(empty($this->postParam("text"))) {
@@ -204,10 +204,10 @@ final class SupportPresenter extends OpenVKPresenter
     {
         $lang = Session::i()->get("lang", "ru");
         $base = OPENVK_ROOT . "/data/knowledgebase";
-        if(file_exists("$base/$name.$lang.textile"))
-            $file = "$base/$name.$lang.textile";
-        else if(file_exists("$base/$name.textile"))
-            $file = "$base/$name.textile";
+        if(file_exists("$base/$name.$lang.md"))
+            $file = "$base/$name.$lang.md";
+        else if(file_exists("$base/$name.md"))
+            $file = "$base/$name.md";
         else
             $this->notFound();
         
@@ -219,11 +219,34 @@ final class SupportPresenter extends OpenVKPresenter
             array_shift($lines);
         }
         
-        $content = implode("\r\n", $lines);
+        $content = implode($lines);
         
-        $parser = new Textile\Parser;
+        $parser = new Parsedown();
         $this->template->heading = $heading;
-        $this->template->content = $parser->parse($content);
+        $this->template->content = $parser->text($content);
+    }
+
+    function renderDeleteComment(int $id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->assertNoCSRF();
+
+        $comment = $this->comments->get($id);
+        if(is_null($comment))
+            $this->notFound();
+
+        $ticket = $comment->getTicket();
+
+        if($ticket->isDeleted())
+            $this->notFound();
+
+        if(!($ticket->getUserId() === $this->user->id && $comment->getUType() === 0))
+            $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+
+        $this->willExecuteWriteAction();
+        $comment->delete();
+
+        $this->flashFail("succ", tr("ticket_changed"), tr("ticket_changed_comment"));
     }
 
     function renderRateAnswer(int $id, int $mark): void

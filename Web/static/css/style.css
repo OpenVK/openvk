@@ -214,7 +214,7 @@ a {
 }
 
 .page_yellowheader a {
-    color: #C8BF85;
+    color: #696029;
 }
 
 .page_content {
@@ -563,6 +563,7 @@ input[type="text"], input[type="password"], input[type~="text"], input[type~="pa
     font-size: 11px;
     font-family: tahoma, verdana, arial, sans-serif;
     width: 100%;
+    box-sizing: border-box;
 }
 
 h4 {
@@ -794,9 +795,8 @@ table.User {
 
 .tabs {
     border-bottom: 1px solid #707070;
-    margin-left: -10px;
-    margin-right: -6px;
-	width: 627px;
+    margin-right: -12px;
+    margin-left: -12px;
 }
 
 #activetabs {
@@ -889,7 +889,6 @@ table.User {
     display: flex;
     padding: 8px;
     cursor: pointer;
-    width: 611px;
     margin-left: 1px;
     border-bottom: 1px solid #d6d6d6;
 }
@@ -923,10 +922,9 @@ table.User {
 }
 
 .crp-entry--message.unread {
-    background-color: #dcdcdc;
+    background-color: #ededed;
     padding: 5px;
     width: 346px;
-    border-radius: 3px;
 }
 
 .messenger-app--messages---message.unread {
@@ -945,8 +943,6 @@ table.User {
 }
 
 .messenger-app--messages---message.unread:last-of-type {
-    border-bottom-left-radius: 3px;
-    border-bottom-right-radius: 3px;
     padding-bottom: 5px;
     margin-bottom: 1.2rem;
 }
@@ -1153,6 +1149,7 @@ textarea {
     width: 100%;
     padding: 4px;
     resize: none;
+    box-sizing: border-box;
 }
 
 #faqhead {
@@ -1584,11 +1581,10 @@ body.scrolled .toTop:hover {
 }
 
 .postFeedWrapper {
-    margin: -10px;
-    width: 611px;
     padding: 4px 8px;
     background-color: rgb(240, 240, 240);
     border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
 }
 
 .user-alert {
@@ -1788,4 +1784,105 @@ body.scrolled .toTop:hover {
 
 .hover-box:hover {
     background-color: #C0CAD5;
+}
+
+.summaryBar {
+    border-bottom: 1px solid #DAE2E8;
+    clear: both;
+    padding: 11px 10px;
+    color: black;
+    font-weight: normal;
+    line-height: normal;
+    margin-left: -12px;
+    margin-right: -12px;
+}
+
+.summaryBar .summary {
+    color: #45688E;
+    font-weight: bold;
+    padding-top: 3px;
+    padding-bottom: 4px;
+    display: inline-block;
+}
+
+.note_header {
+    background: #f7f7f7;
+    border-bottom: solid 1px #DAE1E8;
+    border-top: solid 1px #45688E;
+    padding: 4px 6px 5px 6px;
+}
+
+.note_header .note_title {
+    color: #45688E;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 15px;
+    margin: 0;
+    padding: 0 0 1px 0;
+}
+
+.note_footer {
+    border-top: 1px solid #ddd;
+    clear: both;
+    margin-top: 10px;
+    padding: 0px 2px 0px 6px;
+}
+
+.comments_count {
+    padding: 5px 0px 0px 0px;
+}
+
+.groups_options {
+    padding: 10px 20px 20px;
+    border-top: #DEDEDE solid 1px;
+    margin-top: 12px;
+    margin-left: -12px;
+    margin-right: -12px;
+}
+
+#gp_container {
+    display: inline-block;
+}
+
+#gp_container span {
+    display: block;
+    margin: 10px 0 15px;
+}
+
+#gp_container h4 {
+    font-size: 11px;
+}
+
+.container_gray .content:last-child {
+    margin-bottom: 0;
+}
+
+.group_info {
+    padding: 0 0 0 5px !important;
+}
+
+.group_info .label {
+    width: auto !important;
+    padding-right: 5px;
+}
+
+table td[width="120"] {
+    text-align: right;
+}
+
+.profile_thumb {
+    padding: 0px 10px 0px 0px;
+    width: 50px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.border-block {
+    box-shadow: inset 0px 0 0px 1px #b6bfca, inset 0px 0 0px 10px #d8dfe7;
+    width: 300px;
+    padding: 20px;
+}
+
+.center {
+    margin: 0 auto;
 }

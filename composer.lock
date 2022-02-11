@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "770bb7b5fdc8074bb03f5c2a762914fe",
+    "content-hash": "2c94032cae911ca438bbcfc46c346961",
     "packages": [
         {
             "name": "al/emoji-detector",
@@ -53,17 +53,66 @@
             "time": "2020-06-26T09:10:17+00:00"
         },
         {
+            "name": "bhaktaraz/php-rss-generator",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/bhaktaraz/php-rss-generator.git",
+                "reference": "53cf11db18d87e65973e6df453fb8c1382e5a3bd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/bhaktaraz/php-rss-generator/zipball/53cf11db18d87e65973e6df453fb8c1382e5a3bd",
+                "reference": "53cf11db18d87e65973e6df453fb8c1382e5a3bd",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Bhaktaraz\\RSSGenerator\\": "Source/Bhaktaraz/RSSGenerator/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Bhaktaraz Bhatta",
+                    "email": "bhattabhakta@gmail.com"
+                }
+            ],
+            "description": "Simple RSS generator library for PHP 5.5 or later.",
+            "homepage": "https://github.com/bhaktaraz/php-rss-generator",
+            "keywords": [
+                "Facebook product feed generator",
+                "feed",
+                "generator",
+                "rss",
+                "writer"
+            ],
+            "support": {
+                "issues": "https://github.com/bhaktaraz/php-rss-generator/issues",
+                "source": "https://github.com/bhaktaraz/php-rss-generator/tree/master"
+            },
+            "time": "2021-03-15T10:59:47+00:00"
+        },
+        {
             "name": "chillerlan/php-qrcode",
             "version": "dev-main",
             "source": {
                 "type": "git",
                 "url": "https://github.com/chillerlan/php-qrcode.git",
-                "reference": "0c1f322476a090b945108e6df960ee381a8c352e"
+                "reference": "06730361508c283a02bbf9cbc9e4b55e7b3bc88b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/chillerlan/php-qrcode/zipball/0c1f322476a090b945108e6df960ee381a8c352e",
-                "reference": "0c1f322476a090b945108e6df960ee381a8c352e",
+                "url": "https://api.github.com/repos/chillerlan/php-qrcode/zipball/06730361508c283a02bbf9cbc9e4b55e7b3bc88b",
+                "reference": "06730361508c283a02bbf9cbc9e4b55e7b3bc88b",
                 "shasum": ""
             },
             "require": {
@@ -138,7 +187,7 @@
                     "type": "ko_fi"
                 }
             ],
-            "time": "2021-12-12T23:34:10+00:00"
+            "time": "2021-12-14T15:11:20+00:00"
         },
         {
             "name": "chillerlan/php-settings-container",
@@ -204,24 +253,72 @@
             "time": "2021-09-06T15:17:01+00:00"
         },
         {
+            "name": "erusev/parsedown",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/erusev/parsedown.git",
+                "reference": "6598f3860c2698fe2f0f1bc98212fc01d0a1893c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/erusev/parsedown/zipball/6598f3860c2698fe2f0f1bc98212fc01d0a1893c",
+                "reference": "6598f3860c2698fe2f0f1bc98212fc01d0a1893c",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^4.8.35"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Parsedown": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Emanuil Rusev",
+                    "email": "hello@erusev.com",
+                    "homepage": "http://erusev.com"
+                }
+            ],
+            "description": "Parser for Markdown.",
+            "homepage": "http://parsedown.org",
+            "keywords": [
+                "markdown",
+                "parser"
+            ],
+            "support": {
+                "issues": "https://github.com/erusev/parsedown/issues",
+                "source": "https://github.com/erusev/parsedown/tree/master"
+            },
+            "time": "2020-08-09T14:12:21+00:00"
+        },
+        {
             "name": "ezyang/htmlpurifier",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ezyang/htmlpurifier.git",
-                "reference": "996eaf43310edf1d908bc0030a18b37b8cf6eefd"
+                "reference": "12ab42bd6e742c70c0a52f7b82477fcd44e64b75"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/996eaf43310edf1d908bc0030a18b37b8cf6eefd",
-                "reference": "996eaf43310edf1d908bc0030a18b37b8cf6eefd",
+                "url": "https://api.github.com/repos/ezyang/htmlpurifier/zipball/12ab42bd6e742c70c0a52f7b82477fcd44e64b75",
+                "reference": "12ab42bd6e742c70c0a52f7b82477fcd44e64b75",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2"
-            },
-            "require-dev": {
-                "simpletest/simpletest": "dev-master#72de02a7b80c6bb8864ef9bf66d41d2f58f826bd"
             },
             "default-branch": true,
             "type": "library",
@@ -254,9 +351,9 @@
             ],
             "support": {
                 "issues": "https://github.com/ezyang/htmlpurifier/issues",
-                "source": "https://github.com/ezyang/htmlpurifier/tree/master"
+                "source": "https://github.com/ezyang/htmlpurifier/tree/v4.14.0"
             },
-            "time": "2021-09-07T18:16:55+00:00"
+            "time": "2021-12-25T01:21:49+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -357,12 +454,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "136a635e2b4a49b9d79e9c8fee267ffb257fdba0"
+                "reference": "fe752aedc9fd8fcca3fe7ad05d419d32998a06da"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/136a635e2b4a49b9d79e9c8fee267ffb257fdba0",
-                "reference": "136a635e2b4a49b9d79e9c8fee267ffb257fdba0",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/fe752aedc9fd8fcca3fe7ad05d419d32998a06da",
+                "reference": "fe752aedc9fd8fcca3fe7ad05d419d32998a06da",
                 "shasum": ""
             },
             "require": {
@@ -418,7 +515,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/promises/issues",
-                "source": "https://github.com/guzzle/promises/tree/1.5.0"
+                "source": "https://github.com/guzzle/promises/tree/1.5.1"
             },
             "funding": [
                 {
@@ -434,7 +531,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2021-10-07T13:05:22+00:00"
+            "time": "2021-10-22T20:56:57+00:00"
         },
         {
             "name": "guzzlehttp/psr7",
@@ -472,12 +569,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "GuzzleHttp\\Psr7\\": "src/"
-                },
                 "files": [
                     "src/functions_include.php"
-                ]
+                ],
+                "psr-4": {
+                    "GuzzleHttp\\Psr7\\": "src/"
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -552,12 +649,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/JamesHeinrich/getID3.git",
-                "reference": "a440175a329a83dbfad991e67b5e5f3a1ff51bd9"
+                "reference": "2279f7caca2d761dfc580dd02b401e7a1ff69dfe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JamesHeinrich/getID3/zipball/a440175a329a83dbfad991e67b5e5f3a1ff51bd9",
-                "reference": "a440175a329a83dbfad991e67b5e5f3a1ff51bd9",
+                "url": "https://api.github.com/repos/JamesHeinrich/getID3/zipball/2279f7caca2d761dfc580dd02b401e7a1ff69dfe",
+                "reference": "2279f7caca2d761dfc580dd02b401e7a1ff69dfe",
                 "shasum": ""
             },
             "require": {
@@ -612,7 +709,7 @@
                 "issues": "https://github.com/JamesHeinrich/getID3/issues",
                 "source": "https://github.com/JamesHeinrich/getID3/tree/master"
             },
-            "time": "2021-10-07T12:08:13+00:00"
+            "time": "2022-02-03T17:07:51+00:00"
         },
         {
             "name": "komeiji-satori/curl",
@@ -705,66 +802,6 @@
                 "source": "https://github.com/lfkeitel/php-totp/tree/v1.0.0"
             },
             "time": "2017-02-06T17:46:14+00:00"
-        },
-        {
-            "name": "netcarver/textile",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/textile/php-textile.git",
-                "reference": "d64e1f8424afd600cc2732f4f99f262aef55fca2"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/textile/php-textile/zipball/d64e1f8424afd600cc2732f4f99f262aef55fca2",
-                "reference": "d64e1f8424afd600cc2732f4f99f262aef55fca2",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "php-coveralls/php-coveralls": "2.1.*",
-                "phpunit/phpunit": "5.7.*",
-                "squizlabs/php_codesniffer": "3.*",
-                "symfony/yaml": "2.4.*"
-            },
-            "default-branch": true,
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "3.7-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Netcarver\\Textile\\": "src/Netcarver/Textile/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "description": "Textile markup language parser",
-            "homepage": "https://github.com/textile/php-textile",
-            "keywords": [
-                "document",
-                "format",
-                "html",
-                "language",
-                "markup",
-                "parser",
-                "php-textile",
-                "plaintext",
-                "textile"
-            ],
-            "support": {
-                "irc": "irc://irc.freenode.net/textile",
-                "issues": "https://github.com/textile/php-textile/issues",
-                "source": "https://github.com/textile/php-textile",
-                "wiki": "https://github.com/textile/php-textile/wiki"
-            },
-            "time": "2020-10-01T18:21:03+00:00"
         },
         {
             "name": "psr/cache",
@@ -919,12 +956,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/rybakit/msgpack.php.git",
-                "reference": "66ca2c3948d72068ca0c8b9a4f599f822a7fe2c3"
+                "reference": "1e9eda511520e7494c241622671816a83a76e149"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rybakit/msgpack.php/zipball/66ca2c3948d72068ca0c8b9a4f599f822a7fe2c3",
-                "reference": "66ca2c3948d72068ca0c8b9a4f599f822a7fe2c3",
+                "url": "https://api.github.com/repos/rybakit/msgpack.php/zipball/1e9eda511520e7494c241622671816a83a76e149",
+                "reference": "1e9eda511520e7494c241622671816a83a76e149",
                 "shasum": ""
             },
             "require": {
@@ -933,7 +970,8 @@
             "require-dev": {
                 "ext-gmp": "*",
                 "friendsofphp/php-cs-fixer": "^2.14",
-                "phpunit/phpunit": "^7.1|^8|^9"
+                "phpunit/phpunit": "^7.1|^8|^9",
+                "vimeo/psalm": "^3.9|^4"
             },
             "suggest": {
                 "ext-decimal": "For converting overflowed integers to Decimal objects",
@@ -973,7 +1011,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-07-08T19:01:22+00:00"
+            "time": "2021-12-17T22:02:51+00:00"
         },
         {
             "name": "scssphp/scssphp",
@@ -981,12 +1019,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/scssphp/scssphp.git",
-                "reference": "fd4fc9edc49f5a4465e11e03b7d6198404adbc22"
+                "reference": "c800975c7408e923309fbb51346b84e83dd05700"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/scssphp/scssphp/zipball/fd4fc9edc49f5a4465e11e03b7d6198404adbc22",
-                "reference": "fd4fc9edc49f5a4465e11e03b7d6198404adbc22",
+                "url": "https://api.github.com/repos/scssphp/scssphp/zipball/c800975c7408e923309fbb51346b84e83dd05700",
+                "reference": "c800975c7408e923309fbb51346b84e83dd05700",
                 "shasum": ""
             },
             "require": {
@@ -1002,7 +1040,7 @@
                 "symfony/phpunit-bridge": "^5.1",
                 "thoughtbot/bourbon": "^7.0",
                 "twbs/bootstrap": "~5.0",
-                "twbs/bootstrap4": "4.6.0",
+                "twbs/bootstrap4": "4.6.1",
                 "zurb/foundation": "~6.5"
             },
             "suggest": {
@@ -1045,11 +1083,11 @@
                 "issues": "https://github.com/scssphp/scssphp/issues",
                 "source": "https://github.com/scssphp/scssphp/tree/master"
             },
-            "time": "2021-10-02T12:51:54+00:00"
+            "time": "2022-01-06T19:41:32+00:00"
         },
         {
             "name": "symfony/polyfill-intl-idn",
-            "version": "dev-main",
+            "version": "v1.24.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-idn.git",
@@ -1069,7 +1107,6 @@
             "suggest": {
                 "ext-intl": "For best performance"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1081,12 +1118,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Symfony\\Polyfill\\Intl\\Idn\\": ""
-                },
                 "files": [
                     "bootstrap.php"
-                ]
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Intl\\Idn\\": ""
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -1117,7 +1154,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-intl-idn/tree/main"
+                "source": "https://github.com/symfony/polyfill-intl-idn/tree/v1.24.0"
             },
             "funding": [
                 {
@@ -1137,7 +1174,7 @@
         },
         {
             "name": "symfony/polyfill-intl-normalizer",
-            "version": "dev-main",
+            "version": "v1.24.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-intl-normalizer.git",
@@ -1155,7 +1192,6 @@
             "suggest": {
                 "ext-intl": "For best performance"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1167,12 +1203,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Symfony\\Polyfill\\Intl\\Normalizer\\": ""
-                },
                 "files": [
                     "bootstrap.php"
                 ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Intl\\Normalizer\\": ""
+                },
                 "classmap": [
                     "Resources/stubs"
                 ]
@@ -1202,7 +1238,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.23.0"
+                "source": "https://github.com/symfony/polyfill-intl-normalizer/tree/v1.24.0"
             },
             "funding": [
                 {
@@ -1222,7 +1258,7 @@
         },
         {
             "name": "symfony/polyfill-php72",
-            "version": "dev-main",
+            "version": "v1.24.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/polyfill-php72.git",
@@ -1237,7 +1273,6 @@
             "require": {
                 "php": ">=7.1"
             },
-            "default-branch": true,
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1249,12 +1284,12 @@
                 }
             },
             "autoload": {
-                "psr-4": {
-                    "Symfony\\Polyfill\\Php72\\": ""
-                },
                 "files": [
                     "bootstrap.php"
-                ]
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php72\\": ""
+                }
             },
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -1279,7 +1314,7 @@
                 "shim"
             ],
             "support": {
-                "source": "https://github.com/symfony/polyfill-php72/tree/v1.23.0"
+                "source": "https://github.com/symfony/polyfill-php72/tree/v1.24.0"
             },
             "funding": [
                 {
@@ -1520,17 +1555,18 @@
         "james-heinrich/getid3": 20,
         "rybakit/msgpack": 20,
         "wapmorgan/binary-stream": 20,
-        "netcarver/textile": 20,
         "al/emoji-detector": 20,
         "ezyang/htmlpurifier": 20,
         "scssphp/scssphp": 20,
         "lfkeitel/phptotp": 20,
         "chillerlan/php-qrcode": 20,
-        "vearutop/php-obscene-censor-rus": 20
+        "vearutop/php-obscene-censor-rus": 20,
+        "erusev/parsedown": 20,
+        "bhaktaraz/php-rss-generator": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.0.0"
 }

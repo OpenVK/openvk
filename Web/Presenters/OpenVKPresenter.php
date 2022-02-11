@@ -8,11 +8,12 @@ use Latte\Engine as TemplatingEngine;
 use openvk\Web\Models\Entities\IP;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets};
-use Nette\InvalidStateException as ISE;
+use WhichBrowser;
 
 abstract class OpenVKPresenter extends SimplePresenter
 {
     protected $banTolerant   = false;
+    protected $activationTolerant = false;
     protected $errorTemplate = "@error";
     protected $user = NULL;
     
@@ -35,9 +36,12 @@ abstract class OpenVKPresenter extends SimplePresenter
         ]));
     }
 
-    protected function setTempTheme(string $theme): void
+    protected function setSessionTheme(string $theme, bool $once = false): void
     {
-        Session::i()->set("_tempTheme", $theme);
+        if($once)
+            Session::i()->set("_tempTheme", $theme);
+        else
+            Session::i()->set("_sessionTheme", $theme);
     }
     
     protected function flashFail(string $type, string $title, ?string $message = NULL, ?int $code = NULL, bool $json = false): void
@@ -198,6 +202,7 @@ abstract class OpenVKPresenter extends SimplePresenter
         $user = Authenticator::i()->getUser();
         
         $this->template->isXmas = intval(date('d')) >= 1 && date('m') == 12 || intval(date('d')) <= 15 && date('m') == 1 ? true : false;
+        $this->template->isTimezoned = Session::i()->get("_timezoneOffset");
         
         if(!is_null($user)) {
             $this->user = (object) [];
@@ -206,12 +211,52 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->user->id              = $this->user->identity->getId();
             $this->template->thisUser    = $this->user->identity;
             $this->template->userTainted = $user->isTainted();
+
+            if($this->user->identity->isDeleted()) {
+                /*
+                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣴⠶⠶⣶⠶⠶⠶⠶⠶⠶⠶⠶⠶⢶⠶⠶⠶⠤⠤⠤⠤⣄⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                ⠀⠀⠀⠀⠀⠀⠀⠀⣠⡾⠋⠀⠀⠊⠀⠀⠀⠀⠀⠀⠀⠀⠒⠒⠒⠀⠀⠀⠀⠤⢤⣤⣄⠉⠉⠛⠛⠷⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+                ⠀⠀⠀⠀⠀⠀⠀⣰⠟⠀⠀⠀⠀⠀⠐⠋⢑⣤⣶⣶⣤⡢⡀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣄⡂⠀⠀⠶⢄⠙⢷⣤⠀⠀⠀⠀⠀⠀⠀⠀
+                ⠀⠀⠀⠀⠀⠀⣸⡿⠚⠉⡀⠀⠀⠀⠀⢰⣿⣿⣿⣿⣿⣿⡄⠀⠀⠀⢢⠀⠀⡀⣰⣿⣿⣿⣿⣦⡀⠀⠀⠡⡀⢹⡆⠀⠀⠀⠀⠀⠀⠀
+                ⠀⠀⠀⠀⢀⣴⠏⠀⣀⣀⣀⡤⢤⣄⣠⣿⣿⣿⣿⣻⣿⣿⣷⠀⢋⣾⠈⠙⣶⠒⢿⣿⣿⣿⣿⡿⠟⠃⠀⡀⠡⠼⣧⡀⠀⠀⠀⠀⠀⠀
+                ⠀⠀⢀⣴⣿⢃⡴⢊⢽⣶⣤⣀⠀⠊⠉⠉⡛⢿⣿⣿⣿⠿⠋⢀⡀⠁⠀⠀⢸⣁⣀⣉⣉⣉⡉⠀⠩⡡⠀⣩⣦⠀⠈⠻⣦⡀⠀⠀⠀⠀
+                ⠀⢠⡟⢡⠇⡞⢀⠆⠀⢻⣿⣿⣷⣄⠀⢀⠈⠂⠈⢁⡤⠚⡟⠉⠀⣀⣀⠀⠈⠳⣍⠓⢆⢀⡠⢀⣨⣴⣿⣿⡏⢀⡆⠀⢸⡇⠀⠀⠀⠀
+                ⠀⣾⠁⢸⠀⠀⢸⠀⠀⠀⠹⣿⣿⣿⣿⣶⣬⣦⣤⡈⠀⠀⠇⠀⠛⠉⣩⣤⣤⣤⣿⣤⣤⣴⣾⣿⣿⣿⣿⣿⣧⠞⠀⠀⢸⡇⠀⠀⠀⠀
+                ⠀⢹⣆⠸⠀⠀⢸⠀⠀⠀⠀⠘⢿⣿⣿⣿⣿⣿⣿⣟⣛⠛⠛⣛⡛⠛⠛⣛⣋⡉⠉⣡⠶⢾⣿⣿⣿⣿⣿⣿⡇⠀⠀⢀⣾⠃⠀⠀⠀⠀
+                ⠀⠀⠻⣆⡀⠀⠈⢂⠀⠀⠀⠠⡈⢻⣿⣿⣿⣿⡟⠁⠈⢧⡼⠉⠙⣆⡞⠁⠈⢹⣴⠃⠀⢸⣿⣿⣿⣿⣿⣿⠃⠀⡆⣾⠃⠀⠀⠀⠀⠀
+                ⠀⠀⠀⠈⢻⣇⠀⠀⠀⠀⠀⠀⢡⠀⠹⣿⣿⣿⣷⡀⠀⣸⡇⠀⠀⣿⠁⠀⠀⠘⣿⠀⠀⠘⣿⣿⣿⣿⣿⣿⠀⠀⣿⡇⠀⠀⠀⠀⠀⠀
+                ⠀⠀⠀⠀⠀⠹⣇⠀⠠⠀⠀⠀⠀⠡⠐⢬⡻⣿⣿⣿⣿⣿⣷⣶⣶⣿⣦⣤⣤⣤⣿⣦⣶⣿⣿⣿⣿⣿⣿⣿⠀⠀⣿⡇⠀⠀⠀⠀⠀⠀
+                ⠀⠀⠀⠀⠀⠀⠹⣧⡀⠡⡀⠀⠀⠀⠑⠄⠙⢎⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⠀⢿⡇⠀⠀⠀⠀⠀⠀
+                ⠀⠀⠀⠀⠀⠀⠀⠈⠳⣤⡐⡄⠀⠀⠀⠈⠂⠀⠱⣌⠻⣿⣿⣿⣿⣿⣿⣿⠿⣿⠟⢻⡏⢻⣿⣿⣿⣿⣿⣿⣿⠀⢸⡇⠀⠀⠀⠀⠀⠀
+                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⢮⣦⡀⠂⠀⢀⠀⠀⠈⠳⣈⠻⣿⣿⣿⡇⠘⡄⢸⠀⠀⣇⠀⣻⣿⣿⣿⣿⣿⡏⠀⠸⡇⠀⠀⠀⠀⠀⠀
+                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⢶⣤⣄⡑⠄⠀⠀⠈⠑⠢⠙⠻⢷⣶⣵⣞⣑⣒⣋⣉⣁⣻⣿⠿⠟⠱⠃⡸⠀⣧⠀⠀⠀⠀⠀⠀
+                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠻⣷⣄⡀⠐⠢⣄⣀⡀⠀⠉⠉⠉⠉⠛⠙⠭⠭⠄⠒⠈⠀⠐⠁⢀⣿⠀⠀⠀⠀⠀⠀
+                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠷⢦⣤⣤⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣒⡠⠄⣠⡾⠃⠀⠀⠀⠀⠀⠀
+                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠙⠛⠷⠶⣦⣤⣭⣤⣬⣭⣭⣴⠶⠛⠉⠀⠀⠀⠀⠀⠀⠀⠀
+                */
+                Authenticator::i()->logout();
+                Session::i()->set("_su", NULL);
+                $this->flashFail("err", tr("error"), tr("profile_not_found"));
+                $this->redirect("/", static::REDIRECT_TEMPORARY);
+            }
             
             if($this->user->identity->isBanned() && !$this->banTolerant) {
                 header("HTTP/1.1 403 Forbidden");
                 $this->getTemplatingEngine()->render(__DIR__ . "/templates/@banned.xml", [
                     "thisUser" => $this->user->identity,
                     "csrfToken" => $GLOBALS["csrfToken"],
+                    "isTimezoned" => Session::i()->get("_timezoneOffset"),
+                ]);
+                exit;
+            }
+
+            // ето для емейл уже надо (и по хорошему надо бы избавится от повторяющегося кода мда)
+            if(!$this->user->identity->isActivated() && !$this->activationTolerant) {
+                header("HTTP/1.1 403 Forbidden");
+                $this->getTemplatingEngine()->render(__DIR__ . "/templates/@email.xml", [
+                    "thisUser" => $this->user->identity,
+                    "csrfToken" => $GLOBALS["csrfToken"],
+                    "isTimezoned" => Session::i()->get("_timezoneOffset"),
                 ]);
                 exit;
             }
@@ -221,7 +266,7 @@ abstract class OpenVKPresenter extends SimplePresenter
                 $this->user->identity->save();
             }
             
-            $this->template->ticketAnsweredCount = (new Tickets)->getTicketsCountByuId($this->user->id, 1);
+            $this->template->ticketAnsweredCount = (new Tickets)->getTicketsCountByUserId($this->user->id, 1);
             if($user->can("write")->model("openvk\Web\Models\Entities\TicketReply")->whichBelongsTo(0))
                 $this->template->helpdeskTicketNotAnsweredCount = (new Tickets)->getTicketCount(0);
         }
@@ -235,10 +280,17 @@ abstract class OpenVKPresenter extends SimplePresenter
     {
         parent::onBeforeRender();
         
+        $whichbrowser = new WhichBrowser\Parser(getallheaders());
+        $mobiletheme = OPENVK_ROOT_CONF["openvk"]["preferences"]["defaultMobileTheme"];
+        if($mobiletheme && $whichbrowser->isType('mobile') && Session::i()->get("_tempTheme") == null)
+            $this->setSessionTheme($mobiletheme);
+
         $theme = NULL;
         if(Session::i()->get("_tempTheme")) {
             $theme = Themepacks::i()[Session::i()->get("_tempTheme", "ovk")];
             Session::i()->set("_tempTheme", NULL);
+        } else if(Session::i()->get("_sessionTheme")) {
+            $theme = Themepacks::i()[Session::i()->get("_sessionTheme", "ovk")];
         } else if($this->requestParam("themePreview")) {
             $theme = Themepacks::i()[$this->requestParam("themePreview")];
         } else if($this->user->identity !== null && $this->user->identity->getTheme()) {

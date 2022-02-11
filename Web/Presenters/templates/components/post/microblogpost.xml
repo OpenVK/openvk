@@ -8,15 +8,17 @@
     <tbody>
         <tr>
             <td width="54" valign="top">
-                <img
-                    src="{$author->getAvatarURL()}"
-                    width="{ifset $compact}25{else}50{/ifset}" 
-                    {ifset $compact}class="cCompactAvatars"{/ifset} />
-                        {if !$post->isPostedOnBehalfOfGroup() && !$compact}
-                            <span n:if="$author->isOnline()" class="post-online">
-                                {_online}
-                            </span>
-                {/if}
+                <a href="{$author->getURL()}">
+                    <img
+                        src="{$author->getAvatarURL()}"
+                        width="{ifset $compact}25{else}50{/ifset}" 
+                        {ifset $compact}class="cCompactAvatars"{/ifset} />
+                            {if !$post->isPostedOnBehalfOfGroup() && !$compact}
+                                <span n:if="$author->isOnline()" class="post-online">
+                                    {_online}
+                                </span>
+                    {/if}
+                </a>
             </td>
             <td width="100%" valign="top">
                 <div class="post-author">
@@ -128,8 +130,9 @@
                             {include "../comment.xml", comment => $comment, $compact => true}
                         {/foreach}
                         <div n:ifset="$thisUser" id="commentTextArea{$commentTextAreaId}" n:attr="style => ($commentsCount == 0 ? 'display: none;')" class="commentsTextFieldWrap">
-                            {var commentsURL = "/al_comments.pl/create/posts/" . $post->getId()}
-                            {include "../textArea.xml", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), post => $post}
+                            {var commentsURL = "/al_comments/create/posts/" . $post->getId()}
+                            {var club = is_null($club) ? ($post->getTargetWall() < 0 ? (new openvk\Web\Models\Repositories\Clubs)->get(abs($post->getTargetWall())) : NULL) : $club}
+                            {include "../textArea.xml", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), post => $post, club => $club}
                         </div>
                     </div>
                 {/if}

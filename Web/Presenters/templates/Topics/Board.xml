@@ -14,8 +14,8 @@
 
 {block tabs}
     <form style="margin-left: 12px;">
-        <input name="query" class="header_search_input" placeholder="{_"header_search"}" value="{$_GET['query'] ?? ''}" style="width: 90%" />
-        <input type="submit" class="button" value="{_"search_button"}" style="width: 7%" />
+        <input name="query" class="header_search_input" placeholder="{_"header_search"}" value="{$_GET['query'] ?? ''}" style="width: 86%" />
+        <input type="submit" class="button" value="{_"search_button"}" style="width: 7.5%" />
     </form>
     
     <p style="margin-left: 15px;">

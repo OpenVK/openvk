@@ -9,6 +9,7 @@ use openvk\Web\Models\Repositories\Albums;
 use openvk\Web\Models\Repositories\Videos;
 use openvk\Web\Models\Repositories\Notes;
 use openvk\Web\Models\Repositories\Vouchers;
+use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
 use openvk\Web\Models\Entities\Notifications\CoinsTransferNotification;
 use Chandler\Security\Authenticator;
@@ -180,10 +181,18 @@ final class UserPresenter extends OpenVKPresenter
             $this->willExecuteWriteAction($_GET['act'] === "status");
             
             if($_GET['act'] === "main" || $_GET['act'] == NULL) {
-                $user->setFirst_Name(empty($this->postParam("first_name")) ? $user->getFirstName() : $this->postParam("first_name"));
-                $user->setLast_Name(empty($this->postParam("last_name")) ? "" : $this->postParam("last_name"));
+                try {
+                    $user->setFirst_Name(empty($this->postParam("first_name")) ? $user->getFirstName() : $this->postParam("first_name"));
+                    $user->setLast_Name(empty($this->postParam("last_name")) ? "" : $this->postParam("last_name"));
+                } catch(InvalidUserNameException $ex) {
+                    $this->flashFail("err", tr("error"), tr("invalid_real_name"));
+                }
+                
                 $user->setPseudo(empty($this->postParam("pseudo")) ? NULL : $this->postParam("pseudo"));
                 $user->setStatus(empty($this->postParam("status")) ? NULL : $this->postParam("status"));
+				$user->setHometown(empty($this->postParam("hometown")) ? NULL : $this->postParam("hometown"));
+                
+
                 if (strtotime($this->postParam("birthday")) < time())
                 $user->setBirthday(strtotime($this->postParam("birthday")));
 
@@ -222,7 +231,7 @@ final class UserPresenter extends OpenVKPresenter
 
                 $user->setCity(empty($this->postParam("city")) ? NULL : $this->postParam("city"));
                 $user->setAddress(empty($this->postParam("address")) ? NULL : $this->postParam("address"));
-                
+				
                 $website = $this->postParam("website") ?? "";
                 if(empty($website))
                     $user->setWebsite(NULL);
@@ -372,6 +381,7 @@ final class UserPresenter extends OpenVKPresenter
                     "friends.read",
                     "friends.add",
                     "wall.write",
+                    "messages.write",
                 ];
                 foreach($settings as $setting) {
                     $input = $this->postParam(str_replace(".", "_", $setting));
@@ -395,8 +405,8 @@ final class UserPresenter extends OpenVKPresenter
             } else if($_GET['act'] === "interface") {
                 if (isset(Themepacks::i()[$this->postParam("style")]) || $this->postParam("style") === Themepacks::DEFAULT_THEME_ID)
 				{
-					$user->setStyle($this->postParam("style"));
-					$this->setTempTheme($this->postParam("style"));
+					if ($this->postParam("theme_for_session") != "1") $user->setStyle($this->postParam("style"));
+					$this->setSessionTheme($this->postParam("style"));
 				}
                 
                 if ($this->postParam("style_avatar") <= 2 && $this->postParam("style_avatar") >= 0)
@@ -412,13 +422,14 @@ final class UserPresenter extends OpenVKPresenter
                     $user->setNsfwTolerance((int) $this->postParam("nsfw"));
             } else if($_GET['act'] === "lMenu") {
                 $settings = [
-                    "menu_bildoj"   => "photos",
-                    "menu_filmetoj" => "videos",
-                    "menu_mesagoj"  => "messages",
-                    "menu_notatoj"  => "notes",
-                    "menu_grupoj"   => "groups",
-                    "menu_novajoj"  => "news",
-                    "menu_ligiloj"  => "links",
+                    "menu_bildoj"    => "photos",
+                    "menu_filmetoj"  => "videos",
+                    "menu_mesagoj"   => "messages",
+                    "menu_notatoj"   => "notes",
+                    "menu_grupoj"    => "groups",
+                    "menu_novajoj"   => "news",
+                    "menu_ligiloj"   => "links",
+                    "menu_standardo" => "poster",
                 ];
                 foreach($settings as $checkbox => $setting)
                     $user->setLeftMenuItemStatus($setting, $this->checkbox($checkbox));
@@ -489,11 +500,16 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->secret = $secret;
         }
 
-        $issuer                 = OPENVK_ROOT_CONF["openvk"]["appearance"]["name"];
-        $email                  = $this->user->identity->getEmail();
-        $this->template->qrCode = substr((new QRCode(new QROptions([
+        // Why are these crutch? For some reason, the QR code is not displayed if you just pass the render output to the view
+
+        $issuer = OPENVK_ROOT_CONF["openvk"]["appearance"]["name"];
+        $email  = $this->user->identity->getEmail();
+        $qrCode = explode("base64,", (new QRCode(new QROptions([
             "imageTransparent" => false
-        ])))->render("otpauth://totp/$issuer:$email?secret=$secret&issuer=$issuer"), 22);
+        ])))->render("otpauth://totp/$issuer:$email?secret=$secret&issuer=$issuer"));
+
+        $this->template->qrCodeType = substr($qrCode[0], 5);
+        $this->template->qrCodeData = $qrCode[1];
     }
 
     function renderDisableTwoFactorAuth(): void

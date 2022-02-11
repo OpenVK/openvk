@@ -6,9 +6,50 @@
 {/block}
 
 {block content}
-    <div class="navigation">
-    {foreach $languages as $language}
-        <a href="language?lg={$language['code']}&hash={urlencode($csrfToken)}" class="link"><img src="/assets/packages/static/openvk/img/flags/{$language['flag']}.gif"> {$language['native_name']}</a>
-    {/foreach}
+    <style>
+        .navigation-lang {
+            display: grid;
+            grid-gap: 10px;
+            grid-template-columns: repeat(5, 1fr);
+        }
+
+        .navigation-lang .link_new {
+            display: inline-block;
+            padding: 25px 25px 20px 25px;
+            text-decoration: none;
+            border-top: 1px solid #fff;
+            color: #000;
+            border-bottom: 0;
+            border-left: 0;
+            border-right: 0;
+            text-align: center;
+            font-size: 11px;
+            cursor: pointer;
+            background: none;
+            margin-bottom: 1px;
+        }
+
+        .navigation-lang .link_new:hover {
+            background-color: #E4E4E4;
+            border-top: 1px solid #CCCCCC;
+        }
+    </style>
+
+    <div class="navigation-lang">
+        {foreach $languages as $language}
+            {var $result = preg_match("/(.+)\((.+)\)/", $language['native_name'], $name)}
+
+            <a href="language?lg={$language['code']}&hash={urlencode($csrfToken)}" class="link_new" rel="nofollow">
+                <center><img src="/assets/packages/static/openvk/img/flags/{$language['flag']}.gif"></center>
+                <br>
+                {if $result == 1}
+                    {$name[1]}
+                    <br>
+                    <small>{$name[2]}</small>
+                {else}
+                    {$language['native_name']}
+                {/if}
+            </a>
+        {/foreach}
     </div>
 {/block}

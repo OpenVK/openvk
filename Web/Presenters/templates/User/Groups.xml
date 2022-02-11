@@ -2,37 +2,45 @@
 {var iterator = $user->getClubs($page, $admin)}
 {var count    = $user->getClubCount($admin)}
 
-{block title}{_"groups"}{/block} 
+{block title}
+    {_groups}
+{/block} 
 
 {block header}
-    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> » {_"groups"}
-    
-    <div n:if="!is_null($thisUser) && $user->getId() === $thisUser->getId()" style="float:right;">
-        <span>
-            <b>
-                <a href="/groups_create">
-                    {_"create_group"}
-                </a>
-            </b>
-        </span>
-    </div>
+    {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+        {_my_groups}
+    {else}
+        <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> » {_groups}
+    {/if}
 {/block}
 
 {* BEGIN ELEMENTS DESCRIPTION *}
 
 {block tabs}
-	{if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
-		<div {if !$admin}id="activetabs"{/if} class="tab">
-			<a {if !$admin}id="act_tab_a"{/if} href="/groups{$user->getId()}">
-				{_groups}
-			</a>
-		</div>
-		<div {if $admin}id="activetabs"{/if} class="tab">
-			<a {if $admin}id="act_tab_a"{/if} href="/groups{$user->getId()}?act=managed">
-				{_managed}
-			</a>
-		</div>
-	{/if}
+    {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+        <div n:attr='id => ($admin ? false : "activetabs")' class="tab">
+            <a n:attr='id => ($admin ? false : "act_tab_a")' href="/groups{$user->getId()}">
+                {_groups}
+            </a>
+        </div>
+        <div n:attr='id => (!$admin ? false : "activetabs")' class="tab">
+            <a n:attr='id => (!$admin ? false : "act_tab_a")' href="/groups{$user->getId()}?act=managed">
+                {_managed}
+            </a>
+        </div>
+    {/if}
+{/block}
+
+{block size}
+    <div n:if="!is_null($thisUser) && $user->getId() === $thisUser->getId()" style="padding-bottom: 0px; border-bottom: 0;" class="summaryBar">
+        <div class="summary">
+            {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+                {tr("groups_list", $thisUser->getClubCount())}
+            {else}
+                {tr("groups", $user->getClubCount())}
+            {/if}
+        </div>
+    </div>
 {/block}
 
 {block link|strip|stripHtml}
@@ -43,8 +51,21 @@
     <img src="{$x->getAvatarUrl()}" width="75" alt="Фотография группы" />
 {/block}
 
-{block name}
-    {$x->getName()}
+{block name}{/block}
+
+{block infoTable}
+    <table id="basicInfo" class="ugc-table group_info" cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+            <tr>
+                <td class="label"><span class="nobold">{_name}: </span></td>
+                <td class="data"><a href="{$x->getURL()}">{$x->getName()}</a></td>
+            </tr>
+            <tr>
+                <td class="label"><span class="nobold">{_size}:</span></td>
+                <td class="data"><a href="/club{$x->getId()}/followers">{tr("participants", $x->getFollowersCount())}</a></td>
+            </tr>
+        </tbody>
+    </table>
 {/block}
 
 {block description}
@@ -53,13 +74,47 @@
 
 {block actions}
     {var clubPinned = $thisUser->isClubPinned($x)}
-    {if $x->canBeModifiedBy($thisUser ?? NULL) && ($clubPinned || $thisUser->getPinnedClubCount() <= 10)}
-        <a class="profile_link" href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
-            {if $clubPinned}
-                {_remove_from_left_menu}
-            {else}
-                {_add_to_left_menu}
-            {/if}
+    {if $x->canBeModifiedBy($thisUser ?? NULL)}
+        <a style="width: 140px;" class="profile_link" href="{$x->getURL()}">
+            {_check_community}
         </a>
+        {if ($clubPinned || $thisUser->getPinnedClubCount() <= 10)}
+            <a style="width: 140px;" class="profile_link" href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
+                {if $clubPinned}
+                    {_remove_from_left_menu}
+                {else}
+                    {_add_to_left_menu}
+                {/if}
+            </a>
+        {/if}
+        <form action="/setSub/club" method="post">
+            <input type="hidden" name="act" value="rem" />
+            <input type="hidden" name="id"  value="{$x->getId()}" />
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+            <input style="width: 140px; text-transform: lowercase;" type="submit" id="profile_link" value="{_leave_community}" />
+        </form>
+    {/if}
+{/block}
+
+{block bottom}
+    {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+        <div class="groups_options">
+            <div id="gp_container" style="width: 200px; margin-right: 40px;">
+                <h4>{_open_new_group}</h4>
+                <span>{_open_group_desc}</span>
+                <form action="/groups_create">
+                    <button class="button">{_create_group}</button>
+                </form>
+            </div>
+            <div id="gp_container" style="width: 344px;">
+                <h4>{_search_group}</h4>
+                <span>{_search_group_desc}</span>
+                <form action="/search">
+                    <input name="type" type="hidden" value="groups">
+                    <input name="query" class="header_search_input" value="" style="background: none; width: 155px; padding-left: 3px;">
+                    <button class="button">{_search_by_groups}</button>
+                </form>
+            </div>
+        </div>
     {/if}
 {/block}

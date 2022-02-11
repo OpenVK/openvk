@@ -5,6 +5,9 @@ use openvk\Web\Models\Entities\Notifications\{RepostNotification, WallPostNotifi
 use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums};
 use Chandler\Database\DatabaseConnection;
 use Nette\InvalidStateException as ISE;
+use Bhaktaraz\RSSGenerator\Item;
+use Bhaktaraz\RSSGenerator\Feed;
+use Bhaktaraz\RSSGenerator\Channel;
 
 final class WallPresenter extends OpenVKPresenter
 {
@@ -52,14 +55,14 @@ final class WallPresenter extends OpenVKPresenter
                 $canPost = $owner->getPrivacyPermission("wall.write", $this->user->identity);
             else
                 $this->flashFail("err", tr("error"), "Ошибка доступа");
-	} else if($user < 0) {
+        } else if($user < 0) {
             if($owner->canBeModifiedBy($this->user->identity))
                 $canPost = true;
             else
                 $canPost = $owner->canPost();
         } else {
             $canPost = false;
-	}
+        }
         
         if ($embedded == true) $this->template->_template = "components/wall.xml";
         $this->template->oObj    = $owner;
@@ -81,6 +84,49 @@ final class WallPresenter extends OpenVKPresenter
     function renderWallEmbedded(int $user): void
     {
         $this->renderWall($user, true);
+    }
+
+    function renderRSS(int $user): void
+    {
+        if(false)
+            exit("Ошибка доступа: " . (string) random_int(0, 255));
+        
+        $owner = ($user < 0 ? (new Clubs) : (new Users))->get(abs($user));
+        if(is_null($this->user)) {
+            $canPost = false;
+        } else if($user > 0) {
+            if(!$owner->isBanned())
+                $canPost = $owner->getPrivacyPermission("wall.write", $this->user->identity);
+            else
+                $this->flashFail("err", tr("error"), "Ошибка доступа");
+        } else if($user < 0) {
+            if($owner->canBeModifiedBy($this->user->identity))
+                $canPost = true;
+            else
+                $canPost = $owner->canPost();
+        } else {
+            $canPost = false;
+        }
+
+        $posts = iterator_to_array($this->posts->getPostsFromUsersWall($user));
+
+        $feed = new Feed();
+
+        $channel = new Channel();
+        $channel->title(OPENVK_ROOT_CONF['openvk']['appearance']['name'])->url(ovk_scheme(true) . $_SERVER["SERVER_NAME"])->appendTo($feed);
+
+        foreach($posts as $post) {
+            $item = new Item();
+            $item
+                ->title($post->getOwner()->getCanonicalName())
+                ->description($post->getText())
+                ->url(ovk_scheme(true).$_SERVER["SERVER_NAME"]."/wall{$post->getPrettyId()}")
+                ->pubDate($post->getPublicationTime()->timestamp())
+                ->appendTo($channel);
+        }
+
+        header("Content-Type: application/rss+xml");
+        exit($feed);
     }
     
     function renderFeed(): void
@@ -122,24 +168,24 @@ final class WallPresenter extends OpenVKPresenter
         
         $page  = (int) ($_GET["p"] ?? 1);
         $pPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
-        $posts = DatabaseConnection::i()
-                   ->getContext()
-                   ->table("posts")
-                   ->where("deleted", 0)
-                   ->order("created DESC");
-        
+
+        $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND `posts`.`deleted` = 0";
+
         if($this->user->identity->getNsfwTolerance() === User::NSFW_INTOLERANT)
-            $posts = $posts->where("nsfw", false);
+            $queryBase .= " AND `nsfw` = 0";
+
+        $posts = DatabaseConnection::i()->getConnection()->query("SELECT `posts`.`id` " . $queryBase . " ORDER BY `created` DESC LIMIT " . $pPage . " OFFSET " . ($page - 1) * $pPage);
+        $count = DatabaseConnection::i()->getConnection()->query("SELECT COUNT(*) " . $queryBase)->fetch()->{"COUNT(*)"};
         
         $this->template->_template     = "Wall/Feed.xml";
         $this->template->globalFeed    = true;
         $this->template->paginatorConf = (object) [
-            "count"   => sizeof($posts),
+            "count"   => $count,
             "page"    => (int) ($_GET["p"] ?? 1),
-            "amount"  => sizeof($posts->page($page, $pPage)),
+            "amount"  => sizeof($posts),
             "perPage" => $pPage,
         ];
-        foreach($posts->page($page, $pPage) as $post)
+        foreach($posts as $post)
             $this->template->posts[] = $this->posts->get($post->id);
     }
     

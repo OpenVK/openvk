@@ -7,16 +7,19 @@
     <tbody>
         <tr>
             <td width="30" valign="top">
-                <img
-                    src="{$author->getAvatarURL()}"
-                    width="30"
-                    class="cCompactAvatars" />
+                <a href="{$author->getURL()}">
+                    <img
+                        src="{$author->getAvatarURL()}"
+                        width="30"
+                        class="cCompactAvatars" />
+                </a>
             </td>
             <td width="100%" valign="top">
                 <div class="post-author">
                     <a href="{$author->getURL()}"><b>
                         {$author->getCanonicalName()}
-                    </b></a><br/>
+                    </b></a>
+                    {if $author->isVerified()}<img class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">{/if}<br/>
                 </div>
                 <div class="post-content" id="{$comment->getId()}">
                     <div class="text" id="text{$comment->getId()}">

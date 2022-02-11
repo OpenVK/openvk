@@ -317,6 +317,18 @@
                     </td>
                 </tr>
                 <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_privacy_setting_write_messages}</span>
+                    </td>
+                    <td>
+                        <select name="messages.write", style="width: 164px;">
+                            <option value="2" {if $user->getPrivacySetting('messages.write') == 2}selected{/if}>{_privacy_value_anybody}</option>
+                            <option value="1" {if $user->getPrivacySetting('messages.write') == 1}selected{/if}>{_privacy_value_friends}</option>
+                            <option value="0" {if $user->getPrivacySetting('messages.write') == 0}selected{/if}>{_privacy_value_nobody}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
                     <td>
                         
                     </td>
@@ -451,6 +463,14 @@
                         </td>
                     </tr>
                     <tr>
+                        <td width="120" valign="top" align="right">
+                            <input type="checkbox" name="theme_for_session" value="1">
+                        </td>
+                        <td>
+                            {_apply_style_for_this_device}
+                        </td>
+                    </tr>
+                    <tr>
                         <td>
                             
                         </td>
@@ -539,6 +559,16 @@
                         </td>
                         <td>
                             <span class="nobold">{_additional_links}</span>
+                        </td>
+                    </tr><tr n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable']">
+                        <td width="120" valign="top" align="right" align="right">
+                            <input
+                                  n:attr="checked => $user->getLeftMenuItemStatus('poster')"
+                                  type="checkbox"
+                                  name="menu_standardo" />
+                        </td>
+                        <td>
+                            <span class="nobold">{_ad_poster}</span>
                         </td>
                     </tr>
                     <tr>

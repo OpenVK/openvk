@@ -189,7 +189,7 @@
             </div>
         </div>
     </div>
-    <div n:if="$albumsCount > 0">
+    <div n:if="$albumsCount > 0 || ($thisUser && $club->canBeModifiedBy($thisUser))">
         <div class="content_title_expanded" onclick="hidePanel(this, {$albumsCount});">
             {_"albums"}
         </div>

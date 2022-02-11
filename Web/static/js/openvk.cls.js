@@ -185,7 +185,7 @@ function repostPost(id, hash) {
 
 function setClubAdminComment(clubId, adminId, hash) {
     MessageBox("Изменить комментарий к администратору", `
-        <form action="/club${clubId}/setAdmin.jsp" method="post" id="uClubAdminCommentForm_${clubId}_${adminId}">
+        <form action="/club${clubId}/setAdmin" method="post" id="uClubAdminCommentForm_${clubId}_${adminId}">
             <input type="hidden" name="user" value="${adminId}">
             <input type="hidden" name="hash" value="${hash}">
             <input type="hidden" name="removeComment" id="uClubAdminCommentRemoveCommentInput_${clubId}_${adminId}" value="0">

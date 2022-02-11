@@ -7,6 +7,7 @@
 
 "home" = "Главная";
 "welcome" = "Добро пожаловать";
+"to_top" = "Вверх";
 
 /* Login */
 
@@ -16,7 +17,7 @@
 "forgot_password" = "Забыли пароль?";
 
 "login_failed" = "Не удалось войти";
-"invalid_username_or_password" = "Неверное имя пользователя или пароль. <a href='/restore.pl'>Забыли пароль?</a>";
+"invalid_username_or_password" = "Неверное имя пользователя или пароль. <a href='/restore'>Забыли пароль?</a>";
 
 "failed_to_register" = "Не удалось зарегистрироваться";
 "referral_link_invalid" = "Пригласительная ссылка недействительна.";
@@ -34,6 +35,13 @@
 "password_reset_email_sent" = "Если вы зарегистрированы, вы получите инструкции на email.";
 "password_reset_error" = "Непредвиденная ошибка при сбросе пароля.";
 "password_reset_rate_limit_error" = "Нельзя делать это так часто, извините.";
+
+"email_sent" = "Письмо было успешно отправлено.";
+"email_sent_desc" = "Если ваш электронный адрес существует, вы получите письмо.";
+"email_error" = "Непредвиденная ошибка при отправке письма.";
+"email_rate_limit_error" = "Нельзя делать это так часто, извините.";
+
+"email_verify_success" = "Ваш Email был подтверждён. Приятного времяпрепровождения!";
 
 "registration_disabled_info" = "Регистрация отключена системным администратором. При возможности попросите приглашение у вашего знакомого, если он зарегистрирован на этом сайте.";
 "registration_closed" = "Регистрация закрыта.";
@@ -224,6 +232,7 @@
 "subscriptions" = "Подписки";
 "join_community" = "Вступить в группу";
 "leave_community" = "Выйти из группы";
+"check_community" = "Просмотр группы";
 "min_6_community" = "Название должно быть не менее 6 символов";
 "participants" = "Участники";
 "groups" = "Группы";
@@ -241,6 +250,7 @@
 "only_administrators" = "Только администраторы";
 "website" = "Сайт";
 "managed" = "Управляемые";
+"size" = "Размер";
 
 "administrators_one" = "$1 администратор";
 "administrators_few" = "$1 администратора";
@@ -255,6 +265,7 @@
 "hidden_yes" = "Скрыт: Да";
 "hidden_no" = "Скрыт: Нет";
 "group_allow_post_for_everyone" = "Разрешить публиковать записи всем";
+"group_hide_from_global_feed" = "Не отображать публикации в глобальной ленте";
 "statistics" = "Статистика";
 "group_administrators_list" = "Список админов";
 "group_display_only_creator" = "Отображать только создателя группы";
@@ -262,7 +273,7 @@
 "group_dont_display_administrators_list" = "Ничего не отображать";
 
 "group_changeowner_modal_title" = "Передача прав владельца";
-"group_changeowner_modal_text" = "Внимание! Вы передаёте права владельца пользователю $1. Это действие необратимо. После передави вы останетесь адмиинстратором, но сможете легко перестать им быть.";
+"group_changeowner_modal_text" = "Внимание! Вы передаёте права владельца пользователю $1. Это действие необратимо. После передачи вы останетесь адмиинстратором, но сможете легко перестать им быть.";
 "group_owner_setted" = "Новый владелец ($1) успешно назначен в сообщество $2. Вам выданы права администратора в сообществе. Если Вы хотите вернуть роль владельца, обратитесь в <a href='/support?act=new'>техническую поддержку сайта</a>.";
 
 "participants_zero" = "Ни одного участника";
@@ -277,11 +288,21 @@
 "groups_many" = "$1 групп";
 "groups_other" = "$1 групп";
 
+"groups_list_zero" = "Вы не состоите ни в одной группе";
+"groups_list_one" = "Вы состоите в одной группе";
+"groups_list_other" = "Вы состоите в $1 группах";
+
 "meetings_zero" = "Ни одной встречи";
 "meetings_one" = "Одна встреча";
 "meetings_few" = "$1 встречи";
 "meetings_many" = "$1 встреч";
 "meetings_other" = "$1 встреч";
+
+"open_new_group" = "Открыть новую группу";
+"open_group_desc" = "Не можете найти нужную группу? Откройте свою...";
+"search_group" = "Поиск группы";
+"search_by_groups" = "Поиск по группам";
+"search_group_desc" = "Здесь Вы можете просмотреть существующие группы и выбрать группу себе по вкусу...";
 
 /* Albums */
 
@@ -311,14 +332,24 @@
 "note" = "Заметка";
 "name_note" = "Название";
 "text_note" = "Содержание";
-"create_note" = "Создать заметку";
+"create_note" = "Добавить запись";
+"edit_note" = "Редактировать заметку";
 "actions" = "Действия";
+"notes_start_screen" = "С помощью заметок Вы можете делиться событиями из жизни с друзьями, а так же быть в курсе того, что происходит у них.";
+
+"edited" = "Отредактировано";
 
 "notes_zero" = "Ни одной заметки";
 "notes_one" = "Одна заметка";
 "notes_few" = "$1 заметки";
 "notes_many" = "$1 заметок";
 "notes_other" = "$1 заметок";
+
+"notes_list_zero" = "Не найдено ни одной заметки";
+"notes_list_one" = "Найдена одна заметка";
+"notes_list_few" = "Найдено $1 заметки";
+"notes_list_many" = "Найдено $1 заметок";
+"notes_list_other" = "Найдено $1 заметок";
 
 /* Menus */
 
@@ -355,6 +386,7 @@
 
 "left_menu_donate" = "Поддержать";
 
+"footer_about_instance" = "об инстанции";
 "footer_blog" = "блог";
 "footer_help" = "помощь";
 "footer_developers" = "разработчикам";
@@ -385,6 +417,8 @@
 "cut" = "Обрезка";
 "round_avatars" = "Круглый аватар";
 
+"apply_style_for_this_device" = "Применить стиль только для этого устройства";
+
 "search_for_groups" = "Поиск групп";
 "search_for_people" = "Поиск людей";
 "search_button" = "Найти";
@@ -404,6 +438,7 @@
 "privacy_setting_see_friends" = "Кому видно моих друзей";
 "privacy_setting_add_to_friends" = "Кто может называть меня другом";
 "privacy_setting_write_wall" = "Кто может писать у меня на стене";
+"privacy_setting_write_messages" = "Кто может писать мне сообщения";
 "privacy_value_anybody" = "Все желающие";
 "privacy_value_anybody_dative" = "Всем желающим";
 "privacy_value_users" = "Пользователям OpenVK";
@@ -429,6 +464,7 @@
 "ui_settings_rating_hide" = "Скрывать";
 
 "additional_links" = "Дополнительные ссылки";
+"ad_poster" = "Рекламный плакат";
 
 /* Two-factor authentication */
 
@@ -481,7 +517,7 @@
 "info_uploaded_by" = "Загрузил";
 "info_upload_date" = "Дата загрузки";
 
-"videos_zero" = "Ни одной видеозаписи";
+"videos_zero" = "Нет видео";
 "videos_one" = "Одна видеозапись";
 "videos_few" = "$1 видеозаписи";
 "videos_many" = "$1 видеозаписей";
@@ -667,6 +703,14 @@
 "banned_2" = "А причина этому проста: <b>$1</b>. К сожалению, на этот раз нам пришлось заблокировать вас навсегда.";
 "banned_3" = "Вы всё ещё можете <a href=\"/support?act=new\">написать в службу поддержки</a>, если считаете что произошла ошибка или <a href=\"/logout?hash=$1\">выйти</a>.";
 
+/* Registration confirm */
+
+"ec_header" = "Подтверждение регистрации";
+"ec_title" = "Спасибо!";
+"ec_1" = "<b>$1</b>, ваша регистрация почти закончена. В течении нескольких минут на ваш адрес E-mail должно прийти письмо с ссылкой для подтверждения вашего адреса почты.";
+"ec_2" = "Если по каким-то причинам вам не пришло письмо, то проверьте папку Спам. Если письма не окажется и там, то вы можете переотправить письмо.";
+"ec_resend" = "Переотправить письмо";
+
 /* Discussions */
 
 "discussions" = "Обсуждения";
@@ -748,6 +792,8 @@
 "invalid_email_address" = "Неверный Email адрес";
 "invalid_email_address_comment" = "Email, который вы ввели, не является корректным.";
 
+"invalid_real_name" = "Пожалуйста, используйте реальные имена. Так вашим тульпам будет легче найти вас.";
+
 "invalid_telegram_name" = "Неверное имя Telegram аккаунта";
 "invalid_telegram_name_comment" = "Вы ввели неверное имя аккаунта Telegram.";
 
@@ -794,6 +840,36 @@
 
 "about_openvk" = "Об OpenVK";
 
+"about_this_instance" = "Об этой инстанции";
+"rules" = "Правила";
+"most_popular_groups" = "Самые популярные группы";
+"on_this_instance_are" = "На этой инстанции:";
+
+"about_users_one" = "<b>1</b> пользователь";
+"about_users_few" = "<b>$1</b> пользователя";
+"about_users_many" = "<b>$1</b> пользователей";
+"about_users_other" = "<b>$1</b> пользователей";
+
+"about_online_users_one" = "<b>1</b> пользователь в сети";
+"about_online_users_few" = "<b>$1</b> пользователя в сети";
+"about_online_users_many" = "<b>$1</b> пользователей в сети";
+"about_online_users_other" = "<b>$1</b> пользователей в сети";
+
+"about_active_users_one" = "<b>1</b> активный пользователь";
+"about_active_users_few" = "<b>$1</b> активных пользователя";
+"about_active_users_many" = "<b>$1</b> активных пользователей";
+"about_active_users_other" = "<b>$1</b> активных пользователей";
+
+"about_groups_one" = "<b>1</b> группа";
+"about_groups_few" = "<b>$1</b> группы";
+"about_groups_many" = "<b>$1</b> групп";
+"about_groups_other" = "<b>$1</b> групп";
+
+"about_wall_posts_one" = "<b>1</b> запись на стенах";
+"about_wall_posts_few" = "<b>$1</b> записи на стенах";
+"about_wall_posts_many" = "<b>$1</b> записей на стенах";
+"about_wall_posts_other" = "<b>$1</b> записей на стенах";
+
 /* Dialogs */
 
 "ok" = "ОК";
@@ -806,3 +882,7 @@
 
 "warning" = "Внимание";
 "question_confirm" = "Это действие нельзя отменить. Вы действительно уверены в том что хотите сделать?";
+
+/* User alerts */
+
+"user_alert_scam" = "На этот аккаунт много жаловались в связи с мошенничеством. Пожалуйста, будьте осторожны, особенно если у вас попросят денег.";

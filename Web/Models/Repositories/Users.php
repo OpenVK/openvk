@@ -51,7 +51,7 @@ class Users
     function find(string $query): Util\EntityStream
     {
         $query  = "%$query%";
-        $result = $this->users->where("CONCAT_WS(' ', first_name, last_name) LIKE ?", $query);
+        $result = $this->users->where("CONCAT_WS(' ', first_name, last_name) LIKE ?", $query)->where("deleted", 0);
         
         return new Util\EntityStream("User", $result);
     }
@@ -82,6 +82,24 @@ class Users
         }
 
         return $this->getByShortUrl($address);
+    }
+
+    /**
+     * If you need to check if the user is an instance administrator, use `$user->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)`.
+     * This method is more suitable for instance administrators lists
+     */
+    function getInstanceAdmins(bool $excludeHidden = true): \Traversable
+    {
+        $query = "SELECT DISTINCT(`profiles`.`id`) FROM `ChandlerACLRelations` JOIN `profiles` ON `ChandlerACLRelations`.`user` = `profiles`.`user` COLLATE utf8mb4_unicode_520_ci WHERE `ChandlerACLRelations`.`group` IN (SELECT `group` FROM `ChandlerACLGroupsPermissions` WHERE `model` = \"admin\" AND `permission` = \"access\")";
+
+        if($excludeHidden)
+        $query .= " AND `ChandlerACLRelations`.`user` NOT IN (SELECT `user` FROM `ChandlerACLRelations` WHERE `group` IN (SELECT `group` FROM `ChandlerACLGroupsPermissions` WHERE `model` = \"hidden_admin\" AND `permission` = \"be\"))";
+
+        $query .= " ORDER BY `profiles`.`id`;";
+
+        $result = DatabaseConnection::i()->getConnection()->query($query);
+        foreach($result as $entry)
+            yield $this->get($entry->id);
     }
     
     use \Nette\SmartObject;

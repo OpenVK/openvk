@@ -22,8 +22,8 @@ class Tickets
     
     function getTickets(int $state = 0, int $page = 1): \Traversable
     {
-        foreach($this->tickets->where(["deleted" => 0, "type" => $state])->order("created DESC")->page($page, OPENVK_DEFAULT_PER_PAGE) as $t)
-            yield new Ticket($t);
+        foreach($this->tickets->where(["deleted" => 0, "type" => $state])->order("created DESC")->page($page, OPENVK_DEFAULT_PER_PAGE) as $ticket)
+            yield new Ticket($ticket);
     }
     
     function getTicketCount(int $state = 0): int
@@ -31,21 +31,23 @@ class Tickets
         return sizeof($this->tickets->where(["deleted" => 0, "type" => $state]));
     }
     
-    function getTicketsByuId(int $user_id): \Traversable
+    function getTicketsByUserId(int $userId, int $page = 1): \Traversable
     {
-        foreach($this->tickets->where(['user_id' => $user_id, 'deleted' => 0])->order("created DESC") as $ticket) yield new Ticket($ticket);
+        foreach($this->tickets->where(["user_id" => $userId, "deleted" => 0])->order("created DESC")->page($page, OPENVK_DEFAULT_PER_PAGE) as $ticket) yield new Ticket($ticket);
     }
 
-    function getTicketsCountByuId(int $user_id, int $type = 0): int
+    function getTicketsCountByUserId(int $userId, int $type = NULL): int
     {
-        return sizeof($this->tickets->where(['user_id' => $user_id, 'deleted' => 0, 'type' => $type]));
+        if(is_null($type))
+            return sizeof($this->tickets->where(["user_id" => $userId, "deleted" => 0]));
+        else
+            return sizeof($this->tickets->where(["user_id" => $userId, "deleted" => 0, "type" => $type]));
     }
     
-    function getRequestById(int $req_id): ?Ticket
+    function getRequestById(int $requestId): ?Ticket
     {
-        $requests = $this->tickets->where(['id' => $req_id])->fetch();
+        $requests = $this->tickets->where(["id" => $requestId])->fetch();
         if(!is_null($requests))
-        
             return new Req($requests);
         else
             return null;

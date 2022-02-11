@@ -35,6 +35,8 @@ function handleUpload(id) {
         u("span", indicator.nodes[0]).text(trim(file.name) + " (" + humanFileSize(file.size, false) + ")");
         indicator.attr("style", "display: block;");
     }
+
+    document.querySelector("#post-buttons" + id + " #wallAttachmentMenu").classList.add("hidden");
 }
 
 function initGraffiti(id) {
@@ -108,7 +110,7 @@ function setupWallPostInputHandlers(id) {
         var textArea          = e.target;
         textArea.style.height = "5px";
         var newHeight = textArea.scrollHeight;
-        textArea.style.height = newHeight + boost;
+        textArea.style.height = newHeight + boost + "px";
         return;
         
         // revert to original size if it is larger (possibly changed by user)

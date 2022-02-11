@@ -67,6 +67,35 @@ final class NotesPresenter extends OpenVKPresenter
             $note->setCreated(time());
             $note->setName($this->postParam("name"));
             $note->setSource($this->postParam("html"));
+            $note->setEdited(time());
+            $note->save();
+            
+            $this->redirect("/note" . $this->user->id . "_" . $note->getVirtualId());
+        }
+    }
+
+    function renderEdit(int $owner, int $note_id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+        
+        $note = $this->notes->getNoteById($owner, $note_id);
+
+        if(!$note || $note->getOwner()->getId() !== $owner || $note->isDeleted())
+            $this->notFound();
+        if(is_null($this->user) || !$note->canBeModifiedBy($this->user->identity))
+            $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+        $this->template->note = $note;
+            
+        if($_SERVER["REQUEST_METHOD"] === "POST") {
+            if(empty($this->postParam("name"))) {
+                $this->flashFail("err", tr("error"), tr("error_segmentation")); 
+            }
+
+            $note->setName($this->postParam("name"));
+            $note->setSource($this->postParam("html"));
+            $note->setCached_Content(NULL);
+            $note->setEdited(time());
             $note->save();
             
             $this->redirect("/note" . $this->user->id . "_" . $note->getVirtualId());
