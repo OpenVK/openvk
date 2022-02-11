@@ -62,8 +62,6 @@ class Users
             "all"      => sizeof(clone $this->users),
             "active"   => sizeof((clone $this->users)->where("online > 0")),
             "online"   => sizeof((clone $this->users)->where("online >= ?", time() - 900)),
-            "posts"    => (new Posts)->getCountOfAllPosts(),
-            "comments" => (new Comments)->getCountOfAllComments()
         ];
     }
 
