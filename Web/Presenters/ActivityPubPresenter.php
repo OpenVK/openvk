@@ -7,10 +7,10 @@ final class ActivityPubPresenter extends OpenVKPresenter
     function renderWellKnown(): void
     {
         if ($_SERVER['REQUEST_URI'] == "/.well-known/host-meta") {
-            $data = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            . "<XRD xmlns=\"http://docs.oasis-open.org/ns/xri/xrd-1.0\">\n"
-            . "  <Link rel=\"lrdd\" template=\"" . ovk_scheme(true) . $_SERVER["SERVER_NAME"] . "/.well-known/webfinger?resource={uri}\">\n"
-            . "</XRD>\n";
+            $data = '<?xml version="1.0" encoding="UTF-8"?>'
+            . '<XRD xmlns="http://docs.oasis-open.org/ns/xri/xrd-1.0">'
+            . '<Link rel="lrdd" template="' . ovk_scheme(true) . $_SERVER["SERVER_NAME"] . '/.well-known/webfinger?resource={uri}"/>'
+            . '</XRD>';
 
             header("Content-Type: application/xrd+xml; charset=utf-8");
             exit($data);
