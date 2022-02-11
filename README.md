@@ -78,8 +78,9 @@ You may reach out to us via:
 * Telegram chat: Go to [our channel](https://t.me/openvkenglish) and open discussion in our channel menu.
 * [Reddit](https://www.reddit.com/r/openvk/)
 * [Discussions](https://github.com/openvk/openvk/discussions)
+* Matrix chat: #openvk:matrix.org
 
-**Attention**: bug tracker and telegram chat are public places. And ticketing system is being served by volunteers. If you need to report something, that shouldn't be immediately disclosed to general public (for instance, vulnerability report), please use contact us directly at this email: **openvk [at] tutanota [dot] com**
+**Attention**: bug tracker, telegram and matrix chat are public places. And ticketing system is being served by volunteers. If you need to report something, that shouldn't be immediately disclosed to general public (for instance, vulnerability report), please use contact us directly at this email: **openvk [at] tutanota [dot] com**
 
 <a href="https://codeberg.org/OpenVK/openvk">
     <img alt="Get it on Codeberg" src="https://codeberg.org/Codeberg/GetItOnCodeberg/media/branch/main/get-it-on-blue-on-white.png" height="60">

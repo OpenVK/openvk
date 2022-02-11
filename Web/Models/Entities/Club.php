@@ -40,7 +40,7 @@ class Club extends RowModel
     
     function getAvatarUrl(): string
     {
-        $serverUrl = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
+        $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
         $avPhoto   = $this->getAvatarPhoto();
         
         return is_null($avPhoto) ? "$serverUrl/assets/packages/static/openvk/img/camera_200.png" : $avPhoto->getURL();
@@ -64,16 +64,6 @@ class Club extends RowModel
         else
             return "/club" . $this->getId();
     }
-    /* 
-    function getAvatarUrl(): string
-    {
-        $avAlbum  = (new Albums)->getUserAvatarAlbum($this);
-        $avCount  = $avAlbum->getPhotosCount();
-        $avPhotos = $avAlbum->getPhotos($avCount, 1);
-        $avPhoto  = iterator_to_array($avPhotos)[0] ?? NULL;
-        
-        return is_null($avPhoto) ? "/assets/packages/static/openvk/img/camera_200.png" : $avPhoto->getURL();
-    } */
     
     function getName(): string
     {

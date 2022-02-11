@@ -82,6 +82,14 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
+                            <span class="nobold">{_"hometown"}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="hometown" value="{$user->getHometown()}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
                             <span class="nobold">{_"relationship"}: </span>
                         </td>
                         <td>

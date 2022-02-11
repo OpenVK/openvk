@@ -7,10 +7,12 @@
     <tbody>
         <tr>
             <td width="30" valign="top">
-                <img
-                    src="{$author->getAvatarURL()}"
-                    width="30"
-                    class="cCompactAvatars" />
+                <a href="{$author->getURL()}">
+                    <img
+                        src="{$author->getAvatarURL()}"
+                        width="30"
+                        class="cCompactAvatars" />
+                </a>
             </td>
             <td width="100%" valign="top">
                 <div class="post-author">

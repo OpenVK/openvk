@@ -5,7 +5,7 @@ final class YouTubeVideoDriver extends VideoDriver
 {
     function getThumbnailURL(): string
     {
-        return "https://img.youtube.com/vi/$this->id/mq3.jpg";
+        return "https://img.youtube.com/vi/$this->id/mqdefault.jpg";
     }
     
     function getURL(): string
