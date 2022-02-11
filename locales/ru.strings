@@ -838,6 +838,7 @@
 "profile_changed" = "Профиль изменён";
 "profile_changed_comment" = "Ваш активный профиль был изменён.";
 "profile_not_found" = "Пользователь не найден.";
+"profile_not_found_text" = "Страница удалена либо ещё не создана.";
 
 "suspicious_registration_attempt" = "Подозрительная попытка регистрации";
 "suspicious_registration_attempt_comment" = "Вы пытались зарегистрироваться из подозрительного места.";

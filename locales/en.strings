@@ -801,6 +801,7 @@
 "profile_changed" = "Profile changed";
 "profile_changed_comment" = "Your active profile has been changed.";
 "profile_not_found" = "User is not found.";
+"profile_not_found_text" = "This profile has either been deleted or not been created yet.";
 
 "suspicious_registration_attempt" = "Suspicious registration attempt";
 "suspicious_registration_attempt_comment" = "You tried to register from a suspicious location.";
