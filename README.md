@@ -18,7 +18,6 @@ Updating the source code is done with this command: `git pull`
 
 * **[openvk.su](https://openvk.su/)**
 * [social.fetbuk.ru](http://social.fetbuk.ru/)
-* [openvk.zavsc.pw](https://openvk.zavsc.pw/)
 
 ## Can I create my own OpenVK instance?
 
