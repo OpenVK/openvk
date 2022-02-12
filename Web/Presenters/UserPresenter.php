@@ -41,7 +41,7 @@ final class UserPresenter extends OpenVKPresenter
                     "name" => $user->getFullName(),
                     "summary" => $user->getDescription(),
                     "url" => $user->getFullURL(),
-                    "preferredUsername" => $user->getShortCode(),
+                    "preferredUsername" => "id" . $user->getId(), // Костыль, но рабочий
                     "inbox" => $user->getFullURL() . "/inbox",
                     "outbox" => $user->getFullURL() . "/outbox",
                     "followers" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/friends" . $user->getId() . '?act=incoming',
