@@ -393,7 +393,9 @@
 "avatars_style" = "Avatar style";
 "style" = "Style";
 
-"default" = "Arbitrary (default)";
+"default" = "default";
+
+"arbitrary_avatars" = "Arbitrary";
 "cut" = "Square";
 "round_avatars" = "Round";
 
