@@ -396,7 +396,9 @@
 "avatars_style" = "Аватарлардың стилі";
 "style" = "Стилі";
 
-"default" = "Ерікті (әдепкі)";
+"default" = "әдепкі";
+
+"arbitrary_avatars" = "Ерікті"
 "cut" = "Шаршы";
 "round_avatars" = "Дөңгелек";
 
