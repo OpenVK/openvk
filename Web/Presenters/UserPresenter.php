@@ -46,12 +46,12 @@ final class UserPresenter extends OpenVKPresenter
                     "outbox" => $user->getFullURL() . "/outbox",
                     "followers" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/friends" . $user->getId() . '?act=incoming',
                     "following" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/friends" . $user->getId() . '?act=outcoming',
-                    "endpoints" => array("sharedInbox" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/activitypub/sharedInbox"),
-                    "publicKey" => array(
+                    "endpoints" => ["sharedInbox" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/activitypub/sharedInbox"],
+                    "publicKey" => [
                         "id" => $user->getFullURL(true) . "#main-key",
                         "owner" => $user->getFullURL(true),
                         "publicKeyPem" => $this->getKey()
-                    ),
+                    ],
                     "wall" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/wall" . $user->getId(),
                     "firstName" => $user->getFirstName(),
                     "lastName" => $user->getLastName(),

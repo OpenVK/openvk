@@ -303,16 +303,51 @@ final class WallPresenter extends OpenVKPresenter
     
     function renderPost(int $wall, int $post_id): void
     {
-        $this->assertUserLoggedIn();
-        
         $post = $this->posts->getPostById($wall, $post_id);
         if(!$post || $post->isDeleted())
             $this->notFound();
         
         $this->logPostView($post, $wall);
-        
-        $this->template->post     = $post;
-        if ($post->getTargetWall() > 0) {
+
+		if($this->isActivityPubClient()) {
+			$objPost = array(
+				"type" => "Note",
+				"id" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/wall" . $wall . "_" . $post_id,
+				"attributedTo" => $post->getOwner()->getFullURL(true),
+				"content" => $post->getText(),
+				"published" => $post->getPublicationTime()->format('%Y-%m-%dT%H:%M:%SZ'),
+				"url" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/wall" . $wall . "_" . $post_id,
+				"to" => [
+					"https://www.w3.org/ns/activitystreams#Public"
+				],
+				"cc" => [
+					ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/friends" . $post->getOwner()->getId() . "?act=incoming"
+				],
+				"replies" => [
+			       "type" => "Collection", 
+			       "id" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/wall" . $wall . "_" . $post_id . "#comments", 
+			       "first" => [
+			          "type" => "CollectionPage", 
+			          "items" => [
+			          ], 
+			          "partOf" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/wall" . $wall . "_" . $post_id . "#comments", 
+			          "next" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/wall" . $wall . "_" . $post_id . "?p=2#comments"
+			       ] 
+			    ],
+			    "sensitive" => false,
+			    "likes" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/wall" . $wall . "_" . $post_id . "/likes",
+				"@context" => [
+					"https://www.w3.org/ns/activitystreams",
+					(object) array(
+						"sensitive" => "as:sensitive"
+					)
+				]
+			);
+
+			$this->returnJson($objPost, CT_AP);
+		}
+
+		if ($post->getTargetWall() > 0) {
         	$this->template->wallOwner = (new Users)->get($post->getTargetWall());
 			$this->template->isWallOfGroup = false;
             if($this->template->wallOwner->isBanned())
@@ -321,10 +356,12 @@ final class WallPresenter extends OpenVKPresenter
 			$this->template->wallOwner = (new Clubs)->get(abs($post->getTargetWall()));
 			$this->template->isWallOfGroup = true;
 		}
+        
+        $this->template->post     = $post;
         $this->template->cCount   = $post->getCommentsCount();
         $this->template->cPage    = (int) ($_GET["p"] ?? 1);
         $this->template->comments = iterator_to_array($post->getComments($this->template->cPage));
-    }
+	}
     
     function renderLike(int $wall, int $post_id): void
     {
