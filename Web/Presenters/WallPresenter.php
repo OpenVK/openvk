@@ -311,6 +311,12 @@ final class WallPresenter extends OpenVKPresenter
 
 		if($this->isActivityPubClient()) {
 			$objPost = array(
+				"@context" => [
+					"https://www.w3.org/ns/activitystreams",
+					(object) array(
+						"sensitive" => "as:sensitive"
+					)
+				],
 				"type" => "Note",
 				"id" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/wall" . $wall . "_" . $post_id,
 				"attributedTo" => $post->getOwner()->getFullURL(true),
@@ -335,14 +341,29 @@ final class WallPresenter extends OpenVKPresenter
 			       ] 
 			    ],
 			    "sensitive" => false,
-			    "likes" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/wall" . $wall . "_" . $post_id . "/likes",
-				"@context" => [
-					"https://www.w3.org/ns/activitystreams",
-					(object) array(
-						"sensitive" => "as:sensitive"
-					)
-				]
+			    "likes" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/wall" . $wall . "_" . $post_id . "/likes"
 			);
+
+			if($post->getTargetWall() != $post->getOwner())
+			{
+				$objPost["target"] = array(
+					"type" => "Collection",
+					"id" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . "/wall" . $post->getTargetWall(),
+					"attributedTo" => ovk_scheme(true) . $_SERVER['SERVER_NAME'] . ($post->getTargetWall() > 0 ? "/id" . $post->getTargetWall() : "club" . abs($post->getTargetWall()))
+				);
+			}
+
+			foreach($post->getChildren() as $attachment) {
+				if($attachment instanceof \openvk\Web\Models\Entities\Photo) {
+					$objPost["attachment"][] = array(
+						"type" => "Image",
+						"mediaType" => "image/jpeg",
+						"width" => $attachment->getDimentions()[0],
+						"height" => $attachment->getDimentions()[1],
+						"url" => $attachment->getURL()
+					);
+				}
+			}
 
 			$this->returnJson($objPost, CT_AP);
 		}

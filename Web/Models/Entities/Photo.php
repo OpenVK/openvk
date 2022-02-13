@@ -59,4 +59,11 @@ class Photo extends Media
         
         return $photo;
     }
+
+	function getDimentions()
+	{
+		$hash = $this->getRecord()->hash;
+
+		return getimagesize($this->pathFromHash($hash));
+	}
 }
