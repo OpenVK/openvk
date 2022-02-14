@@ -3,6 +3,7 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Entities\Photo;
+use openvk\Web\Models\Entities\Post;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Albums;
@@ -419,6 +420,24 @@ final class UserPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
+
+        $reason = $this->postParam("deactivate_reason");
+        $share = $this->postParam("deactivate_share");
+
+        if($share) {
+            $post = new Post;
+            $post->setOwner($this->user->id);
+            $post->setWall($this->user->id);
+            $post->setCreated(time());
+            $post->setContent($reason);
+            $post->save();
+        }
+
+        $this->user->identity->deactivate($reason);
+
+        header("HTTP/1.1 302 Found");
+        header("Location: /");
+        exit;
     }
 
     function renderTwoFactorAuthSettings(): void

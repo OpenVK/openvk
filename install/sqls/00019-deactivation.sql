@@ -1,0 +1,1 @@
+ALTER TABLE `profiles` ADD `deact_until` bigint(20) unsigned NOT NULL AFTER `deleted`, ADD `deact_reason` text NULL AFTER `deact_until`;

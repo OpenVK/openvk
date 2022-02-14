@@ -140,22 +140,22 @@ class User extends RowModel
     
     function getFirstName(): string
     {
-        return $this->getRecord()->deleted ? "DELETED" : mb_convert_case($this->getRecord()->first_name, MB_CASE_TITLE);
+        return $this->getRecord()->deleted && $this->getRecord()->deact_until <= time() ? "DELETED" : mb_convert_case($this->getRecord()->first_name, MB_CASE_TITLE);
     }
     
     function getLastName(): string
     {
-        return $this->getRecord()->deleted ? "DELETED" : mb_convert_case($this->getRecord()->last_name, MB_CASE_TITLE);
+        return $this->getRecord()->deleted && $this->getRecord()->deact_until <= time() ? "DELETED" : mb_convert_case($this->getRecord()->last_name, MB_CASE_TITLE);
     }
     
     function getPseudo(): ?string
     {
-        return $this->getRecord()->deleted ? "DELETED" : $this->getRecord()->pseudo;
+        return $this->getRecord()->deleted && $this->getRecord()->deact_until <= time() ? "DELETED" : $this->getRecord()->pseudo;
     }
     
     function getFullName(): string
     {
-        if($this->getRecord()->deleted)
+        if($this->getRecord()->deleted && $this->getRecord()->deact_until <= time())
             return "DELETED";
         
         $pseudo = $this->getPseudo();
@@ -169,9 +169,9 @@ class User extends RowModel
     
     function getCanonicalName(): string
     {
-	if($this->getRecord()->deleted)
+	    if($this->getRecord()->deleted && $this->getRecord()->deact_until <= time())
             return "DELETED";
-	else
+	    else
             return $this->getFirstName() . ' ' . $this->getLastName();
     }
     
@@ -716,6 +716,24 @@ class User extends RowModel
         
         $this->setBlock_Reason($reason);
         $this->save();
+    }
+
+    function deactivate(?string $reason): void
+    {
+        $this->setDeleted(1);
+        $this->setDeact_Until(time() + (MONTH * 7));
+        $this->setDeact_Reason($reason);
+        $this->save();
+    }
+
+    function getDeactivatedUntil(): int
+    {
+        return $this->getRecord()->deact_until;
+    }
+
+    function getDeactivatedUntilDate(): DateTime
+    {
+        return new DateTime($this->getDeactivatedUntil());
     }
     
     function verifyNumber(string $code): bool

@@ -1,0 +1,10 @@
+{extends "@layout.xml"}
+{block title}{$thisUser->getCanonicalName()}{/block}
+
+{block header}
+    {$thisUser->getCanonicalName()}
+{/block}
+
+{block content}
+    Аккаунт выпилится {$thisUser->getDeactivatedUntilDate()} =))
+{/block}
