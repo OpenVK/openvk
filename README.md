@@ -18,7 +18,6 @@ Updating the source code is done with this command: `git pull`
 
 * **[openvk.su](https://openvk.su/)**
 * [social.fetbuk.ru](http://social.fetbuk.ru/)
-* [openvk.zavsc.pw](https://openvk.zavsc.pw/)
 
 ## Can I create my own OpenVK instance?
 
@@ -48,7 +47,7 @@ ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/ext
 ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
 ```
 
-4. Import `install/init-static-db.sql` to **same database** you installed Chandler to
+4. Import `install/init-static-db.sql` to **same database** you installed Chandler to and import all sqls from `install/sqls` to **same database**
 5. Import `install/init-event-db.sql` to **separate database**
 6. Copy `openvk-example.yml` to `openvk.yml` and change options
 7. Run `composer install` in OpenVK directory
@@ -75,11 +74,12 @@ You may reach out to us via:
 
 * [Bug-tracker](https://github.com/openvk/openvk/projects/1)
 * [Ticketing system](https://openvk.su/support?act=new)
-* Telegram chat: Go to [our channel](https://t.me/openvkch) and open discussion in our channel menu.
+* Telegram chat: Go to [our channel](https://t.me/openvkenglish) and open discussion in our channel menu.
 * [Reddit](https://www.reddit.com/r/openvk/)
 * [Discussions](https://github.com/openvk/openvk/discussions)
+* Matrix chat: #openvk:matrix.org
 
-**Attention**: bug tracker and telegram chat are public places. And ticketing system is being served by volunteers. If you need to report something, that shouldn't be immediately disclosed to general public (for instance, vulnerability report), please use contact us directly at this email: **openvk [at] tutanota [dot] com**
+**Attention**: bug tracker, telegram and matrix chat are public places. And ticketing system is being served by volunteers. If you need to report something, that shouldn't be immediately disclosed to general public (for instance, vulnerability report), please use contact us directly at this email: **openvk [at] tutanota [dot] com**
 
 <a href="https://codeberg.org/OpenVK/openvk">
     <img alt="Get it on Codeberg" src="https://codeberg.org/Codeberg/GetItOnCodeberg/media/branch/main/get-it-on-blue-on-white.png" height="60">

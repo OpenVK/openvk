@@ -1886,7 +1886,24 @@ html {
 
   .mb_tab div {
     padding: 5px 7px;
-  }
+}
+
+#gp_container span {
+    display: block;
+    margin: 10px 0 15px;
+}
+
+#gp_container h4 {
+    font-size: 11px;
+}
+
+.container_gray .content:last-child {
+    margin-bottom: 0;
+}
+
+.group_info {
+    padding: 0 0 0 5px !important;
+}
 
   .mb_tab#active {
     background-color: #898989;
@@ -1899,3 +1916,19 @@ html {
   .mb_tab#active a {
     color: white;
   }
+.profile_thumb {
+    padding: 0px 10px 0px 0px;
+    width: 50px;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.border-block {
+    box-shadow: inset 0px 0 0px 1px #b6bfca, inset 0px 0 0px 10px #d8dfe7;
+    width: 300px;
+    padding: 20px;
+}
+
+.center {
+    margin: 0 auto;
+}

@@ -2,9 +2,9 @@
 namespace openvk\Web\Models\Entities\Notifications;
 use openvk\Web\Models\Entities\User;
 
-final class CoinsTransferNotification extends Notification
+final class RatingUpNotification extends Notification
 {
-    protected $actionCode = 9602;
+    protected $actionCode = 9603;
     
     function __construct(User $receiver, User $sender, int $value, string $message)
     {

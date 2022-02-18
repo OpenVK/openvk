@@ -18,13 +18,13 @@
 
 {block tabs}
     {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
-        <div {if !$admin}id="activetabs"{/if} class="tab">
-            <a {if !$admin}id="act_tab_a"{/if} href="/groups{$user->getId()}">
+        <div n:attr='id => ($admin ? false : "activetabs")' class="tab">
+            <a n:attr='id => ($admin ? false : "act_tab_a")' href="/groups{$user->getId()}">
                 {_groups}
             </a>
         </div>
-        <div {if $admin}id="activetabs"{/if} class="tab">
-            <a {if $admin}id="act_tab_a"{/if} href="/groups{$user->getId()}?act=managed">
+        <div n:attr='id => (!$admin ? false : "activetabs")' class="tab">
+            <a n:attr='id => (!$admin ? false : "act_tab_a")' href="/groups{$user->getId()}?act=managed">
                 {_managed}
             </a>
         </div>
@@ -51,15 +51,17 @@
     <img src="{$x->getAvatarUrl()}" width="75" alt="Фотография группы" />
 {/block}
 
-{block infotable}
+{block name}{/block}
+
+{block infoTable}
     <table id="basicInfo" class="ugc-table group_info" cellspacing="0" cellpadding="0" border="0">
         <tbody>
             <tr>
-                <td class="label"><span class="nobold">Название: </span></td>
+                <td class="label"><span class="nobold">{_name}: </span></td>
                 <td class="data"><a href="{$x->getURL()}">{$x->getName()}</a></td>
             </tr>
             <tr>
-                <td class="label"><span class="nobold">Размер:</span></td>
+                <td class="label"><span class="nobold">{_size}:</span></td>
                 <td class="data"><a href="/club{$x->getId()}/followers">{tr("participants", $x->getFollowersCount())}</a></td>
             </tr>
         </tbody>
@@ -99,7 +101,7 @@
 {block bottom}
     {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
         <div class="groups_options">
-            <div id="gp_container" style="width: 200px;margin-right: 40px;">
+            <div id="gp_container" style="width: 200px; margin-right: 40px;">
                 <h4>{_open_new_group}</h4>
                 <span>{_open_group_desc}</span>
                 <form action="/groups_create">
@@ -111,7 +113,7 @@
                 <span>{_search_group_desc}</span>
                 <form action="/search">
                     <input name="type" type="hidden" value="groups">
-                    <input name="query" class="header_search_input" value="" style="background: none;width: 155px;padding-left: 3px;">
+                    <input name="query" class="header_search_input" value="" style="background: none; width: 155px; padding-left: 3px;">
                     <button class="button">{_search_by_groups}</button>
                 </form>
             </div>
