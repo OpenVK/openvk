@@ -5,12 +5,29 @@
 {block title}{_"albums"} {$owner->getCanonicalName()}{/block}
 
 {block header}
-    <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
-    » {_"albums"}
-    
-    <div n:if="$canEdit" style="float: right;">
-        {var isClub = ($owner instanceof openvk\Web\Models\Entities\Club)}
-        <a href="/albums/create{$isClub ? '?gpid=' . $owner->getId() : ''}">{_"create_album"}</a>
+        {if isset($thisUser) && $thisUser->getId() == $owner->getId()}
+            {_my_photos}
+        {else}
+            <a href="{$owner->getURL()}">
+            {$owner->getCanonicalName()}</a>
+            »
+            {_albums}
+        {/if}
+{/block}
+
+{block size}
+    <div style="padding-bottom: 0px; padding-top: 0;" class="summaryBar">
+        <div class="summary">
+                {if !is_null($thisUser) && $owner->getId() === $thisUser->getId()}
+                    {tr("albums_list", $count)}
+                {else}
+                    {tr("albums", $count)}
+                {/if}
+                <span n:if="isset($thisUser) && $thisUser->getId() == $owner->getId()">
+                    &nbsp;|&nbsp;
+                    <a href="/albums/create">{_create_album}</a>
+                </span>
+        </div>
     </div>
 {/block}
 
