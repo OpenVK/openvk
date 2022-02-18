@@ -19,6 +19,7 @@ final class AuthPresenter extends OpenVKPresenter
 {
     protected $banTolerant = true;
     protected $activationTolerant = true;
+    protected $deactivationTolerant = true;
     
     private $authenticator;
     private $db;

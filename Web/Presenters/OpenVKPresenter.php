@@ -14,6 +14,7 @@ abstract class OpenVKPresenter extends SimplePresenter
 {
     protected $banTolerant   = false;
     protected $activationTolerant = false;
+    protected $deactivationTolerant = false;
     protected $errorTemplate = "@error";
     protected $user = NULL;
     
@@ -212,7 +213,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->template->thisUser    = $this->user->identity;
             $this->template->userTainted = $user->isTainted();
 
-            if($this->user->identity->isDeleted()) {
+            if($this->user->identity->isDeleted() && !$this->deactivationTolerant) {
                 if($this->user->identity->getDeactivatedUntil() > time()) {
                     header("HTTP/1.1 403 Forbidden");
                     $this->getTemplatingEngine()->render(__DIR__ . "/templates/@deactivated.xml", [
