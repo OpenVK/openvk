@@ -11,7 +11,7 @@
 {/block}
 
 {block size}
-    <div style="padding-bottom: 0px;border-bottom: 0; padding-top: 0;" class="summaryBar">
+    <div style="padding-bottom: 0px; padding-top: 0;" class="summaryBar">
         <div class="summary">
                 {tr("videos", $count)}
                 <span n:if="isset($thisUser) && $thisUser->getId() == $user->getId()">
