@@ -74,11 +74,12 @@
 
 {block actions}
     {var clubPinned = $thisUser->isClubPinned($x)}
+    {if $x->canBeModifiedBy($thisUser ?? NULL)}
         <div class="navigation" style="width: 140px;">
             <a class="link" href="{$x->getURL()}">
                 {_check_community}
             </a>
-            {if ($clubPinned || $thisUser->getPinnedClubCount() <= 10) && $x->canBeModifiedBy($thisUser ?? NULL)}
+            {if ($clubPinned || $thisUser->getPinnedClubCount() <= 10)}
                 <a class="link" href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
                     {if $clubPinned}
                         {_remove_from_left_menu}
@@ -94,6 +95,7 @@
                 <input style="text-transform: lowercase; width: 100%;" class="link" type="submit" value="{_"leave_community"}" />
             </form>
         </div>
+    {/if}
 {/block}
 
 {block bottom}

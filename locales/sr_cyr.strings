@@ -124,7 +124,7 @@
 "outcoming_req" = "Захтеви";
 "req" = "Захтеви";
 
-"firends_zero" = "Нема ниједног пријатеља";
+"friends_zero" = "Нема ниједног пријатеља";
 "friends_one" = "$1 пријатељ";
 "friends_few" = "$1 пријатеља";
 "friends_many" = "$1 пријатеља";

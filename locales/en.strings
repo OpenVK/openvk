@@ -199,13 +199,21 @@
 "friends_reject" = "Reject request";
 "friends_accept" = "Accept request";
 "send_message" = "Send a message";
-"incoming_req" = "Subscribers";
-"outcoming_req" = "Requests";
+"incoming_req" = "Pending";
+"outcoming_req" = "Outgoing";
 "req" = "Requests";
 
-"firends_zero" = "No friends";
+"req_zero" = "No requests were found...";
+"req_one" = "Found $1 request";
+"req_other" = "Found $1 requests";
+
+"friends_zero" = "No friends";
 "friends_one" = "$1 friend";
 "friends_other" = "$1 friends";
+
+"friends_list_zero" = "You have no friends yet";
+"friends_list_one" = "You have $1 friend";
+"friends_list_other" = "You have $1 friends";
 
 "followers_zero" = "No followers";
 "followers_one" = "$1 follower";
@@ -307,6 +315,10 @@
 "albums_zero" = "No albums";
 "albums_one" = "$1 album";
 "albums_other" = "$1 albums";
+
+"albums_list_zero" = "You don't have any albums";
+"albums_list_one" = "You have one album";
+"albums_list_other" = "You have $1 albums";
 
 /* Notes */
 
@@ -747,7 +759,7 @@
 "information_-2" = "Login success";
 
 "no_data" = "No data";
-"no_data_description" = "There is no data.";
+"no_data_description" = "There is nothing here... yet...";
 
 "error" = "Error";
 "error_shorturl" = "This short address is already owned.";
