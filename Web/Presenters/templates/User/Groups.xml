@@ -53,7 +53,7 @@
 
 {block name}{/block}
 
-{block infoTable}
+{block infotable}
     <table id="basicInfo" class="ugc-table group_info" cellspacing="0" cellpadding="0" border="0">
         <tbody>
             <tr>
