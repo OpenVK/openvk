@@ -202,15 +202,27 @@
 "friends_reject" = "Отменить заявку";
 "friends_accept" = "Принять заявку";
 "send_message" = "Отправить сообщение";
-"incoming_req" = "Подписчики";
-"outcoming_req" = "Заявки";
+"incoming_req" = "Входящие";
+"outcoming_req" = "Исходящие";
 "req" = "Заявки";
 
-"firends_zero" = "Ни одного друга";
+"req_zero" = "Не найдено ни одной заявки...";
+"req_one" = "Найдена $1 заявка";
+"req_few" = "Найлено $1 заявки";
+"req_many" = "Найдено $1 заявки";
+"req_other" = "Найдено $1 заявок";
+
+"friends_zero" = "Ни одного друга";
 "friends_one" = "$1 друг";
 "friends_few" = "$1 друга";
 "friends_many" = "$1 друзей";
 "friends_other" = "$1 друзей";
+
+"friends_list_zero" = "У Вас пока нет друзей";
+"friends_list_one" = "У Вас $1 друг";
+"friends_list_few" = "У Вас $1 друга";
+"friends_list_many" = "У Вас $1 друзей";
+"friends_list_other" = "У Вас $1 друзей";
 
 "followers_zero" = "Ни одного подписчика";
 "followers_one" = "$1 подписчик";
@@ -326,6 +338,12 @@
 "albums_many" = "$1 альбомов";
 "albums_other" = "$1 альбомов";
 
+"albums_list_zero" = "У Вас нет ни одного альбома";
+"albums_list_one" = "У Вас один альбом";
+"albums_list_few" = "У Вас $1 альбома";
+"albums_list_many" = "У Вас $1 альбомов";
+"albums_list_other" = "У Вас $1 альбомов";
+
 /* Notes */
 
 "notes" = "Заметки";
@@ -413,7 +431,9 @@
 "avatars_style" = "Отображение аватаров";
 "style" = "Стиль";
 
-"default" = "Произвольные (по умолчанию)";
+"default" = "по умолчанию";
+
+"arbitrary_avatars" = "Произвольные";
 "cut" = "Квадратные";
 "round_avatars" = "Круглые";
 
@@ -799,7 +819,7 @@
 "information_-2" = "Вход выполнен успешно";
 
 "no_data" = "Нет данных";
-"no_data_description" = "В этом представлении отсутствуют данные.";
+"no_data_description" = "Тут ничего нет... Пока...";
 
 "error" = "Ошибка";
 "error_shorturl" = "Данный короткий адрес уже занят.";

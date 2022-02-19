@@ -402,7 +402,7 @@
                         </td>
                         <td>
                             <select name="style_avatar">
-                                <option value="0" {if $user->getStyleAvatar() == 0}selected{/if}>{_"default"}</option>
+                                <option value="0" {if $user->getStyleAvatar() == 0}selected{/if}>{_"arbitrary_avatars"} ({_"default"})</option>
                                 <option value="1" {if $user->getStyleAvatar() == 1}selected{/if}>{_"cut"}</option>
                                 <option value="2" {if $user->getStyleAvatar() == 2}selected{/if}>{_"round_avatars"}</option>
                             </select>
