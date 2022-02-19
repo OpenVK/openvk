@@ -52,12 +52,12 @@
     <div n:if="$act === 'incoming' || $act === 'outcoming'" class="mb_tabs">
         <div n:attr="id => ($act === 'incoming' ? 'active' : 'ki')" class="mb_tab">
             <div>
-                <a href="?act=incoming">Входящие</a>
+                <a href="?act=incoming">{_incoming_req}</a>
             </div>
         </div>
         <div n:attr="id => ($act === 'outcoming' ? 'active' : 'ki')" class="mb_tab">
             <div>
-                <a href="?act=outcoming">Исходящие</a>
+                <a href="?act=outcoming">{_outcoming_req}</a>
             </div>
         </div>
     </div>

@@ -13,11 +13,11 @@
 {block size}
     <div style="padding-bottom: 0px; padding-top: 0;" class="summaryBar">
         <div class="summary">
-                {tr("videos", $count)}
-                <span n:if="isset($thisUser) && $thisUser->getId() == $user->getId()">
-                    &nbsp;|&nbsp;
-                    <a href="/videos/upload">{_upload_video}</a>
-                </span>
+            {tr("videos", $count)}
+            <span n:if="isset($thisUser) && $thisUser->getId() == $user->getId()">
+                &nbsp;|&nbsp;
+                <a href="/videos/upload">{_upload_video}</a>
+            </span>
         </div>
     </div>
 {/block}

@@ -200,7 +200,7 @@
 "outcoming_req" = "Zgłoszenie";
 "req" = "Zgłoszenie";
 
-"firends_zero" = "Ani jednego przyjaciela";
+"friends_zero" = "Ani jednego przyjaciela";
 "friends_one" = "$1 przyjaciel";
 "friends_few" = "$1 przyjaciela";
 "friends_many" = "$1 przyjaciół";
