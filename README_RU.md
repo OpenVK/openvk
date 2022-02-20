@@ -82,5 +82,5 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 **Внимание**: баг-трекер, телеграм- и matrix-чат являются публичными местами, и жалобы в OVK обслуживается волонтерами. Если вам нужно сообщить о чем-то, что не должно быть раскрыто широкой публике (например, сообщение об уязвимости), пожалуйста, свяжитесь с нами напрямую по этому адресу: **openvk [собака] tutanota [точка] com**.
 
 <a href="https://codeberg.org/OpenVK/openvk">
-    <img alt="Get it on Codeberg" src="https://codeberg.org/Codeberg/GetItOnCodeberg/media/branch/main/get-it-on-blue-on-white.png" height="60">
+    <img alt="Получить на Codeberg" src="https://codeberg.org/Codeberg/GetItOnCodeberg/media/branch/main/get-it-on-blue-on-white.png" height="60">
 </a>
