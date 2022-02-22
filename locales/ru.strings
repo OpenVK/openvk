@@ -543,6 +543,8 @@
 "videos_many" = "$1 видеозаписей";
 "videos_other" = "$1 видеозаписей";
 
+"view_video" = "Просмотр";
+
 /* Notifications */
 
 "feedback" = "Ответы";

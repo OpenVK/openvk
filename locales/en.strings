@@ -513,6 +513,8 @@
 "videos_one" = "$1 video";
 "videos_other" = "$1 videos";
 
+"view_video" = "View";
+
 /* Notifications */
 
 "feedback" = "Feedback";

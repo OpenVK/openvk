@@ -35,6 +35,10 @@ a {
     cursor: pointer;
 }
 
+p {
+    margin: 5px 0;
+}
+
 .layout {
     width: 791px;
     margin: 0 auto;
@@ -1559,13 +1563,14 @@ body.scrolled .toTop:hover {
     padding: 0 6px;
 }
 
-.ovk-video>.preview {
+.ovk-video>.preview, .video-preview {
     width: 170px;
     height: 127px;
-    border: 1px solid #ccc;
     align-content: center;
     display: flex;
-    padding: 1px;
+    padding: 2px;
+    box-shadow: inset 0 0 0px 1px #ccc, inset 0 0 0px 2px #fff;
+    background-color: #000;
 }
 
 #wallAttachmentMenu {
