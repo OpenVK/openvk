@@ -18,7 +18,7 @@
 "login_failed" = "Masuk Gagal";
 "invalid_username_or_password" = "Nama pengguna atau Sandi yang kamu masukan tidak benar. <a href='/restore'>Lupa Kata Sandimu?</a>";
 
-"failed_to_register" = "Buat Akun Baru Gagal";
+"failed_to_register" = "Pendaftaran Akun Baru Gagal";
 "referral_link_invalid" = "Tautan rujukan tidak valid.";
 "registration_disabled" = "Pendaftaran dinonaktifkan oleh sistem administrator.";
 "user_already_exists" = "Pengguna dengan email ini sudah ada.";
@@ -48,7 +48,7 @@
 
 "register_meta_desc" = "Register in $1 sekarang!";
 "register_referer_meta_title" = "$1 mengundangmu ke $2!";
-"register_referer_meta_desc" = "Join $1 dan banyak pengguna lainnya di $2!";
+"register_referer_meta_desc" = "Bergabunglah $1 dan banyak pengguna lainnya di $2!";
 
 "users" = "Pengguna";
 
@@ -58,14 +58,14 @@
 "edit" = "Sunting";
 "birth_date" = "Tanggal lahir";
 "registration_date" = "Bergabung sejak";
-"hometown" = "Hometown";
+"hometown" = "Tempat Asal";
 "this_is_you" = "ini kamu";
-"edit_page" = "Edit page";
-"edit_group" = "Edit group";
+"edit_page" = "Sunting halaman";
+"edit_group" = "Sunting grup";
 "change_status" = "Ubah status";
 "name" = "Nama";
 "surname" = "Nama Belakang";
-"gender" = "Gender";
+"gender" = "Jenis kelamin";
 "male" = "Pria";
 "female" = "Wanita";
 "description" = "Deskripsi";
@@ -73,27 +73,27 @@
 "main_information" = "Informasi Utama";
 "nickname" = "Nama Panggilan";
 "online" = "Aktif";
-"was_online" = "Aktif";
-"was_online_m" = "Aktif";
-"was_online_f" = "Aktif";
+"was_online" = "Terakhir kali terlihat";
+"was_online_m" = "Terakhir kali terlihat";
+"was_online_f" = "Terakhir kali terlihat";
 /* For male and female */
 "all_title" = "Semua";
 "information" = "Informasi";
 "status" = "Status";
-"no_information_provided" = "No information provided.";
-"deceased_person" = "Deceased person";
+"no_information_provided" = "Tidak ada informasi yang diberikan.";
+"deceased_person" = "mendiang";
 "none" = "nihil";
 "send" = "Kirim";
 
-"years_zero" = "berumu 0 tahun";
+"years_zero" = "berumur 0 tahun";
 "years_one" = "berumur 1 tahun";
 "years_other" = "berumur $1 tahun";
 
 "relationship" = "Status Hubungan";
 
 "relationship_0" = "Tidak ada yang dipilih";
-"relationship_1" = "Not married";
-"relationship_2" = "Dating";
+"relationship_1" = "Belum Menikah";
+"relationship_2" = "Berpacaran";
 "relationship_3" = "Engaged";
 "relationship_4" = "Menikah";
 "relationship_5" = "In a civil marriage";
@@ -101,7 +101,7 @@
 "relationship_7" = "Rumit";
 "relationship_8" = "Sedang Aktif mencari";
 
-"politViews" = "Polit. Views";
+"politViews" = "Pandangan Politik";
 
 "politViews_0" = "Tidak ada yang dipilih";
 "politViews_1" = "Indifferent";
@@ -123,7 +123,7 @@
 "city" = "Kota";
 "address" = "Alamat";
 
-"personal_information" = "Personal information";
+"personal_information" = "Informasi personal ";
 
 "interests" = "Minat";
 "favorite_music" = "Musik favorit";
@@ -131,7 +131,7 @@
 "favorite_shows" = "Acara TV favorit";
 "favorite_books" = "Buku favorit";
 "favorite_quotes" = "Kutipan favorit";
-"information_about" = "Tentang";
+"information_about" = "Personalia";
 
 "updated_at" = "Diperbarui pada $1";
 
@@ -140,29 +140,29 @@
 
 /* Wall */
 
-"feed" = "Berita";
+"feed" = "Beranda";
 
-"post_writes_m" = "wrote";
-"post_writes_f" = "wrote";
-"post_writes_g" = "published";
-"wall" = "Wall";
+"post_writes_m" = "Kirim";
+"post_writes_f" = "Kirim";
+"post_writes_g" = "Kirim";
+"wall" = "dinding";
 "post" = "Post";
-"write" = "Write";
-"publish" = "Publish";
+"write" = "tulis";
+"publish" = "publikasikan"";
 "delete" = "Hapus";
 "comments" = "Komentar";
-"share" = "Share";
-"pin" = "Pin";
-"unpin" = "Unpin";
-"pinned" = "pinned";
+"share" = "Bagikan";
+"pin" = "sematkan";
+"unpin" = "batalkan sematkan";
+"pinned" = "disematkan";
 "comments_tip" = "Jadilah yang pertama yang berkomentar,pada postingan ini!";
 "your_comment" = "Komentarmu";
-"shown" = "Shown";
+"shown" = "Tampil";
 "x_out_of" = "$1 dari";
 "wall_zero" = "tidak ada postingan";
 "wall_one" = "$1 postingan";
 "wall_other" = "$1 postingan";
-"publish_post" = "Add post";
+"publish_post" = "Tambah";
 "view_other_comments" = "Lihat komentar lain.";
 
 "no_comments" = "Tidak ada Komentar";
@@ -171,18 +171,18 @@
 "posts_per_page" = "Number of posts per page";
 
 "attachment" = "Lampiran";
-"post_as_group" = "Post as group";
-"comment_as_group" = "Comment as group";
-"add_signature" = "Add signature";
+"post_as_group" = "Post sebagai grup";
+"comment_as_group" = "Komen sebagai group";
+"add_signature" = "Tambahkan Teken";
 /* ^ can be translated as "author's signature". ^ */
-"contains_nsfw" = "Contains NSFW content";
-"nsfw_warning" = "This post may have NSFW-content";
+"contains_nsfw" = "Konten Dewasa (NSFW)";
+"nsfw_warning" = "Postingan ini mungkin terdapat konten Dewasa (NSFW)";
 "report" = "Lapor";
 "attach" = "Lampiran";
-"attach_photo" = "Lampirankan foto";
-"attach_video" = "Lampirankan video";
+"attach_photo" = "Lampirkan foto";
+"attach_video" = "Lampirkan video";
 "draw_graffiti" = "Lampirankan graffiti";
-"no_posts_abstract" = "Nobody wrote anything here... So far.";
+"no_posts_abstract" = "belum ada yang tertulis disini...";
 "attach_no_longer_available" = "Lampiran ini tidak lagi tersedia.";
 "open_post" = "Buka postingan";
 "version_incompatibility" = "Lampiran ini tidak dapat ditampilkan. Mungkin databasenya tidak kompatibel dengan versi OpenVK saat ini .";
@@ -199,29 +199,29 @@
 "friends_reject" = "Tolak Permintaan";
 "friends_accept" = "Terima Permintaan";
 "send_message" = "Kirim Pesan";
-"incoming_req" = "Pending";
-"outcoming_req" = "Outgoing";
-"req" = "Requests";
+"incoming_req" = "Menunggu";
+"outcoming_req" = "Keluar";
+"req" = "Permintaan";
 
-"req_zero" = "No requests were found...";
-"req_one" = "Found $1 request";
-"req_other" = "Found $1 requests";
+"req_zero" = "Tidak ada permintaan ditemukan...";
+"req_one" = "Terdapat $1 permintaan";
+"req_other" = "Terdapat $1 permintaan";
 
 "friends_zero" = "Tidak ada pertemanan";
 "friends_one" = "$1 teman";
 "friends_other" = "$1 teman";
 
-"friends_list_zero" = "You have no friends yet";
-"friends_list_one" = "You have $1 friend";
-"friends_list_other" = "You have $1 friends";
+"friends_list_zero" = "Kamu belum memiliki pertemanan";
+"friends_list_one" = "Kamu memiliki $1 pertemanan";
+"friends_list_other" = "Kamu memiliki $1 pertemanan";
 
-"followers_zero" = "No followers";
-"followers_one" = "$1 follower";
-"followers_other" = "$1 followers";
+"followers_zero" = "Tidak ada pengikut";
+"followers_one" = "$1 pengikut";
+"followers_other" = "$1 pengikut";
 
-"subscriptions_zero" = "No subscriptions";
-"subscriptions_one" = "$1 subscription";
-"subscriptions_other" = "$1 subscriptions";
+"subscriptions_zero" = "Tidak ada Langganan";
+"subscriptions_one" = "$1 Langganan";
+"subscriptions_other" = "$1 Langganan";
 
 /* Group */
 
@@ -232,12 +232,12 @@
 "join_community" = "Gabung komunitas";
 "leave_community" = "Tinggalkan Komunitas";
 "check_community" = "Lihat komunitas;
-"min_6_community" = "Name of the group must have more that 6 characters";
+"min_6_community" = "Nama grup setidaknya minimal memiliki 6 digit huruf";
 "participants" = "Partisipan";
 "groups" = "Grup";
 "meetings" = "Rapat";
 "create_group" = "Buat Grup";
-"group_managers" = "Managers";
+"group_managers" = "Pengurus";
 "group_type" = "Tipe Grup";
 "group_type_open" = "This is an open group, anyone can enter it.";
 "group_type_closed" = "This is an closed group. To enter, you must submit an request.";
@@ -245,54 +245,54 @@
 "administrators" = "Administrator";
 "add_to_left_menu" = "Add to left menu";
 "remove_from_left_menu" = "Remove from left menu";
-"all_followers" = "All followers";
-"only_administrators" = "Only administrators";
+"all_followers" = "Seluruh pengikut";
+"only_administrators" = "Hanya administrator";
 "website" = "Situs";
 "managed" = "Managed";
-"size" = "Size";
+"size" = "Jumlah";
 
 "administrators_one" = "$1 administrator";
-"administrators_other" = "$1 administrators";
+"administrators_other" = "$1 administrator";
 
 "role" = "Role";
 "administrator" = "Administrator";
 "promote_to_admin" = "Promosikan sebagai admin";
 "promote_to_owner" = "Promosikan sebagai pemilik";
 "devote" = "Devote";
-"set_comment" = "Set comment";
-"hidden_yes" = "Hidden: Yes";
-"hidden_no" = "Hidden: No";
-"group_allow_post_for_everyone" = "Allow posting for everyone";
+"set_comment" = "Atur Komentar";
+"hidden_yes" = "Sembunyikan: Ya";
+"hidden_no" = "Sembunyikan: No";
+"group_allow_post_for_everyone" = "Izinkan semua dapat memposting";
 "group_hide_from_global_feed" = "Don't display posts in the global feed";
 "statistics" = "Statistik";
 "group_administrators_list" = "Lis Admin";
-"group_display_only_creator" = "Display only group creator";
-"group_display_all_administrators" = "Display all administrators";
-"group_dont_display_administrators_list" = "Display nothing";
+"group_display_only_creator" = "Tampilkan hanya pembuat grup";
+"group_display_all_administrators" = "Tampilkan seluruh administrator";
+"group_dont_display_administrators_list" = "Jangan tampilkan apapun";
 
 "group_changeowner_modal_title" = "Owner's permissions transfer";
 "group_changeowner_modal_text" = "Attention! You are transferring owner rights to user $1. This action is irreversible. After the transfer, you will remain an administrator, but you can easily stop being one.";
 "group_owner_setted" = "The new owner ($1) has been successfully assigned to the community $2. You have been granted administrator rights in the community. If you want to return the owner role, contact <a href='/support?act=new'>site technical support</a>.";
 
-"participants_zero" = "No partisipan";
+"participants_zero" = "Tidak ada partisipan";
 "participants_one" = "$1 partisipan";
 "participants_other" = "$1 partisipan";
 
-"groups_zero" = "No groups";
-"groups_one" = "$1 group";
-"groups_other" = "$1 groups";
+"groups_zero" = "Tidak ada grup";
+"groups_one" = "$1 grup";
+"groups_other" = "$1 grup";
 
-"groups_list_zero" = "You are not a participant in any group";
-"groups_list_one" = "You are participating in one group";
-"groups_list_other" = "You are a participant of $1 groups";
+"groups_list_zero" = "Kamu belum berpatisipasi dalam grup manapun";
+"groups_list_one" = "Kamu berpatisipasi dalam satu grup";
+"groups_list_other" = "Kamu berpatisipasi dalam of $1 grup";
 
-"meetings_zero" = "No meetings";
-"meetings_one" = "$1 meeting";
-"meetings_other" = "$1 meetings";
+"meetings_zero" = "tidak terdapat rapat/pertemuan";
+"meetings_one" = "$1 rapat/pertemuan";
+"meetings_other" = "$1 rapat/pertemuan";
 
 "open_new_group" = "Open a new group";
 "open_group_desc" = "Can't find the right group? Open your own...";
-"search_group" = "Search group";
+"search_group" = "Cari grup";
 "search_by_groups" = "Search by groups";
 "search_group_desc" = "Here you can browse through the existing groups and choose a group to suit your needs...";
 
@@ -307,18 +307,18 @@
 "photo" = "Foto";
 "upload_button" = "Unggah";
 
-"open_original" = "Open original";
+"open_original" = "Buka ukuran file asli";
 
 "avatar_album" = "Foto Profil";
-"wall_album" = "Wall photos";
+"wall_album" = "Foto dingdings";
 
-"albums_zero" = "No albums";
+"albums_zero" = "tidak ada album";
 "albums_one" = "$1 album";
-"albums_other" = "$1 albums";
+"albums_other" = "$1 album";
 
-"albums_list_zero" = "You don't have any albums";
-"albums_list_one" = "You have one album";
-"albums_list_other" = "You have $1 albums";
+"albums_list_zero" = "Kamu belum mempunya album apapun";
+"albums_list_one" = "Kamu hanya memiliki satu album";
+"albums_list_other" = "Kamu memiliki $1 album";
 
 /* Notes */
 
@@ -330,11 +330,11 @@
 "edit_note" = "Sunting catatan";
 "actions" = "Aksi";
 
-"edited" = "Edited";
+"edited" = "Tersunting";
 
-"notes_zero" = "No notes";
-"notes_one" = "$1 note";
-"notes_other" = "$1 notes";
+"notes_zero" = "Tidak ada catatan";
+"notes_one" = "$1 catatan";
+"notes_other" = "$1 catatan";
 "notes_start_screen" = "With notes, you can share your events with friends and see what's going on with them.";
 
 "notes_list_zero" = "No notes found";
@@ -346,16 +346,16 @@
 /* Note that is string need to fit into the "My Page" link */
 
 "edit_button" = "sunting";
-"my_page" = "My Page";
-"my_friends" = "My Friends";
-"my_photos" = "My Photos";
-"my_videos" = "My Videos";
-"my_messages" = "My Messages";
-"my_notes" = "My Notes";
-"my_groups" = "My Groups";
-"my_feed" = "My Feed";
-"my_feedback" = "My Feedback";
-"my_settings" = "My Settings";
+"my_page" = "Halamanku";
+"my_friends" = "Pertemanan";
+"my_photos" = "Foto";
+"my_videos" = "Video";
+"my_messages" = "Perpesanan";
+"my_notes" = "Catatan";
+"my_groups" = "Grup";
+"my_feed" = "Beranda";
+"my_feedback" = "Pemberandaan";
+"my_settings" = "Pengaturan";
 "bug_tracker" = "Bug-tracker";
 
 "menu_login" = "Masuk";
@@ -365,9 +365,9 @@
 "menu_logout" = "Keluar";
 "menu_support" = "Dukungan";
 
-"header_home" = "home";
+"header_home" = "beranda";
 "header_groups" = "grup";
-"header_people" = "people";
+"header_people" = "orang";
 "header_invite" = "undang";
 "header_help" = "bantuan";
 "header_log_out" = "keluar";
@@ -378,7 +378,7 @@
 
 "left_menu_donate" = "Donasi";
 
-"footer_about_instance" = "about instance";
+"footer_about_instance" = "Tentang";
 "footer_blog" = "blog";
 "footer_help" = "bantuan";
 "footer_developers" = "developers";
@@ -411,7 +411,7 @@
 "cut" = "Kotak";
 "round_avatars" = "Bulat";
 
-"apply_style_for_this_device" = "Apply style only for this device";
+"apply_style_for_this_device" = "Hanya terapkan gaya ini pada perangkat ini";
 
 "search_for_groups" = "Cari grup";
 "search_for_people" = "Cari orang";
@@ -441,12 +441,12 @@
 "privacy_value_nobody" = "Tidak ada";
 
 "your_email_address" = "Alamat Surelmu";
-"your_page_address" = "Your address page";
+"your_page_address" = "Alamat halamanmu";
 "page_address" = "Address page";
-"current_email_address" = "Current email address";
+"current_email_address" = "Alamat surel sekarang";
 "page_id" = "ID Halaman";
-"you_can_also" = "You can also";
-"delete_your_page" = "delete your page";
+"you_can_also" = "Kamu juga dapat";
+"delete_your_page" = "hapus halamanmu";
 "delete_album" = "hapus album";
 
 "ui_settings_interface" = "Antarmuka";
@@ -455,8 +455,8 @@
 "ui_settings_rating_show" = "Tampilkan";
 "ui_settings_rating_hide" = "Sembunyikan";
 
-"additional_links" = "Additional links";
-"ad_poster" = "Ad poster";
+"additional_links" = "Tautan tambahan";
+"ad_poster" = "Periklanan";
 
 /* Two-factor authentication */
 
@@ -470,20 +470,20 @@
 "two_factor_authentication_settings_3" = "or manually enter the given secret key: <b>$1</b>.";
 "two_factor_authentication_settings_4" = "Now enter the code that the application gave you and the password for your page so that we can confirm that you really are.";
 
-"connect" = "Connect";
-"enable" = "Enable";
-"disable" = "Disable";
-"code" = "Code";
-"2fa_code" = "2FA code";
+"connect" = "Hubungkan";
+"enable" = "Aktifkan";
+"disable" = "nonaktifkan";
+"code" = "Kode";
+"2fa_code" = "Kode 2FA";
 
-"incorrect_password" = "Incorrect password";
-"incorrect_code" = "Incorrect code";
-"incorrect_2fa_code" = "Incorrect two-factor authentication code";
+"incorrect_password" = "kata sandi tidak sesuai";
+"incorrect_code" = "kode tidak sesuai";
+"incorrect_2fa_code" = "Keamanan autentikasi dua faktor tidak sesuai";
 "two_factor_authentication_enabled_message" = "Two-factor authentication enabled";
 "two_factor_authentication_enabled_message_description" = "Your page has become more difficult to hack. We recommend that you download <a href='javascript:viewBackupCodes()'>backup codes</a>";
-"two_factor_authentication_disabled_message" = "Two-factor authentication disabled";
+"two_factor_authentication_disabled_message" = "Keamanan autentikasi dua faktor dinon-aktifkan";
 
-"view_backup_codes" = "View backup codes";
+"view_backup_codes" = "lihat kode cadang";
 "backup_codes" = "Backup codes for login confirmation";
 "two_factor_authentication_backup_codes_1" = "Backup codes allow you to validate your login when you don't have access to your phone, for example, while traveling.";
 "two_factor_authentication_backup_codes_2" = "You have <b>10 more codes</b>, each code can only be used once. Print them out, put them away in a safe place and use them when you need codes to validate your login.";
@@ -491,33 +491,33 @@
 
 /* Sorting */
 
-"sort_randomly" = "Sort randomly";
-"sort_up" = "Sort by ID up";
-"sort_down" = "Sort by ID down";
+"sort_randomly" = "Urutkan secara acak";
+"sort_up" = "Urutkan berdasarkan ID terawal";
+"sort_down" = "Urutkan berdasarkan ID terakhir";
 
 /* Videos */
 
-"videos" = "Videos";
+"videos" = "Video";
 "video" = "Video";
-"upload_video" = "Upload video";
+"upload_video" = "Unggah video";
 "video_uploaded" = "Uploaded";
 "video_updated" = "Updated";
-"video_link_to_yt" = "Link to YouTube";
+"video_link_to_yt" = "Pintaskan ke YouTube";
 
-"info_name" = "Title";
-"info_description" = "Description";
-"info_uploaded_by" = "Uploaded by";
-"info_upload_date" = "Upload date";
+"info_name" = "Judul";
+"info_description" = "Deskripsi";
+"info_uploaded_by" = "Diunggah oleh";
+"info_upload_date" = "Tanggal unggah";
 
-"videos_zero" = "No videos";
+"videos_zero" = "Tidak ada video";
 "videos_one" = "$1 video";
-"videos_other" = "$1 videos";
+"videos_other" = "$1 video";
 
-"view_video" = "View";
+"view_video" = "Lihat Video";
 
 /* Notifications */
 
-"feedback" = "Feedback";
+"feedback" = "Pemberandaan";
 "unread" = "Belum dibaca";
 "archive" = "Arsip";
 
@@ -539,17 +539,17 @@
 
 "nt_from" = "dari";
 "nt_yours_adjective" = "kamu";
-"nt_yours_feminitive_adjective" = "yours";
+"nt_yours_feminitive_adjective" = "kamu";
 "nt_post_nominative" = "post";
 "nt_post_instrumental" = "post";
-"nt_note_instrumental" = "note";
+"nt_note_instrumental" = "catatan";
 "nt_photo_instrumental" = "foto";
 "nt_topic_instrumental" = "topik";
 
 /* Time */
 
-"time_at_sp" = " at ";
-"time_just_now" = "just now";
+"time_at_sp" = " pada ";
+"time_just_now" = "baru saja";
 "time_exactly_five_minutes_ago" = "5 menit yang lalu";
 "time_minutes_ago" = "$1 menit yang lalu";
 "time_today" = "hari ini";
@@ -557,55 +557,55 @@
 
 "points" = "Votes";
 "points_count" = "votes";
-"on_your_account" = "on your account";
+"on_your_account" = "Pada akunmu";
 
-"vouchers" = "Vouchers";
-"have_voucher" = "Have voucher";
+"vouchers" = "Voucher";
+"have_voucher" = "voucher dimiliki";
 "voucher_token" = "Voucher token";
-"voucher_activators" = "Users";
-"voucher_explanation" = "Enter the voucher serial number. It is usually listed on the receipt or in the message.";
-"voucher_explanation_ex" = "Note that vouchers can expire and can only be used once.";
-"invalid_voucher" = "Voucher is invalid";
-"voucher_bad" = "You may have entered the wrong serial number, already used voucher, or the voucher has simply expired.";
-"voucher_good" = "Voucher activated";
-"voucher_redeemed" = "The voucher has been successfully activated. You will receive points, but you will no longer be able to activate it with this code.";
-"redeem" = "Redeem voucher";
-"deactivate" = "Deactivate";
-"usages_total" = "Number of uses";
-"usages_left" = "Uses left";
+"voucher_activators" = "Pengguna";
+"voucher_explanation" = "Masukkan nomor seri pada voucher. Biasanya tercantum pada tanda terima atau dalam suatu pesan.";
+"voucher_explanation_ex" = "Perlu diketahui bahwa voucher dapat kedaluwarsa dan hanya dapat digunakan sekali.";
+"invalid_voucher" = "Voucher tidak valid";
+"voucher_bad" = "Kamu mungkin memasukkan nomor seri yang tidak valid atau voucher sudah digunakan, atau juga voucher sudah kedaluwarsa.";
+"voucher_good" = "Voucher telah diaktifkan";
+"voucher_redeemed" = "Voucher telah berhasil diaktifkan.poin akan segera diterima, tetapi kamu tidak lagi dapat mengaktifkannya dengan kode ini.";
+"redeem" = "Gunakan voucher";
+"deactivate" = "Nonaktifkan";
+"usages_total" = "Total telah digunakan";
+"usages_left" = "Sisa penggunaan";
 
 "points_transfer_dialog_header_1" = "You can send as a gift or transfer part of the votes to another person.";
 "points_transfer_dialog_header_2" = "Your current balance:";
 
 "points_amount_one" = "1 vote";
-"points_amount_other" = "$1 votes";
+"points_amount_other" = "$1 vote";
 
-"transfer_poins" = "Transfer votes";
-"transfer_poins_button" = "Transfer votes";
-"also_you_can_transfer_points" = "You can also <a href=\"javascript:showCoinsTransferDialog($1, '$2')\">transfer votes</a> to another person.";
+"transfer_poins" = "Transfer vote";
+"transfer_poins_button" = "Transfer vote";
+"also_you_can_transfer_points" = "Kamu juga dapat <a href=\"javascript:showCoinsTransferDialog($1, '$2')\">membagikan vote</a>ke orang lain.";
 
 "transferred_to_you" = "transferred to you";
 
 "receiver_address" = "Receiver address";
-"coins_count" = "Number of votes";
-"message" = "Message";
+"coins_count" = "Jumlah of vote";
+"message" = "Pesan";
 
-"failed_to_tranfer_points" = "Failed to transfer votes";
+"failed_to_tranfer_points" = "Gagal mentransfer vote";
 
 "points_transfer_successful" = "You have successfully transferred <b>$1</b> to <b><a href=\"$2\">$3</a></b>.";
-"not_all_information_has_been_entered" = "Not all information has been entered.";
-"negative_transfer_value" = "We cannot steal votes from another person, sorry.";
-"message_is_too_long" = "The message is too long.";
-"receiver_not_found" = "The receiver was not found.";
-"you_dont_have_enough_points" = "You don't have enough votes.";
+"not_all_information_has_been_entered" = "Informasi tidak lengkap";
+"negative_transfer_value" = "Maaf,kami tidak bisa mencuri atau menggelapkan votes dari orang lain.";
+"message_is_too_long" = "Pesan terlalu panjang";
+"receiver_not_found" = "Penerima tidak ditemukan / tidak ada";
+"you_dont_have_enough_points" = "Kamu tidak memiliki cukup vote";
 
 "increase_rating" = "Increase rating";
 "increase_rating_button" = "Increase";
-"to_whom" = "To whom";
+"to_whom" = "Kepada ";
 "increase_by" = "Increase by";
-"price" = "Price";
+"price" = "Harga";
 
-"you_have_unused_votes" = "You have $1 unused votes on your balance.";
+"you_have_unused_votes" = "Kamu memiliki $1 vote yang belum digunakan.";
 "apply_voucher" = "Apply voucher";
 
 "failed_to_increase_rating" = "Failed to increase rating";
@@ -616,66 +616,66 @@
 
 /* Gifts */
 
-"gift" = "Gift";
-"gifts" = "Gifts";
-"gifts_zero" = "Zero gifts";
-"gifts_one" = "One gift";
-"gifts_other" = "$1 gifts";
-"gifts_left" = "Gifts left: $1";
-"gifts_left_zero" = "Zero gifts left";
-"gifts_left_one" = "One gift left";
-"gifts_left_other" = "$1 gifts left";
+"gift" = "Hadiah";
+"gifts" = "Hadiah";
+"gifts_zero" = "0 Hadiah";
+"gifts_one" = "1 Hadiah";
+"gifts_other" = "$1 Hadiah";
+"gifts_left" = "Hadiah tersedia: $1";
+"gifts_left_zero" = "tidak ada Hadiah tersedia";
+"gifts_left_one" = "satu Hadiah tersedia";
+"gifts_left_other" = "$1 Hadiah tersisa";
 
-"send_gift" = "Send gift";
+"send_gift" = "Beri Hadiah";
 
-"gift_select" = "Select gift";
-"collections" = "Collections";
+"gift_select" = "Pilih Hadiah";
+"collections" = "Koleksi";
 "confirm" = "Konfirmasi";
-"as_anonymous" = "As anonymous";
-"gift_your_message" = "Your message";
+"as_anonymous" = "sebagai anonim";
+"gift_your_message" = "Pesanmu";
 
-"free_gift" = "Free";
-"coins" = "Votes";
+"free_gift" = "Gratis";
+"coins" = "Vote";
 "coins_zero" = "0 vote";
-"coins_one" = "One vote";
-"coins_other" = "$1 votes";
+"coins_one" = "1 vote";
+"coins_other" = "$1 vote";
 
-"users_gifts" = "Gifts";
+"users_gifts" = "Hadiah";
 
 /* Support */
 
 "support_opened" = "Opened";
 "support_answered" = "With a response";
 "support_closed" = "Closed";
-"support_ticket" = "Ticket";
-"support_tickets" = "Tickets";
+"support_ticket" = "Tiket";
+"support_tickets" = "Tiket";
 "support_status_0" = "Issue under consideration";
 "support_status_1" = "There's a response";
 "support_status_2" = "Closed";
 "support_greeting_hi" = "Greetings, $1!";
 "support_greeting_regards" = "Best regards,<br/>$1 support team.";
 
-"support_faq" = "Frequently Asked Questions";
-"support_list" = "List of tickets";
-"support_new" = "New ticket";
+"support_faq" = "Pertanyaan yang sering diajukan";
+"support_list" = "Lis tiket";
+"support_new" = "Tiket baru";
 
 "support_faq_title" = "Who is this website for?";
 "support_faq_content" = "The site is designed to find friends and acquaintances, as well as view user data. It is like a city directory, through which people can quickly find relevant information about a person.";
 
-"support_new_title" = "Enter the topic of your ticket";
-"support_new_content" = "Describe the issue or suggestion";
+"support_new_title" = "Masukkkan topik tiketmu";
+"support_new_content" = "Deskripsikan keluh kesahmu atau sugesti ataupun kritik dan saranmu";
 
-"support_rate_good_answer" = "This is good answer";
-"support_rate_bad_answer" = "This is bad answer";
-"support_good_answer_user" = "You left a positive feedback.";
-"support_bad_answer_user" = "You left a negative feedback.";
-"support_good_answer_agent" = "User left a positive feedback.";
-"support_bad_answer_agent" = "User left a negative feedback.";
-"support_rated_good" = "You left a positive feedback about the answer.";
-"support_rated_bad" = "You left a negative feedback about the answer.";
-"wrong_parameters" = "Invalid request parameters.";
+"support_rate_good_answer" = "Jawaban yang baik";
+"support_rate_bad_answer" = "Jawaban yang tidak baik";
+"support_good_answer_user" = "Kamu memberikan umpan balik positif.";
+"support_bad_answer_user" = "Kamu memberikan umpan balik negatif.";
+"support_good_answer_agent" = "Pengguna memberikan umpan balik positif.";
+"support_bad_answer_agent" = "Pengguna memberikan umpan balik negatif.";
+"support_rated_good" = "Kamu memberikan umpan balik positif terhadap jawabannya.";
+"support_rated_bad" = "Kamu memberikan umpan balik negatif terhadap jawabannya.";
+"wrong_parameters" = "Parameter permintaan tidak valid.";
 
-"fast_answers" = "Balasan Langsung";
+"fast_answers" = "Balasan cepat";
 
 "comment" = "Komen";
 "sender" = "Pengirim";
@@ -685,8 +685,8 @@
 "you_have_not_entered_text" = "Kamu belum memasukkan teks apa pun";
 "you_have_not_entered_name_or_text" = "Kamu tidak memasukkan nama atau teks";
 
-"ticket_changed" = "Ticket changed";
-"ticket_changed_comment" = "The changes will take effect in a few seconds.";
+"ticket_changed" = "Tiket diubah";
+"ticket_changed_comment" = "Perubahan akan berlaku dalam beberapa saat.";
 
 /* Invite */
 
@@ -696,19 +696,19 @@
 
 /* Banned */
 
-"banned_title" = "You are banned";
-"banned_header" = "You are banned";
-"banned_alt" = "The user is blocked.";
-"banned_1" = "Sorry <b>$1</b>, but you have been banned.";
-"banned_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to block you forever.";
-"banned_3" = "You can still <a href=\"/support?act=new\">write to the support</a> if you think there was an error or <a href=\"/logout?hash=$1\">logout</a>.";
+"banned_title" = "Kamu dibanned";
+"banned_header" = "Kamu dibanned";
+"banned_alt" = "Pengguna diblokir.";
+"banned_1" = "Maaf <b>$1</b>, tapi kamu telah dibanned.";
+"banned_2" = "dan alasannya cukup sederhana: <b>$1</b>. namun, saat ini kamu diblokir selamanya.";
+"banned_3" = "Kamu masih dapat <a href=\"/support?act=new\">menulis dukungan,masukkan,atau banding</a> jika kamu berpikir bahwa itu adalah kesalahan atau kamu bisa <a href=\"/logout?hash=$1\">keluar</a>.";
 
 /* Registration confirm */
 
 "ec_header" = "Konfirmasi Pendaftaran";
 "ec_title" = "Terima kasih!";
-"ec_1" = "<b>$1</b>, your registration is almost done. In a few minutes you should receive an mail with a link to confirm your email address.";
-"ec_2" = "If for some reason you don't get the mail, check your spam folder. If you don't find the email there, you can resend it.";
+"ec_1" = "<b>$1</b>, pendaftaranmu hampir selesai. Dalam beberapa saat kamu akan menerima pesan pada surel dengan tautan untuk mengonfirmasi alamat surelmnu.";
+"ec_2" = "Apabila kamu dengan alasan tertentu tidak menerima pesan ke surelmu, coba periksa folder spam surelmu.namun apabila tidak menemukan pesan apapun, kamu dapat mengirimnya ulang.";
 "ec_resend" = "Kirim ulang";
 
 /* Discussions */
@@ -732,8 +732,8 @@
 "view_topic" = "Lihat topik";
 "edit_topic_action" = "Sunting topik";
 "edit_topic" = "Sunting topik";
-"topic_settings" = "Topic settings";
-"pin_topic" = "Pin topic";
+"topic_settings" = "Pengaturan topik";
+"pin_topic" = "Sematkan Topik";
 "close_topic" = "Tutup topik";
 "delete_topic" = "Hapus topik";
 
@@ -742,13 +742,13 @@
 
 "created" = "Dibuat";
 
-"everyone_can_create_topics" = "Everyone can create topics";
+"everyone_can_create_topics" = "Siapa saja dapat membuat topik";
 "display_list_of_topics_above_wall" = "Display a list of topics above the wall";
 
 "topic_changes_saved_comment" = "The updated title and settings will appear on the topic page.";
 
-"failed_to_create_topic" = "Failed to create topic";
-"failed_to_change_topic" = "Failed to change topic";
+"failed_to_create_topic" = "Pembuatan topik gagal";
+"failed_to_change_topic" = "Pergantian topik gagal";
 "no_title_specified" = "No title specified.";
 
 /* Errors */
@@ -760,69 +760,69 @@
 "information_-1" = "Sukses";
 "information_-2" = "Masuk sukses";
 
-"no_data" = "No data";
-"no_data_description" = "There is nothing here... yet...";
+"no_data" = "Tidaka ada data";
+"no_data_description" = "Belum ada apa-apa disini... ";
 
 "error" = "Error";
-"error_shorturl" = "This short address is already owned.";
-"error_segmentation" = "Segmentation error";
+"error_shorturl" = "Alamat tidak tersedia atau telah dimiliki.";
+"error_segmentation" = "terjadi kesalahan";
 "error_upload_failed" = "Gagal mengunggah foto";
 "error_old_password" = "Kata sandi lama tidak cocok";
 "error_new_password" = "Kata sandi baru tidak cocok";
-"error_shorturl_incorrect" = "The short address has an incorrect format.";
+"error_shorturl_incorrect" = "Alamat singkat memiliki format yang salah.";
 "error_repost_fail" = "Gagal membagikan postingan";
 
 "forbidden" = "Access error";
 "forbidden_comment" = "This user\'s privacy settings do not allow you to look at his page.";
 
-"changes_saved" = "Changes saved";
+"changes_saved" = "Perubahan tersimpan";
 "changes_saved_comment" = "Data baru akan muncul di halamanmu";
 
-"photo_saved" = "Photo saved";
-"photo_saved_comment" = "New profile picture will appear on your page";
+"photo_saved" = "Foto berhasil disimpan";
+"photo_saved_comment" = "Gambar / foto profil baru akan muncul di halamanmu";
 
-"shared_succ" = "The post will appear on your wall. Click on the notification to go to your wall.";
+"shared_succ" = "Postingan akan tampil pada dindingmu,klik notifikasi untuk menuju dinding halamanmu.";
 
-"invalid_email_address" = "Invalid Email address";
-"invalid_email_address_comment" = "The Email you entered is not correct.";
+"invalid_email_address" = "Alamat sural tidak valid";
+"invalid_email_address_comment" = "Surel yang kamu masukkan tidak benar atau tidak sesuai penulisan yang benar.";
 
-"invalid_real_name" = "Please, enter your real name. It'll be easier for your friends to find you like this.";
+"invalid_real_name" = "Silakan, masukkan nama aslimu. Akan lebih mudah bagi temanmu atau kenalanmu untuk menemukanmu seperti ini.";
 
-"invalid_birth_date" = "Invalid date of birth";
-"invalid_birth_date_comment" = "The date of birth you entered is not correct.";
+"invalid_birth_date" = "Tanggal lahir tidak valid";
+"invalid_birth_date_comment" = "Tanggal lahir yang kamu masukkan tidak benar atau tidak sesuai penulisan yang benar.";
 
-"invalid_telegram_name" = "Invalid Telegram account name";
-"invalid_telegram_name_comment" = "The Telegram account name you entered is not correct.";
+"invalid_telegram_name" = "Akun Telegram tidak valid";
+"invalid_telegram_name_comment" = "Akun Telegram yang kamu masukkan tidak benar atau tidak sesuai penulisan yang benar.";
 
 "token_manipulation_error" = "Token manipulation error";
 "token_manipulation_error_comment" = "The token is invalid or expired";
 
 "profile_changed" = "Profile changed";
 "profile_changed_comment" = "Your active profile has been changed.";
-"profile_not_found" = "User is not found.";
+"profile_not_found" = "Pengguna tidak ditemukan.";
 
-"suspicious_registration_attempt" = "Suspicious registration attempt";
-"suspicious_registration_attempt_comment" = "You tried to register from a suspicious location.";
+"suspicious_registration_attempt" = "Upaya yang mencurigakan / asing";
+"suspicious_registration_attempt_comment" = "Kamu mencoba mendaftar dari lokasi yang mencurigakan atau sesuai dengan kebijakan";
 
 "rate_limit_error" = "Choomba, are you completely fucked up?";
 "rate_limit_error_comment" = "Go to the brainwrap, drink the wheels. In $1, you cannot drop shitposts as often. Exception code: $2.";
 
-"not_enough_permissions" = "Not enough permissions";
-"not_enough_permissions_comment" = "You do not have sufficient permissions to perform this action.";
+"not_enough_permissions" = "izin / akses diperlukan";
+"not_enough_permissions_comment" = "Kamu tidak memiliki izin / akses yang memadai untuk melakukan tindakan ini.";
 
-"login_required_error" = "Not enough permissions";
-"login_required_error_comment" = "To view this page, you need to sign in to your account.";
+"login_required_error" = "Akses masuk diperlukan";
+"login_required_error_comment" = "Untuk melihat halaman ini, kamu harus masuk terlebih dahulu.";
 
-"captcha_error" = "Incorrect characters entered";
-"captcha_error_comment" = "Please make sure you fill in the captcha field correctly.";
+"captcha_error" = "captcha error";
+"captcha_error_comment" = "Pastikan Kamu mengisi kolom captcha dengan benar.";
 
-"failed_to_publish_post" = "Gagal mempostingan postingan";
+"failed_to_publish_post" = "Gagal memposting postingan";
 "failed_to_delete_post" = "Gagal menghapus postingan";
 
-"media_file_corrupted" = "The media content file is corrupted.";
-"media_file_corrupted_or_too_large" = "The media content file is corrupted or too large.";
-"post_is_empty_or_too_big" = "The post is empty or too big.";
-"post_is_too_big" = "The post is too big.";
+"media_file_corrupted" = "File konten media rusak / korup.";
+"media_file_corrupted_or_too_large" = "File konten media rusak atau terlalu besar.";
+"post_is_empty_or_too_big" = "Postingan nihil atau ukurannya terlalu besar.";
+"post_is_too_big" = "ukuran postingan terlalu besar";
 
 /* Admin actions */
 
@@ -830,13 +830,13 @@
 "manage_user_action" = "Atur pengguna";
 "manage_group_action" = "Atur grup";
 "ban_user_action" = "Ban pengguna";
-"warn_user_action" = "Warn pengguna";
+"warn_user_action" = "peringatkan pengguna";
 
 /* Paginator (deprecated) */
 
-"paginator_back" = "Back";
-"paginator_page" = "Page $1";
-"paginator_next" = "Next";
+"paginator_back" = "Sebelumnya";
+"paginator_page" = "Halaman $1";
+"paginator_next" = "Selanjutnya";
 
 /* About */
 
@@ -850,11 +850,11 @@
 "about_users_one" = "<b>1</b> pengguna";
 "about_users_other" = "<b>$1</b> pengguna";
 
-"about_online_users_one" = "<b>1</b> online user";
-"about_online_users_other" = "<b>$1</b> online users";
+"about_online_users_one" = "<b>1</b> pengguna aktif";
+"about_online_users_other" = "<b>$1</b> pengguna aktif";
 
-"about_active_users_one" = "<b>1</b> active user";
-"about_active_users_other" = "<b>$1</b> active users";
+"about_active_users_one" = "<b>1</b> pengguna aktif";
+"about_active_users_other" = "<b>$1</b> pengguna aktif";
 
 "about_groups_one" = "<b>1</b> grup";
 "about_groups_other" = "<b>$1</b> grup";
