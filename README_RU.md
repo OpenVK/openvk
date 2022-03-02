@@ -17,6 +17,7 @@ _[English](README.md)_
 ## Инстанции
 
 * **[openvk.su](https://openvk.su/)**
+* **[openvk.uk](https://openvk.uk)** - официальное зеркало openvk.su (<https://t.me/openvkch/1609>)
 * [social.fetbuk.ru](http://social.fetbuk.ru/)
 
 ## Могу ли я создать свою собственную инстанцию OpenVK?

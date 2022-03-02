@@ -17,6 +17,7 @@ Updating the source code is done with this command: `git pull`
 ## Instances
 
 * **[openvk.su](https://openvk.su/)**
+* **[openvk.uk](https://openvk.uk)** - official mirror of openvk.su (<https://t.me/openvkch/1609>)
 * [social.fetbuk.ru](http://social.fetbuk.ru/)
 
 ## Can I create my own OpenVK instance?
