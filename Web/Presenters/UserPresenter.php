@@ -31,7 +31,7 @@ final class UserPresenter extends OpenVKPresenter
     {
         $user = $this->users->get($id);
         if(!$user || $user->isDeleted())
-            $this->notFound();
+            $this->template->_template = "User/deleted.xml";
         else {
             if($user->getShortCode())
                 if(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) !== "/" . $user->getShortCode())
