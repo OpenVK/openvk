@@ -189,7 +189,7 @@
 "outcoming_req" = "Petoj";
 "req" = "Petoj";
 
-"firends_zero" = "Neniuj amikoj";
+"friends_zero" = "Neniuj amikoj";
 "friends_one" = "$1 amiko";
 "friends_few" = "$1 amikoj";
 "friends_many" = "$1 amikoj";

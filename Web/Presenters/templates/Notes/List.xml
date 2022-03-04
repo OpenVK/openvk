@@ -34,6 +34,28 @@
 {* BEGIN ELEMENTS DESCRIPTION *}
 
 {block specpage}
+    <style>
+        #userContent img {
+            max-width: 245pt;
+            max-height: 200pt;
+        }
+
+        #userContent blockquote {
+            background-color: #f3f3f3;
+            border-bottom: 5px solid #969696;
+            padding: 1;
+        }
+
+        #userContent cite {
+            margin-top: 1em;
+            display: block;
+        }
+
+        #userContent cite::before {
+            content: "— ";
+        }
+    </style>
+
     <div class="container_gray" style="background: white; border-top: none;">
 
         {var data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}

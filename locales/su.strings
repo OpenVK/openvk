@@ -198,7 +198,7 @@
 "outcoming_req" = "Заявки";
 "req" = "Заявки";
 
-"firends_zero" = "Ни одного товарища";
+"friends_zero" = "Ни одного товарища";
 "friends_one" = "$1 товарищ";
 "friends_few" = "$1 товарища";
 "friends_many" = "$1 товарищей";

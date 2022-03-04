@@ -124,7 +124,7 @@
 "outcoming_req" = "Zahtevi";
 "req" = "Zahtevi";
 
-"firends_zero" = "Nema nijednog prijatelja";
+"friends_zero" = "Nema nijednog prijatelja";
 "friends_one" = "$1 prijatelj";
 "friends_few" = "$1 prijatelja";
 "friends_many" = "$1 prijatelja";

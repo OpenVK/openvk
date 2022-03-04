@@ -208,7 +208,7 @@
 "outcoming_req" = "Հայցեր";
 "req" = "Հայցեր";
 
-"firends_zero" = "Ոչ մի ընկեր չկա";
+"friends_zero" = "Ոչ մի ընկեր չկա";
 "friends_one" = "$1 ընկեր";
 "friends_few" = "$1 ընկեր";
 "friends_many" = "$1 հատ ընկեր";

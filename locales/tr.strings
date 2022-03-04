@@ -153,7 +153,7 @@
 "outcoming_req" = "İstekler";
 "req" = "İstekler";
 
-"firends_zero" = "Arkadaş yok";
+"friends_zero" = "Arkadaş yok";
 "friends_one" = "$1 arkadaş";
 "friends_other" = "$1 arkadaş";
 
