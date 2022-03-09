@@ -17,8 +17,8 @@ Updating the source code is done with this command: `git pull`
 ## Instances
 
 * **[openvk.su](https://openvk.su/)**
+* **[openvk.uk](https://openvk.uk)** - official mirror of openvk.su (<https://t.me/openvkch/1609>)
 * [social.fetbuk.ru](http://social.fetbuk.ru/)
-* [openvk.zavsc.pw](https://openvk.zavsc.pw/)
 
 ## Can I create my own OpenVK instance?
 
@@ -31,18 +31,24 @@ If you want, you can add your instance to the list above so that people can regi
 ### Installation procedure
 
 1. Install PHP 7.4, web-server, Composer, Node.js, Yarn and [Chandler](https://github.com/openvk/chandler)
-  * PHP 8 has **not** yet been tested, so you should not expect it to work.
+
+* PHP 8 has **not** yet been tested, so you should not expect it to work.
+
 2. Install [commitcaptcha](https://github.com/openvk/commitcaptcha) and OpenVK as Chandler extensions like this:
-```
+
+```bash
 git clone https://github.com/openvk/openvk /path/to/chandler/extensions/available/openvk
 git clone https://github.com/openvk/commitcaptcha /path/to/chandler/extensions/available/commitcaptcha
 ```
+
 3. And enable them:
-```
+
+```bash
 ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/extensions/enabled/
 ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
 ```
-4. Import `install/init-static-db.sql` to **same database** you installed Chandler to
+
+4. Import `install/init-static-db.sql` to **same database** you installed Chandler to and import all sqls from `install/sqls` to **same database**
 5. Import `install/init-event-db.sql` to **separate database**
 6. Copy `openvk-example.yml` to `openvk.yml` and change options
 7. Run `composer install` in OpenVK directory
@@ -50,11 +56,12 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 9. Set `openvk` as your root app in `chandler.yml`
 
 Once you are done, you can login as a system administrator on the network itself (no registration required):
+
 * **Login**: `admin@localhost.localdomain6`
 * **Password**: `admin`
-  *  It is recommended to change the password before using the built-in account.
+  * It is recommended to change the password before using the built-in account.
 
-Full example installation instruction for CentOS 8 is also available [here](docs/centos8_install.md).
+Full example installation instruction for CentOS 8 is also available [here](https://docs.openvk.su/openvk_engine/centos8_installation/).
 
 ### If my website uses OpenVK, should I publish it's sources?
 
@@ -65,13 +72,15 @@ You also not required to publish source texts of your themepacks and plugins.
 ## Where can I get assistance?
 
 You may reach out to us via:
+
 * [Bug-tracker](https://github.com/openvk/openvk/projects/1)
 * [Ticketing system](https://openvk.su/support?act=new)
-* Telegram chat: Go to [our channel](https://t.me/openvkch) and open discussion in our channel menu.
+* Telegram chat: Go to [our channel](https://t.me/openvkenglish) and open discussion in our channel menu.
 * [Reddit](https://www.reddit.com/r/openvk/)
 * [Discussions](https://github.com/openvk/openvk/discussions)
+* Matrix chat: #openvk:matrix.org
 
-**Attention**: bug tracker and telegram chat are public places. And ticketing system is being served by volunteers. If you need to report something, that shouldn't be immediately disclosed to general public (for instance, vulnerability report), please use contact us directly at this email: **openvk [at] tutanota [dot] com**
+**Attention**: bug tracker, telegram and matrix chat are public places. And ticketing system is being served by volunteers. If you need to report something, that shouldn't be immediately disclosed to general public (for instance, vulnerability report), please use contact us directly at this email: **openvk [at] tutanota [dot] com**
 
 <a href="https://codeberg.org/OpenVK/openvk">
     <img alt="Get it on Codeberg" src="https://codeberg.org/Codeberg/GetItOnCodeberg/media/branch/main/get-it-on-blue-on-white.png" height="60">

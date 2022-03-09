@@ -4,14 +4,17 @@
     <tbody>
         <tr>
             <td width="54" valign="top">
-                <img
-                    src="{$author->getAvatarURL()}"
-                    width="50" />
+                <a href="{$author->getURL()}">
+                    <img
+                        src="{$author->getAvatarURL()}"
+                        width="50" />
+                </a>
                        {if !$post->isPostedOnBehalfOfGroup() && !($compact ?? false)}
                             <span n:if="$author->isOnline()" class="post-online">
                                 {_online}
                             </span>
                         {/if}
+                
             </td>
             <td width="100%" valign="top">
                 <div class="post-author">

@@ -53,7 +53,7 @@
 "registration_date" = "Дата регистрации";
 "hometown" = "Родной город";
 "this_is_you" = "это Вы";
-"edit_page" = "Изменить информацию паспорта";
+"edit_page" = "Изменить информацию досье";
 "edit_group" = "Изменить информацию клуба";
 "change_status" = "изменить ";
 "name" = "Имя";
@@ -164,7 +164,7 @@
 "no_comments" = "Отзывы отсутствуют";
 
 "all_news" = "Все новостные газеты";
-"posts_per_page" = "Количество записей в паспорте";
+"posts_per_page" = "Количество записей в досье";
 
 "attachment" = "Вложение";
 "post_as_group" = "От имени клуба";
@@ -198,7 +198,7 @@
 "outcoming_req" = "Заявки";
 "req" = "Заявки";
 
-"firends_zero" = "Ни одного товарища";
+"friends_zero" = "Ни одного товарища";
 "friends_one" = "$1 товарищ";
 "friends_few" = "$1 товарища";
 "friends_many" = "$1 товарищей";
@@ -296,7 +296,7 @@
 
 "open_original" = "Посмотреть оригинал картинки";
 
-"avatar_album" = "Картинки с паспорта";
+"avatar_album" = "Картинки из досье";
 "wall_album" = "Картинки с доски";
 
 "albums_zero" = "Ни одного альбома с картинками";
@@ -322,22 +322,22 @@
 
 /* Menus */
 
-"edit_button" = "ред.";
-"my_page" = "Мой Паспорт";
+"edit_button" = "корр.";
+"my_page" = "Мое Досье";
 "my_friends" = "Мои Товарищи";
 "my_photos" = "Мои Фотокартинки";
 "my_videos" = "Мои Киноленты";
-"my_messages" = "Мои Письма";
-"my_notes" = "Мои Черновики";
+"my_messages" = "Мои Телеграмы";
+"my_notes" = "Мои Записки";
 "my_groups" = "Мои Клубы";
-"my_feed" = "Мои Газеты";
-"my_feedback" = "Мои Ответы";
+"my_feed" = "Мое Информбюро";
+"my_feedback" = "Мои Сводки";
 "my_settings" = "Мои Настройки";
 "bug_tracker" = "Доска задач";
 
 "menu_login" = "Вход";
 "menu_registration" = "Регистрация";
-"menu_help" = "Помощь";
+"menu_help" = "Справка";
 
 "menu_logout" = "Выйти";
 "menu_support" = "Поддержка";
@@ -346,9 +346,9 @@
 "header_groups" = "клубы";
 "header_people" = "граждане";
 "header_invite" = "пригласить";
-"header_help" = "помощь";
-"header_log_out" = "выйти";
-"header_search" = "Поиск";
+"header_help" = "справка";
+"header_log_out" = "эмиграция";
+"header_search" = "Розыск";
 
 "header_login" = "вход";
 "header_registration" = "регистрация";
@@ -359,14 +359,14 @@
 "footer_help" = "помощь";
 "footer_developers" = "госслужащим";
 "footer_choose_language" = "выбрать язык";
-"footer_privacy" = "приватность";
+"footer_privacy" = "секретность";
 
 /* Settings */
 
 "main" = "Основное";
 "contacts" = "Контакты";
 "avatar" = "Картинка";
-"privacy" = "Приватность";
+"privacy" = "Секретность";
 "interface" = "Внешний вид";
 
 "profile_picture" = "Изображение страницы";
@@ -385,8 +385,8 @@
 "cut" = "Обрезка";
 "round_avatars" = "Круглая картинка";
 
-"search_for_groups" = "Поиск клубов";
-"search_for_people" = "Поиск гражданинов";
+"search_for_groups" = "Розыск клубов";
+"search_for_people" = "Розыск граждан";
 "search_button" = "Найти";
 "search_placeholder" = "Начните вводить любое имя, название или слово";
 "results_zero" = "Ни одного результата";
@@ -395,7 +395,7 @@
 "results_many" = "$1 результатов";
 "results_other" = "$1 результатов";
 
-"privacy_setting_access_page" = "Кому из граждан виден мой паспорт";
+"privacy_setting_access_page" = "Кому из граждан видно мое досье";
 "privacy_setting_read_info" = "Кому видно основную информацию моей страницы";
 "privacy_setting_see_groups" = "Кому разрешено просматривать мои картинки и встречи";
 "privacy_setting_see_photos" = "Кому разрешено просматривать мои картинки";
@@ -410,17 +410,17 @@
 "privacy_value_users" = "Участникам органа OpenVK";
 "privacy_value_friends" = "Товарищи";
 "privacy_value_friends_dative" = "Товарищам";
-"privacy_value_only_me" = "Только я";
-"privacy_value_only_me_dative" = "Только мне";
+"privacy_value_only_me" = "Только я и КГБ";
+"privacy_value_only_me_dative" = "Только мне и КГБ";
 "privacy_value_nobody" = "Никто";
 
 "your_email_address" = "Адрес Вашего почтового ящика";
-"your_page_address" = "Адрес Вашего паспорта";
-"page_address" = "Адрес паспорта";
+"your_page_address" = "Адрес Вашего досье";
+"page_address" = "Адрес досье";
 "current_email_address" = "Текущий адрес";
-"page_id" = "Номер паспорта";
+"page_id" = "Номер досье";
 "you_can_also" = "Вы также можете";
-"delete_your_page" = "порвать свой паспорт";
+"delete_your_page" = "порвать свое досье";
 "delete_album" = "выкинуть свой альбом с картинками";
 
 "ui_settings_interface" = "Интерфейс";
@@ -561,7 +561,7 @@
 
 "transferred_to_you" = "передал вам";
 
-"receiver_address" = "Адрес паспорта получателя";
+"receiver_address" = "Адрес досье получателя";
 "coins_count" = "Количество рублей";
 "message" = "Сообщение";
 
@@ -740,10 +740,10 @@
 "forbidden_comment" = "Настройки приватности этого пользователя не разрешают вам смотреть на его страницу.";
 
 "changes_saved" = "Изменения сохранены";
-"changes_saved_comment" = "Товарищ, обоновлённые данные появятся на вашем паспорте.";
+"changes_saved_comment" = "Товарищ, обоновлённые данные появятся на вашем досье.";
 
 "photo_saved" = "Картинка сохранена";
-"photo_saved_comment" = "Товарищ, орган одобрил новую картинку в вашем паспорте.";
+"photo_saved_comment" = "Товарищ, орган одобрил новую картинку в вашем досье.";
 
 "shared_succ" = "Запись появится на вашей доске. Нажмите на уведомление, чтобы перейти к своей стене.";
 
@@ -759,8 +759,8 @@
 "token_manipulation_error" = "Ошибка манипулирования токеном";
 "token_manipulation_error_comment" = "Токен недействителен или истёк";
 
-"profile_changed" = "Паспорт изменён";
-"profile_changed_comment" = "Товарищ, орган одобрил изменение вашего паспорта.";
+"profile_changed" = "Досье изменёно";
+"profile_changed_comment" = "Товарищ, орган одобрил изменение вашего досье.";
 "profile_not_found" = "Гражданин не найден.";
 
 "suspicious_registration_attempt" = "Подозрительная попытка регистрации в орган";

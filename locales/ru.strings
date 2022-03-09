@@ -7,6 +7,7 @@
 
 "home" = "Главная";
 "welcome" = "Добро пожаловать";
+"to_top" = "Вверх";
 
 /* Login */
 
@@ -34,6 +35,13 @@
 "password_reset_email_sent" = "Если вы зарегистрированы, вы получите инструкции на email.";
 "password_reset_error" = "Непредвиденная ошибка при сбросе пароля.";
 "password_reset_rate_limit_error" = "Нельзя делать это так часто, извините.";
+
+"email_sent" = "Письмо было успешно отправлено.";
+"email_sent_desc" = "Если ваш электронный адрес существует, вы получите письмо.";
+"email_error" = "Непредвиденная ошибка при отправке письма.";
+"email_rate_limit_error" = "Нельзя делать это так часто, извините.";
+
+"email_verify_success" = "Ваш Email был подтверждён. Приятного времяпрепровождения!";
 
 "registration_disabled_info" = "Регистрация отключена системным администратором. При возможности попросите приглашение у вашего знакомого, если он зарегистрирован на этом сайте.";
 "registration_closed" = "Регистрация закрыта.";
@@ -194,15 +202,27 @@
 "friends_reject" = "Отменить заявку";
 "friends_accept" = "Принять заявку";
 "send_message" = "Отправить сообщение";
-"incoming_req" = "Подписчики";
-"outcoming_req" = "Заявки";
+"incoming_req" = "Входящие";
+"outcoming_req" = "Исходящие";
 "req" = "Заявки";
 
-"firends_zero" = "Ни одного друга";
+"req_zero" = "Не найдено ни одной заявки...";
+"req_one" = "Найдена $1 заявка";
+"req_few" = "Найдено $1 заявки";
+"req_many" = "Найдено $1 заявки";
+"req_other" = "Найдено $1 заявок";
+
+"friends_zero" = "Ни одного друга";
 "friends_one" = "$1 друг";
 "friends_few" = "$1 друга";
 "friends_many" = "$1 друзей";
 "friends_other" = "$1 друзей";
+
+"friends_list_zero" = "У Вас пока нет друзей";
+"friends_list_one" = "У Вас $1 друг";
+"friends_list_few" = "У Вас $1 друга";
+"friends_list_many" = "У Вас $1 друзей";
+"friends_list_other" = "У Вас $1 друзей";
 
 "followers_zero" = "Ни одного подписчика";
 "followers_one" = "$1 подписчик";
@@ -224,6 +244,7 @@
 "subscriptions" = "Подписки";
 "join_community" = "Вступить в группу";
 "leave_community" = "Выйти из группы";
+"check_community" = "Просмотр группы";
 "min_6_community" = "Название должно быть не менее 6 символов";
 "participants" = "Участники";
 "groups" = "Группы";
@@ -241,6 +262,7 @@
 "only_administrators" = "Только администраторы";
 "website" = "Сайт";
 "managed" = "Управляемые";
+"size" = "Размер";
 
 "administrators_one" = "$1 администратор";
 "administrators_few" = "$1 администратора";
@@ -278,11 +300,21 @@
 "groups_many" = "$1 групп";
 "groups_other" = "$1 групп";
 
+"groups_list_zero" = "Вы не состоите ни в одной группе";
+"groups_list_one" = "Вы состоите в одной группе";
+"groups_list_other" = "Вы состоите в $1 группах";
+
 "meetings_zero" = "Ни одной встречи";
 "meetings_one" = "Одна встреча";
 "meetings_few" = "$1 встречи";
 "meetings_many" = "$1 встреч";
 "meetings_other" = "$1 встреч";
+
+"open_new_group" = "Открыть новую группу";
+"open_group_desc" = "Не можете найти нужную группу? Откройте свою...";
+"search_group" = "Поиск группы";
+"search_by_groups" = "Поиск по группам";
+"search_group_desc" = "Здесь Вы можете просмотреть существующие группы и выбрать группу себе по вкусу...";
 
 /* Albums */
 
@@ -306,20 +338,36 @@
 "albums_many" = "$1 альбомов";
 "albums_other" = "$1 альбомов";
 
+"albums_list_zero" = "У Вас нет ни одного альбома";
+"albums_list_one" = "У Вас один альбом";
+"albums_list_few" = "У Вас $1 альбома";
+"albums_list_many" = "У Вас $1 альбомов";
+"albums_list_other" = "У Вас $1 альбомов";
+
 /* Notes */
 
 "notes" = "Заметки";
 "note" = "Заметка";
 "name_note" = "Название";
 "text_note" = "Содержание";
-"create_note" = "Создать заметку";
+"create_note" = "Добавить запись";
+"edit_note" = "Редактировать заметку";
 "actions" = "Действия";
+"notes_start_screen" = "С помощью заметок Вы можете делиться событиями из жизни с друзьями, а так же быть в курсе того, что происходит у них.";
+
+"edited" = "Отредактировано";
 
 "notes_zero" = "Ни одной заметки";
 "notes_one" = "Одна заметка";
 "notes_few" = "$1 заметки";
 "notes_many" = "$1 заметок";
 "notes_other" = "$1 заметок";
+
+"notes_list_zero" = "Не найдено ни одной заметки";
+"notes_list_one" = "Найдена одна заметка";
+"notes_list_few" = "Найдено $1 заметки";
+"notes_list_many" = "Найдено $1 заметок";
+"notes_list_other" = "Найдено $1 заметок";
 
 /* Menus */
 
@@ -380,12 +428,14 @@
 "new_password" = "Новый пароль";
 "repeat_password" = "Повторите пароль";
 
-"avatars_style" = "Отображение аватар";
+"avatars_style" = "Отображение аватаров";
 "style" = "Стиль";
 
-"default" = "По умолчанию";
-"cut" = "Обрезка";
-"round_avatars" = "Круглый аватар";
+"default" = "по умолчанию";
+
+"arbitrary_avatars" = "Произвольные";
+"cut" = "Квадратные";
+"round_avatars" = "Круглые";
 
 "apply_style_for_this_device" = "Применить стиль только для этого устройства";
 
@@ -487,11 +537,13 @@
 "info_uploaded_by" = "Загрузил";
 "info_upload_date" = "Дата загрузки";
 
-"videos_zero" = "Ни одной видеозаписи";
+"videos_zero" = "Нет видео";
 "videos_one" = "Одна видеозапись";
 "videos_few" = "$1 видеозаписи";
 "videos_many" = "$1 видеозаписей";
 "videos_other" = "$1 видеозаписей";
+
+"view_video" = "Просмотр";
 
 /* Notifications */
 
@@ -578,6 +630,21 @@
 "message_is_too_long" = "Сообщение слишком длинное.";
 "receiver_not_found" = "Получатель не найден.";
 "you_dont_have_enough_points" = "У вас недостаточно голосов.";
+
+"increase_rating" = "Повысить рейтинг";
+"increase_rating_button" = "Повысить";
+"to_whom" = "Кому";
+"increase_by" = "Повысить на";
+"price" = "Стоимость";
+
+"you_have_unused_votes" = "У Вас $1 неиспользованных голоса на балансе.";
+"apply_voucher" = "Применить ваучер";
+
+"failed_to_increase_rating" = "Не удалось повысить рейтинг";
+"rating_increase_successful" = "Вы успешно повысыли рейтинг <b><a href=\"$1\">$2</a></b> на <b>$3%</b>.";
+"negative_rating_value" = "Мы не можем украсть рейтинг у другого человека, извините.";
+
+"increased_your_rating_by" = "повысил ваш рейтинг на";
 
 /* Gifts */
 
@@ -673,6 +740,14 @@
 "banned_2" = "А причина этому проста: <b>$1</b>. К сожалению, на этот раз нам пришлось заблокировать вас навсегда.";
 "banned_3" = "Вы всё ещё можете <a href=\"/support?act=new\">написать в службу поддержки</a>, если считаете что произошла ошибка или <a href=\"/logout?hash=$1\">выйти</a>.";
 
+/* Registration confirm */
+
+"ec_header" = "Подтверждение регистрации";
+"ec_title" = "Спасибо!";
+"ec_1" = "<b>$1</b>, ваша регистрация почти закончена. В течении нескольких минут на ваш адрес E-mail должно прийти письмо с ссылкой для подтверждения вашего адреса почты.";
+"ec_2" = "Если по каким-то причинам вам не пришло письмо, то проверьте папку Спам. Если письма не окажется и там, то вы можете переотправить письмо.";
+"ec_resend" = "Переотправить письмо";
+
 /* Discussions */
 
 "discussions" = "Обсуждения";
@@ -729,7 +804,7 @@
 "information_-2" = "Вход выполнен успешно";
 
 "no_data" = "Нет данных";
-"no_data_description" = "В этом представлении отсутствуют данные.";
+"no_data_description" = "Тут ничего нет... Пока...";
 
 "error" = "Ошибка";
 "error_shorturl" = "Данный короткий адрес уже занят.";
@@ -754,6 +829,8 @@
 "invalid_email_address" = "Неверный Email адрес";
 "invalid_email_address_comment" = "Email, который вы ввели, не является корректным.";
 
+"invalid_real_name" = "Пожалуйста, используйте реальные имена. Так вашим тульпам будет легче найти вас.";
+
 "invalid_telegram_name" = "Неверное имя Telegram аккаунта";
 "invalid_telegram_name_comment" = "Вы ввели неверное имя аккаунта Telegram.";
 
@@ -766,6 +843,7 @@
 "profile_changed" = "Профиль изменён";
 "profile_changed_comment" = "Ваш активный профиль был изменён.";
 "profile_not_found" = "Пользователь не найден.";
+"profile_not_found_text" = "Страница удалена либо ещё не создана.";
 
 "suspicious_registration_attempt" = "Подозрительная попытка регистрации";
 "suspicious_registration_attempt_comment" = "Вы пытались зарегистрироваться из подозрительного места.";
@@ -781,6 +859,14 @@
 
 "captcha_error" = "Неправильно введены символы";
 "captcha_error_comment" = "Пожалуйста, убедитесь, что вы правильно заполнили поле с капчей.";
+
+"failed_to_publish_post" = "Не удалось опубликовать пост";
+"failed_to_delete_post" = "Не удалось удалить пост";
+
+"media_file_corrupted" = "Файл медиаконтента повреждён.";
+"media_file_corrupted_or_too_large" = "Файл медиаконтента повреждён или слишком велик.";
+"post_is_empty_or_too_big" = "Пост пустой или слишком большой.";
+"post_is_too_big" = "Пост слишком большой.";
 
 /* Admin actions */
 

@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities\Notifications;
-use openvk\Web\Models\Entities\{User, Gift};
+use openvk\Web\Models\Entities\User;
 
 final class CoinsTransferNotification extends Notification
 {

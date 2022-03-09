@@ -16,6 +16,10 @@
         {script "js/l10n.js"}
         {script "js/openvk.cls.js"}
 
+        {if $isTimezoned == null}
+            {script "js/timezone.js"}
+        {/if}
+
         {ifset $thisUser}
             {if $thisUser->getNsfwTolerance() < 2}
                 {css "css/nsfw-posts.css"}
@@ -88,14 +92,14 @@
         <div class="dimmer"></div>
 
         <div class="toTop">
-            ⬆ Вверх
+            ⬆ {_to_top}
         </div>
 
         <div class="layout">
             <div id="xhead" class="dm"></div>
             <div class="page_header {if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME}page_custom_header{/if}">
                 <a href="/" class="home_button {if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME}home_button_custom{/if}" title="{$instance_name}">{$instance_name}</a>
-                <div n:if="isset($thisUser) ? !$thisUser->isBanned() : true" class="header_navigation">
+                <div n:if="isset($thisUser) ? (!$thisUser->isBanned() XOR !$thisUser->isActivated()) : true" class="header_navigation">
                     {ifset $thisUser}
                         <div class="link">
                             <a href="/">{_header_home}</a>
@@ -124,7 +128,7 @@
                         <div class="link">
                             <a href="/login">{_header_login}</a>
                         </div>
-                        <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['registration']['enable']" class="link">
+                        <div class="link">
                             <a href="/reg">{_header_registration}</a>
                         </div>
                         <div class="link">
@@ -137,7 +141,7 @@
             <div class="sidebar">
                 <div class="navigation">
                     {ifset $thisUser}
-                        {if !$thisUser->isBanned()}
+                        {if !$thisUser->isBanned() XOR !$thisUser->isActivated()}
                             <a href="/edit" class="link edit-button">{_edit_button}</a>
                             <a href="{$thisUser->getURL()}" class="link">{_my_page}</a>
                             <a href="/friends{$thisUser->getId()}" class="link">{_my_friends}
@@ -184,8 +188,14 @@
                             <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable'] && $thisUser->getLeftMenuItemStatus('poster')" href="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
                                 <img src="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}" alt="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}" class="psa-poster" style="max-width: 100%; margin-top: 50px;" />
                             </a>
+                        {elseif !$thisUser->isActivated()}
+                            <a href="/logout?hash={urlencode($csrfToken)}" class="link">{_menu_logout}</a>
                         {else}
-                            <a href="/support" class="link">{_menu_support}</a>
+                            <a href="/support" class="link">{_menu_support}
+                                {if $ticketAnsweredCount > 0}
+                                    (<b>{$ticketAnsweredCount}</b>)
+                                {/if}
+                            </a>
                             <a href="/logout?hash={urlencode($csrfToken)}" class="link">{_menu_logout}</a>
                         {/if}
                     {else}
@@ -197,7 +207,7 @@
                             <input type="hidden" name="jReturnTo" value="{$_SERVER['REQUEST_URI']}" />
                             <input type="hidden" name="hash" value="{$csrfToken}" />
                             <input type="submit" value="{_log_in}" class="button" style="display: inline-block;" />
-                            <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['registration']['enable']" href="/reg" class="button" style="display: inline-block;">{_registration}</a><br><br>
+                            <a href="/reg" class="button" style="display: inline-block;">{_registration}</a><br><br>
                             <a href="/restore">{_forgot_password}</a>
                         </form>
                     {/ifset}
@@ -250,8 +260,8 @@
                 <a href="/language" class="link">{_footer_choose_language}</a>
                 <a href="/privacy" class="link">{_footer_privacy}</a>
             </div>
-            <p>OpenVK <a href="/about:openvk">{=OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {$dbVersion}</p>
-            <p n:ifcontent="ifcontent">
+            <p>OpenVK <a href="/about:openvk">{php echo OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {$dbVersion}</p>
+            <p n:ifcontent>
                 {php echo OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]}
             </p>
         </div>

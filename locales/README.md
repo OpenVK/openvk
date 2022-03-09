@@ -1,5 +1,5 @@
 # Locales for OpenVK
-So, there is a locales contained here for [OpenVK](../../../openvk).
+So, there is a locales contained here for [OpenVK](../../../).
 
 ## Contributing
 

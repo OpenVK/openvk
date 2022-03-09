@@ -6,6 +6,7 @@
 
 "home" = "Home";
 "welcome" = "Welcome";
+"to_top" = "To top";
 
 /* Login */
 
@@ -33,6 +34,13 @@
 "password_reset_email_sent" = "If you are registered, you will receive instructions by email.";
 "password_reset_error" = "An unexpected error occurred while resetting the password.";
 "password_reset_rate_limit_error" = "You can't do it that often, sorry.";
+
+"email_sent" = "Mail has been successfully sent.";
+"email_sent_desc" = "If your email addess exists, you will receive instructions.";
+"email_error" = "An unexpected error occurred while sending the email.";
+"email_rate_limit_error" = "You can't do it that often, sorry.";
+
+"email_verify_success" = "Your Email has been verified. Have a great time!";
 
 "registration_disabled_info" = "Registration has been disabled by the system administrator. If possible, ask for an invitation from your friend, if he is registered on this site.";
 "registration_closed" = "Registration is closed.";
@@ -191,13 +199,21 @@
 "friends_reject" = "Reject request";
 "friends_accept" = "Accept request";
 "send_message" = "Send a message";
-"incoming_req" = "Subscribers";
-"outcoming_req" = "Requests";
+"incoming_req" = "Pending";
+"outcoming_req" = "Outgoing";
 "req" = "Requests";
 
-"firends_zero" = "No friends";
+"req_zero" = "No requests were found...";
+"req_one" = "Found $1 request";
+"req_other" = "Found $1 requests";
+
+"friends_zero" = "No friends";
 "friends_one" = "$1 friend";
 "friends_other" = "$1 friends";
+
+"friends_list_zero" = "You have no friends yet";
+"friends_list_one" = "You have $1 friend";
+"friends_list_other" = "You have $1 friends";
 
 "followers_zero" = "No followers";
 "followers_one" = "$1 follower";
@@ -215,6 +231,7 @@
 "subscriptions" = "Subscriptions";
 "join_community" = "Join community";
 "leave_community" = "Leave community";
+"check_community" = "View community";
 "min_6_community" = "Name of the group must have more that 6 characters";
 "participants" = "Participants";
 "groups" = "Groups";
@@ -232,6 +249,7 @@
 "only_administrators" = "Only administrators";
 "website" = "Website";
 "managed" = "Managed";
+"size" = "Size";
 
 "administrators_one" = "$1 administrator";
 "administrators_other" = "$1 administrators";
@@ -264,9 +282,19 @@
 "groups_one" = "$1 group";
 "groups_other" = "$1 groups";
 
+"groups_list_zero" = "You are not a participant in any group";
+"groups_list_one" = "You are participating in one group";
+"groups_list_other" = "You are a participant of $1 groups";
+
 "meetings_zero" = "No meetings";
 "meetings_one" = "$1 meeting";
 "meetings_other" = "$1 meetings";
+
+"open_new_group" = "Open a new group";
+"open_group_desc" = "Can't find the right group? Open your own...";
+"search_group" = "Search group";
+"search_by_groups" = "Search by groups";
+"search_group_desc" = "Here you can browse through the existing groups and choose a group to suit your needs...";
 
 /* Albums */
 
@@ -288,18 +316,30 @@
 "albums_one" = "$1 album";
 "albums_other" = "$1 albums";
 
+"albums_list_zero" = "You don't have any albums";
+"albums_list_one" = "You have one album";
+"albums_list_other" = "You have $1 albums";
+
 /* Notes */
 
 "notes" = "Notes";
 "note" = "Note";
 "name_note" = "Title";
 "text_note" = "Content";
-"create_note" = "Create note";
+"create_note" = "Add note";
+"edit_note" = "Edit note";
 "actions" = "Actions";
+
+"edited" = "Edited";
 
 "notes_zero" = "No notes";
 "notes_one" = "$1 note";
 "notes_other" = "$1 notes";
+"notes_start_screen" = "With notes, you can share your events with friends and see what's going on with them.";
+
+"notes_list_zero" = "No notes found";
+"notes_list_one" = "$1 note found";
+"notes_list_other" = "$1 notes found";
 
 /* Menus */
 
@@ -365,9 +405,11 @@
 "avatars_style" = "Avatar style";
 "style" = "Style";
 
-"default" = "Default";
-"cut" = "Cut";
-"round_avatars" = "Round avatars";
+"default" = "default";
+
+"arbitrary_avatars" = "Arbitrary";
+"cut" = "Square";
+"round_avatars" = "Round";
 
 "apply_style_for_this_device" = "Apply style only for this device";
 
@@ -471,6 +513,8 @@
 "videos_one" = "$1 video";
 "videos_other" = "$1 videos";
 
+"view_video" = "View";
+
 /* Notifications */
 
 "feedback" = "Feedback";
@@ -554,6 +598,21 @@
 "message_is_too_long" = "The message is too long.";
 "receiver_not_found" = "The receiver was not found.";
 "you_dont_have_enough_points" = "You don't have enough votes.";
+
+"increase_rating" = "Increase rating";
+"increase_rating_button" = "Increase";
+"to_whom" = "To whom";
+"increase_by" = "Increase by";
+"price" = "Price";
+
+"you_have_unused_votes" = "You have $1 unused votes on your balance.";
+"apply_voucher" = "Apply voucher";
+
+"failed_to_increase_rating" = "Failed to increase rating";
+"rating_increase_successful" = "You have successfully increased rating of <b><a href=\"$1\">$2</a></b> by <b>$3%</b>.";
+"negative_rating_value" = "We cannot steal rating from another person, sorry.";
+
+"increased_your_rating_by" = "increased your rating by";
 
 /* Gifts */
 
@@ -644,6 +703,14 @@
 "banned_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to block you forever.";
 "banned_3" = "You can still <a href=\"/support?act=new\">write to the support</a> if you think there was an error or <a href=\"/logout?hash=$1\">logout</a>.";
 
+/* Registration confirm */
+
+"ec_header" = "Registration confirmation";
+"ec_title" = "Thanks!";
+"ec_1" = "<b>$1</b>, your registration is almost done. In a few minutes you should receive an mail with a link to confirm your email address.";
+"ec_2" = "If for some reason you don't get the mail, check your spam folder. If you don't find the email there, you can resend it.";
+"ec_resend" = "Resend mail";
+
 /* Discussions */
 
 "discussions" = "Discussions";
@@ -694,7 +761,7 @@
 "information_-2" = "Login success";
 
 "no_data" = "No data";
-"no_data_description" = "There is no data.";
+"no_data_description" = "There is nothing here... yet...";
 
 "error" = "Error";
 "error_shorturl" = "This short address is already owned.";
@@ -719,6 +786,8 @@
 "invalid_email_address" = "Invalid Email address";
 "invalid_email_address_comment" = "The Email you entered is not correct.";
 
+"invalid_real_name" = "Please, enter your real name. It'll be easier for your friends to find you like this.";
+
 "invalid_birth_date" = "Invalid date of birth";
 "invalid_birth_date_comment" = "The date of birth you entered is not correct.";
 
@@ -731,6 +800,7 @@
 "profile_changed" = "Profile changed";
 "profile_changed_comment" = "Your active profile has been changed.";
 "profile_not_found" = "User is not found.";
+"profile_not_found_text" = "This profile has either been deleted or not been created yet.";
 
 "suspicious_registration_attempt" = "Suspicious registration attempt";
 "suspicious_registration_attempt_comment" = "You tried to register from a suspicious location.";
@@ -746,6 +816,14 @@
 
 "captcha_error" = "Incorrect characters entered";
 "captcha_error_comment" = "Please make sure you fill in the captcha field correctly.";
+
+"failed_to_publish_post" = "Failed to publish post";
+"failed_to_delete_post" = "Failed to delete post";
+
+"media_file_corrupted" = "The media content file is corrupted.";
+"media_file_corrupted_or_too_large" = "The media content file is corrupted or too large.";
+"post_is_empty_or_too_big" = "The post is empty or too big.";
+"post_is_too_big" = "The post is too big.";
 
 /* Admin actions */
 

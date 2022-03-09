@@ -151,7 +151,7 @@
 "outcoming_req" = "Anfragen";
 "req" = "Anfragen";
 
-"firends_zero" = "Keine Freunde";
+"friends_zero" = "Keine Freunde";
 "friends_one" = "$1 Freund";
 "friends_other" = "$1 Freunde";
 

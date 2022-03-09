@@ -28,6 +28,10 @@
                 <input class="text medium-field" id="guid" disabled value="{$user->getChandlerUser()->getId()}" />
             </div>
             <div class="field-group">
+                <label for="registration_ip">{_admin_first_known_ip}</label>
+                <input class="text medium-field" id="guid" disabled value="{$user->getRegistrationIP()}" />
+            </div>
+            <div class="field-group">
                 <label for="first_name">{_name}</label>
                 <input class="text medium-field" type="text" id="first_name" name="first_name" value="{$user->getFirstName()}" />
             </div>

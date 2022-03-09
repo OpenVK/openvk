@@ -39,7 +39,7 @@ class Users
     function find(string $query): Util\EntityStream
     {
         $query  = "%$query%";
-        $result = $this->users->where("CONCAT_WS(' ', first_name, last_name) LIKE ?", $query);
+        $result = $this->users->where("CONCAT_WS(' ', first_name, last_name, pseudo) LIKE ?", $query)->where("deleted", 0);
         
         return new Util\EntityStream("User", $result);
     }

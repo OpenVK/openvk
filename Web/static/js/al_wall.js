@@ -110,7 +110,7 @@ function setupWallPostInputHandlers(id) {
         var textArea          = e.target;
         textArea.style.height = "5px";
         var newHeight = textArea.scrollHeight;
-        textArea.style.height = newHeight + boost;
+        textArea.style.height = newHeight + boost + "px";
         return;
         
         // revert to original size if it is larger (possibly changed by user)

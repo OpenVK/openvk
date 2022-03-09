@@ -5,6 +5,7 @@ use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{Photo, Message, Correspondence, Gift};
 use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Gifts, Notifications};
+use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 use Chandler\Security\User as ChandlerUser;
@@ -103,7 +104,7 @@ class User extends RowModel
     
     function getAvatarUrl(): string
     {
-        $serverUrl = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
+        $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
         
         if($this->getRecord()->deleted)
             return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
@@ -739,6 +740,27 @@ class User extends RowModel
         return true;
     }
     
+    function setFirst_Name(string $firstName): void
+    {
+        $firstName = mb_convert_case($firstName, MB_CASE_TITLE);
+        if(!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?(?:[\p{L&}\p{Lo}]\p{Mn}?){1,16}$%u', $firstName))
+            throw new InvalidUserNameException;
+        
+        $this->stateChanges("first_name", $firstName);
+    }
+    
+    function setLast_Name(string $lastName): void
+    {
+        if(!empty($lastName))
+        {
+	        $lastName = mb_convert_case($lastName, MB_CASE_TITLE);
+	        if(!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?([\p{L&}\p{Lo}]\p{Mn}?){1,16}(\-\g<1>+)?$%u', $lastName))
+	            throw new InvalidUserNameException;
+        }
+        
+        $this->stateChanges("last_name", $lastName);
+    }
+    
     function setNsfwTolerance(int $tolerance): void
     {
         $this->stateChanges("nsfw_tolerance", $tolerance);
@@ -850,10 +872,10 @@ class User extends RowModel
 
     function isDeleted(): bool
     {
-	if ($this->getRecord()->deleted == 1)
-	return TRUE;
-	else
-        return FALSE;
+        if ($this->getRecord()->deleted == 1)
+            return TRUE;
+        else
+            return FALSE;
     }
 
     /**
@@ -882,6 +904,12 @@ class User extends RowModel
 	{
 		return $this->getRecord()->website;
 	}
+
+    // ты устрица
+    function isActivated(): bool
+    {
+        return (bool) $this->getRecord()->activated;
+    }
     
     use Traits\TSubscribable;
 }

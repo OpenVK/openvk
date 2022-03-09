@@ -190,7 +190,7 @@
 "outcoming_req" = "Входящіе прошенія";
 "req" = "Исходящіе прошенія";
 
-"firends_zero" = "Ни одного знакомца";
+"friends_zero" = "Ни одного знакомца";
 "friends_one" = "$1 знакомецъ";
 "friends_few" = "$1 знакомца";
 "friends_many" = "$1 знакомцевъ";
@@ -364,9 +364,11 @@
 "avatars_style" = "Отображеніе портрета";
 "style" = "Стиль";
 
-"default" = "По умолчанію";
-"cut" = "Обрѣзка";
-"round_avatars" = "Круглый портретъ";
+"default" = "по умолчанію";
+
+"arbitrary_avatars" = "Произвольные​";
+"cut" = "Квадратные​";
+"round_avatars" = "Круглые";
 
 "search_for_groups" = "Поискъ обществъ";
 "search_for_people" = "Поискъ людей";

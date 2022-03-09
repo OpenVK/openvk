@@ -190,7 +190,7 @@
 "outcoming_req" = "Заявки";
 "req" = "Заявки";
 
-"firends_zero" = "Жодного друга";
+"friends_zero" = "Жодного друга";
 "friends_one" = "$1 друг";
 "friends_few" = "$1 друга";
 "friends_many" = "$1 друзів";

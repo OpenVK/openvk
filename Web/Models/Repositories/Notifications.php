@@ -37,7 +37,7 @@ class Notifications
         if(!$count) {
             $query .= " ORDER BY timestamp DESC";
             $query .= " LIMIT " . ($perPage ?? OPENVK_DEFAULT_PER_PAGE);
-            $query .= " OFFSET " . ((($page - 1) * $perPage) ?? OPENVK_DEFAULT_PER_PAGE);
+            $query .= " OFFSET " . (($page - 1) * ($perPage ?? OPENVK_DEFAULT_PER_PAGE));
         }
         
         return $query;

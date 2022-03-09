@@ -289,3 +289,78 @@ function supportFastAnswerDialogOnClick(answer) {
     answerInput.value = answer;
     answerInput.focus();
 }
+
+function ovk_proc_strtr(string, length = 0) {
+    const newString = string.substring(0, length);
+    return newString + (string !== newString ? "…" : "");
+}
+
+function showIncreaseRatingDialog(coinsCount, userUrl, hash) {
+    MessageBox(tr("increase_rating"), `
+        <div class="messagebox-content-header">
+            ${tr("you_have_unused_votes", coinsCount)} <br />
+            <a href="/settings?act=finance.top-up">${tr("apply_voucher")} &raquo;</a>
+        </div>
+        <form action="/increase_social_credits" method="post" id="increase_rating_form" style="margin-top: 30px">
+            <table cellspacing="7" cellpadding="0" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">${tr("to_whom")}:</span>
+                        </td>
+                        <td>
+                            <input type="text" name="receiver" style="width: 100%;" value="${userUrl}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">${tr("increase_by")}:</span>
+                        </td>
+                        <td>
+                            <input id="value_input" type="text" name="value" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">${tr("message")}:</span>
+                        </td>
+                        <td>
+                            <textarea name="message" style="width: 100%;"></textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <div class="menu_divider"></div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">${tr("price")}:</span>
+                        </td>
+                        <td>
+                            <span id="rating_price">${tr("points_amount", 0)}</span> <small class="nobold" style="float: right;">(1% = ${tr("points_amount_one", 1)})</small>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <input type="hidden" name="hash" value="${hash}" />
+        </form>
+    `, [tr("increase_rating_button"), tr("cancel")], [
+        () => {
+            document.querySelector("#increase_rating_form").submit();
+        },
+        Function.noop
+    ]);
+
+    document.querySelector("#value_input").oninput = function () {
+        let value = Number(this.value);
+        value = isNaN(value) ? "?" : ovk_proc_strtr(String(value), 7);
+        if(!value.endsWith("…") && value != "?")
+            value = Number(value);
+
+        if(typeof value === "number")
+            document.querySelector("#rating_price").innerHTML = tr("points_amount", value);
+        else
+            document.querySelector("#rating_price").innerHTML = value + " " + tr("points_amount_other").replace("$1 ", "");
+    };
+}
