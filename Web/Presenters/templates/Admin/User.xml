@@ -34,6 +34,12 @@
             <input class="text medium-field" id="guid" disabled value="{$user->getChandlerUser()->getId()}" />
         </div>
         <div class="field-group">
+            <label for="registration_ip">
+                Первый IP
+            </label>
+            <input class="text medium-field" id="guid" disabled value="{$user->getRegistrationIP()}" />
+        </div>
+        <div class="field-group">
             <label for="first_name">
                 Имя
             </label>
