@@ -148,7 +148,7 @@
 "wall" = "dinding";
 "post" = "Post";
 "write" = "tulis";
-"publish" = "publikasikan"";
+"publish" = "publikasikan";
 "delete" = "Hapus";
 "comments" = "Komentar";
 "share" = "Bagikan";
@@ -231,7 +231,7 @@
 "subscriptions" = "Langganan";
 "join_community" = "Gabung komunitas";
 "leave_community" = "Tinggalkan Komunitas";
-"check_community" = "Lihat komunitas;
+"check_community" = "Lihat komunitas";
 "min_6_community" = "Nama grup setidaknya minimal memiliki 6 digit huruf";
 "participants" = "Partisipan";
 "groups" = "Grup";
