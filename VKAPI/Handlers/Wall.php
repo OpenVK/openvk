@@ -110,6 +110,110 @@ final class Wall extends VKAPIRequestHandler
             ];
     }
 
+    function getById(string $posts, int $extended = 0, string $fields = "", User $user = null)
+    {
+        if($user == null) $user = $this->getUser(); // костыли костыли крылышки
+
+        $items = [];
+        $profiles = [];
+        $groups = [];
+        # $count = $posts->getPostCountOnUserWall((int) $owner_id);
+
+        $psts = explode(",", $posts);
+
+        foreach($psts as $pst)
+        {
+            $id = explode("_", $pst);
+            $post = (new PostsRepo)->getPostById(intval($id[0]), intval($id[1]));
+            if($post) {
+                $from_id = get_class($post->getOwner()) == "openvk\Web\Models\Entities\Club" ? $post->getOwner()->getId() * (-1) : $post->getOwner()->getId();
+                $items[] = (object)[
+                    "id" => $post->getVirtualId(),
+                    "from_id" => $from_id,
+                    "owner_id" => $post->getTargetWall(),
+                    "date" => $post->getPublicationTime()->timestamp(),
+                    "post_type" => "post",
+                    "text" => $post->getText(),
+                    "can_edit" => 0, // TODO
+                    "can_delete" => $post->canBeDeletedBy($user),
+                    "can_pin" => $post->canBePinnedBy($user),
+                    "can_archive" => false, // TODO MAYBE
+                    "is_archived" => false,
+                    "is_pinned" => $post->isPinned(),
+                    "post_source" => (object)["type" => "vk"],
+                    "comments" => (object)[
+                        "count" => $post->getCommentsCount(),
+                        "can_post" => 1
+                    ],
+                    "likes" => (object)[
+                        "count" => $post->getLikesCount(),
+                        "user_likes" => (int) $post->hasLikeFrom($user),
+                        "can_like" => 1,
+                        "can_publish" => 1,
+                    ],
+                    "reposts" => (object)[
+                        "count" => $post->getRepostCount(),
+                        "user_reposted" => 0
+                    ]
+                ];
+                
+                if ($from_id > 0)
+                    $profiles[] = $from_id;
+                else
+                    $groups[] = $from_id * -1;
+            }
+        }
+
+        if($extended == 1) 
+        {
+            $profiles = array_unique($profiles);
+            $groups = array_unique($groups);
+
+            $profilesFormatted = [];
+            $groupsFormatted = [];
+
+            foreach ($profiles as $prof) {
+                $user = (new UsersRepo)->get($prof);
+                $profilesFormatted[] = (object)[
+                    "first_name" => $user->getFirstName(),
+                    "id" => $user->getId(),
+                    "last_name" => $user->getLastName(),
+                    "can_access_closed" => false,
+                    "is_closed" => false,
+                    "sex" => $user->isFemale() ? 1 : 2,
+                    "screen_name" => $user->getShortCode(),
+                    "photo_50" => $user->getAvatarUrl(),
+                    "photo_100" => $user->getAvatarUrl(),
+                    "online" => $user->isOnline()
+                ];
+            }
+
+            foreach($groups as $g) {
+                $group = (new ClubsRepo)->get($g);
+                $groupsFormatted[] = (object)[
+                    "id" => $group->getId(),
+                    "name" => $group->getName(),
+                    "screen_name" => $group->getShortCode(),
+                    "is_closed" => 0,
+                    "type" => "group",
+                    "photo_50" => $group->getAvatarUrl(),
+                    "photo_100" => $group->getAvatarUrl(),
+                    "photo_200" => $group->getAvatarUrl(),
+                ];
+            }
+
+            return (object)[
+                "items" => (array)$items,
+                "profiles" => (array)$profilesFormatted,
+                "groups" => (array)$groupsFormatted
+            ];
+        }
+        else
+            return (object)[
+                "items" => (array)$items
+            ];
+    }
+
     function post(string $owner_id, string $message = "", int $from_group = 0, int $signed = 0): object
     {
         $this->requireUser();
