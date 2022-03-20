@@ -41,7 +41,9 @@ class Video extends Media
                 mkdir($dirId);
             
             $dir = $this->getBaseDir();
-            Shell::bash(__DIR__ . "/../shell/processVideo.sh", OPENVK_ROOT, $filename, $dir, $hash)->start(); #async :DDD
+            $ext = Shell::isPowershell() ? "ps1" : "sh";
+            $cmd = Shell::isPowershell() ? "powershell" : "bash";
+            Shell::$cmd(__DIR__ . "/../shell/processVideo.$ext", OPENVK_ROOT, $filename, $dir, $hash)->start(); #async :DDD
         } catch(ShellUnavailableException $suex) {
             exit(OPENVK_ROOT_CONF["openvk"]["debug"] ? "Shell is unavailable" : VIDEOS_FRIENDLY_ERROR);
         } catch(UnknownCommandException $ucex) {
