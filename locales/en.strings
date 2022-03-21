@@ -773,7 +773,7 @@
 "error_repost_fail" = "Failed to share post";
 
 "forbidden" = "Access error";
-"forbidden_comment" = "This user\'s privacy settings do not allow you to look at his page.";
+"forbidden_comment" = "This user's privacy settings do not allow you to look at his page.";
 
 "changes_saved" = "Changes saved";
 "changes_saved_comment" = "New data will appear on your page";
