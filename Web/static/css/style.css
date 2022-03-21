@@ -68,7 +68,6 @@ p {
 .home_button {
     position: absolute;
     width: 145px;
-    text-indent: -999px;
     height: 42px;
 }
 
