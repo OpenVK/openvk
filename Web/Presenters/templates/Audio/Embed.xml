@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
+        <title>{$audio->getName()}</title>
+        
+        {css "css/style.css"}
+    </head>
+    <body id="audioEmbed">
+        <audio id="audio" />
+        
+        <div id="miniplayer" class="audioEntry">
+            <div class="playerButton">
+                <img src="/assets/packages/static/openvk/img/play.jpg" />
+            </div>
+            
+            <div class="status">
+                <div class="mediaInfo">
+                    <strong>
+                        {$audio->getPerformer()}
+                    </strong>
+                    -
+                    <span class="nobold">
+                        {$audio->getTitle()}
+                    </span>
+                </div>
+                
+                <div class="track">
+                    <div class="selectableTrack">
+                        <div>&nbsp;<!-- actual track --></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="volume">
+                <span class="nobold">
+                    {$audio->getFormattedLength()}
+                </span>
+            </div>
+        </div>
+        
+        {script "js/node_modules/umbrellajs/umbrella.min.js"}
+        {script "js/node_modules/dashjs/dist/dash.all.min.js"}
+        <script>
+            function fmtTime(time) {
+                mins = Math.floor(time / 60).toString().padStart(2, 0);
+                secs = (time - (Math.floor(time / 60) * 60)).toString().padStart(2, 0);
+                
+                return mins + ":" + secs;
+            }
+            
+            const protData = {
+                "org.w3.clearkey": {
+                    "clearkeys": {$audio->getKeys()}
+                }
+            };
+            
+            const play   = u(".playerButton > img");
+            const audio  = document.querySelector("#audio");
+            const player = dashjs.MediaPlayer().create();
+            player.initialize(audio, {$audio->getURL()}, true);
+            player.setProtectionData(protData);
+            
+            play.on("click", function() {
+                audio.paused ? audio.play() : audio.pause();
+            });
+            
+            u(audio).on("timeupdate", function() {
+                let time = audio.currentTime;
+                let ps   = Math.ceil((time * 100) / {$audio->getLength()});
+                
+                u(".volume span").html(fmtTime(Math.floor(time)));
+                u(".track > div > div").nodes[0].style.width = ps + "%";
+            });
+            
+            u(audio).on("play", function() {
+                play.attr("src", "/assets/packages/static/openvk/img/pause.jpg");
+            });
+            
+            u(audio).on(["pause", "ended", "suspended"], function() {
+                play.attr("src", "/assets/packages/static/openvk/img/play.jpg");
+            });
+            
+            u(".track > div").on("click", function(e) {
+                let rect  = document.querySelector(".selectableTrack").getBoundingClientRect();
+                let width = e.clientX - rect.left;
+                let time  = Math.ceil((width * {$audio->getLength()}) / (rect.right - rect.left));
+                
+                audio.currentTime = time;
+            });
+        </script>
+    </body>
+</html>

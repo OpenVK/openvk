@@ -69,7 +69,7 @@ class Audio extends Media
         $this->stateChanges("key", $key);
         $this->stateChanges("token", $tok);
         $this->stateChanges("segment_size", $ss);
-        $this->stateChanges("length", $ss);
+        $this->stateChanges("length", $duration);
 
         try {
             $args = [
@@ -128,6 +128,19 @@ class Audio extends Media
         return $this->getRecord()->length;
     }
 
+    function getFormattedLength(): string
+    {
+        $len  = $this->getLength();
+        $mins = floor($len / 60);
+        $secs = $len - ($mins * 60);
+
+        return (
+            str_pad((string) $mins, 2, "0", STR_PAD_LEFT)
+            . ":" .
+            str_pad((string) $secs, 2, "0", STR_PAD_LEFT)
+        );
+    }
+
     function getSegmentSize(): float
     {
         return $this->getRecord()->segment_size;
@@ -162,17 +175,17 @@ class Audio extends Media
 
     function isExplicit(): bool
     {
-        return $this->getRecord()->explicit;
+        return (bool) $this->getRecord()->explicit;
     }
 
     function isWithdrawn(): bool
     {
-        return $this->getRecord()->withdrawn;
+        return (bool) $this->getRecord()->withdrawn;
     }
 
     function isUnlisted(): bool
     {
-        return $this->getRecord()->unlisted;
+        return (bool) $this->getRecord()->unlisted;
     }
 
     # NOTICE may flush model to DB if it was just processed
@@ -187,8 +200,8 @@ class Audio extends Media
 
         try {
             $fragments = str_replace(".mpd", "_fragments", $this->getFileName());
-            $original = "original_" . bin2hex($this->getRecord()->token) . "mp3";
-            if (file_exists("$fragments/$original")) {
+            $original = "original_" . bin2hex($this->getRecord()->token) . ".mp3";
+            if(file_exists("$fragments/$original")) {
                 # Original gets uploaded after fragments
                 $this->stateChanges("processed", 0x01);
 
