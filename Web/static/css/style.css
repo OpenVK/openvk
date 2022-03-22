@@ -2004,7 +2004,7 @@ table td[width="120"] {
 }
 
 ul {
-    list-style: url(http://vkontakte.ru/images/bullet.gif) outside; /* TODO cock */
+    list-style: url(/assets/packages/static/openvk/img/bullet.gif) outside;
     margin: 10px 0;
     padding-left: 30px;
     color: black;
