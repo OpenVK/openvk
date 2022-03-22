@@ -16,6 +16,8 @@ final class BlobPresenter extends OpenVKPresenter
     
     function renderFile(/*string*/ $dir, string $name, string $format)
     {
+        header("Access-Control-Allow-Origin: *");
+
         $dir  = $this->getDirName($dir);
         $name = preg_replace("%[^a-zA-Z0-9_\-]++%", "", $name);
         $path = OPENVK_ROOT . "/storage/$dir/$name.$format";
@@ -24,7 +26,7 @@ final class BlobPresenter extends OpenVKPresenter
         } else {
             if(isset($_SERVER["HTTP_IF_NONE_MATCH"]))
                 exit(header("HTTP/1.1 304 Not Modified"));
-            
+
             header("Content-Type: " . mime_content_type($path));
             header("Content-Size: " . filesize($path));
             header("ETag: W/\"" . hash_file("snefru", $path) . "\"");

@@ -1,0 +1,104 @@
+{extends "../@layout.xml"}
+
+{block title}
+    {_upload_audio}
+{/block}
+
+{block header}
+    {if !is_null($group)}
+        <a href="{$group->getURL()}">{$group->getCanonicalName()}</a>
+        »
+        <a href="/audios-{$group->getId()}">{_audios}</a>
+    {else}
+        <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
+        »
+        <a href="/audios{$thisUser->getId()}">{_audios}</a>
+    {/if}
+
+    »
+    {_upload_audio}
+{/block}
+
+{block content}
+    <div class="container_gray" style="background: white; border: 0;">
+        <div id="upload_container">
+            <h4>{_select_audio}</h4><br/>
+            <b><a href="javascript:false">{_limits}</a></b>
+            <ul>
+                <li>{tr("audio_requirements", 1, 30, 25)}</li>
+            </ul>
+            <div id="audio_upload">
+                <form enctype="multipart/form-data" method="POST">
+                    <input type="hidden" name="name" />
+                    <input type="hidden" name="performer" />
+                    <input type="hidden" name="lyrics" />
+                    <input type="hidden" name="genre" />
+                    
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    <input id="audio_input" type="file" name="blob" accept="audio/*" />
+                </form>
+            </div><br/>
+        
+            <span>{_you_can_also_add_audio_using} <b><a href="/player">{_search_audio_inst}</a></b>.<span>
+        </div>
+    </div>
+    
+    <div id="dialogBoxHtml" style="display: none;">
+        <table cellspacing="7" cellpadding="0" border="0" align="center">
+            <tbody>
+                <tr>
+                    <td width="120" valign="top"><span class="nobold">Имя:</span></td>
+                    <td><input type="text" name="name" autocomplete="off" /></td>
+                </tr>
+                <tr>
+                    <td width="120" valign="top"><span class="nobold">Исполнитель:</span></td>
+                    <td><input name="performer" autocomplete="off" /></td>
+                </tr>
+                <tr>
+                    <td width="120" valign="top"><span class="nobold">Жанр:</span></td>
+                    <td>
+                        <select name="genre">
+                            <option n:foreach='\openvk\Web\Models\Entities\Audio::genres as $genre' n:attr="selected: $genre == 'Other'" value="{$genre}">
+                                {$genre}
+                            </option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="120" valign="top"><span class="nobold">Текст:</span></td>
+                    <td><textarea name="lyrics"></textarea></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+        u("#audio_input").on("change", function(e) {
+            if(e.currentTarget.files.length <= 0)
+                return;
+            
+            var name_   = document.querySelector("#audio_upload input[name=name]");
+            var perf_   = document.querySelector("#audio_upload input[name=performer]");
+            var genre_  = document.querySelector("#audio_upload input[name=genre]");
+            var lyrics_ = document.querySelector("#audio_upload input[name=lyrics]");
+            
+            MessageBox({_upload_audio}, document.querySelector("#dialogBoxHtml").innerHTML, [{_ok}, {_cancel}], [
+                function() {
+                    var name   = u("input[name=name]", this.$dialog().nodes[0]).nodes[0].value;
+                    var perf   = u("input[name=performer]", this.$dialog().nodes[0]).nodes[0].value;
+                    var genre  = u("select[name=genre]", this.$dialog().nodes[0]).nodes[0].value;
+                    var lyrics = u("textarea[name=lyrics]", this.$dialog().nodes[0]).nodes[0].value;
+                    
+                    name_.value   = name;
+                    perf_.value   = perf;
+                    genre_.value  = genre;
+                    lyrics_.value = lyrics;
+                    
+                    document.querySelector("#audio_upload > form").submit();
+                },
+                
+                Function.noop
+            ]);
+        });
+    </script>
+{/block}

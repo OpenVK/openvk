@@ -1977,3 +1977,124 @@ table td[width="120"] {
 .center {
     margin: 0 auto;
 }
+
+
+#upload_container {
+    background: white;
+    padding: 30px 80px 20px;
+    margin: 10px 25px 30px;
+    border: 1px solid #d6d6d6;
+}
+
+#upload_container h4 {
+    border-bottom: solid 1px #daE1E8;
+    text-align: left;
+    padding: 0px 0px 4px 0px;
+    margin: 0px;
+}
+
+#audio_upload {
+    width: 350px;
+    margin: 20px auto;
+    margin-bottom: 20px;
+    margin-bottom: 10px;
+    padding: 15px 0px;
+    border: 2px solid #ccc;
+    background-color: #EFEFEF;
+    text-align: center;
+}
+
+ul {
+    list-style: url(http://vkontakte.ru/images/bullet.gif) outside;
+    margin: 10px 0px;
+    padding-left: 30px;
+    color: black;
+}
+
+li {
+    padding: 1px 0px;
+}
+
+#upload_container ul {
+    padding-left: 15px;
+}
+
+.audio_list {
+    margin: 5px 20px;
+}
+
+.audio_row {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.audio_row .play_button {
+    height: 16px;
+    width: 16px;
+    background: url(http://web.archive.org/web/20101203010619im_/http://vkontakte.ru/images/play.gif);
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: top;
+}
+
+.audio_row .info {
+    display: inline-block;
+    vertical-align: top;
+    margin-top: 1px;
+    width: 514px;
+}
+
+.audio_row .duration {
+    display: inline-block;
+    vertical-align: top;
+    color: #777;
+    font-size: 10px;
+    margin-left: 5px;
+    margin-top: 2px;
+}
+
+.audio_row .lines {
+    height: 5px;
+    margin-top: 15px;
+    font-size: 0;
+}
+
+.audio_row .lines .dotted {
+    border-top: dashed 1px #d8dfea;
+}
+
+.audio_row .active.volume_line {
+    width: 50px;
+    margin-left: 20px;
+}
+
+.audio_row .volume_line .dot {
+    width: 10px;
+}
+
+.audio_row .active {
+    border-top: 1px solid #5f7d9d;
+    display: inline-block;
+    margin-bottom: 5px;
+}
+
+.audio_row .active.duraton_line .dot {
+    width: 15px;
+}
+
+.audio_row .dot {
+    height: 5px;
+    background: #5f7d9d;
+}
+
+.audio_row .active.duraton_line {
+    width: calc(100% - 70px);
+}
+
+.audio_row .add_button {
+    background: url(https://vkontakte.ru/images/plus.gif) no-repeat center;
+    height: 16px;
+    width: 16px;
+    display: inline-block;
+    margin-left: -16px;
+}
