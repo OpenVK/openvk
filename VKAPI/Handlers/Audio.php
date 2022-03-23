@@ -320,7 +320,7 @@ final class Audio extends VKAPIRequestHandler
         $this->requireUser();
 
         [$owner, $aid] = explode("_", $audio);
-        $song = (new Audios)->getByOwnerAndVID($owner, $aid);
+        $song = (new Audios)->getByOwnerAndVID((int) $owner, (int) $aid);
         $ids  = [];
         foreach(explode(",", $target_ids) as $id) {
             $id = (int) $id;
@@ -338,7 +338,7 @@ final class Audio extends VKAPIRequestHandler
             if(!$group)
                 $this->fail(0404, "Not Found");
             else if(!$group->canBeModifiedBy($this->getUser()))
-                $this->fail(203, "Insufficient rights to this group");
+                $this->fail(203,"Insufficient rights to this group");
 
             $ids[] = $id;
             $this->beacon($song->getId(), $id * -1);

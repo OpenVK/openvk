@@ -444,6 +444,8 @@ class Audio extends Media
             ->delete();
         $ctx->table("audio_listens")->where("audio", $this->getId())
             ->delete();
+        $ctx->table("playlist_relations")->where("media", $this->getId())
+            ->delete();
 
         parent::delete($softly);
     }

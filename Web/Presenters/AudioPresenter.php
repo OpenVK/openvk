@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\Audio;
-use openvk\Web\Models\Entities\Club;
-use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\Audios;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Users;
