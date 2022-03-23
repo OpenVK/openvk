@@ -41,8 +41,12 @@ class Playlist extends MediaCollection
 
     function getAudios(int $offset = 0, ?int $limit = NULL, ?int $shuffleSeed = NULL): \Traversable
     {
-        if(!$shuffleSeed)
-            return $this->fetchClassic($offset, $limit);
+        if(!$shuffleSeed) {
+            foreach ($this->fetchClassic($offset, $limit) as $e)
+                yield $e; # No, I can't return, it will break with []
+
+            return;
+        }
 
         $ids = [];
         foreach($this->relations->select("media AS i")->where("collection", $this->getId()) as $rel)
@@ -95,7 +99,7 @@ class Playlist extends MediaCollection
         if($entity instanceof Club)
             $id *= -1;
 
-        if($this->importTable->where("entity", $id)->count > self::MAX_COUNT)
+        if($this->importTable->where("entity", $id)->count() > self::MAX_COUNT)
             throw new \OutOfBoundsException("Maximum amount of playlists");
 
         $this->importTable->insert([
@@ -129,7 +133,7 @@ class Playlist extends MediaCollection
         return (object) [
             "id"          => $this->getId(),
             "owner_id"    => $oid,
-            "title"       => $this->getTitle(),
+            "title"       => $this->getName(),
             "description" => $this->getDescription(),
             "size"        => $this->size(),
             "length"      => $this->getLength(),

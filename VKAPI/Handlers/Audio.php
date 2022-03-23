@@ -228,6 +228,7 @@ final class Audio extends VKAPIRequestHandler
 
             $songs = [];
             $list  = $album->getAudios($offset, $count, $shuffleSeed);
+
             foreach($list as $song)
                 $songs[] = $this->toSafeAudioStruct($song, $hash, $need_user == 1);
 
@@ -545,12 +546,12 @@ final class Audio extends VKAPIRequestHandler
         return $this->getById($vid, $hash)->items[0];
     }
 
-    function getAlbums(?int $owner_id = NULL, int $offset = 0, int $count = 50, int $drop_private = 1): object
+    function getAlbums(int $owner_id = 0, int $offset = 0, int $count = 50, int $drop_private = 1): object
     {
         $this->requireUser();
 
-        $owner_id ??= $this->getUser()->getId();
-        $playlists  = [];
+        $owner_id  = $owner_id == 0 ? $this->getUser()->getId() : $owner_id;
+        $playlists = [];
         foreach((new Audios)->getPlaylistsByEntityId($owner_id, $offset, $count) as $playlist) {
             if(!$playlist->canBeViewedBy($this->getUser())) {
                 if($drop_private == 1)
@@ -560,7 +561,7 @@ final class Audio extends VKAPIRequestHandler
                 continue;
             }
 
-            $playlists[] = $playlist->toVkApiStructure($this->getUser());
+            $playlists[] = $playlist->toVkApiStruct($this->getUser());
         }
 
         return (object) [
@@ -599,7 +600,7 @@ final class Audio extends VKAPIRequestHandler
         $group = NULL;
         if($group_id != 0) {
             $group = (new Clubs)->get($group_id);
-            if(!$group_id)
+            if(!$group)
                 $this->fail(0404, "Invalid group_id");
             else if(!$group->canBeModifiedBy($this->getUser()))
                 $this->fail(600, "Insufficient rights to this group");
@@ -616,6 +617,10 @@ final class Audio extends VKAPIRequestHandler
             $album->setDescription($description);
 
         $album->save();
+        if(!is_null($group))
+            $album->bookmark($group);
+        else
+            $album->bookmark($this->getUser());
 
         return $album->getId();
     }
@@ -673,7 +678,7 @@ final class Audio extends VKAPIRequestHandler
             $audio = $this->audioFromAnyId($audio_id);
             if(!$audio)
                 continue;
-            else if($audio->canBeViewedBy($this->getUser()))
+            else if(!$audio->canBeViewedBy($this->getUser()))
                 continue;
 
             $audios[] = $audio;
@@ -685,7 +690,7 @@ final class Audio extends VKAPIRequestHandler
         $res = 1;
         try {
             foreach ($audios as $audio)
-                $res = min($res, $album->add($audio));
+                $res = min($res, (int) $album->add($audio));
         } catch(\OutOfBoundsException $ex) {
             return 0;
         }

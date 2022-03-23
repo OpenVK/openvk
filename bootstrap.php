@@ -62,7 +62,7 @@ function ovk_proc_strtr(string $string, int $length = 0): string
     return $newString . ($string !== $newString ? "…" : ""); #if cut hasn't happened, don't append "..."
 }
 
-function knuth_shuffle(Traversable $arr, int $seed): array
+function knuth_shuffle(iterable $arr, int $seed): array
 {
     $data   = is_array($arr) ? $arr : iterator_to_array($arr);
     $retVal = [];
