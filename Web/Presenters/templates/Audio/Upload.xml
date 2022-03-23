@@ -72,8 +72,10 @@
         </table>
     </div>
     
-    <script>
-        u("#audio_input").on("change", function(e) {
+    <script type="module">
+        import * as id3 from "/assets/packages/static/openvk/js/node_modules/id3js/lib/id3.js";
+        
+        u("#audio_input").on("change", async function(e) {
             if(e.currentTarget.files.length <= 0)
                 return;
             
@@ -99,6 +101,25 @@
                 
                 Function.noop
             ]);
+            
+            let tags = await id3.fromFile(e.currentTarget.files[0]);
+            if(tags != null) {
+                console.log("ID" + tags.kind + " detected, setting values...");
+                
+                if(tags.title != null)
+                    document.querySelector(".ovk-diag input[name=name]").value = tags.title;
+                
+                if(tags.artist != null)
+                    document.querySelector(".ovk-diag input[name=performer]").value = tags.artist;
+                
+                if(tags.genre != null) {
+                    if(document.querySelector(".ovk-diag select[name=genre] > option[value='" + tags.genre + "']") != null) {
+                        document.querySelector(".ovk-diag select[name=genre]").value = tags.genre;
+                    } else {
+                        console.warn("Unknown genre: " + tags.genre);
+                    }
+                }
+            }
         });
     </script>
 {/block}

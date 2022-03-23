@@ -128,6 +128,11 @@ iconv-lite@^0.6.2:
   dependencies:
     safer-buffer ">= 2.1.2 < 3.0.0"
 
+id3js@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/id3js/-/id3js-2.1.1.tgz#0c307d0d2f194bc5fa7a809bbed0b1a93577f16d"
+  integrity sha512-9Gi+sG0RHSa5qn8hkwi2KCl+2jV8YrtiZidXbOO3uLfRAxc2jilRg0fiQ3CbeoAmR7G7ap3RVs1kqUVhIyZaog==
+
 ieee754@^1.1.8:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/ieee754/-/ieee754-1.2.1.tgz#8eb7a10a63fff25d15a57b001586d177d1b0d352"
