@@ -10,7 +10,9 @@ final class Audio extends VKAPIRequestHandler
 {
     private function toSafeAudioStruct(?AEntity $audio, ?string $hash = NULL, bool $need_user = false): object
     {
-        if(!$audio || !$audio->canBeViewedBy($this->getUser()))
+        if(!$audio)
+            $this->fail(0404, "Audio not found");
+        else if(!$audio->canBeViewedBy($this->getUser()))
             $this->fail(201, "Access denied to audio(" . $audio->getPrettyId() . ")");
 
         # рофлан ебало
@@ -66,12 +68,21 @@ final class Audio extends VKAPIRequestHandler
         $audioIds = array_unique(explode(",", $audios));
         if(sizeof($audioIds) === 1) {
             $descriptor = explode("_", $audioIds[0]);
-            if(sizeof($descriptor) === 1)
-                $audio = (new Audios)->get((int) $descriptor[0]);
-            else if(sizeof($descriptor) === 2)
+            if(sizeof($descriptor) === 1) {
+                if(ctype_digit($descriptor[0])) {
+                    $audio = (new Audios)->get((int) $descriptor[0]);
+                } else {
+                    $aid = base64_decode($descriptor[0], true);
+                    if(!$aid)
+                        $this->fail(8, "Invalid audio $audioIds[0]");
+
+                    $audio = (new Audios)->get((int) $aid);
+                }
+            } else if(sizeof($descriptor) === 2) {
                 $audio = (new Audios)->getByOwnerAndVID((int) $descriptor[0], (int) $descriptor[1]);
-            else
-                $this->fail(8, "Invalid audio $descriptor");
+            } else {
+                $this->fail(8, "Invalid audio $audioIds[0]");
+            }
 
             return (object) [
                 "count" => 1,
@@ -79,8 +90,8 @@ final class Audio extends VKAPIRequestHandler
                     $this->toSafeAudioStruct($audio, $hash, (bool) $need_user),
                 ],
             ];
-        } else if(sizeof($audioIds) > 32) {
-            $this->fail(1980, "Can't get more than 32 audios at once");
+        } else if(sizeof($audioIds) > 6000) {
+            $this->fail(1980, "Can't get more than 6000 audios at once");
         }
 
         $audios = [];
