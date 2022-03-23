@@ -15,6 +15,10 @@ class Audios
     const ORDER_NEW     = 0;
     const ORDER_POPULAR = 1;
 
+    const VK_ORDER_NEW     = 0;
+    const VK_ORDER_LENGTH  = 1;
+    const VK_ORDER_POPULAR = 2;
+
     function __construct()
     {
         $this->context = DatabaseConnection::i()->getContext();
@@ -42,10 +46,10 @@ class Audios
         return new Audio($audio);
     }
 
-    private function getByEntityID(int $entity, int $page = 1, ?int $perPage = NULL, ?int& $deleted = nullptr): \Traversable
+    function getByEntityID(int $entity, int $offset = 0, ?int $limit = NULL, ?int& $deleted = nullptr): \Traversable
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
-        $iter = $this->rels->where("entity", $entity)->page($page, $perPage);
+        $iter = $this->rels->where("entity", $entity)->limit($limit ?? OPENVK_DEFAULT_PER_PAGE, $offset);
         foreach($iter as $rel) {
             $audio = $this->get($rel->audio);
             if(!$audio || $audio->isDeleted()) {
@@ -59,12 +63,12 @@ class Audios
 
     function getByUser(User $user, int $page = 1, ?int $perPage = NULL, ?int& $deleted = nullptr): \Traversable
     {
-        return $this->getByEntityID($user->getId(), $page, $perPage, $deleted);
+        return $this->getByEntityID($user->getId(), ($perPage * ($page - 1)), $perPage, $deleted);
     }
 
     function getByClub(Club $club, int $page = 1, ?int $perPage = NULL, ?int& $deleted = nullptr): \Traversable
     {
-        return $this->getByEntityID($club->getId() * -1, $page, $perPage, $deleted);
+        return $this->getByEntityID($club->getId() * -1, ($perPage * ($page - 1)), $perPage, $deleted);
     }
 
     function getUserCollectionSize(User $user): int
@@ -87,7 +91,7 @@ class Audios
         return new EntityStream("Audio", $search);
     }
 
-    function getGlobal(int $order): EntityStream
+    function getGlobal(int $order, ?string $genreId = NULL): EntityStream
     {
         $search = $this->audios->where([
             "deleted"   => 0,
@@ -95,15 +99,24 @@ class Audios
             "withdrawn" => 0,
         ])->order($order == Audios::ORDER_NEW ? "created DESC" : "listens DESC");
 
+        if(!is_null($genreId))
+            $search = $search->where("genre", $genreId);
+
         return new EntityStream("Audio", $search);
     }
 
-    function search(string $query): EntityStream
+    function search(string $query, int $sortMode = 0, bool $performerOnly = false, bool $withLyrics = false): EntityStream
     {
+        $columns = $performerOnly ? "performer" : "performer, name";
+        $order   = (["created", "length", "listens"][$sortMode] ?? "") . "DESC";
+
         $search = $this->audios->where([
             "unlisted" => 0,
             "deleted"  => 0,
-        ])->where("MATCH (performer, name) AGAINST (? WITH QUERY EXPANSION)", $query);
+        ])->where("MATCH ($columns) AGAINST (? WITH QUERY EXPANSION)", $query)->order($order);
+
+        if($withLyrics)
+            $search = $search->where("lyrics IS NOT NULL");
 
         return new EntityStream("Audio", $search);
     }
