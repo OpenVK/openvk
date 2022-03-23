@@ -98,8 +98,8 @@
 
         <div class="layout">
             <div id="xhead" class="dm"></div>
-            <div class="page_header {if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME}page_custom_header{/if}">
-                <a href="/" class="home_button {if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME}home_button_custom{/if}" title="{$instance_name}">{$instance_name}</a>
+            <div class="page_header{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME} page_custom_header{/if}">
+                <a href="/" class="home_button{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME} home_button_custom{/if}" title="{$instance_name}">{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME}{$instance_name}{/if}</a>
                 <div n:if="isset($thisUser) ? (!$thisUser->isBanned() XOR !$thisUser->isActivated()) : true" class="header_navigation">
                     {ifset $thisUser}
                         <div class="link">
@@ -129,7 +129,7 @@
                         <div class="link">
                             <a href="/login">{_header_login}</a>
                         </div>
-                        <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['registration']['enable']" class="link">
+                        <div class="link">
                             <a href="/reg">{_header_registration}</a>
                         </div>
                         <div class="link">
@@ -213,7 +213,7 @@
                             <input type="hidden" name="jReturnTo" value="{$_SERVER['REQUEST_URI']}" />
                             <input type="hidden" name="hash" value="{$csrfToken}" />
                             <input type="submit" value="{_log_in}" class="button" style="display: inline-block;" />
-                            <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['registration']['enable']" href="/reg" class="button" style="display: inline-block;">{_registration}</a><br><br>
+                            <a href="/reg" class="button" style="display: inline-block;">{_registration}</a><br><br>
                             <a href="/restore">{_forgot_password}</a>
                         </form>
                     {/ifset}

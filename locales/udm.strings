@@ -196,7 +196,7 @@
 "outcoming_req" = "Заявки";
 "req" = "Заявки";
 
-"firends_zero" = "Одӥг но эшъёс";
+"friends_zero" = "Одӥг но эшъёс";
 "friends_one" = "$1 эшъёс";
 "friends_few" = "$1 эшъёс";
 "friends_many" = "$1 эшъёс";

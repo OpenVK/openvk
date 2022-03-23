@@ -17,8 +17,8 @@ _[English](README.md)_
 ## Инстанции
 
 * **[openvk.su](https://openvk.su/)**
+* **[openvk.uk](https://openvk.uk)** - официальное зеркало openvk.su (<https://t.me/openvkch/1609>)
 * [social.fetbuk.ru](http://social.fetbuk.ru/)
-* [openvk.zavsc.pw](https://openvk.zavsc.pw/)
 
 ## Могу ли я создать свою собственную инстанцию OpenVK?
 
@@ -80,8 +80,8 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 * [Обсуждения](https://github.com/openvk/openvk/discussions)
 * Чат в Matrix: #ovk:matrix.org
 
-**Внимание**: баг-трекер, телеграм- и matrix-чат являются публичными местами, и жалобы в OVK обслуживается волонтерами. Если вам нужно сообщить о чем-то, что не должно быть раскрыто широкой публике (например, сообщение об уязвимости), пожалуйста, свяжитесь с нами напрямую по этому адресу: **openvk [at] tutanota [dot] com**.
+**Внимание**: баг-трекер, телеграм- и matrix-чат являются публичными местами, и жалобы в OVK обслуживается волонтерами. Если вам нужно сообщить о чем-то, что не должно быть раскрыто широкой публике (например, сообщение об уязвимости), пожалуйста, свяжитесь с нами напрямую по этому адресу: **openvk [собака] tutanota [точка] com**.
 
 <a href="https://codeberg.org/OpenVK/openvk">
-    <img alt="Get it on Codeberg" src="https://codeberg.org/Codeberg/GetItOnCodeberg/media/branch/main/get-it-on-blue-on-white.png" height="60">
+    <img alt="Получить на Codeberg" src="https://codeberg.org/Codeberg/GetItOnCodeberg/media/branch/main/get-it-on-blue-on-white.png" height="60">
 </a>

@@ -206,7 +206,7 @@
 "outcoming_req" = "Өтінімдер";
 "req" = "Өтінімдер";
 
-"firends_zero" = "Достарыңыз жоқ";
+"friends_zero" = "Достарыңыз жоқ";
 "friends_one" = "$1 дос";
 "friends_other" = "$1 дос";
 
@@ -396,7 +396,9 @@
 "avatars_style" = "Аватарлардың стилі";
 "style" = "Стилі";
 
-"default" = "Ерікті (әдепкі)";
+"default" = "әдепкі";
+
+"arbitrary_avatars" = "Ерікті"
 "cut" = "Шаршы";
 "round_avatars" = "Дөңгелек";
 

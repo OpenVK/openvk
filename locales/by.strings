@@ -124,7 +124,7 @@
 "outcoming_req" = "Заяўкі";
 "req" = "Заяўкі";
 
-"firends_zero" = "Няма сяброў";
+"friends_zero" = "Няма сяброў";
 "friends_one" = "$1 сябар";
 "friends_few" = "$1  аднаго";
 "friends_many" = "$1 сяброў";
