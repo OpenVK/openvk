@@ -2,6 +2,7 @@
 namespace openvk\VKAPI\Handlers;
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Entities\Audio as AEntity;
+use openvk\Web\Models\Entities\Playlist;
 use openvk\Web\Models\Repositories\Audios;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Util\EntityStream;
@@ -61,28 +62,35 @@ final class Audio extends VKAPIRequestHandler
         }
     }
 
+    private function audioFromAnyId(string $id): ?AEntity
+    {
+        $descriptor = explode("_", $id);
+        if(sizeof($descriptor) === 1) {
+            if(ctype_digit($descriptor[0])) {
+                $audio = (new Audios)->get((int) $descriptor[0]);
+            } else {
+                $aid = base64_decode($descriptor[0], true);
+                if(!$aid)
+                    $this->fail(8, "Invalid audio $id");
+
+                $audio = (new Audios)->get((int) $aid);
+            }
+        } else if(sizeof($descriptor) === 2) {
+            $audio = (new Audios)->getByOwnerAndVID((int) $descriptor[0], (int) $descriptor[1]);
+        } else {
+            $this->fail(8, "Invalid audio $id");
+        }
+
+        return $audio;
+    }
+
     function getById(string $audios, ?string $hash = NULL, int $need_user = 0): object
     {
         $this->requireUser();
 
         $audioIds = array_unique(explode(",", $audios));
         if(sizeof($audioIds) === 1) {
-            $descriptor = explode("_", $audioIds[0]);
-            if(sizeof($descriptor) === 1) {
-                if(ctype_digit($descriptor[0])) {
-                    $audio = (new Audios)->get((int) $descriptor[0]);
-                } else {
-                    $aid = base64_decode($descriptor[0], true);
-                    if(!$aid)
-                        $this->fail(8, "Invalid audio $audioIds[0]");
-
-                    $audio = (new Audios)->get((int) $aid);
-                }
-            } else if(sizeof($descriptor) === 2) {
-                $audio = (new Audios)->getByOwnerAndVID((int) $descriptor[0], (int) $descriptor[1]);
-            } else {
-                $this->fail(8, "Invalid audio $audioIds[0]");
-            }
+            $audio = $this->audioFromAnyId($audioIds[0]);
 
             return (object) [
                 "count" => 1,
@@ -102,6 +110,18 @@ final class Audio extends VKAPIRequestHandler
             "count" => sizeof($audios),
             "items" => $audios,
         ];
+    }
+
+    function isLagtrain(string $audio_id): int
+    {
+        $this->requireUser();
+
+        $audio = $this->audioFromAnyId($audio_id);
+        if(!$audio)
+            $this->fail(0404, "Audio not found");
+
+        # Possible information disclosure risks are acceptable :D
+        return (int) (strpos($audio->getName(), "Lagtrain") !== false);
     }
 
     // TODO stub
@@ -149,6 +169,8 @@ final class Audio extends VKAPIRequestHandler
 
     function getCount(int $owner_id, int $uploaded_only = 0): int
     {
+        $this->requireUser();
+
         if($owner_id < 0) {
             $owner_id *= -1;
             $group = (new Clubs)->get($owner_id);
@@ -177,9 +199,6 @@ final class Audio extends VKAPIRequestHandler
 	{
 		$this->requireUser();
 
-        if($album_id != 0)
-            $this->fail(10, "album_id is not supported");
-
         $shuffleSeed    = NULL;
         $shuffleSeedStr = NULL;
         if($shuffle == 1) {
@@ -198,6 +217,28 @@ final class Audio extends VKAPIRequestHandler
                 $shuffleSeed    = hexdec(bin2hex(base64_decode($shuffle_seed)));
                 $shuffleSeedStr = $shuffle_seed;
             }
+        }
+
+        if($album_id != 0) {
+            $album = (new Audios)->getPlaylist($album_id);
+            if(!$album)
+                $this->fail(0404, "album_id invalid");
+            else if(!$album->canBeViewedBy($this->getUser()))
+                $this->fail(600, "Can't open this album for reading");
+
+            $songs = [];
+            $list  = $album->getAudios($offset, $count, $shuffleSeed);
+            foreach($list as $song)
+                $songs[] = $this->toSafeAudioStruct($song, $hash, $need_user == 1);
+
+            $response = (object) [
+                "count" => sizeof($songs),
+                "items" => $songs,
+            ];
+            if(!is_null($shuffleSeed))
+                $response->shuffle_seed = $shuffleSeedStr;
+
+            return $response;
         }
 
         if(!is_null($audio_ids)) {
@@ -502,5 +543,220 @@ final class Audio extends VKAPIRequestHandler
         $vid = $this->add($audio_id, $owner_id, $group_id);
 
         return $this->getById($vid, $hash)->items[0];
+    }
+
+    function getAlbums(?int $owner_id = NULL, int $offset = 0, int $count = 50, int $drop_private = 1): object
+    {
+        $this->requireUser();
+
+        $owner_id ??= $this->getUser()->getId();
+        $playlists  = [];
+        foreach((new Audios)->getPlaylistsByEntityId($owner_id, $offset, $count) as $playlist) {
+            if(!$playlist->canBeViewedBy($this->getUser())) {
+                if($drop_private == 1)
+                    continue;
+
+                $playlists[] = NULL;
+                continue;
+            }
+
+            $playlists[] = $playlist->toVkApiStructure($this->getUser());
+        }
+
+        return (object) [
+            "count" => sizeof($playlists),
+            "items" => $playlists,
+        ];
+    }
+
+    function searchAlbums(string $query, int $offset = 0, int $limit = 25, int $drop_private = 0): object
+    {
+        $this->requireUser();
+
+        $playlists = [];
+        $search    = (new Audios)->searchPlaylists($query)->offsetLimit($offset, $limit);
+        foreach($search as $playlist) {
+            if(!$playlist->canBeViewedBy($this->getUser())) {
+                if($drop_private == 0)
+                    $playlists[] = NULL;
+
+                continue;
+            }
+
+            $playlists[] = $playlist->toVkApiStruct($this->getUser());
+        }
+
+        return (object) [
+            "count" => sizeof($playlists),
+            "items" => $playlists,
+        ];
+    }
+
+    function addAlbum(string $title, ?string $description = NULL, int $group_id = 0): int
+    {
+        $this->requireUser();
+
+        $group = NULL;
+        if($group_id != 0) {
+            $group = (new Clubs)->get($group_id);
+            if(!$group_id)
+                $this->fail(0404, "Invalid group_id");
+            else if(!$group->canBeModifiedBy($this->getUser()))
+                $this->fail(600, "Insufficient rights to this group");
+        }
+
+        $album = new Playlist;
+        $album->setName($title);
+        if(!is_null($group))
+            $album->setOwner($group_id * -1);
+        else
+            $album->setOwner($this->getUser()->getId());
+
+        if(!is_null($description))
+            $album->setDescription($description);
+
+        $album->save();
+
+        return $album->getId();
+    }
+
+    function editAlbum(int $album_id, ?string $title = NULL, ?string $description = NULL): int
+    {
+        $this->requireUser();
+
+        $album = (new Audios)->getPlaylist($album_id);
+        if(!$album)
+            $this->fail(0404, "Album not found");
+        else if(!$album->canBeModifiedBy($this->getUser()))
+            $this->fail(600, "Insufficient rights to this album");
+
+        if(!is_null($title))
+            $album->setName($title);
+
+        if(!is_null($description))
+            $album->setDescription($description);
+
+        return (int) !(!$title && !$description);
+    }
+
+    function deleteAlbum(int $album_id): int
+    {
+        $this->requireUser();
+
+        $album = (new Audios)->getPlaylist($album_id);
+        if(!$album)
+            $this->fail(0404, "Album not found");
+        else if(!$album->canBeModifiedBy($this->getUser()))
+            $this->fail(600, "Insufficient rights to this album");
+
+        $album->delete();
+
+        return 1;
+    }
+
+    function moveToAlbum(int $album_id, string $audio_ids): int
+    {
+        $this->requireUser();
+
+        $album = (new Audios)->getPlaylist($album_id);
+        if(!$album)
+            $this->fail(0404, "Album not found");
+        else if(!$album->canBeModifiedBy($this->getUser()))
+            $this->fail(600, "Insufficient rights to this album");
+
+        $audios    = [];
+        $audio_ids = array_unique(explode(",", $audio_ids));
+        if(sizeof($audio_ids) < 1 || sizeof($audio_ids) > 1000)
+            $this->fail(8, "audio_ids must contain at least 1 audio and at most 1000");
+
+        foreach($audio_ids as $audio_id) {
+            $audio = $this->audioFromAnyId($audio_id);
+            if(!$audio)
+                continue;
+            else if($audio->canBeViewedBy($this->getUser()))
+                continue;
+
+            $audios[] = $audio;
+        }
+
+        if(sizeof($audios) < 1)
+            return 0;
+
+        $res = 1;
+        try {
+            foreach ($audios as $audio)
+                $res = min($res, $album->add($audio));
+        } catch(\OutOfBoundsException $ex) {
+            return 0;
+        }
+
+        return $res;
+    }
+
+    function removeFromAlbum(int $album_id, string $audio_ids): int
+    {
+        $this->requireUser();
+
+        $album = (new Audios)->getPlaylist($album_id);
+        if(!$album)
+            $this->fail(0404, "Album not found");
+        else if(!$album->canBeModifiedBy($this->getUser()))
+            $this->fail(600, "Insufficient rights to this album");
+
+        $audios    = [];
+        $audio_ids = array_unique(explode(",", $audio_ids));
+        if(sizeof($audio_ids) < 1 || sizeof($audio_ids) > 1000)
+            $this->fail(8, "audio_ids must contain at least 1 audio and at most 1000");
+
+        foreach($audio_ids as $audio_id) {
+            $audio = $this->audioFromAnyId($audio_id);
+            if(!$audio)
+                continue;
+            else if($audio->canBeViewedBy($this->getUser()))
+                continue;
+
+            $audios[] = $audio;
+        }
+
+        if(sizeof($audios) < 1)
+            return 0;
+
+        foreach($audios as $audio)
+            $album->remove($audio);
+
+        return 1;
+    }
+
+    function copyToAlbum(int $album_id, string $audio_ids): int
+    {
+        return $this->moveToAlbum($album_id, $audio_ids);
+    }
+
+    function bookmarkAlbum(int $id): int
+    {
+        $this->requireUser();
+
+        $album = (new Audios)->getPlaylist($id);
+        if(!$album)
+            $this->fail(0404, "Not found");
+
+        if(!$album->canBeViewedBy($this->getUser()))
+            $this->fail(600, "Access error");
+
+        return (int) $album->bookmark($this->getUser());
+    }
+
+    function unBookmarkAlbum(int $id): int
+    {
+        $this->requireUser();
+
+        $album = (new Audios)->getPlaylist($id);
+        if(!$album)
+            $this->fail(0404, "Not found");
+
+        if(!$album->canBeViewedBy($this->getUser()))
+            $this->fail(600, "Access error");
+
+        return (int) $album->unbookmark($this->getUser());
     }
 }

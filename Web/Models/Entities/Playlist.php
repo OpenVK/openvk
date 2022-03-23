@@ -15,6 +15,7 @@ class Playlist extends MediaCollection
     protected $relTableName    = "playlist_relations";
     protected $entityTableName = "audios";
     protected $entityClassName = 'openvk\Web\Models\Entities\Audio';
+    protected $allowDuplicates = false;
 
     private $importTable;
 
@@ -31,6 +32,11 @@ class Playlist extends MediaCollection
     function getCoverURL(): ?string
     {
         return NULL;
+    }
+
+    function getLength(): int
+    {
+        return $this->getRecord()->length;
     }
 
     function getAudios(int $offset = 0, ?int $limit = NULL, ?int $shuffleSeed = NULL): \Traversable
@@ -112,6 +118,27 @@ class Playlist extends MediaCollection
         ])->delete();
 
         return $count > 0;
+    }
+
+    function toVkApiStruct(?User $user = NULL): object
+    {
+        $oid = $this->getOwner()->getId();
+        if($this->getOwner() instanceof Club)
+            $oid *= -1;
+
+        return (object) [
+            "id"          => $this->getId(),
+            "owner_id"    => $oid,
+            "title"       => $this->getTitle(),
+            "description" => $this->getDescription(),
+            "size"        => $this->size(),
+            "length"      => $this->getLength(),
+            "created"     => $this->getCreationTime()->relative(),
+            "modified"    => $this->getCreationTime()->relative(),
+            "accessible"  => $this->canBeViewedBy($user),
+            "editable"    => $this->canBeModifiedBy($user),
+            "bookmarked"  => $this->isBookmarkedBy($user),
+        ];
     }
 
     function setLength(): void

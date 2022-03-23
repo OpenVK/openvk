@@ -41,7 +41,7 @@ class Audios
         return new Audio($audio);
     }
 
-    private function getPlaylist(int $id): ?Playlist
+    function getPlaylist(int $id): ?Playlist
     {
         $playlist = $this->playlists->get($id);
         if(!$playlist)
