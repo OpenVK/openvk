@@ -266,8 +266,13 @@ class Audio extends Media
         if($this->isInLibraryOf($entity))
             return false;
 
-        DatabaseConnection::i()->getContext()->table("audio_relations")->insert([
-            "entity" => $entity->getId() * ($entity instanceof Club ? -1 : 1),
+        $entityId  = $entity->getId() * ($entity instanceof Club ? -1 : 1);
+        $audioRels = DatabaseConnection::i()->getContext()->table("audio_relations");
+        if(sizeof($audioRels->where("entity", $entityId)) > 65536)
+            throw new \OverflowException("Can't have more than 65536 audios in a playlist");
+
+        $audioRels->insert([
+            "entity" => $entityId,
             "audio"  => $this->getId(),
         ]);
 

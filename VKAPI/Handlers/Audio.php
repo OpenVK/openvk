@@ -462,7 +462,11 @@ final class Audio extends VKAPIRequestHandler
         else if(!$audio->canBeViewedBy($this->getUser()))
             $this->fail(201, "Access denied to audio(owner=$owner_id, vid=$audio_id)");
 
-        $audio->add($to);
+        try {
+            $audio->add($to);
+        } catch(\OverflowException $ex) {
+            $this->fail(300, "Album is full");
+        }
 
         return $audio->getPrettyId();
     }
