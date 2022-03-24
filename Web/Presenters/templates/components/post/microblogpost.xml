@@ -9,25 +9,14 @@
         <tr>
             <td width="54" valign="top">
                 <a href="{$author->getURL()}">
-                    <img
-                        src="{$author->getAvatarURL()}"
-                        width="{ifset $compact}25{else}50{/ifset}" 
-                        {ifset $compact}class="cCompactAvatars"{/ifset} />
-                            {if !$post->isPostedOnBehalfOfGroup() && !$compact}
-                                <span n:if="$author->isOnline()" class="post-online">
-                                    {_online}
-                                </span>
-                    {/if}
+                    <img src="{$author->getAvatarURL()}" width="{ifset $compact}25{else}50{/ifset}" {ifset $compact}class="cCompactAvatars"{/ifset} />
+                    <span n:if="!$post->isPostedOnBehalfOfGroup() && !$compact && $author->isOnline()" class="post-online">{_online}</span>
                 </a>
             </td>
             <td width="100%" valign="top">
                 <div class="post-author">
-                    <a href="{$author->getURL()}">
-                        <b>
-                            {$author->getCanonicalName()}
-                        </b>
-                    </a>
-                    {if $author->isVerified()}<img class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">{/if}
+                    <a href="{$author->getURL()}"><b>{$author->getCanonicalName()}</b></a>
+                    <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
                     {if ($onWallOf ?? false) &&!$post->isPostedOnBehalfOfGroup() && $post->getOwnerPost() !== $post->getTargetWall()}
                         {var wallId  = $post->getTargetWall()}
                         {var wallURL = $wallId > -1 ? "/id$wallId" : "/club" . abs($wallId)}
@@ -44,18 +33,17 @@
                             </b>
                         </a>
                     {/if}
-                    {ifset $compact}<br>
-                    <a href="/wall{$post->getPrettyId()}" class="date">
-                        {$post->getPublicationTime()}
-                    </a>
 
+                    {ifset $compact}
+                        <br>
+                        <a href="/wall{$post->getPrettyId()}" class="date">
+                            {$post->getPublicationTime()}
+                        </a>
                     {/ifset}
-                    {if $post->isPinned()}
-                        <span class="nobold">{_pinned}</span>
-                    {/if}
-                    {if $post->canBeDeletedBy($thisUser) && !($forceNoDeleteLink ?? false) && !isset($compact)}
-                        <a class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
-                    {/if}
+
+                    <span n:if="$post->isPinned()" class="nobold">{_pinned}</span>
+
+                    <a n:if="$post->canBeDeletedBy($thisUser) && !($forceNoDeleteLink ?? false) && !isset($compact)" class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
                     
                     {if $post->canBePinnedBy($thisUser) && !($forceNoPinLink ?? false) && !isset($compact)}
                         {if $post->isPinned()}
@@ -80,11 +68,11 @@
                         &nbsp;! Этот пост был размещён за взятку.
                     </div>
                     <div n:if="$post->isSigned()" class="post-signature">
-                        {var acutalAuthor = $post->getOwner(false)}
+                        {var actualAuthor = $post->getOwner(false)}
                         <span>
-                            Автор:
-                            <a href="{$acutalAuthor->getURL()}">
-                               {$acutalAuthor->getCanonicalName()}
+                            {_author}:
+                            <a href="{$actualAuthor->getURL()}">
+                               {$actualAuthor->getCanonicalName()}
                             </a>
                         </span>
                     </div>
@@ -94,26 +82,17 @@
                     {if isset($thisUser)}
                         &nbsp;
                         
-                        {if !($forceNoCommentsLink ?? false)}
-                            <a n:if="$commentsCount == 0" href="javascript:expand_comment_textarea({$commentTextAreaId})">
-                                {_"comment"}
-                            </a>
-                        {/if}
+                        <a n:if="!($forceNoCommentsLink ?? false) && $commentsCount == 0" href="javascript:expand_comment_textarea({$commentTextAreaId})">{_comment}</a>
                         
                         <div class="like_wrap">
-                            {if !($forceNoShareLink ?? false)}
-                                <a class="post-share-button" href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')">
-                                    <div class="repost-icon" style="opacity: 0.4;"></div>
-                                    <span class="likeCnt">{if $post->getRepostCount() > 0}{$post->getRepostCount()}{/if}</span>
-                                </a>
-                            {/if}
+                            <a n:if="!($forceNoShareLink ?? false)" class="post-share-button" href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')">
+                                <div class="repost-icon" style="opacity: 0.4;"></div>
+                                <span class="likeCnt">{if $post->getRepostCount() > 0}{$post->getRepostCount()}{/if}</span>
+                            </a>
 
                             {if !($forceNoLike ?? false)}
                                 {var liked = $post->hasLikeFrom($thisUser)}
-                                <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}"
-                                class="post-like-button"
-                                        data-liked="{(int) $liked}"
-                                        data-likes="{$post->getLikesCount()}">
+                                <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$post->getLikesCount()}">
                                     <div class="heart" id="{if $liked}liked{/if}"></div>
                                     <span class="likeCnt">{if $post->getLikesCount() > 0}{$post->getLikesCount()}{/if}</span>
                                 </a>
@@ -121,21 +100,17 @@
                         </div>
                     {/if}
                 </div>
-                {if !($forceNoCommentsLink ?? false)}
-                    <div n:if="$commentSection == true && $compact == false" class="post-menu-s">
-                        {if $commentsCount > 3}
-                            <a href="/wall{$post->getPrettyId()}" class="expand_button">{_view_other_comments}</a>
-                        {/if}
-                        {foreach $comments as $comment}
-                            {include "../comment.xml", comment => $comment, $compact => true}
-                        {/foreach}
-                        <div n:ifset="$thisUser" id="commentTextArea{$commentTextAreaId}" n:attr="style => ($commentsCount == 0 ? 'display: none;')" class="commentsTextFieldWrap">
-                            {var commentsURL = "/al_comments/create/posts/" . $post->getId()}
-                            {var club = is_null($club) ? ($post->getTargetWall() < 0 ? (new openvk\Web\Models\Repositories\Clubs)->get(abs($post->getTargetWall())) : NULL) : $club}
-                            {include "../textArea.xml", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), post => $post, club => $club}
-                        </div>
+                <div n:if="!($forceNoCommentsLink ?? false) && $commentSection == true && $compact == false" class="post-menu-s">
+                    <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}" class="expand_button">{_view_other_comments}</a>
+                    {foreach $comments as $comment}
+                        {include "../comment.xml", comment => $comment, $compact => true}
+                    {/foreach}
+                    <div n:ifset="$thisUser" id="commentTextArea{$commentTextAreaId}" n:attr="style => ($commentsCount == 0 ? 'display: none;')" class="commentsTextFieldWrap">
+                        {var commentsURL = "/al_comments/create/posts/" . $post->getId()}
+                        {var club = is_null($club) ? ($post->getTargetWall() < 0 ? (new openvk\Web\Models\Repositories\Clubs)->get(abs($post->getTargetWall())) : NULL) : $club}
+                        {include "../textArea.xml", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), post => $post, club => $club}
                     </div>
-                {/if}
+                </div>
             </td>
         </tr>
     </tbody>

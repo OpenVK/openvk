@@ -5,8 +5,8 @@
             <img class="media" src="{$attachment->getURL()}" alt="{$attachment->getDescription()}" />
         </a>
     {else}
-        <a href="javascript:alert('{_"attach_no_longer_available"}');">
-            <img class="media" src="/assets/packages/static/openvk/img/camera_200.png" alt="{_"attach_no_longer_available"}" />
+        <a href="javascript:alert('{_attach_no_longer_available}');">
+            <img class="media" src="/assets/packages/static/openvk/img/camera_200.png" alt="{_attach_no_longer_available}" />
         </a>
     {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Video}
@@ -14,12 +14,12 @@
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Post}
     {php $GLOBALS["_nesAttGloCou"] = (isset($GLOBALS["_nesAttGloCou"]) ? $GLOBALS["_nesAttGloCou"] : 0) + 1}
     {if $GLOBALS["_nesAttGloCou"] > 2}
-        <a href="/wall{$attachment->getPrettyId()}">{_"open_post"}</a>
+        <a href="/wall{$attachment->getPrettyId()}">{_open_post}</a>
     {else}
         {include "post.xml", post => $attachment, compact => true}
     {/if}
 {else}
-    <span style="color:red;">{_"version_incompatibility"}</span>
+    <span style="color:red;">{_version_incompatibility}</span>
 {/if}
 
 {php $GLOBALS["_nesAttGloCou"] = NULL}
