@@ -119,7 +119,7 @@ class Albums
 
     function getAlbumByPhotoId(Photo $photo): ?Album
     {
-        $dbalbum = DatabaseConnection::i()->getContext()->table("album_relations")->where(["media" => $photo->getId()])->fetch();
+        $dbalbum = $this->context->table("album_relations")->where(["media" => $photo->getId()])->fetch();
 
         return $dbalbum->collection ? $this->get($dbalbum->collection) : null;
     }
