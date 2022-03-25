@@ -31,7 +31,7 @@ final class Wall extends VKAPIRequestHandler
                     $attachments[] = [
                         "type" => "photo",
                         "photo" => [
-                            "album_id" => $attachment->getAlbum()->getId(),
+                            "album_id" => $attachment->getAlbum() ? $attachment->getAlbum()->getId() : null,
                             "date" => $attachment->getPublicationTime()->timestamp(),
                             "id" => $attachment->getVirtualId(),
                             "owner_id" => $attachment->getOwner()->getId(),

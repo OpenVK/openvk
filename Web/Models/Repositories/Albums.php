@@ -121,6 +121,6 @@ class Albums
     {
         $dbalbum = DatabaseConnection::i()->getContext()->table("album_relations")->where(["media" => $photo->getId()])->fetch();
 
-        return $this->get($dbalbum->collection);
+        return $dbalbum->collection ? $this->get($dbalbum->collection) : null;
     }
 }
