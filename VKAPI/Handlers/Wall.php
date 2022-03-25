@@ -83,6 +83,8 @@ final class Wall extends VKAPIRequestHandler
                 $profiles[] = $from_id;
             else
                 $groups[] = $from_id * -1;
+
+            $attachments = null; // free attachments so it will not clone everythingg
         }
 
         if($extended == 1) 
@@ -214,6 +216,8 @@ final class Wall extends VKAPIRequestHandler
                     $profiles[] = $from_id;
                 else
                     $groups[] = $from_id * -1;
+
+                $attachments = null; // free attachments so it will not clone everythingg
             }
         }
 
