@@ -54,6 +54,10 @@
         #userContent cite::before {
             content: "— ";
         }
+
+        #userContent .underline {
+            text-decoration: underline;
+        }
     </style>
 
     <div class="container_gray" style="background: white; border-top: none;">

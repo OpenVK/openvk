@@ -1,9 +1,4 @@
 {var microblogEnabled = isset($thisUser) ? $thisUser->hasMicroblogEnabled() : false}
-{if !$post->isPostedOnBehalfOfGroup()}
-    {var then = date_create("@" . $post->getOwner()->getOnline()->timestamp())}
-    {var now = date_create()}
-    {var diff = date_diff($now, $then)}
-{/if}
 
 {if $microblogEnabled}
     {include "post/microblogpost.xml", post => $post, diff => $diff, commentSection => $commentSection}

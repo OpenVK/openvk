@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE latte PUBLIC "-//LATTE//Latte plugin configuration XML V0.0.1//EN" "Latte.dtd">
+<latte version="1" vendor="nette/application">
+    <tags>
+        <!-- nette/application tags -->
+        <tag name="cache" type="PAIR" arguments="if => expr, key, …">
+            <arguments>
+                <argument name="name[:part]" types="KEY_VALUE" validType="string" required="true" />
+                <argument name="arguments" types="PHP_EXPRESSION" repeatable="true" />
+            </arguments>
+        </tag>
+        <tag name="control" type="UNPAIRED">
+            <arguments>
+                <argument name="name[:part]" types="PHP_IDENTIFIER,PHP_EXPRESSION" validType="string" required="true" />
+                <argument name="arguments" types="PHP_EXPRESSION" repeatable="true" />
+            </arguments>
+        </tag>
+        <tag name="link" type="UNPAIRED">
+            <arguments>
+                <argument name="destination" types="LINK_DESTINATION,PHP_EXPRESSION" validType="string" required="true" />
+                <argument name="arguments" types="LINK_PARAMETERS" repeatable="true" />
+            </arguments>
+        </tag>
+        <tag name="href" type="ATTR_ONLY">
+            <arguments>
+                <argument name="destination" types="LINK_DESTINATION,PHP_EXPRESSION" validType="string" required="true" />
+                <argument name="arguments" types="LINK_PARAMETERS" repeatable="true" />
+            </arguments>
+        </tag>
+        <tag name="nonce" type="ATTR_ONLY" />
+        <tag name="plink" type="UNPAIRED">
+            <arguments>
+                <argument name="destination" types="LINK_DESTINATION,PHP_EXPRESSION" validType="string" required="true" />
+                <argument name="arguments" types="LINK_PARAMETERS" repeatable="true" />
+            </arguments>
+        </tag>
+        <!-- @deprecated - nette/application -->
+        <tag name="ifCurrent" type="PAIR" deprecatedMessage="Tag {ifCurrent} is deprecated in Latte 2.6. Use custom function isLinkCurrent() instead.">
+            <arguments>
+                <argument name="destination" types="LINK_DESTINATION,PHP_EXPRESSION" validType="string" required="true" />
+                <argument name="arguments" types="LINK_PARAMETERS" repeatable="true" />
+            </arguments>
+        </tag>
+    </tags>
+    <variables>
+        <variable name="control" type="\Nette\Application\UI\Control" />
+        <variable name="basePath" type="string" />
+        <variable name="baseUrl" type="string" />
+        <variable name="flashes" type="mixed[]" />
+        <variable name="presenter" type="\Nette\Application\UI\Presenter" />
+        <variable name="iterator" type="\Latte\Runtime\CachingIterator" />
+        <variable name="form" type="\Nette\Application\UI\Form" />
+        <variable name="user" type="\Nette\Security\User" />
+    </variables>
+    <functions>
+        <function name="isLinkCurrent" returnType="bool" arguments="(string $destination = null, $args = [])" />
+        <function name="isModuleCurrent" returnType="bool" arguments="(string $moduleName)" />
+    </functions>
+</latte>

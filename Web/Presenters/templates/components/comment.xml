@@ -8,10 +8,7 @@
         <tr>
             <td width="30" valign="top">
                 <a href="{$author->getURL()}">
-                    <img
-                        src="{$author->getAvatarURL()}"
-                        width="30"
-                        class="cCompactAvatars" />
+                    <img src="{$author->getAvatarURL()}" width="30" class="cCompactAvatars" />
                 </a>
             </td>
             <td width="100%" valign="top">
@@ -19,7 +16,7 @@
                     <a href="{$author->getURL()}"><b>
                         {$author->getCanonicalName()}
                     </b></a>
-                    {if $author->isVerified()}<img class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">{/if}<br/>
+                    <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png"><br/>
                 </div>
                 <div class="post-content" id="{$comment->getId()}">
                     <div class="text" id="text{$comment->getId()}">
@@ -34,9 +31,9 @@
                     <div n:if="isset($thisUser) &&! ($compact ?? false)" class="post-menu">
                         <a href="#_comment{$comment->getId()}" class="date">{$comment->getPublicationTime()}</a>&nbsp;|
                         {if $comment->canBeDeletedBy($thisUser)}
-                            <a href="/comment{$comment->getId()}/delete">{_"delete"}</a>&nbsp;|
+                            <a href="/comment{$comment->getId()}/delete">{_delete}</a>&nbsp;|
                         {/if}
-                        <a class="comment-reply">{_"reply"}</a>
+                        <a class="comment-reply">{_reply}</a>
                         <div style="float: right; font-size: .7rem;">
                             <a class="post-like-button" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}">
                                 <div class="heart" style="{if $comment->hasLikeFrom($thisUser)}opacity: 1;{else}opacity: 0.4;{/if}"></div>
@@ -45,7 +42,6 @@
                         </div>
                     </div>
                 </div>
-                
             </td>
         </tr>
     </tbody>

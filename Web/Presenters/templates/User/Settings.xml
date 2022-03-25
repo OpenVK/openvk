@@ -347,15 +347,21 @@
             <center>{tr("also_you_can_transfer_points", $thisUser->getCoins(), rawurlencode($csrfToken))|noescape}</center>
         </div>
         <div style="width: 22%; float: right;">
-            <p style="margin: 0; font-size: medium; text-align: center;">
-                <b>
-                    {_on_your_account}<br/>
-                    <span style="font-size: 50px;">{$thisUser->getCoins()}</span><br/>
-                    {_points_count}<br/><br/>
-                    <small><a href="?act=finance.top-up">[{_have_voucher}?]</a></small>
-                </b>
+            <div style="margin: 0; font-size: medium; text-align: center; font-weight: 900;">
+                {_on_your_account}
+                <div style="width: 100%; height: 60px; font-weight: 100;" id="balance">{$thisUser->getCoins()}</div>
+                {_points_count}<br/>
+                <small><a href="?act=finance.top-up">[{_have_voucher}?]</a></small>
             </p>
         </div>
+        
+        {script "js/node_modules/textfit/textFit.min.js"}
+        <script>
+            let balance = document.querySelector("#balance");
+            
+            balance.style.width = Math.ceil(balance.parentNode.getBoundingClientRect().width) + "px";
+            textFit(balance, { alignVert: true });
+        </script>
         
         {elseif $isFinanceTU}
         
