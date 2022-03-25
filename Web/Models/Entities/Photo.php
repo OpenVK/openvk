@@ -1,5 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
+use openvk\Web\Models\Entities\Album;
+use openvk\Web\Models\Repositories\Albums;
 use Chandler\Database\DatabaseConnection as DB;
 use Nette\InvalidStateException as ISE;
 use Nette\Utils\Image;
@@ -58,5 +60,17 @@ class Photo extends Media
             $album->addPhoto($photo);
         
         return $photo;
+    }
+
+	function getDimentions()
+	{
+		$hash = $this->getRecord()->hash;
+
+		return getimagesize($this->pathFromHash($hash));
+	}
+
+    function getAlbum(): ?Album
+    {
+        return (new Albums)->getAlbumByPhotoId($this);
     }
 }
