@@ -36,10 +36,10 @@ final class Wall extends VKAPIRequestHandler
                             "id" => $attachment->getVirtualId(),
                             "owner_id" => $attachment->getOwner()->getId(),
                             "sizes" => array([
-                                "height" => $attachment->getDimentions()[1],
+                                "height" => 500, // Для временного компросима оставляю статическое число. Если каждый раз обращаться к файлу за количеством пикселов, то наступает пuпuська полная с производительностью, так что пока так 
                                 "url" => $attachment->getURL(),
                                 "type" => "m",
-                                "width" => $attachment->getDimentions()[0],
+                                "width" => 500,
                             ]),
                             "text" => "",
                             "has_tags" => false
@@ -169,10 +169,10 @@ final class Wall extends VKAPIRequestHandler
                                 "id" => $attachment->getVirtualId(),
                                 "owner_id" => $attachment->getOwner()->getId(),
                                 "sizes" => array([
-                                    "height" => $attachment->getDimentions()[1],
+                                    "height" => 500, // я ещё я заебался вставлять одинаковый код в два разных места
                                     "url" => $attachment->getURL(),
                                     "type" => "m",
-                                    "width" => $attachment->getDimentions()[0],
+                                    "width" => 500,
                                 ]),
                                 "text" => "",
                                 "has_tags" => false
