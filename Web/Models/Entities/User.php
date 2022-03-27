@@ -31,11 +31,11 @@ class User extends RowModel
     const NSFW_TOLERANT      = 1;
     const NSFW_FULL_TOLERANT = 2;
     
-    protected function _abstractRelationGenerator(string $filename, int $page = 1): \Traversable
+    protected function _abstractRelationGenerator(string $filename, int $page = 1, int $limit = 6): \Traversable
     {
         $id     = $this->getId();
         $query  = "SELECT id FROM\n" . file_get_contents(__DIR__ . "/../sql/$filename.tsql");
-        $query .= "\n LIMIT 6 OFFSET " . ( ($page - 1) * 6 );
+        $query .= "\n LIMIT " . $limit . " OFFSET " . ( ($page - 1) * $limit );
         
         $rels = DatabaseConnection::i()->getConnection()->query($query, $id, $id);
         foreach($rels as $rel) {
@@ -443,9 +443,9 @@ class User extends RowModel
         ];
     }
     
-    function getFriends(int $page = 1): \Traversable
+    function getFriends(int $page = 1, int $limit = 6): \Traversable
     {
-        return $this->_abstractRelationGenerator("get-friends", $page);
+        return $this->_abstractRelationGenerator("get-friends", $page, $limit);
     }
     
     function getFriendsCount(): int
@@ -453,9 +453,9 @@ class User extends RowModel
         return $this->_abstractRelationCount("get-friends");
     }
     
-    function getFollowers(int $page = 1): \Traversable
+    function getFollowers(int $page = 1, int $limit = 6): \Traversable
     {
-        return $this->_abstractRelationGenerator("get-followers", $page);
+        return $this->_abstractRelationGenerator("get-followers", $page, $limit);
     }
     
     function getFollowersCount(): int
@@ -463,9 +463,9 @@ class User extends RowModel
         return $this->_abstractRelationCount("get-followers");
     }
     
-    function getSubscriptions(int $page = 1): \Traversable
+    function getSubscriptions(int $page = 1, int $limit = 6): \Traversable
     {
-        return $this->_abstractRelationGenerator("get-subscriptions-user", $page);
+        return $this->_abstractRelationGenerator("get-subscriptions-user", $page, $limit);
     }
     
     function getSubscriptionsCount(): int
