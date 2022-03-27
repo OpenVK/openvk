@@ -53,7 +53,7 @@ final class Users extends VKAPIRequestHandler
 			                $response[$i]->verified = intval($usr->isVerified());
 			                break;
 			            case 'sex':
-			                $response[$i]->sex = $authuser->isFemale() ? 1 : 2;
+			                $response[$i]->sex = $usr->isFemale() ? 1 : 2;
 			                break;
 			            case 'has_photo':
 			                $response[$i]->has_photo = is_null($usr->getAvatarPhoto()) ? 0 : 1;
