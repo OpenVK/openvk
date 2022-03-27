@@ -72,7 +72,7 @@
                 <div id="profile_link" style="width: 194px;">
                     <a href="/edit" class="link">{_"edit_page"}</a>
                 </div>
-                <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce']" id="profile_link" style="width: 194px;">
+                <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && !$thisUser->prefersNotToSeeRating()" id="profile_link" style="width: 194px;">
                     <a onClick="showIncreaseRatingDialog({$thisUser->getCoins()}, {ltrim($thisUser->getUrl(), '/')}, {$csrfToken})" class="link">{_increase_rating}</a>
                 </div>
             {else}
@@ -91,6 +91,16 @@
                     </a>
                     <a href="javascript:warnUser()" class="profile_link">
                         {_warn_user_action}
+                    </a>
+                {/if}
+
+                {if $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
+                    <a href="javascript:toggleBanInSupport()" class="profile_link">
+                        {if $user->isBannedInSupport()}
+                            {_unban_in_support_user_action}
+                        {else}
+                            {_ban_in_support_user_action}
+                        {/if}
                     </a>
                 {/if}
                 
@@ -512,7 +522,7 @@
                         xhr = new XMLHttpRequest();
                         xhr.open("GET", "/admin/ban/" + {$user->getId()} + "?reason=" + res + "&hash=" + {rawurlencode($csrfToken)}, true);
                         xhr.onload = (function() {
-                            if(xhr.responseText.indexOf("reason") === -1)
+                            if(xhr.responseText.indexOf("success") === -1)
                                 MessageBox("Ошибка", "Не удалось забанить пользователя...", ["OK"], [Function.noop]);
                             else
                                 MessageBox("Операция успешна", "Пользователь заблокирован", ["OK"], [Function.noop]);
@@ -526,7 +536,7 @@
             function warnUser() {
                 uBanMsgTxt  = "Вы собираетесь предупредить пользователя " + {$user->getCanonicalName()} + ".";
                 uBanMsgTxt += "<br/>Мы отправим уведомление пользователю в личные сообщения от имени аккаунта администратора.";
-                uBanMsgTxt += "<br/><br/><b>Текст предупреждения</b>: <input type='text' id='uWarnMsgInput' placeholder='придумайте что-нибудь крутое' />"
+                uBanMsgTxt += "<br/><br/><b>Текст предупреждения</b>: <input type='text' id='uWarnMsgInput' placeholder='придумайте что-нибудь крутое' />";
                 
                 MessageBox("Выдать предупреждение " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
                     (function() {
@@ -544,6 +554,51 @@
                     Function.noop
                 ]);
             }
+        </script>
+
+        <script n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)">
+            {if $user->isBannedInSupport()}
+                function toggleBanInSupport() {
+                    uBanMsgTxt  = "Вы собираетесь разблокировать в поддержке пользователя " + {$user->getCanonicalName()} + ".";
+                    uBanMsgTxt += "<br/>Сейчас он заблокирован по причине <strong>" + {$user->getBanInSupportReason()} + "</strong>.";
+
+                    MessageBox("Разблокировать в поддержке " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
+                        (function() {
+                            xhr = new XMLHttpRequest();
+                            xhr.open("GET", "/admin/support/unban/" + {$user->getId()} + "?hash=" + {rawurlencode($csrfToken)}, true);
+                            xhr.onload = (function() {
+                                if(xhr.responseText.indexOf("success") === -1)
+                                    MessageBox("Ошибка", "Не удалось разблокировать пользователя в поддержке...", ["OK"], [Function.noop]);
+                                else
+                                    MessageBox("Операция успешна", "Пользователь разблокирован в поддержке", ["OK"], [Function.noop]);
+                            });
+                            xhr.send(null);
+                        }),
+                        Function.noop
+                    ]);
+                }
+            {else}
+                function toggleBanInSupport() {
+                    uBanMsgTxt  = "Вы собираетесь заблокировать в поддержке пользователя " + {$user->getCanonicalName()} + ".";
+                    uBanMsgTxt += "<br/><br/><b>Причина бана</b>: <input type='text' id='uBanMsgInput' placeholder='придумайте что-нибудь крутое' />";
+
+                    MessageBox("Заблокировать в поддержке " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
+                        (function() {
+                            res = document.querySelector("#uBanMsgInput").value;
+                            xhr = new XMLHttpRequest();
+                            xhr.open("GET", "/admin/support/ban/" + {$user->getId()} + "?reason=" + res + "&hash=" + {rawurlencode($csrfToken)}, true);
+                            xhr.onload = (function() {
+                                if(xhr.responseText.indexOf("success") === -1)
+                                    MessageBox("Ошибка", "Не удалось заблокировать пользователя в поддержке...", ["OK"], [Function.noop]);
+                                else
+                                    MessageBox("Операция успешна", "Пользователь заблокирован в поддержке", ["OK"], [Function.noop]);
+                            });
+                            xhr.send(null);
+                        }),
+                        Function.noop
+                    ]);
+                }
+            {/if}
         </script>
 
         <script n:if="isset($thisUser) && $user->getId() == $thisUser->getId()" n:syntax="off">

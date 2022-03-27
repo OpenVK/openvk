@@ -214,6 +214,11 @@ class User extends RowModel
     {
         return $this->getRecord()->block_reason;
     }
+
+    function getBanInSupportReason(): ?string
+    {
+        return $this->getRecord()->block_in_support_reason;
+    }
     
     function getType(): int
     {
@@ -672,6 +677,11 @@ class User extends RowModel
     function isBanned(): bool
     {
         return !is_null($this->getBanReason());
+    }
+
+    function isBannedInSupport(): bool
+    {
+        return !is_null($this->getBanInSupportReason());
     }
     
     function isOnline(): bool
