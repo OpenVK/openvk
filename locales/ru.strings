@@ -877,6 +877,7 @@
 "manage_user_action" = "Управление пользователем";
 "manage_group_action" = "Управление группой";
 "ban_user_action" = "Заблокировать пользователя";
+"unban_user_action" = "Разблокировать пользователя";
 "warn_user_action" = "Предупредить пользователя";
 "ban_in_support_user_action" = "Заблокировать в поддержке";
 "unban_in_support_user_action" = "Разблокировать в поддержке";

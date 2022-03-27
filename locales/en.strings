@@ -834,6 +834,7 @@
 "manage_user_action" = "Manage user";
 "manage_group_action" = "Manage group";
 "ban_user_action" = "Ban user";
+"unban_user_action" = "Unban user";
 "warn_user_action" = "Warn user";
 "ban_in_support_user_action" = "Ban in support";
 "unban_in_support_user_action" = "Unban in support";

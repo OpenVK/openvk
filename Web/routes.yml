@@ -271,6 +271,8 @@ routes:
       handler: "Admin->gifts"
     - url: "/admin/ban/{num}"
       handler: "Admin->quickBan"
+    - url: "/admin/unban/{num}"
+      handler: "Admin->quickUnban"
     - url: "/admin/warn/{num}"
       handler: "Admin->quickWarn"
     - url: "/admin/support/ban/{num}"

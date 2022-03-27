@@ -522,7 +522,7 @@
                         xhr = new XMLHttpRequest();
                         xhr.open("GET", "/admin/ban/" + {$user->getId()} + "?reason=" + res + "&hash=" + {rawurlencode($csrfToken)}, true);
                         xhr.onload = (function() {
-                            if(xhr.responseText.indexOf("reason") === -1)
+                            if(xhr.responseText.indexOf("success") === -1)
                                 MessageBox("Ошибка", "Не удалось забанить пользователя...", ["OK"], [Function.noop]);
                             else
                                 MessageBox("Операция успешна", "Пользователь заблокирован", ["OK"], [Function.noop]);
