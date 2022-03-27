@@ -276,6 +276,8 @@ final class PhotosPresenter extends OpenVKPresenter
         
         $photo->isolate();
         $photo->delete();
-        exit("Фотография успешно удалена!");
+        
+        $this->flash("succ", "Фотография удалена", "Эта фотография была успешно удалена.");
+        $this->redirect("/id0", static::REDIRECT_TEMPORARY);
     }
 }
