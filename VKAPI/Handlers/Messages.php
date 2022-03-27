@@ -4,6 +4,7 @@ use openvk\Web\Events\NewMessageEvent;
 use openvk\Web\Models\Entities\{Correspondence, Message};
 use openvk\Web\Models\Repositories\{Messages as MSGRepo, Users as USRRepo};
 use openvk\VKAPI\Structures\{Message as APIMsg, Conversation as APIConvo};
+use openvk\VKAPI\Handlers\Users as APIUsers;
 use Chandler\Signaling\SignalManager;
 
 final class Messages extends VKAPIRequestHandler
@@ -145,12 +146,14 @@ final class Messages extends VKAPIRequestHandler
         return 1;
     }
     
-    function getConversations(int $offset = 0, int $count = 20, string $filter = "all", int $extended = 0): object
+    function getConversations(int $offset = 0, int $count = 20, string $filter = "all", int $extended = 0, string $fields = ""): object
     {
         $this->requireUser();
         
         $convos = (new MSGRepo)->getCorrespondencies($this->getUser(), -1, $count, $offset);
         $list   = [];
+
+        $users = [];
         foreach($convos as $convo) {
             $correspondents = $convo->getCorrespondents();
             if($correspondents[0]->getId() === $this->getUser()->getId())
@@ -190,6 +193,11 @@ final class Messages extends VKAPIRequestHandler
                 $lastMessagePreview->out        = (int) ($lastMessage->getSender()->getId() === $this->getUser()->getId());
                 $lastMessagePreview->body       = $lastMessage->getText(false);
                 $lastMessagePreview->emoji      = true;
+
+                if($extended == 1) {
+                    $users[] = $lastMessage->getSender()->getId();
+                    $users[] = $author;
+                }
             }
             
             $list[] = [
@@ -198,10 +206,20 @@ final class Messages extends VKAPIRequestHandler
             ];
         }
         
-        return (object) [
-            "count" => sizeof($list),
-            "items" => $list,
-        ];
+        if($extended == 0){
+            return (object) [
+                "count" => sizeof($list),
+                "items" => $list,
+            ];
+        } else {
+            $users = array_unique($users);
+
+            return (object) [
+                "count" => sizeof($list),
+                "items" => $list,
+                "profiles" => (new APIUsers)->get(implode(',', $users), $fields, $offset, $count)
+            ];
+        }
     }
     
     function getHistory(int $offset = 0, int $count = 20, int $user_id = -1, int $peer_id = -1, int $start_message_id = 0, int $rev = 0, int $extended = 0): object
