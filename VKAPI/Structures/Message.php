@@ -11,6 +11,7 @@ final class Message
     public $out;
     public $title = "";
     public $body;
+    public $text;
     public $attachments = [];
     public $fwd_messages = [];
     public $emoji;

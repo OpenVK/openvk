@@ -49,10 +49,12 @@ final class Messages extends VKAPIRequestHandler
             $rMsg->read_state = 1;
             $rMsg->out        = (int) ($message->getSender()->getId() === $this->getUser()->getId());
             $rMsg->body       = $message->getText(false);
+            $rMsg->text       = $message->getText(false);
             $rMsg->emoji      = true;
             
             if($preview_length > 0)
                 $rMsg->body = ovk_proc_strtr($rMsg->body, $preview_length);
+                $rMsg->text = ovk_proc_strtr($rMsg->text, $preview_length);
             
             $items[] = $rMsg;
         }
@@ -192,6 +194,7 @@ final class Messages extends VKAPIRequestHandler
                 $lastMessagePreview->read_state = 1;
                 $lastMessagePreview->out        = (int) ($lastMessage->getSender()->getId() === $this->getUser()->getId());
                 $lastMessagePreview->body       = $lastMessage->getText(false);
+                $lastMessagePreview->text       = $lastMessage->getText(false);
                 $lastMessagePreview->emoji      = true;
 
                 if($extended == 1) {
@@ -248,6 +251,7 @@ final class Messages extends VKAPIRequestHandler
             $rMsg->read_state = 1;
             $rMsg->out        = (int) ($msgU->sender_id === $this->getUser()->getId());
             $rMsg->body       = $message->getText(false);
+            $rMsg->text       = $message->getText(false);
             $rMsg->emoji      = true;
             
             $results[] = $rMsg;
