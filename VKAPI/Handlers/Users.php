@@ -158,13 +158,14 @@ final class Users extends VKAPIRequestHandler
         $users = new UsersRepo;
         
         $array = [];
+		$find = $users->find($q);
 
-        foreach ($users->find($q) as $user) {
+        foreach ($find as $user) {
             $array[] = $user->getId();
         }
 
         return (object)[
-        	"count" => $users->getFoundCount($q),
+        	"count" => $find->size(),
         	"items" => $this->get(implode(',', $array), $fields, $offset, $count)
         ];
     }
