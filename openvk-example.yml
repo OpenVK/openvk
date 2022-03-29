@@ -9,6 +9,9 @@ openvk:
         uploads:
             disableLargeUploads: false
             mode: "basic"
+            api:
+                maxFilesPerDomain: 10
+                maxFileSize: 25000000
         shortcodes:
             minLength: 3 # won't affect existing short urls or the ones set via admin panel
             forbiddenNames:

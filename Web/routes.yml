@@ -279,6 +279,8 @@ routes:
       handler: "Support->quickBanInSupport"
     - url: "/admin/support/unban/{num}"
       handler: "Support->quickUnbanInSupport"
+    - url: "/upload/photo/{text}"
+      handler: "VKAPI->photoUpload"
     - url: "/method/{text}.{text}"
       handler: "VKAPI->route"
     - url: "/token"

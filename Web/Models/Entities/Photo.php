@@ -12,7 +12,7 @@ class Photo extends Media
     protected $fileExtension = "jpeg";
     
     const ALLOWED_SIDE_MULTIPLIER = 7;
-    
+
     protected function saveFile(string $filename, string $hash): bool
     {
         $image = Image::fromFile($filename);
@@ -24,7 +24,7 @@ class Photo extends Media
         return true;
     }
     
-    function crop(real $left, real $top, real $width, real $height): bool
+    function crop(real $left, real $top, real $width, real $height): void
     {
         if(isset($this->changes["hash"]))
             $hash = $this->changes["hash"];
@@ -35,7 +35,7 @@ class Photo extends Media
         
         $image = Image::fromFile($this->pathFromHash($hash));
         $image->crop($left, $top, $width, $height);
-        return $image->save($this->pathFromHash($hash));
+        $image->save($this->pathFromHash($hash));
     }
     
     function isolate(): void
@@ -45,8 +45,46 @@ class Photo extends Media
         
         DB::i()->getContext()->table("album_relations")->where("media", $this->getRecord()->id)->delete();
     }
-    
-    static function fastMake(int $owner, string $description = "", array $file, ?Album $album = NULL, bool $anon = false): Photo
+
+	function getDimensions(): array
+	{
+		$hash = $this->getRecord()->hash;
+
+		return array_slice(getimagesize($this->pathFromHash($hash)), 0, 2);
+	}
+
+    function getDimentions(): array
+    {
+        trigger_error("getDimentions is deprecated, use Photo::getDimensions instead.");
+
+        return $this->getDimensions();
+    }
+
+    function getAlbum(): ?Album
+    {
+        return (new Albums)->getAlbumByPhotoId($this);
+    }
+
+    function toVkApiStruct(): object
+    {
+        $res = (object) [];
+
+        $res->id       = $res->pid = $this->getId();
+        $res->owner_id = $res->user_id = $this->getOwner()->getId()->getId();
+        $res->aid      = $res->album_id = NULL;
+        $res->width    = $this->getDimensions()[0];
+        $res->height   = $this->getDimensions()[1];
+        $res->date     = $res->created = $this->getPublicationTime()->timestamp();
+
+        $res->src =
+            $res->src_small = $res->src_big = $res->src_xbig = $res->src_xxbig =
+            $res->src_xxxbig = $res->photo_75 = $res->photo_130 = $res->photo_604 =
+            $res->photo_807 = $res->photo_1280 = $res->photo_2560 = $this->getURL();
+
+        return $res;
+    }
+
+    static function fastMake(int $owner, array $file, string $description = "", ?Album $album = NULL, bool $anon = false): Photo
     {
         $photo = new static;
         $photo->setOwner($owner);
@@ -55,22 +93,10 @@ class Photo extends Media
         $photo->setCreated(time());
         $photo->setFile($file);
         $photo->save();
-        
+
         if(!is_null($album))
             $album->addPhoto($photo);
-        
+
         return $photo;
-    }
-
-	function getDimentions()
-	{
-		$hash = $this->getRecord()->hash;
-
-		return getimagesize($this->pathFromHash($hash));
-	}
-
-    function getAlbum(): ?Album
-    {
-        return (new Albums)->getAlbumByPhotoId($this);
     }
 }
