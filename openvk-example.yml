@@ -71,6 +71,10 @@ openvk:
             container: ""
             site: ""
             layer: "dataLayer"
+        matomo:
+            enable: false
+            container: ""
+            site: ""
     
     credentials:
         smsc:
