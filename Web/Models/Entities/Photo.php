@@ -84,7 +84,7 @@ class Photo extends Media
         return $res;
     }
 
-    static function fastMake(int $owner, array $file, string $description = "", ?Album $album = NULL, bool $anon = false): Photo
+    static function fastMake(int $owner, string $description = "", array $file, ?Album $album = NULL, bool $anon = false): Photo
     {
         $photo = new static;
         $photo->setOwner($owner);
