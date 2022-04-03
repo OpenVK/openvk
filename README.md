@@ -73,7 +73,6 @@ It depends. You can keep the sources to yourself if you do not plan to distribut
 You may reach out to us via:
 
 * [Bug-tracker](https://github.com/openvk/openvk/projects/1)
-* [Bulletin Board](https://forums.openvk.su/forum.php) (🇷🇺 language, but you can use DeepL/Google Trans)
 * [Ticketing system](https://openvk.su/support?act=new)
 * Telegram chat: Go to [our channel](https://t.me/openvkenglish) and open discussion in our channel menu.
 * [Reddit](https://www.reddit.com/r/openvk/)

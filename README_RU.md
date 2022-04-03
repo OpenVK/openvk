@@ -73,7 +73,6 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 Вы можете связаться с нами через:
 
 * [Баг-трекер](https://github.com/openvk/openvk/projects/1)
-* [Форум](https://forums.openvk.su/forum.php)
 * [Помощь в OVK](https://openvk.su/support?act=new)
 * Telegram-чат: Перейдите на [наш канал](https://t.me/openvkch) и откройте обсуждение в меню нашего канала.
 * [Reddit](https://www.reddit.com/r/openvk/)
