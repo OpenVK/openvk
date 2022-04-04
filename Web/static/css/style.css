@@ -1912,6 +1912,7 @@ table td[width="120"] {
     width: 50px;
     display: inline-block;
     vertical-align: top;
+    box-sizing: border-box;
 }
 
 .mb_tabs {
