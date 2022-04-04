@@ -6,6 +6,7 @@ openvk:
     
     preferences:
         femaleGenderPriority: true
+        nginxCacheTime: null
         uploads:
             disableLargeUploads: false
             mode: "basic"
