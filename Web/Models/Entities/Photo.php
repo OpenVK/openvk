@@ -48,17 +48,21 @@ class Photo extends Media
 
 	function getDimensions(): array
 	{
-		$hash = $this->getRecord()->hash;
+        $x = $this->getRecord()->width;
+        $y = $this->getRecord()->height;
+        if(!$x) { # no sizes in database
+            $hash  = $this->getRecord()->hash;
+            $image = new \Imagick($this->pathFromHash($hash));
 
-		return array_slice(getimagesize($this->pathFromHash($hash)), 0, 2);
+            $x = $image->getImageWidth();
+            $y = $image->getImageHeight();
+            $this->stateChanges("width", $x);
+            $this->stateChanges("height", $y);
+            $this->save();
+        }
+
+        return [$x, $y];
 	}
-
-    function getDimentions(): array
-    {
-        trigger_error("getDimentions is deprecated, use Photo::getDimensions instead.");
-
-        return $this->getDimensions();
-    }
 
     function getAlbum(): ?Album
     {
