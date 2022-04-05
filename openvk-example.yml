@@ -17,6 +17,8 @@ openvk:
             minLength: 3 # won't affect existing short urls or the ones set via admin panel
             forbiddenNames:
                 - "index.php"
+        photos:
+            upgradeStructure: true
         security:
             requireEmail: false
             requirePhone: false

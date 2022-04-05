@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PhotoSizes name="standard">
+    <Size id="miniscule" vkId="s" maxSize="75" requireProp="none" />
+    <Size id="tiny" vkId="m" maxSize="130" requireProp="none" />
+    <Size id="tinier" vkId="o" maxSize="130" requireProp="3:2" />
+    <Size id="xsmall" vkId="p" maxSize="200" requireProp="3:2" />
+    <Size id="small" vkId="q" maxSize="320" requireProp="3:2" />
+    <Size id="medium" vkId="r" maxSize="510" requireProp="3:2" />
+    <Size id="normal" vkId="x" maxSize="604" requireProp="none" />
+    <Size id="large" vkId="y" maxSize="807" requireProp="none" />
+    <Size id="larger" vkId="z" maxResolution="1080x1024" requireProp="none" />
+    <Size id="original" vkId="w" maxResolution="2560x2048" requireProp="none" />
+</PhotoSizes>
