@@ -15,7 +15,8 @@
         "vearutop/php-obscene-censor-rus": "dev-master",
         "erusev/parsedown": "dev-master",
         "bhaktaraz/php-rss-generator": "dev-master",
-        "ext-simplexml": "*"
+        "ext-simplexml": "*",
+        "symfony/console": "5.4.x-dev"
     },
     "minimum-stability": "dev"
 }

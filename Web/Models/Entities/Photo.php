@@ -108,11 +108,11 @@ class Photo extends Media
         DB::i()->getContext()->table("album_relations")->where("media", $this->getRecord()->id)->delete();
     }
 
-    function getSizes(): ?array
+    function getSizes(bool $upgrade = false, bool $forceUpdate = false): ?array
     {
         $sizes = $this->getRecord()->sizes;
-        if(!$sizes) {
-            if(OPENVK_ROOT_CONF["openvk"]["preferences"]["photos"]["upgradeStructure"]) {
+        if(!$sizes || $forceUpdate) {
+            if($forceUpdate || $upgrade || OPENVK_ROOT_CONF["openvk"]["preferences"]["photos"]["upgradeStructure"]) {
                 $hash  = $this->getRecord()->hash;
                 $this->saveImageResizedCopies($this->pathFromHash($hash), $hash);
                 $this->save();
