@@ -81,7 +81,6 @@ class Photo extends Media
         $image->resize(8192, 4320, Image::SHRINK_ONLY | Image::FIT);
         $image->save($this->pathFromHash($hash), 92, Image::JPEG);
         $this->saveImageResizedCopies($filename, $hash);
-        $this->getDimensions(); # propagate dimensions info in DB
         
         return true;
     }
