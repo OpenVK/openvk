@@ -9,7 +9,7 @@
         <tr>
             <td width="54" valign="top">
                 <a href="{$author->getURL()}">
-                    <img src="{$author->getAvatarURL()}" width="{ifset $compact}25{else}50{/ifset}" {ifset $compact}class="cCompactAvatars"{/ifset} />
+                    <img src="{$author->getAvatarURL('miniscule')}" width="{ifset $compact}25{else}50{/ifset}" {ifset $compact}class="cCompactAvatars"{/ifset} />
                     <span n:if="!$post->isPostedOnBehalfOfGroup() && !$compact && $author->isOnline()" class="post-online">{_online}</span>
                 </a>
             </td>

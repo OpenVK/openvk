@@ -102,7 +102,7 @@ class User extends RowModel
             return "/id" . $this->getId();
     }
     
-    function getAvatarUrl(): string
+    function getAvatarUrl(string $size = "miniscule"): string
     {
         $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
         
@@ -115,7 +115,7 @@ class User extends RowModel
         if(is_null($avPhoto))
             return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
         else
-            return $avPhoto->getURL();
+            return $avPhoto->getURLBySizeId($size);
     }
     
     function getAvatarLink(): string

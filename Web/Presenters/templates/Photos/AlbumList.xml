@@ -43,7 +43,7 @@
 
 {block preview}
     {var cover   = $x->getCoverPhoto()}
-    {var preview = is_null($cover) ? "/assets/packages/static/openvk/img/camera_200.png" : $cover->getURL()}
+    {var preview = is_null($cover) ? "/assets/packages/static/openvk/img/camera_200.png" : $cover->getURLBySizeId("normal")}
     
     <a href="/album{$x->getPrettyId()}">
         <img src="{$preview}" alt="{$x->getName()}" style="height: 130px; width: 170px; object-fit: cover" />

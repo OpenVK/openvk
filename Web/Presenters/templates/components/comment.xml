@@ -8,7 +8,7 @@
         <tr>
             <td width="30" valign="top">
                 <a href="{$author->getURL()}">
-                    <img src="{$author->getAvatarURL()}" width="30" class="cCompactAvatars" />
+                    <img src="{$author->getAvatarURL('miniscule')}" width="30" class="cCompactAvatars" />
                 </a>
             </td>
             <td width="100%" valign="top">

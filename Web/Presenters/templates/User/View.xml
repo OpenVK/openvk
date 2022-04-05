@@ -7,7 +7,7 @@
     <!-- openGraph -->
     <meta property="og:title" content="{$user->getCanonicalName()}" />
     <meta property="og:url" content="http://{$_SERVER['HTTP_HOST']}{$user->getURL()}" />
-    <meta property="og:image" content="{$user->getAvatarUrl()}" />
+    <meta property="og:image" content="{$user->getAvatarUrl('normal')}" />
     <meta property="og:type" content="profile" />
     <meta property="og:first_name" content="{$user->getFirstName()}" />
     <meta property="og:last_name" content="{$user->getLastName()}" />
@@ -62,7 +62,7 @@
     <div class="left_small_block">
         <div>
             <a href="{$user->getAvatarLink()|nocheck}">
-                <img src="{$user->getAvatarUrl()}"
+                <img src="{$user->getAvatarUrl('normal')}"
                      alt="{$user->getCanonicalName()}"
                      style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
             </a>
@@ -190,7 +190,7 @@
                     <div class="cl_element" n:foreach="$user->getFriends(1) as $friend">
                         <div class="cl_avatar">
                             <a href="{$friend->getURL()}">
-                                <img class="ava" src="{$friend->getAvatarUrl()}" />
+                                <img class="ava" src="{$friend->getAvatarUrl('miniscule')}" />
                             </a>
                         </div>
                         <a href="{$friend->getURL()}" class="cl_name">
@@ -218,7 +218,7 @@
                             {var cover = $album->getCoverPhoto()}
                             
                             <img
-                                src="{is_null($cover)?'/assets/packages/static/openvk/img/camera_200.png':$cover->getURL()}"
+                                src="{is_null($cover)?'/assets/packages/static/openvk/img/camera_200.png':$cover->getURLBySizeId('small')}"
                                 style="max-width: 80px; max-height: 54pt;" />
                         </div>
                         <div style="overflow: hidden; overflow-wrap: break-word;">

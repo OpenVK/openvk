@@ -26,6 +26,7 @@ class Photo extends Media
             if(($image->getWidth() / $image->getHeight()) > ($px / $py)) {
                 # For some weird reason using resize with EXACT flag causes system to consume an unholy amount of RAM
                 $image->crop(0, 0, "100%", (int) ceil(($px * $image->getWidth()) / $py));
+                $res[0] = true;
             }
         }
 

@@ -26,7 +26,7 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getModel(1)->getAvatarUrl()}" width=64 />
+    <img src="{$x->getModel(1)->getAvatarUrl('miniscule')}" width=64 />
 {/block}
 
 {block name}
