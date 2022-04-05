@@ -57,8 +57,10 @@ class Photo extends Media
     {
         $dir = dirname($this->pathFromHash($hash));
         $dir = "$dir/$hash" . "_cropped";
-        if(!is_dir($dir))
+        if(!is_dir($dir)) {
+            @unlink($dir); # Added to transparently bypass issues with dead pesudofolders summoned by buggy SWIFT impls (selectel)
             mkdir($dir);
+        }
 
         $sizes = simplexml_load_file(OPENVK_ROOT . "/data/photosizes.xml");
         if(!$sizes)
