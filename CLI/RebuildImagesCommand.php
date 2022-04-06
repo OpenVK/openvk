@@ -6,6 +6,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Nette\Utils\ImageException;
 
 class RebuildImagesCommand extends Command
 {
@@ -49,14 +50,20 @@ class RebuildImagesCommand extends Command
             "",
         ]);
 
+        $errors  = 0;
         $count   = 0;
         $avgTime = NULL;
         $begin   = new \DateTimeImmutable("now");
         foreach($selection as $idHolder) {
             $start = microtime(true);
-            $photo = (new Photos)->get($idHolder->id);
-            $photo->getSizes(true, true);
-            $photo->getDimensions();
+
+            try {
+                $photo = (new Photos)->get($idHolder->id);
+                $photo->getSizes(true, true);
+                $photo->getDimensions();
+            } catch(ImageException $ex) {
+                $errors++;
+            }
 
             $timeConsumed = microtime(true) - $start;
             if(!$avgTime)
@@ -69,7 +76,7 @@ class RebuildImagesCommand extends Command
             $int = $int->d . "d" . $int->h . "h" . $int->i . "m" . $int->s . "s";
             $pct = floor(100 * ($count / $totalPics));
 
-            $counter->overwrite("Processed " . ++$count . " images... ($pct% $int left)");
+            $counter->overwrite("Processed " . ++$count . " images... ($pct% $int left $errors/$count fail)");
         }
 
         $counter->overwrite("Processing finished :3");
