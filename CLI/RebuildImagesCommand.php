@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\CLI;
 use Chandler\Database\DatabaseConnection;
-use openvk\Web\Models\Entities\Photo;
+use openvk\Web\Models\Repositories\Photos;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -42,19 +42,34 @@ class RebuildImagesCommand extends Command
         if($input->getOption("upgrade-only"))
             $filter["sizes"] = NULL;
 
-        $selection = $this->images->where($filter);
+        $selection = $this->images->select("id")->where($filter);
+        $totalPics = $selection->count();
         $header->writeln([
-            "Total of " . $selection->count() . " images found.",
+            "Total of $totalPics images found.",
             "",
         ]);
 
-        $i = 0;
-        foreach($selection as $img) {
-            $photo = new Photo($img);
+        $count   = 0;
+        $avgTime = NULL;
+        $begin   = new \DateTimeImmutable("now");
+        foreach($selection as $idHolder) {
+            $start = microtime(true);
+            $photo = (new Photos)->get($idHolder->id);
             $photo->getSizes(true, true);
             $photo->getDimensions();
 
-            $counter->overwrite("Processed " . ++$i . " images...");
+            $timeConsumed = microtime(true) - $start;
+            if(!$avgTime)
+                $avgTime = $timeConsumed;
+            else
+                $avgTime = ($avgTime + $timeConsumed) / 2;
+
+            $eta = $begin->getTimestamp() + ceil($totalPics * $avgTime);
+            $int = (new \DateTimeImmutable("now"))->diff(new \DateTimeImmutable("@$eta"));
+            $int = $int->d . "d" . $int->h . "h" . $int->i . "m" . $int->s . "s";
+            $pct = floor(100 * ($count / $totalPics));
+
+            $counter->overwrite("Processed " . ++$count . " images... ($pct% $int left)");
         }
 
         $counter->overwrite("Processing finished :3");
