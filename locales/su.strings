@@ -255,6 +255,7 @@
 "hidden_yes" = "Скрыт: Да";
 "hidden_no" = "Скрыт: Нет";
 "group_allow_post_for_everyone" = "Разрешить публиковать записи всем";
+group_hide_from_global_feed" = "Не отображать записи в публичной доске";
 "statistics" = "Статистика";
 "group_administrators_list" = "Список админов";
 "group_display_only_creator" = "Отображать только создателя группы";
@@ -430,7 +431,7 @@
 "ui_settings_rating_hide" = "Скрывать";
 
 "additional_links" = "Дополнительные ссылки";
-
+"ad_poster" = "Рекламный плакат";
 /* Two-factor authentication */
 
 "two_factor_authentication" = "Двухфакторная аутентификация";
@@ -608,6 +609,21 @@
 "users_gifts" = "Подарки";
 
 /* Support */
+
+"increase_rating" = "Увеличить рейтинг";
+"increase_rating_button" = "Увеличить";
+"to_whom" = "Кому";
+"increase_by" = "Увеличить на";
+"price" = "Ценник";
+
+"you_have_unused_votes" = "У Вас $1 неиспользованных рубля на кошельке.";
+"apply_voucher" = "Применить купон";
+
+"failed_to_increase_rating" = "Не удалось увеличить рейтинг";
+"rating_increase_successful" = "Вы успешно увеличили рейтинг <b><a href=\"$1\">$2</a></b> на <b>$3%</b>.";
+"negative_rating_value" = "Орган не может украсть баллы рейтинга у другого гражданина, так не положено.";
+
+"increased_your_rating_by" = "увеличил ваш рейтинг на";
 
 "support_opened" = "Открытые";
 "support_answered" = "С ответом";
@@ -795,6 +811,36 @@
 /* About */
 
 "about_openvk" = "Об органе OpenVK";
+"footer_about_instance" = "о стране";
+"about_this_instance" = "Об этой стране";
+"rules" = "Правила";
+"most_popular_groups" = "Самые популярные клубы";
+"on_this_instance_are" = "На этой стране";
+
+"about_users_one" = "<b>1</b> гражданин";
+"about_users_few" = "<b>$1</b> гражданина";
+"about_users_many" = "<b>$1</b> гражданинов";
+"about_users_other" = "<b>$1</b> гражданинов";
+
+"about_online_users_one" = "<b>1</b> пользователь в сети";
+"about_online_users_few" = "<b>$1</b> пользователя в сети";
+"about_online_users_many" = "<b>$1</b> гражданинов в сети";
+"about_online_users_other" = "<b>$1</b> гражданинов в сети";
+
+"about_active_users_one" = "<b>1</b> активный пользователь";
+"about_active_users_few" = "<b>$1</b> активных пользователя";
+"about_active_users_many" = "<b>$1</b> активных гражданинов";
+"about_active_users_other" = "<b>$1</b> активных гражданинов";
+
+"about_groups_one" = "<b>1</b> клуб";
+"about_groups_few" = "<b>$1</b> клубы";
+"about_groups_many" = "<b>$1</b> клубов";
+"about_groups_other" = "<b>$1</b> клубов";
+
+"about_wall_posts_one" = "<b>1</b> заметка на досках";
+"about_wall_posts_few" = "<b>$1</b> заметки на досках";
+"about_wall_posts_many" = "<b>$1</b> заметки на досках";
+"about_wall_posts_other" = "<b>$1</b> заметки на досках";
 
 /* Dialogs */
 
@@ -810,5 +856,20 @@
 "question_confirm" = "Товарищ, будьте внимательны с выбором. Вы согласны с вашим выбором? Отменить не представляется возможным.";
 
 /* User alerts */
+"apply_style_for_this_device" = "Применить стиль только для этой ЭВМ";
 
 "user_alert_scam" = "Органу управления было дозволено, что данный гражданин обманывает товарищей на денежные средства. Будьте осторожны при разговоре с ним.";
+
+
+"ec_header" = "Подтверждение регистрации прописки";
+"ec_title" = "Спасибо!";
+"ec_1" = "<b>$1</b>, на ваш почтовый ящик должно придти письмо с подтверждением регистрации.";
+"ec_2" = "Если по каким-то причинам вам не пришло письмо, то проверьте мусорный бак. Если письма не окажется и там, то вы можете переотправить письмо.";
+"ec_resend" = "Переотправить письмо";
+
+"email_sent" = "Письмо было успешно отправлено.";
+"email_sent_desc" = "Если ваш почтовый ящик существует, вы получите письмо.";
+"email_error" = "Непредвиденная ошибка при отправке письма.";
+"email_rate_limit_error" = "Нельзя делать это так часто, извините.";
+
+"email_verify_success" = "Ваша регистрация была подтверждена. Приятного времяпрепровождения!";
