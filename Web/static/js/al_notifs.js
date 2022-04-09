@@ -1,4 +1,4 @@
-createjs.Sound.registerSound("/assets/packages/static/openvk/audio/Bruh.mp3", "notification");
+createjs.Sound.registerSound("/assets/packages/static/openvk/audio/notify.mp3", "notification");
 
 function __actualPlayNotifSound() {
     createjs.Sound.play("notification");
