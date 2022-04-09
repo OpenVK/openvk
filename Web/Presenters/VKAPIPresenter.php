@@ -77,6 +77,92 @@ final class VKAPIPresenter extends OpenVKPresenter
             exit; # Terminate request processing as this is definitely a CORS preflight request.
         }
     }
+
+    function renderPhotoUpload(string $signature): void
+    {
+        $secret = CHANDLER_ROOT_CONF["security"]["secret"];
+        $computedSignature = hash_hmac("sha3-224", $_SERVER["QUERY_STRING"], $secret);
+        if(!(strlen($signature) == 56 && sodium_memcmp($signature, $computedSignature) == 0)) {
+            header("HTTP/1.1 422 Unprocessable Entity");
+            exit("Try harder <3");
+        }
+
+        $data = unpack("vDOMAIN/Z10FIELD/vMF/vMP/PTIME/PUSER/PGROUP", base64_decode($_SERVER["QUERY_STRING"]));
+        if((time() - $data["TIME"]) > 600) {
+            header("HTTP/1.1 422 Unprocessable Entity");
+            exit("Expired");
+        }
+
+        $folder   = __DIR__ . "../../tmp/api-storage/photos";
+        $maxSize  = OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["api"]["maxFileSize"];
+        $maxFiles = OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["api"]["maxFilesPerDomain"];
+        $usrFiles = sizeof(glob("$folder/$data[USER]_*.oct"));
+        if($usrFiles >= $maxFiles) {
+            header("HTTP/1.1 507 Insufficient Storage");
+            exit("There are $maxFiles pending already. Please save them before uploading more :3");
+        }
+
+        # Not multifile
+        if($data["MF"] === 0) {
+            $file = $_FILES[$data["FIELD"]];
+            if(!$file) {
+                header("HTTP/1.0 400");
+                exit("No file");
+            } else if($file["error"] != UPLOAD_ERR_OK) {
+                header("HTTP/1.0 500");
+                exit("File could not be consumed");
+            } else if($file["size"] > $maxSize) {
+                header("HTTP/1.0 507 Insufficient Storage");
+                exit("File is too big");
+            }
+
+            move_uploaded_file($file["tmp_name"], "$folder/$data[USER]_" . ($usrFiles + 1) . ".oct");
+            header("HTTP/1.0 202 Accepted");
+
+            $photo = $data["USER"] . "|" . ($usrFiles + 1) . "|" . $data["GROUP"];
+            exit(json_encode([
+                "server" => "ephemeral",
+                "photo"  => $photo,
+                "hash"   => hash_hmac("sha3-224", $photo, $secret),
+            ]));
+        }
+
+        $files = [];
+        for($i = 1; $i <= 5; $i++) {
+            $file = $_FILES[$data["FIELD"] . $i] ?? NULL;
+            if (!$file || $file["error"] != UPLOAD_ERR_OK || $file["size"] > $maxSize) {
+                continue;
+            } else if((sizeof($files) + $usrFiles) > $maxFiles) {
+                # Clear uploaded files since they can't be saved anyway
+                foreach($files as $f)
+                    unlink($f);
+
+                header("HTTP/1.1 507 Insufficient Storage");
+                exit("There are $maxFiles pending already. Please save them before uploading more :3");
+            }
+
+            $files[++$usrFiles] = move_uploaded_file($file["tmp_name"], "$folder/$data[USER]_$usrFiles.oct");
+        }
+
+        if(sizeof($files) === 0) {
+            header("HTTP/1.0 400");
+            exit("No file");
+        }
+
+        $filesManifest = [];
+        foreach($files as $id => $file)
+            $filesManifest[] = ["keyholder" => $data["USER"], "resource" => $id, "club" => $data["GROUP"]];
+
+        $filesManifest = json_encode($filesManifest);
+        $manifestHash  = hash_hmac("sha3-224", $filesManifest, $secret);
+        header("HTTP/1.0 202 Accepted");
+        exit(json_encode([
+            "server"      => "ephemeral",
+            "photos_list" => $filesManifest,
+            "album_id"    => "undefined",
+            "hash"        => $manifestHash,
+        ]));
+    }
     
     function renderRoute(string $object, string $method): void
     {

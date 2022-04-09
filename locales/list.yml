@@ -79,3 +79,8 @@ list:
     name: "Udmurtskiy"
     native_name: "Удмуртский"
     author: "mohooks"
+  - code: "id"
+    flag: "id"
+    name: "Indonesian"
+    native_name: "Bahasa Indonesia"
+    author: "loliconazter"

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE latte PUBLIC "-//LATTE//Latte plugin configuration XML V0.0.1//EN" "Latte.dtd">
+<latte version="1" vendor="nette/forms">
+    <tags>
+        <tag name="form" type="PAIR" multiLine="true">
+            <arguments>
+                <argument name="name" types="PHP_IDENTIFIER,VARIABLE,PHP_EXPRESSION" validType="string" required="true" />
+            </arguments>
+        </tag>
+        <tag name="formContainer" type="PAIR" multiLine="true">
+            <arguments>
+                <argument name="name" types="PHP_IDENTIFIER,VARIABLE,PHP_EXPRESSION" validType="string" required="true" />
+            </arguments>
+        </tag>
+        <tag name="formPrint" type="UNPAIRED">
+            <arguments>
+                <argument name="name" types="PHP_IDENTIFIER,VARIABLE,PHP_EXPRESSION" validType="string" required="true" />
+            </arguments>
+        </tag>
+        <tag name="input" type="UNPAIRED">
+            <arguments>
+                <argument name="name" types="PHP_IDENTIFIER,VARIABLE,CONTROL,PHP_EXPRESSION" validType="string" required="true" />
+            </arguments>
+        </tag>
+        <tag name="inputError" type="UNPAIRED">
+            <arguments>
+                <argument name="name" types="PHP_IDENTIFIER,VARIABLE,CONTROL,PHP_EXPRESSION" validType="string" required="true" />
+            </arguments>
+        </tag>
+        <tag name="label" type="AUTO_EMPTY">
+            <arguments>
+                <argument name="name" types="PHP_IDENTIFIER,VARIABLE,CONTROL,PHP_EXPRESSION" validType="string" required="true" />
+            </arguments>
+        </tag>
+        <tag name="name" type="ATTR_ONLY">
+            <arguments>
+                <argument name="name" types="PHP_IDENTIFIER,VARIABLE,CONTROL,PHP_EXPRESSION" validType="string" required="true" />
+            </arguments>
+        </tag>
+    </tags>
+</latte>

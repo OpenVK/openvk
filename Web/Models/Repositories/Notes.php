@@ -29,7 +29,7 @@ class Notes
     function getUserNotes(User $user, int $page = 1, ?int $perPage = NULL): \Traversable
     {
         $perPage = $perPage ?? OPENVK_DEFAULT_PER_PAGE;
-        foreach($this->notes->where("owner", $user->getId())->where("deleted", 0)->page($page, $perPage) as $album)
+        foreach($this->notes->where("owner", $user->getId())->where("deleted", 0)->order("created DESC")->page($page, $perPage) as $album)
             yield new Note($album);
     }
 

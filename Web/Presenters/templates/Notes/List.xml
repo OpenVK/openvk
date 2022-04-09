@@ -54,6 +54,10 @@
         #userContent cite::before {
             content: "— ";
         }
+
+        #userContent .underline {
+            text-decoration: underline;
+        }
     </style>
 
     <div class="container_gray" style="background: white; border-top: none;">
@@ -64,7 +68,7 @@
         <div n:foreach="$data as $dat">
             <div class="profile_thumb">
                 <a href="{$owner->getURL()}">
-                <img src="{$owner->getAvatarUrl()}" style="width: 50px;">
+                <img src="{$owner->getAvatarUrl('miniscule')}" style="width: 50px;">
                 </a>
             </div>
             <article class="note_body" id="userContent" style="width: 540px; display: inline-block; margin-bottom: 35px;">
