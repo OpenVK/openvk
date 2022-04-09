@@ -34,27 +34,33 @@ If you want, you can add your instance to the list above so that people can regi
 
 * PHP 8 has **not** yet been tested, so you should not expect it to work. (edit: it does not work).
 
-2. Install [commitcaptcha](https://github.com/openvk/commitcaptcha) and OpenVK as Chandler extensions like this:
+2. Install MySQL-compatible database.
+
+* We recommend using Percona Server, but any MySQL-compatible server should work
+* Server should be compatible with at least MySQL 5.6, MySQL 8.0+ recommended.
+* Support for MySQL 4.1+ is WIP, replace `utf8mb4` and `utf8mb4_unicode_520_ci` with `utf8` and `utf8_unicode_ci` in SQLs.
+
+3. Install [commitcaptcha](https://github.com/openvk/commitcaptcha) and OpenVK as Chandler extensions like this:
 
 ```bash
 git clone https://github.com/openvk/openvk /path/to/chandler/extensions/available/openvk
 git clone https://github.com/openvk/commitcaptcha /path/to/chandler/extensions/available/commitcaptcha
 ```
 
-3. And enable them:
+4. And enable them:
 
 ```bash
 ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/extensions/enabled/
 ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
 ```
 
-4. Import `install/init-static-db.sql` to the **same database** you installed Chandler to and import all sqls from `install/sqls` to the **same database**
-5. Import `install/init-event-db.sql` to a **separate database** (Yandex.Clickhouse can also be used, higly recommended)
-6. Copy `openvk-example.yml` to `openvk.yml` and change options to your liking
-7. Run `composer install` in OpenVK directory
-8. Run `composer install` in commitcaptcha directory
-9. Move to `Web/static/js` and execute `yarn install`
-10. Set `openvk` as your root app in `chandler.yml`
+5. Import `install/init-static-db.sql` to the **same database** you installed Chandler to and import all sqls from `install/sqls` to the **same database**
+6. Import `install/init-event-db.sql` to a **separate database** (Yandex.Clickhouse can also be used, higly recommended)
+7. Copy `openvk-example.yml` to `openvk.yml` and change options to your liking
+8. Run `composer install` in OpenVK directory
+9. Run `composer install` in commitcaptcha directory
+10. Move to `Web/static/js` and execute `yarn install`
+11. Set `openvk` as your root app in `chandler.yml`
 
 Once you are done, you can login as a system administrator on the network itself (no registration required):
 
