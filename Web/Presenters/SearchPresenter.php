@@ -25,6 +25,10 @@ final class SearchPresenter extends OpenVKPresenter
         $type  = $this->queryParam("type") ?? "users";
         $page  = (int) ($this->queryParam("p") ?? 1);
         
+        $this->willExecuteWriteAction();
+        if($query != "")
+            $this->assertUserLoggedIn();
+        
         // https://youtu.be/pSAWM5YuXx8
         
         $repos = [ "groups" => "clubs", "users" => "users" ];

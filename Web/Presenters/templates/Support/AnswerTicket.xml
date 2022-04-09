@@ -47,7 +47,7 @@
             <tr>
                 {if $comment->getUType() === 0}
                     <td width="54" valign="top">
-                        <img src="{$comment->getUser()->getAvatarUrl()}" width="50" />
+                        <img src="{$comment->getUser()->getAvatarUrl('miniscule')}" width="50" />
                     </td>
                 {else}
                     <td width="54" valign="top">

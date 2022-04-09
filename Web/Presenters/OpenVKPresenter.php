@@ -204,6 +204,8 @@ abstract class OpenVKPresenter extends SimplePresenter
         $this->template->isXmas = intval(date('d')) >= 1 && date('m') == 12 || intval(date('d')) <= 15 && date('m') == 1 ? true : false;
         $this->template->isTimezoned = Session::i()->get("_timezoneOffset");
         
+        $userValidated = 0;
+        $cacheTime     = OPENVK_ROOT_CONF["openvk"]["preferences"]["nginxCacheTime"] ?? 0;
         if(!is_null($user)) {
             $this->user = (object) [];
             $this->user->raw             = $user;
@@ -261,6 +263,8 @@ abstract class OpenVKPresenter extends SimplePresenter
                 exit;
             }
             
+            $userValidated = 1;
+            $cacheTime     = 0; # Force no cache
             if ($this->user->identity->onlineStatus() == 0) {
                 $this->user->identity->setOnline(time());
                 $this->user->identity->save();
@@ -271,6 +275,8 @@ abstract class OpenVKPresenter extends SimplePresenter
                 $this->template->helpdeskTicketNotAnsweredCount = (new Tickets)->getTicketCount(0);
         }
         
+        header("X-OpenVK-User-Validated: $userValidated");
+        header("X-Accel-Expires: $cacheTime");
         setlocale(LC_TIME, ...(explode(";", tr("__locale"))));
         
         parent::onStartup();

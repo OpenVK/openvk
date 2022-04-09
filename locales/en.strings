@@ -688,6 +688,9 @@
 "ticket_changed" = "Ticket changed";
 "ticket_changed_comment" = "The changes will take effect in a few seconds.";
 
+"banned_in_support_1" = "Sorry, <b>$1</b>, but now you can't create tickets.";
+"banned_in_support_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to take away this opportunity from you forever.";
+
 /* Invite */
 
 "invite" = "Invite";
@@ -831,7 +834,10 @@
 "manage_user_action" = "Manage user";
 "manage_group_action" = "Manage group";
 "ban_user_action" = "Ban user";
+"unban_user_action" = "Unban user";
 "warn_user_action" = "Warn user";
+"ban_in_support_user_action" = "Ban in support";
+"unban_in_support_user_action" = "Unban in support";
 
 /* Paginator (deprecated) */
 

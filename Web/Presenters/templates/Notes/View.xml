@@ -33,6 +33,10 @@
         #userContent cite::before {
             content: "— ";
         }
+
+        #userContent .underline {
+            text-decoration: underline;
+        }
     </style>
 
     <article id="userContent" style="margin: 10px 10px 0;">

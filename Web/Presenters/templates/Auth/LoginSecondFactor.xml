@@ -18,7 +18,7 @@
                         <span>{_code}: </span>
                     </td>
                     <td>
-                        <input type="text" name="code" required />
+                        <input type="text" name="code" autocomplete="off" required />
                     </td>
                 </tr>
                 <tr>

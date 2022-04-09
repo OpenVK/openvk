@@ -25,7 +25,7 @@
                 {var lastMsg   = $coresp->getPreviewMessage()}
                 
                 <div class="crp-entry--image">
-                    <img src="{$recipient->getAvatarURL()}"
+                    <img src="{$recipient->getAvatarURL('miniscule')}"
                     alt="Фотография пользователя" />
                 </div>
                 <div class="crp-entry--info">
@@ -36,7 +36,7 @@
                     {var _author = $lastMsg->getSender()}
                     
                     <div class="crp-entry--message---av" n:if="$_author->getId() === $thisUser->getId()">
-                        <img src="{$_author->getAvatarURL()}"
+                        <img src="{$_author->getAvatarURL('miniscule')}"
                         alt="Фотография пользователя" />
                     </div>
                     <div class="crp-entry--message---text">

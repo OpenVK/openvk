@@ -38,7 +38,7 @@
             </label>
             <span id="avatar" class="aui-avatar aui-avatar-project aui-avatar-xlarge">
                 <span class="aui-avatar-inner">
-                    <img src="{$club->getAvatarUrl()}" style="object-fit: cover;"></img>
+                    <img src="{$club->getAvatarUrl('tiny')}" style="object-fit: cover;"></img>
                 </span>
             </span>
         </div>
@@ -155,7 +155,7 @@
                 <td>
                     <span class="aui-avatar aui-avatar-xsmall">
                         <span class="aui-avatar-inner">
-                            <img src="{$follower->getAvatarUrl()}" alt="{$follower->getCanonicalName()}" role="presentation" />
+                            <img src="{$follower->getAvatarUrl('miniscule')}" alt="{$follower->getCanonicalName()}" role="presentation" />
                         </span>
                     </span>
                     

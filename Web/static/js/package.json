@@ -16,6 +16,7 @@
     "react-dom-factories": "^1.0.2",
     "requirejs": "^2.3.6",
     "soundjs": "^1.0.1",
+    "textfit": "^2.4.0",
     "umbrellajs": "^3.1.0"
   }
 }

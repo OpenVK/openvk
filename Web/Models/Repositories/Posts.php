@@ -94,7 +94,6 @@ class Posts
     {
         $post = $this->posts->where(['wall' => $wall, 'virtual_id' => $post])->fetch();
         if(!is_null($post))
-        
             return new Post($post);
         else
             return null;
