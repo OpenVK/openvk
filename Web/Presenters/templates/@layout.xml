@@ -103,7 +103,7 @@
                 <div n:if="isset($thisUser) ? (!$thisUser->isBanned() XOR !$thisUser->isActivated()) : true" class="header_navigation">
                     {ifset $thisUser}
                         <div class="link">
-                            <a href="/">{_header_home}</a>
+                            <a href="/" title="[Alt+Shift+,]" accesskey=",">{_header_home}</a>
                         </div>
                         <div class="link">
                             <a href="/search?type=groups">{_header_groups}</a>
@@ -122,7 +122,7 @@
                         </div>
                         <div class="link">
                             <form action="/search" method="get">
-                                <input type="search" name="query" placeholder="{_header_search}" style="height: 20px;background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; background-color: #fff; padding-left: 18px;width: 120px;" />
+                                <input type="search" name="query" placeholder="{_header_search}" style="height: 20px;background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; background-color: #fff; padding-left: 18px;width: 120px;" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
                             </form>
                         </div>
                     {else}
@@ -144,7 +144,7 @@
                     {ifset $thisUser}
                         {if !$thisUser->isBanned() XOR !$thisUser->isActivated()}
                             <a href="/edit" class="link edit-button">{_edit_button}</a>
-                            <a href="{$thisUser->getURL()}" class="link">{_my_page}</a>
+                            <a href="{$thisUser->getURL()}" class="link" title="{_my_page} [Alt+Shift+.]" accesskey=".">{_my_page}</a>
                             <a href="/friends{$thisUser->getId()}" class="link">{_my_friends}
                                 <object type="internal/link" n:if="$thisUser->getFollowersCount() > 0">
                                     <a href="/friends{$thisUser->getId()}?act=incoming">
@@ -161,8 +161,8 @@
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('notes')" href="/notes{$thisUser->getId()}" class="link">{_my_notes}</a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('groups')" href="/groups{$thisUser->getId()}" class="link">{_my_groups}</a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link">{_my_feed}</a>
-                            <a href="/notifications" class="link">{_my_feedback}
+                            <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link" title="{_my_feed} [Alt+Shift+W]" accesskey="w">{_my_feed}</a>
+                            <a href="/notifications" class="link" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">{_my_feedback}
                                 {if $thisUser->getNotificationsCount() > 0}
                                     (<b>{$thisUser->getNotificationsCount()}</b>)
                                 {/if}
@@ -173,7 +173,7 @@
                             {var canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
                             {var menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
                             <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $menuLinksAvaiable" class="menu_divider"></div>
-                            <a href="/admin" class="link" n:if="$canAccessAdminPanel">Админ-панель</a>
+                            <a href="/admin" class="link" n:if="$canAccessAdminPanel" title="Админ-панель [Alt+Shift+A]" accesskey="a">Админ-панель</a>
                             <a href="/support/tickets" class="link" n:if="$canAccessHelpdesk">Helpdesk
                                 {if $helpdeskTicketNotAnsweredCount > 0}
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
@@ -293,6 +293,37 @@
         {/if}
 
         <script n:if="OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['enable']" async defer data-domain="{php echo OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['domain']}" src="{php echo OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['server']}js/plausible.js"></script>
+        
+        <script n:if="OPENVK_ROOT_CONF['openvk']['telemetry']['piwik']['enable']">
+            {var $piwik = (object) OPENVK_ROOT_CONF['openvk']['telemetry']['piwik']}
+            
+            //<![CDATA[
+            (function(window,document,dataLayerName,id){ 
+            window[dataLayerName]=window[dataLayerName]||[],window[dataLayerName].push({ start:(new Date).getTime(),event:"stg.start" });var scripts=document.getElementsByTagName('script')[0],tags=document.createElement('script');
+            function stgCreateCookie(a,b,c){ var d="";if(c){ var e=new Date;e.setTime(e.getTime()+24*c*60*60*1e3),d=";expires="+e.toUTCString() }document.cookie=a+"="+b+d+";path=/" }
+            var isStgDebug=(window.location.href.match("stg_debug")||document.cookie.match("stg_debug"))&&!window.location.href.match("stg_disable_debug");stgCreateCookie("stg_debug",isStgDebug?1:"",isStgDebug?14:-1);
+            var qP=[];dataLayerName!=="dataLayer"&&qP.push("data_layer_name="+dataLayerName),isStgDebug&&qP.push("stg_debug");var qPString=qP.length>0?("?"+qP.join("&")):"";
+            tags.async=!0,tags.src={$piwik->container . "/"}+id+".js"+qPString,scripts.parentNode.insertBefore(tags,scripts);
+            !function(a,n,i){ a[n]=a[n]||{  };for(var c=0;c<i.length;c++)!function(i){ a[n][i]=a[n][i]||{  },a[n][i].api=a[n][i].api||function(){ var a=[].slice.call(arguments,0);"string"==typeof a[0]&&window[dataLayerName].push({ event:n+"."+i+":"+a[0],parameters:[].slice.call(arguments,1) }) } }(i[c]) }(window,"ppms",["tm","cm"]);
+             })(window,document,{$piwik->layer}, {$piwik->site});
+            //]]>
+        </script>
+        
+        <script n:if="OPENVK_ROOT_CONF['openvk']['telemetry']['matomo']['enable']">
+            {var $matomo = (object) OPENVK_ROOT_CONF['openvk']['telemetry']['matomo']}
+            //<![CDATA[
+            var _paq = window._paq = window._paq || [];
+            _paq.push(['trackPageView']);
+            _paq.push(['enableLinkTracking']);
+            (function() {
+                var u="//" + {$matomo->container} + "/";
+                _paq.push(['setTrackerUrl', u+'matomo.php']);
+                _paq.push(['setSiteId', {$matomo->site}]);
+                var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+                g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+            })();
+            //]]>
+        </script>
 
         {ifset bodyScripts}
             {include bodyScripts}

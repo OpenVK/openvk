@@ -41,7 +41,7 @@
 {/block}
 
 {block preview}
-    <img src="{$x instanceof $Manager ? $x->getUser()->getAvatarURL() : $x->getAvatarURL()}" alt="{$x instanceof $Manager ? $x->getUser()->getCanonicalName() : $x->getCanonicalName()}" width=75 />
+    <img src="{$x instanceof $Manager ? $x->getUser()->getAvatarURL() : $x->getAvatarURL('miniscule')}" alt="{$x instanceof $Manager ? $x->getUser()->getCanonicalName() : $x->getCanonicalName()}" width=75 />
 {/block}
 
 {block name}

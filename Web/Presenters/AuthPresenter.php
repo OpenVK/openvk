@@ -4,6 +4,7 @@ use openvk\Web\Models\Entities\IP;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Entities\PasswordReset;
 use openvk\Web\Models\Entities\EmailVerification;
+use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Models\Repositories\IPs;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Repositories\Restores;
@@ -88,20 +89,25 @@ final class AuthPresenter extends OpenVKPresenter
             if (strtotime($this->postParam("birthday")) > time())
                 $this->flashFail("err", tr("invalid_birth_date"), tr("invalid_birth_date_comment"));
 
+            try {
+                $user = new User;
+                $user->setFirst_Name($this->postParam("first_name"));
+                $user->setLast_Name($this->postParam("last_name"));
+                $user->setSex((int)($this->postParam("sex") === "female"));
+                $user->setEmail($this->postParam("email"));
+                $user->setSince(date("Y-m-d H:i:s"));
+                $user->setRegistering_Ip(CONNECTING_IP);
+                $user->setBirthday(strtotime($this->postParam("birthday")));
+                $user->setActivated((int)!OPENVK_ROOT_CONF['openvk']['preferences']['security']['requireEmail']);
+            } catch(InvalidUserNameException $ex) {
+                $this->flashFail("err", tr("error"), tr("invalid_real_name"));
+            }
+
             $chUser = ChandlerUser::create($this->postParam("email"), $this->postParam("password"));
             if(!$chUser)
                 $this->flashFail("err", tr("failed_to_register"), tr("user_already_exists"));
-            
-            $user = new User;
+
             $user->setUser($chUser->getId());
-            $user->setFirst_Name($this->postParam("first_name"));
-            $user->setLast_Name($this->postParam("last_name"));
-            $user->setSex((int) ($this->postParam("sex") === "female"));
-            $user->setEmail($this->postParam("email"));
-            $user->setSince(date("Y-m-d H:i:s"));
-            $user->setRegistering_Ip(CONNECTING_IP);
-            $user->setBirthday(strtotime($this->postParam("birthday")));
-            $user->setActivated((int) !OPENVK_ROOT_CONF['openvk']['preferences']['security']['requireEmail']);
             $user->save();
             
             if(!is_null($referer)) {

@@ -285,7 +285,6 @@ final class UserPresenter extends OpenVKPresenter
             $photo->setCreated(time());
             $photo->save();
         } catch(ISE $ex) {
-            $name = $album->getName();
             $this->flashFail("err", tr("error"), tr("error_upload_failed"));
         }
         

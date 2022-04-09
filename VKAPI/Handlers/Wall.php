@@ -22,6 +22,32 @@ final class Wall extends VKAPIRequestHandler
 
         foreach ($posts->getPostsFromUsersWall((int)$owner_id, 1, $count, $offset) as $post) {
             $from_id = get_class($post->getOwner()) == "openvk\Web\Models\Entities\Club" ? $post->getOwner()->getId() * (-1) : $post->getOwner()->getId();
+
+            $attachments;
+            foreach($post->getChildren() as $attachment)
+            {
+                if($attachment instanceof \openvk\Web\Models\Entities\Photo)
+                {
+                    $attachments[] = [
+                        "type" => "photo",
+                        "photo" => [
+                            "album_id" => $attachment->getAlbum() ? $attachment->getAlbum()->getId() : null,
+                            "date" => $attachment->getPublicationTime()->timestamp(),
+                            "id" => $attachment->getVirtualId(),
+                            "owner_id" => $attachment->getOwner()->getId(),
+                            "sizes" => array([
+                                "height" => 500, // Для временного компросима оставляю статическое число. Если каждый раз обращаться к файлу за количеством пикселов, то наступает пuпuська полная с производительностью, так что пока так 
+                                "url" => $attachment->getURL(),
+                                "type" => "m",
+                                "width" => 500,
+                            ]),
+                            "text" => "",
+                            "has_tags" => false
+                        ]
+                    ];
+                }
+            }
+
             $items[] = (object)[
                 "id" => $post->getVirtualId(),
                 "from_id" => $from_id,
@@ -35,6 +61,7 @@ final class Wall extends VKAPIRequestHandler
                 "can_archive" => false, // TODO MAYBE
                 "is_archived" => false,
                 "is_pinned" => $post->isPinned(),
+                "attachments" => $attachments,
                 "post_source" => (object)["type" => "vk"],
                 "comments" => (object)[
                     "count" => $post->getCommentsCount(),
@@ -56,6 +83,8 @@ final class Wall extends VKAPIRequestHandler
                 $profiles[] = $from_id;
             else
                 $groups[] = $from_id * -1;
+
+            $attachments = null; // free attachments so it will not clone everythingg
         }
 
         if($extended == 1) 
@@ -127,6 +156,31 @@ final class Wall extends VKAPIRequestHandler
             $post = (new PostsRepo)->getPostById(intval($id[0]), intval($id[1]));
             if($post) {
                 $from_id = get_class($post->getOwner()) == "openvk\Web\Models\Entities\Club" ? $post->getOwner()->getId() * (-1) : $post->getOwner()->getId();
+                $attachments;
+                foreach($post->getChildren() as $attachment)
+                {
+                    if($attachment instanceof \openvk\Web\Models\Entities\Photo)
+                    {
+                        $attachments[] = [
+                            "type" => "photo",
+                            "photo" => [
+                                "album_id" => $attachment->getAlbum() ? $attachment->getAlbum()->getId() : null,
+                                "date" => $attachment->getPublicationTime()->timestamp(),
+                                "id" => $attachment->getVirtualId(),
+                                "owner_id" => $attachment->getOwner()->getId(),
+                                "sizes" => array([
+                                    "height" => 500, // я ещё я заебался вставлять одинаковый код в два разных места
+                                    "url" => $attachment->getURL(),
+                                    "type" => "m",
+                                    "width" => 500,
+                                ]),
+                                "text" => "",
+                                "has_tags" => false
+                            ]
+                        ];
+                    }
+                }
+
                 $items[] = (object)[
                     "id" => $post->getVirtualId(),
                     "from_id" => $from_id,
@@ -141,6 +195,7 @@ final class Wall extends VKAPIRequestHandler
                     "is_archived" => false,
                     "is_pinned" => $post->isPinned(),
                     "post_source" => (object)["type" => "vk"],
+                    "attachments" => $attachments,
                     "comments" => (object)[
                         "count" => $post->getCommentsCount(),
                         "can_post" => 1
@@ -161,6 +216,8 @@ final class Wall extends VKAPIRequestHandler
                     $profiles[] = $from_id;
                 else
                     $groups[] = $from_id * -1;
+
+                $attachments = null; // free attachments so it will not clone everythingg
             }
         }
 

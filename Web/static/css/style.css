@@ -360,7 +360,7 @@ p {
 }
 
 .page_footer {
-    margin-left: 95px;
+    margin-left: 130px;
     padding-top: 5px;
     clear: both;
     text-align: center;
@@ -1334,6 +1334,15 @@ body.scrolled .toTop:hover {
     font-size: 15px;
 }
 
+#test-label {
+    padding: 8pt;
+    margin: 4pt;
+    border: 1px solid #9a205e;
+    background-color: #f5e9ec;
+    position: fixed;
+    font-weight: bold;
+}
+
 .post-upload {
     margin-top: 11px;
     margin-left: 3px;
@@ -1912,6 +1921,7 @@ table td[width="120"] {
     width: 50px;
     display: inline-block;
     vertical-align: top;
+    box-sizing: border-box;
 }
 
 .mb_tabs {
