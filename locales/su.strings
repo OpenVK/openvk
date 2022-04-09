@@ -255,7 +255,7 @@
 "hidden_yes" = "Скрыт: Да";
 "hidden_no" = "Скрыт: Нет";
 "group_allow_post_for_everyone" = "Разрешить публиковать записи всем";
-group_hide_from_global_feed" = "Не отображать записи в публичной доске";
+"group_hide_from_global_feed" = "Не отображать записи в публичной доске";
 "statistics" = "Статистика";
 "group_administrators_list" = "Список админов";
 "group_display_only_creator" = "Отображать только создателя группы";
@@ -775,7 +775,7 @@ group_hide_from_global_feed" = "Не отображать записи в пуб
 "token_manipulation_error" = "Ошибка манипулирования токеном";
 "token_manipulation_error_comment" = "Токен недействителен или истёк";
 
-"profile_changed" = "Досье изменёно";
+"profile_changed" = "Досье изменено";
 "profile_changed_comment" = "Товарищ, орган одобрил изменение вашего досье.";
 "profile_not_found" = "Гражданин не найден.";
 
