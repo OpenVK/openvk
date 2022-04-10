@@ -6,4 +6,4 @@ CREATE TABLE IF NOT EXISTS `email_verifications` (
   `key` char(64) COLLATE utf8mb4_general_nopad_ci NOT NULL,
   `timestamp` bigint(20) unsigned NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_nopad_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
