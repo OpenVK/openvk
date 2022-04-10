@@ -12,7 +12,7 @@ _[English](README.md)_
 
 Мы выпустим OpenVK, как только он будет готов. На данный момент Вы можете:
 * Сделать `git clone` master ветки этой репозитории (используйте `git pull` для обновления)
-* Взять готовую сборку OpenVK из [GitHub Actions](https://github.com/openvk/archive/actions/workflows/nightly.yml)
+* Взять готовую сборку OpenVK из [GitHub Actions](https://nightly.link/openvk/archive/workflows/nightly/master/OpenVK%20Archive.zip)
 
 ## Инстанции
 

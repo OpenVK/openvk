@@ -12,7 +12,7 @@ To be honest, we don't know whether it even works. However, this version is main
 
 We will release OpenVK as soon as it's ready. As for now you can:
 * `git clone` this repo's master branch (use `git pull` to update)
-* Grab a prebuilt OpenVK distro from [GitHub artifacts](https://github.com/openvk/archive/actions/workflows/nightly.yml)
+* Grab a prebuilt OpenVK distro from [GitHub artifacts](https://nightly.link/openvk/archive/workflows/nightly/master/OpenVK%20Archive.zip)
 
 ## Instances
 
