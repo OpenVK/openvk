@@ -94,7 +94,7 @@ openvk:
         eventDB:
             enable: true # Better enable this
             database:
-                dsn: "mysql:unix_socket=/var/run/mysql/mysql.sock;dbname=openvk"
+                dsn: "mysql:unix_socket=/var/run/mysql/mysql.sock;dbname=openvk-eventdb"
                 user: "root"
                 password: "justMonika"
         notificationsBroker:
