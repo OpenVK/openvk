@@ -12,7 +12,7 @@ To be honest, we don't know whether it even works. However, this version is main
 
 We will release OpenVK as soon as it's ready. As for now you can:
 * `git clone` this repo's master branch (use `git pull` to update)
-* Grab a prebuilt OpenVK distro from [GitHub artifacts](https://github.com/openvk/archive/actions/workflows/nightly.yml)
+* Grab a prebuilt OpenVK distro from [GitHub artifacts](https://nightly.link/openvk/archive/workflows/nightly/master/OpenVK%20Archive.zip)
 
 ## Instances
 
@@ -55,7 +55,7 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 ```
 
 5. Import `install/init-static-db.sql` to the **same database** you installed Chandler to and import all sqls from `install/sqls` to the **same database**
-6. Import `install/init-event-db.sql` to a **separate database** (Yandex.Clickhouse can also be used, higly recommended)
+6. Import `install/init-event-db.sql` to a **separate database** (Yandex.Clickhouse can also be used, highly recommended)
 7. Copy `openvk-example.yml` to `openvk.yml` and change options to your liking
 8. Run `composer install` in OpenVK directory
 9. Run `composer install` in commitcaptcha directory
