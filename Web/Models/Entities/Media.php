@@ -6,7 +6,9 @@ abstract class Media extends Postable
 {
     protected $fileExtension = "oct"; #octet stream xddd
     protected $upperNodeReferenceColumnName = "owner";
-    
+    protected $processingPlaceholder = NULL;
+    protected $processingTime = 30;
+
     function __destruct()
     {
         #Remove data, if model wasn't presisted
@@ -21,6 +23,11 @@ abstract class Media extends Postable
             return $uploadSettings["server"]["directory"];
         else
             return OPENVK_ROOT . "/storage/";
+    }
+
+    protected function checkIfFileIsProcessed(): bool
+    {
+        throw new \LogicException("checkIfFileIsProcessed is not implemented");
     }
     
     abstract protected function saveFile(string $filename, string $hash): bool;
@@ -41,6 +48,10 @@ abstract class Media extends Postable
     
     function getURL(): string
     {
+        if(!is_null($this->processingPlaceholder))
+            if(!$this->isProcessed())
+                return "/assets/packages/static/openvk/$this->processingPlaceholder.$this->fileExtension";
+
         $hash = $this->getRecord()->hash;
         
         switch(OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["mode"]) {
@@ -68,6 +79,26 @@ abstract class Media extends Postable
     {
         return $this->getRecord()->description;
     }
+
+    protected function isProcessed(): bool
+    {
+        if(is_null($this->processingPlaceholder))
+            return true;
+
+        if($this->getRecord()->processed)
+            return true;
+
+        $timeDiff = time() - $this->getRecord()->last_checked;
+        if($timeDiff < $this->processingTime)
+            return false;
+
+        $res = $this->checkIfFileIsProcessed();
+        $this->stateChanges("last_checked", time());
+        $this->stateChanges("processed", $res);
+        $this->save();
+
+        return $res;
+    }
     
     function isDeleted(): bool
     {
@@ -89,7 +120,17 @@ abstract class Media extends Postable
         
         $this->stateChanges("hash", $hash);
     }
-    
+
+    function save(): void
+    {
+        if(!is_null($this->processingPlaceholder)) {
+            $this->stateChanges("processed", 0);
+            $this->stateChanges("last_checked", time());
+        }
+
+        parent::save();
+    }
+
     function delete(bool $softly = true): void
     {
         $deleteQuirk = ovkGetQuirk("blobs.erase-upon-deletion");
