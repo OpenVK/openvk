@@ -123,7 +123,7 @@ abstract class Media extends Postable
 
     function save(): void
     {
-        if(!is_null($this->processingPlaceholder)) {
+        if(!is_null($this->processingPlaceholder) && is_null($this->getRecord())) {
             $this->stateChanges("processed", 0);
             $this->stateChanges("last_checked", time());
         }
