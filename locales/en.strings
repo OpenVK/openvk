@@ -853,6 +853,8 @@
 "rules" = "Rules";
 "most_popular_groups" = "Most popular groups";
 "on_this_instance_are" = "On this instance are:";
+"about_links" = "Links";
+"instance_links" = "Instance links:";
 
 "about_users_one" = "<b>1</b> user";
 "about_users_other" = "<b>$1</b> users";

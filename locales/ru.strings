@@ -896,6 +896,8 @@
 "rules" = "Правила";
 "most_popular_groups" = "Самые популярные группы";
 "on_this_instance_are" = "На этой инстанции:";
+"about_links" = "Ссылки";
+"instance_links" = "Ссылки инстанции:";
 
 "about_users_one" = "<b>1</b> пользователь";
 "about_users_few" = "<b>$1</b> пользователя";

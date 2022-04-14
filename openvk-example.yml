@@ -57,6 +57,10 @@ openvk:
             links:
                 - name: "@left_menu_donate"
                   url: "/donate"
+        about:
+            links:
+                - name: "Link caption"
+                  url: "https://example.org/"
         adPoster:
             enable: false
             src: "https://example.org/ad_poster.jpeg"
