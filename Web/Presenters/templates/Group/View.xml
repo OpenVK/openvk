@@ -14,6 +14,8 @@
 
 {block content}
 <div class="left_big_block">
+    <div n:if="!is_null($alert = $club->getAlert())" class="group-alert">{strpos($alert, "@") === 0 ? tr(substr($alert, 1)) : $alert}</div>
+
     <div class="content_title_expanded" onclick="hidePanel(this);">
         {_"information"}
     </div>
