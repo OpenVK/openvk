@@ -18,7 +18,8 @@
         "ext-simplexml": "*",
         "symfony/console": "5.4.x-dev",
         "wapmorgan/morphos": "dev-master",
-        "ext-sodium": "*"
+        "ext-sodium": "*",
+        "ext-iconv": "*"
     },
     "require-dev": {
         "roave/security-advisories": "dev-latest",
