@@ -117,3 +117,8 @@ function setupWallPostInputHandlers(id) {
         // textArea.style.height = (newHeight > originalHeight ? (newHeight + boost) : originalHeight) + "px";
     });
 }
+
+u("#write > form").on("keydown", function(event) {
+    if(event.ctrlKey && event.keyCode === 13)
+        this.submit();
+});
