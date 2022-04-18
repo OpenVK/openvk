@@ -187,9 +187,9 @@
                                 <a n:foreach="$thisUser->getPinnedClubs() as $club" href="{$club->getURL()}" class="link group_link">{$club->getName()}</a>
                             </div>
                             
-                            <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce']" id="votesBalance">
+                            <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $thisUser->getCoins() != 0" id="votesBalance">
                                 {tr("you_still_have_x_points", $thisUser->getCoins())|noescape}
-                                <br/><br/>
+                                <br /><br />
                                 
                                 <a href="/settings?act=finance">{_top_up_your_account} &#xbb;</a>
                             </div>
