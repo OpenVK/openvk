@@ -776,6 +776,7 @@
 "error_new_password" = "New password does not match";
 "error_shorturl_incorrect" = "The short address has an incorrect format.";
 "error_repost_fail" = "Failed to share post";
+"error_data_too_big" = "Attribute '$1' must be at most $2 $3 long";
 
 "forbidden" = "Access error";
 "forbidden_comment" = "This user's privacy settings do not allow you to look at his page.";
