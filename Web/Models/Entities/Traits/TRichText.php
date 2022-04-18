@@ -64,7 +64,12 @@ trait TRichText
                 $text = preg_replace("%@([A-Za-z0-9]++) \(((?:[\p{L&}\p{Lo} 0-9]\p{Mn}?)++)\)%Xu", "[$1|$2]", $text);
                 $text = preg_replace("%([\n\r\s]|^)(@([A-Za-z0-9]++))%Xu", "$1[$3|@$3]", $text);
                 $text = preg_replace("%\[([A-Za-z0-9]++)\|((?:[\p{L&}\p{Lo} 0-9@]\p{Mn}?)++)\]%Xu", "<a href='/$1'>$2</a>", $text);
-                $text = preg_replace("%([\n\r\s]|^)(#([\p{L}_-]++[0-9]*[\p{L}_-]*))%Xu", "$1<a href='/feed/hashtag/$3'>$2</a>", $text);
+                $text = preg_replace_callback("%([\n\r\s]|^)(\#([\p{L}_0-9][\p{L}_0-9\(\)\-\']+[\p{L}_0-9\(\)]|[\p{L}_0-9]{1,2}))%Xu", function($m) {
+                    $slug = rawurlencode($m[3]);
+                    
+                    return "$m[1]<a href='/feed/hashtag/$slug'>$m[2]</a>";
+                }, $text);
+                
                 $text = $this->formatEmojis($text);
             }
             
