@@ -588,6 +588,8 @@
 "points" = "Голоса";
 "points_count" = "голосов";
 "on_your_account" = "на вашем счету";
+"top_up_your_account" = "Пополнить баланс";
+"you_still_have_x_points" = "У Вас <b>$1</b> неиспользованных голосов.";
 
 "vouchers" = "Ваучеры";
 "have_voucher" = "Есть ваучер";

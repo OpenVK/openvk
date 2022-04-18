@@ -186,6 +186,14 @@
                                 <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
                                 <a n:foreach="$thisUser->getPinnedClubs() as $club" href="{$club->getURL()}" class="link group_link">{$club->getName()}</a>
                             </div>
+                            
+                            <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce']" id="votesBalance">
+                                {tr("you_still_have_x_points", $thisUser->getCoins())|noescape}
+                                <br/><br/>
+                                
+                                <a href="/settings?act=finance">{_top_up_your_account} &#xbb;</a>
+                            </div>
+                            
                             <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable'] && $thisUser->getLeftMenuItemStatus('poster')" href="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
                                 <img src="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}" alt="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}" class="psa-poster" style="max-width: 100%; margin-top: 50px;" />
                             </a>
