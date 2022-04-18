@@ -126,4 +126,11 @@ final class AboutPresenter extends OpenVKPresenter
         header("Location: https://github.com/openvk/openvk#readme");
         exit;
     }
+
+    function renderDev(): void
+    {
+        header("HTTP/1.1 302 Found");
+        header("Location: https://docs.openvk.su/");
+        exit;
+    }
 }

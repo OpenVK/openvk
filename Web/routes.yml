@@ -297,6 +297,8 @@ routes:
       handler: "About->robotsTxt"
     - url: "/humans.txt"
       handler: "About->humansTxt"
+    - url: "/dev"
+      handler: "About->dev"
     - url: "/{?shortCode}"
       handler: "UnknownTextRouteStrategy->delegate"
       placeholders:
