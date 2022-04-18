@@ -18,6 +18,7 @@ We will release OpenVK as soon as it's ready. As for now you can:
 
 * **[openvk.su](https://openvk.su/)**
 * **[openvk.uk](https://openvk.uk)** - official mirror of openvk.su (<https://t.me/openvkch/1609>)
+* **[openvk.co](http://openvk.co)** - yet another official mirror of openvk.su without TLS (<https://t.me/openvkch/1654>)
 * [social.fetbuk.ru](http://social.fetbuk.ru/)
 
 ## Can I create my own OpenVK instance?
