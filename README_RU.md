@@ -20,6 +20,7 @@ _[English](README.md)_
 * **[openvk.uk](https://openvk.uk)** - официальное зеркало openvk.su (<https://t.me/openvkch/1609>)
 * **[openvk.co](http://openvk.co)** - ещё одно официальное зеркало openvk.su без TLS (<https://t.me/openvkch/1654>)
 * [social.fetbuk.ru](http://social.fetbuk.ru/)
+* [vepurovk.xyz](http://vepurovk.xyz/)
 
 ## Могу ли я создать свою собственную инстанцию OpenVK?
 
