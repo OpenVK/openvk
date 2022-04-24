@@ -346,6 +346,11 @@ class Club extends RowModel
 	{
 		return $this->getRecord()->website;
 	}
+
+    function getAlert(): ?string
+    {
+        return $this->getRecord()->alert;
+    }
     
     use Traits\TSubscribable;
 }

@@ -1,5 +1,5 @@
 {extends "../@listView.xml"}
-{var sorting = false}
+{var $sorting = false}
 
 {block title}
     {_feedback}

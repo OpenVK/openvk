@@ -1,5 +1,5 @@
 {php if(!isset($GLOBALS["textAreaCtr"])) $GLOBALS["textAreaCtr"] = 10;}
-{var textAreaId = ($post ?? NULL) === null ? (++$GLOBALS["textAreaCtr"]) : $post->getId()}
+{var $textAreaId = ($post ?? NULL) === null ? (++$GLOBALS["textAreaCtr"]) : $post->getId()}
 
 <div id="write" style="padding: 5px 0;" onfocusin="expand_wall_textarea({$textAreaId});">
     <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
@@ -12,7 +12,7 @@
                 {_attachment}: <span>(unknown)</span>
             </div>
             <div n:if="$postOpts ?? true" class="post-opts">
-                {var anonEnabled = OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
+                {var $anonEnabled = OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
                 
                 {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0}
                     {if $club->canBeModifiedBy($thisUser)}

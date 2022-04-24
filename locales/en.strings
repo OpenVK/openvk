@@ -558,6 +558,8 @@
 "points" = "Votes";
 "points_count" = "votes";
 "on_your_account" = "on your account";
+"top_up_your_account" = "Get more";
+"you_still_have_x_points" = "You have <b>$1</b> unused votes.";
 
 "vouchers" = "Vouchers";
 "have_voucher" = "Have voucher";
@@ -779,6 +781,7 @@
 "error_new_password" = "New password does not match";
 "error_shorturl_incorrect" = "The short address has an incorrect format.";
 "error_repost_fail" = "Failed to share post";
+"error_data_too_big" = "Attribute '$1' must be at most $2 $3 long";
 
 "forbidden" = "Access error";
 "forbidden_comment" = "This user's privacy settings do not allow you to look at his page.";
@@ -858,6 +861,8 @@
 "rules" = "Rules";
 "most_popular_groups" = "Most popular groups";
 "on_this_instance_are" = "On this instance are:";
+"about_links" = "Links";
+"instance_links" = "Instance links:";
 
 "about_users_one" = "<b>1</b> user";
 "about_users_other" = "<b>$1</b> users";

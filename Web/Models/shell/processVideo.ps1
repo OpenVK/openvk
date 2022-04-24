@@ -13,7 +13,7 @@ Move-Item $file $temp
 
 # video stub logic was implicitly deprecated, so we start processing at once
 ffmpeg -i $temp -ss 00:00:01.000 -vframes 1 "$dir$hashT/$hash.gif"
-ffmpeg -i $temp -c:v libtheora -q:v 7 -c:a libvorbis -q:a 4 -vf scale=640x360,setsar=1:1 -y $temp2
+ffmpeg -i $temp -c:v libtheora -q:v 7 -c:a libvorbis -q:a 4 -vf "scale=640:480:force_original_aspect_ratio=decrease,pad=640:480:(ow-iw)/2:(oh-ih)/2,setsar=1" -y $temp2
 
 Move-Item $temp2 "$dir$hashT/$hash.ogv"
 Remove-Item $temp

@@ -1,7 +1,7 @@
 {extends "../@listView.xml"}
-{var iterator = $videos}
-{var count    = $paginatorConf->count}
-{var page     = $paginatorConf->page}
+{var $iterator = $videos}
+{var $count    = $paginatorConf->count}
+{var $page     = $paginatorConf->page}
 
 {block title}{_"videos"} {$user->getCanonicalName()}{/block}
 

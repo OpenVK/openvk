@@ -14,6 +14,8 @@
 
 {block content}
 <div class="left_big_block">
+    <div n:if="!is_null($alert = $club->getAlert())" class="group-alert">{strpos($alert, "@") === 0 ? tr(substr($alert, 1)) : $alert}</div>
+
     <div class="content_title_expanded" onclick="hidePanel(this);">
         {_"information"}
     </div>
@@ -41,7 +43,7 @@
         </table>
     </div>
     <div n:if="$club->getFollowersCount() > 0">
-        {var followersCount = $club->getFollowersCount()}
+        {var $followersCount = $club->getFollowersCount()}
         
         <div class="content_title_expanded" onclick="hidePanel(this, {$followersCount});">
             {_participants}
@@ -91,8 +93,8 @@
     {presenter "openvk!Wall->wallEmbedded", -$club->getId()}
 </div>
 <div class="right_small_block">
-    {var avatarPhoto = $club->getAvatarPhoto()}
-    {var avatarLink = ((is_null($avatarPhoto) ? FALSE : $avatarPhoto->isAnonymous()) ? "/photo" . ("s/" . base_convert((string) $avatarPhoto->getId(), 10, 32)) : $club->getAvatarLink())}
+    {var $avatarPhoto = $club->getAvatarPhoto()}
+    {var $avatarLink = ((is_null($avatarPhoto) ? FALSE : $avatarPhoto->isAnonymous()) ? "/photo" . ("s/" . base_convert((string) $avatarPhoto->getId(), 10, 32)) : $club->getAvatarLink())}
     <a href="{$avatarLink|nocheck}">
         <img src="{$club->getAvatarUrl('normal')}" style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
     </a>
@@ -132,7 +134,7 @@
             {_"creator"}
         </div>
         <div class="avatar-list-item" style="padding: 8px;">
-            {var author = $club->getOwner()}
+            {var $author = $club->getOwner()}
             <div class="avatar">
                 <a href="{$author->getURL()}">
                     <img class="ava" src="{$author->getAvatarUrl()}" />
@@ -149,7 +151,7 @@
         </div>
     </div>
     <div n:if="$club->getAdministratorsListDisplay() == 1">
-        {var managersCount = $club->getManagersCount(true)}
+        {var $managersCount = $club->getManagersCount(true)}
 
         <div class="content_title_expanded" onclick="hidePanel(this, {$managersCount});">
             {_"administrators"}
@@ -163,7 +165,7 @@
             </div>
             <div class="avatar-list">
                 <div class="avatar-list-item" n:if="!$club->isOwnerHidden()">
-                    {var author = $club->getOwner()}
+                    {var $author = $club->getOwner()}
                     <div class="avatar">
                         <a href="{$author->getURL()}">
                             <img class="ava" src="{$author->getAvatarUrl()}" />
@@ -175,7 +177,7 @@
                     </div>
                 </div>
                 <div class="avatar-list-item" n:foreach="$club->getManagers(1, true) as $manager">
-                    {var user = $manager->getUser()}
+                    {var $user = $manager->getUser()}
                     <div class="avatar">
                         <a href="{$user->getURL()}">
                             <img height="32" class="ava" src="{$user->getAvatarUrl()}" />
@@ -203,7 +205,7 @@
             <div style="padding: 5px;">
                 <div class="ovk-album" style="display: inline-block;" n:foreach="$albums as $album">
                     <div style="text-align: center;float: left;height: 54pt;width: 100px;">
-                        {var cover = $album->getCoverPhoto()}
+                        {var $cover = $album->getCoverPhoto()}
                         
                         <img
                             src="{is_null($cover)?'/assets/packages/static/openvk/img/camera_200.png':$cover->getURL()}"

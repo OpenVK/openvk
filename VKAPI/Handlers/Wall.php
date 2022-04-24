@@ -35,11 +35,42 @@ final class Wall extends VKAPIRequestHandler
                             "date" => $attachment->getPublicationTime()->timestamp(),
                             "id" => $attachment->getVirtualId(),
                             "owner_id" => $attachment->getOwner()->getId(),
-                            "sizes" => array([
-                                "height" => 500, // Для временного компросима оставляю статическое число. Если каждый раз обращаться к файлу за количеством пикселов, то наступает пuпuська полная с производительностью, так что пока так 
-                                "url" => $attachment->getURL(),
+                            "sizes" => array(
+                            [
+                                "height" => 2560,
+                                "url" => $attachment->getURLBySizeId("normal"),
                                 "type" => "m",
-                                "width" => 500,
+                                "width" => 2560,
+                            ],
+                            [
+                                "height" => 130,
+                                "url" => $attachment->getURLBySizeId("tiny"),
+                                "type" => "o",
+                                "width" => 130,
+                            ],
+                            [
+                                "height" => 604,
+                                "url" => $attachment->getURLBySizeId("normal"),
+                                "type" => "p",
+                                "width" => 604,
+                            ],
+                            [
+                                "height" => 807,
+                                "url" => $attachment->getURLBySizeId("large"),
+                                "type" => "q",
+                                "width" => 807,
+                            ],
+                            [
+                                "height" => 1280,
+                                "url" => $attachment->getURLBySizeId("larger"),
+                                "type" => "r",
+                                "width" => 1280,
+                            ],
+                            [
+                                "height" => 75, // Для временного компросима оставляю статическое число. Если каждый раз обращаться к файлу за количеством пикселов, то наступает пuпuська полная с производительностью, так что пока так 
+                                "url" => $attachment->getURLBySizeId("miniscule"),
+                                "type" => "s",
+                                "width" => 75,
                             ]),
                             "text" => "",
                             "has_tags" => false
@@ -168,11 +199,42 @@ final class Wall extends VKAPIRequestHandler
                                 "date" => $attachment->getPublicationTime()->timestamp(),
                                 "id" => $attachment->getVirtualId(),
                                 "owner_id" => $attachment->getOwner()->getId(),
-                                "sizes" => array([
-                                    "height" => 500, // я ещё я заебался вставлять одинаковый код в два разных места
-                                    "url" => $attachment->getURL(),
+                                "sizes" => array(
+                                [
+                                    "height" => 2560,
+                                    "url" => $attachment->getURLBySizeId("normal"),
                                     "type" => "m",
-                                    "width" => 500,
+                                    "width" => 2560,
+                                ],
+                                [
+                                    "height" => 130,
+                                    "url" => $attachment->getURLBySizeId("tiny"),
+                                    "type" => "o",
+                                    "width" => 130,
+                                ],
+                                [
+                                    "height" => 604,
+                                    "url" => $attachment->getURLBySizeId("normal"),
+                                    "type" => "p",
+                                    "width" => 604,
+                                ],
+                                [
+                                    "height" => 807,
+                                    "url" => $attachment->getURLBySizeId("large"),
+                                    "type" => "q",
+                                    "width" => 807,
+                                ],
+                                [
+                                    "height" => 1280,
+                                    "url" => $attachment->getURLBySizeId("larger"),
+                                    "type" => "r",
+                                    "width" => 1280,
+                                ],
+                                [
+                                    "height" => 75, // Для временного компросима оставляю статическое число. Если каждый раз обращаться к файлу за количеством пикселов, то наступает пuпuська полная с производительностью, так что пока так 
+                                    "url" => $attachment->getURLBySizeId("miniscule"),
+                                    "type" => "s",
+                                    "width" => 75,
                                 ]),
                                 "text" => "",
                                 "has_tags" => false

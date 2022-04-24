@@ -107,7 +107,7 @@
                 <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() == 0" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
                 <a n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" class="profile_link">{_"send_message"}</a>
 
-                {var subStatus = $user->getSubscriptionStatus($thisUser)}
+                {var $subStatus = $user->getSubscriptionStatus($thisUser)}
                 {if $subStatus === 0}
                     <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="add" />
@@ -141,7 +141,7 @@
             <a n:if="$user->getFollowersCount() > 0" href="/friends{$user->getId()}?act=incoming" class="profile_link">{tr("followers", $user->getFollowersCount())}</a>
         </div>
         <div n:if="isset($thisUser) && !$thisUser->prefersNotToSeeRating()" class="profile-hints">
-            {var completeness = $user->getProfileCompletenessReport()}
+            {var $completeness = $user->getProfileCompletenessReport()}
             
             <div n:class="completeness-gauge, $completeness->total >= 100 ? completeness-gauge-gold">
                 <div style="width: {$completeness->percent}%"></div>
@@ -174,7 +174,7 @@
         </div>
         <br />
         <div n:if="$user->getFriendsCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)">
-            {var friendCount = $user->getFriendsCount()}
+            {var $friendCount = $user->getFriendsCount()}
             
             <div class="content_title_expanded" onclick="hidePanel(this, {$friendCount});">
                 {_"friends"}
@@ -215,7 +215,7 @@
                 <div style="padding: 5px;">
                     <div class="ovk-album" style="display: inline-block;" n:foreach="$albums as $album">
                         <div style="text-align: center;float: left;height: 54pt;width: 100px;">
-                            {var cover = $album->getCoverPhoto()}
+                            {var $cover = $album->getCoverPhoto()}
                             
                             <img
                                 src="{is_null($cover)?'/assets/packages/static/openvk/img/camera_200.png':$cover->getURLBySizeId('small')}"
@@ -284,7 +284,7 @@
             </div>
         </div>
         <div n:if="$user->getClubCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
-            {var clubsCount = $user->getClubCount()}
+            {var $clubsCount = $user->getClubCount()}
             <div class="content_title_expanded" onclick="hidePanel(this, {$clubsCount})">
                 {_"groups"}
             </div>
@@ -303,7 +303,7 @@
             </div>
         </div>
         <div n:if="$user->getMeetingCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
-            {var meetingCount = $user->getMeetingCount()}
+            {var $meetingCount = $user->getMeetingCount()}
             <div class="content_title_expanded" onclick="hidePanel(this, {$meetingCount})">
                 {_meetings}
             </div>
@@ -327,7 +327,7 @@
     <div class="right_big_block">
         <div class="page_info">
             <div n:if="!is_null($alert = $user->getAlert())" class="user-alert">{strpos($alert, "@") === 0 ? tr(substr($alert, 1)) : $alert}</div>
-            {var thatIsThisUser = isset($thisUser) && $user->getId() == $thisUser->getId()}
+            {var $thatIsThisUser = isset($thisUser) && $user->getId() == $thisUser->getId()}
             <div n:if="$thatIsThisUser" class="page_status_popup" id="status_editor" style="display: none;">
                 <form name="status_popup_form" onsubmit="changeStatus(); return false;">
                     <div style="margin-bottom: 10px;">
@@ -495,7 +495,7 @@
                 </div>
                 <div class="content_list long">
                     <div class="cl_element" style="width: 25%;" n:foreach="$user->getGifts(1, 4) as $giftDescriptor">
-                        {var hideInfo = !is_null($thisUser) ? ($giftDescriptor->anon ? $thisUser->getId() !== $user->getId() : false) : false}
+                        {var $hideInfo = !is_null($thisUser) ? ($giftDescriptor->anon ? $thisUser->getId() !== $user->getId() : false) : false}
                         <div class="cl_avatar">
                             <a href="{$hideInfo ? 'javascript:false' : $giftDescriptor->sender->getURL()}">
                                 <img style="width: 70px; max-height: 70px;"

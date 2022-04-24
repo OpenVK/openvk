@@ -71,6 +71,8 @@ routes:
       handler: "User->twoFactorAuthSettings"
     - url: "/settings/2fa/disable"
       handler: "User->disableTwoFactorAuth"
+    - url: "/settings/reset_theme"
+      handler: "User->resetThemepack"
     - url: "/coins_transfer"
       handler: "User->coinsTransfer"
     - url: "/increase_social_credits"
@@ -121,8 +123,10 @@ routes:
       handler: "Wall->delete"
     - url: "/wall{num}_{num}/pin"
       handler: "Wall->pin"
-    - url: "/blob_{text}/{text}.{text}"
+    - url: "/blob_{text}/{?path}.{text}"
       handler: "Blob->file"
+      placeholders:
+          path: "[A-z0-9\\-_\\/]{3,}"
     - url: "/themepack/{text}/{?version}/{?resClass}/{?any}"
       handler: "Themepacks->resource"
       placeholders:
@@ -301,6 +305,8 @@ routes:
       handler: "About->robotsTxt"
     - url: "/humans.txt"
       handler: "About->humansTxt"
+    - url: "/dev"
+      handler: "About->dev"
     - url: "/{?shortCode}"
       handler: "UnknownTextRouteStrategy->delegate"
       placeholders:

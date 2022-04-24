@@ -1,7 +1,7 @@
-{var instance_name = OPENVK_ROOT_CONF['openvk']['appearance']['name']}
-
+{var $instance_name = OPENVK_ROOT_CONF['openvk']['appearance']['name']}
+{if !isset($parentModule) || substr($parentModule, 0, 21) === 'libchandler:absolute.'}
 <!DOCTYPE html>
-<html n:if="!isset($parentModule) || substr($parentModule, 0, 21) === 'libchandler:absolute.'">
+<html>
     <head>
         <title>
             {ifset title}{include title} - {/ifset}{$instance_name}
@@ -169,9 +169,9 @@
                             </a>
                             <a href="/settings" class="link">{_my_settings}</a>
                             
-                            {var canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
-                            {var canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
-                            {var menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
+                            {var $canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+                            {var $canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
+                            {var $menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
                             <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $menuLinksAvaiable" class="menu_divider"></div>
                             <a href="/admin" class="link" n:if="$canAccessAdminPanel" title="Админ-панель [Alt+Shift+A]" accesskey="a">Админ-панель</a>
                             <a href="/support/tickets" class="link" n:if="$canAccessHelpdesk">Helpdesk
@@ -191,6 +191,14 @@
                                 <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
                                 <a n:foreach="$thisUser->getPinnedClubs() as $club" href="{$club->getURL()}" class="link group_link">{$club->getName()}</a>
                             </div>
+                            
+                            <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $thisUser->getCoins() != 0" id="votesBalance">
+                                {tr("you_still_have_x_points", $thisUser->getCoins())|noescape}
+                                <br /><br />
+                                
+                                <a href="/settings?act=finance">{_top_up_your_account} &#xbb;</a>
+                            </div>
+                            
                             <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable'] && $thisUser->getLeftMenuItemStatus('poster')" href="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
                                 <img src="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}" alt="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}" class="psa-poster" style="max-width: 100%; margin-top: 50px;" />
                             </a>
@@ -256,7 +264,7 @@
         </div>
 
         <div class="page_footer">
-            {var dbVersion = \Chandler\Database\DatabaseConnection::i()->getConnection()->getPdo()->getAttribute(\PDO::ATTR_SERVER_VERSION)}
+            {var $dbVersion = \Chandler\Database\DatabaseConnection::i()->getConnection()->getPdo()->getAttribute(\PDO::ATTR_SERVER_VERSION)}
 
             <div class="navigation_footer">
                 <a href="/about" class="link">{_footer_about_instance}</a>
@@ -330,6 +338,7 @@
         {/ifset}
     </body>
 </html>
+{/if}
 
 {if isset($parentModule) && substr($parentModule, 0, 21) !== 'libchandler:absolute.'}
     <!-- INCLUDING TEMPLATE FROM PARENTMODULE: {$parentModule} -->

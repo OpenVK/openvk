@@ -481,6 +481,22 @@ final class UserPresenter extends OpenVKPresenter
         $this->flashFail("succ", tr("information_-1"), tr("two_factor_authentication_disabled_message"));
     }
 
+    function renderResetThemepack(): void
+    {
+        $this->assertNoCSRF();
+
+        $this->setSessionTheme(Themepacks::DEFAULT_THEME_ID);
+
+        if($this->user) {
+            $this->willExecuteWriteAction();
+
+            $this->user->identity->setStyle(Themepacks::DEFAULT_THEME_ID);
+            $this->user->identity->save();
+        }
+
+        $this->redirect("/", static::REDIRECT_TEMPORARY_PRESISTENT);
+    }
+
     function renderCoinsTransfer(): void
     {
         $this->assertUserLoggedIn();

@@ -21,8 +21,8 @@
             <div n:foreach="$corresps as $coresp"
                  class="crp-entry"
                  onmousedown="window.location.href = {$coresp->getURL()};" >
-                {var recipient = $coresp->getCorrespondents()[1]}
-                {var lastMsg   = $coresp->getPreviewMessage()}
+                {var $recipient = $coresp->getCorrespondents()[1]}
+                {var $lastMsg   = $coresp->getPreviewMessage()}
                 
                 <div class="crp-entry--image">
                     <img src="{$recipient->getAvatarURL('miniscule')}"
@@ -33,7 +33,7 @@
                     <span>{$lastMsg->getSendTime()->format("%e %B %G" . tr("time_at_sp") . "%X")}</span>
                 </div>
                 <div n:class="crp-entry--message, $lastMsg->getUnreadState() ? unread">
-                    {var _author = $lastMsg->getSender()}
+                    {var $_author = $lastMsg->getSender()}
                     
                     <div class="crp-entry--message---av" n:if="$_author->getId() === $thisUser->getId()">
                         <img src="{$_author->getAvatarURL('miniscule')}"
