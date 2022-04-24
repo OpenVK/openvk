@@ -7,11 +7,11 @@
 
 {block content}
 
-{var isMain       = $mode === 'main'}
-{var isPrivacy    = $mode === 'privacy'}
-{var isFinance    = $mode === 'finance'}
-{var isFinanceTU  = $mode === 'finance.top-up'}
-{var isInterface  = $mode === 'interface'}
+{var $isMain       = $mode === 'main'}
+{var $isPrivacy    = $mode === 'privacy'}
+{var $isFinance    = $mode === 'finance'}
+{var $isFinanceTU  = $mode === 'finance.top-up'}
+{var $isInterface  = $mode === 'interface'}
 
        <div class="tabs">
         <div n:attr="id => ($isMain ? 'activetabs' : 'ki')" class="tab">

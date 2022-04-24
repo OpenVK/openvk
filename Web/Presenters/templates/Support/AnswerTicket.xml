@@ -70,7 +70,7 @@
                             {if $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
                                 <a href="{$comment->getUser()->getURL()}">
                                     <span class="nobold">
-                                        {var lastName = $comment->getUser()->getLastName()}
+                                        {var $lastName = $comment->getUser()->getLastName()}
                                         {if empty(trim($lastName))}
                                             ({$comment->getUser()->getFirstName()})
                                         {else}

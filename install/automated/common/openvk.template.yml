@@ -1,12 +1,12 @@
 openvk:
     debug: true
     appearance:
-        name: "OpenVK"
+        name: "FreeBSD Instance"
         motd: "Yet another OpenVK instance"
-    
+
     preferences:
         femaleGenderPriority: true
-        nginxCacheTime: null
+        nginxCacheTime: 120
         uploads:
             disableLargeUploads: false
             mode: "basic"
@@ -18,7 +18,7 @@ openvk:
             forbiddenNames:
                 - "index.php"
         photos:
-            upgradeStructure: true
+            upgradeStructure: false
         security:
             requireEmail: false
             requirePhone: false
@@ -57,10 +57,6 @@ openvk:
             links:
                 - name: "@left_menu_donate"
                   url: "/donate"
-        about:
-            links:
-                - name: "Link caption"
-                  url: "https://example.org/"
         adPoster:
             enable: false
             src: "https://example.org/ad_poster.jpeg"
@@ -70,7 +66,7 @@ openvk:
             fartscroll: false
             testLabel: false
         defaultMobileTheme: ""
-    
+
     telemetry:
         plausible:
             enable: false
@@ -85,7 +81,7 @@ openvk:
             enable: false
             container: ""
             site: ""
-    
+
     credentials:
         smsc:
             enable: false
@@ -96,11 +92,11 @@ openvk:
             token: "TOKEN_HERE"
             helpdeskChat: ""
         eventDB:
-            enable: false # Better enable this
+            enable: true # Better enable this
             database:
-                dsn: "mysql:unix_socket=/tmp/mysql.sock;dbname=openvk-eventdb"
+                dsn: "mysql:unix_socket=/var/run/mysql/mysql.sock;dbname=openvk-eventdb"
                 user: "root"
-                password: "DATABASE_PASSWORD"
+                password: "justMonika"
         notificationsBroker:
             enable: false
             kafka:

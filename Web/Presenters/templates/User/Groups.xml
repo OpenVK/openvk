@@ -1,6 +1,6 @@
 {extends "../@listView.xml"}
-{var iterator = $user->getClubs($page, $admin)}
-{var count    = $user->getClubCount($admin)}
+{var $iterator = $user->getClubs($page, $admin)}
+{var $count    = $user->getClubCount($admin)}
 
 {block title}
     {_groups}
@@ -73,7 +73,7 @@
 {/block}
 
 {block actions}
-    {var clubPinned = $thisUser->isClubPinned($x)}
+    {var $clubPinned = $thisUser->isClubPinned($x)}
     {if $x->canBeModifiedBy($thisUser ?? NULL)}
         <div class="navigation" style="width: 140px;">
             <a class="link" href="{$x->getURL()}">

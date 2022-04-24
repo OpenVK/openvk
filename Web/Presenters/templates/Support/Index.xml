@@ -6,9 +6,9 @@
 {/block}
 
 {block content}
-    {var isMain = $mode === 'faq'}
-    {var isNew  = $mode === 'new'}
-    {var isList = $mode === 'list'}
+    {var $isMain = $mode === 'faq'}
+    {var $isNew  = $mode === 'new'}
+    {var $isList = $mode === 'list'}
 
     {if $thisUser}
         <div class="tabs">

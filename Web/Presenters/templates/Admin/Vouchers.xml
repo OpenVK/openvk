@@ -50,7 +50,7 @@
     <br/>
     
     <div align="right">
-        {var isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + sizeof($vouchers)) < $count}
+        {var $isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + sizeof($vouchers)) < $count}
         <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">
             «
         </a>

@@ -10,9 +10,9 @@
 
 {block content}
 
-    {var isMain       = $mode === 'main'}
-    {var isBan        = $mode === 'ban'}
-    {var isFollowers  = $mode === 'followers'}
+    {var $isMain       = $mode === 'main'}
+    {var $isBan        = $mode === 'ban'}
+    {var $isFollowers  = $mode === 'followers'}
 
     {if $isMain}
         <div class="aui-tabs horizontal-tabs">
@@ -106,7 +106,7 @@
     {/if}
 
     {if $isFollowers}
-        {var followers  = iterator_to_array($followers)}
+        {var $followers  = iterator_to_array($followers)}
 
         <div class="aui-tabs horizontal-tabs">
             <nav class="aui-navgroup aui-navgroup-horizontal">
@@ -130,7 +130,7 @@
                                     <img src="{$follower->getAvatarUrl()}" alt="{$follower->getCanonicalName()}" role="presentation" />
                                 </span>
                             </span>
-
+                          
                             <a href="{$follower->getURL()}">{$follower->getCanonicalName()}</a>
 
                             <span n:if="$follower->isBanned()" class="aui-lozenge aui-lozenge-subtle aui-lozenge-removed">{_admin_banned}</span>
@@ -147,7 +147,7 @@
                 </tbody>
             </table>
             <div align="right">
-                {var isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + $amount) < $count}
+                {var $isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + $amount) < $count}
 
                 <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">«</a>
                 <a n:if="$isLast" class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">»</a>

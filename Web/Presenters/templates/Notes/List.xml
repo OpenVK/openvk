@@ -1,6 +1,6 @@
 {extends "../@listView.xml"}
-{var iterator = iterator_to_array($notes)}
-{var page     = $paginatorConf->page}
+{var $iterator = iterator_to_array($notes)}
+{var $page     = $paginatorConf->page}
 
 {block title}{_notes}{/block}
 
@@ -62,7 +62,7 @@
 
     <div class="container_gray" style="background: white; border-top: none;">
 
-        {var data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+        {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
         {if sizeof($data) > 0}
 
         <div n:foreach="$data as $dat">

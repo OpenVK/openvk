@@ -303,8 +303,6 @@ final class WallPresenter extends OpenVKPresenter
     
     function renderPost(int $wall, int $post_id): void
     {
-        $this->assertUserLoggedIn();
-        
         $post = $this->posts->getPostById($wall, $post_id);
         if(!$post || $post->isDeleted())
             $this->notFound();

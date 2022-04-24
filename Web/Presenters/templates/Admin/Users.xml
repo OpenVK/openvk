@@ -1,5 +1,5 @@
 {extends "@layout.xml"}
-{var search = true}
+{var $search = true}
 
 {block title}
     {_admin_user_search}
@@ -14,9 +14,9 @@
 {/block}
 
 {block content}
-    {var users  = iterator_to_array($users)}
-    {var amount = sizeof($users)}
-
+    {var $users  = iterator_to_array($users)}
+    {var $amount = sizeof($users)}
+    
     <table class="aui aui-table-list">
         <thead>
             <tr>
@@ -60,7 +60,7 @@
     </table>
     <br/>
     <div align="right">
-        {var isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + $amount) < $count}
+        {var $isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + $amount) < $count}
 
         <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">«</a>
         <a n:if="$isLast" class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">»</a>

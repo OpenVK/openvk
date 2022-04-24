@@ -14,6 +14,8 @@ class Video extends Media
     
     protected $tableName     = "videos";
     protected $fileExtension = "ogv";
+
+    protected $processingPlaceholder = "video/rendering";
     
     protected function saveFile(string $filename, string $hash): bool
     {
@@ -37,7 +39,7 @@ class Video extends Media
                 throw new \DomainException("$filename does not contain any meaningful video streams");
         
         try {
-            if(!is_dir($dirId = $this->pathFromHash($hash)))
+            if(!is_dir($dirId = dirname($this->pathFromHash($hash))))
                 mkdir($dirId);
             
             $dir = $this->getBaseDir();
@@ -53,7 +55,23 @@ class Video extends Media
         usleep(200100);
         return true;
     }
-    
+
+    protected function checkIfFileIsProcessed(): bool
+    {
+        if($this->getType() != Video::TYPE_DIRECT)
+            return true;
+
+        if(!file_exists($this->getFileName())) {
+            if((time() - $this->getRecord()->last_checked) > 3600) {
+                // TODO notify that video processor is probably dead
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
     function getName(): string
     {
         return $this->getRecord()->name;
@@ -83,6 +101,9 @@ class Video extends Media
     function getThumbnailURL(): string
     {
         if($this->getType() === Video::TYPE_DIRECT) {
+            if(!$this->isProcessed())
+                return "/assets/packages/static/openvk/video/rendering.apng";
+
             return preg_replace("%\.[A-z]++$%", ".gif", $this->getURL());
         } else {
             return $this->getVideoDriver()->getThumbnailURL();
