@@ -3,7 +3,7 @@
 {block title}{$note->getName()}{/block}
 
 {block header}
-    {var author = $note->getOwner()}
+    {var $author = $note->getOwner()}
     <a href="{$author->getURL()}">{$author->getCanonicalName()}</a>
     »
     <a href="/notes{$author->getId()}">{_notes}</a>
@@ -12,7 +12,7 @@
 {/block}
 
 {block content}
-    {var author = $note->getOwner()}
+    {var $author = $note->getOwner()}
     <style>
         #userContent img {
             max-width: 245pt;

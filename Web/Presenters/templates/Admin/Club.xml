@@ -11,9 +11,9 @@
 
 {block content}
 
-{var isMain       = $mode === 'main'}
-{var isBan        = $mode === 'ban'}
-{var isFollowers       = $mode === 'followers'}
+{var $isMain       = $mode === 'main'}
+{var $isBan        = $mode === 'ban'}
+{var $isFollowers  = $mode === 'followers'}
 
 {if $isMain}
 
@@ -134,7 +134,7 @@
 
 <!-- This followers block -->
 
-{var followers  = iterator_to_array($followers)}
+{var $followers  = iterator_to_array($followers)}
 
 <div class="aui-tabs horizontal-tabs">
 <nav class="aui-navgroup aui-navgroup-horizontal">
@@ -177,7 +177,7 @@
         </tbody>
     </table>
     <div align="right">
-        {var isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + $amount) < $count}
+        {var $isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + $amount) < $count}
         
         <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">
             ⭁ туда

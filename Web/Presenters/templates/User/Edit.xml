@@ -7,10 +7,10 @@
 
 {block content}
 
-{var isMain      = $mode === 'main'}
-{var isContacts  = $mode === 'contacts'}
-{var isInterests = $mode === 'interests'}
-{var isAvatar    = $mode === 'avatar'}
+{var $isMain      = $mode === 'main'}
+{var $isContacts  = $mode === 'contacts'}
+{var $isInterests = $mode === 'interests'}
+{var $isAvatar    = $mode === 'avatar'}
     <div n:if="$user->hasPendingNumberChange()" class="msg">
         <b>Подтверждение номера телефона</b><br/>
         Введите код для подтверждения смены номера: <a href="/edit/verify_phone">ввести код</a>.

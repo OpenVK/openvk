@@ -3,7 +3,7 @@
     <head>
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
         <style>
-            {var css = file_get_contents(OPENVK_ROOT . "/Web/static/js/node_modules/@atlassian/aui/dist/aui/aui-prototyping.css")}
+            {var $css = file_get_contents(OPENVK_ROOT . "/Web/static/js/node_modules/@atlassian/aui/dist/aui/aui-prototyping.css")}
             {str_replace("fonts/", "/assets/packages/static/openvk/js/node_modules/@atlassian/aui/dist/aui/fonts/", $css)|noescape}
         </style>
         <title>{include title} - Админ-панель {=OPENVK_ROOT_CONF['openvk']['appearance']['name']}</title>
@@ -131,7 +131,7 @@
                     </div>
                     <section class="aui-page-panel-content">
                         {ifset $flashMessage}
-                            {var type = ["err" => "error", "warn" => "warning", "info" => "basic", "succ" => "success"][$flashMessage->type]}
+                            {var $type = ["err" => "error", "warn" => "warning", "info" => "basic", "succ" => "success"][$flashMessage->type]}
                             <div class="aui-message aui-message-{$type}" style="margin-bottom: 15px;">
                                 <p class="title">
                                     <strong>{$flashMessage->title}</strong>
