@@ -23,7 +23,7 @@ final class AdminPresenter extends OpenVKPresenter
     private function warnIfNoCommerce(): void
     {
         if(!OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"])
-            $this->flash("warn", "Коммерция отключена системным администратором", "Настройки ваучеров и подарков будут сохранены, но не будут оказывать никакого влияния.");
+            $this->flash("warn", tr("admin_commerce_disabled"), tr("admin_commerce_disabled_desc"));
     }
     
     private function searchResults(object $repo, &$count)
