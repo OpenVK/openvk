@@ -894,6 +894,7 @@
 "admin_name" = "Имя";
 "admin_title" = "Название";
 "admin_description" = "Описание";
+"admin_first_known_ip" = "Первый IP";
 "admin_shortcode" = "Короткий адрес";
 "admin_verification" = "Верификация";
 "admin_banreason" = "Причина блокировки";
@@ -936,6 +937,15 @@
 "admin_giftsets_title" = "Внутреннее название набора, которое будет использоваться, если не удаётся найти название на языке пользователя.";
 "admin_giftsets_description" = "Внутреннее описание набора, которое будет использоваться, если не удаётся найти название на языке пользователя.";
 "admin_price_free" = "бесплатный";
+"admin_voucher_rating" = "Рейтинг";
+"admin_voucher_serial" = "Серийный номер";
+"admin_voucher_serial_desc" = "Номер состоит из 24 символов. Если формат неправильный или поле не заполнено, будет назначен автоматически.";
+"admin_voucher_coins" = "Количество голосов";
+"admin_voucher_rating" = "Количество рейтинга";
+"admin_voucher_usages_desc" = "Количество аккаунтов, которые могут использовать ваучер. Если написать -1, будет бесконечность.";
+"admin_voucher_status" = "Состояние";
+"admin_voucher_status_opened" = "активен";
+"admin_voucher_status_closed" = "закончился";
 
 "admin_settings" = "Настройки";
 "admin_settings_tuning" = "Общее";
@@ -947,6 +957,9 @@
 "admin_about" = "Об OpenVK";
 "admin_about_version" = "Версия";
 "admin_about_instance" = "Инстанция";
+
+"admin_commerce_disabled" = "Коммерция отключена системным администратором";
+"admin_commerce_disabled_desc" = "Настройки ваучеров и подарков будут сохранены, но не будут оказывать никакого влияния.";
 
 /* Paginator (deprecated) */
 

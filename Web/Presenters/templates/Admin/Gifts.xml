@@ -72,7 +72,8 @@
 
     <div align="right">
         {var $isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + sizeof($gifts)) < $count}
-        <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">«</a>
-        <a n:if="$isLast" class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">»</a>
+
+        <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">&laquo;</a>
+        <a n:if="$isLast" class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">&raquo;</a>
     </div>
 {/block}
