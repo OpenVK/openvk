@@ -260,19 +260,15 @@ final class WallPresenter extends OpenVKPresenter
                     
                     $photos[] = Photo::fastMake($this->user->id, $this->postParam("text"), $file, $album, $anon);
                 }
-            } catch(\DomainException $ex) {
-                $this->flashFail("err", "Не удалось опубликовать пост", "Файл медиаконтента повреждён.");
-            } catch(ISE $ex) {
-                $this->flashFail("err", "Не удалось опубликовать пост", "Файл медиаконтента повреждён или слишком велик.");
-            }
+			} catch(\DomainException $ex) {
+	            $this->flashFail("err", tr("failed_to_publish_post"), tr("media_file_corrupted"));
+	        } catch(ISE $ex) {
+	            $this->flashFail("err", tr("failed_to_publish_post"), tr("media_file_corrupted_or_too_large"));
+	        }
             
             if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK) {
                 $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"], $anon);
             }
-        } catch(\DomainException $ex) {
-            $this->flashFail("err", tr("failed_to_publish_post"), tr("media_file_corrupted"));
-        } catch(ISE $ex) {
-            $this->flashFail("err", tr("failed_to_publish_post"), tr("media_file_corrupted_or_too_large"));
         }
         
         if(empty($this->postParam("text")) && !$photo && !$video)
