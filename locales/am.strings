@@ -9,6 +9,7 @@
 
 "home" = "Գլխավոր";
 "welcome" = "Բարի գալուստ";
+"to_top" = "Վերև";
 
 /* Login */
 
@@ -381,7 +382,6 @@
 
 "left_menu_donate" = "Աջակցել";
 
-
 "footer_about_instance" = "հոսքի մասին";
 "footer_blog" = "բլոգ";
 "footer_help" = "օգնություն";
@@ -410,6 +410,8 @@
 "style" = "Ոճ";
 
 "default" = "Սովորական";
+
+"arbitrary_avatars" = "Կամայական";
 "cut" = "Կտրվածք";
 "round_avatars" = "Կլոր ավատար";
 
@@ -519,6 +521,8 @@
 "videos_many" = "$1 տեսանյութ";
 "videos_other" = "$1 տեսանյութ";
 
+"view_video" = "Դիտում";
+
 /* Notifications */
 
 "feedback" = "Հետադարձ կապ";
@@ -624,6 +628,21 @@
 "receiver_not_found" = "Ստացողը չի գտնվել։";
 "you_dont_have_enough_points" = "Դուք չունե՛ք բավական ձայն։";
 
+"increase_rating" = "Բարձրացնել վարկանիշը";
+"increase_rating_button" = "Բարձրացնել";
+"to_whom" = "Ում";
+"increase_by" = "Բարձրացնել";
+"price" = "Արժողություն";
+
+"you_have_unused_votes" = "Ձեր մոտ $1 չօգտագործված ձայն կա հաշվի վրա։";
+"apply_voucher" = "Կիրառել վաուչեր";
+
+"failed_to_increase_rating" = "Չհաջողվե՛ց բարձրացնել վարկանիշը";
+"rating_increase_successful" = "Դուք հաջողությամբ բարձրացրեցիք Ձեր վարկանիշը <b><a href=\"$1\">$2</a></b> <b>$3%</b>-ով։";
+"negative_rating_value" = "Կներե՛ք, մենք չենք կարող գողանալ ուրիշի վարկանիշը։";
+
+"increased_your_rating_by" = "բարձրացրել է վարկանիշը";
+
 /* Gifts */
 
 "gift" = "Նվեր";
@@ -703,6 +722,9 @@
 "ticket_changed" = "Տոմսը փոփոխված է";
 "ticket_changed_comment" = "Փոփոխությունները ուժի մեջ կմտնեն մի քանի վայրկյանից։";
 
+"banned_in_support_1" = "Կներե՛ք, <b>$1</b>, բայց հիմա Ձեզ թույլատրված չէ դիմումներ ստեղծել։";
+"banned_in_support_2" = "Դրա պատճառաբանությունը սա է․ <b>$1</b>։ Ցավո՛ք, այդ հնարավորությունը մենք Ձեզնից վերցրել ենք առհավետ։";
+
 /* Invite */
 
 "invite" = "Հրավիրել";
@@ -711,9 +733,9 @@
 
 /* Banned */
 
-"banned_title" = "Բլոկավորված եք";
-"banned_header" = "Ձեզ կասեցրել է կառլենի անհաջող բոցը։";
-"banned_alt" = "Օգտատերը բլոկավորված է";
+"banned_title" = "Արգելափակված եք";
+"banned_header" = "Ձեզ կասեցրել է կարլենի անհաջող բոցը։";
+"banned_alt" = "Օգտատերը արգելափակված է";
 "banned_1" = "Կներե՛ք, <b>$1</b>, բայց Դուք կասեցված եք։";
 "banned_2" = "Պատճառը հետևյալն է․ <b>$1</b>. Ափսոս, բայց մենք ստիպված Ձեզ հավերժ ենք կասեցրել;";
 "banned_3" = "Դուք դեռ կարող եք <a href=\"/support?act=new\">գրել նամակ աջակցության ծառայությանը</a>, եթե համարում եք որ դա սխալմունք է, կամ էլ կարող եք <a href=\"/logout?hash=$1\">դուրս գալ</a>։";
@@ -835,6 +857,7 @@
 "captcha_error" = "Սխալ են գրված սիմվոլները";
 "captcha_error_comment" = "Խնդրում ենք համոզվել, որ ճիշտ եք ներմուծել կապտչայի սիմվոլները։";
 
+
 /* Admin actions */
 
 "login_as" = "Մտնել ինչպես $1";
@@ -843,7 +866,84 @@
 "ban_user_action" = "Բլոկավորել օգտվողին";
 "warn_user_action" = "Զգուշացնել օգտվողին";
 
-/* Paginator (subject to delete) */
+
+/* Admin panel */
+
+"admin" = "Ադմին-վահանակ";
+
+"admin_ownerid" = "Տիրոջ ID";
+"admin_author" = "Հեղինակ";
+"admin_name" = "Անուն";
+"admin_title" = "Անվանում";
+"admin_description" = "Նկարագրություն";
+"admin_first_known_ip" = "Առաջին IP";
+"admin_shortcode" = "Կարճ հասցե";
+"admin_verification" = "Վերիֆիկացիա";
+"admin_banreason" = "Արգելափակման պատճառ";
+"admin_banned" = "արգելափակված է";
+"admin_actions" = "Գործողություններ";
+"admin_image" = "Նկար";
+"admin_image_replace" = "Փոխե՞լ նկարը";
+"admin_uses" = "Օգտագործումներ";
+"admin_uses_reset" = "Զրոյացնե՞լ օգտագործումների քանակը";
+"admin_limits" = "Սահմանափակումներ";
+"admin_limits_reset" = "Զրոյացնել օգտագործումների քանակը";
+"admin_open" = "Բացել";
+"admin_loginas" = "Մուտք գործել ինչպես...";
+"admin_commonsettings" = "Ընդհանուր կարգավորումներ";
+"admin_langsettings" = "Լեզվից կախված կարգավորումներ";
+
+"admin_tab_main" = "Գլխավոր";
+"admin_tab_ban" = "Բլոկավորում";
+"admin_tab_followers" = "Մասնակիցներ";
+
+"admin_overview" = "Դիտում";
+"admin_overview_summary" = "Ամփոփում";
+
+"admin_content" = "Օգտատիրային կոնտենտ";
+"admin_user_search" = "Օգտատերերի որոնում";
+"admin_user_online" = "Օնլայն վիճակ";
+"admin_user_online_default" = "Ըստ նախնականի";
+"admin_user_online_incognito" = "Ինկոգնիտո";
+"admin_user_online_deceased" = "Հանգուցյալ";
+"admin_club_search" = "Խմբերի որոնում";
+"admin_club_excludeglobalfeed" = "Չ՛ցույց տալ գլոբալ ժապավենում";
+
+"admin_services" = "Վճարովի ծառայություններ";
+"admin_newgift" = "Նոր նվեր";
+"admin_price" = "Գին";
+"admin_giftset" = "Նվերների հավաքախու";
+"admin_giftsets" = "Նվերների հավաքախուներ";
+"admin_giftsets_none" = "Նվերների հավաքածու չկա։ Ստեղծե՛ք հավաքածու նվեր ավելացնելու համար։";
+"admin_giftsets_create" = "Ստեղծել նվերների հավաքածու";
+"admin_giftsets_title" = "Հավաքածույի ներքին անվանում, եթե չի հաջողվում որոնել այն օգտատիրոջ լեզվով";
+"admin_giftsets_description" = "Հավաքածույի ներքին նկարագրություն, եթե չի հաջողվում որոնել այն օգտատիրոջ լեզվով";
+"admin_price_free" = "անվճար";
+"admin_voucher_rating" = "Վարկանիշ";
+"admin_voucher_serial" = "Սերիական համար";
+"admin_voucher_serial_desc" = "Համարը բաղկացած է 24 նշից։ Եթե Դուք այն սխալ գրեք, այն կտրվի ավտոմատ։";
+"admin_voucher_coins" = "Ձայների քանակ";
+"admin_voucher_rating" = "Վարկանշի քանակ";
+"admin_voucher_usages_desc" = "Վաուչերը օգտագործող ակկաունտների քանակ։ Եթե գրեք -1, ապա այն կլինի օգտագործել անվերջ։";
+"admin_voucher_status" = "Կարգավիճակ";
+"admin_voucher_status_opened" = "ակտիվ է";
+"admin_voucher_status_closed" = "վերջացել է";
+
+"admin_settings" = "Կարգավորումներ";
+"admin_settings_tuning" = "Ընդհանուր";
+"admin_settings_appearance" = "Արտաքին տեսք";
+"admin_settings_security" = "Անվտանգություն";
+"admin_settings_integrations" = "Ինտեգրացիաներ";
+"admin_settings_system" = "Համակարգ";
+
+"admin_about" = "OpenVK-ի մասին";
+"admin_about_version" = "Վերսիա";
+"admin_about_instance" = "Հոսք";
+
+"admin_commerce_disabled" = "Коммерция отключена системным администратором";
+"admin_commerce_disabled_desc" = "Настройки ваучеров и подарков будут сохранены, но не будут оказывать никакого влияния.";
+
+/* Paginator (deprecated) */
 
 "paginator_back" = "Հետ";
 "paginator_page" = "$1 էջ";
@@ -857,6 +957,8 @@
 "rules" = "Կանոններ";
 "most_popular_groups" = "Ամենահայտնի խմբերը";
 "on_this_instance_are" = "Այս հոսքում․";
+"about_links" = "Հղումներ";
+"instance_links" = "Հոսքերի հղումներ․";
 
 "about_users_one" = "<b>Մեկ</b> օգտատեր";
 "about_users_few" = "<b>$1</b> օգտատեր";
