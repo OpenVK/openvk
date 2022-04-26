@@ -629,7 +629,23 @@ h4 {
 }
 
 .post-content .attachments_b {
-    margin-top: 8px;
+	margin-top: 8px;
+	display: grid;
+	grid-gap: 2px;
+	height: 100%;
+	max-height: 300px;
+	overflow: hidden;
+}
+
+.post-content .attachments_b > div {
+    min-width: 0;
+    min-height: 0;
+}
+
+.post-content .attachments_b > div a img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
 }
 
 .attachment .post {

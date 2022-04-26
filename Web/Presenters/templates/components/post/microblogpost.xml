@@ -7,7 +7,7 @@
 <table border="0" style="font-size: 11px;" n:class="post, !$compact ? post-divider, $post->isExplicit() ? post-nsfw">
     <tbody>
         <tr>
-            <td width="54" valign="top">
+            <td width="{ifset $compact}27{else}54{/ifset}" style="{ifset $compact}display: block;{/ifset}" valign="top">
                 <a href="{$author->getURL()}">
                     <img src="{$author->getAvatarURL('miniscule')}" width="{ifset $compact}25{else}50{/ifset}" {ifset $compact}class="cCompactAvatars"{/ifset} />
                     <span n:if="!$post->isPostedOnBehalfOfGroup() && !$compact && $author->isOnline()" class="post-online">{_online}</span>
