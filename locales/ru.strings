@@ -202,15 +202,27 @@
 "friends_reject" = "Отменить заявку";
 "friends_accept" = "Принять заявку";
 "send_message" = "Отправить сообщение";
-"incoming_req" = "Подписчики";
-"outcoming_req" = "Заявки";
+"incoming_req" = "Входящие";
+"outcoming_req" = "Исходящие";
 "req" = "Заявки";
 
-"firends_zero" = "Ни одного друга";
+"req_zero" = "Не найдено ни одной заявки...";
+"req_one" = "Найдена $1 заявка";
+"req_few" = "Найдено $1 заявки";
+"req_many" = "Найдено $1 заявки";
+"req_other" = "Найдено $1 заявок";
+
+"friends_zero" = "Ни одного друга";
 "friends_one" = "$1 друг";
 "friends_few" = "$1 друга";
 "friends_many" = "$1 друзей";
 "friends_other" = "$1 друзей";
+
+"friends_list_zero" = "У Вас пока нет друзей";
+"friends_list_one" = "У Вас $1 друг";
+"friends_list_few" = "У Вас $1 друга";
+"friends_list_many" = "У Вас $1 друзей";
+"friends_list_other" = "У Вас $1 друзей";
 
 "followers_zero" = "Ни одного подписчика";
 "followers_one" = "$1 подписчик";
@@ -326,6 +338,12 @@
 "albums_many" = "$1 альбомов";
 "albums_other" = "$1 альбомов";
 
+"albums_list_zero" = "У Вас нет ни одного альбома";
+"albums_list_one" = "У Вас один альбом";
+"albums_list_few" = "У Вас $1 альбома";
+"albums_list_many" = "У Вас $1 альбомов";
+"albums_list_other" = "У Вас $1 альбомов";
+
 /* Notes */
 
 "notes" = "Заметки";
@@ -410,12 +428,14 @@
 "new_password" = "Новый пароль";
 "repeat_password" = "Повторите пароль";
 
-"avatars_style" = "Отображение аватар";
+"avatars_style" = "Отображение аватаров";
 "style" = "Стиль";
 
-"default" = "По умолчанию";
-"cut" = "Обрезка";
-"round_avatars" = "Круглый аватар";
+"default" = "по умолчанию";
+
+"arbitrary_avatars" = "Произвольные";
+"cut" = "Квадратные";
+"round_avatars" = "Круглые";
 
 "apply_style_for_this_device" = "Применить стиль только для этого устройства";
 
@@ -523,6 +543,8 @@
 "videos_many" = "$1 видеозаписей";
 "videos_other" = "$1 видеозаписей";
 
+"view_video" = "Просмотр";
+
 /* Notifications */
 
 "feedback" = "Ответы";
@@ -566,6 +588,8 @@
 "points" = "Голоса";
 "points_count" = "голосов";
 "on_your_account" = "на вашем счету";
+"top_up_your_account" = "Пополнить баланс";
+"you_still_have_x_points" = "У Вас <b>$1</b> неиспользованных голосов.";
 
 "vouchers" = "Ваучеры";
 "have_voucher" = "Есть ваучер";
@@ -703,6 +727,9 @@
 "ticket_changed" = "Тикет изменён";
 "ticket_changed_comment" = "Изменения вступят силу через несколько секунд.";
 
+"banned_in_support_1" = "Извините, <b>$1</b>, но теперь вам нельзя создавать обращения.";
+"banned_in_support_2" = "А причина этому проста: <b>$1</b>. К сожалению, на этот раз нам пришлось отобрать у вас эту возможность навсегда.";
+
 /* Invite */
 
 "invite" = "Пригласить";
@@ -782,7 +809,7 @@
 "information_-2" = "Вход выполнен успешно";
 
 "no_data" = "Нет данных";
-"no_data_description" = "В этом представлении отсутствуют данные.";
+"no_data_description" = "Тут ничего нет... Пока...";
 
 "error" = "Ошибка";
 "error_shorturl" = "Данный короткий адрес уже занят.";
@@ -792,6 +819,7 @@
 "error_new_password" = "Новые пароли не совпадает";
 "error_shorturl_incorrect" = "Короткий адрес имеет некорректный формат.";
 "error_repost_fail" = "Не удалось поделиться записью";
+"error_data_too_big" = "Аттрибут '$1' не может быть длиннее $2 $3";
 
 "forbidden" = "Ошибка доступа";
 "forbidden_comment" = "Настройки приватности этого пользователя не разрешают вам смотреть на его страницу.";
@@ -821,6 +849,7 @@
 "profile_changed" = "Профиль изменён";
 "profile_changed_comment" = "Ваш активный профиль был изменён.";
 "profile_not_found" = "Пользователь не найден.";
+"profile_not_found_text" = "Страница удалена либо ещё не создана.";
 
 "suspicious_registration_attempt" = "Подозрительная попытка регистрации";
 "suspicious_registration_attempt_comment" = "Вы пытались зарегистрироваться из подозрительного места.";
@@ -837,13 +866,100 @@
 "captcha_error" = "Неправильно введены символы";
 "captcha_error_comment" = "Пожалуйста, убедитесь, что вы правильно заполнили поле с капчей.";
 
+"failed_to_publish_post" = "Не удалось опубликовать пост";
+"failed_to_delete_post" = "Не удалось удалить пост";
+
+"media_file_corrupted" = "Файл медиаконтента повреждён.";
+"media_file_corrupted_or_too_large" = "Файл медиаконтента повреждён или слишком велик.";
+"post_is_empty_or_too_big" = "Пост пустой или слишком большой.";
+"post_is_too_big" = "Пост слишком большой.";
+
 /* Admin actions */
 
 "login_as" = "Войти как $1";
 "manage_user_action" = "Управление пользователем";
 "manage_group_action" = "Управление группой";
 "ban_user_action" = "Заблокировать пользователя";
+"unban_user_action" = "Разблокировать пользователя";
 "warn_user_action" = "Предупредить пользователя";
+"ban_in_support_user_action" = "Заблокировать в поддержке";
+"unban_in_support_user_action" = "Разблокировать в поддержке";
+
+/* Admin panel */
+
+"admin" = "Админ-панель";
+
+"admin_ownerid" = "ID владельца";
+"admin_author" = "Автор";
+"admin_name" = "Имя";
+"admin_title" = "Название";
+"admin_description" = "Описание";
+"admin_first_known_ip" = "Первый IP";
+"admin_shortcode" = "Короткий адрес";
+"admin_verification" = "Верификация";
+"admin_banreason" = "Причина блокировки";
+"admin_banned" = "заблокирован";
+"admin_actions" = "Действия";
+"admin_image" = "Изображение";
+"admin_image_replace" = "Заменить изображение?";
+"admin_uses" = "Использований";
+"admin_uses_reset" = "Сбросить количество использований?";
+"admin_limits" = "Ограничения";
+"admin_limits_reset" = "Сбросить количество ограничений";
+"admin_open" = "Открыть";
+"admin_loginas" = "Войти как...";
+"admin_commonsettings" = "Общие настройки";
+"admin_langsettings" = "Языко-зависимые настройки";
+
+"admin_tab_main" = "Главное";
+"admin_tab_ban" = "Блокировка";
+"admin_tab_followers" = "Участники";
+
+"admin_overview" = "Обзор";
+"admin_overview_summary" = "Сводка";
+
+"admin_content" = "Пользовательский контент";
+"admin_user_search" = "Поиск пользователей";
+"admin_user_online" = "Онлайн статус";
+"admin_user_online_default" = "По-умолчанию";
+"admin_user_online_incognito" = "Инкогнито";
+"admin_user_online_deceased" = "Покойник";
+"admin_club_search" = "Поиск групп";
+"admin_club_excludeglobalfeed" = "Не отображать записи в глобальной ленте";
+
+"admin_services" = "Платные услуги";
+"admin_newgift" = "Новый подарок";
+"admin_price" = "Цена";
+"admin_giftset" = "Набор подарков";
+"admin_giftsets" = "Наборы подарков";
+"admin_giftsets_none" = "Нет наборов подарков. Создайте набор, чтобы создать подарок.";
+"admin_giftsets_create" = "Создать набор подарков";
+"admin_giftsets_title" = "Внутреннее название набора, которое будет использоваться, если не удаётся найти название на языке пользователя.";
+"admin_giftsets_description" = "Внутреннее описание набора, которое будет использоваться, если не удаётся найти название на языке пользователя.";
+"admin_price_free" = "бесплатный";
+"admin_voucher_rating" = "Рейтинг";
+"admin_voucher_serial" = "Серийный номер";
+"admin_voucher_serial_desc" = "Номер состоит из 24 символов. Если формат неправильный или поле не заполнено, будет назначен автоматически.";
+"admin_voucher_coins" = "Количество голосов";
+"admin_voucher_rating" = "Количество рейтинга";
+"admin_voucher_usages_desc" = "Количество аккаунтов, которые могут использовать ваучер. Если написать -1, будет бесконечность.";
+"admin_voucher_status" = "Состояние";
+"admin_voucher_status_opened" = "активен";
+"admin_voucher_status_closed" = "закончился";
+
+"admin_settings" = "Настройки";
+"admin_settings_tuning" = "Общее";
+"admin_settings_appearance" = "Внешний вид";
+"admin_settings_security" = "Безопасность";
+"admin_settings_integrations" = "Интеграции";
+"admin_settings_system" = "Система";
+
+"admin_about" = "Об OpenVK";
+"admin_about_version" = "Версия";
+"admin_about_instance" = "Инстанция";
+
+"admin_commerce_disabled" = "Коммерция отключена системным администратором";
+"admin_commerce_disabled_desc" = "Настройки ваучеров и подарков будут сохранены, но не будут оказывать никакого влияния.";
 
 /* Paginator (deprecated) */
 
@@ -859,6 +975,8 @@
 "rules" = "Правила";
 "most_popular_groups" = "Самые популярные группы";
 "on_this_instance_are" = "На этой инстанции:";
+"about_links" = "Ссылки";
+"instance_links" = "Ссылки инстанции:";
 
 "about_users_one" = "<b>1</b> пользователь";
 "about_users_few" = "<b>$1</b> пользователя";

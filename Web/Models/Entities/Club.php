@@ -38,12 +38,12 @@ class Club extends RowModel
         return iterator_to_array($avPhotos)[0] ?? NULL;
     }
     
-    function getAvatarUrl(): string
+    function getAvatarUrl(string $size = "miniscule"): string
     {
         $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
         $avPhoto   = $this->getAvatarPhoto();
         
-        return is_null($avPhoto) ? "$serverUrl/assets/packages/static/openvk/img/camera_200.png" : $avPhoto->getURL();
+        return is_null($avPhoto) ? "$serverUrl/assets/packages/static/openvk/img/camera_200.png" : $avPhoto->getURLBySizeId($size);
     }
     
     function getAvatarLink(): string
@@ -346,6 +346,11 @@ class Club extends RowModel
 	{
 		return $this->getRecord()->website;
 	}
+
+    function getAlert(): ?string
+    {
+        return $this->getRecord()->alert;
+    }
     
     use Traits\TSubscribable;
 }

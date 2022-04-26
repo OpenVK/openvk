@@ -1,7 +1,7 @@
 {extends "@layout.xml"}
 
 {block title}
-    Наборы подарков
+    {_admin_giftsets}
 {/block}
 
 {block headingWrap}
@@ -9,7 +9,7 @@
         {_create}
     </a>
     
-    <h1>Наборы подарков</h1>
+    <h1>{_admin_giftsets}</h1>
 {/block}
 
 {block content}
@@ -27,12 +27,11 @@
                     </td>
                     <td style="vertical-align: middle; text-align: right;">
                         <a class="aui-button aui-button-primary" href="/admin/gifts/{$cat->getSlug()}.{$cat->getId()}.meta">
-                            <span class="aui-icon aui-icon-small aui-iconfont-new-edit">Редактировать</span>
+                            <span class="aui-icon aui-icon-small aui-iconfont-new-edit">{_edit}</span>
                         </a>
                         
                         <a class="aui-button" href="/admin/gifts/{$cat->getSlug()}.{$cat->getId()}/">
-                            <span class="aui-icon aui-icon-small aui-iconfont-gallery">Открыть</span>
-                            Открыть
+                            <span class="aui-icon aui-icon-small aui-iconfont-gallery">{_admin_open}</span>
                         </a>
                     </td>
                 </tr>
@@ -40,17 +39,13 @@
         </table>
     {else}
         <center>
-            <p>Наборов подарков нету. Чтобы создать подарок, создайте набор.</p>
+            <p>{_admin_giftsets_none}</p>
         </center>
     {/if}
 
     <div align="right">
-        {var isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + sizeof($categories)) < $count}
-        <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?act={$act}&p={($_GET['p'] ?? 1) - 1}">
-            ⭁ туда
-        </a>
-        <a n:if="$isLast" class="aui-button" href="?act={$act}&p={($_GET['p'] ?? 1) + 1}">
-            ⭇  сюда
-        </a>
+        {var $isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + sizeof($categories)) < $count}
+        <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?act={$act}&p={($_GET['p'] ?? 1) - 1}">&laquo;</a>
+        <a n:if="$isLast" class="aui-button" href="?act={$act}&p={($_GET['p'] ?? 1) + 1}">&raquo;</a>
     </div>
 {/block}

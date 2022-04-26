@@ -199,13 +199,21 @@
 "friends_reject" = "Reject request";
 "friends_accept" = "Accept request";
 "send_message" = "Send a message";
-"incoming_req" = "Subscribers";
-"outcoming_req" = "Requests";
+"incoming_req" = "Pending";
+"outcoming_req" = "Outgoing";
 "req" = "Requests";
 
-"firends_zero" = "No friends";
+"req_zero" = "No requests were found...";
+"req_one" = "Found $1 request";
+"req_other" = "Found $1 requests";
+
+"friends_zero" = "No friends";
 "friends_one" = "$1 friend";
 "friends_other" = "$1 friends";
+
+"friends_list_zero" = "You have no friends yet";
+"friends_list_one" = "You have $1 friend";
+"friends_list_other" = "You have $1 friends";
 
 "followers_zero" = "No followers";
 "followers_one" = "$1 follower";
@@ -308,6 +316,10 @@
 "albums_one" = "$1 album";
 "albums_other" = "$1 albums";
 
+"albums_list_zero" = "You don't have any albums";
+"albums_list_one" = "You have one album";
+"albums_list_other" = "You have $1 albums";
+
 /* Notes */
 
 "notes" = "Notes";
@@ -393,9 +405,11 @@
 "avatars_style" = "Avatar style";
 "style" = "Style";
 
-"default" = "Default";
-"cut" = "Cut";
-"round_avatars" = "Round avatars";
+"default" = "default";
+
+"arbitrary_avatars" = "Arbitrary";
+"cut" = "Square";
+"round_avatars" = "Round";
 
 "apply_style_for_this_device" = "Apply style only for this device";
 
@@ -499,6 +513,8 @@
 "videos_one" = "$1 video";
 "videos_other" = "$1 videos";
 
+"view_video" = "View";
+
 /* Notifications */
 
 "feedback" = "Feedback";
@@ -542,6 +558,8 @@
 "points" = "Votes";
 "points_count" = "votes";
 "on_your_account" = "on your account";
+"top_up_your_account" = "Get more";
+"you_still_have_x_points" = "You have <b>$1</b> unused votes.";
 
 "vouchers" = "Vouchers";
 "have_voucher" = "Have voucher";
@@ -672,6 +690,9 @@
 "ticket_changed" = "Ticket changed";
 "ticket_changed_comment" = "The changes will take effect in a few seconds.";
 
+"banned_in_support_1" = "Sorry, <b>$1</b>, but now you can't create tickets.";
+"banned_in_support_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to take away this opportunity from you forever.";
+
 /* Invite */
 
 "invite" = "Invite";
@@ -745,7 +766,7 @@
 "information_-2" = "Login success";
 
 "no_data" = "No data";
-"no_data_description" = "There is no data.";
+"no_data_description" = "There is nothing here... yet...";
 
 "error" = "Error";
 "error_shorturl" = "This short address is already owned.";
@@ -755,9 +776,10 @@
 "error_new_password" = "New password does not match";
 "error_shorturl_incorrect" = "The short address has an incorrect format.";
 "error_repost_fail" = "Failed to share post";
+"error_data_too_big" = "Attribute '$1' must be at most $2 $3 long";
 
 "forbidden" = "Access error";
-"forbidden_comment" = "This user\'s privacy settings do not allow you to look at his page.";
+"forbidden_comment" = "This user's privacy settings do not allow you to look at his page.";
 
 "changes_saved" = "Changes saved";
 "changes_saved_comment" = "New data will appear on your page";
@@ -784,6 +806,7 @@
 "profile_changed" = "Profile changed";
 "profile_changed_comment" = "Your active profile has been changed.";
 "profile_not_found" = "User is not found.";
+"profile_not_found_text" = "This profile has either been deleted or not been created yet.";
 
 "suspicious_registration_attempt" = "Suspicious registration attempt";
 "suspicious_registration_attempt_comment" = "You tried to register from a suspicious location.";
@@ -800,13 +823,102 @@
 "captcha_error" = "Incorrect characters entered";
 "captcha_error_comment" = "Please make sure you fill in the captcha field correctly.";
 
+"failed_to_publish_post" = "Failed to publish post";
+"failed_to_delete_post" = "Failed to delete post";
+
+"media_file_corrupted" = "The media content file is corrupted.";
+"media_file_corrupted_or_too_large" = "The media content file is corrupted or too large.";
+"post_is_empty_or_too_big" = "The post is empty or too big.";
+"post_is_too_big" = "The post is too big.";
+
 /* Admin actions */
 
 "login_as" = "Login as $1";
 "manage_user_action" = "Manage user";
 "manage_group_action" = "Manage group";
 "ban_user_action" = "Ban user";
+"unban_user_action" = "Unban user";
 "warn_user_action" = "Warn user";
+"ban_in_support_user_action" = "Ban in support";
+"unban_in_support_user_action" = "Unban in support";
+
+/* Admin panel */
+
+"admin" = "Admin panel";
+
+"admin_ownerid" = "Owner ID";
+"admin_author" = "Author";
+"admin_name" = "Name";
+"admin_title" = "Title";
+"admin_description" = "Description";
+"admin_first_known_ip" = "First known IP";
+"admin_shortcode" = "Short code";
+"admin_verification" = "Verification";
+"admin_banreason" = "Ban reason";
+"admin_banned" = "banned";
+"admin_gender" = "Gender";
+"admin_registrationdate" = "Registration date";
+"admin_actions" = "Actions";
+"admin_image" = "Image";
+"admin_image_replace" = "Replace the image?";
+"admin_uses" = "Uses";
+"admin_uses_reset" = "Reset the number of uses?";
+"admin_limits" = "Limits";
+"admin_limits_reset" = "Reset the number of limits";
+"admin_open" = "Open";
+"admin_loginas" = "Login as...";
+"admin_commonsettings" = "Common settings";
+"admin_langsettings" = "Language-dependent settings";
+
+"admin_tab_main" = "General";
+"admin_tab_ban" = "Ban";
+"admin_tab_followers" = "Followers";
+
+"admin_overview" = "Overview";
+"admin_overview_summary" = "Summary";
+
+"admin_content" = "User-generated content";
+"admin_user_search" = "Search for users";
+"admin_user_online" = "Online status";
+"admin_user_online_default" = "Default";
+"admin_user_online_incognito" = "Incognito";
+"admin_user_online_deceased" = "Deceased";
+"admin_club_search" = "Search for groups";
+"admin_club_excludeglobalfeed" = "Do not display posts in the global feed";
+
+"admin_services" = "Paid services";
+"admin_newgift" = "New gift";
+"admin_price" = "Price";
+"admin_giftset" = "Gift set";
+"admin_giftsets" = "Gift sets";
+"admin_giftsets_none" = "There are no gift sets. Create a set to create a gift.";
+"admin_giftsets_create" = "Create a gift set";
+"admin_giftsets_title" = "The internal name of the set, which will be used if no name can be found in the user's language.";
+"admin_giftsets_description" = "The internal description of the set, which will be used if no name can be found in the user's language.";
+"admin_price_free" = "free";
+"admin_voucher_rating" = "Rating";
+"admin_voucher_serial" = "Serial number";
+"admin_voucher_serial_desc" = "The number consists of 24 characters. If the format is incorrect or the field is not filled in, it will be assigned automatically.";
+"admin_voucher_coins" = "Number of votes";
+"admin_voucher_rating" = "Number of rating";
+"admin_voucher_usages_desc" = "The number of accounts that can use the voucher. If you type -1, it will be infinity.";
+"admin_voucher_status" = "Status";
+"admin_voucher_status_opened" = "active";
+"admin_voucher_status_closed" = "closed";
+
+"admin_settings" = "Settings";
+"admin_settings_tuning" = "General";
+"admin_settings_appearance" = "Appearance";
+"admin_settings_security" = "Security";
+"admin_settings_integrations" = "Integrations";
+"admin_settings_system" = "System";
+
+"admin_about" = "About OpenVK";
+"admin_about_version" = "Version";
+"admin_about_instance" = "Instance";
+
+"admin_commerce_disabled" = "Commerce has been disabled by the system administrator";
+"admin_commerce_disabled_desc" = "The voucher and gift settings will be saved, but will have no effect.";
 
 /* Paginator (deprecated) */
 
@@ -822,6 +934,8 @@
 "rules" = "Rules";
 "most_popular_groups" = "Most popular groups";
 "on_this_instance_are" = "On this instance are:";
+"about_links" = "Links";
+"instance_links" = "Instance links:";
 
 "about_users_one" = "<b>1</b> user";
 "about_users_other" = "<b>$1</b> users";

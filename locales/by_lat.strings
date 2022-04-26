@@ -132,7 +132,7 @@
 "outcoming_req" = "Zajavy";
 "req" = "Zajavy";
 
-"firends_zero" = "Niama siabroŭ";
+"friends_zero" = "Niama siabroŭ";
 "friends_one" = "$1 siabar";
 "friends_few" = "$1 siabra";
 "friends_many" = "$1 siabroŭ";

@@ -3,7 +3,7 @@
 {block title}{_edit_note}{/block}
 
 {block header}
-    {var author = $note->getOwner()}
+    {var $author = $note->getOwner()}
     <a href="{$author->getURL()}">{$author->getCanonicalName()}</a>
     »
     <a href="/notes{$author->getId()}">{_notes}</a>

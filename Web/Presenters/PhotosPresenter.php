@@ -72,6 +72,8 @@ final class PhotosPresenter extends OpenVKPresenter
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             if(empty($this->postParam("name")))
                 $this->flashFail("err", tr("error"), tr("error_segmentation")); 
+            else if(strlen($this->postParam("name")) > 36)
+                $this->flashFail("err", tr("error"), tr("error_data_too_big", "name", 36, "bytes")); 
 
             $album = new Album;
             $album->setOwner(isset($club) ? $club->getId() * -1 : $this->user->id);
@@ -100,6 +102,9 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->template->album = $album;
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
+            if(strlen($this->postParam("name")) > 36)
+                $this->flashFail("err", tr("error"), tr("error_data_too_big", "name", 36, "bytes"));
+            
             $album->setName(empty($this->postParam("name")) ? $album->getName() : $this->postParam("name"));
             $album->setDescription(empty($this->postParam("desc")) ? NULL : $this->postParam("desc"));
             $album->setEdited(time());
@@ -276,6 +281,8 @@ final class PhotosPresenter extends OpenVKPresenter
         
         $photo->isolate();
         $photo->delete();
-        exit("Фотография успешно удалена!");
+        
+        $this->flash("succ", "Фотография удалена", "Эта фотография была успешно удалена.");
+        $this->redirect("/id0", static::REDIRECT_TEMPORARY);
     }
 }

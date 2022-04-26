@@ -1,17 +1,17 @@
 {extends "../@listView.xml"}
-{var perPage = 6} {* Why 6? Check User::_abstractRelationGenerator *}
+{var $perPage = 6} {* Why 6? Check User::_abstractRelationGenerator *}
 
-{var act = $_GET["act"] ?? "friends"}
+{var $act = $_GET["act"] ?? "friends"}
 
 {if $act == "incoming"}
-    {var iterator = iterator_to_array($user->getFollowers($page))}
-    {var count    = $user->getFollowersCount()}
+    {var $iterator = iterator_to_array($user->getFollowers($page))}
+    {var $count    = $user->getFollowersCount()}
 {elseif $act == "outcoming"}
-    {var iterator = iterator_to_array($user->getSubscriptions($page))}
-    {var count    = $user->getSubscriptionsCount()}
+    {var $iterator = iterator_to_array($user->getSubscriptions($page))}
+    {var $count    = $user->getSubscriptionsCount()}
 {else}
-    {var iterator = iterator_to_array($user->getFriends($page))}
-    {var count    = $user->getFriendsCount()}
+    {var $iterator = iterator_to_array($user->getFriends($page))}
+    {var $count    = $user->getFriendsCount()}
 {/if}
 
 {block title}
@@ -25,13 +25,17 @@
 {/block} 
 
 {block header}
-    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> »
-    {if $act == "incoming"}
-        {_"incoming_req"}
-    {elseif $act == "outcoming"}
-        {_"outcoming_req"}
+    {if isset($thisUser) && $thisUser->getId() == $user->getId()}
+        {_my_friends}
     {else}
-        {_"friends"}
+        <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> »
+        {if $act == "incoming"}
+            {_"incoming_req"}
+        {elseif $act == "outcoming"}
+            {_"outcoming_req"}
+        {else}
+            {_"friends"}
+        {/if}
     {/if}
 {/block}
 
@@ -39,11 +43,38 @@
     <div n:attr="id => ($act === 'friends' ? 'activetabs' : 'ki')" class="tab">
         <a n:attr="id => ($act === 'friends' ? 'act_tab_a' : 'ki')" href="?">{_friends}</a>
     </div>
-    <div n:attr="id => ($act === 'incoming' ? 'activetabs' : 'ki')" class="tab">
-        <a n:attr="id => ($act === 'incoming' ? 'act_tab_a' : 'ki')" href="?act=incoming">{_incoming_req}</a>
+    <div n:attr="id => ($act === 'incoming' || $act === 'outcoming' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($act === 'incoming' || $act === 'outcoming' ? 'act_tab_a' : 'ki')" href="?act=incoming">{_req}</a>
     </div>
-    <div n:attr="id => ($act === 'outcoming' ? 'activetabs' : 'ki')" class="tab">
-        <a n:attr="id => ($act === 'outcoming' ? 'act_tab_a' : 'ki')" href="?act=outcoming">{_outcoming_req}</a>
+{/block}
+
+{block size}
+    <div n:if="$act === 'incoming' || $act === 'outcoming'" class="mb_tabs">
+        <div n:attr="id => ($act === 'incoming' ? 'active' : 'ki')" class="mb_tab">
+            <div>
+                <a href="?act=incoming">{_incoming_req}</a>
+            </div>
+        </div>
+        <div n:attr="id => ($act === 'outcoming' ? 'active' : 'ki')" class="mb_tab">
+            <div>
+                <a href="?act=outcoming">{_outcoming_req}</a>
+            </div>
+        </div>
+    </div>
+    <div style="padding-bottom: 0px;" class="summaryBar">
+        <div class="summary">
+            {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+                {if $act == "incoming"}
+                    {tr("req", $count)}
+                {elseif $act == "outcoming"}
+                    {tr("req", $count)}
+                {else}
+                    {tr("friends_list", $count)}
+                {/if}
+            {else}
+                {tr("friends", $count)}
+            {/if}
+        </div>
     </div>
 {/block}
 
@@ -54,7 +85,7 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getAvatarUrl()}" width="75" alt="Фотография группы" />
+    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="Фотография пользователя" />
 {/block}
 
 {block name}
@@ -82,7 +113,7 @@
 
 {block actions}
     {if $x->getId() !== $thisUser->getId()}
-        {var subStatus = $x->getSubscriptionStatus($thisUser)}
+        {var $subStatus = $x->getSubscriptionStatus($thisUser)}
         {if $subStatus === 0}
             <form action="/setSub/user" method="post" class="profile_link_form">
                 <input type="hidden" name="act" value="add" />

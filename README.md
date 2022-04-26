@@ -6,25 +6,27 @@ _[Русский](README_RU.md)_
 
 VKontakte belongs to Pavel Durov and VK Group.
 
-To be honest, we don't even know whether it even works. However, this version is maintained and we will be happy to accept your bugreports [in our bug-tracker](https://github.com/openvk/openvk/projects/1). You should also be able to submit them using [ticketing system](https://openvk.su/support?act=new) (you will need an OVK account for this).
+To be honest, we don't know whether it even works. However, this version is maintained and we will be happy to accept your bugreports [in our bug-tracker](https://github.com/openvk/openvk/projects/1). You should also be able to submit them using [ticketing system](https://openvk.su/support?act=new) (you will need an OVK account for this).
 
 ## When's the release?
 
-Please use the master branch, as it has the most changes.
-
-Updating the source code is done with this command: `git pull`
+We will release OpenVK as soon as it's ready. As for now you can:
+* `git clone` this repo's master branch (use `git pull` to update)
+* Grab a prebuilt OpenVK distro from [GitHub artifacts](https://nightly.link/openvk/archive/workflows/nightly/master/OpenVK%20Archive.zip)
 
 ## Instances
 
 * **[openvk.su](https://openvk.su/)**
+* **[openvk.uk](https://openvk.uk)** - official mirror of openvk.su (<https://t.me/openvkch/1609>)
+* **[openvk.co](http://openvk.co)** - yet another official mirror of openvk.su without TLS (<https://t.me/openvkch/1654>)
 * [social.fetbuk.ru](http://social.fetbuk.ru/)
-* [openvk.zavsc.pw](https://openvk.zavsc.pw/)
+* [vepurovk.xyz](http://vepurovk.xyz/)
 
 ## Can I create my own OpenVK instance?
 
 Yes! And you're very welcome to.
 
-However, OVK makes use of Chandler Application Server. This software requires extensions, that may not be provided by your hosting provider (namely, sodium and yaml. this extensions are available on most of ISPManager hostings).
+However, OVK makes use of Chandler Application Server. This software requires extensions, that may not be provided by your hosting provider (namely, sodium and yaml. these extensions are available on most of ISPManager hostings).
 
 If you want, you can add your instance to the list above so that people can register there.
 
@@ -32,42 +34,47 @@ If you want, you can add your instance to the list above so that people can regi
 
 1. Install PHP 7.4, web-server, Composer, Node.js, Yarn and [Chandler](https://github.com/openvk/chandler)
 
-* PHP 8 has **not** yet been tested, so you should not expect it to work.
+* PHP 8 has **not** yet been tested, so you should not expect it to work. (edit: it does not work).
 
-2. Install [commitcaptcha](https://github.com/openvk/commitcaptcha) and OpenVK as Chandler extensions like this:
+2. Install MySQL-compatible database.
+
+* We recommend using Percona Server, but any MySQL-compatible server should work
+* Server should be compatible with at least MySQL 5.6, MySQL 8.0+ recommended.
+* Support for MySQL 4.1+ is WIP, replace `utf8mb4` and `utf8mb4_unicode_520_ci` with `utf8` and `utf8_unicode_ci` in SQLs.
+
+3. Install [commitcaptcha](https://github.com/openvk/commitcaptcha) and OpenVK as Chandler extensions like this:
 
 ```bash
 git clone https://github.com/openvk/openvk /path/to/chandler/extensions/available/openvk
 git clone https://github.com/openvk/commitcaptcha /path/to/chandler/extensions/available/commitcaptcha
 ```
 
-3. And enable them:
+4. And enable them:
 
 ```bash
 ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/extensions/enabled/
 ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
 ```
 
-4. Import `install/init-static-db.sql` to **same database** you installed Chandler to and import all sqls from `install/sqls` to **same database**
-5. Import `install/init-event-db.sql` to **separate database**
-6. Copy `openvk-example.yml` to `openvk.yml` and change options
-7. Run `composer install` in OpenVK directory
-8. Move to `Web/static/js` and execute `yarn install`
-9. Set `openvk` as your root app in `chandler.yml`
+5. Import `install/init-static-db.sql` to the **same database** you installed Chandler to and import all sqls from `install/sqls` to the **same database**
+6. Import `install/init-event-db.sql` to a **separate database** (Yandex.Clickhouse can also be used, highly recommended)
+7. Copy `openvk-example.yml` to `openvk.yml` and change options to your liking
+8. Run `composer install` in OpenVK directory
+9. Run `composer install` in commitcaptcha directory
+10. Move to `Web/static/js` and execute `yarn install`
+11. Set `openvk` as your root app in `chandler.yml`
 
 Once you are done, you can login as a system administrator on the network itself (no registration required):
 
 * **Login**: `admin@localhost.localdomain6`
 * **Password**: `admin`
-  * It is recommended to change the password before using the built-in account.
+  * It is recommended to change the password of the built-in account or disable it.
 
-Full example installation instruction for CentOS 8 is also available [here](https://docs.openvk.su/openvk_engine/centos8_installation/).
+💡Confused? Full installation walkthrough is available [here](https://docs.openvk.su/openvk_engine/centos8_installation/) (CentOS 8 [and](https://almalinux.org/) [family](https://yum.oracle.com/oracle-linux-isos.html)).
 
-### If my website uses OpenVK, should I publish it's sources?
+### If my website uses OpenVK, should I release it's sources?
 
-You are encouraged to do so. We don't enforce this though. You can keep your sources to yourself (unless you distribute your OpenVK distro to other people).
-
-You also not required to publish source texts of your themepacks and plugins.
+It depends. You can keep the sources to yourself if you do not plan to distribute your website binaries. If your website software must be distributed, it can stay non-OSS provided the OpenVK is not used as a primary application and is not modified. If you modified OpenVK for your needs or your work is based on it and you're planning to redistribute this, then you should license it under terms of any LGPL-compatible license (like OSL, GPL, LGPL etc).
 
 ## Where can I get assistance?
 
@@ -80,7 +87,7 @@ You may reach out to us via:
 * [Discussions](https://github.com/openvk/openvk/discussions)
 * Matrix chat: #openvk:matrix.org
 
-**Attention**: bug tracker, telegram and matrix chat are public places. And ticketing system is being served by volunteers. If you need to report something, that shouldn't be immediately disclosed to general public (for instance, vulnerability report), please use contact us directly at this email: **openvk [at] tutanota [dot] com**
+**Attention**: bug tracker, board, telegram and matrix chat are public places. And ticketing system is being served by volunteers. If you need to report something, that shouldn't be immediately disclosed to general public (for instance, vulnerability report), please use contact us directly at this email: **openvk [at] tutanota [dot] com**
 
 <a href="https://codeberg.org/OpenVK/openvk">
     <img alt="Get it on Codeberg" src="https://codeberg.org/Codeberg/GetItOnCodeberg/media/branch/main/get-it-on-blue-on-white.png" height="60">

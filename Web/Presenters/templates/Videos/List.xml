@@ -1,7 +1,7 @@
 {extends "../@listView.xml"}
-{var iterator = $videos}
-{var count    = $paginatorConf->count}
-{var page     = $paginatorConf->page}
+{var $iterator = $videos}
+{var $count    = $paginatorConf->count}
+{var $page     = $paginatorConf->page}
 
 {block title}{_"videos"} {$user->getCanonicalName()}{/block}
 
@@ -11,13 +11,13 @@
 {/block}
 
 {block size}
-    <div style="padding-bottom: 0px;border-bottom: 0; padding-top: 0;" class="summaryBar">
+    <div style="padding-bottom: 0px; padding-top: 0;" class="summaryBar">
         <div class="summary">
-                {tr("videos", $count)}
-                <span n:if="isset($thisUser) && $thisUser->getId() == $user->getId()">
-                    &nbsp;|&nbsp;
-                    <a href="/videos/upload">{_upload_video}</a>
-                </span>
+            {tr("videos", $count)}
+            <span n:if="isset($thisUser) && $thisUser->getId() == $user->getId()">
+                &nbsp;|&nbsp;
+                <a href="/videos/upload">{_upload_video}</a>
+            </span>
         </div>
     </div>
 {/block}
@@ -33,9 +33,11 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getThumbnailURL()}"
-         alt="{$x->getName()}"
-         style="max-height: 43pt; max-width: 140px; height: unset; width: unset; border-radius: unset;" />
+    <div class="video-preview">
+        <img src="{$x->getThumbnailURL()}"
+            alt="{$x->getName()}"
+            style="max-width: 170px; max-height: 127px; margin: auto;" />
+    </div>
 {/block}
 
 {block name}
@@ -43,7 +45,13 @@
 {/block}
 
 {block description}
-    <span>{$x->getDescription() ?? ""}</span><br/>
+    <p>
+        <span>{$x->getDescription() ?? ""}</span>
+    </p>
     <span style="color: grey;">{_"video_uploaded"} {$x->getPublicationTime()}</span><br/>
     <span style="color: grey;">{_"video_updated"} {$x->getEditTime() ?? $x->getPublicationTime()}</span>
+    <p>
+        <a href="/video{$x->getPrettyId()}">{_view_video}</a>
+        {if $x->getCommentsCount() > 0}| <a href="/video{$x->getPrettyId()}#comments">{_"comments"} ({$x->getCommentsCount()})</a>{/if}
+    </p>
 {/block}

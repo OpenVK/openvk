@@ -88,4 +88,100 @@ final class Groups extends VKAPIRequestHandler
         	"items" => $rClubs
         ];
     }
+
+    function getById(string $group_ids = "", string $group_id = "", string $fields = ""): ?array
+    {
+        $this->requireUser();
+
+        $clubs = new ClubsRepo;
+		
+        if ($group_ids == null && $group_id != null) 
+            $group_ids = $group_id;
+        
+        if ($group_ids == null && $group_id == null)
+            $this->fail(100, "One of the parameters specified was missing or invalid: group_ids is undefined");
+		
+        $clbs = explode(',', $group_ids);
+        $response;
+
+        $ic = sizeof($clbs);
+
+        for ($i=0; $i < $ic; $i++) {
+            if($i > 500) 
+                break;
+
+            if($clbs[$i] < 0)
+                $this->fail(100, "ты ошибся чутка, у айди группы убери минус");
+
+            $clb = $clubs->get((int) $clbs[$i]);
+            if(is_null($clb))
+            {
+                $response[$i] = (object)[
+                    "id" => intval($clbs[$i]),
+                    "name" => "DELETED",
+                    "screen_name" => "club".intval($clbs[$i]),
+                    "type" => "group",
+                    "description" => "This group was deleted or it doesn't exist"
+                ];   
+            }else if($clbs[$i] == null){
+
+            }else{
+                $response[$i] = (object)[
+                    "id" => $clb->getId(),
+                    "name" => $clb->getName(),
+                    "screen_name" => $clb->getShortCode() ?? "club".$clb->getId(),
+                    "is_closed" => false,
+                    "type" => "group",
+                    "can_access_closed" => true,
+                ];
+
+                $flds = explode(',', $fields);
+
+                foreach($flds as $field) { 
+                    switch ($field) {
+			            case 'verified':
+			                $response[$i]->verified = intval($clb->isVerified());
+			                break;
+			            case 'has_photo':
+			                $response[$i]->has_photo = is_null($clb->getAvatarPhoto()) ? 0 : 1;
+			                break;
+			            case 'photo_max_orig':
+			                $response[$i]->photo_max_orig = $clb->getAvatarURL();
+			                break;
+			            case 'photo_max':
+			                $response[$i]->photo_max = $clb->getAvatarURL();
+			                break;
+			            case 'members_count':
+			                $response[$i]->members_count = $clb->getFollowersCount();
+			                break;
+			            case 'site':
+			                $response[$i]->site = $clb->getWebsite();
+			                break;
+                        case 'description':
+			                $response[$i]->desctiption = $clb->getDescription();
+                            break;
+			            case 'contacts':
+                            $contacts;
+                            $contactTmp = $clb->getManagers(1, true);
+                            foreach($contactTmp as $contact) {
+                                $contacts[] = array(
+                                    'user_id' => $contact->getUser()->getId(),
+                                    'desc' => $contact->getComment()
+                                );
+                            }
+			                $response[$i]->contacts = $contacts;
+			                break;
+                        case 'can_post':
+                            if($clb->canBeModifiedBy($this->getUser()))
+                                $response[$i]->can_post = true;
+                            else
+                                $response[$i]->can_post = $clb->canPost();
+                            break;
+                    }
+                }
+            }
+        }
+
+        return $response;
+    }
 }

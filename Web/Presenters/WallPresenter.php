@@ -45,7 +45,7 @@ final class WallPresenter extends OpenVKPresenter
     function renderWall(int $user, bool $embedded = false): void
     {
         if(false)
-            exit("Ошибка доступа: " . (string) random_int(0, 255));
+            exit(tr("forbidden") . ": " . (string) random_int(0, 255));
         
         $owner = ($user < 0 ? (new Clubs) : (new Users))->get(abs($user));
         if(is_null($this->user)) {
@@ -54,7 +54,7 @@ final class WallPresenter extends OpenVKPresenter
             if(!$owner->isBanned())
                 $canPost = $owner->getPrivacyPermission("wall.write", $this->user->identity);
             else
-                $this->flashFail("err", tr("error"), "Ошибка доступа");
+                $this->flashFail("err", tr("error"), tr("forbidden"));
         } else if($user < 0) {
             if($owner->canBeModifiedBy($this->user->identity))
                 $canPost = true;
@@ -89,7 +89,7 @@ final class WallPresenter extends OpenVKPresenter
     function renderRSS(int $user): void
     {
         if(false)
-            exit("Ошибка доступа: " . (string) random_int(0, 255));
+            exit(tr("forbidden") . ": " . (string) random_int(0, 255));
         
         $owner = ($user < 0 ? (new Clubs) : (new Users))->get(abs($user));
         if(is_null($this->user)) {
@@ -98,7 +98,7 @@ final class WallPresenter extends OpenVKPresenter
             if(!$owner->isBanned())
                 $canPost = $owner->getPrivacyPermission("wall.write", $this->user->identity);
             else
-                $this->flashFail("err", tr("error"), "Ошибка доступа");
+                $this->flashFail("err", tr("error"), tr("forbidden"));
         } else if($user < 0) {
             if($owner->canBeModifiedBy($this->user->identity))
                 $canPost = true;
@@ -213,12 +213,12 @@ final class WallPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
         
         $wallOwner = ($wall > 0 ? (new Users)->get($wall) : (new Clubs)->get($wall * -1))
-                     ?? $this->flashFail("err", "Не удалось опубликовать пост", "Такого пользователя не существует.");
+                     ?? $this->flashFail("err", tr("failed_to_publish_post"), tr("error_4"));
         if($wall > 0) {
             if(!$wallOwner->isBanned())
                 $canPost = $wallOwner->getPrivacyPermission("wall.write", $this->user->identity);
             else
-                $this->flashFail("err", "Ошибка доступа", "Вам нельзя писать на эту стену.");
+                $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
         } else if($wall < 0) {
             if($wallOwner->canBeModifiedBy($this->user->identity))
                 $canPost = true;
@@ -229,7 +229,7 @@ final class WallPresenter extends OpenVKPresenter
         }
 	
         if(!$canPost)
-            $this->flashFail("err", "Ошибка доступа", "Вам нельзя писать на эту стену.");
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
 
         $anon = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"];
         if($wallOwner instanceof Club && $this->postParam("as_group") === "on" && $this->postParam("force_sign") !== "on" && $anon) {
@@ -265,10 +265,18 @@ final class WallPresenter extends OpenVKPresenter
             } catch(ISE $ex) {
                 $this->flashFail("err", "Не удалось опубликовать пост", "Файл медиаконтента повреждён или слишком велик.");
             }
+            
+            if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK) {
+                $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"], $anon);
+            }
+        } catch(\DomainException $ex) {
+            $this->flashFail("err", tr("failed_to_publish_post"), tr("media_file_corrupted"));
+        } catch(ISE $ex) {
+            $this->flashFail("err", tr("failed_to_publish_post"), tr("media_file_corrupted_or_too_large"));
         }
-                
-        if(empty($this->postParam("text")) && empty($photos))
-            $this->flashFail("err", "Не удалось опубликовать пост", "Пост пустой или слишком большой.");
+        
+        if(empty($this->postParam("text")) && !$photo && !$video)
+            $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"));
         
         try {
 	        $post = new Post;
@@ -281,7 +289,7 @@ final class WallPresenter extends OpenVKPresenter
 	        $post->setNsfw($this->postParam("nsfw") === "on");
             $post->save();
         } catch (\LengthException $ex) {
-            $this->flashFail("err", "Не удалось опубликовать пост", "Пост слишком большой.");
+            $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_too_big"));
         }
 
         foreach($photos as $photo) {
@@ -300,8 +308,6 @@ final class WallPresenter extends OpenVKPresenter
     
     function renderPost(int $wall, int $post_id): void
     {
-        $this->assertUserLoggedIn();
-        
         $post = $this->posts->getPostById($wall, $post_id);
         if(!$post || $post->isDeleted())
             $this->notFound();
@@ -313,7 +319,7 @@ final class WallPresenter extends OpenVKPresenter
         	$this->template->wallOwner = (new Users)->get($post->getTargetWall());
 			$this->template->isWallOfGroup = false;
             if($this->template->wallOwner->isBanned())
-                $this->flashFail("err", tr("error"), "Ошибка доступа");
+                $this->flashFail("err", tr("error"), tr("forbidden"));
 		} else {
 			$this->template->wallOwner = (new Clubs)->get(abs($post->getTargetWall()));
 			$this->template->isWallOfGroup = true;
@@ -377,7 +383,7 @@ final class WallPresenter extends OpenVKPresenter
         $user = $this->user->id;
 
         $wallOwner = ($wall > 0 ? (new Users)->get($wall) : (new Clubs)->get($wall * -1))
-                     ?? $this->flashFail("err", "Не удалось удалить пост", "Такого пользователя не существует.");
+                     ?? $this->flashFail("err", tr("failed_to_delete_post"), tr("error_4"));
 
         if($wall < 0) $canBeDeletedByOtherUser = $wallOwner->canBeModifiedBy($this->user->identity);
             else $canBeDeletedByOtherUser = false;
@@ -388,7 +394,7 @@ final class WallPresenter extends OpenVKPresenter
                 $post->delete();
             }
         } else {
-            $this->flashFail("err", "Не удалось удалить пост", "Вы не вошли в аккаунт.");
+            $this->flashFail("err", tr("failed_to_delete_post"), tr("login_required_error_comment"));
         }
         
         $this->redirect($wall < 0 ? "/club".($wall*-1) : "/id".$wall, static::REDIRECT_TEMPORARY);
@@ -405,7 +411,7 @@ final class WallPresenter extends OpenVKPresenter
             $this->notFound();
         
         if(!$post->canBePinnedBy($this->user->identity))
-            $this->flashFail("err", "Ошибка доступа", "Вам нельзя закреплять этот пост.");
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
         
         if(($this->queryParam("act") ?? "pin") === "pin") {
             $post->pin();
@@ -414,6 +420,6 @@ final class WallPresenter extends OpenVKPresenter
         }
         
         // TODO localize message based on language and ?act=(un)pin
-        $this->flashFail("succ", "Операция успешна", "Операция успешна.");
+        $this->flashFail("succ", tr("information_-1"), tr("changes_saved_comment"));
     }
 }

@@ -1,0 +1,46 @@
+<?xml encoding="UTF-8"?>
+
+<!ELEMENT latte (tags,filters,variables,functions)>
+<!ATTLIST latte vendor #REQUIRED>
+<!ATTLIST latte version #REQUIRED>
+
+<!ELEMENT tags (tag)+>
+
+<!ELEMENT tag (arguments)?>
+<!ATTLIST tag name CDATA #REQUIRED>
+<!ATTLIST tag type (PAIR|UNPAIRED|UNPAIRED_ATTR|ATTR_ONLY|AUTO_EMPTY) #REQUIRED>
+<!ATTLIST tag allowedFilters (true|false) #IMPLIED>
+<!ATTLIST tag arguments CDATA #IMPLIED>
+<!ATTLIST tag deprecatedMessage CDATA #IMPLIED>
+<!ATTLIST tag multiLine (true|false) #IMPLIED>
+
+<!ELEMENT arguments (argument)+>
+
+<!ELEMENT argument EMPTY>
+<!ATTLIST argument name #REQUIRED>
+<!ATTLIST argument types CDATA #REQUIRED>
+<!ATTLIST argument repeatable (true|false) #IMPLIED>
+<!ATTLIST argument required (true|false) #IMPLIED>
+<!ATTLIST argument validType  #IMPLIED>
+
+<!ELEMENT filters (filter)+>
+
+<!ELEMENT filter EMPTY>
+<!ATTLIST filter name #REQUIRED>
+<!ATTLIST filter description CDATA #IMPLIED>
+<!ATTLIST filter arguments CDATA #IMPLIED>
+<!ATTLIST filter insertColons  #IMPLIED>
+
+<!ELEMENT variables (variable)+>
+
+<!ELEMENT variable EMPTY>
+<!ATTLIST variable name #REQUIRED>
+<!ATTLIST variable type CDATA #REQUIRED>
+
+<!ELEMENT functions (function)+>
+
+<!ELEMENT function EMPTY>
+<!ATTLIST function name  #REQUIRED>
+<!ATTLIST function arguments CDATA #REQUIRED>
+<!ATTLIST function returnType  #REQUIRED>
+<!ATTLIST function description CDATA #IMPLIED>

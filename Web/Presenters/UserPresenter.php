@@ -31,7 +31,7 @@ final class UserPresenter extends OpenVKPresenter
     {
         $user = $this->users->get($id);
         if(!$user || $user->isDeleted())
-            $this->notFound();
+            $this->template->_template = "User/deleted.xml";
         else {
             if($user->getShortCode())
                 if(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) !== "/" . $user->getShortCode())
@@ -285,7 +285,6 @@ final class UserPresenter extends OpenVKPresenter
             $photo->setCreated(time());
             $photo->save();
         } catch(ISE $ex) {
-            $name = $album->getName();
             $this->flashFail("err", tr("error"), tr("error_upload_failed"));
         }
         
@@ -480,6 +479,22 @@ final class UserPresenter extends OpenVKPresenter
         $this->user->identity->set2fa_secret(NULL);
         $this->user->identity->save();
         $this->flashFail("succ", tr("information_-1"), tr("two_factor_authentication_disabled_message"));
+    }
+
+    function renderResetThemepack(): void
+    {
+        $this->assertNoCSRF();
+
+        $this->setSessionTheme(Themepacks::DEFAULT_THEME_ID);
+
+        if($this->user) {
+            $this->willExecuteWriteAction();
+
+            $this->user->identity->setStyle(Themepacks::DEFAULT_THEME_ID);
+            $this->user->identity->save();
+        }
+
+        $this->redirect("/", static::REDIRECT_TEMPORARY_PRESISTENT);
     }
 
     function renderCoinsTransfer(): void

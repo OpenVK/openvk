@@ -1,6 +1,6 @@
 {extends "../@listView.xml"}
-{var iterator = iterator_to_array($topics)}
-{var page     = $paginatorConf->page}
+{var $iterator = iterator_to_array($topics)}
+{var $page     = $paginatorConf->page}
 
 {block title}{_discussions} {$club->getCanonicalName()}{/block}
 
@@ -46,7 +46,7 @@
     <div style="float: left;">
         {tr("messages", $x->getCommentsCount())}
     </div>
-    {var lastComment = $x->getLastComment()}
+    {var $lastComment = $x->getLastComment()}
     <div n:if="$lastComment" class="avatar-list-item" style="float: right;">
         <div class="avatar">
             <a href="{$lastComment->getOwner()->getURL()}">

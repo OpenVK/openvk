@@ -3,7 +3,7 @@
 {block wrap}
     <div class="ovk-lw-container">
         <div class="ovk-lw--list">
-            {var data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+            {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
             
             {if sizeof($data) > 0}
                 <table n:foreach="$data as $dat" border="0" style="font-size:11px;" class="post">

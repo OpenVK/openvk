@@ -4,4 +4,86 @@
         {tr("user_banned", htmlentities($user->getFirstName()))|noescape}<br/>
         {_"user_banned_comment"} <b>{$user->getBanReason()}</b>.
     </p>
+    {if isset($thisUser)}
+        <p n:if="$thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL) || $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)">
+            <br />
+            <a n:if="$thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL)" href="javascript:unbanUser()" class="button">{_unban_user_action}</a>
+            <a n:if="$thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)" href="javascript:toggleBanInSupport()" class="button">
+                {if $user->isBannedInSupport()}
+                    {_unban_in_support_user_action}
+                {else}
+                    {_ban_in_support_user_action}
+                {/if}
+            </a>
+        </p>
+    {/if}
 </center>
+
+{if isset($thisUser)}
+    <script n:if="$thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL)">
+        function unbanUser() {
+            uUnbanMsgTxt  = "Вы собираетесь разбанить пользователя " + {$user->getCanonicalName()} + ".";
+            uUnbanMsgTxt += "<br/>Сейчас он заблокирован по причине: <strong>" + {$user->getBanReason()} + "</strong>.";
+            
+            MessageBox("Разбанить " + {$user->getFirstName()}, uUnbanMsgTxt, ["Подтвердить", "Отмена"], [
+                (function() {
+                    xhr = new XMLHttpRequest();
+                    xhr.open("GET", "/admin/unban/" + {$user->getId()} + "?hash=" + {rawurlencode($csrfToken)}, true);
+                    xhr.onload = (function() {
+                        if(xhr.responseText.indexOf("success") === -1)
+                            MessageBox("Ошибка", "Не удалось разблокировать пользователя...", ["OK"], [Function.noop]);
+                        else
+                            MessageBox("Операция успешна", "Пользователь разблокирован", ["OK"], [Function.noop]);
+                    });
+                    xhr.send(null);
+                }),
+                Function.noop
+            ]);
+        }
+    </script>
+
+    <script n:if="$thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)">
+        {if $user->isBannedInSupport()}
+            function toggleBanInSupport() {
+                uBanMsgTxt  = "Вы собираетесь разблокировать в поддержке пользователя " + {$user->getCanonicalName()} + ".";
+                uBanMsgTxt += "<br/>Сейчас он заблокирован по причине <strong>" + {$user->getBanInSupportReason()} + "</strong>.";
+
+                MessageBox("Разблокировать в поддержке " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
+                    (function() {
+                        xhr = new XMLHttpRequest();
+                        xhr.open("GET", "/admin/support/unban/" + {$user->getId()} + "?hash=" + {rawurlencode($csrfToken)}, true);
+                        xhr.onload = (function() {
+                            if(xhr.responseText.indexOf("success") === -1)
+                                MessageBox("Ошибка", "Не удалось разблокировать пользователя в поддержке...", ["OK"], [Function.noop]);
+                            else
+                                MessageBox("Операция успешна", "Пользователь разблокирован в поддержке", ["OK"], [Function.noop]);
+                        });
+                        xhr.send(null);
+                    }),
+                    Function.noop
+                ]);
+            }
+        {else}
+            function toggleBanInSupport() {
+                uBanMsgTxt  = "Вы собираетесь заблокировать в поддержке пользователя " + {$user->getCanonicalName()} + ".";
+                uBanMsgTxt += "<br/><br/><b>Причина бана</b>: <input type='text' id='uBanMsgInput' placeholder='придумайте что-нибудь крутое' />";
+
+                MessageBox("Заблокировать в поддержке " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
+                    (function() {
+                        res = document.querySelector("#uBanMsgInput").value;
+                        xhr = new XMLHttpRequest();
+                        xhr.open("GET", "/admin/support/ban/" + {$user->getId()} + "?reason=" + res + "&hash=" + {rawurlencode($csrfToken)}, true);
+                        xhr.onload = (function() {
+                            if(xhr.responseText.indexOf("success") === -1)
+                                MessageBox("Ошибка", "Не удалось заблокировать пользователя в поддержке...", ["OK"], [Function.noop]);
+                            else
+                                MessageBox("Операция успешна", "Пользователь заблокирован в поддержке", ["OK"], [Function.noop]);
+                        });
+                        xhr.send(null);
+                    }),
+                    Function.noop
+                ]);
+            }
+        {/if}
+    </script>
+{/if}

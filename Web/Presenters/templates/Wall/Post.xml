@@ -27,10 +27,9 @@
     <div style="float: left; min-height: 100px; width: 32%;">
         <h4>{_actions}</h4>
         {if isset($thisUser)}
-            {var canDelete = $post->canBeDeletedBy($thisUser)}
+            {var $canDelete = $post->canBeDeletedBy($thisUser)}
         {/if}
         
         <a n:if="$canDelete ?? false" class="profile_link" style="display:block;width:96%;" href="/wall{$post->getPrettyId()}/delete">{_delete}</a>
-        <a class="profile_link" style="display:block;width:96%;" href="/report.pl/{$post->getId()}?type=post">{_report}</a>
     </div>
 {/block}

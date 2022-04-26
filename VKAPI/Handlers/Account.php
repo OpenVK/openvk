@@ -60,7 +60,7 @@ final class Account extends VKAPIRequestHandler
         return 1;
     }
 
-    function getAppPermissions(): object
+    function getAppPermissions(): int
     {
         return 9355263;
     }

@@ -1,6 +1,6 @@
 {extends "../@listView.xml"}
-{var iterator = $user->getClubs($page, $admin)}
-{var count    = $user->getClubCount($admin)}
+{var $iterator = $user->getClubs($page, $admin)}
+{var $count    = $user->getClubCount($admin)}
 
 {block title}
     {_groups}
@@ -32,7 +32,7 @@
 {/block}
 
 {block size}
-    <div n:if="!is_null($thisUser) && $user->getId() === $thisUser->getId()" style="padding-bottom: 0px; border-bottom: 0;" class="summaryBar">
+    <div style="padding-bottom: 0px;" class="summaryBar">
         <div class="summary">
             {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
                 {tr("groups_list", $thisUser->getClubCount())}
@@ -48,12 +48,12 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getAvatarUrl()}" width="75" alt="Фотография группы" />
+    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="Фотография группы" />
 {/block}
 
 {block name}{/block}
 
-{block infoTable}
+{block infotable}
     <table id="basicInfo" class="ugc-table group_info" cellspacing="0" cellpadding="0" border="0">
         <tbody>
             <tr>
@@ -73,26 +73,28 @@
 {/block}
 
 {block actions}
-    {var clubPinned = $thisUser->isClubPinned($x)}
+    {var $clubPinned = $thisUser->isClubPinned($x)}
     {if $x->canBeModifiedBy($thisUser ?? NULL)}
-        <a style="width: 140px;" class="profile_link" href="{$x->getURL()}">
-            {_check_community}
-        </a>
-        {if ($clubPinned || $thisUser->getPinnedClubCount() <= 10)}
-            <a style="width: 140px;" class="profile_link" href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
-                {if $clubPinned}
-                    {_remove_from_left_menu}
-                {else}
-                    {_add_to_left_menu}
-                {/if}
+        <div class="navigation" style="width: 140px;">
+            <a class="link" href="{$x->getURL()}">
+                {_check_community}
             </a>
-        {/if}
-        <form action="/setSub/club" method="post">
-            <input type="hidden" name="act" value="rem" />
-            <input type="hidden" name="id"  value="{$x->getId()}" />
-            <input type="hidden" name="hash" value="{$csrfToken}" />
-            <input style="width: 140px; text-transform: lowercase;" type="submit" id="profile_link" value="{_leave_community}" />
-        </form>
+            {if ($clubPinned || $thisUser->getPinnedClubCount() <= 10)}
+                <a class="link" href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
+                    {if $clubPinned}
+                        {_remove_from_left_menu}
+                    {else}
+                        {_add_to_left_menu}
+                    {/if}
+                </a>
+            {/if}
+            <form action="/setSub/club" method="post">
+                <input type="hidden" name="act" value="rem" />
+                <input type="hidden" name="id"  value="{$x->getId()}" />
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input style="text-transform: lowercase; width: 100%;" class="link" type="submit" value="{_"leave_community"}" />
+            </form>
+        </div>
     {/if}
 {/block}
 

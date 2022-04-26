@@ -152,3 +152,8 @@ function setupWallPostInputHandlers(id) {
 function removePicture(idA) {
     u(`div#aP${idA}`).nodes[0].remove();
 }
+
+u("#write > form").on("keydown", function(event) {
+    if(event.ctrlKey && event.keyCode === 13)
+        this.submit();
+});

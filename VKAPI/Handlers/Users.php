@@ -5,13 +5,15 @@ use openvk\Web\Models\Repositories\Users as UsersRepo;
 
 final class Users extends VKAPIRequestHandler
 {
-    function get(string $user_ids = "0", string $fields = "", int $offset = 0, int $count = 100): array 
+    function get(string $user_ids = "0", string $fields = "", int $offset = 0, int $count = 100, User $authuser = null /* костыль(( */): array 
     {
-        $this->requireUser();
+        // $this->requireUser();
+
+		if($authuser == null) $authuser = $this->getUser();
 
         $users = new UsersRepo;
 		if($user_ids == "0")
-			$user_ids = (string) $this->getUser()->getId();
+			$user_ids = (string) $authuser->getId();
 		
         $usrs = explode(',', $user_ids);
         $response;
@@ -51,7 +53,7 @@ final class Users extends VKAPIRequestHandler
 			                $response[$i]->verified = intval($usr->isVerified());
 			                break;
 			            case 'sex':
-			                $response[$i]->sex = $this->getUser()->isFemale() ? 1 : 2;
+			                $response[$i]->sex = $usr->isFemale() ? 1 : 2;
 			                break;
 			            case 'has_photo':
 			                $response[$i]->has_photo = is_null($usr->getAvatarPhoto()) ? 0 : 1;
@@ -60,8 +62,26 @@ final class Users extends VKAPIRequestHandler
 			                $response[$i]->photo_max_orig = $usr->getAvatarURL();
 			                break;
 			            case 'photo_max':
-			                $response[$i]->photo_max = $usr->getAvatarURL();
+			                $response[$i]->photo_max = $usr->getAvatarURL("original");
 			                break;
+			            case 'photo_50':
+			                $response[$i]->photo_50 = $usr->getAvatarURL();
+			                break;
+			            case 'photo_100':
+			                $response[$i]->photo_50 = $usr->getAvatarURL("tiny");
+			                break;
+			            case 'photo_200':
+			                $response[$i]->photo_50 = $usr->getAvatarURL("normal");
+			                break;
+			            case 'photo_200_orig': // вообще не ебу к чему эта строка ну пусть будет кек
+			                $response[$i]->photo_50 = $usr->getAvatarURL("normal");
+			                break;
+			            case 'photo_400_orig':
+			                $response[$i]->photo_50 = $usr->getAvatarURL("normal");
+			                break;
+						
+						// Она хочет быть выебанной видя матан
+						// Покайфу когда ты Виет а вокруг лишь дискриминант
 						case 'status':
 							if($usr->getStatus() != null)
 						    	$response[$i]->status = $usr->getStatus();
@@ -71,10 +91,10 @@ final class Users extends VKAPIRequestHandler
 			                	$response[$i]->screen_name = $usr->getShortCode();
 			                break;
 			            case 'friend_status':
-							switch($usr->getSubscriptionStatus($this->getUser())) {
+							switch($usr->getSubscriptionStatus($authuser)) {
 								case 3:
 								case 0:
-									$response[$i]->friend_status = $usr->getSubscriptionStatus($this->getUser());
+									$response[$i]->friend_status = $usr->getSubscriptionStatus($authuser);
 									break;
 								case 1:
 									$response[$i]->friend_status = 2;
@@ -158,13 +178,14 @@ final class Users extends VKAPIRequestHandler
         $users = new UsersRepo;
         
         $array = [];
+		$find = $users->find($q);
 
-        foreach ($users->find($q) as $user) {
+        foreach ($find as $user) {
             $array[] = $user->getId();
         }
 
         return (object)[
-        	"count" => $users->getFoundCount($q),
+        	"count" => $find->size(),
         	"items" => $this->get(implode(',', $array), $fields, $offset, $count)
         ];
     }

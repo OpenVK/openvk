@@ -6,7 +6,7 @@
 <a href="/im">{_my_messages}</a> »
 <a href="{$correspondent->getURL()}">{$correspondent->getCanonicalName()}</a>    
     <div n:if="($online = $correspondent->getOnline()->timestamp()) + 2505600 > time()" style="float: right;">
-        {var diff = date_diff(date_create(), date_create('@' . $online))}
+        {var $diff = date_diff(date_create(), date_create('@' . $online))}
         {if 5 >= $diff->i}
             <span><b>{_online}</b></span>
         {else}
@@ -44,7 +44,7 @@
         </div>
         <div class="messenger-app--input">
             {if $correspondent->getId() === $thisUser->getId() || $correspondent->getPrivacyPermission('messages.write', $thisUser)}
-                <img class="ava" src="{$thisUser->getAvatarUrl()}" alt="{$thisUser->getCanonicalName()}" />
+                <img class="ava" src="{$thisUser->getAvatarUrl('miniscule')}" alt="{$thisUser->getCanonicalName()}" />
                 <div class="messenger-app--input---messagebox">
                     <textarea
                             data-bind="value: messageContent, event: { keydown: onTextareaKeyPress }"
@@ -52,7 +52,7 @@
                             placeholder="Введите сообщение"></textarea>
                     <button class="button" data-bind="click: sendMessage">Отправить</button>
                 </div>
-                <img class="ava" src="{$correspondent->getAvatarUrl()}" alt="{$correspondent->getCanonicalName()}" />
+                <img class="ava" src="{$correspondent->getAvatarUrl('miniscule')}" alt="{$correspondent->getCanonicalName()}" />
             {else}
                 <div class="blocked" data-localized-text="Вы не можете писать сообщения {$correspondent->getCanonicalName()} из-за его настроек приватности."></div>
             {/if}
