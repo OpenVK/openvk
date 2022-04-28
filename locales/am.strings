@@ -940,8 +940,8 @@
 "admin_about_version" = "Վերսիա";
 "admin_about_instance" = "Հոսք";
 
-"admin_commerce_disabled" = "Коммерция отключена системным администратором";
-"admin_commerce_disabled_desc" = "Настройки ваучеров и подарков будут сохранены, но не будут оказывать никакого влияния.";
+"admin_commerce_disabled" = "Կոմմերցիան անջատված է համակարգային ադմինիստրատորի կողմից";
+"admin_commerce_disabled_desc" = "Վաուչերների և նվերների կարգավորումները կպահպանվեն, բայց ոչ մի ազդեցություն չեն ունենա։";
 
 /* Paginator (deprecated) */
 
