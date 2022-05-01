@@ -23,11 +23,12 @@ final class Wall extends VKAPIRequestHandler
         foreach ($posts->getPostsFromUsersWall((int)$owner_id, 1, $count, $offset) as $post) {
             $from_id = get_class($post->getOwner()) == "openvk\Web\Models\Entities\Club" ? $post->getOwner()->getId() * (-1) : $post->getOwner()->getId();
 
-            $attachments;
-            foreach($post->getChildren() as $attachment)
-            {
-                if($attachment instanceof \openvk\Web\Models\Entities\Photo)
-                {
+            $attachments = [];
+            foreach($post->getChildren() as $attachment) {
+                if($attachment instanceof \openvk\Web\Models\Entities\Photo) {
+                    if($attachment->isDeleted())
+                        continue;
+                    
                     $attachments[] = [
                         "type" => "photo",
                         "photo" => [
