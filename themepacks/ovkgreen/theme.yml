@@ -1,0 +1,8 @@
+id: ovkgreen
+version: "0.0.1.0"
+openvk_version: 0
+metadata:
+    name:
+        _: "OpenVK Green"
+    author: "Dark-Killer228"
+    description: "Green OpenVK!"
