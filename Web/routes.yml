@@ -73,6 +73,8 @@ routes:
       handler: "User->disableTwoFactorAuth"
     - url: "/settings/reset_theme"
       handler: "User->resetThemepack"
+    - url: "/settings/change_email"
+      handler: "User->emailChangeFinish"
     - url: "/coins_transfer"
       handler: "User->coinsTransfer"
     - url: "/increase_social_credits"

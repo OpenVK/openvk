@@ -472,6 +472,8 @@
 "your_page_address" = "Адрес Вашей страницы";
 "page_address" = "Адрес страницы";
 "current_email_address" = "Текущий адрес";
+"new_email_address" = "Новый адрес";
+"save_email_address" = "Сохранить адрес";
 "page_id" = "ID страницы";
 "you_can_also" = "Вы также можете";
 "delete_your_page" = "удалить свою страницу";
@@ -485,6 +487,8 @@
 
 "additional_links" = "Дополнительные ссылки";
 "ad_poster" = "Рекламный плакат";
+
+"email_change_confirm_message" = "Чтобы изменение вступило в силу, подтвердите ваш новый адрес электронной почты. Мы отправили инструкции на него.";
 
 /* Two-factor authentication */
 

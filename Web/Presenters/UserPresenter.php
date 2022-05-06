@@ -9,12 +9,15 @@ use openvk\Web\Models\Repositories\Albums;
 use openvk\Web\Models\Repositories\Videos;
 use openvk\Web\Models\Repositories\Notes;
 use openvk\Web\Models\Repositories\Vouchers;
+use openvk\Web\Models\Repositories\EmailChangeVerifications;
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
 use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
+use openvk\Web\Models\Entities\EmailChangeVerification;
 use Chandler\Security\Authenticator;
 use lfkeitel\phptotp\{Base32, Totp};
 use chillerlan\QRCode\{QRCode, QROptions};
+use Nette\Database\UniqueConstraintViolationException;
 
 final class UserPresenter extends OpenVKPresenter
 {
@@ -132,7 +135,7 @@ final class UserPresenter extends OpenVKPresenter
         
         if(!$id)
             $this->notFound();
-        
+
         $user = $this->users->get($id);
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->willExecuteWriteAction($_GET['act'] === "status");
@@ -300,7 +303,7 @@ final class UserPresenter extends OpenVKPresenter
         
         if(!$id)
             $this->notFound();
-        
+
         if(in_array($this->queryParam("act"), ["finance", "finance.top-up"]) && !OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"])
             $this->flashFail("err", tr("error"), tr("feature_disabled"));
         
@@ -312,7 +315,7 @@ final class UserPresenter extends OpenVKPresenter
                 if($this->postParam("old_pass") && $this->postParam("new_pass") && $this->postParam("repeat_pass")) {
                     if($this->postParam("new_pass") === $this->postParam("repeat_pass")) {
                         if($this->user->identity->is2faEnabled()) {
-                            $code = $this->postParam("code");
+                            $code = $this->postParam("password_change_code");
                             if(!($code === (new Totp)->GenerateToken(Base32::decode($this->user->identity->get2faSecret())) || $this->user->identity->use2faBackupCode((int) $code)))
                                 $this->flashFail("err", tr("error"), tr("incorrect_2fa_code"));
                         }
@@ -321,6 +324,46 @@ final class UserPresenter extends OpenVKPresenter
                             $this->flashFail("err", tr("error"), tr("error_old_password"));
                     } else {
                         $this->flashFail("err", tr("error"), tr("error_new_password"));
+                    }
+                }
+
+                if($this->postParam("new_email")) {
+                    if(!Validator::i()->emailValid($this->postParam("new_email")))
+                        $this->flashFail("err", tr("invalid_email_address"), tr("invalid_email_address_comment"));
+
+                    if(!Authenticator::verifyHash($this->postParam("email_change_pass"), $user->getChandlerUser()->getRaw()->passwordHash))
+                        $this->flashFail("err", tr("error"), tr("incorrect_password"));
+                    
+                    if($user->is2faEnabled()) {
+                        $code = $this->postParam("email_change_code");
+                        if(!($code === (new Totp)->GenerateToken(Base32::decode($user->get2faSecret())) || $user->use2faBackupCode((int) $code)))
+                            $this->flashFail("err", tr("error"), tr("incorrect_2fa_code"));
+                    }
+
+                    if($this->postParam("new_email") !== $user->getEmail()) {
+                        if (OPENVK_ROOT_CONF['openvk']['preferences']['security']['requireEmail']) {    
+                            $request = (new EmailChangeVerifications)->getLatestByUser($user);
+                            if(!is_null($request) && $request->isNew())
+                                $this->flashFail("err", tr("forbidden"), tr("email_rate_limit_error"));
+                            
+                            $verification = new EmailChangeVerification;
+                            $verification->setProfile($user->getId());
+                            $verification->setNew_Email($this->postParam("new_email"));
+                            $verification->save();
+                            
+                            $params = [
+                                "key"   => $verification->getKey(),
+                                "name"  => $user->getCanonicalName(),
+                            ];
+                            $this->sendmail($this->postParam("new_email"), "change-email", $params); #Vulnerability possible
+                            $this->flashFail("succ", tr("information_-1"), tr("email_change_confirm_message"));
+                        }
+    
+                        try {
+                            $user->setEmail($this->postParam("new_email"));
+                        } catch(UniqueConstraintViolationException $ex) {
+                            $this->flashFail("err", tr("error"), tr("user_already_exists"));
+                        }   
                     }
                 }
                 
@@ -400,11 +443,7 @@ final class UserPresenter extends OpenVKPresenter
                     throw $ex;
             }
             
-			$this->flash(
-                "succ",
-                "Изменения сохранены",
-                "Новые данные появятся на вашей странице."
-            );
+			$this->flash("succ", tr("changes_saved"), tr("changes_saved_comment"));
         }
         $this->template->mode = in_array($this->queryParam("act"), [
             "main", "privacy", "finance", "finance.top-up", "interface"
@@ -502,6 +541,9 @@ final class UserPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
 
+        if(!OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"])
+            $this->flashFail("err", tr("error"), tr("feature_disabled"));
+
         $receiverAddress = $this->postParam("receiver");
         $value           = (int) $this->postParam("value");
         $message         = $this->postParam("message");
@@ -517,7 +559,7 @@ final class UserPresenter extends OpenVKPresenter
 
         $receiver = $this->users->getByAddress($receiverAddress);
         if(!$receiver)
-        $this->flashFail("err", tr("failed_to_tranfer_points"), tr("receiver_not_found"));
+            $this->flashFail("err", tr("failed_to_tranfer_points"), tr("receiver_not_found"));
 
         if($this->user->identity->getCoins() < $value)
             $this->flashFail("err", tr("failed_to_tranfer_points"), tr("you_dont_have_enough_points"));
@@ -573,5 +615,25 @@ final class UserPresenter extends OpenVKPresenter
             (new RatingUpNotification($receiver, $this->user->identity, $value, $message))->emit();
 
         $this->flashFail("succ", tr("information_-1"), tr("rating_increase_successful", $receiver->getURL(), htmlentities($receiver->getCanonicalName()), $value));
+    }
+
+    function renderEmailChangeFinish(): void
+    {
+        $request = (new EmailChangeVerifications)->getByToken(str_replace(" ", "+", $this->queryParam("key")));
+        if(!$request || !$request->isStillValid()) {
+            $this->flash("err", tr("token_manipulation_error"), tr("token_manipulation_error_comment"));
+            $this->redirect("/settings");
+        } else {
+            $request->delete(false);
+
+            try {
+                $request->getUser()->setEmail($request->getNewEmail());
+            } catch(UniqueConstraintViolationException $ex) {
+                $this->flashFail("err", tr("error"), tr("user_already_exists"));
+            }
+
+            $this->flash("succ", tr("changes_saved"), tr("changes_saved_comment"));
+            $this->redirect("/settings");
+        }
     }
 }

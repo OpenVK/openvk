@@ -444,6 +444,8 @@
 "your_page_address" = "Your address page";
 "page_address" = "Address page";
 "current_email_address" = "Current email address";
+"new_email_address" = "New email address";
+"save_email_address" = "Save email address";
 "page_id" = "Page ID";
 "you_can_also" = "You can also";
 "delete_your_page" = "delete your page";
@@ -457,6 +459,8 @@
 
 "additional_links" = "Additional links";
 "ad_poster" = "Ad poster";
+
+"email_change_confirm_message" = "Please confirm your new email address for the change to take effect. We have sent instructions to it.";
 
 /* Two-factor authentication */
 
