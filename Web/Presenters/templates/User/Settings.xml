@@ -64,7 +64,7 @@
                             <span class="nobold">{_"2fa_code"}</span>
                         </td>
                         <td>
-                            <input type="text" name="code" style="width: 100%;" />
+                            <input type="text" name="password_change_code" style="width: 100%;" />
                         </td>
                     </tr>
                     <tr>
@@ -152,6 +152,38 @@
                         </td>
                         <td>
                             {$user->getEmail()}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_new_email_address}</span>
+                        </td>
+                        <td>
+                            <input type="email" name="new_email" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_password}</span>
+                        </td>
+                        <td>
+                            <input type="password" name="email_change_pass" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr n:if="$user->is2faEnabled()">
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"2fa_code"}</span>
+                        </td>
+                        <td>
+                            <input type="text" name="email_change_code" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <input type="submit" value="{_save_email_address}" class="button" />
                         </td>
                     </tr>
                 </tbody>

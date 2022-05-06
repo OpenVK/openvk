@@ -877,6 +877,17 @@ class User extends RowModel
         return true;
     }
 
+    function setEmail(string $email): void
+    {
+        DatabaseConnection::i()->getContext()->table("ChandlerUsers")
+            ->where("id", $this->getChandlerUser()->getId())->update([
+                "login" => $email
+            ]);
+
+        $this->stateChanges("email", $email);
+        $this->save();
+    }
+
     function adminNotify(string $message): bool
     {
         $admId = OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"];

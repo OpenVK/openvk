@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <title>Подтверждение изменения Email</title>
+        <link rel="stylesheet" href="foundation.css" />
+        <style>
+            .container {
+                border-top: 5px solid pink;
+            }
+        </style>
+    </head>
+    <body>
+        <table class="body" data-made-with-foundation="">
+            <tr>
+                <td class="float-center" align="center" valign="top">
+                    <center>
+                        <table class="spacer">
+                            <tr>
+                                <td>
+                                    &nbsp;
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="container">
+                            <tr>
+                                <td>
+                                    <table class="row header">
+                                        <tr>
+                                            <th class="small-12 large-12 columns first last">
+                                                <table>
+                                                    <tr>
+                                                        <th>
+                                                            <table class="spacer">
+                                                                <tr>
+                                                                    <td>
+                                                                        &nbsp;
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                            <h4 class="text-center">Подтверждение изменения Email</h4>
+                                                        </th>
+                                                    </tr>
+                                                </table>
+                                            </th>
+                                        </tr>
+                                    </table>
+                                    
+                                    <table class="row">
+                                        <tr>
+                                            <th class="small-12 large-12 columns first last">
+                                                <table class="row">
+                                                    <tr>
+                                                        <td>
+                                                            <center>
+                                                                <img src="pictures/lock.jpeg" align="center" class="float-center" width=128 height=128 />
+                                                            </center>
+                                                            
+                                                            <table class="spacer">
+                                                                <tr>
+                                                                    <td>
+                                                                        &nbsp;
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                            
+                                                            <hr/>
+                                                            
+                                                            <table class="spacer">
+                                                                <tr>
+                                                                    <td>
+                                                                        &nbsp;
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                            
+                                                            <p class="text-left">
+                                                                Здравствуйте, {$name}! Вы вероятно изменили свой адрес электронной почты в OpenVK. Чтобы изменение вступило в силу, необходимо подтвердить ваш новый Email.
+                                                            </p>
+                                                            
+                                                            <table class="spacer">
+                                                                <tr>
+                                                                    <td>
+                                                                        &nbsp;
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                            
+                                                            <table class="button large expand success">
+                                                                <tr>
+                                                                    <td>
+                                                                        <table>
+                                                                            <tr>
+                                                                                <td>
+                                                                                    <center>
+                                                                                        <a href="http://{$_SERVER['HTTP_HOST']}/settings/change_email?key={rawurlencode($key)}" align="center" class="float-center">Подтвердить Email!</a>
+                                                                                    </center>
+                                                                                </td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                            
+                                                            <table class="spacer">
+                                                                <tr>
+                                                                    <td>
+                                                                        &nbsp;
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                            
+                                                            <p class="text-left">
+                                                                Если кнопка не работает, вы можете попробовать скопировать и вставить эту ссылку в адресную строку вашего веб-обозревателя:
+                                                            </p>
+                                                            
+                                                            <table class="callout">
+                                                                <tr>
+                                                                    <th class="callout-inner primary">
+                                                                        <a href="http://{$_SERVER['HTTP_HOST']}/settings/change_email?key={$key}" style="color: #000; text-decoration: none;">
+                                                                            http://{$_SERVER['HTTP_HOST']}/settings/change_email?key={$key}
+                                                                        </a>
+                                                                    </th>
+                                                                </tr>
+                                                            </table>
+                                                            
+                                                            <p class="text-left">
+                                                                Обратите внимание на то, что эту ссылку нельзя:
+                                                            </p>
+                                                            
+                                                            <ul>
+                                                                <li>Передавать другим людям (даже друзьям, питомцам, соседам, любимым девушкам)</li>
+                                                                <li>Использовать, если прошло более двух дней с её генерации</li>
+                                                            </ul>
+                                                            
+                                                            <table class="callout">
+                                                                <tr>
+                                                                    <th class="callout-inner alert">
+                                                                        <p>
+                                                                            Ещё раз <b>обратите внимание</b> на то, что данную ссылку или письмо <b>ни в коем случае нельзя</b> передавать другим людям! Даже если они представляются службой поддержки.<br/>
+                                                                            Это письмо предназначено исключительно для одноразового, <b>непосредственного</b> использования владельцем аккаунта.
+                                                                        </p>
+                                                                    </th>
+                                                                </tr>
+                                                            </table>
+                                                            
+                                                            <table class="spacer">
+                                                                <tr>
+                                                                    <td>
+                                                                        &nbsp;
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                            
+                                                            <p class="text-right">
+                                                                С уважением, овк-тян.
+                                                            </p>
+                                                            
+                                                            <table class="spacer">
+                                                                <tr>
+                                                                    <td>
+                                                                        &nbsp;
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                            
+                                                            <hr/>
+                                                            
+                                                            <table class="spacer">
+                                                                <tr>
+                                                                    <td>
+                                                                        &nbsp;
+                                                                    </td>
+                                                                </tr>
+                                                            </table>
+                                                            
+                                                            <p class="text-left">
+                                                                <small>
+                                                                    Вы получили это письмо так как кто-то или вы изменили адрес электронной почты. Это не рассылка и от неё нельзя отписаться. Если вы всё равно хотите перестать получать подобные письма, деактивируйте ваш аккаунт.
+                                                                </small>
+                                                            </p>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </th>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                        <table class="spacer">
+                            <tr>
+                                <td>
+                                    &nbsp;
+                                </td>
+                            </tr>
+                        </table>
+                    </center>
+                </td>
+            </tr>
+        </table>
+    </body>
+</html>
