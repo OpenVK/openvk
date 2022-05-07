@@ -877,7 +877,7 @@ class User extends RowModel
         return true;
     }
 
-    function setEmail(string $email): void
+    function changeEmail(string $email): void
     {
         DatabaseConnection::i()->getContext()->table("ChandlerUsers")
             ->where("id", $this->getChandlerUser()->getId())->update([

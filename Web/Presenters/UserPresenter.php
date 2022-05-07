@@ -360,7 +360,7 @@ final class UserPresenter extends OpenVKPresenter
                         }
     
                         try {
-                            $user->setEmail($this->postParam("new_email"));
+                            $user->changeEmail($this->postParam("new_email"));
                         } catch(UniqueConstraintViolationException $ex) {
                             $this->flashFail("err", tr("error"), tr("user_already_exists"));
                         }   
@@ -627,7 +627,7 @@ final class UserPresenter extends OpenVKPresenter
             $request->delete(false);
 
             try {
-                $request->getUser()->setEmail($request->getNewEmail());
+                $request->getUser()->changeEmail($request->getNewEmail());
             } catch(UniqueConstraintViolationException $ex) {
                 $this->flashFail("err", tr("error"), tr("user_already_exists"));
             }
