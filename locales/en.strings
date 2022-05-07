@@ -592,6 +592,11 @@
 
 "transferred_to_you" = "transferred to you";
 
+"transfer_trough_ton" = "Top up with TON";
+"transfer_ton_contents" = "You can top up your balance with TON cryptocurrency. It's just enough to scan the QR-code with the Tonkeeper app, or manually send TON according to the requisites. Within a few minutes you will receive a certain amount of votes.";
+"transfer_ton_address" = "<b>Wallet address:</b> $1<br/><b>Message content:</b> $2";
+"transfer_ton_currency_per_ton" = "$1 TON";
+
 "receiver_address" = "Receiver address";
 "coins_count" = "Number of votes";
 "message" = "Message";

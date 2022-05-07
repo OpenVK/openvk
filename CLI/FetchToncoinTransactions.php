@@ -51,7 +51,7 @@ class FetchToncoinTransactions extends Command
         }
 
         $testnet_subdomain = OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["testnet"] ? "testnet." : "";
-        $url = "https://" . $testnet_subdomain . "toncenter.com/api/v2/getTransactions?";
+        $url               = "https://" . $testnet_subdomain . "toncenter.com/api/v2/getTransactions?";
 
         $opts = [
             "http" => [
@@ -61,8 +61,8 @@ class FetchToncoinTransactions extends Command
         ];
 
         $selection = $this->transactions->select('hash, lt')->order("id DESC")->limit(1)->fetch();
-        $tr_hash = $selection->hash ?? NULL;
-        $tr_lt = $selection->lt ?? NULL;
+        $tr_hash   = $selection->hash ?? NULL;
+        $tr_lt     = $selection->lt ?? NULL;
 
         $data = http_build_query([
             "address" => OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["address"],
@@ -78,17 +78,13 @@ class FetchToncoinTransactions extends Command
         foreach($response["result"] as $transfer)
         {
             $output_array;
-            preg_match('/ovk=([0-9]+)/', $transfer["in_msg"]["message"], $output_array);
-            $userid = ctype_digit($output_array[1]) ? intval($output_array[1]) : null;
-            if($userid === null)
-            {
+            preg_match('/' . OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["regex"] . '/', $transfer["in_msg"]["message"], $output_array);
+            $userid = ctype_digit($output_array[1]) ? intval($output_array[1]) : NULL;
+            if($userid === NULL) {
                 $header->writeln(["Well, that's a donation. Thanks! XD"]);
-            }
-            else
-            {
+            } else {
                 $user = (new Users)->get($userid);
-                if(!$user) 
-                {
+                if(!$user) {
                     $header->writeln(["Well, that's a donation. Thanks! XD"]);
                 } else {
                     $value = ($transfer["in_msg"]["value"] / NANOTON) / OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["rate"];
@@ -97,9 +93,9 @@ class FetchToncoinTransactions extends Command
                     (new CoinsTransferNotification($user, (new Users)->get(OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"]), 0, "Via TON cryptocurrency"))->emit();
                     $header->writeln([$value . " coins are added to " . $user->getId() . " user id"]);
                     $this->transactions->insert([
-                        "id" => null,
+                        "id"   => NULL,
                         "hash" => $transfer["transaction_id"]["hash"],
-                        "lt" => $transfer["transaction_id"]["lt"]
+                        "lt"   => $transfer["transaction_id"]["lt"]
                     ]);
                 }
             }
