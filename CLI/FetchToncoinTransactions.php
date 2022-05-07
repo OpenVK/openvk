@@ -32,8 +32,7 @@ class FetchToncoinTransactions extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $header  = $output->section();
-        $counter = $output->section();
+        $header = $output->section();
 
         $header->writeln([
             "TONCOIN Fetcher",
@@ -41,12 +40,9 @@ class FetchToncoinTransactions extends Command
             "",
         ]);
 
-        if(!OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["enabled"])
-        {
-            $header->writeln([
-                "Sorry, but you handn't enabled the TON support in your config file yet.",
-                "",
-            ]);
+        if(!OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["enabled"]) {
+            $header->writeln("Sorry, but you handn't enabled the TON support in your config file yet.");
+
             return Command::FAILURE;
         }
 
@@ -75,8 +71,7 @@ class FetchToncoinTransactions extends Command
         $response = json_decode($response, true);
 
         $header->writeln(["Gonna up the balance of users"]);
-        foreach($response["result"] as $transfer)
-        {
+        foreach($response["result"] as $transfer) {
             $output_array;
             preg_match('/' . OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["regex"] . '/', $transfer["in_msg"]["message"], $output_array);
             $userid = ctype_digit($output_array[1]) ? intval($output_array[1]) : NULL;
@@ -91,7 +86,7 @@ class FetchToncoinTransactions extends Command
                     $user->setCoins($user->getCoins() + $value);
                     $user->save();
                     (new CoinsTransferNotification($user, (new Users)->get(OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"]), 0, "Via TON cryptocurrency"))->emit();
-                    $header->writeln([$value . " coins are added to " . $user->getId() . " user id"]);
+                    $header->writeln($value . " coins are added to " . $user->getId() . " user id");
                     $this->transactions->insert([
                         "id"   => NULL,
                         "hash" => $transfer["transaction_id"]["hash"],
