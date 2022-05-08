@@ -23,11 +23,11 @@ a, #profile_link, .profile_link {
 }
 
 .content_title_expanded {
- 	background-image: url("exp.png");
+ 	background-image: url("themepack/ovkgreen/resource/exp.png");
 }
 
 .content_title_unexpanded {
-background-image: url("unexp.png");
+background-image: url("themepack/ovkgreen/resource/unexp.png");
 }
 
 h4 {
@@ -54,15 +54,15 @@ color: #1ca847;
 }
 
 .page_header {
-    background: url("head.png");
+    background: url("themepack/ovkgreen/resource/header.png");
 }
 
 .header_navigation .link {
-    background: url("head.png");
+    background: url("themepack/ovkgreen/resource/perek.png");
 }
 
 input[type=checkbox] {
-    background-image: url("checkbox.png"):
+    background-image: url("themepack/ovkgreen/resource/checkbox.gif"):
 }
 
 .navigation_footer .link {
@@ -82,5 +82,5 @@ background-color: #488e45
 }
 
 .heart {
-	background-image: url("res/heart.png")
+	background-image: url("themepack/ovkgreen/resource/like.gif")
  }
