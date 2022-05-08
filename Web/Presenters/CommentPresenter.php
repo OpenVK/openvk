@@ -60,7 +60,7 @@ final class CommentPresenter extends OpenVKPresenter
             }
         }
         
-        // TODO move to trait
+        # TODO move to trait
         try {
             $photo = NULL;
             $video = NULL;

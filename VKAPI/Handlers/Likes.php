@@ -63,7 +63,7 @@ final class Likes extends VKAPIRequestHandler
                 
                 return (object)[
                     "liked" => (int) $post->hasLikeFrom($user),
-                    "copied" => 0 // TODO: handle this
+                    "copied" => 0 # TODO: handle this
                 ];
                 break;
             default:

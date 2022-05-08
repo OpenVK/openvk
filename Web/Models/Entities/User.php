@@ -939,7 +939,7 @@ class User extends RowModel
 		return $this->getRecord()->website;
 	}
 
-    // ты устрица
+    # ты устрица
     function isActivated(): bool
     {
         return (bool) $this->getRecord()->activated;

@@ -495,7 +495,7 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->secret = $secret;
         }
 
-        // Why are these crutch? For some reason, the QR code is not displayed if you just pass the render output to the view
+        # Why are these crutch? For some reason, the QR code is not displayed if you just pass the render output to the view
 
         $issuer = OPENVK_ROOT_CONF["openvk"]["appearance"]["name"];
         $email  = $this->user->identity->getEmail();
