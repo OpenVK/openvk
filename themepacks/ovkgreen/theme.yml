@@ -1,0 +1,11 @@
+id: vk2007
+version: "0.0.1.0"
+openvk_version: 0
+enabled: 1
+metadata:
+    name:
+        _: "V Kontakte 2007"
+        en: "V Kontakte 2007"
+        ru: "В Контакте 2007"
+    author: "Veselcraft"
+    description: "V Kontakte-stylized theme by 2007 era"
