@@ -1,0 +1,86 @@
+a, #profile_link, .profile_link {
+	color: #2fd261;
+}
+
+#ki:hover {
+	color: #2fd261;
+}
+
+.page_footer .link:hover {
+    color: #2fd261;
+}
+
+.profileName h2 {
+	color: #1ca82d;
+}
+
+.navigation .link {
+	color: #15ac66;
+}
+
+.content_title_expanded, .content_title_unexpanded {
+    color: #3fbb5f;
+}
+
+.content_title_expanded {
+ 	background-image: url("exp.png");
+}
+
+.content_title_unexpanded {
+background-image: url("unexp.png");
+}
+
+h4 {
+color: #1ca847;
+}
+
+.button {
+    border: #00cc6e;
+    background: #1cbd37;
+    text-shadow: #1cbd37;
+}
+
+#activetabs {
+    background: #1cbd37;
+}
+
+.button:hover {
+    border: #199d2f;
+    background: #199d2f;
+}
+
+#activetabs:hover{
+    background: #1cbd37;
+}
+
+.page_header {
+    background: url("head.png");
+}
+
+.header_navigation .link {
+    background: url("head.png");
+}
+
+input[type=checkbox] {
+    background-image: url("checkbox.png"):
+}
+
+.navigation_footer .link {
+    color: #2fd261;
+}
+
+.home_button {
+    width: 200px;
+}
+
+.ovk-diag-head {
+background-color: #488e45
+}
+
+.content_subtitle {
+    color: #2aa32e;
+}
+
+.heart {
+	background-image: url("res/heart.png")
+ }
