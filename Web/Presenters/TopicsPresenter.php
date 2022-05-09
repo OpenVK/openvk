@@ -91,7 +91,7 @@ final class TopicsPresenter extends OpenVKPresenter
             $topic->setFlags($flags);
             $topic->save();
             
-            // TODO move to trait
+            # TODO move to trait
             try {
                 $photo = NULL;
                 $video = NULL;

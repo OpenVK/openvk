@@ -136,7 +136,7 @@ function isLanguageAvailable($lg): bool
 
 function getBrowsersLanguage(): array
 {
-    if ($_SERVER['HTTP_ACCEPT_LANGUAGE'] != null) return mb_split(",", mb_split(";", $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0]);
+    if ($_SERVER['HTTP_ACCEPT_LANGUAGE'] != NULL) return mb_split(",", mb_split(";", $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0]);
     else return array();
 }
 
@@ -144,7 +144,7 @@ function eventdb(): ?DatabaseConnection
 {
     $conf = OPENVK_ROOT_CONF["openvk"]["credentials"]["eventDB"];
     if(!$conf["enable"])
-        return null;
+        return NULL;
     
     $db = (object) $conf["database"];
     return DatabaseConnection::connect([
@@ -216,8 +216,8 @@ return (function() {
 
     setlocale(LC_TIME, "POSIX");
 
-    // TODO: Default language in config
-    if(Session::i()->get("lang") == null) {
+    # TODO: Default language in config
+    if(Session::i()->get("lang") == NULL) {
         $languages = array_reverse(getBrowsersLanguage());
         foreach($languages as $lg) {
             if(isLanguageAvailable($lg)) setLanguage($lg);    
@@ -233,7 +233,7 @@ return (function() {
     else
         $ver = "Public Technical Preview 3";
 
-    // Unix time constants
+    # Unix time constants
     define('MINUTE', 60);
     define('HOUR', 60 * MINUTE);
     define('DAY', 24 * HOUR);

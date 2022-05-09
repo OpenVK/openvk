@@ -2,7 +2,7 @@
 {var $comments = $post->getLastComments(3)}
 {var $commentsCount = $post->getCommentsCount()}
 
-{var $commentTextAreaId = $post === null ? rand(1,300) : $post->getId()}
+{var $commentTextAreaId = $post === NULL ? rand(1,300) : $post->getId()}
 
 <table border="0" style="font-size: 11px;" n:class="post, !$compact ? post-divider, $post->isExplicit() ? post-nsfw">
     <tbody>

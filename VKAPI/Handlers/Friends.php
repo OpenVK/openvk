@@ -25,7 +25,7 @@ final class Friends extends VKAPIRequestHandler
 		$usersApi = new Users($this->getUser());
 
 		if (!is_null($fields)) {
-			$response = $usersApi->get(implode(',', $friends), $fields, 0, $count);  // FIXME
+			$response = $usersApi->get(implode(',', $friends), $fields, 0, $count);  # FIXME
 		}
 
 		return (object) [

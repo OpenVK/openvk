@@ -29,7 +29,7 @@ final class SearchPresenter extends OpenVKPresenter
         if($query != "")
             $this->assertUserLoggedIn();
         
-        // https://youtu.be/pSAWM5YuXx8
+        # https://youtu.be/pSAWM5YuXx8
         
         $repos = [ "groups" => "clubs", "users" => "users" ];
         $repo  = $repos[$type] or $this->throwError(400, "Bad Request", "Invalid search entity $type.");

@@ -106,7 +106,7 @@ final class MessengerPresenter extends OpenVKPresenter
         
         $messages       = [];
         $correspondence = new Correspondence($this->user->identity, $correspondent);
-        foreach($correspondence->getMessages(1, $lastMsg === 0 ? null : $lastMsg) as $message)
+        foreach($correspondence->getMessages(1, $lastMsg === 0 ? NULL : $lastMsg) as $message)
             $messages[] = $message->simplify();
         
         header("Content-Type: application/json");
