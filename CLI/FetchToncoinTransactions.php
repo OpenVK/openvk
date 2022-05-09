@@ -70,17 +70,17 @@ class FetchToncoinTransactions extends Command
         $response = file_get_contents($url . $data, false, stream_context_create($opts));
         $response = json_decode($response, true);
 
-        $header->writeln(["Gonna up the balance of users"]);
+        $header->writeln("Gonna up the balance of users");
         foreach($response["result"] as $transfer) {
             $output_array;
             preg_match('/' . OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["regex"] . '/', $transfer["in_msg"]["message"], $output_array);
             $userid = ctype_digit($output_array[1]) ? intval($output_array[1]) : NULL;
             if($userid === NULL) {
-                $header->writeln(["Well, that's a donation. Thanks! XD"]);
+                $header->writeln("Well, that's a donation. Thanks! XD");
             } else {
                 $user = (new Users)->get($userid);
                 if(!$user) {
-                    $header->writeln(["Well, that's a donation. Thanks! XD"]);
+                    $header->writeln("Well, that's a donation. Thanks! XD");
                 } else {
                     $value = ($transfer["in_msg"]["value"] / NANOTON) / OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["rate"];
                     $user->setCoins($user->getCoins() + $value);
@@ -96,7 +96,7 @@ class FetchToncoinTransactions extends Command
             }
         }
 
-        $counter->overwrite("Processing finished :3");
+        $header->writeln("Processing finished :3");
 
         return Command::SUCCESS;
     }
