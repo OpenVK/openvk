@@ -22,7 +22,7 @@ function trim(string) {
     return newStr;
 }
 
-/* function handleUpload(id) {
+function handleUpload(id) {
     console.warn("блять...");
     
     u("#post-buttons" + id + " .postFileSel").not("#" + this.id).each(input => input.value = null);
@@ -37,7 +37,7 @@ function trim(string) {
     }
 
     document.querySelector("#post-buttons" + id + " #wallAttachmentMenu").classList.add("hidden");
-} */
+}
 
 function initGraffiti(id) {
     let canvas = null;
@@ -98,59 +98,14 @@ u(".post-like-button").on("click", function(e) {
 let picCount = 0;
 
 function setupWallPostInputHandlers(id) {
-    u("#wall-post-input" + id).on("input", function(e) {
-        var boost             = 5;
-        var textArea          = e.target;
-        textArea.style.height = "5px";
-        var newHeight = textArea.scrollHeight;
-        textArea.style.height = newHeight + boost + "px";
-        return;
-        
-        // revert to original size if it is larger (possibly changed by user)
-        // textArea.style.height = (newHeight > originalHeight ? (newHeight + boost) : originalHeight) + "px";
-    });
+    u("#wall-post-input" + id).on("paste", function(e) {
+        if(e.clipboardData.files.length === 1) {
+            var input = u("#post-buttons" + id + " input[name=_pic_attachment]").nodes[0];
+            input.files = e.clipboardData.files;
 
-    u(`#wall-post-input${id}`).on("paste", function(e) {
-        for (let i = 0; i < e.clipboardData.files.length; i++) {
-            console.log(e.clipboardData.files[i]);
-            if(e.clipboardData.files[i].type.match('^image/')) {
-                let blobURL = URL.createObjectURL(e.clipboardData.files[i]);
-                addPhotoMedia(e.clipboardData.files, blobURL);
-            }
-        }
-    });
-
-    u(`#post-buttons${id} input[name=_pic_attachment]`).on("change", function(e) {
-        let blobURL = URL.createObjectURL(e.target.files[0]);
-        addPhotoMedia(e.target.files, blobURL);
-    });
-
-    function addPhotoMedia(files, preview) {
-        if(getMediaCount() >= 4) {
-            alert('Низя.');
-        } else {
-            picCount++;
-            u(`#post-buttons${id} .upload`).append(u(`
-                <div class="upload-item" id="aP${picCount}">
-                    <a href="javascript:removePicture(${picCount})" class="upload-delete">×</a>
-                    <img src="${preview}">
-                </div>
-            `));
-            u(`div#aP${picCount}`).nodes[0].append(u(`<input type="file" accept="image/*" name="attachPic${picCount}" id="attachPic${picCount}" style="display: none;">`).first());
-            let input = u(`#attachPic${picCount}`).nodes[0];
-            input.files = files; // нужен рефактор, но щас не
-            console.log(input);
             u(input).trigger("change");
         }
-    }
-
-    function getMediaCount() {
-        return u(`#post-buttons${id} .upload`).nodes[0].children.length;
-    }
-}
-
-function removePicture(idA) {
-    u(`div#aP${idA}`).nodes[0].remove();
+    });
 }
 
 u("#write > form").on("keydown", function(event) {

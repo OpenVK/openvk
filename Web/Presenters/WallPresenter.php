@@ -248,27 +248,24 @@ final class WallPresenter extends OpenVKPresenter
         if($this->postParam("force_sign") === "on")
             $flags |= 0b01000000;
         
-        $photos = [];
-        $_FILES["_pic_attachment"] = null;
-        foreach($_FILES as $file) {
-        	bdump($file);
-            try {
-                if($file["error"] === UPLOAD_ERR_OK && preg_match('/^image\//', $file['type'])) {
-                    $album = NULL;
-                    if(!$anon && $wall > 0 && $wall === $this->user->id)
-                        $album = (new Albums)->getUserWallAlbum($wallOwner);
-                    
-                    $photos[] = Photo::fastMake($this->user->id, $this->postParam("text"), $file, $album, $anon);
-                }
-			} catch(\DomainException $ex) {
-	            $this->flashFail("err", tr("failed_to_publish_post"), tr("media_file_corrupted"));
-	        } catch(ISE $ex) {
-	            $this->flashFail("err", tr("failed_to_publish_post"), tr("media_file_corrupted_or_too_large"));
-	        }
+        try {
+            $photo = NULL;
+            $video = NULL;
+            if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
+                $album = NULL;
+                if(!$anon && $wall > 0 && $wall === $this->user->id)
+                    $album = (new Albums)->getUserWallAlbum($wallOwner);
+
+                $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album, $anon);
+            }
             
             if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK) {
                 $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"], $anon);
             }
+        } catch(\DomainException $ex) {
+            $this->flashFail("err", tr("failed_to_publish_post"), tr("media_file_corrupted"));
+        } catch(ISE $ex) {
+            $this->flashFail("err", tr("failed_to_publish_post"), tr("media_file_corrupted_or_too_large"));
         }
         
         if(empty($this->postParam("text")) && !$photo && !$video)
@@ -288,9 +285,11 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_too_big"));
         }
 
-        foreach($photos as $photo) {
-        	$post->attach($photo);
-        }
+        if(!is_null($photo))
+            $post->attach($photo);
+        
+        if(!is_null($video))
+            $post->attach($video);
         
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
