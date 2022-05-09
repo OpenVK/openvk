@@ -275,6 +275,8 @@
             </p>
         </div>
 
+        {include "components/cookies.xml"}
+
         {script "js/node_modules/msgpack-lite/dist/msgpack.min.js"}
         {script "js/node_modules/soundjs/lib/soundjs.min.js"}
         {script "js/node_modules/ky/umd.js"}

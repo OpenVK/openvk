@@ -972,3 +972,8 @@
 /* User alerts */
 
 "user_alert_scam" = "This account has been reported a lot for scam. Please be careful, especially if he asked for money.";
+
+/* Cookies pop-up */
+
+"cookies_popup_content" = "All kids love cookies, so this website uses cookies to identify you and nothing more. Check <a href='/privacy'>our privacy policy</a> for more information.";
+"cookies_popup_agree" = "Accept";

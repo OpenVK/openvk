@@ -1914,3 +1914,24 @@ table td[width="120"] {
     text-align: center;
     user-select: none;
 }
+
+.cookies-popup {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 40px;
+    background: linear-gradient(#fff, #eee);
+    box-shadow: inset 0px 1px 0px #bbb, inset 0px 2px 0px #ddd;
+}
+
+.cookies-popup .contanier {
+    width: 760px;
+    display: flex;
+    margin: 0 auto;
+    align-items: center;
+    height: 100%;
+}
+
+.cookies-popup .contanier .text {
+    width: 100%;
+}
