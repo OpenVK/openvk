@@ -95,8 +95,6 @@ u(".post-like-button").on("click", function(e) {
     return false;
 });
 
-let picCount = 0;
-
 function setupWallPostInputHandlers(id) {
     u("#wall-post-input" + id).on("paste", function(e) {
         if(e.clipboardData.files.length === 1) {
@@ -105,6 +103,18 @@ function setupWallPostInputHandlers(id) {
 
             u(input).trigger("change");
         }
+    });
+
+    u("#wall-post-input" + id).on("input", function(e) {
+        var boost             = 5;
+        var textArea          = e.target;
+        textArea.style.height = "5px";
+        var newHeight = textArea.scrollHeight;
+        textArea.style.height = newHeight + boost + "px";
+        return;
+
+        // revert to original size if it is larger (possibly changed by user)
+        // textArea.style.height = (newHeight > originalHeight ? (newHeight + boost) : originalHeight) + "px";
     });
 }
 
