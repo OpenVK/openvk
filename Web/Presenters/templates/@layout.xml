@@ -103,7 +103,7 @@
                 <div n:if="isset($thisUser) ? (!$thisUser->isBanned() XOR !$thisUser->isActivated()) : true" class="header_navigation">
                     {ifset $thisUser}
                         <div class="link">
-                            <a href="/" title="[Alt+Shift+,]" accesskey=",">{_header_home}</a>
+                            <a href="/">{_header_home}</a>
                         </div>
                         <div class="link">
                             <a href="/search?type=groups">{_header_groups}</a>
@@ -161,7 +161,7 @@
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('notes')" href="/notes{$thisUser->getId()}" class="link">{_my_notes}</a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('groups')" href="/groups{$thisUser->getId()}" class="link">{_my_groups}</a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link" title="{_my_feed} [Alt+Shift+W]" accesskey="w">{_my_feed}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link" title="{_my_feed} [Alt+Shift+,]" accesskey=",">{_my_feed}</a>
                             <a href="/notifications" class="link" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">{_my_feedback}
                                 {if $thisUser->getNotificationsCount() > 0}
                                     (<b>{$thisUser->getNotificationsCount()}</b>)
