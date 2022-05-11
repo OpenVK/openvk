@@ -70,14 +70,14 @@ final class AdminPresenter extends OpenVKPresenter
                 $user->setLast_Name($this->postParam("last_name"));
                 $user->setPseudo($this->postParam("nickname"));
                 $user->setStatus($this->postParam("status"));
-                $user->setVerified(empty($this->postParam("verify") ? 0 : 1));
-                if($user->onlineStatus() != $this->postParam("online")) $user->setOnline(intval($this->postParam("online")));
                 if(!$user->setShortCode(empty($this->postParam("shortcode")) ? NULL : $this->postParam("shortcode")))
                     $this->flash("err", tr("error"), tr("error_shorturl_incorrect"));
+                $user->changeEmail($this->postParam("email"));
+                if($user->onlineStatus() != $this->postParam("online")) $user->setOnline(intval($this->postParam("online")));
+                $user->setVerified(empty($this->postParam("verify") ? 0 : 1));
+
                 $user->save();
                 break;
-            
-            
         }
     }
     
