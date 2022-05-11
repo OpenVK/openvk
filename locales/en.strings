@@ -975,5 +975,5 @@
 
 /* Cookies pop-up */
 
-"cookies_popup_content" = "All kids love cookies, so this website uses cookies to identify you and nothing more. Check <a href='/privacy'>our privacy policy</a> for more information.";
+"cookies_popup_content" = "All kids love cookie, so this website uses Cookies to identify your session and nothing more. Check <a href='/privacy'>our privacy policy</a> for more information.";
 "cookies_popup_agree" = "Accept";
