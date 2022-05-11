@@ -214,7 +214,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->template->userTainted = $user->isTainted();
 
             if($this->user->identity->isDeleted() && !$this->deactivationTolerant) {
-                if($this->user->identity->getDeactivatedUntil() > time()) {
+                if($this->user->identity->getDeactivatedUntil()->timestamp() > time()) {
                     header("HTTP/1.1 403 Forbidden");
                     $this->getTemplatingEngine()->render(__DIR__ . "/templates/@deactivated.xml", [
                         "thisUser" => $this->user->identity,

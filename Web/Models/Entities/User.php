@@ -726,14 +726,9 @@ class User extends RowModel
         $this->save();
     }
 
-    function getDeactivatedUntil(): int
+    function getDeactivatedUntil(): DateTime
     {
-        return $this->getRecord()->deact_until;
-    }
-
-    function getDeactivatedUntilDate(): DateTime
-    {
-        return new DateTime($this->getDeactivatedUntil());
+        return new DateTime($this->getRecord()->deact_until);
     }
     
     function verifyNumber(string $code): bool

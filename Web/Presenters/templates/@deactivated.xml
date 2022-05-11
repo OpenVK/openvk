@@ -6,5 +6,5 @@
 {/block}
 
 {block content}
-    Аккаунт выпилится {$thisUser->getDeactivatedUntilDate()} =))
+    Аккаунт выпилится {$thisUser->getDeactivatedUntil()} =))
 {/block}
