@@ -14,6 +14,7 @@ use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
 use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
 use openvk\Web\Models\Entities\EmailChangeVerification;
+use openvk\Web\Util\AirRaidsProvider;
 use Chandler\Security\Authenticator;
 use lfkeitel\phptotp\{Base32, Totp};
 use chillerlan\QRCode\{QRCode, QROptions};
@@ -308,6 +309,12 @@ final class UserPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("feature_disabled"));
         
         $user = $this->users->get($id);
+
+        if($this->queryParam("act") === "interface") {
+            $this->template->airRaidAlertsEnabled = OPENVK_ROOT_CONF['openvk']['credentials']['airRaidAlerts']['enable'];
+            $this->template->states               = AirRaidsProvider::i()->getStates();
+        }
+
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->willExecuteWriteAction();
             
@@ -419,6 +426,8 @@ final class UserPresenter extends OpenVKPresenter
                 
                 if(in_array($this->postParam("nsfw"), [0, 1, 2]))
                     $user->setNsfwTolerance((int) $this->postParam("nsfw"));
+
+                $user->setUkraine_State($this->postParam("ukraine_state") === "-1" ? NULL : (int) $this->postParam("ukraine_state"));
             } else if($_GET['act'] === "lMenu") {
                 $settings = [
                     "menu_bildoj"    => "photos",

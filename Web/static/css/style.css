@@ -1906,7 +1906,7 @@ table td[width="120"] {
     margin: 0 auto;
 }
 
-#votesBalance {
+.left-menu-info-box {
     margin-top: 50px;
     padding: 7px;
     background-color: #f6f6f6;

@@ -621,6 +621,36 @@
                 </tbody>
             </table>
         </form>
+
+        {if $airRaidAlertsEnabled}
+            <h4>{_air_raid_alerts}</h4>
+            <form action="/settings?act=interface" method="POST" enctype="multipart/form-data">
+                <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                    <tbody>
+                        <tr>
+                            <td width="120" valign="top">
+                                <span class="nobold">{_ukrainian_state}</span>
+                            </td>
+                            <td>
+                                <select name="ukraine_state">
+                                    <option n:attr="selected => is_null($user->getUkraineState())" value="-1">{_relationship_0}</option>
+                                    <option n:foreach="$states as $id => $state" n:attr="selected => $user->getUkraineState() === $id" value="{$id}">{$state}</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                
+                            </td>
+                            <td>
+                                <input type="hidden" name="hash" value="{$csrfToken}" />
+                                <input type="submit" value="{_'save'}" class="button" />
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </form>
+        {/if}
         
         {/if}
     </div>

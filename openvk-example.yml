@@ -95,6 +95,10 @@ openvk:
             enable: false
             token: "TOKEN_HERE"
             helpdeskChat: ""
+        airRaidAlerts:
+            enable: false
+            instance: "" # https://github.com/and3rson/raid
+            key: "API_KEY_HERE"
         eventDB:
             enable: false # Better enable this
             database:

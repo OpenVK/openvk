@@ -664,3 +664,10 @@
 
 "warning" = "Увага";
 "question_confirm" = "Цю дію не можна скасувати. Ви дійсно впевнені в тому, що хочете зробити?";
+
+/* Ukraine air raids alerts */
+
+"air_raid_alerts" = "Сповіщення про повітряні тривоги в Україні";
+"air_raid_alert" = "Тривога";
+"go_to_the_shelter" = "Пройдіть в укриття!";
+"ukrainian_state" = "Область";

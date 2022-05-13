@@ -8,6 +8,7 @@ use Latte\Engine as TemplatingEngine;
 use openvk\Web\Models\Entities\IP;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets};
+use openvk\Web\Util\AirRaidsProvider;
 use WhichBrowser;
 
 abstract class OpenVKPresenter extends SimplePresenter
@@ -273,6 +274,13 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->template->ticketAnsweredCount = (new Tickets)->getTicketsCountByUserId($this->user->id, 1);
             if($user->can("write")->model("openvk\Web\Models\Entities\TicketReply")->whichBelongsTo(0))
                 $this->template->helpdeskTicketNotAnsweredCount = (new Tickets)->getTicketCount(0);
+
+            if(is_null($this->user->identity->getUkraineState())) {
+                $this->template->isAirRaidAlert = false;  
+            } else {
+                $this->template->isAirRaidAlert = AirRaidsProvider::i()->getStatusById($this->user->identity->getUkraineState());
+                $this->template->airRaidState   = AirRaidsProvider::i()->getNameById($this->user->identity->getUkraineState());
+            }
         }
         
         header("X-OpenVK-User-Validated: $userValidated");
