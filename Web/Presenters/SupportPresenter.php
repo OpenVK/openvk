@@ -79,12 +79,13 @@ final class SupportPresenter extends OpenVKPresenter
         $act = $this->queryParam("act") ?? "open";
         switch($act) {
             default:
+                # NOTICE falling through
             case "open":
                 $state = 0;
-            break;
+                break;
             case "answered":
                 $state = 1;
-            break;
+                break;
             case "closed":
                 $state = 2;
         }
