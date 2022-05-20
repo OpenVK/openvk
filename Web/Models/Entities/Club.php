@@ -104,6 +104,8 @@ class Club extends RowModel
     {
         if(!is_null($this->getDescription()))
             return nl2br(htmlspecialchars($this->getDescription(), ENT_DISALLOWED | ENT_XHTML));
+        else
+            return NULL;
     }
     
     function getShortCode(): ?string
