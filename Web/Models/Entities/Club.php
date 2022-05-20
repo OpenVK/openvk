@@ -99,6 +99,12 @@ class Club extends RowModel
     {
         return $this->getRecord()->about;
     }
+
+    function getDescriptionHtml(): ?string
+    {
+        if(!is_null($this->getDescription()))
+            return nl2br(htmlspecialchars($this->getDescription(), ENT_DISALLOWED | ENT_XHTML));
+    }
     
     function getShortCode(): ?string
     {
