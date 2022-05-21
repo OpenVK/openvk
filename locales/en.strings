@@ -665,9 +665,6 @@
 "support_list" = "List of tickets";
 "support_new" = "New ticket";
 
-"support_faq_title" = "Who is this website for?";
-"support_faq_content" = "The site is designed to find friends and acquaintances, as well as view user data. It is like a city directory, through which people can quickly find relevant information about a person.";
-
 "support_new_title" = "Enter the topic of your ticket";
 "support_new_content" = "Describe the issue or suggestion";
 

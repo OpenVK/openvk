@@ -28,6 +28,41 @@ final class SupportPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->template->mode = in_array($this->queryParam("act"), ["faq", "new", "list"]) ? $this->queryParam("act") : "faq";
 
+        if($this->template->mode === "faq") {
+            $lang = Session::i()->get("lang", "ru");
+            $base = OPENVK_ROOT . "/data/knowledgebase/faq";
+            if(file_exists("$base.$lang.md"))
+                $file = "$base.$lang.md";
+            else if(file_exists("$base.md"))
+                $file = "$base.md";
+            else
+                $file = NULL;
+
+            if(is_null($file)) {
+                $this->template->faq = [];
+            } else {
+                $lines = file($file);
+                $faq   = [];
+                $index = 0;
+
+                foreach($lines as $line) {
+                    if(strpos($line, "# ") === 0)
+                        ++$index;
+
+                    $faq[$index][] = $line;
+                }
+
+                $this->template->faq = array_map(function($section) {
+                    $title = substr($section[0], 2);
+                    array_shift($section);
+                    return [
+                        $title,
+                        (new Parsedown())->text(implode("\n", $section))
+                    ];
+                }, $faq);
+            }
+        }
+
         $this->template->count = $this->tickets->getTicketsCountByUserId($this->user->id);
         if($this->template->mode === "list") {
             $this->template->page    = (int) ($this->queryParam("p") ?? 1);
