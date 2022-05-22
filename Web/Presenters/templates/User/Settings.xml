@@ -479,24 +479,24 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">NSFW-контент</span>
+                            <span class="nobold">{_ui_settings_nsfw_content}</span>
                         </td>
                         <td>
                             <select name="nsfw">
-                                <option value="0" {if $user->getNsfwTolerance() === 0}selected{/if}>Не показывать в глобальной ленте</option>
-                                <option value="1" {if $user->getNsfwTolerance() === 1}selected{/if}>Только замазывать</option>
-                                <option value="2" {if $user->getNsfwTolerance() === 2}selected{/if}>Показывать</option>
+                                <option value="0" {if $user->getNsfwTolerance() === 0}selected{/if}>{_ui_settings_nsfw_content_dont_show}</option>
+                                <option value="1" {if $user->getNsfwTolerance() === 1}selected{/if}>{_ui_settings_nsfw_content_blur}</option>
+                                <option value="2" {if $user->getNsfwTolerance() === 2}selected{/if}>{_ui_settings_nsfw_content_show}</option>
                             </select>
                         </td>
                     </tr>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">Вид постов</span>
+                            <span class="nobold">{_ui_settings_view_of_posts}</span>
                         </td>
                         <td>
                             <select name="microblog">
-                                <option value="0" {if !$user->hasMicroblogEnabled()}selected{/if}>Старый</option>
-                                <option value="1" {if $user->hasMicroblogEnabled()}selected{/if}>Микроблог</option>
+                                <option value="0" {if !$user->hasMicroblogEnabled()}selected{/if}>{_ui_settings_view_of_posts_old}</option>
+                                <option value="1" {if $user->hasMicroblogEnabled()}selected{/if}>{_ui_settings_view_of_posts_microblog}</option>
                             </select>
                         </td>
                     </tr>

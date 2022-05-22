@@ -456,6 +456,13 @@
 "ui_settings_rating" = "Rating";
 "ui_settings_rating_show" = "Show";
 "ui_settings_rating_hide" = "Hide";
+"ui_settings_nsfw_content" = "NSFW content";
+"ui_settings_nsfw_content_dont_show" = "Don't show in global feed";
+"ui_settings_nsfw_content_blur" = "Just blur";
+"ui_settings_nsfw_content_show" = "Show";
+"ui_settings_view_of_posts" = "View of posts";
+"ui_settings_view_of_posts_old" = "Old";
+"ui_settings_view_of_posts_microblog" = "Microblog";
 
 "additional_links" = "Additional links";
 "ad_poster" = "Ad poster";

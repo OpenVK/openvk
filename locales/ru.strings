@@ -484,6 +484,13 @@
 "ui_settings_rating" = "Рейтинг";
 "ui_settings_rating_show" = "Показывать";
 "ui_settings_rating_hide" = "Скрывать";
+"ui_settings_nsfw_content" = "NSFW-контент";
+"ui_settings_nsfw_content_dont_show" = "Не показывать в глобальной ленте";
+"ui_settings_nsfw_content_blur" = "Только замазывать";
+"ui_settings_nsfw_content_show" = "Показывать";
+"ui_settings_view_of_posts" = "Вид постов";
+"ui_settings_view_of_posts_old" = "Старый";
+"ui_settings_view_of_posts_microblog" = "Микроблог";
 
 "additional_links" = "Дополнительные ссылки";
 "ad_poster" = "Рекламный плакат";
