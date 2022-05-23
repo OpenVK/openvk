@@ -501,6 +501,17 @@
                         </td>
                     </tr>
                     <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_ui_settings_main_page}</span>
+                        </td>
+                        <td>
+                            <select name="main_page">
+                                <option value="0" {if !$user->getMainPage()}selected{/if}>{_my_page}</option>
+                                <option value="1" {if $user->getMainPage()}selected{/if}>{_my_feed}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
                         <td width="120" valign="top" align="right">
                             <input type="checkbox" name="theme_for_session" value="1">
                         </td>

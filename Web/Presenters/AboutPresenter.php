@@ -14,7 +14,12 @@ final class AboutPresenter extends OpenVKPresenter
     {
         if(!is_null($this->user)) {
             header("HTTP/1.1 302 Found");
-            header("Location: /id" . $this->user->id);
+
+            if($this->user->identity->getMainPage())
+                header("Location: /feed");
+            else
+                header("Location: /id" . $this->user->id);
+
             exit;
         }
         

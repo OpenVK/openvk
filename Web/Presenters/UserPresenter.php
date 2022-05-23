@@ -419,6 +419,9 @@ final class UserPresenter extends OpenVKPresenter
                 
                 if(in_array($this->postParam("nsfw"), [0, 1, 2]))
                     $user->setNsfwTolerance((int) $this->postParam("nsfw"));
+
+                if(in_array($this->postParam("main_page"), [0, 1]))
+                    $user->setMain_Page((int) $this->postParam("main_page"));
             } else if($_GET['act'] === "lMenu") {
                 $settings = [
                     "menu_bildoj"    => "photos",

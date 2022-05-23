@@ -85,6 +85,11 @@ class User extends RowModel
     {
         return (bool) $this->getRecord()->microblog;
     }
+
+    function getMainPage(): int
+    {
+        return $this->getRecord()->main_page;
+    }
     
     function getChandlerGUID(): string
     {
