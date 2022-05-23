@@ -112,7 +112,7 @@ function setupWallPostInputHandlers(id) {
         var newHeight = textArea.scrollHeight;
         textArea.style.height = newHeight + boost + "px";
         return;
-
+        
         // revert to original size if it is larger (possibly changed by user)
         // textArea.style.height = (newHeight > originalHeight ? (newHeight + boost) : originalHeight) + "px";
     });

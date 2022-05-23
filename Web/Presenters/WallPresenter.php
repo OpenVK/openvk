@@ -255,7 +255,7 @@ final class WallPresenter extends OpenVKPresenter
                 $album = NULL;
                 if(!$anon && $wall > 0 && $wall === $this->user->id)
                     $album = (new Albums)->getUserWallAlbum($wallOwner);
-
+                
                 $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album, $anon);
             }
             
@@ -284,7 +284,7 @@ final class WallPresenter extends OpenVKPresenter
         } catch (\LengthException $ex) {
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_too_big"));
         }
-
+        
         if(!is_null($photo))
             $post->attach($photo);
         
