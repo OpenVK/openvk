@@ -118,7 +118,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             return ($action === "register" || $action === "login");
         }
         
-        return (bool) $this->user->raw->can($action)->model($model)->whichBelongsTo($context === -1 ? null : $context);
+        return (bool) $this->user->raw->can($action)->model($model)->whichBelongsTo($context === -1 ? NULL : $context);
     }
     
     protected function assertPermission(string $model, string $action, int $context, bool $throw = false): void
@@ -252,7 +252,7 @@ abstract class OpenVKPresenter extends SimplePresenter
                 exit;
             }
 
-            // ето для емейл уже надо (и по хорошему надо бы избавится от повторяющегося кода мда)
+            # ето для емейл уже надо (и по хорошему надо бы избавится от повторяющегося кода мда)
             if(!$this->user->identity->isActivated() && !$this->activationTolerant) {
                 header("HTTP/1.1 403 Forbidden");
                 $this->getTemplatingEngine()->render(__DIR__ . "/templates/@email.xml", [
@@ -288,7 +288,7 @@ abstract class OpenVKPresenter extends SimplePresenter
         
         $whichbrowser = new WhichBrowser\Parser(getallheaders());
         $mobiletheme = OPENVK_ROOT_CONF["openvk"]["preferences"]["defaultMobileTheme"];
-        if($mobiletheme && $whichbrowser->isType('mobile') && Session::i()->get("_tempTheme") == null)
+        if($mobiletheme && $whichbrowser->isType('mobile') && Session::i()->get("_tempTheme") == NULL)
             $this->setSessionTheme($mobiletheme);
 
         $theme = NULL;
@@ -299,7 +299,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             $theme = Themepacks::i()[Session::i()->get("_sessionTheme", "ovk")];
         } else if($this->requestParam("themePreview")) {
             $theme = Themepacks::i()[$this->requestParam("themePreview")];
-        } else if($this->user->identity !== null && $this->user->identity->getTheme()) {
+        } else if($this->user->identity !== NULL && $this->user->identity->getTheme()) {
             $theme = $this->user->identity->getTheme();
         }
         

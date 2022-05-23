@@ -17,7 +17,7 @@
         {script "js/l10n.js"}
         {script "js/openvk.cls.js"}
 
-        {if $isTimezoned == null}
+        {if $isTimezoned == NULL}
             {script "js/timezone.js"}
         {/if}
 
@@ -26,7 +26,7 @@
                 {css "css/nsfw-posts.css"}
             {/if}
 
-            {if $theme !== null}
+            {if $theme !== NULL}
                 {if $theme->inheritDefault()}
                     {css "css/style.css"}
                     {css "css/dialog.css"}
@@ -274,6 +274,8 @@
                 {php echo OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]}
             </p>
         </div>
+
+        {include "components/cookies.xml"}
 
         {script "js/node_modules/msgpack-lite/dist/msgpack.min.js"}
         {script "js/node_modules/soundjs/lib/soundjs.min.js"}

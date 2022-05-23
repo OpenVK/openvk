@@ -32,7 +32,7 @@ final class Wall extends VKAPIRequestHandler
                     $attachments[] = [
                         "type" => "photo",
                         "photo" => [
-                            "album_id" => $attachment->getAlbum() ? $attachment->getAlbum()->getId() : null,
+                            "album_id" => $attachment->getAlbum() ? $attachment->getAlbum()->getId() : NULL,
                             "date"     => $attachment->getPublicationTime()->timestamp(),
                             "id"       => $attachment->getVirtualId(),
                             "owner_id" => $attachment->getOwner()->getId(),
@@ -51,10 +51,10 @@ final class Wall extends VKAPIRequestHandler
                 "date" => $post->getPublicationTime()->timestamp(),
                 "post_type" => "post",
                 "text" => $post->getText(),
-                "can_edit" => 0, // TODO
+                "can_edit" => 0, # TODO
                 "can_delete" => $post->canBeDeletedBy($this->getUser()),
                 "can_pin" => $post->canBePinnedBy($this->getUser()),
-                "can_archive" => false, // TODO MAYBE
+                "can_archive" => false, # TODO MAYBE
                 "is_archived" => false,
                 "is_pinned" => $post->isPinned(),
                 "attachments" => $attachments,
@@ -80,7 +80,7 @@ final class Wall extends VKAPIRequestHandler
             else
                 $groups[] = $from_id * -1;
 
-            $attachments = null; // free attachments so it will not clone everythingg
+            $attachments = NULL; # free attachments so it will not clone everythingg
         }
 
         if($extended == 1) 
@@ -135,9 +135,9 @@ final class Wall extends VKAPIRequestHandler
             ];
     }
 
-    function getById(string $posts, int $extended = 0, string $fields = "", User $user = null)
+    function getById(string $posts, int $extended = 0, string $fields = "", User $user = NULL)
     {
-        if($user == null) $user = $this->getUser(); // костыли костыли крылышки
+        if($user == NULL) $user = $this->getUser(); # костыли костыли крылышки
 
         $items = [];
         $profiles = [];
@@ -160,7 +160,7 @@ final class Wall extends VKAPIRequestHandler
                         $attachments[] = [
                             "type" => "photo",
                             "photo" => [
-                                "album_id" => $attachment->getAlbum() ? $attachment->getAlbum()->getId() : null,
+                                "album_id" => $attachment->getAlbum() ? $attachment->getAlbum()->getId() : NULL,
                                 "date" => $attachment->getPublicationTime()->timestamp(),
                                 "id" => $attachment->getVirtualId(),
                                 "owner_id" => $attachment->getOwner()->getId(),
@@ -196,7 +196,7 @@ final class Wall extends VKAPIRequestHandler
                                     "width" => 1280,
                                 ],
                                 [
-                                    "height" => 75, // Для временного компросима оставляю статическое число. Если каждый раз обращаться к файлу за количеством пикселов, то наступает пuпuська полная с производительностью, так что пока так 
+                                    "height" => 75, # Для временного компросима оставляю статическое число. Если каждый раз обращаться к файлу за количеством пикселов, то наступает пuпuська полная с производительностью, так что пока так 
                                     "url" => $attachment->getURLBySizeId("miniscule"),
                                     "type" => "s",
                                     "width" => 75,
@@ -215,10 +215,10 @@ final class Wall extends VKAPIRequestHandler
                     "date" => $post->getPublicationTime()->timestamp(),
                     "post_type" => "post",
                     "text" => $post->getText(),
-                    "can_edit" => 0, // TODO
+                    "can_edit" => 0, # TODO
                     "can_delete" => $post->canBeDeletedBy($user),
                     "can_pin" => $post->canBePinnedBy($user),
-                    "can_archive" => false, // TODO MAYBE
+                    "can_archive" => false, # TODO MAYBE
                     "is_archived" => false,
                     "is_pinned" => $post->isPinned(),
                     "post_source" => (object)["type" => "vk"],
@@ -244,7 +244,7 @@ final class Wall extends VKAPIRequestHandler
                 else
                     $groups[] = $from_id * -1;
 
-                $attachments = null; // free attachments so it will not clone everythingg
+                $attachments = NULL; # free attachments so it will not clone everythingg
             }
         }
 
@@ -335,12 +335,12 @@ final class Wall extends VKAPIRequestHandler
         if($signed == 1)
             $flags |= 0b01000000;
 
-        // TODO: Compatible implementation of this
+        # TODO: Compatible implementation of this
         try {
-            $photo = null;
-            $video = null;
+            $photo = NULL;
+            $video = NULL;
             if($_FILES["photo"]["error"] === UPLOAD_ERR_OK) {
-                $album = null;
+                $album = NULL;
                 if(!$anon && $owner_id > 0 && $owner_id === $this->getUser()->getId())
                     $album = (new AlbumsRepo)->getUserWallAlbum($wallOwner);
 

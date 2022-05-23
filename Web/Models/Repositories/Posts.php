@@ -96,7 +96,7 @@ class Posts
         if(!is_null($post))
             return new Post($post);
         else
-            return null;
+            return NULL;
         
     }
     

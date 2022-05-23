@@ -414,7 +414,7 @@ final class WallPresenter extends OpenVKPresenter
             $post->unpin();
         }
         
-        // TODO localize message based on language and ?act=(un)pin
+        # TODO localize message based on language and ?act=(un)pin
         $this->flashFail("succ", tr("information_-1"), tr("changes_saved_comment"));
     }
 }

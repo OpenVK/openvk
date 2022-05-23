@@ -302,8 +302,8 @@ class Club extends RowModel
     {
         $manager = (new Managers)->getByUserAndClub($user->getId(), $this->getId());
 
-        if ($ignoreHidden && $manager !== null && $manager->isHidden())
-            return null;
+        if ($ignoreHidden && $manager !== NULL && $manager->isHidden())
+            return NULL;
 
         return $manager;
     }
