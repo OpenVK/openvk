@@ -273,6 +273,7 @@ final class WallPresenter extends OpenVKPresenter
         
         try {
 	        $post = new Post;
+            
 	        $post->setOwner($this->user->id);
 	        $post->setWall($wall);
 	        $post->setCreated(time());

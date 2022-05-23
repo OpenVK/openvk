@@ -399,13 +399,13 @@
 
             function convertCurrency(coin) {
                 var currencyTON = {php echo OPENVK_ROOT_CONF['openvk']['preferences']['ton']['rate']};
-                u('.coins_dialog_conv').nodes[0].innerHTML = tr("transfer_ton_currency_per_ton", coin * currencyTON); 
+                u(".coins_dialog_conv").nodes[0].innerHTML = tr("transfer_ton_currency_per_ton", coin * currencyTON); 
             }
 
             function showCoinsTopUpTroughTon() {
                 MessageBox(tr("transfer_trough_ton"), `
                     <div class="messagebox-content-header">
-                        ${ tr("transfer_ton_contents") }
+                        ${tr("transfer_ton_contents")}
                     </div>
                     <div style="margin-top: 30px">` +
                     {tr("transfer_ton_address", OPENVK_ROOT_CONF['openvk']['preferences']['ton']['address'], str_replace("$1", $thisUser->getId(), OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["hint"]))} + 

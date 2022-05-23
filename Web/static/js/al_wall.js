@@ -100,7 +100,7 @@ function setupWallPostInputHandlers(id) {
         if(e.clipboardData.files.length === 1) {
             var input = u("#post-buttons" + id + " input[name=_pic_attachment]").nodes[0];
             input.files = e.clipboardData.files;
-
+            
             u(input).trigger("change");
         }
     });

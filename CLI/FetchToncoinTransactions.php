@@ -46,8 +46,8 @@ class FetchToncoinTransactions extends Command
             return Command::FAILURE;
         }
 
-        $testnet_subdomain = OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["testnet"] ? "testnet." : "";
-        $url               = "https://" . $testnet_subdomain . "toncenter.com/api/v2/getTransactions?";
+        $testnetSubdomain = OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["testnet"] ? "testnet." : "";
+        $url               = "https://" . $testnetSubdomain . "toncenter.com/api/v2/getTransactions?";
 
         $opts = [
             "http" => [
@@ -57,14 +57,14 @@ class FetchToncoinTransactions extends Command
         ];
 
         $selection = $this->transactions->select('hash, lt')->order("id DESC")->limit(1)->fetch();
-        $tr_hash   = $selection->hash ?? NULL;
-        $tr_lt     = $selection->lt ?? NULL;
+        $trHash   = $selection->hash ?? NULL;
+        $trLt     = $selection->lt ?? NULL;
 
         $data = http_build_query([
             "address" => OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["address"],
             "limit" => 100,
-            "hash" => $tr_hash,
-            "to_lt" => $tr_lt
+            "hash" => $trHash,
+            "to_lt" => $trLt
         ]);
 
         $response = file_get_contents($url . $data, false, stream_context_create($opts));
@@ -75,7 +75,7 @@ class FetchToncoinTransactions extends Command
             $output_array;
             preg_match('/' . OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["regex"] . '/', $transfer["in_msg"]["message"], $output_array);
             $userid = ctype_digit($output_array[1]) ? intval($output_array[1]) : NULL;
-            if($userid === NULL) {
+            if(is_null($userid)) {
                 $header->writeln("Well, that's a donation. Thanks! XD");
             } else {
                 $user = (new Users)->get($userid);
