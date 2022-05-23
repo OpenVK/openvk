@@ -47,7 +47,7 @@ class FetchToncoinTransactions extends Command
         }
 
         $testnetSubdomain = OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["testnet"] ? "testnet." : "";
-        $url               = "https://" . $testnetSubdomain . "toncenter.com/api/v2/getTransactions?";
+        $url              = "https://" . $testnetSubdomain . "toncenter.com/api/v2/getTransactions?";
 
         $opts = [
             "http" => [
@@ -57,14 +57,14 @@ class FetchToncoinTransactions extends Command
         ];
 
         $selection = $this->transactions->select('hash, lt')->order("id DESC")->limit(1)->fetch();
-        $trHash   = $selection->hash ?? NULL;
-        $trLt     = $selection->lt ?? NULL;
+        $trHash    = $selection->hash ?? NULL;
+        $trLt      = $selection->lt ?? NULL;
 
         $data = http_build_query([
             "address" => OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["address"],
-            "limit" => 100,
-            "hash" => $trHash,
-            "to_lt" => $trLt
+            "limit"   => 100,
+            "hash"    => $trHash,
+            "to_lt"   => $trLt
         ]);
 
         $response = file_get_contents($url . $data, false, stream_context_create($opts));
@@ -72,13 +72,13 @@ class FetchToncoinTransactions extends Command
 
         $header->writeln("Gonna up the balance of users");
         foreach($response["result"] as $transfer) {
-            $output_array;
-            preg_match('/' . OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["regex"] . '/', $transfer["in_msg"]["message"], $output_array);
-            $userid = ctype_digit($output_array[1]) ? intval($output_array[1]) : NULL;
-            if(is_null($userid)) {
+            $outputArray;
+            preg_match('/' . OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["regex"] . '/', $transfer["in_msg"]["message"], $outputArray);
+            $userId = ctype_digit($outputArray[1]) ? intval($outputArray[1]) : NULL;
+            if(is_null($userId)) {
                 $header->writeln("Well, that's a donation. Thanks! XD");
             } else {
-                $user = (new Users)->get($userid);
+                $user = (new Users)->get($userId);
                 if(!$user) {
                     $header->writeln("Well, that's a donation. Thanks! XD");
                 } else {

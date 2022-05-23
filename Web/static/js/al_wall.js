@@ -104,7 +104,7 @@ function setupWallPostInputHandlers(id) {
             u(input).trigger("change");
         }
     });
-
+    
     u("#wall-post-input" + id).on("input", function(e) {
         var boost             = 5;
         var textArea          = e.target;

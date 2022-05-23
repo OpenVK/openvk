@@ -272,15 +272,14 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"));
         
         try {
-	        $post = new Post;
-            
-	        $post->setOwner($this->user->id);
-	        $post->setWall($wall);
-	        $post->setCreated(time());
-	        $post->setContent($this->postParam("text"));
-	        $post->setAnonymous($anon);
-	        $post->setFlags($flags);
-	        $post->setNsfw($this->postParam("nsfw") === "on");
+            $post = new Post;
+            $post->setOwner($this->user->id);
+            $post->setWall($wall);
+            $post->setCreated(time());
+            $post->setContent($this->postParam("text"));
+            $post->setAnonymous($anon);
+            $post->setFlags($flags);
+            $post->setNsfw($this->postParam("nsfw") === "on");
             $post->save();
         } catch (\LengthException $ex) {
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_too_big"));
