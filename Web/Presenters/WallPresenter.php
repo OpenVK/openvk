@@ -113,7 +113,7 @@ final class WallPresenter extends OpenVKPresenter
         $feed = new Feed();
 
         $channel = new Channel();
-        $channel->title(OPENVK_ROOT_CONF['openvk']['appearance']['name'])->url(ovk_scheme(true) . $_SERVER["SERVER_NAME"])->appendTo($feed);
+        $channel->title($post->getOwner()->getCanonicalName() . " — " . OPENVK_ROOT_CONF['openvk']['appearance']['name'])->url(ovk_scheme(true) . $_SERVER["SERVER_NAME"])->appendTo($feed);
 
         foreach($posts as $post) {
             $item = new Item();
