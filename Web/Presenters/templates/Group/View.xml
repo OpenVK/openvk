@@ -29,7 +29,7 @@
                 </tr>
                 <tr>
                     <td><span class="nobold">{_"description"}:</span></td>
-                    <td>{$club->getDescription()}</td>  
+                    <td>{$club->getDescriptionHtml()|noescape}</td>
                 </tr>
                 <tr n:if="!is_null($club->getWebsite())">
                     <td><span class="nobold">{_"website"}: </span></td>

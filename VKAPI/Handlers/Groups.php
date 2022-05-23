@@ -48,7 +48,7 @@ final class Groups extends VKAPIRequestHandler
                     "name" => "DELETED",
                     "deactivated" => "deleted"
                 ];   
-            }else if($clbs[$i] == null){
+            }else if($clbs[$i] == NULL){
 
             }else{
                 $rClubs[$i] = (object)[
@@ -95,10 +95,10 @@ final class Groups extends VKAPIRequestHandler
 
         $clubs = new ClubsRepo;
 		
-        if ($group_ids == null && $group_id != null) 
+        if ($group_ids == NULL && $group_id != NULL) 
             $group_ids = $group_id;
         
-        if ($group_ids == null && $group_id == null)
+        if ($group_ids == NULL && $group_id == NULL)
             $this->fail(100, "One of the parameters specified was missing or invalid: group_ids is undefined");
 		
         $clbs = explode(',', $group_ids);
@@ -123,7 +123,7 @@ final class Groups extends VKAPIRequestHandler
                     "type" => "group",
                     "description" => "This group was deleted or it doesn't exist"
                 ];   
-            }else if($clbs[$i] == null){
+            }else if($clbs[$i] == NULL){
 
             }else{
                 $response[$i] = (object)[

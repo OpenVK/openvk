@@ -2,31 +2,11 @@ Function.noop = () => {};
 
 var _n_counter = 0;
 
-var _activeWindow = true;
-
-const _pageTitle = u("title").nodes[0].innerText;
-
 var counter = 0;
 
-/* this fucking dumb shit is broken :c
-
-window.addEventListener('focus', () => {
-    _activeWindow = true;
-    closeAllNotifications();
+window.addEventListener("focus", () => {
+    document.title = document.title.replace(/^\([0-9]+\) /, ""); // remove notification counter xD
 });
-
-window.addEventListener('blur', () => {_activeWindow = false});
-
-function closeAllNotifications() {
-    var notifications = u(".notifications_global_wrap").nodes[0].children;
-    for (var i = 0; i < notifications.length; i++) {
-        setTimeout(() => {
-            console.log(i);
-            notifications.item(i).classList.add('disappears');
-            setTimeout(() => {notifications.item(i).remove()}, 500).bind(this);
-        }, 5000).bind(this);
-    }
-} */
 
 function NewNotification(title, body, avatar = null, callback = () => {}, time = 5000, count = true) {
     if(avatar != null) {
@@ -62,18 +42,19 @@ function NewNotification(title, body, avatar = null, callback = () => {}, time =
     }
 
     function __closeNotification() {
+        if(document.visibilityState != "visible")
+            return setTimeout(() => {__closeNotification()}, time); // delay notif deletion
+        
         getPrototype().addClass('disappears');
-        setTimeout(() => {getPrototype().remove()}, 500);
+        return setTimeout(() => {getPrototype().remove()}, 500);
     }
 
     if(count == true) {
         counter++;
-        document.title = `(${counter}) ${_pageTitle}`;
+        document.title = `(${counter}) ${document.title}`;
     }
     
-    /* if(_activeWindow == true) { */
-        setTimeout(() => {__closeNotification()}, time);
-    /* } */
+    setTimeout(() => {__closeNotification()}, time);
 
     notification.children('notification_title').children('a.close').on('click', function(e) {
         __closeNotification();

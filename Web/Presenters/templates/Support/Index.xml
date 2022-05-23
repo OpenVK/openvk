@@ -51,9 +51,9 @@
 
     {if $isMain}
         <h4>{_support_faq}</h4><br />
-        <div class="faq">
-            <div id="faqhead">{_support_faq_title}</div>
-            <div id="faqcontent">{_support_faq_content}</div>
+        <div n:foreach="$faq as $section" class="faq">
+            <div id="faqhead">{$section[0]}</div>
+            <div id="faqcontent">{$section[1]|noescape}</div>
         </div>
     {/if}
 

@@ -165,8 +165,11 @@ class Photo extends Media
         foreach($manifest->Size as $size)
             $mappings[(string) $size["id"]] = (string) $size["vkId"];
 
-        foreach($sizes as $id => $meta)
-            $res[$mappings[$id] ?? $id] = $meta;
+        foreach($sizes as $id => $meta) {
+            $type       = $mappings[$id] ?? $id;
+            $meta->type = $type;
+            $res[$type] = $meta;
+        }
 
         return $res;
     }

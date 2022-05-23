@@ -126,7 +126,7 @@ class Message extends RowModel
             ],
             "timing" => [
                 "sent"   => (string) $this->getSendTime()->format("%e %B %G" . tr("time_at_sp") . "%X"),
-                "edited" => is_null($this->getEditTime()) ? null : (string) $this->getEditTime(),
+                "edited" => is_null($this->getEditTime()) ? NULL : (string) $this->getEditTime(),
             ],
             "text"        => $this->getText(),
             "read"        => !$this->isUnread(),

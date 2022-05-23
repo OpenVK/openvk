@@ -444,6 +444,8 @@
 "your_page_address" = "Your address page";
 "page_address" = "Address page";
 "current_email_address" = "Current email address";
+"new_email_address" = "New email address";
+"save_email_address" = "Save email address";
 "page_id" = "Page ID";
 "you_can_also" = "You can also";
 "delete_your_page" = "delete your page";
@@ -454,9 +456,19 @@
 "ui_settings_rating" = "Rating";
 "ui_settings_rating_show" = "Show";
 "ui_settings_rating_hide" = "Hide";
+"ui_settings_nsfw_content" = "NSFW content";
+"ui_settings_nsfw_content_dont_show" = "Don't show in global feed";
+"ui_settings_nsfw_content_blur" = "Just blur";
+"ui_settings_nsfw_content_show" = "Show";
+"ui_settings_view_of_posts" = "View of posts";
+"ui_settings_view_of_posts_old" = "Old";
+"ui_settings_view_of_posts_microblog" = "Microblog";
+"ui_settings_main_page" = "Main page";
 
 "additional_links" = "Additional links";
 "ad_poster" = "Ad poster";
+
+"email_change_confirm_message" = "Please confirm your new email address for the change to take effect. We have sent instructions to it.";
 
 /* Two-factor authentication */
 
@@ -661,9 +673,6 @@
 "support_list" = "List of tickets";
 "support_new" = "New ticket";
 
-"support_faq_title" = "Who is this website for?";
-"support_faq_content" = "The site is designed to find friends and acquaintances, as well as view user data. It is like a city directory, through which people can quickly find relevant information about a person.";
-
 "support_new_title" = "Enter the topic of your ticket";
 "support_new_content" = "Describe the issue or suggestion";
 
@@ -847,6 +856,84 @@
 "ban_in_support_user_action" = "Ban in support";
 "unban_in_support_user_action" = "Unban in support";
 
+/* Admin panel */
+
+"admin" = "Admin panel";
+
+"admin_ownerid" = "Owner ID";
+"admin_author" = "Author";
+"admin_name" = "Name";
+"admin_title" = "Title";
+"admin_description" = "Description";
+"admin_first_known_ip" = "First known IP";
+"admin_shortcode" = "Short code";
+"admin_verification" = "Verification";
+"admin_banreason" = "Ban reason";
+"admin_banned" = "banned";
+"admin_gender" = "Gender";
+"admin_registrationdate" = "Registration date";
+"admin_actions" = "Actions";
+"admin_image" = "Image";
+"admin_image_replace" = "Replace the image?";
+"admin_uses" = "Uses";
+"admin_uses_reset" = "Reset the number of uses?";
+"admin_limits" = "Limits";
+"admin_limits_reset" = "Reset the number of limits";
+"admin_open" = "Open";
+"admin_loginas" = "Login as...";
+"admin_commonsettings" = "Common settings";
+"admin_langsettings" = "Language-dependent settings";
+
+"admin_tab_main" = "General";
+"admin_tab_ban" = "Ban";
+"admin_tab_followers" = "Followers";
+
+"admin_overview" = "Overview";
+"admin_overview_summary" = "Summary";
+
+"admin_content" = "User-generated content";
+"admin_user_search" = "Search for users";
+"admin_user_online" = "Online status";
+"admin_user_online_default" = "Default";
+"admin_user_online_incognito" = "Incognito";
+"admin_user_online_deceased" = "Deceased";
+"admin_club_search" = "Search for groups";
+"admin_club_excludeglobalfeed" = "Do not display posts in the global feed";
+
+"admin_services" = "Paid services";
+"admin_newgift" = "New gift";
+"admin_price" = "Price";
+"admin_giftset" = "Gift set";
+"admin_giftsets" = "Gift sets";
+"admin_giftsets_none" = "There are no gift sets. Create a set to create a gift.";
+"admin_giftsets_create" = "Create a gift set";
+"admin_giftsets_title" = "The internal name of the set, which will be used if no name can be found in the user's language.";
+"admin_giftsets_description" = "The internal description of the set, which will be used if no name can be found in the user's language.";
+"admin_price_free" = "free";
+"admin_voucher_rating" = "Rating";
+"admin_voucher_serial" = "Serial number";
+"admin_voucher_serial_desc" = "The number consists of 24 characters. If the format is incorrect or the field is not filled in, it will be assigned automatically.";
+"admin_voucher_coins" = "Number of votes";
+"admin_voucher_rating" = "Number of rating";
+"admin_voucher_usages_desc" = "The number of accounts that can use the voucher. If you type -1, it will be infinity.";
+"admin_voucher_status" = "Status";
+"admin_voucher_status_opened" = "active";
+"admin_voucher_status_closed" = "closed";
+
+"admin_settings" = "Settings";
+"admin_settings_tuning" = "General";
+"admin_settings_appearance" = "Appearance";
+"admin_settings_security" = "Security";
+"admin_settings_integrations" = "Integrations";
+"admin_settings_system" = "System";
+
+"admin_about" = "About OpenVK";
+"admin_about_version" = "Version";
+"admin_about_instance" = "Instance";
+
+"admin_commerce_disabled" = "Commerce has been disabled by the system administrator";
+"admin_commerce_disabled_desc" = "The voucher and gift settings will be saved, but will have no effect.";
+
 /* Paginator (deprecated) */
 
 "paginator_back" = "Back";
@@ -895,3 +982,8 @@
 /* User alerts */
 
 "user_alert_scam" = "This account has been reported a lot for scam. Please be careful, especially if he asked for money.";
+
+/* Cookies pop-up */
+
+"cookies_popup_content" = "All kids love cookie, so this website uses Cookies to identify your session and nothing more. Check <a href='/privacy'>our privacy policy</a> for more information.";
+"cookies_popup_agree" = "Accept";

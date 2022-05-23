@@ -63,7 +63,7 @@ class Video extends Media
 
         if(!file_exists($this->getFileName())) {
             if((time() - $this->getRecord()->last_checked) > 3600) {
-                // TODO notify that video processor is probably dead
+                # TODO notify that video processor is probably dead
             }
 
             return false;

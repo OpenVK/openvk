@@ -7,9 +7,9 @@ final class Users extends VKAPIRequestHandler
 {
     function get(string $user_ids = "0", string $fields = "", int $offset = 0, int $count = 100, User $authuser = null /* костыль(( */): array 
     {
-        // $this->requireUser();
+        # $this->requireUser();
 
-		if($authuser == null) $authuser = $this->getUser();
+		if($authuser == NULL) $authuser = $this->getUser();
 
         $users = new UsersRepo;
 		if($user_ids == "0")
@@ -34,7 +34,7 @@ final class Users extends VKAPIRequestHandler
                     "last_name" => "",
                     "deactivated" => "deleted"
                 ];   
-            }else if($usrs[$i] == null){
+            }else if($usrs[$i] == NULL){
 
             }else{
                 $response[$i] = (object)[
@@ -73,21 +73,21 @@ final class Users extends VKAPIRequestHandler
 			            case 'photo_200':
 			                $response[$i]->photo_50 = $usr->getAvatarURL("normal");
 			                break;
-			            case 'photo_200_orig': // вообще не ебу к чему эта строка ну пусть будет кек
+			            case 'photo_200_orig': # вообще не ебу к чему эта строка ну пусть будет кек
 			                $response[$i]->photo_50 = $usr->getAvatarURL("normal");
 			                break;
 			            case 'photo_400_orig':
 			                $response[$i]->photo_50 = $usr->getAvatarURL("normal");
 			                break;
 						
-						// Она хочет быть выебанной видя матан
-						// Покайфу когда ты Виет а вокруг лишь дискриминант
+						# Она хочет быть выебанной видя матан
+						# Покайфу когда ты Виет а вокруг лишь дискриминант
 						case 'status':
-							if($usr->getStatus() != null)
+							if($usr->getStatus() != NULL)
 						    	$response[$i]->status = $usr->getStatus();
 						    break;
 						case 'screen_name':
-							if($usr->getShortCode() != null)
+							if($usr->getShortCode() != NULL)
 			                	$response[$i]->screen_name = $usr->getShortCode();
 			                break;
 			            case 'friend_status':

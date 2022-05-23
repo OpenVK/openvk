@@ -85,6 +85,11 @@ class User extends RowModel
     {
         return (bool) $this->getRecord()->microblog;
     }
+
+    function getMainPage(): int
+    {
+        return $this->getRecord()->main_page;
+    }
     
     function getChandlerGUID(): string
     {
@@ -877,6 +882,17 @@ class User extends RowModel
         return true;
     }
 
+    function changeEmail(string $email): void
+    {
+        DatabaseConnection::i()->getContext()->table("ChandlerUsers")
+            ->where("id", $this->getChandlerUser()->getId())->update([
+                "login" => $email
+            ]);
+
+        $this->stateChanges("email", $email);
+        $this->save();
+    }
+
     function adminNotify(string $message): bool
     {
         $admId = OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"];
@@ -928,7 +944,7 @@ class User extends RowModel
 		return $this->getRecord()->website;
 	}
 
-    // ты устрица
+    # ты устрица
     function isActivated(): bool
     {
         return (bool) $this->getRecord()->activated;

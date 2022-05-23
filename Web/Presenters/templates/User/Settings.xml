@@ -64,7 +64,7 @@
                             <span class="nobold">{_"2fa_code"}</span>
                         </td>
                         <td>
-                            <input type="text" name="code" style="width: 100%;" />
+                            <input type="text" name="password_change_code" style="width: 100%;" />
                         </td>
                     </tr>
                     <tr>
@@ -152,6 +152,38 @@
                         </td>
                         <td>
                             {$user->getEmail()}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_new_email_address}</span>
+                        </td>
+                        <td>
+                            <input type="email" name="new_email" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_password}</span>
+                        </td>
+                        <td>
+                            <input type="password" name="email_change_pass" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr n:if="$user->is2faEnabled()">
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"2fa_code"}</span>
+                        </td>
+                        <td>
+                            <input type="text" name="email_change_code" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <input type="submit" value="{_save_email_address}" class="button" />
                         </td>
                     </tr>
                 </tbody>
@@ -447,24 +479,35 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">NSFW-контент</span>
+                            <span class="nobold">{_ui_settings_nsfw_content}</span>
                         </td>
                         <td>
                             <select name="nsfw">
-                                <option value="0" {if $user->getNsfwTolerance() === 0}selected{/if}>Не показывать в глобальной ленте</option>
-                                <option value="1" {if $user->getNsfwTolerance() === 1}selected{/if}>Только замазывать</option>
-                                <option value="2" {if $user->getNsfwTolerance() === 2}selected{/if}>Показывать</option>
+                                <option value="0" {if $user->getNsfwTolerance() === 0}selected{/if}>{_ui_settings_nsfw_content_dont_show}</option>
+                                <option value="1" {if $user->getNsfwTolerance() === 1}selected{/if}>{_ui_settings_nsfw_content_blur}</option>
+                                <option value="2" {if $user->getNsfwTolerance() === 2}selected{/if}>{_ui_settings_nsfw_content_show}</option>
                             </select>
                         </td>
                     </tr>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">Вид постов</span>
+                            <span class="nobold">{_ui_settings_view_of_posts}</span>
                         </td>
                         <td>
                             <select name="microblog">
-                                <option value="0" {if !$user->hasMicroblogEnabled()}selected{/if}>Старый</option>
-                                <option value="1" {if $user->hasMicroblogEnabled()}selected{/if}>Микроблог</option>
+                                <option value="0" {if !$user->hasMicroblogEnabled()}selected{/if}>{_ui_settings_view_of_posts_old}</option>
+                                <option value="1" {if $user->hasMicroblogEnabled()}selected{/if}>{_ui_settings_view_of_posts_microblog}</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_ui_settings_main_page}</span>
+                        </td>
+                        <td>
+                            <select name="main_page">
+                                <option value="0" {if !$user->getMainPage()}selected{/if}>{_my_page}</option>
+                                <option value="1" {if $user->getMainPage()}selected{/if}>{_my_feed}</option>
                             </select>
                         </td>
                     </tr>

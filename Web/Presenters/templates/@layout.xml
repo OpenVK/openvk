@@ -17,7 +17,7 @@
         {script "js/l10n.js"}
         {script "js/openvk.cls.js"}
 
-        {if $isTimezoned == null}
+        {if $isTimezoned == NULL}
             {script "js/timezone.js"}
         {/if}
 
@@ -26,7 +26,7 @@
                 {css "css/nsfw-posts.css"}
             {/if}
 
-            {if $theme !== null}
+            {if $theme !== NULL}
                 {if $theme->inheritDefault()}
                     {css "css/style.css"}
                     {css "css/dialog.css"}
@@ -103,7 +103,7 @@
                 <div n:if="isset($thisUser) ? (!$thisUser->isBanned() XOR !$thisUser->isActivated()) : true" class="header_navigation">
                     {ifset $thisUser}
                         <div class="link">
-                            <a href="/" title="[Alt+Shift+,]" accesskey=",">{_header_home}</a>
+                            <a href="/">{_header_home}</a>
                         </div>
                         <div class="link">
                             <a href="/search?type=groups">{_header_groups}</a>
@@ -161,7 +161,7 @@
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('notes')" href="/notes{$thisUser->getId()}" class="link">{_my_notes}</a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('groups')" href="/groups{$thisUser->getId()}" class="link">{_my_groups}</a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link" title="{_my_feed} [Alt+Shift+W]" accesskey="w">{_my_feed}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link" title="{_my_feed} [Alt+Shift+,]" accesskey=",">{_my_feed}</a>
                             <a href="/notifications" class="link" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">{_my_feedback}
                                 {if $thisUser->getNotificationsCount() > 0}
                                     (<b>{$thisUser->getNotificationsCount()}</b>)
@@ -173,7 +173,7 @@
                             {var $canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
                             {var $menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
                             <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $menuLinksAvaiable" class="menu_divider"></div>
-                            <a href="/admin" class="link" n:if="$canAccessAdminPanel" title="Админ-панель [Alt+Shift+A]" accesskey="a">Админ-панель</a>
+                            <a href="/admin" class="link" n:if="$canAccessAdminPanel" title="{_admin} [Alt+Shift+A]" accesskey="a">{_admin}</a>
                             <a href="/support/tickets" class="link" n:if="$canAccessHelpdesk">Helpdesk
                                 {if $helpdeskTicketNotAnsweredCount > 0}
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
@@ -279,6 +279,8 @@
                 {php echo OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]}
             </p>
         </div>
+
+        {include "components/cookies.xml"}
 
         {script "js/node_modules/msgpack-lite/dist/msgpack.min.js"}
         {script "js/node_modules/soundjs/lib/soundjs.min.js"}
