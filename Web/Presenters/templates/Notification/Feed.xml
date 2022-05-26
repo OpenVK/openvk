@@ -12,7 +12,7 @@
 
 {block tabs}
     <div n:attr="id => ($mode === 'new' ? 'activetabs' : 'ki')" class="tab">
-        <a n:attr="id => ($mode === 'new' ? 'act_tab_a' : 'ki')" href="?">{_unread}</a>
+        <a n:attr="id => ($mode === 'new' ? 'act_tab_a' : 'ki')" href="?act=new">{_unread}</a>
     </div>
     <div n:attr="id => ($mode === 'archived' ? 'activetabs' : 'ki')" class="tab">
         <a n:attr="id => ($mode === 'archived' ? 'act_tab_a' : 'ki')" href="?act=archived">{_archive}</a>
