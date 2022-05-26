@@ -4,7 +4,7 @@
 <div class="wrap2">
     <div class="wrap1">
         <div class="page_wrap padding_top">
-            <div n:ifset="tabs" class="tabs">
+            <div n:ifset="tabs" n:ifcontent class="tabs">
                 {include tabs}
             </div>
 

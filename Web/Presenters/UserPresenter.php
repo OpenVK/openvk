@@ -90,6 +90,9 @@ final class UserPresenter extends OpenVKPresenter
         elseif (!$user->getPrivacyPermission('groups.read', $this->user->identity ?? NULL))
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         else {
+            if($this->queryParam("act") === "managed" && $this->user->id !== $user->getId())
+                $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+
             $this->template->user = $user;
             $this->template->page = (int) ($this->queryParam("p") ?? 1);
             $this->template->admin = $this->queryParam("act") == "managed";

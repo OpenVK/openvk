@@ -32,7 +32,7 @@
 {/block}
 
 {block size}
-    <div style="padding-bottom: 0px;" class="summaryBar">
+    <div style="padding-bottom: 0px; {if is_null($thisUser) || $user->getId() !== $thisUser->getId()}padding-top: 0px;{/if}" class="summaryBar">
         <div class="summary">
             {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
                 {tr("groups_list", $thisUser->getClubCount())}
@@ -90,7 +90,7 @@
             {/if}
             <form action="/setSub/club" method="post">
                 <input type="hidden" name="act" value="rem" />
-                <input type="hidden" name="id"  value="{$x->getId()}" />
+                <input type="hidden" name="id" value="{$x->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
                 <input style="text-transform: lowercase; width: 100%;" class="link" type="submit" value="{_"leave_community"}" />
             </form>
@@ -101,7 +101,7 @@
 {block bottom}
     {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
         <div class="groups_options">
-            <div id="gp_container" style="width: 200px; margin-right: 40px;">
+            <div id="gp_container" style="width: 200px; margin-right: 39px;">
                 <h4>{_open_new_group}</h4>
                 <span>{_open_group_desc}</span>
                 <form action="/groups_create">
