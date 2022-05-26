@@ -1517,14 +1517,17 @@ body.scrolled .toTop:hover {
 
 #wallAttachmentMenu {
     position: absolute;
-    margin-top: 20px;
     border: 1px solid darkgrey;
     background-color: white;
     z-index: 32;
+    margin-top: -7px;
+    margin-left: -16px;
+    box-shadow: 0 1px 3px -1px;
 }
 
 #wallAttachmentMenu>a {
-    display: block;
+    display: flex;
+    gap: 5px;
     padding: 2px 6px;
     cursor: pointer;
 }
@@ -1535,6 +1538,12 @@ body.scrolled .toTop:hover {
 
 #wallAttachmentMenu>a:hover {
     background-color: #f0f0f0;
+}
+
+#wallAttachmentMenu>.header {
+	padding: 6px 15px;
+	background-color: #eee;
+	text-align: center;
 }
 
 #ovkDraw {

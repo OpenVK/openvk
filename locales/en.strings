@@ -187,6 +187,8 @@
 "open_post" = "Open post";
 "version_incompatibility" = "This attachment could not be displayed. Probably the database is incompatible with the current version of OpenVK.";
 
+"graffiti" = "Graffiti";
+
 "reply" = "Reply";
 
 /* Friends */
