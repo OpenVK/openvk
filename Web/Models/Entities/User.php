@@ -145,14 +145,22 @@ class User extends RowModel
         return iterator_to_array($avPhotos)[0] ?? NULL;
     }
     
-    function getFirstName(): string
+    function getFirstName(bool $pristine = false): string
     {
-        return $this->getRecord()->deleted ? "DELETED" : mb_convert_case($this->getRecord()->first_name, MB_CASE_TITLE);
+        $name = $this->getRecord()->deleted ? "DELETED" : mb_convert_case($this->getRecord()->first_name, MB_CASE_TITLE);
+        if((($ts = tr("__transNames")) !== "@__transNames") && !$pristine)
+            return transliterator_transliterate($ts, $name);
+        else
+            return $name;
     }
     
-    function getLastName(): string
+    function getLastName(bool $pristine = false): string
     {
-        return $this->getRecord()->deleted ? "DELETED" : mb_convert_case($this->getRecord()->last_name, MB_CASE_TITLE);
+        $name = $this->getRecord()->deleted ? "DELETED" : mb_convert_case($this->getRecord()->last_name, MB_CASE_TITLE);
+        if((($ts = tr("__transNames")) !== "@__transNames") && !$pristine)
+            return transliterator_transliterate($ts, $name);
+        else
+            return $name;
     }
     
     function getPseudo(): ?string

@@ -43,7 +43,7 @@
                             <span class="nobold">{_"name"}: </span>
                         </td>
                         <td>
-                            <input type="text" name="first_name" value="{$user->getFirstName()}" />
+                            <input type="text" name="first_name" value="{$user->getFirstName(true)}" />
                         </td>
                     </tr>
                     <tr>
@@ -51,7 +51,7 @@
                             <span class="nobold">{_"surname"}: </span>
                         </td>
                         <td>
-                            <input type="text" name="last_name" value="{$user->getLastName()}" />
+                            <input type="text" name="last_name" value="{$user->getLastName(true)}" />
                         </td>
                     </tr>
                     <tr>
