@@ -415,8 +415,8 @@
 "results_other" = "$1 нәтиже";
 
 "your_email_address" = "Сіздің Email-мекенжайыңыз";
-"your_page_address" = "Сіздің мекенжай бетіңіз";
-"page_address" = "Мекенжай беті";
+"your_page_address" = "Сіздің парақшаңыздың мекенжайы";
+"page_address" = "Парақшаңыздың мекенжайы";
 "current_email_address" = "Қазіргі Email-мекенжайы";
 "new_email_address" = "Жаңа Email-мекенжайы";
 "save_email_address" = "Email-мекенжайын сақтау";
@@ -844,7 +844,7 @@
 
 "admin" = "Админ-панель";
 
-"admin_ownerid" = "Иесіеің ID-і";
+"admin_ownerid" = "Иесіеің ID-сі";
 "admin_author" = "Авторы";
 "admin_name" = "Аты";
 "admin_title" = "Тақырыбы";
