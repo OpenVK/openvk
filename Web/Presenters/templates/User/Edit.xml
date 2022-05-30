@@ -94,16 +94,18 @@
                         </td>
                         <td>
                             <select name="marialstatus">
-                                <option value="0" {if $user->getMaritalStatus() == 0}selected{/if}>{_"relationship_0"}</option>
-                                <option value="1" {if $user->getMaritalStatus() == 1}selected{/if}>{_"relationship_1"}</option>
-                                <option value="2" {if $user->getMaritalStatus() == 2}selected{/if}>{_"relationship_2"}</option>
-                                <option value="3" {if $user->getMaritalStatus() == 3}selected{/if}>{_"relationship_3"}</option>
-                                <option value="4" {if $user->getMaritalStatus() == 4}selected{/if}>{_"relationship_4"}</option>
-                                <option value="5" {if $user->getMaritalStatus() == 5}selected{/if}>{_"relationship_5"}</option>
-                                <option value="6" {if $user->getMaritalStatus() == 6}selected{/if}>{_"relationship_6"}</option>
-                                <option value="7" {if $user->getMaritalStatus() == 7}selected{/if}>{_"relationship_7"}</option>
-                                <option value="8" {if $user->getMaritalStatus() == 8}selected{/if}>{_"relationship_8"}</option>
-                                
+                                <option n:foreach="range(0, 8) as $i" n:attr="selected: ($user->getMaritalStatus() == $i)" value="{$i}">
+                                    {if $user->isFemale()}
+                                        {var $str = "relationship_$i"}
+                                        {if tr($str . "_fem") == ("@$str" . "_fem")}
+                                            {_"$str"}
+                                        {else}
+                                            {tr($str . "_fem")}
+                                        {/if}
+                                    {else}
+                                        {_"relationship_$i"}
+                                    {/if}
+                                </option>
                             </select>
                         </td>
                     </tr>

@@ -285,6 +285,19 @@ class User extends RowModel
     {
         return $this->getRecord()->marital_status;
     }
+    
+    function getLocalizedMaritalStatus(): string
+    {
+        $status = $this->getMaritalStatus();
+        $string = "relationship_$status";
+        if($this->isFemale()) {
+            $res = tr($string . "_fem");
+            if($res != ("@" . $string . "_fem"))
+                return $res; # If fem version exists, return
+        }
+        
+        return tr($string);
+    }
 
     function getContactEmail(): ?string
     {

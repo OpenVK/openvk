@@ -99,9 +99,14 @@
 "relationship_3" = "Помолвлен";
 "relationship_4" = "Женат";
 "relationship_5" = "В гражданском браке";
-"relationship_6" = "Влюблен";
+"relationship_6" = "Влюблён";
 "relationship_7" = "Всё сложно";
 "relationship_8" = "В активном поиске";
+
+"relationship_1_fem" = "Не замужем";
+"relationship_3_fem" = "Помолвлена";
+"relationship_4_fem" = "Замужем";
+"relationship_6_fem" = "Влюблена";
 
 "politViews" = "Полит. взгляды";
 
