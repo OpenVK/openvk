@@ -30,7 +30,7 @@
                 </div>
                 <div class="crp-entry--info">
                     <a href="{$recipient->getURL()}">{$recipient->getCanonicalName()}</a><br/>
-                    <span>{$lastMsg->getSendTime()->format("%e %B %G" . tr("time_at_sp") . "%X")}</span>
+                    <span>{$lastMsg->getSendTimeHumanized()}</span>
                 </div>
                 <div n:class="crp-entry--message, $lastMsg->getUnreadState() ? unread">
                     {var $_author = $lastMsg->getSender()}
@@ -44,6 +44,9 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div style="margin-top: 3px;">
+            {include "../components/paginator.xml", conf => $paginatorConf}
         </div>
     {else}
         <br/>

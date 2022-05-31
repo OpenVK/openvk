@@ -60,6 +60,17 @@ class Message extends RowModel
     {
         return new DateTime($this->getRecord()->created);
     }
+
+    function getSendTimeHumanized(): string
+    {
+        $dateTime = new DateTime($this->getRecord()->created);
+
+        if($dateTime->format("%d.%m.%y") == ovk_strftime_safe("%d.%m.%y", time())) {
+            return $dateTime->format("%T %p");
+        } else {
+            return $dateTime->format("%d.%m.%y");
+        }
+    }
     
     /**
      * Get date of last edit, if any edits were made, otherwise null.
@@ -125,7 +136,7 @@ class Message extends RowModel
                 "name"   => $author->getFirstName().$unreadmsg,
             ],
             "timing" => [
-                "sent"   => (string) $this->getSendTime()->format("%e %B %G" . tr("time_at_sp") . "%X"),
+                "sent"   => (string) $this->getSendTimeHumanized(),
                 "edited" => is_null($this->getEditTime()) ? NULL : (string) $this->getEditTime(),
             ],
             "text"        => $this->getText(),
