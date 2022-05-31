@@ -149,7 +149,7 @@ class User extends RowModel
     {
         $name = $this->getRecord()->deleted ? "DELETED" : mb_convert_case($this->getRecord()->first_name, MB_CASE_TITLE);
         if((($ts = tr("__transNames")) !== "@__transNames") && !$pristine)
-            return transliterator_transliterate($ts, $name);
+            return mb_convert_case(transliterator_transliterate($ts, $name), MB_CASE_TITLE);
         else
             return $name;
     }
@@ -158,7 +158,7 @@ class User extends RowModel
     {
         $name = $this->getRecord()->deleted ? "DELETED" : mb_convert_case($this->getRecord()->last_name, MB_CASE_TITLE);
         if((($ts = tr("__transNames")) !== "@__transNames") && !$pristine)
-            return transliterator_transliterate($ts, $name);
+            return mb_convert_case(transliterator_transliterate($ts, $name), MB_CASE_TITLE);
         else
             return $name;
     }
