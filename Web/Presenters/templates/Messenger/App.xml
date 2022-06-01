@@ -181,7 +181,7 @@
                     "sender": {
                         "link": {$thisUser->getURL()},
                         "avatar": {$thisUser->getAvatarUrl()},
-                        "name": {$thisUser->getFullName()}
+                        "name": {$thisUser->getFirstName()}
                     },
                     "timing": {
                         "sent": window.API.Service.getTime(),
@@ -199,7 +199,7 @@
                     "sender": {
                         "link": {$correspondent->getURL()},
                         "avatar": {$correspondent->getAvatarUrl()},
-                        "name": {$correspondent->getFullName()}
+                        "name": {$correspondent->getFirstName()}
                     },
                     "timing": {
                         "sent": window.API.Service.getTime(),
