@@ -37,7 +37,7 @@
                         </div>
                     </div>
                     <div class="time" align="right">
-                        <span data-bind="text: timing.sent"></span>
+                        <span data-bind="html: timing.sent"></span>
                     </div>
                 </div>
             </div>
@@ -213,6 +213,7 @@
             
             newMessage(content) {
                 let msg = this._newSelfMessage(content);
+                msg.timing.sent = "<img src=\"/assets/packages/static/openvk/img/loading_mini.gif\">";
                 this.addMessage(msg);
                 
                 return msg._tuid;
