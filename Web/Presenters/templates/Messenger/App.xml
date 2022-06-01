@@ -10,7 +10,7 @@
         {if 5 >= $diff->i}
             <span><b>{_online}</b></span>
         {else}
-            <span>{$correspondent->isFemale() ? "заходила" : "заходил"} {$correspondent->getOnline()}</span>
+            <span>{$correspondent->isFemale() ? tr("was_online_f") : tr("was_online_m")} {$correspondent->getOnline()}</span>
         {/if}
     </div>
 {/block}
@@ -49,12 +49,12 @@
                     <textarea
                             data-bind="value: messageContent, event: { keydown: onTextareaKeyPress }"
                             name="message"
-                            placeholder="Введите сообщение"></textarea>
-                    <button class="button" data-bind="click: sendMessage">Отправить</button>
+                            placeholder="{_enter_message}"></textarea>
+                    <button class="button" data-bind="click: sendMessage">{_send}</button>
                 </div>
                 <img class="ava" src="{$correspondent->getAvatarUrl('miniscule')}" alt="{$correspondent->getCanonicalName()}" />
             {else}
-                <div class="blocked" data-localized-text="Вы не можете писать сообщения {$correspondent->getCanonicalName()} из-за его настроек приватности."></div>
+                <div class="blocked" data-localized-text="{_messages_blocked}"></div>
             {/if}
         </div>
     </div>
@@ -251,9 +251,9 @@
                                 avatar: "/assets/packages/static/openvk/img/oof.apng",
                                 id: -1,
                                 link: "/support/manpages/messages/not-delivered.html",
-                                name: "Сообщение не доставлено"
+                                name: tr("messages_error_1")
                             },
-                            text: "При отправке этого сообщения произошла ошибка общего характера...",
+                            text: tr("messages_error_1_description"),
                             timing: {
                                 edited: null,
                                 sent: "???"
