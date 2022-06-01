@@ -59,7 +59,7 @@
         </div>
     </div>
     
-    <script src="https://knockoutjs.com/downloads/knockout-3.5.1.js"></script>
+    {script "js/node_modules/knockout/build/output/knockout-latest.js"}
     <script>
         function MessengerViewModel(initialMessages = []) {
             window.messages     = ko.observableArray(initialMessages);
