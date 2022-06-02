@@ -399,7 +399,7 @@
 
             function convertCurrency(coin) {
                 var currencyTON = {php echo OPENVK_ROOT_CONF['openvk']['preferences']['ton']['rate']};
-                u(".coins_dialog_conv").nodes[0].innerHTML = tr("transfer_ton_currency_per_ton", coin * currencyTON); 
+                u(".coins_dialog_conv").nodes[0].innerHTML = coin * currencyTON + " TON"; 
             }
 
             function showCoinsTopUpTroughTon() {
