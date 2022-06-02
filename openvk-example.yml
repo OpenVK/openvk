@@ -53,6 +53,14 @@ openvk:
                 processingLimit: 3000
                 emojiProcessingLimit: 1000
         commerce: false
+        ton:
+            enabled: false
+            address: "🅿"
+            testnet: false # Only for testing purposes.
+            rate: 0.02     # TONs per 1 coin
+            regex: "ovk=([0-9]+)"
+            hint: "ovk=$1"
+            # Please read docs to understand how to turn on automatic checking for new translations
         menu:
             links:
                 - name: "@left_menu_donate"
