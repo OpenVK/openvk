@@ -405,7 +405,7 @@
             function showCoinsTopUpTroughTon() {
                 MessageBox(tr("transfer_trough_ton"), `
                     <div class="messagebox-content-header">
-                        ${tr("transfer_ton_contents")}
+                        ${ tr("transfer_ton_contents") }
                     </div>
                     <div style="margin-top: 30px">` +
                     {tr("transfer_ton_address", OPENVK_ROOT_CONF['openvk']['preferences']['ton']['address'], str_replace("$1", $thisUser->getId(), OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["hint"]))} + 
