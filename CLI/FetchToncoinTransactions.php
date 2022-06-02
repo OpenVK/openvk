@@ -85,7 +85,7 @@ class FetchToncoinTransactions extends Command
                     $value = ($transfer["in_msg"]["value"] / NANOTON) / OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["rate"];
                     $user->setCoins($user->getCoins() + $value);
                     $user->save();
-                    (new CoinsTransferNotification($user, (new Users)->get(OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"]), 0, "Via TON cryptocurrency"))->emit();
+                    (new CoinsTransferNotification($user, (new Users)->get(OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"]), (int) $value, "Via TON cryptocurrency"))->emit();
                     $header->writeln($value . " coins are added to " . $user->getId() . " user id");
                     $this->transactions->insert([
                         "id"   => NULL,
