@@ -840,8 +840,8 @@
 "suspicious_registration_attempt" = "Suspicious registration attempt";
 "suspicious_registration_attempt_comment" = "You tried to register from a suspicious location.";
 
-"rate_limit_error" = "Choomba, are you completely fucked up?";
-"rate_limit_error_comment" = "Go to the brainwrap, drink the wheels. In $1, you cannot drop shitposts as often. Exception code: $2.";
+"rate_limit_error" = "Hey, slow down!";
+"rate_limit_error_comment" = "Daniel Myslivets dispises you. In $1, you cannot send requests as often. Exception code: $2.";
 
 "not_enough_permissions" = "Not enough permissions";
 "not_enough_permissions_comment" = "You do not have sufficient permissions to perform this action.";
