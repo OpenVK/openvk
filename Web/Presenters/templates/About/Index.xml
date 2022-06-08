@@ -9,7 +9,7 @@
     {presenter "openvk!Support->knowledgeBaseArticle", "about"}
     <center>
         <a class="button" style="margin-right: 5px;cursor: pointer;" href="/login">{_"log_in"}</a>
-        <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['registration']['enable']" class="button" style="cursor: pointer;" href="/reg">{_"registration"}</a>
+        <a class="button" style="cursor: pointer;" href="/reg">{_"registration"}</a>
     </center>
     {* TO-DO: Add statistics about this instance as on mastodon.social *}
 {/block}

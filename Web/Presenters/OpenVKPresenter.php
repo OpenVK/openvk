@@ -119,7 +119,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             return ($action === "register" || $action === "login");
         }
         
-        return (bool) $this->user->raw->can($action)->model($model)->whichBelongsTo($context === -1 ? null : $context);
+        return (bool) $this->user->raw->can($action)->model($model)->whichBelongsTo($context === -1 ? NULL : $context);
     }
     
     protected function assertPermission(string $model, string $action, int $context, bool $throw = false): void
@@ -205,6 +205,8 @@ abstract class OpenVKPresenter extends SimplePresenter
         $this->template->isXmas = intval(date('d')) >= 1 && date('m') == 12 || intval(date('d')) <= 15 && date('m') == 1 ? true : false;
         $this->template->isTimezoned = Session::i()->get("_timezoneOffset");
         
+        $userValidated = 0;
+        $cacheTime     = OPENVK_ROOT_CONF["openvk"]["preferences"]["nginxCacheTime"] ?? 0;
         if(!is_null($user)) {
             $this->user = (object) [];
             $this->user->raw             = $user;
@@ -240,7 +242,7 @@ abstract class OpenVKPresenter extends SimplePresenter
                 exit;
             }
 
-            // ето для емейл уже надо (и по хорошему надо бы избавится от повторяющегося кода мда)
+            # ето для емейл уже надо (и по хорошему надо бы избавится от повторяющегося кода мда)
             if(!$this->user->identity->isActivated() && !$this->activationTolerant) {
                 header("HTTP/1.1 403 Forbidden");
                 $this->getTemplatingEngine()->render(__DIR__ . "/templates/@email.xml", [
@@ -251,6 +253,8 @@ abstract class OpenVKPresenter extends SimplePresenter
                 exit;
             }
             
+            $userValidated = 1;
+            $cacheTime     = 0; # Force no cache
             if ($this->user->identity->onlineStatus() == 0) {
                 $this->user->identity->setOnline(time());
                 $this->user->identity->save();
@@ -261,6 +265,8 @@ abstract class OpenVKPresenter extends SimplePresenter
                 $this->template->helpdeskTicketNotAnsweredCount = (new Tickets)->getTicketCount(0);
         }
         
+        header("X-OpenVK-User-Validated: $userValidated");
+        header("X-Accel-Expires: $cacheTime");
         setlocale(LC_TIME, ...(explode(";", tr("__locale"))));
         
         parent::onStartup();
@@ -272,7 +278,7 @@ abstract class OpenVKPresenter extends SimplePresenter
         
         $whichbrowser = new WhichBrowser\Parser(getallheaders());
         $mobiletheme = OPENVK_ROOT_CONF["openvk"]["preferences"]["defaultMobileTheme"];
-        if($mobiletheme && $whichbrowser->isType('mobile') && Session::i()->get("_tempTheme") == null)
+        if($mobiletheme && $whichbrowser->isType('mobile') && Session::i()->get("_tempTheme") == NULL)
             $this->setSessionTheme($mobiletheme);
 
         $theme = NULL;
@@ -283,7 +289,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             $theme = Themepacks::i()[Session::i()->get("_sessionTheme", "ovk")];
         } else if($this->requestParam("themePreview")) {
             $theme = Themepacks::i()[$this->requestParam("themePreview")];
-        } else if($this->user->identity !== null && $this->user->identity->getTheme()) {
+        } else if($this->user->identity !== NULL && $this->user->identity->getTheme()) {
             $theme = $this->user->identity->getTheme();
         }
         

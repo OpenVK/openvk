@@ -47,7 +47,7 @@
                             <span>{_"gender"}: </span>
                         </td>
                         <td>
-                            {var femalePreferred = OPENVK_ROOT_CONF["openvk"]["preferences"]["femaleGenderPriority"]}
+                            {var $femalePreferred = OPENVK_ROOT_CONF["openvk"]["preferences"]["femaleGenderPriority"]}
                             <select name="sex" required>
                                 <option n:attr="selected => !$femalePreferred" value="male">{_"male"}</option>
                                 <option n:attr="selected => $femalePreferred" value="female">{_"female"}</option>

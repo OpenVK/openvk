@@ -3,7 +3,7 @@
 {block title}Альбом {$album->getName()}{/block}
 
 {block header}
-    {var isClub = ($album->getOwner() instanceof openvk\Web\Models\Entities\Club)}
+    {var $isClub = ($album->getOwner() instanceof openvk\Web\Models\Entities\Club)}
     
     <a href="{$album->getOwner()->getURL()}">
         {$album->getOwner()->getCanonicalName()}

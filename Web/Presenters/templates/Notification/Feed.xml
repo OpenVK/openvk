@@ -1,5 +1,5 @@
 {extends "../@listView.xml"}
-{var sorting = false}
+{var $sorting = false}
 
 {block title}
     {_feedback}
@@ -12,7 +12,7 @@
 
 {block tabs}
     <div n:attr="id => ($mode === 'new' ? 'activetabs' : 'ki')" class="tab">
-        <a n:attr="id => ($mode === 'new' ? 'act_tab_a' : 'ki')" href="?">{_unread}</a>
+        <a n:attr="id => ($mode === 'new' ? 'act_tab_a' : 'ki')" href="?act=new">{_unread}</a>
     </div>
     <div n:attr="id => ($mode === 'archived' ? 'activetabs' : 'ki')" class="tab">
         <a n:attr="id => ($mode === 'archived' ? 'act_tab_a' : 'ki')" href="?act=archived">{_archive}</a>
@@ -26,7 +26,7 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getModel(1)->getAvatarUrl()}" width=64 />
+    <img src="{$x->getModel(1)->getAvatarUrl('miniscule')}" width=64 />
 {/block}
 
 {block name}

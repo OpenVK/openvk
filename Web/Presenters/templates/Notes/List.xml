@@ -1,6 +1,6 @@
 {extends "../@listView.xml"}
-{var iterator = iterator_to_array($notes)}
-{var page     = $paginatorConf->page}
+{var $iterator = iterator_to_array($notes)}
+{var $page     = $paginatorConf->page}
 
 {block title}{_notes}{/block}
 
@@ -54,17 +54,21 @@
         #userContent cite::before {
             content: "— ";
         }
+
+        #userContent .underline {
+            text-decoration: underline;
+        }
     </style>
 
     <div class="container_gray" style="background: white; border-top: none;">
 
-        {var data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+        {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
         {if sizeof($data) > 0}
 
         <div n:foreach="$data as $dat">
             <div class="profile_thumb">
                 <a href="{$owner->getURL()}">
-                <img src="{$owner->getAvatarUrl()}" style="width: 50px;">
+                <img src="{$owner->getAvatarUrl('miniscule')}" style="width: 50px;">
                 </a>
             </div>
             <article class="note_body" id="userContent" style="width: 540px; display: inline-block; margin-bottom: 35px;">

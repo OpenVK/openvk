@@ -113,7 +113,7 @@ final class WallPresenter extends OpenVKPresenter
         $feed = new Feed();
 
         $channel = new Channel();
-        $channel->title(OPENVK_ROOT_CONF['openvk']['appearance']['name'])->url(ovk_scheme(true) . $_SERVER["SERVER_NAME"])->appendTo($feed);
+        $channel->title($post->getOwner()->getCanonicalName() . " — " . OPENVK_ROOT_CONF['openvk']['appearance']['name'])->url(ovk_scheme(true) . $_SERVER["SERVER_NAME"])->appendTo($feed);
 
         foreach($posts as $post) {
             $item = new Item();
@@ -303,8 +303,6 @@ final class WallPresenter extends OpenVKPresenter
     
     function renderPost(int $wall, int $post_id): void
     {
-        $this->assertUserLoggedIn();
-        
         $post = $this->posts->getPostById($wall, $post_id);
         if(!$post || $post->isDeleted())
             $this->notFound();
@@ -416,7 +414,7 @@ final class WallPresenter extends OpenVKPresenter
             $post->unpin();
         }
         
-        // TODO localize message based on language and ?act=(un)pin
+        # TODO localize message based on language and ?act=(un)pin
         $this->flashFail("succ", tr("information_-1"), tr("changes_saved_comment"));
     }
 }

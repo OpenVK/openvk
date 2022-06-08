@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
+use morphos\Gender;
 use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
@@ -9,6 +10,7 @@ use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 use Chandler\Security\User as ChandlerUser;
+use function morphos\Russian\inflectName;
 
 class User extends RowModel
 {
@@ -31,11 +33,11 @@ class User extends RowModel
     const NSFW_TOLERANT      = 1;
     const NSFW_FULL_TOLERANT = 2;
     
-    protected function _abstractRelationGenerator(string $filename, int $page = 1): \Traversable
+    protected function _abstractRelationGenerator(string $filename, int $page = 1, int $limit = 6): \Traversable
     {
         $id     = $this->getId();
         $query  = "SELECT id FROM\n" . file_get_contents(__DIR__ . "/../sql/$filename.tsql");
-        $query .= "\n LIMIT 6 OFFSET " . ( ($page - 1) * 6 );
+        $query .= "\n LIMIT " . $limit . " OFFSET " . ( ($page - 1) * $limit );
         
         $rels = DatabaseConnection::i()->getConnection()->query($query, $id, $id);
         foreach($rels as $rel) {
@@ -83,6 +85,11 @@ class User extends RowModel
     {
         return (bool) $this->getRecord()->microblog;
     }
+
+    function getMainPage(): int
+    {
+        return $this->getRecord()->main_page;
+    }
     
     function getChandlerGUID(): string
     {
@@ -102,7 +109,7 @@ class User extends RowModel
             return "/id" . $this->getId();
     }
     
-    function getAvatarUrl(): string
+    function getAvatarUrl(string $size = "miniscule"): string
     {
         $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
         
@@ -115,7 +122,7 @@ class User extends RowModel
         if(is_null($avPhoto))
             return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
         else
-            return $avPhoto->getURL();
+            return $avPhoto->getURLBySizeId($size);
     }
     
     function getAvatarLink(): string
@@ -138,14 +145,22 @@ class User extends RowModel
         return iterator_to_array($avPhotos)[0] ?? NULL;
     }
     
-    function getFirstName(): string
+    function getFirstName(bool $pristine = false): string
     {
-        return $this->getRecord()->deleted && $this->getRecord()->deact_until <= time() ? "DELETED" : mb_convert_case($this->getRecord()->first_name, MB_CASE_TITLE);
+        $name = $this->getRecord()->deleted && $this->getRecord()->deact_until <= time() ? "DELETED" : mb_convert_case($this->getRecord()->first_name, MB_CASE_TITLE);
+        if((($ts = tr("__transNames")) !== "@__transNames") && !$pristine)
+            return mb_convert_case(transliterator_transliterate($ts, $name), MB_CASE_TITLE);
+        else
+            return $name;
     }
     
-    function getLastName(): string
+    function getLastName(bool $pristine = false): string
     {
-        return $this->getRecord()->deleted && $this->getRecord()->deact_until <= time() ? "DELETED" : mb_convert_case($this->getRecord()->last_name, MB_CASE_TITLE);
+        $name = $this->getRecord()->deleted && $this->getRecord()->deact_until <= time() ? "DELETED" : mb_convert_case($this->getRecord()->last_name, MB_CASE_TITLE);
+        if((($ts = tr("__transNames")) !== "@__transNames") && !$pristine)
+            return mb_convert_case(transliterator_transliterate($ts, $name), MB_CASE_TITLE);
+        else
+            return $name;
     }
     
     function getPseudo(): ?string
@@ -166,153 +181,182 @@ class User extends RowModel
         
         return $this->getFirstName() . $pseudo . $this->getLastName();
     }
+
+    function getMorphedName(string $case = "genitive", bool $fullName = true): string
+    {
+        $name = $fullName ? ($this->getLastName() . " " . $this->getFirstName()) : $this->getFirstName();
+        if(!preg_match("%^[А-яё\-]+$%", $name))
+            return $name; # name is probably not russian
+
+        $inflected = inflectName($name, $case, $this->isFemale() ? Gender::FEMALE : Gender::MALE);
+
+        return $inflected ?: $name;
+    }
     
     function getCanonicalName(): string
     {
-	    if($this->getRecord()->deleted && $this->getRecord()->deact_until <= time())
+        if($this->getRecord()->deleted && $this->getRecord()->deact_until <= time())
             return "DELETED";
-	    else
-            return $this->getFirstName() . ' ' . $this->getLastName();
+        else
+            return $this->getFirstName() . " " . $this->getLastName();
     }
-    
+
     function getPhone(): ?string
     {
         return $this->getRecord()->phone;
     }
-    
+
     function getEmail(): ?string
     {
         return $this->getRecord()->email;
     }
-    
+
     function getOnline(): DateTime
     {
         return new DateTime($this->getRecord()->online);
     }
-    
+
     function getDescription(): ?string
     {
         return $this->getRecord()->about;
     }
-    
+
     function getStatus(): ?string
     {
         return $this->getRecord()->status;
     }
-    
+
     function getShortCode(): ?string
     {
         return $this->getRecord()->shortcode;
     }
-    
+
     function getAlert(): ?string
     {
         return $this->getRecord()->alert;
     }
-    
+
     function getBanReason(): ?string
     {
         return $this->getRecord()->block_reason;
     }
-    
+
+    function getBanInSupportReason(): ?string
+    {
+        return $this->getRecord()->block_in_support_reason;
+    }
+
     function getType(): int
     {
         return $this->getRecord()->type;
     }
-    
+
     function getCoins(): float
     {
         if(!OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"])
             return 0.0;
-        
+
         return $this->getRecord()->coins;
     }
-    
+
     function getRating(): int
     {
         return OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"] ? $this->getRecord()->rating : 0;
     }
-    
+
     function getReputation(): int
     {
         return $this->getRecord()->reputation;
     }
-    
+
     function getRegistrationTime(): DateTime
     {
         return new DateTime($this->getRecord()->since->getTimestamp());
     }
-    
+
     function getRegistrationIP(): string
     {
         return $this->getRecord()->registering_ip;
     }
-    
+
     function getHometown(): ?string
     {
         return $this->getRecord()->hometown;
     }
-    
+
     function getPoliticalViews(): int
     {
         return $this->getRecord()->polit_views;
     }
-    
+
     function getMaritalStatus(): int
     {
         return $this->getRecord()->marital_status;
     }
     
+    function getLocalizedMaritalStatus(): string
+    {
+        $status = $this->getMaritalStatus();
+        $string = "relationship_$status";
+        if($this->isFemale()) {
+            $res = tr($string . "_fem");
+            if($res != ("@" . $string . "_fem"))
+                return $res; # If fem version exists, return
+        }
+        
+        return tr($string);
+    }
+
     function getContactEmail(): ?string
     {
         return $this->getRecord()->email_contact;
     }
-    
+
     function getTelegram(): ?string
     {
         return $this->getRecord()->telegram;
     }
-    
+
     function getInterests(): ?string
     {
         return $this->getRecord()->interests;
     }
-    
+
     function getFavoriteMusic(): ?string
     {
         return $this->getRecord()->fav_music;
     }
-    
+
     function getFavoriteFilms(): ?string
     {
         return $this->getRecord()->fav_films;
     }
-    
+
     function getFavoriteShows(): ?string
     {
         return $this->getRecord()->fav_shows;
     }
-    
+
     function getFavoriteBooks(): ?string
     {
         return $this->getRecord()->fav_books;
     }
-    
+
     function getFavoriteQuote(): ?string
     {
         return $this->getRecord()->fav_quote;
     }
-    
+
     function getCity(): ?string
     {
         return $this->getRecord()->city;
     }
-    
+
     function getPhysicalAddress(): ?string
     {
         return $this->getRecord()->address;
     }
-    
+
     function getNotificationOffset(): int
     {
         return $this->getRecord()->notification_offset;
@@ -327,7 +371,7 @@ class User extends RowModel
     {
         return (int)floor((time() - $this->getBirthday()->timestamp()) / YEAR);
     }
-    
+
     function get2faSecret(): ?string
     {
         return $this->getRecord()["2fa_secret"];
@@ -342,7 +386,7 @@ class User extends RowModel
     {
         $this->stateChanges("notification_offset", time());
     }
-    
+
     function getLeftMenuItemStatus(string $id): bool
     {
         return (bool) bmask($this->getRecord()->left_menu, [
@@ -359,7 +403,7 @@ class User extends RowModel
             ],
         ])->get($id);
     }
-    
+
     function getPrivacySetting(string $id): int
     {
         return (int) bmask($this->getRecord()->privacy, [
@@ -378,7 +422,7 @@ class User extends RowModel
             ],
         ])->get($id);
     }
-    
+
     function getPrivacyPermission(string $permission, ?User $user = NULL): bool
     {
         $permStatus = $this->getPrivacySetting($permission);
@@ -386,7 +430,7 @@ class User extends RowModel
             return $permStatus === User::PRIVACY_EVERYONE;
         else if($user->getId() === $this->getId())
             return true;
-        
+
         switch($permStatus) {
             case User::PRIVACY_ONLY_FRIENDS:
                 return $this->getSubscriptionStatus($user) === User::SUBSCRIPTION_MUTUAL;
@@ -397,12 +441,12 @@ class User extends RowModel
                 return false;
         }
     }
-    
+
     function getProfileCompletenessReport(): object
     {
         $incompleteness = 0;
         $unfilled       = [];
-        
+
         if(!$this->getRecord()->status) {
             $unfilled[]      = "status";
             $incompleteness += 15;
@@ -423,46 +467,46 @@ class User extends RowModel
             $unfilled[]      = "interests";
             $incompleteness += 20;
         }
-        
+
         $total = max(100 - $incompleteness + $this->getRating(), 0);
         if(ovkGetQuirk("profile.rating-bar-behaviour") === 0)
 	    if ($total >= 100)
             $percent = round(($total / 10**strlen(strval($total))) * 100, 0);
         else
 		    $percent = min($total, 100);
-        
+
         return (object) [
             "total"    => $total,
             "percent"  => $percent,
             "unfilled" => $unfilled,
         ];
     }
-    
-    function getFriends(int $page = 1): \Traversable
+
+    function getFriends(int $page = 1, int $limit = 6): \Traversable
     {
-        return $this->_abstractRelationGenerator("get-friends", $page);
+        return $this->_abstractRelationGenerator("get-friends", $page, $limit);
     }
-    
+
     function getFriendsCount(): int
     {
         return $this->_abstractRelationCount("get-friends");
     }
-    
-    function getFollowers(int $page = 1): \Traversable
+
+    function getFollowers(int $page = 1, int $limit = 6): \Traversable
     {
-        return $this->_abstractRelationGenerator("get-followers", $page);
+        return $this->_abstractRelationGenerator("get-followers", $page, $limit);
     }
-    
+
     function getFollowersCount(): int
     {
         return $this->_abstractRelationCount("get-followers");
     }
-    
-    function getSubscriptions(int $page = 1): \Traversable
+
+    function getSubscriptions(int $page = 1, int $limit = 6): \Traversable
     {
-        return $this->_abstractRelationGenerator("get-subscriptions-user", $page);
+        return $this->_abstractRelationGenerator("get-subscriptions-user", $page, $limit);
     }
-    
+
     function getSubscriptionsCount(): int
     {
         return $this->_abstractRelationCount("get-subscriptions-user");
@@ -472,7 +516,7 @@ class User extends RowModel
     {
         return sizeof(DatabaseConnection::i()->getContext()->table("messages")->where(["recipient_id" => $this->getId(), "unread" => 1]));
     }
-    
+
     function getClubs(int $page = 1, bool $admin = false): \Traversable
     {
         if($admin) {
@@ -497,7 +541,7 @@ class User extends RowModel
             }
         }
     }
-    
+
     function getClubCount(bool $admin = false): int
     {
         if($admin) {
@@ -512,7 +556,7 @@ class User extends RowModel
             return sizeof($sel);
         }
     }
-    
+
     function getPinnedClubs(): \Traversable
     {
         foreach($this->getRecord()->related("groups.owner")->where("owner_club_pinned", true) as $target) {
@@ -553,16 +597,16 @@ class User extends RowModel
         foreach($sel as $target) {
             $target = (new Clubs)->get($target->event);
             if(!$target) continue;
-            
+
             yield $target;
         }
     }
-    
+
     function getMeetingCount(): int
     {
         return sizeof($this->getRecord()->related("event_turnouts.user"));
     }
-    
+
     function getGifts(int $page = 1, ?int $perPage = NULL): \Traversable
     {
         $gifts = $this->getRecord()->related("gift_user_relations.receiver")->order("sent DESC")->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
@@ -576,7 +620,7 @@ class User extends RowModel
             ];
         }
     }
-    
+
     function getGiftCount(): int
     {
         return sizeof($this->getRecord()->related("gift_user_relations.receiver"));
@@ -611,9 +655,9 @@ class User extends RowModel
 
     function use2faBackupCode(int $code): bool
     {
-        return (bool) $this->getRecord()->related("2fa_backup_codes.owner")->where("code", $code)->delete();   
+        return (bool) $this->getRecord()->related("2fa_backup_codes.owner")->where("code", $code)->delete();
     }
-    
+
     function getSubscriptionStatus(User $user): int
     {
         $subbed = !is_null($this->getRecord()->related("subscriptions.follower")->where([
@@ -624,71 +668,76 @@ class User extends RowModel
             "model"    => static::class,
             "follower" => $user->getId(),
         ])->fetch());
-        
+
         if($subbed && $followed) return User::SUBSCRIPTION_MUTUAL;
         if($subbed)   return User::SUBSCRIPTION_INCOMING;
         if($followed) return User::SUBSCRIPTION_OUTGOING;
-        
+
         return User::SUBSCRIPTION_ABSENT;
     }
-    
+
     function getNotificationsCount(bool $archived = false): int
     {
         return (new Notifications)->getNotificationCountByUser($this, $this->getNotificationOffset(), $archived);
     }
-    
+
     function getNotifications(int $page, bool $archived = false): \Traversable
     {
         return (new Notifications)->getNotificationsByUser($this, $this->getNotificationOffset(), $archived, $page);
     }
-    
+
     function getPendingPhoneVerification(): ?ActiveRow
     {
         return $this->getRecord()->ref("number_verification", "id");
     }
-    
+
     function getRefLinkId(): string
     {
         $hash = hash_hmac("Snefru", (string) $this->getId(), CHANDLER_ROOT_CONF["security"]["secret"], true);
-        
+
         return dechex($this->getId()) . " " . base64_encode($hash);
     }
-    
+
     function getNsfwTolerance(): int
     {
         return $this->getRecord()->nsfw_tolerance;
     }
-    
+
     function isFemale(): bool
     {
         return (bool) $this->getRecord()->sex;
     }
-    
+
     function isVerified(): bool
     {
         return (bool) $this->getRecord()->verified;
     }
-    
+
     function isBanned(): bool
     {
         return !is_null($this->getBanReason());
     }
-    
+
+    function isBannedInSupport(): bool
+    {
+        return !is_null($this->getBanInSupportReason());
+    }
+
     function isOnline(): bool
     {
         return time() - $this->getRecord()->online <= 300;
     }
-    
+
     function prefersNotToSeeRating(): bool
     {
         return !((bool) $this->getRecord()->show_rating);
     }
-    
+
     function hasPendingNumberChange(): bool
     {
         return !is_null($this->getPendingPhoneVerification());
     }
-    
+
     function gift(User $sender, Gift $gift, ?string $comment = NULL, bool $anonymous = false): void
     {
         DatabaseConnection::i()->getContext()->table("gift_user_relations")->insert([
@@ -700,7 +749,7 @@ class User extends RowModel
             "sent"      => time(),
         ]);
     }
-    
+
     function ban(string $reason, bool $deleteSubscriptions = true): void
     {
         if($deleteSubscriptions) {
@@ -713,7 +762,7 @@ class User extends RowModel
             );
             $subs->delete();
         }
-        
+
         $this->setBlock_Reason($reason);
         $this->save();
     }
@@ -735,33 +784,33 @@ class User extends RowModel
     {
         $ver = $this->getPendingPhoneVerification();
         if(!$ver) return false;
-        
+
         try {
             if(sodium_memcmp((string) $ver->code, $code) === -1) return false;
         } catch(\SodiumException $ex) {
             return false;
         }
-        
+
         $this->setPhone($ver->number);
         $this->save();
-        
+
         DatabaseConnection::i()->getContext()
                                ->table("number_verification")
                                ->where("user", $this->getId())
                                ->delete();
-        
+
         return true;
     }
-    
+
     function setFirst_Name(string $firstName): void
     {
         $firstName = mb_convert_case($firstName, MB_CASE_TITLE);
         if(!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?(?:[\p{L&}\p{Lo}]\p{Mn}?){1,16}$%u', $firstName))
             throw new InvalidUserNameException;
-        
+
         $this->stateChanges("first_name", $firstName);
     }
-    
+
     function setLast_Name(string $lastName): void
     {
         if(!empty($lastName))
@@ -770,15 +819,15 @@ class User extends RowModel
 	        if(!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?([\p{L&}\p{Lo}]\p{Mn}?){1,16}(\-\g<1>+)?$%u', $lastName))
 	            throw new InvalidUserNameException;
         }
-        
+
         $this->stateChanges("last_name", $lastName);
     }
-    
+
     function setNsfwTolerance(int $tolerance): void
     {
         $this->stateChanges("nsfw_tolerance", $tolerance);
     }
-    
+
     function setPrivacySetting(string $id, int $status): void
     {
         $this->stateChanges("privacy", bmask($this->changes["privacy"] ?? $this->getRecord()->privacy, [
@@ -797,7 +846,7 @@ class User extends RowModel
             ],
         ])->set($id, $status)->toInteger());
     }
-    
+
     function setLeftMenuItemStatus(string $id, bool $status): void
     {
         $mask = bmask($this->changes["left_menu"] ?? $this->getRecord()->left_menu, [
@@ -813,10 +862,10 @@ class User extends RowModel
                 "poster",
             ],
         ])->set($id, (int) $status)->toInteger();
-        
+
         $this->stateChanges("left_menu", $mask);
     }
-    
+
     function setShortCode(?string $code = NULL, bool $force = false): ?bool
     {
         if(!is_null($code)) {
@@ -828,20 +877,20 @@ class User extends RowModel
                 return false;
             if(\Chandler\MVC\Routing\Router::i()->getMatchingRoute("/$code")[0]->presenter !== "UnknownTextRouteStrategy")
                 return false;
-	    
+
             $pClub = DatabaseConnection::i()->getContext()->table("groups")->where("shortcode", $code)->fetch();
                 if(!is_null($pClub))
                     return false;
         }
-        
+
         $this->stateChanges("shortcode", $code);
         return true;
     }
-    
+
     function setPhoneWithVerification(string $phone): string
     {
         $code = unpack("S", openssl_random_pseudo_bytes(2))[1];
-        
+
         if($this->hasPendingNumberChange()) {
             DatabaseConnection::i()->getContext()
                                    ->table("number_verification")
@@ -852,10 +901,10 @@ class User extends RowModel
                                    ->table("number_verification")
                                    ->insert(["user" => $this->getId(), "number" => $phone, "code" => $code]);
         }
-        
+
         return (string) $code;
     }
-    
+
     # KABOBSQL temporary fix
     # Tuesday, the 7th of January 2020 @ 22:43 <Menhera>: implementing quick fix to this problem and monitoring
     # NOTICE: this is an ongoing conversation, add your comments just above this line. Thanks!
@@ -863,10 +912,21 @@ class User extends RowModel
     {
         $this->stateChanges("shortcode", $this->getRecord()->shortcode); #fix KABOBSQL
         $this->stateChanges("online", $time);
-        
+
         return true;
     }
-    
+
+    function changeEmail(string $email): void
+    {
+        DatabaseConnection::i()->getContext()->table("ChandlerUsers")
+            ->where("id", $this->getChandlerUser()->getId())->update([
+                "login" => $email
+            ]);
+
+        $this->stateChanges("email", $email);
+        $this->save();
+    }
+
     function adminNotify(string $message): bool
     {
         $admId = OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"];
@@ -874,12 +934,12 @@ class User extends RowModel
             return false;
         else if(is_null($admin = (new Users)->get($admId)))
             return false;
-        
+
         $cor = new Correspondence($admin, $this);
         $msg = new Message;
         $msg->setContent($message);
         $cor->sendMessage($msg, true);
-        
+
         return true;
     }
 
@@ -906,7 +966,7 @@ class User extends RowModel
             case 2:
                 return 2;
                 break;
-            
+
             default:
                 return 0;
                 break;
@@ -918,7 +978,7 @@ class User extends RowModel
 		return $this->getRecord()->website;
 	}
 
-    // ты устрица
+    # ты устрица
     function isActivated(): bool
     {
         return (bool) $this->getRecord()->activated;

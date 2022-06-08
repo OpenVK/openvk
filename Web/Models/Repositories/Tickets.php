@@ -50,7 +50,7 @@ class Tickets
         if(!is_null($requests))
             return new Req($requests);
         else
-            return null;
+            return NULL;
         
     }
     

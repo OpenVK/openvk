@@ -33,16 +33,17 @@
             {_groups}
         </a>
     </div>
+</div>
+<form class="header_search_inputbt">
+    <input name="type" type="hidden" value="{$type ?? 'users'}" />
+    <input name="query" class="header_search_input" placeholder="{_search_placeholder}" value="{$_GET['query'] ?? ''}" />
+    <button class="button_search">{_search_button}</button>
+</form>
 
-    <form class="header_search_inputbt">
-        <input name="type" type="hidden" value="{$type ?? 'users'}" />
-        <input name="query" class="header_search_input" placeholder="{_search_placeholder}" value="{$_GET['query'] ?? ''}" />
-        <button class="button_search">{_search_button}</button>
-    </form>
-
-    <p style="margin-left: 15px; margin-top: 0;">
-        <b>{tr("results", $count)}</b>
-    </p>
+<p style="margin-left: 15px; margin-top: 0;">
+    <b>{tr("results", $count)}</b>
+</p>
+<div>
 {/block}
 
 {block link|strip|stripHtml}
@@ -50,7 +51,7 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getAvatarUrl()}" width="75" alt="{_"photo"}" />
+    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="{_"photo"}" />
 {/block}
 
 {block name}

@@ -14,7 +14,12 @@ final class AboutPresenter extends OpenVKPresenter
     {
         if(!is_null($this->user)) {
             header("HTTP/1.1 302 Found");
-            header("Location: /id" . $this->user->id);
+
+            if($this->user->identity->getMainPage())
+                header("Location: /feed");
+            else
+                header("Location: /id" . $this->user->id);
+
             exit;
         }
         
@@ -85,7 +90,7 @@ final class AboutPresenter extends OpenVKPresenter
         if(is_null($lg))
             $this->throwError(404, "Not found", "Language is not found");
         header("Content-Type: application/javascript");
-        echo "window.lang = " . json_encode($localizer->export($lang)) . ";"; // привет хардкод :DDD
+        echo "window.lang = " . json_encode($localizer->export($lang)) . ";"; # привет хардкод :DDD
         exit;
     }
 
@@ -120,10 +125,17 @@ final class AboutPresenter extends OpenVKPresenter
 
     function renderHumansTxt(): void
     {
-        // :D
+        # :D
 
         header("HTTP/1.1 302 Found");
         header("Location: https://github.com/openvk/openvk#readme");
+        exit;
+    }
+
+    function renderDev(): void
+    {
+        header("HTTP/1.1 302 Found");
+        header("Location: https://docs.openvk.su/");
         exit;
     }
 }

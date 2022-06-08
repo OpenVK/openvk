@@ -80,11 +80,11 @@ final class InternalAPIPresenter extends OpenVKPresenter
             if ($postTZ != $sessionOffset || $sessionOffset == null) {
                 Session::i()->set("_timezoneOffset", $postTZ ? $postTZ : 3 * MINUTE );
                 $this->returnJson([
-                    "success" => 1 // If it's new value
+                    "success" => 1 # If it's new value
                 ]);
             } else {
                 $this->returnJson([
-                    "success" => 2 // If it's the same value (if for some reason server will call this func)
+                    "success" => 2 # If it's the same value (if for some reason server will call this func)
                 ]);
             }
         } else {

@@ -1,17 +1,17 @@
 {extends "../@listView.xml"}
-{var perPage = 6} {* Why 6? Check User::_abstractRelationGenerator *}
+{var $perPage = 6} {* Why 6? Check User::_abstractRelationGenerator *}
 
-{var act = $_GET["act"] ?? "friends"}
+{var $act = $_GET["act"] ?? "friends"}
 
 {if $act == "incoming"}
-    {var iterator = iterator_to_array($user->getFollowers($page))}
-    {var count    = $user->getFollowersCount()}
+    {var $iterator = iterator_to_array($user->getFollowers($page))}
+    {var $count    = $user->getFollowersCount()}
 {elseif $act == "outcoming"}
-    {var iterator = iterator_to_array($user->getSubscriptions($page))}
-    {var count    = $user->getSubscriptionsCount()}
+    {var $iterator = iterator_to_array($user->getSubscriptions($page))}
+    {var $count    = $user->getSubscriptionsCount()}
 {else}
-    {var iterator = iterator_to_array($user->getFriends($page))}
-    {var count    = $user->getFriendsCount()}
+    {var $iterator = iterator_to_array($user->getFriends($page))}
+    {var $count    = $user->getFriendsCount()}
 {/if}
 
 {block title}
@@ -85,7 +85,7 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getAvatarUrl()}" width="75" alt="Фотография группы" />
+    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="Фотография пользователя" />
 {/block}
 
 {block name}
@@ -113,7 +113,7 @@
 
 {block actions}
     {if $x->getId() !== $thisUser->getId()}
-        {var subStatus = $x->getSubscriptionStatus($thisUser)}
+        {var $subStatus = $x->getSubscriptionStatus($thisUser)}
         {if $subStatus === 0}
             <form action="/setSub/user" method="post" class="profile_link_form">
                 <input type="hidden" name="act" value="add" />

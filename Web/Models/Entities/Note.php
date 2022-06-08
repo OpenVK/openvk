@@ -48,6 +48,7 @@ class Note extends Postable
             "acronym",
             "blockquote",
             "cite",
+            "span",
         ]);
         $config->set("HTML.AllowedAttributes", [
             "table.summary",
@@ -59,6 +60,8 @@ class Note extends Postable
             "img.style",
             "div.style",
             "div.title",
+            "span.class",
+            "p.class",
         ]);
         $config->set("CSS.AllowedProperties", [
             "float",
@@ -67,6 +70,9 @@ class Note extends Postable
             "max-height",
             "max-width",
             "font-weight",
+        ]);
+        $config->set("Attr.AllowedClasses", [
+            "underline",
         ]);
         
         $purifier = new HTMLPurifier($config);

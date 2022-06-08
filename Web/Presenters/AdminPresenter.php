@@ -23,7 +23,7 @@ final class AdminPresenter extends OpenVKPresenter
     private function warnIfNoCommerce(): void
     {
         if(!OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"])
-            $this->flash("warn", "Коммерция отключена системным администратором", "Настройки ваучеров и подарков будут сохранены, но не будут оказывать никакого влияния.");
+            $this->flash("warn", tr("admin_commerce_disabled"), tr("admin_commerce_disabled_desc"));
     }
     
     private function searchResults(object $repo, &$count)
@@ -70,14 +70,14 @@ final class AdminPresenter extends OpenVKPresenter
                 $user->setLast_Name($this->postParam("last_name"));
                 $user->setPseudo($this->postParam("nickname"));
                 $user->setStatus($this->postParam("status"));
-                $user->setVerified(empty($this->postParam("verify") ? 0 : 1));
-                if($user->onlineStatus() != $this->postParam("online")) $user->setOnline(intval($this->postParam("online")));
                 if(!$user->setShortCode(empty($this->postParam("shortcode")) ? NULL : $this->postParam("shortcode")))
                     $this->flash("err", tr("error"), tr("error_shorturl_incorrect"));
+                $user->changeEmail($this->postParam("email"));
+                if($user->onlineStatus() != $this->postParam("online")) $user->setOnline(intval($this->postParam("online")));
+                $user->setVerified(empty($this->postParam("verify") ? 0 : 1));
+
                 $user->save();
                 break;
-            
-            
         }
     }
     
@@ -346,7 +346,20 @@ final class AdminPresenter extends OpenVKPresenter
             exit(json_encode([ "error" => "User does not exist" ]));
         
         $user->ban($this->queryParam("reason"));
-        exit(json_encode([ "reason" => $this->queryParam("reason") ]));
+        exit(json_encode([ "success" => true, "reason" => $this->queryParam("reason") ]));
+    }
+
+    function renderQuickUnban(int $id): void
+    {
+        $this->assertNoCSRF();
+        
+        $user = $this->users->get($id);
+        if(!$user)
+            exit(json_encode([ "error" => "User does not exist" ]));
+        
+        $user->setBlock_Reason(null);
+        $user->save();
+        exit(json_encode([ "success" => true ]));
     }
     
     function renderQuickWarn(int $id): void

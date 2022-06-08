@@ -99,9 +99,14 @@
 "relationship_3" = "Помолвлен";
 "relationship_4" = "Женат";
 "relationship_5" = "В гражданском браке";
-"relationship_6" = "Влюблен";
+"relationship_6" = "Влюблён";
 "relationship_7" = "Всё сложно";
 "relationship_8" = "В активном поиске";
+
+"relationship_1_fem" = "Не замужем";
+"relationship_3_fem" = "Помолвлена";
+"relationship_4_fem" = "Замужем";
+"relationship_6_fem" = "Влюблена";
 
 "politViews" = "Полит. взгляды";
 
@@ -189,6 +194,8 @@
 "attach_no_longer_available" = "Это вложение больше недоступно.";
 "open_post" = "Открыть запись";
 "version_incompatibility" = "Не удалось отобразить это вложение. Возможно, база данных несовместима с текущей версией OpenVK.";
+
+"graffiti" = "Граффити";
 
 "reply" = "Ответить";
 
@@ -472,6 +479,8 @@
 "your_page_address" = "Адрес Вашей страницы";
 "page_address" = "Адрес страницы";
 "current_email_address" = "Текущий адрес";
+"new_email_address" = "Новый адрес";
+"save_email_address" = "Сохранить адрес";
 "page_id" = "ID страницы";
 "you_can_also" = "Вы также можете";
 "delete_your_page" = "удалить свою страницу";
@@ -482,9 +491,19 @@
 "ui_settings_rating" = "Рейтинг";
 "ui_settings_rating_show" = "Показывать";
 "ui_settings_rating_hide" = "Скрывать";
+"ui_settings_nsfw_content" = "NSFW-контент";
+"ui_settings_nsfw_content_dont_show" = "Не показывать в глобальной ленте";
+"ui_settings_nsfw_content_blur" = "Только замазывать";
+"ui_settings_nsfw_content_show" = "Показывать";
+"ui_settings_view_of_posts" = "Вид постов";
+"ui_settings_view_of_posts_old" = "Старый";
+"ui_settings_view_of_posts_microblog" = "Микроблог";
+"ui_settings_main_page" = "Главная страница";
 
 "additional_links" = "Дополнительные ссылки";
 "ad_poster" = "Рекламный плакат";
+
+"email_change_confirm_message" = "Чтобы изменение вступило в силу, подтвердите ваш новый адрес электронной почты. Мы отправили инструкции на него.";
 
 "profile_deactivate" = "Удаление страницы";
 "profile_deactivate_button" = "Удалить страницу";
@@ -606,6 +625,8 @@
 "points" = "Голоса";
 "points_count" = "голосов";
 "on_your_account" = "на вашем счету";
+"top_up_your_account" = "Пополнить баланс";
+"you_still_have_x_points" = "У Вас <b>$1</b> неиспользованных голосов.";
 
 "vouchers" = "Ваучеры";
 "have_voucher" = "Есть ваучер";
@@ -635,6 +656,11 @@
 "also_you_can_transfer_points" = "Также вы можете <a href=\"javascript:showCoinsTransferDialog($1, '$2')\">передать голоса</a> другому человеку.";
 
 "transferred_to_you" = "передал вам";
+
+"transfer_trough_ton" = "Пополнить с помощью TON";
+"transfer_ton_contents" = "Вы можете пополнить ваш баланс с помощью криптовалюты TON. Достаточно отсканировать QR-code приложением Tonkeeper, или вручную отправить TON по реквизитам. В течении нескольких минут вам придут определенное количество голосов.";
+"transfer_ton_address" = "<b>Адрес кошелька:</b> $1<br/><b>Содержание сообщения:</b> $2";
+"transfer_ton_currency_per_ton" = "$1 TON";
 
 "receiver_address" = "Адрес получателя";
 "coins_count" = "Количество голосов";
@@ -714,9 +740,6 @@
 "support_list" = "Список обращений";
 "support_new" = "Новое обращение";
 
-"support_faq_title" = "Для кого этот сайт?";
-"support_faq_content" = "Сайт предназначен для поиска друзей и знакомых, а также для просмотра данных пользователя. Это как справочник города, с помощью которого люди могут быстро найти актуальную информацию о человеке.";
-
 "support_new_title" = "Введите тему вашего обращения";
 "support_new_content" = "Опишите проблему или предложение";
 
@@ -743,6 +766,9 @@
 "ticket_changed" = "Тикет изменён";
 "ticket_changed_comment" = "Изменения вступят силу через несколько секунд.";
 
+"banned_in_support_1" = "Извините, <b>$1</b>, но теперь вам нельзя создавать обращения.";
+"banned_in_support_2" = "А причина этому проста: <b>$1</b>. К сожалению, на этот раз нам пришлось отобрать у вас эту возможность навсегда.";
+
 /* Invite */
 
 "invite" = "Пригласить";
@@ -765,6 +791,18 @@
 "ec_1" = "<b>$1</b>, ваша регистрация почти закончена. В течении нескольких минут на ваш адрес E-mail должно прийти письмо с ссылкой для подтверждения вашего адреса почты.";
 "ec_2" = "Если по каким-то причинам вам не пришло письмо, то проверьте папку Спам. Если письма не окажется и там, то вы можете переотправить письмо.";
 "ec_resend" = "Переотправить письмо";
+
+/* Messages */
+
+"all_messages" = "Все сообщения";
+
+"search_messages" = "Поиск сообщений";
+"no_messages" = "Никто Вам не писал, пока что.";
+"messages_blocked" = "Вы не можете отправить сообщение этому пользователю, поскольку он ограничил круг лиц, которые могут присылать ему сообщения.";
+"enter_message" = "Введите сообщение";
+
+"messages_error_1" = "Сообщение не доставлено";
+"messages_error_1_description" = "При отправке этого сообщения произошла ошибка общего характера...";
 
 /* Discussions */
 
@@ -832,6 +870,7 @@
 "error_new_password" = "Новые пароли не совпадает";
 "error_shorturl_incorrect" = "Короткий адрес имеет некорректный формат.";
 "error_repost_fail" = "Не удалось поделиться записью";
+"error_data_too_big" = "Аттрибут '$1' не может быть длиннее $2 $3";
 
 "forbidden" = "Ошибка доступа";
 "forbidden_comment" = "Настройки приватности этого пользователя не разрешают вам смотреть на его страницу.";
@@ -866,8 +905,8 @@
 "suspicious_registration_attempt" = "Подозрительная попытка регистрации";
 "suspicious_registration_attempt_comment" = "Вы пытались зарегистрироваться из подозрительного места.";
 
-"rate_limit_error" = "Чумба, ты совсем ёбнутый?";
-"rate_limit_error_comment" = "Сходи к мозгоправу, попей колёсики. В $1 нельзя вбрасывать щитпосты так часто. Код исключения: $2.";
+"rate_limit_error" = "Эй, сбавь обороты!";
+"rate_limit_error_comment" = "Даниил Мысливец вам очень недоволен. В $1 нельзя делать запросы так часто. Код исключения: $2.";
 
 "not_enough_permissions" = "Недостаточно прав";
 "not_enough_permissions_comment" = "У вас недостаточно прав чтобы выполнять это действие.";
@@ -892,7 +931,86 @@
 "manage_user_action" = "Управление пользователем";
 "manage_group_action" = "Управление группой";
 "ban_user_action" = "Заблокировать пользователя";
+"unban_user_action" = "Разблокировать пользователя";
 "warn_user_action" = "Предупредить пользователя";
+"ban_in_support_user_action" = "Заблокировать в поддержке";
+"unban_in_support_user_action" = "Разблокировать в поддержке";
+
+/* Admin panel */
+
+"admin" = "Админ-панель";
+
+"admin_ownerid" = "ID владельца";
+"admin_author" = "Автор";
+"admin_name" = "Имя";
+"admin_title" = "Название";
+"admin_description" = "Описание";
+"admin_first_known_ip" = "Первый IP";
+"admin_shortcode" = "Короткий адрес";
+"admin_verification" = "Верификация";
+"admin_banreason" = "Причина блокировки";
+"admin_banned" = "заблокирован";
+"admin_actions" = "Действия";
+"admin_image" = "Изображение";
+"admin_image_replace" = "Заменить изображение?";
+"admin_uses" = "Использований";
+"admin_uses_reset" = "Сбросить количество использований?";
+"admin_limits" = "Ограничения";
+"admin_limits_reset" = "Сбросить количество ограничений";
+"admin_open" = "Открыть";
+"admin_loginas" = "Войти как...";
+"admin_commonsettings" = "Общие настройки";
+"admin_langsettings" = "Языко-зависимые настройки";
+
+"admin_tab_main" = "Главное";
+"admin_tab_ban" = "Блокировка";
+"admin_tab_followers" = "Участники";
+
+"admin_overview" = "Обзор";
+"admin_overview_summary" = "Сводка";
+
+"admin_content" = "Пользовательский контент";
+"admin_user_search" = "Поиск пользователей";
+"admin_user_online" = "Онлайн статус";
+"admin_user_online_default" = "По-умолчанию";
+"admin_user_online_incognito" = "Инкогнито";
+"admin_user_online_deceased" = "Покойник";
+"admin_club_search" = "Поиск групп";
+"admin_club_excludeglobalfeed" = "Не отображать записи в глобальной ленте";
+
+"admin_services" = "Платные услуги";
+"admin_newgift" = "Новый подарок";
+"admin_price" = "Цена";
+"admin_giftset" = "Набор подарков";
+"admin_giftsets" = "Наборы подарков";
+"admin_giftsets_none" = "Нет наборов подарков. Создайте набор, чтобы создать подарок.";
+"admin_giftsets_create" = "Создать набор подарков";
+"admin_giftsets_title" = "Внутреннее название набора, которое будет использоваться, если не удаётся найти название на языке пользователя.";
+"admin_giftsets_description" = "Внутреннее описание набора, которое будет использоваться, если не удаётся найти название на языке пользователя.";
+"admin_price_free" = "бесплатный";
+"admin_voucher_rating" = "Рейтинг";
+"admin_voucher_serial" = "Серийный номер";
+"admin_voucher_serial_desc" = "Номер состоит из 24 символов. Если формат неправильный или поле не заполнено, будет назначен автоматически.";
+"admin_voucher_coins" = "Количество голосов";
+"admin_voucher_rating" = "Количество рейтинга";
+"admin_voucher_usages_desc" = "Количество аккаунтов, которые могут использовать ваучер. Если написать -1, будет бесконечность.";
+"admin_voucher_status" = "Состояние";
+"admin_voucher_status_opened" = "активен";
+"admin_voucher_status_closed" = "закончился";
+
+"admin_settings" = "Настройки";
+"admin_settings_tuning" = "Общее";
+"admin_settings_appearance" = "Внешний вид";
+"admin_settings_security" = "Безопасность";
+"admin_settings_integrations" = "Интеграции";
+"admin_settings_system" = "Система";
+
+"admin_about" = "Об OpenVK";
+"admin_about_version" = "Версия";
+"admin_about_instance" = "Инстанция";
+
+"admin_commerce_disabled" = "Коммерция отключена системным администратором";
+"admin_commerce_disabled_desc" = "Настройки ваучеров и подарков будут сохранены, но не будут оказывать никакого влияния.";
 
 /* Paginator (deprecated) */
 
@@ -908,6 +1026,8 @@
 "rules" = "Правила";
 "most_popular_groups" = "Самые популярные группы";
 "on_this_instance_are" = "На этой инстанции:";
+"about_links" = "Ссылки";
+"instance_links" = "Ссылки инстанции:";
 
 "about_users_one" = "<b>1</b> пользователь";
 "about_users_few" = "<b>$1</b> пользователя";
@@ -950,3 +1070,8 @@
 /* User alerts */
 
 "user_alert_scam" = "На этот аккаунт много жаловались в связи с мошенничеством. Пожалуйста, будьте осторожны, особенно если у вас попросят денег.";
+
+/* Cookies pop-up */
+
+"cookies_popup_content" = "Все дети любят печенье, поэтому этот веб-сайт использует Cookies для того, чтобы идентифицировать вашу сессию и ничего более. Ознакомьтесь с нашей <a href='/privacy'>политикой конфиденциальности</a> для получения дополнительной информации.";
+"cookies_popup_agree" = "Согласен";

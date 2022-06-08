@@ -2,7 +2,7 @@
 /* Design belongs to Pavel Durov & VK Group */
 
 .post {
-    padding: 5px 0 5px 0;
+    padding: 5px 0;
 }
 
 .post-divider {
@@ -12,7 +12,7 @@
 .post-author {
     background-color: transparent;
     border: none;
-    padding: 0 3px 3px 3px;
+    padding: 0 3px 3px;
 }
 
 .post-author .date {
@@ -25,7 +25,7 @@
 }
 
 .post-content .text {
-    padding: 0 4px 0 4px;
+    padding: 0 4px;
 }
 
 .post-menu {
@@ -37,7 +37,7 @@
 }
 
 .comment {
-    padding: 5px 0 0 0;
+    padding: 5px 0 0;
     border-top: 1px #ddd solid;
 }
 
@@ -46,16 +46,16 @@
 }
 
 .repost-icon {
-    background: url('/assets/packages/static/openvk/img/published.gif') no-repeat 0px 0px;
+    background: url('/assets/packages/static/openvk/img/published.gif') no-repeat 0 0;
     height: 12px;
-    margin: 2px 3px 0px;
+    margin: 2px 3px 0;
     width: 11px;
 }
 
 .heart {
-    background: url('/assets/packages/static/openvk/img/like.gif') no-repeat 1px 0px;
+    background: url('/assets/packages/static/openvk/img/like.gif') no-repeat 1px 0;
     height: 10px;
-    margin: 2px 3px 0px;
+    margin: 2px 3px 0;
     width: 11px;
     float: none;
     opacity: 0.4;
@@ -73,24 +73,25 @@
     opacity: 0.4 !important;
 }
 
-.post-share-button, .post-like-button {
+.post-share-button,
+.post-like-button {
     display: flex;
     padding: 2px;
     border-radius: 2px;
     transition-duration: 0.2s;
 }
 
-.post-share-button:hover, .post-like-button:hover {
+.post-share-button:hover,
+.post-like-button:hover {
     background-color: rgb(240, 240, 240);
 }
 
 .post-author .delete {
     float: right;
-    display: inline-block;
     height: 16px;
     width: 16px;
     overflow: auto;
-    background: url("/assets/packages/static/openvk/img/input_clear.gif") no-repeat 0px 0px;
+    background: url("/assets/packages/static/openvk/img/input_clear.gif") no-repeat 0 0;
     opacity: 0.1;
     transition-duration: 0.3s;
 }
@@ -101,11 +102,10 @@
 
 .post-author .pin {
     float: right;
-    display: inline-block;
     height: 16px;
     width: 16px;
     overflow: auto;
-    background: url("/assets/packages/static/openvk/img/pin.png") no-repeat 0px 0px;
+    background: url("/assets/packages/static/openvk/img/pin.png") no-repeat 0 0;
     opacity: 0.1;
     transition-duration: 0.3s;
 }
@@ -117,7 +117,7 @@
 .expand_button {
     background-color: #eee;
     width: 100%;
-    display: inline-block;;
+    display: inline-block;
     height: 30px;
     line-height: 28px;
     text-align: center;

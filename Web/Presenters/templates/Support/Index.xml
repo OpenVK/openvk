@@ -6,9 +6,9 @@
 {/block}
 
 {block content}
-    {var isMain = $mode === 'faq'}
-    {var isNew  = $mode === 'new'}
-    {var isList = $mode === 'list'}
+    {var $isMain = $mode === 'faq'}
+    {var $isNew  = $mode === 'new'}
+    {var $isList = $mode === 'list'}
 
     {if $thisUser}
         <div class="tabs">
@@ -26,24 +26,34 @@
         <br />
         
         {if $isNew}
-            <div class="new">
-                <form action="/support" method="post" style="margin:0;">
-                    <center>
-                        <input name="name" style="width: 80%; resize: vertical;" placeholder="{_support_new_title}" /><br /><br />
-                        <textarea name="text" style="width: 80%; resize: vertical;" placeholder="{_support_new_content}"></textarea><br /><br />
-                        <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" value="{_write}" class="button" style="margin-left: 70%;" /><br /><br />
-                    </center>
-                </form>
-            </div>
+            {if !is_null($banReason)}
+                <center>
+                    <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_'banned_alt'}" style="width: 20%;" />
+                </center>
+                <p>
+                    {tr("banned_in_support_1", htmlentities($thisUser->getCanonicalName()))|noescape}<br/>
+                    {tr("banned_in_support_2", htmlentities($banReason))|noescape}
+                </p>
+            {else}
+                <div class="new">
+                    <form action="/support" method="post" style="margin:0;">
+                        <center>
+                            <input name="name" style="width: 80%; resize: vertical;" placeholder="{_support_new_title}" /><br /><br />
+                            <textarea name="text" style="width: 80%; resize: vertical;" placeholder="{_support_new_content}"></textarea><br /><br />
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_write}" class="button" style="margin-left: 70%;" /><br /><br />
+                        </center>
+                    </form>
+                </div>
+            {/if}
         {/if}
     {/if}
 
     {if $isMain}
         <h4>{_support_faq}</h4><br />
-        <div class="faq">
-            <div id="faqhead">{_support_faq_title}</div>
-            <div id="faqcontent">{_support_faq_content}</div>
+        <div n:foreach="$faq as $section" class="faq">
+            <div id="faqhead">{$section[0]}</div>
+            <div id="faqcontent">{$section[1]|noescape}</div>
         </div>
     {/if}
 

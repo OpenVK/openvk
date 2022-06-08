@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\Ticket;
-use openvk\Web\Models\Repositories\Tickets;
+use openvk\Web\Models\Repositories\{Tickets, Users};
 use openvk\Web\Models\Entities\TicketComment;
 use openvk\Web\Models\Repositories\TicketComments;
 use openvk\Web\Util\Telegram;
@@ -28,13 +28,54 @@ final class SupportPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->template->mode = in_array($this->queryParam("act"), ["faq", "new", "list"]) ? $this->queryParam("act") : "faq";
 
+        if($this->template->mode === "faq") {
+            $lang = Session::i()->get("lang", "ru");
+            $base = OPENVK_ROOT . "/data/knowledgebase/faq";
+            if(file_exists("$base.$lang.md"))
+                $file = "$base.$lang.md";
+            else if(file_exists("$base.md"))
+                $file = "$base.md";
+            else
+                $file = NULL;
+
+            if(is_null($file)) {
+                $this->template->faq = [];
+            } else {
+                $lines = file($file);
+                $faq   = [];
+                $index = 0;
+
+                foreach($lines as $line) {
+                    if(strpos($line, "# ") === 0)
+                        ++$index;
+
+                    $faq[$index][] = $line;
+                }
+
+                $this->template->faq = array_map(function($section) {
+                    $title = substr($section[0], 2);
+                    array_shift($section);
+                    return [
+                        $title,
+                        (new Parsedown())->text(implode("\n", $section))
+                    ];
+                }, $faq);
+            }
+        }
+
         $this->template->count = $this->tickets->getTicketsCountByUserId($this->user->id);
         if($this->template->mode === "list") {
             $this->template->page    = (int) ($this->queryParam("p") ?? 1);
             $this->template->tickets = $this->tickets->getTicketsByUserId($this->user->id, $this->template->page);
         }
 
+        if($this->template->mode === "new")
+            $this->template->banReason = $this->user->identity->getBanInSupportReason();
+        
         if($_SERVER["REQUEST_METHOD"] === "POST") {
+            if($this->user->identity->isBannedInSupport())
+                $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+
             if(!empty($this->postParam("name")) && !empty($this->postParam("text"))) {
                 $this->willExecuteWriteAction();
 
@@ -73,12 +114,13 @@ final class SupportPresenter extends OpenVKPresenter
         $act = $this->queryParam("act") ?? "open";
         switch($act) {
             default:
+                # NOTICE falling through
             case "open":
                 $state = 0;
-            break;
+                break;
             case "answered":
                 $state = 1;
-            break;
+                break;
             case "closed":
                 $state = 2;
         }
@@ -267,5 +309,33 @@ final class SupportPresenter extends OpenVKPresenter
         $comment->save();
 
         exit(header("HTTP/1.1 200 OK"));
+    }
+
+    function renderQuickBanInSupport(int $id): void
+    {
+        $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+        $this->assertNoCSRF();
+
+        $user = (new Users)->get($id);
+        if(!$user)
+            exit(json_encode([ "error" => "User does not exist" ]));
+        
+        $user->setBlock_In_Support_Reason($this->queryParam("reason"));
+        $user->save();
+        $this->returnJson([ "success" => true, "reason" => $this->queryParam("reason") ]);
+    }
+
+    function renderQuickUnbanInSupport(int $id): void
+    {
+        $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+        $this->assertNoCSRF();
+        
+        $user = (new Users)->get($id);
+        if(!$user)
+            exit(json_encode([ "error" => "User does not exist" ]));
+        
+        $user->setBlock_In_Support_Reason(null);
+        $user->save();
+        $this->returnJson([ "success" => true ]);
     }
 }

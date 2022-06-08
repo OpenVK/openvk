@@ -1,0 +1,1 @@
+ALTER TABLE `videos` ADD `processed` BOOLEAN NOT NULL DEFAULT FALSE AFTER `link`, ADD `last_checked` BIGINT UNSIGNED NOT NULL DEFAULT '0' AFTER `processed`;

@@ -55,6 +55,17 @@ function parseAjaxResponse(responseString) {
     }
 }
 
+function toggleMenu(id) {
+    if($(`#post-buttons${id} #wallAttachmentMenu`).is('.hidden')) {
+        $(`#post-buttons${id} #wallAttachmentMenu`).css({ opacity: 0 });
+        $(`#post-buttons${id} #wallAttachmentMenu`).toggleClass('hidden').fadeTo(250, 1);
+    } else {
+        $(`#post-buttons${id} #wallAttachmentMenu`).fadeTo(250, 0, function () {
+            $(this).toggleClass('hidden');
+        });
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function() { //BEGIN
 
     u("#_photoDelete").on("click", function(e) {
@@ -171,7 +182,7 @@ function repostPost(id, hash) {
 			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 			xhr.onload = (function() {
                 if(xhr.responseText.indexOf("wall_owner") === -1)
-					MessageBox(tr('error'), tr('error_repost_fail'), tr('ok'), [Function.noop]);
+					MessageBox(tr('error'), tr('error_repost_fail'), [tr('ok')], [Function.noop]);
 				else {
 					let jsonR = JSON.parse(xhr.responseText);
                     NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.location.href = "/wall" + jsonR.wall_owner});

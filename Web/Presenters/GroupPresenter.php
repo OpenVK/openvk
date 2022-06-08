@@ -89,7 +89,7 @@ final class GroupPresenter extends OpenVKPresenter
         $this->template->club              = $this->clubs->get($id);
         $this->template->onlyShowManagers  = $this->queryParam("onlyAdmins") == "1";
         if($this->template->onlyShowManagers) {
-            $this->template->followers     = null;
+            $this->template->followers     = NULL;
 
             $this->template->managers     = $this->template->club->getManagers((int) ($this->queryParam("p") ?? 1), !$this->template->club->canBeModifiedBy($this->user->identity));
             if($this->template->club->canBeModifiedBy($this->user->identity) || !$this->template->club->isOwnerHidden()) {
@@ -99,7 +99,7 @@ final class GroupPresenter extends OpenVKPresenter
             $this->template->count         = $this->template->club->getManagersCount();
         } else {
             $this->template->followers     = $this->template->club->getFollowers((int) ($this->queryParam("p") ?? 1));
-            $this->template->managers      = null;
+            $this->template->managers      = NULL;
             $this->template->count         = $this->template->club->getFollowersCount();
         }
 
@@ -116,7 +116,7 @@ final class GroupPresenter extends OpenVKPresenter
         $user = is_null($this->queryParam("user")) ? $this->postParam("user") : $this->queryParam("user");
         $comment = $this->postParam("comment");
         $removeComment = $this->postParam("removeComment") === "1";
-        $hidden = ["0" => false, "1" => true][$this->queryParam("hidden")] ?? null;
+        $hidden = ["0" => false, "1" => true][$this->queryParam("hidden")] ?? NULL;
         //$index = $this->queryParam("index");
         if(!$user)
             $this->badRequest();

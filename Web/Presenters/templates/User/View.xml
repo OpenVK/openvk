@@ -7,7 +7,7 @@
     <!-- openGraph -->
     <meta property="og:title" content="{$user->getCanonicalName()}" />
     <meta property="og:url" content="http://{$_SERVER['HTTP_HOST']}{$user->getURL()}" />
-    <meta property="og:image" content="{$user->getAvatarUrl()}" />
+    <meta property="og:image" content="{$user->getAvatarUrl('normal')}" />
     <meta property="og:type" content="profile" />
     <meta property="og:first_name" content="{$user->getFirstName()}" />
     <meta property="og:last_name" content="{$user->getLastName()}" />
@@ -41,7 +41,7 @@
         {if $user->isOnline()}
             <span><b>{_online}</b></span>
         {else}
-            <span>{_was_online} {$user->getOnline()}</span>
+            <span>{$user->isFemale() ? tr("was_online_f") : tr("was_online_m")} {$user->getOnline()}</span>
         {/if}
     </div>
     <div n:if="$user->onlineStatus() == 2" style="float:right;">
@@ -62,7 +62,7 @@
     <div class="left_small_block">
         <div>
             <a href="{$user->getAvatarLink()|nocheck}">
-                <img src="{$user->getAvatarUrl()}"
+                <img src="{$user->getAvatarUrl('normal')}"
                      alt="{$user->getCanonicalName()}"
                      style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
             </a>
@@ -72,7 +72,7 @@
                 <div id="profile_link" style="width: 194px;">
                     <a href="/edit" class="link">{_"edit_page"}</a>
                 </div>
-                <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce']" id="profile_link" style="width: 194px;">
+                <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && !$thisUser->prefersNotToSeeRating()" id="profile_link" style="width: 194px;">
                     <a onClick="showIncreaseRatingDialog({$thisUser->getCoins()}, {ltrim($thisUser->getUrl(), '/')}, {$csrfToken})" class="link">{_increase_rating}</a>
                 </div>
             {else}
@@ -93,11 +93,21 @@
                         {_warn_user_action}
                     </a>
                 {/if}
+
+                {if $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
+                    <a href="javascript:toggleBanInSupport()" class="profile_link">
+                        {if $user->isBannedInSupport()}
+                            {_unban_in_support_user_action}
+                        {else}
+                            {_ban_in_support_user_action}
+                        {/if}
+                    </a>
+                {/if}
                 
                 <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() == 0" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
                 <a n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" class="profile_link">{_"send_message"}</a>
 
-                {var subStatus = $user->getSubscriptionStatus($thisUser)}
+                {var $subStatus = $user->getSubscriptionStatus($thisUser)}
                 {if $subStatus === 0}
                     <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="add" />
@@ -131,7 +141,7 @@
             <a n:if="$user->getFollowersCount() > 0" href="/friends{$user->getId()}?act=incoming" class="profile_link">{tr("followers", $user->getFollowersCount())}</a>
         </div>
         <div n:if="isset($thisUser) && !$thisUser->prefersNotToSeeRating()" class="profile-hints">
-            {var completeness = $user->getProfileCompletenessReport()}
+            {var $completeness = $user->getProfileCompletenessReport()}
             
             <div n:class="completeness-gauge, $completeness->total >= 100 ? completeness-gauge-gold">
                 <div style="width: {$completeness->percent}%"></div>
@@ -164,7 +174,7 @@
         </div>
         <br />
         <div n:if="$user->getFriendsCount() > 0 && $user->getPrivacyPermission('friends.read', $thisUser ?? NULL)">
-            {var friendCount = $user->getFriendsCount()}
+            {var $friendCount = $user->getFriendsCount()}
             
             <div class="content_title_expanded" onclick="hidePanel(this, {$friendCount});">
                 {_"friends"}
@@ -180,7 +190,7 @@
                     <div class="cl_element" n:foreach="$user->getFriends(1) as $friend">
                         <div class="cl_avatar">
                             <a href="{$friend->getURL()}">
-                                <img class="ava" src="{$friend->getAvatarUrl()}" />
+                                <img class="ava" src="{$friend->getAvatarUrl('miniscule')}" />
                             </a>
                         </div>
                         <a href="{$friend->getURL()}" class="cl_name">
@@ -205,10 +215,10 @@
                 <div style="padding: 5px;">
                     <div class="ovk-album" style="display: inline-block;" n:foreach="$albums as $album">
                         <div style="text-align: center;float: left;height: 54pt;width: 100px;">
-                            {var cover = $album->getCoverPhoto()}
+                            {var $cover = $album->getCoverPhoto()}
                             
                             <img
-                                src="{is_null($cover)?'/assets/packages/static/openvk/img/camera_200.png':$cover->getURL()}"
+                                src="{is_null($cover)?'/assets/packages/static/openvk/img/camera_200.png':$cover->getURLBySizeId('small')}"
                                 style="max-width: 80px; max-height: 54pt;" />
                         </div>
                         <div style="overflow: hidden; overflow-wrap: break-word;">
@@ -274,7 +284,7 @@
             </div>
         </div>
         <div n:if="$user->getClubCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
-            {var clubsCount = $user->getClubCount()}
+            {var $clubsCount = $user->getClubCount()}
             <div class="content_title_expanded" onclick="hidePanel(this, {$clubsCount})">
                 {_"groups"}
             </div>
@@ -293,7 +303,7 @@
             </div>
         </div>
         <div n:if="$user->getMeetingCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
-            {var meetingCount = $user->getMeetingCount()}
+            {var $meetingCount = $user->getMeetingCount()}
             <div class="content_title_expanded" onclick="hidePanel(this, {$meetingCount})">
                 {_meetings}
             </div>
@@ -317,7 +327,7 @@
     <div class="right_big_block">
         <div class="page_info">
             <div n:if="!is_null($alert = $user->getAlert())" class="user-alert">{strpos($alert, "@") === 0 ? tr(substr($alert, 1)) : $alert}</div>
-            {var thatIsThisUser = isset($thisUser) && $user->getId() == $thisUser->getId()}
+            {var $thatIsThisUser = isset($thisUser) && $user->getId() == $thisUser->getId()}
             <div n:if="$thatIsThisUser" class="page_status_popup" id="status_editor" style="display: none;">
                 <form name="status_popup_form" onsubmit="changeStatus(); return false;">
                     <div style="margin-bottom: 10px;">
@@ -348,7 +358,7 @@
                         </tr>
                         <tr>
                             <td class="label"><span class="nobold">{_"relationship"}:</span></td>
-                            <td class="data">{var $marialStatus = $user->getMaritalStatus()}{_"relationship_$marialStatus"}</td>
+                            <td class="data">{$user->getLocalizedMaritalStatus()}</td>
                         </tr>
                         <tr>
                             <td class="label"><span class="nobold">{_"registration_date"}: </span></td>
@@ -485,7 +495,7 @@
                 </div>
                 <div class="content_list long">
                     <div class="cl_element" style="width: 25%;" n:foreach="$user->getGifts(1, 4) as $giftDescriptor">
-                        {var hideInfo = !is_null($thisUser) ? ($giftDescriptor->anon ? $thisUser->getId() !== $user->getId() : false) : false}
+                        {var $hideInfo = !is_null($thisUser) ? ($giftDescriptor->anon ? $thisUser->getId() !== $user->getId() : false) : false}
                         <div class="cl_avatar">
                             <a href="{$hideInfo ? 'javascript:false' : $giftDescriptor->sender->getURL()}">
                                 <img style="width: 70px; max-height: 70px;"
@@ -512,7 +522,7 @@
                         xhr = new XMLHttpRequest();
                         xhr.open("GET", "/admin/ban/" + {$user->getId()} + "?reason=" + res + "&hash=" + {rawurlencode($csrfToken)}, true);
                         xhr.onload = (function() {
-                            if(xhr.responseText.indexOf("reason") === -1)
+                            if(xhr.responseText.indexOf("success") === -1)
                                 MessageBox("Ошибка", "Не удалось забанить пользователя...", ["OK"], [Function.noop]);
                             else
                                 MessageBox("Операция успешна", "Пользователь заблокирован", ["OK"], [Function.noop]);
@@ -526,7 +536,7 @@
             function warnUser() {
                 uBanMsgTxt  = "Вы собираетесь предупредить пользователя " + {$user->getCanonicalName()} + ".";
                 uBanMsgTxt += "<br/>Мы отправим уведомление пользователю в личные сообщения от имени аккаунта администратора.";
-                uBanMsgTxt += "<br/><br/><b>Текст предупреждения</b>: <input type='text' id='uWarnMsgInput' placeholder='придумайте что-нибудь крутое' />"
+                uBanMsgTxt += "<br/><br/><b>Текст предупреждения</b>: <input type='text' id='uWarnMsgInput' placeholder='придумайте что-нибудь крутое' />";
                 
                 MessageBox("Выдать предупреждение " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
                     (function() {
@@ -544,6 +554,51 @@
                     Function.noop
                 ]);
             }
+        </script>
+
+        <script n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)">
+            {if $user->isBannedInSupport()}
+                function toggleBanInSupport() {
+                    uBanMsgTxt  = "Вы собираетесь разблокировать в поддержке пользователя " + {$user->getCanonicalName()} + ".";
+                    uBanMsgTxt += "<br/>Сейчас он заблокирован по причине <strong>" + {$user->getBanInSupportReason()} + "</strong>.";
+
+                    MessageBox("Разблокировать в поддержке " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
+                        (function() {
+                            xhr = new XMLHttpRequest();
+                            xhr.open("GET", "/admin/support/unban/" + {$user->getId()} + "?hash=" + {rawurlencode($csrfToken)}, true);
+                            xhr.onload = (function() {
+                                if(xhr.responseText.indexOf("success") === -1)
+                                    MessageBox("Ошибка", "Не удалось разблокировать пользователя в поддержке...", ["OK"], [Function.noop]);
+                                else
+                                    MessageBox("Операция успешна", "Пользователь разблокирован в поддержке", ["OK"], [Function.noop]);
+                            });
+                            xhr.send(null);
+                        }),
+                        Function.noop
+                    ]);
+                }
+            {else}
+                function toggleBanInSupport() {
+                    uBanMsgTxt  = "Вы собираетесь заблокировать в поддержке пользователя " + {$user->getCanonicalName()} + ".";
+                    uBanMsgTxt += "<br/><br/><b>Причина бана</b>: <input type='text' id='uBanMsgInput' placeholder='придумайте что-нибудь крутое' />";
+
+                    MessageBox("Заблокировать в поддержке " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
+                        (function() {
+                            res = document.querySelector("#uBanMsgInput").value;
+                            xhr = new XMLHttpRequest();
+                            xhr.open("GET", "/admin/support/ban/" + {$user->getId()} + "?reason=" + res + "&hash=" + {rawurlencode($csrfToken)}, true);
+                            xhr.onload = (function() {
+                                if(xhr.responseText.indexOf("success") === -1)
+                                    MessageBox("Ошибка", "Не удалось заблокировать пользователя в поддержке...", ["OK"], [Function.noop]);
+                                else
+                                    MessageBox("Операция успешна", "Пользователь заблокирован в поддержке", ["OK"], [Function.noop]);
+                            });
+                            xhr.send(null);
+                        }),
+                        Function.noop
+                    ]);
+                }
+            {/if}
         </script>
 
         <script n:if="isset($thisUser) && $user->getId() == $thisUser->getId()" n:syntax="off">

@@ -6,13 +6,19 @@ openvk:
     
     preferences:
         femaleGenderPriority: true
+        nginxCacheTime: null
         uploads:
             disableLargeUploads: false
             mode: "basic"
+            api:
+                maxFilesPerDomain: 10
+                maxFileSize: 25000000
         shortcodes:
             minLength: 3 # won't affect existing short urls or the ones set via admin panel
             forbiddenNames:
                 - "index.php"
+        photos:
+            upgradeStructure: true
         security:
             requireEmail: false
             requirePhone: false
@@ -47,10 +53,22 @@ openvk:
                 processingLimit: 3000
                 emojiProcessingLimit: 1000
         commerce: false
+        ton:
+            enabled: false
+            address: "🅿"
+            testnet: false # Only for testing purposes.
+            rate: 0.02     # TONs per 1 coin
+            regex: "ovk=([0-9]+)"
+            hint: "ovk=$1"
+            # Please read docs to understand how to turn on automatic checking for new translations
         menu:
             links:
                 - name: "@left_menu_donate"
                   url: "/donate"
+        about:
+            links:
+                - name: "Link caption"
+                  url: "https://example.org/"
         adPoster:
             enable: false
             src: "https://example.org/ad_poster.jpeg"
@@ -66,6 +84,15 @@ openvk:
             enable: false
             domain: ""
             server: ""
+        piwik:
+            enable: false
+            container: ""
+            site: ""
+            layer: "dataLayer"
+        matomo:
+            enable: false
+            container: ""
+            site: ""
     
     credentials:
         smsc:
