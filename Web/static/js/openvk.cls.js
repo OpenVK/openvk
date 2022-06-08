@@ -301,6 +301,7 @@ function showProfileDeactivateDialog(hash) {
             ${tr("profile_deactivate_header")}
         </div>
         <form action="/settings/deactivate" method="post" id="profile_deactivate_dialog" style="margin-top: 30px">
+            <h4>${tr("profile_deactivate_reason_header")}</h4>
             <table>
                 <tbody>
                     <tr>
@@ -329,7 +330,7 @@ function showProfileDeactivateDialog(hash) {
                     </tr>
                 </tbody>
             </table>
-            <textarea name="deactivate_reason" id="deactivate_reason"></textarea><br><br>
+            <textarea name="deactivate_reason" id="deactivate_reason" placeholder="${tr("gift_your_message")}"></textarea><br><br>
             <input type="checkbox" name="deactivate_share" id="deactivate_share">
             <label for="deactivate_share">${tr("share_with_friends")}</label>
             <input type="hidden" name="hash" value="${hash}" />

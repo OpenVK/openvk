@@ -460,7 +460,8 @@
 
 "profile_deactivate" = "Delete account";
 "profile_deactivate_button" = "Delete account";
-"profile_deactivate_header" = "Please select a reason why you are leaving";
+"profile_deactivate_header" = "We are sorry that you want to delete your page. Therefore, you can specify the reason for deletion and your message about it. We read your feedback and try to make the site better!";
+"profile_deactivate_reason_header" = "Please select a reason why you are leaving";
 "profile_deactivate_reason_1" = "I have another profile and don't need this one";
 "profile_deactivate_reason_1_text" = "I created a new page and now I want to wipe my past.";
 "profile_deactivate_reason_2" = "Website takes away too much of my time";
