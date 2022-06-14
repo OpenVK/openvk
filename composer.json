@@ -1,5 +1,6 @@
 {
     "require": {
+        "php": "~7.3",
         "guzzlehttp/guzzle": "^6.5",
         "komeiji-satori/curl": "dev-master",
         "whichbrowser/parser": "dev-master",
