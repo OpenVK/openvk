@@ -221,15 +221,6 @@
             </table>
         </form>
         
-        <!-- dsrev: it's better if we hide it before the page deletion function appears tbh.
-             vc: i agree
-        
-        <div class="settings_delete">
-            {_you_can_also} <a href="#" onclick="alert('Не реализовали ждите')">{_delete_your_page}</a>.
-        </div>
-        
-        -->
-        
         {elseif $isPrivacy}
         
         <form action="/settings?act=privacy" method="POST" enctype="multipart/form-data">
