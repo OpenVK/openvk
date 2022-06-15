@@ -26,6 +26,10 @@ body {
     background: unset;
 }
 
+.header_navigation .link a:hover {
+    text-decoration: none;
+}
+
 .sidebar {
     margin-top: 47px;
     position: fixed;
@@ -182,4 +186,8 @@ input[type~="search"], textarea, select {
 
 .written {
     background: url("/themepack/openvk_modern/0.0.1.0/resource/4.png") no-repeat 0px 1px;
+}
+
+#votesBalance {
+    border-bottom: 1.5px solid #f6f6f6;
 }
