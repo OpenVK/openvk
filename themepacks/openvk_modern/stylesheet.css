@@ -107,6 +107,12 @@ body {
     border-bottom: solid 1px #EEE5B8;
 }
 
+.page-wrap {
+    border-bottom: solid 1px #fff;
+    border-left: solid 1px #fff;
+    border-right: solid 1px #fff;
+}
+
 .page_wrap {
     border-bottom: solid 1px #fff;
     border-left: solid 1px #fff;
