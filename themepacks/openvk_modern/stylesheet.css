@@ -145,6 +145,10 @@ input[type~="search"], textarea, select {
     border: 1px solid #E5E5E5;
 }
 
+.mb_tab#active div {
+    border: 2px solid #898989;
+}
+
 .summaryBar {
     border-bottom: #fff solid 1px;
 }
