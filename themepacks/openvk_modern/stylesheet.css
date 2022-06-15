@@ -6,7 +6,7 @@ body {
     position: fixed;
     height: 42px;
     background: #3C3C3C;
-    z-index: 1000;
+    z-index: 199;
 }
 
 .home_button {
