@@ -3,3 +3,10 @@
     background-position-y: 0px;
     background-position-x: 1px;
 }
+
+.home_button_custom {
+    background: url("/themepack/openvk_modern/0.0.1.0/resource/5.png") no-repeat;
+    background-position-y: 0px;
+    background-position-x: 1px;
+    text-shadow: none;
+}
