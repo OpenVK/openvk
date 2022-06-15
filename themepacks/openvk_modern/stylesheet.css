@@ -107,7 +107,7 @@ body {
     border-bottom: solid 1px #EEE5B8;
 }
 
-.page-wrap {
+.page_wrap {
     border-bottom: solid 1px #fff;
     border-left: solid 1px #fff;
     border-right: solid 1px #fff;
@@ -116,11 +116,6 @@ body {
 #wrapHI {
     border-right: solid 1px #EEE5B8;
     border-left: solid 1px #EEE5B8;
-}
-
-#wrapH {
-    border-right: solid 1px #fff;
-    border-left: solid 1px #fff;
 }
 
 .menu_divider {
@@ -148,6 +143,10 @@ input[type~="password"], input[type="email"], input[type="phone"],
 input[type~="email"], input[type~="phone"], input[type="search"],
 input[type~="search"], textarea, select {
     border: 1px solid #E5E5E5;
+}
+
+.summaryBar {
+    border-bottom: #fff solid 1px;
 }
 
 .page_footer .link:hover {
