@@ -10,9 +10,10 @@ body {
 }
 
 .home_button {
-    background: url("/themepack/openvk_modern/0.0.1.0/resource/2.png") no-repeat;
-    background-position-y: 0px;
-    background-position-x: 1px;
+    background: #3C3C3C url("/themepack/openvk_modern/0.0.1.0/resource/2.png") no-repeat;
+	background-size: 80%;
+    background-position-y: 6px;
+    background-position-x: 10px;
 }
 
 .home_button_custom {
