@@ -137,7 +137,7 @@ body {
 }
 
 .container_gray .content {
-    border: #fff solid 1px;
+    border: #E5E5E5 solid 1px;
 }
 
 .accent-box {
@@ -191,6 +191,14 @@ input[type~="search"], textarea, select {
 
 .psa-poster {
     border: 5px solid #F3F3F3;
+}
+
+.ovk-diag {
+    border: none;
+}
+
+.ovk-diag-head {
+    border-bottom: 1px solid #757575;
 }
 
 #votesBalance {
