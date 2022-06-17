@@ -10,15 +10,17 @@ body {
 }
 
 .home_button {
-    background: url("/themepack/openvk_modern/0.0.1.0/resource/2.png") no-repeat;
+    background: #3C3C3C url("/themepack/openvk_modern/0.0.1.0/resource/2.png") no-repeat;
+    background-size: 80%;
     background-position-y: 0px;
-    background-position-x: 1px;
+    background-position-x: 2px;
 }
 
 .home_button_custom {
-    background: url("/themepack/openvk_modern/0.0.1.0/resource/4.png") no-repeat;
+    background: #3C3C3C url("/themepack/openvk_modern/0.0.1.0/resource/4.png") no-repeat;
+    background-size: 80%;
     background-position-y: 0px;
-    background-position-x: 1px;
+    background-position-x: 2px;
     text-shadow: none;
 }
 
@@ -137,7 +139,7 @@ body {
 }
 
 .container_gray .content {
-    border: #fff solid 1px;
+    border: #E5E5E5 solid 1px;
 }
 
 .accent-box {
@@ -193,6 +195,14 @@ input[type~="search"], textarea, select {
     border: 5px solid #F3F3F3;
 }
 
+.ovk-diag {
+    border: none;
+}
+
+.ovk-diag-head {
+    border-bottom: 1px solid #757575;
+}
+
 #votesBalance {
-    border-bottom: 1.5px solid #f6f6f6;
+    border-bottom: none;
 }
