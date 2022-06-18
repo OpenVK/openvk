@@ -4,6 +4,16 @@
 
 {block headIncludes}
     {if $user->getPrivacyPermission('page.read', $thisUser ?? NULL)}
+        {if $user->isBanned()}
+            <meta name="description" content="{tr('banned_user_seo_description', $user->getCanonicalName())}" />
+        {elseif !is_null($user->getDescription())}
+            <meta name="description" content="{$user->getCanonicalName()} ♠ {tr('friends', $user->getFriendsCount())} ♠ {tr('followers', $user->getFollowersCount())} ♠ {$user->getDescription()}" />
+        {else}
+            {var $instance_name = OPENVK_ROOT_CONF['openvk']['appearance']['name']}
+            <meta name="description"
+                content="{$user->getCanonicalName()} @ {$instance_name} ♠ {tr('friends', $user->getFriendsCount())} ♠ {tr('followers', $user->getFollowersCount())} ♠ {_default_user_seo_cfa}" />
+        {/if}
+        
         <!-- openGraph -->
         <meta property="og:title" content="{$user->getCanonicalName()}" />
         <meta property="og:url" content="http://{$_SERVER['HTTP_HOST']}{$user->getURL()}" />
