@@ -47,7 +47,7 @@
 "registration_closed" = "Registration is closed.";
 "invites_you_to" = "<strong>$1</strong> invites you to $2";
 
-"register_meta_desc" = "Register in $1 now!";
+"register_meta_desc" = "Create your profile in $1 right now and take part in various fun activities organized by local users";
 "register_referer_meta_title" = "$1 invites you to $2!";
 "register_referer_meta_desc" = "Join $1 and many other users at $2!";
 
