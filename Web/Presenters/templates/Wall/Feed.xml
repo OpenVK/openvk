@@ -3,53 +3,54 @@
 
 {block header}
     {_"feed"}
-    
-    <div style="float: right;">
-        <span>
-            <b>
-                {if !isset($globalFeed)}
-                    <a href="/feed/all">{_"all_news"}</a>
-                {else}
-                    <a href="/feed">{_"my_feed"}</a>
-                {/if}
-            </b>
-        </span>
-    </div>
 {/block}
 
 {block content}
-    <div class="postFeedWrapper">
+    <div class="tabs">
+        <div n:attr="id => (isset($globalFeed) ? 'ki' : 'activetabs')" class="tab">
+            <a n:attr="id => (isset($globalFeed) ? 'ki' : 'act_tab_a')" href="/feed">{_my_news}</a>
+        </div>
+        <div n:attr="id => (isset($globalFeed) ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => (isset($globalFeed) ? 'act_tab_a' : 'ki')" href="/feed/all">{_all_news}</a>
+        </div>
+    </div>
+
+    <div n:class="postFeedWrapper, $thisUser->hasMicroblogEnabled() ? postFeedWrapperMicroblog">
         {include "../components/textArea.xml", route => "/wall" . $thisUser->getId() . "/makePost"}
     </div>
-    <br/>
     
-    <center>
-        {foreach $posts as $post}
-            <a name="postGarter={$post->getId()}"></a>
-            
-            {include "../components/post.xml", post => $post, onWallOf => true, commentSection => true}
-        {/foreach}
-        {include "../components/paginator.xml", conf => $paginatorConf}
-        <br/>
-        {_"posts_per_page"}:
-        <select id="pageSelect">
-            <option value="1">1</option>
-            <option value="5">5</option>
-            <option value="10">10</option>
-            <option value="20">20</option>
-            <option value="30">30</option>
-            <option value="40">40</option>
-            <option value="50">50</option>
-        </select>
-        <script>
-            u("#pageSelect").nodes[0].value = {$paginatorConf->perPage};
-            
-            u("#pageSelect").on("change", function(e) {
-                let url = "?" + {http_build_query(array_merge($_GET, ['posts' => '__padding']))};
-                window.location.assign(url.replace("__padding", e.target.value));
-            });
-        </script>
-    </center>
+    {foreach $posts as $post}
+        <a name="postGarter={$post->getId()}"></a>
+        {include "../components/post.xml", post => $post, onWallOf => true, commentSection => true}
+    {/foreach}
+
+    <div class="postFeedBottom">
+        <div class="postFeedPaginator">
+            {include "../components/paginator.xml", conf => $paginatorConf}
+        </div>
+        <div class="postFeedPageSelect">
+            {_"posts_per_page"}:
+            <br />
+            <select id="pageSelect">
+                <option value="1">1</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="40">40</option>
+                <option value="50">50</option>
+            </select>
+        </div>
+    </div>
+
+    <script>
+        u("#pageSelect").nodes[0].value = {$paginatorConf->perPage};
+        
+        u("#pageSelect").on("change", function(e) {
+            let url = "?" + {http_build_query(array_merge($_GET, ['posts' => '__padding']))};
+            window.location.assign(url.replace("__padding", e.target.value));
+        });
+    </script>
 
     {if isset($thisUser) && $thisUser->hasMicroblogEnabled()}
         {script "js/al_comments.js"}

@@ -1611,6 +1611,26 @@ body.scrolled .toTop:hover {
     background-color: rgb(240, 240, 240);
     border-bottom: 1px solid #ccc;
     border-top: 1px solid #ccc;
+    margin-left: -10px;
+    margin-bottom: 10px;
+    width: 611px;
+}
+
+.postFeedWrapperMicroblog {
+    margin-bottom: 5px;
+}
+
+.postFeedBottom .postFeedPaginator {
+    float: right;
+}
+
+.postFeedBottom .postFeedPageSelect {
+    float: left;
+    padding-top: 8px;
+}
+
+#pageSelect {
+    width: 200px;
 }
 
 .user-alert {
