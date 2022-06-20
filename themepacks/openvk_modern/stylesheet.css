@@ -103,10 +103,14 @@ body {
 }
 
 .page_yellowheader {
-    background: #EEE5B8;
-    border-right: solid 1px #EEE5B8;
-    border-left: solid 1px #EEE5B8;
-    border-bottom: solid 1px #EEE5B8;
+    background: #E2E2E2;
+    border-right: solid 1px #E2E2E2;
+    border-left: solid 1px #E2E2E2;
+    border-bottom: solid 1px #E2E2E2;
+}
+
+.page_yellowheader span {
+    color: #BBBBBB;
 }
 
 .page-wrap {
@@ -122,8 +126,8 @@ body {
 }
 
 #wrapHI {
-    border-right: solid 1px #EEE5B8;
-    border-left: solid 1px #EEE5B8;
+    border-right: solid 1px #E2E2E2;
+    border-left: solid 1px #E2E2E2;
 }
 
 .menu_divider {
