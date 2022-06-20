@@ -195,10 +195,6 @@ input[type~="search"], textarea, select {
     border: 1px solid #FAFAFA;
 }
 
-.psa-poster {
-    border: 5px solid #F3F3F3;
-}
-
 .ovk-diag {
     border: none;
 }
