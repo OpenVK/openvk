@@ -584,7 +584,6 @@ h4 {
     font-size: 12px;
     font-weight: bold;
     margin: 0;
-    padding: 0 0 3px;
     font-family: verdana, arial, sans-serif;
 }
 
@@ -836,7 +835,7 @@ table.User {
     padding: 4px;
     border: #DEDEDE solid 1px;
     clear: both;
-    margin-bottom: 12px;
+    margin-bottom: 6px;
     overflow: hidden;
     word-break: break-word;
 }
@@ -1968,10 +1967,10 @@ table td[width="120"] {
 }
 
 #votesBalance {
-    margin-top: 50px;
+    margin-top: 10px;
     padding: 7px;
     background-color: #f6f6f6;
-    border-bottom: 1.5px solid #707070;
+    border-bottom: 1.5px solid #DDDDDD;
     text-align: center;
     user-select: none;
 }

@@ -378,7 +378,7 @@
                 <small n:if="OPENVK_ROOT_CONF['openvk']['preferences']['ton']['enabled']">
                     <a href="javascript:showCoinsTopUpTroughTon()">[{_transfer_trough_ton}]</a>
                 </small>
-            </p>
+            </div>
         </div>
         
         {script "js/node_modules/textfit/textFit.min.js"}
