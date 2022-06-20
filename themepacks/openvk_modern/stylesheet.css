@@ -113,6 +113,10 @@ body {
     color: #BBBBBB;
 }
 
+.page_yellowheader a {
+	color: #5C5C5C;
+}
+
 .page-wrap {
     border-bottom: solid 1px #fff;
     border-left: solid 1px #fff;
