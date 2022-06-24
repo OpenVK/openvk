@@ -134,6 +134,10 @@ body {
     border-left: solid 1px #E2E2E2;
 }
 
+.left_small_block {
+    border-right: 1px #fff solid;
+}
+
 .menu_divider {
     background: #E5E5E5;
 }
@@ -201,10 +205,22 @@ input[type~="search"], textarea, select {
 
 .ovk-diag {
     border: none;
+    border-radius: 2px;
+}
+
+.ovk-diag-cont {
+    border-radius: 2px;
 }
 
 .ovk-diag-head {
     border-bottom: 1px solid #757575;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+}
+
+.ovk-diag-action {
+	border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
 }
 
 #votesBalance {
