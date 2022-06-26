@@ -231,7 +231,7 @@ return (function() {
     if(is_dir($gitDir = OPENVK_ROOT . "/.git") && $showCommitHash)
         $ver = trim(`git --git-dir="$gitDir" log --pretty="%h" -n1 HEAD` ?? "Unknown version") . "-nightly";
     else
-        $ver = "Public Technical Preview 3";
+        $ver = "Public Technical Preview 4";
 
     # Unix time constants
     define('MINUTE', 60);
