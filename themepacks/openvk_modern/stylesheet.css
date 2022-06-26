@@ -165,6 +165,10 @@ input[type~="search"], textarea, select {
     border: 1px solid #E5E5E5;
 }
 
+input[type=checkbox] {
+	background-image: url("/themepack/openvk_modern/0.0.1.0/resource/6.png")
+}
+
 .mb_tab#active div {
     border: 2px solid #898989;
 }
