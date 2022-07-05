@@ -68,7 +68,7 @@
                 </tr>
                 <tr>
                     <td><span class="nobold">{_"relationship"}:</span></td>
-                    <td>{var $marialStatus = $x->getMaritalStatus()}{_"relationship_$marialStatus"}</td>
+                    <td>{$x->getLocalizedMaritalStatus()}</td>
                 </tr>
                 <tr>
                     <td><span class="nobold">{_"registration_date"}: </span></td>
