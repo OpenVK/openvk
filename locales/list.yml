@@ -38,7 +38,7 @@ list:
     flag: "am"
     name: "Armenian"
     native_name: "Հայերեն"
-    author: "LifesMinder (apeeh)"
+    author: "Life'sMinder"
   - code: "sr_cyr"
     flag: "rs"
     name: "Serbian (cyrillic)"
