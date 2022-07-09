@@ -372,13 +372,12 @@
                             <td class="label"><span class="nobold">{_"politViews"}:</span></td>
                             <td class="data">{var $pviews = $user->getPoliticalViews()}{_"politViews_$pviews"}</td>
                         </tr>
-                        {if $user->getBirthday()->timestamp() > 0}
-                            <tr>
-                                <td class="label"><span class="nobold">{_"birth_date"}:</span></td>
-                                <td class="data">{$user->getBirthday()->format('%e %B %Y')},
+                        <tr n:if="!is_null($user->getBirthday())">
+                            <td class="label"><span class="nobold">{_"birth_date"}:</span></td>
+                            <td n:if="$user->getBirthdayPrivacy() == 0" class="data">{$user->getBirthday()->format('%e %B %Y')},
                                 {tr("years", $user->getAge())}</td>
-                            </tr>
-                        {/if}
+                            <td n:if="$user->getBirthdayPrivacy() == 1" class="data">{$user->getBirthday()->format('%e %B')}</td>
+                        </tr>
                     </tbody>
                 </table>
 			</div>

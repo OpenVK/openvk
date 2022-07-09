@@ -97,7 +97,7 @@ final class AuthPresenter extends OpenVKPresenter
                 $user->setEmail($this->postParam("email"));
                 $user->setSince(date("Y-m-d H:i:s"));
                 $user->setRegistering_Ip(CONNECTING_IP);
-                $user->setBirthday(strtotime($this->postParam("birthday")));
+                $user->setBirthday(empty($this->postParam("birthday")) ? NULL : strtotime($this->postParam("birthday")));
                 $user->setActivated((int)!OPENVK_ROOT_CONF['openvk']['preferences']['security']['requireEmail']);
             } catch(InvalidUserNameException $ex) {
                 $this->flashFail("err", tr("error"), tr("invalid_real_name"));

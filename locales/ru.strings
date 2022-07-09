@@ -91,6 +91,9 @@
 "years_many" = "$1 лет";
 "years_other" = "$1 лет";
 
+"show_my_birthday" = "Показывать дату рождения";
+"show_only_month_and_day" = "Показывать только день и месяц";
+
 "relationship" = "Семейное положение";
 
 "relationship_0" = "Не выбрано";

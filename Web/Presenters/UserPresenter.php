@@ -157,7 +157,10 @@ final class UserPresenter extends OpenVKPresenter
                 
 
                 if (strtotime($this->postParam("birthday")) < time())
-                $user->setBirthday(strtotime($this->postParam("birthday")));
+                $user->setBirthday(empty($this->postParam("birthday")) ? NULL : strtotime($this->postParam("birthday")));
+
+                if ($this->postParam("birthday_privacy") <= 1 && $this->postParam("birthday_privacy") >= 0)
+                $user->setBirthday_Privacy($this->postParam("birthday_privacy"));
 
                 if ($this->postParam("marialstatus") <= 8 && $this->postParam("marialstatus") >= 0)
                 $user->setMarital_Status($this->postParam("marialstatus"));

@@ -569,6 +569,7 @@ input[type~="email"],
 input[type~="phone"],
 input[type="search"],
 input[type~="search"],
+input[type~="date"],
 select {
     border: 1px solid #C0CAD5;
     padding: 3px;

@@ -90,6 +90,9 @@
 "years_one" = "1 year old";
 "years_other" = "$1 years old";
 
+"show_my_birthday" = "Show my birthday";
+"show_only_month_and_day" = "Show only month and day";
+
 "relationship" = "Relationship";
 
 "relationship_0" = "Not selected";
