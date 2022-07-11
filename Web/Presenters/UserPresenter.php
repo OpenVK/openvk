@@ -33,13 +33,9 @@ final class UserPresenter extends OpenVKPresenter
     function renderView(int $id): void
     {
         $user = $this->users->get($id);
-        if(!$user || $user->isDeleted())
+        if(!$user || $user->isDeleted()) {
             $this->template->_template = "User/deleted.xml";
-        else {
-            if($user->getShortCode())
-                if(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) !== "/" . $user->getShortCode())
-                    $this->redirect("/" . $user->getShortCode(), static::REDIRECT_TEMPORARY_PRESISTENT);
-            
+        } else {
             $this->template->albums      = (new Albums)->getUserAlbums($user);
             $this->template->albumsCount = (new Albums)->getUserAlbumsCount($user);
             $this->template->videos      = (new Videos)->getByUser($user, 1, 2);

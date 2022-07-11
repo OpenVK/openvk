@@ -22,15 +22,12 @@ final class GroupPresenter extends OpenVKPresenter
         if(!$club) {
             $this->notFound();
         } else {
-            if($club->getShortCode())
-                if(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) !== "/" . $club->getShortCode())
-                    $this->redirect("/" . $club->getShortCode(), static::REDIRECT_TEMPORARY_PRESISTENT);
-            
-            $this->template->club        = $club;
             $this->template->albums      = (new Albums)->getClubAlbums($club, 1, 3);
             $this->template->albumsCount = (new Albums)->getClubAlbumsCount($club);
             $this->template->topics      = (new Topics)->getLastTopics($club, 3);
             $this->template->topicsCount = (new Topics)->getClubTopicsCount($club);
+
+            $this->template->club = $club;
         }
     }
     
