@@ -580,12 +580,14 @@
                 function toggleBanInSupport() {
                     uBanMsgTxt  = "Вы собираетесь заблокировать в поддержке пользователя " + {$user->getCanonicalName()} + ".";
                     uBanMsgTxt += "<br/><br/><b>Причина бана</b>: <input type='text' id='uBanMsgInput' placeholder='придумайте что-нибудь крутое' />";
+                    uBanMsgTxt += "<br/><br/><input type='checkbox' id='uBanClsTicketsInput' /><label for='uBanClsTicketsInput'>Закрыть все обращения пользователя</label>";
 
                     MessageBox("Заблокировать в поддержке " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
                         (function() {
                             res = document.querySelector("#uBanMsgInput").value;
+                            cls = document.querySelector("#uBanClsTicketsInput").value;
                             xhr = new XMLHttpRequest();
-                            xhr.open("GET", "/admin/support/ban/" + {$user->getId()} + "?reason=" + res + "&hash=" + {rawurlencode($csrfToken)}, true);
+                            xhr.open("GET", "/admin/support/ban/" + {$user->getId()} + "?reason=" + res + "&close_tickets=" + cls + "&hash=" + {rawurlencode($csrfToken)}, true);
                             xhr.onload = (function() {
                                 if(xhr.responseText.indexOf("success") === -1)
                                     MessageBox("Ошибка", "Не удалось заблокировать пользователя в поддержке...", ["OK"], [Function.noop]);
