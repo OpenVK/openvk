@@ -220,7 +220,7 @@ final class Messages extends VKAPIRequestHandler
             return (object) [
                 "count" => sizeof($list),
                 "items" => $list,
-                "profiles" => (new APIUsers)->get(implode(',', $users), $fields, $offset, $count)
+                "profiles" => (!empty($users) ? (new APIUsers)->get(implode(',', $users), $fields, $offset, $count) : [])
             ];
         }
     }
