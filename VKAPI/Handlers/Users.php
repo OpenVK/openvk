@@ -68,16 +68,16 @@ final class Users extends VKAPIRequestHandler
 			                $response[$i]->photo_50 = $usr->getAvatarURL();
 			                break;
 			            case 'photo_100':
-			                $response[$i]->photo_50 = $usr->getAvatarURL("tiny");
+			                $response[$i]->photo_100 = $usr->getAvatarURL("tiny");
 			                break;
 			            case 'photo_200':
-			                $response[$i]->photo_50 = $usr->getAvatarURL("normal");
+			                $response[$i]->photo_200 = $usr->getAvatarURL("normal");
 			                break;
 			            case 'photo_200_orig': # вообще не ебу к чему эта строка ну пусть будет кек
-			                $response[$i]->photo_50 = $usr->getAvatarURL("normal");
+			                $response[$i]->photo_200_orig = $usr->getAvatarURL("normal");
 			                break;
 			            case 'photo_400_orig':
-			                $response[$i]->photo_50 = $usr->getAvatarURL("normal");
+			                $response[$i]->photo_400_orig = $usr->getAvatarURL("normal");
 			                break;
 						
 						# Она хочет быть выебанной видя матан

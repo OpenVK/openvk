@@ -37,50 +37,69 @@ final class Groups extends VKAPIRequestHandler
 
         if(sizeof($clbs) > $count) $ic = $count;
 
-        $clbs = array_slice($clbs, $offset * $count);
+        if (!empty($clbs)) {
+            $clbs = array_slice($clbs, $offset * $count);
 
-        for ($i=0; $i < $ic; $i++) { 
-            $usr = $clbs[$i];
-            if(is_null($usr))
-            {
-                $rClubs[$i] = (object)[
-                    "id" => $clbs[$i],
-                    "name" => "DELETED",
-                    "deactivated" => "deleted"
-                ];   
-            }else if($clbs[$i] == NULL){
+            for ($i=0; $i < $ic; $i++) { 
+                $usr = $clbs[$i];
+                if(is_null($usr))
+                {
+                    $rClubs[$i] = (object)[
+                        "id" => $clbs[$i],
+                        "name" => "DELETED",
+                        "deactivated" => "deleted"
+                    ];   
+                }else if($clbs[$i] == NULL){
 
-            }else{
-                $rClubs[$i] = (object)[
-                    "id" => $usr->getId(),
-                    "name" => $usr->getName(),
-                    "screen_name" => $usr->getShortCode(),
-                    "is_closed" => false,
-                    "can_access_closed" => true,
-                ];
+                }else{
+                    $rClubs[$i] = (object)[
+                        "id" => $usr->getId(),
+                        "name" => $usr->getName(),
+                        "screen_name" => $usr->getShortCode(),
+                        "is_closed" => false,
+                        "can_access_closed" => true,
+                    ];
 
-                $flds = explode(',', $fields);
+                    $flds = explode(',', $fields);
 
-                foreach($flds as $field) { 
-                    switch ($field) {
-                        case 'verified':
-                            $rClubs[$i]->verified = intval($usr->isVerified());
-                            break;
-                        case 'has_photo':
-                            $rClubs[$i]->has_photo = is_null($usr->getAvatarPhoto()) ? 0 : 1;
-                            break;
-                        case 'photo_max_orig':
-                            $rClubs[$i]->photo_max_orig = $usr->getAvatarURL();
-                            break;
-                        case 'photo_max':
-                            $rClubs[$i]->photo_max = $usr->getAvatarURL();
-                            break;
-						case 'members_count':
-							$rClubs[$i]->members_count = $usr->getFollowersCount();
-							break;
+                    foreach($flds as $field) { 
+                        switch ($field) {
+                            case 'verified':
+                                $rClubs[$i]->verified = intval($usr->isVerified());
+                                break;
+                            case 'has_photo':
+                                $rClubs[$i]->has_photo = is_null($usr->getAvatarPhoto()) ? 0 : 1;
+                                break;
+                            case 'photo_max_orig':
+                                $rClubs[$i]->photo_max_orig = $usr->getAvatarURL();
+                                break;
+                            case 'photo_max':
+                                $rClubs[$i]->photo_max = $usr->getAvatarURL("original"); // ORIGINAL ANDREI CHINITEL 🥵🥵🥵🥵
+                                break;
+                            case 'photo_50':
+                                $rClubs[$i]->photo_50 = $usr->getAvatarURL();
+                                break;
+                            case 'photo_100':
+                                $rClubs[$i]->photo_100 = $usr->getAvatarURL("tiny");
+                                break;
+                            case 'photo_200':
+                                $rClubs[$i]->photo_200 = $usr->getAvatarURL("normal");
+                                break;
+                            case 'photo_200_orig':
+                                $rClubs[$i]->photo_200_orig = $usr->getAvatarURL("normal");
+                                break;
+                            case 'photo_400_orig':
+                                $rClubs[$i]->photo_400_orig = $usr->getAvatarURL("normal");
+                                break;
+                            case 'members_count':
+                                $rClubs[$i]->members_count = $usr->getFollowersCount();
+                                break;
+                        }
                     }
                 }
             }
+        } else {
+            $rClubs = [];
         }
 
         return (object) [
