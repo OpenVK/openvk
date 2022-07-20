@@ -25,7 +25,7 @@ final class Likes extends VKAPIRequestHandler
         }
 	}
 
-	function remove(string $type, int $owner_id, int $item_id): object
+	function delete(string $type, int $owner_id, int $item_id): object
 	{
 		$this->requireUser();
 
