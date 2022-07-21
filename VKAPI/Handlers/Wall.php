@@ -50,7 +50,7 @@ final class Wall extends VKAPIRequestHandler
                 "owner_id" => $post->getTargetWall(),
                 "date" => $post->getPublicationTime()->timestamp(),
                 "post_type" => "post",
-                "text" => $post->getText(),
+                "text" => $post->getText(false),
                 "can_edit" => 0, # TODO
                 "can_delete" => $post->canBeDeletedBy($this->getUser()),
                 "can_pin" => $post->canBePinnedBy($this->getUser()),
@@ -214,7 +214,7 @@ final class Wall extends VKAPIRequestHandler
                     "owner_id" => $post->getTargetWall(),
                     "date" => $post->getPublicationTime()->timestamp(),
                     "post_type" => "post",
-                    "text" => $post->getText(),
+                    "text" => $post->getText(false),
                     "can_edit" => 0, # TODO
                     "can_delete" => $post->canBeDeletedBy($user),
                     "can_pin" => $post->canBePinnedBy($user),
