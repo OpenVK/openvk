@@ -6,21 +6,20 @@ use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Entities\Club;
 use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
 use openvk\Web\Models\Entities\Post;
-use openvk\Web\Models\Entities\Postable;
 use openvk\Web\Models\Repositories\Posts as PostsRepo;
 
 final class Wall extends VKAPIRequestHandler
 {
     function get(string $owner_id, string $domain = "", int $offset = 0, int $count = 30, int $extended = 0): object
     {
-        $posts = new PostsRepo;
+        $posts    = new PostsRepo;
 
-        $items = [];
+        $items    = [];
         $profiles = [];
-        $groups = [];
-        $count = $posts->getPostCountOnUserWall((int) $owner_id);
+        $groups   = [];
+        $count    = $posts->getPostCountOnUserWall((int) $owner_id);
 
-        foreach ($posts->getPostsFromUsersWall((int)$owner_id, 1, $count, $offset) as $post) {
+        foreach($posts->getPostsFromUsersWall((int)$owner_id, 1, $count, $offset) as $post) {
             $from_id = get_class($post->getOwner()) == "openvk\Web\Models\Entities\Club" ? $post->getOwner()->getId() * (-1) : $post->getOwner()->getId();
 
             $attachments = [];
@@ -45,32 +44,32 @@ final class Wall extends VKAPIRequestHandler
             }
 
             $items[] = (object)[
-                "id" => $post->getVirtualId(),
-                "from_id" => $from_id,
-                "owner_id" => $post->getTargetWall(),
-                "date" => $post->getPublicationTime()->timestamp(),
-                "post_type" => "post",
-                "text" => $post->getText(false),
-                "can_edit" => 0, # TODO
-                "can_delete" => $post->canBeDeletedBy($this->getUser()),
-                "can_pin" => $post->canBePinnedBy($this->getUser()),
-                "can_archive" => false, # TODO MAYBE
-                "is_archived" => false,
-                "is_pinned" => $post->isPinned(),
-                "attachments" => $attachments,
-                "post_source" => (object)["type" => "vk"],
-                "comments" => (object)[
-                    "count" => $post->getCommentsCount(),
+                "id"           => $post->getVirtualId(),
+                "from_id"      => $from_id,
+                "owner_id"     => $post->getTargetWall(),
+                "date"         => $post->getPublicationTime()->timestamp(),
+                "post_type"    => "post",
+                "text"         => $post->getText(false),
+                "can_edit"     => 0, # TODO
+                "can_delete"   => $post->canBeDeletedBy($this->getUser()),
+                "can_pin"      => $post->canBePinnedBy($this->getUser()),
+                "can_archive"  => false, # TODO MAYBE
+                "is_archived"  => false,
+                "is_pinned"    => $post->isPinned(),
+                "attachments"  => $attachments,
+                "post_source"  => (object)["type" => "vk"],
+                "comments"     => (object)[
+                    "count"    => $post->getCommentsCount(),
                     "can_post" => 1
                 ],
                 "likes" => (object)[
-                    "count" => $post->getLikesCount(),
-                    "user_likes" => (int) $post->hasLikeFrom($this->getUser()),
-                    "can_like" => 1,
+                    "count"       => $post->getLikesCount(),
+                    "user_likes"  => (int) $post->hasLikeFrom($this->getUser()),
+                    "can_like"    => 1,
                     "can_publish" => 1,
                 ],
                 "reposts" => (object)[
-                    "count" => $post->getRepostCount(),
+                    "count"         => $post->getRepostCount(),
                     "user_reposted" => 0
                 ]
             ];
@@ -78,58 +77,56 @@ final class Wall extends VKAPIRequestHandler
             if ($from_id > 0)
                 $profiles[] = $from_id;
             else
-                $groups[] = $from_id * -1;
+                $groups[]   = $from_id * -1;
 
             $attachments = NULL; # free attachments so it will not clone everythingg
         }
 
-        if($extended == 1) 
-        {
+        if($extended == 1) {
             $profiles = array_unique($profiles);
-            $groups = array_unique($groups);
+            $groups  = array_unique($groups);
 
             $profilesFormatted = [];
-            $groupsFormatted = [];
+            $groupsFormatted   = [];
 
-            foreach ($profiles as $prof) {
-                $user = (new UsersRepo)->get($prof);
+            foreach($profiles as $prof) {
+                $user                = (new UsersRepo)->get($prof);
                 $profilesFormatted[] = (object)[
-                    "first_name" => $user->getFirstName(),
-                    "id" => $user->getId(),
-                    "last_name" => $user->getLastName(),
+                    "first_name"        => $user->getFirstName(),
+                    "id"                => $user->getId(),
+                    "last_name"         => $user->getLastName(),
                     "can_access_closed" => false,
-                    "is_closed" => false,
-                    "sex" => $user->isFemale() ? 1 : 2,
-                    "screen_name" => $user->getShortCode(),
-                    "photo_50" => $user->getAvatarUrl(),
-                    "photo_100" => $user->getAvatarUrl(),
-                    "online" => $user->isOnline()
+                    "is_closed"         => false,
+                    "sex"               => $user->isFemale() ? 1 : 2,
+                    "screen_name"       => $user->getShortCode(),
+                    "photo_50"          => $user->getAvatarUrl(),
+                    "photo_100"         => $user->getAvatarUrl(),
+                    "online"            => $user->isOnline()
                 ];
             }
 
             foreach($groups as $g) {
-                $group = (new ClubsRepo)->get($g);
+                $group             = (new ClubsRepo)->get($g);
                 $groupsFormatted[] = (object)[
-                    "id" => $group->getId(),
-                    "name" => $group->getName(),
+                    "id"          => $group->getId(),
+                    "name"        => $group->getName(),
                     "screen_name" => $group->getShortCode(),
-                    "is_closed" => 0,
-                    "type" => "group",
-                    "photo_50" => $group->getAvatarUrl(),
-                    "photo_100" => $group->getAvatarUrl(),
-                    "photo_200" => $group->getAvatarUrl(),
+                    "is_closed"   => 0,
+                    "type"        => "group",
+                    "photo_50"    => $group->getAvatarUrl(),
+                    "photo_100"   => $group->getAvatarUrl(),
+                    "photo_200"   => $group->getAvatarUrl(),
                 ];
             }
 
-            return (object)[
-                "count" => $count,
-                "items" => (array)$items,
+            return (object) [
+                "count"    => $count,
+                "items"    => (array)$items,
                 "profiles" => (array)$profilesFormatted,
-                "groups" => (array)$groupsFormatted
+                "groups"   => (array)$groupsFormatted
             ];
-        }
-        else
-            return (object)[
+        } else
+            return (object) [
                 "count" => $count,
                 "items" => (array)$items
             ];
@@ -137,71 +134,68 @@ final class Wall extends VKAPIRequestHandler
 
     function getById(string $posts, int $extended = 0, string $fields = "", User $user = NULL)
     {
-        if($user == NULL) $user = $this->getUser(); # костыли костыли крылышки
+        if($user == NULL)
+            $user = $this->getUser(); # костыли костыли крылышки
 
-        $items = [];
+        $items    = [];
         $profiles = [];
-        $groups = [];
-        # $count = $posts->getPostCountOnUserWall((int) $owner_id);
+        $groups   = [];
 
-        $psts = explode(",", $posts);
+        $psts     = explode(',', $posts);
 
-        foreach($psts as $pst)
-        {
-            $id = explode("_", $pst);
+        foreach($psts as $pst) {
+            $id   = explode("_", $pst);
             $post = (new PostsRepo)->getPostById(intval($id[0]), intval($id[1]));
             if($post) {
                 $from_id = get_class($post->getOwner()) == "openvk\Web\Models\Entities\Club" ? $post->getOwner()->getId() * (-1) : $post->getOwner()->getId();
                 $attachments;
-                foreach($post->getChildren() as $attachment)
-                {
-                    if($attachment instanceof \openvk\Web\Models\Entities\Photo)
-                    {
+                foreach($post->getChildren() as $attachment) {
+                    if($attachment instanceof \openvk\Web\Models\Entities\Photo) {
                         $attachments[] = [
-                            "type" => "photo",
+                            "type"  => "photo",
                             "photo" => [
                                 "album_id" => $attachment->getAlbum() ? $attachment->getAlbum()->getId() : NULL,
-                                "date" => $attachment->getPublicationTime()->timestamp(),
-                                "id" => $attachment->getVirtualId(),
+                                "date"     => $attachment->getPublicationTime()->timestamp(),
+                                "id"       => $attachment->getVirtualId(),
                                 "owner_id" => $attachment->getOwner()->getId(),
-                                "sizes" => array(
+                                "sizes"    => array(
                                 [
                                     "height" => 2560,
-                                    "url" => $attachment->getURLBySizeId("normal"),
-                                    "type" => "m",
-                                    "width" => 2560,
+                                    "url"    => $attachment->getURLBySizeId("normal"),
+                                    "type"   => "m",
+                                    "width"  => 2560,
                                 ],
                                 [
                                     "height" => 130,
-                                    "url" => $attachment->getURLBySizeId("tiny"),
-                                    "type" => "o",
-                                    "width" => 130,
+                                    "url"    => $attachment->getURLBySizeId("tiny"),
+                                    "type"   => "o",
+                                    "width"  => 130,
                                 ],
                                 [
                                     "height" => 604,
-                                    "url" => $attachment->getURLBySizeId("normal"),
-                                    "type" => "p",
-                                    "width" => 604,
+                                    "url"    => $attachment->getURLBySizeId("normal"),
+                                    "type"   => "p",
+                                    "width"  => 604,
                                 ],
                                 [
                                     "height" => 807,
-                                    "url" => $attachment->getURLBySizeId("large"),
-                                    "type" => "q",
-                                    "width" => 807,
+                                    "url"    => $attachment->getURLBySizeId("large"),
+                                    "type"   => "q",
+                                    "width"  => 807,
                                 ],
                                 [
                                     "height" => 1280,
-                                    "url" => $attachment->getURLBySizeId("larger"),
-                                    "type" => "r",
-                                    "width" => 1280,
+                                    "url"    => $attachment->getURLBySizeId("larger"),
+                                    "type"   => "r",
+                                    "width"  => 1280,
                                 ],
                                 [
                                     "height" => 75, # Для временного компросима оставляю статическое число. Если каждый раз обращаться к файлу за количеством пикселов, то наступает пuпuська полная с производительностью, так что пока так 
-                                    "url" => $attachment->getURLBySizeId("miniscule"),
-                                    "type" => "s",
-                                    "width" => 75,
+                                    "url"    => $attachment->getURLBySizeId("miniscule"),
+                                    "type"   => "s",
+                                    "width"  => 75,
                                 ]),
-                                "text" => "",
+                                "text"     => "",
                                 "has_tags" => false
                             ]
                         ];
@@ -209,32 +203,32 @@ final class Wall extends VKAPIRequestHandler
                 }
 
                 $items[] = (object)[
-                    "id" => $post->getVirtualId(),
-                    "from_id" => $from_id,
-                    "owner_id" => $post->getTargetWall(),
-                    "date" => $post->getPublicationTime()->timestamp(),
-                    "post_type" => "post",
-                    "text" => $post->getText(false),
-                    "can_edit" => 0, # TODO
-                    "can_delete" => $post->canBeDeletedBy($user),
-                    "can_pin" => $post->canBePinnedBy($user),
-                    "can_archive" => false, # TODO MAYBE
-                    "is_archived" => false,
-                    "is_pinned" => $post->isPinned(),
-                    "post_source" => (object)["type" => "vk"],
-                    "attachments" => $attachments,
-                    "comments" => (object)[
-                        "count" => $post->getCommentsCount(),
+                    "id"           => $post->getVirtualId(),
+                    "from_id"      => $from_id,
+                    "owner_id"     => $post->getTargetWall(),
+                    "date"         => $post->getPublicationTime()->timestamp(),
+                    "post_type"    => "post",
+                    "text"         => $post->getText(false),
+                    "can_edit"     => 0, # TODO
+                    "can_delete"   => $post->canBeDeletedBy($user),
+                    "can_pin"      => $post->canBePinnedBy($user),
+                    "can_archive"  => false, # TODO MAYBE
+                    "is_archived"  => false,
+                    "is_pinned"    => $post->isPinned(),
+                    "post_source"  => (object)["type" => "vk"],
+                    "attachments"  => $attachments,
+                    "comments"     => (object)[
+                        "count"    => $post->getCommentsCount(),
                         "can_post" => 1
                     ],
                     "likes" => (object)[
-                        "count" => $post->getLikesCount(),
-                        "user_likes" => (int) $post->hasLikeFrom($user),
-                        "can_like" => 1,
+                        "count"       => $post->getLikesCount(),
+                        "user_likes"  => (int) $post->hasLikeFrom($user),
+                        "can_like"    => 1,
                         "can_publish" => 1,
                     ],
                     "reposts" => (object)[
-                        "count" => $post->getRepostCount(),
+                        "count"         => $post->getRepostCount(),
                         "user_reposted" => 0
                     ]
                 ];
@@ -242,58 +236,56 @@ final class Wall extends VKAPIRequestHandler
                 if ($from_id > 0)
                     $profiles[] = $from_id;
                 else
-                    $groups[] = $from_id * -1;
+                    $groups[]   = $from_id * -1;
 
                 $attachments = NULL; # free attachments so it will not clone everythingg
             }
         }
 
-        if($extended == 1) 
-        {
+        if($extended == 1) {
             $profiles = array_unique($profiles);
-            $groups = array_unique($groups);
+            $groups   = array_unique($groups);
 
             $profilesFormatted = [];
-            $groupsFormatted = [];
+            $groupsFormatted   = [];
 
-            foreach ($profiles as $prof) {
-                $user = (new UsersRepo)->get($prof);
+            foreach($profiles as $prof) {
+                $user                = (new UsersRepo)->get($prof);
                 $profilesFormatted[] = (object)[
-                    "first_name" => $user->getFirstName(),
-                    "id" => $user->getId(),
-                    "last_name" => $user->getLastName(),
+                    "first_name"        => $user->getFirstName(),
+                    "id"                => $user->getId(),
+                    "last_name"         => $user->getLastName(),
                     "can_access_closed" => false,
-                    "is_closed" => false,
-                    "sex" => $user->isFemale() ? 1 : 2,
-                    "screen_name" => $user->getShortCode(),
-                    "photo_50" => $user->getAvatarUrl(),
-                    "photo_100" => $user->getAvatarUrl(),
-                    "online" => $user->isOnline()
+                    "is_closed"         => false,
+                    "sex"               => $user->isFemale() ? 1 : 2,
+                    "screen_name"       => $user->getShortCode(),
+                    "photo_50"          => $user->getAvatarUrl(),
+                    "photo_100"         => $user->getAvatarUrl(),
+                    "online"            => $user->isOnline()
                 ];
             }
 
             foreach($groups as $g) {
-                $group = (new ClubsRepo)->get($g);
+                $group             = (new ClubsRepo)->get($g);
                 $groupsFormatted[] = (object)[
-                    "id" => $group->getId(),
-                    "name" => $group->getName(),
-                    "screen_name" => $group->getShortCode(),
-                    "is_closed" => 0,
-                    "type" => "group",
-                    "photo_50" => $group->getAvatarUrl(),
-                    "photo_100" => $group->getAvatarUrl(),
-                    "photo_200" => $group->getAvatarUrl(),
+                    "id"           => $group->getId(),
+                    "name"         => $group->getName(),
+                    "screen_name"  => $group->getShortCode(),
+                    "is_closed"    => 0,
+                    "type"         => "group",
+                    "photo_50"     => $group->getAvatarUrl(),
+                    "photo_100"    => $group->getAvatarUrl(),
+                    "photo_200"    => $group->getAvatarUrl(),
                 ];
             }
 
-            return (object)[
-                "items" => (array)$items,
+            return (object) [
+                "items"    => (array)$items,
                 "profiles" => (array)$profilesFormatted,
-                "groups" => (array)$groupsFormatted
+                "groups"   => (array)$groupsFormatted
             ];
-        }
-        else
-            return (object)[
+        } else
+            return (object) [
                 "items" => (array)$items
             ];
     }
@@ -302,7 +294,7 @@ final class Wall extends VKAPIRequestHandler
     {
         $this->requireUser();
 
-        $owner_id = intval($owner_id);
+        $owner_id  = intval($owner_id);
         
         $wallOwner = ($owner_id > 0 ? (new UsersRepo)->get($owner_id) : (new ClubsRepo)->get($owner_id * -1))
                      ?? $this->fail(18, "User was deleted or banned");

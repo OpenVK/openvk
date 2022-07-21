@@ -9,19 +9,19 @@ final class Likes extends VKAPIRequestHandler
 	{
 		$this->requireUser();
 
-        switch ($type) {
-            case 'post':
+        switch($type) {
+            case "post":
                 $post = (new PostsRepo)->getPostById($owner_id, $item_id);
-                if (is_null($post)) $this->fail(100, 'One of the parameters specified was missing or invalid: object not found');
+                if(is_null($post))
+                    $this->fail(100, "One of the parameters specified was missing or invalid: object not found");
 
                 $post->setLike(true, $this->getUser());
-                return (object)[
+
+                return (object) [
                     "likes" => $post->getLikesCount()
                 ];
-                break;
             default:
-                $this->fail(100, 'One of the parameters specified was missing or invalid: incorrect type');
-                break;
+                $this->fail(100, "One of the parameters specified was missing or invalid: incorrect type");
         }
 	}
 
@@ -29,19 +29,18 @@ final class Likes extends VKAPIRequestHandler
 	{
 		$this->requireUser();
 
-        switch ($type) {
-            case 'post':
+        switch($type) {
+            case "post":
                 $post = (new PostsRepo)->getPostById($owner_id, $item_id);
-                if (is_null($post)) $this->fail(100, 'One of the parameters specified was missing or invalid: object not found');
+                if (is_null($post))
+                    $this->fail(100, "One of the parameters specified was missing or invalid: object not found");
 
                 $post->setLike(false, $this->getUser());
-                return (object)[
+                return (object) [
                     "likes" => $post->getLikesCount()
                 ];
-                break;
             default:
-                $this->fail(100, 'One of the parameters specified was missing or invalid: incorrect type');
-                break;
+                $this->fail(100, "One of the parameters specified was missing or invalid: incorrect type");
         }
 	}
 	
@@ -49,26 +48,26 @@ final class Likes extends VKAPIRequestHandler
 	{
 		$this->requireUser();
 
-        switch ($type) {
-            case 'post':
+        switch($type) {
+            case "post":
                 $user = (new UsersRepo)->get($user_id);
-                if (is_null($user)) return (object)[
-                    "liked" => 0,
-                    "copied" => 0,
-                    "sex" => 0
-                ];
+                if (is_null($user))
+                    return (object) [
+                        "liked"  => 0,
+                        "copied" => 0,
+                        "sex"    => 0
+                    ];
 
                 $post = (new PostsRepo)->getPostById($owner_id, $item_id);
-                if (is_null($post)) $this->fail(100, 'One of the parameters specified was missing or invalid: object not found');
+                if (is_null($post))
+                    $this->fail(100, "One of the parameters specified was missing or invalid: object not found");
                 
-                return (object)[
-                    "liked" => (int) $post->hasLikeFrom($user),
+                return (object) [
+                    "liked"  => (int) $post->hasLikeFrom($user),
                     "copied" => 0 # TODO: handle this
                 ];
-                break;
             default:
-                $this->fail(100, 'One of the parameters specified was missing or invalid: incorrect type');
-                break;
+                $this->fail(100, "One of the parameters specified was missing or invalid: incorrect type");
         }
 	}
 }

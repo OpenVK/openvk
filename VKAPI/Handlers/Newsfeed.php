@@ -1,8 +1,5 @@
 <?php declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
-use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Entities\Post;
-use openvk\Web\Models\Entities\Postable;
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Repositories\Posts as PostsRepo;
 use openvk\VKAPI\Handlers\Wall;
@@ -13,7 +10,8 @@ final class Newsfeed extends VKAPIRequestHandler
     {
         $this->requireUser();
         
-        if($offset != 0) $start_from = $offset;
+        if($offset != 0)
+            $start_from = $offset;
         
         $id    = $this->getUser()->getId();
         $subs  = DatabaseConnection::i()
@@ -26,12 +24,12 @@ final class Newsfeed extends VKAPIRequestHandler
         $ids[] = $this->getUser()->getId();
         
         $posts = DatabaseConnection::i()
-                ->getContext()
-                ->table("posts")
-                ->select("id")
-                ->where("wall IN (?)", $ids)
-                ->where("deleted", 0)
-                ->order("created DESC");
+                    ->getContext()
+                    ->table("posts")
+                    ->select("id")
+                    ->where("wall IN (?)", $ids)
+                    ->where("deleted", 0)
+                    ->order("created DESC");
 
         $rposts = [];
         foreach($posts->page((int) ($offset + 1), $count) as $post)

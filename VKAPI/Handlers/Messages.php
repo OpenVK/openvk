@@ -40,7 +40,7 @@ final class Messages extends VKAPIRequestHandler
                 continue;
             
             $author = $message->getSender()->getId() === $this->getUser()->getId() ? $message->getRecipient()->getId() : $message->getSender()->getId();
-            $rMsg = new APIMsg;
+            $rMsg   = new APIMsg;
             
             $rMsg->id         = $message->getId();
             $rMsg->user_id    = $author;
@@ -123,9 +123,8 @@ final class Messages extends VKAPIRequestHandler
         $items = [];
         foreach($ids as $id) {
             $message = $msgs->get((int) $id);
-            if(!$message || $message->getSender()->getId() !== $this->getUser()->getId() && $message->getRecipient()->getId() !== $this->getUser()->getId()) {
+            if(!$message || $message->getSender()->getId() !== $this->getUser()->getId() && $message->getRecipient()->getId() !== $this->getUser()->getId())
                 $items[$id] = 0;
-            }
             
             $message->delete();
             $items[$id] = 1;
@@ -186,7 +185,7 @@ final class Messages extends VKAPIRequestHandler
                 else
                     $author = $lastMessage->getSender()->getId();
                 
-                $lastMessagePreview = new APIMsg;
+                $lastMessagePreview             = new APIMsg;
                 $lastMessagePreview->id         = $lastMessage->getId();
                 $lastMessagePreview->user_id    = $author;
                 $lastMessagePreview->from_id    = $lastMessage->getSender()->getId();
@@ -218,8 +217,8 @@ final class Messages extends VKAPIRequestHandler
             $users = array_unique($users);
 
             return (object) [
-                "count" => sizeof($list),
-                "items" => $list,
+                "count"    => sizeof($list),
+                "items"    => $list,
                 "profiles" => (!empty($users) ? (new APIUsers)->get(implode(',', $users), $fields, $offset, $count) : [])
             ];
         }
@@ -249,7 +248,7 @@ final class Messages extends VKAPIRequestHandler
 
             $dialogue = new Correspondence($this->getUser(), $user);
             $iterator = $dialogue->getMessages(Correspondence::CAP_BEHAVIOUR_START_MESSAGE_ID, 0, 1, 0, false);
-            $msg = $iterator[0]->unwrap(); // шоб удобнее было
+            $msg      = $iterator[0]->unwrap(); // шоб удобнее было
             $output['items'][] = [
                 "peer" => [
                     "id" => $user->getId(),
@@ -276,7 +275,7 @@ final class Messages extends VKAPIRequestHandler
         }
 
         if($extended == 1) {
-            $userslist = array_unique($userslist);
+            $userslist          = array_unique($userslist);
             $output['profiles'] = (!empty($userslist) ? (new APIUsers)->get(implode(',', $userslist), $fields) : []);
         }
 

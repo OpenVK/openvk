@@ -2,7 +2,6 @@
 namespace openvk\VKAPI\Handlers;
 use openvk\Web\Models\Repositories\{Users as UsersRepo, Clubs as ClubsRepo, Posts as PostsRepo};
 
-
 final class Ovk extends VKAPIRequestHandler
 {
     function version(): string
