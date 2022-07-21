@@ -110,8 +110,6 @@ final class Groups extends VKAPIRequestHandler
 
     function getById(string $group_ids = "", string $group_id = "", string $fields = ""): ?array
     {
-        $this->requireUser();
-
         $clubs = new ClubsRepo;
 		
         if ($group_ids == NULL && $group_id != NULL) 
@@ -191,10 +189,11 @@ final class Groups extends VKAPIRequestHandler
 			                $response[$i]->contacts = $contacts;
 			                break;
                         case 'can_post':
-                            if($clb->canBeModifiedBy($this->getUser()))
-                                $response[$i]->can_post = true;
-                            else
-                                $response[$i]->can_post = $clb->canPost();
+                            if(!is_null($this->getUser()))
+                                if($clb->canBeModifiedBy($this->getUser()))
+                                    $response[$i]->can_post = true;
+                                else
+                                    $response[$i]->can_post = $clb->canPost();
                             break;
                     }
                 }
