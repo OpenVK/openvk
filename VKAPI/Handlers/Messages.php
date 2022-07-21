@@ -224,6 +224,65 @@ final class Messages extends VKAPIRequestHandler
             ];
         }
     }
+
+    function getConversationsById(string $peer_ids, int $extended = 0, string $fields = "")
+    {
+        $this->requireUser();
+
+        $peers = explode(',', $peer_ids);
+
+        $output = [
+            "count" => 0,
+            "items" => []
+        ];
+
+        $userslist = [];
+
+        foreach($peers as $peer) {
+            if(key($peers) > 100)
+                continue;
+
+            if(is_null($user_id = $this->resolvePeer((int) $peer)))
+                $this->fail(-151, "Chats are not implemented");
+
+            $user     = (new USRRepo)->get((int) $peer);
+
+            $dialogue = new Correspondence($this->getUser(), $user);
+            $iterator = $dialogue->getMessages(Correspondence::CAP_BEHAVIOUR_START_MESSAGE_ID, 0, 1, 0, false);
+            $msg = $iterator[0]->unwrap(); // шоб удобнее было
+            $output['items'][] = [
+                "peer" => [
+                    "id" => $user->getId(),
+                    "type" => "user",
+                    "local_id" => $user->getId()
+                ],
+                "last_message_id" => $msg->id,
+                "in_read" => $msg->id,
+                "out_read" => $msg->id,
+                "sort_id" => [
+                    "major_id" => 0,
+                    "minor_id" => $msg->id, // КОНЕЧНО ЖЕ
+                ],
+                "last_conversation_message_id" => $user->getId(),
+                "in_read_cmid" => $user->getId(),
+                "out_read_cmid" => $user->getId(),
+                "is_marked_unread" => $iterator[0]->isUnread(),
+                "important" => false, // целестора когда релиз
+                "can_write" => [
+                    "allowed" => ($user->getId() === $this->getUser()->getId() || $user->getPrivacyPermission('messages.write', $this->getUser()) === true)
+                ]                
+            ];
+            $userslist[] = $user->getId();
+        }
+
+        if($extended == 1) {
+            $userslist = array_unique($userslist);
+            $output['profiles'] = (!empty($userslist) ? (new APIUsers)->get(implode(',', $userslist), $fields) : []);
+        }
+
+        $output['count'] = sizeof($output['items']);
+        return (object) $output;
+    }
     
     function getHistory(int $offset = 0, int $count = 20, int $user_id = -1, int $peer_id = -1, int $start_message_id = 0, int $rev = 0, int $extended = 0): object
     {
