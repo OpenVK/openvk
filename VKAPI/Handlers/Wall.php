@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
 use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Entities\Notifications\{WallPostNotification};
+use openvk\Web\Models\Entities\Notifications\{WallPostNotification, RepostNotification};
 use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Entities\Club;
 use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
@@ -372,5 +372,33 @@ final class Wall extends VKAPIRequestHandler
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
 
         return (object)["post_id" => $post->getVirtualId()];
+    }
+
+    function repost(string $object, string $message) {
+        $this->requireUser();
+
+        $postArray;
+        if(preg_match('/wall((?:-?)[0-9]+)_([0-9]+)/', $object, $postArray) == 0)
+            $this->fail(100, "One of the parameters specified was missing or invalid: object is incorrect");
+        
+        $post = (new PostsRepo)->getPostById((int) $postArray[1], (int) $postArray[2]);
+        if(!$post || $post->isDeleted()) $this->fail(100, "One of the parameters specified was missing or invalid");
+        
+        $nPost = new Post;
+        $nPost->setOwner($this->user->getId());
+        $nPost->setWall($this->user->getId());
+        $nPost->setContent($message);
+        $nPost->save();
+        $nPost->attach($post);
+        
+        if($post->getOwner(false)->getId() !== $this->user->getId() && !($post->getOwner() instanceof Club))
+            (new RepostNotification($post->getOwner(false), $post, $this->user->identity))->emit();
+
+        return (object) [
+            "success" => 1, // 👍
+            "post_id" => $nPost->getVirtualId(),
+            "reposts_count" => $post->getRepostCount(),
+            "likes_count" => $post->getLikesCount()
+        ];
     }
 }
