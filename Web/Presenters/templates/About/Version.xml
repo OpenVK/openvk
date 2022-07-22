@@ -397,7 +397,7 @@
                     <td class="e">
                         Vladimir Barinov (veselcraft), Celestora, Konstantin Kichulkin (kosfurler),
                         Nikita Volkov (sup_ban), Daniel Myslivets, Alexander Kotov (l-lacker),
-                        Alexey Assemblerov (BiosNod), Ilya Prokopenko (dsrev / Holoniix) and Maxim Leshchenko (maksales / maksalees)
+                        Alexey Assemblerov (BiosNod), Ilya Prokopenko (dsrev) and Maxim Leshchenko (maksales / maksalees)
                     </td>
                 </tr>
             </tbody>
@@ -458,7 +458,7 @@
                 </tr>
                 <tr>
                     <td class="e">Initial hosting</td>
-                    <td class="v">Ilya Prokopenko (dsrev / Holoniix) and Celestora</td>
+                    <td class="v">Ilya Prokopenko (dsrev) and Celestora</td>
                 </tr>
                 <tr>
                     <td class="e">Initial bug-tracker hosting</td>
@@ -474,7 +474,7 @@
                 </tr>
                 <tr>
                     <td class="e">Best barmaid</td>
-                    <td class="v">Jill</td> {* I can agree ~~ holoniix *}
+                    <td class="v">Jill</td>
                 </tr>
                 <tr>
                     <td class="e">Initial Helpdesk implementation</td>
@@ -492,7 +492,7 @@
                     <td>
                         kovaltim, Vladimir Lapskiy (0x7d5), Alexander Minkin (WerySkok), Polina Katunina (RousPhaul), veth,
                         Egor Shevchenko, Vadim Korovin (yuni), Ash Defenders,
-                        Pavel Silaev, Dmitriy Daemon, Ilya Prokopenko (dsrev / Holoniix),
+                        Pavel Silaev, Dmitriy Daemon, Ilya Prokopenko (dsrev),
                         cmed404 and unknown tester, who disappeared shortly after trying to upload post with cat.
                     </td>
                 </tr>
