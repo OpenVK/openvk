@@ -486,8 +486,8 @@
                 <div class="content_subtitle">
                     {tr("gifts", $giftCount)}
                     <div style="float:right;">
-                        {if OPENVK_ROOT_CONF['openvk']['preferences']['commerce']}
-                        <a href="/gifts?act=pick&user={$user->getId()}">{_send_gift}</a> |
+                        {if OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && !is_null($thisUser)}
+                            <a href="/gifts?act=pick&user={$user->getId()}">{_send_gift}</a> |
                         {/if}
                         <a href="/gifts{$user->getId()}">{_all_title}</a>
                     </div>
@@ -499,7 +499,8 @@
                             <a href="{$hideInfo ? 'javascript:false' : $giftDescriptor->sender->getURL()}">
                                 <img style="width: 70px; max-height: 70px;"
                                     src="{$giftDescriptor->gift->getImage(2)}"
-                                    alt="{$hideInfo ? tr('gift') : ($giftDescriptor->caption ?? tr('gift'))}" />
+                                    alt="{$hideInfo ? tr('gift') : ($giftDescriptor->caption ?? tr('gift'))}" 
+                                    title="{$hideInfo ? tr('gift') : ($giftDescriptor->caption ?? tr('gift'))}" />
                             </a>  
                         </div>
                     </div>
