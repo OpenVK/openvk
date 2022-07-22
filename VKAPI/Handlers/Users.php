@@ -13,7 +13,7 @@ final class Users extends VKAPIRequestHandler
 		if($user_ids == "0")
 			$user_ids = (string) $authuser->getId();
 		
-        $usrs = explode(',', $user_ids);','
+        $usrs = explode(',', $user_ids);
         $response;
 
         $ic = sizeof($usrs);
