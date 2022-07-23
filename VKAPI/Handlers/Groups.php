@@ -161,6 +161,21 @@ final class Groups extends VKAPIRequestHandler
 			            case "photo_max":
 			                $response[$i]->photo_max = $clb->getAvatarURL();
 			                break;
+                        case "photo_50":
+                            $response[$i]->photo_50 = $clb->getAvatarURL();
+                            break;
+                        case "photo_100":
+                            $response[$i]->photo_100 = $clb->getAvatarURL("tiny");
+                            break;
+                        case "photo_200":
+                            $response[$i]->photo_200 = $clb->getAvatarURL("normal");
+                            break;
+                        case "photo_200_orig":
+                            $response[$i]->photo_200_orig = $clb->getAvatarURL("normal");
+                            break;
+                        case "photo_400_orig":
+                            $response[$i]->photo_400_orig = $clb->getAvatarURL("normal");
+                            break;
 			            case "members_count":
 			                $response[$i]->members_count = $clb->getFollowersCount();
 			                break;
