@@ -23,22 +23,37 @@ final class Wall extends VKAPIRequestHandler
             $from_id = get_class($post->getOwner()) == "openvk\Web\Models\Entities\Club" ? $post->getOwner()->getId() * (-1) : $post->getOwner()->getId();
 
             $attachments = [];
+            $repost = [];
             foreach($post->getChildren() as $attachment) {
                 if($attachment instanceof \openvk\Web\Models\Entities\Photo) {
                     if($attachment->isDeleted())
                         continue;
                     
-                    $attachments[] = [
-                        "type" => "photo",
-                        "photo" => [
-                            "album_id" => $attachment->getAlbum() ? $attachment->getAlbum()->getId() : NULL,
-                            "date"     => $attachment->getPublicationTime()->timestamp(),
-                            "id"       => $attachment->getVirtualId(),
-                            "owner_id" => $attachment->getOwner()->getId(),
-                            "sizes"    => array_values($attachment->getVkApiSizes()),
-                            "text"     => "",
-                            "has_tags" => false
-                        ]
+                    $attachments[] = $this->getApiPhoto($attachment);
+                } else if ($attachment instanceof \openvk\Web\Models\Entities\Post) {
+                    $repostAttachments = [];
+
+                    foreach($attachment->getChildren() as $repostAttachment) {
+                        if($repostAttachment instanceof \openvk\Web\Models\Entities\Photo) {
+                            if($attachment->isDeleted())
+                                continue;
+                        
+                            $repostAttachments[] = $this->getApiPhoto($repostAttachment);
+                            /* Рекурсии, сука! Заказывали? */
+                        }
+                    }
+
+                    $repost[] = [
+                        "id" => $attachment->getVirtualId(),
+                        "owner_id" => $attachment->getOwner()->getId(),
+                        "from_id" => $attachment->getOwner()->getId(),
+                        "date" => $attachment->getPublicationTime()->timestamp(),
+                        "post_type" => "post",
+                        "text" => $attachment->getText(false),
+                        "attachments" => $repostAttachments,
+                        "post_source" => [
+                            "type" => "vk"
+                        ],
                     ];
                 }
             }
@@ -50,6 +65,7 @@ final class Wall extends VKAPIRequestHandler
                 "date"         => $post->getPublicationTime()->timestamp(),
                 "post_type"    => "post",
                 "text"         => $post->getText(false),
+                "copy_history" => $repost,
                 "can_edit"     => 0, # TODO
                 "can_delete"   => $post->canBeDeletedBy($this->getUser()),
                 "can_pin"      => $post->canBePinnedBy($this->getUser()),
@@ -148,56 +164,35 @@ final class Wall extends VKAPIRequestHandler
             $post = (new PostsRepo)->getPostById(intval($id[0]), intval($id[1]));
             if($post) {
                 $from_id = get_class($post->getOwner()) == "openvk\Web\Models\Entities\Club" ? $post->getOwner()->getId() * (-1) : $post->getOwner()->getId();
-                $attachments;
+                $attachments = [];
+                $repost = []; // чел высрал семь сигарет 😳 помянем 🕯
                 foreach($post->getChildren() as $attachment) {
                     if($attachment instanceof \openvk\Web\Models\Entities\Photo) {
-                        $attachments[] = [
-                            "type"  => "photo",
-                            "photo" => [
-                                "album_id" => $attachment->getAlbum() ? $attachment->getAlbum()->getId() : NULL,
-                                "date"     => $attachment->getPublicationTime()->timestamp(),
-                                "id"       => $attachment->getVirtualId(),
-                                "owner_id" => $attachment->getOwner()->getId(),
-                                "sizes"    => array(
-                                [
-                                    "height" => 2560,
-                                    "url"    => $attachment->getURLBySizeId("normal"),
-                                    "type"   => "m",
-                                    "width"  => 2560,
-                                ],
-                                [
-                                    "height" => 130,
-                                    "url"    => $attachment->getURLBySizeId("tiny"),
-                                    "type"   => "o",
-                                    "width"  => 130,
-                                ],
-                                [
-                                    "height" => 604,
-                                    "url"    => $attachment->getURLBySizeId("normal"),
-                                    "type"   => "p",
-                                    "width"  => 604,
-                                ],
-                                [
-                                    "height" => 807,
-                                    "url"    => $attachment->getURLBySizeId("large"),
-                                    "type"   => "q",
-                                    "width"  => 807,
-                                ],
-                                [
-                                    "height" => 1280,
-                                    "url"    => $attachment->getURLBySizeId("larger"),
-                                    "type"   => "r",
-                                    "width"  => 1280,
-                                ],
-                                [
-                                    "height" => 75, # Для временного компросима оставляю статическое число. Если каждый раз обращаться к файлу за количеством пикселов, то наступает пuпuська полная с производительностью, так что пока так 
-                                    "url"    => $attachment->getURLBySizeId("miniscule"),
-                                    "type"   => "s",
-                                    "width"  => 75,
-                                ]),
-                                "text"     => "",
-                                "has_tags" => false
-                            ]
+                        $attachments[] = $this->getApiPhoto($attachment);
+                    } else if ($attachment instanceof \openvk\Web\Models\Entities\Post) {
+                        $repostAttachments = [];
+
+                        foreach($attachment->getChildren() as $repostAttachment) {
+                            if($repostAttachment instanceof \openvk\Web\Models\Entities\Photo) {
+                                if($attachment->isDeleted())
+                                    continue;
+                            
+                                $repostAttachments[] = $this->getApiPhoto($repostAttachment);
+                                /* Рекурсии, сука! Заказывали? */
+                            }
+                        }    
+
+                        $repost[] = [
+                            "id" => $attachment->getVirtualId(),
+                            "owner_id" => $attachment->getOwner()->getId(),
+                            "from_id" => $attachment->getOwner()->getId(),
+                            "date" => $attachment->getPublicationTime()->timestamp(),
+                            "post_type" => "post",
+                            "text" => $attachment->getText(false),
+                            "attachments" => $repostAttachments,
+                            "post_source" => [
+                                "type" => "vk"
+                            ],
                         ];
                     }
                 }
@@ -209,6 +204,7 @@ final class Wall extends VKAPIRequestHandler
                     "date"         => $post->getPublicationTime()->timestamp(),
                     "post_type"    => "post",
                     "text"         => $post->getText(false),
+                    "copy_history" => $repost,
                     "can_edit"     => 0, # TODO
                     "can_delete"   => $post->canBeDeletedBy($user),
                     "can_pin"      => $post->canBePinnedBy($user),
@@ -238,7 +234,8 @@ final class Wall extends VKAPIRequestHandler
                 else
                     $groups[]   = $from_id * -1;
 
-                $attachments = NULL; # free attachments so it will not clone everythingg
+                $attachments = NULL; # free attachments so it will not clone everything
+                $repost = NULL;      # same
             }
         }
 
@@ -374,7 +371,7 @@ final class Wall extends VKAPIRequestHandler
         return (object)["post_id" => $post->getVirtualId()];
     }
 
-    function repost(string $object, string $message) {
+    function repost(string $object, string $message = "") {
         $this->requireUser();
 
         $postArray;
@@ -399,6 +396,21 @@ final class Wall extends VKAPIRequestHandler
             "post_id" => $nPost->getVirtualId(),
             "reposts_count" => $post->getRepostCount(),
             "likes_count" => $post->getLikesCount()
+        ];
+    }
+
+    private function getApiPhoto($attachment) {
+        return [
+            "type"  => "photo",
+            "photo" => [
+                "album_id" => $attachment->getAlbum() ? $attachment->getAlbum()->getId() : NULL,
+                "date"     => $attachment->getPublicationTime()->timestamp(),
+                "id"       => $attachment->getVirtualId(),
+                "owner_id" => $attachment->getOwner()->getId(),
+                "sizes"    => array_values($attachment->getVkApiSizes()),
+                "text"     => "",
+                "has_tags" => false
+            ]
         ];
     }
 }
