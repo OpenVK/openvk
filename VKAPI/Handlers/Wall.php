@@ -45,8 +45,8 @@ final class Wall extends VKAPIRequestHandler
 
                     $repost[] = [
                         "id" => $attachment->getVirtualId(),
-                        "owner_id" => $attachment->getOwner()->getId(),
-                        "from_id" => $attachment->getOwner()->getId(),
+                        "owner_id" => $attachment->isPostedOnBehalfOfGroup() ? $attachment->getOwner()->getId() * -1 : $attachment->getOwner()->getId(),
+                        "from_id" => $attachment->isPostedOnBehalfOfGroup() ? $attachment->getOwner()->getId() * -1 : $attachment->getOwner()->getId(),
                         "date" => $attachment->getPublicationTime()->timestamp(),
                         "post_type" => "post",
                         "text" => $attachment->getText(false),
@@ -184,8 +184,8 @@ final class Wall extends VKAPIRequestHandler
 
                         $repost[] = [
                             "id" => $attachment->getVirtualId(),
-                            "owner_id" => $attachment->getOwner()->getId(),
-                            "from_id" => $attachment->getOwner()->getId(),
+                            "owner_id" => $attachment->isPostedOnBehalfOfGroup() ? $attachment->getOwner()->getId() * -1 : $attachment->getOwner()->getId(),
+                            "from_id" => $attachment->isPostedOnBehalfOfGroup() ? $attachment->getOwner()->getId() * -1 : $attachment->getOwner()->getId(),
                             "date" => $attachment->getPublicationTime()->timestamp(),
                             "post_type" => "post",
                             "text" => $attachment->getText(false),
