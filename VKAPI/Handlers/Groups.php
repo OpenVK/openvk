@@ -204,6 +204,10 @@ final class Groups extends VKAPIRequestHandler
                                 else
                                     $response[$i]->can_post = $clb->canPost();
                             break;
+                        case "is_member":
+                            if(!is_null($this->getUser()))
+                                $response[$i]->is_member = (int) $clb->getSubscriptionStatus($this->getUser());
+                            break;
                     }
                 }
             }
