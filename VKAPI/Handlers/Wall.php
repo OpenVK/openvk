@@ -1,12 +1,14 @@
 <?php declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
 use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Entities\Notifications\{WallPostNotification, RepostNotification};
+use openvk\Web\Models\Entities\Notifications\{WallPostNotification, RepostNotification, CommentNotification};
 use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Entities\Club;
 use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
 use openvk\Web\Models\Entities\Post;
 use openvk\Web\Models\Repositories\Posts as PostsRepo;
+use openvk\Web\Models\Entities\Comment;
+use openvk\Web\Models\Repositories\Comments as CommentsRepo;
 
 final class Wall extends VKAPIRequestHandler
 {
@@ -399,6 +401,160 @@ final class Wall extends VKAPIRequestHandler
             "reposts_count" => $post->getRepostCount(),
             "likes_count" => $post->getLikesCount()
         ];
+    }
+
+    function getComments(int $owner_id, int $post_id, bool $need_likes = true, int $offset = 0, int $count = 10, string $fields = "sex,screen_name,photo_50,photo_100,online_info,online", string $sort = "asc", bool $extended = false) {
+        $this->requireUser();
+
+        $post = (new PostsRepo)->getPostById($owner_id, $post_id);
+        if(!$post || $post->isDeleted()) $this->fail(100, "One of the parameters specified was missing or invalid");
+
+        $comments = (new CommentsRepo)->getCommentsByTarget($post, $offset+1, $count, $sort == "desc" ? "DESC" : "ASC");
+        
+        $items = [];
+        $profiles = [];
+
+        foreach($comments as $comment) {
+            $item = [
+                "id"            => $comment->getId(),
+                "from_id"       => $comment->getOwner()->getId(),
+                "date"          => $comment->getPublicationTime()->timestamp(),
+                "text"          => $comment->getText(false),
+                "post_id"       => $post->getVirtualId(),
+                "owner_id"      => $post->isPostedOnBehalfOfGroup() ? $post->getOwner()->getId() * -1 : $post->getOwner()->getId(),
+                "parents_stack" => [],
+                "thread"        => [
+                    "count"             => 0,
+                    "items"             => [],
+                    "can_post"          => false,
+                    "show_reply_button" => true,
+                    "groups_can_post"   => false,
+                ]
+            ];
+
+            if($need_likes == true)
+                $item['likes'] = [
+                    "can_like"    => 1,
+                    "count"       => $comment->getLikesCount(),
+                    "user_likes"  => (int) $comment->hasLikeFrom($this->getUser()),
+                    "can_publish" => 1
+                ];
+            
+            $items[] = $item;
+            if($extended == true)
+                $profiles[] = $comment->getOwner()->getId();
+        }
+
+        $response = [
+            "count"               => (new CommentsRepo)->getCommentsCountByTarget($post),
+            "items"               => $items,
+            "current_level_count" => (new CommentsRepo)->getCommentsCountByTarget($post),
+            "can_post"            => true,
+            "show_reply_button"   => true,
+            "groups_can_post"     => false
+        ];
+
+        if($extended == true) {
+            $profiles = array_unique($profiles);
+            $response['profiles'] = (!empty($profiles) ? (new Users)->get(implode(',', $profiles), $fields) : []);
+        }
+
+        return (object) $response;
+    }
+
+    function getComment(int $owner_id, int $comment_id, bool $extended = false, string $fields = "sex,screen_name,photo_50,photo_100,online_info,online") {
+        $this->requireUser();
+
+        $comment = (new CommentsRepo)->get($comment_id); // один хуй айди всех комментов общий
+
+        $profiles = [];
+
+        $item = [
+            "id"            => $comment->getId(),
+            "from_id"       => $comment->getOwner()->getId(),
+            "date"          => $comment->getPublicationTime()->timestamp(),
+            "text"          => $comment->getText(false),
+            "post_id"       => $comment->getTarget()->getVirtualId(),
+            "owner_id"      => $comment->getTarget()->isPostedOnBehalfOfGroup() ? $comment->getTarget()->getOwner()->getId() * -1 : $comment->getTarget()->getOwner()->getId(),
+            "parents_stack" => [],
+            "likes"         => [
+                "can_like"    => 1,
+                "count"       => $comment->getLikesCount(),
+                "user_likes"  => (int) $comment->hasLikeFrom($this->getUser()),
+                "can_publish" => 1
+            ],
+            "thread"        => [
+                "count"             => 0,
+                "items"             => [],
+                "can_post"          => false,
+                "show_reply_button" => true,
+                "groups_can_post"   => false,
+            ]
+        ];
+        
+        if($extended == true)
+            $profiles[] = $comment->getOwner()->getId();
+
+        $response = [
+            "items"               => [$item],
+            "can_post"            => true,
+            "show_reply_button"   => true,
+            "groups_can_post"     => false
+        ];
+
+        if($extended == true) {
+            $profiles = array_unique($profiles);
+            $response['profiles'] = (!empty($profiles) ? (new Users)->get(implode(',', $profiles), $fields) : []);
+        }
+
+        return $response;
+    }
+
+    function createComment(int $owner_id, int $post_id, string $message, int $from_group = 0) {
+        $post = (new PostsRepo)->getPostById($owner_id, $post_id);
+        if(!$post || $post->isDeleted()) $this->fail(100, "One of the parameters specified was missing or invalid");
+
+        if($post->getTargetWall() < 0)
+            $club = (new ClubsRepo)->get(abs($post->getTargetWall()));
+        
+        $flags = 0;
+        if($from_group != 0 && !is_null($club) && $club->canBeModifiedBy($this->user))
+            $flags |= 0b10000000;
+        
+        try {
+            $comment = new Comment;
+            $comment->setOwner($this->user->getId());
+            $comment->setModel(get_class($post));
+            $comment->setTarget($post->getId());
+            $comment->setContent($message);
+            $comment->setCreated(time());
+            $comment->setFlags($flags);
+            $comment->save();
+        } catch (\LengthException $ex) {
+            $this->fail(1, "ошибка про то что коммент большой слишком");
+        }
+        
+        if($post->getOwner()->getId() !== $this->user->getId())
+            if(($owner = $post->getOwner()) instanceof User)
+                (new CommentNotification($owner, $comment, $post, $this->user))->emit();
+        
+        return (object) [
+            "comment_id" => $comment->getId(),
+            "parents_stack" => []
+        ];
+    }
+
+        function deleteComment(int $comment_id) {
+        $this->requireUser();
+
+        $comment = (new CommentsRepo)->get($comment_id);
+        if(!$comment) $this->fail(100, "One of the parameters specified was missing or invalid");;
+        if(!$comment->canBeDeletedBy($this->user))
+            $this->fail(7, "Access denied");
+        
+        $comment->delete();
+        
+        return 1;
     }
 
     private function getApiPhoto($attachment) {
