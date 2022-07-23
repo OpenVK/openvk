@@ -152,10 +152,10 @@ final class Wall extends VKAPIRequestHandler
 
     function getById(string $posts, int $extended = 0, string $fields = "", User $user = NULL)
     {
-        $this->requireUser();
-
-        if($user == NULL)
+        if($user == NULL) {
+            $this->requireUser();
             $user = $this->getUser(); # костыли костыли крылышки
+        }
 
         $items    = [];
         $profiles = [];
