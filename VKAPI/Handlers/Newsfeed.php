@@ -10,9 +10,6 @@ final class Newsfeed extends VKAPIRequestHandler
     {
         $this->requireUser();
         
-        if($offset != 0)
-            $start_from = $offset;
-        
         $id    = $this->getUser()->getId();
         $subs  = DatabaseConnection::i()
                     ->getContext()
@@ -29,12 +26,15 @@ final class Newsfeed extends VKAPIRequestHandler
                     ->select("id")
                     ->where("wall IN (?)", $ids)
                     ->where("deleted", 0)
+                    ->where("created < (?)", empty($start_from) ? time()+1 : $start_from)
                     ->order("created DESC");
 
         $rposts = [];
         foreach($posts->page((int) ($offset + 1), $count) as $post)
             $rposts[] = (new PostsRepo)->get($post->id)->getPrettyId();
 
-        return (new Wall)->getById(implode(',', $rposts), $extended, $fields, $this->getUser());
+        $response = (new Wall)->getById(implode(',', $rposts), $extended, $fields, $this->getUser());
+        $response->next_from = end($response->items)->date;
+        return $response;
     }
 }
