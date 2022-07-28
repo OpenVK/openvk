@@ -1,0 +1,11 @@
+id: discordtheme
+version: "0.0.1.0"
+openvk_version: 0
+enabled: 1
+metadata:
+    name:
+        _: "DiscordTheme [by Utinka]"
+        en: "DiscordTheme [by Utinka]"
+        ru: "Дискорд тема [by Utinka]"
+    author: "Utinka"
+    description: "Discord theme to OpenVK"
