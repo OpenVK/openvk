@@ -112,7 +112,7 @@
 {/block}
 
 {block actions}
-    {if $x->getId() !== $thisUser->getId()}
+    {if ($x->getId() !== $thisUser->getId()) && ($thisUser->getId() === $user->getId())}
         {var $subStatus = $x->getSubscriptionStatus($thisUser)}
         {if $subStatus === 0}
             <form action="/setSub/user" method="post" class="profile_link_form">
