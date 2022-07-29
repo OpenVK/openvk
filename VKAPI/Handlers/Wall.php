@@ -544,7 +544,7 @@ final class Wall extends VKAPIRequestHandler
         ];
     }
 
-        function deleteComment(int $comment_id) {
+    function deleteComment(int $comment_id) {
         $this->requireUser();
 
         $comment = (new CommentsRepo)->get($comment_id);

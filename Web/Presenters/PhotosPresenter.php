@@ -129,6 +129,7 @@ final class PhotosPresenter extends OpenVKPresenter
         $name  = $album->getName();
         $owner = $album->getOwner();
         $album->delete();
+
         $this->flash("succ", "Альбом удалён", "Альбом $name был успешно удалён.");
         $this->redirect("/albums" . ($owner instanceof Club ? "-" : "") . $owner->getId());
     }
@@ -241,7 +242,10 @@ final class PhotosPresenter extends OpenVKPresenter
             }
             
             $album->addPhoto($photo);
-            $this->redirect("/photo" . $photo->getPrettyId(), static::REDIRECT_TEMPORARY);
+            $album->setEdited(time());
+            $album->save();
+
+            $this->redirect("/photo" . $photo->getPrettyId() . "?from=album" . $album->getId(), static::REDIRECT_TEMPORARY);
         } else {
             $this->template->album = $album;
         }
@@ -262,6 +266,8 @@ final class PhotosPresenter extends OpenVKPresenter
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->assertNoCSRF();
             $album->removePhoto($photo);
+            $album->setEdited(time());
+            $album->save();
             
             $this->flash("succ", "Фотография удалена", "Эта фотография была успешно удалена.");
             $this->redirect("/album" . $album->getPrettyId(), static::REDIRECT_TEMPORARY);

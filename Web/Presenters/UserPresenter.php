@@ -293,7 +293,11 @@ final class UserPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("error_upload_failed"));
         }
         
-        (new Albums)->getUserAvatarAlbum($this->user->identity)->addPhoto($photo);
+        $album = (new Albums)->getUserAvatarAlbum($this->user->identity);
+        $album->addPhoto($photo);
+        $album->setEdited(time());
+        $album->save();
+        
         $this->flashFail("succ", tr("photo_saved"), tr("photo_saved_comment"));
     }
     
