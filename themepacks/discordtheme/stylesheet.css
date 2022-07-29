@@ -10,7 +10,7 @@ body {
 }
 
 .home_button {
-    background: #272530 url("/themepack/openvk_modern/0.0.1.0/resource/2.png") no-repeat;
+    background: #272530 url("res/logo.png") no-repeat;
     background-size: 80%;
     background-position-y: 0px;
     background-position-x: 2px;
@@ -53,9 +53,9 @@ body {
 .content_title_expanded {
     color: #fbfbfe;
     cursor: pointer;
-    background:#7484b1;
+    background:#302b43;
     padding: 3px 10px;
-    border-top: #7484b1 solid 1px;
+    border-top: #302b43 solid 1px;
 }
 
 .content_title_expanded a {
@@ -118,7 +118,7 @@ h4 {
 
 .navigation .link:hover {
     color: #fbfbfe;
-    background-color: #7484b1;
+    background-color: #302b43;
     border-top: 1px solid #272530;
 }
     
@@ -130,7 +130,7 @@ h4 {
 }
     
 .navigation .edit-button:hover {
-  background-color: #7484b1 !important;
+  background-color: #302b43 !important;
   color: #fbfbfe !important;
   position: absolute;
   right: 0;
@@ -188,10 +188,10 @@ h4 {
 }
 
 .page_yellowheader {
-    background: #7484b1;
-    border-right: solid 1px #7484b1;
-    border-left: solid 1px #7484b1;
-    border-bottom: solid 1px #7484b1;
+    background: #302b43;
+    border-right: solid 1px #302b43;
+    border-left: solid 1px #302b43;
+    border-bottom: solid 1px #302b43;
 }
 
 .page_yellowheader span {
@@ -217,16 +217,16 @@ h4 {
 }
 
 #wrapH {
-    color: #fbfbfe;
-    border-right: solid 1px #403f4c;
-    border-left: solid 1px #403f4c;
+    color: #272530;
+    border-right: solid 1px #272530;
+    border-left: solid 1px #272530;
 }
 
 #wrapHI {
     color: #fbfbfe;
-    border: 3px solid #7484b1;
-    border-right: solid 1px #7484b1;
-    border-left: solid 1px #7484b1;
+    border: 3px solid #302b43;
+    border-right: solid 1px #272530;
+    border-left: solid 1px #272530;
 }
 
 .wrap1 {
@@ -245,6 +245,12 @@ h4 {
 .padding_top .mb_tabs {
     background-color: #272530;
     border: 1px solid #272530;
+}
+    
+.content_title_unexpanded {
+    background: #272530;
+    padding: 3px 10px;
+    border-top: #272530 solid 1px;
 }
 
 .left_small_block {
@@ -282,11 +288,23 @@ input[type="text"], input[type="password"], input[type~="text"],
 input[type~="password"], input[type="email"], input[type="phone"],
 input[type~="email"], input[type~="phone"], input[type="search"],
 input[type~="search"], textarea, select {
-    border: 1px solid #E5E5E5;
+    color: #E5E5E5;
+    background: #403f4c;
+    border: 1px solid #707070;
 }
 
 input[type=checkbox] {
-    background-image: url("/themepack/openvk_modern/0.0.1.0/resource/6.png")
+    background-image: url("res/check_mark.png")
+}
+
+input[type=search] {
+    color: #E5E5E5;
+    height: 20px;
+    background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px;
+    background-color: #403f4c !important;
+    border: 1px solid #272530;
+    padding-left: 18px;
+    width: 120px;
 }
 
 .mb_tab {
@@ -359,7 +377,7 @@ input[type=checkbox] {
 
 #votesBalance {
     color: #fbfbfe;
-    background-color: #7484b1;
+    background-color: #302b43;
     border-bottom: none;
 }
 
@@ -376,7 +394,7 @@ a {
 }
     
 img {
-    opacity: .7;
+    opacity: .8;
 }
 
 .navigation_footer .link {
@@ -408,7 +426,7 @@ img {
 }
 
 .heart {
-  background: url('https://github.com/Parliskaya/test/blob/main/like.gif?raw=true') no-repeat 1px 0;
+  background: url('res/like.gif') no-repeat 1px 0;
   height: 10px;
   margin: 2px 3px 0;
   width: 11px;
@@ -417,7 +435,7 @@ img {
 }
 
 .heart:hover {
-  background: url('https://github.com/Parliskaya/test/blob/main/like.gif?raw=true') no-repeat 1px 0;
+  background: url('res/like.gif') no-repeat 1px 0;
   height: 10px;
   margin: 2px 3px 0;
   width: 11px;
