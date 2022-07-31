@@ -201,6 +201,34 @@
                 </div>
             </div>
         </div>
+        <div n:if="$thisUser->getId() == $user->getId() && $user->getFriendsOnlineCount() > 0">
+            {var $friendOnlineCount = $user->getFriendsOnlineCount()}
+            
+            <div class="content_title_expanded" onclick="hidePanel(this, {$friendOnlineCount});">
+                {_"friends_online"}
+            </div>
+            <div>
+                <div class="content_subtitle">
+                    {tr("friends_online", $friendOnlineCount)}
+                    <div style="float:right;">
+                        <a href="/friends{$user->getId()}">{_"all_title"}</a>
+                    </div>
+                </div>
+                <div class="content_list">
+                    <div class="cl_element" n:foreach="$user->getFriendsOnline(1) as $friend">
+                        <div class="cl_avatar">
+                            <a href="{$friend->getURL()}">
+                                <img class="ava" src="{$friend->getAvatarUrl('miniscule')}" />
+                            </a>
+                        </div>
+                        <a href="{$friend->getURL()}" class="cl_name">
+                            <text class="cl_fname">{$friend->getFirstName()}</text>
+                            <text class="cl_lname">{$friend->getLastName()}</text>
+                        </a>    
+                    </div>
+                </div>
+            </div>
+        </div>
         <div n:if="$albumsCount > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this, {$albumsCount});">
                 {_"albums"}

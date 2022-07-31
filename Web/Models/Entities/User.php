@@ -500,6 +500,16 @@ class User extends RowModel
         return $this->_abstractRelationCount("get-friends");
     }
 
+    function getFriendsOnline(int $page = 1, int $limit = 6): \Traversable
+    {
+        return $this->_abstractRelationGenerator("get-online-friends", $page, $limit);
+    }
+
+    function getFriendsOnlineCount(): int
+    {
+        return $this->_abstractRelationCount("get-online-friends");
+    }
+
     function getFollowers(int $page = 1, int $limit = 6): \Traversable
     {
         return $this->_abstractRelationGenerator("get-followers", $page, $limit);

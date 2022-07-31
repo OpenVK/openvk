@@ -9,6 +9,9 @@
 {elseif $act == "outcoming"}
     {var $iterator = iterator_to_array($user->getSubscriptions($page))}
     {var $count    = $user->getSubscriptionsCount()}
+{elseif $act == "online"}
+    {var $iterator = iterator_to_array($user->getFriendsOnline($page))}
+    {var $count    = $user->getFriendsOnlineCount()}
 {else}
     {var $iterator = iterator_to_array($user->getFriends($page))}
     {var $count    = $user->getFriendsCount()}
@@ -19,6 +22,8 @@
         {_"incoming_req"}
     {elseif $act == "outcoming"}
         {_"outcoming_req"}
+    {elseif $act == "online"}
+        {_"friends_online"}
     {else}
         {_"friends"}
     {/if}
@@ -33,6 +38,8 @@
             {_"incoming_req"}
         {elseif $act == "outcoming"}
             {_"outcoming_req"}
+        {elseif $act == "online"}
+            {_"friends_online"}
         {else}
             {_"friends"}
         {/if}
@@ -41,7 +48,10 @@
 
 {block tabs}
     <div n:attr="id => ($act === 'friends' ? 'activetabs' : 'ki')" class="tab">
-        <a n:attr="id => ($act === 'friends' ? 'act_tab_a' : 'ki')" href="?">{_friends}</a>
+        <a n:attr="id => ($act === 'friends' ? 'act_tab_a' : 'ki')" href="?">{_all_friends}</a>
+    </div>
+    <div n:attr="id => ($act === 'online' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($act === 'online' ? 'act_tab_a' : 'ki')" href="?act=online">{_online}</a>
     </div>
     <div n:attr="id => ($act === 'incoming' || $act === 'outcoming' ? 'activetabs' : 'ki')" class="tab">
         <a n:attr="id => ($act === 'incoming' || $act === 'outcoming' ? 'act_tab_a' : 'ki')" href="?act=incoming">{_req}</a>
@@ -68,6 +78,8 @@
                     {tr("req", $count)}
                 {elseif $act == "outcoming"}
                     {tr("req", $count)}
+                {elseif $act == "online"}
+                    {tr("friends_list_online", $count)}
                 {else}
                     {tr("friends_list", $count)}
                 {/if}
