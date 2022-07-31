@@ -12,16 +12,21 @@ use openvk\Web\Models\Repositories\Comments as CommentsRepo;
 
 final class Wall extends VKAPIRequestHandler
 {
-    function get(string $owner_id, string $domain = "", int $offset = 0, int $count = 30, int $extended = 0): object
+    function get(int $owner_id, string $domain = "", int $offset = 0, int $count = 30, int $extended = 0): object
     {
         $posts    = new PostsRepo;
 
         $items    = [];
         $profiles = [];
         $groups   = [];
-        $count    = $posts->getPostCountOnUserWall((int) $owner_id);
+        $count    = $posts->getPostCountOnUserWall($owner_id);
 
-        foreach($posts->getPostsFromUsersWall((int)$owner_id, 1, $count, $offset) as $post) {
+        $wallOnwer = (new UsersRepo)->get($owner_id);
+
+        if(!$wallOnwer || $wallOnwer->isDeleted() || $wallOnwer->isDeleted())
+            $this->fail(18, "User was deleted or banned");
+
+        foreach($posts->getPostsFromUsersWall($owner_id, 1, $count, $offset) as $post) {
             $from_id = get_class($post->getOwner()) == "openvk\Web\Models\Entities\Club" ? $post->getOwner()->getId() * (-1) : $post->getOwner()->getId();
 
             $attachments = [];
