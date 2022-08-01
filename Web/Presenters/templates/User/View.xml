@@ -201,7 +201,7 @@
                 </div>
             </div>
         </div>
-        <div n:if="$thisUser->getId() == $user->getId() && $user->getFriendsOnlineCount() > 0">
+        <div n:if="$thisUser != NULL && $thisUser->getId() == $user->getId() && $user->getFriendsOnlineCount() > 0">
             {var $friendOnlineCount = $user->getFriendsOnlineCount()}
             
             <div class="content_title_expanded" onclick="hidePanel(this, {$friendOnlineCount});">
@@ -211,7 +211,7 @@
                 <div class="content_subtitle">
                     {tr("friends_online", $friendOnlineCount)}
                     <div style="float:right;">
-                        <a href="/friends{$user->getId()}">{_"all_title"}</a>
+                        <a href="/friends{$user->getId()}?act=online">{_"all_title"}</a>
                     </div>
                 </div>
                 <div class="content_list">
