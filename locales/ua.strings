@@ -1,4 +1,4 @@
-#include <en>
+#include <by>
 
 "__locale" = "uk_UA.utf8;Ukr";
 "__WinEncoding" = "Windows-1251";
@@ -29,7 +29,7 @@
 "access_recovery" = "Відновлення доступу";
 "page_access_recovery" = "Відновити доступ до сторінки";
 "access_recovery_info" = "Забули пароль? Не хвилюйтеся, введіть ваші дані і ми відправимо вам email з інструкціями по відновленню аккаунта.";
-"access_recovery_info_2" = "Введіть ваш новий пароль. Всі поточні сеанси будуть припинені, а токени доступу будуть анульовані.";
+"access_recovery_info_2" = "Введіть ваш новий пароль. Всі поточні сеанси будуть припинені, а токени доступу анульовані.";
 "reset_password" = "Скинути пароль";
 "2fa_code_2" = "Код двофакторної аутентифікації";
 
@@ -236,7 +236,7 @@
 "friends_many" = "$1 друзів";
 "friends_other" = "$1 друзів";
 
-"followers_zero" = "Ні одного підписника";
+"followers_zero" = "Жодного підписника";
 "followers_one" = "$1 підписник";
 "followers_few" = "$1 підписника";
 "followers_many" = "$1 підписників";
@@ -276,9 +276,9 @@
 "managed" = "Керовані";
 "size" = "Розмір";
 
-"administrators one" = "$1 адміністратор";
-"administrators few" = "$1 адміністратора";
-"administrators other" = "$1 адміністраторів";
+"administrators_one" = "$1 адміністратор";
+"administrators_few" = "$1 адміністратора";
+"administrators_other" = "$1 адміністраторів";
 
 "role" = "Роль";
 "administrator" = "Адміністратор";
@@ -322,7 +322,7 @@
 "meetings_many" = "$1 зустрічів";
 "meetings_other" = "$1 зустрічів";
 
-"open_new_group" = "Відкрити нову групу";
+"open_new_group" = "Створити нову групу";
 "open_group_desc" = "Не можете знайти потрібну групу? Відкрийте свою...";
 "search_group" = "Пошук групи";
 "search_by_groups" = "Пошук за групами";
@@ -470,7 +470,7 @@
 "privacy_setting_add_to_friends" = "Хто може називати мене другом";
 "privacy_setting_write_wall" = "Хто може писати у мене на стіні";
 "privacy_setting_write_messages" = "Хто може писати мені повідомлення";
-privacy_value_anybody" = "Всі бажаючі";
+"privacy_value_anybody" = "Всі бажаючі";
 "privacy_value_anybody_dative" = "Всім бажаючим";
 "privacy_value_users" = "Користувачам OpenVK";
 "privacy_value_friends" = "Друзі";
@@ -584,7 +584,7 @@ privacy_value_anybody" = "Всі бажаючі";
 "notifications_post" = "$1 написав(-ла) $2записом$3 на вашій стіні: $4";
 "notifications_appoint" = "$1 призначив вас керівником групи $2";
 
-nt_liked_yours" = "сподобався ваш";
+"nt_liked_yours" = "сподобався ваш";
 "nt_shared_yours" = "поділився(-ась) вашим";
 "nt_commented_yours" = "залишив(-ла) коментарій під";
 "nt_written_on_your_wall" = "написав(-ла) на вашій стіні";
