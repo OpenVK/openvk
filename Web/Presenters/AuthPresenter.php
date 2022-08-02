@@ -322,4 +322,16 @@ final class AuthPresenter extends OpenVKPresenter
             $this->redirect("/");
         }
     }
+
+    function renderReactivatePage(): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        $this->user->identity->reactivate();
+
+        header("HTTP/1.1 302 Found");
+        header("Location: /");
+        exit;
+    }
 } 

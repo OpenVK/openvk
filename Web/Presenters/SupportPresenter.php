@@ -12,6 +12,7 @@ use Parsedown;
 final class SupportPresenter extends OpenVKPresenter
 {
     protected $banTolerant = true;
+    protected $deactivationTolerant = true;
     
     private $tickets;
     private $comments;

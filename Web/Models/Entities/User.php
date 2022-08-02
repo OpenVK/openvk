@@ -793,6 +793,14 @@ class User extends RowModel
         $this->save();
     }
 
+    function reactivate(): void
+    {
+        $this->setDeleted(0);
+        $this->setDeact_Until(NULL);
+        $this->setDeact_Reason("");
+        $this->save();
+    }
+
     function getDeactivatedUntil(): DateTime
     {
         return new DateTime($this->getRecord()->deact_until);

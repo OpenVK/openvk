@@ -77,6 +77,8 @@ routes:
       handler: "User->emailChangeFinish"
     - url: "/settings/deactivate"
       handler: "User->deactivate"
+    - url: "/settings/reactivate"
+      handler: "Auth->reactivatePage"
     - url: "/coins_transfer"
       handler: "User->coinsTransfer"
     - url: "/increase_social_credits"

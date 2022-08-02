@@ -102,6 +102,11 @@
                 <a href="/" class="home_button{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME} home_button_custom{/if}" title="{$instance_name}">{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME}{$instance_name}{/if}</a>
                 <div n:if="isset($thisUser) ? (!$thisUser->isBanned() XOR !$thisUser->isActivated()) : true" class="header_navigation">
                     {ifset $thisUser}
+                        {if $thisUser->getDeactivatedUntil()->timestamp() > time()}
+                        <div class="link">
+                            <a href="/logout?hash={urlencode($csrfToken)}">{_header_log_out}</a>
+                        </div>
+                        {else}
                         <div class="link">
                             <a href="/">{_header_home}</a>
                         </div>
@@ -125,6 +130,7 @@
                                 <input type="search" name="query" placeholder="{_header_search}" style="height: 20px;background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; background-color: #fff; padding-left: 18px;width: 120px;" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
                             </form>
                         </div>
+                        {/if}
                     {else}
                         <div class="link">
                             <a href="/login">{_header_login}</a>
@@ -142,7 +148,7 @@
             <div class="sidebar">
                 <div class="navigation">
                     {ifset $thisUser}
-                        {if !$thisUser->isBanned() XOR !$thisUser->isActivated()}
+                        {if !$thisUser->isBanned() XOR !$thisUser->isActivated() XOR $thisUser->getDeactivatedUntil()->timestamp() > time()}
                             <a href="/edit" class="link edit-button">{_edit_button}</a>
                             <a href="{$thisUser->getURL()}" class="link" title="{_my_page} [Alt+Shift+.]" accesskey=".">{_my_page}</a>
                             <a href="/friends{$thisUser->getId()}" class="link">{_my_friends}
