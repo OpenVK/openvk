@@ -91,6 +91,9 @@
 "years_many" = "$1 лет";
 "years_other" = "$1 лет";
 
+"show_my_birthday" = "Показывать дату рождения";
+"show_only_month_and_day" = "Показывать только день и месяц";
+
 "relationship" = "Семейное положение";
 
 "relationship_0" = "Не выбрано";
@@ -176,6 +179,7 @@
 
 "no_comments" = "Комментарии отсутствуют";
 
+"my_news" = "Мои новости";
 "all_news" = "Все новости";
 "posts_per_page" = "Количество записей на странице";
 
@@ -212,6 +216,8 @@
 "incoming_req" = "Входящие";
 "outcoming_req" = "Исходящие";
 "req" = "Заявки";
+"friends_online" = "Друзья он-лайн";
+"all_friends" = "Все друзья"; 
 
 "req_zero" = "Не найдено ни одной заявки...";
 "req_one" = "Найдена $1 заявка";
@@ -224,6 +230,12 @@
 "friends_few" = "$1 друга";
 "friends_many" = "$1 друзей";
 "friends_other" = "$1 друзей";
+
+"friends_online_zero" = "Ни одного друга он-лайн";
+"friends_online_one" = "$1 друг он-лайн";
+"friends_online_few" = "$1 друга он-лайн";
+"friends_online_many" = "$1 друзей он-лайн";
+"friends_online_other" = "$1 друзей он-лайн";
 
 "friends_list_zero" = "У Вас пока нет друзей";
 "friends_list_one" = "У Вас $1 друг";
@@ -242,6 +254,12 @@
 "subscriptions_few" = "$1 подписки";
 "subscriptions_many" = "$1 подписок";
 "subscriptions_other" = "$1 подписок";
+
+"friends_list_online_zero" = "У Вас пока нет друзей он-лайн";
+"friends_list_online_one" = "У Вас $1 друг он-лайн";
+"friends_list_online_few" = "У Вас $1 друга он-лайн";
+"friends_list_online_many" = "У Вас $1 друзей он-лайн";
+"friends_list_online_other" = "У Вас $1 друзей он-лайн";
 
 /* Group */
 
@@ -876,7 +894,7 @@
 "forbidden_comment" = "Настройки приватности этого пользователя не разрешают вам смотреть на его страницу.";
 
 "changes_saved" = "Изменения сохранены";
-"changes_saved_comment" = "Новый данные появятся на вашей странице";
+"changes_saved_comment" = "Новые данные появятся на вашей странице";
 
 "photo_saved" = "Фотография сохранена";
 "photo_saved_comment" = "Новое изображние профиля появится у вас на странице";

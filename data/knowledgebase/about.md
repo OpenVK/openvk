@@ -1,6 +1,6 @@
 **OpenVK is a universal colleague search tool based on the VKontakte structure.**
 
-We want friends, classmates, classmates, neighbors and colleagues to always be in touch.
+We want friends, classmates, neighbors and colleagues to always be in touch.
 
 With this site you can:
 

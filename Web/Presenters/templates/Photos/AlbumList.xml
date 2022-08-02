@@ -59,6 +59,6 @@
 {block description}
     <span>{$x->getDescription() ?? $x->getName()}</span><br />
     <span style="color: grey;">{$x->getPhotosCount()} фотографий</span><br />
-    <span style="color: grey;">Обновлен {$x->getEditTime() ?? $x->getCreationTime()}</span><br />
-    <span style="color: grey;">Создан {$x->getCreationTime()}</span><br />
+    <span style="color: grey;">{tr("updated_at", $x->getEditTime() ?? $x->getCreationTime())}</span><br />
+    <span style="color: grey;">{_created} {$x->getCreationTime()}</span><br />
 {/block}

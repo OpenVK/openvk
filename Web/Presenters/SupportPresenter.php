@@ -6,6 +6,7 @@ use openvk\Web\Models\Entities\TicketComment;
 use openvk\Web\Models\Repositories\TicketComments;
 use openvk\Web\Util\Telegram;
 use Chandler\Session\Session;
+use Chandler\Database\DatabaseConnection;
 use Parsedown;
 
 final class SupportPresenter extends OpenVKPresenter
@@ -322,6 +323,10 @@ final class SupportPresenter extends OpenVKPresenter
         
         $user->setBlock_In_Support_Reason($this->queryParam("reason"));
         $user->save();
+
+        if($this->queryParam("close_tickets"))
+            DatabaseConnection::i()->getConnection()->query("UPDATE tickets SET type = 2 WHERE user_id = ".$id);
+
         $this->returnJson([ "success" => true, "reason" => $this->queryParam("reason") ]);
     }
 

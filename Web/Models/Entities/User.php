@@ -364,7 +364,15 @@ class User extends RowModel
 
     function getBirthday(): ?DateTime
     {
-        return new DateTime($this->getRecord()->birthday);
+        if(is_null($this->getRecord()->birthday))
+            return NULL;
+        else
+            return new DateTime($this->getRecord()->birthday);
+    }
+
+    function getBirthdayPrivacy(): int
+    {
+        return $this->getRecord()->birthday_privacy;
     }
 
     function getAge(): ?int
@@ -490,6 +498,16 @@ class User extends RowModel
     function getFriendsCount(): int
     {
         return $this->_abstractRelationCount("get-friends");
+    }
+
+    function getFriendsOnline(int $page = 1, int $limit = 6): \Traversable
+    {
+        return $this->_abstractRelationGenerator("get-online-friends", $page, $limit);
+    }
+
+    function getFriendsOnlineCount(): int
+    {
+        return $this->_abstractRelationCount("get-online-friends");
     }
 
     function getFollowers(int $page = 1, int $limit = 6): \Traversable

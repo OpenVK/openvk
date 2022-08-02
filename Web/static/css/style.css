@@ -569,6 +569,7 @@ input[type~="email"],
 input[type~="phone"],
 input[type="search"],
 input[type~="search"],
+input[type~="date"],
 select {
     border: 1px solid #C0CAD5;
     padding: 3px;
@@ -584,7 +585,6 @@ h4 {
     font-size: 12px;
     font-weight: bold;
     margin: 0;
-    padding: 0 0 3px;
     font-family: verdana, arial, sans-serif;
 }
 
@@ -836,7 +836,7 @@ table.User {
     padding: 4px;
     border: #DEDEDE solid 1px;
     clear: both;
-    margin-bottom: 12px;
+    margin-bottom: 6px;
     overflow: hidden;
     word-break: break-word;
 }
@@ -1611,6 +1611,26 @@ body.scrolled .toTop:hover {
     background-color: rgb(240, 240, 240);
     border-bottom: 1px solid #ccc;
     border-top: 1px solid #ccc;
+    margin-left: -10px;
+    margin-bottom: 10px;
+    width: 611px;
+}
+
+.postFeedWrapperMicroblog {
+    margin-bottom: 5px;
+}
+
+.postFeedBottom .postFeedPaginator {
+    float: right;
+}
+
+.postFeedBottom .postFeedPageSelect {
+    float: left;
+    padding-top: 8px;
+}
+
+#pageSelect {
+    width: 200px;
 }
 
 .user-alert {
@@ -1948,10 +1968,10 @@ table td[width="120"] {
 }
 
 #votesBalance {
-    margin-top: 50px;
+    margin-top: 10px;
     padding: 7px;
     background-color: #f6f6f6;
-    border-bottom: 1.5px solid #707070;
+    border-bottom: 1.5px solid #DDDDDD;
     text-align: center;
     user-select: none;
 }

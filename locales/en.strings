@@ -90,6 +90,9 @@
 "years_one" = "1 year old";
 "years_other" = "$1 years old";
 
+"show_my_birthday" = "Show my birthday";
+"show_only_month_and_day" = "Show only month and day";
+
 "relationship" = "Relationship";
 
 "relationship_0" = "Not selected";
@@ -168,6 +171,7 @@
 
 "no_comments" = "No comments";
 
+"my_news" = "My news";
 "all_news" = "All news";
 "posts_per_page" = "Number of posts per page";
 
@@ -205,6 +209,8 @@
 "incoming_req" = "Pending";
 "outcoming_req" = "Outgoing";
 "req" = "Requests";
+"friends_online" = "Friends online";
+"all_friends" = "All friends";
 
 "req_zero" = "No requests were found...";
 "req_one" = "Found $1 request";
@@ -214,9 +220,17 @@
 "friends_one" = "$1 friend";
 "friends_other" = "$1 friends";
 
+"friends_online_zero" = "No friends online";
+"friends_online_one" = "$1 friend is online";
+"friends_online_other" = "$1 friends are online";
+
 "friends_list_zero" = "You have no friends yet";
 "friends_list_one" = "You have $1 friend";
 "friends_list_other" = "You have $1 friends";
+
+"friends_list_online_zero" = "You have no friends online";
+"friends_list_online_one" = "You have $1 friend online";
+"friends_list_online_other" = "You have $1 friends online";
 
 "followers_zero" = "No followers";
 "followers_one" = "$1 follower";

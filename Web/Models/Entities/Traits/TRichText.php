@@ -75,6 +75,8 @@ trait TRichText
             
             $text = $this->removeZalgo($text);
             $text = nl2br($text);
+        } else {
+            $text = str_replace("\r\n","\n", $text);
         }
         
         if(OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["christian"])

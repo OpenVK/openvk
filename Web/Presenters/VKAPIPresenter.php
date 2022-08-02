@@ -42,6 +42,24 @@ final class VKAPIPresenter extends OpenVKPresenter
         
         exit(json_encode($payload));
     }
+
+    private function twofaFail(int $userId): void
+    {
+        header("HTTP/1.1 401 Unauthorized");
+        header("Content-Type: application/json");
+        
+        $payload = [
+            "error"             => "need_validation",
+            "error_description" => "use app code",
+            "validation_type"   => "2fa_app",
+            "validation_sid"    => "2fa_".$userId."_2839041_randommessdontread",
+            "phone_mask"        => "+374 ** *** 420",
+            "redirect_url"      => "https://http.cat/418", // Not implemented yet :( So there is a photo of cat :3
+            "validation_resend" => "nowhere"
+        ];
+        
+        exit(json_encode($payload));
+    }
     
     private function badMethod(string $object, string $method): void
     {
@@ -249,8 +267,12 @@ final class VKAPIPresenter extends OpenVKPresenter
         $user = (new Users)->get($uId);
 
         $code = $this->requestParam("code");
-        if($user->is2faEnabled() && !($code === (new Totp)->GenerateToken(Base32::decode($user->get2faSecret())) || $user->use2faBackupCode((int) $code)))
-            $this->fail(28, "Invalid 2FA code", "internal", "acquireToken");
+        if($user->is2faEnabled() && !($code === (new Totp)->GenerateToken(Base32::decode($user->get2faSecret())) || $user->use2faBackupCode((int) $code))) {
+            if($this->requestParam("2fa_supported") == "1")
+                $this->twofaFail($user->getId());
+            else
+                $this->fail(28, "Invalid 2FA code", "internal", "acquireToken");
+        }
         
         $token = new APIToken;
         $token->setUser($user);

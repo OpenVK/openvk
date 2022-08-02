@@ -6,24 +6,30 @@ body {
     position: fixed;
     height: 42px;
     background: #3C3C3C;
-    z-index: 1000;
+    z-index: 199;
 }
 
 .home_button {
-    background: url("/themepack/openvk_modern/0.0.1.0/resource/2.png") no-repeat;
+    background: #3C3C3C url("/themepack/openvk_modern/0.0.1.0/resource/2.png") no-repeat;
+    background-size: 80%;
     background-position-y: 0px;
-    background-position-x: 1px;
+    background-position-x: 2px;
 }
 
 .home_button_custom {
-    background: url("/themepack/openvk_modern/0.0.1.0/resource/5.png") no-repeat;
+    background: #3C3C3C url("/themepack/openvk_modern/0.0.1.0/resource/4.png") no-repeat;
+    background-size: 80%;
     background-position-y: 0px;
-    background-position-x: 1px;
+    background-position-x: 2px;
     text-shadow: none;
 }
 
 .header_navigation .link {
     background: unset;
+}
+
+.header_navigation .link a:hover {
+    text-decoration: none;
 }
 
 .sidebar {
@@ -97,10 +103,18 @@ body {
 }
 
 .page_yellowheader {
-    background: #EEE5B8;
-    border-right: solid 1px #EEE5B8;
-    border-left: solid 1px #EEE5B8;
-    border-bottom: solid 1px #EEE5B8;
+    background: #E2E2E2;
+    border-right: solid 1px #E2E2E2;
+    border-left: solid 1px #E2E2E2;
+    border-bottom: solid 1px #E2E2E2;
+}
+
+.page_yellowheader span {
+    color: #BBBBBB;
+}
+
+.page_yellowheader a {
+	color: #5C5C5C;
 }
 
 .page-wrap {
@@ -109,14 +123,19 @@ body {
     border-right: solid 1px #fff;
 }
 
-#wrapHI {
-    border-right: solid 1px #EEE5B8;
-    border-left: solid 1px #EEE5B8;
+.page_wrap {
+    border-bottom: solid 1px #fff;
+    border-left: solid 1px #fff;
+    border-right: solid 1px #fff;
 }
 
-#wrapH {
-    border-right: solid 1px #fff;
-    border-left: solid 1px #fff;
+#wrapHI {
+    border-right: solid 1px #E2E2E2;
+    border-left: solid 1px #E2E2E2;
+}
+
+.left_small_block {
+    border-right: 1px #fff solid;
 }
 
 .menu_divider {
@@ -132,7 +151,7 @@ body {
 }
 
 .container_gray .content {
-    border: #fff solid 1px;
+    border: #E5E5E5 solid 1px;
 }
 
 .accent-box {
@@ -144,6 +163,18 @@ input[type~="password"], input[type="email"], input[type="phone"],
 input[type~="email"], input[type~="phone"], input[type="search"],
 input[type~="search"], textarea, select {
     border: 1px solid #E5E5E5;
+}
+
+input[type=checkbox] {
+	background-image: url("/themepack/openvk_modern/0.0.1.0/resource/6.png")
+}
+
+.mb_tab#active div {
+    border: 2px solid #898989;
+}
+
+.summaryBar {
+    border-bottom: #fff solid 1px;
 }
 
 .page_footer .link:hover {
@@ -176,10 +207,26 @@ input[type~="search"], textarea, select {
     border: 1px solid #FAFAFA;
 }
 
-.psa-poster {
-    border: 5px solid #F3F3F3;
+.ovk-diag {
+    border: none;
+    border-radius: 2px;
 }
 
-.written {
-    background: url("/themepack/openvk_modern/0.0.1.0/resource/4.png") no-repeat 0px 1px;
+.ovk-diag-cont {
+    border-radius: 2px;
+}
+
+.ovk-diag-head {
+    border-bottom: 1px solid #757575;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+}
+
+.ovk-diag-action {
+	border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+
+#votesBalance {
+    border-bottom: none;
 }

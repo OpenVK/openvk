@@ -201,6 +201,34 @@
                 </div>
             </div>
         </div>
+        <div n:if="$thisUser != NULL && $thisUser->getId() == $user->getId() && $user->getFriendsOnlineCount() > 0">
+            {var $friendOnlineCount = $user->getFriendsOnlineCount()}
+            
+            <div class="content_title_expanded" onclick="hidePanel(this, {$friendOnlineCount});">
+                {_"friends_online"}
+            </div>
+            <div>
+                <div class="content_subtitle">
+                    {tr("friends_online", $friendOnlineCount)}
+                    <div style="float:right;">
+                        <a href="/friends{$user->getId()}?act=online">{_"all_title"}</a>
+                    </div>
+                </div>
+                <div class="content_list">
+                    <div class="cl_element" n:foreach="$user->getFriendsOnline(1) as $friend">
+                        <div class="cl_avatar">
+                            <a href="{$friend->getURL()}">
+                                <img class="ava" src="{$friend->getAvatarUrl('miniscule')}" />
+                            </a>
+                        </div>
+                        <a href="{$friend->getURL()}" class="cl_name">
+                            <text class="cl_fname">{$friend->getFirstName()}</text>
+                            <text class="cl_lname">{$friend->getLastName()}</text>
+                        </a>    
+                    </div>
+                </div>
+            </div>
+        </div>
         <div n:if="$albumsCount > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this, {$albumsCount});">
                 {_"albums"}
@@ -372,13 +400,12 @@
                             <td class="label"><span class="nobold">{_"politViews"}:</span></td>
                             <td class="data">{var $pviews = $user->getPoliticalViews()}{_"politViews_$pviews"}</td>
                         </tr>
-                        {if $user->getBirthday()->timestamp() > 0}
-                            <tr>
-                                <td class="label"><span class="nobold">{_"birth_date"}:</span></td>
-                                <td class="data">{$user->getBirthday()->format('%e %B %Y')},
+                        <tr n:if="!is_null($user->getBirthday())">
+                            <td class="label"><span class="nobold">{_"birth_date"}:</span></td>
+                            <td n:if="$user->getBirthdayPrivacy() == 0" class="data">{$user->getBirthday()->format('%e %B %Y')},
                                 {tr("years", $user->getAge())}</td>
-                            </tr>
-                        {/if}
+                            <td n:if="$user->getBirthdayPrivacy() == 1" class="data">{$user->getBirthday()->format('%e %B')}</td>
+                        </tr>
                     </tbody>
                 </table>
 			</div>
@@ -487,8 +514,8 @@
                 <div class="content_subtitle">
                     {tr("gifts", $giftCount)}
                     <div style="float:right;">
-                        {if OPENVK_ROOT_CONF['openvk']['preferences']['commerce']}
-                        <a href="/gifts?act=pick&user={$user->getId()}">{_send_gift}</a> |
+                        {if OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && !is_null($thisUser)}
+                            <a href="/gifts?act=pick&user={$user->getId()}">{_send_gift}</a> |
                         {/if}
                         <a href="/gifts{$user->getId()}">{_all_title}</a>
                     </div>
@@ -500,7 +527,8 @@
                             <a href="{$hideInfo ? 'javascript:false' : $giftDescriptor->sender->getURL()}">
                                 <img style="width: 70px; max-height: 70px;"
                                     src="{$giftDescriptor->gift->getImage(2)}"
-                                    alt="{$hideInfo ? tr('gift') : ($giftDescriptor->caption ?? tr('gift'))}" />
+                                    alt="{$hideInfo ? tr('gift') : ($giftDescriptor->caption ?? tr('gift'))}" 
+                                    title="{$hideInfo ? tr('gift') : ($giftDescriptor->caption ?? tr('gift'))}" />
                             </a>  
                         </div>
                     </div>
@@ -581,12 +609,14 @@
                 function toggleBanInSupport() {
                     uBanMsgTxt  = "Вы собираетесь заблокировать в поддержке пользователя " + {$user->getCanonicalName()} + ".";
                     uBanMsgTxt += "<br/><br/><b>Причина бана</b>: <input type='text' id='uBanMsgInput' placeholder='придумайте что-нибудь крутое' />";
+                    uBanMsgTxt += "<br/><br/><input type='checkbox' id='uBanClsTicketsInput' /><label for='uBanClsTicketsInput'>Закрыть все обращения пользователя</label>";
 
                     MessageBox("Заблокировать в поддержке " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
                         (function() {
                             res = document.querySelector("#uBanMsgInput").value;
+                            cls = document.querySelector("#uBanClsTicketsInput").value;
                             xhr = new XMLHttpRequest();
-                            xhr.open("GET", "/admin/support/ban/" + {$user->getId()} + "?reason=" + res + "&hash=" + {rawurlencode($csrfToken)}, true);
+                            xhr.open("GET", "/admin/support/ban/" + {$user->getId()} + "?reason=" + res + "&close_tickets=" + cls + "&hash=" + {rawurlencode($csrfToken)}, true);
                             xhr.onload = (function() {
                                 if(xhr.responseText.indexOf("success") === -1)
                                     MessageBox("Ошибка", "Не удалось заблокировать пользователя в поддержке...", ["OK"], [Function.noop]);

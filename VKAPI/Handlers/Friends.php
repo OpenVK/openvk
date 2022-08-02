@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
-use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\Users as UsersRepo;
 
 final class Friends extends VKAPIRequestHandler
@@ -15,7 +14,7 @@ final class Friends extends VKAPIRequestHandler
 
 		$this->requireUser();
 		
-		foreach ($users->get($user_id)->getFriends($offset, $count) as $friend) {
+		foreach($users->get($user_id)->getFriends($offset, $count) as $friend) {
 			$friends[$i] = $friend->getId();
 			$i++;
 		}
@@ -24,7 +23,7 @@ final class Friends extends VKAPIRequestHandler
 
 		$usersApi = new Users($this->getUser());
 
-		if (!is_null($fields)) {
+		if(!is_null($fields)) {
 			$response = $usersApi->get(implode(',', $friends), $fields, 0, $count);  # FIXME
 		}
 
@@ -70,33 +69,28 @@ final class Friends extends VKAPIRequestHandler
 		$this->requireUser();
 
 		$users = new UsersRepo;
-
-		$user = $users->get(intval($user_id));
+		$user  = $users->get(intval($user_id));
 		
-		if(is_null($user)){
+		if(is_null($user)) {
 			$this->fail(177, "Cannot add this user to friends as user not found");
 		} else if($user->getId() == $this->getUser()->getId()) {
 			$this->fail(174, "Cannot add user himself as friend");
 		}
 
-		switch ($user->getSubscriptionStatus($this->getUser())) {
+		switch($user->getSubscriptionStatus($this->getUser())) {
 			case 0:
 				$user->toggleSubscription($this->getUser());
 				return 1;
-				break;
 
 			case 1:
 				$user->toggleSubscription($this->getUser());
 				return 2;
-				break;
 
 			case 3:
 				return 2;
-				break;
 			
 			default:
 				return 1;
-				break;
 		}
 	}
 
@@ -108,15 +102,13 @@ final class Friends extends VKAPIRequestHandler
 
 		$user = $users->get(intval($user_id));
 
-		switch ($user->getSubscriptionStatus($this->getUser())) {
+		switch($user->getSubscriptionStatus($this->getUser())) {
 			case 3:
 				$user->toggleSubscription($this->getUser());
 				return 1;
-				break;
 			
 			default:
 				fail(15, "Access denied: No friend or friend request found.");
-				break;
 		}
 	}
 
@@ -130,28 +122,12 @@ final class Friends extends VKAPIRequestHandler
 
 		$response = [];
 
-		for ($i=0; $i < sizeof($friends); $i++) { 
+		for($i=0; $i < sizeof($friends); $i++) { 
 			$friend = $users->get(intval($friends[$i]));
-
-			$status = 0;
-			switch ($friend->getSubscriptionStatus($this->getUser())) {
-				case 3:
-				case 0:
-					$status = $friend->getSubscriptionStatus($this->getUser());
-					break;
-				
-				case 1:
-					$status = 2;
-					break;
-
-				case 2:
-					$status = 1;
-					break;
-			}
 
 			$response[] = (object)[
 				"friend_status" => $friend->getSubscriptionStatus($this->getUser()),
-				"user_id" => $friend->getId()
+				"user_id" 		=> $friend->getId()
 			];
 		}
 

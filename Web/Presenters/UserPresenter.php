@@ -34,13 +34,9 @@ final class UserPresenter extends OpenVKPresenter
     function renderView(int $id): void
     {
         $user = $this->users->get($id);
-        if(!$user || $user->isDeleted())
+        if(!$user || $user->isDeleted()) {
             $this->template->_template = "User/deleted.xml";
-        else {
-            if($user->getShortCode())
-                if(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) !== "/" . $user->getShortCode())
-                    $this->redirect("/" . $user->getShortCode(), static::REDIRECT_TEMPORARY_PRESISTENT);
-            
+        } else {
             $this->template->albums      = (new Albums)->getUserAlbums($user);
             $this->template->albumsCount = (new Albums)->getUserAlbumsCount($user);
             $this->template->videos      = (new Videos)->getByUser($user, 1, 2);
@@ -158,7 +154,10 @@ final class UserPresenter extends OpenVKPresenter
                 
 
                 if (strtotime($this->postParam("birthday")) < time())
-                $user->setBirthday(strtotime($this->postParam("birthday")));
+                $user->setBirthday(empty($this->postParam("birthday")) ? NULL : strtotime($this->postParam("birthday")));
+
+                if ($this->postParam("birthday_privacy") <= 1 && $this->postParam("birthday_privacy") >= 0)
+                $user->setBirthday_Privacy($this->postParam("birthday_privacy"));
 
                 if ($this->postParam("marialstatus") <= 8 && $this->postParam("marialstatus") >= 0)
                 $user->setMarital_Status($this->postParam("marialstatus"));
@@ -295,7 +294,11 @@ final class UserPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("error_upload_failed"));
         }
         
-        (new Albums)->getUserAvatarAlbum($this->user->identity)->addPhoto($photo);
+        $album = (new Albums)->getUserAvatarAlbum($this->user->identity);
+        $album->addPhoto($photo);
+        $album->setEdited(time());
+        $album->save();
+        
         $this->flashFail("succ", tr("photo_saved"), tr("photo_saved_comment"));
     }
     

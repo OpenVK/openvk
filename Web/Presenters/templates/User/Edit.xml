@@ -145,7 +145,11 @@
                              <span class="nobold">{_"birth_date"}: </span>
                         </td>
                         <td>
-                         <input max={date('Y-m-d')} name="birthday" value={$user->getBirthday()->format('%Y-%m-%d')} type="date"/>
+                            <input max={date('Y-m-d')} name="birthday" value={is_null($user->getBirthday()) ? NULL : $user->getBirthday()->format('%Y-%m-%d')} type="date" style="margin-bottom: 7px;" />
+                            <select name="birthday_privacy">
+                                <option value="0" {if $user->getBirthdayPrivacy() == 0}selected{/if}>{_show_my_birthday}</option>
+                                <option value="1" {if $user->getBirthdayPrivacy() == 1}selected{/if}>{_show_only_month_and_day}</option>
+                            </select>
                         </td>
                     </tr>
                     <tr>
