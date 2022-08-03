@@ -1,20 +1,15 @@
-{extends "@layout.xml"}
-{block title}{$thisUser->getCanonicalName()}{/block}
+{extends "../@layout.xml"}
+{block title}{$user->getCanonicalName()}{/block}
 
 {block header}
-    {$thisUser->getCanonicalName()}
+    {$user->getCanonicalName()}
 {/block}
 
 {block content}
-    <div class="container_gray bottom" style="margin: -10px -10px 10px;">
-        Ваша страница <b>удалена</b>.<br/><br/>
-        Если Вы захотите снова начать пользоваться сайтом, Вы можете <a href="/settings/reactivate">восстановить свою страницу</a> до {$thisUser->getDeactivatedUntil()->format("%e %B %G" . tr("time_at_sp") . "%R")}.
-    </div>
-
     <div class="left_small_block">
         <div>
-            <img src="{$thisUser->getAvatarUrl('normal')}"
-                alt="{$thisUser->getCanonicalName()}"
+            <img src="{$user->getAvatarUrl('normal')}"
+                alt="{$user->getCanonicalName()}"
                 style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
         </div>
     </div>
@@ -23,7 +18,7 @@
         <div class="page_info">
             <div class="accountInfo clearFix">
                 <div class="profileName">
-                    <h2>{$thisUser->getFullName()}</h2>
+                    <h2>{$user->getFullName()}</h2>
                     <div class="page_status" style="color: #AAA;">Страница удалена</div>
                 </div>
             </div>

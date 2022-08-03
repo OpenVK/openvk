@@ -152,7 +152,7 @@ final class AuthPresenter extends OpenVKPresenter
                 $this->flashFail("err", tr("login_failed"), tr("invalid_username_or_password"));
 
             $ovkUser = new User($user->related("profiles.user")->fetch());
-            if($ovkUser->isDeleted())
+            if($ovkUser->isDeleted() && $ovkUser->getDeactivatedUntil()->timestamp() < time())
                 $this->flashFail("err", tr("login_failed"), tr("invalid_username_or_password"));
 
             $secret = $user->related("profiles.user")->fetch()["2fa_secret"];

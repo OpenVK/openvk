@@ -37,7 +37,13 @@ final class UserPresenter extends OpenVKPresenter
     {
         $user = $this->users->get($id);
         if(!$user || $user->isDeleted()) {
-            $this->template->_template = "User/deleted.xml";
+            if($user->getDeactivatedUntil()->timestamp() > time()) {
+                $this->template->_template = "User/deactivated.xml";
+                
+                $this->template->user = $user;
+            } else {
+                $this->template->_template = "User/deleted.xml";
+            }
         } else {
             $this->template->albums      = (new Albums)->getUserAlbums($user);
             $this->template->albumsCount = (new Albums)->getUserAlbumsCount($user);

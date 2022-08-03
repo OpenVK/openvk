@@ -796,7 +796,7 @@ class User extends RowModel
     function reactivate(): void
     {
         $this->setDeleted(0);
-        $this->setDeact_Until(NULL);
+        $this->setDeact_Until(0);
         $this->setDeact_Reason("");
         $this->save();
     }
