@@ -316,28 +316,28 @@ function showProfileDeactivateDialog(hash) {
             <table>
                 <tbody>
                     <tr>
-                        <td><input type="radio" name="deactivate_type" id="deactivate_1"></td>
-                        <td><label for="deactivate_1">${tr("profile_deactivate_reason_1")}</label></td>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_r_1" data-text="${tr("profile_deactivate_reason_1_text")}"></td>
+                        <td><label for="deactivate_r_1">${tr("profile_deactivate_reason_1")}</label></td>
                     </tr>
                     <tr>
-                        <td><input type="radio" name="deactivate_type" id="deactivate_2"></td>
-                        <td><label for="deactivate_2">${tr("profile_deactivate_reason_2")}</label></td>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_r_2" data-text="${tr("profile_deactivate_reason_2_text")}"></td>
+                        <td><label for="deactivate_r_2">${tr("profile_deactivate_reason_2")}</label></td>
                     </tr>
                     <tr>
-                        <td><input type="radio" name="deactivate_type" id="deactivate_3"></td>
-                        <td><label for="deactivate_3">${tr("profile_deactivate_reason_3")}</label></td>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_r_3" data-text="${tr("profile_deactivate_reason_3_text")}"></td>
+                        <td><label for="deactivate_r_3">${tr("profile_deactivate_reason_3")}</label></td>
                     </tr>
                     <tr>
-                        <td><input type="radio" name="deactivate_type" id="deactivate_4"></td>
-                        <td><label for="deactivate_4">${tr("profile_deactivate_reason_4")}</label></td>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_r_4" data-text="${tr("profile_deactivate_reason_4_text")}"></td>
+                        <td><label for="deactivate_r_4">${tr("profile_deactivate_reason_4")}</label></td>
                     </tr>
                     <tr>
-                        <td><input type="radio" name="deactivate_type" id="deactivate_5"></td>
-                        <td><label for="deactivate_5">${tr("profile_deactivate_reason_5")}</label></td>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_r_5" data-text="${tr("profile_deactivate_reason_5_text")}"></td>
+                        <td><label for="deactivate_r_5">${tr("profile_deactivate_reason_5")}</label></td>
                     </tr>
                     <tr>
-                        <td><input type="radio" name="deactivate_type" id="deactivate_6"></td>
-                        <td><label for="deactivate_6">${tr("profile_deactivate_reason_6")}</label></td>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_r_6" data-text=""></td>
+                        <td><label for="deactivate_r_6">${tr("profile_deactivate_reason_6")}</label></td>
                     </tr>
                 </tbody>
             </table>
@@ -353,24 +353,9 @@ function showProfileDeactivateDialog(hash) {
         Function.noop
     ]);
 
-    document.querySelector("#deactivate_1").onclick = function () {
-        document.getElementById('deactivate_reason').value = tr("profile_deactivate_reason_1_text");
-    };
-    document.querySelector("#deactivate_2").onclick = function () {
-        document.getElementById('deactivate_reason').value = tr("profile_deactivate_reason_2_text");
-    };
-    document.querySelector("#deactivate_3").onclick = function () {
-        document.getElementById('deactivate_reason').value = tr("profile_deactivate_reason_3_text");
-    };
-    document.querySelector("#deactivate_4").onclick = function () {
-        document.getElementById('deactivate_reason').value = tr("profile_deactivate_reason_4_text");
-    };
-    document.querySelector("#deactivate_5").onclick = function () {
-        document.getElementById('deactivate_reason').value = tr("profile_deactivate_reason_5_text");
-    };
-    document.querySelector("#deactivate_6").onclick = function () {
-        document.getElementById('deactivate_reason').value = '';
-    };
+    $('[id^="deactivate_r_"]').on("click", function () {
+        document.getElementById('deactivate_reason').value = $(this).data("text");
+    });
 }
 
 function showIncreaseRatingDialog(coinsCount, userUrl, hash) {
