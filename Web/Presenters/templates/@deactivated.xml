@@ -7,8 +7,7 @@
 
 {block content}
     <div class="container_gray bottom" style="margin: -10px -10px 10px;">
-        Ваша страница <b>удалена</b>.<br/><br/>
-        Если Вы захотите снова начать пользоваться сайтом, Вы можете <a href="/settings/reactivate">восстановить свою страницу</a> до {$thisUser->getDeactivatedUntil()->format("%e %B %G" . tr("time_at_sp") . "%R")}.
+        {tr("profile_deactivated_msg", $thisUser->getDeactivatedUntil()->format("%e %B %G" . tr("time_at_sp") . "%R"))|noescape}
     </div>
 
     <div class="left_small_block">
@@ -24,12 +23,11 @@
             <div class="accountInfo clearFix">
                 <div class="profileName">
                     <h2>{$thisUser->getFullName()}</h2>
-                    <div class="page_status" style="color: #AAA;">Страница удалена</div>
+                    <div class="page_status" style="color: #AAA;">{_profile_deactivated_status}</div>
                 </div>
             </div>
             <center style="color: #AAA;margin: 40px 0;font-size: 13px;">
-                Страница пользователя удалена.<br/>
-                Информация недоступна.
+                {_profile_deactivated_info|noescape}
             </center>
         </div>
     </div>

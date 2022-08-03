@@ -342,7 +342,7 @@ function showProfileDeactivateDialog(hash) {
                 </tbody>
             </table>
             <textarea name="deactivate_reason" id="deactivate_reason" placeholder="${tr("gift_your_message")}"></textarea><br><br>
-            <input type="checkbox" name="deactivate_share" id="deactivate_share">
+            <input type="checkbox" name="deactivate_share" id="deactivate_share" checked>
             <label for="deactivate_share">${tr("share_with_friends")}</label>
             <input type="hidden" name="hash" value="${hash}" />
         </form>

@@ -149,6 +149,10 @@
 "post_writes_m" = "wrote";
 "post_writes_f" = "wrote";
 "post_writes_g" = "published";
+"post_deact_m" = "deleted his profile saying:";
+"post_deact_f" = "deleted her profile saying:";
+"post_deact_silent_m" = "silently deleted his profile.";
+"post_deact_silent_f" = "silently deleted her profile.";
 "wall" = "Wall";
 "post" = "Post";
 "write" = "Write";
@@ -502,6 +506,10 @@
 "profile_deactivate_reason_5" = "No one comments on my posts";
 "profile_deactivate_reason_5_text" = "No one watches me here and it's sad. You will regret that I left.";
 "profile_deactivate_reason_6" = "Other reason";
+
+"profile_deactivated_msg" = "Your account has been <b>deleted</b>.<br/><br/>If you would like to start using the site again, you can <a href='/settings/reactivate'>restore your account</a> until $1.";
+"profile_deactivated_status" = "Account deleted";
+"profile_deactivated_info" = "The account has been deleted.<br/>The information is not available.";
 
 "share_with_friends" = "Share with friends";
 

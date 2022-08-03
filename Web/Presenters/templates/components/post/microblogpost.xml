@@ -1,6 +1,11 @@
 {var $author = $post->getOwner()}
 {var $comments = $post->getLastComments(3)}
 {var $commentsCount = $post->getCommentsCount()}
+{if $post->isPostedAtDeact() && $post->getText()}
+    {var $deac = "post_deact"}
+{else}
+    {var $deac = "post_deact_silent"}
+{/if}
 
 {var $commentTextAreaId = $post === NULL ? rand(1,300) : $post->getId()}
 
@@ -17,6 +22,7 @@
                 <div class="post-author">
                     <a href="{$author->getURL()}"><b>{$author->getCanonicalName()}</b></a>
                     <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
+                    {$post->isPostedAtDeact() ? ($author->isFemale() ? tr($deac . "_f") : tr($deac . "_m"))}
                     {if ($onWallOf ?? false) &&!$post->isPostedOnBehalfOfGroup() && $post->getOwnerPost() !== $post->getTargetWall()}
                         {var $wallId  = $post->getTargetWall()}
                         {var $wallURL = $wallId > -1 ? "/id$wallId" : "/club" . abs($wallId)}

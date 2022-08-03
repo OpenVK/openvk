@@ -488,15 +488,19 @@ final class UserPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
 
+        $flags = 0;
         $reason = $this->postParam("deactivate_reason");
         $share = $this->postParam("deactivate_share");
 
         if($share) {
+            $flags |= 0b00100000;
+
             $post = new Post;
             $post->setOwner($this->user->id);
             $post->setWall($this->user->id);
             $post->setCreated(time());
             $post->setContent($reason);
+            $post->setFlags($flags);
             $post->save();
         }
 
