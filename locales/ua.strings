@@ -216,6 +216,8 @@
 "send_message" = "Відправити повідомлення";
 "incoming_req" = "Підписники";
 "outcoming_req" = "Заявки";
+"friends_online" = "Друзі онлайн";
+"all_friends" = "Усі друзі"; 
 "req" = "Заявки";
 
 "req_zero" = "Не знайдено жодної заявки...";
@@ -236,17 +238,29 @@
 "friends_many" = "$1 друзів";
 "friends_other" = "$1 друзів";
 
+"friends_online_zero" = "Жодного друга онлайн";
+"friends_online_one" = "$1 друг онлайн";
+"friends_online_few" = "$1 друга онлайн";
+"friends_online_many" = "$1 друзів онлайн";
+"friends_online_other" = "$1 друзів онлайн";
+
 "followers_zero" = "Жодного підписника";
 "followers_one" = "$1 підписник";
 "followers_few" = "$1 підписника";
 "followers_many" = "$1 підписників";
 "followers_other" = "$1 підписників";
 
-"subscriptions_zero" = "Ні одної підписки";
+"subscriptions_zero" = "Жодної підписки";
 "subscriptions_one" = "$1 підписка";
 "subscriptions_few" = "$1 підписки";
 "subscriptions_many" = "$1 підписок";
 "subscriptions_other" = "$1 підписок";
+
+"friends_list_online_zero" = "У Вас поки немає друзів, що в онлайн";
+"friends_list_online_one" = "У Вас $1 друг онлайн";
+"friends_list_online_few" = "У Вас $1 друга онлайн";
+"friends_list_online_many" = "У Вас $1 друзів онлайн";
+"friends_list_online_other" = "У Вас $1 друзів онлайн";
 
 /* Group */
 
