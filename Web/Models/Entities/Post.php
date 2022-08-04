@@ -85,7 +85,7 @@ class Post extends Postable
         return ($this->getRecord()->flags & 0b01000000) > 0;
     }
 
-    function isPostedAtDeact(): bool
+    function isDeactivationMessage(): bool
     {
         return ($this->getRecord()->flags & 0b00100000) > 0;
     }

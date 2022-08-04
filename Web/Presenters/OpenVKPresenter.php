@@ -216,11 +216,11 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->template->userTainted = $user->isTainted();
 
             if($this->user->identity->isDeleted() && !$this->deactivationTolerant) {
-                if($this->user->identity->getDeactivatedUntil()->timestamp() > time()) {
+                if($this->user->identity->isDeactivated()) {
                     header("HTTP/1.1 403 Forbidden");
                     $this->getTemplatingEngine()->render(__DIR__ . "/templates/@deactivated.xml", [
-                        "thisUser" => $this->user->identity,
-                        "csrfToken" => $GLOBALS["csrfToken"],
+                        "thisUser"    => $this->user->identity,
+                        "csrfToken"   => $GLOBALS["csrfToken"],
                         "isTimezoned" => Session::i()->get("_timezoneOffset"),
                     ]);
                 } else {
@@ -235,8 +235,8 @@ abstract class OpenVKPresenter extends SimplePresenter
             if($this->user->identity->isBanned() && !$this->banTolerant) {
                 header("HTTP/1.1 403 Forbidden");
                 $this->getTemplatingEngine()->render(__DIR__ . "/templates/@banned.xml", [
-                    "thisUser" => $this->user->identity,
-                    "csrfToken" => $GLOBALS["csrfToken"],
+                    "thisUser"    => $this->user->identity,
+                    "csrfToken"   => $GLOBALS["csrfToken"],
                     "isTimezoned" => Session::i()->get("_timezoneOffset"),
                 ]);
                 exit;
@@ -246,8 +246,8 @@ abstract class OpenVKPresenter extends SimplePresenter
             if(!$this->user->identity->isActivated() && !$this->activationTolerant) {
                 header("HTTP/1.1 403 Forbidden");
                 $this->getTemplatingEngine()->render(__DIR__ . "/templates/@email.xml", [
-                    "thisUser" => $this->user->identity,
-                    "csrfToken" => $GLOBALS["csrfToken"],
+                    "thisUser"    => $this->user->identity,
+                    "csrfToken"   => $GLOBALS["csrfToken"],
                     "isTimezoned" => Session::i()->get("_timezoneOffset"),
                 ]);
                 exit;

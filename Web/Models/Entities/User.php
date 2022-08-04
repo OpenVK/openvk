@@ -147,7 +147,7 @@ class User extends RowModel
     
     function getFirstName(bool $pristine = false): string
     {
-        $name = $this->getRecord()->deleted && $this->getRecord()->deact_until <= time() ? "DELETED" : mb_convert_case($this->getRecord()->first_name, MB_CASE_TITLE);
+        $name = ($this->isDeleted() && !$this->isDeactivated() ? "DELETED" : mb_convert_case($this->getRecord()->first_name, MB_CASE_TITLE));
         if((($ts = tr("__transNames")) !== "@__transNames") && !$pristine)
             return mb_convert_case(transliterator_transliterate($ts, $name), MB_CASE_TITLE);
         else
@@ -156,7 +156,7 @@ class User extends RowModel
     
     function getLastName(bool $pristine = false): string
     {
-        $name = $this->getRecord()->deleted && $this->getRecord()->deact_until <= time() ? "DELETED" : mb_convert_case($this->getRecord()->last_name, MB_CASE_TITLE);
+        $name = ($this->isDeleted() && !$this->isDeactivated() ? "DELETED" : mb_convert_case($this->getRecord()->last_name, MB_CASE_TITLE));
         if((($ts = tr("__transNames")) !== "@__transNames") && !$pristine)
             return mb_convert_case(transliterator_transliterate($ts, $name), MB_CASE_TITLE);
         else
@@ -165,12 +165,12 @@ class User extends RowModel
     
     function getPseudo(): ?string
     {
-        return $this->getRecord()->deleted && $this->getRecord()->deact_until <= time() ? "DELETED" : $this->getRecord()->pseudo;
+        return ($this->isDeleted() && !$this->isDeactivated() ? "DELETED" : $this->getRecord()->pseudo);
     }
     
     function getFullName(): string
     {
-        if($this->getRecord()->deleted && $this->getRecord()->deact_until <= time())
+        if($this->isDeleted() && !$this->isDeactivated())
             return "DELETED";
         
         $pseudo = $this->getPseudo();
@@ -195,7 +195,7 @@ class User extends RowModel
     
     function getCanonicalName(): string
     {
-        if($this->getRecord()->deleted && $this->getRecord()->deact_until <= time())
+        if($this->isDeleted() && !$this->isDeactivated())
             return "DELETED";
         else
             return $this->getFirstName() . " " . $this->getLastName();
@@ -788,7 +788,7 @@ class User extends RowModel
     function deactivate(?string $reason): void
     {
         $this->setDeleted(1);
-        $this->setDeact_Until(time() + (MONTH * 7));
+        $this->setDeact_Date(time() + (MONTH * 7));
         $this->setDeact_Reason($reason);
         $this->save();
     }
@@ -796,14 +796,14 @@ class User extends RowModel
     function reactivate(): void
     {
         $this->setDeleted(0);
-        $this->setDeact_Until(0);
+        $this->setDeact_Date(0);
         $this->setDeact_Reason("");
         $this->save();
     }
 
-    function getDeactivatedUntil(): DateTime
+    function getDeactivationDate(): DateTime
     {
-        return new DateTime($this->getRecord()->deact_until);
+        return new DateTime($this->getRecord()->deact_date);
     }
     
     function verifyNumber(string $code): bool
@@ -972,6 +972,14 @@ class User extends RowModel
     function isDeleted(): bool
     {
         if ($this->getRecord()->deleted == 1)
+            return TRUE;
+        else
+            return FALSE;
+    }
+
+    function isDeactivated(): bool
+    {
+        if ($this->getDeactivationDate()->timestamp() > time())
             return TRUE;
         else
             return FALSE;

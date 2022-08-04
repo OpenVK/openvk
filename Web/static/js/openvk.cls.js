@@ -348,13 +348,13 @@ function showProfileDeactivateDialog(hash) {
         </form>
     `, [tr("profile_deactivate_button"), tr("cancel")], [
         () => {
-            document.querySelector("#profile_deactivate_dialog").submit();
+            $("#profile_deactivate_dialog").submit();
         },
         Function.noop
     ]);
 
     $('[id^="deactivate_r_"]').on("click", function () {
-        document.getElementById('deactivate_reason').value = $(this).data("text");
+        $('#deactivate_reason').val($(this).data("text"));
     });
 }
 

@@ -37,7 +37,7 @@ final class UserPresenter extends OpenVKPresenter
     {
         $user = $this->users->get($id);
         if(!$user || $user->isDeleted()) {
-            if($user->getDeactivatedUntil()->timestamp() > time()) {
+            if($user->isDeactivated()) {
                 $this->template->_template = "User/deactivated.xml";
                 
                 $this->template->user = $user;
@@ -281,8 +281,7 @@ final class UserPresenter extends OpenVKPresenter
         
         $user->toggleSubscription($this->user->identity);
         
-        header("HTTP/1.1 302 Found");
-        header("Location: /id" . $user->getId());
+        $this->redirect("/id" . $user->getId());
         exit;
     }
     
@@ -506,8 +505,7 @@ final class UserPresenter extends OpenVKPresenter
 
         $this->user->identity->deactivate($reason);
 
-        header("HTTP/1.1 302 Found");
-        header("Location: /");
+        $this->redirect("/");
         exit;
     }
 

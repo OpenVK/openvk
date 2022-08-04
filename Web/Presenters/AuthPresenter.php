@@ -152,7 +152,7 @@ final class AuthPresenter extends OpenVKPresenter
                 $this->flashFail("err", tr("login_failed"), tr("invalid_username_or_password"));
 
             $ovkUser = new User($user->related("profiles.user")->fetch());
-            if($ovkUser->isDeleted() && $ovkUser->getDeactivatedUntil()->timestamp() < time())
+            if($ovkUser->isDeleted() && !$ovkUser->isDeactivated())
                 $this->flashFail("err", tr("login_failed"), tr("invalid_username_or_password"));
 
             $secret = $user->related("profiles.user")->fetch()["2fa_secret"];
@@ -330,8 +330,7 @@ final class AuthPresenter extends OpenVKPresenter
 
         $this->user->identity->reactivate();
 
-        header("HTTP/1.1 302 Found");
-        header("Location: /");
+        $this->redirect("/", 2);
         exit;
     }
 } 

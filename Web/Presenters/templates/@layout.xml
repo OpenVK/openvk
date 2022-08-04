@@ -102,34 +102,34 @@
                 <a href="/" class="home_button{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME} home_button_custom{/if}" title="{$instance_name}">{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME}{$instance_name}{/if}</a>
                 <div n:if="isset($thisUser) ? (!$thisUser->isBanned() XOR !$thisUser->isActivated()) : true" class="header_navigation">
                     {ifset $thisUser}
-                        {if $thisUser->getDeactivatedUntil()->timestamp() > time()}
-                        <div class="link">
-                            <a href="/logout?hash={urlencode($csrfToken)}">{_header_log_out}</a>
-                        </div>
+                        {if $thisUser->isDeactivated()}
+                            <div class="link">
+                                <a href="/logout?hash={urlencode($csrfToken)}">{_header_log_out}</a>
+                            </div>
                         {else}
-                        <div class="link">
-                            <a href="/">{_header_home}</a>
-                        </div>
-                        <div class="link">
-                            <a href="/search?type=groups">{_header_groups}</a>
-                        </div>
-                        <div class="link">
-                            <a href="/search">{_header_search}</a>
-                        </div>
-                        <div class="link">
-                            <a href="/invite">{_header_invite}</a>
-                        </div>
-                        <div class="link">
-                            <a href="/support">{_header_help} <b n:if="$ticketAnsweredCount > 0">({$ticketAnsweredCount})</b></a>
-                        </div>
-                        <div class="link">
-                            <a href="/logout?hash={urlencode($csrfToken)}">{_header_log_out}</a>
-                        </div>
-                        <div class="link">
-                            <form action="/search" method="get">
-                                <input type="search" name="query" placeholder="{_header_search}" style="height: 20px;background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; background-color: #fff; padding-left: 18px;width: 120px;" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
-                            </form>
-                        </div>
+                            <div class="link">
+                                <a href="/">{_header_home}</a>
+                            </div>
+                            <div class="link">
+                                <a href="/search?type=groups">{_header_groups}</a>
+                            </div>
+                            <div class="link">
+                                <a href="/search">{_header_search}</a>
+                            </div>
+                            <div class="link">
+                                <a href="/invite">{_header_invite}</a>
+                            </div>
+                            <div class="link">
+                                <a href="/support">{_header_help} <b n:if="$ticketAnsweredCount > 0">({$ticketAnsweredCount})</b></a>
+                            </div>
+                            <div class="link">
+                                <a href="/logout?hash={urlencode($csrfToken)}">{_header_log_out}</a>
+                            </div>
+                            <div class="link">
+                                <form action="/search" method="get">
+                                    <input type="search" name="query" placeholder="{_header_search}" style="height: 20px;background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; background-color: #fff; padding-left: 18px;width: 120px;" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
+                                </form>
+                            </div>
                         {/if}
                     {else}
                         <div class="link">
@@ -148,7 +148,7 @@
             <div class="sidebar">
                 <div class="navigation">
                     {ifset $thisUser}
-                        {if !$thisUser->isBanned() XOR !$thisUser->isActivated() XOR $thisUser->getDeactivatedUntil()->timestamp() > time()}
+                        {if !$thisUser->isBanned() XOR !$thisUser->isActivated() XOR $thisUser->isDeactivated()}
                             <a href="/edit" class="link edit-button">{_edit_button}</a>
                             <a href="{$thisUser->getURL()}" class="link" title="{_my_page} [Alt+Shift+.]" accesskey=".">{_my_page}</a>
                             <a href="/friends{$thisUser->getId()}" class="link">{_my_friends}
