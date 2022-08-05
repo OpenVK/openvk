@@ -149,6 +149,10 @@
 "post_writes_m" = "wrote";
 "post_writes_f" = "wrote";
 "post_writes_g" = "published";
+"post_deact_m" = "deleted his profile saying:";
+"post_deact_f" = "deleted her profile saying:";
+"post_deact_silent_m" = "silently deleted his profile.";
+"post_deact_silent_f" = "silently deleted her profile.";
 "wall" = "Wall";
 "post" = "Post";
 "write" = "Write";
@@ -486,6 +490,28 @@
 "ad_poster" = "Ad poster";
 
 "email_change_confirm_message" = "Please confirm your new email address for the change to take effect. We have sent instructions to it.";
+
+"profile_deactivate" = "Delete account";
+"profile_deactivate_button" = "Delete account";
+"profile_deactivate_header" = "We are sorry that you want to delete your page. Therefore, you can specify the reason for deletion and your message about it. We read your feedback and try to make the site better!";
+"profile_deactivate_reason_header" = "Please select a reason why you are leaving";
+"profile_deactivate_reason_1" = "I have another profile and don't need this one";
+"profile_deactivate_reason_1_text" = "I created a new page and now I want to wipe my past.";
+"profile_deactivate_reason_2" = "Website takes away too much of my time";
+"profile_deactivate_reason_2_text" = "Even though this site is nice and beautiful, it takes away my time that I need for work and life.";
+"profile_deactivate_reason_3" = "Website harbors too much inappropriate content";
+"profile_deactivate_reason_3_text" = "I have found enough porn and pirated content to last me a lifetime, I'm leaving now.";
+"profile_deactivate_reason_4" = "I am worried about the safety of my data";
+"profile_deactivate_reason_4_text" = "I'm being watched and I'm scared to be here. I'm sorry, I have to leave.";
+"profile_deactivate_reason_5" = "No one comments on my posts";
+"profile_deactivate_reason_5_text" = "No one watches me here and it's sad. You will regret that I left.";
+"profile_deactivate_reason_6" = "Other reason";
+
+"profile_deactivated_msg" = "Your account has been <b>deleted</b>.<br/><br/>If you would like to start using the site again, you can <a href='/settings/reactivate'>restore your account</a> until $1.";
+"profile_deactivated_status" = "Account deleted";
+"profile_deactivated_info" = "The account has been deleted.<br/>The information is not available.";
+
+"share_with_friends" = "Share with friends";
 
 /* Two-factor authentication */
 

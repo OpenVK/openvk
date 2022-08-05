@@ -9,6 +9,7 @@ final class AboutPresenter extends OpenVKPresenter
 {
     protected $banTolerant = true;
     protected $activationTolerant = true;
+    protected $deactivationTolerant = true;
     
     function renderIndex(): void
     {

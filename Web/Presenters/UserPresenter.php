@@ -3,6 +3,7 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Entities\Photo;
+use openvk\Web\Models\Entities\Post;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Albums;
@@ -22,6 +23,8 @@ use Nette\Database\UniqueConstraintViolationException;
 final class UserPresenter extends OpenVKPresenter
 {
     private $users;
+
+    public $deactivationTolerant = false;
     
     function __construct(Users $users)
     {
@@ -34,7 +37,13 @@ final class UserPresenter extends OpenVKPresenter
     {
         $user = $this->users->get($id);
         if(!$user || $user->isDeleted()) {
-            $this->template->_template = "User/deleted.xml";
+            if($user->isDeactivated()) {
+                $this->template->_template = "User/deactivated.xml";
+                
+                $this->template->user = $user;
+            } else {
+                $this->template->_template = "User/deleted.xml";
+            }
         } else {
             $this->template->albums      = (new Albums)->getUserAlbums($user);
             $this->template->albumsCount = (new Albums)->getUserAlbumsCount($user);
@@ -272,8 +281,7 @@ final class UserPresenter extends OpenVKPresenter
         
         $user->toggleSubscription($this->user->identity);
         
-        header("HTTP/1.1 302 Found");
-        header("Location: /id" . $user->getId());
+        $this->redirect("/id" . $user->getId());
         exit;
     }
     
@@ -472,6 +480,33 @@ final class UserPresenter extends OpenVKPresenter
         
         $this->template->user   = $user;
         $this->template->themes = Themepacks::i()->getThemeList();
+    }
+
+    function renderDeactivate(): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        $flags = 0;
+        $reason = $this->postParam("deactivate_reason");
+        $share = $this->postParam("deactivate_share");
+
+        if($share) {
+            $flags |= 0b00100000;
+
+            $post = new Post;
+            $post->setOwner($this->user->id);
+            $post->setWall($this->user->id);
+            $post->setCreated(time());
+            $post->setContent($reason);
+            $post->setFlags($flags);
+            $post->save();
+        }
+
+        $this->user->identity->deactivate($reason);
+
+        $this->redirect("/");
+        exit;
     }
 
     function renderTwoFactorAuthSettings(): void

@@ -1,4 +1,9 @@
 {var $author = $post->getOwner()}
+{if $post->isDeactivationMessage() && $post->getText()}
+    {var $deac = "post_deact"}
+{else}
+    {var $deac = "post_deact_silent"}
+{/if}
 
 <table border="0" style="font-size: 11px;" n:class="post, $post->isExplicit() ? post-nsfw">
     <tbody>
@@ -13,7 +18,7 @@
                 <div class="post-author">
                     <a href="{$author->getURL()}"><b>{$author->getCanonicalName()}</b></a>
                     <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
-                    {$post->isPostedOnBehalfOfGroup() ? tr("post_writes_g") : ($author->isFemale() ? tr("post_writes_f") : tr("post_writes_m"))}
+                    {$post->isDeactivationMessage() ? ($author->isFemale() ? tr($deac . "_f") : tr($deac . "_m")) : ($post->isPostedOnBehalfOfGroup() ? tr("post_writes_g") : ($author->isFemale() ? tr("post_writes_f") : tr("post_writes_m")))}
                     {if ($onWallOf ?? false) &&!$post->isPostedOnBehalfOfGroup() && $post->getOwnerPost() !== $post->getTargetWall()}
                         {var $wallId  = $post->getTargetWall()}
                         {var $wallURL = $wallId > -1 ? "/id$wallId" : "/club" . abs($wallId)}

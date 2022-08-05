@@ -20,6 +20,7 @@ final class AuthPresenter extends OpenVKPresenter
 {
     protected $banTolerant = true;
     protected $activationTolerant = true;
+    protected $deactivationTolerant = true;
     
     private $authenticator;
     private $db;
@@ -151,7 +152,7 @@ final class AuthPresenter extends OpenVKPresenter
                 $this->flashFail("err", tr("login_failed"), tr("invalid_username_or_password"));
 
             $ovkUser = new User($user->related("profiles.user")->fetch());
-            if($ovkUser->isDeleted())
+            if($ovkUser->isDeleted() && !$ovkUser->isDeactivated())
                 $this->flashFail("err", tr("login_failed"), tr("invalid_username_or_password"));
 
             $secret = $user->related("profiles.user")->fetch()["2fa_secret"];
@@ -320,5 +321,16 @@ final class AuthPresenter extends OpenVKPresenter
             $this->flash("success", tr("email_verify_success"));
             $this->redirect("/");
         }
+    }
+
+    function renderReactivatePage(): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        $this->user->identity->reactivate();
+
+        $this->redirect("/", 2);
+        exit;
     }
 } 
