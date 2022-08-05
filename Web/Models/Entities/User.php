@@ -971,7 +971,7 @@ class User extends RowModel
 
     function isDeleted(): bool
     {
-        if ($this->getRecord()->deleted == 1)
+        if($this->getRecord()->deleted == 1)
             return TRUE;
         else
             return FALSE;
@@ -979,7 +979,7 @@ class User extends RowModel
 
     function isDeactivated(): bool
     {
-        if ($this->getDeactivationDate()->timestamp() > time())
+        if($this->getDeactivationDate()->timestamp() > time())
             return TRUE;
         else
             return FALSE;

@@ -282,7 +282,6 @@ final class UserPresenter extends OpenVKPresenter
         $user->toggleSubscription($this->user->identity);
         
         $this->redirect("/id" . $user->getId());
-        exit;
     }
     
     function renderSetAvatar(): void
@@ -506,7 +505,6 @@ final class UserPresenter extends OpenVKPresenter
         $this->user->identity->deactivate($reason);
 
         $this->redirect("/");
-        exit;
     }
 
     function renderTwoFactorAuthSettings(): void

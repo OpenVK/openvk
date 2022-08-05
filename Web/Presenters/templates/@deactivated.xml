@@ -26,7 +26,7 @@
                     <div class="page_status" style="color: #AAA;">{_profile_deactivated_status}</div>
                 </div>
             </div>
-            <center style="color: #AAA;margin: 40px 0;font-size: 13px;">
+            <center style="color: #AAA; margin: 40px 0; font-size: 13px;">
                 {_profile_deactivated_info|noescape}
             </center>
         </div>
