@@ -331,6 +331,5 @@ final class AuthPresenter extends OpenVKPresenter
         $this->user->identity->reactivate();
 
         $this->redirect("/", 2);
-        exit;
     }
 } 
