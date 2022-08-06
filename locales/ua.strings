@@ -437,7 +437,7 @@
 "footer_blog" = "блог";
 "footer_help" = "допомога";
 "footer_developers" = "розробникам";
-"footer_choose_language" = "вибрати мову";
+"footer_choose_language" = "обрати мову";
 "footer_privacy" = "приватність";
 
 /* Settings */
@@ -494,7 +494,7 @@
 "privacy_value_friends" = "Друзі";
 "privacy_value_friends_dative" = "Друзям";
 "privacy_value_only_me" = "Тільки я";
-"privacy_value_only_me_dative" = "Тільки меня";
+"privacy_value_only_me_dative" = "Тільки мені";
 "privacy_value_nobody" = "Ніхто";
 
 "your_email_address" = "Адрес Вашої електронної пошти";
@@ -551,13 +551,13 @@
 
 /* Two-factor authentication */
 
-"two_factor_authentication" = "Двофакторна аутентифікація";
+"two_factor_authentication" = "Двофакторна автентифікація";
 "two_factor_authentication_disabled" = "Забезпечує надійний захист від злому: для входу на сторінку необхідно ввести код, отриманий в додатку 2FA.";
-"two_factor_authentication_enabled" = "Двофакторна аутентифікація увімкнена. Ваша сторінка захищена.";
-"two_factor_authentication_login" = "У вас увімкнена двофакторна аутентифікація. Для входу введіть код отриманий в додатку.";
+"two_factor_authentication_enabled" = "Двофакторна автентифікація увімкнена. Ваша сторінка захищена.";
+"two_factor_authentication_login" = "У вас увімкнена двофакторна автентифікація. Для входу введіть код отриманий в додатку.";
 
-"two_factor_authentication_settings_1" = "Двофакторну аутентифікацію через TOTP можна використовувати навіть без Інтернету. Для цього вам знадобиться додаток для генерації кодів. Наприклад, Google Authenticator </b> для Android і iOS або вільні<b>Aegis І and OTP </b> для Android. Переконайтеся, що на телефоні точно встановлена дата і час.";
-"two_factor_authentication_settings_2" = "Використовуючи додаток для двофакторної аутентифікації, відскануйте наведений нижче QR-код:";
+"two_factor_authentication_settings_1" = "Двофакторну автентифікацію через TOTP можна використовувати навіть без інтернету. Для цього вам знадобиться застосунок для генерації кодів, наприклад Google Authenticator для Android та iOS або відкриті <b>Aegis Authenticator чи andOTP</b> для Android. Важливо: на пристрої має бути точна дата та час."
+"two_factor_authentication_settings_2" = "Використовуючи додаток для двофакторної автентифікації, відскануйте наведений нижче QR-код:";
 "two_factor_authentication_settings_3" = "або вручну введіть секретний ключ: <b>$1</b>.";
 "two_factor_authentication_settings_4" = "Тепер введіть код, який вам надав додаток, і пароль від вашої сторінки, щоб ми могли підтвердити, що ви дійсно ви.";
 
@@ -569,10 +569,10 @@
 
 "incorrect_password" = "Хибний пароль";
 "incorrect_code" = "Хибний код";
-"incorrect_2fa_code" = "Хибний код двофакторної аутентифікації";
+"incorrect_2fa_code" = "Хибний код двофакторної автентифікації";
 "two_factor_authentication_enabled_message" = "Двофакторна автентифікація увімкнена";
 "two_factor_authentication_enabled_message_description" = "Вашу сторінку стало важче зламати. Рекомендуємо вам завантажити <a href='javascript:viewBackupCodes()'>резервні коди</a>";
-"two_factor_authentication_disabled_message" = "Двофакторна аутентифікація вимкнена";
+"two_factor_authentication_disabled_message" = "Двофакторна автентифікація вимкнена";
 
 "view_backup_codes" = "Переглянути резервні коди";
 "backup_codes" = "Резервні коди для підтвердження входу";
@@ -652,7 +652,7 @@
 "points_count" = "голосів";
 "on_your_account" = "на вашому рахунку";
 "top_up_your_account" = "Поповнити баланс";
-"you_still_have_x_points" = "У Вас <b>$1</b> неиспользованных голосов.";
+"you_still_have_x_points" = "У Вас <b>$1</b> голосів.";
 
 "vouchers" = "Ваучери";
 "have_voucher" = "Є ваучер";
@@ -733,7 +733,7 @@
 
 "send_gift" = "Відправити подарунок";
 
-"gift_select" = "Вибрати подарунок";
+"gift_select" = "Обрати подарунок";
 "collections" = "Колекції";
 "confirm" = "Підтвердження";
 "as_anonymous" = "Анонімно";
@@ -762,9 +762,9 @@
 "support_greeting_hi" = "Вітаємо, $1!";
 "support_greeting_regards" = "З повагою,<br/>команда підтримки $1.";
 
-"support faq" = "Запитання, що часто ставляться";
-"support list" = "Список звернень";
-"support new" = "Нове звернення";
+"support_faq" = "Запитання, що часто ставляться";
+"support_list" = "Список звернень";
+"support_new" = "Нове звернення";
 
 "support_new_title" = "Введіть тему вашого звернення";
 "support_new_content" = "Опишіть проблему чи пропозицію";
