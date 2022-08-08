@@ -73,28 +73,22 @@
 {/block}
 
 {block actions}
-    {var $clubPinned = $thisUser->isClubPinned($x)}
     {if $x->canBeModifiedBy($thisUser ?? NULL)}
-        <div class="navigation" style="width: 140px;">
-            <a class="link" href="{$x->getURL()}">
-                {_check_community}
-            </a>
-            {if ($clubPinned || $thisUser->getPinnedClubCount() <= 10)}
-                <a class="link" href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
-                    {if $clubPinned}
-                        {_remove_from_left_menu}
-                    {else}
-                        {_add_to_left_menu}
-                    {/if}
-                </a>
+        {var $clubPinned = $thisUser->isClubPinned($x)}
+        <a href="{$x->getURL()}" class="profile_link">{_check_community}</a>
+        <a href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" class="profile_link" n:if="$clubPinned || $thisUser->getPinnedClubCount() <= 10" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
+            {if $clubPinned}
+                {_remove_from_left_menu}
+            {else}
+                {_add_to_left_menu}
             {/if}
-            <form action="/setSub/club" method="post">
-                <input type="hidden" name="act" value="rem" />
-                <input type="hidden" name="id" value="{$x->getId()}" />
-                <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input style="text-transform: lowercase; width: 100%;" class="link" type="submit" value="{_"leave_community"}" />
-            </form>
-        </div>
+        </a>
+        <form class="profile_link_form" action="/setSub/club" method="post">
+            <input type="hidden" name="act" value="rem" />
+            <input type="hidden" name="id" value="{$x->getId()}" />
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+            <input type="submit" class="profile_link" value="{_"leave_community"}" />
+        </form>
     {/if}
 {/block}
 
