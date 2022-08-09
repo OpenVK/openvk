@@ -80,7 +80,7 @@ final class UserPresenter extends OpenVKPresenter
                 $name = $user->getFullName();
                 $this->flash("err", "Ошибка доступа", "Вы не можете просматривать полный список подписок $name.");
                 
-                $this->redirect("/id$id", static::REDIRECT_TEMPORARY_PRESISTENT);
+                $this->redirect($user->getURL());
             }
         }
     }
@@ -281,7 +281,7 @@ final class UserPresenter extends OpenVKPresenter
         
         $user->toggleSubscription($this->user->identity);
         
-        $this->redirect("/id" . $user->getId());
+        $this->redirect($user->getURL());
     }
     
     function renderSetAvatar(): void
@@ -587,7 +587,7 @@ final class UserPresenter extends OpenVKPresenter
             $this->user->identity->save();
         }
 
-        $this->redirect("/", static::REDIRECT_TEMPORARY_PRESISTENT);
+        $this->redirect("/");
     }
 
     function renderCoinsTransfer(): void

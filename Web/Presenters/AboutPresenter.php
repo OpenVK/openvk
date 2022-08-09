@@ -14,20 +14,14 @@ final class AboutPresenter extends OpenVKPresenter
     function renderIndex(): void
     {
         if(!is_null($this->user)) {
-            header("HTTP/1.1 302 Found");
-
             if($this->user->identity->getMainPage())
-                header("Location: /feed");
+                $this->redirect("/feed");
             else
-                header("Location: /id" . $this->user->id);
-
-            exit;
+                $this->redirect($this->user->identity->getURL());
         }
         
         if($_SERVER['REQUEST_URI'] == "/id0") {
-            header("HTTP/1.1 302 Found");
-            header("Location: /");
-            exit;
+            $this->redirect("/");
         }
         
         $this->template->stats = (new Users)->getStatistics();
@@ -127,16 +121,11 @@ final class AboutPresenter extends OpenVKPresenter
     function renderHumansTxt(): void
     {
         # :D
-
-        header("HTTP/1.1 302 Found");
-        header("Location: https://github.com/openvk/openvk#readme");
-        exit;
+        $this->redirect("https://github.com/openvk/openvk#readme");
     }
 
     function renderDev(): void
     {
-        header("HTTP/1.1 302 Found");
-        header("Location: https://docs.openvk.su/");
-        exit;
+        $this->redirect("https://docs.openvk.su/");
     }
 }

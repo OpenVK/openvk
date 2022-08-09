@@ -170,8 +170,7 @@ final class AdminPresenter extends OpenVKPresenter
         
         $voucher->save();
         
-        $this->redirect("/admin/vouchers/id" . $voucher->getId(), static::REDIRECT_TEMPORARY);
-        exit;
+        $this->redirect("/admin/vouchers/id" . $voucher->getId());
     }
     
     function renderGiftCategories(): void
@@ -193,7 +192,7 @@ final class AdminPresenter extends OpenVKPresenter
             if(!$cat)
                 $this->notFound();
             else if($cat->getSlug() !== $slug)
-                $this->redirect("/admin/gifts/" . $cat->getSlug() . "." . $id . ".meta", static::REDIRECT_TEMPORARY);
+                $this->redirect("/admin/gifts/" . $cat->getSlug() . "." . $id . ".meta");
         } else {
             $gen = true;
             $cat = new GiftCategory;
@@ -234,7 +233,7 @@ final class AdminPresenter extends OpenVKPresenter
                 $cat->setDescription($code, $this->postParam("description_$code"));
         }
         
-        $this->redirect("/admin/gifts/" . $cat->getSlug() . "." . $cat->getId() . ".meta", static::REDIRECT_TEMPORARY);
+        $this->redirect("/admin/gifts/" . $cat->getSlug() . "." . $cat->getId() . ".meta");
     }
     
     function renderGifts(string $catSlug, int $catId): void
@@ -245,7 +244,7 @@ final class AdminPresenter extends OpenVKPresenter
         if(!$cat)
             $this->notFound();
         else if($cat->getSlug() !== $catSlug)
-            $this->redirect("/admin/gifts/" . $cat->getSlug() . "." . $catId . "/", static::REDIRECT_TEMPORARY);
+            $this->redirect("/admin/gifts/" . $cat->getSlug() . "." . $catId . "/");
         
         $this->template->cat   = $cat;
         $this->template->gifts = iterator_to_array($cat->getGifts((int) ($this->queryParam("p") ?? 1), NULL, $this->template->count));
@@ -284,7 +283,7 @@ final class AdminPresenter extends OpenVKPresenter
                 
                 $name = $catTo->getName();
                 $this->flash("succ", "Gift moved successfully", "This gift will now be in <b>$name</b>.");
-                $this->redirect("/admin/gifts/" . $catTo->getSlug() . "." . $catTo->getId() . "/", static::REDIRECT_TEMPORARY);
+                $this->redirect("/admin/gifts/" . $catTo->getSlug() . "." . $catTo->getId() . "/");
                 break;
             default:
             case "edit":
@@ -328,7 +327,7 @@ final class AdminPresenter extends OpenVKPresenter
                         $cat->addGift($gift);
                 }
                 
-                $this->redirect("/admin/gifts/id" . $gift->getId(), static::REDIRECT_TEMPORARY);
+                $this->redirect("/admin/gifts/id" . $gift->getId());
         }
     }
     

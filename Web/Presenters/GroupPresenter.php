@@ -54,8 +54,7 @@ final class GroupPresenter extends OpenVKPresenter
                 }
                 
                 $club->toggleSubscription($this->user->identity);
-                header("HTTP/1.1 302 Found");
-                header("Location: /club" . $club->getId());
+                $this->redirect("/club" . $club->getId());
             }else{
                 $this->flashFail("err", "Ошибка", "Вы не ввели название группы.");
             }
@@ -74,9 +73,7 @@ final class GroupPresenter extends OpenVKPresenter
         
         $club->toggleSubscription($this->user->identity);
         
-        header("HTTP/1.1 302 Found");
-        header("Location: /club" . $club->getId());
-        exit;
+        $this->redirect($club->getURL());
     }
     
     function renderFollowers(int $id): void

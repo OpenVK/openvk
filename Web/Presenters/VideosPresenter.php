@@ -80,7 +80,7 @@ final class VideosPresenter extends OpenVKPresenter
                 
                 $video->save();
                 
-                $this->redirect("/video" . $video->getPrettyId(), static::REDIRECT_TEMPORARY);
+                $this->redirect("/video" . $video->getPrettyId());
             } else {
                 $this->flashFail("err", "Произошла ошибка", "Видео не может быть опубликовано без названия.");
             }
@@ -104,7 +104,7 @@ final class VideosPresenter extends OpenVKPresenter
             $video->save();
             
             $this->flash("succ", "Изменения сохранены", "Обновлённое описание появится на странице с видосиком.");
-            $this->redirect("/video" . $video->getPrettyId(), static::REDIRECT_TEMPORARY);
+            $this->redirect("/video" . $video->getPrettyId());
         } 
         
         $this->template->video = $video;
@@ -128,7 +128,6 @@ final class VideosPresenter extends OpenVKPresenter
             $this->flashFail("err", "Не удалось удалить пост", "Вы не вошли в аккаунт.");
         }
         
-        $this->redirect("/videos".$owner, static::REDIRECT_TEMPORARY);
-        exit;
+        $this->redirect("/videos" . $owner);
     }
 }

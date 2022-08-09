@@ -100,8 +100,7 @@ final class SupportPresenter extends OpenVKPresenter
                     Telegram::send($helpdeskChat, $telegramText);
                 }
 
-                header("HTTP/1.1 302 Found");
-                header("Location: /support/view/" . $ticket->getId());
+                $this->redirect("/support/view/" . $ticket->getId());
             } else {
                 $this->flashFail("err", tr("error"), tr("you_have_not_entered_name_or_text"));
             }
@@ -192,8 +191,7 @@ final class SupportPresenter extends OpenVKPresenter
                 $comment->setCreated(time());
                 $comment->save();
                 
-                header("HTTP/1.1 302 Found");
-                header("Location: /support/view/" . $id);
+                $this->redirect("/support/view/" . $id);
             } else {
                 $this->flashFail("err", tr("error"), tr("you_have_not_entered_text"));
             }

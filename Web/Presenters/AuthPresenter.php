@@ -51,7 +51,7 @@ final class AuthPresenter extends OpenVKPresenter
     function renderRegister(): void
     {
         if(!is_null($this->user))
-            $this->redirect("/id" . $this->user->id, static::REDIRECT_TEMPORARY);
+            $this->redirect($this->user->identity->getURL());
         
         if(!$this->hasPermission("user", "register", -1)) exit("Вас забанили");
         
@@ -129,7 +129,7 @@ final class AuthPresenter extends OpenVKPresenter
             }
             
             $this->authenticator->authenticate($chUser->getId());
-            $this->redirect("/id" . $user->getId(), static::REDIRECT_TEMPORARY);
+            $this->redirect("/id" . $user->getId());
         }
     }
     
@@ -138,12 +138,11 @@ final class AuthPresenter extends OpenVKPresenter
         $redirUrl = $this->requestParam("jReturnTo");
         
         if(!is_null($this->user))
-            $this->redirect($redirUrl ?? "/id" . $this->user->id, static::REDIRECT_TEMPORARY);
+            $this->redirect($redirUrl ?? $this->user->identity->getURL());
         
         if(!$this->hasPermission("user", "login", -1)) exit("Вас забанили");
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
-            
             $user = $this->db->table("ChandlerUsers")->where("login", $this->postParam("login"))->fetch();
             if(!$user)
                 $this->flashFail("err", tr("login_failed"), tr("invalid_username_or_password"));
@@ -172,8 +171,7 @@ final class AuthPresenter extends OpenVKPresenter
             }
             
             $this->authenticator->authenticate($user->id);
-            $this->redirect($redirUrl ?? "/id" . $user->related("profiles.user")->fetch()->id, static::REDIRECT_TEMPORARY);
-            exit;
+            $this->redirect($redirUrl ?? $ovkUser->getURL());
         }
     }
     
@@ -184,7 +182,7 @@ final class AuthPresenter extends OpenVKPresenter
         
         if($uuid === "unset") {
             Session::i()->set("_su", NULL);
-            $this->redirect("/", static::REDIRECT_TEMPORARY);
+            $this->redirect("/");
         }
         
         if(!$this->db->table("ChandlerUsers")->where("id", $uuid))
@@ -193,8 +191,7 @@ final class AuthPresenter extends OpenVKPresenter
         $this->assertPermission('openvk\Web\Models\Entities\User', 'substitute', 0);
         Session::i()->set("_su", $uuid);
         $this->flash("succ", tr("profile_changed"), tr("profile_changed_comment"));
-        $this->redirect("/", static::REDIRECT_TEMPORARY);
-        exit;
+        $this->redirect("/");
     }
     
     function renderLogout(): void
@@ -204,7 +201,7 @@ final class AuthPresenter extends OpenVKPresenter
         $this->authenticator->logout();
         Session::i()->set("_su", NULL);
         
-        $this->redirect("/", static::REDIRECT_TEMPORARY_PRESISTENT);
+        $this->redirect("/");
     }
     
     function renderFinishRestoringPassword(): void
@@ -244,7 +241,7 @@ final class AuthPresenter extends OpenVKPresenter
     function renderRestore(): void
     {
         if(!is_null($this->user))
-            $this->redirect("/id" . $this->user->id, static::REDIRECT_TEMPORARY);
+            $this->redirect($this->user->identity->getURL());
 
         if(($this->queryParam("act") ?? "default") === "finish")
             $this->pass("openvk!Auth->finishRestoringPassword");
@@ -274,7 +271,6 @@ final class AuthPresenter extends OpenVKPresenter
             ];
             $this->sendmail($uRow->login, "password-reset", $params); #Vulnerability possible
             
-            
             $this->flashFail("succ", tr("information_-1"), tr("password_reset_email_sent"));
         }
     }
@@ -282,7 +278,7 @@ final class AuthPresenter extends OpenVKPresenter
     function renderResendEmail(): void
     {
         if(!is_null($this->user) && $this->user->identity->isActivated())
-            $this->redirect("/id" . $this->user->id, static::REDIRECT_TEMPORARY);
+            $this->redirect($this->user->identity->getURL());
 
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             $user = $this->user->identity;
@@ -330,6 +326,6 @@ final class AuthPresenter extends OpenVKPresenter
 
         $this->user->identity->reactivate();
 
-        $this->redirect("/", 2);
+        $this->redirect("/");
     }
 } 

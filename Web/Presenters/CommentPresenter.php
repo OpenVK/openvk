@@ -24,7 +24,7 @@ final class CommentPresenter extends OpenVKPresenter
         
         if(!is_null($this->user)) $comment->toggleLike($this->user->identity);
         
-        $this->redirect($_SERVER["HTTP_REFERER"], static::REDIRECT_TEMPORARY);
+        $this->redirect($_SERVER["HTTP_REFERER"]);
     }
     
     function renderMakeComment(string $repo, int $eId): void

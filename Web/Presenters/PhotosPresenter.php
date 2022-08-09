@@ -83,9 +83,9 @@ final class PhotosPresenter extends OpenVKPresenter
             $album->save();
             
             if(isset($club))
-                $this->redirect("/album-" . $album->getOwner()->getId() . "_" . $album->getId(), static::REDIRECT_TEMPORARY);
+                $this->redirect("/album-" . $album->getOwner()->getId() . "_" . $album->getId());
             else
-                $this->redirect("/album" . $album->getOwner()->getId() . "_" . $album->getId(), static::REDIRECT_TEMPORARY);
+                $this->redirect("/album" . $album->getOwner()->getId() . "_" . $album->getId());
         }
     }
     
@@ -204,7 +204,7 @@ final class PhotosPresenter extends OpenVKPresenter
             $photo->save();
             
             $this->flash("succ", "Изменения сохранены", "Обновлённое описание появится на странице с фоткой.");
-            $this->redirect("/photo" . $photo->getPrettyId(), static::REDIRECT_TEMPORARY);
+            $this->redirect("/photo" . $photo->getPrettyId());
         } 
         
         $this->template->photo = $photo;
@@ -245,7 +245,7 @@ final class PhotosPresenter extends OpenVKPresenter
             $album->setEdited(time());
             $album->save();
 
-            $this->redirect("/photo" . $photo->getPrettyId() . "?from=album" . $album->getId(), static::REDIRECT_TEMPORARY);
+            $this->redirect("/photo" . $photo->getPrettyId() . "?from=album" . $album->getId());
         } else {
             $this->template->album = $album;
         }
@@ -270,7 +270,7 @@ final class PhotosPresenter extends OpenVKPresenter
             $album->save();
             
             $this->flash("succ", "Фотография удалена", "Эта фотография была успешно удалена.");
-            $this->redirect("/album" . $album->getPrettyId(), static::REDIRECT_TEMPORARY);
+            $this->redirect("/album" . $album->getPrettyId());
         }
     }
     
@@ -289,6 +289,6 @@ final class PhotosPresenter extends OpenVKPresenter
         $photo->delete();
         
         $this->flash("succ", "Фотография удалена", "Эта фотография была успешно удалена.");
-        $this->redirect("/id0", static::REDIRECT_TEMPORARY);
+        $this->redirect("/id0");
     }
 }

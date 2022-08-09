@@ -61,9 +61,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->flash($type, $title, $message, $code);
             $referer = $_SERVER["HTTP_REFERER"] ?? "/";
             
-            header("HTTP/1.1 302 Found");
-            header("Location: $referer");
-            exit;
+            $this->redirect($referer);
         }
     }
     
@@ -99,9 +97,8 @@ abstract class OpenVKPresenter extends SimplePresenter
             }
             
             $this->flash("err", tr("login_required_error"), tr("login_required_error_comment"));
-            header("HTTP/1.1 302 Found");
-            header("Location: $loginUrl");
-            exit;
+            
+            $this->redirect($loginUrl);
         }
     }
     
@@ -111,9 +108,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             if($model !== "user") {
                 $this->flash("info", tr("login_required_error"), tr("login_required_error_comment"));
                 
-                header("HTTP/1.1 302 Found");
-                header("Location: /login");
-                exit;
+                $this->redirect("/login");
             }
             
             return ($action === "register" || $action === "login");
@@ -227,7 +222,7 @@ abstract class OpenVKPresenter extends SimplePresenter
                     Authenticator::i()->logout();
                     Session::i()->set("_su", NULL);
                     $this->flashFail("err", tr("error"), tr("profile_not_found"));
-                    $this->redirect("/", static::REDIRECT_TEMPORARY);
+                    $this->redirect("/");
                 }
                 exit;
             }
