@@ -1,8 +1,8 @@
 {extends "../@layout.xml"}
-{block title}{_"log_in"}{/block}
+{block title}{_log_in}{/block}
 
 {block header}
-    {_"log_in"}
+    {_log_in}
 {/block}
 
 {block content}
@@ -11,7 +11,7 @@
             <tbody>
                 <tr>
                     <td>
-                        <span>{_"email"}: </span>
+                        <span>{_email}: </span>
                     </td>
                     <td>
                         <input type="text" name="login" required />
@@ -19,7 +19,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <span>{_"password"}: </span>
+                        <span>{_password}: </span>
                     </td>
                     <td>
                         <input type="password" name="password" required />
@@ -31,8 +31,8 @@
                     </td>
                     <td>
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" value="{_'log_in'}" class="button" />
-                        <a href="/reg">{_"registration"}</a>
+                        <input type="submit" value="{_log_in}" class="button" />
+                        <a href="/reg">{_registration}</a>
                     </td>
                 </tr>
             </tbody>

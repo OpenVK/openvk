@@ -1,8 +1,8 @@
 {extends "../@layout.xml"}
-{block title}{_"my_settings"}{/block}
+{block title}{_my_settings}{/block}
 
 {block header}
-    {_"my_settings"}
+    {_my_settings}
 {/block}
 
 {block content}
@@ -15,16 +15,16 @@
 
        <div class="tabs">
         <div n:attr="id => ($isMain ? 'activetabs' : 'ki')" class="tab">
-            <a n:attr="id => ($isMain ? 'act_tab_a' : 'ki')" href="/settings">{_"main"}</a>
+            <a n:attr="id => ($isMain ? 'act_tab_a' : 'ki')" href="/settings">{_main}</a>
         </div>
         <div n:attr="id => ($isPrivacy ? 'activetabs' : 'ki')" class="tab">
-            <a n:attr="id => ($isPrivacy ? 'act_tab_a' : 'ki')" href="/settings?act=privacy">{_"privacy"}</a>
+            <a n:attr="id => ($isPrivacy ? 'act_tab_a' : 'ki')" href="/settings?act=privacy">{_privacy}</a>
         </div>
         <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce']" n:attr="id => (($isFinance || $isFinanceTU) ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => (($isFinance || $isFinanceTU) ? 'act_tab_a' : 'ki')" href="/settings?act=finance">{_points}</a>
         </div>
         <div n:attr="id => ($isInterface ? 'activetabs' : 'ki')" class="tab">
-            <a n:attr="id => ($isInterface ? 'act_tab_a' : 'ki')" href="/settings?act=interface">{_"interface"}</a>
+            <a n:attr="id => ($isInterface ? 'act_tab_a' : 'ki')" href="/settings?act=interface">{_interface}</a>
         </div>
     </div>
     
@@ -32,12 +32,12 @@
         {if $isMain}
         
         <form action="/settings?act=main" method="POST" enctype="multipart/form-data">
-            <h4>{_"change_password"}</h4>
+            <h4>{_change_password}</h4>
             <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">{_"old_password"}</span>
+                            <span class="nobold">{_old_password}</span>
                         </td>
                         <td>
                             <input type="password" name="old_pass" style="width: 100%;" />
@@ -45,7 +45,7 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">{_"new_password"}</span>
+                            <span class="nobold">{_new_password}</span>
                         </td>
                         <td>
                             <input type="password" name="new_pass" style="width: 100%;" />
@@ -53,7 +53,7 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">{_"repeat_password"}</span>
+                            <span class="nobold">{_repeat_password}</span>
                         </td>
                         <td>
                             <input type="password" name="repeat_pass" style="width: 100%;" />
@@ -73,7 +73,7 @@
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_"change_password"}" class="button" />
+                            <input type="submit" value="{_change_password}" class="button" />
                         </td>
                     </tr>
                 </tbody>
@@ -214,7 +214,7 @@
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_'save'}" class="button" />
+                            <input type="submit" value="{_save}" class="button" />
                         </td>
                     </tr>
                 </tbody>
@@ -362,7 +362,7 @@
                     </td>
                     <td>
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" value="{_'save'}" class="button" />
+                        <input type="submit" value="{_save}" class="button" />
                     </td>
                 </tr>
             </table>
@@ -464,23 +464,23 @@
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">{_"avatars_style"}</span>
+                            <span class="nobold">{_avatars_style}</span>
                         </td>
                         <td>
                             <select name="style_avatar">
-                                <option value="0" {if $user->getStyleAvatar() == 0}selected{/if}>{_"arbitrary_avatars"} ({_"default"})</option>
-                                <option value="1" {if $user->getStyleAvatar() == 1}selected{/if}>{_"cut"}</option>
-                                <option value="2" {if $user->getStyleAvatar() == 2}selected{/if}>{_"round_avatars"}</option>
+                                <option value="0" {if $user->getStyleAvatar() == 0}selected{/if}>{_arbitrary_avatars} ({_default})</option>
+                                <option value="1" {if $user->getStyleAvatar() == 1}selected{/if}>{_cut}</option>
+                                <option value="2" {if $user->getStyleAvatar() == 2}selected{/if}>{_round_avatars}</option>
                             </select>
                         </td>
                     </tr>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">{_"style"}</span>
+                            <span class="nobold">{_style}</span>
                         </td>
                         <td>
                             <select name="style">
-                                <option value="ovk" {if $user->getStyle() == 'ovk'}selected{/if}>OpenVK ({_"default"})</option>
+                                <option value="ovk" {if $user->getStyle() == 'ovk'}selected{/if}>OpenVK ({_default})</option>
                                 <option n:foreach="$themes as $id => $theme"
                                         n:attr="selected => $user->getStyle() === $id"
                                         value="{$id}">
@@ -548,7 +548,7 @@
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_'save'}" class="button" />
+                            <input type="submit" value="{_save}" class="button" />
                         </td>
                     </tr>
                 </tbody>
@@ -649,7 +649,7 @@
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_'save'}" class="button" />
+                            <input type="submit" value="{_save}" class="button" />
                         </td>
                     </tr>
                 </tbody>

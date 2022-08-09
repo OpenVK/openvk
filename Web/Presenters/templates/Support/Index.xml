@@ -28,7 +28,7 @@
         {if $isNew}
             {if !is_null($banReason)}
                 <center>
-                    <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_'banned_alt'}" style="width: 20%;" />
+                    <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_banned_alt}" style="width: 20%;" />
                 </center>
                 <p>
                     {tr("banned_in_support_1", htmlentities($thisUser->getCanonicalName()))|noescape}<br/>

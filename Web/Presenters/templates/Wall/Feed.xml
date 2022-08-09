@@ -1,8 +1,8 @@
 {extends "../@layout.xml"}
-{block title}{_"feed"}{/block}
+{block title}{_feed}{/block}
 
 {block header}
-    {_"feed"}
+    {_feed}
 {/block}
 
 {block content}
@@ -29,7 +29,7 @@
             {include "../components/paginator.xml", conf => $paginatorConf}
         </div>
         <div class="postFeedPageSelect">
-            {_"posts_per_page"}:
+            {_posts_per_page}:
             <br />
             <select id="pageSelect">
                 <option value="1">1</option>

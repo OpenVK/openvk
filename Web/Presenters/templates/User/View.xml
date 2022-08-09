@@ -34,7 +34,7 @@
          class="name-checkmark"
          src="/assets/packages/static/openvk/img/checkmark.png"
          />
-    <span n:if="isset($thisUser) && $user->getId() == $thisUser->getId()"><b>({_"this_is_you"})</b></span>
+    <span n:if="isset($thisUser) && $user->getId() == $thisUser->getId()"><b>({_this_is_you})</b></span>
     
     <!-- DEBUG: ONLINE REPORT: static {$user->getOnline()->timestamp()}s adjusted {$user->getOnline()->timestamp() + 2505600}s real {time()}s -->
     <div n:if="$user->getOnline()->timestamp() + 2505600 > time()" style="float:right;">
@@ -70,7 +70,7 @@
         <div n:ifset="$thisUser" id="profile_links">
             {if $user->getId() == $thisUser->getId()}
                 <div id="profile_link" style="width: 194px;">
-                    <a href="/edit" class="link">{_"edit_page"}</a>
+                    <a href="/edit" class="link">{_edit_page}</a>
                 </div>
                 <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && !$thisUser->prefersNotToSeeRating()" id="profile_link" style="width: 194px;">
                     <a onClick="showIncreaseRatingDialog({$thisUser->getCoins()}, {ltrim($thisUser->getUrl(), '/')}, {$csrfToken})" class="link">{_increase_rating}</a>
@@ -105,7 +105,7 @@
                 {/if}
                 
                 <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() == 0" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
-                <a n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" class="profile_link">{_"send_message"}</a>
+                <a n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" class="profile_link">{_send_message}</a>
 
                 {var $subStatus = $user->getSubscriptionStatus($thisUser)}
                 {if $subStatus === 0}
@@ -113,28 +113,28 @@
                         <input type="hidden" name="act" value="add" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" class="profile_link" value="{_"friends_add"}" />
+                        <input type="submit" class="profile_link" value="{_friends_add}" />
                     </form>
                 {elseif $subStatus === 1}
                     <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="add" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" class="profile_link" value="{_"friends_accept"}" />
+                        <input type="submit" class="profile_link" value="{_friends_accept}" />
                     </form>
                 {elseif $subStatus === 2}
                     <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="rem" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" class="profile_link" value="{_"friends_reject"}" />
+                        <input type="submit" class="profile_link" value="{_friends_reject}" />
                     </form>
                 {elseif $subStatus === 3}
                     <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="rem" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" class="profile_link" value="{_"friends_delete"}" />
+                        <input type="submit" class="profile_link" value="{_friends_delete}" />
                     </form>
                 {/if}
             {/if}
@@ -177,13 +177,13 @@
             {var $friendCount = $user->getFriendsCount()}
             
             <div class="content_title_expanded" onclick="hidePanel(this, {$friendCount});">
-                {_"friends"}
+                {_friends}
             </div>
             <div>
                 <div class="content_subtitle">
                     {tr("friends", $friendCount)}
                     <div style="float:right;">
-                        <a href="/friends{$user->getId()}">{_"all_title"}</a>
+                        <a href="/friends{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
                 <div class="content_list">
@@ -205,13 +205,13 @@
             {var $friendOnlineCount = $user->getFriendsOnlineCount()}
             
             <div class="content_title_expanded" onclick="hidePanel(this, {$friendOnlineCount});">
-                {_"friends_online"}
+                {_friends_online}
             </div>
             <div>
                 <div class="content_subtitle">
                     {tr("friends_online", $friendOnlineCount)}
                     <div style="float:right;">
-                        <a href="/friends{$user->getId()}?act=online">{_"all_title"}</a>
+                        <a href="/friends{$user->getId()}?act=online">{_all_title}</a>
                     </div>
                 </div>
                 <div class="content_list">
@@ -231,13 +231,13 @@
         </div>
         <div n:if="$albumsCount > 0 && $user->getPrivacyPermission('photos.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this, {$albumsCount});">
-                {_"albums"}
+                {_albums}
             </div>
             <div>
                 <div class="content_subtitle">
                     {tr("albums", $albumsCount)}
                     <div style="float:right;">
-                        <a href="/albums{$user->getId()}">{_"all_title"}</a>
+                        <a href="/albums{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
                 <div style="padding: 5px;">
@@ -265,7 +265,7 @@
                 <div class="content_subtitle">
                     {tr("videos", $videosCount)}
                     <div style="float:right;">
-                        <a href="/videos{$user->getId()}">{_"all_title"}</a>
+                        <a href="/videos{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
                 <div style="padding: 5px;">
@@ -291,7 +291,7 @@
                 <div class="content_subtitle">
                     {tr("notes", $notesCount)}
                     <div style="float:right;">
-                        <a href="/notes{$user->getId()}">{_"all_title"}</a>
+                        <a href="/notes{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
 				
@@ -314,13 +314,13 @@
         <div n:if="$user->getClubCount() > 0 && $user->getPrivacyPermission('groups.read', $thisUser ?? NULL)">
             {var $clubsCount = $user->getClubCount()}
             <div class="content_title_expanded" onclick="hidePanel(this, {$clubsCount})">
-                {_"groups"}
+                {_groups}
             </div>
             <div>
                 <div class="content_subtitle">
                     {tr("groups", $clubsCount)}
                     <div style="float:right;">
-                        <a href="/groups{$user->getId()}">{_"all_title"}</a>
+                        <a href="/groups{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
                 <div style="padding-left: 5px;">
@@ -339,7 +339,7 @@
                 <div class="content_subtitle">
                     {tr("meetings", $meetingCount)}
                     <div style="float:right;">
-                        <a href="/groups{$user->getId()}?act=meetings">{_"all_title"}</a>
+                        <a href="/groups{$user->getId()}?act=meetings">{_all_title}</a>
                     </div>
                 </div>
                 <div style="padding-left: 5px;">
@@ -372,7 +372,7 @@
                         <div n:class="page_status, $thatIsThisUser ? page_status_edit_button" n:attr="id => $thatIsThisUser ? page_status_text : NULL">{$user->getStatus()}</div>
                     {elseif $thatIsThisUser}
                         <div class="page_status">
-                            <div n:class="edit_link, $thatIsThisUser ? page_status_edit_button" id="page_status_text">[ {_"change_status"} ]</div>
+                            <div n:class="edit_link, $thatIsThisUser ? page_status_edit_button" id="page_status_text">[ {_change_status} ]</div>
                         </div>
                     {/if}
                 </div>
@@ -381,27 +381,27 @@
                 <table id="basicInfo" class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:if=" $user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
                     <tbody>
                         <tr>
-                            <td class="label"><span class="nobold">{_"gender"}: </span></td>
+                            <td class="label"><span class="nobold">{_gender}: </span></td>
                             <td class="data">{$user->isFemale() ? tr("female") : tr("male")}</td>
                         </tr>
                         <tr>
-                            <td class="label"><span class="nobold">{_"relationship"}:</span></td>
+                            <td class="label"><span class="nobold">{_relationship}:</span></td>
                             <td class="data">{$user->getLocalizedMaritalStatus()}</td>
                         </tr>
                         <tr>
-                            <td class="label"><span class="nobold">{_"registration_date"}: </span></td>
+                            <td class="label"><span class="nobold">{_registration_date}: </span></td>
                             <td class="data">{$user->getRegistrationTime()}</td>
                         </tr>
                         <tr n:if="!is_null($user->getHometown())">
-                            <td class="label"><span class="nobold">{_"hometown"}:</span></td>
+                            <td class="label"><span class="nobold">{_hometown}:</span></td>
                             <td class="data">{$user->getHometown()}</td>
                         </tr>
                         <tr>
-                            <td class="label"><span class="nobold">{_"politViews"}:</span></td>
+                            <td class="label"><span class="nobold">{_politViews}:</span></td>
                             <td class="data">{var $pviews = $user->getPoliticalViews()}{_"politViews_$pviews"}</td>
                         </tr>
                         <tr n:if="!is_null($user->getBirthday())">
-                            <td class="label"><span class="nobold">{_"birth_date"}:</span></td>
+                            <td class="label"><span class="nobold">{_birth_date}:</span></td>
                             <td n:if="$user->getBirthdayPrivacy() == 0" class="data">{$user->getBirthday()->format('%e %B %Y')},
                                 {tr("years", $user->getAge())}</td>
                             <td n:if="$user->getBirthdayPrivacy() == 1" class="data">{$user->getBirthday()->format('%e %B')}</td>
@@ -412,14 +412,14 @@
         </div>
         <div n:if="$user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this);">
-                {_"information"}
+                {_information}
             </div>
             
             {capture $contactInfo_Tmp}
                 <table class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:ifcontent>
                   <tbody n:ifcontent>
                         <tr n:if="!is_null($user->getContactEmail())">
-                            <td class="label"><span class="nobold">{_"email"}: </span></td>
+                            <td class="label"><span class="nobold">{_email}: </span></td>
                             <td>
                                 <a href="mailto:{$user->getContactEmail()}" rel="ugc">
                                     {$user->getContactEmail()}
@@ -427,7 +427,7 @@
                             </td>
                         </tr>
                         <tr n:if="!is_null($user->getTelegram())">
-                            <td class="label"><span class="nobold">{_"telegram"}: </span></td>
+                            <td class="label"><span class="nobold">{_telegram}: </span></td>
                             <td>
                                 <a href="https://t.me/{$user->getTelegram()}" rel="ugc" target="_blank">
                                     @{$user->getTelegram()}
@@ -435,7 +435,7 @@
                             </td>
                         </tr>
                         <tr n:if="!is_null($user->getWebsite())">
-                            <td class="label"><span class="nobold">{_"personal_website"}: </span></td>
+                            <td class="label"><span class="nobold">{_personal_website}: </span></td>
                             <td>
                                 <a href="{$user->getWebsite()}" rel="ugc" target="_blank">
                                     {$user->getWebsite()}
@@ -443,11 +443,11 @@
                             </td>
                         </tr>
                     <tr n:if="!is_null($user->getCity())">
-                        <td class="label"><span class="nobold">{_"city"}:</span></td>
+                        <td class="label"><span class="nobold">{_city}:</span></td>
                         <td class="data">{$user->getCity()}</td>
                     </tr>
                     <tr n:if="!is_null($user->getPhysicalAddress())">
-                        <td class="label"><span class="nobold">{_"address"}:</span></td>
+                        <td class="label"><span class="nobold">{_address}:</span></td>
                         <td class="data">{$user->getPhysicalAddress()}</td>
                     </tr>
                   </tbody>
@@ -457,27 +457,27 @@
                 <table class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:ifcontent>
                   <tbody n:ifcontent>
                     <tr n:if="!is_null($user->getInterests())">
-                        <td class="label"><span class="nobold">{_"interests"}: </span></td>
+                        <td class="label"><span class="nobold">{_interests}: </span></td>
                         <td class="data">{$user->getInterests()}</td>
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteMusic())">
-                        <td class="label"><span class="nobold">{_"favorite_music"}: </span></td>
+                        <td class="label"><span class="nobold">{_favorite_music}: </span></td>
                         <td class="data">{$user->getFavoriteMusic()}</td>
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteFilms())">
-                        <td class="label"><span class="nobold">{_"favorite_films"}: </span></td>
+                        <td class="label"><span class="nobold">{_favorite_films}: </span></td>
                         <td class="data">{$user->getFavoriteFilms()}</td>
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteShows())">
-                        <td class="label"><span class="nobold">{_"favorite_shows"}: </span></td>
+                        <td class="label"><span class="nobold">{_favorite_shows}: </span></td>
                         <td class="data">{$user->getFavoriteShows()}</td>
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteBooks())">
-                        <td class="label"><span class="nobold">{_"favorite_books"}: </span></td>
+                        <td class="label"><span class="nobold">{_favorite_books}: </span></td>
                         <td class="data">{$user->getFavoriteBooks()}</td>
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteQuote())">
-                        <td class="label"><span class="nobold">{_"favorite_quotes"}: </span></td>
+                        <td class="label"><span class="nobold">{_favorite_quotes}: </span></td>
                         <td class="data">{$user->getFavoriteQuote()}</td>
                     </tr>
                     <tr n:if="!is_null($user->getDescription())">
@@ -489,14 +489,14 @@
             {/capture}
             <div>
             <div style="padding: 10px 8px 15px 8px;" n:ifcontent>
-                <h4 style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_"contact_information"} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=contacts" class="edit_link">[ {_"edit"} ]</a>{/if}{/ifset}</h4>
+                <h4 style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_contact_information} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=contacts" class="edit_link">[ {_edit} ]</a>{/if}{/ifset}</h4>
                 {if !empty($contactInfo_Tmp)}
                     {$contactInfo_Tmp|noescape}
                 {else}
                     <div style="padding: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
                 {/if}
                 <br>
-                <h4 style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_"personal_information"} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=interests" class="edit_link">[ {_"edit"} ]</a>{/if}{/ifset}</h4>
+                <h4 style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_personal_information} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=interests" class="edit_link">[ {_edit} ]</a>{/if}{/ifset}</h4>
                 {if !empty($uInfo_Tmp)}
                     {$uInfo_Tmp|noescape}
                 {else}

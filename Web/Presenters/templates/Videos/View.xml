@@ -5,9 +5,9 @@
 {block header}
     <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>
     »
-    <a href="/videos{$user->getId()}">{_"videos"}</a>
+    <a href="/videos{$user->getId()}">{_videos}</a>
     »
-    {_"video"}
+    {_video}
 {/block}
 
 {block content}
@@ -37,14 +37,14 @@
         </div>
         <div style="float: left; min-height: 100px; width: 30%; overflow: hidden; overflow-wrap: break-word;">
             <div>
-                <h4>{_"information"}</h4>
-                <span style="color: grey;">{_"info_name"}:</span>
+                <h4>{_information}</h4>
+                <span style="color: grey;">{_info_name}:</span>
                 {$video->getName()}<br/>
-                <span style="color: grey;">{_"info_description"}:</span>
-                {$video->getDescription() ?? "(отсутствует)"}<br/>
-                <span style="color: grey;">{_"info_uploaded_by"}:</span>
+                <span style="color: grey;">{_info_description}:</span>
+                {$video->getDescription() ?? "(" . tr("none") . ")"}<br/>
+                <span style="color: grey;">{_info_uploaded_by}:</span>
                 <a href="{$user->getURL()}">{$user->getFullName()}</a><br/>
-                <span style="color: grey;">{_"info_upload_date"}:</span>
+                <span style="color: grey;">{_info_upload_date}:</span>
                 {$video->getPublicationTime()}
             </div>
             <br/>

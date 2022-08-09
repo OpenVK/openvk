@@ -31,7 +31,7 @@
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">{_"name"}: </span>
+                            <span class="nobold">{_name}: </span>
                         </td>
                         <td>
                             <input type="text" name="name" value="{$club->getName()}" />
@@ -39,7 +39,7 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">{_"description"}: </span>
+                            <span class="nobold">{_description}: </span>
                         </td>
                         <td>
                             <textarea type="text" name="about" style="resize:vertical;">{$club->getDescription()}</textarea>
@@ -105,7 +105,7 @@
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_'save'}" class="button" />
+                            <input type="submit" value="{_save}" class="button" />
                         </td>
                     </tr>
                 </tbody>

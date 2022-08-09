@@ -51,7 +51,7 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="{_"photo"}" />
+    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="{_photo}" />
 {/block}
 
 {block name}
@@ -63,21 +63,21 @@
         <tbody>
             {if $type === "users"}
                 <tr>
-                    <td><span class="nobold">{_"gender"}: </span></td>
+                    <td><span class="nobold">{_gender}: </span></td>
                     <td>{$x->isFemale() ? tr("female") : tr("male")}</td>
                 </tr>
                 <tr>
-                    <td><span class="nobold">{_"relationship"}:</span></td>
+                    <td><span class="nobold">{_relationship}:</span></td>
                     <td>{$x->getLocalizedMaritalStatus()}</td>
                 </tr>
                 <tr>
-                    <td><span class="nobold">{_"registration_date"}: </span></td>
+                    <td><span class="nobold">{_registration_date}: </span></td>
                     <td>{$x->getRegistrationTime()}</td>
                 </tr>
             {/if}
             <tr>
                 <td>
-                    <span class="nobold">{_"description"}:</span>
+                    <span class="nobold">{_description}:</span>
                 </td>
                 <td>
                     {$x->getDescription() ?? '(' . tr("none") . ')'}

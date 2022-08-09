@@ -1,10 +1,10 @@
 {extends "../@layout.xml"}
-{block title}{_"wall"}{/block}
+{block title}{_wall}{/block}
 
 {block header}
     <a href="{$oObj->getURL()}">{$oObj->getCanonicalName()}</a>
     »
-    {_"wall"} 
+    {_wall} 
     <div style="float:right;">
         <span>
             <b>{tr("wall", $count)}</b>

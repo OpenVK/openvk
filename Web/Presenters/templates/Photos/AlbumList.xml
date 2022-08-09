@@ -2,7 +2,7 @@
 {var $iterator = iterator_to_array($albums)}
 {var $page     = $paginatorConf->page}
 
-{block title}{_"albums"} {$owner->getCanonicalName()}{/block}
+{block title}{_albums} {$owner->getCanonicalName()}{/block}
 
 {block header}
     {if isset($thisUser) && $thisUser->getId() == $owner->getId()}

@@ -54,11 +54,11 @@
     <table>
         <tbody>
             <tr>
-                <td width="120" valign="top"><span class="nobold">{_"gender"}: </span></td>
+                <td width="120" valign="top"><span class="nobold">{_gender}: </span></td>
                 <td>{$user->isFemale() ? "женский" : "мужской"}</td>
             </tr>
             <tr>
-                <td width="120" valign="top"><span class="nobold">{_"registration_date"}: </span></td>
+                <td width="120" valign="top"><span class="nobold">{_registration_date}: </span></td>
                 <td>{$user->getRegistrationTime()}</td>
             </tr>
             <tr>

@@ -1,8 +1,8 @@
 {extends "../@layout.xml"}
-{block title}{_"registration"}{/block}
+{block title}{_registration}{/block}
 
 {block header}
-    {_"registration"}
+    {_registration}
 {/block}
 
 {block headIncludes}
@@ -28,7 +28,7 @@
                 <tbody>
                     <tr>
                         <td>
-                            <span>{_"name"}: </span>
+                            <span>{_name}: </span>
                         </td>
                         <td>
                             <input type="text" name="first_name" required />
@@ -36,7 +36,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <span>{_"surname"}: </span>
+                            <span>{_surname}: </span>
                         </td>
                         <td>
                             <input type="text" name="last_name" />
@@ -44,19 +44,19 @@
                     </tr>
                     <tr>
                         <td>
-                            <span>{_"gender"}: </span>
+                            <span>{_gender}: </span>
                         </td>
                         <td>
                             {var $femalePreferred = OPENVK_ROOT_CONF["openvk"]["preferences"]["femaleGenderPriority"]}
                             <select name="sex" required>
-                                <option n:attr="selected => !$femalePreferred" value="male">{_"male"}</option>
-                                <option n:attr="selected => $femalePreferred" value="female">{_"female"}</option>
+                                <option n:attr="selected => !$femalePreferred" value="male">{_male}</option>
+                                <option n:attr="selected => $femalePreferred" value="female">{_female}</option>
                             </select>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <span>{_"birth_date"}: </span>
+                            <span>{_birth_date}: </span>
                         </td>
                         <td>
                             <input max={date('Y-m-d')} name="birthday" type="date"/>
@@ -65,7 +65,7 @@
                     <tr></tr>
                     <tr>
                         <td>
-                            <span>{_"email"}: </span>
+                            <span>{_email}: </span>
                         </td>
                         <td>
                             <input type="email" name="email" required />
@@ -73,7 +73,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <span>{_"password"}: </span>
+                            <span>{_password}: </span>
                         </td>
                         <td>
                             <input type="password" name="password" required />
@@ -93,8 +93,8 @@
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_'registration'}" class="button" />
-                            <a href="/login">{_"log_in"}</a>
+                            <input type="submit" value="{_registration}" class="button" />
+                            <a href="/login">{_log_in}</a>
                         </td>
                     </tr>
                 </tbody>
@@ -102,9 +102,9 @@
         </form>
     {else}
         <center>
-            <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_'registration_closed'}" style="width: 20%;" />
+            <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_registration_closed}" style="width: 20%;" />
             <p>
-                {_"registration_disabled_info"}
+                {_registration_disabled_info}
                 {if OPENVK_ROOT_CONF['openvk']['preferences']['registration']['reason']}
                     <br/><br/><b>{php echo OPENVK_ROOT_CONF['openvk']['preferences']['registration']['reason']}</b>
                 {/if}
