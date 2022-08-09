@@ -1,9 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\Ticket;
-use openvk\Web\Models\Repositories\{Tickets, Users};
-use openvk\Web\Models\Entities\TicketComment;
-use openvk\Web\Models\Repositories\TicketComments;
+use openvk\Web\Models\Entities\{Ticket, TicketComment};
+use openvk\Web\Models\Repositories\{Tickets, Users, TicketComments};
 use openvk\Web\Util\Telegram;
 use Chandler\Session\Session;
 use Chandler\Database\DatabaseConnection;

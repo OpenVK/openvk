@@ -25,15 +25,15 @@ final class BlobPresenter extends OpenVKPresenter
             $this->notFound();
         
         if(isset($_SERVER["HTTP_IF_NONE_MATCH"]))
-                exit(header("HTTP/1.1 304 Not Modified"));
-            
-            header("Content-Type: " . mime_content_type($path));
-            header("Content-Size: " . filesize($path));
-            header("Cache-Control: public, max-age=1210000");
-            header("X-Accel-Expires: 1210000");
-            header("ETag: W/\"" . hash_file("snefru", $path) . "\"");
-            
-            readfile($path);
-            exit;
+            exit(header("HTTP/1.1 304 Not Modified"));
+        
+        header("Content-Type: " . mime_content_type($path));
+        header("Content-Size: " . filesize($path));
+        header("Cache-Control: public, max-age=1210000");
+        header("X-Accel-Expires: 1210000");
+        header("ETag: W/\"" . hash_file("snefru", $path) . "\"");
+        
+        readfile($path);
+        exit;
     }
 }

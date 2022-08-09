@@ -1,14 +1,8 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\IP;
-use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Entities\PasswordReset;
-use openvk\Web\Models\Entities\EmailVerification;
+use openvk\Web\Models\Entities\{IP, User, PasswordReset, EmailVerification};
+use openvk\Web\Models\Repositories\{IPs, Users, Restores, Verifications};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
-use openvk\Web\Models\Repositories\IPs;
-use openvk\Web\Models\Repositories\Users;
-use openvk\Web\Models\Repositories\Restores;
-use openvk\Web\Models\Repositories\Verifications;
 use openvk\Web\Util\Validator;
 use Chandler\Session\Session;
 use Chandler\Security\User as ChandlerUser;
