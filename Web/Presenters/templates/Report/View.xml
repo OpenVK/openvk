@@ -3,16 +3,16 @@
 {block title}{$report->getReason()}{/block}
 
 {block header}
-    <a href="/support/reports">{_list_of_reports}</a>
+    <a href="/admin/support/reports">{_list_of_reports}</a>
     »
     {_report_number}{$report->getId()}
 {/block}
 
 {block content}
 <p><b>{_comment}: </b>{$report->getReason()}</p>
-{include "../components/post/oldpost.xml", post => $report->getContentObject(), forceNoDeleteLink => TRUE, forceNoShareLink => TRUE, forceNoLike => TRUE}
+{include "../components/post/oldpost.xml", post => $report->getContentObject(), forceNoPinLink => TRUE, forceNoDeleteLink => TRUE, forceNoShareLink => TRUE, forceNoLike => TRUE}
 <center>
-    <form action="/support/reportAction{$report->getId()}" method="post">
+    <form action="/admin/support/reportAction{$report->getId()}" method="post">
         <input type="hidden" name="hash" value="{$csrfToken}" />
         <input type="submit" name="ban" value="{_ban_user_action}" class="button">
         <input type="submit" name="delete" value="{_delete}" class="button">

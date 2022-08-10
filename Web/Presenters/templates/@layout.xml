@@ -179,7 +179,7 @@
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
                                 {/if}
                             </a>
-                            <a href="/support/reports" class="link" n:if="$canAccessHelpdesk">Reports
+                            <a href="/admin/support/reports" class="link" n:if="$canAccessHelpdesk">Reports
                                 {if $reportNotAnsweredCount > 0}
                                     (<b>{$reportNotAnsweredCount}</b>)
                                 {/if}

@@ -15,7 +15,7 @@
 {* BEGIN ELEMENTS DESCRIPTION *}
 
 {block link|strip|stripHtml}
-    /support/report{$x->getId()}
+    /admin/support/report{$x->getId()}
 {/block}
 
 {block preview}
