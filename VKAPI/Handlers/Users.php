@@ -27,7 +27,7 @@ final class Users extends VKAPIRequestHandler
             $usr = $users->get((int) $usrs[$i]);
             if(is_null($usr) || $usr->isDeleted()) {
                 $response[$i] = (object)[
-                    "id" 		  => $usrs[$i],
+                    "id" 		  => (int) $usrs[$i],
                     "first_name"  => "DELETED",
                     "last_name"   => "",
                     "deactivated" => "deleted"
