@@ -45,8 +45,8 @@ final class Account extends VKAPIRequestHandler
         $this->requireUser();
 
         $this->getUser()->setOnline(time());
-
         $this->getUser()->save();
+        
         return 1;
     }
 
