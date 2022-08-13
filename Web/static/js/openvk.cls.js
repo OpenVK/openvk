@@ -427,3 +427,15 @@ function showIncreaseRatingDialog(coinsCount, userUrl, hash) {
             document.querySelector("#rating_price").innerHTML = value + " " + tr("points_amount_other").replace("$1 ", "");
     };
 }
+
+$(document).on("scroll", () => {
+    if($(document).scrollTop() > $(".sidebar").height() + 50) {
+        $(".floating_sidebar")[0].classList.add("show");
+    } else if($(".floating_sidebar")[0].classList.contains("show")) {
+        $(".floating_sidebar")[0].classList.remove("show");
+        $(".floating_sidebar")[0].classList.add("hide_anim");
+        setTimeout(() => {
+            $(".floating_sidebar")[0].classList.remove("hide_anim");
+        }, 250);
+    }
+})

@@ -1997,3 +1997,59 @@ table td[width="120"] {
 .cookies-popup .contanier .text {
     width: 100%;
 }
+
+.floating_sidebar {
+    position: fixed;
+    top: 0;
+    display: flex;
+    flex-direction: column;
+    width: 118px;
+    align-items: end;
+    transition: 250ms;
+    display: none;
+}
+
+.floating_sidebar.show {
+    display: flex;
+    animation-name: appearing;
+    animation-duration: 250ms;
+}
+
+.floating_sidebar.hide_anim {
+    opacity: 0;
+    display: flex;
+}
+
+.floating_sidebar .minilink {
+    text-align: right;
+    opacity: 0.5;
+    padding: 8px 4px;
+    width: fit-content;
+    transition: 250ms;
+    height: 11px;
+    display: flex;
+}
+
+.floating_sidebar .minilink:hover {
+    opacity: 1;
+}
+
+.minilink .counter {
+	font-weight: bold;
+	background-color: #eee;
+	line-height: 10px;
+	margin: -1px 3px 0 0;
+	padding: 1px 1px;
+	border-radius: 2px;
+	height: 11px;
+}
+
+@keyframes appearing {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
