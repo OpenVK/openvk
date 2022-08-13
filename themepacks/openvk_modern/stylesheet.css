@@ -238,3 +238,13 @@ input[type=checkbox] {
     align-items: start;
     width: 21%;
 }
+.minilink .counter {
+    background-color: #2B587A;
+    margin: 0;
+    padding: 0;
+    left: 10px;
+    font-size: 7px;
+    color: #fff;
+    position: absolute;
+    margin-top: -6px;
+}
