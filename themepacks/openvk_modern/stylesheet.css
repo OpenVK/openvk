@@ -230,3 +230,11 @@ input[type=checkbox] {
 #votesBalance {
     border-bottom: none;
 }
+
+.floating_sidebar {
+    position: fixed;
+    top: 50px;
+    right: 0;
+    align-items: start;
+    width: 21%;
+}
