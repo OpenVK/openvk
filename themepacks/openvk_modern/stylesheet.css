@@ -241,7 +241,7 @@ input[type=checkbox] {
 .minilink .counter {
     background-color: #2B587A;
     margin: 0;
-    padding: 0;
+    padding: 0.5px 2px;
     left: 10px;
     font-size: 7px;
     color: #fff;
