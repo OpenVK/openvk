@@ -151,14 +151,13 @@ final class Friends extends VKAPIRequestHandler
 
 		if(!is_null($fields)) 
 			$response = $usersApi->get(implode(',', $followers), $fields, 0, $count);  # FIXME
-		
+
 		foreach($response as $user)
 			$user->user_id = $user->id;
-		
-		
+
 		return (object) [
 			"count" => $this->getUser()->getFollowersCount(),
 			"items" => $response
-		]; 
+		];
 	}
 }
