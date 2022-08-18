@@ -56,6 +56,10 @@
 
 {block name}
     <text style="overflow: hidden;">&nbsp;{$x->getCanonicalName()}</text>
+    <img n:if="$x->isVerified()" 
+        class="name-checkmark"
+        src="/assets/packages/static/openvk/img/checkmark.png"
+    />
 {/block}
 
 {block description}
