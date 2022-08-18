@@ -180,6 +180,13 @@
 "wall_other" = "$1 записей";
 "publish_post" = "Добавить запись";
 "view_other_comments" = "Посмотреть остальные комментарии";
+"wall_archive" = "Архив";
+"wall_do_archive" = "Архивировать";
+"wall_do_unarchive" = "Восстановить";
+"wall_archive_succ" = "Запись архивирована";
+"wall_archive_succ_descr" = "Теперь она находится в архиве записей.";
+"wall_unarchive_succ" = "Запись восстановлена.";
+"wall_unarchive_succ_descr" = "Теперь она снова видна пользователям.";
 
 "no_comments" = "Комментарии отсутствуют";
 

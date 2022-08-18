@@ -99,6 +99,11 @@ class Post extends Postable
     {
         return (bool) $this->getRecord()->deleted;
     }
+
+    function isArchive(): bool
+    {
+        return (bool) $this->getRecord()->archive;
+    }
     
     function getOwnerPost(): int
     {
@@ -172,6 +177,38 @@ class Post extends Postable
     {
         $this->setDeleted(1);
         $this->unwire();
+        $this->save();
+    }
+
+    function archive(): void
+    {
+        DB::i()
+            ->getContext()
+            ->table("posts")
+            ->where([
+                "wall"   => $this->getTargetWall(),
+                "virtual_id" => $this->getVirtualId(),
+                "archive" => 0,
+            ])
+            ->update(["archive" => 1]);
+
+        $this->stateChanges("archive", 1);
+        $this->save();
+    }
+
+    function unarchive(): void
+    {
+        DB::i()
+            ->getContext()
+            ->table("posts")
+            ->where([
+                "wall"   => $this->getTargetWall(),
+                "virtual_id" => $this->getVirtualId(),
+                "archive" => 1,
+            ])
+            ->update(["archive" => 0]);
+
+        $this->stateChanges("archive", 0);
         $this->save();
     }
     

@@ -1,0 +1,1 @@
+ALTER TABLE `posts` ADD `archive` TINYINT NOT NULL DEFAULT '0' AFTER `archive`;

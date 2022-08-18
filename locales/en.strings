@@ -172,6 +172,13 @@
 "wall_other" = "$1 posts";
 "publish_post" = "Add post";
 "view_other_comments" = "View other comments";
+"wall_archive" = "Archive";
+"wall_do_archive" = "Archive";
+"wall_do_unarchive" = "Restore";
+"wall_archive_succ" = "The post has been archived";
+"wall_archive_succ_descr" = "Now it's in the archive.";
+"wall_unarchive_succ" = "The post has been restored";
+"wall_unarchive_succ_descr" = "Now it's visible to users again.";
 
 "no_comments" = "No comments";
 
