@@ -241,6 +241,8 @@ routes:
       handler: "Notes->list"
     - url: "/note{num}_{num}"
       handler: "Notes->view"
+    - url: "/notes/prerender"
+      handler: "Notes->preView"
     - url: "/notes/create"
       handler: "Notes->create"
     - url: "/note{num}_{num}/edit"
