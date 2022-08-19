@@ -179,7 +179,8 @@
 "wall_archive_succ_descr" = "Now it's in the archive.";
 "wall_unarchive_succ" = "The post has been restored";
 "wall_unarchive_succ_descr" = "Now it's visible to users again.";
-"wall_show_more" = "Show more...";
+"show_more" = "Show more...";
+"hide_collapsed" = "Hide text";
 
 "no_comments" = "No comments";
 

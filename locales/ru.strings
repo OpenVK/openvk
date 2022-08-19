@@ -187,7 +187,8 @@
 "wall_archive_succ_descr" = "Теперь она находится в архиве записей.";
 "wall_unarchive_succ" = "Запись восстановлена.";
 "wall_unarchive_succ_descr" = "Теперь она снова видна пользователям.";
-"wall_show_more" = "Показать больше...";
+"wall_show_more" = "Показать полностью...";
+"wall_hide_collapsed" = "Скрыть текст";
 
 "no_comments" = "Комментарии отсутствуют";
 

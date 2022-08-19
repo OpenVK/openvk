@@ -5,6 +5,12 @@
     {var $deac = "post_deact_silent"}
 {/if}
 
+<script defer>
+    $(".post-content-text").collapser({
+        mode: "words",
+        truncate: 50
+    });
+</script>
 <table border="0" style="font-size: 11px;" n:class="post, $post->isExplicit() ? post-nsfw">
     <tbody>
         <tr>
@@ -42,26 +48,7 @@
                 </div>
                 <div class="post-content" id="{$post->getPrettyId()}">
                     <div class="text" id="text{$post->getPrettyId()}">
-                        <span
-                            id="content-{$post->getVirtualId()}"
-                            style="display: inline;"
-                        >
-                            {mb_substr($post->getText(), 0, 35)|noescape}
-                        </span>
-                        {if mb_substr($post->getText(), 35) != ""}
-                            <a
-                                id="showMore-{$post->getVirtualId()}"
-                                onClick="this.style.display = 'none'; document.getElementById('hidden-content-{$post->getVirtualId()}').style.display = 'inline';"
-                            >
-                                {_wall_show_more}
-                            </a>
-                            <span
-                                id="hidden-content-{$post->getVirtualId()}"
-                                style="display: none; margin-left: -4px;"
-                            >
-                                {mb_substr($post->getText(), 35)|noescape}
-                            </span>
-                        {/if}
+                        <span class="post-content-text">{$post->getText()}</span>
 
                         <div n:ifcontent class="attachments_b">
                             <div class="attachment" n:foreach="$post->getChildren() as $attachment" data-localized-nsfw-text="{_nsfw_warning}">
