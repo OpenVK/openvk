@@ -1,0 +1,1 @@
+ALTER TABLE `posts` ADD `archived` TINYINT NOT NULL DEFAULT '0' AFTER `deleted`;

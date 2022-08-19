@@ -4,7 +4,7 @@
 {block header}
     <a href="{$oObj->getURL()}">{$oObj->getCanonicalName()}</a>
     »
-    {_wall} 
+    {if $archive}{_wall_archive}{else}{_wall}{/if}
     <div style="float:right;">
         <span>
             <b>{tr("wall", $count)}</b>
@@ -13,9 +13,10 @@
 {/block}
 
 {block content}
+    {var $is_archive = $archive === '1'}
     <div class="content_divider">
         <div>
-            <div n:if="$canPost" class="content_subtitle">
+            <div n:if="$canPost AND !$is_archive" class="content_subtitle">
                 {include "../components/textArea.xml", route => "/wall$owner/makePost"}
             </div>
             

@@ -69,7 +69,7 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->owner   = $user;
         $this->template->canPost = $canPost;
         $this->template->count   = $this->posts->getPostCountOnUserWall($user);
-        $this->template->posts   = iterator_to_array($this->posts->getPostsFromUsersWall($user, (int) ($_GET["p"] ?? 1)));
+        $this->template->posts   = iterator_to_array($this->posts->getPostsFromUsersWall($user, (int) ($_GET["p"] ?? 1), NULL, NULL, $this->queryParam("archive") == 1));
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
             "page"    => (int) ($_GET["p"] ?? 1),
@@ -79,6 +79,7 @@ final class WallPresenter extends OpenVKPresenter
 
         
         $this->logPostsViewed($this->template->posts, $user);
+        $this->template->archive = $this->queryParam("archive");
     }
 
     function renderWallEmbedded(int $user): void
@@ -150,6 +151,7 @@ final class WallPresenter extends OpenVKPresenter
                    ->select("id")
                    ->where("wall IN (?)", $ids)
                    ->where("deleted", 0)
+                   ->where("archived", 0)
                    ->order("created DESC");
         $this->template->paginatorConf = (object) [
             "count"   => sizeof($posts),
@@ -408,5 +410,26 @@ final class WallPresenter extends OpenVKPresenter
         
         # TODO localize message based on language and ?act=(un)pin
         $this->flashFail("succ", tr("information_-1"), tr("changes_saved_comment"));
+    }
+
+    function renderArchive(int $wall, int $post_id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        $post = $this->posts->getPostById($wall, $post_id);
+        if(!$post)
+            $this->notFound();
+
+        if($post->getOwnerPost() != $this->user->id)
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+
+        if (($this->queryParam("act") ?? "archive") === "archive") {
+            $post->archive();
+            $this->flashFail("succ", tr("wall_archive_succ"), tr("wall_archive_succ_descr"));
+        } else {
+            $post->unarchive();
+            $this->flashFail("succ", tr("wall_unarchive_succ"), tr("wall_unarchive_succ_descr"));
+        } 
     }
 }
