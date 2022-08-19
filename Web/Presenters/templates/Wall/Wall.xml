@@ -4,7 +4,7 @@
 {block header}
     <a href="{$oObj->getURL()}">{$oObj->getCanonicalName()}</a>
     »
-    {if $archive}{_"wall_archive"}{else}{_"wall"}{/if}
+    {if $archive}{_wall_archive}{else}{_"wall"}{/if}
     <div style="float:right;">
         <span>
             <b>{tr("wall", $count)}</b>

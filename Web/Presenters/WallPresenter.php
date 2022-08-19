@@ -151,7 +151,7 @@ final class WallPresenter extends OpenVKPresenter
                    ->select("id")
                    ->where("wall IN (?)", $ids)
                    ->where("deleted", 0)
-                   ->where("archive", 0)
+                   ->where("archived", 0)
                    ->order("created DESC");
         $this->template->paginatorConf = (object) [
             "count"   => sizeof($posts),

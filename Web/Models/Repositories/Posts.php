@@ -37,7 +37,7 @@ class Posts
         return $this->toPost($post);
     }
     
-    function getPostsFromUsersWall(int $user, int $page = 1, ?int $perPage = NULL, ?int $offset = NULL, ?bool $archive = FALSE): \Traversable
+    function getPostsFromUsersWall(int $user, int $page = 1, ?int $perPage = NULL, ?int $offset = NULL, ?bool $archived = FALSE): \Traversable
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
         $offset ??= $perPage * ($page - 1);
@@ -61,7 +61,7 @@ class Posts
             "wall"    => $user,
             "pinned"  => false,
             "deleted" => false,
-            "archive" => $archive
+            "archived" => $archived
         ])->order("created DESC")->limit($perPage, $offset);
         
         foreach($sel as $post)

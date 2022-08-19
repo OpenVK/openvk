@@ -100,9 +100,9 @@ class Post extends Postable
         return (bool) $this->getRecord()->deleted;
     }
 
-    function isArchive(): bool
+    function isArchived(): bool
     {
-        return (bool) $this->getRecord()->archive;
+        return (bool) $this->getRecord()->archived;
     }
     
     function getOwnerPost(): int

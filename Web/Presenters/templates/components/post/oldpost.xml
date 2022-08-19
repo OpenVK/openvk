@@ -42,27 +42,7 @@
                 </div>
                 <div class="post-content" id="{$post->getPrettyId()}">
                     <div class="text" id="text{$post->getPrettyId()}">
-                        <span
-                            id="content-{$post->getVirtualId()}"
-                            style="display: inline;"
-                        >
-                            {mb_substr($post->getText(), 0, 35)|noescape}
-                        </span>
-
-                        {if mb_substr($post->getText(), 35) != ""}
-                        <a
-                            id="showMore-{$post->getVirtualId()}" 
-                            onClick="document.getElementById('showMore-{$post->getVirtualId()}').style.display = 'none'; document.getElementById('hidden-content-{$post->getVirtualId()}.style.display = 'inline';"
-                        >
-                            Показать полностью...
-                        </a>
-                        <span
-                            id="hidden-content-{$post->getVirtualId()}"
-                            style="display: none; margin-left: -4px;"
-                        >
-                            {mb_substr($post->getText(), 35)|noescape}
-                        </span>
-                        {/if}
+                        {$post->getText()|noescape}
                         
                         <div n:ifcontent class="attachments_b">
                             <div class="attachment" n:foreach="$post->getChildren() as $attachment" data-localized-nsfw-text="{_nsfw_warning}">
@@ -94,7 +74,7 @@
                         <a href="/wall{$post->getPrettyId()}/delete">{_delete}</a> &nbsp;|&nbsp;
                     {/if}
 
-                    {if !$post->isArchive()}
+                    {if !$post->isArchived()}
                         <a href="/wall{$post->getPrettyId()}/archive?act=archive&hash={rawurlencode($csrfToken)}">
                             {_wall_do_archive}
                         </a>
@@ -104,7 +84,7 @@
                         </a>
                     {/if}
                     
-                    {if !$post->isArchive()}
+                    {if !$post->isArchived()}
                         {if !($forceNoPinLink ?? false) && $post->canBePinnedBy($thisUser)}
                             {if $post->isPinned()}
                                 <a href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}">{_unpin}</a>
