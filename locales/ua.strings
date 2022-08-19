@@ -182,6 +182,13 @@
 "wall_other" = "$1 записів";
 "publish_post" = "Додати запис";
 "view_other_comments" = "Переглянути інші коментарі";
+"wall_archive" = "Архів";
+"wall_do_archive" = "Архівувати";
+"wall_do_unarchive" = "Розархівувати";
+"wall_archive_succ" = "Запис архівовано.";
+"wall_archive_succ_descr" = "Тепер запис знаходиться в архіві записів.";
+"wall_unarchive_succ" = "Запис відновлено.";
+"wall_unarchive_succ_descr" = "Тепер запис знову доступний користувачам.";
 
 "no_comments" = "Коментарі відсутні";
 
