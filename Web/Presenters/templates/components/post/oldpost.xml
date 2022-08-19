@@ -85,6 +85,7 @@
                     {/if}
                     
                     {if !$post->isArchived()}
+                        &nbsp;|&nbsp;
                         {if !($forceNoPinLink ?? false) && $post->canBePinnedBy($thisUser)}
                             {if $post->isPinned()}
                                 <a href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}">{_unpin}</a>

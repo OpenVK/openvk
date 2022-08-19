@@ -188,11 +188,11 @@ class Post extends Postable
             ->where([
                 "wall"   => $this->getTargetWall(),
                 "virtual_id" => $this->getVirtualId(),
-                "archive" => 0,
+                "archived" => 0,
             ])
-            ->update(["archive" => 1]);
+            ->update(["archived" => 1]);
 
-        $this->stateChanges("archive", 1);
+        $this->stateChanges("archived", 1);
         $this->save();
     }
 
@@ -204,11 +204,11 @@ class Post extends Postable
             ->where([
                 "wall"   => $this->getTargetWall(),
                 "virtual_id" => $this->getVirtualId(),
-                "archive" => 1,
+                "archived" => 1,
             ])
-            ->update(["archive" => 0]);
+            ->update(["archived" => 0]);
 
-        $this->stateChanges("archive", 0);
+        $this->stateChanges("archived", 0);
         $this->save();
     }
     

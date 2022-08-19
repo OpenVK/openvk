@@ -32,6 +32,7 @@ class Posts
             "wall"    => $user,
             "pinned"  => true,
             "deleted" => false,
+            "archived" => false,
         ])->fetch();
         
         return $this->toPost($post);
@@ -74,6 +75,7 @@ class Posts
         $sel = $this->posts
                     ->where("MATCH (content) AGAINST (? IN BOOLEAN MODE)", "+$hashtag")
                     ->where("deleted", 0)
+                    ->where("archived", 0)
                     ->order("created DESC")
                     ->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
         
@@ -86,7 +88,8 @@ class Posts
         $hashtag = "#$hashtag";
         $sel = $this->posts
                     ->where("content LIKE ?", "%$hashtag%")
-                    ->where("deleted", 0);
+                    ->where("deleted", 0)
+                    ->where("archived", 0);
         
         return sizeof($sel);
     }
@@ -103,7 +106,7 @@ class Posts
     
     function getPostCountOnUserWall(int $user): int
     {
-        return sizeof($this->posts->where(["wall" => $user, "deleted" => 0]));
+        return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "archived" => 0]));
     }
 
     function getCount(): int
