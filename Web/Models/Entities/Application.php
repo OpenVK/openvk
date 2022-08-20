@@ -74,14 +74,14 @@ class Application extends RowModel
             case "basic":
                 return "$serverUrl/blob_" . substr($hash, 0, 2) . "/$hash" . "_app_avatar.png";
             case "accelerated":
-                return "$serverUrl/openvk-datastore/$hash.app_avatar.png";
+                return "$serverUrl/openvk-datastore/$hash" . "_app_avatar.png";
             case "server":
                 $settings = (object) OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["server"];
                 return (
                     $settings->protocol ?? ovk_scheme() .
                     "://" . $settings->host .
                     $settings->path .
-                    substr($hash, 0, 2) . "/$hash.app_avatar.png"
+                    substr($hash, 0, 2) . "/$hash" . "_app_avatar.png"
                 );
         }
     }
@@ -205,7 +205,7 @@ class Application extends RowModel
             return -2;
         }
     
-        $hash = hash_file("murmur3a", $file["tmp_name"]);
+        $hash = hash_file("adler32", $file["tmp_name"]);
         if(!is_dir($this->getAvatarsDir() . substr($hash, 0, 2)))
             if(!mkdir($this->getAvatarsDir() . substr($hash, 0, 2)))
                 return -3;
