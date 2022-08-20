@@ -39,10 +39,10 @@ final class AppsPresenter extends OpenVKPresenter
     
         $app = $this->apps->get((int) $this->queryParam("app"));
         if(!$app)
-            $this->flashFail("err", "Invalid ID", "Invalid application ID supplied"); // TODO trans
+            $this->flashFail("err", tr("app_err_not_found"), tr("app_err_not_found_desc"));
         
         $app->uninstall($this->user->identity);
-        $this->flashFail("succ", "Application uninstalled", "You can reinstall it by launching again."); // TODO trans
+        $this->flashFail("succ", tr("app_uninstalled"), tr("app_uninstalled_desc"));
     }
     
     function renderEdit(): void
@@ -52,14 +52,14 @@ final class AppsPresenter extends OpenVKPresenter
         $app = NULL;
         if($this->queryParam("act") !== "create") {
             if(empty($this->queryParam("app")))
-                $this->flashFail("err", "Invalid ID", "Invalid application ID supplied"); // TODO trans
+                $this->flashFail("err", tr("app_err_not_found"), tr("app_err_not_found_desc"));
     
             $app = $this->apps->get((int) $this->queryParam("app"));
             if(!$app)
-                $this->flashFail("err", "Invalid ID", "Invalid application ID supplied"); // TODO trans
+                $this->flashFail("err", tr("app_err_not_found"), tr("app_err_not_found_desc"));
     
             if($app->getOwner()->getId() != $this->user->identity->getId())
-                $this->flashFail("err", "Invalid ID", "Invalid application ID supplied"); // TODO trans
+                $this->flashFail("err", tr("forbidden"), tr("app_err_forbidden_desc"));
         }
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -69,18 +69,18 @@ final class AppsPresenter extends OpenVKPresenter
             }
             
             if(!filter_var($this->postParam("url"), FILTER_VALIDATE_URL))
-                $this->flashFail("err", "Invalid URL", "Invalid URL supplied"); // TODO trans
+                $this->flashFail("err", tr("app_err_url"), tr("app_err_url_desc"));
     
             if(isset($_FILES["ava"]) && $_FILES["ava"]["size"] > 0) {
                 if(($res = $app->setAvatar($_FILES["ava"])) !== 0)
-                    $this->flashFail("err", "Invalid avatar", "E$res"); // TODO trans
+                    $this->flashFail("err", tr("app_err_ava"), tr("app_err_ava_desc", $res));
             }
             
             if(empty($this->postParam("note"))) {
                 $app->setNoteLink(NULL);
             } else {
                 if(!$app->setNoteLink($this->postParam("note")))
-                    $this->flashFail("err", "Invalid note link", "lll"); // TODO trans
+                    $this->flashFail("err", tr("app_err_note"), tr("app_err_note_desc"));
             }
             
             $app->setName($this->postParam("name"));

@@ -2,19 +2,19 @@
 
 {block title}
     {if $create}
-        Создать приложение
+        {_create_app}
     {else}
-        Редактировать приложение
+        {_edit_app}
     {/if}
 {/block}
 
 {block header}
     {if $create}
-        Новое приложение
+        {_new_app}
     {else}
-        <a href="/apps?act=dev">Мои приложения</a> »
+        <a href="/apps?act=dev">{_own_apps_alternate}</a> »
         <a href="/app{$id}">{$name}</a> »
-        Редактировать
+        {_edit}
     {/if}
 {/block}
 
@@ -50,7 +50,7 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">Заметка с новостями: </span>
+                            <span class="nobold">{_app_news}: </span>
                         </td>
                         <td>
                             <input type="text" name="note" placeholder="{ovk_scheme(true) . $_SERVER['HTTP_HOST']}/note{$thisUser->getId()}_10" value="{$note ?? ''}" />
@@ -66,10 +66,10 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">Состояние: </span>
+                            <span class="nobold">{_app_state}: </span>
                         </td>
                         <td>
-                            <input type="checkbox" name="enable" n:attr="checked => ($on ?? false)" /> Включено
+                            <input type="checkbox" name="enable" n:attr="checked => ($on ?? false)" /> {_app_enabled}
                         </td>
                     </tr>
                     <tr>
@@ -86,15 +86,15 @@
         </form>
         <br/>
 
-        <h4>Дополнительная информация</h4>
+        <h4>{_additional_information}</h4>
         <div>
             <ul style="color: unset;">
                 {if $create}
-                    <li>Укажите в URL точный адрес вместе со схемой (https), портом (80) и нужными параметрами запроса.</li>
-                    <li>Ваше приложение будет открыто в iframe.</li>
+                    <li>{_app_creation_hint_url}</li>
+                    <li>{_app_creation_hint_iframe}</li>
                 {else}
-                    <li>На счету вашего приложения <b>{$coins}</b> голосов. (<a href="javascript:withdraw({$id})">вывести?</a>)</li>
-                    <li>Вашим приложением пользуются <b>{$users}</b> человек.</li>
+                    <li>{tr("app_balance", $coins)|noescape} (<a href="javascript:withdraw({$id})">{_app_withdrawal_q}</a>)</li>
+                    <li>{tr("app_users", $users)|noescape}</li>
                 {/if}
             </ul>
         </div>
@@ -104,9 +104,9 @@
         async function withdraw(id) {
             let coins = await API.Apps.withdrawFunds(id);
             if(coins == 0)
-                MessageBox("Вывод средств", "Не удалось вывести пустоту, извините.", ["OK"], [Function.noop]);
+                MessageBox({_app_withdrawal}, {_app_withdrawal_empty}, ["OK"], [Function.noop]);
             else
-                MessageBox("Вывод средств", "Заявка на вывод " + coins + " голосов была создана. Ожидайте зачисления.", ["OK"], [Function.noop]);
+                MessageBox({_app_withdrawal}, {tr("app_withdrawal_created", $coins)}, ["OK"], [Function.noop]);
         }
     </script>
 {/block}

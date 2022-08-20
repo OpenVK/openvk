@@ -1,9 +1,9 @@
 const perms = {
-    friends: ["вашим Друзьям", "добавлять пользователей в друзья и читать ваш список друзей"],
-    wall: ["вашей Стене", "смотреть ваши новости, вашу стену и создавать на ней посты"],
-    messages: ["вашим Сообщениям", "читать и писать от вашего имени сообщения"],
-    groups: ["вашим Сообществам", "смотреть список ваших групп и подписывать вас на другие"],
-    likes: ["функционалу Лайков", "ставить и убирать отметки \"мне нравится\" с записей"]
+    friends: [tr("appjs_sperm_friends"), tr("appjs_sperm_friends_desc")],
+    wall: [tr("appjs_sperm_wall"), tr("appjs_sperm_wall_desc")],
+    messages: [tr("appjs_sperm_messages"), tr("appjs_sperm_messages_desc")],
+    groups: [tr("appjs_sperm_groups"), tr("appjs_sperm_groups_desc")],
+    likes: [tr("appjs_sperm_likes"), tr("appjs_sperm_likes_desc")]
 }
 
 function escapeHtml(unsafe)
@@ -33,11 +33,11 @@ function toQueryString(obj, prefix) {
 
 function handleWallPostRequest(event) {
     let mBoxContent = `
-        <b>Приложение <i>${window.appTitle}</i> хочет опубликовать на вашей стене пост:</b><br/>
+        <b>${tr("app")} <i>${window.appTitle}</i> ${tr("appjs_wall_post_desc")}:</b><br/>
         <p style="padding: 8px; border: 1px solid gray;">${escapeHtml(event.data.text)}</p>
     `;
 
-    MessageBox("Опубликовать пост", mBoxContent, ["Разрешить", "Не разрешать"], [
+    MessageBox(tr("appjs_wall_post"), mBoxContent, [tr("appjs_sperm_allow"), tr("appjs_sperm_deny")], [
         async () => {
             let id = await API.Wall.newStatus(event.data.text);
             event.source.postMessage({
@@ -88,9 +88,9 @@ async function handleVkApiRequest(event) {
         let allowed = false;
         await (new Promise(r => {
             MessageBox(
-                "Запрос доступа",
-                `<p>Приложение <b>${window.appTitle}</b> запрашивает доступ к <b>${dInfo[0]}</b>. Приложение сможет <b>${dInfo[1]}</b>.`,
-                ["Предоставить доступ", "Отменить"],
+                tr("appjs_sperm_request"),
+                `<p>${tr("app")} <b>${window.appTitle}</b> ${tr("appjs_sperm_requests")} <b>${dInfo[0]}</b>. ${tr("appjs_sperm_can")} <b>${dInfo[1]}</b>.`,
+                [tr("appjs_sperm_allow"), tr("appjs_sperm_deny")],
                 [
                     () => {
                         API.Apps.updatePermission(window.appId, domain, "yes").then(() => {
@@ -145,19 +145,19 @@ function handlePayment(event) {
     }
 
     MessageBox(
-        "Оплата покупки",
+        tr("appjs_payment"),
         `
-            <p>Вы собираетесь оплатить заказ в приложении <b>${window.appTitle}</b>.<br/>Состав заказа: <b>${payload.description}</b></p>
-            <p>Итоговая сумма к оплате: <big><b>${payload.outSum}</b></big> голосов.
+            <p>${tr("appjs_payment_intro")} <b>${window.appTitle}</b>.<br/>${tr("appjs_order_items")}: <b>${payload.description}</b></p>
+            <p>${tr("appjs_payment_total")}: <big><b>${payload.outSum}</b></big> ${tr("points_count")}.
         `,
-        ["Оплатить", "Отмена"],
+        [tr("appjs_payment_confirm"), tr("cancel")],
         [
             async () => {
                 let sign;
                 try {
                     sign = await API.Apps.pay(window.appId, payload.outSum);
                 } catch(e) {
-                    MessageBox("Ошибка", "Не удалось оплатить покупку: недостаточно средств.", ["OK"], [Function.noop]);
+                    MessageBox(tr("error"), tr("appjs_err_funds"), ["OK"], [Function.noop]);
 
                     event.source.postMessage({
                         transaction: payload.transaction,

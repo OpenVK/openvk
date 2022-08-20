@@ -22,7 +22,7 @@
 
     <center>
         <p>
-            Разработчик: <a href="{$owner->getURL()}">{$owner->getFullName()}</a>
+            {_app_dev}: <a href="{$owner->getURL()}">{$owner->getFullName()}</a>
         </p>
     </center>
 
