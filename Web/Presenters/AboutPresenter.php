@@ -110,8 +110,6 @@ final class AboutPresenter extends OpenVKPresenter
         . "Disallow: /settings\n"
         . "Disallow: /edit\n"
         . "Disallow: /gifts\n"
-        . "Disallow: /assets/packages/static/openvk/img/flags/\n"
-        . "Disallow: /assets/packages/static/openvk/img/camera_200.png\n"
         . "Disallow: /support\n"
         . "Disallow: /rpc\n"
         . "Disallow: /language\n"
