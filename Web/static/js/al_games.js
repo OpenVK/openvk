@@ -71,7 +71,7 @@ async function handleVkApiRequest(event) {
     }
 
     let domain = method.split(".")[0];
-    if(domain === "mewsfeed")
+    if(domain === "newsfeed")
         domain = "wall";
 
     if(!window.appPerms.includes(domain)) {
