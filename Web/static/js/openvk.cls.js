@@ -441,7 +441,7 @@ $(document).on("scroll", () => {
 })
 
 function showBtStatusChangeDialog(report, hash) {
-    MessageBox("Измененить статус", `<form action="/bug${report}/setStatus" method="post" id="status_change_dialog">
+    MessageBox("Изменить статус", `<form action="/bug${report}/setStatus" method="post" id="status_change_dialog">
             <table>
                 <tbody>
                     <tr>
@@ -492,7 +492,7 @@ function showBtStatusChangeDialog(report, hash) {
 }
 
 function showBtPriorityChangeDialog(report, hash) {
-    MessageBox("Измененить приоритет", `<form action="/bug${report}/setPriority" method="post" id="priority_change_dialog">
+    MessageBox("Изменить приоритет", `<form action="/bug${report}/setPriority" method="post" id="priority_change_dialog">
             <table>
                 <tbody>
                     <tr>
