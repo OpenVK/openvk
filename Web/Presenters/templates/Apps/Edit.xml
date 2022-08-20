@@ -1,0 +1,95 @@
+{extends "../@layout.xml"}
+
+{block title}
+    {if $create}
+        Создать приложение
+    {else}
+        Редактировать приложение
+    {/if}
+{/block}
+
+{block header}
+    {if $create}
+        Новое приложение
+    {else}
+        <a href="/apps?act=dev">Мои приложения</a> »
+        <a href="/app{$id}">{$name}</a> »
+        Редактировать
+    {/if}
+{/block}
+
+{block content}
+    <div class="container_gray">
+        <h4>{_main_information}</h4>
+        <form method="POST" enctype="multipart/form-data">
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_name}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="name" value="{$name ?? ''}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_description}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="desc" value="{$desc ?? ''}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">URL: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="url" value="{$url ?? ''}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">Состояние: </span>
+                        </td>
+                        <td>
+                            <input type="checkbox" name="enable" n:attr="checked => ($on ?? false)" /> Включено
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+
+                        </td>
+                        <td>
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_save}" class="button" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+        <br/>
+
+        <h4>Дополнительная информация</h4>
+        <div>
+            <ul style="color: unset;">
+                {if $create}
+                    <li>Укажите в URL точный адрес вместе со схемой (https), портом (80) и нужными параметрами запроса.</li>
+                    <li>Ваше приложение будет открыто в iframe.</li>
+                {else}
+                    <li>На счету вашего приложения <b>{$coins}</b> голосов. (<a href="javascript:withdraw({$id})">вывести?</a>)
+                {/if}
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        async function withdraw(id) {
+            let coins = await API.Apps.withdrawFunds(id);
+            if(coins == 0)
+                MessageBox("Вывод средств", "Не удалось вывести пустоту, извините.", ["OK"], [Function.noop]);
+            else
+                MessageBox("Вывод средств", "Заявка на вывод " + coins + " голосов была создана. Ожидайте зачисления.", ["OK"], [Function.noop]);
+        }
+    </script>
+{/block}
