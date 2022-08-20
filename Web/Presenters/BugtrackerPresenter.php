@@ -70,10 +70,15 @@ final class BugtrackerPresenter extends OpenVKPresenter
 
         $status = $this->postParam("status");
         $comment = $this->postParam("text");
+        $points = $this->postParam("points-count");
         $list = ["Открыт", "На рассмотрении", "В работе", "Исправлен", "Закрыт", "Требует корректировки", "Заблокирован", "Отклонён"];
 
         $report = (new BugtrackerReports)->get($report_id);
         $report->setStatus($status);
+
+        if ($points)
+            DB::i()->getContext()->query("UPDATE `profiles` SET `coins` = `coins` + " . $points . " WHERE `id` = " . $report->getReporter()->getId());
+
         $report->save();
 
         $this->createComment($report, $comment, "Новый статус отчёта — $list[$status]", TRUE);
@@ -87,10 +92,15 @@ final class BugtrackerPresenter extends OpenVKPresenter
 
         $priority = $this->postParam("priority");
         $comment = $this->postParam("text");
+        $points = $this->postParam("points-count");
         $list = ["Пожелание", "Низкий", "Средний", "Высокий", "Критический", "Уязвимость"];
 
         $report = (new BugtrackerReports)->get($report_id);
         $report->setPriority($priority);
+
+        if ($points)
+            DB::i()->getContext()->query("UPDATE `profiles` SET `coins` = `coins` + " . $points . " WHERE `id` = " . $report->getReporter()->getId());
+
         $report->save();
 
         $this->createComment($report, $comment, "Новый приоритет отчёта — $list[$priority]", TRUE);

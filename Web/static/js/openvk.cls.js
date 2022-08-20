@@ -481,6 +481,12 @@ function showBtStatusChangeDialog(report, hash) {
             <br>
             <h4>Вы можете прокомментировать изменение статуса</h4>
             <textarea name="text" style="width: 100%;resize: vertical;"></textarea>
+            <br><br>
+            <div style="display: flex;">
+                Начислить 
+                <input style="width: 45px; height: 9px;" type="number" name="points-count" value="0">
+                голосов
+            </div>
             <input type="hidden" name="hash" value="${hash}" />
         </form>
     `, ["Сохранить", tr("cancel")], [
@@ -524,6 +530,12 @@ function showBtPriorityChangeDialog(report, hash) {
             <br>
             <h4>Вы можете прокомментировать изменение приоритета</h4>
             <textarea name="text" style="width: 100%;resize: vertical;"></textarea>
+            <br><br>
+            <div style="display: flex;">
+                Начислить 
+                <input style="width: 45px; height: 9px;" type="number" name="points-count" value="0">
+                голосов
+            </div>
             <input type="hidden" name="hash" value="${hash}" />
         </form>
     `, ["Сохранить", tr("cancel")], [
