@@ -28,6 +28,7 @@ final class AppsPresenter extends OpenVKPresenter
         $this->template->origin = $app->getOrigin();
         $this->template->url    = $app->getURL();
         $this->template->owner  = $app->getOwner();
+        $this->template->news   = $app->getNote();
         $this->template->perms  = $app->getPermissions($this->user->identity);
     }
     
@@ -70,9 +71,16 @@ final class AppsPresenter extends OpenVKPresenter
             if(!filter_var($this->postParam("url"), FILTER_VALIDATE_URL))
                 $this->flashFail("err", "Invalid URL", "Invalid URL supplied"); // TODO trans
     
-            if(isset($_FILES["ava"])) {
+            if(isset($_FILES["ava"]) && $_FILES["ava"]["size"] > 0) {
                 if(($res = $app->setAvatar($_FILES["ava"])) !== 0)
                     $this->flashFail("err", "Invalid avatar", "E$res"); // TODO trans
+            }
+            
+            if(empty($this->postParam("note"))) {
+                $app->setNoteLink(NULL);
+            } else {
+                if(!$app->setNoteLink($this->postParam("note")))
+                    $this->flashFail("err", "Invalid note link", "lll"); // TODO trans
             }
             
             $app->setName($this->postParam("name"));
@@ -94,6 +102,7 @@ final class AppsPresenter extends OpenVKPresenter
             $this->template->coins  = $app->getBalance();
             $this->template->origin = $app->getOrigin();
             $this->template->url    = $app->getURL();
+            $this->template->note   = $app->getNoteLink();
             $this->template->on     = $app->isEnabled();
         } else {
             $this->template->create = true;

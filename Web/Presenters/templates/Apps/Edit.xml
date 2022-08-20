@@ -50,6 +50,14 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
+                            <span class="nobold">Заметка с новостями: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="note" placeholder="{ovk_scheme(true) . $_SERVER['HTTP_HOST']}/note{$thisUser->getId()}_10" value="{$note ?? ''}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
                             <span class="nobold">URL: </span>
                         </td>
                         <td>

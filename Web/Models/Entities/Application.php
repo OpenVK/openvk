@@ -3,6 +3,7 @@ namespace openvk\Web\Models\Entities;
 use Chandler\Database\DatabaseConnection;
 use Nette\Utils\Image;
 use Nette\Utils\UnknownImageFileException;
+use openvk\Web\Models\Repositories\Notes;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\RowModel;
 
@@ -85,6 +86,23 @@ class Application extends RowModel
         }
     }
     
+    function getNote(): ?Note
+    {
+        if(!$this->getRecord()->news)
+            return NULL;
+        
+        return (new Notes)->get($this->getRecord()->news);
+    }
+    
+    function getNoteLink(): string
+    {
+        $note = $this->getNote();
+        if(!$note)
+            return "";
+        
+        return ovk_scheme(true) . $_SERVER["HTTP_HOST"] . "/note" . $note->getPrettyId();
+    }
+    
     function getBalance(): float
     {
         return $this->getRecord()->coins;
@@ -142,6 +160,32 @@ class Application extends RowModel
     function isInstalledBy(User $user): bool
     {
         return !is_null($this->getInstallationEntry($user));
+    }
+    
+    function setNoteLink(?string $link): bool
+    {
+        if(!$link) {
+            $this->stateChanges("news", NULL);
+            
+            return true;
+        }
+        
+        preg_match("%note([0-9]+)_([0-9]+)$%", $link, $matches);
+        if(sizeof($matches) != 3)
+            return false;
+        
+        $owner = is_null($this->getRecord()) ? $this->changes["owner"] : $this->getRecord()->owner;
+        [, $ownerId, $vid] = $matches;
+        if($ownerId != $owner)
+            return false;
+        
+        $note = (new Notes)->getNoteById((int) $ownerId, (int) $vid);
+        if(!$note)
+            return false;
+        
+        $this->stateChanges("news", $note->getId());
+        
+        return true;
     }
     
     function setAvatar(array $file): int
