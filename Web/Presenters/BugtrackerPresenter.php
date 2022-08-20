@@ -59,7 +59,7 @@ final class BugtrackerPresenter extends OpenVKPresenter
 
             $this->template->canAdminBugTracker = $this->user->identity->getChandlerUser()->can("admin")->model('openvk\Web\Models\Repositories\BugtrackerReports')->whichBelongsTo(NULL);
         } else {
-            $this->flashFail("err", "Отчёт не найден. Возможно, он был удалён.");
+            $this->flashFail("err", tr("bug_tracker_report_not_found"));
         }
     }
 
@@ -71,7 +71,16 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $status = $this->postParam("status");
         $comment = $this->postParam("text");
         $points = $this->postParam("points-count");
-        $list = ["Открыт", "На рассмотрении", "В работе", "Исправлен", "Закрыт", "Требует корректировки", "Заблокирован", "Отклонён"];
+        $list = [
+            tr("bug_tracker_status_open"),
+            tr("bug_tracker_status_under_review"),
+            tr("bug_tracker_status_in_progress"),
+            tr("bug_tracker_status_fixed"),
+            tr("bug_tracker_status_closed"),
+            tr("bug_tracker_status_requires_adjustment"),
+            tr("bug_tracker_status_locked"),
+            tr("bug_tracker_status_rejected")
+        ];
 
         $report = (new BugtrackerReports)->get($report_id);
         $report->setStatus($status);
@@ -81,8 +90,8 @@ final class BugtrackerPresenter extends OpenVKPresenter
 
         $report->save();
 
-        $this->createComment($report, $comment, "Новый статус отчёта — $list[$status]", TRUE);
-        $this->flashFail("succ", "Изменения сохранены", "Новый статус отчёта — $list[$status]");
+        $this->createComment($report, $comment, tr("bug_tracker_new_report_status") . " — $list[$status]", TRUE);
+        $this->flashFail("succ", tr("changes_saved"), tr("bug_tracker_new_report_status") . " — $list[$status]");
     }
 
     function renderChangePriority(int $report_id): void
@@ -93,7 +102,14 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $priority = $this->postParam("priority");
         $comment = $this->postParam("text");
         $points = $this->postParam("points-count");
-        $list = ["Пожелание", "Низкий", "Средний", "Высокий", "Критический", "Уязвимость"];
+        $list = [
+            tr("bug_tracker_priority_feature"),
+            tr("bug_tracker_priority_low"),
+            tr("bug_tracker_priority_medium"),
+            tr("bug_tracker_priority_high"),
+            tr("bug_tracker_priority_critical"),
+            tr("bug_tracker_priority_vulnerability")
+        ];
 
         $report = (new BugtrackerReports)->get($report_id);
         $report->setPriority($priority);
@@ -103,8 +119,8 @@ final class BugtrackerPresenter extends OpenVKPresenter
 
         $report->save();
 
-        $this->createComment($report, $comment, "Новый приоритет отчёта — $list[$priority]", TRUE);
-        $this->flashFail("succ", "Изменения сохранены", "Новый приоритет отчёта — $list[$priority]");
+        $this->createComment($report, $comment, tr("bug_tracker_new_report_priority") . " — $list[$priority]", TRUE);
+        $this->flashFail("succ", tr("changes_saved"), tr("bug_tracker_new_report_priority") . " — $list[$priority]");
     }
 
     function createComment(?BugReport $report, string $text, string $label = "", bool $is_moder = FALSE, bool $is_hidden = FALSE)
@@ -112,10 +128,10 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $moder = $this->user->identity->getChandlerUser()->can("admin")->model('openvk\Web\Models\Repositories\BugtrackerReports')->whichBelongsTo(NULL);
 
         if (!$text && !$label)
-            $this->flashFail("err", "Ошибка", "Комментарий не может быть пустым.");
+            $this->flashFail("err", tr("error"), tr("bug_tracker_empty_comment"));
 
         if ($report->getRawStatus() == 6 && !$moder)
-            $this->flashFail("err", "Ошибка доступа");
+            $this->flashFail("err", tr("forbidden"));
 
         DB::i()->getContext()->table("bt_comments")->insert([
             "report" => $report->getId(),
@@ -126,7 +142,7 @@ final class BugtrackerPresenter extends OpenVKPresenter
             "label" => $label
         ]);
 
-        $this->flashFail("succ", "Успех", "Комментарий отправлен.");
+        $this->flashFail("succ", tr("bug_tracker_success"), tr("bug_tracker_comment_sent"));
     }
 
     function renderAddComment(int $report_id): void
@@ -153,7 +169,7 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $device = $this->postParam("device");
 
         if (!$title || !$text || !$priority || !$product || !$device)
-            $this->flashFail("err", "Ошибка", "Заполнены не все поля");
+            $this->flashFail("err", tr("error"), tr("bug_tracker_fields_error"));
         
         $id = DB::i()->getContext()->table("bugs")->insert([
             "reporter" => $this->user->identity->getId(),
@@ -176,7 +192,7 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $moder = $this->user->identity->getChandlerUser()->can("admin")->model('openvk\Web\Models\Repositories\BugtrackerReports')->whichBelongsTo(NULL);
 
         if (!$moder)
-            $this->flashFail("err", "Ошибка доступа");
+            $this->flashFail("err", tr("forbidden"));
 
         $title = $this->postParam("title");
         $description = $this->postParam("description");
@@ -198,10 +214,10 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $report = (new BugtrackerReports)->get($report_id);
         
         if ($report->getReporter()->getId() === $this->user->identity->getId())
-            $this->flashFail("err", "Ошибка доступа");
+            $this->flashFail("err", tr("forbidden"));
 
         DB::i()->getContext()->table("bugs")->where("id", $report_id)->update("reproduced", $report->getReproducedCount() + 1);
 
-        $this->flashFail("succ", "Успех", "Вы отметили, что у Вас получилось воспроизвести этот баг.");
+        $this->flashFail("succ", tr("bug_tracker_success"), tr("bug_tracker_reproduced_text"));
     }
 }

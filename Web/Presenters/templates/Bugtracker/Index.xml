@@ -1,36 +1,36 @@
 {extends "../@layout.xml"}
 
-{block title}Баг-трекер{/block}
+{block title}{_bug_tracker}{/block}
 
 {block header}
-Баг-трекер
+    {_bug_tracker}
 {/block}
 
 {block content}
 <div class="tabs">
         <div n:attr='id => $mode === "list" ? "activetabs" : false' class="tab">
             <a n:attr='id => $mode === "list" ? "act_tab_a" : false' href="/bugtracker">
-                Отчёты
+                {_bug_tracker_reports}
             </a>
         </div>
         <div n:attr='id => $mode === "products" ? "activetabs" : false' class="tab">
             <a n:attr='id => $mode === "products" ? "act_tab_a" : false' href="/bugtracker?act=products">
-                Продукты
+                {_bug_tracker_products}
             </a>
         </div>
         <div n:attr='id => $mode === "reporter" ? "activetabs" : false' class="tab">
             <a n:attr='id => $mode === "reporter" ? "act_tab_a" : false' href="/bugtracker?act=reporter&id={$user->id}">
-                Карточка тестировщика
+                {_bug_tracker_reporter_card}
             </a>
         </div>
         <div n:if='in_array($mode, ["list", "new"])' n:attr='id => $mode === "new" ? "activetabs" : false' class="tab" style="float: right;">
             <a n:attr='id => $mode === "new" ? "act_tab_a" : false' href="/bugtracker?act=new">
-                Создать
+                {_create}
             </a>
         </div>
         <div n:if='in_array($mode, ["products", "new_product"])' n:attr='id => $mode === "new_product" ? "activetabs" : false' class="tab" style="float: right;">
             <a n:attr='id => $mode === "new_product" ? "act_tab_a" : false' href="/bugtracker?act=new_product">
-                Создать
+                {_create}
             </a>
         </div>
     </div>
@@ -59,25 +59,25 @@
                     <table id="basicInfo" class="ugc-table group_info" cellspacing="0" cellpadding="0" border="0">
                         <tbody>
                             <tr>
-                                <td class="label"><span class="nobold">Продукт:</span></td>
+                                <td class="label"><span class="nobold">{_bug_tracker_product}:</span></td>
                                 <td class="data"><a href="#">{$bug->getProduct()->getCanonicalName()}</a></td>
                             </tr>
                             <tr>
-                                <td class="label"><span class="nobold">Отправил: </span></td>
+                                <td class="label"><span class="nobold">{_bug_tracker_sent_by}: </span></td>
                                 <td class="data">
                                     <a href="/bugtracker?act=reporter&id={$bug->getReporter()->getId()}">{$bug->getReporter()->getCanonicalName()}</a>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="label"><span class="nobold">Воспроизвелось:</span></td>
+                                <td class="label"><span class="nobold">{_bug_tracker_reproduced}:</span></td>
                                 <td class="data"><a href="#">{tr("participants", $bug->getReproducedCount())}</a></td>
                             </tr>
                             <tr>
-                                <td class="label"><span class="nobold">Статус:</span></td>
+                                <td class="label"><span class="nobold">{_status}:</span></td>
                                 <td class="data"><a href="#">{$bug->getStatus()}</a></td>
                             </tr>
                             <tr>
-                                <td class="label"><span class="nobold">Приоритет:</span></td>
+                                <td class="label"><span class="nobold">{_priority}:</span></td>
                                 <td class="data"><a href="#">{$bug->getPriority()}</a></td>
                             </tr>
                         </tbody>
@@ -101,44 +101,44 @@
 <form method="post" action="/bugtracker/create">
     <input name="title" type="text" placeholder="Название отчёта">
     <br><br>
-    <textarea placeholder="Описание бага" name="text" style="width: 100%;resize: vertical;"></textarea>
+    <textarea placeholder="{_bug_tracker_bug_description}" name="text" style="width: 100%; resize: vertical;"></textarea>
     <br><br>
     <select name="product">
-        <option disabled>Продукт</option>
+        <option disabled>{_bug_tracker_product}</option>
         <option n:foreach="$open_products as $product" value="{$product->getId()}">{$product->getCanonicalName()}</option>
     </select>
     <br><br>
-    <h4>Приоритет</h4>
+    <h4>{_bug_tracker_priority}</h4>
     <table>
         <tbody>
             <tr>
                 <td><input type="radio" name="priority" value="0"></td>
-                <td><label for="priority_1">Пожелание</label></td>
+                <td><label for="priority_1">{_bug_tracker_priority_feature}</label></td>
             </tr>
             <tr>
                 <td><input type="radio" name="priority" value="1"></td>
-                <td><label for="priority_2">Низкий</label></td>
+                <td><label for="priority_2">{_bug_tracker_priority_low}</label></td>
             </tr>
             <tr>
                 <td><input type="radio" name="priority" value="2"></td>
-                <td><label for="priority_3">Средний</label></td>
+                <td><label for="priority_3">{_bug_tracker_priority_medium}</label></td>
             </tr>
             <tr>
                 <td><input type="radio" name="priority" value="3"></td>
-                <td><label for="priority_4">Высокий</label></td>
+                <td><label for="priority_4">{_bug_tracker_priority_high}</label></td>
             </tr>
             <tr>
                 <td><input type="radio" name="priority" value="4"></td>
-                <td><label for="priority_5">Критический</label></td>
+                <td><label for="priority_5">{_bug_tracker_priority_critical}</label></td>
             </tr>
             <tr>
                 <td><input type="radio" name="priority" value="5"></td>
-                <td><label for="priority_6">Уязвимость</label></td>
+                <td><label for="priority_6">{_bug_tracker_priority_vulnerability}</label></td>
             </tr>
         </tbody>
     </table>
     <br>
-    <input type="text" name="device" placeholder="Устройство">
+    <input type="text" name="device" placeholder="{_bug_tracker_device}">
     <br>
     <br>
     <input type="hidden" name="hash" value="{$csrfToken}" />
@@ -166,20 +166,20 @@
                     <table id="basicInfo" class="ugc-table group_info" cellspacing="0" cellpadding="0" border="0">
                         <tbody>
                             <tr>
-                                <td class="label"><span class="nobold">Название:</span></td>
+                                <td class="label"><span class="nobold">{_bug_tracker_name}:</span></td>
                                 <td class="data">
                                     <a href="#">{$product->getCanonicalName()}</a>
-                                    <b n:if="$product->isClosed()">(закрыт)</b>
+                                    <b n:if="$product->isClosed()">({_bug_tracker_product_is_closed})</b>
                                 </td>
                             </tr>
                             <tr n:if="$canAdminBugTracker">
-                                <td class="label"><span class="nobold">Создал: </span></td>
+                                <td class="label"><span class="nobold">{_bug_tracker_product_created_by}: </span></td>
                                 <td class="data">
                                     <a href="/bugtracker?act=reporter&id={$product->getCreator()->getId()}">{$product->getCreator()->getCanonicalName()}</a>
                                 </td>
                             </tr>
                             <tr>
-                                <td class="label"><span class="nobold">Дата создания:</span></td>
+                                <td class="label"><span class="nobold">{_bug_tracker_product_creation_date}:</span></td>
                                 <td class="data"><a href="#">123</a></td>
                             </tr>
                         </tbody>
@@ -192,13 +192,13 @@
 
 {elseif $mode === "new_product"}
 <form method="post" action="/bugtracker/createProduct">
-    <input type="text" name="title" placeholder="Название">
+    <input type="text" name="title" placeholder="{_bug_tracker_product_name}">
     <br><br>
-    <textarea placeholder="Описание продукта" name="description" style="width: 100%; resize: vertical;"></textarea>
+    <textarea placeholder="{_bug_tracker_product_description}" name="description" style="width: 100%; resize: vertical;"></textarea>
 
     <input type="hidden" name="hash" value="{$csrfToken}" />
     <br><br>
-    <input type="submit" value="Создать" class="button" style="float: right;" />
+    <input type="submit" value="{_create}" class="button" style="float: right;" />
     <br><br>
 </form>
 
@@ -212,7 +212,7 @@
         </div>
         <div class="info" style="width: 92%">
             <a href="{$reporter->getURL()}" class="title">{$reporter->getCanonicalName()}</a>
-            <div>тестировщик отправил {$reporter_stats[0]} отчётов, из них {$reporter_stats[1]} имеют положительный статус</div>
+            <div>tr("bug_tracker_reporter_card_text", $reporter_stats[0], $reporter_stats[1])</div>
         </div>
     </div>
     <table border="0" style="font-size: 11px; width: 100%;" class="post">
@@ -234,25 +234,25 @@
                         <table id="basicInfo" class="ugc-table group_info" cellspacing="0" cellpadding="0" border="0">
                             <tbody>
                                 <tr>
-                                    <td class="label"><span class="nobold">Продукт:</span></td>
+                                    <td class="label"><span class="nobold">{_bug_tracker_product}:</span></td>
                                     <td class="data"><a href="#">{$bug->getProduct()->getCanonicalName()}</a></td>
                                 </tr>
                                 <tr>
-                                    <td class="label"><span class="nobold">Отправил: </span></td>
+                                    <td class="label"><span class="nobold">{_bug_tracker_sent_by}: </span></td>
                                     <td class="data">
                                         <a href="/bugtracker?act=reporter&id={$bug->getReporter()->getId()}">{$bug->getReporter()->getCanonicalName()}</a>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="label"><span class="nobold">Воспроизвелось:</span></td>
+                                    <td class="label"><span class="nobold">{_bug_tracker_reproduced}:</span></td>
                                     <td class="data"><a href="#">{tr("participants", $bug->getReproducedCount())}</a></td>
                                 </tr>
                                 <tr>
-                                    <td class="label"><span class="nobold">Статус:</span></td>
+                                    <td class="label"><span class="nobold">{_status}:</span></td>
                                     <td class="data"><a href="#">{$bug->getStatus()}</a></td>
                                 </tr>
                                 <tr>
-                                    <td class="label"><span class="nobold">Приоритет:</span></td>
+                                    <td class="label"><span class="nobold">{_bug_tracker_priority}:</span></td>
                                     <td class="data"><a href="#">{$bug->getPriority()}</a></td>
                                 </tr>
                             </tbody>
@@ -273,7 +273,7 @@
     </div>
 </div>
 <div n:if="!$reporter">
-    <center>Пользователь не найден.</center>
+    <center>{_profile_not_found}</center>
 </div>
 {/if}
 {/block}

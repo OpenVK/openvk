@@ -8,7 +8,7 @@
 {/block}
 
 {block content}
-{if $bug}
+{if $bug AND !$bug->isDeleted()}
 <h4>{$bug->getCanonicalName()}</h4>
 
 <div class="avatar-list-item" style="padding: 8px;">
@@ -19,7 +19,7 @@
     </div>
     <div class="info" style="width: 92%">
         <a href="/bugtracker?act=reporter&id={$reporter->getId()}" class="title">{$reporter->getCanonicalName()}</a>
-        <div class="subtitle">создано: {$bug->getCreationDate()}</div>
+        <div class="subtitle">{_created}: {$bug->getCreationDate()}</div>
     </div>
 </div>
 <hr color="#DAE1E8" size="1">
@@ -28,33 +28,36 @@
 <table id="basicInfo" class="ugc-table group_info" cellspacing="0" cellpadding="0" border="0" style="width: 100%;">
     <tbody>
         <tr>
-            <td class="label"><span class="nobold">Отправил: </span></td>
+            <td class="label"><span class="nobold">{_bug_tracker_sent_by}: </span></td>
             <td class="data">
                 <a href="/bugtracker?act=reporter&id={$bug->getReporter()->getId()}">{$bug->getReporter()->getCanonicalName()}</a>
             </td>
         </tr>
         <tr>
-            <td class="label"><span class="nobold">Воспроизвелось:</span></td>
+            <td class="label"><span class="nobold">{_bug_tracker_reproduced}:</span></td>
             <td class="data"><a href="#">{tr("participants", $bug->getReproducedCount())}</a></td>
         </tr>
         <tr>
-            <td class="label"><span class="nobold">Статус:</span></td>
+            <td class="label"><span class="nobold">{_status}:</span></td>
             <td class="data"><a href="#" n:attr='onClick => $canAdminBugTracker ? "showBtStatusChangeDialog({$bug->getId()}, \"{$csrfToken}\");" : false'>{$bug->getStatus()}</a></td>
         </tr>
         <tr>
-            <td class="label"><span class="nobold">Приоритет:</span></td>
+            <td class="label"><span class="nobold">{_bug_tracker_priority}:</span></td>
             <td class="data"><a href="#" n:attr='onClick => $canAdminBugTracker ? "showBtPriorityChangeDialog({$bug->getId()}, \"{$csrfToken}\");" : false'>{$bug->getPriority()}</a></td>
         </tr>
         <tr>
-            <td class="label"><span class="nobold">Устройство:</span></td>
+            <td class="label"><span class="nobold">{_bug_tracker_device}:</span></td>
             <td class="data"><a href="#">{$bug->getDevice()}</a></td>
         </tr>
     </tbody>
 </table>
 <hr color="#DAE1E8" size="1">
-<button n:if="$canAdminBugTracker" class="button" onClick="showBtStatusChangeDialog({$bug->getId()}, {$csrfToken})">Изменить статус</button>
-<button n:if="$canAdminBugTracker" class="button" onClick="showBtPriorityChangeDialog({$bug->getId()}, {$csrfToken})">Изменить приоритет</button>
-<a n:if="$bug->getReporter()->getId() !== $user->identity->getId()" class="button" href="/bug{$bug->getId()}/reproduce">Воспроизвелось</a>
+<button n:if="$canAdminBugTracker" class="button" onClick="showBtStatusChangeDialog({$bug->getId()}, {$csrfToken})">{_bug_tracker_change_status}</button>
+<button n:if="$canAdminBugTracker" class="button" onClick="showBtPriorityChangeDialog({$bug->getId()}, {$csrfToken})">{_bug_tracker_change_priority}</button>
+<a n:if="$bug->getReporter()->getId() !== $user->identity->getId()" class="button" href="/bug{$bug->getId()}/reproduce">
+    {_bug_tracker_reproduced}
+    <span n:if="$bug->getReproducedCount() > 0">({$bug->getReproducedCount()})</span>
+</a>
 {if sizeof($comments) > 0}
 <hr color="#DAE1E8" size="1">
 <div n:foreach="$comments as $comment">
@@ -66,12 +69,12 @@
         </div>
         <div class="info" style="width: 90%;">
             <a n:attr='href => $comment->isModer() ? false : "/bugtracker?act=reporter&id={$comment->getAuthor()->getId()}"' class="title">
-                {$comment->isModer() ? "Модератор" : $comment->getAuthor()->getCanonicalName()}
+                {$comment->isModer() ? "{_bug_tracker_moderator}" : $comment->getAuthor()->getCanonicalName()}
                 <a n:if="$comment->isModer() AND $canAdminBugTracker" href="{$comment->getAuthor()->getURL()}">
                     (<b>{$comment->getAuthor()->getCanonicalName()}</b>)
                 </a>
             </a>
-            <b n:if="$comment->isHidden() AND $canAdminBugTracker">(скрытый комментарий)</b>
+            <b n:if="$comment->isHidden() AND $canAdminBugTracker">({_bug_tracker_hidden_comment_span})</b>
             <br>
             <b n:if="$comment->getLabel()" class="post-author" style="display: inline-block; border-top: 0;">{$comment->getLabel()}</b>
             <div>
@@ -87,10 +90,10 @@
     <div style="float: right;">
         <div n:if="$canAdminBugTracker" style="display: inline;">
             <input id="is_moder" type="checkbox" name="is_moder">
-            <label for="is_moder">От лица модератора</label>
+            <label for="is_moder">{_bug_tracker_comment_as_moderator}</label>
 
             <input id="is_hidden" type="checkbox" name="is_hidden">
-            <label for="is_hidden">Скрытый комментарий</label>
+            <label for="is_hidden">{_bug_tracker_hidden_comment}</label>
         </div>
 
         <input type="hidden" name="hash" value="{$csrfToken}" />
@@ -100,7 +103,7 @@
 </form>
 {else}
 <div>
-    Отчёт не найден. Возможно, он был удалён.
+    {_bug_tracker_report_not_found}
 </div>
 {/if}
 
