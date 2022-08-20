@@ -35,7 +35,7 @@
 {/block}
 
 {block preview}
-    <img style="max-width: 75px;" src="https://c.tenor.com/1y8zDc-ll-EAAAAM/3d-saul-saul-goodman.gif" />
+    <img style="max-width: 75px;" src="{$x->getAvatarUrl()}" />
 {/block}
 
 {block name}

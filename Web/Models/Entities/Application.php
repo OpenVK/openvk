@@ -1,6 +1,8 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
 use Chandler\Database\DatabaseConnection;
+use Nette\Utils\Image;
+use Nette\Utils\UnknownImageFileException;
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\RowModel;
 
@@ -29,6 +31,15 @@ class Application extends RowModel
         "market",
     ];
     
+    private function getAvatarsDir(): string
+    {
+        $uploadSettings = OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"];
+        if($uploadSettings["mode"] === "server" && $uploadSettings["server"]["kind"] === "cdn")
+            return $uploadSettings["server"]["directory"];
+        else
+            return OPENVK_ROOT . "/storage/";
+    }
+    
     function getId(): int
     {
         return $this->getRecord()->id;
@@ -51,7 +62,27 @@ class Application extends RowModel
     
     function getAvatarUrl(): string
     {
-        return "";
+        $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
+        if(is_null($this->getRecord()->avatar_hash))
+            return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
+    
+        $hash = $this->getRecord()->avatar_hash;
+        switch(OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["mode"]) {
+            default:
+            case "default":
+            case "basic":
+                return "$serverUrl/blob_" . substr($hash, 0, 2) . "/$hash" . "_app_avatar.png";
+            case "accelerated":
+                return "$serverUrl/openvk-datastore/$hash.app_avatar.png";
+            case "server":
+                $settings = (object) OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["server"];
+                return (
+                    $settings->protocol ?? ovk_scheme() .
+                    "://" . $settings->host .
+                    $settings->path .
+                    substr($hash, 0, 2) . "/$hash.app_avatar.png"
+                );
+        }
     }
     
     function getBalance(): float
@@ -111,6 +142,30 @@ class Application extends RowModel
     function isInstalledBy(User $user): bool
     {
         return !is_null($this->getInstallationEntry($user));
+    }
+    
+    function setAvatar(array $file): int
+    {
+        if($file["error"] !== UPLOAD_ERR_OK)
+            return -1;
+        
+        try {
+            $image = Image::fromFile($file["tmp_name"]);
+        } catch (UnknownImageFileException $e) {
+            return -2;
+        }
+    
+        $hash = hash_file("murmur3a", $file["tmp_name"]);
+        if(!is_dir($this->getAvatarsDir() . substr($hash, 0, 2)))
+            if(!mkdir($this->getAvatarsDir() . substr($hash, 0, 2)))
+                return -3;
+        
+        $image->resize(140, 140, Image::STRETCH);
+        $image->save($this->getAvatarsDir() . substr($hash, 0, 2) . "/$hash" . "_app_avatar.png");
+        
+        $this->stateChanges("avatar_hash", $hash);
+        
+        return 0;
     }
     
     function setPermission(User $user, string $perm, bool $enabled): bool

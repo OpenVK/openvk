@@ -70,6 +70,11 @@ final class AppsPresenter extends OpenVKPresenter
             if(!filter_var($this->postParam("url"), FILTER_VALIDATE_URL))
                 $this->flashFail("err", "Invalid URL", "Invalid URL supplied"); // TODO trans
     
+            if(isset($_FILES["ava"])) {
+                if(($res = $app->setAvatar($_FILES["ava"])) !== 0)
+                    $this->flashFail("err", "Invalid avatar", "E$res"); // TODO trans
+            }
+            
             $app->setName($this->postParam("name"));
             $app->setDescription($this->postParam("desc"));
             $app->setAddress($this->postParam("url"));

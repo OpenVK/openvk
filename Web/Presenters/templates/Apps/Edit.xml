@@ -42,6 +42,14 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
+                            <span class="nobold">{_avatar}: </span>
+                        </td>
+                        <td>
+                            <input type="file" name="ava" accept="image/*" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
                             <span class="nobold">URL: </span>
                         </td>
                         <td>
