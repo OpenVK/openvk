@@ -188,8 +188,11 @@ class Application extends RowModel
     
     function withdrawCoins(): void
     {
+        $balance = $this->getBalance();
+        $tax     = ($balance / 100) * OPENVK_ROOT_CONF["openvk"]["preferences"]["apps"]["withdrawTax"];
+        
         $owner = $this->getOwner();
-        $owner->setCoins($owner->getCoins() + $this->getBalance());
+        $owner->setCoins($owner->getCoins() + ($balance - $tax));
         $this->setCoins(0.0);
         $this->save();
         $owner->save();
