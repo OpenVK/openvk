@@ -439,3 +439,97 @@ $(document).on("scroll", () => {
         }, 250);
     }
 })
+
+function showBtStatusChangeDialog(report, hash) {
+    MessageBox("Измененить статус", `<form action="/bug${report}/setStatus" method="post" id="status_change_dialog">
+            <table>
+                <tbody>
+                    <tr>
+                        <td><input type="radio" name="status" value="0"></td>
+                        <td><label for="status_1">Открыт</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="status" value="1"></td>
+                        <td><label for="status_2">На рассмотрении</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="status" value="2"></td>
+                        <td><label for="status_3">В работе</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="status" value="3"></td>
+                        <td><label for="status_3">Исправлен</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="status" value="4"></td>
+                        <td><label for="status_3">Закрыт</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="status" value="5"></td>
+                        <td><label for="status_3">Требует корректировки</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="status" value="6"></td>
+                        <td><label for="status_3">Заблокирован</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="status" value="7"></td>
+                        <td><label for="status_3">Отклонён</label></td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            <h4>Вы можете прокомментировать изменение статуса</h4>
+            <textarea name="text" style="width: 100%;resize: vertical;"></textarea>
+            <input type="hidden" name="hash" value="${hash}" />
+        </form>
+    `, ["Сохранить", tr("cancel")], [
+        () => {
+            $("#status_change_dialog").submit();
+        },
+        Function.noop
+    ]);
+}
+
+function showBtPriorityChangeDialog(report, hash) {
+    MessageBox("Измененить приоритет", `<form action="/bug${report}/setPriority" method="post" id="priority_change_dialog">
+            <table>
+                <tbody>
+                    <tr>
+                        <td><input type="radio" name="priority" value="0"></td>
+                        <td><label for="priority_1">Пожелание</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="priority" value="1"></td>
+                        <td><label for="priority_2">Низкий</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="priority" value="2"></td>
+                        <td><label for="priority_3">Средний</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="priority" value="3"></td>
+                        <td><label for="priority_4">Высокий</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="priority" value="4"></td>
+                        <td><label for="priority_5">Критический</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="priority" value="5"></td>
+                        <td><label for="priority_6">Уязвимость</label></td>
+                    </tr>
+                </tbody>
+            </table>
+            <br>
+            <h4>Вы можете прокомментировать изменение приоритета</h4>
+            <textarea name="text" style="width: 100%;resize: vertical;"></textarea>
+            <input type="hidden" name="hash" value="${hash}" />
+        </form>
+    `, ["Сохранить", tr("cancel")], [
+        () => {
+            $("#priority_change_dialog").submit();
+        },
+        Function.noop
+    ]);
+}
