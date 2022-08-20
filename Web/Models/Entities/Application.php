@@ -124,6 +124,12 @@ class Application extends RowModel
         );
     }
     
+    function getUsersCount(): int
+    {
+        $cx = DatabaseConnection::i()->getContext();
+        return sizeof($cx->table("app_users")->where("app", $this->getId()));
+    }
+    
     function getInstallationEntry(User $user): ?array
     {
         $cx    = DatabaseConnection::i()->getContext();

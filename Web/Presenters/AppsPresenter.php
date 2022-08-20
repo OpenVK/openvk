@@ -103,6 +103,7 @@ final class AppsPresenter extends OpenVKPresenter
             $this->template->origin = $app->getOrigin();
             $this->template->url    = $app->getURL();
             $this->template->note   = $app->getNoteLink();
+            $this->template->users  = $app->getUsersCount();
             $this->template->on     = $app->isEnabled();
         } else {
             $this->template->create = true;
