@@ -776,7 +776,7 @@
 "app_state" = "Стан";
 "app_enabled" = "Увімкнено";
 "app_creation_hint_url" = "Вкажіть в URL точну адресу разом зі схемою (https), портом (80) та потрібними параметрами запиту.";
-"app_creation_hint_iframe" = "Ваша програма буде відкрита в iframe.";
+"app_creation_hint_iframe" = "Ваш застосунок буде відкритий в iframe.";
 "app_balance" = "На рахунку вашої програми <b>$1</b> голосів.";
 "app_users" = "Вашим додатком користуються <b>$1</b> користувачів.";
 "app_withdrawal" = "Виведення коштів";
@@ -802,7 +802,7 @@
 "appjs_sperm_messages_desc" = "читати та писати від вашого імені повідомлення";
 "appjs_sperm_groups" = "вашим Спільнотам";
 "appjs_sperm_groups_desc" = "дивитися список ваших груп та підписувати вас на інші";
-"appjs_sperm_likes" = "функціоналу Лайков";
+"appjs_sperm_likes" = "функціоналу Лайків";
 "appjs_sperm_likes_desc" = "ставити та прибирати позначки \"мені подобається\" із записів";
 
 "appjs_sperm_request" = "Запит доступу";
