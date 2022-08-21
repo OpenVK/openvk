@@ -39,8 +39,10 @@ final class BugtrackerPresenter extends OpenVKPresenter
             $this->template->count = $this->reports->getCountByReporter((int) $this->queryParam("id"));
         } else {
             $this->template->page     = (int) ($this->queryParam("p") ?? 1);
-            $this->template->count    = $this->reports->getReportsCount(0);
-            $this->template->iterator = $this->reports->getAllReports($this->template->page);
+            $this->template->count    = $this->reports->getReportsCount((int) $this->queryParam("product"));
+            $this->template->iterator = $this->queryParam("product") 
+                ? $this->reports->getReports((int) $this->queryParam("product"), $this->template->page) 
+                : $this->reports->getAllReports($this->template->page);
         }
 
         $this->template->canAdminBugTracker = $this->user->identity->getChandlerUser()->can("admin")->model('openvk\Web\Models\Repositories\BugtrackerReports')->whichBelongsTo(NULL);

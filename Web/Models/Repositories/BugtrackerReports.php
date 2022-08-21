@@ -38,9 +38,11 @@ class BugtrackerReports
             yield new BugReport($report);
     }
 
-    function getReportsCount(): int
+    function getReportsCount(int $product_id): int
     {
-        return sizeof($this->reports->where(["deleted" => NULL]));
+        return $product_id
+            ? sizeof($this->reports->where(["deleted" => NULL, "product_id" => $product_id]))
+            : sizeof($this->reports->where(["deleted" => NULL]));
     }
 
     function getByReporter(int $reporter_id, int $page = 1): \Traversable
