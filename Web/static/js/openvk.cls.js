@@ -440,7 +440,7 @@ $(document).on("scroll", () => {
     }
 })
 
-function showBtStatusChangeDialog(report, hash) {
+function showBtStatusChangeDialog(report, currentBalance, hash) {
     MessageBox("Изменить статус", `<form action="/bug${report}/setStatus" method="post" id="status_change_dialog">
             <table>
                 <tbody>
@@ -482,10 +482,13 @@ function showBtStatusChangeDialog(report, hash) {
             <h4>Вы можете прокомментировать изменение статуса</h4>
             <textarea name="text" style="width: 100%;resize: vertical;"></textarea>
             <br><br>
-            <div style="display: flex;">
-                Начислить 
+            У тестировщика сейчас ${currentBalance} голосов.
+            <br>
+            <div style="display: inline;">
+                Вы можете начислить &nbsp;
                 <input style="width: 45px; height: 9px;" type="number" name="points-count" value="0">
-                голосов
+                &nbsp;голосов
+                <span class="nobold">(отрицательные значения поддерживаются)</span>
             </div>
             <input type="hidden" name="hash" value="${hash}" />
         </form>
@@ -497,7 +500,7 @@ function showBtStatusChangeDialog(report, hash) {
     ]);
 }
 
-function showBtPriorityChangeDialog(report, hash) {
+function showBtPriorityChangeDialog(report, currentBalance, hash) {
     MessageBox("Изменить приоритет", `<form action="/bug${report}/setPriority" method="post" id="priority_change_dialog">
             <table>
                 <tbody>
@@ -531,10 +534,13 @@ function showBtPriorityChangeDialog(report, hash) {
             <h4>Вы можете прокомментировать изменение приоритета</h4>
             <textarea name="text" style="width: 100%;resize: vertical;"></textarea>
             <br><br>
-            <div style="display: flex;">
-                Начислить 
+            У тестировщика сейчас ${currentBalance} голосов.
+            <br>
+            <div style="display: inline;">
+                Вы можете начислить &nbsp;
                 <input style="width: 45px; height: 9px;" type="number" name="points-count" value="0">
-                голосов
+                &nbsp;голосов
+                <span class="nobold">(отрицательные значения поддерживаются)</span>
             </div>
             <input type="hidden" name="hash" value="${hash}" />
         </form>

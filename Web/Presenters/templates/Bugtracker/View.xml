@@ -39,11 +39,11 @@
         </tr>
         <tr>
             <td class="label"><span class="nobold">{_status}:</span></td>
-            <td class="data"><a href="#" n:attr='onClick => $canAdminBugTracker ? "showBtStatusChangeDialog({$bug->getId()}, \"{$csrfToken}\");" : false'>{$bug->getStatus()}</a></td>
+            <td class="data"><a href="#" n:attr='onClick => $canAdminBugTracker ? "showBtStatusChangeDialog({$bug->getId()}, {$reporter->getCoins()}, \"{$csrfToken}\");" : false'>{$bug->getStatus()}</a></td>
         </tr>
         <tr>
             <td class="label"><span class="nobold">{_bug_tracker_priority}:</span></td>
-            <td class="data"><a href="#" n:attr='onClick => $canAdminBugTracker ? "showBtPriorityChangeDialog({$bug->getId()}, \"{$csrfToken}\");" : false'>{$bug->getPriority()}</a></td>
+            <td class="data"><a href="#" n:attr='onClick => $canAdminBugTracker ? "showBtPriorityChangeDialog({$bug->getId()}, {$reporter->getCoins()}, \"{$csrfToken}\");" : false'>{$bug->getPriority()}</a></td>
         </tr>
         <tr>
             <td class="label"><span class="nobold">{_bug_tracker_device}:</span></td>
@@ -52,8 +52,8 @@
     </tbody>
 </table>
 <hr color="#DAE1E8" size="1">
-<button n:if="$canAdminBugTracker" class="button" onClick="showBtStatusChangeDialog({$bug->getId()}, {$csrfToken})">{_bug_tracker_change_status}</button>
-<button n:if="$canAdminBugTracker" class="button" onClick="showBtPriorityChangeDialog({$bug->getId()}, {$csrfToken})">{_bug_tracker_change_priority}</button>
+<button n:if="$canAdminBugTracker" class="button" onClick="showBtStatusChangeDialog({$bug->getId()}, {$reporter->getCoins()}, {$csrfToken})">{_bug_tracker_change_status}</button>
+<button n:if="$canAdminBugTracker" class="button" onClick="showBtPriorityChangeDialog({$bug->getId()}, {$reporter->getCoins()}, {$csrfToken})">{_bug_tracker_change_priority}</button>
 <a n:if="$bug->getReporter()->getId() !== $user->identity->getId()" class="button" href="/bug{$bug->getId()}/reproduce">
     {_bug_tracker_reproduced}
     <span n:if="$bug->getReproducedCount() > 0">({$bug->getReproducedCount()})</span>
@@ -80,6 +80,7 @@
             <div>
                 {$comment->getText()}
             </div>
+            <b n:if="$canAdminBugTracker AND $comment->getBalanceChanges()">(действия с балансом: {$comment->getBalanceChanges() > 0 ? "+" : false}{$comment->getBalanceChanges()})</b>
         </div>
     </div>
     <hr color="#DAE1E8" size="1">

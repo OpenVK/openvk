@@ -38,4 +38,9 @@ class BugReportComment extends RowModel
     {
         return $this->getRecord()->label;
     }
+
+    function getBalanceChanges(): ?int
+    {
+        return $this->getRecord()->point_actions;
+    }
 }

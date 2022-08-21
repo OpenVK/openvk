@@ -90,7 +90,7 @@ final class BugtrackerPresenter extends OpenVKPresenter
 
         $report->save();
 
-        $this->createComment($report, $comment, tr("bug_tracker_new_report_status") . " — $list[$status]", TRUE);
+        $this->createComment($report, $comment, tr("bug_tracker_new_report_status") . " — $list[$status]", TRUE, FALSE, $points);
         $this->flashFail("succ", tr("changes_saved"), tr("bug_tracker_new_report_status") . " — $list[$status]");
     }
 
@@ -119,11 +119,11 @@ final class BugtrackerPresenter extends OpenVKPresenter
 
         $report->save();
 
-        $this->createComment($report, $comment, tr("bug_tracker_new_report_priority") . " — $list[$priority]", TRUE);
+        $this->createComment($report, $comment, tr("bug_tracker_new_report_priority") . " — $list[$priority]", TRUE, FALSE, $points);
         $this->flashFail("succ", tr("changes_saved"), tr("bug_tracker_new_report_priority") . " — $list[$priority]");
     }
 
-    function createComment(?BugReport $report, string $text, string $label = "", bool $is_moder = FALSE, bool $is_hidden = FALSE)
+    function createComment(?BugReport $report, string $text, string $label = "", bool $is_moder = FALSE, bool $is_hidden = FALSE, string $point_actions = NULL)
     {
         $moder = $this->user->identity->getChandlerUser()->can("admin")->model('openvk\Web\Models\Repositories\BugtrackerReports')->whichBelongsTo(NULL);
 
@@ -138,6 +138,7 @@ final class BugtrackerPresenter extends OpenVKPresenter
             "author" => $this->user->identity->getId(),
             "is_moder" => $moder === $is_moder,
             "is_hidden" => $moder === $is_hidden,
+            "point_actions" => $point_actions,
             "text" => $text,
             "label" => $label
         ]);
