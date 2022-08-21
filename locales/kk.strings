@@ -84,6 +84,9 @@
 "years_one" = "1 жаста";
 "years_other" = "$1 жаста";
 
+"show_my_birthday" = "Туған күнімді көрсету";
+"show_only_month_and_day" = "Ай мен күнді ғана көрсету";
+
 "was_online_f" = "желіде болған";
 "all_title" = "Барлығы";
 "information" = "Ақпарат";
@@ -147,6 +150,11 @@
 
 "post_writes_m" = "жазды";
 "post_writes_f" = "жазды";
+"post_writes_g" = "жариялады";
+"post_deact_m" = "осы сөзбен парақшасын жойып тастады:";
+"post_deact_f" = "осы сөзбен парақшасын жойып тастады:";
+"post_deact_silent_m" = "үндемей парақшасын жойып тастады.";
+"post_deact_silent_f" = "үндемей парақшасын жойып тастады.";
 "wall" = "Қабырға";
 "post" = "Жазба";
 "write" = "Жазу";
@@ -166,8 +174,16 @@
 "wall_one" = "$1 жазба";
 "wall_other" = "$1 жазба";
 "feed" = "Жаңалықтар";
-"publish_post" = "жазба жариялау";
+"publish_post" = "Жазба жариялау";
 "view_other_comments" = "Басқа пікірлерді қарау";
+
+"wall_archive" = "Жазбалар мұрағаты";
+"wall_do_archive" = "Жазбаны мұрағаттау";
+"wall_do_unarchive" = "Жазбаны қалпына келтіру";
+"wall_archive_succ" = "Жазба мұрағатталды";
+"wall_archive_succ_descr" = "Енді ол мұрағатта.";
+"wall_unarchive_succ" = "Жазба қалпына келтірілді";
+"wall_unarchive_succ_descr" = "Енді ол басқаларға қайта көрінеді.";
 
 "no_comments" = "Пікірлер жоқ";
 
@@ -210,10 +226,24 @@
 "incoming_req" = "Жазылушылар";
 "outcoming_req" = "Өтінімдер";
 "req" = "Өтінімдер";
+"friends_online" = "Желідегі достар";
+"all_friends" = "Барлық достар";
 
 "friends_zero" = "Достарыңыз жоқ";
 "friends_one" = "$1 дос";
 "friends_other" = "$1 дос";
+
+"friends_online_zero" = "Желідеге достарыңыз жоқ";
+"friends_online_one" = "$1 дос желіде";
+"friends_online_other" = "$1 дос желіде";
+
+"friends_list_zero" = "Әзірше достарыңыз жоқ";
+"friends_list_one" = "Сізде $1 дос";
+"friends_list_other" = "Сізде $1 дос";
+
+"friends_list_online_zero" = "Әзірше желідегі достарыңыз жоқ";
+"friends_list_online_one" = "$1 досыңыз желіде";
+"friends_list_online_other" = "$1 досыңыз желіде";
 
 "followers_zero" = "Жазылмандар жоқ";
 "followers_one" = "$1 жазылман";
@@ -450,6 +480,28 @@
 "ad_poster" = "Жарнама постері";
 
 "email_change_confirm_message" = "Өзгеріс әсер ету үшін өзіңіздің жаңа Email-мекенжайыңызды растаңыз. Біз оған нұсқаулық жібердік.";
+
+"profile_deactivate" = "Парақшаны жою";
+"profile_deactivate_button" = "Парақшаны жою";
+"profile_deactivate_header" = "Парақшаңызды жойғыңыз келгені үшін өкініштіміз. Сондықтан жою себебін және осы жағдай туралы хабарламаңызды көрсете аласыз. Біз сіздің пікіріңізді оқып, сайтты жақсартуға тырысамыз!";
+"profile_deactivate_reason_header" = "Парақшаны жою себебін көрсетіңізші";
+"profile_deactivate_reason_1" = "Мұнда басқа парақшам бар";
+"profile_deactivate_reason_1_text" = "Мен жаңа парақша жасадым, енді өткенімді өшіргім келеді.";
+"profile_deactivate_reason_2" = "Веб-сайт уақытымды жей береді";
+"profile_deactivate_reason_2_text" = "Бұл сайт мықты болса да, менің жұмысқа және өмірге қажет уақытымды алады.";
+"profile_deactivate_reason_3" = "Веб-сайтта орынсыз материалдар көп";
+"profile_deactivate_reason_3_text" = "Мен өмір бойына жеткілікті порно және қарақшылық материал таптым. Енді кетсем болады.";
+"profile_deactivate_reason_4" = "Деректерімнің қауіпсіздігіне алаңдаймын";
+"profile_deactivate_reason_4_text" = "Мені бақылап жатыр, мына жерде отырғанды қорқамын. Кетуім керек.";
+"profile_deactivate_reason_5" = "Ешкім жазбаларымды қарамайды";
+"profile_deactivate_reason_5_text" = "Мына жерде маған ешкім назар аудармайды. Мен кеткеніме өкінесіңдер.";
+"profile_deactivate_reason_6" = "Басқа себеп";
+
+"profile_deactivated_msg" = "Парақшаңыз <b>жойылды</b>.<br/><br/>Сайтты қайта пайдаланғыңыз келсе $1 дейін <a href='/settings/reactivate'>парақшаңызды қайтара аласыз</a>.";
+"profile_deactivated_status" = "Парақша жойылған";
+"profile_deactivated_info" = "Бұл парақша жойылған.<br/>Ақпарат қолжетімсіз.";
+
+"share_with_friends" = "Достармен бөлісу";
 
 "two_factor_authentication" = "Екі факторлы аутентификация";
 "two_factor_authentication_disabled" = "Бұзылудан сенімді қорғаныс қызметін қамтамасыз етеді: парақшаға кіру үшін 2FA қосымшасында алынған кодты енгізу керек.";

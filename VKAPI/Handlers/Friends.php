@@ -23,9 +23,8 @@ final class Friends extends VKAPIRequestHandler
 
 		$usersApi = new Users($this->getUser());
 
-		if(!is_null($fields)) {
+		if(!is_null($fields))
 			$response = $usersApi->get(implode(',', $friends), $fields, 0, $count);  # FIXME
-		}
 
 		return (object) [
 			"count" => $users->get($user_id)->getFriendsCount(),
@@ -132,5 +131,33 @@ final class Friends extends VKAPIRequestHandler
 		}
 
 		return $response;
+	}
+
+	function getRequests(string $fields = "", int $offset = 0, int $count = 100): object
+	{
+		$this->requireUser();
+
+		$i = 0;
+		$offset++;
+		$followers = [];
+
+		foreach($this->getUser()->getFollowers() as $follower) {
+			$followers[$i] = $follower->getId();
+			$i++;
+		}
+
+		$response = $followers;
+		$usersApi = new Users($this->getUser());
+
+		if(!is_null($fields)) 
+			$response = $usersApi->get(implode(',', $followers), $fields, 0, $count);  # FIXME
+
+		foreach($response as $user)
+			$user->user_id = $user->id;
+
+		return (object) [
+			"count" => $this->getUser()->getFollowersCount(),
+			"items" => $response
+		];
 	}
 }

@@ -102,7 +102,7 @@ function tr(string $stringId, ...$variables): string
         }
         
         for($i = 0; $i < sizeof($variables); $i++)
-            $output = preg_replace("%(?<!\\\\)(\\$)" . ($i + 1) . "%", $variables[$i], $output);
+            $output = preg_replace("%(?<!\\\\)(\\$)" . ($i + 1) . "%", (string) $variables[$i], $output);
     }
     
     return $output;

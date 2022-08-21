@@ -72,6 +72,7 @@
 "description" = "Description";
 "save" = "Save";
 "main_information" = "Main information";
+"additional_information" = "Additional information";
 "nickname" = "Nickname";
 "online" = "Online";
 "was_online" = "was online";
@@ -357,6 +358,10 @@
 "notes_one" = "$1 note";
 "notes_other" = "$1 notes";
 "notes_start_screen" = "With notes, you can share your events with friends and see what's going on with them.";
+"note_preview" = "Preview draft";
+"note_preview_warn" = "Preview mode active";
+"note_preview_warn_details" = "Notes may change their behaviour or looks after being saved. Also, try not to use preview very often.";
+"note_preview_empty_err" = "Preview of empty or nameless note? Why, Mr. White?";
 
 "notes_list_zero" = "No notes found";
 "notes_list_one" = "$1 note found";
@@ -703,6 +708,74 @@
 "coins_other" = "$1 votes";
 
 "users_gifts" = "Gifts";
+
+/* Apps */
+"app" = "Application";
+"apps" = "Applications";
+"my_apps" = "My Apps";
+"all_apps" = "All apps";
+"installed_apps" = "Installed apps";
+"own_apps" = "Own apps";
+"own_apps_alternate" = "My apps";
+
+"app_play" = "start";
+"app_uninstall" = "uninstall";
+"app_edit" = "edit";
+"app_dev" = "Developer";
+
+"create_app" = "Create an application";
+"edit_app" = "Edit an application";
+"new_app" = "New application";
+"app_news" = "A news note";
+"app_state" = "Status";
+"app_enabled" = "Enabled";
+"app_creation_hint_url" = "Specify in the URL the exact address together with the scheme (https), the port (80) and the required request parameters.";
+"app_creation_hint_iframe" = "Your application will be opened in an iframe.";
+"app_balance" = "Your application has <b>$1</b> votes to its credit.";
+"app_users" = "Your application is used by <b>$1</b> people.";
+"app_withdrawal_q" = "withdraw?";
+"app_withdrawal" = "Withdrawal";
+"app_withdrawal_empty" = "Couldn't withdraw emptiness, sorry.";
+"app_withdrawal_created" = "A request to withdraw $1 votes has been created. Awaiting crediting.";
+
+"appjs_payment" = "Purchase payment";
+"appjs_payment_intro" = "You are about to pay for an order in the application";
+"appjs_order_items" = "Order items";
+"appjs_payment_total" = "Total amount payable";
+"appjs_payment_confirm" = "Pay";
+"appjs_err_funds" = "Failed to pay: insufficient funds.";
+
+"appjs_wall_post" = "Publish a post";
+"appjs_wall_post_desc" = "wants to publish a post on your wall";
+
+"appjs_sperm_friends" = "your Friends";
+"appjs_sperm_friends_desc" = "add users as friends and read your friends list";
+"appjs_sperm_wall" = "your Wall";
+"appjs_sperm_wall_desc" = "see your news, your wall and create posts on it";
+"appjs_sperm_messages" = "your Messages";
+"appjs_sperm_messages_desc" = "read and write messages on your behalf";
+"appjs_sperm_groups" = "your Groups";
+"appjs_sperm_groups_desc" = "see a list of your groups and subscribe you to other";
+"appjs_sperm_likes" = "Likes feature";
+"appjs_sperm_likes_desc" = "give and take away likes to posts";
+
+"appjs_sperm_request" = "Access request";
+"appjs_sperm_requests" = "requests access to";
+"appjs_sperm_can" = "The app will be able to";
+"appjs_sperm_allow" = "Allow";
+"appjs_sperm_disallow" = "Disallow";
+
+"app_uninstalled" = "Application is disabled";
+"app_uninstalled_desc" = "It will no longer be able to perform actions on your behalf.";
+"app_err_not_found" = "Application not found";
+"app_err_not_found_desc" = "Incorrect identifier or it has been disabled.";
+"app_err_forbidden_desc" = "This application is not yours.";
+"app_err_url" = "Incorrect address";
+"app_err_url_desc" = "The address of the application did not pass the check, make sure it is correct.";
+"app_err_ava" = "Unable to upload an avatar";
+"app_err_ava_desc" = "Avatar too big or wrong: general error #$res.";
+"app_err_note" = "Failed to attach a news note";
+"app_err_note_desc" = "Make sure the link is correct and the note belongs to you.";
 
 /* Support */
 
