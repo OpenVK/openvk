@@ -48,7 +48,8 @@ CREATE TABLE `bt_comments` (
   `is_moder` tinyint(1) DEFAULT NULL,
   `is_hidden` tinyint(1) DEFAULT NULL,
   `text` longtext NOT NULL,
-  `label` varchar(50) NOT NULL
+  `label` varchar(50) NOT NULL,
+  `point_actions` bigint(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 ALTER TABLE `bt_comments`
