@@ -23,29 +23,39 @@ final class BugtrackerPresenter extends OpenVKPresenter
     function renderIndex(): void
     {
         $this->assertUserLoggedIn();
-        $this->template->mode = in_array($this->queryParam("act"), ["list", "show", "products", "new_product", "reporter", "new"]) ? $this->queryParam("act") : "list";
+        $this->template->mode = in_array($this->queryParam("act"), ["list", "products", "new_product", "reporter", "new"]) ? $this->queryParam("act") : "list";
+
+        if($this->queryParam("act") === "show")
+            $this->redirect("/bug" . $this->queryParam("id"));
 
         $this->template->user = $this->user;
-       
-        $this->template->all_products = $this->products->getAll();
+        $this->template->page = (int) ($this->queryParam("p") ?? 1);
+
         $this->template->open_products = $this->products->getOpen();
 
-        if($this->template->mode === "reporter") {
-            $this->template->reporter = (new Users)->get((int) $this->queryParam("id"));
-            $this->template->reporter_stats = [$this->reports->getCountByReporter((int) $this->queryParam("id")), $this->reports->getSuccCountByReporter((int) $this->queryParam("id"))];
+        switch ($this->template->mode) {
+            case 'reporter':
+                $this->template->reporter = (new Users)->get((int) $this->queryParam("id"));
+                $this->template->reporter_stats = [$this->reports->getCountByReporter((int) $this->queryParam("id")), $this->reports->getSuccCountByReporter((int) $this->queryParam("id"))];
 
-            $this->template->page = (int) ($this->queryParam("p") ?? 1);
-            $this->template->iterator = $this->reports->getByReporter((int) $this->queryParam("id"));
-            $this->template->count = $this->reports->getCountByReporter((int) $this->queryParam("id"));
-        } else {
-            $this->template->page     = (int) ($this->queryParam("p") ?? 1);
-            $this->template->count    = $this->reports->getReportsCount((int) $this->queryParam("product"));
-            $this->template->iterator = $this->queryParam("product") 
-                ? $this->reports->getReports((int) $this->queryParam("product"), $this->template->page) 
-                : $this->reports->getAllReports($this->template->page);
+                $this->template->iterator = $this->reports->getByReporter((int) $this->queryParam("id"), $this->template->page);
+                $this->template->count = $this->reports->getCountByReporter((int) $this->queryParam("id"));
+                break;
+            
+            case 'products':
+                $this->template->count = $this->products->getCount();
+                $this->template->iterator = $this->products->getAll($this->template->page);
+                break;
+
+            default:
+                $this->template->count    = $this->reports->getReportsCount((int) $this->queryParam("product"));
+                $this->template->iterator = $this->queryParam("product") 
+                    ? $this->reports->getReports((int) $this->queryParam("product"), $this->template->page) 
+                    : $this->reports->getAllReports($this->template->page);
+                break;
         }
 
-        $this->template->canAdminBugTracker = $this->user->identity->getChandlerUser()->can("admin")->model('openvk\Web\Models\Repositories\BugtrackerReports')->whichBelongsTo(NULL);
+        $this->template->isModerator = $this->user->identity->isBtModerator();
     }
 
     function renderView(int $id): void
@@ -59,7 +69,7 @@ final class BugtrackerPresenter extends OpenVKPresenter
             $this->template->reporter = $this->template->bug->getReporter();
             $this->template->comments = $this->comments->getByReport($this->template->bug);
 
-            $this->template->canAdminBugTracker = $this->user->identity->getChandlerUser()->can("admin")->model('openvk\Web\Models\Repositories\BugtrackerReports')->whichBelongsTo(NULL);
+            $this->template->isModerator = $this->user->identity->isBtModerator();
         } else {
             $this->flashFail("err", tr("bug_tracker_report_not_found"));
         }
@@ -127,12 +137,12 @@ final class BugtrackerPresenter extends OpenVKPresenter
 
     function createComment(?BugReport $report, string $text, string $label = "", bool $is_moder = FALSE, bool $is_hidden = FALSE, string $point_actions = NULL)
     {
-        $moder = $this->user->identity->getChandlerUser()->can("admin")->model('openvk\Web\Models\Repositories\BugtrackerReports')->whichBelongsTo(NULL);
+        $moder = $this->user->identity->isBtModerator();
 
         if (!$text && !$label)
             $this->flashFail("err", tr("error"), tr("bug_tracker_empty_comment"));
 
-        if ($report->getRawStatus() == 6 && !$moder)
+        if (in_array($report->getRawStatus(), [5, 6]) && !$moder)
             $this->flashFail("err", tr("forbidden"));
 
         DB::i()->getContext()->table("bt_comments")->insert([
@@ -142,7 +152,8 @@ final class BugtrackerPresenter extends OpenVKPresenter
             "is_hidden" => $moder === $is_hidden,
             "point_actions" => $point_actions,
             "text" => $text,
-            "label" => $label
+            "label" => $label,
+            "created" => time()
         ]);
 
         $this->flashFail("succ", tr("bug_tracker_success"), tr("bug_tracker_comment_sent"));
@@ -192,7 +203,7 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
 
-        $moder = $this->user->identity->getChandlerUser()->can("admin")->model('openvk\Web\Models\Repositories\BugtrackerReports')->whichBelongsTo(NULL);
+        $moder = $this->user->identity->isBtModerator();
 
         if (!$moder)
             $this->flashFail("err", tr("forbidden"));

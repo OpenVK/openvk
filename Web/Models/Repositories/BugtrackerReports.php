@@ -51,12 +51,12 @@ class BugtrackerReports
             yield new BugReport($report);
     }
 
-    function getCountByReporter(int $reporter_id)
+    function getCountByReporter(int $reporter_id): ?int
     {
         return sizeof($this->reports->where(["deleted" => NULL, "reporter" => $reporter_id]));
     }
 
-    function getSuccCountByReporter(int $reporter_id)
+    function getSuccCountByReporter(int $reporter_id): ?int
     {
         return sizeof($this->reports->where(["deleted" => NULL, "reporter" => $reporter_id, "status" => "<= 4"]));
     }

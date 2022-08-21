@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
+use openvk\Web\Util\DateTime;
 use openvk\Web\Models\{RowModel};
 use openvk\Web\Models\Entities\{User};
 use openvk\Web\Models\Repositories\{Users};
@@ -36,5 +37,10 @@ class BugtrackerProduct extends RowModel
     function isClosed(): ?bool
     {
         return (bool) $this->getRecord()->closed;
+    }
+
+    function getCreationTime(): DateTime
+    {
+        return new DateTime($this->getRecord()->created);
     }
 }

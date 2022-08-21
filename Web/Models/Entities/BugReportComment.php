@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
+use openvk\Web\Util\DateTime;
 use openvk\Web\Models\{RowModel};
 use openvk\Web\Models\Entities\{User, BugtrackerProduct};
 use openvk\Web\Models\Repositories\{Users, BugtrackerProducts};
@@ -42,5 +43,10 @@ class BugReportComment extends RowModel
     function getBalanceChanges(): ?int
     {
         return $this->getRecord()->point_actions;
+    }
+
+    function getCreationTime(): DateTime
+    {
+        return new DateTime($this->getRecord()->created);
     }
 }

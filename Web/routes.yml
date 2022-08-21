@@ -33,6 +33,8 @@ routes:
       handler: "Support->delete"
     - url: "/bugtracker"
       handler: "Bugtracker->index"
+    - url: "/bugs"
+      handler: "Bugtracker->index"
     - url: "/bug{num}"
       handler: "Bugtracker->view"
     - url: "/bug{num}/setStatus"

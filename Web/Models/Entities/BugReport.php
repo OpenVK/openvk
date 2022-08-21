@@ -92,7 +92,7 @@ class BugReport extends RowModel
         return $this->getRecord()->reproduced;
     }
 
-    function getCreationDate(): DateTime
+    function getCreationTime(): DateTime
     {
         return new DateTime($this->getRecord()->created);
     }

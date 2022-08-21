@@ -25,15 +25,20 @@ class BugtrackerProducts
         return $this->toProduct($this->products->get($id));
     }
 
-    function getAll(): \Traversable
+    function getAll(int $page = 1): \Traversable
     {
-        foreach($this->products->order("id ASC") as $product)
+        foreach($this->products->order("id ASC")->page($page, 5) as $product)
             yield new BugtrackerProduct($product);
     }
 
-    function getOpen(): \Traversable
+    function getOpen(int $page = 1): \Traversable
     {
-        foreach($this->products->where(["closed" => 0])->order("id ASC") as $product)
+        foreach($this->products->where(["closed" => 0])->order("id ASC")->page($page, 5) as $product)
             yield new BugtrackerProduct($product);
+    }
+
+    function getCount(): ?int
+    {
+        return sizeof($this->products->where(["closed" => 0]));
     }
 }

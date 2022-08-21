@@ -1017,6 +1017,11 @@ class User extends RowModel
     {
         return (bool) $this->getRecord()->activated;
     }
+
+    function isBtModerator(): bool
+    {
+        return $this->getChandlerUser()->can("admin")->model('openvk\Web\Models\Repositories\BugtrackerReports')->whichBelongsTo(NULL);
+    }
     
     use Traits\TSubscribable;
 }

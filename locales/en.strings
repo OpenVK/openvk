@@ -381,7 +381,7 @@
 "my_feed" = "My Feed";
 "my_feedback" = "My Feedback";
 "my_settings" = "My Settings";
-"bug_tracker" = "Bug-tracker";
+"bug_tracker" = "Bug tracker";
 
 "menu_login" = "Login";
 "menu_registration" = "Registration";
@@ -1078,7 +1078,7 @@
 "bug_tracker_hidden_comment" = "Hidden comment";
 "bug_tracker_report_not_found" = "The report was not found. It may have been deleted.";
 "bug_tracker_status_open" = "Open";
-"bug_tracker_status_under_review" = "Under review":
+"bug_tracker_status_under_review" = "Under review";
 "bug_tracker_status_in_progress" = "In progress";
 "bug_tracker_status_fixed" = "Fixed";
 "bug_tracker_status_closed" = "Closed";

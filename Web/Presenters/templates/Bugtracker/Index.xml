@@ -60,7 +60,7 @@
                         <tbody>
                             <tr>
                                 <td class="label"><span class="nobold">{_bug_tracker_product}:</span></td>
-                                <td class="data"><a href="#">{$bug->getProduct()->getCanonicalName()}</a></td>
+                                <td class="data"><a href="/bugtracker?act=products">{$bug->getProduct()->getCanonicalName()}</a></td>
                             </tr>
                             <tr>
                                 <td class="label"><span class="nobold">{_bug_tracker_sent_by}: </span></td>
@@ -77,8 +77,12 @@
                                 <td class="data"><a href="#">{$bug->getStatus()}</a></td>
                             </tr>
                             <tr>
-                                <td class="label"><span class="nobold">{_priority}:</span></td>
+                                <td class="label"><span class="nobold">{_bug_tracker_priority}:</span></td>
                                 <td class="data"><a href="#">{$bug->getPriority()}</a></td>
+                            </tr>
+                            <tr>
+                                <td class="label"><span class="nobold">{_created}:</span></td>
+                                <td class="data"><a href="#">{$bug->getCreationTime()}</a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -149,7 +153,7 @@
 {elseif $mode === "products"}
 <table border="0" style="font-size: 11px; width: 100%;" class="post">
     <tbody>
-        <tr n:foreach="$all_products as $product">
+        <tr n:foreach="$iterator as $product">
             <td width="54" >
                 <center>
                     <img src="/assets/packages/static/openvk/img/note_icon.png">
@@ -157,7 +161,7 @@
             </td>
             <td width="92%" valign="top">
                 <div class="post-author" href="#">
-                    <a href="#">
+                    <a href="/bugtracker?product={$product->getId()}">
                         <b>{$product->getCanonicalName()}</b>
                          <span>#{$product->getId()}</span>
                     </a>
@@ -166,13 +170,13 @@
                     <table id="basicInfo" class="ugc-table group_info" cellspacing="0" cellpadding="0" border="0">
                         <tbody>
                             <tr>
-                                <td class="label"><span class="nobold">{_bug_tracker_name}:</span></td>
+                                <td class="label"><span class="nobold">{_bug_tracker_product}:</span></td>
                                 <td class="data">
-                                    <a href="#">{$product->getCanonicalName()}</a>
+                                    <a href="/bugtracker?product={$product->getId()}">{$product->getCanonicalName()}</a>
                                     <b n:if="$product->isClosed()">({_bug_tracker_product_is_closed})</b>
                                 </td>
                             </tr>
-                            <tr n:if="$canAdminBugTracker">
+                            <tr n:if="$isModerator">
                                 <td class="label"><span class="nobold">{_bug_tracker_product_created_by}: </span></td>
                                 <td class="data">
                                     <a href="/bugtracker?act=reporter&id={$product->getCreator()->getId()}">{$product->getCreator()->getCanonicalName()}</a>
@@ -180,7 +184,7 @@
                             </tr>
                             <tr>
                                 <td class="label"><span class="nobold">{_bug_tracker_product_creation_date}:</span></td>
-                                <td class="data"><a href="#">123</a></td>
+                                <td class="data"><a href="#">{$product->getCreationTime()}</a></td>
                             </tr>
                         </tbody>
                     </table>
@@ -189,6 +193,15 @@
         </tr>
     </tbody>
 </table>
+<div style="padding: 8px;">
+    {include "../components/paginator.xml", conf => (object) [
+        "page"     => $page,
+        "count"    => $count,
+        "amount"   => sizeof($iterator),
+        "perPage"  => 5,
+        "atBottom" => true,
+    ]}
+</div>
 
 {elseif $mode === "new_product"}
 <form method="post" action="/bugtracker/createProduct">
@@ -212,7 +225,8 @@
         </div>
         <div class="info" style="width: 92%">
             <a href="{$reporter->getURL()}" class="title">{$reporter->getCanonicalName()}</a>
-            <div>tr("bug_tracker_reporter_card_text", $reporter_stats[0], $reporter_stats[1])</div>
+            <b n:if="$reporter->isBtModerator() AND $isModerator">[Модератор]</b>
+            <div>{tr("bug_tracker_reporter_card_text", $reporter_stats[0], $reporter_stats[1])}</div>
         </div>
     </div>
     <table border="0" style="font-size: 11px; width: 100%;" class="post">
