@@ -4,6 +4,7 @@
 
 {block header}
 <a href="/bugtracker">Баг-трекер</a>
+» <a href="/bugtracker?product={$bug->getProduct()->getId()}">{$bug->getProduct()->getCanonicalName()}</a>
 » Отчёт #{$bug->getId()}
 {/block}
 
@@ -29,7 +30,7 @@
     <tbody>
         <tr>
             <td class="label"><span class="nobold">{_bug_tracker_product}:</span></td>
-            <td class="data"><a href="#">{$bug->getProduct()->getCanonicalName()}</a></td>
+            <td class="data"><a href="/bugtracker?product={$bug->getProduct()->getId()}">{$bug->getProduct()->getCanonicalName()}</a></td>
         </tr>
         <tr>
             <td class="label"><span class="nobold">{_bug_tracker_sent_by}: </span></td>
