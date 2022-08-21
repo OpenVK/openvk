@@ -201,7 +201,8 @@ final class BugtrackerPresenter extends OpenVKPresenter
         DB::i()->getContext()->table("bt_products")->insert([
             "creator_id" => $this->user->identity->getId(),
             "title" => $title,
-            "description" => $description
+            "description" => $description,
+            "created" => time()
         ]);
 
         $this->redirect("/bugtracker?act=products");
