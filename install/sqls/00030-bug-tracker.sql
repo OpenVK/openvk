@@ -29,7 +29,9 @@ CREATE TABLE `bt_products` (
   `title` varchar(255) NOT NULL,
   `description` varchar(10000) NOT NULL,
   `created` bigint(20) NOT NULL,
-  `closed` tinyint(1) DEFAULT 0
+  `closed` tinyint(1) DEFAULT 0,
+  `private` tinyint(4) DEFAULT 0,
+  `deleted` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 ALTER TABLE `bt_products`
@@ -57,5 +59,23 @@ ALTER TABLE `bt_comments`
   ADD PRIMARY KEY (`id`);
 
 ALTER TABLE `bt_comments`
+  MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
+COMMIT;
+
+/* bt_products_access */
+
+CREATE TABLE `bt_products_access` (
+  `id` bigint(20) NOT NULL,
+  `created` bigint(20) NOT NULL,
+  `tester` bigint(20) NOT NULL,
+  `product` bigint(20) NOT NULL,
+  `moderator` bigint(20) NOT NULL,
+  `access` tinyint(1) DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+ALTER TABLE `bt_products_access`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `bt_products_access`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 COMMIT;

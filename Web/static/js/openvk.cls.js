@@ -551,3 +551,109 @@ function showBtPriorityChangeDialog(report, currentBalance, hash) {
         Function.noop
     ]);
 }
+
+function showBtGiveProductAccessDialog(product, hash) {
+    MessageBox("Выдать доступ", `<form action="/bt_product${product[0]}/giveAccess" method="post" id="give_product_access_dialog">
+        <div>
+            Выдать пользователю <b>ID</b>&nbsp
+            <input style="width: 45px; height: 9px;" type="number" name="uid" value="1" min="1">
+            &nbsp; доступ к продукту <b>${product[1]}</b> (#${product[0]}).
+        </div>
+        <input type="hidden" name="hash" value="${hash}" />
+    </form>`, ["Продолжить", tr("cancel")], [
+        () => {
+            $("#give_product_access_dialog").submit();
+        },
+        Function.noop
+    ]);
+}
+
+function showBtRevokeProductAccessDialog(product, hash) {
+    MessageBox("Забрать доступ", `<form action="/bt_product${product[0]}/revokeAccess" method="post" id="revoke_product_access_dialog">
+        <div>
+            Забрать у пользователя <b>ID</b>&nbsp
+            <input style="width: 45px; height: 9px;" type="number" name="uid" value="1" min="1">
+            &nbsp; доступ к продукту <b>${product[1]}</b> (#${product[0]}).
+        </div>
+        <input type="hidden" name="hash" value="${hash}" />
+    </form>`, ["Продолжить", tr("cancel")], [
+        () => {
+            $("#revoke_product_access_dialog").submit();
+        },
+        Function.noop
+    ]);
+}
+
+function showBtProductAccessDialog(product, hash) {
+    MessageBox(`Доступ к ${product[1]} (#${product[0]})`, `<form action="/bt_product${product[0]}/manageAccess" method="post" id="give_product_access_dialog">
+        <table>
+            <tbody>
+                <tr>
+                    <td><input type="radio" name="action" value="give"></td>
+                    <td><label for="priority_1">Выдать</label></td>
+                </tr>
+                <tr>
+                    <td><input type="radio" name="action" value="revoke"></td>
+                    <td><label for="priority_2">Забрать</label></td>
+                </tr>
+            </tbody>
+        </table>
+        <br>
+        <div>
+            <b>ID</b> пользователя&nbsp
+            <input style="width: 45px; height: 9px;" type="number" name="uid" value="1" min="1">
+        </div>
+        <input type="hidden" name="hash" value="${hash}" />
+    </form>`, ["Продолжить", tr("cancel")], [
+        () => {
+            $("#give_product_access_dialog").submit();
+        },
+        Function.noop
+    ]);
+}
+
+function showBtPrivateProductDialog(product, hash) {
+    MessageBox(`Настройки продукта ${product[1]} (#${product[0]})`, `<form action="/bt_product${product[0]}/managePrivacy" method="post" id="give_product_access_dialog">
+        <table>
+            <tbody>
+                <tr>
+                    <td><input type="radio" name="action" value="open"></td>
+                    <td><label for="priority_1">Открытый</label></td>
+                </tr>
+                <tr>
+                    <td><input type="radio" name="action" value="private"></td>
+                    <td><label for="priority_2">Приватный</label></td>
+                </tr>
+            </tbody>
+        </table>
+        <input type="hidden" name="hash" value="${hash}" />
+    </form>`, ["Продолжить", tr("cancel")], [
+        () => {
+            $("#give_product_access_dialog").submit();
+        },
+        Function.noop
+    ]);
+}
+
+function showBtProductStatusDialog(product, hash) {
+    MessageBox(`Статус продукта ${product[1]} (#${product[0]})`, `<form action="/bt_product${product[0]}/manageStatus" method="post" id="give_product_access_dialog">
+        <table>
+            <tbody>
+                <tr>
+                    <td><input type="radio" name="action" value="open"></td>
+                    <td><label for="priority_1">Открытый</label></td>
+                </tr>
+                <tr>
+                    <td><input type="radio" name="action" value="closed"></td>
+                    <td><label for="priority_2">Закрытый</label></td>
+                </tr>
+            </tbody>
+        </table>
+        <input type="hidden" name="hash" value="${hash}" />
+    </form>`, ["Продолжить", tr("cancel")], [
+        () => {
+            $("#give_product_access_dialog").submit();
+        },
+        Function.noop
+    ]);
+}

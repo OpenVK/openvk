@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Repositories;
-use openvk\Web\Models\Entities\{BugReport};
+use openvk\Web\Models\Entities\{BugReport, User};
+use openvk\Web\Models\Repositories\{BugtrackerProducts};
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 
@@ -26,17 +27,23 @@ class BugtrackerReports
         return $this->toReport($this->reports->get($id));
     }
 
-    function getAllReports(int $page = 1): \Traversable
+    function getAllReports(User $user, int $page = 1): \Traversable
     {
-        foreach($this->reports->where(["deleted" => NULL])->order("created DESC")->page($page, 5) as $report)
+        $reports = $this->reports->where(["deleted" => NULL])->order("created DESC")->page($page, 5);
+
+        foreach($reports as $report)
             yield new BugReport($report);
     }
 
-    function getReports(int $product_id = 0, int $priority = 0, int $page = 1): \Traversable
+    function getReports(int $product_id = 0, int $priority = 0, int $page = 1, User $user = NULL): \Traversable
     {
         $filter = ["deleted" => NULL];
         $product_id && $filter["product_id"] = $product_id;
         $priority && $filter["priority"] = $priority;
+
+        $product = (new BugtrackerProducts)->get($product_id);
+        if (!$product->hasAccess($user))
+            return false;
 
         foreach($this->reports->where($filter)->order("created DESC")->page($page, 5) as $report)
             yield new BugReport($report);

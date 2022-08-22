@@ -43,15 +43,16 @@ final class BugtrackerPresenter extends OpenVKPresenter
                 break;
             
             case 'products':
-                $this->template->count = $this->products->getCount();
-                $this->template->iterator = $this->products->getAll($this->template->page);
+                $this->template->filter = $this->queryParam("filter") ?? "all";
+                $this->template->count = $this->products->getCount($this->template->filter, $this->user->identity);
+                $this->template->iterator = $this->products->getFiltered($this->user->identity, $this->template->filter, $this->template->page);
                 break;
 
             default:
-                $this->template->count    = $this->reports->getReportsCount((int) $this->queryParam("product"), (int) $this->queryParam("priority"));
+                $this->template->count    = $this->reports->getReportsCount((int) $this->queryParam("product"), (int) $this->queryParam("priority"), $this->user->identity);
                 $this->template->iterator = $this->queryParam("product") 
-                    ? $this->reports->getReports((int) $this->queryParam("product"), (int) $this->queryParam("priority"), $this->template->page) 
-                    : $this->reports->getAllReports($this->template->page);
+                    ? $this->reports->getReports((int) $this->queryParam("product"), (int) $this->queryParam("priority"), $this->template->page, $this->user->identity) 
+                    : $this->reports->getAllReports($this->user->identity, $this->template->page);
                 break;
         }
 
@@ -63,6 +64,9 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $this->template->user = $this->user;
+
+        if (!$this->reports->get($id)->getProduct()->hasAccess($this->template->user->identity))
+            $this->flashFail("err", tr("forbidden"));
 
         if ($this->reports->get($id)) {
             $this->template->bug = $this->reports->get($id);
@@ -203,19 +207,21 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
 
-        $moder = $this->user->identity->isBtModerator();
-
-        if (!$moder)
+        if (!$this->user->identity->isBtModerator())
             $this->flashFail("err", tr("forbidden"));
 
         $title = $this->postParam("title");
         $description = $this->postParam("description");
+        $is_closed = (bool) $this->postParam("is_closed");
+        $is_private = (bool) $this->postParam("is_private");
 
         DB::i()->getContext()->table("bt_products")->insert([
             "creator_id" => $this->user->identity->getId(),
             "title" => $title,
             "description" => $description,
-            "created" => time()
+            "created" => time(),
+            "closed" => $is_closed,
+            "private" => $is_private
         ]);
 
         $this->redirect("/bugtracker?act=products");
@@ -234,5 +240,103 @@ final class BugtrackerPresenter extends OpenVKPresenter
         DB::i()->getContext()->table("bugs")->where("id", $report_id)->update(["reproduced" => $report->getReproducedCount() + 1]);
 
         $this->flashFail("succ", tr("bug_tracker_success"), tr("bug_tracker_reproduced_text"));
+    }
+
+    function renderManageAccess(int $product_id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        if (!$this->user->identity->isBtModerator())
+            $this->flashFail("err", tr("forbidden"));
+
+        $user = (new Users)->get((int) $this->postParam("uid"));
+        $product = $this->products->get($product_id);
+        $action = $this->postParam("action");
+
+        if ($action === "give") {
+            if (!$product->isPrivate() || $product->hasAccess($user))
+            $this->flashFail("err", "Ошибка", $user->getCanonicalName() . " уже имеет доступ к продукту " . $product->getCanonicalName());
+
+            DB::i()->getContext()->table("bt_products_access")->insert([
+                "created" => time(),
+                "tester" => $user->getId(),
+                "product" => $product_id,
+                "moderator" => $this->user->identity->getId()
+            ]);
+
+            $this->flashFail("succ", "Успех", $user->getCanonicalName() . " теперь имеет доступ к продукту " . $product->getCanonicalName());
+        } else {
+            if ($user->isBtModerator())
+                $this->flashFail("err", "Ошибка", "Невозможно забрать доступ к продукту у модератора.");
+
+            if (!$product->hasAccess($user))
+                $this->flashFail("err", "Ошибка", $user->getCanonicalName() . " и так не имеет доступа  к продукту " . $product->getCanonicalName());
+
+            DB::i()->getContext()->table("bt_products_access")->where([
+                "tester" => $user->getId(),
+                "product" => $product_id,
+            ])->delete();
+
+            $this->flashFail("succ", "Успех", $user->getCanonicalName() . " теперь не имеет доступа к продукту " . $product->getCanonicalName());
+        }
+    }
+
+    function renderManagePrivacy(int $product_id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        if (!$this->user->identity->isBtModerator())
+            $this->flashFail("err", tr("forbidden"));
+
+        $user = (new Users)->get((int) $this->postParam("uid"));
+        $product = $this->products->get($product_id);
+        $action = $this->postParam("action");
+
+        if ($action == "open") {
+            if (!$product->isPrivate())
+                $this->flashFail("err", "Ошибка", "Продукт " . $product->getCanonicalName() . " и так открытый.");
+
+            DB::i()->getContext()->table("bt_products")->where("id", $product_id)->update(["private" => 0]);
+
+            $this->flashFail("succ", "Успех", "Продукт " . $product->getCanonicalName() . " теперь открытый.");
+        } else {
+           if ($product->isPrivate())
+                $this->flashFail("err", "Ошибка", "Продукт " . $product->getCanonicalName() . " и так приватный.");
+
+            DB::i()->getContext()->table("bt_products")->where("id", $product_id)->update(["private" => 1]);
+
+            $this->flashFail("succ", "Успех", "Продукт " . $product->getCanonicalName() . " теперь приватный.");
+        }
+    }
+
+    function renderManageStatus(int $product_id): void
+    {
+         $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        if (!$this->user->identity->isBtModerator())
+            $this->flashFail("err", tr("forbidden"));
+
+        $user = (new Users)->get((int) $this->postParam("uid"));
+        $product = $this->products->get($product_id);
+        $action = $this->postParam("action");
+
+        if ($action == "open") {
+            if (!$product->isClosed())
+                $this->flashFail("err", "Ошибка", "Продукт " . $product->getCanonicalName() . " и так открытый.");
+            
+            DB::i()->getContext()->table("bt_products")->where("id", $product_id)->update(["closed" => 0]);
+
+            $this->flashFail("succ", "Успех", "Продукт " . $product->getCanonicalName() . " теперь открытый.");
+        } else {
+            if ($product->isClosed())
+                $this->flashFail("err", "Ошибка", "Продукт " . $product->getCanonicalName() . " и так закрытый.");
+            
+            DB::i()->getContext()->table("bt_products")->where("id", $product_id)->update(["closed" => 1]);
+
+            $this->flashFail("succ", "Успех", "Продукт " . $product->getCanonicalName() . " теперь закрытый.");
+        }
     }
 }

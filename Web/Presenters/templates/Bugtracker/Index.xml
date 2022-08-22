@@ -28,7 +28,7 @@
                 {_create}
             </a>
         </div>
-        <div n:if='in_array($mode, ["products", "new_product"])' n:attr='id => $mode === "new_product" ? "activetabs" : false' class="tab" style="float: right;">
+        <div n:if='in_array($mode, ["products", "new_product"]) AND $isModerator' n:attr='id => $mode === "new_product" ? "activetabs" : false' class="tab" style="float: right;">
             <a n:attr='id => $mode === "new_product" ? "act_tab_a" : false' href="/bugtracker?act=new_product">
                 {_create}
             </a>
@@ -43,20 +43,23 @@
 <table border="0" style="font-size: 11px; width: 100%;" class="post">
     <tbody>
         <tr n:foreach="$iterator as $bug">
-            <td width="54" >
+            {var $isHidden = !$bug->getProduct()->hasAccess($user->identity)}
+            <td width="54">
                 <center>
                     <img src="/assets/packages/static/openvk/img/note_icon.png">
                 </center>
             </td>
             <td width="92%" valign="top">
                 <div class="post-author" href="#">
-                    <a href="/bug{$bug->getId()}">
-                        <b>{$bug->getCanonicalName()}</b>
-                         <span>#{$bug->getId()}</span>
+                    <a n:attr="href => !$isHidden ? '/bug' . $bug->getId() : false">
+                        <b>
+                            {!$isHidden ? $bug->getCanonicalName() : "Скрытый отчёт"}
+                        </b>
+                         <span n:if="!$isHidden">#{$bug->getId()}</span>
                     </a>
                 </div>
                 <div class="post-content" style="padding: 4px 0; font-size: 11px;">
-                    <table id="basicInfo" class="ugc-table group_info" cellspacing="0" cellpadding="0" border="0">
+                    <table n:if="!$isHidden" id="basicInfo" class="ugc-table group_info" cellspacing="0" cellpadding="0" border="0">
                         <tbody>
                             <tr>
                                 <td class="label"><span class="nobold">{_bug_tracker_product}:</span></td>
@@ -83,6 +86,58 @@
                             <tr>
                                 <td class="label"><span class="nobold">{_created}:</span></td>
                                 <td class="data"><a href="#">{$bug->getCreationTime()}</a></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table n:if="$isHidden" id="basicInfo" class="ugc-table group_info" cellspacing="0" cellpadding="0" border="0" style="filter: blur(3px)">
+                        <tbody>
+                            <tr>
+                                <td class="label">
+                                    <span class="nobold">{_bug_tracker_product}:</span>
+                                </td>
+                                <td class="data">
+                                    <a>AbcdEFGH</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">
+                                    <span class="nobold">{_bug_tracker_sent_by}: </span>
+                                </td>
+                                <td class="data">
+                                    <a>John Doe</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">
+                                    <span class="nobold">{_bug_tracker_reproduced}:</span>
+                                </td>
+                                <td class="data">
+                                    <a>...</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">
+                                    <span class="nobold">{_status}:</span>
+                                </td>
+                                <td class="data">
+                                    <a href="#">...</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">
+                                    <span class="nobold">{_bug_tracker_priority}:</span>
+                                </td>
+                                <td class="data">
+                                    <a>...</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="label">
+                                    <span class="nobold">{_created}:</span>
+                                </td>
+                                <td class="data">
+                                    <a>...</a>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -151,10 +206,36 @@
 </form>
 
 {elseif $mode === "products"}
+<div>
+    <div n:attr='id => $filter === "all" ? "activetabs" : false' class="tab">
+        <a n:attr='id => $filter === "all" ? "act_tab_a" : false' href="/bugtracker?act=products">
+            Все
+        </a>
+    </div>
+    <div n:attr='id => $filter === "open" ? "activetabs" : false' class="tab">
+        <a n:attr='id => $filter === "open" ? "act_tab_a" : false' href="/bugtracker?act=products&filter=open">
+            Открытые
+        </a>
+    </div>
+    <div n:attr='id => $filter === "closed" ? "activetabs" : false' class="tab">
+        <a n:attr='id => $filter === "closed" ? "act_tab_a" : false' href="/bugtracker?act=products&filter=closed">
+            Закрытые
+        </a>
+    </div>
+    <div n:attr='id => $filter === "private" ? "activetabs" : false' class="tab">
+        <a n:attr='id => $filter === "private" ? "act_tab_a" : false' href="/bugtracker?act=products&filter=private">
+            Приватные
+        </a>
+    </div>
+</div>
+<br>
+{if $count < 1}
+    {include "../components/nothing.xml"}
+{/if}
 <table border="0" style="font-size: 11px; width: 100%;" class="post">
     <tbody>
         <tr n:foreach="$iterator as $product">
-            <td width="54" >
+            <td width="54">
                 <center>
                     <img src="/assets/packages/static/openvk/img/note_icon.png">
                 </center>
@@ -167,6 +248,10 @@
                     </a>
                 </div>
                 <div class="post-content" style="padding: 4px 0; font-size: 11px;">
+                    <div n:if="$product->getDescription()" style="padding: 4px; font-size: 11px;">
+                        {$product->getDescription()}
+                        <hr color="#DAE1E8" size="1">
+                    </div>
                     <table id="basicInfo" class="ugc-table group_info" cellspacing="0" cellpadding="0" border="0">
                         <tbody>
                             <tr>
@@ -185,6 +270,28 @@
                             <tr>
                                 <td class="label"><span class="nobold">{_bug_tracker_product_creation_date}:</span></td>
                                 <td class="data"><a href="#">{$product->getCreationTime()}</a></td>
+                            </tr>
+                            <tr n:if="$isModerator">
+                                <td class="label"><span class="nobold">действия:</span></td>
+                                <td class="data" style="width: 100% !important;">
+                                    <span>
+                                        <a
+                                            onClick="showBtProductStatusDialog([{$product->getId()}, {$product->getCanonicalName()}], {$csrfToken})"
+                                        >
+                                            закрытый
+                                        </a>
+                                        ・
+                                        <a
+                                            onClick="showBtPrivateProductDialog([{$product->getId()}, {$product->getCanonicalName()}], {$csrfToken})"
+                                        >
+                                            приватный
+                                        </a>
+                                        ・
+                                        <a onClick="showBtProductAccessDialog([{$product->getId()}, {$product->getCanonicalName()}], {$csrfToken})">
+                                            доступ
+                                        </a>
+                                    </span>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -208,7 +315,13 @@
     <input type="text" name="title" placeholder="{_bug_tracker_product_name}">
     <br><br>
     <textarea placeholder="{_bug_tracker_product_description}" name="description" style="width: 100%; resize: vertical;"></textarea>
+    <div style="display: inline;">
+        <input id="is_closed" type="checkbox" name="is_closed">
+        <label for="is_closed">Закрытый</label>
 
+        <input id="is_private" type="checkbox" name="is_private">
+        <label for="is_private">Приватный</label>
+    </div>
     <input type="hidden" name="hash" value="{$csrfToken}" />
     <br><br>
     <input type="submit" value="{_create}" class="button" style="float: right;" />

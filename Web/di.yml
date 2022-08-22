@@ -33,6 +33,7 @@ services:
     - openvk\Web\Models\Repositories\Tickets
     - openvk\Web\Models\Repositories\BugtrackerReports
     - openvk\Web\Models\Repositories\BugtrackerProducts
+    - openvk\Web\Models\Repositories\BugtrackerPrivateProducts
     - openvk\Web\Models\Repositories\BugtrackerComments
     - openvk\Web\Models\Repositories\Messages
     - openvk\Web\Models\Repositories\Restores   
