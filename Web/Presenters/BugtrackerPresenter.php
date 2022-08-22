@@ -231,7 +231,7 @@ final class BugtrackerPresenter extends OpenVKPresenter
         if ($report->getReporter()->getId() === $this->user->identity->getId())
             $this->flashFail("err", tr("forbidden"));
 
-        DB::i()->getContext()->table("bugs")->where("id", $report_id)->update("reproduced", $report->getReproducedCount() + 1);
+        DB::i()->getContext()->table("bugs")->where("id", $report_id)->update(["reproduced" => $report->getReproducedCount() + 1]);
 
         $this->flashFail("succ", tr("bug_tracker_success"), tr("bug_tracker_reproduced_text"));
     }

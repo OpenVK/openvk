@@ -67,7 +67,7 @@
 <button n:if="$isModerator" class="button" onClick="showBtPriorityChangeDialog({$bug->getId()}, {$reporter->getCoins()}, {$csrfToken})">{_bug_tracker_change_priority}</button>
 <a n:if="$bug->getReporter()->getId() !== $user->identity->getId()" class="button" href="/bug{$bug->getId()}/reproduce">
     {_bug_tracker_reproduced}
-    <span n:if="$bug->getReproducedCount() > 0">({$bug->getReproducedCount()})</span>
+    <span n:if="$bug->getReproducedCount() > 0" class="nobold">({$bug->getReproducedCount()})</span>
 </a>
 {if sizeof($comments) > 0}
 <hr color="#DAE1E8" size="1">
