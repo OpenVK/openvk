@@ -78,7 +78,7 @@
                             </tr>
                             <tr>
                                 <td class="label"><span class="nobold">{_bug_tracker_priority}:</span></td>
-                                <td class="data"><a href="#">{$bug->getPriority()}</a></td>
+                                <td class="data"><a href="#" n:attr="style => $bug->getRawPriority() === 5 ? 'color: red; font-weight: 700;' : false">{$bug->getPriority()}</a></td>
                             </tr>
                             <tr>
                                 <td class="label"><span class="nobold">{_created}:</span></td>
