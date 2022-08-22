@@ -48,9 +48,9 @@ final class BugtrackerPresenter extends OpenVKPresenter
                 break;
 
             default:
-                $this->template->count    = $this->reports->getReportsCount((int) $this->queryParam("product"));
+                $this->template->count    = $this->reports->getReportsCount((int) $this->queryParam("product"), (int) $this->queryParam("priority"));
                 $this->template->iterator = $this->queryParam("product") 
-                    ? $this->reports->getReports((int) $this->queryParam("product"), $this->template->page) 
+                    ? $this->reports->getReports((int) $this->queryParam("product"), (int) $this->queryParam("priority"), $this->template->page) 
                     : $this->reports->getAllReports($this->template->page);
                 break;
         }

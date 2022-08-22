@@ -32,17 +32,23 @@ class BugtrackerReports
             yield new BugReport($report);
     }
 
-    function getReports(int $product_id = 0, int $page = 1): \Traversable
+    function getReports(int $product_id = 0, int $priority = 0, int $page = 1): \Traversable
     {
-        foreach($this->reports->where(["deleted" => NULL, "product_id" => $product_id])->order("created DESC")->page($page, 5) as $report)
+        $filter = ["deleted" => NULL];
+        $product_id && $filter["product_id"] = $product_id;
+        $priority && $filter["priority"] = $priority;
+
+        foreach($this->reports->where($filter)->order("created DESC")->page($page, 5) as $report)
             yield new BugReport($report);
     }
 
-    function getReportsCount(int $product_id): int
+    function getReportsCount(int $product_id = 0, int $priority = 0): int
     {
-        return $product_id
-            ? sizeof($this->reports->where(["deleted" => NULL, "product_id" => $product_id]))
-            : sizeof($this->reports->where(["deleted" => NULL]));
+        $filter = ["deleted" => NULL];
+        $product_id && $filter["product_id"] = $product_id;
+        $priority && $filter["priority"] = $priority;
+
+        return sizeof($this->reports->where($filter));
     }
 
     function getByReporter(int $reporter_id, int $page = 1): \Traversable
