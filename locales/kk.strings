@@ -174,8 +174,16 @@
 "wall_one" = "$1 жазба";
 "wall_other" = "$1 жазба";
 "feed" = "Жаңалықтар";
-"publish_post" = "жазба жариялау";
+"publish_post" = "Жазба жариялау";
 "view_other_comments" = "Басқа пікірлерді қарау";
+
+"wall_archive" = "Жазбалар мұрағаты";
+"wall_do_archive" = "Жазбаны мұрағаттау";
+"wall_do_unarchive" = "Жазбаны қалпына келтіру";
+"wall_archive_succ" = "Жазба мұрағатталды";
+"wall_archive_succ_descr" = "Енді ол мұрағатта.";
+"wall_unarchive_succ" = "Жазба қалпына келтірілді";
+"wall_unarchive_succ_descr" = "Енді ол басқаларға қайта көрінеді.";
 
 "no_comments" = "Пікірлер жоқ";
 

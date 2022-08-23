@@ -20,6 +20,7 @@ services:
     - openvk\Web\Presenters\GiftsPresenter
     - openvk\Web\Presenters\MessengerPresenter
     - openvk\Web\Presenters\TopicsPresenter
+    - openvk\Web\Presenters\AppsPresenter
     - openvk\Web\Presenters\ThemepacksPresenter
     - openvk\Web\Presenters\VKAPIPresenter
     - openvk\Web\Models\Repositories\Users
@@ -39,4 +40,5 @@ services:
     - openvk\Web\Models\Repositories\Vouchers
     - openvk\Web\Models\Repositories\Gifts
     - openvk\Web\Models\Repositories\Topics
+    - openvk\Web\Models\Repositories\Applications
     - openvk\Web\Models\Repositories\ContentSearchRepository

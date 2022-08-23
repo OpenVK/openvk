@@ -173,6 +173,7 @@
                                     (<b>{$thisUser->getNotificationsCount()}</b>)
                                 {/if}
                             </a>
+                            <a href="/apps?act=installed" class="link">{_my_apps}</a>
                             <a href="/settings" class="link">{_my_settings}</a>
                             
                             {var $canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}

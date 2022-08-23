@@ -460,7 +460,7 @@ final class UserPresenter extends OpenVKPresenter
 
         if($this->template->mode == "finance") {
             $address = OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["address"];
-            $text    = str_replace("$1", $this->user->identity->getId(), OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["hint"]);
+            $text    = str_replace("$1", (string) $this->user->identity->getId(), OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["hint"]);
             $qrCode  = explode("base64,", (new QRCode(new QROptions([
                 "imageTransparent" => false
             ])))->render("ton://transfer/$address?text=$text"));
