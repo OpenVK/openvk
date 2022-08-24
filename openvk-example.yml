@@ -19,6 +19,8 @@ openvk:
                 - "index.php"
         photos:
             upgradeStructure: true
+        apps:
+            withdrawTax: 8
         security:
             requireEmail: false
             requirePhone: false

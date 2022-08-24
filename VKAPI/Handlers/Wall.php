@@ -19,7 +19,7 @@ final class Wall extends VKAPIRequestHandler
         $items    = [];
         $profiles = [];
         $groups   = [];
-        $count    = $posts->getPostCountOnUserWall($owner_id);
+        $cnt      = $posts->getPostCountOnUserWall($owner_id);
 
         $wallOnwer = (new UsersRepo)->get($owner_id);
 
@@ -143,15 +143,15 @@ final class Wall extends VKAPIRequestHandler
             }
 
             return (object) [
-                "count"    => $count,
-                "items"    => (array)$items,
-                "profiles" => (array)$profilesFormatted,
-                "groups"   => (array)$groupsFormatted
+                "count"    => $cnt,
+                "items"    => $items,
+                "profiles" => $profilesFormatted,
+                "groups"   => $groupsFormatted
             ];
         } else
             return (object) [
-                "count" => $count,
-                "items" => (array)$items
+                "count" => $cnt,
+                "items" => $items
             ];
     }
 

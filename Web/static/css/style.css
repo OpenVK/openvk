@@ -2044,6 +2044,13 @@ table td[width="120"] {
 	height: 11px;
 }
 
+#app_news_container {
+    margin-bottom: 30px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 250px;
+}
+
 @keyframes appearing {
     from {
         opacity: 0;
