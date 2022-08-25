@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Repositories;
 use openvk\Web\Models\Entities\Club;
+use openvk\Web\Models\Repositories\Aliases;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 
@@ -22,7 +23,21 @@ class Clubs
     
     function getByShortURL(string $url): ?Club
     {
-        return $this->toClub($this->clubs->where("shortcode", $url)->fetch());
+        $shortcode = $this->toClub($this->clubs->where("shortcode", $url)->fetch());
+
+        if ($shortcode)
+            return $shortcode;
+        else {
+            $alias = (new Aliases)->getByShortcode($url);
+
+            if (!$alias)
+                return NULL;
+
+            if ($alias->getType() !== "club")
+                return NULL;
+
+            return $alias->getClub();
+        }
     }
     
     function get(int $id): ?Club
