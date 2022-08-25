@@ -85,6 +85,7 @@ final class BugtrackerPresenter extends OpenVKPresenter
     function renderChangeStatus(int $report_id): void
     {
         $this->assertUserLoggedIn();
+        $this->assertNoCSRF();
         $this->willExecuteWriteAction();
 
         if ($this->user->identity->isBannedInBt())
@@ -101,7 +102,8 @@ final class BugtrackerPresenter extends OpenVKPresenter
             tr("bug_tracker_status_closed"),
             tr("bug_tracker_status_requires_adjustment"),
             tr("bug_tracker_status_locked"),
-            tr("bug_tracker_status_rejected")
+            tr("bug_tracker_status_rejected"),
+            "Переоткрыт"
         ];
 
         $report = (new BugtrackerReports)->get($report_id);
@@ -119,6 +121,7 @@ final class BugtrackerPresenter extends OpenVKPresenter
     function renderChangePriority(int $report_id): void
     {
         $this->assertUserLoggedIn();
+        $this->assertNoCSRF();
         $this->willExecuteWriteAction();
 
         if ($this->user->identity->isBannedInBt())
@@ -204,7 +207,7 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $product = $this->postParam("product");
         $device = $this->postParam("device");
 
-        if (!$title || !$text || !$priority || !$product || !$device)
+        if (!$title || !$text || !$product || !$device || $priority === NULL)
             $this->flashFail("err", tr("error"), tr("bug_tracker_fields_error"));
         
         $id = DB::i()->getContext()->table("bugs")->insert([
@@ -223,6 +226,7 @@ final class BugtrackerPresenter extends OpenVKPresenter
     function renderCreateProduct(): void
     {
         $this->assertUserLoggedIn();
+        $this->assertNoCSRF();
         $this->willExecuteWriteAction();
 
         if ($this->user->identity->isBannedInBt())
@@ -269,6 +273,7 @@ final class BugtrackerPresenter extends OpenVKPresenter
     function renderManageAccess(int $product_id): void
     {
         $this->assertUserLoggedIn();
+        $this->assertNoCSRF();
         $this->willExecuteWriteAction();
 
         if ($this->user->identity->isBannedInBt())
@@ -312,6 +317,7 @@ final class BugtrackerPresenter extends OpenVKPresenter
     function renderManagePrivacy(int $product_id): void
     {
         $this->assertUserLoggedIn();
+        $this->assertNoCSRF();
         $this->willExecuteWriteAction();
 
         if ($this->user->identity->isBannedInBt())
@@ -344,6 +350,7 @@ final class BugtrackerPresenter extends OpenVKPresenter
     function renderManageStatus(int $product_id): void
     {
         $this->assertUserLoggedIn();
+        $this->assertNoCSRF();
         $this->willExecuteWriteAction();
 
         if ($this->user->identity->isBannedInBt())
@@ -376,6 +383,7 @@ final class BugtrackerPresenter extends OpenVKPresenter
     function renderKickTester(int $uid): void
     {
         $this->assertUserLoggedIn();
+        $this->assertNoCSRF();
         $this->willExecuteWriteAction();
 
         if ($this->user->identity->isBannedInBt())
@@ -391,12 +399,16 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $user->setBlock_in_bt_reason($comment);
         $user->save();
 
+        if ($this->postParam("ban_reports"))
+            DB::i()->getConnection()->query("UPDATE bugs SET status = 6 WHERE reporter = " . $uid);
+
         $this->flashFail("succ", "Успех", $user->getCanonicalName() . " был исключён из программы OVK Testers.");
     }
 
     function renderUnbanTester(int $uid): void
     {
         $this->assertUserLoggedIn();
+        $this->assertNoCSRF();
         $this->willExecuteWriteAction();
 
         if ($this->user->identity->isBannedInBt())
@@ -409,6 +421,9 @@ final class BugtrackerPresenter extends OpenVKPresenter
 
         $user->setBlock_in_bt_reason(NULL);
         $user->save();
+
+        if ($this->postParam("unban_reports"))
+            DB::i()->getConnection()->query("UPDATE bugs SET status = 8 WHERE reporter = " . $uid);
 
         $this->flashFail("succ", "Успех", $user->getCanonicalName() . " был разблокирован в баг-трекере.");
     }

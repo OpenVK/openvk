@@ -458,23 +458,27 @@ function showBtStatusChangeDialog(report, currentBalance, hash) {
                     </tr>
                     <tr>
                         <td><input type="radio" name="status" value="3"></td>
-                        <td><label for="status_3">Исправлен</label></td>
+                        <td><label for="status_4">Исправлен</label></td>
                     </tr>
                     <tr>
                         <td><input type="radio" name="status" value="4"></td>
-                        <td><label for="status_3">Закрыт</label></td>
+                        <td><label for="status_5">Закрыт</label></td>
                     </tr>
                     <tr>
                         <td><input type="radio" name="status" value="5"></td>
-                        <td><label for="status_3">Требует корректировки</label></td>
+                        <td><label for="status_6">Требует корректировки</label></td>
                     </tr>
                     <tr>
                         <td><input type="radio" name="status" value="6"></td>
-                        <td><label for="status_3">Заблокирован</label></td>
+                        <td><label for="status_7">Заблокирован</label></td>
                     </tr>
                     <tr>
                         <td><input type="radio" name="status" value="7"></td>
-                        <td><label for="status_3">Отклонён</label></td>
+                        <td><label for="status_8">Отклонён</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="status" value="8"></td>
+                        <td><label for="status_9">Переоткрыт</label></td>
                     </tr>
                 </tbody>
             </table>
@@ -664,6 +668,8 @@ function showBtKickUserDialog(user, hash) {
     <br>
     <h4>Комментарий модератора</h4>
     <textarea name="comment" style="width: 100%;resize: vertical;"></textarea>
+    <input type="checkbox" name="ban_reports" id="ban_reports">
+    <label for="ban_reports">Заблокировать все его отчёты</label>
     <input type="hidden" name="hash" value="${hash}" />
 `, ["Продолжить", tr("cancel")], [
         () => {
@@ -674,10 +680,12 @@ function showBtKickUserDialog(user, hash) {
 }
 
 function showBtUnbanUserDialog(user, hash) {
-    MessageBox("Исключить из программы", `<form action="/bt_reporter${user[0]}/unban" method="post" id="unban_ovk_testers_dialog">
+    MessageBox("Вернуть в программу", `<form action="/bt_reporter${user[0]}/unban" method="post" id="unban_ovk_testers_dialog">
     <div>Вы действительно хотите вернуть тестировщика <b>${user[1]}</b> в программу OVK Testers?</div>
     <br>
     <div>Он был исключён по причине: <b>${user[2]}</b></div>
+     <input type="checkbox" name="unban_reports" id="unban_reports">
+    <label for="ban_reports">Переоткрыть все его отчёты</label>
     <input type="hidden" name="hash" value="${hash}" />
 `, ["Вернуть", tr("cancel")], [
         () => {

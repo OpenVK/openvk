@@ -50,7 +50,8 @@ class BugReport extends RowModel
             tr("bug_tracker_status_closed"),
             tr("bug_tracker_status_requires_adjustment"),
             tr("bug_tracker_status_locked"),
-            tr("bug_tracker_status_rejected")
+            tr("bug_tracker_status_rejected"),
+            "Переоткрыт"
         ];
         $status_id = $this->getRecord()->status;
 
