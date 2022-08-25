@@ -79,3 +79,9 @@ ALTER TABLE `bt_products_access`
 ALTER TABLE `bt_products_access`
   MODIFY `id` bigint(20) NOT NULL AUTO_INCREMENT;
 COMMIT;
+
+ALTER TABLE `profiles` ADD `block_in_bt_reason` TEXT NOT NULL AFTER `block_in_support_reason`;
+
+INSERT INTO `chandlergroups` (`id`, `name`, `color`) VALUES ('599342ce-240a-11ed-92bc-5254002d4243', 'Bugtracker Moderators', NULL);
+INSERT INTO `chandleraclrelations` (`user`, `group`, `priority`) VALUES ('ffffffff-ffff-ffff-ffff-ffffffffffff', '599342ce-240a-11ed-92bc-5254002d4243', '64');
+INSERT INTO `chandleraclgroupspermissions` (`group`, `model`, `context`, `permission`, `status`) VALUES ('599342ce-240a-11ed-92bc-5254002d4243', 'openvk\\Web\\Models\\Repositories\\BugtrackerReports', NULL, 'admin', '1');

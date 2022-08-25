@@ -657,3 +657,32 @@ function showBtProductStatusDialog(product, hash) {
         Function.noop
     ]);
 }
+
+function showBtKickUserDialog(user, hash) {
+    MessageBox("Исключить из программы", `<form action="/bt_reporter${user[0]}/kick" method="post" id="kick_from_ovk_testers_dialog">
+    <div>Вы действительно хотите исключить тестировщика <b>${user[1]}</b> из программы OVK Testers?</div>
+    <br>
+    <h4>Комментарий модератора</h4>
+    <textarea name="comment" style="width: 100%;resize: vertical;"></textarea>
+    <input type="hidden" name="hash" value="${hash}" />
+`, ["Продолжить", tr("cancel")], [
+        () => {
+            $("#kick_from_ovk_testers_dialog").submit();
+        },
+        Function.noop
+    ]);
+}
+
+function showBtUnbanUserDialog(user, hash) {
+    MessageBox("Исключить из программы", `<form action="/bt_reporter${user[0]}/unban" method="post" id="unban_ovk_testers_dialog">
+    <div>Вы действительно хотите вернуть тестировщика <b>${user[1]}</b> в программу OVK Testers?</div>
+    <br>
+    <div>Он был исключён по причине: <b>${user[2]}</b></div>
+    <input type="hidden" name="hash" value="${hash}" />
+`, ["Вернуть", tr("cancel")], [
+        () => {
+            $("#unban_ovk_testers_dialog").submit();
+        },
+        Function.noop
+    ]);
+}

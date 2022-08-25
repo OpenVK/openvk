@@ -65,6 +65,9 @@ final class BugtrackerPresenter extends OpenVKPresenter
 
         $this->template->user = $this->user;
 
+        if ($this->template->user->identity->isBannedInBt())
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+
         if (!$this->reports->get($id)->getProduct()->hasAccess($this->template->user->identity))
             $this->flashFail("err", tr("forbidden"));
 
@@ -83,6 +86,9 @@ final class BugtrackerPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
+
+        if ($this->user->identity->isBannedInBt())
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
 
         $status = $this->postParam("status");
         $comment = $this->postParam("text");
@@ -115,6 +121,9 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
 
+        if ($this->user->identity->isBannedInBt())
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+
         $priority = $this->postParam("priority");
         $comment = $this->postParam("text");
         $points = $this->postParam("points-count");
@@ -141,6 +150,9 @@ final class BugtrackerPresenter extends OpenVKPresenter
 
     function createComment(?BugReport $report, string $text, string $label = "", bool $is_moder = FALSE, bool $is_hidden = FALSE, string $point_actions = NULL)
     {
+        if ($this->user->identity->isBannedInBt())
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+
         $moder = $this->user->identity->isBtModerator();
 
         if (!$text && !$label)
@@ -168,6 +180,9 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
 
+        if ($this->user->identity->isBannedInBt())
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+
         $text = $this->postParam("text");
         $is_moder = (bool) $this->postParam("is_moder");
         $is_hidden = (bool) $this->postParam("is_hidden");
@@ -179,6 +194,9 @@ final class BugtrackerPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
+
+        if ($this->user->identity->isBannedInBt())
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
 
         $title = $this->postParam("title");
         $text = $this->postParam("text");
@@ -207,6 +225,9 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
 
+        if ($this->user->identity->isBannedInBt())
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+
         if (!$this->user->identity->isBtModerator())
             $this->flashFail("err", tr("forbidden"));
 
@@ -232,6 +253,9 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
 
+        if ($this->user->identity->isBannedInBt())
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+
         $report = (new BugtrackerReports)->get($report_id);
         
         if ($report->getReporter()->getId() === $this->user->identity->getId())
@@ -246,6 +270,9 @@ final class BugtrackerPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
+
+        if ($this->user->identity->isBannedInBt())
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
 
         if (!$this->user->identity->isBtModerator())
             $this->flashFail("err", tr("forbidden"));
@@ -287,6 +314,9 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
 
+        if ($this->user->identity->isBannedInBt())
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+
         if (!$this->user->identity->isBtModerator())
             $this->flashFail("err", tr("forbidden"));
 
@@ -313,8 +343,11 @@ final class BugtrackerPresenter extends OpenVKPresenter
 
     function renderManageStatus(int $product_id): void
     {
-         $this->assertUserLoggedIn();
+        $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
+
+        if ($this->user->identity->isBannedInBt())
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
 
         if (!$this->user->identity->isBtModerator())
             $this->flashFail("err", tr("forbidden"));
@@ -338,5 +371,45 @@ final class BugtrackerPresenter extends OpenVKPresenter
 
             $this->flashFail("succ", "Успех", "Продукт " . $product->getCanonicalName() . " теперь закрытый.");
         }
+    }
+
+    function renderKickTester(int $uid): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        if ($this->user->identity->isBannedInBt())
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+
+        if (!$this->user->identity->isBtModerator())
+            $this->flashFail("err", tr("forbidden"));
+
+        $user = (new Users)->get($uid);
+
+        $comment = $this->postParam("comment") ?? "";
+
+        $user->setBlock_in_bt_reason($comment);
+        $user->save();
+
+        $this->flashFail("succ", "Успех", $user->getCanonicalName() . " был исключён из программы OVK Testers.");
+    }
+
+    function renderUnbanTester(int $uid): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        if ($this->user->identity->isBannedInBt())
+            $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+
+        if (!$this->user->identity->isBtModerator())
+            $this->flashFail("err", tr("forbidden"));
+
+        $user = (new Users)->get($uid);
+
+        $user->setBlock_in_bt_reason(NULL);
+        $user->save();
+
+        $this->flashFail("succ", "Успех", $user->getCanonicalName() . " был разблокирован в баг-трекере.");
     }
 }

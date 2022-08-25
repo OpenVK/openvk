@@ -1022,6 +1022,16 @@ class User extends RowModel
     {
         return $this->getChandlerUser()->can("admin")->model('openvk\Web\Models\Repositories\BugtrackerReports')->whichBelongsTo(NULL);
     }
+
+    function getBanInBtReason(): ?string
+    {
+        return $this->getRecord()->block_in_bt_reason;
+    }
+
+    function isBannedInBt(): bool
+    {
+        return !is_null($this->getBanInBtReason());
+    }
     
     use Traits\TSubscribable;
 }
