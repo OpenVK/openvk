@@ -2,6 +2,7 @@
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Voucher, Gift, GiftCategory, User};
 use openvk\Web\Models\Repositories\{Users, Clubs, Vouchers, Gifts};
+use Chandler\Database\DatabaseConnection;
 
 final class AdminPresenter extends OpenVKPresenter
 {
@@ -371,5 +372,56 @@ final class AdminPresenter extends OpenVKPresenter
         
         $user->adminNotify("⚠️ " . $this->queryParam("message"));
         exit(json_encode([ "message" => $this->queryParam("message") ]));
+    }
+
+    function renderBannedLinks(): void
+    {
+        $this->template->links = DatabaseConnection::i()->getContext()->table("links_banned");
+        $this->template->users = new Users;
+    }
+
+    function renderBannedLink(int $id): void
+    {
+        $link = NULL;
+        $this->template->form = (object) [];
+
+        if($id === 0) {
+            $this->template->form->id     = 0;
+            $this->template->form->link   = NULL;
+            $this->template->form->reason = NULL;
+        } else {
+            $link = DatabaseConnection::i()->getContext()->table("links_banned")->where("id", $id)->fetch();
+            if(!$link)
+                $this->notFound();
+
+            $this->template->form->id     = $link->id;
+            $this->template->form->link   = $link->link;
+            $this->template->form->reason = $link->reason;
+        }
+
+        if($_SERVER["REQUEST_METHOD"] !== "POST")
+            return;
+
+        $link = DatabaseConnection::i()->getContext()->table("links_banned")->where("id", $id)->fetch();
+
+        $new_link = $this->postParam("link");
+        $new_reason = $this->postParam("reason");
+
+        $lid = $id;
+
+        if ($link) {
+            DatabaseConnection::i()
+                ->getConnection()
+                ->query("UPDATE `links_banned` SET `link` = '$new_link', `reason` = '$new_reason' WHERE `links_banned`.`id` = $id");
+        } else {
+            DatabaseConnection::i()
+                ->getContext()
+                ->table("links_banned")
+                ->insert(["link" => $new_link, "reason" => $new_reason]);
+
+            $lid = DatabaseConnection::i()->getConnection()->query("SELECT MAX(id) AS id FROM `links_banned`")->fetch()->id;
+        }
+
+        $this->redirect("/admin/bannedLink/id" . $lid);
     }
 }

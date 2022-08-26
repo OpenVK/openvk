@@ -1062,6 +1062,12 @@
 "admin_commerce_disabled" = "Commerce has been disabled by the system administrator";
 "admin_commerce_disabled_desc" = "The voucher and gift settings will be saved, but will have no effect.";
 
+"admin_banned_links" = "Blocked links";
+"admin_banned_link" = "Link";
+"admin_banned_link_description" = "In the format example.com";
+"admin_banned_link_reason" = "Reason";
+"admin_banned_link_initiator" = "Initiator";
+
 /* Paginator (deprecated) */
 
 "paginator_back" = "Back";
@@ -1115,3 +1121,9 @@
 
 "cookies_popup_content" = "All kids love cookie, so this website uses Cookies to identify your session and nothing more. Check <a href='/privacy'>our privacy policy</a> for more information.";
 "cookies_popup_agree" = "Accept";
+
+/* Away */
+
+"url_is_banned" = "Link is not allowed";
+"url_is_banned_comment" = "The <b>$1</b> administration has forbidden this link.";
+"url_is_banned_default_reason" = "The link you are trying to open may lead you to a site that was created for the purpose of deceiving users with the intention of gaining profit.";

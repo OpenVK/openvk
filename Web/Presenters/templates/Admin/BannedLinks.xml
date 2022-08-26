@@ -1,0 +1,40 @@
+{extends "@layout.xml"}
+
+{block title}
+    {_admin_banned_links}
+{/block}
+
+{block heading}
+    <a style="float: right;" class="aui-button aui-button-primary" href="/admin/bannedLink/id0">
+        {_create}
+    </a>
+
+    {_admin_banned_links}
+{/block}
+
+{block content}
+    <table class="aui aui-table-list">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>{_admin_banned_link}</th>
+                <th>{_admin_banned_link_reason}</th>
+                <th>{_admin_banned_link_initiator}</th>
+                <th>{_admin_actions}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr n:foreach="$links as $link">
+                <td>{$link->id}</td>
+                <td>{$link->link}</td>
+                <td>{$link->reason ?? "-"}</td>
+                <td>{$users->get($link->initiator)->getCanonicalName()}</td>
+                <td>
+                    <a class="aui-button aui-button-primary" href="/admin/bannedLink/id{$link->id}">
+                        <span class="aui-icon aui-icon-small aui-iconfont-new-edit">{_edit}</span>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{/block}
