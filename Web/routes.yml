@@ -303,6 +303,8 @@ routes:
       handler: "Admin->bannedLinks"
     - url: "/admin/bannedLink/id{num}"
       handler: "Admin->bannedLink"
+    - url: "/admin/bannedLink/id{num}/unban"
+      handler: "Admin->unbanLink"
     - url: "/upload/photo/{text}"
       handler: "VKAPI->photoUpload"
     - url: "/method/{text}.{text}"

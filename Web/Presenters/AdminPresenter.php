@@ -405,7 +405,7 @@ final class AdminPresenter extends OpenVKPresenter
         $link = DatabaseConnection::i()->getContext()->table("links_banned")->where("id", $id)->fetch();
 
         $new_link = $this->postParam("link");
-        $new_reason = $this->postParam("reason");
+        $new_reason = $this->postParam("reason") ?? NULL;
 
         $lid = $id;
 
@@ -414,14 +414,29 @@ final class AdminPresenter extends OpenVKPresenter
                 ->getConnection()
                 ->query("UPDATE `links_banned` SET `link` = '$new_link', `reason` = '$new_reason' WHERE `links_banned`.`id` = $id");
         } else {
+            if (!$new_link)
+                $this->flashFail("err", "Ошибка", "Ссылка не указана");
+
             DatabaseConnection::i()
                 ->getContext()
                 ->table("links_banned")
-                ->insert(["link" => $new_link, "reason" => $new_reason]);
+                ->insert(["link" => $new_link, "reason" => $new_reason, "initiator" => $this->user->identity->getId()]);
 
             $lid = DatabaseConnection::i()->getConnection()->query("SELECT MAX(id) AS id FROM `links_banned`")->fetch()->id;
         }
 
         $this->redirect("/admin/bannedLink/id" . $lid);
+    }
+
+    function renderUnbanLink(int $id): void
+    {
+        $link = DatabaseConnection::i()->getContext()->table("links_banned")->where("id", $id)->fetch();
+
+        if (!$link)
+            $this->flashFail("err", "Ошибка", "Ссылка не найдена");
+
+        DatabaseConnection::i()->getContext()->table("links_banned")->where("id", $id)->delete(FALSE);
+
+        $this->redirect("/admin/bannedLinks");
     }
 }

@@ -34,6 +34,7 @@
                 <div class="buttons">
                     <input type="hidden" name="hash" value="{$csrfToken}" />
                     <input class="aui-button aui-button-primary submit" type="submit" value="{_save}">
+                    <a class="aui-button aui-button-secondary" href="/admin/bannedLink/id{$form->id}/unban">{_delete}</a>
                 </div>
             </div>
         </form>
