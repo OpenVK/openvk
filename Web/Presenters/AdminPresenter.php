@@ -410,7 +410,7 @@ final class AdminPresenter extends OpenVKPresenter
         $lid = $id;
 
         if ($link) {
-            $link->setDomain($new_domain);
+            $link->setDomain($new_domain ?? $this->postParam("link"));
             $link->setReason($new_reason);
             $link->setRegexp_rule($this->postParam("regexp"));
             $link->save();

@@ -37,8 +37,9 @@ class BannedLinks
 
     function check(string $url): ?array
     {
-        $uri = preg_replace("(^https?://)", "", $url );
-        $domain = parse_url($url)["host"];
+        $uri = preg_replace("(^https?://)", "", $url);
+        $domain = preg_replace('/^www\./', '', parse_url($url)["host"]);
+
         $rulesForDomain = $this->getByDomain($domain);
 
         if (is_null($rulesForDomain))
