@@ -152,6 +152,7 @@ final class Messages extends VKAPIRequestHandler
         $this->requireUser();
         
         $convos = (new MSGRepo)->getCorrespondencies($this->getUser(), -1, $count, $offset);
+        $convosCount = (new MSGRepo)->getCorrespondenciesCount($this->getUser());
         $list   = [];
 
         $users = [];
@@ -195,9 +196,8 @@ final class Messages extends VKAPIRequestHandler
                 $lastMessagePreview->body       = $lastMessage->getText(false);
                 $lastMessagePreview->text       = $lastMessage->getText(false);
                 $lastMessagePreview->emoji      = true;
-
+            
                 if($extended == 1) {
-                    $users[] = $lastMessage->getSender()->getId();
                     $users[] = $author;
                 }
             }
@@ -210,16 +210,17 @@ final class Messages extends VKAPIRequestHandler
         
         if($extended == 0){
             return (object) [
-                "count" => sizeof($list),
+                "count" => $convosCount,
                 "items" => $list,
             ];
         } else {
+            $users[] = $this->getUser()->getId();
             $users = array_unique($users);
 
             return (object) [
-                "count"    => sizeof($list),
+                "count"    => $convosCount,
                 "items"    => $list,
-                "profiles" => (!empty($users) ? (new APIUsers)->get(implode(',', $users), $fields, $offset, $count) : [])
+                "profiles" => (!empty($users) ? (new APIUsers)->get(implode(',', $users), $fields, 0, $count+1) : [])
             ];
         }
     }
