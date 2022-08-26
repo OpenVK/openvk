@@ -253,6 +253,8 @@ routes:
       handler: "About->invite"
     - url: "/away.php"
       handler: "Away->away"
+    - url: "/away.php&banned=1&lid={num}"
+      handler: "BannedLink->view"
     - url: "/gift{num}_{num}.png"
       handler: "Gifts->giftImage"
     - url: "/gifts{num}"

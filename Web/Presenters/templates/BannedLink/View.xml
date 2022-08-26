@@ -1,0 +1,20 @@
+{extends "../@layout.xml"}
+
+{block title}Переход по ссылке заблокирован{/block}
+
+{block header}
+Переход по ссылке заблокирован
+{/block}
+
+{block content}
+<div style="min-height: 120px;">
+    <img src="//vk.com/images/pics/spamfight.gif" style="max-height: 110px">
+
+    <div style="padding-left: 150px; margin-top: -100px;">
+        <h4 style="font-size: 14px; margin-bottom: 8px;">Ссылка на подозрительный сайт</h4>
+        <span>
+            {$link->getComment()|noescape}
+        </span>
+    </div>
+</div>
+{/block}

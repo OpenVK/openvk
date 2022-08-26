@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{Voucher, Gift, GiftCategory, User};
-use openvk\Web\Models\Repositories\{Users, Clubs, Vouchers, Gifts};
+use openvk\Web\Models\Entities\{Voucher, Gift, GiftCategory, User, BannedLink};
+use openvk\Web\Models\Repositories\{Users, Clubs, Vouchers, Gifts, BannedLinks};
 use Chandler\Database\DatabaseConnection;
 
 final class AdminPresenter extends OpenVKPresenter
@@ -382,7 +382,6 @@ final class AdminPresenter extends OpenVKPresenter
 
     function renderBannedLink(int $id): void
     {
-        $link = NULL;
         $this->template->form = (object) [];
 
         if($id === 0) {
@@ -390,39 +389,40 @@ final class AdminPresenter extends OpenVKPresenter
             $this->template->form->link   = NULL;
             $this->template->form->reason = NULL;
         } else {
-            $link = DatabaseConnection::i()->getContext()->table("links_banned")->where("id", $id)->fetch();
+            $link = (new BannedLinks)->get($id);
             if(!$link)
                 $this->notFound();
 
-            $this->template->form->id     = $link->id;
-            $this->template->form->link   = $link->link;
-            $this->template->form->reason = $link->reason;
+            $this->template->form->id     = $link->getId();
+            $this->template->form->link   = $link->getDomain();
+            $this->template->form->reason = $link->getReason();
         }
 
         if($_SERVER["REQUEST_METHOD"] !== "POST")
             return;
 
-        $link = DatabaseConnection::i()->getContext()->table("links_banned")->where("id", $id)->fetch();
+        $link = (new BannedLinks)->get($id);
 
         $new_link = $this->postParam("link");
-        $new_reason = $this->postParam("reason") ?? NULL;
+        $new_reason = $this->postParam("reason") ?: NULL;
 
         $lid = $id;
 
         if ($link) {
-            DatabaseConnection::i()
-                ->getConnection()
-                ->query("UPDATE `links_banned` SET `link` = '$new_link', `reason` = '$new_reason' WHERE `links_banned`.`id` = $id");
+            $link->setLink($new_link);
+            $link->setReason($new_reason);
+            $link->save();
         } else {
             if (!$new_link)
                 $this->flashFail("err", "Ошибка", "Ссылка не указана");
 
-            DatabaseConnection::i()
-                ->getContext()
-                ->table("links_banned")
-                ->insert(["link" => $new_link, "reason" => $new_reason, "initiator" => $this->user->identity->getId()]);
+            $link = new BannedLink;
+            $link->setLink($new_link);
+            $link->setReason($new_reason);
+            $link->setInitiator($this->user->identity->getId());
+            $link->save();
 
-            $lid = DatabaseConnection::i()->getConnection()->query("SELECT MAX(id) AS id FROM `links_banned`")->fetch()->id;
+            $lid = $link->getId();
         }
 
         $this->redirect("/admin/bannedLink/id" . $lid);
@@ -430,12 +430,12 @@ final class AdminPresenter extends OpenVKPresenter
 
     function renderUnbanLink(int $id): void
     {
-        $link = DatabaseConnection::i()->getContext()->table("links_banned")->where("id", $id)->fetch();
+        $link = (new BannedLinks)->get($id);
 
         if (!$link)
             $this->flashFail("err", "Ошибка", "Ссылка не найдена");
 
-        DatabaseConnection::i()->getContext()->table("links_banned")->where("id", $id)->delete(FALSE);
+        $link->delete(FALSE);
 
         $this->redirect("/admin/bannedLinks");
     }
