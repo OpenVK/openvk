@@ -8,7 +8,7 @@
 
 {block content}
 <div style="min-height: 120px;">
-    <img src="//vk.com/images/pics/spamfight.gif" style="max-height: 110px">
+    <img src="/assets/packages/static/openvk/img/oof.apng" width="110" height="110" style="margin-left: 20px;">
 
     <div style="padding-left: 150px; margin-top: -100px;">
         <h4 style="font-size: 14px; margin-bottom: 8px;">Ссылка на подозрительный сайт</h4>
