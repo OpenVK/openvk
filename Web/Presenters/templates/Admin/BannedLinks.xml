@@ -17,7 +17,8 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>{_admin_banned_link}</th>
+                <th>Домен</th>
+                <th>REGEXP</th>
                 <th>{_admin_banned_link_reason}</th>
                 <th>{_admin_banned_link_initiator}</th>
                 <th>{_admin_actions}</th>
@@ -26,7 +27,8 @@
         <tbody>
             <tr n:foreach="$links as $link">
                 <td>{$link->id}</td>
-                <td>{$link->link}</td>
+                <td>{$link->domain}</td>
+                <td>{$link->regexp_rule}</td>
                 <td>{$link->reason ?? "-"}</td>
                 <td>{$users->get($link->initiator)->getCanonicalName()}</td>
                 <td>

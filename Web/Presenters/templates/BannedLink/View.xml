@@ -3,7 +3,7 @@
 {block title}Переход по ссылке заблокирован{/block}
 
 {block header}
-Переход по ссылке заблокирован
+Предупреждение
 {/block}
 
 {block content}
@@ -15,6 +15,8 @@
         <span>
             {$link->getComment()|noescape}
         </span>
+        <br><br>
+        <a href="{$to}" class="button" target="_blank">Перейти по ссылке</a>
     </div>
 </div>
 {/block}

@@ -56,7 +56,7 @@ openvk:
                 emojiProcessingLimit: 1000
         commerce: false
         susLinks:
-            allowTransition: false
+            warnings: true
             showReason: true
         ton:
             enabled: false

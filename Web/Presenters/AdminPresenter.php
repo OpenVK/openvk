@@ -396,6 +396,7 @@ final class AdminPresenter extends OpenVKPresenter
             $this->template->form->id     = $link->getId();
             $this->template->form->link   = $link->getDomain();
             $this->template->form->reason = $link->getReason();
+            $this->template->form->regexp = $link->getRawRegexp();
         }
 
         if($_SERVER["REQUEST_METHOD"] !== "POST")
@@ -403,22 +404,24 @@ final class AdminPresenter extends OpenVKPresenter
 
         $link = (new BannedLinks)->get($id);
 
-        $new_link = $this->postParam("link");
+        $new_domain = parse_url($this->postParam("link"))["host"];
         $new_reason = $this->postParam("reason") ?: NULL;
 
         $lid = $id;
 
         if ($link) {
-            $link->setLink($new_link);
+            $link->setDomain($new_domain);
             $link->setReason($new_reason);
+            $link->setRegexp_rule($this->postParam("regexp"));
             $link->save();
         } else {
-            if (!$new_link)
+            if (!$new_domain)
                 $this->flashFail("err", "Ошибка", "Ссылка не указана");
 
             $link = new BannedLink;
-            $link->setLink($new_link);
+            $link->setDomain($new_domain);
             $link->setReason($new_reason);
+            $link->setRegexp_rule($this->postParam("regexp"));
             $link->setInitiator($this->user->identity->getId());
             $link->save();
 

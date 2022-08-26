@@ -1125,6 +1125,6 @@
 /* Away */
 
 "url_is_banned" = "Link is not allowed";
-"url_is_banned_comment" = "The <b>$1</b> administration has forbidden this link.";
-"url_is_banned_comment_r" = "The <b>$1</b> administration has forbidden this link.<br><br>The reason is: <b>$2</b>";
+"url_is_banned_comment" = "The <b>$1</b> administration recommends not to follow this link.";
+"url_is_banned_comment_r" = "The <b>$1</b> administration recommends not to follow this link.<br><br>The reason is: <b>$2</b>";
 "url_is_banned_default_reason" = "The link you are trying to open may lead you to a site that was created for the purpose of deceiving users with the intention of gaining profit.";

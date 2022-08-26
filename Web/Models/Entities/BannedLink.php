@@ -17,7 +17,7 @@ class BannedLink extends RowModel
 
     function getDomain(): string
     {
-        return $this->getRecord()->link;
+        return $this->getRecord()->domain;
     }
 
     function getReason(): string
@@ -35,5 +35,15 @@ class BannedLink extends RowModel
         return OPENVK_ROOT_CONF["openvk"]["preferences"]["susLinks"]["showReason"]
             ? tr("url_is_banned_comment_r", OPENVK_ROOT_CONF["openvk"]["appearance"]["name"], $this->getReason())
             : tr("url_is_banned_comment", OPENVK_ROOT_CONF["openvk"]["appearance"]["name"]);
+    }
+
+    function getRegexpRule(): string
+    {
+        return '/' . $this->getDomain() . $this->getRecord()->regexp_rule . '/';
+    }
+
+    function getRawRegexp(): string
+    {
+        return $this->getRecord()->regexp_rule;
     }
 }

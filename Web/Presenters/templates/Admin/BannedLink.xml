@@ -22,9 +22,14 @@
                 <input class="text long-field" type="number" id="id" name="id" disabled value="{$form->id}" />
             </div>
             <div class="field-group">
-                <label for="token">{_admin_banned_link}</label>
+                <label for="token">Домен</label>
                 <input class="text long-field" type="text" id="link" name="link" value="{$form->link}" />
-                <div class="description">{_admin_banned_link_description}</div>
+                <div class="description">С протоколом (https://example.com/)</div>
+            </div>
+            <div class="field-group">
+                <label for="token">Регулярное выражение</label>
+                <input class="text long-field" type="text" id="regexp" name="regexp" value="{$form->regexp}" />
+                <div class="description">Подставляется после домена, указанного выше. Не заполняйте, если хотите заблокировать весь домен</div>
             </div>
             <div class="field-group">
                 <label for="coins">{_admin_banned_link_reason}</label>

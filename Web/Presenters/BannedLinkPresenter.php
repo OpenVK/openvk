@@ -8,5 +8,6 @@ final class BannedLinkPresenter extends OpenVKPresenter
 {
     function renderView(int $lid) {
         $this->template->link = (new BannedLinks)->get($lid);
+        $this->template->to   = $this->queryParam("to");
     }
 }

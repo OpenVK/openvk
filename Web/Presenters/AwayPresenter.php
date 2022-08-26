@@ -6,11 +6,11 @@ final class AwayPresenter extends OpenVKPresenter
 {
     function renderAway(): void
     {
-        $link_rule = (new BannedLinks)->getByDomain(parse_url($this->queryParam("to", PHP_URL_HOST))["host"]);
+        $checkBanEntries = (new BannedLinks)->check($this->queryParam("to"));
 
-        if (!OPENVK_ROOT_CONF["openvk"]["preferences"]["susLinks"]["allowTransition"]) {
-            if (!is_null($link_rule))
-                $this->pass("openvk!BannedLink->view", $link_rule->getId());
+        if (OPENVK_ROOT_CONF["openvk"]["preferences"]["susLinks"]["warnings"]) {
+            if (sizeof($checkBanEntries) > 0)
+                $this->pass("openvk!BannedLink->view", $checkBanEntries[0]);
         }
 
         header("HTTP/1.0 302 Found");
