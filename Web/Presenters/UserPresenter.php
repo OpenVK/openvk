@@ -4,7 +4,7 @@ use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification};
 use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
-use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications};
+use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications, Blacklists};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
 use Chandler\Security\Authenticator;
@@ -15,12 +15,14 @@ use Nette\Database\UniqueConstraintViolationException;
 final class UserPresenter extends OpenVKPresenter
 {
     private $users;
+    private $blacklists;
 
     public $deactivationTolerant = false;
     
-    function __construct(Users $users)
+    function __construct(Users $users, Blacklists $blacklists)
     {
         $this->users = $users;
+        $this->blacklists = $blacklists;
         
         parent::__construct();
     }
@@ -28,6 +30,11 @@ final class UserPresenter extends OpenVKPresenter
     function renderView(int $id): void
     {
         $user = $this->users->get($id);
+
+        if ($this->user->identity)
+            if ($this->blacklists->isBanned($user, $this->user->identity) && !$this->user->identity->isAdmin())
+                $this->flashFail("err", tr("forbidden"), "Пользователь внёс Вас в чёрный список.");
+
         if(!$user || $user->isDeleted()) {
             if($user->isDeactivated()) {
                 $this->template->_template = "User/deactivated.xml";
@@ -43,8 +50,11 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->videosCount = (new Videos)->getUserVideosCount($user);
             $this->template->notes       = (new Notes)->getUserNotes($user, 1, 4);
             $this->template->notesCount  = (new Notes)->getUserNotesCount($user);
-            
+            $this->template->blacklists  = $this->blacklists;
+
             $this->template->user = $user;
+            $this->template->isBlacklistedThem = $this->blacklists->isBanned($this->user->identity, $user);
+            $this->template->isBlacklistedByThem = $this->blacklists->isBanned($user, $this->user->identity);
         }
     }
     
@@ -56,8 +66,12 @@ final class UserPresenter extends OpenVKPresenter
         $page = abs($this->queryParam("p") ?? 1);
         if(!$user)
             $this->notFound();
-        elseif (!$user->getPrivacyPermission('friends.read', $this->user->identity ?? NULL))
+        elseif (!$user->getPrivacyPermission('friends.read', $this->user->identity ?? NULL)) {
+            if ($this->blacklists->isBanned($user, $this->user->identity))
+                $this->flashFail("err", tr("forbidden"), "Пользователь внёс Вас в чёрный список.");
+
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        }
         else
             $this->template->user = $user;
         
@@ -84,8 +98,12 @@ final class UserPresenter extends OpenVKPresenter
         $user = $this->users->get($id);
         if(!$user)
             $this->notFound();
-        elseif (!$user->getPrivacyPermission('groups.read', $this->user->identity ?? NULL))
+        elseif (!$user->getPrivacyPermission('groups.read', $this->user->identity ?? NULL)) {
+            if ($this->blacklists->isBanned($user, $this->user->identity))
+                $this->flashFail("err", tr("forbidden"), "Пользователь внёс Вас в чёрный список.");
+
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        }
         else {
             if($this->queryParam("act") === "managed" && $this->user->id !== $user->getId())
                 $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
@@ -454,7 +472,7 @@ final class UserPresenter extends OpenVKPresenter
 			$this->flash("succ", tr("changes_saved"), tr("changes_saved_comment"));
         }
         $this->template->mode = in_array($this->queryParam("act"), [
-            "main", "privacy", "finance", "finance.top-up", "interface"
+            "main", "privacy", "finance", "finance.top-up", "interface", "blacklist"
         ]) ? $this->queryParam("act")
             : "main";
 
@@ -467,6 +485,11 @@ final class UserPresenter extends OpenVKPresenter
 
             $this->template->qrCodeType = substr($qrCode[0], 5);
             $this->template->qrCodeData = $qrCode[1];
+        }
+
+        if($this->template->mode == "blacklist") {
+            $this->template->items = $this->blacklists->getList($user);
+            $this->template->count = $this->blacklists->getCount($user);
         }
         
         $this->template->user   = $user;

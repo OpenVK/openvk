@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Repositories\{Users, Notes};
+use openvk\Web\Models\Repositories\{Users, Notes, Blacklists};
 use openvk\Web\Models\Entities\Note;
 
 final class NotesPresenter extends OpenVKPresenter
@@ -18,8 +18,12 @@ final class NotesPresenter extends OpenVKPresenter
     {
         $user = (new Users)->get($owner);
         if(!$user) $this->notFound();
-        if(!$user->getPrivacyPermission('notes.read', $this->user->identity ?? NULL))
+        if(!$user->getPrivacyPermission('notes.read', $this->user->identity ?? NULL)) {
+            if ((new Blacklists)->isBanned($user, $this->user->identity))
+                $this->flashFail("err", tr("forbidden"), "Пользователь внёс Вас в чёрный список.");
+
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        }
         
         $this->template->notes = $this->notes->getUserNotes($user, (int)($this->queryParam("p") ?? 1));
         $this->template->count = $this->notes->getUserNotesCount($user);
