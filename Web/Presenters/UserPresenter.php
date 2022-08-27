@@ -32,8 +32,14 @@ final class UserPresenter extends OpenVKPresenter
         $user = $this->users->get($id);
 
         if ($this->user->identity)
-            if ($this->blacklists->isBanned($user, $this->user->identity) && !$this->user->identity->isAdmin())
-                $this->flashFail("err", tr("forbidden"), "Пользователь внёс Вас в чёрный список.");
+            if ($this->blacklists->isBanned($user, $this->user->identity)) {
+                    if ($this->user->identity->isAdmin()) {
+                        if (OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["blacklists"]["applyToAdmins"])
+                            $this->flashFail("err", tr("forbidden"), "Пользователь внёс Вас в чёрный список.");
+                    } else {
+                        $this->flashFail("err", tr("forbidden"), "Пользователь внёс Вас в чёрный список.");
+                    }
+                }
 
         if(!$user || $user->isDeleted()) {
             if($user->isDeactivated()) {

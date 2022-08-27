@@ -139,6 +139,11 @@ final class PhotosPresenter extends OpenVKPresenter
         if(!$album) $this->notFound();
         if($album->getPrettyId() !== $owner . "_" . $id || $album->isDeleted())
             $this->notFound();
+
+        if ((new Blacklists)->isBanned($album->getOwner(), $this->user->identity)) {
+            if (!$this->user->identity->isAdmin() OR $this->user->identity->isAdmin() AND OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["blacklists"]["applyToAdmins"])
+                $this->flashFail("err", tr("forbidden"), "Пользователь внёс Вас в чёрный список.");
+        }
         
         if($owner > 0 /* bc we currently don't have perms for clubs */) {
             $ownerObject = (new Users)->get($owner);
@@ -166,8 +171,10 @@ final class PhotosPresenter extends OpenVKPresenter
         $photo = $this->photos->getByOwnerAndVID($ownerId, $photoId);
         if(!$photo || $photo->isDeleted()) $this->notFound();
 
-        if ((new Blacklists)->isBanned($photo->getOwner(), $this->user->identity))
-            $this->flashFail("err", tr("forbidden"), "Пользователь внёс Вас в чёрный список.");
+        if ((new Blacklists)->isBanned($photo->getOwner(), $this->user->identity)) {
+            if (!$this->user->identity->isAdmin() OR $this->user->identity->isAdmin() AND OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["blacklists"]["applyToAdmins"])
+                $this->flashFail("err", tr("forbidden"), "Пользователь внёс Вас в чёрный список.");
+        }
 
         if(!is_null($this->queryParam("from"))) {
             if(preg_match("%^album([0-9]++)$%", $this->queryParam("from"), $matches) === 1) {
