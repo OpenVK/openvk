@@ -359,6 +359,12 @@ class Club extends RowModel
     {
         return $this->getRecord()->alert;
     }
+
+    function isSubscribed(int $uid): bool
+    {
+        $query  = "SELECT * FROM `subscriptions` WHERE `follower` = ? AND `model` = ? AND `target` = ?";
+        return sizeof(DB::i()->getConnection()->query($query, $uid, 'openvk\Web\Models\Entities\Club', $this->getId())->fetch()) > 0;
+    }
     
     use Traits\TSubscribable;
 }
