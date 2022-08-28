@@ -65,6 +65,8 @@ routes:
       handler: "Auth->verifyEmail"
     - url: "/setSID/{slug}"
       handler: "Auth->su"
+    - url: "/unban.php"
+      handler: "Auth->unbanThemself"
     - url: "/settings"
       handler: "User->settings"
     - url: "/settings/2fa"

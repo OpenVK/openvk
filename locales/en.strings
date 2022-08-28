@@ -835,8 +835,13 @@
 "banned_header" = "You are banned";
 "banned_alt" = "The user is blocked.";
 "banned_1" = "Sorry <b>$1</b>, but you have been banned.";
-"banned_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to block you forever.";
+"banned_2" = "And the reason for this is simple: <b>$1</b>.";
+"banned_perm" = "Unfortunately, this time we had to block you forever.";
+"banned_until_time" = "This time we had to block you until <b>$1</b>";
 "banned_3" = "You can still <a href=\"/support?act=new\">write to the support</a> if you think there was an error or <a href=\"/logout?hash=$1\">logout</a>.";
+"banned_unban_myself" = "Unban myself";
+"banned_unban_title" = "Your account has been unbanned";
+"banned_unban_description" = "Try not to break the rules anymore.";
 
 /* Registration confirm */
 

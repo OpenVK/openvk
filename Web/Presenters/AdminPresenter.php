@@ -339,12 +339,14 @@ final class AdminPresenter extends OpenVKPresenter
     function renderQuickBan(int $id): void
     {
         $this->assertNoCSRF();
-        
+
+        $unban_time = strtotime($this->queryParam("date"));
+
         $user = $this->users->get($id);
         if(!$user)
             exit(json_encode([ "error" => "User does not exist" ]));
         
-        $user->ban($this->queryParam("reason"));
+        $user->ban($this->queryParam("reason"), true, $unban_time);
         exit(json_encode([ "success" => true, "reason" => $this->queryParam("reason") ]));
     }
 
@@ -356,7 +358,8 @@ final class AdminPresenter extends OpenVKPresenter
         if(!$user)
             exit(json_encode([ "error" => "User does not exist" ]));
         
-        $user->setBlock_Reason(null);
+        $user->setBlock_Reason(NULL);
+        $user->setUnblock_time(NULL);
         $user->save();
         exit(json_encode([ "success" => true ]));
     }
