@@ -129,6 +129,8 @@ routes:
       handler: "Wall->delete"
     - url: "/wall{num}_{num}/pin"
       handler: "Wall->pin"
+    - url: "/wall{num}_{num}/archive"
+      handler: "Wall->archive"
     - url: "/blob_{text}/{?path}.{text}"
       handler: "Blob->file"
       placeholders:

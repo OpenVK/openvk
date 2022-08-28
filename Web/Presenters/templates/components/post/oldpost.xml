@@ -5,6 +5,12 @@
     {var $deac = "post_deact_silent"}
 {/if}
 
+<script defer>
+    $(".post-content-text").collapser({
+        mode: "words",
+        truncate: 50
+    });
+</script>
 <table border="0" style="font-size: 11px;" n:class="post, $post->isExplicit() ? post-nsfw">
     <tbody>
         <tr>
@@ -42,8 +48,8 @@
                 </div>
                 <div class="post-content" id="{$post->getPrettyId()}">
                     <div class="text" id="text{$post->getPrettyId()}">
-                        {$post->getText()|noescape}
-                        
+                        <span class="post-content-text">{$post->getText()}</span>
+
                         <div n:ifcontent class="attachments_b">
                             <div class="attachment" n:foreach="$post->getChildren() as $attachment" data-localized-nsfw-text="{_nsfw_warning}">
                                 {include "../attachment.xml", attachment => $attachment}
@@ -73,48 +79,61 @@
                     {if !($forceNoDeleteLink ?? false) && $post->canBeDeletedBy($thisUser)}
                         <a href="/wall{$post->getPrettyId()}/delete">{_delete}</a> &nbsp;|&nbsp;
                     {/if}
-                    
-                    {if !($forceNoPinLink ?? false) && $post->canBePinnedBy($thisUser)}
-                        {if $post->isPinned()}
-                            <a href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}">{_unpin}</a>
-                        {else}
-                            <a href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}">{_pin}</a>
-                        {/if}
-                        &nbsp;|&nbsp;
+
+                    {if !$post->isArchived()}
+                        <a href="/wall{$post->getPrettyId()}/archive?act=archive&hash={rawurlencode($csrfToken)}">
+                            {_wall_do_archive}
+                        </a>
+                    {else}
+                        <a href="/wall{$post->getPrettyId()}/archive?act=unarchive&hash={rawurlencode($csrfToken)}">
+                            {_wall_do_unarchive}
+                        </a>
                     {/if}
                     
-                    <a n:if="!($forceNoCommentsLink ?? false)" href="/wall{$post->getPrettyId()}#comments">
-                        {_comments}
-                        {if $post->getCommentsCount() > 0}
-                            (<b>{$post->getCommentsCount()}</b>)
-                        {/if}
-                    </a>
-
-                    {if !($forceNoCommentsLink ?? false) && !($forceNoShareLink ?? false)}
+                    {if !$post->isArchived()}
                         &nbsp;|&nbsp;
-                    {/if}
-                    
-                    <a n:if="!($forceNoShareLink ?? false)" class="post-share-button" {ifset $thisUser} href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')"{/ifset}>
-                        {_share}
-                        {if $post->getRepostCount() > 0}
-                            (<b>{$post->getRepostCount()}</b>)
+                        {if !($forceNoPinLink ?? false) && $post->canBePinnedBy($thisUser)}
+                            {if $post->isPinned()}
+                                <a href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}">{_unpin}</a>
+                            {else}
+                                <a href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}">{_pin}</a>
+                            {/if}
+                            &nbsp;|&nbsp;
                         {/if}
-                    </a>
+                        
+                        <a n:if="!($forceNoCommentsLink ?? false)" href="/wall{$post->getPrettyId()}#comments">
+                            {_comments}
+                            {if $post->getCommentsCount() > 0}
+                                (<b>{$post->getCommentsCount()}</b>)
+                            {/if}
+                        </a>
 
-                    <div n:if="!($forceNoLike ?? false)" class="like_wrap">
-                        {ifset $thisUser}
-                            {var $liked = $post->hasLikeFrom($thisUser)}
-                            <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$post->getLikesCount()}">
-                                <div class="heart" id="{if $liked}liked{/if}"></div>
-                                <span class="likeCnt">{if $post->getLikesCount() > 0}{$post->getLikesCount()}{/if}</span>
-                            </a>
-                        {else}
-                            <a n:if="$post->getLikesCount() > 0" class="post-like-button">
-                                <div class="heart"></div>
-                                <span class="likeCnt">{$post->getLikesCount()}</span>
-                            </a>
-                        {/ifset}
-                    </div>
+                        {if !($forceNoCommentsLink ?? false) && !($forceNoShareLink ?? false)}
+                            &nbsp;|&nbsp;
+                        {/if}
+                        
+                        <a n:if="!($forceNoShareLink ?? false)" class="post-share-button" {ifset $thisUser} href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')"{/ifset}>
+                            {_share}
+                            {if $post->getRepostCount() > 0}
+                                (<b>{$post->getRepostCount()}</b>)
+                            {/if}
+                        </a>
+
+                        <div n:if="!($forceNoLike ?? false)" class="like_wrap">
+                            {ifset $thisUser}
+                                {var $liked = $post->hasLikeFrom($thisUser)}
+                                <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$post->getLikesCount()}">
+                                    <div class="heart" id="{if $liked}liked{/if}"></div>
+                                    <span class="likeCnt">{if $post->getLikesCount() > 0}{$post->getLikesCount()}{/if}</span>
+                                </a>
+                            {else}
+                                <a n:if="$post->getLikesCount() > 0" class="post-like-button">
+                                    <div class="heart"></div>
+                                    <span class="likeCnt">{$post->getLikesCount()}</span>
+                                </a>
+                            {/ifset}
+                        </div>
+                    {/if}
                 </div>
             </td>
         </tr>

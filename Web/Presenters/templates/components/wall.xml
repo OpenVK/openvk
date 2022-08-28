@@ -3,7 +3,11 @@
         {_wall} 
         <nobold>
             {tr("wall", $count)}
-            <a href="/wall{$owner}" class="float-right lowercase">{_all_title}</a>
+            <div class="float-right">
+                <a href="/wall{$owner}" class="lowercase">{_all_title}</a>
+                |
+                <a href="/wall{$owner}?archive=1" class="lowercase">{_wall_archive}</a>
+            </div>
         </nobold>
     </div>
     <div>

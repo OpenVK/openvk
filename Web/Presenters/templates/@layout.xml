@@ -325,6 +325,7 @@
         {script "js/scroll.js"}
         {script "js/al_wall.js"}
         {script "js/al_api.js"}
+        {script "js/jquery.collapser.js"}
 
         {ifset $thisUser}
             {script "js/al_notifs.js"}
