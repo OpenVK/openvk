@@ -316,10 +316,18 @@ final class Messages extends VKAPIRequestHandler
             $results[] = $rMsg;
         }
         
-        return (object) [
+        $output = [
             "count" => sizeof($results),
             "items" => $results,
         ];
+        
+        if ($extended == 1) {
+            $users[] = $this->getUser()->getId();
+            $users[] = $user_id;
+            $output["profiles"] = (!empty($users) ? (new APIUsers)->get(implode(',', $users), $fields) : []);
+        }
+        
+        return (object) $output;
     }
     
     function getLongPollHistory(int $ts = -1, int $preview_length = 0, int $events_limit = 1000, int $msgs_limit = 1000): object
