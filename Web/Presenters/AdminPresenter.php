@@ -416,7 +416,7 @@ final class AdminPresenter extends OpenVKPresenter
             $link->save();
         } else {
             if (!$new_domain)
-                $this->flashFail("err", "Ошибка", "Ссылка не указана");
+                $this->flashFail("err", tr("error"), tr("admin_banned_link_not_specified"));
 
             $link = new BannedLink;
             $link->setDomain($new_domain);
@@ -436,7 +436,7 @@ final class AdminPresenter extends OpenVKPresenter
         $link = (new BannedLinks)->get($id);
 
         if (!$link)
-            $this->flashFail("err", "Ошибка", "Ссылка не найдена");
+            $this->flashFail("err", tr("error"), tr("admin_banned_link_not_found"));
 
         $link->delete(FALSE);
 

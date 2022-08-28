@@ -8,7 +8,7 @@
     {_edit} #{$form->id ?? "undefined"}
 {/block}
 
-        {block content}
+{block content}
 <div style="margin: 8px -8px;" class="aui-tabs horizontal-tabs">
     <ul class="tabs-menu">
         <li class="menu-item active-tab">
@@ -22,14 +22,14 @@
                 <input class="text long-field" type="number" id="id" name="id" disabled value="{$form->id}" />
             </div>
             <div class="field-group">
-                <label for="token">Домен</label>
+                <label for="token">{_admin_banned_domain}</label>
                 <input class="text long-field" type="text" id="link" name="link" value="{$form->link}" />
-                <div class="description">С протоколом (https://example.com/)</div>
+                <div class="description">{_admin_banned_link_description}</div>
             </div>
             <div class="field-group">
-                <label for="token">Регулярное выражение</label>
+                <label for="token">{_admin_banned_link_regexp}</label>
                 <input class="text long-field" type="text" id="regexp" name="regexp" value="{$form->regexp}" />
-                <div class="description">Подставляется после домена, указанного выше. Не заполняйте, если хотите заблокировать весь домен</div>
+                <div class="description">{_admin_banned_link_regexp_description}</div>
             </div>
             <div class="field-group">
                 <label for="coins">{_admin_banned_link_reason}</label>

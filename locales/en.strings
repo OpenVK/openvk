@@ -1064,9 +1064,14 @@
 
 "admin_banned_links" = "Blocked links";
 "admin_banned_link" = "Link";
-"admin_banned_link_description" = "In the format example.com";
+"admin_banned_domain" = "Domain";
+"admin_banned_link_description" = "With the protocol (https://example.com/)";
+"admin_banned_link_regexp" = "Regular expression";
+"admin_banned_link_regexp_description" = "It is substituted after the domain specified above. Don't fill it out if you want to block the entire domain";
 "admin_banned_link_reason" = "Reason";
 "admin_banned_link_initiator" = "Initiator";
+"admin_banned_link_not_specified" = "The link is not specified";
+"admin_banned_link_not_found" = "Link not found";
 
 /* Paginator (deprecated) */
 
@@ -1128,3 +1133,5 @@
 "url_is_banned_comment" = "The <b>$1</b> administration recommends not to follow this link.";
 "url_is_banned_comment_r" = "The <b>$1</b> administration recommends not to follow this link.<br><br>The reason is: <b>$2</b>";
 "url_is_banned_default_reason" = "The link you are trying to open may lead you to a site that was created for the purpose of deceiving users with the intention of gaining profit.";
+"url_is_banned_title" = "Link to a suspicious site";
+"url_is_banned_proceed" = "Follow the link";

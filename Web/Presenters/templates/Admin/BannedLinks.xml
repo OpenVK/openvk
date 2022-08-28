@@ -17,7 +17,7 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Домен</th>
+                <th>{_admin_banned_domain}</th>
                 <th>REGEXP</th>
                 <th>{_admin_banned_link_reason}</th>
                 <th>{_admin_banned_link_initiator}</th>
