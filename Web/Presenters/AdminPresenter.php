@@ -10,13 +10,15 @@ final class AdminPresenter extends OpenVKPresenter
     private $clubs;
     private $vouchers;
     private $gifts;
+    private $bannedLinks;
     
-    function __construct(Users $users, Clubs $clubs, Vouchers $vouchers, Gifts $gifts)
+    function __construct(Users $users, Clubs $clubs, Vouchers $vouchers, Gifts $gifts, BannedLinks $bannedLinks)
     {
         $this->users    = $users;
         $this->clubs    = $clubs;
         $this->vouchers = $vouchers;
         $this->gifts    = $gifts;
+        $this->bannedLinks = $bannedLinks;
         
         parent::__construct();
     }
@@ -376,7 +378,7 @@ final class AdminPresenter extends OpenVKPresenter
 
     function renderBannedLinks(): void
     {
-        $this->template->links = DatabaseConnection::i()->getContext()->table("links_banned");
+        $this->template->links = $this->bannedLinks->getList((int) $this->queryParam("p") ?: 1);
         $this->template->users = new Users;
     }
 
@@ -438,7 +440,7 @@ final class AdminPresenter extends OpenVKPresenter
         if (!$link)
             $this->flashFail("err", tr("error"), tr("admin_banned_link_not_found"));
 
-        $link->delete(FALSE);
+        $link->delete(false);
 
         $this->redirect("/admin/bannedLinks");
     }

@@ -25,6 +25,17 @@ class BannedLinks
         return $this->toBannedLink($this->bannedLinks->get($id));
     }
 
+    function getList(?int $page = 1): \Traversable
+    {
+        foreach($this->bannedLinks->order("id DESC")->page($page, OPENVK_DEFAULT_PER_PAGE) as $link)
+            yield new BannedLink($link);
+    }
+
+    function getCount(int $page = 1): int
+    {
+        return sizeof($this->bannedLinks->fetch());
+    }
+
     function getByDomain(string $domain): ?Selection
     {
         return $this->bannedLinks->where("domain", $domain);
@@ -32,34 +43,31 @@ class BannedLinks
 
     function isDomainBanned(string $domain): bool
     {
-        return !is_null(DB::i()->getConnection()->query("SELECT * FROM `links_banned` WHERE `link` = '$domain' AND `regexp_rule` = ''")->fetch());
+        return sizeof($this->bannedLinks->where(["link" => $domain, "regexp_rule" => ""])) > 0;
+    }
+
+    function genLinks($rules): \Traversable
+    {
+        foreach ($rules as $rule)
+            yield $this->get($rule->id);
+    }
+
+    function genEntries($links, $uri): \Traversable
+    {
+        foreach($links as $link)
+            if (preg_match($link->getRegexpRule(), $uri))
+                yield $link->getId();
     }
 
     function check(string $url): ?array
     {
-        $uri = preg_replace("(^https?://)", "", $url);
-        $domain = preg_replace('/^www\./', '', parse_url($url)["host"]);
+        $uri = strstr(str_replace(["https://", "http://"], "", $url), "/", true);
+        $domain = str_replace("www.", "", $uri);
+        $rules = $this->getByDomain($domain);
 
-        $rulesForDomain = $this->getByDomain($domain);
-
-        if (is_null($rulesForDomain))
+        if (is_null($rules))
             return NULL;
 
-        $links = [];
-
-        foreach($rulesForDomain as $rule)
-        {
-            $links[] = $this->get($rule->id);
-        }
-
-        $entries = [];
-
-        foreach($links as $link)
-        {
-            if (preg_match($link->getRegexpRule(), $uri))
-                $entries[] = $link->getId();
-        }
-
-        return $entries;
+        return iterator_to_array($this->genEntries($this->genLinks($rules), $uri));
     }
 }
