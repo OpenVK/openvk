@@ -340,7 +340,7 @@ final class AdminPresenter extends OpenVKPresenter
     {
         $this->assertNoCSRF();
 
-        $unban_time = strtotime($this->queryParam("date"));
+        $unban_time = strtotime($this->queryParam("date")) ?: NULL;
 
         $user = $this->users->get($id);
         if(!$user)

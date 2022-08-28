@@ -768,7 +768,7 @@ class User extends RowModel
         ]);
     }
 
-    function ban(string $reason, bool $deleteSubscriptions = true, int $unban_time = 0): void
+    function ban(string $reason, bool $deleteSubscriptions = true, ?int $unban_time = NULL): void
     {
         if($deleteSubscriptions) {
             $subs = DatabaseConnection::i()->getContext()->table("subscriptions");
@@ -1021,7 +1021,7 @@ class User extends RowModel
 
     function getUnbanTime(): ?string
     {
-        return date('d.m.Y', $this->getRecord()->unblock_time);
+        return !is_null($this->getRecord()->unblock_time) ? date('d.m.Y', $this->getRecord()->unblock_time) : NULL;
     }
 
     function canUnbanThemself(): bool
