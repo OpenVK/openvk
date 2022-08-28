@@ -324,7 +324,7 @@ final class Messages extends VKAPIRequestHandler
         if ($extended == 1) {
             $users[] = $this->getUser()->getId();
             $users[] = $user_id;
-            $output["profiles"] = (!empty($users) ? (new APIUsers)->get(implode(',', $users), $fields) : []);
+           $output["profiles"] = (!empty($users) ? (new APIUsers($this->getUser()))->get(implode(',', $users), $fields) : []);
         }
         
         return (object) $output;
