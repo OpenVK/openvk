@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{Post, Photo, Video, Club, User};
+use openvk\Web\Models\Entities\{Post, Photo, Video, Club, User, PostChangeRecord};
 use openvk\Web\Models\Entities\Notifications\{RepostNotification, WallPostNotification};
-use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums};
+use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums, PostsChanges};
 use Chandler\Database\DatabaseConnection;
 use Nette\InvalidStateException as ISE;
 use Bhaktaraz\RSSGenerator\Item;
@@ -12,10 +12,12 @@ use Bhaktaraz\RSSGenerator\Channel;
 final class WallPresenter extends OpenVKPresenter
 {
     private $posts;
+    private $changes;
     
-    function __construct(Posts $posts)
+    function __construct(Posts $posts, PostsChanges $changes)
     {
         $this->posts = $posts;
+        $this->changes = $changes;
         
         parent::__construct();
     }
@@ -274,10 +276,24 @@ final class WallPresenter extends OpenVKPresenter
         try {
             if ($editTarget) {
                 $post = $this->posts->getPostById($this->user->id, $editTarget);
+
+                $changes_record = new PostChangeRecord;
+
+                if (OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["logChanges"]) {
+                    $changes_record->setWall_id($wall);
+                    $changes_record->setVirtual_id($editTarget);
+                    $changes_record->setOldContent($post->getText());
+                    $changes_record->setNewContent($this->postParam("text"));
+                    $changes_record->setCreated(time());
+                    $changes_record->save();
+                }
+
                 $post->setEdited(time());
                 $post->setContent($this->postParam("text"));
                 $post->setFlags($flags);
                 $post->setNsfw($this->postParam("nsfw") === "on");
+                $post->setChange_id($changes_record->getId());
+                $post->setChange_type(2);
                 $post->save();
             } else {
                 $post = new Post;
@@ -418,5 +434,57 @@ final class WallPresenter extends OpenVKPresenter
         
         # TODO localize message based on language and ?act=(un)pin
         $this->flashFail("succ", tr("information_-1"), tr("changes_saved_comment"));
+    }
+
+    function renderPostHistory(int $wall, int $post_id): void
+    {
+        $this->assertUserLoggedIn();
+
+        if(!$this->user->identity->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL))
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+
+        $post = $this->posts->getPostById($wall, $post_id);
+
+        if (!$post) $this->notFound();
+
+        $this->template->post = $post;
+
+        if ($post->getTargetWall() > 0) {
+            $this->template->wallOwner = (new Users)->get($post->getTargetWall());
+            $this->template->isWallOfGroup = false;
+            if($this->template->wallOwner->isBanned())
+                $this->flashFail("err", tr("error"), tr("forbidden"));
+        } else {
+            $this->template->wallOwner = (new Clubs)->get(abs($post->getTargetWall()));
+            $this->template->isWallOfGroup = true;
+        }
+
+        $this->template->cPage    = (int) ($_GET["p"] ?? 1);
+        $this->template->cCount   = sizeof(iterator_to_array($this->changes->getAllHistoryById($wall, $post_id)));
+        $this->template->changes  = iterator_to_array($this->changes->getHistoryById($wall, $post_id, $this->template->cPage));
+        $this->template->cAmount  = sizeof($this->template->changes);
+    }
+
+    function renderPostHistoryRestore(int $wall, int $post_id, int $change_id, string $type): void
+    {
+        $this->assertUserLoggedIn();
+
+        if(!$this->user->identity->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL))
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+
+        $post = $this->posts->getPostById($wall, $post_id);
+        $change = $this->changes->get($change_id);
+
+        if ($type == "old")
+            $post->setContent($change->getOldContent());
+        else
+            $post->setContent($change->getNewContent());
+
+        $post->setChange_Id($change->getId());
+        $post->setChange_Type($type == "new" ? 2 : 1);
+
+        $post->save();
+
+        $this->flashFail("succ", "Успех", "Версия #$change_id применена.");
     }
 }

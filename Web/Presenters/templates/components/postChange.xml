@@ -1,0 +1,41 @@
+{var $author = $change->getAuthor()}
+
+<table border="0" style="font-size: 11px;">
+    <tbody>
+        <tr>
+            <td width="54" valign="top">
+                <a href="{$author->getURL()}">
+                    <img src="{$author->getAvatarURL('miniscule')}" width="50" />
+                    <span n:if="!$post->isPostedOnBehalfOfGroup() && !($compact ?? false) && $author->isOnline()" class="post-online">{_online}</span>
+                </a>
+            </td>
+            <td width="100%" valign="top">
+                <div class="post-author">
+                    <a href="{$author->getURL()}"><b>
+                        {$author->getCanonicalName()}
+                    </b></a>
+                    <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png"><br/>
+                </div>
+                <div class="post-content" id="{$change->getId()}">
+                    <div class="text" id="text{$change->getId()}">
+                        {$change->getOldContent()|noescape}
+                        <a n:if="$change->canBeApplied('old')" href="/wall{$post->getPrettyId()}/history/restore{$change->getId()}/old">
+                            &nbsp;|&nbsp; Применить
+                        </a>
+                        <span class="nobold" n:if="$post->getChangeId() == $change->getId() AND $post->getChangeType() == 'old'">
+                            &nbsp;|&nbsp; Текущая версия
+                        </span>
+                        <hr size="1" color="#ddd">
+                        {$change->getNewContent()|noescape}
+                        <a n:if="$change->canBeApplied('new')" href="/wall{$post->getPrettyId()}/history/restore{$change->getId()}/new">
+                            &nbsp;|&nbsp; Применить
+                        </a>
+                        <span class="nobold" n:if="$post->getChangeId() == $change->getId() AND $post->getChangeType() == 'new'">
+                            &nbsp;|&nbsp; Текущая версия
+                        </span>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
