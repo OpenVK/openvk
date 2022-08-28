@@ -35,16 +35,13 @@ class Users
 
         if ($shortcode)
             return $shortcode;
-        else {
-            $alias = (new Aliases)->getByShortcode($url);
-            if (!$alias)
-                return NULL;
 
-            if ($alias->getType() !== "user")
-                return NULL;
+        $alias = (new Aliases)->getByShortcode($url);
 
-            return $alias->getUser();
-        }
+        if (!$alias) return NULL;
+        if ($alias->getType() !== "user") return NULL;
+
+        return $alias->getUser();
     }
     
     function getByChandlerUser(ChandlerUser $user): ?User

@@ -27,17 +27,13 @@ class Clubs
 
         if ($shortcode)
             return $shortcode;
-        else {
-            $alias = (new Aliases)->getByShortcode($url);
 
-            if (!$alias)
-                return NULL;
+        $alias = (new Aliases)->getByShortcode($url);
 
-            if ($alias->getType() !== "club")
-                return NULL;
+        if (!$alias) return NULL;
+        if ($alias->getType() !== "club") return NULL;
 
-            return $alias->getClub();
-        }
+        return $alias->getClub();
     }
     
     function get(int $id): ?Club
