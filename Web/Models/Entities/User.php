@@ -1017,6 +1017,12 @@ class User extends RowModel
     {
         return (bool) $this->getRecord()->activated;
     }
-    
+
+    function isSubscribed(int $gid): bool
+    {
+        $query  = "SELECT * FROM `subscriptions` WHERE `follower` = ? AND `model` = ? AND `target` = ?";
+        return sizeof(DatabaseConnection::i()->getConnection()->query($query, $this->getId(), 'openvk\Web\Models\Entities\Club', 2)->fetch()) > 0;
+    }
+
     use Traits\TSubscribable;
 }

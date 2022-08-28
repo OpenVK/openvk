@@ -89,7 +89,7 @@
                 {_add_to_left_menu}
             {/if}
         </a>
-        <form class="profile_link_form" action="/setSub/club" method="post">
+        <form n:if="$thisUser->isSubscribed($x->getId())" class="profile_link_form" action="/setSub/club" method="post">
             <input type="hidden" name="act" value="rem" />
             <input type="hidden" name="id" value="{$x->getId()}" />
             <input type="hidden" name="hash" value="{$csrfToken}" />
