@@ -22,6 +22,11 @@ class Blacklists
             yield new BlacklistItem($blacklistItem);
     }
 
+    function getByAuthorAndTarget(int $author, int $target): ?BlacklistItem
+    {
+        return new BlacklistItem($this->blacklists->where(["author" => $author, "target" => $target])->fetch());
+    }
+
     function getCount(User $user): int
     {
         return sizeof($this->blacklists->where("author", $user->getId())->fetch());
@@ -32,6 +37,6 @@ class Blacklists
         if (!$author || !$target)
             return FALSE;
 
-        return sizeof(DB::i()->getContext()->table("blacklists")->where(["author" => $author->getId(), "target" => $target->getId()])->fetch()) > 0;
+        return !is_null($this->getByAuthorAndTarget($author->getId(), $target->getId()));
     }
 }

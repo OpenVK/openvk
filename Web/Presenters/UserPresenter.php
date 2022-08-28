@@ -34,8 +34,9 @@ final class UserPresenter extends OpenVKPresenter
         if ($this->user->identity)
             if ($this->blacklists->isBanned($user, $this->user->identity)) {
                     if ($this->user->identity->isAdmin()) {
-                        if (OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["blacklists"]["applyToAdmins"])
+                        if (OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["blacklists"]["applyToAdmins"]) {
                             $this->flashFail("err", tr("forbidden"), "Пользователь внёс Вас в чёрный список.");
+                        }
                     } else {
                         $this->flashFail("err", tr("forbidden"), "Пользователь внёс Вас в чёрный список.");
                     }
@@ -56,11 +57,11 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->videosCount = (new Videos)->getUserVideosCount($user);
             $this->template->notes       = (new Notes)->getUserNotes($user, 1, 4);
             $this->template->notesCount  = (new Notes)->getUserNotesCount($user);
-            $this->template->blacklists  = $this->blacklists;
+            $this->template->blacklists  = (new Blacklists);
 
             $this->template->user = $user;
-            $this->template->isBlacklistedThem = $this->blacklists->isBanned($this->user->identity, $user);
-            $this->template->isBlacklistedByThem = $this->blacklists->isBanned($user, $this->user->identity);
+            $this->template->isBlacklistedThem = $this->template->blacklists->isBanned($this->user->identity, $user);
+            $this->template->isBlacklistedByThem = $this->template->blacklists->isBanned($user, $this->user->identity);
         }
     }
     
@@ -72,12 +73,8 @@ final class UserPresenter extends OpenVKPresenter
         $page = abs($this->queryParam("p") ?? 1);
         if(!$user)
             $this->notFound();
-        elseif (!$user->getPrivacyPermission('friends.read', $this->user->identity ?? NULL)) {
-            if ($this->blacklists->isBanned($user, $this->user->identity))
-                $this->flashFail("err", tr("forbidden"), "Пользователь внёс Вас в чёрный список.");
-
+        elseif (!$user->getPrivacyPermission('friends.read', $this->user->identity ?? NULL))
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
-        }
         else
             $this->template->user = $user;
         
@@ -104,12 +101,8 @@ final class UserPresenter extends OpenVKPresenter
         $user = $this->users->get($id);
         if(!$user)
             $this->notFound();
-        elseif (!$user->getPrivacyPermission('groups.read', $this->user->identity ?? NULL)) {
-            if ($this->blacklists->isBanned($user, $this->user->identity))
-                $this->flashFail("err", tr("forbidden"), "Пользователь внёс Вас в чёрный список.");
-
+        elseif (!$user->getPrivacyPermission('groups.read', $this->user->identity ?? NULL))
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
-        }
         else {
             if($this->queryParam("act") === "managed" && $this->user->id !== $user->getId())
                 $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));

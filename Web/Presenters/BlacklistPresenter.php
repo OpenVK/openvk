@@ -34,9 +34,10 @@ final class BlacklistPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
         $this->assertUserLoggedIn();
 
-        $record = new BlacklistItem(DB::i()->getContext()->table("blacklists")->where([ "author" => $this->user->identity->getId(), "target" => $this->postParam("id") ])->fetch());
+        $record = $this->blacklists->getByAuthorAndTarget($this->user->identity->getId(), $this->postParam("id"));
+        //$record = new BlacklistItem(DB::i()->getContext()->table("blacklists")->where([ "author" => $this->user->identity->getId(), "target" =>  ])->fetch());
         $name = $record->getTarget()->getCanonicalName();
-        $record->delete(FALSE);
+        $record->delete(false);
 
         $this->flashFail("succ", "Успех",  "$name удалён из чёрного списка.");
     }
