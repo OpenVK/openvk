@@ -13,8 +13,8 @@ function expand_comment_textarea(id) {
 }
 
 function edit_post(id, wid) {
-    var el = document.getElementById('text'+wid+'_'+id);
-    var ed = document.getElementById('text_edit'+wid+'_'+id);
+    var el = document.getElementById(`text${id}_${wid}`);
+    var ed = document.getElementById(`text_edit${id}_${wid}`);
     if (el.style.display == "none") {
         el.style.display = "block";
         ed.style.display = "none";
