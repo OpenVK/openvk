@@ -284,7 +284,7 @@ final class Messages extends VKAPIRequestHandler
         return (object) $output;
     }
     
-    function getHistory(int $offset = 0, int $count = 20, int $user_id = -1, int $peer_id = -1, int $start_message_id = 0, int $rev = 0, int $extended = 0): object
+    function getHistory(int $offset = 0, int $count = 20, int $user_id = -1, int $peer_id = -1, int $start_message_id = 0, int $rev = 0, int $extended = 0, string $fields = ""): object
     {
         $this->requireUser();
         
