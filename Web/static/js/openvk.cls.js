@@ -490,13 +490,12 @@ function showBtStatusChangeDialog(report, currentBalance, hash) {
             <br>
             <div style="display: inline;">
                 Вы можете начислить &nbsp;
-                <input style="width: 45px; height: 9px;" type="number" name="points-count" value="0">
+                <input style="width: 45px; height: 9px;" type="number" name="points-count" value="0" min="0">
                 &nbsp;голосов
-                <span class="nobold">(отрицательные значения поддерживаются)</span>
             </div>
             <input type="hidden" name="hash" value="${hash}" />
         </form>
-    `, ["Сохранить", tr("cancel")], [
+    `, ["Сохранить", "Отмена"], [
         () => {
             $("#status_change_dialog").submit();
         },
@@ -542,13 +541,12 @@ function showBtPriorityChangeDialog(report, currentBalance, hash) {
             <br>
             <div style="display: inline;">
                 Вы можете начислить &nbsp;
-                <input style="width: 45px; height: 9px;" type="number" name="points-count" value="0">
+                <input style="width: 45px; height: 9px;" type="number" name="points-count" value="0" min="0">
                 &nbsp;голосов
-                <span class="nobold">(отрицательные значения поддерживаются)</span>
             </div>
             <input type="hidden" name="hash" value="${hash}" />
         </form>
-    `, ["Сохранить", tr("cancel")], [
+    `, ["Сохранить", "Отмена"], [
         () => {
             $("#priority_change_dialog").submit();
         },

@@ -109,8 +109,10 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $report = (new BugtrackerReports)->get($report_id);
         $report->setStatus($status);
 
-        if ($points)
+        if ($points >= 0)
             DB::i()->getContext()->query("UPDATE `profiles` SET `coins` = `coins` + " . $points . " WHERE `id` = " . $report->getReporter()->getId());
+        else
+            $this->flashFail("err", tr("error"), "Число голосов должно быть больше или равно 0.");
 
         $report->save();
 
@@ -142,8 +144,10 @@ final class BugtrackerPresenter extends OpenVKPresenter
         $report = (new BugtrackerReports)->get($report_id);
         $report->setPriority($priority);
 
-        if ($points)
+        if ($points >= 0)
             DB::i()->getContext()->query("UPDATE `profiles` SET `coins` = `coins` + " . $points . " WHERE `id` = " . $report->getReporter()->getId());
+        else
+            $this->flashFail("err", tr("error"), "Число голосов должно быть больше или равно 0.");
 
         $report->save();
 
