@@ -89,12 +89,21 @@
                 {_add_to_left_menu}
             {/if}
         </a>
-        <form n:if="$x->isSubscribed($thisUser->getId())" class="profile_link_form" action="/setSub/club" method="post">
-            <input type="hidden" name="act" value="rem" />
-            <input type="hidden" name="id" value="{$x->getId()}" />
-            <input type="hidden" name="hash" value="{$csrfToken}" />
-            <input type="submit" class="profile_link" value="{_leave_community}" />
-        </form>
+        {if $x->getSubscriptionStatus($thisUser) == false}
+            <form action="/setSub/club" method="post">
+                <input type="hidden" name="act" value="add" />
+                <input type="hidden" name="id"  value="{$x->getId()}" />
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" id="profile_link" value="{_join_community}" style="width:150px;" />
+            </form>
+        {else}
+            <form action="/setSub/club" method="post">
+                <input type="hidden" name="act" value="rem" />
+                <input type="hidden" name="id"  value="{$x->getId()}" />
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" id="profile_link" value="{_leave_community}" style="width:150px;" />
+            </form>
+        {/if}
     {/if}
 {/block}
 
