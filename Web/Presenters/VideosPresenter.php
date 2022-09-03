@@ -41,7 +41,7 @@ final class VideosPresenter extends OpenVKPresenter
         if(!$user) $this->notFound();
         if(!$user->getPrivacyPermission('videos.read', $this->user->identity ?? NULL)) {
             if ((new Blacklists)->isBanned($user, $this->user->identity))
-                $this->flashFail("err", tr("forbidden"), "Пользователь внёс Вас в чёрный список.");
+                $this->flashFail("err", tr("forbidden"),  tr("user_blacklisted_you"));
 
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }

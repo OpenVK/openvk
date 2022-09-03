@@ -139,7 +139,7 @@ final class PhotosPresenter extends OpenVKPresenter
 
         if ((new Blacklists)->isBanned($album->getOwner(), $this->user->identity)) {
             if (!$this->user->identity->isAdmin() OR $this->user->identity->isAdmin() AND OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["blacklists"]["applyToAdmins"])
-                $this->flashFail("err", tr("forbidden"), "Пользователь внёс Вас в чёрный список.");
+                $this->flashFail("err", tr("forbidden"), tr("user_blacklisted_you"));
         }
         
         if($owner > 0 /* bc we currently don't have perms for clubs */) {
@@ -166,7 +166,7 @@ final class PhotosPresenter extends OpenVKPresenter
 
         if ((new Blacklists)->isBanned($photo->getOwner(), $this->user->identity)) {
             if (!$this->user->identity->isAdmin() OR $this->user->identity->isAdmin() AND OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["blacklists"]["applyToAdmins"])
-                $this->flashFail("err", tr("forbidden"), "Пользователь внёс Вас в чёрный список.");
+                $this->flashFail("err", tr("forbidden"),  tr("user_blacklisted_you"));
         }
 
         if(!is_null($this->queryParam("from"))) {

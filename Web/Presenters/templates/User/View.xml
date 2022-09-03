@@ -368,9 +368,9 @@
     <div class="right_big_block">
         <div class="page_info">
             <div n:if="$isBlacklistedByThem AND $thisUser->isAdmin() AND $thisUser->getId() !== $user->getId()" class="user-alert">
-                <b>Будьте осторожны с этой информацией:</b>
+                <b>{admin_privacy_warning}:</b>
                 <br/>
-                Пользователь внёс Вас в чёрный список
+                {_user_blacklisted_you}
             </div>
             <div n:if="!is_null($alert = $user->getAlert())" class="user-alert">{strpos($alert, "@") === 0 ? tr(substr($alert, 1)) : $alert}</div>
             {var $thatIsThisUser = isset($thisUser) && $user->getId() == $thisUser->getId()}

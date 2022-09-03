@@ -439,10 +439,7 @@ class User extends RowModel
         else if($user->getId() === $this->getId())
             return true;
         else if ((new Blacklists)->isBanned($this, $user)) {
-            if ($user->isAdmin() && !OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["blacklists"]["applyToAdmins"])
-                return true;
-
-            return false;
+            return $user->isAdmin() && !OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["blacklists"]["applyToAdmins"];
         }
 
         switch($permStatus) {

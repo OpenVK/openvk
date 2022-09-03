@@ -28,7 +28,7 @@
             <a n:attr="id => ($isInterface ? 'act_tab_a' : 'ki')" href="/settings?act=interface">{_interface}</a>
         </div>
         <div n:attr="id => ($isBlackList ? 'activetabs' : 'ki')" class="tab">
-            <a n:attr="id => ($isBlackList ? 'act_tab_a' : 'ki')" href="/settings?act=blacklist">Чёрный список</a>
+            <a n:attr="id => ($isBlackList ? 'act_tab_a' : 'ki')" href="/settings?act=blacklist">{_blacklist}</a>
         </div>
     </div>
     

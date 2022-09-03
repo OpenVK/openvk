@@ -13,7 +13,7 @@ final class BlacklistPresenter extends OpenVKPresenter
         $this->blacklists = $blacklists;
     }
 
-    function renderAddToBl(): void
+    function renderAddToBlacklist(): void
     {
         $this->willExecuteWriteAction();
         $this->assertUserLoggedIn();
@@ -29,7 +29,7 @@ final class BlacklistPresenter extends OpenVKPresenter
         $this->flashFail("succ", "Успех", $target->getCanonicalName() . " занесён в чёрный список.");
     }
 
-    function renderRemoveFromBl(): void
+    function renderRemoveFromBlacklist(): void
     {
         $this->willExecuteWriteAction();
         $this->assertUserLoggedIn();
