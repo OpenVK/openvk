@@ -8,6 +8,7 @@
 {block content}
 
 {var $isMain       = $mode === 'main'}
+{var $isSecurity   = $mode === 'security'}
 {var $isPrivacy    = $mode === 'privacy'}
 {var $isFinance    = $mode === 'finance'}
 {var $isFinanceTU  = $mode === 'finance.top-up'}
@@ -16,6 +17,9 @@
        <div class="tabs">
         <div n:attr="id => ($isMain ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isMain ? 'act_tab_a' : 'ki')" href="/settings">{_main}</a>
+        </div>
+        <div n:attr="id => ($isSecurity ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => ($isSecurity ? 'act_tab_a' : 'ki')" href="/settings?act=security">{_security}</a>
         </div>
         <div n:attr="id => ($isPrivacy ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isPrivacy ? 'act_tab_a' : 'ki')" href="/settings?act=privacy">{_privacy}</a>
@@ -226,6 +230,28 @@
             {_you_can_also} <a onClick="showProfileDeactivateDialog({$csrfToken})">{_delete_your_page}</a>.
         </div>
 
+        {elseif $isSecurity}
+        <h4>{_ui_settings_sessions}</h4>
+        <form action="/revokeAllTokens" method="POST">
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="accent-box">
+                                {tr("end_all_sessions_description", OPENVK_ROOT_CONF['openvk']['appearance']['name'])}
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top" style="text-align: center;">
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_end_all_sessions}" class="button" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+        
         {elseif $isPrivacy}
 
         <form action="/settings?act=privacy" method="POST" enctype="multipart/form-data">
