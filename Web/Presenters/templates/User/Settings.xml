@@ -34,7 +34,92 @@
     
     <div class="container_gray">
         {if $isMain}
-        
+
+        <form action="/settings?act=main" method="POST" enctype="multipart/form-data">
+            <h4>{_your_email_address}</h4>
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_current_email_address}</span>
+                        </td>
+                        <td>
+                            {$user->getEmail()}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_new_email_address}</span>
+                        </td>
+                        <td>
+                            <input type="email" name="new_email" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_password}</span>
+                        </td>
+                        <td>
+                            <input type="password" name="email_change_pass" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr n:if="$user->is2faEnabled()">
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"2fa_code"}</span>
+                        </td>
+                        <td>
+                            <input type="text" name="email_change_code" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+
+                        </td>
+                        <td>
+                            <input type="submit" value="{_save_email_address}" class="button" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/>
+            <h4>{_your_page_address}</h4>
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_page_id}</span>
+                        </td>
+                        <td>
+                            {$user->getId()}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_page_address}</span>
+                        </td>
+                        <td>
+                            <input type="text" name="sc" value="{$user->getShortCode()}" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+
+                        </td>
+                        <td>
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_save}" class="button" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+
+        <br/>
+        <div class="settings_delete">
+            {_you_can_also} <a onClick="showProfileDeactivateDialog({$csrfToken})">{_delete_your_page}</a>.
+        </div>
+
+        {elseif $isSecurity}
         <form action="/settings?act=main" method="POST" enctype="multipart/form-data">
             <h4>{_change_password}</h4>
             <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
@@ -73,7 +158,7 @@
                     </tr>
                     <tr>
                         <td>
-                            
+
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
@@ -83,154 +168,71 @@
                 </tbody>
             </table>
             <br/>
-            <h4>{_two_factor_authentication}</h4>
-            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
-                <tbody>
-                    {if $user->is2faEnabled()}
-                        <tr>
-                            <td>
-                                <div class="accent-box">
-                                    {_two_factor_authentication_enabled}
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: center;">
-                                <a class="button" href="javascript:viewBackupCodes()">{_view_backup_codes}</a>
-                                <a class="button" href="javascript:disableTwoFactorAuth()">{_disable}</a>
-                            </td>
-                        </tr>
-
-                        <script>
-                            function viewBackupCodes() {
-                                MessageBox("Просмотр резервных кодов", `
-                                    <form id="back-codes-view-form" method="post" action="/settings/2fa">
-                                        <label for="password">Пароль</label>
-                                        <input type="password" id="password" name="password" required />
-                                        <input type="hidden" name="hash" value={$csrfToken} />
-                                    </form>
-                                `, ["Просмотреть", "Отменить"], [
-                                    () => {
-                                        document.querySelector("#back-codes-view-form").submit();
-                                    }, Function.noop
-                                ]);
-                            }
-
-                            function disableTwoFactorAuth() {
-                                MessageBox("Отключить 2FA", `
-                                    <form id="two-factor-auth-disable-form" method="post" action="/settings/2fa/disable">
-                                        <label for="password">Пароль</label>
-                                        <input type="password" id="password" name="password" required />
-                                        <input type="hidden" name="hash" value={$csrfToken} />
-                                    </form>
-                                `, ["Отключить", "Отменить"], [
-                                    () => {
-                                        document.querySelector("#two-factor-auth-disable-form").submit();
-                                    }, Function.noop
-                                ]);
-                            }
-                        </script>
-                    {else}
-                        <tr>
-                            <td>
-                                <div class="accent-box">
-                                    {_two_factor_authentication_disabled}
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: center;">
-                                <a class="button" href="/settings/2fa">{_connect}</a>
-                            </td>
-                        </tr>
-                    {/if}
-                </tbody>
-            </table>
-            <br/>
-            <h4>{_your_email_address}</h4>
-            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
-                <tbody>
-                    <tr>
-                        <td width="120" valign="top">
-                            <span class="nobold">{_current_email_address}</span>
-                        </td>
-                        <td>
-                            {$user->getEmail()}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="120" valign="top">
-                            <span class="nobold">{_new_email_address}</span>
-                        </td>
-                        <td>
-                            <input type="email" name="new_email" style="width: 100%;" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="120" valign="top">
-                            <span class="nobold">{_password}</span>
-                        </td>
-                        <td>
-                            <input type="password" name="email_change_pass" style="width: 100%;" />
-                        </td>
-                    </tr>
-                    <tr n:if="$user->is2faEnabled()">
-                        <td width="120" valign="top">
-                            <span class="nobold">{_"2fa_code"}</span>
-                        </td>
-                        <td>
-                            <input type="text" name="email_change_code" style="width: 100%;" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            
-                        </td>
-                        <td>
-                            <input type="submit" value="{_save_email_address}" class="button" />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <br/>
-            <h4>{_your_page_address}</h4>
-            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
-                <tbody>
-                    <tr>
-                        <td width="120" valign="top">
-                            <span class="nobold">{_page_id}</span>
-                        </td>
-                        <td>
-                            {$user->getId()}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="120" valign="top">
-                            <span class="nobold">{_page_address}</span>
-                        </td>
-                        <td>
-                            <input type="text" name="sc" value="{$user->getShortCode()}" style="width: 100%;" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            
-                        </td>
-                        <td>
-                            <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_save}" class="button" />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
         </form>
-
         <br/>
-        <div class="settings_delete">
-            {_you_can_also} <a onClick="showProfileDeactivateDialog({$csrfToken})">{_delete_your_page}</a>.
-        </div>
+        <h4>{_two_factor_authentication}</h4>
+        <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+            <tbody>
+                {if $user->is2faEnabled()}
+                <tr>
+                    <td>
+                        <div class="accent-box">
+                            {_two_factor_authentication_enabled}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">
+                        <a class="button" href="javascript:viewBackupCodes()">{_view_backup_codes}</a>
+                        <a class="button" href="javascript:disableTwoFactorAuth()">{_disable}</a>
+                    </td>
+                </tr>
 
-        {elseif $isSecurity}
+                <script>
+                    function viewBackupCodes() {
+                        MessageBox("Просмотр резервных кодов", `
+                            <form id="back-codes-view-form" method="post" action="/settings/2fa">
+                                <label for="password">Пароль</label>
+                                <input type="password" id="password" name="password" required />
+                                <input type="hidden" name="hash" value={$csrfToken} />
+                            </form>
+                            `, ["Просмотреть", "Отменить"], [
+                            () => {
+                                document.querySelector("#back-codes-view-form").submit();
+                            }, Function.noop
+                        ]);
+                    }
+
+                    function disableTwoFactorAuth() {
+                        MessageBox("Отключить 2FA", `
+                            <form id="two-factor-auth-disable-form" method="post" action="/settings/2fa/disable">
+                                <label for="password">Пароль</label>
+                                <input type="password" id="password" name="password" required />
+                                <input type="hidden" name="hash" value={$csrfToken} />
+                            </form>
+                            `, ["Отключить", "Отменить"], [
+                            () => {
+                                document.querySelector("#two-factor-auth-disable-form").submit();
+                            }, Function.noop
+                        ]);
+                    }
+                </script>
+                {else}
+                <tr>
+                    <td>
+                        <div class="accent-box">
+                            {_two_factor_authentication_disabled}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;">
+                        <a class="button" href="/settings/2fa">{_connect}</a>
+                    </td>
+                </tr>
+                {/if}
+            </tbody>
+        </table>
         <h4>{_ui_settings_sessions}</h4>
         <form action="/revokeAllTokens" method="POST">
             <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
