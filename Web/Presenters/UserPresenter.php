@@ -28,30 +28,34 @@ final class UserPresenter extends OpenVKPresenter
     function renderView(int $id): void
     {
         $user = $this->users->get($id);
-        $canViewDeleted = $this->user->identity->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL) === OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["adminsCanViewDeletedUsers"];
+        $canViewDeleted = $this->user->identity->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL) && OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["adminsCanViewDeletedUsers"];
 
         if ($user === NULL) {
             $this->template->_template = "User/deleted.xml";
-        } else {
-            if ($user->isDeleted() AND !$canViewDeleted) {
-                if ($user->isDeactivated()) {
-                    $this->template->_template = "User/deactivated.xml";
 
-                    $this->template->user = $user;
-                } else {
-                    $this->template->_template = "User/deleted.xml";
-                }
-            } else {
-                $this->template->albums = (new Albums)->getUserAlbums($user);
-                $this->template->albumsCount = (new Albums)->getUserAlbumsCount($user);
-                $this->template->videos = (new Videos)->getByUser($user, 1, 2);
-                $this->template->videosCount = (new Videos)->getUserVideosCount($user);
-                $this->template->notes = (new Notes)->getUserNotes($user, 1, 4);
-                $this->template->notesCount = (new Notes)->getUserNotesCount($user);
-
-                $this->template->user = $user;
-            }
+            return;
         }
+
+        if ($user->isDeleted() AND !$canViewDeleted) {
+            if ($user->isDeactivated()) {
+                $this->template->_template = "User/deactivated.xml";
+                $this->template->user = $user;
+
+                return;
+            }
+
+            $this->template->_template = "User/deleted.xml";
+
+            return;
+        }
+
+        $this->template->albums = (new Albums)->getUserAlbums($user);
+        $this->template->albumsCount = (new Albums)->getUserAlbumsCount($user);
+        $this->template->videos = (new Videos)->getByUser($user, 1, 2);
+        $this->template->videosCount = (new Videos)->getUserVideosCount($user);
+        $this->template->notes = (new Notes)->getUserNotes($user, 1, 4);
+        $this->template->notesCount = (new Notes)->getUserNotesCount($user);
+        $this->template->user = $user;
     }
     
     function renderFriends(int $id): void
