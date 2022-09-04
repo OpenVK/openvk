@@ -34,7 +34,92 @@
     
     <div class="container_gray">
         {if $isMain}
-        
+
+        <form action="/settings?act=main" method="POST" enctype="multipart/form-data">
+            <h4>{_your_email_address}</h4>
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_current_email_address}</span>
+                        </td>
+                        <td>
+                            {$user->getEmail()}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_new_email_address}</span>
+                        </td>
+                        <td>
+                            <input type="email" name="new_email" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_password}</span>
+                        </td>
+                        <td>
+                            <input type="password" name="email_change_pass" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr n:if="$user->is2faEnabled()">
+                        <td width="120" valign="top">
+                            <span class="nobold">{_"2fa_code"}</span>
+                        </td>
+                        <td>
+                            <input type="text" name="email_change_code" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+
+                        </td>
+                        <td>
+                            <input type="submit" value="{_save_email_address}" class="button" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <br/>
+            <h4>{_your_page_address}</h4>
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_page_id}</span>
+                        </td>
+                        <td>
+                            {$user->getId()}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_page_address}</span>
+                        </td>
+                        <td>
+                            <input type="text" name="sc" value="{$user->getShortCode()}" style="width: 100%;" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+
+                        </td>
+                        <td>
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_save}" class="button" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+
+        <br/>
+        <div class="settings_delete">
+            {_you_can_also} <a onClick="showProfileDeactivateDialog({$csrfToken})">{_delete_your_page}</a>.
+        </div>
+
+        {elseif $isSecurity}
         <form action="/settings?act=main" method="POST" enctype="multipart/form-data">
             <h4>{_change_password}</h4>
             <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
@@ -73,7 +158,7 @@
                     </tr>
                     <tr>
                         <td>
-                            
+
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
@@ -83,90 +168,7 @@
                 </tbody>
             </table>
             <br/>
-            <h4>{_your_email_address}</h4>
-            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
-                <tbody>
-                    <tr>
-                        <td width="120" valign="top">
-                            <span class="nobold">{_current_email_address}</span>
-                        </td>
-                        <td>
-                            {$user->getEmail()}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="120" valign="top">
-                            <span class="nobold">{_new_email_address}</span>
-                        </td>
-                        <td>
-                            <input type="email" name="new_email" style="width: 100%;" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="120" valign="top">
-                            <span class="nobold">{_password}</span>
-                        </td>
-                        <td>
-                            <input type="password" name="email_change_pass" style="width: 100%;" />
-                        </td>
-                    </tr>
-                    <tr n:if="$user->is2faEnabled()">
-                        <td width="120" valign="top">
-                            <span class="nobold">{_"2fa_code"}</span>
-                        </td>
-                        <td>
-                            <input type="text" name="email_change_code" style="width: 100%;" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            
-                        </td>
-                        <td>
-                            <input type="submit" value="{_save_email_address}" class="button" />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <br/>
-            <h4>{_your_page_address}</h4>
-            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
-                <tbody>
-                    <tr>
-                        <td width="120" valign="top">
-                            <span class="nobold">{_page_id}</span>
-                        </td>
-                        <td>
-                            {$user->getId()}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td width="120" valign="top">
-                            <span class="nobold">{_page_address}</span>
-                        </td>
-                        <td>
-                            <input type="text" name="sc" value="{$user->getShortCode()}" style="width: 100%;" />
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            
-                        </td>
-                        <td>
-                            <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_save}" class="button" />
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
         </form>
-
-        <br/>
-        <div class="settings_delete">
-            {_you_can_also} <a onClick="showProfileDeactivateDialog({$csrfToken})">{_delete_your_page}</a>.
-        </div>
-
-        {elseif $isSecurity}
         <br/>
         <h4>{_two_factor_authentication}</h4>
         <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
