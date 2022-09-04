@@ -452,6 +452,7 @@
 "avatar" = "Аватар";
 "privacy" = "Приватность";
 "interface" = "Внешний вид";
+"security" = "Безопасность";
 
 "profile_picture" = "Изображение страницы";
 
@@ -526,6 +527,7 @@
 "ui_settings_view_of_posts_old" = "Старый";
 "ui_settings_view_of_posts_microblog" = "Микроблог";
 "ui_settings_main_page" = "Главная страница";
+"ui_settings_sessions" = "Сессии";
 
 "additional_links" = "Дополнительные ссылки";
 "ad_poster" = "Рекламный плакат";
@@ -553,6 +555,11 @@
 "profile_deactivated_info" = "Страница пользователя удалена.<br/>Информация недоступна.";
 
 "share_with_friends" = "Рассказать друзьям";
+
+"end_all_sessions" = "Сбросить все сессии";
+"end_all_sessions_description" = "Если вы хотите выйти из $1 со всех устройств, нажмите на кнопку ниже";
+
+"end_all_sessions_done" = "Все сессии сброшены, включая мобильные приложения";
 
 /* Two-factor authentication */
 

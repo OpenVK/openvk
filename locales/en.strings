@@ -418,6 +418,7 @@
 "avatar" = "Avatar";
 "privacy" = "Privacy";
 "interface" = "Interface";
+"security" = "Security";
 
 "profile_picture" = "Profile picture";
 
@@ -490,6 +491,7 @@
 "ui_settings_view_of_posts_old" = "Old";
 "ui_settings_view_of_posts_microblog" = "Microblog";
 "ui_settings_main_page" = "Main page";
+"ui_settings_sessions" = "Sessions";
 
 "additional_links" = "Additional links";
 "ad_poster" = "Ad poster";
@@ -517,6 +519,11 @@
 "profile_deactivated_info" = "The account has been deleted.<br/>The information is not available.";
 
 "share_with_friends" = "Share with friends";
+
+"end_all_sessions" = "End all sessions";
+"end_all_sessions_description" = "If you wanna logout from $1 on all devices, click on button below";
+
+"end_all_sessions_done" = "All sessions was ended, including mobile apps";
 
 /* Two-factor authentication */
 

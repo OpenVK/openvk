@@ -67,6 +67,8 @@ routes:
       handler: "Auth->su"
     - url: "/unban.php"
       handler: "Auth->unbanThemself"
+    - url: "/revokeAllTokens"
+      handler: "Auth->revokeAllTokens"
     - url: "/settings"
       handler: "User->settings"
     - url: "/settings/2fa"
