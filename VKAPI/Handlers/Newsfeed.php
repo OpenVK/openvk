@@ -34,7 +34,7 @@ final class Newsfeed extends VKAPIRequestHandler
             $rposts[] = (new PostsRepo)->get($post->id)->getPrettyId();
 
         $response = (new Wall)->getById(implode(',', $rposts), $extended, $fields, $this->getUser());
-        $response->next_from = end($response->items)->id;
+        $response->next_from = end(end($posts->page((int) ($offset + 1), $count))); // ну и костыли пиздец конечно)
         return $response;
     }
 }
