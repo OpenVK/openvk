@@ -12,6 +12,16 @@
     <p>
         {tr("banned_1", htmlentities($thisUser->getCanonicalName()))|noescape}<br/>
         {tr("banned_2", htmlentities($thisUser->getBanReason()))|noescape}
+
+        {if !$thisUser->getUnbanTime()}
+            {_banned_perm}
+        {else}
+            {tr("banned_until_time", $thisUser->getUnbanTime())|noescape}
+        {/if}
+    </p>
+    <p n:if="$thisUser->canUnbanThemself()">
+        <hr/>
+        <center><a class="button" href="/unban.php">{_banned_unban_myself}</a></center>
     </p>
     <hr/>
     <p>
