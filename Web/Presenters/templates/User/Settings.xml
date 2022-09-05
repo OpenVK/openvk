@@ -35,6 +35,7 @@
     <div class="container_gray">
         {if $isMain}
 
+
         <form action="/settings?act=main" method="POST" enctype="multipart/form-data">
             <h4>{_your_email_address}</h4>
             <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">

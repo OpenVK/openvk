@@ -42,3 +42,5 @@ services:
     - openvk\Web\Models\Repositories\Topics
     - openvk\Web\Models\Repositories\Applications
     - openvk\Web\Models\Repositories\ContentSearchRepository
+    - openvk\Web\Presenters\NamesPresenter
+    - openvk\Web\Models\Repositories\Names
