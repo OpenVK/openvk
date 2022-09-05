@@ -26,7 +26,7 @@ final class Newsfeed extends VKAPIRequestHandler
                     ->select("id")
                     ->where("wall IN (?)", $ids)
                     ->where("deleted", 0)
-                    ->where("created < (?)", empty($start_from) ? time()+1 : $start_from)
+                    ->where("id < (?)", empty($start_from) ? time()+1 : $start_from)
                     ->order("created DESC");
 
         $rposts = [];
@@ -34,7 +34,7 @@ final class Newsfeed extends VKAPIRequestHandler
             $rposts[] = (new PostsRepo)->get($post->id)->getPrettyId();
 
         $response = (new Wall)->getById(implode(',', $rposts), $extended, $fields, $this->getUser());
-        $response->next_from = end($response->items)->date;
+        $response->next_from = end(end($posts->page((int) ($offset + 1), $count))); // ну и костыли пиздец конечно)
         return $response;
     }
 }

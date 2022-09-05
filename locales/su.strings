@@ -11,17 +11,17 @@
 /* Login */
 
 "log_in" = "Вход";
-"password" = "Пароль";
+"password" = "Проходное слово";
 "registration" = "Регистрация";
-"forgot_password" = "Забыли пароль?";
+"forgot_password" = "Забыли проходное слово?";
 
 "login_failed" = "Не удалось войти";
 "invalid_username_or_password" = "Неверное имя пользователя или пароль. <a href='/restore.pl'>Забыли пароль?</a>";
 
 "failed_to_register" = "Не удалось зарегистрироваться";
 "referral_link_invalid" = "Пригласительная ссылка недействительна.";
-"registration_disabled" = "Регистрация отключена системным администратором.";
-"user_already_exists" = "Пользователь с таким email уже существует.";
+"registration_disabled" = "Товарищ, регистрация отключена Имперской Канцелярией.";
+"user_already_exists" = "Гражданин с таким почтовым ящиком уже существует.";
 
 "access_recovery" = "Восстановление доступа";
 "page_access_recovery" = "Восстановить доступ к странице";
@@ -30,25 +30,25 @@
 "reset_password" = "Сбросить пароль";
 "2fa_code_2" = "Код двухфакторной аутентификации";
 
-"password_successfully_reset" = "Ваш пароль был успешно сброшен.";
-"password_reset_email_sent" = "Если вы зарегистрированы, вы получите инструкции на email.";
-"password_reset_error" = "Непредвиденная ошибка при сбросе пароля.";
+"password_successfully_reset" = "Ваше проходное слово было успешно сброшено.";
+"password_reset_email_sent" = "Если вы зарегистрированы, вы получите инструкции на почтовый ящик.";
+"password_reset_error" = "Непредвиденная ошибка при сбросе проходного слова.";
 "password_reset_rate_limit_error" = "Нельзя делать это так часто, извините.";
 
-"registration_disabled_info" = "Регистрация отключена системным администратором. При возможности попросите приглашение у вашего знакомого, если он зарегистрирован на этом сайте.";
+"registration_disabled_info" = "Товарищ, регистрация отключена Имперской Канцелярией. При возможности попросите приглашение у вашего знакомого, если он зарегистрирован на этом сайте.";
 "registration_closed" = "Регистрация закрыта.";
 "invites_you_to" = "<strong>$1</strong> приглашает вас в $2";
 
 "register_meta_desc" = "Зарегистрируйтесь в $1 прямо сейчас!";
 "register_referer_meta_title" = "$1 приглашает вас в $2!";
-"register_referer_meta_desc" = "Присоединяйтесь к $1 и множеству других пользователей в $2!";
+"register_referer_meta_desc" = "Присоединяйтесь к $1 и множеству других граждан в $2!";
 
-"users" = "Пользователи";
+"users" = "Граждане";
 
 /* Profile information */
 
-"select_language" = "Выбрать язык";
-"edit" = "Изменить";
+"select_language" = "Выбрать менталитет";
+"edit" = "Корректировать";
 "birth_date" = "День рождения";
 "registration_date" = "Дата регистрации";
 "hometown" = "Родной город";
@@ -90,7 +90,7 @@
 "relationship_2" = "Встречаюсь";
 "relationship_3" = "Помолвлен";
 "relationship_4" = "Женат";
-"relationship_5" = "В гражданском браке";
+"relationship_5" = "Сожительствую";
 "relationship_6" = "Влюблен";
 "relationship_7" = "Всё сложно";
 "relationship_8" = "В активном поиске";
@@ -98,29 +98,29 @@
 "politViews" = "Полит. взгляды";
 
 "politViews_0" = "Не выбраны";
-"politViews_1" = "Индифферентные";
+"politViews_1" = "Не в партии";
 "politViews_2" = "Коммунистические";
 "politViews_3" = "Социалистические";
-"politViews_4" = "Умеренные";
-"politViews_5" = "Либеральные";
+"politViews_4" = "Центристские";
+"politViews_5" = "Антисоветские";
 "politViews_6" = "Консервативные";
-"politViews_7" = "Монархические";
+"politViews_7" = "Контрреволюционные";
 "politViews_8" = "Ультраконсервативные";
 "politViews_9" = "Либертарианские";
 
 "contact_information" = "Контактная информация";
 
 "email" = "Почтовый ящик";
-"phone" = "Телефон";
+"phone" = "Стационарный телефон";
 "telegram" = "Telegram";
 "personal_website" = "Личная визитка";
 "city" = "Город";
 "address" = "Адрес";
 
-"personal_information" = "Личная информация";
+"personal_information" = "Личность";
 
 "interests" = "Интересы";
-"favorite_music" = "Любимые аудиозаписи";
+"favorite_music" = "Любимые звукозаписи";
 "favorite_films" = "Любимые киноленты";
 "favorite_shows" = "Любимые программы";
 "favorite_books" = "Любимые книги";
@@ -189,8 +189,8 @@
 "friends" = "Товарищи";
 "followers" = "Подписчики";
 "follower" = "Подписчик";
-"friends_add" = "Добавить в товарищи";
-"friends_delete" = "Удалить из товарищей";
+"friends_add" = "Взять в товарищи";
+"friends_delete" = "Отвергнуть товарища";
 "friends_reject" = "Порвать приглашение в товарищи";
 "friends_accept" = "Прочитать приглашение в товарищи";
 "send_message" = "Отправить телеграмму";
@@ -222,13 +222,13 @@
 "subscribe" = "Подписаться";
 "unsubscribe" = "Отписаться";
 "subscriptions" = "Подписки";
-"join_community" = "Вступить в группу";
-"leave_community" = "Выйти из группы";
+"join_community" = "Вступить в клуб";
+"leave_community" = "Выйти из клуба";
 "min_6_community" = "Название должно быть не менее 6 символов";
 "participants" = "Участники";
-"groups" = "Группы";
+"groups" = "Клубы";
 "meetings" = "Встречи";
-"create_group" = "Создать группу";
+"create_group" = "Создать клуб";
 "group_managers" = "Руководство";
 "group_type" = "Тип группы";
 "group_type_open" = "Это открытая группа. В неё может вступить любой желающий.";
@@ -263,7 +263,7 @@
 "group_dont_display_administrators_list" = "Ничего не отображать";
 
 "group_changeowner_modal_title" = "Передача прав владельца";
-"group_changeowner_modal_text" = "Внимание! Вы передаёте права владельца пользователю $1. Это действие необратимо. После передави вы останетесь адмиинстратором, но сможете легко перестать им быть.";
+"group_changeowner_modal_text" = "Внимание! Вы передаёте права владельца пользователю $1. Это действие необратимо. После передачи вы останетесь адмиинстратором, но сможете легко перестать им быть.";
 "group_owner_setted" = "Новый владелец ($1) успешно назначен в сообщество $2. Вам выданы права администратора в сообществе. Если Вы хотите вернуть роль владельца, обратитесь в <a href='/support?act=new'>техническую поддержку сайта</a>.";
 
 "participants_zero" = "Ни одного участника";
@@ -340,8 +340,8 @@
 "menu_registration" = "Регистрация";
 "menu_help" = "Справка";
 
-"menu_logout" = "Выйти";
-"menu_support" = "Поддержка";
+"menu_logout" = "Эмигрировать";
+"menu_support" = "Справочная";
 
 "header_home" = "главная";
 "header_groups" = "клубы";
@@ -646,12 +646,12 @@
 "support_new_title" = "Введите тему вашего обращения";
 "support_new_content" = "Опишите проблему или предложение";
 
-"support_rate_good_answer" = "Это хороший ответ";
-"support_rate_bad_answer" = "Это плохой ответ";
-"support_good_answer_user" = "Вы оставили положительный отзыв.";
-"support_bad_answer_user" = "Вы оставили негативный отзыв.";
-"support_good_answer_agent" = "Гражданин оставил положительный отзыв";
-"support_bad_answer_agent" = "Гражданин оставил негативный отзыв";
+"support_rate_good_answer" = "Подарить конфеты";
+"support_rate_bad_answer" = "Закатить скандал";
+"support_good_answer_user" = "Вы подарили конфеты сотруднику справочной.";
+"support_bad_answer_user" = "Вы закатили скандал сотруднику справочной.";
+"support_good_answer_agent" = "Гражданин подарил конфеты сотруднику справочной";
+"support_bad_answer_agent" = "Гражданин закатил скандал сотруднику справочной";
 "support_rated_good" = "Вы оставили положительный отзыв об ответе.";
 "support_rated_bad" = "Вы оставили негативный отзыв об ответе.";
 "wrong_parameters" = "Неверные параметры запроса.";
@@ -683,7 +683,7 @@
 "banned_alt" = "Гражданин был отправлен в тюрьму.";
 "banned_1" = "Извините, <b>$1</b>, но вы были отправлены в тюрьму.";
 "banned_2" = "А причина этому проста: <b>$1</b>. Органу в этот раз пришлось отправить вас под стражу навсегда.";
-"banned_3" = "Вы всё ещё можете <a href=\"/support?act=new\">написать в службу поддержки</a>, если считаете что произошла ошибка или <a href=\"/logout?hash=$1\">выйти</a>.";
+"banned_3" = "Вы всё ещё можете <a href=\"/support?act=new\">написать в Справочную</a>, если считаете что произошла ошибка или <a href=\"/logout?hash=$1\">эмигрировать</a>.";
 
 /* Discussions */
 
@@ -822,15 +822,15 @@
 "about_users_many" = "<b>$1</b> гражданинов";
 "about_users_other" = "<b>$1</b> гражданинов";
 
-"about_online_users_one" = "<b>1</b> пользователь в сети";
-"about_online_users_few" = "<b>$1</b> пользователя в сети";
-"about_online_users_many" = "<b>$1</b> гражданинов в сети";
-"about_online_users_other" = "<b>$1</b> гражданинов в сети";
+"about_online_users_one" = "<b>1</b> гражданин в сети";
+"about_online_users_few" = "<b>$1</b> гражданина в сети";
+"about_online_users_many" = "<b>$1</b> граждан в сети";
+"about_online_users_other" = "<b>$1</b> граждан в сети";
 
-"about_active_users_one" = "<b>1</b> активный пользователь";
-"about_active_users_few" = "<b>$1</b> активных пользователя";
-"about_active_users_many" = "<b>$1</b> активных гражданинов";
-"about_active_users_other" = "<b>$1</b> активных гражданинов";
+"about_active_users_one" = "<b>1</b> активный гражданин";
+"about_active_users_few" = "<b>$1</b> активных граждан";
+"about_active_users_many" = "<b>$1</b> активных граждан";
+"about_active_users_other" = "<b>$1</b> активных граждан";
 
 "about_groups_one" = "<b>1</b> клуб";
 "about_groups_few" = "<b>$1</b> клубы";
@@ -860,7 +860,6 @@
 
 "user_alert_scam" = "Органу управления было дозволено, что данный гражданин обманывает товарищей на денежные средства. Будьте осторожны при разговоре с ним.";
 
-
 "ec_header" = "Подтверждение регистрации прописки";
 "ec_title" = "Спасибо!";
 "ec_1" = "<b>$1</b>, на ваш почтовый ящик должно придти письмо с подтверждением регистрации.";
@@ -873,3 +872,16 @@
 "email_rate_limit_error" = "Нельзя делать это так часто, извините.";
 
 "email_verify_success" = "Ваша регистрация была подтверждена. Приятного времяпрепровождения!";
+
+"you_still_have_x_points" = "У Вас <b>$1</b> неиспользованных совестких рублей.";
+"top_up_your_account" = "Пополнить баланс";
+
+"transfer_trough_ton" = "Пополнить с помощью ТОН";
+"transfer_ton_contents" = "Вы можете пополнить ваш баланс с помощью криптовалюты ТОН. Достаточно отсканировать КуАр-код приложением Tonkeeper, или вручную отправить ТОН по реквизитам. В течении нескольких минут вам придут определенное количество рублей.";
+"transfer_ton_address" = "<b>Адрес кошелька:</b> $1<br/><b>Содержание телеграммы:</b> $2";
+"transfer_ton_currency_per_ton" = "$1 TON";
+
+"about_links" = "Ссылки";
+"instance_links" = "Ссылки страны:";
+
+"my_apps" = "Досуг и отдых";

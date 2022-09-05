@@ -768,7 +768,7 @@ class User extends RowModel
         ]);
     }
 
-    function ban(string $reason, bool $deleteSubscriptions = true): void
+    function ban(string $reason, bool $deleteSubscriptions = true, ?int $unban_time = NULL): void
     {
         if($deleteSubscriptions) {
             $subs = DatabaseConnection::i()->getContext()->table("subscriptions");
@@ -782,6 +782,7 @@ class User extends RowModel
         }
 
         $this->setBlock_Reason($reason);
+        $this->setUnblock_time($unban_time);
         $this->save();
     }
 
@@ -1012,26 +1013,42 @@ class User extends RowModel
 		return $this->getRecord()->website;
 	}
 
-    # ты устрица
-    function isActivated(): bool
-    {
-        return (bool) $this->getRecord()->activated;
-    }
+  # ты устрица
+  function isActivated(): bool
+  {
+      return (bool) $this->getRecord()->activated;
+  }
 
-    function isBtModerator(): bool
-    {
-        return $this->getChandlerUser()->can("admin")->model('openvk\Web\Models\Repositories\BugtrackerReports')->whichBelongsTo(NULL);
-    }
+  function isBtModerator(): bool
+  {
+      return $this->getChandlerUser()->can("admin")->model('openvk\Web\Models\Repositories\BugtrackerReports')->whichBelongsTo(NULL);
+  }
 
-    function getBanInBtReason(): ?string
-    {
-        return $this->getRecord()->block_in_bt_reason;
-    }
+  function getBanInBtReason(): ?string
+  {
+      return $this->getRecord()->block_in_bt_reason;
+  }
 
-    function isBannedInBt(): bool
-    {
-        return !is_null($this->getBanInBtReason());
-    }
+  function isBannedInBt(): bool
+  {
+      return !is_null($this->getBanInBtReason());
+  }
+
+  function getUnbanTime(): ?string
+  {
+      return !is_null($this->getRecord()->unblock_time) ? date('d.m.Y', $this->getRecord()->unblock_time) : NULL;
+  }
+
+  function canUnbanThemself(): bool
+  {
+      if (!$this->isBanned())
+          return false;
+
+      if ($this->getRecord()->unblock_time > time() || $this->getRecord()->unblock_time == 0)
+          return false;
+
+      return true;
+  }
     
-    use Traits\TSubscribable;
+  use Traits\TSubscribable;
 }
