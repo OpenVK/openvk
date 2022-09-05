@@ -832,12 +832,12 @@
 
 "support_opened" = "Відкриті";
 "support_answered" = "З відповіддю";
-"support_closed" = "Закриті";
+"support_closed" = "Зачинені";
 "support_ticket" = "Звернення";
 "support_tickets" = "Звернення";
 "support_status_0" = "Питання на розгляді";
 "support_status_1" = "Є відповідь";
-"support_status_2" = "Закрито";
+"support_status_2" = "Зачинено";
 "support_greeting_hi" = "Вітаємо, $1!";
 "support_greeting_regards" = "З повагою,<br/>команда підтримки $1.";
 
