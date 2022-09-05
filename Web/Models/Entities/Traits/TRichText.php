@@ -35,12 +35,12 @@ trait TRichText
             "%(([A-z]++):\/\/(\S*?\.\S*?))([\s)\[\]{},\"\'<]|\.\s|$)%",
             (function (array $matches): string {
                 $href = str_replace("#", "&num;", $matches[1]);
-                $href = str_replace(";", "&#59;", $matches[1]);
+                $href = rawurlencode(str_replace(";", "&#59;", $matches[1]));
                 $link = str_replace("#", "&num;", $matches[3]);
                 $link = str_replace(";", "&#59;", $matches[3]);
                 $rel  = $this->isAd() ? "sponsored" : "ugc";
                 
-                return "<a href='$href' rel='$rel' target='_blank'>$link</a>" . htmlentities($matches[4]);
+                return "<a href='/away.php?to=$href' rel='$rel' target='_blank'>$link</a>" . htmlentities($matches[4]);
             }),
             $text
         );

@@ -56,6 +56,9 @@
                                         <li>
                                             <a href="/admin/clubs">{_groups}</a>
                                         </li>
+                                        <li>
+                                            <a href="/admin/bannedLinks">{_admin_banned_links}</a>
+                                        </li>
                                     </ul>
                                     <div class="aui-nav-heading">
                                         <strong>{_admin_services}</strong>
