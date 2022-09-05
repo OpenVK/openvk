@@ -26,7 +26,7 @@ final class BlacklistPresenter extends OpenVKPresenter
         $record->setCreated(time());
         $record->save();
 
-        $this->flashFail("succ", "Успех", $target->getCanonicalName() . " занесён в чёрный список.");
+        $this->flashFail("succ", tr("success"), tr("user_blacklisted", $target->getCanonicalName()));
     }
 
     function renderRemoveFromBlacklist(): void
@@ -35,10 +35,9 @@ final class BlacklistPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $record = $this->blacklists->getByAuthorAndTarget($this->user->identity->getId(), $this->postParam("id"));
-        //$record = new BlacklistItem(DB::i()->getContext()->table("blacklists")->where([ "author" => $this->user->identity->getId(), "target" =>  ])->fetch());
         $name = $record->getTarget()->getCanonicalName();
         $record->delete(false);
 
-        $this->flashFail("succ", "Успех",  "$name удалён из чёрного списка.");
+        $this->flashFail("succ", tr("success"),  tr("user_removed_from_the_blacklist", $name));
     }
 }

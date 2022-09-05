@@ -1145,6 +1145,8 @@
 
 "blacklist" = "Blacklist";
 "user_blacklisted_you" = "This user has blacklisted you.";
+"user_blacklisted" = "$1 has been blacklisted"
+"user_removed_from_the_blacklist" = "$1 has been removed from the blacklist."
 
 /* Away */
 
