@@ -99,7 +99,7 @@
         {else}
             <form class="profile_link_form" action="/setSub/club" method="post">
                 <input type="hidden" name="act" value="rem" />
-                <input type="hidden" name="id"  value="{$x->getId()}" />
+                <input type="hidden" name="id" value="{$x->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
                 <input type="submit" class="profile_link" value="{_leave_community}" />
             </form>
