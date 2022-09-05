@@ -1123,6 +1123,17 @@
 "admin_commerce_disabled" = "Коммерция отключена системным администратором";
 "admin_commerce_disabled_desc" = "Настройки ваучеров и подарков будут сохранены, но не будут оказывать никакого влияния.";
 
+"admin_banned_links" = "Заблокированные ссылки";
+"admin_banned_link" = "Ссылка";
+"admin_banned_domain" = "Домен";
+"admin_banned_link_description" = "С протоколом (https://example.com/)";
+"admin_banned_link_regexp" = "Регулярное выражение";
+"admin_banned_link_regexp_description" = "Подставляется после домена, указанного выше. Не заполняйте, если хотите заблокировать весь домен";
+"admin_banned_link_reason" = "Причина";
+"admin_banned_link_initiator" = "Инициатор";
+"admin_banned_link_not_specified" = "Ссылка не указана";
+"admin_banned_link_not_found" = "Ссылка не найдена";
+
 /* Paginator (deprecated) */
 
 "paginator_back" = "Назад";
@@ -1186,3 +1197,12 @@
 
 "cookies_popup_content" = "Все дети любят печенье, поэтому этот веб-сайт использует Cookies для того, чтобы идентифицировать вашу сессию и ничего более. Ознакомьтесь с нашей <a href='/privacy'>политикой конфиденциальности</a> для получения дополнительной информации.";
 "cookies_popup_agree" = "Согласен";
+
+/* Away */
+
+"url_is_banned" = "Переход невозможен";
+"url_is_banned_comment" = "Администрация <b>$1</b> не рекомендует переходить по этой ссылке.";
+"url_is_banned_comment_r" = "Администрация <b>$1</b> не рекомендует переходить по этой ссылке.<br><br>Причина: <b>$2</b>";
+"url_is_banned_default_reason" = "Ссылка, по которой вы попытались перейти, может вести на сайт, который был создан с целью обмана пользователей и получения за счёт этого прибыли.";
+"url_is_banned_title" = "Ссылка на подозрительный сайт";
+"url_is_banned_proceed" = "Перейти по ссылке";

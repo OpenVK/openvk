@@ -23,6 +23,7 @@ services:
     - openvk\Web\Presenters\AppsPresenter
     - openvk\Web\Presenters\ThemepacksPresenter
     - openvk\Web\Presenters\VKAPIPresenter
+    - openvk\Web\Presenters\BannedLinkPresenter
     - openvk\Web\Models\Repositories\Users
     - openvk\Web\Models\Repositories\Posts
     - openvk\Web\Models\Repositories\Photos
@@ -44,3 +45,5 @@ services:
     - openvk\Web\Models\Repositories\ContentSearchRepository
     - openvk\Web\Presenters\NamesPresenter
     - openvk\Web\Models\Repositories\Names
+    - openvk\Web\Models\Repositories\BannedLinks
+    
