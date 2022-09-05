@@ -223,7 +223,7 @@ input[type=checkbox] {
 }
 
 .ovk-diag-action {
-	border-bottom-left-radius: 2px;
+    border-bottom-left-radius: 2px;
     border-bottom-right-radius: 2px;
 }
 
@@ -231,20 +231,6 @@ input[type=checkbox] {
     border-bottom: none;
 }
 
-.floating_sidebar {
-    position: fixed;
-    top: 50px;
-    right: 0;
-    align-items: start;
-    width: 21%;
-}
-.minilink .counter {
-    background-color: #2B587A;
-    margin: 0;
-    padding: 0.5px 2px;
-    left: 10px;
-    font-size: 7px;
-    color: #fff;
-    position: absolute;
-    margin-top: -6px;
+.floating_sidebar,.floating_sidebar.show {
+    display:none
 }

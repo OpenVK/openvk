@@ -771,7 +771,7 @@ class User extends RowModel
         ]);
     }
 
-    function ban(string $reason, bool $deleteSubscriptions = true): void
+    function ban(string $reason, bool $deleteSubscriptions = true, ?int $unban_time = NULL): void
     {
         if($deleteSubscriptions) {
             $subs = DatabaseConnection::i()->getContext()->table("subscriptions");
@@ -785,6 +785,7 @@ class User extends RowModel
         }
 
         $this->setBlock_Reason($reason);
+        $this->setUnblock_time($unban_time);
         $this->save();
     }
 
@@ -1024,6 +1025,22 @@ class User extends RowModel
     function isAdmin(): bool
     {
         return $this->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL);
+    }
+    
+    function getUnbanTime(): ?string
+    {
+        return !is_null($this->getRecord()->unblock_time) ? date('d.m.Y', $this->getRecord()->unblock_time) : NULL;
+    }
+
+    function canUnbanThemself(): bool
+    {
+        if (!$this->isBanned())
+            return false;
+
+        if ($this->getRecord()->unblock_time > time() || $this->getRecord()->unblock_time == 0)
+            return false;
+
+        return true;
     }
     
     use Traits\TSubscribable;
