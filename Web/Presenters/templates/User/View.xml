@@ -96,10 +96,10 @@
                         {_warn_user_action}
                     </a>
                     <a n:if="!$user->isDeactivated()" href="javascript:deleteUser()" class="profile_link">
-                        Удалить
+                        {_delete}
                     </a>
                     <a n:if="$user->isDeactivated()" href="javascript:restoreDeleted()" class="profile_link">
-                        Восстановить
+                        {_restore}
                     </a>
                 {/if}
 
