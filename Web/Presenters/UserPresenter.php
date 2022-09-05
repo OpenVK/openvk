@@ -17,7 +17,6 @@ final class UserPresenter extends OpenVKPresenter
     private $users;
 
     public $deactivationTolerant = false;
-    
     function __construct(Users $users)
     {
         $this->users = $users;

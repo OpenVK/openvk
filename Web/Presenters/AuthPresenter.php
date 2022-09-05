@@ -323,6 +323,23 @@ final class AuthPresenter extends OpenVKPresenter
         $this->redirect("/");
     }
 
+    function renderUnbanThemself(): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        if(!$this->user->identity->canUnbanThemself())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+
+        $user = $this->users->get($this->user->id);
+
+        $user->setBlock_Reason(NULL);
+        $user->setUnblock_Time(NULL);
+        $user->save();
+
+        $this->flashFail("succ", tr("banned_unban_title"), tr("banned_unban_description"));
+    }
+    
     /*
      * This function will revoke all tokens, including API and Web tokens and except active one
      * 

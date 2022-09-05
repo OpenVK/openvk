@@ -2,7 +2,8 @@
     <img src="/assets/packages/static/openvk/img/oof.apng" alt="Пользователь заблокирован." style="width: 20%;" />
     <p>
         {tr("user_banned", htmlentities($user->getFirstName()))|noescape}<br/>
-        {_user_banned_comment} <b>{$user->getBanReason()}</b>.
+        {_user_banned_comment} <b>{$user->getBanReason()}</b>.<br/>
+        Пользователь заблокирован до: <b>{$user->getUnbanTime()}</b>
     </p>
     {if isset($thisUser)}
         <p n:if="$thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL) || $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)">
