@@ -23,7 +23,6 @@
         </div>
     </div>
     <br/>
-    {$amount} {$count}
     <div
         class="user-alert"
         style="padding: 10px 0; background-color: #F5F7F9; border: 1px solid #E9E9EB; color: #000; font-weight: normal;"
