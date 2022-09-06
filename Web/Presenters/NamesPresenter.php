@@ -32,8 +32,6 @@ final class NamesPresenter extends OpenVKPresenter
         $this->template->iterator = $this->names->getList($this->template->page, $this->template->mode_status);
         $this->template->names = iterator_to_array($this->template->iterator);
 
-        //exit(var_dump($this->template->names[0]));
-
         $this->template->count = (clone $this->names)->getCount($this->template->mode_status);
     }
 
