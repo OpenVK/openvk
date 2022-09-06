@@ -465,7 +465,7 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->cAmount  = sizeof($this->template->changes);
     }
 
-    function renderPostHistoryRestore(int $wall, int $post_id, int $change_id, string $type): void
+    function renderPostHistoryRestore(int $wall, int $post_id, int $change_id): void
     {
         $this->assertUserLoggedIn();
 
@@ -475,14 +475,8 @@ final class WallPresenter extends OpenVKPresenter
         $post = $this->posts->getPostById($wall, $post_id);
         $change = $this->changes->get($change_id);
 
-        if ($type == "old")
-            $post->setContent($change->getOldContent());
-        else
-            $post->setContent($change->getNewContent());
-
+        $post->setContent($change->getNewContent());
         $post->setChange_Id($change->getId());
-        $post->setChange_Type($type == "new" ? 2 : 1);
-
         $post->save();
 
         $this->flashFail("succ", "Успех", "Версия #$change_id применена.");

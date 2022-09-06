@@ -44,11 +44,6 @@ class PostChangeRecord extends RowModel
         return (new Users)->get($this->getWid());
     }
 
-    function getOldContent(): ?string
-    {
-        return $this->getRecord()->oldContent;
-    }
-
     function getNewContent(): ?string
     {
         return $this->getRecord()->newContent;
@@ -59,13 +54,8 @@ class PostChangeRecord extends RowModel
         return new DateTime($this->getRecord()->created);
     }
 
-    function canBeApplied(string $type): bool
+    function canBeApplied(): bool
     {
-        $post = $this->getPost();
-
-        if ($post->getChangeId() == $this->getId())
-            if ($post->getChangeType() == $type) return false;
-
-        return true;
+        return $this->getPost()->getChangeId() != $this->getId();
     }
 }

@@ -18,22 +18,14 @@
                 </div>
                 <div class="post-content" id="{$change->getId()}">
                     <div class="text" id="text{$change->getId()}">
-                        {$change->getOldContent()|noescape}
-                        <a n:if="$change->canBeApplied('old')" href="/wall{$post->getPrettyId()}/history/restore{$change->getId()}/old">
-                            &nbsp;|&nbsp; Применить
-                        </a>
-                        <span class="nobold" n:if="$post->getChangeId() == $change->getId() AND $post->getChangeType() == 'old'">
-                            &nbsp;|&nbsp; Текущая версия
-                        </span>
-                        <hr size="1" color="#ddd">
                         {$change->getNewContent()|noescape}
-                        <a n:if="$change->canBeApplied('new')" href="/wall{$post->getPrettyId()}/history/restore{$change->getId()}/new">
-                            &nbsp;|&nbsp; Применить
-                        </a>
-                        <span class="nobold" n:if="$post->getChangeId() == $change->getId() AND $post->getChangeType() == 'new'">
-                            &nbsp;|&nbsp; Текущая версия
-                        </span>
                     </div>
+                    <span class="nobold">
+                        &nbsp;&nbsp;{$change->getCreationDate()}
+                    </span>
+                    <a n:if="$change->canBeApplied()" href="/wall{$post->getPrettyId()}/history/restore{$change->getId()}">
+                        &nbsp;|&nbsp; Применить
+                    </a>
                 </div>
             </td>
         </tr>
