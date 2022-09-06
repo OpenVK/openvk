@@ -282,7 +282,6 @@ final class WallPresenter extends OpenVKPresenter
                 if (OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["logChanges"]) {
                     $changes_record->setWall_id($wall);
                     $changes_record->setVirtual_id($editTarget);
-                    $changes_record->setOldContent($post->getText());
                     $changes_record->setNewContent($this->postParam("text"));
                     $changes_record->setCreated(time());
                     $changes_record->save();
