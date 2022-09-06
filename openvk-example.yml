@@ -56,6 +56,9 @@ openvk:
                 emojiProcessingLimit: 1000
             logChanges: true
         commerce: false
+        susLinks:
+            warnings: true
+            showReason: true
         ton:
             enabled: false
             address: "🅿"

@@ -452,6 +452,7 @@
 "avatar" = "Аватар";
 "privacy" = "Приватность";
 "interface" = "Внешний вид";
+"security" = "Безопасность";
 
 "profile_picture" = "Изображение страницы";
 
@@ -526,6 +527,7 @@
 "ui_settings_view_of_posts_old" = "Старый";
 "ui_settings_view_of_posts_microblog" = "Микроблог";
 "ui_settings_main_page" = "Главная страница";
+"ui_settings_sessions" = "Сессии";
 
 "additional_links" = "Дополнительные ссылки";
 "ad_poster" = "Рекламный плакат";
@@ -553,6 +555,11 @@
 "profile_deactivated_info" = "Страница пользователя удалена.<br/>Информация недоступна.";
 
 "share_with_friends" = "Рассказать друзьям";
+
+"end_all_sessions" = "Сбросить все сессии";
+"end_all_sessions_description" = "Если вы хотите выйти из $1 со всех устройств, нажмите на кнопку ниже";
+
+"end_all_sessions_done" = "Все сессии сброшены, включая мобильные приложения";
 
 /* Two-factor authentication */
 
@@ -880,8 +887,13 @@
 "banned_header" = "Вы были верискокнуты";
 "banned_alt" = "Пользователь заблокирован.";
 "banned_1" = "Извините, <b>$1</b>, но вы были верискокнуты.";
-"banned_2" = "А причина этому проста: <b>$1</b>. К сожалению, на этот раз нам пришлось заблокировать вас навсегда.";
+"banned_2" = "А причина этому проста: <b>$1</b>.";
+"banned_perm" = "К сожалению, на этот раз нам пришлось заблокировать вас навсегда";
+"banned_until_time" = "На этот раз нам пришлось заблокировать вас до <b>$1</b>";
 "banned_3" = "Вы всё ещё можете <a href=\"/support?act=new\">написать в службу поддержки</a>, если считаете что произошла ошибка или <a href=\"/logout?hash=$1\">выйти</a>.";
+"banned_unban_myself" = "Разморозить страницу";
+"banned_unban_title" = "Ваш аккаунт разблокирован";
+"banned_unban_description" = "Постарайтесь больше не нарушать правила.";
 
 /* Registration confirm */
 
@@ -1111,6 +1123,17 @@
 "admin_commerce_disabled" = "Коммерция отключена системным администратором";
 "admin_commerce_disabled_desc" = "Настройки ваучеров и подарков будут сохранены, но не будут оказывать никакого влияния.";
 
+"admin_banned_links" = "Заблокированные ссылки";
+"admin_banned_link" = "Ссылка";
+"admin_banned_domain" = "Домен";
+"admin_banned_link_description" = "С протоколом (https://example.com/)";
+"admin_banned_link_regexp" = "Регулярное выражение";
+"admin_banned_link_regexp_description" = "Подставляется после домена, указанного выше. Не заполняйте, если хотите заблокировать весь домен";
+"admin_banned_link_reason" = "Причина";
+"admin_banned_link_initiator" = "Инициатор";
+"admin_banned_link_not_specified" = "Ссылка не указана";
+"admin_banned_link_not_found" = "Ссылка не найдена";
+
 /* Paginator (deprecated) */
 
 "paginator_back" = "Назад";
@@ -1174,3 +1197,12 @@
 
 "cookies_popup_content" = "Все дети любят печенье, поэтому этот веб-сайт использует Cookies для того, чтобы идентифицировать вашу сессию и ничего более. Ознакомьтесь с нашей <a href='/privacy'>политикой конфиденциальности</a> для получения дополнительной информации.";
 "cookies_popup_agree" = "Согласен";
+
+/* Away */
+
+"url_is_banned" = "Переход невозможен";
+"url_is_banned_comment" = "Администрация <b>$1</b> не рекомендует переходить по этой ссылке.";
+"url_is_banned_comment_r" = "Администрация <b>$1</b> не рекомендует переходить по этой ссылке.<br><br>Причина: <b>$2</b>";
+"url_is_banned_default_reason" = "Ссылка, по которой вы попытались перейти, может вести на сайт, который был создан с целью обмана пользователей и получения за счёт этого прибыли.";
+"url_is_banned_title" = "Ссылка на подозрительный сайт";
+"url_is_banned_proceed" = "Перейти по ссылке";
