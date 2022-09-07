@@ -9,6 +9,9 @@
 {elseif $act == "outcoming"}
     {var $iterator = iterator_to_array($user->getSubscriptions($page))}
     {var $count    = $user->getSubscriptionsCount()}
+{elseif $act == "online"}
+    {var $iterator = iterator_to_array($user->getFriendsOnline($page))}
+    {var $count    = $user->getFriendsOnlineCount()}
 {else}
     {var $iterator = iterator_to_array($user->getFriends($page))}
     {var $count    = $user->getFriendsCount()}
@@ -16,11 +19,13 @@
 
 {block title}
     {if $act == "incoming"}
-        {_"incoming_req"}
+        {_incoming_req}
     {elseif $act == "outcoming"}
-        {_"outcoming_req"}
+        {_outcoming_req}
+    {elseif $act == "online"}
+        {_friends_online}
     {else}
-        {_"friends"}
+        {_friends}
     {/if}
 {/block} 
 
@@ -30,18 +35,23 @@
     {else}
         <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> »
         {if $act == "incoming"}
-            {_"incoming_req"}
+            {_incoming_req}
         {elseif $act == "outcoming"}
-            {_"outcoming_req"}
+            {_outcoming_req}
+        {elseif $act == "online"}
+            {_friends_online}
         {else}
-            {_"friends"}
+            {_friends}
         {/if}
     {/if}
 {/block}
 
 {block tabs}
     <div n:attr="id => ($act === 'friends' ? 'activetabs' : 'ki')" class="tab">
-        <a n:attr="id => ($act === 'friends' ? 'act_tab_a' : 'ki')" href="?">{_friends}</a>
+        <a n:attr="id => ($act === 'friends' ? 'act_tab_a' : 'ki')" href="?">{_all_friends}</a>
+    </div>
+    <div n:attr="id => ($act === 'online' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($act === 'online' ? 'act_tab_a' : 'ki')" href="?act=online">{_online}</a>
     </div>
     <div n:attr="id => ($act === 'incoming' || $act === 'outcoming' ? 'activetabs' : 'ki')" class="tab">
         <a n:attr="id => ($act === 'incoming' || $act === 'outcoming' ? 'act_tab_a' : 'ki')" href="?act=incoming">{_req}</a>
@@ -68,6 +78,8 @@
                     {tr("req", $count)}
                 {elseif $act == "outcoming"}
                     {tr("req", $count)}
+                {elseif $act == "online"}
+                    {tr("friends_list_online", $count)}
                 {else}
                     {tr("friends_list", $count)}
                 {/if}
@@ -90,21 +102,25 @@
 
 {block name}
     {$x->getCanonicalName()}
+    <img n:if="$x->isVerified()" 
+        class="name-checkmark" 
+        src="/assets/packages/static/openvk/img/checkmark.png" 
+    />
 {/block}
 
 {block description}
     <table>
         <tbody>
             <tr>
-                <td width="120" valign="top"><span class="nobold">{_"gender"}: </span></td>
+                <td width="120" valign="top"><span class="nobold">{_gender}: </span></td>
                 <td>{$x->isFemale() ? tr("female") : tr("male")}</td>
             </tr>
             <tr>
-                <td width="120" valign="top"><span class="nobold">{_"relationship"}:</span></td>
-                <td>{var $marialStatus = $x->getMaritalStatus()}{_"relationship_$marialStatus"}</td>
+                <td width="120" valign="top"><span class="nobold">{_relationship}:</span></td>
+                <td>{$x->getLocalizedMaritalStatus()}</td>
             </tr>
             <tr>
-                <td width="120" valign="top"><span class="nobold">{_"registration_date"}: </span></td>
+                <td width="120" valign="top"><span class="nobold">{_registration_date}: </span></td>
                 <td>{$x->getRegistrationTime()}</td>
             </tr>
         </tbody>
@@ -112,36 +128,36 @@
 {/block}
 
 {block actions}
-    {if $x->getId() !== $thisUser->getId()}
+    {if ($x->getId() !== $thisUser->getId()) && ($thisUser->getId() === $user->getId())}
         {var $subStatus = $x->getSubscriptionStatus($thisUser)}
         {if $subStatus === 0}
             <form action="/setSub/user" method="post" class="profile_link_form">
                 <input type="hidden" name="act" value="add" />
                 <input type="hidden" name="id"  value="{$x->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" class="profile_link" value="{_"friends_add"}" />
+                <input type="submit" class="profile_link" value="{_friends_add}" />
             </form>
         {elseif $subStatus === 1}
             <form action="/setSub/user" method="post" class="profile_link_form">
                 <input type="hidden" name="act" value="add" />
                 <input type="hidden" name="id"  value="{$x->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" class="profile_link" value="{_"friends_accept"}" />
+                <input type="submit" class="profile_link" value="{_friends_accept}" />
             </form>
         {elseif $subStatus === 2}
             <form action="/setSub/user" method="post" class="profile_link_form">
                 <input type="hidden" name="act" value="rem" />
                 <input type="hidden" name="id"  value="{$x->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" class="profile_link" value="{_"friends_reject"}" />
+                <input type="submit" class="profile_link" value="{_friends_reject}" />
             </form>
         {elseif $subStatus === 3}
-            <a href="/im?sel={$x->getId()}" class="profile_link">{_"send_message"}</a>
+            <a href="/im?sel={$x->getId()}" class="profile_link">{_send_message}</a>
             <form action="/setSub/user" method="post" class="profile_link_form">
                 <input type="hidden" name="act" value="rem" />
                 <input type="hidden" name="id"  value="{$x->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" class="profile_link" value="{_"friends_delete"}" />
+                <input type="submit" class="profile_link" value="{_friends_delete}" />
             </form>
         {/if}
     {/if}

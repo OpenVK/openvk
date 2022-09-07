@@ -1,0 +1,20 @@
+SELECT COUNT(id) AS cnt FROM
+(
+  (
+    SELECT
+      recipient_id AS id
+    FROM messages
+    WHERE
+      sender_id = ?
+    AND
+      sender_type = ?
+  ) UNION (
+    SELECT
+      sender_id AS id
+    FROM messages
+    WHERE
+      recipient_id = ?
+    AND
+      recipient_type = ?
+  )
+) dt

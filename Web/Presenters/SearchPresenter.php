@@ -1,9 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Repositories\Users;
-use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Repositories\Clubs;
-use openvk\Web\Models\Entities\Club;
+use openvk\Web\Models\Entities\{User, Club};
+use openvk\Web\Models\Repositories\{Users, Clubs};
 use Chandler\Database\DatabaseConnection;
 
 final class SearchPresenter extends OpenVKPresenter

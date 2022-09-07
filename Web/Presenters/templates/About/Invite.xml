@@ -6,9 +6,9 @@
 {/block}
 
 {block content}
-    {_"you_can_invite"}<br><br>
+    {_you_can_invite}<br><br>
     <center>
         <input type="text" readonly value="https://{$_SERVER["HTTP_HOST"]}/reg?ref={rawurlencode($thisUser->getRefLinkId())}" size="50" />
     </center>
-    <p>{_"you_can_invite_2"}</p>
+    <p>{_you_can_invite_2}</p>
 {/block}

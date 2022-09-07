@@ -113,14 +113,14 @@ final class WallPresenter extends OpenVKPresenter
         $feed = new Feed();
 
         $channel = new Channel();
-        $channel->title(OPENVK_ROOT_CONF['openvk']['appearance']['name'])->url(ovk_scheme(true) . $_SERVER["SERVER_NAME"])->appendTo($feed);
+        $channel->title($owner->getCanonicalName() . " — " . OPENVK_ROOT_CONF['openvk']['appearance']['name'])->url(ovk_scheme(true) . $_SERVER["HTTP_HOST"])->appendTo($feed);
 
         foreach($posts as $post) {
             $item = new Item();
             $item
                 ->title($post->getOwner()->getCanonicalName())
                 ->description($post->getText())
-                ->url(ovk_scheme(true).$_SERVER["SERVER_NAME"]."/wall{$post->getPrettyId()}")
+                ->url(ovk_scheme(true).$_SERVER["HTTP_HOST"]."/wall{$post->getPrettyId()}")
                 ->pubDate($post->getPublicationTime()->timestamp())
                 ->appendTo($channel);
         }
@@ -294,11 +294,7 @@ final class WallPresenter extends OpenVKPresenter
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
         
-        if($wall > 0)
-            $this->redirect("/id$wall", 2); #Will exit
-        
-        $wall = $wall * -1;
-        $this->redirect("/club$wall", 2);
+        $this->redirect($wallOwner->getURL());
     }
     
     function renderPost(int $wall, int $post_id): void
@@ -337,10 +333,7 @@ final class WallPresenter extends OpenVKPresenter
             $post->toggleLike($this->user->identity);
         }
         
-        $this->redirect(
-            "$_SERVER[HTTP_REFERER]#postGarter=" . $post->getId(),
-            static::REDIRECT_TEMPORARY
-        );
+        $this->redirect("$_SERVER[HTTP_REFERER]#postGarter=" . $post->getId());
     }
     
     function renderShare(int $wall, int $post_id): void
@@ -392,8 +385,7 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("failed_to_delete_post"), tr("login_required_error_comment"));
         }
         
-        $this->redirect($wall < 0 ? "/club".($wall*-1) : "/id".$wall, static::REDIRECT_TEMPORARY);
-        exit;
+        $this->redirect($wall < 0 ? "/club" . ($wall*-1) : "/id" . $wall);
     }
     
     function renderPin(int $wall, int $post_id): void

@@ -14,6 +14,7 @@ abstract class OpenVKPresenter extends SimplePresenter
 {
     protected $banTolerant   = false;
     protected $activationTolerant = false;
+    protected $deactivationTolerant = false;
     protected $errorTemplate = "@error";
     protected $user = NULL;
     
@@ -60,9 +61,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->flash($type, $title, $message, $code);
             $referer = $_SERVER["HTTP_REFERER"] ?? "/";
             
-            header("HTTP/1.1 302 Found");
-            header("Location: $referer");
-            exit;
+            $this->redirect($referer);
         }
     }
     
@@ -98,9 +97,8 @@ abstract class OpenVKPresenter extends SimplePresenter
             }
             
             $this->flash("err", tr("login_required_error"), tr("login_required_error_comment"));
-            header("HTTP/1.1 302 Found");
-            header("Location: $loginUrl");
-            exit;
+            
+            $this->redirect($loginUrl);
         }
     }
     
@@ -110,9 +108,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             if($model !== "user") {
                 $this->flash("info", tr("login_required_error"), tr("login_required_error_comment"));
                 
-                header("HTTP/1.1 302 Found");
-                header("Location: /login");
-                exit;
+                $this->redirect("/login");
             }
             
             return ($action === "register" || $action === "login");
@@ -214,39 +210,28 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->template->thisUser    = $this->user->identity;
             $this->template->userTainted = $user->isTainted();
 
-            if($this->user->identity->isDeleted()) {
-                /*
-                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣠⣴⠶⠶⣶⠶⠶⠶⠶⠶⠶⠶⠶⠶⢶⠶⠶⠶⠤⠤⠤⠤⣄⣀⣀⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-                ⠀⠀⠀⠀⠀⠀⠀⠀⣠⡾⠋⠀⠀⠊⠀⠀⠀⠀⠀⠀⠀⠀⠒⠒⠒⠀⠀⠀⠀⠤⢤⣤⣄⠉⠉⠛⠛⠷⣦⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
-                ⠀⠀⠀⠀⠀⠀⠀⣰⠟⠀⠀⠀⠀⠀⠐⠋⢑⣤⣶⣶⣤⡢⡀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣠⣄⡂⠀⠀⠶⢄⠙⢷⣤⠀⠀⠀⠀⠀⠀⠀⠀
-                ⠀⠀⠀⠀⠀⠀⣸⡿⠚⠉⡀⠀⠀⠀⠀⢰⣿⣿⣿⣿⣿⣿⡄⠀⠀⠀⢢⠀⠀⡀⣰⣿⣿⣿⣿⣦⡀⠀⠀⠡⡀⢹⡆⠀⠀⠀⠀⠀⠀⠀
-                ⠀⠀⠀⠀⢀⣴⠏⠀⣀⣀⣀⡤⢤⣄⣠⣿⣿⣿⣿⣻⣿⣿⣷⠀⢋⣾⠈⠙⣶⠒⢿⣿⣿⣿⣿⡿⠟⠃⠀⡀⠡⠼⣧⡀⠀⠀⠀⠀⠀⠀
-                ⠀⠀⢀⣴⣿⢃⡴⢊⢽⣶⣤⣀⠀⠊⠉⠉⡛⢿⣿⣿⣿⠿⠋⢀⡀⠁⠀⠀⢸⣁⣀⣉⣉⣉⡉⠀⠩⡡⠀⣩⣦⠀⠈⠻⣦⡀⠀⠀⠀⠀
-                ⠀⢠⡟⢡⠇⡞⢀⠆⠀⢻⣿⣿⣷⣄⠀⢀⠈⠂⠈⢁⡤⠚⡟⠉⠀⣀⣀⠀⠈⠳⣍⠓⢆⢀⡠⢀⣨⣴⣿⣿⡏⢀⡆⠀⢸⡇⠀⠀⠀⠀
-                ⠀⣾⠁⢸⠀⠀⢸⠀⠀⠀⠹⣿⣿⣿⣿⣶⣬⣦⣤⡈⠀⠀⠇⠀⠛⠉⣩⣤⣤⣤⣿⣤⣤⣴⣾⣿⣿⣿⣿⣿⣧⠞⠀⠀⢸⡇⠀⠀⠀⠀
-                ⠀⢹⣆⠸⠀⠀⢸⠀⠀⠀⠀⠘⢿⣿⣿⣿⣿⣿⣿⣟⣛⠛⠛⣛⡛⠛⠛⣛⣋⡉⠉⣡⠶⢾⣿⣿⣿⣿⣿⣿⡇⠀⠀⢀⣾⠃⠀⠀⠀⠀
-                ⠀⠀⠻⣆⡀⠀⠈⢂⠀⠀⠀⠠⡈⢻⣿⣿⣿⣿⡟⠁⠈⢧⡼⠉⠙⣆⡞⠁⠈⢹⣴⠃⠀⢸⣿⣿⣿⣿⣿⣿⠃⠀⡆⣾⠃⠀⠀⠀⠀⠀
-                ⠀⠀⠀⠈⢻⣇⠀⠀⠀⠀⠀⠀⢡⠀⠹⣿⣿⣿⣷⡀⠀⣸⡇⠀⠀⣿⠁⠀⠀⠘⣿⠀⠀⠘⣿⣿⣿⣿⣿⣿⠀⠀⣿⡇⠀⠀⠀⠀⠀⠀
-                ⠀⠀⠀⠀⠀⠹⣇⠀⠠⠀⠀⠀⠀⠡⠐⢬⡻⣿⣿⣿⣿⣿⣷⣶⣶⣿⣦⣤⣤⣤⣿⣦⣶⣿⣿⣿⣿⣿⣿⣿⠀⠀⣿⡇⠀⠀⠀⠀⠀⠀
-                ⠀⠀⠀⠀⠀⠀⠹⣧⡀⠡⡀⠀⠀⠀⠑⠄⠙⢎⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣦⠀⢿⡇⠀⠀⠀⠀⠀⠀
-                ⠀⠀⠀⠀⠀⠀⠀⠈⠳⣤⡐⡄⠀⠀⠀⠈⠂⠀⠱⣌⠻⣿⣿⣿⣿⣿⣿⣿⠿⣿⠟⢻⡏⢻⣿⣿⣿⣿⣿⣿⣿⠀⢸⡇⠀⠀⠀⠀⠀⠀
-                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠈⠻⢮⣦⡀⠂⠀⢀⠀⠀⠈⠳⣈⠻⣿⣿⣿⡇⠘⡄⢸⠀⠀⣇⠀⣻⣿⣿⣿⣿⣿⡏⠀⠸⡇⠀⠀⠀⠀⠀⠀
-                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⢶⣤⣄⡑⠄⠀⠀⠈⠑⠢⠙⠻⢷⣶⣵⣞⣑⣒⣋⣉⣁⣻⣿⠿⠟⠱⠃⡸⠀⣧⠀⠀⠀⠀⠀⠀
-                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠻⣷⣄⡀⠐⠢⣄⣀⡀⠀⠉⠉⠉⠉⠛⠙⠭⠭⠄⠒⠈⠀⠐⠁⢀⣿⠀⠀⠀⠀⠀⠀
-                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠛⠷⢦⣤⣤⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣒⡠⠄⣠⡾⠃⠀⠀⠀⠀⠀⠀
-                ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠉⠙⠛⠷⠶⣦⣤⣭⣤⣬⣭⣭⣴⠶⠛⠉⠀⠀⠀⠀⠀⠀⠀⠀
-                */
-                Authenticator::i()->logout();
-                Session::i()->set("_su", NULL);
-                $this->flashFail("err", tr("error"), tr("profile_not_found"));
-                $this->redirect("/", static::REDIRECT_TEMPORARY);
+            if($this->user->identity->isDeleted() && !$this->deactivationTolerant) {
+                if($this->user->identity->isDeactivated()) {
+                    header("HTTP/1.1 403 Forbidden");
+                    $this->getTemplatingEngine()->render(__DIR__ . "/templates/@deactivated.xml", [
+                        "thisUser"    => $this->user->identity,
+                        "csrfToken"   => $GLOBALS["csrfToken"],
+                        "isTimezoned" => Session::i()->get("_timezoneOffset"),
+                    ]);
+                } else {
+                    Authenticator::i()->logout();
+                    Session::i()->set("_su", NULL);
+                    $this->flashFail("err", tr("error"), tr("profile_not_found"));
+                    $this->redirect("/");
+                }
+                exit;
             }
             
             if($this->user->identity->isBanned() && !$this->banTolerant) {
                 header("HTTP/1.1 403 Forbidden");
                 $this->getTemplatingEngine()->render(__DIR__ . "/templates/@banned.xml", [
-                    "thisUser" => $this->user->identity,
-                    "csrfToken" => $GLOBALS["csrfToken"],
+                    "thisUser"    => $this->user->identity,
+                    "csrfToken"   => $GLOBALS["csrfToken"],
                     "isTimezoned" => Session::i()->get("_timezoneOffset"),
                 ]);
                 exit;
@@ -256,8 +241,8 @@ abstract class OpenVKPresenter extends SimplePresenter
             if(!$this->user->identity->isActivated() && !$this->activationTolerant) {
                 header("HTTP/1.1 403 Forbidden");
                 $this->getTemplatingEngine()->render(__DIR__ . "/templates/@email.xml", [
-                    "thisUser" => $this->user->identity,
-                    "csrfToken" => $GLOBALS["csrfToken"],
+                    "thisUser"    => $this->user->identity,
+                    "csrfToken"   => $GLOBALS["csrfToken"],
                     "isTimezoned" => Session::i()->get("_timezoneOffset"),
                 ]);
                 exit;
@@ -265,7 +250,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             
             $userValidated = 1;
             $cacheTime     = 0; # Force no cache
-            if ($this->user->identity->onlineStatus() == 0) {
+            if($this->user->identity->onlineStatus() == 0 && !($this->user->identity->isDeleted() || $this->user->identity->isBanned())) {
                 $this->user->identity->setOnline(time());
                 $this->user->identity->save();
             }

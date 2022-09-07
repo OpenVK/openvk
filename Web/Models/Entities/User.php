@@ -145,24 +145,32 @@ class User extends RowModel
         return iterator_to_array($avPhotos)[0] ?? NULL;
     }
     
-    function getFirstName(): string
+    function getFirstName(bool $pristine = false): string
     {
-        return $this->getRecord()->deleted ? "DELETED" : mb_convert_case($this->getRecord()->first_name, MB_CASE_TITLE);
+        $name = ($this->isDeleted() && !$this->isDeactivated() ? "DELETED" : mb_convert_case($this->getRecord()->first_name, MB_CASE_TITLE));
+        if((($ts = tr("__transNames")) !== "@__transNames") && !$pristine)
+            return mb_convert_case(transliterator_transliterate($ts, $name), MB_CASE_TITLE);
+        else
+            return $name;
     }
     
-    function getLastName(): string
+    function getLastName(bool $pristine = false): string
     {
-        return $this->getRecord()->deleted ? "DELETED" : mb_convert_case($this->getRecord()->last_name, MB_CASE_TITLE);
+        $name = ($this->isDeleted() && !$this->isDeactivated() ? "DELETED" : mb_convert_case($this->getRecord()->last_name, MB_CASE_TITLE));
+        if((($ts = tr("__transNames")) !== "@__transNames") && !$pristine)
+            return mb_convert_case(transliterator_transliterate($ts, $name), MB_CASE_TITLE);
+        else
+            return $name;
     }
     
     function getPseudo(): ?string
     {
-        return $this->getRecord()->deleted ? "DELETED" : $this->getRecord()->pseudo;
+        return ($this->isDeleted() && !$this->isDeactivated() ? "DELETED" : $this->getRecord()->pseudo);
     }
     
     function getFullName(): string
     {
-        if($this->getRecord()->deleted)
+        if($this->isDeleted() && !$this->isDeactivated())
             return "DELETED";
         
         $pseudo = $this->getPseudo();
@@ -187,7 +195,7 @@ class User extends RowModel
     
     function getCanonicalName(): string
     {
-        if($this->getRecord()->deleted)
+        if($this->isDeleted() && !$this->isDeactivated())
             return "DELETED";
         else
             return $this->getFirstName() . " " . $this->getLastName();
@@ -285,6 +293,19 @@ class User extends RowModel
     {
         return $this->getRecord()->marital_status;
     }
+    
+    function getLocalizedMaritalStatus(): string
+    {
+        $status = $this->getMaritalStatus();
+        $string = "relationship_$status";
+        if($this->isFemale()) {
+            $res = tr($string . "_fem");
+            if($res != ("@" . $string . "_fem"))
+                return $res; # If fem version exists, return
+        }
+        
+        return tr($string);
+    }
 
     function getContactEmail(): ?string
     {
@@ -343,7 +364,15 @@ class User extends RowModel
 
     function getBirthday(): ?DateTime
     {
-        return new DateTime($this->getRecord()->birthday);
+        if(is_null($this->getRecord()->birthday))
+            return NULL;
+        else
+            return new DateTime($this->getRecord()->birthday);
+    }
+
+    function getBirthdayPrivacy(): int
+    {
+        return $this->getRecord()->birthday_privacy;
     }
 
     function getAge(): ?int
@@ -469,6 +498,16 @@ class User extends RowModel
     function getFriendsCount(): int
     {
         return $this->_abstractRelationCount("get-friends");
+    }
+
+    function getFriendsOnline(int $page = 1, int $limit = 6): \Traversable
+    {
+        return $this->_abstractRelationGenerator("get-online-friends", $page, $limit);
+    }
+
+    function getFriendsOnlineCount(): int
+    {
+        return $this->_abstractRelationCount("get-online-friends");
     }
 
     function getFollowers(int $page = 1, int $limit = 6): \Traversable
@@ -729,7 +768,7 @@ class User extends RowModel
         ]);
     }
 
-    function ban(string $reason, bool $deleteSubscriptions = true): void
+    function ban(string $reason, bool $deleteSubscriptions = true, ?int $unban_time = NULL): void
     {
         if($deleteSubscriptions) {
             $subs = DatabaseConnection::i()->getContext()->table("subscriptions");
@@ -743,9 +782,31 @@ class User extends RowModel
         }
 
         $this->setBlock_Reason($reason);
+        $this->setUnblock_time($unban_time);
         $this->save();
     }
 
+    function deactivate(?string $reason): void
+    {
+        $this->setDeleted(1);
+        $this->setDeact_Date(time() + (MONTH * 7));
+        $this->setDeact_Reason($reason);
+        $this->save();
+    }
+
+    function reactivate(): void
+    {
+        $this->setDeleted(0);
+        $this->setDeact_Date(0);
+        $this->setDeact_Reason("");
+        $this->save();
+    }
+
+    function getDeactivationDate(): DateTime
+    {
+        return new DateTime($this->getRecord()->deact_date);
+    }
+    
     function verifyNumber(string $code): bool
     {
         $ver = $this->getPendingPhoneVerification();
@@ -911,7 +972,15 @@ class User extends RowModel
 
     function isDeleted(): bool
     {
-        if ($this->getRecord()->deleted == 1)
+        if($this->getRecord()->deleted == 1)
+            return TRUE;
+        else
+            return FALSE;
+    }
+
+    function isDeactivated(): bool
+    {
+        if($this->getDeactivationDate()->timestamp() > time())
             return TRUE;
         else
             return FALSE;
@@ -948,6 +1017,22 @@ class User extends RowModel
     function isActivated(): bool
     {
         return (bool) $this->getRecord()->activated;
+    }
+
+    function getUnbanTime(): ?string
+    {
+        return !is_null($this->getRecord()->unblock_time) ? date('d.m.Y', $this->getRecord()->unblock_time) : NULL;
+    }
+
+    function canUnbanThemself(): bool
+    {
+        if (!$this->isBanned())
+            return false;
+
+        if ($this->getRecord()->unblock_time > time() || $this->getRecord()->unblock_time == 0)
+            return false;
+
+        return true;
     }
     
     use Traits\TSubscribable;

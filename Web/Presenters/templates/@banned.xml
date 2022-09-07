@@ -1,17 +1,27 @@
 {extends "@layout.xml"}
-{block title}{_"banned_title"}{/block}
+{block title}{_banned_title}{/block}
 
 {block header}
-    {_"banned_header"}
+    {_banned_header}
 {/block}
 
 {block content}
     <center>
-        <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_'banned_alt'}" style="width: 20%;" />
+        <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_banned_alt}" style="width: 20%;" />
     </center>
     <p>
         {tr("banned_1", htmlentities($thisUser->getCanonicalName()))|noescape}<br/>
         {tr("banned_2", htmlentities($thisUser->getBanReason()))|noescape}
+
+        {if !$thisUser->getUnbanTime()}
+            {_banned_perm}
+        {else}
+            {tr("banned_until_time", $thisUser->getUnbanTime())|noescape}
+        {/if}
+    </p>
+    <p n:if="$thisUser->canUnbanThemself()">
+        <hr/>
+        <center><a class="button" href="/unban.php">{_banned_unban_myself}</a></center>
     </p>
     <hr/>
     <p>

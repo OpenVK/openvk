@@ -17,8 +17,8 @@ _[English](README.md)_
 ## Инстанции
 
 * **[openvk.su](https://openvk.su/)**
-* **[openvk.uk](https://openvk.uk)** - официальное зеркало openvk.su (<https://t.me/openvkch/1609>)
-* **[openvk.co](http://openvk.co)** - ещё одно официальное зеркало openvk.su без TLS (<https://t.me/openvkch/1654>)
+* **[openvk.uk](https://openvk.uk)** - официальное зеркало openvk.su (<https://t.me/openvk/1609>)
+* **[openvk.co](http://openvk.co)** - ещё одно официальное зеркало openvk.su без TLS (<https://t.me/openvk/1654>)
 * [social.fetbuk.ru](http://social.fetbuk.ru/)
 * [vepurovk.xyz](http://vepurovk.xyz/)
 
@@ -82,7 +82,7 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 
 * [Баг-трекер](https://github.com/openvk/openvk/projects/1)
 * [Помощь в OVK](https://openvk.su/support?act=new)
-* Telegram-чат: Перейдите на [наш канал](https://t.me/openvkch) и откройте обсуждение в меню нашего канала.
+* Telegram-чат: Перейдите на [наш канал](https://t.me/openvk) и откройте обсуждение в меню нашего канала.
 * [Reddit](https://www.reddit.com/r/openvk/)
 * [Обсуждения](https://github.com/openvk/openvk/discussions)
 * Чат в Matrix: #ovk:matrix.org

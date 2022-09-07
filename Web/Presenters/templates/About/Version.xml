@@ -396,8 +396,8 @@
                 <tr>
                     <td class="e">
                         Vladimir Barinov (veselcraft), Celestora, Konstantin Kichulkin (kosfurler),
-                        Nikita Volkov (sup_ban), Daniel Myslivets, Alexander Kotov (l-lacker),
-                        Alexey Assemblerov (BiosNod), Ilya Prokopenko (dsrev) and Maxim Leshchenko (maksales / maksalees)
+                        Nikita Volkov (sup_ban), Daniel Myslivets, Maxim Leshchenko (maksales / maksalees)
+                        and n1rwana
                     </td>
                 </tr>
             </tbody>
@@ -474,7 +474,7 @@
                 </tr>
                 <tr>
                     <td class="e">Best barmaid</td>
-                    <td class="v">Jill</td> {* I can agree ~~ dsrev *}
+                    <td class="v">Jill</td>
                 </tr>
                 <tr>
                     <td class="e">Initial Helpdesk implementation</td>

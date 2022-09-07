@@ -3,4 +3,7 @@
 
 <a href="{$user->getURL()}"><b>{$user->getCanonicalName()}</b></a>
 {_nt_made_you_admin}
-<a href="{$club->getURL()}"><b>{$club->getCanonicalName()}</b></a> {$notification->getDateTime()}.
+<a href="{$club->getURL()}"><b>{$club->getCanonicalName()}</b></a>.
+<div class="nobold">
+    {$notification->getDateTime()}
+</div>

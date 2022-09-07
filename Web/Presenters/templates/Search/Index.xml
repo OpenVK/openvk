@@ -33,16 +33,17 @@
             {_groups}
         </a>
     </div>
+</div>
+<form class="header_search_inputbt">
+    <input name="type" type="hidden" value="{$type ?? 'users'}" />
+    <input name="query" class="header_search_input" placeholder="{_search_placeholder}" value="{$_GET['query'] ?? ''}" />
+    <button class="button_search">{_search_button}</button>
+</form>
 
-    <form class="header_search_inputbt">
-        <input name="type" type="hidden" value="{$type ?? 'users'}" />
-        <input name="query" class="header_search_input" placeholder="{_search_placeholder}" value="{$_GET['query'] ?? ''}" />
-        <button class="button_search">{_search_button}</button>
-    </form>
-
-    <p style="margin-left: 15px; margin-top: 0;">
-        <b>{tr("results", $count)}</b>
-    </p>
+<p style="margin-left: 15px; margin-top: 0;">
+    <b>{tr("results", $count)}</b>
+</p>
+<div>
 {/block}
 
 {block link|strip|stripHtml}
@@ -50,11 +51,15 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="{_"photo"}" />
+    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="{_photo}" />
 {/block}
 
 {block name}
     <text style="overflow: hidden;">&nbsp;{$x->getCanonicalName()}</text>
+    <img n:if="$x->isVerified()" 
+        class="name-checkmark"
+        src="/assets/packages/static/openvk/img/checkmark.png"
+    />
 {/block}
 
 {block description}
@@ -62,21 +67,21 @@
         <tbody>
             {if $type === "users"}
                 <tr>
-                    <td><span class="nobold">{_"gender"}: </span></td>
+                    <td><span class="nobold">{_gender}: </span></td>
                     <td>{$x->isFemale() ? tr("female") : tr("male")}</td>
                 </tr>
                 <tr>
-                    <td><span class="nobold">{_"relationship"}:</span></td>
-                    <td>{var $marialStatus = $x->getMaritalStatus()}{_"relationship_$marialStatus"}</td>
+                    <td><span class="nobold">{_relationship}:</span></td>
+                    <td>{$x->getLocalizedMaritalStatus()}</td>
                 </tr>
                 <tr>
-                    <td><span class="nobold">{_"registration_date"}: </span></td>
+                    <td><span class="nobold">{_registration_date}: </span></td>
                     <td>{$x->getRegistrationTime()}</td>
                 </tr>
             {/if}
             <tr>
                 <td>
-                    <span class="nobold">{_"description"}:</span>
+                    <span class="nobold">{_description}:</span>
                 </td>
                 <td>
                     {$x->getDescription() ?? '(' . tr("none") . ')'}

@@ -2,18 +2,11 @@
 namespace openvk\Web\Presenters;
 use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
-use openvk\Web\Models\Entities\Photo;
-use openvk\Web\Models\Repositories\Users;
-use openvk\Web\Models\Repositories\Clubs;
-use openvk\Web\Models\Repositories\Albums;
-use openvk\Web\Models\Repositories\Videos;
-use openvk\Web\Models\Repositories\Notes;
-use openvk\Web\Models\Repositories\Vouchers;
-use openvk\Web\Models\Repositories\EmailChangeVerifications;
+use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification};
+use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
+use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
-use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
-use openvk\Web\Models\Entities\EmailChangeVerification;
 use Chandler\Security\Authenticator;
 use lfkeitel\phptotp\{Base32, Totp};
 use chillerlan\QRCode\{QRCode, QROptions};
@@ -22,7 +15,8 @@ use Nette\Database\UniqueConstraintViolationException;
 final class UserPresenter extends OpenVKPresenter
 {
     private $users;
-    
+
+    public $deactivationTolerant = false;
     function __construct(Users $users)
     {
         $this->users = $users;
@@ -33,13 +27,15 @@ final class UserPresenter extends OpenVKPresenter
     function renderView(int $id): void
     {
         $user = $this->users->get($id);
-        if(!$user || $user->isDeleted())
-            $this->template->_template = "User/deleted.xml";
-        else {
-            if($user->getShortCode())
-                if(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH) !== "/" . $user->getShortCode())
-                    $this->redirect("/" . $user->getShortCode(), static::REDIRECT_TEMPORARY_PRESISTENT);
-            
+        if(!$user || $user->isDeleted()) {
+            if($user->isDeactivated()) {
+                $this->template->_template = "User/deactivated.xml";
+                
+                $this->template->user = $user;
+            } else {
+                $this->template->_template = "User/deleted.xml";
+            }
+        } else {
             $this->template->albums      = (new Albums)->getUserAlbums($user);
             $this->template->albumsCount = (new Albums)->getUserAlbumsCount($user);
             $this->template->videos      = (new Videos)->getByUser($user, 1, 2);
@@ -75,7 +71,7 @@ final class UserPresenter extends OpenVKPresenter
                 $name = $user->getFullName();
                 $this->flash("err", "Ошибка доступа", "Вы не можете просматривать полный список подписок $name.");
                 
-                $this->redirect("/id$id", static::REDIRECT_TEMPORARY_PRESISTENT);
+                $this->redirect($user->getURL());
             }
         }
     }
@@ -90,6 +86,9 @@ final class UserPresenter extends OpenVKPresenter
         elseif (!$user->getPrivacyPermission('groups.read', $this->user->identity ?? NULL))
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         else {
+            if($this->queryParam("act") === "managed" && $this->user->id !== $user->getId())
+                $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+
             $this->template->user = $user;
             $this->template->page = (int) ($this->queryParam("p") ?? 1);
             $this->template->admin = $this->queryParam("act") == "managed";
@@ -154,7 +153,10 @@ final class UserPresenter extends OpenVKPresenter
                 
 
                 if (strtotime($this->postParam("birthday")) < time())
-                $user->setBirthday(strtotime($this->postParam("birthday")));
+                $user->setBirthday(empty($this->postParam("birthday")) ? NULL : strtotime($this->postParam("birthday")));
+
+                if ($this->postParam("birthday_privacy") <= 1 && $this->postParam("birthday_privacy") >= 0)
+                $user->setBirthday_Privacy($this->postParam("birthday_privacy"));
 
                 if ($this->postParam("marialstatus") <= 8 && $this->postParam("marialstatus") >= 0)
                 $user->setMarital_Status($this->postParam("marialstatus"));
@@ -270,9 +272,7 @@ final class UserPresenter extends OpenVKPresenter
         
         $user->toggleSubscription($this->user->identity);
         
-        header("HTTP/1.1 302 Found");
-        header("Location: /id" . $user->getId());
-        exit;
+        $this->redirect($user->getURL());
     }
     
     function renderSetAvatar(): void
@@ -291,7 +291,11 @@ final class UserPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("error_upload_failed"));
         }
         
-        (new Albums)->getUserAvatarAlbum($this->user->identity)->addPhoto($photo);
+        $album = (new Albums)->getUserAvatarAlbum($this->user->identity);
+        $album->addPhoto($photo);
+        $album->setEdited(time());
+        $album->save();
+        
         $this->flashFail("succ", tr("photo_saved"), tr("photo_saved_comment"));
     }
     
@@ -449,11 +453,49 @@ final class UserPresenter extends OpenVKPresenter
 			$this->flash("succ", tr("changes_saved"), tr("changes_saved_comment"));
         }
         $this->template->mode = in_array($this->queryParam("act"), [
-            "main", "privacy", "finance", "finance.top-up", "interface"
+            "main", "security", "privacy", "finance", "finance.top-up", "interface"
         ]) ? $this->queryParam("act")
             : "main";
+
+        if($this->template->mode == "finance") {
+            $address = OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["address"];
+            $text    = str_replace("$1", (string) $this->user->identity->getId(), OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["hint"]);
+            $qrCode  = explode("base64,", (new QRCode(new QROptions([
+                "imageTransparent" => false
+            ])))->render("ton://transfer/$address?text=$text"));
+
+            $this->template->qrCodeType = substr($qrCode[0], 5);
+            $this->template->qrCodeData = $qrCode[1];
+        }
+        
         $this->template->user   = $user;
         $this->template->themes = Themepacks::i()->getThemeList();
+    }
+
+    function renderDeactivate(): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        $flags = 0;
+        $reason = $this->postParam("deactivate_reason");
+        $share = $this->postParam("deactivate_share");
+
+        if($share) {
+            $flags |= 0b00100000;
+
+            $post = new Post;
+            $post->setOwner($this->user->id);
+            $post->setWall($this->user->id);
+            $post->setCreated(time());
+            $post->setContent($reason);
+            $post->setFlags($flags);
+            $post->save();
+        }
+
+        $this->user->identity->deactivate($reason);
+
+        $this->redirect("/");
     }
 
     function renderTwoFactorAuthSettings(): void
@@ -536,7 +578,7 @@ final class UserPresenter extends OpenVKPresenter
             $this->user->identity->save();
         }
 
-        $this->redirect("/", static::REDIRECT_TEMPORARY_PRESISTENT);
+        $this->redirect("/");
     }
 
     function renderCoinsTransfer(): void

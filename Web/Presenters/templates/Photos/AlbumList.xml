@@ -2,7 +2,7 @@
 {var $iterator = iterator_to_array($albums)}
 {var $page     = $paginatorConf->page}
 
-{block title}{_"albums"} {$owner->getCanonicalName()}{/block}
+{block title}{_albums} {$owner->getCanonicalName()}{/block}
 
 {block header}
     {if isset($thisUser) && $thisUser->getId() == $owner->getId()}
@@ -59,6 +59,6 @@
 {block description}
     <span>{$x->getDescription() ?? $x->getName()}</span><br />
     <span style="color: grey;">{$x->getPhotosCount()} фотографий</span><br />
-    <span style="color: grey;">Обновлен {$x->getEditTime() ?? $x->getCreationTime()}</span><br />
-    <span style="color: grey;">Создан {$x->getCreationTime()}</span><br />
+    <span style="color: grey;">{tr("updated_at", $x->getEditTime() ?? $x->getCreationTime())}</span><br />
+    <span style="color: grey;">{_created} {$x->getCreationTime()}</span><br />
 {/block}

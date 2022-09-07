@@ -5,9 +5,9 @@
     <a href="{$album->getOwner()->getURL()}">{$album->getOwner()->getCanonicalName()}</a>
     » 
     {if $album->getOwner() instanceof openvk\Web\Models\Entities\Club}
-        <a href="/albums{$album->getOwner()->getId() * -1}">{_"albums"}</a>
+        <a href="/albums{$album->getOwner()->getId() * -1}">{_albums}</a>
     {else}
-        <a href="/albums{$album->getOwner()->getId()}">{_"albums"}</a>
+        <a href="/albums{$album->getOwner()->getId()}">{_albums}</a>
     {/if}
     » 
     {$album->getName()}
@@ -18,11 +18,11 @@
       <table cellspacing="6">
         <tbody>
           <tr>
-            <td width="120" valign="top"><span class="nobold">{_"name"}:</span></td>
+            <td width="120" valign="top"><span class="nobold">{_name}:</span></td>
             <td><input type="text" name="name" value="{$album->getName()}" /></td>
           </tr>
           <tr>
-            <td width="120" valign="top"><span class="nobold">{_"description"}:</span></td>
+            <td width="120" valign="top"><span class="nobold">{_description}:</span></td>
             <td>
                 <textarea style="margin: 0px; height: 50px; width: 159px; resize: none;" name="desc">{$album->getDescription()}</textarea>
             </td>
@@ -31,7 +31,7 @@
             <td width="120" valign="top"></td>
             <td>
                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" class="button" name="submit" value="{_'save'}" />
+                <input type="submit" class="button" name="submit" value="{_save}" />
             </td>
           </tr>
         </tbody>
@@ -39,6 +39,6 @@
     </form>
     <hr/>
     <center>
-        {_"you_can_also"} <a href="/album{$album->getOwner() instanceof openvk\Web\Models\Entities\Club ? '-' : ''}{$album->getOwner()->getId()}_{$album->getId()}/delete?hash={rawurlencode($csrfToken)}">{_"delete_album"}</a>.
+        {_you_can_also} <a href="/album{$album->getOwner() instanceof openvk\Web\Models\Entities\Club ? '-' : ''}{$album->getOwner()->getId()}_{$album->getId()}/delete?hash={rawurlencode($csrfToken)}">{_delete_album}</a>.
     </center>
 {/block}

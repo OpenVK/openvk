@@ -17,22 +17,22 @@
     <div n:if="!is_null($alert = $club->getAlert())" class="group-alert">{strpos($alert, "@") === 0 ? tr(substr($alert, 1)) : $alert}</div>
 
     <div class="content_title_expanded" onclick="hidePanel(this);">
-        {_"information"}
+        {_information}
     </div>
     
     <div class="page_info">
         <table class="ugc-table">
             <tbody>
                 <tr>
-                    <td><span class="nobold">{_"name_group"}:</span></td>
+                    <td><span class="nobold">{_name_group}:</span></td>
                     <td><b>{$club->getName()}</b></td>    
                 </tr>
                 <tr>
-                    <td><span class="nobold">{_"description"}:</span></td>
+                    <td><span class="nobold">{_description}:</span></td>
                     <td>{$club->getDescriptionHtml()|noescape}</td>
                 </tr>
                 <tr n:if="!is_null($club->getWebsite())">
-                    <td><span class="nobold">{_"website"}: </span></td>
+                    <td><span class="nobold">{_website}: </span></td>
                     <td>
                         <a href="{$club->getWebsite()}" rel="ugc" target="_blank">
                             {$club->getWebsite()}
@@ -78,7 +78,7 @@
             <div class="content_subtitle">
                 {tr("topics", $topicsCount)}
                 <div style="float: right;">
-                    <a href="/board{$club->getId()}">{_"all_title"}</a>
+                    <a href="/board{$club->getId()}">{_all_title}</a>
                 </div>
             </div>
             <div>
@@ -100,38 +100,38 @@
     </a>
     <div n:ifset="$thisUser" id="profile_links">
         {if $club->canBeModifiedBy($thisUser)}
-            <a href="/club{$club->getId()}/edit" id="profile_link">{_"edit_group"}</a>
+            <a href="/club{$club->getId()}/edit" id="profile_link">{_edit_group}</a>
         {/if}
         {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
-            <a href="/admin/clubs/id{$club->getId()}" id="profile_link">{_"manage_group_action"}</a>
+            <a href="/admin/clubs/id{$club->getId()}" id="profile_link">{_manage_group_action}</a>
         {/if}
         {if $club->getSubscriptionStatus($thisUser) == false}
             <form action="/setSub/club" method="post">
                 <input type="hidden" name="act" value="add" />
                 <input type="hidden" name="id"  value="{$club->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" id="profile_link" value="{_"join_community"}" />
+                <input type="submit" id="profile_link" value="{_join_community}" />
             </form>
         {else}
             <form action="/setSub/club" method="post">
                 <input type="hidden" name="act" value="rem" />
                 <input type="hidden" name="id"  value="{$club->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" id="profile_link" value="{_"leave_community"}" />
+                <input type="submit" id="profile_link" value="{_leave_community}" />
             </form>
         {/if}
     </div>
     <div>
         <div class="content_title_expanded" onclick="hidePanel(this);">
-            {_"group_type"}
+            {_group_type}
         </div>
         <div style="padding:4px">
-            {_"group_type_open"}
+            {_group_type_open}
         </div>
     </div>
     <div n:if="$club->getAdministratorsListDisplay() == 0">
         <div class="content_title_expanded" onclick="hidePanel(this);">
-            {_"creator"}
+            {_creator}
         </div>
         <div class="avatar-list-item" style="padding: 8px;">
             {var $author = $club->getOwner()}
@@ -154,13 +154,13 @@
         {var $managersCount = $club->getManagersCount(true)}
 
         <div class="content_title_expanded" onclick="hidePanel(this, {$managersCount});">
-            {_"administrators"}
+            {_administrators}
         </div>
         <div>
             <div class="content_subtitle">
                 {tr("administrators", $managersCount)}
                 <div style="float: right;">
-                    <a href="/club{$club->getId()}/followers?onlyAdmins=1">{_"all_title"}</a>
+                    <a href="/club{$club->getId()}/followers?onlyAdmins=1">{_all_title}</a>
                 </div>
             </div>
             <div class="avatar-list">
@@ -193,13 +193,13 @@
     </div>
     <div n:if="$albumsCount > 0 || ($thisUser && $club->canBeModifiedBy($thisUser))">
         <div class="content_title_expanded" onclick="hidePanel(this, {$albumsCount});">
-            {_"albums"}
+            {_albums}
         </div>
         <div>
             <div class="content_subtitle">
                 {tr("albums", $albumsCount)}
                 <div style="float:right;">
-                    <a href="/albums{$club->getId() * -1}">{_"all_title"}</a>
+                    <a href="/albums{$club->getId() * -1}">{_all_title}</a>
                 </div>
             </div>
             <div style="padding: 5px;">
@@ -227,7 +227,7 @@
             <div class="content_subtitle">
                 {tr("topics", $topicsCount)}
                 <div style="float: right;">
-                    <a href="/board{$club->getId()}">{_"all_title"}</a>
+                    <a href="/board{$club->getId()}">{_all_title}</a>
                 </div>
             </div>
             <div>

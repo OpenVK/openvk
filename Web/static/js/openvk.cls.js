@@ -55,6 +55,17 @@ function parseAjaxResponse(responseString) {
     }
 }
 
+function toggleMenu(id) {
+    if($(`#post-buttons${id} #wallAttachmentMenu`).is('.hidden')) {
+        $(`#post-buttons${id} #wallAttachmentMenu`).css({ opacity: 0 });
+        $(`#post-buttons${id} #wallAttachmentMenu`).toggleClass('hidden').fadeTo(250, 1);
+    } else {
+        $(`#post-buttons${id} #wallAttachmentMenu`).fadeTo(250, 0, function () {
+            $(this).toggleClass('hidden');
+        });
+    }
+}
+
 document.addEventListener("DOMContentLoaded", function() { //BEGIN
 
     u("#_photoDelete").on("click", function(e) {
@@ -295,6 +306,58 @@ function ovk_proc_strtr(string, length = 0) {
     return newString + (string !== newString ? "…" : "");
 }
 
+function showProfileDeactivateDialog(hash) {
+    MessageBox(tr("profile_deactivate"), `
+        <div class="messagebox-content-header">
+            ${tr("profile_deactivate_header")}
+        </div>
+        <form action="/settings/deactivate" method="post" id="profile_deactivate_dialog" style="margin-top: 30px">
+            <h4>${tr("profile_deactivate_reason_header")}</h4>
+            <table>
+                <tbody>
+                    <tr>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_r_1" data-text="${tr("profile_deactivate_reason_1_text")}"></td>
+                        <td><label for="deactivate_r_1">${tr("profile_deactivate_reason_1")}</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_r_2" data-text="${tr("profile_deactivate_reason_2_text")}"></td>
+                        <td><label for="deactivate_r_2">${tr("profile_deactivate_reason_2")}</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_r_3" data-text="${tr("profile_deactivate_reason_3_text")}"></td>
+                        <td><label for="deactivate_r_3">${tr("profile_deactivate_reason_3")}</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_r_4" data-text="${tr("profile_deactivate_reason_4_text")}"></td>
+                        <td><label for="deactivate_r_4">${tr("profile_deactivate_reason_4")}</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_r_5" data-text="${tr("profile_deactivate_reason_5_text")}"></td>
+                        <td><label for="deactivate_r_5">${tr("profile_deactivate_reason_5")}</label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="radio" name="deactivate_type" id="deactivate_r_6" data-text=""></td>
+                        <td><label for="deactivate_r_6">${tr("profile_deactivate_reason_6")}</label></td>
+                    </tr>
+                </tbody>
+            </table>
+            <textarea name="deactivate_reason" id="deactivate_reason" placeholder="${tr("gift_your_message")}"></textarea><br><br>
+            <input type="checkbox" name="deactivate_share" id="deactivate_share" checked>
+            <label for="deactivate_share">${tr("share_with_friends")}</label>
+            <input type="hidden" name="hash" value="${hash}" />
+        </form>
+    `, [tr("profile_deactivate_button"), tr("cancel")], [
+        () => {
+            $("#profile_deactivate_dialog").submit();
+        },
+        Function.noop
+    ]);
+
+    $('[id^="deactivate_r_"]').on("click", function () {
+        $('#deactivate_reason').val($(this).data("text"));
+    });
+}
+
 function showIncreaseRatingDialog(coinsCount, userUrl, hash) {
     MessageBox(tr("increase_rating"), `
         <div class="messagebox-content-header">
@@ -364,3 +427,15 @@ function showIncreaseRatingDialog(coinsCount, userUrl, hash) {
             document.querySelector("#rating_price").innerHTML = value + " " + tr("points_amount_other").replace("$1 ", "");
     };
 }
+
+$(document).on("scroll", () => {
+    if($(document).scrollTop() > $(".sidebar").height() + 50) {
+        $(".floating_sidebar")[0].classList.add("show");
+    } else if($(".floating_sidebar")[0].classList.contains("show")) {
+        $(".floating_sidebar")[0].classList.remove("show");
+        $(".floating_sidebar")[0].classList.add("hide_anim");
+        setTimeout(() => {
+            $(".floating_sidebar")[0].classList.remove("hide_anim");
+        }, 250);
+    }
+})

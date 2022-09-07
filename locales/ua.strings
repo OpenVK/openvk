@@ -1,5 +1,3 @@
-#include <ru>
-
 "__locale" = "uk_UA.utf8;Ukr";
 "__WinEncoding" = "Windows-1251";
 
@@ -9,6 +7,7 @@
 
 "home" = "Головна";
 "welcome" = "Ласкаво просимо";
+"to_top" = "Нагору";
 
 /* Login */
 
@@ -28,26 +27,35 @@
 "access_recovery" = "Відновлення доступу";
 "page_access_recovery" = "Відновити доступ до сторінки";
 "access_recovery_info" = "Забули пароль? Не хвилюйтеся, введіть ваші дані і ми відправимо вам email з інструкціями по відновленню аккаунта.";
-"access_recovery_info_2" = "Введіть ваш новий пароль. Всі поточні сеанси будуть припинені і токени доступу будуть анульовані.";
+"access_recovery_info_2" = "Введіть ваш новий пароль. Всі поточні сеанси будуть припинені, а токени доступу анульовані.";
 "reset_password" = "Скинути пароль";
 "2fa_code_2" = "Код двофакторної аутентифікації";
 
 "password_successfully_reset" = "Ваш пароль був успішно скинутий.";
 "password_reset_email_sent" = "Якщо ви зареєстровані, Ви отримаєте інструкції на email.";
 "password_reset_error" = "Непередбачена помилка при скиданні пароля.";
+"password_reset_rate_limit_error" = "Не можна часто надсилати запити на скидання паролю, вибачте.";
+
+"email_sent" = "Лист був успішно надісланий.";
+"email_sent_desc" = "Якщо ваша електронна адреса існує, ви отримаєте лист.";
+"email_error" = "Непередбачена помилка під час надсилання листа.";
 "password_reset_rate_limit_error" = "Не можна робити це так часто, вибачте.";
 
-"registration_disabled_info" = "Реєстрація відключена системним адміністратором. При можливостіпопросіть запрошення у вашого знайомого, якщо він зареєстрований на цьому сайті.";
-"registration_closed" = ".";
-"invites_you_to" = "<strong>$1</strong> запрошує вас в $2";
+"email_verify_success" = "Ваш Email був підтверджений. Приємного проведення часу!";
 
-"register_meta_desc" = "Зарегистрируйтесь в $1 прямо сейчас!";
-"register_referer_meta_title" = "$1 запрошує вас в $2!";
-"register_referer_meta_desc" = "Приєднуйтесь до $1 і безлічі інших користувачів у $2!";
+"registration_disabled_info" = "Реєстрація відключена системним адміністратором. При можливості попросіть запрошення у вашого знайомого, якщо він зареєстрований на цьому сайті.";
+"registration_closed" = "Реєстрація відключена.";
+"invites_you_to" = "<strong>$1</strong> запрошує вас до $2";
+
+"register_meta_desc" = "Зареєструйтесь у $1 прямо зараз!";
+"register_referer_meta_title" = "$1 запрошує вас у $2!";
+"register_referer_meta_desc" = "Приєднуйтесь до $1 та багатьох інших користувачів у $2!";
+
+"users" = "Користувачі";
 
 /* Profile information */
 
-"select_language" = "Вибрати мову";
+"select_language" = "Обрати мову";
 "edit" = "Редагувати";
 "birth_date" = "День нарождення";
 "registration_date" = "Дата реєстрації";
@@ -59,11 +67,12 @@
 "name" = "Ім’я";
 "surname" = "Прізвище";
 "gender" = "Стать";
-"male" = "чоловіча";
-"female" = "жіноча";
+"male" = "Чоловіча";
+"female" = "Жіноча";
 "description" = "Опис";
 "save" = "Зберегти";
 "main_information" = "Основна інформація";
+"additional_information" = "Додаткова інформація";
 "nickname" = "Нікнейм";
 "online" = "Онлайн";
 "was_online" = "був у мережі";
@@ -83,9 +92,12 @@
 "years_many" = "$1 років";
 "years_other" = "$1 років";
 
+"show_my_birthday" = "Показувати дату народження";
+"show_only_month_and_day" = "Показувати лише день та місяць";
+
 "relationship" = "Сімейний стан";
 
-"relationship_0" = "Не вибрано";
+"relationship_0" = "Не зазначені";
 "relationship_1" = "Не одружений";
 "relationship_2" = "Зустрічаюсь";
 "relationship_3" = "Заручений";
@@ -94,6 +106,11 @@
 "relationship_6" = "Закоханий";
 "relationship_7" = "Все складно";
 "relationship_8" = "В активному пошуку";
+
+"relationship_1_fem" = "Неодружена";
+"relationship_3_fem" = "Заручена";
+"relationship_4_fem" = "Одружена";
+"relationship_6_fem" = "Закохана";
 
 "politViews" = "Політ. погляди";
 
@@ -129,6 +146,9 @@
 
 "updated_at" = "Оновлено $1";
 
+"user_banned" = "На жаль, нам довелося заблокувати сторінку користувача <b>$1</b>.";
+"user_banned_comment" = "Коментар модератора:";
+
 /* Wall */
 
 "feed" = "Новини";
@@ -136,6 +156,10 @@
 "post_writes_m" = "написав";
 "post_writes_f" = "написала";
 "post_writes_g" = "опублікували";
+"post_deact_m" = "видалив сторінку зі словами:";
+"post_deact_f" = "видалила сторінку зі словами:";
+"post_deact_silent_m" = "мовчки видалив свою сторінку.";
+"post_deact_silent_f" = "мовчки видалила свою сторінку.";
 "wall" = "Стіна";
 "post" = "Запис";
 "write" = "Написати";
@@ -160,6 +184,7 @@
 
 "no_comments" = "Коментарі відсутні";
 
+"my_news" = "Мої новини";
 "all_news" = "Усі новини";
 "posts_per_page" = "Кількість записів на сторінці";
 
@@ -170,15 +195,21 @@
 "contains_nsfw" = "Містить NSFW-контент";
 "nsfw_warning" = "Даний запис може містити контент 18+";
 "report" = "Поскаржитися";
+"attach" = "Прикріпити";
 "attach_photo" = "Прикріпити фото";
+"attach_photo" = "Прикріпити відео";
+"draw_graffiti" = "Намалювати графіті";
 "no_posts_abstract" = "Тут ніхто нічого не написав... Поки.";
 "attach_no_longer_available" = "Це вкладення більше недоступне.";
 "open_post" = "Відкрити запис";
 "version_incompatibility" = "Не вдалося відобразити це вкладення. Можливо, база даних несумісна з поточною версією OpenVK.";
 
+"graffiti" = "Графіті";
+
+"reply" = "Відповісти";
+
 /* Friends */
 
-"friends" = "Друзі";
 "followers" = "Підписники";
 "follower" = "Підписник";
 "friends_add" = "Додати в друзі";
@@ -188,13 +219,33 @@
 "send_message" = "Відправити повідомлення";
 "incoming_req" = "Підписники";
 "outcoming_req" = "Заявки";
+"friends_online" = "Друзі онлайн";
+"all_friends" = "Усі друзі"; 
 "req" = "Заявки";
+
+"req_zero" = "Не знайдено жодної заявки...";
+"req_one" = "Знайдена $1 заявка";
+"req_few" = "Знайдено $1 заявки";
+"req_many" = "Знайдено $1 заявки";
+"req_other" = "Знайдено $1 заявок";
 
 "friends_zero" = "Жодного друга";
 "friends_one" = "$1 друг";
 "friends_few" = "$1 друга";
 "friends_many" = "$1 друзів";
 "friends_other" = "$1 друзів";
+
+"friends_list_zero" = "У вас поки немає друзів";
+"friends_list_one" = "У Вас $1 друг";
+"friends_list_few" = "У Вас $1 друг";
+"friends_many" = "$1 друзів";
+"friends_other" = "$1 друзів";
+
+"friends_online_zero" = "Жодного друга онлайн";
+"friends_online_one" = "$1 друг онлайн";
+"friends_online_few" = "$1 друга онлайн";
+"friends_online_many" = "$1 друзів онлайн";
+"friends_online_other" = "$1 друзів онлайн";
 
 "followers_zero" = "Жодного підписника";
 "followers_one" = "$1 підписник";
@@ -208,6 +259,12 @@
 "subscriptions_many" = "$1 підписок";
 "subscriptions_other" = "$1 підписок";
 
+"friends_list_online_zero" = "У Вас поки немає друзів, що в онлайн";
+"friends_list_online_one" = "У Вас $1 друг онлайн";
+"friends_list_online_few" = "У Вас $1 друга онлайн";
+"friends_list_online_many" = "У Вас $1 друзів онлайн";
+"friends_list_online_other" = "У Вас $1 друзів онлайн";
+
 /* Group */
 
 "name_group" = "Назва";
@@ -216,6 +273,7 @@
 "subscriptions" = "Підписки";
 "join_community" = "Вступити в групу";
 "leave_community" = "Вийти з групи";
+"check_community" = "Перегляд групи";
 "min_6_community" = "Назва повинна містити не менше 6 символів";
 "participants" = "Учасники";
 "groups" = "Групи";
@@ -233,6 +291,7 @@
 "only_administrators" = "Тільки адміністратори";
 "website" = "Сайт";
 "managed" = "Керовані";
+"size" = "Розмір";
 
 "administrators_one" = "$1 адміністратор";
 "administrators_few" = "$1 адміністратора";
@@ -241,16 +300,22 @@
 "role" = "Роль";
 "administrator" = "Адміністратор";
 "promote_to_admin" = "Підвищити до адміністратора";
+"promote_to_owner" = "Призначити власником";
 "devote" = "Розжалувати";
 "set_comment" = "Змінити коментар";
 "hidden_yes" = "Прихований: Так";
 "hidden_no" = "Прихований: Ні";
 "group_allow_post_for_everyone" = "Дозволити публікувати записи всім";
+"group_hide_from_global_feed" = "Не відображати публікації у глобальній стрічці";
 "statistics" = "Статистика";
 "group_administrators_list" = "Список адмінів";
 "group_display_only_creator" = "Відображати лише автора групи";
 "group_display_all_administrators" = "Відображати всіх адміністраторів";
 "group_dont_display_administrators_list" = "Нічого не відображати";
+
+"group_changeowner_modal_title" = "Передача прав власника";
+"group_changeowner_modal_text" = "Увага! Ви передаєте права власника користувачу $1. Ця дія необоротна. Після передачі ви залишитеся адміністратором, але зможете легко перестати ним бути.";
+"group_owner_setted" = "Новий власник ($1) успішно призначений для спільноти $2. Вам видано права адміністратора у спільноті. Якщо Ви хочете повернути роль власника, зверніться до <a href='/support?act=new'>технічної підтримки сайту</a>.";
 
 "participants_zero" = "Жодного учасника";
 "participants_one" = "Один учасник";
@@ -264,11 +329,21 @@
 "groups_many" = "$1 груп";
 "groups_other" = "$1 груп";
 
+"groups_list_zero" = "Ви не перебуваєте в жодній групі";
+"groups_list_one" = "Ви перебуваєте в одній групі";
+"groups_list_other" = "Ви перебуваєте в $1 групах";
+
 "meetings_zero" = "Жодної зустрічі";
 "meetings_one" = "Одна зустріч";
 "meetings_few" = "$1 зустріч";
 "meetings_many" = "$1 зустрічів";
 "meetings_other" = "$1 зустрічів";
+
+"open_new_group" = "Створити нову групу";
+"open_group_desc" = "Не можете знайти потрібну групу? Відкрийте свою...";
+"search_group" = "Пошук групи";
+"search_by_groups" = "Пошук за групами";
+"search_group_desc" = "Тут Ви можете переглянути існуючи групи та обрати групу до вподоби.";
 
 /* Albums */
 
@@ -292,6 +367,12 @@
 "albums_many" = "$1 альбомів";
 "albums_other" = "$1 альбомів";
 
+"albums_list_zero" = "У Вас немає жодного альбому";
+"albums_list_one" = "У Вас є один альбом";
+"albums_list_few" = "У Вас $1 альбому";
+"albums_list_many" = "У Вас $1 альбомів";
+"albums_list_other" = "У Вас $1 альбомів";
+
 /* Notes */
 
 "notes" = "Нотатки";
@@ -299,13 +380,27 @@
 "name_note" = "Назва";
 "text_note" = "Вміст";
 "create_note" = "Створити нотатку";
+"edit_note" = "Редагувати нотатку";
 "actions" = "Дії";
+"notes_start_screen" = "За допомогою нотаток Ви можете ділитися подіями з життя з друзями, а також бути в курсі того, що відбувається у них.";
+"note_preview" = "Попередній перегляд";
+"note_preview_warn" = "Увага: Це всього лише попередній перегляд";
+"note_preview_warn_details" = "Після збереження, нотатки можуть мати інший вигляд. Також не викликайте перегляд занадто часто.";
+"note_preview_empty_err" = "Попередній перегляд неможливий: Немає імені чи змісту.";
+
+"edited" = "Відредаговано";
 
 "notes_zero" = "Жодної нотатки";
 "notes_one" = "Одна нотатка";
 "notes_few" = "$1 нотатки";
 "notes_many" = "$1 нотаток";
 "notes_other" = "$1 нотаток";
+
+"notes_list_zero" = "Не знайдено жодної нотатки";
+"notes_list_one" = "Знайдено одну нотатку";
+"notes_list_few" = "Знайдено $1 нотатки";
+"notes_list_many" = "Знайдено $1 нотаток";
+"notes_list_other" = "Знайдено $1 нотаток";
 
 /* Menus */
 
@@ -326,6 +421,9 @@
 "menu_registration" = "Реєстрація";
 "menu_help" = "Допомога";
 
+"menu_logout" = "Вийти";
+"menu_support" = "Підтримка";
+
 "header_home" = "головна";
 "header_groups" = "групи";
 "header_people" = "люди";
@@ -339,19 +437,21 @@
 
 "left_menu_donate" = "Підтримати";
 
+"footer_about_instance" = "про інстанцію";
 "footer_blog" = "блог";
 "footer_help" = "допомога";
 "footer_developers" = "розробникам";
-"footer_choose_language" = "вибрати мову";
+"footer_choose_language" = "обрати мову";
 "footer_privacy" = "приватність";
 
 /* Settings */
 
-"main" = "Основе";
+"main" = "Основне";
 "contacts" = "Контакти";
 "avatar" = "Аватар";
 "privacy" = "Приватність";
 "interface" = "Зовнішній вид";
+"security" = "Безпека";
 
 "profile_picture" = "Зображення сторінки";
 
@@ -365,13 +465,18 @@
 "avatars_style" = "Відображення аватарів";
 "style" = "Стиль";
 
-"default" = "За замовчанням";
-"cut" = "Обрізка";
-"round_avatars" = "Круглий аватар";
+"default" = "за замовчуванням";
+
+"arbitrary_avatars" = "Довільні";
+"cut" = "Квадратні";
+"round avatars" = "Круглі";
+
+"apply_style_for_this_device" = "Застосувати стиль лише для цього пристрою";
 
 "search_for_groups" = "Пошук груп";
 "search_for_people" = "Пошук людей";
 "search_button" = "Знайти";
+"search_placeholder" = "Почніть вводити будь-яке ім'я, назву чи слово";
 "results_zero" = "Жодного результату";
 "results_one" = "Один результат";
 "results_few" = "$1 результата";
@@ -387,19 +492,22 @@
 "privacy_setting_see_friends" = "Кому видно моїх друзів";
 "privacy_setting_add_to_friends" = "Хто може називати мене другом";
 "privacy_setting_write_wall" = "Хто може писати у мене на стіні";
+"privacy_setting_write_messages" = "Хто може писати мені повідомлення";
 "privacy_value_anybody" = "Всі бажаючі";
 "privacy_value_anybody_dative" = "Всім бажаючим";
 "privacy_value_users" = "Користувачам OpenVK";
 "privacy_value_friends" = "Друзі";
 "privacy_value_friends_dative" = "Друзям";
-"privacy_value_only_me_and_super_capite" = "Я і Володимир Зеленський";
-"privacy_value_only_me_and_super_capite_dative" = "Мені і Володимиру Зеленському";
-"privacy_value_super_capite" = "Володимиру Зеленському";
+"privacy_value_only_me" = "Тільки я";
+"privacy_value_only_me_dative" = "Тільки мені";
+"privacy_value_nobody" = "Ніхто";
 
 "your_email_address" = "Адрес Вашої електронної пошти";
 "your_page_address" = "Адрес Вашої сторінки";
 "page_address" = "Адрес сторінки";
 "current_email_address" = "Поточний адрес";
+"new_email_address" = "Нова адреса";
+"save_email_address" = "Зберегти адресу";
 "page_id" = "ID сторінки";
 "you_can_also" = "Ви також можете";
 "delete_your_page" = "видалити свою сторінку";
@@ -410,16 +518,59 @@
 "ui_settings_rating" = "Рейтинг";
 "ui_settings_rating_show" = "Показувати";
 "ui_settings_rating_hide" = "Приховувати";
+"ui_settings_nsfw_content" = "NSFW-контент";
+"ui_settings_nsfw_content_dont_show" = "Не показувати у глобальній стрічці";
+"ui_settings_nsfw_content_blur" = "Тільки замазувати";
+"ui_settings_nsfw_content_show" = "Показувати";
+"ui_settings_view_of_posts" = "Вигляд постів";
+"ui_settings_view_of_posts_old" = "Старий";
+"ui_settings_view_of_posts_microblog" = "Мікроблог";
+"ui_settings_main_page" = "Головна сторінка";
+"ui_settings_sessions" = "Сеанси";
 
-"two_factor_authentication" = "Двофакторна аутентифікація";
+"additional_links" = "Додаткові посилання";
+"ad_poster" = "Рекламний плакат";
+
+"email_change_confirm_message" = "Щоб зміни набули чинності, підтвердьте вашу нову адресу електронної пошти. Ми надіслали інструкції на нього.";
+
+"profile_deactivate" = "Видалення сторінки";
+"profile_deactivate_button" = "Видалити сторінку";
+"profile_deactivate_header" = "Ми шкодуємо, що Ви бажаєте видалити свою сторінку. Тому, Ви можете вказати причину видалення та Ваше повідомлення з цього приводу. Ми читаємо Ваші відгуки та намагаємося зробити сайт кращим!";
+"profile_deactivate_reason_header" = "Будь ласка, вкажіть причину видалення Вашої сторінки";
+"profile_deactivate_reason_1" = "У мене є інший обліковий запис на сайті";
+"profile_deactivate_reason_1_text" = "Я створив нову сторінку, і тепер хочу стерти своє минуле.";
+"profile_deactivate_reason_2" = "Сайт забирає в мене надто багато часу";
+"profile_deactivate_reason_2_text" = "Нехай цей сайт хороший і прекрасний, але він забирає у мене час, який мені потрібний для роботи та життя.";
+"profile_deactivate_reason_3" = "Сайт містить дуже багато неприйнятних матеріалів";
+"profile_deactivate_reason_3_text" = "Я знайшов достатньо порнографії та піратського контенту – вистачить на все життя. Тепер я йду.";
+"profile_deactivate_reason_4" = "Мене турбує безпека моїх даних";
+"profile_deactivate_reason_4_text" = "За мною стежать і мені страшно тут. Я мушу піти.";
+"profile_deactivate_reason_5" = "Мою сторінку не коментують";
+"profile_deactivate_reason_5_text" = "Мене ніхто не дивиться тут, і це сумно. Ви пошкодуєте, що я пішов!";
+"profile_deactivate_reason_6" = "Інша причина";
+
+"profile_deactivated_msg" = "Ваша сторінка <b>видалена</b>.<br/><br/>Якщо Ви захочете знову почати користуватися сайтом, Ви можете <a href='/settings/reactivate'>відновити свою сторінку</a> до $1.";
+"profile_deactivated_status" = "Сторінка видалена";
+"profile_deactivated_info" = "Сторінку користувача видалено.<br/>Подробиці недоступні.";
+
+"share_with_friends" = "Розповісти друзям";
+
+"end_all_sessions" = "Завершити всі сеанси";
+"end_all_sessions_description" = "Якщо ви хочете вийти з $1 на всіх пристроях, натисніть кнопку нижче";
+
+"end_all_sessions_done" = "<b>Усі</b> сеанси було завершено";
+
+/* Two-factor authentication */
+
+"two_factor_authentication" = "Двофакторна автентифікація";
 "two_factor_authentication_disabled" = "Забезпечує надійний захист від злому: для входу на сторінку необхідно ввести код, отриманий в додатку 2FA.";
-"two_factor_authentication_enabled" = "Двофакторна аутентифікація увімкнена. Ваша сторінка захищена.";
-"two_factor_authentication_login" = "У вас увімкнена двофакторна аутентифікація. Для входу введіть код отриманий в додатку.";
+"two_factor_authentication_enabled" = "Двофакторна автентифікація увімкнена. Ваша сторінка захищена.";
+"two_factor_authentication_login" = "У вас увімкнена двофакторна автентифікація. Для входу введіть код отриманий в додатку.";
 
-"two_factor_authentication_settings_1" = "Двофакторну аутентифікацію через TOTP можна використовувати навіть без Інтернету. Для цього вам знадобиться додаток для генерації кодів. Наприклад, Google Authenticator </b> для Android і iOS або вільні<b>Aegis І and OTP </b> для Android. Переконайтеся, що на телефоні точно встановлена дата і час.";
-"two_factor_authentication_settings_2" = "Використовуючи додаток для двофакторної аутентифікації, відскануйте наведений нижче QR-код:";
+"two_factor_authentication_settings_1" = "Двофакторну автентифікацію через TOTP можна використовувати навіть без інтернету. Для цього вам знадобиться застосунок для генерації кодів, наприклад Google Authenticator для Android та iOS або відкриті <b>Aegis Authenticator чи andOTP</b> для Android. Важливо: на пристрої має бути точна дата та час.";
+"two_factor_authentication_settings_2" = "Використовуючи застосунок для двофакторної автентифікації, відскануйте наведений нижче QR-код:";
 "two_factor_authentication_settings_3" = "або вручну введіть секретний ключ: <b>$1</b>.";
-"two_factor_authentication_settings_4" = "Тепер введіть код, який вам надав додаток, і пароль від вашої сторінки, щоб ми могли підтвердити, що ви дійсно ви.";
+"two_factor_authentication_settings_4" = "Тепер введіть код, який вам надав застосунок, і пароль від вашої сторінки, щоб ми могли підтвердити, що ви дійсно ви.";
 
 "connect" = "Підключити";
 "enable" = "Включити";
@@ -427,16 +578,16 @@
 "code" = "Код";
 "2fa_code" = "Код 2FA";
 
-"incorrect_password" = "Неправильний пароль";
-"incorrect_code" = "Неправильний код";
-"incorrect_2fa_code" = "Неправильний код двофакторної аутентифікації";
-"two_factor_authentication_enabled_message" = "Двофакторна аутентифікація увімкнена";
+"incorrect_password" = "Хибний пароль";
+"incorrect_code" = "Хибний код";
+"incorrect_2fa_code" = "Хибний код двофакторної автентифікації";
+"two_factor_authentication_enabled_message" = "Двофакторна автентифікація увімкнена";
 "two_factor_authentication_enabled_message_description" = "Вашу сторінку стало важче зламати. Рекомендуємо вам завантажити <a href='javascript:viewBackupCodes()'>резервні коди</a>";
-"two_factor_authentication_disabled_message" = "Двофакторна аутентифікація вимкнена";
+"two_factor_authentication_disabled_message" = "Двофакторна автентифікація вимкнена";
 
 "view_backup_codes" = "Переглянути резервні коди";
 "backup_codes" = "Резервні коди для підтвердження входу";
-"two_factor_authentication_backup_codes_1" = "Резервні коди дозволяють підтверджувати вхід, коли у вас немає доступу до телефону, наприклад, в подорожі.";
+"two_factor_authentication_backup_codes_1" = "Резервні коди дозволяють підтверджувати вхід, коли у вас немає доступу до телефону, наприклад, у подорожі.";
 "two_factor_authentication_backup_codes_2" = "У вас є ще <b>10 кодів</b>, кожним кодом можна скористатися тільки один раз. Роздрукуйте їх, приберіть в надійне місце і використовуйте, коли будуть потрібні коди для підтвердження входу.";
 "two_factor_authentication_backup_codes_3" = "Ви можете отримати нові коди, якщо вони закінчуються. Дійсні тільки останні створені резервні коди.";
 
@@ -453,7 +604,7 @@
 "upload_video" = "Завантажити відео";
 "video_uploaded" = "Завантажено";
 "video_updated" = "Оновлено";
-"video_link_to_yt" = "Посилання на YT";
+"video_link_to_yt" = "Посилання на YouTube";
 
 "info_name" = "Назва";
 "info_description" = "Опис";
@@ -465,6 +616,8 @@
 "videos_few" = "$1 відеозаписи";
 "videos_many" = "$1 відеозаписів";
 "videos_other" = "$1 відеозаписів";
+
+"view_video" = "Перегляд";
 
 /* Notifications */
 
@@ -495,12 +648,13 @@
 "nt_post_instrumental" = "постом";
 "nt_note_instrumental" = "нотаткою";
 "nt_photo_instrumental" = "фотографією";
+"nt_topic_instrumental" = "темою";
 
 /* Time */
 
 "time_at_sp" = " в ";
 "time_just_now" = "щойно";
-"time_exactly_five_minutes_ago" = "рівно 5 хвилин тому";
+"time_exactly_five_minutes_ago" = "5 хвилин тому";
 "time_minutes_ago" = "$1 хвилину тому";
 "time_today" = "сьогодні";
 "time_yesterday" = "вчора";
@@ -508,6 +662,8 @@
 "points" = "Голоси";
 "points_count" = "голосів";
 "on_your_account" = "на вашому рахунку";
+"top_up_your_account" = "Поповнити баланс";
+"you_still_have_x_points" = "У Вас <b>$1</b> голосів.";
 
 "vouchers" = "Ваучери";
 "have_voucher" = "Є ваучер";
@@ -524,6 +680,53 @@
 "usages_total" = "Кількість використань";
 "usages_left" = "Залишилося використань";
 
+"points_transfer_dialog_header_1" = "Ви можете надіслати в подарунок або передати частину голосів іншій людині.";
+"points_transfer_dialog_header_2" = "Ваш поточний баланс:";
+
+"points_amount_one" = "1 голос";
+"points_amount_few" = "$1 голос";
+"points_amount_many" = "$1 голосів";
+"points_amount_other" = "$1 голосів";
+
+"transfer_poins" = "Передача голосів";
+"transfer_poins_button" = "Передати голоси";
+"also_you_can_transfer_points" = "Також ви можете <a href=\"javascript:showCoinsTransferDialog($1, '$2')\">передати голоси</a> іншій людині.";
+
+"transferred_to_you" = "передав вам";
+
+"transfer_trough_ton" = "Поповнити через TON";
+"transfer_ton_contents" = "Ви можете поповнити ваш баланс за допомогою криптовалюти TON. Достатньо просканувати QR-code програмою Tonkeeper, або вручну відправити TON за реквізитами. Протягом кількох хвилин вам прийде певна кількість голосів.";
+"transfer_ton_address" = "<b>Адреса гаманця:</b> $1<br/><b>Зміст повідомлення:</b> $2";
+"transfer_ton_currency_per_ton" = "$1 TON";
+
+"receiver_address" = "Адреса одержувача";
+"coins_count" = "Кількість голосів";
+"message" = "Повідомлення";
+
+"failed_to_tranfer_points" = "Не вдалося передати голоси";
+
+"points_transfer_successful" = "Ви успішно передали <b>$1 <a href=\"$2\">$3</a></b>.";
+"not_all_information_has_been_entered" = "Введено не всю інформацію.";
+"negative_transfer_value" = "Значення не може бути від'ємним.";
+"message_is_too_long" = "Повідомлення надто довге.";
+"receiver_not_found" = "Одержувача не знайдено.";
+"you_dont_have_enough_points" = "У вас недостатньо голосів.";
+
+"increase_rating" = "Підвищити рейтинг";
+"increase_rating_button" = "Підвищити";
+"to_whom" = "Кому";
+"increase_by" = "Підвищити на";
+"price" = "Ціна";
+
+"you_have_unused_votes" = "У вас $1 невикористаних голосів на балансі.";
+"apply_voucher" = "Застосувати ваучер";
+
+"failed_to_increase_rating" = "Не вдалося підвищити рейтинг";
+"rating_increase_successful" = "Ви підвищили рейтинг <b><a href=\"$1\">$2</a></b> на <b>$3%</b>.";
+"negative_rating_value" = "Значення не може бути від'ємним.";
+
+"increased_your_rating_by" = "підвищив ваш рейтинг на";
+
 /* Gifts */
 
 "gift" = "Подарунок";
@@ -533,86 +736,254 @@
 "gifts_few" = "$1 подарунка";
 "gifts_many" = "$1 подарунків";
 "gifts_other" = "$1 подарунків";
-"gifts_left" = "Подарунків залишилося: $1";
-"gifts_left_one" = "Один подарунок залишився";
-"gifts_left_few" = "$1 подарунка залишилося";
-"gifts_left_many" = "$1 подарунків залишилося";
-"gifts_left_other" = "$1 подарунків залишилося";
+"gifts_left" = "Подарунок залишилося: $1";
+"gifts_left_one" = "Залишився один подарунок";
+"gifts_left_few" = "Залишилося $1 подарунка";
+"gifts_left_many" = "Залишилося $1 подарунків";
+"gifts_left_other" = "Залишилося $1 подарунків";
 
 "send_gift" = "Відправити подарунок";
 
-"gift_select" = "Вибрати подарунок";
+"gift_select" = "Обрати подарунок";
 "collections" = "Колекції";
-"confirm" = "Підтверждення";
+"confirm" = "Підтвердження";
 "as_anonymous" = "Анонімно";
 "gift_your_message" = "Ваше повідомлення";
 
 "free_gift" = "Безкоштовно";
-"coins" = "Голоса";
+"coins" = "Голоси";
 "coins_zero" = "0 голосів";
 "coins_one" = "Один голос";
-"coins_few" = "$1 голоса";
+"coins_few" = "$1 голос";
 "coins_many" = "$1 голосів";
 "coins_other" = "$1 голосів";
 
 "users_gifts" = "Подарунки";
 
+/* Apps */
+"app" = "Застосунок";
+"apps" = "Застосунки";
+"my_apps" = "Мої Застосунки";
+"all_apps" = "Всі застосунки";
+"installed_apps" = "Мої застосунки";
+"own_apps" = "Керування";
+"own_apps_alternate" = "Мої застосунки";
+
+"app_play" = "запустити";
+"app_uninstall" = "вимкнути";
+"app_edit" = "редагувати";
+"app_dev" = "Розробник";
+
+"create_app" = "Створити застосунок";
+"edit_app" = "Редагувати застосунок";
+"new_app" = "Новий застосунок";
+"app_news" = "Нотатка з новинами";
+"app_state" = "Стан";
+"app_enabled" = "Увімкнено";
+"app_creation_hint_url" = "Вкажіть в URL точну адресу разом зі схемою (https), портом (80) та потрібними параметрами запиту.";
+"app_creation_hint_iframe" = "Ваш застосунок буде відкритий в iframe.";
+"app_balance" = "На рахунку вашого застосунку <b>$1</b> голосів.";
+"app_users" = "Вашим застосунком користуються <b>$1</b> користувачів.";
+"app_withdrawal" = "Виведення коштів";
+"app_withdrawal_q" = "вивести?";
+"app_withdrawal_empty" = "Не вдалося вивести: Значення не може бути пустим";
+"app_withdrawal_created" = "Заявку на виведення $1 голосів було створено. Чекайте на зарахування.";
+
+"appjs_payment" = "Оплата покупки";
+"appjs_payment_intro" = "Ви збираєтеся сплатити замовлення в застосунку";
+"appjs_order_items" = "Деталі замовлення";
+"appjs_payment_total" = "Підсумкова сума до оплати";
+"appjs_payment_confirm" = "Сплатити";
+"appjs_err_funds" = "Не вдалося сплатити покупку: недостатньо коштів.";
+
+"appjs_wall_post" = "Опублікувати пост";
+"appjs_wall_post_desc" = "хоче опублікувати на вашій стіні пост";
+
+"appjs_sperm_friends" = "вашим Друзям";
+"appjs_sperm_friends_desc" = "додавати користувачів у друзі та читати ваш список друзів";
+"appjs_sperm_wall" = "вашій Стіні";
+"appjs_sperm_wall_desc" = "дивитися ваші новини, вашу стіну та створювати на ній пости";
+"appjs_sperm_messages" = "вашим повідомленням";
+"appjs_sperm_messages_desc" = "читати та писати від вашого імені повідомлення";
+"appjs_sperm_groups" = "вашим Спільнотам";
+"appjs_sperm_groups_desc" = "дивитися список ваших груп та підписувати вас на інші";
+"appjs_sperm_likes" = "функціоналу Лайків";
+"appjs_sperm_likes_desc" = "ставити та прибирати позначки \"мені подобається\" із записів";
+
+"appjs_sperm_request" = "Запит доступу";
+"appjs_sperm_requests" = "запитує доступ до";
+"appjs_sperm_can" = "Застосунок зможе";
+"appjs_sperm_allow" = "Дозволити";
+"appjs_sperm_disallow" = "Відхилити";
+
+"app_uninstalled" = "Застосунок вимкнено";
+"app_uninstalled_desc" = "Він не зможе виконувати дії від вашого імені.";
+"app_err_not_found" = "Застосунок не знайдено";
+"app_err_not_found_desc" = "Неправильний ідентифікатор або застосунок вимкнено.";
+"app_err_forbidden_desc" = "Цей застосунок не ваш.";
+"app_err_url" = "Некоректна адреса";
+"app_err_url_desc" = "Адреса застосунку не пройшла перевірку, переконайтеся, що вона вказана правильно.";
+"app_err_ava" = "Не вдалося завантажити аватарку";
+"app_err_ava_desc" = "Аватарка занадто велика чи крива: помилка загального характеру №$res.";
+"app_err_note" = "Не вдалося прикріпити замітку новин";
+"app_err_note_desc" = "Переконайтеся, що посилання правильне і нотатка належить вам.";
+
 /* Support */
 
 "support_opened" = "Відкриті";
 "support_answered" = "З відповіддю";
-"support_closed" = "Закриті";
+"support_closed" = "Зачинені";
 "support_ticket" = "Звернення";
 "support_tickets" = "Звернення";
 "support_status_0" = "Питання на розгляді";
 "support_status_1" = "Є відповідь";
-"support_status_2" = "Закрито";
-"support_greeting_hi" = "Вітаю, $1!";
+"support_status_2" = "Зачинено";
+"support_greeting_hi" = "Вітаємо, $1!";
 "support_greeting_regards" = "З повагою,<br/>команда підтримки $1.";
 
-"support_faq" = "ЧаПи";
+"support_faq" = "Запитання, що часто ставляться";
 "support_list" = "Список звернень";
 "support_new" = "Нове звернення";
 
-"support_faq_title" = "Для кого цей сайт?";
-"support_faq_content" = "Сайт призначений для пошуку друзів і знайомих, а також для перегляду даних користувачів. Це як довідник міста, за допомогою якого люди можуть швидко знайти актуальну інформацію про людину.";
-
 "support_new_title" = "Введіть тему вашого звернення";
-"support_new_content" = "Опишіть проблему або пропозицію";
+"support_new_content" = "Опишіть проблему чи пропозицію";
+
+"support_rate_good_answer" = "Це хороша відповідь";
+"support_rate_bad_answer" = "Це погана відповідь";
+"support_good_answer_user" = "Ви залишили позитивний відгук.";
+"support_bad_answer_user" = "Ви залишили негативний відгук.";
+"support_good_answer_agent" = "Користувач залишив позитивний відгук";
+"support_bad_answer_agent" = "Користувач залишив негативний відгук";
+"support_rated_good" = "Ви залишили позитивний відгук про відповідь.";
+"support_rated_bad" = "Ви залишили негативний відгук про відповідь.";
+"wrong_parameters" = "Неправильні параметри запиту.";
+
+"fast_answers" = "Швидкі відповіді";
 
 "comment" = "Коментар";
 "sender" = "Відправник";
 
 "author" = "Автор";
 
+"you_have_not_entered_text" = "Ви не ввели текст";
+"you_have_not_entered_name_or_text" = "Ви не ввели тему або текст";
+
+"ticket_changed" = "Звернення змінено";
+"ticket_changed_comment" = "Зміни набудуть чинності через кілька секунд.";
+
+"banned_in_support_1" = "Вибачте, <b>$1</b>, але тепер вам не можна створювати звернення.";
+"banned_in_support_2" = "Підстава: $1</b>. Цього разу нам довелося забрати у вас цю можливість назавжди.";
+
 /* Invite */
+
 "invite" = "Запросити";
-"you_can_invite" = "Ви можете запросити своїх друзів або знайомих в мережу за допомогою індивідуального посилання:";
-"you_can_invite_2" = "Додайте це посилання до вашого повідомлення. Користувач зареєструється, і він відразу з'явиться у вас в друзях.";
+"you_can_invite" = "Ви можете запросити своїх друзів або знайомих до соціальної мережі за допомогою індивідуального посилання:";
+"you_can_invite_2" = "Прикладіть це посилання до вашого поідомлення. Користувач зареєструється, і він відразу з'явиться у вас у друзях.";
+
+/* Banned */
+
+"banned_title" = "Обліковий запис заблоковано";
+"banned_header" = "Ваш обліковий запис заблоковано.";
+"banned_alt" = "Користувача заблоковано.";
+"banned_1" = "<b>$1</b>, ваш обліковий запис заблоковано за порушення правил користування сайту.";
+"banned_2" = "Привід: <b>$1</b>.";
+"banned_perm" = "На цей раз, Ви заблоковані назавжди.";
+"banned_until_time" = "На цей раз, Ви заблоковані до <b>$1</b>";
+"banned_3" = "Ви все ще можете <a href=\"/support?act=new\">написати в службу підтримки</a>, якщо вважаєте, що сталася помилка або <a href=\"/logout?hash= $1\">вийти</a>.";
+"banned_unban_myself" = "Розблокувати сторінку";
+"banned_unban_title" = "Ваш обліковий запис розблокований";
+"banned_unban_description" = "Намагайтеся, більше не порушувати правила.";
+
+/* Registration confirm */
+
+"ec_header" = "Підтвердження реєстрації";
+"ec_title" = "Дякую!";
+"ec_1" = "<b>$1</b>, ваша реєстрація майже закінчена. Протягом кількох хвилин на вашу адресу електронної пошти повинен прийти лист із посиланням для підтвердження вашої адреси пошти.";
+"ec_2" = "Якщо з якихось причин вам не надійшов лист, перевірте папку Спам. Якщо листа не виявиться і там, то ви можете перенаправити листа.";
+"ec_resend" = "Передати лист";
+
+/* Messages */
+
+"all_messages" = "Всі повідомлення";
+
+"search_messages" = "Пошук повідомлень";
+"no_messages" = "Ніхто Вам не писав, поки що.";
+"messages_blocked" = "Ви не можете надіслати повідомлення цьому користувачу, оскільки він обмежив коло осіб, які можуть надсилати йому повідомлення.";
+"enter_message" = "Введіть повідомлення";
+
+"messages_error_1" = "Повідомлення не доставлене";
+"messages_error_1_description" = "При надсиланні цього повідомлення сталася помилка загального характеру...";
+
+/* Discussions */
+
+"discussions" = "Обговорення";
+
+"messages_one" = "Одне повідомлення";
+"messages_few" = "$1 повідомлення";
+"messages_many" = "$1 повідомлень";
+"messages_other" = "$1 повідомлень";
+
+"topic_messages_count_zero" = "У темі немає повідомлень";
+"topic_messages_count_one" = "У темі одне повідомлення";
+"topic_messages_count_few" = "У темі $1 повідомлення";
+"topic_messages_count_many" = "У темі $1 повідомлень";
+"topic_messages_count_other" = "У темі $1 повідомлень";
+
+"replied" = "відповів";
+"create_topic" = "Створити тему";
+
+"new_topic" = "Нова тема";
+"title" = "Заголовок";
+"text" = "Текст";
+
+"view_topic" = "Перегляд теми";
+"edit_topic_action" = "Редагувати тему";
+"edit_topic" = "Редагування теми";
+"topic_settings" = "Налаштування теми";
+"pin_topic" = "Закріпити тему";
+"close_topic" = "Закрити тему";
+"delete_topic" = "Видалити тему";
+
+"topics_one" = "Одна тема";
+"topics_few" = "$1 теми";
+"topics_many" = "$1 тема";
+"topics_other" = "$1 тем";
+
+"created" = "Створено";
+
+"everyone_can_create_topics" = "Всі можуть створювати теми";
+"display_list_of_topics_above_wall" = "Відображати список тем над стіною";
+
+"topic_changes_saved_comment" = "Оновлений заголовок та налаштування з'являться на сторінці з темою.";
+
+"failed_to_create_topic" = "Не вдалося створити тему";
+"failed_to_change_topic" = "Не вдалося змінити тему";
+"no_title_specified" = "Заголовок не вказано.";
 
 /* Errors */
 
-"error_1" = "Некоректний запит";
-"error_2" = "Невірний логін чи пароль";
-"error_3" = "Не авторизований";
-"error_4" = "Користувача не існує";
-"information_-1" = "Операція виконана успішно";
-"information_-2" = "Вхід виконаний успішно";
+"error_1" = "Неправильний запит";
+"error_2" = "Невірний логін або пароль";
+"error_3" = "Не автентифікований";
+"error_4" = "Користувач не існує";
+"information_-1" = "Операція успішно завершена";
+"information_-2" = "Вхід виконано успішно";
 
 "no_data" = "Немає даних";
-"no_data_description" = "У цьому поданні відсутні дані.";
+"no_data_description" = "Тут нічого немає... Поки що...";
 
 "error" = "Помилка";
-"error_shorturl" = "Цей короткий адрес вже зайнятий.";
+"error_shorturl" = "Ця коротка адреса вже зайнята.";
 "error_segmentation" = "Помилка сегментації";
-"error_upload_failed" = "Не вдалось завантажити фото";
-"error_old_password" = "Старий пароль не співпадає";
-"error_new_password" = "Нові паролі не співпадають";
-"error_shorturl_incorrect" = "Короткий адрес має некоректний формат.";
+"error_upload_failed" = "Не вдалося завантажити фотографію";
+"error_old_password" = "Старий пароль не збігається";
+"error_new_password" = "Нові паролі не збігаються";
+"error_shorturl_incorrect" = "Коротка адреса має неправильний формат.";
 "error_repost_fail" = "Не вдалося поділитися записом";
+"error_data_too_big" = "Атрибут '$1' не може бути довше $2 $3";
 
 "forbidden" = "Помилка доступу";
-"forbidden_comment" = "Налаштування приватності цього користувача не дозволяють вам дивитися на його сторінку.";
+"forbidden_comment" = "Налаштування приватності цього користувача не дозволяють дивитися на його сторінку.";
 
 "changes_saved" = "Зміни збережені";
 "changes_saved_comment" = "Нові дані з'являться на вашій сторінці";
@@ -620,15 +991,17 @@
 "photo_saved" = "Фотографія збережена";
 "photo_saved_comment" = "Нове зображення профілю з'явиться у вас на сторінці";
 
-"shared_succ" = "Запис з'явиться на вашій стіні. Натисніть на повідомлення, щоб перейти до своєї стіни.";
+"shared_succ" = "Запис з'явиться на вашій стіні. Натисніть на сповіщення, щоб перейти до своєї стіни.";
 
-"invalid_email_address" = "Неправильна Email адреса";
-"invalid_email_address_comment" = "Email, який ви ввели, не є коректним.";
+"invalid_email_address" = "Невірна Email адреса";
+"invalid_email_address_comment" = "Введена Email адреса некорректна";
 
-"invalid_telegram_name" = "Неправильне ім'я Telegram аккаунта";
-"invalid_telegram_name_comment" = "Ви ввели неправильне ім'я облікового запису Telegram.";
+"invalid_real_name" = "Будь ласка, використовуйте реальні імена. Так вашим друзям буде легше знайти вас.";
 
-"invalid_birth_date" = "Неправильна дата народження";
+"invalid_telegram_name" = "Некоректний псевдонім Telegram акаунту";
+"invalid_telegram_name_comment" = "Ви ввели некоректний псевдонім  Telegram.";
+
+"invalid_birth_date" = "Некоректна дата народження";
 "invalid_birth_date_comment" = "Дата народження, яку ви ввели, не є коректною.";
 
 "token_manipulation_error" = "Помилка маніпулювання токеном";
@@ -637,16 +1010,117 @@
 "profile_changed" = "Профіль змінено";
 "profile_changed_comment" = "Ваш активний профіль було змінено.";
 "profile_not_found" = "Користувач не знайдений.";
+"profile_not_found_text" = "Сторінку видалено або ще не створено.";
 
 "suspicious_registration_attempt" = "Підозріла спроба реєстрації";
 "suspicious_registration_attempt_comment" = "Ви намагалися зареєструватися з підозрілого місця.";
+
+"rate_limit_error" = "Обмеження запитів";
+"rate_limit_error_comment" = "У $1 не можна робити запити так часто. Код виключення: $2.";
+
+"not_enough_permissions" = "Недостатньо прав";
+"not_enough_permissions_comment" = "У вас недостатньо прав, щоб виконувати цю дію.";
+
+"login_required_error" = "Недостатньо прав";
+"login_required_error_comment" = "Щоб переглянути цю сторінку, потрібно зайти на сайт.";
+
+"captcha_error" = "Неправильно введені символи";
+"captcha_error_comment" = "Переконайтеся, що ви правильно заповнили поле з CAPTCHA.";
+
+"failed_to_publish_post" = "Не вдалося опублікувати пост";
+"failed_to_delete_post" = "Не вдалося видалити пост";
+
+"media_file_corrupted" = "Файл медіаконтенту пошкоджено.";
+"media_file_corrupted_or_too_large" = "Файл медіаконтенту пошкоджений або файл занадто великий.";
+"post_is_empty_or_too_big" = "Пост порожній чи надто великий.";
+"post_is_too_big" = "Пост надто великий.";
 
 /* Admin actions */
 
 "login_as" = "Увійти як $1";
 "manage_user_action" = "Керування користувачем";
+"manage_group_action" = "Керування групою";
 "ban_user_action" = "Заблокувати користувача";
+"unban_user_action" = "Розблокувати користувача";
 "warn_user_action" = "Попередити користувача";
+"ban_in_support_user_action" = "Заблокувати у тех.підтримці";
+"unban_in_support_user_action" = "Розблокувати у тех.підтримці";
+
+/* Admin panel */
+
+"admin" = "Админ-панель";
+
+"admin_ownerid" = "ID власника";
+"admin_author" = "Автор";
+"admin_name" = "Ім'я";
+"admin_title" = "Назва";
+"admin_description" = "Опис";
+"admin_first_known_ip" = "Перший IP";
+"admin_shortcode" = "Коротка адреса";
+"admin_verification" = "Верифікація";
+"admin_banreason" = "Причина блокування";
+"admin_banned" = "заблокований";
+"admin_actions" = "Дії";
+"admin_image" = "Зображення";
+"admin_image_replace" = "Замінити зображення?";
+"admin_uses" = "Використань";
+"admin_uses_reset" = "Скинути кількість використання?";
+"admin_limits" = "Обмеження";
+"admin_limits_reset" = "Скинути кількість обмежень";
+"admin_open" = "Відкрити";
+"admin_loginas" = "Увійти як...";
+"admin_commonsettings" = "Загальні налаштування";
+"admin_langsettings" = "Мовно-залежні налаштування";
+
+"admin_tab_main" = "Головне";
+"admin_tab_ban" = "Блокування";
+"admin_tab_followers" = "Учасники";
+
+"admin_overview" = "Огляд";
+"admin_overview_summary" = "Зведення";
+
+"admin_content" = "Контент користувача";
+"admin_user_search" = "Пошук користувачів";
+"admin_user_online" = "Онлайн статус";
+"admin_user_online_default" = "За замовчуванням";
+"admin_user_online_incognito" = "Інкогніто";
+"admin_user_online_deceased" = "Небіжчик";
+"admin_club_search" = "Пошук груп";
+"admin_club_excludeglobalfeed" = "Не відображати записи у глобальній стрічці";
+
+"admin_services" = "Платні послуги";
+"admin_newgift" = "Новий подарунок";
+"admin_price" = "Ціна";
+"admin_giftset" = "Набір подарунків";
+"admin_giftsets" = "Набори подарунків";
+"admin_giftsets_none" = "Немає наборів подарунків. Створіть набір, щоб створити подарунок.";
+"admin_giftsets_create" = "Створити набір подарунків";
+"admin_giftsets_title" = "Внутрішня назва набору, яка буде використовуватися, якщо не вдається знайти назву мовою користувача.";
+"admin_giftsets_description" = "Внутрішній опис набору, який буде використовуватись, якщо не вдається знайти назву мовою користувача.";
+"admin_price_free" = "безкоштовний";
+"admin_voucher_rating" = "Рейтинг";
+"admin_voucher_serial" = "Серійний номер";
+"admin_voucher_serial_desc" = "Номер складається з 24 символів. Якщо формат неправильний або поле не заповнене, буде призначено автоматично.";
+"admin_voucher_coins" = "Кількість голосів";
+"admin_voucher_rating" = "Кількість рейтингу";
+"admin_voucher_usages_desc" = "Кількість акаунтів, які можуть використовувати ваучер. Якщо написати -1, буде нескінченність.";
+"admin_voucher_status" = "Стан";
+"admin_voucher_status_opened" = "активний";
+"admin_voucher_status_closed" = "закінчився";
+
+"admin_settings" = "Налаштування";
+"admin_settings_tuning" = "Загальне";
+"admin_settings_appearance" = "Зовнішній вигляд";
+"admin_settings_security" = "Безпека";
+"admin_settings_integrations" = "Інтеграція";
+"admin_settings_system" = "Система";
+
+"admin_about" = "Про OpenVK";
+"admin_about_version" = "Версія";
+"admin_about_instance" = "Інстанція";
+
+"admin_commerce_disabled" = "Комерція відключена системним адміністратором";
+"admin_commerce_disabled_desc" = "Налаштування ваучерів та подарунків будуть збережені, але не матимуть впливу.";
 
 /* Paginator (deprecated) */
 
@@ -654,13 +1128,60 @@
 "paginator_page" = "Сторінка $1";
 "paginator_next" = "Далі";
 
+/* About */
+
+"about_openvk" = "Про OpenVK";
+
+"about_this_instance" = "Про цю інстанцію";
+"rules" = "Правила";
+"most_popular_groups" = "Найпопулярніші групи";
+"on_this_instance_are" = "На цій інстанції:";
+"about_links" = "Посилання";
+"instance_links" = "Посилання інстанції:";
+
+"about_users_one" = "<b>1</b> користувач";
+"about_users_few" = "<b>$1</b> користувача";
+"about_users_many" = "<b>$1</b> користувачів";
+"about_users_other" = "<b>$1</b> користувачів";
+
+"about_online_users_one" = "<b>1</b> користувач у мережі";
+"about_online_users_few" = "<b>$1</b> користувача в мережі";
+"about_online_users_many" = "<b>$1</b> користувачів у мережі";
+"about_online_users_other" = "<b>$1</b> користувачів у мережі";
+
+"about_active_users_one" = "<b>1</b> активний користувач";
+"about_active_users_few" = "<b>$1</b> активних користувачів";
+"about_active_users_many" = "<b>$1</b> активних користувачів";
+"about_active_users_other" = "<b>$1</b> активних користувачів";
+
+"about_groups_one" = "<b>1</b> група";
+"about_groups_few" = "<b>$1</b> групи";
+"about_groups_many" = "<b>$1</b> груп";
+"about_groups_other" = "<b>$1</b> груп";
+
+"about_wall_posts_one" = "<b>1</b> запис на стінах";
+"about_wall_posts_few" = "<b>$1</b> записи на стінах";
+"about_wall_posts_many" = "<b>$1</b> записів на стінах";
+"about_wall_posts_other" = "<b>$1</b> записів на стінах";
+
 /* Dialogs */
 
 "ok" = "ОК";
 "yes" = "Так";
 "no" = "Ні";
-"cancel" = "Скасування";
+"cancel" = "Скасувати";
 "edit_action" = "Змінити";
+"transfer" = "Передати";
+"close" = "Закрити";
 
 "warning" = "Увага";
-"question_confirm" = "Цю дію не можна скасувати. Ви дійсно впевнені в тому, що хочете зробити?";
+"question_confirm" = "Цю дію не можна скасувати. Ви дійсно впевнені, що хочете зробити?";
+
+/* User alerts */
+
+"user_alert_scam" = "На цей акаунт багато скаржилися у зв'язку з шахрайством. Будь ласка, будьте обережні, особливо якщо у вас попросять грошей.";
+
+/* Cookies pop-up */
+
+"cookies_popup_content" = "Цей веб-сайт використовує cookies для того, щоб ідентифікувати вашу сесію і нічого більше. Ознайомтеся з нашою <a href='/privacy'>політикою конфіденційності</a> для отримання додаткової інформації.";
+"cookies_popup_agree" = "Згоден";

@@ -29,7 +29,9 @@
     }
 
     function agreeWithCookies() {
-        document.cookie = "cookiesAgreed=true";
+        let expires = (new Date(Date.now() + 40000000000)).toUTCString();
+        
+        document.cookie = "cookiesAgreed=true;expires=" + expires + ";SameSite=Strict";
         u(".cookies-popup").nodes[0].style.display = "none";
     }
 </script>

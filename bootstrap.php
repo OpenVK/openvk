@@ -31,7 +31,8 @@ function _ovk_check_environment(): void
         "openssl",
         "json",
         "tokenizer",
-        "libxml",
+        "xml",
+        "intl",
         "date",
         "session",
         "SPL",
@@ -101,7 +102,7 @@ function tr(string $stringId, ...$variables): string
         }
         
         for($i = 0; $i < sizeof($variables); $i++)
-            $output = preg_replace("%(?<!\\\\)(\\$)" . ($i + 1) . "%", $variables[$i], $output);
+            $output = preg_replace("%(?<!\\\\)(\\$)" . ($i + 1) . "%", (string) $variables[$i], $output);
     }
     
     return $output;
@@ -231,7 +232,7 @@ return (function() {
     if(is_dir($gitDir = OPENVK_ROOT . "/.git") && $showCommitHash)
         $ver = trim(`git --git-dir="$gitDir" log --pretty="%h" -n1 HEAD` ?? "Unknown version") . "-nightly";
     else
-        $ver = "Public Technical Preview 3";
+        $ver = "Public Technical Preview 4";
 
     # Unix time constants
     define('MINUTE', 60);

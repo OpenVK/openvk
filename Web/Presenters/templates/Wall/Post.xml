@@ -1,5 +1,5 @@
 {extends "../@layout.xml"}
-{block title}{_"post"}{/block}
+{block title}{_post}{/block}
 
 {block header}
 	<a href="{$wallOwner->getURL()}">
@@ -10,7 +10,7 @@
 		{_wall}
 	</a>
 	»
-	{_"post"}
+	{_post}
 {/block}
 
 {block content}

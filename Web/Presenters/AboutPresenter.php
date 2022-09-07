@@ -9,24 +9,19 @@ final class AboutPresenter extends OpenVKPresenter
 {
     protected $banTolerant = true;
     protected $activationTolerant = true;
+    protected $deactivationTolerant = true;
     
     function renderIndex(): void
     {
         if(!is_null($this->user)) {
-            header("HTTP/1.1 302 Found");
-
             if($this->user->identity->getMainPage())
-                header("Location: /feed");
+                $this->redirect("/feed");
             else
-                header("Location: /id" . $this->user->id);
-
-            exit;
+                $this->redirect($this->user->identity->getURL());
         }
         
         if($_SERVER['REQUEST_URI'] == "/id0") {
-            header("HTTP/1.1 302 Found");
-            header("Location: /");
-            exit;
+            $this->redirect("/");
         }
         
         $this->template->stats = (new Users)->getStatistics();
@@ -107,6 +102,15 @@ final class AboutPresenter extends OpenVKPresenter
         . "# covered from unauthorized persons (for example, due to\n"
         . "# lack of rights to access the admin panel)\n\n"
         . "User-Agent: *\n"
+        . "Disallow: /albums/create\n"
+        . "Disallow: /videos/upload\n"
+        . "Disallow: /invite\n"
+        . "Disallow: /groups_create\n"
+        . "Disallow: /notifications\n"
+        . "Disallow: /settings\n"
+        . "Disallow: /edit\n"
+        . "Disallow: /gifts\n"
+        . "Disallow: /support\n"
         . "Disallow: /rpc\n"
         . "Disallow: /language\n"
         . "Disallow: /badbrowser.php\n"
@@ -126,16 +130,11 @@ final class AboutPresenter extends OpenVKPresenter
     function renderHumansTxt(): void
     {
         # :D
-
-        header("HTTP/1.1 302 Found");
-        header("Location: https://github.com/openvk/openvk#readme");
-        exit;
+        $this->redirect("https://github.com/openvk/openvk#readme");
     }
 
     function renderDev(): void
     {
-        header("HTTP/1.1 302 Found");
-        header("Location: https://docs.openvk.su/");
-        exit;
+        $this->redirect("https://docs.openvk.su/");
     }
 }

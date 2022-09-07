@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{Voucher, Gift, GiftCategory, User};
-use openvk\Web\Models\Repositories\{Users, Clubs, Vouchers, Gifts};
+use openvk\Web\Models\Entities\{Voucher, Gift, GiftCategory, User, BannedLink};
+use openvk\Web\Models\Repositories\{Users, Clubs, Vouchers, Gifts, BannedLinks};
+use Chandler\Database\DatabaseConnection;
 
 final class AdminPresenter extends OpenVKPresenter
 {
@@ -9,13 +10,15 @@ final class AdminPresenter extends OpenVKPresenter
     private $clubs;
     private $vouchers;
     private $gifts;
+    private $bannedLinks;
     
-    function __construct(Users $users, Clubs $clubs, Vouchers $vouchers, Gifts $gifts)
+    function __construct(Users $users, Clubs $clubs, Vouchers $vouchers, Gifts $gifts, BannedLinks $bannedLinks)
     {
         $this->users    = $users;
         $this->clubs    = $clubs;
         $this->vouchers = $vouchers;
         $this->gifts    = $gifts;
+        $this->bannedLinks = $bannedLinks;
         
         parent::__construct();
     }
@@ -170,8 +173,7 @@ final class AdminPresenter extends OpenVKPresenter
         
         $voucher->save();
         
-        $this->redirect("/admin/vouchers/id" . $voucher->getId(), static::REDIRECT_TEMPORARY);
-        exit;
+        $this->redirect("/admin/vouchers/id" . $voucher->getId());
     }
     
     function renderGiftCategories(): void
@@ -193,7 +195,7 @@ final class AdminPresenter extends OpenVKPresenter
             if(!$cat)
                 $this->notFound();
             else if($cat->getSlug() !== $slug)
-                $this->redirect("/admin/gifts/" . $cat->getSlug() . "." . $id . ".meta", static::REDIRECT_TEMPORARY);
+                $this->redirect("/admin/gifts/" . $cat->getSlug() . "." . $id . ".meta");
         } else {
             $gen = true;
             $cat = new GiftCategory;
@@ -234,7 +236,7 @@ final class AdminPresenter extends OpenVKPresenter
                 $cat->setDescription($code, $this->postParam("description_$code"));
         }
         
-        $this->redirect("/admin/gifts/" . $cat->getSlug() . "." . $cat->getId() . ".meta", static::REDIRECT_TEMPORARY);
+        $this->redirect("/admin/gifts/" . $cat->getSlug() . "." . $cat->getId() . ".meta");
     }
     
     function renderGifts(string $catSlug, int $catId): void
@@ -245,7 +247,7 @@ final class AdminPresenter extends OpenVKPresenter
         if(!$cat)
             $this->notFound();
         else if($cat->getSlug() !== $catSlug)
-            $this->redirect("/admin/gifts/" . $cat->getSlug() . "." . $catId . "/", static::REDIRECT_TEMPORARY);
+            $this->redirect("/admin/gifts/" . $cat->getSlug() . "." . $catId . "/");
         
         $this->template->cat   = $cat;
         $this->template->gifts = iterator_to_array($cat->getGifts((int) ($this->queryParam("p") ?? 1), NULL, $this->template->count));
@@ -284,7 +286,7 @@ final class AdminPresenter extends OpenVKPresenter
                 
                 $name = $catTo->getName();
                 $this->flash("succ", "Gift moved successfully", "This gift will now be in <b>$name</b>.");
-                $this->redirect("/admin/gifts/" . $catTo->getSlug() . "." . $catTo->getId() . "/", static::REDIRECT_TEMPORARY);
+                $this->redirect("/admin/gifts/" . $catTo->getSlug() . "." . $catTo->getId() . "/");
                 break;
             default:
             case "edit":
@@ -328,7 +330,7 @@ final class AdminPresenter extends OpenVKPresenter
                         $cat->addGift($gift);
                 }
                 
-                $this->redirect("/admin/gifts/id" . $gift->getId(), static::REDIRECT_TEMPORARY);
+                $this->redirect("/admin/gifts/id" . $gift->getId());
         }
     }
     
@@ -340,12 +342,14 @@ final class AdminPresenter extends OpenVKPresenter
     function renderQuickBan(int $id): void
     {
         $this->assertNoCSRF();
-        
+
+        $unban_time = strtotime($this->queryParam("date")) ?: NULL;
+
         $user = $this->users->get($id);
         if(!$user)
             exit(json_encode([ "error" => "User does not exist" ]));
         
-        $user->ban($this->queryParam("reason"));
+        $user->ban($this->queryParam("reason"), true, $unban_time);
         exit(json_encode([ "success" => true, "reason" => $this->queryParam("reason") ]));
     }
 
@@ -357,7 +361,8 @@ final class AdminPresenter extends OpenVKPresenter
         if(!$user)
             exit(json_encode([ "error" => "User does not exist" ]));
         
-        $user->setBlock_Reason(null);
+        $user->setBlock_Reason(NULL);
+        $user->setUnblock_time(NULL);
         $user->save();
         exit(json_encode([ "success" => true ]));
     }
@@ -372,5 +377,74 @@ final class AdminPresenter extends OpenVKPresenter
         
         $user->adminNotify("⚠️ " . $this->queryParam("message"));
         exit(json_encode([ "message" => $this->queryParam("message") ]));
+    }
+
+    function renderBannedLinks(): void
+    {
+        $this->template->links = $this->bannedLinks->getList((int) $this->queryParam("p") ?: 1);
+        $this->template->users = new Users;
+    }
+
+    function renderBannedLink(int $id): void
+    {
+        $this->template->form = (object) [];
+
+        if($id === 0) {
+            $this->template->form->id     = 0;
+            $this->template->form->link   = NULL;
+            $this->template->form->reason = NULL;
+        } else {
+            $link = (new BannedLinks)->get($id);
+            if(!$link)
+                $this->notFound();
+
+            $this->template->form->id     = $link->getId();
+            $this->template->form->link   = $link->getDomain();
+            $this->template->form->reason = $link->getReason();
+            $this->template->form->regexp = $link->getRawRegexp();
+        }
+
+        if($_SERVER["REQUEST_METHOD"] !== "POST")
+            return;
+
+        $link = (new BannedLinks)->get($id);
+
+        $new_domain = parse_url($this->postParam("link"))["host"];
+        $new_reason = $this->postParam("reason") ?: NULL;
+
+        $lid = $id;
+
+        if ($link) {
+            $link->setDomain($new_domain ?? $this->postParam("link"));
+            $link->setReason($new_reason);
+            $link->setRegexp_rule($this->postParam("regexp"));
+            $link->save();
+        } else {
+            if (!$new_domain)
+                $this->flashFail("err", tr("error"), tr("admin_banned_link_not_specified"));
+
+            $link = new BannedLink;
+            $link->setDomain($new_domain);
+            $link->setReason($new_reason);
+            $link->setRegexp_rule($this->postParam("regexp"));
+            $link->setInitiator($this->user->identity->getId());
+            $link->save();
+
+            $lid = $link->getId();
+        }
+
+        $this->redirect("/admin/bannedLink/id" . $lid);
+    }
+
+    function renderUnbanLink(int $id): void
+    {
+        $link = (new BannedLinks)->get($id);
+
+        if (!$link)
+            $this->flashFail("err", tr("error"), tr("admin_banned_link_not_found"));
+
+        $link->delete(false);
+
+        $this->redirect("/admin/bannedLinks");
     }
 }

@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Repositories\Users;
-use openvk\Web\Models\Repositories\Notes;
+use openvk\Web\Models\Repositories\{Users, Notes};
 use openvk\Web\Models\Entities\Note;
 
 final class NotesPresenter extends OpenVKPresenter
@@ -45,6 +44,29 @@ final class NotesPresenter extends OpenVKPresenter
         $this->template->cPage    = (int) ($this->queryParam("p") ?? 1);
         $this->template->comments = iterator_to_array($note->getComments($this->template->cPage));
         $this->template->note     = $note;
+    }
+    
+    function renderPreView(): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+    
+        if($_SERVER["REQUEST_METHOD"] !== "POST") {
+            header("HTTP/1.1 400 Bad Request");
+            exit;
+        }
+        
+        if(empty($this->postParam("html")) || empty($this->postParam("title"))) {
+            header("HTTP/1.1 400 Bad Request");
+            exit(tr("note_preview_empty_err"));
+        }
+    
+        $note = new Note;
+        $note->setSource($this->postParam("html"));
+        
+        $this->flash("info", tr("note_preview_warn"), tr("note_preview_warn_details"));
+        $this->template->title = $this->postParam("title");
+        $this->template->html  = $note->getText();
     }
     
     function renderCreate(): void

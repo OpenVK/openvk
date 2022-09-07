@@ -8,16 +8,16 @@ final class Account extends VKAPIRequestHandler
         $this->requireUser();
 
         return (object) [
-            "first_name" => $this->getUser()->getFirstName(),
-            "id" => $this->getUser()->getId(),
-            "last_name" => $this->getUser()->getLastName(),
-            "home_town" => $this->getUser()->getHometown(),
-            "status" => $this->getUser()->getStatus(),
-            "bdate" => "1.1.1970",                              # TODO
-            "bdate_visibility" => 0,                            # TODO
-            "phone" => "+420 ** *** 228",                       # TODO
-            "relation" => $this->getUser()->getMaritalStatus(),
-            "sex" => $this->getUser()->isFemale() ? 1 : 2
+            "first_name"       => $this->getUser()->getFirstName(),
+            "id"               => $this->getUser()->getId(),
+            "last_name"        => $this->getUser()->getLastName(),
+            "home_town"        => $this->getUser()->getHometown(),
+            "status"           => $this->getUser()->getStatus(),
+            "bdate"            => $this->getUser()->getBirthday()->format('%e.%m.%Y'),
+            "bdate_visibility" => $this->getUser()->getBirthdayPrivacy(),
+            "phone"            => "+420 ** *** 228",                       # TODO
+            "relation"         => $this->getUser()->getMaritalStatus(),
+            "sex"              => $this->getUser()->isFemale() ? 1 : 2
         ];
     }
 
@@ -25,20 +25,18 @@ final class Account extends VKAPIRequestHandler
     {
         $this->requireUser();
 
-        # Цiй метод є заглушка
-
         return (object) [
-            "2fa_required" => 0,
-            "country" => "CZ",                                  # TODO
-            "eu_user" => false,                                 # TODO
-            "https_required" => 1,
-            "intro" => 0,
-            "community_comments" => false,
-            "is_live_streaming_enabled" => false,
+            "2fa_required"                  => $this->getUser()->is2faEnabled() ? 1 : 0,
+            "country"                       => "CZ",                                  # TODO
+            "eu_user"                       => false,                                 # TODO
+            "https_required"                => 1,
+            "intro"                         => 0,
+            "community_comments"            => false,
+            "is_live_streaming_enabled"     => false,
             "is_new_live_streaming_enabled" => false,
-            "lang" => 1,
-            "no_wall_replies" => 0,
-            "own_posts_default" => 0
+            "lang"                          => 1,
+            "no_wall_replies"               => 0,
+            "own_posts_default"             => 0
         ];
     }
 
@@ -47,7 +45,8 @@ final class Account extends VKAPIRequestHandler
         $this->requireUser();
 
         $this->getUser()->setOnline(time());
-
+        $this->getUser()->save();
+        
         return 1;
     }
 
@@ -68,9 +67,9 @@ final class Account extends VKAPIRequestHandler
     function getCounters(string $filter = ""): object
     {
         return (object) [
-            "friends" => $this->getUser()->getFollowersCount(),
+            "friends"       => $this->getUser()->getFollowersCount(),
             "notifications" => $this->getUser()->getNotificationsCount(),
-            "messages" => $this->getUser()->getUnreadMessagesCount()
+            "messages"      => $this->getUser()->getUnreadMessagesCount()
         ];
 
         # TODO: Filter

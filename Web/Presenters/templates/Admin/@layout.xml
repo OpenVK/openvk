@@ -16,7 +16,7 @@
                     <div class="aui-header-inner">
                         <div class="aui-header-primary">
                             <h1 id="logo" class="aui-header-logo aui-header-logo-textonly">
-                                <a href="/admin">
+                                <a href="/">
                                     <span class="aui-header-logo-device">{$instance_name}</span>
                                 </a>
                             </h1>
@@ -55,6 +55,9 @@
                                         </li>
                                         <li>
                                             <a href="/admin/clubs">{_groups}</a>
+                                        </li>
+                                        <li>
+                                            <a href="/admin/bannedLinks">{_admin_banned_links}</a>
                                         </li>
                                     </ul>
                                     <div class="aui-nav-heading">

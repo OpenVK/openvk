@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\ServiceAPI;
+use openvk\Web\Models\Entities\Post;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\Posts;
 
@@ -54,5 +55,20 @@ class Wall implements Handler
         $res->canEdit = $res->canDelete = $post->canBeDeletedBy($this->user);
         
         $resolve((array) $res);
+    }
+    
+    function newStatus(string $text, callable $resolve, callable $reject): void
+    {
+        $post = new Post;
+        $post->setOwner($this->user->getId());
+        $post->setWall($this->user->getId());
+        $post->setCreated(time());
+        $post->setContent($text);
+        $post->setAnonymous(false);
+        $post->setFlags(0);
+        $post->setNsfw(false);
+        $post->save();
+        
+        $resolve($post->getId());
     }
 }

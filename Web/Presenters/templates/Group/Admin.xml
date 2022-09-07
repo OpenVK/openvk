@@ -12,13 +12,13 @@
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">{_"comment"}: </span>
+                            <span class="nobold">{_comment}: </span>
                         </td>
                         <td>
                             <input type="text" name="comment" value="{$manager->getComment()}" />
                         </td>
                     </tr>
-		    <tr>
+		            <tr>
                         <td width="120" valign="top">
                             <span class="nobold"></span>
                         </td>
@@ -34,7 +34,7 @@
                         <td>
                             <input type="hidden" name="user" value="{$manager->getUser()->getId()}">
                             <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_'save'}" class="button" />
+                            <input type="submit" value="{_save}" class="button" />
                         </td>
                     </tr>
                 </tbody>

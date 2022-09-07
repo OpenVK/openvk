@@ -55,22 +55,25 @@
             <br/>
             <input type="submit" value="{_write}" class="button" />
             <div style="float: right; display: flex; flex-direction: column;">
-                <a href="javascript:void(u('#post-buttons{$textAreaId} #wallAttachmentMenu').toggleClass('hidden'));">
+                <a href="javascript:toggleMenu({$textAreaId});">
                     {_attach}
                 </a>
                 
                 <div id="wallAttachmentMenu" class="hidden">
+                    <a class="header" href="javascript:toggleMenu({$textAreaId});">
+                        {_attach}
+                    </a>
                     <a href="javascript:void(document.querySelector('#post-buttons{$textAreaId} input[name=_pic_attachment]').click());">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
-                        {_attach_photo}
+                        {_photo}
                     </a>
                     <a href="javascript:void(document.querySelector('#post-buttons{$textAreaId} input[name=_vid_attachment]').click());">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
-                        {_attach_video}
+                        {_video}
                     </a>
                     <a n:if="$graffiti ?? false" href="javascript:initGraffiti({$textAreaId});">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
-                        {_draw_graffiti}
+                        {_graffiti}
                     </a>
                 </div>
             </div>

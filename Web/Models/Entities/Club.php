@@ -67,7 +67,7 @@ class Club extends RowModel
     
     function getName(): string
     {
-        return ovk_proc_strtr($this->getRecord()->name, 32);
+        return $this->getRecord()->name;
     }
     
     function getCanonicalName(): string

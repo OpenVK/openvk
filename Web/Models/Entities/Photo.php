@@ -243,8 +243,11 @@ class Photo extends Media
         $photo->setFile($file);
         $photo->save();
 
-        if(!is_null($album))
+        if(!is_null($album)) {
             $album->addPhoto($photo);
+            $album->setEdited(time());
+            $album->save();
+        }
 
         return $photo;
     }
