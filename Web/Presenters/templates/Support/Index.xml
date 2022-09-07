@@ -22,7 +22,6 @@
                 <a n:attr="id => ($isNew ? 'act_tab_a' : 'ki')" href="/support?act=new">{_support_new}</a>
             </div>
         </div>
-        
         <br />
         
         {if $isNew}
