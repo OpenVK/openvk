@@ -4,8 +4,7 @@ use openvk\Web\Util\DateTime;
 use Nette\Database\Table\ActiveRow;
 use openvk\Web\Models\RowModel;
 use Chandler\Database\DatabaseConnection;
-use openvk\Web\Models\Repositories\Users;
-use openvk\Web\Models\Repositories\Posts;
+use openvk\Web\Models\Repositories\{Users, Posts, Photos, Videos, Clubs};
 use Chandler\Database\DatabaseConnection as DB;
 use Nette\InvalidStateException as ISE;
 use Nette\Database\Table\Selection;
@@ -67,6 +66,9 @@ class Report extends RowModel
     function getContentObject()
     {
         if ($this->getContentType() == "post") return (new Posts)->get($this->getContentId());
+        else if ($this->getContentType() == "photo") return (new Photos)->get($this->getContentId());
+        else if ($this->getContentType() == "video") return (new Videos)->get($this->getContentId());
+        else if ($this->getContentType() == "group") return (new Clubs)->get($this->getContentId());
         else return null;
     }
 

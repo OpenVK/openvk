@@ -10,12 +10,28 @@
 
 {block content}
 <p><b>{_comment}: </b>{$report->getReason()}</p>
-{include "../components/post/oldpost.xml", post => $report->getContentObject()}
+    {if $report->getContentType() == "post"}
+        {include "../components/post/oldpost.xml", post => $report->getContentObject()}
+    {elseif $report->getContentType() == "photo"}
+        {include "../components/photo.xml", photo => $report->getContentObject()}
+    {elseif $report->getContentType() == "video"}
+        {include "../components/video.xml", video => $report->getContentObject()}
+    {elseif $report->getContentType() == "group"}
+        {include "../components/group.xml", group => $report->getContentObject()}
+    {else}
+        Error
+    {/if}
 <center>
-    <form action="/admin/reportAction{$report->getId()}" method="post">
+    <form n:if="$report->getContentType() != 'group'" action="/admin/reportAction{$report->getId()}" method="post">
         <input type="hidden" name="hash" value="{$csrfToken}" />
         <input type="submit" name="ban" value="{_ban_user_action}" class="button">
         <input type="submit" name="delete" value="{_delete}" class="button">
+        <input type="submit" name="ignore" value="{_ignore_report}" class="button">
+    </form>
+    <form n:if="$report->getContentType() == 'group'" action="/admin/reportAction{$report->getId()}" method="post">
+        <input type="hidden" name="hash" value="{$csrfToken}" />
+        <input type="submit" name="banClubOwner" value="Заблокировать создателя" class="button">
+        <input type="submit" name="banClub" value="Заблокировать группу" class="button">
         <input type="submit" name="ignore" value="{_ignore_report}" class="button">
     </form>
 </center>

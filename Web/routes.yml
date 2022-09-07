@@ -243,6 +243,8 @@ routes:
       handler: "Admin->quickWarn"
     - url: "/admin/reports"
       handler: "Report->list"
+    - url: "/scumfeed"
+      handler: "Report->list"
     - url: "/admin/report{num}"
       handler: "Report->view"
     - url: "/admin/reportAction{num}"

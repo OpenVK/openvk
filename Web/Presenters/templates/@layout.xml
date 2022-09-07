@@ -177,7 +177,7 @@
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
                                 {/if}
                             </a>
-                            <a href="/admin/reports" class="link">Reports</a>
+                            <a href="/admin/reports" class="link">{tr("reports")}</a>
                         {/if}
                         <a
                           n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem"
@@ -272,7 +272,7 @@
                 <a href="/privacy" class="link">{_footer_privacy}</a>
             </div>
             <p>OpenVK <a href="/about:openvk">{php echo OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {$dbVersion}</p>
-            <p n:ifcontent="ifcontent">
+            <p n:ifcontent>
                 {php echo OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]}
             </p>
         </div>

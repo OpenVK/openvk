@@ -27,5 +27,15 @@
 {/block}
 
 {block description}
-    {_text_of_the_post}: {$x->getContentObject()->getText()}
+    {if $x->getContentType() == "post"}
+        {_text_of_the_post}: {$x->getContentObject()->getText()}
+    {elseif $x->getContentType() == "photo"}
+        {_photo}
+    {elseif $x->getContentType() == "video"}
+        {_video}
+    {elseif $x->getContentType() == "group"}
+        {_groups}
+    {else}
+        Unknown
+    {/if}
 {/block}

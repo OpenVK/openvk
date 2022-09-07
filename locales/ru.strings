@@ -590,6 +590,7 @@
 "support_new_title" = "Введите тему вашего обращения";
 "support_new_content" = "Опишите проблему или предложение";
 
+"reports" = "Жалобы";
 "ignore_report" = "Игнорировать жалобу";
 "report_number" = "Жалоба №";
 "list_of_reports" = "Список жалоб";
