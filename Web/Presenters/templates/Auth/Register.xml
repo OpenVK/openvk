@@ -89,6 +89,11 @@
                     </tr>
                     <tr>
                         <td>
+                            <input type="checkbox" required /> {_checkbox_in_registration}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
                             
                         </td>
                         <td>
