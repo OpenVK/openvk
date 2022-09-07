@@ -341,6 +341,12 @@ class Club extends RowModel
 	{
 		return $this->getRecord()->website;
 	}
+
+    function ban(string $reason): void
+    {
+        $this->setBlock_Reason($reason);
+        $this->save();
+    }
     
     use Traits\TSubscribable;
 }

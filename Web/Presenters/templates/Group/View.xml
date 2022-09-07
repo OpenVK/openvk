@@ -104,6 +104,34 @@
                 <input type="submit" id="profile_link" value="{_"leave_community"}" />
             </form>
         {/if}
+        {var $canReport = $thisUser->getId() != $club->getOwner()->getId()}
+        {if $canReport}
+        <a class="profile_link" style="display:block;width:96%;" href="javascript:reportVideo()">{_report}</a>
+
+        <script>
+            function reportVideo() {
+            uReportMsgTxt  = "Вы собираетесь пожаловаться на данное сообщество.";
+            uReportMsgTxt += "<br/>Что именно вам кажется недопустимым в этом материале?";
+            uReportMsgTxt += "<br/><br/><b>Причина жалобы</b>: <input type='text' id='uReportMsgInput' placeholder='Причина' />"
+
+            MessageBox("Пожаловаться?", uReportMsgTxt, ["Подтвердить", "Отмена"], [
+                (function() {
+                    res = document.querySelector("#uReportMsgInput").value;
+                    xhr = new XMLHttpRequest();
+                    xhr.open("GET", "/report.pl/" + {$club->getId()} + "?reason=" + res + "&type=group", true);
+                    xhr.onload = (function() {
+                    if(xhr.responseText.indexOf("reason") === -1)
+                        MessageBox("Ошибка", "Не удалось подать жалобу...", ["OK"], [Function.noop]);
+                    else
+                        MessageBox("Операция успешна", "Скоро её рассмотрят модераторы", ["OK"], [Function.noop]);
+                    });
+                    xhr.send(null);
+                    }),
+                Function.noop
+                ]);
+            }
+        </script>
+        {/if}
     </div>
     <div>
         <div class="content_title_expanded" onclick="hidePanel(this);">
