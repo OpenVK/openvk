@@ -1,3 +1,5 @@
+#include <ru>
+
 "__locale" = "be_BY@latin;Bel_Lat";
 "__WinEncoding" = "Windows-1251";
 
@@ -121,9 +123,6 @@
 "friends" = "Siabry";
 "followers" = "Padpisanty";
 "follower" = "Padpisant";
-"login_as" = "Uvajści jak";
-"ban_fast" = "Zabanić";
-"adm_notify" = "Papiaredzić";
 "friends_add" = "Dadać da siabroŭ";
 "friends_delete" = "Vydalić ź siabroŭ";
 "friends_reject" = "Adchilić zajavu";
@@ -133,7 +132,7 @@
 "outcoming_req" = "Zajavy";
 "req" = "Zajavy";
 
-"firends_zero" = "Niama siabroŭ";
+"friends_zero" = "Niama siabroŭ";
 "friends_one" = "$1 siabar";
 "friends_few" = "$1 siabra";
 "friends_many" = "$1 siabroŭ";
@@ -298,6 +297,7 @@
 "search_for_groups" = "Pošuk hurtoŭ";
 "search_for_people" = "Pošuk ludziaŭ";
 "search_button" = "Znajści";
+
 "privacy_setting_access_page" = "Kamu ŭ interniecie vidać maju staronku";
 "privacy_setting_read_info" = "Kamu vidać asnoŭnuju infarmacyju majoj staronki";
 "privacy_setting_see_groups" = "Kamu vidać maje hurty j sustrečy";
@@ -312,9 +312,9 @@
 "privacy_value_users" = "Karystalnikam OpenVK";
 "privacy_value_friends" = "Siabry";
 "privacy_value_friends_dative" = "Siabram";
-"privacy_value_only_me_and_super_capite" = "Ja j Jahor Praŭdzikaŭ";
-"privacy_value_only_me_and_super_capite_dative" = "Mianie j Jahoru Praŭdzikavu";
-"privacy_value_super_capite" = "Jahoru Praŭdzikavu";
+"privacy_value_only_me" = "Tolki ja";
+"privacy_value_only_me_dative" = "Tolki mnie";
+"privacy_value_nobody" = "Nichto";
 
 "your_email_address" = "Adras Vašaj elektronaj pošty";
 "your_page_address" = "Adras Vašaj staronki";
@@ -395,24 +395,6 @@
 "time_minutes_ago" = "$1 chvilinaŭ tamu";
 "time_today" = "siońnia";
 "time_yesterday" = "učora";
-
-"privacy_setting_access_page" = "Kamu ŭ interniecie vidać maju staronku";
-"privacy_setting_read_info" = "Kamu vidać asnoŭnuju infarmacyju majoj staronki";
-"privacy_setting_see_groups" = "Kamu vidać maje hurty j sustrečy";
-"privacy_setting_see_photos" = "Kamu vidać maje fotazdymki";
-"privacy_setting_see_videos" = "Kamu vidać maje videazapisy";
-"privacy_setting_see_notes" = "Kamu vidać maje natatki";
-"privacy_setting_see_friends" = "Kamu vidać maich siabroŭ";
-"privacy_setting_add_to_friends" = "Chto moža nazyvać mianie siabram";
-"privacy_setting_write_wall" = "Chto moža pisać u mianie na ścianie";
-"privacy_value_anybody" = "Usie žadajučyja";
-"privacy_value_anybody_dative" = "Usim žadajučym";
-"privacy_value_users" = "Karystalnikam OpenVK";
-"privacy_value_friends" = "Siabry";
-"privacy_value_friends_dative" = "Siabram";
-"privacy_value_only_me_and_super_capite" = "Tolki ja";
-"privacy_value_only_me_and_super_capite_dative" = "Tolki mnie";
-"privacy_value_super_capite" = "Nichto";
 
 "your_email_address" = "Adras Vašaj elektronaj pošty";
 "your_page_address" = "Adras Vašaj staronki";

@@ -31,7 +31,8 @@ function _ovk_check_environment(): void
         "openssl",
         "json",
         "tokenizer",
-        "libxml",
+        "xml",
+        "intl",
         "date",
         "session",
         "SPL",
@@ -101,7 +102,7 @@ function tr(string $stringId, ...$variables): string
         }
         
         for($i = 0; $i < sizeof($variables); $i++)
-            $output = preg_replace("%(?<!\\\\)(\\$)" . ($i + 1) . "%", $variables[$i], $output);
+            $output = preg_replace("%(?<!\\\\)(\\$)" . ($i + 1) . "%", (string) $variables[$i], $output);
     }
     
     return $output;
@@ -136,7 +137,7 @@ function isLanguageAvailable($lg): bool
 
 function getBrowsersLanguage(): array
 {
-    if ($_SERVER['HTTP_ACCEPT_LANGUAGE'] != null) return mb_split(",", mb_split(";", $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0]);
+    if ($_SERVER['HTTP_ACCEPT_LANGUAGE'] != NULL) return mb_split(",", mb_split(";", $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0]);
     else return array();
 }
 
@@ -144,7 +145,7 @@ function eventdb(): ?DatabaseConnection
 {
     $conf = OPENVK_ROOT_CONF["openvk"]["credentials"]["eventDB"];
     if(!$conf["enable"])
-        return null;
+        return NULL;
     
     $db = (object) $conf["database"];
     return DatabaseConnection::connect([
@@ -167,7 +168,8 @@ function ovk_proc_strtrim(string $string, int $length = 0): string
 
 function ovk_strftime_safe(string $format, ?int $timestamp = NULL): string
 {
-    $str = strftime($format, $timestamp ?? time());
+    $sessionOffset = intval(Session::i()->get("_timezoneOffset"));
+    $str = strftime($format, $timestamp + ($sessionOffset * MINUTE) * -1 ?? time() + ($sessionOffset * MINUTE) * -1);
     if(PHP_SHLIB_SUFFIX === "dll") {
         $enc = tr("__WinEncoding");
         if($enc === "@__WinEncoding")
@@ -215,8 +217,8 @@ return (function() {
 
     setlocale(LC_TIME, "POSIX");
 
-    // TODO: Default language in config
-    if(Session::i()->get("lang") == null) {
+    # TODO: Default language in config
+    if(Session::i()->get("lang") == NULL) {
         $languages = array_reverse(getBrowsersLanguage());
         foreach($languages as $lg) {
             if(isLanguageAvailable($lg)) setLanguage($lg);    
@@ -230,7 +232,15 @@ return (function() {
     if(is_dir($gitDir = OPENVK_ROOT . "/.git") && $showCommitHash)
         $ver = trim(`git --git-dir="$gitDir" log --pretty="%h" -n1 HEAD` ?? "Unknown version") . "-nightly";
     else
-        $ver = "Build 15";
+        $ver = "Public Technical Preview 4";
+
+    # Unix time constants
+    define('MINUTE', 60);
+    define('HOUR', 60 * MINUTE);
+    define('DAY', 24 * HOUR);
+    define('WEEK', 7 * DAY);
+    define('MONTH', 30 * DAY);
+    define('YEAR', 365 * DAY);
 
     define("nullptr", NULL);
     define("OPENVK_DEFAULT_INSTANCE_NAME", "OpenVK", false);

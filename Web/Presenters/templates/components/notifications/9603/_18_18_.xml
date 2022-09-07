@@ -1,0 +1,11 @@
+{var $sender   = $notification->getModel(1)}
+{var $value    = (int) explode(" ", $notification->getData(), 2)[0]}
+{var $message  = explode(" ", $notification->getData(), 2)[1]}
+
+<a href="{$sender->getURL()}"><b>{$sender->getCanonicalName()}</b></a> {_increased_your_rating_by} {$value}%.
+{if !empty($message)}
+    {_message}: "{$message}".
+{/if}
+<div class="nobold">
+    {$notification->getDateTime()}
+</div>

@@ -1,13 +1,13 @@
 {extends "../@layout.xml"}
-{block title}{_"log_in"}{/block}
+{block title}{_log_in}{/block}
 
 {block header}
-    {_"log_in"}
+    {_log_in}
 {/block}
 
 {block content}
     <p>
-        {_"two_factor_authentication_login"}
+        {_two_factor_authentication_login}
     </p>
 
     <form method="POST" enctype="multipart/form-data">
@@ -18,7 +18,7 @@
                         <span>{_code}: </span>
                     </td>
                     <td>
-                        <input type="text" name="code" required />
+                        <input type="text" name="code" autocomplete="off" required />
                     </td>
                 </tr>
                 <tr>
@@ -29,7 +29,7 @@
                         <input type="hidden" name="login" value="{$login}" />
                         <input type="hidden" name="password" value="{$password}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" value="{_'log_in'}" class="button" />
+                        <input type="submit" value="{_log_in}" class="button" />
                     </td>
                 </tr>
             </tbody>

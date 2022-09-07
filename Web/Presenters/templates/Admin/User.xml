@@ -1,7 +1,7 @@
 {extends "@layout.xml"}
 
 {block title}
-    Редактировать {$user->getCanonicalName()}
+    {_edit} {$user->getCanonicalName()}
 {/block}
 
 {block heading}
@@ -10,83 +10,70 @@
 
 {block content}
     <div class="aui-tabs horizontal-tabs">
-    <form class="aui" method="POST">
-        <div class="field-group">
-            <label for="avatar">
-                Аватарка
-            </label>
-            <span id="avatar" class="aui-avatar aui-avatar-project aui-avatar-xlarge">
-                <span class="aui-avatar-inner">
-                    <img src="{$user->getAvatarUrl()}" style="object-fit: cover;"></img>
+        <form class="aui" method="POST">
+            <div class="field-group">
+                <label for="avatar">{_avatar}</label>
+                <span id="avatar" class="aui-avatar aui-avatar-project aui-avatar-xlarge">
+                    <span class="aui-avatar-inner">
+                        <img src="{$user->getAvatarUrl('tiny')}" style="object-fit: cover;"></img>
+                    </span>
                 </span>
-            </span>
-        </div>
-        <div class="field-group">
-            <label for="id">
-                ID
-            </label>
-            <input class="text medium-field" type="number" id="id" disabled value="{$user->getId()}" />
-        </div>
-        <div class="field-group">
-            <label for="guid">
-                GUID
-            </label>
-            <input class="text medium-field" id="guid" disabled value="{$user->getChandlerUser()->getId()}" />
-        </div>
-        <div class="field-group">
-            <label for="first_name">
-                Имя
-            </label>
-            <input class="text medium-field" type="text" id="first_name" name="first_name" value="{$user->getFirstName()}" />
-        </div>
-        <div class="field-group">
-            <label for="last_name">
-                Фамилия
-            </label>
-            <input class="text medium-field" type="text" id="last_name" name="last_name" value="{$user->getLastName()}" />
-        </div>
-        <div class="field-group">
-            <label for="nickname">
-                Никнейм
-            </label>
-            <input class="text medium-field" type="text" id="nickname" name="nickname" value="{$user->getPseudo()}" />
-        </div>
-        <div class="field-group">
-            <label for="status">
-                Статус
-            </label>
-            <input class="text medium-field" type="text" id="status" name="status" value="{$user->getStatus()}" />
-        </div>
-        <div class="field-group">
-            <label for="email">
-                E-Mail
-            </label>
-            <input class="text medium-field" type="email" id="email" name="email" value="{$user->getEmail()}" />
-        </div>
-        <hr>
-        <div class="field-group">
-            <label for="city">
-                Верификация
-            </label>
-            <input class="toggle-large" type="checkbox" id="verify" name="verify" value="1" {if $user->isVerified()} checked {/if} />
-        </div>
-        <div class="field-group">
-            <label for="city">
-                Онлайн статус
-            </label>
-            <select name="online" class="select">
-                <option value="0" {if $user->onlineStatus() > 2}selected{/if}>По-умолчанию</option>
-                <option value="1" {if $user->onlineStatus() == 1}selected{/if}>Инкогнито</option>
-                <option value="2" {if $user->onlineStatus() == 2}selected{/if}>Юзер умер</option>
-            </select>
-        </div>
-        <div class="buttons-container">
-            <div class="buttons">
-                <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input class="button submit" type="submit" value="Сохранить">
             </div>
-        </div>
-    </form>
-    
+            <div class="field-group">
+                <label for="id">ID</label>
+                <input class="text medium-field" type="number" id="id" disabled value="{$user->getId()}" />
+            </div>
+            <div class="field-group">
+                <label for="guid">GUID</label>
+                <input class="text medium-field" id="guid" disabled value="{$user->getChandlerUser()->getId()}" />
+            </div>
+            <div class="field-group">
+                <label for="registration_ip">{_admin_first_known_ip}</label>
+                <input class="text medium-field" id="guid" disabled value="{$user->getRegistrationIP()}" />
+            </div>
+            <div class="field-group">
+                <label for="first_name">{_name}</label>
+                <input class="text medium-field" type="text" id="first_name" name="first_name" value="{$user->getFirstName()}" />
+            </div>
+            <div class="field-group">
+                <label for="last_name">{_surname}</label>
+                <input class="text medium-field" type="text" id="last_name" name="last_name" value="{$user->getLastName()}" />
+            </div>
+            <div class="field-group">
+                <label for="nickname">{_nickname}</label>
+                <input class="text medium-field" type="text" id="nickname" name="nickname" value="{$user->getPseudo()}" />
+            </div>
+            <div class="field-group">
+                <label for="status">{_status}</label>
+                <input class="text medium-field" type="text" id="status" name="status" value="{$user->getStatus()}" />
+            </div>
+            <div class="field-group">
+                <label for="email">E-Mail</label>
+                <input class="text medium-field" type="email" id="email" name="email" value="{$user->getEmail()}" />
+            </div>
+            <div class="field-group">
+                <label for="shortcode">{_admin_shortcode}</label>
+                <input class="text medium-field" type="text" id="shortcode" name="shortcode" value="{$user->getShortCode()}" />
+            </div>
+            <hr>
+            <div class="field-group">
+                <label for="city">{_admin_verification}</label>
+                <input class="toggle-large" type="checkbox" id="verify" name="verify" value="1" {if $user->isVerified()} checked {/if} />
+            </div>
+            <div class="field-group">
+                <label for="city">{_admin_user_online}</label>
+                <select name="online" class="select">
+                    <option value="0" {if $user->onlineStatus() > 2}selected{/if}>{_admin_user_online_default}</option>
+                    <option value="1" {if $user->onlineStatus() == 1}selected{/if}>{_admin_user_online_incognite}</option>
+                    <option value="2" {if $user->onlineStatus() == 2}selected{/if}>{_admin_user_online_deceased}</option>
+                </select>
+            </div>
+            <div class="buttons-container">
+                <div class="buttons">
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    <input class="button submit" type="submit" value="{_save}">
+                </div>
+            </div>
+        </form>
     </div>
 {/block}

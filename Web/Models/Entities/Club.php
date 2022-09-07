@@ -38,12 +38,12 @@ class Club extends RowModel
         return iterator_to_array($avPhotos)[0] ?? NULL;
     }
     
-    function getAvatarUrl(): string
+    function getAvatarUrl(string $size = "miniscule"): string
     {
-        $serverUrl = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
+        $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
         $avPhoto   = $this->getAvatarPhoto();
         
-        return is_null($avPhoto) ? "$serverUrl/assets/packages/static/openvk/img/camera_200.png" : $avPhoto->getURL();
+        return is_null($avPhoto) ? "$serverUrl/assets/packages/static/openvk/img/camera_200.png" : $avPhoto->getURLBySizeId($size);
     }
     
     function getAvatarLink(): string
@@ -64,20 +64,10 @@ class Club extends RowModel
         else
             return "/club" . $this->getId();
     }
-    /* 
-    function getAvatarUrl(): string
-    {
-        $avAlbum  = (new Albums)->getUserAvatarAlbum($this);
-        $avCount  = $avAlbum->getPhotosCount();
-        $avPhotos = $avAlbum->getPhotos($avCount, 1);
-        $avPhoto  = iterator_to_array($avPhotos)[0] ?? NULL;
-        
-        return is_null($avPhoto) ? "/assets/packages/static/openvk/img/camera_200.png" : $avPhoto->getURL();
-    } */
     
     function getName(): string
     {
-        return ovk_proc_strtr($this->getRecord()->name, 32);
+        return $this->getRecord()->name;
     }
     
     function getCanonicalName(): string
@@ -109,6 +99,14 @@ class Club extends RowModel
     {
         return $this->getRecord()->about;
     }
+
+    function getDescriptionHtml(): ?string
+    {
+        if(!is_null($this->getDescription()))
+            return nl2br(htmlspecialchars($this->getDescription(), ENT_DISALLOWED | ENT_XHTML));
+        else
+            return NULL;
+    }
     
     function getShortCode(): ?string
     {
@@ -130,6 +128,21 @@ class Club extends RowModel
         return $this->getRecord()->administrators_list_display;
     }
     
+    function isEveryoneCanCreateTopics(): bool
+    {
+        return (bool) $this->getRecord()->everyone_can_create_topics;
+    }
+
+    function isDisplayTopicsAboveWallEnabled(): bool
+    {
+        return (bool) $this->getRecord()->display_topics_above_wall;
+    }
+
+    function isHideFromGlobalFeedEnabled(): bool
+    {
+        return (bool) $this->getRecord()->hide_from_global_feed;
+    }
+
     function getType(): int
     {
         return $this->getRecord()->type;
@@ -297,8 +310,8 @@ class Club extends RowModel
     {
         $manager = (new Managers)->getByUserAndClub($user->getId(), $this->getId());
 
-        if ($ignoreHidden && $manager !== null && $manager->isHidden())
-            return null;
+        if ($ignoreHidden && $manager !== NULL && $manager->isHidden())
+            return NULL;
 
         return $manager;
     }
@@ -338,14 +351,19 @@ class Club extends RowModel
     }
 
     function getWebsite(): ?string
-	{
-		return $this->getRecord()->website;
-	}
+	  {
+		  return $this->getRecord()->website;
+	  }
 
     function ban(string $reason): void
     {
         $this->setBlock_Reason($reason);
         $this->save();
+    }
+
+    function getAlert(): ?string
+    {
+        return $this->getRecord()->alert;
     }
     
     use Traits\TSubscribable;

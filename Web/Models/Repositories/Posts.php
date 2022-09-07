@@ -71,7 +71,7 @@ class Posts
     {
         $hashtag = "#$hashtag";
         $sel = $this->posts
-                    ->where("content LIKE ?", "%$hashtag%")
+                    ->where("MATCH (content) AGAINST (? IN BOOLEAN MODE)", "+$hashtag")
                     ->where("deleted", 0)
                     ->order("created DESC")
                     ->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
@@ -94,15 +94,19 @@ class Posts
     {
         $post = $this->posts->where(['wall' => $wall, 'virtual_id' => $post])->fetch();
         if(!is_null($post))
-        
             return new Post($post);
         else
-            return null;
+            return NULL;
         
     }
     
     function getPostCountOnUserWall(int $user): int
     {
         return sizeof($this->posts->where(["wall" => $user, "deleted" => 0]));
+    }
+
+    function getCount(): int
+    {
+        return sizeof(clone $this->posts);
     }
 }

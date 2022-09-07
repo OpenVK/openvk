@@ -17,20 +17,23 @@ final class BlobPresenter extends OpenVKPresenter
     function renderFile(/*string*/ $dir, string $name, string $format)
     {
         $dir  = $this->getDirName($dir);
-        $name = preg_replace("%[^a-zA-Z0-9_\-]++%", "", $name);
-        $path = OPENVK_ROOT . "/storage/$dir/$name.$format";
-        if(!file_exists($path)) {
+        $base = realpath(OPENVK_ROOT . "/storage/$dir");
+        $path = realpath(OPENVK_ROOT . "/storage/$dir/$name.$format");
+        if(!$path) # Will also check if file exists since realpath fails on ENOENT
             $this->notFound();
-        } else {
-            if(isset($_SERVER["HTTP_IF_NONE_MATCH"]))
-                exit(header("HTTP/1.1 304 Not Modified"));
-            
-            header("Content-Type: " . mime_content_type($path));
-            header("Content-Size: " . filesize($path));
-            header("ETag: W/\"" . hash_file("snefru", $path) . "\"");
-            
-            readfile($path);
-            exit;
-        }
+        else if(strpos($path, $path) !== 0) # Prevent directory traversal and storage container escape
+            $this->notFound();
+        
+        if(isset($_SERVER["HTTP_IF_NONE_MATCH"]))
+            exit(header("HTTP/1.1 304 Not Modified"));
+        
+        header("Content-Type: " . mime_content_type($path));
+        header("Content-Size: " . filesize($path));
+        header("Cache-Control: public, max-age=1210000");
+        header("X-Accel-Expires: 1210000");
+        header("ETag: W/\"" . hash_file("snefru", $path) . "\"");
+        
+        readfile($path);
+        exit;
     }
 }

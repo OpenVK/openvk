@@ -124,6 +124,6 @@ final class ReportPresenter extends OpenVKPresenter
             $report->delete();
             $this->flash("suc", "Смэрть...", "Сообщество успешно забанено.");
         }
-        $this->redirect("/admin/reports");
+        $this->redirect("/support/reports");
     }
 }

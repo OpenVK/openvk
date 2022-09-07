@@ -1,9 +1,9 @@
 <div class="content_divider">
     <div class="content_title_expanded" onclick="hidePanel(this);">
-        {_"wall"} 
+        {_wall} 
         <nobold>
-        {tr("wall", $count)}
-        <a href="/wall{$owner}" class="float-right lowercase">{_all_title}</a>
+            {tr("wall", $count)}
+            <a href="/wall{$owner}" class="float-right lowercase">{_all_title}</a>
         </nobold>
     </div>
     <div>
@@ -25,3 +25,7 @@
         </div>
     </div>
 </div>
+
+{if isset($thisUser) && $thisUser->hasMicroblogEnabled()}
+    {script "js/al_comments.js"}
+{/if}

@@ -1,13 +1,13 @@
 {extends "@layout.xml"}
 
 {block title}
-    Сводка
+    {_admin_overview_summary}
 {/block}
 
 {block heading}
-    Сводка
+    {_admin_overview_summary}
 {/block}
 
 {block content}
-    Да!
+    ┬─┬︵/(.□.)╯
 {/block}

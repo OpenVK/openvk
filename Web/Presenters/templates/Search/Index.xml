@@ -6,10 +6,13 @@
     {else}
         {tr("search_for_groups")}
     {/if}
+    {if $_GET['query']}
+        - {$_GET['query']}
+    {/if}
 {/block}
 
 {block header}
-    OpenVK »
+    {=OPENVK_ROOT_CONF["openvk"]["appearance"]["name"]} »
     {if $type === "users"}
         {tr("search_for_people")}
     {else}
@@ -17,30 +20,46 @@
     {/if}
 {/block}
 
-{block tabs}
-    <form style="margin-left: 12px;">
-        <input name="type" type="hidden" value="{$_GET['type'] ?? 'users'}" />
-        <input name="query" type="text" placeholder="{_"header_search"}" value="{$_GET['query'] ?? ''}" style="width: 90%" />
-        <input type="submit" class="button" value="{_"search_button"}" style="width: 9%" />
-    </form>
-    
-    <p style="margin-left: 15px;">
-        <b>{tr("results", $count)}</b>
-    </p>
-{/block}
-
 {* BEGIN ELEMENTS DESCRIPTION *}
+
+{block tabs}
+    <div {if $type === "users"}id="activetabs"{/if} class="tab">
+        <a {if $type === "users"}id="act_tab_a"{/if} href="/search?type=users{if $_GET['query']}&query={urlencode($_GET['query'])}{/if}">
+            {_users}
+        </a>
+    </div>
+    <div {if $type === "groups"}id="activetabs"{/if} class="tab">
+        <a {if $type === "groups"}id="act_tab_a"{/if} href="/search?type=groups{if $_GET['query']}&query={urlencode($_GET['query'])}{/if}">
+            {_groups}
+        </a>
+    </div>
+</div>
+<form class="header_search_inputbt">
+    <input name="type" type="hidden" value="{$type ?? 'users'}" />
+    <input name="query" class="header_search_input" placeholder="{_search_placeholder}" value="{$_GET['query'] ?? ''}" />
+    <button class="button_search">{_search_button}</button>
+</form>
+
+<p style="margin-left: 15px; margin-top: 0;">
+    <b>{tr("results", $count)}</b>
+</p>
+<div>
+{/block}
 
 {block link|strip|stripHtml}
     {$x->getURL()}
 {/block}
 
 {block preview}
-    <img src="{$x->getAvatarUrl()}" width="75" alt="{_"photo"}" />
+    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="{_photo}" />
 {/block}
 
 {block name}
     <text style="overflow: hidden;">&nbsp;{$x->getCanonicalName()}</text>
+    <img n:if="$x->isVerified()" 
+        class="name-checkmark"
+        src="/assets/packages/static/openvk/img/checkmark.png"
+    />
 {/block}
 
 {block description}
@@ -48,21 +67,21 @@
         <tbody>
             {if $type === "users"}
                 <tr>
-                    <td><span class="nobold">{_"gender"}: </span></td>
+                    <td><span class="nobold">{_gender}: </span></td>
                     <td>{$x->isFemale() ? tr("female") : tr("male")}</td>
                 </tr>
                 <tr>
-                    <td><span class="nobold">{_"relationship"}:</span></td>
-                    <td>{var $marialStatus = $x->getMaritalStatus()}{_"relationship_$marialStatus"}</td>
+                    <td><span class="nobold">{_relationship}:</span></td>
+                    <td>{$x->getLocalizedMaritalStatus()}</td>
                 </tr>
                 <tr>
-                    <td><span class="nobold">{_"registration_date"}: </span></td>
+                    <td><span class="nobold">{_registration_date}: </span></td>
                     <td>{$x->getRegistrationTime()}</td>
                 </tr>
             {/if}
             <tr>
                 <td>
-                    <span class="nobold">{_"description"}:</span>
+                    <span class="nobold">{_description}:</span>
                 </td>
                 <td>
                     {$x->getDescription() ?? '(' . tr("none") . ')'}

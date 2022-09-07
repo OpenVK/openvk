@@ -5,9 +5,10 @@ update.pid.old
 Web/static/js/node_modules
 
 tmp/*
-!tmp/.gitkeep
+!tmp/api-storage
 !tmp/themepack_artifacts/.gitkeep
 themepacks/*
 !themepacks/.gitkeep
+!themepacks/openvk_modern
 storage/*
 !storage/.gitkeep

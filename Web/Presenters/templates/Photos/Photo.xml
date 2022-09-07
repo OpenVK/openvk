@@ -1,6 +1,6 @@
 {extends "../@layout.xml"}
 
-{block title}{_"photo"}{/block}
+{block title}{_photo}{/block}
 
 {block header}
     {ifset $album}
@@ -8,20 +8,20 @@
             {$album->getOwner()->getCanonicalName()}
         </a>
         {if ($album->getOwner() instanceof openvk\Web\Models\Entities\Club)}
-            » <a href="/albums{$album->getOwner()->getId() * -1}">{_"albums"}</a>
+            » <a href="/albums{$album->getOwner()->getId() * -1}">{_albums}</a>
         {else}
-            » <a href="/albums{$album->getOwner()->getId()}">{_"albums"}</a>
+            » <a href="/albums{$album->getOwner()->getId()}">{_albums}</a>
         {/if}
         » <a href="/album{$album->getPrettyId()}">{$album->getName()}</a>
     {else}
         <a href="{$photo->getOwner()->getURL()}">{$photo->getOwner()->getCanonicalName()}</a>
     {/ifset}
-    » {_"photo"}
+    » {_photo}
 {/block}
 
 {block content}
     <center style="margin-bottom: 8pt;">
-        <img src="{$photo->getURL()}" style="max-width: 80%; max-height: 60vh;" />
+        <img src="{$photo->getURLBySizeId('large')}" style="max-width: 80%; max-height: 60vh;" />
     </center>
     
     <hr/>
@@ -32,12 +32,12 @@
         </div>
         <div style="float: left; min-height: 100px; width: 30%;">
             <div>
-                <h4>{_"information"}</h4>
-                <span style="color: grey;">{_"info_description"}:</span>
-                {$photo->getDescription() ?? "(отсутствует)"}<br/>
-                <span style="color: grey;">{_"info_uploaded_by"}:</span>
+                <h4>{_information}</h4>
+                <span style="color: grey;">{_info_description}:</span>
+                {$photo->getDescription() ?? "(" . tr("none") . ")"}<br/>
+                <span style="color: grey;">{_info_uploaded_by}:</span>
                 <a href="{$photo->getOwner()->getURL()}">{$photo->getOwner()->getFullName()}</a><br/>
-                <span style="color: grey;">{_"info_upload_date"}:</span>
+                <span style="color: grey;">{_info_upload_date}:</span>
                 {$photo->getPublicationTime()}
             </div>
             <br/>
@@ -46,8 +46,8 @@
                 {var canReport = true}
             {/if}
             <div n:if="isset($thisUser) && $thisUser->getId() === $photo->getOwner()->getId()">
-                <a href="/photo{$photo->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">{_"edit"}</a>
-                <a id="_photoDelete" href="/photo{$photo->getPrettyId()}/delete" class="profile_link" style="display:block;width:96%;">{_"delete"}</a>
+                <a href="/photo{$photo->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">{_edit}</a>
+                <a id="_photoDelete" href="/photo{$photo->getPrettyId()}/delete" class="profile_link" style="display:block;width:96%;">{_delete}</a>
             </div>
             <a href="{$photo->getURL()}" class="profile_link" target="_blank" style="display:block;width:96%;">{_"open_original"}</a>
             <a n:if="$canReport ?? false" class="profile_link" style="display:block;width:96%;" href="javascript:reportPhoto()">{_report}</a>
@@ -74,6 +74,7 @@
                 ]);
                 }
             </script>
+            <a href="{$photo->getURL()}" class="profile_link" target="_blank" style="display:block;width:96%;">{_open_original}</a>
         </div>
     </div>
 {/block}

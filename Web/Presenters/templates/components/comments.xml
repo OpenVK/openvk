@@ -1,29 +1,22 @@
-<h4>{_"comments"} ({$count})</h4>
+<h4 n:if="$showTitle ?? true">{_comments} ({$count})</h4>
 
 <div n:ifset="$thisUser">
-    {var commentsURL = "/al_comments.pl/create/$model/" . $parent->getId()}
-    {var club = $parent instanceof \openvk\Web\Models\Entities\Post && $parent->getTargetWall() < 0 ? (new openvk\Web\Models\Repositories\Clubs)->get(abs($parent->getTargetWall())) : NULL}
-    {include "textArea.xml", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), club => $club}
+    {var $commentsURL = "/al_comments/create/$model/" . $parent->getId()}
+    {var $club = $parent instanceof \openvk\Web\Models\Entities\Post && $parent->getTargetWall() < 0 ? (new openvk\Web\Models\Repositories\Clubs)->get(abs($parent->getTargetWall())) : $club}
+    {if !$readOnly}
+        {include "textArea.xml", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), club => $club}
+    {/if}
 </div>
 
 {if sizeof($comments) > 0}
     {foreach $comments as $comment}
         {include "comment.xml", comment => $comment}
     {/foreach}
-    {include "paginator.xml", conf => (object) ["page" => $page, "count" => $count, "amount" => sizeof($comments), "perPage" => 10]}
+    <div style="margin-top: 11px;">
+        {include "paginator.xml", conf => (object) ["page" => $page, "count" => $count, "amount" => sizeof($comments), "perPage" => 10]}
+    </div>
 {else}
-    <!-- {if $model === "photos"}
-        <p>Будьте первым, кто оставит комментарий к этой фотографии</p>
-    {elseif $model === "posts"}
-        <p>Будьте первым, кто оставит комментарий к этой записи</p>
-    {elseif $model === "notes"}
-        <p>Будьте первым, кто оставит комментарий к этой заметке</p>
-    {elseif $model === "videos"}
-        <p>Будьте первым, кто оставит комментарий к этой видеозаписи</p>
-    {else}
-        <p>Будьте первым кто оставит комментарий к этой дичи!</p>
-    {/if} -->
-    {_"comments_tip"}
+    {_comments_tip}
 {/if}
 
 {script "js/al_comments.js"}

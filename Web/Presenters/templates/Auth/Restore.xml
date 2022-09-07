@@ -1,24 +1,24 @@
 {extends "../@layout.xml"}
 
 {block title}
-    Восстановление доступа
+    {_access_recovery}
 {/block}
 
 {block header}
-    Восстановить доступ к странице
+    {_page_access_recovery}
 {/block}
 
 {block content}
     <p>
-        Забыли пароль? Не волнуйтесь, введите ваши данные и мы отправим вам email с инструкциями по восстановлению аккаунта.
+        {_access_recovery_info}
     </p>
     
     <form method="POST" enctype="multipart/form-data">
-        <label for="login">Логин: </label>
+        <label for="login">{_log_in}: </label>
         <input id="login" type="text" name="login" required />
         <br/><br/>
         
         <input type="hidden" name="hash" value="{$csrfToken}" />
-        <input type="submit" value="Сбросить пароль" class="button" style="float: right;" />
+        <input type="submit" value="{_reset_password}" class="button" style="float: right;" />
     </form>
 {/block}

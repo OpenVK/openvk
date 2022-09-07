@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Repositories\Users;
-use openvk\Web\Models\Repositories\Clubs;
+use openvk\Web\Models\Repositories\{Users, Clubs};
 
 final class UnknownTextRouteStrategyPresenter extends OpenVKPresenter
 {

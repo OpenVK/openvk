@@ -48,6 +48,7 @@ class Note extends Postable
             "acronym",
             "blockquote",
             "cite",
+            "span",
         ]);
         $config->set("HTML.AllowedAttributes", [
             "table.summary",
@@ -59,6 +60,8 @@ class Note extends Postable
             "img.style",
             "div.style",
             "div.title",
+            "span.class",
+            "p.class",
         ]);
         $config->set("CSS.AllowedProperties", [
             "float",
@@ -68,9 +71,22 @@ class Note extends Postable
             "max-width",
             "font-weight",
         ]);
+        $config->set("Attr.AllowedClasses", [
+            "underline",
+        ]);
+    
+        $source = NULL;
+        if(is_null($this->getRecord())) {
+            if(isset($this->changes["source"]))
+                $source = $this->changes["source"];
+            else
+                throw new \LogicException("Can't render note without content set.");
+        } else {
+            $source = $this->getRecord()->source;
+        }
         
         $purifier = new HTMLPurifier($config);
-        return $purifier->purify($this->getRecord()->source);
+        return $purifier->purify($source);
     }
     
     function getName(): string
@@ -85,6 +101,9 @@ class Note extends Postable
     
     function getText(): string
     {
+        if(is_null($this->getRecord()))
+            return $this->renderHTML();
+        
         $cached = $this->getRecord()->cached_content;
         if(!$cached) {
             $cached = $this->renderHTML();
@@ -93,5 +112,10 @@ class Note extends Postable
         }
         
         return $cached;
+    }
+
+    function getSource(): string
+    {
+        return $this->getRecord()->source;
     }
 }

@@ -1,3 +1,5 @@
+#include <en>
+
 "__locale" = "tr_TR.UTF-8;Tur";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
@@ -151,7 +153,7 @@
 "outcoming_req" = "İstekler";
 "req" = "İstekler";
 
-"firends_zero" = "Arkadaş yok";
+"friends_zero" = "Arkadaş yok";
 "friends_one" = "$1 arkadaş";
 "friends_other" = "$1 arkadaş";
 
@@ -330,6 +332,7 @@
 "privacy_value_friends_dative" = "Arkadaşlarım";
 "privacy_value_only_me" = "Sadece ben";
 "privacy_value_only_me_dative" = "Sadece ben";
+"privacy_value_nobody" = "Kimse";
 
 "your_email_address" = "E-posta adresin";
 "your_page_address" = "Adres sayfan";

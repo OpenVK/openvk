@@ -35,11 +35,13 @@ function handleUpload(id) {
         u("span", indicator.nodes[0]).text(trim(file.name) + " (" + humanFileSize(file.size, false) + ")");
         indicator.attr("style", "display: block;");
     }
+
+    document.querySelector("#post-buttons" + id + " #wallAttachmentMenu").classList.add("hidden");
 }
 
 function initGraffiti(id) {
     let canvas = null;
-    let msgbox = MessageBox("Нарисовать граффити", "<div id='ovkDraw'></div>", ["Сохранить", "Отменить"], [function() {
+    let msgbox = MessageBox(tr("draw_graffiti"), "<div id='ovkDraw'></div>", [tr("save"), tr("cancel")], [function() {
         canvas.getImage({includeWatermark: false}).toBlob(blob => {
             let fName = "Graffiti-" + Math.ceil(performance.now()).toString() + ".jpeg";
             let image = new File([blob], fName, {type: "image/jpeg", lastModified: new Date().getTime()});
@@ -108,10 +110,15 @@ function setupWallPostInputHandlers(id) {
         var textArea          = e.target;
         textArea.style.height = "5px";
         var newHeight = textArea.scrollHeight;
-        textArea.style.height = newHeight + boost;
+        textArea.style.height = newHeight + boost + "px";
         return;
         
         // revert to original size if it is larger (possibly changed by user)
         // textArea.style.height = (newHeight > originalHeight ? (newHeight + boost) : originalHeight) + "px";
     });
 }
+
+u("#write > form").on("keydown", function(event) {
+    if(event.ctrlKey && event.keyCode === 13)
+        this.submit();
+});

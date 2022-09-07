@@ -1,16 +1,35 @@
 {extends "../@listView.xml"}
-{var iterator = iterator_to_array($albums)}
-{var page     = $paginatorConf->page}
+{var $iterator = iterator_to_array($albums)}
+{var $page     = $paginatorConf->page}
 
-{block title}{_"albums"} {$owner->getCanonicalName()}{/block}
+{block title}{_albums} {$owner->getCanonicalName()}{/block}
 
 {block header}
-    <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
-    » {_"albums"}
-    
-    <div n:if="$canEdit" style="float: right;">
-        {var isClub = ($owner instanceof openvk\Web\Models\Entities\Club)}
-        <a href="/albums/create{$isClub ? '?gpid=' . $owner->getId() : ''}">{_"create_album"}</a>
+    {if isset($thisUser) && $thisUser->getId() == $owner->getId()}
+        {_my_photos}
+    {else}
+        <a href="{$owner->getURL()}">
+        {$owner->getCanonicalName()}</a>
+        »
+        {_albums}
+    {/if}
+{/block}
+
+{block size}
+    <div style="padding-bottom: 0px; padding-top: 0;" class="summaryBar">
+        <div class="summary">
+            {if !is_null($thisUser) && $owner->getId() === $thisUser->getId()}
+                {tr("albums_list", $count)}
+            {else}
+                {tr("albums", $count)}
+            {/if}
+            
+            <span n:if="$canEdit" style="float: right;">
+                &nbsp;|&nbsp;
+                {var $isClub = ($owner instanceof \openvk\Web\Models\Entities\Club)}
+                <a href="/albums/create{$isClub ? '?gpid=' . $owner->getId() : ''}">{_create_album}</a>
+            </span>
+        </div>
     </div>
 {/block}
 
@@ -25,14 +44,12 @@
 {/block}
 
 {block preview}
-    {var cover   = $x->getCoverPhoto()}
-    {var preview = is_null($cover) ? "/assets/packages/static/openvk/img/camera_200.png" : $cover->getURL()}
+    {var $cover   = $x->getCoverPhoto()}
+    {var $preview = is_null($cover) ? "/assets/packages/static/openvk/img/camera_200.png" : $cover->getURLBySizeId("normal")}
     
-    <center style="height: 54pt; width: 140px;">
-        <a href="/album{$x->getPrettyId()}">
-            <img src="{$preview}" alt="{$x->getName()}" style="max-height: 100%; max-width: 100%;" />
-        </a>
-    </center>
+    <a href="/album{$x->getPrettyId()}">
+        <img src="{$preview}" alt="{$x->getName()}" style="height: 130px; width: 170px; object-fit: cover" />
+    </a>
 {/block}
 
 {block name}
@@ -40,8 +57,8 @@
 {/block}
 
 {block description}
-    <span>{$x->getDescription() ?? $x->getName()}</span><br/>
-    <span style="color: grey;">{$x->getPhotosCount()} фотографий</span><br/>
-    <span style="color: grey;">Создан {$x->getCreationTime()}</span><br/>
-    <span style="color: grey;">Изменён {$x->getEditTime() ?? $x->getCreationTime()}</span>
+    <span>{$x->getDescription() ?? $x->getName()}</span><br />
+    <span style="color: grey;">{$x->getPhotosCount()} фотографий</span><br />
+    <span style="color: grey;">{tr("updated_at", $x->getEditTime() ?? $x->getCreationTime())}</span><br />
+    <span style="color: grey;">{_created} {$x->getCreationTime()}</span><br />
 {/block}

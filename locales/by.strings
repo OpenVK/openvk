@@ -1,3 +1,5 @@
+#include <ru>
+
 "__locale" = "be_BY.UTF-8;Bel";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
@@ -121,12 +123,20 @@
 "incoming_req" = "Падпісанты";
 "outcoming_req" = "Заяўкі";
 "req" = "Заяўкі";
+"friends_online" = "Сябры ан-лайн";
+"all_friends" = "Ўсе сябры";
 
-"firends_zero" = "Няма сяброў";
+"friends_zero" = "Няма сяброў";
 "friends_one" = "$1 сябар";
-"friends_few" = "$1  аднаго";
+"friends_few" = "$1 аднаго";
 "friends_many" = "$1 сяброў";
 "friends_other" = "$1 сяброў";
+
+"friends_online_zero" = "Няма сяброў ан-лайн";
+"friends_online_one" = "$1 сябар ан-лайн";
+"friends_online_few" = "$1 аднаго ан-лайн";
+"friends_online_many" = "$1 сяброў ан-лайн";
+"friends_online_other" = "$1 сяброў ан-лайн";
 
 "followers_zero" = "Няма падпісчыкаў";
 "followers_one" = "$1 падпісант";
@@ -139,6 +149,18 @@
 "subscriptions_few" = "$1 падпіскі";
 "subscriptions_many" = "$1 падпісак";
 "subscriptions_other" = "$1 падпісак";
+
+"friends_list_zero" = "У Вас пака няма сяброў";
+"friends_list_one" = "У Вас $1 сябар";
+"friends_list_few" = "У Вас $1 сябра";
+"friends_list_many" = "У Вас $1 сяброў";
+"friends_list_other" = "У Вас $1 сяброў";
+
+"friends_list_online_zero" = "У Вас пака няма сяброў ан-лайн";
+"friends_list_online_one" = "У Вас $1 сябар ан-лайн";
+"friends_list_online_few" = "У Вас $1 сябра ан-лайн";
+"friends_list_online_many" = "У Вас $1 сяброў ан-лайн";
+"friends_list_online_other" = "У Вас $1 сяброў ан-лайн";
 
 /* Group */
 
@@ -287,6 +309,7 @@
 "search_for_groups" = "Пошук груп";
 "search_for_people" = "Пошук людзей";
 "search_button" = "Знайсці";
+
 "privacy_setting_access_page" = "Каму ў інтэрнэце відаць маю старонку";
 "privacy_setting_read_info" = "Каму відаць асноўную інфармацыю маёй старонкі";
 "privacy_setting_see_groups" = "Каму відаць мае суполкі і сустрэчы";
@@ -301,9 +324,9 @@
 "privacy_value_users" = "Карыстальнікам OpenVK";
 "privacy_value_friends" = "Сябры";
 "privacy_value_friends_dative" = "Сябрам";
-"privacy_value_only_me_and_super_capite" = "Я і Даніілу Мысліўцу";
-"privacy_value_only_me_and_super_capite_dative" = "Мне і Даніілу Мысліўцу";
-"privacy_value_super_capite" = "Даніілу Мысліўцу";
+"privacy_value_only_me" = "Толькі я";
+"privacy_value_only_me_dative" = "Толькі мне";
+"privacy_value_nobody" = "Ніхто";
 
 "your_email_address" = "Адрас Вашай электроннай пошты";
 "your_page_address" = "Адрас Вашай старонкі";
@@ -386,24 +409,6 @@
 "Time_today" = "сёння";
 "Time_yesterday" = "учора";
 
-"privacy_setting_access_page" = "Каму ў інтэрнэце відаць маю старонку";
-"privacy_setting_read_info" = "Каму відаць асноўную інфармацыю маёй старонкі";
-"privacy_setting_see_groups" = "Каму відаць мае суполкі і сустрэчы";
-"privacy_setting_see_photos" = "Каму відаць мае фатаграфіі";
-"privacy_setting_see_videos" = "Каму відаць мае відэазапісы";
-"privacy_setting_see_notes" = "Каму відаць мае нататкі";
-"privacy_setting_see_friends" = "Каму відаць маіх сяброў";
-"privacy_setting_add_to_friends" = "Хто можа называць мяне сябрам";
-"privacy_setting_write_wall" = "Хто можа пісаць у мяне на сцяне";
-"privacy_value_anybody" = "Усе жадаючыя";
-"privacy_value_anybody_dative" = "Усім жадаючым";
-"privacy_value_users" = "Карыстальнікам OpenVK";
-"privacy_value_friends" = "Сябры";
-"privacy_value_friends_dative" = "Сябрам";
-"privacy_value_only_me_and_super_capite" = "Я і Даніілу Мысліўцу";
-"privacy_value_only_me_and_super_capite_dative" = "Мне і Даніілу Мысліўцу";
-"privacy_value_super_capite" = "Даніілу Мысліўцу";
-
 "your_email_address" = "Адрас Вашай электроннай пошты";
 "your_page_address" = "Адрас Вашай старонкі";
 "page_address" = "Адрас старонкі";
@@ -485,3 +490,7 @@
 "comment" = "Каментарый";
 "sender" = "Адпраўнік";
 
+/* Cookies pop-up */
+
+"cookies_popup_content" = "Усе хлопчыкi любяць пэчыва, таму гэты вэб-сайт выкарыстоўвае Cookies для таго, каб ідэнтыфікаваць вашу сесію і нічога болей. Звяртайцеся да нашай <a href='/privacy'>палiтыкi канфiдэнцыальнастi</a> для палучэння поўнай iнфармацыi.";
+"cookies_popup_agree" = "Прынiмаю";

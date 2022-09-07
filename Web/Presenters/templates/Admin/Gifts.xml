@@ -9,7 +9,7 @@
         {_create}
     </a>
     
-    <h1>Набор "{$cat->getName()}"</h1>
+    <h1>{_admin_giftset} "{$cat->getName()}"</h1>
 {/block}
 
 {block content}
@@ -32,11 +32,11 @@
                     <td style="vertical-align: middle;">
                         {$gift->getName()}
                         <span n:if="$gift->isFree()" class="aui-lozenge aui-lozenge-subtle aui-lozenge-success">
-                            бесплатный
+                            {_admin_price_free}
                         </span>
                     </td>
                     <td style="vertical-align: middle;">
-                        {$gift->getPrice()} голосов
+                        {tr("points_amount", $gift->getPrice())}
                     </td>
                     <td style="vertical-align: middle;">
                         {$gift->getUsages()} раз
@@ -71,12 +71,9 @@
     {/if}
 
     <div align="right">
-        {var isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + sizeof($gifts)) < $count}
-        <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">
-            ⭁ туда
-        </a>
-        <a n:if="$isLast" class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">
-            ⭇  сюда
-        </a>
+        {var $isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + sizeof($gifts)) < $count}
+
+        <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">&laquo;</a>
+        <a n:if="$isLast" class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">&raquo;</a>
     </div>
 {/block}

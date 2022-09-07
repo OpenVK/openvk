@@ -1,10 +1,10 @@
 {extends "../@layout.xml"}
-{block title}{_"wall"}{/block}
+{block title}{_wall}{/block}
 
 {block header}
     <a href="{$oObj->getURL()}">{$oObj->getCanonicalName()}</a>
     »
-    {_"wall"} 
+    {_wall} 
     <div style="float:right;">
         <span>
             <b>{tr("wall", $count)}</b>
@@ -13,24 +13,28 @@
 {/block}
 
 {block content}
-<div class="content_divider">
-    <div>
-        <div n:if="$canPost" class="content_subtitle">
-            {include "../components/textArea.xml", route => "/wall$owner/makePost"}
-        </div>
-        
-        <div class="content">
-            {if sizeof($posts) > 0}
-                {foreach $posts as $post}
-                    <a name="postGarter={$post->getId()}"></a>
-                    
-                    {include "../components/post.xml", post => $post, commentSection => true}
-                {/foreach}
-                {include "../components/paginator.xml", conf => $paginatorConf}
-            {else}
-                {_no_posts_abstract}
-            {/if}
+    <div class="content_divider">
+        <div>
+            <div n:if="$canPost" class="content_subtitle">
+                {include "../components/textArea.xml", route => "/wall$owner/makePost"}
+            </div>
+            
+            <div class="content">
+                {if sizeof($posts) > 0}
+                    {foreach $posts as $post}
+                        <a name="postGarter={$post->getId()}"></a>
+                        
+                        {include "../components/post.xml", post => $post, commentSection => true}
+                    {/foreach}
+                    {include "../components/paginator.xml", conf => $paginatorConf}
+                {else}
+                    {_no_posts_abstract}
+                {/if}
+            </div>
         </div>
     </div>
-</div>
+
+    {if isset($thisUser) && $thisUser->hasMicroblogEnabled()}
+        {script "js/al_comments.js"}
+    {/if}
 {/block}

@@ -34,10 +34,18 @@ final class MessengerPresenter extends OpenVKPresenter
         if(isset($_GET["sel"]))
             $this->pass("openvk!Messenger->app", $_GET["sel"]);
         
-        $page = $_GET["p"] ?? 1;
+        $page = (int) ($_GET["p"] ?? 1);
         $correspondences = iterator_to_array($this->messages->getCorrespondencies($this->user->identity, $page));
-        
+
+        // #КакаоПрокакалось
+
         $this->template->corresps = $correspondences;
+        $this->template->paginatorConf = (object) [
+            "count"   => $this->messages->getCorrespondenciesCount($this->user->identity),
+            "page"    => (int) ($_GET["p"] ?? 1),
+            "amount"  => sizeof($this->template->corresps),
+            "perPage" => OPENVK_DEFAULT_PER_PAGE,
+        ];
     }
     
     function renderApp(int $sel): void
@@ -106,7 +114,7 @@ final class MessengerPresenter extends OpenVKPresenter
         
         $messages       = [];
         $correspondence = new Correspondence($this->user->identity, $correspondent);
-        foreach($correspondence->getMessages(1, $lastMsg === 0 ? null : $lastMsg) as $message)
+        foreach($correspondence->getMessages(1, $lastMsg === 0 ? NULL : $lastMsg) as $message)
             $messages[] = $message->simplify();
         
         header("Content-Type: application/json");
@@ -124,7 +132,7 @@ final class MessengerPresenter extends OpenVKPresenter
         }
         
         $sel = $this->getCorrespondent($sel);
-        if($sel->getId() !== $this->user->id && $sel->getSubscriptionStatus($this->user->identity) !== 3)
+        if($sel->getId() !== $this->user->id && !$sel->getPrivacyPermission('messages.write', $this->user->identity))
             exit(header("HTTP/1.1 403 Forbidden"));
         
         $cor = new Correspondence($this->user->identity, $sel);

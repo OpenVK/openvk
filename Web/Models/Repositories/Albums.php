@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Repositories;
 use openvk\Web\Models\Entities\Album;
+use openvk\Web\Models\Entities\Photo;
 use openvk\Web\Models\Entities\Club;
 use openvk\Web\Models\Entities\User;
 use Nette\Database\Table\ActiveRow;
@@ -114,5 +115,12 @@ class Albums
         }
         
         return new Album($album);
+    }
+
+    function getAlbumByPhotoId(Photo $photo): ?Album
+    {
+        $dbalbum = $this->context->table("album_relations")->where(["media" => $photo->getId()])->fetch();
+
+        return $dbalbum->collection ? $this->get($dbalbum->collection) : null;
     }
 }
