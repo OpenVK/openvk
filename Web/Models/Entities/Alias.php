@@ -9,14 +9,14 @@ class Alias extends RowModel
 {
     protected $tableName = "aliases";
     
-    function getId(): int
+    function getOwnerId(): int
     {
-        return $this->getRecord()->id;
+        return $this->getRecord()->owner_id;
     }
 
     function getType(): string
     {
-        if ($this->getId() < 0)
+        if ($this->getOwnerId() < 0)
             return "club";
 
         return "user";
@@ -24,7 +24,7 @@ class Alias extends RowModel
 
     function getUser(): ?User
     {
-        return (new Users)->get($this->getId());
+        return (new Users)->get($this->getOwnerId());
     }
 
     function getClub(): ?Club

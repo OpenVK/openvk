@@ -40,7 +40,7 @@ class Users
 
         if (!$alias) return NULL;
         if ($alias->getType() !== "user") return NULL;
-
+        
         return $alias->getUser();
     }
     
