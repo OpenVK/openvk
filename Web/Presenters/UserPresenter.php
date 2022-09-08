@@ -167,8 +167,11 @@ final class UserPresenter extends OpenVKPresenter
                 if ($this->postParam("gender"))
                     if($this->postParam("gender") == "hide")
                         $user->setGender(NULL);
-                    elseif($this->postParam("gender") == "other" && $this->postParam("other-gender-string"))
-                        $user->setGender($this->postParam("other-gender-string"));
+                    elseif($this->postParam("gender") == "other")
+                        if($this->postParam("other-gender-string"))
+                            $user->setGender($this->postParam("other-gender-string"));
+                        else
+                            $user->setGender(NULL);
                     else
                         $user->setGender($this->postParam("gender"));
 

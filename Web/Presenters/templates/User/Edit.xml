@@ -143,13 +143,13 @@
                         </script>
                         <td>
                             <select name="gender" onchange="genderChanged(event)">
-                                <option value="hide" n:attr="selected => $user->getRawGender() == NULL">{_hide}</option>
+                                <option value="hide" n:attr="selected => $user->getRawGender() == NULL">{_hidden}</option>
                                 <option value="female"  n:attr="selected => $user->getRawGender() == 'female'">{_female}</option>
                                 <option value="male" n:attr="selected => $user->getRawGender() == 'male'">{_male}</option>
                                 <option value="non-binary" n:attr="selected => $user->getRawGender() == 'non-binary'">{_non-binary}</option>
                                 <option value="other" n:attr="selected => $user->hasOtherGenderString()">{_other}</option>
                             </select>
-                            <input id="other-gender-input" type="text" name="other-gender-string" placeholder="{_other_gender_placeholder}" style="display: {$user->hasOtherGenderString() ? 'inline' : 'none'};" />
+                            <input id="other-gender-input" type="text" name="other-gender-string" placeholder="{_other_gender_placeholder}" style="display: {$user->hasOtherGenderString() ? 'inline' : 'none'};" n:attr="value => $user->hasOtherGenderString() ? $user->getGender() : ''" />
                         </td>
                     </tr>
                     <tr>

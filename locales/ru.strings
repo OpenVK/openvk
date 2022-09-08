@@ -74,6 +74,7 @@
 "non-binary" = "небинарный";
 "other" = "другой";
 "other_gender_placeholder" = "Я идентифицирую себя как...";
+"hidden" = "не указан";
 "description" = "Описание";
 "save" = "Сохранить";
 "main_information" = "Основная информация";
