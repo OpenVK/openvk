@@ -71,6 +71,9 @@
 "gender" = "Пол";
 "male" = "мужской";
 "female" = "женский";
+"non-binary" = "небинарный";
+"other" = "другой";
+"other_gender_placeholder" = "Я идентифицирую себя как...";
 "description" = "Описание";
 "save" = "Сохранить";
 "main_information" = "Основная информация";
