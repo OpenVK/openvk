@@ -1,9 +1,9 @@
 {extends "../@listView.xml"}
 {var $Manager = openvk\Web\Models\Entities\Manager::class}
-{var iterator = $onlyShowManagers ? $managers : $followers}
-{var count    = $paginatorConf->count}
-{var page     = $paginatorConf->page}
-{var perPage  = 6}
+{var $iterator = $onlyShowManagers ? $managers : $followers}
+{var $count    = $paginatorConf->count}
+{var $page     = $paginatorConf->page}
+{var $perPage  = 6}
 
 {block title}{_followers} {$club->getCanonicalName()}{/block}
 
@@ -49,16 +49,16 @@
 {/block}
 
 {block description}
-    {var user    = $x instanceof $Manager ? $x->getUser() : $x}
-    {var manager = $x instanceof $Manager ? $x : $club->getManager($user, !$club->canBeModifiedBy($thisUser))}
+    {var $user    = $x instanceof $Manager ? $x->getUser() : $x}
+    {var $manager = $x instanceof $Manager ? $x : $club->getManager($user, !$club->canBeModifiedBy($thisUser))}
     <table>
         <tbody>
             <tr>
-                <td width="120" valign="top"><span class="nobold">{_"gender"}: </span></td>
+                <td width="120" valign="top"><span class="nobold">{_gender}: </span></td>
                 <td>{$user->isFemale() ? "женский" : "мужской"}</td>
             </tr>
             <tr>
-                <td width="120" valign="top"><span class="nobold">{_"registration_date"}: </span></td>
+                <td width="120" valign="top"><span class="nobold">{_registration_date}: </span></td>
                 <td>{$user->getRegistrationTime()}</td>
             </tr>
             <tr>
@@ -106,8 +106,8 @@
 {/block}
 
 {block actions}
-    {var user    = $x instanceof $Manager ? $x->getUser() : $x}
-    {var manager = $x instanceof $Manager ? $x : $club->getManager($user, !$club->canBeModifiedBy($thisUser))}
+    {var $user    = $x instanceof $Manager ? $x->getUser() : $x}
+    {var $manager = $x instanceof $Manager ? $x : $club->getManager($user, !$club->canBeModifiedBy($thisUser))}
     {if $club->canBeModifiedBy($thisUser ?? NULL)}
         <a class="profile_link" href="/club{$club->getId()}/setAdmin?user={$user->getId()}&hash={rawurlencode($csrfToken)}" n:if="$club->getOwner()->getId() !== $user->getId()">
             {if $manager}

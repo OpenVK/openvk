@@ -1,6 +1,6 @@
 {extends "../@listView.xml"}
-{var iterator = iterator_to_array($topics)}
-{var page     = $paginatorConf->page}
+{var $iterator = iterator_to_array($topics)}
+{var $page     = $paginatorConf->page}
 
 {block title}{_discussions} {$club->getCanonicalName()}{/block}
 
@@ -14,8 +14,8 @@
 
 {block tabs}
     <form style="margin-left: 12px;">
-        <input name="query" class="header_search_input" placeholder="{_"header_search"}" value="{$_GET['query'] ?? ''}" style="width: 86%" />
-        <input type="submit" class="button" value="{_"search_button"}" style="width: 7.5%" />
+        <input name="query" class="header_search_input" placeholder="{_header_search}" value="{$_GET['query'] ?? ''}" style="width: 86%" />
+        <input type="submit" class="button" value="{_search_button}" style="width: 7.5%" />
     </form>
     
     <p style="margin-left: 15px;">
@@ -46,7 +46,7 @@
     <div style="float: left;">
         {tr("messages", $x->getCommentsCount())}
     </div>
-    {var lastComment = $x->getLastComment()}
+    {var $lastComment = $x->getLastComment()}
     <div n:if="$lastComment" class="avatar-list-item" style="float: right;">
         <div class="avatar">
             <a href="{$lastComment->getOwner()->getURL()}">

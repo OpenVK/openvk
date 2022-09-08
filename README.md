@@ -12,13 +12,15 @@ To be honest, we don't know whether it even works. However, this version is main
 
 We will release OpenVK as soon as it's ready. As for now you can:
 * `git clone` this repo's master branch (use `git pull` to update)
-* Grab a prebuilt OpenVK distro from [GitHub artifacts](https://github.com/openvk/archive/actions/workflows/nightly.yml)
+* Grab a prebuilt OpenVK distro from [GitHub artifacts](https://nightly.link/openvk/archive/workflows/nightly/master/OpenVK%20Archive.zip)
 
 ## Instances
 
 * **[openvk.su](https://openvk.su/)**
-* **[openvk.uk](https://openvk.uk)** - official mirror of openvk.su (<https://t.me/openvkch/1609>)
+* **[openvk.uk](https://openvk.uk)** - official mirror of openvk.su (<https://t.me/openvk/1609>)
+* **[openvk.co](http://openvk.co)** - yet another official mirror of openvk.su without TLS (<https://t.me/openvk/1654>)
 * [social.fetbuk.ru](http://social.fetbuk.ru/)
+* [vepurovk.xyz](http://vepurovk.xyz/)
 
 ## Can I create my own OpenVK instance?
 
@@ -32,29 +34,35 @@ If you want, you can add your instance to the list above so that people can regi
 
 1. Install PHP 7.4, web-server, Composer, Node.js, Yarn and [Chandler](https://github.com/openvk/chandler)
 
-* PHP 8 has **not** yet been tested, so you should not expect it to work. (edit: it does not work).
+* PHP 8.1 is supported, but it was not tested carefully, be aware of that.
 
-2. Install [commitcaptcha](https://github.com/openvk/commitcaptcha) and OpenVK as Chandler extensions like this:
+2. Install MySQL-compatible database.
+
+* We recommend using Percona Server, but any MySQL-compatible server should work
+* Server should be compatible with at least MySQL 5.6, MySQL 8.0+ recommended.
+* Support for MySQL 4.1+ is WIP, replace `utf8mb4` and `utf8mb4_unicode_520_ci` with `utf8` and `utf8_unicode_ci` in SQLs.
+
+3. Install [commitcaptcha](https://github.com/openvk/commitcaptcha) and OpenVK as Chandler extensions like this:
 
 ```bash
 git clone https://github.com/openvk/openvk /path/to/chandler/extensions/available/openvk
 git clone https://github.com/openvk/commitcaptcha /path/to/chandler/extensions/available/commitcaptcha
 ```
 
-3. And enable them:
+4. And enable them:
 
 ```bash
 ln -s /path/to/chandler/extensions/available/commitcaptcha /path/to/chandler/extensions/enabled/
 ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions/enabled/
 ```
 
-4. Import `install/init-static-db.sql` to the **same database** you installed Chandler to and import all sqls from `install/sqls` to the **same database**
-5. Import `install/init-event-db.sql` to a **separate database** (Yandex.Clickhouse can also be used, higly recommended)
-6. Copy `openvk-example.yml` to `openvk.yml` and change options to your liking
-7. Run `composer install` in OpenVK directory
-8. Run `composer install` in commitcaptcha directory
-9. Move to `Web/static/js` and execute `yarn install`
-10. Set `openvk` as your root app in `chandler.yml`
+5. Import `install/init-static-db.sql` to the **same database** you installed Chandler to and import all sqls from `install/sqls` to the **same database**
+6. Import `install/init-event-db.sql` to a **separate database** (Yandex.Clickhouse can also be used, highly recommended)
+7. Copy `openvk-example.yml` to `openvk.yml` and change options to your liking
+8. Run `composer install` in OpenVK directory
+9. Run `composer install` in commitcaptcha directory
+10. Move to `Web/static/js` and execute `yarn install`
+11. Set `openvk` as your root app in `chandler.yml`
 
 Once you are done, you can login as a system administrator on the network itself (no registration required):
 

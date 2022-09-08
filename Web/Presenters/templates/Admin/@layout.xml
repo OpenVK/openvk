@@ -1,12 +1,13 @@
+{var $instance_name = OPENVK_ROOT_CONF['openvk']['appearance']['name']}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
         <style>
-            {var css = file_get_contents(OPENVK_ROOT . "/Web/static/js/node_modules/@atlassian/aui/dist/aui/aui-prototyping.css")}
+            {var $css = file_get_contents(OPENVK_ROOT . "/Web/static/js/node_modules/@atlassian/aui/dist/aui/aui-prototyping.css")}
             {str_replace("fonts/", "/assets/packages/static/openvk/js/node_modules/@atlassian/aui/dist/aui/fonts/", $css)|noescape}
         </style>
-        <title>{include title} - Админ-панель {=OPENVK_ROOT_CONF['openvk']['appearance']['name']}</title>
+        <title>{include title} - {_admin} {$instance_name}</title>
     </head>
     <body>
         <div id="page">
@@ -15,24 +16,16 @@
                     <div class="aui-header-inner">
                         <div class="aui-header-primary">
                             <h1 id="logo" class="aui-header-logo aui-header-logo-textonly">
-                                <a href="/admin">
-                                    <span class="aui-header-logo-device">{=OPENVK_ROOT_CONF['openvk']['appearance']['name']}</span>
+                                <a href="/">
+                                    <span class="aui-header-logo-device">{$instance_name}</span>
                                 </a>
                             </h1>
                         </div>
                         <div n:if="$search ?? false" class="aui-header-secondary">
                             <ul class="aui-nav">
                                 <form class="aui-quicksearch dont-default-focus ajs-dirty-warning-exempt">
-                                    <input
-                                          id="quickSearchInput"
-                                          autocomplete="off"
-                                          class="search"
-                                          type="text"
-                                          placeholder="{include searchTitle}"
-                                          value="{$_GET['q'] ?? ''}"
-                                          name="q"
-                                          accesskey="Q" />
-                                     <input type="hidden" value=1 name=p />
+                                    <input id="quickSearchInput" autocomplete="off" class="search" type="text" placeholder="{include searchTitle}" value="{$_GET['q'] ?? ''}" name="q" accesskey="Q" />
+                                    <input type="hidden" value=1 name=p />
                                 </form>
                             </ul>
                         </div>
@@ -46,83 +39,67 @@
                             <div class="aui-navgroup-inner">
                                 <div class="aui-navgroup-primary">
                                     <div class="aui-nav-heading">
-                                        <strong>Обзор</strong>
+                                        <strong>{_admin_overview}</strong>
                                     </div>
                                     <ul class="aui-nav">
                                         <li>
-                                            <a href="/admin">
-                                                Сводка
-                                            </a>
+                                            <a href="/admin">{_admin_overview_summary}</a>
                                         </li>
                                     </ul>
                                     <div class="aui-nav-heading">
-                                        <strong>Пользовательский контент</strong>
+                                        <strong>{_admin_content}</strong>
                                     </div>
                                     <ul class="aui-nav">
                                         <li>
-                                            <a href="/admin/users">
-                                                Пользователи
-                                            </a>
+                                            <a href="/admin/users">{_users}</a>
                                         </li>
                                         <li>
-                                            <a href="/admin/clubs">
-                                                Группы
-                                            </a>
+                                            <a href="/admin/clubs">{_groups}</a>
+                                        </li>
+                                        <li>
+                                            <a href="/admin/bannedLinks">{_admin_banned_links}</a>
                                         </li>
                                     </ul>
                                     <div class="aui-nav-heading">
-                                        <strong>Платные услуги</strong>
+                                        <strong>{_admin_services}</strong>
                                     </div>
                                     <ul class="aui-nav">
                                         <li>
-                                            <a href="/admin/vouchers">
-                                                {_vouchers}
-                                            </a>
+                                            <a href="/admin/vouchers">{_vouchers}</a>
                                         </li>
                                         <li>
-                                            <a href="/admin/gifts">
-                                                Подарки
-                                            </a>
+                                            <a href="/admin/gifts">{_gifts}</a>
                                         </li>
                                     </ul>
                                     <div class="aui-nav-heading">
-                                        <strong>Настройки</strong>
+                                        <strong>{_admin_settings}</strong>
                                     </div>
                                     <ul class="aui-nav">
                                         <li>
-                                            <a href="/admin/settings/tuning">
-                                                Общие
-                                            </a>
+                                            <a href="/admin/settings/tuning">{_admin_settings_tuning}</a>
                                         </li>
                                         <li>
-                                            <a href="/admin/settings/appearance">
-                                                Внешний вид
-                                            </a>
+                                            <a href="/admin/settings/appearance">{_admin_settings_appearance}</a>
                                         </li>
                                         <li>
-                                            <a href="/admin/settings/security">
-                                                Безопасность
-                                            </a>
+                                            <a href="/admin/settings/security">{_admin_settings_security}</a>
                                         </li>
                                         <li>
-                                            <a href="/admin/settings/integrations">
-                                                Интеграции
-                                            </a>
+                                            <a href="/admin/settings/integrations">{_admin_settings_integrations}</a>
                                         </li>
                                         <li>
-                                            <a href="/admin/settings/system">
-                                                Система
-                                            </a>
+                                            <a href="/admin/settings/system">{_admin_settings_system}</a>
                                         </li>
                                     </ul>
                                     <div class="aui-nav-heading">
-                                        <strong>Об OpenVK</strong>
+                                        <strong>{_admin_about}</strong>
                                     </div>
                                     <ul class="aui-nav">
                                         <li>
-                                            <a href="/about:openvk">
-                                                Версия
-                                            </a>
+                                            <a href="/about:openvk">{_admin_about_version}</a>
+                                        </li>
+                                        <li>
+                                            <a href="/about">{_admin_about_instance}</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -131,7 +108,7 @@
                     </div>
                     <section class="aui-page-panel-content">
                         {ifset $flashMessage}
-                            {var type = ["err" => "error", "warn" => "warning", "info" => "basic", "succ" => "success"][$flashMessage->type]}
+                            {var $type = ["err" => "error", "warn" => "warning", "info" => "basic", "succ" => "success"][$flashMessage->type]}
                             <div class="aui-message aui-message-{$type}" style="margin-bottom: 15px;">
                                 <p class="title">
                                     <strong>{$flashMessage->title}</strong>
@@ -139,11 +116,11 @@
                                 <p>{$flashMessage->msg|noescape}</p>
                             </div>
                         {/ifset}
-                        
+
                         {ifset preHeader}
                             {include preHeader}
                         {/ifset}
-                        
+
                         <header class="aui-page-header">
                             <div class="aui-page-header-inner">
                                 <div class="aui-page-header-main">
@@ -167,11 +144,11 @@
                 </section>
             </footer>
         </div>
-        
+
         {script "js/node_modules/jquery/dist/jquery.min.js"}
         {script "js/node_modules/@atlassian/aui/dist/aui/aui-prototyping.js"}
         <script>AJS.tabs.setup();</script>
-        
+
         {ifset scripts}
             {include scripts}
         {/ifset}

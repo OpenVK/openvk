@@ -2,7 +2,13 @@ Function.noop = () => {};
 
 var _n_counter = 0;
 
-function NewNotification(title, body, avatar = null, callback = () => {}, time = 5000) {
+var counter = 0;
+
+window.addEventListener("focus", () => {
+    document.title = document.title.replace(/^\([0-9]+\) /, ""); // remove notification counter xD
+});
+
+function NewNotification(title, body, avatar = null, callback = () => {}, time = 5000, count = true) {
     if(avatar != null) {
         avatar = '<avatar>' +
             '<img src="' + avatar + '">' +
@@ -36,10 +42,18 @@ function NewNotification(title, body, avatar = null, callback = () => {}, time =
     }
 
     function __closeNotification() {
-        getPrototype().addClass('disappears');
-        setTimeout(() => {getPrototype().remove()}, 500);
-    }
+        if(document.visibilityState != "visible")
+            return setTimeout(() => {__closeNotification()}, time); // delay notif deletion
         
+        getPrototype().addClass('disappears');
+        return setTimeout(() => {getPrototype().remove()}, 500);
+    }
+
+    if(count == true) {
+        counter++;
+        document.title = `(${counter}) ${document.title}`;
+    }
+    
     setTimeout(() => {__closeNotification()}, time);
 
     notification.children('notification_title').children('a.close').on('click', function(e) {

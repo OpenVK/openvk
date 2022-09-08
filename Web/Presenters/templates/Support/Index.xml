@@ -6,9 +6,9 @@
 {/block}
 
 {block content}
-    {var isMain = $mode === 'faq'}
-    {var isNew  = $mode === 'new'}
-    {var isList = $mode === 'list'}
+    {var $isMain = $mode === 'faq'}
+    {var $isNew  = $mode === 'new'}
+    {var $isList = $mode === 'list'}
 
     {if $thisUser}
         <div class="tabs">
@@ -28,7 +28,7 @@
         {if $isNew}
             {if !is_null($banReason)}
                 <center>
-                    <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_'banned_alt'}" style="width: 20%;" />
+                    <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_banned_alt}" style="width: 20%;" />
                 </center>
                 <p>
                     {tr("banned_in_support_1", htmlentities($thisUser->getCanonicalName()))|noescape}<br/>
@@ -51,9 +51,9 @@
 
     {if $isMain}
         <h4>{_support_faq}</h4><br />
-        <div class="faq">
-            <div id="faqhead">{_support_faq_title}</div>
-            <div id="faqcontent">{_support_faq_content}</div>
+        <div n:foreach="$faq as $section" class="faq">
+            <div id="faqhead">{$section[0]}</div>
+            <div id="faqcontent">{$section[1]|noescape}</div>
         </div>
     {/if}
 

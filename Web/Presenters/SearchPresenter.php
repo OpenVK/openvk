@@ -1,9 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Repositories\Users;
-use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Repositories\Clubs;
-use openvk\Web\Models\Entities\Club;
+use openvk\Web\Models\Entities\{User, Club};
+use openvk\Web\Models\Repositories\{Users, Clubs};
 use Chandler\Database\DatabaseConnection;
 
 final class SearchPresenter extends OpenVKPresenter
@@ -29,7 +27,7 @@ final class SearchPresenter extends OpenVKPresenter
         if($query != "")
             $this->assertUserLoggedIn();
         
-        // https://youtu.be/pSAWM5YuXx8
+        # https://youtu.be/pSAWM5YuXx8
         
         $repos = [ "groups" => "clubs", "users" => "users" ];
         $repo  = $repos[$type] or $this->throwError(400, "Bad Request", "Invalid search entity $type.");

@@ -26,13 +26,13 @@ class Comments
         return $this->toComment($this->comments->get($id));
     }
     
-    function getCommentsByTarget(Postable $target, int $page, ?int $perPage = NULL): \Traversable
+    function getCommentsByTarget(Postable $target, int $page, ?int $perPage = NULL, ?string $sort = "ASC"): \Traversable
     {
         $comments = $this->comments->where([
             "model"   => get_class($target),
             "target"  => $target->getId(),
             "deleted" => false,
-        ])->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
+        ])->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE)->order("created ".$sort);;
         
         foreach($comments as $comment)
             yield $this->toComment($comment);

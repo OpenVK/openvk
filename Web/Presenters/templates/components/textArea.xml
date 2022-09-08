@@ -1,5 +1,5 @@
 {php if(!isset($GLOBALS["textAreaCtr"])) $GLOBALS["textAreaCtr"] = 10;}
-{var textAreaId = ($post ?? NULL) === null ? (++$GLOBALS["textAreaCtr"]) : $post->getId()}
+{var $textAreaId = ($post ?? NULL) === NULL ? (++$GLOBALS["textAreaCtr"]) : $post->getId()}
 
 <div id="write" style="padding: 5px 0;" onfocusin="expand_wall_textarea({$textAreaId});">
     <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
@@ -12,7 +12,7 @@
                 {_attachment}: <span>(unknown)</span>
             </div>
             <div n:if="$postOpts ?? true" class="post-opts">
-                {var anonEnabled = OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
+                {var $anonEnabled = OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
                 
                 {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0}
                     {if $club->canBeModifiedBy($thisUser)}
@@ -55,22 +55,25 @@
             <br/>
             <input type="submit" value="{_write}" class="button" />
             <div style="float: right; display: flex; flex-direction: column;">
-                <a href="javascript:void(u('#post-buttons{$textAreaId} #wallAttachmentMenu').toggleClass('hidden'));">
+                <a href="javascript:toggleMenu({$textAreaId});">
                     {_attach}
                 </a>
                 
                 <div id="wallAttachmentMenu" class="hidden">
+                    <a class="header" href="javascript:toggleMenu({$textAreaId});">
+                        {_attach}
+                    </a>
                     <a href="javascript:void(document.querySelector('#post-buttons{$textAreaId} input[name=_pic_attachment]').click());">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
-                        {_attach_photo}
+                        {_photo}
                     </a>
                     <a href="javascript:void(document.querySelector('#post-buttons{$textAreaId} input[name=_vid_attachment]').click());">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
-                        {_attach_video}
+                        {_video}
                     </a>
                     <a n:if="$graffiti ?? false" href="javascript:initGraffiti({$textAreaId});">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
-                        {_draw_graffiti}
+                        {_graffiti}
                     </a>
                 </div>
             </div>

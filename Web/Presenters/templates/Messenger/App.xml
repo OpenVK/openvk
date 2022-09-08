@@ -6,11 +6,11 @@
 <a href="/im">{_my_messages}</a> »
 <a href="{$correspondent->getURL()}">{$correspondent->getCanonicalName()}</a>    
     <div n:if="($online = $correspondent->getOnline()->timestamp()) + 2505600 > time()" style="float: right;">
-        {var diff = date_diff(date_create(), date_create('@' . $online))}
+        {var $diff = date_diff(date_create(), date_create('@' . $online))}
         {if 5 >= $diff->i}
             <span><b>{_online}</b></span>
         {else}
-            <span>{$correspondent->isFemale() ? "заходила" : "заходил"} {$correspondent->getOnline()}</span>
+            <span>{$correspondent->isFemale() ? tr("was_online_f") : tr("was_online_m")} {$correspondent->getOnline()}</span>
         {/if}
     </div>
 {/block}
@@ -37,7 +37,7 @@
                         </div>
                     </div>
                     <div class="time" align="right">
-                        <span data-bind="text: timing.sent"></span>
+                        <span data-bind="html: timing.sent"></span>
                     </div>
                 </div>
             </div>
@@ -49,17 +49,17 @@
                     <textarea
                             data-bind="value: messageContent, event: { keydown: onTextareaKeyPress }"
                             name="message"
-                            placeholder="Введите сообщение"></textarea>
-                    <button class="button" data-bind="click: sendMessage">Отправить</button>
+                            placeholder="{_enter_message}"></textarea>
+                    <button class="button" data-bind="click: sendMessage">{_send}</button>
                 </div>
                 <img class="ava" src="{$correspondent->getAvatarUrl('miniscule')}" alt="{$correspondent->getCanonicalName()}" />
             {else}
-                <div class="blocked" data-localized-text="Вы не можете писать сообщения {$correspondent->getCanonicalName()} из-за его настроек приватности."></div>
+                <div class="blocked" data-localized-text="{_messages_blocked}"></div>
             {/if}
         </div>
     </div>
     
-    <script src="https://knockoutjs.com/downloads/knockout-3.5.1.js"></script>
+    {script "js/node_modules/knockout/build/output/knockout-latest.js"}
     <script>
         function MessengerViewModel(initialMessages = []) {
             window.messages     = ko.observableArray(initialMessages);
@@ -181,7 +181,7 @@
                     "sender": {
                         "link": {$thisUser->getURL()},
                         "avatar": {$thisUser->getAvatarUrl()},
-                        "name": {$thisUser->getFullName()}
+                        "name": {$thisUser->getFirstName()}
                     },
                     "timing": {
                         "sent": window.API.Service.getTime(),
@@ -199,7 +199,7 @@
                     "sender": {
                         "link": {$correspondent->getURL()},
                         "avatar": {$correspondent->getAvatarUrl()},
-                        "name": {$correspondent->getFullName()}
+                        "name": {$correspondent->getFirstName()}
                     },
                     "timing": {
                         "sent": window.API.Service.getTime(),
@@ -213,6 +213,7 @@
             
             newMessage(content) {
                 let msg = this._newSelfMessage(content);
+                msg.timing.sent = "<img src=\"/assets/packages/static/openvk/img/loading_mini.gif\">";
                 this.addMessage(msg);
                 
                 return msg._tuid;
@@ -250,9 +251,9 @@
                                 avatar: "/assets/packages/static/openvk/img/oof.apng",
                                 id: -1,
                                 link: "/support/manpages/messages/not-delivered.html",
-                                name: "Сообщение не доставлено"
+                                name: tr("messages_error_1")
                             },
-                            text: "При отправке этого сообщения произошла ошибка общего характера...",
+                            text: tr("messages_error_1_description"),
                             timing: {
                                 edited: null,
                                 sent: "???"

@@ -71,7 +71,7 @@ class Posts
     {
         $hashtag = "#$hashtag";
         $sel = $this->posts
-                    ->where("content LIKE ?", "%$hashtag%")
+                    ->where("MATCH (content) AGAINST (? IN BOOLEAN MODE)", "+$hashtag")
                     ->where("deleted", 0)
                     ->order("created DESC")
                     ->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
@@ -96,7 +96,7 @@ class Posts
         if(!is_null($post))
             return new Post($post);
         else
-            return null;
+            return NULL;
         
     }
     

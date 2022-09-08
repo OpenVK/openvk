@@ -91,7 +91,7 @@ final class TopicsPresenter extends OpenVKPresenter
             $topic->setFlags($flags);
             $topic->save();
             
-            // TODO move to trait
+            # TODO move to trait
             try {
                 $photo = NULL;
                 $video = NULL;
@@ -108,7 +108,7 @@ final class TopicsPresenter extends OpenVKPresenter
                 }
             } catch(ISE $ex) {
                 $this->flash("err", "Не удалось опубликовать комментарий", "Файл медиаконтента повреждён или слишком велик.");
-                $this->redirect("/topic" . $topic->getPrettyId(), static::REDIRECT_TEMPORARY);
+                $this->redirect("/topic" . $topic->getPrettyId());
             }
             
             if(!empty($this->postParam("text")) || $photo || $video) {
@@ -123,7 +123,7 @@ final class TopicsPresenter extends OpenVKPresenter
                     $comment->save();
                 } catch (\LengthException $ex) {
                     $this->flash("err", "Не удалось опубликовать комментарий", "Комментарий слишком большой.");
-                    $this->redirect("/topic" . $topic->getPrettyId(), static::REDIRECT_TEMPORARY);
+                    $this->redirect("/topic" . $topic->getPrettyId());
                 }
                 
                 if(!is_null($photo))
@@ -133,7 +133,7 @@ final class TopicsPresenter extends OpenVKPresenter
                     $comment->attach($video);
             }
 
-            $this->redirect("/topic" . $topic->getPrettyId(), static::REDIRECT_TEMPORARY);
+            $this->redirect("/topic" . $topic->getPrettyId());
         }
 
         $this->template->club = $club;
@@ -167,7 +167,7 @@ final class TopicsPresenter extends OpenVKPresenter
             $topic->save();
             
             $this->flash("succ", tr("changes_saved"), tr("topic_changes_saved_comment"));
-            $this->redirect("/topic" . $topic->getPrettyId(), static::REDIRECT_TEMPORARY);
+            $this->redirect("/topic" . $topic->getPrettyId());
         }
 
         $this->template->topic = $topic;
@@ -189,6 +189,6 @@ final class TopicsPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
         $topic->deleteTopic();
         
-        $this->redirect("/board" . $topic->getClub()->getId(), static::REDIRECT_TEMPORARY);
+        $this->redirect("/board" . $topic->getClub()->getId());
     }
 }

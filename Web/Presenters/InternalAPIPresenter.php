@@ -29,9 +29,10 @@ final class InternalAPIPresenter extends OpenVKPresenter
     
     function renderRoute(): void
     {
-        if($_SERVER["REQUEST_METHOD"] !== "POST")
+        if($_SERVER["REQUEST_METHOD"] !== "POST") {
+            header("HTTP/1.1 405 Method Not Allowed");
             exit("ты дебил это точка апи");
-        
+        }
         try {
             $input = (object) MessagePack::unpack(file_get_contents("php://input"));
         } catch (\Exception $ex) {
@@ -71,20 +72,21 @@ final class InternalAPIPresenter extends OpenVKPresenter
     }
 
     function renderTimezone() {
-        if($_SERVER["REQUEST_METHOD"] !== "POST")
+        if($_SERVER["REQUEST_METHOD"] !== "POST") {
+            header("HTTP/1.1 405 Method Not Allowed");
             exit("ты дебил это метод апи");
-
+        }
         $sessionOffset = Session::i()->get("_timezoneOffset");
         if(is_numeric($this->postParam("timezone", false))) {
             $postTZ = intval($this->postParam("timezone", false));
             if ($postTZ != $sessionOffset || $sessionOffset == null) {
                 Session::i()->set("_timezoneOffset", $postTZ ? $postTZ : 3 * MINUTE );
                 $this->returnJson([
-                    "success" => 1 // If it's new value
+                    "success" => 1 # If it's new value
                 ]);
             } else {
                 $this->returnJson([
-                    "success" => 2 // If it's the same value (if for some reason server will call this func)
+                    "success" => 2 # If it's the same value (if for some reason server will call this func)
                 ]);
             }
         } else {

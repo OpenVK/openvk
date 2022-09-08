@@ -6,7 +6,7 @@ table.User > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > a:nth-chil
     object-fit: cover;
 }
 
-.post > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > img:nth-child(1)
+.post > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > a:nth-child(1) > img:nth-child(1)
 {
     width: 50px;
     height: 50px;
@@ -38,5 +38,11 @@ div.content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth
 .cCompactAvatars {
     width: 30px !important;
     height: 30px !important;
+    object-fit: cover;
+}
+
+.profile_thumb > a > img {
+    width: 50px;
+    height: 50px;
     object-fit: cover;
 }

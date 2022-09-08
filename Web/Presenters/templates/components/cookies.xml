@@ -1,0 +1,37 @@
+<div class="cookies-popup" style="display: none;">
+    <div class="contanier">
+        <div class="text">
+            {tr("cookies_popup_content")|noescape}
+        </div>
+        <div class="buttons">
+            <a href="javascript:agreeWithCookies()" class="button">
+                {_cookies_popup_agree}
+            </a>
+        </div>
+    </div>
+</div>
+
+<script>
+    let cookie = decodeURIComponent(document.cookie).split(";");
+    let cookiesAgreed = false;
+    for(let i = 0; i < cookie.length; i++) {
+        let c = cookie[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if(c == "cookiesAgreed=true") {
+            cookiesAgreed = true;
+            break;
+        }
+    }
+    if(!cookiesAgreed) {
+        u(".cookies-popup").nodes[0].style.display = "block";
+    }
+
+    function agreeWithCookies() {
+        let expires = (new Date(Date.now() + 40000000000)).toUTCString();
+        
+        document.cookie = "cookiesAgreed=true;expires=" + expires + ";SameSite=Strict";
+        u(".cookies-popup").nodes[0].style.display = "none";
+    }
+</script>

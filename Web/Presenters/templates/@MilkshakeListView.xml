@@ -3,7 +3,7 @@
 {block wrap}
     <div class="ovk-lw-container">
         <div class="ovk-lw--list">
-            {var data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+            {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
             
             {if sizeof($data) > 0}
                 <table n:foreach="$data as $dat" border="0" style="font-size:11px;" class="post">
@@ -52,9 +52,9 @@
             {include actions}
             <hr/>
             <div n:if="$sorting ?? true" class="tile">
-                <a href="?C=I;O=R" class="profile_link">{_"sort_randomly"}</a>
-                <a href="?C=M;O=D" class="profile_link">{_"sort_up"}</a>
-                <a href="?C=M;O=A" class="profile_link">{_"sort_down"}</a>
+                <a href="?C=I;O=R" class="profile_link">{_sort_randomly}</a>
+                <a href="?C=M;O=D" class="profile_link">{_sort_up}</a>
+                <a href="?C=M;O=A" class="profile_link">{_sort_down}</a>
             </div>
         </div>
     </div>

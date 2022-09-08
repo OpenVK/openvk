@@ -4,9 +4,9 @@
 {block header}
     <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
     »
-    <a href="/videos{$thisUser->getId()}">{_"videos"}</a>
+    <a href="/videos{$thisUser->getId()}">{_videos}</a>
     »
-    <a href="/video{$video->getPrettyId()}">{_"video"}</a>
+    <a href="/video{$video->getPrettyId()}">{_video}</a>
     »
     Изменить видеозапись
 {/block}
@@ -18,13 +18,13 @@
       <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
         <tbody>
           <tr>
-            <td width="120" valign="top"><span class="nobold">{_"name"}:</span></td>
+            <td width="120" valign="top"><span class="nobold">{_name}:</span></td>
             <td>
                 <input type="text" value="{$video->getName()}" name="name" />
             </td>
           </tr>
           <tr>
-            <td width="120" valign="top"><span class="nobold">{_"description"}:</span></td>
+            <td width="120" valign="top"><span class="nobold">{_description}:</span></td>
             <td>
                 <textarea name="desc">{$video->getDescription()}</textarea>
             </td>
@@ -33,7 +33,7 @@
             <td width="120" valign="top"></td>
             <td>
                 <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="submit" class="button" name="submit" value="{_'save'}" />
+                <input type="submit" class="button" name="submit" value="{_save}" />
             </td>
           </tr>
         </tbody>

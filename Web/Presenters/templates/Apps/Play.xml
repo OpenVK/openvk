@@ -1,0 +1,37 @@
+{extends "../@layout.xml"}
+
+{block title}
+    {$name}
+{/block}
+
+{block header}
+    {$name}
+{/block}
+
+{block content}
+    <center>
+        <iframe id="appFrame" referrerpolicy="unsafe-url" sandbox="allow-scripts" frameBorder="0" src="{$url}" height="600" width="600"></iframe>
+    </center>
+
+    <div n:if="!is_null($news)" id="news">
+        <h4>{$news->getName()}</h4>
+        <div id="app_news_container">
+            {$news->getText()|noescape}
+        </div>
+    </div>
+
+    <center>
+        <p>
+            {_app_dev}: <a href="{$owner->getURL()}">{$owner->getFullName()}</a>
+        </p>
+    </center>
+
+    <script>
+        window.appId     = {$id};
+        window.appTitle  = {$name};
+        window.appPerms  = {$perms};
+        window.appOrigin = {$origin};
+    </script>
+
+    {script "js/al_games.js"}
+{/block}

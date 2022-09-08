@@ -31,7 +31,7 @@
                 <tbody>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">{_"name"}: </span>
+                            <span class="nobold">{_name}: </span>
                         </td>
                         <td>
                             <input type="text" name="name" value="{$club->getName()}" />
@@ -39,7 +39,7 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">{_"description"}: </span>
+                            <span class="nobold">{_description}: </span>
                         </td>
                         <td>
                             <textarea type="text" name="about" style="resize:vertical;">{$club->getDescription()}</textarea>
@@ -92,7 +92,7 @@
                             <span class="nobold">{_group_administrators_list}: </span>
                         </td>
                         <td>
-                            {var areAllAdminsHidden = $club->getManagersCount(true) == 0}
+                            {var $areAllAdminsHidden = $club->getManagersCount(true) == 0}
                             <input type="radio" name="administrators_list_display" value="0" n:attr="checked => $club->getAdministratorsListDisplay() == 0, disabled => $areAllAdminsHidden" /> {_group_display_only_creator}<br>
                             <input type="radio" name="administrators_list_display" value="1" n:attr="checked => $club->getAdministratorsListDisplay() == 1, disabled => $areAllAdminsHidden" /> {_group_display_all_administrators}<br>
                             <input type="radio" name="administrators_list_display" value="2" n:attr="checked => $club->getAdministratorsListDisplay() == 2" /> {_group_dont_display_administrators_list}<br>
@@ -105,7 +105,7 @@
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_'save'}" class="button" />
+                            <input type="submit" value="{_save}" class="button" />
                         </td>
                     </tr>
                 </tbody>

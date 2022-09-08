@@ -1,29 +1,31 @@
 {extends "@layout.xml"}
-{var search = true}
+{var $search = true}
 
 {block title}
-    Пользователи
+    {_admin_user_search}
 {/block}
 
 {block heading}
-    Пиздюки
+    {_users}
 {/block}
 
-{block searchTitle}Поиск пиздюков{/block}
+{block searchTitle}
+    {include title}
+{/block}
 
 {block content}
-    {var users  = iterator_to_array($users)}
-    {var amount = sizeof($users)}
+    {var $users  = iterator_to_array($users)}
+    {var $amount = sizeof($users)}
     
     <table class="aui aui-table-list">
         <thead>
             <tr>
-                <th>#</th>
-                <th>Имя</th>
-                <th>Пол</th>
-                <th>Короткий адрес</th>
-                <th>Дата регистрации</th>
-                <th>Действия</th>
+                <th>ID</th>
+                <th>{_admin_name}</th>
+                <th>{_gender}</th>
+                <th>{_admin_shortcode}</th>
+                <th>{_registration_date}</th>
+                <th>{_admin_actions}</th>
             </tr>
         </thead>
         <tbody>
@@ -35,23 +37,21 @@
                             <img src="{$user->getAvatarUrl('miniscule')}" alt="{$user->getCanonicalName()}" style="object-fit: cover;" role="presentation" />
                         </span>
                     </span>
-                    
+
                     <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>
-                    
-                    <span n:if="$user->isBanned()" class="aui-lozenge aui-lozenge-subtle aui-lozenge-removed">
-                        заблокирован
-                    </span>
+
+                    <span n:if="$user->isBanned()" class="aui-lozenge aui-lozenge-subtle aui-lozenge-removed">{_admin_banned}</span>
                 </td>
-                <td>{$user->isFemale() ? "Женский" : "Мужской"}</td>
-                <td>{$user->getShortCode() ?? "(отсутствует)"}</td>
+                <td>{$user->isFemale() ? tr("female") : tr("male")}</td>
+                <td>{$user->getShortCode() ?? "(" . tr("none") . ")"}</td>
                 <td>{$user->getRegistrationTime()}</td>
                 <td>
                     <a class="aui-button aui-button-primary" href="/admin/users/id{$user->getId()}">
-                        <span class="aui-icon aui-icon-small aui-iconfont-new-edit">Редактировать</span>
+                        <span class="aui-icon aui-icon-small aui-iconfont-new-edit">{_edit}</span>
                     </a>
                     {if $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
                         <a class="aui-button" href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}">
-                            <span class="aui-icon aui-icon-small aui-iconfont-sign-in">Войти как</span>
+                            <span class="aui-icon aui-icon-small aui-iconfont-sign-in">{_admin_loginas}</span>
                         </a>
                     {/if}
                 </td>
@@ -60,13 +60,9 @@
     </table>
     <br/>
     <div align="right">
-        {var isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + $amount) < $count}
-        
-        <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">
-            ⭁ туда
-        </a>
-        <a n:if="$isLast" class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">
-            ⭇  сюда
-        </a>
+        {var $isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + $amount) < $count}
+
+        <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">&laquo;</a>
+        <a n:if="$isLast" class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">&raquo;</a>
     </div>
 {/block}

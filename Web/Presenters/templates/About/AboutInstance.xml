@@ -9,7 +9,7 @@
     <table width="100%" cellspacing="0" cellpadding="0">
         <tbody>
             <tr valign="top">
-                <td width="250" {if sizeof($admins) > 0}style="padding-right: 10px;"{/if}>
+                <td width="250"{if sizeof($admins) > 0} style="padding-right: 10px;"{/if}>
                     <h4>{_statistics}</h4>
                     <div style="margin-top: 5px;">
                         {_on_this_instance_are}
@@ -21,6 +21,15 @@
                             <li><span>{tr("about_wall_posts", $postsCount)|noescape}</span></li>
                         </ul>
                     </div>
+                    {if OPENVK_ROOT_CONF['openvk']['preferences']['about']['links']}
+                        <h4>{_about_links}</h4>
+                        <div style="margin-top: 5px;">
+                            {_instance_links}
+                            <ul>
+                                <li n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['about']['links'] as $aboutLink"><a href="{$aboutLink['url']}" target="_blank" class="link">{$aboutLink["name"]}</a></li>
+                            </ul>
+                        </div>
+                    {/if}
                 </td>
                 <td n:if="sizeof($admins) > 0">
                     <h4>{_administrators}</h4>
@@ -44,14 +53,23 @@
 
     {if sizeof($popularClubs) !== 0}
         <h4>{_most_popular_groups}</h4>
-        <ol>
-            <li n:foreach="$popularClubs as $entry" style="margin-top: 5px;">
-                <a href="{$entry->club->getURL()}">{$entry->club->getName()}</a>
-                <div>
-                    {tr("participants", $entry->subscriptions)}
-                </div>
-            </li>
-        </ol>
+        {var $entries = array_chunk($popularClubs, 10, true)}
+        <table width="100%" cellspacing="0" cellpadding="0">
+            <tbody>
+                <tr valign="top">
+                    <td n:foreach="$entries as $chunk">
+                        <ol>
+                            <li value="{$num+1}" style="margin-top: 5px;" n:foreach="$chunk as $num => $club">
+                                <a href="{$club->club->getURL()}">{$club->club->getName()}</a>
+                                <div>
+                                    {tr("participants", $club->subscriptions)}
+                                </div>
+                            </li>
+                        </ol>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     {/if}
 
     <h4>{_rules}</h4>

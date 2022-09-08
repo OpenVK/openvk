@@ -1,14 +1,14 @@
 {extends "../@layout.xml"}
-{block title}{_"upload_photo"}{/block}
+{block title}{_upload_photo}{/block}
 
 {block header}
     <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
     » 
-    <a href="/albums{$thisUser->getId()}">{_"albums"}</a>
+    <a href="/albums{$thisUser->getId()}">{_albums}</a>
     » 
     <a href="/album{$album->getPrettyId()}">{$album->getName()}</a>
     » 
-    {_"upload_photo"}
+    {_upload_photo}
 {/block}
 
 {block content}
@@ -16,11 +16,11 @@
       <table cellspacing="6">
         <tbody>
           <tr>
-            <td width="120" valign="top"><span class="nobold">{_"description"}:</span></td>
+            <td width="120" valign="top"><span class="nobold">{_description}:</span></td>
             <td><textarea style="margin: 0px; height: 50px; width: 159px; resize: none;" name="desc"></textarea></td>
           </tr>
           <tr>
-            <td width="120" valign="top"><span class="nobold">{_"photo"}:</span></td>
+            <td width="120" valign="top"><span class="nobold">{_photo}:</span></td>
             <td><input type="file" name="blob" accept="image/*" /></td>
           </tr>
           <tr>

@@ -1,5 +1,5 @@
 {extends "../@layout.xml"}
-{block title}{_"post"}{/block}
+{block title}{_post}{/block}
 
 {block header}
 	<a href="{$wallOwner->getURL()}">
@@ -10,7 +10,7 @@
 		{_wall}
 	</a>
 	»
-	{_"post"}
+	{_post}
 {/block}
 
 {block content}
@@ -27,7 +27,7 @@
     <div style="float: left; min-height: 100px; width: 32%;">
         <h4>{_actions}</h4>
         {if isset($thisUser)}
-            {var canDelete = $post->canBeDeletedBy($thisUser)}
+            {var $canDelete = $post->canBeDeletedBy($thisUser)}
         {/if}
         
         <a n:if="$canDelete ?? false" class="profile_link" style="display:block;width:96%;" href="/wall{$post->getPrettyId()}/delete">{_delete}</a>

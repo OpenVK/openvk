@@ -67,7 +67,7 @@ class Club extends RowModel
     
     function getName(): string
     {
-        return ovk_proc_strtr($this->getRecord()->name, 32);
+        return $this->getRecord()->name;
     }
     
     function getCanonicalName(): string
@@ -98,6 +98,14 @@ class Club extends RowModel
     function getDescription(): ?string
     {
         return $this->getRecord()->about;
+    }
+
+    function getDescriptionHtml(): ?string
+    {
+        if(!is_null($this->getDescription()))
+            return nl2br(htmlspecialchars($this->getDescription(), ENT_DISALLOWED | ENT_XHTML));
+        else
+            return NULL;
     }
     
     function getShortCode(): ?string
@@ -302,8 +310,8 @@ class Club extends RowModel
     {
         $manager = (new Managers)->getByUserAndClub($user->getId(), $this->getId());
 
-        if ($ignoreHidden && $manager !== null && $manager->isHidden())
-            return null;
+        if ($ignoreHidden && $manager !== NULL && $manager->isHidden())
+            return NULL;
 
         return $manager;
     }
@@ -346,6 +354,11 @@ class Club extends RowModel
 	{
 		return $this->getRecord()->website;
 	}
+
+    function getAlert(): ?string
+    {
+        return $this->getRecord()->alert;
+    }
     
     use Traits\TSubscribable;
 }

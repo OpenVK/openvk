@@ -1,16 +1,16 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\Ticket;
-use openvk\Web\Models\Repositories\{Tickets, Users};
-use openvk\Web\Models\Entities\TicketComment;
-use openvk\Web\Models\Repositories\TicketComments;
+use openvk\Web\Models\Entities\{Ticket, TicketComment};
+use openvk\Web\Models\Repositories\{Tickets, Users, TicketComments};
 use openvk\Web\Util\Telegram;
 use Chandler\Session\Session;
+use Chandler\Database\DatabaseConnection;
 use Parsedown;
 
 final class SupportPresenter extends OpenVKPresenter
 {
     protected $banTolerant = true;
+    protected $deactivationTolerant = true;
     
     private $tickets;
     private $comments;
@@ -27,6 +27,41 @@ final class SupportPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
         $this->template->mode = in_array($this->queryParam("act"), ["faq", "new", "list"]) ? $this->queryParam("act") : "faq";
+
+        if($this->template->mode === "faq") {
+            $lang = Session::i()->get("lang", "ru");
+            $base = OPENVK_ROOT . "/data/knowledgebase/faq";
+            if(file_exists("$base.$lang.md"))
+                $file = "$base.$lang.md";
+            else if(file_exists("$base.md"))
+                $file = "$base.md";
+            else
+                $file = NULL;
+
+            if(is_null($file)) {
+                $this->template->faq = [];
+            } else {
+                $lines = file($file);
+                $faq   = [];
+                $index = 0;
+
+                foreach($lines as $line) {
+                    if(strpos($line, "# ") === 0)
+                        ++$index;
+
+                    $faq[$index][] = $line;
+                }
+
+                $this->template->faq = array_map(function($section) {
+                    $title = substr($section[0], 2);
+                    array_shift($section);
+                    return [
+                        $title,
+                        (new Parsedown())->text(implode("\n", $section))
+                    ];
+                }, $faq);
+            }
+        }
 
         $this->template->count = $this->tickets->getTicketsCountByUserId($this->user->id);
         if($this->template->mode === "list") {
@@ -63,8 +98,7 @@ final class SupportPresenter extends OpenVKPresenter
                     Telegram::send($helpdeskChat, $telegramText);
                 }
 
-                header("HTTP/1.1 302 Found");
-                header("Location: /support/view/" . $ticket->getId());
+                $this->redirect("/support/view/" . $ticket->getId());
             } else {
                 $this->flashFail("err", tr("error"), tr("you_have_not_entered_name_or_text"));
             }
@@ -79,12 +113,13 @@ final class SupportPresenter extends OpenVKPresenter
         $act = $this->queryParam("act") ?? "open";
         switch($act) {
             default:
+                # NOTICE falling through
             case "open":
                 $state = 0;
-            break;
+                break;
             case "answered":
                 $state = 1;
-            break;
+                break;
             case "closed":
                 $state = 2;
         }
@@ -154,8 +189,7 @@ final class SupportPresenter extends OpenVKPresenter
                 $comment->setCreated(time());
                 $comment->save();
                 
-                header("HTTP/1.1 302 Found");
-                header("Location: /support/view/" . $id);
+                $this->redirect("/support/view/" . $id);
             } else {
                 $this->flashFail("err", tr("error"), tr("you_have_not_entered_text"));
             }
@@ -286,6 +320,10 @@ final class SupportPresenter extends OpenVKPresenter
         
         $user->setBlock_In_Support_Reason($this->queryParam("reason"));
         $user->save();
+
+        if($this->queryParam("close_tickets"))
+            DatabaseConnection::i()->getConnection()->query("UPDATE tickets SET type = 2 WHERE user_id = ".$id);
+
         $this->returnJson([ "success" => true, "reason" => $this->queryParam("reason") ]);
     }
 

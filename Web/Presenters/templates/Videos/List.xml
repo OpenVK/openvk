@@ -1,13 +1,13 @@
 {extends "../@listView.xml"}
-{var iterator = $videos}
-{var count    = $paginatorConf->count}
-{var page     = $paginatorConf->page}
+{var $iterator = $videos}
+{var $count    = $paginatorConf->count}
+{var $page     = $paginatorConf->page}
 
-{block title}{_"videos"} {$user->getCanonicalName()}{/block}
+{block title}{_videos} {$user->getCanonicalName()}{/block}
 
 {block header}
     <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>
-    » {_"videos"}
+    » {_videos}
 {/block}
 
 {block size}
@@ -48,10 +48,10 @@
     <p>
         <span>{$x->getDescription() ?? ""}</span>
     </p>
-    <span style="color: grey;">{_"video_uploaded"} {$x->getPublicationTime()}</span><br/>
-    <span style="color: grey;">{_"video_updated"} {$x->getEditTime() ?? $x->getPublicationTime()}</span>
+    <span style="color: grey;">{_video_uploaded} {$x->getPublicationTime()}</span><br/>
+    <span style="color: grey;">{_video_updated} {$x->getEditTime() ?? $x->getPublicationTime()}</span>
     <p>
         <a href="/video{$x->getPrettyId()}">{_view_video}</a>
-        {if $x->getCommentsCount() > 0}| <a href="/video{$x->getPrettyId()}#comments">{_"comments"} ({$x->getCommentsCount()})</a>{/if}
+        {if $x->getCommentsCount() > 0}| <a href="/video{$x->getPrettyId()}#comments">{_comments} ({$x->getCommentsCount()})</a>{/if}
     </p>
 {/block}

@@ -39,7 +39,7 @@ class Notes
         if(!is_null($note))
             return new Note($note);
         else
-            return null;
+            return NULL;
     }
     
     function getUserNotesCount(User $user): int

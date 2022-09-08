@@ -1,5 +1,6 @@
 {
     "require": {
+        "php": "~7.3||~8.1",
         "guzzlehttp/guzzle": "^6.5",
         "komeiji-satori/curl": "dev-master",
         "whichbrowser/parser": "dev-master",
@@ -17,7 +18,9 @@
         "bhaktaraz/php-rss-generator": "dev-master",
         "ext-openssl": "*",
         "ext-simplexml": "*",
-        "symfony/console": "5.4.x-dev"
+        "symfony/console": "5.4.x-dev",
+        "wapmorgan/morphos": "dev-master",
+        "ext-sodium": "*"
     },
     "minimum-stability": "dev"
 }

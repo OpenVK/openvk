@@ -35,7 +35,7 @@ class Topics
     {
         $perPage = $perPage ?? OPENVK_DEFAULT_PER_PAGE;
 
-        // Get pinned topics first
+        # Get pinned topics first
         $query  = "SELECT `id` FROM `topics` WHERE `pinned` = 1 AND `group` = ? AND `deleted` = 0 UNION SELECT `id` FROM `topics` WHERE `pinned` = 0 AND `group` = ? AND `deleted` = 0";
         $query .= " LIMIT " . $perPage . " OFFSET " . ($page - 1) * $perPage;
 

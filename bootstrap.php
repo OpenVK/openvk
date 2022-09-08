@@ -31,7 +31,8 @@ function _ovk_check_environment(): void
         "openssl",
         "json",
         "tokenizer",
-        "libxml",
+        "xml",
+        "intl",
         "date",
         "session",
         "SPL",
@@ -128,7 +129,7 @@ function tr(string $stringId, ...$variables): string
         }
         
         for($i = 0; $i < sizeof($variables); $i++)
-            $output = preg_replace("%(?<!\\\\)(\\$)" . ($i + 1) . "%", $variables[$i], $output);
+            $output = preg_replace("%(?<!\\\\)(\\$)" . ($i + 1) . "%", (string) $variables[$i], $output);
     }
     
     return $output;
@@ -163,7 +164,7 @@ function isLanguageAvailable($lg): bool
 
 function getBrowsersLanguage(): array
 {
-    if ($_SERVER['HTTP_ACCEPT_LANGUAGE'] != null) return mb_split(",", mb_split(";", $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0]);
+    if ($_SERVER['HTTP_ACCEPT_LANGUAGE'] != NULL) return mb_split(",", mb_split(";", $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0]);
     else return array();
 }
 
@@ -171,7 +172,7 @@ function eventdb(): ?DatabaseConnection
 {
     $conf = OPENVK_ROOT_CONF["openvk"]["credentials"]["eventDB"];
     if(!$conf["enable"])
-        return null;
+        return NULL;
     
     $db = (object) $conf["database"];
     return DatabaseConnection::connect([
@@ -243,8 +244,8 @@ return (function() {
 
     setlocale(LC_TIME, "POSIX");
 
-    // TODO: Default language in config
-    if(Session::i()->get("lang") == null) {
+    # TODO: Default language in config
+    if(Session::i()->get("lang") == NULL) {
         $languages = array_reverse(getBrowsersLanguage());
         foreach($languages as $lg) {
             if(isLanguageAvailable($lg)) setLanguage($lg);    
@@ -258,9 +259,9 @@ return (function() {
     if(is_dir($gitDir = OPENVK_ROOT . "/.git") && $showCommitHash)
         $ver = trim(`git --git-dir="$gitDir" log --pretty="%h" -n1 HEAD` ?? "Unknown version") . "-nightly";
     else
-        $ver = "Public Technical Preview 3";
+        $ver = "Public Technical Preview 4";
 
-    // Unix time constants
+    # Unix time constants
     define('MINUTE', 60);
     define('HOUR', 60 * MINUTE);
     define('DAY', 24 * HOUR);

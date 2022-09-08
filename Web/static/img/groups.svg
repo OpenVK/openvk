@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="11"
+   height="11"
+   viewBox="0 0 2.9104165 2.9104168"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20)"
+   sodipodi:docname="groups.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:pageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="px"
+     showgrid="true"
+     units="px"
+     width="11px"
+     inkscape:zoom="90.50967"
+     inkscape:cx="6.1706114"
+     inkscape:cy="9.5625141"
+     inkscape:window-width="1920"
+     inkscape:window-height="1017"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     inkscape:snap-grids="true">
+    <inkscape:grid
+       type="xygrid"
+       id="grid9"
+       empspacing="11"
+       dotted="false"
+       color="#45ff3f"
+       opacity="0.1254902"
+       empcolor="#3fff4a"
+       empopacity="0.25098039"
+       snapvisiblegridlinesonly="true"
+       enabled="true" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2">
+    <pattern
+       id="EMFhbasepattern"
+       patternUnits="userSpaceOnUse"
+       width="6"
+       height="6"
+       x="0"
+       y="0" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <image
+       y="0"
+       x="0.0010831825"
+       xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAIAAAAmzuBxAAABGklEQVQYlS3OwU7CUBCF4TNzb2utVVokbojEjSxJfAHff8PGnSKIiAiIRqPQpr0z46IuT/Ll5CczA6CK8fhutVqn6WlZ1Z1OcXs7IgAAA1DBZPK0eHkV46BUB/wc6sn0G6047EtV3aw3IQhAZVXXjTSNrLc7a0WaHgOoqio0AYCoJEnShIaJFADg26ui2/091AABbAZmf5Jl0m4QvOfB4CqOEuaIyIlQ3in6/QsV2H+polucFcW5gYhYDfFRkucIrVABO0QxrodDH0VKEBNjKmskMQwgM5vcP2/fv942H0JMLmoCsizzEfd6+c3o0j8+zKazeVWpdxERBzUmd9iXqvXnblPkqV8ulyrinTMCTNk5NSNiphjklvPFHxKrln0M4XFLAAAAAElFTkSuQmCC"
+       height="2.9093335"
+       width="2.9093335"
+       preserveAspectRatio="none"
+       id="image14"
+       style="display:none;image-rendering:pixelated" />
+    <path
+       style="fill:#a2b3c6;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 4.9999992e-8,2.9104166 C 4.9999992e-8,2.38125 0.64905598,1.9719727 0.64905598,1.9719727 c 0,0 0.14469401,0.2025716 0.34726562,0.2067057 0.2025716,0.00413 0.4175456,-0.1984375 0.4175456,-0.1984375 0,0 0.1653646,0.024805 0.3224609,0.1405599 0.1570964,0.1157552 0.1777669,0.1901693 0.3100586,0.1901693 0.1322917,0 0.3927409,-0.2025717 0.3927409,-0.2025717 0,0 0.1240234,0.020671 0.2687174,0.1694987 0.144694,0.1488282 0.2025716,0.6325195 0.2025716,0.6325195 z"
+       id="path6010"
+       sodipodi:nodetypes="ccccsscscc" />
+    <path
+       style="fill:#a2b3c6;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 1.0541992,0.7069337 c 0,0 0.4588867,0.049609 0.4630208,0.504362 0.00413,0.4547525 -0.2976562,0.835091 -0.4630208,0.835091 -0.16536458,0 -0.52503254,-0.3431315 -0.52503254,-0.835091 0,-0.4919597 0.52503254,-0.504362 0.52503254,-0.504362 z"
+       id="path6078" />
+    <path
+       style="fill:#a2b3c6;fill-opacity:1;stroke:none;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="m 2.1042643,1.0666017 c 0,0 0.3927409,0.049609 0.396875,0.3844725 0.00413,0.3348633 -0.1694987,0.6986654 -0.3803385,0.6986654 -0.2108399,0 -0.4382162,-0.3720703 -0.4382162,-0.6779948 0,-0.3720702 0.4216797,-0.4051431 0.4216797,-0.4051431 z"
+       id="path6146"
+       sodipodi:nodetypes="ccssc" />
+  </g>
+</svg>

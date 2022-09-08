@@ -1,15 +1,15 @@
 {extends "../@layout.xml"}
-{block title}{_"welcome"}{/block}
+{block title}{_welcome}{/block}
 
 {block header}
-    {_"welcome"}
+    {_welcome}
 {/block}
 
 {block content}
     {presenter "openvk!Support->knowledgeBaseArticle", "about"}
     <center>
-        <a class="button" style="margin-right: 5px;cursor: pointer;" href="/login">{_"log_in"}</a>
-        <a class="button" style="cursor: pointer;" href="/reg">{_"registration"}</a>
+        <a class="button" style="margin-right: 5px;cursor: pointer;" href="/login">{_log_in}</a>
+        <a class="button" style="cursor: pointer;" href="/reg">{_registration}</a>
     </center>
     {* TO-DO: Add statistics about this instance as on mastodon.social *}
 {/block}

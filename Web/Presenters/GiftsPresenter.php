@@ -91,7 +91,7 @@ final class GiftsPresenter extends OpenVKPresenter
         $gift->used();
         
         $this->flash("succ", "Подарок отправлен", "Вы отправили подарок <b>" . $user->getFirstName() . "</b> за " . $gift->getPrice() . " голосов.");
-        $this->redirect($user->getURL(), static::REDIRECT_TEMPORARY);
+        $this->redirect($user->getURL());
     }
     
     function renderStub(): void

@@ -1,8 +1,8 @@
 {extends "../@layout.xml"}
-{block title}{_"select_language"}{/block}
+{block title}{_select_language}{/block}
 
 {block header}
-    {_"select_language"}
+    {_select_language}
 {/block}
 
 {block content}

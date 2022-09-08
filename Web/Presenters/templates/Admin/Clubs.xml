@@ -1,29 +1,31 @@
 {extends "@layout.xml"}
-{var search = true}
+{var $search = true}
 
 {block title}
-    Группы
+    {_admin_club_search}
 {/block}
 
 {block heading}
-    Бутылки
+    {_groups}
 {/block}
 
-{block searchTitle}Поиск бутылок{/block}
+{block searchTitle}
+    {include title}
+{/block}
 
 {block content}
-    {var clubs  = iterator_to_array($clubs)}
-    {var amount = sizeof($clubs)}
+    {var $clubs  = iterator_to_array($clubs)}
+    {var $amount = sizeof($clubs)}
     
     <table class="aui aui-table-list">
         <thead>
             <tr>
-                <th>#</th>
-                <th>Имя</th>
-                <th>Автор</th>
-                <th>Описание</th>
-                <th>Короткий адрес</th>
-                <th>Действия</th>
+                <th>ID</th>
+                <th>{_admin_title}</th>
+                <th>{_admin_author}</th>
+                <th>{_admin_description}</th>
+                <th>{_admin_shortcode}</th>
+                <th>{_admin_actions}</th>
             </tr>
         </thead>
         <tbody>
@@ -39,7 +41,7 @@
                     <a href="{$club->getURL()}">{$club->getCanonicalName()}</a>
                 </td>
                 <td>
-                    {var user = $club->getOwner()}
+                    {var $user = $club->getOwner()}
                     
                     <span class="aui-avatar aui-avatar-xsmall">
                         <span class="aui-avatar-inner">
@@ -49,11 +51,11 @@
                     
                     <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>
                 </td>
-                <td>{$club->getDescription() ?? "(не указано)"}</td>
+                <td>{$club->getDescription() ?? "(" . tr("none") . ")"}</td>
                 <td>{$club->getShortCode()}</td>
                 <td>
                     <a class="aui-button aui-button-primary" href="/admin/clubs/id{$club->getId()}">
-                        <span class="aui-icon aui-icon-small aui-iconfont-new-edit">Редактировать</span>
+                        <span class="aui-icon aui-icon-small aui-iconfont-new-edit">{_edit}</span>
                     </a>
                 </td>
             </tr>
@@ -61,13 +63,9 @@
     </table>
     <br/>
     <div align="right">
-        {var isLast = ((10 * (($_GET['p'] ?? 1) - 1)) + $amount) < $count}
+        {var $isLast = ((10 * (($_GET['p'] ?? 1) - 1)) + $amount) < $count}
         
-        <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">
-            ⭁ туда
-        </a>
-        <a n:if="$isLast" class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">
-            ⭇  сюда
-        </a>
+        <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">&laquo;</a>
+        <a n:if="$isLast" class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">&raquo;</a>
     </div>
 {/block}

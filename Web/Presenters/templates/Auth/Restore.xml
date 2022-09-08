@@ -1,24 +1,24 @@
 {extends "../@layout.xml"}
 
 {block title}
-    {_"access_recovery"}
+    {_access_recovery}
 {/block}
 
 {block header}
-    {_"page_access_recovery"}
+    {_page_access_recovery}
 {/block}
 
 {block content}
     <p>
-        {_"access_recovery_info"}
+        {_access_recovery_info}
     </p>
     
     <form method="POST" enctype="multipart/form-data">
-        <label for="login">{_"log_in"}: </label>
+        <label for="login">{_log_in}: </label>
         <input id="login" type="text" name="login" required />
         <br/><br/>
         
         <input type="hidden" name="hash" value="{$csrfToken}" />
-        <input type="submit" value="{_'reset_password'}" class="button" style="float: right;" />
+        <input type="submit" value="{_reset_password}" class="button" style="float: right;" />
     </form>
 {/block}
