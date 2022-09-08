@@ -9,11 +9,13 @@ final class MessengerPresenter extends OpenVKPresenter
 {
     private $messages;
     private $signaler;
-    
+    protected $presenterName = "messenger";
+
     function __construct(Messages $messages)
     {
         $this->messages = $messages;
         $this->signaler = SignalManager::i();
+
         parent::__construct();
     }
     
@@ -30,7 +32,7 @@ final class MessengerPresenter extends OpenVKPresenter
     function renderIndex(): void
     {
         $this->assertUserLoggedIn();
-        
+
         if(isset($_GET["sel"]))
             $this->pass("openvk!Messenger->app", $_GET["sel"]);
         

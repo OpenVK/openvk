@@ -8,7 +8,8 @@ use Chandler\Security\Authenticator;
 final class GroupPresenter extends OpenVKPresenter
 {
     private $clubs;
-    
+    protected $presenterName = "group";
+
     function __construct(Clubs $clubs)
     {
         $this->clubs = $clubs;

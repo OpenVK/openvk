@@ -11,6 +11,7 @@ final class SupportPresenter extends OpenVKPresenter
 {
     protected $banTolerant = true;
     protected $deactivationTolerant = true;
+    protected $presenterName = "support";
     
     private $tickets;
     private $comments;
