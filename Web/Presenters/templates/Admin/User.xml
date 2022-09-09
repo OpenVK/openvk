@@ -68,6 +68,10 @@
                     <option value="2" {if $user->onlineStatus() == 2}selected{/if}>{_admin_user_online_deceased}</option>
                 </select>
             </div>
+            <hr>
+            <div class="field-group">
+                <a href="/admin/chandler/groups">{_c_edit_groups}</a>
+            </div>
             <div class="buttons-container">
                 <div class="buttons">
                     <input type="hidden" name="hash" value="{$csrfToken}" />

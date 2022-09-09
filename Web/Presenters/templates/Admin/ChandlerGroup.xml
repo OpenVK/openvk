@@ -1,0 +1,152 @@
+{extends "@layout.xml"}
+
+{block title}
+    {$group->name}
+{/block}
+
+{block heading}
+    <a href="/admin/chandler/groups">{_c_groups}</a>
+    » {$group->name}
+{/block}
+
+{block content}
+    {var $isMain        = $mode === 'main'}
+    {var $isPermissions = $mode === 'permissions'}
+    {var $isMembers     = $mode === 'members'}
+
+    {if $isMain}
+    <div class="aui-tabs horizontal-tabs">
+        <nav class="aui-navgroup aui-navgroup-horizontal">
+            <div class="aui-navgroup-inner">
+                <div class="aui-navgroup-primary">
+                    <ul class="aui-nav">
+                        <li class="aui-nav-selected"><a href="?act=main">{_admin_tab_main}</a></li>
+                        <li><a href="?act=permissions">{_c_group_permissions}</a></li>
+                        <li><a href="?act=members">{_c_group_members}</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <form class="aui" method="POST">
+            <div class="field-group">
+                <label for="id">ID</label>
+                <input class="text medium-field" type="text" id="id" disabled value="{$group->id}" />
+            </div>
+            <div class="field-group">
+                <label for="first_name">{_name}</label>
+                <input class="text medium-field" type="text" id="name" name="name" value="{$group->name}" />
+            </div>
+            <div class="field-group">
+                <label for="first_name">{_c_color}</label>
+                <input class="text medium-field" type="text" id="color" name="color" value="{$group->color}" />
+            </div>
+            <div class="buttons-container">
+                <div class="buttons">
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    <input class="button submit" type="submit" value="{_save}">
+                </div>
+            </div>
+        </form>
+    </div>
+    {elseif $isMembers}
+    <div class="aui-tabs horizontal-tabs">
+        <nav class="aui-navgroup aui-navgroup-horizontal">
+            <div class="aui-navgroup-inner">
+                <div class="aui-navgroup-primary">
+                    <ul class="aui-nav">
+                        <li><a href="?act=main">{_admin_tab_main}</a></li>
+                        <li><a href="?act=permissions">{_c_group_permissions}</a></li>
+                        <li class="aui-nav-selected"><a href="?act=members">{_c_group_members}</a></li>
+                        <li>
+                            <form class="aui" method="POST"  style="display: flex;">
+                                <div class="field-group">
+                                    <label for="uid">UID</label>
+                                    <input class="text" type="text" id="uid" name="uid" />
+                                </div>
+                                <div style="margin: 5px;">
+                                    <div class="buttons">
+                                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                                        <input class="button submit" type="submit" value="{_add}">
+                                    </div>
+                                </div>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <table class="aui aui-table-list">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>{_admin_actions}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr n:foreach="$members as $member">
+                    <td>
+                        <a href="/admin/chandler/users/{$member->user}">
+                            {$member->user}
+                        </a>
+                    </td>
+                    <td>
+                        <a class="aui-button aui-button-primary" href="/admin/chandler/groups/{$member->group}?act=removeMember&uid={$member->user}">
+                            <span class="aui-icon aui-icon-small aui-iconfont-delete">{_edit}</span>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {elseif $isPermissions}
+    <div class="aui-tabs horizontal-tabs">
+        <nav class="aui-navgroup aui-navgroup-horizontal">
+            <div class="aui-navgroup-inner">
+                <div class="aui-navgroup-primary">
+                    <ul class="aui-nav">
+                        <li><a href="?act=main">{_admin_tab_main}</a></li>
+                        <li class="aui-nav-selected"><a href="?act=permissions">{_c_group_permissions}</a></li>
+                        <li><a href="?act=members">{_c_group_members}</a></li>
+                        <li>
+                            <form class="aui" method="POST" style="display: flex;">
+                                <div class="field-group">
+                                    <label for="model">{_c_model}</label>
+                                    <input class="text" type="text" id="model" name="model" />
+                                    <input class="text" type="text" id="permission" name="permission" />
+                                    <label for="action">{_c_permission}</label>
+                                </div>
+                                <div style="margin: 5px;">
+                                    <div class="buttons">
+                                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                                        <input class="button submit" type="submit" value="{_add}">
+                                    </div>
+                                </div>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <table class="aui aui-table-list">
+            <thead>
+                <tr>
+                    <th>{_c_model}</th>
+                    <th>{_c_permission}</th>
+                    <th>{_admin_actions}</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr n:foreach="$perms as $perm">
+                    <td>{$perm->model}</td>
+                    <td>{$perm->permission}</td>
+                    <td>
+                        <a class="aui-button aui-button-primary" href="/admin/chandler/groups/{$perm->group}?act=removePermission&model={$perm->model}&perm={$perm->permission}">
+                            <span class="aui-icon aui-icon-small aui-iconfont-delete">{_edit}</span>
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    {/if}
+{/block}
