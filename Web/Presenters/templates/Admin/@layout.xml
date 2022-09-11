@@ -65,9 +65,6 @@
                                     </div>
                                     <ul class="aui-nav">
                                         <li>
-                                            <a href="/admin/chandler/users">{_c_users}</a>
-                                        </li>
-                                        <li>
                                             <a href="/admin/chandler/groups">{_c_groups}</a>
                                         </li>
                                     </ul>

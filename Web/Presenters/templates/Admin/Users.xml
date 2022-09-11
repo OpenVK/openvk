@@ -21,6 +21,7 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>UUID</th>
                 <th>{_admin_name}</th>
                 <th>{_gender}</th>
                 <th>{_admin_shortcode}</th>
@@ -31,6 +32,7 @@
         <tbody>
             <tr n:foreach="$users as $user">
                 <td>{$user->getId()}</td>
+                <td>{$user->getChandlerGUID()}</td>
                 <td>
                     <span class="aui-avatar aui-avatar-xsmall">
                         <span class="aui-avatar-inner">

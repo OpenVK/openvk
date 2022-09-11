@@ -11,14 +11,16 @@ final class AdminPresenter extends OpenVKPresenter
     private $vouchers;
     private $gifts;
     private $bannedLinks;
-    
-    function __construct(Users $users, Clubs $clubs, Vouchers $vouchers, Gifts $gifts, BannedLinks $bannedLinks)
+    private $chandlerGroups;
+
+    function __construct(Users $users, Clubs $clubs, Vouchers $vouchers, Gifts $gifts, BannedLinks $bannedLinks, ChandlerGroups $chandlerGroups)
     {
         $this->users    = $users;
         $this->clubs    = $clubs;
         $this->vouchers = $vouchers;
         $this->gifts    = $gifts;
         $this->bannedLinks = $bannedLinks;
+        $this->chandlerGroups = $chandlerGroups;
         
         parent::__construct();
     }
@@ -62,8 +64,8 @@ final class AdminPresenter extends OpenVKPresenter
             $this->notFound();
         
         $this->template->user = $user;
-        $this->template->c_groups_add = (new ChandlerGroups)->getList();
-        $this->template->c_groups_del = (new ChandlerGroups)->getList();
+        $this->template->c_groups_list = (new ChandlerGroups)->getList();
+        $this->template->c_memberships = $this->chandlerGroups->getUsersMemberships($user->getChandlerGUID());
 
         if($_SERVER["REQUEST_METHOD"] !== "POST")
             return;
@@ -80,6 +82,10 @@ final class AdminPresenter extends OpenVKPresenter
                 $user->changeEmail($this->postParam("email"));
                 if($user->onlineStatus() != $this->postParam("online")) $user->setOnline(intval($this->postParam("online")));
                 $user->setVerified(empty($this->postParam("verify") ? 0 : 1));
+                if($this->postParam("add-to-group")) {
+                    $query = "INSERT INTO `chandleraclrelations` (`user`, `group`) VALUES ('" . $user->getChandlerGUID() . "', '" . $this->postParam("add-to-group") . "')";
+                    DatabaseConnection::i()->getConnection()->query($query);
+                }
 
                 $user->save();
 
@@ -451,11 +457,6 @@ final class AdminPresenter extends OpenVKPresenter
         $this->redirect("/admin/bannedLinks");
     }
 
-    function renderChandlerUsers(): void
-    {
-        $this->template->users = (new ChandlerUsers)->getList((int) $this->queryParam("p") ?: 1);
-    }
-
     function renderChandlerGroups(): void
     {
         $this->template->groups = (new ChandlerGroups)->getList();
@@ -538,8 +539,10 @@ final class AdminPresenter extends OpenVKPresenter
 
     function renderChandlerUser(string $UUID): void
     {
-        $user = $this->users->getByChandlerUser((new ChandlerUsers)->getById($UUID));
+        if(!$UUID) $this->notFound();
 
+        $c_user = (new ChandlerUsers())->getById($UUID);
+        $user = $this->users->getByChandlerUser($c_user);
         if(!$user) $this->notFound();
 
         $this->redirect("/admin/users/id" . $user->getId());

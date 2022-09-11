@@ -75,27 +75,52 @@
                 </div>
             </div>
         </nav>
-        <table class="aui aui-table-list">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>{_admin_actions}</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr n:foreach="$members as $member">
-                    <td>
-                        <a href="/admin/chandler/users/{$member->user}">
-                            {$member->user}
-                        </a>
-                    </td>
-                    <td>
-                        <a class="aui-button aui-button-primary" href="/admin/chandler/groups/{$member->group}?act=removeMember&uid={$member->user}">
-                            <span class="aui-icon aui-icon-small aui-iconfont-delete">{_edit}</span>
-                        </a>
-                    </td>
-                </tr>
-            </tbody>
+            <table class="aui aui-table-list">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>UUID</th>
+                        <th>{_admin_name}</th>
+                        <th>{_gender}</th>
+                        <th>{_admin_shortcode}</th>
+                        <th>{_registration_date}</th>
+                        <th>{_admin_actions}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr n:foreach="$members as $user">
+                        <td>{$user->getId()}</td>
+                        <td>{$user->getChandlerGUID()}</td>
+                        <td>
+                            <span class="aui-avatar aui-avatar-xsmall">
+                                <span class="aui-avatar-inner">
+                                    <img src="{$user->getAvatarUrl('miniscule')}" alt="{$user->getCanonicalName()}" style="object-fit: cover;" role="presentation" />
+                                </span>
+                            </span>
+
+                            <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>
+
+                            <span n:if="$user->isBanned()" class="aui-lozenge aui-lozenge-subtle aui-lozenge-removed">{_admin_banned}</span>
+                        </td>
+                        <td>{$user->isFemale() ? tr("female") : tr("male")}</td>
+                        <td>{$user->getShortCode() ?? "(" . tr("none") . ")"}</td>
+                        <td>{$user->getRegistrationTime()}</td>
+                        <td>
+                            <a class="aui-button aui-button-primary" href="/admin/chandler/groups/{$group->id}?act=removeMember&uid={$user->getChandlerGUID()}">
+                                <span class="aui-icon aui-icon-small aui-iconfont-delete">{_delete}</span>
+                            </a>
+                            <a class="aui-button aui-button-primary" href="/admin/users/id{$user->getId()}">
+                                <span class="aui-icon aui-icon-small aui-iconfont-new-edit">{_edit}</span>
+                            </a>
+                            {if $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
+                            <a class="aui-button" href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}">
+                                <span class="aui-icon aui-icon-small aui-iconfont-sign-in">{_admin_loginas}</span>
+                            </a>
+                            {/if}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </table>
     </div>
     {elseif $isPermissions}

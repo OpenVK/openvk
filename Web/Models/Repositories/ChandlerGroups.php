@@ -3,6 +3,7 @@ namespace openvk\Web\Models\Repositories;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection as DB;
 use openvk\Web\Models\Entities\User;
+use Chandler\Security\User as ChandlerUser;
 
 class ChandlerGroups
 {
@@ -29,7 +30,15 @@ class ChandlerGroups
 
     function getMembersById(string $UUID): \Traversable
     {
-        foreach($this->members->where("group", $UUID) as $member) yield $member;
+        foreach($this->members->where("group", $UUID) as $member)
+            yield (new Users)->getByChandlerUser(
+                new ChandlerUser($this->context->table("chandlerusers")->where("id", $member->user)->fetch())
+            );
+    }
+
+    function getUsersMemberships(string $UUID): \Traversable
+    {
+        foreach($this->members->where("user", $UUID) as $member) yield $member;
     }
 
     function getPermissionsById(string $UUID): \Traversable

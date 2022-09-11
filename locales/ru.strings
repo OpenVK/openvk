@@ -1228,3 +1228,5 @@
 "c_permission_not_found" = "Связь права и группы не найдена.";
 "c_group_not_found" = "Группа не найдена.";
 "c_user_is_already_in_group" = "Этот пользователь уже включён в эту группу.";
+"c_add_to_group" = "Добавить в группу";
+"c_remove_from_group" = "Исключить из группы";

@@ -1167,3 +1167,5 @@
 "c_permission_not_found" = "The relationship between the permission and the group was not found.";
 "c_group_not_found" = "The group was not found.";
 "c_user_is_already_in_group" = "This user is already a member of this group.";
+"c_add_to_group" = "Add to group";
+"c_remove_from_group" = "Remove from group";
