@@ -135,13 +135,16 @@ final class Friends extends VKAPIRequestHandler
 
 	function getRequests(string $fields = "", int $offset = 0, int $count = 100): object
 	{
+		if ($count >= 1000)
+			$this->fail(100, "One of the required parameters was not passed or is invalid.");
+
 		$this->requireUser();
 
 		$i = 0;
 		$offset++;
 		$followers = [];
 
-		foreach($this->getUser()->getFollowers() as $follower) {
+		foreach($this->getUser()->getFollowers($offset, $count) as $follower) {
 			$followers[$i] = $follower->getId();
 			$i++;
 		}
