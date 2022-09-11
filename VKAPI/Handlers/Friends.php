@@ -133,7 +133,7 @@ final class Friends extends VKAPIRequestHandler
 		return $response;
 	}
 
-	function getRequests(string $fields = "", int $offset = 0, int $count = 100): object
+	function getRequests(string $fields = "", int $offset = 0, int $count = 100, int $extended = 0): object
 	{
 		if ($count >= 1000)
 			$this->fail(100, "One of the required parameters was not passed or is invalid.");
@@ -152,8 +152,10 @@ final class Friends extends VKAPIRequestHandler
 		$response = $followers;
 		$usersApi = new Users($this->getUser());
 
-		if(!is_null($fields)) 
-			$response = $usersApi->get(implode(',', $followers), $fields, 0, $count);  # FIXME
+		if($extended == 1)
+			$response = $usersApi->get(implode(',', $followers), $fields, 0, $count);
+		else
+			$response = $usersApi->get(implode(',', $followers), "", 0, $count);
 
 		foreach($response as $user)
 			$user->user_id = $user->id;
