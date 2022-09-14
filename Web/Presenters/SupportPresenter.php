@@ -157,7 +157,7 @@ final class SupportPresenter extends OpenVKPresenter
                 if($ticket->getUserId() !== $this->user->id && $this->hasPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0))
                     $_redirect = "/support/tickets";
                 else
-                    $_redirect = "/support";
+                    $_redirect = "/support?act=list";
 
                 $ticket->delete();
                 $this->redirect($_redirect);
