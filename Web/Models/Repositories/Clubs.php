@@ -45,6 +45,9 @@ class Clubs
 
     function getPopularClubs(): \Traversable
     {
+        // TODO rewrite
+        
+        /*
         $query   = "SELECT ROW_NUMBER() OVER (ORDER BY `subscriptions` DESC) as `place`, `target` as `id`, COUNT(`follower`) as `subscriptions` FROM `subscriptions` WHERE `model` = \"openvk\\\Web\\\Models\\\Entities\\\Club\" GROUP BY `target` ORDER BY `subscriptions` DESC, `id` LIMIT 30;";
         $entries = DatabaseConnection::i()->getConnection()->query($query);
 
@@ -54,6 +57,7 @@ class Clubs
                 "club"          => $this->get($entry["id"]),
                 "subscriptions" => $entry["subscriptions"],
             ];
+        */
     }
     
     use \Nette\SmartObject;
