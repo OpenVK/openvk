@@ -1124,6 +1124,17 @@
 "admin_commerce_disabled" = "Комерція відключена системним адміністратором";
 "admin_commerce_disabled_desc" = "Налаштування ваучерів та подарунків будуть збережені, але не матимуть впливу.";
 
+"admin_banned_links" = "Заблоковані посилання";
+"admin_banned_link" = "Посилання";
+"admin_banned_domain" = "Домен";
+"admin_banned_link_description" = "З протоколом (https://example.org/)";
+"admin_banned_link_regexp" = "Регулярний вираз";
+"admin_banned_link_regexp_description" = "Підставляється після домену, зазначеного вище. Не заповнюйте, якщо хочете заблокувати весь домен";
+"admin_banned_link_reason" = "Причина";
+"admin_banned_link_initiator" = "Ініціатор";
+"admin_banned_link_not_specified" = "Посилання не зазначено";
+"admin_banned_link_not_found" = "Посилання не знайдено";
+
 /* Paginator (deprecated) */
 
 "paginator_back" = "Назад";
@@ -1187,3 +1198,12 @@
 
 "cookies_popup_content" = "Цей веб-сайт використовує cookies для того, щоб ідентифікувати вашу сесію і нічого більше. Ознайомтеся з нашою <a href='/privacy'>політикою конфіденційності</a> для отримання додаткової інформації.";
 "cookies_popup_agree" = "Згоден";
+
+/* Away */
+
+"url_is_banned" = "Перехід неможливий";
+"url_is_banned_comment" = "Адміністрація <b>$1</b> не рекомендує переходити за цим посиланням.";
+"url_is_banned_comment_r" = "Адміністрація <b>$1</b> не рекомендує переходити за цим посиланням.<br><br>Підстава: <b>$2</b>";
+"url_is_banned_default_reason" = "Посилання, за яким Ви спробували перейти, може вести на сайт, що був створений з метою обману користувачів і отримання шляхом цього неправомірного прибутку.";
+"url_is_banned_title" = "Посилання на підозрілий сайт";
+"url_is_banned_proceed" = "Перейти за посиланням";
