@@ -15,6 +15,8 @@
 "password" = "Пароль";
 "registration" = "Регистрация";
 "forgot_password" = "Забыли пароль?";
+"checkbox_in_registration" = "Я согласен с <a href='/privacy'>политикой конфиденциальности</a> и <a href='/about'>правилами сайта</a>";
+"checkbox_in_registration_unchecked" = "Вы должны согласиться с политикой конфиденциальности и правилами, чтобы зарегистрироваться.";
 
 "login_failed" = "Не удалось войти";
 "invalid_username_or_password" = "Неверное имя пользователя или пароль. <a href='/restore'>Забыли пароль?</a>";
@@ -1217,3 +1219,12 @@
 "helpdesk_showing_name" = "Отображаемое имя";
 "helpdesk_show_number" = "Показывать номер";
 "helpdesk_avatar_url" = "Ссылка на аватарку";
+
+/* Maintenance */
+
+"global_maintenance" = "Технические работы";
+"section_maintenance" = "Раздел недоступен";
+"undergoing_global_maintenance" = "К сожалению, сейчас инстанс закрыт на технические работы. Мы уже работаем над устранением неисправностей. Пожалуйста, попробуйте зайти позже.";
+"undergoing_section_maintenance" = "К сожалению, раздел <b>$1</b> временно недоступен. Мы уже работаем над устранением неисправностей. Пожалуйста, попробуйте зайти позже.";
+
+"topics" = "Темы";

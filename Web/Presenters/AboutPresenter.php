@@ -64,7 +64,7 @@ final class AboutPresenter extends OpenVKPresenter
         $this->template->usersStats   = (new Users)->getStatistics();
         $this->template->clubsCount   = (new Clubs)->getCount();
         $this->template->postsCount   = (new Posts)->getCount();
-        $this->template->popularClubs = iterator_to_array((new Clubs)->getPopularClubs());
+        $this->template->popularClubs = [];
         $this->template->admins       = iterator_to_array((new Users)->getInstanceAdmins());
     }
     

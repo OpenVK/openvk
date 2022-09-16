@@ -908,6 +908,10 @@ class User extends RowModel
             $pClub = DatabaseConnection::i()->getContext()->table("groups")->where("shortcode", $code)->fetch();
                 if(!is_null($pClub))
                     return false;
+
+            $pAlias = DatabaseConnection::i()->getContext()->table("aliases")->where("shortcode", $code)->fetch();
+                if(!is_null($pAlias))
+                    return false;
         }
 
         $this->stateChanges("shortcode", $code);
