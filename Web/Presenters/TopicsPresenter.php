@@ -7,7 +7,8 @@ final class TopicsPresenter extends OpenVKPresenter
 {
     private $topics;
     private $clubs;
-    
+    protected $presenterName = "topics";
+
     function __construct(Topics $topics, Clubs $clubs)
     {
         $this->topics = $topics;
