@@ -804,6 +804,8 @@
 "support_new_title" = "Enter the topic of your ticket";
 "support_new_content" = "Describe the issue or suggestion";
 
+"reports" = "Reports";
+
 "support_rate_good_answer" = "This is good answer";
 "support_rate_bad_answer" = "This is bad answer";
 "support_good_answer_user" = "You left a positive feedback.";

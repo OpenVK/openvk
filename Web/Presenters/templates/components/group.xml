@@ -1,0 +1,22 @@
+{block content}
+<div class="content">
+    <table>
+        <tbody>
+            <tr>
+                <td valign="top">
+                    <a href="{$group->getURL()}">
+                        <img src="{$group->getAvatarURL()}" width="75" alt="Фотография группы">
+                    </a>
+                </td>
+                <td valign="top" style="width: 100%">
+                    <a href="{$group->getURL()}">
+                        <b>
+                            asdasdasd
+                        </b>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{/block}

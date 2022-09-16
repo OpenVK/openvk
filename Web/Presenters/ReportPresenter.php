@@ -52,7 +52,7 @@ final class ReportPresenter extends OpenVKPresenter
             exit(json_encode([ "error" => tr("error_segmentation") ]));
 
         // At this moment, only Posts will be implemented
-        if($this->queryParam("type") == 'post') {
+        if(in_array($this->queryParam("type"), ["post", "photo", "video", "group"])) {
             $post = (new Posts)->get(intval($id));
             if(!$post)
                 exit(json_encode([ "error" => "Unable to report nonexistent content" ]));
@@ -77,10 +77,11 @@ final class ReportPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
         $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
 
-        if($this->postParam("ban")) {    
-            $report = $this->reports->get($id);
-            if(!$report) $this->notFound();
-            if($report->isDeleted()) $this->notFound();
+        $report = $this->reports->get($id);
+        if(!$report) $this->notFound();
+        if($report->isDeleted()) $this->notFound();
+
+        if($this->postParam("ban")) {
             if(is_null($this->user))
                 $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
             
@@ -88,23 +89,40 @@ final class ReportPresenter extends OpenVKPresenter
             $report->deleteContent();
             $this->flash("suc", "Смэрть...", "Пользователь успешно забанен.");
         }else if($this->postParam("delete")){
-            $report = $this->reports->get($id);
-            if(!$report) $this->notFound();
-            if($report->isDeleted()) $this->notFound();
             if(is_null($this->user))
                 $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
             
             $report->deleteContent();
             $this->flash("suc", "Нехай живе!", "Контент удалён, а пользователю прилетело предупреждение.");
         }else if($this->postParam("ignore")){
-            $report = $this->reports->get($id);
-            if(!$report) $this->notFound();
-            if($report->isDeleted()) $this->notFound();
             if(is_null($this->user))
                 $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
             
-            $report->setDeleted();
+            $report->delete();
             $this->flash("suc", "Нехай живе!", "Жалоба проигнорирована.");
+        }else if($this->postParam("banClubOwner")) {
+            if($report->getContentType() != "group")
+                $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+
+            $club = $report->getContentObject();
+
+            if(is_null($club))
+                $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+
+            $owner = $club->getOwner();
+            $owner->ban("Banned by report. Ask Technical support for ban reason");
+
+            $report->delete();
+            $this->flash("suc", "Смэрть...", "Создатель сообщества успешно забанен.");
+        }else if($this->postParam("banClub")) {
+            if($report->getContentType() != "group")
+                $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+
+            $club = $report->getContentObject();
+            $club->ban("Banned by report. Ask Technical support for ban reason");
+
+            $report->delete();
+            $this->flash("suc", "Смэрть...", "Сообщество успешно забанено.");
         }
         $this->redirect("/support/reports");
     }

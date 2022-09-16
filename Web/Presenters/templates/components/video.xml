@@ -1,0 +1,14 @@
+{block content}
+<center style="margin-bottom: 8pt;">
+    {if $video->getType() === 0}
+        <video width="610" src="{$video->getURL()}" controls></video>
+    {else}
+        {var driver = $video->getVideoDriver()}
+        {if !$driver}
+            Эта видеозапись не поддерживается в вашей версии OpenVK.
+        {else}
+            {$driver->getEmbed()|noescape}
+        {/if}
+    {/if}
+</center>
+{/block}
