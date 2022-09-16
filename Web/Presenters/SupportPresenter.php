@@ -350,13 +350,13 @@ final class SupportPresenter extends OpenVKPresenter
         if(!$support_names->isExists($id))
             $this->template->mode = "edit";
 
-        $this->template->agent_id = $id;
-        $this->template->mode = in_array($this->queryParam("act"), ["info", "edit"]) ? $this->queryParam("act") : "info";
-        $this->template->agent = $support_names->get($id) ?? NULL;
-        $this->template->counters = [
-          "all" => (new TicketComments)->getCountByAgent($id),
-          "good" => (new TicketComments)->getCountByAgent($id, 1),
-          "bad" => (new TicketComments)->getCountByAgent($id, 2)
+        $this->template->agent_id    = $id;
+        $this->template->mode        = in_array($this->queryParam("act"), ["info", "edit"]) ? $this->queryParam("act") : "info";
+        $this->template->agent       = $support_names->get($id) ?? NULL;
+        $this->template->counters    = [
+          "all"    => (new TicketComments)->getCountByAgent($id),
+          "good"   => (new TicketComments)->getCountByAgent($id, 1),
+          "bad"    => (new TicketComments)->getCountByAgent($id, 2)
         ];
 
         if($id != $this->user->identity->getId())
@@ -364,8 +364,6 @@ final class SupportPresenter extends OpenVKPresenter
                 $this->template->mode = "info";
             else
                 $this->redirect("/support/agent" . $this->user->identity->getId());
-
-        #exit(var_dump($this->template->agent->getAvatarURL()));
     }
 
     function renderEditAgent(int $id): void

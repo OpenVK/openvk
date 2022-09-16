@@ -1147,3 +1147,14 @@
 "url_is_banned_default_reason" = "The link you are trying to open may lead you to a site that was created for the purpose of deceiving users with the intention of gaining profit.";
 "url_is_banned_title" = "Link to a suspicious site";
 "url_is_banned_proceed" = "Follow the link";
+
+/* Helpdesk */
+"helpdesk" = "Support";
+"helpdesk_agent" = "Support Agent";
+"helpdesk_agent_card" = "Agent Card";
+"helpdesk_positive_answers" = "positive answers";
+"helpdesk_negative_answers" = "negative answers";
+"helpdesk_all_answers" = "all answers";
+"helpdesk_showing_name" = "Display name";
+"helpdesk_show_number" = "Show the number";
+"helpdesk_avatar_url" = "Link to the avatar";

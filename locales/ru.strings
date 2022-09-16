@@ -1210,3 +1210,10 @@
 /* Helpdesk */
 "helpdesk" = "Поддержка";
 "helpdesk_agent" = "Агент Поддержки";
+"helpdesk_agent_card" = "Карточка агента";
+"helpdesk_positive_answers" = "положительных ответов";
+"helpdesk_negative_answers" = "отрицательных ответов";
+"helpdesk_all_answers" = "всего ответов";
+"helpdesk_showing_name" = "Отображаемое имя";
+"helpdesk_show_number" = "Показывать номер";
+"helpdesk_avatar_url" = "Ссылка на аватарку";

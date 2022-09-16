@@ -1,7 +1,7 @@
 {extends "../@layout.xml"}
 
 {block header}
-    Карточка агента
+    {_helpdesk_agent_card}
 {/block}
 
 {block content}
@@ -32,40 +32,40 @@
                 <div>
                     <b style="color: green;">{$counters["good"]}</b>
                 </div>
-                <div>положительных ответов</div>
+                <div>{_helpdesk_positive_answers}</div>
             </div>
             <div style="text-align: center;">
                 <div>
                     <b style="color: red;">{$counters["bad"]}</b>
                 </div>
-                <div>отрицательных ответов</div>
+                <div>{_helpdesk_negative_answers}</div>
             </div>
             <div style="text-align: center;">
                 <div>
                     <b>{$counters["all"]}</b>
                 </div>
-                <div>всего ответов</div>
+                <div>{_helpdesk_all_answers}</div>
             </div>
         </div>
         {if $isEdit}
-            <h4>Редактировать</h4>
+            <h4>{_edit}</h4>
             <br/>
             <form method="post" action="/support/agent{$agent_id}/edit">
-                <label for="name">Отображаемое имя</label>
-                <input name="name" type="text" value="{$agent->getCanonicalName()}" placeholder="Агент Поддержки #777" />
+                <label for="name">{_helpdesk_showing_name}</label>
+                <input name="name" type="text" value="{$agent->getCanonicalName()}" placeholder="{_helpdesk_agent} #777" />
                 <br/><br/>
-                <label for="number">Показывать номер?</label>
+                <label for="number">{_helpdesk_show_number}?</label>
                 {$agent->isShowNumber()}
                 <select name="number">
-                    <option value="1" n:attr="selected => $agent->isShowNumber() === 1 ? true : false">Да</option>
-                    <option value="0" n:attr="selected => $agent->isShowNumber() === 0 ? true : false">Нет</option>
+                    <option value="1" n:attr="selected => $agent->isShowNumber() === 1 ? true : false">{_yes}</option>
+                    <option value="0" n:attr="selected => $agent->isShowNumber() === 0 ? true : false">{_no}</option>
                 </select>
                 <br/><br/>
-                <label for="number">Аватар</label>
-                <input name="avatar" type="text" value="{$agent->getAvatarURL()}" placeholder="Ссылка на аватарку" />
+                <label for="number">{_avatar}</label>
+                <input name="avatar" type="text" value="{$agent->getAvatarURL()}" placeholder="{_helpdesk_avatar_url}" />
                 <input type="hidden" value="{$csrfToken}" name="hash" />
                 <br/><br/>
-                <input type="submit" class="button" value="Сохранить" />
+                <input type="submit" class="button" value="{_save}" />
             </form>
         {/if}
     </div>
@@ -74,19 +74,19 @@
     <h4>Создать</h4>
     <br/>
         <form method="post" action="/support/agent{$agent_id}/edit">
-            <label for="name">Отображаемое имя</label>
-            <input name="name" type="text" placeholder="Агент Поддержки #777" />
+            <label for="name">{_helpdesk_showing_name}</label>
+            <input name="name" type="text" placeholder="{_helpdesk_agent} #777" />
             <br/><br/>
-            <label for="number">Показывать номер?</span></label>
+            <label for="number">{_helpdesk_show_number}?</span></label>
             <select name="number">
-                <option value="1">Да</option>
-                <option value="0">Нет</option>
+                <option value="1">{_yes}</option>
+                <option value="0">{_no}</option>
             </select>
             <br/><br/>
-            <label for="number">Аватар</label>
-            <input name="avatar" type="text" placeholder="Ссылка на аватарку" />
+            <label for="number">{_avatar}</label>
+            <input name="avatar" type="text" placeholder="{_helpdesk_avatar_url}" />
             <input type="hidden" value="{$csrfToken}" name="hash" />
-            <input type="submit" class="button" value="Сохранить" />
+            <input type="submit" class="button" value="{_save}" />
         </form>
 {/if}
 {/block}
