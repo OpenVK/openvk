@@ -29,6 +29,6 @@ class Alias extends RowModel
 
     function getClub(): ?Club
     {
-        return (new Clubs)->get($this->getId() * -1);
+        return (new Clubs)->get($this->getOwnerId() * -1);
     }
 }
