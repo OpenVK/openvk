@@ -1,0 +1,171 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: mysql-pvc
+    namespace: openvk
+    annotations: {}
+      # volume.beta.kubernetes.io/storage-class: "efs-sc"
+  spec:
+    # storageClassName: efs-sc
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 10Gi
+- apiVersion: v1
+  kind: PersistentVolumeClaim
+  metadata:
+    name: clickhouse-pvc
+    namespace: openvk
+    annotations: {}
+      # volume.beta.kubernetes.io/storage-class: "efs-sc"
+  spec:
+    # storageClassName: efs-sc
+    accessModes:
+    - ReadWriteOnce
+    resources:
+      requests:
+        storage: 10Gi
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: openvk
+    namespace: openvk
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: openvk
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: openvk
+      spec:
+        containers:
+        - env: []
+          image: ghcr.io/openvk/openvk/openvk:latest
+          imagePullPolicy: Always
+          name: openvk
+          ports:
+          - containerPort: 80
+            name: http
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+          volumeMounts:
+          - mountPath: /var/log/openvk
+            name: openvk-logs
+          - mountPath: /opt/chandler/extensions/available/openvk/openvk.yml
+            name: openvk-config
+            subPath: openvk.yml
+          - mountPath: /opt/chandler/chandler.yml
+            name: openvk-config
+            subPath: chandler.yml
+        - env:
+          - name: MYSQL_DATABASE
+            value: "db"
+          - name: MYSQL_USER
+            value: "openvk"
+          - name: MYSQL_PASSWORD
+            value: "openvk"
+          - name: MYSQL_RANDOM_ROOT_PASSWORD
+            value: "yes"
+          image: ghcr.io/openvk/openvk/mysql:latest
+          imagePullPolicy: Always
+          name: mysql
+          ports:
+          - containerPort: 3306
+            name: mysql
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+          volumeMounts:
+          - mountPath: /var/lib/mysql
+            name: mysql
+        - env:
+          - name: CLICKHOUSE_DB
+            value: "openvk-eventdb"
+          - name: CLICKHOUSE_USER
+            value: "openvk"
+          - name: CLICKHOUSE_PASSWORD
+            value: "openvk"
+          image: ghcr.io/openvk/openvk/mysql:latest
+          imagePullPolicy: Always
+          name: clickhouse
+          ports:
+          - containerPort: 8123
+            name: ck-http
+            protocol: TCP
+          - containerPort: 9000
+            name: ck-native
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+          volumeMounts:
+          - mountPath: /var/lib/clickhouse
+            name: clickhouse
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        volumes:
+        - name: clickhouse
+          persistentVolumeClaim:
+            claimName: clickhouse-pvc
+        - name: mysql
+          persistentVolumeClaim:
+            claimName: mysql-pvc
+        - name: openvk-logs
+          emptyDir: {}
+        - name: openvk-config
+          configMap:
+            name: openvk-config
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: mysql-svc
+    namespace: openvk
+  spec:
+    ports:
+    - name: mysql
+      port: 3306
+    selector:
+      app: openvk
+    type: ClusterIP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: clickhouse-svc
+    namespace: openvk
+  spec:
+    ports:
+    - name: ck-http
+      port: 8123
+    - name: ck-native
+      port: 9000
+    selector:
+      app: openvk
+    type: ClusterIP
+- apiVersion: v1
+  kind: Service
+  metadata:
+    name: openvk-svc
+    namespace: openvk
+  spec:
+    ports:
+    - name: http
+      port: 80
+    selector:
+      app: openvk
+    type: LoadBalancer
+kind: List
+metadata: {}
