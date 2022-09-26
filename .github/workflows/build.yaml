@@ -49,16 +49,16 @@ jobs:
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
 
-          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_ID:$VERSION . --push -f install/automated/kubernetes/openvk.Dockerfile --build-arg GITREPO=${{ github.repository }}
+          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_ID:$VERSION . --push -f install/automated/docker/openvk.Dockerfile --build-arg GITREPO=${{ github.repository }}
       
       - name: Build MariaDB primary image
         run: |
           IMAGE_NAME=ghcr.io/${{ github.repository }}/$DB_IMAGE_NAME:$DB_VERSION-primary
 
-          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_NAME . --push -f install/automated/kubernetes/mariadb-primary.Dockerfile --build-arg VERSION=$DB_VERSION
+          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_NAME . --push -f install/automated/docker/mariadb-primary.Dockerfile --build-arg VERSION=$DB_VERSION
       
       - name: Build MariaDB event image
         run: |
           IMAGE_NAME=ghcr.io/${{ github.repository }}/$EVENT_IMAGE_NAME:$DB_VERSION-eventdb
 
-          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_NAME . --push -f install/automated/kubernetes/mariadb-eventdb.Dockerfile --build-arg VERSION=$DB_VERSION
+          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_NAME . --push -f install/automated/docker/mariadb-eventdb.Dockerfile --build-arg VERSION=$DB_VERSION

@@ -31,7 +31,7 @@ jobs:
         run: |
           IMAGE_NAME=ghcr.io/${{ github.repository }}/$BASE_IMAGE_NAME:$BASE_IMAGE_VERSION-cli
 
-          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_NAME . --push -f install/automated/kubernetes/base-php-cli.Dockerfile --build-arg VERSION=$BASE_IMAGE_VERSION
+          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_NAME . --push -f install/automated/docker/base-php-cli.Dockerfile --build-arg VERSION=$BASE_IMAGE_VERSION
   
   build-apache:
     runs-on: ubuntu-latest
@@ -55,4 +55,4 @@ jobs:
         run: |
           IMAGE_NAME=ghcr.io/${{ github.repository }}/$BASE_IMAGE_NAME:$BASE_IMAGE_VERSION-apache
 
-          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_NAME . --push -f install/automated/kubernetes/base-php-apache.Dockerfile --build-arg VERSION=$BASE_IMAGE_VERSION
+          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_NAME . --push -f install/automated/docker/base-php-apache.Dockerfile --build-arg VERSION=$BASE_IMAGE_VERSION
