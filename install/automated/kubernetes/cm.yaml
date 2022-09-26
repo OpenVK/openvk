@@ -141,7 +141,7 @@ data:
     chandler:
       debug: true
       websiteUrl: null
-      rootApp:    "root"
+      rootApp:    "openvk"
       
       preferences:
           appendExtension: "xhtml"
