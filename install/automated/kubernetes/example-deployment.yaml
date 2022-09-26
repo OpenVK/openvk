@@ -104,7 +104,7 @@ items:
             value: "openvk"
           - name: MARIADB_RANDOM_ROOT_PASSWORD
             value: "yes"
-          image: ghcr.io/openvk/openvk/mariadb:8.0-primary
+          image: ghcr.io/openvk/openvk/mariadb:10.9-primary
           imagePullPolicy: Always
           name: mariadb-primary
           ports:
@@ -152,7 +152,7 @@ items:
             value: "openvk"
           - name: MARIADB_RANDOM_ROOT_PASSWORD
             value: "yes"
-          image: ghcr.io/openvk/openvk/mariadb:8.0-eventdb
+          image: ghcr.io/openvk/openvk/mariadb:10.9-eventdb
           imagePullPolicy: Always
           name: mariadb-eventdb
           ports:
