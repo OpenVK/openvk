@@ -3,7 +3,7 @@ items:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: mysql-pvc
+    name: mysql-primary-pvc
     namespace: openvk
     annotations: {}
       # volume.beta.kubernetes.io/storage-class: "efs-sc"
@@ -17,7 +17,7 @@ items:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: clickhouse-pvc
+    name: mysql-eventdb-pvc
     namespace: openvk
     annotations: {}
       # volume.beta.kubernetes.io/storage-class: "efs-sc"
@@ -68,6 +68,33 @@ items:
           - mountPath: /opt/chandler/chandler.yml
             name: openvk-config
             subPath: chandler.yml
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        volumes:
+        - name: openvk-logs
+          emptyDir: {}
+        - name: openvk-config
+          configMap:
+            name: openvk-config
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: mysql-primary
+    namespace: openvk
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: mysql-primary
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: mysql-primary
+      spec:
+        containers:
         - env:
           - name: MYSQL_DATABASE
             value: "db"
@@ -77,9 +104,9 @@ items:
             value: "openvk"
           - name: MYSQL_RANDOM_ROOT_PASSWORD
             value: "yes"
-          image: ghcr.io/openvk/openvk/mysql:latest
+          image: ghcr.io/openvk/openvk/mysql:8.0-primary
           imagePullPolicy: Always
-          name: mysql
+          name: mysql-primary
           ports:
           - containerPort: 3306
             name: mysql
@@ -90,70 +117,84 @@ items:
               memory: 512Mi
           volumeMounts:
           - mountPath: /var/lib/mysql
-            name: mysql
+            name: mysql-primary
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        volumes:
+        - name: mysql-primary
+          persistentVolumeClaim:
+            claimName: mysql-primary-pvc
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: mysql-eventdb
+    namespace: openvk
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: mysql-eventdb
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: mysql-eventdb
+      spec:
+        containers:
         - env:
-          - name: CLICKHOUSE_DB
-            value: "openvk-eventdb"
-          - name: CLICKHOUSE_USER
+          - name: MYSQL_DATABASE
+            value: "openvk_eventdb"
+          - name: MYSQL_USER
             value: "openvk"
-          - name: CLICKHOUSE_PASSWORD
+          - name: MYSQL_PASSWORD
             value: "openvk"
-          image: ghcr.io/openvk/openvk/mysql:latest
+          - name: MYSQL_RANDOM_ROOT_PASSWORD
+            value: "yes"
+          image: ghcr.io/openvk/openvk/mysql:8.0-eventdb
           imagePullPolicy: Always
-          name: clickhouse
+          name: mysql-eventdb
           ports:
-          - containerPort: 8123
-            name: ck-http
-            protocol: TCP
-          - containerPort: 9000
-            name: ck-native
+          - containerPort: 3306
+            name: mysql
             protocol: TCP
           resources:
             requests:
               cpu: 100m
               memory: 512Mi
           volumeMounts:
-          - mountPath: /var/lib/clickhouse
-            name: clickhouse
+          - mountPath: /var/lib/mysql
+            name: mysql-eventdb
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         volumes:
-        - name: clickhouse
+        - name: mysql-eventdb
           persistentVolumeClaim:
-            claimName: clickhouse-pvc
-        - name: mysql
-          persistentVolumeClaim:
-            claimName: mysql-pvc
-        - name: openvk-logs
-          emptyDir: {}
-        - name: openvk-config
-          configMap:
-            name: openvk-config
+            claimName: mysql-eventdb-pvc
 - apiVersion: v1
   kind: Service
   metadata:
-    name: mysql-svc
+    name: mysql-primary-svc
     namespace: openvk
   spec:
     ports:
     - name: mysql
       port: 3306
     selector:
-      app: openvk
+      app: mysql-primary
     type: ClusterIP
 - apiVersion: v1
   kind: Service
   metadata:
-    name: clickhouse-svc
+    name: mysql-eventdb-svc
     namespace: openvk
   spec:
     ports:
-    - name: ck-http
-      port: 8123
-    - name: ck-native
-      port: 9000
+    - name: mysql
+      port: 3306
     selector:
-      app: openvk
+      app: mysql-eventdb
     type: ClusterIP
 - apiVersion: v1
   kind: Service
