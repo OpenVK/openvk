@@ -45,6 +45,6 @@ COPY --from=nodejs --chown=www-data:www-data /opt/chandler /opt/chandler
 RUN ln -s /opt/chandler/extensions/available/commitcaptcha/ /opt/chandler/extensions/enabled/commitcaptcha && \
     ln -s /opt/chandler/extensions/available/openvk/ /opt/chandler/extensions/enabled/openvk && \
     ln -s /opt/chandler/extensions/available/openvk/install/automated/common/10-openvk.conf /etc/apache2/conf-enabled/10-openvk.conf && \
-    ln -s /opt/chandler/extensions/available/openvk/install/automated/common/02-rewrite.conf /etc/apache2/mods-enabled/02-rewrite.conf
+    a2enmod rewrite
 
 USER www-data
