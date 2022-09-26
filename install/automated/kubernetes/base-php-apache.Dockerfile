@@ -13,6 +13,7 @@ RUN apt update; \
     install-php-extensions \
         gd \
         zip \
+        intl \
         yaml \
         pdo_mysql \
     && \

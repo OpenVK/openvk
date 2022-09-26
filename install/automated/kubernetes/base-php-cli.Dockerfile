@@ -12,4 +12,5 @@ RUN install-php-extensions \
     gd \
     zip \
     yaml \
+    intl \
     pdo_mysql
