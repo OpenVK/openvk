@@ -3,7 +3,7 @@ items:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: mysql-primary-pvc
+    name: mariadb-primary-pvc
     namespace: openvk
     annotations: {}
       # volume.beta.kubernetes.io/storage-class: "efs-sc"
@@ -17,7 +17,7 @@ items:
 - apiVersion: v1
   kind: PersistentVolumeClaim
   metadata:
-    name: mysql-eventdb-pvc
+    name: mariadb-eventdb-pvc
     namespace: openvk
     annotations: {}
       # volume.beta.kubernetes.io/storage-class: "efs-sc"
@@ -79,34 +79,34 @@ items:
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: mysql-primary
+    name: mariadb-primary
     namespace: openvk
   spec:
     replicas: 1
     revisionHistoryLimit: 10
     selector:
       matchLabels:
-        app: mysql-primary
+        app: mariadb-primary
     strategy:
       type: Recreate
     template:
       metadata:
         labels:
-          app: mysql-primary
+          app: mariadb-primary
       spec:
         containers:
         - env:
-          - name: MYSQL_DATABASE
+          - name: MARIADB_DATABASE
             value: "db"
-          - name: MYSQL_USER
+          - name: MARIADB_USER
             value: "openvk"
-          - name: MYSQL_PASSWORD
+          - name: MARIADB_PASSWORD
             value: "openvk"
-          - name: MYSQL_RANDOM_ROOT_PASSWORD
+          - name: MARIADB_RANDOM_ROOT_PASSWORD
             value: "yes"
-          image: ghcr.io/openvk/openvk/mysql:8.0-primary
+          image: ghcr.io/openvk/openvk/mariadb:8.0-primary
           imagePullPolicy: Always
-          name: mysql-primary
+          name: mariadb-primary
           ports:
           - containerPort: 3306
             name: mysql
@@ -117,44 +117,44 @@ items:
               memory: 512Mi
           volumeMounts:
           - mountPath: /var/lib/mysql
-            name: mysql-primary
+            name: mariadb-primary
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         volumes:
-        - name: mysql-primary
+        - name: mariadb-primary
           persistentVolumeClaim:
-            claimName: mysql-primary-pvc
+            claimName: mariadb-primary-pvc
 - apiVersion: apps/v1
   kind: Deployment
   metadata:
-    name: mysql-eventdb
+    name: mariadb-eventdb
     namespace: openvk
   spec:
     replicas: 1
     revisionHistoryLimit: 10
     selector:
       matchLabels:
-        app: mysql-eventdb
+        app: mariadb-eventdb
     strategy:
       type: Recreate
     template:
       metadata:
         labels:
-          app: mysql-eventdb
+          app: mariadb-eventdb
       spec:
         containers:
         - env:
-          - name: MYSQL_DATABASE
+          - name: MARIADB_DATABASE
             value: "openvk_eventdb"
-          - name: MYSQL_USER
+          - name: MARIADB_USER
             value: "openvk"
-          - name: MYSQL_PASSWORD
+          - name: MARIADB_PASSWORD
             value: "openvk"
-          - name: MYSQL_RANDOM_ROOT_PASSWORD
+          - name: MARIADB_RANDOM_ROOT_PASSWORD
             value: "yes"
-          image: ghcr.io/openvk/openvk/mysql:8.0-eventdb
+          image: ghcr.io/openvk/openvk/mariadb:8.0-eventdb
           imagePullPolicy: Always
-          name: mysql-eventdb
+          name: mariadb-eventdb
           ports:
           - containerPort: 3306
             name: mysql
@@ -165,36 +165,36 @@ items:
               memory: 512Mi
           volumeMounts:
           - mountPath: /var/lib/mysql
-            name: mysql-eventdb
+            name: mariadb-eventdb
         dnsPolicy: ClusterFirst
         restartPolicy: Always
         volumes:
-        - name: mysql-eventdb
+        - name: mariadb-eventdb
           persistentVolumeClaim:
-            claimName: mysql-eventdb-pvc
+            claimName: mariadb-eventdb-pvc
 - apiVersion: v1
   kind: Service
   metadata:
-    name: mysql-primary-svc
+    name: mariadb-primary-svc
     namespace: openvk
   spec:
     ports:
     - name: mysql
       port: 3306
     selector:
-      app: mysql-primary
+      app: mariadb-primary
     type: ClusterIP
 - apiVersion: v1
   kind: Service
   metadata:
-    name: mysql-eventdb-svc
+    name: mariadb-eventdb-svc
     namespace: openvk
   spec:
     ports:
     - name: mysql
       port: 3306
     selector:
-      app: mysql-eventdb
+      app: mariadb-eventdb
     type: ClusterIP
 - apiVersion: v1
   kind: Service
