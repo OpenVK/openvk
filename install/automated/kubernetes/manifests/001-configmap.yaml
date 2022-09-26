@@ -128,7 +128,7 @@ data:
           eventDB:
               enable: true
               database:
-                  dsn: "mysql:host=mariadb-eventdb-svc;dbname=openvk-eventdb"
+                  dsn: "mysql:host=mariadb-eventdb-svc;dbname=openvk_eventdb"
                   user: "openvk"
                   password: "openvk"
           notificationsBroker:
