@@ -7,6 +7,7 @@ USER root
 
 RUN apt update; \
     apt install -y \
+        git \
         ffmpeg \
         libsdl2-2.0-0 \
     && \
