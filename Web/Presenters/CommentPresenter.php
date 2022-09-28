@@ -6,6 +6,7 @@ use openvk\Web\Models\Repositories\{Comments, Clubs};
 
 final class CommentPresenter extends OpenVKPresenter
 {
+    protected $presenterName = "comment";
     private $models = [
         "posts"   => "openvk\\Web\\Models\\Repositories\\Posts",
         "photos"  => "openvk\\Web\\Models\\Repositories\\Photos",

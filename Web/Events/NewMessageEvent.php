@@ -27,14 +27,23 @@ class NewMessageEvent implements ILPEmitable
         if($peer === $userId)
             $peer = $msg->getRecipient()->getId();
         
+        /*
+         * Source:
+         * https://github.com/danyadev/longpoll-doc
+         */
+
         return [
             4,                                # event type
+            $msg->getId(),                    # messageId
             256,                              # checked for spam flag
             $peer,                            # TODO calculate peer correctly
             $msg->getSendTime()->timestamp(), # creation time in unix
             $msg->getText(),                  # text (formatted)
+            [],                               # empty additional info
             [],                               # empty attachments
             $msg->getId() << 2,               # id as random_id
+            $peer,                            # conversation id
+            0                                 # not edited yet
         ];
     }
 }

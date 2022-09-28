@@ -1169,3 +1169,12 @@
 "c_user_is_already_in_group" = "This user is already a member of this group.";
 "c_add_to_group" = "Add to group";
 "c_remove_from_group" = "Remove from group";
+
+/* Maintenance */
+
+"global_maintenance" = "Undergoing maintenance";
+"section_maintenance" = "The section is not available";
+"undergoing_global_maintenance" = "Unfortunately, the instance is now closed for technical work. We are already working on troubleshooting. Please try to come back later.";
+"undergoing_section_maintenance" = "Unfortunately, the <b>$1</b> section is temporarily unavailable. We are already working on troubleshooting. Please try to come back later.";
+
+"topics" = "Topics";
