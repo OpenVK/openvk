@@ -13,13 +13,13 @@
 
     <div class="tabs">
         <div n:attr="id => ($isNew ? 'activetabs' : 'ki')" class="tab">
-            <a n:attr="id => ($isNew ? 'act_tab_a' : 'ki')" href="/names_admin.php">Новые</a>
+            <a n:attr="id => ($isNew ? 'act_tab_a' : 'ki')" href="/names_admin.php">{_names_new}</a>
         </div>
         <div n:attr="id => ($isAccepted ? 'activetabs' : 'ki')" class="tab">
-            <a n:attr="id => ($isAccepted ? 'act_tab_a' : 'ki')" href="/names_admin.php?act=accepted">Принятые</a>
+            <a n:attr="id => ($isAccepted ? 'act_tab_a' : 'ki')" href="/names_admin.php?act=accepted">{_names_approved}</a>
         </div>
         <div n:attr="id => ($isRejected ? 'activetabs' : 'ki')" class="tab">
-            <a n:attr="id => ($isRejected ? 'act_tab_a' : 'ki')" href="/names_admin.php?act=rejected">Отклонённые</a>
+            <a n:attr="id => ($isRejected ? 'act_tab_a' : 'ki')" href="/names_admin.php?act=rejected">{_names_rejected}</a>
         </div>
     </div>
     <br/>
@@ -33,7 +33,7 @@
     {if $count < 1}
         {include "../components/nothing.xml"}
     {else}
-            <h4>Показано {$amount} заявок на смену имени (всего {$count})</h4>
+            <h4>{tr("names_showed", $amount, $count)}</h4>
             <div class="container_gray">
                 <div
                     n:foreach="$names as $name"
@@ -88,18 +88,18 @@
                                         class="user-alert"
                                         style="background-color: #EDEDED; border: 1px solid #D8D8D8; font-weight: normal; color: #000; padding: 10px;"
                                     >
-                                        <b style="color: #858787;">Город:</b> {$name->getUser()->getCity() ?? "Не указан"}
+                                        <b style="color: #858787;">{_city}:</b> {$name->getUser()->getCity() ?? "Не указан"}
                                     </div>
                                     <center style="margin-top: 20px;">
                                         <div n:if="$name->getStatus() == 0">
-                                            <a href="/name{$name->getId()}?act=accept" class="button">Одобрить</a>
-                                            <a href="/name{$name->getId()}?act=reject" class="button">Отклонить</a>
+                                            <a href="/name{$name->getId()}?act=accept" class="button">{_approve}</a>
+                                            <a href="/name{$name->getId()}?act=reject" class="button">{_reject}</a>
                                         </div>
                                         <div n:if="$name->getStatus() == 1">
-                                            <b style="color: green;">Одобрена</b>
+                                            <b style="color: green;">{_approved}</b>
                                         </div>
                                         <div n:if="$name->getStatus() == 2">
-                                            <b style="color: red;">Отклонена</b>
+                                            <b style="color: red;">{_rejected}</b>
                                         </div>
                                     </center>
                                 </td>

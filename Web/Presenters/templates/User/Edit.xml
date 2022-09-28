@@ -36,12 +36,12 @@
 
         <h4>{_main_information}</h4>
         <div class="msg msg_info" n:if="$user->hasNamesRequests() AND !$user->hasNamesRequests(2, true)">
-            <b>Смена имени</b><br>
-            Ваша заявка на смену имени находится на рассмотрении модераторами.
+            <b>{_name_change_request}</b><br>
+            {_name_change_request_pending}
         </div>
         <div class="msg msg_err" n:if="$user->hasNamesRequests(2, true)">
-            <b>Смена имени</b><br>
-            Ваша заявка на смену имени была отклонена модераторами. Вы можете подать новую, когда это сообщение исчезнет.
+            <b>{_name_change_request}</b><br>
+            {_name_change_request_rejected}
         </div>
 
         <form action="/edit?act=main" method="POST" enctype="multipart/form-data">

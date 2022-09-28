@@ -1147,3 +1147,16 @@
 "url_is_banned_default_reason" = "The link you are trying to open may lead you to a site that was created for the purpose of deceiving users with the intention of gaining profit.";
 "url_is_banned_title" = "Link to a suspicious site";
 "url_is_banned_proceed" = "Follow the link";
+
+/* Names */
+"names_new" = "New";
+"names_approved" = "Approved";
+"names_rejected" = "Rejected";
+"names_showed" = "$1 name change requests are shown (total $2)";
+"approve" = "Approve";
+"reject" = "Reject";
+"approved" = "Approved";
+"rejected" = "Rejected";
+"name_change_request" = "Name change";
+"name_change_request_pending" = "Your application for a name change is under consideration by the moderators.";
+"name_change_request_rejected" = "Your request to change your name was rejected by the moderators. You can submit a new one when this message disappears.";
