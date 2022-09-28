@@ -11,6 +11,7 @@ final class SupportPresenter extends OpenVKPresenter
 {
     protected $banTolerant = true;
     protected $deactivationTolerant = true;
+    protected $presenterName = "support";
     
     private $tickets;
     private $comments;
@@ -155,11 +156,12 @@ final class SupportPresenter extends OpenVKPresenter
                 $this->notFound();
             } else {
                 if($ticket->getUserId() !== $this->user->id && $this->hasPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0))
-                    $this->redirect("/support/tickets");
+                    $_redirect = "/support/tickets";
                 else
-                    $this->redirect("/support");
+                    $_redirect = "/support?act=list";
 
                 $ticket->delete();
+                $this->redirect($_redirect);
             }
         }
     }

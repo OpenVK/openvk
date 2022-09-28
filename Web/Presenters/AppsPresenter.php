@@ -6,7 +6,7 @@ use openvk\Web\Models\Repositories\Applications;
 final class AppsPresenter extends OpenVKPresenter
 {
     private $apps;
-    
+    protected $presenterName = "apps";
     function __construct(Applications $apps)
     {
         $this->apps = $apps;

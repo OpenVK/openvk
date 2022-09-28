@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Repositories;
 use openvk\Web\Models\Entities\User;
+use openvk\Web\Models\Repositories\Aliases;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 use Chandler\Security\User as ChandlerUser;
@@ -9,11 +10,13 @@ class Users
 {
     private $context;
     private $users;
+    private $aliases;
     
     function __construct()
     {
         $this->context = DatabaseConnection::i()->getContext();
         $this->users   = $this->context->table("profiles");
+        $this->aliases = $this->context->table("aliases");
     }
     
     private function toUser(?ActiveRow $ar): ?User
@@ -28,7 +31,17 @@ class Users
     
     function getByShortURL(string $url): ?User
     {
-        return $this->toUser($this->users->where("shortcode", $url)->fetch());
+        $shortcode = $this->toUser($this->users->where("shortcode", $url)->fetch());
+
+        if ($shortcode)
+            return $shortcode;
+
+        $alias = (new Aliases)->getByShortcode($url);
+
+        if (!$alias) return NULL;
+        if ($alias->getType() !== "user") return NULL;
+        
+        return $alias->getUser();
     }
     
     function getByChandlerUser(ChandlerUser $user): ?User
