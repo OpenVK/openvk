@@ -15,7 +15,25 @@ services:
       - openvk-logs:/var/log/openvk
       - ./openvk.yml:/opt/chandler/extensions/available/openvk/openvk.yml:ro
       - ./chandler.yml:/opt/chandler/chandler.yml:ro
+    depends_on:
+      - acl_handler
+      - mariadb-primary
+      - mariadb-eventdb
   
+  acl_handler:
+    image: docker.io/alpine:edge
+    container_name: acl_handler
+    restart: unless-stopped
+    entrypoint: /bin/sh
+    command: -c "/bin/acl_handler.sh"
+    volumes:
+      - openvk-storage:/opt/chandler/extensions/available/openvk/storage
+      - openvk-audios:/opt/chandler/extensions/available/openvk/tmp/api-storage/audios
+      - openvk-photos:/opt/chandler/extensions/available/openvk/tmp/api-storage/photos
+      - openvk-videos:/opt/chandler/extensions/available/openvk/tmp/api-storage/videos
+      - openvk-logs:/var/log/openvk
+      - ./acl_handler.sh:/bin/acl_handler.sh:ro
+
   mariadb-primary:
     image: ghcr.io/openvk/openvk/mariadb:10.9-primary
     container_name: mariadb-primary

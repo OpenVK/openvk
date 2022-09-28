@@ -20,6 +20,40 @@ items:
       spec:
         containers:
         - env: []
+          image: docker.io/alpine:edge
+          imagePullPolicy: IfNotPresent
+          name: acl_handler
+          resources: {}
+          command: 
+          - /bin/sh
+          - -c
+          - |-
+            #!/bin/sh
+
+            trap 'exit 0' TERM
+
+            while :
+            do
+                chown -R 33:33 /opt/chandler/extensions/available/openvk/storage
+                chown -R 33:33 /opt/chandler/extensions/available/openvk/tmp/api-storage/audios
+                chown -R 33:33 /opt/chandler/extensions/available/openvk/tmp/api-storage/photos
+                chown -R 33:33 /opt/chandler/extensions/available/openvk/tmp/api-storage/videos
+                chown -R 33:33 /var/log/openvk
+
+                sleep 600
+            done
+          volumeMounts:
+          - mountPath: /var/log/openvk
+            name: openvk-logs
+          - mountPath: /opt/chandler/extensions/available/openvk/storage
+            name: openvk-storage
+          - mountPath: /opt/chandler/extensions/available/openvk/tmp/api-storage/audios
+            name: openvk-storage-audios
+          - mountPath: /opt/chandler/extensions/available/openvk/tmp/api-storage/photos
+            name: openvk-storage-photos
+          - mountPath: /opt/chandler/extensions/available/openvk/tmp/api-storage/videos
+            name: openvk-storage-videos
+        - env: []
           image: ghcr.io/openvk/openvk/openvk:latest
           imagePullPolicy: Always
           name: openvk
