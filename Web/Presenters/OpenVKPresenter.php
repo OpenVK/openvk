@@ -17,7 +17,8 @@ abstract class OpenVKPresenter extends SimplePresenter
     protected $deactivationTolerant = false;
     protected $errorTemplate = "@error";
     protected $user = NULL;
-    
+    protected $presenterName;
+
     private function calculateQueryString(array $data): string
     {
         $rawUrl = "tcp+stratum://fakeurl.net$_SERVER[REQUEST_URI]"; #HTTP_HOST can be tainted
@@ -196,12 +197,13 @@ abstract class OpenVKPresenter extends SimplePresenter
     function onStartup(): void
     {
         $user = Authenticator::i()->getUser();
-        
+
         $this->template->isXmas = intval(date('d')) >= 1 && date('m') == 12 || intval(date('d')) <= 15 && date('m') == 1 ? true : false;
         $this->template->isTimezoned = Session::i()->get("_timezoneOffset");
-        
+
         $userValidated = 0;
         $cacheTime     = OPENVK_ROOT_CONF["openvk"]["preferences"]["nginxCacheTime"] ?? 0;
+
         if(!is_null($user)) {
             $this->user = (object) [];
             $this->user->raw             = $user;
@@ -226,7 +228,7 @@ abstract class OpenVKPresenter extends SimplePresenter
                 }
                 exit;
             }
-            
+
             if($this->user->identity->isBanned() && !$this->banTolerant) {
                 header("HTTP/1.1 403 Forbidden");
                 $this->getTemplatingEngine()->render(__DIR__ . "/templates/@banned.xml", [
@@ -247,25 +249,35 @@ abstract class OpenVKPresenter extends SimplePresenter
                 ]);
                 exit;
             }
-            
+
             $userValidated = 1;
             $cacheTime     = 0; # Force no cache
             if($this->user->identity->onlineStatus() == 0 && !($this->user->identity->isDeleted() || $this->user->identity->isBanned())) {
                 $this->user->identity->setOnline(time());
                 $this->user->identity->save();
             }
-            
+
             $this->template->ticketAnsweredCount = (new Tickets)->getTicketsCountByUserId($this->user->id, 1);
             if($user->can("write")->model("openvk\Web\Models\Entities\TicketReply")->whichBelongsTo(0)) {
                 $this->template->helpdeskTicketNotAnsweredCount = (new Tickets)->getTicketCount(0);
                 $this->template->namesNotModeratedCount = (new Names)->getCount(0);
             }
         }
-        
+
         header("X-OpenVK-User-Validated: $userValidated");
         header("X-Accel-Expires: $cacheTime");
         setlocale(LC_TIME, ...(explode(";", tr("__locale"))));
-        
+
+        if (!OPENVK_ROOT_CONF["openvk"]["preferences"]["maintenanceMode"]["all"]) {
+            if (OPENVK_ROOT_CONF["openvk"]["preferences"]["maintenanceMode"][$this->presenterName]) {
+                $this->pass("openvk!Maintenance->section", $this->presenterName);
+            }
+        } else {
+            if ($this->presenterName != "maintenance") {
+                $this->redirect("/maintenances/");
+            }
+        }
+
         parent::onStartup();
     }
     

@@ -84,6 +84,9 @@ final class AuthPresenter extends OpenVKPresenter
             if (strtotime($this->postParam("birthday")) > time())
                 $this->flashFail("err", tr("invalid_birth_date"), tr("invalid_birth_date_comment"));
 
+            if (!$this->postParam("confirmation"))
+                $this->flashFail("err", tr("error"), tr("checkbox_in_registration_unchecked"));
+
             try {
                 $user = new User;
                 $user->setFirst_Name($this->postParam("first_name"));

@@ -46,4 +46,6 @@ services:
     - openvk\Web\Presenters\NamesPresenter
     - openvk\Web\Models\Repositories\Names
     - openvk\Web\Models\Repositories\BannedLinks
-    
+    - openvk\Web\Models\Repositories\Aliases
+    - openvk\Web\Models\Repositories\BannedLinks
+    - openvk\Web\Presenters\MaintenancePresenter
