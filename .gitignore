@@ -1,5 +1,6 @@
 vendor
 openvk.yml
+chandler.yml
 update.pid
 update.pid.old
 Web/static/js/node_modules
