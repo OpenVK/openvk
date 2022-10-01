@@ -8,7 +8,8 @@ final class VideosPresenter extends OpenVKPresenter
 {
     private $videos;
     private $users;
-    
+    protected $presenterName = "videos";
+
     function __construct(Videos $videos, Users $users)
     {
         $this->videos = $videos;
