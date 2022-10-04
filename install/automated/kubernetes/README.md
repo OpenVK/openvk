@@ -30,3 +30,9 @@ Ingress:
 ```
 kubectl apply -f manifests/005-ingress.yaml
 ```
+Kafka (optional, enable in configmap first):
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+helm install kafka bitnami/kafka -n openvk -f manifests/006-kafka-values.yaml
+```
