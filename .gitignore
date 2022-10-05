@@ -11,5 +11,6 @@ tmp/*
 themepacks/*
 !themepacks/.gitkeep
 !themepacks/openvk_modern
+!themepacks/midnight
 storage/*
 !storage/.gitkeep
