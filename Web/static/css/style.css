@@ -2051,6 +2051,13 @@ table td[width="120"] {
     max-height: 250px;
 }
 
+.tippy-box[data-theme~="vk"] {
+    user-select: none;
+    background-color: #fff;
+    border: 1px solid #DCE1E6;
+    border-radius: 1px;
+}
+
 @keyframes appearing {
     from {
         opacity: 0;

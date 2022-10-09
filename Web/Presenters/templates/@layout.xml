@@ -17,6 +17,14 @@
         {script "js/l10n.js"}
         {script "js/openvk.cls.js"}
 
+        {css "js/node_modules/tippy.js/dist/backdrop.css"}
+        {css "js/node_modules/tippy.js/dist/border.css"}
+        {css "js/node_modules/tippy.js/dist/svg-arrow.css"}
+        {css "js/node_modules/tippy.js/themes/light.css"}
+        {script "js/node_modules/@popperjs/core/dist/umd/popper.min.js"}
+        {script "js/node_modules/tippy.js/dist/tippy-bundle.umd.min.js"}
+        {script "js/node_modules/handlebars/dist/handlebars.min.js"}
+
         {if $isTimezoned == NULL}
             {script "js/timezone.js"}
         {/if}
@@ -325,6 +333,7 @@
         {script "js/scroll.js"}
         {script "js/al_wall.js"}
         {script "js/al_api.js"}
+        {script "js/al_mentions.js"}
 
         {ifset $thisUser}
             {script "js/al_notifs.js"}

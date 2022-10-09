@@ -25,7 +25,7 @@
                     {$post->isDeactivationMessage() ? ($author->isFemale() ? tr($deac . "_f") : tr($deac . "_m"))}
                     {if ($onWallOf ?? false) &&!$post->isPostedOnBehalfOfGroup() && $post->getOwnerPost() !== $post->getTargetWall()}
                         {var $wallOwner = $post->getWallOwner()}
-                        <a href="{$wallOwner->getURL()}">
+                        <a href="{$wallOwner->getURL()}" class="mention" data-mention-ref="{$post->getTargetWall()}">
                             <b>
                                 {if isset($thisUser) && $thisUser->getId() === $post->getTargetWall()}
                                 {_post_on_your_wall}
@@ -75,7 +75,7 @@
                         {var $actualAuthor = $post->getOwner(false)}
                         <span>
                             {_author}:
-                            <a href="{$actualAuthor->getURL()}">
+                            <a href="{$actualAuthor->getURL()}" class="mention" data-mention-ref="{$actualAuthor->getId()}">
                                {$actualAuthor->getCanonicalName()}
                             </a>
                         </span>
