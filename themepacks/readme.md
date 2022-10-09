@@ -4,7 +4,7 @@ This folder contains all themes that can be used by any user on an instance.
 
 ## How do I create a theme?
 
-Create a directory, the name of which should contain only Latin letters and numbers, then create a file in that directory with a name `theme.yml`, and fill it with the following content:
+Create a directory, the name of which should contain only Latin letters and numbers, then create a file in this directory called `theme.yml`, and fill it with the following content:
 
 ```yaml
 id: vk2007
