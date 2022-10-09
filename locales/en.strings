@@ -16,6 +16,9 @@
 "registration" = "Registration";
 "forgot_password" = "Forgot your password?";
 
+"checkbox_in_registration" = "I agree to the <a href='/privacy'>privacy policy</a> and <a href='/about'>site policies</a>";
+"checkbox_in_registration_unchecked" = "You must agree to the privacy policy and rules in order to register.";
+
 "login_failed" = "Login failed";
 "invalid_username_or_password" = "The username or password you entered is incorrect. <a href='/restore'>Forgot your password?</a>";
 
