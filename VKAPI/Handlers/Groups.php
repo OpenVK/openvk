@@ -102,23 +102,32 @@ final class Groups extends VKAPIRequestHandler
         ];
     }
 
-    function getById(string $group_ids = "", string $group_id = "", string $fields = ""): ?array
+    function getById(string $group_ids = "", string $group_id = "", string $fields = "", int $offset = 0, int $count = 500): ?array
     {
+        /* Both offset and count SHOULD be used only in OpenVK code, 
+           not in your app or script, since it's not oficially documented by VK */
+
         $clubs = new ClubsRepo;
 		
-        if($group_ids == NULL && $group_id != NULL) 
+        if(empty($group_ids) && !empty($group_id)) 
             $group_ids = $group_id;
         
-        if($group_ids == NULL && $group_id == NULL)
+        if(empty($group_ids) && empty($group_id))
             $this->fail(100, "One of the parameters specified was missing or invalid: group_ids is undefined");
 		
         $clbs = explode(',', $group_ids);
-        $response;
+        $response = array();
 
         $ic = sizeof($clbs);
 
+        if(sizeof($clbs) > $count)
+			$ic = $count;
+
+        $clbs = array_slice($clbs, $offset * $count);
+
+
         for($i=0; $i < $ic; $i++) {
-            if($i > 500) 
+            if($i > 500 || $clbs[$i] == 0) 
                 break;
 
             if($clbs[$i] < 0)
@@ -214,5 +223,25 @@ final class Groups extends VKAPIRequestHandler
         }
 
         return $response;
+    }
+
+    function search(string $q, int $offset = 0, int $count = 100)
+    {
+        $clubs = new ClubsRepo;
+        
+        $array = [];
+		$find  = $clubs->find($q);
+
+        foreach ($find as $group)
+            $array[] = $group->getId();
+
+        return (object) [
+        	"count" => $find->size(),
+        	"items" => $this->getById(implode(',', $array), "", "is_admin,is_member,is_advertiser,photo_50,photo_100,photo_200", $offset, $count)
+            /*
+             * As there is no thing as "fields" by the original documentation
+             * i'll just bake this param by the example shown here: https://dev.vk.com/method/groups.search 
+             */
+        ];
     }
 }
