@@ -42,7 +42,7 @@ final class Wall extends VKAPIRequestHandler
 
                     foreach($attachment->getChildren() as $repostAttachment) {
                         if($repostAttachment instanceof \openvk\Web\Models\Entities\Photo) {
-                            if($attachment->isDeleted())
+                            if($repostAttachment->isDeleted())
                                 continue;
                         
                             $repostAttachments[] = $this->getApiPhoto($repostAttachment);
