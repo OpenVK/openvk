@@ -12,8 +12,8 @@ var tooltipTemplate = Handlebars.compile(`
                         <img class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png" />
                     {{/if}}
                 </span><br/>
-                <span style="color: #444">{{online}}</span><br/>
-                <span>{{about}}</span>
+                <span style="color: #444;">{{online}}</span><br/>
+                <span style="color: #000;">{{about}}</span>
             </td>
         </tr>
     </table>
