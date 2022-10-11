@@ -20,9 +20,21 @@
     <div class="poll-results">
         <div n:foreach="$results->options as $option" class="poll-result">
             {if $isAnon}
-                <a href="javascript:false">{$option->name}</a>
+                <a href="javascript:false">
+                    {if $option->voted}
+                        <b>{$option->name}</b>
+                    {else}
+                        {$option->name}
+                    {/if}
+                </a>
             {else}
-                <a href="/poll{$id}/voters?option={base_convert($option->id, 10, 32)}">{$option->name}</a>
+                <a href="/poll{$id}/voters?option={base_convert($option->id, 10, 32)}">
+                    {if $option->voted}
+                        <b>{$option->name}</b>
+                    {else}
+                        {$option->name}
+                    {/if}
+                </a>
             {/if}
 
             <div class="poll-result-barspace">
