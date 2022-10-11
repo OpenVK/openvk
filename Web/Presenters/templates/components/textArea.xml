@@ -16,7 +16,6 @@
             </div>
             <div n:if="$postOpts ?? true" class="post-opts">
                 {var $anonEnabled = OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
-                
                 {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0}
                     {if $club->canBeModifiedBy($thisUser)}
                         <script>
@@ -46,6 +45,7 @@
                     <input type="checkbox" name="nsfw" /> {_contains_nsfw}
                 </label>
             </div>
+
             <div n:if="!($postOpts ?? true) && !is_null($thisUser) && !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)" class="post-opts">
                 <label>
                     <input type="checkbox" name="as_group" /> {_comment_as_group}

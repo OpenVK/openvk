@@ -45,9 +45,6 @@ final class WallPresenter extends OpenVKPresenter
     
     function renderWall(int $user, bool $embedded = false): void
     {
-        if(false)
-            exit(tr("forbidden") . ": " . (string) random_int(0, 255));
-        
         $owner = ($user < 0 ? (new Clubs) : (new Users))->get(abs($user));
         if(is_null($this->user)) {
             $canPost = false;
@@ -66,7 +63,10 @@ final class WallPresenter extends OpenVKPresenter
         }
         
         if ($embedded == true) $this->template->_template = "components/wall.xml";
-        $this->template->oObj    = $owner;
+        $this->template->oObj = $owner;
+        if($user < 0)
+            $this->template->club = $owner;
+        
         $this->template->owner   = $user;
         $this->template->canPost = $canPost;
         $this->template->count   = $this->posts->getPostCountOnUserWall($user);
@@ -89,9 +89,6 @@ final class WallPresenter extends OpenVKPresenter
 
     function renderRSS(int $user): void
     {
-        if(false)
-            exit(tr("forbidden") . ": " . (string) random_int(0, 255));
-        
         $owner = ($user < 0 ? (new Clubs) : (new Users))->get(abs($user));
         if(is_null($this->user)) {
             $canPost = false;
