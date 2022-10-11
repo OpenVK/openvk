@@ -44,6 +44,8 @@ final class Wall extends VKAPIRequestHandler
                         continue;
                     
                     $attachments[] = $this->getApiPhoto($attachment);
+                } else if($attachment instanceof \openvk\Web\Models\Entities\Poll) {
+                    $attachments[] = $this->getApiPoll($attachment);
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Post) {
                     $repostAttachments = [];
 
@@ -185,6 +187,8 @@ final class Wall extends VKAPIRequestHandler
                 foreach($post->getChildren() as $attachment) {
                     if($attachment instanceof \openvk\Web\Models\Entities\Photo) {
                         $attachments[] = $this->getApiPhoto($attachment);
+                    } else if($attachment instanceof \openvk\Web\Models\Entities\Poll) {
+                        $attachments[] = $this->getApiPoll($attachment);
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Post) {
                         $repostAttachments = [];
 
@@ -568,7 +572,7 @@ final class Wall extends VKAPIRequestHandler
         
         return 1;
     }
-
+    
     private function getApiPhoto($attachment) {
         return [
             "type"  => "photo",
@@ -580,6 +584,46 @@ final class Wall extends VKAPIRequestHandler
                 "sizes"    => array_values($attachment->getVkApiSizes()),
                 "text"     => "",
                 "has_tags" => false
+            ]
+        ];
+    }
+
+    private function getApiPoll($attachment) {
+        $answers = array();
+        foreach($attachment->getResults()->options as $answer) {
+            $answers[] = (object)[
+                "id"    => $answer->id,
+                "rate"  => $answer->pct,
+                "text"  => $answer->name,
+                "votes" => $answer->votes
+            ];
+        }
+        
+        $userVote = array();
+        foreach($attachment->getUserVote($this->getUser()) as $vote)
+            $userVote[] = $vote[0];
+
+        return [
+            "type"  => "poll",
+            "poll" => [
+                "multiple"   => $attachment->isMultipleChoice(),
+                "end_date"   => $attachment->endsAt() == NULL ? 0 : $attachment->endsAt()->timestamp(),
+                "closed"     => $attachment->hasEnded(),
+                "is_board"   => false,
+                "can_edit"   => false,
+                "can_vote"   => $attachment->canVote($this->getUser()),
+                "can_report" => false,
+                "can_share"  => true,
+                "created"    => 0,
+                "id"         => $attachment->getId(),
+                "owner_id"   => $attachment->getOwner()->getId(),
+                "question"   => $attachment->getTitle(),
+                "votes"      => $attachment->getVoterCount(),
+                "disable_unvote" => $attachment->isRevotable(),
+                "anonymous"  => $attachment->isAnonymous(),
+                "answer_ids" => $userVote,
+                "answers"    => $answers,
+                "author_id"  => $attachment->getOwner()->getId(),
             ]
         ];
     }
