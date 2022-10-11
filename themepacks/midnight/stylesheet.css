@@ -35,8 +35,9 @@ span, .post-author .date, .crp-entry--message---text, .messenger-app--messages--
     border-color: #2c2640 !important;
 }
 
-.tippy-box[data-theme~="vk"][data-placement^='top'] > .tippy-arrow::before {
+.tippy-box[data-theme~="vk"][data-placement^='top'] > .tippy-arrow::before, .tippy-box[data-theme~="vk"][data-placement^='bottom'] > .tippy-arrow::before {
     border-top-color: #1e1a2b;
+    border-bottom-color: #1e1a2b;
 }
 
 hr {
@@ -123,11 +124,11 @@ h4, .content_title_expanded, .summaryBar .summary, .content_title_unexpanded {
 }
 
 .content_title_expanded {
-    background-image: url("/themepack/midnight/0.0.1.2/resource/flex_arrow_open.png");
+    background-image: url("/themepack/midnight/0.0.1.3/resource/flex_arrow_open.png");
 }
 
 .content_title_unexpanded {
-    background-image: url("/themepack/midnight/0.0.1.2/resource/flex_arrow_shut.gif");
+    background-image: url("/themepack/midnight/0.0.1.3/resource/flex_arrow_shut.gif");
 }
 
 .ovk-video > .preview, .video-preview {
@@ -149,17 +150,17 @@ h4, .content_title_expanded, .summaryBar .summary, .content_title_unexpanded {
 
 .page_yellowheader {
     color: #c6d2e8;
-    background-image: url("/themepack/midnight/0.0.1.2/resource/header_purple.png");
+    background-image: url("/themepack/midnight/0.0.1.3/resource/header_purple.png");
     background-color: #231f34;
     border-color: #231f34;
 }
 
 .page_header {
-    background-image: url("/themepack/midnight/0.0.1.2/resource/header.png");
+    background-image: url("/themepack/midnight/0.0.1.3/resource/header.png");
 }
 
 .page_custom_header {
-    background-image: url("/themepack/midnight/0.0.1.2/resource/header_custom.png");
+    background-image: url("/themepack/midnight/0.0.1.3/resource/header_custom.png");
 }
 
 .page_yellowheader span, .page_yellowheader a {
@@ -179,11 +180,11 @@ form[action="/search"] > input, .header_search_input, textarea, input[type="text
 }
 
 input[type="checkbox"] {
-    background-image: url("/themepack/midnight/0.0.1.2/resource/checkbox.png");
+    background-image: url("/themepack/midnight/0.0.1.3/resource/checkbox.png");
 }
 
 input[type="radio"] {
-    background-image: url("/themepack/midnight/0.0.1.2/resource/radio.png");
+    background-image: url("/themepack/midnight/0.0.1.3/resource/radio.png");
 }
 
 .header_navigation .link {
@@ -191,19 +192,19 @@ input[type="radio"] {
 }
 
 .heart {
-    background-image: url("/themepack/midnight/0.0.1.2/resource/like.gif") !important;
+    background-image: url("/themepack/midnight/0.0.1.3/resource/like.gif") !important;
 }
 
 .pinned-mark, .post-author .pin {
-    background-image: url("/themepack/midnight/0.0.1.2/resource/pin.png") !important;
+    background-image: url("/themepack/midnight/0.0.1.3/resource/pin.png") !important;
 }
 
 .repost-icon {
-    background-image: url("/themepack/midnight/0.0.1.2/resource/published.gif") !important;
+    background-image: url("/themepack/midnight/0.0.1.3/resource/published.gif") !important;
 }
 
 .post-author .delete {
-    background-image: url("/themepack/midnight/0.0.1.2/resource/input_clear.gif") !important;
+    background-image: url("/themepack/midnight/0.0.1.3/resource/input_clear.gif") !important;
 }
 
 .user-alert {
