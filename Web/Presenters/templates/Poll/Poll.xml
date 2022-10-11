@@ -21,9 +21,9 @@
             <div n:foreach="$options as $oid => $option" class="poll-option">
                 <label>
                     {if $multiple}
-                        <input n:attr="disabled: is_null($thisUser)" type="checkbox" name="option{$oid}" onclick="pollCheckBoxPressed(this)" />
+                        <input n:attr="disabled => is_null($thisUser)" type="checkbox" name="option{$oid}" onclick="pollCheckBoxPressed(this)" />
                     {else}
-                        <input n:attr="disabled: is_null($thisUser)" type="radio" value="{$oid}" name="vote" onclick="pollRadioPressed(this)" />
+                        <input n:attr="disabled => is_null($thisUser)" type="radio" value="{$oid}" name="vote" onclick="pollRadioPressed(this)" />
                     {/if}
 
                     {$option}
