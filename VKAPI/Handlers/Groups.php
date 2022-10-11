@@ -10,7 +10,7 @@ final class Groups extends VKAPIRequestHandler
         $this->requireUser();
 
         if($user_id == 0) {
-        	foreach($this->getUser()->getClubs($offset+1) as $club)
+        	foreach($this->getUser()->getClubs((int) floor($offset/$count)+1) as $club)
         		$clbs[] = $club;
         	$clbsCount = $this->getUser()->getClubCount();
         } else {
@@ -37,13 +37,7 @@ final class Groups extends VKAPIRequestHandler
 
             for($i=0; $i < $ic; $i++) { 
                 $usr = $clbs[$i];
-                if(is_null($usr)) {
-                    $rClubs[$i] = (object)[
-                        "id" => $clbs[$i],
-                        "name" => "DELETED",
-                        "deactivated" => "deleted"
-                    ];   
-                } else if($clbs[$i] == NULL) {
+                if(is_null($usr)) { 
 
                 } else {
                     $rClubs[$i] = (object) [
@@ -151,6 +145,7 @@ final class Groups extends VKAPIRequestHandler
                     "screen_name"       => $clb->getShortCode() ?? "club".$clb->getId(),
                     "is_closed"         => false,
                     "type"              => "group",
+                    "is_member"         => !is_null($this->getUser()) ? (int) $clb->getSubscriptionStatus($this->getUser()) : 0,
                     "can_access_closed" => true,
                 ];
 
@@ -212,10 +207,6 @@ final class Groups extends VKAPIRequestHandler
                                     $response[$i]->can_post = true;
                                 else
                                     $response[$i]->can_post = $clb->canPost();
-                            break;
-                        case "is_member":
-                            if(!is_null($this->getUser()))
-                                $response[$i]->is_member = (int) $clb->getSubscriptionStatus($this->getUser());
                             break;
                     }
                 }
