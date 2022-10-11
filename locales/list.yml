@@ -9,7 +9,7 @@ list:
     name: "English"
     native_name: "English"
     author: "OpenVK Team"
-  - code: "ua"
+  - code: "uk"
     flag: "ua"
     name: "Ukrainian"
     native_name: "Україньска"
