@@ -28,16 +28,21 @@ final class PollPresenter extends OpenVKPresenter
         $this->template->until    = $poll->endsAt();
         $this->template->votes    = $poll->getVoterCount();
         $this->template->meta     = $poll->getMetaDescription();
-        if(is_null($this->user) || $poll->canVote($this->user->identity)) {
+        $this->template->ended    = $ended = $poll->hasEnded();
+        if((is_null($this->user) || $poll->canVote($this->user->identity)) && !$ended) {
             $this->template->options = $poll->getOptions();
             
             $this->template->_template = "Poll/Poll.xml";
             return;
         }
     
-        $this->template->voted    = $poll->hasVoted($this->user->identity);
-        $this->template->ended    = $poll->hasEnded();
-        $this->template->results  = $poll->getResults($this->user->identity);
+        if(is_null($this->user)) {
+            $this->template->voted   = false;
+            $this->template->results = $poll->getResults();
+        } else {
+            $this->template->voted   = $poll->hasVoted($this->user->identity);
+            $this->template->results = $poll->getResults($this->user->identity);
+        }
         
         $this->template->_template = "Poll/PollResults.xml";
     }
