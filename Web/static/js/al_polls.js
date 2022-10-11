@@ -1,3 +1,7 @@
+function escapeXML(text) {
+    return $("<span/>").text(text).html();
+}
+
 async function pollRetractVote(id) {
     let poll = $(`.poll[data-id=${id}]`);
 
@@ -72,7 +76,7 @@ function initPoll(id) {
             <label><input type="checkbox" name="anon" /> ${tr("poll_anonymous")}</label><br/>
             <label><input type="checkbox" name="multi" /> ${tr("poll_multiple")}</label><br/>
             <label><input type="checkbox" name="locked" /> ${tr("poll_locked")}</label><br/>
-            <label style="display: none;">
+            <label>
                 <input type="checkbox" name="expires" />
                 ${tr("poll_edit_expires")}
                 <select name="expires_in" style="width: unset;">
@@ -101,7 +105,7 @@ function initPoll(id) {
                 if($(this).val().length === 0)
                     return;
 
-                options += `<option>${$(this).val()}</option>`;
+                options += `<option>${escapeXML($(this).val())}</option>`;
             });
 
             let xml = `
@@ -111,7 +115,6 @@ function initPoll(id) {
             `;
             $("input[name=poll]", form).val(xml);
             $(".post-has-poll", form).show();
-            console.log(xml);
         },
         function() {
             $("input", $(this.$dialog().nodes[0])).unbind();

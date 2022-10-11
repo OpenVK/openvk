@@ -236,7 +236,7 @@ class Poll extends Attachable
         if(!is_null($this->getRecord()))
             throw new PollLockedException;
         
-        $this->stateChanges("can_revote", true);
+        $this->stateChanges("can_revote", $canReVote);
     }
     
     function setAnonymity(bool $anonymous): void
@@ -256,8 +256,8 @@ class Poll extends Attachable
         $this->setTitle($xml["title"] ?? "Untitled");
         $this->setMultipleChoice(($xml["multiple"] ?? "no") == "yes");
         $this->setAnonymity(($xml["anonymous"] ?? "no") == "yes");
-        $this->setRevotability(($xml["locked"] ?? "no") == "yes");
-        if(ctype_digit($xml["duration"] ?? ""))
+        $this->setRevotability(($xml["locked"] ?? "no") == "no");
+        if(ctype_digit((string) ($xml["duration"] ?? "")))
             $this->setEndDate(time() + ((86400 * (int) $xml["duration"])));
         
         $options = [];
