@@ -10,7 +10,7 @@ final class Groups extends VKAPIRequestHandler
         $this->requireUser();
 
         if($user_id == 0) {
-        	foreach($this->getUser()->getClubs((int) floor($offset/$count)+1) as $club)
+        	foreach($this->getUser()->getClubs($offset, false, $count, true) as $club)
         		$clbs[] = $club;
         	$clbsCount = $this->getUser()->getClubCount();
         } else {
@@ -20,7 +20,7 @@ final class Groups extends VKAPIRequestHandler
         	if(is_null($user))
         		$this->fail(15, "Access denied");
 
-        	foreach($user->getClubs($offset+1) as $club)
+        	foreach($user->getClubs($offset, false, $count, true) as $club)
         		$clbs[] = $club;
 
         	$clbsCount = $user->getClubCount();
@@ -33,8 +33,6 @@ final class Groups extends VKAPIRequestHandler
             $ic = $count;
 
         if(!empty($clbs)) {
-            $clbs = array_slice($clbs, $offset * $count);
-
             for($i=0; $i < $ic; $i++) { 
                 $usr = $clbs[$i];
                 if(is_null($usr)) { 
