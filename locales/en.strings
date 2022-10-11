@@ -873,6 +873,38 @@
 "messages_error_1" = "Message not delivered";
 "messages_error_1_description" = "There was a general error in sending this message...";
 
+/* Polls */
+"poll" = "Poll";
+"create_poll" = "Create poll";
+"poll_title" = "Ask a question";
+"poll_add_option" = "Add an option...";
+"poll_anonymous" = "Anonymous votes";
+"poll_multiple" = "Multiple answers";
+"poll_locked" = "Quiz mode (no retraction)";
+"poll_edit_expires" = "Expires in: ";
+"poll_edit_expires_days" = "days";
+"poll_editor_tips" = "Pressing backspace in empty option will remove it. Use Tab/Enter (in last option) to create new options faster.";
+"poll_embed" = "Embed code";
+
+"poll_voter_count_zero" = "Be <b>the first one</b> to vote!";
+"poll_voter_count_one" = "<b>Only one</b> user voted.";
+"poll_voter_count_few" = "<b>$1</b> users voted.";
+"poll_voter_count_many" = "<b>$1</b> users voted.";
+"poll_voter_count_other" = "<b>$1</b> users voted.";
+
+"poll_voters_list" = "Voters";
+
+"poll_anon" = "Anonymous";
+"poll_public" = "Public";
+"poll_multi" = "multiple choice";
+"poll_lock" = "can't revoke";
+"poll_until" = "until $1";
+
+"poll_err_to_much_options" = "Too much options supplied.";
+"poll_err_anonymous" = "Can't access voters list: poll is anonymous.";
+"cast_vote" = "Vote!";
+"retract_vote" = "Cancel my vote";
+
 /* Discussions */
 
 "discussions" = "Discussions";
