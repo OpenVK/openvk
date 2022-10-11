@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{Post, Photo, Video, Club, User};
+use openvk\Web\Models\Exceptions\TooMuchOptionsException;
+use openvk\Web\Models\Entities\{Poll, Post, Photo, Video, Club, User};
 use openvk\Web\Models\Entities\Notifications\{RepostNotification, WallPostNotification};
 use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums};
 use Chandler\Database\DatabaseConnection;
@@ -259,16 +260,26 @@ final class WallPresenter extends OpenVKPresenter
                 $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album, $anon);
             }
             
-            if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK) {
+            if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK)
                 $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"], $anon);
-            }
         } catch(\DomainException $ex) {
             $this->flashFail("err", tr("failed_to_publish_post"), tr("media_file_corrupted"));
         } catch(ISE $ex) {
             $this->flashFail("err", tr("failed_to_publish_post"), tr("media_file_corrupted_or_too_large"));
         }
         
-        if(empty($this->postParam("text")) && !$photo && !$video)
+        try {
+            $poll = NULL;
+            $xml = $this->postParam("poll");
+            if (!is_null($xml) && $xml != "none")
+                $poll = Poll::import($this->user->identity, $xml);
+        } catch(TooMuchOptionsException $e) {
+            $this->flashFail("err", tr("failed_to_publish_post"), tr("poll_err_to_much_options"));
+        } catch(\UnexpectedValueException $e) {
+            $this->flashFail("err", tr("failed_to_publish_post"), "Poll format invalid");
+        }
+        
+        if(empty($this->postParam("text")) && !$photo && !$video && !$poll)
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"));
         
         try {
@@ -290,6 +301,9 @@ final class WallPresenter extends OpenVKPresenter
         
         if(!is_null($video))
             $post->attach($video);
+        
+        if(!is_null($poll))
+            $post->attach($poll);
         
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
