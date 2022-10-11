@@ -103,7 +103,7 @@ class Poll extends Attachable
             $option->name = $title;
     
             $option->votes  = $this->getVoterCount($id);
-            $option->pct    = $result->totalVotes == 0 ? 0 : (($option->votes / $result->totalVotes) * 100);
+            $option->pct    = $result->totalVotes == 0 ? 0 : min(100, floor(($option->votes / $result->totalVotes) * 100));
             $option->voters = $this->getVoters($id, 1, 10);
             if(!$user || !$voted)
                 $option->voted = NULL;
