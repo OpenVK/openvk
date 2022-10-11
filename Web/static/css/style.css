@@ -448,6 +448,15 @@ table {
     color: #e8e8e8;
 }
 
+.button[disabled] {
+    filter: opacity(0.5);
+    cursor: not-allowed;
+}
+
+.button[disabled]:hover {
+    color: #fff;
+}
+
 .button-loading {
     display: inline-block;
     background-image: url('/assets/packages/static/openvk/img/loading_mini.gif');
@@ -801,6 +810,8 @@ table.User {
     padding: 0 10px;
     margin-left: -10px;
     width: 607px;
+    overflow-x: auto;
+    white-space: nowrap;
 }
 
 .tabs.stupid-fix {
@@ -1338,14 +1349,14 @@ body.scrolled .toTop:hover {
     font-weight: bold;
 }
 
-.post-upload {
+.post-upload, .post-has-poll {
     margin-top: 11px;
     margin-left: 3px;
     color: #3c3c3c;
     display: none;
 }
 
-.post-upload::before {
+.post-upload::before, .post-has-poll::before {
     content: " ";
     width: 8px;
     height: 8px;
@@ -2049,6 +2060,81 @@ table td[width="120"] {
     overflow-x: hidden;
     overflow-y: auto;
     max-height: 250px;
+}
+
+.poll {
+    padding: 8px;
+    transition: .1s filter ease-in;
+    border: 1px solid #e3e3e3;
+}
+
+.poll.loading {
+    filter: opacity(0.5);
+    cursor: progress;
+    user-select: none;
+}
+
+.poll.loading * {
+    pointer-events: none;
+}
+
+.poll-embed {
+    float: right;
+}
+
+.poll h4 {
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+}
+
+.poll-meta .nobold {
+    font-style: oblique;
+}
+
+.poll-result-barspace {
+    display: flex;
+}
+
+.poll-result {
+    margin-bottom: 5px;
+}
+
+.poll-result a {
+    color: unset;
+}
+
+.poll-result-bar {
+    position: relative;
+    margin: 5px 0;
+    background-color: #f7f7f7;
+    height: 13pt;
+    flex: 14;
+}
+
+span.poll-result-count {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    color: #7d96af;
+}
+
+.poll-result-bar-sub {
+    height: 100%;
+    background-color: #d9e1ea;
+}
+
+.poll-result-pct {
+    flex: 2;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-left: 5px;
+}
+
+a.poll-retract-vote {
+    float: right;
 }
 
 .tippy-box[data-theme~="vk"] {
