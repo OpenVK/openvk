@@ -21,10 +21,17 @@ final class Wall extends VKAPIRequestHandler
         $groups   = [];
         $cnt      = $posts->getPostCountOnUserWall($owner_id);
 
-        $wallOnwer = (new UsersRepo)->get($owner_id);
+        if ($owner_id > 0)
+            $wallOnwer = (new UsersRepo)->get($owner_id);
+        else
+            $wallOnwer = (new ClubsRepo)->get($owner_id * -1);
 
-        if(!$wallOnwer || $wallOnwer->isDeleted() || $wallOnwer->isDeleted())
-            $this->fail(18, "User was deleted or banned");
+        if ($owner_id > 0)
+            if(!$wallOnwer || $wallOnwer->isDeleted())
+                $this->fail(18, "User was deleted or banned");
+        else
+            if(!$wallOnwer)
+                $this->fail(15, "Access denied: wall is disabled"); // Don't search for logic here pls
 
         foreach($posts->getPostsFromUsersWall($owner_id, 1, $count, $offset) as $post) {
             $from_id = get_class($post->getOwner()) == "openvk\Web\Models\Entities\Club" ? $post->getOwner()->getId() * (-1) : $post->getOwner()->getId();
