@@ -284,10 +284,14 @@ abstract class OpenVKPresenter extends SimplePresenter
         parent::onBeforeRender();
         
         $whichbrowser = new WhichBrowser\Parser(getallheaders());
+        $featurephonetheme = OPENVK_ROOT_CONF["openvk"]["preferences"]["defaultFeaturePhoneTheme"];
         $mobiletheme = OPENVK_ROOT_CONF["openvk"]["preferences"]["defaultMobileTheme"];
-        if($mobiletheme && $whichbrowser->isType('mobile') && Session::i()->get("_tempTheme") == NULL)
+        
+        if($featurephonetheme && $this->isOldThing($whichbrowser) && Session::i()->get("_tempTheme") == NULL) {
+            $this->setSessionTheme($featurephonetheme);
+        } elseif($mobiletheme && $whichbrowser->isType('mobile') && Session::i()->get("_tempTheme") == NULL)
             $this->setSessionTheme($mobiletheme);
-
+    
         $theme = NULL;
         if(Session::i()->get("_tempTheme")) {
             $theme = Themepacks::i()[Session::i()->get("_tempTheme", "ovk")];
@@ -317,5 +321,34 @@ abstract class OpenVKPresenter extends SimplePresenter
         header("Content-Type: application/json");
         header("Content-Length: $size");
         exit($payload);
+    }
+
+    protected function isOldThing($whichbrowser) {
+        if($whichbrowser->isOs('Series60') || 
+           $whichbrowser->isOs('Series40') || 
+           $whichbrowser->isOs('Series80') || 
+           $whichbrowser->isOs('Windows CE') || 
+           $whichbrowser->isOs('Windows Mobile') || 
+           $whichbrowser->isOs('Nokia Asha Platform') || 
+           $whichbrowser->isOs('UIQ') || 
+           $whichbrowser->isEngine('NetFront') || // PSP and other japanese portable systems
+           $whichbrowser->isOs('Android') || 
+           $whichbrowser->isOs('iOS') ||
+           $whichbrowser->isBrowser('Internet Explorer', '<=', '8')) {
+            // yeah, it's old, but ios and android are?
+            if($whichbrowser->isOs('iOS') && $whichbrowser->isOs('iOS', '<=', '9'))
+                return true;
+            elseif($whichbrowser->isOs('iOS') && $whichbrowser->isOs('iOS', '>', '9'))
+                return false;
+            
+            if($whichbrowser->isOs('Android') && $whichbrowser->isOs('Android', '<=', '5'))
+                return true;
+            elseif($whichbrowser->isOs('Android') && $whichbrowser->isOs('Android', '>', '5'))
+                return false;
+
+            return true;
+        } else {
+            return false;
+        }
     }
 } 
