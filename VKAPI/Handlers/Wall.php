@@ -45,7 +45,7 @@ final class Wall extends VKAPIRequestHandler
                     
                     $attachments[] = $this->getApiPhoto($attachment);
                 } else if($attachment instanceof \openvk\Web\Models\Entities\Poll) {
-                    $attachments[] = $this->getApiPoll($attachment);
+                    $attachments[] = $this->getApiPoll($attachment, $this->getUser());
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Post) {
                     $repostAttachments = [];
 
@@ -188,7 +188,7 @@ final class Wall extends VKAPIRequestHandler
                     if($attachment instanceof \openvk\Web\Models\Entities\Photo) {
                         $attachments[] = $this->getApiPhoto($attachment);
                     } else if($attachment instanceof \openvk\Web\Models\Entities\Poll) {
-                        $attachments[] = $this->getApiPoll($attachment);
+                        $attachments[] = $this->getApiPoll($attachment, $user);
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Post) {
                         $repostAttachments = [];
 
@@ -588,7 +588,7 @@ final class Wall extends VKAPIRequestHandler
         ];
     }
 
-    private function getApiPoll($attachment) {
+    private function getApiPoll($attachment, $user) {
         $answers = array();
         foreach($attachment->getResults()->options as $answer) {
             $answers[] = (object)[
@@ -600,7 +600,7 @@ final class Wall extends VKAPIRequestHandler
         }
         
         $userVote = array();
-        foreach($attachment->getUserVote($this->getUser()) as $vote)
+        foreach($attachment->getUserVote($user) as $vote)
             $userVote[] = $vote[0];
 
         return [
