@@ -87,12 +87,15 @@
                             {captcha_template()|noescape}
                         </td>
                     </tr>
+
                     <tr>
                         <td>
-                            
+
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="checkbox" required="true" name="confirmation" /> {_checkbox_in_registration|noescape}
+                            <br /><br />
                             <input type="submit" value="{_registration}" class="button" />
                             <a href="/login">{_log_in}</a>
                         </td>

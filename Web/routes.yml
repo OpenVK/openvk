@@ -273,6 +273,10 @@ routes:
       handler: "Apps->edit"
     - url: "/apps/uninstall"
       handler: "Apps->unInstall"
+    - url: "/poll{num}"
+      handler: "Poll->view"
+    - url: "/poll{num}/voters"
+      handler: "Poll->voters"
     - url: "/admin"
       handler: "Admin->index"
     - url: "/admin/users"
@@ -335,3 +339,7 @@ routes:
       handler: "UnknownTextRouteStrategy->delegate"
       placeholders:
           shortCode: "[a-z][a-z0-9\\@\\.\\_]{0,30}[a-z0-9]"
+    - url: "/maintenance/{text}"
+      handler: "Maintenance->section"
+    - url: "/maintenances/"
+      handler: "Maintenance->all"

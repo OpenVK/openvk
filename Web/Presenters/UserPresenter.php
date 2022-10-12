@@ -15,12 +15,13 @@ use Nette\Database\UniqueConstraintViolationException;
 final class UserPresenter extends OpenVKPresenter
 {
     private $users;
-
     public $deactivationTolerant = false;
+    protected $presenterName = "user";
+
     function __construct(Users $users)
     {
         $this->users = $users;
-        
+
         parent::__construct();
     }
     

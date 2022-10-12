@@ -16,6 +16,9 @@
 "registration" = "Registration";
 "forgot_password" = "Forgot your password?";
 
+"checkbox_in_registration" = "I agree to the <a href='/privacy'>privacy policy</a> and <a href='/about'>site policies</a>";
+"checkbox_in_registration_unchecked" = "You must agree to the privacy policy and rules in order to register.";
+
 "login_failed" = "Login failed";
 "invalid_username_or_password" = "The username or password you entered is incorrect. <a href='/restore'>Forgot your password?</a>";
 
@@ -154,6 +157,9 @@
 "post_deact_f" = "deleted her profile saying:";
 "post_deact_silent_m" = "silently deleted his profile.";
 "post_deact_silent_f" = "silently deleted her profile.";
+"post_on_your_wall" = "on your wall";
+"post_on_group_wall" = "in $1";
+"post_on_user_wall" = "on $1's wall";
 "wall" = "Wall";
 "post" = "Post";
 "write" = "Write";
@@ -871,6 +877,38 @@
 "messages_error_1" = "Message not delivered";
 "messages_error_1_description" = "There was a general error in sending this message...";
 
+/* Polls */
+"poll" = "Poll";
+"create_poll" = "Create poll";
+"poll_title" = "Ask a question";
+"poll_add_option" = "Add an option...";
+"poll_anonymous" = "Anonymous votes";
+"poll_multiple" = "Multiple answers";
+"poll_locked" = "Quiz mode (no retraction)";
+"poll_edit_expires" = "Expires in: ";
+"poll_edit_expires_days" = "days";
+"poll_editor_tips" = "Pressing backspace in empty option will remove it. Use Tab/Enter (in last option) to create new options faster.";
+"poll_embed" = "Embed code";
+
+"poll_voter_count_zero" = "Be <b>the first one</b> to vote!";
+"poll_voter_count_one" = "<b>Only one</b> user voted.";
+"poll_voter_count_few" = "<b>$1</b> users voted.";
+"poll_voter_count_many" = "<b>$1</b> users voted.";
+"poll_voter_count_other" = "<b>$1</b> users voted.";
+
+"poll_voters_list" = "Voters";
+
+"poll_anon" = "Anonymous";
+"poll_public" = "Public";
+"poll_multi" = "multiple choice";
+"poll_lock" = "can't revoke";
+"poll_until" = "until $1";
+
+"poll_err_to_much_options" = "Too much options supplied.";
+"poll_err_anonymous" = "Can't access voters list: poll is anonymous.";
+"cast_vote" = "Vote!";
+"retract_vote" = "Cancel my vote";
+
 /* Discussions */
 
 "discussions" = "Discussions";
@@ -1148,3 +1186,12 @@
 "url_is_banned_default_reason" = "The link you are trying to open may lead you to a site that was created for the purpose of deceiving users with the intention of gaining profit.";
 "url_is_banned_title" = "Link to a suspicious site";
 "url_is_banned_proceed" = "Follow the link";
+
+/* Maintenance */
+
+"global_maintenance" = "Undergoing maintenance";
+"section_maintenance" = "The section is not available";
+"undergoing_global_maintenance" = "Unfortunately, the instance is now closed for technical work. We are already working on troubleshooting. Please try to come back later.";
+"undergoing_section_maintenance" = "Unfortunately, the <b>$1</b> section is temporarily unavailable. We are already working on troubleshooting. Please try to come back later.";
+
+"topics" = "Topics";

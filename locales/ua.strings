@@ -15,6 +15,8 @@
 "password" = "Пароль";
 "registration" = "Реєстрація";
 "forgot_password" = "Забули пароль?";
+"checkbox_in_registration" = "Я згоден з <a href='/privacy'>політикою конфіденційності</a> і <a href='/about'>правилами сайту</a>";
+"checkbox_in_registration_unchecked" = "Ви повинні погодитися з політикою конфіденційності та правилами, щоб зареєструватися.";
 
 "login_failed" = "Не вдалося увійти";
 "invalid_username_or_password" = "Неправильне ім'я користувача або пароль. <a href='/restore'>Забули пароль?</a>";
@@ -160,6 +162,9 @@
 "post_deact_f" = "видалила сторінку зі словами:";
 "post_deact_silent_m" = "мовчки видалив свою сторінку.";
 "post_deact_silent_f" = "мовчки видалила свою сторінку.";
+"post_on_your_wall" = "на вашій стіні";
+"post_on_group_wall" = "в $1";
+"post_on_user_wall" = "на стіні $1";
 "wall" = "Стіна";
 "post" = "Запис";
 "write" = "Написати";
@@ -210,6 +215,7 @@
 
 /* Friends */
 
+"friends" = "Друзі";
 "followers" = "Підписники";
 "follower" = "Підписник";
 "friends_add" = "Додати в друзі";
@@ -218,10 +224,11 @@
 "friends_accept" = "Прийняти заявку";
 "send_message" = "Відправити повідомлення";
 "incoming_req" = "Підписники";
+"outcoming_req" = "Вихідні";
+"req" = "Заявки";
 "outcoming_req" = "Заявки";
 "friends_online" = "Друзі онлайн";
 "all_friends" = "Усі друзі"; 
-"req" = "Заявки";
 
 "req_zero" = "Не знайдено жодної заявки...";
 "req_one" = "Знайдена $1 заявка";
@@ -235,17 +242,17 @@
 "friends_many" = "$1 друзів";
 "friends_other" = "$1 друзів";
 
-"friends_list_zero" = "У вас поки немає друзів";
-"friends_list_one" = "У Вас $1 друг";
-"friends_list_few" = "У Вас $1 друг";
-"friends_many" = "$1 друзів";
-"friends_other" = "$1 друзів";
-
 "friends_online_zero" = "Жодного друга онлайн";
 "friends_online_one" = "$1 друг онлайн";
 "friends_online_few" = "$1 друга онлайн";
 "friends_online_many" = "$1 друзів онлайн";
 "friends_online_other" = "$1 друзів онлайн";
+
+"friends_list_zero" = "У вас поки немає друзів";
+"friends_list_one" = "У Вас $1 друг";
+"friends_list_few" = "У Вас $1 друг";
+"friends_many" = "$1 друзів";
+"friends_other" = "$1 друзів";
 
 "followers_zero" = "Жодного підписника";
 "followers_one" = "$1 підписник";
@@ -1122,6 +1129,17 @@
 "admin_commerce_disabled" = "Комерція відключена системним адміністратором";
 "admin_commerce_disabled_desc" = "Налаштування ваучерів та подарунків будуть збережені, але не матимуть впливу.";
 
+"admin_banned_links" = "Заблоковані посилання";
+"admin_banned_link" = "Посилання";
+"admin_banned_domain" = "Домен";
+"admin_banned_link_description" = "З протоколом (https://example.org/)";
+"admin_banned_link_regexp" = "Регулярний вираз";
+"admin_banned_link_regexp_description" = "Підставляється після домену, зазначеного вище. Не заповнюйте, якщо хочете заблокувати весь домен";
+"admin_banned_link_reason" = "Причина";
+"admin_banned_link_initiator" = "Ініціатор";
+"admin_banned_link_not_specified" = "Посилання не зазначено";
+"admin_banned_link_not_found" = "Посилання не знайдено";
+
 /* Paginator (deprecated) */
 
 "paginator_back" = "Назад";
@@ -1185,3 +1203,21 @@
 
 "cookies_popup_content" = "Цей веб-сайт використовує cookies для того, щоб ідентифікувати вашу сесію і нічого більше. Ознайомтеся з нашою <a href='/privacy'>політикою конфіденційності</a> для отримання додаткової інформації.";
 "cookies_popup_agree" = "Згоден";
+
+/* Away */
+
+"url_is_banned" = "Перехід неможливий";
+"url_is_banned_comment" = "Адміністрація <b>$1</b> не рекомендує переходити за цим посиланням.";
+"url_is_banned_comment_r" = "Адміністрація <b>$1</b> не рекомендує переходити за цим посиланням.<br><br>Підстава: <b>$2</b>";
+"url_is_banned_default_reason" = "Посилання, за яким Ви спробували перейти, може вести на сайт, що був створений з метою обману користувачів і отримання шляхом цього неправомірного прибутку.";
+"url_is_banned_title" = "Посилання на підозрілий сайт";
+"url_is_banned_proceed" = "Перейти за посиланням";
+
+/* Maintenance */
+
+"global_maintenance" = "Технічні роботи";
+"section_maintenance" = "Розділ недоступний";
+"undergoing_global_maintenance" = "На жаль, зараз інстанція закрита на технічні роботи. Ми вже працюємо над усуненням неполадок. Будь ласка, спробуйте зайти пізніше.";
+"undergoing_section_maintenance" = "На жаль, розділ <b>$1</b> тимчасово недоступний. Ми вже працюємо над усуненням неполадок. Будь ласка, спробуйте зайти пізніше.";
+
+"topics" = "Теми";

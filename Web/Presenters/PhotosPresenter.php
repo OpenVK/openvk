@@ -9,7 +9,8 @@ final class PhotosPresenter extends OpenVKPresenter
     private $users;
     private $photos;
     private $albums;
-    
+    protected $presenterName = "photos";
+
     function __construct(Photos $photos, Albums $albums, Users $users)
     {
         $this->users  = $users;
