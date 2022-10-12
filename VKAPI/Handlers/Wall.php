@@ -611,7 +611,7 @@ final class Wall extends VKAPIRequestHandler
                 "closed"     => $attachment->hasEnded(),
                 "is_board"   => false,
                 "can_edit"   => false,
-                "can_vote"   => $attachment->canVote($this->getUser()),
+                "can_vote"   => $attachment->canVote($user),
                 "can_report" => false,
                 "can_share"  => true,
                 "created"    => 0,
