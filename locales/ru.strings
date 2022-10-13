@@ -162,6 +162,9 @@
 "post_deact_f" = "удалила страницу со словами:";
 "post_deact_silent_m" = "молча удалил свою страницу.";
 "post_deact_silent_f" = "молча удалила свою страницу.";
+"post_on_your_wall" = "на вашей стене";
+"post_on_group_wall" = "в $1";
+"post_on_user_wall" = "на стене $1";
 "wall" = "Стена";
 "post" = "Запись";
 "write" = "Написать";
@@ -916,6 +919,38 @@
 
 "messages_error_1" = "Сообщение не доставлено";
 "messages_error_1_description" = "При отправке этого сообщения произошла ошибка общего характера...";
+
+/* Polls */
+"poll" = "Опрос";
+"create_poll" = "Новый опрос";
+"poll_title" = "Тема опроса";
+"poll_add_option" = "Добавить вариант ответа";
+"poll_anonymous" = "Анонимный опрос";
+"poll_multiple" = "Множественный выбор";
+"poll_locked" = "Запретить отменять свой голос";
+"poll_edit_expires" = "Голосование истекает через: ";
+"poll_edit_expires_days" = "дней";
+"poll_editor_tips" = "Нажатие Backspace в пустом варианте приводит к его удалению. Tab/Enter в последнем добавляет новый.";
+"poll_embed" = "Получить код";
+
+"poll_voter_count_zero" = "Будьте <b>первым</b>, кто проголосует!";
+"poll_voter_count_one" = "В опросе проголосовал <b>один</b> человек.";
+"poll_voter_count_few" = "В опросе проголосовало <b>$1</b> человека.";
+"poll_voter_count_many" = "В опросе проголосовало <b>$1</b> человек.";
+"poll_voter_count_other" = "В опросе проголосовало <b>$1</b> человек.";
+
+"poll_voters_list" = "Список проголосовавших";
+
+"poll_anon" = "Анонимное голосование";
+"poll_public" = "Публичное голосование";
+"poll_multi" = "много вариантов";
+"poll_lock" = "нельзя переголосовать";
+"poll_until" = "до $1";
+
+"poll_err_to_much_options" = "Слишком много вариантов в опросе.";
+"poll_err_anonymous" = "Невозможно просмотреть список проголосовавших в анонимном голосовании.";
+"cast_vote" = "Проголосовать";
+"retract_vote" = "Отменить голос";
 
 /* Discussions */
 

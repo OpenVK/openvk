@@ -1,5 +1,5 @@
 id: midnight
-version: "0.0.1.1"
+version: "0.0.1.4"
 openvk_version: 0
 enabled: 1
 metadata:
@@ -7,5 +7,6 @@ metadata:
         _: "OpenVK Midnight"
         en: "OpenVK Midnight"
         ru: "OpenVK Midnight"
+        uk: "OpenVK Midnight"
     author: "Ilya Prokopenko"
     description: "A dark theme for OpenVK"
