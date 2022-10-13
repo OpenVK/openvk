@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
 use Chandler\Database\DatabaseConnection as DB;
-use openvk\Web\Models\Repositories\Clubs;
+use openvk\Web\Models\Repositories\{Clubs, Users};
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\Notifications\LikeNotification;
 
@@ -54,6 +54,15 @@ class Post extends Postable
     function getTargetWall(): int
     {
         return $this->getRecord()->wall;
+    }
+
+    function getWallOwner()
+    {
+        $w = $this->getRecord()->wall;
+        if($w < 0)
+            return (new Clubs)->get(abs($w));
+
+        return (new Users)->get($w);
     }
     
     function getRepostCount(): int
