@@ -379,6 +379,30 @@ final class AdminPresenter extends OpenVKPresenter
         exit(json_encode([ "message" => $this->queryParam("message") ]));
     }
 
+    function renderQuickDeactivate(int $id): void
+    {
+        $this->assertNoCSRF();
+
+        $user = $this->users->get($id);
+        if(!$user)
+            exit(json_encode([ "error" => "User does not exist" ]));
+
+        $user->deactivate($this->queryParam("reason") ?? NULL);
+        exit(json_encode([ "success" => true ]));
+    }
+
+    function renderQuickRestore(int $id): void
+    {
+        $this->assertNoCSRF();
+
+        $user = $this->users->get($id);
+        if(!$user)
+            exit(json_encode([ "error" => "User does not exist" ]));
+
+        $user->reactivate();
+        exit(json_encode([ "success" => true ]));
+    }
+
     function renderBannedLinks(): void
     {
         $this->template->links = $this->bannedLinks->getList((int) $this->queryParam("p") ?: 1);

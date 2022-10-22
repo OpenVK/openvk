@@ -165,6 +165,7 @@
 "write" = "Write";
 "publish" = "Publish";
 "delete" = "Delete";
+"restore" = "Restore";
 "comments" = "Comments";
 "share" = "Share";
 "pin" = "Pin";
