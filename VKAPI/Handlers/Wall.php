@@ -204,7 +204,10 @@ final class Wall extends VKAPIRequestHandler
                             }
                         } 
                         
-                        $groups[] = $attachment->isPostedOnBehalfOfGroup() ? $attachment->getOwner()->getId() : $attachment->getOwner()->getId();
+                        if ($attachment->isPostedOnBehalfOfGroup())
+                            $groups[] = $attachment->getOwner()->getId();
+                        else
+                            $profiles[] = $attachment->getOwner()->getId();
 
                         $repost[] = [
                             "id" => $attachment->getVirtualId(),
