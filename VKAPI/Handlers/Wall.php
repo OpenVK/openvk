@@ -59,6 +59,11 @@ final class Wall extends VKAPIRequestHandler
                         }
                     }
 
+                    if ($attachment->isPostedOnBehalfOfGroup())
+                        $groups[] = $attachment->getOwner()->getId();
+                    else
+                        $profiles[] = $attachment->getOwner()->getId();
+
                     $repost[] = [
                         "id" => $attachment->getVirtualId(),
                         "owner_id" => $attachment->isPostedOnBehalfOfGroup() ? $attachment->getOwner()->getId() * -1 : $attachment->getOwner()->getId(),
@@ -200,7 +205,12 @@ final class Wall extends VKAPIRequestHandler
                                 $repostAttachments[] = $this->getApiPhoto($repostAttachment);
                                 /* Рекурсии, сука! Заказывали? */
                             }
-                        }    
+                        } 
+                        
+                        if ($attachment->isPostedOnBehalfOfGroup())
+                            $groups[] = $attachment->getOwner()->getId();
+                        else
+                            $profiles[] = $attachment->getOwner()->getId();
 
                         $repost[] = [
                             "id" => $attachment->getVirtualId(),
@@ -606,24 +616,24 @@ final class Wall extends VKAPIRequestHandler
         return [
             "type"  => "poll",
             "poll" => [
-                "multiple"   => $attachment->isMultipleChoice(),
-                "end_date"   => $attachment->endsAt() == NULL ? 0 : $attachment->endsAt()->timestamp(),
-                "closed"     => $attachment->hasEnded(),
-                "is_board"   => false,
-                "can_edit"   => false,
-                "can_vote"   => $attachment->canVote($user),
-                "can_report" => false,
-                "can_share"  => true,
-                "created"    => 0,
-                "id"         => $attachment->getId(),
-                "owner_id"   => $attachment->getOwner()->getId(),
-                "question"   => $attachment->getTitle(),
-                "votes"      => $attachment->getVoterCount(),
+                "multiple"       => $attachment->isMultipleChoice(),
+                "end_date"       => $attachment->endsAt() == NULL ? 0 : $attachment->endsAt()->timestamp(),
+                "closed"         => $attachment->hasEnded(),
+                "is_board"       => false,
+                "can_edit"       => false,
+                "can_vote"       => $attachment->canVote($user),
+                "can_report"     => false,
+                "can_share"      => true,
+                "created"        => 0,
+                "id"             => $attachment->getId(),
+                "owner_id"       => $attachment->getOwner()->getId(),
+                "question"       => $attachment->getTitle(),
+                "votes"          => $attachment->getVoterCount(),
                 "disable_unvote" => $attachment->isRevotable(),
-                "anonymous"  => $attachment->isAnonymous(),
-                "answer_ids" => $userVote,
-                "answers"    => $answers,
-                "author_id"  => $attachment->getOwner()->getId(),
+                "anonymous"      => $attachment->isAnonymous(),
+                "answer_ids"     => $userVote,
+                "answers"        => $answers,
+                "author_id"      => $attachment->getOwner()->getId(),
             ]
         ];
     }
