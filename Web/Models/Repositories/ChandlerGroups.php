@@ -13,9 +13,9 @@ class ChandlerGroups
     public function __construct()
     {
         $this->context = DB::i()->getContext();
-        $this->groups  = $this->context->table("chandlergroups");
-        $this->members = $this->context->table("chandleraclrelations");
-        $this->perms   = $this->context->table("chandleraclgroupspermissions");
+        $this->groups  = $this->context->table("ChandlerGroups");
+        $this->members = $this->context->table("ChandlerACLRelations");
+        $this->perms   = $this->context->table("ChandlerACLGroupsPermissions");
     }
 
     function get(string $UUID): ?ActiveRow
@@ -32,7 +32,7 @@ class ChandlerGroups
     {
         foreach($this->members->where("group", $UUID) as $member)
             yield (new Users)->getByChandlerUser(
-                new ChandlerUser($this->context->table("chandlerusers")->where("id", $member->user)->fetch())
+                new ChandlerUser($this->context->table("ChandlerUsers")->where("id", $member->user)->fetch())
             );
     }
 
