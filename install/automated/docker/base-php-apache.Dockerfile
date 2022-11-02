@@ -17,5 +17,6 @@ RUN apt update; \
         intl \
         yaml \
         pdo_mysql \
+        rdkafka \
     && \
     rm -rf /var/lib/apt/lists/*
