@@ -13,7 +13,7 @@ class ChandlerUsers
     public function __construct()
     {
         $this->context = DB::i()->getContext();
-        $this->users   = $this->context->table("chandlerusers");
+        $this->users   = $this->context->table("ChandlerUsers");
     }
 
     private function toUser(?ActiveRow $ar): ?ChandlerUser
