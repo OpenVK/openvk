@@ -5,7 +5,7 @@ list:
     native_name: "Русский"
     author: "OpenVK Team"
   - code: "en"
-    flag: "us"
+    flag: "gb"
     name: "English"
     native_name: "English"
     author: "OpenVK Team"

@@ -76,6 +76,9 @@ final class AboutPresenter extends OpenVKPresenter
             $this->assertNoCSRF();
             setLanguage($_GET['lg']);
         }
+
+        if(!is_null($_GET['jReturnTo']))
+            $this->redirect(rawurldecode($_GET['jReturnTo']));
     }
 
     function renderExportJSLanguage($lg = NULL): void

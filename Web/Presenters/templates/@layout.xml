@@ -263,9 +263,17 @@
                 <a href="/blog" class="link">{_footer_blog}</a>
                 <a href="/support" class="link">{_footer_help}</a>
                 <a href="/dev" target="_blank" class="link">{_footer_developers}</a>
-                <a href="/language" class="link">{_footer_choose_language}</a>
                 <a href="/privacy" class="link">{_footer_privacy}</a>
             </div>
+            <p>
+                {var $currentUrl = $_SERVER["REQUEST_URI"]}
+                {foreach array_slice(getLanguages(), 0, 3) as $language}
+                    <a href="/language?lg={$language['code']}&hash={urlencode($csrfToken)}&jReturnTo={php echo rawurlencode($currentUrl)}" rel="nofollow" title="{$language['native_name']}" class="link">
+                        <img src="/assets/packages/static/openvk/img/flags/{$language['flag']}.gif" alt="{$language['native_name']}">
+                    </a>
+                {/foreach}
+                <a href="/language" class="link">all languages &raquo;</a>
+            </p>
             <p>OpenVK <a href="/about:openvk">{php echo OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {$dbVersion}</p>
             <p n:ifcontent>
                 {php echo OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]}
