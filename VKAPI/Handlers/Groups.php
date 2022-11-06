@@ -233,4 +233,32 @@ final class Groups extends VKAPIRequestHandler
              */
         ];
     }
+
+    function join(int $group_id)
+    {
+        $this->requireUser();
+        
+        $club = (new ClubsRepo)->get($group_id);
+        
+        $isMember = !is_null($this->getUser()) ? (int) $club->getSubscriptionStatus($this->getUser()) : 0;
+
+        if($isMember == 0)
+            $club->toggleSubscription($this->getUser());
+
+        return 1;
+    }
+
+    function leave(int $group_id)
+    {
+        $this->requireUser();
+        
+        $club = (new ClubsRepo)->get($group_id);
+        
+        $isMember = !is_null($this->getUser()) ? (int) $club->getSubscriptionStatus($this->getUser()) : 0;
+
+        if($isMember == 1)
+            $club->toggleSubscription($this->getUser());
+
+        return 1;
+    }
 }
