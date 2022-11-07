@@ -1186,8 +1186,18 @@
 "url_is_banned_title" = "Link to a suspicious site";
 "url_is_banned_proceed" = "Follow the link";
 
-/* Chandler */
+/* Helpdesk */
+"helpdesk" = "Support";
+"helpdesk_agent" = "Support Agent";
+"helpdesk_agent_card" = "Agent Card";
+"helpdesk_positive_answers" = "positive answers";
+"helpdesk_negative_answers" = "negative answers";
+"helpdesk_all_answers" = "all answers";
+"helpdesk_showing_name" = "Display name";
+"helpdesk_show_number" = "Show the number";
+"helpdesk_avatar_url" = "Link to the avatar";
 
+/* Chandler */
 "c_user_removed_from_group" = "The user has been removed from the group";
 "c_permission_removed_from_group" = "The permission has been removed from the group";
 "c_group_removed" = "The group has been deleted.";

@@ -27,6 +27,13 @@ class TicketComments
         else
             return NULL;
     }
+
+    function getCountByAgent(int $agent_id, int $mark = NULL): int
+    {
+        $filter = ['user_id' => $agent_id, 'user_type' => 1];
+        $mark && $filter['mark'] = $mark;
+        return sizeof($this->comments->where($filter));
+    }
    
     use \Nette\SmartObject;
 }
