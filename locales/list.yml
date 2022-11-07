@@ -84,3 +84,8 @@ list:
     name: "Indonesian"
     native_name: "Bahasa Indonesia"
     author: "loliconazter"
+  - code: "qqx"
+    flag: "europeanunion"
+    name: "qqx"
+    native_name: "qqx"
+    author: "celestora"
