@@ -40,7 +40,7 @@
             {var $result = preg_match("/(.+)\((.+)\)/", $language['native_name'], $name)}
 
             <a href="language?lg={$language['code']}&hash={urlencode($csrfToken)}" class="link_new" rel="nofollow">
-                <center><img src="/assets/packages/static/openvk/img/flags/{$language['flag']}.gif"></center>
+                <center><img src="/assets/packages/static/openvk/img/flags/{$language['flag']}.gif" alt="{$language['native_name']}"></center>
                 <br>
                 {if $result == 1}
                     {$name[1]}

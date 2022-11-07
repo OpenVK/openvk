@@ -535,12 +535,15 @@ class User extends RowModel
         return sizeof(DatabaseConnection::i()->getContext()->table("messages")->where(["recipient_id" => $this->getId(), "unread" => 1]));
     }
 
-    function getClubs(int $page = 1, bool $admin = false): \Traversable
+    function getClubs(int $page = 1, bool $admin = false, int $count = OPENVK_DEFAULT_PER_PAGE, bool $offset = false): \Traversable
     {
+        if(!$offset)
+            $page = ($page - 1) * $count;
+
         if($admin) {
             $id     = $this->getId();
             $query  = "SELECT `id` FROM `groups` WHERE `owner` = ? UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?";
-            $query .= " LIMIT " . OPENVK_DEFAULT_PER_PAGE . " OFFSET " . ($page - 1) * OPENVK_DEFAULT_PER_PAGE;
+            $query .= " LIMIT " . $count . " OFFSET " . $page;
 
             $sel = DatabaseConnection::i()->getConnection()->query($query, $id, $id);
             foreach($sel as $target) {
@@ -550,7 +553,7 @@ class User extends RowModel
                 yield $target;
             }
         } else {
-            $sel = $this->getRecord()->related("subscriptions.follower")->page($page, OPENVK_DEFAULT_PER_PAGE);
+            $sel = $this->getRecord()->related("subscriptions.follower")->limit($count, $page);
             foreach($sel->where("model", "openvk\\Web\\Models\\Entities\\Club") as $target) {
                 $target = (new Clubs)->get($target->target);
                 if(!$target) continue;

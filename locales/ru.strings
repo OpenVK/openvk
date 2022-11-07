@@ -1,4 +1,4 @@
-"__locale" = "ru_UA.utf8;ru_RU.UTF-8;Rus";
+"__locale" = "ru_RU.UTF-8;Rus";
 "__WinEncoding" = "Windows-1251";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
@@ -162,6 +162,9 @@
 "post_deact_f" = "удалила страницу со словами:";
 "post_deact_silent_m" = "молча удалил свою страницу.";
 "post_deact_silent_f" = "молча удалила свою страницу.";
+"post_on_your_wall" = "на вашей стене";
+"post_on_group_wall" = "в $1";
+"post_on_user_wall" = "на стене $1";
 "wall" = "Стена";
 "post" = "Запись";
 "write" = "Написать";
@@ -223,7 +226,7 @@
 "incoming_req" = "Входящие";
 "outcoming_req" = "Исходящие";
 "req" = "Заявки";
-"friends_online" = "Друзья он-лайн";
+"friends_online" = "Друзья онлайн";
 "all_friends" = "Все друзья"; 
 
 "req_zero" = "Не найдено ни одной заявки...";
@@ -238,11 +241,11 @@
 "friends_many" = "$1 друзей";
 "friends_other" = "$1 друзей";
 
-"friends_online_zero" = "Ни одного друга он-лайн";
-"friends_online_one" = "$1 друг он-лайн";
-"friends_online_few" = "$1 друга он-лайн";
-"friends_online_many" = "$1 друзей он-лайн";
-"friends_online_other" = "$1 друзей он-лайн";
+"friends_online_zero" = "Ни одного друга онлайн";
+"friends_online_one" = "$1 друг онлайн";
+"friends_online_few" = "$1 друга онлайн";
+"friends_online_many" = "$1 друзей онлайн";
+"friends_online_other" = "$1 друзей онлайн";
 
 "friends_list_zero" = "У Вас пока нет друзей";
 "friends_list_one" = "У Вас $1 друг";
@@ -262,11 +265,11 @@
 "subscriptions_many" = "$1 подписок";
 "subscriptions_other" = "$1 подписок";
 
-"friends_list_online_zero" = "У Вас пока нет друзей он-лайн";
-"friends_list_online_one" = "У Вас $1 друг он-лайн";
-"friends_list_online_few" = "У Вас $1 друга он-лайн";
-"friends_list_online_many" = "У Вас $1 друзей он-лайн";
-"friends_list_online_other" = "У Вас $1 друзей он-лайн";
+"friends_list_online_zero" = "У Вас пока нет друзей онлайн";
+"friends_list_online_one" = "У Вас $1 друг онлайн";
+"friends_list_online_few" = "У Вас $1 друга онлайн";
+"friends_list_online_many" = "У Вас $1 друзей онлайн";
+"friends_list_online_other" = "У Вас $1 друзей онлайн";
 
 /* Group */
 
@@ -317,7 +320,7 @@
 "group_dont_display_administrators_list" = "Ничего не отображать";
 
 "group_changeowner_modal_title" = "Передача прав владельца";
-"group_changeowner_modal_text" = "Внимание! Вы передаёте права владельца пользователю $1. Это действие необратимо. После передачи вы останетесь адмиинстратором, но сможете легко перестать им быть.";
+"group_changeowner_modal_text" = "Внимание! Вы передаёте права владельца пользователю $1. Это действие необратимо. После передачи вы останетесь админстратором, но сможете легко перестать им быть.";
 "group_owner_setted" = "Новый владелец ($1) успешно назначен в сообщество $2. Вам выданы права администратора в сообществе. Если Вы хотите вернуть роль владельца, обратитесь в <a href='/support?act=new'>техническую поддержку сайта</a>.";
 
 "participants_zero" = "Ни одного участника";
@@ -636,7 +639,7 @@
 "notifications_under_post" = "вашей $3записью$4 от $5";
 "notifications_under_video" = "вашим $3видео$4";
 "notifications_post" = "$1 написал(-ла) $2запись$3 на вашей стене: $4";
-"notifications_appoint" = "$1 назвачил вас руководителем сообщества $2";
+"notifications_appoint" = "$1 назначил вас руководителем сообщества $2";
 
 "nt_liked_yours" = "понравился ваш";
 "nt_shared_yours" = "поделился(-ась) вашим";
@@ -698,7 +701,7 @@
 "transferred_to_you" = "передал вам";
 
 "transfer_trough_ton" = "Пополнить с помощью TON";
-"transfer_ton_contents" = "Вы можете пополнить ваш баланс с помощью криптовалюты TON. Достаточно отсканировать QR-code приложением Tonkeeper, или вручную отправить TON по реквизитам. В течении нескольких минут вам придут определенное количество голосов.";
+"transfer_ton_contents" = "Вы можете пополнить ваш баланс с помощью криптовалюты TON. Достаточно отсканировать QR-code приложением Tonkeeper, или вручную отправить TON по реквизитам. В течение нескольких минут вам придут определенное количество голосов.";
 "transfer_ton_address" = "<b>Адрес кошелька:</b> $1<br/><b>Содержание сообщения:</b> $2";
 "transfer_ton_currency_per_ton" = "$1 TON";
 
@@ -822,7 +825,7 @@
 "app_uninstalled" = "Приложение отключено";
 "app_uninstalled_desc" = "Оно больше не сможет выполнять действия от Вашего имени.";
 "app_err_not_found" = "Приложение не найдено";
-"app_err_not_found_desc" = "Некорректный идентифиактор или оно было отключено.";
+"app_err_not_found_desc" = "Некорректный идентификатор или оно было отключено.";
 "app_err_forbidden_desc" = "Это приложение не Ваше.";
 "app_err_url" = "Неправильный адрес";
 "app_err_url_desc" = "Адрес приложения не прошёл проверку, убедитесь что он указан правильно.";
@@ -901,7 +904,7 @@
 
 "ec_header" = "Подтверждение регистрации";
 "ec_title" = "Спасибо!";
-"ec_1" = "<b>$1</b>, ваша регистрация почти закончена. В течении нескольких минут на ваш адрес E-mail должно прийти письмо с ссылкой для подтверждения вашего адреса почты.";
+"ec_1" = "<b>$1</b>, ваша регистрация почти закончена. В течение нескольких минут на ваш адрес E-mail должно прийти письмо со ссылкой для подтверждения вашего адреса почты.";
 "ec_2" = "Если по каким-то причинам вам не пришло письмо, то проверьте папку Спам. Если письма не окажется и там, то вы можете переотправить письмо.";
 "ec_resend" = "Переотправить письмо";
 
@@ -916,6 +919,38 @@
 
 "messages_error_1" = "Сообщение не доставлено";
 "messages_error_1_description" = "При отправке этого сообщения произошла ошибка общего характера...";
+
+/* Polls */
+"poll" = "Опрос";
+"create_poll" = "Новый опрос";
+"poll_title" = "Тема опроса";
+"poll_add_option" = "Добавить вариант ответа";
+"poll_anonymous" = "Анонимный опрос";
+"poll_multiple" = "Множественный выбор";
+"poll_locked" = "Запретить отменять свой голос";
+"poll_edit_expires" = "Голосование истекает через: ";
+"poll_edit_expires_days" = "дней";
+"poll_editor_tips" = "Нажатие Backspace в пустом варианте приводит к его удалению. Tab/Enter в последнем добавляет новый.";
+"poll_embed" = "Получить код";
+
+"poll_voter_count_zero" = "Будьте <b>первым</b>, кто проголосует!";
+"poll_voter_count_one" = "В опросе проголосовал <b>один</b> человек.";
+"poll_voter_count_few" = "В опросе проголосовало <b>$1</b> человека.";
+"poll_voter_count_many" = "В опросе проголосовало <b>$1</b> человек.";
+"poll_voter_count_other" = "В опросе проголосовало <b>$1</b> человек.";
+
+"poll_voters_list" = "Список проголосовавших";
+
+"poll_anon" = "Анонимное голосование";
+"poll_public" = "Публичное голосование";
+"poll_multi" = "много вариантов";
+"poll_lock" = "нельзя переголосовать";
+"poll_until" = "до $1";
+
+"poll_err_to_much_options" = "Слишком много вариантов в опросе.";
+"poll_err_anonymous" = "Невозможно просмотреть список проголосовавших в анонимном голосовании.";
+"cast_vote" = "Проголосовать";
+"retract_vote" = "Отменить голос";
 
 /* Discussions */
 
@@ -992,14 +1027,14 @@
 "changes_saved_comment" = "Новые данные появятся на вашей странице";
 
 "photo_saved" = "Фотография сохранена";
-"photo_saved_comment" = "Новое изображние профиля появится у вас на странице";
+"photo_saved_comment" = "Новое изображение профиля появится у вас на странице";
 
 "shared_succ" = "Запись появится на вашей стене. Нажмите на уведомление, чтобы перейти к своей стене.";
 
 "invalid_email_address" = "Неверный Email адрес";
 "invalid_email_address_comment" = "Email, который вы ввели, не является корректным.";
 
-"invalid_real_name" = "Пожалуйста, используйте реальные имена. Так вашим тульпам будет легче найти вас.";
+"invalid_real_name" = "Пожалуйста, используйте реальные имена. Так вашим друзьям будет легче найти вас.";
 
 "invalid_telegram_name" = "Неверное имя Telegram аккаунта";
 "invalid_telegram_name_comment" = "Вы ввели неверное имя аккаунта Telegram.";
@@ -1219,6 +1254,27 @@
 "helpdesk_showing_name" = "Отображаемое имя";
 "helpdesk_show_number" = "Показывать номер";
 "helpdesk_avatar_url" = "Ссылка на аватарку";
+/* Chandler */
+
+"c_user_removed_from_group" = "Пользователь был удалён из группы";
+"c_permission_removed_from_group" = "Право было удалено из группы";
+"c_group_removed" = "Группа была удалена.";
+"c_groups" = "Группы Chandler";
+"c_users" = "Пользователи Chandler";
+"c_group_permissions" = "Права";
+"c_group_members" = "Участники";
+"c_model" = "Модель";
+"c_permission" = "Право";
+"c_permissions" = "Права";
+"c_color" = "Цвет";
+"add" = "Добавить";
+"c_edit_groups" = "Редактировать группы";
+"c_user_is_not_in_group" = "Связь пользователя и группы не найдена.";
+"c_permission_not_found" = "Связь права и группы не найдена.";
+"c_group_not_found" = "Группа не найдена.";
+"c_user_is_already_in_group" = "Этот пользователь уже включён в эту группу.";
+"c_add_to_group" = "Добавить в группу";
+"c_remove_from_group" = "Исключить из группы";
 
 /* Maintenance */
 

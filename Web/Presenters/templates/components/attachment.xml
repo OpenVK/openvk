@@ -11,6 +11,8 @@
     {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Video}
     <video class="media" src="{$attachment->getURL()}" controls="controls"></video>
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Poll}
+    {presenter "openvk!Poll->view", $attachment->getId()}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Post}
     {php $GLOBALS["_nesAttGloCou"] = (isset($GLOBALS["_nesAttGloCou"]) ? $GLOBALS["_nesAttGloCou"] : 0) + 1}
     {if $GLOBALS["_nesAttGloCou"] > 2}

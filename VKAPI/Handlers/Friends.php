@@ -107,7 +107,7 @@ final class Friends extends VKAPIRequestHandler
 				return 1;
 			
 			default:
-				fail(15, "Access denied: No friend or friend request found.");
+				$this->fail(15, "Access denied: No friend or friend request found.");
 		}
 	}
 

@@ -72,6 +72,9 @@ Once you are done, you can login as a system administrator on the network itself
 
 💡Confused? Full installation walkthrough is available [here](https://docs.openvk.su/openvk_engine/centos8_installation/) (CentOS 8 [and](https://almalinux.org/) [family](https://yum.oracle.com/oracle-linux-isos.html)).
 
+### Looking for Docker or Kubernetes deployment?
+See `install/automated/docker/README.md` and `install/automated/kubernetes/README.md` for Docker and Kubernetes deployment instructions.
+
 ### If my website uses OpenVK, should I release it's sources?
 
 It depends. You can keep the sources to yourself if you do not plan to distribute your website binaries. If your website software must be distributed, it can stay non-OSS provided the OpenVK is not used as a primary application and is not modified. If you modified OpenVK for your needs or your work is based on it and you're planning to redistribute this, then you should license it under terms of any LGPL-compatible license (like OSL, GPL, LGPL etc).
