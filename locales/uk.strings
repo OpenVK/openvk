@@ -28,7 +28,7 @@
 
 "access_recovery" = "Відновлення доступу";
 "page_access_recovery" = "Відновити доступ до сторінки";
-"access_recovery_info" = "Забули пароль? Не хвилюйтеся, введіть ваші дані і ми відправимо вам email з інструкціями по відновленню аккаунта.";
+"access_recovery_info" = "Забули пароль? Не хвилюйтеся, введіть ваші дані й ми відправимо вам на email інструкції з відновлення акаунта.";
 "access_recovery_info_2" = "Введіть ваш новий пароль. Всі поточні сеанси будуть припинені, а токени доступу анульовані.";
 "reset_password" = "Скинути пароль";
 "2fa_code_2" = "Код двофакторної аутентифікації";
@@ -36,7 +36,7 @@
 "password_successfully_reset" = "Ваш пароль був успішно скинутий.";
 "password_reset_email_sent" = "Якщо ви зареєстровані, Ви отримаєте інструкції на email.";
 "password_reset_error" = "Непередбачена помилка при скиданні пароля.";
-"password_reset_rate_limit_error" = "Не можна часто надсилати запити на скидання паролю, вибачте.";
+"password_reset_rate_limit_error" = "Не можна часто надсилати запити на скидання пароля, вибачте.";
 
 "email_sent" = "Лист був успішно надісланий.";
 "email_sent_desc" = "Якщо ваша електронна адреса існує, ви отримаєте лист.";
@@ -59,7 +59,7 @@
 
 "select_language" = "Обрати мову";
 "edit" = "Редагувати";
-"birth_date" = "День нарождення";
+"birth_date" = "День народження";
 "registration_date" = "Дата реєстрації";
 "hometown" = "Рідне місто";
 "this_is_you" = "це Ви";
@@ -176,7 +176,7 @@
 "unpin" = "Відкріпити";
 "pinned" = "прикріплено";
 "comments_tip" = "Будьте першим, хто залишить коментар!";
-"your_comment" = "Ваш коментарій";
+"your_comment" = "Ваш коментар";
 "shown" = "Показано";
 "x_out_of" = "$1 з";
 "wall_zero" = "немає записів";
@@ -195,7 +195,7 @@
 
 "attachment" = "Вкладення";
 "post_as_group" = "Від імені суспільства";
-"comment_as_group" = "Від іимені суспільства";
+"comment_as_group" = "Від імені суспільства";
 "add_signature" = "Підпис автора";
 "contains_nsfw" = "Містить NSFW-контент";
 "nsfw_warning" = "Даний запис може містити контент 18+";
@@ -207,7 +207,7 @@
 "no_posts_abstract" = "Тут ніхто нічого не написав... Поки.";
 "attach_no_longer_available" = "Це вкладення більше недоступне.";
 "open_post" = "Відкрити запис";
-"version_incompatibility" = "Не вдалося відобразити це вкладення. Можливо, база даних несумісна з поточною версією OpenVK.";
+"version_incompatibility" = "Не вдалося показати це вкладення. Можливо, база даних несумісна з поточною версією OpenVK.";
 
 "graffiti" = "Графіті";
 
@@ -313,12 +313,12 @@
 "hidden_yes" = "Прихований: Так";
 "hidden_no" = "Прихований: Ні";
 "group_allow_post_for_everyone" = "Дозволити публікувати записи всім";
-"group_hide_from_global_feed" = "Не відображати публікації у глобальній стрічці";
+"group_hide_from_global_feed" = "Не показувати публікації у глобальній стрічці";
 "statistics" = "Статистика";
 "group_administrators_list" = "Список адмінів";
-"group_display_only_creator" = "Відображати лише автора групи";
-"group_display_all_administrators" = "Відображати всіх адміністраторів";
-"group_dont_display_administrators_list" = "Нічого не відображати";
+"group_display_only_creator" = "Показувати лише автора групи";
+"group_display_all_administrators" = "Показувати всіх адміністраторів";
+"group_dont_display_administrators_list" = "Нічого не показувати";
 
 "group_changeowner_modal_title" = "Передача прав власника";
 "group_changeowner_modal_text" = "Увага! Ви передаєте права власника користувачу $1. Ця дія необоротна. Після передачі ви залишитеся адміністратором, але зможете легко перестати ним бути.";
@@ -343,8 +343,8 @@
 "meetings_zero" = "Жодної зустрічі";
 "meetings_one" = "Одна зустріч";
 "meetings_few" = "$1 зустріч";
-"meetings_many" = "$1 зустрічів";
-"meetings_other" = "$1 зустрічів";
+"meetings_many" = "$1 зустрічей";
+"meetings_other" = "$1 зустрічей";
 
 "open_new_group" = "Створити нову групу";
 "open_group_desc" = "Не можете знайти потрібну групу? Відкрийте свою...";
@@ -359,18 +359,18 @@
 "create_album" = "Створити альбом";
 "edit_album" = "Редагувати альбом";
 "creating_album" = "Створення альбому";
-"upload_photo" = "Загрузити фотографію";
+"upload_photo" = "Завантажити фотографію";
 "photo" = "Фотографія";
-"upload_button" = "Загрузити";
+"upload_button" = "Завантажити";
 
-"open_original" = "Відкрити орігінал";
+"open_original" = "Відкрити оригінал";
 
-"avatar_album" = "Фотографії з сторінки";
-"wall_album" = "Фотографії з стіни";
+"avatar_album" = "Фотографії зі сторінки";
+"wall_album" = "Фотографії зі стіни";
 
 "albums_zero" = "Жодного альбому";
 "albums_one" = "Один альбом";
-"albums_few" = "$1 альбома";
+"albums_few" = "$1 альбоми";
 "albums_many" = "$1 альбомів";
 "albums_other" = "$1 альбомів";
 
@@ -486,13 +486,13 @@
 "search_placeholder" = "Почніть вводити будь-яке ім'я, назву чи слово";
 "results_zero" = "Жодного результату";
 "results_one" = "Один результат";
-"results_few" = "$1 результата";
+"results_few" = "$1 результати";
 "results_many" = "$1 результатів";
 "results_other" = "$1 результатів";
 
 "privacy_setting_access_page" = "Кому в інтернеті видно мою сторінку";
 "privacy_setting_read_info" = "Кому видно основну інформацію моєї сторінки";
-"privacy_setting_see_groups" = "Кому видно мої групи і зустрічі";
+"privacy_setting_see_groups" = "Кому видно мої групи й зустрічі";
 "privacy_setting_see_photos" = "Кому видно мої фотографії";
 "privacy_setting_see_videos" = "Кому видно мої відеозаписи";
 "privacy_setting_see_notes" = "Кому видно мої нотатки";
@@ -500,8 +500,8 @@
 "privacy_setting_add_to_friends" = "Хто може називати мене другом";
 "privacy_setting_write_wall" = "Хто може писати у мене на стіні";
 "privacy_setting_write_messages" = "Хто може писати мені повідомлення";
-"privacy_value_anybody" = "Всі бажаючі";
-"privacy_value_anybody_dative" = "Всім бажаючим";
+"privacy_value_anybody" = "Всі охочий";
+"privacy_value_anybody_dative" = "Усім охочим";
 "privacy_value_users" = "Користувачам OpenVK";
 "privacy_value_friends" = "Друзі";
 "privacy_value_friends_dative" = "Друзям";
@@ -575,11 +575,11 @@
 "two_factor_authentication_login" = "У вас увімкнена двофакторна автентифікація. Для входу введіть код отриманий в додатку.";
 
 "two_factor_authentication_settings_1" = "Двофакторну автентифікацію через TOTP можна використовувати навіть без інтернету. Для цього вам знадобиться застосунок для генерації кодів, наприклад Google Authenticator для Android та iOS або відкриті <b>Aegis Authenticator чи andOTP</b> для Android. Важливо: на пристрої має бути точна дата та час.";
-"two_factor_authentication_settings_2" = "Використовуючи застосунок для двофакторної автентифікації, відскануйте наведений нижче QR-код:";
+"two_factor_authentication_settings_2" = "Використовуючи застосунок для двофакторної автентифікації, проскануйте наведений нижче QR-код:";
 "two_factor_authentication_settings_3" = "або вручну введіть секретний ключ: <b>$1</b>.";
 "two_factor_authentication_settings_4" = "Тепер введіть код, який вам надав застосунок, і пароль від вашої сторінки, щоб ми могли підтвердити, що ви дійсно ви.";
 
-"connect" = "Підключити";
+"connect" = "Під'єднати";
 "enable" = "Включити";
 "disable" = "Відключити";
 "code" = "Код";
@@ -595,7 +595,7 @@
 "view_backup_codes" = "Переглянути резервні коди";
 "backup_codes" = "Резервні коди для підтвердження входу";
 "two_factor_authentication_backup_codes_1" = "Резервні коди дозволяють підтверджувати вхід, коли у вас немає доступу до телефону, наприклад, у подорожі.";
-"two_factor_authentication_backup_codes_2" = "У вас є ще <b>10 кодів</b>, кожним кодом можна скористатися тільки один раз. Роздрукуйте їх, приберіть в надійне місце і використовуйте, коли будуть потрібні коди для підтвердження входу.";
+"two_factor_authentication_backup_codes_2" = "У вас є ще <b>10 кодів</b>, кожним кодом можна скористатися тільки один раз. Надрукуйте їх, приберіть в надійне місце і використовуйте, коли будуть потрібні коди для підтвердження входу.";
 "two_factor_authentication_backup_codes_3" = "Ви можете отримати нові коди, якщо вони закінчуються. Дійсні тільки останні створені резервні коди.";
 
 /* Sorting */
@@ -618,7 +618,7 @@
 "info_uploaded_by" = "Завантажив";
 "info_upload_date" = "Дата завантаження";
 
-"videos_zero" = "Жодної відеозаписи";
+"videos_zero" = "Жодного відеозапису";
 "videos_one" = "Одна відеозапис";
 "videos_few" = "$1 відеозаписи";
 "videos_many" = "$1 відеозаписів";
@@ -644,7 +644,7 @@
 
 "nt_liked_yours" = "сподобався ваш";
 "nt_shared_yours" = "поділився(-ась) вашим";
-"nt_commented_yours" = "залишив(-ла) коментарій під";
+"nt_commented_yours" = "залишив(-ла) коментар під";
 "nt_written_on_your_wall" = "написав(-ла) на вашій стіні";
 "nt_made_you_admin" = "призначив (-ла) вас керівником групи";
 
@@ -757,7 +757,7 @@
 "as_anonymous" = "Анонімно";
 "gift_your_message" = "Ваше повідомлення";
 
-"free_gift" = "Безкоштовно";
+"free_gift" = "Безоплатно";
 "coins" = "Голоси";
 "coins_zero" = "0 голосів";
 "coins_one" = "Один голос";
@@ -846,7 +846,7 @@
 "support_status_1" = "Є відповідь";
 "support_status_2" = "Зачинено";
 "support_greeting_hi" = "Вітаємо, $1!";
-"support_greeting_regards" = "З повагою,<br/>команда підтримки $1.";
+"support_greeting_regards" = "З повагою, <br/>команда підтримки $1.";
 
 "support_faq" = "Запитання, що часто ставляться";
 "support_list" = "Список звернень";
@@ -885,7 +885,7 @@
 
 "invite" = "Запросити";
 "you_can_invite" = "Ви можете запросити своїх друзів або знайомих до соціальної мережі за допомогою індивідуального посилання:";
-"you_can_invite_2" = "Прикладіть це посилання до вашого поідомлення. Користувач зареєструється, і він відразу з'явиться у вас у друзях.";
+"you_can_invite_2" = "Прикладіть це посилання до вашого повідомлення. Користувач зареєструється, і він відразу з'явиться у вас у друзях.";
 
 /* Banned */
 
@@ -920,6 +920,38 @@
 
 "messages_error_1" = "Повідомлення не доставлене";
 "messages_error_1_description" = "При надсиланні цього повідомлення сталася помилка загального характеру...";
+
+/* Polls */
+"poll" = "Опитування";
+"create_poll" = "Нове опитування";
+"poll_title" = "Тема опитування";
+"poll_add_option" = "Додати варіант опитування";
+"poll_anonymous" = "Анонімна відповідь";
+"poll_multiple" = "Множинний вибір";
+"poll_locked" = "Заборонити скасовувати свій голос";
+"poll_edit_expires" = "Голосування закінчується через: ";
+"poll_edit_expires_days" = "днів";
+"poll_editor_tips" = "Натискання Backspace в порожньому варіанті призводить до його видалення. Tab чи Enter в останньому варіанті додає новий варіант.";
+"poll_embed" = "Отримати код";
+
+"poll_voter_count_zero" = "Будьте <b>першим</b>, хто проголосує!";
+"poll_voter_count_one" = "В опитуванні проголосував <b>одна</b> людина.";
+"poll_voter_count_few" = "В опитуванні проголосували <b>$1</b> людини.";
+"poll_voter_count_many" = "В опитуванні проголосувало <b>$1</b> людей.";
+"poll_voter_count_other" = "В опитуванні проголосували <b>$1</b> людини.";
+
+"poll_voters_list" = "Лист голосувальників";
+
+"poll_anon" = "Анонімне голосування";
+"poll_public" = "Публічне голосування";
+"poll_multi" = "декілька відповідей";
+"poll_lock" = "не можна переголосувати";
+"poll_until" = "до $1";
+
+"poll_err_to_much_options" = "Надто багато варіантів в опитуванні.";
+"poll_err_anonymous" = "Неможливо переглянути список тих, хто проголосував в анонімному голосуванні.";
+"cast_vote" = "Проголосувати";
+"retract_vote" = "Скасувати голос";
 
 /* Discussions */
 
@@ -959,7 +991,7 @@
 "created" = "Створено";
 
 "everyone_can_create_topics" = "Всі можуть створювати теми";
-"display_list_of_topics_above_wall" = "Відображати список тем над стіною";
+"display_list_of_topics_above_wall" = "Показувати список тем над стіною";
 
 "topic_changes_saved_comment" = "Оновлений заголовок та налаштування з'являться на сторінці з темою.";
 
@@ -1001,7 +1033,7 @@
 "shared_succ" = "Запис з'явиться на вашій стіні. Натисніть на сповіщення, щоб перейти до своєї стіни.";
 
 "invalid_email_address" = "Невірна Email адреса";
-"invalid_email_address_comment" = "Введена Email адреса некорректна";
+"invalid_email_address_comment" = "Введена Email адреса некоректна";
 
 "invalid_real_name" = "Будь ласка, використовуйте реальні імена. Так вашим друзям буде легше знайти вас.";
 
@@ -1055,7 +1087,7 @@
 
 /* Admin panel */
 
-"admin" = "Админ-панель";
+"admin" = "Адмін панель";
 
 "admin_ownerid" = "ID власника";
 "admin_author" = "Автор";
@@ -1093,7 +1125,7 @@
 "admin_user_online_incognito" = "Інкогніто";
 "admin_user_online_deceased" = "Небіжчик";
 "admin_club_search" = "Пошук груп";
-"admin_club_excludeglobalfeed" = "Не відображати записи у глобальній стрічці";
+"admin_club_excludeglobalfeed" = "Не показувати записи у глобальній стрічці";
 
 "admin_services" = "Платні послуги";
 "admin_newgift" = "Новий подарунок";
@@ -1104,7 +1136,7 @@
 "admin_giftsets_create" = "Створити набір подарунків";
 "admin_giftsets_title" = "Внутрішня назва набору, яка буде використовуватися, якщо не вдається знайти назву мовою користувача.";
 "admin_giftsets_description" = "Внутрішній опис набору, який буде використовуватись, якщо не вдається знайти назву мовою користувача.";
-"admin_price_free" = "безкоштовний";
+"admin_price_free" = "безоплатний";
 "admin_voucher_rating" = "Рейтинг";
 "admin_voucher_serial" = "Серійний номер";
 "admin_voucher_serial_desc" = "Номер складається з 24 символів. Якщо формат неправильний або поле не заповнене, буде призначено автоматично.";
@@ -1201,7 +1233,7 @@
 
 /* Cookies pop-up */
 
-"cookies_popup_content" = "Цей веб-сайт використовує cookies для того, щоб ідентифікувати вашу сесію і нічого більше. Ознайомтеся з нашою <a href='/privacy'>політикою конфіденційності</a> для отримання додаткової інформації.";
+"cookies_popup_content" = "Цей вебсайт використовує cookies для того, щоб ідентифікувати вашу сесію і нічого більше. Ознайомтеся з нашою <a href='/privacy'>політикою конфіденційності</a> для отримання додаткової інформації.";
 "cookies_popup_agree" = "Згоден";
 
 /* Away */
@@ -1212,6 +1244,28 @@
 "url_is_banned_default_reason" = "Посилання, за яким Ви спробували перейти, може вести на сайт, що був створений з метою обману користувачів і отримання шляхом цього неправомірного прибутку.";
 "url_is_banned_title" = "Посилання на підозрілий сайт";
 "url_is_banned_proceed" = "Перейти за посиланням";
+
+/* Chandler */
+
+"c_user_removed_from_group" = "Користувача було видалено з групи";
+"c_permission_removed_from_group" = "Право було видалено з групи";
+"c_group_removed" = "Групу видалено.";
+"c_groups" = "Групи Chandler";
+"c_users" = "Користувачі Chandler";
+"c_group_permissions" = "Права";
+"c_group_members" = "Учасники";
+"c_model" = "Модель";
+"c_permission" = "Право";
+"c_permissions" = "Права";
+"c_color" = "Колір";
+"add" = "Додати";
+"c_edit_groups" = "Редагувати групи";
+"c_user_is_not_in_group" = "Зв'язок користувача і групи не знайдено.";
+"c_permission_not_found" = "Зв'язок права і групи не знайдено.";
+"c_group_not_found" = "Групу не знайдено.";
+"c_user_is_already_in_group" = "Цей користувач уже включений у цю групу.";
+"c_add_to_group" = "Додати в групу";
+"c_remove_from_group" = "Вилучити з групи";
 
 /* Maintenance */
 
