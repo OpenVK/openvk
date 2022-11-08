@@ -34,7 +34,7 @@ list:
     name: "German"
     native_name: "Deutsch"
     author: "SamyoFox"
-  - code: "am"
+  - code: "hy"
     flag: "am"
     name: "Armenian"
     native_name: "Հայերեն"
