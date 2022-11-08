@@ -1092,7 +1092,7 @@
 "admin_voucher_serial" = "Serial number";
 "admin_voucher_serial_desc" = "The number consists of 24 characters. If the format is incorrect or the field is not filled in, it will be assigned automatically.";
 "admin_voucher_coins" = "Number of votes";
-"admin_voucher_rating" = "Number of rating";
+"admin_voucher_rating_number" = "Number of rating";
 "admin_voucher_usages_desc" = "The number of accounts that can use the voucher. If you type -1, it will be infinity.";
 "admin_voucher_status" = "Status";
 "admin_voucher_status_opened" = "active";

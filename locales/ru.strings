@@ -1140,7 +1140,7 @@
 "admin_voucher_serial" = "Серийный номер";
 "admin_voucher_serial_desc" = "Номер состоит из 24 символов. Если формат неправильный или поле не заполнено, будет назначен автоматически.";
 "admin_voucher_coins" = "Количество голосов";
-"admin_voucher_rating" = "Количество рейтинга";
+"admin_voucher_rating_number" = "Количество рейтинга";
 "admin_voucher_usages_desc" = "Количество аккаунтов, которые могут использовать ваучер. Если написать -1, будет бесконечность.";
 "admin_voucher_status" = "Состояние";
 "admin_voucher_status_opened" = "активен";

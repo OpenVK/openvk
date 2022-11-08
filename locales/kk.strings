@@ -974,7 +974,7 @@
 "admin_voucher_serial" = "Сериялық нөмір";
 "admin_voucher_serial_desc" = "Нөмір 24 белгіден тұрады. Пішім дұрыс болмаса я өріс бос болса, автоматты түрде тағайындалады.";
 "admin_voucher_coins" = "Дауыстар көлемі";
-"admin_voucher_rating" = "Рейтинг көлемі";
+"admin_voucher_rating_number" = "Рейтинг көлемі";
 "admin_voucher_usages_desc" = "Ваучерді пайдалана алатын аккаунттардың саны. -1 деп жазсаңыз, шексіздік болады.";
 "admin_voucher_status" = "Күйі";
 "admin_voucher_status_opened" = "белсенді";

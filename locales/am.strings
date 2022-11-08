@@ -1099,7 +1099,7 @@
 "admin_voucher_serial" = "Սերիական համար";
 "admin_voucher_serial_desc" = "Համարը բաղկացած է 24 նշից։ Եթե Դուք այն սխալ գրեք, այն կտրվի ավտոմատ։";
 "admin_voucher_coins" = "Ձայների քանակ";
-"admin_voucher_rating" = "Վարկանշի քանակ";
+"admin_voucher_rating_number" = "Վարկանշի քանակ";
 "admin_voucher_usages_desc" = "Վաուչերը օգտագործող ակկաունտների քանակ։ Եթե գրեք -1, ապա այն կլինի օգտագործել անվերջ։";
 "admin_voucher_status" = "Կարգավիճակ";
 "admin_voucher_status_opened" = "ակտիվ է";

@@ -1143,7 +1143,7 @@
 "admin_voucher_serial" = "Серійний номер";
 "admin_voucher_serial_desc" = "Номер складається з 24 символів. Якщо формат неправильний або поле не заповнене, буде призначено автоматично.";
 "admin_voucher_coins" = "Кількість голосів";
-"admin_voucher_rating" = "Кількість рейтингу";
+"admin_voucher_rating_number" = "Кількість рейтингу";
 "admin_voucher_usages_desc" = "Кількість акаунтів, які можуть використовувати ваучер. Якщо написати -1, буде нескінченність.";
 "admin_voucher_status" = "Стан";
 "admin_voucher_status_opened" = "активний";
