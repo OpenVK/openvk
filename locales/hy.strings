@@ -1,7 +1,6 @@
 #include <en>
 
 "__locale" = "hy_AM.utf8;hy_AM.UTF-8;Arm";
-"__WinEncoding" = "Windows-1251";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 
@@ -19,42 +18,33 @@
 "forgot_password" = "Մոռացե՞լ եք գաղտնաբառը";
 "checkbox_in_registration" = "Ես համաձայն եմ <a href='/privacy'>կոնֆիդենցիալության քաղաքականությանն</a> ու <a href='/about'>կայքի կանոնադրությանը</a>։";
 "checkbox_in_registration_unchecked" = "Դուք պետք է համաձայնվեք պայմանների հետ նախքան գրանցվելը։";
-
 "login_failed" = "Չհաջողվեց մուտք գործել";
 "invalid_username_or_password" = "Սխալ օգտատիրոջ անուն կամ գաղտնաբառ։ Դուք կարող եք <a href='/restore'>վերականգնել ձեր գաղտնաբառը</a>։";
-
 "failed_to_register" = "Չհաջողվեց գրանցվել";
 "referral_link_invalid" = "Հրավերքային հղումը սխալ է։";
 "registration_disabled" = "Գրանցումները անջատված են համակարգային ադմինիստրատորի կողմից։";
 "user_already_exists" = "Այդ E-Mail-ով օգտատեր արդեն գոյություն ունի։";
-
 "access_recovery" = "Հասանելիության վերականգնում";
 "page_access_recovery" = "Վերադարձնել էջի հասանելիությունը";
 "access_recovery_info" = "Մոռացել եք գաղտնաբա՞ռը, մի՛ անհանգստացեք։ Ձեր E-Mail-ին կուղարկվեն վերականգնման հրահանգները։";
 "access_recovery_info_2" = "Մուտքագրե՛ք ձեր նոր գաղտնաբառը։ Ձեր բոլոր սեանսները և հասանելիության տոկենները կանուլլացվեն։";
 "reset_password" = "Զրոյացնել գաղտնաբառը";
 "2fa_code_2" = "Երկքայլ աուտենտիֆիկացիայի կոդ";
-
 "password_successfully_reset" = "Ձեր գաղտնաբառը հաջողությամբ զրոյացվել է։";
 "password_reset_email_sent" = "Եթե Դուք գրանցված եք, ապա Դուք";
 "password_reset_error" = "Անկանխատեսելի սխալ գաղտնաբառի զրոյացման ժամանակ։";
 "password_reset_rate_limit_error" = "Հազար ներողություն, բայց այդպես շատ հաճախ չի կարելի անել։";
-
 "email_sent" = "Նամակը հաջողությամբ ուղարկվել է։";
 "email_sent_desc" = "Եթե ձեր էլ․ հասցեն գոյություն ունի, Դուք կստանաք նամակը։";
 "email_error" = "Անկանխատեսելի սխալ նամակ ուղարկելու ժամանակ։";
 "email_rate_limit_error" = "Կներեք, չափից շատ նամակ ուղարկել չի կարելի։";
-
 "email_verify_success" = "Ձեր E-Mail-ը հաստատված է։ Հաճելի՛ ժամանց։";
-
 "registration_disabled_info" = "Գրանցումները անջատված են համակարգային ադմինիստրատորի կողմից։ Հնարավորության դեպքում, խնդրեք հրավերք արդեն գրանցված օգտատերերից։";
 "registration_closed" = "Գրանցումը փակ է։";
 "invites_you_to" = "<strong>$1</strong> ձեզ հրավիրում է $2";
-
 "register_meta_desc" = "Գրանցվեք $1 -ում հենց հիմա՛";
 "register_referer_meta_title" = "$1 -ն հրավիրում է ձեզ դեպի $2";
 "register_referer_meta_desc" = "Միացե՛ք $1 -ին և բազմաթիվ օգտատերերին $2 -ու՛մ";
-
 "users" = "Օգտատերեր";
 
 /* Profile information */
@@ -88,18 +78,13 @@
 "deceased_person" = "Վախճանված";
 "none" = "բացակայում է";
 "send" = "ուղարկել";
-
 "years_zero" = "Զրո տարեկան";
 "years_one" = "Մի տարեկան";
-"years_few" = "$1 տարեկան";
 "years_many" = "$1 տարեկան";
 "years_other" = "$1 տարեկան";
-
 "show_my_birthday" = "Ցույց տալ ծննդյան օրը";
 "show_only_month_and_day" = "Ցուցադրել միայն ամիսն ու օրը";
-
 "relationship" = "Ընտանեկան դրություն";
-
 "relationship_0" = "Ընտրված չէ";
 "relationship_1" = "Չամուսնացած եմ";
 "relationship_2" = "Հանդիպում եմ";
@@ -109,14 +94,9 @@
 "relationship_6" = "Սիրահարված եմ";
 "relationship_7" = "Ամեն ինչ բարդ է";
 "relationship_8" = "Ակտիվ փնտրտուկների մեջ եմ";
-
-"relationship_1_fem" = "Չամուսնացած եմ";
 "relationship_3_fem" = "Նշանված եմ";
-"relationship_4_fem" = "Ամուսնացած եմ";
 "relationship_6_fem" = "Սիրահարված եմ";
-
 "politViews" = "Քաղաքական տեսանկյուններ";
-
 "politViews_0" = "Ընտրված չեն";
 "politViews_1" = "Ինդիֆֆերենցիալ";
 "politViews_2" = "Կոմունիստական";
@@ -127,18 +107,14 @@
 "politViews_7" = "Մոնարխիկ";
 "politViews_8" = "Ուլտրակոնսերվատիվ";
 "politViews_9" = "Լիբերտարիանական";
-
 "contact_information" = "Կոնտակտային ինֆորմացիա";
-
 "email" = "Էլեկտրոնային հասցե";
 "phone" = "Հեռախոս";
 "telegram" = "Telegram";
 "personal_website" = "Կայք";
 "city" = "Քաղաք";
 "address" = "Հասցե";
-
 "personal_information" = "Անձնական ինֆորմացիա";
-
 "interests" = "Հետաքրքրություններ";
 "favorite_music" = "Սիրված երգ";
 "favorite_films" = "Սիրված ֆիլմեր";
@@ -146,16 +122,13 @@
 "favorite_books" = "Սիրված գրքեր";
 "favorite_quotes" = "Սիրված խոսքեր";
 "information_about" = "Տեղեկություն";
-
 "updated_at" = "Թարմացված է $1";
-
 "user_banned" = "Ցավո՛ք, մենք ստիպված կասեցրել ենք <b>$1</b>-ի էջը։";
 "user_banned_comment" = "Մոդերատորի մեկնաբանությունը․";
 
 /* Wall */
 
 "feed" = "Լուրեր";
-
 "post_writes_m" = "գրել է";
 "post_writes_f" = "գրել է";
 "post_writes_g" = "հրապարակել են";
@@ -179,18 +152,14 @@
 "x_out_of" = "$1–ը";
 "wall_zero" = "գրություն չկա";
 "wall_one" = "մեկ գրություն";
-"wall_few" = "$1 գրություն";
 "wall_many" = "$1 գրություն";
 "wall_other" = "$1 գրություն";
 "publish_post" = "Ավելացնել գրություն";
 "view_other_comments" = "Կարդալ մեկնաբանությունները";
-
 "no_comments" = "Մեկնաբանություններ չկան";
-
 "my_news" = "Իմ լուրերը";
 "all_news" = "Ամբողջ լուրերը";
 "posts_per_page" = "Գրությունների քանակը էջում";
-
 "attachment" = "Հավելում";
 "post_as_group" = "Խմբի անունից";
 "comment_as_group" = "Մեկնաբանել խմբի անունից";
@@ -206,9 +175,7 @@
 "attach_no_longer_available" = "Այս հավելվածը այլևս հասանելի չէ";
 "open_post" = "Բացել գրությունը";
 "version_incompatibility" = "Չհաջողվեց ցույց տալ հավելվածը։ Հնարավոր է, բազաների տվյալները հասանելի չեն OpenVK–ի այս տարբերակի հետ։";
-
 "graffiti" = "Գրաֆիտի";
-
 "reply" = "Պատասխանել";
 
 /* Friends */
@@ -225,41 +192,29 @@
 "outcoming_req" = "Հայցեր";
 "req" = "Հայցեր";
 "friends_online" = "Ընկերները ցանցում";
-"all_friends" = "Բոլոր ընկերները"; 
-
+"all_friends" = "Բոլոր ընկերները";
 "req_zero" = "Ոչ մի հայտ չի գտնվել...";
 "req_one" = "Գտնվեց մեկ հայտ";
-"req_few" = "Գտնվեց $1 հայտ";
 "req_many" = "Գտնվեց $1 հայտ";
 "req_other" = "Գտնվեց $1 հայտ";
-
 "friends_zero" = "Ոչ մի ընկեր չկա";
 "friends_one" = "$1 ընկեր";
-"friends_few" = "$1 ընկեր";
 "friends_many" = "$1 հատ ընկեր";
 "friends_other" = "$1 հատ ընկեր";
-
 "friends_list_zero" = "Դուք դեռ չունեք ընկերներ";
 "friends_list_one" = "Դուք ունեք մեկ ընկեր";
-"friends_list_few" = "Դուք ունեք $1 ընկեր";
 "friends_list_many" = "Դուք ունեք $1 ընկեր";
 "friends_list_other" = "Դուք ունեք $1 ընկեր";
-
 "followers_zero" = "Ոչ մի բաժանորդ չունեք";
 "followers_one" = "$1 բաժանորդ";
-"followers_few" = "$1 բաժանորդ";
 "followers_many" = "$1 բաժանորդ";
 "followers_other" = "$1 բաժանորդ";
-
 "subscriptions_zero" = "Ոչ մեկի վրա չեք բաժանորդագրվել";
 "subscriptions_one" = "$1 բաժանորդագրություն";
-"subscriptions_few" = "$1 բաժանորդագրություն";
 "subscriptions_many" = "$1 բաժանորդագրություն";
 "subscriptions_other" = "$1 բաժանորդագրություն";
-
 "friends_list_online_zero" = "Դուք դեռ չունեք ցանցի մեջ գտնվող ընկերներ";
 "friends_list_online_one" = "Ձեր $1 ընկերը ցանցի մեջ է";
-"friends_list_online_few" = "Ձեր $1 ընկերները ցանցի մեջ են";
 "friends_list_online_many" = "Ձեր $1 ընկերները ցանցի մեջ են";
 "friends_list_online_other" = "Ձեր $1 ընկերները ցանցի մեջ են";
 
@@ -290,11 +245,8 @@
 "website" = "Վեբկայք";
 "managed" = "Կառավարվում է";
 "size" = "Չափ";
-
 "administrators_one" = "$1 ադմինիստրատոր";
-"administrators_few" = "$1 ադմինիստրատոր";
 "administrators_other" = "$1 ադմինիստրատոր";
-
 "role" = "Դեր";
 "administrator" = "Ադմինիստրատոր";
 "promote_to_admin" = "Բարձրացնել դեպի ադմինիստրատոր";
@@ -310,33 +262,24 @@
 "group_display_only_creator" = "Ցույց տալ միայն խմբի ստեղծողին";
 "group_display_all_administrators" = "Ցուցադրել բոլոր ադմինիստրատորներին";
 "group_dont_display_administrators_list" = "Ոչ մեկին ցույց չտալ";
-
 "group_changeowner_modal_title" = "Օգտատերի իրավասությունների փոխանցում";
 "group_changeowner_modal_text" = "<b>Ուշադրությու՛ն։</b> Դուք փոխանցում եք խմբի բոլոր իրավունքները $1-ին։ Այս գործողությունը անդառնալի է։ Դուք էլի կմնաք ադմինիստրատոր, բայց հեշտությամբ դա ձեզնից կարող են խլել։";
 "group_owner_setted" = "Նոր տերը ($1) նշանակված է $2 միությունում։ Ձեզ տրված են ադմինիստրատորի իրավասություններ։ Եթե ուզում եք հետ բերել իրավասությունները, <a href='/support?act=new'>գրե՛ք կայքի տեխնիկական աջակցությանը</a>։";
-
 "participants_zero" = "Ոչ մի մասնակից";
 "participants_one" = "Միայն մեկ մասնակից";
-"participants_few" = "$1 մասնակից";
 "participants_many" = "$1 հատ մասնակից";
 "participants_other" = "$1 հատ մասնակից";
-
 "groups_zero" = "Ոչ մի խումբ";
 "groups_one" = "Մեկ խումբ";
-"groups_few" = "$1 խումբ";
 "groups_many" = "$1 խումբ";
 "groups_other" = "$1 խումբ";
-
 "groups_list_zero" = "Դուք չկաք գեթ ոչ մի խմբում";
 "groups_list_one" = "Դուք կաք միայն մեկ խմբում";
 "groups_list_other" = "Դուք կաք $1 խմբում";
-
 "meetings_zero" = "Ոչ մի հանդիպում";
 "meetings_one" = "Մեկ հանդիպում";
-"meetings_few" = "$1 հանդիպում";
 "meetings_many" = "$1 հանդիպում";
 "meetings_other" = "$1 հանդիպում";
-
 "open_new_group" = "Նոր խումբ բացել";
 "open_group_desc" = "Չե՞ք կարող խումբ գտնել, բացեք ձերը․․․";
 "search_group" = "Խմբի որոնում";
@@ -353,21 +296,15 @@
 "upload_photo" = "Վերբեռնել լուսանկար";
 "photo" = "Լուսանկար";
 "upload_button" = "Վերբեռնել";
-
 "open_original" = "Բացել օրիգինալը";
-
 "avatar_album" = "Էջի լուսանկարները";
 "wall_album" = "Պատի լուսանկարները";
-
 "albums_zero" = "Ոչ մի ալբոմ չկա";
 "albums_one" = "Մեկ ալբոմ";
-"albums_few" = "$1 ալբոմ";
 "albums_many" = "$1 ալբոմ";
 "albums_other" = "$1 ալբոմ";
-
 "albums_list_zero" = "Դուք ոչ մի ալբոմ չունեք";
 "albums_list_one" = "Դուք ունեք մեկ ալբոմ";
-"albums_list_few" = "Դուք ունեք $1 ալբոմ";
 "albums_list_many" = "Դուք ունեք $1 ալբոմ";
 "albums_list_other" = "Դուք ունեք $1 ալբոմ";
 
@@ -385,18 +322,13 @@
 "note_preview_warn" = "Սա ընդամենը նախադիտում է";
 "note_preview_warn_details" = "Պահպանելուց հետո նշումները կարող են այլ տեսք ունենալ։ Ու մեկ էլ, այդքան հաճախ նախադիտում մի արեք։";
 "note_preview_empty_err" = "Ինչու՞ նախադիտել նշումը առանց վերնագրի կամ բովանդակության։";
-
 "edited" = "Խմբագրված է";
-
 "notes_zero" = "Ոչ մի նշում";
 "notes_one" = "Մեկ նշում";
-"notes_few" = "$1 նշում";
 "notes_many" = "$1 նշում";
 "notes_other" = "$1 նշում";
-
 "notes_list_zero" = "Ոչ մի նշում չի գտնվել";
 "notes_list_one" = "Գտնվեց մեկ նշում";
-"notes_list_few" = "Գտնվեց $1 նշում";
 "notes_list_many" = "Գտնվեց $1 նշում";
 "notes_list_other" = "Գտնվեց $1 նշում";
 
@@ -414,14 +346,11 @@
 "my_feedback" = "Իմ պատասխանները";
 "my_settings" = "Իմ կարգավորումները";
 "bug_tracker" = "Բագ–թրեքեր";
-
 "menu_login" = "Մուտք";
 "menu_registration" = "Գրանցում";
 "menu_help" = "Օգնություն";
-
 "menu_logout" = "Դուրս գալ";
 "menu_support" = "Օգնություն";
-
 "header_home" = "գլխավոր";
 "header_groups" = "խմբեր";
 "header_people" = "մարդիկ";
@@ -429,12 +358,9 @@
 "header_help" = "օգնություն";
 "header_log_out" = "դուրս գալ";
 "header_search" = "Որոնում";
-
 "header_login" = "Մուտք";
 "header_registration" = "Գրանցում";
-
 "left_menu_donate" = "Աջակցել";
-
 "footer_about_instance" = "հոսքի մասին";
 "footer_blog" = "բլոգ";
 "footer_help" = "օգնություն";
@@ -450,37 +376,27 @@
 "privacy" = "Գաղտնիություն";
 "interface" = "Արտաքին տեսք";
 "security" = "Անվտանգություն";
-
 "profile_picture" = "Էջի նկար";
-
 "picture" = "Նկար";
-
 "change_password" = "Փոխել գաղտնաբառը";
 "old_password" = "Հին գաղտնաբառը";
 "new_password" = "Նոր գաղտնաբառը";
 "repeat_password" = "Կրկնեք գաղտնաբառը";
-
 "avatars_style" = "Ավատարի տեսք";
 "style" = "Ոճ";
-
 "default" = "Սովորական";
-
 "arbitrary_avatars" = "Կամայական";
 "cut" = "Կտրվածք";
 "round_avatars" = "Շրջանաձև";
-
 "apply_style_for_this_device" = "Հաստատել տեսքը միայն այս սարքի համար";
-
 "search_for_groups" = "Խմբերի որոնում";
 "search_for_people" = "Մարդկանց որոնում";
 "search_button" = "Որոնել";
 "search_placeholder" = "Գրեք ցանկացած անուն, անվանում կամ բառ";
 "results_zero" = "Ոչ մի արդյունք";
 "results_one" = "Մեկ արդյունք";
-"results_few" = "$1 արդյունք";
 "results_many" = "$1 արդյունք";
 "results_other" = "$1 արդյունք";
-
 "privacy_setting_access_page" = "Ով կարող է տեսնել ինտերնետում իմ էջը";
 "privacy_setting_read_info" = "Ում է տեսանելի իմ էջի հիմնական ինֆորմացիան";
 "privacy_setting_see_groups" = "Ով կարող է տեսնել իմ խմբերը և հանդիպումները";
@@ -499,7 +415,6 @@
 "privacy_value_only_me" = "Միայն ես";
 "privacy_value_only_me_dative" = "Միայն ինձ";
 "privacy_value_nobody" = "Ոչ ոք";
-
 "your_email_address" = "Ձեր էլեկտրոնային հասցեն";
 "your_page_address" = "Ձեր էջի հասցեն";
 "page_address" = "Էջի հասցեն";
@@ -510,7 +425,6 @@
 "you_can_also" = "Դուք նաև կարող եք";
 "delete_your_page" = "ջնջել ձեր էջը";
 "delete_album" = "ջնջել ալբոմը";
-
 "ui_settings_interface" = "Ինտերֆեյս";
 "ui_settings_sidebar" = "Ձախ մենյու";
 "ui_settings_rating" = "Վարկանիշ";
@@ -524,12 +438,9 @@
 "ui_settings_view_of_posts_old" = "Հին";
 "ui_settings_view_of_posts_microblog" = "Միկրոբլոգ";
 "ui_settings_main_page" = "Գլխավոր էջ";
-
 "additional_links" = "Հավելյալ հղումներ";
 "ad_poster" = "Գովազդային վահանակ";
-
 "email_change_confirm_message" = "Որպեսզի Ձեր փոփոխությունը կատարվի, հաստատե՛ք Ձեր նոր էլեկտրոնային հասցեն։ Այնտեղ մենք ուղարկել ենք հրահանգները։";
-
 "profile_deactivate" = "Էջի հեռացում";
 "profile_deactivate_button" = "Ջնջել էջը";
 "profile_deactivate_header" = "Մենք ցավում ենք որ Դուք ցանկանում եք ջնջել ձեր էջը։ Դրա համար Դուք կարող եք նշել հեռացման պատճառը և Ձեր կարծիքը այդ առումով։ Մեզ համար կարևոր է Ձեր կարծիքը, որպեսզի դարձնենք կայքը ավելի լավը։";
@@ -545,16 +456,12 @@
 "profile_deactivate_reason_5" = "Իմ էջը չեն մեկնաբանում";
 "profile_deactivate_reason_5_text" = "Ինձ այստեղ շան տեղ դնող չկա ու ես տխրում եմ։ Դուք կզղջաք որ ես հեռացա...";
 "profile_deactivate_reason_6" = "Այլ պատճառ";
-
 "profile_deactivated_msg" = "Ձեր էջը <b>ջնջված է</b>։<br/><br/>Եթե Դուք ուզենաք նորից օգտվել Ձեր էջով, կարող եք <a href='/settings/reactivate'>ապաակտիվացնել այն</a> մինչև $1:";
 "profile_deactivated_status" = "Էջը ջնջված է";
 "profile_deactivated_info" = "Օգտատիրոջ էջը հեռացվել է։<br/>Մանրամասն տեղեկատվությունը բացակայում է։";
-
 "share_with_friends" = "Պատմել ընկերներին";
-
 "end_all_sessions" = "Դուրս գալ բոլոր սեսսիաներից";
 "end_all_sessions_description" = "Եթե ցանկանում եք դուրս գալ $1–ից ամեն դեվայսից, սեղմե՛ք ներքևի կոճակը";
-
 "end_all_sessions_done" = "Բոլոր սեսսիաները նետված են, ներառյալ բջջային հավելվածները";
 
 /* Two-factor authentication */
@@ -563,25 +470,21 @@
 "two_factor_authentication_disabled" = "Ապահովում է հուսալի պաշտպանում ջարդումից․ անհրաժեշտ է ներմուծել 2FA-ով ստացված կոդը։";
 "two_factor_authentication_enabled" = "Երկքայլ աուտենտիֆիկացիան միացված է։ Ձեր էջը պաշտպանված է։";
 "two_factor_authentication_login" = "Ձեր մոտ առկա է երկքայլ աուտենտիֆիկացիան։ Ներմուծե՛ք հավելվածից ստացած կոդը։";
-
 "two_factor_authentication_settings_1" = "Երկքայլ աուտենտիֆիկացիան TOTP-ի միջոցով կարելի է օգտագործել անգամ առանձ ինտերնետի առկայության։ Դրա համար պետք է ներբեռնել հատուկ հավելված կոդերի գեներացիայի համար, օրինակ, Անդրոիդի և iOS-ի համար ՝ <b>Google Authenticator</b>, կամ էլ <b>Aegis և andOTP</b> ՝ Անդրոիդի համար։ Համոզվե՛ք որ Ձեր հեռախոսի վրա ճիշտ ամսաթիվ է տեղադրված։";
 "two_factor_authentication_settings_2" = "Սկանավորե՛ք տրված QR-կոդը երկքայլ աուտենտիֆիկացիայի համար նախատեսված հավելվածի միջոցով․";
 "two_factor_authentication_settings_3" = ", կամ էլ ինքնուրույն ներմուծե՛ք գաղտնի բանալին․ <b>$1</b>.";
 "two_factor_authentication_settings_4" = "Հիմա մուտքագրե՛ք հավելվածի կողմից տրված կոդը և ձեր էջի գաղտնաբառը, որպեսզի մենք կարողանանք հաստատել, որ դա դուք եք։";
-
 "connect" = "Կապել";
 "enable" = "Միացնել";
 "disable" = "Անջատել";
 "code" = "Կոդ";
 "2fa_code" = "2FA կոդ";
-
 "incorrect_password" = "Սխալ գաղտնաբառ";
 "incorrect_code" = "Սխալ կոդ";
 "incorrect_2fa_code" = "Սխալ կոդ երկքայլ աուտենտիֆիկացիայի համար";
 "two_factor_authentication_enabled_message" = "Երկքայլ աուտենտիֆիկացիան միացված է";
 "two_factor_authentication_enabled_message_description" = "Ձեր էջը ջարդելը հիմա բարդ գործ է․․․ Խորհուրդ ենք տալիս ներբեռնել <a href='javascript:viewBackupCodes()'>ռեզերվային կոդերը</a>";
 "two_factor_authentication_disabled_message" = "Երկքայլ աուտենտիֆիկացիան անջատված է";
-
 "view_backup_codes" = "Դիտել ռեզերվային կոդերը";
 "backup_codes" = "Մուտքի հաստատման ռեզերվային կոդեր";
 "two_factor_authentication_backup_codes_1" = "Ռեզերվային կոդերը թույլ են տալիս հաստատել մուտքը, երբ դուք չունեք հասանելիություն հեռախոսին, օրինակ՝ ճանապարհորդելիս կամ աշխատանքի վայրում։";
@@ -602,18 +505,14 @@
 "video_uploaded" = "Վերբեռնված է";
 "video_updated" = "Թարմացված է";
 "video_link_to_yt" = "YouTube-յան հղում";
-
 "info_name" = "Անվանում";
 "info_description" = "Նկարագրություն";
 "info_uploaded_by" = "Վերբեռնել է";
 "info_upload_date" = "Վերբեռնման ամսաթիվ";
-
 "videos_zero" = "Ոչ մի տեսանյութ չկա";
 "videos_one" = "Մեկ տեսանյութ";
-"videos_few" = "$1 տեսանյութ";
 "videos_many" = "$1 տեսանյութ";
 "videos_other" = "$1 տեսանյութ";
-
 "view_video" = "Դիտում";
 
 /* Notifications */
@@ -621,7 +520,6 @@
 "feedback" = "Հետադարձ կապ";
 "unread" = "Չկարդացված";
 "archive" = "Արխիվ";
-
 "notifications_like" = "$1 –ը գնահատել է ձեր $2գրությունը$3 ($4)";
 "notifications_repost" = "$1 –ը կիսվել է ձեր $2գրությամբ$3 ($4)";
 "notifications_comment_under" = "$1 –ը թողել է մեկնաբանություն $2";
@@ -631,13 +529,11 @@
 "notifications_under_video" = "ձեր $3վիդեոն$4";
 "notifications_post" = "$1 թողել է $2գրություն$3 ձեր պատի վրա․ $4";
 "notifications_appoint" = "$1 –ը նշանակել է ձեզ որպես $2 խմբի ղեկավար";
-
 "nt_liked_yours" = "դուր է եկել ձեր";
 "nt_shared_yours" = "կիսվել է ձեր";
 "nt_commented_yours" = "թողել է մեկնաբանություն";
 "nt_written_on_your_wall" = "գրել է ձեր պատին";
 "nt_made_you_admin" = "նշանակել է ձեզ խմբի գլխավոր";
-
 "nt_from" = "ից";
 "nt_yours_adjective" = "ձեր";
 "nt_yours_feminitive_adjective" = "ձեր";
@@ -655,13 +551,11 @@
 "time_minutes_ago" = "$1 րոպե առաջ";
 "time_today" = "այսօր";
 "time_yesterday" = "երեկ";
-
 "points" = "Ձայն";
 "points_count" = "ձայն";
 "on_your_account" = "ձեր հաշվում";
 "top_up_your_account" = "Լիցքավորել բալանսը";
 "you_still_have_x_points" = "Դուք ունեք <b>$1</b> չօգտագործված ձայն։";
-
 "vouchers" = "Վաուչերներ";
 "have_voucher" = "Կա վաուչեր";
 "voucher_token" = "Վաուչերի կոդ";
@@ -676,52 +570,39 @@
 "deactivate" = "Դեակտիվացնել";
 "usages_total" = "Օգտագործումների քանակ";
 "usages_left" = "Մնացին օգտագործումներ";
-
 "points_transfer_dialog_header_1" = "Դուք կարող եք ուղարկել ձայները և նվերների մի մասը այլ մարդուն։";
 "points_transfer_dialog_header_2" = "Ձեր ներկայիս բալանսը․ ";
-
 "points_amount_one" = "Մեկ ձայն";
-"points_amount_few" = "$1 ձայն";
 "points_amount_many" = "$1 ձայն";
 "points_amount_other" = "$1 ձայն";
-
 "transfer_poins" = "Ձայների փոխանցում";
 "transfer_poins_button" = "Փոխանցել ձայներ";
 "also_you_can_transfer_points" = "Նաև դուք կարող եք <a href=\"javascript:showCoinsTransferDialog($1, '$2')\">փոխանցել ձայներ</a> այլ մարդուն։";
-
 "transferred_to_you" = "փոխանցեց Ձեզ";
-
 "transfer_trough_ton" = "Լիցքավորել TON-ի միջոցով";
 "transfer_ton_contents" = "Դուք կարող եք լիցքավորել Ձեր բալանսը TON կրիպտոարժույթի միջոցով։ Դրա համար պետք է սկանավորել QR կոդը Tonkeeper հավելվածի օգնությամբ, կամ էլ ձեռքով ուղարկել TON-ը ռեկվիզիտներին։ Մի քանի րոպեներիընթացքում Ձեզ մոտ կավելանա կոնկրետ ձայների քանակ։";
 "transfer_ton_address" = "<b>Դրամապանակի հասցե:</b> $1<br/><b>Նամակի պարունակություն:</b> $2";
 "transfer_ton_currency_per_ton" = "$1 TON";
-
 "receiver_address" = "Ստացողի հասցե";
 "coins_count" = "Ձայների քանակ";
 "message" = "Նամակ";
-
 "failed_to_tranfer_points" = "Չհաջողվե՛ց փոխանցել ձայները";
-
 "points_transfer_successful" = "Դուք հաջողությամբ <b>$1</b>-ին փոխանցեցիք <b><a href=\"$2\">$3</a></b>.";
 "not_all_information_has_been_entered" = "Ոչ բոլոր ինֆորմացիան է ներմուծված";
 "negative_transfer_value" = "Կներեք, լավ տղություն չի ուրիշից ձայներ գողանալը։";
 "message_is_too_long" = "Նամակը շատ երկար է։";
 "receiver_not_found" = "Ստացողը չի գտնվել։";
 "you_dont_have_enough_points" = "Դուք չունե՛ք բավական ձայն։";
-
 "increase_rating" = "Բարձրացնել վարկանիշը";
 "increase_rating_button" = "Բարձրացնել";
 "to_whom" = "Ում";
 "increase_by" = "Բարձրացնել";
 "price" = "Արժողություն";
-
 "you_have_unused_votes" = "Ձեր մոտ $1 չօգտագործված ձայն կա հաշվի վրա։";
 "apply_voucher" = "Կիրառել վաուչեր";
-
 "failed_to_increase_rating" = "Չհաջողվե՛ց բարձրացնել վարկանիշը";
 "rating_increase_successful" = "Դուք հաջողությամբ բարձրացրեցիք Ձեր վարկանիշը <b><a href=\"$1\">$2</a></b> <b>$3%</b>-ով։";
 "negative_rating_value" = "Կներե՛ք, մենք չենք կարող գողանալ ուրիշի վարկանիշը։";
-
 "increased_your_rating_by" = "բարձրացրել է վարկանիշը";
 
 /* Gifts */
@@ -730,31 +611,24 @@
 "gifts" = "Նվերներ";
 "gifts_zero" = "Նվերներ չկան";
 "gifts_one" = "Մեկ նվեր";
-"gifts_few" = "$1 նվեր";
 "gifts_many" = "$1 նվեր";
 "gifts_other" = "$1 նվեր";
 "gifts_left" = "Մնաց $1 նվեր";
 "gifts_left_one" = "Մնաց մեկ նվեր";
-"gifts_left_few" = "$1 նվեր մնաց";
 "gifts_left_many" = "$1 նվեր մնաց";
 "gifts_left_other" = "$1 նվեր մնաց";
-
 "send_gift" = "Ուղարկել նվեր";
-
 "gift_select" = "Ընտրել նվեր";
 "collections" = "Հավաքածուներ";
 "confirm" = "Հաստատում";
 "as_anonymous" = "Գաղտնի";
 "gift_your_message" = "Ձեր նամակը";
-
 "free_gift" = "Անվճար";
 "coins" = "Ձայներ";
 "coins_zero" = "0 ձայն";
 "coins_one" = "Մեկ ձայն";
-"coins_few" = "$1 ձայն";
 "coins_many" = "$1 ձայն";
 "coins_other" = "$1 ձայն";
-
 "users_gifts" = "Նվերներ";
 
 /* Apps */
@@ -766,12 +640,10 @@
 "installed_apps" = "Տեղադրված հավելվածները";
 "own_apps" = "Կառավարում";
 "own_apps_alternate" = "Իմ այլ հավելվածները";
-
 "app_play" = "միացնել";
 "app_uninstall" = "անջատել";
 "app_edit" = "խմբագրել";
 "app_dev" = "Մշակող";
-
 "create_app" = "Ստեղծել հավելված";
 "edit_app" = "Խմբագրել հավելվածը";
 "new_app" = "Նոր հավելված";
@@ -786,17 +658,14 @@
 "app_withdrawal" = "Միջոցների դուրս բերում";
 "app_withdrawal_empty" = "Կներեք, դատարկությունը չհաջողվեց դուրս բերել։";
 "app_withdrawal_created" = "$1 ձայնի դուրս բերման հայտը գրանցված է։ Սպասեք հաշվառմանը։";
-
 "appjs_payment" = "Գնման վճարում";
 "appjs_payment_intro" = "Դուք պատրաստվում եք հավելվածի գնումը վճարել";
 "appjs_order_items" = "Գնման ցուցակ";
 "appjs_payment_total" = "Վճարման ընդհանուր գին";
 "appjs_payment_confirm" = "Վճարել";
 "appjs_err_funds" = "Չհաջողվե՛ց վճարել գնումը անբավարար միջոցների համար։";
-
 "appjs_wall_post" = "Հրապարակել գրությունտը";
 "appjs_wall_post_desc" = "ցանկանում է Ձեր պատին գրություն թողնել";
-
 "appjs_sperm_friends" = "ձեր ընկերներին";
 "appjs_sperm_friends_desc" = "ավելացնել օգտատերերին որպես ընկերներ և կարդալ Ձեր գրությունները";
 "appjs_sperm_wall" = "ձեր պատին";
@@ -807,13 +676,11 @@
 "appjs_sperm_groups_desc" = "դիտել Ձեր խմբերի ցուցակն ու բաժանորդագրել դեպի այլ խմբեր";
 "appjs_sperm_likes" = "լայքելու ֆունկցիոնալին";
 "appjs_sperm_likes_desc" = "տեղադրել և հանել \"Դուր գալու\" ռեակցիաները ձայնագրություններից";
-
 "appjs_sperm_request" = "Հասանելիության հարցում";
 "appjs_sperm_requests" = "հասանելիություն է խնդրում";
 "appjs_sperm_can" = "Հավելվածը կարող է";
 "appjs_sperm_allow" = "Թույլատրել";
 "appjs_sperm_disallow" = "Չթույլատրել";
-
 "app_uninstalled" = "Հավելվածն անջատված է";
 "app_uninstalled_desc" = "Այն Ձեր անունից էլ չի կարող կատարել գործողություններ։";
 "app_err_not_found" = "Հավելվածը չի գտնվել";
@@ -838,14 +705,11 @@
 "support_status_2" = "Փակ է";
 "support_greeting_hi" = "Բարև ձեզ, $1!";
 "support_greeting_regards" = "Հարգանքով, <br/>$1 -ի աջակցման թիմ։";
-
 "support_faq" = "Հաճախ տրվող հարցեր";
 "support_list" = "Դիմումների ցուցակ";
 "support_new" = "Նոր դիմում";
-
 "support_new_title" = "Գրե՛ք ձեր դիմումի վերնագիրը";
 "support_new_content" = "Նկարագրե՛ք խնդիրը կամ առաջարկը";
-
 "support_rate_good_answer" = "Սա լավ պատասխան է";
 "support_rate_bad_answer" = "Սա վատ պատասխան է";
 "support_good_answer_user" = "Դուք թողել եք դրական ակնարկ։";
@@ -855,20 +719,14 @@
 "support_rated_good" = "Դուք թողել եք դրական ակնարկ պատասխանի մասին։";
 "support_rated_bad" = "Դուք թողել եք բացասական ակնարկ պատասխանի մասին։";
 "wrong_parameters" = "Հարցման սխալ կարգավորումներ";
-
 "fast_answers" = "Արագ պատասխաններ";
-
 "comment" = "Մեկնաբանություն";
 "sender" = "Ուղարկող";
-
 "author" = "Հեղինակ";
-
 "you_have_not_entered_text" = "Դուք չեք գրել տեքստ";
 "you_have_not_entered_name_or_text" = "Դուք անուն կամ տեքստ չեք գրել";
-
 "ticket_changed" = "Տոմսը փոփոխված է";
 "ticket_changed_comment" = "Փոփոխությունները ուժի մեջ կմտնեն մի քանի վայրկյանից։";
-
 "banned_in_support_1" = "Կներե՛ք, <b>$1</b>, բայց հիմա Ձեզ թույլատրված չէ դիմումներ ստեղծել։";
 "banned_in_support_2" = "Դրա պատճառաբանությունը սա է․ <b>$1</b>։ Ցավո՛ք, այդ հնարավորությունը մենք Ձեզնից վերցրել ենք առհավետ։";
 
@@ -903,37 +761,28 @@
 /* Messages */
 
 "all_messages" = "Բոլոր նամակները";
-
 "search_messages" = "Նամակների որոնում";
 "no_messages" = "Դեռ ոչ մեկ Ձեզ չի գրել․․․ դեռ․․․";
 "messages_blocked" = "Դուք չե՛ք կարող ուղարկել այս օգտատերին նամակ, քանի որ նա սահմանափակել է իրեն գրող անձանց քանակը։";
 "enter_message" = "Գրեք նամակը";
-
 "messages_error_1" = "Նամակը չի ուղարկվել";
 "messages_error_1_description" = "Այս նամակը ուղարկելու ժամանակ տեղի է ունեցել ընդհանրացված սխալ...";
 
 /* Discussions */
 
 "discussions" = "Քննարկումներ";
-
 "messages_one" = "Մեկ նամակ";
-"messages_few" = "$1 նամակ";
 "messages_many" = "$1 նամակ";
 "messages_other" = "$1 նամակ";
-
 "topic_messages_count_zero" = "Թեմայում նամակ չկա";
 "topic_messages_count_one" = "Թեմայում մեկ նամակ է";
-"topic_messages_count_few" = "Թեմայում $1 նամակ կա";
 "topic_messages_count_many" = "Թեմայում $1 նամակ կա";
 "topic_messages_count_other" = "Թեմայում $1 նամակ կա";
-
 "replied" = "պատասխանել է";
 "create_topic" = "Ստեղծել թեմա";
-
 "new_topic" = "Նոր թեմա";
 "title" = "Անվանում";
 "text" = "Տեքստ";
-
 "view_topic" = "Թեմայի դիտարկում";
 "edit_topic_action" = "Խմբագրել թեման";
 "edit_topic" = "Թեմայի խմբագրում";
@@ -941,19 +790,13 @@
 "pin_topic" = "Ամրացնել թեման";
 "close_topic" = "Փակել թեման";
 "delete_topic" = "Ջնջել թեման";
-
 "topics_one" = "Մեկ թեմա";
-"topics_few" = "$1 թեմա";
 "topics_many" = "$1 թեմա";
 "topics_other" = "$1 թեմա";
-
 "created" = "Ստեղծված է";
-
 "everyone_can_create_topics" = "Բոլորը կարող են թեմաներ սարքել";
 "display_list_of_topics_above_wall" = "Ցուցադրել պատի տակ թեմաների ցուցակը";
-
 "topic_changes_saved_comment" = "Թարմացված անվանումն ու կարգավորումները կհայտնվեն թեմայի էջում։";
-
 "failed_to_create_topic" = "Չհաջողվեց թեմա ստեղծել";
 "failed_to_change_topic" = "Չհաջողվեց խմբագրել թեման";
 "no_title_specified" = "Անվանումը նշված չէ";
@@ -966,10 +809,8 @@
 "error_4" = "Օգտատերը գոյություն չունի";
 "information_-1" = "Օպերացիան հաջողությամբ կատարված է";
 "information_-2" = "Մուտքը հաջողությամբ իրականացված է";
-
 "no_data" = "Տվյալ չկա";
 "no_data_description" = "Այստեղ տվյալները բացակայում են";
-
 "error" = "Սխալ";
 "error_shorturl" = "Այս կարճ հասցեն արդեն զբաղված է";
 "error_segmentation" = "Սեգմենտացիայի սխալ";
@@ -978,55 +819,38 @@
 "error_new_password" = "Նոր գաղտնաբառերը չեն համընկնում";
 "error_shorturl_incorrect" = "Կարճ հասցեն ունի սխալ ֆորմատ";
 "error_repost_fail" = "Չհաջողվեց կիսվել գրության հետ";
-
 "forbidden" = "Հասանելիության սխալ";
 "forbidden_comment" = "Այս օգտատիրոջ գաղտնիության կարգավորումները ձեզ թույլ չեն տալիս դիտել օգտատերի էջը։";
-
 "changes_saved" = "Փոփոխությունները պահպանված են";
 "changes_saved_comment" = "Նոր տվյալները կհայտնվեն ձեր էջում";
-
 "photo_saved" = "Լուսանկարը պահպանված է";
 "photo_saved_comment" = "Նոր նկարը կհայտնվի ձեր էջում";
-
 "shared_succ" = "Գրությունը կհայտնվի ձեր պատում։ Սեղմե՛ք ծանուցման վրա որպեսզի հայտնվեք այնտեղ։";
-
 "invalid_email_address" = "Սխալ E-Mail հասցե";
 "invalid_email_address_comment" = "E-Mail-ը, որը դուք ներմուծել եք, սխալ է։";
-
 "invalid_real_name" = "Խնդրում ենք օգտագործել իրական անուններ։ Այդպես Ձեր թայֆին ավելի հեշտ կլինի Ձեզ գտնել։";
-
 "invalid_telegram_name" = "Սխալ Telegram-ի օգտատիրոջ անուն";
 "invalid_telegram_name_comment" = "Դուք սխալ Telegram-ի օգտատեր եք նշել։";
-
 "invalid_birth_date" = "Սխալ ծննդյան ամսաթիվ";
 "invalid_birth_date_comment" = "Ծննդյան օրը, որը դուք նշել եք, ոչ կորրեկտ Է։";
-
 "token_manipulation_error" = "Տոկենի մանիպուլյացիայի խնդիր";
 "token_manipulation_error_comment" = "Տոկենը սպառված է կամ անվավեր։";
-
 "profile_changed" = "Պրոֆիլը փոխված է";
 "profile_changed_comment" = "Ձեր ներկայիս գաղտնաբառը փոփոխված է։";
 "profile_not_found" = "Օգտատերը չի գտնվել։";
 "profile_not_found_text" = "Էջը ջնջված է կամ դեռ չի ստեղծվել։";
-
 "suspicious_registration_attempt" = "Գրանցման կասկածելի փորձ";
 "suspicious_registration_attempt_comment" = "Դուք մի տեսակ փորձել եք սխալ տեղից գրանցվել։";
-
 "rate_limit_error" = "Հե՛յ, կարող ա՞ խառնել ես։";
 "rate_limit_error_comment" = "Ա՛յ $1, չի՛ կարելի այսքան հաճախ սպամ հրապարակել։ Հո դու Կառլենը չե՞ս։ Բացառության կոդ․ $2։";
-
 "not_enough_permissions" = "Այդքան իրավասություն չկա";
 "not_enough_permissions_comment" = "Դուք բավական իրավասություն չունեք այս գործողությունը կատարելու համար։";
-
 "login_required_error" = "Պահանջվում է մուտք գործել";
 "login_required_error_comment" = "Այս էջը դիտելու համար պետք է մուտք գործել դեպի կայք։";
-
 "captcha_error" = "Սխալ են գրված սիմվոլները";
 "captcha_error_comment" = "Խնդրում ենք համոզվել, որ ճիշտ եք ներմուծել կապտչայի սիմվոլները։";
-
 "failed_to_publish_post" = "Չհաջողվե՛ց հրապարակել փոսթը";
 "failed_to_delete_post" = "Չհաջողվե՛ց ջնջել փոսթը";
-
 "media_file_corrupted" = "Մեդիաֆայլը վնասված է։";
 "media_file_corrupted_or_too_large" = "Մեդիաֆայլը վնասված է կամ իր չափը շատ մեծ է։";
 "post_is_empty_or_too_big" = "Փոսթը դատարկ է կամ շատ մեծ։";
@@ -1046,7 +870,6 @@
 /* Admin panel */
 
 "admin" = "Ադմին-վահանակ";
-
 "admin_ownerid" = "Օգտատիրոջ ID";
 "admin_author" = "Հեղինակ";
 "admin_name" = "Անուն";
@@ -1068,14 +891,11 @@
 "admin_loginas" = "Մուտք գործել ինչպես...";
 "admin_commonsettings" = "Ընդհանուր կարգավորումներ";
 "admin_langsettings" = "Լեզվից կախված կարգավորումներ";
-
 "admin_tab_main" = "Գլխավոր";
 "admin_tab_ban" = "Բլոկավորում";
 "admin_tab_followers" = "Մասնակիցներ";
-
 "admin_overview" = "Դիտում";
 "admin_overview_summary" = "Ամփոփում";
-
 "admin_content" = "Օգտատիրային կոնտենտ";
 "admin_user_search" = "Օգտատերերի որոնում";
 "admin_user_online" = "Օնլայն վիճակ";
@@ -1084,7 +904,6 @@
 "admin_user_online_deceased" = "Հանգուցյալ";
 "admin_club_search" = "Խմբերի որոնում";
 "admin_club_excludeglobalfeed" = "Չ՛ցույց տալ գլոբալ ժապավենում";
-
 "admin_services" = "Վճարովի ծառայություններ";
 "admin_newgift" = "Նոր նվեր";
 "admin_price" = "Գին";
@@ -1104,21 +923,17 @@
 "admin_voucher_status" = "Կարգավիճակ";
 "admin_voucher_status_opened" = "ակտիվ է";
 "admin_voucher_status_closed" = "վերջացել է";
-
 "admin_settings" = "Կարգավորումներ";
 "admin_settings_tuning" = "Ընդհանուր";
 "admin_settings_appearance" = "Արտաքին տեսք";
 "admin_settings_security" = "Անվտանգություն";
 "admin_settings_integrations" = "Ինտեգրացիաներ";
 "admin_settings_system" = "Համակարգ";
-
 "admin_about" = "OpenVK-ի մասին";
 "admin_about_version" = "Վերսիա";
 "admin_about_instance" = "Հոսք";
-
 "admin_commerce_disabled" = "Կոմմերցիան անջատված է համակարգային ադմինիստրատորի կողմից";
 "admin_commerce_disabled_desc" = "Վաուչերների և նվերների կարգավորումները կպահպանվեն, բայց ոչ մի ազդեցություն չեն ունենա։";
-
 "admin_banned_links" = "Արգելափակված հղումներ";
 "admin_banned_link" = "Հղում";
 "admin_banned_domain" = "Դոմեն";
@@ -1139,36 +954,25 @@
 /* About */
 
 "about_openvk" = "OpenVK-ի մասին";
-
 "about_this_instance" = "Այս հոսքի մասին";
 "rules" = "Կանոններ";
 "most_popular_groups" = "Ամենահայտնի խմբերը";
 "on_this_instance_are" = "Այս հոսքում․";
 "about_links" = "Հղումներ";
 "instance_links" = "Հոսքերի հղումներ․";
-
 "about_users_one" = "<b>Մեկ</b> օգտատեր";
-"about_users_few" = "<b>$1</b> օգտատեր";
 "about_users_many" = "<b>$1</b> օգտատեր";
 "about_users_other" = "<b>$1</b> օգտատեր";
-
 "about_online_users_one" = "<b>Մեկ</b> օգտատեր է ցանցի մեջ";
-"about_online_users_few" = "<b>$1</b> օգտատեր է ցանցի մեջ";
 "about_online_users_many" = "<b>$1</b> օգտատեր է ցանցի մեջ";
 "about_online_users_other" = "<b>$1</b> օգտատեր է ցանցի մեջ";
-
 "about_active_users_one" = "<b>Մեկ</b> ակտիվ օգտատեր";
-"about_active_users_few" = "<b>$1</b> ակտիվ օգտատեր";
 "about_active_users_many" = "<b>$1</b> ակտիվ օգտատեր";
 "about_active_users_other" = "<b>$1</b> ակտիվ օգտատեր";
-
 "about_groups_one" = "<b>Մեկ</b> խումբ";
-"about_groups_few" = "<b>$1</b> խումբ";
 "about_groups_many" = "<b>$1</b> խումբ";
 "about_groups_other" = "<b>$1</b> խումբ";
-
 "about_wall_posts_one" = "<b>Մեկ</b> գրություն պատերի վրա";
-"about_wall_posts_few" = "<b>$1</b> գրություն պատերի վրա";
 "about_wall_posts_many" = "<b>$1</b> գրություն պատերի վրա";
 "about_wall_posts_other" = "<b>$1</b> գրություն պատերի վրա";
 
@@ -1181,7 +985,6 @@
 "edit_action" = "Փոփոխել";
 "transfer" = "Փոխանցել";
 "close" = "Փակել";
-
 "warning" = "Ուշադրություն";
 "question_confirm" = "Այս գործողությունը էլ երբեք հետ չի բերվի։ Դուք վստա՞հ եք որ ուզում եք շարունակել։";
 
@@ -1209,5 +1012,4 @@
 "section_maintenance" = "Բաժինը անհասանելի է";
 "undergoing_global_maintenance" = "Ցավոք սրտի, հիմա հոսքը փակված է տեխնիկական աշխատանքներ անցկացնելու համար։ Մենք արդեն աշխատում ենք խնդիրները շտկելու ուղղությամբ։ Խնդրում ենք այցելել մի քիչ ուշ։";
 "undergoing_section_maintenance" = "Ցավոք սրտի, <b>$1</b> բաժինը ժամանակավորապես անհասանելի է։ Մենք արդեն աշխատում ենք խնդիրները շտկելու ուղղությամբ։ Խնդրում ենք այցելել մի քիչ ուշ։";
-
 "topics" = "Թեմաներ";

@@ -1,5 +1,4 @@
 "__locale" = "ru_UDM.utf8;ru_UDM.UTF-8;Udm";
-"__WinEncoding" = "Windows-1251";
 
 /* Main page */
 
@@ -12,35 +11,28 @@
 "password" = "Пароль";
 "registration" = "Регистрация";
 "forgot_password" = "Вунэтоно пароль?";
-
 "login_failed" = "Пырыса ӧз удалты";
 "invalid_username_or_password" = "Пользователь пароль ним яке мыдлань. <a href='/restore.pl'>Забыли пароль?</a>";
-
 "failed_to_register" = "Не удалось зарегистрироваться";
 "referral_link_invalid" = "Недействительный ссылка ӧтён.";
 "registration_disabled" = "Регистрация радлы отключена администратором.";
 "user_already_exists" = "Пользователь email сыӵе ини ӵош улӥськом.";
-
 "access_recovery" = "Восстановление доступа";
 "page_access_recovery" = "Восстановя доступ к странице";
 "access_recovery_info" = "Забыли пароль? Бугыръяське, тонэн ӵош тон мыным но келялозы валэктон восстановление email to юри сямен пырозы.";
 "access_recovery_info_2" = "Введите выль пароль. Все текущие сеансы будут приостановлены и токены доступа будут аннулированы.";
 "reset_password" = "Сбросить пароль";
 "2fa_code_2" = "Код двухфакторной аутентификации";
-
 "password_successfully_reset" = "Ваш пароль был успешно сброшен.";
 "password_reset_email_sent" = "Если вы зарегистрированы, вы получите инструкции на email.";
 "password_reset_error" = "Непредвиденная ошибка при сбросе пароля.";
 "password_reset_rate_limit_error" = "Нельзя делать это так часто, извините.";
-
 "registration_disabled_info" = "Регистрация отключена системным администратором. При возможности попросите приглашение у вашего знакомого, если он зарегистрирован на этом сайте.";
 "registration_closed" = "Регистрация закрыта.";
 "invites_you_to" = "<strong>$1</strong> приглашает вас в $2";
-
 "register_meta_desc" = "Зарегистрируйтесь в $1 прямо сейчас!";
 "register_referer_meta_title" = "$1 приглашает вас в $2!";
 "register_referer_meta_desc" = "Присоединяйтесь к $1 и множеству других пользователей в $2!";
-
 "users" = "Пользователи";
 
 /* Profile information */
@@ -74,15 +66,11 @@
 "deceased_person" = "Бам кышка адями";
 "none" = "отсутствует";
 "send" = "Ыстыны";
-
 "years_zero" = "0 ар";
 "years_one" = "1 ар";
-"years_few" = "$1 ар";
 "years_many" = "$1 ар";
 "years_other" = "$1 ар";
-
 "relationship" = "Семейное положение";
-
 "relationship_0" = "Ӧз быръе";
 "relationship_1" = "Кышнояськыны уг";
 "relationship_2" = "Пумиськизы";
@@ -92,9 +80,7 @@
 "relationship_6" = "Ог-огзэс яратыса";
 "relationship_7" = "Сложной вань";
 "relationship_8" = "В активном поиске";
-
 "politViews" = "Политической учке";
-
 "politViews_0" = "Ӧз быръе";
 "politViews_1" = "Индифферентные";
 "politViews_2" = "Коммунистические";
@@ -105,18 +91,14 @@
 "politViews_7" = "Монархические";
 "politViews_8" = "Ультраконсервативные";
 "politViews_9" = "Либертарианские";
-
 "contact_information" = "Тодэтъёс";
-
 "email" = "Электронная почта";
 "phone" = "Телефон";
 "telegram" = "Telegram";
 "personal_website" = "Личной сайт";
 "city" = "Город";
 "address" = "Адресъёсын";
-
 "personal_information" = "Личной информация";
-
 "interests" = "Тунсыкъёссэс";
 "favorite_music" = "Яратоно крезьгурез";
 "favorite_films" = "Яратоно фильмы";
@@ -124,16 +106,13 @@
 "favorite_books" = "Яратоно книги";
 "favorite_quotes" = "Яратоно цитаты";
 "information_about" = "Ачим сярысь";
-
 "updated_at" = "Обновлено $1";
-
 "user_banned" = "Жаляса верано луэ, мон луэ заблокировать пользователя  <b>$1</b>.";
 "user_banned_comment" = "Комментарий модератора:";
 
 /* Wall */
 
 "feed" = "Иворъёс";
-
 "post_writes_m" = "гожтыны";
 "post_writes_f" = "гожтыны";
 "post_writes_g" = "опубликовало";
@@ -153,17 +132,13 @@
 "x_out_of" = "$1 из";
 "wall_zero" = "записей ӧвӧл";
 "wall_one" = "одӥг запись";
-"wall_few" = "$1 записи";
 "wall_many" = "$1 записей";
 "wall_other" = "$1 записей";
 "publish_post" = "Ватсан записи";
 "view_other_comments" = "Учке мукет комментарий";
-
 "no_comments" = "Комментариев ӧвӧл";
-
 "all_news" = "Вань иворъёс";
 "posts_per_page" = "Количество записей на странице";
-
 "attachment" = "Вложение";
 "post_as_group" = "Нимысьтыз сообщество";
 "comment_as_group" = "Нимысьтыз сообщество";
@@ -179,7 +154,6 @@
 "attach_no_longer_available" = "Та вложение трос валантэмез.";
 "open_post" = "Усьты запись";
 "version_incompatibility" = "Та вложение возьматытэк ӧйлась. Оло, юри несовместимый версия OpenVK базаын бызиз.";
-
 "reply" = "Ответить";
 
 /* Friends */
@@ -195,22 +169,16 @@
 "incoming_req" = "Подписчики";
 "outcoming_req" = "Заявки";
 "req" = "Заявки";
-
 "friends_zero" = "Одӥг но эшъёс";
 "friends_one" = "$1 эшъёс";
-"friends_few" = "$1 эшъёс";
 "friends_many" = "$1 эшъёс";
 "friends_other" = "$1 эшъёс";
-
 "followers_zero" = "Одӥг но подписчика";
 "followers_one" = "$1 подписчик";
-"followers_few" = "$1 подписчика";
 "followers_many" = "$1 подписчиков";
 "followers_other" = "$1 подписчиков";
-
 "subscriptions_zero" = "Одӥг но подписки";
 "subscriptions_one" = "$1 подписка";
-"subscriptions_few" = "$1 подписки";
 "subscriptions_many" = "$1 подписок";
 "subscriptions_other" = "$1 подписок";
 
@@ -239,11 +207,8 @@
 "only_administrators" = "Только администраторы";
 "website" = "Сайт";
 "managed" = "Управляемые";
-
 "administrators_one" = "$1 администратор";
-"administrators_few" = "$1 администратора";
 "administrators_other" = "$1 администраторов";
-
 "role" = "Рольёсты";
 "administrator" = "Администратор";
 "promote_to_admin" = "Озь будэтӥз администратора";
@@ -258,26 +223,19 @@
 "group_display_only_creator" = "Возьмаса гинэ создателя группы";
 "group_display_all_administrators" = "Администратор вань возьмалэ";
 "group_dont_display_administrators_list" = "Номыр но уг возьматы";
-
 "group_changeowner_modal_title" = "Передача право кузё";
 "group_changeowner_modal_text" = "Сак! Тыныд право сётӥз кузёйыръёс пользователь $1. Та ужрад необратимый. Передача бере, тӥледлы кыле на администраторлэсь но, со капчиен быгатэ луыны дугдӥз.";
 "group_owner_setted" = "Выль кузё ($1) пусъемын йыг сообщество $2. Администратор сообществоын тыныд право сётӥз. Рольёсъя Тон кузёйыр берыктэмед потэ ке, пӧрмиз <a href='/support?act=new'>техническую поддержку сайта</a>.";
-
 "participants_zero" = "Но одӥг пыриськисьёс";
 "participants_one" = "Одӥг пыриськисьёс";
-"participants_few" = "$1 пыриськисьёс";
 "participants_many" = "$1 пыриськисьёс";
 "participants_other" = "$1 пыриськисьёс";
-
 "groups_zero" = "Но одӥг группа";
 "groups_one" = "Одӥг группаын";
-"groups_few" = "$1 группаын";
 "groups_many" = "$1 группаын";
 "groups_other" = "$1 группаын";
-
 "meetings_zero" = "Но одӥг пумиськон";
 "meetings_one" = "Одӥг пумиськон";
-"meetings_few" = "$1 пумиськон";
 "meetings_many" = "$1 пумиськон";
 "meetings_other" = "$1 пумиськон";
 
@@ -291,15 +249,11 @@
 "upload_photo" = "Туспуктэм etkileşimli";
 "photo" = "Туспуктэм";
 "upload_button" = "Etkileşimli";
-
 "open_original" = "Открыть оригинал";
-
 "avatar_album" = "Ӵош туспуктэм бам";
 "wall_album" = "Борддорысь туспуктэмъёсты";
-
 "albums_zero" = "Одӥг но альбом";
 "albums_one" = "Одӥг альбом";
-"albums_few" = "$1 альбома";
 "albums_many" = "$1 альбомов";
 "albums_other" = "$1 альбомов";
 
@@ -311,10 +265,8 @@
 "text_note" = "Содержание";
 "create_note" = "Кылдӥз заметку";
 "actions" = "Ужъёс";
-
 "notes_zero" = "Ни одной заметки";
 "notes_one" = "Одна заметка";
-"notes_few" = "$1 заметки";
 "notes_many" = "$1 заметок";
 "notes_other" = "$1 заметок";
 
@@ -332,14 +284,11 @@
 "my_feedback" = "Мынам Ответы";
 "my_settings" = "Мынам Настройки";
 "bug_tracker" = "Баг-трекер";
-
 "menu_login" = "Пырон";
 "menu_registration" = "Регистрация";
 "menu_help" = "Юрттэт";
-
 "menu_logout" = "Потӥз";
 "menu_support" = "Юрттэт";
-
 "header_home" = "кутскон";
 "header_groups" = "группы";
 "header_people" = "адями";
@@ -347,12 +296,9 @@
 "header_help" = "юрттэт";
 "header_log_out" = "потӥз";
 "header_search" = "Утчан";
-
 "header_login" = "пырон";
 "header_registration" = "регистрация";
-
 "left_menu_donate" = "юрттоз";
-
 "footer_blog" = "блог";
 "footer_help" = "юрттэт";
 "footer_developers" = "разработчикам";
@@ -366,36 +312,27 @@
 "avatar" = "Аватар";
 "privacy" = "Приватность";
 "interface" = "Педпал туссы";
-
 "profile_picture" = "Суредъя бам";
-
 "picture" = "Суред";
-
 "change_password" = "Изменить пароль";
 "old_password" = "Старый пароль";
 "new_password" = "Новый пароль";
 "repeat_password" = "Повторите пароль";
-
 "avatars_style" = "Отображение аватар";
 "style" = "Стиль";
-
 "default" = "По умолчанию";
 "cut" = "Обрезка";
 "round_avatars" = "Круглый аватар";
-
 "search_for_groups" = "Группа утчан";
 "search_for_people" = "Адями утчан";
 "search_button" = "Шедьтӥзы";
 "search_placeholder" = "Котькудӥныз нимысьтыз пырыны кутске, нимыз яке кыл";
 "results_zero" = "Одӥг но результатъёсыз";
 "results_one" = "Один результат";
-"results_few" = "$1 результата";
 "results_many" = "$1 результатов";
 "results_other" = "$1 результатов";
-
 "privacy_setting_access_page" = "Кин милемыз адӟыса интернетын бам";
 "privacy_setting_read_info" = "кин милемыз адӟоз информациез валтӥсь бам";
-"privacy_setting_set_groups" = "группаен но мон адӟиськи, Кин пумитан";
 "privacy_setting_see_photos" = "кин милемыз адӟоз туспуктэм";
 "privacy_setting_see_videos" = "кин милемыз адӟоз видеозапись";
 "privacy_setting_see_notes" = "кин милемыз адӟоз заметка";
@@ -411,7 +348,6 @@
 "privacy_value_only_me" = "мон Гинэ";
 "privacy_value_only_me_dative" = "мон Гинэ";
 "privacy_value_nobody" = "Нокин";
-
 "your_email_address" = "тон электронной почта адрес";
 "your_page_address" = "Тон Адресъёсын бам";
 "page_address" = "Адресъёсын бам";
@@ -420,13 +356,11 @@
 "you_can_also" = "тӥ озьы быгатӥськоды";
 "delete_your_page" = "баме асьсэлэсь палэнтыны";
 "delete_album" = "альбом палэнтыны";
-
 "ui_settings_interface" = "Интерфейсэз";
 "ui_settings_sidebar" = "паллян менюысь";
 "ui_settings_rating" = "Рейтинг";
 "ui_settings_rating_show" = "Возьматэ";
 "ui_settings_rating_hide" = "Ватэм";
-
 "additional_links" = "Ватсаса чӧлсконъёсыз";
 
 /* Two-factor authentication */
@@ -435,25 +369,21 @@
 "two_factor_authentication_disabled" = "Обеспечивает надежную защиту от взлома: для входа на страницу необходимо ввести код, полученный в приложении 2FA.";
 "two_factor_authentication_enabled" = "Двухфакторная аутентификация включена. Ваша страница защищена.";
 "two_factor_authentication_login" = "У вас включена двухфакторная аутентификация. Для входа введите код полученный в приложении.";
-
 "two_factor_authentication_settings_1" = "Двухфакторную аутентификацию через TOTP можно использовать даже без интернета. Для этого вам понадобится приложение для генерации кодов. Например, <b>Google Authenticator</b> для Android и iOS или свободные <b>Aegis и andOTP</b> для Android. Убедитесь, что на телефоне точно установлена дата и время.";
 "two_factor_authentication_settings_2" = "Используя приложение для двухфакторной аутентификации, отсканируйте приведенный ниже QR-код:";
 "two_factor_authentication_settings_3" = "или вручную введите секретный ключ: <b>$1</b>.";
 "two_factor_authentication_settings_4" = "Теперь введите код, который вам предоставило приложение, и пароль от вашей страницы, чтобы мы могли подтвердить, что вы действительно вы.";
-
 "connect" = "Подключать";
 "enable" = "Ӝуаз";
 "disable" = "Отключить";
 "code" = "Кода";
 "2fa_code" = "Кода 2FA";
-
 "incorrect_password" = "Неверный пароль";
 "incorrect_code" = "Неверный код";
 "incorrect_2fa_code" = "Неверный код двухфакторной аутентификации";
 "two_factor_authentication_enabled_message" = "Двухфакторная аутентификация включена";
 "two_factor_authentication_enabled_message_description" = "Вашу страницу стало труднее взломать. Рекомендуем вам скачать <a href='javascript:viewBackupCodes()'>резервные коды</a>";
 "two_factor_authentication_disabled_message" = "Двухфакторная аутентификация отключена";
-
 "view_backup_codes" = "Посмотреть резервные коды";
 "backup_codes" = "Резервные коды для подтверждения входа";
 "two_factor_authentication_backup_codes_1" = "Резервные коды позволяют подтверждать вход, когда у вас нет доступа к телефону, например, в путешествии.";
@@ -474,15 +404,12 @@
 "video_uploaded" = "Ватсаны";
 "video_updated" = "- лэн выльдэм";
 "video_link_to_yt" = "вылэ Ссылка YouTube";
-
 "info_name" = "Нимыза";
 "info_description" = "Кылсуред";
 "info_uploaded_by" = "Ватсаны";
 "info_upload_date" = "загрузка Дыр";
-
 "videos_zero" = "одӥг но видеозапись";
 "videos_one" = "Одӥг видеозапись";
-"videos_few" = "$1 видеозапись";
 "videos_many" = "$1 видеозапись";
 "videos_other" = "$1 видеозапись";
 
@@ -491,7 +418,6 @@
 "feedback" = "Ответ";
 "unread" = "Непрочитанный";
 "archive" = "Архив";
-
 "notifications_like" = "$1 тон дунъяны $2 гожъямъёсыз$3 $4";
 "notifications_repost" = "$1 paylaş(-лася) тон $2 гожъямъёсыз$3 $4";
 "notifications_comment_under" = "$1 кельтыса(-ла) улэ комментарий $2";
@@ -501,13 +427,11 @@
 "notifications_under_video" = "тон $video 3$4";
 "notifications_post" = "$1 гожтэ(-ла) $2 гожъямъёсыз$борддоръёсыз вылэ-тонэ 3: $4";
 "notifications_appoint" = "$1 сообщество тон дасямын кивалтӥсез $2";
-
 "nt_liked_yours" = "тыныд кельше";
 "nt_shared_yours" = "paylaş(-аса) тон";
 "nt_commented_yours" = "кельты(а) комментарий улын";
 "nt_written_on_your_wall" = "гожтыны(а) ас вылэ борддор";
 "nt_made_you_admin" = "висъяськы(нош) тон кивалтӥсез сообщество";
-
 "nt_from" = "дор";
 "nt_yours_adjective" = "тон";
 "nt_yours_feminitive_adjective" = "тон";
@@ -525,11 +449,9 @@
 "time_minutes_ago" = "$1 минутэ учке";
 "time_today" = "туннэ";
 "time_yesterday" = "толон";
-
 "points" = "Голоса";
 "points_count" = "голосов";
 "on_your_account" = "на вашем счету";
-
 "vouchers" = "Ваучеръёсты";
 "have_voucher" = "Вал, ваучеръёсты";
 "voucher_token" = "Кода ваучеръёсты";
@@ -544,27 +466,19 @@
 "deactivate" = "Деактивировать";
 "usages_total" = "ужатонъя лыд";
 "usages_left" = "Кылем ужатонъя";
-
 "points_transfer_dialog_header_1" = "Вы можете отправить в подарок или передать часть голосов другому человеку.";
 "points_transfer_dialog_header_2" = "Ваш текущий баланс:";
-
 "points_amount_one" = "1 голос";
-"points_amount_few" = "$1 голоса";
 "points_amount_many" = "$1 голосов";
 "points_amount_other" = "$1 голосов";
-
 "transfer_poins" = "Передача голосов";
 "transfer_poins_button" = "Передать голоса";
 "also_you_can_transfer_points" = "Также вы можете <a href=\"javascript:showCoinsTransferDialog($1, '$2')\">передать голоса</a> другому человеку.";
-
 "transferred_to_you" = "передал вам";
-
 "receiver_address" = "Адрес получателя";
 "coins_count" = "Количество голосов";
 "message" = "Сообщение";
-
 "failed_to_tranfer_points" = "Не удалось передать голоса";
-
 "points_transfer_successful" = "Вы успешно передали <b>$1 <a href=\"$2\">$3</a></b>.";
 "not_all_information_has_been_entered" = "Введена не вся информация.";
 "negative_transfer_value" = "Мы не можем украсть голоса у другого человека, извините.";
@@ -578,31 +492,24 @@
 "gifts" = "Кузьым";
 "gifts_zero" = "кузьым Ӧвӧл";
 "gifts_one" = "одӥг кузьым";
-"gifts_few" = "$1 кузьым";
 "gifts_many" = "$1 кузьым";
 "gifts_other" = "$1 кузьым";
 "gifts_left" = "Кузьым кыльы: $1";
 "gifts_left_one" = "кылиз одӥг кузьым";
-"gifts_left_few" = "$1 кылем кузьым";
 "gifts_left_menu" = "$1 кылем кузьым";
 "gifts_left_other" = "$1 кылем кузьым";
-
 "send_gift" = "Отправить подарок";
-
 "gift_select" = "Выбрать подарок";
 "collections" = "Коллекции";
 "confirm" = "Подтверждение";
 "as_anonymous" = "Анонимно";
 "gift_your_message" = "Ваше сообщение";
-
 "free_gift" = "Бесплатно";
 "coins" = "Голоса";
 "coins_zero" = "0 голосов";
 "coins_one" = "Один голос";
-"coins_few" = "$1 голоса";
 "coins_many" = "$1 голосов";
 "coins_other" = "$1 голосов";
-
 "users_gifts" = "Подарки";
 
 /* Support */
@@ -617,17 +524,12 @@
 "support_status_2" = "Ворсамын";
 "support_greeting_hi" = "ӟеч-а, бур - $1!";
 "support_greeting_regards" = "гажамысь,<br/>команда юрттэт $1.";
-
 "support_faq" = "Часто задаваемые вопросы";
 "support_list" = "Список обращений";
 "support_new" = "Новое обращение";
-
-"support_faq_title" = "Для кого этот сайт?";
 "support_faq_content" = "Сайт предназначен для поиска друзей и знакомых, а также для просмотра данных пользователя. Это как справочник города, с помощью которого люди могут быстро найти актуальную информацию о человеке.";
-
 "support_new_title" = "Темая-лэсь вазиськонэ пыртӥзы";
 "support_new_content" = "Гожтэмын яке предложениосты ужпум";
-
 "support_rate_good_answer" = "та умой ответ";
 "support_rate_bad_answer" = "уродзэ та ответ";
 "support_good_answer_user" = "положительной отзыв тон кельты.";
@@ -637,17 +539,12 @@
 "support_rated_good" = "тон сярысь веранзэ азьланьтэ отзыв кельто.";
 "support_rated_bad" = "тыныд ответ кельто негативный сярысь отзывъёссэс.";
 "wrong_parameters" = "запрос параметръёсты оскытылӥзы.";
-
 "fast_answers" = "Быстрые ответы";
-
 "comment" = "Комментарий";
 "sender" = "Отправитель";
-
 "author" = "Автор";
-
 "you_have_not_entered_text" = "Вы не ввели текст";
 "you_have_not_entered_name_or_text" = "Вы не ввели имя или текст";
-
 "ticket_changed" = "Тикет изменён";
 "ticket_changed_comment" = "Изменения вступят силу через несколько секунд.";
 
@@ -669,25 +566,18 @@
 /* Discussions */
 
 "discussions" = "Обсуждения";
-
 "messages_one" = "Одно сообщение";
-"messages_few" = "$1 сообщения";
 "messages_many" = "$1 сообщений";
 "messages_other" = "$1 сообщений";
-
 "topic_messages_count_zero" = "В теме нет сообщений";
 "topic_messages_count_one" = "В теме одно сообщение";
-"topic_messages_count_few" = "В теме $1 сообщения";
 "topic_messages_count_many" = "В теме $1 сообщений";
 "topic_messages_count_other" = "В теме $1 сообщений";
-
 "replied" = "ответил";
 "create_topic" = "Кылдӥз тему";
-
 "new_topic" = "Новая тема";
 "title" = "Заголовок";
 "text" = "Текст";
-
 "view_topic" = "Просмотр темы";
 "edit_topic_action" = "Редактировать тему";
 "edit_topic" = "Редактирование темы";
@@ -695,19 +585,13 @@
 "pin_topic" = "Закрепить тему";
 "close_topic" = "Закрыть тему";
 "delete_topic" = "Удалить тему";
-
 "topics_one" = "Одна тема";
-"topics_few" = "$1 темы";
 "topics_many" = "$1 тема";
 "topics_other" = "$1 тем";
-
 "created" = "Создано";
-
 "everyone_can_create_topics" = "Все могут создавать темы";
 "display_list_of_topics_above_wall" = "Отображать список тем над стеной";
-
 "topic_changes_saved_comment" = "Обновлённый заголовок и настройки появятся на странице с темой.";
-
 "failed_to_create_topic" = "Не удалось кылдӥз тему";
 "failed_to_change_topic" = "Не удалось изменить тему";
 "no_title_specified" = "Заголовок не указан.";
@@ -720,10 +604,8 @@
 "error_4" = "уг уло Пользователь";
 "information_-1" = "операциосты быдэсъяны йыг";
 "information_-2" = "йыг пырон быдэстэм";
-
 "no_data" = "Нет данных";
 "no_data_description" = "Ивортодэт татын ӧвӧл татын.";
-
 "error" = "Янгыше";
 "error_shorturl" = "Данный короткий адрес уже занят.";
 "error_segmentation" = "Янгышъёс сегментация";
@@ -732,46 +614,32 @@
 "error_new_password" = "Новые пароли не совпадает";
 "error_shorturl_incorrect" = "Короткий адрес имеет некорректный формат.";
 "error_repost_fail" = "Не удалось поделиться записью";
-
 "forbidden" = "Ошибка доступа";
 "forbidden_comment" = "Настройки приватности этого пользователя не разрешают вам смотреть на его страницу.";
-
 "changes_saved" = "Изменения сохранены";
 "changes_saved_comment" = "Новый данные появятся на вашей странице";
-
 "photo_saved" = "Фотография сохранена";
 "photo_saved_comment" = "Новое изображние профиля появится у вас на странице";
-
 "shared_succ" = "Запись появится на вашей стене. Нажмите на уведомление, чтобы перейти к своей стене.";
-
 "invalid_email_address" = "Неверный Email адрес";
 "invalid_email_address_comment" = "Email, который вы ввели, не является корректным.";
-
 "invalid_telegram_name" = "Неверное имя Telegram аккаунта";
 "invalid_telegram_name_comment" = "Вы ввели неверное имя аккаунта Telegram.";
-
 "invalid_birth_date" = "Неверная дата рождения";
 "invalid_birth_date_comment" = "Дата рождения, которую вы ввели, не является корректной.";
-
 "token_manipulation_error" = "Ошибка манипулирования токеном";
 "token_manipulation_error_comment" = "Токен недействителен или истёк";
-
 "profile_changed" = "Профиль изменён";
 "profile_changed_comment" = "Ваш активный профиль был изменён.";
 "profile_not_found" = "Пользователь не найден.";
-
 "suspicious_registration_attempt" = "Подозрительная попытка регистрации";
 "suspicious_registration_attempt_comment" = "Вы пытались зарегистрироваться из подозрительного места.";
-
 "rate_limit_error" = "Чумба, ты совсем ёбнутый?";
 "rate_limit_error_comment" = "Сходи к мозгоправу, попей колёсики. В $1 нельзя вбрасывать щитпосты так часто. Код исключения: $2.";
-
 "not_enough_permissions" = "Недостаточно прав";
 "not_enough_permissions_comment" = "У вас недостаточно прав чтобы выполнять это действие.";
-
 "login_required_error" = "Недостаточно прав";
 "login_required_error_comment" = "Чтобы просматривать эту страницу, нужно зайти на сайт.";
-
 "captcha_error" = "Неправильно введены символы";
 "captcha_error_comment" = "Пожалуйста, убедитесь, что вы правильно заполнили поле с капчей.";
 
@@ -802,7 +670,6 @@
 "edit_action" = "Воштоз";
 "transfer" = "Дышетон";
 "close" = "Ворсамын";
-
 "warning" = "Айкай";
 "question_confirm" = "Та ужме уг вошты. Зэм но, мар каремзы потэ, тон солы оскиськод-а?";
 

@@ -42,9 +42,7 @@
 "all_title" = "Sve";
 "information" = "Informacija";
 "status" = "Status";
-
 "relationship" = "Porodićni status";
-
 "relationship_0" = "Nemam";
 "relationship_1" = "Nisam oženjen";
 "relationship_2" = "Upoznajem se";
@@ -54,9 +52,7 @@
 "relationship_6" = "Zaljubljen";
 "relationship_7" = "Sve je teško";
 "relationship_8" = "Nalazim se u aktivnom pretraživanju";
-
 "politViews" = "Politički pogledi";
-
 "politViews_0" = "Nemam";
 "politViews_1" = "Ravnodušan";
 "politViews_2" = "Komunistićki";
@@ -67,17 +63,13 @@
 "politViews_7" = "Monarhistićki";
 "politViews_8" = "Ultrakonzervativne";
 "politViews_9" = "Libertarijanske";
-
 "contact_information" = "Kontakt informacije";
-
 "email" = "Elektronska pošta";
 "phone" = "Broj telefona";
 "telegram" = "Telegram";
 "city" = "Ime grada";
 "address" = "Adresa";
-
 "personal_information" = "Personalna informacija";
-
 "interests" = "Interesi";
 "favorite_music" = "Omiljena muzika";
 "favorite_films" = "Omiljeni filmovi";
@@ -104,10 +96,8 @@
 "x_out_of" = "$1 od";
 "wall_zero" = "nema zapisa";
 "wall_one" = "jedina zapis";
-"wall_few" = "$1 zapisa";
 "wall_many" = "$1 zapisa";
 "wall_other" = "$1 zapisa";
-
 "nsfw_warning" = "Ova post ima sadržaj za osobe od 18 godina i više";
 
 /* Friends */
@@ -123,22 +113,16 @@
 "incoming_req" = "Pretplatnici";
 "outcoming_req" = "Zahtevi";
 "req" = "Zahtevi";
-
 "friends_zero" = "Nema nijednog prijatelja";
 "friends_one" = "$1 prijatelj";
-"friends_few" = "$1 prijatelja";
 "friends_many" = "$1 prijatelja";
 "friends_other" = "$1 prijatelja";
-
 "followers_zero" = "Nema nijednog sledbenika";
 "followers_one" = "$1 sledbenik";
-"followers_few" = "$1 sledbenika";
 "followers_many" = "$1 sledbenika";
 "followers_other" = "$1 sledbenika";
-
 "subscriptions_zero" = "Nema nijedne prijave";
 "subscriptions_one" = "$1 prijava";
-"subscriptions_few" = "$1 prijava";
 "subscriptions_many" = "$1 prijava";
 "subscriptions_other" = "$1 prijava";
 
@@ -160,27 +144,20 @@
 "group_type_open" = "To je otvorena grupa. Svaka persona može se pridružiti prilikom nje.";
 "group_type_closed" = "To je zatvorena grupa. Morate se prijaviti.";
 "creator" = "Stvaralac";
-
 "role" = "Uloga";
 "administrator" = "Administrator";
 "promote_to_admin" = "Promovisati do administatora";
 "devote" = "Ražalovati ulogu";
-
 "participants_zero" = "Nema učesnika";
 "participants_one" = "Jedan učesnik";
-"participants_few" = "$1 učesnika";
 "participants_many" = "$1 učesnika";
 "participants_other" = "$1 učesnika";
-
 "groups_zero" = "Nema grupe";
 "groups_one" = "Jedna grupa";
-"groups_few" = "$1 grupa";
 "groups_many" = "$1 grupa";
 "groups_other" = "$1 grupa";
-
 "meetings_zero" = "Nema sastanka";
 "meetings_one" = "Jedan sastanak";
-"meetings_few" = "$1 sastanka";
 "meetings_many" = "$1 sastanka";
 "meetings_other" = "$1 sastanka";
 
@@ -194,10 +171,8 @@
 "upload_photo" = "Otpremiti foto";
 "photo" = "Foto";
 "upload_button" = "Otpremanje";
-
 "albums_zero" = "Nema albuma";
 "albums_one" = "Jedan album";
-"albums_few" = "$1 albuma";
 "albums_many" = "$1 albuma";
 "albums_other" = "$1 albuma";
 
@@ -211,10 +186,8 @@
 "actions" = "Aktivnosti";
 "feed" = "Vesti";
 "publish_post" = "Objaviti post";
-
 "notes_zero" = "Nema beleška";
 "notes_one" = "Jedna beleška";
-"notes_few" = "$1 beleška";
 "notes_many" = "$1 beleška";
 "notes_other" = "$1 beleška";
 
@@ -232,33 +205,26 @@
 "my_feedback" = "Moji odgovare";
 "my_settings" = "Moja podešavanja";
 "bug_tracker" = "Praćenje grešaka";
-
 "menu_login" = "Prijaviti se";
 "menu_registration" = "Registracija";
 "menu_help" = "Pomoć";
-
 "header_home" = "naslovna strana";
 "header_groups" = "grupi";
-"header_donate" = "podrška";
 "header_people" = "ljudi";
 "header_invite" = "pozvati";
 "header_help" = "pomoć";
 "header_log_out" = "odjaviti se";
 "header_search" = "Istraživanje";
-
 "header_login" = "Prijava";
 "header_registration" = "Registracija";
 "header_help" = "Pomoć";
-
 "footer_blog" = "blog";
 "footer_help" = "pomoć";
 "footer_developers" = "obraćanje programerima";
 "footer_choose_language" = "izabrati jezik";
 "footer_privacy" = "privatnost";
-
 "notes_zero" = "Nema beleška";
 "notes_one" = "Jedna beleška";
-"notes_few" = "$1 beleška";
 "notes_many" = "$1 beleška";
 "notes_other" = "$1 belešci";
 
@@ -269,27 +235,20 @@
 "avatar" = "Slika";
 "privacy" = "Privatnost";
 "interface" = "Izgled";
-
 "profile_picture" = "Slika profila";
-
 "picture" = "Slika";
-
 "change_password" = "Promena šifre";
 "old_password" = "Stara šifra";
 "new_password" = "Nova šifra";
 "repeat_password" = "Ponoviti šifru";
-
 "avatars_style" = "Prikazati avatar";
 "style" = "Stil";
-
 "default" = "Uobićajeno";
 "cut" = "Uređivanje slike";
 "round_avatars" = "Okrugli avatar";
-
 "search_for_groups" = "Istraživanje grupa";
 "search_for_people" = "Istraživanje ljudi";
 "search_button" = "Pronaći";
-
 "privacy_setting_access_page" = "Ko može videti moju stranicu na Internetu";
 "privacy_setting_read_info" = "Ko može videti osnovnu informaciju od moje stranice";
 "privacy_setting_see_groups" = "Ko može videti informaciju o mojim grupovima i sastanku";
@@ -307,7 +266,6 @@
 "privacy_value_only_me" = "Ja sam";
 "privacy_value_only_me_dative" = "Za mene";
 "privacy_value_nobody" = "Niko";
-
 "your_email_address" = "Vaša e-mail adresa";
 "your_page_address" = "Adresa Vaše stranice";
 "page_address" = "Adresa stranice";
@@ -316,7 +274,6 @@
 "you_can_also" = "Vi takođe imate mogućnost";
 "delete_your_page" = "da izbrišite svoju stranicu";
 "delete_album" = "da izbrišite album";
-
 "ui_settings_interface" = "Interfejs";
 "ui_settings_sidebar" = "Levi meni";
 "ui_settings_rating" = "Rejting";
@@ -337,15 +294,12 @@
 "video_uploaded" = "Otpremljeno";
 "video_updated" = "Ažurirano";
 "video_link_to_yt" = "YT Adresa";
-
 "info_name" = "Naziv";
 "info_description" = "Opis";
 "info_uploaded_by" = "Video je preuzeo";
 "info_upload_date" = "Datum preuzimanja";
-
 "videos_zero" = "Nema nijednog video";
 "videos_one" = "Jedno video";
-"videos_few" = "$1 video";
 "videos_many" = "$1 video";
 "videos_other" = "$1 video";
 
@@ -354,7 +308,6 @@
 "feedback" = "Povratna veza";
 "unread" = "Nepročitano";
 "archive" = "Arhiva";
-
 "notifications_like" = "$1 je procenio vašu $2zapis$3 ispod $4";
 "notifications_repost" = "$1 podelio(-lila) se vašim $2postom$3 ispod $4";
 "notifications_comment_under" = "$1 ostavio(-la) komentar ispod $2";
@@ -364,13 +317,11 @@
 "notifications_under_video" = "vašeg $3video$4";
 "notifications_post" = "$1 napisao(-la) je $2nešto$3 na vašem zidu: $4";
 "notifications_appoint" = "$1 odredio je vas za vođu zajednice $2";
-
 "nt_liked_yours" = "sviđalo je vaše";
 "nt_shared_yours" = "podelio(-ila) je sa vašim";
 "nt_commented_yours" = "napisao(la) je komentar ispod";
 "nt_written_on_your_wall" = "napisao(la) je nešto na vašem zidu";
 "nt_made_you_admin" = "odredio(la) je vas za vođu zajednice";
-
 "nt_from" = "od";
 "nt_yours_adjective" = "vašeg";
 "nt_yours_feminitive_adjective" = "vašeg";
@@ -387,7 +338,6 @@
 "time_minutes_ago" = "$pre 1 minuti";
 "time_today" = "danas";
 "time_yesterday" = "juće";
-
 "your_email_address" = "Adresa Vaše elektronske pošte";
 "your_page_address" = "Adresa Vaše stranice";
 "page_address" = "Adresa stranice";
@@ -396,13 +346,11 @@
 "you_can_also" = "Vi takođe možete";
 "delete_your_page" = "da izbrišite svoju stranicu";
 "delete_album" = "da izbrišite album";
-
 "ui_settings_interface" = "Interfejs";
 "ui_settings_sidebar" = "Levi meni";
 "ui_settings_rating" = "Rejting";
 "ui_settings_rating_show" = "Pokazati";
 "ui_settings_rating_hide" = "Sakriti";
-
 "usages_total" = "Broj upotreba";
 "usages_left" = "Korišćenja je ostalo";
 
@@ -413,21 +361,17 @@
 "gifts_zero" = "Nema poklona";
 "gifts_one" = "Јеdan poklon";
 "gifts_other" = "Ostvariti poklon od strane $1";
-
 "send_gift" = "Poslato je poklona";
-
 "gift_select" = "Izabrati poklon";
 "collections" = "Kolekcije";
 "confirm" = "Podtvrditi";
 "as_anonymous" = "Ja sam anoniman";
 "gift_your_message" = "Vaša poruka";
-
 "free_gift" = "Besplatan";
 "coins" = "Glasovi";
 "coins_zero" = "0 glasova";
 "coins_one" = "Jedan glas";
 "coins_other" = "Glasati od strane $1";
-
 "comment" = "Komentarije";
 "sender" = "Pošiljalac";
 
@@ -439,10 +383,8 @@
 "error_4" = "Ovaj korisnik ne postoji";
 "information_-1" = "Bravo";
 "information_-2" = "Uspešno ste prijavili";
-
 "no_data" = "Nema podataka";
 "no_data_description" = "Nema podataka u vezi.";
-
 "error" = "Izvinjavam se";
 "error_shorturl" = "Ova kratka adresa je već nalazi u vlasništvu.";
 "error_segmentation" = "Pogrešna segmentacija";
@@ -450,13 +392,10 @@
 "error_old_password" = "Stara šifra ne odgovara";
 "error_new_password" = "Nova šifra ne odgovara";
 "error_shorturl_incorrect" = "Kratka adresa sadrži pogrešan format.";
-
 "forbidden" = "Postoji greška u pristupu";
 "forbidden_comment" = "Podešavanja privatnosti korisnika ne dozvoli Vama da otvorite njegovu stranicu.";
-
 "changes_saved" = "Podešavanja su sačuvana";
 "changes_saved_comment" = "Novi podaci će se pojaviti na Vašoj stranici";
-
 "photo_saved" = "Слика је сачувана";
 "photo_saved_comment" = "Нова слика профила ће се појавити на Вашој страници";
 

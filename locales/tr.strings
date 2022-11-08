@@ -38,7 +38,7 @@
 "nickname" = "Takma ad";
 "online" = "Çevrimiçi";
 "was_online" = "çevrimiçiydi";
-"was_online_m" = "çevrimiçiydi"; 
+"was_online_m" = "çevrimiçiydi";
 /* For male and femail */
 
 "was_online_f" = "çevrimiçiydi";
@@ -48,9 +48,7 @@
 "no_information_provided" = "Verilen bilgi yok.";
 "deceased_person" = "Vefat eden kişi";
 "none" = "hiçbiri";
-
 "relationship" = "İlişki durumu";
-
 "relationship_0" = "Seçilmedi";
 "relationship_1" = "Evli değil";
 "relationship_2" = "Çıkıyor";
@@ -60,9 +58,7 @@
 "relationship_6" = "Aşık";
 "relationship_7" = "Her şey karışık";
 "relationship_8" = "Aktif arayışta";
-
 "politViews" = "Politik grşlr";
-
 "politViews_0" = "Seçilmedi";
 "politViews_1" = "Kayıtsız";
 "politViews_2" = "Komünist";
@@ -73,18 +69,14 @@
 "politViews_7" = "Monarşik";
 "politViews_8" = "Ultra-Muhafazakar";
 "politViews_9" = "Özgürlükçü";
-
 "contact_information" = "İletişim bilgileri";
-
 "email" = "E-posta";
 "phone" = "Telefon";
 "telegram" = "Telegram";
 "personal_website" = "Kişisel websitesi";
 "city" = "Şehir";
 "address" = "Adres";
-
 "personal_information" = "Kişisel bilgi";
-
 "interests" = "İlgiler";
 "favorite_music" = "Favori müzik";
 "favorite_films" = "Favori filmler";
@@ -92,7 +84,6 @@
 "favorite_books" = "Favori kitaplar";
 "favorite_quotes" = "Favori sözler";
 "information_about" = "Hakkında";
-
 "updated_at" = "Güncelleme: $1";
 
 /* Wall */
@@ -119,12 +110,9 @@
 "feed" = "Haberler";
 "publish_post" = "Gönderi ekle";
 "view_other_comments" = "Diğer yorumları görüntüle";
-
 "no_comments" = "Yorum yok";
-
 "all_news" = "Tüm haberler";
 "posts_per_page" = "Sayfa başına yapılan gönderiler";
-
 "attachment" = "Ek";
 "post_as_group" = "Grup olarak gönder";
 "add_signature" = "İmza ekle";
@@ -152,15 +140,12 @@
 "incoming_req" = "Aboneler";
 "outcoming_req" = "İstekler";
 "req" = "İstekler";
-
 "friends_zero" = "Arkadaş yok";
 "friends_one" = "$1 arkadaş";
 "friends_other" = "$1 arkadaş";
-
 "followers_zero" = "Takipçi yok";
 "followers_one" = "$1 takipçi";
 "followers_other" = "$1 takipçi";
-
 "subscriptions_zero" = "Abonelik yok";
 "subscriptions_one" = "$1 abonelik";
 "subscriptions_other" = "$1 abonelik";
@@ -189,10 +174,8 @@
 "all_followers" = "Tüm takipçiler";
 "only_administrators" = "Yalnızca yöneticiler";
 "website" = "Websitesi";
-
 "administrators_one" = "$1 yönetici";
 "administrators_other" = "$1 yönetici";
-
 "role" = "Rol";
 "administrator" = "Yönetici";
 "promote_to_admin" = "Yöneticiliğe yükselt";
@@ -206,15 +189,12 @@
 "group_display_only_creator" = "Yalnızca grup kurucusunu göster";
 "group_display_all_administrators" = "Tüm yöneticileri göster";
 "group_dont_display_administrators_list" = "Hiçbir şey gösterme";
-
 "participants_zero" = "Katılımcı yok";
 "participants_one" = "$1 katılımcı";
 "participants_other" = "$1 katılımcı";
-
 "groups_zero" = "Grup yok";
 "groups_one" = "$1 grup";
 "groups_other" = "$1 grup";
-
 "meetings_zero" = "Toplantı yok";
 "meetings_one" = "$1 toplantı";
 "meetings_other" = "$1 toplantı";
@@ -229,9 +209,7 @@
 "upload_photo" = "Fotoğraf yükle";
 "photo" = "Fotoğraf";
 "upload_button" = "Yükle";
-
 "open_original" = "Orijinali aç";
-
 "albums_zero" = "Albüm yok";
 "albums_one" = "$1 albüm";
 "albums_other" = "$1 albüm";
@@ -244,7 +222,6 @@
 "text_note" = "İçerik";
 "create_note" = "Not oluştur";
 "actions" = "İşlemler";
-
 "notes_zero" = "Not yok";
 "notes_one" = "$1 not";
 "notes_other" = "$1 not";
@@ -265,24 +242,19 @@
 "my_feedback" = "Geri bildirimim";
 "my_settings" = "Ayarlarım";
 "bug_tracker" = "Hata-tkpçsi";
-
 "menu_login" = "Giriş yap";
 "menu_registration" = "Kayıt";
 "menu_help" = "Yardım";
-
 "header_home" = "ana menü";
 "header_groups" = "gruplar";
-"header_donate" = "bağış yap";
 "header_people" = "kişiler";
 "header_invite" = "davet et";
 "header_help" = "yardım";
 "header_log_out" = "çıkış yap";
 "header_search" = "ara";
-
 "header_login" = "giriş yap";
 "header_registration" = "kayıt";
 "header_help" = "yardım";
-
 "footer_blog" = "blog";
 "footer_help" = "yardım";
 "footer_developers" = "geliştiriciler";
@@ -296,23 +268,17 @@
 "avatar" = "Avatar";
 "privacy" = "Gizlilik";
 "interface" = "Arayüz";
-
 "profile_picture" = "Profil resmi";
-
 "picture" = "Resim";
-
 "change_password" = "Parolayı değiştir";
 "old_password" = "Eski parola";
 "new_password" = "Yeni parola";
 "repeat_password" = "Parolayı tekrarla";
-
 "avatars_style" = "Avatar tarzı";
 "style" = "Tarz";
-
 "default" = "Varsayılan";
 "cut" = "Kes";
 "round_avatars" = "Avatarı yuvarla";
-
 "search_for_groups" = "Grup ara";
 "search_for_people" = "Kişi ara";
 "search_button" = "Ara";
@@ -333,7 +299,6 @@
 "privacy_value_only_me" = "Sadece ben";
 "privacy_value_only_me_dative" = "Sadece ben";
 "privacy_value_nobody" = "Kimse";
-
 "your_email_address" = "E-posta adresin";
 "your_page_address" = "Adres sayfan";
 "page_address" = "Adres sayfası";
@@ -342,7 +307,6 @@
 "you_can_also" = "Ayrıca";
 "delete_your_page" = "sayfanı silebilirsin";
 "delete_album" = "albümü silebilirsin";
-
 "ui_settings_interface" = "Arayüz";
 "ui_settings_sidebar" = "Sol menü";
 "ui_settings_rating" = "Oylama";
@@ -355,25 +319,21 @@
 "two_factor_authentication_disabled" = "Saldırılara karşı güvenilir koruma sağlar: Sayfaya girmek için, 2AD uygulamasından alınan kodu girmeniz gerekir.";
 "two_factor_authentication_enabled" = "İki adımlı doğrulama etkinleştirildi. Sayfanız koruma altında.";
 "two_factor_authentication_login" = "İki adımlı doğrulamanız var. Giriş yapmak için uygulamadan aldığınız kodu girin.";
-
 "two_factor_authentication_settings_1" = "TOTP aracılığıyla iki adımlı doğrulama internetsiz bile kullanılabilir. Bunu yapmak için kod oluşturma uygulamasına ihtiyacınız var. Mesela, Android ve iOS için <b>Google Authenticator</b> veya Android için <b>FOSS Aegis veya andOTP</b>. Telefonunuzun tarih ve saatinin doğru ayarlandığından emin olun.";
 "two_factor_authentication_settings_2" = "İki adımlı doğrulama uygulamasından aşağıdaki QR kodunu okutun:";
 "two_factor_authentication_settings_3" = "ya da verilen gizli anahtarı kendiniz girin: <b>$1</b>.";
 "two_factor_authentication_settings_4" = "Şimdi uygulamanın verdiği kodu ve sayfanızın parolasını girin ki bunu yapan kişinin gerçekten siz olduğunu doğrulayabilelim.";
-
 "connect" = "Bağlan";
 "enable" = "Etkinleştir";
 "disable" = "Devre dışı bırak";
 "code" = "Kod";
 "2fa_code" = "2AD kodu";
-
 "incorrect_password" = "Yanlış parola";
 "incorrect_code" = "Yanlış kod";
 "incorrect_2fa_code" = "Yanlış iki adımlı doğrulama kodu";
 "two_factor_authentication_enabled_message" = "İki adımlı doğrulama etkinleştirildi";
 "two_factor_authentication_enabled_message_description" = "Sayfanızın ele geçirilmesi daha zor hale geldi. <a href='javascript:viewBackupCodes()'>Yedek kodları</a> indirmenizi tavsiye ederiz";
 "two_factor_authentication_disabled_message" = "İki adımlı doğrulama devre dışı bırakıldı";
-
 "view_backup_codes" = "Yedek kodları göster";
 "backup_codes" = "Giriş doğrulamaso için yedek kodlar";
 "two_factor_authentication_backup_codes_1" = "Yedek kodlar mesela dolaşırken telefonunuza erişiminiz olmadığında girişinizi doğrulamanızı sağlar.";
@@ -394,12 +354,10 @@
 "video_uploaded" = "Yüklendi";
 "video_updated" = "Güncellendi";
 "video_link_to_yt" = "YT linki";
-
 "info_name" = "Başlık";
 "info_description" = "Açıklama";
 "info_uploaded_by" = "Yükleyen";
 "info_upload_date" = "Yükleme tarihi";
-
 "videos_zero" = "Video yok";
 "videos_one" = "$1 video";
 "videos_other" = "$1 video";
@@ -409,7 +367,6 @@
 "feedback" = "Geri bildirim";
 "unread" = "Okunmamış";
 "archive" = "Arşivle";
-
 "notifications_like" = "$1, $4 üzerinden $2gönderini$3 beğendi";
 "notifications_repost" = "$1, $4 üzerinden $2gönderini$3 paylaştı";
 "notifications_comment_under" = "$1, $2 içinde bir yorum yaptı";
@@ -419,13 +376,11 @@
 "notifications_under_video" = "$3videon$4";
 "notifications_post" = "$1, duvarında $2bir gönderi$3 paylaştı: $4";
 "notifications_appoint" = "$1, seni $2 topluluğunda bir yönetici olarak atadı";
-
 "nt_liked_yours" = "seninkini beğendi";
 "nt_shared_yours" = "seninkini paylaştı";
 "nt_commented_yours" = "seninkine yorum yaptı";
 "nt_written_on_your_wall" = "duvarında yazdı";
 "nt_made_you_admin" = "toplulukta yönetici yaptı";
-
 "nt_from" = "üzerinden";
 "nt_yours_adjective" = "senin";
 "nt_yours_feminitive_adjective" = "senin";
@@ -442,7 +397,6 @@
 "time_minutes_ago" = "$1 dakika önce";
 "time_today" = "bugün";
 "time_yesterday" = "dün";
-
 "vouchers" = "Fişler";
 "have_voucher" = "Fişi var";
 "voucher_token" = "Fiş tokeni";
@@ -465,15 +419,12 @@
 "gifts_zero" = "0 hediye";
 "gifts_one" = "1 hediye";
 "gifts_other" = "$1 hediye";
-
 "send_gift" = "Hediye gönder";
-
 "gift_select" = "Hediye seç";
 "collections" = "Koleksiyonlar";
 "confirm" = "Onayla";
 "as_anonymous" = "Anonim olarak";
 "gift_your_message" = "Mesajınız";
-
 "free_gift" = "Ücretsiz";
 "coins" = "Voice'ler";
 "coins_zero" = "0 voice";
@@ -492,20 +443,14 @@
 "support_status_2" = "Kapandı";
 "support_greeting_hi" = "Merhaba, $1!";
 "support_greeting_regards" = "Saygılar,<br/>$1 destek ekibi.";
-
 "support_faq" = "Sık Sorulan Sorular";
 "support_list" = "Bilet listesi";
 "support_new" = "Yeni bilet";
-
-"support_faq_title" = "Bu websitesi kim içindir?";
 "support_faq_content" = "Bu site arkadaşlarınızı ve tanıdıklarınızı bulmak için, aynı zamanda kullanıcı verisini görebilmek için tasarlanmıştır. Bu, kişilerin bir kişi hakkında hızlıca ilgili bilgileri bulunabildiği bir şehir defteri gibidir.";
-
 "support_new_title" = "Biletinizin konusunu girin";
 "support_new_content" = "Sorununuzu ya da önerinizi açıklayın";
-
 "comment" = "Yorum";
 "sender" = "Gönderen";
-
 "author" = "Yazan";
 
 /* Errors */
@@ -516,10 +461,8 @@
 "error_4" = "Böyle bir kullanıcı yok";
 "information_-1" = "Başarılı";
 "information_-2" = "Giriş başarılı";
-
 "no_data" = "Veri yok";
 "no_data_description" = "Böyle bir veri yok.";
-
 "error" = "Hata";
 "error_shorturl" = "Bu kısa adresin zaten bir sahibi var.";
 "error_segmentation" = "Segment hatası";
@@ -527,13 +470,10 @@
 "error_old_password" = "Eski parola uyuşmuyor";
 "error_new_password" = "Yeni parola uyuşmuyor";
 "error_shorturl_incorrect" = "Kısa adresin hatalı bir formatı var.";
-
 "forbidden" = "Erişim hatası";
 "forbidden_comment" = "Bu kullanıcının gizlilik ayarları onun sayfasına bakmanıza izin vermiyor.";
-
 "changes_saved" = "Değişiklikler kaydedildi";
 "changes_saved_comment" = "Yeni veriler sayfanızda görünecek";
-
 "photo_saved" = "Resim kaydedildi";
 "photo_saved_comment" = "Yeni resim sayfanızda görünecek";
 
@@ -550,3 +490,4 @@
 "paginator_next" = "İleri";
 
 /* Translated by @WindowZ414 - @WindowZ414 tarafından çevirildi */
+
