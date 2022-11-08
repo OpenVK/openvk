@@ -71,7 +71,6 @@
 "send" = "Отправить";
 "years_zero" = "0 летъ";
 "years_one" = "1 годъ";
-"years_many" = "$1 летъ";
 "years_other" = "$1 летъ";
 "relationship" = "Семейное положеніе";
 "relationship_0" = "Не выбрано";
@@ -133,7 +132,6 @@
 "x_out_of" = "$1 изъ";
 "wall_zero" = "Нѣтъ извѣстій";
 "wall_one" = "единственное высказываніе";
-"wall_many" = "$1 высказываній";
 "wall_other" = "$1 высказываній";
 "publish_post" = "Добавить высказываніе";
 "view_other_comments" = "Посмотрѣть остальные замѣчанія";
@@ -168,15 +166,12 @@
 "req" = "Исходящіе прошенія";
 "friends_zero" = "Ни одного знакомца";
 "friends_one" = "$1 знакомецъ";
-"friends_many" = "$1 знакомцевъ";
 "friends_other" = "$1 знакомцевъ";
 "followers_zero" = "Ни одного почитателя";
 "followers_one" = "$1 почитатель";
-"followers_many" = "$1 почитателей";
 "followers_other" = "$1 почитателей";
 "subscriptions_zero" = "Ни одной подписки";
 "subscriptions_one" = "$1 подписка";
-"subscriptions_many" = "$1 подписокъ";
 "subscriptions_other" = "$1 подписокъ";
 
 /* Group */
@@ -221,15 +216,12 @@
 "group_dont_display_administrators_list" = "Ничего не отображать";
 "participants_zero" = "Ни одного участника";
 "participants_one" = "Одинъ участникъ";
-"participants_many" = "$1 участниковъ";
 "participants_other" = "$1 участниковъ";
 "groups_zero" = "Ни одной группы";
 "groups_one" = "Одна группа";
-"groups_many" = "$1 группъ";
 "groups_other" = "$1 группъ";
 "meetings_zero" = "Ни одной встрѣчи";
 "meetings_one" = "Одна встрѣча";
-"meetings_many" = "$1 встрѣчъ";
 "meetings_other" = "$1 встрѣчъ";
 
 /* Albums */
@@ -247,7 +239,6 @@
 "wall_album" = "Фотографіи с салона";
 "albums_zero" = "Ни одного альбома";
 "albums_one" = "Одинъ альбомъ";
-"albums_many" = "$1 альбомовъ";
 "albums_other" = "$1 альбомовъ";
 
 /* Notes */
@@ -260,7 +251,6 @@
 "actions" = "Дѣйствія";
 "notes_zero" = "Ни одной очерки";
 "notes_one" = "Одна очерка";
-"notes_many" = "$1 очерок";
 "notes_other" = "$1 очерок";
 
 /* Menus */
@@ -319,7 +309,6 @@
 "search_button" = "Найти";
 "results_zero" = "Ни одного результата";
 "results_one" = "Одинъ результатъ";
-"results_many" = "$1 результатовъ";
 "results_other" = "$1 результатовъ";
 "privacy_setting_access_page" = "Кому въ интернетѣ видно мою страницу";
 "privacy_setting_read_info" = "Кому видно основную информацію моей страницы";
@@ -396,7 +385,6 @@
 "info_upload_date" = "Дата загрузки";
 "videos_zero" = "Ни одного экземпляра";
 "videos_one" = "Один экземпляръ";
-"videos_many" = "$1 экземпляровъ";
 "videos_other" = "$1 экземпляровъ";
 
 /* Notifications */
@@ -458,11 +446,9 @@
 "gifts" = "Подарки";
 "gifts_zero" = "Нѣтъ подарковъ";
 "gifts_one" = "Одинъ подарокъ";
-"gifts_many" = "$1 подарковъ";
 "gifts_other" = "$1 подарковъ";
 "gifts_left" = "Подарковъ осталось: $1";
 "gifts_left_one" = "Одинъ подарокъ остался";
-"gifts_left_many" = "$1 подарковъ осталось";
 "gifts_left_other" = "$1 подарковъ осталось";
 "send_gift" = "Отправить подарокъ";
 "gift_select" = "Выбрать подарокъ";
@@ -474,7 +460,6 @@
 "coins" = "Голоса";
 "coins_zero" = "0 голосовъ";
 "coins_one" = "Одинъ голосъ";
-"coins_many" = "$1 голосовъ";
 "coins_other" = "$1 голосовъ";
 "users_gifts" = "Подарки";
 
@@ -493,7 +478,6 @@
 "support_faq" = "Часто ​задаваемые вопросы";
 "support_list" = "Списокъ обращеній";
 "support_new" = "Новое обращеніе";
-"support_faq_content" = "Сайтъ предназначенъ для поиска друзей и знакомыхъ, а также для просмотра данныхъ пользователя. Это какъ справочникъ города, съ помощью котораго люди могутъ быстро найти актуальную информацію о человѣкѣ.";
 "support_new_title" = "Введите тему вашего обращенія";
 "support_new_content" = "Опишите проблему или предложеніе";
 "comment" = "Комментарій";
@@ -579,5 +563,6 @@
 "edit_action" = "Измѣнить";
 "warning" = "Вниманіе";
 "question_confirm" = "Это дѣйствіе нельзя отмѣнить. Вы дѣйствительно увѣрены въ томъ что хотите сдѣлать?";
+
 
 

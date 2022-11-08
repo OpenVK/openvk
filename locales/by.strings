@@ -96,7 +96,6 @@
 "x_out_of" = "$1 з";
 "wall_zero" = "няма запісаў";
 "wall_one" = "адзіная запіс";
-"wall_many" = "$1 складнікаў";
 "wall_other" = "$1 складнікаў";
 "nsfw_warning" = "Дадзены пост можа ўтрымліваць 18+ кантэнт";
 
@@ -117,27 +116,21 @@
 "all_friends" = "Ўсе сябры";
 "friends_zero" = "Няма сяброў";
 "friends_one" = "$1 сябар";
-"friends_many" = "$1 сяброў";
 "friends_other" = "$1 сяброў";
 "friends_online_zero" = "Няма сяброў ан-лайн";
 "friends_online_one" = "$1 сябар ан-лайн";
-"friends_online_many" = "$1 сяброў ан-лайн";
 "friends_online_other" = "$1 сяброў ан-лайн";
 "followers_zero" = "Няма падпісчыкаў";
 "followers_one" = "$1 падпісант";
-"followers_many" = "$1 падпісчыкаў";
 "followers_other" = "$1 падпісчыкаў";
 "subscriptions_zero" = "Ні адной падпіскі";
 "subscriptions_one" = "$1 падпіска";
-"subscriptions_many" = "$1 падпісак";
 "subscriptions_other" = "$1 падпісак";
 "friends_list_zero" = "У Вас пака няма сяброў";
 "friends_list_one" = "У Вас $1 сябар";
-"friends_list_many" = "У Вас $1 сяброў";
 "friends_list_other" = "У Вас $1 сяброў";
 "friends_list_online_zero" = "У Вас пака няма сяброў ан-лайн";
 "friends_list_online_one" = "У Вас $1 сябар ан-лайн";
-"friends_list_online_many" = "У Вас $1 сяброў ан-лайн";
 "friends_list_online_other" = "У Вас $1 сяброў ан-лайн";
 
 /* Group */
@@ -164,15 +157,12 @@
 "devote" = "Разжалаваць";
 "participants_zero" = "Ніводнага ўдзельніка";
 "participants_one" = "Адзін удзельнік";
-"participants_many" = "$1 удзельнікаў";
 "participants_other" = "$1 удзельнікаў";
 "groups_zero" = "Ні адной групы";
 "groups_one" = "Адна група";
-"groups_many" = "$1 гуртоў";
 "groups_other" = "$1 гуртоў";
 "meetings_zero" = "Ні адной сустрэчы";
 "meetings_one" = "Адна сустрэча";
-"meetings_many" = "$1 сустрэч";
 "meetings_other" = "$1 сустрэч";
 
 /* Albums */
@@ -187,7 +177,6 @@
 "upload_button" = "Загрузіць";
 "albums_zero" = "Няма альбомаў";
 "albums_one" = "Адзін альбом";
-"albums_many" = "$1 альбомаў";
 "albums_other" = "$1 альбомаў";
 
 /* Notes */
@@ -202,7 +191,6 @@
 "publish_post" = "Дадаць запіс";
 "notes_zero" = "Ні адной нататкі";
 "notes_one" = "Адна нататка";
-"notes_many" = "$1 нататак";
 "notes_other" = "$1 нататак";
 
 /* Menus */
@@ -239,7 +227,6 @@
 "footer_privacy" = "прыватнасць";
 "notes_zero" = "Ні адной нататкі";
 "notes_one" = "Адна нататка";
-"notes_many" = "$1 нататак";
 "notes_other" = "$1 нататак";
 
 /* Settings */
@@ -314,7 +301,6 @@
 "info_upload_date" = "Дата загрузкі";
 "videos_zero" = "Ні адной відэазапісы";
 "videos_one" = "Адна відэазапіс";
-"videos_many" = "$1 відэазапісаў";
 "videos_other" = "$1 відэазапісаў";
 
 
@@ -344,9 +330,7 @@
 "nt_post_instrumental" = "пастом";
 "nt_note_instrumental" = "нататкай";
 "nt_photo_instrumental" = "фатаграфіяй";
-"Time_just_now" = "толькі што";
 "Time_minutes_ago" = "$1 хвілін таму";
-"Time_yesterday" = "учора";
 "your_email_address" = "Адрас Вашай электроннай пошты";
 "your_page_address" = "Адрас Вашай старонкі";
 "page_address" = "Адрас старонкі";

@@ -80,7 +80,6 @@
 "send" = "ուղարկել";
 "years_zero" = "Զրո տարեկան";
 "years_one" = "Մի տարեկան";
-"years_many" = "$1 տարեկան";
 "years_other" = "$1 տարեկան";
 "show_my_birthday" = "Ցույց տալ ծննդյան օրը";
 "show_only_month_and_day" = "Ցուցադրել միայն ամիսն ու օրը";
@@ -94,7 +93,6 @@
 "relationship_6" = "Սիրահարված եմ";
 "relationship_7" = "Ամեն ինչ բարդ է";
 "relationship_8" = "Ակտիվ փնտրտուկների մեջ եմ";
-"relationship_3_fem" = "Նշանված եմ";
 "relationship_6_fem" = "Սիրահարված եմ";
 "politViews" = "Քաղաքական տեսանկյուններ";
 "politViews_0" = "Ընտրված չեն";
@@ -152,7 +150,6 @@
 "x_out_of" = "$1–ը";
 "wall_zero" = "գրություն չկա";
 "wall_one" = "մեկ գրություն";
-"wall_many" = "$1 գրություն";
 "wall_other" = "$1 գրություն";
 "publish_post" = "Ավելացնել գրություն";
 "view_other_comments" = "Կարդալ մեկնաբանությունները";
@@ -195,27 +192,21 @@
 "all_friends" = "Բոլոր ընկերները";
 "req_zero" = "Ոչ մի հայտ չի գտնվել...";
 "req_one" = "Գտնվեց մեկ հայտ";
-"req_many" = "Գտնվեց $1 հայտ";
 "req_other" = "Գտնվեց $1 հայտ";
 "friends_zero" = "Ոչ մի ընկեր չկա";
 "friends_one" = "$1 ընկեր";
-"friends_many" = "$1 հատ ընկեր";
 "friends_other" = "$1 հատ ընկեր";
 "friends_list_zero" = "Դուք դեռ չունեք ընկերներ";
 "friends_list_one" = "Դուք ունեք մեկ ընկեր";
-"friends_list_many" = "Դուք ունեք $1 ընկեր";
 "friends_list_other" = "Դուք ունեք $1 ընկեր";
 "followers_zero" = "Ոչ մի բաժանորդ չունեք";
 "followers_one" = "$1 բաժանորդ";
-"followers_many" = "$1 բաժանորդ";
 "followers_other" = "$1 բաժանորդ";
 "subscriptions_zero" = "Ոչ մեկի վրա չեք բաժանորդագրվել";
 "subscriptions_one" = "$1 բաժանորդագրություն";
-"subscriptions_many" = "$1 բաժանորդագրություն";
 "subscriptions_other" = "$1 բաժանորդագրություն";
 "friends_list_online_zero" = "Դուք դեռ չունեք ցանցի մեջ գտնվող ընկերներ";
 "friends_list_online_one" = "Ձեր $1 ընկերը ցանցի մեջ է";
-"friends_list_online_many" = "Ձեր $1 ընկերները ցանցի մեջ են";
 "friends_list_online_other" = "Ձեր $1 ընկերները ցանցի մեջ են";
 
 /* Group */
@@ -267,18 +258,15 @@
 "group_owner_setted" = "Նոր տերը ($1) նշանակված է $2 միությունում։ Ձեզ տրված են ադմինիստրատորի իրավասություններ։ Եթե ուզում եք հետ բերել իրավասությունները, <a href='/support?act=new'>գրե՛ք կայքի տեխնիկական աջակցությանը</a>։";
 "participants_zero" = "Ոչ մի մասնակից";
 "participants_one" = "Միայն մեկ մասնակից";
-"participants_many" = "$1 հատ մասնակից";
 "participants_other" = "$1 հատ մասնակից";
 "groups_zero" = "Ոչ մի խումբ";
 "groups_one" = "Մեկ խումբ";
-"groups_many" = "$1 խումբ";
 "groups_other" = "$1 խումբ";
 "groups_list_zero" = "Դուք չկաք գեթ ոչ մի խմբում";
 "groups_list_one" = "Դուք կաք միայն մեկ խմբում";
 "groups_list_other" = "Դուք կաք $1 խմբում";
 "meetings_zero" = "Ոչ մի հանդիպում";
 "meetings_one" = "Մեկ հանդիպում";
-"meetings_many" = "$1 հանդիպում";
 "meetings_other" = "$1 հանդիպում";
 "open_new_group" = "Նոր խումբ բացել";
 "open_group_desc" = "Չե՞ք կարող խումբ գտնել, բացեք ձերը․․․";
@@ -301,11 +289,9 @@
 "wall_album" = "Պատի լուսանկարները";
 "albums_zero" = "Ոչ մի ալբոմ չկա";
 "albums_one" = "Մեկ ալբոմ";
-"albums_many" = "$1 ալբոմ";
 "albums_other" = "$1 ալբոմ";
 "albums_list_zero" = "Դուք ոչ մի ալբոմ չունեք";
 "albums_list_one" = "Դուք ունեք մեկ ալբոմ";
-"albums_list_many" = "Դուք ունեք $1 ալբոմ";
 "albums_list_other" = "Դուք ունեք $1 ալբոմ";
 
 /* Notes */
@@ -325,11 +311,9 @@
 "edited" = "Խմբագրված է";
 "notes_zero" = "Ոչ մի նշում";
 "notes_one" = "Մեկ նշում";
-"notes_many" = "$1 նշում";
 "notes_other" = "$1 նշում";
 "notes_list_zero" = "Ոչ մի նշում չի գտնվել";
 "notes_list_one" = "Գտնվեց մեկ նշում";
-"notes_list_many" = "Գտնվեց $1 նշում";
 "notes_list_other" = "Գտնվեց $1 նշում";
 
 /* Menus */
@@ -395,7 +379,6 @@
 "search_placeholder" = "Գրեք ցանկացած անուն, անվանում կամ բառ";
 "results_zero" = "Ոչ մի արդյունք";
 "results_one" = "Մեկ արդյունք";
-"results_many" = "$1 արդյունք";
 "results_other" = "$1 արդյունք";
 "privacy_setting_access_page" = "Ով կարող է տեսնել ինտերնետում իմ էջը";
 "privacy_setting_read_info" = "Ում է տեսանելի իմ էջի հիմնական ինֆորմացիան";
@@ -511,7 +494,6 @@
 "info_upload_date" = "Վերբեռնման ամսաթիվ";
 "videos_zero" = "Ոչ մի տեսանյութ չկա";
 "videos_one" = "Մեկ տեսանյութ";
-"videos_many" = "$1 տեսանյութ";
 "videos_other" = "$1 տեսանյութ";
 "view_video" = "Դիտում";
 
@@ -573,7 +555,6 @@
 "points_transfer_dialog_header_1" = "Դուք կարող եք ուղարկել ձայները և նվերների մի մասը այլ մարդուն։";
 "points_transfer_dialog_header_2" = "Ձեր ներկայիս բալանսը․ ";
 "points_amount_one" = "Մեկ ձայն";
-"points_amount_many" = "$1 ձայն";
 "points_amount_other" = "$1 ձայն";
 "transfer_poins" = "Ձայների փոխանցում";
 "transfer_poins_button" = "Փոխանցել ձայներ";
@@ -611,11 +592,9 @@
 "gifts" = "Նվերներ";
 "gifts_zero" = "Նվերներ չկան";
 "gifts_one" = "Մեկ նվեր";
-"gifts_many" = "$1 նվեր";
 "gifts_other" = "$1 նվեր";
 "gifts_left" = "Մնաց $1 նվեր";
 "gifts_left_one" = "Մնաց մեկ նվեր";
-"gifts_left_many" = "$1 նվեր մնաց";
 "gifts_left_other" = "$1 նվեր մնաց";
 "send_gift" = "Ուղարկել նվեր";
 "gift_select" = "Ընտրել նվեր";
@@ -627,7 +606,6 @@
 "coins" = "Ձայներ";
 "coins_zero" = "0 ձայն";
 "coins_one" = "Մեկ ձայն";
-"coins_many" = "$1 ձայն";
 "coins_other" = "$1 ձայն";
 "users_gifts" = "Նվերներ";
 
@@ -772,11 +750,9 @@
 
 "discussions" = "Քննարկումներ";
 "messages_one" = "Մեկ նամակ";
-"messages_many" = "$1 նամակ";
 "messages_other" = "$1 նամակ";
 "topic_messages_count_zero" = "Թեմայում նամակ չկա";
 "topic_messages_count_one" = "Թեմայում մեկ նամակ է";
-"topic_messages_count_many" = "Թեմայում $1 նամակ կա";
 "topic_messages_count_other" = "Թեմայում $1 նամակ կա";
 "replied" = "պատասխանել է";
 "create_topic" = "Ստեղծել թեմա";
@@ -791,7 +767,6 @@
 "close_topic" = "Փակել թեման";
 "delete_topic" = "Ջնջել թեման";
 "topics_one" = "Մեկ թեմա";
-"topics_many" = "$1 թեմա";
 "topics_other" = "$1 թեմա";
 "created" = "Ստեղծված է";
 "everyone_can_create_topics" = "Բոլորը կարող են թեմաներ սարքել";
@@ -961,19 +936,14 @@
 "about_links" = "Հղումներ";
 "instance_links" = "Հոսքերի հղումներ․";
 "about_users_one" = "<b>Մեկ</b> օգտատեր";
-"about_users_many" = "<b>$1</b> օգտատեր";
 "about_users_other" = "<b>$1</b> օգտատեր";
 "about_online_users_one" = "<b>Մեկ</b> օգտատեր է ցանցի մեջ";
-"about_online_users_many" = "<b>$1</b> օգտատեր է ցանցի մեջ";
 "about_online_users_other" = "<b>$1</b> օգտատեր է ցանցի մեջ";
 "about_active_users_one" = "<b>Մեկ</b> ակտիվ օգտատեր";
-"about_active_users_many" = "<b>$1</b> ակտիվ օգտատեր";
 "about_active_users_other" = "<b>$1</b> ակտիվ օգտատեր";
 "about_groups_one" = "<b>Մեկ</b> խումբ";
-"about_groups_many" = "<b>$1</b> խումբ";
 "about_groups_other" = "<b>$1</b> խումբ";
 "about_wall_posts_one" = "<b>Մեկ</b> գրություն պատերի վրա";
-"about_wall_posts_many" = "<b>$1</b> գրություն պատերի վրա";
 "about_wall_posts_other" = "<b>$1</b> գրություն պատերի վրա";
 
 /* Dialogs */

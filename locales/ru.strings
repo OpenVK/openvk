@@ -79,7 +79,6 @@
 "send" = "Отправить";
 "years_zero" = "0 лет";
 "years_one" = "1 год";
-"years_many" = "$1 лет";
 "years_other" = "$1 лет";
 "show_my_birthday" = "Показывать дату рождения";
 "show_only_month_and_day" = "Показывать только день и месяц";
@@ -93,7 +92,6 @@
 "relationship_6" = "Влюблён";
 "relationship_7" = "Всё сложно";
 "relationship_8" = "В активном поиске";
-"relationship_3_fem" = "Помолвлена";
 "relationship_6_fem" = "Влюблена";
 "politViews" = "Полит. взгляды";
 "politViews_0" = "Не выбраны";
@@ -154,7 +152,6 @@
 "x_out_of" = "$1 из";
 "wall_zero" = "нет записей";
 "wall_one" = "единственная запись";
-"wall_many" = "$1 записей";
 "wall_other" = "$1 записей";
 "publish_post" = "Добавить запись";
 "view_other_comments" = "Посмотреть остальные комментарии";
@@ -197,31 +194,24 @@
 "all_friends" = "Все друзья";
 "req_zero" = "Не найдено ни одной заявки...";
 "req_one" = "Найдена $1 заявка";
-"req_many" = "Найдено $1 заявки";
 "req_other" = "Найдено $1 заявок";
 "friends_zero" = "Ни одного друга";
 "friends_one" = "$1 друг";
-"friends_many" = "$1 друзей";
 "friends_other" = "$1 друзей";
 "friends_online_zero" = "Ни одного друга онлайн";
 "friends_online_one" = "$1 друг онлайн";
-"friends_online_many" = "$1 друзей онлайн";
 "friends_online_other" = "$1 друзей онлайн";
 "friends_list_zero" = "У Вас пока нет друзей";
 "friends_list_one" = "У Вас $1 друг";
-"friends_list_many" = "У Вас $1 друзей";
 "friends_list_other" = "У Вас $1 друзей";
 "followers_zero" = "Ни одного подписчика";
 "followers_one" = "$1 подписчик";
-"followers_many" = "$1 подписчиков";
 "followers_other" = "$1 подписчиков";
 "subscriptions_zero" = "Ни одной подписки";
 "subscriptions_one" = "$1 подписка";
-"subscriptions_many" = "$1 подписок";
 "subscriptions_other" = "$1 подписок";
 "friends_list_online_zero" = "У Вас пока нет друзей онлайн";
 "friends_list_online_one" = "У Вас $1 друг онлайн";
-"friends_list_online_many" = "У Вас $1 друзей онлайн";
 "friends_list_online_other" = "У Вас $1 друзей онлайн";
 
 /* Group */
@@ -273,18 +263,15 @@
 "group_owner_setted" = "Новый владелец ($1) успешно назначен в сообщество $2. Вам выданы права администратора в сообществе. Если Вы хотите вернуть роль владельца, обратитесь в <a href='/support?act=new'>техническую поддержку сайта</a>.";
 "participants_zero" = "Ни одного участника";
 "participants_one" = "Один участник";
-"participants_many" = "$1 участников";
 "participants_other" = "$1 участников";
 "groups_zero" = "Ни одной группы";
 "groups_one" = "Одна группа";
-"groups_many" = "$1 групп";
 "groups_other" = "$1 групп";
 "groups_list_zero" = "Вы не состоите ни в одной группе";
 "groups_list_one" = "Вы состоите в одной группе";
 "groups_list_other" = "Вы состоите в $1 группах";
 "meetings_zero" = "Ни одной встречи";
 "meetings_one" = "Одна встреча";
-"meetings_many" = "$1 встреч";
 "meetings_other" = "$1 встреч";
 "open_new_group" = "Открыть новую группу";
 "open_group_desc" = "Не можете найти нужную группу? Откройте свою...";
@@ -307,11 +294,9 @@
 "wall_album" = "Фотографии со стены";
 "albums_zero" = "Ни одного альбома";
 "albums_one" = "Один альбом";
-"albums_many" = "$1 альбомов";
 "albums_other" = "$1 альбомов";
 "albums_list_zero" = "У Вас нет ни одного альбома";
 "albums_list_one" = "У Вас один альбом";
-"albums_list_many" = "У Вас $1 альбомов";
 "albums_list_other" = "У Вас $1 альбомов";
 
 /* Notes */
@@ -331,11 +316,9 @@
 "edited" = "Отредактировано";
 "notes_zero" = "Ни одной заметки";
 "notes_one" = "Одна заметка";
-"notes_many" = "$1 заметок";
 "notes_other" = "$1 заметок";
 "notes_list_zero" = "Не найдено ни одной заметки";
 "notes_list_one" = "Найдена одна заметка";
-"notes_list_many" = "Найдено $1 заметок";
 "notes_list_other" = "Найдено $1 заметок";
 
 /* Menus */
@@ -401,7 +384,6 @@
 "search_placeholder" = "Начните вводить любое имя, название или слово";
 "results_zero" = "Ни одного результата";
 "results_one" = "Один результат";
-"results_many" = "$1 результатов";
 "results_other" = "$1 результатов";
 "privacy_setting_access_page" = "Кому в интернете видно мою страницу";
 "privacy_setting_read_info" = "Кому видно основную информацию моей страницы";
@@ -518,7 +500,6 @@
 "info_upload_date" = "Дата загрузки";
 "videos_zero" = "Нет видео";
 "videos_one" = "Одна видеозапись";
-"videos_many" = "$1 видеозаписей";
 "videos_other" = "$1 видеозаписей";
 "view_video" = "Просмотр";
 
@@ -580,7 +561,6 @@
 "points_transfer_dialog_header_1" = "Вы можете отправить в подарок или передать часть голосов другому человеку.";
 "points_transfer_dialog_header_2" = "Ваш текущий баланс:";
 "points_amount_one" = "1 голос";
-"points_amount_many" = "$1 голосов";
 "points_amount_other" = "$1 голосов";
 "transfer_poins" = "Передача голосов";
 "transfer_poins_button" = "Передать голоса";
@@ -618,11 +598,9 @@
 "gifts" = "Подарки";
 "gifts_zero" = "Нет подарков";
 "gifts_one" = "Один подарок";
-"gifts_many" = "$1 подарков";
 "gifts_other" = "$1 подарков";
 "gifts_left" = "Подарков осталось: $1";
 "gifts_left_one" = "Один подарок остался";
-"gifts_left_many" = "$1 подарков осталось";
 "gifts_left_other" = "$1 подарков осталось";
 "send_gift" = "Отправить подарок";
 "gift_select" = "Выбрать подарок";
@@ -634,7 +612,6 @@
 "coins" = "Голоса";
 "coins_zero" = "0 голосов";
 "coins_one" = "Один голос";
-"coins_many" = "$1 голосов";
 "coins_other" = "$1 голосов";
 "users_gifts" = "Подарки";
 
@@ -806,11 +783,9 @@
 
 "discussions" = "Обсуждения";
 "messages_one" = "Одно сообщение";
-"messages_many" = "$1 сообщений";
 "messages_other" = "$1 сообщений";
 "topic_messages_count_zero" = "В теме нет сообщений";
 "topic_messages_count_one" = "В теме одно сообщение";
-"topic_messages_count_many" = "В теме $1 сообщений";
 "topic_messages_count_other" = "В теме $1 сообщений";
 "replied" = "ответил";
 "create_topic" = "Создать тему";
@@ -825,7 +800,6 @@
 "close_topic" = "Закрыть тему";
 "delete_topic" = "Удалить тему";
 "topics_one" = "Одна тема";
-"topics_many" = "$1 тема";
 "topics_other" = "$1 тем";
 "created" = "Создано";
 "everyone_can_create_topics" = "Все могут создавать темы";
@@ -996,19 +970,14 @@
 "about_links" = "Ссылки";
 "instance_links" = "Ссылки инстанции:";
 "about_users_one" = "<b>1</b> пользователь";
-"about_users_many" = "<b>$1</b> пользователей";
 "about_users_other" = "<b>$1</b> пользователей";
 "about_online_users_one" = "<b>1</b> пользователь в сети";
-"about_online_users_many" = "<b>$1</b> пользователей в сети";
 "about_online_users_other" = "<b>$1</b> пользователей в сети";
 "about_active_users_one" = "<b>1</b> активный пользователь";
-"about_active_users_many" = "<b>$1</b> активных пользователей";
 "about_active_users_other" = "<b>$1</b> активных пользователей";
 "about_groups_one" = "<b>1</b> группа";
-"about_groups_many" = "<b>$1</b> групп";
 "about_groups_other" = "<b>$1</b> групп";
 "about_wall_posts_one" = "<b>1</b> запись на стенах";
-"about_wall_posts_many" = "<b>$1</b> записей на стенах";
 "about_wall_posts_other" = "<b>$1</b> записей на стенах";
 
 /* Dialogs */

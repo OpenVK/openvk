@@ -96,7 +96,6 @@
 "x_out_of" = "$1 od";
 "wall_zero" = "nema zapisa";
 "wall_one" = "jedina zapis";
-"wall_many" = "$1 zapisa";
 "wall_other" = "$1 zapisa";
 "nsfw_warning" = "Ova post ima sadržaj za osobe od 18 godina i više";
 
@@ -115,15 +114,12 @@
 "req" = "Zahtevi";
 "friends_zero" = "Nema nijednog prijatelja";
 "friends_one" = "$1 prijatelj";
-"friends_many" = "$1 prijatelja";
 "friends_other" = "$1 prijatelja";
 "followers_zero" = "Nema nijednog sledbenika";
 "followers_one" = "$1 sledbenik";
-"followers_many" = "$1 sledbenika";
 "followers_other" = "$1 sledbenika";
 "subscriptions_zero" = "Nema nijedne prijave";
 "subscriptions_one" = "$1 prijava";
-"subscriptions_many" = "$1 prijava";
 "subscriptions_other" = "$1 prijava";
 
 /* Group */
@@ -150,15 +146,12 @@
 "devote" = "Ražalovati ulogu";
 "participants_zero" = "Nema učesnika";
 "participants_one" = "Jedan učesnik";
-"participants_many" = "$1 učesnika";
 "participants_other" = "$1 učesnika";
 "groups_zero" = "Nema grupe";
 "groups_one" = "Jedna grupa";
-"groups_many" = "$1 grupa";
 "groups_other" = "$1 grupa";
 "meetings_zero" = "Nema sastanka";
 "meetings_one" = "Jedan sastanak";
-"meetings_many" = "$1 sastanka";
 "meetings_other" = "$1 sastanka";
 
 /* Albums */
@@ -173,7 +166,6 @@
 "upload_button" = "Otpremanje";
 "albums_zero" = "Nema albuma";
 "albums_one" = "Jedan album";
-"albums_many" = "$1 albuma";
 "albums_other" = "$1 albuma";
 
 /* Notes */
@@ -188,7 +180,6 @@
 "publish_post" = "Objaviti post";
 "notes_zero" = "Nema beleška";
 "notes_one" = "Jedna beleška";
-"notes_many" = "$1 beleška";
 "notes_other" = "$1 beleška";
 
 /* Menus */
@@ -225,7 +216,6 @@
 "footer_privacy" = "privatnost";
 "notes_zero" = "Nema beleška";
 "notes_one" = "Jedna beleška";
-"notes_many" = "$1 beleška";
 "notes_other" = "$1 belešci";
 
 /* Settings */
@@ -300,7 +290,6 @@
 "info_upload_date" = "Datum preuzimanja";
 "videos_zero" = "Nema nijednog video";
 "videos_one" = "Jedno video";
-"videos_many" = "$1 video";
 "videos_other" = "$1 video";
 
 /* Notifications */
