@@ -69,7 +69,7 @@ list:
     name: "Esperanto"
     native_name: "Esperanto"
     author: "n1rwana"
-  - code: "su"
+  - code: "ru_sov"
     flag: "su"
     name: "Soviet"
     native_name: "Советский"
