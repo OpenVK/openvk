@@ -38,7 +38,11 @@
 "nickname" = "Spitzname";
 "online" = "Online";
 "was_online" = "war online";
-"was_online_m" = "war online";
+"was_online_m" = "war online"; 
+/* For male and female */
+
+"years" = "Jahre alt";
+
 "was_online_f" = "war online";
 "all_title" = "Alle";
 "information" = "Information";
@@ -46,7 +50,9 @@
 "no_information_provided" = "Keine Informationen angegeben.";
 "deceased_person" = "Gestorbene Person";
 "none" = "Nichts";
+
 "relationship" = "Beziehung";
+
 "relationship_0" = "Nicht ausgewählt";
 "relationship_1" = "Nicht verheiratet";
 "relationship_2" = "Datet jemanden";
@@ -56,7 +62,9 @@
 "relationship_6" = "Verliebt";
 "relationship_7" = "Es ist kompliziert";
 "relationship_8" = "Aktiv am suchen";
+
 "politViews" = "Politische Ansichten";
+
 "politViews_0" = "Nicht ausgewählt";
 "politViews_1" = "Egal";
 "politViews_2" = "Kommunist";
@@ -67,14 +75,18 @@
 "politViews_7" = "Monarchisch";
 "politViews_8" = "Ultra-Konservativ";
 "politViews_9" = "Libertär";
+
 "contact_information" = "Kontaktinformationen";
+
 "email" = "E-Mail";
 "phone" = "Telefonnummer";
 "telegram" = "Telegram";
 "personal_website" = "Persönliche Website";
 "city" = "Stadt";
 "address" = "Adresse";
+
 "personal_information" = "Persönliche Informationen";
+
 "interests" = "Interessen";
 "favorite_music" = "Lieblingsmusik";
 "favorite_films" = "Lieblingsfilme";
@@ -82,6 +94,7 @@
 "favorite_books" = "Lieblingsbücher";
 "favorite_quotes" = "Lieblingszitate";
 "information_about" = "Über";
+
 "updated_at" = "Zuletzt aktualisiert am $1";
 
 /* Wall */
@@ -108,11 +121,14 @@
 "wall_other" = "$1 Posts";
 "feed" = "Nachrichten";
 "publish_post" = "Post hinzufügen";
+
 "all_news" = "Alle Nachrichten";
 "posts_per_page" = "Anzahl an Posts per Seite";
+
 "attachment" = "Anhang";
 "post_as_group" = "Als Gruppe posten";
 "add_signature" = "Signatur hinzufügen";
+
 "nsfw_warning" = "Dieser Post enthält möglicherweise NSFW-Inhalte";
 "report" = "Melden";
 "attach_photo" = "Foto anhängen";
@@ -134,12 +150,15 @@
 "incoming_req" = "Abonennten";
 "outcoming_req" = "Anfragen";
 "req" = "Anfragen";
+
 "friends_zero" = "Keine Freunde";
 "friends_one" = "$1 Freund";
 "friends_other" = "$1 Freunde";
+
 "followers_zero" = "Keine Follower";
 "followers_one" = "$1 Follower";
 "followers_other" = "$1 Follower";
+
 "subscriptions_zero" = "Keine Abonnements";
 "subscriptions_one" = "$1 Abonnement";
 "subscriptions_other" = "$1 Abonnements";
@@ -168,6 +187,7 @@
 "all_followers" = "Alle Follower";
 "only_administrators" = "Nur Administratoren";
 "website" = "Website";
+
 "administrators_one" = "$1 Administrator";
 "administrators_other" = "$1 Administratoren";
 "set_comment" = "Kommentar festlegen";
@@ -177,18 +197,22 @@
 "administrator" = "Administrator";
 "promote_to_admin" = "Zum Administrator befördern";
 "devote" = "Herabstufens";
+
 "group_allow_post_for_everyone" = "Jedem erlauben zu posten";
 "statistics" = "Statistiken";
 "group_administrators_list" = "Liste der Administratoren";
 "group_display_only_creator" = "Nur den Gruppenersteller anzeigen";
 "group_display_all_administrators" = "Alle Administratoren anzeigen";
 "group_dont_display_administrators_list" = "Nichts anzeigen";
+
 "participants_zero" = "Keine Teilnehmer";
 "participants_one" = "$1 Teilnehmer";
 "participants_other" = "$1 Teilnehmer";
+
 "groups_zero" = "Keine Gruppen";
 "groups_one" = "$1 Gruppe";
 "groups_other" = "$1 Gruppen";
+
 "meetings_zero" = "Keine Meetings";
 "meetings_one" = "$1 Meeting";
 "meetings_other" = "$1 Meetings";
@@ -203,9 +227,12 @@
 "upload_photo" = "Foto hochladen";
 "photo" = "Foto";
 "upload_button" = "Hochladen";
+
 "open_original" = "Original öffnen";
+
 "avatar_album" = "Profilfotos";
 "wall_album" = "Pinnwand-Fotos";
+
 "albums_zero" = "Keine Alben";
 "albums_one" = "$1 Album";
 "albums_other" = "$1 Alben";
@@ -218,6 +245,7 @@
 "text_note" = "Inhalt";
 "create_note" = "Notiz erstellen";
 "actions" = "Aktionen";
+
 "notes_zero" = "Keine Notizen";
 "notes_one" = "$1 Notiz";
 "notes_other" = "$1 Notizen";
@@ -238,19 +266,24 @@
 "my_feedback" = "Mein Feedback";
 "my_settings" = "Meine Einstellungen";
 "bug_tracker" = "Bugtracker";
+
 "menu_login" = "Einloggen";
 "menu_registration" = "Registrieren";
 "menu_help" = "Hilfe";
+
 "header_home" = "home";
 "header_groups" = "gruppen";
+"header_donate" = "spenden";
 "header_people" = "personen";
 "header_invite" = "einladen";
 "header_help" = "hilfe";
 "header_log_out" = "abmelden";
 "header_search" = "Suchen";
+
 "header_login" = "einloggen";
 "header_registration" = "registrieren";
 "header_help" = "hilfe";
+
 "footer_blog" = "blog";
 "footer_help" = "hilfe";
 "footer_developers" = "entwickler";
@@ -264,23 +297,30 @@
 "avatar" = "Avatar";
 "privacy" = "Privatsphäre";
 "interface" = "oberfläche";
+
 "profile_picture" = "Profilbild";
+
 "picture" = "Bild";
+
 "change_password" = "Passwort ändern";
 "old_password" = "Altes Psswort";
 "new_password" = "Neues Passwort";
 "repeat_password" = "Passwort wiederholen";
+
 "avatars_style" = "Avatarstil";
 "style" = "Stil";
+
 "default" = "Standard";
 "cut" = "Ausschneiden";
 "round_avatars" = "Runde Avatare";
+
 "search_for_groups" = "Nach Gruppen suchen";
 "search_for_people" = "Nach Personen suchen";
 "search_button" = "Suchen";
 "results_zero" = "Keine Ergebnisse";
 "results_one" = "$1 Ergebnis";
 "results_other" = "$1 Ergebnisse";
+
 "privacy_setting_access_page" = "Wer darf meine Seite sehen";
 "privacy_setting_read_info" = "Wer darf meine Hauptinformationen sehen";
 "privacy_setting_see_groups" = "Wer darf meine Gruppen und Meetings sehen";
@@ -298,6 +338,7 @@
 "privacy_value_only_me" = "Nur ich";
 "privacy_value_only_me_dative" = "Nur ich";
 "privacy_value_nobody" = "Niemand";
+
 "your_email_address" = "Deine E-Mail-Adresse";
 "your_page_address" = "Deine Profil-URL";
 "page_address" = "Profil-URL";
@@ -306,6 +347,7 @@
 "you_can_also" = "Du kannst auch";
 "delete_your_page" = "deine seite löschen";
 "delete_album" = "album löschen";
+
 "ui_settings_interface" = "Oberfläche";
 "ui_settings_sidebar" = "Linkes Menü";
 "ui_settings_rating" = "Bewertung";
@@ -326,10 +368,12 @@
 "video_uploaded" = "Hochgeladen";
 "video_updated" = "Aktualisiert";
 "video_link_to_yt" = "YT-Link";
+
 "info_name" = "Titel";
 "info_description" = "Beschreibung";
 "info_uploaded_by" = "Hochgeladen von";
 "info_upload_date" = "Hochgeladen am:";
+
 "videos_zero" = "Keine Videos";
 "videos_one" = "$1 Video";
 "videos_other" = "$1 Videos";
@@ -339,6 +383,7 @@
 "feedback" = "Feedback";
 "unread" = "Ungelesen";
 "archive" = "Archiv";
+
 "notifications_like" = "$1 hat deinem $2Post$3 vom $4 einen Like gegeben";
 "notifications_repost" = "$1 hat deinen $2Post$3 vom $4 geteilt";
 "notifications_comment_under" = "$1 hat einen Kommentar unter $2 hinterlassen";
@@ -348,11 +393,13 @@
 "notifications_under_video" = "deinem $3Video$4";
 "notifications_post" = "$1 hat $2einen Post$3 an deiner Pinnwand hinterlassen: $4";
 "notifications_appoint" = "$1 hat dich zum Community-Manager befördert $2";
+
 "nt_liked_yours" = "hat deins geliket";
 "nt_shared_yours" = "hat deins geteilt";
 "nt_commented_yours" = "hat deins kommentiert";
 "nt_written_on_your_wall" = "hat auf deine Pinnwand geschrieben";
 "nt_made_you_admin" = "hat dich zum Admin in einer Community gemacht";
+
 "nt_from" = "von";
 "nt_yours_adjective" = "deinen";
 "nt_yours_feminitive_adjective" = "deinen";
@@ -369,6 +416,7 @@
 "time_minutes_ago" = "vor $1 Minuten";
 "time_today" = "Heute";
 "time_yesterday" = "Gestern";
+
 "vouchers" = "Gutschein";
 "have_voucher" = "Gutschein einlösen";
 "voucher_token" = "Gutschein-Token";
@@ -391,17 +439,21 @@
 "gifts_zero" = "Keine Geschenke";
 "gifts_one" = "1 Geschenk";
 "gifts_other" = "$1 Geschenke";
+
 "send_gift" = "Geschenk senden";
+
 "gift_select" = "Geschenk auswählen";
 "collections" = "Sammlungen";
 "confirm" = "Bestätigen";
 "as_anonymous" = "Als Anonym";
 "gift_your_message" = "Deine Nachricht";
+
 "free_gift" = "Kostenlos";
 "coins" = "Stimmen";
 "coins_zero" = "0 Stimmen";
 "coins_one" = "1 Stimme";
 "coins_other" = "$1 Stimmen";
+
 "comment" = "Kommentar";
 "sender" = "Sender";
 
@@ -413,8 +465,10 @@
 "error_4" = "Dieser Nutzer existiert nicht";
 "information_-1" = "Erfolgreich";
 "information_-2" = "Login erfolgreich";
+
 "no_data" = "Keine Daten";
 "no_data_description" = "Es gibt keine Daten.";
+
 "error" = "Fehler";
 "error_shorturl" = "Diese Kurz-URL ist bereits vergeben.";
 "error_segmentation" = "Segmentierungsfehler";
@@ -422,10 +476,13 @@
 "error_old_password" = "Altes Passwort stimmt nicht überein";
 "error_new_password" = "Neues Passwort stimmt nicht überein";
 "error_shorturl_incorrect" = "Die Kurz-URL hat ein fehlerhaftes Format.";
+
 "forbidden" = "Zugriffsfehler";
 "forbidden_comment" = "Die Privatsphäreeinstellungen des Nutzers erlauben dir nicht, seine Seite anzusehen.";
+
 "changes_saved" = "Änderungen gespeichert";
 "changes_saved_comment" = "Neue Informationen werden nun auf deiner Seite angezeigt";
+
 "photo_saved" = "Foto gespeichert";
 "photo_saved_comment" = "Dein neues Profilbild wird nun auf deiner Seite angezeigt";
 
