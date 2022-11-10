@@ -81,6 +81,7 @@
 "send" = "Відправити";
 "years_zero" = "0 років";
 "years_one" = "1 рік";
+"years_many" = "$1 років";
 "years_other" = "$1 років";
 "show_my_birthday" = "Показувати дату народження";
 "show_only_month_and_day" = "Показувати лише день та місяць";
@@ -94,6 +95,7 @@
 "relationship_6" = "Закоханий";
 "relationship_7" = "Все складно";
 "relationship_8" = "В активному пошуку";
+"relationship_3_fem" = "Заручена";
 "relationship_6_fem" = "Закохана";
 "politViews" = "Політ. погляди";
 "politViews_0" = "Не вибрано";
@@ -154,6 +156,7 @@
 "x_out_of" = "$1 з";
 "wall_zero" = "немає записів";
 "wall_one" = "єдиний запис";
+"wall_many" = "$1 записів";
 "wall_other" = "$1 записів";
 "publish_post" = "Додати запис";
 "view_other_comments" = "Переглянути інші коментарі";
@@ -197,24 +200,31 @@
 "all_friends" = "Усі друзі";
 "req_zero" = "Не знайдено жодної заявки...";
 "req_one" = "Знайдена $1 заявка";
+"req_many" = "Знайдено $1 заявки";
 "req_other" = "Знайдено $1 заявок";
 "friends_zero" = "Жодного друга";
 "friends_one" = "$1 друг";
+"friends_many" = "$1 друзів";
 "friends_other" = "$1 друзів";
 "friends_online_zero" = "Жодного друга онлайн";
 "friends_online_one" = "$1 друг онлайн";
+"friends_online_many" = "$1 друзів онлайн";
 "friends_online_other" = "$1 друзів онлайн";
 "friends_list_zero" = "У вас поки немає друзів";
 "friends_list_one" = "У Вас $1 друг";
+"friends_many" = "$1 друзів";
 "friends_other" = "$1 друзів";
 "followers_zero" = "Жодного підписника";
 "followers_one" = "$1 підписник";
+"followers_many" = "$1 підписників";
 "followers_other" = "$1 підписників";
 "subscriptions_zero" = "Жодної підписки";
 "subscriptions_one" = "$1 підписка";
+"subscriptions_many" = "$1 підписок";
 "subscriptions_other" = "$1 підписок";
 "friends_list_online_zero" = "У Вас поки немає друзів, що в онлайн";
 "friends_list_online_one" = "У Вас $1 друг онлайн";
+"friends_list_online_many" = "У Вас $1 друзів онлайн";
 "friends_list_online_other" = "У Вас $1 друзів онлайн";
 
 /* Group */
@@ -266,15 +276,18 @@
 "group_owner_setted" = "Новий власник ($1) успішно призначений для спільноти $2. Вам видано права адміністратора у спільноті. Якщо Ви хочете повернути роль власника, зверніться до <a href='/support?act=new'>технічної підтримки сайту</a>.";
 "participants_zero" = "Жодного учасника";
 "participants_one" = "Один учасник";
+"participants_many" = "$1 учасників";
 "participants_other" = "$1 учасників";
 "groups_zero" = "Жодної групи";
 "groups_one" = "Одна група";
+"groups_many" = "$1 груп";
 "groups_other" = "$1 груп";
 "groups_list_zero" = "Ви не перебуваєте в жодній групі";
 "groups_list_one" = "Ви перебуваєте в одній групі";
 "groups_list_other" = "Ви перебуваєте в $1 групах";
 "meetings_zero" = "Жодної зустрічі";
 "meetings_one" = "Одна зустріч";
+"meetings_many" = "$1 зустрічей";
 "meetings_other" = "$1 зустрічей";
 "open_new_group" = "Створити нову групу";
 "open_group_desc" = "Не можете знайти потрібну групу? Відкрийте свою...";
@@ -297,9 +310,11 @@
 "wall_album" = "Фотографії зі стіни";
 "albums_zero" = "Жодного альбому";
 "albums_one" = "Один альбом";
+"albums_many" = "$1 альбомів";
 "albums_other" = "$1 альбомів";
 "albums_list_zero" = "У Вас немає жодного альбому";
 "albums_list_one" = "У Вас є один альбом";
+"albums_list_many" = "У Вас $1 альбомів";
 "albums_list_other" = "У Вас $1 альбомів";
 
 /* Notes */
@@ -319,9 +334,11 @@
 "edited" = "Відредаговано";
 "notes_zero" = "Жодної нотатки";
 "notes_one" = "Одна нотатка";
+"notes_many" = "$1 нотаток";
 "notes_other" = "$1 нотаток";
 "notes_list_zero" = "Не знайдено жодної нотатки";
 "notes_list_one" = "Знайдено одну нотатку";
+"notes_list_many" = "Знайдено $1 нотаток";
 "notes_list_other" = "Знайдено $1 нотаток";
 
 /* Menus */
@@ -386,6 +403,7 @@
 "search_placeholder" = "Почніть вводити будь-яке ім'я, назву чи слово";
 "results_zero" = "Жодного результату";
 "results_one" = "Один результат";
+"results_many" = "$1 результатів";
 "results_other" = "$1 результатів";
 "privacy_setting_access_page" = "Кому в інтернеті видно мою сторінку";
 "privacy_setting_read_info" = "Кому видно основну інформацію моєї сторінки";
@@ -502,6 +520,7 @@
 "info_upload_date" = "Дата завантаження";
 "videos_zero" = "Жодного відеозапису";
 "videos_one" = "Одна відеозапис";
+"videos_many" = "$1 відеозаписів";
 "videos_other" = "$1 відеозаписів";
 "view_video" = "Перегляд";
 
@@ -563,6 +582,7 @@
 "points_transfer_dialog_header_1" = "Ви можете надіслати в подарунок або передати частину голосів іншій людині.";
 "points_transfer_dialog_header_2" = "Ваш поточний баланс:";
 "points_amount_one" = "1 голос";
+"points_amount_many" = "$1 голосів";
 "points_amount_other" = "$1 голосів";
 "transfer_poins" = "Передача голосів";
 "transfer_poins_button" = "Передати голоси";
@@ -600,9 +620,11 @@
 "gifts" = "Подарунки";
 "gifts_zero" = "Немає подарунків";
 "gifts_one" = "Один подарунок";
+"gifts_many" = "$1 подарунків";
 "gifts_other" = "$1 подарунків";
 "gifts_left" = "Подарунок залишилося: $1";
 "gifts_left_one" = "Залишився один подарунок";
+"gifts_left_many" = "Залишилося $1 подарунків";
 "gifts_left_other" = "Залишилося $1 подарунків";
 "send_gift" = "Відправити подарунок";
 "gift_select" = "Обрати подарунок";
@@ -614,6 +636,7 @@
 "coins" = "Голоси";
 "coins_zero" = "0 голосів";
 "coins_one" = "Один голос";
+"coins_many" = "$1 голосів";
 "coins_other" = "$1 голосів";
 "users_gifts" = "Подарунки";
 
@@ -785,9 +808,11 @@
 
 "discussions" = "Обговорення";
 "messages_one" = "Одне повідомлення";
+"messages_many" = "$1 повідомлень";
 "messages_other" = "$1 повідомлень";
 "topic_messages_count_zero" = "У темі немає повідомлень";
 "topic_messages_count_one" = "У темі одне повідомлення";
+"topic_messages_count_many" = "У темі $1 повідомлень";
 "topic_messages_count_other" = "У темі $1 повідомлень";
 "replied" = "відповів";
 "create_topic" = "Створити тему";
@@ -802,6 +827,7 @@
 "close_topic" = "Закрити тему";
 "delete_topic" = "Видалити тему";
 "topics_one" = "Одна тема";
+"topics_many" = "$1 тема";
 "topics_other" = "$1 тем";
 "created" = "Створено";
 "everyone_can_create_topics" = "Всі можуть створювати теми";
@@ -972,14 +998,19 @@
 "about_links" = "Посилання";
 "instance_links" = "Посилання інстанції:";
 "about_users_one" = "<b>1</b> користувач";
+"about_users_many" = "<b>$1</b> користувачів";
 "about_users_other" = "<b>$1</b> користувачів";
 "about_online_users_one" = "<b>1</b> користувач у мережі";
+"about_online_users_many" = "<b>$1</b> користувачів у мережі";
 "about_online_users_other" = "<b>$1</b> користувачів у мережі";
 "about_active_users_one" = "<b>1</b> активний користувач";
+"about_active_users_many" = "<b>$1</b> активних користувачів";
 "about_active_users_other" = "<b>$1</b> активних користувачів";
 "about_groups_one" = "<b>1</b> група";
+"about_groups_many" = "<b>$1</b> груп";
 "about_groups_other" = "<b>$1</b> груп";
 "about_wall_posts_one" = "<b>1</b> запис на стінах";
+"about_wall_posts_many" = "<b>$1</b> записів на стінах";
 "about_wall_posts_other" = "<b>$1</b> записів на стінах";
 
 /* Dialogs */

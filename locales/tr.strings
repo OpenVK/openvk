@@ -446,6 +446,7 @@
 "support_faq" = "Sık Sorulan Sorular";
 "support_list" = "Bilet listesi";
 "support_new" = "Yeni bilet";
+"support_faq_content" = "Bu site arkadaşlarınızı ve tanıdıklarınızı bulmak için, aynı zamanda kullanıcı verisini görebilmek için tasarlanmıştır. Bu, kişilerin bir kişi hakkında hızlıca ilgili bilgileri bulunabildiği bir şehir defteri gibidir.";
 "support_new_title" = "Biletinizin konusunu girin";
 "support_new_content" = "Sorununuzu ya da önerinizi açıklayın";
 "comment" = "Yorum";
@@ -489,5 +490,4 @@
 "paginator_next" = "İleri";
 
 /* Translated by @WindowZ414 - @WindowZ414 tarafından çevirildi */
-
 

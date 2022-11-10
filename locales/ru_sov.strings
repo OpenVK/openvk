@@ -70,6 +70,7 @@
 "send" = "Отправить";
 "years_zero" = "0 лет";
 "years_one" = "1 год";
+"years_many" = "$1 лет";
 "years_other" = "$1 лет";
 "relationship" = "Семейное положение";
 "relationship_0" = "Не выбрано";
@@ -133,6 +134,7 @@
 "x_out_of" = "$1 из";
 "wall_zero" = "нет записей";
 "wall_one" = "единственная запись";
+"wall_many" = "$1 записей";
 "wall_other" = "$1 записей";
 "publish_post" = "Добавить запись";
 "view_other_comments" = "Посмотреть остальные комментарии";
@@ -171,12 +173,15 @@
 "req" = "Заявки";
 "friends_zero" = "Ни одного товарища";
 "friends_one" = "$1 товарищ";
+"friends_many" = "$1 товарищей";
 "friends_other" = "$1 друзей";
 "followers_zero" = "Ни одного подписчика";
 "followers_one" = "$1 подписчик";
+"followers_many" = "$1 подписчиков";
 "followers_other" = "$1 подписчиков";
 "subscriptions_zero" = "Ни одной подписки";
 "subscriptions_one" = "$1 подписка";
+"subscriptions_many" = "$1 подписок";
 "subscriptions_other" = "$1 подписок";
 
 /* Group */
@@ -226,12 +231,15 @@
 "group_owner_setted" = "Новый владелец ($1) успешно назначен в сообщество $2. Вам выданы права администратора в сообществе. Если Вы хотите вернуть роль владельца, обратитесь в <a href='/support?act=new'>техническую поддержку сайта</a>.";
 "participants_zero" = "Ни одного участника";
 "participants_one" = "Один участник";
+"participants_many" = "$1 участников";
 "participants_other" = "$1 участников";
 "groups_zero" = "Ни одной группы";
 "groups_one" = "Одна группа";
+"groups_many" = "$1 групп";
 "groups_other" = "$1 групп";
 "meetings_zero" = "Ни одной встречи";
 "meetings_one" = "Одна встреча";
+"meetings_many" = "$1 встреч";
 "meetings_other" = "$1 встреч";
 
 /* Albums */
@@ -249,6 +257,7 @@
 "wall_album" = "Картинки с доски";
 "albums_zero" = "Ни одного альбома с картинками";
 "albums_one" = "Один альбом с картинками";
+"albums_many" = "$1 альбомов с картинками";
 "albums_other" = "$1 альбомов с картинками";
 
 /* Notes */
@@ -261,6 +270,7 @@
 "actions" = "Действия";
 "notes_zero" = "Ни одного черновика";
 "notes_one" = "Один черновик";
+"notes_many" = "$1 черновиков";
 "notes_other" = "$1 черновиков";
 
 /* Menus */
@@ -322,6 +332,7 @@
 "search_placeholder" = "Начните вводить любое имя, название или слово";
 "results_zero" = "Ни одного результата";
 "results_one" = "Один результат";
+"results_many" = "$1 результатов";
 "results_other" = "$1 результатов";
 "privacy_setting_access_page" = "Кому из граждан видно мое досье";
 "privacy_setting_read_info" = "Кому видно основную информацию моей страницы";
@@ -403,6 +414,7 @@
 "info_upload_date" = "Дата отправки киноленты";
 "videos_zero" = "Ни однойкиноленты";
 "videos_one" = "Одна кинолента";
+"videos_many" = "$1 кинолент";
 "videos_other" = "$1 кинолент";
 
 /* Notifications */
@@ -461,6 +473,7 @@
 "points_transfer_dialog_header_1" = "Вы можете отправить в подарок или передать часть рублей другому гражданину.";
 "points_transfer_dialog_header_2" = "Ваш текущий баланс:";
 "points_amount_one" = "1 рубль";
+"points_amount_many" = "$1 рублей";
 "points_amount_other" = "$1 рублей";
 "transfer_poins" = "Передача рублей";
 "transfer_poins_button" = "Передать рубли";
@@ -483,9 +496,11 @@
 "gifts" = "Подарки";
 "gifts_zero" = "Нет подарков";
 "gifts_one" = "Один подарок";
+"gifts_many" = "$1 подарков";
 "gifts_other" = "$1 подарков";
 "gifts_left" = "Подарков осталось: $1";
 "gifts_left_one" = "Один подарок остался";
+"gifts_left_many" = "$1 подарков осталось";
 "gifts_left_other" = "$1 подарков осталось";
 "send_gift" = "Отправить подарок";
 "gift_select" = "Выбрать подарок";
@@ -497,6 +512,7 @@
 "coins" = "Голоса";
 "coins_zero" = "0 рублей";
 "coins_one" = "Один рубль";
+"coins_many" = "$1 рублей";
 "coins_other" = "$1 рублей";
 "users_gifts" = "Подарки";
 
@@ -526,6 +542,7 @@
 "support_faq" = "Часто задаваемые вопросы";
 "support_list" = "Список обращений";
 "support_new" = "Новое обращение";
+"support_faq_content" = "Сайт предназначен для поиска друзей и знакомых, а также для просмотра данных пользователя. Это как справочник города, с помощью которого люди могут быстро найти актуальную информацию о человеке.";
 "support_new_title" = "Введите тему вашего обращения";
 "support_new_content" = "Опишите проблему или предложение";
 "support_rate_good_answer" = "Подарить конфеты";
@@ -566,9 +583,11 @@
 
 "discussions" = "Обсуждения";
 "messages_one" = "Одна телеграмма";
+"messages_many" = "$1 телеграмм";
 "messages_other" = "$1 телеграмм";
 "topic_messages_count_zero" = "В теме нет телеграмм";
 "topic_messages_count_one" = "В теме одна телеграмма";
+"topic_messages_count_many" = "В теме $1 телеграмм";
 "topic_messages_count_other" = "В теме $1 телеграмм";
 "replied" = "ответил";
 "create_topic" = "Создать тему";
@@ -583,6 +602,7 @@
 "close_topic" = "Закрыть тему";
 "delete_topic" = "Удалить тему";
 "topics_one" = "Одна тема";
+"topics_many" = "$1 тема";
 "topics_other" = "$1 тем";
 "created" = "Создано";
 "everyone_can_create_topics" = "Все могут создавать темы";
@@ -662,14 +682,19 @@
 "most_popular_groups" = "Самые популярные клубы";
 "on_this_instance_are" = "На этой стране";
 "about_users_one" = "<b>1</b> гражданин";
+"about_users_many" = "<b>$1</b> гражданинов";
 "about_users_other" = "<b>$1</b> гражданинов";
 "about_online_users_one" = "<b>1</b> гражданин в сети";
+"about_online_users_many" = "<b>$1</b> граждан в сети";
 "about_online_users_other" = "<b>$1</b> граждан в сети";
 "about_active_users_one" = "<b>1</b> активный гражданин";
+"about_active_users_many" = "<b>$1</b> активных граждан";
 "about_active_users_other" = "<b>$1</b> активных граждан";
 "about_groups_one" = "<b>1</b> клуб";
+"about_groups_many" = "<b>$1</b> клубов";
 "about_groups_other" = "<b>$1</b> клубов";
 "about_wall_posts_one" = "<b>1</b> заметка на досках";
+"about_wall_posts_many" = "<b>$1</b> заметки на досках";
 "about_wall_posts_other" = "<b>$1</b> заметки на досках";
 
 /* Dialogs */

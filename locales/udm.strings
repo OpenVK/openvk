@@ -68,6 +68,7 @@
 "send" = "Ыстыны";
 "years_zero" = "0 ар";
 "years_one" = "1 ар";
+"years_many" = "$1 ар";
 "years_other" = "$1 ар";
 "relationship" = "Семейное положение";
 "relationship_0" = "Ӧз быръе";
@@ -131,6 +132,7 @@
 "x_out_of" = "$1 из";
 "wall_zero" = "записей ӧвӧл";
 "wall_one" = "одӥг запись";
+"wall_many" = "$1 записей";
 "wall_other" = "$1 записей";
 "publish_post" = "Ватсан записи";
 "view_other_comments" = "Учке мукет комментарий";
@@ -169,12 +171,15 @@
 "req" = "Заявки";
 "friends_zero" = "Одӥг но эшъёс";
 "friends_one" = "$1 эшъёс";
+"friends_many" = "$1 эшъёс";
 "friends_other" = "$1 эшъёс";
 "followers_zero" = "Одӥг но подписчика";
 "followers_one" = "$1 подписчик";
+"followers_many" = "$1 подписчиков";
 "followers_other" = "$1 подписчиков";
 "subscriptions_zero" = "Одӥг но подписки";
 "subscriptions_one" = "$1 подписка";
+"subscriptions_many" = "$1 подписок";
 "subscriptions_other" = "$1 подписок";
 
 /* Group */
@@ -223,12 +228,15 @@
 "group_owner_setted" = "Выль кузё ($1) пусъемын йыг сообщество $2. Администратор сообществоын тыныд право сётӥз. Рольёсъя Тон кузёйыр берыктэмед потэ ке, пӧрмиз <a href='/support?act=new'>техническую поддержку сайта</a>.";
 "participants_zero" = "Но одӥг пыриськисьёс";
 "participants_one" = "Одӥг пыриськисьёс";
+"participants_many" = "$1 пыриськисьёс";
 "participants_other" = "$1 пыриськисьёс";
 "groups_zero" = "Но одӥг группа";
 "groups_one" = "Одӥг группаын";
+"groups_many" = "$1 группаын";
 "groups_other" = "$1 группаын";
 "meetings_zero" = "Но одӥг пумиськон";
 "meetings_one" = "Одӥг пумиськон";
+"meetings_many" = "$1 пумиськон";
 "meetings_other" = "$1 пумиськон";
 
 /* Albums */
@@ -246,6 +254,7 @@
 "wall_album" = "Борддорысь туспуктэмъёсты";
 "albums_zero" = "Одӥг но альбом";
 "albums_one" = "Одӥг альбом";
+"albums_many" = "$1 альбомов";
 "albums_other" = "$1 альбомов";
 
 /* Notes */
@@ -258,6 +267,7 @@
 "actions" = "Ужъёс";
 "notes_zero" = "Ни одной заметки";
 "notes_one" = "Одна заметка";
+"notes_many" = "$1 заметок";
 "notes_other" = "$1 заметок";
 
 /* Menus */
@@ -319,6 +329,7 @@
 "search_placeholder" = "Котькудӥныз нимысьтыз пырыны кутске, нимыз яке кыл";
 "results_zero" = "Одӥг но результатъёсыз";
 "results_one" = "Один результат";
+"results_many" = "$1 результатов";
 "results_other" = "$1 результатов";
 "privacy_setting_access_page" = "Кин милемыз адӟыса интернетын бам";
 "privacy_setting_read_info" = "кин милемыз адӟоз информациез валтӥсь бам";
@@ -399,6 +410,7 @@
 "info_upload_date" = "загрузка Дыр";
 "videos_zero" = "одӥг но видеозапись";
 "videos_one" = "Одӥг видеозапись";
+"videos_many" = "$1 видеозапись";
 "videos_other" = "$1 видеозапись";
 
 /* Notifications */
@@ -457,6 +469,7 @@
 "points_transfer_dialog_header_1" = "Вы можете отправить в подарок или передать часть голосов другому человеку.";
 "points_transfer_dialog_header_2" = "Ваш текущий баланс:";
 "points_amount_one" = "1 голос";
+"points_amount_many" = "$1 голосов";
 "points_amount_other" = "$1 голосов";
 "transfer_poins" = "Передача голосов";
 "transfer_poins_button" = "Передать голоса";
@@ -479,9 +492,11 @@
 "gifts" = "Кузьым";
 "gifts_zero" = "кузьым Ӧвӧл";
 "gifts_one" = "одӥг кузьым";
+"gifts_many" = "$1 кузьым";
 "gifts_other" = "$1 кузьым";
 "gifts_left" = "Кузьым кыльы: $1";
 "gifts_left_one" = "кылиз одӥг кузьым";
+"gifts_left_menu" = "$1 кылем кузьым";
 "gifts_left_other" = "$1 кылем кузьым";
 "send_gift" = "Отправить подарок";
 "gift_select" = "Выбрать подарок";
@@ -493,6 +508,7 @@
 "coins" = "Голоса";
 "coins_zero" = "0 голосов";
 "coins_one" = "Один голос";
+"coins_many" = "$1 голосов";
 "coins_other" = "$1 голосов";
 "users_gifts" = "Подарки";
 
@@ -511,6 +527,7 @@
 "support_faq" = "Часто задаваемые вопросы";
 "support_list" = "Список обращений";
 "support_new" = "Новое обращение";
+"support_faq_content" = "Сайт предназначен для поиска друзей и знакомых, а также для просмотра данных пользователя. Это как справочник города, с помощью которого люди могут быстро найти актуальную информацию о человеке.";
 "support_new_title" = "Темая-лэсь вазиськонэ пыртӥзы";
 "support_new_content" = "Гожтэмын яке предложениосты ужпум";
 "support_rate_good_answer" = "та умой ответ";
@@ -550,9 +567,11 @@
 
 "discussions" = "Обсуждения";
 "messages_one" = "Одно сообщение";
+"messages_many" = "$1 сообщений";
 "messages_other" = "$1 сообщений";
 "topic_messages_count_zero" = "В теме нет сообщений";
 "topic_messages_count_one" = "В теме одно сообщение";
+"topic_messages_count_many" = "В теме $1 сообщений";
 "topic_messages_count_other" = "В теме $1 сообщений";
 "replied" = "ответил";
 "create_topic" = "Кылдӥз тему";
@@ -567,6 +586,7 @@
 "close_topic" = "Закрыть тему";
 "delete_topic" = "Удалить тему";
 "topics_one" = "Одна тема";
+"topics_many" = "$1 тема";
 "topics_other" = "$1 тем";
 "created" = "Создано";
 "everyone_can_create_topics" = "Все могут создавать темы";

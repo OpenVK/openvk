@@ -99,6 +99,7 @@
 "x_out_of" = "$1 ź";
 "wall_zero" = "niama zapisaŭ";
 "wall_one" = "adziny zapis";
+"wall_many" = "$1 zapisaŭ";
 "wall_other" = "$1 zapisaŭ";
 "nsfw_warning" = "Hety post mažliva maje 18+ kantent";
 "report" = "Abžałavać";
@@ -120,12 +121,15 @@
 "req" = "Zajavy";
 "friends_zero" = "Niama siabroŭ";
 "friends_one" = "$1 siabar";
+"friends_many" = "$1 siabroŭ";
 "friends_other" = "$1 siabroŭ";
 "followers_zero" = "Niama padpisantaŭ";
 "followers_one" = "$1 padpisant";
+"followers_many" = "$1 padpisantaŭ";
 "followers_other" = "$1 padpisantaŭ";
 "subscriptions_zero" = "Niama padpisak";
 "subscriptions_one" = "$1 padpiska";
+"subscriptions_many" = "$1 padpisak";
 "subscriptions_other" = "$1 padpisak";
 
 /* Group */
@@ -152,12 +156,15 @@
 "devote" = "Razskardzicca";
 "participants_zero" = "Niama ŭdzielnikaŭ";
 "participants_one" = "Adziny ŭdzielnik";
+"participants_many" = "$1 udzielnikaŭ";
 "participants_other" = "$1 udzielnikaŭ";
 "groups_zero" = "Niama hurtoŭ";
 "groups_one" = "Adziny hurt";
+"groups_many" = "$1 hurtoŭ";
 "groups_other" = "$1 hurtoŭ";
 "meetings_zero" = "Niama sustreč";
 "meetings_one" = "Adzinaja sustreča";
+"meetings_many" = "$1 sustreč";
 "meetings_other" = "$1 sustreč";
 
 /* Albums */
@@ -172,6 +179,7 @@
 "upload_button" = "Zapampavać";
 "albums_zero" = "Niama albomaŭ";
 "albums_one" = "Adziny albom";
+"albums_many" = "$1 albomaŭ";
 "albums_other" = "$1 albomaŭ";
 
 /* Notes */
@@ -186,6 +194,7 @@
 "publish_post" = "Dadać zapis";
 "notes_zero" = "Niama natatak";
 "notes_one" = "Adzinaja natatka";
+"notes_many" = "$1 natatak";
 "notes_other" = "$1 natatak";
 
 /* Menus */
@@ -222,6 +231,7 @@
 "footer_privacy" = "pryvatnaść";
 "notes_zero" = "Niama natatak";
 "notes_one" = "Adna natatka";
+"notes_many" = "$1 natatak";
 "notes_other" = "$1 natatak";
 
 /* Settings */
@@ -296,6 +306,7 @@
 "info_upload_date" = "Kali zapampovana";
 "videos_zero" = "Niama videazapisaŭ";
 "videos_one" = "Adziny videazapis";
+"videos_many" = "$1 videazapisaŭ";
 "videos_other" = "$1 videazapisaŭ";
 
 /* Notifications */

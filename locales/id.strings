@@ -567,6 +567,7 @@
 "support_faq" = "Pertanyaan yang sering diajukan";
 "support_list" = "Lis tiket";
 "support_new" = "Tiket baru";
+"support_faq_content" = "The site is designed to find friends and acquaintances, as well as view user data. It is like a city directory, through which people can quickly find relevant information about a person.";
 "support_new_title" = "Masukkkan topik tiketmu";
 "support_new_content" = "Deskripsikan keluh kesahmu atau sugesti ataupun kritik dan saranmu";
 "support_rate_good_answer" = "Jawaban yang baik";

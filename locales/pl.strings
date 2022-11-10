@@ -72,6 +72,7 @@
 "send" = "Wysłać";
 "years_zero" = "0 lat";
 "years_one" = "1 rok";
+"years_many" = "$1 lat";
 "years_other" = "$1 lat";
 "relationship" = "Stan cywilny";
 "relationship_0" = "Nie wybrano";
@@ -135,6 +136,7 @@
 "x_out_of" = "$1 z";
 "wall_zero" = "brak wpisów";
 "wall_one" = "jedyny wpis";
+"wall_many" = "$1 wpis";
 "wall_other" = "$1 wpis";
 "publish_post" = "Dodaj wpis";
 "view_other_comments" = "Zobacz pozostałe komentarze";
@@ -173,12 +175,15 @@
 "req" = "Zgłoszenie";
 "friends_zero" = "Ani jednego przyjaciela";
 "friends_one" = "$1 przyjaciel";
+"friends_many" = "$1 przyjaciół";
 "friends_other" = "$1 przyjaciół";
 "followers_zero" = "Brak subskrybenta";
 "followers_one" = "$1 subskrybent";
+"followers_many" = "$1 subskrybent";
 "followers_other" = "$1 subskrybent";
 "subscriptions_zero" = "Brak abonamentu";
 "subscriptions_one" = "$1 subskrypcja";
+"subscriptions_many" = "$1 subskrypcji";
 "subscriptions_other" = "$1 subskrypcji";
 
 /* Group */
@@ -228,12 +233,15 @@
 "group_owner_setted" = "Nowy właściciel ($1) został pomyślnie przypisany do społeczności $2. Otrzymujesz uprawnienia administratora w społeczności. Jeśli chcesz odzyskać rolę właściciela, skontaktuj się z <a href='/support?act=new'>wsparcie techniczne strony</a>.";
 "participants_zero" = "Brak uczestnika";
 "participants_one" = "Jeden uczestnik";
+"participants_many" = "$1 uczestników";
 "participants_other" = "$1 uczestników";
 "groups_zero" = "Żadnej grupy";
 "groups_one" = "Jedna grupa";
+"groups_many" = "$1 grup";
 "groups_other" = "$1 grup";
 "meetings_zero" = "Ani jednego spotkania";
 "meetings_one" = "Jedno spotkanie";
+"meetings_many" = "$1 spotkań";
 "meetings_other" = "$1 spotkań";
 
 /* Albums */
@@ -251,6 +259,7 @@
 "wall_album" = "Zdjęcia ze ściany";
 "albums_zero" = "Brak albumu";
 "albums_one" = "Jeden album";
+"albums_many" = "$1 albumów";
 "albums_other" = "$1 albumów";
 
 /* Notes */
@@ -263,6 +272,7 @@
 "actions" = "Postępowanie";
 "notes_zero" = "Brak notatek";
 "notes_one" = "Jedna notka";
+"notes_many" = "$1 notatek";
 "notes_other" = "$1 notatek";
 
 /* Menus */
@@ -325,6 +335,7 @@
 "search_placeholder" = "Zacznij wpisywać dowolne imię, tytuł lub słowo";
 "results_zero" = "Brak wyników";
 "results_one" = "Jeden wynik";
+"results_many" = "$1 wyniki";
 "results_other" = "$1 wyników";
 "privacy_setting_access_page" = "Kto w Internecie widzi moją stronę";
 "privacy_setting_read_info" = "Kto widzi podstawowe informacje o mojej stronie";
@@ -407,6 +418,7 @@
 "info_upload_date" = "Data pobrania";
 "videos_zero" = "Brak nagrania wideo";
 "videos_one" = "Jedno nagranie wideo";
+"videos_many" = "$1 nagrania wideo";
 "videos_other" = "$1 nagrania wideo";
 
 /* Notifications */
@@ -465,6 +477,7 @@
 "points_transfer_dialog_header_1" = "Możesz wysłać jako prezent lub przekazać część głosów innej osobie.";
 "points_transfer_dialog_header_2" = "Twoje bieżące saldo:";
 "points_amount_one" = "1 głos";
+"points_amount_many" = "$1 głosów";
 "points_amount_other" = "$1 głosów";
 "transfer_poins" = "Przekazywanie głosów";
 "transfer_poins_button" = "Oddaj głosy";
@@ -487,9 +500,11 @@
 "gifts" = "Prezenty";
 "gifts_zero" = "Brak prezentów";
 "gifts_one" = "Jeden prezent";
+"gifts_many" = "$1 prezentów";
 "gifts_other" = "$1 prezentów";
 "gifts_left" = "Prezentów zostało: $1";
 "gifts_left_one" = "Jeden prezent został";
+"gifts_left_many" = "$1 pozostało prezentów";
 "gifts_left_other" = "$1 pozostało prezentów";
 "send_gift" = "Wyślij prezent";
 "gift_select" = "Wybierz prezent";
@@ -501,6 +516,7 @@
 "coins" = "Głosy";
 "coins_zero" = "0 głosów";
 "coins_one" = "Jeden głos";
+"coins_many" = "$1 głosów";
 "coins_other" = "$1 głosów";
 "users_gifts" = "Prezent";
 
@@ -519,6 +535,7 @@
 "support_faq" = "Najczęściej zadawane pytania";
 "support_list" = "Lista zgłoszeń";
 "support_new" = "Nowy apel";
+"support_faq_content" = "Witryna służy do wyszukiwania znajomych i znajomych, a także do przeglądania danych użytkownika. To jak przewodnik po mieście, dzięki któremu ludzie mogą szybko znaleźć aktualne informacje o osobie.";
 "support_new_title" = "Wpisz temat swojego apelu";
 "support_new_content" = "Opisz problem lub sugestię";
 "support_rate_good_answer" = "To dobra odpowiedź";
@@ -558,9 +575,11 @@
 
 "discussions" = "Dyskusja";
 "messages_one" = "Jedna post";
+"messages_many" = "$1 postów";
 "messages_other" = "$1 postów";
 "topic_messages_count_zero" = "W temacie brak postów";
 "topic_messages_count_one" = "W temacie jeden post";
+"topic_messages_count_many" = "W temacie $1 postów";
 "topic_messages_count_other" = "W temacie $1 postów";
 "replied" = "odpowiedzieć";
 "create_topic" = "Utwórz temat";
@@ -575,6 +594,7 @@
 "close_topic" = "Zamknij temat";
 "delete_topic" = "Usuń temat";
 "topics_one" = "Jeden temat";
+"topics_many" = "$1 tematy";
 "topics_other" = "$1 tematów";
 "created" = "Powstały";
 "everyone_can_create_topics" = "Każdy może tworzyć tematy";
@@ -653,14 +673,19 @@
 "most_popular_groups" = "Najpopularniejsze grupy";
 "on_this_instance_are" = "W tej instancji:";
 "about_users_one" = "<b>1</b> użytkownik";
+"about_users_many" = "<b>$1</b> użytkowników";
 "about_users_other" = "<b>$1</b> użytkowników";
 "about_online_users_one" = "<b>1</b> użytkownik online";
+"about_online_users_many" = "<b>$1</b> użytkowników online";
 "about_online_users_other" = "<b>$1</b> użytkowników online";
 "about_active_users_one" = "<b>1</b> aktywny użytkownik";
+"about_active_users_many" = "<b>$1</b> aktywnych użytkowników";
 "about_active_users_other" = "<b>$1</b> aktywnych użytkowników";
 "about_groups_one" = "<b>1</b> grupa";
+"about_groups_many" = "<b>$1</b> grup";
 "about_groups_other" = "<b>$1</b> grup";
 "about_wall_posts_one" = "<b>1</b> wpis na ścianach";
+"about_wall_posts_many" = "<b>$1</b> wpisów na ścianach";
 "about_wall_posts_other" = "<b>$1</b> wpisów na ścianach";
 
 /* Dialogs */

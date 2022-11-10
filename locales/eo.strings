@@ -71,6 +71,7 @@
 "send" = "Sendi";
 "years_zero" = "0 jara";
 "years_one" = "1 jara";
+"years_many" = "$1 jara";
 "years_other" = "$1 jara";
 "relationship" = "Rilato";
 "relationship_0" = "Ne elektita";
@@ -132,6 +133,7 @@
 "x_out_of" = "$1 el";
 "wall_zero" = "neniuj afiŝoj";
 "wall_one" = "$1 afiŝo";
+"wall_many" = "$1 rekordoj";
 "wall_other" = "$1 afiŝoj";
 "publish_post" = "Aldonu afiŝon";
 "view_other_comments" = "Rigardu aliajn komentojn";
@@ -166,12 +168,15 @@
 "req" = "Petoj";
 "friends_zero" = "Neniuj amikoj";
 "friends_one" = "$1 amiko";
+"friends_many" = "$1 amikoj";
 "friends_other" = "$1 amikoj";
 "followers_zero" = "Neniuj sekvantoj";
 "followers_one" = "$1 sekvanto";
+"followers_many" = "$1 sekvantoj";
 "followers_other" = "$1 sekvantoj";
 "subscriptions_zero" = "Neniuj abonoj";
 "subscriptions_one" = "$1 abono";
+"subscriptions_many" = "$1 abonoj";
 "subscriptions_other" = "$1 abonoj";
 
 /* Group */
@@ -216,12 +221,15 @@
 "group_dont_display_administrators_list" = "Montru nenion";
 "participants_zero" = "Neniuj partoprenantoj";
 "participants_one" = "$1 partoprenanto";
+"participants_many" = "$1 partoprenantoj";
 "participants_other" = "$1 partoprenantoj";
 "groups_zero" = "Neniuj grupoj";
 "groups_one" = "$1 grupo";
+"groups_many" = "$1 grupoj";
 "groups_other" = "$1 grupoj";
 "meetings_zero" = "Neniuj kunvenoj";
 "meetings_one" = "$1 kunveno";
+"meetings_many" = "$1 kunvenoj";
 "meetings_other" = "$1 kunvenoj";
 
 /* Albums */
@@ -239,6 +247,7 @@
 "wall_album" = "Muraj fotoj";
 "albums_zero" = "Neniuj albumoj";
 "albums_one" = "$1 albumo";
+"albums_many" = "$1 albumoj";
 "albums_other" = "$1 albumoj";
 
 /* Notes */
@@ -251,6 +260,7 @@
 "actions" = "Agoj";
 "notes_zero" = "Neniuj notoj";
 "notes_one" = "$1 noto";
+"notes_many" = "$1 notoj";
 "notes_other" = "$1 notoj";
 
 /* Menus */
@@ -308,6 +318,7 @@
 "search_button" = "Trovi";
 "results_zero" = "Neniuj rezultoj";
 "results_one" = "$1 rezulto";
+"results_many" = "$1 rezultoj";
 "results_other" = "$1 rezultoj";
 "privacy_setting_access_page" = "Kiu povas vidi mian paĝon";
 "privacy_setting_read_info" = "Kiu povas vidi ĉefajn informojn de mia paĝo";
@@ -384,6 +395,7 @@
 "info_upload_date" = "Upload date";
 "videos_zero" = "Neniuj filmetoj";
 "videos_one" = "$1 video";
+"videos_many" = "$1 videoj";
 "videos_other" = "$1 videoj";
 
 /* Notifications */
@@ -445,9 +457,11 @@
 "gifts" = "Donacoj";
 "gifts_zero" = "Nulaj donacoj";
 "gifts_one" = "Unu donaco";
+"gifts_many" = "$1 donacoj";
 "gifts_other" = "$1 gifts";
 "gifts_left" = "Restas donacoj: $1";
 "gifts_left_one" = "Restas unu donaco";
+"gifts_left_many" = "Restas $1 donacoj";
 "gifts_left_other" = "Restas $1 donacoj";
 "send_gift" = "Sendu donacon";
 "gift_select" = "Elektu donacon";
@@ -459,6 +473,7 @@
 "coins" = "Voĉdonoj";
 "coins_zero" = "0 voĉdono";
 "coins_one" = "Unu voĉdono";
+"coins_many" = "$1 voĉoj";
 "coins_other" = "$1 voĉoj";
 "users_gifts" = "Donacoj";
 
@@ -477,6 +492,7 @@
 "support_faq" = "Oftaj Demandoj";
 "support_list" = "Listo de biletoj";
 "support_new" = "Nova bileto";
+"support_faq_content" = "La retejo estas desegnita por trovi amikojn kaj konatojn, kaj ankaŭ vidi datumojn de uzantoj. Ĝi estas kiel urba adresaro, per kiu homoj povas rapide trovi koncernajn informojn pri homo.";
 "support_new_title" = "Eniri la temon de via bileto";
 "support_new_content" = "Describe the issue or suggestion";
 "comment" = "Komento";
