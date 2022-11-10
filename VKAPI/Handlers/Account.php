@@ -109,12 +109,8 @@ final class Account extends VKAPIRequestHandler
                 $this->fail(1260, "Invalid screen name");
 
         # For compatibility with original VK API
-        if($sex > 0) {
-            if($sex == 1) 
-                $user->setSex(1);
-            if($sex == 2)
-                $user->setSex(0);
-        }
+        if($sex > 0)
+            $user->setSex($sex == 1 ? 1 : 0);
             
         if($relation > -1)
             $user->setMarital_Status($relation);
@@ -130,7 +126,7 @@ final class Account extends VKAPIRequestHandler
         # For compatibility with original VK API
         switch($bdate_visibility) {
             case 0:
-                $this->fail(946, "Don't show date of birth is not implemented.");
+                $this->fail(946, "Hiding date of birth is not implemented.");
                 break;
             case 1:
                 $user->setBirthday_privacy(0);
