@@ -142,6 +142,8 @@ function handlePayment(event) {
             ok: false,
             error: "negative sum"
         }, '*');
+        
+        return;
     }
 
     MessageBox(
