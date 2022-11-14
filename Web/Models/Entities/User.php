@@ -150,7 +150,7 @@ class User extends RowModel
         $name = ($this->isDeleted() && !$this->isDeactivated() ? "DELETED" : mb_convert_case($this->getRecord()->first_name, MB_CASE_TITLE));
 	$tsn  = tr("__transNames");
         if(( $tsn !== "@__transNames" && !empty($tsn) ) && !$pristine)
-            return mb_convert_case(transliterator_transliterate($ts, $name), MB_CASE_TITLE);
+            return mb_convert_case(transliterator_transliterate($tsn, $name), MB_CASE_TITLE);
         else
             return $name;
     }
@@ -160,7 +160,7 @@ class User extends RowModel
         $name = ($this->isDeleted() && !$this->isDeactivated() ? "DELETED" : mb_convert_case($this->getRecord()->last_name, MB_CASE_TITLE));
 	$tsn  = tr("__transNames");
         if(( $tsn !== "@__transNames" && !empty($tsn) ) && !$pristine)
-            return mb_convert_case(transliterator_transliterate($ts, $name), MB_CASE_TITLE);
+            return mb_convert_case(transliterator_transliterate($tsn, $name), MB_CASE_TITLE);
         else
             return $name;
     }
