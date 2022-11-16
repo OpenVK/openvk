@@ -94,7 +94,7 @@
                         </td>
                         <td>
                             <select name="marialstatus">
-                                <option n:foreach="range(0, 8) as $i" n:attr="selected: ($user->getMaritalStatus() == $i)" value="{$i}">
+                                <option n:foreach="range(0, 8) as $i" n:attr="selected => ($user->getMaritalStatus() == $i)" value="{$i}">
                                     {if $user->isFemale()}
                                         {var $str = "relationship_$i"}
                                         {if tr($str . "_fem") == ("@$str" . "_fem")}
