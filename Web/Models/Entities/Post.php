@@ -96,7 +96,7 @@ class Post extends Postable
 
     function isDeactivationMessage(): bool
     {
-        return ($this->getRecord()->flags & 0b00100000) > 0;
+        return (($this->getRecord()->flags & 0b00100000) > 0) && ($this->getRecord()->owner > 0);
     }
     
     function isExplicit(): bool
