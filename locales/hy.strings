@@ -797,22 +797,22 @@
 "appjs_wall_post" = "Հրապարակել գրությունտը";
 "appjs_wall_post_desc" = "ցանկանում է Ձեր պատին գրություն թողնել";
 
-"appjs_sperm_friends" = "ձեր ընկերներին";
-"appjs_sperm_friends_desc" = "ավելացնել օգտատերերին որպես ընկերներ և կարդալ Ձեր գրությունները";
-"appjs_sperm_wall" = "ձեր պատին";
-"appjs_sperm_wall_desc" = "դիտել Ձեր լուրերը, կարդալ պատն ու թողել գրություններ";
-"appjs_sperm_messages" = "ձեր նամակներին";
-"appjs_sperm_messages_desc" = "կարդալ և գրել նամակներ Ձեր անունից";
-"appjs_sperm_groups" = "ձեր հանրություններին";
-"appjs_sperm_groups_desc" = "դիտել Ձեր խմբերի ցուցակն ու բաժանորդագրել դեպի այլ խմբեր";
-"appjs_sperm_likes" = "լայքելու ֆունկցիոնալին";
-"appjs_sperm_likes_desc" = "տեղադրել և հանել \"Դուր գալու\" ռեակցիաները ձայնագրություններից";
+"appjs_act_friends" = "ձեր ընկերներին";
+"appjs_act_friends_desc" = "ավելացնել օգտատերերին որպես ընկերներ և կարդալ Ձեր գրությունները";
+"appjs_act_wall" = "ձեր պատին";
+"appjs_act_wall_desc" = "դիտել Ձեր լուրերը, կարդալ պատն ու թողել գրություններ";
+"appjs_act_messages" = "ձեր նամակներին";
+"appjs_act_messages_desc" = "կարդալ և գրել նամակներ Ձեր անունից";
+"appjs_act_groups" = "ձեր հանրություններին";
+"appjs_act_groups_desc" = "դիտել Ձեր խմբերի ցուցակն ու բաժանորդագրել դեպի այլ խմբեր";
+"appjs_act_likes" = "լայքելու ֆունկցիոնալին";
+"appjs_act_likes_desc" = "տեղադրել և հանել \"Դուր գալու\" ռեակցիաները ձայնագրություններից";
 
-"appjs_sperm_request" = "Հասանելիության հարցում";
-"appjs_sperm_requests" = "հասանելիություն է խնդրում";
-"appjs_sperm_can" = "Հավելվածը կարող է";
-"appjs_sperm_allow" = "Թույլատրել";
-"appjs_sperm_disallow" = "Չթույլատրել";
+"appjs_act_request" = "Հասանելիության հարցում";
+"appjs_act_requests" = "հասանելիություն է խնդրում";
+"appjs_act_can" = "Հավելվածը կարող է";
+"appjs_act_allow" = "Թույլատրել";
+"appjs_act_disallow" = "Չթույլատրել";
 
 "app_uninstalled" = "Հավելվածն անջատված է";
 "app_uninstalled_desc" = "Այն Ձեր անունից էլ չի կարող կատարել գործողություններ։";

@@ -761,22 +761,22 @@
 "appjs_wall_post" = "Publish a post";
 "appjs_wall_post_desc" = "wants to publish a post on your wall";
 
-"appjs_sperm_friends" = "your Friends";
-"appjs_sperm_friends_desc" = "add users as friends and read your friends list";
-"appjs_sperm_wall" = "your Wall";
-"appjs_sperm_wall_desc" = "see your news, your wall and create posts on it";
-"appjs_sperm_messages" = "your Messages";
-"appjs_sperm_messages_desc" = "read and write messages on your behalf";
-"appjs_sperm_groups" = "your Groups";
-"appjs_sperm_groups_desc" = "see a list of your groups and subscribe you to other";
-"appjs_sperm_likes" = "Likes feature";
-"appjs_sperm_likes_desc" = "give and take away likes to posts";
+"appjs_act_friends" = "your Friends";
+"appjs_act_friends_desc" = "add users as friends and read your friends list";
+"appjs_act_wall" = "your Wall";
+"appjs_act_wall_desc" = "see your news, your wall and create posts on it";
+"appjs_act_messages" = "your Messages";
+"appjs_act_messages_desc" = "read and write messages on your behalf";
+"appjs_act_groups" = "your Groups";
+"appjs_act_groups_desc" = "see a list of your groups and subscribe you to other";
+"appjs_act_likes" = "Likes feature";
+"appjs_act_likes_desc" = "give and take away likes to posts";
 
-"appjs_sperm_request" = "Access request";
-"appjs_sperm_requests" = "requests access to";
-"appjs_sperm_can" = "The app will be able to";
-"appjs_sperm_allow" = "Allow";
-"appjs_sperm_disallow" = "Disallow";
+"appjs_act_request" = "Access request";
+"appjs_act_requests" = "requests access to";
+"appjs_act_can" = "The app will be able to";
+"appjs_act_allow" = "Allow";
+"appjs_act_disallow" = "Disallow";
 
 "app_uninstalled" = "Application is disabled";
 "app_uninstalled_desc" = "It will no longer be able to perform actions on your behalf.";

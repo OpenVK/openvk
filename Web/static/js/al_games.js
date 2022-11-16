@@ -1,9 +1,9 @@
 const perms = {
-    friends: [tr("appjs_sperm_friends"), tr("appjs_sperm_friends_desc")],
-    wall: [tr("appjs_sperm_wall"), tr("appjs_sperm_wall_desc")],
-    messages: [tr("appjs_sperm_messages"), tr("appjs_sperm_messages_desc")],
-    groups: [tr("appjs_sperm_groups"), tr("appjs_sperm_groups_desc")],
-    likes: [tr("appjs_sperm_likes"), tr("appjs_sperm_likes_desc")]
+    friends: [tr("appjs_act_friends"), tr("appjs_act_friends_desc")],
+    wall: [tr("appjs_act_wall"), tr("appjs_act_wall_desc")],
+    messages: [tr("appjs_act_messages"), tr("appjs_act_messages_desc")],
+    groups: [tr("appjs_act_groups"), tr("appjs_act_groups_desc")],
+    likes: [tr("appjs_act_likes"), tr("appjs_act_likes_desc")]
 }
 
 function escapeHtml(unsafe)
@@ -37,7 +37,7 @@ function handleWallPostRequest(event) {
         <p style="padding: 8px; border: 1px solid gray;">${escapeHtml(event.data.text)}</p>
     `;
 
-    MessageBox(tr("appjs_wall_post"), mBoxContent, [tr("appjs_sperm_allow"), tr("appjs_sperm_deny")], [
+    MessageBox(tr("appjs_wall_post"), mBoxContent, [tr("appjs_act_allow"), tr("appjs_act_disallow")], [
         async () => {
             let id = await API.Wall.newStatus(event.data.text);
             event.source.postMessage({
@@ -88,9 +88,9 @@ async function handleVkApiRequest(event) {
         let allowed = false;
         await (new Promise(r => {
             MessageBox(
-                tr("appjs_sperm_request"),
-                `<p>${tr("app")} <b>${window.appTitle}</b> ${tr("appjs_sperm_requests")} <b>${dInfo[0]}</b>. ${tr("appjs_sperm_can")} <b>${dInfo[1]}</b>.`,
-                [tr("appjs_sperm_allow"), tr("appjs_sperm_deny")],
+                tr("appjs_act_request"),
+                `<p>${tr("app")} <b>${window.appTitle}</b> ${tr("appjs_act_requests")} <b>${dInfo[0]}</b>. ${tr("appjs_act_can")} <b>${dInfo[1]}</b>.`,
+                [tr("appjs_act_allow"), tr("appjs_act_disallow")],
                 [
                     () => {
                         API.Apps.updatePermission(window.appId, domain, "yes").then(() => {
