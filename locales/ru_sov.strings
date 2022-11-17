@@ -1,3 +1,5 @@
+#include <ru>
+
 "__locale" = "su_SU.utf8;su_SU.UTF-8;Rus";
 "__WinEncoding" = "Windows-1251";
 
