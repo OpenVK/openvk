@@ -27,7 +27,7 @@
     <hr/>
     
     <div style="width: 100%; min-height: 100px;">
-        <div style="float: left; min-height: 100px; width: 70%;">
+        <div style="float: left; min-height: 100px; width: 68%; margin-right: 2%;">
             {include "../components/comments.xml",
                      comments => $comments,
                      count => $cCount,
