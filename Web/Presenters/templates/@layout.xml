@@ -163,7 +163,7 @@
                             </a>
 
                             <div class="floating_sidebar">
-                                <a class="minilink" href="/friends{$thisUser->getId()}">
+                                <a class="minilink-friends" href="/friends{$thisUser->getId()}">
                                     <object type="internal/link" n:if="$thisUser->getFollowersCount() > 0">
                                         <div class="counter">
                                             +{$thisUser->getFollowersCount()}
@@ -171,10 +171,10 @@
                                     </object>
                                     <img src="/assets/packages/static/openvk/img/friends.svg">
                                 </a>
-                                <a class="minilink" href="/albums{$thisUser->getId()}">
+                                <a class="minilink-albums" href="/albums{$thisUser->getId()}">
                                     <img src="/assets/packages/static/openvk/img/photos.svg">
                                 </a>
-                                <a class="minilink" href="/im">
+                                <a class="minilink-messenger" href="/im">
                                     <object type="internal/link" n:if="$thisUser->getUnreadMessagesCount() > 0">
                                         <div class="counter">
                                             +{$thisUser->getUnreadMessagesCount()}
@@ -182,10 +182,10 @@
                                     </object>
                                     <img src="/assets/packages/static/openvk/img/messages.svg">
                                 </a>
-                                <a class="minilink" href="/groups{$thisUser->getId()}">
+                                <a class="minilink-groups" href="/groups{$thisUser->getId()}">
                                     <img src="/assets/packages/static/openvk/img/groups.svg">
                                 </a>
-                                <a class="minilink" href="/notifications">
+                                <a class="minilink-notifications" href="/notifications">
                                     <object type="internal/link" n:if="$thisUser->getNotificationsCount() > 0">
                                         <div class="counter">
                                             +{$thisUser->getNotificationsCount()}
