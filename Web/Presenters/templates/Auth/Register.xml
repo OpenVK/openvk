@@ -22,21 +22,21 @@
         <p n:if="!is_null($referer)" align="center">
             {tr("invites_you_to", $referer->getFullName(), OPENVK_ROOT_CONF['openvk']['appearance']['name'])|noescape}
         </p>
-		<div style="margin: 10px;">
+	<div style="margin: 10px;">
         <h2 class="header2">{_registration}</h2>
-		<table cellspacing="10" cellpadding="0" border="0" align="center" style="margin: 9px;">
-		<tbody>
-		<tr>
-		<td>
-		<img src="assets/packages/static/openvk/img/favicons/favicon64.png" style="width: 32px;" align="middle"></img>
-		</td>
-		<td>
-		<b>OpenVK - универсальное средство поиска коллег основанное на структуре ВКонтакте.</b>
-		Мы хотим, чтобы друзья, однокурсники, одноклассники, соседи и коллеги всегда могли быть в контакте.
-		</td>
-		</tr>
-		</tbody>
-		</table>
+	    <table cellspacing="10" cellpadding="0" border="0" align="center" style="margin: 9px;">
+	        <tbody>
+	            <tr>
+	                <td>
+	                <img src="assets/packages/static/openvk/img/favicons/favicon64.png" style="width: 32px;" align="middle"></img>
+	                </td>
+	                <td>
+	                <b>OpenVK - универсальное средство поиска коллег основанное на структуре ВКонтакте.</b>
+	                Мы хотим, чтобы друзья, однокурсники, одноклассники, соседи и коллеги всегда могли быть в контакте.
+	                </td>
+	            </tr>
+	        </tbody>
+	    </table>
         <form method="POST" enctype="multipart/form-data">
             <table cellspacing="7" cellpadding="0" width="52%" border="0" align="center">
                 <tbody>
