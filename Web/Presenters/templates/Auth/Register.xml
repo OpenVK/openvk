@@ -41,7 +41,7 @@
             <table cellspacing="7" cellpadding="0" width="52%" border="0" align="center">
                 <tbody>
                     <tr>
-					<h4 style="margin-left: 60px;">{_name}</h4>
+		        <h4 style="margin-left: 60px;">{_main}</h4>
                         <td style="text-align: right; min-width: 100px;">
                             <span class="nobold">{_name}: </span>
                         </td>
@@ -74,9 +74,9 @@
                             <input type="password" name="password" required />
                         </td>
                     </tr>
-					</table>
-					<table cellspacing="7" cellpadding="0" width="52%" border="0" align="center">
-					<h4 style="margin-left: 60px;">{_other_fields}</h4>
+		        </table>
+		        <table cellspacing="7" cellpadding="0" width="52%" border="0" align="center">
+		        <h4 style="margin-left: 60px;">{_other_fields}</h4>
                     <tr>
                         <td style="text-align: right; min-width: 100px;">
                             <span class="nobold">{_birth_date}: </span>
@@ -85,7 +85,7 @@
                             <input max={date('Y-m-d')} name="birthday" type="date"/>
                         </td>
                     </tr>
-					<tr>
+			<tr>
                         <td style="text-align: right;">
                             <span class="nobold">{_gender}: </span>
                         </td>
@@ -105,16 +105,16 @@
                             {captcha_template()|noescape}
                         </td>
                     </tr>
-					</table>
+                        </table>
                         <div style="margin-left: 100px; margin-right: 100px; text-align: center;">
                             <input type="hidden" name="hash" value="{$csrfToken}" />
                             <input type="checkbox" required="true" name="confirmation" /> {_checkbox_in_registration|noescape}
                             <br /><br />
-							<input type="submit" value="{_registration}" class="button" /><br><br>
+			    <input type="submit" value="{_registration}" class="button" /><br><br>
                         </div>
                 </tbody>
         </form>
-		</div>
+    </div>
     {else}
         <center>
             <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_registration_closed}" style="width: 20%;" />
