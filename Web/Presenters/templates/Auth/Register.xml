@@ -23,7 +23,7 @@
             {tr("invites_you_to", $referer->getFullName(), OPENVK_ROOT_CONF['openvk']['appearance']['name'])|noescape}
         </p>
 		<div style="margin: 10px;">
-        <h2>{_registration}</h2>
+        <h2 class="header2">{_registration}</h2>
 		<table cellspacing="10" cellpadding="0" border="0" align="center" style="margin: 9px;">
 		<tbody>
 		<tr>
