@@ -31,12 +31,12 @@
                         
                     </td>
                     <td>
-					<center>
+		    <center>
                         <input type="hidden" name="hash" value="{$csrfToken}" />
                         <input type="submit" value="{_log_in}" class="button" />
                         <a href="/reg" class="button" style="display: inline-block;">{_registration}</a><br><br>
-						<a href="/restore">{_forgot_password}</a>
-					</center>
+			<a href="/restore">{_forgot_password}</a>
+		    </center>
                     </td>
                 </tr>
             </tbody>
