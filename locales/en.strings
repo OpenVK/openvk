@@ -55,6 +55,7 @@
 "register_referer_meta_desc" = "Join $1 and many other users at $2!";
 
 "users" = "Users";
+"other_fields" = "Other fields";
 
 /* Profile information */
 
