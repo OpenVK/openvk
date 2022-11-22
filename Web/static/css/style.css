@@ -589,6 +589,15 @@ select {
     box-sizing: border-box;
 }
 
+h2 {
+    border-bottom: 1px solid #E8EBEE;
+    color: #45688E;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+    font-family: verdana, arial, sans-serif;
+}
+
 h4 {
     border-bottom: 1px solid #E8EBEE;
     color: #45688E;
