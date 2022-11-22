@@ -163,7 +163,7 @@
                             </a>
 
                             <div class="floating_sidebar">
-                                <a class="minilink minilink-friends" href="/friends{$thisUser->getId()}">
+                                <a id="minilink-friends" class="minilink" href="/friends{$thisUser->getId()}">
                                     <object type="internal/link" n:if="$thisUser->getFollowersCount() > 0">
                                         <div class="counter">
                                             +{$thisUser->getFollowersCount()}
