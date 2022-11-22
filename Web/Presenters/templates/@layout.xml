@@ -182,7 +182,7 @@
                                     </object>
                                     <img src="/assets/packages/static/openvk/img/messages.svg">
                                 </a>
-                                <a id="minilink-groups" class="minilink"  href="/groups{$thisUser->getId()}">
+                                <a id="minilink-groups" class="minilink" href="/groups{$thisUser->getId()}">
                                     <img src="/assets/packages/static/openvk/img/groups.svg">
                                 </a>
                                 <a id="minilink-notifications" class="minilink" href="/notifications">
