@@ -44,6 +44,7 @@
 "register_meta_desc" = "Зарегистрируйтесь въ $1 прямо сейчасъ!";
 "register_referer_meta_title" = "$1 приглашаетъ васъ въ $2!";
 "register_referer_meta_desc" = "Присоединяйтесь къ $1 и множеству другихъ пользователей въ $2!";
+"other_fields" = "Остальное"
 
 /* Profile information */
 
