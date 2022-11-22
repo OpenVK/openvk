@@ -589,7 +589,7 @@ select {
     box-sizing: border-box;
 }
 
-h2 {
+.header2 {
     border-bottom: 1px solid #E8EBEE;
     color: #45688E;
     font-size: 14px;
