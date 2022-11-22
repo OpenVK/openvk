@@ -7,19 +7,20 @@
 
 {block content}
     <form method="POST" enctype="multipart/form-data">
+	<h4 style="margin-left: 100px; margin-right: 100px;">{_log_in}</h4>
         <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
             <tbody>
-                <tr>
+                <tr style="text-align: right;">
                     <td>
-                        <span>{_email}: </span>
+                        <span class="nobold">{_email}: </span>
                     </td>
                     <td>
                         <input type="text" name="login" required />
                     </td>
                 </tr>
-                <tr>
+                <tr style="text-align: right;">
                     <td>
-                        <span>{_password}: </span>
+                        <span class="nobold">{_password}: </span>
                     </td>
                     <td>
                         <input type="password" name="password" required />
@@ -30,9 +31,12 @@
                         
                     </td>
                     <td>
+					<center>
                         <input type="hidden" name="hash" value="{$csrfToken}" />
                         <input type="submit" value="{_log_in}" class="button" />
-                        <a href="/reg">{_registration}</a>
+                        <a href="/reg" class="button" style="display: inline-block;">{_registration}</a><br><br>
+						<a href="/restore">{_forgot_password}</a>
+					</center>
                     </td>
                 </tr>
             </tbody>
