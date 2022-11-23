@@ -2162,3 +2162,12 @@ a.poll-retract-vote {
         opacity: 1;
     }
 }
+
+.regform-left{
+	text-align: right; 
+	min-width: 110px;
+}
+
+.regform-right{
+	min-width: 200px;
+}
