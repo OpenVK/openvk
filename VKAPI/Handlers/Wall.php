@@ -441,9 +441,14 @@ final class Wall extends VKAPIRequestHandler
         $profiles = [];
 
         foreach($comments as $comment) {
+            $owner = $comment->getOwner();
+            $oid   = $owner->getId();
+            if($owner instanceof Club)
+                $oid *= -1;
+            
             $item = [
                 "id"            => $comment->getId(),
-                "from_id"       => $comment->getOwner()->getId(),
+                "from_id"       => $oid,
                 "date"          => $comment->getPublicationTime()->timestamp(),
                 "text"          => $comment->getText(false),
                 "post_id"       => $post->getVirtualId(),
