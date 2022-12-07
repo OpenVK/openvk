@@ -60,7 +60,7 @@
     {else}
     
     <div class="left_small_block">
-        <div>
+        <div style="margin-left: auto;margin-right: auto;display: table;">
             <a href="{$user->getAvatarLink()|nocheck}">
                 <img src="{$user->getAvatarUrl('normal')}"
                      alt="{$user->getCanonicalName()}"
@@ -77,25 +77,25 @@
                 </div>
             {else}
                 {if $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
-                    <a href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}" class="profile_link">
+                    <a href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}" class="profile_link" style="width: 194px;">
                         {tr("login_as", $user->getFirstName())}
                     </a>
                 {/if}
                 
                 {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
-                    <a href="/admin/users/id{$user->getId()}" class="profile_link">
+                    <a href="/admin/users/id{$user->getId()}" class="profile_link" style="width: 194px;">
                         {_manage_user_action}
                     </a>
-                    <a href="javascript:banUser()" class="profile_link">
+                    <a href="javascript:banUser()" class="profile_link" style="width: 194px;">
                         {_ban_user_action}
                     </a>
-                    <a href="javascript:warnUser()" class="profile_link">
+                    <a href="javascript:warnUser()" class="profile_link" style="width: 194px;">
                         {_warn_user_action}
                     </a>
                 {/if}
 
                 {if $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
-                    <a href="javascript:toggleBanInSupport()" class="profile_link">
+                    <a href="javascript:toggleBanInSupport()" class="profile_link" style="width: 194px;">
                         {if $user->isBannedInSupport()}
                             {_unban_in_support_user_action}
                         {else}
@@ -104,8 +104,8 @@
                     </a>
                 {/if}
                 
-                <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() == 0" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
-                <a n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" class="profile_link">{_send_message}</a>
+                <a style="width: 194px;" n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() == 0" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
+                <a style="width: 194px;" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" class="profile_link">{_send_message}</a>
 
                 {var $subStatus = $user->getSubscriptionStatus($thisUser)}
                 {if $subStatus === 0}
@@ -113,32 +113,32 @@
                         <input type="hidden" name="act" value="add" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" class="profile_link" value="{_friends_add}" />
+                        <input type="submit" class="profile_link" value="{_friends_add}" style="width: 194px;" />
                     </form>
                 {elseif $subStatus === 1}
                     <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="add" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" class="profile_link" value="{_friends_accept}" />
+                        <input type="submit" class="profile_link" value="{_friends_accept}" style="width: 194px;" />
                     </form>
                 {elseif $subStatus === 2}
                     <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="rem" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" class="profile_link" value="{_friends_reject}" />
+                        <input type="submit" class="profile_link" value="{_friends_reject}" style="width: 194px;" />
                     </form>
                 {elseif $subStatus === 3}
                     <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="rem" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" class="profile_link" value="{_friends_delete}" />
+                        <input type="submit" class="profile_link" value="{_friends_delete}" style="width: 194px;" />
                     </form>
                 {/if}
             {/if}
-            <a n:if="$user->getFollowersCount() > 0" href="/friends{$user->getId()}?act=incoming" class="profile_link">{tr("followers", $user->getFollowersCount())}</a>
+            <a style="width: 194px;" n:if="$user->getFollowersCount() > 0" href="/friends{$user->getId()}?act=incoming" class="profile_link">{tr("followers", $user->getFollowersCount())}</a>
         </div>
         <div n:if="isset($thisUser) && !$thisUser->prefersNotToSeeRating()" class="profile-hints">
             {var $completeness = $user->getProfileCompletenessReport()}
