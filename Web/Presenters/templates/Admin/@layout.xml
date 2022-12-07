@@ -56,6 +56,17 @@
                                         <li>
                                             <a href="/admin/clubs">{_groups}</a>
                                         </li>
+                                        <li>
+                                            <a href="/admin/bannedLinks">{_admin_banned_links}</a>
+                                        </li>
+                                    </ul>
+                                    <div class="aui-nav-heading">
+                                        <strong>Chandler</strong>
+                                    </div>
+                                    <ul class="aui-nav">
+                                        <li>
+                                            <a href="/admin/chandler/groups">{_c_groups}</a>
+                                        </li>
                                     </ul>
                                     <div class="aui-nav-heading">
                                         <strong>{_admin_services}</strong>

@@ -55,6 +55,23 @@ openvk:
                 processingLimit: 3000
                 emojiProcessingLimit: 1000
         commerce: false
+        susLinks:
+            warnings: true
+            showReason: true
+        maintenanceMode:
+            all: false
+            photos: false
+            videos: false
+            messenger: false
+            user: false
+            group: false
+            comment: false
+            gifts: false
+            apps: false
+            notes: false
+            notification: false
+            support: false
+            topics: false
         ton:
             enabled: false
             address: "🅿"

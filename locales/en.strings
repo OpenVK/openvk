@@ -16,6 +16,9 @@
 "registration" = "Registration";
 "forgot_password" = "Forgot your password?";
 
+"checkbox_in_registration" = "I agree to the <a href='/privacy'>privacy policy</a> and <a href='/about'>site policies</a>";
+"checkbox_in_registration_unchecked" = "You must agree to the privacy policy and rules in order to register.";
+
 "login_failed" = "Login failed";
 "invalid_username_or_password" = "The username or password you entered is incorrect. <a href='/restore'>Forgot your password?</a>";
 
@@ -154,6 +157,9 @@
 "post_deact_f" = "deleted her profile saying:";
 "post_deact_silent_m" = "silently deleted his profile.";
 "post_deact_silent_f" = "silently deleted her profile.";
+"post_on_your_wall" = "on your wall";
+"post_on_group_wall" = "in $1";
+"post_on_user_wall" = "on $1's wall";
 "wall" = "Wall";
 "post" = "Post";
 "write" = "Write";
@@ -418,6 +424,7 @@
 "avatar" = "Avatar";
 "privacy" = "Privacy";
 "interface" = "Interface";
+"security" = "Security";
 
 "profile_picture" = "Profile picture";
 
@@ -490,6 +497,7 @@
 "ui_settings_view_of_posts_old" = "Old";
 "ui_settings_view_of_posts_microblog" = "Microblog";
 "ui_settings_main_page" = "Main page";
+"ui_settings_sessions" = "Sessions";
 
 "additional_links" = "Additional links";
 "ad_poster" = "Ad poster";
@@ -517,6 +525,11 @@
 "profile_deactivated_info" = "The account has been deleted.<br/>The information is not available.";
 
 "share_with_friends" = "Share with friends";
+
+"end_all_sessions" = "End all sessions";
+"end_all_sessions_description" = "If you wanna logout from $1 on all devices, click on button below";
+
+"end_all_sessions_done" = "All sessions was ended, including mobile apps";
 
 /* Two-factor authentication */
 
@@ -748,22 +761,22 @@
 "appjs_wall_post" = "Publish a post";
 "appjs_wall_post_desc" = "wants to publish a post on your wall";
 
-"appjs_sperm_friends" = "your Friends";
-"appjs_sperm_friends_desc" = "add users as friends and read your friends list";
-"appjs_sperm_wall" = "your Wall";
-"appjs_sperm_wall_desc" = "see your news, your wall and create posts on it";
-"appjs_sperm_messages" = "your Messages";
-"appjs_sperm_messages_desc" = "read and write messages on your behalf";
-"appjs_sperm_groups" = "your Groups";
-"appjs_sperm_groups_desc" = "see a list of your groups and subscribe you to other";
-"appjs_sperm_likes" = "Likes feature";
-"appjs_sperm_likes_desc" = "give and take away likes to posts";
+"appjs_act_friends" = "your Friends";
+"appjs_act_friends_desc" = "add users as friends and read your friends list";
+"appjs_act_wall" = "your Wall";
+"appjs_act_wall_desc" = "see your news, your wall and create posts on it";
+"appjs_act_messages" = "your Messages";
+"appjs_act_messages_desc" = "read and write messages on your behalf";
+"appjs_act_groups" = "your Groups";
+"appjs_act_groups_desc" = "see a list of your groups and subscribe you to other";
+"appjs_act_likes" = "Likes feature";
+"appjs_act_likes_desc" = "give and take away likes to posts";
 
-"appjs_sperm_request" = "Access request";
-"appjs_sperm_requests" = "requests access to";
-"appjs_sperm_can" = "The app will be able to";
-"appjs_sperm_allow" = "Allow";
-"appjs_sperm_disallow" = "Disallow";
+"appjs_act_request" = "Access request";
+"appjs_act_requests" = "requests access to";
+"appjs_act_can" = "The app will be able to";
+"appjs_act_allow" = "Allow";
+"appjs_act_disallow" = "Disallow";
 
 "app_uninstalled" = "Application is disabled";
 "app_uninstalled_desc" = "It will no longer be able to perform actions on your behalf.";
@@ -835,8 +848,13 @@
 "banned_header" = "You are banned";
 "banned_alt" = "The user is blocked.";
 "banned_1" = "Sorry <b>$1</b>, but you have been banned.";
-"banned_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to block you forever.";
+"banned_2" = "And the reason for this is simple: <b>$1</b>.";
+"banned_perm" = "Unfortunately, this time we had to block you forever.";
+"banned_until_time" = "This time we had to block you until <b>$1</b>";
 "banned_3" = "You can still <a href=\"/support?act=new\">write to the support</a> if you think there was an error or <a href=\"/logout?hash=$1\">logout</a>.";
+"banned_unban_myself" = "Unban myself";
+"banned_unban_title" = "Your account has been unbanned";
+"banned_unban_description" = "Try not to break the rules anymore.";
 
 /* Registration confirm */
 
@@ -857,6 +875,38 @@
 
 "messages_error_1" = "Message not delivered";
 "messages_error_1_description" = "There was a general error in sending this message...";
+
+/* Polls */
+"poll" = "Poll";
+"create_poll" = "Create poll";
+"poll_title" = "Ask a question";
+"poll_add_option" = "Add an option...";
+"poll_anonymous" = "Anonymous votes";
+"poll_multiple" = "Multiple answers";
+"poll_locked" = "Quiz mode (no retraction)";
+"poll_edit_expires" = "Expires in: ";
+"poll_edit_expires_days" = "days";
+"poll_editor_tips" = "Pressing backspace in empty option will remove it. Use Tab/Enter (in last option) to create new options faster.";
+"poll_embed" = "Embed code";
+
+"poll_voter_count_zero" = "Be <b>the first one</b> to vote!";
+"poll_voter_count_one" = "<b>Only one</b> user voted.";
+"poll_voter_count_few" = "<b>$1</b> users voted.";
+"poll_voter_count_many" = "<b>$1</b> users voted.";
+"poll_voter_count_other" = "<b>$1</b> users voted.";
+
+"poll_voters_list" = "Voters";
+
+"poll_anon" = "Anonymous";
+"poll_public" = "Public";
+"poll_multi" = "multiple choice";
+"poll_lock" = "can't revoke";
+"poll_until" = "until $1";
+
+"poll_err_to_much_options" = "Too much options supplied.";
+"poll_err_anonymous" = "Can't access voters list: poll is anonymous.";
+"cast_vote" = "Vote!";
+"retract_vote" = "Cancel my vote";
 
 /* Discussions */
 
@@ -1042,7 +1092,7 @@
 "admin_voucher_serial" = "Serial number";
 "admin_voucher_serial_desc" = "The number consists of 24 characters. If the format is incorrect or the field is not filled in, it will be assigned automatically.";
 "admin_voucher_coins" = "Number of votes";
-"admin_voucher_rating" = "Number of rating";
+"admin_voucher_rating_number" = "Number of rating";
 "admin_voucher_usages_desc" = "The number of accounts that can use the voucher. If you type -1, it will be infinity.";
 "admin_voucher_status" = "Status";
 "admin_voucher_status_opened" = "active";
@@ -1061,6 +1111,17 @@
 
 "admin_commerce_disabled" = "Commerce has been disabled by the system administrator";
 "admin_commerce_disabled_desc" = "The voucher and gift settings will be saved, but will have no effect.";
+
+"admin_banned_links" = "Blocked links";
+"admin_banned_link" = "Link";
+"admin_banned_domain" = "Domain";
+"admin_banned_link_description" = "With the protocol (https://example.com/)";
+"admin_banned_link_regexp" = "Regular expression";
+"admin_banned_link_regexp_description" = "It is substituted after the domain specified above. Don't fill it out if you want to block the entire domain";
+"admin_banned_link_reason" = "Reason";
+"admin_banned_link_initiator" = "Initiator";
+"admin_banned_link_not_specified" = "The link is not specified";
+"admin_banned_link_not_found" = "Link not found";
 
 /* Paginator (deprecated) */
 
@@ -1115,3 +1176,53 @@
 
 "cookies_popup_content" = "All kids love cookie, so this website uses Cookies to identify your session and nothing more. Check <a href='/privacy'>our privacy policy</a> for more information.";
 "cookies_popup_agree" = "Accept";
+
+/* Away */
+
+"url_is_banned" = "Link is not allowed";
+"url_is_banned_comment" = "The <b>$1</b> administration recommends not to follow this link.";
+"url_is_banned_comment_r" = "The <b>$1</b> administration recommends not to follow this link.<br><br>The reason is: <b>$2</b>";
+"url_is_banned_default_reason" = "The link you are trying to open may lead you to a site that was created for the purpose of deceiving users with the intention of gaining profit.";
+"url_is_banned_title" = "Link to a suspicious site";
+"url_is_banned_proceed" = "Follow the link";
+
+/* Helpdesk */
+"helpdesk" = "Support";
+"helpdesk_agent" = "Support Agent";
+"helpdesk_agent_card" = "Agent Card";
+"helpdesk_positive_answers" = "positive answers";
+"helpdesk_negative_answers" = "negative answers";
+"helpdesk_all_answers" = "all answers";
+"helpdesk_showing_name" = "Display name";
+"helpdesk_show_number" = "Show the number";
+"helpdesk_avatar_url" = "Link to the avatar";
+
+/* Chandler */
+"c_user_removed_from_group" = "The user has been removed from the group";
+"c_permission_removed_from_group" = "The permission has been removed from the group";
+"c_group_removed" = "The group has been deleted.";
+"c_groups" = "Chandler Groups";
+"c_users" = "Chandler Users";
+"c_group_permissions" = "Permissions";
+"c_group_members" = "Members";
+"c_model" = "Model";
+"c_permission" = "Permission";
+"c_permissions" = "Permissions";
+"c_color" = "Color";
+"add" = "Add";
+"c_edit_groups" = "Edit Groups";
+"c_user_is_not_in_group" = "The relationship between the user and the group was not found.";
+"c_permission_not_found" = "The relationship between the permission and the group was not found.";
+"c_group_not_found" = "The group was not found.";
+"c_user_is_already_in_group" = "This user is already a member of this group.";
+"c_add_to_group" = "Add to group";
+"c_remove_from_group" = "Remove from group";
+
+/* Maintenance */
+
+"global_maintenance" = "Undergoing maintenance";
+"section_maintenance" = "The section is not available";
+"undergoing_global_maintenance" = "Unfortunately, the instance is now closed for technical work. We are already working on troubleshooting. Please try to come back later.";
+"undergoing_section_maintenance" = "Unfortunately, the <b>$1</b> section is temporarily unavailable. We are already working on troubleshooting. Please try to come back later.";
+
+"topics" = "Topics";

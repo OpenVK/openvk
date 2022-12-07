@@ -16,7 +16,7 @@ async function setupNotificationListener() {
         } catch(rejection) {
             if(rejection.message !== "Nothing to report") {
                 console.error(rejection);
-                break;
+                return;
             }
             
             console.info("No new notifications discovered... Redialing event broker");

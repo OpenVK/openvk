@@ -84,6 +84,9 @@ final class AuthPresenter extends OpenVKPresenter
             if (strtotime($this->postParam("birthday")) > time())
                 $this->flashFail("err", tr("invalid_birth_date"), tr("invalid_birth_date_comment"));
 
+            if (!$this->postParam("confirmation"))
+                $this->flashFail("err", tr("error"), tr("checkbox_in_registration_unchecked"));
+
             try {
                 $user = new User;
                 $user->setFirst_Name($this->postParam("first_name"));
@@ -321,5 +324,40 @@ final class AuthPresenter extends OpenVKPresenter
         $this->user->identity->reactivate();
 
         $this->redirect("/");
+    }
+
+    function renderUnbanThemself(): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        if(!$this->user->identity->canUnbanThemself())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+
+        $user = $this->users->get($this->user->id);
+
+        $user->setBlock_Reason(NULL);
+        $user->setUnblock_Time(NULL);
+        $user->save();
+
+        $this->flashFail("succ", tr("banned_unban_title"), tr("banned_unban_description"));
+    }
+    
+    /*
+     * This function will revoke all tokens, including API and Web tokens and except active one
+     * 
+     * OF COURSE it requires CSRF
+     */ 
+    function renderRevokeAllTokens(): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+        $this->assertNoCSRF();
+
+        // API tokens
+        $this->db->table("api_tokens")->where("user", $this->user->identity->getId())->delete();
+        // Web tokens
+        $this->db->table("ChandlerTokens")->where("user", $this->user->identity->getChandlerGUID())->where("token != ?", Session::i()->get("tok"))->delete();
+        $this->flashFail("succ", tr("information_-1"), tr("end_all_sessions_done"));
     }
 } 

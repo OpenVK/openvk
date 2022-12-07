@@ -6,7 +6,8 @@ use openvk\Web\Models\Entities\Note;
 final class NotesPresenter extends OpenVKPresenter
 {
     private $notes;
-    
+    protected $presenterName = "notes";
+
     function __construct(Notes $notes)
     {
         $this->notes = $notes;

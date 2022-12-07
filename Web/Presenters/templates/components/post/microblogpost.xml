@@ -24,17 +24,15 @@
                     <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
                     {$post->isDeactivationMessage() ? ($author->isFemale() ? tr($deac . "_f") : tr($deac . "_m"))}
                     {if ($onWallOf ?? false) &&!$post->isPostedOnBehalfOfGroup() && $post->getOwnerPost() !== $post->getTargetWall()}
-                        {var $wallId  = $post->getTargetWall()}
-                        {var $wallURL = $wallId > -1 ? "/id$wallId" : "/club" . abs($wallId)}
-                        на
-                        <a href="{$wallURL}">
+                        {var $wallOwner = $post->getWallOwner()}
+                        <a href="{$wallOwner->getURL()}" class="mention" data-mention-ref="{$post->getTargetWall()}">
                             <b>
-                                {if isset($thisUser) && $thisUser->getId() === $wallId}
-                                    вашей
-                                {/if}
-                                стене
-                                {if $wallId < 0}
-                                    группы
+                                {if isset($thisUser) && $thisUser->getId() === $post->getTargetWall()}
+                                {_post_on_your_wall}
+                                {elseif $wallOwner instanceof \openvk\Web\Models\Entities\Club}
+                                {tr("post_on_group_wall", ovk_proc_strtr($wallOwner->getName(), 52))}
+                                {else}
+                                {tr("post_on_user_wall", $wallOwner->getMorphedName("genitive", false))}
                                 {/if}
                             </b>
                         </a>
@@ -77,7 +75,7 @@
                         {var $actualAuthor = $post->getOwner(false)}
                         <span>
                             {_author}:
-                            <a href="{$actualAuthor->getURL()}">
+                            <a href="{$actualAuthor->getURL()}" class="mention" data-mention-ref="{$actualAuthor->getId()}">
                                {$actualAuthor->getCanonicalName()}
                             </a>
                         </span>

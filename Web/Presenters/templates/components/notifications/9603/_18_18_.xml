@@ -6,3 +6,6 @@
 {if !empty($message)}
     {_message}: "{$message}".
 {/if}
+<div class="nobold">
+    {$notification->getDateTime()}
+</div>

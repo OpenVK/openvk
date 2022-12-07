@@ -15,13 +15,13 @@ use Nette\Database\UniqueConstraintViolationException;
 final class UserPresenter extends OpenVKPresenter
 {
     private $users;
-
     public $deactivationTolerant = false;
-    
+    protected $presenterName = "user";
+
     function __construct(Users $users)
     {
         $this->users = $users;
-        
+
         parent::__construct();
     }
     
@@ -29,7 +29,7 @@ final class UserPresenter extends OpenVKPresenter
     {
         $user = $this->users->get($id);
         if(!$user || $user->isDeleted()) {
-            if($user->isDeactivated()) {
+            if(!is_null($user) && $user->isDeactivated()) {
                 $this->template->_template = "User/deactivated.xml";
                 
                 $this->template->user = $user;
@@ -454,7 +454,7 @@ final class UserPresenter extends OpenVKPresenter
 			$this->flash("succ", tr("changes_saved"), tr("changes_saved_comment"));
         }
         $this->template->mode = in_array($this->queryParam("act"), [
-            "main", "privacy", "finance", "finance.top-up", "interface"
+            "main", "security", "privacy", "finance", "finance.top-up", "interface"
         ]) ? $this->queryParam("act")
             : "main";
 
