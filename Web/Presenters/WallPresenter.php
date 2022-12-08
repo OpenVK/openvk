@@ -247,15 +247,28 @@ final class WallPresenter extends OpenVKPresenter
             $flags |= 0b01000000;
         
         try {
-            $photo = NULL;
+            $photos = [];
             $video = NULL;
-            if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
+            /* if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
                 $album = NULL;
                 if(!$anon && $wall > 0 && $wall === $this->user->id)
                     $album = (new Albums)->getUserWallAlbum($wallOwner);
                 
                 $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album, $anon);
+            } */
+
+            foreach($_FILES as $file) {
+                bdump($file);
+                if($file["error"] === UPLOAD_ERR_OK && preg_match('/^image\//', $file['type'])) {
+                    $album = NULL;
+                    if(!$anon && $wall > 0 && $wall === $this->user->id)
+                        $album = (new Albums)->getUserWallAlbum($wallOwner);
+
+                    $photos[] = Photo::fastMake($this->user->id, $this->postParam("text"), $file, $album, $anon);
+                }
             }
+
+            bdump($photos);
             
             if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK)
                 $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"], $anon);
@@ -276,7 +289,7 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("failed_to_publish_post"), "Poll format invalid");
         }
         
-        if(empty($this->postParam("text")) && !$photo && !$video && !$poll)
+        if(empty($this->postParam("text")) && !$photos && !$video && !$poll)
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"));
         
         try {
@@ -293,8 +306,8 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_too_big"));
         }
         
-        if(!is_null($photo))
-            $post->attach($photo);
+        foreach($photos as $photo)
+        	$post->attach($photo);
         
         if(!is_null($video))
             $post->attach($video);

@@ -8,8 +8,8 @@
             <!-- padding to fix <br/> bug -->
         </div>
         <div id="post-buttons{$textAreaId}" style="display: none;">
-            <div class="post-upload">
-                {_attachment}: <span>(unknown)</span>
+            <div class="upload">
+
             </div>
             <div class="post-has-poll">
                 {_poll}
