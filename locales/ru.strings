@@ -572,6 +572,14 @@
 "nt_photo_instrumental" = "фотографией";
 "nt_topic_instrumental" = "темой";
 
+"nt_you_were_mentioned_u" = "Вас упомянул пользователь";
+"nt_you_were_mentioned_g" = "Вас упомянуло сообщество";
+"nt_mention_in_post_or_comms" = "в посте или в одной из веток его обсуждения";
+"nt_mention_in_photo" = "в обсуждении фотографии";
+"nt_mention_in_video" = "в обсуждении видеозаписи";
+"nt_mention_in_note" = "в обсуждении заметки";
+"nt_mention_in_topic" = "в обсуждении";
+
 /* Time */
 
 "time_at_sp" = " в ";

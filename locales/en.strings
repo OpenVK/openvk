@@ -619,6 +619,14 @@
 "nt_photo_instrumental" = "photo";
 "nt_topic_instrumental" = "topic";
 
+"nt_you_were_mentioned_u" = "You were mentioned by user";
+"nt_you_were_mentioned_g" = "You were mentioned by group";
+"nt_mention_in_post_or_comms" = "in post or one of its discussion threads";
+"nt_mention_in_photo" = "in discussion of this photo";
+"nt_mention_in_video" = "in discussion of this video";
+"nt_mention_in_note" = "in discussion of this note";
+"nt_mention_in_topic" = "in the discussion";
+
 /* Time */
 
 "time_at_sp" = " at ";
