@@ -30,7 +30,7 @@ class Makima
             return Makima::ORIENT_SLIM;
     }
 
-    private function calculateMultiThumbsHeight(array $ratios, float $w, float $h, float $m): float
+    private function calculateMultiThumbsHeight(array $ratios, float $w, float $m): float
     {
         return ($w - (sizeof($ratios) - 1) * $m) / array_sum($ratios);
     }
@@ -212,7 +212,7 @@ class Makima
                 # Now let's find the most optimal configuration:
                 $optimalConfiguration = $optimalDifference = NULL;
                 foreach($tries as $config => $heights) {
-                    $config = explode('&', $config);
+                    $config = explode('&', (string) $config); # да да стринговые ключи пхп даже со стриктайпами автокастует к инту (см. 187)
                     $confH  = $marginHeight * (sizeof($heights) - 1);
                     foreach($heights as $h)
                         $confH += $h;
@@ -241,8 +241,8 @@ class Makima
                 $gridLineOffsets = [];
                 $rowTiles        = []; // vector<vector<ThumbTile>>
 
-                for($i = 0; $i < sizeof($optConf); $i++) {
-                    $lineChunksNum = $optConf[$i];
+                for($i = 0; $i < sizeof($optimalConfiguration); $i++) {
+                    $lineChunksNum = $optimalConfiguration[$i];
                     $lineThumbs    = [];
                     for($j = 0; $j < $lineChunksNum; $j++)
                         $lineThumbs[] = array_shift($thumbsRemain);
