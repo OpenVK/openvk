@@ -136,6 +136,30 @@ p {
     border-top: 1px solid #CCCCCC;
 }
 
+.navigation .link_soon {
+    display: block;
+    padding: 3px 3px 3px 6px;
+    text-decoration: none;
+    border-top: 1px solid #fff;
+    color: #000;
+    border-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+    font-size: 11px;
+    text-align: left;
+    cursor: pointer;
+    background: none;
+    margin-bottom: 1px;
+}
+
+.navigation .link_soon {
+	color: #2B587A63;
+}
+.navigation .link_soon:hover {
+	background:#DAE1E8;
+	border-top:1px solid #CAD1D9
+}
+
 .navigation .edit-button {
     background-color: #fff !important;
     color: gray !important;
