@@ -305,7 +305,11 @@ final class WallPresenter extends OpenVKPresenter
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
         
-        $mentions = iterator_to_array($post->resolveMentions([$this->user->identity->getId()]));
+        $excludeMentions = [$this->user->identity->getId()];
+        if($wall > 0)
+            $excludeMentions[] = $wall;
+
+        $mentions = iterator_to_array($post->resolveMentions($excludeMentions));
         foreach($mentions as $mentionee)
             if($mentionee instanceof User)
                 (new MentionNotification($mentionee, $post, $post->getOwner(), strip_tags($post->getText())))->emit();

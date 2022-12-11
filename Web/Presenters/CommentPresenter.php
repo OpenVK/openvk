@@ -106,7 +106,11 @@ final class CommentPresenter extends OpenVKPresenter
             if(($owner = $entity->getOwner()) instanceof User)
                 (new CommentNotification($owner, $comment, $entity, $this->user->identity))->emit();
     
-        $mentions = iterator_to_array($comment->resolveMentions([$this->user->identity->getId()]));
+        $excludeMentions = [$this->user->identity->getId()];
+        if(($owner = $entity->getOwner()) instanceof User)
+            $excludeMentions[] = $owner->getId();
+
+        $mentions = iterator_to_array($comment->resolveMentions($excludeMentions));
         foreach($mentions as $mentionee)
             if($mentionee instanceof User)
                 (new MentionNotification($mentionee, $entity, $comment->getOwner(), strip_tags($comment->getText())))->emit();
