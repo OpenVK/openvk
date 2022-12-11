@@ -49,6 +49,12 @@
         <div class="notifications_global_wrap"></div>
         <div class="dimmer"></div>
 
+        {if isset($backdrops) && !is_null($backdrops)}
+            <div id="backdrop" style="background-image: url('{$backdrops[0]|noescape}'), url('{$backdrops[1]|noescape}');">
+                <div id="backdropDripper"></div>
+            </div>
+        {/if}
+
         <div class="toTop">
             ⬆ {_to_top}
         </div>

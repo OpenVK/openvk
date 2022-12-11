@@ -5,7 +5,7 @@ use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{Photo, Message, Correspondence, Gift};
-use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Gifts, Notifications};
+use openvk\Web\Models\Repositories\{Photos, Users, Clubs, Albums, Gifts, Notifications};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
@@ -1044,5 +1044,6 @@ class User extends RowModel
         return true;
     }
     
+    use Traits\TBackDrops;
     use Traits\TSubscribable;
 }

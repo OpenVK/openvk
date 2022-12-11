@@ -1,4 +1,8 @@
 {extends "../@layout.xml"}
+{if $mode === 'backdrop'}
+    {var $backdrops = $user->getBackDropPictureURLs()}
+{/if}
+
 {block title}{_edit_page}{/block}
 
 {block header}
@@ -6,11 +10,12 @@
 {/block}
 
 {block content}
+    {var $isMain      = $mode === 'main'}
+    {var $isContacts  = $mode === 'contacts'}
+    {var $isInterests = $mode === 'interests'}
+    {var $isAvatar    = $mode === 'avatar'}
+    {var $isBackDrop  = $mode === 'backdrop'}
 
-{var $isMain      = $mode === 'main'}
-{var $isContacts  = $mode === 'contacts'}
-{var $isInterests = $mode === 'interests'}
-{var $isAvatar    = $mode === 'avatar'}
     <div n:if="$user->hasPendingNumberChange()" class="msg">
         <b>Подтверждение номера телефона</b><br/>
         Введите код для подтверждения смены номера: <a href="/edit/verify_phone">ввести код</a>.
@@ -28,6 +33,9 @@
         </div>
         <div n:attr="id => ($isAvatar ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isAvatar ? 'act_tab_a' : 'ki')" href="/edit?act=avatar">{_avatar}</a>
+        </div>
+        <div n:attr="id => ($isBackDrop ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => ($isBackDrop ? 'act_tab_a' : 'ki')" href="/edit?act=backdrop">{_backdrop_short}</a>
         </div>
     </div>
     
@@ -326,6 +334,36 @@
             </table>
         </form>
         
+        {elseif $isBackDrop}
+
+        <h4>{_backdrop}</h4>
+        <p>{_backdrop_desc}</p>
+        <form method="POST" enctype="multipart/form-data">
+            <div id="backdropEditor">
+                <div id="backdropFilePicker">
+                    <input type="file" accept="image/*" name="backdrop1" />
+                    <div id="spacer"></div>
+                    <input type="file" accept="image/*" name="backdrop2" />
+                </div>
+            </div>
+
+            <p>
+                <span class="nobold">{_backdrop_warn}</span>
+            </p>
+            <p>
+                <span class="nobold">{_backdrop_about_adding}</span>
+            </p>
+            <p><br/></p>
+
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+            <div>
+                <center>
+                    <button name="subact" value="save" class="button">{_backdrop_save}</button>
+                    <button name="subact" value="remove" class="button">{_backdrop_remove}</button>
+                </center>
+            </div>
+        </form>
+
         {/if}
     </div>
     

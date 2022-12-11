@@ -187,6 +187,8 @@ routes:
           club: "club|public|event"
     - url: "/club{num}/edit"
       handler: "Group->edit"
+    - url: "/club{num}/backdrop"
+      handler: "Group->editBackdrop"
     - url: "/club{num}/stats"
       handler: "Group->statistics"
     - url: "/club{num}/followers"
