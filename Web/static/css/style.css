@@ -651,6 +651,12 @@ h4 {
     image-rendering: -webkit-optimize-contrast;
 }
 
+.post-content .media_makima {
+    width: calc(100% - 4px);
+    height: calc(100% - 4px);
+    object-fit: cover;
+}
+
 .post-signature {
     margin: 4px;
     margin-bottom: 2px;
