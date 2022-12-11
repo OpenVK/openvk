@@ -542,6 +542,8 @@ final class Wall extends VKAPIRequestHandler
     }
 
     function createComment(int $owner_id, int $post_id, string $message, int $from_group = 0) {
+        $this->requireUser();
+        
         $post = (new PostsRepo)->getPostById($owner_id, $post_id);
         if(!$post || $post->isDeleted()) $this->fail(100, "One of the parameters specified was missing or invalid");
 
