@@ -22,10 +22,16 @@ function trim(string) {
     return newStr;
 }
 
-function handleUpload(id) {
-    console.warn("блять...");
-    
-    u("#post-buttons" + id + " .postFileSel").not("#" + this.id).each(input => input.value = null);
+function handleVideoTAreaUpdate(event, id) {
+    console.log(event, id);
+    let indicator = u("#post-buttons" + id + " .post-upload");
+    let file      = event.target.files[0];
+    if(typeof file === "undefined") {
+        indicator.attr("style", "display: none;");
+    } else {
+        u("span", indicator.nodes[0]).text("Видеолента: " + trim(file.name) + " (" + humanFileSize(file.size, false) + ")");
+        indicator.attr("style", "display: block;");
+    }
 
     document.querySelector("#post-buttons" + id + " #wallAttachmentMenu").classList.add("hidden");
 }

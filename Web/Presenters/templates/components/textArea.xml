@@ -11,6 +11,9 @@
             <div class="upload">
 
             </div>
+            <div class="post-upload">
+                <span style="color: inherit;"></span>
+            </div>
             <div class="post-has-poll">
                 {_poll}
             </div>
@@ -52,7 +55,7 @@
                 </label>
             </div>
             <input type="file" class="postFileSel" id="postFilePic" name="_pic_attachment" accept="image/*" style="display:none;" />
-            <input type="file" class="postFileSel" id="postFileVid" name="_vid_attachment" accept="video/*" style="display:none;" />
+            <input type="file" class="postFileSel" id="postFileVid" name="_vid_attachment" accept="video/*" style="display:none;" onchange="handleVideoTAreaUpdate(event, {$textAreaId})" />
             <input type="hidden" name="poll" value="none" />
             <input type="hidden" name="type" value="1" />
             <input type="hidden" name="hash" value="{$csrfToken}" />
@@ -91,10 +94,6 @@
 
 <script>
     $(document).ready(() => {
-        u("#post-buttons{$textAreaId} .postFileSel").on("change", function() {
-            handleUpload.bind(this, {$textAreaId})();
-        });
-
         setupWallPostInputHandlers({$textAreaId});
     });
 </script>
