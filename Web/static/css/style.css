@@ -166,6 +166,54 @@ p {
     border-top: 1px solid #CCCCCC;
 }
 
+#backdrop {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: -100;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center left, center right;
+    pointer-events: none;
+    opacity: .8;
+}
+
+#backdropDripper {
+    width: 800px;
+    height: 100%;
+    margin: auto;
+    background-color: #fff;
+    box-shadow: -30px 0px 20px 20px #fff, -50px 0px 20px 20px hsl(0deg 0% 100% / 59%), -70px 0px 20px 20px hsl(0deg 0% 100% / 43%), -90px 0px 20px 20px hsl(0deg 0% 100% / 35%), -110px 0px 20px 20px hsl(0deg 0% 100% / 28%), -130px 0px 20px 20px hsl(0deg 0% 100% / 16%), 30px 0px 20px 20px #fff, 50px 0px 20px 20px hsl(0deg 0% 100% / 59%), 70px 0px 20px 20px hsl(0deg 0% 100% / 43%), 90px 0px 20px 20px hsl(0deg 0% 100% / 35%), 110px 0px 20px 20px hsl(0deg 0% 100% / 28%), 130px 0px 20px 20px hsl(0deg 0% 100% / 16%);
+}
+
+#backdropEditor {
+    position: relative;
+    border: 4px inset #cfcfcf;
+    padding: 8px;
+    width: 550px;
+    height: 270px;
+    margin: 8px auto;
+    background-image: url("../img/backdrop-editor.gif");
+    background-size: cover;
+}
+
+#backdropFilePicker {
+    position: absolute;
+    top: 140px;
+    padding: 0 19px;
+}
+
+#backdropFilePicker > input {
+    width: 90px;
+}
+
+#backdropFilePicker > #spacer {
+    display: inline-block;
+    width: calc(550px - 16px - 38px - 171px);
+}
+
 .page_body {
     width: 632px;
     float: right;

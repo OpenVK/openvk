@@ -1,5 +1,9 @@
 {extends "../@layout.xml"}
 
+{if !$user->isBanned()}
+    {var $backdrops = $user->getBackDropPictureURLs()}
+{/if}
+
 {block title}{$user->getCanonicalName()}{/block} 
 
 {block headIncludes}
