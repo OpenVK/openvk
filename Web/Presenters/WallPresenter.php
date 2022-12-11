@@ -257,18 +257,17 @@ final class WallPresenter extends OpenVKPresenter
                 $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album, $anon);
             } */
 
-            foreach($_FILES as $file) {
-                bdump($file);
-                if($file["error"] === UPLOAD_ERR_OK && preg_match('/^image\//', $file['type'])) {
-                    $album = NULL;
-                    if(!$anon && $wall > 0 && $wall === $this->user->id)
-                        $album = (new Albums)->getUserWallAlbum($wallOwner);
+            $album = NULL;
+            if(!$anon && $wall > 0 && $wall === $this->user->id)
+                $album = (new Albums)->getUserWallAlbum($wallOwner);
 
-                    $photos[] = Photo::fastMake($this->user->id, $this->postParam("text"), $file, $album, $anon);
-                }
+            foreach($_FILES as $fileId => $file) {
+                bdump([$fileId, $file, $file["error"] !== UPLOAD_ERR_OK, strncmp($fileId, "attachPic", 9) !== 0]);
+                if($file["error"] !== UPLOAD_ERR_OK || strncmp($fileId, "attachPic", 9) !== 0)
+                    continue;
+
+                $photos[] = Photo::fastMake($this->user->id, $this->postParam("text"), $file, $album, $anon);
             }
-
-            bdump($photos);
             
             if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK)
                 $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"], $anon);
