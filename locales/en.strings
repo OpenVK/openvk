@@ -533,9 +533,9 @@
 
 "backdrop_short" = "Backdrop";
 "backdrop" = "Page backdrop";
-"backdrop_desc" = "Вы можете установить два изображения в качестве фона вашей страницы. Они будут отображаться по бокам у тех, кто зайдёт на вашу страницу. С помощью этой возможности вы можете добавить своему профилю больше индивидуальности.";
-"backdrop_warn" = "You can set two pictures as your profile or group backdrop. They will be displayed on left and right edges of page. You can customize your profile with this feature, but use it responsibly."
-"backdrop_about_adding" = "You can upload only one picture, although depending on design, the ending result may look ugly. You can also change only one pic: if you already have two images set up and you want to change one - upload only one, the other won't be removed. To remove both images press the button below, you can't remove pictures individually."
+"backdrop_desc" = "You can set two pictures as your profile or group backdrop. They will be displayed on left and right edges of page. With this feature, you can add more personality to your profile.";
+"backdrop_warn" = "The images will be arranged as in the layout above. Their height will be automatically increased so that they occupy 100% of the screen height, there will be a blur in the middle. It is not possible to replace the background of the main OpenVK interface or add audio.";
+"backdrop_about_adding" = "You can upload only one picture, although depending on design, the ending result may look ugly. You can also change only one pic: if you already have two images set up and you want to change one - upload only one, the other won't be removed. To remove both images press the button below, you can't remove pictures individually.";
 "backdrop_save" = "Save backdrop picture(s)";
 "backdrop_remove" = "Remove all backdrop pictures";
 "backdrop_error_title" = "Error saving backdrop settings";
