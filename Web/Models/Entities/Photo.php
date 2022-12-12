@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
 use MessagePack\MessagePack;
-use Nette\Utils\ImageException;
-use Nette\Utils\UnknownImageFileException;
 use openvk\Web\Models\Entities\Album;
 use openvk\Web\Models\Repositories\Albums;
 use Chandler\Database\DatabaseConnection as DB;
@@ -15,55 +13,47 @@ class Photo extends Media
     protected $fileExtension = "jpeg";
 
     const ALLOWED_SIDE_MULTIPLIER = 7;
-    
-    /**
-     * @throws \ImagickException
-     * @throws ImageException
-     * @throws UnknownImageFileException
-     */
-    private function resizeImage(\Imagick $image, string $filename, string $outputDir, \SimpleXMLElement $size): array
+
+    private function resizeImage(string $filename, string $outputDir, \SimpleXMLElement $size): array
     {
-        $res = [false];
+        $res   = [false];
+        $image = Image::fromFile($filename);
         $requiresProportion = ((string) $size["requireProp"]) != "none";
         if($requiresProportion) {
-            $props = explode(":", (string)$size["requireProp"]);
+            $props = explode(":", (string) $size["requireProp"]);
             $px = (int) $props[0];
             $py = (int) $props[1];
-            if(($image->getImageWidth() / $image->getImageHeight()) > ($px / $py)) {
-                $height = ceil(($px * $image->getImageWidth()) / $py);
-                $image->cropImage($image->getImageWidth(), $height, 0, 0);
+            if(($image->getWidth() / $image->getHeight()) > ($px / $py)) {
+                # For some weird reason using resize with EXACT flag causes system to consume an unholy amount of RAM
+                $image->crop(0, 0, "100%", (int) ceil(($px * $image->getWidth()) / $py));
                 $res[0] = true;
             }
         }
-    
+
         if(isset($size["maxSize"])) {
             $maxSize = (int) $size["maxSize"];
-            $sizes   = Image::calculateSize($image->getImageWidth(), $image->getImageHeight(), $maxSize, $maxSize, Image::SHRINK_ONLY | Image::FIT);
-            $image->resizeImage($sizes[0], $sizes[1], \Imagick::FILTER_POINT, 1);
+            $image->resize($maxSize, $maxSize, Image::SHRINK_ONLY | Image::FIT);
         } else if(isset($size["maxResolution"])) {
             $resolution = explode("x", (string) $size["maxResolution"]);
-            $sizes = Image::calculateSize(
-                $image->getImageWidth(), $image->getImageHeight(), (int) $resolution[0], (int) $resolution[1], Image::SHRINK_ONLY | Image::FIT
-            );
-            $image->resizeImage($sizes[0], $sizes[1], \Imagick::FILTER_POINT, 1);
+            $image->resize((int) $resolution[0], (int) $resolution[1], Image::SHRINK_ONLY | Image::FIT);
         } else {
             throw new \RuntimeException("Malformed size description: " . (string) $size["id"]);
         }
-    
-        $res[1] = $image->getImageWidth();
-        $res[2] = $image->getImageHeight();
+
+        $res[1] = $image->getWidth();
+        $res[2] = $image->getHeight();
         if($res[1] <= 300 || $res[2] <= 300)
-            $image->writeImage("$outputDir/$size[id].gif");
+            $image->save("$outputDir/" . (string) $size["id"] . ".gif");
         else
-            $image->writeImage("$outputDir/$size[id].jpeg");
-        
-        $image->destroy();
+            $image->save("$outputDir/" . (string) $size["id"] . ".jpeg");
+
+        imagedestroy($image->getImageResource());
         unset($image);
-        
+
         return $res;
     }
 
-    private function saveImageResizedCopies(\Imagick $image, string $filename, string $hash): void
+    private function saveImageResizedCopies(string $filename, string $hash): void
     {
         $dir = dirname($this->pathFromHash($hash));
         $dir = "$dir/$hash" . "_cropped";
@@ -78,7 +68,7 @@ class Photo extends Media
 
         $sizesMeta = [];
         foreach($sizes->Size as $size)
-            $sizesMeta[(string) $size["id"]] = $this->resizeImage(clone $image, $filename, $dir, $size);
+            $sizesMeta[(string) $size["id"]] = $this->resizeImage($filename, $dir, $size);
 
         $sizesMeta = MessagePack::pack($sizesMeta);
         $this->stateChanges("sizes", $sizesMeta);
@@ -86,19 +76,13 @@ class Photo extends Media
 
     protected function saveFile(string $filename, string $hash): bool
     {
-        $image = new \Imagick;
-        $image->readImage($filename);
-        $h = $image->getImageHeight();
-        $w = $image->getImageWidth();
-        if(($h >= ($w * Photo::ALLOWED_SIDE_MULTIPLIER)) || ($w >= ($h * Photo::ALLOWED_SIDE_MULTIPLIER)))
+        $image = Image::fromFile($filename);
+        if(($image->height >= ($image->width * Photo::ALLOWED_SIDE_MULTIPLIER)) || ($image->width >= ($image->height * Photo::ALLOWED_SIDE_MULTIPLIER)))
             throw new ISE("Invalid layout: image is too wide/short");
-    
-        $sizes = Image::calculateSize(
-            $image->getImageWidth(), $image->getImageHeight(), 8192, 4320, Image::SHRINK_ONLY | Image::FIT
-        );
-        $image->resizeImage($sizes[0], $sizes[1], \Imagick::FILTER_POINT, 1);
-        $image->writeImage($this->pathFromHash($hash));
-        $this->saveImageResizedCopies($image, $filename, $hash);
+
+        $image->resize(8192, 4320, Image::SHRINK_ONLY | Image::FIT);
+        $image->save($this->pathFromHash($hash), 92, Image::JPEG);
+        $this->saveImageResizedCopies($filename, $hash);
         
         return true;
     }
