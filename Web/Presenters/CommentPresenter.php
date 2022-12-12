@@ -1,11 +1,12 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{Comment, Photo, Video, User, Topic, Post};
+use openvk\Web\Models\Entities\{Comment, Notifications\MentionNotification, Photo, Video, User, Topic, Post};
 use openvk\Web\Models\Entities\Notifications\CommentNotification;
 use openvk\Web\Models\Repositories\{Comments, Clubs};
 
 final class CommentPresenter extends OpenVKPresenter
 {
+    protected $presenterName = "comment";
     private $models = [
         "posts"   => "openvk\\Web\\Models\\Repositories\\Posts",
         "photos"  => "openvk\\Web\\Models\\Repositories\\Photos",
@@ -104,6 +105,15 @@ final class CommentPresenter extends OpenVKPresenter
         if($entity->getOwner()->getId() !== $this->user->identity->getId())
             if(($owner = $entity->getOwner()) instanceof User)
                 (new CommentNotification($owner, $comment, $entity, $this->user->identity))->emit();
+    
+        $excludeMentions = [$this->user->identity->getId()];
+        if(($owner = $entity->getOwner()) instanceof User)
+            $excludeMentions[] = $owner->getId();
+
+        $mentions = iterator_to_array($comment->resolveMentions($excludeMentions));
+        foreach($mentions as $mentionee)
+            if($mentionee instanceof User)
+                (new MentionNotification($mentionee, $entity, $comment->getOwner(), strip_tags($comment->getText())))->emit();
         
         $this->flashFail("succ", "Комментарий добавлен", "Ваш комментарий появится на странице.");
     }

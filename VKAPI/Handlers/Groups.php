@@ -10,7 +10,7 @@ final class Groups extends VKAPIRequestHandler
         $this->requireUser();
 
         if($user_id == 0) {
-        	foreach($this->getUser()->getClubs($offset+1) as $club)
+        	foreach($this->getUser()->getClubs($offset, false, $count, true) as $club)
         		$clbs[] = $club;
         	$clbsCount = $this->getUser()->getClubCount();
         } else {
@@ -20,7 +20,7 @@ final class Groups extends VKAPIRequestHandler
         	if(is_null($user))
         		$this->fail(15, "Access denied");
 
-        	foreach($user->getClubs($offset+1) as $club)
+        	foreach($user->getClubs($offset, false, $count, true) as $club)
         		$clbs[] = $club;
 
         	$clbsCount = $user->getClubCount();
@@ -33,17 +33,9 @@ final class Groups extends VKAPIRequestHandler
             $ic = $count;
 
         if(!empty($clbs)) {
-            $clbs = array_slice($clbs, $offset * $count);
-
             for($i=0; $i < $ic; $i++) { 
                 $usr = $clbs[$i];
-                if(is_null($usr)) {
-                    $rClubs[$i] = (object)[
-                        "id" => $clbs[$i],
-                        "name" => "DELETED",
-                        "deactivated" => "deleted"
-                    ];   
-                } else if($clbs[$i] == NULL) {
+                if(is_null($usr)) { 
 
                 } else {
                     $rClubs[$i] = (object) [
@@ -102,23 +94,32 @@ final class Groups extends VKAPIRequestHandler
         ];
     }
 
-    function getById(string $group_ids = "", string $group_id = "", string $fields = ""): ?array
+    function getById(string $group_ids = "", string $group_id = "", string $fields = "", int $offset = 0, int $count = 500): ?array
     {
+        /* Both offset and count SHOULD be used only in OpenVK code, 
+           not in your app or script, since it's not oficially documented by VK */
+
         $clubs = new ClubsRepo;
 		
-        if($group_ids == NULL && $group_id != NULL) 
+        if(empty($group_ids) && !empty($group_id)) 
             $group_ids = $group_id;
         
-        if($group_ids == NULL && $group_id == NULL)
+        if(empty($group_ids) && empty($group_id))
             $this->fail(100, "One of the parameters specified was missing or invalid: group_ids is undefined");
 		
         $clbs = explode(',', $group_ids);
-        $response;
+        $response = array();
 
         $ic = sizeof($clbs);
 
+        if(sizeof($clbs) > $count)
+			$ic = $count;
+
+        $clbs = array_slice($clbs, $offset * $count);
+
+
         for($i=0; $i < $ic; $i++) {
-            if($i > 500) 
+            if($i > 500 || $clbs[$i] == 0) 
                 break;
 
             if($clbs[$i] < 0)
@@ -142,6 +143,7 @@ final class Groups extends VKAPIRequestHandler
                     "screen_name"       => $clb->getShortCode() ?? "club".$clb->getId(),
                     "is_closed"         => false,
                     "type"              => "group",
+                    "is_member"         => !is_null($this->getUser()) ? (int) $clb->getSubscriptionStatus($this->getUser()) : 0,
                     "can_access_closed" => true,
                 ];
 
@@ -204,15 +206,59 @@ final class Groups extends VKAPIRequestHandler
                                 else
                                     $response[$i]->can_post = $clb->canPost();
                             break;
-                        case "is_member":
-                            if(!is_null($this->getUser()))
-                                $response[$i]->is_member = (int) $clb->getSubscriptionStatus($this->getUser());
-                            break;
                     }
                 }
             }
         }
 
         return $response;
+    }
+
+    function search(string $q, int $offset = 0, int $count = 100)
+    {
+        $clubs = new ClubsRepo;
+        
+        $array = [];
+		$find  = $clubs->find($q);
+
+        foreach ($find as $group)
+            $array[] = $group->getId();
+
+        return (object) [
+        	"count" => $find->size(),
+        	"items" => $this->getById(implode(',', $array), "", "is_admin,is_member,is_advertiser,photo_50,photo_100,photo_200", $offset, $count)
+            /*
+             * As there is no thing as "fields" by the original documentation
+             * i'll just bake this param by the example shown here: https://dev.vk.com/method/groups.search 
+             */
+        ];
+    }
+
+    function join(int $group_id)
+    {
+        $this->requireUser();
+        
+        $club = (new ClubsRepo)->get($group_id);
+        
+        $isMember = !is_null($this->getUser()) ? (int) $club->getSubscriptionStatus($this->getUser()) : 0;
+
+        if($isMember == 0)
+            $club->toggleSubscription($this->getUser());
+
+        return 1;
+    }
+
+    function leave(int $group_id)
+    {
+        $this->requireUser();
+        
+        $club = (new ClubsRepo)->get($group_id);
+        
+        $isMember = !is_null($this->getUser()) ? (int) $club->getSubscriptionStatus($this->getUser()) : 0;
+
+        if($isMember == 1)
+            $club->toggleSubscription($this->getUser());
+
+        return 1;
     }
 }

@@ -4,6 +4,7 @@
     "create-react-class": "^15.7.0",
     "dashjs": "^4.3.0",
     "id3js": "^2.1.1",
+    "handlebars": "^4.7.7",
     "jquery": "^2.1.0",
     "knockout": "^3.5.1",
     "ky": "^0.19.0",
@@ -17,6 +18,7 @@
     "requirejs": "^2.3.6",
     "soundjs": "^1.0.1",
     "textfit": "^2.4.0",
+    "tippy.js": "^6.3.7",
     "umbrellajs": "^3.1.0"
   }
 }

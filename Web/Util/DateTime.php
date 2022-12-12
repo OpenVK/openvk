@@ -21,7 +21,8 @@ class DateTime
         $then = date_create("@" . $this->timestamp);
         $now  = date_create();
         $diff = date_diff($now, $then);
-        if($diff->invert === 0) return __OPENVK_ERROR_CLOCK_IN_FUTURE;
+        if($diff->invert === 0)
+            return ovk_strftime_safe("%e %B %Y ", $this->timestamp) . tr("time_at_sp") . ovk_strftime_safe(" %R %p", $this->timestamp);
         
         if($this->timestamp >= strtotime("midnight")) { # Today
             if($diff->h >= 1)
@@ -52,13 +53,10 @@ class DateTime
         switch($type) {
             case static::RELATIVE_FORMAT_NORMAL:
                 return mb_convert_case($this->zmdate(), MB_CASE_TITLE_SIMPLE);
-                break;
             case static::RELATIVE_FORMAT_LOWER:
                 return $this->zmdate();
-                break;
             case static::RELATIVE_FORMAT_SHORT:
                 return "";
-                break;
         }
     }
     

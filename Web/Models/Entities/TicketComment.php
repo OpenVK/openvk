@@ -42,7 +42,7 @@ class TicketComment extends RowModel
         
         $alias = $this->getSupportAlias();
         if(!$alias)
-            return OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["supportName"] . " №" . $this->getAgentNumber();
+            return tr("helpdesk_agent") . " #" . $this->getAgentNumber();
         
         $name = $alias->getName();
         if($alias->shouldAppendNumber())

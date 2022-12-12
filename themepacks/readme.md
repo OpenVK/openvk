@@ -1,10 +1,10 @@
 # OpenVK Themepacks
 
-This folder contains all themes that can be used by any user on instance.
+This folder contains all themes that can be used by any user on an instance.
 
-## How do i create the theme?
+## How do I create a theme?
 
-Create a directory, the name of which should contain only Latin letters and numbers, and create a file there `theme.yml`, and fill it with the following content:
+Create a directory, the name of which should contain only Latin letters and numbers, then create a file in this directory called `theme.yml`, and fill it with the following content:
 
 ```yaml
 id: vk2007
@@ -24,13 +24,13 @@ metadata:
 
 `id` is the name of the folder
 
-`version` - version of the theme
+`version` is the version of the theme
 
-`openvk_version` - version OpenVK *(it is necessary to leave the value 0)*
+`openvk_version` is the version of OpenVK *(it is necessary to leave the value to 0)*
 
 `metadata`:
 
-* `name` - the name of the theme for the end user. Inside it you can leave names for different languages. `_` (underscore) - for all languages.
+* `name` - the name of the theme for the end user. Inside it you can leave names for different languages. `_` (underscore) is for all languages.
 
 Next, in `stylesheet.css` you can insert any CSS code, with which you can change the elements of the site. If you need additional pictures or resources, just create a `res` folder, and access the resources via the `/themepack/{directory name}/{theme version}/resource/{resource}` path.
 

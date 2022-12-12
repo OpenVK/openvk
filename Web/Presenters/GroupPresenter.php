@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Club, Photo};
+use Nette\InvalidStateException;
 use openvk\Web\Models\Entities\Notifications\ClubModeratorNotification;
 use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers, Topics};
 use Chandler\Security\Authenticator;
@@ -8,7 +9,8 @@ use Chandler\Security\Authenticator;
 final class GroupPresenter extends OpenVKPresenter
 {
     private $clubs;
-    
+    protected $presenterName = "group";
+
     function __construct(Clubs $clubs)
     {
         $this->clubs = $clubs;
@@ -190,7 +192,7 @@ final class GroupPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
         
         $club = $this->clubs->get($id);
-        if(!$club->canBeModifiedBy($this->user->identity))
+        if(!$club || !$club->canBeModifiedBy($this->user->identity))
             $this->notFound();
         else
             $this->template->club = $club;
@@ -247,6 +249,45 @@ final class GroupPresenter extends OpenVKPresenter
             
             $this->flash("succ", "Изменения сохранены", "Новые данные появятся в вашей группе.");
         }
+    }
+    
+    function renderEditBackdrop(int $id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+    
+        $club = $this->clubs->get($id);
+        if(!$club || !$club->canBeModifiedBy($this->user->identity))
+            $this->notFound();
+        else
+            $this->template->club = $club;
+        
+        if($_SERVER["REQUEST_METHOD"] !== "POST")
+            return;
+    
+        if($this->postParam("subact") === "remove") {
+            $club->unsetBackDropPictures();
+            $club->save();
+            $this->flashFail("succ", tr("backdrop_succ_rem"), tr("backdrop_succ_desc")); # will exit
+        }
+    
+        $pic1 = $pic2 = NULL;
+        try {
+            if($_FILES["backdrop1"]["error"] !== UPLOAD_ERR_NO_FILE)
+                $pic1 = Photo::fastMake($this->user->id, "Profile backdrop (system)", $_FILES["backdrop1"]);
+        
+            if($_FILES["backdrop2"]["error"] !== UPLOAD_ERR_NO_FILE)
+                $pic2 = Photo::fastMake($this->user->id, "Profile backdrop (system)", $_FILES["backdrop2"]);
+        } catch(InvalidStateException $e) {
+            $this->flashFail("err", tr("backdrop_error_title"), tr("backdrop_error_no_media"));
+        }
+    
+        if($pic1 == $pic2 && is_null($pic1))
+            $this->flashFail("err", tr("backdrop_error_title"), tr("backdrop_error_no_media"));
+    
+        $club->setBackDropPictures($pic1, $pic2);
+        $club->save();
+        $this->flashFail("succ", tr("backdrop_succ"), tr("backdrop_succ_desc"));
     }
     
     function renderStatistics(int $id): void

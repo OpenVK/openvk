@@ -136,6 +136,30 @@ p {
     border-top: 1px solid #CCCCCC;
 }
 
+.navigation .link_soon {
+    display: block;
+    padding: 3px 3px 3px 6px;
+    text-decoration: none;
+    border-top: 1px solid #fff;
+    color: #000;
+    border-bottom: 0;
+    border-left: 0;
+    border-right: 0;
+    font-size: 11px;
+    text-align: left;
+    cursor: pointer;
+    background: none;
+    margin-bottom: 1px;
+}
+
+.navigation .link_soon {
+	color: #2B587A63;
+}
+.navigation .link_soon:hover {
+	background:#DAE1E8;
+	border-top:1px solid #CAD1D9
+}
+
 .navigation .edit-button {
     background-color: #fff !important;
     color: gray !important;
@@ -164,6 +188,54 @@ p {
 .navigation_footer .link:hover {
     background-color: #E4E4E4;
     border-top: 1px solid #CCCCCC;
+}
+
+#backdrop {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: -100;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center left, center right;
+    pointer-events: none;
+    opacity: .8;
+}
+
+#backdropDripper {
+    width: 800px;
+    height: 100%;
+    margin: auto;
+    background-color: #fff;
+    box-shadow: -30px 0px 20px 20px #fff, -50px 0px 20px 20px hsl(0deg 0% 100% / 59%), -70px 0px 20px 20px hsl(0deg 0% 100% / 43%), -90px 0px 20px 20px hsl(0deg 0% 100% / 35%), -110px 0px 20px 20px hsl(0deg 0% 100% / 28%), -130px 0px 20px 20px hsl(0deg 0% 100% / 16%), 30px 0px 20px 20px #fff, 50px 0px 20px 20px hsl(0deg 0% 100% / 59%), 70px 0px 20px 20px hsl(0deg 0% 100% / 43%), 90px 0px 20px 20px hsl(0deg 0% 100% / 35%), 110px 0px 20px 20px hsl(0deg 0% 100% / 28%), 130px 0px 20px 20px hsl(0deg 0% 100% / 16%);
+}
+
+#backdropEditor {
+    position: relative;
+    border: 4px inset #cfcfcf;
+    padding: 8px;
+    width: 550px;
+    height: 270px;
+    margin: 8px auto;
+    background-image: url("../img/backdrop-editor.gif");
+    background-size: cover;
+}
+
+#backdropFilePicker {
+    position: absolute;
+    top: 140px;
+    padding: 0 19px;
+}
+
+#backdropFilePicker > input {
+    width: 90px;
+}
+
+#backdropFilePicker > #spacer {
+    display: inline-block;
+    width: calc(550px - 16px - 38px - 171px);
 }
 
 .page_body {
@@ -448,6 +520,15 @@ table {
     color: #e8e8e8;
 }
 
+.button[disabled] {
+    filter: opacity(0.5);
+    cursor: not-allowed;
+}
+
+.button[disabled]:hover {
+    color: #fff;
+}
+
 .button-loading {
     display: inline-block;
     background-image: url('/assets/packages/static/openvk/img/loading_mini.gif');
@@ -515,7 +596,7 @@ input[type=radio]:checked {
 }
 
 .content_title_expanded {
-    background-image: url('../img/flex_arrow_open2.png');
+    background-image: url('../img/flex_arrow_open2.png')!important;
     background-repeat: no-repeat;
     background-color: #e6e6e6;
     border-top: #8B8B8B solid 1px;
@@ -529,7 +610,7 @@ input[type=radio]:checked {
 }
 
 .content_title_unexpanded {
-    background-image: url('../img/flex_arrow_shut.gif');
+    background-image: url('../img/flex_arrow_shut.gif')!important;
     background-repeat: no-repeat;
     background-color: #eee;
     border-top: solid 1px #ccc;
@@ -801,6 +882,8 @@ table.User {
     padding: 0 10px;
     margin-left: -10px;
     width: 607px;
+    overflow-x: auto;
+    white-space: nowrap;
 }
 
 .tabs.stupid-fix {
@@ -1338,14 +1421,14 @@ body.scrolled .toTop:hover {
     font-weight: bold;
 }
 
-.post-upload {
+.post-upload, .post-has-poll {
     margin-top: 11px;
     margin-left: 3px;
     color: #3c3c3c;
     display: none;
 }
 
-.post-upload::before {
+.post-upload::before, .post-has-poll::before {
     content: " ";
     width: 8px;
     height: 8px;
@@ -2159,6 +2242,88 @@ li {
     overflow-x: hidden;
     overflow-y: auto;
     max-height: 250px;
+}
+
+.poll {
+    padding: 8px;
+    transition: .1s filter ease-in;
+    border: 1px solid #e3e3e3;
+}
+
+.poll.loading {
+    filter: opacity(0.5);
+    cursor: progress;
+    user-select: none;
+}
+
+.poll.loading * {
+    pointer-events: none;
+}
+
+.poll-embed {
+    float: right;
+}
+
+.poll h4 {
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+}
+
+.poll-meta .nobold {
+    font-style: oblique;
+}
+
+.poll-result-barspace {
+    display: flex;
+}
+
+.poll-result {
+    margin-bottom: 5px;
+}
+
+.poll-result a {
+    color: unset;
+}
+
+.poll-result-bar {
+    position: relative;
+    margin: 5px 0;
+    background-color: #f7f7f7;
+    height: 13pt;
+    flex: 14;
+}
+
+span.poll-result-count {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    color: #7d96af;
+}
+
+.poll-result-bar-sub {
+    height: 100%;
+    background-color: #d9e1ea;
+}
+
+.poll-result-pct {
+    flex: 2;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding-left: 5px;
+}
+
+a.poll-retract-vote {
+    float: right;
+}
+
+.tippy-box[data-theme~="vk"] {
+    user-select: none;
+    background-color: #fff;
+    border: 1px solid #DCE1E6;
+    border-radius: 1px;
 }
 
 @keyframes appearing {

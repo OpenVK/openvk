@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
 use Chandler\Database\DatabaseConnection as DB;
-use openvk\Web\Models\Repositories\Clubs;
+use openvk\Web\Models\Repositories\{Clubs, Users};
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\Notifications\LikeNotification;
 
@@ -55,6 +55,15 @@ class Post extends Postable
     {
         return $this->getRecord()->wall;
     }
+
+    function getWallOwner()
+    {
+        $w = $this->getRecord()->wall;
+        if($w < 0)
+            return (new Clubs)->get(abs($w));
+
+        return (new Users)->get($w);
+    }
     
     function getRepostCount(): int
     {
@@ -87,7 +96,7 @@ class Post extends Postable
 
     function isDeactivationMessage(): bool
     {
-        return ($this->getRecord()->flags & 0b00100000) > 0;
+        return (($this->getRecord()->flags & 0b00100000) > 0) && ($this->getRecord()->owner > 0);
     }
     
     function isExplicit(): bool

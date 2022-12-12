@@ -1,0 +1,218 @@
+* {
+    scrollbar-color: #3f365b #1d192b;
+}
+
+html {
+    color-scheme: dark !important;
+}
+
+body, #backdropDripper {
+    background-color: #0e0b1a;
+    color: #c6d2e8;
+}
+
+#backdropDripper {
+    box-shadow: -30px 0px 20px 20px #0e0b1a, -50px 0px 20px 20px hsl(252 41% 7% / 59%), -70px 0px 20px 20px hsl(252 41% 7% / 43%), -90px 0px 20px 20px hsl(252 41% 7% / 35%), -110px 0px 20px 20px hsl(252 41% 7% / 28%), -130px 0px 20px 20px hsl(252 41% 7% / 16%), 30px 0px 20px 20px #0e0b1a, 50px 0px 20px 20px hsl(252 41% 7% / 59%), 70px 0px 20px 20px hsl(252 41% 7% / 43%), 90px 0px 20px 20px hsl(252 41% 7% / 35%), 110px 0px 20px 20px hsl(252 41% 7% / 28%), 130px 0px 20px 20px hsl(252 41% 7% / 16%);
+}
+
+span, .post-author .date, .crp-entry--message---text, .messenger-app--messages---message .time, .navigation-lang .link_new {
+    color: #8b9ab5 !important;
+}
+
+.nobold, nobold {
+    color: #6f82a8;
+}
+
+.page_status {
+    color: #c6d2e8;
+}
+
+.profileName h2 {
+    color: #8eb2d0;
+}
+
+.wrap1, .wrap2, .page-wrap, #wrapH, #wrapHI {
+    border-color: #1c202f;
+}
+
+.accountInfo, .left_small_block, #profile_link, .profile_link, .navigation .link, .navigation .link:hover, .navigation_footer .link, .navigation_footer .link:hover, .completeness-gauge, input[type="text"], input[type="password"], input[type~="text"], input[type~="password"], input[type="email"], input[type="phone"], input[type~="email"], input[type~="phone"], input[type="search"], input[type~="search"], input[type~="date"], select, .content_title_expanded, .content_title_unexpanded, .content_subtitle, textarea, .post-content, .post-author, hr, h4, .postFeedWrapper, .tabs, #wallAttachmentMenu, .ovk-diag, .ovk-diag-head, #ovkDraw, #ovkDraw .literally .lc-picker, .literally .lc-options.horz-toolbar, .page_wrap, .container_gray .content, .summaryBar, .groups_options, form[action="/search"] > input, .header_search_input, .header_search_inputbt, .accent-box, .page_status_popup, .messenger-app--input, .messenger-app, .crp-entry:first-of-type, .crp-list, .crp-entry, .note_footer, .page_content > div, #editor, .note_header, center[style="background: white;border: #DEDEDE solid 1px;"], .album-photo img, .mb_tabs, .mb_tab#active div, .navigation-lang .link_new, #faqhead, #faqcontent, .post-divider, .comment, .commentsTextFieldWrap, tr, td, th, #votesBalance, .paginator a.active, .paginator a:hover, .topic-list-item, #userContent blockquote, .tippy-box[data-theme~="vk"], .poll {
+    border-color: #2c2640 !important;
+}
+
+.tippy-box[data-theme~="vk"][data-placement^='top'] > .tippy-arrow::before, .tippy-box[data-theme~="vk"][data-placement^='bottom'] > .tippy-arrow::before {
+    border-top-color: #1e1a2b;
+    border-bottom-color: #1e1a2b;
+}
+
+hr {
+    background-color: #2c2640 !important;
+}
+
+.cookies-popup {
+    background: linear-gradient(#1e1a2b, #231e33);
+    box-shadow: unset;
+}
+
+.button, #activetabs, .messagebox-content-header, .accent-box, .button_search {
+    background-color: #383052;
+}
+
+.tab:hover {
+    background-color: #40375e;
+}
+
+.menu_divider, .ovk-diag-action, .minilink .counter {
+    background-color: #2c2640;
+}
+
+#ovkDraw .literally .lc-picker, .literally .lc-options.horz-toolbar, .mb_tab#active {
+    background-color: #453e5e;
+}
+
+.ovk-diag-cont {
+    background-color: #272e4894;
+}
+
+a, .page_footer .link, #profile_link, .profile_link {
+    color: #8fb9d8;
+}
+
+.page_footer .link:hover, .navigation .link:hover, .navigation .edit-button:hover, #profile_link:hover, .profile_link:hover, #wallAttachmentMenu > a:hover, .crp-entry:hover, .navigation-lang .link_new:hover, .paginator a:hover, .post-share-button:hover, .post-like-button:hover {
+    background-color: #272138 !important;
+}
+
+.header_navigation .link a {
+    color: #bcc3d0;
+}
+
+.header_navigation .link a:hover, .home_button_custom {
+    color: #c7cdd9;
+}
+
+.navigation .link {
+    color: #d9e0ee;
+}
+
+.navigation .edit-button {
+    background-color: #0e0b1a !important;
+    color: #7b94c4 !important;
+}
+
+#test-label, .msg.msg_err {
+    background-color: #30161d;
+}
+
+.msg.msg_succ {
+    background-color: #163f13;
+}
+
+h4, .content_title_expanded, .summaryBar .summary, .content_title_unexpanded {
+    color: #7c94c5;
+}
+
+.notes_titles small, .post-upload, .post-has-poll {
+    color: #6f82a8;
+}
+
+.content_title_expanded, .content_title_unexpanded, .ovk-diag, .settings_delete, center[style="background: white;border: #DEDEDE solid 1px;"], .album-photo img, #faqhead, td.e, tr.e {
+    background-color: #231e33 !important;
+}
+
+.content_subtitle, .postFeedWrapper, .ovk-diag-head, .container_gray, .page_status_popup, .messenger-app--input, .note_header, #faqcontent, .commentsTextFieldWrap, td.v, tr.v, #votesBalance, .expand_button, #userContent blockquote, .tippy-box[data-theme~="vk"] {
+    background-color: #1e1a2b !important;
+}
+
+.post-author {
+    background-color: #1e1a2b;
+    /* this is fix to correct the unexpected behavior of the microblog style lol */
+}
+
+.content_title_expanded {
+    background-image: url("/themepack/midnight/0.0.1.4/resource/flex_arrow_open.png");
+}
+
+.content_title_unexpanded {
+    background-image: url("/themepack/midnight/0.0.1.4/resource/flex_arrow_shut.gif");
+}
+
+.ovk-video > .preview, .video-preview {
+    box-shadow: inset 0 0 0 1px #231e33, inset 0 0 0 2px #1e1a2b;
+}
+
+#wallAttachmentMenu, .container_gray .content, .mb_tabs {
+    background-color: #120e1f;
+}
+
+#wallAttachmentMenu > .header, .messenger-app--messages---message.unread, tr.h {
+    background-color: #1d192b;
+}
+
+.toTop {
+    background-color: #272138;
+    color: #c6d2e8;
+}
+
+.page_yellowheader {
+    color: #c6d2e8;
+    background-image: url("/themepack/midnight/0.0.1.4/resource/header_purple.png");
+    background-color: #231f34;
+    border-color: #231f34;
+}
+
+.page_header {
+    background-image: url("/themepack/midnight/0.0.1.4/resource/header.png");
+}
+
+.page_custom_header {
+    background-image: url("/themepack/midnight/0.0.1.4/resource/header_custom.png");
+}
+
+.page_yellowheader span, .page_yellowheader a {
+    color: #a48aff !important;
+}
+
+.completeness-gauge, .poll-result-bar {
+    background-color: #231e33;
+}
+
+.completeness-gauge > div, .poll-result-bar-sub {
+    background-color: #2c2640;
+}
+
+form[action="/search"] > input, .header_search_input, textarea, input[type="text"], input[type="password"], input[type~="text"], input[type~="password"], input[type="email"], input[type="phone"], input[type~="email"], input[type~="phone"], input[type="search"], input[type~="search"], input[type~="date"], select, .crp-entry--message.unread {
+    background-color: #181826 !important;
+}
+
+input[type="checkbox"] {
+    background-image: url("/themepack/midnight/0.0.1.4/resource/checkbox.png");
+}
+
+input[type="radio"] {
+    background-image: url("/themepack/midnight/0.0.1.4/resource/radio.png");
+}
+
+.header_navigation .link {
+    background: unset;
+}
+
+.heart {
+    background-image: url("/themepack/midnight/0.0.1.4/resource/like.gif") !important;
+}
+
+.pinned-mark, .post-author .pin {
+    background-image: url("/themepack/midnight/0.0.1.4/resource/pin.png") !important;
+}
+
+.repost-icon {
+    background-image: url("/themepack/midnight/0.0.1.4/resource/published.gif") !important;
+}
+
+.post-author .delete {
+    background-image: url("/themepack/midnight/0.0.1.4/resource/input_clear.gif") !important;
+}
+
+.user-alert {
+    background-color: #41311a;
+    color: #d5b88c;
+    border-color: #514534;
+}

@@ -1,0 +1,272 @@
+apiVersion: v1
+items:
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: openvk
+    namespace: openvk
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: openvk
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: openvk
+      spec:
+        containers:
+        - env: []
+          image: docker.io/alpine:edge
+          imagePullPolicy: IfNotPresent
+          name: acl_handler
+          resources: {}
+          command: 
+          - /bin/sh
+          - -c
+          - |-
+            #!/bin/sh
+
+            trap 'exit 0' TERM
+
+            while :
+            do
+                chown -R 33:33 /opt/chandler/extensions/available/openvk/storage
+                chown -R 33:33 /opt/chandler/extensions/available/openvk/tmp/api-storage/audios
+                chown -R 33:33 /opt/chandler/extensions/available/openvk/tmp/api-storage/photos
+                chown -R 33:33 /opt/chandler/extensions/available/openvk/tmp/api-storage/videos
+                chown -R 33:33 /var/log/openvk
+
+                sleep 600
+            done
+          volumeMounts:
+          - mountPath: /var/log/openvk
+            name: openvk-logs
+          - mountPath: /opt/chandler/extensions/available/openvk/storage
+            name: openvk-storage
+          - mountPath: /opt/chandler/extensions/available/openvk/tmp/api-storage/audios
+            name: openvk-storage-audios
+          - mountPath: /opt/chandler/extensions/available/openvk/tmp/api-storage/photos
+            name: openvk-storage-photos
+          - mountPath: /opt/chandler/extensions/available/openvk/tmp/api-storage/videos
+            name: openvk-storage-videos
+        - env: []
+          image: ghcr.io/openvk/openvk/openvk:latest
+          imagePullPolicy: Always
+          name: openvk
+          ports:
+          - containerPort: 80
+            name: http
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+          volumeMounts:
+          - mountPath: /var/log/openvk
+            name: openvk-logs
+          - mountPath: /opt/chandler/extensions/available/openvk/openvk.yml
+            name: openvk-config
+            subPath: openvk.yml
+          - mountPath: /opt/chandler/chandler.yml
+            name: openvk-config
+            subPath: chandler.yml
+          - mountPath: /opt/chandler/extensions/available/openvk/storage
+            name: openvk-storage
+          - mountPath: /opt/chandler/extensions/available/openvk/tmp/api-storage/audios
+            name: openvk-storage-audios
+          - mountPath: /opt/chandler/extensions/available/openvk/tmp/api-storage/photos
+            name: openvk-storage-photos
+          - mountPath: /opt/chandler/extensions/available/openvk/tmp/api-storage/videos
+            name: openvk-storage-videos
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        volumes:
+        - name: openvk-logs
+          emptyDir: {}
+        - name: openvk-config
+          configMap:
+            name: openvk-config
+        - name: openvk-storage
+          persistentVolumeClaim:
+            claimName: openvk-storage-pvc
+        - name: openvk-storage-audios
+          persistentVolumeClaim:
+            claimName: openvk-storage-audios-pvc
+        - name: openvk-storage-photos
+          persistentVolumeClaim:
+            claimName: openvk-storage-photos-pvc
+        - name: openvk-storage-videos
+          persistentVolumeClaim:
+            claimName: openvk-storage-videos-pvc
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: mariadb-primary
+    namespace: openvk
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: mariadb-primary
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: mariadb-primary
+      spec:
+        containers:
+        - env:
+          - name: MARIADB_DATABASE
+            value: "db"
+          - name: MARIADB_USER
+            value: "openvk"
+          - name: MARIADB_PASSWORD
+            value: "openvk"
+          - name: MARIADB_RANDOM_ROOT_PASSWORD
+            value: "yes"
+          image: ghcr.io/openvk/openvk/mariadb:10.9-primary
+          imagePullPolicy: Always
+          name: mariadb-primary
+          ports:
+          - containerPort: 3306
+            name: mysql
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+          volumeMounts:
+          - mountPath: /var/lib/mysql
+            name: mariadb-primary
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        volumes:
+        - name: mariadb-primary
+          persistentVolumeClaim:
+            claimName: mariadb-primary-pvc
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: mariadb-eventdb
+    namespace: openvk
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: mariadb-eventdb
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: mariadb-eventdb
+      spec:
+        containers:
+        - env:
+          - name: MARIADB_DATABASE
+            value: "openvk_eventdb"
+          - name: MARIADB_USER
+            value: "openvk"
+          - name: MARIADB_PASSWORD
+            value: "openvk"
+          - name: MARIADB_RANDOM_ROOT_PASSWORD
+            value: "yes"
+          image: ghcr.io/openvk/openvk/mariadb:10.9-eventdb
+          imagePullPolicy: Always
+          name: mariadb-eventdb
+          ports:
+          - containerPort: 3306
+            name: mysql
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+          volumeMounts:
+          - mountPath: /var/lib/mysql
+            name: mariadb-eventdb
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        volumes:
+        - name: mariadb-eventdb
+          persistentVolumeClaim:
+            claimName: mariadb-eventdb-pvc
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: phpmyadmin
+    namespace: openvk
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: phpmyadmin
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: phpmyadmin
+      spec:
+        containers:
+        - env:
+          - name: PMA_ARBITRARY
+            value: "1"
+          image: docker.io/phpmyadmin:5
+          imagePullPolicy: Always
+          name: phpmyadmin
+          ports:
+          - containerPort: 80
+            name: http
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+- apiVersion: apps/v1
+  kind: Deployment
+  metadata:
+    name: adminer
+    namespace: openvk
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      matchLabels:
+        app: adminer
+    strategy:
+      type: Recreate
+    template:
+      metadata:
+        labels:
+          app: adminer
+      spec:
+        containers:
+        - env:
+          - name: ADMINER_DEFAULT_SERVER
+            value: "mariadb-primary-svc"
+          image: docker.io/adminer:4
+          imagePullPolicy: Always
+          name: adminer
+          ports:
+          - containerPort: 8080
+            name: http
+            protocol: TCP
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+kind: List
+metadata: {}
