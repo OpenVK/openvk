@@ -596,7 +596,7 @@ input[type=radio]:checked {
 }
 
 .content_title_expanded {
-    background-image: url('../img/flex_arrow_open2.png');
+    background-image: url('../img/flex_arrow_open2.png')!important;
     background-repeat: no-repeat;
     background-color: #e6e6e6;
     border-top: #8B8B8B solid 1px;
@@ -610,7 +610,7 @@ input[type=radio]:checked {
 }
 
 .content_title_unexpanded {
-    background-image: url('../img/flex_arrow_shut.gif');
+    background-image: url('../img/flex_arrow_shut.gif')!important;
     background-repeat: no-repeat;
     background-color: #eee;
     border-top: solid 1px #ccc;
