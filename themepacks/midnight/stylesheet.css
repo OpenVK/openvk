@@ -6,9 +6,13 @@ html {
     color-scheme: dark !important;
 }
 
-body {
+body, #backdropDripper {
     background-color: #0e0b1a;
     color: #c6d2e8;
+}
+
+#backdropDripper {
+    box-shadow: -30px 0px 20px 20px #0e0b1a, -50px 0px 20px 20px hsl(252 41% 7% / 59%), -70px 0px 20px 20px hsl(252 41% 7% / 43%), -90px 0px 20px 20px hsl(252 41% 7% / 35%), -110px 0px 20px 20px hsl(252 41% 7% / 28%), -130px 0px 20px 20px hsl(252 41% 7% / 16%), 30px 0px 20px 20px #0e0b1a, 50px 0px 20px 20px hsl(252 41% 7% / 59%), 70px 0px 20px 20px hsl(252 41% 7% / 43%), 90px 0px 20px 20px hsl(252 41% 7% / 35%), 110px 0px 20px 20px hsl(252 41% 7% / 28%), 130px 0px 20px 20px hsl(252 41% 7% / 16%);
 }
 
 span, .post-author .date, .crp-entry--message---text, .messenger-app--messages---message .time, .navigation-lang .link_new {
@@ -175,7 +179,7 @@ h4, .content_title_expanded, .summaryBar .summary, .content_title_unexpanded {
     background-color: #2c2640;
 }
 
-form[action="/search"] > input, .header_search_input, textarea, input[type="text"] {
+form[action="/search"] > input, .header_search_input, textarea, input[type="text"], input[type="password"], input[type~="text"], input[type~="password"], input[type="email"], input[type="phone"], input[type~="email"], input[type~="phone"], input[type="search"], input[type~="search"], input[type~="date"], select, .crp-entry--message.unread {
     background-color: #181826 !important;
 }
 
