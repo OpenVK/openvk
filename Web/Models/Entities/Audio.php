@@ -123,7 +123,7 @@ class Audio extends Media
             $start = time();
             while(file_exists($filename))
                 if(time() - $start > 5)
-                    exit("Timed out waiting for ffmpeg");
+                    exit("Timed out waiting for ffmpeg"); // TODO replace with exception
 
         } catch(UnknownCommandException $ucex) {
             exit(OPENVK_ROOT_CONF["openvk"]["debug"] ? "bash/pwsh is not installed" : VIDEOS_FRIENDLY_ERROR);

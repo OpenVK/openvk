@@ -31,7 +31,7 @@ ffmpeg -i $audioFile -f dash -encryption_scheme cenc-aes-ctr -encryption_key $ke
 ffmpeg -i $audioFile -vn -ar 44100 "original_$token.mp3"
 Move-Item "original_$token.mp3" ($fileHash + '_fragments')
 
-Move-Item -Path ($fileHash + '_fragments') -Destination "$storageDir/$hashPart"
+Get-ChildItem -Path ($fileHash + '_fragments/*') | Move-Item -Destination ("$storageDir/$hashPart/$fileHash" + '_fragments')
 Move-Item -Path ("$fileHash.mpd") -Destination "$storageDir/$hashPart"
 
 cd ..
