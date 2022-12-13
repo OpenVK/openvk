@@ -30,7 +30,7 @@
                 {/if}
 
                 <td width="54" valign="top">
-                    <a href="/{$sxModel->getURL()}">
+                    <a href="{$sxModel->getURL()}">
                         <img src="{$sxModel->getAvatarUrl('miniscule')}" width=50 />
                     </a>
                 </td>
