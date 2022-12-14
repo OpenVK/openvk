@@ -159,6 +159,50 @@ function removePicture(idA) {
     u(`div#aP${idA}`).nodes[0].remove();
 }
 
+function OpenMiniature(e, photo) {
+    /*
+    В общем, надо сделать такую хуйню:
+
+    В функцию передаётся:
+    - Array с айди фотки и ссылкой прямой на пикчу
+    - index
+
+    Ну и вот как бы
+    */
+    e.preventDefault();
+
+    if(u(".ovk-photo-view").length > 0) return false;
+    
+    let dialog = u(
+    `<div class="ovk-photo-view-dimmer">
+        <div class="ovk-photo-view">
+            <div class="photo_com_title">
+                Фотография 1 из 1
+                <div>
+                    <a id="ovk-photo-close">Закрыть</a>
+                </div>
+            </div>
+            <center style="margin-bottom: 8pt;">
+                <img src="${photo}" style="max-width: 80%; max-height: 60vh;">
+            </center>
+        </div>
+    </div>`);
+    u("body").addClass("dimmed").append(dialog);
+    
+    let button = u("#ovk-photo-close");
+
+    button.on("click", function(e) {
+        let __closeDialog = () => {
+            u("body").removeClass("dimmed");
+            u(".ovk-photo-view-dimmer").remove();
+        };
+        
+        __closeDialog();
+    })
+
+    return u(".ovk-photo-view-dimmer");
+}
+
 u("#write > form").on("keydown", function(event) {
     if(event.ctrlKey && event.keyCode === 13)
         this.submit();

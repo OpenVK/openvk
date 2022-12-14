@@ -2211,6 +2211,41 @@ a.poll-retract-vote {
     border-radius: 3px;
 }
 
+/* https://imgur.com/a/ihB3JZ4 */
+
+.ovk-photo-view-dimmer {
+    position: fixed;
+    left: 0px;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    overflow: auto;
+    padding-bottom: 20px;
+    z-index: 300;
+}
+
+.ovk-photo-view {
+    position: relative;
+    z-index: 999;
+    background: #fff;
+    width: 610px;
+    padding: 20px;
+    padding-top: 15px;
+    padding-bottom: 10px;
+    box-shadow: 0px 0px 3px 1px #222;
+    margin: 15px auto 0 auto;
+}
+
+.photo_com_title {
+	font-weight: bold;
+	padding-bottom: 20px;
+}
+
+.photo_com_title div {
+	float: right;
+	font-weight: normal;
+}
+
 @keyframes appearing {
     from {
         opacity: 0;
