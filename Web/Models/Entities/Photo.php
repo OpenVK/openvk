@@ -39,13 +39,13 @@ class Photo extends Media
         if(isset($size["maxSize"])) {
             $maxSize = (int) $size["maxSize"];
             $sizes   = Image::calculateSize($image->getImageWidth(), $image->getImageHeight(), $maxSize, $maxSize, Image::SHRINK_ONLY | Image::FIT);
-            $image->resizeImage($sizes[0], $sizes[1], \Imagick::FILTER_POINT, 1);
+            $image->resizeImage($sizes[0], $sizes[1], \Imagick::FILTER_HERMITE, 1);
         } else if(isset($size["maxResolution"])) {
             $resolution = explode("x", (string) $size["maxResolution"]);
             $sizes = Image::calculateSize(
                 $image->getImageWidth(), $image->getImageHeight(), (int) $resolution[0], (int) $resolution[1], Image::SHRINK_ONLY | Image::FIT
             );
-            $image->resizeImage($sizes[0], $sizes[1], \Imagick::FILTER_POINT, 1);
+            $image->resizeImage($sizes[0], $sizes[1], \Imagick::FILTER_HERMITE, 1);
         } else {
             throw new \RuntimeException("Malformed size description: " . (string) $size["id"]);
         }
@@ -107,7 +107,7 @@ class Photo extends Media
         $sizes = Image::calculateSize(
             $image->getImageWidth(), $image->getImageHeight(), 8192, 4320, Image::SHRINK_ONLY | Image::FIT
         );
-        $image->resizeImage($sizes[0], $sizes[1], \Imagick::FILTER_POINT, 1);
+        $image->resizeImage($sizes[0], $sizes[1], \Imagick::FILTER_HERMITE, 1);
         $image->writeImage($this->pathFromHash($hash));
         $this->saveImageResizedCopies($image, $filename, $hash);
         
