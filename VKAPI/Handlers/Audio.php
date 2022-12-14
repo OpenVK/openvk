@@ -195,7 +195,7 @@ final class Audio extends VKAPIRequestHandler
         return (new Audios)->getUserCollectionSize($user);
     }
 
-	function get(int $owner_id = 0, int $album_id = 0, ?string $audio_ids = NULL, int $need_user = 1, int $offset = 0, int $count = 100, int $uploaded_only = 0, int $need_seed = 0, ?string $shuffle_seed = NULL, int $shuffle = 0, ?string $hash = NULL): object
+	function get(int $owner_id = 0, int $album_id = 0, string $audio_ids = '', int $need_user = 1, int $offset = 0, int $count = 100, int $uploaded_only = 0, int $need_seed = 0, ?string $shuffle_seed = NULL, int $shuffle = 0, ?string $hash = NULL): object
 	{
 		$this->requireUser();
 
@@ -242,10 +242,12 @@ final class Audio extends VKAPIRequestHandler
             return $response;
         }
 
-        if(!is_null($audio_ids)) {
+        if(!empty($audio_ids)) {
             $audio_ids = explode(",", $audio_ids);
             if(!$audio_ids)
                 $this->fail(10, "Audio::get@L0d186:explode(string): Unknown error");
+            else if(sizeof($audio_ids) < 1)
+                $this->fail(8, "Invalid audio_ids syntax");
 
             if(!is_null($shuffleSeed))
                 $audio_ids = knuth_shuffle($audio_ids, $shuffleSeed);
@@ -316,20 +318,6 @@ final class Audio extends VKAPIRequestHandler
             "count" => sizeof($items),
             "items" => $items,
         ];
-
-		$serverUrl = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
-	
-		return (object) [
-			"count" => 1,
-			"items" => [(object) [
-				"id" 	   => 1,
-				"owner_id" => 1,
-				"artist"   => "В ОВК ПОКА НЕТ МУЗЫКИ",
-				"title"    => "ЖДИТЕ :)))",
-				"duration" => 22,
-				"url"      => $serverUrl . "/assets/packages/static/openvk/audio/nomusic.mp3"
-			]]
-		];
 	}
 
     function getLyrics(int $lyrics_id): object
