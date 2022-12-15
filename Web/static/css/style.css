@@ -2246,6 +2246,22 @@ a.poll-retract-vote {
 	font-weight: normal;
 }
 
+.ovk-photo-slide-left {
+    left: 0;
+    width: 35%;
+    height: 100%;
+    position: absolute;
+    cursor: pointer;
+}
+
+.ovk-photo-slide-right {
+    right: 0;
+    width: 35%;
+    height: 100%;
+    position: absolute;
+    cursor: pointer;
+}
+
 @keyframes appearing {
     from {
         opacity: 0;

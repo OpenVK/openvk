@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
+use openvk\Web\Models\Repositories\Posts;
 use MessagePack\MessagePack;
 use Chandler\Session\Session;
 
@@ -92,6 +93,39 @@ final class InternalAPIPresenter extends OpenVKPresenter
         } else {
             $this->returnJson([
                 "success" => 0
+            ]);
+        }
+    }
+
+    function renderGetPhotosFromPost(string $post_id) {
+        if($_SERVER["REQUEST_METHOD"] !== "POST") {
+            header("HTTP/1.1 405 Method Not Allowed");
+            exit("иди нахуй заебал");
+        }
+        
+        $id   = explode("_", $post_id);
+        $post = (new Posts)->getPostById(intval($id[0]), intval($id[1]));
+
+        if(is_null($post)) {
+            $this->returnJson([
+                "success" => 0
+            ]);
+        } else {
+            $response = [];
+            $attachments = $post->getChildren();
+            foreach($attachments as $attachment) 
+            {
+                if($attachment instanceof \openvk\Web\Models\Entities\Photo)
+                {
+                    $response[] = [
+                        "url" => $attachment->getURLBySizeId('normal'),
+                        "id"  => $attachment->getPrettyId()
+                    ];
+                }
+            }
+            $this->returnJson([
+                "success" => 1,
+                "body" => $response
             ]);
         }
     }

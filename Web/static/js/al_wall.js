@@ -159,31 +159,36 @@ function removePicture(idA) {
     u(`div#aP${idA}`).nodes[0].remove();
 }
 
-function OpenMiniature(e, photo) {
+function OpenMiniature(e, photo, post, photo_id) {
     /*
-    В общем, надо сделать такую хуйню:
-
-    В функцию передаётся:
-    - Array с айди фотки и ссылкой прямой на пикчу
-    - index
-
-    Ну и вот как бы
+    костыли но смешные однако
     */
     e.preventDefault();
 
     if(u(".ovk-photo-view").length > 0) return false;
+
+    // Значения для переключения фоток
+
+    let json;
+
+    let imagesCount = 0;
+    let imagesIndex = 0;
     
     let dialog = u(
     `<div class="ovk-photo-view-dimmer">
         <div class="ovk-photo-view">
             <div class="photo_com_title">
-                Фотография 1 из 1
+                <text id="photo_com_title_photos">
+                    <img src="/assets/packages/static/openvk/img/loading_mini.gif">
+                </text>
                 <div>
                     <a id="ovk-photo-close">Закрыть</a>
                 </div>
             </div>
             <center style="margin-bottom: 8pt;">
-                <img src="${photo}" style="max-width: 80%; max-height: 60vh;">
+                <div class="ovk-photo-slide-left"></div>
+                <div class="ovk-photo-slide-right"></div>
+                <img src="${photo}" style="max-width: 80%; max-height: 60vh;" id="ovk-photo-img">
             </center>
         </div>
     </div>`);
@@ -198,7 +203,67 @@ function OpenMiniature(e, photo) {
         };
         
         __closeDialog();
-    })
+    });
+
+    function __slidePhoto(direction) {
+        /* direction = 1 - right
+           direction = 0 - left */
+        if(json == undefined) {
+            console.log("Да подожди ты. Куда торопишься?");
+        } else {
+            if(imagesIndex >= imagesCount && direction == 1) {
+                imagesIndex = 1;
+            } else if(imagesIndex <= 1 && direction == 0) {
+                imagesIndex = imagesCount;
+            } else if(direction == 1) {
+                imagesIndex++;
+            } else if(direction == 0) {
+                imagesIndex--;
+            }
+
+            let photoURL = json.body[imagesIndex - 1].url;
+
+            u("#ovk-photo-img").last().src = photoURL;
+            u("#photo_com_title_photos").last().innerHTML = "Фотография " + imagesIndex + " из " + imagesCount;
+        }
+    }
+
+    let slideLeft = u(".ovk-photo-slide-left");
+
+    slideLeft.on("click", (e) => {
+        __slidePhoto(0);
+    });
+
+    let slideRight = u(".ovk-photo-slide-right");
+
+    slideRight.on("click", (e) => {
+        __slidePhoto(1);
+    });
+
+    ky.post("/iapi/getPhotosFromPost/" + post, {
+        hooks: {
+            afterResponse: [
+                async (_request, _options, response) => {
+                    json = await response.json();
+
+                    imagesCount = json.body.length;
+                    imagesIndex = 0;
+                    // Это всё придётся правда на 1 прибавлять
+                    
+                    json.body.every(element => {
+                        imagesIndex++;
+                        if(element.id == photo_id) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    });
+
+                    u("#photo_com_title_photos").last().innerHTML = "Фотография " + imagesIndex + " из " + imagesCount;
+                }
+            ]
+        }
+    });
 
     return u(".ovk-photo-view-dimmer");
 }
