@@ -188,8 +188,11 @@ function OpenMiniature(e, photo, post, photo_id) {
             <center style="margin-bottom: 8pt;">
                 <div class="ovk-photo-slide-left"></div>
                 <div class="ovk-photo-slide-right"></div>
-                <img src="${photo}" style="max-width: 80%; max-height: 60vh;" id="ovk-photo-img">
+                <img src="${photo}" style="max-width: 100%; max-height: 60vh;" id="ovk-photo-img">
             </center>
+            <div class="ovk-photo-details">
+                <img src="/assets/packages/static/openvk/img/loading_mini.gif">
+            </div>
         </div>
     </div>`);
     u("body").addClass("dimmed").append(dialog);
@@ -258,6 +261,23 @@ function OpenMiniature(e, photo, post, photo_id) {
                             return true;
                         }
                     });
+
+                    u("#photo_com_title_photos").last().innerHTML = "Фотография " + imagesIndex + " из " + imagesCount;
+                }
+            ]
+        }
+    });
+
+    ky("/photo" + photo_id, {
+        hooks: {
+            afterResponse: [
+                async (_request, _options, response) => {
+                    let parser = new DOMParser();
+                    let body = parser.parseFromString(await response.text(), "text/html");
+
+                    let element = u(body.getElementsByClassName("ovk-photo-details")).last();
+
+                    u(".ovk-photo-details").last().innerHTML = element.innerHTML;
 
                     u("#photo_com_title_photos").last().innerHTML = "Фотография " + imagesIndex + " из " + imagesCount;
                 }
