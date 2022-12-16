@@ -2216,6 +2216,17 @@ a.poll-retract-vote {
     border-radius: 1px;
 }
 
+.client_app > img {
+	top: 3px;
+	position: relative;
+}
+
+.client_app.client_app_titlebar > img {
+    top: 2px;
+	position: relative;
+    filter: invert(100%) sepia(100%) saturate(800%) hue-rotate(2deg) brightness(130%) contrast(50.1%);
+}
+
 @keyframes appearing {
     from {
         opacity: 0;

@@ -122,3 +122,70 @@ u("#write > form").on("keydown", function(event) {
     if(event.ctrlKey && event.keyCode === 13)
         this.submit();
 });
+
+var tooltipClientTemplate = Handlebars.compile(`
+    <table>
+        <tr>
+            <td width="54" valign="top">
+                <img src="{{img}}" width="54" />
+            </td>
+            <td width="1"></td>
+            <td width="150" valign="top">
+                <text>
+                    {{app_tr}}: <b>{{name}}</b>
+                </text><br/>
+                <a href="{{url}}">Подробнее</a>
+            </td>
+        </tr>
+    </table>
+`);
+
+var tooltipClientNoInfoTemplate = Handlebars.compile(`
+    <table>
+        <tr>
+            <td width="150" valign="top">
+                <text>
+                    {{app_tr}}: <b>{{name}}</b>
+                </text><br/>
+            </td>
+        </tr>
+    </table>
+`);
+
+tippy(".client_app", {
+    theme: "light vk",
+    content: "⌛",
+    allowHTML: true,
+    interactive: true,
+    interactiveDebounce: 500,
+
+    onCreate: async function(that) {
+        that._resolvedClient = null;
+    },
+
+    onShow: async function(that) {
+        let client_tag = that.reference.dataset.appTag;
+        let client_name = that.reference.dataset.appName;
+        let client_url = that.reference.dataset.appUrl;
+        let client_img = that.reference.dataset.appImg;
+        
+        if(client_name != "") {
+            let res = {
+                'name':   client_name,
+                'url':    client_url,
+                'img':    client_img,
+                'app_tr': tr("app") 
+            };
+    
+            that.setContent(tooltipClientTemplate(res));
+        } else {
+            let res = {
+                'name': client_tag,
+                'app_tr': tr("app") 
+            };
+    
+            that.setContent(tooltipClientNoInfoTemplate(res));
+        }
+    }
+});
+
