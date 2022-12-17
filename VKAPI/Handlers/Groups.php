@@ -185,7 +185,7 @@ final class Groups extends VKAPIRequestHandler
 			                $response[$i]->site = $clb->getWebsite();
 			                break;
                         case "description":
-			                $response[$i]->desctiption = $clb->getDescription();
+			                $response[$i]->description = $clb->getDescription();
                             break;
 			            case "contacts":
                             $contacts;
