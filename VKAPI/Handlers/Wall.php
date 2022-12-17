@@ -90,12 +90,12 @@ final class Wall extends VKAPIRequestHandler
 
             $post_source = [];
     
-            if($attachment->getPlatform(true) === NULL) {
+            if($post->getPlatform(true) === NULL) {
                 $post_source = (object)["type" => "vk"];
             } else {
                 $post_source = (object)[
                     "type" => "api",
-                    "platform" => $attachment->getPlatform(true)
+                    "platform" => $post->getPlatform(true)
                 ];
             }
 
