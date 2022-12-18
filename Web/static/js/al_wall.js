@@ -134,7 +134,7 @@ var tooltipClientTemplate = Handlebars.compile(`
                 <text>
                     {{app_tr}}: <b>{{name}}</b>
                 </text><br/>
-                <a href="{{url}}">Подробнее</a>
+                <a href="{{url}}">${tr("learn_more")}</a>
             </td>
         </tr>
     </table>

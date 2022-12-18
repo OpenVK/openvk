@@ -811,6 +811,8 @@
 "app_err_note" = "Failed to attach a news note";
 "app_err_note_desc" = "Make sure the link is correct and the note belongs to you.";
 
+"learn_more" = "Learn more";
+
 /* Support */
 
 "support_opened" = "Opened";
