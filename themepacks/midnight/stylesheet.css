@@ -128,11 +128,11 @@ h4, .content_title_expanded, .summaryBar .summary, .content_title_unexpanded {
 }
 
 .content_title_expanded {
-    background-image: url("/themepack/midnight/0.0.1.4/resource/flex_arrow_open.png");
+    background-image: url("/themepack/midnight/0.0.2.1/resource/flex_arrow_open.png") !important;
 }
 
 .content_title_unexpanded {
-    background-image: url("/themepack/midnight/0.0.1.4/resource/flex_arrow_shut.gif");
+    background-image: url("/themepack/midnight/0.0.2.1/resource/flex_arrow_shut.gif") !important;
 }
 
 .ovk-video > .preview, .video-preview {
@@ -154,17 +154,17 @@ h4, .content_title_expanded, .summaryBar .summary, .content_title_unexpanded {
 
 .page_yellowheader {
     color: #c6d2e8;
-    background-image: url("/themepack/midnight/0.0.1.4/resource/header_purple.png");
+    background-image: url("/themepack/midnight/0.0.2.1/resource/header_purple.png") !important;
     background-color: #231f34;
     border-color: #231f34;
 }
 
 .page_header {
-    background-image: url("/themepack/midnight/0.0.1.4/resource/header.png");
+    background-image: url("/themepack/midnight/0.0.2.1/resource/header.png") !important;
 }
 
 .page_custom_header {
-    background-image: url("/themepack/midnight/0.0.1.4/resource/header_custom.png");
+    background-image: url("/themepack/midnight/0.0.2.1/resource/header_custom.png") !important;
 }
 
 .page_yellowheader span, .page_yellowheader a {
@@ -184,11 +184,11 @@ form[action="/search"] > input, .header_search_input, textarea, input[type="text
 }
 
 input[type="checkbox"] {
-    background-image: url("/themepack/midnight/0.0.1.4/resource/checkbox.png");
+    background-image: url("/themepack/midnight/0.0.2.1/resource/checkbox.png") !important;
 }
 
 input[type="radio"] {
-    background-image: url("/themepack/midnight/0.0.1.4/resource/radio.png");
+    background-image: url("/themepack/midnight/0.0.2.1/resource/radio.png") !important;
 }
 
 .header_navigation .link {
@@ -196,19 +196,19 @@ input[type="radio"] {
 }
 
 .heart {
-    background-image: url("/themepack/midnight/0.0.1.4/resource/like.gif") !important;
+    background-image: url("/themepack/midnight/0.0.2.1/resource/like.gif") !important;
 }
 
 .pinned-mark, .post-author .pin {
-    background-image: url("/themepack/midnight/0.0.1.4/resource/pin.png") !important;
+    background-image: url("/themepack/midnight/0.0.2.1/resource/pin.png") !important;
 }
 
 .repost-icon {
-    background-image: url("/themepack/midnight/0.0.1.4/resource/published.gif") !important;
+    background-image: url("/themepack/midnight/0.0.2.1/resource/published.gif") !important;
 }
 
 .post-author .delete {
-    background-image: url("/themepack/midnight/0.0.1.4/resource/input_clear.gif") !important;
+    background-image: url("/themepack/midnight/0.0.2.1/resource/input_clear.gif") !important;
 }
 
 .user-alert {
