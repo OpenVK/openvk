@@ -30,7 +30,7 @@ class Photo extends Media
             $px = (int) $props[0];
             $py = (int) $props[1];
             if(($image->getImageWidth() / $image->getImageHeight()) > ($px / $py)) {
-                $height = ceil(($px * $image->getImageWidth()) / $py);
+                $height = (int) ceil(($px * $image->getImageWidth()) / $py);
                 $image->cropImage($image->getImageWidth(), $height, 0, 0);
                 $res[0] = true;
             }
