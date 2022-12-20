@@ -156,7 +156,7 @@ class Photo extends Media
         foreach($sizes as $id => $meta) {
             if(isset($meta[3]) && !$meta[3]) {
                 $res[$id] = (object) [
-                    "url"    => "/photos/thumbnails/" . $this->getId() . "_$id.jpeg",
+                    "url"    => ovk_scheme(true) . $_SERVER["HTTP_HOST"] . "/photos/thumbnails/" . $this->getId() . "_$id.jpeg",
                     "width"  => NULL,
                     "height" => NULL,
                     "crop"   => NULL
