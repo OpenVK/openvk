@@ -14,6 +14,8 @@ final class Wall extends VKAPIRequestHandler
 {
     function get(int $owner_id, string $domain = "", int $offset = 0, int $count = 30, int $extended = 0): object
     {
+        $this->requireUser();
+        
         $posts    = new PostsRepo;
 
         $items    = [];
