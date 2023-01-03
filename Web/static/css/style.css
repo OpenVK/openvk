@@ -33,6 +33,10 @@ p {
     margin: 5px 0;
 }
 
+h1 {
+    margin-top: 0;
+}
+
 .layout {
     width: 791px;
     margin: 0 auto;
@@ -1734,11 +1738,6 @@ body.scrolled .toTop:hover {
     font-weight: 900;
     background-color: #f3ddbd;
     color: #58462a;
-}
-
-.knowledgeBaseArticle {
-    margin-top: -11px;
-    /* this is very stupid fix but nah */
 }
 
 .avatar-list {
