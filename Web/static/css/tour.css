@@ -62,32 +62,6 @@ p.wel {
  padding-right: 16px;
 }
 
-
-.rightNav {
- border:0px; width:140px; padding-left: 6px; float:left;
-}
-.rightNav h1 {
- border:0px; background: #EAEAEA; font-weight:bold; font-size:11px; padding: 4px 5px;
-}
-.rightLinks {
- margin-bottom:10px;
-}
-.rightLinks div {
- padding:4px 6px 4px 5px; margin:1px;
-}
-.rightLinks .active {
- background: #fff; 
-}
-.rightLinks .active a {
- cursor: default; color: #000; font-weight:bold;
-}
-.rightLinks .active a:hover {
- cursor: default; text-decoration: none;
-}
-
-.rightLinks img {
- vertical-align: bottom; margin-right:5px;
-}
 p.big {
  font-size:12px; text-align:center;
 }
@@ -120,6 +94,86 @@ text-decoration:none;
 
 .selled {
  background-color: #B8C4CF;
+}
+
+* {box-sizing: border-box}
+
+.rightNav {
+ border:0px; width:140px; padding-left: 6px; float:right;
+}
+.rightNav h1 {
+ border:0px; background: #EAEAEA; font-weight:bold; font-size:11px; padding: 4px 5px;
+}
+.rightLinks {
+ margin-bottom:10px;
+}
+.rightLinks div {
+ padding:4px 6px 4px 5px; margin:1px;
+}
+.rightLinks .active {
+ background: #fff; 
+}
+.rightLinks .active a {
+ cursor: default; color: #000; font-weight:bold;
+}
+.rightLinks .active a:hover {
+ cursor: default; text-decoration: none;
+}
+
+.rightLinks img {
+ vertical-align: bottom; margin-right:5px;
+}
+
+/* Style the tab */
+.tab {
+    float: right;
+    width: 140px;
+}
+
+.tab:hover {
+    background: none;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+    display: block;
+    background-color: inherit;
+    width: 138px;
+	height: 24px;
+    border: none;
+	margin-bottom: 5px;
+    outline: none;
+    text-align: left;
+    cursor: pointer;
+	background: none;
+	font-size: 10px;
+}
+
+/* Create an active/current "tab button" class */
+.tab button.active {
+    background-color: #fff;
+	cursor: default; color: #000; font-weight:bold;
+}
+
+.tab button.hover{
+	background: none;
+}
+
+/* Style the tab content */
+.tabcontent {
+    float: left;
+    padding: 0px 12px;
+	background: #fff;
+    width: 77%;
+}
+.tabcontent img{
+	margin:auto;
+}
+.tabicon{
+	width: 16px;
+	height: 16px;
+	display: inline;
+	margin-right: 1px;
 }
 
 /* OVK CONTENT TOUR CSS */
