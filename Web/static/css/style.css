@@ -2253,3 +2253,20 @@ a.poll-retract-vote {
 .regform-right{
 	min-width: 200px;
 }
+
+
+.tour {
+    background: #F9F6E7;
+    border: 1px solid #BEAD61;
+    padding: 8px 25px;
+    width:205px;
+    text-align:center;
+    color: #000;
+    font-size:12px;
+    margin:10px auto;
+    cursor:hand;cursor:pointer;
+}
+
+.tour div {
+    font-size: 11px; color:#000; 
+}

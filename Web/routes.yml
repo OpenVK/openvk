@@ -345,6 +345,8 @@ routes:
       handler: "About->humansTxt"
     - url: "/dev"
       handler: "About->dev"
+    - url: "/tour"
+      handler: "About->tour"
     - url: "/{?shortCode}"
       handler: "UnknownTextRouteStrategy->delegate"
       placeholders:
