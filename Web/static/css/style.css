@@ -661,6 +661,15 @@ select {
     box-sizing: border-box;
 }
 
+.header2 {
+    border-bottom: 1px solid #E8EBEE;
+    color: #45688E;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+    font-family: verdana, arial, sans-serif;
+}
+
 h4 {
     border-bottom: 1px solid #E8EBEE;
     color: #45688E;
@@ -2235,4 +2244,13 @@ a.poll-retract-vote {
     to {
         opacity: 1;
     }
+}
+
+.regform-left{
+	text-align: right; 
+	min-width: 110px;
+}
+
+.regform-right{
+	min-width: 200px;
 }

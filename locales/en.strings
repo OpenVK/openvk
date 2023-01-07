@@ -53,8 +53,11 @@
 "register_meta_desc" = "Register in $1 now!";
 "register_referer_meta_title" = "$1 invites you to $2!";
 "register_referer_meta_desc" = "Join $1 and many other users at $2!";
+"registration_welcome_1" = "is a universal colleague search tool based on the VKontakte structure.";
+"registration_welcome_2" = "We want friends, classmates, neighbors and colleagues to always be in touch.";
 
 "users" = "Users";
+"other_fields" = "Other fields";
 
 /* Profile information */
 
