@@ -477,7 +477,7 @@
      <h2>{_tour_section_14_title_2|noescape}</h2>
      
      <ul class="listing">
-     <li><span>{_tour_section_14_text_2_1|noescape}/span></li>
+     <li><span>{_tour_section_14_text_2_1|noescape}</span></li>
       <li><span>{_tour_section_14_text_2_2|noescape}</span></li>
      <li><span>{_tour_section_14_text_2_3|noescape}</span></li>
      </ul>
