@@ -19,20 +19,20 @@
     
     <div class="rightLinks">
     <div class="tab">
-      <button class="tablinks" onclick="eurotour(event, 'start')" id="defaultOpen"><div class="tabicon"><img src="https://openvk.uk/assets/packages/static/openvk/img/icons/1.svg" width="16" height="16"></div>{_tour_section_1|noescape}</button>
-      <button class="tablinks" onclick="eurotour(event, 'profile')"><div class="tabicon"><img src="https://openvk.uk/assets/packages/static/openvk/img/icons/2.svg" width="16" height="16"></div>{_tour_section_2|noescape}</button>
-      <button class="tablinks" onclick="eurotour(event, 'photos')"><div class="tabicon"><img src="https://openvk.uk/assets/packages/static/openvk/img/icons/3.svg" width="16" height="16"></div>{_tour_section_3|noescape}</button>
-      <button class="tablinks" onclick="eurotour(event, 'search')"><div class="tabicon"><img src="https://openvk.uk/assets/packages/static/openvk/img/icons/4.svg" width="16" height="16"></div>{_tour_section_4|noescape}</button>
-      <button class="tablinks" onclick="eurotour(event, 'videos')"><div class="tabicon"><img src="https://openvk.uk/assets/packages/static/openvk/img/icons/5.svg" width="16" height="16"></div>{_tour_section_5|noescape}</button>
-      <button class="tablinks" onclick="eurotour(event, 'audios')"><div class="tabicon"><img src="https://openvk.uk/assets/packages/static/openvk/img/icons/6.svg" width="16" height="16"></div>{_tour_section_6|noescape}</button>
-      <button class="tablinks" onclick="eurotour(event, 'news')"><div class="tabicon"><img src="https://openvk.uk/assets/packages/static/openvk/img/icons/7.svg" width="16" height="16"></div>{_tour_section_7|noescape}</button>
-      <button class="tablinks" onclick="eurotour(event, 'news_global')"><div class="tabicon"><img src="https://openvk.uk/assets/packages/static/openvk/img/icons/8.svg" width="16" height="16"></div>{_tour_section_8|noescape}</button>
-      <button class="tablinks" onclick="eurotour(event, 'groups')"><div class="tabicon"><img src="https://openvk.uk/assets/packages/static/openvk/img/icons/9.svg" width="16" height="16"></div>{_tour_section_9|noescape}</button>
-      <button class="tablinks" onclick="eurotour(event, 'events')"><div class="tabicon"><img src="https://openvk.uk/assets/packages/static/openvk/img/icons/10.svg" width="16" height="16"></div>{_tour_section_10|noescape}</button>
-      <button class="tablinks" onclick="eurotour(event, 'themes')"><div class="tabicon"><img src="https://openvk.uk/assets/packages/static/openvk/img/icons/11.svg" width="16" height="16"></div>{_tour_section_11|noescape}</button>
-      <button class="tablinks" onclick="eurotour(event, 'customization')"><div class="tabicon"><img src="https://openvk.uk/assets/packages/static/openvk/img/icons/12.svg" width="16" height="16"></div>{_tour_section_12|noescape}</button>
-      <button class="tablinks" onclick="eurotour(event, 'vouchers')"><div class="tabicon"><img src="https://openvk.uk/assets/packages/static/openvk/img/icons/13.svg" width="16" height="16"></div>{_tour_section_13|noescape}</button>
-      <button class="tablinks" onclick="eurotour(event, 'mobile')"><div class="tabicon"><img src="https://openvk.uk/assets/packages/static/openvk/img/icons/14.svg" width="16" height="16"></div>{_tour_section_14|noescape}</button>
+      <button class="tablinks" onclick="eurotour(event, 'start')" id="defaultOpen"><div class="tabicon"><img src="assets/packages/static/openvk/img/icons/1.svg" width="16" height="16"></div>{_tour_section_1|noescape}</button>
+      <button class="tablinks" onclick="eurotour(event, 'profile')"><div class="tabicon"><img src="assets/packages/static/openvk/img/icons/2.svg" width="16" height="16"></div>{_tour_section_2|noescape}</button>
+      <button class="tablinks" onclick="eurotour(event, 'photos')"><div class="tabicon"><img src="assets/packages/static/openvk/img/icons/3.svg" width="16" height="16"></div>{_tour_section_3|noescape}</button>
+      <button class="tablinks" onclick="eurotour(event, 'search')"><div class="tabicon"><img src="assets/packages/static/openvk/img/icons/4.svg" width="16" height="16"></div>{_tour_section_4|noescape}</button>
+      <button class="tablinks" onclick="eurotour(event, 'videos')"><div class="tabicon"><img src="assets/packages/static/openvk/img/icons/5.svg" width="16" height="16"></div>{_tour_section_5|noescape}</button>
+      <button class="tablinks" onclick="eurotour(event, 'audios')"><div class="tabicon"><img src="assets/packages/static/openvk/img/icons/6.svg" width="16" height="16"></div>{_tour_section_6|noescape}</button>
+      <button class="tablinks" onclick="eurotour(event, 'news')"><div class="tabicon"><img src="assets/packages/static/openvk/img/icons/7.svg" width="16" height="16"></div>{_tour_section_7|noescape}</button>
+      <button class="tablinks" onclick="eurotour(event, 'news_global')"><div class="tabicon"><img src="assets/packages/static/openvk/img/icons/8.svg" width="16" height="16"></div>{_tour_section_8|noescape}</button>
+      <button class="tablinks" onclick="eurotour(event, 'groups')"><div class="tabicon"><img src="assets/packages/static/openvk/img/icons/9.svg" width="16" height="16"></div>{_tour_section_9|noescape}</button>
+      <button class="tablinks" onclick="eurotour(event, 'events')"><div class="tabicon"><img src="assets/packages/static/openvk/img/icons/10.svg" width="16" height="16"></div>{_tour_section_10|noescape}</button>
+      <button class="tablinks" onclick="eurotour(event, 'themes')"><div class="tabicon"><img src="assets/packages/static/openvk/img/icons/11.svg" width="16" height="16"></div>{_tour_section_11|noescape}</button>
+      <button class="tablinks" onclick="eurotour(event, 'customization')"><div class="tabicon"><img src="assets/packages/static/openvk/img/icons/12.svg" width="16" height="16"></div>{_tour_section_12|noescape}</button>
+      <button class="tablinks" onclick="eurotour(event, 'vouchers')"><div class="tabicon"><img src="assets/packages/static/openvk/img/icons/13.svg" width="16" height="16"></div>{_tour_section_13|noescape}</button>
+      <button class="tablinks" onclick="eurotour(event, 'mobile')"><div class="tabicon"><img src="assets/packages/static/openvk/img/icons/14.svg" width="16" height="16"></div>{_tour_section_14|noescape}</button>
        
      
     </div>
@@ -62,7 +62,7 @@
      <li><span>{_tour_section_1_text_2|noescape}</span></li> 
      <li><span>{_tour_section_1_text_3|noescape}</span></li>
      </ul>
-     <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/reg.png" width="440">
+     <img src="assets/packages/static/openvk/img/tour/reg.png" width="440">
      <p class="big">{_tour_section_1_bottom_text_1|noescape}</p>
      <div style="margin-top:10px; padding-left:175px">
                             
@@ -77,7 +77,7 @@
       <li><span>{_tour_section_2_text_1_2|noescape}</span></li> 
       <li><span>{_tour_section_2_text_1_3|noescape}</span></li>
      </ul>
-     <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/profile.png" width="440">
+     <img src="assets/packages/static/openvk/img/tour/profile.png" width="440">
      <p class="big">{_tour_section_2_bottom_text_1|noescape}</p>
      <h2>{_tour_section_2_title_2|noescape}</h2>
      <ul class="listing">
@@ -85,26 +85,26 @@
       <li><span>{_tour_section_2_text_2_2|noescape}</span></li>
       <li><span>{_tour_section_2_text_2_3|noescape}</span></li> 
      </ul>
-     <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/privacy.png" width="440">
+     <img src="assets/packages/static/openvk/img/tour/privacy.png" width="440">
      
      <h2>{_tour_section_2_title_3|noescape}</h2>
      <ul class="listing">
       <li><span>{_tour_section_2_text_3_1|noescape}</span></li>
         <li><span>{_tour_section_2_text_3_2|noescape}</span></li> 
       </ul>
-      <center><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/adres_ff.jpg"></center>
+      <center><img src="assets/packages/static/openvk/img/tour/adres_ff.jpg"></center>
       <ul class="listing">
     
     <li><span>{_tour_section_2_text_3_3|noescape}</span></li>
       <li><span>{_tour_section_2_text_3_4|noescape}</span></li>
      </ul>
-     <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/adres3.png" width="440">
-      <center><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/adres_ff_tohru.jpg"></center>
+     <img src="assets/packages/static/openvk/img/tour/adres3.png" width="440">
+      <center><img src="assets/packages/static/openvk/img/tour/adres_ff_tohru.jpg"></center>
      <br>
     <i><p class="big">{_tour_section_2_bottom_text_2|noescape}</p></p></i>
     
      <h2>{_tour_section_2_title_4|noescape}</h2>
-     <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/wall.png" width="440">
+     <img src="assets/packages/static/openvk/img/tour/wall.png" width="440">
      
                           
      <br>
@@ -117,8 +117,8 @@
      <li><span>{_tour_section_3_text_2|noescape}</span></li> 
      <li><span>{_tour_section_3_text_3|noescape}</span></li>
      </ul>
-     <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/photos.png" width="440">
-     <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/photos2.png" width="440">
+     <img src="assets/packages/static/openvk/img/tour/photos.png" width="440">
+     <img src="assets/packages/static/openvk/img/tour/photos2.png" width="440">
      <p class="big">{_tour_section_3_bottom_text_1|noescape}</p>
     
                               
@@ -132,11 +132,11 @@
      <li><span>{_tour_section_4_text_1|noescape}</span></li> 
      <li><span>{_tour_section_4_text_2|noescape}</span></li>
      </ul>
-     <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/search.png" width="440">
+     <img src="assets/packages/static/openvk/img/tour/search.png" width="440">
      <ul class="listing">
      <li><span>{_tour_section_4_text_3|noescape}</span></li> 
      </ul>
-     <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/search2.png" width="440">
+     <img src="assets/packages/static/openvk/img/tour/search2.png" width="440">
     
     <h2>{_tour_section_4_title_2|noescape}</h2>
     
@@ -144,7 +144,7 @@
      <li><span>{_tour_section_4_text_4|noescape}</span></li> 
      </ul>
      
-      <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/search_h.png" width="440">
+      <img src="assets/packages/static/openvk/img/tour/search_h.png" width="440">
     
                             
      <br>       
@@ -157,18 +157,18 @@
      <li><span>{_tour_section_5_text_1|noescape}</span></li> 
      <li><span>{_tour_section_5_text_2|noescape}</span></li>
      </ul>
-     <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/videos.png" width="440">
+     <img src="assets/packages/static/openvk/img/tour/videos.png" width="440">
      <p class="big">{_tour_section_5_bottom_text_1|noescape}</p>
-     <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/videos_a.png" width="440">
+     <img src="assets/packages/static/openvk/img/tour/videos_a.png" width="440">
     <h2>{_tour_section_5_title_2|noescape}</h2>
     
     <ul class="listing">
      <li><span>{_tour_section_5_text_3|noescape}</span></li> 
      </ul>
-       <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/videos_y.png" width="440">
+       <img src="assets/packages/static/openvk/img/tour/videos_y.png" width="440">
      
      
-      <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/videos_w.png" width="440">
+      <img src="assets/packages/static/openvk/img/tour/videos_w.png" width="440">
     
                             
      <br>       
@@ -195,7 +195,7 @@
      
      </ul>
      
-      <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/local_news.png" width="440">
+      <img src="assets/packages/static/openvk/img/tour/local_news.png" width="440">
       
       <p class="big">{_tour_section_7_bottom_text_1|noescape}</p> 
     
@@ -214,12 +214,12 @@
      
     
       
-        <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/news_global.png" width="440">
+        <img src="assets/packages/static/openvk/img/tour/news_global.png" width="440">
         
         <p class="big">{_tour_section_8_bottom_text_1|noescape}</p>
      
       
-          <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/poll.png" width="440">
+          <img src="assets/packages/static/openvk/img/tour/poll.png" width="440">
           
             <p class="big">{_tour_section_8_bottom_text_2|noescape}</p>
     
@@ -238,9 +238,9 @@
      
     
       
-        <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/groups.png" width="440">
+        <img src="assets/packages/static/openvk/img/tour/groups.png" width="440">
         <p class="big">{_tour_section_9_bottom_text_1|noescape}</p>
-        <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/groups_view.png" width="440">
+        <img src="assets/packages/static/openvk/img/tour/groups_view.png" width="440">
         <p class="big">{_tour_section_9_bottom_text_2|noescape}</p>
      
           <h2>{_tour_section_9_title_2|noescape}</h2>
@@ -251,7 +251,7 @@
      <li><span>{_tour_section_9_text_2_3|noescape}</span></li> 
      </ul>
       
-          <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/groups_admin.png" width="440">
+          <img src="assets/packages/static/openvk/img/tour/groups_admin.png" width="440">
           
             <p class="big">{_tour_section_9_bottom_text_3|noescape}</p>
     
@@ -280,18 +280,18 @@
      <li><span>{_tour_section_11_text_3|noescape}</span></li>
      </ul>
      
-     <center><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/theme_picker.png"></center>
+     <center><img src="assets/packages/static/openvk/img/tour/theme_picker.png"></center>
      
      <p class="big">{_tour_section_11_bottom_text_1|noescape}</p><br>
     
      
-     <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/theme3.png" width="460">
+     <img src="assets/packages/static/openvk/img/tour/theme3.png" width="460">
      
       <table cellspacing="5" border="0">
       <tbody>
         <tr>
-          <td><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/theme1.png" style="float:left;" width="220"></td>
-          <td><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/theme2.png" style="float:right;" width="220"></td>
+          <td><img src="assets/packages/static/openvk/img/tour/theme1.png" style="float:left;" width="220"></td>
+          <td><img src="assets/packages/static/openvk/img/tour/theme2.png" style="float:right;" width="220"></td>
         </tr>
       </tbody>
     </table>
@@ -312,7 +312,7 @@
      <li><span>{_tour_section_12_text_2|noescape}</span></li>
      </ul>
      
-     <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/backdrop.png" width="440">
+     <img src="assets/packages/static/openvk/img/tour/backdrop.png" width="440">
      
      <p class="big">{_tour_section_12_bottom_text_1|noescape}</p><br>
     
@@ -326,13 +326,13 @@
      <table cellspacing="5" border="0">
       <tbody>
         <tr>
-          <td><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/backdrop_ex.png" width="440"></td>
+          <td><img src="assets/packages/static/openvk/img/tour/backdrop_ex.png" width="440"></td>
         </tr>
         <tr>
-          <td><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/backdrop_ex1.png" width="440"></td>
+          <td><img src="assets/packages/static/openvk/img/tour/backdrop_ex1.png" width="440"></td>
         </tr>
          <tr>
-          <td><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/backdrop_ex2.png" width="440"></td>
+          <td><img src="assets/packages/static/openvk/img/tour/backdrop_ex2.png" width="440"></td>
         </tr>
       </tbody>
     </table>
@@ -351,18 +351,18 @@
      <li><span>{_tour_section_12_text_2_2|noescape}</span></li>
      </ul>
      
-     <center><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/avatar_picker.png"></center><br>
+     <center><img src="assets/packages/static/openvk/img/tour/avatar_picker.png"></center><br>
     
     <table cellspacing="5" border="0">
       <tbody>
         <tr>
-          <td><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/avatars_def.png" style="float:left;" width="220"></td>
-          <td><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/avatars_round.png" style="float:right;" width="220"></td>
+          <td><img src="assets/packages/static/openvk/img/tour/avatars_def.png" style="float:left;" width="220"></td>
+          <td><img src="assets/packages/static/openvk/img/tour/avatars_round.png" style="float:right;" width="220"></td>
         </tr>
       </tbody>
     </table><br>
     
-     <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/avatars_quad.png" width="440">
+     <img src="assets/packages/static/openvk/img/tour/avatars_quad.png" width="440">
     
     <h2>{_tour_section_12_title_3|noescape}</h2>
      
@@ -374,8 +374,8 @@
      <table cellspacing="5" border="0">
       <tbody>
         <tr>
-          <td><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/leftmenu.png" style="float:left;" width="220"></td>
-          <td><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/leftmenu2.png" style="float:right;" width="220"></td>
+          <td><img src="assets/packages/static/openvk/img/tour/leftmenu.png" style="float:left;" width="220"></td>
+          <td><img src="assets/packages/static/openvk/img/tour/leftmenu2.png" style="float:right;" width="220"></td>
         </tr>
       </tbody>
     </table>
@@ -387,14 +387,14 @@
      <li><span>{_tour_section_12_text_4_3|noescape}</span></li>
       </ul>
       
-      <center><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/wall_pick.png"></center><br>
+      <center><img src="assets/packages/static/openvk/img/tour/wall_pick.png"></center><br>
      
      <table cellspacing="5" border="0">
       <tbody>
         <tr>
-          <td><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/wall_old.png" style="float:left;" width="220">
+          <td><img src="assets/packages/static/openvk/img/tour/wall_old.png" style="float:left;" width="220">
      <br> <p class="big"{_tour_section_12_bottom_text_4|noescape}</p></td>
-          <td><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/wall_new.png" style="float:right;" width="220">
+          <td><img src="assets/packages/static/openvk/img/tour/wall_new.png" style="float:right;" width="220">
           <br><p class="big">{_tour_section_12_bottom_text_5|noescape}</p></td>
         </tr>
       </tbody>
@@ -417,16 +417,16 @@
        <li><span>{_tour_section_13_text_2|noescape}</span></li>
      </ul>
      
-     <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/vouchers.png" width="440">
+     <img src="assets/packages/static/openvk/img/tour/vouchers.png" width="440">
      
-     <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/vouchers_type.png" width="440">
+     <img src="assets/packages/static/openvk/img/tour/vouchers_type.png" width="440">
      <p class="big">{_tour_section_13_bottom_text_1|noescape}</p><br>
      
      <ul class="listing">
      <li><span>{_tour_section_13_text_3|noescape}</span></li> 
      <li><span>{_tour_section_13_text_4|noescape}</span></li>
      </ul>
-      <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/vouchers_ok.png" width="440">
+      <img src="assets/packages/static/openvk/img/tour/vouchers_ok.png" width="440">
      
      <p class="big">{_tour_section_13_bottom_text_2|noescape}</p><br>
     
@@ -452,8 +452,8 @@
      <table cellspacing="5" border="0">
       <tbody>
         <tr>
-          <td><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/app1.png" style="float:left;" width="210"></td>
-          <td><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/app2.png" style="float:right;" width="210"></td>
+          <td><img src="assets/packages/static/openvk/img/tour/app1.png" style="float:left;" width="210"></td>
+          <td><img src="assets/packages/static/openvk/img/tour/app2.png" style="float:right;" width="210"></td>
         </tr>
       </tbody>
     </table>
@@ -462,7 +462,7 @@
     <table cellspacing="5" border="0">
       <tbody>
         <tr>
-          <td><img src="https://openvk.uk/assets/packages/static/openvk/img/tour/app3.png" width="425"></td>
+          <td><img src="assets/packages/static/openvk/img/tour/app3.png" width="425"></td>
         </tr>
       </tbody>
     </table>
@@ -480,7 +480,7 @@
       <li><span>{_tour_section_14_text_2_2|noescape}</span></li>
      <li><span>{_tour_section_14_text_2_3|noescape}</span></li>
      </ul>
-      <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/app4.jpeg" width="440">
+      <img src="assets/packages/static/openvk/img/tour/app4.jpeg" width="440">
      
      <br>
     
