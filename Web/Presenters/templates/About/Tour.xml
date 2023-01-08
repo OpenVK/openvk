@@ -6,6 +6,7 @@
 {/block}
 
 {block content}
+
 {css "css/tour.css"}
 <div id="tour">
 
@@ -102,15 +103,10 @@
      <br>
     <i><p class="big">{_tour_section_2_bottom_text_2|noescape}</p></p></i>
     
-     <h2>Стена</h2>
+     <h2>{_tour_section_2_title_4|noescape}</h2>
      <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/wall.png" width="440">
      
-     <div style="margin-top:10px; padding-left:175px">
-      <td>
-                                <input type="hidden" name="hash" value="хуй">
-                                <input type="submit" value="Далее →" class="button">
-                            </td>
-     </div>                           
+                          
      <br>
     </div>
     
@@ -138,7 +134,7 @@
      </ul>
      <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/search.png" width="440">
      <ul class="listing">
-     <li><span{_tour_section_4_text_3|noescape}</span></li> 
+     <li><span>{_tour_section_4_text_3|noescape}</span></li> 
      </ul>
      <img src="https://openvk.uk/assets/packages/static/openvk/img/tour/search2.png" width="440">
     
