@@ -490,7 +490,7 @@
                         <td class="data">{$user->getFavoriteQuote()}</td>
                     </tr>
                     <tr n:if="!is_null($user->getDescription())">
-                        <td class="label"><span class="nobold">О себе: </span></td>
+                        <td class="label"><span class="nobold">{_information_about}: </span></td>
                         <td class="data">{$user->getDescription()}</td>
                     </tr>
                   </tbody>
