@@ -5,7 +5,7 @@ use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{Photo, Message, Correspondence, Gift};
-use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Gifts, Notifications};
+use openvk\Web\Models\Repositories\{Photos, Users, Clubs, Albums, Gifts, Notifications};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
@@ -751,6 +751,63 @@ class User extends RowModel
         return time() - $this->getRecord()->online <= 300;
     }
 
+    function getOnlinePlatform(bool $forAPI = false): ?string
+    {
+        $platform = $this->getRecord()->client_name;
+        if($forAPI) {
+            switch ($platform) {
+                case 'openvk_android':
+                case 'openvk_legacy_android':
+                    return 'android';
+                    break;
+
+                case 'openvk_ios':
+                case 'openvk_legacy_ios':
+                    return 'iphone';
+                    break;
+                
+                case 'vika_touch': // кика хохотач ахахахаххахахахахах
+                case 'vk4me':
+                    return 'mobile';
+                    break;
+
+                case NULL:
+                    return NULL;
+                    break;
+                
+                default:
+                    return 'api';
+                    break;
+            }
+        } else {
+            return $platform;
+        }
+    }
+
+    function getOnlinePlatformDetails(): array
+    {
+        $clients = simplexml_load_file(OPENVK_ROOT . "/data/clients.xml");
+
+        foreach($clients as $client) {
+            if($client['tag'] == $this->getOnlinePlatform()) {
+                return [
+                    "tag"  => $client['tag'],
+                    "name" => $client['name'],
+                    "url"  => $client['url'],
+                    "img"  => $client['img']
+                ];
+                break;
+            }
+        }
+
+        return [
+            "tag"  => $this->getOnlinePlatform(),
+            "name" => NULL,
+            "url"  => NULL,
+            "img"  => NULL
+        ];
+    }
+
     function prefersNotToSeeRating(): bool
     {
         return !((bool) $this->getRecord()->show_rating);
@@ -1044,5 +1101,6 @@ class User extends RowModel
         return true;
     }
     
+    use Traits\TBackDrops;
     use Traits\TSubscribable;
 }

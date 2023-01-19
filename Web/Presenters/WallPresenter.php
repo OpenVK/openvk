@@ -2,7 +2,7 @@
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Exceptions\TooMuchOptionsException;
 use openvk\Web\Models\Entities\{Poll, Post, Photo, Video, Club, User};
-use openvk\Web\Models\Entities\Notifications\{RepostNotification, WallPostNotification};
+use openvk\Web\Models\Entities\Notifications\{MentionNotification, RepostNotification, WallPostNotification};
 use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums};
 use Chandler\Database\DatabaseConnection;
 use Nette\InvalidStateException as ISE;
@@ -316,6 +316,15 @@ final class WallPresenter extends OpenVKPresenter
         
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
+        
+        $excludeMentions = [$this->user->identity->getId()];
+        if($wall > 0)
+            $excludeMentions[] = $wall;
+
+        $mentions = iterator_to_array($post->resolveMentions($excludeMentions));
+        foreach($mentions as $mentionee)
+            if($mentionee instanceof User)
+                (new MentionNotification($mentionee, $post, $post->getOwner(), strip_tags($post->getText())))->emit();
         
         $this->redirect($wallOwner->getURL());
     }

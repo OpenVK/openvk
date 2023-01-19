@@ -6,16 +6,23 @@
 {/block}
 
 {block content}
-    <p>
-        {_two_factor_authentication_login}
-    </p>
+	<h4 style="margin-left: 100px; margin-right: 100px;">{_two_factor_authentication}</h4>
+        <table cellspacing="10" cellpadding="0" border="0" align="center" width="70%">
+            <tbody>
+                <tr>
+                    <td>
+                    {_two_factor_authentication_login}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
     <form method="POST" enctype="multipart/form-data">
         <table cellspacing="7" cellpadding="0" width="40%" border="0" align="center">
             <tbody>
-                <tr>
+                <tr style="text-align: right;">
                     <td>
-                        <span>{_code}: </span>
+                        <span class="nobold">{_code}: </span>
                     </td>
                     <td>
                         <input type="text" name="code" autocomplete="off" required />
@@ -25,14 +32,14 @@
                     <td>
                         
                     </td>
-                    <td>
-                        <input type="hidden" name="login" value="{$login}" />
-                        <input type="hidden" name="password" value="{$password}" />
-                        <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" value="{_log_in}" class="button" />
-                    </td>
                 </tr>
             </tbody>
         </table>
+        <center>
+            <input type="hidden" name="login" value="{$login}" />
+            <input type="hidden" name="password" value="{$password}" />
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+            <input type="submit" value="{_log_in}" class="button" />
+        </center>
     </form>
 {/block}

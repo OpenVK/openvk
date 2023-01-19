@@ -1,0 +1,4 @@
+{var $user = $notification->getModel(0)}
+{var $post = $notification->getModel(1)}
+
+{_nt_you_were_mentioned_u} <a href="{$user->getURL()}"><b>{$user->getCanonicalName()}</b></a> {$notification->getDateTime()} <a href="/topic{$post->getPrettyId()}"><b>{_nt_mention_in_topic}</b></a>: "{$notification->getData()}"

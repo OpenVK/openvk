@@ -1,6 +1,8 @@
 {var $author = $post->getOwner()}
 {var $comments = $post->getLastComments(3)}
 {var $commentsCount = $post->getCommentsCount()}
+{var $platform = $post->getPlatform()}
+{var $platformDetails = $post->getPlatformDetails()}
 {if $post->isDeactivationMessage() && $post->getText()}
     {var $deac = "post_deact"}
 {else}
@@ -88,6 +90,9 @@
                 </div>
                 <div class="post-menu" n:if="!isset($compact)">
                     <a href="/wall{$post->getPrettyId()}" class="date">{$post->getPublicationTime()}</a>
+                    <a n:if="!empty($platform)" class="client_app" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
+                        <img src="/assets/packages/static/openvk/img/app_icons_mini/{$post->getPlatform(this)}.svg">
+                    </a>
                     {if isset($thisUser)}
                         &nbsp;
                         

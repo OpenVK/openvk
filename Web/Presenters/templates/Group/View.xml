@@ -1,4 +1,5 @@
 {extends "../@layout.xml"}
+{var $backdrops = $club->getBackDropPictureURLs()}
 
 {block title}{$club->getName()}{/block} 
 

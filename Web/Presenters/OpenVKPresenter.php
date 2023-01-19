@@ -254,6 +254,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             $cacheTime     = 0; # Force no cache
             if($this->user->identity->onlineStatus() == 0 && !($this->user->identity->isDeleted() || $this->user->identity->isBanned())) {
                 $this->user->identity->setOnline(time());
+                $this->user->identity->setClient_name(NULL);
                 $this->user->identity->save();
             }
 
