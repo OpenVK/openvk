@@ -173,6 +173,8 @@ function OpenMiniature(e, photo, post, photo_id) {
 
     let imagesCount = 0;
     let imagesIndex = 0;
+
+    let tempDetailsSection = [];
     
     let dialog = u(
     `<div class="ovk-photo-view-dimmer">
@@ -208,6 +210,36 @@ function OpenMiniature(e, photo, post, photo_id) {
         __closeDialog();
     });
 
+    function __reloadTitleBar() {
+        u("#photo_com_title_photos").last().innerHTML = "Фотография " + imagesIndex + " из " + imagesCount;
+    }
+
+    function __loadDetails(photo_id, index) {
+        if(tempDetailsSection[index] == null) {
+            u(".ovk-photo-details").last().innerHTML = '<img src="/assets/packages/static/openvk/img/loading_mini.gif">';
+            ky("/photo" + photo_id, {
+                hooks: {
+                    afterResponse: [
+                        async (_request, _options, response) => {
+                            let parser = new DOMParser();
+                            let body = parser.parseFromString(await response.text(), "text/html");
+
+                            let element = u(body.getElementsByClassName("ovk-photo-details")).last();
+
+                            tempDetailsSection[index] = element.innerHTML;
+
+                            if(index == imagesIndex) {
+                                u(".ovk-photo-details").last().innerHTML = element.innerHTML;
+                            }
+                        }
+                    ]
+                }
+            });
+        } else {
+            u(".ovk-photo-details").last().innerHTML = tempDetailsSection[index];
+        }
+    }
+
     function __slidePhoto(direction) {
         /* direction = 1 - right
            direction = 0 - left */
@@ -227,7 +259,8 @@ function OpenMiniature(e, photo, post, photo_id) {
             let photoURL = json.body[imagesIndex - 1].url;
 
             u("#ovk-photo-img").last().src = photoURL;
-            u("#photo_com_title_photos").last().innerHTML = "Фотография " + imagesIndex + " из " + imagesCount;
+            __reloadTitleBar();
+            __loadDetails(json.body[imagesIndex - 1].id, imagesIndex);
         }
     }
 
@@ -262,25 +295,8 @@ function OpenMiniature(e, photo, post, photo_id) {
                         }
                     });
 
-                    u("#photo_com_title_photos").last().innerHTML = "Фотография " + imagesIndex + " из " + imagesCount;
-                }
-            ]
-        }
-    });
-
-    ky("/photo" + photo_id, {
-        hooks: {
-            afterResponse: [
-                async (_request, _options, response) => {
-                    let parser = new DOMParser();
-                    let body = parser.parseFromString(await response.text(), "text/html");
-
-                    let element = u(body.getElementsByClassName("ovk-photo-details")).last();
-
-                    u(".ovk-photo-details").last().innerHTML = element.innerHTML;
-
-                    u("#photo_com_title_photos").last().innerHTML = "Фотография " + imagesIndex + " из " + imagesCount;
-                }
+                    __reloadTitleBar();
+                    __loadDetails(json.body[imagesIndex - 1].id, imagesIndex);                }
             ]
         }
     });
