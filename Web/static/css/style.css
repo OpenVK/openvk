@@ -2323,6 +2323,10 @@ a.poll-retract-vote {
     margin: 15px auto 0 auto;
 }
 
+.ovk-photo-details {
+    overflow: auto;
+}
+
 .photo_com_title {
 	font-weight: bold;
 	padding-bottom: 20px;
@@ -2337,6 +2341,7 @@ a.poll-retract-vote {
     left: 0;
     width: 35%;
     height: 100%;
+    max-height: 60vh;
     position: absolute;
     cursor: pointer;
 }
@@ -2345,6 +2350,7 @@ a.poll-retract-vote {
     right: 0;
     width: 35%;
     height: 100%;
+    max-height: 60vh;
     position: absolute;
     cursor: pointer;
 }
