@@ -37,6 +37,9 @@ final class AboutPresenter extends OpenVKPresenter
     
     function renderBB(): void
     {}
+
+    function renderTour(): void
+    {}
     
     function renderInvite(): void
     {

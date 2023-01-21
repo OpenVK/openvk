@@ -1,7 +1,7 @@
 {if $attachment instanceof \openvk\Web\Models\Entities\Photo}
     {if !$attachment->isDeleted()}
         {var $link = "/photo" . ($attachment->isAnonymous() ? ("s/" . base_convert((string) $attachment->getId(), 10, 32)) : $attachment->getPrettyId())}
-        <a href="{$link}">
+        <a href="{$link}" onclick="OpenMiniature(event, {$attachment->getURLBySizeId('normal')}, {$post->getPrettyId()}, {$attachment->getPrettyId()})">
             <img class="media media_makima" src="{$attachment->getURLBySizeId('normal')}" alt="{$attachment->getDescription()}" />
         </a>
     {else}

@@ -1,6 +1,8 @@
 {var $author = $post->getOwner()}
 {var $comments = $post->getLastComments(3)}
 {var $commentsCount = $post->getCommentsCount()}
+{var $platform = $post->getPlatform()}
+{var $platformDetails = $post->getPlatformDetails()}
 {if $post->isDeactivationMessage() && $post->getText()}
     {var $deac = "post_deact"}
 {else}
@@ -61,9 +63,14 @@
                     <div class="text" id="text{$post->getPrettyId()}">
                         {$post->getText()|noescape}
                         
-                        <div n:ifcontent class="attachments_b">
-                            <div class="attachment" n:foreach="$post->getChildren() as $attachment" data-localized-nsfw-text="{_nsfw_warning}">
-                                {include "../attachment.xml", attachment => $attachment}
+                        {var $width = ($GLOBALS["_bigWall"] ?? false) ? 550 : 320}
+                        {if isset($GLOBALS["_nesAttGloCou"])}
+                            {var $width = $width - 70 * $GLOBALS["_nesAttGloCou"]}
+                        {/if}
+                        {var $attachmentsLayout = $post->getChildrenWithLayout($width)}
+                        <div n:ifcontent class="attachments_b" style="height: {$attachmentsLayout->height|noescape}; width: {$attachmentsLayout->width|noescape};">
+                            <div class="attachment" n:foreach="$attachmentsLayout->tiles as $attachment" style="float: {$attachment[3]|noescape}; width: {$attachment[0]|noescape}; height: {$attachment[1]|noescape};" data-localized-nsfw-text="{_nsfw_warning}">
+                                {include "../attachment.xml", attachment => $attachment[2], post => $post}
                             </div>
                         </div>
                     </div>
@@ -83,6 +90,9 @@
                 </div>
                 <div class="post-menu" n:if="!isset($compact)">
                     <a href="/wall{$post->getPrettyId()}" class="date">{$post->getPublicationTime()}</a>
+                    <a n:if="!empty($platform)" class="client_app" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
+                        <img src="/assets/packages/static/openvk/img/app_icons_mini/{$post->getPlatform(this)}.svg">
+                    </a>
                     {if isset($thisUser)}
                         &nbsp;
                         

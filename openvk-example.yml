@@ -18,7 +18,8 @@ openvk:
             forbiddenNames:
                 - "index.php"
         photos:
-            upgradeStructure: true
+            upgradeStructure: false
+            photoSaving: "quick"
         apps:
             withdrawTax: 8
         security:

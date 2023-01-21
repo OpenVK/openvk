@@ -37,7 +37,7 @@
                 <div class="new">
                     <form action="/support" method="post" style="margin:0;">
                         <center>
-                            <input name="name" style="width: 80%; resize: vertical;" placeholder="{_support_new_title}" /><br /><br />
+                            <input type="text" name="name" style="width: 80%; resize: vertical;" placeholder="{_support_new_title}" /><br /><br />
                             <textarea name="text" style="width: 80%; resize: vertical;" placeholder="{_support_new_content}"></textarea><br /><br />
                             <input type="hidden" name="hash" value="{$csrfToken}" />
                             <input type="submit" value="{_write}" class="button" style="margin-left: 70%;" /><br /><br />

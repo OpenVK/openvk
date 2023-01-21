@@ -159,7 +159,219 @@ function removePicture(idA) {
     u(`div#aP${idA}`).nodes[0].remove();
 }
 
+function OpenMiniature(e, photo, post, photo_id) {
+    /*
+    костыли но смешные однако
+    */
+    e.preventDefault();
+
+    if(u(".ovk-photo-view").length > 0) return false;
+
+    // Значения для переключения фоток
+
+    let json;
+
+    let imagesCount = 0;
+    let imagesIndex = 0;
+
+    let tempDetailsSection = [];
+    
+    let dialog = u(
+    `<div class="ovk-photo-view-dimmer">
+        <div class="ovk-photo-view">
+            <div class="photo_com_title">
+                <text id="photo_com_title_photos">
+                    <img src="/assets/packages/static/openvk/img/loading_mini.gif">
+                </text>
+                <div>
+                    <a id="ovk-photo-close">Закрыть</a>
+                </div>
+            </div>
+            <center style="margin-bottom: 8pt;">
+                <div class="ovk-photo-slide-left"></div>
+                <div class="ovk-photo-slide-right"></div>
+                <img src="${photo}" style="max-width: 100%; max-height: 60vh;" id="ovk-photo-img">
+            </center>
+            <div class="ovk-photo-details">
+                <img src="/assets/packages/static/openvk/img/loading_mini.gif">
+            </div>
+        </div>
+    </div>`);
+    u("body").addClass("dimmed").append(dialog);
+    
+    let button = u("#ovk-photo-close");
+
+    button.on("click", function(e) {
+        let __closeDialog = () => {
+            u("body").removeClass("dimmed");
+            u(".ovk-photo-view-dimmer").remove();
+        };
+        
+        __closeDialog();
+    });
+
+    function __reloadTitleBar() {
+        u("#photo_com_title_photos").last().innerHTML = "Фотография " + imagesIndex + " из " + imagesCount;
+    }
+
+    function __loadDetails(photo_id, index) {
+        if(tempDetailsSection[index] == null) {
+            u(".ovk-photo-details").last().innerHTML = '<img src="/assets/packages/static/openvk/img/loading_mini.gif">';
+            ky("/photo" + photo_id, {
+                hooks: {
+                    afterResponse: [
+                        async (_request, _options, response) => {
+                            let parser = new DOMParser();
+                            let body = parser.parseFromString(await response.text(), "text/html");
+
+                            let element = u(body.getElementsByClassName("ovk-photo-details")).last();
+
+                            tempDetailsSection[index] = element.innerHTML;
+
+                            if(index == imagesIndex) {
+                                u(".ovk-photo-details").last().innerHTML = element.innerHTML;
+                            }
+                        }
+                    ]
+                }
+            });
+        } else {
+            u(".ovk-photo-details").last().innerHTML = tempDetailsSection[index];
+        }
+    }
+
+    function __slidePhoto(direction) {
+        /* direction = 1 - right
+           direction = 0 - left */
+        if(json == undefined) {
+            console.log("Да подожди ты. Куда торопишься?");
+        } else {
+            if(imagesIndex >= imagesCount && direction == 1) {
+                imagesIndex = 1;
+            } else if(imagesIndex <= 1 && direction == 0) {
+                imagesIndex = imagesCount;
+            } else if(direction == 1) {
+                imagesIndex++;
+            } else if(direction == 0) {
+                imagesIndex--;
+            }
+
+            let photoURL = json.body[imagesIndex - 1].url;
+
+            u("#ovk-photo-img").last().src = photoURL;
+            __reloadTitleBar();
+            __loadDetails(json.body[imagesIndex - 1].id, imagesIndex);
+        }
+    }
+
+    let slideLeft = u(".ovk-photo-slide-left");
+
+    slideLeft.on("click", (e) => {
+        __slidePhoto(0);
+    });
+
+    let slideRight = u(".ovk-photo-slide-right");
+
+    slideRight.on("click", (e) => {
+        __slidePhoto(1);
+    });
+
+    ky.post("/iapi/getPhotosFromPost/" + post, {
+        hooks: {
+            afterResponse: [
+                async (_request, _options, response) => {
+                    json = await response.json();
+
+                    imagesCount = json.body.length;
+                    imagesIndex = 0;
+                    // Это всё придётся правда на 1 прибавлять
+                    
+                    json.body.every(element => {
+                        imagesIndex++;
+                        if(element.id == photo_id) {
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    });
+
+                    __reloadTitleBar();
+                    __loadDetails(json.body[imagesIndex - 1].id, imagesIndex);                }
+            ]
+        }
+    });
+
+    return u(".ovk-photo-view-dimmer");
+}
+
 u("#write > form").on("keydown", function(event) {
     if(event.ctrlKey && event.keyCode === 13)
         this.submit();
 });
+
+var tooltipClientTemplate = Handlebars.compile(`
+    <table>
+        <tr>
+            <td width="54" valign="top">
+                <img src="{{img}}" width="54" />
+            </td>
+            <td width="1"></td>
+            <td width="150" valign="top">
+                <text>
+                    {{app_tr}}: <b>{{name}}</b>
+                </text><br/>
+                <a href="{{url}}">${tr("learn_more")}</a>
+            </td>
+        </tr>
+    </table>
+`);
+
+var tooltipClientNoInfoTemplate = Handlebars.compile(`
+    <table>
+        <tr>
+            <td width="150" valign="top">
+                <text>
+                    {{app_tr}}: <b>{{name}}</b>
+                </text><br/>
+            </td>
+        </tr>
+    </table>
+`);
+
+tippy(".client_app", {
+    theme: "light vk",
+    content: "⌛",
+    allowHTML: true,
+    interactive: true,
+    interactiveDebounce: 500,
+
+    onCreate: async function(that) {
+        that._resolvedClient = null;
+    },
+
+    onShow: async function(that) {
+        let client_tag = that.reference.dataset.appTag;
+        let client_name = that.reference.dataset.appName;
+        let client_url = that.reference.dataset.appUrl;
+        let client_img = that.reference.dataset.appImg;
+        
+        if(client_name != "") {
+            let res = {
+                'name':   client_name,
+                'url':    client_url,
+                'img':    client_img,
+                'app_tr': tr("app") 
+            };
+    
+            that.setContent(tooltipClientTemplate(res));
+        } else {
+            let res = {
+                'name': client_tag,
+                'app_tr': tr("app") 
+            };
+    
+            that.setContent(tooltipClientNoInfoTemplate(res));
+        }
+    }
+});
+
