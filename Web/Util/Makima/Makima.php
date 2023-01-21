@@ -89,12 +89,12 @@ class Makima
                         ($maxWidth - $marginWidth) / $ratios[1] / ( (1 / $ratios[0]) + (1 / $ratios[1]) )
                     );
                     $w1 = $maxWidth - $w0 - $marginWidth;
-                    $h  = min($maxHeight, min($w0 / $ratios[0], $w / $ratios[1]));
+                    $h  = min($maxHeight, min($w0 / $ratios[0], $w1 / $ratios[1]));
 
                     $result->colSizes = [ceil($w0), ceil($w1)];
                     $result->rowSizes = [1];
                     $result->width    = ceil($w0 + $w1 + $marginWidth);
-                    $result->height   = ceil($height);
+                    $result->height   = ceil($h);
                     $result->tiles    = [new ThumbTile(1, 1, $w0, $h), new ThumbTile(1, 1, $w1, $h)];
                 }
             break;
@@ -103,7 +103,7 @@ class Makima
                 if($orients == [Makima::ORIENT_WIDE, Makima::ORIENT_WIDE, Makima::ORIENT_WIDE]) {
                     $hCover = min($maxWidth / $ratios[0], ($maxHeight - $marginHeight) * (2 / 3));
                     $w2     = ($maxWidth - $marginWidth) / 2;
-                    $h      = min($maxHeight - $hCover - $margin, min($w2 / $ratios[1], $w2 / $ratios[2]));
+                    $h      = min($maxHeight - $hCover - $marginHeight, min($w2 / $ratios[1], $w2 / $ratios[2]));
 
                     $result->colSizes = [1, 1];
                     $result->rowSizes = [ceil($hCover), ceil($h)];
@@ -269,7 +269,7 @@ class Makima
                         $result->tiles[$k++] = $row[] = $tile;
                     }
 
-                    $result->rowTiles[] = $row;
+                    $rowTiles[] = $row;
                 }
 
                 sort($gridLineOffsets, SORT_NUMERIC);
