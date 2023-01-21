@@ -638,8 +638,12 @@ h4 {
     line-height: 130%;
 }
 
-.post-content .attachments_b {
+.post-content .attachments:first-of-type {
     margin-top: 8px;
+}
+
+.post-content .attachments_m .attachment {
+    width: 98%;
 }
 
 .attachment .post {

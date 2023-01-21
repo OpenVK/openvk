@@ -44,7 +44,7 @@ trait TAttachmentHost
                 continue;
             }
 
-            $skipped[] = ["100%", "unset", $child, "unset"];
+            $skipped[] = $child;
         }
 
         $height = "unset";
@@ -66,7 +66,8 @@ trait TAttachmentHost
         return (object) [
             "width"  => $width . "px",
             "height" => $height . "px",
-            "tiles"  => array_merge($result, $skipped),
+            "tiles"  => $result,
+            "extras" => $skipped,
         ];
     }
     
