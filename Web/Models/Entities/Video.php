@@ -30,7 +30,7 @@ class Video extends Media
             throw new \DomainException("$filename does not contain any video streams");
         
         $durations = [];
-        preg_match('%duration=([0-9\.]++)%', $streams, $durations);
+        preg_match_all('%duration=([0-9\.]++)%', $streams, $durations);
         if(sizeof($durations[1]) === 0)
             throw new \DomainException("$filename does not contain any meaningful video streams");
         
