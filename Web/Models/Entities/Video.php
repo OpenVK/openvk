@@ -13,7 +13,7 @@ class Video extends Media
     const TYPE_EMBED  = 1;
     
     protected $tableName     = "videos";
-    protected $fileExtension = "ogv";
+    protected $fileExtension = "mp4";
 
     protected $processingPlaceholder = "video/rendering";
     

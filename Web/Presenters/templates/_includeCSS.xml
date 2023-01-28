@@ -5,6 +5,7 @@
 
     {if $theme !== NULL}
         {if $theme->inheritDefault()}
+            {css "css/bsdn.css"}
             {css "css/style.css"}
             {css "css/dialog.css"}
             {css "css/notifications.css"}
@@ -20,6 +21,7 @@
             <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/xmas.css" />
         {/if}
     {else}
+        {css "css/bsdn.css"}
         {css "css/style.css"}
         {css "css/dialog.css"}
         {css "css/notifications.css"}
@@ -41,6 +43,7 @@
         {css "css/microblog.css"}
     {/if}
 {else}
+    {css "css/bsdn.css"}
     {css "css/style.css"}
     {css "css/dialog.css"}
     {css "css/nsfw-posts.css"}

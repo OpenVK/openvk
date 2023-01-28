@@ -2277,3 +2277,21 @@ a.poll-retract-vote {
 .tour div {
     font-size: 11px; color:#000; 
 }
+
+.video-wowzer > img {
+    vertical-align: bottom;
+}
+
+.video-wowzer {
+    font-weight: bolder;
+    font-size: 12px;
+    padding: 3px 0;
+}
+
+.video-wowzer a::before {
+    content: "b";
+    color: transparent;
+    width: 12px;
+    background-image: url(/assets/packages/static/openvk/img/videoico.png);
+    display: none;
+}
