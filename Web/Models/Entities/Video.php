@@ -104,7 +104,7 @@ class Video extends Media
             if(!$this->isProcessed())
                 return "/assets/packages/static/openvk/video/rendering.apng";
 
-            return preg_replace("%\.[A-z]++$%", ".gif", $this->getURL());
+            return preg_replace("%\.[A-z0-9]++$%", ".gif", $this->getURL());
         } else {
             return $this->getVideoDriver()->getThumbnailURL();
         }
