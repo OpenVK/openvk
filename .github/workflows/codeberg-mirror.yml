@@ -1,8 +1,6 @@
 name: Codeberg Mirroring
 
-on:
-  push:
-    branches: ["master"]
+on: push
 
 jobs:
   to_codeberg:
