@@ -15,6 +15,6 @@ Move-Item $file $temp
 ffmpeg -i $temp -ss 00:00:01.000 -vframes 1 "$dir$hashT/$hash.gif"
 ffmpeg -i $temp -c:v libx264 -q:v 7 -c:a libmp3lame -q:a 4 -tune zerolatency -vf "scale=640:480:force_original_aspect_ratio=decrease,pad=640:480:(ow-iw)/2:(oh-ih)/2,setsar=1" -y $temp2
 
-Move-Item $temp2 "$dir$hashT/$hash.ogv"
+Move-Item $temp2 "$dir$hashT/$hash.mp4"
 Remove-Item $temp
 Remove-Item $temp2
