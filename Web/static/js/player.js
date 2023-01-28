@@ -147,15 +147,22 @@ function _bsdnEventListenerFactory(el, v) {
                         return;
 
                     let rect = el.querySelector(".bsdn-player").getBoundingClientRect();
-
                     let h = rect.height, w = rect.width;
-                    let x = e.pageX - rect.x, y = e.pageY - rect.y;
+                    let x, y;
+                    if(document.fullscreen) {
+                        x = e.screenX;
+                        y = e.screenY;
+                    } else {
+                        let rx = rect.x + window.scrollX, ry = rect.y + window.scrollY;
+                        x = e.pageX - rx;
+                        y = e.pageY - ry;
+                    }
 
                     if(h - y < 169)
-                        y -= 169;
+                        y = Math.max(0, y - 169);
 
                     if(w - x < 238)
-                        x -= 238;
+                        x = Math.max(0, x - 238);
 
                     let menu = el.querySelector(".bsdn_contextMenu");
                     menu.style.top     = y + "px";
