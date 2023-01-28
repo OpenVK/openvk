@@ -169,14 +169,16 @@ time.bsdn_timeFull {
     padding: 6px;
     border: 1px solid #908f90;
     width: 232px;
-    height: 191px;
+    height: 169px;
+    font-size: 15px;
+    box-sizing: border-box;
 }
 
 .bsdn_contextMenuElement {
     display: block;
     color: #666294;
     cursor: pointer;
-    padding: 3px 0px 3px 20px;
+    padding: 3px 0 3px 20px;
 }
 
 .bsdn_contextMenu hr {

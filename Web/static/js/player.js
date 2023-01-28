@@ -151,15 +151,15 @@ function _bsdnEventListenerFactory(el, v) {
                     let h = rect.height, w = rect.width;
                     let x = e.pageX - rect.x, y = e.pageY - rect.y;
 
-                    if(h - y < 191)
-                        y -= 191;
+                    if(h - y < 169)
+                        y -= 169;
 
-                    if(w - x < 246)
-                        x -= 246;
+                    if(w - x < 238)
+                        x -= 238;
 
                     let menu = el.querySelector(".bsdn_contextMenu");
-                    menu.style.top     = y;
-                    menu.style.left    = x;
+                    menu.style.top     = y + "px";
+                    menu.style.left    = x + "px";
                     menu.style.display = "unset";
                 }
             ]
