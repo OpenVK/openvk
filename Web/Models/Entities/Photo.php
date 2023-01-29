@@ -283,6 +283,14 @@ class Photo extends Media
         return [$x, $y];
     }
 
+    function getPageURL(): string
+    {
+        if($this->isAnonymous())
+            return "/photos/" . base_convert((string) $this->getId(), 10, 32);
+
+        return "/photo" . $this->getPrettyId();
+    }
+
     function getAlbum(): ?Album
     {
         return (new Albums)->getAlbumByPhotoId($this);
