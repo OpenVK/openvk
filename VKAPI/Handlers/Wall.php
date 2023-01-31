@@ -559,6 +559,14 @@ final class Wall extends VKAPIRequestHandler
             $oid   = $owner->getId();
             if($owner instanceof Club)
                 $oid *= -1;
+
+            $attachments = [];
+
+            foreach($comment->getChildren() as $attachment) {
+                if($attachment instanceof \openvk\Web\Models\Entities\Photo) {
+                    $attachments[] = $this->getApiPhoto($attachment);
+                }
+            }
             
             $item = [
                 "id"            => $comment->getId(),
@@ -568,6 +576,7 @@ final class Wall extends VKAPIRequestHandler
                 "post_id"       => $post->getVirtualId(),
                 "owner_id"      => $post->isPostedOnBehalfOfGroup() ? $post->getOwner()->getId() * -1 : $post->getOwner()->getId(),
                 "parents_stack" => [],
+                "attachments"   => $attachments,
                 "thread"        => [
                     "count"             => 0,
                     "items"             => [],
@@ -588,6 +597,9 @@ final class Wall extends VKAPIRequestHandler
             $items[] = $item;
             if($extended == true)
                 $profiles[] = $comment->getOwner()->getId();
+
+            $attachments = null;
+            // Reset $attachments to not duplicate prikols
         }
 
         $response = [
@@ -614,6 +626,14 @@ final class Wall extends VKAPIRequestHandler
 
         $profiles = [];
 
+        $attachments = [];
+        
+        foreach($comment->getChildren() as $attachment) {
+            if($attachment instanceof \openvk\Web\Models\Entities\Photo) {
+                $attachments[] = $this->getApiPhoto($attachment);
+            }
+        }
+
         $item = [
             "id"            => $comment->getId(),
             "from_id"       => $comment->getOwner()->getId(),
@@ -622,6 +642,7 @@ final class Wall extends VKAPIRequestHandler
             "post_id"       => $comment->getTarget()->getVirtualId(),
             "owner_id"      => $comment->getTarget()->isPostedOnBehalfOfGroup() ? $comment->getTarget()->getOwner()->getId() * -1 : $comment->getTarget()->getOwner()->getId(),
             "parents_stack" => [],
+            "attachments"   => $attachments,
             "likes"         => [
                 "can_like"    => 1,
                 "count"       => $comment->getLikesCount(),
@@ -651,6 +672,8 @@ final class Wall extends VKAPIRequestHandler
             $profiles = array_unique($profiles);
             $response['profiles'] = (!empty($profiles) ? (new Users)->get(implode(',', $profiles), $fields) : []);
         }
+
+        
 
         return $response;
     }
