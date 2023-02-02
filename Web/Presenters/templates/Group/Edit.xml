@@ -22,11 +22,6 @@
                 {_followers}
             </a>
         </div>
-        <div class="tab">
-            <a href="/club{$club->getId()}/stats">
-                {_statistics}
-            </a>
-        </div>
     </div>
     
     <div class="container_gray">
