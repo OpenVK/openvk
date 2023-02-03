@@ -756,7 +756,7 @@ class User extends RowModel
         $platform = $this->getRecord()->client_name;
         if($forAPI) {
             switch ($platform) {
-                case 'openvk_android':
+                case 'openvk_refresh_android':
                 case 'openvk_legacy_android':
                     return 'android';
                     break;

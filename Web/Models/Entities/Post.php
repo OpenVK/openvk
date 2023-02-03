@@ -119,7 +119,7 @@ class Post extends Postable
         $platform = $this->getRecord()->api_source_name;
         if($forAPI) {
             switch ($platform) {
-                case 'openvk_android':
+                case 'openvk_refresh_android':
                 case 'openvk_legacy_android':
                     return 'android';
                     break;
