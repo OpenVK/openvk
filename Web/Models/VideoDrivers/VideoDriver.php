@@ -14,5 +14,5 @@ abstract class VideoDriver
     
     abstract function getURL(): string;
     
-    abstract function getEmbed(): string;
+    abstract function getEmbed(int $w = 600, int $h = 340): string;
 }

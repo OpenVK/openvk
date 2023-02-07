@@ -9,9 +9,19 @@
         </a>
     {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Video}
-    <div class="bsdn media" data-name="{$attachment->getName()}" data-author="{$attachment->getOwner()->getCanonicalName()}">
-        <video class="media" src="{$attachment->getURL()}"></video>
-    </div>
+    {if $attachment->getType() === 0}
+        <div class="bsdn media" data-name="{$attachment->getName()}" data-author="{$attachment->getOwner()->getCanonicalName()}">
+            <video class="media" src="{$attachment->getURL()}"></video>
+        </div>
+    {else}
+        {var $driver = $attachment->getVideoDriver()}
+        {if !$driver}
+            <span style="color:red;">{_version_incompatibility}</span>
+        {else}
+            {$driver->getEmbed()|noescape}
+        {/if}
+    {/if}
+
     <div class="video-wowzer">
         <img src="/assets/packages/static/openvk/img/videoico.png" />
         <a href="/video{$attachment->getPrettyId()}">{$attachment->getName()}</a>

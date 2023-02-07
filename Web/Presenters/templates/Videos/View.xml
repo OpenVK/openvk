@@ -21,7 +21,7 @@
             {if !$driver}
                 Эта видеозапись не поддерживается в вашей версии OpenVK.
             {else}
-                {$driver->getEmbed()|noescape}
+                {$driver->getEmbed(-1, -1)|noescape}
             {/if}
         {/if}
     </center>
