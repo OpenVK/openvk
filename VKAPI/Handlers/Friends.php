@@ -66,6 +66,7 @@ final class Friends extends VKAPIRequestHandler
 	function add(string $user_id): int
 	{
 		$this->requireUser();
+        $this->willExecuteWriteAction();
 
 		$users = new UsersRepo;
 		$user  = $users->get(intval($user_id));
@@ -96,6 +97,7 @@ final class Friends extends VKAPIRequestHandler
 	function delete(string $user_id): int
 	{
 		$this->requireUser();
+        $this->willExecuteWriteAction();
 
 		$users = new UsersRepo;
 

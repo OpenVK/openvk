@@ -432,6 +432,7 @@ final class Wall extends VKAPIRequestHandler
     function post(string $owner_id, string $message = "", int $from_group = 0, int $signed = 0): object
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $owner_id  = intval($owner_id);
         
@@ -516,6 +517,7 @@ final class Wall extends VKAPIRequestHandler
 
     function repost(string $object, string $message = "") {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $postArray;
         if(preg_match('/wall((?:-?)[0-9]+)_([0-9]+)/', $object, $postArray) == 0)
@@ -679,6 +681,9 @@ final class Wall extends VKAPIRequestHandler
     }
 
     function createComment(int $owner_id, int $post_id, string $message, int $from_group = 0) {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        
         $post = (new PostsRepo)->getPostById($owner_id, $post_id);
         if(!$post || $post->isDeleted()) $this->fail(100, "One of the parameters specified was missing or invalid");
 
@@ -714,6 +719,7 @@ final class Wall extends VKAPIRequestHandler
 
     function deleteComment(int $comment_id) {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $comment = (new CommentsRepo)->get($comment_id);
         if(!$comment) $this->fail(100, "One of the parameters specified was missing or invalid");;
