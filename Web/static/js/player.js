@@ -16,6 +16,8 @@ function _bsdnToHumanTime(time) {
 }
 
 function _bsdnTpl(name, author) {
+    name = escapeHtml(name);
+
     return `
             <div class="bsdn_contextMenu" style="display: none;">
                 <span class="bsdn_contextMenuElement bsdn_copyVideoUrl">Copy video link to clipboard</span>

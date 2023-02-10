@@ -428,6 +428,18 @@ function showIncreaseRatingDialog(coinsCount, userUrl, hash) {
     };
 }
 
+function escapeHtml(text) {
+    var map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    };
+    
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+
 $(document).on("scroll", () => {
     if($(document).scrollTop() > $(".sidebar").height() + 50) {
         $(".floating_sidebar")[0].classList.add("show");
