@@ -16,7 +16,8 @@ function _bsdnToHumanTime(time) {
 }
 
 function _bsdnTpl(name, author) {
-    name = escapeHtml(name);
+    name   = escapeHtml(name);
+    author = escapeHtml(author);
 
     return `
             <div class="bsdn_contextMenu" style="display: none;">
