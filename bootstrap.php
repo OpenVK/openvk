@@ -17,7 +17,7 @@ function _ovk_check_environment(): void
         $problems[] = "Composer dependencies missing";
     
     $requiredExtensions = [
-        "gd",
+        "imagick",
         "fileinfo",
         "PDO",
         "pdo_mysql",
