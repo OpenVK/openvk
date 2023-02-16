@@ -16,7 +16,7 @@
 "registration" = "Registration";
 "forgot_password" = "Forgot your password?";
 
-"checkbox_in_registration" = "I agree to the <a href='/privacy'>privacy policy</a> and <a href='/about'>site policies</a>";
+"checkbox_in_registration" = "I agree to the <a href='/privacy'>privacy policy</a> and <a href='/terms'>site policies</a>";
 "checkbox_in_registration_unchecked" = "You must agree to the privacy policy and rules in order to register.";
 
 "login_failed" = "Login failed";
@@ -1289,7 +1289,7 @@
 "tour_section_1_text_1" = "Registering an account is the very first and most basic step in beginning your journey on this site.";
 "tour_section_1_text_2" = "To register you will need to enter your name, E-mail and password.";
 "tour_section_1_text_3" = "<b>Remember:</b> Your E-mail will be used as your login to the site. You also have the full right not to specify your last name when signing up. In case you lost your password to enter the site, use the <a href='/restore'>recovery page</a>";
-"tour_section_1_bottom_text_1" = "By registering on the site, you agree to <a href='/about'>site rules</a> and <a href='/privacy'>privacy policy</a>";
+"tour_section_1_bottom_text_1" = "By registering on the site, you agree to <a href='/terms'>site rules</a> and <a href='/privacy'>privacy policy</a>";
 
 
 "tour_section_2_title_1" = "Your Profile";

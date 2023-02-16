@@ -17,7 +17,7 @@
 "password" = "Գաղտնաբառ";
 "registration" = "Գրանցում";
 "forgot_password" = "Մոռացե՞լ եք գաղտնաբառը";
-"checkbox_in_registration" = "Ես համաձայն եմ <a href='/privacy'>կոնֆիդենցիալության քաղաքականությանն</a> ու <a href='/about'>կայքի կանոնադրությանը</a>։";
+"checkbox_in_registration" = "Ես համաձայն եմ <a href='/privacy'>կոնֆիդենցիալության քաղաքականությանն</a> ու <a href='/terms'>կայքի կանոնադրությանը</a>։";
 "checkbox_in_registration_unchecked" = "Դուք պետք է համաձայնվեք պայմանների հետ նախքան գրանցվելը։";
 
 "login_failed" = "Չհաջողվեց մուտք գործել";

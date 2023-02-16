@@ -17,7 +17,7 @@
 "password" = "Пароль";
 "registration" = "Реєстрація";
 "forgot_password" = "Забули пароль?";
-"checkbox_in_registration" = "Я згоден з <a href='/privacy'>політикою конфіденційності</a> і <a href='/about'>правилами сайту</a>";
+"checkbox_in_registration" = "Я згоден з <a href='/privacy'>політикою конфіденційності</a> і <a href='/terms'>правилами сайту</a>";
 "checkbox_in_registration_unchecked" = "Ви повинні погодитися з політикою конфіденційності та правилами, щоб зареєструватися.";
 "login_failed" = "Не вдалося увійти";
 "invalid_username_or_password" = "Неправильне ім'я користувача або пароль. <a href='/restore'>Забули пароль?</a>";
