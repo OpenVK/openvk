@@ -49,7 +49,7 @@ trait TRichText
     
     private function removeZalgo(string $text): string
     {
-        return preg_replace("%[\x{0300}-\x{036F}]{3,}%Xu", "�", $text);
+        return preg_replace("%\p{M}{3,}%Xu", "�", $text);
     }
     
     function resolveMentions(array $skipUsers = []): \Traversable
