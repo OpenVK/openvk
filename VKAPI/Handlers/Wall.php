@@ -49,40 +49,7 @@ final class Wall extends VKAPIRequestHandler
                 } else if($attachment instanceof \openvk\Web\Models\Entities\Poll) {
                     $attachments[] = $this->getApiPoll($attachment, $this->getUser());
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Video) {
-                    $video = [
-                        "type" => "video",
-                        "video" => [
-                            "can_comment" => 1,
-                            "can_like" => 0,  // we don't h-have wikes in videos
-                            "can_repost" => 0,
-                            "can_subscribe" => 1,
-                            "can_add_to_faves" => 0,
-                            "can_add" => 0,
-                            "comments" => $attachment->getCommentsCount(),
-                            "date" => $attachment->getPublicationTime()->timestamp(),
-                            "description" => $attachment->getDescription(),
-                            "duration" => 0, // я хуй знает как получить длину видео
-                            "image" => [
-                                [
-                                    "url" => $attachment->getThumbnailURL(),
-                                    "width" => 320,
-                                    "height" => 240,
-                                    "with_padding" => 1
-                                ]
-                            ],
-                            "width" => 640,
-                            "height" => 480,
-                            "id" => $attachment->getVirtualId(),
-                            "owner_id" => $attachment->getOwner()->getId(),
-                            "user_id" => $attachment->getOwner()->getId(),
-                            "title" => $attachment->getName(),
-                            "is_favorite" => false,
-                            "repeat" => 0,
-                            "type" => "video",
-                            "views" => 0, // у нас просмотров нет)
-                        ]
-                    ];
-                    $attachments[] = $video;
+                    $attachments[] = $attachment->getApiStructure();
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Post) {
                     $repostAttachments = [];
 
