@@ -38,7 +38,9 @@ function _bsdnTpl(name, author) {
 
             <div class="bsdn_controls">
                 <div>
-                    <button class="bsdn_playButton">▶</button>
+                    <button class="bsdn_playButton">
+                        <img src="/assets/packages/static/openvk/img/bsdn/play.png" style="padding-right: 2px; padding-top: 3px;">
+                    </button>
                 </div>
 
                 <div class="bsdn_terebilkaWrap">
@@ -192,7 +194,7 @@ function _bsdnEventListenerFactory(el, v) {
             ],
             pause: [
                 () => {
-                    el.querySelector(".bsdn_playButton").innerHTML = "▶";
+                    el.querySelector(".bsdn_playButton").innerHTML = "<img src='/assets/packages/static/openvk/img/bsdn/play.png' style='padding-right: 2px; padding-top: 3px; height: 19px;' />";
                     el.querySelector(".bsdn-player").classList.remove("_bsdn_playing");
                     el.querySelector(".bsdn_teaserWrap").style.display = "flex";
                 }
