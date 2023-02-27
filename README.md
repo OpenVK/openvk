@@ -2,28 +2,26 @@
 
 _[Русский](README_RU.md)_
 
-**OpenVK** is an attempt to create a simple CMS that ~~cosplays~~ imitates old VK. Code provided here is not stable yet.
+**OpenVK** is an attempt to create a simple CMS that ~~cosplays~~ imitates old VKontakte. Code provided here is not stable yet.
 
 VKontakte belongs to Pavel Durov and VK Group.
 
-To be honest, we don't know whether it even works. However, this version is maintained and we will be happy to accept your bugreports [in our bug-tracker](https://github.com/openvk/openvk/projects/1). You should also be able to submit them using [ticketing system](https://openvk.su/support?act=new) (you will need an OVK account for this).
+To be honest, we don't know whether if it even works. However, this version is maintained and we will be happy to accept your bugreports [in our bug tracker](https://github.com/openvk/openvk/projects/1). You should also be able to submit them using [ticketing system](https://openvk.su/support?act=new) (you will need an OpenVK account for this).
 
 ## When's the release?
 
-We will release OpenVK as soon as it's ready. As for now you can:
+We will release OpenVK as soon as it's ready. As for now, you can:
 * `git clone` this repo's master branch (use `git pull` to update)
 * Grab a prebuilt OpenVK distro from [GitHub artifacts](https://nightly.link/openvk/archive/workflows/nightly/master/OpenVK%20Archive.zip)
 
 ## Instances
 
 * **[openvk.su](https://openvk.su/)**
-** Mirrors:
-** **[openvk.uk](https://openvk.uk)** (<https://t.me/openvk/1609>)
-** **[openvk.co](http://openvk.co)** (without TLS (<https://t.me/openvk/1654>))
+  * **[openvk.uk](https://openvk.uk)** ([mirror](https://t.me/openvk/1609))
+  * **[openvk.co](http://openvk.co)** (mirror [without TLS](https://t.me/openvk/1654))
 * [social.fetbuk.ru](http://social.fetbuk.ru/)
 * [vepurovk.xyz](http://vepurovk.xyz/)
-** Mirrors:
-** [vepurovk.fun](http://vepurovk.fun/) (without TLS)
+  * [vepurovk.fun](http://vepurovk.fun/) (mirror without TLS)
 
 ## Can I create my own OpenVK instance?
 
@@ -86,14 +84,14 @@ It depends. You can keep the sources to yourself if you do not plan to distribut
 
 You may reach out to us via:
 
-* [Bug-tracker](https://github.com/openvk/openvk/projects/1)
-* [Ticketing system](https://openvk.su/support?act=new)
-* Telegram chat: Go to [our channel](https://t.me/openvkenglish) and open discussion in our channel menu.
+* [Bug Tracker](https://github.com/openvk/openvk/projects/1)
+* [Ticketing System](https://openvk.su/support?act=new)
+* Telegram Chat: Go to [our channel](https://t.me/openvkenglish) and open discussion in our channel menu.
 * [Reddit](https://www.reddit.com/r/openvk/)
-* [Discussions](https://github.com/openvk/openvk/discussions)
-* Matrix chat: #openvk:matrix.org
+* [GitHub Discussions](https://github.com/openvk/openvk/discussions)
+* Matrix Chat: #openvk:matrix.org
 
-**Attention**: bug tracker, board, telegram and matrix chat are public places, ticketing system is being served by volunteers. If you need to report something that should not be immediately disclosed to general public (for instance, a vulnerability), please contact us directly by this email: **openvk [at] tutanota [dot] com**
+**Attention**: bug tracker, board, Telegram and Matrix chat are public places, ticketing system is being served by volunteers. If you need to report something that should not be immediately disclosed to general public (for instance, a vulnerability), please contact us directly via this email: **openvk [at] tutanota [dot] com**
 
 <a href="https://codeberg.org/OpenVK/openvk">
     <img alt="Get it on Codeberg" src="https://codeberg.org/Codeberg/GetItOnCodeberg/media/branch/main/get-it-on-blue-on-white.png" height="60">
