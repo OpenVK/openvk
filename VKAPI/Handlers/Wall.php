@@ -673,7 +673,7 @@ final class Wall extends VKAPIRequestHandler
                 "date"     => $attachment->getPublicationTime()->timestamp(),
                 "id"       => $attachment->getVirtualId(),
                 "owner_id" => $attachment->getOwner()->getId(),
-                "sizes"    => array_values($attachment->getVkApiSizes()),
+                "sizes"    => !is_null($attachment->getVkApiSizes()) ? array_values($attachment->getVkApiSizes()) : NULL,
                 "text"     => "",
                 "has_tags" => false
             ]
