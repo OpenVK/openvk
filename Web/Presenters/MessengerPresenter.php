@@ -60,7 +60,7 @@ final class MessengerPresenter extends OpenVKPresenter
 
         if(!$this->user->identity->getPrivacyPermission('messages.write', $correspondent))
         {
-            $this->flash("err", tr("warning"), "Этот пользователь, возможно, вам не сможет ответить из-за ваших настроек приватности.");
+            $this->flash("err", tr("warning"), tr("user_may_not_reply"));
         }
         
         $this->template->selId         = $sel;
