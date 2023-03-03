@@ -1197,6 +1197,7 @@
 /* User alerts */
 
 "user_alert_scam" = "This account has been reported a lot for scam. Please be careful, especially if he asked for money.";
+"user_may_not_reply" = "This user may not reply to you because of your privacy settings. <a href='/settings?act=privacy'>Open privacy settings</a>";
 
 /* Cookies pop-up */
 
