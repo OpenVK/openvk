@@ -195,19 +195,24 @@ final class VKAPIPresenter extends OpenVKPresenter
                 $identity = NULL;
             } else {
                 $token = (new APITokens)->getByCode($this->requestParam("access_token"));
-                if(!$token)
+                if(!$token) {
                     $identity = NULL;
-                else
+                } else {
                     $identity = $token->getUser();
+                    $platform = $token->getPlatform();
+                }
             }
         }
+        
+        if(!is_null($identity) && $identity->isBanned())
+            $this->fail(18, "User account is deactivated", $object, $method);
         
         $object       = ucfirst(strtolower($object));
         $handlerClass = "openvk\\VKAPI\\Handlers\\$object";
         if(!class_exists($handlerClass))
             $this->badMethod($object, $method);
         
-        $handler = new $handlerClass($identity);
+        $handler = new $handlerClass($identity, $platform);
         if(!is_callable([$handler, $method]))
             $this->badMethod($object, $method);
         
@@ -274,8 +279,11 @@ final class VKAPIPresenter extends OpenVKPresenter
                 $this->fail(28, "Invalid 2FA code", "internal", "acquireToken");
         }
         
+        $platform = $this->requestParam("client_name");
+
         $token = new APIToken;
         $token->setUser($user);
+        $token->setPlatform(is_null($platform) ? "api" : $platform);
         $token->save();
         
         $payload = json_encode([

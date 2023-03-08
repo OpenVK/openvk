@@ -74,3 +74,10 @@ div.ovk-video > div > img
     object-fit: cover;
     border-radius: 100px;
 }
+
+.tippy-content > table > tbody > tr > td:nth-child(1) > img{
+    width: 54px;
+    height: 54px;
+    object-fit: cover;
+    border-radius: 100px;
+}

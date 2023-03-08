@@ -49,6 +49,12 @@
         <div class="notifications_global_wrap"></div>
         <div class="dimmer"></div>
 
+        {if isset($backdrops) && !is_null($backdrops)}
+            <div id="backdrop" style="background-image: url('{$backdrops[0]|noescape}'), url('{$backdrops[1]|noescape}');">
+                <div id="backdropDripper"></div>
+            </div>
+        {/if}
+
         <div class="toTop">
             ⬆ {_to_top}
         </div>
@@ -163,7 +169,7 @@
                             </a>
 
                             <div class="floating_sidebar">
-                                <a class="minilink" href="/friends{$thisUser->getId()}">
+                                <a id="minilink-friends" class="minilink" href="/friends{$thisUser->getId()}">
                                     <object type="internal/link" n:if="$thisUser->getFollowersCount() > 0">
                                         <div class="counter">
                                             +{$thisUser->getFollowersCount()}
@@ -171,10 +177,10 @@
                                     </object>
                                     <img src="/assets/packages/static/openvk/img/friends.svg">
                                 </a>
-                                <a class="minilink" href="/albums{$thisUser->getId()}">
+                                <a id="minilink-albums" class="minilink" href="/albums{$thisUser->getId()}">
                                     <img src="/assets/packages/static/openvk/img/photos.svg">
                                 </a>
-                                <a class="minilink" href="/im">
+                                <a id="minilink-messenger" class="minilink" href="/im">
                                     <object type="internal/link" n:if="$thisUser->getUnreadMessagesCount() > 0">
                                         <div class="counter">
                                             +{$thisUser->getUnreadMessagesCount()}
@@ -182,10 +188,10 @@
                                     </object>
                                     <img src="/assets/packages/static/openvk/img/messages.svg">
                                 </a>
-                                <a class="minilink" href="/groups{$thisUser->getId()}">
+                                <a id="minilink-groups" class="minilink" href="/groups{$thisUser->getId()}">
                                     <img src="/assets/packages/static/openvk/img/groups.svg">
                                 </a>
-                                <a class="minilink" href="/notifications">
+                                <a id="minilink-notifications" class="minilink" href="/notifications">
                                     <object type="internal/link" n:if="$thisUser->getNotificationsCount() > 0">
                                         <div class="counter">
                                             +{$thisUser->getNotificationsCount()}
@@ -288,6 +294,7 @@
         {script "js/messagebox.js"}
         {script "js/notifications.js"}
         {script "js/scroll.js"}
+        {script "js/player.js"}
         {script "js/al_wall.js"}
         {script "js/al_api.js"}
         {script "js/al_mentions.js"}
@@ -303,6 +310,8 @@
                 fartscroll(400);
             </script>
         {/if}
+
+        <script>bsdnHydrate();</script>
 
         <script n:if="OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['enable']" async defer data-domain="{php echo OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['domain']}" src="{php echo OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['server']}js/plausible.js"></script>
         

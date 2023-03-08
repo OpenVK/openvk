@@ -66,6 +66,7 @@ final class Polls extends VKAPIRequestHandler
     function addVote(int $poll_id, string $answers_ids) 
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $poll = (new PollsRepo)->get($poll_id);
 
@@ -87,6 +88,7 @@ final class Polls extends VKAPIRequestHandler
     function deleteVote(int $poll_id) 
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $poll = (new PollsRepo)->get($poll_id);
 

@@ -360,5 +360,6 @@ class Club extends RowModel
         return $this->getRecord()->alert;
     }
     
+    use Traits\TBackDrops;
     use Traits\TSubscribable;
 }

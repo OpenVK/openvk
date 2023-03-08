@@ -108,11 +108,31 @@ final class Users extends VKAPIRequestHandler
 								}
 								break;
 							case "last_seen":
-								if ($usr->onlineStatus() == 0)
+								if ($usr->onlineStatus() == 0) {
+									$platform = $usr->getOnlinePlatform(true);
+									switch ($platform) {
+										case 'iphone':
+											$platform = 2;
+											break;
+
+										case 'android':
+											$platform = 4;
+											break;
+
+										case NULL:
+											$platform = 7;
+											break;
+										
+										default:
+											$platform = 1;
+											break;
+									}
+
 									$response[$i]->last_seen = (object) [
-										"platform" => 1,
+										"platform" => $platform,
 										"time"     => $usr->getOnline()->timestamp()
 									];
+								}
 							case "music":
 								$response[$i]->music = $usr->getFavoriteMusic();
 								break;

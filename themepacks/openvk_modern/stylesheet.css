@@ -234,3 +234,14 @@ input[type=checkbox] {
 .floating_sidebar,.floating_sidebar.show {
     display:none
 }
+
+#backdrop:before {
+    content:"";
+    display:block;
+    position:fixed;
+    top:0;
+    left:0;
+    height:42px;
+    width:100%;
+    background-color:#3c3c3c
+}
