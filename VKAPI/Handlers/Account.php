@@ -52,7 +52,7 @@ final class Account extends VKAPIRequestHandler
         return 1;
     }
 
-    function setOffline(): object
+    function setOffline(): int
     {
         $this->requireUser();
 
