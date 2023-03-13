@@ -1009,6 +1009,15 @@ class User extends RowModel
         return true;
     }
 
+    function updOnline(string $platform): bool
+    {
+        $this->setOnline(time());
+        $this->setClient_name($platform);
+        $this->save();
+
+        return true;
+    }
+
     function changeEmail(string $email): void
     {
         DatabaseConnection::i()->getContext()->table("ChandlerUsers")
