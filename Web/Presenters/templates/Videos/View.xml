@@ -13,7 +13,9 @@
 {block content}
     <center style="margin-bottom: 8pt;">
         {if $video->getType() === 0}
-            <video width="610" src="{$video->getURL()}" controls></video>
+            <div class="bsdn" data-name="{$video->getName()}" data-author="{$user->getCanonicalName()}">
+                <video width="610" src="{$video->getURL()}"></video>
+            </div>
         {else}
             {var $driver = $video->getVideoDriver()}
             {if !$driver}

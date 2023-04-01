@@ -47,6 +47,11 @@
         {else}
             <span>{$user->isFemale() ? tr("was_online_f") : tr("was_online_m")} {$user->getOnline()}</span>
         {/if}
+        {var $platform = $user->getOnlinePlatform()}
+        {var $platformDetails = $user->getOnlinePlatformDetails()}
+        <a n:if="!empty($platform)" class="client_app client_app_titlebar" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
+            <img src="/assets/packages/static/openvk/img/app_icons_mini/{$user->getOnlinePlatform(this)}.svg">
+        </a>
     </div>
     <div n:if="$user->onlineStatus() == 2" style="float:right;">
         <span><b>{_deceased_person}</b></span>
@@ -485,7 +490,7 @@
                         <td class="data">{$user->getFavoriteQuote()}</td>
                     </tr>
                     <tr n:if="!is_null($user->getDescription())">
-                        <td class="label"><span class="nobold">О себе: </span></td>
+                        <td class="label"><span class="nobold">{_information_about}: </span></td>
                         <td class="data">{$user->getDescription()}</td>
                     </tr>
                   </tbody>

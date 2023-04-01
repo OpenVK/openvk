@@ -185,7 +185,7 @@ final class Groups extends VKAPIRequestHandler
 			                $response[$i]->site = $clb->getWebsite();
 			                break;
                         case "description":
-			                $response[$i]->desctiption = $clb->getDescription();
+			                $response[$i]->description = $clb->getDescription();
                             break;
 			            case "contacts":
                             $contacts;
@@ -237,6 +237,7 @@ final class Groups extends VKAPIRequestHandler
     function join(int $group_id)
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
         
         $club = (new ClubsRepo)->get($group_id);
         
@@ -251,6 +252,7 @@ final class Groups extends VKAPIRequestHandler
     function leave(int $group_id)
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
         
         $club = (new ClubsRepo)->get($group_id);
         

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg id="svg1306" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" height="48px" width="48px" version="1.1" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/">
+ <defs id="defs1308">
+  <radialGradient id="radialGradient3976" gradientUnits="userSpaceOnUse" cy="40" cx="23.857" gradientTransform="matrix(1 0 0 .5 0 20)" r="17.143">
+   <stop id="stop4128" offset="0"/>
+   <stop id="stop4130" stop-opacity="0" offset="1"/>
+  </radialGradient>
+  <linearGradient id="linearGradient3980" y2="-8.5627" gradientUnits="userSpaceOnUse" x2="20.065" y1="53.836" x1="43.936">
+   <stop id="stop2481" stop-color="#ffe69b" offset="0"/>
+   <stop id="stop2483" stop-color="#fff" offset="1"/>
+  </linearGradient>
+ </defs>
+ <metadata id="metadata1311">
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Rodney Dawes</dc:title>
+     </cc:Agent>
+    </dc:creator>
+    <dc:contributor>
+     <cc:Agent>
+      <dc:title>Jakub Steiner, Garrett LeSage</dc:title>
+     </cc:Agent>
+    </dc:contributor>
+    <cc:license rdf:resource="http://creativecommons.org/licenses/by-sa/2.0/"/>
+    <dc:title/>
+   </cc:Work>
+   <cc:License rdf:about="http://creativecommons.org/licenses/by-sa/2.0/">
+    <cc:permits rdf:resource="http://web.resource.org/cc/Reproduction"/>
+    <cc:permits rdf:resource="http://web.resource.org/cc/Distribution"/>
+    <cc:requires rdf:resource="http://web.resource.org/cc/Notice"/>
+    <cc:requires rdf:resource="http://web.resource.org/cc/Attribution"/>
+    <cc:permits rdf:resource="http://web.resource.org/cc/DerivativeWorks"/>
+    <cc:requires rdf:resource="http://web.resource.org/cc/ShareAlike"/>
+   </cc:License>
+  </rdf:RDF>
+ </metadata>
+ <g id="layer2">
+  <path id="path6548" opacity=".6" style="color:#000000" d="m41 40a17.143 8.5714 0 1 1 -34.286 0 17.143 8.5714 0 1 1 34.286 0z" transform="matrix(1.0706 0 0 .525 -.89276 22.5)" display="block" fill="url(#radialGradient3976)"/>
+ </g>
+ <g id="layer1">
+  <g id="g4006">
+   <path id="path1314" d="m46.857 23.929c0 12.9-10.457 23.357-23.357 23.357s-23.357-10.457-23.357-23.357 10.457-23.357 23.357-23.357 23.357 10.457 23.357 23.357z" transform="matrix(.92049 0 0 .92049 2.3685 .97408)" stroke="#204a87" stroke-width="1.0864" fill="#3465a4"/>
+   <path id="path3560" opacity=".34659" d="m49.902 26.635c0 13.25-10.741 23.991-23.991 23.991s-23.991-10.741-23.991-23.991 10.741-23.991 23.991-23.991 23.991 10.741 23.991 23.991z" fill-opacity="0" transform="matrix(.85448 0 0 .85448 1.86 .24062)" stroke="url(#linearGradient3980)" stroke-width="1.1703"/>
+  </g>
+ </g>
+ <g id="layer3" fill="#fff">
+  <path id="path3684" opacity=".25" d="m24 3c-11.046 0-20 8.954-20 20 0 1.6861 0.23214 3.3108 0.625 4.875 3.204 4.7933 13.254-0.12014 20.219-5.5938 8.008-6.2931 17.842 8.3593 19.125 1.4375 0.008-0.239 0.031-0.478 0.031-0.719 0-11.046-8.954-20-20-20z"/>
+  <g id="g13674" transform="translate(2.8959 -3.6973)">
+   <path id="text3246" d="m21.104 13.697c-0.86423 0.01942-1.5754 0.30821-2.1336 0.86638-0.55819 0.55821-0.84699 1.2694-0.86638 2.1336 0.01939 0.86424 0.30819 1.5754 0.86638 2.1336 0.55818 0.55821 1.2694 0.847 2.1336 0.86638 0.86422-0.01938 1.5754-0.30817 2.1336-0.86638 0.55818-0.55817 0.84697-1.2694 0.86638-2.1336-0.01941-0.8642-0.3082-1.5754-0.86638-2.1336-0.5582-0.55817-1.2694-0.84696-2.1336-0.86638z"/>
+   <path id="path13678" d="m15.104 21.697v3h2c0.55228 0 1 0.44772 1 1v9c0 0.55228-0.44772 1-1 1h-2v3h12v-3h-2c-0.55228 0-1-0.44772-1-1v-13h-9z"/>
+  </g>
+ </g>
+</svg>

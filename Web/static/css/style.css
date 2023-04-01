@@ -33,6 +33,10 @@ p {
     margin: 5px 0;
 }
 
+h1 {
+    margin-top: 0;
+}
+
 .layout {
     width: 791px;
     margin: 0 auto;
@@ -556,7 +560,8 @@ input[type=radio] {
 }
 
 input[type=checkbox] {
-    background-image: url("data:image/gif;base64,R0lGODlhDwA4AKIHANrh6P///8DK1a22wF+DpbfAy9/l6v///yH5BAEAAAcALAAAAAAPADgAAAOzKLrMJyHKGcWjOFiY5+7eBVbi+I1aCZ6m2rGrm21NrTx2LWMEwYE93yho+PF6gmKHyCJIiEVRMABNcQzBnsFAumK13K5kS9iGjNuwBPbC5RyDuHw+PwwA+LweP7Dv/wB9d4B6goSFfod8iYqGioGMh46NkYSTkpWAgnSccXadnJl/PYOHQaWAQQWoe6qrhK6MBHmujkEArpCDBVkEBQWLu7w9v3mTv77AxpG/ysusmp+gdQkAOw==");
+    background-image: url("data:image/gif;base64,R0lGODlhDwA4ALMAAP//////AP8A//8AAAD//wD/AAAA/wAAADtZd8XKzuHh4crKysHBwba2tv///wAAACH5BAEAAA4ALAAAAAAPADgAAASzcMlJqVsg653X5SDgYeE2luaHdup6rmKLvq5c0rMdjlUvXb6eDoRAkFBF4yqZOBKLi2aJSUNomE1VEoCNkRLJYiLB+oLF5LJmjBinnOO0BncDBi2NvH6/dzQUgIGCgA1+g4cKhX+IgoqMjYaPhJGSjpKJlI+WlZmMm5qdiIp8pHl+paShh0WLj0mtiEywg0kMCbOBTAyUCLlolkkKWJiLZ8PEgGxogZtsY5CwcYOfnqeofREAOw==");
+    width: 15px;
 }
 
 input[type=radio] {
@@ -571,6 +576,11 @@ input[type=radio]:hover {
 input[type=checkbox]:checked,
 input[type=radio]:checked {
     background-position: 0 -14px;
+}
+
+input[type=checkbox]:checked:hover,
+input[type=radio]:checked:hover {
+    background-position: 0 -42px;
 }
 
 #auth {
@@ -659,6 +669,15 @@ select {
     font-family: tahoma, verdana, arial, sans-serif;
     width: 100%;
     box-sizing: border-box;
+}
+
+.header2 {
+    border-bottom: 1px solid #E8EBEE;
+    color: #45688E;
+    font-size: 14px;
+    font-weight: bold;
+    margin: 0;
+    font-family: verdana, arial, sans-serif;
 }
 
 h4 {
@@ -1736,11 +1755,6 @@ body.scrolled .toTop:hover {
     color: #58462a;
 }
 
-.knowledgeBaseArticle {
-    margin-top: -11px;
-    /* this is very stupid fix but nah */
-}
-
 .avatar-list {
     padding: 4px 8px;
 }
@@ -2063,6 +2077,7 @@ table td[width="120"] {
 .cookies-popup {
     position: fixed;
     bottom: 0;
+	left: 0;
     width: 100%;
     height: 40px;
     background: linear-gradient(#fff, #eee);
@@ -2216,6 +2231,17 @@ a.poll-retract-vote {
     border-radius: 1px;
 }
 
+.client_app > img {
+	top: 3px;
+	position: relative;
+}
+
+.client_app.client_app_titlebar > img {
+    top: 2px;
+	position: relative;
+    filter: invert(100%) sepia(100%) saturate(800%) hue-rotate(2deg) brightness(130%) contrast(50.1%);
+}
+
 @keyframes appearing {
     from {
         opacity: 0;
@@ -2224,4 +2250,48 @@ a.poll-retract-vote {
     to {
         opacity: 1;
     }
+}
+
+.regform-left{
+	text-align: right; 
+	min-width: 110px;
+}
+
+.regform-right{
+	min-width: 200px;
+}
+
+
+.tour {
+    background: #F9F6E7;
+    border: 1px solid #BEAD61;
+    padding: 8px 25px;
+    width:205px;
+    text-align:center;
+    color: #000;
+    font-size:12px;
+    margin:10px auto;
+    cursor:hand;cursor:pointer;
+}
+
+.tour div {
+    font-size: 11px; color:#000; 
+}
+
+.video-wowzer > img {
+    vertical-align: bottom;
+}
+
+.video-wowzer {
+    font-weight: bolder;
+    font-size: 12px;
+    padding: 3px 0;
+}
+
+.video-wowzer a::before {
+    content: "b";
+    color: transparent;
+    width: 12px;
+    background-image: url(/assets/packages/static/openvk/img/videoico.png);
+    display: none;
 }

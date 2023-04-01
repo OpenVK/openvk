@@ -1,11 +1,15 @@
 {var $author = $post->getOwner()}
 {var $comments = $post->getLastComments(3)}
 {var $commentsCount = $post->getCommentsCount()}
+{var $platform = $post->getPlatform()}
+{var $platformDetails = $post->getPlatformDetails()}
 {if $post->isDeactivationMessage() && $post->getText()}
     {var $deac = "post_deact"}
 {else}
     {var $deac = "post_deact_silent"}
 {/if}
+{var $compact = isset($compact) ? true : false}
+{var $club = isset($club) ? $club}
 
 {var $commentTextAreaId = $post === NULL ? rand(1,300) : $post->getId()}
 
@@ -14,7 +18,7 @@
         <tr>
             <td width="54" valign="top">
                 <a href="{$author->getURL()}">
-                    <img src="{$author->getAvatarURL('miniscule')}" width="{ifset $compact}25{else}50{/ifset}" {ifset $compact}class="cCompactAvatars"{/ifset} />
+                    <img src="{$author->getAvatarURL('miniscule')}" width="{if $compact}25{else}50{/if}" {if $compact}class="cCompactAvatars"{/if} />
                     <span n:if="!$post->isPostedOnBehalfOfGroup() && !$compact && $author->isOnline()" class="post-online">{_online}</span>
                 </a>
             </td>
@@ -38,18 +42,18 @@
                         </a>
                     {/if}
 
-                    {ifset $compact}
+                    {if $compact}
                         <br>
                         <a href="/wall{$post->getPrettyId()}" class="date">
                             {$post->getPublicationTime()}
                         </a>
-                    {/ifset}
+                    {/if}
 
                     <span n:if="$post->isPinned()" class="nobold">{_pinned}</span>
 
-                    <a n:if="$post->canBeDeletedBy($thisUser) && !($forceNoDeleteLink ?? false) && !isset($compact)" class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
+                    <a n:if="$post->canBeDeletedBy($thisUser) && !($forceNoDeleteLink ?? false) && $compact == false" class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
                     
-                    {if $post->canBePinnedBy($thisUser) && !($forceNoPinLink ?? false) && !isset($compact)}
+                    {if $post->canBePinnedBy($thisUser) && !($forceNoPinLink ?? false) && $compact == false}
                         {if $post->isPinned()}
                             <a class="pin" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}"></a>
                         {else}
@@ -81,8 +85,11 @@
                         </span>
                     </div>
                 </div>
-                <div class="post-menu" n:if="!isset($compact)">
+                <div class="post-menu" n:if="$compact == false">
                     <a href="/wall{$post->getPrettyId()}" class="date">{$post->getPublicationTime()}</a>
+                    <a n:if="!empty($platform)" class="client_app" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
+                        <img src="/assets/packages/static/openvk/img/app_icons_mini/{$post->getPlatform(this)}.svg">
+                    </a>
                     {if isset($thisUser)}
                         &nbsp;
                         

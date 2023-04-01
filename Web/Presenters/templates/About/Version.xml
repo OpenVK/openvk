@@ -411,7 +411,7 @@
                 <tr>
                     <td class="e">
                         Vladimir Barinov (veselcraft) and Konstantin Kichulkin (kosfurler)<br/>
-                        OpenVK is a free open-source software that "cosplays" (or imitates) older versions of russian website VKontakte. VKontakte belongs to Pavel Durov and VK Group.
+                        OpenVK is a free open source software that "cosplays" (or imitates) older versions of a Russian social network called VKontakte. VKontakte belongs to Pavel Durov and VK Group.
                     </td>
                 </tr>
             </tbody>
@@ -430,7 +430,7 @@
                         Native name
                     </td>
                     <td>
-                        Author
+                        Author(s)
                     </td>
                 </tr>
                 {foreach $languages as $language}

@@ -30,7 +30,7 @@ class Photo extends Media
             $px = (int) $props[0];
             $py = (int) $props[1];
             if(($image->getImageWidth() / $image->getImageHeight()) > ($px / $py)) {
-                $height = ceil(($px * $image->getImageWidth()) / $py);
+                $height = (int) ceil(($px * $image->getImageWidth()) / $py);
                 $image->cropImage($image->getImageWidth(), $height, 0, 0);
                 $res[0] = true;
             }
@@ -156,7 +156,7 @@ class Photo extends Media
         foreach($sizes as $id => $meta) {
             if(isset($meta[3]) && !$meta[3]) {
                 $res[$id] = (object) [
-                    "url"    => "/photos/thumbnails/" . $this->getId() . "_$id.jpeg",
+                    "url"    => ovk_scheme(true) . $_SERVER["HTTP_HOST"] . "/photos/thumbnails/" . $this->getId() . "_$id.jpeg",
                     "width"  => NULL,
                     "height" => NULL,
                     "crop"   => NULL
@@ -281,6 +281,14 @@ class Photo extends Media
         }
 
         return [$x, $y];
+    }
+
+    function getPageURL(): string
+    {
+        if($this->isAnonymous())
+            return "/photos/" . base_convert((string) $this->getId(), 10, 32);
+
+        return "/photo" . $this->getPrettyId();
     }
 
     function getAlbum(): ?Album

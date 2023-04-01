@@ -45,13 +45,12 @@ final class Account extends VKAPIRequestHandler
     {
         $this->requireUser();
 
-        $this->getUser()->setOnline(time());
-        $this->getUser()->save();
+        $this->getUser()->updOnline($this->getPlatform());
         
         return 1;
     }
 
-    function setOffline(): object
+    function setOffline(): int
     {
         $this->requireUser();
 
@@ -79,6 +78,8 @@ final class Account extends VKAPIRequestHandler
     function saveProfileInfo(string $first_name = "", string $last_name = "", string $screen_name = "", int $sex = -1, int $relation = -1, string $bdate = "", int $bdate_visibility = -1, string $home_town = "", string $status = ""): object 
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
+        
         $user = $this->getUser();
 
         $output = [

@@ -1,5 +1,5 @@
 "__locale" = "en_US.UTF-8;Eng";
-"__transNames" = "Russian-Latin/BGN; Any-Latin";
+"__transNames" = "[\P{script=Han}]; Russian-Latin/BGN; Any-Latin";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 
@@ -53,8 +53,11 @@
 "register_meta_desc" = "Register in $1 now!";
 "register_referer_meta_title" = "$1 invites you to $2!";
 "register_referer_meta_desc" = "Join $1 and many other users at $2!";
+"registration_welcome_1" = "is a universal colleague search tool based on the VKontakte structure.";
+"registration_welcome_2" = "We want friends, classmates, neighbors and colleagues to always be in touch.";
 
 "users" = "Users";
+"other_fields" = "Other fields";
 
 /* Profile information */
 
@@ -63,7 +66,7 @@
 "birth_date" = "Birth date";
 "registration_date" = "Registration date";
 "hometown" = "Hometown";
-"this_is_you" = "that is You";
+"this_is_you" = "it's you";
 "edit_page" = "Edit page";
 "edit_group" = "Edit group";
 "change_status" = "change status";
@@ -617,15 +620,15 @@
 "notifications_post" = "$1 published $2a post$3 on your wall: $4";
 "notifications_appoint" = "$1 appointed you as community manager $2";
 
-"nt_liked_yours" = "liked yours";
-"nt_shared_yours" = "shared yours";
+"nt_liked_yours" = "liked your";
+"nt_shared_yours" = "shared your";
 "nt_commented_yours" = "commented";
 "nt_written_on_your_wall" = "wrote on your wall";
 "nt_made_you_admin" = "appointed you in the community";
 
 "nt_from" = "from";
-"nt_yours_adjective" = "yours";
-"nt_yours_feminitive_adjective" = "yours";
+"nt_yours_adjective" = "your";
+"nt_yours_feminitive_adjective" = "your";
 "nt_post_nominative" = "post";
 "nt_post_instrumental" = "post";
 "nt_note_instrumental" = "note";
@@ -810,6 +813,8 @@
 "app_err_ava_desc" = "Avatar too big or wrong: general error #$res.";
 "app_err_note" = "Failed to attach a news note";
 "app_err_note_desc" = "Make sure the link is correct and the note belongs to you.";
+
+"learn_more" = "Learn more";
 
 /* Support */
 
@@ -1192,6 +1197,7 @@
 /* User alerts */
 
 "user_alert_scam" = "This account has been reported a lot for scam. Please be careful, especially if he asked for money.";
+"user_may_not_reply" = "This user may not reply to you because of your privacy settings. <a href='/settings?act=privacy'>Open privacy settings</a>";
 
 /* Cookies pop-up */
 
@@ -1247,3 +1253,168 @@
 "undergoing_section_maintenance" = "Unfortunately, the <b>$1</b> section is temporarily unavailable. We are already working on troubleshooting. Please try to come back later.";
 
 "topics" = "Topics";
+
+
+/* Tutorial */
+
+"tour_title" = "Site Tour";
+"reg_title" = "Registration";
+"ifnotlike_title" = " &quot;If I don't liked this site?&quot; ";
+"tour_promo" = "About what awaits you after registration";
+
+"reg_text" = "<a href='/reg'>Registering</a> an account is absolutely free and takes no more than two minutes";
+"ifnotlike_text" = "You can always delete your account";
+
+
+"tour_next" = "Next →";
+"tour_reg" = "Registration →";
+
+
+"tour_section_1" = "Start";
+"tour_section_2" = "Profile";
+"tour_section_3" = "Photos";
+"tour_section_4" = "Search";
+"tour_section_5" = "Videos";
+"tour_section_6" = "Audios";
+"tour_section_7" = "Local news feed";
+"tour_section_8" = "Global news feed";
+"tour_section_9" = "Groups";
+"tour_section_10" = "Events";
+"tour_section_11" = "Themes";
+"tour_section_12" = "Customization";
+"tour_section_13" = "Promocodes";
+"tour_section_14" = "Mobile version";
+
+
+"tour_section_1_title_1" = "Where to start?";
+"tour_section_1_text_1" = "Registering an account is the very first and most basic step in beginning your journey on this site.";
+"tour_section_1_text_2" = "To register you will need to enter your name, E-mail and password.";
+"tour_section_1_text_3" = "<b>Remember:</b> Your E-mail will be used as your login to the site. You also have the full right not to specify your last name when signing up. In case you lost your password to enter the site, use the <a href='/restore'>recovery page</a>";
+"tour_section_1_bottom_text_1" = "By registering on the site, you agree to <a href='/about'>site rules</a> and <a href='/privacy'>privacy policy</a>";
+
+
+"tour_section_2_title_1" = "Your Profile";
+"tour_section_2_text_1_1" = "After registering, you will automatically be redirected to <b>your</b> profile.";
+"tour_section_2_text_1_2" = "You can edit it anywhere and anytime you want.";
+"tour_section_2_text_1_3" = "<b>Hint:</b> To make your profile look nice and presentable, you can fill it with information or upload a photo that highlights, for example, your deep inner world.";
+"tour_section_2_bottom_text_1" = "You are the one who decides how much information your friends need to know about you.";
+"tour_section_2_title_2" = "Set your own privacy settings";
+"tour_section_2_text_2_1" = "You can define exactly who can access certain types of information and sections on your page.";
+"tour_section_2_text_2_2" = "You have the right to block access to your page from search engines and unregistered users.";
+"tour_section_2_text_2_3" = "<b>Remember:</b> privacy settings will be expanded in the future.";
+"tour_section_2_title_3" = "Profile URL";
+"tour_section_2_text_3_1" = "After registering your page, you get a personal ID like <b>@id12345</b>";
+"tour_section_2_text_3_2" = "The <b>default ID</b>, which was obtained after registration, <b>cannot be changed</b>";
+"tour_section_2_text_3_3" = "But in the settings of your page you can bind your personal address and this address <b>can be changed</b> at any time";
+"tour_section_2_text_3_4" = "<b>Hint:</b> You can take any address that is at least 5 characters long. Try to get a cool URL :)";
+"tour_section_2_bottom_text_2" = "<i>Any short address in Latin small letters is supported; the address may contain numbers (not at the beginning), periods, and underscores (not at the beginning or end)</i>";
+"tour_section_2_title_4" = "Wall";
+
+
+"tour_section_3_title_1" = "Share your photo moments";
+"tour_section_3_text_1" = "The &quot;Photos&quot; section is available in your profile as soon as you sign up";
+"tour_section_3_text_2" = "You can browse user photo albums and create your own";
+"tour_section_3_text_3" = "Access to all your photo albums for other users is controlled in the page privacy settings";
+"tour_section_3_bottom_text_1" = "You can create an unlimited number of photo albums from your travels or events, or just to store memes";
+
+
+"tour_section_4_title_1" = "Search";
+"tour_section_4_text_1" = "The &quot;Search&quot; section allows you to search for users and groups.";
+"tour_section_4_text_2" = "This section of the site will be improved over time.";
+"tour_section_4_text_3" = "To start a search, you need to know the user's first (or last) name; and if you're looking for a group, you need to know its name.";
+"tour_section_4_title_2" = "Quick Search";
+"tour_section_4_text_4" = "If you want to save time in any way, the search bar is also available in the header of the site";
+
+
+"tour_section_5_title_1" = "Upload and share videos with your friends!";
+"tour_section_5_text_1" = "You can upload an unlimited number of videos and clips";
+"tour_section_5_text_2" = "The &quot;Videos&quot; section is controlled by the privacy settings";
+"tour_section_5_bottom_text_1" = "Videos can be uploaded bypassing the &quot;Videos&quot; section by simply attaching them to a new entry on the wall:";
+"tour_section_5_title_2" = "Importing videos from YouTube";
+"tour_section_5_text_3" = "In addition to uploading videos directly, the site also supports embedding videos from YouTube";
+
+
+"tour_section_6_title_1" = "Audios section, which doesn't exist yet xdddd";
+"tour_section_6_text_1" = "I would love to do a tutorial on this section, but sunshine Vriska didn't make the music :c";
+
+
+"tour_section_7_title_1" = "Follow what your friends write";
+"tour_section_7_text_1" = "The &quot;My News&quot; section is divided into two types: local feed and global feed";
+"tour_section_7_text_2" = "The local feed will only show news from your friends and groups";
+"tour_section_7_bottom_text_1" = "No recommendation system. <b>It's up to you to create your own news feed</b>";
+
+
+"tour_section_8_title_1" = "Follow what topics are discussed on the site";
+"tour_section_8_text_1" = "The global newsfeed will show entries of all site users and groups";
+"tour_section_8_text_2" = "Viewing this section may not be recommended for sensitive or fragile people";
+"tour_section_8_bottom_text_1" = "The design of the global feed does not differ in any way from the local feed";
+"tour_section_8_bottom_text_2" = "The feed has many types of content, from regular photos and videos to anonymous posts and polls";
+
+
+"tour_section_9_title_1" = "Create groups!";
+"tour_section_9_text_1" = "The site already has thousands of groups devoted to various topics and fan associations";
+"tour_section_9_text_2" = "You can join any group you want. And if you haven't found a matching one, you can create your own";
+"tour_section_9_text_3" = "Each group has its own section of wiki pages, photo albums, block of links and discussions";
+"tour_section_9_title_2" = "Manage your group with a friend";
+"tour_section_9_text_2_1" = "Manage the group in the &quot;Edit Group&quot; section under the community avatar";
+"tour_section_9_text_2_2" = "Create a team of administrators from the usual participants or those whom you trust";
+"tour_section_9_text_2_3" = "You can hide the administrator you want, so he will not appear anywhere within your group";
+"tour_section_9_bottom_text_1" = "The &quot;My Groups&quot; section is on the left menu of the site";
+"tour_section_9_bottom_text_2" = "Group example";
+"tour_section_9_bottom_text_3" = "Groups are often real organizations whose members want to stay in touch with their audiences";
+
+
+"tour_section_10_title_1" = "Oops";
+"tour_section_10_text_1" = "I would be very happy to do a tutorial on this section, but the section is still under development. For now, we'll skip this section of the tutorial and move on...";
+
+
+"tour_section_11_title_1" = "Themes";
+"tour_section_11_text_1" = "After registering, you will have a standard theme installed as your appearance";
+"tour_section_11_text_2" = "Some new users may be a bit intimidated by the current stock theme, which reeks of quite antiquity";
+"tour_section_11_text_3" = "<b>But no worries:</b> You can create your own theme for the site by reading <a href='https://docs.openvk.uk/'>documentation</a> or choose an existing one from the catalog";
+"tour_section_11_bottom_text_1" = "A catalog of themes is available under &quot;My Settings&quot; in the &quot;Interface&quot; tab;";
+"tour_section_11_wordart" = "<img src='https://openvk.uk/assets/packages/static/openvk/img/tour/wordart_en.png' width='65%'>";
+
+"tour_section_12_title_1" = "Profile and group backgrounds";
+"tour_section_12_text_1" = "You can set two images as the background of your page";
+"tour_section_12_text_2" = "They will be displayed on the sides of those who come to your page";
+"tour_section_12_text_3" = "<b>Hint:</b> before setting the background, try to experiment with the layout: try to mirror the future background image, or even just create a nice gradient";
+"tour_section_12_title_2" = "Avatars";
+"tour_section_12_text_2_1" = "You can set the option to show the user's avatar: standard, rounded and square (1:1)";
+"tour_section_12_text_2_2" = "These settings will only be visible to you";
+"tour_section_12_title_3" = "Editing the left menu";
+"tour_section_12_text_3_1" = "If necessary, you can hide unnecessary sections of the site";
+"tour_section_12_text_3_2" = "<b>Remember: </b>The essential sections (My Page; My Friends; My Answers; My Settings) cannot be hidden";
+"tour_section_12_title_4" = "View of posts";
+"tour_section_12_text_4_1" = "If you're tired of the old wall design that was in the once-popular original VKontakte, you can always change the look of the posts to Microblog";
+"tour_section_12_text_4_2" = "The view of the posts can be changed between the two options at any time";
+"tour_section_12_text_4_3" = "<b>Note that</b> if you selected the old view of the posts, the latest comments will not be loaded";
+"tour_section_12_bottom_text_1" = "Background setup page";
+"tour_section_12_bottom_text_2" = "Examples of pages with set backgrounds";
+"tour_section_12_bottom_text_3" = "With this feature you can add more personality to your profile";
+"tour_section_12_bottom_text_4" = "Old post view";
+"tour_section_12_bottom_text_5" = "Microblog";
+
+
+"tour_section_13_title_1" = "Promocodes";
+"tour_section_13_text_1" = "OpenVK has a promo code system that aims to add some currency (rating percentages, votes, and so on)";
+"tour_section_13_text_2" = "Such coupons are created for some significant events and holidays. Follow the <a href='https://t.me/openvk'>OpenVK Telegram channel</a>";
+"tour_section_13_text_3" = "After activating a promocode, the currency set by the administrators will be transferred to you";
+"tour_section_13_text_4" = "<b>Remember: </b>All promocodes have a limited activation period";
+"tour_section_13_bottom_text_1" = "Promocodes consist of 24 digits and letters";
+"tour_section_13_bottom_text_2" = "Successful activation (for example, we were credited with 100 votes)";
+"tour_section_13_bottom_text_3" = "<b>Attention: </b>Once a promocode is activated on your page, the same promocode cannot be reactivated";
+
+"tour_section_14_title_1" = "Mobile version";
+"tour_section_14_text_1" = "At the moment there is no mobile web version of the site yet, but there is a mobile app for Android";
+"tour_section_14_text_2" = "OpenVK Legacy is an OpenVK mobile app for retro Android devices with the design of the original VKontakte 3.0 app from 2013";
+"tour_section_14_text_3" = "The minimum supported version is Android 2.1 Eclair, which means devices from the early 2010s will be quite useful";
+
+"tour_section_14_title_2" = "Where can I download this?";
+"tour_section_14_text_2_1" = "Release versions are downloaded through the official F-Droid repository";
+"tour_section_14_text_2_2" = "If you are a beta tester, new versions of the app are posted to a separate update channel";
+"tour_section_14_text_2_3" = "<b>Note: </b>The app may have various bugs and problems, if you encounter a mistake, please report it to the <a href='/app'>official app group</a>";
+
+"tour_section_14_bottom_text_1" = "Screenshots";
+"tour_section_14_bottom_text_2" = "This concludes the tour of the site. If you want to try our mobile app, create your own group here, invite your friends or find new ones, or just have some fun in general, you can do it right now with a small <a href='/reg'>registration</a>";
+"tour_section_14_bottom_text_3" = "This concludes the tour of the site";
