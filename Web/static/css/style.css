@@ -851,6 +851,8 @@ span {
 
 .content_list .cl_element {
     width: 33%;
+    display: inline-block;
+    text-align: center;
 }
 
 .content_list.long .cl_element {
@@ -871,6 +873,7 @@ span {
 
 .content_list .cl_element .cl_name .cl_lname {
     font-size: 7pt;
+    display: block;
 }
 
 .ava {
@@ -2253,7 +2256,7 @@ a.poll-retract-vote {
 }
 
 .regform-left{
-	text-align: right; 
+	text-align: right;
 	min-width: 110px;
 }
 
@@ -2275,7 +2278,7 @@ a.poll-retract-vote {
 }
 
 .tour div {
-    font-size: 11px; color:#000; 
+    font-size: 11px; color:#000;
 }
 
 .video-wowzer > img {
