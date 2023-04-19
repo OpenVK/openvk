@@ -22,6 +22,8 @@ We will release OpenVK as soon as it's ready. As for now, you can:
 * [social.fetbuk.ru](http://social.fetbuk.ru/)
 * [vepurovk.xyz](http://vepurovk.xyz/)
   * [vepurovk.fun](http://vepurovk.fun/) (mirror without TLS)
+* [ovk.tinelix.ru](https://ovk.tinelix.ru)
+  * [mirror without TLS](http://ovk.tinelix.ru)
 
 ## Can I create my own OpenVK instance?
 

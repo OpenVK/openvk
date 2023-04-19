@@ -992,6 +992,7 @@
 "error_upload_failed" = "Failed to upload a photo";
 "error_old_password" = "Old password does not match";
 "error_new_password" = "New password does not match";
+"error_weak_password" = "Password isn't strong enough. It should has at least 8 symbols, at least one capital letter and at least one digit."
 "error_shorturl_incorrect" = "The short address has an incorrect format.";
 "error_repost_fail" = "Failed to share post";
 "error_data_too_big" = "Attribute '$1' must be at most $2 $3 long";

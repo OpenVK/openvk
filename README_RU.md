@@ -22,6 +22,8 @@ _[English](README.md)_
 * [social.fetbuk.ru](http://social.fetbuk.ru/)
 * [vepurovk.xyz](http://vepurovk.xyz/)
   * **[vepurovk.fun](http://vepurovk.fun)** (зеркало без TLS)
+* [ovk.tinelix.ru](https://ovk.tinelix.ru)
+  * [зеркало без TLS](http://ovk.tinelix.ru)
 
 ## Могу ли я создать свою собственную инстанцию OpenVK?
 
