@@ -1,4 +1,4 @@
-/*avatar controls idk*/
+/*avatar controls*/
 #avatarEdit
 {
     position: relative;
@@ -38,11 +38,20 @@
 {
     color:#B2B2B2;
 }
+#_newPicture:hover
+{
+    color: #D9D9D9;
+}
 .newpict
 {
     position:absolute;
-    margin-left:0;
-    margin-right:0;
+    text-align:center;
+    left:20%;
+    top:75%;
+}
+.newpict:hover
+{
+    color:#5680a0;
 }
 #groupAvatarChange
 {
@@ -60,4 +69,8 @@
     position:absolute;
     left:0;
     margin-left:20px;
+}
+#_newAvatarPicture:hover
+{
+    color:#D9D9D9;
 }
