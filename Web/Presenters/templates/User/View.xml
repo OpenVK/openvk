@@ -70,10 +70,51 @@
     
     <div class="left_small_block">
         <div style="margin-left: auto;margin-right: auto;display: table;">
-            <a href="{$user->getAvatarLink()|nocheck}">
-                <img src="{$user->getAvatarUrl('normal')}"
-                     alt="{$user->getCanonicalName()}"
-                     style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
+            <div
+            {if $user->getId() == $thisUser->getId()} onmouseover="
+                {if is_null($user->getAvatarPhoto()) == false && $user->getAvatarPhoto()->getURL() != "$serverUrl/assets/packages/static/openvk/img/camera_200.png"}
+                _avatarDelete.style.backgroundColor='rgba(0, 0, 0, 0.7)';
+                deleteButton.style.opacity='100%';
+                {/if}
+                avatarChange.style.backgroundColor='rgba(0, 0, 0, 0.7)';
+                avatarChange.style.opacity='100%';
+                "
+                onmouseleave="
+                {if is_null($user->getAvatarPhoto()) == false && $user->getAvatarPhoto()->getURL() != "$serverUrl/assets/packages/static/openvk/img/camera_200.png"}
+                _avatarDelete.style.backgroundColor='rgba(0, 0, 0, 0)';
+                deleteButton.style.opacity='0%';
+                {/if}
+                avatarChange.style.backgroundColor='rgba(0, 0, 0, 0)';
+                avatarChange.style.opacity='0%';
+                //pizdec
+                "{/if}>
+            <div n:if="$user->getId() == $thisUser->getId()">
+                <div id="avatarEdit" style="position:relative;">
+                    <div n:if="is_null($user->getAvatarPhoto()) == false && $user->getAvatarPhoto()->getURL() != '$serverUrl/assets/packages/static/openvk/img/camera_200.png'">
+                        <a id="_avatarDelete" href="/photo{$user->getAvatarPhoto()->getPrettyId()}/delete"
+                            style="position:absolute;right:0;top:0;background-color:rgba(51, 51, 51, 0); border-radius: 0px 0px 3px 3px;padding:2px;padding-left:3px;">
+                    <img id="deleteButton" src="/assets/packages/static/openvk/img/delete.png" style="opacity:0;"></a>
+                    </div>
+                </div>
+                <ul id="avatarChange" style="position:absolute;width:100px;background-color:rgba(51, 51, 51, 0);list-style-type: none;font-size:11px;padding-top:10px;padding-bottom:10px;opacity:0%;">
+                        <li><img src="/assets/packages/static/openvk/img/upload.png" style="position:absolute;left:0;margin-left:20px;"><a href="/al_avatars" id="_newPicture" style="color:#B2B2B2;" onmouseover="_newPicture.style.color = '#D9D9D9';" onmouseleave="_newPicture.style.color = '#B2B2B2';"> {tr("new_photo")}</a></li>
+                        <!--<li><img src="/assets/packages/static/openvk/img/miniature.png"><a href="javascript:alert('')" id="_changeMiniature" style="color:#B2B2B2;" onmouseover="_changeMiniature.style.color = '#D9D9D9';" onmouseleave="_changeMiniature.style.color = '#B2B2B2';">{tr("change_miniature")}</a></li>-->
+                </ul>
+                 
+            </div>
+                <a href="{$user->getAvatarLink()|nocheck}">
+                    <img src="{$user->getAvatarUrl('normal')}"
+                        id="avatarImage"
+                        alt="{$user->getCanonicalName()}"
+                        style="max-width:100%; image-rendering: -webkit-optimize-contrast;" />
+                <script>
+                    window.addEventListener("load", event => {
+                        let image = avatarImage;
+                        avatarChange.style.marginTop = image.height-32+"px";
+                        avatarChange.style.width = image.width/1.25+"px"
+                    });
+                 </script>
+            </div>
             </a>
         </div>
         <div n:ifset="$thisUser" id="profile_links">
