@@ -96,9 +96,48 @@
 <div class="right_small_block">
     {var $avatarPhoto = $club->getAvatarPhoto()}
     {var $avatarLink = ((is_null($avatarPhoto) ? FALSE : $avatarPhoto->isAnonymous()) ? "/photo" . ("s/" . base_convert((string) $avatarPhoto->getId(), 10, 32)) : $club->getAvatarLink())}
-    <a href="{$avatarLink|nocheck}">
-        <img src="{$club->getAvatarUrl('normal')}" style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
-    </a>
+    <div id="avatark" style="position:relative;width:100%;"
+        onmouseover="
+            avatarChange.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+            avatarChange.style.opacity = '1';
+            _avatarDelete.style.backgroundColor = 'rgba(0, 0, 0, 0.7)';
+            _avatarDelete.style.opacity = '1';
+            deleteButton.style.opacity = '1';
+            "
+        onmouseleave="
+            avatarChange.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+            avatarChange.style.opacity = '0';
+            _avatarDelete.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+            _avatarDelete.style.opacity = '0';
+            deleteButton.style.opacity = '0';
+        ">
+        {if $club->canBeModifiedBy($thisUser)}
+            {if is_null($avatarPhoto) == true}
+            <a href="/club{$club->getId()}/edit" id="_newAvatarPicture" class="newpict" style="position:absolute;margin-left:0;margin-right:0;">{_add_photo}</a>
+            {else}
+            <a id="_avatarDelete" href="/photo{$club->getAvatarPhoto()->getPrettyId()}/delete"
+                        style="position:absolute;right:0;top:0;background-color:rgba(51, 51, 51, 0); border-radius: 0px 0px 3px 3px;padding:2px;padding-left:3px;"><img id="deleteButton" src="/assets/packages/static/openvk/img/delete.png" style="opacity:0;"></a>
+                <ul id="avatarChange" style="position:absolute;width:100px;background-color:rgba(51, 51, 51, 0);list-style-type: none;font-size:11px;padding-top:10px;padding-bottom:10px;opacity:0%;">
+                        <li id="ff">
+                            <img src="/assets/packages/static/openvk/img/upload.png" style="position:absolute;left:0;margin-left:20px;"><a href="/club{$club->getId()}/edit" id="_newAvatarPicture" style="color:#B2B2B2;" onmouseover="_newAvatarPicture.style.color = '#D9D9D9';" onmouseleave="_newAvatarPicture.style.color = '#B2B2B2';"> {tr("new_photo")}</a>
+                        </li>
+                        <!--<li><img src="/assets/packages/static/openvk/img/miniature.png"><a href="javascript:alert('')" id="_changeMiniature" style="color:#B2B2B2;" onmouseover="_changeMiniature.style.color = '#D9D9D9';" onmouseleave="_changeMiniature.style.color = '#B2B2B2';">{tr("change_miniature")}</a></li>-->
+                </ul>
+            {/if}
+        {/if}
+        {if is_null($avatarPhoto) == false}<a href="/photo{$club->getAvatarPhoto()->getPrettyId()}"
+        {else}<a href="javascript:void(0)"
+        {/if}>
+        <img id="clubAvatar" src="{$club->getAvatarUrl('normal')}" style="width: 100%; image-rendering: -webkit-optimize-contrast;"></a>
+        <script>
+            //_newAvatarPicture.style.marginTop = clubAvatar.height-30+"px";
+            window.addEventListener("load", event => {
+                    let image = clubAvatar;
+                    avatarChange.style.marginTop = image.height-34+"px";
+                    avatarChange.style.width = image.width/1.25+"px"
+            });
+        </script>
+    </div>
     <div n:ifset="$thisUser" id="profile_links">
         {if $club->canBeModifiedBy($thisUser)}
             <a href="/club{$club->getId()}/edit" id="profile_link">{_edit_group}</a>

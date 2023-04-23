@@ -210,6 +210,9 @@
 
 "reply" = "Reply";
 
+"updated_photo_m" = "updated his avatar";
+"updated_photo_f" = "updated her avatar";
+
 /* Friends */
 
 "friends" = "Friends";
@@ -326,6 +329,7 @@
 "search_group" = "Search group";
 "search_by_groups" = "Search by groups";
 "search_group_desc" = "Here you can browse through the existing groups and choose a group to suit your needs...";
+"add_photo" = "Add photo";
 
 /* Albums */
 
@@ -350,6 +354,18 @@
 "albums_list_zero" = "You don't have any albums";
 "albums_list_one" = "You have one album";
 "albums_list_other" = "You have $1 albums";
+
+"new_photo" = "Upload new photo";
+
+"real_photo" = "It will be easier for your friends to recognize you, if you upload your real picture.";
+"formats" = "You can upload an image in JPG, GIF or PNG format.";
+"upload_problems" = "If you're having troubles during uploading, try selecting a smaller photo.";
+"webcam_avatar" = "If your computer has a webcam, you can take a photo from the webcam »";
+
+"delete_photo" = "Are you sure you want to delete the photo?";
+"change_miniature" = "Change miniature";
+"good_photo" = "A good photo will make your community more recognizable.";
+"leave_photo" = "Leave post on the wall";
 
 /* Notes */
 
@@ -992,7 +1008,6 @@
 "error_upload_failed" = "Failed to upload a photo";
 "error_old_password" = "Old password does not match";
 "error_new_password" = "New password does not match";
-"error_weak_password" = "Password isn't strong enough. It should has at least 8 symbols, at least one capital letter and at least one digit.";
 "error_shorturl_incorrect" = "The short address has an incorrect format.";
 "error_repost_fail" = "Failed to share post";
 "error_data_too_big" = "Attribute '$1' must be at most $2 $3 long";
@@ -1194,7 +1209,7 @@
 
 "warning" = "Warning";
 "question_confirm" = "This action can't be undone. Do you really wanna do it?";
-
+"prevention" = "Prevention";
 /* User alerts */
 
 "user_alert_scam" = "This account has been reported a lot for scam. Please be careful, especially if he asked for money.";
