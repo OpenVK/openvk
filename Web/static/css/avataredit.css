@@ -41,8 +41,13 @@
 .newpict
 {
     position:absolute;
-    margin-left:0;
-    margin-right:0;
+    text-align:center;
+    left:20%;
+    top:75%;
+}
+.newpict:hover
+{
+    color:#5680a0;
 }
 #groupAvatarChange
 {
