@@ -65,7 +65,6 @@ function toggleMenu(id) {
         });
     }
 }
-
 document.addEventListener("DOMContentLoaded", function() { //BEGIN
 
     u("#_photoDelete").on("click", function(e) {
@@ -88,7 +87,66 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
         
         return e.preventDefault();
     });
-
+    u("#_avatarDelete").on("click", function(e) {
+        var formHtml = "<form id='tmpPhDelF' action='" + u(this).attr("href") + "' >";
+        formHtml    += "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />";
+        formHtml    += "</form>";
+        u("body").append(formHtml);
+        
+        MessageBox(tr('prevention'), tr('delete_photo'), [
+            tr('delete'),
+            tr('close')
+        ], [
+            (function() {
+                u("#tmpPhDelF").nodes[0].submit();
+            }),
+            (function() {
+                u("#tmpPhDelF").remove();
+            }),
+        ]);
+        
+        return e.preventDefault();
+    });
+    u("#_newPicture").on("click", function(e) {
+        MessageBox(tr('new_photo'), 
+        "<form id='tmpPhDelF' action='" + u(this).attr("href") + "' method='POST' enctype='multipart/form-data'>"+
+        "<div id='tmpdd' style='text-align:center'>"+tr('real_photo')+"<br><br>"+tr('formats')+"<br><br>"+"<input type='file' accept='image/*' name='blob' value='"+tr('select_file')+"'><br><br>"+tr('upload_problems')+"<br></div>"+
+        //"<p><input type='checkbox' name='makeAvatarPost'>"+tr('leave_photo')+"</p>"+
+        "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />"+
+        "</form>", [
+            tr('upload_button'),
+            tr('close')
+        ], [
+            (function() {
+                u("#tmpPhDelF").nodes[0].submit();
+            }),
+            (function() {
+                u("#tmpPhDelF").remove();
+            }),
+        ]);
+        
+        return e.preventDefault();
+    });
+    u("#_newAvatarPicture").on("click", function(e) {
+        MessageBox(tr('new_photo'), 
+        "<form id='tmpPhDelF' action='" + u(this).attr("href") + "' method='POST' enctype='multipart/form-data'>"+
+        "<div id='tmpdd' style='text-align:center'>"+tr('good_photo')+"<br><br>"+tr('formats')+"<br><br>"+"<input type='file' accept='image/*' name='ava' value='"+tr('select_file')+"'><br><br>"+tr('upload_problems')+"<br></div>"+
+        //"<p><input type='checkbox' name='makeAvatarPost' value='1'>"+tr('leave_photo')+"</p>"+
+        "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />"+
+        "</form>", [
+            tr('upload_button'),
+            tr('close')
+        ], [
+            (function() {
+                u("#tmpPhDelF").nodes[0].submit();
+            }),
+            (function() {
+                u("#tmpPhDelF").remove();
+            }),
+        ]);
+        
+        return e.preventDefault();
+    });
     /* @rem-pai why this func wasn't named as "#_deleteDialog"? It looks universal IMO */
 
     u("#_noteDelete").on("click", function(e) {
