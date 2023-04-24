@@ -71,7 +71,8 @@
                             <span class="nobold">{_avatar}: </span>
                         </td>
                         <td>
-                            <input type="file" name="ava" accept="image/*" />
+                            <label class="button" style="">Обзор<input type="file" id="ava" name="ava" style="display: none;" onchange="filename.innerHTML=blob.value" /></label>
+                            <div id="filename" style="margin-top: 10px;"></div>
                         </td>
                     </tr>
 		            <tr>

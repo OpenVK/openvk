@@ -37,9 +37,10 @@
         <form method="POST" enctype="multipart/form-data">
             <div id="backdropEditor">
                 <div id="backdropFilePicker">
-                    <input type="file" accept="image/*" name="backdrop1" />
-                    <div id="spacer"></div>
-                    <input type="file" accept="image/*" name="backdrop2" />
+                    <label class="button" style="">Обзор<input type="file" accept="image/*" name="backdrop1" style="display: none;"></label>
+                    <div id="spacer" style="width: 366px;"></div>
+                    <label class="button" style="">Обзор<input type="file" accept="image/*" name="backdrop2" style="display: none;"></label>
+                    <div id="spacer" style="width: 366px;"></div>
                 </div>
             </div>
 

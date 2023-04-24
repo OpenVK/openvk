@@ -20,7 +20,7 @@
         <b>Подтверждение номера телефона</b><br/>
         Введите код для подтверждения смены номера: <a href="/edit/verify_phone">ввести код</a>.
     </div>
-    
+
     <div class="tabs">
         <div n:attr="id => ($isMain ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isMain ? 'act_tab_a' : 'ki')" href="/edit">{_main}</a>
@@ -38,10 +38,10 @@
             <a n:attr="id => ($isBackDrop ? 'act_tab_a' : 'ki')" href="/edit?act=backdrop">{_backdrop_short}</a>
         </div>
     </div>
-    
+
     <div class="container_gray">
         {if $isMain}
-        
+
         <h4>{_main_information}</h4>
         <form action="/edit?act=main" method="POST" enctype="multipart/form-data">
             <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
@@ -133,7 +133,7 @@
                                 <option value="7" {if $user->getPoliticalViews() == 7}selected{/if}>{_politViews_7}</option>
                                 <option value="8" {if $user->getPoliticalViews() == 8}selected{/if}>{_politViews_8}</option>
                                 <option value="9" {if $user->getPoliticalViews() == 9}selected{/if}>{_politViews_9}</option>
-                                
+
                             </select>
                         </td>
                     </tr>
@@ -162,7 +162,7 @@
                     </tr>
                     <tr>
                         <td>
-                            
+
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
@@ -172,9 +172,9 @@
                 </tbody>
             </table>
         </form>
-        
+
         {elseif $isContacts}
-            
+
         <h4>{_contact_information}</h4>
         <form action="/edit?act=contacts" method="POST" enctype="multipart/form-data">
             <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
@@ -221,7 +221,7 @@
                     </tr>
                     <tr>
                         <td>
-                            
+
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
@@ -231,9 +231,9 @@
                 </tbody>
             </table>
         </form>
-        
+
         {elseif $isInterests}
-        
+
         <h4>{_personal_information}</h4>
         <form action="/edit?act=interests" method="POST" enctype="multipart/form-data">
             <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
@@ -296,7 +296,7 @@
                     </tr>
                     <tr>
                         <td>
-                            
+
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
@@ -306,9 +306,9 @@
                 </tbody>
             </table>
         </form>
-        
+
         {elseif $isAvatar}
-        
+
         <h4>{_profile_picture}</h4>
         <form action="/al_avatars" method="POST" enctype="multipart/form-data">
             <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
@@ -318,12 +318,13 @@
                             <span class="nobold">{_picture}: </span>
                         </td>
                         <td>
-                            <input type="file" name="blob" accept="image/*" />
+                            <label class="button" style="">Обзор<input type="file" id="blob" name="blob" style="display: none;" onchange="filename.innerHTML=blob.value" /></label>
+                            <div id="filename" style="margin-top: 10px;"></div>
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            
+
                         </td>
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
@@ -333,7 +334,7 @@
                 </tbody>
             </table>
         </form>
-        
+
         {elseif $isBackDrop}
 
         <h4>{_backdrop}</h4>
@@ -341,9 +342,10 @@
         <form method="POST" enctype="multipart/form-data">
             <div id="backdropEditor">
                 <div id="backdropFilePicker">
-                    <input type="file" accept="image/*" name="backdrop1" />
-                    <div id="spacer"></div>
-                    <input type="file" accept="image/*" name="backdrop2" />
+                    <label class="button" style="">Обзор<input type="file" accept="image/*" name="backdrop1" style="display: none;"></label>
+                    <div id="spacer" style="width: 366px;"></div>
+                    <label class="button" style="">Обзор<input type="file" accept="image/*" name="backdrop2" style="display: none;"></label>
+                    <div id="spacer" style="width: 366px;"></div>
                 </div>
             </div>
 
@@ -366,5 +368,5 @@
 
         {/if}
     </div>
-    
+
 {/block}
