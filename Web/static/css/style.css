@@ -231,6 +231,7 @@ h1 {
     position: absolute;
     top: 140px;
     padding: 0 19px;
+    margin: 24px;
 }
 
 #backdropFilePicker > input {

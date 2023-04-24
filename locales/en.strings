@@ -546,6 +546,7 @@
 "backdrop_succ" = "Backdrop settings saved";
 "backdrop_succ_rem" = "Backdrop images have been removed";
 "backdrop_succ_desc" = "Users will start seeing changes in 5 minutes.";
+"browse" = "Browse";
 
 /* Two-factor authentication */
 

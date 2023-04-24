@@ -506,6 +506,7 @@
 "backdrop_succ" = "Фон сохранён";
 "backdrop_succ_rem" = "Фон удалён";
 "backdrop_succ_desc" = "Изменения будут заметны другим пользователям через 5 минут.";
+"browse" = "Обзор";
 
 /* Two-factor authentication */
 
