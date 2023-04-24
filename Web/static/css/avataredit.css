@@ -3,6 +3,25 @@
 {
     position: relative;
 }
+#avatarAll {
+    overflow: hidden;
+    position: relative;
+}
+#avatarChange, #_avatarDelete, #groupAvatarChange {
+    -webkit-transition: all 200ms ease-in-out;
+    -moz-transition: all 200ms ease-in-out;
+    -o-transition: all 200ms ease-in-out;
+    transition: all 200ms ease-in-out;
+}
+#avatarChange {
+    bottom: -32px !important;
+    visibility: hidden;
+}
+div#avatarAll:hover #avatarChange {
+    opacity: 1 !important;
+    bottom: -8px !important;
+    visibility: visible;
+}
 #_avatarDelete 
 {
     position:absolute;
@@ -26,17 +45,22 @@
     font-size:11px;
     padding-top:10px;
     padding-bottom:10px;
+	padding-right: 10px;
     opacity:0%;
 }
 #uploadIcon
 {
     position:absolute;
     left:0;
-    margin-left:20px;
+    margin-left:13px;
 }
 #_newPicture
 {
     color:#B2B2B2;
+}
+#_newPicture:hover
+{
+    color: #D9D9D9;
 }
 .newpict
 {
@@ -58,11 +82,16 @@
     font-size:11px;
     padding-top:10px;
     padding-bottom:10px;
+	padding-right: 10px;
     opacity:0%;
 }
 #_newAvatarPicture2
 {
     position:absolute;
     left:0;
-    margin-left:20px;
+    margin-left:13px;
+}
+#_newAvatarPicture:hover
+{
+    color:#D9D9D9;
 }
