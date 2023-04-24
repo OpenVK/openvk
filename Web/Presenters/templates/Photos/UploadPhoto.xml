@@ -22,7 +22,9 @@
           <tr>
             <td width="120" valign="top"><span class="nobold">{_photo}:</span></td>
             <td>
-              <label class="button" style="">{_browse}<input type="file" id="blob" name="blob" style="display: none;" onchange="filename.innerHTML=blob.files[0].name" /></label>
+              <label class="button" style="">{_browse}
+                <input type="file" id="blob" name="blob" style="display: none;" onchange="filename.innerHTML=blob.files[0].name" />
+              </label>
               <div id="filename" style="margin-top: 10px;"></div>
             </td>
           </tr>

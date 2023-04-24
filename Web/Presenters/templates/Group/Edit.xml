@@ -71,7 +71,9 @@
                             <span class="nobold">{_avatar}: </span>
                         </td>
                         <td>
-                            <label class="button" style="">{_browse}<input type="file" id="ava" name="ava" style="display: none;" onchange="filename.innerHTML=ava.files[0].name" /></label>
+                            <label class="button" style="">{_browse}
+                                <input type="file" id="ava" name="ava" style="display: none;" onchange="filename.innerHTML=ava.files[0].name" />
+                            </label>
                             <div id="filename" style="margin-top: 10px;"></div>
                         </td>
                     </tr>
