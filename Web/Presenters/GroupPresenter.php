@@ -250,7 +250,40 @@ final class GroupPresenter extends OpenVKPresenter
             $this->flash("succ", "Изменения сохранены", "Новые данные появятся в вашей группе.");
         }
     }
-    
+    function renderEditAvatar(int $id)
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+        $club = $this->clubs->get($id);
+        if(!$club ||!$club->canBeModifiedBy($this->user->identity))
+        {
+            $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию.");
+        }
+        if($_FILES["ava"]["error"] === UPLOAD_ERR_OK) {
+            $photo = new Photo;
+            try {
+                $anon = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"];
+                if($anon && $this->user->id === $club->getOwner()->getId())
+                    $anon = $club->isOwnerHidden();  
+                else if($anon)
+                    $anon = $club->getManager($this->user->identity)->isHidden();
+
+                $photo->setOwner($this->user->id);
+                $photo->setDescription("Group image");
+                $photo->setFile($_FILES["ava"]);
+                $photo->setCreated(time());
+                $photo->setAnonymous($anon);
+                $photo->save();
+                
+                (new Albums)->getClubAvatarAlbum($club)->addPhoto($photo);
+            } catch(ISE $ex) {
+                $name = $album->getName();
+                $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию.");
+            }
+        }
+        $this->flash("succ", "Фотография сохранена", "Новые данные появятся в вашей группе.");
+        $this->redirect("/club$id");
+    }
     function renderEditBackdrop(int $id): void
     {
         $this->assertUserLoggedIn();
