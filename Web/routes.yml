@@ -199,6 +199,8 @@ routes:
       handler: "Group->admin"
     - url: "/club{num}/setAdmin"
       handler: "Group->modifyAdmin"
+    - url: "/club{num}/al_avatars"
+      handler: "Group->editAvatar"
     - url: "/groups{num}"
       handler: "User->groups"
     - url: "/groups_pin"

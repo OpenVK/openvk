@@ -118,8 +118,8 @@
             <a id="_avatarDelete" href="/photo{$club->getAvatarPhoto()->getPrettyId()}/delete">
                 <img id="deleteButton" src="/assets/packages/static/openvk/img/delete.png" style="opacity:0;"></a>
                 <ul id="groupAvatarChange">
-                        <li id="ff">
-                            <img src="/assets/packages/static/openvk/img/upload.png" id="_newAvatarPicture2"><a href="/club{$club->getId()}/edit" id="_newAvatarPicture" style="color:#B2B2B2;" onmouseover="_newAvatarPicture.style.color = '#D9D9D9';" onmouseleave="_newAvatarPicture.style.color = '#B2B2B2';"> {tr("new_photo")}</a>
+                        <li>
+                            <img src="/assets/packages/static/openvk/img/upload.png" id="_newAvatarPicture2"><a href="/club{$club->getId()}/al_avatars" id="_newAvatarPicture" style="color:#B2B2B2;" onmouseover="_newAvatarPicture.style.color = '#D9D9D9';" onmouseleave="_newAvatarPicture.style.color = '#B2B2B2';"> {tr("new_photo")}</a>
                         </li>
                         <!--<li><img src="/assets/packages/static/openvk/img/miniature.png"><a href="javascript:alert('')" id="_changeMiniature" style="color:#B2B2B2;" onmouseover="_changeMiniature.style.color = '#D9D9D9';" onmouseleave="_changeMiniature.style.color = '#B2B2B2';">{tr("change_miniature")}</a></li>-->
                 </ul>
