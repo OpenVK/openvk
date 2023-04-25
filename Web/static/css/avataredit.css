@@ -17,6 +17,12 @@
 {
     opacity:0;
 }
+#avatarChange, #_avatarDelete, #groupAvatarChange {
+    -webkit-transition: all 200ms ease-in-out;
+    -moz-transition: all 200ms ease-in-out;
+    -o-transition: all 200ms ease-in-out;
+    transition: all 200ms ease-in-out;
+}
 #avatarChange
 {
     position:absolute;
@@ -27,6 +33,10 @@
     padding-top:10px;
     padding-bottom:10px;
     opacity:0%;
+}
+div#avatarAll:hover #avatarChange {
+    opacity: 1 !important;
+    visibility: visible;
 }
 #uploadIcon
 {
