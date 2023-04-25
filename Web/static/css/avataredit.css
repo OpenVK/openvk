@@ -1,26 +1,7 @@
-/*avatar controls idk*/
+/*avatar controls*/
 #avatarEdit
 {
     position: relative;
-}
-#avatarAll {
-    overflow: hidden;
-    position: relative;
-}
-#avatarChange, #_avatarDelete, #groupAvatarChange {
-    -webkit-transition: all 200ms ease-in-out;
-    -moz-transition: all 200ms ease-in-out;
-    -o-transition: all 200ms ease-in-out;
-    transition: all 200ms ease-in-out;
-}
-#avatarChange {
-    bottom: -32px !important;
-    visibility: hidden;
-}
-div#avatarAll:hover #avatarChange {
-    opacity: 1 !important;
-    bottom: -8px !important;
-    visibility: visible;
 }
 #_avatarDelete 
 {
@@ -36,6 +17,12 @@ div#avatarAll:hover #avatarChange {
 {
     opacity:0;
 }
+#avatarChange, #_avatarDelete, #groupAvatarChange {
+    -webkit-transition: all 200ms ease-in-out;
+    -moz-transition: all 200ms ease-in-out;
+    -o-transition: all 200ms ease-in-out;
+    transition: all 200ms ease-in-out;
+}
 #avatarChange
 {
     position:absolute;
@@ -45,14 +32,17 @@ div#avatarAll:hover #avatarChange {
     font-size:11px;
     padding-top:10px;
     padding-bottom:10px;
-	padding-right: 10px;
     opacity:0%;
+}
+div#avatarAll:hover #avatarChange {
+    opacity: 1 !important;
+    visibility: visible;
 }
 #uploadIcon
 {
     position:absolute;
     left:0;
-    margin-left:13px;
+    margin-left:20px;
 }
 #_newPicture
 {
@@ -82,14 +72,13 @@ div#avatarAll:hover #avatarChange {
     font-size:11px;
     padding-top:10px;
     padding-bottom:10px;
-	padding-right: 10px;
     opacity:0%;
 }
 #_newAvatarPicture2
 {
     position:absolute;
     left:0;
-    margin-left:13px;
+    margin-left:20px;
 }
 #_newAvatarPicture:hover
 {
