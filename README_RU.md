@@ -16,14 +16,7 @@ _[English](README.md)_
 
 ## Инстанции
 
-* **[openvk.su](https://openvk.su/)**
-  * **[openvk.uk](https://openvk.uk)** ([зеркало](<https://t.me/openvk/1609>))
-  * **[openvk.co](http://openvk.co)** (зеркало [без TLS](<https://t.me/openvk/1654>))
-* [social.fetbuk.ru](http://social.fetbuk.ru/)
-* [vepurovk.xyz](http://vepurovk.xyz/)
-  * **[vepurovk.fun](http://vepurovk.fun)** (зеркало без TLS)
-* [ovk.tinelix.ru](https://ovk.tinelix.ru)
-  * [зеркало без TLS](http://ovk.tinelix.ru)
+Список инстанций находится в [нашей вики этого репозитория](https://github.com/openvk/openvk/wiki/Instances-(RU)).
 
 ## Могу ли я создать свою собственную инстанцию OpenVK?
 
