@@ -16,14 +16,7 @@ We will release OpenVK as soon as it's ready. As for now, you can:
 
 ## Instances
 
-* **[openvk.su](https://openvk.su/)**
-  * **[openvk.uk](https://openvk.uk)** ([mirror](https://t.me/openvk/1609))
-  * **[openvk.co](http://openvk.co)** (mirror [without TLS](https://t.me/openvk/1654))
-* [social.fetbuk.ru](http://social.fetbuk.ru/)
-* [vepurovk.xyz](http://vepurovk.xyz/)
-  * [vepurovk.fun](http://vepurovk.fun/) (mirror without TLS)
-* [ovk.tinelix.ru](https://ovk.tinelix.ru)
-  * [mirror without TLS](http://ovk.tinelix.ru)
+A list of instances can be found in [our wiki of this repository](https://github.com/openvk/openvk/wiki/Instances).
 
 ## Can I create my own OpenVK instance?
 
