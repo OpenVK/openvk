@@ -11,27 +11,47 @@ use openvk\Web\Models\Repositories\Comments as CommentsRepo;
 
 final class Video extends VKAPIRequestHandler
 {
-    function get(string $videos, int $offset = 0, int $count = 30, int $extended = 0): object
+    function get(int $owner_id, string $videos, int $offset = 0, int $count = 30, int $extended = 0): object
     {
         $this->requireUser();
 
-        $vids = explode(',', $videos);
-
-        foreach($vids as $vid)
-        {
-            $id    = explode("_", $vid);
-
+        if ($videos) {
+            $vids = explode(',', $videos);
+    
+            foreach($vids as $vid)
+            {
+                $id    = explode("_", $vid);
+    
+                $items = [];
+    
+                $video = (new VideosRepo)->getByOwnerAndVID(intval($id[0]), intval($id[1]));
+                if($video) {
+                    $items[] = $video->getApiStructure();
+                }
+            }
+    
+            return (object) [
+                "count" => count($items),
+                "items" => $items
+            ];
+        } else {
+            if ($owner_id > 0) 
+            $user = (new UsersRepo)->get($owner_id);
+            else
+            $this->fail(1, "Not implemented");
+            
+            $videos = (new VideosRepo)->getByUser($user, $offset + 1, $count);
+            $videosCount = (new VideosRepo)->getUserVideosCount($user);
+            
             $items = [];
-
-            $video = (new VideosRepo)->getByOwnerAndVID(intval($id[0]), intval($id[1]));
-            if($video) {
+            foreach ($videos as $video) {
                 $items[] = $video->getApiStructure();
             }
+    
+            return (object) [
+                "count" => $videosCount,
+                "items" => $items
+            ];
         }
-
-        return (object) [
-            "count" => count($items),
-            "items" => $items
-        ];
     }
 }
