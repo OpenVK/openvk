@@ -24,11 +24,6 @@
                 {_followers}
             </a>
         </div>
-        <div class="tab">
-            <a href="javascript:void(0)">
-                {_statistics}
-            </a>
-        </div>
     </div>
 
     <div class="container_gray">
