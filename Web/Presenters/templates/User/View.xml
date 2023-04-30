@@ -74,7 +74,7 @@
             {if !is_null($thisUser) && $user->getId() == $thisUser->getId()} onmouseover="
                 {if is_null($user->getAvatarPhoto()) == false && $user->getAvatarPhoto()->getURL() != "$serverUrl/assets/packages/static/openvk/img/camera_200.png"}
                 _avatarDelete.style.backgroundColor='rgba(0, 0, 0, 0.7)';
-                deleteButton.style.opacity='100%';
+                deleteButton.style.opacity='0.7';
                 {/if}
                 avatarChange.style.backgroundColor='rgba(0, 0, 0, 0.7)';
                 avatarChange.style.opacity='100%';
@@ -82,11 +82,10 @@
                 onmouseleave="
                 {if is_null($user->getAvatarPhoto()) == false && $user->getAvatarPhoto()->getURL() != "$serverUrl/assets/packages/static/openvk/img/camera_200.png"}
                 _avatarDelete.style.backgroundColor='rgba(0, 0, 0, 0)';
-                deleteButton.style.opacity='0%';
+                deleteButton.style.opacity='0';
                 {/if}
                 avatarChange.style.backgroundColor='rgba(0, 0, 0, 0)';
-                avatarChange.style.opacity='0%';
-                //pizdec
+                avatarChange.style.opacity='0';
                 "{/if}>
             <div n:if="!is_null($thisUser) && $user->getId() == $thisUser->getId()">
                 <div id="avatarEdit">
