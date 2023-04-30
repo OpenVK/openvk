@@ -16,7 +16,7 @@
 "password" = "Құпиясөз";
 "registration" = "Тіркелу";
 "forgot_password" = "Құпиясөзіңізді ұмыттыңыз ба?";
-"checkbox_in_registration" = "Мен <a href='/privacy'>құпиялық саясаты</a> мен <a href='/about'>сайт саясатымен</a> келісемін";
+"checkbox_in_registration" = "Мен <a href='/privacy'>құпиялық саясаты</a> мен <a href='/terms'>сайт саясатымен</a> келісемін";
 "checkbox_in_registration_unchecked" = "Тіркелу үшін құпиялылық саясаты мен ережелерімен келісуіңіз керек.";
 "login_failed" = "Жүйеге кіру сәтті аяқталмады";
 "invalid_username_or_password" = "Пайдаланушы аты немесе құпиясөз дұрыс емес.<a href='/restore'>Құпиясөзді ұмыттыңыз ба?</a>";
