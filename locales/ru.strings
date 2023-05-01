@@ -364,6 +364,7 @@
 /* Menus */
 
 "edit_button" = "ред.";
+
 "my_page" = "Моя Страница";
 "my_friends" = "Мои Друзья";
 "my_photos" = "Мои Фотографии";
@@ -375,11 +376,13 @@
 "my_feedback" = "Мои Ответы";
 "my_settings" = "Мои Настройки";
 "bug_tracker" = "Баг-трекер";
+
 "menu_login" = "Вход";
 "menu_registration" = "Регистрация";
 "menu_help" = "Помощь";
 "menu_logout" = "Выйти";
 "menu_support" = "Поддержка";
+
 "header_home" = "главная";
 "header_groups" = "группы";
 "header_people" = "люди";
@@ -389,8 +392,11 @@
 "header_search" = "Поиск";
 "header_login" = "вход";
 "header_registration" = "регистрация";
+
 "left_menu_donate" = "Поддержать";
+
 "footer_about_instance" = "об инстанции";
+"footer_rules" = "правила";
 "footer_blog" = "блог";
 "footer_help" = "помощь";
 "footer_developers" = "разработчикам";

@@ -378,11 +378,13 @@
 "my_feedback" = "Мої Відповіді";
 "my_settings" = "Мої Налаштування";
 "bug_tracker" = "Баг-трекер";
+
 "menu_login" = "Вхід";
 "menu_registration" = "Реєстрація";
 "menu_help" = "Допомога";
 "menu_logout" = "Вийти";
 "menu_support" = "Підтримка";
+
 "header_home" = "головна";
 "header_groups" = "групи";
 "header_people" = "люди";
@@ -392,8 +394,11 @@
 "header_search" = "Пошук";
 "header_login" = "вхід";
 "header_registration" = "реєстрація";
+
 "left_menu_donate" = "Підтримати";
+
 "footer_about_instance" = "про інстанцію";
+"footer_rules" = "правила";
 "footer_blog" = "блог";
 "footer_help" = "допомога";
 "footer_developers" = "розробникам";

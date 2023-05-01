@@ -266,6 +266,7 @@
 
             <div class="navigation_footer">
                 <a href="/about" class="link">{_footer_about_instance}</a>
+                <a href="/terms" class="link">{_footer_rules}</a>
                 <a href="/blog" class="link">{_footer_blog}</a>
                 <a href="/support" class="link">{_footer_help}</a>
                 <a href="/dev" target="_blank" class="link">{_footer_developers}</a>
