@@ -1173,6 +1173,7 @@
 "about_wall_posts_few" = "<b>$1</b> գրություն պատերի վրա";
 "about_wall_posts_many" = "<b>$1</b> գրություն պատերի վրա";
 "about_wall_posts_other" = "<b>$1</b> գրություն պատերի վրա";
+"about_watch_rules" = "տես <a href=\"$1\">այստեղ</a>․";
 
 /* Dialogs */
 

@@ -1079,6 +1079,7 @@
 "about_wall_posts_few" = "<b>$1</b> записи на стінах";
 "about_wall_posts_many" = "<b>$1</b> записів на стінах";
 "about_wall_posts_other" = "<b>$1</b> записів на стінах";
+"about_watch_rules" = "Дивіться <a href=\"$1\">тут</a>.";
 
 /* Dialogs */
 

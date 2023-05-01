@@ -74,6 +74,6 @@
 
     <h4>{_rules}</h4>
     <div style="margin-top: 16px;">
-        {presenter "openvk!Support->knowledgeBaseArticle", "rules"}
+        {tr("about_watch_rules", "/terms")}
     </div>
 {/block}

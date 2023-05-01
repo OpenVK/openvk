@@ -831,6 +831,8 @@
 "about_wall_posts_many" = "<b>$1</b> wpisów na ścianach";
 "about_wall_posts_other" = "<b>$1</b> wpisów na ścianach";
 
+"about_watch_rules" = "Spójrz <a href=\"$1\">tutaj</a>.";
+
 /* Dialogs */
 
 "ok" = "ОК";
