@@ -1184,7 +1184,7 @@
 "about_wall_posts_one" = "<b>1</b> wall post";
 "about_wall_posts_other" = "<b>$1</b> wall posts";
 
-"about_watch_rules" = "Watch <a href=\"$1\">here</a>.";
+"about_watch_rules" = "Watch <a href='$1'>here</a>.";
 
 /* Dialogs */
 
