@@ -134,7 +134,12 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
     u("#_newAvatarPicture").on("click", function(e) {
         MessageBox(tr('new_photo'), 
         "<form id='tmpPhDelF' action='" + u(this).attr("href") + "' method='POST' enctype='multipart/form-data'>"+
-        "<div id='tmpdd' style='text-align:center'>"+tr('good_photo')+"<br><br>"+tr('formats')+"<br><br>"+"<input type='file' accept='image/*' name='ava' value='"+tr('select_file')+"'><br><br>"+tr('upload_problems')+"<br></div>"+
+        "<div id='tmpdd' style='text-align:center'>"+tr('good_photo')+
+	"<br><br>"+tr('formats')+"<br><br>"+
+	"<label class=\"button\" style=\"\">"+tr('browse')+
+        "<input type=\"file\" id=\"ava\" name=\"ava\" style=\"display: none;\" onchange=\"filename.innerHTML=ava.files[0].name\" /></label>"+
+        "<div id=\"filename\" style=\"margin-top: 10px;\"></div>"+
+	"<br><br>"+tr('upload_problems')+"<br></div>"+
         //"<p><input type='checkbox' name='makeAvatarPost' value='1'>"+tr('leave_photo')+"</p>"+
         "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />"+
         "</form>", [
