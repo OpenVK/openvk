@@ -70,38 +70,19 @@
     
     <div class="left_small_block">
         <div style="margin-left: auto;margin-right: auto;display: table;">
-            <div
-            {if !is_null($thisUser) && $user->getId() == $thisUser->getId()} onmouseover="
-                {if is_null($user->getAvatarPhoto()) == false && $user->getAvatarPhoto()->getURL() != "$serverUrl/assets/packages/static/openvk/img/camera_200.png"}
-                _avatarDelete.style.backgroundColor='rgba(0, 0, 0, 0.7)';
-                deleteButton.style.opacity='0.7';
-                {/if}
-                avatarChange.style.backgroundColor='rgba(0, 0, 0, 0.7)';
-                avatarChange.style.opacity='100%';
-                "
-                onmouseleave="
-                {if is_null($user->getAvatarPhoto()) == false && $user->getAvatarPhoto()->getURL() != "$serverUrl/assets/packages/static/openvk/img/camera_200.png"}
-                _avatarDelete.style.backgroundColor='rgba(0, 0, 0, 0)';
-                deleteButton.style.opacity='0';
-                {/if}
-                avatarChange.style.backgroundColor='rgba(0, 0, 0, 0)';
-                avatarChange.style.opacity='0';
-                "{/if}>
-            <div n:if="!is_null($thisUser) && $user->getId() == $thisUser->getId()">
-                <div id="avatarEdit">
-                    <div n:if="is_null($user->getAvatarPhoto()) == false && $user->getAvatarPhoto()->getURL() != '$serverUrl/assets/packages/static/openvk/img/camera_200.png'">
+            <div id="avatarAll">
+                <div n:if="!is_null($thisUser) && $user->getId() == $thisUser->getId()">
+                    <div id="avatarDeleteBlock">
+                        <div id="av" n:if="is_null($user->getAvatarPhoto()) == false && $user->getAvatarPhoto()->getURL() != '$serverUrl/assets/packages/static/openvk/img/camera_200.png'">
                         <a id="_avatarDelete" href="/photo{$user->getAvatarPhoto()->getPrettyId()}/delete">
-                    <img id="deleteButton" src="/assets/packages/static/openvk/img/delete.png"></a>
+                        <img id="deleteButton" src="/assets/packages/static/openvk/img/delete.png"></a>
+                        </div>
                     </div>
-                </div>
-                <ul id="avatarChange">
-                        <li><img src="/assets/packages/static/openvk/img/upload.png" id="uploadIcon">
-                        <a href="/al_avatars" id="_newPicture" onmouseover="_newPicture.style.color = '#D9D9D9';" onmouseleave="_newPicture.style.color = '#B2B2B2';"> {tr("new_photo")}</a>
-                        </li>
-                        <!--<li><img src="/assets/packages/static/openvk/img/miniature.png"><a href="javascript:alert('')" id="_changeMiniature" style="color:#B2B2B2;" onmouseover="_changeMiniature.style.color = '#D9D9D9';" onmouseleave="_changeMiniature.style.color = '#B2B2B2';">{tr("change_miniature")}</a></li>-->
-                        <!--в опенвк не предвидится смена минатюры-->
-                </ul>
-                 
+                <ul id="avatarOptionsBlock">
+                    <li><img src="/assets/packages/static/openvk/img/upload.png" id="uploadIcon">
+                    <a href="/al_avatars" id="_newPicture"> {tr("new_photo")}</a>
+                    </li>
+                </ul>    
             </div>
                 <a href="{$user->getAvatarLink()|nocheck}">
                     <img src="{$user->getAvatarUrl('normal')}"
@@ -111,8 +92,8 @@
                 <script>
                     window.addEventListener("load", event => {
                         let image = avatarImage;
-                        avatarChange.style.marginTop = image.height-32+"px";
-                        avatarChange.style.width = image.width/1.25+"px"
+                        avatarOptionsBlock.style.marginTop = image.height-32+"px";
+                        avatarOptionsBlock.style.width = image.width/1.25+"px"
                     });
                  </script>
             </div>

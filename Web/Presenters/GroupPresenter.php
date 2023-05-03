@@ -250,13 +250,16 @@ final class GroupPresenter extends OpenVKPresenter
             $this->flash("succ", "Изменения сохранены", "Новые данные появятся в вашей группе.");
         }
     }
-    function renderEditAvatar(int $id)
+
+    function renderEditAvatar(int $id): void
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
+        
         $club = $this->clubs->get($id);
-        if(!$club ||!$club->canBeModifiedBy($this->user->identity))
+        if(!$club || !$club->canBeModifiedBy($this->user->identity))
         {
+            
             $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию.");
         }
         if($_FILES["ava"]["error"] === UPLOAD_ERR_OK) {
@@ -278,9 +281,11 @@ final class GroupPresenter extends OpenVKPresenter
                 (new Albums)->getClubAvatarAlbum($club)->addPhoto($photo);
             } catch(ISE $ex) {
                 $name = $album->getName();
+
                 $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию.");
             }
         }
+
         $this->flash("succ", "Фотография сохранена", "Новые данные появятся в вашей группе.");
         $this->redirect("/club$id");
     }
