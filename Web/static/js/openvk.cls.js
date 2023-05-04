@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
         return e.preventDefault();
     });
     u("#_newPicture").on("click", function(e) {
-        MessageBox(tr('new_photo'), 
+        MessageBox(tr('new_photo'),
         "<form id='tmpPhDelF' action='" + u(this).attr("href") + "' method='POST' enctype='multipart/form-data'>"+
         "<div id='tmpdd' style='text-align:center'>"+tr('formats')+"<br><br>"+
         "<label class=\"button\" style=\"\">"+tr('browse')+
