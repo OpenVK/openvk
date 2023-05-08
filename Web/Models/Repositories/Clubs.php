@@ -73,11 +73,17 @@ class Clubs
 	
     function getOwnedClubs(int $id): \Traversable
     {
-		# infoapp
-        $result = DatabaseConnection::i()->getConnection()->query("SELECT * FROM `groups` WHERE `owner` = $id ORDER BY `id`");
 
+        $result    = DatabaseConnection::i()->getConnection()->query("SELECT * FROM `groups` WHERE `owner` = $id ORDER BY `id`;");
+        $coadmins  = DatabaseConnection::i()->getConnection()->query("SELECT * FROM `group_coadmins` WHERE `user` = $id ORDER BY `user`;");
+        
         foreach($result as $entry)
             yield $this->get($entry->id);
+        
+        foreach($coadmins as $coadmin)
+            yield $this->get($coadmin->club);
+        
     }
+	
     use \Nette\SmartObject;
 }
