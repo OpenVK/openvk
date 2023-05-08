@@ -71,7 +71,7 @@ class Clubs
         */
     }
 	
-    function getOwnedClubs(int $id): \Traversable
+    function getWriteableClubs(int $id): \Traversable
     {
 
         $result    = DatabaseConnection::i()->getConnection()->query("SELECT * FROM `groups` WHERE `owner` = $id ORDER BY `id`;");

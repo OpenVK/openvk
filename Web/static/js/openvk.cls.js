@@ -216,7 +216,7 @@ function repostPost(id, hash, owner) {
 		Function.noop
 	]);
     let xhrj = new XMLHttpRequest();
-    xhrj.open("GET", "id"+owner+"/getOwnedClubs?hash="+hash)
+    xhrj.open("GET", "id"+owner+"/getWriteableClubs?hash="+hash)
     xhrj.send()
     xhrj.onload = () =>
     {

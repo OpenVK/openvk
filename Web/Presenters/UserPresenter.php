@@ -708,12 +708,12 @@ final class UserPresenter extends OpenVKPresenter
         }
     }
 
-	function renderOwnedClubs(int $id)
+	function renderGetWriteableClubs(int $id)
     {
         $this->assertUserLoggedIn();
 
         if($this->user->id == $id) {
-            $clubs   = iterator_to_array((new Clubs)->getOwnedClubs($id));
+            $clubs   = iterator_to_array((new Clubs)->getWriteableClubs($id));
             $json    = [];
 
             foreach($clubs as $club)
