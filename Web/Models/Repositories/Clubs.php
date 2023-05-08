@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Repositories;
 use openvk\Web\Models\Entities\Club;
-use openvk\Web\Models\Repositories\Aliases;
+use openvk\Web\Models\Repositories\{Aliases, Users};
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
 
@@ -70,6 +70,14 @@ class Clubs
             ];
         */
     }
-    
+	
+    function getOwnedClubs(int $id): \Traversable
+    {
+		# infoapp
+        $result = DatabaseConnection::i()->getConnection()->query("SELECT * FROM `groups` WHERE `owner` = $id ORDER BY `id`");
+
+        foreach($result as $entry)
+            yield $this->get($entry->id);
+    }
     use \Nette\SmartObject;
 }

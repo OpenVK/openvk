@@ -453,25 +453,37 @@ final class Wall extends VKAPIRequestHandler
         return (object)["post_id" => $post->getVirtualId()];
     }
 
-    function repost(string $object, string $message = "") {
+    function repost(string $object, string $message = "", int $group_id = 0) {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
         $postArray;
         if(preg_match('/wall((?:-?)[0-9]+)_([0-9]+)/', $object, $postArray) == 0)
             $this->fail(100, "One of the parameters specified was missing or invalid: object is incorrect");
-
+        
         $post = (new PostsRepo)->getPostById((int) $postArray[1], (int) $postArray[2]);
         if(!$post || $post->isDeleted()) $this->fail(100, "One of the parameters specified was missing or invalid");
-
+        
         $nPost = new Post;
         $nPost->setOwner($this->user->getId());
-        $nPost->setWall($this->user->getId());
+        if($group_id > 0)
+        {
+            $club = (new ClubsRepo)->get($group_id);
+            if(!$club || !$club->canBeModifiedBy($this->user))
+            {
+                $this->fail(42, "Invalid group");
+            }
+            $nPost->setWall($group_id*-1);
+        }
+        else
+        {
+            $nPost->setWall($this->user->getId());
+        }
         $nPost->setContent($message);
         $nPost->setApi_Source_Name($this->getPlatform());
         $nPost->save();
         $nPost->attach($post);
-
+        
         if($post->getOwner(false)->getId() !== $this->user->getId() && !($post->getOwner() instanceof Club))
             (new RepostNotification($post->getOwner(false), $post, $this->user->identity))->emit();
 
@@ -482,6 +494,7 @@ final class Wall extends VKAPIRequestHandler
             "likes_count" => $post->getLikesCount()
         ];
     }
+
 
     function getComments(int $owner_id, int $post_id, bool $need_likes = true, int $offset = 0, int $count = 10, string $fields = "sex,screen_name,photo_50,photo_100,online_info,online", string $sort = "asc", bool $extended = false) {
         $this->requireUser();

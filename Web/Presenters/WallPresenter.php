@@ -301,7 +301,7 @@ final class WallPresenter extends OpenVKPresenter
         
         if(!is_null($poll))
             $post->attach($poll);
-        
+		 
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
         
@@ -364,20 +364,50 @@ final class WallPresenter extends OpenVKPresenter
         
         $post = $this->posts->getPostById($wall, $post_id);
         if(!$post || $post->isDeleted()) $this->notFound();
-        
+        $where = $this->postParam("type") ?? "wall";
+        $groupId = NULL;
+        $flags = 0;
+        if($where == "group")
+        {
+            $groupId = $this->postParam("groupId");
+        }
         if(!is_null($this->user)) {
             $nPost = new Post;
-            $nPost->setOwner($this->user->id);
-            $nPost->setWall($this->user->id);
+            if($where == "wall")
+            {
+                $nPost->setOwner($this->user->id);
+                $nPost->setWall($this->user->id);
+            }
+            elseif($where == "group")
+            {
+                $nPost->setOwner($this->user->id);
+                
+                if($this->postParam("asGroup") == 1)
+                {
+                    $flags |= 0b10000000;
+                }
+                if($this->postParam("signed") == 1)
+                {
+                    $flags |= 0b01000000;
+                }
+                $nPost->setWall($groupId*-1);
+            }
             $nPost->setContent($this->postParam("text"));
+            $nPost->setFlags($flags);
             $nPost->save();
             $nPost->attach($post);
             
             if($post->getOwner(false)->getId() !== $this->user->identity->getId() && !($post->getOwner() instanceof Club))
                 (new RepostNotification($post->getOwner(false), $post, $this->user->identity))->emit();
         };
-        
-        $this->returnJson(["wall_owner" => $this->user->identity->getId()]);
+        if($where == "wall")
+        {
+            $this->returnJson(["wall_owner" => $this->user->identity->getId()]);
+        }
+        else
+        {
+            $this->returnJson(["wall_owner" => $groupId*-1]);
+        }
     }
     
     function renderDelete(int $wall, int $post_id): void

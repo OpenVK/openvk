@@ -65,7 +65,6 @@ function toggleMenu(id) {
         });
     }
 }
-
 document.addEventListener("DOMContentLoaded", function() { //BEGIN
 
     u("#_photoDelete").on("click", function(e) {
@@ -88,7 +87,6 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
         
         return e.preventDefault();
     });
-
     /* @rem-pai why this func wasn't named as "#_deleteDialog"? It looks universal IMO */
 
     u("#_noteDelete").on("click", function(e) {
@@ -170,12 +168,37 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
 
 }); //END ONREADY DECLS
 
-function repostPost(id, hash) {
-	uRepostMsgTxt  = tr('your_comment') + ": <textarea id='uRepostMsgInput_"+id+"'></textarea><br/><br/>";
-	
+function repostPost(id, hash, owner) {
+	uRepostMsgTxt  = `
+    <b>${tr('auditory')}:</b> <br/>
+    <input type="radio" name="type" onchange="signs.setAttribute('hidden', 'hidden');groupId.setAttribute('hidden', 'hidden')" value="wall" checked>${tr("in_wall")}<br/>
+    <input type="radio" name="type" onchange="signs.removeAttribute('hidden');groupId.removeAttribute('hidden')" value="group">${tr("in_group")}<br/>
+    <select style="width:50%;" id="groupId" name="groupId" hidden>
+    </select><br/>
+    <b>${tr('your_comment')}:</b> 
+    <textarea id='uRepostMsgInput_${id}'></textarea>
+    <div id="signs" hidden>
+    <label><input type="checkbox" id="asgroup" name="asGroup" value="1">${tr('post_as_group')}</label><br>
+    <label><input onchange="asgroup.checked = true" type="checkbox" id="signed" name="signed" value="1">${tr('add_signature')}</label>
+    </div>
+    <br/><br/>`;
+    let clubs = [];
 	MessageBox(tr('share'), uRepostMsgTxt, [tr('send'), tr('cancel')], [
 		(function() {
 			text = document.querySelector("#uRepostMsgInput_"+id).value;
+            type = "user";
+            radios = document.querySelectorAll('input[name="type"]')
+            for(const r of radios)
+            {
+                if(r.checked)
+                {
+                    type = r.value;
+                    break;
+                }
+            }
+            groupId = document.querySelector("#groupId").value;
+            asGroup = asgroup.value;
+            signed = signed.value;
 			hash = encodeURIComponent(hash);
 			xhr = new XMLHttpRequest();
 			xhr.open("POST", "/wall"+id+"/repost?hash="+hash, true);
@@ -188,10 +211,21 @@ function repostPost(id, hash) {
                     NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.location.href = "/wall" + jsonR.wall_owner});
 				}
 			});
-			xhr.send('text=' + encodeURI(text));
+			xhr.send('text=' + encodeURI(text) + '&type=' + encodeURI(type) + '&groupId=' + encodeURI(groupId) + "&asGroup="+encodeURI(asGroup) + "&signed="+encodeURI(signed));
 		}),
 		Function.noop
 	]);
+    let xhrj = new XMLHttpRequest();
+    xhrj.open("GET", "id"+owner+"/getOwnedClubs?hash="+hash)
+    xhrj.send()
+    xhrj.onload = () =>
+    {
+        clubs = JSON.parse(xhrj.responseText);
+        for(const el of clubs)
+        {
+            document.getElementById("groupId").insertAdjacentHTML("beforeend", `<option value="${el.id}">${el.name}</option>`)
+        }
+    }
 }
 
 function setClubAdminComment(clubId, adminId, hash) {

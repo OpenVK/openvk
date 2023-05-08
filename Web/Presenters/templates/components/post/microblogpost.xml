@@ -96,7 +96,7 @@
                         <a n:if="!($forceNoCommentsLink ?? false) && $commentsCount == 0" href="javascript:expand_comment_textarea({$commentTextAreaId})">{_comment}</a>
                         
                         <div class="like_wrap">
-                            <a n:if="!($forceNoShareLink ?? false)" class="post-share-button" href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')">
+                            <a n:if="!($forceNoShareLink ?? false)" class="post-share-button" href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}', {$thisUser->getId()})">
                                 <div class="repost-icon" style="opacity: 0.4;"></div>
                                 <span class="likeCnt">{if $post->getRepostCount() > 0}{$post->getRepostCount()}{/if}</span>
                             </a>
