@@ -2086,6 +2086,7 @@ table td[width="120"] {
     height: 40px;
     background: linear-gradient(#fff, #eee);
     box-shadow: inset 0px 1px 0px #bbb, inset 0px 2px 0px #ddd;
+    z-index: 2048;
 }
 
 .cookies-popup .contanier {
