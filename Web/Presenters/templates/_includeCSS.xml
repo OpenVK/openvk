@@ -9,6 +9,7 @@
             {css "css/bsdn.css"}
             {css "css/dialog.css"}
             {css "css/notifications.css"}
+            {css "css/avataredit.css"}
 
             {if $isXmas}
                 {css "css/xmas.css"}
@@ -25,6 +26,7 @@
         {css "css/bsdn.css"}
         {css "css/dialog.css"}
         {css "css/notifications.css"}
+        {css "css/avataredit.css"}
 
         {if $isXmas}
             {css "css/xmas.css"}
@@ -48,6 +50,7 @@
     {css "css/dialog.css"}
     {css "css/nsfw-posts.css"}
     {css "css/notifications.css"}
+    {css "css/avataredit.css"}
 
     {if $isXmas}
         {css "css/xmas.css"}

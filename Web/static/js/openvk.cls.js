@@ -440,7 +440,7 @@ function escapeHtml(text) {
     return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
-function addAvatarImage(hash, groupStrings = false, groupId = 0)
+function addAvatarImage(groupStrings = false, groupId = 0)
 {
     let inputname = groupStrings == true ? 'ava' : 'blob';
     let body = `
@@ -452,7 +452,6 @@ function addAvatarImage(hash, groupStrings = false, groupId = 0)
         <input accept="image/*" type="file" name="${inputname}" hidden id="${inputname}" style="display: none;" onchange="uploadAvatar(${groupStrings}, ${groupStrings == true ? groupId : null})">
         </label><br><br>
         <p>${tr('troubles_avatar')}</p>
-        <input type="hidden" value="${hash}">
     </div>
     `
     let msg = MessageBox(tr('uploading_new_image'), body, [
@@ -465,7 +464,7 @@ function addAvatarImage(hash, groupStrings = false, groupId = 0)
     msg.attr("style", "width: 600px;");
 }
 
-function uploadAvatar(group = false, group_id = 0, hash)
+function uploadAvatar(group = false, group_id = 0)
 {
     loader.style.display = "block";
     uploadbtn.setAttribute("hidden", "hidden")
@@ -473,6 +472,8 @@ function uploadAvatar(group = false, group_id = 0, hash)
     let formData = new FormData();
     let bloborava = group == false ? "blob" : "ava"
     formData.append(bloborava, document.getElementById(bloborava).files[0]);
+    formData.append("ava", 1)
+    formData.append("hash", u("meta[name=csrf]").attr("value"))
     xhr.open("POST", group == true ? "/club"+group_id+"/al_avatar" : "/al_avatars")
     xhr.onload = () => {
         let json = JSON.parse(xhr.responseText);
@@ -498,7 +499,7 @@ function uploadAvatar(group = false, group_id = 0, hash)
     xhr.send(formData)
 }
 
-function deleteAvatar(avatar, hash)
+function deleteAvatar(avatar)
 {
     let body = `
         <p>${tr("deleting_avatar_sure")}</p>
@@ -516,7 +517,7 @@ function deleteAvatar(avatar, hash)
                 location.reload()
             }
             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-            xhr.send("hash="+hash)
+            xhr.send("hash="+u("meta[name=csrf]").attr("value"))
         }),
         (function() {
             u("#tmpPhDelF").remove();

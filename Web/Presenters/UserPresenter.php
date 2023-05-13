@@ -334,11 +334,14 @@ final class UserPresenter extends OpenVKPresenter
         $post->setFlags($flags);
         $post->save();
         $post->attach($photo);
-
-        $this->returnJson([
-            "url" => $photo->getURL(),
-            "id" => $photo->getPrettyId()
-        ]);
+        if($this->postParam("ava", true) == (int)1) {
+            $this->returnJson([
+                "url" => $photo->getURL(),
+                "id" => $photo->getPrettyId()
+            ]);
+        } else {
+            $this->flashFail("succ", tr("photo_saved"), tr("photo_saved_comment"));
+        }
     }
     
     function renderSettings(): void
