@@ -22,6 +22,10 @@
                     <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
                     {if $post->isDeactivationMessage()}
                         {$author->isFemale() ? tr($deac . "_f") : tr($deac . "_m")}
+                    {elseif $post->isUpdateAvatarMessage() && !$post->isPostedOnBehalfOfGroup()}
+                        {$author->isFemale() ? tr("upd_f") : tr("upd_m")}
+                    {elseif $post->isUpdateAvatarMessage() && $post->isPostedOnBehalfOfGroup()}
+                        {tr("upd_g")}
                     {elseif $post->isPostedOnBehalfOfGroup()}
                         {_post_writes_g}
                     {else}

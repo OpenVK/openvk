@@ -99,6 +99,11 @@ class Post extends Postable
         return (($this->getRecord()->flags & 0b00100000) > 0) && ($this->getRecord()->owner > 0);
     }
     
+    function isUpdateAvatarMessage(): bool
+    {
+        return (($this->getRecord()->flags & 0b00010000) > 0) && ($this->getRecord()->owner > 0);
+    }
+
     function isExplicit(): bool
     {
         return (bool) $this->getRecord()->nsfw;
