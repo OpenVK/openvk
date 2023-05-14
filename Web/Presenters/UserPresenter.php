@@ -39,6 +39,7 @@ final class UserPresenter extends OpenVKPresenter
             }
         } else {
             $this->template->albums      = (new Albums)->getUserAlbums($user);
+            $this->template->avatarAlbum = (new Albums)->getUserAvatarAlbum($user);
             $this->template->albumsCount = (new Albums)->getUserAlbumsCount($user);
             $this->template->videos      = (new Videos)->getByUser($user, 1, 2);
             $this->template->videosCount = (new Videos)->getUserVideosCount($user);
@@ -301,7 +302,7 @@ final class UserPresenter extends OpenVKPresenter
         $this->redirect($user->getURL());
     }
     
-    function renderSetAvatar(): void
+    function renderSetAvatar()
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
@@ -321,8 +322,26 @@ final class UserPresenter extends OpenVKPresenter
         $album->addPhoto($photo);
         $album->setEdited(time());
         $album->save();
-        
-        $this->flashFail("succ", tr("photo_saved"), tr("photo_saved_comment"));
+
+        $flags = 0;
+        $flags |= 0b00010000;
+
+        $post = new Post;
+        $post->setOwner($this->user->id);
+        $post->setWall($this->user->id);
+        $post->setCreated(time());
+        $post->setContent("");
+        $post->setFlags($flags);
+        $post->save();
+        $post->attach($photo);
+        if($this->postParam("ava", true) == (int)1) {
+            $this->returnJson([
+                "url" => $photo->getURL(),
+                "id" => $photo->getPrettyId()
+            ]);
+        } else {
+            $this->flashFail("succ", tr("photo_saved"), tr("photo_saved_comment"));
+        }
     }
     
     function renderSettings(): void

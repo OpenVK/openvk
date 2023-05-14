@@ -189,6 +189,8 @@ routes:
           club: "club|public|event"
     - url: "/club{num}/edit"
       handler: "Group->edit"
+    - url: "/club{num}/al_avatar"
+      handler: "Group->setAvatar"
     - url: "/club{num}/backdrop"
       handler: "Group->editBackdrop"
     - url: "/club{num}/stats"

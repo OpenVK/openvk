@@ -351,6 +351,30 @@
 "albums_list_one" = "You have one album";
 "albums_list_other" = "You have $1 albums";
 
+"add_image" = "Add image";
+"add_image_group" = "Upload image";
+"upload_new_picture" = "Upload new photo";
+"uploading_new_image" = "Uploading new photo";
+"friends_avatar" = "It will be easier for friends to recognize you if you upload your real picture.";
+"groups_avatar" = "Good photo can make your group more recognizable.";
+"formats_avatar" = "You can upload an image in JPG, GIF or PNG format.";
+"troubles_avatar" = "If you're having trouble uploading, try selecting a smaller photo.";
+"webcam_avatar" = "If your computer is equipped with a webcam, you can <a href='javascript:'>take a snapshot</a>.";
+
+"update_avatar_notification" = "Profile photo was updated";
+"update_avatar_description" = "Click to watch";
+
+"deleting_avatar" = "Deleting photo";
+"deleting_avatar_sure" = "Do you sure you want to delete avatar?";
+
+"deleted_avatar_notification" = "Picture successfully deleted";
+
+"save_changes" = "Save changes";
+
+"upd_m" = "updated his profile picture";
+"upd_f" = "updated her profile picture";
+"upd_g" = "updated group's picture";
+
 /* Notes */
 
 "notes" = "Notes";

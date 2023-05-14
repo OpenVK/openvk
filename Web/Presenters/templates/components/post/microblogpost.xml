@@ -27,6 +27,8 @@
                     <a href="{$author->getURL()}"><b>{$author->getCanonicalName()}</b></a>
                     <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
                     {$post->isDeactivationMessage() ? ($author->isFemale() ? tr($deac . "_f") : tr($deac . "_m"))}
+                    {$post->isUpdateAvatarMessage() && !$post->isPostedOnBehalfOfGroup() ? ($author->isFemale() ? tr("upd_f") : tr("upd_m"))}
+                    {$post->isUpdateAvatarMessage() && $post->isPostedOnBehalfOfGroup() ? tr("upd_g") : ""}
                     {if ($onWallOf ?? false) &&!$post->isPostedOnBehalfOfGroup() && $post->getOwnerPost() !== $post->getTargetWall()}
                         {var $wallOwner = $post->getWallOwner()}
                         <a href="{$wallOwner->getURL()}" class="mention" data-mention-ref="{$post->getTargetWall()}">
