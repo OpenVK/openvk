@@ -2,7 +2,7 @@
 namespace openvk\VKAPI\Handlers;
 use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
 use openvk\Web\Models\Repositories\Users as UsersRepo;
-use openvk\Web\Models\Entities\{Club};
+use openvk\Web\Models\Entities\Club;
 
 final class Groups extends VKAPIRequestHandler
 {
@@ -292,51 +292,16 @@ final class Groups extends VKAPIRequestHandler
                 int    $topics = NULL, 
                 int    $adminlist = NULL,
                 int    $topicsAboveVall = NULL,
-                int    $hideFromGlobalFeed = NULL,
-                # дальше для совместимости с вк
-                int    $subject = NULL, 
-                int    $access = NULL, 
-                string $email = NULL, 
-                string $phone = NULL, 
-                string $rss = NULL, 
-                int    $event_start_date = NULL, 
-                int    $event_finish_date = NULL, 
-                int    $event_group_id = NULL,
-                int    $public_category = NULL, 
-                int    $public_subcategory = NULL, 
-                int    $public_date = NULL, 
-                int    $photos = NULL, 
-                int    $video = NULL, 
-                bool   $links = NULL, 
-                bool   $events = NULL,
-                bool   $places = NULL, 
-                bool   $contacts = NULL, 
-                bool   $wiki = NULL,
-                bool   $messages = NULL,
-                bool   $articles = NULL,
-                bool   $addresses = NULL,
-                bool   $age_limits = NULL,
-                bool   $market = NULL,
-                bool   $obscene_filter = NULL,
-                bool   $obscene_stopwords = NULL,
-                string $obscene_words = NULL,
-                int    $main_section = NULL,
-                int    $secondary_section = NULL,
-                int    $country = NULL,
-                int    $city = NULL
-                )
+                int    $hideFromGlobalFeed = NULL)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
         $club = (new ClubsRepo)->get($group_id);
 
-        if(!$club)
-            $this->fail(203, "Club not found");
-        if(!$club || !$club->canBeModifiedBy($this->getUser()))
-            $this->fail(15, "You can't modify this group.");
-        if(!is_null($screen_name) && !$club->setShortcode($screen_name))
-            $this->fail(103, "Invalid shortcode.");
+        if(!$club) $this->fail(203, "Club not found");
+        if(!$club || !$club->canBeModifiedBy($this->getUser())) $this->fail(15, "You can't modify this group.");
+        if(!empty($screen_name) && !$club->setShortcode($screen_name)) $this->fail(103, "Invalid shortcode.");
 
         !is_null($title)              ? $club->setName($title) : NULL;
         !is_null($description)        ? $club->setAbout($description) : NULL;
@@ -382,8 +347,7 @@ final class Groups extends VKAPIRequestHandler
         $filds = explode(",", $fields);
 
         $i = 0;
-        foreach($members as $member)
-        {
+        foreach($members as $member) {
             if($i > $count) {
                 break;
             }
@@ -394,35 +358,95 @@ final class Groups extends VKAPIRequestHandler
             ];
 
             foreach($filds as $fild) {
-                $fild == "bdate" ?                     $arr->items[$i]->bdate = $member->getBirthday()->format('%e.%m.%Y') : NULL;
-                $fild == "can_post" ?                  $arr->items[$i]->can_post = $club->canBeModifiedBy($member) : NULL;
-                $fild == "can_see_all_posts" ?         $arr->items[$i]->can_see_all_posts = 1 : NULL;
-                $fild == "can_see_audio" ?             $arr->items[$i]->can_see_audio = 0 : NULL; # lul
-                $fild == "can_write_private_message" ? $arr->items[$i]->can_write_private_message = 0 : NULL;
-                $fild == "common_count" ?              $arr->items[$i]->common_count = 420 : NULL; # я хэзэ чё ето
-                $fild == "connections" ?               $arr->items[$i]->connections = 1 : NULL;
-                $fild == "contacts" ?                  $arr->items[$i]->contacts = $member->getContactEmail() : NULL;
-                $fild == "country" ?                   $arr->items[$i]->country = 1 : NULL;
-                $fild == "domain" ?                    $arr->items[$i]->domain = "" : NULL;
-                $fild == "education" ?                 $arr->items[$i]->education = "" : NULL;
-                $fild == "has_mobile" ?                $arr->items[$i]->has_mobile = false : NULL;
-                $fild == "last_seen" ?                 $arr->items[$i]->last_seen = $member->getOnline()->timestamp() : NULL;
-                $fild == "lists" ?                     $arr->items[$i]->lists = "" : NULL;
-                $fild == "online" ?                    $arr->items[$i]->online = $member->isOnline() : NULL;
-                $fild == "online_mobile" ?             $arr->items[$i]->online_mobile = $member->getOnlinePlatform() == "android" || $member->getOnlinePlatform() == "iphone" || $member->getOnlinePlatform() == "mobile" : NULL;
-                $fild == "photo_100" ?                 $arr->items[$i]->photo_100 = $member->getAvatarURL("tiny") : NULL;
-                $fild == "photo_200" ?                 $arr->items[$i]->photo_200 = $member->getAvatarURL("normal") : NULL;
-                $fild == "photo_200_orig" ?            $arr->items[$i]->photo_200_orig = $member->getAvatarURL("normal") : NULL;
-                $fild == "photo_400_orig" ?            $arr->items[$i]->photo_400_orig = $member->getAvatarURL("normal") : NULL;
-                $fild == "photo_max" ?                 $arr->items[$i]->photo_max = $member->getAvatarURL("original") : NULL;
-                $fild == "photo_max_orig" ?            $arr->items[$i]->photo_max_orig = $member->getAvatarURL() : NULL;
-                $fild == "relation" ?                  $arr->items[$i]->relation = $member->getMaritalStatus() : NULL;
-                $fild == "relatives" ?                 $arr->items[$i]->relatives = 0 : NULL;
-                $fild == "schools" ?                   $arr->items[$i]->schools = 0 : NULL;
-                $fild == "sex" ?                       $arr->items[$i]->sex = $member->isFemale() ? 1 : 2 : NULL;
-                $fild == "site" ?                      $arr->items[$i]->site = $member->getWebsite() : NULL;
-                $fild == "status" ?                    $arr->items[$i]->status = $member->getStatus() : NULL;
-                $fild == "universities" ?              $arr->items[$i]->universities = 0 : NULL;
+                switch($fild) {
+                    case "bdate":
+                        $arr->items[$i]->bdate = $member->getBirthday()->format('%e.%m.%Y');
+                        break;
+                    case "can_post":
+                        $arr->items[$i]->can_post = $club->canBeModifiedBy($member);
+                        break;
+                    case "can_see_all_posts":
+                        $arr->items[$i]->can_see_all_posts = 1;
+                        break;
+                    case "can_see_audio":
+                        $arr->items[$i]->can_see_audio = 0;
+                        break;
+                    case "can_write_private_message":
+                        $arr->items[$i]->can_write_private_message = 0;
+                        break;
+                    case "common_count":
+                        $arr->items[$i]->common_count = 420;
+                        break;
+                    case "connections":
+                        $arr->items[$i]->connections = 1;
+                        break;
+                    case "contacts":
+                        $arr->items[$i]->contacts = $member->getContactEmail();
+                        break;
+                    case "country":
+                        $arr->items[$i]->country = 1;
+                        break;
+                    case "domain":
+                        $arr->items[$i]->domain = "";
+                        break;
+                    case "education":
+                        $arr->items[$i]->education = "";
+                        break;
+                    case "has_mobile":
+                        $arr->items[$i]->has_mobile = false;
+                        break;
+                    case "last_seen":
+                        $arr->items[$i]->last_seen = $member->getOnline()->timestamp();
+                        break;
+                    case "lists":
+                        $arr->items[$i]->lists = "";
+                        break;
+                    case "online":
+                        $arr->items[$i]->online = $member->isOnline();
+                        break;
+                    case "online_mobile":
+                        $arr->items[$i]->online_mobile = $member->getOnlinePlatform() == "android" || $member->getOnlinePlatform() == "iphone" || $member->getOnlinePlatform() == "mobile";
+                        break;
+                    case "photo_100":
+                        $arr->items[$i]->photo_100 = $member->getAvatarURL("tiny");
+                        break;
+                    case "photo_200":
+                        $arr->items[$i]->photo_200 = $member->getAvatarURL("normal");
+                        break;
+                    case "photo_200_orig":
+                        $arr->items[$i]->photo_200_orig = $member->getAvatarURL("normal");
+                        break;
+                    case "photo_400_orig":
+                        $arr->items[$i]->photo_400_orig = $member->getAvatarURL("normal");
+                        break;
+                    case "photo_max":
+                        $arr->items[$i]->photo_max = $member->getAvatarURL("original");
+                        break;
+                    case "photo_max_orig":
+                        $arr->items[$i]->photo_max_orig = $member->getAvatarURL();
+                        break;
+                    case "relation":
+                        $arr->items[$i]->relation = $member->getMaritalStatus();
+                        break;
+                    case "relatives":
+                        $arr->items[$i]->relatives = 0;
+                        break;
+                    case "schools":
+                        $arr->items[$i]->schools = 0;
+                        break;
+                    case "sex":
+                        $arr->items[$i]->sex = $member->isFemale() ? 1 : 2;
+                        break;
+                    case "site":
+                        $arr->items[$i]->site = $member->getWebsite();
+                        break;
+                    case "status":
+                        $arr->items[$i]->status = $member->getStatus();
+                        break;
+                    case "universities":
+                        $arr->items[$i]->universities = 0;
+                        break;
+                }
             }
             $i++;
         }

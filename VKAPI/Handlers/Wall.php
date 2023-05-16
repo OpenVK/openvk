@@ -409,7 +409,7 @@ final class Wall extends VKAPIRequestHandler
         if($signed == 1)
             $flags |= 0b01000000;
 
-        if(empty($message) && !$photo && !$video)
+        if(empty($message) && empty($attachments))
             $this->fail(100, "Required parameter 'message' missing.");
 
         try {
@@ -426,32 +426,47 @@ final class Wall extends VKAPIRequestHandler
         }
 
         if(!empty($attachments)) {
-            $att = explode(" ", $attachments);
-            $attachmentType = $att[0]; 
-            # Аттачи такого вида: [тип] [id владельца]_[id вложения]
-            # Пример: photo 1_1
+            $attachmentsArr = explode(",", $attachments);
+            # Аттачи такого вида: [тип][id владельца]_[id вложения]
+            # Пример: photo1_1
 
-            $attachmentOwner = (int)explode("_", $att[1])[0];
-            $attachmentId    = (int)end(explode("_", $att[1]));
+            if(count($attachmentsArr) > 10)
+                $this->fail(50, "Error: too many attachments");
+            
+            foreach($attachmentsArr as $attac) {
+                $attachmentType = NULL;
 
-            $attacc = NULL;
+                if(str_contains($attac, "photo"))
+                    $attachmentType = "photo";
+                elseif(str_contains($attac, "video"))
+                    $attachmentType = "video";
+                else
+                    $this->fail(205, "Unknown attachment type");
 
-            if($attachmentType == "photo") {
-                $attacc = (new PhotosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                if(is_null($attacc))
-                    $this->fail(100, "Photo does not exists");
-                if($attacc->getOwner()->getId() != $this->getUser()->getId())
-                    $this->fail(43, "You do not have access to this photo");
-                
-                $post->attach($attacc);
-            } elseif($attachmentType == "video") {
-                $attacc = (new VideosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                if(!$attacc)
-                    $this->fail(100, "Video does not exists");
-                if($attacc->getOwner()->getId() != $this->getUser()->getId())
-                    $this->fail(43, "You do not have access to this video");
+                $attachment = str_replace($attachmentType, "", $attac);
 
-                $post->attach($attacc);
+                $attachmentOwner = (int)explode("_", $attachment)[0];
+                $attachmentId    = (int)end(explode("_", $attachment));
+
+                $attacc = NULL;
+
+                if($attachmentType == "photo") {
+                    $attacc = (new PhotosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
+                    if(is_null($attacc))
+                        $this->fail(100, "Photo does not exists");
+                    if($attacc->getOwner()->getId() != $this->getUser()->getId())
+                        $this->fail(43, "You do not have access to this photo");
+                    
+                    $post->attach($attacc);
+                } elseif($attachmentType == "video") {
+                    $attacc = (new VideosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
+                    if(!$attacc)
+                        $this->fail(100, "Video does not exists");
+                    if($attacc->getOwner()->getId() != $this->getUser()->getId())
+                        $this->fail(43, "You do not have access to this video");
+
+                    $post->attach($attacc);
+                }
             }
         }
 

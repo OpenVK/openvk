@@ -262,12 +262,12 @@ class Club extends RowModel
         return $subbed && ($this->getOpennesStatus() === static::CLOSED ? $this->isSubscriptionAccepted($user) : true);
     }
     
-    function getFollowersQuery(): GroupedSelection
+    function getFollowersQuery(string $sort = "follower ASC"): GroupedSelection
     {
         $query = $this->getRecord()->related("subscriptions.target");
         
         if($this->getOpennesStatus() === static::OPEN) {
-            $query = $query->where("model", "openvk\\Web\\Models\\Entities\\Club");
+            $query = $query->where("model", "openvk\\Web\\Models\\Entities\\Club")->order($sort);
         } else {
             return false;
         }
@@ -280,9 +280,9 @@ class Club extends RowModel
         return sizeof($this->getFollowersQuery());
     }
     
-    function getFollowers(int $page = 1): \Traversable
+    function getFollowers(int $page = 1, int $perPage = 6, string $sort = "follower ASC"): \Traversable
     {
-        $rels = $this->getFollowersQuery()->page($page, 6);
+        $rels = $this->getFollowersQuery($sort)->page($page, $perPage);
         
         foreach($rels as $rel) {
             $rel = (new Users)->get($rel->follower);

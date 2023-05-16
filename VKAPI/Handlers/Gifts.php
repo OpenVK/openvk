@@ -6,7 +6,7 @@ use openvk\Web\Models\Entities\Notifications\GiftNotification;
 
 final class Gifts extends VKAPIRequestHandler
 {
-    function get(int $user_id, int $count = 100, int $offset = 0)
+    function get(int $user_id, int $count = 10, int $offset = 0)
     {
         $this->requireUser();
 
@@ -54,10 +54,17 @@ final class Gifts extends VKAPIRequestHandler
         $this->willExecuteWriteAction();
 
         $user = (new UsersRepo)->get((int) $user_ids);
+        if(OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] == false)
+            $this->fail(105, "Commerce is disabled on this instance");
+        
         if(!$user || $user->isDeleted())
             $this->fail(177, "Invalid user");
-        
+
         $gift  = (new GiftsRepo)->get($gift_id);
+
+        if(!$gift)
+            $this->fail(165, "Invalid gift");
+        
         $price = $gift->getPrice();
         $coinsLeft = $this->getUser()->getCoins() - $price;
 
@@ -103,128 +110,53 @@ final class Gifts extends VKAPIRequestHandler
     }
 
     # этих методов не было в ВК, но я их добавил чтобы можно было отобразить список подарков
-    function getCategories(bool $extended = false, int $count = 10, int $offset = 0)
+    function getCategories(bool $extended = false, int $page = 1)
     {
-        $cats = (new GiftsRepo)->getCategories(1, $count);
+        $cats = (new GiftsRepo)->getCategories($page);
         $categ = [];
-        $i = 1;
+        $i = 0;
 
         foreach($cats as $cat) {
-            if($i > $count) 
-                break;
-            if($i > $offset) {
-                $categ[] = [
-                    "name"        => $cat->getName(),
-                    "description" => $cat->getDescription(),
-                    "id"          => $cat->getId(),
-                    "thumbnail"   => $cat->getThumbnailURL(),
-                    "localizations" => $extended == true ?
+            $categ[$i] = [
+                "name"        => $cat->getName(),
+                "description" => $cat->getDescription(),
+                "id"          => $cat->getId(),
+                "thumbnail"   => $cat->getThumbnailURL(),
+                ];
+            if($extended == true) {
+                $categ[$i]["localizations"] = [];
+                foreach(getLanguages() as $lang) {
+                    $code = $lang["code"];
+                    $categ[$i]["localizations"][$code] =
                     [
-                        "en"    => [
-                            "name"    => $cat->getName("en"),
-                            "desc"    => $cat->getDescription("en"),
-                        ],
-                        "ru"    => [
-                            "name"    => $cat->getName("ru"),
-                            "desc"    => $cat->getDescription("ru"),
-                        ],
-                        "uk"  => [
-                            "name"    => $cat->getName("uk"),
-                            "desc"    => $cat->getDescription("uk")
-                        ],
-                        "by"  => [
-                            "name"    => $cat->getName("by"),
-                            "desc"    => $cat->getDescription("by")
-                        ],
-                        "by_lat"  => [
-                            "name"    => $cat->getName("by_lat"),
-                            "desc"    => $cat->getDescription("by_lat")
-                        ],
-                        "pl"  => [
-                            "name"    => $cat->getName("pl"),
-                            "desc"    => $cat->getDescription("pl")
-                        ],
-                        "de"  => [
-                            "name"    => $cat->getName("de"),
-                            "desc"    => $cat->getDescription("de")
-                        ],
-                        "hy"  => [
-                            "name"    => $cat->getName("hy"),
-                            "desc"    => $cat->getDescription("hy")
-                        ],
-                        "sr_cyr"  => [
-                            "name"    => $cat->getName("sr_cyr"),
-                            "desc"    => $cat->getDescription("sr_cyr")
-                        ],
-                        "sr_lat"  => [
-                            "name"    => $cat->getName("sr_lat"),
-                            "desc"    => $cat->getDescription("sr_lat")
-                        ],
-                        "tr"  => [
-                            "name"    => $cat->getName("tr"),
-                            "desc"    => $cat->getDescription("tr")
-                        ],
-                        "kk"  => [
-                            "name"    => $cat->getName("kk"),
-                            "desc"    => $cat->getDescription("kk")
-                        ],
-                        "ru_old"  => [
-                            "name"    => $cat->getName("ru_old"),
-                            "desc"    => $cat->getDescription("ru_old")
-                        ],
-                        "eo"  => [
-                            "name"    => $cat->getName("eo"),
-                            "desc"    => $cat->getDescription("eo")
-                        ],
-                        "ru_sov"  => [
-                            "name"    => $cat->getName("ru_sov"),
-                            "desc"    => $cat->getDescription("ru_sov")
-                        ],
-                        "udm"  => [
-                            "name"    => $cat->getName("udm"),
-                            "desc"    => $cat->getDescription("udm")
-                        ],
-                        "id"  => [
-                            "name"    => $cat->getName("id"),
-                            "desc"    => $cat->getDescription("id")
-                        ],
-                        "qqx"  => [
-                            "name"    => $cat->getName("qqx"),
-                            "desc"    => $cat->getDescription("qqx")
-                        ],
-                    ] : NULL];
-            } else {
-                $i++;
+                        "name"    => $cat->getName($code),
+                        "desc"    => $cat->getDescription($code),
+                    ];
+                }
             }
+            $i++;
         }
         
         return $categ;
     }
 
-    function getGiftsInCategory(int $id, int $count = 10, int $offset = 0)
+    function getGiftsInCategory(int $id, int $page = 1)
     {
         $this->requireUser();
         if(!(new GiftsRepo)->getCat($id))
             $this->fail(177, "Category not found");
 
-        $giftz = ((new GiftsRepo)->getCat($id))->getGifts(1, $count);
+        $giftz = ((new GiftsRepo)->getCat($id))->getGifts($page);
         $gifts = [];
-        $i = 1;
 
         foreach($giftz as $gift) {
-            if($i > $count) 
-                break;
-            if($i > $offset) {
-                $gifts[] = [
-                    "name"         => $gift->getName(),
-                    "image"        => $gift->getImage(2),
-                    "usages_left"  => (int)$gift->getUsagesLeft($this->getUser()),
-                    "price"        => $gift->getPrice(), # голосов
-                    "is_free"      => $gift->isFree()
-                ];
-            } else {
-                $i++;
-            }
+            $gifts[] = [
+                "name"         => $gift->getName(),
+                "image"        => $gift->getImage(2),
+                "usages_left"  => (int)$gift->getUsagesLeft($this->getUser()),
+                "price"        => $gift->getPrice(), # голосов
+                "is_free"      => $gift->isFree()
+            ];
         }
 
         return $gifts;
