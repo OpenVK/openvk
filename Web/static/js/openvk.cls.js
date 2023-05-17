@@ -168,18 +168,18 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
 
 }); //END ONREADY DECLS
 
-function repostPost(id, hash, owner) {
+async function repostPost(id, hash) {
 	uRepostMsgTxt  = `
     <b>${tr('auditory')}:</b> <br/>
     <input type="radio" name="type" onchange="signs.setAttribute('hidden', 'hidden');groupId.setAttribute('hidden', 'hidden')" value="wall" checked>${tr("in_wall")}<br/>
-    <input type="radio" name="type" onchange="signs.removeAttribute('hidden');groupId.removeAttribute('hidden')" value="group">${tr("in_group")}<br/>
+    <input type="radio" name="type" onchange="signs.removeAttribute('hidden');groupId.removeAttribute('hidden')" value="group" id="group">${tr("in_group")}<br/>
     <select style="width:50%;" id="groupId" name="groupId" hidden>
     </select><br/>
     <b>${tr('your_comment')}:</b> 
     <textarea id='uRepostMsgInput_${id}'></textarea>
     <div id="signs" hidden>
-    <label><input type="checkbox" id="asgroup" name="asGroup" value="1">${tr('post_as_group')}</label><br>
-    <label><input onchange="asgroup.checked = true" type="checkbox" id="signed" name="signed" value="1">${tr('add_signature')}</label>
+    <label><input onchange="signed.checked ? signed.checked = false : null" type="checkbox" id="asgroup" name="asGroup">${tr('post_as_group')}</label><br>
+    <label><input onchange="asgroup.checked = true" type="checkbox" id="signed" name="signed">${tr('add_signature')}</label>
     </div>
     <br/><br/>`;
     let clubs = [];
@@ -197,8 +197,8 @@ function repostPost(id, hash, owner) {
                 }
             }
             groupId = document.querySelector("#groupId").value;
-            asGroup = asgroup.value;
-            signed = signed.value;
+            asGroup = asgroup.checked == true ? 1 : 0;
+            signed  = signed.checked == true ? 1 : 0;
 			hash = encodeURIComponent(hash);
 			xhr = new XMLHttpRequest();
 			xhr.open("POST", "/wall"+id+"/repost?hash="+hash, true);
@@ -215,16 +215,15 @@ function repostPost(id, hash, owner) {
 		}),
 		Function.noop
 	]);
-    let xhrj = new XMLHttpRequest();
-    xhrj.open("GET", "id"+owner+"/getWriteableClubs?hash="+hash)
-    xhrj.send()
-    xhrj.onload = () =>
+    try
     {
-        clubs = JSON.parse(xhrj.responseText);
-        for(const el of clubs)
-        {
+        clubs = await API.Groups.getWriteableClubs();
+        for(const el of clubs) {
             document.getElementById("groupId").insertAdjacentHTML("beforeend", `<option value="${el.id}">${el.name}</option>`)
         }
+    } catch(rejection) {
+        console.error("You did not created any groups")
+        document.getElementById("group").setAttribute("disabled", "disabled")
     }
 }
 

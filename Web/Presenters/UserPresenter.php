@@ -707,26 +707,4 @@ final class UserPresenter extends OpenVKPresenter
             $this->redirect("/settings");
         }
     }
-
-	function renderGetWriteableClubs(int $id)
-    {
-        $this->assertUserLoggedIn();
-
-        if($this->user->id == $id) {
-            $clubs   = iterator_to_array((new Clubs)->getWriteableClubs($id));
-            $json    = [];
-
-            foreach($clubs as $club)
-                $json[]   = [
-                    "name"   => $club->getName(),
-                    "id"     => $club->getId()
-                ];
-            
-            $this->returnJson($json);
-        } else {
-
-            $this->returnJson(["You are not allowed to see user-created groups"]);
-        }
-    }
-	
 }

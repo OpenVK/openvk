@@ -301,7 +301,7 @@ final class WallPresenter extends OpenVKPresenter
         
         if(!is_null($poll))
             $post->attach($poll);
-		 
+        
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
         
@@ -402,11 +402,9 @@ final class WallPresenter extends OpenVKPresenter
                 (new RepostNotification($post->getOwner(false), $post, $this->user->identity))->emit();
         };
 		
-        if($where == "wall")
-            $this->returnJson(["wall_owner" => $this->user->identity->getId()]);
-
-        else
-            $this->returnJson(["wall_owner" => $groupId*-1]);
+        $this->returnJson([
+            "wall_owner" => $where == "wall" ? $this->user->identity->getId() : $groupId*-1
+        ]);
     }
     
     function renderDelete(int $wall, int $post_id): void
