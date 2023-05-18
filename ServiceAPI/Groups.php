@@ -18,9 +18,10 @@ class Groups implements Handler
     {
         $clubs  = [];
         $wclubs = $this->groups->getWriteableClubs($this->user->getId());
+        $count  = $this->groups->getWriteableClubsCount($this->user->getId());
 
-        if(count(iterator_to_array($this->groups->getWriteableClubs($this->user->getId()))) == 0) {
-            $reject("You did not created any groups");
+        if(!$count) {
+            $reject(122, "You don't have any groups with write access");
 
             return;
         }

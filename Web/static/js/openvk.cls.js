@@ -171,8 +171,8 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
 async function repostPost(id, hash) {
 	uRepostMsgTxt  = `
     <b>${tr('auditory')}:</b> <br/>
-    <input type="radio" name="type" onchange="signs.setAttribute('hidden', 'hidden');groupId.setAttribute('hidden', 'hidden')" value="wall" checked>${tr("in_wall")}<br/>
-    <input type="radio" name="type" onchange="signs.removeAttribute('hidden');groupId.removeAttribute('hidden')" value="group" id="group">${tr("in_group")}<br/>
+    <input type="radio" name="type" onchange="signs.setAttribute('hidden', 'hidden');document.getElementById('groupId').setAttribute('hidden', 'hidden')" value="wall" checked>${tr("in_wall")}<br/>
+    <input type="radio" name="type" onchange="signs.removeAttribute('hidden');document.getElementById('groupId').removeAttribute('hidden')" value="group" id="group">${tr("in_group")}<br/>
     <select style="width:50%;" id="groupId" name="groupId" hidden>
     </select><br/>
     <b>${tr('your_comment')}:</b> 
@@ -183,6 +183,9 @@ async function repostPost(id, hash) {
     </div>
     <br/><br/>`;
     let clubs = [];
+    repostsCount = document.getElementById("repostsCount"+id)
+    prevVal = repostsCount != null ? Number(repostsCount.innerHTML) : 0;
+
 	MessageBox(tr('share'), uRepostMsgTxt, [tr('send'), tr('cancel')], [
 		(function() {
 			text = document.querySelector("#uRepostMsgInput_"+id).value;
@@ -209,20 +212,25 @@ async function repostPost(id, hash) {
 				else {
 					let jsonR = JSON.parse(xhr.responseText);
                     NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.location.href = "/wall" + jsonR.wall_owner});
-				}
+                    repostsCount != null ?
+                    repostsCount.innerHTML = prevVal+1 :
+                    document.getElementById("reposts"+id).insertAdjacentHTML("beforeend", "(<b id='repostsCount"+id+"'>1</b>)") //для старого вида постов
+                }
 			});
 			xhr.send('text=' + encodeURI(text) + '&type=' + encodeURI(type) + '&groupId=' + encodeURI(groupId) + "&asGroup="+encodeURI(asGroup) + "&signed="+encodeURI(signed));
 		}),
 		Function.noop
 	]);
+
     try
     {
         clubs = await API.Groups.getWriteableClubs();
         for(const el of clubs) {
-            document.getElementById("groupId").insertAdjacentHTML("beforeend", `<option value="${el.id}">${el.name}</option>`)
+            document.getElementById("groupId").insertAdjacentHTML("beforeend", `<option value="${el.id}">${escapeHtml(el.name)}</option>`)
         }
+
     } catch(rejection) {
-        console.error("You did not created any groups")
+        console.error(rejection)
         document.getElementById("group").setAttribute("disabled", "disabled")
     }
 }

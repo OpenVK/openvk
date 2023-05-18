@@ -475,7 +475,7 @@ final class Wall extends VKAPIRequestHandler
             if(!$club->canBeModifiedBy($this->user))
                 $this->fail(16, "Access to group denied");
             
-            $nPost->setWall($group_id*-1);
+            $nPost->setWall($group_id * -1);
         } else {
             $nPost->setWall($this->user->getId());
         }

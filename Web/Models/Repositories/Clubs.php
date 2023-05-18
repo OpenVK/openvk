@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Repositories;
-use openvk\Web\Models\Entities\Club;
+use openvk\Web\Models\Entities\{Club, Manager};
 use openvk\Web\Models\Repositories\{Aliases, Users};
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
@@ -9,11 +9,13 @@ class Clubs
 {
     private $context;
     private $clubs;
+    private $coadmins;
     
     function __construct()
     {
-        $this->context = DatabaseConnection::i()->getContext();
-        $this->clubs   = $this->context->table("groups");
+        $this->context  = DatabaseConnection::i()->getContext();
+        $this->clubs    = $this->context->table("groups");
+        $this->coadmins = $this->context->table("group_coadmins");
     }
     
     private function toClub(?ActiveRow $ar): ?Club
@@ -73,17 +75,22 @@ class Clubs
 	
     function getWriteableClubs(int $id): \Traversable
     {
-
-        $result    = DatabaseConnection::i()->getConnection()->query("SELECT * FROM `groups` WHERE `owner` = $id ORDER BY `id`;");
-        $coadmins  = DatabaseConnection::i()->getConnection()->query("SELECT * FROM `group_coadmins` WHERE `user` = $id ORDER BY `user`;");
+        $result    = $this->clubs->where(["owner" => $id]);
+        $coadmins  = $this->coadmins->where(["user" => $id]);
         
         foreach($result as $entry)
-            yield $this->get($entry->id);
+            yield new Club($entry);
         
         foreach($coadmins as $coadmin)
-            yield $this->get($coadmin->club);
+            $cl = new Manager($coadmin);
+            yield $cl->getClub();
         
     }
-	
+
+    function getWriteableClubsCount(int $id): int
+    {
+        return sizeof($this->clubs->where(["owner" => $id])) + sizeof($this->coadmins->where(["user" => $id]));
+    }
+
     use \Nette\SmartObject;
 }

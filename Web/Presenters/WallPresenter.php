@@ -382,6 +382,10 @@ final class WallPresenter extends OpenVKPresenter
                 $nPost->setWall($this->user->id);
             } elseif($where == "group") {
                 $nPost->setOwner($this->user->id);
+                $club = (new Clubs)->get((int)$groupId);
+
+                if(!$club || !$club->canBeModifiedBy($this->user->identity))
+                    $this->notFound();
                 
                 if($this->postParam("asGroup") == 1) 
                     $flags |= 0b10000000;
@@ -389,7 +393,7 @@ final class WallPresenter extends OpenVKPresenter
                 if($this->postParam("signed") == 1)
                     $flags |= 0b01000000;
                 
-                $nPost->setWall($groupId*-1);
+                $nPost->setWall($groupId * -1);
             }
 
             $nPost->setContent($this->postParam("text"));
@@ -403,7 +407,7 @@ final class WallPresenter extends OpenVKPresenter
         };
 		
         $this->returnJson([
-            "wall_owner" => $where == "wall" ? $this->user->identity->getId() : $groupId*-1
+            "wall_owner" => $where == "wall" ? $this->user->identity->getId() : $groupId * -1
         ]);
     }
     
