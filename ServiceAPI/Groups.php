@@ -21,7 +21,7 @@ class Groups implements Handler
         $count  = $this->groups->getWriteableClubsCount($this->user->getId());
 
         if(!$count) {
-            $reject(122, "You don't have any groups with write access");
+            $reject("You don't have any groups with write access");
 
             return;
         }

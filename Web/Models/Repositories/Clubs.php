@@ -75,21 +75,22 @@ class Clubs
 	
     function getWriteableClubs(int $id): \Traversable
     {
-        $result    = $this->clubs->where(["owner" => $id]);
-        $coadmins  = $this->coadmins->where(["user" => $id]);
+        $result    = $this->clubs->where("owner", $id);
+        $coadmins  = $this->coadmins->where("user", $id);
         
-        foreach($result as $entry)
+        foreach($result as $entry) {
             yield new Club($entry);
-        
-        foreach($coadmins as $coadmin)
+        }
+
+        foreach($coadmins as $coadmin) {
             $cl = new Manager($coadmin);
             yield $cl->getClub();
-        
+        }
     }
 
     function getWriteableClubsCount(int $id): int
     {
-        return sizeof($this->clubs->where(["owner" => $id])) + sizeof($this->coadmins->where(["user" => $id]));
+        return sizeof($this->clubs->where("owner", $id)) + sizeof($this->coadmins->where("user", $id));
     }
 
     use \Nette\SmartObject;

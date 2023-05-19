@@ -217,7 +217,7 @@ async function repostPost(id, hash) {
                     document.getElementById("reposts"+id).insertAdjacentHTML("beforeend", "(<b id='repostsCount"+id+"'>1</b>)") //для старого вида постов
                 }
 			});
-			xhr.send('text=' + encodeURI(text) + '&type=' + encodeURI(type) + '&groupId=' + encodeURI(groupId) + "&asGroup="+encodeURI(asGroup) + "&signed="+encodeURI(signed));
+			xhr.send('text='+encodeURI(text) + '&type='+type + '&groupId='+groupId + "&asGroup="+asGroup + "&signed="+signed);
 		}),
 		Function.noop
 	]);
