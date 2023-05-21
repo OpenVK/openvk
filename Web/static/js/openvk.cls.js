@@ -1,3 +1,4 @@
+﻿
 function expand_wall_textarea(id) {
     var el = document.getElementById('post-buttons'+id);
     var wi = document.getElementById('wall-post-input'+id);
@@ -169,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
 }); //END ONREADY DECLS
 
 async function repostPost(id, hash) {
-	uRepostMsgTxt  = `
+    uRepostMsgTxt  = `
     <b>${tr('auditory')}:</b> <br/>
     <input type="radio" name="type" onchange="signs.setAttribute('hidden', 'hidden');document.getElementById('groupId').setAttribute('hidden', 'hidden')" value="wall" checked>${tr("in_wall")}<br/>
     <input type="radio" name="type" onchange="signs.removeAttribute('hidden');document.getElementById('groupId').removeAttribute('hidden')" value="group" id="group">${tr("in_group")}<br/>
@@ -186,9 +187,9 @@ async function repostPost(id, hash) {
     repostsCount = document.getElementById("repostsCount"+id)
     prevVal = repostsCount != null ? Number(repostsCount.innerHTML) : 0;
 
-	MessageBox(tr('share'), uRepostMsgTxt, [tr('send'), tr('cancel')], [
-		(function() {
-			text = document.querySelector("#uRepostMsgInput_"+id).value;
+    MessageBox(tr('share'), uRepostMsgTxt, [tr('send'), tr('cancel')], [
+        (function() {
+            text = document.querySelector("#uRepostMsgInput_"+id).value;
             type = "user";
             radios = document.querySelectorAll('input[name="type"]')
             for(const r of radios)
@@ -202,26 +203,27 @@ async function repostPost(id, hash) {
             groupId = document.querySelector("#groupId").value;
             asGroup = asgroup.checked == true ? 1 : 0;
             signed  = signed.checked == true ? 1 : 0;
-			hash = encodeURIComponent(hash);
-			xhr = new XMLHttpRequest();
-			xhr.open("POST", "/wall"+id+"/repost?hash="+hash, true);
-			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-			xhr.onload = (function() {
+            hash = encodeURIComponent(hash);
+            
+            xhr = new XMLHttpRequest();
+            xhr.open("POST", "/wall"+id+"/repost?hash="+hash, true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.onload = (function() {
                 if(xhr.responseText.indexOf("wall_owner") === -1)
-					MessageBox(tr('error'), tr('error_repost_fail'), [tr('ok')], [Function.noop]);
-				else {
-					let jsonR = JSON.parse(xhr.responseText);
+                    MessageBox(tr('error'), tr('error_repost_fail'), [tr('ok')], [Function.noop]);
+                else {
+                    let jsonR = JSON.parse(xhr.responseText);
                     NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.location.href = "/wall" + jsonR.wall_owner});
                     repostsCount != null ?
                     repostsCount.innerHTML = prevVal+1 :
                     document.getElementById("reposts"+id).insertAdjacentHTML("beforeend", "(<b id='repostsCount"+id+"'>1</b>)") //для старого вида постов
                 }
-			});
-			xhr.send('text='+encodeURI(text) + '&type='+type + '&groupId='+groupId + "&asGroup="+asGroup + "&signed="+signed);
-		}),
-		Function.noop
-	]);
-
+                });
+            xhr.send('text='+encodeURI(text) + '&type='+type + '&groupId='+groupId + "&asGroup="+asGroup + "&signed="+signed);
+        }),
+        Function.noop
+    ]);
+    
     try
     {
         clubs = await API.Groups.getWriteableClubs();
