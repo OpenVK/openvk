@@ -418,7 +418,7 @@ final class Wall extends VKAPIRequestHandler
             }
 
             if($_FILES["video"]["error"] === UPLOAD_ERR_OK)
-                $video = Video::fastMake($this->getUser()->getId(), $message, $_FILES["video"], $anon);
+                $video = Video::fastMake($this->getUser()->getId(), $_FILES["video"]["name"], $message, $_FILES["video"], $anon);
         } catch(\DomainException $ex) {
             $this->fail(-156, "The media file is corrupted");
         } catch(ISE $ex) {
