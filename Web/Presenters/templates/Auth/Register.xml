@@ -129,12 +129,12 @@
 	                </td>
 	                <td>
                         {_registration_disabled_info}
-                        {if OPENVK_ROOT_CONF['openvk']['preferences']['registration']['reason']}
+                        {if OPENVK_ROOT_CONF['openvk']['preferences']['registration']['disablingReason']}
                         <br/>
                         <br/>
                         {_admin_banned_link_reason}: 
                         <br>
-                        <b>{php echo OPENVK_ROOT_CONF['openvk']['preferences']['registration']['reason']}</b>
+                        <b>{php echo OPENVK_ROOT_CONF['openvk']['preferences']['registration']['disablingReason']}</b>
                         {/if}
 	                </td>
 	            </tr>
