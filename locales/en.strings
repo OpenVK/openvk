@@ -91,6 +91,7 @@
 "no_information_provided" = "No information provided.";
 "deceased_person" = "Deceased person";
 "none" = "none";
+"desc_none" = "no description";
 "send" = "Send";
 
 "years_zero" = "0 year old";
@@ -478,7 +479,12 @@
 "apply_style_for_this_device" = "Apply style only for this device";
 
 "search_for_groups" = "Search for groups";
-"search_for_people" = "Search for people";
+"search_for_users" = "Search for people";
+"search_for_posts" = "Search for posts";
+"search_for_comments" = "Search for comments";
+"search_for_videos" = "Search for videos";
+"search_for_apps" = "Search for apps";
+"search_for_notes" = "Search for notes";
 "search_button" = "Find";
 "search_placeholder" = "Start typing any name, title or word";
 "results_zero" = "No results";
@@ -1450,3 +1456,53 @@
 "tour_section_14_bottom_text_1" = "Screenshots";
 "tour_section_14_bottom_text_2" = "This concludes the tour of the site. If you want to try our mobile app, create your own group here, invite your friends or find new ones, or just have some fun in general, you can do it right now with a small <a href='/reg'>registration</a>";
 "tour_section_14_bottom_text_3" = "This concludes the tour of the site";
+
+/* Search */
+
+"s_people" = "People";
+"s_groups" = "Clubs";
+"s_events" = "Events";
+"s_apps" = "Applications";
+"s_questions" = "Questions";
+"s_notes" = "Notes";
+"s_themes" = "Themes";
+"s_posts" = "Posts";
+"s_comments" = "Comments";
+"s_videos" = "Videos";
+"s_audios" = "Music";
+"s_by_people" = "for people";
+"s_by_groups" = "for groups";
+"s_by_posts" = "for posts";
+"s_by_comments" = "for comments";
+"s_by_videos" = "for videos";
+"s_by_apps" = "for apps";
+"s_by_audios" = "for musics";
+
+"s_order_by" = "Order by...";
+
+"s_order_by_id" = "By id";
+"s_order_by_name" = "By name";
+"s_order_by_random" = "By random";
+"s_order_by_rating" = "By rating";
+"s_order_invert" = "Invert";
+
+"s_by_date" = "By date";
+"s_date_before" = "Before";
+"s_date_after" = "After";
+
+"s_region" = "Region";
+"s_city" = "City";
+"s_native_city" = "Hometown";
+
+"s_main" = "Main";
+"s_age" = "Age";
+"s_sex" = "Sex";
+"s_wemen" = "Woman";
+"s_man" = "Man";
+
+"s_relationship" = "Relationship";
+"s_now_on_site" = "now on site";
+"s_with_photo" = "with photo";
+"s_only_in_names" = "only in names";
+
+"s_any" = "any";

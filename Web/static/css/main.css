@@ -2300,3 +2300,153 @@ a.poll-retract-vote {
     background-image: url(/assets/packages/static/openvk/img/videoico.png);
     display: none;
 }
+
+.searchOptions
+{
+    overflow-y: hidden;
+    background:#F7F7F7;
+    overflow-x:hidden;
+    width:29.2%;
+    border-top:1px solid #E5E7E6;
+    float:right;
+    padding-left:9.6px;
+    scrollbar-width: none;
+    font-size:12px;
+    background-color:#f7f7f7;
+    margin-right: -7px;
+}
+
+.searchBtn
+{
+    border: solid 1px #575757;
+    background-color: #696969;
+    color:white;
+    margin-left: -3px;
+    padding-bottom:2px;
+    width:80px;
+    cursor: pointer;
+    box-shadow: 0px 2px 0px 0px rgba(255, 255, 255, 0.18) inset;
+}
+
+.searchBtn:active
+{
+    border: solid 1px #666666;
+    background-color: #696969;
+    color:white;
+    box-shadow: 0px -2px 0px 0px rgba(255, 255, 255, 0.18) inset;
+}
+
+.searchList
+{
+    list-style: none;
+    padding-left:0px;
+}
+
+.searchList #used
+{
+    margin-left:0px;
+    color: white;
+    padding:2px;
+    padding-top:5px;
+    padding-bottom:5px;
+    border: solid 0.125rem #696969;
+    background:linear-gradient(#888888,#858585);
+    margin-bottom:2px;
+    padding-left:5px;
+    width:90%;
+}
+
+.searchList #used a
+{
+    color: white;
+}
+
+.sr:focus
+{
+    outline:none;
+}
+
+.searchHide
+{
+    padding-right: 5px;
+}
+
+.searchList li
+{
+    margin-left:0px;
+    color: #2B587A !important;
+    cursor:pointer;
+    padding:2px;
+    padding-top:5px;
+    padding-bottom:5px;
+    margin-bottom:2px;
+    padding-left:5px;
+}
+
+.searchList li a
+{
+    min-width:100%;
+}
+
+.searchList li:hover
+{
+    margin-left:0px;
+    color: #2B587A !important;
+    background:#ebebeb;
+    padding:2px;
+    padding-top:5px;
+    padding-bottom:5px;
+    margin-bottom:2px;
+    padding-left:5px;
+    width:91%;
+}
+
+.whatFind
+{
+    color:rgb(128, 128, 128);
+    background:none;
+    border:none;
+    position:absolute;
+    width:150px;
+    right:95px;
+    top:12px;
+    text-align:right;
+}
+
+.searchOptionName
+{
+    cursor:pointer;
+    background-color: #EAEAEA;
+    padding-left:5px;
+    padding-top:5px;
+    padding-bottom:5px;
+    width: 90%;
+    font-weight: 600;
+    color: #585858;
+}
+
+.searchOption
+{
+    user-select: none;
+}
+
+.searchOptionBlock
+{
+    margin-top: -5px;
+    padding-top:10px;
+    max-width:92%;
+    padding-bottom:6px;
+}
+
+.searchOptionBlock select
+{
+    padding-left:7px;
+    padding-top:3px;
+    padding-bottom:3px;
+    cursor:pointer;
+}
+
+.searchOptionBlock input[type=text], input[type=date]
+{
+    margin-bottom:5px;
+}
