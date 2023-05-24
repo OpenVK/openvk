@@ -97,6 +97,14 @@ h1 {
     background-size: 1.5px 41px;
 }
 
+.header_navigation .nodivider {
+    display: inline-block;
+    height: 29px;
+    padding: 11px 4px 0 7px;
+    background: none;
+    background-size: 1.5px 41px;
+}
+
 .header_navigation .link a {
     color: #D7D7D7;
     text-decoration: none;
@@ -670,6 +678,7 @@ select {
     font-family: tahoma, verdana, arial, sans-serif;
     width: 100%;
     box-sizing: border-box;
+    outline:none;
 }
 
 .header2 {
@@ -2306,10 +2315,9 @@ a.poll-retract-vote {
     overflow-y: hidden;
     background:#F7F7F7;
     overflow-x:hidden;
-    width:29.2%;
+    width:28.8%;
     border-top:1px solid #E5E7E6;
     float:right;
-    padding-left:9.6px;
     scrollbar-width: none;
     font-size:12px;
     background-color:#f7f7f7;
@@ -2339,6 +2347,7 @@ a.poll-retract-vote {
 .searchList
 {
     list-style: none;
+    user-select: none;
     padding-left:0px;
 }
 

@@ -579,7 +579,7 @@ function expandSearch()
     
     document.querySelector(".whatFind").style.display = "block";
     document.querySelector(".whatFind").style.marginRight = "-80px";
-    document.getElementById("searchInput").style.width = "650px";
+    document.getElementById("searchInput").style.width = "627px";
 }
 
 async function decreaseSearch()
@@ -609,6 +609,26 @@ function hideParams(name)
         $("#n_"+name+" img").attr("src", "/assets/packages/static/openvk/img/show.png");
     } else {
         $("#n_"+name+" img").attr("src", "/assets/packages/static/openvk/img/hide.png");
+    }
+}
+
+function resetSearch()
+{
+    let inputs = document.querySelectorAll("input")
+    let selects = document.querySelectorAll("select")
+
+    for(const input of inputs)
+    {
+        if(input != dnt) {
+            input.value = ""
+        }
+    }
+
+    for(const select of selects)
+    {
+        if(select != sortyor) {
+            select.value = 0
+        }
     }
 }
 

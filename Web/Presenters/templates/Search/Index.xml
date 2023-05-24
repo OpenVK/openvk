@@ -122,6 +122,12 @@
 {/block}
 
 {block content}
+    <style>
+    .comment, .post-divider 
+    {
+        border:none;
+    }
+    </style>
     <div style="margin-top:-7px">
     {include "../components/paginator.xml", conf => (object) [
         "page"     => $page,
@@ -138,7 +144,7 @@
     {include searchOptions}
 
     {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
-    <div class="container_gray" style="float:left;width:68%;border-top:1px solid #E5E7E6">
+    <div class="container_gray" style="float:left;width:70%;border-top:1px solid #E5E7E6">
         {if sizeof($data) > 0}
             {if $type == "users" || $type == "groups" || $type == "apps"}
                 <div class="content" n:foreach="$data as $dat">
@@ -171,16 +177,9 @@
                     </table>
                 </div>
             {elseif $type == "posts"}
-                {foreach $data as $dat}
-                    {if $dat->getTargetWall() < 0 && $dat->getWallOwner()->isHideFromGlobalFeedEnabled()}
-                        {php continue;}
-                        {* костыль но я по-другому не придумал *}
-                    {else}
-                        <div class="content">
-                            {include "../components/post.xml", post => $dat, commentSection => true, onWallOf => true}
-                        </div>
-                    {/if}
-                {/foreach}
+                <div n:foreach="$data as $dat" class="content">
+                {include "../components/post.xml", post => $dat, commentSection => true, onWallOf => true}
+                </div>
             {elseif $type == "comments"}
                 <div n:foreach="$data as $dat" class="content">
                 {include "../components/comment.xml", comment => $dat, linkW => true}
@@ -230,7 +229,7 @@
         <div class="searchOption">
             <div class="searchOptionName" id="n_sort" onclick="hideParams('sort')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{_s_order_by}</div>
             <div class="searchOptionBlock" id="s_sort">
-                <select name="sort" form="searcher">
+                <select name="sort" form="searcher" id="sortyor" onchange="this.value == 'random' ? document.getElementById('invertor').setAttribute('hidden', 'hidden') : document.getElementById('invertor').removeAttribute('hidden')">
                     <option value="id" {if $_GET["sort"] == "name"}selected{/if}>{_s_order_by_id}</option>
                     <option value="random" {if $_GET["sort"] == "random"}selected{/if}>{_s_order_by_random}</option>
                     {if $type == "users"}
@@ -240,7 +239,9 @@
                         {/if}
                     {/if}
                 </select>
+                <div id="invertor" {if $_GET["sort"] == "random"}hidden{/if}>
                 <input type="checkbox" name="invert" value="1" form="searcher" {if !is_null($_GET['invert']) && $_GET['invert'] == "1"}checked{/if}>{_s_order_invert}
+                </div>
             </div>
         </div>
 
@@ -275,6 +276,7 @@
                 <input type="text" value="{if !is_null($_GET['status'])}{$_GET['status']}{/if}" form="searcher" placeholder="{_status}" name="status">
                 <input type="text" value="{if !is_null($_GET['city'])}{$_GET['city']}{/if}" form="searcher" placeholder="{_city}" name="city">
                 <input type="text" value="{if !is_null($_GET['native_city'])}{$_GET['native_city']}{/if}" form="searcher" placeholder="{_s_native_city}" name="native_city">
+                <input name="is_online" type="checkbox" {if !is_null($_GET['is_online']) && $_GET['is_online'] == "1"}checked{/if} form="searcher" value="1">{_s_now_on_site}
             </div>
         </div>
 
@@ -330,10 +332,9 @@
                 <input type="text" value="{if !is_null($_GET['fav_quote'])}{$_GET['fav_quote']}{/if}" form="searcher" placeholder="{_favorite_quotes}"  name="fav_quote">
             </div>
         </div>
-
-        <input name="is_online" type="checkbox" {if !is_null($_GET['is_online']) && $_GET['is_online'] == "1"}checked{/if} form="searcher" value="1">{_s_now_on_site}
         <!--<input name="with_photo" type="checkbox" {if !is_null($_GET['with_photo']) && $_GET['with_photo'] == "on"}checked{/if} form="searcher">{_s_with_photo}-->
         {/if}
+        <input class="button" type="button" id="dnt" value="{_reset}" onclick="resetSearch()">
     </div>
 
 {/block}
