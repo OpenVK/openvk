@@ -1507,3 +1507,6 @@
 
 "s_any" = "any";
 "reset" = "Reset";
+
+"closed_group_post" = "This is a post from private group";
+"deleted_target_comment" = "This comment belongs to deleted post";

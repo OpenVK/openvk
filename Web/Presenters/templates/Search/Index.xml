@@ -108,6 +108,7 @@
                 {/if}
             {/if}
             <tr>
+            {if !empty($x->getDescription())}
                 {if $type != "apps"}
                 <td>
                     <span class="nobold">{_description}:</span>
@@ -117,6 +118,15 @@
                     {$x->getDescription() ?? '(' . tr("none") . ')'}
                 </td>
             </tr>
+            {/if}
+            {if $type == "groups"}
+                <td>
+                    <span class="nobold">{_size}:</span>
+                </td>
+                <td>
+                    {tr("participants", $x->getFollowersCount())}
+                </td>
+            {/if}
         </tbody>
     </table>
 {/block}
@@ -144,7 +154,7 @@
     {include searchOptions}
 
     {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
-    <div class="container_gray" style="float:left;width:70%;border-top:1px solid #E5E7E6">
+    <div class="container_gray borderup" style="float:left;width:70%;">
         {if sizeof($data) > 0}
             {if $type == "users" || $type == "groups" || $type == "apps"}
                 <div class="content" n:foreach="$data as $dat">
@@ -178,12 +188,20 @@
                 </div>
             {elseif $type == "posts"}
                 <div n:foreach="$data as $dat" class="content">
-                {include "../components/post.xml", post => $dat, commentSection => true, onWallOf => true}
+                    {if !$dat || $dat->getTargetWall() < 0 && $dat->getWallOwner()->isHideFromGlobalFeedEnabled()}
+                        {_closed_group_post}.
+                    {else}
+                        {include "../components/post.xml", post => $dat, commentSection => true, onWallOf => true}
+                    {/if}
                 </div>
             {elseif $type == "comments"}
                 <div n:foreach="$data as $dat" class="content">
-                {include "../components/comment.xml", comment => $dat, linkW => true}
-                </div>      
+                    {if !$dat->getTarget() || $dat->getTarget()->isDeleted()}
+                        {_deleted_target_comment}.
+                    {else}
+                        {include "../components/comment.xml", comment => $dat, linkW => true}
+                    {/if}
+                </div>
             {elseif $type == "videos"}
                 {foreach $data as $dat}
                     {if $dat->getOwner()->isDeleted()}

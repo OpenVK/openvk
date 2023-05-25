@@ -2313,7 +2313,6 @@ a.poll-retract-vote {
 .searchOptions
 {
     overflow-y: hidden;
-    background:#F7F7F7;
     overflow-x:hidden;
     width:28.8%;
     border-top:1px solid #E5E7E6;
@@ -2458,4 +2457,9 @@ a.poll-retract-vote {
 .searchOptionBlock input[type=text], input[type=date]
 {
     margin-bottom:5px;
+}
+
+.borderup
+{
+    border-top:1px solid #E5E7E6;
 }
