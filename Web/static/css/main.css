@@ -2308,3 +2308,12 @@ a.poll-retract-vote {
     border-bottom: 1px dotted #8b8b8b;
     z-index: 10;
 }
+
+.page_content.overscrolled div[class$="_small_block"] {
+    position: absolute;
+    visibility: hidden;
+}
+
+.page_content.overscrolled div[class$="_big_block"] {
+    width: unset;
+}

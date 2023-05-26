@@ -711,3 +711,7 @@
         {include "banned.xml"}
     {/if}
 {/block}
+
+{block bodyScripts}
+    {script "js/al_despacito_wall.js"}
+{/block}
