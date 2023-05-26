@@ -20,7 +20,7 @@ final class Gifts extends VKAPIRequestHandler
 
         $gift_item = [];
 
-        $userGifts = $user->getGifts(1, $count, false);
+        $userGifts = array_slice(iterator_to_array($user->getGifts(1, $count, false)), $offset);
 
         if(sizeof($userGifts) < 0) {
             return NULL;

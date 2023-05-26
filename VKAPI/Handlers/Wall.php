@@ -430,7 +430,7 @@ final class Wall extends VKAPIRequestHandler
             # Аттачи такого вида: [тип][id владельца]_[id вложения]
             # Пример: photo1_1
 
-            if(count($attachmentsArr) > 10)
+            if(sizeof($attachmentsArr) > 10)
                 $this->fail(50, "Error: too many attachments");
             
             foreach($attachmentsArr as $attac) {
@@ -452,7 +452,7 @@ final class Wall extends VKAPIRequestHandler
 
                 if($attachmentType == "photo") {
                     $attacc = (new PhotosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                    if(is_null($attacc))
+                    if(!$attacc || $attacc->isDeleted())
                         $this->fail(100, "Photo does not exists");
                     if($attacc->getOwner()->getId() != $this->getUser()->getId())
                         $this->fail(43, "You do not have access to this photo");
@@ -460,7 +460,7 @@ final class Wall extends VKAPIRequestHandler
                     $post->attach($attacc);
                 } elseif($attachmentType == "video") {
                     $attacc = (new VideosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                    if(!$attacc)
+                    if(!$attacc || $attacc->isDeleted())
                         $this->fail(100, "Video does not exists");
                     if($attacc->getOwner()->getId() != $this->getUser()->getId())
                         $this->fail(43, "You do not have access to this video");
@@ -641,15 +641,19 @@ final class Wall extends VKAPIRequestHandler
         return $response;
     }
 
-    function createComment(int $owner_id, int $post_id, string $message, int $from_group = 0) {
+    function createComment(int $owner_id, int $post_id, string $message, int $from_group = 0, string $attachments = "") {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
         $post = (new PostsRepo)->getPostById($owner_id, $post_id);
-        if(!$post || $post->isDeleted()) $this->fail(100, "One of the parameters specified was missing or invalid");
+        if(!$post || $post->isDeleted()) $this->fail(100, "Invalid post");
 
         if($post->getTargetWall() < 0)
             $club = (new ClubsRepo)->get(abs($post->getTargetWall()));
+
+        if(empty($message) && empty($attachments)) {
+            $this->fail(100, "Required parameter 'message' missing.");
+        }
 
         $flags = 0;
         if($from_group != 0 && !is_null($club) && $club->canBeModifiedBy($this->user))
@@ -666,6 +670,49 @@ final class Wall extends VKAPIRequestHandler
             $comment->save();
         } catch (\LengthException $ex) {
             $this->fail(1, "ошибка про то что коммент большой слишком");
+        }
+
+        if(!empty($attachments)) {
+            $attachmentsArr = explode(",", $attachments);
+
+            if(sizeof($attachmentsArr) > 10)
+                $this->fail(50, "Error: too many attachments");
+            
+            foreach($attachmentsArr as $attac) {
+                $attachmentType = NULL;
+
+                if(str_contains($attac, "photo"))
+                    $attachmentType = "photo";
+                elseif(str_contains($attac, "video"))
+                    $attachmentType = "video";
+                else
+                    $this->fail(205, "Unknown attachment type");
+
+                $attachment = str_replace($attachmentType, "", $attac);
+
+                $attachmentOwner = (int)explode("_", $attachment)[0];
+                $attachmentId    = (int)end(explode("_", $attachment));
+
+                $attacc = NULL;
+
+                if($attachmentType == "photo") {
+                    $attacc = (new PhotosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
+                    if(!$attacc || $attacc->isDeleted())
+                        $this->fail(100, "Photo does not exists");
+                    if($attacc->getOwner()->getId() != $this->getUser()->getId())
+                        $this->fail(43, "You do not have access to this photo");
+                    
+                    $comment->attach($attacc);
+                } elseif($attachmentType == "video") {
+                    $attacc = (new VideosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
+                    if(!$attacc || $attacc->isDeleted())
+                        $this->fail(100, "Video does not exists");
+                    if($attacc->getOwner()->getId() != $this->getUser()->getId())
+                        $this->fail(43, "You do not have access to this video");
+
+                    $comment->attach($attacc);
+                }
+            }
         }
 
         if($post->getOwner()->getId() !== $this->user->getId())

@@ -4,7 +4,6 @@ use openvk\Web\Models\Repositories\Notes as NotesRepo;
 use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Repositories\Comments as CommentsRepo;
 use openvk\Web\Models\Entities\{Note, Comment};
-use openvk\VKAPI\Structures\{Note as APINote};
 use openvk\VKAPI\Structures\{Comment as APIComment};
 
 final class Notes extends VKAPIRequestHandler
@@ -72,7 +71,7 @@ final class Notes extends VKAPIRequestHandler
 
         $comment = (new CommentsRepo)->get($comment_id);
 
-        if(!$comment)
+        if(!$comment || !$comment->canBeDeletedBy($this->getUser()))
             $this->fail(403, "Access to comment denied");
 
         $comment->delete();
@@ -94,7 +93,7 @@ final class Notes extends VKAPIRequestHandler
             $this->fail(189, "Note is deleted");
 
         !empty($title) ? $note->setName($title) : NULL;
-        !empty($text) ? $note->setSource($text) : NULL;
+        !empty($text)  ? $note->setSource($text) : NULL;
 
         $note->setCached_Content(NULL);
         $note->setEdited(time());
@@ -128,29 +127,32 @@ final class Notes extends VKAPIRequestHandler
         if(!$user)
             $this->fail(15, "Invalid user");
         
-        $notes = iterator_to_array((new NotesRepo)->getUserNotes($user, 1, $count, $sort == 0 ? "ASC" : "DESC"));
-        $nodez = (object) [
-            "count" => (new NotesRepo)->getUserNotesCount((new UsersRepo)->get($user_id)), 
-            "notes" => []
-        ];
+        if(empty($note_ids)) {
+            $notes = array_slice(iterator_to_array((new NotesRepo)->getUserNotes($user, 1, $count, $sort == 0 ? "ASC" : "DESC")), $offset);
+            $nodez = (object) [
+                "count" => (new NotesRepo)->getUserNotesCount((new UsersRepo)->get($user_id)), 
+                "notes" => []
+            ];
+    
+            foreach($notes as $note) {
+                if($note->isDeleted()) continue;
+                
+                $nodez->notes[] = $note->toVkApiStruct();
+            }
+        } else {
+            $notes = explode(',', $note_ids);
 
-        foreach($notes as $note) {
-            if($note->isDeleted())
-                continue;
-            
-            $apiNote                = new APINote;
-            $apiNote->id            = $note->getId();
-            $apiNote->owner_id      = $note->getOwner()->getId();
-            $apiNote->title         = $note->getName();
-            $apiNote->text          = $note->getText();
-            $apiNote->date          = $note->getPublicationTime()->timestamp();
-            $apiNote->comments      = $note->getCommentsCount();
-            $apiNote->read_comments = $note->getCommentsCount();
-            $apiNote->view_url      = "/note".$note->getOwner()->getId()."_".$note->getId();
-            $apiNote->privacy_view  = 1;
-            $apiNote->can_comment   = 1;
-            $apiNote->text_wiki     = "r";
-            $nodez->notes[]         = $apiNote;
+            foreach($notes as $note)
+            {
+                $id    = explode("_", $note);
+    
+                $items = [];
+    
+                $note = (new NotesRepo)->getNoteById((int)$id[0], (int)$id[1]);
+                if($note) {
+                    $nodez->notes[] = $note->toVkApiStruct();
+                }
+            }
         }
 
         return $nodez;
@@ -168,26 +170,10 @@ final class Notes extends VKAPIRequestHandler
         if($note->isDeleted())
             $this->fail(189, "Note is deleted");
         
-        if(!$user || $note->getOwner()->isDeleted())
+        if(!$note->getOwner() || $note->getOwner()->isDeleted())
             $this->fail(177, "Owner does not exists");
-        
-        $apiNote = new APINote;
 
-        $apiNote->id = $note->getId();
-        $apiNote->owner_id = $note->getOwner()->getId();
-        $apiNote->title = $note->getName();
-        $apiNote->text = $note->getText();
-        $apiNote->date = $note->getPublicationTime()->timestamp();
-        $apiNote->comments = $note->getCommentsCount();
-        $apiNote->read_comments = $note->getCommentsCount();
-        $apiNote->view_url = "/note".$note->getOwner()->getId()."_".$note->getId();
-        $apiNote->privacy_view = 1;
-        $apiNote->can_comment = 1;
-        $apiNote->text_wiki = "r";
-
-        $nodez->notes[] = $apiNote;
-
-        return $apiNote;
+        return $note->toVkApiStruct();
     }
 
     function getComments(int $note_id, int $owner_id, int $sort = 1, int $offset = 0, int $count = 100)
@@ -200,14 +186,14 @@ final class Notes extends VKAPIRequestHandler
         if($note->isDeleted())
             $this->fail(189, "Note is deleted");
         
-        if($note->getOwner()->isDeleted())
+        if(!$note->getOwner())
             $this->fail(177, "Owner does not exists");
         
         $arr = (object) [
             "count" => $note->getCommentsCount(), 
             "comments" => []];
-        $comments = $note->getComments(1, $count);
-
+        $comments = array_slice(iterator_to_array($note->getComments(1, $count)), $offset);
+        
         foreach($comments as $comment) {
             $comm            = new APIComment;
             $comm->id        = $comment->getId();
@@ -223,13 +209,13 @@ final class Notes extends VKAPIRequestHandler
         return $arr;
     }
 
-    function getFriendsNotes(int $offset, int $count)
+    function getFriendsNotes(int $offset = 0, int $count = 0)
     {
-        return 1;
+        $this->fail(4, "Not implemented");
     }
 
-    function restoreComment(int $comment_id, int $owner_id)
+    function restoreComment(int $comment_id = 0, int $owner_id = 0)
     {
-        $this->fail(4, " ");
+        $this->fail(4, "Not implemented");
     }
 }
