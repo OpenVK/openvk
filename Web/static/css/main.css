@@ -2300,3 +2300,11 @@ a.poll-retract-vote {
     background-image: url(/assets/packages/static/openvk/img/videoico.png);
     display: none;
 }
+
+#standaloneCommentBox {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    border-bottom: 1px dotted #8b8b8b;
+    z-index: 10;
+}
