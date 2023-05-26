@@ -101,14 +101,16 @@
                             </select>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="regform-left">
-                            <span class="nobold">CAPTCHA: </span>
-                        </td>
-                        <td class="regform-right">
-                            {captcha_template()|noescape}
-                        </td>
-                    </tr>
+                    {if !(strpos(captcha_template(), 'verified'))}
+                        <tr>
+                            <td class="regform-left">
+                                <span class="nobold">CAPTCHA: </span>
+                            </td>
+                            <td class="regform-right">
+                                {captcha_template()|noescape}
+                            </td>
+                        </tr>
+                    {/if}
                 </table>
                     <div style="margin-left: 100px; margin-right: 100px; text-align: center;">
                         <input type="hidden" name="hash" value="{$csrfToken}" />
@@ -120,21 +122,18 @@
         </form>
     </div>
     {else}
-	<h4>{_registration_closed}</h4>
+	    <h4>{_registration_closed}</h4>
 		<table cellspacing="10" cellpadding="0" border="0" align="center" style="margin: 9px;">
 	        <tbody>
 	            <tr>
 	                <td style="width: 20%;">
-	                <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_registration_closed}" style="width: 100%;"/>
+	                    <img src="/assets/packages/static/openvk/img/oof.apng" alt="{_registration_closed}" style="width: 100%;"/>
 	                </td>
 	                <td>
                         {_registration_disabled_info}
                         {if OPENVK_ROOT_CONF['openvk']['preferences']['registration']['disablingReason']}
-                        <br/>
-                        <br/>
-                        {_admin_banned_link_reason}: 
-                        <br>
-                        <b>{php echo OPENVK_ROOT_CONF['openvk']['preferences']['registration']['disablingReason']}</b>
+                            <br/><br/>{_admin_banned_link_reason}:<br>
+                            <b>{php echo OPENVK_ROOT_CONF['openvk']['preferences']['registration']['disablingReason']}</b>
                         {/if}
 	                </td>
 	            </tr>
