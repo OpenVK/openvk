@@ -207,6 +207,9 @@ final class AuthPresenter extends OpenVKPresenter
     
     function renderFinishRestoringPassword(): void
     {
+        if(OPENVK_ROOT_CONF['openvk']['preferences']['security']['disablePasswordRestoring'])
+            $this->notFound();
+
         $request = $this->restores->getByToken(str_replace(" ", "+", $this->queryParam("key")));
         if(!$request || !$request->isStillValid()) {
             $this->flash("err", tr("token_manipulation_error"), tr("token_manipulation_error_comment"));
@@ -241,6 +244,9 @@ final class AuthPresenter extends OpenVKPresenter
     
     function renderRestore(): void
     {
+        if(OPENVK_ROOT_CONF['openvk']['preferences']['security']['disablePasswordRestoring'])
+            $this->notFound();
+
         if(!is_null($this->user))
             $this->redirect($this->user->identity->getURL());
 

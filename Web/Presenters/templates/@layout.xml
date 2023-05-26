@@ -220,7 +220,7 @@
                             <input type="hidden" name="hash" value="{$csrfToken}" />
                             <input type="submit" value="{_log_in}" class="button" style="display: inline-block; font-family: Tahoma" />
                             <a href="/reg"><input type="button" value="{_registration}" class="button" style="font-family: Tahoma" /></a><br><br>
-                            <a href="/restore">{_forgot_password}</a>
+                            {if !OPENVK_ROOT_CONF['openvk']['preferences']['security']['disablePasswordRestoring']}<a href="/restore">{_forgot_password}</a>{/if}
                         </form>
                     {/ifset}
                 </div>
