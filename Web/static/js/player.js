@@ -26,14 +26,14 @@ function _bsdnTpl(name, author) {
                 <span class="bsdn_contextMenuElement">OpenVK BSDN///Player 0.1</span>
                 <hr/>
                 <span class="bsdn_contextMenuElement">Developers:</span>
-                <span class="bsdn_contextMenuElement" onclick="window.location.assign('https://github.com/celestora');">
-                    - celstora
-                </span>
-                <span class="bsdn_contextMenuElement" onclick="window.location.assign('https://github.com/openvk/openvk/issues');">
-                    - Report a problem...
+                <span class="bsdn_contextMenuElement" onclick="window.open('https://github.com/celestora');">
+                    - celestora
                 </span>
                 <hr/>
-                <span class="bsdn_contextMenuElement" onclick="confirm('эм это шутка');">About Adobe Flash Player...</span>
+                <span class="bsdn_contextMenuElement" onclick="window.open('https://github.com/openvk/openvk/issues/new');">
+                    Report a problem...
+                </span>
+                <span class="bsdn_contextMenuElement" onclick="window.open('https://www.youtube.com/watch?v=4Hq53bN34_w');">About Adobe Flash Player...</span>
             </div>
 
             <div class="bsdn_controls">

@@ -37,9 +37,9 @@ openvk:
                 autoban: true
         registration:
             enable: true
-            reason: "" # reason for disabling registration
+            disablingReason: ""
         support:
-            supportName: "Moderator"
+            supportName: "Agent"
             adminAccount: 1 # Change this ok
             fastAnswers:
                 - "This is a list of quick answers to common questions for support. Post your responses here and agents can send it quickly with just 3 clicks"
@@ -125,9 +125,9 @@ openvk:
             token: "TOKEN_HERE"
             helpdeskChat: ""
         eventDB:
-            enable: false # Better enable this
+            enable: true
             database:
-                dsn: "mysql:unix_socket=/tmp/mysql.sock;dbname=openvk-eventdb"
+                dsn: "mysql:unix_host=localhost;dbname=openvk-eventdb" # or unix_socket=/tmp/mysql.sock
                 user: "root"
                 password: "DATABASE_PASSWORD"
         notificationsBroker:

@@ -258,7 +258,7 @@ final class WallPresenter extends OpenVKPresenter
             }
             
             if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK)
-                $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"], $anon);
+                $video = Video::fastMake($this->user->id, $_FILES["_vid_attachment"]["name"], $this->postParam("text"), $_FILES["_vid_attachment"], $anon);
         } catch(\DomainException $ex) {
             $this->flashFail("err", tr("failed_to_publish_post"), tr("media_file_corrupted"));
         } catch(ISE $ex) {
@@ -363,21 +363,52 @@ final class WallPresenter extends OpenVKPresenter
         $this->assertNoCSRF();
         
         $post = $this->posts->getPostById($wall, $post_id);
-        if(!$post || $post->isDeleted()) $this->notFound();
+
+        if(!$post || $post->isDeleted()) 
+            $this->notFound();
         
+        $where = $this->postParam("type") ?? "wall";
+        $groupId = NULL;
+        $flags = 0;
+
+        if($where == "group")
+            $groupId = $this->postParam("groupId");
+
         if(!is_null($this->user)) {
             $nPost = new Post;
-            $nPost->setOwner($this->user->id);
-            $nPost->setWall($this->user->id);
+
+            if($where == "wall") {
+                $nPost->setOwner($this->user->id);
+                $nPost->setWall($this->user->id);
+            } elseif($where == "group") {
+                $nPost->setOwner($this->user->id);
+                $club = (new Clubs)->get((int)$groupId);
+
+                if(!$club || !$club->canBeModifiedBy($this->user->identity))
+                    $this->notFound();
+                
+                if($this->postParam("asGroup") == 1) 
+                    $flags |= 0b10000000;
+
+                if($this->postParam("signed") == 1)
+                    $flags |= 0b01000000;
+                
+                $nPost->setWall($groupId * -1);
+            }
+
             $nPost->setContent($this->postParam("text"));
+            $nPost->setFlags($flags);
             $nPost->save();
+
             $nPost->attach($post);
             
             if($post->getOwner(false)->getId() !== $this->user->identity->getId() && !($post->getOwner() instanceof Club))
                 (new RepostNotification($post->getOwner(false), $post, $this->user->identity))->emit();
         };
-        
-        $this->returnJson(["wall_owner" => $this->user->identity->getId()]);
+		
+        $this->returnJson([
+            "wall_owner" => $where == "wall" ? $this->user->identity->getId() : $groupId * -1
+        ]);
     }
     
     function renderDelete(int $wall, int $post_id): void
