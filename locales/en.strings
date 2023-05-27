@@ -175,6 +175,9 @@
 "pinned" = "pinned";
 "comments_tip" = "Be first, who leaves a comment at this post!";
 "your_comment" = "Your comment";
+"auditory" = "Auditory";
+"in_wall" = "to user's wall";
+"in_group" = "to group";
 "shown" = "Shown";
 "x_out_of" = "$1 of";
 "wall_zero" = "no posts";

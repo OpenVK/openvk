@@ -111,10 +111,10 @@
                         &nbsp;|&nbsp;
                     {/if}
                     
-                    <a n:if="!($forceNoShareLink ?? false)" class="post-share-button" {ifset $thisUser} href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')"{/ifset}>
+                    <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button" {ifset $thisUser} href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')"{/ifset}>
                         {_share}
                         {if $post->getRepostCount() > 0}
-                            (<b>{$post->getRepostCount()}</b>)
+                            (<b id="repostsCount{$post->getPrettyId()}">{$post->getRepostCount()}</b>)
                         {/if}
                     </a>
 

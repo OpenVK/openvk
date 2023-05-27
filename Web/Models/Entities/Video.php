@@ -195,11 +195,11 @@ class Video extends Media
         $this->save();
     }
     
-    static function fastMake(int $owner, string $description = "", array $file, bool $unlisted = true, bool $anon = false): Video
+    static function fastMake(int $owner, string $name = "Unnamed Video.ogv", string $description = "", array $file, bool $unlisted = true, bool $anon = false): Video
     {
         $video = new Video;
         $video->setOwner($owner);
-        $video->setName("Unnamed Video.ogv");
+        $video->setName(ovk_proc_strtr($name, 61));
         $video->setDescription(ovk_proc_strtr($description, 300));
         $video->setAnonymous($anon);
         $video->setCreated(time());

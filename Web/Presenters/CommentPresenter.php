@@ -74,7 +74,7 @@ final class CommentPresenter extends OpenVKPresenter
             }
             
             if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK) {
-                $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"]);
+                $video = Video::fastMake($this->user->id, $_FILES["_vid_attachment"]["name"], $this->postParam("text"), $_FILES["_vid_attachment"]);
             }
         } catch(ISE $ex) {
             $this->flashFail("err", "Не удалось опубликовать комментарий", "Файл медиаконтента повреждён или слишком велик.");
