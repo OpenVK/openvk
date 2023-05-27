@@ -20,6 +20,8 @@ openvk:
         photos:
             upgradeStructure: false
             photoSaving: "quick"
+        videos:
+            disableUploading: false
         apps:
             withdrawTax: 8
         security:

@@ -197,6 +197,9 @@ class Video extends Media
     
     static function fastMake(int $owner, string $name = "Unnamed Video.ogv", string $description = "", array $file, bool $unlisted = true, bool $anon = false): Video
     {
+        if(OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading'])
+            exit(VIDEOS_FRIENDLY_ERROR);
+
         $video = new Video;
         $video->setOwner($owner);
         $video->setName(ovk_proc_strtr($name, 61));
