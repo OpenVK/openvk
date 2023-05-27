@@ -1109,6 +1109,23 @@ class User extends RowModel
 
         return true;
     }
+
+    function toVkApiStruct(): object
+    {
+        $res = (object) [];
+
+        $res->id = $this->getId();
+        $res->first_name = $this->getFirstName();
+        $res->last_name = $this->getLastName();
+        $res->deactivated = $this->isDeactivated();
+        $res->photo_50    = $this->getAvatarURL();
+        $res->photo_100   = $this->getAvatarURL("tiny");
+        $res->photo_200   = $this->getAvatarURL("normal");
+        $res->photo_id    = !is_null($this->getAvatarPhoto()) ? $this->getAvatarPhoto()->getPrettyId() : NULL;
+        # TODO: Perenesti syuda vsyo ostalnoyie
+
+        return $res;
+    }
     
     use Traits\TBackDrops;
     use Traits\TSubscribable;

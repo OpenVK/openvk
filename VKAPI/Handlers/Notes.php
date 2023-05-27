@@ -104,6 +104,7 @@ final class Notes extends VKAPIRequestHandler
 
     function editComment(int $comment_id, string $message, int $owner_id = NULL)
     {
+        /*
         $this->requireUser();
         $this->willExecuteWriteAction();
 
@@ -115,7 +116,8 @@ final class Notes extends VKAPIRequestHandler
         $comment->setContent($message);
         $comment->setEdited(time());
         $comment->save();
-
+        */
+        
         return 1;
     }
 
@@ -128,7 +130,7 @@ final class Notes extends VKAPIRequestHandler
             $this->fail(15, "Invalid user");
         
         if(empty($note_ids)) {
-            $notes = array_slice(iterator_to_array((new NotesRepo)->getUserNotes($user, 1, $count, $sort == 0 ? "ASC" : "DESC")), $offset);
+            $notes = array_slice(iterator_to_array((new NotesRepo)->getUserNotes($user, 1, $count + $offset, $sort == 0 ? "ASC" : "DESC")), $offset);
             $nodez = (object) [
                 "count" => (new NotesRepo)->getUserNotesCount((new UsersRepo)->get($user_id)), 
                 "notes" => []
