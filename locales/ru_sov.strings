@@ -965,17 +965,8 @@
 "s_date_before" = "До";
 "s_date_after" = "После";
 
-"s_region" = "Область";
-"s_city" = "Город";
-"s_native_city" = "Место рождения";
-
 "s_main" = "Паспорт";
-"s_age" = "Возраст";
-"s_sex" = "Пол";
-"s_wemen" = "Женский";
-"s_man" = "Мужской";
 
-"s_relationship" = "Семейное положение";
 "s_now_on_site" = "cейчас доступен";
 "s_with_photo" = "с фотокарточкой";
 "s_only_in_names" = "только в паспорте";

@@ -2328,7 +2328,7 @@ a.poll-retract-vote {
     border: solid 1px #575757;
     background-color: #696969;
     color:white;
-    margin-left: -3px;
+    margin-left: -11px;
     padding-bottom:2px;
     width:80px;
     cursor: pointer;
@@ -2416,8 +2416,8 @@ a.poll-retract-vote {
     border:none;
     position:absolute;
     width:150px;
-    right:95px;
-    top:12px;
+    cursor:pointer;
+    right:80px;
     text-align:right;
 }
 

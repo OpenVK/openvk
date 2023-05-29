@@ -92,9 +92,9 @@
                             <div class="{if $atSearch}nodivider{else}link{/if}">
 
                                 {if !$atSearch}
-                                    <form action="/search" method="get" id="searcher">
+                                    <form action="/search" method="get" id="searcher" style="position:relative;">
                                         <input id="searchInput" onfocus="expandSearch()" onblur="decreaseSearch()" class="sr" type="search" name="query" placeholder="{_header_search}" style="height: 20px;background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; background-color: #fff; padding-left: 18px;width: 120px;" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
-                                        <select name="type" class="whatFind" style="display:none;">
+                                        <select name="type" class="whatFind" style="display:none;top: 0px;">
                                             <option value="users">{_s_by_people}</option>
                                             <option value="groups">{_s_by_groups}</option>
                                             <option value="posts">{_s_by_posts}</option>
@@ -104,7 +104,7 @@
                                         </select>
                                     </form>
                                 {else}
-                                    <form action="/search" method="get" id="searcher">
+                                    <form action="/search" method="get" id="searcher" style="margin-top: -1px;position:relative;">
                                         <input id="searchInput" value="{$_GET['query'] ?? ''}" type="search" class="sr" name="query" placeholder="{_header_search}" style="height: 20px;background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; background-color: #fff; padding-left: 18px;width: 555px;" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
                                         <select name="type" class="whatFind">
                                             <option value="users"    {if str_contains($_SERVER['REQUEST_URI'], "type=users")}selected{/if}>{_s_by_people}</option>

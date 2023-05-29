@@ -293,7 +293,7 @@
             <div class="searchOptionBlock" id="s_main">
                 <input type="text" value="{if !is_null($_GET['status'])}{$_GET['status']}{/if}" form="searcher" placeholder="{_status}" name="status">
                 <input type="text" value="{if !is_null($_GET['city'])}{$_GET['city']}{/if}" form="searcher" placeholder="{_city}" name="city">
-                <input type="text" value="{if !is_null($_GET['native_city'])}{$_GET['native_city']}{/if}" form="searcher" placeholder="{_s_native_city}" name="native_city">
+                <input type="text" value="{if !is_null($_GET['hometown'])}{$_GET['hometown']}{/if}" form="searcher" placeholder="{_hometown}" name="hometown">
                 <input name="is_online" type="checkbox" {if !is_null($_GET['is_online']) && $_GET['is_online'] == "1"}checked{/if} form="searcher" value="1">{_s_now_on_site}
             </div>
         </div>

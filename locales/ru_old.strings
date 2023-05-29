@@ -760,17 +760,8 @@
 "s_date_before" = "До";
 "s_date_after" = "После";
 
-"s_region" = "Губернiя";
-"s_city" = "Городъ";
-"s_native_city" = "Родной городъ";
-
 "s_main" = "Основное";
-"s_age" = "Возрастъ";
-"s_sex" = "Полъ";
-"s_wemen" = "Женскiй";
-"s_man" = "Мужской";
 
-"s_relationship" = "Семейное положенiе";
 "s_now_on_site" = "cейчас тутъ";
 "s_with_photo" = "с фотокарточкой";
 "s_only_in_names" = "только в имѣнахъ";
