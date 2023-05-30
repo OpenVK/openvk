@@ -6,7 +6,7 @@ html {
     color-scheme: dark !important;
 }
 
-body, #backdropDripper {
+body, #backdropDripper, #standaloneCommentBox {
     background-color: #0e0b1a;
     color: #c6d2e8;
 }
@@ -35,7 +35,7 @@ span, .post-author .date, .crp-entry--message---text, .messenger-app--messages--
     border-color: #1c202f;
 }
 
-.accountInfo, .left_small_block, #profile_link, .profile_link, .navigation .link, .navigation .link:hover, .navigation_footer .link, .navigation_footer .link:hover, .completeness-gauge, input[type="text"], input[type="password"], input[type~="text"], input[type~="password"], input[type="email"], input[type="phone"], input[type~="email"], input[type~="phone"], input[type="search"], input[type~="search"], input[type~="date"], select, .content_title_expanded, .content_title_unexpanded, .content_subtitle, textarea, .post-content, .post-author, hr, h4, .postFeedWrapper, .tabs, #wallAttachmentMenu, .ovk-diag, .ovk-diag-head, #ovkDraw, #ovkDraw .literally .lc-picker, .literally .lc-options.horz-toolbar, .page_wrap, .container_gray .content, .summaryBar, .groups_options, form[action="/search"] > input, .header_search_input, .header_search_inputbt, .accent-box, .page_status_popup, .messenger-app--input, .messenger-app, .crp-entry:first-of-type, .crp-list, .crp-entry, .note_footer, .page_content > div, #editor, .note_header, center[style="background: white;border: #DEDEDE solid 1px;"], .album-photo img, .mb_tabs, .mb_tab#active div, .navigation-lang .link_new, #faqhead, #faqcontent, .post-divider, .comment, .commentsTextFieldWrap, tr, td, th, #votesBalance, .paginator a.active, .paginator a:hover, .topic-list-item, #userContent blockquote, .tippy-box[data-theme~="vk"], .poll {
+.accountInfo, .left_small_block, #profile_link, .profile_link, .navigation .link, .navigation .link:hover, .navigation_footer .link, .navigation_footer .link:hover, .completeness-gauge, input[type="text"], input[type="password"], input[type~="text"], input[type~="password"], input[type="email"], input[type="phone"], input[type~="email"], input[type~="phone"], input[type="search"], input[type~="search"], input[type~="date"], select, .content_title_expanded, .content_title_unexpanded, .content_subtitle, textarea, .post-content, .post-author, hr, h4, .postFeedWrapper, .tabs, #wallAttachmentMenu, .ovk-diag, .ovk-diag-head, #ovkDraw, #ovkDraw .literally .lc-picker, .literally .lc-options.horz-toolbar, .page_wrap, .container_gray .content, .summaryBar, .groups_options, form[action="/search"] > input, .header_search_input, .header_search_inputbt, .accent-box, .page_status_popup, .messenger-app--input, .messenger-app, .crp-entry:first-of-type, .crp-list, .crp-entry, .note_footer, .page_content > div, #editor, .note_header, center[style="background: white;border: #DEDEDE solid 1px;"], .album-photo img, .mb_tabs, .mb_tab#active div, .navigation-lang .link_new, #faqhead, #faqcontent, .post-divider, .comment, .commentsTextFieldWrap, tr, td, th, #votesBalance, .paginator a.active, .paginator a:hover, .topic-list-item, #userContent blockquote, .tippy-box[data-theme~="vk"], .poll, #standaloneCommentBox {
     border-color: #2c2640 !important;
 }
 
@@ -137,11 +137,11 @@ h4, .content_title_expanded, .summaryBar .summary, .content_title_unexpanded {
 }
 
 .content_title_expanded {
-    background-image: url("/themepack/midnight/0.0.2.6/resource/flex_arrow_open.png") !important;
+    background-image: url("/themepack/midnight/0.0.2.7/resource/flex_arrow_open.png") !important;
 }
 
 .content_title_unexpanded {
-    background-image: url("/themepack/midnight/0.0.2.6/resource/flex_arrow_shut.gif") !important;
+    background-image: url("/themepack/midnight/0.0.2.7/resource/flex_arrow_shut.gif") !important;
 }
 
 .ovk-video > .preview, .video-preview {
@@ -163,17 +163,17 @@ h4, .content_title_expanded, .summaryBar .summary, .content_title_unexpanded {
 
 .page_yellowheader {
     color: #c6d2e8;
-    background-image: url("/themepack/midnight/0.0.2.6/resource/header_purple.png") !important;
+    background-image: url("/themepack/midnight/0.0.2.7/resource/header_purple.png") !important;
     background-color: #231f34;
     border-color: #231f34;
 }
 
 .page_header {
-    background-image: url("/themepack/midnight/0.0.2.6/resource/header.png") !important;
+    background-image: url("/themepack/midnight/0.0.2.7/resource/header.png") !important;
 }
 
 .page_custom_header {
-    background-image: url("/themepack/midnight/0.0.2.6/resource/header_custom.png") !important;
+    background-image: url("/themepack/midnight/0.0.2.7/resource/header_custom.png") !important;
 }
 
 .page_yellowheader span, .page_yellowheader a {
@@ -193,11 +193,11 @@ form[action="/search"] > input, .header_search_input, textarea, input[type="text
 }
 
 input[type="checkbox"] {
-    background-image: url("/themepack/midnight/0.0.2.6/resource/checkbox.png") !important;
+    background-image: url("/themepack/midnight/0.0.2.7/resource/checkbox.png") !important;
 }
 
 input[type="radio"] {
-    background-image: url("/themepack/midnight/0.0.2.6/resource/radio.png") !important;
+    background-image: url("/themepack/midnight/0.0.2.7/resource/radio.png") !important;
 }
 
 .header_navigation .link {
@@ -205,19 +205,19 @@ input[type="radio"] {
 }
 
 .heart {
-    background-image: url("/themepack/midnight/0.0.2.6/resource/like.gif") !important;
+    background-image: url("/themepack/midnight/0.0.2.7/resource/like.gif") !important;
 }
 
 .pinned-mark, .post-author .pin {
-    background-image: url("/themepack/midnight/0.0.2.6/resource/pin.png") !important;
+    background-image: url("/themepack/midnight/0.0.2.7/resource/pin.png") !important;
 }
 
 .repost-icon {
-    background-image: url("/themepack/midnight/0.0.2.6/resource/published.gif") !important;
+    background-image: url("/themepack/midnight/0.0.2.7/resource/published.gif") !important;
 }
 
 .post-author .delete {
-    background-image: url("/themepack/midnight/0.0.2.6/resource/input_clear.gif") !important;
+    background-image: url("/themepack/midnight/0.0.2.7/resource/input_clear.gif") !important;
 }
 
 .user-alert {
@@ -227,6 +227,6 @@ input[type="radio"] {
 }
 
 #backdropEditor {
-    background-image: url("/themepack/midnight/0.0.2.6/resource/backdrop-editor.gif") !important;
+    background-image: url("/themepack/midnight/0.0.2.7/resource/backdrop-editor.gif") !important;
     border-color: #473e66 !important;
 }
