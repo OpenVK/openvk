@@ -249,7 +249,6 @@
             <div class="searchOptionBlock" id="s_sort">
                 <select name="sort" form="searcher" id="sortyor" onchange="this.value == 'random' ? document.getElementById('invertor').setAttribute('hidden', 'hidden') : document.getElementById('invertor').removeAttribute('hidden')">
                     <option value="id" {if $_GET["sort"] == "name"}selected{/if}>{_s_order_by_id}</option>
-                    <option value="random" {if $_GET["sort"] == "random"}selected{/if}>{_s_order_by_random}</option>
                     {if $type == "users"}
                         <option value="name" {if $_GET["sort"] == "name"}selected{/if}>{_s_order_by_name}</option>
                         {if OPENVK_ROOT_CONF["preferences"]["commerce"] != "false"}

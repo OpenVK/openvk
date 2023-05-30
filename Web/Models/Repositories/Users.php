@@ -57,37 +57,79 @@ class Users
         $notNullParams = [];
         $nnparamsCount = 0;
         
-        foreach($pars as $paramName => $paramValue) {
+        foreach($pars as $paramName => $paramValue)
             if($paramName != "before" && $paramName != "after" && $paramName != "gender")
                 $paramValue != NULL ? $notNullParams += ["$paramName" => "%$paramValue%"] : NULL;
             else
                 $paramValue != NULL ? $notNullParams += ["$paramName" => "$paramValue"]   : NULL;
-        }
 
         $nnparamsCount = sizeof($notNullParams);
 
         if($nnparamsCount > 0) {
-            !is_null($notNullParams["hometown"])      ? $result->where("hometown LIKE ?", $notNullParams["hometown"])            : NULL;
-            !is_null($notNullParams["city"])          ? $result->where("city LIKE ?", $notNullParams["city"])                    : NULL;
-            !is_null($notNullParams["maritalstatus"]) ? $result->where("marital_status LIKE ?", $notNullParams["maritalstatus"]) : NULL;
-            !is_null($notNullParams["status"])        ? $result->where("status LIKE ?", $notNullParams["status"])                : NULL;
-            !is_null($notNullParams["politViews"])    ? $result->where("polit_views LIKE ?", $notNullParams["politViews"])       : NULL;
-            !is_null($notNullParams["email"])         ? $result->where("email_contact LIKE ?", $notNullParams["email"])          : NULL;
-            !is_null($notNullParams["telegram"])      ? $result->where("telegram LIKE ?", $notNullParams["telegram"])            : NULL;
-            !is_null($notNullParams["site"])          ? $result->where("website LIKE ?", $notNullParams["site"])                 : NULL;
-            !is_null($notNullParams["address"])       ? $result->where("address LIKE ?", $notNullParams["address"])              : NULL;
-            !is_null($notNullParams["is_online"])     ? $result->where("online >= ?", time() - 900)                              : NULL;
-            !is_null($notNullParams["interests"])     ? $result->where("interests LIKE ?", $notNullParams["interests"])          : NULL;
-            !is_null($notNullParams["fav_mus"])       ? $result->where("fav_music LIKE ?", $notNullParams["fav_mus"])            : NULL;
-            !is_null($notNullParams["fav_films"])     ? $result->where("fav_films LIKE ?", $notNullParams["fav_films"])          : NULL;
-            !is_null($notNullParams["fav_shows"])     ? $result->where("fav_shows LIKE ?", $notNullParams["fav_shows"])          : NULL;
-            !is_null($notNullParams["fav_books"])     ? $result->where("fav_books LIKE ?", $notNullParams["fav_books"])          : NULL;
-            !is_null($notNullParams["fav_quote"])     ? $result->where("fav_quote LIKE ?", $notNullParams["fav_quote"])          : NULL;
-            !is_null($notNullParams["before"])        ? $result->where("UNIX_TIMESTAMP(since) < ?", $notNullParams["before"])    : NULL;
-            !is_null($notNullParams["after"])         ? $result->where("UNIX_TIMESTAMP(since) > ?", $notNullParams["after"])     : NULL;
-            !is_null($notNullParams["gender"])        ? $result->where("sex ?", $notNullParams["gender"])                        : NULL;
-            # !is_null($notNullParams["has_avatar"])    ? $result->related(): NULL;
+            foreach($notNullParams as $paramName => $paramValue) {
+                switch($paramName) {
+                    case "hometown":
+                        $result->where("hometown LIKE ?", $paramValue);
+                        break;
+                    case "city":
+                        $result->where("city LIKE ?", $paramValue);
+                        break;
+                    case "maritalstatus":
+                        $result->where("marital_status LIKE ?", $paramValue);
+                        break;
+                    case "status":
+                        $result->where("status LIKE ?", $paramValue);
+                        break;
+                    case "politViews":
+                        $result->where("polit_views LIKE ?", $paramValue);
+                        break;
+                    case "email":
+                        $result->where("email_contact LIKE ?", $paramValue);
+                        break;
+                    case "telegram":
+                        $result->where("telegram LIKE ?", $paramValue);
+                        break;
+                    case "site":
+                        $result->where("telegram LIKE ?", $paramValue);
+                        break;
+                    case "address":
+                        $result->where("address LIKE ?", $paramValue);
+                        break;
+                    case "is_online":
+                        $result->where("online >= ?", time() - 900);
+                        break;
+                    case "interests":
+                        $result->where("interests LIKE ?", $paramValue);
+                        break;
+                    case "fav_mus":
+                        $result->where("fav_music LIKE ?", $paramValue);
+                        break;
+                    case "fav_films":
+                        $result->where("fav_films LIKE ?", $paramValue);
+                        break;
+                    case "fav_shows":
+                        $result->where("fav_shows LIKE ?", $paramValue);
+                        break;
+                    case "fav_books":
+                        $result->where("fav_books LIKE ?", $paramValue);
+                        break;
+                    case "fav_quote":
+                        $result->where("fav_quote LIKE ?", $paramValue);
+                        break;
+                    case "before":
+                        $result->where("UNIX_TIMESTAMP(since) < ?", $paramValue);
+                        break;
+                    case "after":
+                        $result->where("UNIX_TIMESTAMP(since) > ?", $paramValue);
+                        break;
+                    case "gender":
+                        $result->where("sex ?", $paramValue);
+                        break;
+                }
+            }
         }
+
+
         return new Util\EntityStream("User", $result->order($sort));
     }
     

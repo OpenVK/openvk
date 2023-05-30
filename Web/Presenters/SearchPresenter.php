@@ -57,9 +57,6 @@ final class SearchPresenter extends OpenVKPresenter
             case "id":
                 $sort = "id " . $invert;
                 break;
-            case "random":
-                $sort = "RAND()";
-                break;
             case "name":
                 $sort = "first_name " . $invert;
                 break;   

@@ -52,20 +52,29 @@ class Videos
 
         $notNullParams = [];
 
-        foreach($pars as $paramName => $paramValue) {
+        foreach($pars as $paramName => $paramValue)
             if($paramName != "before" && $paramName != "after")
                 $paramValue != NULL ? $notNullParams+=["$paramName" => "%$paramValue%"]   : NULL;
             else
                 $paramValue != NULL ? $notNullParams+=["$paramName" => "$paramValue"]     : NULL;
-        }
-
+        
         $result = $this->videos->where("name OR description LIKE ?", $query)->where("deleted", 0);
         $nnparamsCount = sizeof($notNullParams);
 
         if($nnparamsCount > 0) {
-            !is_null($notNullParams["before"])        ? $result->where("created < ?", $notNullParams["before"])    : NULL;
-            !is_null($notNullParams["after"])         ? $result->where("created > ?", $notNullParams["after"])     : NULL;
+            foreach($notNullParams as $paramName => $paramValue) {
+                switch($paramName) {
+                    case "before":
+                        $result->where("created < ?", $paramValue);
+                        break;
+                    case "after":
+                        $result->where("created > ?", $paramValue);
+                        break;
+                }
+            }
         }
+
+
         return new Util\EntityStream("Video", $result->order("$sort"));
     }
 }

@@ -626,7 +626,7 @@ function resetSearch()
 
     for(const select of selects)
     {
-        if(select != sortyor) {
+        if(select != sortyor && select != document.querySelector(".whatFind")) {
             select.value = 0
         }
     }
