@@ -10,9 +10,9 @@
             </div>
         </td>
         <td valign="top" style="width: 100%">
-        {ifset infotable}
-            {include infotable, x => $dat}
-        {else}
+            {ifset infotable}
+                {include infotable, x => $dat}
+            {else}
         <a href="/video{$video->getPrettyId()}">
             <b>
             {$video->getName()}

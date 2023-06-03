@@ -262,7 +262,7 @@
             </div>
         </div>
 
-        {if $type !== "groups" && $type !== "apps"} {*В OpenVK не сохраняется дата создания группы*}
+    {if $type !== "groups" && $type !== "apps"} {* В OpenVK не сохраняется дата создания группы *}
         <div class="searchOption">
             <div class="searchOptionName" id="n_dates" onclick="hideParams('dates')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{_s_by_date}</div>
             <div class="searchOptionBlock" id="s_dates">
@@ -284,9 +284,9 @@
                     max={date('Y-m-d')}></p>
             </div>
         </div>
-        {/if}
+    {/if}
 
-        {if $type === "users"}
+    {if $type === "users"}
         <div class="searchOption">
             <div class="searchOptionName" id="n_main" onclick="hideParams('main')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{_main}</div>
             <div class="searchOptionBlock" id="s_main">
@@ -350,7 +350,7 @@
             </div>
         </div>
         <!--<input name="with_photo" type="checkbox" {if !is_null($_GET['with_photo']) && $_GET['with_photo'] == "on"}checked{/if} form="searcher">{_s_with_photo}-->
-        {/if}
+    {/if}
         <input class="button" type="button" id="dnt" value="{_reset}" onclick="resetSearch()">
     </div>
 
