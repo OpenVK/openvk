@@ -52,7 +52,7 @@
                 </label>
             </div>
             <input type="file" class="postFileSel" id="postFilePic" name="_pic_attachment" accept="image/*" style="display:none;" />
-            <input type="file" class="postFileSel" id="postFileVid" name="_vid_attachment" accept="video/*" style="display:none;" />
+            <input n:if="!OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']" type="file" class="postFileSel" id="postFileVid" name="_vid_attachment" accept="video/*" style="display:none;" />
             <input type="hidden" name="poll" value="none" />
             <input type="hidden" name="type" value="1" />
             <input type="hidden" name="hash" value="{$csrfToken}" />
@@ -71,7 +71,7 @@
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
                         {_photo}
                     </a>
-                    <a href="javascript:void(document.querySelector('#post-buttons{$textAreaId} input[name=_vid_attachment]').click());">
+                    <a n:if="!OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']" href="javascript:void(document.querySelector('#post-buttons{$textAreaId} input[name=_vid_attachment]').click());">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
                         {_video}
                     </a>

@@ -7,7 +7,7 @@ use openvk\VKAPI\Handlers\Wall;
 
 final class Newsfeed extends VKAPIRequestHandler
 {
-    function get(string $fields = "", int $start_from = 0, int $offset = 0, int $count = 30, int $extended = 0, int $forGodSakePleaseDoNotReportAboutMyOnlineActivity = 0)
+    function get(string $fields = "", int $start_from = 0, int $start_time = 0, int $end_time = 0, int $offset = 0, int $count = 30, int $extended = 0, int $forGodSakePleaseDoNotReportAboutMyOnlineActivity = 0)
     {
         $this->requireUser();
 
@@ -33,6 +33,8 @@ final class Newsfeed extends VKAPIRequestHandler
                     ->where("wall IN (?)", $ids)
                     ->where("deleted", 0)
                     ->where("id < (?)", empty($start_from) ? PHP_INT_MAX : $start_from)
+                    ->where("? <= created", empty($start_time) ? 0 : $start_time)
+                    ->where("? >= created", empty($end_time) ? PHP_INT_MAX : $end_time)
                     ->order("created DESC");
 
         $rposts = [];
@@ -45,7 +47,7 @@ final class Newsfeed extends VKAPIRequestHandler
         return $response;
     }
 
-    function getGlobal(string $fields = "", int $start_from = 0, int $offset = 0, int $count = 30, int $extended = 0)
+    function getGlobal(string $fields = "", int $start_from = 0, int $start_time = 0, int $end_time = 0,  int $offset = 0, int $count = 30, int $extended = 0)
     {
         $this->requireUser();
         
@@ -55,7 +57,9 @@ final class Newsfeed extends VKAPIRequestHandler
             $queryBase .= " AND `nsfw` = 0";
 
         $start_from = empty($start_from) ? PHP_INT_MAX : $start_from;
-        $posts = DatabaseConnection::i()->getConnection()->query("SELECT `posts`.`id` " . $queryBase . " AND `posts`.`id` < " . $start_from . " ORDER BY `created` DESC LIMIT " . $count . " OFFSET " . $offset);
+        $start_time = empty($start_time) ? 0 : $start_time;
+        $end_time = empty($end_time) ? PHP_INT_MAX : $end_time;
+        $posts = DatabaseConnection::i()->getConnection()->query("SELECT `posts`.`id` " . $queryBase . " AND `posts`.`id` <= " . $start_from . " AND " . $start_time . " <= `posts`.`created` AND `posts`.`created` <= " . $end_time . " ORDER BY `created` DESC LIMIT " . $count . " OFFSET " . $offset);
         
         $rposts = [];
         $ids = [];

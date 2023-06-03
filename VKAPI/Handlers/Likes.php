@@ -54,11 +54,7 @@ final class Likes extends VKAPIRequestHandler
             case "post":
                 $user = (new UsersRepo)->get($user_id);
                 if (is_null($user))
-                    return (object) [
-                        "liked"  => 0,
-                        "copied" => 0,
-                        "sex"    => 0
-                    ];
+                    $this->fail(100, "One of the parameters specified was missing or invalid: user not found");
 
                 $post = (new PostsRepo)->getPostById($owner_id, $item_id);
                 if (is_null($post))

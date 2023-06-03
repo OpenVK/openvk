@@ -20,6 +20,8 @@ openvk:
         photos:
             upgradeStructure: false
             photoSaving: "quick"
+        videos:
+            disableUploading: false
         apps:
             withdrawTax: 8
         security:
@@ -28,6 +30,7 @@ openvk:
             forcePhoneVerification: false
             forceEmailVerification: false
             forceStrongPassword: false
+            disablePasswordRestoring: true # turn this off if you have configured e-mail sending correctly
             enableSu: true
             rateLimits:
                 actions: 5
