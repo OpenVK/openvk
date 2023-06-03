@@ -84,6 +84,9 @@ final class TopicsPresenter extends OpenVKPresenter
             if($this->postParam("as_group") === "on" && $club->canBeModifiedBy($this->user->identity))
                 $flags |= 0b10000000;
 
+            if($_FILES["_vid_attachment"] && OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading'])
+                $this->flashFail("err", tr("error"), "Video uploads are disabled by the system administrator.");
+
             $topic = new Topic;
             $topic->setGroup($club->getId());
             $topic->setOwner($this->user->id);

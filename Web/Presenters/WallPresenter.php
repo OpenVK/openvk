@@ -229,6 +229,9 @@ final class WallPresenter extends OpenVKPresenter
         if(!$canPost)
             $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
 
+        if($_FILES["_vid_attachment"] && OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading'])
+            $this->flashFail("err", tr("error"), "Video uploads are disabled by the system administrator.");
+
         $anon = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"];
         if($wallOwner instanceof Club && $this->postParam("as_group") === "on" && $this->postParam("force_sign") !== "on" && $anon) {
             $manager = $wallOwner->getManager($this->user->identity);

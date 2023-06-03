@@ -181,6 +181,28 @@ function _bsdnEventListenerFactory(el, v) {
             click: [ () => el.querySelector(".bsdn_contextMenu").style.display = "none" ]
         },
 
+        ".bsdn_copyVideoUrl": {
+            click: [
+                async () => {
+                    let videoUrl = el.querySelector(".bsdn_video > video").src;
+                    let fallback = () => {
+                        prompt("URL:", videoUrl);
+                    };
+
+                    if(typeof navigator.clipboard == "undefined") {
+                        fallback();
+                    } else {
+                        try {
+                            await navigator.clipboard.writeText(videoUrl);
+                            confirm("👍🏼");
+                        } catch(e) {
+                            fallback();
+                        }
+                    }
+                }
+            ]
+        },
+
         ".bsdn_video > video": {
             play: [
                 () => {

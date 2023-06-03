@@ -47,6 +47,9 @@ final class CommentPresenter extends OpenVKPresenter
             $club = (new Clubs)->get(abs($entity->getTargetWall()));
         else if($entity instanceof Topic)
             $club = $entity->getClub();
+
+        if($_FILES["_vid_attachment"] && OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading'])
+            $this->flashFail("err", tr("error"), "Video uploads are disabled by the system administrator.");
         
         $flags = 0;
         if($this->postParam("as_group") === "on" && !is_null($club) && $club->canBeModifiedBy($this->user->identity))
