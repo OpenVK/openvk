@@ -488,7 +488,7 @@
                             {var $interests = explode(", ", $user->getInterests())}
                             
                             {foreach $interests as $interest}
-                            <a href="/search?type=users&query=&interests={urlencode($interest)}">{$interest}</a>{if $interest != end($interests)},{/if}
+                                <a href="/search?type=users&query=&interests={urlencode($interest)}">{$interest}</a>{if $interest != end($interests)},{/if}
                             {/foreach}
                         </td>
                     </tr>
@@ -741,7 +741,6 @@
     {else} {* isBanned() *}
         {include "banned.xml"}
     {/if}
-
 {/block}
 
 {block bodyScripts}
