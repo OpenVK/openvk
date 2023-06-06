@@ -1,6 +1,6 @@
 {extends "../@layout.xml"}
 
-{block title}Видеозапись{/block}
+{block title}{_video}{/block}
 
 {block header}
     <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>
@@ -14,7 +14,7 @@
     <center style="margin-bottom: 8pt;">
         {if $video->getType() === 0}
             <div class="bsdn" data-name="{$video->getName()}" data-author="{$user->getCanonicalName()}">
-                <video width="610" src="{$video->getURL()}"></video>
+                <video src="{$video->getURL()}"></video>
             </div>
         {else}
             {var $driver = $video->getVideoDriver()}
