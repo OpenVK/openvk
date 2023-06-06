@@ -218,8 +218,8 @@
                             <input id="password" type="password" name="password" required />
                             <input type="hidden" name="jReturnTo" value="{$_SERVER['REQUEST_URI']}" />
                             <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_log_in}" class="button" style="display: inline-block;" />
-                            <a href="/reg" class="button" style="display: inline-block;">{_registration}</a><br><br>
+                            <input type="submit" value="{_log_in}" class="button" style="display: inline-block; font-family: Tahoma" />
+                            <a href="/reg"><input type="button" value="{_registration}" class="button" style="font-family: Tahoma" /></a><br><br>
                             <a href="/restore">{_forgot_password}</a>
                         </form>
                     {/ifset}
@@ -294,6 +294,7 @@
         {script "js/messagebox.js"}
         {script "js/notifications.js"}
         {script "js/scroll.js"}
+        {script "js/player.js"}
         {script "js/al_wall.js"}
         {script "js/al_api.js"}
         {script "js/al_mentions.js"}
@@ -309,6 +310,8 @@
                 fartscroll(400);
             </script>
         {/if}
+
+        <script>bsdnHydrate();</script>
 
         <script n:if="OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['enable']" async defer data-domain="{php echo OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['domain']}" src="{php echo OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['server']}js/plausible.js"></script>
         

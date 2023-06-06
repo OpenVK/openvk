@@ -10,7 +10,23 @@
         </a>
     {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Video}
-    <video class="media" src="{$attachment->getURL()}" controls="controls"></video>
+    {if $attachment->getType() === 0}
+        <div class="bsdn media" data-name="{$attachment->getName()}" data-author="{$attachment->getOwner()->getCanonicalName()}">
+            <video class="media" src="{$attachment->getURL()}"></video>
+        </div>
+    {else}
+        {var $driver = $attachment->getVideoDriver()}
+        {if !$driver}
+            <span style="color:red;">{_version_incompatibility}</span>
+        {else}
+            {$driver->getEmbed("100%")|noescape}
+        {/if}
+    {/if}
+
+    <div class="video-wowzer">
+        <img src="/assets/packages/static/openvk/img/videoico.png" />
+        <a href="/video{$attachment->getPrettyId()}">{$attachment->getName()}</a>
+    </div>
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Poll}
     {presenter "openvk!Poll->view", $attachment->getId()}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Post}

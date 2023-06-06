@@ -237,6 +237,7 @@ final class Groups extends VKAPIRequestHandler
     function join(int $group_id)
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
         
         $club = (new ClubsRepo)->get($group_id);
         
@@ -251,6 +252,7 @@ final class Groups extends VKAPIRequestHandler
     function leave(int $group_id)
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
         
         $club = (new ClubsRepo)->get($group_id);
         

@@ -1,8 +1,6 @@
 name: Codeberg Mirroring
 
-on:
-  push:
-    branches: ["master"]
+on: push
 
 jobs:
   to_codeberg:
@@ -14,4 +12,4 @@ jobs:
       - uses: pixta-dev/repository-mirroring-action@v1
         with:
           target_repo_url: "git@codeberg.org:openvk/openvk.git"
-          ssh_private_key: ${{ secrets.CODEBERG_PRIVSSH }}
+          ssh_private_key: ${{ secrets.CODEBERG_MIRRORSSH }}

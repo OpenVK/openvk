@@ -8,6 +8,7 @@ final class Likes extends VKAPIRequestHandler
 	function add(string $type, int $owner_id, int $item_id): object
 	{
 		$this->requireUser();
+        $this->willExecuteWriteAction();
 
         switch($type) {
             case "post":
@@ -28,6 +29,7 @@ final class Likes extends VKAPIRequestHandler
 	function delete(string $type, int $owner_id, int $item_id): object
 	{
 		$this->requireUser();
+        $this->willExecuteWriteAction();
 
         switch($type) {
             case "post":

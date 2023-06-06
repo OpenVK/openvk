@@ -204,6 +204,9 @@ final class VKAPIPresenter extends OpenVKPresenter
             }
         }
         
+        if(!is_null($identity) && $identity->isBanned())
+            $this->fail(18, "User account is deactivated", $object, $method);
+        
         $object       = ucfirst(strtolower($object));
         $handlerClass = "openvk\\VKAPI\\Handlers\\$object";
         if(!class_exists($handlerClass))

@@ -756,7 +756,7 @@ class User extends RowModel
         $platform = $this->getRecord()->client_name;
         if($forAPI) {
             switch ($platform) {
-                case 'openvk_android':
+                case 'openvk_refresh_android':
                 case 'openvk_legacy_android':
                     return 'android';
                     break;
@@ -1005,6 +1005,15 @@ class User extends RowModel
     {
         $this->stateChanges("shortcode", $this->getRecord()->shortcode); #fix KABOBSQL
         $this->stateChanges("online", $time);
+
+        return true;
+    }
+
+    function updOnline(string $platform): bool
+    {
+        $this->setOnline(time());
+        $this->setClient_name($platform);
+        $this->save();
 
         return true;
     }

@@ -231,6 +231,7 @@ h1 {
     position: absolute;
     top: 140px;
     padding: 0 19px;
+    margin: 24px;
 }
 
 #backdropFilePicker > input {
@@ -861,6 +862,8 @@ span {
 
 .content_list .cl_element {
     width: 33%;
+    display: inline-block;
+    text-align: center;
 }
 
 .content_list.long .cl_element {
@@ -881,6 +884,7 @@ span {
 
 .content_list .cl_element .cl_name .cl_lname {
     font-size: 7pt;
+    display: block;
 }
 
 .ava {
@@ -2381,7 +2385,7 @@ a.poll-retract-vote {
 }
 
 .regform-left{
-	text-align: right; 
+	text-align: right;
 	min-width: 110px;
 }
 
@@ -2403,5 +2407,23 @@ a.poll-retract-vote {
 }
 
 .tour div {
-    font-size: 11px; color:#000; 
+    font-size: 11px; color:#000;
+}
+
+.video-wowzer > img {
+    vertical-align: bottom;
+}
+
+.video-wowzer {
+    font-weight: bolder;
+    font-size: 12px;
+    padding: 3px 0;
+}
+
+.video-wowzer a::before {
+    content: "b";
+    color: transparent;
+    width: 12px;
+    background-image: url(/assets/packages/static/openvk/img/videoico.png);
+    display: none;
 }

@@ -556,6 +556,7 @@
 "end_all_sessions_description" = "Եթե ցանկանում եք դուրս գալ $1–ից ամեն դեվայսից, սեղմե՛ք ներքևի կոճակը";
 
 "end_all_sessions_done" = "Բոլոր սեսսիաները նետված են, ներառյալ բջջային հավելվածները";
+"browse" = "Վերանայում";
 
 /* Two-factor authentication */
 

@@ -27,6 +27,7 @@ openvk:
             requirePhone: false
             forcePhoneVerification: false
             forceEmailVerification: false
+            forceStrongPassword: false
             enableSu: true
             rateLimits:
                 actions: 5
