@@ -486,7 +486,7 @@ final class Wall extends VKAPIRequestHandler
         $nPost->attach($post);
         
         if($post->getOwner(false)->getId() !== $this->user->getId() && !($post->getOwner() instanceof Club))
-            (new RepostNotification($post->getOwner(false), $post, $this->user->identity))->emit();
+            (new RepostNotification($post->getOwner(false), $post, $this->user))->emit();
 
         return (object) [
             "success" => 1, // 👍
