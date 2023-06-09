@@ -58,7 +58,7 @@ class Users
         $nnparamsCount = 0;
         
         foreach($pars as $paramName => $paramValue)
-            if($paramName != "before" && $paramName != "after" && $paramName != "gender")
+            if($paramName != "before" && $paramName != "after" && $paramName != "gender" && $paramName != "maritalstatus" && $paramName != "politViews")
                 $paramValue != NULL ? $notNullParams += ["$paramName" => "%$paramValue%"] : NULL;
             else
                 $paramValue != NULL ? $notNullParams += ["$paramName" => "$paramValue"]   : NULL;
@@ -75,13 +75,13 @@ class Users
                         $result->where("city LIKE ?", $paramValue);
                         break;
                     case "maritalstatus":
-                        $result->where("marital_status LIKE ?", $paramValue);
+                        $result->where("marital_status ?", $paramValue);
                         break;
                     case "status":
                         $result->where("status LIKE ?", $paramValue);
                         break;
                     case "politViews":
-                        $result->where("polit_views LIKE ?", $paramValue);
+                        $result->where("polit_views ?", $paramValue);
                         break;
                     case "email":
                         $result->where("email_contact LIKE ?", $paramValue);
