@@ -151,6 +151,9 @@
 "pinned" = "высказыванiе наверху";
 "comments_tip" = "Будьте первымъ, кто оставитъ замѣчанiе.";
 "your_comment" = "Вашъ комментарій";
+"auditory" = "Смотритѣли";
+"in_wall" = "на странiцу";
+"in_group" = "в общѣство";
 "shown" = "Показано";
 "x_out_of" = "$1 изъ";
 "wall_zero" = "Нѣтъ извѣстій";
@@ -236,6 +239,7 @@
 "only_administrators" = "Только администраторы";
 "website" = "Сайтъ";
 "managed" = "Управляемые";
+"size" = "Размеръ";
 
 "administrators_one" = "$1 администраторъ";
 "administrators_few" = "$1 администратора";
@@ -294,6 +298,35 @@
 "albums_few" = "$1 альбома";
 "albums_many" = "$1 альбомовъ";
 "albums_other" = "$1 альбомовъ";
+"albums_list_zero" = "У Васъ нетъ нi одного альбома с картiнками";
+"albums_list_one" = "У Васъ одiн альбом с картiнками";
+"albums_list_few" = "У Васъ $1 альбома с картiнками";
+"albums_list_many" = "У Васъ $1 альбомовъ с картiнками";
+"albums_list_other" = "У Васъ $1 альбомовъ с картiнками";
+
+"add_image" = "Вклѣить фото";
+"add_image_group" = "Вклѣйка фото";
+"upload_new_picture" = "Вклеiть новую фото";
+"uploading_new_image" = "Вклѣйка нового фото";
+"friends_avatar" = "Знакомымъ будетъ проще узнать Васъ, если вы вклѣите своё настоящое фото.";
+"groups_avatar" = "Хорошое фото сделает Вашу группу более узнаваѣмой.";
+"formats_avatar" = "Вы можете вклѣить фото в формате JPG, GIF или PNG.";
+"troubles_avatar" = "Ежѣли вознiкают проблѣмы с прикрѣплѣнiем, попробуйтѣ вклѣить фото меньшего размера.";
+"webcam_avatar" = "Ежѣли Вашъ компьютер имѣет фотоаппаратъ, Вы можѣте <a href='javascript:'>сделать быстрое фото »</a>";
+
+"update_avatar_notification" = "Фото странiцы обновлено";
+"update_avatar_description" = "Нажмiте сюда, чтобы пѣрейти к просмотру";
+
+"deleting_avatar" = "Вырѣзка фото";
+"deleting_avatar_sure" = "Вы дѣйствительно хотите отклѣить фото?";
+
+"deleted_avatar_notification" = "Фото успешно отклѣено";
+
+"save_changes" = "Сохранiть измѣненiя";
+
+"upd_m" = "обновил фото своѣй странiцы";
+"upd_f" = "обновила фото своѣй странiцы";
+"upd_g" = "обновило фото общѣства";
 
 /* Notes */
 
@@ -375,7 +408,12 @@
 "round_avatars" = "Круглые";
 
 "search_for_groups" = "Поискъ обществъ";
-"search_for_people" = "Поискъ людей";
+"search_for_users" = "Поискъ граждан";
+"search_for_posts" = "Поискъ высказыванiй";
+"search_for_comments" = "Поискъ очерковъ";
+"search_for_videos" = "Поискъ синематографовъ";
+"search_for_apps" = "Поискъ забав";
+"search_for_notes" = "Поискъ запiсокъ";
 "search_button" = "Найти";
 "results_zero" = "Ни одного результата";
 "results_one" = "Одинъ результатъ";
@@ -689,3 +727,47 @@
 "warning" = "Вниманіе";
 "question_confirm" = "Это дѣйствіе нельзя отмѣнить. Вы дѣйствительно увѣрены въ томъ что хотите сдѣлать?";
  
+/* Search */
+
+"s_people" = "Гражданѣ";
+"s_groups" = "Общѣства";
+"s_events" = "События";
+"s_apps" = "Забавы";
+"s_questions" = "Вопросы";
+"s_notes" = "Заметки";
+"s_themes" = "Тѣмы";
+"s_posts" = "Высказыванiя";
+"s_comments" = "Очерки";
+"s_videos" = "Сiнѣматографы";
+"s_audios" = "Аудио";
+"s_by_people" = "по гражданам";
+"s_by_groups" = "по общѣствам";
+"s_by_posts" = "по запiсям";
+"s_by_comments" = "по очеркамъ";
+"s_by_videos" = "по сiнѣматографамъ";
+"s_by_apps" = "по забавам";
+"s_by_audios" = "по музыке";
+
+"s_order_by" = "Расположѣнiе";
+
+"s_order_by_id" = "По порядковому номеру";
+"s_order_by_name" = "По паспорту";
+"s_order_by_random" = "По случайности";
+"s_order_by_rating" = "По рейтингу";
+"s_order_invert" = "Отразiть";
+
+"s_by_date" = "По датѣ";
+"s_date_before" = "До";
+"s_date_after" = "После";
+
+"s_main" = "Основное";
+
+"s_now_on_site" = "cейчас тутъ";
+"s_with_photo" = "с фотокарточкой";
+"s_only_in_names" = "только в имѣнахъ";
+
+"s_any" = "любой";
+"reset" = "Сбросъ";
+
+"closed_group_post" = "Это высказыванiе изъ закрытого общѣства";
+"deleted_target_comment" = "Этотъ отзыв принадлѣжит к удалѣнному высказыванiю";

@@ -420,11 +420,11 @@
                         </tr>
                         <tr n:if="!is_null($user->getHometown())">
                             <td class="label"><span class="nobold">{_hometown}:</span></td>
-                            <td class="data">{$user->getHometown()}</td>
+                            <td class="data"><a href="/search?type=users&query=&hometown={urlencode($user->getHometown())}">{$user->getHometown()}</a></td>
                         </tr>
                         <tr>
                             <td class="label"><span class="nobold">{_politViews}:</span></td>
-                            <td class="data">{var $pviews = $user->getPoliticalViews()}{_"politViews_$pviews"}</td>
+                            <td class="data"><a {if $user->getPoliticalViews() != 0}href="/search?type=users&query=&politViews={$user->getPoliticalViews()}"{/if}>{var $pviews = $user->getPoliticalViews()}{_"politViews_$pviews"}</a></td>
                         </tr>
                         <tr n:if="!is_null($user->getBirthday())">
                             <td class="label"><span class="nobold">{_birth_date}:</span></td>
@@ -470,7 +470,7 @@
                         </tr>
                     <tr n:if="!is_null($user->getCity())">
                         <td class="label"><span class="nobold">{_city}:</span></td>
-                        <td class="data">{$user->getCity()}</td>
+                        <td class="data"><a href="/search?type=users&query=&city={$user->getCity()}">{$user->getCity()}</a></td>
                     </tr>
                     <tr n:if="!is_null($user->getPhysicalAddress())">
                         <td class="label"><span class="nobold">{_address}:</span></td>
@@ -484,23 +484,54 @@
                   <tbody n:ifcontent>
                     <tr n:if="!is_null($user->getInterests())">
                         <td class="label"><span class="nobold">{_interests}: </span></td>
-                        <td class="data">{$user->getInterests()}</td>
+                        <td class="data">
+                            {var $interests = explode(", ", $user->getInterests())}
+                            
+                            {foreach $interests as $interest}
+                                <a href="/search?type=users&query=&interests={urlencode($interest)}">{$interest}</a>{if $interest != end($interests)},{/if}
+                            {/foreach}
+                        </td>
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteMusic())">
+
                         <td class="label"><span class="nobold">{_favorite_music}: </span></td>
-                        <td class="data">{$user->getFavoriteMusic()}</td>
+                        <td class="data">
+                            {var $musics = explode(", ", $user->getFavoriteMusic())}
+
+                            {foreach $musics as $music}
+                                <a href="/search?type=users&query=&fav_mus={urlencode($music)}">{$music}</a>{if $music != end($musics)},{/if}
+                            {/foreach}
+                        </td>
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteFilms())">
                         <td class="label"><span class="nobold">{_favorite_films}: </span></td>
-                        <td class="data">{$user->getFavoriteFilms()}</td>
+                        <td class="data">
+                            {var $films = explode(", ", $user->getFavoriteFilms())}
+
+                            {foreach $films as $film}
+                                <a href="/search?type=users&query=&fav_films={urlencode($film)}">{$film}</a>{if $film != end($films)},{/if}
+                            {/foreach}
+                        </td>
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteShows())">
                         <td class="label"><span class="nobold">{_favorite_shows}: </span></td>
-                        <td class="data">{$user->getFavoriteShows()}</td>
+                        <td class="data">                        
+                            {var $shows = explode(", ", $user->getFavoriteShows())}
+
+                            {foreach $shows as $show}
+                                <a href="/search?type=users&query=&fav_shows={urlencode($show)}">{$show}</a>{if $show != end($shows)},{/if}
+                            {/foreach}
+                        </td>
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteBooks())">
                         <td class="label"><span class="nobold">{_favorite_books}: </span></td>
-                        <td class="data">{$user->getFavoriteBooks()}</td>
+                        <td class="data">
+                            {var $books = explode(", ", $user->getFavoriteBooks())}
+
+                            {foreach $books as $book}
+                                <a href="/search?type=users&query=&fav_books={urlencode($book)}">{$book}</a>{if $book != end($books)},{/if}
+                            {/foreach}
+                        </td>
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteQuote())">
                         <td class="label"><span class="nobold">{_favorite_quotes}: </span></td>

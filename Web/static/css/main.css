@@ -97,6 +97,14 @@ h1 {
     background-size: 1.5px 41px;
 }
 
+.header_navigation .nodivider {
+    display: inline-block;
+    height: 29px;
+    padding: 11px 4px 0 7px;
+    background: none;
+    background-size: 1.5px 41px;
+}
+
 .header_navigation .link a {
     color: #D7D7D7;
     text-decoration: none;
@@ -670,6 +678,7 @@ select {
     font-family: tahoma, verdana, arial, sans-serif;
     width: 100%;
     box-sizing: border-box;
+    outline:none;
 }
 
 .header2 {
@@ -2299,6 +2308,167 @@ a.poll-retract-vote {
     width: 12px;
     background-image: url(/assets/packages/static/openvk/img/videoico.png);
     display: none;
+}
+
+.searchOptions
+{
+    overflow: hidden;
+    width:25.5%;
+    border-top:1px solid #E5E7E6;
+    float:right;
+    scrollbar-width: none;
+    font-size:12px;
+    background-color:#f7f7f7;
+    margin-right: -7px;
+}
+
+.searchBtn
+{
+    border: solid 1px #575757;
+    background-color: #696969;
+    color:white;
+    margin-left: -11px;
+    padding-bottom:2px;
+    width:80px;
+    cursor: pointer;
+    box-shadow: 0px 2px 0px 0px rgba(255, 255, 255, 0.18) inset;
+    margin-top: 1px;
+}
+
+.searchBtn:active
+{
+    border: solid 1px #666666;
+    background-color: #696969;
+    color:white;
+    box-shadow: 0px -2px 0px 0px rgba(255, 255, 255, 0.18) inset;
+}
+
+.searchList
+{
+    list-style: none;
+    user-select: none;
+    padding-left:0px;
+}
+
+.searchList #used
+{
+    margin-left:0px;
+    color: white;
+    padding:2px;
+    padding-top:5px;
+    padding-bottom:5px;
+    border: solid 0.125rem #696969;
+    background:linear-gradient(#888888,#858585);
+    margin-bottom:2px;
+    padding-left:9px;
+    width:87%;
+}
+
+.searchList #used a
+{
+    color: white;
+}
+
+.sr:focus
+{
+    outline:none;
+}
+
+.searchHide
+{
+    padding-right: 5px;
+}
+
+.searchList li
+{
+    margin-left:0px;
+    color: #2B587A !important;
+    cursor:pointer;
+    padding:2px;
+    padding-top:5px;
+    padding-bottom:5px;
+    margin-bottom:2px;
+    padding-left:9px;
+}
+
+.searchList li a
+{
+    min-width:100%;
+}
+
+.searchList li:hover
+{
+    margin-left:0px;
+    color: #2B587A !important;
+    background:#ebebeb;
+    padding:2px;
+    padding-top:5px;
+    padding-bottom:5px;
+    margin-bottom:2px;
+    padding-left:9px;
+    width:91%;
+}
+
+.whatFind
+{
+    color:rgb(128, 128, 128);
+    background:none;
+    border:none;
+    position:absolute;
+    width:150px;
+    cursor:pointer;
+    right:80px;
+    text-align:right;
+    margin-top: 0.5px;
+}
+
+.searchOptionName
+{
+    cursor:pointer;
+    background-color: #EAEAEA;
+    padding-left:5px;
+    padding-top:5px;
+    padding-bottom:5px;
+    width: 90%;
+    font-weight: 600;
+    color: #585858;
+    border-bottom: 2px solid #E4E4E4;
+}
+
+.searchOption
+{
+    user-select: none;
+}
+
+.searchOptionBlock
+{
+    margin-top: -5px;
+    padding-top:10px;
+    max-width:92%;
+    padding-bottom:6px;
+}
+
+.searchOptionBlock select
+{
+    padding-left:7px;
+    padding-top:3px;
+    padding-bottom:3px;
+    cursor:pointer;
+}
+
+.searchOptionBlock input[type=text], input[type=date]
+{
+    margin-bottom:5px;
+}
+
+.borderup
+{
+    border-top:1px solid #E5E7E6;
+}
+
+#searchInput
+{
+    transition: .3s linear;
 }
 
 #standaloneCommentBox {

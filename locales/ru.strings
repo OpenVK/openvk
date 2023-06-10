@@ -80,6 +80,7 @@
 "no_information_provided" = "Информация отсутствует.";
 "deceased_person" = "Страница покойного человека";
 "none" = "отсутствует";
+"desc_none" = "описание отсутствует";
 "send" = "Отправить";
 "years_zero" = "0 лет";
 "years_one" = "1 год";
@@ -452,7 +453,12 @@
 "round_avatars" = "Круглые";
 "apply_style_for_this_device" = "Применить стиль только для этого устройства";
 "search_for_groups" = "Поиск групп";
-"search_for_people" = "Поиск людей";
+"search_for_users" = "Поиск людей";
+"search_for_posts" = "Поиск записей";
+"search_for_comments" = "Поиск комментариев";
+"search_for_videos" = "Поиск видео";
+"search_for_apps" = "Поиск приложений";
+"search_for_notes" = "Поиск записок";
 "search_button" = "Найти";
 "search_placeholder" = "Начните вводить любое имя, название или слово";
 "results_zero" = "Ни одного результата";
@@ -1343,4 +1349,49 @@
 
 "tour_section_14_bottom_text_1" = "Скриншоты приложения";
 "tour_section_14_bottom_text_2" = "На этом экскурсия по сайту завершена. Если вы хотите попробовать наше мобильное приложение, создать здесь свою группу, позвать своих друзей или найти новых, или вообще просто как-нибудь поразвлекаться, то это можно сделать прямо сейчас, пройдя небольшую <a href='/reg'>регистрацию</a>";
-"tour_section_14_bottom_text_3" = "На этом экскурсия по сайту завершена."
+"tour_section_14_bottom_text_3" = "На этом экскурсия по сайту завершена.";
+
+/* Search */
+
+"s_people" = "Люди";
+"s_groups" = "Группы";
+"s_events" = "События";
+"s_apps" = "Приложения";
+"s_questions" = "Вопросы";
+"s_notes" = "Заметки";
+"s_themes" = "Темы";
+"s_posts" = "Записи";
+"s_comments" = "Комментарии";
+"s_videos" = "Видео";
+"s_audios" = "Аудио";
+"s_by_people" = "по людям";
+"s_by_groups" = "по группам";
+"s_by_posts" = "по записям";
+"s_by_comments" = "по комментариям";
+"s_by_videos" = "по видео";
+"s_by_apps" = "по приложениям";
+"s_by_audios" = "по музыке";
+
+"s_order_by" = "Порядок";
+
+"s_order_by_id" = "По id";
+"s_order_by_name" = "По имени";
+"s_order_by_random" = "По случайности";
+"s_order_by_rating" = "По рейтингу";
+"s_order_invert" = "Инвертировать";
+
+"s_by_date" = "По дате";
+"s_date_before" = "До";
+"s_date_after" = "После";
+
+"s_main" = "Основное";
+
+"s_now_on_site" = "cейчас на сайте";
+"s_with_photo" = "с фото";
+"s_only_in_names" = "только в именах";
+
+"s_any" = "любой";
+"reset" = "Сброс";
+
+"closed_group_post" = "Эта запись из закрытой группы";
+"deleted_target_comment" = "Этот комментарий принадлежит к удалённой записи";

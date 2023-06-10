@@ -1,3 +1,5 @@
+#include <ru>
+
 "__locale" = "su_SU.utf8;su_SU.UTF-8;Rus";
 "__WinEncoding" = "Windows-1251";
 
@@ -154,6 +156,9 @@
 "pinned" = "закреплено";
 "comments_tip" = "Гражданин, будьте первым, кто напишет отзыв!";
 "your_comment" = "Ваш отзыв";
+"auditory" = "Зрители";
+"in_wall" = "в досье";
+"in_group" = "в собрание";
 "shown" = "Показано";
 "x_out_of" = "$1 из";
 "wall_zero" = "нет записей";
@@ -244,6 +249,7 @@
 "only_administrators" = "Только администраторы";
 "website" = "Сайт";
 "managed" = "Управляемые";
+"size" = "Размер";
 
 "administrators_one" = "$1 администратор";
 "administrators_few" = "$1 администратора";
@@ -308,6 +314,36 @@
 "albums_few" = "$1 альбома с картинками";
 "albums_many" = "$1 альбомов с картинками";
 "albums_other" = "$1 альбомов с картинками";
+"albums_list_zero" = "У Вас нет ни одного альбома с картинками";
+"albums_list_one" = "У Вас один альбом с картинками";
+"albums_list_few" = "У Вас $1 альбома с картинками";
+"albums_list_many" = "У Вас $1 альбомов с картинками";
+"albums_list_other" = "У Вас $1 альбомов с картинками";
+
+"add_image" = "Поставить фотокарточку";
+"add_image_group" = "Загрузка фотокарточки";
+"upload_new_picture" = "Загрузить новую фотокарточку";
+"uploading_new_image" = "Загрузка новой фотокарточки";
+"friends_avatar" = "Знакомым будет проще узнать Вас, если вы загрузите свою настоящую фотокарточку.";
+"groups_avatar" = "Хорошая фотокарточка сделает Ваше собрание более узнаваемым.";
+"formats_avatar" = "Вы можете загрузить плёнку в формате JPG, GIF или PNG.";
+"troubles_avatar" = "Если возникают проблемы с прикреплением, попробуйте выбрать фотокарточку меньшего размера.";
+"webcam_avatar" = "Если ваш компьютер оснащён фотокамерой, Вы можете <a href='javascript:'>сделать быструю фотокарточку »</a>";
+
+"update_avatar_notification" = "Фотокарточка досье обновлена";
+"update_avatar_description" = "Нажмите сюда, чтобы перейти к рассмотрению";
+
+"deleting_avatar" = "Удаление фотокарточки";
+"deleting_avatar_sure" = "Вы действительно хотите удалить фотокарточку?";
+
+"deleted_avatar_notification" = "Фотокарточка успешно откреплена";
+
+"save_changes" = "Сохранить изменения";
+
+"upd_m" = "обновил фотокарточку на своём досье";
+"upd_f" = "обновила фотокарточку на своём досье";
+"upd_g" = "обновило фотокарточку собрания";
+
 
 /* Notes */
 
@@ -390,8 +426,14 @@
 "cut" = "Обрезка";
 "round_avatars" = "Круглая картинка";
 
-"search_for_groups" = "Розыск клубов";
-"search_for_people" = "Розыск граждан";
+"search_for_groups" = "Розыск собраний";
+"search_for_users" = "Розыск граждан";
+"search_for_posts" = "Розыск записей";
+"search_for_comments" = "Розыск отзывов";
+"search_for_videos" = "Розыск кинолент";
+"search_for_apps" = "Розыск приложений";
+"search_for_notes" = "Розыск записок";
+
 "search_button" = "Найти";
 "search_placeholder" = "Начните вводить любое имя, название или слово";
 "results_zero" = "Ни одного результата";
@@ -889,3 +931,48 @@
 "instance_links" = "Ссылки страны:";
 
 "my_apps" = "Досуг и отдых";
+
+/* Search */
+
+"s_people" = "Граждане";
+"s_groups" = "Собрания";
+"s_events" = "События";
+"s_apps" = "Приложения";
+"s_questions" = "Вопросы";
+"s_notes" = "Заметки";
+"s_themes" = "Темы";
+"s_posts" = "Записи";
+"s_comments" = "Отзывы";
+"s_videos" = "Киноленты";
+"s_audios" = "Аудио";
+"s_by_people" = "по гражданам";
+"s_by_groups" = "по собраниям";
+"s_by_posts" = "по записям";
+"s_by_comments" = "по отзывам";
+"s_by_videos" = "по кинолентам";
+"s_by_apps" = "по приложениям";
+"s_by_audios" = "по музыке";
+
+"s_order_by" = "Расположение";
+
+"s_order_by_id" = "По номерам";
+"s_order_by_name" = "По имени";
+"s_order_by_random" = "Наобум";
+"s_order_by_rating" = "По соц. рейтингу";
+"s_order_invert" = "Отразить";
+
+"s_by_date" = "По дате";
+"s_date_before" = "До";
+"s_date_after" = "После";
+
+"s_main" = "Паспорт";
+
+"s_now_on_site" = "cейчас доступен";
+"s_with_photo" = "с фотокарточкой";
+"s_only_in_names" = "только в паспорте";
+
+"s_any" = "любой";
+"reset" = "Сброс";
+
+"closed_group_post" = "Эта запись из закрытого собрания";
+"deleted_target_comment" = "Этот отзыв надлежит к удалённой записи";

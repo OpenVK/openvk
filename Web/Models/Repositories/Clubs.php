@@ -43,12 +43,12 @@ class Clubs
         return $this->toClub($this->clubs->get($id));
     }
     
-    function find(string $query, int $page = 1, ?int $perPage = NULL): \Traversable
+    function find(string $query, array $pars = [], string $sort = "id DESC", int $page = 1, ?int $perPage = NULL): \Traversable
     {
         $query  = "%$query%";
         $result = $this->clubs->where("name LIKE ? OR about LIKE ?", $query, $query);
         
-        return new Util\EntityStream("Club", $result);
+        return new Util\EntityStream("Club", $result->order($sort));
     }
 
     function getCount(): int

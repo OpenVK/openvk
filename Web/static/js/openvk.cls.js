@@ -568,6 +568,80 @@ function deleteAvatar(avatar)
     ]);
 }
 
+function expandSearch()
+{
+    // console.log("search expanded")
+    let els = document.querySelectorAll("div.dec")
+    for(const element of els)
+    {
+        element.style.display = "none"
+    }
+    
+    document.querySelector(".whatFind").style.display = "block";
+    document.querySelector(".whatFind").style.marginRight = "-80px";
+    document.getElementById("searchInput").style.width = "627px";
+    document.getElementById("searchInput").style.background = "none";
+    document.getElementById("searchInput").style.backgroundColor = "#fff";
+    document.getElementById("searchInput").style.paddingLeft = "6px";
+    srch.classList.add("nodivider")
+}
+
+async function decreaseSearch()
+{
+    // чтобы люди успели выбрать что искать и поиск не скрывался сразу
+    await new Promise(r => setTimeout(r, 4000));
+    // console.log("search decreased")
+    if(document.activeElement !== searchInput)
+    {
+        document.getElementById("searchInput").style.background = "url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px";
+        document.getElementById("searchInput").style.backgroundColor = "#fff";
+        document.getElementById("searchInput").style.paddingLeft = "18px";
+        document.getElementById("searchInput").style.width = "120px";
+        document.querySelector(".whatFind").style.display = "none";
+
+        await new Promise(r => setTimeout(r, 300));
+        srch.classList.remove("nodivider")
+
+        let els = document.querySelectorAll("div.dec")
+        for(const element of els)
+        {
+            element.style.display = "inline-block"
+        }
+    }
+}
+
+function hideParams(name)
+{
+    $("#s_"+name).slideToggle(250, "swing");
+
+    if($(`#n_${name} img`).attr("src") == "/assets/packages/static/openvk/img/hide.png")
+    {
+        $("#n_"+name+" img").attr("src", "/assets/packages/static/openvk/img/show.png");
+    } else {
+        $("#n_"+name+" img").attr("src", "/assets/packages/static/openvk/img/hide.png");
+    }
+}
+
+function resetSearch()
+{
+    let inputs = document.querySelectorAll("input")
+    let selects = document.querySelectorAll("select")
+
+    for(const input of inputs)
+    {
+        if(input != dnt) {
+            input.value = ""
+        }
+    }
+
+    for(const select of selects)
+    {
+        if(select != sortyor && select != document.querySelector(".whatFind")) {
+            select.value = 0
+        }
+    }
+}
+
 $(document).on("scroll", () => {
     if($(document).scrollTop() > $(".sidebar").height() + 50) {
         $(".floating_sidebar")[0].classList.add("show");
