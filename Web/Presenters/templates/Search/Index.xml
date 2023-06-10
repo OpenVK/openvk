@@ -30,7 +30,7 @@
     {if $type != "apps"}
         <text style="overflow: hidden;">&nbsp;{$x->getCanonicalName()}        
         {if $_GET['sort'] == "rating"}({$x->getRating()}%)
-        {elseif $_GET['sort'] == "id" || $_GET['sort'] == "random"}(id{$x->getId()}){/if}</text>
+        {elseif $_GET['sort'] == "id"}(id{$x->getId()}){/if}</text>
         <img n:if="$x->isVerified()" 
             class="name-checkmark"
             src="/assets/packages/static/openvk/img/checkmark.png"
@@ -154,7 +154,7 @@
     {include searchOptions}
 
     {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
-    <div class="container_gray borderup" style="float:left;width:70%;">
+    <div class="container_gray borderup" style="float:left;width:73.3%;">
         {if sizeof($data) > 0}
             {if $type == "users" || $type == "groups" || $type == "apps"}
                 <div class="content" n:foreach="$data as $dat">
@@ -247,16 +247,16 @@
         <div class="searchOption">
             <div class="searchOptionName" id="n_sort" onclick="hideParams('sort')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{_s_order_by}</div>
             <div class="searchOptionBlock" id="s_sort">
-                <select name="sort" form="searcher" id="sortyor" onchange="this.value == 'random' ? document.getElementById('invertor').setAttribute('hidden', 'hidden') : document.getElementById('invertor').removeAttribute('hidden')">
+                <select name="sort" form="searcher" id="sortyor">
                     <option value="id" {if $_GET["sort"] == "name"}selected{/if}>{_s_order_by_id}</option>
                     {if $type == "users"}
                         <option value="name" {if $_GET["sort"] == "name"}selected{/if}>{_s_order_by_name}</option>
-                        {if OPENVK_ROOT_CONF["preferences"]["commerce"] != "false"}
+                        {if OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"]}
                             <option value="rating" {if $_GET["sort"] == "rating"}selected{/if}>{_s_order_by_rating}</option>
                         {/if}
                     {/if}
                 </select>
-                <div id="invertor" {if $_GET["sort"] == "random"}hidden{/if}>
+                <div id="invertor">
                 <input type="checkbox" name="invert" value="1" form="searcher" {if !is_null($_GET['invert']) && $_GET['invert'] == "1"}checked{/if}>{_s_order_invert}
                 </div>
             </div>
@@ -307,7 +307,7 @@
         </div>
 
         <div class="searchOption">
-            <div class="searchOptionName" id="n_relationship" onclick="hideParams('relationship')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{_relationship}</div>
+            <div class="searchOptionName" id="n_relationship" onclick="hideParams('relationship')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{ovk_proc_strtr(tr("relationship"), 14)}</div>
             <div class="searchOptionBlock" id="s_relationship">
                 <select name="maritalstatus" form="searcher">
                     <option n:foreach="range(0, 8) as $i" value="{$i}" {if $_GET['maritalstatus'] == $i}selected{/if} form="searcher">

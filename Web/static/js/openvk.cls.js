@@ -580,6 +580,10 @@ function expandSearch()
     document.querySelector(".whatFind").style.display = "block";
     document.querySelector(".whatFind").style.marginRight = "-80px";
     document.getElementById("searchInput").style.width = "627px";
+    document.getElementById("searchInput").style.background = "none";
+    document.getElementById("searchInput").style.backgroundColor = "#fff";
+    document.getElementById("searchInput").style.paddingLeft = "6px";
+    srch.classList.add("nodivider")
 }
 
 async function decreaseSearch()
@@ -589,14 +593,20 @@ async function decreaseSearch()
     // console.log("search decreased")
     if(document.activeElement !== searchInput)
     {
+        document.getElementById("searchInput").style.background = "url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px";
+        document.getElementById("searchInput").style.backgroundColor = "#fff";
+        document.getElementById("searchInput").style.paddingLeft = "18px";
+        document.getElementById("searchInput").style.width = "120px";
+        document.querySelector(".whatFind").style.display = "none";
+
+        await new Promise(r => setTimeout(r, 300));
+        srch.classList.remove("nodivider")
+
         let els = document.querySelectorAll("div.dec")
         for(const element of els)
         {
             element.style.display = "inline-block"
         }
-
-        document.querySelector(".whatFind").style.display = "none";
-        document.getElementById("searchInput").style.width = "120px";
     }
 }
 

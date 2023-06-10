@@ -2312,9 +2312,8 @@ a.poll-retract-vote {
 
 .searchOptions
 {
-    overflow-y: hidden;
-    overflow-x:hidden;
-    width:28.8%;
+    overflow: hidden;
+    width:25.5%;
     border-top:1px solid #E5E7E6;
     float:right;
     scrollbar-width: none;
@@ -2333,6 +2332,7 @@ a.poll-retract-vote {
     width:80px;
     cursor: pointer;
     box-shadow: 0px 2px 0px 0px rgba(255, 255, 255, 0.18) inset;
+    margin-top: 1px;
 }
 
 .searchBtn:active
@@ -2360,8 +2360,8 @@ a.poll-retract-vote {
     border: solid 0.125rem #696969;
     background:linear-gradient(#888888,#858585);
     margin-bottom:2px;
-    padding-left:5px;
-    width:90%;
+    padding-left:9px;
+    width:87%;
 }
 
 .searchList #used a
@@ -2388,7 +2388,7 @@ a.poll-retract-vote {
     padding-top:5px;
     padding-bottom:5px;
     margin-bottom:2px;
-    padding-left:5px;
+    padding-left:9px;
 }
 
 .searchList li a
@@ -2405,7 +2405,7 @@ a.poll-retract-vote {
     padding-top:5px;
     padding-bottom:5px;
     margin-bottom:2px;
-    padding-left:5px;
+    padding-left:9px;
     width:91%;
 }
 
@@ -2419,6 +2419,7 @@ a.poll-retract-vote {
     cursor:pointer;
     right:80px;
     text-align:right;
+    margin-top: 0.5px;
 }
 
 .searchOptionName
@@ -2431,6 +2432,7 @@ a.poll-retract-vote {
     width: 90%;
     font-weight: 600;
     color: #585858;
+    border-bottom: 2px solid #E4E4E4;
 }
 
 .searchOption
@@ -2462,6 +2464,11 @@ a.poll-retract-vote {
 .borderup
 {
     border-top:1px solid #E5E7E6;
+}
+
+#searchInput
+{
+    transition: .3s linear;
 }
 
 #standaloneCommentBox {
