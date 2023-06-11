@@ -6,6 +6,7 @@
         <style>
             {var $css = file_get_contents(OPENVK_ROOT . "/Web/static/js/node_modules/@atlassian/aui/dist/aui/aui-prototyping.css")}
             {str_replace("fonts/", "/assets/packages/static/openvk/js/node_modules/@atlassian/aui/dist/aui/fonts/", $css)|noescape}
+            {file_get_contents(OPENVK_ROOT . "/Web/static/js/node_modules/@atlassian/aui/dist/aui/aui-prototyping-darkmode.css")|noescape}
         </style>
         <title>{include title} - {_admin} {$instance_name}</title>
     </head>
@@ -21,12 +22,49 @@
                                 </a>
                             </h1>
                         </div>
-                        <div n:if="$search ?? false" class="aui-header-secondary">
+                        <div class="aui-header-secondary">
                             <ul class="aui-nav">
-                                <form class="aui-quicksearch dont-default-focus ajs-dirty-warning-exempt">
-                                    <input id="quickSearchInput" autocomplete="off" class="search" type="text" placeholder="{include searchTitle}" value="{$_GET['q'] ?? ''}" name="q" accesskey="Q" />
-                                    <input type="hidden" value=1 name=p />
-                                </form>
+                                <li n:if="$search ?? false">
+                                    <form class="aui-quicksearch dont-default-focus ajs-dirty-warning-exempt">
+                                        <input id="quickSearchInput" autocomplete="off" class="search" type="text" placeholder="{include searchTitle}" value="{$_GET['q'] ?? ''}" name="q" accesskey="Q" />
+                                        <input type="hidden" value=1 name=p />
+                                    </form>
+                                </li>
+                                <li>
+                                    <aui-toggle id="switch-theme" label="Toggle dark mode"></aui-toggle>
+                                    <script>
+                                        const toggle = document.getElementById("switch-theme");
+                                        let currentTheme = localStorage.getItem("ovkadmin-theme");
+
+                                        if (currentTheme == null) {
+                                            const preferDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+                                            let theme = "light";
+                                            
+                                            if (preferDarkScheme.matches) {
+                                                theme = "dark";
+                                                document.body.classList.add("aui-theme-dark");
+                                            }
+
+                                            localStorage.setItem("ovkadmin-theme", theme);
+                                        }
+
+                                        if (currentTheme == "dark") {
+                                            document.body.classList.add("aui-theme-dark");
+                                        }
+
+                                        toggle.addEventListener("click", function() {
+                                            document.body.classList.toggle("aui-theme-dark");
+
+                                            let theme = "light";
+
+                                            if (document.body.classList.contains("aui-theme-dark")) {
+                                                theme = "dark";
+                                            }
+
+                                            localStorage.setItem("ovkadmin-theme", theme);
+                                        });
+                                    </script>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -34,7 +72,7 @@
             </header>
             <div class="aui-page-panel">
                 <div class="aui-page-panel-inner">
-                    <div class="aui-page-panel-nav" style="background-color: #fff;">
+                    <div class="aui-page-panel-nav">
                         <nav class="aui-navgroup aui-navgroup-vertical">
                             <div class="aui-navgroup-inner">
                                 <div class="aui-navgroup-primary">
