@@ -2485,5 +2485,5 @@ a.poll-retract-vote {
 }
 
 .page_content.overscrolled div[class$="_big_block"] {
-    width: unset;
+    width: 100%;
 }
