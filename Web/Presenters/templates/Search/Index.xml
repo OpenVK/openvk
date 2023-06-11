@@ -89,7 +89,7 @@
                 {if !is_null($_GET['address']) && $_GET['address'] != "" && $x->getPrivacySetting("page.info.read") > 1}
                     <tr>
                         <td><span class="nobold">{_address}:</span></td>
-                        <td><a href="{$x->getPhysicalAddress()}">{$x->getPhysicalAddress()}</a></td>
+                        <td>{$x->getPhysicalAddress()}</td>
                     </tr>
                 {/if}    
                 {if $x->getPrivacySetting("page.info.read") > 1}        
@@ -114,7 +114,7 @@
                     <span class="nobold">{_description}:</span>
                 </td>
                 {/if}
-                <td>
+                <td {if $type == "apps"}style="width:400px"{/if}>
                     {$x->getDescription() ?? '(' . tr("none") . ')'}
                 </td>
             </tr>
@@ -204,13 +204,9 @@
                 </div>
             {elseif $type == "videos"}
                 {foreach $data as $dat}
-                    {if $dat->getOwner()->isDeleted()}
-                        {php continue;}
-                    {else}
                         <div class="content">
                             {include "../components/video.xml", video => $dat}
                         </div>
-                    {/if}
                 {/foreach}
             {elseif $type == "audios"}
                 хуй
@@ -239,9 +235,7 @@
             <li {if $type === "comments"}id="used"{/if}><a href="/search?type=comments{if $_GET['query']}&query={urlencode($_GET['query'])}{/if}&sort=id">{_s_comments} {if $type === "comments"}({$count}){/if}</a></li>
             <li {if $type === "posts"}   id="used"{/if}><a href="/search?type=posts{if $_GET['query']}&query={urlencode($_GET['query'])}{/if}&sort=id">   {_s_posts}    {if $type === "posts"}   ({$count}){/if}</a></li>
             <li {if $type === "videos"}  id="used"{/if}><a href="/search?type=videos{if $_GET['query']}&query={urlencode($_GET['query'])}{/if}&sort=id">  {_s_videos}   {if $type === "videos"}  ({$count}){/if}</a></li>
-            <!--<li {if $type === "audios"}id="used"{/if}><a href="/search?type=audios{if $_GET['query']}&query={urlencode($_GET['query'])}{/if}&sort=id">{_s_audios}   {if $type === "audios"}  ({$count}){/if}</a></li>-->
             <li {if $type === "apps"}    id="used"{/if}><a href="/search?type=apps{if $_GET['query']}&query={urlencode($_GET['query'])}{/if}&sort=id">    {_s_apps}     {if $type === "apps"}    ({$count}){/if}</a></li>
-            <!--<li {if $type === "notes"}id="used"{/if}><a href="/search?type=notes{if $_GET['query']}&query={urlencode($_GET['query'])}{/if}&sort=id">{_s_notes} {if $type === "notes"}({$count}){/if}</a></li>-->
         </ul>
 
         <div class="searchOption">
@@ -262,11 +256,15 @@
             </div>
         </div>
 
-    {if $type !== "groups" && $type !== "apps"} {* В OpenVK не сохраняется дата создания группы *}
+    {if $type !== "groups" && $type !== "apps"} {* В OpenVK не сохраняется дата создания групп и приложений *}
         <div class="searchOption">
             <div class="searchOptionName" id="n_dates" onclick="hideParams('dates')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{_s_by_date}</div>
             <div class="searchOptionBlock" id="s_dates">
-                <p id="bydate">{_s_date_before}:<br>   
+                {if $type != "users"}
+                    <p id="bydate">{_s_date_before}:<br>
+                {else}
+                    <p id="bydate">{_s_registered_before}:<br>
+                {/if}
                 <input type="date" name="datebefore" 
                     form="searcher"
                     id="bydate"
@@ -274,7 +272,11 @@
                     value="{if !is_null($_GET['datebefore'])}{$_GET['datebefore']}{/if}"
                     min="2019-11-19"
                     max={date('Y-m-d')}></p>
-                <p id="bydate">{_s_date_after}:<br>
+                {if $type != "users"}
+                    <p id="bydate">{_s_date_after}:<br>
+                {else}
+                    <p id="bydate">{_s_registered_after}:<br>
+                {/if}
                 <input type="date" name="dateafter" 
                     form="searcher"
                     style="width:100%"
@@ -300,9 +302,9 @@
         <div class="searchOption">
             <div class="searchOptionName" id="n_gender" onclick="hideParams('gender')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{_gender}</div>
             <div class="searchOptionBlock" id="s_gender">
-                <p><input type="radio" form="searcher" {if $_GET['gender'] == 0}checked{/if} name="gender" value="0">{_male}</p>
-                <p><input type="radio" form="searcher" {if $_GET['gender'] == 1}checked{/if} name="gender" value="1">{_female}</p>
-                <p><input type="radio" form="searcher" {if $_GET['gender'] == 2 || is_null($_GET['gender'])}checked{/if} name="gender" value="2">{_s_any}</p>
+                <p><input type="radio" form="searcher" id="gend" {if $_GET['gender'] == 0}checked{/if} name="gender" value="0">{_male}</p>
+                <p><input type="radio" form="searcher" id="gend1"{if $_GET['gender'] == 1}checked{/if} name="gender" value="1">{_female}</p>
+                <p><input type="radio" form="searcher" id="gend2"{if $_GET['gender'] == 2 || is_null($_GET['gender'])}checked{/if} name="gender" value="2">{_s_any}</p>
             </div>
         </div>
 

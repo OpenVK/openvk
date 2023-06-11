@@ -58,7 +58,7 @@ class Videos
             else
                 $paramValue != NULL ? $notNullParams+=["$paramName" => "$paramValue"]     : NULL;
         
-        $result = $this->videos->where("name OR description LIKE ?", $query)->where("deleted", 0);
+        $result = $this->videos->where("CONCAT_WS(' ', name, description) LIKE ?", $query)->where("deleted", 0);
         $nnparamsCount = sizeof($notNullParams);
 
         if($nnparamsCount > 0) {

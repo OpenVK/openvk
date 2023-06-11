@@ -485,6 +485,7 @@
 "search_for_videos" = "Search for videos";
 "search_for_apps" = "Search for apps";
 "search_for_notes" = "Search for notes";
+"search_for_audios" = "Search for music";
 "search_button" = "Find";
 "search_placeholder" = "Start typing any name, title or word";
 "results_zero" = "No results";
@@ -1487,6 +1488,8 @@
 "s_order_invert" = "Invert";
 
 "s_by_date" = "By date";
+"s_registered_before" = "Registered before";
+"s_registered_after" = "Registered after";
 "s_date_before" = "Before";
 "s_date_after" = "After";
 
