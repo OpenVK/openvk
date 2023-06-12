@@ -22,7 +22,7 @@ final class Board extends VKAPIRequestHandler
             $this->fail(403, "Invalid club");
         }
 
-        if(!$club->canBeModifiedBy($this->getUser())) {
+        if(!$club->canBeModifiedBy($this->getUser()) && !$club->isEveryoneCanCreateTopics()) {
             $this->fail(403, "Access to club denied");
         }
 
@@ -111,9 +111,10 @@ final class Board extends VKAPIRequestHandler
             return 0;
         }
 
-        $topic->setClosed(1);
-
-        $topic->save();
+        if(!$topic->isClosed()) {
+            $topic->setClosed(1);
+            $topic->save();
+        }
 
         return 1;
     }
@@ -219,7 +220,7 @@ final class Board extends VKAPIRequestHandler
 
         $topic = (new TopicsRepo)->getTopicById($group_id, $topic_id);
 
-        if(!$topic || !$topic->getClub() || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
+        if(!$topic || !$topic->getClub() || $topic->isDeleted() || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
             return 0;
         }
 
@@ -253,7 +254,7 @@ final class Board extends VKAPIRequestHandler
 
         $topic = (new TopicsRepo)->getTopicById($group_id, $topic_id);
 
-        if(!$topic || !$topic->getClub() || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
+        if(!$topic || !$topic->getClub() || $topic->isDeleted() || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
             return 0;
         }
 
@@ -290,13 +291,14 @@ final class Board extends VKAPIRequestHandler
         
         $topic = (new TopicsRepo)->getTopicById($group_id, $topic_id);
 
-        if(!$topic || !$topic->getClub() || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
+        if(!$topic || !$topic->getClub() || $topic->isDeleted() || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
             $this->fail(5, "Invalid topic");
         }
 
         $arr = [
             "items" => []
         ];
+
         $comms = array_slice(iterator_to_array($topic->getComments(1, $count + $offset)), $offset);
         foreach($comms as $comm) {
             $arr["items"][] = $this->getApiBoardComment($comm, $need_likes);
@@ -304,6 +306,10 @@ final class Board extends VKAPIRequestHandler
             if($extended) {
                 if($comm->getOwner() instanceof \openvk\Web\Models\Entities\User) {
                     $arr["profiles"][] = $comm->getOwner()->toVkApiStruct();
+                }
+
+                if($comm->getOwner() instanceof \openvk\Web\Models\Entities\Club) {
+                    $arr["groups"][] = $comm->getOwner()->toVkApiStruct();
                 }
             }
         }
@@ -334,8 +340,7 @@ final class Board extends VKAPIRequestHandler
         } else {
             $topics = explode(',', $topic_ids);
 
-            foreach($topics as $topic)
-            {
+            foreach($topics as $topic) {
                 $id = explode("_", $topic);
                 $topicy = (new TopicsRepo)->getTopicById((int)$id[0], (int)$id[1]);
                 if($topicy) {
@@ -354,20 +359,21 @@ final class Board extends VKAPIRequestHandler
 
         $topic = (new TopicsRepo)->getTopicById($group_id, $topic_id);
 
-        if(!$topic || !$topic->getClub() || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
+        if(!$topic || !$topic->getClub() || !$topic->isDeleted() || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
             return 0;
         }
 
-        $topic->setClosed(0);
-
-        $topic->save();
+        if($topic->isClosed()) {
+            $topic->setClosed(0);
+            $topic->save();
+        }
 
         return 1;
     }
 
     function restoreComment(int $group_id, int $topic_id, int $comment_id)
     {
-        $this->fail(4, "Not implemented");
+        $this->fail(501, "Not implemented");
     }
 
     function unfixTopic(int $group_id, int $topic_id)
@@ -381,6 +387,11 @@ final class Board extends VKAPIRequestHandler
             return 0;
         }
 
+        if($topic->isPinned()) {
+            $topic->setClosed(0);
+            $topic->save();
+        }
+
         $topic->setPinned(0);
 
         $topic->save();
@@ -388,7 +399,7 @@ final class Board extends VKAPIRequestHandler
         return 1;
     }
 
-    private function getApiBoardComment($comment, bool $need_likes = false)
+    private function getApiBoardComment(?Comment $comment, bool $need_likes = false)
     {
         $res = (object) [];
 
@@ -407,14 +418,10 @@ final class Board extends VKAPIRequestHandler
         }
 
         foreach($comment->getChildren() as $attachment) {
-            if($attachment instanceof \openvk\Web\Models\Entities\Photo) {
-                if($attachment->isDeleted())
-                    continue;
+            if($attachment->isDeleted())
+                continue;
 
-                $res->attachments[] = $attachment->toVkApiStruct();
-            } else if($$attachment instanceof \openvk\Web\Models\Entities\Video) {
-                $res->attachments[] = $attachment->getApiStructure();
-            }
+            $res->attachments[] = $attachment->toVkApiStruct();
         }
 
         return $res;

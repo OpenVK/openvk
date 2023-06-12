@@ -291,7 +291,7 @@ final class Groups extends VKAPIRequestHandler
                 int    $wall = NULL, 
                 int    $topics = NULL, 
                 int    $adminlist = NULL,
-                int    $topicsAboveVall = NULL,
+                int    $topicsAboveWall = NULL,
                 int    $hideFromGlobalFeed = NULL)
     {
         $this->requireUser();
@@ -310,7 +310,7 @@ final class Groups extends VKAPIRequestHandler
         !is_null($wall)               ? $club->setWall($wall) : NULL;
         !is_null($topics)             ? $club->setEveryone_Can_Create_Topics($topics) : NULL;
         !is_null($adminlist)          ? $club->setAdministrators_List_Display($adminlist) : NULL;
-        !is_null($topicsAboveVall)    ? $club->setDisplay_Topics_Above_Wall($topicsAboveVall) : NULL;
+        !is_null($topicsAboveWall)    ? $club->setDisplay_Topics_Above_Wall($topicsAboveWall) : NULL;
         !is_null($hideFromGlobalFeed) ? $club->setHide_From_Global_Feed($hideFromGlobalFeed) : NULL;
 
         $club->save();
@@ -508,7 +508,7 @@ final class Groups extends VKAPIRequestHandler
         if(!$club || $group_id == 0)
             $this->fail(203, "Invalid club");
 
-        if(!$usver || $user_id == 0)
+        if(!$usver || $usver->isDeleted() || $user_id == 0)
             $this->fail(30, "Invalid user");
 
         if($extended == false) {
@@ -528,7 +528,7 @@ final class Groups extends VKAPIRequestHandler
     function remove(int $group_id, int $user_id)
     {
         $this->requireUser();
-        # зоглущка
-        return 0;
+
+        $this->fail(501, "Not implemented");
     }
 }

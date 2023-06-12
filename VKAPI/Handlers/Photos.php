@@ -408,6 +408,10 @@ final class Photos extends VKAPIRequestHandler
                 $this->fail(21, "Invalid photo");
             }
 
+            if($photo->getOwner()->isDeleted()) {
+                $this->fail(21, "Owner of this photo is deleted");
+            }
+
             if(!$photo->getOwner()->getPrivacyPermission('photos.read', $this->getUser())) {
                 $this->fail(21, "This user chose to hide his photos.");
             }
@@ -560,7 +564,7 @@ final class Photos extends VKAPIRequestHandler
 
     function getAllComments(int $owner_id, int $album_id, bool $need_likes = false, int $offset = 0, int $count = 100)
     {
-        $this->fail(10, "Not implemented :D");
+        $this->fail(501, "Not implemented");
     }
 
     function deleteComment(int $comment_id, int $owner_id = 0)

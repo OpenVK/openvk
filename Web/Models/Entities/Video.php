@@ -165,6 +165,11 @@ class Video extends Media
         ];
     }
     
+    function toVkApiStruct(): object
+    {
+        return $this->getApiStructure();
+    }
+
     function setLink(string $link): string
     {
         if(preg_match(file_get_contents(__DIR__ . "/../VideoDrivers/regex/youtube.txt"), $link, $matches)) {

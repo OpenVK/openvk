@@ -12,9 +12,10 @@ final class Gifts extends VKAPIRequestHandler
 
         $i = 0;
 
-        $i+=$offset;
+        $i += $offset;
 
         $user = (new UsersRepo)->get($user_id);
+
         if(!$user || $user->isDeleted())
             $this->fail(177, "Invalid user");
 
@@ -54,7 +55,8 @@ final class Gifts extends VKAPIRequestHandler
         $this->willExecuteWriteAction();
 
         $user = (new UsersRepo)->get((int) $user_ids);
-        if(OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] == false)
+
+        if(!OPENVK_ROOT_CONF['openvk']['preferences']['commerce'])
             $this->fail(105, "Commerce is disabled on this instance");
         
         if(!$user || $user->isDeleted())
@@ -105,8 +107,8 @@ final class Gifts extends VKAPIRequestHandler
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
-        # тожэ заглушка
-        return 0;
+
+        $this->fail(501, "Not implemented");
     }
 
     # этих методов не было в ВК, но я их добавил чтобы можно было отобразить список подарков
@@ -116,6 +118,9 @@ final class Gifts extends VKAPIRequestHandler
         $categ = [];
         $i = 0;
 
+        if(!OPENVK_ROOT_CONF['openvk']['preferences']['commerce'])
+            $this->fail(105, "Commerce is disabled on this instance");
+
         foreach($cats as $cat) {
             $categ[$i] = [
                 "name"        => $cat->getName(),
@@ -123,6 +128,7 @@ final class Gifts extends VKAPIRequestHandler
                 "id"          => $cat->getId(),
                 "thumbnail"   => $cat->getThumbnailURL(),
                 ];
+            
             if($extended == true) {
                 $categ[$i]["localizations"] = [];
                 foreach(getLanguages() as $lang) {
@@ -143,6 +149,10 @@ final class Gifts extends VKAPIRequestHandler
     function getGiftsInCategory(int $id, int $page = 1)
     {
         $this->requireUser();
+
+        if(!OPENVK_ROOT_CONF['openvk']['preferences']['commerce'])
+            $this->fail(105, "Commerce is disabled on this instance");
+
         if(!(new GiftsRepo)->getCat($id))
             $this->fail(177, "Category not found");
 

@@ -2,6 +2,7 @@
 namespace openvk\Web\Models\Entities;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\RowModel;
+use openvk\Web\Models\Entities\{Note};
 
 class Comment extends Post
 {
@@ -53,7 +54,7 @@ class Comment extends Post
                $this->getTarget() instanceof Topic && $this->getTarget()->canBeModifiedBy($user);
     }
 
-    function toVkApiStruct(?User $user = NULL, bool $need_likes = false, bool $extended = false): object
+    function toVkApiStruct(?User $user = NULL, bool $need_likes = false, bool $extended = false, ?Note $note = NULL): object
     {
         $res = (object) [];
 
@@ -63,6 +64,12 @@ class Comment extends Post
         $res->text          = $this->getText();
         $res->attachments   = [];
         $res->parents_stack = [];
+        
+        if(!is_null($note)) {
+            $res->uid       = $this->getOwner()->getId();
+            $res->nid       = $note->getId();
+            $res->oid       = $note->getOwner()->getId();
+        }
 
         foreach($this->getChildren() as $attachment) {
             if($attachment->isDeleted())
