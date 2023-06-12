@@ -421,8 +421,18 @@
 "my_settings" = "My Settings";
 "bug_tracker" = "Bug-tracker";
 
+"mobile_friends" = "Friends";
+"mobile_photos" = "Photos";
+"mobile_videos" = "Videos";
+"mobile_messages" = "Messages";
+"mobile_notes" = "Notes";
+"mobile_groups" = "Groups";
+"mobile_search" = "Search";
+
+"menu_settings" = "Settings";
 "menu_login" = "Login";
 "menu_registration" = "Registration";
+"menu_desktop_version" = "Desktop version";
 "menu_help" = "Help";
 
 "menu_logout" = "Logout";
