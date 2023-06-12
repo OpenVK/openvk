@@ -406,10 +406,20 @@
 "my_settings" = "Мої Налаштування";
 "bug_tracker" = "Баг-трекер";
 
+"mobile_friends" = "Друзі";
+"mobile_photos" = "Фотографії";
+"mobile_videos" = "Відеозаписи";
+"mobile_messages" = "Повідомлення";
+"mobile_notes" = "Нотатки";
+"mobile_groups" = Групи";
+"mobile_search" = "Пошук";
+
+"menu_settings" = "Налаштування";
 "menu_login" = "Вхід";
 "menu_registration" = "Реєстрація";
 "menu_help" = "Допомога";
 "menu_logout" = "Вийти";
+"menu_desktop_version" = "Повна версія";
 "menu_support" = "Підтримка";
 
 "header_home" = "головна";
