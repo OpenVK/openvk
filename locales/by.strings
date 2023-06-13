@@ -326,6 +326,7 @@
 "search_for_videos" = "Шукаць відэа";
 "search_for_apps" = "Шукаць праграмы";
 "search_for_notes" = "Шукаць нататкі";
+"search_for_audios" = "Пошук музыкі";
 "search_button" = "Знайсці";
 
 "privacy_setting_access_page" = "Каму ў інтэрнэце відаць маю старонку";
@@ -543,7 +544,9 @@
 "s_order_invert" = "Інвертаваць";
 
 "s_by_date" = "Па даце";
-"s_date_before" = "Зарэгістравана да";
+"s_registered_before" = "Зарэгістравана да";
+"s_registered_after" = "Зарэгістравана пасля";
+"s_date_before" = "Да";
 "s_date_after" = "Пасля";
 
 "s_main" = "Асноўны";
