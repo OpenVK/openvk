@@ -414,6 +414,7 @@
 "search_for_videos" = "Поискъ синематографовъ";
 "search_for_apps" = "Поискъ забав";
 "search_for_notes" = "Поискъ запiсокъ";
+"search_for_audios" = "Поиск музыкъ";
 "search_button" = "Найти";
 "results_zero" = "Ни одного результата";
 "results_one" = "Одинъ результатъ";
@@ -757,6 +758,8 @@
 "s_order_invert" = "Отразiть";
 
 "s_by_date" = "По датѣ";
+"s_registered_before" = "Зарѣгистрированъ до";
+"s_registered_after" = "Зарѣгистрированъ после";
 "s_date_before" = "До";
 "s_date_after" = "После";
 

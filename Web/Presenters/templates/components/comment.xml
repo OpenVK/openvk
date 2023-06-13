@@ -29,7 +29,21 @@
                         </div>
                     </div>
                     <div n:if="isset($thisUser) &&! ($compact ?? false)" class="post-menu">
-                        <a {if is_null($linkW)}href="#_comment{$comment->getId()}"{else}href="wall{!is_null($comment->getTarget()) ? $comment->getTarget()->getPrettyId() : $comment->getOwner()->getId()}#_comment{$comment->getId()}"{/if} class="date">{$comment->getPublicationTime()}</a>&nbsp;|
+                        {var $target = "wall"}
+
+                        {if get_class($comment->getTarget()) == "openvk\Web\Models\Entities\Note"}
+                            {php $target = "note"}
+                        {elseif get_class($comment->getTarget()) == "openvk\Web\Models\Entities\Post"}
+                            {php $target = "wall"}
+                        {elseif get_class($comment->getTarget()) == "openvk\Web\Models\Entities\Photo"}
+                            {php $target = "photo"}
+                        {elseif get_class($comment->getTarget()) == "openvk\Web\Models\Entities\Video"}
+                            {php $target = "video"}
+                        {elseif get_class($comment->getTarget()) == "openvk\Web\Models\Entities\Topic"}
+                            {php $target = "topic"}
+                        {/if}
+
+                        <a {if is_null($linkW)}href="#_comment{$comment->getId()}"{else}href="{$target}{!is_null($comment->getTarget()) ? $comment->getTarget()->getPrettyId() : $comment->getOwner()->getId()}#_comment{$comment->getId()}"{/if} class="date">{$comment->getPublicationTime()}</a>&nbsp;|
                         {if $comment->canBeDeletedBy($thisUser)}
                             <a href="/comment{$comment->getId()}/delete">{_delete}</a>&nbsp;|
                         {/if}
