@@ -461,6 +461,7 @@
 "search_for_videos" = "Пошук відео";
 "search_for_apps" = "Пошук додатків";
 "search_for_notes" = "Пошук нотаток";
+"search_for_audios" = "Пошук музики";
 "search_button" = "Знайти";
 "search_placeholder" = "Почніть вводити будь-яке ім'я, назву чи слово";
 "results_zero" = "Жодного результату";
@@ -1400,7 +1401,9 @@
 "s_order_invert" = "Інвертувати";
 
 "s_by_date" = "За датою";
-"s_date_before" = "Зареєстровано до";
+"s_registered_before" = "Зареєстровано до";
+"s_registered_after" = "Зареєстровано після";
+"s_date_before" = "До";
 "s_date_after" = "Після";
 
 "s_main" = "Основне";
