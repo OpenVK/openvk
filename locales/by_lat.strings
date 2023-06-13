@@ -313,6 +313,7 @@
 "search_for_videos" = "Šukać videa";
 "search_for_apps" = "Šukać prahramy";
 "search_for_notes" = "Šukać natatki";
+"search_for_audios" = "Pošuk muzyki";
 "search_button" = "Znajści";
 
 "privacy_setting_access_page" = "Kamu ŭ interniecie vidać maju staronku";
@@ -503,7 +504,9 @@
 "s_order_invert" = "Invertavać";
 
 "s_by_date" = "Pa dacie";
-"s_date_before" = "Zarehistravana da";
+"s_registered_before" = "Zarehistravana da";
+"s_registered_after" = "Zarehistravana paslia";
+"s_date_before" = "Da";
 "s_date_after" = "Paslia";
 
 "s_main" = "Asnoŭny";
