@@ -2,6 +2,7 @@
 namespace openvk\Web\Models\Entities;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\RowModel;
+use openvk\Web\Models\Entities\{Note};
 
 class Comment extends Post
 {
@@ -51,5 +52,37 @@ class Comment extends Post
                $this->getTarget()->getOwner()->getId() == $user->getId() ||
                $this->getTarget() instanceof Post && $this->getTarget()->getTargetWall() < 0 && (new Clubs)->get(abs($this->getTarget()->getTargetWall()))->canBeModifiedBy($user) ||
                $this->getTarget() instanceof Topic && $this->getTarget()->canBeModifiedBy($user);
+    }
+
+    function toVkApiStruct(?User $user = NULL, bool $need_likes = false, bool $extended = false, ?Note $note = NULL): object
+    {
+        $res = (object) [];
+
+        $res->id            = $this->getId();
+        $res->from_id       = $this->getOwner()->getId();
+        $res->date          = $this->getPublicationTime()->timestamp();
+        $res->text          = $this->getText();
+        $res->attachments   = [];
+        $res->parents_stack = [];
+        
+        if(!is_null($note)) {
+            $res->uid       = $this->getOwner()->getId();
+            $res->nid       = $note->getId();
+            $res->oid       = $note->getOwner()->getId();
+        }
+
+        foreach($this->getChildren() as $attachment) {
+            if($attachment->isDeleted())
+                continue;
+                
+            $res->attachments[] = $attachment->toVkApiStruct();
+        }
+
+        if($need_likes) {
+            $res->count      = $this->getLikesCount();
+            $res->user_likes = (int)$this->hasLikeFrom($user);
+            $res->can_like   = 1;
+        }
+        return $res;
     }
 }
