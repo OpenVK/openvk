@@ -250,7 +250,7 @@ input[type=checkbox] {
 {
     overflow-y: hidden;
     overflow-x:hidden;
-    width:28.8%;
+    width:25.5%;
     border-top:1px solid #2B2B2B;
     float:right;
     scrollbar-width: none;
@@ -314,11 +314,6 @@ input[type=checkbox] {
     margin-bottom: 2px;
     padding-left: 5px;
     width: 91%;
-}
-
-.searchOptions
-{
-    width: 25.5%;
 }
 
 .searchOptionName
