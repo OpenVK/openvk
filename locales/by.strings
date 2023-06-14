@@ -8,6 +8,7 @@
 
 "home" = "Галоўная";
 "welcome" = "Сардэчна запрашаем";
+"to_top" = "Уверх";
 
 /* Login */
 
@@ -42,9 +43,20 @@
 "all_title" = "Усе";
 "information" = "Інфармацыя";
 "status" = "Статус";
+"no_information_provided" = "Няма інфармацыі.";
+"deceased_person" = "Старонка памерлага чалавека";
+"none" = "адсутнічае";
+"desc_none" = "няма апісання";
+"send" = "Адправіць";
+"years_zero" = "0 гадоў";
+"years_one" = "1 год";
+"years_few" = "$1 год";
+"years_many" = "$1 год";
+"years_other" = "$1 год";
+"show_my_birthday" = "Паказаць дату нараджэння";
+"show_only_month_and_day" = "Паказваць толькі дзень і месяц";
 
 "relationship" = "Сямейнае становішча";
-
 "relationship_0" = "Не выбрана";
 "relationship_1" = "Ня женаты";
 "relationship_2" = "Сустракаюся";
@@ -308,7 +320,13 @@
 "round_avatars" = "Круглы аватар";
 
 "search_for_groups" = "Пошук груп";
-"search_for_people" = "Пошук людзей";
+"search_for_users" = "Шукаць карыстальнікаў";
+"search_for_posts" = "Пошук пастоў";
+"search_for_comments" = "Пошук каментарыяў";
+"search_for_videos" = "Шукаць відэа";
+"search_for_apps" = "Шукаць праграмы";
+"search_for_notes" = "Шукаць нататкі";
+"search_for_audios" = "Пошук музыкі";
 "search_button" = "Знайсці";
 
 "privacy_setting_access_page" = "Каму ў інтэрнэце відаць маю старонку";
@@ -495,3 +513,50 @@
 
 "cookies_popup_content" = "Усе хлопчыкi любяць пэчыва, таму гэты вэб-сайт выкарыстоўвае Cookies для таго, каб ідэнтыфікаваць вашу сесію і нічога болей. Звяртайцеся да нашай <a href='/privacy'>палiтыкi канфiдэнцыальнастi</a> для палучэння поўнай iнфармацыi.";
 "cookies_popup_agree" = "Прынiмаю";
+
+/* Пошук */
+
+"s_people" = "Людзі";
+"s_groups" = "Супольнасці";
+"s_events" = "Падзеі";
+"s_apps" = "Прылады";
+"s_questions" = "Пытанні";
+"s_notes" = "Нататкі";
+"s_themes" = "Тэмы";
+"s_posts" = "Пасты";
+"s_comments" = "Каментарыі";
+"s_videos" = "Відэа";
+"s_audios" = "Музыка";
+"s_by_people" = "па людзям";
+"s_by_groups" = "па суполках";
+"s_by_posts" = "па паведамленнях";
+"s_by_comments" = "па каментарыях";
+"s_by_videos" = "па відэа";
+"s_by_apps" = "па прыладам";
+"s_by_audios" = "па музыцы";
+
+"s_order_by" = "Сартаваць па...";
+
+"s_order_by_id" = "ID";
+"s_order_by_name" = "Па імені";
+"s_order_by_random" = "Выпадкова";
+"s_order_by_rating" = "Па рэйтынгу";
+"s_order_invert" = "Інвертаваць";
+
+"s_by_date" = "Па даце";
+"s_registered_before" = "Зарэгістравана да";
+"s_registered_after" = "Зарэгістравана пасля";
+"s_date_before" = "Да";
+"s_date_after" = "Пасля";
+
+"s_main" = "Асноўны";
+
+"s_now_on_site" = "зараз на сайце";
+"s_with_photo" = "з фота";
+"s_only_in_names" = "толькі ў імёнах";
+
+"s_any" = "любы";
+"reset" = "Ачысціць";
+
+"closed_group_post" = "Гэта паведамленне з прыватнай групы";
+"deleted_target_comment" = "Гэты каментарый належыць да выдаленага поста";
