@@ -405,20 +405,11 @@
 "my_settings" = "Мои Настройки";
 "bug_tracker" = "Баг-трекер";
 
-"mobile_friends" = "Друзья";
-"mobile_photos" = "Фотографии";
-"mobile_videos" = "Видеозаписи";
-"mobile_messages" = "Сообщения";
-"mobile_notes" = "Заметки";
-"mobile_groups" = "Группы";
-"mobile_search" = "Поиск";
-
 "menu_settings" = "Настройки";
 "menu_login" = "Вход";
 "menu_registration" = "Регистрация";
 "menu_help" = "Помощь";
 "menu_logout" = "Выйти";
-"menu_desktop_version" = "Полная версия";
 "menu_support" = "Поддержка";
 
 "header_home" = "главная";
@@ -1405,3 +1396,13 @@
 
 "closed_group_post" = "Эта запись из закрытой группы";
 "deleted_target_comment" = "Этот комментарий принадлежит к удалённой записи";
+
+/* Mobile */
+"mobile_friends" = "Друзья";
+"mobile_photos" = "Фотографии";
+"mobile_videos" = "Видеозаписи";
+"mobile_messages" = "Сообщения";
+"mobile_notes" = "Заметки";
+"mobile_groups" = "Группы";
+"mobile_search" = "Поиск";
+"mobile_desktop_version" = "Полная версия";
