@@ -118,4 +118,23 @@ class Note extends Postable
     {
         return $this->getRecord()->source;
     }
+
+    function toVkApiStruct(): object
+    {
+        $res = (object) [];
+
+        $res->id            = $this->getId();
+        $res->owner_id      = $this->getOwner()->getId();
+        $res->title         = $this->getName();
+        $res->text          = $this->getText();
+        $res->date          = $this->getPublicationTime()->timestamp();
+        $res->comments      = $this->getCommentsCount();
+        $res->read_comments = $this->getCommentsCount();
+        $res->view_url      = "/note".$this->getOwner()->getId()."_".$this->getId();
+        $res->privacy_view  = 1;
+        $res->can_comment   = 1;
+        $res->text_wiki     = "r";
+
+        return $res;
+    }
 }

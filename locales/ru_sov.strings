@@ -433,6 +433,7 @@
 "search_for_videos" = "Розыск кинолент";
 "search_for_apps" = "Розыск приложений";
 "search_for_notes" = "Розыск записок";
+"search_for_audios" = "Розыск аудио";
 
 "search_button" = "Найти";
 "search_placeholder" = "Начните вводить любое имя, название или слово";
@@ -962,6 +963,8 @@
 "s_order_invert" = "Отразить";
 
 "s_by_date" = "По дате";
+"s_registered_before" = "Зарегистрирован до";
+"s_registered_after" = "Зарегистрирован после";
 "s_date_before" = "До";
 "s_date_after" = "После";
 

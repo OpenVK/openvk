@@ -460,6 +460,7 @@
 "search_for_videos" = "Поиск видео";
 "search_for_apps" = "Поиск приложений";
 "search_for_notes" = "Поиск записок";
+"search_for_audios" = "Поиск музыки";
 "search_button" = "Найти";
 "search_placeholder" = "Начните вводить любое имя, название или слово";
 "results_zero" = "Ни одного результата";
@@ -1382,6 +1383,8 @@
 "s_order_invert" = "Инвертировать";
 
 "s_by_date" = "По дате";
+"s_registered_before" = "Зарегистрирован до";
+"s_registered_after" = "Зарегистрирован после";
 "s_date_before" = "До";
 "s_date_after" = "После";
 

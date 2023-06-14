@@ -296,25 +296,35 @@ class Photo extends Media
         return (new Albums)->getAlbumByPhotoId($this);
     }
 
-    function toVkApiStruct(): object
+    function toVkApiStruct(bool $photo_sizes = true, bool $extended = false): object
     {
         $res = (object) [];
 
         $res->id       = $res->pid = $this->getId();
-        $res->owner_id = $res->user_id = $this->getOwner()->getId()->getId();
+        $res->owner_id = $res->user_id = $this->getOwner()->getId();
         $res->aid      = $res->album_id = NULL;
         $res->width    = $this->getDimensions()[0];
         $res->height   = $this->getDimensions()[1];
         $res->date     = $res->created = $this->getPublicationTime()->timestamp();
 
-        $res->sizes        = $this->getVkApiSizes();
-        $res->src_small    = $res->photo_75 = $this->getURLBySizeId("miniscule");
-        $res->src          = $res->photo_130 = $this->getURLBySizeId("tiny");
-        $res->src_big      = $res->photo_604 = $this->getURLBySizeId("normal");
-        $res->src_xbig     = $res->photo_807 = $this->getURLBySizeId("large");
-        $res->src_xxbig    = $res->photo_1280 = $this->getURLBySizeId("larger");
-        $res->src_xxxbig   = $res->photo_2560 = $this->getURLBySizeId("original");
-        $res->src_original = $res->url = $this->getURLBySizeId("UPLOADED_MAXRES");
+        if($photo_sizes) {
+            $res->sizes        = $this->getVkApiSizes();
+            $res->src_small    = $res->photo_75 = $this->getURLBySizeId("miniscule");
+            $res->src          = $res->photo_130 = $this->getURLBySizeId("tiny");
+            $res->src_big      = $res->photo_604 = $this->getURLBySizeId("normal");
+            $res->src_xbig     = $res->photo_807 = $this->getURLBySizeId("large");
+            $res->src_xxbig    = $res->photo_1280 = $this->getURLBySizeId("larger");
+            $res->src_xxxbig   = $res->photo_2560 = $this->getURLBySizeId("original");
+            $res->src_original = $res->url = $this->getURLBySizeId("UPLOADED_MAXRES");
+        }
+
+        if($extended) {
+            $res->likes       = $this->getLikesCount(); # их нету но пусть будут
+            $res->comments    = $this->getCommentsCount();
+            $res->tags        = 0;
+            $res->can_comment = 1;
+            $res->can_repost  = 0;
+        }
 
         return $res;
     }

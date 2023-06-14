@@ -2,6 +2,7 @@
 namespace openvk\VKAPI\Handlers;
 use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
 use openvk\Web\Models\Repositories\Users as UsersRepo;
+use openvk\Web\Models\Entities\Club;
 
 final class Groups extends VKAPIRequestHandler
 {
@@ -262,5 +263,272 @@ final class Groups extends VKAPIRequestHandler
             $club->toggleSubscription($this->getUser());
 
         return 1;
+    }
+
+    function create(string $title, string $description = "", string $type = "group", int $public_category = 1, int $public_subcategory = 1, int $subtype = 1)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $club = new Club;
+
+        $club->setName($title);
+        $club->setAbout($description);
+        $club->setOwner($this->getUser()->getId());
+        $club->save();
+
+        $club->toggleSubscription($this->getUser());
+
+        return $this->getById((string)$club->getId());
+    }
+
+    function edit(
+                int $group_id, 
+                string $title = NULL, 
+                string $description = NULL, 
+                string $screen_name = NULL, 
+                string $website = NULL, 
+                int    $wall = NULL, 
+                int    $topics = NULL, 
+                int    $adminlist = NULL,
+                int    $topicsAboveWall = NULL,
+                int    $hideFromGlobalFeed = NULL)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $club = (new ClubsRepo)->get($group_id);
+
+        if(!$club) $this->fail(203, "Club not found");
+        if(!$club || !$club->canBeModifiedBy($this->getUser())) $this->fail(15, "You can't modify this group.");
+        if(!empty($screen_name) && !$club->setShortcode($screen_name)) $this->fail(103, "Invalid shortcode.");
+
+        !is_null($title)              ? $club->setName($title) : NULL;
+        !is_null($description)        ? $club->setAbout($description) : NULL;
+        !is_null($screen_name)        ? $club->setShortcode($screen_name) : NULL;
+        !is_null($website)            ? $club->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website) : NULL;
+        !is_null($wall)               ? $club->setWall($wall) : NULL;
+        !is_null($topics)             ? $club->setEveryone_Can_Create_Topics($topics) : NULL;
+        !is_null($adminlist)          ? $club->setAdministrators_List_Display($adminlist) : NULL;
+        !is_null($topicsAboveWall)    ? $club->setDisplay_Topics_Above_Wall($topicsAboveWall) : NULL;
+        !is_null($hideFromGlobalFeed) ? $club->setHide_From_Global_Feed($hideFromGlobalFeed) : NULL;
+
+        $club->save();
+
+        return 1;
+    }
+
+    function getMembers(string $group_id, string $sort = "id_asc", int $offset = 0, int $count = 100, string $fields = "", string $filter = "any")
+    {
+        # bdate,can_post,can_see_all_posts,can_see_audio,can_write_private_message,city,common_count,connections,contacts,country,domain,education,has_mobile,last_seen,lists,online,online_mobile,photo_100,photo_200,photo_200_orig,photo_400_orig,photo_50,photo_max,photo_max_orig,relation,relatives,schools,sex,site,status,universities
+        $club = (new ClubsRepo)->get((int) $group_id);
+        if(!$club) 
+            $this->fail(125, "Invalid group id");
+
+        $sorter = "follower ASC";
+
+        switch($sort) {
+            default:
+            case "time_asc":
+            case "id_asc":
+                $sorter = "follower ASC";
+                break;
+            case "time_desc":
+            case "id_desc":
+                $sorter = "follower DESC";
+                break;
+        }
+
+        $members = array_slice(iterator_to_array($club->getFollowers(1, $count, $sorter)), $offset);
+        $arr = (object) [
+            "count" => count($members), 
+            "items" => array()];
+        
+        $filds = explode(",", $fields);
+
+        $i = 0;
+        foreach($members as $member) {
+            if($i > $count) {
+                break;
+            }
+
+            $arr->items[] = (object) [
+                "id" => $member->getId(),
+                "name" => $member->getCanonicalName(),
+            ];
+
+            foreach($filds as $fild) {
+                switch($fild) {
+                    case "bdate":
+                        $arr->items[$i]->bdate = $member->getBirthday()->format('%e.%m.%Y');
+                        break;
+                    case "can_post":
+                        $arr->items[$i]->can_post = $club->canBeModifiedBy($member);
+                        break;
+                    case "can_see_all_posts":
+                        $arr->items[$i]->can_see_all_posts = 1;
+                        break;
+                    case "can_see_audio":
+                        $arr->items[$i]->can_see_audio = 0;
+                        break;
+                    case "can_write_private_message":
+                        $arr->items[$i]->can_write_private_message = 0;
+                        break;
+                    case "common_count":
+                        $arr->items[$i]->common_count = 420;
+                        break;
+                    case "connections":
+                        $arr->items[$i]->connections = 1;
+                        break;
+                    case "contacts":
+                        $arr->items[$i]->contacts = $member->getContactEmail();
+                        break;
+                    case "country":
+                        $arr->items[$i]->country = 1;
+                        break;
+                    case "domain":
+                        $arr->items[$i]->domain = "";
+                        break;
+                    case "education":
+                        $arr->items[$i]->education = "";
+                        break;
+                    case "has_mobile":
+                        $arr->items[$i]->has_mobile = false;
+                        break;
+                    case "last_seen":
+                        $arr->items[$i]->last_seen = $member->getOnline()->timestamp();
+                        break;
+                    case "lists":
+                        $arr->items[$i]->lists = "";
+                        break;
+                    case "online":
+                        $arr->items[$i]->online = $member->isOnline();
+                        break;
+                    case "online_mobile":
+                        $arr->items[$i]->online_mobile = $member->getOnlinePlatform() == "android" || $member->getOnlinePlatform() == "iphone" || $member->getOnlinePlatform() == "mobile";
+                        break;
+                    case "photo_100":
+                        $arr->items[$i]->photo_100 = $member->getAvatarURL("tiny");
+                        break;
+                    case "photo_200":
+                        $arr->items[$i]->photo_200 = $member->getAvatarURL("normal");
+                        break;
+                    case "photo_200_orig":
+                        $arr->items[$i]->photo_200_orig = $member->getAvatarURL("normal");
+                        break;
+                    case "photo_400_orig":
+                        $arr->items[$i]->photo_400_orig = $member->getAvatarURL("normal");
+                        break;
+                    case "photo_max":
+                        $arr->items[$i]->photo_max = $member->getAvatarURL("original");
+                        break;
+                    case "photo_max_orig":
+                        $arr->items[$i]->photo_max_orig = $member->getAvatarURL();
+                        break;
+                    case "relation":
+                        $arr->items[$i]->relation = $member->getMaritalStatus();
+                        break;
+                    case "relatives":
+                        $arr->items[$i]->relatives = 0;
+                        break;
+                    case "schools":
+                        $arr->items[$i]->schools = 0;
+                        break;
+                    case "sex":
+                        $arr->items[$i]->sex = $member->isFemale() ? 1 : 2;
+                        break;
+                    case "site":
+                        $arr->items[$i]->site = $member->getWebsite();
+                        break;
+                    case "status":
+                        $arr->items[$i]->status = $member->getStatus();
+                        break;
+                    case "universities":
+                        $arr->items[$i]->universities = 0;
+                        break;
+                }
+            }
+            $i++;
+        }
+        return $arr;
+    }
+
+    function getSettings(string $group_id)
+    {
+        $this->requireUser();
+        $club = (new ClubsRepo)->get((int)$group_id);
+
+        if(!$club || !$club->canBeModifiedBy($this->getUser()))
+            $this->fail(15, "You can't get settings of this group.");
+
+        $arr = (object) [
+            "title"          => $club->getName(),
+            "description"    => $club->getDescription() != NULL ? $club->getDescription() : "",
+            "address"        => $club->getShortcode(),
+            "wall"           => $club->canPost() == true ? 1 : 0,
+            "photos"         => 1,
+            "video"          => 0,
+            "audio"          => 0,
+            "docs"           => 0,
+            "topics"         => $club->isEveryoneCanCreateTopics() == true ? 1 : 0,
+            "wiki"           => 0,
+            "messages"       => 0,
+            "obscene_filter" => 0,
+            "obscene_stopwords" => 0,
+            "obscene_words"  => "",
+            "access"         => 1,
+            "subject"        => 1,
+            "subject_list"   => [
+                0 => "в", 
+                1 => "опенвк", 
+                2 => "нет", 
+                3 => "категорий", 
+                4 => "групп", 
+            ],
+            "rss"            => "/club".$club->getId()."/rss",
+            "website"        => $club->getWebsite(),
+            "age_limits"     => 0,
+            "market"         => [],
+        ];
+
+        return $arr;
+    }
+
+    function isMember(string $group_id, int $user_id, string $user_ids = "", bool $extended = false)
+    {
+        $this->requireUser();
+        $id = $user_id != NULL ? $user_id : explode(",", $user_ids);
+
+        if($group_id < 0)
+            $this->fail(228, "Remove the minus from group_id");
+
+        $club = (new ClubsRepo)->get((int)$group_id);
+        $usver = (new UsersRepo)->get((int)$id);
+
+        if(!$club || $group_id == 0)
+            $this->fail(203, "Invalid club");
+
+        if(!$usver || $usver->isDeleted() || $user_id == 0)
+            $this->fail(30, "Invalid user");
+
+        if($extended == false) {
+            return $club->getSubscriptionStatus($usver) ? 1 : 0;
+        } else {
+            return (object)
+            [
+                "member"     => $club->getSubscriptionStatus($usver) ? 1 : 0,
+                "request"    => 0,
+                "invitation" => 0,
+                "can_invite" => 0,
+                "can_recall" => 0 
+            ];
+        }
+    }
+
+    function remove(int $group_id, int $user_id)
+    {
+        $this->requireUser();
+
+        $this->fail(501, "Not implemented");
     }
 }
