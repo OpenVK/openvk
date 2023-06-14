@@ -263,10 +263,10 @@ input[type=checkbox] {
 {
     border: none;
     background-color: #555555;
-    color:#ffffff;
+    color: #ffffff;
     margin-left: -3px;
-    padding-bottom:2px;
-    width:80px;
+    padding-bottom: 2px;
+    width: 80px;
     cursor: pointer;
     box-shadow: none;
 }
@@ -275,7 +275,7 @@ input[type=checkbox] {
 {
     border: none;
     background-color: rgb(77, 77, 77);
-    color:white;
+    color: white;
     box-shadow: none;
 }
 
@@ -283,14 +283,14 @@ input[type=checkbox] {
 {
     margin-left:0px;
     color: white;
-    padding:2px;
-    padding-top:5px;
-    padding-bottom:5px;
+    padding: 2px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     border: none;
     background: #a4a4a4;
-    margin-bottom:2px;
-    padding-left:5px;
-    width:90%;
+    margin-bottom: 2px;
+    padding-left: 5px;
+    width: 90%;
 }
 
 .searchList #used a
@@ -305,24 +305,29 @@ input[type=checkbox] {
 
 .searchList li:hover
 {
-    margin-left:0px;
+    margin-left: 0px;
     color: #2B587A !important;
-    background:#eeeeee;
-    padding:2px;
-    padding-top:5px;
-    padding-bottom:5px;
-    margin-bottom:2px;
-    padding-left:5px;
-    width:91%;
+    background: #eeeeee;
+    padding: 2px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 2px;
+    padding-left: 5px;
+    width: 91%;
+}
+
+.searchOptions
+{
+    width: 25.5%;
 }
 
 .searchOptionName
 {
-    cursor:pointer;
+    cursor: pointer;
     background-color: #a4a4a4;
-    padding-left:5px;
-    padding-top:5px;
-    padding-bottom:5px;
+    padding-left: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
     width: 90%;
     font-weight: 600;
     color: #fff;
@@ -330,10 +335,10 @@ input[type=checkbox] {
 
 .searchOptionName img
 {
-    display:none;
+    display: none;
 }
 
 .borderup
 {
-    border-top:1px solid #2f2f2f;
+    border-top: 1px solid #2f2f2f;
 }
