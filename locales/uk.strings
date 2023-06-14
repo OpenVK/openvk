@@ -406,20 +406,11 @@
 "my_settings" = "Мої Налаштування";
 "bug_tracker" = "Баг-трекер";
 
-"mobile_friends" = "Друзі";
-"mobile_photos" = "Фотографії";
-"mobile_videos" = "Відеозаписи";
-"mobile_messages" = "Повідомлення";
-"mobile_notes" = "Нотатки";
-"mobile_groups" = Групи";
-"mobile_search" = "Пошук";
-
 "menu_settings" = "Налаштування";
 "menu_login" = "Вхід";
 "menu_registration" = "Реєстрація";
 "menu_help" = "Допомога";
 "menu_logout" = "Вийти";
-"menu_desktop_version" = "Повна версія";
 "menu_support" = "Підтримка";
 
 "header_home" = "головна";
@@ -1373,3 +1364,13 @@
 "tour_section_14_bottom_text_1" = "Скріншоти застосунку";
 "tour_section_14_bottom_text_2" = "На цьому екскурсія сайтом завершена. Якщо ви хочете спробувати наш мобільний застосунок, створити тут свою групу, покликати своїх друзів чи знайти нових, або взагалі просто якось розважитися, то це можна зробити просто зараз, пройшовши невелику <a href='/reg'>реєстрацію</a>";
 "tour_section_14_bottom_text_3" = "На цьому екскурсія сайтом завершена.";
+
+/* Mobile */
+"mobile_friends" = "Друзі";
+"mobile_photos" = "Фотографії";
+"mobile_videos" = "Відеозаписи";
+"mobile_messages" = "Повідомлення";
+"mobile_notes" = "Нотатки";
+"mobile_groups" = Групи";
+"mobile_search" = "Пошук";
+"mobile_desktop_version" = "Повна версія";
