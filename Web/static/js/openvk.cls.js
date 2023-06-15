@@ -1,4 +1,6 @@
 ﻿
+const { json } = require("stream/consumers");
+
 function expand_wall_textarea(id) {
     var el = document.getElementById('post-buttons'+id);
     var wi = document.getElementById('wall-post-input'+id);
@@ -590,9 +592,11 @@ async function decreaseSearch()
 {
     // чтобы люди успели выбрать что искать и поиск не скрывался сразу
     await new Promise(r => setTimeout(r, 4000));
+
     // console.log("search decreased")
-    if(document.activeElement !== searchInput)
+    if(document.activeElement !== searchInput && document.activeElement !== typer)
     {
+        srcht.setAttribute("hidden", "hidden")
         document.getElementById("searchInput").style.background = "url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px";
         document.getElementById("searchInput").style.backgroundColor = "#fff";
         document.getElementById("searchInput").style.paddingLeft = "18px";
@@ -639,6 +643,62 @@ function resetSearch()
         if(select != sortyor && select != document.querySelector(".whatFind")) {
             select.value = 0
         }
+    }
+}
+
+async function checkSearchTips()
+{
+    let query = searchInput.value;
+
+    await new Promise(r => setTimeout(r, 500));
+
+    let type = typer.value;
+    let smt  = type == "users" || type == "groups";
+    if(query.length > 3 && query == searchInput.value && smt) {
+        srcht.removeAttribute("hidden")
+        let etype = type == "groups" ? "clubs" : "users"
+
+        let xhr = new XMLHttpRequest()
+        xhr.open("POST", "/fastSearch?query="+query+"&type="+etype)
+
+        xhr.onloadstart = () => {
+            srchrr.innerHTML = `<img id="loader" src="/assets/packages/static/openvk/img/loading_mini.gif">`
+        }
+
+        xhr.onloadend = async () => {
+            let results;
+
+            try {
+                results = JSON.parse(xhr.responseText)
+            } catch {
+                srchrr.innerHTML = "Rate limits"
+            }
+
+            if(results["items"] != null) {
+                srchrr.innerHTML = ""
+
+                for(const el of results["items"]) {
+                    srchrr.insertAdjacentHTML("beforeend", `
+                            <tr class="restip" onmousedown="if (event.which === 2) { window.open('${el.url}', '_blank'); } else {location.href='${el.url}'}">
+                                <td>
+                                    <img src="${el.avatar}" width="30">
+                                </td>
+                                <td valign="top">
+                                    <p class="nameq" style="margin-top: -2px;">${el.name}</p>
+                                    <p class="desq">${el.description}</p>
+                                </td>
+                            </tr>
+                    `)
+                    
+                }
+            } else {
+                srchrr.innerHTML = tr("no_results")
+            }
+        }
+
+        xhr.send()
+    } else {
+        //srcht.setAttribute("hidden", "hidden")
     }
 }
 

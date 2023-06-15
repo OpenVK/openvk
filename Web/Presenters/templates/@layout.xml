@@ -93,8 +93,8 @@
 
                                 {if !$atSearch}
                                     <form action="/search" method="get" id="searcher" style="position:relative;">
-                                        <input id="searchInput" onfocus="expandSearch()" onblur="decreaseSearch()" class="sr" type="search" name="query" placeholder="{_header_search}" style="height: 20px;background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; background-color: #fff; padding-left: 18px;width: 120px;" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
-                                        <select name="type" class="whatFind" style="display:none;top: 0px;">
+                                        <input autocomplete="off" id="searchInput" oninput="checkSearchTips()" onfocus="expandSearch()" onblur="decreaseSearch()" class="sr" type="search" name="query" placeholder="{_header_search}" style="height: 20px;background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; background-color: #fff; padding-left: 18px;width: 120px;" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
+                                        <select onchange="checkSearchTips()" id="typer" name="type" class="whatFind" style="display:none;top: 0px;">
                                             <option value="users">{_s_by_people}</option>
                                             <option value="groups">{_s_by_groups}</option>
                                             <option value="posts">{_s_by_posts}</option>
@@ -103,6 +103,12 @@
                                             <option value="apps">{_s_by_apps}</option>
                                         </select>
                                     </form>
+                                    <div class="searchTips" id="srcht" hidden>
+                                        <table style="border:none;border-spacing: 0;">
+                                            <tbody id="srchrr">
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 {else}
                                     <form action="/search" method="get" id="searcher" style="margin-top: -1px;position:relative;">
                                         <input id="searchInput" value="{$_GET['query'] ?? ''}" type="search" class="sr" name="query" placeholder="{_header_search}" style="height: 20px; background-color: #fff; padding-left: 6px;width: 555px;" title="{_header_search} [Alt+Shift+F]" accesskey="f" />

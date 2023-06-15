@@ -100,4 +100,56 @@ final class SearchPresenter extends OpenVKPresenter
         $this->template->type     = $type;
         $this->template->page     = $page;
     }
+
+    function renderFastSearch()
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        if($_SERVER["REQUEST_METHOD"] === "POST") {
+
+            $query = $this->queryParam("query") ?? "";
+
+            if($query == "" || strlen($query) < 3)
+                $this->returnJson([
+                    "error" => "type something longer"
+                ]);
+
+            $type = $this->queryParam("type") ?? "users";
+
+            $isUsers = $type == "users";
+            $repo  = $isUsers ? (new Users) : (new Clubs);
+            $sort = $isUsers ? "rating DESC" : "id ASC";
+
+            $res = $repo->find($query, ["doNotSearchMe" => $this->user->id], $sort);
+
+            $results  = array_slice(iterator_to_array($res), 0, 5);
+            
+            $count = sizeof($results);
+
+            $arr = [
+                "count" => $count,
+                "items" => []
+            ];
+
+            if(sizeof($results) < 1) {
+                $this->returnJson(["err" => "No results"]);
+            }
+
+            foreach($results as $res) {
+                
+                $arr["items"][] = [
+                            "id" => $res->getId(),
+                        "name" => $isUsers ? $res->getCanonicalName() : $res->getName(),
+                        "avatar" => $res->getAvatarUrl(),
+                            "url" => $res->getUrl(),
+                    "description" => ovk_proc_strtr($res->getDescription() ?? "...", 40)
+                ];
+            }
+
+            $this->returnJson($arr);
+        } else {
+            $this->returnJson(["err" => "or"]);
+        }
+    }
 }
