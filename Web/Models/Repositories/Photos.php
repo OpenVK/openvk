@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Repositories;
-use openvk\Web\Models\Entities\Photo;
+use openvk\Web\Models\Entities\{Photo, User};
 use Chandler\Database\DatabaseConnection;
 
 class Photos
@@ -31,5 +31,16 @@ class Photos
         if(!$photo) return NULL;
         
         return new Photo($photo);
+    }
+
+    function getEveryUserPhoto(User $user): \Traversable
+    {
+        $photos = $this->photos->where([
+            "owner" => $user->getId()
+        ]);
+
+        foreach($photos as $photo) {
+            yield new Photo($photo);
+        }
     }
 }

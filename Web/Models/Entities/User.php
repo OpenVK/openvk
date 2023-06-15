@@ -5,7 +5,7 @@ use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{Photo, Message, Correspondence, Gift};
-use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Gifts, Notifications, Blacklists};
+use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Photos, Gifts, Notifications, Blacklists};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
@@ -148,8 +148,9 @@ class User extends RowModel
     function getFirstName(bool $pristine = false): string
     {
         $name = ($this->isDeleted() && !$this->isDeactivated() ? "DELETED" : mb_convert_case($this->getRecord()->first_name, MB_CASE_TITLE));
-        if((($ts = tr("__transNames")) !== "@__transNames") && !$pristine)
-            return mb_convert_case(transliterator_transliterate($ts, $name), MB_CASE_TITLE);
+	$tsn  = tr("__transNames");
+        if(( $tsn !== "@__transNames" && !empty($tsn) ) && !$pristine)
+            return mb_convert_case(transliterator_transliterate($tsn, $name), MB_CASE_TITLE);
         else
             return $name;
     }
@@ -157,8 +158,9 @@ class User extends RowModel
     function getLastName(bool $pristine = false): string
     {
         $name = ($this->isDeleted() && !$this->isDeactivated() ? "DELETED" : mb_convert_case($this->getRecord()->last_name, MB_CASE_TITLE));
-        if((($ts = tr("__transNames")) !== "@__transNames") && !$pristine)
-            return mb_convert_case(transliterator_transliterate($ts, $name), MB_CASE_TITLE);
+	$tsn  = tr("__transNames");
+        if(( $tsn !== "@__transNames" && !empty($tsn) ) && !$pristine)
+            return mb_convert_case(transliterator_transliterate($tsn, $name), MB_CASE_TITLE);
         else
             return $name;
     }
@@ -538,12 +540,15 @@ class User extends RowModel
         return sizeof(DatabaseConnection::i()->getContext()->table("messages")->where(["recipient_id" => $this->getId(), "unread" => 1]));
     }
 
-    function getClubs(int $page = 1, bool $admin = false): \Traversable
+    function getClubs(int $page = 1, bool $admin = false, int $count = OPENVK_DEFAULT_PER_PAGE, bool $offset = false): \Traversable
     {
+        if(!$offset)
+            $page = ($page - 1) * $count;
+
         if($admin) {
             $id     = $this->getId();
             $query  = "SELECT `id` FROM `groups` WHERE `owner` = ? UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?";
-            $query .= " LIMIT " . OPENVK_DEFAULT_PER_PAGE . " OFFSET " . ($page - 1) * OPENVK_DEFAULT_PER_PAGE;
+            $query .= " LIMIT " . $count . " OFFSET " . $page;
 
             $sel = DatabaseConnection::i()->getConnection()->query($query, $id, $id);
             foreach($sel as $target) {
@@ -553,7 +558,7 @@ class User extends RowModel
                 yield $target;
             }
         } else {
-            $sel = $this->getRecord()->related("subscriptions.follower")->page($page, OPENVK_DEFAULT_PER_PAGE);
+            $sel = $this->getRecord()->related("subscriptions.follower")->limit($count, $page);
             foreach($sel->where("model", "openvk\\Web\\Models\\Entities\\Club") as $target) {
                 $target = (new Clubs)->get($target->target);
                 if(!$target) continue;
@@ -747,6 +752,63 @@ class User extends RowModel
     function isOnline(): bool
     {
         return time() - $this->getRecord()->online <= 300;
+    }
+
+    function getOnlinePlatform(bool $forAPI = false): ?string
+    {
+        $platform = $this->getRecord()->client_name;
+        if($forAPI) {
+            switch ($platform) {
+                case 'openvk_refresh_android':
+                case 'openvk_legacy_android':
+                    return 'android';
+                    break;
+
+                case 'openvk_ios':
+                case 'openvk_legacy_ios':
+                    return 'iphone';
+                    break;
+                
+                case 'vika_touch': // кика хохотач ахахахаххахахахахах
+                case 'vk4me':
+                    return 'mobile';
+                    break;
+
+                case NULL:
+                    return NULL;
+                    break;
+                
+                default:
+                    return 'api';
+                    break;
+            }
+        } else {
+            return $platform;
+        }
+    }
+
+    function getOnlinePlatformDetails(): array
+    {
+        $clients = simplexml_load_file(OPENVK_ROOT . "/data/clients.xml");
+
+        foreach($clients as $client) {
+            if($client['tag'] == $this->getOnlinePlatform()) {
+                return [
+                    "tag"  => $client['tag'],
+                    "name" => $client['name'],
+                    "url"  => $client['url'],
+                    "img"  => $client['img']
+                ];
+                break;
+            }
+        }
+
+        return [
+            "tag"  => $this->getOnlinePlatform(),
+            "name" => NULL,
+            "url"  => NULL,
+            "img"  => NULL
+        ];
     }
 
     function prefersNotToSeeRating(): bool
@@ -950,6 +1012,15 @@ class User extends RowModel
         return true;
     }
 
+    function updOnline(string $platform): bool
+    {
+        $this->setOnline(time());
+        $this->setClient_name($platform);
+        $this->save();
+
+        return true;
+    }
+
     function changeEmail(string $email): void
     {
         DatabaseConnection::i()->getContext()->table("ChandlerUsers")
@@ -1046,6 +1117,24 @@ class User extends RowModel
 
         return true;
     }
+
+    function toVkApiStruct(): object
+    {
+        $res = (object) [];
+
+        $res->id = $this->getId();
+        $res->first_name = $this->getFirstName();
+        $res->last_name = $this->getLastName();
+        $res->deactivated = $this->isDeactivated();
+        $res->photo_50    = $this->getAvatarURL();
+        $res->photo_100   = $this->getAvatarURL("tiny");
+        $res->photo_200   = $this->getAvatarURL("normal");
+        $res->photo_id    = !is_null($this->getAvatarPhoto()) ? $this->getAvatarPhoto()->getPrettyId() : NULL;
+        # TODO: Perenesti syuda vsyo ostalnoyie
+
+        return $res;
+    }
     
+    use Traits\TBackDrops;
     use Traits\TSubscribable;
 }

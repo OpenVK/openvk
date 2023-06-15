@@ -49,12 +49,88 @@ class Users
         return $this->toUser($this->users->where("user", $user->getId())->fetch());
     }
     
-    function find(string $query): Util\EntityStream
+    function find(string $query, array $pars = [], string $sort = "id DESC"): Util\EntityStream
     {
         $query  = "%$query%";
         $result = $this->users->where("CONCAT_WS(' ', first_name, last_name, pseudo, shortcode) LIKE ?", $query)->where("deleted", 0);
         
-        return new Util\EntityStream("User", $result);
+        $notNullParams = [];
+        $nnparamsCount = 0;
+        
+        foreach($pars as $paramName => $paramValue)
+            if($paramName != "before" && $paramName != "after" && $paramName != "gender" && $paramName != "maritalstatus" && $paramName != "politViews")
+                $paramValue != NULL ? $notNullParams += ["$paramName" => "%$paramValue%"] : NULL;
+            else
+                $paramValue != NULL ? $notNullParams += ["$paramName" => "$paramValue"]   : NULL;
+
+        $nnparamsCount = sizeof($notNullParams);
+
+        if($nnparamsCount > 0) {
+            foreach($notNullParams as $paramName => $paramValue) {
+                switch($paramName) {
+                    case "hometown":
+                        $result->where("hometown LIKE ?", $paramValue);
+                        break;
+                    case "city":
+                        $result->where("city LIKE ?", $paramValue);
+                        break;
+                    case "maritalstatus":
+                        $result->where("marital_status ?", $paramValue);
+                        break;
+                    case "status":
+                        $result->where("status LIKE ?", $paramValue);
+                        break;
+                    case "politViews":
+                        $result->where("polit_views ?", $paramValue);
+                        break;
+                    case "email":
+                        $result->where("email_contact LIKE ?", $paramValue);
+                        break;
+                    case "telegram":
+                        $result->where("telegram LIKE ?", $paramValue);
+                        break;
+                    case "site":
+                        $result->where("telegram LIKE ?", $paramValue);
+                        break;
+                    case "address":
+                        $result->where("address LIKE ?", $paramValue);
+                        break;
+                    case "is_online":
+                        $result->where("online >= ?", time() - 900);
+                        break;
+                    case "interests":
+                        $result->where("interests LIKE ?", $paramValue);
+                        break;
+                    case "fav_mus":
+                        $result->where("fav_music LIKE ?", $paramValue);
+                        break;
+                    case "fav_films":
+                        $result->where("fav_films LIKE ?", $paramValue);
+                        break;
+                    case "fav_shows":
+                        $result->where("fav_shows LIKE ?", $paramValue);
+                        break;
+                    case "fav_books":
+                        $result->where("fav_books LIKE ?", $paramValue);
+                        break;
+                    case "fav_quote":
+                        $result->where("fav_quote LIKE ?", $paramValue);
+                        break;
+                    case "before":
+                        $result->where("UNIX_TIMESTAMP(since) < ?", $paramValue);
+                        break;
+                    case "after":
+                        $result->where("UNIX_TIMESTAMP(since) > ?", $paramValue);
+                        break;
+                    case "gender":
+                        $result->where("sex ?", $paramValue);
+                        break;
+                }
+            }
+        }
+
+
+        return new Util\EntityStream("User", $result->order($sort));
     }
     
     function getStatistics(): object

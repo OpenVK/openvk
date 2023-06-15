@@ -196,6 +196,18 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->renderPhoto($photo->getOwner(true)->getId(), $photo->getVirtualId());
     }
     
+    function renderThumbnail($id, $size): void
+    {
+        $photo = $this->photos->get($id);
+        if(!$photo || $photo->isDeleted())
+            $this->notFound();
+        
+        if(!$photo->forceSize($size))
+            chandler_http_panic(588, "Gone", "This thumbnail cannot be generated due to server misconfiguration");
+        
+        $this->redirect($photo->getURLBySizeId($size), 8);
+    }
+    
     function renderEditPhoto(int $ownerId, int $photoId): void
     {
         $this->assertUserLoggedIn();

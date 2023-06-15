@@ -1,9 +1,11 @@
 # VK API Compatability layer for OpenVK
 
-This directory contains VK api handlers, structures and relared
+This directory contains VK API handlers, structures and relared
 exceptions. It is still a work-in-progress functionality.  
-**Note**: requests to api are routed through
+**Note**: requests to API are routed through
 openvk.Web.Presenters.VKAPIPresenter, this dir contains only handlers.
+
+[Documentation for API clients](https://docs.openvk.uk/openvk_engine/api/description/)
 
 ## Implementing API methods
 

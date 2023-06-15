@@ -10,6 +10,8 @@ SELECT DISTINCT id, class FROM
       sender_id = ?
     AND
       sender_type = ?
+    AND
+      deleted = 0
   ) UNION (
     SELECT
       sender_id AS id,
@@ -20,6 +22,8 @@ SELECT DISTINCT id, class FROM
       recipient_id = ?
     AND
       recipient_type = ?
+    AND
+      deleted = 0
   )
   ORDER BY
     time

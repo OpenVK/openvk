@@ -99,7 +99,39 @@ class Posts
             return NULL;
         
     }
-    
+
+    function find(string $query = "", array $pars = [], string $sort = "id"): Util\EntityStream
+    {
+        $query  = "%$query%";
+
+        $notNullParams = [];
+
+        foreach($pars as $paramName => $paramValue)
+            if($paramName != "before" && $paramName != "after")
+                $paramValue != NULL ? $notNullParams+=["$paramName" => "%$paramValue%"]   : NULL;
+            else
+                $paramValue != NULL ? $notNullParams+=["$paramName" => "$paramValue"]     : NULL;
+
+        $result = $this->posts->where("content LIKE ?", $query)->where("deleted", 0);
+        $nnparamsCount = sizeof($notNullParams);
+
+        if($nnparamsCount > 0) {
+            foreach($notNullParams as $paramName => $paramValue) {
+                switch($paramName) {
+                    case "before":
+                        $result->where("created < ?", $paramValue);
+                        break;
+                    case "after":
+                        $result->where("created > ?", $paramValue);
+                        break;
+                }
+            }
+        }
+
+
+        return new Util\EntityStream("Post", $result->order("$sort"));
+    }
+
     function getPostCountOnUserWall(int $user): int
     {
         return sizeof($this->posts->where(["wall" => $user, "deleted" => 0]));
