@@ -1515,6 +1515,7 @@
 "mobile_notes" = "Notes";
 "mobile_groups" = "Groups";
 "mobile_search" = "Search";
+"mobile_settings" = "Settings"
 "mobile_desktop_version" = "Desktop version";
 "mobile_menu" = "Menu";
 "mobile_like" = "Like";
