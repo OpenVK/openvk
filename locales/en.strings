@@ -421,8 +421,10 @@
 "my_settings" = "My Settings";
 "bug_tracker" = "Bug-tracker";
 
+"menu_settings" = "Settings";
 "menu_login" = "Login";
 "menu_registration" = "Registration";
+
 "menu_help" = "Help";
 
 "menu_logout" = "Logout";
@@ -1504,3 +1506,15 @@
 
 "closed_group_post" = "This is a post from private group";
 "deleted_target_comment" = "This comment belongs to deleted post";
+
+/* Mobile */
+"mobile_friends" = "Friends";
+"mobile_photos" = "Photos";
+"mobile_videos" = "Videos";
+"mobile_messages" = "Messages";
+"mobile_notes" = "Notes";
+"mobile_groups" = "Groups";
+"mobile_search" = "Search";
+"mobile_desktop_version" = "Desktop version";
+"mobile_menu" = "Menu";
+"mobile_like" = "Like";

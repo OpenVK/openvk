@@ -407,6 +407,7 @@
 "my_settings" = "Мої Налаштування";
 "bug_tracker" = "Баг-трекер";
 
+"menu_settings" = "Налаштування";
 "menu_login" = "Вхід";
 "menu_registration" = "Реєстрація";
 "menu_help" = "Допомога";
@@ -1417,3 +1418,16 @@
 
 "closed_group_post" = "Цей допис з приватної групи";
 "deleted_target_comment" = "Цей коментар належить до видаленого допису";
+
+/* Mobile */
+
+"mobile_friends" = "Друзі";
+"mobile_photos" = "Фотографії";
+"mobile_videos" = "Відеозаписи";
+"mobile_messages" = "Повідомлення";
+"mobile_notes" = "Нотатки";
+"mobile_groups" = Групи";
+"mobile_search" = "Пошук";
+"mobile_desktop_version" = "Повна версія";
+"mobile_menu" = "Меню";
+"mobile_like" = "Мені подобається";
