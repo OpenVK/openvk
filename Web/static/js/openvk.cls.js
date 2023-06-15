@@ -1,6 +1,4 @@
 ﻿
-const { json } = require("stream/consumers");
-
 function expand_wall_textarea(id) {
     var el = document.getElementById('post-buttons'+id);
     var wi = document.getElementById('wall-post-input'+id);
@@ -650,55 +648,36 @@ async function checkSearchTips()
 {
     let query = searchInput.value;
 
-    await new Promise(r => setTimeout(r, 500));
+    await new Promise(r => setTimeout(r, 1000));
 
     let type = typer.value;
-    let smt  = type == "users" || type == "groups";
+    let smt  = type == "users" || type == "groups" || type == "videos";
+
     if(query.length > 3 && query == searchInput.value && smt) {
         srcht.removeAttribute("hidden")
-        let etype = type == "groups" ? "clubs" : "users"
+        let etype = type
 
-        let xhr = new XMLHttpRequest()
-        xhr.open("POST", "/fastSearch?query="+query+"&type="+etype)
+        try {
+            let results = await API.Search.fastSearch(escapeHtml(query), etype)
+            
+            srchrr.innerHTML = ""
 
-        xhr.onloadstart = () => {
-            srchrr.innerHTML = `<img id="loader" src="/assets/packages/static/openvk/img/loading_mini.gif">`
-        }
-
-        xhr.onloadend = async () => {
-            let results;
-
-            try {
-                results = JSON.parse(xhr.responseText)
-            } catch {
-                srchrr.innerHTML = "Rate limits"
-            }
-
-            if(results["items"] != null) {
-                srchrr.innerHTML = ""
-
-                for(const el of results["items"]) {
-                    srchrr.insertAdjacentHTML("beforeend", `
-                            <tr class="restip" onmousedown="if (event.which === 2) { window.open('${el.url}', '_blank'); } else {location.href='${el.url}'}">
-                                <td>
-                                    <img src="${el.avatar}" width="30">
-                                </td>
-                                <td valign="top">
-                                    <p class="nameq" style="margin-top: -2px;">${el.name}</p>
-                                    <p class="desq">${el.description}</p>
-                                </td>
-                            </tr>
+            for(const el of results["items"]) {
+                srchrr.insertAdjacentHTML("beforeend", `
+                    <tr class="restip" onmousedown="if (event.which === 2) { window.open('${el.url}', '_blank'); } else {location.href='${el.url}'}">
+                        <td>
+                            <img src="${el.avatar}" width="30">
+                        </td>
+                        <td valign="top">
+                            <p class="nameq" style="margin-top: -2px;">${el.name}</p>
+                            <p class="desq">${el.description}</p>
+                        </td>
+                    </tr>
                     `)
-                    
-                }
-            } else {
-                srchrr.innerHTML = tr("no_results")
             }
+        } catch(rejection) {
+            srchrr.innerHTML = tr("no_results")
         }
-
-        xhr.send()
-    } else {
-        //srcht.setAttribute("hidden", "hidden")
     }
 }
 

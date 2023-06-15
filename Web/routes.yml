@@ -251,8 +251,6 @@ routes:
       handler: "Search->index"
     - url: "/search/content"
       handler: "ContentSearch->index"
-    - url: "/fastSearch"
-      handler: "Search->fastSearch"
     - url: "/notes{num}"
       handler: "Notes->list"
     - url: "/note{num}_{num}"
