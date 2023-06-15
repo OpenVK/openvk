@@ -1426,9 +1426,10 @@
 "mobile_videos" = "Відеозаписи";
 "mobile_messages" = "Повідомлення";
 "mobile_notes" = "Нотатки";
-"mobile_groups" = Групи";
+"mobile_groups" = "Групи";
 "mobile_search" = "Пошук";
 "mobile_settings" = "Налаштування";
 "mobile_desktop_version" = "Повна версія";
+"mobile_log_out" = "Вийти";
 "mobile_menu" = "Меню";
 "mobile_like" = "Мені подобається";
