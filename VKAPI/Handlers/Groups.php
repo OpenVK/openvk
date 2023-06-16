@@ -354,7 +354,8 @@ final class Groups extends VKAPIRequestHandler
 
             $arr->items[] = (object) [
                 "id" => $member->getId(),
-                "name" => $member->getCanonicalName(),
+                "first_name" => $member->getFirstName(),
+                "last_name" => $member->getLastName(),
             ];
 
             foreach($filds as $fild) {
