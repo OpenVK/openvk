@@ -1412,4 +1412,6 @@
 "mobile_desktop_version" = "Полная версия";
 "mobile_log_out" = "Выйти";
 "mobile_menu" = "Меню";
-"mobile_like" = "Мне нравится";
+"mobile_like" = "Нравится";
+"mobile_user_info_hide" = "Скрыть";
+"mobile_user_info_show_details" = "Показать подробнее";

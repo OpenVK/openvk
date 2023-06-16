@@ -1432,4 +1432,6 @@
 "mobile_desktop_version" = "Повна версія";
 "mobile_log_out" = "Вийти";
 "mobile_menu" = "Меню";
-"mobile_like" = "Мені подобається";
+"mobile_like" = "Подобається";
+"mobile_user_info_hide" = "Приховувати";
+"mobile_user_info_show_details" = "Показати докладніше";
