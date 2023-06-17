@@ -6,6 +6,7 @@ use openvk\VKAPI\Exceptions\APIErrorException;
 use openvk\Web\Models\Entities\{User, APIToken};
 use openvk\Web\Models\Repositories\{Users, APITokens};
 use lfkeitel\phptotp\{Base32, Totp};
+use WhichBrowser;
 
 final class VKAPIPresenter extends OpenVKPresenter
 {
@@ -283,7 +284,7 @@ final class VKAPIPresenter extends OpenVKPresenter
 
         $token = new APIToken;
         $token->setUser($user);
-        $token->setPlatform(is_null($platform) ? "api" : $platform);
+        $token->setPlatform($platform ?? (new WhichBrowser\Parser(getallheaders()))->toString());
         $token->save();
         
         $payload = json_encode([
