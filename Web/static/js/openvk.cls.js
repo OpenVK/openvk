@@ -664,13 +664,13 @@ async function checkSearchTips()
 
             for(const el of results["items"]) {
                 srchrr.insertAdjacentHTML("beforeend", `
-                    <tr class="restip" onmousedown="if (event.which === 2) { window.open('${el.url}', '_blank'); } else {location.href='${el.url}'}">
+                    <tr class="restip" onmouseup="if (event.which === 2) { window.open('${el.url}', '_blank'); } else {location.href='${el.url}'}">
                         <td>
                             <img src="${el.avatar}" width="30">
                         </td>
                         <td valign="top">
-                            <p class="nameq" style="margin-top: -2px;">${el.name}</p>
-                            <p class="desq">${el.description}</p>
+                            <p class="nameq" style="margin-top: -2px;text-transform:none;">${el.name}</p>
+                            <p class="desq" style="text-transform:none;">${el.description}</p>
                         </td>
                     </tr>
                     `)
