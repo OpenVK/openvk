@@ -669,8 +669,8 @@ async function checkSearchTips()
                             <img src="${el.avatar}" width="30">
                         </td>
                         <td valign="top">
-                            <p class="nameq" style="margin-top: -2px;text-transform:none;">${el.name}</p>
-                            <p class="desq" style="text-transform:none;">${el.description}</p>
+                            <p class="nameq" style="margin-top: -2px;text-transform:none;">${escapeHtml(el.name)}</p>
+                            <p class="desq" style="text-transform:none;">${escapeHtml(el.description)}</p>
                         </td>
                     </tr>
                     `)
