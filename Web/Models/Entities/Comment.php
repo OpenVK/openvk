@@ -61,7 +61,7 @@ class Comment extends Post
         $res->id            = $this->getId();
         $res->from_id       = $this->getOwner()->getId();
         $res->date          = $this->getPublicationTime()->timestamp();
-        $res->text          = $this->getText();
+        $res->text          = $this->getText(false);
         $res->attachments   = [];
         $res->parents_stack = [];
         
