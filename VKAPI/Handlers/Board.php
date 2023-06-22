@@ -291,7 +291,7 @@ final class Board extends VKAPIRequestHandler
         
         $topic = (new TopicsRepo)->getTopicById($group_id, $topic_id);
 
-        if(!$topic || !$topic->getClub() || $topic->isDeleted() || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
+        if(!$topic || !$topic->getClub() || $topic->isDeleted()) {
             $this->fail(5, "Invalid topic");
         }
 
@@ -325,6 +325,7 @@ final class Board extends VKAPIRequestHandler
 
         $arr = [];
         $club = (new ClubsRepo)->get($group_id);
+
         $topics = array_slice(iterator_to_array((new TopicsRepo)->getClubTopics($club, 1, $count + $offset)), $offset);
         $arr["count"] = (new TopicsRepo)->getClubTopicsCount($club);
         $arr["items"] = [];
@@ -335,7 +336,7 @@ final class Board extends VKAPIRequestHandler
         if(empty($topic_ids)) {
             foreach($topics as $topic) {
                 if($topic->isDeleted()) continue;
-                $arr["items"][] = $topic->toVkApiStruct($preview, $preview_length);
+                $arr["items"][] = $topic->toVkApiStruct($preview, $preview_length > 1 ? $preview_length : 90);
             }
         } else {
             $topics = explode(',', $topic_ids);
@@ -343,8 +344,9 @@ final class Board extends VKAPIRequestHandler
             foreach($topics as $topic) {
                 $id = explode("_", $topic);
                 $topicy = (new TopicsRepo)->getTopicById((int)$id[0], (int)$id[1]);
-                if($topicy) {
-                    $arr["items"] = $topicy->toVkApiStruct();
+
+                if($topicy && !$topicy->isDeleted()) {
+                    $arr["items"][] = $topicy->toVkApiStruct($preview, $preview_length > 1 ? $preview_length : 90);
                 }
             }
         }
@@ -406,7 +408,7 @@ final class Board extends VKAPIRequestHandler
         $res->id            = $comment->getId();
         $res->from_id       = $comment->getOwner()->getId();
         $res->date          = $comment->getPublicationTime()->timestamp();
-        $res->text          = $comment->getText();
+        $res->text          = $comment->getText(false);
         $res->attachments   = [];
         $res->likes         = [];
         if($need_likes) {

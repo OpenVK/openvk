@@ -117,6 +117,7 @@ class Video extends Media
 
     function getApiStructure(): object
     {
+        $fromYoutube = $this->getType() == Video::TYPE_EMBED;
         return (object)[
             "type" => "video",
             "video" => [
@@ -145,10 +146,11 @@ class Video extends Media
                 "user_id" => $this->getOwner()->getId(),
                 "title" => $this->getName(),
                 "is_favorite" => false,
-                "player" => $this->getURL(),
-                "files" => [
+                "player" => !$fromYoutube ? $this->getURL() : $this->getVideoDriver()->getURL(),
+                "files" => !$fromYoutube ? [
                     "mp4_480" => $this->getURL()	
-                ],
+                ] : NULL,
+                "platform" => $fromYoutube ? "youtube" : NULL,
                 "added" => 0,
                 "repeat" => 0,
                 "type" => "video",
