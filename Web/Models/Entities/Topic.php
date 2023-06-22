@@ -71,7 +71,7 @@ class Topic extends Postable
     function getFirstComment(): ?Comment
     {
         $array = iterator_to_array($this->getComments(1));
-        return isset($array[0]) ? $array[0] : NULL;
+        return $array[0] ?? NULL;
     }
 
     function getUpdateTime(): DateTime
@@ -97,9 +97,23 @@ class Topic extends Postable
         $res->id         = $this->getId();
         $res->title      = $this->getTitle();
         $res->created    = $this->getPublicationTime()->timestamp();
-        $res->created_by = $this->getOwner() instanceof User ? $this->getOwner()->getId() : $this->getOwner()->getId() * -1;
+
+        if($this->getOwner() instanceof User) {
+            $res->created_by = $this->getOwner()->getId();
+        } else {
+            $res->created_by = $this->getOwner()->getId() * -1;
+        }
+        
         $res->updated    = $this->getUpdateTime()->timestamp();
-        $res->updated_by = $this->getLastComment() ? $this->getLastComment()->getOwner() instanceof User ? $this->getLastComment()->getOwner()->getId() : $this->getLastComment()->getOwner()->getId() * -1 : NULL;
+
+        if($this->getLastComment()) {
+            if($this->getLastComment()->getOwner() instanceof User) {
+                $res->updated_by = $this->getLastComment()->getOwner()->getId();
+            } else {
+                $res->updated_by = $this->getLastComment()->getOwner()->getId() * -1;
+            }
+        }
+
         $res->is_closed  = (int)$this->isClosed();
         $res->is_fixed   = (int)$this->isPinned();
         $res->comments   = $this->getCommentsCount();

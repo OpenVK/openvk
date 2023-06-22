@@ -346,7 +346,7 @@ final class Board extends VKAPIRequestHandler
                 $topicy = (new TopicsRepo)->getTopicById((int)$id[0], (int)$id[1]);
 
                 if($topicy && !$topicy->isDeleted()) {
-                    $arr["items"] = $topicy->toVkApiStruct($preview, $preview_length > 1 ? $preview_length : 90);
+                    $arr["items"][] = $topicy->toVkApiStruct($preview, $preview_length > 1 ? $preview_length : 90);
                 }
             }
         }
