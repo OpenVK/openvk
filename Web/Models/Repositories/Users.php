@@ -58,7 +58,7 @@ class Users
         $nnparamsCount = 0;
         
         foreach($pars as $paramName => $paramValue)
-            if($paramName != "before" && $paramName != "after" && $paramName != "gender" && $paramName != "maritalstatus" && $paramName != "politViews")
+            if($paramName != "before" && $paramName != "after" && $paramName != "gender" && $paramName != "maritalstatus" && $paramName != "politViews" && $paramName != "doNotSearchMe")
                 $paramValue != NULL ? $notNullParams += ["$paramName" => "%$paramValue%"] : NULL;
             else
                 $paramValue != NULL ? $notNullParams += ["$paramName" => "$paramValue"]   : NULL;
@@ -124,6 +124,9 @@ class Users
                         break;
                     case "gender":
                         $result->where("sex ?", $paramValue);
+                        break;
+                    case "doNotSearchMe":
+                        $result->where("id !=", $paramValue);
                         break;
                 }
             }

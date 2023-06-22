@@ -2487,3 +2487,49 @@ a.poll-retract-vote {
 .page_content.overscrolled div[class$="_big_block"] {
     width: 100%;
 }
+
+.searchTips
+{
+    position: absolute;
+    background: white;
+    padding-left: 6px;
+    padding-right: 6px;
+    padding-bottom: 6px;
+    border: 1px solid #C0CAD5;
+    border-top: 0px;
+    width: fit-content;
+    z-index: 666666;
+    margin-top: -2px;
+}
+
+.searchTips td
+{
+    color: black;
+    padding: 3px;
+    font-weight: lighter;
+    position:relative;
+}
+
+.searchTips td .desq
+{
+    margin-top: -9px;
+}
+
+.restip td a:hover
+{
+    color: black;
+    font-weight: lighter;
+    text-decoration: none;
+}
+
+.searchTips .restip
+{
+    padding-right: 10px;
+    cursor: pointer;
+    user-select: none;
+}
+
+.searchTips .restip:hover
+{
+    background: rgb(236, 235, 235);
+}

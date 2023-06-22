@@ -1507,6 +1507,8 @@
 "closed_group_post" = "This is a post from private group";
 "deleted_target_comment" = "This comment belongs to deleted post";
 
+"no_results" = "No results";
+
 /* Mobile */
 "mobile_friends" = "Friends";
 "mobile_photos" = "Photos";

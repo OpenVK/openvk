@@ -1400,6 +1400,8 @@
 "closed_group_post" = "Эта запись из закрытой группы";
 "deleted_target_comment" = "Этот комментарий принадлежит к удалённой записи";
 
+"no_results" = "Результатов нет";
+
 /* Mobile */
 "mobile_friends" = "Друзья";
 "mobile_photos" = "Фотографии";
