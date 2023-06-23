@@ -123,6 +123,7 @@ class Note extends Postable
     {
         $res = (object) [];
 
+        $res->type          = "note";
         $res->id            = $this->getId();
         $res->owner_id      = $this->getOwner()->getId();
         $res->title         = $this->getName();

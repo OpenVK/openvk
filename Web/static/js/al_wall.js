@@ -189,3 +189,44 @@ tippy(".client_app", {
     }
 });
 
+function addNote(textareaId, id, name)
+{
+    note.value = id
+
+    let nortd = document.querySelector("#post-buttons"+textareaId+" .post-has-note");
+    nortd.style.display = "block"
+
+    nortd.innerHTML = `${tr("note")} ${name}`
+
+    u("body").removeClass("dimmed");
+    u(".ovk-diag-cont").remove();
+}
+
+async function attachNote(id)
+{
+    let notes = await API.Wall.getMyNotes()
+    let body  = ``
+
+    if(notes.items.length < 1) {
+        body = `${tr("no_notes")}`
+    } else {
+        body = `
+            ${tr("select_or_create_new")}
+            <div id="notesList">
+        `
+
+        for(const note of notes.items) {
+            body += `
+                <div class="ntSelect" onclick="addNote(${id}, ${note.id}, '${escapeHtml(note.name)}')">
+                    <span>${escapeHtml(note.name)}</span>
+                </div>
+            `
+        }
+     
+        body += `</div>`
+    }
+
+    let frame = MessageBox(tr("select_note"), body, [tr("cancel")], [Function.noop]);
+
+    document.querySelector(".ovk-diag-body").style.padding = "10px"
+}

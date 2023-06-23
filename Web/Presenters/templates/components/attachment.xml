@@ -28,6 +28,20 @@
     </div>
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Poll}
     {presenter "openvk!Poll->view", $attachment->getId()}
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Note}
+    {if !$attachment->isDeleted()}
+        <div class="attachment_note">
+            <img class="attachment_note_icon" src="/assets/packages/static/openvk/img/note.svg">
+            <span class="attachment_note_text">{_note}</span>
+            <span class="attachment_note_name"><a href="/note{$attachment->getPrettyId()}">{ovk_proc_strtr($attachment->getName(), 66)}</a></span>
+        </div>
+    {else}
+        <div class="attachment_note">
+            <img class="attachment_note_icon" src="/assets/packages/static/openvk/img/note.svg">
+            <span class="attachment_note_text">{_note}</span>
+            <span class="attachment_note_name">{_deleted}</span>
+        </div>
+    {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Post}
     {php $GLOBALS["_nesAttGloCou"] = (isset($GLOBALS["_nesAttGloCou"]) ? $GLOBALS["_nesAttGloCou"] : 0) + 1}
     {if $GLOBALS["_nesAttGloCou"] > 2}

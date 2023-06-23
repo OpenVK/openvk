@@ -389,6 +389,13 @@
 "notes_list_many" = "Найдено $1 заметок";
 "notes_list_other" = "Найдено $1 заметок";
 
+"select_note" = "Выбор заметки";
+"no_notes" = "У вас нет ни одной заметки";
+
+"error_attaching_note" = "Не удалось прикрепить заметку";
+
+"select_or_create_new" = "Выберите существующую заметку или <a href='/notes/create'>создайте новую</a>";
+
 /* Menus */
 
 "edit_button" = "ред.";

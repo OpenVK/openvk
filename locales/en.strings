@@ -404,6 +404,13 @@
 "notes_list_one" = "$1 note found";
 "notes_list_other" = "$1 notes found";
 
+"select_note" = "Selecting note";
+"no_notes" = "You don't have any notes";
+
+"error_attaching_note" = "Error when attaching note";
+
+"select_or_create_new" = "Select existing note or <a href='/notes/create'>create new one</a>";
+
 /* Menus */
 
 /* Note that is string need to fit into the "My Page" link */
