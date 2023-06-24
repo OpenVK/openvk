@@ -79,8 +79,9 @@ class Wall implements Handler
         $myNotes = $this->notes->getUserNotes($this->user, 1, $this->notes->getUserNotesCount($this->user));
 
         $arr = [
-            "count" => sizeof($myNotes),
-            "items" => []
+            "count"  => sizeof($myNotes),
+            "closed" => $this->user->getPrivacySetting("notes.read"),
+            "items"  => []
         ];
 
         foreach($myNotes as $note) {

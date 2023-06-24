@@ -287,6 +287,10 @@ final class WallPresenter extends OpenVKPresenter
             if(!$note || $note->isDeleted() || $note->getOwner()->getId() != $this->user->id) {
                 $this->flashFail("err", tr("error"), tr("error_attaching_note"));
             }
+            
+            if($note->getOwner()->getPrivacySetting("notes.read") < 1) {
+                $this->flashFail("err", " ");
+            }
         }
         
         if(empty($this->postParam("text")) && !$photo && !$video && !$poll && !$note)

@@ -80,7 +80,7 @@
                         {_video}
                     </a>
                     <a n:if="$notes ?? false" href="javascript:attachNote({$textAreaId})">
-                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/document-new.png" />
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-srt.png" />
                         {_note}
                     </a>
                     <a n:if="$graffiti ?? false" href="javascript:initGraffiti({$textAreaId});">

@@ -207,23 +207,27 @@ async function attachNote(id)
     let notes = await API.Wall.getMyNotes()
     let body  = ``
 
-    if(notes.items.length < 1) {
-        body = `${tr("no_notes")}`
+    if(notes.closed < 1) {
+        body = `${tr("notes_closed")}`
     } else {
-        body = `
-            ${tr("select_or_create_new")}
-            <div id="notesList">
-        `
-
-        for(const note of notes.items) {
-            body += `
-                <div class="ntSelect" onclick="addNote(${id}, ${note.id}, '${escapeHtml(note.name)}')">
-                    <span>${escapeHtml(note.name)}</span>
-                </div>
+        if(notes.items.length < 1) {
+            body = `${tr("no_notes")}`
+        } else {
+            body = `
+                ${tr("select_or_create_new")}
+                <div id="notesList">
             `
-        }
-     
-        body += `</div>`
+    
+            for(const note of notes.items) {
+                body += `
+                    <div class="ntSelect" onclick="addNote(${id}, ${note.id}, '${escapeHtml(note.name)}')">
+                        <span>${escapeHtml(note.name)}</span>
+                    </div>
+                `
+            }
+         
+            body += `</div>`
+        }    
     }
 
     let frame = MessageBox(tr("select_note"), body, [tr("cancel")], [Function.noop]);

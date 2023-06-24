@@ -480,6 +480,9 @@ final class Wall extends VKAPIRequestHandler
                         $this->fail(100, "Note does not exists");
                     if($attacc->getOwner()->getId() != $this->getUser()->getId())
                         $this->fail(43, "You do not have access to this note");
+                    
+                    if($attacc->getOwner()->getPrivacySetting("notes.read") < 1)
+                        $this->fail(11, "You can't attach note to post, because your notes list is closed. Change it in privacy settings in web-version.");
 
                     $post->attach($attacc);
                 }

@@ -411,6 +411,8 @@
 
 "select_or_create_new" = "Select existing note or <a href='/notes/create'>create new one</a>";
 
+"notes_closed" = "You can't attach note to post, because only you can see them.<br> You can change it in <a href=\"/settings?act=privacy\">settings</a>.";
+
 /* Menus */
 
 /* Note that is string need to fit into the "My Page" link */
