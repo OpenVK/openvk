@@ -215,7 +215,7 @@ final class Wall extends VKAPIRequestHandler
         foreach($psts as $pst) {
             $id   = explode("_", $pst);
             $post = (new PostsRepo)->getPostById(intval($id[0]), intval($id[1]));
-            if($post || !$post->isDeleted()) {
+            if($post && !$post->isDeleted()) {
                 $from_id = get_class($post->getOwner()) == "openvk\Web\Models\Entities\Club" ? $post->getOwner()->getId() * (-1) : $post->getOwner()->getId();
                 $attachments = [];
                 $repost = []; // чел высрал семь сигарет 😳 помянем 🕯
