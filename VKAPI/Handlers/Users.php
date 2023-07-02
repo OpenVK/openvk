@@ -32,7 +32,15 @@ final class Users extends VKAPIRequestHandler
 						"first_name"  => "DELETED",
 						"last_name"   => "",
 						"deactivated" => "deleted"
-					];   
+					];
+				} else if($usr->isBanned()) {
+					$response[$i] = (object)[
+						"id"          => $usr->getId(),
+						"first_name"  => $usr->getFirstName(),
+						"last_name"   => $usr->getLastName(),
+						"deactivated" => "banned",
+						"ban_reason"  => $usr->getBanReason()
+					];
 				} else if($usrs[$i] == NULL) {
 
 				} else {
