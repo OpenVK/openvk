@@ -1,0 +1,7 @@
+CREATE TABLE `blacklists` (
+  `index` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `author` BIGINT UNSIGNED NOT NULL,
+  `target` BIGINT UNSIGNED NOT NULL,
+  `created` DATETIME NOT NULL,
+  PRIMARY KEY (`index`)
+) ENGINE = InnoDB;
