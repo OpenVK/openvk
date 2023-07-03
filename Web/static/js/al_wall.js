@@ -189,14 +189,24 @@ tippy(".client_app", {
     }
 });
 
-function addNote(textareaId, id, name)
+function addNote(textareaId, nid)
 {
-    note.value = id
+    if(nid > 0) {
+        note.value = nid
+        let noteObj = document.querySelector("#nd"+nid)
+    
+        let nortd = document.querySelector("#post-buttons"+textareaId+" .post-has-note");
+        nortd.style.display = "block"
+    
+        nortd.innerHTML = `${tr("note")} ${escapeHtml(noteObj.dataset.name)}`
+    } else {
+        note.value = "none"
 
-    let nortd = document.querySelector("#post-buttons"+textareaId+" .post-has-note");
-    nortd.style.display = "block"
+        let nortd = document.querySelector("#post-buttons"+textareaId+" .post-has-note");
+        nortd.style.display = "none"
 
-    nortd.innerHTML = `${tr("note")} ${escapeHtml(name)}`
+        nortd.innerHTML = ""
+    }
 
     u("body").removeClass("dimmed");
     u(".ovk-diag-cont").remove();
@@ -215,12 +225,18 @@ async function attachNote(id)
         } else {
             body = `
                 ${tr("select_or_create_new")}
-                <div id="notesList">
-            `
-    
+                <div id="notesList">`
+
+            if(note.value != "none") {
+                body += `
+                <div class="ntSelect" onclick="addNote(${id}, 0)">
+                    <span>${tr("do_not_attach_note")}</span>
+                </div>`
+            }
+
             for(const note of notes.items) {
                 body += `
-                    <div class="ntSelect" onclick="addNote(${id}, ${note.id}, '${note.name}')">
+                    <div data-name="${note.name}" class="ntSelect" id="nd${note.id}" onclick="addNote(${id}, ${note.id})">
                         <span>${escapeHtml(note.name)}</span>
                     </div>
                 `
