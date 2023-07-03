@@ -196,7 +196,7 @@ function addNote(textareaId, id, name)
     let nortd = document.querySelector("#post-buttons"+textareaId+" .post-has-note");
     nortd.style.display = "block"
 
-    nortd.innerHTML = `${tr("note")} ${name}`
+    nortd.innerHTML = `${tr("note")} ${escapeHtml(name)}`
 
     u("body").removeClass("dimmed");
     u(".ovk-diag-cont").remove();
@@ -220,7 +220,7 @@ async function attachNote(id)
     
             for(const note of notes.items) {
                 body += `
-                    <div class="ntSelect" onclick="addNote(${id}, ${note.id}, '${escapeHtml(note.name)}')">
+                    <div class="ntSelect" onclick="addNote(${id}, ${note.id}, '${note.name}')">
                         <span>${escapeHtml(note.name)}</span>
                     </div>
                 `

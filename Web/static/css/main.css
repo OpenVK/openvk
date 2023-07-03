@@ -2540,6 +2540,7 @@ a.poll-retract-vote {
 
 .attachment_note_text {
     color: #605F63;
+    margin-left: 2px;
 }
 
 .attachment_note {

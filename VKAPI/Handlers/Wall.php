@@ -477,7 +477,7 @@ final class Wall extends VKAPIRequestHandler
                 } elseif($attachmentType == "note") {
                     $attacc = (new NotesRepo)->getNoteById($attachmentOwner, $attachmentId);
                     if(!$attacc || $attacc->isDeleted())
-                        $this->fail(100, "Note does not exists");
+                        $this->fail(100, "Note does not exist");
                     if($attacc->getOwner()->getId() != $this->getUser()->getId())
                         $this->fail(43, "You do not have access to this note");
                     

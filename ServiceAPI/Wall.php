@@ -81,7 +81,7 @@ class Wall implements Handler
         $arr = [
             "count"  => sizeof($myNotes),
             "closed" => $this->user->getPrivacySetting("notes.read"),
-            "items"  => []
+            "items"  => [],
         ];
 
         foreach($myNotes as $note) {
