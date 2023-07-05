@@ -85,4 +85,14 @@ class Comment extends Post
         }
         return $res;
     }
+
+    function canBeViewedBy(?User $user = NULL): bool
+    {
+        # по понятным причинам не проверяем удалённость овнера
+        if($this->isDeleted() || $this->getTarget()->isDeleted()) {
+            return false;
+        }
+
+        return $this->getTarget()->canBeViewedBy($user);
+    }
 }

@@ -83,6 +83,7 @@
      <ul class="listing">
       <li><span>{_tour_section_2_text_2_1|noescape}</span></li>
       <li><span>{_tour_section_2_text_2_2|noescape}</span></li>
+      <li><span>{_tour_section_2_text_2_4|noescape}</span></li> 
       <li><span>{_tour_section_2_text_2_3|noescape}</span></li> 
      </ul>
      <img src="assets/packages/static/openvk/img/tour/privacy.png" width="440">

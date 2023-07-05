@@ -72,7 +72,7 @@
                             <div id="filename" style="margin-top: 10px;"></div>
                         </td>
                     </tr>
-		            <tr>
+                    <tr>
                         <td width="120" valign="top">
                             <span class="nobold">{_wall}: </span>
                         </td>
@@ -99,6 +99,37 @@
                             <input type="radio" name="administrators_list_display" value="0" n:attr="checked => $club->getAdministratorsListDisplay() == 0, disabled => $areAllAdminsHidden" /> {_group_display_only_creator}<br>
                             <input type="radio" name="administrators_list_display" value="1" n:attr="checked => $club->getAdministratorsListDisplay() == 1, disabled => $areAllAdminsHidden" /> {_group_display_all_administrators}<br>
                             <input type="radio" name="administrators_list_display" value="2" n:attr="checked => $club->getAdministratorsListDisplay() == 2" /> {_group_dont_display_administrators_list}<br>
+                        </td>
+                    </tr>
+
+                    <tr n:if="$club->getOwner()->getId() == $thisUser->getId()">
+                        <script>
+                            function showGroupDeleteDialog()
+                            {
+                                let id = {$club->getId()}
+                                let body = `
+                                    <form action="/club` + id + `/delete" id="grpDeactivation" method="POST">` +
+                                        tr("trying_delete_group") + `
+                                        <input type="password" id="password" name="password" required />
+                                        <input type="hidden" name="hash" value="` + u("meta[name=csrf]").attr("value") + `" />
+                                    </form>
+                                `
+
+                                MessageBox(tr("group_deletion"), body, [tr("delete"), tr("cancel")], [
+                                    () => {
+                                        $("#grpDeactivation").submit();
+                                    },
+                                    Function.noop
+                                ]);
+
+                                document.querySelector(".ovk-diag-body").style.padding = "10px"
+                            }
+                        </script>
+                        <td width="120" valign="top">
+                            
+                        </td>
+                        <td>
+                            <span><a href="javascript:showGroupDeleteDialog()">{_delete_group}</a></span>
                         </td>
                     </tr>
 

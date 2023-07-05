@@ -43,11 +43,32 @@ class Clubs
         return $this->toClub($this->clubs->get($id));
     }
     
-    function find(string $query, array $pars = [], string $sort = "id DESC", int $page = 1, ?int $perPage = NULL): \Traversable
+    function find(string $query, array $pars = [], string $sort = "id DESC"): \Traversable
     {
         $query  = "%$query%";
         $result = $this->clubs->where("name LIKE ? OR about LIKE ?", $query, $query);
         
+        $notNullParams = [];
+        $nnparamsCount = 0;
+        
+        foreach($pars as $paramName => $paramValue)
+            if($paramName != "before" && $paramName != "after" && $paramName != "gender" && $paramName != "maritalstatus" && $paramName != "politViews" && $paramName != "doNotSearchMe")
+                $paramValue != NULL ? $notNullParams += ["$paramName" => "%$paramValue%"] : NULL;
+            else
+                $paramValue != NULL ? $notNullParams += ["$paramName" => "$paramValue"]   : NULL;
+
+        $nnparamsCount = sizeof($notNullParams);
+
+        if($nnparamsCount > 0) {
+            foreach($notNullParams as $paramName => $paramValue) {
+                switch($paramName) {
+                    case "doNotShowDeleted":
+                        $result->where("deleted", 0);
+                        break;
+                }
+            }
+        }
+
         return new Util\EntityStream("Club", $result->order($sort));
     }
 
@@ -75,7 +96,7 @@ class Clubs
 	
     function getWriteableClubs(int $id): \Traversable
     {
-        $result    = $this->clubs->where("owner", $id);
+        $result    = $this->clubs->where("owner", $id)->where("deleted", 0);
         $coadmins  = $this->coadmins->where("user", $id);
         
         foreach($result as $entry) {
@@ -90,7 +111,7 @@ class Clubs
 
     function getWriteableClubsCount(int $id): int
     {
-        return sizeof($this->clubs->where("owner", $id)) + sizeof($this->coadmins->where("user", $id));
+        return sizeof($this->clubs->where("owner", $id)->where("deleted", 0)) + sizeof($this->coadmins->where("user", $id));
     }
 
     use \Nette\SmartObject;

@@ -90,6 +90,15 @@ class Topic extends Postable
         $this->save();
     }
 
+    function canBeViewedBy(?User $user = NULL): bool
+    {
+        if($this->isDeleted() || $this->getClub()->isDeleted()) {
+            return false;
+        }
+
+        return true;
+    }
+
     function toVkApiStruct(int $preview = 0, int $preview_length = 90): object
     {
         $res = (object)[];

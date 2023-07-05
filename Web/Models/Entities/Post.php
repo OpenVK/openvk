@@ -245,6 +245,16 @@ class Post extends Postable
         $this->unwire();
         $this->save();
     }
+
+    function canBeViewedBy(?User $user = NULL): bool
+    {
+        if($this->isDeleted()) {
+            return false;
+        }
+
+        # родительский контроль в openvk
+        return $this->getWallOwner()->canBeViewedBy($user);
+    }
     
     use Traits\TRichText;
 }

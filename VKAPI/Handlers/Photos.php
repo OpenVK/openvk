@@ -3,7 +3,7 @@ namespace openvk\VKAPI\Handlers;
 
 use Nette\InvalidStateException;
 use Nette\Utils\ImageException;
-use openvk\Web\Models\Entities\{Photo, Album, Comment};
+use openvk\Web\Models\Entities\{Photo, Album, Comment, Club};
 use openvk\Web\Models\Repositories\Albums;
 use openvk\Web\Models\Repositories\Photos as PhotosRepo;
 use openvk\Web\Models\Repositories\Clubs;
@@ -54,7 +54,7 @@ final class Photos extends VKAPIRequestHandler
 
         if($owner_id < 0) {
             $club = (new Clubs)->get(abs($owner_id));
-            if(!$club)
+            if(!$club || $club->isDeleted())
                 $this->fail(0404, "Club not found");
             else if(!$club->canBeModifiedBy($this->getUser()))
                 $this->fail(200, "Access: Club can't be 'written' by user");
@@ -106,7 +106,7 @@ final class Photos extends VKAPIRequestHandler
         $album = NULL;
         if(!is_null($group_id)) {
             $club = (new Clubs)->get(abs($group_id));
-            if(!$club)
+            if(!$club || $club->isDeleted())
                 $this->fail(0404, "Club not found");
             else if(!$club->canBeModifiedBy($this->getUser()))
                 $this->fail(200, "Access: Club can't be 'written' by user");
@@ -239,7 +239,7 @@ final class Photos extends VKAPIRequestHandler
         if($group_id != 0) {
             $club = (new Clubs)->get((int) $group_id);
 
-            if(!$club || !$club->canBeModifiedBy($this->getUser())) {
+            if(!$club || !$club->canBeModifiedBy($this->getUser()) || $club->isDeleted()) {
                 $this->fail(20, "Invalid club");
             }
         }
@@ -273,6 +273,10 @@ final class Photos extends VKAPIRequestHandler
             $this->fail(40, "You can't change system album");
         }
 
+        if($album->getOwner()->isDeleted()) {
+            $this->fail(24, "User or club was deleted");
+        }
+
         if(!$album->canBeModifiedBy($this->getUser())) {
             $this->fail(2, "Access to album denied");
         }
@@ -301,12 +305,18 @@ final class Photos extends VKAPIRequestHandler
                     "items" => []
                 ];
 
-                if(!$user || $user->isDeleted())
+                if(!$user)
                     $this->fail(2, "Invalid user");
-                
+
+                if($user->isDeleted()) {
+                    $this->fail(66, "User was deleted");
+                }
+
+                if(!$user->canBeViewedBy($this->getUser() ?? NULL))
+                    $this->fail(8, "Access denied");
 
                 if(!$user->getPrivacyPermission('photos.read', $this->getUser()))
-                    $this->fail(21, "This user chose to hide his albums.");
+                    $this->fail(21, "Access denied: This user chose to hide his albums.");
 
                 $albums = array_slice(iterator_to_array((new Albums)->getUserAlbums($user, 1, $count + $offset)), $offset);
 
@@ -326,6 +336,10 @@ final class Photos extends VKAPIRequestHandler
 
                 if(!$club)
                     $this->fail(2, "Invalid club");
+
+                if($club->isDeleted()) {
+                    $this->fail(66, "Club was deleted");
+                }
                 
                 $albums = array_slice(iterator_to_array((new Albums)->getClubAlbums($club, 1, $count + $offset)), $offset);
 
@@ -348,6 +362,9 @@ final class Photos extends VKAPIRequestHandler
                 $id = explode("_", $album);
     
                 $album = (new Albums)->getAlbumByOwnerAndId((int)$id[0], (int)$id[1]);
+
+                if($album->getOwner()->isDeleted()) continue;
+
                 if($album && !$album->isDeleted()) {
                     if(!$need_system && $album->isCreatedBySystem()) continue;
                     $res["items"][] = $album->toVkApiStruct($this->getUser(), $need_covers, $photo_sizes);
@@ -370,12 +387,16 @@ final class Photos extends VKAPIRequestHandler
         if($user_id > 0) {
 
             $us = (new UsersRepo)->get($user_id);
+
             if(!$us || $us->isDeleted()) {
                 $this->fail(21, "Invalid user");
             }
+
+            if(!$us->canBeViewedBy($this->getUser() ?? NULL))
+                $this->fail(8, "Access denied");
             
             if(!$us->getPrivacyPermission('photos.read', $this->getUser())) {
-                $this->fail(21, "This user chose to hide his albums.");
+                $this->fail(21, "Access denied: This user chose to hide his albums.");
             }
 
             return (new Albums)->getUserAlbumsCount($us);
@@ -384,11 +405,16 @@ final class Photos extends VKAPIRequestHandler
         if($group_id > 0)
         {
             $cl = (new Clubs)->get($group_id);
-            if(!$cl) {
+
+            if(!$cl || $cl->isDeleted()) {
                 $this->fail(21, "Invalid club");
             }
 
             return (new Albums)->getClubAlbumsCount($cl);
+        }
+
+        if($group_id < 0) {
+            $this->fail(88, "Remove - bruh");
         }
     }
 
@@ -416,6 +442,10 @@ final class Photos extends VKAPIRequestHandler
                 $this->fail(21, "This user chose to hide his photos.");
             }
 
+            if(!$photo->canBeViewedBy($this->getUser() ?? NULL)) {
+                $this->fail(8, "Access denied");
+            }
+
             $res[] = $photo->toVkApiStruct($photo_sizes, $extended);
         }
 
@@ -432,12 +462,16 @@ final class Photos extends VKAPIRequestHandler
         if(empty($photo_ids)) {
             $album = (new Albums)->getAlbumByOwnerAndId($owner_id, $album_id);
 
+            if(!$album || $album->isDeleted()) {
+                $this->fail(21, "Invalid album");
+            }
+
             if(!$album->getOwner()->getPrivacyPermission('photos.read', $this->getUser())) {
                 $this->fail(21, "This user chose to hide his albums.");
             }
 
-            if(!$album || $album->isDeleted()) {
-                $this->fail(21, "Invalid album");
+            if(!$album->canBeViewedBy($this->getUser() ?? NULL)) {
+                $this->fail(8, "Access denied");
             }
             
             $photos = array_slice(iterator_to_array($album->getPhotos(1, $count + $offset)), $offset);
@@ -451,20 +485,29 @@ final class Photos extends VKAPIRequestHandler
         } else {
             $photos = explode(',', $photo_ids);
 
-            $res = [
-                "count" => sizeof($photos),
-                "items" => []
-            ];
+            $items = [];
+            $count = 0;
 
             foreach($photos as $photo)
             {
                 $id = explode("_", $photo);
     
                 $phot = (new PhotosRepo)->getByOwnerAndVID((int)$id[0], (int)$id[1]);
+
                 if($phot && !$phot->isDeleted()) {
-                    $res["items"][] = $phot->toVkApiStruct($photo_sizes, $extended);
+                    if(!$phot->canBeViewedBy($this->getUser() ?? NULL)) {
+                        continue;
+                    }
+
+                    $count += 1;
+                    $items[] = $phot->toVkApiStruct($photo_sizes, $extended);
                 }
             }
+
+            $res = [
+                "count" => $count,
+                "items" => $items
+            ];
         }
 
         return $res;
@@ -485,6 +528,10 @@ final class Photos extends VKAPIRequestHandler
             $this->fail(22, "Album already deleted");
         }
 
+        if($album->getOwner()->isDeleted()) {
+            $this->fail(1, "No escape");
+        }
+
         $album->delete();
 
         return 1;
@@ -503,6 +550,10 @@ final class Photos extends VKAPIRequestHandler
 
         if($photo->isDeleted()) {
             $this->fail(21, "Photo is deleted");
+        }
+
+        if($photo->getAlbum() && $photo->getAlbum()->getOwner()->isDeleted()) {
+            $this->fail(2, "Owner is deleted");
         }
 
         if(!empty($caption)) {
@@ -601,7 +652,7 @@ final class Photos extends VKAPIRequestHandler
 
         $photo = (new PhotosRepo)->getByOwnerAndVID($owner_id, $photo_id);
 
-        if(!$photo->getAlbum()->getOwner()->getPrivacyPermission('photos.read', $this->getUser())) {
+        if($photo->getAlbum() && $photo->getAlbum()->getOwner() instanceof User && !$photo->getOwner()->getPrivacyPermission('photos.read', $this->getUser())) {
             $this->fail(21, "This user chose to hide his albums.");
         }
 
@@ -609,6 +660,14 @@ final class Photos extends VKAPIRequestHandler
             $this->fail(180, "Photo not found");
         if($photo->isDeleted())
             $this->fail(189, "Photo is deleted");
+        
+        if(!$photo->canBeViewedBy($this->getUser() ?? NULL)) {
+            $this->fail(8, "Access denied");
+        }
+
+        if($photo->getAlbum() && $photo->getAlbum()->getOwner()->isDeleted()) {
+            $this->fail(18, "Owner is deleted");
+        }
 
         $comment = new Comment;
         $comment->setOwner($this->getUser()->getId());
@@ -683,11 +742,15 @@ final class Photos extends VKAPIRequestHandler
             $this->fail(21, "This user chose to hide his albums.");
         }
 
+        if(!$user->canBeViewedBy($this->getUser() ?? NULL)) {
+            $this->fail(8, "Access denied");
+        }
+
         $photos = array_slice(iterator_to_array((new PhotosRepo)->getEveryUserPhoto($user, 1, $count + $offset)), $offset);
         $res = [];
 
         foreach($photos as $photo) {
-            if(!$photo || $photo->isDeleted()) continue;
+            if(!$photo || $photo->isDeleted() || $photo->isAnonymous()) continue;
             $res["items"][] = $photo->toVkApiStruct($photo_sizes, $extended);
         }
 
@@ -700,18 +763,27 @@ final class Photos extends VKAPIRequestHandler
         $this->willExecuteWriteAction();
 
         $photo = (new PhotosRepo)->getByOwnerAndVID($owner_id, $photo_id);
-        $comms = array_slice(iterator_to_array($photo->getComments(1, $offset + $count)), $offset);
 
         if(!$photo) {
             $this->fail(4, "Invalid photo");
         }
 
-        if(!$photo->getAlbum()->getOwner()->getPrivacyPermission('photos.read', $this->getUser())) {
+        $comms = array_slice(iterator_to_array($photo->getComments(1, $offset + $count)), $offset);
+
+        if(!$photo->getOwner()->getPrivacyPermission('photos.read', $this->getUser())) {
             $this->fail(21, "This user chose to hide his photos.");
         }
 
         if($photo->isDeleted()) {
             $this->fail(4, "Photo is deleted");
+        }
+
+        if($photo->getOwner()->isDeleted()) {
+            $this->fail(4, "Owner is deleted");
+        }
+
+        if(!$photo->canBeViewedBy($this->getUser() ?? NULL)) {
+            $this->fail(8, "Access denied");
         }
 
         $res = [

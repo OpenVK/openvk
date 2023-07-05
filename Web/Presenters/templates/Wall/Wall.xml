@@ -1,4 +1,11 @@
 {extends "../@layout.xml"}
+
+{block headIncludes}
+    {if $oObj->isDeleted() || $oObj->isClosed() || $oObj instanceof openvk\Web\Models\Entities\Club && $oObj->isHideFromGlobalFeedEnabled()}
+        <meta name="robots" content="noindex, noarchive">
+    {/if}
+{/block}
+
 {block title}{_wall}{/block}
 
 {block header}

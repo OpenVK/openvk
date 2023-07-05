@@ -40,6 +40,10 @@ final class CommentPresenter extends OpenVKPresenter
         $entity = $repo->get($eId);
         if(!$entity) $this->notFound();
 
+        if(!$entity->canBeViewedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
         if($entity instanceof Topic && $entity->isClosed())
             $this->notFound();
 

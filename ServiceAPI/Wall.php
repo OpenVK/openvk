@@ -22,6 +22,14 @@ class Wall implements Handler
         $post = $this->posts->get($id);
         if(!$post || $post->isDeleted())
             $reject("No post with id=$id");
+
+        if(!$post->canBeViewedBy($this->user ?? NULL)) {
+            $reject(1, "Access denied");
+        }
+
+        if($post->getWallOwner()->isDeleted()) {
+            $reject(2, "Access denied: wall owner was deleted or banned");
+        }
         
         $res = (object) [];
         $res->id     = $post->getId();

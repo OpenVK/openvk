@@ -149,6 +149,18 @@
 
 "user_banned" = "Unfortunately, we had to block the <b>$1</b> user page.";
 "user_banned_comment" = "Moderator's comment:";
+"limited_access_to_page_m" = "$1 restricted access to his page.";
+"limited_access_to_page_f" = "$1 restricted access to his page.";
+
+"you_can_add" = "You can";
+"add_to_friends_m" = "add him to friends.";
+"add_to_friends_f" = "add her to friends.";
+
+"register_to_access_page_m" = "Register to access his page.";
+"register_to_access_page_f" = "Register to access her page.";
+
+"private_profile_warning" = "This profile is closed, but you can access him, because you have admin rights.";
+"private_profile_warning_desc" = "Please, respect privacy rights and don't abuse this ability.";
 
 /* Wall */
 
@@ -213,6 +225,10 @@
 "graffiti" = "Graffiti";
 
 "reply" = "Reply";
+
+"no_access_attachment" = "No access to attachment";
+"no_access_post" = "No access to post";
+"no_access_abstract" = "No access";
 
 /* Friends */
 
@@ -330,6 +346,35 @@
 "search_group" = "Search group";
 "search_by_groups" = "Search by groups";
 "search_group_desc" = "Here you can browse through the existing groups and choose a group to suit your needs...";
+"owners_delete" = "Only group's creator can delete it.";
+"owners_restore" = "Only group's creator can restore it?";
+
+"delete_group" = "Delete group";
+"restore_group" = "Restore group";
+
+"group_deletion" = "Group deletion";
+"trying_delete_group" = "You are going to delete this group. <br><br> Enter your password:";
+
+"group_was_deleted" = "This group was deleted by owner.";
+"group_was_blocked" = "This group was blocked.";
+
+"deleted_f" = "Deleted";
+"ban_reason_g" = "Block reason";
+
+"ban_group" = "Ban club";
+"ban_group_desc" = "You gonna to ban club named $1. <br><br>Enter ban reason:";
+"unban_group" = "Unban club";
+
+"go_to_owner" = "Go to owner's page";
+
+"come_up_with_something_cool" = "come up with something cool";
+"delete_every_post" = "Delete every post";
+"unsubscribe_everyoune" = "Unsubscribe everyone";
+"warn_owner_club" = "Warn groups creator";
+
+"cant_ban_group" = "Can't delete club";
+"your_club_was_banned" = "Your club named \"$1\" was banned. Reason: $2";
+
 
 /* Albums */
 
@@ -522,6 +567,9 @@
 "privacy_value_only_me" = "Only me";
 "privacy_value_only_me_dative" = "Only me";
 "privacy_value_nobody" = "Nobody";
+"profile_type" = "Profile type";
+"profile_type_open" = "Open";
+"profile_type_closed" = "Closed";
 
 "your_email_address" = "Your Email address";
 "your_page_address" = "Your address page";
@@ -1353,6 +1401,7 @@
 "tour_section_2_text_2_1" = "You can define exactly who can access certain types of information and sections on your page.";
 "tour_section_2_text_2_2" = "You have the right to block access to your page from search engines and unregistered users.";
 "tour_section_2_text_2_3" = "<b>Remember:</b> privacy settings will be expanded in the future.";
+"tour_section_2_text_2_4" = "Also, you can make your profile private, by setting the \"profile type\".";
 "tour_section_2_title_3" = "Profile URL";
 "tour_section_2_text_3_1" = "After registering your page, you get a personal ID like <b>@id12345</b>";
 "tour_section_2_text_3_2" = "The <b>default ID</b>, which was obtained after registration, <b>cannot be changed</b>";
@@ -1370,8 +1419,8 @@
 
 
 "tour_section_4_title_1" = "Search";
-"tour_section_4_text_1" = "The &quot;Search&quot; section allows you to search for users and groups.";
-"tour_section_4_text_2" = "This section of the site will be improved over time.";
+"tour_section_4_text_1" = "The &quot;Search&quot; section allows you to search for users, groups, videos, comments, posts and apps.";
+"tour_section_4_text_2" = "You can sort and filter search results.";
 "tour_section_4_text_3" = "To start a search, you need to know the user's first (or last) name; and if you're looking for a group, you need to know its name.";
 "tour_section_4_title_2" = "Quick Search";
 "tour_section_4_text_4" = "If you want to save time in any way, the search bar is also available in the header of the site";
@@ -1514,8 +1563,9 @@
 "s_any" = "any";
 "reset" = "Reset";
 
-"closed_group_post" = "This is a post from private group";
-"deleted_target_comment" = "This comment belongs to deleted post";
+"dont_need_to_see_comment" = "No access to comment.";
+"dont_need_to_see_post" = "No access to post.";
+"dont_need_to_see_video" = "No access to video.";
 
 "no_results" = "No results";
 

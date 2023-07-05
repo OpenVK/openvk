@@ -292,4 +292,9 @@ class Poll extends Attachable
             ]);
         }
     }
+
+    function canBeViewedBy(?User $user): bool
+    {
+        return true;
+    }
 }

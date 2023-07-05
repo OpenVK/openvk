@@ -25,7 +25,7 @@ final class PhotosPresenter extends OpenVKPresenter
         if($owner > 0) {
             $user = $this->users->get($owner);
             if(!$user) $this->notFound();
-            if (!$user->getPrivacyPermission('photos.read', $this->user->identity ?? NULL))
+            if (!$user->getPrivacyPermission('photos.read', $this->user->identity ?? NULL) || !$user->canBeViewedBy($this->user->identity))
                 $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
             $this->template->albums  = $this->albums->getUserAlbums($user, $this->queryParam("p") ?? 1);
             $this->template->count   = $this->albums->getUserAlbumsCount($user);
@@ -35,7 +35,7 @@ final class PhotosPresenter extends OpenVKPresenter
                 $this->template->canEdit = $this->user->id === $user->getId();
         } else {
             $club = (new Clubs)->get(abs($owner));
-            if(!$club) $this->notFound();
+            if(!$club || $club->isDeleted()) $this->notFound();
             $this->template->albums  = $this->albums->getClubAlbums($club, $this->queryParam("p") ?? 1);
             $this->template->count   = $this->albums->getClubAlbumsCount($club);
             $this->template->owner   = $club;
@@ -59,7 +59,7 @@ final class PhotosPresenter extends OpenVKPresenter
         
         if(!is_null($gpid = $this->queryParam("gpid"))) {
             $club = (new Clubs)->get((int) $gpid);
-            if(!$club->canBeModifiedBy($this->user->identity))
+            if(!$club->canBeModifiedBy($this->user->identity) || $club->isDeleted())
                 $this->notFound();
             
             $this->template->club = $club;
@@ -91,7 +91,7 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
         
         $album = $this->albums->get($id);
-        if(!$album) $this->notFound();
+        if(!$album || $album->isDeleted() || $album->getOwner()->isDeleted()) $this->notFound();
         if($album->getPrettyId() !== $owner . "_" . $id || $album->isDeleted()) $this->notFound();
         if(is_null($this->user) || !$album->canBeModifiedBy($this->user->identity) || $album->isDeleted())
             $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
@@ -117,7 +117,7 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->assertNoCSRF();
         
         $album = $this->albums->get($id);
-        if(!$album) $this->notFound();
+        if(!$album || $album->getOwner()->isDeleted()) $this->notFound();
         if($album->getPrettyId() !== $owner . "_" . $id || $album->isDeleted()) $this->notFound();
         if(is_null($this->user) || !$album->canBeModifiedBy($this->user->identity))
             $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
@@ -134,13 +134,14 @@ final class PhotosPresenter extends OpenVKPresenter
     {
         $album = $this->albums->get($id);
         if(!$album) $this->notFound();
-        if($album->getPrettyId() !== $owner . "_" . $id || $album->isDeleted())
+        if($album->getPrettyId() !== $owner . "_" . $id || $album->isDeleted() || $album->getOwner()->isDeleted())
             $this->notFound();
-        
+
+        if(!$album->canBeViewedBy($this->user->identity))
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+
         if($owner > 0 /* bc we currently don't have perms for clubs */) {
             $ownerObject = (new Users)->get($owner);
-            if(!$ownerObject->getPrivacyPermission('photos.read', $this->user->identity ?? NULL))
-                $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         }
         
         $this->template->album  = $album;
@@ -157,8 +158,15 @@ final class PhotosPresenter extends OpenVKPresenter
     function renderPhoto(int $ownerId, int $photoId): void
     {
         $photo = $this->photos->getByOwnerAndVID($ownerId, $photoId);
-        if(!$photo || $photo->isDeleted()) $this->notFound();
+        if(!$photo || $photo->isDeleted() || $photo->getOwner()->isDeleted()) $this->notFound();
         
+        if($ownerId > 0) {
+            $ownerObject = (new Users)->get($ownerId);
+        }
+
+        if(!$photo->canBeViewedBy($this->user->identity))
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+
         if(!is_null($this->queryParam("from"))) {
             if(preg_match("%^album([0-9]++)$%", $this->queryParam("from"), $matches) === 1) {
                 $album = $this->albums->get((int) $matches[1]);
@@ -178,6 +186,7 @@ final class PhotosPresenter extends OpenVKPresenter
     {
         $id    = (int) base_convert((string) $id, 32, 10);
         $photo = $this->photos->get($id);
+
         if(!$photo || $photo->isDeleted())
             $this->notFound();
         
@@ -203,7 +212,7 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
         
         $photo = $this->photos->getByOwnerAndVID($ownerId, $photoId);
-        if(!$photo) $this->notFound();
+        if(!$photo || $photo->getOwner()->isDeleted()) $this->notFound();
         if(is_null($this->user) || $this->user->id != $ownerId)
             $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
         
@@ -228,7 +237,7 @@ final class PhotosPresenter extends OpenVKPresenter
         
         [$owner, $id] = explode("_", $this->queryParam("album"));
         $album = $this->albums->get((int) $id);
-        if(!$album)
+        if(!$album || $album->getOwner()->isDeleted())
             $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в <b>DELETED</b>.");
         if(is_null($this->user) || !$album->canBeModifiedBy($this->user->identity))
             $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
@@ -266,7 +275,7 @@ final class PhotosPresenter extends OpenVKPresenter
         
         $album = $this->albums->get($albumId);
         $photo = $this->photos->get($photoId);
-        if(!$album || !$photo) $this->notFound();
+        if(!$album || !$photo || $album->getOwner()->isDeleted()) $this->notFound();
         if(!$album->hasPhoto($photo)) $this->notFound();
         if(is_null($this->user) || !$album->canBeModifiedBy($this->user->identity))
             $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");

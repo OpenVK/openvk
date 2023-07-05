@@ -43,7 +43,15 @@ class Club extends RowModel
         $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
         $avPhoto   = $this->getAvatarPhoto();
         
-        return is_null($avPhoto) ? "$serverUrl/assets/packages/static/openvk/img/camera_200.png" : $avPhoto->getURLBySizeId($size);
+        if($this->isBanned()) {
+            return "$serverUrl/assets/packages/static/openvk/img/banned_club_200.png";
+        }
+
+        if($this->isDeleted()) {
+            return "$serverUrl/assets/packages/static/openvk/img/deleted_club_200.png";
+        }
+
+        return is_null($avPhoto) ? "$serverUrl/assets/packages/static/openvk/img/club_200.png" : $avPhoto->getURLBySizeId($size);
     }
     
     function getAvatarLink(): string
@@ -143,11 +151,30 @@ class Club extends RowModel
         return (bool) $this->getRecord()->hide_from_global_feed;
     }
 
+    function isDeleted(): bool
+    {
+        return (bool) $this->getRecord()->deleted;
+    }
+
+    function isClosed(): bool
+    {
+        return false;
+    }
+
     function getType(): int
     {
         return $this->getRecord()->type;
     }
     
+    function canBeViewedBy(?User $user = NULL)
+    {
+        if($this->isDeleted()) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
     function isVerified(): bool
     {
         return (bool) $this->getRecord()->verified;
@@ -155,12 +182,17 @@ class Club extends RowModel
     
     function isBanned(): bool
     {
-        return !is_null($this->getBanReason());
+        return $this->isDeleted() && $this->hasBlockReason();
+    }
+
+    function hasBlockReason(): bool
+    {
+        return !is_null($this->getBanReason()) && !empty($this->getBanReason());
     }
 
     function canPost(): bool
     {
-	    return (bool) $this->getRecord()->wall;
+        return (bool) $this->getRecord()->wall;
     }
 
     
@@ -351,9 +383,9 @@ class Club extends RowModel
     }
 
     function getWebsite(): ?string
-	{
-		return $this->getRecord()->website;
-	}
+    {
+        return $this->getRecord()->website;
+    }
 
     function getAlert(): ?string
     {
@@ -385,6 +417,9 @@ class Club extends RowModel
         $res->can_create_topic = $this->canBeModifiedBy($user) ? 1 : $this->isEveryoneCanCreateTopics() ? 1 : 0;
 
         $res->can_post         = $this->canBeModifiedBy($user) ? 1 : $this->canPost() ? 1 : 0;
+
+        $res->is_deleted = (int)$this->isDeleted();
+        $res->is_banned  = (int)$this->isBanned();
 
         return (object) $res;
     }

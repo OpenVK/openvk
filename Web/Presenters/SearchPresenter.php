@@ -86,7 +86,9 @@ final class SearchPresenter extends OpenVKPresenter
             "hometown"      => $this->queryParam("hometown")   != "" ? $this->queryParam("hometown") : NULL,
             "before"        => $this->queryParam("datebefore") != "" ? strtotime($this->queryParam("datebefore")) : NULL,
             "after"         => $this->queryParam("dateafter")  != "" ? strtotime($this->queryParam("dateafter")) : NULL,
-            "gender"        => $this->queryParam("gender")     != "" && $this->queryParam("gender") != 2 ? $this->queryParam("gender") : NULL
+            "gender"        => $this->queryParam("gender")     != "" && $this->queryParam("gender") != 2 ? $this->queryParam("gender") : NULL,
+            "doNotShowDeleted" => true,
+            "doNotShowPrivate" => true
         ];
 
         $repo  = $repos[$type] or $this->throwError(400, "Bad Request", "Invalid search entity $type.");

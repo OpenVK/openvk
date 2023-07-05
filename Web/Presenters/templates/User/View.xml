@@ -1,13 +1,13 @@
 {extends "../@layout.xml"}
 
-{if !$user->isBanned()}
+{if !$user->isBanned() && $user->canBeViewedBy($thisUser ?? NULL)}
     {var $backdrops = $user->getBackDropPictureURLs()}
 {/if}
 
 {block title}{$user->getCanonicalName()}{/block} 
 
 {block headIncludes}
-    {if $user->getPrivacyPermission('page.read', $thisUser ?? NULL)}
+    {if $user->getPrivacySetting("page.read") == 3 && !$user->isClosed()}
     <!-- openGraph -->
     <meta property="og:title" content="{$user->getCanonicalName()}" />
     <meta property="og:url" content="http://{$_SERVER['HTTP_HOST']}{$user->getURL()}" />
@@ -59,12 +59,97 @@
 {/block}
 
 {block content}
+    {if !is_null($thisUser) && $thisUser->getId() != $user->getId() && $user->getProfileType() == 1 && $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+        <div class="msg msg_err" style="width:96%;">
+            <b>{_private_profile_warning}</b>
+            <br>
+            {_private_profile_warning_desc}
+        </div>
+    {/if}
+
     {if !$user->isBanned()}
     
-    {if !$user->getPrivacyPermission('page.read', $thisUser ?? NULL)}
-        <div class="msg msg_err">
-            <b>{_forbidden}</b><br/>
-            {_forbidden_comment}
+    {if !$user->canBeViewedBy($thisUser ?? NULL)}
+        <div class="left_small_block">
+            <div style="margin-left: auto;margin-right: auto;display: table;position:relative;" class="avatar_block" id="av">
+                <img 
+                    {if $user->getPrivacySetting("page.read") < 3 && !isset($thisUser)}
+                        src="/assets/packages/static/openvk/img/camera_private_200.png"
+                    {else}
+                        src="{$user->getAvatarUrl('normal')}"
+                    {/if}
+                    alt="{$user->getCanonicalName()}"
+                    style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
+            </div>
+            <div n:ifset="$thisUser" id="profile_links">
+                {var $subStatus = $user->getSubscriptionStatus($thisUser)}
+
+                {if $user->getPrivacyPermission('messages.write', $thisUser)}
+                    <a style="width: 194px;" href="/im?sel={$user->getId()}" class="profile_link">{_send_message}</a>
+                {/if}
+
+                {if $subStatus === 0}
+                    <form action="/setSub/user" method="post" class="profile_link_form" id="addToFriends">
+                        <input type="hidden" name="act" value="add" />
+                        <input type="hidden" name="id"  value="{$user->getId()}" />
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="submit" class="profile_link" value="{_friends_add}" style="width: 194px;" />
+                    </form>
+                {elseif $subStatus === 1}
+                    <form action="/setSub/user" method="post" class="profile_link_form" id="addToFriends">
+                        <input type="hidden" name="act" value="add" />
+                        <input type="hidden" name="id"  value="{$user->getId()}" />
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="submit" class="profile_link" value="{_friends_accept}" style="width: 194px;" />
+                    </form>
+                {elseif $subStatus === 2}
+                    <form action="/setSub/user" method="post" class="profile_link_form">
+                        <input type="hidden" name="act" value="rem" />
+                        <input type="hidden" name="id"  value="{$user->getId()}" />
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="submit" class="profile_link" value="{_friends_reject}" style="width: 194px;" />
+                    </form>
+                {/if}
+            </div>
+        </div>
+        <div class="right_big_block">
+            <div class="page_info">
+                <div n:if="!is_null($alert = $user->getAlert())" class="user-alert">{strpos($alert, "@") === 0 ? tr(substr($alert, 1)) : $alert}</div>
+                {var $thatIsThisUser = isset($thisUser) && $user->getId() == $thisUser->getId()}
+                <div class="accountInfo clearFix">
+                    <div class="profileName">
+                        <h2>{$user->getFullName()}</h2>
+                        {if !is_null($user->getStatus())}
+                            <div n:class="page_status, $thatIsThisUser ? page_status_edit_button" n:attr="id => $thatIsThisUser ? page_status_text : NULL">{$user->getStatus()}</div>
+                        {/if}
+                    </div>
+                </div>
+                <div>
+                    <table id="basicInfo" class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0">
+                        <tbody>
+                            <tr>
+                                <td class="label"><span class="nobold">{_gender}: </span></td>
+                                <td class="data">{$user->isFemale() ? tr("female") : tr("male")}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="msg msg_yellow" style="width: 93%;">
+                    {var $m = $user->isFemale() ? "f" : "m"}
+                    {tr("limited_access_to_page_$m", $user->getFirstName())}
+
+                    {if isset($thisUser)}
+                        {if $subStatus != 2}
+                            <br /><br />
+                            {_you_can_add}
+                            <a href="javascript:addToFriends.submit()">{tr("add_to_friends_$m")}</a>
+                        {/if}
+                    {else}
+                        <br /><br />
+                        {tr("register_to_access_page_$m")}
+                    {/if}
+                </div>
+            </div>
         </div>
     {else}
     
@@ -320,20 +405,20 @@
                         <a href="/notes{$user->getId()}">{_all_title}</a>
                     </div>
                 </div>
-				
-				<div style="padding: 5px 8px 15px 8px;">
+                
+                <div style="padding: 5px 8px 15px 8px;">
                     <ul class="notes_titles" n:foreach="$notes as $note">
-						<li class="written">
-							<a href="/note{$note->getPrettyId()}">
-								{$note->getName()}
-							</a>
-							<small>
-								{$note->getPublicationTime()}
-								<span class="divide">|</span>
-								<a href="/note{$note->getPrettyId()}">{_comments}</a>
-							</small>
-						</li>
-					</ul>
+                        <li class="written">
+                            <a href="/note{$note->getPrettyId()}">
+                                {$note->getName()}
+                            </a>
+                            <small>
+                                {$note->getPublicationTime()}
+                                <span class="divide">|</span>
+                                <a href="/note{$note->getPrettyId()}">{_comments}</a>
+                            </small>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
@@ -391,7 +476,7 @@
                     <button type="submit" name="submit" class="button" style="height: 22px;">{_send}</button>
                 </form>
             </div>
-			<div class="accountInfo clearFix">
+            <div class="accountInfo clearFix">
                 <div class="profileName">
                     <h2>{$user->getFullName()}</h2>
                     {if !is_null($user->getStatus())}
@@ -434,7 +519,7 @@
                         </tr>
                     </tbody>
                 </table>
-			</div>
+            </div>
         </div>
         <div n:if="$user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this);">

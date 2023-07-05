@@ -1,16 +1,23 @@
 {extends "../@layout.xml"}
+
+{block headIncludes}
+    {if $wallOwner->isDeleted() || $wallOwner->isClosed() || $wallOwner instanceof openvk\Web\Models\Entities\Club && $wallOwner->isHideFromGlobalFeedEnabled()}
+        <meta name="robots" content="noindex, noarchive">
+    {/if}
+{/block}
+
 {block title}{_post}{/block}
 
 {block header}
-	<a href="{$wallOwner->getURL()}">
-		{$wallOwner->getCanonicalName()}
-	</a>
-	»
-	<a href="/wall{$wallOwner->getId() * ($isWallOfGroup ? -1 : 1)}">
-		{_wall}
-	</a>
-	»
-	{_post}
+    <a href="{$wallOwner->getURL()}">
+        {$wallOwner->getCanonicalName()}
+    </a>
+    »
+    <a href="/wall{$wallOwner->getId() * ($isWallOfGroup ? -1 : 1)}">
+        {_wall}
+    </a>
+    »
+    {_post}
 {/block}
 
 {block content}

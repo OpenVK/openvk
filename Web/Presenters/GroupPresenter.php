@@ -82,7 +82,12 @@ final class GroupPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
 
-        $this->template->club              = $this->clubs->get($id);
+        $club = $this->clubs->get($id);
+        if(!$club || $club->isDeleted()) {
+            $this->notFound();
+        }
+
+        $this->template->club              = $club;
         $this->template->onlyShowManagers  = $this->queryParam("onlyAdmins") == "1";
         if($this->template->onlyShowManagers) {
             $this->template->followers     = NULL;
@@ -192,20 +197,20 @@ final class GroupPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
         
         $club = $this->clubs->get($id);
-        if(!$club || !$club->canBeModifiedBy($this->user->identity))
+        if(!$club || !$club->canBeModifiedBy($this->user->identity) || $club->isDeleted())
             $this->notFound();
         else
             $this->template->club = $club;
             
         if($_SERVER["REQUEST_METHOD"] === "POST") {
-	    if(!$club->setShortcode( empty($this->postParam("shortcode")) ? NULL : $this->postParam("shortcode") ))
+            if(!$club->setShortcode( empty($this->postParam("shortcode")) ? NULL : $this->postParam("shortcode") ))
                 $this->flashFail("err", tr("error"), tr("error_shorturl_incorrect"));
             
             $club->setName(empty($this->postParam("name")) ? $club->getName() : $this->postParam("name"));
             $club->setAbout(empty($this->postParam("about")) ? NULL : $this->postParam("about"));
-	    $club->setWall(empty($this->postParam("wall")) ? 0 : 1);
+            $club->setWall(empty($this->postParam("wall")) ? 0 : 1);
             $club->setAdministrators_List_Display(empty($this->postParam("administrators_list_display")) ? 0 : $this->postParam("administrators_list_display"));
-	    $club->setEveryone_Can_Create_Topics(empty($this->postParam("everyone_can_create_topics")) ? 0 : 1);
+            $club->setEveryone_Can_Create_Topics(empty($this->postParam("everyone_can_create_topics")) ? 0 : 1);
             $club->setDisplay_Topics_Above_Wall(empty($this->postParam("display_topics_above_wall")) ? 0 : 1);
             $club->setHide_From_Global_Feed(empty($this->postParam("hide_from_global_feed")) ? 0 : 1);
             
@@ -300,7 +305,7 @@ final class GroupPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
     
         $club = $this->clubs->get($id);
-        if(!$club || !$club->canBeModifiedBy($this->user->identity))
+        if(!$club || !$club->canBeModifiedBy($this->user->identity) || $club->isDeleted())
             $this->notFound();
         else
             $this->template->club = $club;
@@ -341,7 +346,7 @@ final class GroupPresenter extends OpenVKPresenter
             $this->flashFail("err", "Ошибка подключения", "Не удалось подключится к службе телеметрии.");
         
         $club = $this->clubs->get($id);
-        if(!$club->canBeModifiedBy($this->user->identity))
+        if(!$club->canBeModifiedBy($this->user->identity) || $club->isDeleted())
             $this->notFound();
         else
             $this->template->club = $club;
@@ -395,5 +400,68 @@ final class GroupPresenter extends OpenVKPresenter
         $club->save();
 
         $this->flashFail("succ", tr("information_-1"), tr("group_owner_setted", $newOwner->getCanonicalName(), $club->getName()));
+    }
+
+    function renderDelete(int $id)
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+        $this->assertNoCSRF();
+
+        if($_SERVER['REQUEST_METHOD'] !== "POST")
+            $this->redirect("/club" . $id);
+
+        $club = $this->clubs->get($id);
+
+        if(!$club || $club->isDeleted()) {
+            $this->flashFail("err", tr("error"), "Invalid club");
+        }
+
+        if(!Authenticator::verifyHash($this->postParam("password"), $club->getOwner()->getChandlerUser()->getRaw()->passwordHash)) {
+            $this->flashFail("err", tr("error"), tr("incorrect_password"));
+        }
+
+        if($club->getOwner()->getId() != $this->user->id) {
+            $this->flashFail("err", tr("error"), tr("owners_delete"));
+        }
+
+        $club->setDeleted(1);
+        $club->setShortcode(NULL);
+        $club->setHide_From_Global_Feed(1);
+
+        $club->save();
+
+        $this->redirect("/club".$club->getId());
+    }
+
+    function renderRestore(int $id)
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+        $this->assertNoCSRF();
+
+        if($_SERVER['REQUEST_METHOD'] !== "POST")
+            $this->redirect("/club" . $id);
+
+        $club = $this->clubs->get($id);
+
+        if(!$club || !$club->isDeleted()) {
+            $this->flashFail("err", tr("error"), "Invalid club");
+        }
+        
+        if($club->getOwner()->getId() != $this->user->id) {
+            $this->flashFail("err", tr("error"), tr("owners_restore"));
+        }
+
+        if($club->isBanned()) {
+            $this->flashFail("err", tr("error"));
+        }
+
+        $club->setDeleted(0);
+        $club->setHide_From_Global_Feed(0);
+
+        $club->save();
+
+        $this->redirect("/club".$club->getId());
     }
 }

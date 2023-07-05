@@ -347,4 +347,17 @@ class Photo extends Media
 
         return $photo;
     }
+
+    function canBeViewedBy(?User $user = NULL): bool
+    {
+        if($this->isDeleted() || $this->getOwner()->isDeleted()) {
+            return false;
+        }
+
+        if(!is_null($this->getAlbum())) {
+            return $this->getAlbum()->canBeViewedBy($user);
+        } else {
+            return $this->getOwner()->canBeViewedBy($user);
+        }
+    }
 }

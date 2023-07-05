@@ -58,7 +58,7 @@ final class UserPresenter extends OpenVKPresenter
         $page = abs($this->queryParam("p") ?? 1);
         if(!$user)
             $this->notFound();
-        elseif (!$user->getPrivacyPermission('friends.read', $this->user->identity ?? NULL))
+        elseif (!$user->getPrivacyPermission('friends.read', $this->user->identity ?? NULL) || !$user->canBeViewedBy($this->user->identity))
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         else
             $this->template->user = $user;
@@ -86,7 +86,7 @@ final class UserPresenter extends OpenVKPresenter
         $user = $this->users->get($id);
         if(!$user)
             $this->notFound();
-        elseif (!$user->getPrivacyPermission('groups.read', $this->user->identity ?? NULL))
+        elseif (!$user->getPrivacyPermission('groups.read', $this->user->identity ?? NULL) || !$user->canBeViewedBy($this->user->identity))
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         else {
             if($this->queryParam("act") === "managed" && $this->user->id !== $user->getId())
@@ -435,6 +435,10 @@ final class UserPresenter extends OpenVKPresenter
                     $input = $this->postParam(str_replace(".", "_", $setting));
                     $user->setPrivacySetting($setting, min(3, abs($input ?? $user->getPrivacySetting($setting))));
                 }
+                $prof = $this->postParam("profile_type") == 1 || $this->postParam("profile_type") == 0 ? (int)$this->postParam("profile_type") : 0;
+                $user->setProfile_type($prof);
+                $user->save();
+
             } else if($_GET['act'] === "finance.top-up") {
                 $token   = $this->postParam("key0") . $this->postParam("key1") . $this->postParam("key2") . $this->postParam("key3");
                 $voucher = (new Vouchers)->getByToken($token);

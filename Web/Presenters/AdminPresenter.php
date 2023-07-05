@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Voucher, Gift, GiftCategory, User, BannedLink};
-use openvk\Web\Models\Repositories\{ChandlerGroups, ChandlerUsers, Users, Clubs, Vouchers, Gifts, BannedLinks};
+use openvk\Web\Models\Repositories\{ChandlerGroups, ChandlerUsers, Users, Clubs, Vouchers, Gifts, BannedLinks, Posts};
 use Chandler\Database\DatabaseConnection;
 
 final class AdminPresenter extends OpenVKPresenter
@@ -122,6 +122,7 @@ final class AdminPresenter extends OpenVKPresenter
                 $club->setShortCode($this->postParam("shortcode"));
                 $club->setVerified(empty($this->postParam("verify") ? 0 : 1));
                 $club->setHide_From_Global_Feed(empty($this->postParam("hide_from_global_feed") ? 0 : 1));
+                $club->setDeleted(empty($this->postParam("deleted") ? 0 : 1));
                 $club->save();
                 break;
             case "ban":
@@ -546,5 +547,77 @@ final class AdminPresenter extends OpenVKPresenter
         if(!$user) $this->notFound();
 
         $this->redirect("/admin/users/id" . $user->getId());
+    }
+
+    function renderBanClub(int $id)
+    {
+        if($_SERVER["REQUEST_METHOD"] !== "POST")
+            $this->notFound();
+
+        $this->assertNoCSRF();
+
+        $club = $this->clubs->get($id);
+
+        if(!$club)
+            exit(json_encode([ "error" => "Club does not exist" ]));
+            
+        $club->setDeleted(1);
+        $club->setHide_From_Global_Feed(1);
+        $club->setShortcode(NULL);
+        $club->setBlock_reason(!empty($this->postParam("block_reason")) && !is_null($this->postParam("block_reason")) ? $this->postParam("block_reason") : "хз");
+
+        if($this->postParam("delete_every_post") != "false") {
+            $count = (new Posts)->getPostCountOnUserWall($club->getId() * -1);
+            $posts = (new Posts)->getPostsFromUsersWall($club->getId() * -1, 1, $count);
+
+            foreach($posts as $post) {
+                $post->unwire();
+                $post->delete();
+            }
+        }
+
+        if($this->postParam("unsub_everyone") != "false") {
+            $followers = $club->getFollowers(1, $club->getFollowersCount());
+
+            foreach($followers as $follower) {
+                $club->toggleSubscription($follower);
+            }
+        }
+
+        /*
+        if($this->postParam("warn_owner_club") != "false") {
+            if($club->getOwner() && !$club->getOwner()->isDeleted()) {
+                $club->getOwner()->adminNotify("⚠️ " . tr("your_club_was_banned", $club->getName(), $this->postParam("block_reason")));
+        }*/
+
+        $club->save();
+        exit(json_encode([ "success" => true, "reason" => $this->queryParam("block_reason") ]));
+    }
+
+    function renderUnbanClub(int $id)
+    {
+        if($_SERVER["REQUEST_METHOD"] !== "POST")
+            $this->notFound();
+
+        $this->assertNoCSRF();
+
+        $club = $this->clubs->get($id);
+
+        if(!$club)
+            exit(json_encode([ "error" => "Club does not exist" ]));
+        
+        /*
+        if($club->hasBlockReason()) {
+            if($club->getOwner() && !$club->getOwner()->isDeleted()) {
+                $club->getOwner()->adminNotify("⚠️ " . tr("your_club_was_unbanned", $club->getName()));
+            }
+        }*/
+
+        $club->setDeleted(0);
+        $club->setHide_From_Global_Feed(0);
+        $club->setBlock_reason(NULL);
+
+        $club->save();
+        exit(json_encode([ "success" => true]));
     }
 }

@@ -148,7 +148,7 @@ class User extends RowModel
     function getFirstName(bool $pristine = false): string
     {
         $name = ($this->isDeleted() && !$this->isDeactivated() ? "DELETED" : mb_convert_case($this->getRecord()->first_name, MB_CASE_TITLE));
-	$tsn  = tr("__transNames");
+        $tsn  = tr("__transNames");
         if(( $tsn !== "@__transNames" && !empty($tsn) ) && !$pristine)
             return mb_convert_case(transliterator_transliterate($tsn, $name), MB_CASE_TITLE);
         else
@@ -158,7 +158,7 @@ class User extends RowModel
     function getLastName(bool $pristine = false): string
     {
         $name = ($this->isDeleted() && !$this->isDeactivated() ? "DELETED" : mb_convert_case($this->getRecord()->last_name, MB_CASE_TITLE));
-	$tsn  = tr("__transNames");
+        $tsn  = tr("__transNames");
         if(( $tsn !== "@__transNames" && !empty($tsn) ) && !$pristine)
             return mb_convert_case(transliterator_transliterate($tsn, $name), MB_CASE_TITLE);
         else
@@ -377,6 +377,12 @@ class User extends RowModel
         return $this->getRecord()->birthday_privacy;
     }
 
+    function getProfileType(): int
+    {
+        # 0 — открытый профиль, 1 — закрытый
+        return $this->getRecord()->profile_type;
+    }
+
     function getAge(): ?int
     {
         return (int)floor((time() - $this->getBirthday()->timestamp()) / YEAR);
@@ -392,6 +398,47 @@ class User extends RowModel
         return !is_null($this->get2faSecret());
     }
 
+    function canBeViewedBy(?User $user = NULL): bool
+    {
+        if(!is_null($user)) {
+            if($this->getId() == $user->getId()) {
+                return true;
+            }
+
+            if($user->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)) {
+                return true;
+            }
+
+            if($this->getProfileType() == 0) {
+                return true;
+            } else {
+                if($user->getSubscriptionStatus($this) == User::SUBSCRIPTION_MUTUAL) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+        } else {
+            if($this->getProfileType() == 0) {
+                if($this->getPrivacySetting("page.read") == 3) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function isClosed()
+    {
+        return (bool) $this->getProfileType();
+    }
+    
     function updateNotificationOffset(): void
     {
         $this->stateChanges("notification_offset", time());
@@ -480,10 +527,10 @@ class User extends RowModel
 
         $total = max(100 - $incompleteness + $this->getRating(), 0);
         if(ovkGetQuirk("profile.rating-bar-behaviour") === 0)
-	    if ($total >= 100)
+        if ($total >= 100)
             $percent = round(($total / 10**strlen(strval($total))) * 100, 0);
         else
-		    $percent = min($total, 100);
+            $percent = min($total, 100);
 
         return (object) [
             "total"    => $total,
@@ -904,9 +951,9 @@ class User extends RowModel
     {
         if(!empty($lastName))
         {
-	        $lastName = mb_convert_case($lastName, MB_CASE_TITLE);
-	        if(!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?([\p{L&}\p{Lo}]\p{Mn}?){1,16}(\-\g<1>+)?$%u', $lastName))
-	            throw new InvalidUserNameException;
+            $lastName = mb_convert_case($lastName, MB_CASE_TITLE);
+            if(!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?([\p{L&}\p{Lo}]\p{Mn}?){1,16}(\-\g<1>+)?$%u', $lastName))
+                throw new InvalidUserNameException;
         }
 
         $this->stateChanges("last_name", $lastName);
@@ -1083,10 +1130,10 @@ class User extends RowModel
         }
     }
 
-	function getWebsite(): ?string
-	{
-		return $this->getRecord()->website;
-	}
+    function getWebsite(): ?string
+    {
+        return $this->getRecord()->website;
+    }
 
     # ты устрица
     function isActivated(): bool
@@ -1110,7 +1157,7 @@ class User extends RowModel
         return true;
     }
 
-    function toVkApiStruct(): object
+    function toVkApiStruct(?User $user = NULL): object
     {
         $res = (object) [];
 
@@ -1122,6 +1169,12 @@ class User extends RowModel
         $res->photo_100   = $this->getAvatarURL("tiny");
         $res->photo_200   = $this->getAvatarURL("normal");
         $res->photo_id    = !is_null($this->getAvatarPhoto()) ? $this->getAvatarPhoto()->getPrettyId() : NULL;
+        $res->is_closed   = $this->isClosed();
+
+        if(!is_null($user)) {
+            $res->can_access_closed  = (bool)$this->canBeViewedBy($user);
+        }
+
         # TODO: Perenesti syuda vsyo ostalnoyie
 
         return $res;

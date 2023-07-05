@@ -1,7 +1,15 @@
 {var $microblogEnabled = isset($thisUser) ? $thisUser->hasMicroblogEnabled() : false}
 
+{if $post->canBeViewedBy($thisUser ?? NULL)}
+
 {if $microblogEnabled}
     {include "post/microblogpost.xml", post => $post, commentSection => $commentSection}
 {else}
     {include "post/oldpost.xml", post => $post}
+{/if}
+
+{else}
+    <div class="post post-divider">
+        <span style="color:gray;">{_no_access_post}</span>
+    </div>
 {/if}

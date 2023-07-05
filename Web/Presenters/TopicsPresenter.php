@@ -22,7 +22,7 @@ final class TopicsPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $club = $this->clubs->get($id);
-        if(!$club)
+        if(!$club || $club->isDeleted())
             $this->notFound();
 
         $this->template->club = $club;
@@ -51,7 +51,7 @@ final class TopicsPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $topic = $this->topics->getTopicById($clubId, $topicId);
-        if(!$topic)
+        if(!$topic || $topic->getClub()->isDeleted())
             $this->notFound();
 
         $this->template->topic    = $topic;
@@ -66,7 +66,7 @@ final class TopicsPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $club = $this->clubs->get($clubId);
-        if(!$club)
+        if(!$club || $club->isDeleted())
             $this->notFound();
 
         if(!$club->isEveryoneCanCreateTopics() && !$club->canBeModifiedBy($this->user->identity))
@@ -149,7 +149,7 @@ final class TopicsPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $topic = $this->topics->getTopicById($clubId, $topicId);
-        if(!$topic)
+        if(!$topic || $topic->getClub()->isDeleted())
             $this->notFound();
 
         if(!$topic->canBeModifiedBy($this->user->identity))
@@ -184,7 +184,7 @@ final class TopicsPresenter extends OpenVKPresenter
         $this->assertNoCSRF();
 
         $topic = $this->topics->getTopicById($clubId, $topicId);
-        if(!$topic)
+        if(!$topic || $topic->getClub()->isDeleted())
             $this->notFound();
 
         if(!$topic->canBeModifiedBy($this->user->identity))

@@ -148,7 +148,7 @@ class Video extends Media
                 "is_favorite" => false,
                 "player" => !$fromYoutube ? $this->getURL() : $this->getVideoDriver()->getURL(),
                 "files" => !$fromYoutube ? [
-                    "mp4_480" => $this->getURL()	
+                    "mp4_480" => $this->getURL()
                 ] : NULL,
                 "platform" => $fromYoutube ? "youtube" : NULL,
                 "added" => 0,
@@ -218,5 +218,19 @@ class Video extends Media
         $video->save();
         
         return $video;
+    }
+
+    function canBeViewedBy(?User $user = NULL): bool
+    {
+        if($this->isDeleted() || $this->getOwner()->isDeleted()) {
+            return false;
+        }
+        
+        if(get_class($this->getOwner()) == "openvk\\Web\\Models\\Entities\\User") {
+            return $this->getOwner()->canBeViewedBy($user) && $this->getOwner()->getPrivacyPermission('videos.read', $user);
+        } else {
+            # когда у видосов появятся группы
+            return true;
+        }
     }
 }

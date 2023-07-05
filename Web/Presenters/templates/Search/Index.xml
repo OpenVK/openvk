@@ -188,25 +188,29 @@
                 </div>
             {elseif $type == "posts"}
                 <div n:foreach="$data as $dat" class="content">
-                    {if !$dat || $dat->getTargetWall() < 0 && $dat->getWallOwner()->isHideFromGlobalFeedEnabled()}
-                        {_closed_group_post}.
+                    {if !$dat->canBeViewedBy($thisUser ?? NULL) || $dat->getTargetWall() < 0 && $dat->getOwner()->isHideFromGlobalFeedEnabled()}
+                        {_dont_need_to_see_post}
                     {else}
                         {include "../components/post.xml", post => $dat, commentSection => true, onWallOf => true}
                     {/if}
                 </div>
             {elseif $type == "comments"}
                 <div n:foreach="$data as $dat" class="content">
-                    {if !$dat->getTarget() || $dat->getTarget()->isDeleted()}
-                        {_deleted_target_comment}.
+                    {if !$dat->canBeViewedBy($thisUser ?? NULL)}
+                        {_dont_need_to_see_comment}
                     {else}
                         {include "../components/comment.xml", comment => $dat, linkW => true}
                     {/if}
                 </div>
             {elseif $type == "videos"}
                 {foreach $data as $dat}
-                        <div class="content">
+                    <div class="content">
+                        {if !$dat->canBeViewedBy($thisUser ?? NULL)}
+                            {_dont_need_to_see_video}
+                        {else}
                             {include "../components/video.xml", video => $dat}
-                        </div>
+                        {/if}
+                    </div>
                 {/foreach}
             {elseif $type == "audios"}
                 хуй

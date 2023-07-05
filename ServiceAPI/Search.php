@@ -46,30 +46,35 @@ class Search implements Handler
                 break;
         }
 
-        $res = $repo->find($query, ["doNotSearchMe" => $this->user->getId()], $sort);
+        $res = $repo->find($query, ["doNotSearchMe" => $this->user->getId(), "doNotShowDeleted" => true, "doNotShowPrivate" => true], $sort);
 
-        $results  = array_slice(iterator_to_array($res), 0, 5);
-            
-        $count = sizeof($results);
+        $results  = array_slice(iterator_to_array($res), 0, 7);
 
-        $arr = [
-            "count" => $count,
-            "items" => []
-        ];
+        $items = [];
+        $count = 0;
 
-        if(sizeof($results) < 1) {
-            $reject(2, "No results");
-        }
+        foreach($results as $res) {
+            if(!$res->canBeViewedBy($this->user)) continue;
 
-        foreach($results as $res) {  
-            $arr["items"][] = [
+            $items[] = [
                 "id"          => $res->getId(),
                 "name"        => $type == "users"  ? $res->getCanonicalName() : $res->getName(),
                 "avatar"      => $type != "videos" ? $res->getAvatarUrl() : $res->getThumbnailURL(),
                 "url"         => $type != "videos" ? $res->getUrl() : "/video".$res->getPrettyId(),
                 "description" => ovk_proc_strtr($res->getDescription() ?? "...", 40)
             ];
+
+            $count+=1;
         }
+
+        if($count < 1) {
+            $reject(2, "No results");
+        }
+
+        $arr = [
+            "count" => $count,
+            "items" => $items
+        ];
 
         $resolve($arr);
     }

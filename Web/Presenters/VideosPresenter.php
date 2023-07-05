@@ -22,7 +22,7 @@ final class VideosPresenter extends OpenVKPresenter
     {
         $user = $this->users->get($id);
         if(!$user) $this->notFound();
-        if(!$user->getPrivacyPermission('videos.read', $this->user->identity ?? NULL))
+        if(!$user->getPrivacyPermission('videos.read', $this->user->identity ?? NULL) || !$user->canBeViewedBy($this->user->identity))
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         
         $this->template->user   = $user;
@@ -39,14 +39,17 @@ final class VideosPresenter extends OpenVKPresenter
     function renderView(int $owner, int $vId): void
     {
         $user = $this->users->get($owner);
-        if(!$user) $this->notFound();
-        if(!$user->getPrivacyPermission('videos.read', $this->user->identity ?? NULL))
-            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        if(!$user || $user->isDeleted()) $this->notFound();
 
-        if($this->videos->getByOwnerAndVID($owner, $vId)->isDeleted()) $this->notFound();
+        $video = $this->videos->getByOwnerAndVID($owner, $vId);
+
+        if(!$video || $video->isDeleted()) $this->notFound();
+
+        if(!$video->canBeViewedBy($this->user->identity))
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         
         $this->template->user     = $user;
-        $this->template->video    = $this->videos->getByOwnerAndVID($owner, $vId);
+        $this->template->video    = $video;
         $this->template->cCount   = $this->template->video->getCommentsCount();
         $this->template->cPage    = (int) ($this->queryParam("p") ?? 1);
         $this->template->comments = iterator_to_array($this->template->video->getComments($this->template->cPage));

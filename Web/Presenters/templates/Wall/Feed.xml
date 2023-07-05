@@ -15,9 +15,13 @@
         </div>
     </div>
 
-    <div n:class="postFeedWrapper, $thisUser->hasMicroblogEnabled() ? postFeedWrapperMicroblog">
-        {include "../components/textArea.xml", route => "/wall" . $thisUser->getId() . "/makePost", graffiti => true, polls => true, notes => true}
-    </div>
+    {if $thisUser->isClosed() && isset($globalFeed)}
+        {* br *}
+    {else}
+        <div n:class="postFeedWrapper, $thisUser->hasMicroblogEnabled() ? postFeedWrapperMicroblog">
+            {include "../components/textArea.xml", route => "/wall" . $thisUser->getId() . "/makePost", graffiti => true, polls => true, notes => true}
+        </div>
+    {/if}
     
     {foreach $posts as $post}
         <a name="postGarter={$post->getId()}"></a>

@@ -46,6 +46,12 @@ final class WallPresenter extends OpenVKPresenter
     function renderWall(int $user, bool $embedded = false): void
     {
         $owner = ($user < 0 ? (new Clubs) : (new Users))->get(abs($user));
+
+        if(!$owner->canBeViewedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+            $this->redirect("/");
+        }
+
         if(is_null($this->user)) {
             $canPost = false;
         } else if($user > 0) {
@@ -60,6 +66,10 @@ final class WallPresenter extends OpenVKPresenter
                 $canPost = $owner->canPost();
         } else {
             $canPost = false;
+        }
+
+        if($owner->isDeleted()) {
+            $this->notFound();
         }
         
         if ($embedded == true) $this->template->_template = "components/wall.xml";
@@ -98,7 +108,7 @@ final class WallPresenter extends OpenVKPresenter
             else
                 $this->flashFail("err", tr("error"), tr("forbidden"));
         } else if($user < 0) {
-            if($owner->canBeModifiedBy($this->user->identity))
+            if($owner->canBeModifiedBy($this->user->identity) && $owner->canBeViewedBy($this->user->identity))
                 $canPost = true;
             else
                 $canPost = $owner->canPost();
@@ -167,8 +177,9 @@ final class WallPresenter extends OpenVKPresenter
         $page  = (int) ($_GET["p"] ?? 1);
         $pPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
 
-        $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND `posts`.`deleted` = 0";
-
+        $queryBase = "FROM `posts` JOIN `profiles` ON `profiles`.`id` = ABS(`posts`.`wall`) LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`)";
+        $queryBase .= "WHERE (`profiles`.`profile_type` = 0 OR `profiles`.`first_name` IS NULL) AND (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND `posts`.`deleted` = 0";
+        
         if($this->user->identity->getNsfwTolerance() === User::NSFW_INTOLERANT)
             $queryBase .= " AND `nsfw` = 0";
 
@@ -213,15 +224,20 @@ final class WallPresenter extends OpenVKPresenter
         $wallOwner = ($wall > 0 ? (new Users)->get($wall) : (new Clubs)->get($wall * -1))
                      ?? $this->flashFail("err", tr("failed_to_publish_post"), tr("error_4"));
         if($wall > 0) {
-            if(!$wallOwner->isBanned())
+            if(!$wallOwner->isBanned() && !$wallOwner->isDeleted() && $wallOwner->canBeViewedBy($this->user->identity))
                 $canPost = $wallOwner->getPrivacyPermission("wall.write", $this->user->identity);
             else
                 $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
         } else if($wall < 0) {
-            if($wallOwner->canBeModifiedBy($this->user->identity))
-                $canPost = true;
-            else
-                $canPost = $wallOwner->canPost();
+            if(!$wallOwner->isDeleted()) {
+                if($wallOwner->canBeModifiedBy($this->user->identity))
+                    $canPost = true;
+                else
+                    $canPost = $wallOwner->canPost();
+            } else {
+                $canPost = false;
+            }
+
         } else {
             $canPost = false; 
         }
@@ -340,21 +356,24 @@ final class WallPresenter extends OpenVKPresenter
     function renderPost(int $wall, int $post_id): void
     {
         $post = $this->posts->getPostById($wall, $post_id);
-        if(!$post || $post->isDeleted())
+        if(!$post || $post->isDeleted() || $post->getWallOwner()->isDeleted())
             $this->notFound();
+
+        if(!$post->canBeViewedBy($this->user->identity))
+            $this->flashFail("err", tr("error"), tr("forbidden"));
         
         $this->logPostView($post, $wall);
         
         $this->template->post     = $post;
         if ($post->getTargetWall() > 0) {
-        	$this->template->wallOwner = (new Users)->get($post->getTargetWall());
-			$this->template->isWallOfGroup = false;
-            if($this->template->wallOwner->isBanned())
+            $this->template->wallOwner = (new Users)->get($post->getTargetWall());
+            $this->template->isWallOfGroup = false;
+            if($this->template->wallOwner->isBanned() || $this->template->wallOwner->isDeleted())
                 $this->flashFail("err", tr("error"), tr("forbidden"));
-		} else {
-			$this->template->wallOwner = (new Clubs)->get(abs($post->getTargetWall()));
-			$this->template->isWallOfGroup = true;
-		}
+        } else {
+            $this->template->wallOwner = (new Clubs)->get(abs($post->getTargetWall()));
+            $this->template->isWallOfGroup = true;
+        }
         $this->template->cCount   = $post->getCommentsCount();
         $this->template->cPage    = (int) ($_GET["p"] ?? 1);
         $this->template->comments = iterator_to_array($post->getComments($this->template->cPage));
@@ -367,8 +386,12 @@ final class WallPresenter extends OpenVKPresenter
         $this->assertNoCSRF();
         
         $post = $this->posts->getPostById($wall, $post_id);
-        if(!$post || $post->isDeleted()) $this->notFound();
+        if(!$post || $post->isDeleted() || $post->getWallOwner()->isDeleted()) $this->notFound();
         
+        if(!$post->canBeViewedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
         if(!is_null($this->user)) {
             $post->toggleLike($this->user->identity);
         }
@@ -384,9 +407,17 @@ final class WallPresenter extends OpenVKPresenter
         
         $post = $this->posts->getPostById($wall, $post_id);
 
-        if(!$post || $post->isDeleted()) 
+        if(!$post || $post->isDeleted() ||  $post->getWallOwner()->isDeleted()) 
             $this->notFound();
         
+        
+        if(!$post->canBeViewedBy($this->user->identity)) {
+            $this->returnJson([
+                "error" => "forbidden"
+            ]);
+        }
+        
+
         $where = $this->postParam("type") ?? "wall";
         $groupId = NULL;
         $flags = 0;
@@ -425,7 +456,7 @@ final class WallPresenter extends OpenVKPresenter
             if($post->getOwner(false)->getId() !== $this->user->identity->getId() && !($post->getOwner() instanceof Club))
                 (new RepostNotification($post->getOwner(false), $post, $this->user->identity))->emit();
         };
-		
+        
         $this->returnJson([
             "wall_owner" => $where == "wall" ? $this->user->identity->getId() : $groupId * -1
         ]);

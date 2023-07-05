@@ -43,11 +43,17 @@
         </div>
     {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Post}
-    {php $GLOBALS["_nesAttGloCou"] = (isset($GLOBALS["_nesAttGloCou"]) ? $GLOBALS["_nesAttGloCou"] : 0) + 1}
-    {if $GLOBALS["_nesAttGloCou"] > 2}
-        <a href="/wall{$attachment->getPrettyId()}">{_open_post}</a>
-    {else}
-        {include "post.xml", post => $attachment, compact => true}
+    {if $attachment->canBeViewedBy($thisUser ?? NULL)}
+        {php $GLOBALS["_nesAttGloCou"] = (isset($GLOBALS["_nesAttGloCou"]) ? $GLOBALS["_nesAttGloCou"] : 0) + 1}
+        {if $GLOBALS["_nesAttGloCou"] > 2}
+            <a href="/wall{$attachment->getPrettyId()}">{_open_post}</a>
+        {else}
+            {include "post.xml", post => $attachment, compact => true}
+        {/if}
+    {else} 
+        <div class="no_access_attachment">
+            <span>{_no_access_attachment}</span>
+        </div>
     {/if}
 {else}
     <span style="color:red;">{_version_incompatibility}</span>

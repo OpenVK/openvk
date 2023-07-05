@@ -93,4 +93,19 @@ class Album extends MediaCollection
 
         return $res;
     }
+
+    function canBeViewedBy(?User $user = NULL): bool
+    {
+        if($this->isDeleted()) {
+            return false;
+        }
+
+        $owner = $this->getOwner();
+
+        if(get_class($owner) == "openvk\\Web\\Models\\Entities\\User") {
+            return $owner->canBeViewedBy($user) && $owner->getPrivacyPermission('photos.read', $user);
+        } else {
+            return $owner->canBeViewedBy($user);
+        }
+    }
 }

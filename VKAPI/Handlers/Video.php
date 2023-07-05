@@ -11,11 +11,11 @@ use openvk\Web\Models\Repositories\Comments as CommentsRepo;
 
 final class Video extends VKAPIRequestHandler
 {
-    function get(int $owner_id, string $videos, int $offset = 0, int $count = 30, int $extended = 0): object
+    function get(int $owner_id, string $videos = "", int $offset = 0, int $count = 30, int $extended = 0): object
     {
         $this->requireUser();
 
-        if ($videos) {
+        if(!empty($videos)) {
             $vids = explode(',', $videos);
     
             foreach($vids as $vid)
@@ -26,6 +26,10 @@ final class Video extends VKAPIRequestHandler
     
                 $video = (new VideosRepo)->getByOwnerAndVID(intval($id[0]), intval($id[1]));
                 if($video) {
+                    if(!$video->canBeViewedBy($this->getUser() ?? NULL)) {
+                        continue;
+                    }
+
                     $items[] = $video->getApiStructure();
                 }
             }
@@ -36,15 +40,23 @@ final class Video extends VKAPIRequestHandler
             ];
         } else {
             if ($owner_id > 0) 
-            $user = (new UsersRepo)->get($owner_id);
+                $user = (new UsersRepo)->get($owner_id);
             else
-            $this->fail(1, "Not implemented");
+                $this->fail(1, "Not implemented");
+            
+            if(!$user->getPrivacyPermission('videos.read', $this->getUser())) {
+                $this->fail(20, "Access denied: this user chose to hide his videos");
+            }
             
             $videos = (new VideosRepo)->getByUser($user, $offset + 1, $count);
             $videosCount = (new VideosRepo)->getUserVideosCount($user);
             
             $items = [];
             foreach ($videos as $video) {
+                if(!$video->canBeViewedBy($this->getUser() ?? NULL)) {
+                    $this->fail(8, "Access denied");
+                }
+
                 $items[] = $video->getApiStructure();
             }
     

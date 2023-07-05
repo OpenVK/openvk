@@ -165,11 +165,11 @@ h1 {
 }
 
 .navigation .link_soon {
-	color: #2B587A63;
+    color: #2B587A63;
 }
 .navigation .link_soon:hover {
-	background:#DAE1E8;
-	border-top:1px solid #CAD1D9
+    background:#DAE1E8;
+    border-top:1px solid #CAD1D9
 }
 
 .navigation .edit-button {
@@ -997,6 +997,11 @@ table.User {
     background-color: #f5e9ec;
 }
 
+.msg.msg_yellow {
+    border-color:#D4BC4C;
+    background-color:#F9F6E7;
+}
+
 .edit_link {
     color: #c5c5c5;
     font-family: verdana, arial, sans-serif;
@@ -1689,9 +1694,9 @@ body.scrolled .toTop:hover {
 }
 
 #wallAttachmentMenu>.header {
-	padding: 6px 15px;
-	background-color: #eee;
-	text-align: center;
+    padding: 6px 15px;
+    background-color: #eee;
+    text-align: center;
 }
 
 #ovkDraw {
@@ -2090,7 +2095,7 @@ table td[width="120"] {
 .cookies-popup {
     position: fixed;
     bottom: 0;
-	left: 0;
+    left: 0;
     width: 100%;
     height: 40px;
     background: linear-gradient(#fff, #eee);
@@ -2147,13 +2152,13 @@ table td[width="120"] {
 }
 
 .minilink .counter {
-	font-weight: bold;
-	background-color: #eee;
-	line-height: 10px;
-	margin: -1px 3px 0 0;
-	padding: 1px 1px;
-	border-radius: 2px;
-	height: 11px;
+    font-weight: bold;
+    background-color: #eee;
+    line-height: 10px;
+    margin: -1px 3px 0 0;
+    padding: 1px 1px;
+    border-radius: 2px;
+    height: 11px;
 }
 
 #app_news_container {
@@ -2246,13 +2251,13 @@ a.poll-retract-vote {
 }
 
 .client_app > img {
-	top: 3px;
-	position: relative;
+    top: 3px;
+    position: relative;
 }
 
 .client_app.client_app_titlebar > img {
     top: 2px;
-	position: relative;
+    position: relative;
     filter: invert(100%) sepia(100%) saturate(800%) hue-rotate(2deg) brightness(130%) contrast(50.1%);
 }
 
@@ -2267,12 +2272,12 @@ a.poll-retract-vote {
 }
 
 .regform-left{
-	text-align: right;
-	min-width: 110px;
+    text-align: right;
+    min-width: 110px;
 }
 
 .regform-right{
-	min-width: 200px;
+    min-width: 200px;
 }
 
 
@@ -2564,4 +2569,21 @@ a.poll-retract-vote {
 .ntSelect:hover
 {
     background-color: rgb(233, 232, 232);
+}
+
+.no_access_attachment
+{
+    border: 1px dashed black;
+    text-align: center;
+    padding-top: 20px;
+    cursor: pointer;
+    user-select: none;
+    margin-top: -8px;
+    width: 98.4%;
+    padding-bottom: 20px;
+}
+
+.no_access_attachment:hover
+{
+    background-color: rgb(240, 240, 240);
 }

@@ -131,6 +131,20 @@
 "information_about" = "О себѣ";
 
 "updated_at" = "Новыя данные отражены $1";
+"user_banned" = "К сожалѣнiю, нам прiшлось запрѣтiть страницу пользоватѣля <b>$1</b>.";
+"user_banned_comment" = "Коммѣнтарiй модѣратора:";
+"limited_access_to_page_m" = "$1 огранiчилъ доступъ к своей странiце.";
+"limited_access_to_page_f" = "$1 огранiчила доступъ к своей странiце.";
+
+"you_can_add" = "Вы можѣте";
+"add_to_friends_m" = "добавiть его в знакомцы.";
+"add_to_friends_f" = "добавiть её в знакомцы.";
+
+"register_to_access_page_m" = "Зарѣгiстрируйтѣсь, чтобы получить доступъ к его странiце.";
+"register_to_access_page_f" = "Зарѣгiстрируйтѣсь, чтобы получить доступъ к её странiце.";
+
+"private_profile_warning" = "Эта страница закрытая, но вы имѣѣте к нѣму доступъ, потому что вы — боярiн.";
+"private_profile_warning_desc" = "Пожалуйста, уважайте права крѣпостных и не злоупотрѣбляйте этой возможностью.";
 
 /* Wall */
 
@@ -276,6 +290,39 @@
 "meetings_few" = "$1 встрѣчи";
 "meetings_many" = "$1 встрѣчъ";
 "meetings_other" = "$1 встрѣчъ";
+
+"open_new_group" = "Открiть новую группу";
+"open_group_desc" = "Нѣ можѣте найтi нужную группу? Откройтѣ свою...";
+"search_group" = "Поiскъ группы";
+"search_by_groups" = "Поiск по группамъ";
+"search_group_desc" = "Здѣсь Вы можѣтѣ просмотрѣть сущѣствующиѣ группы i выбрать группу сѣбе по вкусу...";
+
+"owners_delete" = "Только создатѣль группы можѣтъ удалiть её.";
+"owners_restore" = "Только создатѣль группы можѣтъ восстановiть её?";
+
+"delete_group" = "Удалiть группу";
+"restore_group" = "Восстановiть группу";
+
+"group_deletion" = "Удалѣнiѣ группы";
+"trying_delete_group" = "Вы собiраѣтесь удалiть эту группу. <br><br> Введiте ваш шiфр:";
+
+"group_was_deleted" = "Данная группа была удалѣна создатѣлѣм.";
+"group_was_blocked" = "Данная группа была заблокирована.";
+
+"deleted_f" = "Удалена";
+"ban_reason_g" = "Прiчiна блокiровкi";
+
+"ban_group" = "Заблокiровать группу";
+"ban_group_desc" = "Вы собираѣтѣсь заблокiровать группу $1. <br><br>Введiте причину уничтожѣнiя:";
+"unban_group" = "Разблокiровать группу";
+
+"go_to_owner" = "Перейтi на странiцу создатѣля";
+
+"come_up_with_something_cool" = "прiдумайте что-нiбудь забавноя";
+
+"cant_ban_group" = "Не удалось заблокiровать группу";
+"your_club_was_banned" = "Ваша группа \"$1\" была заблокiрована по причине $2";
+"your_club_was_unbanned" = "Ваша группа \"$1\" была разблокiрована";
 
 /* Albums */
 
@@ -439,6 +486,10 @@
 "privacy_value_only_me" = "Мнѣ одному";
 "privacy_value_only_me_dative" = "Мнѣ одному";
 "privacy_value_nobody" = "Никому";
+
+"profile_type" = "Тiп профiля";
+"profile_type_open" = "Открытый";
+"profile_type_closed" = "Закрытый";
 
 "your_email_address" = "Адресъ Вашей электронной почты";
 "your_page_address" = "Адресъ Вашей страницы";
@@ -772,5 +823,8 @@
 "s_any" = "любой";
 "reset" = "Сбросъ";
 
-"closed_group_post" = "Это высказыванiе изъ закрытого общѣства";
-"deleted_target_comment" = "Этотъ отзыв принадлѣжит к удалѣнному высказыванiю";
+"dont_need_to_see_comment" = "Нѣтъ доступа к коммѣнтарiю.";
+"dont_need_to_see_post" = "Нѣтъ доступа к запiсi.";
+"dont_need_to_see_video" = "Нѣтъ доступа к вiдео.";
+
+"no_results" = "Результатовъ нѣт";

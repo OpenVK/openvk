@@ -1416,8 +1416,11 @@
 "s_any" = "будь-який";
 "reset" = "Очистити";
 
-"closed_group_post" = "Цей допис з приватної групи";
-"deleted_target_comment" = "Цей коментар належить до видаленого допису";
+"dont_need_to_see_comment" = "Немає доступу до коментаря.";
+"dont_need_to_see_post" = "Немає доступу до запису.";
+"dont_need_to_see_video" = "Немає доступу до відео.";
+
+"no_results" = "Немає результатів";
 
 /* Mobile */
 

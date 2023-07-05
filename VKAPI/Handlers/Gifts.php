@@ -16,8 +16,13 @@ final class Gifts extends VKAPIRequestHandler
 
         $user = (new UsersRepo)->get($user_id);
 
-        if(!$user || $user->isDeleted())
+        if(!$user || $user->isDeleted()) {
             $this->fail(177, "Invalid user");
+        }
+
+        if(!$user->canBeViewedBy($this->getUser() ?? NULL)) {
+            $this->fail(8, "Access denied");
+        }
 
         $gift_item = [];
 
@@ -61,6 +66,10 @@ final class Gifts extends VKAPIRequestHandler
         
         if(!$user || $user->isDeleted())
             $this->fail(177, "Invalid user");
+
+        if(!$user->canBeViewedBy($this->getUser() ?? NULL)) {
+            $this->fail(8, "Access denied");
+        }
 
         $gift  = (new GiftsRepo)->get($gift_id);
 
