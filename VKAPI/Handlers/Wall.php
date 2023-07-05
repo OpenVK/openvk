@@ -13,6 +13,8 @@ use openvk\Web\Models\Entities\Photo;
 use openvk\Web\Models\Repositories\Photos as PhotosRepo;
 use openvk\Web\Models\Entities\Video;
 use openvk\Web\Models\Repositories\Videos as VideosRepo;
+use openvk\Web\Models\Entities\Note;
+use openvk\Web\Models\Repositories\Notes as NotesRepo;
 
 final class Wall extends VKAPIRequestHandler
 {
@@ -54,6 +56,8 @@ final class Wall extends VKAPIRequestHandler
                     $attachments[] = $this->getApiPoll($attachment, $this->getUser());
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Video) {
                     $attachments[] = $attachment->getApiStructure();
+                } else if ($attachment instanceof \openvk\Web\Models\Entities\Note) {
+                    $attachments[] = $attachment->toVkApiStruct();
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Post) {
                     $repostAttachments = [];
 
@@ -226,6 +230,8 @@ final class Wall extends VKAPIRequestHandler
                         $attachments[] = $this->getApiPoll($attachment, $user);
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Video) {
                         $attachments[] = $attachment->getApiStructure();
+                    } else if ($attachment instanceof \openvk\Web\Models\Entities\Note) {
+                        $attachments[] = $attachment->toVkApiStruct();
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Post) {
                         $repostAttachments = [];
 
@@ -440,6 +446,8 @@ final class Wall extends VKAPIRequestHandler
                     $attachmentType = "photo";
                 elseif(str_contains($attac, "video"))
                     $attachmentType = "video";
+                elseif(str_contains($attac, "note"))
+                    $attachmentType = "note";
                 else
                     $this->fail(205, "Unknown attachment type");
 
@@ -464,6 +472,17 @@ final class Wall extends VKAPIRequestHandler
                         $this->fail(100, "Video does not exists");
                     if($attacc->getOwner()->getId() != $this->getUser()->getId())
                         $this->fail(43, "You do not have access to this video");
+
+                    $post->attach($attacc);
+                } elseif($attachmentType == "note") {
+                    $attacc = (new NotesRepo)->getNoteById($attachmentOwner, $attachmentId);
+                    if(!$attacc || $attacc->isDeleted())
+                        $this->fail(100, "Note does not exist");
+                    if($attacc->getOwner()->getId() != $this->getUser()->getId())
+                        $this->fail(43, "You do not have access to this note");
+                    
+                    if($attacc->getOwner()->getPrivacySetting("notes.read") < 1)
+                        $this->fail(11, "You can't attach note to post, because your notes list is closed. Change it in privacy settings in web-version.");
 
                     $post->attach($attacc);
                 }
@@ -542,6 +561,8 @@ final class Wall extends VKAPIRequestHandler
             foreach($comment->getChildren() as $attachment) {
                 if($attachment instanceof \openvk\Web\Models\Entities\Photo) {
                     $attachments[] = $this->getApiPhoto($attachment);
+                } elseif($attachment instanceof \openvk\Web\Models\Entities\Note) {
+                    $attachments[] = $attachment->toVkApiStruct();
                 }
             }
 
@@ -599,8 +620,8 @@ final class Wall extends VKAPIRequestHandler
     function getComment(int $owner_id, int $comment_id, bool $extended = false, string $fields = "sex,screen_name,photo_50,photo_100,online_info,online") {
         $this->requireUser();
 
-        $comment = (new CommentsRepo)->get($comment_id); // один хуй айди всех комментов общий
-
+        $comment = (new CommentsRepo)->get($comment_id); # один хуй айди всех комментов общий
+        
         $profiles = [];
 
         $attachments = [];

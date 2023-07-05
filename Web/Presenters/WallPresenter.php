@@ -3,7 +3,7 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Models\Exceptions\TooMuchOptionsException;
 use openvk\Web\Models\Entities\{Poll, Post, Photo, Video, Club, User};
 use openvk\Web\Models\Entities\Notifications\{MentionNotification, RepostNotification, WallPostNotification};
-use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums};
+use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums, Notes};
 use Chandler\Database\DatabaseConnection;
 use Nette\InvalidStateException as ISE;
 use Bhaktaraz\RSSGenerator\Item;
@@ -278,8 +278,22 @@ final class WallPresenter extends OpenVKPresenter
         } catch(\UnexpectedValueException $e) {
             $this->flashFail("err", tr("failed_to_publish_post"), "Poll format invalid");
         }
+
+        $note = NULL;
+
+        if(!is_null($this->postParam("note")) && $this->postParam("note") != "none") {
+            $note = (new Notes)->get((int)$this->postParam("note"));
+
+            if(!$note || $note->isDeleted() || $note->getOwner()->getId() != $this->user->id) {
+                $this->flashFail("err", tr("error"), tr("error_attaching_note"));
+            }
+            
+            if($note->getOwner()->getPrivacySetting("notes.read") < 1) {
+                $this->flashFail("err", " ");
+            }
+        }
         
-        if(empty($this->postParam("text")) && !$photo && !$video && !$poll)
+        if(empty($this->postParam("text")) && !$photo && !$video && !$poll && !$note)
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"));
         
         try {
@@ -304,6 +318,9 @@ final class WallPresenter extends OpenVKPresenter
         
         if(!is_null($poll))
             $post->attach($poll);
+
+        if(!is_null($note))
+            $post->attach($note);
         
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();

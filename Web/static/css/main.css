@@ -1453,14 +1453,14 @@ body.scrolled .toTop:hover {
     font-weight: bold;
 }
 
-.post-upload, .post-has-poll {
+.post-upload, .post-has-poll, .post-has-note {
     margin-top: 11px;
     margin-left: 3px;
     color: #3c3c3c;
     display: none;
 }
 
-.post-upload::before, .post-has-poll::before {
+.post-upload::before, .post-has-poll::before, .post-has-note::before {
     content: " ";
     width: 8px;
     height: 8px;
@@ -2532,4 +2532,36 @@ a.poll-retract-vote {
 .searchTips .restip:hover
 {
     background: rgb(236, 235, 235);
+}
+
+.attachment_note_icon {
+    max-width: 9px;
+}
+
+.attachment_note_text {
+    color: #605F63;
+    margin-left: 2px;
+}
+
+.attachment_note {
+    user-select: none;
+}
+
+#notesList
+{
+    overflow-y: scroll;
+    max-height: 130px;
+    margin-top: 5px;
+}
+
+.ntSelect
+{
+    cursor: pointer;
+    padding: 6px;
+
+}
+
+.ntSelect:hover
+{
+    background-color: rgb(233, 232, 232);
 }

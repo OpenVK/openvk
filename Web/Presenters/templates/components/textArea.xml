@@ -14,6 +14,9 @@
             <div class="post-has-poll">
                 {_poll}
             </div>
+            <div class="post-has-note">
+                
+            </div>
             <div n:if="$postOpts ?? true" class="post-opts">
                 {var $anonEnabled = OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
                 {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0}
@@ -54,6 +57,7 @@
             <input type="file" class="postFileSel" id="postFilePic" name="_pic_attachment" accept="image/*" style="display:none;" />
             <input n:if="!OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']" type="file" class="postFileSel" id="postFileVid" name="_vid_attachment" accept="video/*" style="display:none;" />
             <input type="hidden" name="poll" value="none" />
+            <input type="hidden" id="note" name="note" value="none" />
             <input type="hidden" name="type" value="1" />
             <input type="hidden" name="hash" value="{$csrfToken}" />
             <br/>
@@ -74,6 +78,10 @@
                     <a n:if="!OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']" href="javascript:void(document.querySelector('#post-buttons{$textAreaId} input[name=_vid_attachment]').click());">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
                         {_video}
+                    </a>
+                    <a n:if="$notes ?? false" href="javascript:attachNote({$textAreaId})">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-srt.png" />
+                        {_note}
                     </a>
                     <a n:if="$graffiti ?? false" href="javascript:initGraffiti({$textAreaId});">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
