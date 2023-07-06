@@ -382,9 +382,9 @@ class Club extends RowModel
         $res->photo_100  = $this->getAvatarUrl("tiny");
         $res->photo_200  = $this->getAvatarUrl("normal");
 
-        $res->can_create_topic = $this->canBeModifiedBy($user) ? 1 : $this->isEveryoneCanCreateTopics() ? 1 : 0;
+        $res->can_create_topic = $this->canBeModifiedBy($user) ? 1 : ($this->isEveryoneCanCreateTopics() ? 1 : 0);
 
-        $res->can_post         = $this->canBeModifiedBy($user) ? 1 : $this->canPost() ? 1 : 0;
+        $res->can_post         = $this->canBeModifiedBy($user) ? 1 : ($this->canPost() ? 1 : 0);
 
         return (object) $res;
     }
