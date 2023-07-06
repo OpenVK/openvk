@@ -192,7 +192,7 @@ tippy(".client_app", {
 function addNote(textareaId, nid)
 {
     if(nid > 0) {
-        note.value = nid
+        document.getElementById("note").value = nid
         let noteObj = document.querySelector("#nd"+nid)
     
         let nortd = document.querySelector("#post-buttons"+textareaId+" .post-has-note");
@@ -200,7 +200,7 @@ function addNote(textareaId, nid)
     
         nortd.innerHTML = `${tr("note")} ${escapeHtml(noteObj.dataset.name)}`
     } else {
-        note.value = "none"
+        document.getElementById("note").value = "none"
 
         let nortd = document.querySelector("#post-buttons"+textareaId+" .post-has-note");
         nortd.style.display = "none"
@@ -227,7 +227,7 @@ async function attachNote(id)
                 ${tr("select_or_create_new")}
                 <div id="notesList">`
 
-            if(note.value != "none") {
+            if(document.getElementById("note").value != "none") {
                 body += `
                 <div class="ntSelect" onclick="addNote(${id}, 0)">
                     <span>${tr("do_not_attach_note")}</span>
