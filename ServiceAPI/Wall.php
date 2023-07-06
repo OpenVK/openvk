@@ -76,10 +76,11 @@ class Wall implements Handler
 
     function getMyNotes(callable $resolve, callable $reject)
     {
-        $myNotes = $this->notes->getUserNotes($this->user, 1, $this->notes->getUserNotesCount($this->user));
+        $count   = $this->notes->getUserNotesCount($this->user);
+        $myNotes = $this->notes->getUserNotes($this->user, 1, $count);
 
         $arr = [
-            "count"  => sizeof($myNotes),
+            "count"  => $count,
             "closed" => $this->user->getPrivacySetting("notes.read"),
             "items"  => [],
         ];
