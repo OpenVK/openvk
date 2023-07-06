@@ -392,6 +392,9 @@
 "notes_list_many" = "Знайдено $1 нотаток";
 "notes_list_other" = "Знайдено $1 нотаток";
 
+/* Notes: Article Viewer */
+"aw_legacy_ui" = "Класичне дієвидло";
+
 /* Menus */
 
 "edit_button" = "ред.";

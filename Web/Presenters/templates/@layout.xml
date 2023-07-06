@@ -49,6 +49,28 @@
         <div class="notifications_global_wrap"></div>
         <div class="dimmer"></div>
 
+        <div class="articleView">
+            <a id="articleCloseButton" class="button" href="javascript:u('body').removeClass('article');">{_close}</a>
+            <div class="articleView_container">
+                <div class="articleView_info">
+                    <div class="articleView_author">
+                        <img id="articleAuthorAva" src="" />
+                        <div>
+                            <span><a id="articleAuthorName"></a></span>
+                            <time id="articleTime"></time>
+                        </div>
+                    </div>
+
+                    <div class="articleView_link">
+                        <a id="articleLink" href="/" class="button">{_aw_legacy_ui}</a>
+                    </div>
+                </div>
+
+                <div class="articleView_text" id="articleText">
+                </div>
+            </div>
+        </div>
+
         {if isset($backdrops) && !is_null($backdrops)}
             <div id="backdrop" style="background-image: url('{$backdrops[0]|noescape}'), url('{$backdrops[1]|noescape}');">
                 <div id="backdropDripper"></div>

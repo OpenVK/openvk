@@ -1403,6 +1403,7 @@ textarea {
     box-sizing: border-box;
     opacity: 0;
     transition: .1s all;
+    z-index: 129;
 }
 
 body.scrolled .toTop:hover {
@@ -2564,4 +2565,134 @@ a.poll-retract-vote {
 .ntSelect:hover
 {
     background-color: rgb(233, 232, 232);
+}
+
+body.article {
+    height: 100vh;
+    overflow-y: hidden;
+}
+
+body.article .articleView {
+    display: unset;
+}
+
+body.article .floating_sidebar, body.article .page_content {
+    display: none;
+}
+
+.articleView {
+    display: none;
+    position: absolute;
+    z-index: 128;
+    width: 100%;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #fff;
+}
+
+.articleView_container {
+    width: 791px;
+    margin: auto;
+}
+
+.articleView_info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.articleView_author {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.articleView_author > img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 100%;
+}
+
+.articleView_author > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.articleView_author > div > span {
+    font-size: 13pt;
+    font-weight: 600;
+    font-family: sans-serif;
+}
+
+.articleView_author > div > span > a {
+    color: #000;
+}
+
+.articleView_author > div > time {
+    font-size: 11pt;
+    font-family: sans-serif;
+    color: grey;
+}
+
+.articleView_text {
+    padding: 30px 0;
+    font-size: 19px;
+    font-family: serif;
+}
+
+.articleView_text h1, .articleView_text h2, .articleView_text h3, .articleView_text h4 {
+    font-family: sans-serif;
+}
+
+.articleView_text h1 {
+    font-size: 38px;
+    line-height: 41px;
+}
+
+.articleView_text h2 {
+    font-size: 32px;
+    line-height: 1.13em;
+}
+
+.articleView_text h3 {
+    font-size: 24px;
+    line-height: 1.4em;
+}
+
+.articleView_text h4 {
+    font-size: 19px;
+    line-height: 1.2em;
+    color: black;
+    border: none;
+}
+
+.articleView_text p {
+    margin-top: 24px;
+}
+
+.articleView_text p:first-of-type {
+    margin-top: 40px;
+}
+
+.articleView_text ::selection {
+    color: #fff;
+    background: #000;
+}
+
+.articleView_link > a {
+    font-size: 14px;
+}
+
+.articleView_text hr {
+    border: none;
+    height: 20px;
+    background: url(data:image/svg+xml;charset=utf-8,%3Csvg%20height%3D%229%22%20width%3D%2235%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cg%20fill%3D%22none%22%20fill-rule%3D%22evenodd%22%20opacity%3D%22.5%22%3E%3Cpath%20d%3D%22m0%200h35v9h-35z%22%2F%3E%3Cpath%20d%3D%22m3.997%200h1v3h-1zm4.147%201.817.5.866-2.598%201.5-.5-.866zm.5%204.5-.5.866-2.598-1.5.5-.866zm-3.647%202.683h-1v-3h1zm-4.147-1.817-.5-.866%202.598-1.5.5.866zm-.5-4.5.5-.866%202.598%201.5-.5.866zm16.647-2.683h1v3h-1zm4.147%201.817.5.866-2.598%201.5-.5-.866zm.5%204.5-.5.866-2.598-1.5.5-.866zm-3.647%202.683h-1v-3h1zm-4.147-1.817-.5-.866%202.598-1.5.5.866zm-.5-4.5.5-.866%202.598%201.5-.5.866zm16.647-2.683h1v3h-1zm4.147%201.817.5.866-2.598%201.5-.5-.866zm.5%204.5-.5.866-2.598-1.5.5-.866zm-3.647%202.683h-1v-3h1zm-4.147-1.817-.5-.866%202.598-1.5.5.866zm-.5-4.5.5-.866%202.598%201.5-.5.866z%22%20fill%3D%22%23000%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E) no-repeat center;
+    margin: 0;
+}
+#articleCloseButton {
+    position: absolute;
+    right: 22px;
+    font-size: 12px;
 }

@@ -250,3 +250,16 @@ async function attachNote(id)
 
     document.querySelector(".ovk-diag-body").style.padding = "10px"
 }
+
+async function showArticle(note_id) {
+    u("body").addClass("dimmed");
+    let note = await API.Notes.getNote(note_id);
+    u("#articleAuthorAva").attr("src", note.author.ava);
+    u("#articleAuthorName").text(note.author.name);
+    u("#articleAuthorName").attr("href", note.author.link);
+    u("#articleTime").text(note.created);
+    u("#articleLink").attr("href", note.link);
+    u("#articleText").html(`<h1 class="articleView_nameHeading">${note.title}</h1>` + note.html);
+    u("body").removeClass("dimmed");
+    u("body").addClass("article");
+}
