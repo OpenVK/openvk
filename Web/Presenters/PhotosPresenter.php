@@ -27,7 +27,7 @@ final class PhotosPresenter extends OpenVKPresenter
             if(!$user) $this->notFound();
             if (!$user->getPrivacyPermission('photos.read', $this->user->identity ?? NULL) || !$user->canBeViewedBy($this->user->identity))
                 $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
-            $this->template->albums  = $this->albums->getUserAlbums($user, $this->queryParam("p") ?? 1);
+            $this->template->albums  = $this->albums->getUserAlbums($user, (int)($this->queryParam("p") ?? 1));
             $this->template->count   = $this->albums->getUserAlbumsCount($user);
             $this->template->owner   = $user;
             $this->template->canEdit = false;
@@ -36,7 +36,7 @@ final class PhotosPresenter extends OpenVKPresenter
         } else {
             $club = (new Clubs)->get(abs($owner));
             if(!$club || $club->isDeleted()) $this->notFound();
-            $this->template->albums  = $this->albums->getClubAlbums($club, $this->queryParam("p") ?? 1);
+            $this->template->albums  = $this->albums->getClubAlbums($club, (int)($this->queryParam("p") ?? 1));
             $this->template->count   = $this->albums->getClubAlbumsCount($club);
             $this->template->owner   = $club;
             $this->template->canEdit = false;
@@ -46,7 +46,7 @@ final class PhotosPresenter extends OpenVKPresenter
         
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
-            "page"    => $this->queryParam("p") ?? 1,
+            "page"    => (int)($this->queryParam("p") ?? 1),
             "amount"  => NULL,
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
         ];
