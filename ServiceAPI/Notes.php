@@ -19,12 +19,12 @@ class Notes implements Handler
     {
         $note = $this->notes->get($noteId);
         if(!$note || $note->isDeleted())
-            $reject("Note is gone");
+            $reject(83, "Note is gone");
         
         $noteOwner = $note->getOwner();
         assert($noteOwner instanceof User);
         if(!$noteOwner->getPrivacyPermission("notes.read", $this->user))
-            $reject("You don't have permission to access this note");
+            $reject(160, "You don't have permission to access this note");
         
         $resolve([
             "title"   => $note->getName(),
