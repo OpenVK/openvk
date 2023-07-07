@@ -33,7 +33,7 @@
         <div class="attachment_note">
             <img class="attachment_note_icon" src="/assets/packages/static/openvk/img/note.svg">
             <span class="attachment_note_text">{_note}</span>
-            <span class="attachment_note_name"><a href="javascript:showArticle({$attachment->getId()});">{ovk_proc_strtr($attachment->getName(), 66)}</a></span>
+            <span class="attachment_note_name"><a href="javascript:void(showArticle({$attachment->getId()}));">{ovk_proc_strtr($attachment->getName(), 66)}</a></span>
         </div>
     {else}
         <div class="attachment_note">
