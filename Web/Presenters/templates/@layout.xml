@@ -50,7 +50,7 @@
         <div class="dimmer"></div>
 
         <div class="articleView">
-            <a id="articleCloseButton" class="button" href="javascript:u('body').removeClass('article');">{_close}</a>
+            <a id="articleCloseButton" class="button" href="javascript:void(u('body').removeClass('article'));">{_close}</a>
             <div class="articleView_container">
                 <div class="articleView_info">
                     <div class="articleView_author">
