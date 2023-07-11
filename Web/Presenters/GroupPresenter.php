@@ -454,7 +454,7 @@ final class GroupPresenter extends OpenVKPresenter
         }
 
         if($club->isBanned()) {
-            $this->flashFail("err", tr("error"));
+            $this->flashFail("err", tr("error"), tr("banned_restore"));
         }
 
         $club->setDeleted(0);

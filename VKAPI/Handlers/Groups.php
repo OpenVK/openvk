@@ -21,7 +21,7 @@ final class Groups extends VKAPIRequestHandler
             if(is_null($user) || $user->isDeleted() || $user->isBanned())
                 $this->fail(15, "Invalid user");
 
-            if($user->getPrivacyPermission("page.info.read", $this->getUser() ?? NULL)) {
+            if(!$user->getPrivacyPermission("groups.read", $this->getUser() ?? NULL)) {
                 $this->fail(8, "Access denied: this user chose to hide his groups.");
             }
 

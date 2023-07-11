@@ -223,7 +223,7 @@ final class Users extends VKAPIRequestHandler
         $user = $users->get($user_id);
         
         if(!$user || $user->isDeleted()) {
-            $this->fail(4, "User deleted");
+            $this->fail(4, "User is deleted");
         }
         
         if(!$user->canBeViewedBy($this->getUser() ?? NULL)) {

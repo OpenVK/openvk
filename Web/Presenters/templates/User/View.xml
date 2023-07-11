@@ -59,7 +59,7 @@
 {/block}
 
 {block content}
-    {if !is_null($thisUser) && $thisUser->getId() != $user->getId() && $user->getProfileType() == 1 && $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+    {if !is_null($thisUser) && $thisUser->getId() != $user->getId() && $user->getProfileType() == 1 && $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL) && $thisUser->getSubscriptionStatus($user) < 3}
         <div class="msg msg_err" style="width:96%;">
             <b>{_private_profile_warning}</b>
             <br>
@@ -124,7 +124,7 @@
                         {/if}
                     </div>
                 </div>
-                <div>
+                <div n:if="$user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
                     <table id="basicInfo" class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0">
                         <tbody>
                             <tr>
@@ -134,7 +134,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="msg msg_yellow" style="width: 93%;">
+                <div class="msg msg_yellow" style="width: 93%;{if !$user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)}margin-top: 5px;{/if}">
                     {var $m = $user->isFemale() ? "f" : "m"}
                     {tr("limited_access_to_page_$m", $user->getFirstName())}
 

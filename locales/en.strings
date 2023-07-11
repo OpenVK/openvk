@@ -348,6 +348,7 @@
 "search_group_desc" = "Here you can browse through the existing groups and choose a group to suit your needs...";
 "owners_delete" = "Only group's creator can delete it.";
 "owners_restore" = "Only group's creator can restore it?";
+"banned_restore" = "You can't unban banned club.";
 
 "delete_group" = "Delete group";
 "restore_group" = "Restore group";

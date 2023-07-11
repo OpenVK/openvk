@@ -230,7 +230,7 @@ class Video extends Media
             return $this->getOwner()->canBeViewedBy($user) && $this->getOwner()->getPrivacyPermission('videos.read', $user);
         } else {
             # когда у видосов появятся группы
-            return true;
+            return $this->getOwner()->canBeViewedBy($user);
         }
     }
 }

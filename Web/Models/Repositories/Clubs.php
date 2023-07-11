@@ -52,7 +52,7 @@ class Clubs
         $nnparamsCount = 0;
         
         foreach($pars as $paramName => $paramValue)
-            if($paramName != "before" && $paramName != "after" && $paramName != "gender" && $paramName != "maritalstatus" && $paramName != "politViews" && $paramName != "doNotSearchMe")
+            if($paramName != "doNotShowDeleted")
                 $paramValue != NULL ? $notNullParams += ["$paramName" => "%$paramValue%"] : NULL;
             else
                 $paramValue != NULL ? $notNullParams += ["$paramName" => "$paramValue"]   : NULL;
@@ -93,7 +93,7 @@ class Clubs
             ];
         */
     }
-	
+    
     function getWriteableClubs(int $id): \Traversable
     {
         $result    = $this->clubs->where("owner", $id)->where("deleted", 0);
