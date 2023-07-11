@@ -1142,8 +1142,8 @@
 
 "blacklist" = "Чёрный список";
 "user_blacklisted_you" = "Пользователь внёс Вас в чёрный список.";
-"user_blacklisted" = "$1 занесён в чёрный список."
-"user_removed_from_the_blacklist" = "$1 удалён из чёрного списка."
+"user_blacklisted" = "$1 занесён в чёрный список.";
+"user_removed_from_the_blacklist" = "$1 удалён из чёрного списка.";
 
 /* Away */
 
