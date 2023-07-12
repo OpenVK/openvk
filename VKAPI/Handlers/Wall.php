@@ -125,6 +125,7 @@ final class Wall extends VKAPIRequestHandler
                 "can_archive"  => false, # TODO MAYBE
                 "is_archived"  => false,
                 "is_pinned"    => $post->isPinned(),
+                "is_explicit"  => $post->isExplicit(),
                 "attachments"  => $attachments,
                 "post_source"  => $post_source,
                 "comments"     => (object)[
@@ -299,6 +300,7 @@ final class Wall extends VKAPIRequestHandler
                     "can_archive"  => false, # TODO MAYBE
                     "is_archived"  => false,
                     "is_pinned"    => $post->isPinned(),
+                    "is_explicit"  => $post->isExplicit(),
                     "post_source"  => $post_source,
                     "attachments"  => $attachments,
                     "comments"     => (object)[
