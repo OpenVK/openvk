@@ -61,7 +61,7 @@ final class Photos extends VKAPIRequestHandler
         }
 
         return (object) [
-            "upload_url" => $this->getPhotoUploadUrl("photo", isset($club) ? 0 : $club->getId()),
+            "upload_url" => $this->getPhotoUploadUrl("photo", !isset($club) ? 0 : $club->getId()),
         ];
     }
 
