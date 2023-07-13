@@ -300,7 +300,7 @@ class Photo extends Media
     {
         $res = (object) [];
 
-        $res->id       = $res->pid = $this->getId();
+        $res->id       = $res->pid = $this->getVirtualId();
         $res->owner_id = $res->user_id = $this->getOwner()->getId();
         $res->aid      = $res->album_id = NULL;
         $res->width    = $this->getDimensions()[0];
