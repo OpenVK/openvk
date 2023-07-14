@@ -14,9 +14,12 @@ final class Polls extends VKAPIRequestHandler
     {
         $poll = (new PollsRepo)->get($poll_id);
 
-        if (!$poll)
+        if(!$poll)
             $this->fail(100, "One of the parameters specified was missing or invalid: poll_id is incorrect");
         
+        if(!$poll->canBeViewedBy($this->getUser()))
+            $this->fail(256, "Access to poll denied");
+
         $users = array();
         $answers = array();
         foreach($poll->getResults()->options as $answer) {
@@ -73,6 +76,9 @@ final class Polls extends VKAPIRequestHandler
         if(!$poll)
             $this->fail(251, "Invalid poll id");
 
+        if(!$poll->canBeViewedBy($this->getUser()))
+            $this->fail(256, "Access to poll denied");
+
         try {
             $poll->vote($this->getUser(), explode(",", $answers_ids));
             return 1;
@@ -94,6 +100,9 @@ final class Polls extends VKAPIRequestHandler
 
         if(!$poll)
             $this->fail(251, "Invalid poll id");
+
+        if(!$poll->canBeViewedBy($this->getUser()))
+            $this->fail(256, "Access to poll denied");
 
         try {
             $poll->revokeVote($this->getUser());

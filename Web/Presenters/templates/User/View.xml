@@ -110,6 +110,15 @@
                         <input type="submit" class="profile_link" value="{_friends_reject}" style="width: 194px;" />
                     </form>
                 {/if}
+                {if $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
+                    <a href="javascript:toggleBanInSupport()" class="profile_link" style="width: 194px;">
+                        {if $user->isBannedInSupport()}
+                            {_unban_in_support_user_action}
+                        {else}
+                            {_ban_in_support_user_action}
+                        {/if}
+                    </a>
+                {/if}
             </div>
         </div>
         <div class="right_big_block">
@@ -728,6 +737,8 @@
             }
         </script>
 
+        {/if}
+
         <script n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)">
             {if $user->isBannedInSupport()}
                 function toggleBanInSupport() {
@@ -820,8 +831,6 @@
             }
         </script>
     </div>
-    
-    {/if}
     
     {else} {* isBanned() *}
         {include "banned.xml"}

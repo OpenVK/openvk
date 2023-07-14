@@ -19,6 +19,9 @@ final class PollPresenter extends OpenVKPresenter
         $poll = $this->polls->get($id);
         if(!$poll)
             $this->notFound();
+
+        if(!$poll->canBeViewedBy($this->user->identity))
+            $this->notFound();
     
         $this->template->id       = $poll->getId();
         $this->template->title    = $poll->getTitle();
@@ -51,6 +54,9 @@ final class PollPresenter extends OpenVKPresenter
     {
         $poll = $this->polls->get($pollId);
         if(!$poll)
+            $this->notFound();
+        
+        if(!$poll->canBeViewedBy($this->user->identity))
             $this->notFound();
         
         if($poll->isAnonymous())

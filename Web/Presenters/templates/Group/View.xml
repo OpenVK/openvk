@@ -135,13 +135,12 @@
                 function banClub() {
                     let name = {$club->getName()}
                     let body = tr("ban_group_desc", {$club->getName()})
-                    let cool = tr("come_up_with_something_cool")
                     let num  = {$club->getId()}
                     body += `
                         <br>
-                        <input type="text" id="block_reason" name="block_reason" placeholder="` + cool + `">
-                        <input type="checkbox" value="1" id="delete_every_post" name="delete_every_post">` + tr('delete_every_post') +
-                        `<br><input type="checkbox" value="1" id="unsub_everyone" name="unsub_everyone">` + tr('unsubscribe_everyoune')
+                        <input type="text" id="block_reason" name="block_reason" placeholder="` + tr("come_up_with_something_cool") + `">
+                        <input type="checkbox" value="1" id="delete_every_post" name="delete_every_post"><label for="delete_every_post"> ` + tr('delete_every_post') + `</label>
+                        <br><input type="checkbox" value="1" id="unsub_everyone" name="unsub_everyone"><label for="unsub_everyone"> ` + tr('unsubscribe_everyoune') + `</label>`
                     
 
                     MessageBox({_ban_group} + " " + {$club->getName()}, body, [{_ok}, {_cancel}], [

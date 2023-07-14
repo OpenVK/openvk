@@ -293,8 +293,8 @@ class Poll extends Attachable
         }
     }
 
-    function canBeViewedBy(?User $user): bool
+    function canBeViewedBy(?User $user = NULL): bool
     {
-        return true;
+        return $this->getOwner()->canBeViewedBy($user);
     }
 }

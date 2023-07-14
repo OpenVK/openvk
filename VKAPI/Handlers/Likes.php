@@ -70,9 +70,12 @@ final class Likes extends VKAPIRequestHandler
         switch($type) {
             case "post":
                 $user = (new UsersRepo)->get($user_id);
-                if (is_null($user))
+                if(is_null($user))
                     $this->fail(100, "One of the parameters specified was missing or invalid: user not found");
 
+                if(!$user->canBeViewedBy($this->getUser()))
+                    $this->fail(1983, "Access to user denied");
+                
                 $post = (new PostsRepo)->getPostById($owner_id, $item_id);
                 if (is_null($post))
                     $this->fail(100, "One of the parameters specified was missing or invalid: object not found");
