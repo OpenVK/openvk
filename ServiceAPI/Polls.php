@@ -26,7 +26,12 @@ class Polls implements Handler
     {
         $poll = $this->polls->get($pollId);
         if(!$poll) {
-            $reject("Poll not found");
+            $reject(1, "Poll not found");
+            return;
+        }
+
+        if(!$poll->canBeViewedBy($this->user)) {
+            $reject(12, "Access to poll denied");
             return;
         }
         
@@ -34,16 +39,16 @@ class Polls implements Handler
             $options = explode(",", $options);
             $poll->vote($this->user, $options);
         } catch(AlreadyVotedException $ex) {
-            $reject("Poll state changed: user has already voted.");
+            $reject(10, "Poll state changed: user has already voted.");
             return;
         } catch(PollLockedException $ex) {
-            $reject("Poll state changed: poll has ended.");
+            $reject(25, "Poll state changed: poll has ended.");
             return;
         } catch(InvalidOptionException $ex) {
-            $reject("Foreign options passed.");
+            $reject(34, "Foreign options passed.");
             return;
         } catch(UnexpectedValueException $ex) {
-            $reject("Too much options passed.");
+            $reject(42, "Too much options passed.");
             return;
         }
         
@@ -54,14 +59,19 @@ class Polls implements Handler
     {
         $poll = $this->polls->get($pollId);
         if(!$poll) {
-            $reject("Poll not found");
+            $reject(28, "Poll not found");
+            return;
+        }
+        
+        if(!$poll->canBeViewedBy($this->user)) {
+            $reject(12, "Access to poll denied");
             return;
         }
         
         try {
             $poll->revokeVote($this->user);
         } catch(PollLockedException $ex) {
-            $reject("Votes can't be revoked from this poll.");
+            $reject(19, "Votes can't be revoked from this poll.");
             return;
         }
     

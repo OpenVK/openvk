@@ -4,7 +4,7 @@ use openvk\Web\Models\Exceptions\TooMuchOptionsException;
 use openvk\Web\Util\DateTime;
 use \UnexpectedValueException;
 use Nette\InvalidStateException;
-use openvk\Web\Models\Repositories\Users;
+use openvk\Web\Models\Repositories\{Users, Posts};
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Exceptions\PollLockedException;
 use openvk\Web\Models\Exceptions\AlreadyVotedException;
@@ -293,8 +293,18 @@ class Poll extends Attachable
         }
     }
 
+    function getAttachedPost()
+    {
+        $post = DatabaseConnection::i()->getContext()->table("attachments")
+            ->where(
+                ["attachable_type" => static::class, 
+                "attachable_id"    => $this->getId()])->fetch();
+
+        return (new Posts)->get($post->target_id);
+    }
+
     function canBeViewedBy(?User $user = NULL): bool
     {
-        return $this->getOwner()->canBeViewedBy($user);
+        return $this->getAttachedPost()->canBeViewedBy($user);
     }
 }
