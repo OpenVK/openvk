@@ -41,9 +41,6 @@ class Blacklists
         if (!$author || !$target)
             return FALSE;
 
-        bdump($this->getByAuthorAndTarget($author->getId(), $target->getId()), "хуита какая-то вроде для бл*клиста");
-
-
         return !is_null($this->getByAuthorAndTarget($author->getId(), $target->getId()));
     }
 }
