@@ -394,7 +394,7 @@
     <div class="right_big_block">
         <div class="page_info">
             <div n:if="$isBlacklistedByThem AND $thisUser->isAdmin() AND $thisUser->getId() !== $user->getId()" class="user-alert">
-                <b>{admin_privacy_warning}:</b>
+                <b>{_admin_privacy_warning}:</b>
                 <br/>
                 {_user_blacklisted_you}
             </div>

@@ -24,7 +24,11 @@ class Blacklists
 
     function getByAuthorAndTarget(int $author, int $target): ?BlacklistItem
     {
-        return new BlacklistItem($this->blacklists->where(["author" => $author, "target" => $target])->fetch());
+        $fetch = $this->blacklists->where(["author" => $author, "target" => $target])->fetch();
+        if ($fetch)
+            return new BlacklistItem($fetch);
+        else
+            return null;
     }
 
     function getCount(User $user): int
@@ -36,6 +40,9 @@ class Blacklists
     {
         if (!$author || !$target)
             return FALSE;
+
+        bdump($this->getByAuthorAndTarget($author->getId(), $target->getId()), "хуита какая-то вроде для бл*клиста");
+
 
         return !is_null($this->getByAuthorAndTarget($author->getId(), $target->getId()));
     }

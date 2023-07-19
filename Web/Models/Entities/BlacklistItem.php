@@ -28,4 +28,6 @@ class BlacklistItem extends RowModel
     {
         return new DateTime($this->getRecord()->created);
     }
+
+    
 }
