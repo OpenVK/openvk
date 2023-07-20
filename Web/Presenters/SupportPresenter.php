@@ -396,4 +396,24 @@ final class SupportPresenter extends OpenVKPresenter
             $this->flashFail("succ", "Успех", "Профиль создан. Теперь пользователи видят Ваши псевдоним и аватарку вместо стандартных аватарки и номера.");
         }
     }
+
+    function renderCloseTicket(int $id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->assertNoCSRF();
+        $this->willExecuteWriteAction();
+
+        $ticket = $this->tickets->get($id);
+
+        if($ticket->isDeleted() === 1 || $ticket->getType() === 2 || $ticket->getUserId() !== $this->user->id) {
+            header("HTTP/1.1 403 Forbidden");
+            header("Location: /support/view/" . $id);
+            exit;
+        }
+
+        $ticket->setType(2);
+        $ticket->save();
+
+        $this->flashFail("succ", tr("ticket_changed"), tr("ticket_changed_comment"));
+    }
 }
