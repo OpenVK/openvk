@@ -879,7 +879,12 @@ final class Wall extends VKAPIRequestHandler
         foreach($attachment->getUserVote($user) as $vote)
             $userVote[] = $vote[0];
 
-        $ownerr = $attachment->getAttachedPost()->getOwner() instanceof User ? $attachment->getAttachedPost()->getOwner()->getId() : $attachment->getAttachedPost()->getOwner()->getId() * -1;
+        $ownerr = 0;
+
+        if(!is_null($attachment->getAttachedPost())) {
+            $ownerr = $attachment->getAttachedPost()->getOwner() instanceof User ? $attachment->getAttachedPost()->getOwner()->getId() : $attachment->getAttachedPost()->getOwner()->getId() * -1;
+        }
+        
         return [
             "type"  => "poll",
             "poll" => [
@@ -891,7 +896,7 @@ final class Wall extends VKAPIRequestHandler
                 "can_vote"       => $attachment->canVote($user),
                 "can_report"     => false,
                 "can_share"      => true,
-                "created"        => $attachment->getAttachedPost()->getPublicationTime()->timestamp(),
+                "created"        => $attachment->getAttachedPost() ? $attachment->getAttachedPost()->getPublicationTime()->timestamp() : 0,
                 "id"             => $attachment->getId(),
                 "owner_id"       => $ownerr,
                 "question"       => $attachment->getTitle(),

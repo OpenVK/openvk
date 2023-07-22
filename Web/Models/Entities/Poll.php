@@ -300,11 +300,20 @@ class Poll extends Attachable
                 ["attachable_type" => static::class, 
                 "attachable_id"    => $this->getId()])->fetch();
 
-        return (new Posts)->get($post->target_id);
+        if(!is_null($post->target_id)) {
+            return (new Posts)->get($post->target_id);
+        } else {
+            return NULL;
+        }
     }
 
     function canBeViewedBy(?User $user = NULL): bool
     {
-        return $this->getAttachedPost()->canBeViewedBy($user);
+        if(!is_null($this->getAttachedPost())) {
+            return $this->getAttachedPost()->canBeViewedBy($user);
+        } else {
+            return true;
+        }
+        
     }
 }
