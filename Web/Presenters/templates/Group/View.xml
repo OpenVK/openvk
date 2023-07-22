@@ -229,7 +229,7 @@
                         
                         <img
                             src="{is_null($cover)?'/assets/packages/static/openvk/img/camera_200.png':$cover->getURL()}"
-                            style="max-width: 80px; max-height: 54pt;" />
+                            style="max-width: 80px; max-height: 54pt;" loading=lazy />
                     </div>
                     <div>
                         <b><a href="/album{$album->getPrettyId()}">{$album->getName()}</a></b><br>

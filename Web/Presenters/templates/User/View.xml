@@ -273,7 +273,7 @@
                             
                             <img
                                 src="{is_null($cover)?'/assets/packages/static/openvk/img/camera_200.png':$cover->getURLBySizeId('small')}"
-                                style="max-width: 80px; max-height: 54pt;" />
+                                style="max-width: 80px; max-height: 54pt;" loading=lazy />
                         </div>
                         <div style="overflow: hidden; overflow-wrap: break-word;">
                             <b><a href="/album{$album->getPrettyId()}">{$album->getName()}</a></b><br>
@@ -585,7 +585,7 @@
                                 <img style="width: 70px; max-height: 70px;"
                                     src="{$giftDescriptor->gift->getImage(2)}"
                                     alt="{$hideInfo ? tr('gift') : ($giftDescriptor->caption ?? tr('gift'))}" 
-                                    title="{$hideInfo ? tr('gift') : ($giftDescriptor->caption ?? tr('gift'))}" />
+                                    title="{$hideInfo ? tr('gift') : ($giftDescriptor->caption ?? tr('gift'))}" loading=lazy />
                             </a>  
                         </div>
                     </div>

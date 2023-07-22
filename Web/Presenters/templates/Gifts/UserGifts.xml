@@ -16,7 +16,7 @@
 {/block}
 
 {block preview}
-    <img src="{$x->gift->getImage(2)}" width="75" alt="{_gift}" />
+    <img src="{$x->gift->getImage(2)}" width="75" alt="{_gift}" loading=lazy />
 {/block}
 
 {block name}

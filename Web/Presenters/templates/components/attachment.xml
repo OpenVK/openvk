@@ -1,7 +1,7 @@
 {if $attachment instanceof \openvk\Web\Models\Entities\Photo}
     {if !$attachment->isDeleted()}
         <a href="{$attachment->getPageUrl()}">
-            <img class="media" src="{$attachment->getURLBySizeId('normal')}" alt="{$attachment->getDescription()}" />
+            <img class="media" src="{$attachment->getURLBySizeId('normal')}" alt="{$attachment->getDescription()}" loading=lazy />
         </a>
     {else}
         <a href="javascript:alert('{_attach_no_longer_available}');">
