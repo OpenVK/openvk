@@ -385,7 +385,7 @@ final class SupportPresenter extends OpenVKPresenter
             $agent->setNumerate((int) $this->postParam("number") ?? NULL);
             $agent->setIcon($this->postParam("avatar"));
             $agent->save();
-            $this->flashFail("succ", "Успех", "Профиль отредактирован.");
+            $this->flashFail("succ", tr("agent_profile_created"));
         } else {
             $agent = new SupportAgent;
             $agent->setAgent($this->user->identity->getId());
@@ -393,7 +393,7 @@ final class SupportPresenter extends OpenVKPresenter
             $agent->setNumerate((int) $this->postParam("number") ?? NULL);
             $agent->setIcon($this->postParam("avatar"));
             $agent->save();
-            $this->flashFail("succ", "Успех", "Профиль создан. Теперь пользователи видят Ваши псевдоним и аватарку вместо стандартных аватарки и номера.");
+            $this->flashFail("succ", tr("agent_profile_created_1"), tr("agent_profile_created_2"));
         }
     }
 

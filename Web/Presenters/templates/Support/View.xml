@@ -44,7 +44,7 @@
         </div>
         {if $ticket->getType() === 1}
             <div class="post-author" style="border-top: none; padding: 14px; margin-top: 14px;">
-                Если у Вас больше нет вопросов, Вы можете <a onClick="closeTicket()">закрыть этот тикет</a>.
+                {_you_can_close_this_ticket_1} <a onClick="closeTicket()">{_you_can_close_this_ticket_2}</a>.
             </div>
         {/if}
         <div class="text" style="padding-top: 10px; border-bottom: #ECECEC solid 1px;">
