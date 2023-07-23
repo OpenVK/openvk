@@ -1,4 +1,6 @@
 {var $author = $post->getOwner()}
+{var $platform = $post->getPlatform()}
+{var $platformDetails = $post->getPlatformDetails()}
 {if $post->isDeactivationMessage() && $post->getText()}
     {var $deac = "post_deact"}
 {else}
@@ -20,6 +22,10 @@
                     <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
                     {if $post->isDeactivationMessage()}
                         {$author->isFemale() ? tr($deac . "_f") : tr($deac . "_m")}
+                    {elseif $post->isUpdateAvatarMessage() && !$post->isPostedOnBehalfOfGroup()}
+                        {$author->isFemale() ? tr("upd_f") : tr("upd_m")}
+                    {elseif $post->isUpdateAvatarMessage() && $post->isPostedOnBehalfOfGroup()}
+                        {tr("upd_g")}
                     {elseif $post->isPostedOnBehalfOfGroup()}
                         {_post_writes_g}
                     {else}
@@ -46,6 +52,9 @@
                     <br/>
                     <a href="/wall{$post->getPrettyId()}" class="date">
                         {$post->getPublicationTime()}{if $post->isPinned()}, {_pinned}{/if}
+                        <a n:if="!empty($platform)" class="client_app" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
+                            <img src="/assets/packages/static/openvk/img/app_icons_mini/{$post->getPlatform(this)}.svg">
+                        </a>
                     </a>
                 </div>
                 <div class="post-content" id="{$post->getPrettyId()}">
@@ -102,10 +111,10 @@
                         &nbsp;|&nbsp;
                     {/if}
                     
-                    <a n:if="!($forceNoShareLink ?? false)" class="post-share-button" {ifset $thisUser} href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')"{/ifset}>
+                    <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button" {ifset $thisUser} href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')"{/ifset}>
                         {_share}
                         {if $post->getRepostCount() > 0}
-                            (<b>{$post->getRepostCount()}</b>)
+                            (<b id="repostsCount{$post->getPrettyId()}">{$post->getRepostCount()}</b>)
                         {/if}
                     </a>
 

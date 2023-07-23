@@ -1,7 +1,6 @@
 {if $attachment instanceof \openvk\Web\Models\Entities\Photo}
     {if !$attachment->isDeleted()}
-        {var $link = "/photo" . ($attachment->isAnonymous() ? ("s/" . base_convert((string) $attachment->getId(), 10, 32)) : $attachment->getPrettyId())}
-        <a href="{$link}">
+        <a href="{$attachment->getPageUrl()}">
             <img class="media" src="{$attachment->getURLBySizeId('normal')}" alt="{$attachment->getDescription()}" />
         </a>
     {else}
@@ -10,9 +9,39 @@
         </a>
     {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Video}
-    <video class="media" src="{$attachment->getURL()}" controls="controls"></video>
+    {if $attachment->getType() === 0}
+        <div class="bsdn media" data-name="{$attachment->getName()}" data-author="{$attachment->getOwner()->getCanonicalName()}">
+            <video class="media" src="{$attachment->getURL()}"></video>
+        </div>
+    {else}
+        {var $driver = $attachment->getVideoDriver()}
+        {if !$driver}
+            <span style="color:red;">{_version_incompatibility}</span>
+        {else}
+            {$driver->getEmbed("100%")|noescape}
+        {/if}
+    {/if}
+
+    <div class="video-wowzer">
+        <img src="/assets/packages/static/openvk/img/videoico.png" />
+        <a href="/video{$attachment->getPrettyId()}">{$attachment->getName()}</a>
+    </div>
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Poll}
     {presenter "openvk!Poll->view", $attachment->getId()}
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Note}
+    {if !$attachment->isDeleted()}
+        <div class="attachment_note">
+            <img class="attachment_note_icon" src="/assets/packages/static/openvk/img/note.svg">
+            <span class="attachment_note_text">{_note}</span>
+            <span class="attachment_note_name"><a href="javascript:void(showArticle({$attachment->getId()}));">{ovk_proc_strtr($attachment->getName(), 66)}</a></span>
+        </div>
+    {else}
+        <div class="attachment_note">
+            <img class="attachment_note_icon" src="/assets/packages/static/openvk/img/note.svg">
+            <span class="attachment_note_text">{_note}</span>
+            <span class="attachment_note_name">{_deleted}</span>
+        </div>
+    {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Post}
     {php $GLOBALS["_nesAttGloCou"] = (isset($GLOBALS["_nesAttGloCou"]) ? $GLOBALS["_nesAttGloCou"] : 0) + 1}
     {if $GLOBALS["_nesAttGloCou"] > 2}

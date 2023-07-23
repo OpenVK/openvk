@@ -17,7 +17,7 @@
 "password" = "Գաղտնաբառ";
 "registration" = "Գրանցում";
 "forgot_password" = "Մոռացե՞լ եք գաղտնաբառը";
-"checkbox_in_registration" = "Ես համաձայն եմ <a href='/privacy'>կոնֆիդենցիալության քաղաքականությանն</a> ու <a href='/about'>կայքի կանոնադրությանը</a>։";
+"checkbox_in_registration" = "Ես համաձայն եմ <a href='/privacy'>կոնֆիդենցիալության քաղաքականությանն</a> ու <a href='/terms'>կայքի կանոնադրությանը</a>։";
 "checkbox_in_registration_unchecked" = "Դուք պետք է համաձայնվեք պայմանների հետ նախքան գրանցվելը։";
 
 "login_failed" = "Չհաջողվեց մուտք գործել";
@@ -436,6 +436,7 @@
 "left_menu_donate" = "Աջակցել";
 
 "footer_about_instance" = "հոսքի մասին";
+"footer_rules" = "կանոնները";
 "footer_blog" = "բլոգ";
 "footer_help" = "օգնություն";
 "footer_developers" = "մշակողներին";
@@ -556,6 +557,7 @@
 "end_all_sessions_description" = "Եթե ցանկանում եք դուրս գալ $1–ից ամեն դեվայսից, սեղմե՛ք ներքևի կոճակը";
 
 "end_all_sessions_done" = "Բոլոր սեսսիաները նետված են, ներառյալ բջջային հավելվածները";
+"browse" = "Վերանայում";
 
 /* Two-factor authentication */
 
@@ -1171,6 +1173,7 @@
 "about_wall_posts_few" = "<b>$1</b> գրություն պատերի վրա";
 "about_wall_posts_many" = "<b>$1</b> գրություն պատերի վրա";
 "about_wall_posts_other" = "<b>$1</b> գրություն պատերի վրա";
+"about_watch_rules" = "տես <a href='$1'>այստեղ</a>․";
 
 /* Dialogs */
 

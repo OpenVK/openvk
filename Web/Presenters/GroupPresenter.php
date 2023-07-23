@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{Club, Photo};
+use openvk\Web\Models\Entities\{Club, Photo, Post};
+use Nette\InvalidStateException;
 use openvk\Web\Models\Entities\Notifications\ClubModeratorNotification;
 use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers, Topics};
 use Chandler\Security\Authenticator;
@@ -191,7 +192,7 @@ final class GroupPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
         
         $club = $this->clubs->get($id);
-        if(!$club->canBeModifiedBy($this->user->identity))
+        if(!$club || !$club->canBeModifiedBy($this->user->identity))
             $this->notFound();
         else
             $this->template->club = $club;
@@ -248,6 +249,88 @@ final class GroupPresenter extends OpenVKPresenter
             
             $this->flash("succ", "Изменения сохранены", "Новые данные появятся в вашей группе.");
         }
+    }
+    
+    function renderSetAvatar(int $id)
+    {
+        $photo = new Photo;
+        $club = $this->clubs->get($id);
+        if($_SERVER["REQUEST_METHOD"] === "POST" && $_FILES["ava"]["error"] === UPLOAD_ERR_OK) {
+            try {
+                $anon = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"];
+                if($anon && $this->user->id === $club->getOwner()->getId())
+                    $anon = $club->isOwnerHidden();  
+                else if($anon)
+                    $anon = $club->getManager($this->user->identity)->isHidden();
+                $photo->setOwner($this->user->id);
+                $photo->setDescription("Club image");
+                $photo->setFile($_FILES["ava"]);
+                $photo->setCreated(time());
+                $photo->setAnonymous($anon);
+                $photo->save();
+                
+                (new Albums)->getClubAvatarAlbum($club)->addPhoto($photo);
+
+                $flags = 0;
+                $flags |= 0b00010000;
+                $flags |= 0b10000000;
+
+                $post = new Post;
+                $post->setOwner($this->user->id);
+                $post->setWall($club->getId()*-1);
+                $post->setCreated(time());
+                $post->setContent("");
+                $post->setFlags($flags);
+                $post->save();
+                $post->attach($photo);
+
+            } catch(ISE $ex) {
+                $name = $album->getName();
+                $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию.");
+            }
+        }
+        $this->returnJson([
+            "url" => $photo->getURL(),
+            "id" => $photo->getPrettyId()
+        ]);
+    }
+    function renderEditBackdrop(int $id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+    
+        $club = $this->clubs->get($id);
+        if(!$club || !$club->canBeModifiedBy($this->user->identity))
+            $this->notFound();
+        else
+            $this->template->club = $club;
+        
+        if($_SERVER["REQUEST_METHOD"] !== "POST")
+            return;
+    
+        if($this->postParam("subact") === "remove") {
+            $club->unsetBackDropPictures();
+            $club->save();
+            $this->flashFail("succ", tr("backdrop_succ_rem"), tr("backdrop_succ_desc")); # will exit
+        }
+    
+        $pic1 = $pic2 = NULL;
+        try {
+            if($_FILES["backdrop1"]["error"] !== UPLOAD_ERR_NO_FILE)
+                $pic1 = Photo::fastMake($this->user->id, "Profile backdrop (system)", $_FILES["backdrop1"]);
+        
+            if($_FILES["backdrop2"]["error"] !== UPLOAD_ERR_NO_FILE)
+                $pic2 = Photo::fastMake($this->user->id, "Profile backdrop (system)", $_FILES["backdrop2"]);
+        } catch(InvalidStateException $e) {
+            $this->flashFail("err", tr("backdrop_error_title"), tr("backdrop_error_no_media"));
+        }
+    
+        if($pic1 == $pic2 && is_null($pic1))
+            $this->flashFail("err", tr("backdrop_error_title"), tr("backdrop_error_no_media"));
+    
+        $club->setBackDropPictures($pic1, $pic2);
+        $club->save();
+        $this->flashFail("succ", tr("backdrop_succ"), tr("backdrop_succ_desc"));
     }
     
     function renderStatistics(int $id): void

@@ -1,9 +1,9 @@
 {
   "dependencies": {
-    "@atlassian/aui": "^8.5.1",
+    "@atlassian/aui": "^9.6.0",
     "create-react-class": "^15.7.0",
     "handlebars": "^4.7.7",
-    "jquery": "^2.1.0",
+    "jquery": "^3.0.0",
     "knockout": "^3.5.1",
     "ky": "^0.19.0",
     "literallycanvas": "^0.5.2",

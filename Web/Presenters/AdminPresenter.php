@@ -86,6 +86,9 @@ final class AdminPresenter extends OpenVKPresenter
                     $query = "INSERT INTO `ChandlerACLRelations` (`user`, `group`) VALUES ('" . $user->getChandlerGUID() . "', '" . $this->postParam("add-to-group") . "')";
                     DatabaseConnection::i()->getConnection()->query($query);
                 }
+                if($this->postParam("password")) {
+                    $user->getChandlerUser()->updatePassword($this->postParam("password"));
+                }
 
                 $user->save();
 

@@ -80,7 +80,11 @@ final class AuthPresenter extends OpenVKPresenter
             
             if(!Validator::i()->emailValid($this->postParam("email")))
                 $this->flashFail("err", tr("invalid_email_address"), tr("invalid_email_address_comment"));
-            
+
+            if(OPENVK_ROOT_CONF['openvk']['preferences']['security']['forceStrongPassword'])
+                if(!Validator::i()->passwordStrong($this->postParam("password")))
+                    $this->flashFail("err", tr("error"), tr("error_weak_password"));
+
             if (strtotime($this->postParam("birthday")) > time())
                 $this->flashFail("err", tr("invalid_birth_date"), tr("invalid_birth_date_comment"));
 
@@ -203,6 +207,9 @@ final class AuthPresenter extends OpenVKPresenter
     
     function renderFinishRestoringPassword(): void
     {
+        if(OPENVK_ROOT_CONF['openvk']['preferences']['security']['disablePasswordRestoring'])
+            $this->notFound();
+
         $request = $this->restores->getByToken(str_replace(" ", "+", $this->queryParam("key")));
         if(!$request || !$request->isStillValid()) {
             $this->flash("err", tr("token_manipulation_error"), tr("token_manipulation_error_comment"));
@@ -237,6 +244,9 @@ final class AuthPresenter extends OpenVKPresenter
     
     function renderRestore(): void
     {
+        if(OPENVK_ROOT_CONF['openvk']['preferences']['security']['disablePasswordRestoring'])
+            $this->notFound();
+
         if(!is_null($this->user))
             $this->redirect($this->user->identity->getURL());
 

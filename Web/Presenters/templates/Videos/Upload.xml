@@ -25,7 +25,12 @@
           </tr>
           <tr>
             <td width="120" valign="top"><span class="nobold">{_video}:</span></td>
-            <td><input type="file" name="blob" accept="video/*" /></td>
+            <td>
+              <label class="button" style="">{_browse}
+                <input type="file" id="blob" name="blob" style="display: none;" onchange="filename.innerHTML=blob.files[0].name" accept="video/*" />
+              </label>
+              <div id="filename" style="margin-top: 10px;"></div>
+            </td>
           </tr>
           <tr>
             <td width="120" valign="top"><span class="nobold">{_video_link_to_yt}:</span></td>

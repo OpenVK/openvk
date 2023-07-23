@@ -69,6 +69,16 @@
                 </select>
             </div>
             <hr/>
+            <div class="field-group">
+                <label for="email">{_password}</label>
+                <input class="text medium-field" type="password" id="password" name="password" value="" />
+            </div>
+            <div class="buttons-container">
+                <div class="buttons">
+                    <a class="button" onclick="let pswd = Math.random().toString(27).slice(2,12); alert('Сгенерированный пароль: ' + pswd + '\n\nНе забудьте сообщить пользователю, чтобы он сменил пароль на свой!'); $('input#password').val(pswd);">Сгенерировать пароль</a>
+                </div>
+            </div>
+            <hr/>
             <h2>{_c_groups}</h2>
             <div>
                 <div class="field-group">
