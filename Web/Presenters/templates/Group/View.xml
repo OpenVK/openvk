@@ -134,7 +134,7 @@
             <script>
                 function banClub() {
                     let name = {$club->getName()}
-                    let body = tr("ban_group_desc", {$club->getName()})
+                    let body = tr("ban_group_desc", escapeHtml(name))
                     let num  = {$club->getId()}
                     body += `
                         <br>
@@ -143,7 +143,7 @@
                         <br><input type="checkbox" value="1" id="unsub_everyone" name="unsub_everyone"><label for="unsub_everyone"> ` + tr('unsubscribe_everyoune') + `</label>`
                     
 
-                    MessageBox({_ban_group} + " " + {$club->getName()}, body, [{_ok}, {_cancel}], [
+                    MessageBox({_ban_group} + " " + escapeHtml(name), body, [{_ok}, {_cancel}], [
                         (function() {
                             let xhr = new XMLHttpRequest()
                             xhr.open("POST", "/admin/clubs/id" + num + "/ban" + "?hash=" + {rawurlencode($csrfToken)}, true);
