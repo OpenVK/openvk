@@ -385,7 +385,7 @@ final class SupportPresenter extends OpenVKPresenter
             $agent->setNumerate((int) $this->postParam("number") ?? NULL);
             $agent->setIcon($this->postParam("avatar"));
             $agent->save();
-            $this->flashFail("succ", tr("agent_profile_created"));
+            $this->flashFail("succ", tr("agent_profile_edited"));
         } else {
             $agent = new SupportAgent;
             $agent->setAgent($this->user->identity->getId());
