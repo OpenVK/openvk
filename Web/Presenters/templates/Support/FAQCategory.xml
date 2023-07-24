@@ -1,0 +1,90 @@
+{extends "../@layout.xml"}
+
+{block title}{$title}{/block}
+
+{block header}
+    <a href="/support">{_menu_help}</a>
+    <div style="display:inline;" n:if="$mode === 'view'">> {_support_faq_category}</div>
+    <div style="display:inline;" n:if="$mode === 'edit'">> <a href="/faqs{$category->getId()}">{$category->getTitle()}</a> > {_support_edit_mode}</div>
+{/block}
+
+{block content}
+    {var $articles = iterator_to_array($category->getArticles(NULL, $canEditFAQ))}
+    <div n:if="$mode === 'view'">
+        <h4 style="display:flex;line-height:28px;gap:8px;padding:8px;">
+            <div style="width:28px;height:28px;border-radius:3px;background:url('/assets/packages/static/openvk/img/faq_icons.png');background-position:0 -{$category->getIconBackgroundPosition()}px;"/>
+            {$category->getTitle()}
+            <div n:if="$canEditFAQ">
+                <a href="/faqs{$category->getId()}?act=edit">({_support_edit})</a>
+                <a href="/faqs{$category->getId()}?act=edit&mode=copy">({_support_copy})</a>
+                <a href="/new_faq?lang={$category->getLanguage()}&cid={$category->getId()}">(+{_support_add_article})</a>
+            </div>
+        </h4>
+        <div style="margin:14px;" />
+        <ul n:if="count($articles) > 0" n:foreach="$articles as $article" style="padding-inline-start:18px;">
+            <li>
+                <a href="/faq{$article->getId()}" style="display:block;">
+                    <h4 style="display:inherit;padding:8px;">{$article->getTitle()}</h4>
+                </a>
+            </li>
+        </ul>
+        <center n:if="count($articles) === 0" style="padding: 30px;">
+            <img src="/assets/packages/static/openvk/img/sad.png" height="45"/>
+            <div style="margin-top: 8px;">{_support_empty}</div>
+        </center>
+    </div>
+    <div n:if="$mode === 'edit'">
+        <form method="post" style="margin:0;">
+            <center>
+                <input value="{$category->getTitle()}" type="text" name="title" style="width: 80%; resize: vertical;" placeholder="{_support_faq_title_placeholder}" /><br /><br />
+                <input n:attr="checked => !$category->canSeeByUsers()" type="checkbox" name="for_agents_only" value="1" /> {_support_for_agents_only}
+                <span n:if="$copyMode"><input type="checkbox" name="copy_with_articles" value="1" /> {_support_copy_articles}</span>
+                <br/><br/>
+                <div style="display:grid;grid-template-columns: repeat(11, auto);row-gap: 10px;">
+                    <div n:for="$i = 0; $i < 22; $i++" onclick="onIconClick({$i})">
+                        <div id="icon-{$i}" style="width:28px;height:28px;border-radius:3px;background:url('/assets/packages/static/openvk/img/faq_icons.png');background-position:0 -{28 * $i}px;cursor:pointer;" />
+                    </div>
+                </div>
+                <br/>
+                <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_support_language}: </span>
+                        </td>
+                        <td>
+                            <select name="language">
+                                <option
+                                        n:attr="selected => $language['code'] === $category->getLanguage()"
+                                        n:foreach="$languages as $language"
+                                        value="{$language['code']}"
+                                >[{$language["code"]}] {$language["native_name"]}</option>
+                            </select>
+                        </td>
+                    </tr>
+                </table>
+
+                <input id="icon-number" type="hidden" name="icon" value="0" />
+                <div style="display:none;" id="prev-icon">0</div>
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" value="{_save}" class="button" style="margin-left: 70%;" /><br /><br />
+            </center>
+        </form>
+        <h4 /><br />
+        <form action="/al_helpdesk_cat/{$category->getId()}/delete" method="post" style="margin:0;">
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+            <input type="submit" value="{_delete}" class="button" />
+            <input type="checkbox" name="delete_articles" value="1" /> {_support_delete_articles}
+        </form>
+    </div>
+    <script>
+    const icon_number_elem = document.getElementById("icon-number");
+    const prev_icon = document.getElementById("prev-icon");
+
+    function onIconClick(number) {
+        icon_number_elem.value = number;
+        document.getElementById("icon-" + prev_icon.innerHTML).style.border = "none";
+        prev_icon.innerHTML = number;
+        document.getElementById("icon-" + number).style.border = "3px solid red";
+    }
+    </script>
+{/block}

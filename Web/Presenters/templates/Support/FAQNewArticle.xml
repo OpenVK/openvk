@@ -1,0 +1,57 @@
+{extends "../@layout.xml"}
+
+{block title}{_support_new_article}{/block}
+
+{block header}<a href="/support?lang={$activeLang}">{_menu_help}</a> > {_support_create_article}{/block}
+
+{block content}
+<script>
+function onLanguageSelectChanged(e) {
+    window.location.href = "/new_faq?lang=" + e.value;
+}
+</script>
+<form action="/new_faq" method="post" style="margin:0;">
+    <center>
+        <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+            <tr>
+                <td width="120" valign="top">
+                    <span class="nobold">{_support_language}: </span>
+                </td>
+                <td>
+                    <select name="language" onchange="onLanguageSelectChanged(this)">
+                        <option
+                                n:attr="selected => $language['code'] == $activeLang"
+                                n:foreach="$languages as $language"
+                                value="{$language['code']}"
+                        >[{$language["code"]}] {$language["native_name"]}</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <input type="text" name="title" style="width: 80%; resize: vertical;" placeholder="{_support_faq_title_placeholder}" /><br /><br />
+        <textarea name="text" style="width: 80%; resize: vertical;" placeholder="{_support_faq_text_placeholder}"></textarea><br /><br />
+        <input type="checkbox" name="unlogged_can_see" value="1" /> {_support_unlogged_can_see}
+        <input type="checkbox" name="users_can_see" value="1" /> {_support_users_can_see}
+        <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+            <tr>
+                <td width="120" valign="top">
+                    <span class="nobold">{_support_category}: </span>
+                </td>
+                <td>
+                    <select name="category">
+                        <option
+                                n:attr="selected => $category->getId() == $category_id"
+                                n:foreach="$categories as $category"
+                                value="{$category->getId()}"
+                        >[#{$category->getId()}] {$category->getTitle()}</option>
+                    </select>
+                </td>
+            </tr>
+        </table>
+        {$test}
+
+        <input type="hidden" name="hash" value="{$csrfToken}" />
+        <input type="submit" value="{_create}" class="button" style="margin-left: 70%;" /><br /><br />
+    </center>
+</form>
+{/block}

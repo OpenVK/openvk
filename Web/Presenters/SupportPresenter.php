@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{SupportAgent, Ticket, TicketComment};
-use openvk\Web\Models\Repositories\{Tickets, Users, TicketComments, SupportAgents};
+use openvk\Web\Models\Entities\{FAQArticle, FAQCategory, SupportAgent, Ticket, TicketComment};
+use openvk\Web\Models\Repositories\{FAQCategories, Tickets, Users, TicketComments, SupportAgents, FAQArticles};
 use openvk\Web\Util\Telegram;
 use Chandler\Session\Session;
 use Chandler\Database\DatabaseConnection;
@@ -28,8 +28,12 @@ final class SupportPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
         $this->template->mode = in_array($this->queryParam("act"), ["faq", "new", "list"]) ? $this->queryParam("act") : "faq";
+        $canEdit = $this->user->identity->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0);
 
         if($this->template->mode === "faq") {
+            $this->template->categories = (new FAQCategories)->getList($canEdit ? $this->queryParam("lang") ?? Session::i()->get("lang", "ru") : Session::i()->get("lang", "ru"), $canEdit);
+            $this->template->canEditFAQ = $canEdit;
+
             $lang = Session::i()->get("lang", "ru");
             $base = OPENVK_ROOT . "/data/knowledgebase/faq";
             if(file_exists("$base.$lang.md"))
@@ -104,6 +108,9 @@ final class SupportPresenter extends OpenVKPresenter
                 $this->flashFail("err", tr("error"), tr("you_have_not_entered_name_or_text"));
             }
         }
+
+        $this->template->languages = getLanguages();
+        $this->template->activeLang = $this->queryParam("lang") ?? Session::i()->get("lang", "ru");
     }
     
     function renderList(): void
@@ -395,5 +402,192 @@ final class SupportPresenter extends OpenVKPresenter
             $agent->save();
             $this->flashFail("succ", "Успех", "Профиль создан. Теперь пользователи видят Ваши псевдоним и аватарку вместо стандартных аватарки и номера.");
         }
+    }
+
+    function renderFAQArticle(int $id): void
+    {
+        $article = (new FAQArticles)->get($id);
+        if (!$article || $article->isDeleted())
+            $this->notFound();
+
+        $category = $article->getCategory();
+
+        if ($category->isDeleted())
+            $this->notFound();
+
+        if (!$article->canSeeByUnloggedUsers())
+            $this->assertUserLoggedIn();
+
+        if (!$category->canSeeByUsers() || (!$article->canSeeByUsers() && !$article->canSeeByUnloggedUsers()))
+            $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+
+        $canEdit = false;
+        if ($this->user->identity)
+            $canEdit = $this->user->identity->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0);
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $this->assertNoCSRF();
+            if (!$canEdit) {
+                $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+            }
+
+            $cid = $this->postParam("category");
+            if ($this->postParam("language") != $article->getLanguage()) {
+                $categories = iterator_to_array((new FAQCategories)->getList($this->postParam("language")));
+                if (sizeof($categories) > 0) {
+                    $cid = iterator_to_array((new FAQCategories)->getList($this->postParam("language")))[0]->getId();
+                } else {
+                    $this->flashFail("err", tr("error"), tr("support_cant_change_lang_no_cats"));
+                }
+            }
+
+            $article->setTitle($this->postParam("title"));
+            $article->setText($this->postParam("text"));
+            $article->setUnlogged_Can_see(empty($this->postParam("unlogged_can_see") ? 0 : 1));
+            $article->setUsers_Can_See(empty($this->postParam("users_can_see") ? 0 : 1));
+            $article->setCategory($cid);
+            $article->setLanguage($this->postParam("language"));
+            $article->save();
+            $this->flashFail("succ", tr("changes_saved"));
+        } else {
+            $this->template->mode = $canEdit ? in_array($this->queryParam("act"), ["view", "edit"]) ? $this->queryParam("act") : "view" : "view";
+            $this->template->category = $category;
+            $this->template->article = $article;
+            $this->template->text = (new Parsedown())->text($article->getText());
+            $this->template->canEditFAQ = $canEdit;
+            $this->template->categories = (new FAQCategories)->getList($this->queryParam("lang") ?? $article->getLanguage(), TRUE);
+            $this->template->languages = getLanguages();
+            $this->template->activeLang = $this->queryParam("lang") ?? $article->getLanguage();
+        }
+    }
+
+    function renderFAQCategory(int $id): void
+    {
+        $category = (new FAQCategories)->get($id);
+
+        if (!$category)
+            $this->notFound();
+
+        if (!$category->canSeeByUsers())
+            $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+
+        $canEdit = $this->user->identity->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0);
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $this->assertNoCSRF();
+            if (!$canEdit) {
+                $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+            }
+
+            if ($this->queryParam("mode") === "copy") {
+                $orig_cat = $category;
+                $category = new FAQCategory;
+            }
+
+            $category->setTitle($this->postParam("title"));
+            $category->setIcon($orig_cat->getIcon() ?? $this->postParam("icon"));
+            $category->setFor_Agents_Only(empty($this->postParam("for_agents_only") ? 0 : 1));
+            $category->setLanguage($this->postParam("language"));
+            $category->save();
+
+            if ($this->queryParam("mode") === "copy" && !empty($this->postParam("copy_with_articles"))) {
+                $articles = $orig_cat->getArticles(NULL, TRUE);
+                foreach ($articles as $article) {
+                    $_article = new FAQArticle;
+                    $_article->setCategory($category->getId());
+                    $_article->setTitle($article->getTitle());
+                    $_article->setText($article->getText());
+                    $_article->setUsers_Can_See($article->canSeeByUsers());
+                    $_article->setUnlogged_Can_See($article->canSeeByUnloggedUsers());
+                    $_article->setLanguage($category->getLanguage());
+                    $_article->save();
+                }
+            }
+
+            $this->flashFail("succ", tr("changes_saved"));
+        }
+
+        $this->template->mode = $canEdit ? in_array($this->queryParam("act"), ["view", "edit"]) ? $this->queryParam("act") : "view" : "view";
+        $this->template->copyMode = $canEdit ? $this->queryParam("mode") === "copy" : FALSE;
+        $this->template->category = $category;
+        $this->template->canEditFAQ = $canEdit;
+        $this->template->languages = getLanguages();
+    }
+
+    function renderFAQNewArticle(): void
+    {
+        $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            if (!$this->postParam("category"))
+                $this->flashFail("err", tr("support_category_not_specified"));
+
+            $article = new FAQArticle;
+            $article->setTitle($this->postParam("title"));
+            $article->setText($this->postParam("text"));
+            $article->setUnlogged_Can_see(empty($this->postParam("unlogged_can_see") ? 0 : 1));
+            $article->setUsers_Can_See(empty($this->postParam("users_can_see") ? 0 : 1));
+            $article->setCategory($this->postParam("category"));
+            $article->setLanguage(Session::i()->get("lang", "ru"));
+            $article->save();
+            $this->redirect("/faq" . $article->getId());
+        } else {
+            $this->template->categories = (new FAQCategories)->getList($this->queryParam("lang") ?? Session::i()->get("lang", "ru"), TRUE);
+            $this->template->category_id = $this->queryParam("cid");
+            $this->template->activeLang = $this->queryParam("lang") ?? Session::i()->get("lang", "ru");
+            $this->template->languages = getLanguages();
+        }
+    }
+
+    function renderFAQNewCategory(): void
+    {
+        $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $category = new FAQCategory;
+            $category->setTitle($this->postParam("title"));
+            $category->setIcon($this->postParam("icon"));
+            $category->setFor_Agents_Only(empty($this->postParam("for_agents_only") ? 0 : 1));
+            $category->setLanguage($this->postParam("language"));
+            $category->save();
+            $this->redirect("/faqs" . $category->getId());
+        }
+
+        $this->template->activeLang = $this->queryParam("lang") ?? Session::i()->get("lang", "ru");
+        $this->template->languages = getLanguages();
+    }
+
+    function renderFAQDeleteArticle(int $id): void
+    {
+        $this->assertNoCSRF();
+        $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+
+        $article = (new FAQArticles)->get($id);
+        if (!$article || $article->isDeleted())
+            $this->notFound();
+
+        $cid = $article->getCategory()->getId();
+        $article->delete();
+        $this->redirect("/faqs" . $cid);
+    }
+
+    function renderFAQDeleteCategory(int $id): void
+    {
+        $this->assertNoCSRF();
+        $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+
+        $category = (new FAQCategories)->get($id);
+        if (!$category || $category->isDeleted())
+            $this->notFound();
+
+        if (!empty($this->postParam("delete_articles"))) {
+            $articles = $category->getArticles(NULL, TRUE);
+            foreach ($articles as $article) {
+                $article->delete();
+            }
+        }
+
+        $category->delete();
+        $this->redirect("/support");
     }
 }

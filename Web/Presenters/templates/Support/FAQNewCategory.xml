@@ -1,0 +1,56 @@
+{extends "../@layout.xml"}
+
+{block title}{_support_new_category}{/block}
+
+{block header}<a href="/support?lang={$activeLang}">{_menu_help}</a> > {_support_create_category}{/block}
+
+{block content}
+    <form action="/new_faq_cat" method="post" style="margin:0;">
+        <center>
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_support_language}: </span>
+                    </td>
+                    <td>
+                        <select name="language">
+                            <option
+                                    n:attr="selected => $language['code'] == $activeLang"
+                                    n:foreach="$languages as $language"
+                                    value="{$language['code']}"
+                            >[{$language["code"]}] {$language["native_name"]}</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+            <input type="text" name="title" style="width: 80%; resize: vertical;" placeholder="{_support_faq_title_placeholder}" /><br /><br />
+            <input type="checkbox" name="for_agents_only" value="1" /> {_support_for_agents_only}
+            <br/><br/>
+        </center>
+        <b style="display:block;margin-bottom:8px;padding:0 16px;">Иконка</b>
+        <center>
+            <div style="display:grid;grid-template-columns: repeat(11, auto);row-gap: 10px">
+                <div n:for="$i = 0; $i < 22; $i++" onclick="onIconClick({$i})">
+                    <div id="icon-{$i}" style="width:28px;height:28px;border-radius:3px;background:url('/assets/packages/static/openvk/img/faq_icons.png');background-position:0 -{28 * $i}px;cursor:pointer;" />
+                </div>
+            </div>
+            <br/><br/>
+
+            <input id="icon-number" type="hidden" name="icon" value="0" />
+            <div style="display:none;" id="prev-icon">0</div>
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+            <input type="submit" value="{_create}" class="button" style="margin-left: 70%;" /><br /><br />
+        </center>
+    </form>
+    <script>
+    const icon_number_elem = document.getElementById("icon-number");
+    const prev_icon = document.getElementById("prev-icon");
+
+    function onIconClick(number) {
+        icon_number_elem.value = number;
+        document.getElementById("icon-" + prev_icon.innerHTML).style.border = "none";
+        prev_icon.innerHTML = number;
+        document.getElementById("icon-" + number).style.border = "3px solid red";
+    }
+    </script>
+{/block}

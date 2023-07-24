@@ -913,6 +913,32 @@
 "banned_in_support_1" = "Sorry, <b>$1</b>, but now you can't create tickets.";
 "banned_in_support_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to take away this opportunity from you forever.";
 
+"support_article" = "Article";
+"support_edit_mode" = "Editing";
+"support_faq_title_placeholder" = "A long time ago,";
+"support_faq_text_placeholder" = "In a galaxy far, far away...";
+"support_unlogged_can_see" = "Unauthorized users can see";
+"support_users_can_see" = "Users can see";
+"support_category" = "Category";
+"support_faq_category" = "FAQ Category";
+"support_edit" = "edit";
+"support_add_article" = "article";
+"support_empty" = "There's nothing here yet";
+"support_for_agents_only" = "Only for agents";
+"support_icon_number" = "Icon number";
+"support_create_article" = "Create an article";
+"support_create_category" = "Create a category";
+"support_new_article" = "New article";
+"support_new_category" = "New category";
+"support_article_acc" = "an article";
+"support_category_acc" = "a category";
+"support_language" = "Language";
+"support_category_not_specified" = "You didn't specify a category";
+"support_cant_change_lang_no_cats" = "In this localization, not a single category has been created yet to which the article could be moved";
+"support_copy" = "copy";
+"support_delete_articles" = "Delete articles";
+"support_copy_articles" = "Copy with articles";
+
 /* Invite */
 
 "invite" = "Invite";
