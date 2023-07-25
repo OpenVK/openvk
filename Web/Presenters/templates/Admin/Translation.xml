@@ -68,7 +68,7 @@
         <a class="aui-button aui-button-primary" onclick="openKeyInNewTab({$key['key']})">
             <span class="aui-icon aui-icon-small aui-iconfont-world">{_translate}</span>
         </a>
-        <a class="aui-button aui-button-primary" onclick="deleteKey({$key['index']})">
+        <a class="aui-button aui-button-primary" onclick="deleteKey({$key['index']})" style="background-color: red;">
             <span class="aui-icon aui-icon-small aui-iconfont-delete">{_delete}</span>
         </a>
     </div>
