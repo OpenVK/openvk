@@ -1,7 +1,12 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{SupportAgent, Ticket, TicketComment};
-use openvk\Web\Models\Repositories\{Tickets, Users, TicketComments, SupportAgents};
+use openvk\Web\Models\Entities\{SupportAgent, SupportTemplate, SupportTemplateDir, Ticket, TicketComment};
+use openvk\Web\Models\Repositories\{SupportTemplates,
+    SupportTemplatesDirs,
+    Tickets,
+    Users,
+    TicketComments,
+    SupportAgents};
 use openvk\Web\Util\Telegram;
 use Chandler\Session\Session;
 use Chandler\Database\DatabaseConnection;
@@ -210,7 +215,6 @@ final class SupportPresenter extends OpenVKPresenter
         $this->template->ticket      = $ticket;
         $this->template->comments    = $ticketComments;
         $this->template->id          = $id;
-        $this->template->fastAnswers = OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["fastAnswers"];
     }
     
     function renderAnswerTicketReply(int $id): void
@@ -396,4 +400,233 @@ final class SupportPresenter extends OpenVKPresenter
             $this->flashFail("succ", "Успех", "Профиль создан. Теперь пользователи видят Ваши псевдоним и аватарку вместо стандартных аватарки и номера.");
         }
     }
+
+    function renderGetTemplatesDirs(): void
+    {
+        $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+
+        $dirs = [];
+        foreach ((new SupportTemplatesDirs)->getList($this->user->identity->getId()) as $dir) {
+            $dirs[] = ["id" => $dir->getId(), "title" => $dir->getTitle()];
+        }
+
+        $this->returnJson(["success" => true, "dirs" => $dirs]);
+    }
+
+    function renderGetTemplatesInDir(int $dirId): void
+    {
+        $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+
+        $dir = (new SupportTemplatesDirs)->get($dirId);
+
+        if (!$dir || $dir->getOwner()->getId() !== $this->user->identity->getId() && !$dir->isPublic()) {
+            $this->returnJson(["success" => false, "error" => tr("forbidden")]);
+        }
+
+        $templates = [];
+        foreach ($dir->getTemplates() as $template) {
+            $templateData = [
+                "id" => $template->getId(),
+                "title" => $template->getTitle(),
+                "text" => $template->getText(),
+            ];
+
+            if ($this->queryParam("tid")) {
+                $ticket = (new Tickets)->get((int) $this->queryParam("tid"));
+                $ticket_user = $ticket->getUser();
+                $replacements = [
+                    "{user_name}" => $ticket_user->getFirstName(),
+                    "{last_name}" => $ticket_user->getLastName(),
+                    "{unban_time}" => $ticket_user->getUnbanTime(),
+                ];
+
+                if ($ticket->getId()) {
+                    foreach ($replacements as $search => $replace) {
+                        $templateData["text"] = str_replace($search, $replace, $templateData["text"]);
+                    }
+                }
+            }
+
+            $templates[] = $templateData;
+        }
+
+        $this->returnJson(["success" => true, "templates" => $templates]);
+    }
+
+    function renderCreateTemplatesDir(): void
+    {
+        $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+        $this->assertNoCSRF();
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $dir = new SupportTemplateDir;
+            $dir->setTitle($this->postParam("title"));
+            $dir->setOwner($this->user->identity->getId());
+            $dir->setIs_Public(!empty($this->postParam("is_public")));
+            $dir->save();
+
+            $this->flashFail("succ", tr("changes_saved"));
+        }
+    }
+
+    function renderTemplates(): void
+    {
+        $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+
+        $mode = in_array($this->queryParam("act"), ["dirs", "list", "create_dir", "create_template", "edit_dir", "edit_template"]) ? $this->queryParam("act") : "dirs";
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $this->assertNoCSRF();
+
+            if ($mode === "create_dir" || $mode === "edit_dir") {
+                $dirId = (int) $this->queryParam("dir");
+                $dir = ($mode === "create_dir") ? new SupportTemplateDir : (new SupportTemplatesDirs)->get($dirId);
+
+                if ($mode === "edit_dir" && (!$dir || $dir->isDeleted())) {
+                    $this->notFound();
+                }
+
+                if ($mode === "edit_dir" && $dir->getOwner()->getId() !== $this->user->identity->getId()) {
+                    $this->flashFail("err", tr("forbidden"));
+                }
+
+                $dir->setTitle($this->postParam("title"));
+                $dir->setOwner($this->user->identity->getId());
+                $dir->setIs_Public(!empty($this->postParam("is_public")));
+                $dir->save();
+
+                if ($mode === "create_dir") {
+                    $this->redirect("/support/templates?act=list&dir=" . $dir->getId());
+                } else {
+                    $this->flashFail("succ", tr("changes_saved"));
+                }
+            } else if ($mode === "create_template" || $mode === "edit_template") {
+                $templateId = (int) $this->queryParam("id");
+                $template = ($mode === "create_template") ? new SupportTemplate : (new SupportTemplates)->get($templateId);
+                if (!$template || $template->isDeleted()) {
+                    $this->notFound();
+                }
+
+                if ($mode === "edit_template" && $template->getOwner()->getId() !== $this->user->identity->getId()) {
+                    $this->flashFail("err", tr("forbidden"));
+                }
+
+                $dirId = ($mode === "create_template") ? (int) $this->queryParam("dir") : $template->getDir()->getId();
+                $dir = (new SupportTemplatesDirs)->get($dirId);
+
+                if ($mode === "create_template" && $dir->getOwner()->getId() !== $this->user->identity->getId()) {
+                    $this->flashFail("err", tr("forbidden"));
+                }
+
+                if (!$dir || $dir->isDeleted()) {
+                    $this->notFound();
+                }
+
+                if ($dir->getOwner()->getId() !== $this->user->identity->getId()) {
+                    $this->flashFail("err", tr("forbidden"));
+                }
+
+                $template->setOwner($this->user->identity->getId());
+                $template->setDir($dir->getId());
+                $template->setTitle($this->postParam("title"));
+                $template->setText($this->postParam("text"));
+                $template->save();
+
+                if ($mode === "create_template") {
+                    $this->redirect("/support/templates?act=list&dir=" . $dirId . "&id=" . $template->getId());
+                } else {
+                    $this->flashFail("succ", tr("changes_saved"));
+                }
+            }
+        } else {
+            $this->template->mode = $mode;
+
+            if (!$this->queryParam("dir")) {
+                $dirs = (new SupportTemplatesDirs)->getList($this->user->identity->getId());
+                $this->template->dirs = $dirs;
+                $this->template->dirsCount = count($dirs);
+
+                if ($mode === "edit_template") {
+                    $templateId = (int) $this->queryParam("id");
+                    $template = (new SupportTemplates)->get($templateId);
+
+                    if (!$template || $template->isDeleted()) {
+                        $this->notFound();
+                    }
+
+                    if ($template->getOwner()->getId() !== $this->user->identity->getId()) {
+                        $this->flashFail("err", tr("forbidden"));
+                    }
+
+                    $this->template->dir = $template->getDir();
+                    $this->template->activeTemplate = $template;
+                }
+            } else {
+                $dirId = (int) $this->queryParam("dir");
+                $dir = (new SupportTemplatesDirs)->get($dirId);
+
+                if (!$dir || $dir->isDeleted()) {
+                    $this->notFound();
+                }
+
+                if ($mode === "edit_dir" && $dir->getOwner()->getId() !== $this->user->identity->getId()) {
+                    $this->flashFail("err", tr("forbidden"));
+                }
+
+                if ($mode === "create_template" && $dir->getOwner()->getId() !== $this->user->identity->getId()) {
+                    $this->flashFail("err", tr("forbidden"));
+                }
+
+                $this->template->dir = $dir;
+                $templates = $dir->getTemplates();
+                $this->template->templates = $templates;
+                $this->template->templatesCount = count($templates);
+                $this->template->selectedTemplate = (int) $this->queryParam("id");
+            }
+        }
+    }
+
+    function renderDeleteDir(int $id): void
+    {
+        $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+        $dir = (new SupportTemplatesDirs)->get($id);
+
+        if (!$dir || $dir->isDeleted()) {
+            $this->notFound();
+        }
+
+        if ($dir->getOwner()->getId() !== $this->user->identity->getId()) {
+            $this->flashFail("err", tr("forbidden"));
+        }
+
+        $templates = $dir->getTemplates();
+
+        foreach ($templates as $template) {
+            $template->delete();
+        }
+
+        $dir->delete();
+
+        $this->redirect("/support/templates");
+    }
+
+    function renderDeleteTemplate(int $id): void
+    {
+        $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+        $template = (new SupportTemplates)->get($id);
+
+        if (!$template || $template->isDeleted()) {
+            $this->notFound();
+        }
+
+        if ($template->getOwner()->getId() !== $this->user->identity->getId()) {
+            $this->flashFail("err", tr("forbidden"));
+        }
+
+        $dir = $template->getDir()->getId();
+        $template->delete();
+
+        $this->redirect("/support/templates?act=list&dir=$dir");
+    }
+
 }

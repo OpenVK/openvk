@@ -913,6 +913,20 @@
 "banned_in_support_1" = "Sorry, <b>$1</b>, but now you can't create tickets.";
 "banned_in_support_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to take away this opportunity from you forever.";
 
+"support_my_templates" = "My templates";
+"support_create_templates_dir" = "Create folder";
+"support_create_template" = "Create template";
+"support_public_templates_dir" = "Other agents can use";
+"support_remove_templates_dir_1" = "Delete folder";
+"support_remove_templates_dir_2" = "with templates";
+"support_templates_dir_name" = "Folder name";
+"support_template_replacement_user_name" = "User's first name";
+"support_template_replacement_last_name" = "User's last name";
+"support_template_replacement_unban_time" = "User's unban time";
+"support_template_text" = "Template Text";
+"support_template_name" = "Template Name";
+"support_apply_template" = "Use";
+
 /* Invite */
 
 "invite" = "Invite";

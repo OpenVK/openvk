@@ -1,0 +1,93 @@
+{extends "../@layout.xml"}
+
+{block header}
+    <div n:if="$mode === 'dirs'">{_support_my_templates}</div>
+    <div n:if="$mode === 'list'"><a href="/support/templates">{_support_my_templates}</a> > {$dir->getTitle()}</div>
+    <div n:if="$mode === 'create_dir'"><a href="/support/templates">{_support_my_templates}</a> > {_support_create_templates_dir}</div>
+    <div n:if="$mode === 'create_template'">
+        <a href="/support/templates">{_support_my_templates}</a>
+        > <a href="/support/templates?act=list&dir={$dir->getId()}">{$dir->getTitle()}</a>
+        > {_support_create_template}
+    </div>
+    <div n:if="$mode === 'edit_dir'">
+        <a href="/support/templates">{_support_my_templates}</a>
+        > <a href="/support/templates?act=list&dir={$dir->getId()}">{$dir->getTitle()}</a>
+        > {_edit}
+    </div>
+    <div n:if="$mode === 'edit_template'">
+        <a href="/support/templates">{_support_my_templates}</a>
+        > <a href="/support/templates?act=list&dir={$dir->getId()}">{$dir->getTitle()}</a>
+        > <a href="/support/templates?act=list&dir={$dir->getId()}&id={$activeTemplate->getId()}">{$activeTemplate->getTitle()}</a>
+        > {_edit}
+    </div>
+{/block}
+
+{block content}
+    <div n:if="$mode === 'dirs'">
+        <div>
+            <a class="button" href="/support/templates?act=create_dir">{_support_create_templates_dir}</a>
+        </div>
+        <br/>
+        <div n:if="$dirsCount <= 0" style="padding: 32px">
+            <center>{_no_data_description}</center>
+        </div>
+        <div n:foreach="$dirs as $dir">
+            <a href="/support/templates?act=list&dir={$dir->getId()}">
+                <h4 style="padding: 8px;">
+                    {$dir->getTitle()}
+                    <a n:if="$dir->getOwner()->getId() === $thisUser->getId()" href="/support/templates?act=edit_dir&dir={$dir->getId()}">({_edit})</a>
+                </h4>
+            </a>
+        </div>
+    </div>
+    <div n:if="$mode === 'list'">
+        <div n:if="$dir->getOwner()->getId() === $thisUser->getId()">
+            <a class="button" href="/support/templates?act=create_template&dir={$dir->getId()}">{_support_create_template}</a>
+            <a class="button" href="/support/templates_dir{$dir->getId()}/delete">{_support_remove_templates_dir_1} <b>{_support_remove_templates_dir_2}</b></a>
+        </div>
+        <br/>
+        <div n:if="$templatesCount <= 0" style="padding: 32px">
+            <center>{_no_data_description}</center>
+        </div>
+        <div n:foreach="$templates as $template">
+            <h4 style="padding: 8px; cursor: pointer;" onclick="toggleTemplateTextShow({$template->getId()})">
+                {$template->getTitle()}
+                <a n:if="$template->getOwner()->getId() === $thisUser->getId()" href="/support/templates?act=edit_template&id={$template->getId()}">({_edit})</a>
+            </h4>
+            <div id="template-text-{$template->getId()}" style="display: none; padding: 8px; white-space: pre-wrap;">{$template->getText()}</div>
+        </div>
+    </div>
+    <div n:if="$mode === 'create_dir' || $mode === 'edit_dir'">
+        <form method="post">
+            <input type="text" placeholder="{_support_templates_dir_name}" name="title" n:attr="value => $mode === 'edit_dir' ? $dir->getTitle() : ''" />
+            <input type="checkbox" value="1" name="is_public" n:attr="checked => $mode === 'edit_dir' ? $dir->isPublic() : false"/> {_support_public_templates_dir}
+            <input type="hidden" value="{$csrfToken}" name="hash"/>
+            <input type="submit" n:attr="value => ($mode === 'create_dir' ? tr(create) : tr(save))" class="button" />
+        </form>
+    </div>
+    <div n:if="$mode === 'create_template' || $mode === 'edit_template'">
+        <form method="post">
+            <input n:attr="value => $mode === 'edit_template' ? $activeTemplate->getTitle() : ''" type="text" placeholder="{_support_template_name}" name="title"/>
+            <textarea style="resize: vertical;" name="text" placeholder="{_support_template_text}">{$mode === 'edit_template' ? $activeTemplate->getText() : ''}</textarea>
+            <ul>
+                <li><b>{="{user_name}"}</b> — {_support_template_replacement_user_name}</li>
+                <li><b>{="{last_name}"}</b> — {_support_template_replacement_last_name}</li>
+                <li><b>{="{unban_time}"}</b> — {_support_template_replacement_unban_time}</li>
+            </ul>
+            <input type="hidden" value="{$csrfToken}" name="hash"/>
+            <input type="submit" n:attr="value => ($mode === 'create_template' ? tr(create) : tr(save))" class="button" />
+            <a n:if="$mode === 'edit_template'" class="button" href="/support/template{$activeTemplate->getId()}/delete">{_delete}</a>
+        </form>
+    </div>
+    <script>
+        function toggleTemplateTextShow(id, scrollTo) {
+            if (!scrollTo) scrollTo = false;
+
+            const elem = document.getElementById('template-text-' + id);
+            elem.style.display = (elem.style.display === 'none' ? 'inherit' : 'none');
+            if (scrollTo) elem.scrollIntoView();
+        }
+
+        toggleTemplateTextShow({$selectedTemplate}, true)
+    </script>
+{/block}

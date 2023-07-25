@@ -21,6 +21,9 @@
     <div class="tab">
         <a href="/support/agent{$thisUser->getId()}">Мой профиль</a>
     </div>
+    <div class="tab">
+        <a href="/support/templates">{_support_my_templates}</a>
+    </div>
 {/block}
 
 {* BEGIN ELEMENTS DESCRIPTION *}

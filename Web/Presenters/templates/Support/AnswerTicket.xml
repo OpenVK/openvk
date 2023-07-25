@@ -33,8 +33,8 @@
                     <option value="0">{_support_status_0}</option>
                 </select>
             </div>
-            <div n:if="!is_null($fastAnswers)" style="float: right;">
-                <a class="button" href="javascript:showSupportFastAnswerDialog(fastAnswers)">{_fast_answers}</a>
+            <div style="float: right;">
+                <a class="button" href="javascript:getTemplatesDirs({$ticket->getId()}, true)">{_fast_answers}</a>
             </div>
             <br />
         </form>
@@ -123,10 +123,9 @@
     </table>
 
     <script>
-        const fastAnswers = [
-            {foreach $fastAnswers as $answer}
-                {$answer},
-            {/foreach}
-        ];
+        function toggleTemplateTextShow(id) {
+            const elem = document.getElementById('template-text-' + id);
+            elem.style.display = (elem.style.display === "none" ? "block" : "none");
+        }
     </script>
 {/block}
