@@ -1,0 +1,110 @@
+version: '3.7'
+
+services:
+  openvk:
+    image: ghcr.io/openvk/openvk/openvk:latest
+    container_name: openvk
+    restart: unless-stopped
+    ports:
+      - 8080:80
+    volumes:
+      - openvk-storage:/opt/chandler/extensions/available/openvk/storage
+      - openvk-audios:/opt/chandler/extensions/available/openvk/tmp/api-storage/audios
+      - openvk-photos:/opt/chandler/extensions/available/openvk/tmp/api-storage/photos
+      - openvk-videos:/opt/chandler/extensions/available/openvk/tmp/api-storage/videos
+      - openvk-logs:/var/log/openvk
+      - ./openvk.yml:/opt/chandler/extensions/available/openvk/openvk.yml:ro
+      - ./chandler.yml:/opt/chandler/chandler.yml:ro
+    depends_on:
+      - acl_handler
+      - mariadb-primary
+      - mariadb-eventdb
+      - kafka
+
+  acl_handler:
+    image: docker.io/alpine:edge
+    container_name: acl_handler
+    restart: unless-stopped
+    entrypoint: /bin/sh
+    command: -c "/bin/acl_handler.sh"
+    volumes:
+      - openvk-storage:/opt/chandler/extensions/available/openvk/storage
+      - openvk-audios:/opt/chandler/extensions/available/openvk/tmp/api-storage/audios
+      - openvk-photos:/opt/chandler/extensions/available/openvk/tmp/api-storage/photos
+      - openvk-videos:/opt/chandler/extensions/available/openvk/tmp/api-storage/videos
+      - openvk-logs:/var/log/openvk
+      - ./acl_handler.sh:/bin/acl_handler.sh:ro
+
+  mariadb-primary:
+    image: ghcr.io/openvk/openvk/mariadb:10.9-primary
+    container_name: mariadb-primary
+    restart: unless-stopped
+    volumes:
+      - mariadb-primary:/var/lib/mysql
+    environment:
+      - MARIADB_DATABASE=db
+      - MARIADB_USER=openvk
+      - MARIADB_PASSWORD=openvk
+      - MARIADB_RANDOM_ROOT_PASSWORD=yes
+
+  mariadb-eventdb:
+    image: ghcr.io/openvk/openvk/mariadb:10.9-eventdb
+    container_name: mariadb-eventdb
+    restart: unless-stopped
+    volumes:
+      - mariadb-eventdb:/var/lib/mysql
+    environment:
+      - MARIADB_DATABASE=openvk_eventdb
+      - MARIADB_USER=openvk
+      - MARIADB_PASSWORD=openvk
+      - MARIADB_RANDOM_ROOT_PASSWORD=yes
+
+  kafka:
+    image: docker.io/bitnami/kafka:3.2
+    container_name: kafka
+    restart: unless-stopped
+    volumes:
+      - kafka-data:/bitnami
+    environment:
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@127.0.0.1:9093
+
+  phpmyadmin:
+    image: docker.io/phpmyadmin:5
+    container_name: phpmyadmin
+    restart: unless-stopped
+    ports:
+      - 8081:80
+    environment:
+      - PMA_HOST=mariadb-primary
+      - PMA_USER=openvk
+      - PMA_PASSWORD=openvk
+      - PMA_PORT=3306
+      - PMA_ARBITRARY=1
+
+  adminer:
+    image: docker.io/adminer:4
+    container_name: adminer
+    restart: unless-stopped
+    ports:
+      - 8082:8080
+    environment:
+      - ADMINER_DEFAULT_SERVER=mariadb-primary
+
+volumes:
+  openvk-storage:
+  openvk-audios:
+  openvk-photos:
+  openvk-videos:
+  openvk-logs:
+  mariadb-primary:
+  mariadb-eventdb:
+  kafka-data:

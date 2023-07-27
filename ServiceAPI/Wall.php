@@ -2,17 +2,19 @@
 namespace openvk\ServiceAPI;
 use openvk\Web\Models\Entities\Post;
 use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Repositories\Posts;
+use openvk\Web\Models\Repositories\{Posts, Notes};
 
 class Wall implements Handler
 {
     protected $user;
     protected $posts;
+    protected $notes;
     
     function __construct(?User $user)
     {
         $this->user  = $user;
         $this->posts = new Posts;
+        $this->notes = new Notes;
     }
     
     function getPost(int $id, callable $resolve, callable $reject): void
@@ -70,5 +72,27 @@ class Wall implements Handler
         $post->save();
         
         $resolve($post->getId());
+    }
+
+    function getMyNotes(callable $resolve, callable $reject)
+    {
+        $count   = $this->notes->getUserNotesCount($this->user);
+        $myNotes = $this->notes->getUserNotes($this->user, 1, $count);
+
+        $arr = [
+            "count"  => $count,
+            "closed" => $this->user->getPrivacySetting("notes.read"),
+            "items"  => [],
+        ];
+
+        foreach($myNotes as $note) {
+            $arr["items"][] = [
+                "id"      => $note->getId(),
+                "name"    => ovk_proc_strtr($note->getName(), 30),
+                #"preview" => $note->getPreview() 
+            ];
+        }
+
+        $resolve($arr);
     }
 }

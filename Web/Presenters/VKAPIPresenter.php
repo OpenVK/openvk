@@ -6,6 +6,7 @@ use openvk\VKAPI\Exceptions\APIErrorException;
 use openvk\Web\Models\Entities\{User, APIToken};
 use openvk\Web\Models\Repositories\{Users, APITokens};
 use lfkeitel\phptotp\{Base32, Totp};
+use WhichBrowser;
 
 final class VKAPIPresenter extends OpenVKPresenter
 {
@@ -98,20 +99,21 @@ final class VKAPIPresenter extends OpenVKPresenter
 
     function renderPhotoUpload(string $signature): void
     {
-        $secret = CHANDLER_ROOT_CONF["security"]["secret"];
-        $computedSignature = hash_hmac("sha3-224", $_SERVER["QUERY_STRING"], $secret);
+        $secret            = CHANDLER_ROOT_CONF["security"]["secret"];
+        $queryString       = rawurldecode($_SERVER["QUERY_STRING"]);
+        $computedSignature = hash_hmac("sha3-224", $queryString, $secret);
         if(!(strlen($signature) == 56 && sodium_memcmp($signature, $computedSignature) == 0)) {
             header("HTTP/1.1 422 Unprocessable Entity");
             exit("Try harder <3");
         }
 
-        $data = unpack("vDOMAIN/Z10FIELD/vMF/vMP/PTIME/PUSER/PGROUP", base64_decode($_SERVER["QUERY_STRING"]));
+        $data = unpack("vDOMAIN/Z10FIELD/vMF/vMP/PTIME/PUSER/PGROUP", base64_decode($queryString));
         if((time() - $data["TIME"]) > 600) {
             header("HTTP/1.1 422 Unprocessable Entity");
             exit("Expired");
         }
 
-        $folder   = __DIR__ . "../../tmp/api-storage/photos";
+        $folder   = __DIR__ . "/../../tmp/api-storage/photos";
         $maxSize  = OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["api"]["maxFileSize"];
         $maxFiles = OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["api"]["maxFilesPerDomain"];
         $usrFiles = sizeof(glob("$folder/$data[USER]_*.oct"));
@@ -195,19 +197,24 @@ final class VKAPIPresenter extends OpenVKPresenter
                 $identity = NULL;
             } else {
                 $token = (new APITokens)->getByCode($this->requestParam("access_token"));
-                if(!$token)
+                if(!$token) {
                     $identity = NULL;
-                else
+                } else {
                     $identity = $token->getUser();
+                    $platform = $token->getPlatform();
+                }
             }
         }
+        
+        if(!is_null($identity) && $identity->isBanned())
+            $this->fail(18, "User account is deactivated", $object, $method);
         
         $object       = ucfirst(strtolower($object));
         $handlerClass = "openvk\\VKAPI\\Handlers\\$object";
         if(!class_exists($handlerClass))
             $this->badMethod($object, $method);
         
-        $handler = new $handlerClass($identity);
+        $handler = new $handlerClass($identity, $platform);
         if(!is_callable([$handler, $method]))
             $this->badMethod($object, $method);
         
@@ -274,8 +281,11 @@ final class VKAPIPresenter extends OpenVKPresenter
                 $this->fail(28, "Invalid 2FA code", "internal", "acquireToken");
         }
         
+        $platform = $this->requestParam("client_name");
+
         $token = new APIToken;
         $token->setUser($user);
+        $token->setPlatform($platform ?? (new WhichBrowser\Parser(getallheaders()))->toString());
         $token->save();
         
         $payload = json_encode([

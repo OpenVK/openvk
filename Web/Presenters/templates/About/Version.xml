@@ -411,7 +411,7 @@
                 <tr>
                     <td class="e">
                         Vladimir Barinov (veselcraft) and Konstantin Kichulkin (kosfurler)<br/>
-                        OpenVK is a free open-source software that "cosplays" (or imitates) older versions of russian website VKontakte. VKontakte belongs to Pavel Durov and VK Group.
+                        OpenVK is a free open source software that "cosplays" (or imitates) older versions of a Russian social network called VKontakte. VKontakte belongs to Pavel Durov and VK Group.
                     </td>
                 </tr>
             </tbody>
@@ -430,7 +430,7 @@
                         Native name
                     </td>
                     <td>
-                        Author
+                        Author(s)
                     </td>
                 </tr>
                 {foreach $languages as $language}
@@ -458,7 +458,7 @@
                 </tr>
                 <tr>
                     <td class="e">Initial hosting</td>
-                    <td class="v">Ilya Prokopenko (dsrev) and Celestora</td>
+                    <td class="v">Lumaeris and Celestora</td>
                 </tr>
                 <tr>
                     <td class="e">Initial bug-tracker hosting</td>
@@ -492,7 +492,7 @@
                     <td>
                         kovaltim, Vladimir Lapskiy (0x7d5), Alexander Minkin (WerySkok), Polina Katunina (RousPhaul), veth,
                         Egor Shevchenko, Vadim Korovin (yuni), Ash Defenders,
-                        Pavel Silaev, Dmitriy Daemon, Ilya Prokopenko (dsrev),
+                        Pavel Silaev, Dmitriy Daemon, Lumaeris,
                         cmed404 and unknown tester, who disappeared shortly after trying to upload post with cat.
                     </td>
                 </tr>
