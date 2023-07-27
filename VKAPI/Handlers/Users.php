@@ -32,15 +32,7 @@ final class Users extends VKAPIRequestHandler
 						"first_name"  => "DELETED",
 						"last_name"   => "",
 						"deactivated" => "deleted"
-					];
-				} else if($usr->isBanned()) {
-					$response[$i] = (object)[
-						"id"          => $usr->getId(),
-						"first_name"  => $usr->getFirstName(),
-						"last_name"   => $usr->getLastName(),
-						"deactivated" => "banned",
-						"ban_reason"  => $usr->getBanReason()
-					];
+					];   
 				} else if($usrs[$i] == NULL) {
 
 				} else {
@@ -116,31 +108,11 @@ final class Users extends VKAPIRequestHandler
 								}
 								break;
 							case "last_seen":
-								if ($usr->onlineStatus() == 0) {
-									$platform = $usr->getOnlinePlatform(true);
-									switch ($platform) {
-										case 'iphone':
-											$platform = 2;
-											break;
-
-										case 'android':
-											$platform = 4;
-											break;
-
-										case NULL:
-											$platform = 7;
-											break;
-										
-										default:
-											$platform = 1;
-											break;
-									}
-
+								if ($usr->onlineStatus() == 0)
 									$response[$i]->last_seen = (object) [
-										"platform" => $platform,
+										"platform" => 1,
 										"time"     => $usr->getOnline()->timestamp()
 									];
-								}
 							case "music":
 								$response[$i]->music = $usr->getFavoriteMusic();
 								break;
@@ -158,10 +130,7 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "interests":
 								$response[$i]->interests = $usr->getInterests();
-								break;
-							case "rating":
-								$response[$i]->rating = $usr->getRating();
-								break;	 
+								break;	    
 						}
 					}
 
@@ -199,94 +168,19 @@ final class Users extends VKAPIRequestHandler
         ];
     }
 
-    function search(string $q, 
-                    string $fields = "", 
-                    int $offset = 0, 
-                    int $count = 100,
-                    string $city = "",
-                    string $hometown = "",
-                    int $sex = 2,
-                    int $status = 0, # это про marital status
-                    bool $online = false,
-                    # дальше идут параметры которых нету в vkapi но есть на сайте
-                    string $profileStatus = "", # а это уже нормальный статус
-                    int $sort = 0,
-                    int $before = 0,
-                    int $politViews = 0,
-                    int $after = 0,
-                    string $interests = "",
-                    string $fav_music = "",
-                    string $fav_films = "",
-                    string $fav_shows = "",
-                    string $fav_books = "",
-                    string $fav_quotes = ""
-                    )
+    function search(string $q, string $fields = "", int $offset = 0, int $count = 100)
     {
         $users = new UsersRepo;
         
-        $sortg = "id ASC";
-
-        $nfilds = $fields;
-
-        switch($sort) {
-            case 0:
-                $sortg = "id DESC";
-                break;
-            case 1:
-                $sortg = "id ASC";
-                break;
-            case 2:
-                $sortg = "first_name DESC";
-                break;
-            case 3:
-                $sortg = "first_name ASC";
-                break;
-            case 4:
-                $sortg = "rating DESC";
-
-                if(!str_contains($nfilds, "rating")) {
-                    $nfilds .= "rating";
-                }
-
-                break;
-            case 5:
-                $sortg = "rating DESC";
-
-                if(!str_contains($nfilds, "rating")) {
-                    $nfilds .= "rating";
-                }
-
-                break;
-        }
-
         $array = [];
-
-        $parameters = [
-            "city"            => !empty($city) ? $city : NULL,
-            "hometown"        => !empty($hometown) ? $hometown : NULL,
-            "gender"          => $sex < 2 ? $sex : NULL,
-            "maritalstatus"   => (bool)$status ? $status : NULL,
-            "politViews"      => (bool)$politViews ? $politViews : NULL,
-            "is_online"       => $online ? 1 : NULL,
-            "status"          => !empty($profileStatus) ? $profileStatus : NULL,
-            "before"          => $before != 0 ? $before : NULL,
-            "after"           => $after  != 0 ? $after : NULL,
-            "interests"       => !empty($interests) ? $interests : NULL,
-            "fav_music"       => !empty($fav_music) ? $fav_music : NULL,
-            "fav_films"       => !empty($fav_films) ? $fav_films : NULL,
-            "fav_shows"       => !empty($fav_shows) ? $fav_shows : NULL,
-            "fav_books"       => !empty($fav_books) ? $fav_books : NULL,
-            "fav_quotes"      => !empty($fav_quotes) ? $fav_quotes : NULL,
-        ];
-
-        $find  = $users->find($q, $parameters, $sortg);
+		$find  = $users->find($q);
 
         foreach ($find as $user)
             $array[] = $user->getId();
 
         return (object) [
         	"count" => $find->size(),
-        	"items" => $this->get(implode(',', $array), $nfilds, $offset, $count)
+        	"items" => $this->get(implode(',', $array), $fields, $offset, $count)
         ];
     }
 }

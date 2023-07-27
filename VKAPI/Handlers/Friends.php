@@ -66,7 +66,6 @@ final class Friends extends VKAPIRequestHandler
 	function add(string $user_id): int
 	{
 		$this->requireUser();
-        $this->willExecuteWriteAction();
 
 		$users = new UsersRepo;
 		$user  = $users->get(intval($user_id));
@@ -97,7 +96,6 @@ final class Friends extends VKAPIRequestHandler
 	function delete(string $user_id): int
 	{
 		$this->requireUser();
-        $this->willExecuteWriteAction();
 
 		$users = new UsersRepo;
 
@@ -109,7 +107,7 @@ final class Friends extends VKAPIRequestHandler
 				return 1;
 			
 			default:
-				$this->fail(15, "Access denied: No friend or friend request found.");
+				fail(15, "Access denied: No friend or friend request found.");
 		}
 	}
 
@@ -135,18 +133,15 @@ final class Friends extends VKAPIRequestHandler
 		return $response;
 	}
 
-	function getRequests(string $fields = "", int $offset = 0, int $count = 100, int $extended = 0): object
+	function getRequests(string $fields = "", int $offset = 0, int $count = 100): object
 	{
-		if ($count >= 1000)
-			$this->fail(100, "One of the required parameters was not passed or is invalid.");
-
 		$this->requireUser();
 
 		$i = 0;
 		$offset++;
 		$followers = [];
 
-		foreach($this->getUser()->getFollowers($offset, $count) as $follower) {
+		foreach($this->getUser()->getFollowers() as $follower) {
 			$followers[$i] = $follower->getId();
 			$i++;
 		}
@@ -154,7 +149,8 @@ final class Friends extends VKAPIRequestHandler
 		$response = $followers;
 		$usersApi = new Users($this->getUser());
 
-		$response = $usersApi->get(implode(',', $followers), $fields, 0, $count);
+		if(!is_null($fields)) 
+			$response = $usersApi->get(implode(',', $followers), $fields, 0, $count);  # FIXME
 
 		foreach($response as $user)
 			$user->user_id = $user->id;

@@ -9,8 +9,7 @@ final class PhotosPresenter extends OpenVKPresenter
     private $users;
     private $photos;
     private $albums;
-    protected $presenterName = "photos";
-
+    
     function __construct(Photos $photos, Albums $albums, Users $users)
     {
         $this->users  = $users;
@@ -183,18 +182,6 @@ final class PhotosPresenter extends OpenVKPresenter
         
         $this->template->_template = "Photos/Photo.xml";
         $this->renderPhoto($photo->getOwner(true)->getId(), $photo->getVirtualId());
-    }
-    
-    function renderThumbnail($id, $size): void
-    {
-        $photo = $this->photos->get($id);
-        if(!$photo || $photo->isDeleted())
-            $this->notFound();
-        
-        if(!$photo->forceSize($size))
-            chandler_http_panic(588, "Gone", "This thumbnail cannot be generated due to server misconfiguration");
-        
-        $this->redirect($photo->getURLBySizeId($size), 8);
     }
     
     function renderEditPhoto(int $ownerId, int $photoId): void

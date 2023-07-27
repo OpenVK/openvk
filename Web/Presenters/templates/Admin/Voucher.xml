@@ -34,7 +34,7 @@
                     <input class="text long-field" type="number" min="0" id="coins" name="coins" value="{$form->coins}" />
                 </div>
                 <div class="field-group">
-                    <label for="rating">{_admin_voucher_rating_number}</label>
+                    <label for="rating">{_admin_voucher_rating}</label>
                     <input class="text long-field" type="number" min="0" id="rating" name="rating" value="{$form->rating}" />
                 </div>
                 <div class="field-group">

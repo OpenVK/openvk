@@ -54,11 +54,6 @@ class Apps implements Handler
             $reject("No application with this id found");
             return;
         }
-
-        if($amount < 0) {
-            $reject(552, "Payment amount is invalid");
-            return;
-        }
         
         $coinsLeft = $this->user->getCoins() - $amount;
         if($coinsLeft < 0) {

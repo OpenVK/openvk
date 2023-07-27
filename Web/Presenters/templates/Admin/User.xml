@@ -68,53 +68,6 @@
                     <option value="2" {if $user->onlineStatus() == 2}selected{/if}>{_admin_user_online_deceased}</option>
                 </select>
             </div>
-            <hr/>
-            <div class="field-group">
-                <label for="email">{_password}</label>
-                <input class="text medium-field" type="password" id="password" name="password" value="" />
-            </div>
-            <div class="buttons-container">
-                <div class="buttons">
-                    <a class="button" onclick="let pswd = Math.random().toString(27).slice(2,12); alert('Сгенерированный пароль: ' + pswd + '\n\nНе забудьте сообщить пользователю, чтобы он сменил пароль на свой!'); $('input#password').val(pswd);">Сгенерировать пароль</a>
-                </div>
-            </div>
-            <hr/>
-            <h2>{_c_groups}</h2>
-            <div>
-                <div class="field-group">
-                    <label for="add-to-group">{_c_add_to_group}</label>
-                    <select class="select" name="add-to-group">
-                        <option n:foreach="$c_groups_list as $group" value="{$group->id}">
-                            {$group->name}
-                        </option>
-                    </select>
-
-                    <table class="aui aui-table-list">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>{_admin_actions}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr n:foreach="$c_memberships as $membership">
-                                <td>
-                                    <a href="/admin/chandler/groups/{$membership->group}?act=members">{$membership->group}</a>
-                                </td>
-                                <td>
-                                    <a
-                                        class="aui-icon aui-icon-small aui-iconfont-cross"
-                                        href="/admin/chandler/groups/{$membership->group}?act=removeMember&uid={$user->getChandlerGUID()}"
-                                        style="margin: 0 50%;"
-                                    >
-                                        {_c_remove_from_group}
-                                    </a>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
             <div class="buttons-container">
                 <div class="buttons">
                     <input type="hidden" name="hash" value="{$csrfToken}" />

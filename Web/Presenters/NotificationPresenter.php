@@ -3,8 +3,6 @@ namespace openvk\Web\Presenters;
 
 final class NotificationPresenter extends OpenVKPresenter
 {
-    protected $presenterName = "notification";
-
     function renderFeed(): void
     {
         $this->assertUserLoggedIn();

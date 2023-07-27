@@ -1,15 +1,11 @@
 {var $author = $post->getOwner()}
 {var $comments = $post->getLastComments(3)}
 {var $commentsCount = $post->getCommentsCount()}
-{var $platform = $post->getPlatform()}
-{var $platformDetails = $post->getPlatformDetails()}
 {if $post->isDeactivationMessage() && $post->getText()}
     {var $deac = "post_deact"}
 {else}
     {var $deac = "post_deact_silent"}
 {/if}
-{var $compact = isset($compact) ? true : false}
-{var $club = isset($club) ? $club}
 
 {var $commentTextAreaId = $post === NULL ? rand(1,300) : $post->getId()}
 
@@ -18,7 +14,7 @@
         <tr>
             <td width="54" valign="top">
                 <a href="{$author->getURL()}">
-                    <img src="{$author->getAvatarURL('miniscule')}" width="{if $compact}25{else}50{/if}" {if $compact}class="cCompactAvatars"{/if} />
+                    <img src="{$author->getAvatarURL('miniscule')}" width="{ifset $compact}25{else}50{/ifset}" {ifset $compact}class="cCompactAvatars"{/ifset} />
                     <span n:if="!$post->isPostedOnBehalfOfGroup() && !$compact && $author->isOnline()" class="post-online">{_online}</span>
                 </a>
             </td>
@@ -27,35 +23,35 @@
                     <a href="{$author->getURL()}"><b>{$author->getCanonicalName()}</b></a>
                     <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
                     {$post->isDeactivationMessage() ? ($author->isFemale() ? tr($deac . "_f") : tr($deac . "_m"))}
-                    {$post->isUpdateAvatarMessage() && !$post->isPostedOnBehalfOfGroup() ? ($author->isFemale() ? tr("upd_f") : tr("upd_m"))}
-                    {$post->isUpdateAvatarMessage() && $post->isPostedOnBehalfOfGroup() ? tr("upd_g") : ""}
                     {if ($onWallOf ?? false) &&!$post->isPostedOnBehalfOfGroup() && $post->getOwnerPost() !== $post->getTargetWall()}
-                        {var $wallOwner = $post->getWallOwner()}
-                        <a href="{$wallOwner->getURL()}" class="mention" data-mention-ref="{$post->getTargetWall()}">
+                        {var $wallId  = $post->getTargetWall()}
+                        {var $wallURL = $wallId > -1 ? "/id$wallId" : "/club" . abs($wallId)}
+                        на
+                        <a href="{$wallURL}">
                             <b>
-                                {if isset($thisUser) && $thisUser->getId() === $post->getTargetWall()}
-                                {_post_on_your_wall}
-                                {elseif $wallOwner instanceof \openvk\Web\Models\Entities\Club}
-                                {tr("post_on_group_wall", ovk_proc_strtr($wallOwner->getName(), 52))}
-                                {else}
-                                {tr("post_on_user_wall", $wallOwner->getMorphedName("genitive", false))}
+                                {if isset($thisUser) && $thisUser->getId() === $wallId}
+                                    вашей
+                                {/if}
+                                стене
+                                {if $wallId < 0}
+                                    группы
                                 {/if}
                             </b>
                         </a>
                     {/if}
 
-                    {if $compact}
+                    {ifset $compact}
                         <br>
                         <a href="/wall{$post->getPrettyId()}" class="date">
                             {$post->getPublicationTime()}
                         </a>
-                    {/if}
+                    {/ifset}
 
                     <span n:if="$post->isPinned()" class="nobold">{_pinned}</span>
 
-                    <a n:if="$post->canBeDeletedBy($thisUser) && !($forceNoDeleteLink ?? false) && $compact == false" class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
+                    <a n:if="$post->canBeDeletedBy($thisUser) && !($forceNoDeleteLink ?? false) && !isset($compact)" class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
                     
-                    {if $post->canBePinnedBy($thisUser) && !($forceNoPinLink ?? false) && $compact == false}
+                    {if $post->canBePinnedBy($thisUser) && !($forceNoPinLink ?? false) && !isset($compact)}
                         {if $post->isPinned()}
                             <a class="pin" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}"></a>
                         {else}
@@ -81,26 +77,23 @@
                         {var $actualAuthor = $post->getOwner(false)}
                         <span>
                             {_author}:
-                            <a href="{$actualAuthor->getURL()}" class="mention" data-mention-ref="{$actualAuthor->getId()}">
+                            <a href="{$actualAuthor->getURL()}">
                                {$actualAuthor->getCanonicalName()}
                             </a>
                         </span>
                     </div>
                 </div>
-                <div class="post-menu" n:if="$compact == false">
+                <div class="post-menu" n:if="!isset($compact)">
                     <a href="/wall{$post->getPrettyId()}" class="date">{$post->getPublicationTime()}</a>
-                    <a n:if="!empty($platform)" class="client_app" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
-                        <img src="/assets/packages/static/openvk/img/app_icons_mini/{$post->getPlatform(this)}.svg">
-                    </a>
                     {if isset($thisUser)}
                         &nbsp;
                         
                         <a n:if="!($forceNoCommentsLink ?? false) && $commentsCount == 0" href="javascript:expand_comment_textarea({$commentTextAreaId})">{_comment}</a>
                         
                         <div class="like_wrap">
-                            <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button" href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')">
+                            <a n:if="!($forceNoShareLink ?? false)" class="post-share-button" href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')">
                                 <div class="repost-icon" style="opacity: 0.4;"></div>
-                                <span class="likeCnt" id="repostsCount{$post->getPrettyId()}">{if $post->getRepostCount() > 0}{$post->getRepostCount()}{/if}</span>
+                                <span class="likeCnt">{if $post->getRepostCount() > 0}{$post->getRepostCount()}{/if}</span>
                             </a>
 
                             {if !($forceNoLike ?? false)}

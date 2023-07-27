@@ -13,13 +13,13 @@
             </a>
         </div>
         <div class="tab">
-            <a href="/club{$club->getId()}/backdrop">
-                {_backdrop_short}
+            <a href="/club{$club->getId()}/followers">
+                {_followers}
             </a>
         </div>
         <div class="tab">
-            <a href="/club{$club->getId()}/followers">
-                {_followers}
+            <a href="/club{$club->getId()}/stats">
+                {_statistics}
             </a>
         </div>
     </div>
@@ -66,10 +66,7 @@
                             <span class="nobold">{_avatar}: </span>
                         </td>
                         <td>
-                            <label class="button" style="">{_browse}
-                                <input type="file" id="ava" name="ava" style="display: none;" onchange="filename.innerHTML=ava.files[0].name" />
-                            </label>
-                            <div id="filename" style="margin-top: 10px;"></div>
+                            <input type="file" name="ava" accept="image/*" />
                         </td>
                     </tr>
 		            <tr>

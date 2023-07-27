@@ -1,8 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
 use MessagePack\MessagePack;
-use Nette\Utils\ImageException;
-use Nette\Utils\UnknownImageFileException;
 use openvk\Web\Models\Entities\Album;
 use openvk\Web\Models\Repositories\Albums;
 use Chandler\Database\DatabaseConnection as DB;
@@ -15,62 +13,48 @@ class Photo extends Media
     protected $fileExtension = "jpeg";
 
     const ALLOWED_SIDE_MULTIPLIER = 7;
-    
-    /**
-     * @throws \ImagickException
-     * @throws ImageException
-     * @throws UnknownImageFileException
-     */
-    private function resizeImage(\Imagick $image, string $outputDir, \SimpleXMLElement $size): array
+
+    private function resizeImage(string $filename, string $outputDir, \SimpleXMLElement $size): array
     {
-        $res = [false];
+        $res   = [false];
+        $image = Image::fromFile($filename);
         $requiresProportion = ((string) $size["requireProp"]) != "none";
         if($requiresProportion) {
             $props = explode(":", (string) $size["requireProp"]);
             $px = (int) $props[0];
             $py = (int) $props[1];
-            if(($image->getImageWidth() / $image->getImageHeight()) > ($px / $py)) {
-                $height = (int) ceil(($px * $image->getImageWidth()) / $py);
-                $image->cropImage($image->getImageWidth(), $height, 0, 0);
+            if(($image->getWidth() / $image->getHeight()) > ($px / $py)) {
+                # For some weird reason using resize with EXACT flag causes system to consume an unholy amount of RAM
+                $image->crop(0, 0, "100%", (int) ceil(($px * $image->getWidth()) / $py));
                 $res[0] = true;
             }
         }
-    
+
         if(isset($size["maxSize"])) {
             $maxSize = (int) $size["maxSize"];
-            $sizes   = Image::calculateSize($image->getImageWidth(), $image->getImageHeight(), $maxSize, $maxSize, Image::SHRINK_ONLY | Image::FIT);
-            $image->resizeImage($sizes[0], $sizes[1], \Imagick::FILTER_HERMITE, 1);
+            $image->resize($maxSize, $maxSize, Image::SHRINK_ONLY | Image::FIT);
         } else if(isset($size["maxResolution"])) {
             $resolution = explode("x", (string) $size["maxResolution"]);
-            $sizes = Image::calculateSize(
-                $image->getImageWidth(), $image->getImageHeight(), (int) $resolution[0], (int) $resolution[1], Image::SHRINK_ONLY | Image::FIT
-            );
-            $image->resizeImage($sizes[0], $sizes[1], \Imagick::FILTER_HERMITE, 1);
+            $image->resize((int) $resolution[0], (int) $resolution[1], Image::SHRINK_ONLY | Image::FIT);
         } else {
             throw new \RuntimeException("Malformed size description: " . (string) $size["id"]);
         }
-    
-        $res[1] = $image->getImageWidth();
-        $res[2] = $image->getImageHeight();
+
+        $res[1] = $image->getWidth();
+        $res[2] = $image->getHeight();
         if($res[1] <= 300 || $res[2] <= 300)
-            $image->writeImage("$outputDir/$size[id].gif");
+            $image->save("$outputDir/" . (string) $size["id"] . ".gif");
         else
-            $image->writeImage("$outputDir/$size[id].jpeg");
-        
-        $res[3] = true;
-        $image->destroy();
+            $image->save("$outputDir/" . (string) $size["id"] . ".jpeg");
+
+        imagedestroy($image->getImageResource());
         unset($image);
-        
+
         return $res;
     }
 
-    private function saveImageResizedCopies(?\Imagick $image, string $filename, string $hash): void
+    private function saveImageResizedCopies(string $filename, string $hash): void
     {
-        if(!$image) {
-            $image = new \Imagick;
-            $image->readImage($filename);
-        }
-        
         $dir = dirname($this->pathFromHash($hash));
         $dir = "$dir/$hash" . "_cropped";
         if(!is_dir($dir)) {
@@ -83,13 +67,8 @@ class Photo extends Media
             throw new \RuntimeException("Could not load photosizes.xml!");
 
         $sizesMeta = [];
-        if(OPENVK_ROOT_CONF["openvk"]["preferences"]["photos"]["photoSaving"] === "quick") {
-            foreach($sizes->Size as $size)
-                $sizesMeta[(string)$size["id"]] = [false, false, false, false];
-        } else {
-            foreach($sizes->Size as $size)
-                $sizesMeta[(string)$size["id"]] = $this->resizeImage(clone $image, $dir, $size);
-        }
+        foreach($sizes->Size as $size)
+            $sizesMeta[(string) $size["id"]] = $this->resizeImage($filename, $dir, $size);
 
         $sizesMeta = MessagePack::pack($sizesMeta);
         $this->stateChanges("sizes", $sizesMeta);
@@ -97,19 +76,13 @@ class Photo extends Media
 
     protected function saveFile(string $filename, string $hash): bool
     {
-        $image = new \Imagick;
-        $image->readImage($filename);
-        $h = $image->getImageHeight();
-        $w = $image->getImageWidth();
-        if(($h >= ($w * Photo::ALLOWED_SIDE_MULTIPLIER)) || ($w >= ($h * Photo::ALLOWED_SIDE_MULTIPLIER)))
+        $image = Image::fromFile($filename);
+        if(($image->height >= ($image->width * Photo::ALLOWED_SIDE_MULTIPLIER)) || ($image->width >= ($image->height * Photo::ALLOWED_SIDE_MULTIPLIER)))
             throw new ISE("Invalid layout: image is too wide/short");
-    
-        $sizes = Image::calculateSize(
-            $image->getImageWidth(), $image->getImageHeight(), 8192, 4320, Image::SHRINK_ONLY | Image::FIT
-        );
-        $image->resizeImage($sizes[0], $sizes[1], \Imagick::FILTER_HERMITE, 1);
-        $image->writeImage($this->pathFromHash($hash));
-        $this->saveImageResizedCopies($image, $filename, $hash);
+
+        $image->resize(8192, 4320, Image::SHRINK_ONLY | Image::FIT);
+        $image->save($this->pathFromHash($hash), 92, Image::JPEG);
+        $this->saveImageResizedCopies($filename, $hash);
         
         return true;
     }
@@ -141,8 +114,8 @@ class Photo extends Media
         $sizes = $this->getRecord()->sizes;
         if(!$sizes || $forceUpdate) {
             if($forceUpdate || $upgrade || OPENVK_ROOT_CONF["openvk"]["preferences"]["photos"]["upgradeStructure"]) {
-                $hash = $this->getRecord()->hash;
-                $this->saveImageResizedCopies(NULL, $this->pathFromHash($hash), $hash);
+                $hash  = $this->getRecord()->hash;
+                $this->saveImageResizedCopies($this->pathFromHash($hash), $hash);
                 $this->save();
 
                 return $this->getSizes();
@@ -154,16 +127,6 @@ class Photo extends Media
         $res   = [];
         $sizes = MessagePack::unpack($sizes);
         foreach($sizes as $id => $meta) {
-            if(isset($meta[3]) && !$meta[3]) {
-                $res[$id] = (object) [
-                    "url"    => ovk_scheme(true) . $_SERVER["HTTP_HOST"] . "/photos/thumbnails/" . $this->getId() . "_$id.jpeg",
-                    "width"  => NULL,
-                    "height" => NULL,
-                    "crop"   => NULL
-                ];
-                continue;
-            }
-            
             $url  = $this->getURL();
             $url  = str_replace(".$this->fileExtension", "_cropped/$id.", $url);
             $url .= ($meta[1] <= 300 || $meta[2] <= 300) ? "gif" : "jpeg";
@@ -185,47 +148,6 @@ class Photo extends Media
         ];
 
         return $res;
-    }
-    
-    function forceSize(string $sizeName): bool
-    {
-        $hash  = $this->getRecord()->hash;
-        $sizes = MessagePack::unpack($this->getRecord()->sizes);
-        $size  = $sizes[$sizeName] ?? false;
-        if(!$size)
-            return $size;
-        
-        if(!isset($size[3]) || $size[3] === true)
-            return true;
-    
-        $path = $this->pathFromHash($hash);
-        $dir  = dirname($this->pathFromHash($hash));
-        $dir  = "$dir/$hash" . "_cropped";
-        if(!is_dir($dir)) {
-            @unlink($dir);
-            mkdir($dir);
-        }
-    
-        $sizeMetas = simplexml_load_file(OPENVK_ROOT . "/data/photosizes.xml");
-        if(!$sizeMetas)
-            throw new \RuntimeException("Could not load photosizes.xml!");
-        
-        $sizeInfo = NULL;
-        foreach($sizeMetas->Size as $size)
-            if($size["id"] == $sizeName)
-                $sizeInfo = $size;
-        
-        if(!$sizeInfo)
-            return false;
-        
-        $pic = new \Imagick;
-        $pic->readImage($path);
-        $sizes[$sizeName] = $this->resizeImage($pic, $dir, $sizeInfo);
-        
-        $this->stateChanges("sizes", MessagePack::pack($sizes));
-        $this->save();
-        
-        return $sizes[$sizeName][3];
     }
 
     function getVkApiSizes(): ?array
@@ -283,48 +205,30 @@ class Photo extends Media
         return [$x, $y];
     }
 
-    function getPageURL(): string
-    {
-        if($this->isAnonymous())
-            return "/photos/" . base_convert((string) $this->getId(), 10, 32);
-
-        return "/photo" . $this->getPrettyId();
-    }
-
     function getAlbum(): ?Album
     {
         return (new Albums)->getAlbumByPhotoId($this);
     }
 
-    function toVkApiStruct(bool $photo_sizes = true, bool $extended = false): object
+    function toVkApiStruct(): object
     {
         $res = (object) [];
 
-        $res->id       = $res->pid = $this->getVirtualId();
-        $res->owner_id = $res->user_id = $this->getOwner()->getId();
+        $res->id       = $res->pid = $this->getId();
+        $res->owner_id = $res->user_id = $this->getOwner()->getId()->getId();
         $res->aid      = $res->album_id = NULL;
         $res->width    = $this->getDimensions()[0];
         $res->height   = $this->getDimensions()[1];
         $res->date     = $res->created = $this->getPublicationTime()->timestamp();
 
-        if($photo_sizes) {
-            $res->sizes        = $this->getVkApiSizes();
-            $res->src_small    = $res->photo_75 = $this->getURLBySizeId("miniscule");
-            $res->src          = $res->photo_130 = $this->getURLBySizeId("tiny");
-            $res->src_big      = $res->photo_604 = $this->getURLBySizeId("normal");
-            $res->src_xbig     = $res->photo_807 = $this->getURLBySizeId("large");
-            $res->src_xxbig    = $res->photo_1280 = $this->getURLBySizeId("larger");
-            $res->src_xxxbig   = $res->photo_2560 = $this->getURLBySizeId("original");
-            $res->src_original = $res->url = $this->getURLBySizeId("UPLOADED_MAXRES");
-        }
-
-        if($extended) {
-            $res->likes       = $this->getLikesCount(); # их нету но пусть будут
-            $res->comments    = $this->getCommentsCount();
-            $res->tags        = 0;
-            $res->can_comment = 1;
-            $res->can_repost  = 0;
-        }
+        $res->sizes        = $this->getVkApiSizes();
+        $res->src_small    = $res->photo_75 = $this->getURLBySizeId("miniscule");
+        $res->src          = $res->photo_130 = $this->getURLBySizeId("tiny");
+        $res->src_big      = $res->photo_604 = $this->getURLBySizeId("normal");
+        $res->src_xbig     = $res->photo_807 = $this->getURLBySizeId("large");
+        $res->src_xxbig    = $res->photo_1280 = $this->getURLBySizeId("larger");
+        $res->src_xxxbig   = $res->photo_2560 = $this->getURLBySizeId("original");
+        $res->src_original = $res->url = $this->getURLBySizeId("UPLOADED_MAXRES");
 
         return $res;
     }

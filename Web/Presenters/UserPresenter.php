@@ -1,6 +1,5 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use Nette\InvalidStateException;
 use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification};
@@ -16,13 +15,12 @@ use Nette\Database\UniqueConstraintViolationException;
 final class UserPresenter extends OpenVKPresenter
 {
     private $users;
-    public $deactivationTolerant = false;
-    protected $presenterName = "user";
 
+    public $deactivationTolerant = false;
     function __construct(Users $users)
     {
         $this->users = $users;
-
+        
         parent::__construct();
     }
     
@@ -30,7 +28,7 @@ final class UserPresenter extends OpenVKPresenter
     {
         $user = $this->users->get($id);
         if(!$user || $user->isDeleted()) {
-            if(!is_null($user) && $user->isDeactivated()) {
+            if($user->isDeactivated()) {
                 $this->template->_template = "User/deactivated.xml";
                 
                 $this->template->user = $user;
@@ -39,7 +37,6 @@ final class UserPresenter extends OpenVKPresenter
             }
         } else {
             $this->template->albums      = (new Albums)->getUserAlbums($user);
-            $this->template->avatarAlbum = (new Albums)->getUserAvatarAlbum($user);
             $this->template->albumsCount = (new Albums)->getUserAlbumsCount($user);
             $this->template->videos      = (new Videos)->getByUser($user, 1, 2);
             $this->template->videosCount = (new Videos)->getUserVideosCount($user);
@@ -210,30 +207,6 @@ final class UserPresenter extends OpenVKPresenter
                 $user->setFav_Books(empty($this->postParam("fav_books")) ? NULL : ovk_proc_strtr($this->postParam("fav_books"), 300));
                 $user->setFav_Quote(empty($this->postParam("fav_quote")) ? NULL : ovk_proc_strtr($this->postParam("fav_quote"), 300));
                 $user->setAbout(empty($this->postParam("about")) ? NULL : ovk_proc_strtr($this->postParam("about"), 300));
-            } elseif($_GET["act"] === "backdrop") {
-                if($this->postParam("subact") === "remove") {
-                    $user->unsetBackDropPictures();
-                    $user->save();
-                    $this->flashFail("succ", tr("backdrop_succ_rem"), tr("backdrop_succ_desc")); # will exit
-                }
-    
-                $pic1 = $pic2 = NULL;
-                try {
-                    if($_FILES["backdrop1"]["error"] !== UPLOAD_ERR_NO_FILE)
-                        $pic1 = Photo::fastMake($user->getId(), "Profile backdrop (system)", $_FILES["backdrop1"]);
-    
-                    if($_FILES["backdrop2"]["error"] !== UPLOAD_ERR_NO_FILE)
-                        $pic2 = Photo::fastMake($user->getId(), "Profile backdrop (system)", $_FILES["backdrop2"]);
-                } catch(InvalidStateException $e) {
-                    $this->flashFail("err", tr("backdrop_error_title"), tr("backdrop_error_no_media"));
-                }
-                
-                if($pic1 == $pic2 && is_null($pic1))
-                    $this->flashFail("err", tr("backdrop_error_title"), tr("backdrop_error_no_media"));
-                
-                $user->setBackDropPictures($pic1, $pic2);
-                $user->save();
-                $this->flashFail("succ", tr("backdrop_succ"), tr("backdrop_succ_desc"));
             } elseif($_GET['act'] === "status") {
                 if(mb_strlen($this->postParam("status")) > 255) {
                     $statusLength = (string) mb_strlen($this->postParam("status"));
@@ -261,7 +234,7 @@ final class UserPresenter extends OpenVKPresenter
         }
         
         $this->template->mode = in_array($this->queryParam("act"), [
-            "main", "contacts", "interests", "avatar", "backdrop"
+            "main", "contacts", "interests", "avatar"
         ]) ? $this->queryParam("act")
             : "main";
         
@@ -302,7 +275,7 @@ final class UserPresenter extends OpenVKPresenter
         $this->redirect($user->getURL());
     }
     
-    function renderSetAvatar()
+    function renderSetAvatar(): void
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
@@ -322,26 +295,8 @@ final class UserPresenter extends OpenVKPresenter
         $album->addPhoto($photo);
         $album->setEdited(time());
         $album->save();
-
-        $flags = 0;
-        $flags |= 0b00010000;
-
-        $post = new Post;
-        $post->setOwner($this->user->id);
-        $post->setWall($this->user->id);
-        $post->setCreated(time());
-        $post->setContent("");
-        $post->setFlags($flags);
-        $post->save();
-        $post->attach($photo);
-        if($this->postParam("ava", true) == (int)1) {
-            $this->returnJson([
-                "url" => $photo->getURL(),
-                "id" => $photo->getPrettyId()
-            ]);
-        } else {
-            $this->flashFail("succ", tr("photo_saved"), tr("photo_saved_comment"));
-        }
+        
+        $this->flashFail("succ", tr("photo_saved"), tr("photo_saved_comment"));
     }
     
     function renderSettings(): void

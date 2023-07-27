@@ -7,7 +7,6 @@ final class GiftsPresenter extends OpenVKPresenter
 {
     private $gifts;
     private $users;
-    protected $presenterName = "gifts";
     
     function __construct(Gifts $gifts, Users $users)
     {

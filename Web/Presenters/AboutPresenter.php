@@ -37,9 +37,6 @@ final class AboutPresenter extends OpenVKPresenter
     
     function renderBB(): void
     {}
-
-    function renderTour(): void
-    {}
     
     function renderInvite(): void
     {
@@ -67,7 +64,7 @@ final class AboutPresenter extends OpenVKPresenter
         $this->template->usersStats   = (new Users)->getStatistics();
         $this->template->clubsCount   = (new Clubs)->getCount();
         $this->template->postsCount   = (new Posts)->getCount();
-        $this->template->popularClubs = [];
+        $this->template->popularClubs = iterator_to_array((new Clubs)->getPopularClubs());
         $this->template->admins       = iterator_to_array((new Users)->getInstanceAdmins());
     }
     
@@ -79,9 +76,6 @@ final class AboutPresenter extends OpenVKPresenter
             $this->assertNoCSRF();
             setLanguage($_GET['lg']);
         }
-
-        if(!is_null($_GET['jReturnTo']))
-            $this->redirect(rawurldecode($_GET['jReturnTo']));
     }
 
     function renderExportJSLanguage($lg = NULL): void
@@ -141,6 +135,6 @@ final class AboutPresenter extends OpenVKPresenter
 
     function renderDev(): void
     {
-        $this->redirect("https://docs.openvk.uk/");
+        $this->redirect("https://docs.openvk.su/");
     }
 }

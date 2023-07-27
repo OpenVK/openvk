@@ -18,10 +18,7 @@ openvk:
             forbiddenNames:
                 - "index.php"
         photos:
-            upgradeStructure: false
-            photoSaving: "quick"
-        videos:
-            disableUploading: false
+            upgradeStructure: true
         apps:
             withdrawTax: 8
         security:
@@ -29,8 +26,6 @@ openvk:
             requirePhone: false
             forcePhoneVerification: false
             forceEmailVerification: false
-            forceStrongPassword: false
-            disablePasswordRestoring: true # turn this off if you have configured e-mail sending correctly
             enableSu: true
             rateLimits:
                 actions: 5
@@ -40,9 +35,9 @@ openvk:
                 autoban: true
         registration:
             enable: true
-            disablingReason: ""
+            reason: "" # reason for disabling registration
         support:
-            supportName: "Agent"
+            supportName: "Moderator"
             adminAccount: 1 # Change this ok
             fastAnswers:
                 - "This is a list of quick answers to common questions for support. Post your responses here and agents can send it quickly with just 3 clicks"
@@ -63,20 +58,6 @@ openvk:
         susLinks:
             warnings: true
             showReason: true
-        maintenanceMode:
-            all: false
-            photos: false
-            videos: false
-            messenger: false
-            user: false
-            group: false
-            comment: false
-            gifts: false
-            apps: false
-            notes: false
-            notification: false
-            support: false
-            topics: false
         ton:
             enabled: false
             address: "🅿"
@@ -128,9 +109,9 @@ openvk:
             token: "TOKEN_HERE"
             helpdeskChat: ""
         eventDB:
-            enable: true
+            enable: false # Better enable this
             database:
-                dsn: "mysql:unix_host=localhost;dbname=openvk-eventdb" # or unix_socket=/tmp/mysql.sock
+                dsn: "mysql:unix_socket=/tmp/mysql.sock;dbname=openvk-eventdb"
                 user: "root"
                 password: "DATABASE_PASSWORD"
         notificationsBroker:

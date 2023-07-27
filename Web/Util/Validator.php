@@ -22,9 +22,5 @@ class Validator
         return (bool) preg_match("/^(?:t.me\/|@)?([a-zA-Z0-9_]{0,32})$/", $telegram);
     }
 
-    function passwordStrong(string $password): bool{
-        return (bool) preg_match("/^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{8,}$/", $password);
-    }
-
     use TSimpleSingleton;
 }

@@ -1,9 +1,8 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Exceptions\TooMuchOptionsException;
-use openvk\Web\Models\Entities\{Poll, Post, Photo, Video, Club, User};
-use openvk\Web\Models\Entities\Notifications\{MentionNotification, RepostNotification, WallPostNotification};
-use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums, Notes};
+use openvk\Web\Models\Entities\{Post, Photo, Video, Club, User};
+use openvk\Web\Models\Entities\Notifications\{RepostNotification, WallPostNotification};
+use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums};
 use Chandler\Database\DatabaseConnection;
 use Nette\InvalidStateException as ISE;
 use Bhaktaraz\RSSGenerator\Item;
@@ -45,6 +44,9 @@ final class WallPresenter extends OpenVKPresenter
     
     function renderWall(int $user, bool $embedded = false): void
     {
+        if(false)
+            exit(tr("forbidden") . ": " . (string) random_int(0, 255));
+        
         $owner = ($user < 0 ? (new Clubs) : (new Users))->get(abs($user));
         if(is_null($this->user)) {
             $canPost = false;
@@ -63,10 +65,7 @@ final class WallPresenter extends OpenVKPresenter
         }
         
         if ($embedded == true) $this->template->_template = "components/wall.xml";
-        $this->template->oObj = $owner;
-        if($user < 0)
-            $this->template->club = $owner;
-        
+        $this->template->oObj    = $owner;
         $this->template->owner   = $user;
         $this->template->canPost = $canPost;
         $this->template->count   = $this->posts->getPostCountOnUserWall($user);
@@ -89,6 +88,9 @@ final class WallPresenter extends OpenVKPresenter
 
     function renderRSS(int $user): void
     {
+        if(false)
+            exit(tr("forbidden") . ": " . (string) random_int(0, 255));
+        
         $owner = ($user < 0 ? (new Clubs) : (new Users))->get(abs($user));
         if(is_null($this->user)) {
             $canPost = false;
@@ -229,9 +231,6 @@ final class WallPresenter extends OpenVKPresenter
         if(!$canPost)
             $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
 
-        if($_FILES["_vid_attachment"] && OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading'])
-            $this->flashFail("err", tr("error"), "Video uploads are disabled by the system administrator.");
-
         $anon = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"];
         if($wallOwner instanceof Club && $this->postParam("as_group") === "on" && $this->postParam("force_sign") !== "on" && $anon) {
             $manager = $wallOwner->getManager($this->user->identity);
@@ -260,40 +259,16 @@ final class WallPresenter extends OpenVKPresenter
                 $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album, $anon);
             }
             
-            if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK)
-                $video = Video::fastMake($this->user->id, $_FILES["_vid_attachment"]["name"], $this->postParam("text"), $_FILES["_vid_attachment"], $anon);
+            if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK) {
+                $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"], $anon);
+            }
         } catch(\DomainException $ex) {
             $this->flashFail("err", tr("failed_to_publish_post"), tr("media_file_corrupted"));
         } catch(ISE $ex) {
             $this->flashFail("err", tr("failed_to_publish_post"), tr("media_file_corrupted_or_too_large"));
         }
         
-        try {
-            $poll = NULL;
-            $xml = $this->postParam("poll");
-            if (!is_null($xml) && $xml != "none")
-                $poll = Poll::import($this->user->identity, $xml);
-        } catch(TooMuchOptionsException $e) {
-            $this->flashFail("err", tr("failed_to_publish_post"), tr("poll_err_to_much_options"));
-        } catch(\UnexpectedValueException $e) {
-            $this->flashFail("err", tr("failed_to_publish_post"), "Poll format invalid");
-        }
-
-        $note = NULL;
-
-        if(!is_null($this->postParam("note")) && $this->postParam("note") != "none") {
-            $note = (new Notes)->get((int)$this->postParam("note"));
-
-            if(!$note || $note->isDeleted() || $note->getOwner()->getId() != $this->user->id) {
-                $this->flashFail("err", tr("error"), tr("error_attaching_note"));
-            }
-            
-            if($note->getOwner()->getPrivacySetting("notes.read") < 1) {
-                $this->flashFail("err", " ");
-            }
-        }
-        
-        if(empty($this->postParam("text")) && !$photo && !$video && !$poll && !$note)
+        if(empty($this->postParam("text")) && !$photo && !$video)
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"));
         
         try {
@@ -316,23 +291,8 @@ final class WallPresenter extends OpenVKPresenter
         if(!is_null($video))
             $post->attach($video);
         
-        if(!is_null($poll))
-            $post->attach($poll);
-
-        if(!is_null($note))
-            $post->attach($note);
-        
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
-        
-        $excludeMentions = [$this->user->identity->getId()];
-        if($wall > 0)
-            $excludeMentions[] = $wall;
-
-        $mentions = iterator_to_array($post->resolveMentions($excludeMentions));
-        foreach($mentions as $mentionee)
-            if($mentionee instanceof User)
-                (new MentionNotification($mentionee, $post, $post->getOwner(), strip_tags($post->getText())))->emit();
         
         $this->redirect($wallOwner->getURL());
     }
@@ -383,52 +343,21 @@ final class WallPresenter extends OpenVKPresenter
         $this->assertNoCSRF();
         
         $post = $this->posts->getPostById($wall, $post_id);
-
-        if(!$post || $post->isDeleted()) 
-            $this->notFound();
+        if(!$post || $post->isDeleted()) $this->notFound();
         
-        $where = $this->postParam("type") ?? "wall";
-        $groupId = NULL;
-        $flags = 0;
-
-        if($where == "group")
-            $groupId = $this->postParam("groupId");
-
         if(!is_null($this->user)) {
             $nPost = new Post;
-
-            if($where == "wall") {
-                $nPost->setOwner($this->user->id);
-                $nPost->setWall($this->user->id);
-            } elseif($where == "group") {
-                $nPost->setOwner($this->user->id);
-                $club = (new Clubs)->get((int)$groupId);
-
-                if(!$club || !$club->canBeModifiedBy($this->user->identity))
-                    $this->notFound();
-                
-                if($this->postParam("asGroup") == 1) 
-                    $flags |= 0b10000000;
-
-                if($this->postParam("signed") == 1)
-                    $flags |= 0b01000000;
-                
-                $nPost->setWall($groupId * -1);
-            }
-
+            $nPost->setOwner($this->user->id);
+            $nPost->setWall($this->user->id);
             $nPost->setContent($this->postParam("text"));
-            $nPost->setFlags($flags);
             $nPost->save();
-
             $nPost->attach($post);
             
             if($post->getOwner(false)->getId() !== $this->user->identity->getId() && !($post->getOwner() instanceof Club))
                 (new RepostNotification($post->getOwner(false), $post, $this->user->identity))->emit();
         };
-		
-        $this->returnJson([
-            "wall_owner" => $where == "wall" ? $this->user->identity->getId() : $groupId * -1
-        ]);
+        
+        $this->returnJson(["wall_owner" => $this->user->identity->getId()]);
     }
     
     function renderDelete(int $wall, int $post_id): void

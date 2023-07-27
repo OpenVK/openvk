@@ -8,7 +8,6 @@ final class Likes extends VKAPIRequestHandler
 	function add(string $type, int $owner_id, int $item_id): object
 	{
 		$this->requireUser();
-        $this->willExecuteWriteAction();
 
         switch($type) {
             case "post":
@@ -29,7 +28,6 @@ final class Likes extends VKAPIRequestHandler
 	function delete(string $type, int $owner_id, int $item_id): object
 	{
 		$this->requireUser();
-        $this->willExecuteWriteAction();
 
         switch($type) {
             case "post":
@@ -54,7 +52,11 @@ final class Likes extends VKAPIRequestHandler
             case "post":
                 $user = (new UsersRepo)->get($user_id);
                 if (is_null($user))
-                    $this->fail(100, "One of the parameters specified was missing or invalid: user not found");
+                    return (object) [
+                        "liked"  => 0,
+                        "copied" => 0,
+                        "sex"    => 0
+                    ];
 
                 $post = (new PostsRepo)->getPostById($owner_id, $item_id);
                 if (is_null($post))

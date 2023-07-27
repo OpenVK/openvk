@@ -1,12 +1,11 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{Comment, Notifications\MentionNotification, Photo, Video, User, Topic, Post};
+use openvk\Web\Models\Entities\{Comment, Photo, Video, User, Topic, Post};
 use openvk\Web\Models\Entities\Notifications\CommentNotification;
 use openvk\Web\Models\Repositories\{Comments, Clubs};
 
 final class CommentPresenter extends OpenVKPresenter
 {
-    protected $presenterName = "comment";
     private $models = [
         "posts"   => "openvk\\Web\\Models\\Repositories\\Posts",
         "photos"  => "openvk\\Web\\Models\\Repositories\\Photos",
@@ -47,9 +46,6 @@ final class CommentPresenter extends OpenVKPresenter
             $club = (new Clubs)->get(abs($entity->getTargetWall()));
         else if($entity instanceof Topic)
             $club = $entity->getClub();
-
-        if($_FILES["_vid_attachment"] && OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading'])
-            $this->flashFail("err", tr("error"), "Video uploads are disabled by the system administrator.");
         
         $flags = 0;
         if($this->postParam("as_group") === "on" && !is_null($club) && $club->canBeModifiedBy($this->user->identity))
@@ -77,7 +73,7 @@ final class CommentPresenter extends OpenVKPresenter
             }
             
             if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK) {
-                $video = Video::fastMake($this->user->id, $_FILES["_vid_attachment"]["name"], $this->postParam("text"), $_FILES["_vid_attachment"]);
+                $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"]);
             }
         } catch(ISE $ex) {
             $this->flashFail("err", "Не удалось опубликовать комментарий", "Файл медиаконтента повреждён или слишком велик.");
@@ -108,15 +104,6 @@ final class CommentPresenter extends OpenVKPresenter
         if($entity->getOwner()->getId() !== $this->user->identity->getId())
             if(($owner = $entity->getOwner()) instanceof User)
                 (new CommentNotification($owner, $comment, $entity, $this->user->identity))->emit();
-    
-        $excludeMentions = [$this->user->identity->getId()];
-        if(($owner = $entity->getOwner()) instanceof User)
-            $excludeMentions[] = $owner->getId();
-
-        $mentions = iterator_to_array($comment->resolveMentions($excludeMentions));
-        foreach($mentions as $mentionee)
-            if($mentionee instanceof User)
-                (new MentionNotification($mentionee, $entity, $comment->getOwner(), strip_tags($comment->getText())))->emit();
         
         $this->flashFail("succ", "Комментарий добавлен", "Ваш комментарий появится на странице.");
     }
