@@ -9,11 +9,13 @@ final class MessengerPresenter extends OpenVKPresenter
 {
     private $messages;
     private $signaler;
-    
+    protected $presenterName = "messenger";
+
     function __construct(Messages $messages)
     {
         $this->messages = $messages;
         $this->signaler = SignalManager::i();
+
         parent::__construct();
     }
     
@@ -30,7 +32,7 @@ final class MessengerPresenter extends OpenVKPresenter
     function renderIndex(): void
     {
         $this->assertUserLoggedIn();
-        
+
         if(isset($_GET["sel"]))
             $this->pass("openvk!Messenger->app", $_GET["sel"]);
         
@@ -55,6 +57,11 @@ final class MessengerPresenter extends OpenVKPresenter
         $correspondent = $this->getCorrespondent($sel);
         if(!$correspondent)
             $this->notFound();
+
+        if(!$this->user->identity->getPrivacyPermission('messages.write', $correspondent))
+        {
+            $this->flash("err", tr("warning"), tr("user_may_not_reply"));
+        }
         
         $this->template->selId         = $sel;
         $this->template->correspondent = $correspondent;
@@ -93,6 +100,13 @@ final class MessengerPresenter extends OpenVKPresenter
         }
         
         $legacy = $this->queryParam("version") < 3;
+
+        $time = intval($this->queryParam("wait"));
+        
+        if($time > 60)
+            $time = 60;
+        elseif($time == 0)
+        	$time = 25; // default
         
         $this->signaler->listen(function($event, $eId) use ($id) {
             exit(json_encode([
@@ -101,7 +115,7 @@ final class MessengerPresenter extends OpenVKPresenter
                     $event->getVKAPISummary($id),
                 ],
             ]));
-        }, $id);
+        }, $id, $time);
     }
     
     function renderApiGetMessages(int $sel, int $lastMsg): void

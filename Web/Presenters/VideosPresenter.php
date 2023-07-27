@@ -8,7 +8,8 @@ final class VideosPresenter extends OpenVKPresenter
 {
     private $videos;
     private $users;
-    
+    protected $presenterName = "videos";
+
     function __construct(Videos $videos, Users $users)
     {
         $this->videos = $videos;
@@ -55,6 +56,9 @@ final class VideosPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
+
+        if(OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading'])
+            $this->flashFail("err", tr("error"), "Video uploads are disabled by the system administrator.");
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             if(!empty($this->postParam("name"))) {

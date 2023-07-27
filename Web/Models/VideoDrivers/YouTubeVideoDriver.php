@@ -13,13 +13,13 @@ final class YouTubeVideoDriver extends VideoDriver
         return "https://youtu.be/$this->id";
     }
     
-    function getEmbed(): string
+    function getEmbed(string $w = "600", string $h = "340"): string
     {
         return <<<CODE
         <iframe
-               width="600"
-               height="340"
-               src="https://www.youtube.com/embed/$this->id"
+               width="$w"
+               height="$h"
+               src="https://www.youtube-nocookie.com/embed/$this->id"
                frameborder="0"
                sandbox="allow-same-origin allow-scripts allow-popups"
                allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"

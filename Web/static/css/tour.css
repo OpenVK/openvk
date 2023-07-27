@@ -1,0 +1,179 @@
+/* OVK CONTENT TOUR CSS */
+
+#tour {
+ background-color: #f7f7F7;
+ padding:0px;
+  overflow : hidden ! important;
+  _height : 1% ! important;
+
+}
+
+.welcome {
+ background-color: #fff;
+ padding: 10px;
+ padding-right:50px;
+ border: 1px solid #ccc;
+}
+
+h4 {  
+  border-bottom: solid 1px #b9c4da;
+  margin: 0px;
+  padding: 0px 0px 4px;
+  font-size: 15px; 
+}
+
+h6 {
+ color: #45668E; 
+ font-size: 13px; 
+ padding-bottom: 3px;
+ height: 32px;
+ width: auto;
+}
+
+h2 {
+ color: #45668E; 
+ font-size: 14px; 
+ padding-bottom: 3px;
+ width: auto;
+ border-bottom: 1px solid #DAE1E8;
+}
+
+.correctIt {
+ font-size: 11px;
+ color: #777;
+ font-weight: normal;
+ float: right;
+}
+
+p.wel {
+  padding-left: 50px; font-size: 11px; 
+  background: #fff;
+}
+
+#auth{
+	background: #f7f7F7;
+}
+
+.wLabel {
+ float:left; width:100px; padding-top:4px;
+ font-weight: bold;
+ color: #777;
+ text-align: right;
+ padding-right: 16px;
+}
+
+p.big {
+ font-size:12px; text-align:center;
+}
+.tour {
+ background: #F9F6E7;
+ border: 1px solid #BEAD61;
+ padding: 8px 25px;
+ width:205px;
+ text-align:center;
+ color: #000;
+ font-size:12px;
+ margin:10px auto;
+ cursor:hand;cursor:pointer;
+}
+.tour div {
+ font-size: 11px; color:#000; 
+}
+a.noUnd:hover  {
+text-decoration:none;
+}
+
+.helpNav {
+ margin: 4px 0px; padding:4px 6px; background:#DAE1E8; border-top:1px solid #B7BEC6; width: 5.3em;
+ font-size:11px; text-decoration: none; color: #2B587A; cursor: hand; cursor: pointer;
+}
+
+.helpNav a {
+ text-decoration: none;
+}
+
+.selled {
+ background-color: #B8C4CF;
+}
+
+* {box-sizing: border-box}
+
+.rightNav {
+ border:0px; width:140px; padding-left: 6px; float:right;
+}
+.rightNav h1 {
+ border:0px; background: #EAEAEA; font-weight:bold; font-size:11px; padding: 4px 5px;
+}
+.rightLinks {
+ margin-bottom:10px;
+}
+.rightLinks div {
+ padding:4px 6px 4px 5px; margin:1px;
+}
+.rightLinks .active {
+ background: #fff; 
+}
+.rightLinks .active a {
+ cursor: default; color: #000; font-weight:bold;
+}
+.rightLinks .active a:hover {
+ cursor: default; text-decoration: none;
+}
+
+.rightLinks img {
+ vertical-align: bottom; margin-right:5px;
+}
+
+/* Style the tab */
+.tab {
+    float: right;
+    width: 140px;
+}
+
+.tab:hover {
+    background: none;
+}
+
+/* Style the buttons inside the tab */
+.tab button {
+    display: block;
+    background-color: inherit;
+    width: 138px;
+	height: 24px;
+    border: none;
+	margin-bottom: 5px;
+    outline: none;
+    text-align: left;
+    cursor: pointer;
+	background: none;
+	font-size: 10px;
+}
+
+/* Create an active/current "tab button" class */
+.tab button.active {
+    background-color: #fff;
+	cursor: default; color: #000; font-weight:bold;
+}
+
+.tab button.hover{
+	background: none;
+}
+
+/* Style the tab content */
+.tabcontent {
+    float: left;
+    padding: 0px 12px;
+	background: #fff;
+    width: 77%;
+}
+.tabcontent img{
+	margin:auto;
+}
+.tabicon{
+	width: 16px;
+	height: 16px;
+	display: inline;
+	margin-right: 1px;
+}
+
+/* OVK CONTENT TOUR CSS */

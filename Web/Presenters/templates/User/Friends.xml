@@ -53,7 +53,7 @@
     <div n:attr="id => ($act === 'online' ? 'activetabs' : 'ki')" class="tab">
         <a n:attr="id => ($act === 'online' ? 'act_tab_a' : 'ki')" href="?act=online">{_online}</a>
     </div>
-    <div n:attr="id => ($act === 'incoming' || $act === 'outcoming' ? 'activetabs' : 'ki')" class="tab">
+    <div n:if="!is_null($thisUser) && $user->getId() === $thisUser->getId()" n:attr="id => ($act === 'incoming' || $act === 'outcoming' ? 'activetabs' : 'ki')" class="tab">
         <a n:attr="id => ($act === 'incoming' || $act === 'outcoming' ? 'act_tab_a' : 'ki')" href="?act=incoming">{_req}</a>
     </div>
 {/block}

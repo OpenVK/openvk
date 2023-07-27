@@ -1,11 +1,13 @@
 <?php declare(strict_types=1);
+
 namespace openvk\Web\Models\Entities;
+
 use morphos\Gender;
 use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{Photo, Message, Correspondence, Gift};
-use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Gifts, Notifications};
+use openvk\Web\Models\Repositories\{Photos, Users, Clubs, Albums, Gifts, Notifications};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
@@ -15,187 +17,189 @@ use function morphos\Russian\inflectName;
 class User extends RowModel
 {
     protected $tableName = "profiles";
-    
+
     const TYPE_DEFAULT = 0;
-    const TYPE_BOT     = 1;
-    
-    const SUBSCRIPTION_ABSENT   = 0;
+    const TYPE_BOT = 1;
+
+    const SUBSCRIPTION_ABSENT = 0;
     const SUBSCRIPTION_INCOMING = 1;
     const SUBSCRIPTION_OUTGOING = 2;
-    const SUBSCRIPTION_MUTUAL   = 3;
-    
-    const PRIVACY_NO_ONE          = 0;
-    const PRIVACY_ONLY_FRIENDS    = 1;
+    const SUBSCRIPTION_MUTUAL = 3;
+
+    const PRIVACY_NO_ONE = 0;
+    const PRIVACY_ONLY_FRIENDS = 1;
     const PRIVACY_ONLY_REGISTERED = 2;
-    const PRIVACY_EVERYONE        = 3;
-    
-    const NSFW_INTOLERANT    = 0;
-    const NSFW_TOLERANT      = 1;
+    const PRIVACY_EVERYONE = 3;
+
+    const NSFW_INTOLERANT = 0;
+    const NSFW_TOLERANT = 1;
     const NSFW_FULL_TOLERANT = 2;
-    
+
     protected function _abstractRelationGenerator(string $filename, int $page = 1, int $limit = 6): \Traversable
     {
-        $id     = $this->getId();
-        $query  = "SELECT id FROM\n" . file_get_contents(__DIR__ . "/../sql/$filename.tsql");
-        $query .= "\n LIMIT " . $limit . " OFFSET " . ( ($page - 1) * $limit );
-        
+        $id = $this->getId();
+        $query = "SELECT id FROM\n" . file_get_contents(__DIR__ . "/../sql/$filename.tsql");
+        $query .= "\n LIMIT " . $limit . " OFFSET " . (($page - 1) * $limit);
+
         $rels = DatabaseConnection::i()->getConnection()->query($query, $id, $id);
-        foreach($rels as $rel) {
+        foreach ($rels as $rel) {
             $rel = (new Users)->get($rel->id);
-            if(!$rel) continue;
-            
+            if (!$rel) continue;
+
             yield $rel;
         }
     }
-    
+
     protected function _abstractRelationCount(string $filename): int
     {
-        $id    = $this->getId();
+        $id = $this->getId();
         $query = "SELECT COUNT(*) AS cnt FROM\n" . file_get_contents(__DIR__ . "/../sql/$filename.tsql");
-        
-        return (int) DatabaseConnection::i()->getConnection()->query($query, $id, $id)->fetch()->cnt;
+
+        return (int)DatabaseConnection::i()->getConnection()->query($query, $id, $id)->fetch()->cnt;
     }
-    
+
     function getId(): int
     {
         return $this->getRecord()->id;
     }
-    
+
     function getStyle(): string
     {
         return $this->getRecord()->style;
     }
-    
+
     function getTheme(): ?Themepack
     {
         return Themepacks::i()[$this->getStyle()] ?? NULL;
     }
-    
+
     function getStyleAvatar(): int
     {
         return $this->getRecord()->style_avatar;
     }
-    
+
     function hasMilkshakeEnabled(): bool
     {
-        return (bool) $this->getRecord()->milkshake;
+        return (bool)$this->getRecord()->milkshake;
     }
 
     function hasMicroblogEnabled(): bool
     {
-        return (bool) $this->getRecord()->microblog;
+        return (bool)$this->getRecord()->microblog;
     }
 
     function getMainPage(): int
     {
         return $this->getRecord()->main_page;
     }
-    
+
     function getChandlerGUID(): string
     {
         return $this->getRecord()->user;
     }
-    
+
     function getChandlerUser(): ChandlerUser
     {
         return new ChandlerUser($this->getRecord()->ref("ChandlerUsers", "user"));
     }
-    
+
     function getURL(): string
     {
-        if(!is_null($this->getShortCode()))
+        if (!is_null($this->getShortCode()))
             return "/" . $this->getShortCode();
         else
             return "/id" . $this->getId();
     }
-    
+
     function getAvatarUrl(string $size = "miniscule"): string
     {
         $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
-        
-        if($this->getRecord()->deleted)
+
+        if ($this->getRecord()->deleted)
             return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
-        else if($this->isBanned())
+        else if ($this->isBanned())
             return "$serverUrl/assets/packages/static/openvk/img/banned.jpg";
-        
+
         $avPhoto = $this->getAvatarPhoto();
-        if(is_null($avPhoto))
+        if (is_null($avPhoto))
             return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
         else
             return $avPhoto->getURLBySizeId($size);
     }
-    
+
     function getAvatarLink(): string
     {
         $avPhoto = $this->getAvatarPhoto();
-        if(!$avPhoto) return "javascript:void(0)";
-        
+        if (!$avPhoto) return "javascript:void(0)";
+
         $pid = $avPhoto->getPrettyId();
         $aid = (new Albums)->getUserAvatarAlbum($this)->getId();
-        
+
         return "/photo$pid?from=album$aid";
     }
-    
+
     function getAvatarPhoto(): ?Photo
     {
-        $avAlbum  = (new Albums)->getUserAvatarAlbum($this);
-        $avCount  = $avAlbum->getPhotosCount();
+        $avAlbum = (new Albums)->getUserAvatarAlbum($this);
+        $avCount = $avAlbum->getPhotosCount();
         $avPhotos = $avAlbum->getPhotos($avCount, 1);
-        
+
         return iterator_to_array($avPhotos)[0] ?? NULL;
     }
-    
+
     function getFirstName(bool $pristine = false): string
     {
         $name = ($this->isDeleted() && !$this->isDeactivated() ? "DELETED" : mb_convert_case($this->getRecord()->first_name, MB_CASE_TITLE));
-        if((($ts = tr("__transNames")) !== "@__transNames") && !$pristine)
-            return mb_convert_case(transliterator_transliterate($ts, $name), MB_CASE_TITLE);
+        $tsn = tr("__transNames");
+        if (($tsn !== "@__transNames" && !empty($tsn)) && !$pristine)
+            return mb_convert_case(transliterator_transliterate($tsn, $name), MB_CASE_TITLE);
         else
             return $name;
     }
-    
+
     function getLastName(bool $pristine = false): string
     {
         $name = ($this->isDeleted() && !$this->isDeactivated() ? "DELETED" : mb_convert_case($this->getRecord()->last_name, MB_CASE_TITLE));
-        if((($ts = tr("__transNames")) !== "@__transNames") && !$pristine)
-            return mb_convert_case(transliterator_transliterate($ts, $name), MB_CASE_TITLE);
+        $tsn = tr("__transNames");
+        if (($tsn !== "@__transNames" && !empty($tsn)) && !$pristine)
+            return mb_convert_case(transliterator_transliterate($tsn, $name), MB_CASE_TITLE);
         else
             return $name;
     }
-    
+
     function getPseudo(): ?string
     {
         return ($this->isDeleted() && !$this->isDeactivated() ? "DELETED" : $this->getRecord()->pseudo);
     }
-    
+
     function getFullName(): string
     {
-        if($this->isDeleted() && !$this->isDeactivated())
+        if ($this->isDeleted() && !$this->isDeactivated())
             return "DELETED";
-        
+
         $pseudo = $this->getPseudo();
-        if(!$pseudo)
+        if (!$pseudo)
             $pseudo = " ";
         else
             $pseudo = " ($pseudo) ";
-        
+
         return $this->getFirstName() . $pseudo . $this->getLastName();
     }
 
     function getMorphedName(string $case = "genitive", bool $fullName = true): string
     {
         $name = $fullName ? ($this->getLastName() . " " . $this->getFirstName()) : $this->getFirstName();
-        if(!preg_match("%^[А-яё\-]+$%", $name))
+        if (!preg_match("%^[А-яё\-]+$%", $name))
             return $name; # name is probably not russian
 
         $inflected = inflectName($name, $case, $this->isFemale() ? Gender::FEMALE : Gender::MALE);
 
         return $inflected ?: $name;
     }
-    
+
     function getCanonicalName(): string
     {
-        if($this->isDeleted() && !$this->isDeactivated())
+        if ($this->isDeleted() && !$this->isDeactivated())
             return "DELETED";
         else
             return $this->getFirstName() . " " . $this->getLastName();
@@ -253,7 +257,7 @@ class User extends RowModel
 
     function getCoins(): float
     {
-        if(!OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"])
+        if (!OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"])
             return 0.0;
 
         return $this->getRecord()->coins;
@@ -293,17 +297,17 @@ class User extends RowModel
     {
         return $this->getRecord()->marital_status;
     }
-    
+
     function getLocalizedMaritalStatus(): string
     {
         $status = $this->getMaritalStatus();
         $string = "relationship_$status";
-        if($this->isFemale()) {
+        if ($this->isFemale()) {
             $res = tr($string . "_fem");
-            if($res != ("@" . $string . "_fem"))
+            if ($res != ("@" . $string . "_fem"))
                 return $res; # If fem version exists, return
         }
-        
+
         return tr($string);
     }
 
@@ -364,7 +368,7 @@ class User extends RowModel
 
     function getBirthday(): ?DateTime
     {
-        if(is_null($this->getRecord()->birthday))
+        if (is_null($this->getRecord()->birthday))
             return NULL;
         else
             return new DateTime($this->getRecord()->birthday);
@@ -397,8 +401,8 @@ class User extends RowModel
 
     function getLeftMenuItemStatus(string $id): bool
     {
-        return (bool) bmask($this->getRecord()->left_menu, [
-            "length"   => 1,
+        return (bool)bmask($this->getRecord()->left_menu, [
+            "length" => 1,
             "mappings" => [
                 "photos",
                 "videos",
@@ -414,8 +418,8 @@ class User extends RowModel
 
     function getPrivacySetting(string $id): int
     {
-        return (int) bmask($this->getRecord()->privacy, [
-            "length"   => 2,
+        return (int)bmask($this->getRecord()->privacy, [
+            "length" => 2,
             "mappings" => [
                 "page.read",
                 "page.info.read",
@@ -434,12 +438,12 @@ class User extends RowModel
     function getPrivacyPermission(string $permission, ?User $user = NULL): bool
     {
         $permStatus = $this->getPrivacySetting($permission);
-        if(!$user)
+        if (!$user)
             return $permStatus === User::PRIVACY_EVERYONE;
-        else if($user->getId() === $this->getId())
+        else if ($user->getId() === $this->getId())
             return true;
 
-        switch($permStatus) {
+        switch ($permStatus) {
             case User::PRIVACY_ONLY_FRIENDS:
                 return $this->getSubscriptionStatus($user) === User::SUBSCRIPTION_MUTUAL;
             case User::PRIVACY_ONLY_REGISTERED:
@@ -453,39 +457,39 @@ class User extends RowModel
     function getProfileCompletenessReport(): object
     {
         $incompleteness = 0;
-        $unfilled       = [];
+        $unfilled = [];
 
-        if(!$this->getRecord()->status) {
-            $unfilled[]      = "status";
+        if (!$this->getRecord()->status) {
+            $unfilled[] = "status";
             $incompleteness += 15;
         }
-        if(!$this->getRecord()->telegram) {
-            $unfilled[]      = "telegram";
+        if (!$this->getRecord()->telegram) {
+            $unfilled[] = "telegram";
             $incompleteness += 15;
         }
-        if(!$this->getRecord()->email) {
-            $unfilled[]      = "email";
+        if (!$this->getRecord()->email) {
+            $unfilled[] = "email";
             $incompleteness += 20;
         }
-        if(!$this->getRecord()->city) {
-            $unfilled[]      = "city";
+        if (!$this->getRecord()->city) {
+            $unfilled[] = "city";
             $incompleteness += 20;
         }
-        if(!$this->getRecord()->interests) {
-            $unfilled[]      = "interests";
+        if (!$this->getRecord()->interests) {
+            $unfilled[] = "interests";
             $incompleteness += 20;
         }
 
         $total = max(100 - $incompleteness + $this->getRating(), 0);
-        if(ovkGetQuirk("profile.rating-bar-behaviour") === 0)
-	    if ($total >= 100)
-            $percent = round(($total / 10**strlen(strval($total))) * 100, 0);
-        else
-		    $percent = min($total, 100);
+        if (ovkGetQuirk("profile.rating-bar-behaviour") === 0)
+            if ($total >= 100)
+                $percent = round(($total / 10 ** strlen(strval($total))) * 100, 0);
+            else
+                $percent = min($total, 100);
 
-        return (object) [
-            "total"    => $total,
-            "percent"  => $percent,
+        return (object)[
+            "total" => $total,
+            "percent" => $percent,
             "unfilled" => $unfilled,
         ];
     }
@@ -535,25 +539,28 @@ class User extends RowModel
         return sizeof(DatabaseConnection::i()->getContext()->table("messages")->where(["recipient_id" => $this->getId(), "unread" => 1]));
     }
 
-    function getClubs(int $page = 1, bool $admin = false): \Traversable
+    function getClubs(int $page = 1, bool $admin = false, int $count = OPENVK_DEFAULT_PER_PAGE, bool $offset = false): \Traversable
     {
-        if($admin) {
-            $id     = $this->getId();
-            $query  = "SELECT `id` FROM `groups` WHERE `owner` = ? UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?";
-            $query .= " LIMIT " . OPENVK_DEFAULT_PER_PAGE . " OFFSET " . ($page - 1) * OPENVK_DEFAULT_PER_PAGE;
+        if (!$offset)
+            $page = ($page - 1) * $count;
+
+        if ($admin) {
+            $id = $this->getId();
+            $query = "SELECT `id` FROM `groups` WHERE `owner` = ? UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?";
+            $query .= " LIMIT " . $count . " OFFSET " . $page;
 
             $sel = DatabaseConnection::i()->getConnection()->query($query, $id, $id);
-            foreach($sel as $target) {
+            foreach ($sel as $target) {
                 $target = (new Clubs)->get($target->id);
-                if(!$target) continue;
+                if (!$target) continue;
 
                 yield $target;
             }
         } else {
-            $sel = $this->getRecord()->related("subscriptions.follower")->page($page, OPENVK_DEFAULT_PER_PAGE);
-            foreach($sel->where("model", "openvk\\Web\\Models\\Entities\\Club") as $target) {
+            $sel = $this->getRecord()->related("subscriptions.follower")->limit($count, $page);
+            foreach ($sel->where("model", "openvk\\Web\\Models\\Entities\\Club") as $target) {
                 $target = (new Clubs)->get($target->target);
-                if(!$target) continue;
+                if (!$target) continue;
 
                 yield $target;
             }
@@ -562,11 +569,11 @@ class User extends RowModel
 
     function getClubCount(bool $admin = false): int
     {
-        if($admin) {
-            $id    = $this->getId();
+        if ($admin) {
+            $id = $this->getId();
             $query = "SELECT COUNT(*) AS `cnt` FROM (SELECT `id` FROM `groups` WHERE `owner` = ? UNION SELECT `club` as `id` FROM `group_coadmins` WHERE `user` = ?) u0;";
 
-            return (int) DatabaseConnection::i()->getConnection()->query($query, $id, $id)->fetch()->cnt;
+            return (int)DatabaseConnection::i()->getConnection()->query($query, $id, $id)->fetch()->cnt;
         } else {
             $sel = $this->getRecord()->related("subscriptions.follower");
             $sel = $sel->where("model", "openvk\\Web\\Models\\Entities\\Club");
@@ -577,16 +584,16 @@ class User extends RowModel
 
     function getPinnedClubs(): \Traversable
     {
-        foreach($this->getRecord()->related("groups.owner")->where("owner_club_pinned", true) as $target) {
+        foreach ($this->getRecord()->related("groups.owner")->where("owner_club_pinned", true) as $target) {
             $target = (new Clubs)->get($target->id);
-            if(!$target) continue;
+            if (!$target) continue;
 
             yield $target;
         }
 
-        foreach($this->getRecord()->related("group_coadmins.user")->where("club_pinned", true) as $target) {
+        foreach ($this->getRecord()->related("group_coadmins.user")->where("club_pinned", true) as $target) {
             $target = (new Clubs)->get($target->club);
-            if(!$target) continue;
+            if (!$target) continue;
 
             yield $target;
         }
@@ -599,11 +606,11 @@ class User extends RowModel
 
     function isClubPinned(Club $club): bool
     {
-        if($club->getOwner()->getId() === $this->getId())
+        if ($club->getOwner()->getId() === $this->getId())
             return $club->isOwnerClubPinned();
 
         $manager = $club->getManager($this);
-        if(!is_null($manager))
+        if (!is_null($manager))
             return $manager->isClubPinned();
 
         return false;
@@ -612,9 +619,9 @@ class User extends RowModel
     function getMeetings(int $page = 1): \Traversable
     {
         $sel = $this->getRecord()->related("event_turnouts.user")->page($page, OPENVK_DEFAULT_PER_PAGE);
-        foreach($sel as $target) {
+        foreach ($sel as $target) {
             $target = (new Clubs)->get($target->event);
-            if(!$target) continue;
+            if (!$target) continue;
 
             yield $target;
         }
@@ -628,13 +635,13 @@ class User extends RowModel
     function getGifts(int $page = 1, ?int $perPage = NULL): \Traversable
     {
         $gifts = $this->getRecord()->related("gift_user_relations.receiver")->order("sent DESC")->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
-        foreach($gifts as $rel) {
-            yield (object) [
-                "sender"  => (new Users)->get($rel->sender),
-                "gift"    => (new Gifts)->get($rel->gift),
+        foreach ($gifts as $rel) {
+            yield (object)[
+                "sender" => (new Users)->get($rel->sender),
+                "gift" => (new Gifts)->get($rel->gift),
                 "caption" => $rel->comment,
-                "anon"    => $rel->anonymous,
-                "sent"    => new DateTime($rel->sent),
+                "anon" => $rel->anonymous,
+                "sent" => new DateTime($rel->sent),
             ];
         }
     }
@@ -647,7 +654,7 @@ class User extends RowModel
     function get2faBackupCodes(): \Traversable
     {
         $sel = $this->getRecord()->related("2fa_backup_codes.owner");
-        foreach($sel as $target)
+        foreach ($sel as $target)
             yield $target->code;
     }
 
@@ -660,36 +667,36 @@ class User extends RowModel
     {
         $codes = [];
 
-        for($i = 0; $i < 10 - $this->get2faBackupCodeCount(); $i++) {
+        for ($i = 0; $i < 10 - $this->get2faBackupCodeCount(); $i++) {
             $codes[] = [
                 owner => $this->getId(),
                 code => random_int(10000000, 99999999)
             ];
         }
 
-        if(sizeof($codes) > 0)
+        if (sizeof($codes) > 0)
             DatabaseConnection::i()->getContext()->table("2fa_backup_codes")->insert($codes);
     }
 
     function use2faBackupCode(int $code): bool
     {
-        return (bool) $this->getRecord()->related("2fa_backup_codes.owner")->where("code", $code)->delete();
+        return (bool)$this->getRecord()->related("2fa_backup_codes.owner")->where("code", $code)->delete();
     }
 
     function getSubscriptionStatus(User $user): int
     {
         $subbed = !is_null($this->getRecord()->related("subscriptions.follower")->where([
-            "model"  => static::class,
+            "model" => static::class,
             "target" => $user->getId(),
         ])->fetch());
         $followed = !is_null($this->getRecord()->related("subscriptions.target")->where([
-            "model"    => static::class,
+            "model" => static::class,
             "follower" => $user->getId(),
         ])->fetch());
 
-        if($subbed && $followed) return User::SUBSCRIPTION_MUTUAL;
-        if($subbed)   return User::SUBSCRIPTION_INCOMING;
-        if($followed) return User::SUBSCRIPTION_OUTGOING;
+        if ($subbed && $followed) return User::SUBSCRIPTION_MUTUAL;
+        if ($subbed) return User::SUBSCRIPTION_INCOMING;
+        if ($followed) return User::SUBSCRIPTION_OUTGOING;
 
         return User::SUBSCRIPTION_ABSENT;
     }
@@ -711,7 +718,7 @@ class User extends RowModel
 
     function getRefLinkId(): string
     {
-        $hash = hash_hmac("Snefru", (string) $this->getId(), CHANDLER_ROOT_CONF["security"]["secret"], true);
+        $hash = hash_hmac("Snefru", (string)$this->getId(), CHANDLER_ROOT_CONF["security"]["secret"], true);
 
         return dechex($this->getId()) . " " . base64_encode($hash);
     }
@@ -723,12 +730,12 @@ class User extends RowModel
 
     function isFemale(): bool
     {
-        return (bool) $this->getRecord()->sex;
+        return (bool)$this->getRecord()->sex;
     }
 
     function isVerified(): bool
     {
-        return (bool) $this->getRecord()->verified;
+        return (bool)$this->getRecord()->verified;
     }
 
     function isBanned(): bool
@@ -746,9 +753,66 @@ class User extends RowModel
         return time() - $this->getRecord()->online <= 300;
     }
 
+    function getOnlinePlatform(bool $forAPI = false): ?string
+    {
+        $platform = $this->getRecord()->client_name;
+        if ($forAPI) {
+            switch ($platform) {
+                case 'openvk_refresh_android':
+                case 'openvk_legacy_android':
+                    return 'android';
+                    break;
+
+                case 'openvk_ios':
+                case 'openvk_legacy_ios':
+                    return 'iphone';
+                    break;
+
+                case 'vika_touch': // кика хохотач ахахахаххахахахахах
+                case 'vk4me':
+                    return 'mobile';
+                    break;
+
+                case NULL:
+                    return NULL;
+                    break;
+
+                default:
+                    return 'api';
+                    break;
+            }
+        } else {
+            return $platform;
+        }
+    }
+
+    function getOnlinePlatformDetails(): array
+    {
+        $clients = simplexml_load_file(OPENVK_ROOT . "/data/clients.xml");
+
+        foreach ($clients as $client) {
+            if ($client['tag'] == $this->getOnlinePlatform()) {
+                return [
+                    "tag" => $client['tag'],
+                    "name" => $client['name'],
+                    "url" => $client['url'],
+                    "img" => $client['img']
+                ];
+                break;
+            }
+        }
+
+        return [
+            "tag" => $this->getOnlinePlatform(),
+            "name" => NULL,
+            "url" => NULL,
+            "img" => NULL
+        ];
+    }
+
     function prefersNotToSeeRating(): bool
     {
-        return !((bool) $this->getRecord()->show_rating);
+        return !((bool)$this->getRecord()->show_rating);
     }
 
     function hasPendingNumberChange(): bool
@@ -759,18 +823,18 @@ class User extends RowModel
     function gift(User $sender, Gift $gift, ?string $comment = NULL, bool $anonymous = false): void
     {
         DatabaseConnection::i()->getContext()->table("gift_user_relations")->insert([
-            "sender"    => $sender->getId(),
-            "receiver"  => $this->getId(),
-            "gift"      => $gift->getId(),
-            "comment"   => $comment,
+            "sender" => $sender->getId(),
+            "receiver" => $this->getId(),
+            "gift" => $gift->getId(),
+            "comment" => $comment,
             "anonymous" => $anonymous,
-            "sent"      => time(),
+            "sent" => time(),
         ]);
     }
 
     function ban(string $reason, bool $deleteSubscriptions = true, ?int $unban_time = NULL): void
     {
-        if($deleteSubscriptions) {
+        if ($deleteSubscriptions) {
             $subs = DatabaseConnection::i()->getContext()->table("subscriptions");
             $subs = $subs->where(
                 "follower = ? OR (target = ? AND model = ?)",
@@ -806,15 +870,15 @@ class User extends RowModel
     {
         return new DateTime($this->getRecord()->deact_date);
     }
-    
+
     function verifyNumber(string $code): bool
     {
         $ver = $this->getPendingPhoneVerification();
-        if(!$ver) return false;
+        if (!$ver) return false;
 
         try {
-            if(sodium_memcmp((string) $ver->code, $code) === -1) return false;
-        } catch(\SodiumException $ex) {
+            if (sodium_memcmp((string)$ver->code, $code) === -1) return false;
+        } catch (\SodiumException $ex) {
             return false;
         }
 
@@ -822,9 +886,9 @@ class User extends RowModel
         $this->save();
 
         DatabaseConnection::i()->getContext()
-                               ->table("number_verification")
-                               ->where("user", $this->getId())
-                               ->delete();
+            ->table("number_verification")
+            ->where("user", $this->getId())
+            ->delete();
 
         return true;
     }
@@ -832,7 +896,7 @@ class User extends RowModel
     function setFirst_Name(string $firstName): void
     {
         $firstName = mb_convert_case($firstName, MB_CASE_TITLE);
-        if(!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?(?:[\p{L&}\p{Lo}]\p{Mn}?){1,16}$%u', $firstName))
+        if (!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?(?:[\p{L&}\p{Lo}]\p{Mn}?){1,16}$%u', $firstName))
             throw new InvalidUserNameException;
 
         $this->stateChanges("first_name", $firstName);
@@ -840,11 +904,10 @@ class User extends RowModel
 
     function setLast_Name(string $lastName): void
     {
-        if(!empty($lastName))
-        {
-	        $lastName = mb_convert_case($lastName, MB_CASE_TITLE);
-	        if(!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?([\p{L&}\p{Lo}]\p{Mn}?){1,16}(\-\g<1>+)?$%u', $lastName))
-	            throw new InvalidUserNameException;
+        if (!empty($lastName)) {
+            $lastName = mb_convert_case($lastName, MB_CASE_TITLE);
+            if (!preg_match('%^[\p{Lu}\p{Lo}]\p{Mn}?([\p{L&}\p{Lo}]\p{Mn}?){1,16}(\-\g<1>+)?$%u', $lastName))
+                throw new InvalidUserNameException;
         }
 
         $this->stateChanges("last_name", $lastName);
@@ -858,7 +921,7 @@ class User extends RowModel
     function setPrivacySetting(string $id, int $status): void
     {
         $this->stateChanges("privacy", bmask($this->changes["privacy"] ?? $this->getRecord()->privacy, [
-            "length"   => 2,
+            "length" => 2,
             "mappings" => [
                 "page.read",
                 "page.info.read",
@@ -877,7 +940,7 @@ class User extends RowModel
     function setLeftMenuItemStatus(string $id, bool $status): void
     {
         $mask = bmask($this->changes["left_menu"] ?? $this->getRecord()->left_menu, [
-            "length"   => 1,
+            "length" => 1,
             "mappings" => [
                 "photos",
                 "videos",
@@ -888,26 +951,30 @@ class User extends RowModel
                 "links",
                 "poster",
             ],
-        ])->set($id, (int) $status)->toInteger();
+        ])->set($id, (int)$status)->toInteger();
 
         $this->stateChanges("left_menu", $mask);
     }
 
     function setShortCode(?string $code = NULL, bool $force = false): ?bool
     {
-        if(!is_null($code)) {
-            if(strlen($code) < OPENVK_ROOT_CONF["openvk"]["preferences"]["shortcodes"]["minLength"] && !$force)
+        if (!is_null($code)) {
+            if (strlen($code) < OPENVK_ROOT_CONF["openvk"]["preferences"]["shortcodes"]["minLength"] && !$force)
                 return false;
-            if(!preg_match("%^[a-z][a-z0-9\\.\\_]{0,30}[a-z0-9]$%", $code))
+            if (!preg_match("%^[a-z][a-z0-9\\.\\_]{0,30}[a-z0-9]$%", $code))
                 return false;
-            if(in_array($code, OPENVK_ROOT_CONF["openvk"]["preferences"]["shortcodes"]["forbiddenNames"]))
+            if (in_array($code, OPENVK_ROOT_CONF["openvk"]["preferences"]["shortcodes"]["forbiddenNames"]))
                 return false;
-            if(\Chandler\MVC\Routing\Router::i()->getMatchingRoute("/$code")[0]->presenter !== "UnknownTextRouteStrategy")
+            if (\Chandler\MVC\Routing\Router::i()->getMatchingRoute("/$code")[0]->presenter !== "UnknownTextRouteStrategy")
                 return false;
 
             $pClub = DatabaseConnection::i()->getContext()->table("groups")->where("shortcode", $code)->fetch();
-                if(!is_null($pClub))
-                    return false;
+            if (!is_null($pClub))
+                return false;
+
+            $pAlias = DatabaseConnection::i()->getContext()->table("aliases")->where("shortcode", $code)->fetch();
+            if (!is_null($pAlias))
+                return false;
         }
 
         $this->stateChanges("shortcode", $code);
@@ -918,18 +985,18 @@ class User extends RowModel
     {
         $code = unpack("S", openssl_random_pseudo_bytes(2))[1];
 
-        if($this->hasPendingNumberChange()) {
+        if ($this->hasPendingNumberChange()) {
             DatabaseConnection::i()->getContext()
-                                   ->table("number_verification")
-                                   ->where("user", $this->getId())
-                                   ->update(["number" => $phone, "code" => $code]);
+                ->table("number_verification")
+                ->where("user", $this->getId())
+                ->update(["number" => $phone, "code" => $code]);
         } else {
             DatabaseConnection::i()->getContext()
-                                   ->table("number_verification")
-                                   ->insert(["user" => $this->getId(), "number" => $phone, "code" => $code]);
+                ->table("number_verification")
+                ->insert(["user" => $this->getId(), "number" => $phone, "code" => $code]);
         }
 
-        return (string) $code;
+        return (string)$code;
     }
 
     # KABOBSQL temporary fix
@@ -939,6 +1006,15 @@ class User extends RowModel
     {
         $this->stateChanges("shortcode", $this->getRecord()->shortcode); #fix KABOBSQL
         $this->stateChanges("online", $time);
+
+        return true;
+    }
+
+    function updOnline(string $platform): bool
+    {
+        $this->setOnline(time());
+        $this->setClient_name($platform);
+        $this->save();
 
         return true;
     }
@@ -957,9 +1033,9 @@ class User extends RowModel
     function adminNotify(string $message): bool
     {
         $admId = OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"];
-        if(!$admId)
+        if (!$admId)
             return false;
-        else if(is_null($admin = (new Users)->get($admId)))
+        else if (is_null($admin = (new Users)->get($admId)))
             return false;
 
         $cor = new Correspondence($admin, $this);
@@ -972,7 +1048,7 @@ class User extends RowModel
 
     function isDeleted(): bool
     {
-        if($this->getRecord()->deleted == 1)
+        if ($this->getRecord()->deleted == 1)
             return TRUE;
         else
             return FALSE;
@@ -980,7 +1056,7 @@ class User extends RowModel
 
     function isDeactivated(): bool
     {
-        if($this->getDeactivationDate()->timestamp() > time())
+        if ($this->getDeactivationDate()->timestamp() > time())
             return TRUE;
         else
             return FALSE;
@@ -1008,47 +1084,65 @@ class User extends RowModel
         }
     }
 
-	function getWebsite(): ?string
-	{
-		return $this->getRecord()->website;
-	}
+    function getWebsite(): ?string
+    {
+        return $this->getRecord()->website;
+    }
 
-  # ты устрица
-  function isActivated(): bool
-  {
-      return (bool) $this->getRecord()->activated;
-  }
+    # ты устрица
+    function isActivated(): bool
+    {
+        return (bool)$this->getRecord()->activated;
+    }
 
-  function isBtModerator(): bool
-  {
-      return $this->getChandlerUser()->can("admin")->model('openvk\Web\Models\Repositories\BugtrackerReports')->whichBelongsTo(NULL);
-  }
+    function isBtModerator(): bool
+    {
+        return $this->getChandlerUser()->can("admin")->model('openvk\Web\Models\Repositories\BugtrackerReports')->whichBelongsTo(NULL);
+    }
 
-  function getBanInBtReason(): ?string
-  {
-      return $this->getRecord()->block_in_bt_reason;
-  }
+    function getBanInBtReason(): ?string
+    {
+        return $this->getRecord()->block_in_bt_reason;
+    }
 
-  function isBannedInBt(): bool
-  {
-      return !is_null($this->getBanInBtReason());
-  }
+    function isBannedInBt(): bool
+    {
+        return !is_null($this->getBanInBtReason());
+    }
 
-  function getUnbanTime(): ?string
-  {
-      return !is_null($this->getRecord()->unblock_time) ? date('d.m.Y', $this->getRecord()->unblock_time) : NULL;
-  }
+    function getUnbanTime(): ?string
+    {
+        return !is_null($this->getRecord()->unblock_time) ? date('d.m.Y', $this->getRecord()->unblock_time) : NULL;
+    }
 
-  function canUnbanThemself(): bool
-  {
-      if (!$this->isBanned())
-          return false;
+    function canUnbanThemself(): bool
+    {
+        if (!$this->isBanned())
+            return false;
 
-      if ($this->getRecord()->unblock_time > time() || $this->getRecord()->unblock_time == 0)
-          return false;
+        if ($this->getRecord()->unblock_time > time() || $this->getRecord()->unblock_time == 0)
+            return false;
 
-      return true;
-  }
-    
-  use Traits\TSubscribable;
+        return true;
+    }
+
+    function toVkApiStruct(): object
+    {
+        $res = (object)[];
+
+        $res->id = $this->getId();
+        $res->first_name = $this->getFirstName();
+        $res->last_name = $this->getLastName();
+        $res->deactivated = $this->isDeactivated();
+        $res->photo_50 = $this->getAvatarURL();
+        $res->photo_100 = $this->getAvatarURL("tiny");
+        $res->photo_200 = $this->getAvatarURL("normal");
+        $res->photo_id = !is_null($this->getAvatarPhoto()) ? $this->getAvatarPhoto()->getPrettyId() : NULL;
+        # TODO: Perenesti syuda vsyo ostalnoyie
+
+        return $res;
+    }
+
+    use Traits\TBackDrops;
+    use Traits\TSubscribable;
 }
