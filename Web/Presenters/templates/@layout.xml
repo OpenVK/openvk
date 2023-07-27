@@ -17,62 +17,19 @@
         {script "js/l10n.js"}
         {script "js/openvk.cls.js"}
 
+        {css "js/node_modules/tippy.js/dist/backdrop.css"}
+        {css "js/node_modules/tippy.js/dist/border.css"}
+        {css "js/node_modules/tippy.js/dist/svg-arrow.css"}
+        {css "js/node_modules/tippy.js/themes/light.css"}
+        {script "js/node_modules/@popperjs/core/dist/umd/popper.min.js"}
+        {script "js/node_modules/tippy.js/dist/tippy-bundle.umd.min.js"}
+        {script "js/node_modules/handlebars/dist/handlebars.min.js"}
+
         {if $isTimezoned == NULL}
             {script "js/timezone.js"}
         {/if}
 
-        {ifset $thisUser}
-            {if $thisUser->getNsfwTolerance() < 2}
-                {css "css/nsfw-posts.css"}
-            {/if}
-
-            {if $theme !== NULL}
-                {if $theme->inheritDefault()}
-                    {css "css/style.css"}
-                    {css "css/dialog.css"}
-                    {css "css/notifications.css"}
-                    
-                    {if $isXmas}
-                        {css "css/xmas.css"}
-                    {/if}
-                {/if}
-
-                <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/stylesheet/styles.css" />
-                
-                {if $isXmas}
-                    <link rel="stylesheet" href="/themepack/{$theme->getId()}/{$theme->getVersion()}/resource/xmas.css" />
-                {/if}
-            {else}
-                {css "css/style.css"}
-                {css "css/dialog.css"}
-                {css "css/notifications.css"}
-                
-                {if $isXmas}
-                    {css "css/xmas.css"}
-                {/if}
-            {/if}
-
-            {if $thisUser->getStyleAvatar() == 1}
-                {css "css/avatar.1.css"}
-            {/if}
-            
-            {if $thisUser->getStyleAvatar() == 2}
-                {css "css/avatar.2.css"}
-            {/if}
-
-            {if $thisUser->hasMicroblogEnabled() == 1}
-                {css "css/microblog.css"}
-            {/if}
-        {else}
-            {css "css/style.css"}
-            {css "css/dialog.css"}
-            {css "css/nsfw-posts.css"}
-            {css "css/notifications.css"}
-
-            {if $isXmas}
-                {css "css/xmas.css"}
-            {/if}
-        {/ifset}
+        {include "_includeCSS.xml"}
 
         {ifset headIncludes}
             {include headIncludes}
@@ -92,6 +49,34 @@
         <div class="notifications_global_wrap"></div>
         <div class="dimmer"></div>
 
+        <div class="articleView">
+            <a id="articleCloseButton" class="button" href="javascript:void(u('body').removeClass('article'));">{_close}</a>
+            <div class="articleView_container">
+                <div class="articleView_info">
+                    <div class="articleView_author">
+                        <img id="articleAuthorAva" src="" />
+                        <div>
+                            <span><a id="articleAuthorName"></a></span>
+                            <time id="articleTime"></time>
+                        </div>
+                    </div>
+
+                    <div class="articleView_link">
+                        <a id="articleLink" href="/" class="button">{_aw_legacy_ui}</a>
+                    </div>
+                </div>
+
+                <div class="articleView_text" id="articleText">
+                </div>
+            </div>
+        </div>
+
+        {if isset($backdrops) && !is_null($backdrops)}
+            <div id="backdrop" style="background-image: url('{$backdrops[0]|noescape}'), url('{$backdrops[1]|noescape}');">
+                <div id="backdropDripper"></div>
+            </div>
+        {/if}
+
         <div class="toTop">
             ⬆ {_to_top}
         </div>
@@ -107,28 +92,66 @@
                                 <a href="/logout?hash={urlencode($csrfToken)}">{_header_log_out}</a>
                             </div>
                         {else}
-                            <div class="link">
+                            <div class="link dec">
                                 <a href="/">{_header_home}</a>
                             </div>
-                            <div class="link">
+                            <div class="link dec">
                                 <a href="/search?type=groups">{_header_groups}</a>
                             </div>
-                            <div class="link">
+                            <div class="link dec">
                                 <a href="/search">{_header_search}</a>
                             </div>
-                            <div class="link">
+                            <div class="link dec">
                                 <a href="/invite">{_header_invite}</a>
                             </div>
-                            <div class="link">
+                            <div class="link dec">
                                 <a href="/support">{_header_help} <b n:if="$ticketAnsweredCount > 0">({$ticketAnsweredCount})</b></a>
                             </div>
-                            <div class="link">
+                            <div class="link dec">
                                 <a href="/logout?hash={urlencode($csrfToken)}">{_header_log_out}</a>
                             </div>
-                            <div class="link">
-                                <form action="/search" method="get">
-                                    <input type="search" name="query" placeholder="{_header_search}" style="height: 20px;background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; background-color: #fff; padding-left: 18px;width: 120px;" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
-                                </form>
+                            {var $atSearch = str_contains($_SERVER['REQUEST_URI'], "/search")}
+                            <div id="srch" class="{if $atSearch}nodivider{else}link{/if}">
+
+                                {if !$atSearch}
+                                    <form action="/search" method="get" id="searcher" style="position:relative;">
+                                        <input autocomplete="off" id="searchInput" oninput="checkSearchTips()" onfocus="expandSearch()" onblur="decreaseSearch()" class="sr" type="search" name="query" placeholder="{_header_search}" style="height: 20px;background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; background-color: #fff; padding-left: 18px;width: 120px;" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
+                                        <select onchange="checkSearchTips()" id="typer" name="type" class="whatFind" style="display:none;top: 0px;">
+                                            <option value="users">{_s_by_people}</option>
+                                            <option value="groups">{_s_by_groups}</option>
+                                            <option value="posts">{_s_by_posts}</option>
+                                            <option value="comments">{_s_by_comments}</option>
+                                            <option value="videos">{_s_by_videos}</option>
+                                            <option value="apps">{_s_by_apps}</option>
+                                        </select>
+                                    </form>
+                                    <div class="searchTips" id="srcht" hidden>
+                                        <table style="border:none;border-spacing: 0;">
+                                            <tbody id="srchrr">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                {else}
+                                    <form action="/search" method="get" id="searcher" style="margin-top: -1px;position:relative;">
+                                        <input id="searchInput" value="{$_GET['query'] ?? ''}" type="search" class="sr" name="query" placeholder="{_header_search}" style="height: 20px; background-color: #fff; padding-left: 6px;width: 555px;" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
+                                        <select name="type" class="whatFind">
+                                            <option value="users"    {if str_contains($_SERVER['REQUEST_URI'], "type=users")}selected{/if}>{_s_by_people}</option>
+                                            <option value="groups"   {if str_contains($_SERVER['REQUEST_URI'], "type=groups")}selected{/if}>{_s_by_groups}</option>
+                                            <option value="posts"    {if str_contains($_SERVER['REQUEST_URI'], "type=posts")}selected{/if}>{_s_by_posts}</option>
+                                            <option value="comments" {if str_contains($_SERVER['REQUEST_URI'], "type=comments")}selected{/if}>{_s_by_comments}</option>
+                                            <option value="videos"   {if str_contains($_SERVER['REQUEST_URI'], "type=videos")}selected{/if}>{_s_by_videos}</option>
+                                            <option value="apps"     {if str_contains($_SERVER['REQUEST_URI'], "type=apps")}selected{/if}>{_s_by_apps}</option>
+                                        </select>
+                                        <button class="searchBtn"><span style="color:white;font-weight: 600;font-size:12px;">{_header_search}</span></button>
+                                    </form>
+                                    <script>
+                                        let els = document.querySelectorAll("div.dec")
+                                        for(const element of els)
+                                        {
+                                            element.style.display = "none"
+                                        }
+                                    </script>
+                                {/if}
                             </div>
                         {/if}
                     {else}
@@ -181,7 +204,7 @@
                             {var $menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
                             <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $menuLinksAvaiable" class="menu_divider"></div>
                             <a href="/admin" class="link" n:if="$canAccessAdminPanel" title="{_admin} [Alt+Shift+A]" accesskey="a">{_admin}</a>
-                            <a href="/support/tickets" class="link" n:if="$canAccessHelpdesk">Helpdesk
+                            <a href="/support/tickets" class="link" n:if="$canAccessHelpdesk">{_helpdesk}
                                 {if $helpdeskTicketNotAnsweredCount > 0}
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
                                 {/if}
@@ -222,7 +245,7 @@
                             </a>
 
                             <div class="floating_sidebar">
-                                <a class="minilink" href="/friends{$thisUser->getId()}">
+                                <a id="minilink-friends" class="minilink" href="/friends{$thisUser->getId()}">
                                     <object type="internal/link" n:if="$thisUser->getFollowersCount() > 0">
                                         <div class="counter">
                                             +{$thisUser->getFollowersCount()}
@@ -230,10 +253,10 @@
                                     </object>
                                     <img src="/assets/packages/static/openvk/img/friends.svg">
                                 </a>
-                                <a class="minilink" href="/albums{$thisUser->getId()}">
+                                <a id="minilink-albums" class="minilink" href="/albums{$thisUser->getId()}">
                                     <img src="/assets/packages/static/openvk/img/photos.svg">
                                 </a>
-                                <a class="minilink" href="/im">
+                                <a id="minilink-messenger" class="minilink" href="/im">
                                     <object type="internal/link" n:if="$thisUser->getUnreadMessagesCount() > 0">
                                         <div class="counter">
                                             +{$thisUser->getUnreadMessagesCount()}
@@ -241,10 +264,10 @@
                                     </object>
                                     <img src="/assets/packages/static/openvk/img/messages.svg">
                                 </a>
-                                <a class="minilink" href="/groups{$thisUser->getId()}">
+                                <a id="minilink-groups" class="minilink" href="/groups{$thisUser->getId()}">
                                     <img src="/assets/packages/static/openvk/img/groups.svg">
                                 </a>
-                                <a class="minilink" href="/notifications">
+                                <a id="minilink-notifications" class="minilink" href="/notifications">
                                     <object type="internal/link" n:if="$thisUser->getNotificationsCount() > 0">
                                         <div class="counter">
                                             +{$thisUser->getNotificationsCount()}
@@ -271,9 +294,9 @@
                             <input id="password" type="password" name="password" required />
                             <input type="hidden" name="jReturnTo" value="{$_SERVER['REQUEST_URI']}" />
                             <input type="hidden" name="hash" value="{$csrfToken}" />
-                            <input type="submit" value="{_log_in}" class="button" style="display: inline-block;" />
-                            <a href="/reg" class="button" style="display: inline-block;">{_registration}</a><br><br>
-                            <a href="/restore">{_forgot_password}</a>
+                            <input type="submit" value="{_log_in}" class="button" style="display: inline-block; font-family: Tahoma" />
+                            <a href="/reg"><input type="button" value="{_registration}" class="button" style="font-family: Tahoma" /></a><br><br>
+                            {if !OPENVK_ROOT_CONF['openvk']['preferences']['security']['disablePasswordRestoring']}<a href="/restore">{_forgot_password}</a>{/if}
                         </form>
                     {/ifset}
                     </div>
@@ -324,12 +347,21 @@
 
             <div class="navigation_footer">
                 <a href="/about" class="link">{_footer_about_instance}</a>
+                <a href="/terms" class="link">{_footer_rules}</a>
                 <a href="/blog" class="link">{_footer_blog}</a>
                 <a href="/support" class="link">{_footer_help}</a>
                 <a href="/dev" target="_blank" class="link">{_footer_developers}</a>
-                <a href="/language" class="link">{_footer_choose_language}</a>
                 <a href="/privacy" class="link">{_footer_privacy}</a>
             </div>
+            <p>
+                {var $currentUrl = $_SERVER["REQUEST_URI"]}
+                {foreach array_slice(getLanguages(), 0, 3) as $language}
+                    <a href="/language?lg={$language['code']}&hash={urlencode($csrfToken)}&jReturnTo={php echo rawurlencode($currentUrl)}" rel="nofollow" title="{$language['native_name']}" class="link">
+                        <img src="/assets/packages/static/openvk/img/flags/{$language['flag']}.gif" alt="{$language['native_name']}">
+                    </a>
+                {/foreach}
+                <a href="/language" class="link">all languages &raquo;</a>
+            </p>
             <p>OpenVK <a href="/about:openvk">{php echo OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {$dbVersion}</p>
             <p n:ifcontent>
                 {php echo OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]}
@@ -344,8 +376,11 @@
         {script "js/messagebox.js"}
         {script "js/notifications.js"}
         {script "js/scroll.js"}
+        {script "js/player.js"}
         {script "js/al_wall.js"}
         {script "js/al_api.js"}
+        {script "js/al_mentions.js"}
+        {script "js/al_polls.js"}
 
         {ifset $thisUser}
             {script "js/al_notifs.js"}
@@ -357,6 +392,8 @@
                 fartscroll(400);
             </script>
         {/if}
+
+        <script>bsdnHydrate();</script>
 
         <script n:if="OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['enable']" async defer data-domain="{php echo OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['domain']}" src="{php echo OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['server']}js/plausible.js"></script>
         

@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Voucher, Gift, GiftCategory, User, BannedLink};
-use openvk\Web\Models\Repositories\{Bans, Photos, Posts, Users, Clubs, Videos, Vouchers, Gifts, BannedLinks};
+use openvk\Web\Models\Repositories\{Bans, ChandlerGroups, ChandlerUsers, Photos, Posts, Users, Clubs, Videos, Vouchers, Gifts, BannedLinks};
 use Chandler\Database\DatabaseConnection;
 
 final class AdminPresenter extends OpenVKPresenter
@@ -11,14 +11,16 @@ final class AdminPresenter extends OpenVKPresenter
     private $vouchers;
     private $gifts;
     private $bannedLinks;
-    
-    function __construct(Users $users, Clubs $clubs, Vouchers $vouchers, Gifts $gifts, BannedLinks $bannedLinks)
+    private $chandlerGroups;
+
+    function __construct(Users $users, Clubs $clubs, Vouchers $vouchers, Gifts $gifts, BannedLinks $bannedLinks, ChandlerGroups $chandlerGroups)
     {
         $this->users    = $users;
         $this->clubs    = $clubs;
         $this->vouchers = $vouchers;
         $this->gifts    = $gifts;
         $this->bannedLinks = $bannedLinks;
+        $this->chandlerGroups = $chandlerGroups;
         
         parent::__construct();
     }
@@ -62,7 +64,9 @@ final class AdminPresenter extends OpenVKPresenter
             $this->notFound();
         
         $this->template->user = $user;
-        
+        $this->template->c_groups_list = (new ChandlerGroups)->getList();
+        $this->template->c_memberships = $this->chandlerGroups->getUsersMemberships($user->getChandlerGUID());
+
         if($_SERVER["REQUEST_METHOD"] !== "POST")
             return;
         
@@ -78,8 +82,16 @@ final class AdminPresenter extends OpenVKPresenter
                 $user->changeEmail($this->postParam("email"));
                 if($user->onlineStatus() != $this->postParam("online")) $user->setOnline(intval($this->postParam("online")));
                 $user->setVerified(empty($this->postParam("verify") ? 0 : 1));
+                if($this->postParam("add-to-group")) {
+                    $query = "INSERT INTO `ChandlerACLRelations` (`user`, `group`) VALUES ('" . $user->getChandlerGUID() . "', '" . $this->postParam("add-to-group") . "')";
+                    DatabaseConnection::i()->getConnection()->query($query);
+                }
+                if($this->postParam("password")) {
+                    $user->getChandlerUser()->updatePassword($this->postParam("password"));
+                }
 
                 $user->save();
+
                 break;
         }
     }
@@ -468,5 +480,96 @@ final class AdminPresenter extends OpenVKPresenter
         if (!$user) $this->notFound();
 
         $this->template->bans = (new Bans)->getByUser($user_id);
+    }
+
+    function renderChandlerGroups(): void
+    {
+        $this->template->groups = (new ChandlerGroups)->getList();
+
+        if($_SERVER["REQUEST_METHOD"] !== "POST")
+            return;
+
+        $req = "INSERT INTO `ChandlerGroups` (`name`) VALUES ('" . $this->postParam("name") . "')";
+        DatabaseConnection::i()->getConnection()->query($req);
+    }
+
+    function renderChandlerGroup(string $UUID): void
+    {
+        $DB = DatabaseConnection::i()->getConnection();
+
+        if(is_null($DB->query("SELECT * FROM `ChandlerGroups` WHERE `id` = '$UUID'")->fetch()))
+            $this->flashFail("err", tr("error"), tr("c_group_not_found"));
+
+        $this->template->group = (new ChandlerGroups)->get($UUID);
+        $this->template->mode = in_array(
+            $this->queryParam("act"),
+            [
+                "main",
+                "members",
+                "permissions",
+                "removeMember",
+                "removePermission",
+                "delete"
+            ]) ? $this->queryParam("act") : "main";
+        $this->template->members = (new ChandlerGroups)->getMembersById($UUID);
+        $this->template->perms = (new ChandlerGroups)->getPermissionsById($UUID);
+
+        if($this->template->mode == "removeMember") {
+            $where = "`user` = '" . $this->queryParam("uid") . "' AND `group` = '$UUID'";
+
+            if(is_null($DB->query("SELECT * FROM `ChandlerACLRelations` WHERE " . $where)->fetch()))
+                $this->flashFail("err", tr("error"), tr("c_user_is_not_in_group"));
+
+            $DB->query("DELETE FROM `ChandlerACLRelations` WHERE " . $where);
+            $this->flashFail("succ", tr("changes_saved"), tr("c_user_removed_from_group"));
+        } elseif($this->template->mode == "removePermission") {
+            $where = "`model` = '" . trim(addslashes($this->queryParam("model"))) . "' AND `permission` = '". $this->queryParam("perm") ."' AND `group` = '$UUID'";
+
+            if(is_null($DB->query("SELECT * FROM `ChandlerACLGroupsPermissions WHERE $where`")))
+                $this->flashFail("err", tr("error"), tr("c_permission_not_found"));
+
+            $DB->query("DELETE FROM `ChandlerACLGroupsPermissions` WHERE $where");
+            $this->flashFail("succ", tr("changes_saved"), tr("c_permission_removed_from_group"));
+        } elseif($this->template->mode == "delete") {
+            $DB->query("DELETE FROM `ChandlerGroups` WHERE `id` = '$UUID'");
+            $DB->query("DELETE FROM `ChandlerACLGroupsPermissions` WHERE `group` = '$UUID'");
+            $DB->query("DELETE FROM `ChandlerACLRelations` WHERE `group` = '$UUID'");
+
+            $this->flashFail("succ", tr("changes_saved"), tr("c_group_removed"));
+        }
+
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") return;
+
+        $req = "";
+
+        if($this->template->mode == "main")
+            if($this->postParam("delete"))
+                $req = "DELETE FROM `ChandlerGroups` WHERE `id`='$UUID'";
+            else
+                $req = "UPDATE `ChandlerGroups` SET `name`='". $this->postParam('name') ."' , `color`='". $this->postParam("color") ."' WHERE `id`='$UUID'";
+
+        if($this->template->mode == "members")
+            if($this->postParam("uid"))
+                if(!is_null($DB->query("SELECT * FROM `ChandlerACLRelations` WHERE `user` = '" . $this->postParam("uid") . "'")))
+                    $this->flashFail("err", tr("error"), tr("c_user_is_already_in_group"));
+
+                $req = "INSERT INTO `ChandlerACLRelations` (`user`, `group`, `priority`) VALUES ('". $this->postParam("uid") ."', '$UUID', 32)";
+
+        if($this->template->mode == "permissions")
+            $req = "INSERT INTO `ChandlerACLGroupsPermissions` (`group`, `model`, `permission`, `context`) VALUES ('$UUID', '". trim(addslashes($this->postParam("model"))) ."', '". $this->postParam("permission") ."', 0)";
+
+        $DB->query($req);
+        $this->flashFail("succ", tr("changes_saved"));
+    }
+
+    function renderChandlerUser(string $UUID): void
+    {
+        if(!$UUID) $this->notFound();
+
+        $c_user = (new ChandlerUsers())->getById($UUID);
+        $user = $this->users->getByChandlerUser($c_user);
+        if(!$user) $this->notFound();
+
+        $this->redirect("/admin/users/id" . $user->getId());
     }
 }

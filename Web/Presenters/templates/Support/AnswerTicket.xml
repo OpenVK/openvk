@@ -101,7 +101,7 @@
                         </div>
                     {elseif ($comment->getUType() === 1)}
                         <div class="post-author">
-                            <a><b>{$comment->getAuthorName()}</b></a>
+                            <a n:attr="href => $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0) ? '/support/agent' . $comment->getUser()->getId() : ''"><b>{$comment->getAuthorName()}</b></a>
                             {if $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
                                 <a href="{$comment->getUser()->getURL()}">
                                     <span class="nobold">
