@@ -4,7 +4,7 @@ use openvk\Web\Util\DateTime;
 use Nette\Database\Table\ActiveRow;
 use openvk\Web\Models\RowModel;
 use Chandler\Database\DatabaseConnection;
-use openvk\Web\Models\Repositories\{Users, Posts, Photos, Videos, Clubs};
+use openvk\Web\Models\Repositories\{Applications, Comments, Notes, Users, Posts, Photos, Videos, Clubs};
 use Chandler\Database\DatabaseConnection as DB;
 use Nette\InvalidStateException as ISE;
 use Nette\Database\Table\Selection;
@@ -53,22 +53,25 @@ class Report extends RowModel
         return $this->getRecord()->user_id;
     }
     
-    function getUser(): user
+    function getUser(): User
     {
-        return (new Users)->get($this->getRecord()->user_id);
+        return (new Users)->get((int) $this->getRecord()->user_id);
     }
 
     function getContentId(): int
     {
-        return $this->getRecord()->target_id;
+        return (int) $this->getRecord()->target_id;
     }
 
     function getContentObject()
     {
-        if ($this->getContentType() == "post") return (new Posts)->get($this->getContentId());
-        else if ($this->getContentType() == "photo") return (new Photos)->get($this->getContentId());
-        else if ($this->getContentType() == "video") return (new Videos)->get($this->getContentId());
-        else if ($this->getContentType() == "group") return (new Clubs)->get($this->getContentId());
+        if ($this->getContentType() == "post")         return (new Posts)->get($this->getContentId());
+        else if ($this->getContentType() == "photo")   return (new Photos)->get($this->getContentId());
+        else if ($this->getContentType() == "video")   return (new Videos)->get($this->getContentId());
+        else if ($this->getContentType() == "group")   return (new Clubs)->get($this->getContentId());
+        else if ($this->getContentType() == "comment") return (new Comments)->get($this->getContentId());
+        else if ($this->getContentType() == "note")    return (new Notes)->get($this->getContentId());
+        else if ($this->getContentType() == "app")     return (new Applications)->get($this->getContentId());
         else return null;
     }
 
@@ -77,16 +80,17 @@ class Report extends RowModel
         return (new Posts)->get($this->getContentId())->getOwner();
     }
 
-    // TODO: Localize that
-    function banUser()
+    function banUser($initiator)
     {
-        $this->getAuthor()->ban("Banned by report. Ask Technical support for ban reason");
+        $this->getAuthor()->ban("**content-" . $this->getContentType() . "-" . $this->getContentId() . "**", false, time() + $this->getAuthor()->getNewBanTime(), $initiator);
     }
 
     function deleteContent()
     {
-        $this->getAuthor()->adminNotify("Ваш контент, который вы опубликовали " . $this->getContentObject()->getPublicationTime() . " был удалён модераторами инстанса. За повторные или серьёзные нарушения вас могут заблокировать.");
-        $this->getContentObject()->delete();
+        $pubTime = $this->getContentObject()->getPublicationTime();
+        $name = $this->getContentObject()->getName();
+        $this->getAuthor()->adminNotify("Ваш контент, который вы опубликовали $pubTime ($name) был удалён модераторами инстанса. За повторные или серьёзные нарушения вас могут заблокировать.");
+        $this->getContentObject()->delete($this->getContentType() !== "app");
         $this->setDeleted(1);
         $this->save();
     }

@@ -186,8 +186,11 @@
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
                                 {/if}
                             </a>
-                            <a href="/admin/reports" class="link">{tr("reports")}</a>
-                        {/if}
+                            <a n:if="$canAccessHelpdesk" href="/scumfeed" class="link">{tr("reports")}
+                                {if $reportNotAnsweredCount > 0}
+                                    (<b>{$reportNotAnsweredCount}</b>)
+                                {/if}
+                            </a>
                         <a
                           n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem"
                           href="{$menuItem['url']}"
@@ -199,11 +202,6 @@
                             n:foreach="$thisUser->getPinnedClubs() as $club"
                             href="{$club->getURL()}"
                             class="link group_link">{$club->getName()}</a>
-                            <a href="/admin/support/reports" class="link" n:if="$canAccessHelpdesk">Reports
-                                {if $reportNotAnsweredCount > 0}
-                                    (<b>{$reportNotAnsweredCount}</b>)
-                                {/if}
-                            </a>
 
                             <a n:if="$thisUser->getLeftMenuItemStatus('links')" n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem" href="{$menuItem['url']}" target="_blank" class="link">{strpos($menuItem["name"], "@") === 0 ? tr(substr($menuItem["name"], 1)) : $menuItem["name"]}</a>
 
@@ -278,8 +276,13 @@
                             <a href="/restore">{_forgot_password}</a>
                         </form>
                     {/ifset}
+                    </div>
                 </div>
-            </div>
+                {ifset $thisUser}
+                    {if !$thisUser->isBanned()}
+                        </div>
+                    {/if}
+                {/ifset}
 
             <div class="page_body">
                 <div id="wrapH">

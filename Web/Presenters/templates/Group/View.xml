@@ -134,7 +134,7 @@
                 (function() {
                     res = document.querySelector("#uReportMsgInput").value;
                     xhr = new XMLHttpRequest();
-                    xhr.open("GET", "/report.pl/" + {$club->getId()} + "?reason=" + res + "&type=group", true);
+                    xhr.open("GET", "/report/" + {$club->getId()} + "?reason=" + res + "&type=group", true);
                     xhr.onload = (function() {
                     if(xhr.responseText.indexOf("reason") === -1)
                         MessageBox("Ошибка", "Не удалось подать жалобу...", ["OK"], [Function.noop]);

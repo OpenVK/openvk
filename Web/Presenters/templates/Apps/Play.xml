@@ -1,4 +1,5 @@
 {extends "../@layout.xml"}
+{var $canReport = $owner->getId() !== $thisUser->getId()}
 
 {block title}
     {$name}
@@ -6,6 +7,7 @@
 
 {block header}
     {$name}
+    <a style="float: right;" onClick="reportApp()" n:if="$canReport ?? false">Пожаловаться</a>
 {/block}
 
 {block content}
@@ -31,6 +33,30 @@
         window.appTitle  = {$name};
         window.appPerms  = {$perms};
         window.appOrigin = {$origin};
+    </script>
+
+    <script n:if="$canReport ?? false">
+        function reportApp() {
+            uReportMsgTxt  = "Вы собираетесь пожаловаться на данное приложение.";
+            uReportMsgTxt += "<br/>Что именно вам кажется недопустимым в этом материале?";
+            uReportMsgTxt += "<br/><br/><b>Причина жалобы</b>: <input type='text' id='uReportMsgInput' placeholder='Причина' />"
+
+            MessageBox("Пожаловаться?", uReportMsgTxt, ["Подтвердить", "Отмена"], [
+                (function() {
+                    res = document.querySelector("#uReportMsgInput").value;
+                    xhr = new XMLHttpRequest();
+                    xhr.open("GET", "/report/" + {$id} + "?reason=" + res + "&type=app", true);
+                    xhr.onload = (function() {
+                    if(xhr.responseText.indexOf("reason") === -1)
+                        MessageBox("Ошибка", "Не удалось подать жалобу...", ["OK"], [Function.noop]);
+                    else
+                        MessageBox("Операция успешна", "Скоро её рассмотрят модераторы", ["OK"], [Function.noop]);
+                    });
+                    xhr.send(null);
+                }),
+                Function.noop
+            ]);
+        }
     </script>
 
     {script "js/al_games.js"}

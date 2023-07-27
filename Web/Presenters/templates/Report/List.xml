@@ -15,7 +15,7 @@
 {* BEGIN ELEMENTS DESCRIPTION *}
 
 {block link|strip|stripHtml}
-    /admin/support/report{$x->getId()}
+    /admin/report{$x->getId()}
 {/block}
 
 {block preview}
@@ -35,6 +35,10 @@
         {_video}
     {elseif $x->getContentType() == "group"}
         {_groups}
+    {elseif $x->getContentType() == "comment"}
+        {_comment}
+    {elseif $x->getContentType() == "app"}
+        {_app}
     {else}
         Unknown
     {/if}

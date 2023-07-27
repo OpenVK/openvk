@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{IP, User, PasswordReset, EmailVerification};
-use openvk\Web\Models\Repositories\{IPs, Users, Restores, Verifications};
+use openvk\Web\Models\Repositories\{Bans, IPs, Users, Restores, Verifications};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
 use Chandler\Session\Session;
@@ -332,9 +332,16 @@ final class AuthPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
 
         $user = $this->users->get($this->user->id);
+        $ban = (new Bans)->get((int)$user->getRawBanReason());
+        if (!$ban || $ban->isOver() || $ban->isPermanent())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+
+        $ban->setRemoved_Manually(2);
+        $ban->setRemoved_By($this->user->identity->getId());
+        $ban->save();
 
         $user->setBlock_Reason(NULL);
-        $user->setUnblock_Time(NULL);
+        // $user->setUnblock_Time(NULL);
         $user->save();
 
         $this->flashFail("succ", tr("banned_unban_title"), tr("banned_unban_description"));

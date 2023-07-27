@@ -1154,3 +1154,5 @@
 "url_is_banned_default_reason" = "The link you are trying to open may lead you to a site that was created for the purpose of deceiving users with the intention of gaining profit.";
 "url_is_banned_title" = "Link to a suspicious site";
 "url_is_banned_proceed" = "Follow the link";
+
+"recently" = "Recently";

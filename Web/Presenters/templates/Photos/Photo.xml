@@ -61,7 +61,7 @@
                     (function() {
                         res = document.querySelector("#uReportMsgInput").value;
                         xhr = new XMLHttpRequest();
-                        xhr.open("GET", "/report.pl/" + {$photo->getId()} + "?reason=" + res + "&type=photo", true);
+                        xhr.open("GET", "/report/" + {$photo->getId()} + "?reason=" + res + "&type=photo", true);
                         xhr.onload = (function() {
                         if(xhr.responseText.indexOf("reason") === -1)
                             MessageBox("Ошибка", "Не удалось подать жалобу...", ["OK"], [Function.noop]);

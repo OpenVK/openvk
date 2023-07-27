@@ -51,12 +51,7 @@ final class ReportPresenter extends OpenVKPresenter
         if(!$id)
             exit(json_encode([ "error" => tr("error_segmentation") ]));
 
-        // At this moment, only Posts will be implemented
-        if(in_array($this->queryParam("type"), ["post", "photo", "video", "group"])) {
-            $post = (new Posts)->get(intval($id));
-            if(!$post)
-                exit(json_encode([ "error" => "Unable to report nonexistent content" ]));
-
+        if(in_array($this->queryParam("type"), ["post", "photo", "video", "group", "comment", "note", "app"])) {
             $report = new Report;
             $report->setUser_id($this->user->id);
             $report->setTarget_id($id);
@@ -78,52 +73,40 @@ final class ReportPresenter extends OpenVKPresenter
         $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
 
         $report = $this->reports->get($id);
-        if(!$report) $this->notFound();
-        if($report->isDeleted()) $this->notFound();
+        if(!$report || $report->isDeleted()) $this->notFound();
 
-        if($this->postParam("ban")) {
-            if(is_null($this->user))
-                $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
-            
-            $report->banUser();
+        if ($this->postParam("ban")) {
             $report->deleteContent();
+            $report->banUser($this->user->identity->getId());
+
             $this->flash("suc", "Смэрть...", "Пользователь успешно забанен.");
-        }else if($this->postParam("delete")){
-            if(is_null($this->user))
-                $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
-            
+        } else if ($this->postParam("delete")) {
             $report->deleteContent();
+
             $this->flash("suc", "Нехай живе!", "Контент удалён, а пользователю прилетело предупреждение.");
-        }else if($this->postParam("ignore")){
-            if(is_null($this->user))
-                $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
-            
+        } else if ($this->postParam("ignore")) {
             $report->delete();
+
             $this->flash("suc", "Нехай живе!", "Жалоба проигнорирована.");
-        }else if($this->postParam("banClubOwner")) {
-            if($report->getContentType() != "group")
+        } else if ($this->postParam("banClubOwner") || $this->postParam("banClub")) {
+            if ($report->getContentType() !== "group")
                 $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
 
             $club = $report->getContentObject();
-
-            if(is_null($club))
+            if (!$club || $club->isBanned())
                 $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
 
-            $owner = $club->getOwner();
-            $owner->ban("Banned by report. Ask Technical support for ban reason");
+            if ($this->postParam("banClubOwner")) {
+                $club->getOwner()->ban("**content-" . $report->getContentType() . "-" . $report->getContentId() . "**", false, $club->getOwner()->getNewBanTime(), $this->user->identity->getId());
+            } else {
+                $club->ban("**content-" . $report->getContentType() . "-" . $report->getContentId() . "**");
+            }
 
             $report->delete();
-            $this->flash("suc", "Смэрть...", "Создатель сообщества успешно забанен.");
-        }else if($this->postParam("banClub")) {
-            if($report->getContentType() != "group")
-                $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
 
-            $club = $report->getContentObject();
-            $club->ban("Banned by report. Ask Technical support for ban reason");
-
-            $report->delete();
-            $this->flash("suc", "Смэрть...", "Сообщество успешно забанено.");
+            $this->flash("suc", "Смэрть...", ($this->postParam("banClubOwner") ? "Создатель сообщества успешно забанен." : "Сообщество успешно забанено"));
         }
-        $this->redirect("/support/reports");
+
+        $this->redirect("/scumfeed");
     }
 }
