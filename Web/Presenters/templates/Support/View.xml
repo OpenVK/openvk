@@ -31,7 +31,7 @@
         function closeTicket() {
             let url = `/support/ticket${{$ticket->getId()}}/close?hash=${{urlencode($csrfToken)}}`;
             $.ajax(url, {
-                error: () => alert("Произошла ошибка"),
+                error: () => alert(tr("error")),
                 success: () => location.reload()
             });
         }
