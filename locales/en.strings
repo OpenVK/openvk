@@ -260,6 +260,7 @@
 
 /* Group */
 
+"group" = "Group";
 "name_group" = "Name";
 "subscribe" = "Subscribe";
 "unsubscribe" = "Unsubscribe";
@@ -297,8 +298,38 @@
 "set_comment" = "Set comment";
 "hidden_yes" = "Hidden: Yes";
 "hidden_no" = "Hidden: No";
-"group_allow_post_for_everyone" = "Allow posting for everyone";
+"group_allow_post_for_everyone" = "Open";
+"group_limited_post" = "Suggestions";
+"group_closed_post" = "Closed";
+"suggest_new" = "Suggest post";
+"show_suggested_posts" = "$1 suggested posts by you";
+"show_suggested_posts_everyone" = "$1 suggested posts";
 "group_hide_from_global_feed" = "Don't display posts in the global feed";
+"suggested_posts_by_you" = "Suggested posts by you";
+"suggested_posts_by_everyone" = "Suggested posts";
+"suggested" = "Suggested";
+"suggested_posts_everyone" = "Suggested by users posts";
+"no_suggested_posts_by_you" = "You haven't suggested posts to this group yet.";
+"no_suggested_posts_by_people" = "No posts have been suggested to this group yet.";
+
+"publish_suggested" = "Accept";
+"decline_suggested" = "Decline";
+
+"publishing_suggested_post" = "Publishing suggested post";
+"x_suggested_posts_in_group" = "This group has $1 suggested posts";
+"x_suggested_posts_in_group_by_you" = "You suggested $1 posts to this group";
+
+"suggestion_succefully_published" = "Post successfully published";
+"suggestion_succefully_declined" = "Post successfully declined";
+"suggestion_press_to_go" = "Click to show him";
+
+"error_declining_invalid_post" = "Error when declining post: post does not exists";
+"error_declining_not_suggested_post" = "Error when declining post: post is not suggested";
+"error_declining_declined_post" = "Error when declining post: post is already declined";
+
+"error_accepting_invalid_post" = "Error when accepting post: post does not exists";
+"error_accepting_not_suggested_post" = "Error when accepting post: post is not suggested";
+"error_accepting_declined_post" = "Error when accepting post: cant accept declined post";
 "statistics" = "Statistics";
 "group_administrators_list" = "Admins list";
 "group_display_only_creator" = "Display only group creator";
@@ -330,6 +361,11 @@
 "search_group" = "Search group";
 "search_by_groups" = "Search by groups";
 "search_group_desc" = "Here you can browse through the existing groups and choose a group to suit your needs...";
+
+"error_suggestions" = "Error accessing to suggestions";
+"error_suggestions_closed" = "This group has closed wall.";
+"error_suggestions_open" = "This group has open wall.";
+"error_suggestions_access" = "Only group's administrators can view all suggested posts.";
 
 /* Albums */
 
@@ -675,6 +711,7 @@
 "nt_shared_yours" = "shared your";
 "nt_commented_yours" = "commented";
 "nt_written_on_your_wall" = "wrote on your wall";
+"nt_accepted_your_post" = "accepted your suggested";
 "nt_made_you_admin" = "appointed you in the community";
 
 "nt_from" = "from";
@@ -693,6 +730,8 @@
 "nt_mention_in_video" = "in discussion of this video";
 "nt_mention_in_note" = "in discussion of this note";
 "nt_mention_in_topic" = "in the discussion";
+
+"nt_post_small" = "post";
 
 /* Time */
 

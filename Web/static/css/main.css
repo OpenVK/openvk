@@ -2696,3 +2696,21 @@ body.article .floating_sidebar, body.article .page_content {
     right: 22px;
     font-size: 12px;
 }
+
+.sugglist {
+    padding-bottom: 5px;
+    padding-top: 5px;
+    margin-bottom: -5px;
+    padding-left: 9px;
+    border-top: 1px solid gray;
+    background-color: #e6e6e6;
+    margin-top: 5px;
+}
+
+.sugglist a {
+    color: #626262;
+}
+
+.suggestionControls {
+    text-align: center;
+}

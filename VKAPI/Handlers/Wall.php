@@ -18,7 +18,7 @@ use openvk\Web\Models\Repositories\Notes as NotesRepo;
 
 final class Wall extends VKAPIRequestHandler
 {
-    function get(int $owner_id, string $domain = "", int $offset = 0, int $count = 30, int $extended = 0): object
+    function get(int $owner_id, string $domain = "", int $offset = 0, int $count = 30, int $extended = 0, string $filter = "all"): object
     {
         $this->requireUser();
 
@@ -27,7 +27,7 @@ final class Wall extends VKAPIRequestHandler
         $items    = [];
         $profiles = [];
         $groups   = [];
-        $cnt      = $posts->getPostCountOnUserWall($owner_id);
+        $cnt      = 0;
 
         if ($owner_id > 0)
             $wallOnwer = (new UsersRepo)->get($owner_id);
@@ -41,7 +41,43 @@ final class Wall extends VKAPIRequestHandler
             if(!$wallOnwer)
                 $this->fail(15, "Access denied: wall is disabled"); // Don't search for logic here pls
 
-        foreach($posts->getPostsFromUsersWall($owner_id, 1, $count, $offset) as $post) {
+        $iteratorv;
+
+        switch($filter) {
+            case "all":
+                $iteratorv = $posts->getPostsFromUsersWall($owner_id, 1, $count, $offset);
+                $cnt       = $posts->getPostCountOnUserWall($owner_id);
+                break;
+            case "owner":
+                $this->fail(66666, "Not implemented :(");
+                break;
+            case "others":
+                $this->fail(66666, "Not implemented :(");
+                break; 
+            case "postponed":
+                $this->fail(66666, "Otlojka is not implemented :)");
+                break;
+            # В апи, походу, нету метода, который бы публиковал запись из предложки
+            case "suggests":
+                if($owner_id < 0) {
+                    if($wallOnwer->canBeModifiedBy($this->getUser())) {
+                        $iteratorv = $posts->getSuggestedPosts($owner_id * -1, 1, $count, $offset);
+                        $cnt       = $posts->getSuggestedPostsCount($owner_id * -1);
+                    } else {
+                        $iteratorv = $posts->getSuggestedPosts($owner_id * -1, 1, $count, $offset);
+                        $cnt       = $posts->getSuggestedPostsCount($owner_id * -1);
+                    }
+                } else {
+                    $this->fail(528, "Suggested posts avaiable only at groups");
+                }
+
+                break;
+            default:
+                $this->fail(254, "Invalid filter");
+                break;
+        }
+
+        foreach($iteratorv as $post) {
             $from_id = get_class($post->getOwner()) == "openvk\Web\Models\Entities\Club" ? $post->getOwner()->getId() * (-1) : $post->getOwner()->getId();
 
             $attachments = [];
@@ -428,6 +464,11 @@ final class Wall extends VKAPIRequestHandler
             $post->setContent($message);
             $post->setFlags($flags);
             $post->setApi_Source_Name($this->getPlatform());
+
+            if($owner_id < 0 && !$wallOwner->canBeModifiedBy($this->getUser()) && $wallOwner->getWallType() == 2) {
+                $post->setSuggested(1);
+            }
+
             $post->save();
         } catch(\LogicException $ex) {
             $this->fail(100, "One of the parameters specified was missing or invalid");
@@ -493,6 +534,10 @@ final class Wall extends VKAPIRequestHandler
 
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
+
+        if($owner_id < 0 && !$wallOwner->canBeModifiedBy($this->getUser()) && $wallOwner->getWallType() == 2) {
+            return (object)["post_id" => "on_view"];
+        }
 
         return (object)["post_id" => $post->getVirtualId()];
     }

@@ -23,6 +23,10 @@ class Club extends RowModel
     const NOT_RELATED  = 0;
     const SUBSCRIBED   = 1;
     const REQUEST_SENT = 2;
+
+    const WALL_CLOSED   = 0;
+    const WALL_OPEN     = 1;
+    const WALL_LIMITED  = 2;
     
     function getId(): int
     {
@@ -44,6 +48,11 @@ class Club extends RowModel
         $avPhoto   = $this->getAvatarPhoto();
         
         return is_null($avPhoto) ? "$serverUrl/assets/packages/static/openvk/img/camera_200.png" : $avPhoto->getURLBySizeId($size);
+    }
+
+    function getWallType(): int
+    {
+        return $this->getRecord()->wall;
     }
     
     function getAvatarLink(): string
@@ -181,6 +190,14 @@ class Club extends RowModel
         
         $this->stateChanges("shortcode", $code);
         return true;
+    }
+
+    function setWall(int $type)
+    {
+        if($type > 3 || $type < 0)
+            throw new \LogicException("Invalid wall");
+
+        $this->stateChanges("wall", $type);
     }
     
     function isSubscriptionAccepted(User $user): bool

@@ -245,6 +245,11 @@ class Post extends Postable
         $this->unwire();
         $this->save();
     }
+
+    function getSuggestionType()
+    {
+        return $this->getRecord()->suggested;
+    }
     
     use Traits\TRichText;
 }

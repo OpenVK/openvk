@@ -3,7 +3,7 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Club, Photo, Post};
 use Nette\InvalidStateException;
 use openvk\Web\Models\Entities\Notifications\ClubModeratorNotification;
-use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers, Topics};
+use openvk\Web\Models\Repositories\{Posts, Clubs, Users, Albums, Managers, Topics};
 use Chandler\Security\Authenticator;
 
 final class GroupPresenter extends OpenVKPresenter
@@ -28,6 +28,14 @@ final class GroupPresenter extends OpenVKPresenter
             $this->template->albumsCount = (new Albums)->getClubAlbumsCount($club);
             $this->template->topics      = (new Topics)->getLastTopics($club, 3);
             $this->template->topicsCount = (new Topics)->getClubTopicsCount($club);
+
+            if(!is_null($this->user->identity) && !$club->canBeModifiedBy($this->user->identity) && $club->getWallType() == 2) {
+                $this->template->suggestedPostsCountByUser = (new Posts)->getSuggestedPostsCountByUser($club->getId(), $this->user->id);
+            }
+
+            if(!is_null($this->user->identity) && $club->canBeModifiedBy($this->user->identity) && $club->getWallType() == 2) {
+                $this->template->suggestedPostsCountByEveryone = (new Posts)->getSuggestedPostsCount($club->getId());
+            }
 
             $this->template->club = $club;
         }
@@ -192,7 +200,7 @@ final class GroupPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
         
         $club = $this->clubs->get($id);
-        if(!$club || !$club->canBeModifiedBy($this->user->identity))
+        if(!$club || !$club->canBeModifiedBy($this->user->identity) || $club->isDeleted())
             $this->notFound();
         else
             $this->template->club = $club;
@@ -395,5 +403,69 @@ final class GroupPresenter extends OpenVKPresenter
         $club->save();
 
         $this->flashFail("succ", tr("information_-1"), tr("group_owner_setted", $newOwner->getCanonicalName(), $club->getName()));
+    }
+
+    function renderSuggestedThisUser(int $id)
+    {
+        $this->assertUserLoggedIn();
+
+        $club = $this->clubs->get($id);
+        if(!$club || method_exists($club, "isDeleted") && $club->isDeleted())
+            $this->notFound();
+        else
+            $this->template->club = $club;
+
+        if($club->getWallType() == 1) {
+            $this->flash("err", tr("error_suggestions"), tr("error_suggestions_closed"));
+            $this->redirect("/club".$club->getId());
+        }
+
+        if($club->getWallType() == 0) {
+            $this->flash("err", tr("error_suggestions"), tr("error_suggestions_open"));
+            $this->redirect("/club".$club->getId());
+        }
+
+        if($club->canBeModifiedBy($this->user->identity)) {
+            $this->flash("err", tr("error_suggestions"), "No sense");
+            $this->redirect("/club".$club->getId());
+        }
+
+        $this->template->posts = (new Posts)->getSuggestedPostsByUser($club->getId(), $this->user->id, (int) ($this->queryParam("p") ?? 1));
+        $this->template->count = (new Posts)->getSuggestedPostsCountByUser($club->getId(), $this->user->id);
+        $this->template->type  = "my";
+        $this->template->page  = (int) ($this->queryParam("p") ?? 1);
+        $this->template->_template = "Group/Suggested.xml";
+    }
+
+    function renderSuggestedAll(int $id)
+    {
+        $this->assertUserLoggedIn();
+
+        $club = $this->clubs->get($id);
+        if(!$club || method_exists($club, "isDeleted") && $club->isDeleted())
+            $this->notFound();
+        else
+            $this->template->club = $club;
+
+        if($club->getWallType() == 1) {
+            $this->flash("err", tr("error_suggestions"), tr("error_suggestions_closed"));
+            $this->redirect("/club".$club->getId());
+        }
+
+        if($club->getWallType() == 0) {
+            $this->flash("err", tr("error_suggestions"), tr("error_suggestions_open"));
+            $this->redirect("/club".$club->getId());
+        }
+
+        if(!$club->canBeModifiedBy($this->user->identity)) {
+            $this->flash("err", tr("error_suggestions"), tr("error_suggestions_access"));
+            $this->redirect("/club".$club->getId());
+        }
+
+        $this->template->posts = (new Posts)->getSuggestedPosts($club->getId(), (int) ($this->queryParam("p") ?? 1));
+        $this->template->count = (new Posts)->getSuggestedPostsCount($club->getId());
+        $this->template->type  = "everyone";
+        $this->template->page  = (int) ($this->queryParam("p") ?? 1);
+        $this->template->_template = "Group/Suggested.xml";
     }
 }
