@@ -65,8 +65,8 @@ final class Wall extends VKAPIRequestHandler
                         $iteratorv = $posts->getSuggestedPosts($owner_id * -1, 1, $count, $offset);
                         $cnt       = $posts->getSuggestedPostsCount($owner_id * -1);
                     } else {
-                        $iteratorv = $posts->getSuggestedPosts($owner_id * -1, 1, $count, $offset);
-                        $cnt       = $posts->getSuggestedPostsCount($owner_id * -1);
+                        $iteratorv = $posts->getSuggestedPostsByUser($owner_id * -1, $this->getUser()->getId(), 1, $count, $offset);
+                        $cnt       = $posts->getSuggestedPostsCountByUser($owner_id * -1, $this->getUser()->getId());
                     }
                 } else {
                     $this->fail(528, "Suggested posts avaiable only at groups");
