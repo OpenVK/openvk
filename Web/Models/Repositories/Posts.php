@@ -149,12 +149,15 @@ class Posts
 
     function getSuggestedPosts(int $club, int $page = 1, ?int $perPage = NULL, ?int $offset = NULL): \Traversable
     {
+        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
+        $offset ??= $perPage * ($page - 1);
+
         $sel = $this->posts
                     ->where("deleted", 0)
                     ->where("wall", $club * -1)
                     ->order("created DESC")
                     ->where("suggested", 1)
-                    ->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
+                    ->limit($perPage, $offset);
         
         foreach($sel as $post)
             yield new Post($post);
@@ -165,15 +168,18 @@ class Posts
         return sizeof($this->posts->where(["wall" => $club * -1, "deleted" => 0, "suggested" => 1]));
     }
 
-    function getSuggestedPostsByUser(int $club, int $user, int $page = 1, ?int $perPage = NULL): \Traversable
+    function getSuggestedPostsByUser(int $club, int $user, int $page = 1, ?int $perPage = NULL, ?int $offset = NULL): \Traversable
     {
+        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
+        $offset ??= $perPage * ($page - 1);
+
         $sel = $this->posts
                     ->where("deleted", 0)
                     ->where("wall", $club * -1)
                     ->where("owner", $user)
                     ->order("created DESC")
                     ->where("suggested", 1)
-                    ->page($page, $perPage ?? OPENVK_DEFAULT_PER_PAGE);
+                    ->limit($perPage, $offset);
         
         foreach($sel as $post)
             yield new Post($post);
