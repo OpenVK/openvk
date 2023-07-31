@@ -305,7 +305,7 @@ $(document).on("click", "#publish_post", async (e) => {
         e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
     }), Function.noop]);
 
-    document.getElementById("pooblish").innerHTML = e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.querySelector(".really_text").innerHTML
+    document.getElementById("pooblish").innerHTML = e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.querySelector(".really_text").innerHTML.replace(/<br>/g, '')
     document.querySelector(".ovk-diag-body").style.padding = "9px";
 })
 
