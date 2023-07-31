@@ -57,7 +57,8 @@ final class Wall extends VKAPIRequestHandler
             case "postponed":
                 $this->fail(66666, "Otlojka is not implemented :)");
                 break;
-            # В апи, походу, нету метода, который бы публиковал запись из предложки
+            # В вкапи, походу, нету метода, который бы публиковал запись из предложки.
+            # Либо он закрыт для неофициальных клиентов, как gifts.send 
             case "suggests":
                 if($owner_id < 0) {
                     if($wallOnwer->canBeModifiedBy($this->getUser())) {

@@ -110,7 +110,7 @@ class Wall implements Handler
             $reject(10, "Post is already declined");
 
         if(!$post->canBePinnedBy($this->user))
-            $reject(22, "Access to post denied :)");
+            $reject(22, "Access to post denied");
 
         $post->setSuggested(2);
         $post->save();
@@ -131,7 +131,7 @@ class Wall implements Handler
             $reject(10, "Post is declined");
 
         if(!$post->canBePinnedBy($this->user))
-            $reject(22, "Access to post denied :)");
+            $reject(22, "Access to post denied");
 
         $author = $post->getOwner();
         $flags = 0;
@@ -144,7 +144,10 @@ class Wall implements Handler
         $post->setSuggested(0);
         $post->setCreated(time());
         $post->setFlags($flags);
-        $post->setContent($content);
+
+        if(mb_strlen($content) > 0) {
+            $post->setContent($content);
+        }
 
         $post->save();
 

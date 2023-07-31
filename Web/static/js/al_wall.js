@@ -339,8 +339,7 @@ $(document).on("click", "#decline_post", async (e) => {
     } finally {
         u("#deleteMe").remove()
     }
-
-    // а хули
+    
     NewNotification(tr("suggestion_succefully_declined"), "", null);
     e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
     document.getElementById("cound").innerHTML = tr("x_suggested_posts_in_group", post)
