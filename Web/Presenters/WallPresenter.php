@@ -2,7 +2,7 @@
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Exceptions\TooMuchOptionsException;
 use openvk\Web\Models\Entities\{Poll, Post, Photo, Video, Club, User};
-use openvk\Web\Models\Entities\Notifications\{MentionNotification, RepostNotification, WallPostNotification};
+use openvk\Web\Models\Entities\Notifications\{MentionNotification, NewSuggestedPostsNotification, RepostNotification, WallPostNotification};
 use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums, Notes};
 use Chandler\Database\DatabaseConnection;
 use Nette\InvalidStateException as ISE;
@@ -341,6 +341,20 @@ final class WallPresenter extends OpenVKPresenter
                 (new MentionNotification($mentionee, $post, $post->getOwner(), strip_tags($post->getText())))->emit();
         
         if($wall < 0 && !$wallOwner->canBeModifiedBy($this->user->identity) && $wallOwner->getWallType() == 2) {
+            $suggsCount = $this->posts->getSuggestedPostsCount($wallOwner->getId());
+
+            # Возможно, это заебёт админов групп, но так они хотя бы про паблик вспомнят
+            # Мб рандома добавить?
+            if($suggsCount % 10 == 0) {
+                $managers = $wallOwner->getManagers();
+                $owner = $wallOwner->getOwner();
+                (new NewSuggestedPostsNotification($owner, $wallOwner))->emit();
+
+                foreach($managers as $manager) {
+                    (new NewSuggestedPostsNotification($manager->getUser(), $wallOwner))->emit();
+                }
+            }
+
             $this->redirect("/club".$wallOwner->getId()."/suggested");
         } else {
             $this->redirect($wallOwner->getURL());

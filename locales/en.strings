@@ -712,6 +712,8 @@
 "nt_commented_yours" = "commented";
 "nt_written_on_your_wall" = "wrote on your wall";
 "nt_accepted_your_post" = "accepted your suggested";
+"nt_in_club" = "In group";
+"nt_new_suggested_posts" = "new posts in suggestions";
 "nt_made_you_admin" = "appointed you in the community";
 
 "nt_from" = "from";

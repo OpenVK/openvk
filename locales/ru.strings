@@ -671,6 +671,8 @@
 "nt_commented_yours" = "оставил(а) комментарий под";
 "nt_written_on_your_wall" = "написал(а) на вашей стене";
 "nt_accepted_your_post" = "опубликовало вашу предложенную";
+"nt_in_club" = "В сообществе";
+"nt_new_suggested_posts" = "новые записи в предложке";
 "nt_made_you_admin" = "назначил(а) вас руководителем сообщества";
 "nt_from" = "от";
 "nt_yours_adjective" = "вашим";
