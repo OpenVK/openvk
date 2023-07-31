@@ -83,8 +83,10 @@ final class AdminPresenter extends OpenVKPresenter
                 if($user->onlineStatus() != $this->postParam("online")) $user->setOnline(intval($this->postParam("online")));
                 $user->setVerified(empty($this->postParam("verify") ? 0 : 1));
                 if($this->postParam("add-to-group")) {
-                    $query = "INSERT INTO `ChandlerACLRelations` (`user`, `group`) VALUES ('" . $user->getChandlerGUID() . "', '" . $this->postParam("add-to-group") . "')";
-                    DatabaseConnection::i()->getConnection()->query($query);
+                    if (!(new ChandlerGroups)->isUserAMember($user->getChandlerGUID(), $this->postParam("add-to-group"))) {
+                        $query = "INSERT INTO `ChandlerACLRelations` (`user`, `group`) VALUES ('" . $user->getChandlerGUID() . "', '" . $this->postParam("add-to-group") . "')";
+                        DatabaseConnection::i()->getConnection()->query($query);
+                    }
                 }
                 if($this->postParam("password")) {
                     $user->getChandlerUser()->updatePassword($this->postParam("password"));
