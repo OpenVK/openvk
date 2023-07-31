@@ -39,7 +39,7 @@ final class GroupPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
-            if(!empty($this->postParam("name")))
+            if(!empty($this->postParam("name")) && mb_strlen(trim($this->postParam("name"))) > 0)
             {
                 $club = new Club;
                 $club->setName($this->postParam("name"));
@@ -201,7 +201,7 @@ final class GroupPresenter extends OpenVKPresenter
 	    if(!$club->setShortcode( empty($this->postParam("shortcode")) ? NULL : $this->postParam("shortcode") ))
                 $this->flashFail("err", tr("error"), tr("error_shorturl_incorrect"));
             
-            $club->setName(empty($this->postParam("name")) ? $club->getName() : $this->postParam("name"));
+            $club->setName((empty($this->postParam("name")) || mb_strlen(trim($this->postParam("name"))) === 0) ? $club->getName() : $this->postParam("name"));
             $club->setAbout(empty($this->postParam("about")) ? NULL : $this->postParam("about"));
 	    $club->setWall(empty($this->postParam("wall")) ? 0 : 1);
             $club->setAdministrators_List_Display(empty($this->postParam("administrators_list_display")) ? 0 : $this->postParam("administrators_list_display"));
