@@ -1,0 +1,951 @@
+{block content}
+    <script>
+        $("#cities-not-found").hide();
+        $("#cities-list-td").show();
+
+        let change_country_input_timeout = 0;
+
+        {if $country}
+            function onChangeCityInput() {
+                clearTimeout(change_country_input_timeout);
+
+                change_country_input_timeout = setTimeout(() => {
+                    let q = $("#city").val();
+                    $.ajax({
+                        type: "POST",
+                        url: "/geodb?act=cities",
+                        data: {
+                            country: {$country->getId()},
+                            q: q,
+                            hash: {=$csrfToken}
+                        },
+                        success: (response) => {
+                            $("#cities-not-found").hide();
+                            $("#cities-list").empty();
+                            if (response.list.length > 0) {
+                                response.list.forEach((city) => {
+                                $("#cities-list").append(`<option value="${ city.id}">${ city.native_name} (${ city.name})</option>`);
+                                });
+                                $("#cities-list").show();
+                            } else {
+                                $("#cities-not-found").show();
+                                $("#cities-list").hide();
+                            }
+                            $("#cities-list-td").show();
+                        }
+                    });
+                }, 500);
+            }
+        {/if}
+
+        {if $mode === 'university'}
+            function getFacultyBlock(id, name) {
+                return `<li id="faculty-${ id}">
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E8EBEE;">
+                        <h4 style="padding: 8px; margin-bottom: 4px; border: none;">
+                            <span style="color: inherit; font-weight: unset;" id="faculty-${ id}-name">${ name}</span>
+                            <input type="text" value="${ name}" name="name" id="faculty-${ id}-name-input" style="display: none;">
+                        </h4>
+                        <div style="display: flex; gap: 8px; align-self: center;">
+                            <a id="faculty-${ id}-edit-icon" onclick="editFaculty(${ id})">
+                                <div class="icon edit-icon"></div>
+                            </a>
+                            <a id="faculty-${ id}-save-icon" style="display: none;" onclick="saveFaculty(${ id})">
+                                <div class="icon save-icon"></div>
+                            </a>
+                            <a onclick="deleteFaculty(${ id}, '${ name}')">
+                                <div class="icon delete-icon"></div>
+                            </a>
+                        </div>
+                    </div>
+                </li>`;
+            }
+
+            function addFaculty() {
+                AddFacultyMsgTxt = "Вы собираетесь добавить факультет в университет <b>" + {$school->getName()} + "</b>";
+                AddFacultyMsgTxt += "<br/><br/><input id='new-faculty-name' placeholder='Название факультета' type='text' />";
+
+                MessageBox("Добавить факультет", AddFacultyMsgTxt, ["Подтвердить", "Отмена"], [
+                (function () {
+                        $.ajax({
+                            type: "POST",
+                            url: "/editdb?act=add_faculty&uid=" + {$school->getId()} + "",
+                            data: {
+                                name: $("#new-faculty-name").val(),
+                                hash: {=$csrfToken}
+                            },
+                            success: (response) => {
+                                if (response.success) {
+                                    NewNotification("Успех", "Факультет добавлен", "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                                    if (response.reload) {
+                                        setTimeout(() => window.location.reload(), 500)
+                                    } else {
+                                        $("#faculties").append(getFacultyBlock(response.payload.id, response.payload.name));
+                                    }
+                                } else {
+                                    NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                                }
+                            }
+                        });
+                    }),
+                    Function.noop
+                    ])
+            }
+
+            function editFaculty(id) {
+                let faculty = ("#faculty-" + id);
+                $(faculty + "-name").toggle();
+                $(faculty + "-edit-icon").toggle();
+                $(faculty + "-name-input").toggle();
+                $(faculty + "-save-icon").toggle();
+            }
+
+            function saveFaculty(id) {
+                let faculty = ("#faculty-" + id);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/editdb?act=faculty&id=" + id,
+                    data: {
+                        name: $(faculty + "-name-input").val(),
+                        hash: {=$csrfToken}
+                    },
+                    success: (response) => {
+                        if (response.success) {
+                            $(faculty + "-name").text($(faculty + "-name-input").val());
+                        } else {
+                            NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                        }
+                        editFaculty(id);
+                    }
+                });
+            }
+
+            function deleteFaculty(id, name) {
+                DeleteFacultyMsgTxt = "Вы собираетесь удалить факультет <b>" + name + "</b>";
+
+                MessageBox("Вы уверены?", DeleteFacultyMsgTxt, ["Подтвердить", "Отмена"], [
+                (function () {
+                        $.ajax({
+                            type: "POST",
+                            url: "/editdb?act=faculty&delete=1",
+                            data: {
+                                id: id,
+                                hash: {=$csrfToken}
+                            },
+                            success: (response) => {
+                                if (response.success) {
+                                    NewNotification("Успех", "Факультет удален", "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                                    if (response.reload) {
+                                        setTimeout(() => window.location.reload(), 500)
+                                    } else {
+                                        let elem = $("#faculty-" + response.payload);
+                                        elem.hide("slow", () => elem.remove());
+                                    }
+                                } else {
+                                    NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                                }
+                            }
+                        });
+                    }),
+                    Function.noop
+                    ])
+            }
+
+            {if $can_view_deleted}
+                function restoreFaculty(id, name) {
+                    RestoreFacultyMsgTxt = "Вы собираетесь восстановить факультет <b>" + name + "</b>";
+
+                    MessageBox("Вы уверены?", RestoreFacultyMsgTxt, ["Подтвердить", "Отмена"], [
+                    (function () {
+                            $.ajax({
+                                type: "POST",
+                                url: "/editdb?act=faculty&restore=1",
+                                data: {
+                                    id: id,
+                                    hash: {=$csrfToken}
+                                },
+                                success: (response) => {
+                                    if (response.success) {
+                                        NewNotification("Успех", "Факультет восстановлен", "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                                        if (response.reload) {
+                                            setTimeout(() => window.location.reload(), 500)
+                                        } else {
+                                            let elem = $("#faculty-" + response.payload);
+                                            elem.hide("slow", () => elem.remove());
+                                        }
+                                    } else {
+                                        NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                                    }
+                                }
+                            });
+                        }),
+                        Function.noop
+                        ])
+                }
+
+                function restoreSpecialization(id, name) {
+                    DeleteSpecializationMsgTxt = "Вы собираетесь восстановить специализацию <b>" + name + "</b>";
+
+                    MessageBox("Восстановить специализацию", DeleteSpecializationMsgTxt, ["Подтвердить", "Отмена"], [
+                    (function () {
+                            $.ajax({
+                                type: "POST",
+                                url: "/editdb?act=specialization&restore=1",
+                                data: {
+                                    id: id,
+                                    hash: {=$csrfToken}
+                                },
+                                success: (response) => {
+                                    if (response.success) {
+                                        NewNotification("Успех", "Специализация восстановлена", "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                                        let elem = $("#specialization-" + response.payload.id);
+                                        elem.hide('slow', () => elem.remove());
+                                    } else {
+                                        NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                                    }
+                                }
+                            });
+                        }),
+                        Function.noop
+                        ])
+                }
+            {/if}
+
+            function getSpecializationBlock(id, name, is_deleted) {
+                return `<li id="specialization-${ id}">
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E8EBEE;">
+                        <h4 style="padding: 8px; margin-bottom: 4px; border: none;">
+                            <span style="color: inherit; font-weight: unset;" id="specialization-${ id}-name">[#${ id}] ${ name}</span>
+                            <input type="text" value="${ name}" name="name" id="specialization-${ id}-name-input" style="display: none;">
+                        </h4>
+                        <div style="display: flex; gap: 8px; align-self: center;">
+                            <a id="specialization-${ id}-edit-icon" onclick="editSpecialization(${ id})">
+                                <div class="icon edit-icon"></div>
+                            </a>
+                            <a id="specialization-${ id}-save-icon" style="display: none;" onclick="saveSpecialization(${ id})">
+                                <div class="icon save-icon"></div>
+                            </a>
+                            ${ !is_deleted ? `<a onclick="deleteSpecialization(${ id}, '${ name}')">
+                                <div class="icon delete-icon"></div>
+                            </a>` : ''}
+                            ${ is_deleted ? `<a onclick="restoreSpecialization(${ id}, '${ name}')">
+                                <div class="icon plus-icon"></div>
+                            </a>` : ''}
+                        </div>
+                    </div>
+                </li>`;
+            }
+
+            function getSpecializations(id, deleted, alreadyShown, is_deleted) {
+                if (!alreadyShown) {
+                    $("#faculty-" + id + "-specializations").toggle();
+                }
+
+                $("#faculty-" + id + "-specializations-error").remove();
+
+                if (!$("#faculty-" + id + "-specializations").is(":hidden")) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/editdb?act=specializations&deleted=" + deleted,
+                        data: {
+                            fid: id,
+                            hash: {=$csrfToken}
+                        },
+                        success: (response) => {
+                            $("#faculty-" + id + "-specializations-list").empty();
+                            if (response.success) {
+                                if (response.list.length > 0) {
+                                    response.list.forEach((specialization) => {
+                                        $("#faculty-" + id + "-specializations-list").append(getSpecializationBlock(specialization.id, specialization.name, is_deleted));
+                                    });
+                                } else {
+                                    $("#faculty-" + id + "-specializations-list").append("<center id='faculty-" + id + "-specializations-error' style='padding: 42px;'>Ничего не найдено :(</center>");
+                                }
+                            } else {
+                                $("#faculty-" + id + "-specializations").append("<center id='faculty-" + id + "-specializations-error' style='padding: 42px;'>" + (response?.error ?? "Неизвестная ошибка") + "</center>");
+                                NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                            }
+                        }
+                    });
+                }
+            }
+
+            function editSpecialization(id) {
+                let specialization = ("#specialization-" + id);
+                $(specialization + "-name").toggle();
+                $(specialization + "-edit-icon").toggle();
+                $(specialization + "-name-input").toggle();
+                $(specialization + "-save-icon").toggle();
+            }
+
+            function saveSpecialization(id) {
+                let specialization = ("#specialization-" + id);
+
+                $.ajax({
+                    type: "POST",
+                    url: "/editdb?act=specialization&id=" + id,
+                    data: {
+                        name: $(specialization + "-name-input").val(),
+                        hash: {=$csrfToken}
+                    },
+                    success: (response) => {
+                        if (response.success) {
+                            $(specialization + "-name").text($(specialization + "-name-input").val());
+                        } else {
+                            NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                        }
+                        editSpecialization(id);
+                    }
+                });
+            }
+
+            function addSpecialization(fid, name) {
+                AddSpecializationMsgTxt = "Вы собираетесь добавить специализацию в университет <b>" + name + "</b>";
+                AddSpecializationMsgTxt += "<br/><br/><input id='new-specialization-name' placeholder='Название специализации' type='text' />";
+
+                MessageBox("Добавить специализацию", AddSpecializationMsgTxt, ["Подтвердить", "Отмена"], [
+                (function () {
+                        $.ajax({
+                            type: "POST",
+                            url: "/editdb?act=add_specialization&fid=" + fid + "",
+                            data: {
+                                name: $("#new-specialization-name").val(),
+                                hash: {=$csrfToken}
+                            },
+                            success: (response) => {
+                                if (response.success) {
+                                    NewNotification("Успех", "Специализация добавлена", "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                                    $("#faculty-" + fid + "-specializations-list").append(getSpecializationBlock(response.payload.id, response.payload.name));
+                                    $("#faculty-" + fid + "-specializations-error").remove();
+                                } else {
+                                    NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                                }
+                            }
+                        });
+                    }),
+                    Function.noop
+                    ])
+            }
+
+            function deleteSpecialization(id, name) {
+                DeleteSpecializationMsgTxt = "Вы собираетесь удалить специализацию <b>" + name + "</b>";
+
+                MessageBox("Удалить специализацию", DeleteSpecializationMsgTxt, ["Подтвердить", "Отмена"], [
+                (function () {
+                        $.ajax({
+                            type: "POST",
+                            url: "/editdb?act=specialization&delete=1",
+                            data: {
+                                id: id,
+                                hash: {=$csrfToken}
+                            },
+                            success: (response) => {
+                                if (response.success) {
+                                    NewNotification("Успех", "Специализация удалена", "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                                    let elem = $("#specialization-" + response.payload.id);
+                                    elem.hide('slow', () => elem.remove());
+                                } else {
+                                    NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                                }
+                            }
+                        });
+                    }),
+                    Function.noop
+                    ])
+            }
+        {/if}
+
+        let change_city_select_timeout = 0;
+
+            {if $city}
+                $("#cities-not-found").hide();
+                $("#cities-list-td").show();
+            {/if}
+
+            function getSchoolDiv(id, title) {
+            return `
+            <li id="school-${ id}">
+                <a style="cursor: pointer;">
+                </a>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E8EBEE;">
+                    <a style="cursor: pointer;">
+                        <h4 style="padding: 8px; margin-bottom: 4px; border: none;">
+                            ${ title}
+                        </h4>
+                    </a>
+                    <div style="display: flex; gap: 8px; align-self: center;">
+                        <a style="cursor: pointer;">
+                        </a>
+                        <a href="/editdb?act=school&id=${ id}">
+                            <div class="icon edit-icon"></div>
+                        </a>
+                        <a onclick="deleteSchool(${ id}, '${ title}')">
+                            <div class="icon delete-icon"></div>
+                        </a>
+                    </div>
+                </div>
+            </li>
+            `;
+            }
+
+            function getUniversityDiv(id, title) {
+            return `
+            <li id="university-${ id}">
+                <a style="cursor: pointer;">
+                </a>
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E8EBEE;">
+                    <a style="cursor: pointer;">
+                        <h4 style="padding: 8px; margin-bottom: 4px; border: none;">
+                            ${ title}
+                        </h4>
+                    </a>
+                    <div style="display: flex; gap: 8px; align-self: center;">
+                        <a style="cursor: pointer;">
+                        </a>
+                        <a href="/editdb?act=univetsity&id=${ id}">
+                            <div class="icon edit-icon"></div>
+                        </a>
+                        <a onclick="deleteUniversity(${ id}, '${ title}')">
+                            <div class="icon delete-icon"></div>
+                        </a>
+                    </div>
+                </div>
+            </li>
+            `;
+            }
+
+            {if $country}
+                function onChangeCityInput() {
+                    clearTimeout(change_country_input_timeout);
+
+                    change_country_input_timeout = setTimeout(() => {
+                        let q = $("#city").val();
+                        $.ajax({
+                            type: "POST",
+                            url: "/geodb?act=cities",
+                            data: {
+                                country: {$country->getId()},
+                                q: q,
+                                hash: {=$csrfToken}
+                            },
+                            success: (response) => {
+                                $("#cities-not-found").hide();
+                                $("#cities-list").empty();
+                                if (response.list.length > 0) {
+                                    response.list.forEach((city) => {
+                                        $("#cities-list").append(`<option value="${ city.id}">${ city.native_name} (${ city.name})</option>`);
+                                    });
+                                    $("#cities-list").show();
+                                    onChangeCitySelect($("#cities-list").val());
+                                } else {
+                                    $("#cities-not-found").show();
+                                    $("#cities-list").hide();
+                                }
+                                $("#cities-list-td").show();
+                        }
+                    });
+                    }, 500);
+                }
+
+                function searchSchools(city) {
+                    $.ajax({
+                            type: "POST",
+                            url: "/editdb?act=country&id={$country->getId()}&edu=1&city=" + city + "&view=" + {$view},
+                            data: {
+                                hash: {=$csrfToken}
+                            },
+                            success: (response) => {
+                                console.log(response);
+                                $("#schools").empty();
+                                $("#universities").empty();
+
+                                if (response.success) {
+                                    $("#current-city-name").text(response.city).show();
+                                    $("#current-city-block").show();
+                                    if (response.list.length > 0) {
+                                        response.list.forEach((school) => {
+                                            $("#schools").append(getSchoolDiv(school.id, school.name));
+                                            $("#universities").append(getUniversityDiv(school.id, school.name));
+                                        });
+                                    } else {
+                                        $("#schools").append("<center style='padding: 32px;'>Ничего не найдено :(</center>");
+                                        $("#universities").append("<center style='padding: 32px;'>Ничего не найдено :(</center>");
+                                    }
+                                } else {
+                                    $("#schools").append("<center style='padding: 32px;'>" + tr("error") + "</center>");
+                                    $("#universities").append("<center style='padding: 32px;'>" + tr("error") + "</center>");
+                                }
+                            }
+                    });
+                }
+            {/if}
+
+            function onChangeCitySelect(cityOverride) {
+                clearTimeout(change_city_select_timeout);
+                change_city_select_timeout = setTimeout(() => {
+                    searchSchools($("#cities-list").val());
+                }, 500)
+            }
+
+            function deleteSchool(id, name, isRestore = false) {
+                DeleteSchoolMsgTxt = "Вы собираетесь " + (isRestore ? "восстановить" : "удалить") + " школу <b>" + name + "</b>";
+
+                MessageBox("Вы уверены?", DeleteSchoolMsgTxt, ["Подтвердить", "Отмена"], [
+                (function () {
+                        $.ajax({
+                            type: "POST",
+                            url: "/editdb?act=school" + (isRestore ? "&restore=1" : "&delete=1"),
+                            data: {
+                                id: id,
+                                hash: {=$csrfToken}
+                            },
+                            success: (response) => {
+                                if (response.success) {
+                                    NewNotification("Успех", "Школа " + (isRestore ? "восстановлена" : "удалена"), "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                                    if (response.reload) {
+                                        setTimeout(() => window.location.reload(), 500)
+                                    } else {
+                                        let elem = $("#school-" + response.payload);
+                                        elem.hide("slow", () => elem.remove());
+                                    }
+                                } else {
+                                    NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                                }
+                            }
+                        });
+                    }),
+                    Function.noop
+                    ])
+            }
+
+            function deleteUniversity(id, name, isRestore = false) {
+                DeleteUniversityMsgTxt = "Вы собираетесь " + (isRestore ? "восстановить" : "удалить") + " университет <b>" + name + "</b>";
+
+                MessageBox("Вы уверены?", DeleteUniversityMsgTxt, ["Подтвердить", "Отмена"], [
+                (function () {
+                        $.ajax({
+                            type: "POST",
+                            url: "/editdb?act=university" + (isRestore ? "&restore=1" : "&delete=1"),
+                            data: {
+                                id: id,
+                                hash: {=$csrfToken}
+                            },
+                            success: (response) => {
+                                if (response.success) {
+                                    NewNotification("Успех", "Университет " + (isRestore ? "восстановлен" : "удален"), "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                                    if (response.reload) {
+                                        setTimeout(() => window.location.reload(), 500)
+                                    } else {
+                                        let elem = $("#university-" + response.payload);
+                                        elem.hide("slow", () => elem.remove());
+                                    }
+                                } else {
+                                    NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                                }
+                            }
+                        });
+                    }),
+                    Function.noop
+                    ])
+            }
+
+
+        let search_editors_timer = 0;
+
+        $("#searchEditors").on("input", function(e) {
+            clearTimeout(search_editors_timer);
+            search_editors_timer = setTimeout(() => {
+                console.log(e);
+                $.ajax({
+                    type: "POST",
+                    url: "/editdb?act=editors",
+                    data: {
+                        q: (e.target.value ? e.target.value : " "),
+                        hash: {=$csrfToken}
+                    },
+                    success: (response) => {
+                        console.log(response);
+                        $("#editors").empty();
+
+                        if (response.editors.length > 0) {
+                            response.editors.forEach((editor) => {
+                                let user = editor[0];
+                                let countries = editor[1];
+                                $("#editors").append(getEditorDiv(user.id, user.name, user.link, user.avatar));
+
+                                countries.forEach((country) => {
+                                    $("#" + user.id + "-countries").append(getCountryDiv(country.id, user.id, country.name, user.name, country.code, country.flag, country.edu, country.cities));
+                                });
+                            });
+                        } else {
+                            $("#editors").append("<center style='padding: 32px;'>Ничего не найдено :(</center>");
+                        }
+                    }
+                });
+            }, 500);
+        });
+
+        function getEditorDiv(id, name, link, avatar) {
+        return `<div id="${ id}-editor">
+        <table cellpadding="7">
+            <tbody>
+                <tr>
+                    <td valign="top">
+                        <a href="${ link}">
+                            <img src="${ avatar}" width="48" alt="Фотография профиля" style="border: 1px solid #EBF0F4;"/>
+                        </a>
+                    </td>
+                    <td valign="top" style="width: 100%">
+                        <div style="display: flex; flex-direction: column; justify-content: space-between; height: 48px;">
+                            <div style="display: flex; justify-content: space-between;">
+                                <a href="${ link}">${ name} </a>
+                                <a class="link" onclick="addCountry(${ id})">Добавить страну</a>
+                            </div>
+                            <a>лог действий</a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div style="padding: 8px;" id="${ id}-countries"></div>
+    </div>`
+        }
+
+        function getCountryDiv(id, user, name, user_name, code, flag, edu, cities) {
+        return `<div href="/editdb?act=country&id=${ id}" id="${ user}-country-${ code}">
+        <h4 style="padding: 8px 0;">
+            <div style="display: flex; justify-content: space-between;">
+                <a href="/editdb?act=country&id=${ id}" style="width: 33%;">
+                    <img src="${ flag}"/>
+                    ${ name}
+                </a>
+                <div class="nobold" style="width: 33%;">
+                    <tr>
+                        <td width="120" valign="top" align="right">
+                            <input type="checkbox" name="can_edit_education"
+                                   id="${ user}_can_edit_education_${ code}"
+                                   onclick="onEditorCheckboxClick(${ user}, '${ code}')"
+                            ${ edu ? "checked='true'" : ""}
+                            />
+                        </td>
+                        <td>
+                            <span class="nobold">образование</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top" align="right">
+                            <input type="checkbox" name="can_edit_cities"
+                                   id="${ user}_can_edit_cities_${ code}"
+                                   onclick="onEditorCheckboxClick(${ user}, '${ code}')"
+                            ${ cities ? "checked='true'" : ""}
+                            />
+                        </td>
+                        <td>
+                            <span class="nobold">города</span>
+                        </td>
+                    </tr>
+                </div>
+                <a class="link" style="font-weight: normal !important; width: 33%; text-align: right;"
+                   onclick="deleteEditorCountry([${ user}, '${ user_name}'], ['${ code}', '${ name}'])">
+                    Удалить
+                </a>
+            </div>
+        </h4>
+    </div>`;
+        }
+
+        function addNewEditor() {
+            const link    = $("#new-editor-link").val();
+            const country = $("#new-editor-country").val();
+            const edu     = $("#new-editor-edu").is(":checked");
+            const cities  = $("#new-editor-cities").is(":checked");
+
+            $.ajax({
+                type: "POST",
+                url: "/editdb?act=editors",
+                data: {
+                    link: link,
+                    country: country,
+                    can_access_edu: edu ? 1 : 0,
+                    can_access_cities: cities ? 1 : 0,
+                    hash: {=$csrfToken}
+                },
+                success: (response) => {
+                    if (response.success) {
+                        NewNotification("Успех", "Редактор базы добавлен", "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                        let r = response.payload;
+                        if (!r.user_exists)
+                        $("#editors").append(getEditorDiv(r.user, r.user_name, r.link, r.avatar));
+
+                        $("#" + r.user + "-countries").append(getCountryDiv(r.id, r.user, r.name, r.user_name, r.code, r.flag, r.edu, r.cities));
+                    } else {
+                        NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                    }
+                }
+            });
+        }
+
+        function addCountry(user) {
+            AddCountryMsgTxt  = "<select name='country' id='" + user + "-add-country-code'>";
+            {foreach $countries as $country}
+                AddCountryMsgTxt += "<option value='" + {$country->getCode()} + "'>[" + {=$country->getCode()} + "] " + {=$country->getCanonicalName()} + "</option>";
+            {/foreach}
+            AddCountryMsgTxt += "</select>";
+
+            AddCountryMsgTxt += "<div class='nobold'>";
+            AddCountryMsgTxt += "<input type='checkbox' id='" + user + "-can-access-edu' /><a class='link'>образование</a>";
+            AddCountryMsgTxt += "<input type='checkbox' id='" + user + "-can-access-cities' style='margin-left: 16px;' /><a class='link'>города</a>";
+            AddCountryMsgTxt += "</div>";
+
+            MessageBox("Добавить страну", AddCountryMsgTxt, ["Подтвердить", "Отмена"], [
+                (function() {
+                    $.ajax({
+                        type: "POST",
+                        url: "/editdb?act=editor&id=" + user,
+                        data: {
+                            country: $("#" + user + "-add-country-code").val(),
+                            can_access_edu: $("#" + user + "-can-access-edu").is(":checked") ? 1 : 0,
+                            can_access_cities: $("#" + user + "-can-access-cities").is(":checked") ? 1 : 0,
+                            hash: {=$csrfToken}
+                        },
+                        success: (response) => {
+                            if (response.success) {
+                                NewNotification("Успех", "Права доступа редактора обновлены", "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                                let r = response.payload;
+                                $("#" + user + "-countries").append(getCountryDiv(r.id, r.user, r.name, r.user_name, r.code, r.flag, r.edu, r.cities));
+                            } else {
+                                NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                            }
+                        }
+                    });
+                }),
+                Function.noop
+            ]);
+        }
+
+        function deleteEditorCountry(user, country) {
+            DelCountryMsgTxt = "Вы собираетесь исключить " + user[1] + " из редакторов страны " + country[1];
+
+            MessageBox("Вы уверены?", DelCountryMsgTxt, ["Подтвердить", "Отмена"], [
+            (function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "/editdb?act=editor&id=" + user[0] + "&delete=1",
+                        data: {
+                        country: country[0],
+                        hash: {=$csrfToken}
+                        },
+                        success: (response) => {
+                            if (response.success) {
+                                NewNotification("Успех", "Права доступа редактора обновлены", "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                                let elem = $("#" + user[0] + "-country-" + country[0]);
+                                elem.hide('slow', () => elem.remove());
+
+                                if (response?.payload?.delete_user) {
+                                    elem = $("#" + user[0] + "-editor");
+                                    elem.hide('slow', () => elem.remove());
+                                }
+                            } else {
+                                NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                            }
+                        }
+                    });
+                }),
+                Function.noop
+                ])
+        }
+
+        function onEditorCheckboxClick(user, country) {
+            let edu_elem = $("#" + user + "_can_edit_education_" + country);
+            let edu = edu_elem.is(":checked");
+
+            let cities_elem = $("#" + user + "_can_edit_cities_" + country);
+            let cities = cities_elem.is(":checked");
+
+            edu_elem.prop('disabled', true);
+            cities_elem.prop('disabled', true);
+
+            $.ajax({
+                type: "POST",
+                url: "/editdb?act=editor&id=" + user + "&edit=1",
+                data: {
+                    country: country,
+                    can_access_edu: edu ? 1 : 0,
+                    can_access_cities: cities ? 1 : 0,
+                    hash: {=$csrfToken}
+                },
+                success: (response) => {
+                    if (response.success) {
+                        NewNotification("Успех", "Права доступа редактора обновлены", "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                    } else {
+                        NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                    }
+
+                    setTimeout(() => {
+                        edu_elem.prop('disabled', false);
+                        cities_elem.prop('disabled', false);
+                    }, 500);
+                }
+            });
+        }
+
+        function editRequest(id, save) {
+            $("#" + id + "-info-block").toggle();
+            $("#" + id + "-edit-block").toggle();
+            $("#" + id + "-edit-button").toggle();
+            $("#" + id + "-save-button").toggle();
+
+            if (save) {
+                $.ajax({
+                    type: "POST",
+                    url: "/editdb?act=requests&tab=" + {$mode} + "&edit=1",
+                    data: {
+                        rid: id,
+                        name: $("#" + id + "-name").val(),
+                        native_name: $("#" + id + "-native_name").val(),
+                        city_id: $("#" + id + "-city_id").val(),
+                        university_id: $("#" + id + "-university_id").val(),
+                        faculty_id: $("#" + id + "-faculty_id").val(),
+                        hash: {=$csrfToken}
+                    },
+                    success: (response) => {
+                        if (response.success) {
+                            NewNotification("Успех", "Заявка отредактирована", "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                            setTimeout(() => window.location.reload(), 500)
+                        } else {
+                            NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                        }
+                    }
+                });
+            }
+        }
+
+        function getRequestBlock(id, user, item) {
+        return `
+        <div id="request-${ id}">
+            <div style="border: 8px solid #D9E3EA; margin: 16px 0;">
+                <div>
+                    <table cellpadding="7">
+                        <tbody>
+                            <tr>
+                                <td valign="top">
+                                    <a href="${ user.url}">
+                                        <img src="${ user.avatar}" width="48"
+                                             alt="Фотография профиля" style="border: 1px solid #EBF0F4;">
+                                    </a>
+                                </td>
+                                <td valign="top" style="width: 100%">
+                                    <div>
+                                        <div style="display: flex; justify-content: space-between;">
+                                            <a href="${ user.url}">${ user.name}</a>
+                                        </div>
+                                        предлагает добавить ${ item.type}
+                                        <b>${ item.title}</b>
+                                        <ul>
+                                            ${ item.name}
+                                            ${ item.native_name}
+                                        </ul>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <center style="padding: 16px;">
+                    <button class="button">Добавить</button>
+                    <button class="button">Отклонить</button>
+                </center>
+            </div>
+        </div>
+        `;
+        }
+
+        $("#country-select").on('change', (e) => {
+            window.location.href = "/editdb?act=requests&cid=" + e.target.value + "&tab=" + {$mode};
+        });
+
+        function performRequestAction(rid, isAccept) {
+            $.ajax({
+                type: "POST",
+                url: "/editdb?act=requests&tab=" + {$mode} + (isAccept ? '&accept=1' : '&decline=1'),
+                data: {
+                    rid: rid,
+                    hash: {=$csrfToken}
+                },
+                success: (response) => {
+                    if (response.success) {
+                        NewNotification("Успех", "Заявка " + (isAccept ? "одобрена" : "отклонена"), "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                        let elem = $("#request-" + response.payload);
+                        elem.hide('slow', () => elem.remove());
+                    } else {
+                        NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                    }
+                }
+            });
+        }
+
+        function searchSchools(city) {
+            $.ajax({
+                type: "POST",
+                url: "/editdb?act=country&id={$country->getId()}&edu=1&city=" + city + "&view=" + {$view},
+                data: {
+                    hash: {=$csrfToken}
+                },
+                success: (response) => {
+                    console.log(response);
+                    $("#schools").empty();
+                    $("#universities").empty();
+
+                    if (response.success) {
+                        $("#current-city-name").text(response.city).show();
+                        $("#current-city-block").show();
+                        if (response.list.length > 0) {
+                            response.list.forEach((school) => {
+                                $("#schools").append(getSchoolDiv(school.id, school.name));
+                                $("#universities").append(getUniversityDiv(school.id, school.name));
+                            });
+                        } else {
+                            $("#schools").append("<center style='padding: 32px;'>Ничего не найдено :(</center>");
+                            $("#universities").append("<center style='padding: 32px;'>Ничего не найдено :(</center>");
+                        }
+                    } else {
+                            $("#schools").append("<center style='padding: 32px;'>" + tr("error") + "</center>");
+                            $("#universities").append("<center style='padding: 32px;'>" + tr("error") + "</center>");
+                    }
+                }
+            });
+        }
+
+        function onChangeCitySelect(cityOverride) {
+            clearTimeout(change_city_select_timeout);
+            change_city_select_timeout = setTimeout(() => {
+                searchSchools($("#cities-list").val());
+            }, 500)
+        }
+
+        function deleteCountry(id, restore) {
+            MessageBox((restore ? "Восстановить" : "Удалить") + " страну", "Вы уверены?", ["Подтвердить", "Отмена"], [
+                (function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "/editdb?act=country&id=" + id + (restore ? "&restore=1" : "&delete=1"),
+                        data: {
+                            hash: {=$csrfToken}
+                        },
+                        success: (response) => {
+                            if (response.success) {
+                                NewNotification("Успех", "Страна " + (restore ? "восстановлена" : "удалена"), "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                                let elem = $("#country-" + response.payload);
+                                elem.hide('slow', () => elem.remove());
+                            } else {
+                                NewNotification("Ошибка", (response.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png")
+                            }
+                        }
+                    });
+                }),
+                Function.noop
+            ])
+        }
+    </script>
+{/block}

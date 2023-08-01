@@ -49,3 +49,11 @@ services:
     - openvk\Web\Models\Repositories\BannedLinks
     - openvk\Web\Models\Repositories\ChandlerGroups
     - openvk\Web\Presenters\MaintenancePresenter
+    - openvk\Web\Presenters\GeodbPresenter
+    - openvk\Web\Models\Repositories\GeodbRights
+    - openvk\Web\Models\Repositories\GeodbCountries
+    - openvk\Web\Models\Repositories\GeodbCities
+    - openvk\Web\Models\Repositories\GeodbLogs
+    - openvk\Web\Models\Repositories\GeodbEducation
+    - openvk\Web\Models\Repositories\GeodbFaculties
+    - openvk\Web\Models\Repositories\GeodbSpecializations

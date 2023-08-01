@@ -1,0 +1,41 @@
+{extends "../@layout.xml"}
+
+{block title}{$title}{/block}
+{block header}{include title}{/block}
+
+{block content}
+    {include "./tabs.xml", mode => $mode, country => $country}
+    <br />
+    <div n:if="$mode === 'add_edu'">
+    <div>
+        <h4><a href="/editdb?act=country&id={$country->getId()}&edu=1{if $view === 'universities'}&view=universities{/if}">{$country->getCanonicalName()}</a> → {include title}</h4>
+        <form id="add-country-form" method="post">
+            <div id="cities-list-td-input">
+                <td width="120" valign="top">
+                    <span class="nobold">Город: </span>
+                </td>
+                <td>
+                    <input type="text" name="city" placeholder="Начните вводить название" id="city"
+                           onInput="onChangeCityInput()"/>
+                </td>
+            </div>
+            <div id="cities-list-td" style="display: none !important">
+                <d width="120" valign="top">
+                    <span class="nobold"></span>
+                </d>
+                <td>
+                    <center id="cities-not-found">Ничего не найдено</center>
+                    <select id="cities-list" name="city-id" value="1" style="display: none;">
+                    </select>
+                </td>
+            </div>
+
+            <input type="text" name="name" placeholder="Название"/>
+
+            <input type="hidden" name="hash" value="{$csrfToken}"/>
+            <input type="submit" value="{_create}" class="button" style="float: right;"/>
+        </form>
+    </div>
+    </div>
+    {include "./GeodbForAdmins.js.xml", view => $view}
+{/block}

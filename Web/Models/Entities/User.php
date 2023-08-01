@@ -5,7 +5,18 @@ use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{Photo, Message, Correspondence, Gift};
-use openvk\Web\Models\Repositories\{Photos, Users, Clubs, Albums, Gifts, Notifications};
+use openvk\Web\Models\Repositories\{GeodbCities,
+    GeodbCountries,
+    GeodbEducation,
+    GeodbFaculties,
+    GeodbRights,
+    GeodbSpecializations,
+    Photos,
+    Users,
+    Clubs,
+    Albums,
+    Gifts,
+    Notifications};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
@@ -349,9 +360,31 @@ class User extends RowModel
         return $this->getRecord()->fav_quote;
     }
 
-    function getCity(): ?string
+    function getCity(?bool $for_option = false)
     {
-        return $this->getRecord()->city;
+        $id = (int) $this->getRecord()->city_id;
+        $city = (new GeodbCities)->get($id);
+
+        if ($for_option) {
+            if (!$city) return null;
+            return ["id" => $city->getId(), "name" => $city->getName(), "native_name" => $city->getNativeName()];
+        } else {
+            if ($city && !$city->isDeleted()) return $city->getCanonicalName();
+            else return "DELETED";
+        }
+    }
+
+    function getCountry(?bool $for_option = false)
+    {
+        $id = (int) $this->getRecord()->country_id;
+        $country = (new GeodbCountries)->get($id);
+        if (!$country) return null;
+
+        if ($for_option) {
+            return ["id" => $country->getId(), "name" => $country->getName(), "native_name" => $country->getNativeName()];
+        } else {
+            return ($country->getCanonicalName() ?? "DELETED");
+        }
     }
 
     function getPhysicalAddress(): ?string
@@ -1031,7 +1064,7 @@ class User extends RowModel
 
     function adminNotify(string $message): bool
     {
-        $admId = OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"];
+        $admId = (int) OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"];
         if(!$admId)
             return false;
         else if(is_null($admin = (new Users)->get($admId)))
@@ -1125,6 +1158,50 @@ class User extends RowModel
         # TODO: Perenesti syuda vsyo ostalnoyie
 
         return $res;
+    }
+
+    function canEditGeodb(): bool
+    {
+        return sizeof((new GeodbRights)->getList($this->getId())) > 0 || $this->getChandlerUser()->can("write")->model("openvk\Web\Models\Entities\GeodbCountry")->whichBelongsTo(0);
+    }
+
+    function getSchool(): ?GeodbSchool
+    {
+        return (new GeodbEducation)->getSchool((int) $this->getRecord()->school_id);
+    }
+
+    function getSchoolYears(): array
+    {
+        if (!$this->getRecord()->school_years) return [NULL, NULL, NULL];
+
+        return explode("**", $this->getRecord()->school_years);
+    }
+
+    function getSchoolSpecialization(): ?string
+    {
+        return $this->getRecord()->school_specialization;
+    }
+    
+    function getUniversityYears(): array
+    {
+        if (!$this->getRecord()->university_years) return [NULL, NULL, NULL];
+
+        return explode("**", $this->getRecord()->university_years);
+    }
+
+    function getUniversitySpecialization(): ?GeodbSpecialization
+    {
+        return (new GeodbSpecializations)->get((int) $this->getRecord()->university_specialization);
+    }
+
+    function getUniversity(): ?GeodbUniversity
+    {
+        return (new GeodbEducation)->getUniversity((int) $this->getRecord()->university);
+    }
+
+    function getUniversityFaculty(): ?GeodbFaculty
+    {
+        return (new GeodbFaculties)->get($this->getRecord()->university_faculty);
     }
     
     use Traits\TBackDrops;

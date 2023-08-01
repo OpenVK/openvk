@@ -12,6 +12,7 @@
 {block content}
     {var $isMain      = $mode === 'main'}
     {var $isContacts  = $mode === 'contacts'}
+    {var $isEducation = $mode === 'education'}
     {var $isInterests = $mode === 'interests'}
     {var $isAvatar    = $mode === 'avatar'}
     {var $isBackDrop  = $mode === 'backdrop'}
@@ -27,6 +28,9 @@
         </div>
         <div n:attr="id => ($isContacts ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isContacts ? 'act_tab_a' : 'ki')" href="/edit?act=contacts">{_contacts}</a>
+        </div>
+        <div n:attr="id => ($isEducation ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => ($isEducation ? 'act_tab_a' : 'ki')" href="/edit?act=education">Образование</a>
         </div>
         <div n:attr="id => ($isInterests ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isInterests ? 'act_tab_a' : 'ki')" href="/edit?act=interests">{_interests}</a>
@@ -205,10 +209,51 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">{_city}: </span>
+                            <span class="nobold">Страна: </span>
                         </td>
                         <td>
-                            <input type="text" name="city" value="{$user->getCity()}" />
+                            <input type="text" name="country" placeholder="Начните вводить название" id="country"
+                                   onInput="onChangeCountryInput()"
+                            {if $user->getCountry()}value='{$user->getCountry()}'{/if} />
+                        </td>
+                    </tr>
+                    <tr id="countries-list-td" style="display: none">
+                        <td width="120" valign="top">
+                            <span class="nobold"></span>
+                        </td>
+                        <td>
+                            <center id="countries-not-found">Ничего не найдено</center>
+                            <select id="countries-list" name="country-id" value="1">
+                                {if $user->getCountry()}
+                                    <option value="{$user->getCountry(true)['id']}">{$user->getCountry(true)['native_name']}
+                                        ({$user->getCountry(true)['name']})
+                                    </option>
+                                {/if}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr id="cities-list-td-input" style="display: none">
+                        <td width="120" valign="top">
+                            <span class="nobold">Город: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="city" placeholder="Начните вводить название" id="city" onInput="onChangeCityInput()" {if $user->getCity()}value='{$user->getCity()}'{/if} />
+                            <a onClick="geodbRequest('cities')">Я не могу найти свой город</a>
+                        </td>
+                    </tr>
+                    <tr id="cities-list-td" style="display: none">
+                        <td width="120" valign="top">
+                            <span class="nobold"></span>
+                        </td>
+                        <td>
+                            <center id="cities-not-found">Ничего не найдено</center>
+                            <select id="cities-list" name="city-id" value="1">
+                                {if $user->getCity()}
+                                <option value="{$user->getCity(true)['id']}">{$user->getCity(true)['native_name']}
+                                    ({$user->getCity(true)['name']})
+                                </option>
+                                {/if}
+                            </select>
                         </td>
                     </tr>
                     <tr>
@@ -231,6 +276,198 @@
                 </tbody>
             </table>
         </form>
+        {include "../Geodb/GeodbForEdit.js.xml", user => $user}
+
+        {elseif $isEducation}
+        <style>.school-additional { display: none } .university-additional { display: none }</style>
+        <h4>Школа</h4>
+        <form action="/edit?act=education&type=school" method="POST" enctype="multipart/form-data">
+        <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+            <tbody>
+                <tr id="school-cities-list-td-input">
+                    <td width="120" valign="top">
+                        <span class="nobold">Город: </span>
+                    </td>
+                    <td>
+                        <input type="text" name="city" placeholder="Начните вводить название" id="city"
+                               onInput="onChangeSchoolCityInput(0)"/>
+                    </td>
+                </tr>
+                <tr id="school-cities-list-td" style="display: none">
+                    <td width="120" valign="top">
+                        <span class="nobold"></span>
+                    </td>
+                    <td>
+                        <center id="school-cities-not-found">Ничего не найдено</center>
+                        <select id="school-cities-list" name="city-id" value="1" onchange="onChangeCitySelect(null, 0)">
+                        </select>
+                    </td>
+                </tr>
+                <div id="school-info" style="display: none;">
+                    <tr id="schools" style="display: none;">
+                        <td width="120" valign="top">
+                            <span class="nobold">Школа:</span>
+                        </td>
+                        <td id="schools-block">
+                            <center id="schools-not-found" style="padding: 16px;">Ничего не найдено</center>
+                            <select id="schools-list" name="school-id" value="1">
+                            </select>
+                        </td>
+                    </tr>
+                </div>
+                <tr class="school-additional-0" style="display: none;">
+                    <td width="120" valign="top">
+                        <span class="nobold">Год начала обучения:</span>
+                    </td>
+                    <td>
+                        <input type="text" name="edu_start"
+                               n:attr="value => $user->getSchoolYears()[0] != 0 ? $user->getSchoolYears()[0] : NULL"/>
+                    </td>
+                </tr>
+                <tr class="school-additional-0" style="display: none;">
+                    <td width="120" valign="top">
+                        <span class="nobold">Год окончания обучения:</span>
+                    </td>
+                    <td>
+                        <input type="text" name="edu_end"
+                               n:attr="value => $user->getSchoolYears()[1] != 0 ? $user->getSchoolYears()[1] : NULL"/>
+                    </td>
+                </tr>
+                <tr class="school-additional-0" style="display: none;">
+                    <td width="120" valign="top">
+                        <span class="nobold">Год выпуска:</span>
+                    </td>
+                    <td>
+                        <input type="text" name="edu_graduation"
+                               n:attr="value => $user->getSchoolYears()[2] != 0 ? $user->getSchoolYears()[2] : NULL"/>
+                    </td>
+                </tr>
+                <tr class="school-additional-0" style="display: none;">
+                    <td width="120" valign="top">
+                        <span class="nobold">Специальность:</span>
+                    </td>
+                    <td>
+                        <input type="text" name="edu_specialization" n:attr="value => $user->getSchoolSpecialization() ?? NULL" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+
+                    </td>
+                    <td>
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="submit" value="{_save}" class="button" />
+                        <div><a onClick="geodbRequest('schools')">Я не могу найти свою школу</a></div>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+        </form>
+        <h4>Университет</h4>
+        <form action="/edit?act=education&type=university" method="POST" enctype="multipart/form-data">
+        <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+            <tbody>
+                <tr id="university-cities-list-td-input">
+                    <td width="120" valign="top">
+                        <span class="nobold">Город: </span>
+                    </td>
+                    <td>
+                        <input type="text" name="city" placeholder="Начните вводить название" id="university-city"
+                               onInput="onChangeUniversityCityInput()"/>
+                    </td>
+                </tr>
+                <tr id="university-cities-list-td" style="display: none">
+                    <td width="120" valign="top">
+                        <span class="nobold"></span>
+                    </td>
+                    <td>
+                        <center id="university-cities-not-found">Ничего не найдено</center>
+                        <select id="university-cities-list" name="city-id" value="1" onchange="onChangeUniversityCitySelect()">
+                        </select>
+                    </td>
+                </tr>
+                <div id="university-info">
+                    <tr id="universities" style="display: none;">
+                        <td width="120" valign="top">
+                            <span class="nobold">Университет:</span>
+                        </td>
+                        <td id="universities-block">
+                            <center id="universities-not-found" style="padding: 16px;">Ничего не найдено</center>
+                            <select id="universities-list" name="university-id" value="1">
+                            </select>
+                        </td>
+                    </tr>
+                </div>
+                <div id="faculty-info">
+                    <tr id="faculties" style="display: none;">
+                        <td width="120" valign="top">
+                            <span class="nobold">Факультет:</span>
+                        </td>
+                        <td id="faculties-block">
+                            <center id="faculties-not-found" style="padding: 16px;">Ничего не найдено</center>
+                            <select id="faculties-list" name="faculty-id" value="1">
+                            </select>
+                        </td>
+                    </tr>
+                </div>
+                <div id="specialization-info">
+                    <tr id="specializations" style="display: none;">
+                        <td width="120" valign="top">
+                            <span class="nobold">Специализация:</span>
+                        </td>
+                        <td id="specializations-block">
+                            <center id="specializations-not-found" style="padding: 16px;">Ничего не найдено</center>
+                            <select id="specializations-list" name="specialization-id" value="1" onchange="onChangeSpecializationsCitySelect()">
+                            </select>
+                        </td>
+                    </tr>
+                </div>
+                <tr class="university-additional">
+                    <td width="120" valign="top">
+                        <span class="nobold">Год начала обучения:</span>
+                    </td>
+                    <td>
+                        <input type="text" name="edu_university_start"
+                               n:attr="value => $user->getUniversityYears()[0] != 0 ? $user->getUniversityYears()[0] : NULL"/>
+                    </td>
+                </tr>
+                <tr class="university-additional">
+                    <td width="120" valign="top">
+                        <span class="nobold">Год окончания обучения:</span>
+                    </td>
+                    <td>
+                        <input type="text" name="edu_university_end"
+                               n:attr="value => $user->getUniversityYears()[1] != 0 ? $user->getUniversityYears()[1] : NULL"/>
+                    </td>
+                </tr>
+                <tr class="university-additional">
+                    <td width="120" valign="top">
+                        <span class="nobold">Год выпуска:</span>
+                    </td>
+                    <td>
+                        <input type="text" name="edu_university_graduation"
+                               n:attr="value => $user->getUniversityYears()[2] != 0 ? $user->getUniversityYears()[2] : NULL"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+
+                    </td>
+                    <td>
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="submit" value="{_save}" class="button" />
+                        <div>
+                            <a onClick="geodbRequest('universities')">Я не могу найти свой университет</a>,
+                            <a onClick="geodbRequest('faculties')">факультет</a>,
+                            <a onClick="geodbRequest('specializations')">специальность</a>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        </form>
+        {include "../Geodb/GeodbForEdit.js.xml", user => $user}
 
         {elseif $isInterests}
 

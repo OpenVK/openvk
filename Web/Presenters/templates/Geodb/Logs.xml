@@ -1,0 +1,43 @@
+{extends "../@layout.xml"}
+
+{block title}Логи{/block}
+{block header}{include title}{/block}
+
+{block content}
+{include "./tabs.xml", mode => $mode, country => $country}
+<div>
+    <div n:if="$count <= 0">
+        <br />
+        {include "../components/nothing.xml"}
+    </div>
+    <div n:if="$count > 0">
+        <div n:foreach="$logs as $log" style="border: 8px solid #D9E3EA; margin: 16px 0;">
+            {var $user = $log->getUser()}
+            <table cellpadding="7">
+                <tbody>
+                    <tr>
+                        <td valign="top">
+                            <a href="{$user->getURL()}">
+                                <img src="{$user->getAvatarUrl('normal')}" width="48" alt="Фотография профиля" style="border: 1px solid #EBF0F4;"/>
+                            </a>
+                        </td>
+                        <td valign="top" style="width: 100%">
+                            <div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <a href="{$user->getURL()}">{$user->getFullName()}</a>
+                                </div>
+                                <div>
+                                    <b>{$log->getType()}</b> {$log->getObjectType()} <a href="{$log->getObjectURL()}">{$log->getObjectName()}</a>
+                                </div>
+                                <div style="margin-left: -39px;">
+                                    <blockquote style="background-color: #f3f3f3; border-bottom: 5px solid #969696; padding: 10px;">{$log->getLogsText()|noescape}</blockquote>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{/block}

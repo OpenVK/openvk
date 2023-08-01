@@ -1,0 +1,104 @@
+{extends "../@layout.xml"}
+
+{block title}Заявки Геодб{/block}
+{block header}{include title}{/block}
+
+{block content}
+    <div>
+        <select placeholder="Страна" id="country-select">
+            <option n:foreach="$countries as $country" value="{$country->getId()}"
+                    n:attr="selected => ($current_country ? ($country->getId() === $current_country->getId()) : false)">[{$country->getCode()}]
+                {$country->getNativeName()}
+            </option>
+        </select>
+    </div>
+    <div n:if="$country || $current_country">
+        <div class="tabs">
+            <br/>
+            <div n:if="$can_view_cities" n:attr="id => ($mode === 'cities' ? 'activetabs' : 'ki')" class="tab">
+                <a n:attr="id => ($mode === 'cities' ? 'act_tab_a' : 'ki')" href="/editdb?act=requests&cid={$current_country->getId()}&tab=cities">Города</a>
+            </div>
+            <div n:if="$can_view_education" n:attr="id => ($mode === 'schools' ? 'activetabs' : 'ki')" class="tab">
+                <a n:attr="id => ($mode === 'schools' ? 'act_tab_a' : 'ki')" href="/editdb?act=requests&cid={$current_country->getId()}&tab=schools">Школы</a>
+            </div>
+            <div n:if="$can_view_education" n:attr="id => ($mode === 'universities' ? 'activetabs' : 'ki')" class="tab">
+                <a n:attr="id => ($mode === 'universities' ? 'act_tab_a' : 'ki')" href="/editdb?act=requests&cid={$current_country->getId()}&tab=universities">Университеты</a>
+            </div>
+            <div n:if="$can_view_education" n:attr="id => ($mode === 'faculties' ? 'activetabs' : 'ki')" class="tab">
+                <a n:attr="id => ($mode === 'faculties' ? 'act_tab_a' : 'ki')" href="/editdb?act=requests&cid={$current_country->getId()}&tab=faculties">Факультеты</a>
+            </div>
+            <div n:if="$can_view_education" n:attr="id => ($mode === 'specializations' ? 'activetabs' : 'ki')" class="tab">
+                <a n:attr="id => ($mode === 'specializations' ? 'act_tab_a' : 'ki')" href="/editdb?act=requests&cid={$current_country->getId()}&tab=specializations">Специализации</a>
+            </div>
+        </div>
+        <div id="requests" style="margin-top: 8px;">
+            <div id="requests-placeholder" n:if="count($requests) === 0">{include "../components/nothing.xml"}</div>
+            <div id="requests-list" n:attr="style => count($requests) === 0 ? 'display: none;' : ''">
+                <div n:foreach="$requests as $request" id="request-{$request[0]->getId()}">
+                    <div style="border: 8px solid #D9E3EA; margin: 16px 0;">
+                        <div>
+                            <table cellpadding="7">
+                                <tbody>
+                                    <tr>
+                                        <td valign="top">
+                                            <a href="{$request[1]->getURL()}">
+                                                <img src="{$request[1]->getAvatarURL()}" width="48"
+                                                     alt="Фотография профиля" style="border: 1px solid #EBF0F4;">
+                                            </a>
+                                        </td>
+                                        <td valign="top" style="width: 100%">
+                                            <div>
+                                                <div style="display: flex; justify-content: space-between;">
+                                                    <a href="{$request[1]->getURL()}">{$request[1]->getCanonicalName()}</a>
+                                                </div>
+                                                предлагает добавить {$type}
+                                                <b>{$mode === "cities" ? $request[0]->getNativeName() : $request[0]->getName()}</b>
+                                                <ul id="{$request[0]->getId()}-info-block">
+                                                    <div n:if="$mode === 'cities'">
+                                                        <li>Название на английском: <b>{$request[0]->getName()}</b></li>
+                                                        <li>Родное название: <b>{$request[0]->getNativeName()}</b></li>
+                                                    </div>
+                                                    <div n:if="$mode !== 'cities'">
+                                                        <li>Город:
+                                                            <a href="/editdb?act=city&id={$request[0]->getCity()->getId()}">{$request[0]->getCity()->getNativeName()}</a>
+                                                        </li>
+                                                        <li n:if="$mode === 'faculties' || $mode === 'specializations'">
+                                                            Университет:
+                                                            <a href="/editdb?act=university&id={$request[0]->getUniversity()->getId()}">
+                                                                {$request[0]->getUniversity()->getName()}
+                                                            </a>
+                                                        </li>
+                                                        <li n:if="$mode === 'specializations'">
+                                                            Факультет:
+                                                            <a href="/editdb?act=university&id={$request[0]->getUniversity()->getId()}">{$request[0]->getFaculty()->getName()}</a>
+                                                        </li>
+                                                    </div>
+                                                </ul>
+                                                <div id="{$request[0]->getId()}-edit-block" style="display: none;">
+                                                    <input n:attr="placeholder => ($mode === 'cities' ? 'Название на английском' : 'Название')" name="name" type="text" value="{$request[0]->getName()}" id="{$request[0]->getId()}-name" />
+                                                    <input n:if="$mode === 'cities'" placeholder="Родное название" name="name" type="text" value="{$request[0]->getNativeName()}" id="{$request[0]->getId()}-native_name" />
+                                                    <input n:if="$mode !== 'cities'" placeholder="ID города" name="city-id" type="text" value="{$request[0]->getCity()->getId()}" id="{$request[0]->getId()}-city_id" />
+                                                    <input n:if="$mode === 'faculties' || $mode === 'specializations'" placeholder="ID университета" name="university-id" type="text" value="{$request[0]->getUniversity()->getId()}" id="{$request[0]->getId()}-university_id" />
+                                                    <input n:if="$mode === 'specializations'" placeholder="ID факультета" name="faculty-id" type="text" value="{$request[0]->getFaculty()->getId()}" id="{$request[0]->getId()}-faculty_id" />
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <center style="padding: 16px;">
+                            <button class="button" onClick="performRequestAction({$request[0]->getId()}, true)">Добавить</button>
+                            <button class="button" onClick="performRequestAction({$request[0]->getId()}, false)">Отклонить</button>
+                            <button id="{$request[0]->getId()}-edit-button" class="button" onClick="editRequest({$request[0]->getId()})">Редактировать</button>
+                            <button id="{$request[0]->getId()}-save-button" class="button" onClick="editRequest({$request[0]->getId()}, 1)" style="display: none;">Сохранить</button>
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {if $country || $current_country}
+        {include "./GeodbForAdmins.js.xml", countries => $countries}
+    {/if}
+{/block}

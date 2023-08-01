@@ -1,0 +1,41 @@
+{extends "../@layout.xml"}
+
+{block title}Добавить страну{/block}
+{block header}{include title}{/block}
+
+{block content}
+    {include "./tabs.xml", mode => $mode, country => $country}
+    <br />
+    <div>
+        <h4>Добавить страну</h4>
+        <form id="add-country-form" method="post">
+            <input type="text" name="code" placeholder="Код страны" n:attr="value => $country ? $country->getCode() : ''"/>
+            <input type="text" name="flag" placeholder="Флаг" onInput="onCreateCountryFormFlagChanged(this)" n:attr="value => $country ? $country->getFlagCode() : ''"/>
+            <div>
+                <b>Флаг:</b> <img id="createCountryFormFlag" n:attr="src => $country ? $country->getFlagURL() : ''" />
+            </div>
+            <input type="text" name="name" placeholder="Название на английском" n:attr="value => $country ? $country->getName() : ''"/>
+            <input type="text" name="native_name" placeholder="Родное название" n:attr="value => $country ? $country->getNativeName() : ''"/>
+
+            <input type="hidden" name="hash" value="{$csrfToken}"/>
+            <input type="submit" n:attr="value => $country ? tr('save') : tr('create')" class="button" style="float: right;"/>
+        </form>
+        <script>
+            let check_flag_timer = 0;
+
+            function onCreateCountryFormFlagChanged(e) {
+                clearTimeout(check_flag_timer);
+                check_flag_timer = setTimeout(() => {
+                    let image_src = "/assets/packages/static/openvk/img/flags/" + e.value + ".gif";
+
+                    $.get({ url: image_src}).done((data) => {
+                        if (data.includes("error"))
+                            $("#createCountryFormFlag").attr("src", "/assets/packages/static/openvk/img/flags/europeanunion.gif");
+                        else
+                            $("#createCountryFormFlag").attr("src", image_src);
+                    })
+                }, 500)
+            }
+        </script>
+    </div>
+{/block}

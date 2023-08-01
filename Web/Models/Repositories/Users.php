@@ -71,8 +71,13 @@ class Users
                     case "hometown":
                         $result->where("hometown LIKE ?", $paramValue);
                         break;
+                    case "country":
+                        $country = (new GeodbCountries)->find($paramValue);
+                        if ($country) $result->where("country_id LIKE ?", $country->getId());
+                        break;
                     case "city":
-                        $result->where("city LIKE ?", $paramValue);
+                        $country = (new GeodbCities)->find($paramValue);
+                        if ($country) $result->where("city_id LIKE ?", $country->getId());
                         break;
                     case "maritalstatus":
                         $result->where("marital_status ?", $paramValue);
