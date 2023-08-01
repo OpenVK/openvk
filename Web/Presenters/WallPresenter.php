@@ -335,10 +335,15 @@ final class WallPresenter extends OpenVKPresenter
         if($wall > 0)
             $excludeMentions[] = $wall;
 
-        $mentions = iterator_to_array($post->resolveMentions($excludeMentions));
-        foreach($mentions as $mentionee)
-            if($mentionee instanceof User)
-                (new MentionNotification($mentionee, $post, $post->getOwner(), strip_tags($post->getText())))->emit();
+        if($wall < 0 && !$wallOwner->canBeModifiedBy($this->user->identity) && $wallOwner->getWallType() == 2) {
+            # Чтобы не было упоминаний из предложки
+        } else {
+            $mentions = iterator_to_array($post->resolveMentions($excludeMentions));
+
+            foreach($mentions as $mentionee)
+                if($mentionee instanceof User)
+                    (new MentionNotification($mentionee, $post, $post->getOwner(), strip_tags($post->getText())))->emit();
+        }
         
         if($wall < 0 && !$wallOwner->canBeModifiedBy($this->user->identity) && $wallOwner->getWallType() == 2) {
             $suggsCount = $this->posts->getSuggestedPostsCount($wallOwner->getId());
