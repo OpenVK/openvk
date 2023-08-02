@@ -2,6 +2,33 @@
 namespace openvk\Web\Models\Entities;
 use HTMLPurifier_Config;
 use HTMLPurifier;
+use HTMLPurifier_Filter;
+
+class SecurityFilter extends HTMLPurifier_Filter
+{
+    public function preFilter($html, $config, $context)
+    {
+        $html = preg_replace_callback(
+            '/<img[^>]*src\s*=\s*["\']([^"\']*)["\'][^>]*>/i',
+            function ($matches) {
+                $originalSrc = $matches[1];
+                $encodedSrc = '/image.php?url=' . base64_encode($originalSrc);
+                return str_replace($originalSrc, $encodedSrc, $matches[0]);
+            },
+            $html
+        );
+
+        return preg_replace_callback(
+            '/<a[^>]*href\s*=\s*["\']([^"\']*)["\'][^>]*>/i',
+            function ($matches) {
+                $originalHref = $matches[1];
+                $encodedHref = '/away.php?to=' . urlencode($originalHref);
+                return str_replace($originalHref, $encodedHref, $matches[0]);
+            },
+            $html
+        );
+    }
+}
 
 class Note extends Postable
 {
@@ -74,7 +101,8 @@ class Note extends Postable
         $config->set("Attr.AllowedClasses", [
             "underline",
         ]);
-    
+        $config->set('Filter.Custom', [new SecurityFilter()]);
+
         $source = NULL;
         if(is_null($this->getRecord())) {
             if(isset($this->changes["source"]))
