@@ -288,7 +288,7 @@ final class Groups extends VKAPIRequestHandler
                 string $description = NULL, 
                 string $screen_name = NULL, 
                 string $website = NULL, 
-                int    $wall = NULL, 
+                int    $wall = -1, 
                 int    $topics = NULL, 
                 int    $adminlist = NULL,
                 int    $topicsAboveWall = NULL,
@@ -303,17 +303,29 @@ final class Groups extends VKAPIRequestHandler
         if(!$club || !$club->canBeModifiedBy($this->getUser())) $this->fail(15, "You can't modify this group.");
         if(!empty($screen_name) && !$club->setShortcode($screen_name)) $this->fail(103, "Invalid shortcode.");
 
-        !is_null($title)              ? $club->setName($title) : NULL;
-        !is_null($description)        ? $club->setAbout($description) : NULL;
-        !is_null($screen_name)        ? $club->setShortcode($screen_name) : NULL;
-        !is_null($website)            ? $club->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website) : NULL;
-        !is_null($wall)               ? $club->setWall($wall) : NULL;
-        !is_null($topics)             ? $club->setEveryone_Can_Create_Topics($topics) : NULL;
-        !is_null($adminlist)          ? $club->setAdministrators_List_Display($adminlist) : NULL;
-        !is_null($topicsAboveWall)    ? $club->setDisplay_Topics_Above_Wall($topicsAboveWall) : NULL;
-        !is_null($hideFromGlobalFeed) ? $club->setHide_From_Global_Feed($hideFromGlobalFeed) : NULL;
+        !empty($title)              ? $club->setName($title) : NULL;
+        !empty($description)        ? $club->setAbout($description) : NULL;
+        !empty($screen_name)        ? $club->setShortcode($screen_name) : NULL;
+        !empty($website)            ? $club->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website) : NULL;
+        
+        try {
+            $wall != -1 ? $club->setWall($wall) : NULL;
+        } catch(\Exception $e) {
+            $this->fail(50, "Invalid wall value");
+        }
 
-        $club->save();
+        !empty($topics)             ? $club->setEveryone_Can_Create_Topics($topics) : NULL;
+        !empty($adminlist)          ? $club->setAdministrators_List_Display($adminlist) : NULL;
+        !empty($topicsAboveWall)    ? $club->setDisplay_Topics_Above_Wall($topicsAboveWall) : NULL;
+        !empty($hideFromGlobalFeed) ? $club->setHide_From_Global_Feed($hideFromGlobalFeed) : NULL;
+
+        try {
+            $club->save();
+        } catch(\TypeError $e) {
+            $this->fail(15, "Nothing changed");
+        } catch(\Exception $e) {
+            $this->fail(18, "An unknown error occurred: maybe you set an incorrect value?");
+        }
 
         return 1;
     }
@@ -466,7 +478,7 @@ final class Groups extends VKAPIRequestHandler
             "title"          => $club->getName(),
             "description"    => $club->getDescription() != NULL ? $club->getDescription() : "",
             "address"        => $club->getShortcode(),
-            "wall"           => $club->canPost() == true ? 1 : 0,
+            "wall"           => $club->getWallType(), # отличается от вкшных но да ладно
             "photos"         => 1,
             "video"          => 0,
             "audio"          => 0,

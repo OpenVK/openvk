@@ -113,6 +113,7 @@ class Wall implements Handler
             $reject(22, "Access to post denied");
 
         $post->setSuggested(2);
+        $post->setDeleted(1);
         $post->save();
 
         $resolve($this->posts->getSuggestedPostsCount($post->getWallOwner()->getId()));
