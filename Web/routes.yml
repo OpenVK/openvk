@@ -339,6 +339,8 @@ routes:
       handler: "Admin->chandlerGroup"
     - url: "/admin/chandler/users/{slug}"
       handler: "Admin->chandlerUser"
+    - url: "/admin/logs"
+      handler: "Admin->logs"
     - url: "/internal/wall{num}"
       handler: "Wall->wallEmbedded"
     - url: "/robots.txt"

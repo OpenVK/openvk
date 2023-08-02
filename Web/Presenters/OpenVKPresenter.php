@@ -7,7 +7,7 @@ use Chandler\Security\Authenticator;
 use Latte\Engine as TemplatingEngine;
 use openvk\Web\Models\Entities\IP;
 use openvk\Web\Themes\Themepacks;
-use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets};
+use openvk\Web\Models\Repositories\{CurrentUser, IPs, Users, APITokens, Tickets};
 use WhichBrowser;
 
 abstract class OpenVKPresenter extends SimplePresenter
@@ -211,6 +211,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->user->id              = $this->user->identity->getId();
             $this->template->thisUser    = $this->user->identity;
             $this->template->userTainted = $user->isTainted();
+            CurrentUser::get($this->user->identity);
 
             if($this->user->identity->isDeleted() && !$this->deactivationTolerant) {
                 if($this->user->identity->isDeactivated()) {
@@ -255,7 +256,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             if($this->user->identity->onlineStatus() == 0 && !($this->user->identity->isDeleted() || $this->user->identity->isBanned())) {
                 $this->user->identity->setOnline(time());
                 $this->user->identity->setClient_name(NULL);
-                $this->user->identity->save();
+                $this->user->identity->save(false);
             }
 
             $this->template->ticketAnsweredCount = (new Tickets)->getTicketsCountByUserId($this->user->id, 1);
