@@ -129,13 +129,13 @@ ALTER TABLE `geodb_universities`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `profiles`
-    ADD `country` VARCHAR(60) NOT NULL AFTER `activated`,
-    ADD `country_id` BIGINT UNSIGNED NOT NULL AFTER `country`,
-    ADD `city_id` BIGINT UNSIGNED NOT NULL AFTER `country_id`,
-    ADD `school_id` BIGINT UNSIGNED NOT NULL AFTER `city_id`,
-    ADD `school_years` TINYTEXT NOT NULL AFTER `school_id`,
-    ADD `school_specialization` TINYTEXT NOT NULL AFTER `school_years`,
-    ADD `university_years` TINYTEXT NOT NULL AFTER `school_specialization`,
-    ADD `university_specialization` TINYTEXT NOT NULL AFTER `university_years`,
-    ADD `university` BIGINT UNSIGNED NOT NULL AFTER `university_specialization`,
-    ADD `university_faculty` BIGINT UNSIGNED NOT NULL AFTER `university`;
+    ADD `country` VARCHAR(60) NULL DEFAULT NULL AFTER `activated`,
+    ADD `country_id` BIGINT UNSIGNED NULL DEFAULT NULL AFTER `country`,
+    ADD `city_id` BIGINT UNSIGNED NULL DEFAULT NULL AFTER `country_id`,
+    ADD `school_id` BIGINT UNSIGNED NULL DEFAULT NULL AFTER `city_id`,
+    ADD `school_years` TINYTEXT NULL DEFAULT NULL AFTER `school_id`,
+    ADD `school_specialization` TINYTEXT NULL DEFAULT NULL AFTER `school_years`,
+    ADD `university_years` TINYTEXT NULL DEFAULT NULL AFTER `school_specialization`,
+    ADD `university_specialization` TINYTEXT NULL DEFAULT NULL AFTER `university_years`,
+    ADD `university` BIGINT UNSIGNED NULL DEFAULT NULL AFTER `university_specialization`,
+    ADD `university_faculty` BIGINT UNSIGNED NULL DEFAULT NULL AFTER `university`;
