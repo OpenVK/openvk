@@ -95,4 +95,15 @@ class Wall implements Handler
 
         $resolve($arr);
     }
+
+    function getMapIframe(int $id, callable $resolve, callable $reject)
+    {
+        $post = $this->posts->get($id);
+        if ($post->getGeolocation())
+        {
+            $resolve($post->getMapEmbed());
+        } else {
+            $reject("No geotag found");
+        }
+    }
 }

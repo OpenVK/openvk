@@ -379,7 +379,7 @@ final class Wall extends VKAPIRequestHandler
             ];
     }
 
-    function post(string $owner_id, string $message = "", int $from_group = 0, int $signed = 0, string $attachments = ""): object
+    function post(string $owner_id, string $message = "", int $from_group = 0, int $signed = 0, string $attachments = "", float $latitude, float $longitude): object
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -428,6 +428,8 @@ final class Wall extends VKAPIRequestHandler
             $post->setContent($message);
             $post->setFlags($flags);
             $post->setApi_Source_Name($this->getPlatform());
+            if($latitude && $longitude) 
+                $post->setLocation($latitude, $longitude);
             $post->save();
         } catch(\LogicException $ex) {
             $this->fail(100, "One of the parameters specified was missing or invalid");

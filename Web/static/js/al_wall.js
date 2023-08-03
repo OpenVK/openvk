@@ -263,3 +263,12 @@ async function showArticle(note_id) {
     u("body").removeClass("dimmed");
     u("body").addClass("article");
 }
+
+async function openMapDialog(id)
+{
+    let iframe = await API.Wall.getMapIframe(id)
+
+    let frame = MessageBox("Геолокация", iframe, [tr("close")], [Function.noop]);
+
+    document.querySelector(".ovk-diag-body").style.padding = "10px"
+}

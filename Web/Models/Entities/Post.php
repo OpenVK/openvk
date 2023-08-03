@@ -4,6 +4,7 @@ use Chandler\Database\DatabaseConnection as DB;
 use openvk\Web\Models\Repositories\{Clubs, Users};
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\Notifications\LikeNotification;
+use Nette\InvalidStateException as ISE;
 
 class Post extends Postable
 {
@@ -175,6 +176,29 @@ class Post extends Postable
             "img"  => NULL
         ];
     }
+
+    function getGeolocation(): ?string {
+        return $this->getRecord()->geolocation;
+    }
+
+    function getMapEmbed(): ?string {
+        $location = $this->getRecord()->geolocation;
+        if(is_null($location)) return null;
+
+        $location_array = array();
+
+        preg_match('/^((\-?|\+?)?\d+(\.\d+)?),\s*((\-?|\+?)?\d+(\.\d+)?)$/', $location, $location_array);
+        
+        $latitude = floatval($location_array[1]);
+        $longitude = floatval($location_array[4]);
+
+        return "<iframe 
+        width=\"100%\" 
+        height=\"350\" 
+        src=\"https://www.openstreetmap.org/export/embed.html?bbox=". ($longitude - 0.002) ."%2C". ($latitude - 0.002) ."%2C". ($longitude + 0.002) ."%2C". ($latitude + 0.002) ."&amp;layer=mapnik&amp;marker=". $latitude ."%2C". $longitude ."\" 
+        style=\"border: 1px solid black\">
+        </iframe>";
+    }
     
     function pin(): void
     {
@@ -218,6 +242,15 @@ class Post extends Postable
             throw new \LengthException("Content is too large.");
         
         $this->stateChanges("content", $content);
+    }
+
+    function setLocation(float $latitude, $longitude): void
+    {
+        if ($latitude > 90 || $latitude < -90 || $longitude > 180 || $longitude < -180) {
+            throw new \LogicException("Invalid latitude or longitude");
+        } else {
+            $this->setGeolocation($latitude.",".$longitude);
+        }
     }
 
     function toggleLike(User $user): bool

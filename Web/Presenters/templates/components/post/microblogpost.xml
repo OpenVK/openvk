@@ -86,6 +86,12 @@
                             </a>
                         </span>
                     </div>
+                    <div n:if="$post->getGeolocation()" class="post-signature">
+                        <a href="javascript:openMapDialog({$post->getId()});">
+                            <img src="/assets/packages/static/openvk/img/geo.svg">
+                            Геолокация
+                        </a>
+                    </div>
                 </div>
                 <div class="post-menu" n:if="$compact == false">
                     <a href="/wall{$post->getPrettyId()}" class="date">{$post->getPublicationTime()}</a>
