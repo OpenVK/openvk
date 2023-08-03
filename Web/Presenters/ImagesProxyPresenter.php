@@ -26,7 +26,14 @@ final class ImagesProxyPresenter extends OpenVKPresenter
 
     public function renderIndex(): void
     {
-        $url = base64_decode($this->requestParam("url"));
+        $this->assertUserLoggedIn();
+
+        $url = $this->requestParam("url");
+        if (OPENVK_ROOT_CONF["openvk"]["preferences"]["imagesProxy"]["settings"]["base64_decode_url"]) {
+            $url = base64_decode($url);
+        }
+
+        $url = OPENVK_ROOT_CONF["openvk"]["preferences"]["imagesProxy"]["settings"]["url_prefix"] . $url;
         if (!$url || !filter_var($url, FILTER_VALIDATE_URL)) {
             $this->placeholder();
         }

@@ -12,8 +12,17 @@ class SecurityFilter extends HTMLPurifier_Filter
             '/<img[^>]*src\s*=\s*["\']([^"\']*)["\'][^>]*>/i',
             function ($matches) {
                 $originalSrc = $matches[1];
-                $encodedSrc = '/image.php?url=' . base64_encode($originalSrc);
-                return str_replace($originalSrc, $encodedSrc, $matches[0]);
+                $src = $originalSrc;
+                if (!str_contains($src, "/image.php?url=")) {
+                    $src = '/image.php?url=' . base64_encode($originalSrc);
+                } else {
+                    if (!OPENVK_ROOT_CONF["openvk"]["preferences"]["imagesProxy"]["replaceInNotes"]) {
+                        $src = preg_replace_callback('/(.*)\/image\.php\?url=(.*)/i', function ($matches) {
+                            return base64_decode($matches[2]);
+                        }, $src);
+                    }
+                }
+                return str_replace($originalSrc, $src, $matches[0]);
             },
             $html
         );
@@ -34,7 +43,7 @@ class Note extends Postable
 {
     protected $tableName = "notes";
     
-    protected function renderHTML(): string
+    protected function renderHTML(?string $content = NULL): string
     {
         $config = HTMLPurifier_Config::createDefault();
         $config->set("Attr.AllowedClasses", []);
@@ -103,14 +112,16 @@ class Note extends Postable
         ]);
         $config->set('Filter.Custom', [new SecurityFilter()]);
 
-        $source = NULL;
-        if(is_null($this->getRecord())) {
-            if(isset($this->changes["source"]))
-                $source = $this->changes["source"];
-            else
-                throw new \LogicException("Can't render note without content set.");
-        } else {
-            $source = $this->getRecord()->source;
+        $source = $content;
+        if (!$source) {
+            if (is_null($this->getRecord())) {
+                if (isset($this->changes["source"]))
+                    $source = $this->changes["source"];
+                else
+                    throw new \LogicException("Can't render note without content set.");
+            } else {
+                $source = $this->getRecord()->source;
+            }
         }
         
         $purifier = new HTMLPurifier($config);
@@ -138,8 +149,8 @@ class Note extends Postable
             $this->setCached_Content($cached);
             $this->save();
         }
-        
-        return $cached;
+
+        return $this->renderHTML($cached);
     }
 
     function getSource(): string
