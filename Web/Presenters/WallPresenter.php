@@ -300,6 +300,12 @@ final class WallPresenter extends OpenVKPresenter
             if (!$geo["lat"] || !$geo["lng"] || !$geo["name"]) {
                 $this->flashFail("err", tr("error"), tr("error_geolocation"));
             }
+
+            $latitude = (float) $geo["lat"];
+            $longitude = (float) $geo["lng"];
+            if ($latitude > 90 || $latitude < -90 || $longitude > 180 || $longitude < -180) {
+                $this->flashFail("err", tr("error"), "Invalid latitude or longitude");
+            }
         }
         
         if(empty($this->postParam("text")) && !$photo && !$video && !$poll && !$note && !$geo)
@@ -316,8 +322,8 @@ final class WallPresenter extends OpenVKPresenter
             $post->setNsfw($this->postParam("nsfw") === "on");
             if ($geo) {
                 $post->setGeo(json_encode($geo));
-                $post->setGeo_Lat($geo["lat"]);
-                $post->setGeo_Lon($geo["lng"]);
+                $post->setGeo_Lat($latitude);
+                $post->setGeo_Lon($longitude);
             }
             $post->save();
         } catch (\LengthException $ex) {
