@@ -111,6 +111,18 @@ final class Wall extends VKAPIRequestHandler
                 ];
             }
 
+            $geo = [];
+
+            if($post->getGeolocation()) {
+                $geoarray = $post->getGeolocationByArray();
+
+                $geo = [
+                    "coordinates" => $geoarray[0] . " " . $geoarray[1],
+                    "showmap" => 1,
+                    "type" => "point"
+                ];
+            }
+
             $items[] = (object)[
                 "id"           => $post->getVirtualId(),
                 "from_id"      => $from_id,
@@ -128,6 +140,7 @@ final class Wall extends VKAPIRequestHandler
                 "is_explicit"  => $post->isExplicit(),
                 "attachments"  => $attachments,
                 "post_source"  => $post_source,
+                "geo"          => $geo,
                 "comments"     => (object)[
                     "count"    => $post->getCommentsCount(),
                     "can_post" => 1

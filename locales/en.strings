@@ -214,6 +214,8 @@
 
 "reply" = "Reply";
 
+"geolocation" = "Geolocation";
+
 /* Friends */
 
 "friends" = "Friends";

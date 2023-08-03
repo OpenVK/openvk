@@ -268,7 +268,7 @@ async function openMapDialog(id)
 {
     let iframe = await API.Wall.getMapIframe(id)
 
-    let frame = MessageBox("Геолокация", iframe, [tr("close")], [Function.noop]);
+    let frame = MessageBox(tr("geolocation"), iframe, [tr("close")], [Function.noop]);
 
     document.querySelector(".ovk-diag-body").style.padding = "10px"
 }

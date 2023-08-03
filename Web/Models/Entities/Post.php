@@ -181,6 +181,18 @@ class Post extends Postable
         return $this->getRecord()->geolocation;
     }
 
+    function getGeolocationAsArray(): ?array {
+        $location = $this->getRecord()->geolocation;
+        if(is_null($location)) return null;
+
+        preg_match('/^((\-?|\+?)?\d+(\.\d+)?),\s*((\-?|\+?)?\d+(\.\d+)?)$/', $location, $location_array);
+        
+        $latitude = floatval($location_array[1]);
+        $longitude = floatval($location_array[4]);
+
+        return array($latitude, $longitude);
+    }
+
     function getMapEmbed(): ?string {
         $location = $this->getRecord()->geolocation;
         if(is_null($location)) return null;
