@@ -73,9 +73,11 @@
                             </div>
                         </div>
                     </div>
-                    <div n:if="$post->getGeo()" style="padding: 4px;">
-                        <div style="border-bottom: #ECECEC solid 1px;" />
-                        <div style="cursor: pointer; padding: 4px;" onclick="javascript:openGeo({$post->getGeo()}, {$post->getOwner()->getId()}, {$post->getVirtualId()})"><b>{_geotag}</b>: {$post->getGeo()->name}</div>
+                    <div n:if="$post->getGeo()" class="post-signature">
+                        <a onclick="javascript:openGeo({$post->getGeo()}, {$post->getOwner()->getId()}, {$post->getVirtualId()})">
+                            <img src="/assets/packages/static/openvk/img/geo.svg">
+                            <b>{_geotag}</b>: {$post->getGeo()->name}
+                        </a>
                     </div>
                     <div n:if="$post->isAd()" style="color:grey;">
                         <br/>
