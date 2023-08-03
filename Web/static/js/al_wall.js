@@ -353,8 +353,9 @@ function openGeo(data, owner_id, virtual_id) {
     let map = L.map(element, {attributionControl: false});
     let target = L.latLng(data.lat, data.lng);
     map.setView(target, 15);
+
     let marker = L.marker(target).addTo(map);
-    marker.bindPopup(data.name).openPopup();
+    marker.bindPopup(data.name ?? tr("geotag")).openPopup();
 
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -404,7 +405,7 @@ function getPostPopup(post) {
                                 </div>
                                 <div style="padding: 4px;">
                                     <div style="border-bottom: #ECECEC solid 1px;"></div>
-                                    <div style="cursor: pointer; padding: 4px;"><b>${tr("geotag")}</b>: ${post.geo.name}</div>
+                                    <div style="cursor: pointer; padding: 4px;"><b>${tr("geotag")}</b>: ${post.geo.name ?? tr("admin_open")}</div>
                                 </div>
                             </div>
                         </td>
@@ -430,12 +431,27 @@ function openNearPosts(posts) {
         markerLayers.addTo(map);
 
         let markersBounds = [];
+        let coords = [];
 
         posts.posts.forEach((post) => {
-            let marker = L.marker(L.latLng(post.geo.lat, post.geo.lng)).addTo(map);
-            marker.bindPopup(getPostPopup(post));
-            markerLayers.addLayer(marker);
-            markersBounds.push(marker.getLatLng());
+            if (coords.includes(`${post.geo.lat} ${post.geo.lng}`)) {
+                markerLayers.getLayers().forEach((marker) => {
+                    if (marker.getLatLng().lat === post.geo.lat && marker.getLatLng().lng === post.geo.lng) {
+                        let content = marker.getPopup()._content += getPostPopup(post);
+                        if (!content.startsWith(`<div style="max-height: 300px; overflow-y: auto;">`))
+                            content = `<div style="max-height: 300px; overflow-y: auto;">${content}`;
+
+                        marker.getPopup().setContent(content);
+                    }
+                });
+            } else {
+                let marker = L.marker(L.latLng(post.geo.lat, post.geo.lng)).addTo(map);
+                marker.bindPopup(getPostPopup(post));
+                markerLayers.addLayer(marker);
+                markersBounds.push(marker.getLatLng());
+            }
+
+            coords.push(`${post.geo.lat} ${post.geo.lng}`);
         })
 
         let bounds = L.latLngBounds(markersBounds);

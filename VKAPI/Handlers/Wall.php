@@ -117,7 +117,7 @@ final class Wall extends VKAPIRequestHandler
                 $geoarray = $post->getGeo();
 
                 $geo = [
-                    "coordinates" => $geoarray["lat"] . " " . $geoarray["lng"],
+                    "coordinates" => $geoarray->lat . " " . $geoarray->lng,
                     "showmap" => 1,
                     "type" => "point"
                 ];
@@ -392,7 +392,7 @@ final class Wall extends VKAPIRequestHandler
             ];
     }
 
-    function post(string $owner_id, string $message = "", int $from_group = 0, int $signed = 0, string $attachments = "", float $latitude, float $longitude): object
+    function post(string $owner_id, string $message = "", int $from_group = 0, int $signed = 0, string $attachments = "", ?float $latitude = NULL, ?float $longitude = NULL, ?string $geo_name = NULL): object
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -433,11 +433,40 @@ final class Wall extends VKAPIRequestHandler
         if(empty($message) && empty($attachments))
             $this->fail(100, "Required parameter 'message' missing.");
 
-        $geo = array(
-            "name" => null,
-            "lat" => $latitude,
-            "lng" => $longitude,
-        );
+        $geo = NULL;
+
+        if ($latitude && $longitude) {
+            $geo = array(
+                "name" => null,
+                "lat" => $latitude,
+                "lng" => $longitude,
+            );
+
+            if ($latitude > 90 || $latitude < -90 || $longitude > 180 || $longitude < -180) {
+                $this->fail(100, "Invalid latitude or longitude");
+            }
+
+            if (strlen(trim($geo_name))) {
+                $geo["name"] = $geo_name;
+            } else {
+                $info = file_get_contents("https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=jsonv2", false, stream_context_create([
+                    'http' => [
+                        'method' => 'GET',
+                        'header' => implode("\r\n", [
+                            'User-Agent: Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.2 (KHTML, like Gecko) Chrome/22.0.1216.0 Safari/537.2',
+                            "Referer: https://$_SERVER[SERVER_NAME]/"
+                        ])
+                    ]
+                ]));
+
+                if ($info) {
+                    $info = json_decode($info, true, JSON_UNESCAPED_UNICODE);
+                    if (key_exists("place_id", $info)) {
+                        $geo["name"] = $info["name"] ?? $info["display_name"];
+                    }
+                }
+            }
+        }
 
         try {
             $post = new Post;
