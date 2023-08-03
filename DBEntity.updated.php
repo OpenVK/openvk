@@ -105,8 +105,8 @@ abstract class DBEntity
     function save(?bool $log = true): void
     {
         if ($log) {
-            $user = CurrentUser::i()->getUser();
-            $user_id = is_null($user) ? (int)OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"] : $user->getId();
+            $user = CurrentUser::i();
+            $user_id = is_null($user) ? (int)OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"] : $user->getUser()->getId();
         }
 
         if(is_null($this->record)) {
