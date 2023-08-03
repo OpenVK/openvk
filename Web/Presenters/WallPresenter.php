@@ -298,7 +298,7 @@ final class WallPresenter extends OpenVKPresenter
         if (!is_null($this->postParam("geo")) && $this->postParam("geo") != "none") {
             $geo = json_decode($this->postParam("geo"), true, JSON_UNESCAPED_UNICODE);
             if (!$geo["lat"] || !$geo["lng"] || !$geo["name"]) {
-                $this->flashFail("err", tr("error"), "Ошибка при прикреплении геометки");
+                $this->flashFail("err", tr("error"), tr("error_geolocation"));
             }
         }
         
@@ -508,7 +508,7 @@ final class WallPresenter extends OpenVKPresenter
         $lon = $post->getLon();
 
         if (!$lat || !$lon)
-            $this->returnJson(["success" => false, "error" => "У поста не указана гео-метка"]);
+            $this->returnJson(["success" => false, "error" => tr("error_no_geotag")]);
 
         $query = file_get_contents(__DIR__ . "/../Models/sql/get-nearest-posts.tsql");
         $_posts = DatabaseConnection::i()->getContext()->query($query, $lat, $lon, $post->getId())->fetchAll();

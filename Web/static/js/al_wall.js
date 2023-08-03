@@ -265,14 +265,14 @@ async function showArticle(note_id) {
 }
 
 async function initGeo(tid) {
-    MessageBox("Прикрепить геометку", "<div id=\"osm-map\"></div>", ["Прикрепить", "Отмена"], [(function () {
+    MessageBox(tr("attach_geotag"), "<div id=\"osm-map\"></div>", ["Прикрепить", tr("cancel")], [(function () {
         let marker = {
             lat: currentMarker._latlng.lat,
             lng: currentMarker._latlng.lng,
             name: currentMarker._popup._content
         };
         $(`#post-buttons${tid} #geo`).val(JSON.stringify(marker));
-        $(`#post-buttons${tid} .post-has-geo`).text(`Геометка: ${marker.name}`);
+        $(`#post-buttons${tid} .post-has-geo`).text(`${tr("geotag")}: ${marker.name}`);
         $(`#post-buttons${tid} .post-has-geo`).show();
     }), Function.noop]);
     
@@ -323,8 +323,8 @@ async function initGeo(tid) {
         currentMarker = L.marker([lat, lng]).addTo(map);
         currentMarker.bindPopup(name).openPopup();
 
-        console.log("Широта: " + lat + ", Долгота: " + lng);
-        console.log("Название места: " + name);
+        console.log(`${tr("latitude")}: ${lat}, ${tr("longitude")}: ${lng}`);
+        console.log(`${tr("name_of_the_place")}: ${name}`);
 
         let marker = {
             lat: lat,
@@ -343,7 +343,7 @@ async function initGeo(tid) {
 }
 
 function openGeo(data, owner_id, virtual_id) {
-    MessageBox("Геометка", "<div id=\"osm-map\"></div>", ["Ближайшие посты", "OK"], [(function () {
+    MessageBox(tr("geotag"), "<div id=\"osm-map\"></div>", [tr("nearest_posts"), "OK"], [(function () {
         getNearPosts(owner_id, virtual_id);
     }), Function.noop]);
 
@@ -372,7 +372,7 @@ function getNearPosts(owner_id, virtual_id) {
             if (response.success) {
                 openNearPosts(response);
             } else {
-                MessageBox("Ошибка", "Произошла ошибка в ходе запроса:" + (response?.error ?? "Неизвестная ошибка"), ["OK"], [Function.noop]);
+                MessageBox(tr("error"), `${tr("error_segmentation")}: ${(response?.error ?? "Unknown error")}`, ["OK"], [Function.noop]);
             }
         }
     });
@@ -408,7 +408,7 @@ function openNearPosts(posts) {
                                 </div>
                                 <div style="padding: 4px;">
                                     <div style="border-bottom: #ECECEC solid 1px;"></div>
-                                    <div style="cursor: pointer; padding: 4px;"><b>Геометка</b>: ${post.geo.name}</div>
+                                    <div style="cursor: pointer; padding: 4px;"><b>${tr("geotag")}</b>: ${post.geo.name}</div>
                                 </div>
                             </div>
                         </td>
