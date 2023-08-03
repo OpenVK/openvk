@@ -152,7 +152,7 @@ final class SupportPresenter extends OpenVKPresenter
 
         if(!empty($id)) {
             $ticket = $this->tickets->get($id);
-            if(!$ticket || $ticket->isDeleted() != 0 || $ticket->getUserId() !== $this->user->id && !$this->hasPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0)) {
+            if(!$ticket || $ticket->isDeleted() != 0 || (($ticket->getUserId() !== $this->user->id || $ticket->isFromSupport()) && !$this->hasPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0))) {
                 $this->notFound();
             } else {
                 if($ticket->getUserId() !== $this->user->id && $this->hasPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0))
@@ -395,5 +395,38 @@ final class SupportPresenter extends OpenVKPresenter
             $agent->save();
             $this->flashFail("succ", "Успех", "Профиль создан. Теперь пользователи видят Ваши псевдоним и аватарку вместо стандартных аватарки и номера.");
         }
+    }
+
+    function renderSendUserTicket(): void
+    {
+        $this->assertPermission("openvk\Web\Models\Entities\TicketReply", "write", 0);
+        $this->assertNoCSRF();
+
+        if (!$this->postParam("uid") || !$this->postParam("text"))
+            $this->returnJson(["success" => false, "error" => "Один или несколько обязательных параметров не были переданы"]);
+
+        $user = (new Users)->get((int) $this->postParam("uid"));
+        if (!$user) $this->returnJson(["success" => false, "error" => "Пользователь не найден"]);
+
+        $ticket = new Ticket;
+        $ticket->setType(1);
+        $ticket->setUser_Id($user->getId());
+        $ticket->setName("[Вопрос от Поддержки]" . ($this->postParam("title") ? " " . $this->postParam("title") : ""));
+        $ticket->setText($this->postParam("text"));
+        $ticket->setCreated(time());
+        $ticket->setSupport_Sender($this->user->id);
+        $ticket->save();
+
+        $comment = new TicketComment;
+        $comment->setUser_Id($this->user->id);
+        $comment->setUser_Type(1);
+        $comment->setText($this->postParam("text"));
+        $comment->setCreated(time());
+        $comment->setTicket_Id($ticket->getId());
+        $comment->save();
+
+        $user->adminNotify(($user->isFemale() ? "Дорогая " : "Дорогой ") . $user->getFirstName() . "!\n\nВы получили новый вопрос (https://$_SERVER[SERVER_NAME]/support/view/{$ticket->getId()}) от Команды Поддержки " . OPENVK_ROOT_CONF["openvk"]["appearance"]["name"]);
+
+        $this->returnJson(["success" => true, "payload" => $ticket->getId()]);
     }
 }

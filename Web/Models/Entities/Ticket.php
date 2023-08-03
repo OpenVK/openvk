@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
+use openvk\Web\Models\Repositories\SupportAgents;
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Repositories\Users;
@@ -62,6 +63,16 @@ class Ticket extends RowModel
     function isAd(): bool /* Эх, костыли... */
     {
     	return false;
+    }
+
+    function getSupportSender(): ?SupportAgent
+    {
+        return (new SupportAgents)->get((int) $this->getRecord()->support_sender);
+    }
+
+    function isFromSupport(): bool
+    {
+        return $this->getSupportSender() !== NULL;
     }
 
     use Traits\TRichText;

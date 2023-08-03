@@ -34,13 +34,16 @@
             <a href="#" style="font-size:13px;"><b>{$ticket->getName()}</b></a>
             <br />{_status}: {$ticket->getStatus()}
         </div>
-        <div class="text" style="padding-top: 10px; border-bottom: #ECECEC solid 1px;">
+        <div class="text" style="padding-top: 10px; border-bottom: #ECECEC solid 1px;" n:if="!$ticket->isFromSupport()">
             {$ticket->getText()|noescape}
-            <br /></br>
+            <br /><br />
         </div>
         <div style="padding-top: 5px;">
-            {$ticket->getTime()}&nbsp;|&nbsp;
-            <a href="/support/delete/{$id}?hash={$csrfToken}">{_delete}</a>
+            {$ticket->getTime()}
+            <span n:if="!$ticket->isFromSupport()">
+                &nbsp;|&nbsp;
+                <a href="/support/delete/{$id}?hash={$csrfToken}">{_delete}</a>
+            </span>
         </div>
         {if $ticket->getType() !== 2}
             <br />

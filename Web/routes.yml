@@ -35,6 +35,8 @@ routes:
       handler: "Support->agent"
     - url: "/support/agent{num}/edit"
       handler: "Support->editAgent"
+    - url: "/al_helpdesk/sendTicket"
+      handler: "Support->sendUserTicket"
     - url: "/language"
       handler: "About->language"
     - url: "/language/{text}.js"
