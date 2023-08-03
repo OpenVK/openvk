@@ -292,8 +292,17 @@ final class WallPresenter extends OpenVKPresenter
                 $this->flashFail("err", " ");
             }
         }
+
+        $geo = NULL;
+
+        if (!is_null($this->postParam("geo")) && $this->postParam("geo") != "none") {
+            $geo = json_decode($this->postParam("geo"), true, JSON_UNESCAPED_UNICODE);
+            if (!$geo["lat"] || !$geo["lng"] || !$geo["name"]) {
+                $this->flashFail("err", tr("error"), "Ошибка при прикреплении геометки");
+            }
+        }
         
-        if(empty($this->postParam("text")) && !$photo && !$video && !$poll && !$note)
+        if(empty($this->postParam("text")) && !$photo && !$video && !$poll && !$note && !$geo)
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"));
         
         try {
@@ -305,6 +314,11 @@ final class WallPresenter extends OpenVKPresenter
             $post->setAnonymous($anon);
             $post->setFlags($flags);
             $post->setNsfw($this->postParam("nsfw") === "on");
+            if ($geo) {
+                $post->setGeo(json_encode($geo));
+                $post->setGeo_Lat($geo["lat"]);
+                $post->setGeo_Lon($geo["lng"]);
+            }
             $post->save();
         } catch (\LengthException $ex) {
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_too_big"));
@@ -479,5 +493,50 @@ final class WallPresenter extends OpenVKPresenter
         
         # TODO localize message based on language and ?act=(un)pin
         $this->flashFail("succ", tr("information_-1"), tr("changes_saved_comment"));
+    }
+
+    function renderNearest(int $wall, int $post_id): void
+    {
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") $this->notFound();
+        $this->assertUserLoggedIn();
+
+        $post = $this->posts->getPostById($wall, $post_id);
+        if(!$post)
+            $this->notFound();
+
+        $lat = $post->getLat();
+        $lon = $post->getLon();
+
+        if (!$lat || !$lon)
+            $this->returnJson(["success" => false, "error" => "У поста не указана гео-метка"]);
+
+        $query = file_get_contents(__DIR__ . "/../Models/sql/get-nearest-posts.tsql");
+        $_posts = DatabaseConnection::i()->getContext()->query($query, $lat, $lon, $post->getId())->fetchAll();
+        $posts = [];
+        foreach ($_posts as $post) {
+            $distance = $post["distance"];
+            $post = (new Posts)->get($post["id"]);
+            if (!$post || $post->isDeleted()) continue;
+
+            $owner = $post->getOwner();
+
+            $preview = mb_substr($post->getText(), 0, 50) . (strlen($post->getText()) > 50 ? "..." : "");
+            $posts[] = [
+                "preview" => strlen($preview) > 0 ? $preview : "(нет текста)",
+                "url" => "/wall" . $post->getPrettyId(),
+                "time" => $post->getPublicationTime()->html(),
+                "owner" => [
+                    "url" => $owner->getURL(),
+                    "avatar_url" => $owner->getAvatarURL(),
+                    "name" => $owner->getCanonicalName(),
+                    "verified" => $owner->isVerified(),
+                    "writes" => ($owner instanceof User) ? ($owner->isFemale() ? tr("post_writes_f") : tr("post_writes_m")) : tr("post_writes_m")
+                ],
+                "geo" => $post->getGeo(),
+                "distance" => $distance
+            ];
+        }
+
+        $this->returnJson(["success" => true, "posts" => $posts, "need_count" => count($posts) === 25]);
     }
 }

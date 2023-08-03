@@ -263,3 +263,162 @@ async function showArticle(note_id) {
     u("body").removeClass("dimmed");
     u("body").addClass("article");
 }
+
+async function initGeo(tid) {
+    MessageBox("Прикрепить геометку", "<div id=\"osm-map\"></div>", ["Прикрепить", "Отмена"], [(function () {
+        let marker = {
+            lat: currentMarker._latlng.lat,
+            lng: currentMarker._latlng.lng,
+            name: currentMarker._popup._content
+        };
+        $(`#post-buttons${tid} #geo`).val(JSON.stringify(marker));
+        $(`#post-buttons${tid} .post-has-geo`).text(`Геометка: ${marker.name}`);
+        $(`#post-buttons${tid} .post-has-geo`).show();
+    }), Function.noop]);
+    
+    const element = document.getElementById('osm-map');
+    element.style = 'height: 600px;';
+
+    let markerLayers = L.layerGroup();
+
+    let map = L.map(element, {
+        center: [55.322978, 38.673362],
+        zoom: 10,
+        attributionControl: false,
+        width: 800
+    });
+    let currentMarker = null;
+    markerLayers.addTo(map);
+
+    map.on('click', (e) => {
+        let lat = e.latlng.lat;
+        let lng = e.latlng.lng;
+
+        if (currentMarker) map.removeLayer(currentMarker);
+
+        $.get({
+            url: `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=jsonv2`,
+            success: (response) => {
+                markerLayers.clearLayers();
+
+                currentMarker = L.marker([lat, lng]).addTo(map);
+                currentMarker.bindPopup(response?.name ?? response?.display_name).openPopup();
+                markerLayers.addLayer(currentMarker);
+            }
+        })
+    });
+
+    const geocoderControl = L.Control.geocoder({
+        defaultMarkGeocode: false,
+    }).addTo(map);
+
+    geocoderControl.on('markgeocode', function (e) {
+        console.log(e);
+        let lat = e.geocode.properties.lat;
+        let lng = e.geocode.properties.lon;
+        let name = (e.geocode.properties?.name ?? e.geocode.properties.display_name);
+
+        if (currentMarker) map.removeLayer(currentMarker);
+
+        currentMarker = L.marker([lat, lng]).addTo(map);
+        currentMarker.bindPopup(name).openPopup();
+
+        console.log("Широта: " + lat + ", Долгота: " + lng);
+        console.log("Название места: " + name);
+
+        let marker = {
+            lat: lat,
+            lng: lng,
+            name: name
+        };
+        map.setView([lat, lng], 15);
+    });
+
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    $(".ovk-diag-cont").width('50%');
+    setTimeout(function(){ map.invalidateSize()}, 100);
+}
+
+function openGeo(data, owner_id, virtual_id) {
+    MessageBox("Геометка", "<div id=\"osm-map\"></div>", ["Ближайшие посты", "OK"], [(function () {
+        getNearPosts(owner_id, virtual_id);
+    }), Function.noop]);
+
+    let element = document.getElementById('osm-map');
+    element.style = 'height: 600px;';
+
+    let map = L.map(element, {attributionControl: false});
+    let target = L.latLng(data.lat, data.lng);
+    map.setView(target, 15);
+    let marker = L.marker(target).addTo(map);
+    marker.bindPopup(data.name).openPopup();
+
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    $(".ovk-diag-cont").width('50%');
+    setTimeout(function(){ map.invalidateSize()}, 100);
+}
+
+function getNearPosts(owner_id, virtual_id) {
+    $.ajax({
+        type: "POST",
+        url: `/wall${owner_id}_${virtual_id}/nearest`,
+        success: (response) => {
+            if (response.success) {
+                openNearPosts(response);
+            } else {
+                MessageBox("Ошибка", "Произошла ошибка в ходе запроса:" + (response?.error ?? "Неизвестная ошибка"), ["OK"], [Function.noop]);
+            }
+        }
+    });
+}
+
+function openNearPosts(posts) {
+    console.log(posts);
+    let MsgBody = "";
+
+    posts.posts.forEach((post) => {
+        MsgBody += `<a style="color: inherit; display: block; margin-bottom: 8px;" href="${post.url}" target="_blank">
+            <table border="0" style="font-size: 11px;" class="post">
+                <tbody>
+                    <tr>
+                        <td width="54" valign="top">
+                            <a href="${post.owner.url}">
+                                <img src="${post.owner.avatar_url}" width="50">
+                            </a>
+                        </td>
+                        <td width="100%" valign="top">
+                            <div class="post-author">
+                                <a href="${post.owner.url}"><b>${post.owner.name}</b></a>
+                                ${post.owner.verified ? `<img class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">` : ""}
+                                ${post.owner.writes}
+                                <br>
+                                <a href="${post.url}" class="date">
+                                    ${post.time}
+                                </a>
+                            </div>
+                            <div class="post-content" id="2_28">
+                                <div class="text" id="text2_28">
+                                    ${post.preview}
+                                </div>
+                                <div style="padding: 4px;">
+                                    <div style="border-bottom: #ECECEC solid 1px;"></div>
+                                    <div style="cursor: pointer; padding: 4px;"><b>Геометка</b>: ${post.geo.name}</div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+       </a>`;
+    });
+
+    if (posts.need_count) MsgBody += "<br/><br/><center style='color: grey;'>Показаны первые 25 постов</center>"
+
+    MessageBox("Ближайшие посты", MsgBody, ["OK"], [Function.noop]);
+}

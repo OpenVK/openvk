@@ -1,0 +1,10 @@
+SELECT *,
+    SQRT(
+        POW(69.1 * (? - geo_lat), 2) +
+        POW(69.1 * (? - geo_lon) * COS(RADIANS(geo_lat)), 2)
+    ) AS distance
+FROM Posts
+WHERE id <> ?
+HAVING distance < 1 AND distance IS NOT NULL
+ORDER BY distance
+LIMIT 25;
