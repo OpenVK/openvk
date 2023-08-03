@@ -275,7 +275,7 @@ async function initGeo(tid) {
         $(`#post-buttons${tid} .post-has-geo`).text(`${tr("geotag")}: ${marker.name}`);
         $(`#post-buttons${tid} .post-has-geo`).show();
     }), Function.noop]);
-    
+
     const element = document.getElementById('osm-map');
     element.style = 'height: 600px;';
 
@@ -378,12 +378,8 @@ function getNearPosts(owner_id, virtual_id) {
     });
 }
 
-function openNearPosts(posts) {
-    console.log(posts);
-    let MsgBody = "";
-
-    posts.posts.forEach((post) => {
-        MsgBody += `<a style="color: inherit; display: block; margin-bottom: 8px;" href="${post.url}" target="_blank">
+function getPostPopup(post) {
+    return `<a style="color: inherit; display: block; margin-bottom: 8px;" href="${post.url}" target="_blank">
             <table border="0" style="font-size: 11px;" class="post">
                 <tbody>
                     <tr>
@@ -416,9 +412,44 @@ function openNearPosts(posts) {
                 </tbody>
             </table>
        </a>`;
-    });
+}
 
-    if (posts.need_count) MsgBody += "<br/><br/><center style='color: grey;'>Показаны первые 25 постов</center>"
+function openNearPosts(posts) {
+    if (posts.posts.length > 0) {
+        let MsgTxt = "<div id=\"osm-map\"></div>";
+        MsgTxt += "<br /><br /><center style='color: grey;'>Показано последние 25 постов за месяц</center>";
 
-    MessageBox("Ближайшие посты", MsgBody, ["OK"], [Function.noop]);
+        MessageBox("Ближайшие посты", MsgTxt, ["OK"], [Function.noop]);
+
+        let element = document.getElementById('osm-map');
+        element.style = 'height: 600px;';
+
+        let markerLayers = L.layerGroup();
+        let map = L.map(element, {attributionControl: false});
+
+        markerLayers.addTo(map);
+
+        let markersBounds = [];
+
+        posts.posts.forEach((post) => {
+            let marker = L.marker(L.latLng(post.geo.lat, post.geo.lng)).addTo(map);
+            marker.bindPopup(getPostPopup(post));
+            markerLayers.addLayer(marker);
+            markersBounds.push(marker.getLatLng());
+        })
+
+        let bounds = L.latLngBounds(markersBounds);
+        map.fitBounds(bounds);
+
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        $(".ovk-diag-cont").width('50%');
+        setTimeout(function () {
+            map.invalidateSize()
+        }, 100);
+    } else {
+        MessageBox("Ближайшие посты", "<center style='color: grey;'>Нет ближайших постов :(</center>", ["OK"], [Function.noop]);
+    }
 }
