@@ -111,6 +111,18 @@ final class Wall extends VKAPIRequestHandler
                 ];
             }
 
+            $geo = [];
+
+            if($post->getGeo()) {
+                $geoarray = $post->getGeo();
+
+                $geo = [
+                    "coordinates" => $geoarray["lat"] . " " . $geoarray["lng"],
+                    "showmap" => 1,
+                    "type" => "point"
+                ];
+            }
+
             $items[] = (object)[
                 "id"           => $post->getVirtualId(),
                 "from_id"      => $from_id,
@@ -127,6 +139,7 @@ final class Wall extends VKAPIRequestHandler
                 "is_pinned"    => $post->isPinned(),
                 "is_explicit"  => $post->isExplicit(),
                 "attachments"  => $attachments,
+                "geo"          => $geo,
                 "post_source"  => $post_source,
                 "comments"     => (object)[
                     "count"    => $post->getCommentsCount(),
@@ -379,7 +392,7 @@ final class Wall extends VKAPIRequestHandler
             ];
     }
 
-    function post(string $owner_id, string $message = "", int $from_group = 0, int $signed = 0, string $attachments = ""): object
+    function post(string $owner_id, string $message = "", int $from_group = 0, int $signed = 0, string $attachments = "", float $latitude, float $longitude): object
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -420,6 +433,12 @@ final class Wall extends VKAPIRequestHandler
         if(empty($message) && empty($attachments))
             $this->fail(100, "Required parameter 'message' missing.");
 
+        $geo = array(
+            "name" => null,
+            "lat" => $latitude,
+            "lng" => $longitude,
+        );
+
         try {
             $post = new Post;
             $post->setOwner($this->getUser()->getId());
@@ -428,6 +447,11 @@ final class Wall extends VKAPIRequestHandler
             $post->setContent($message);
             $post->setFlags($flags);
             $post->setApi_Source_Name($this->getPlatform());
+            if ($geo) {
+                $post->setGeo(json_encode($geo));
+                $post->setGeo_Lat($geo["lat"]);
+                $post->setGeo_Lon($geo["lng"]);
+            }
             $post->save();
         } catch(\LogicException $ex) {
             $this->fail(100, "One of the parameters specified was missing or invalid");
