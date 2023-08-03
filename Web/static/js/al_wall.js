@@ -417,7 +417,7 @@ function getPostPopup(post) {
 function openNearPosts(posts) {
     if (posts.posts.length > 0) {
         let MsgTxt = "<div id=\"osm-map\"></div>";
-        MsgTxt += "<br /><br /><center style='color: grey;'>Показано последние 25 постов за месяц</center>";
+        MsgTxt += "<br /><br /><center style='color: grey;'>Показаны последние 25 постов за месяц</center>";
 
         MessageBox("Ближайшие посты", MsgTxt, ["OK"], [Function.noop]);
 
