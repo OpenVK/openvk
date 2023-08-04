@@ -331,6 +331,8 @@
 "search_by_groups" = "Search by groups";
 "search_group_desc" = "Here you can browse through the existing groups and choose a group to suit your needs...";
 
+"group_banned" = "Unfortunately, we had to block the <b>$1</b> group.";
+
 /* Albums */
 
 "create" = "Create";
