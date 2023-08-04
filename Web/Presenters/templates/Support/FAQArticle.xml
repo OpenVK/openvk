@@ -1,0 +1,73 @@
+{extends "../@layout.xml"}
+
+{block title}{$title}{/block}
+
+{block header}
+	<a href="/support">{_menu_help}</a>
+		> <a href="/faqs{$category->getId()}">{$category->getTitle()}</a>
+		> <a n:if="$mode === 'edit'" href="/faq{$article->getId()}">{$article->getTitle()}</a>
+		<div style="display:inline;" n:if="$mode === 'view'">{_support_article} <a n:if="$canEditFAQ" href="/faq{$article->getId()}?act=edit">({_app_edit})</a></div>
+		<div style="display:inline;" n:if="$mode === 'edit'">> {_support_edit_mode}</div>
+{/block}
+
+{block content}
+	<script>
+	function onLanguageSelectChanged(e) {
+		window.location.href = "/faq{$article->getId()}?act=edit&lang=" + e.value;
+	}
+	</script>
+	<div n:if="$mode === 'view'">
+		<h4 style="padding:8px 0;">{$article->getTitle()}</h4>
+		{$text|noescape}
+	</div>
+	<div n:if="$mode === 'edit'">
+		<form action="/faq{$article->getId()}" method="post" style="margin:0;">
+			<center>
+				<input value="{$article->getTitle()}" type="text" name="title" style="width: 80%; resize: vertical;" placeholder="{_support_faq_title_placeholder}" /><br /><br />
+				<textarea name="text" style="width: 80%; resize: vertical; height: 200px" placeholder="{_support_faq_text_placeholder}">{$article->getText()}</textarea><br /><br />
+				<input n:attr="checked => $article->canSeeByUnloggedUsers()" type="checkbox" name="unlogged_can_see" value="1" /> {_support_unlogged_can_see}
+				<input n:attr="checked => $article->canSeeByUsers()" type="checkbox" name="users_can_see" value="1" /> {_support_users_can_see}
+				<table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+					<tr>
+						<td width="120" valign="top">
+							<span class="nobold">{_support_category}: </span>
+						</td>
+						<td>
+							<select name="category">
+								<option
+										n:attr="selected => $article->getCategory()->getId() === $category->getId()"
+										n:foreach="$categories as $category"
+										value="{$category->getId()}"
+								>[#{$category->getId()}] {$category->getTitle()}</option>
+							</select>
+						</td>
+					</tr>
+				</table>
+				<table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+					<tr>
+						<td width="120" valign="top">
+							<span class="nobold">{_support_language}: </span>
+						</td>
+						<td>
+							<select name="language" onchange="onLanguageSelectChanged(this)">
+								<option
+										n:attr="selected => $language['code'] === $activeLang"
+										n:foreach="$languages as $language"
+										value="{$language['code']}"
+								>[{$language["code"]}] {$language["native_name"]}</option>
+							</select>
+						</td>
+					</tr>
+				</table>
+
+				<input type="hidden" name="hash" value="{$csrfToken}" />
+				<input type="submit" value="{_save}" class="button" style="margin-left: 70%;" /><br /><br />
+			</center>
+		</form>
+		<h4 /><br />
+		<form action="/al_helpdesk/{$article->getId()}/delete" method="post" style="margin:0;">
+			<input type="hidden" name="hash" value="{$csrfToken}" />
+			<input type="submit" value="{_delete}" class="button" />
+		</form>
+	</div>
+{/block}
