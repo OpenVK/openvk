@@ -103,6 +103,13 @@
 "relationship_3_fem" = "Помолвлена";
 "relationship_4_fem" = "Замужем";
 "relationship_6_fem" = "Влюблена";
+"relationship_2_prefix" = "с";
+"relationship_3_prefix" = "с";
+"relationship_4_prefix" = "на";
+"relationship_4_prefix_fem" = "за";
+"relationship_5_prefix" = "с";
+"relationship_6_prefix" = "в";
+"relationship_7_prefix" = "с";
 "politViews" = "Полит. взгляды";
 "politViews_0" = "Не выбраны";
 "politViews_1" = "Индифферентные";

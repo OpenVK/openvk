@@ -113,6 +113,14 @@
 "relationship_7" = "Everything is complicated";
 "relationship_8" = "Actively searching";
 
+/* xd */
+"relationship_2_prefix" = "with";
+"relationship_3_prefix" = "with";
+"relationship_4_prefix" = "with";
+"relationship_5_prefix" = "with";
+"relationship_6_prefix" = "with";
+"relationship_7_prefix" = "with";
+
 "politViews" = "Polit. Views";
 
 "politViews_0" = "Not Selected";

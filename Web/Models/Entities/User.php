@@ -299,10 +299,11 @@ class User extends RowModel
         return $this->getRecord()->marital_status;
     }
     
-    function getLocalizedMaritalStatus(): string
+    function getLocalizedMaritalStatus(?bool $prefix = false): string
     {
         $status = $this->getMaritalStatus();
         $string = "relationship_$status";
+        if ($prefix) $string .= "_prefix";
         if($this->isFemale()) {
             $res = tr($string . "_fem");
             if($res != ("@" . $string . "_fem"))
@@ -310,6 +311,17 @@ class User extends RowModel
         }
         
         return tr($string);
+    }
+
+    function getMaritalStatusUser(): ?User
+    {
+        if (!$this->getRecord()->marital_status_user) return NULL;
+        return (new Users)->get($this->getRecord()->marital_status_user);
+    }
+
+    function getMaritalStatusUserPrefix(): ?string
+    {
+        return $this->getLocalizedMaritalStatus(true);
     }
 
     function getContactEmail(): ?string
