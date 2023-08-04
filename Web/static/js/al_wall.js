@@ -269,7 +269,7 @@ async function initGeo(tid) {
         let marker = {
             lat: currentMarker._latlng.lat,
             lng: currentMarker._latlng.lng,
-            name: $(`#geo-name-input-${tid}`).val() ?? currentMarker._popup._content
+            name: $(`#geo-name-input-${tid}`).val() ? $(`#geo-name-input-${tid}`).val() : $(`#geo-name-${tid}`).text()
         };
         $(`#post-buttons${tid} #geo`).val(JSON.stringify(marker));
         $(`#post-buttons${tid} .post-has-geo`).text(`${tr("geotag")}: ${marker.name}`);
@@ -305,7 +305,7 @@ async function initGeo(tid) {
 
                 let name = response?.name ?? response?.display_name ?? tr("geotag");
                 let content = `<span onclick="let name = prompt('Введите название геоточки'); $('#geo-name-input-${tid}').val(name); $(this).text(name);" id="geo-name-${tid}">${name}</span>`;
-                content += `<input type="hidden" id="geo-name-input-${tid}" />`;
+                content += `<input type="hidden" id="geo-name-input-${tid}" value="" />`;
 
                 currentMarker.bindPopup(content).openPopup();
                 markerLayers.addLayer(currentMarker);

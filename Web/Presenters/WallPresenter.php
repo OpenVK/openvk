@@ -301,8 +301,8 @@ final class WallPresenter extends OpenVKPresenter
                 $this->flashFail("err", tr("error"), tr("error_geolocation"));
             }
 
-            $latitude = (float) $geo["lat"];
-            $longitude = (float) $geo["lng"];
+            $latitude = number_format((float) $geo["lat"], 8, ".", '');
+            $longitude = number_format((float) $geo["lng"], 8, ".", '');
             if ($latitude > 90 || $latitude < -90 || $longitude > 180 || $longitude < -180) {
                 $this->flashFail("err", tr("error"), "Invalid latitude or longitude");
             }

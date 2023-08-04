@@ -436,15 +436,18 @@ final class Wall extends VKAPIRequestHandler
         $geo = NULL;
 
         if ($latitude && $longitude) {
+            $latitude = number_format($latitude, 8, ".", '');
+            $longitude = number_format($longitude, 8, ".", '');
+
+            if ((!$latitude || !$longitude) || ($latitude > 90 || $latitude < -90 || $longitude > 180 || $longitude < -180)) {
+                $this->fail(100, "Invalid latitude or longitude");
+            }
+
             $geo = array(
                 "name" => null,
                 "lat" => $latitude,
                 "lng" => $longitude,
             );
-
-            if ($latitude > 90 || $latitude < -90 || $longitude > 180 || $longitude < -180) {
-                $this->fail(100, "Invalid latitude or longitude");
-            }
 
             if (strlen(trim($geo_name))) {
                 $geo["name"] = $geo_name;
