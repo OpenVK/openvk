@@ -214,7 +214,16 @@
 
                             <div id="_groupListPinnedGroups">
                                 <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
-                                <a n:foreach="$thisUser->getPinnedClubs() as $club" href="{$club->getURL()}" class="link group_link">{$club->getName()}</a>
+
+                                <a n:foreach="$thisUser->getPinnedClubs() as $club" href="{$club->getURL()}" class="link group_link">
+                                    {$club->getName()}
+
+                                    <object type="internal/link" style="white-space: normal;" id="sug{$club->getId()}" n:if="$club->getSuggestedPostsCount() > 0 && $club->getWallType() == 2">
+                                        <a href="{$club->getURL()}/suggested/all">
+                                            (<b>{$club->getSuggestedPostsCount()}</b>)
+                                        </a>
+                                    </object>
+                                </a>
                             </div>
                             
                             <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $thisUser->getCoins() != 0" id="votesBalance">

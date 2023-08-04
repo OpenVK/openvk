@@ -3,7 +3,7 @@ namespace openvk\Web\Models\Entities;
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{User, Manager};
-use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Managers};
+use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Managers, Posts};
 use Nette\Database\Table\{ActiveRow, GroupedSelection};
 use Chandler\Database\DatabaseConnection as DB;
 use Chandler\Security\User as ChandlerUser;
@@ -307,6 +307,13 @@ class Club extends RowModel
             
             yield $rel;
         }
+    }
+
+    function getSuggestedPostsCount()
+    {
+        $count = (new Posts)->getSuggestedPostsCount($this->getId());
+
+        return $count;
     }
     
     function getManagers(int $page = 1, bool $ignoreHidden = false): \Traversable
