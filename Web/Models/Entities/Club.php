@@ -272,7 +272,7 @@ class Club extends RowModel
             return false;
         }
         
-        return $query;
+        return $query->group("follower");
     }
     
     function getFollowersCount(): int
