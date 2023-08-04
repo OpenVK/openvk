@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
 use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Entities\Notifications\{WallPostNotification, NewSuggestedPostsNotification, RepostNotification, CommentNotification};
+use openvk\Web\Models\Entities\Notifications\{PostAcceptedNotification, WallPostNotification, NewSuggestedPostsNotification, RepostNotification, CommentNotification};
 use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Entities\Club;
 use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
@@ -61,6 +61,9 @@ final class Wall extends VKAPIRequestHandler
             # Либо он закрыт для неофициальных клиентов, как gifts.send 
             case "suggests":
                 if($owner_id < 0) {
+                    if($wallOnwer->getWallType() != 2) 
+                        $this->fail(125, "Group's wall type is open or closed");
+
                     if($wallOnwer->canBeModifiedBy($this->getUser())) {
                         $iteratorv = $posts->getSuggestedPosts($owner_id * -1, 1, $count, $offset);
                         $cnt       = $posts->getSuggestedPostsCount($owner_id * -1);
@@ -830,6 +833,80 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(7, "Access denied");
 
         $comment->delete();
+
+        return 1;
+    }
+
+    # !!! Нестандартный метод
+    function acceptPost(int $club, int $post_id, string $new_message = "", bool $sign = true)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        if($club < 0) {
+            $this->fail(62, "Club's id is negative");
+        }
+
+        $post = (new PostsRepo)->getPostById($club * -1, $post_id, true);
+        if(!$post || $post->isDeleted())
+            $this->fail(32, "Invald post");
+
+        if($post->getSuggestionType() == 0)
+            $this->fail(20, "Post is not suggested");
+
+        if($post->getSuggestionType() == 2)
+            $this->fail(16, "Post is declined");
+
+        if(!$post->canBePinnedBy($this->getUser()))
+            $this->fail(51, "Access denied");
+
+        $author = $post->getOwner();
+        $flags = 0;
+        $flags |= 0b10000000;
+
+        if($sign)
+            $flags |= 0b01000000;
+
+        $post->setSuggested(0);
+        $post->setCreated(time());
+        $post->setFlags($flags);
+
+        if(!empty($new_message) && iconv_strlen($new_message) > 0)
+            $post->setContent($new_message);
+
+        $post->save();
+        (new PostAcceptedNotification($author, $post, $post->getWallOwner()))->emit();
+
+        return 1;
+    }
+
+    # !!! Нестандартный метод
+    function declinePost(int $club, int $post_id)
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        
+        if($club < 0) {
+            $this->fail(62, "Club's id is negative");
+        }
+
+        $post = (new PostsRepo)->getPostById($club * -1, $post_id, true);
+
+        if(!$post || $post->isDeleted())
+            $this->fail(32, "Invald post");
+
+        if($post->getSuggestionType() == 0)
+            $this->fail(20, "Post is not suggested");
+
+        if($post->getSuggestionType() == 2)
+            $this->fail(16, "Post is already declined");
+
+        if(!$post->canBePinnedBy($this->getUser()))
+            $this->fail(51, "Access denied");
+
+        $post->setSuggested(2);
+        $post->setDeleted(1);
+        $post->save();
 
         return 1;
     }
