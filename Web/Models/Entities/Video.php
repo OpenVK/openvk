@@ -163,7 +163,7 @@ class Video extends Media
         ];
 
         if(!is_null($user)) {
-            $res->likes = [
+            $res->video["likes"] = [
                 "count" => $this->getLikesCount(),
                 "user_likes" => $this->hasLikeFrom($user)
             ];

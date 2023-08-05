@@ -43,7 +43,7 @@ final class Likes extends VKAPIRequestHandler
         if(is_null($postable) || $postable->isDeleted())
             $this->fail(100, "One of the parameters specified was missing or invalid: object not found");
 
-        if(!$postable->canBeViewedBy($this->getUser() ?? NULL)) {
+        if(method_exists($postable, "canBeViewedBy") && !$postable->canBeViewedBy($this->getUser() ?? NULL)) {
             $this->fail(2, "Access to postable denied");
         }
 
@@ -88,7 +88,7 @@ final class Likes extends VKAPIRequestHandler
         if(is_null($postable) || $postable->isDeleted())
             $this->fail(100, "One of the parameters specified was missing or invalid: object not found");
 
-        if(!$postable->canBeViewedBy($this->getUser() ?? NULL)) {
+        if(method_exists($postable, "canBeViewedBy") && !$postable->canBeViewedBy($this->getUser() ?? NULL)) {
             $this->fail(2, "Access to postable denied");
         }
 
@@ -110,7 +110,7 @@ final class Likes extends VKAPIRequestHandler
         if(is_null($user) || $user->isDeleted())
             $this->fail(100, "One of the parameters specified was missing or invalid: user not found");
         
-        if(!$user->canBeViewedBy($this->getUser())) {
+        if(method_exists($user, "canBeViewedBy") && !$user->canBeViewedBy($this->getUser())) {
             $this->fail(1984, "Access denied: you can't see this user");
         }
 
