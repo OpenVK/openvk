@@ -129,10 +129,15 @@ abstract class Postable extends Attachable
             "target" => $this->getRecord()->id,
         ];
 
-        if($liked)
-            DB::i()->getContext()->table("likes")->insert($searchData);
-        else
-            DB::i()->getContext()->table("likes")->where($searchData)->delete();
+        if($liked) {
+            if(!$this->hasLikeFrom($user)) {
+                DB::i()->getContext()->table("likes")->insert($searchData); 
+            }
+        } else {
+            if($this->hasLikeFrom($user)) {
+                DB::i()->getContext()->table("likes")->where($searchData)->delete();
+            }
+        } 
     }
     
     function hasLikeFrom(User $user): bool

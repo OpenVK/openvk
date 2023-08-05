@@ -183,6 +183,8 @@ routes:
       handler: "Videos->edit"
     - url: "/video{num}_{num}/remove"
       handler: "Videos->remove"
+    - url: "/video{num}_{num}/like"
+      handler: "Videos->like"
     - url: "/{?!club}{num}"
       handler: "Group->view"
       placeholders:

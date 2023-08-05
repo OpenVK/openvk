@@ -1,6 +1,6 @@
 Function.noop = () => {};
 
-function MessageBox(title, body, buttons, callbacks) {
+function MessageBox(title, body, buttons, callbacks, removeDimmedOnExit = true) {
     if(u(".ovk-diag-cont").length > 0) return false;
     
     let dialog = u(
@@ -19,7 +19,10 @@ function MessageBox(title, body, buttons, callbacks) {
         
         button.on("click", function(e) {
             let __closeDialog = () => {
-                u("body").removeClass("dimmed");
+                if(removeDimmedOnExit) {
+                    u("body").removeClass("dimmed");
+                }
+                
                 u(".ovk-diag-cont").remove();
             };
             

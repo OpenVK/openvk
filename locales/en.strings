@@ -1537,3 +1537,47 @@
 "mobile_like" = "Like";
 "mobile_user_info_hide" = "Hide";
 "mobile_user_info_show_details" = "Show details";
+
+/* Fullscreen player */
+
+"hide_player" = "Minimize";
+"close_player" = "Close";
+"show_comments" = "Show info";
+"close_comments" = "Hide info";
+"to_page" = "Go to page";
+"download_video" = "Download";
+"added" = "Added";
+"x_views" = "$1 views";
+
+"video_author" = "Video's author";
+"video_delete" = "Delete";
+"no_description" = "no description";
+
+"show_more_comments" = "Show more comments";
+"video_processing" = "Video is succefully uploaded and now is processed.";
+"video_access_denied" = "Access to video denied";
+"open_page_to_read_comms" = "To read the comments, open <a href=\"$1\">page</a>.";
+
+"no_video_error" = "No videofile";
+"no_video_description" = "Select file or specify link.";
+
+"error_video" = "An error has occurred";
+"file_corrupted" = "File is corrupted or does not have video.";
+"link_incorrect" = "Maybe, the link is wrong.";
+
+"no_name_error" = "Video can't be published without name";
+"access_denied_error" = "Access denied";
+"access_denied_error_description" = "You are not allowed to edit this resource";
+
+"changes_saved_video_comment" = "Updated data will appear on the video page";
+"cant_delete_video" = "Failed to delete video";
+"cant_delete_video_comment" = "You are not logged in.";
+
+"change_video" = "Change video";
+
+"video_is_deleted" = "Video was deleted.";
+"share_video" = "Share video";
+"shared_succ_video" = "Video will appear at your wall. Click on this notification to move to post.";
+"watch_in_window" = "Watch in window";
+
+"comments_load_timeout" = "The instance may have fallen";

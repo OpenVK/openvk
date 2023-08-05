@@ -13,6 +13,7 @@
 
         <script src="/language/{php echo getLanguage()}.js" crossorigin="anonymous"></script>
         {script "js/node_modules/jquery/dist/jquery.min.js"}
+        {script "js/node_modules/jquery-ui/dist/jquery-ui.min.js"}
         {script "js/node_modules/umbrellajs/umbrella.min.js"}
         {script "js/l10n.js"}
         {script "js/openvk.cls.js"}
@@ -345,6 +346,10 @@
             <p n:ifcontent>
                 {php echo OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]}
             </p>
+        </div>
+
+        <div id="ajloader" class="loader">
+            <img src="/assets/packages/static/openvk/img/loading_mini.gif" style="width: 40px;">
         </div>
 
         {include "components/cookies.xml"}

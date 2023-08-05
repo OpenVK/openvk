@@ -115,15 +115,15 @@ class Video extends Media
         return $this->getRecord()->owner;
     }
 
-    function getApiStructure(): object
+    function getApiStructure(?User $user = NULL): object
     {
         $fromYoutube = $this->getType() == Video::TYPE_EMBED;
-        return (object)[
+        $res = (object)[
             "type" => "video",
             "video" => [
                 "can_comment" => 1,
-                "can_like" => 0,  // we don't h-have wikes in videos
-                "can_repost" => 0,
+                "can_like" => 1,  // we don't h-have wikes in videos
+                "can_repost" => 1,
                 "can_subscribe" => 1,
                 "can_add_to_faves" => 0,
                 "can_add" => 0,
@@ -155,21 +155,26 @@ class Video extends Media
                 "repeat" => 0,
                 "type" => "video",
                 "views" => 0,
-                "likes" => [
-                    "count" => 0,
-                    "user_likes" => 0
-                ],
                 "reposts" => [
                     "count" => 0,
                     "user_reposted" => 0
                 ]
             ]
         ];
+
+        if(!is_null($user)) {
+            $res->likes = [
+                "count" => $this->getLikesCount(),
+                "user_likes" => $this->hasLikeFrom($user)
+            ];
+        }
+
+        return $res;
     }
     
-    function toVkApiStruct(): object
+    function toVkApiStruct(?User $user): object
     {
-        return $this->getApiStructure();
+        return $this->getApiStructure($user);
     }
 
     function setLink(string $link): string

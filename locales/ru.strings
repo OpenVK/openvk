@@ -1430,3 +1430,47 @@
 "mobile_like" = "Нравится";
 "mobile_user_info_hide" = "Скрыть";
 "mobile_user_info_show_details" = "Показать подробнее";
+
+/* Fullscreen player */
+
+"hide_player" = "Скрыть";
+"close_player" = "Закрыть";
+"show_comments" = "Показать информацию";
+"close_comments" = "Скрыть информацию";
+"to_page" = "Перейти на страницу";
+"download_video" = "Скачать";
+"added" = "Добавлено";
+"x_views" = "$1 просмотров";
+
+"video_author" = "Автор видео";
+"video_delete" = "Удалить";
+"no_description" = "описания нет";
+
+"show_more_comments" = "Показать больше комментариев";
+"video_processing" = "Видео успешно загружено и на данный момент обрабатывается.";
+"video_access_denied" = "Доступ к видео запрещён";
+"open_page_to_read_comms" = "Для чтения комментариев откройте <a href=\"$1\">страницу</a>.";
+
+"no_video_error" = "Нету видеозаписи";
+"no_video_description" = "Выберите файл или укажите ссылку.";
+
+"error_video" = "Произошла ошибка";
+"file_corrupted" = "Файл повреждён или не содержит видео.";
+"link_incorrect" = "Возможно, ссылка некорректна.";
+
+"no_name_error" = "Видео не может быть опубликовано без названия";
+"access_denied_error" = "Ошибка доступа";
+"access_denied_error_description" = "Вы не имеете права редактировать этот ресурс";
+
+"changes_saved_video_comment" = "Обновлённые данные появятся на странице с видео";
+"cant_delete_video" = "Не удалось удалить видео";
+"cant_delete_video_comment" = "Вы не вошли в аккаунт.";
+
+"change_video" = "Изменить видеозапись";
+
+"video_is_deleted" = "Видео удалено.";
+"share_video" = "Поделиться видеороликом";
+"shared_succ_video" = "Видео появится на вашей стене. Нажмите на уведомление, чтобы перейти к записи.";
+"watch_in_window" = "Смотреть в окне";
+
+"comments_load_timeout" = "Возможно, инстанция упала."; 
