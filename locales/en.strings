@@ -326,6 +326,8 @@
 "publish_suggested" = "Accept";
 "decline_suggested" = "Decline";
 
+"error_loading_suggest" = "Error when loading new posts";
+
 "publishing_suggested_post" = "Publishing suggested post";
 "suggested_posts_in_group_zero" = "You've looked at all the suggested posts, congratulations!";
 "suggested_posts_in_group_one" = "This group has one suggested post";

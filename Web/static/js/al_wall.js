@@ -277,6 +277,9 @@ $(document).on("click", "#publish_post", async (e) => {
         let post;
 
         try {
+            e.currentTarget.classList.add("loaded")
+            e.currentTarget.setAttribute("value", "")
+            e.currentTarget.setAttribute("id", "")
             post = await API.Wall.acceptPost(id, document.getElementById("signatr").checked, document.getElementById("pooblish").value)
         } catch(ex) {
             switch(ex.code) {
@@ -297,12 +300,19 @@ $(document).on("click", "#publish_post", async (e) => {
                     break;
             }
 
+            e.currentTarget.setAttribute("value", tr("publish_suggested"))
+            e.currentTarget.classList.remove("loaded")
+            e.currentTarget.setAttribute("id", "publish_post")
             return 0;
         }
 
         NewNotification(tr("suggestion_succefully_published"), tr("suggestion_press_to_go"), null, () => {window.location.assign("/wall" + post.id)});
         document.getElementById("cound").innerHTML = tr("suggested_posts_in_group", post.new_count)
         e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
+    
+        if(document.querySelectorAll(".post.post-divider").length < 1 && post.new_count > 0) {
+            loadMoreSuggestedPosts()
+        }
     }), Function.noop]);
 
     document.getElementById("pooblish").innerHTML = e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.querySelector(".really_text").innerHTML.replace(/(<([^>]+)>)/gi, '')
@@ -314,7 +324,9 @@ $(document).on("click", "#decline_post", async (e) => {
     let post;
 
     try {
-        e.currentTarget.parentNode.parentNode.insertAdjacentHTML("afterbegin", `<img id="deleteMe" src="/assets/packages/static/openvk/img/loading_mini.gif">`)
+        e.currentTarget.classList.add("loaded")
+        e.currentTarget.setAttribute("value", "")
+        e.currentTarget.setAttribute("id", "")
         post = await API.Wall.declinePost(id)
     } catch(ex) {
         switch(ex.code) {
@@ -335,6 +347,9 @@ $(document).on("click", "#decline_post", async (e) => {
                 break;
         }
 
+        e.currentTarget.setAttribute("value", tr("decline_suggested"))
+        e.currentTarget.setAttribute("id", "decline_post")
+        e.currentTarget.classList.remove("loaded")
         return 0;
     } finally {
         u("#deleteMe").remove()
@@ -343,4 +358,31 @@ $(document).on("click", "#decline_post", async (e) => {
     NewNotification(tr("suggestion_succefully_declined"), "", null);
     e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
     document.getElementById("cound").innerHTML = tr("suggested_posts_in_group", post)
+
+    if(document.querySelectorAll(".post.post-divider").length < 1 && post > 0) {
+        loadMoreSuggestedPosts()
+    }
 })
+
+function loadMoreSuggestedPosts()
+{
+    let xhr = new XMLHttpRequest
+    xhr.open("GET", location.href)
+
+    xhr.onloadstart = () => {
+        document.getElementById("postz").innerHTML = `<img src="/assets/packages/static/openvk/img/loading_mini.gif">`
+    }
+
+    xhr.onload = () => {
+        let parser = new DOMParser()
+        let body   = parser.parseFromString(xhr.responseText, "text/html").getElementById("postz")
+
+        document.getElementById("postz").innerHTML = body.innerHTML
+    }
+
+    xhr.onerror = () => {
+        document.getElementById("postz").innerHTML = tr("error_loading_suggest")
+    }
+
+    xhr.send()
+}

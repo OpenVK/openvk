@@ -12,15 +12,18 @@
         {include "../components/error.xml", title => "", description => $type == "my" ? tr("no_suggested_posts_by_you") : tr("no_suggested_posts_by_people")}
     {else}
         <h4 id="cound">{if $type == "my"}{tr("suggested_posts_in_group_by_you", $count)}{else}{tr("suggested_posts_in_group", $count)}{/if}</h4>
-        {foreach $posts as $post}
-            {include "../components/post/microblogpost.xml", post => $post, commentSection => false, suggestion => true, forceNoCommentsLink => true, forceNoPinLink => true, forceNoLike => true, forceNoShareLink => true}
-        {/foreach}
+        <div id="postz">
+            {foreach $posts as $post}
+                {include "../components/post/microblogpost.xml", post => $post, commentSection => false, suggestion => true, forceNoCommentsLink => true, forceNoPinLink => true, forceNoLike => true, forceNoShareLink => true}
+            {/foreach}
+
+            {include "../components/paginator.xml", conf => (object) [
+                "page"     => $page,
+                "count"    => $count,
+                "amount"   => sizeof($posts),
+                "perPage"  => OPENVK_DEFAULT_PER_PAGE,
+                "atBottom" => true,
+            ]}
+        </div>
     {/if}
-    {include "../components/paginator.xml", conf => (object) [
-        "page"     => $page,
-        "count"    => $count,
-        "amount"   => sizeof($posts),
-        "perPage"  => OPENVK_DEFAULT_PER_PAGE,
-        "atBottom" => true,
-    ]}
 {/block}

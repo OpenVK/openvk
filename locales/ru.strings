@@ -310,6 +310,8 @@
 "publish_suggested" = "Опубликовать запись";
 "decline_suggested" = "Отклонить";
 
+"error_loading_suggest" = "Не удалось подгрузить новые посты";
+
 "publishing_suggested_post" = "Публикация предложенной записи";
 "suggested_posts_in_group_zero" = "Вы посмотрели всю предложку, поздравляю!";
 "suggested_posts_in_group_one" = "В эту группу предложили одну запись";
