@@ -343,7 +343,7 @@
 
 "suggestion_succefully_published" = "Post successfully published";
 "suggestion_succefully_declined" = "Post successfully declined";
-"suggestion_press_to_go" = "Click to show him";
+"suggestion_press_to_go" = "Click to show it";
 
 "error_declining_invalid_post" = "Error when declining post: post does not exists";
 "error_declining_not_suggested_post" = "Error when declining post: post is not suggested";
