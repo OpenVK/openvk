@@ -301,7 +301,7 @@ $(document).on("click", "#publish_post", async (e) => {
         }
 
         NewNotification(tr("suggestion_succefully_published"), tr("suggestion_press_to_go"), null, () => {window.location.assign("/wall" + post.id)});
-        document.getElementById("cound").innerHTML = tr("x_suggested_posts_in_group", post.new_count)
+        document.getElementById("cound").innerHTML = tr("suggested_posts_in_group", post.new_count)
         e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
     }), Function.noop]);
 
@@ -342,5 +342,5 @@ $(document).on("click", "#decline_post", async (e) => {
     
     NewNotification(tr("suggestion_succefully_declined"), "", null);
     e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
-    document.getElementById("cound").innerHTML = tr("x_suggested_posts_in_group", post)
+    document.getElementById("cound").innerHTML = tr("suggested_posts_in_group", post)
 })

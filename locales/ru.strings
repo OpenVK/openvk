@@ -287,8 +287,18 @@
 "group_limited_post" = "Предложка";
 "group_closed_post" = "Закрытая";
 "suggest_new" = "Предложить новость";
-"show_suggested_posts" = "$1 предложенных вами записей";
-"show_suggested_posts_everyone" = "$1 предложенных записей";
+"suggested_by_you_zero" = "$1 предложенных вами записей";
+"suggested_by_you_one" = "Одна предложенная вами запись";
+"suggested_by_you_few" = "$1 предложенные вами записи";
+"suggested_by_you_many" = "$1 предложенных вами записей";
+"suggested_by_you_other" = "$1 предложенных вами записей";
+
+"suggested_by_everyone_zero" = "$1 предложенных записей";
+"suggested_by_everyone_one" = "Одна предложенная запись";
+"suggested_by_everyone_few" = "$1 предложенные записи";
+"suggested_by_everyone_many" = "$1 предложенных записей";
+"suggested_by_everyone_other" = "$1 предложенных записей";
+
 "group_hide_from_global_feed" = "Не отображать публикации в глобальной ленте";
 "suggested_posts_by_you" = "Предложенные вами записи";
 "suggested_posts_by_everyone" = "Предложенные записи";
@@ -301,8 +311,17 @@
 "decline_suggested" = "Отклонить";
 
 "publishing_suggested_post" = "Публикация предложенной записи";
-"x_suggested_posts_in_group" = "В эту группу предложили $1 записей";
-"x_suggested_posts_in_group_by_you" = "Вы предложили в эту группу $1 записей";
+"suggested_posts_in_group_zero" = "Вы посмотрели всю предложку, поздравляю!";
+"suggested_posts_in_group_one" = "В эту группу предложили одну запись";
+"suggested_posts_in_group_few" = "В эту группу предложили $1 записи";
+"suggested_posts_in_group_many" = "В эту группу предложили $1 записей";
+"suggested_posts_in_group_other" = "В эту группу предложили $1 записей";
+
+"suggested_posts_in_group_by_you_zero" = "Вы не предлагали в эту группу никаких записей";
+"suggested_posts_in_group_by_you_one" = "Вы предложили в эту группу одну запись";
+"suggested_posts_in_group_by_you_few" = "Вы предложили в эту группу $1 записи";
+"suggested_posts_in_group_by_you_many" = "Вы предложили в эту группу $1 записей";
+"suggested_posts_in_group_by_you_other" = "Вы предложили в эту группу $1 записей";
 
 "suggestion_succefully_published" = "Запись успешно опубликована";
 "suggestion_succefully_declined" = "Запись успешно отклонена";

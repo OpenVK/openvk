@@ -302,8 +302,19 @@
 "group_limited_post" = "Suggestions";
 "group_closed_post" = "Closed";
 "suggest_new" = "Suggest post";
-"show_suggested_posts" = "$1 suggested posts by you";
-"show_suggested_posts_everyone" = "$1 suggested posts";
+
+"suggested_by_you_zero" = "$1 suggested posts by you";
+"suggested_by_you_one" = "One suggested post by you";
+"suggested_by_you_few" = "$1 suggested posts by you";
+"suggested_by_you_many" = "$1 suggested posts by you";
+"suggested_by_you_other" = "$1 suggested posts by you";
+
+"suggested_by_everyone_zero" = "$1 suggested posts";
+"suggested_by_everyone_one" = "One suggested post";
+"suggested_by_everyone_few" = "$1 suggested posts";
+"suggested_by_everyone_many" = "$1 suggested posts";
+"suggested_by_everyone_other" = "$1 suggested posts";
+
 "group_hide_from_global_feed" = "Don't display posts in the global feed";
 "suggested_posts_by_you" = "Suggested posts by you";
 "suggested_posts_by_everyone" = "Suggested posts";
@@ -316,8 +327,17 @@
 "decline_suggested" = "Decline";
 
 "publishing_suggested_post" = "Publishing suggested post";
-"x_suggested_posts_in_group" = "This group has $1 suggested posts";
-"x_suggested_posts_in_group_by_you" = "You suggested $1 posts to this group";
+"suggested_posts_in_group_zero" = "You've looked at all the suggested posts, congratulations!";
+"suggested_posts_in_group_one" = "This group has one suggested post";
+"suggested_posts_in_group_few" = "This group has $1 suggested posts";
+"suggested_posts_in_group_many" = "This group has $1 suggested posts";
+"suggested_posts_in_group_other" = "This group has $1 suggested posts";
+
+"suggested_posts_in_group_by_you_zero" = "You haven't suggested any posts to this group";
+"suggested_posts_in_group_by_you_one" = "You suggested one post to this group";
+"suggested_posts_in_group_by_you_few" = "You suggested $1 posts to this group";
+"suggested_posts_in_group_by_you_many" = "You suggested $1 posts to this group";
+"suggested_posts_in_group_by_you_other" = "You suggested $1 posts to this group";
 
 "suggestion_succefully_published" = "Post successfully published";
 "suggestion_succefully_declined" = "Post successfully declined";
