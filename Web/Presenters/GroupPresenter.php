@@ -415,7 +415,7 @@ final class GroupPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $club = $this->clubs->get($id);
-        if(!$club || method_exists($club, "isDeleted") && $club->isDeleted())
+        if(!$club)
             $this->notFound();
         else
             $this->template->club = $club;
@@ -447,7 +447,7 @@ final class GroupPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $club = $this->clubs->get($id);
-        if(!$club || method_exists($club, "isDeleted") && $club->isDeleted())
+        if(!$club)
             $this->notFound();
         else
             $this->template->club = $club;
