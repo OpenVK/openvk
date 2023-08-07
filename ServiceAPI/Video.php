@@ -153,4 +153,4 @@ class Video implements Handler
 
         $resolve($res);
     }
-} 
+}
