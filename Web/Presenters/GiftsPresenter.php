@@ -20,7 +20,7 @@ final class GiftsPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         
         $user = $this->users->get($user);
-        if(!$user)
+        if(!$user || $user->isServiceAccount())
             $this->notFound();
         
         $this->template->user     = $user;
@@ -33,7 +33,7 @@ final class GiftsPresenter extends OpenVKPresenter
     function renderGiftMenu(): void
     {
         $user = $this->users->get((int) ($this->queryParam("user") ?? 0));
-        if(!$user)
+        if(!$user || $user->isServiceAccount())
             $this->notFound();
         
         $this->template->page = $page = (int) ($this->queryParam("p") ?? 1);
@@ -65,7 +65,7 @@ final class GiftsPresenter extends OpenVKPresenter
         $user = $this->users->get((int) ($this->queryParam("user") ?? 0));
         $gift = $this->gifts->get((int) ($this->queryParam("elid") ?? 0));
         $cat  = $this->gifts->getCat((int) ($this->queryParam("pack") ?? 0));
-        if(!$user || !$cat || !$gift || !$cat->hasGift($gift))
+        if(!$user || !$cat || !$gift || !$cat->hasGift($gift) || $user->isServiceAccount())
             $this->flashFail("err", "Не удалось подарить", "Не удалось подтвердить права на подарок.");
         
         if(!$gift->canUse($this->user->identity))

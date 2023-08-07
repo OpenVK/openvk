@@ -29,7 +29,7 @@
                     alt="Фотография пользователя" />
                 </div>
                 <div class="crp-entry--info">
-                    <a href="{$recipient->getURL()}">{$recipient->getCanonicalName()}</a><br/>
+                    <a href="{$recipient->getURL()}" n:attr="style => $recipient->isServiceAccount() ? 'font-weight: 700; color: #1b7a1b;' : ''">{$recipient->getCanonicalName()}</a><br/>
                     <span>{$lastMsg->getSendTimeHumanized()}</span>
                 </div>
                 <div n:class="crp-entry--message, $lastMsg->getUnreadState() ? unread">
