@@ -57,8 +57,6 @@ final class Wall extends VKAPIRequestHandler
             case "postponed":
                 $this->fail(66666, "Otlojka is not implemented :)");
                 break;
-            # В вкапи, походу, нету метода, который бы публиковал запись из предложки.
-            # Либо он закрыт для неофициальных клиентов, как gifts.send 
             case "suggests":
                 if($owner_id < 0) {
                     if($wallOnwer->getWallType() != 2) 
@@ -419,7 +417,7 @@ final class Wall extends VKAPIRequestHandler
             ];
     }
 
-    function post(string $owner_id, string $message = "", int $from_group = 0, int $signed = 0, string $attachments = ""): object
+    function post(string $owner_id, string $message = "", int $from_group = 0, int $signed = 0, string $attachments = "", int $post_id = 0): object
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -439,6 +437,45 @@ final class Wall extends VKAPIRequestHandler
             $canPost = false;
 
         if($canPost == false) $this->fail(15, "Access denied");
+
+        if($post_id > 0) {
+            if($owner_id > 0) {
+                $this->fail(62, "Suggested posts available only at groups");
+            }
+
+            $post = (new PostsRepo)->getPostById($owner_id, $post_id, true);
+
+            if(!$post || $post->isDeleted())
+                $this->fail(32, "Invald post");
+
+            if($post->getSuggestionType() == 0)
+                $this->fail(20, "Post is not suggested");
+
+            if($post->getSuggestionType() == 2)
+                $this->fail(16, "Post is declined");
+
+            if(!$post->canBePinnedBy($this->getUser()))
+                $this->fail(51, "Access denied");
+
+            $author = $post->getOwner();
+            $flags = 0;
+            $flags |= 0b10000000;
+
+            if($signed == 1)
+                $flags |= 0b01000000;
+
+            $post->setSuggested(0);
+            $post->setCreated(time());
+            $post->setFlags($flags);
+
+            if(!empty($message) && iconv_strlen($message) > 0)
+                $post->setContent($message);
+
+            $post->save();
+            (new PostAcceptedNotification($author, $post, $post->getWallOwner()))->emit();
+
+            return (object)["post_id" => $post->getVirtualId()];
+        }
 
         $anon = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"];
         if($wallOwner instanceof Club && $from_group == 1 && $signed != 1 && $anon) {
@@ -837,78 +874,25 @@ final class Wall extends VKAPIRequestHandler
         return 1;
     }
 
-    # !!! Нестандартный метод
-    function acceptPost(int $club, int $post_id, string $new_message = "", bool $sign = true)
+    function delete(int $owner_id, int $post_id)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        if($club < 0) {
-            $this->fail(62, "Club's id is negative");
-        }
-
-        $post = (new PostsRepo)->getPostById($club * -1, $post_id, true);
+        $post = (new PostsRepo)->getPostById($owner_id, $post_id, true);
         if(!$post || $post->isDeleted())
-            $this->fail(32, "Invald post");
+            $this->fail(583, "Invalid post");
 
-        if($post->getSuggestionType() == 0)
-            $this->fail(20, "Post is not suggested");
-
-        if($post->getSuggestionType() == 2)
-            $this->fail(16, "Post is declined");
-
-        if(!$post->canBePinnedBy($this->getUser()))
-            $this->fail(51, "Access denied");
-
-        $author = $post->getOwner();
-        $flags = 0;
-        $flags |= 0b10000000;
-
-        if($sign)
-            $flags |= 0b01000000;
-
-        $post->setSuggested(0);
-        $post->setCreated(time());
-        $post->setFlags($flags);
-
-        if(!empty($new_message) && iconv_strlen($new_message) > 0)
-            $post->setContent($new_message);
-
-        $post->save();
-        (new PostAcceptedNotification($author, $post, $post->getWallOwner()))->emit();
-
-        return 1;
-    }
-
-    # !!! Нестандартный метод
-    function declinePost(int $club, int $post_id)
-    {
-        $this->requireUser();
-        $this->willExecuteWriteAction();
+        $wallOwner = $post->getWallOwner();
         
-        if($club < 0) {
-            $this->fail(62, "Club's id is negative");
+        if($post->getOwnerPost() == $this->getUser()->getId() || $post->getTargetWall() == $this->getUser()->getId() || $owner_id < 0 && $wallOwner->canBeModifiedBy($this->getUser())) {
+            $post->unwire();
+            $post->delete();
+
+            return 1;
+        } else {
+            $this->fail(15, "Access denied");
         }
-
-        $post = (new PostsRepo)->getPostById($club * -1, $post_id, true);
-
-        if(!$post || $post->isDeleted())
-            $this->fail(32, "Invald post");
-
-        if($post->getSuggestionType() == 0)
-            $this->fail(20, "Post is not suggested");
-
-        if($post->getSuggestionType() == 2)
-            $this->fail(16, "Post is already declined");
-
-        if(!$post->canBePinnedBy($this->getUser()))
-            $this->fail(51, "Access denied");
-
-        $post->setSuggested(2);
-        $post->setDeleted(1);
-        $post->save();
-
-        return 1;
     }
 
     private function getApiPhoto($attachment) {
