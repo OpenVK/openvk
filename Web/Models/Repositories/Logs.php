@@ -65,7 +65,9 @@ class Logs
             $log->setXdiff_Old(json_encode($nobject));
             $log->setXdiff_New(json_encode($_changes));
             $log->setTs(time());
-            $log->save(false);
+            $log->setIp(CurrentUser::i()->getIP());
+            $log->setUserAgent(CurrentUser::i()->getUserAgent());
+            $log->save();
         }
     }
 

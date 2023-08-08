@@ -8,7 +8,9 @@ CREATE TABLE `logs`
     `object_id`    bigint(20) UNSIGNED NOT NULL,
     `xdiff_old`    longtext COLLATE utf8mb4_unicode_ci   NOT NULL,
     `xdiff_new`    longtext COLLATE utf8mb4_unicode_ci   NOT NULL,
-    `ts`           bigint(20) NOT NULL
+    `ts`           bigint(20) NOT NULL,
+    `ip`           tinytext                              NOT NULL,
+    `useragent`    longtext                              NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 ALTER TABLE `logs`

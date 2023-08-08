@@ -211,7 +211,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->user->id              = $this->user->identity->getId();
             $this->template->thisUser    = $this->user->identity;
             $this->template->userTainted = $user->isTainted();
-            CurrentUser::get($this->user->identity);
+            CurrentUser::get($this->user->identity, $_SERVER["REMOTE_ADDR"], $_SERVER["HTTP_USER_AGENT"]);
 
             if($this->user->identity->isDeleted() && !$this->deactivationTolerant) {
                 if($this->user->identity->isDeactivated()) {
