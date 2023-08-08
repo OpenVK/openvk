@@ -13,8 +13,8 @@
             {include "./content/photo.xml", photo => $object}
         {elseif $type == "video"}
             {include "./content/video.xml", video => $object}
-        {elseif $type == "group"}
-            {include "../components/group.xml", group => $object}
+        {elseif $type == "group" || $type == "user"}
+            {include "../components/group.xml", group => $object, isUser => $type == "user"}
         {elseif $type == "comment"}
             {include "../components/comment.xml", comment => $object, timeOnly => true}
         {elseif $type == "note"}

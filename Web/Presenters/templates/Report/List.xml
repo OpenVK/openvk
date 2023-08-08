@@ -2,6 +2,8 @@
 {var iterator = iterator_to_array($reports)}
 {var page     = $paginatorConf->page}
 
+{block tabs}{include "../NoSpam/Tabs.xml", mode => "reports"}{/block}
+
 {block title}{_list_of_reports}{/block}
 
 {block header}
@@ -39,6 +41,8 @@
         {_comment}
     {elseif $x->getContentType() == "app"}
         {_app}
+    {elseif $x->getContentType() == "user"}
+        {_users}
     {else}
         Unknown
     {/if}

@@ -840,6 +840,7 @@
 "report_number" = "Жалоба №";
 "list_of_reports" = "Список жалоб";
 "text_of_the_post" = "Текст записи";
+"today" = "сегодня";
 
 "comment" = "Комментарий";
 "sender" = "Отправитель";

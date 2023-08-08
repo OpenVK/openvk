@@ -9,19 +9,23 @@
 {/block}
 
 {block content}
-<p><b>{_comment}: </b>{$report->getReason()}</p>
+    <div class="tabs">{include "../NoSpam/Tabs.xml", mode => "reports"}</div>
+    <br />
+    <p>
+        <b>{_comment}:</b> {$report->getReason()}
+    </p>
     {include "ViewContent.xml", type => $report->getContentType(), object => $report->getContentObject()}
-<center>
+    <center>
     <form action="/admin/reportAction{$report->getId()}" method="post">
         <center>
             <form n:if="$report->getContentType() != 'group'" action="/admin/reportAction{$report->getId()}" method="post">
-                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="hidden" name="hash" value="{$csrfToken}"/>
                 <input type="submit" name="ban" value="{_ban_user_action}" class="button">
                 <input type="submit" name="delete" value="{_delete}" class="button">
                 <input type="submit" name="ignore" value="{_ignore_report}" class="button">
             </form>
             <form n:if="$report->getContentType() == 'group'" action="/admin/reportAction{$report->getId()}" method="post">
-                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="hidden" name="hash" value="{$csrfToken}"/>
                 <input type="submit" name="banClubOwner" value="Заблокировать создателя" class="button">
                 <input type="submit" name="banClub" value="Заблокировать группу" class="button">
                 <input type="submit" name="ignore" value="{_ignore_report}" class="button">

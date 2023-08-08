@@ -51,7 +51,7 @@ final class ReportPresenter extends OpenVKPresenter
         if(!$id)
             exit(json_encode([ "error" => tr("error_segmentation") ]));
 
-        if(in_array($this->queryParam("type"), ["post", "photo", "video", "group", "comment", "note", "app"])) {
+        if(in_array($this->queryParam("type"), ["post", "photo", "video", "group", "comment", "note", "app", "user"])) {
             $report = new Report;
             $report->setUser_id($this->user->id);
             $report->setTarget_id($id);

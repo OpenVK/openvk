@@ -72,6 +72,7 @@ class Report extends RowModel
         else if ($this->getContentType() == "comment") return (new Comments)->get($this->getContentId());
         else if ($this->getContentType() == "note")    return (new Notes)->get($this->getContentId());
         else if ($this->getContentType() == "app")     return (new Applications)->get($this->getContentId());
+        else if ($this->getContentType() == "user")    return (new Users)->get($this->getContentId());
         else return null;
     }
 
@@ -82,15 +83,18 @@ class Report extends RowModel
 
     function banUser($initiator)
     {
-        $this->getAuthor()->ban("**content-" . $this->getContentType() . "-" . $this->getContentId() . "**", false, time() + $this->getAuthor()->getNewBanTime(), $initiator);
+        $reason = $this->getContentType() !== "user" ? ("**content-" . $this->getContentType() . "-" . $this->getContentId() . "**") : ("Подозрительная активность");
+        $this->getAuthor()->ban($reason, false, time() + $this->getAuthor()->getNewBanTime(), $initiator);
     }
 
     function deleteContent()
     {
-        $pubTime = $this->getContentObject()->getPublicationTime();
-        $name = $this->getContentObject()->getName();
-        $this->getAuthor()->adminNotify("Ваш контент, который вы опубликовали $pubTime ($name) был удалён модераторами инстанса. За повторные или серьёзные нарушения вас могут заблокировать.");
-        $this->getContentObject()->delete($this->getContentType() !== "app");
+        if ($this->getContentType() !== "user") {
+            $pubTime = $this->getContentObject()->getPublicationTime();
+            $name = $this->getContentObject()->getName();
+            $this->getAuthor()->adminNotify("Ваш контент, который вы опубликовали $pubTime ($name) был удалён модераторами инстанса. За повторные или серьёзные нарушения вас могут заблокировать.");
+            $this->getContentObject()->delete($this->getContentType() !== "app");
+        }
         $this->setDeleted(1);
         $this->save();
     }

@@ -264,10 +264,10 @@ class User extends RowModel
 
         $reason = $ban->getReason();
 
-        preg_match('/\*\*content-(post|photo|video|group|comment|note|app|noSpamTemplate)-(\d+)\*\*$/', $reason, $matches);
+        preg_match('/\*\*content-(post|photo|video|group|comment|note|app|noSpamTemplate|user)-(\d+)\*\*$/', $reason, $matches);
         if (sizeof($matches) === 3) {
             $content_type = $matches[1]; $content_id = (int) $matches[2];
-            if ($content_type === "noSpamTemplate") {
+            if (in_array($content_type, ["noSpamTemplate", "user"])) {
                 $reason = "Подозрительная активность";
             } else {
                 if ($for !== "banned") {
@@ -282,6 +282,7 @@ class User extends RowModel
                         case "comment": $reason[] = (new Comments)->get($content_id);     break;
                         case "note":    $reason[] = (new Notes)->get($content_id);        break;
                         case "app":     $reason[] = (new Applications)->get($content_id); break;
+                        case "user":    $reason[] = (new Users)->get($content_id);        break;
                         default:        $reason[] = null;
                     }
                 }
@@ -1171,6 +1172,7 @@ class User extends RowModel
     {
         $ban = (new Bans)->get((int) $this->getRecord()->block_reason);
         if (!$ban || $ban->isOver() || $ban->isPermanent()) return null;
+        if ($this->canUnbanThemself()) return tr("today");
 
         return date('d.m.Y', $ban->getEndTime());
     }

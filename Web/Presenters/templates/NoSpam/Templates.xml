@@ -4,7 +4,7 @@
 {block header}{include title}{/block}
 
 {block content}
-    {include "Tabs.xml", mode => "templates"}
+    <div class="tabs">{include "Tabs.xml", mode => "templates"}</div>
 
     <style>
         table, th, td {

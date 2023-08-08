@@ -32,7 +32,7 @@ final class NoSpamPresenter extends OpenVKPresenter
         $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
 
         $targetDir = __DIR__ . '/../Models/Entities/';
-        $mode = in_array($this->queryParam("act"), ["form", "templates", "rollback"]) ? $this->queryParam("act") : "form";
+        $mode = in_array($this->queryParam("act"), ["form", "templates", "rollback", "reports"]) ? $this->queryParam("act") : "form";
 
         if ($mode === "form") {
             $this->template->_template = "NoSpam/Index";
@@ -70,6 +70,8 @@ final class NoSpamPresenter extends OpenVKPresenter
                 $filter["id"] = (int)$this->queryParam("id");
             }
             $this->template->templates = iterator_to_array((new NoSpamLogs)->getList($filter));
+        } else if ($mode === "reports") {
+            $this->redirect("/scumfeed");
         } else {
             $template = (new NoSpamLogs)->get((int)$this->postParam("id"));
             if (!$template || $template->isRollbacked())
