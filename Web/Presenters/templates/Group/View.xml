@@ -124,6 +124,7 @@
         {/if}
         {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
             <a href="/admin/clubs/id{$club->getId()}" id="profile_link">{_manage_group_action}</a>
+            <a href="/admin/logs?obj_id={$club->getId()}&obj_type=Club" class="profile_link">Последние действия</a>
         {/if}
         {if $club->getSubscriptionStatus($thisUser) == false}
             <form action="/setSub/club" method="post">

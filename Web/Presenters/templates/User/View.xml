@@ -121,6 +121,9 @@
                     <a href="/admin/user{$user->getId()}/bans" class="profile_link">
                         Блокировки
                     </a>
+                    <a href="/admin/logs?uid={$user->getId()}" class="profile_link" style="width: 194px;">
+                        Последние действия
+                    </a>
                 {/if}
 
                 {if $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}

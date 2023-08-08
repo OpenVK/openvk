@@ -1086,7 +1086,7 @@ class User extends RowModel
     {
         $this->setOnline(time());
         $this->setClient_name($platform);
-        $this->save();
+        $this->save(false);
 
         return true;
     }

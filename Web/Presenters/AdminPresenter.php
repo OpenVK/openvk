@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Voucher, Gift, GiftCategory, User, BannedLink};
-use openvk\Web\Models\Repositories\{Bans, ChandlerGroups, ChandlerUsers, Photos, Posts, Users, Clubs, Videos, Vouchers, Gifts, BannedLinks};
+use openvk\Web\Models\Repositories\{Bans, ChandlerGroups, ChandlerUsers, Photos, Posts, Users, Clubs, Videos, Vouchers, Gifts, BannedLinks, Logs};
 use Chandler\Database\DatabaseConnection;
 
 final class AdminPresenter extends OpenVKPresenter
@@ -12,8 +12,9 @@ final class AdminPresenter extends OpenVKPresenter
     private $gifts;
     private $bannedLinks;
     private $chandlerGroups;
+    private $logs;
 
-    function __construct(Users $users, Clubs $clubs, Vouchers $vouchers, Gifts $gifts, BannedLinks $bannedLinks, ChandlerGroups $chandlerGroups)
+    function __construct(Users $users, Clubs $clubs, Vouchers $vouchers, Gifts $gifts, BannedLinks $bannedLinks, ChandlerGroups $chandlerGroups, Logs $logs)
     {
         $this->users    = $users;
         $this->clubs    = $clubs;
@@ -21,6 +22,7 @@ final class AdminPresenter extends OpenVKPresenter
         $this->gifts    = $gifts;
         $this->bannedLinks = $bannedLinks;
         $this->chandlerGroups = $chandlerGroups;
+        $this->logs = $logs;
         
         parent::__construct();
     }
@@ -571,5 +573,44 @@ final class AdminPresenter extends OpenVKPresenter
         if(!$user) $this->notFound();
 
         $this->redirect("/admin/users/id" . $user->getId());
+    }
+
+    function renderLogs(): void
+    {
+        $filter = [];
+
+        if ($this->queryParam("id")) {
+            $id = (int) $this->queryParam("id");
+            $filter["id"] = $id;
+            $this->template->id = $id;
+        }
+        if ($this->queryParam("type") !== NULL && $this->queryParam("type") !== "any") {
+            $type = in_array($this->queryParam("type"), [0, 1, 2, 3]) ? (int) $this->queryParam("type") : 0;
+            $filter["type"] = $type;
+            $this->template->type = $type;
+        }
+        if ($this->queryParam("uid")) {
+            $user = (int) $this->queryParam("uid");
+            $filter["user"] = $user;
+            $this->template->user = $user;
+        }
+        if ($this->queryParam("obj_id")) {
+            $obj_id = (int) $this->queryParam("obj_id");
+            $filter["object_id"] = $obj_id;
+            $this->template->obj_id = $obj_id;
+        }
+        if ($this->queryParam("obj_type") !== NULL && $this->queryParam("obj_type") !== "any") {
+            $obj_type = "openvk\\Web\\Models\\Entities\\" . $this->queryParam("obj_type");
+            $filter["object_model"] = $obj_type;
+            $this->template->obj_type = $obj_type;
+        }
+
+        if (count($filter) === 0) {
+            $this->template->logs = $this->searchResults($this->logs, $this->template->count);
+        } else {
+            $this->template->logs = $this->logs->search($filter);
+        }
+
+        $this->template->object_types = (new Logs)->getTypes();
     }
 }

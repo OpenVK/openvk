@@ -357,6 +357,8 @@ routes:
       handler: "NoSpam->index"
     - url: "/al_abuse/search"
       handler: "NoSpam->search"
+    - url: "/admin/logs"
+      handler: "Admin->logs"
     - url: "/internal/wall{num}"
       handler: "Wall->wallEmbedded"
     - url: "/robots.txt"
