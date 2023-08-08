@@ -131,5 +131,10 @@ abstract class DBEntity
         $this->changes = [];
     }
 
+    function getTableName(): string
+    {
+        return $this->getTable()->getName();
+    }
+
     use \Nette\SmartObject;
 }
