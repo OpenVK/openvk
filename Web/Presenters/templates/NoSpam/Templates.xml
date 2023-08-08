@@ -89,8 +89,10 @@
         // Full width block
         $(".navigation").hide();
         $(".page_content").width("100%");
-        $(".page_body").width("100%").css("margin-right", 0).css("margin-top", "-5px");
+        $(".page_body").width("100%").css("margin-right", 0).css("margin-top", "-2px");
         $(".tabs").width("100%");
+        $(".sidebar").css("margin", 0);
+        $(".page_header").css("position", "initial");
 
         function openTableField(name, id) {
             MessageBox(name, $(`#${ name}-${ id}`).text(), ["OK"], [Function.noop]);

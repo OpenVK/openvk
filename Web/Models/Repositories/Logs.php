@@ -28,7 +28,7 @@ class Logs
         return $this->toLog($this->logs->get($id));
     }
 
-    function create(int $user, string $table, string $model, int $type, $object, $changes): void
+    function create(int $user, string $table, string $model, int $type, $object, $changes, ?string $ip = NULL, ?string $useragent = NULL): void
     {
         if (OPENVK_ROOT_CONF["openvk"]["preferences"]["logs"] === true) {
             $fobject = (is_array($object) ? $object : $object->unwrap());
@@ -65,8 +65,8 @@ class Logs
             $log->setXdiff_Old(json_encode($nobject));
             $log->setXdiff_New(json_encode($_changes));
             $log->setTs(time());
-            $log->setIp(CurrentUser::i()->getIP());
-            $log->setUserAgent(CurrentUser::i()->getUserAgent());
+            $log->setIp($ip ?? CurrentUser::i()->getIP());
+            $log->setUserAgent($useragent ?? CurrentUser::i()->getUserAgent());
             $log->save();
         }
     }

@@ -130,7 +130,7 @@ final class AuthPresenter extends OpenVKPresenter
             }
             
             $this->authenticator->authenticate($chUser->getId());
-            (new Logs)->create($user->getId(), "profiles", "openvk\\Web\\Models\\Entities\\User", 0, $user, $user);
+            (new Logs)->create($user->getId(), "profiles", "openvk\\Web\\Models\\Entities\\User", 0, $user, $user, $_SERVER["REMOTE_ADDR"], $_SERVER["HTTP_USER_AGENT"]);
             $this->redirect("/id" . $user->getId());
             $user->save();
         }
