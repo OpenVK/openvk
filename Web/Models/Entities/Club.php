@@ -361,6 +361,12 @@ class Club extends RowModel
         $this->save();
     }
 
+    function unban(): void
+    {
+        $this->setBlock_Reason(null);
+        $this->save();
+    }
+
     function getAlert(): ?string
     {
         return $this->getRecord()->alert;

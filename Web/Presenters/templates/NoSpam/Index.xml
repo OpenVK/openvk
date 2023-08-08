@@ -1,0 +1,193 @@
+{extends "../@layout.xml"}
+
+{block title}noSpam{/block}
+{block header}{include title}{/block}
+
+{block content}
+    {include "Tabs.xml", mode => "form"}
+    <br />
+    <div style="display: flex; border: 1px solid #ECECEC; padding: 8px;">
+        <div id="noSpam-form" style="width: 50%; border-right: 1px solid #ECECEC;">
+            <table cellspacing="7" cellpadding="0" width="100%" border="0">
+                <tbody>
+                    <tr>
+                        <td width="83px">
+                            <span class="nobold">Раздел:</span>
+                        </td>
+                        <td>
+                            <select name="model" id="model" style="margin-left: -2px;">
+                                <option selected>Не выбрано</option>
+                                <option n:foreach="$models as $model" value="{$model}">
+                                    {$model}
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="border-top: 1px solid #ECECEC; margin: 8px 0;" />
+            <table cellspacing="7" cellpadding="0" width="100%" border="0">
+                <tbody>
+                    <tr style="width: 129px; border-top: 1px solid #ECECEC;">
+                        <td>
+                            <span class="nobold">Подстрока:</span>
+                        </td>
+                        <td>
+                            <input type="text" name="regex" placeholder="Regex" id="regex">
+                        </td>
+                    </tr>
+                    {* "Это могли бы быть мы с тобой, но" в овк нет логов :( *}
+                    {*<tr style="width: 129px">
+                        <td>
+                            <span class="nobold">IP:</span>
+                        </td>
+                        <td>
+                            <input type="text" name="ip" placeholder="или подсеть">
+                        </td>
+                    </tr>
+                    <tr style="width: 129px">
+                        <td>
+                            <span class="nobold">Юзер-агент:</span>
+                        </td>
+                        <td>
+                            <input type="text" name="useragent" placeholder="Mozila 1.0 Blablabla/test">
+                        </td>
+                    </tr>
+                    <tr style="width: 129px">
+                        <td>
+                            <span class="nobold">Время раньше, чем:</span>
+                        </td>
+                        <td>
+                            <input type="date" name="ds">
+                        </td>
+                    </tr>
+                    <tr style="width: 129px">
+                        <td>
+                            <span class="nobold">Время позже, чем:</span>
+                        </td>
+                        <td>
+                            <input type="date" name="de">
+                        </td>
+                    </tr>*}
+                </tbody>
+            </table>
+            <br />
+            <center><b>ИЛИ</b></center>
+            <br />
+            <textarea style="resize: vertical; width: calc(100% - 6px)" placeholder='city = "Воскресенск" && id = 1' name="where" id="where" />
+            <div style="border-top: 1px solid #ECECEC; margin: 8px 0;" />
+            <table cellspacing="7" cellpadding="0" width="100%" border="0">
+                <tbody>
+                    <tr style="width: 129px; border-top: 1px solid #ECECEC;">
+                        <td>
+                            <span class="nobold">Параметры блокировки:</span>
+                        </td>
+                        <td>
+                            <select name="ban_type" id="noSpam-ban-type">
+                                <option value="1">Только откат</option>
+                                <option value="2">Только блокировка</option>
+                                <option value="3">Откат и блокировка</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="border-top: 1px solid #ECECEC; margin: 8px 0;" />
+            <center>
+                <div id="noSpam-buttons">
+                    <input id="search" type="submit" value="Поиск" class="button" />
+                    <input id="apply" type="submit" value="Применить" class="button" style="display: none;" />
+                </div>
+                <div id="noSpam-loader" style="display: none;">
+                    <img src="/assets/packages/static/openvk/img/loading_mini.gif" style="width: 40px;">
+                </div>
+            </center>
+        </div>
+        <div style="width: 50%;">
+            <center id="noSpam-results-loader" style="display: none;">
+                <img src="/assets/packages/static/openvk/img/loading_mini.gif" style="width: 40px; margin: 125px 0;">
+            </center>
+            <center id="noSpam-results-text" style="margin: 125px 25px;">Здесь будут отображаться результаты поиска</center>
+            <div id="noSpam-results-block" style="display: none;">
+                <h4 style="padding: 8px;">Результаты поиска (<span id="noSpam-results-count" style="color: inherit; font-weight: inherit;"></span> шт.)</h4>
+                <ul style="padding-inline-start:18px;" id="noSpam-results-list"></ul>
+            </div>
+        </div>
+    </div>
+    <script>
+        async function search(ban = false) {
+            $("#noSpam-results-text").hide();
+            $("#noSpam-results-block").hide();
+            $("#apply").hide();
+            $("#noSpam-buttons").hide();
+
+            $("#noSpam-results-loader").show();
+            $("#noSpam-loader").show();
+
+            let model = $("#model").val();
+            let regex = $("#regex").val();
+            let where = $("#where").val();
+
+            await $.ajax({
+                type: "POST",
+                url: "/al_abuse/search",
+                data: {
+                    model: model,
+                    q: regex,
+                    where: where,
+                    ban: ban,
+                    hash: {=$csrfToken}
+                },
+                success: (response) => {
+                    if (response.success) {
+                        console.log(response);
+                        if (response.count > 0) {
+                            $("#noSpam-results-list").empty();
+                            $("#noSpam-results-count").text(response.count);
+                            response.list.forEach((item) => {
+                                const HTML_TAGS_REGEX = /<\/?([^>]+)(>|$)/g;
+                                let fields = "";
+                                Object.entries(item).map(([key, value]) => {
+                                    fields += `<b>${ key}</b>: ${ value?.toString()?.replace(HTML_TAGS_REGEX, "[$1]")}<br />`;
+                                });
+
+                                $("#noSpam-results-list").append(`<li>
+                                    <a style="display: block;" onClick="$('#noSpam-result-fields-${ model}-${ item.id}').toggle()">
+                                        <h4 style="display: inherit; padding: 8px;">${ model} #${ item.id}</h4>
+                                    </a>
+                                    <div style="display: none;" id="noSpam-result-fields-${ model}-${ item.id}">${ fields}</div>
+                                </li>`);
+                            });
+                            $("#noSpam-results-block").show();
+                            $("#apply").show();
+                        } else {
+                            $("#noSpam-results-text").text(ban ? "Операция завершена успешно" : "Ничего не найдено :(");
+                            $("#noSpam-results-text").show();
+                        }
+                    } else {
+                        $("#noSpam-results-text").text(response?.error ?? "Неизвестная ошибка");
+                        $("#noSpam-results-text").show();
+                    }
+                },
+                error: (error) => {
+                    console.error("Error while searching noSpam:", error);
+                    $("#noSpam-results-text").text("Ошибка при выполнении запроса");
+                    $("#noSpam-results-text").show();
+                }
+            });
+
+            $("#noSpam-buttons").show();
+            $("#noSpam-loader").hide();
+            $("#noSpam-results-loader").hide();
+        }
+
+        $("#search").on("click", () => { search(); });
+        $("#regex, #where").keypress((e) => {
+            if (e.which === 13 && !e.shiftKey) {
+                e.preventDefault();
+                search();
+            }
+        });
+        $("#apply").on("click", () => { search(Number($("#noSpam-ban-type").val())); })
+    </script>
+{/block}

@@ -264,22 +264,26 @@ class User extends RowModel
 
         $reason = $ban->getReason();
 
-        preg_match('/\*\*content-(post|photo|video|group|comment|note|app)-(\d+)\*\*$/', $reason, $matches);
+        preg_match('/\*\*content-(post|photo|video|group|comment|note|app|noSpamTemplate)-(\d+)\*\*$/', $reason, $matches);
         if (sizeof($matches) === 3) {
-            if ($for !== "banned") {
+            $content_type = $matches[1]; $content_id = (int) $matches[2];
+            if ($content_type === "noSpamTemplate") {
                 $reason = "Подозрительная активность";
             } else {
-                $content_type = $matches[1]; $content_id = (int) $matches[2];
-                $reason = [$this->getTextForContentBan($content_type), $content_type];
-                switch ($content_type) {
-                    case "post":    $reason[] = (new Posts)->get($content_id);        break;
-                    case "photo":   $reason[] = (new Photos)->get($content_id);       break;
-                    case "video":   $reason[] = (new Videos)->get($content_id);       break;
-                    case "group":   $reason[] = (new Clubs)->get($content_id);        break;
-                    case "comment": $reason[] = (new Comments)->get($content_id);     break;
-                    case "note":    $reason[] = (new Notes)->get($content_id);        break;
-                    case "app":     $reason[] = (new Applications)->get($content_id); break;
-                    default:        $reason[] = null;
+                if ($for !== "banned") {
+                    $reason = "Подозрительная активность";
+                } else {
+                    $reason = [$this->getTextForContentBan($content_type), $content_type];
+                    switch ($content_type) {
+                        case "post":    $reason[] = (new Posts)->get($content_id);        break;
+                        case "photo":   $reason[] = (new Photos)->get($content_id);       break;
+                        case "video":   $reason[] = (new Videos)->get($content_id);       break;
+                        case "group":   $reason[] = (new Clubs)->get($content_id);        break;
+                        case "comment": $reason[] = (new Comments)->get($content_id);     break;
+                        case "note":    $reason[] = (new Notes)->get($content_id);        break;
+                        case "app":     $reason[] = (new Applications)->get($content_id); break;
+                        default:        $reason[] = null;
+                    }
                 }
             }
         }
@@ -899,6 +903,21 @@ class User extends RowModel
 
         $this->setBlock_Reason($ban->getId());
         // $this->setUnblock_time($unban_time);
+        $this->save();
+    }
+
+    function unban(int $removed_by): void
+    {
+        $ban = (new Bans)->get((int) $this->getRawBanReason());
+        if (!$ban || $ban->isOver())
+            return;
+
+        $ban->setRemoved_Manually(true);
+        $ban->setRemoved_By($removed_by);
+        $ban->save();
+
+        $this->setBlock_Reason(NULL);
+        // $user->setUnblock_time(NULL);
         $this->save();
     }
 

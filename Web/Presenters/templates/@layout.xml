@@ -214,6 +214,9 @@
                                     (<b>{$reportNotAnsweredCount}</b>)
                                 {/if}
                             </a>
+                            <a n:if="$canAccessHelpdesk" href="/noSpam" class="link">
+                                noSpam
+                            </a>
                         <a
                           n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem"
                           href="{$menuItem['url']}"
