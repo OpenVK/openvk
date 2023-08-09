@@ -4,21 +4,39 @@
 {block header}{include title}{/block}
 
 {block content}
+    <style>
+        .noSpamIcon {
+            width: 20px;
+            height: 20px;
+            background: url("/assets/packages/static/openvk/img/supp_icons.png");
+        }
+
+        .noSpamIcon-Add {
+            background-position: 0 0;
+        }
+
+        .noSpamIcon-Delete {
+            background-position: 0 -21px;
+        }
+    </style>
     <div class="tabs">{include "Tabs.xml", mode => "form"}</div>
     <br/>
     <div style="display: flex; border: 1px solid #ECECEC; padding: 8px;">
     <div id="noSpam-form" style="width: 50%; border-right: 1px solid #ECECEC;">
         <table cellspacing="7" cellpadding="0" width="100%" border="0">
-            <tbody>
-                <tr>
+            <tbody id="models-list">
+                <tr id="0-model">
                     <td width="83px">
                         <span class="nobold">Раздел:</span>
                     </td>
                     <td>
-                        <select name="model" id="model" style="margin-left: -2px;">
-                            <option selected value="none">Не выбрано</option>
-                            <option n:foreach="$models as $model" value="{$model}">{$model}</option>
-                        </select>
+                        <div style="display: flex; gap: 8px; justify-content: space-between;">
+                            <div id="add-model" class="noSpamIcon noSpamIcon-Add" style="display: none;" />
+                            <select name="model" id="model" class="model initialModel" style="margin-left: -2px;">
+                                <option selected value="none">Не выбрано</option>
+                                <option n:foreach="$models as $model" value="{$model}">{$model}</option>
+                            </select>
+                        </div>
                     </td>
                 </tr>
             </tbody>
@@ -140,6 +158,18 @@
             $("#noSpam-results-loader").show();
             $("#noSpam-loader").show();
 
+
+            let models = [];
+            $(".model").each(function (i) {
+                let name = $(this).val();
+                if (!models.includes(name)) {
+                    if (name.length > 0 && name !== "none") {
+                        models.push(name);
+                    }
+                }
+            });
+            models = models.join(",");
+
             let model = $("#model").val();
             let regex = $("#regex").val();
             let where = $("#where").val();
@@ -153,6 +183,7 @@
                 type: "POST",
                 url: "/al_abuse/search",
                 data: {
+                    models: models,
                     model: model,
                     q: regex,
                     where: where,
@@ -178,10 +209,10 @@
                                 });
 
                                 $("#noSpam-results-list").append(`<li>
-                                    <a style="display: block;" onClick="$('#noSpam-result-fields-${ model}-${ item.id}').toggle()">
-                                        <h4 style="display: inherit; padding: 8px;">${ model} #${ item.id}</h4>
+                                    <a style="display: block;" onClick="$('#noSpam-result-fields-${ item.__model_name}-${ item.id}').toggle()">
+                                        <h4 style="display: inherit; padding: 8px;">${ item.__model_name} #${ item.id}</h4>
                                     </a>
-                                    <div style="display: none;" id="noSpam-result-fields-${ model}-${ item.id}">${ fields}</div>
+                                    <div style="display: none;" id="noSpam-result-fields-${ item.__model_name}-${ item.id}">${ fields}</div>
                                 </li>`);
                             });
                             $("#noSpam-results-block").show();
@@ -215,8 +246,10 @@
             }
         });
         $("#apply").on("click", () => { search(Number($("#noSpam-ban-type").val())); })
-        $("#model").on("change", async (e) => {
-            if (e.target.value !== "none") {
+
+        async function selectChange(value) {
+            console.log(value);
+            if (value !== "none") {
                 $("#noSpam-fields").hide();
                 $("#noSpam-model-not-selected").show();
                 $("#noSpam-model-not-selected-text").hide();
@@ -224,17 +257,59 @@
                 setTimeout(() => {
                     $("#noSpam-model-not-selected").hide();
                     $("#noSpam-fields").show();
+                    $("#add-model").show();
                     $("#noSpam-model-not-selected-loader").hide();
                 }, 100)
             } else {
+                if ($(".model").not(".initialModel").length === 0) {
+                    $("#noSpam-fields").hide();
+                    $("#noSpam-model-not-selected").show();
+                    $("#noSpam-model-not-selected-loader").show();
+                    setTimeout(() => {
+                        $("#noSpam-model-not-selected-text").show();
+                        $("#noSpam-model-not-selected-loader").hide();
+                    }, 100)
+                }
+            }
+        }
+
+        $(".model").change(async (e) => {
+            selectChange(e.target.value);
+        })
+
+        $("#add-model").on("click", () => {
+            console.log($(".model").length);
+            $("#models-list").append(`
+                <tr id="${ $('.model').length}-model">
+                    <td width="83px">
+
+                    </td>
+                    <td>
+                        <div style="display: flex; gap: 8px; justify-content: space-between;">
+                            <div class="noSpamIcon noSpamIcon-Delete" onClick="deleteModelSelect(${ $('.model').length});"></div>
+                            <select name="model" class="model" style="margin-left: -2px;" onChange="selectChange($(this).val())">
+                                <option selected value="none">Не выбрано</option>
+                                {foreach $models as $model}
+                                    <option value={$model}>{$model|noescape}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </td>
+                </tr>`);
+        });
+
+        function deleteModelSelect(id) {
+            $(`#${ id}-model`).remove();
+            if ($(".model").length === 0) {
+                console.log("BLYAT", $(".model"));
                 $("#noSpam-fields").hide();
-                $("#noSpam-model-not-selected").show();
-                $("#noSpam-model-not-selected-loader").show();
-                setTimeout(() => {
-                    $("#noSpam-model-not-selected-text").show();
-                    $("#noSpam-model-not-selected-loader").hide();
+                    $("#noSpam-model-not-selected").show();
+                    $("#noSpam-model-not-selected-loader").show();
+                    setTimeout(() => {
+                        $("#noSpam-model-not-selected-text").show();
+                        $("#noSpam-model-not-selected-loader").hide();
                 }, 100)
             }
-        })
+        }
     </script>
 {/block}

@@ -152,7 +152,13 @@ final class NoSpamPresenter extends OpenVKPresenter
                 if ($ts) $conditions[] = "`ts` < $ts";
                 if ($te) $conditions[] = "`ts` > $te";
                 if ($user) $conditions[] = "`user` = $user";
-                $logs = $db->query("SELECT * FROM `logs` WHERE (`object_table` = '$table') AND (" . implode(" AND ", $conditions) . ") GROUP BY `object_id`");
+
+                $whereStart = "WHERE `object_table` = '$table'";
+                if ($table === "profiles") {
+                    $whereStart .= "AND `type` = 0";
+                }
+
+                $logs = $db->query("SELECT * FROM `logs` $whereStart AND (" . implode(" AND ", $conditions) . ") GROUP BY `object_id`");
                 $response = [];
 
                 if (!$where) {
@@ -166,6 +172,11 @@ final class NoSpamPresenter extends OpenVKPresenter
                         $object = $log->getObject()->unwrap();
 
                         if (!$object) continue;
+                        //exit(var_dump(substr_replace($where, "", 0, strlen(" AND"))));
+                        if (str_starts_with($where, " AND")) {
+                            $where = substr_replace($where, "", 0, strlen(" AND"));
+                        }
+
                         foreach ($db->query("SELECT * FROM `$table` WHERE $where")->fetchAll() as $o) {
                             if ($object->id === $o["id"]) {
                                 $response[] = $object;
@@ -179,6 +190,9 @@ final class NoSpamPresenter extends OpenVKPresenter
         }
 
         try {
+            $response = [];
+            $processed = 0;
+
             $where = $this->postParam("where");
             $ip = $this->postParam("ip");
             $useragent = $this->postParam("useragent");
@@ -190,135 +204,152 @@ final class NoSpamPresenter extends OpenVKPresenter
             if (!$ip && !$useragent && !$searchTerm && !$ts && !$te && !$where && !$searchTerm && !$user)
                 $this->returnJson(["success" => false, "error" => "Нет запроса. Заполните поле \"подстрока\" или введите запрос \"WHERE\" в поле под ним."]);
 
-            $model_name = NoSpamPresenter::ENTITIES_NAMESPACE . "\\" . $this->postParam("model");
-            if (!class_exists($model_name))
-                $this->returnJson(["success" => false, "error" => "Модель не найдена"]);
+            $models = explode(",", $this->postParam("models"));
 
-            $model = new $model_name;
-
-            $c = new \ReflectionClass($model_name);
-            if ($c->isAbstract() || $c->getName() == NoSpamPresenter::ENTITIES_NAMESPACE . "\\Correspondence")
-                $this->returnJson(["success" => false, "error" => "No."]);
-
-            $db = DatabaseConnection::i()->getContext();
-            $table = $model->getTableName();
-            $columns = $db->getStructure()->getColumns($table);
-
-            if ($searchTerm) {
-                $conditions = [];
-                $need_deleted = false;
-                foreach ($columns as $column) {
-                    if ($column["name"] == "deleted") {
-                        $need_deleted = true;
-                    } else {
-                        $conditions[] = "`$column[name]` REGEXP '$searchTerm'";
-                    }
-                }
-                $conditions = implode(" OR ", $conditions);
-
-                $where = ($where ? " AND ($conditions)" : $conditions);
-                if ($need_deleted) $where .= " AND `deleted` = 0";
-            }
-
-            $rows = [];
-            if ($ip || $useragent || $ts || $te || $user) {
-                $rows = searchByAdditionalParams($table, $where, $ip, $useragent, $ts, $te, $user);
-            }
-
-            $result = $db->query("SELECT * FROM `$table` WHERE $where");
-            if (count($rows) === 0)
-                $rows = $result->fetchAll();
-
-            if (!in_array((int)$this->postParam("ban"), [1, 2, 3])) {
-                $response = [];
-                foreach ($rows as $key => $object) {
-                    $object = (array)$object;
-                    $_obj = [];
-                    foreach ($object as $key => $value) {
-                        foreach ($columns as $column) {
-                            if ($column["name"] === $key && in_array(strtoupper($column["nativetype"]), ["BLOB", "BINARY", "VARBINARY", "TINYBLOB", "MEDIUMBLOB", "LONGBLOB"])) {
-                                $value = "[BINARY]";
-                                break;
-                            }
-                        }
-
-                        $_obj[$key] = $value;
-                    }
-                    $response[] = $_obj;
+            foreach ($models as $_model) {
+                $model_name = NoSpamPresenter::ENTITIES_NAMESPACE . "\\" . $_model;
+                if (!class_exists($model_name)) {
+                    continue;
                 }
 
-                $this->returnJson(["success" => true, "count" => count($response), "list" => $response]);
-            } else {
-                $ids = [];
+                $model = new $model_name;
 
-                foreach ($rows as $object) {
-                    $object = new $model_name($db->table($table)->get($object->id));
-                    if (!$object) continue;
-                    $ids[] = $object->getId();
+                $c = new \ReflectionClass($model_name);
+                if ($c->isAbstract() || $c->getName() == NoSpamPresenter::ENTITIES_NAMESPACE . "\\Correspondence") {
+                    continue;
                 }
 
-                $log = new NoSpamLog;
-                $log->setUser($this->user->id);
-                $log->setModel($this->postParam("model"));
+                $db = DatabaseConnection::i()->getContext();
+                $table = $model->getTableName();
+                $columns = $db->getStructure()->getColumns($table);
+
                 if ($searchTerm) {
-                    $log->setRegex($searchTerm);
-                } else {
-                    $log->setRequest($where);
-                }
-                $log->setBan_Type((int)$this->postParam("ban"));
-                $log->setCount(count($rows));
-                $log->setTime(time());
-                $log->setItems(implode(",", $ids));
-                $log->save();
-
-                $banned_ids = [];
-                foreach ($rows as $object) {
-                    $object = new $model_name($db->table($table)->get($object->id));
-                    if (!$object) continue;
-
-                    $owner = NULL;
-                    $methods = ["getOwner", "getUser", "getRecipient", "getInitiator"];
-
-                    if (method_exists($object, "ban")) {
-                        $owner = $object;
-                    } else {
-                        foreach ($methods as $method) {
-                            if (method_exists($object, $method)) {
-                                $owner = $object->$method();
-                                break;
-                            }
-                        }
-                    }
-
-                    if ($owner instanceof User && $owner->getId() === $this->user->id) {
-                        if (count($rows) === 1) {
-                            $this->returnJson(["success" => false, "error" => "\"Производственная травма\" — Вы не можете блокировать или удалять свой же контент"]);
+                    $conditions = [];
+                    $need_deleted = false;
+                    foreach ($columns as $column) {
+                        if ($column["name"] == "deleted") {
+                            $need_deleted = true;
                         } else {
-                            continue;
+                            $conditions[] = "`$column[name]` REGEXP '$searchTerm'";
                         }
                     }
+                    $conditions = implode(" OR ", $conditions);
 
-                    if (in_array((int)$this->postParam("ban"), [2, 3])) {
-                        if ($owner) {
-                            $_id = ($owner instanceof Club ? $owner->getId() * -1 : $owner->getId());
-                            if (!in_array($_id, $banned_ids)) {
-                                if ($owner instanceof User) {
-                                    $owner->ban("**content-noSpamTemplate-" . $log->getId() . "**", false, time() + $owner->getNewBanTime(), $this->user->id);
-                                } else {
-                                    $owner->ban("Подозрительная активность");
-                                }
-
-                                $banned_ids[] = $_id;
-                            }
-                        }
-                    }
-
-                    if (in_array((int)$this->postParam("ban"), [1, 3]))
-                        $object->delete();
+                    $where = ($this->postParam("where") ? " AND ($conditions)" : "($conditions)");
+                    if ($need_deleted) $where .= " AND (`deleted` = 0)";
                 }
 
-                $this->returnJson(["success" => true]);
+                $rows = [];
+                if ($ip || $useragent || $ts || $te || $user) {
+                    $rows = searchByAdditionalParams($table, $where, $ip, $useragent, $ts, $te, $user);
+                }
+
+                if (count($rows) === 0) {
+                    if (!$searchTerm) {
+                        if (str_starts_with($where, " AND")) {
+                            if ($searchTerm && !$this->postParam("where")) {
+                                $where = substr_replace($where, "", 0, strlen(" AND"));
+                            } else {
+                                $where = "(" . $this->postParam("where") . ")" . $where;
+                            }
+                        }
+
+                        $result = $db->query("SELECT * FROM `$table` WHERE $where");
+                        $rows = $result->fetchAll();
+                    }
+                }
+
+                if (!in_array((int)$this->postParam("ban"), [1, 2, 3])) {
+                    foreach ($rows as $key => $object) {
+                        $object = (array)$object;
+                        $_obj = [];
+                        foreach ($object as $key => $value) {
+                            foreach ($columns as $column) {
+                                if ($column["name"] === $key && in_array(strtoupper($column["nativetype"]), ["BLOB", "BINARY", "VARBINARY", "TINYBLOB", "MEDIUMBLOB", "LONGBLOB"])) {
+                                    $value = "[BINARY]";
+                                    break;
+                                }
+                            }
+
+                            $_obj[$key] = $value;
+                            $_obj["__model_name"] = $_model;
+                        }
+                        $response[] = $_obj;
+                    }
+                } else {
+                    $ids = [];
+
+                    foreach ($rows as $object) {
+                        $object = new $model_name($db->table($table)->get($object->id));
+                        if (!$object) continue;
+                        $ids[] = $object->getId();
+                    }
+
+                    $log = new NoSpamLog;
+                    $log->setUser($this->user->id);
+                    $log->setModel($_model);
+                    if ($searchTerm) {
+                        $log->setRegex($searchTerm);
+                    } else {
+                        $log->setRequest($where);
+                    }
+                    $log->setBan_Type((int)$this->postParam("ban"));
+                    $log->setCount(count($rows));
+                    $log->setTime(time());
+                    $log->setItems(implode(",", $ids));
+                    $log->save();
+
+                    $banned_ids = [];
+                    foreach ($rows as $object) {
+                        $object = new $model_name($db->table($table)->get($object->id));
+                        if (!$object) continue;
+
+                        $owner = NULL;
+                        $methods = ["getOwner", "getUser", "getRecipient", "getInitiator"];
+
+                        if (method_exists($object, "ban")) {
+                            $owner = $object;
+                        } else {
+                            foreach ($methods as $method) {
+                                if (method_exists($object, $method)) {
+                                    $owner = $object->$method();
+                                    break;
+                                }
+                            }
+                        }
+
+                        if ($owner instanceof User && $owner->getId() === $this->user->id) {
+                            if (count($rows) === 1) {
+                                $this->returnJson(["success" => false, "error" => "\"Производственная травма\" — Вы не можете блокировать или удалять свой же контент"]);
+                            } else {
+                                continue;
+                            }
+                        }
+
+                        if (in_array((int)$this->postParam("ban"), [2, 3])) {
+                            if ($owner) {
+                                $_id = ($owner instanceof Club ? $owner->getId() * -1 : $owner->getId());
+                                if (!in_array($_id, $banned_ids)) {
+                                    if ($owner instanceof User) {
+                                        $owner->ban("**content-noSpamTemplate-" . $log->getId() . "**", false, time() + $owner->getNewBanTime(), $this->user->id);
+                                    } else {
+                                        $owner->ban("Подозрительная активность");
+                                    }
+
+                                    $banned_ids[] = $_id;
+                                }
+                            }
+                        }
+
+                        if (in_array((int)$this->postParam("ban"), [1, 3]))
+                            $object->delete();
+                    }
+
+                    $processed++;
+                }
             }
+
+            $this->returnJson(["success" => true, "processed" => $processed, "count" => count($response), "list" => $response]);
         } catch (\Throwable $e) {
             $this->returnJson(["success" => false, "error" => $e->getMessage()]);
         }
