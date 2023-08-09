@@ -219,7 +219,7 @@
                                     {$club->getName()}
 
                                     <object type="internal/link" style="white-space: normal;" id="sug{$club->getId()}" n:if="$club->getSuggestedPostsCount() > 0 && $club->getWallType() == 2">
-                                        <a href="{$club->getURL()}/suggested/all">
+                                        <a href="{$club->getURL()}/suggested">
                                             (<b>{$club->getSuggestedPostsCount()}</b>)
                                         </a>
                                     </object>

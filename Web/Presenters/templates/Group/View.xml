@@ -96,7 +96,7 @@
     </div>
 
     <div n:if="!is_null($suggestedPostsCountByEveryone) && $suggestedPostsCountByEveryone > 0" class="sugglist">
-        <a href="/club{$club->getId()}/suggested/all">{tr("suggested_by_everyone", $suggestedPostsCountByEveryone)}</a>
+        <a href="/club{$club->getId()}/suggested">{tr("suggested_by_everyone", $suggestedPostsCountByEveryone)}</a>
     </div>
 
     {presenter "openvk!Wall->wallEmbedded", -$club->getId()}

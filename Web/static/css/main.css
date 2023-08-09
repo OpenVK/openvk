@@ -2717,5 +2717,12 @@ body.article .floating_sidebar, body.article .page_content {
 
 .button.loaded {
     background: #595959 url("/assets/packages/static/openvk/img/loading_mini.gif") no-repeat 50% 50%;
-    padding: 16px 40px 6px 4px;
+    padding: 2px 9px 7px 39px;
+    margin-bottom: -6px;
+}
+
+@-moz-document url-prefix() {
+    .button.loaded {
+        padding: 16px 40px 6px 4px !important;
+    }
 }

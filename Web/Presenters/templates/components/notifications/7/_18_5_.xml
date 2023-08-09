@@ -1,5 +1,5 @@
 {var $club = $notification->getModel(1)}
 
 {_nt_in_club}
-<a href="{$club->getURL()}/suggested/all"><b>{$club->getName()}</b></a>
+<a href="{$club->getURL()}/suggested"><b>{$club->getName()}</b></a>
 {_nt_new_suggested_posts}

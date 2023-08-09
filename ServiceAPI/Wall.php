@@ -2,7 +2,7 @@
 namespace openvk\ServiceAPI;
 use openvk\Web\Models\Entities\Post;
 use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Entities\Notifications\{PostAcceptedNotification};
+use openvk\Web\Models\Entities\Notifications\PostAcceptedNotification;
 use openvk\Web\Models\Repositories\{Posts, Notes};
 
 class Wall implements Handler
@@ -22,7 +22,10 @@ class Wall implements Handler
     {
         $post = $this->posts->get($id);
         if(!$post || $post->isDeleted())
-            $reject("No post with id=$id");
+            $reject(53, "No post with id=$id");
+
+        if($post->getSuggestionType() != 0)
+            $reject(25, "Can't get suggested post");
         
         $res = (object) [];
         $res->id     = $post->getId();
