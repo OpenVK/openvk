@@ -9,7 +9,6 @@
 {/block}
 
 {block content}
-    {var $logs  = iterator_to_array($logs)}
     {var $amount = sizeof($logs)}
 
     <style>
@@ -27,7 +26,7 @@
             <option value="3" n:attr="selected => $type === 3">Восстановление</option>
         </select>
         <input class="text medium-field" type="number" id="id" name="id" placeholder="ID записи" n:attr="value => $id"/>
-        <input class="text medium-field" type="number" id="uid" name="uid" placeholder="ID пользователя" n:attr="value => $user"/>
+        <input class="text medium-field" type="text" id="uid" name="uid" placeholder="UUID пользователя" n:attr="value => $user"/>
     </div>
     <div style="margin: 8px 0;" />
     <div>
@@ -51,16 +50,10 @@
             </tr>
         </thead>
         <tbody>
-
             <tr n:foreach="$logs as $log">
                 <td>{$log->getId()}</td>
                 <td>
-                    <span n:if="$log->getUser()->getAvatarURL()" class="aui-avatar aui-avatar-xsmall">
-                        <span class="aui-avatar-inner">
-                            <img src="{$log->getUser()->getAvatarURL()}" alt="{$log->getUser()->getCanonicalName()}" style="object-fit: cover;" role="presentation" />
-                        </span>
-                    </span>
-                    <a href="{$log->getUser()->getURL()}">{$log->getUser()->getCanonicalName()}</a>
+                    <a href="/admin/chandler/user/{$log->getUser()}" target="_blank">{$log->getUser()}</a>
                 </td>
                 <td>
                     <span n:if="$log->getObjectAvatar()" class="aui-avatar aui-avatar-xsmall">
