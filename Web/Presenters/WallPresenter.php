@@ -46,13 +46,13 @@ final class WallPresenter extends OpenVKPresenter
     function renderWall(int $user, bool $embedded = false): void
     {
         $owner = ($user < 0 ? (new Clubs) : (new Users))->get(abs($user));
+        if ($owner->isBanned())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+
         if(is_null($this->user)) {
             $canPost = false;
         } else if($user > 0) {
-            if(!$owner->isBanned())
-                $canPost = $owner->getPrivacyPermission("wall.write", $this->user->identity);
-            else
-                $this->flashFail("err", tr("error"), tr("forbidden"));
+            $canPost = $owner->getPrivacyPermission("wall.write", $this->user->identity);
         } else if($user < 0) {
             if($owner->canBeModifiedBy($this->user->identity))
                 $canPost = true;
@@ -100,6 +100,8 @@ final class WallPresenter extends OpenVKPresenter
         } else if($user < 0) {
             if($owner->canBeModifiedBy($this->user->identity))
                 $canPost = true;
+            else if ($owner->isBanned())
+                $this->flashFail("err", tr("error"), tr("forbidden"));
             else
                 $canPost = $owner->canPost();
         } else {
@@ -212,11 +214,12 @@ final class WallPresenter extends OpenVKPresenter
         
         $wallOwner = ($wall > 0 ? (new Users)->get($wall) : (new Clubs)->get($wall * -1))
                      ?? $this->flashFail("err", tr("failed_to_publish_post"), tr("error_4"));
+
+        if ($wallOwner->isBanned())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+
         if($wall > 0) {
-            if(!$wallOwner->isBanned())
-                $canPost = $wallOwner->getPrivacyPermission("wall.write", $this->user->identity);
-            else
-                $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
+            $canPost = $wallOwner->getPrivacyPermission("wall.write", $this->user->identity);
         } else if($wall < 0) {
             if($wallOwner->canBeModifiedBy($this->user->identity))
                 $canPost = true;
@@ -354,6 +357,9 @@ final class WallPresenter extends OpenVKPresenter
 		} else {
 			$this->template->wallOwner = (new Clubs)->get(abs($post->getTargetWall()));
 			$this->template->isWallOfGroup = true;
+
+            if ($this->template->wallOwner->isBanned())
+                $this->flashFail("err", tr("error"), tr("forbidden"));
 		}
         $this->template->cCount   = $post->getCommentsCount();
         $this->template->cPage    = (int) ($_GET["p"] ?? 1);
@@ -368,7 +374,10 @@ final class WallPresenter extends OpenVKPresenter
         
         $post = $this->posts->getPostById($wall, $post_id);
         if(!$post || $post->isDeleted()) $this->notFound();
-        
+
+        if ($post->getWallOwner()->isBanned())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+
         if(!is_null($this->user)) {
             $post->toggleLike($this->user->identity);
         }
@@ -386,6 +395,9 @@ final class WallPresenter extends OpenVKPresenter
 
         if(!$post || $post->isDeleted()) 
             $this->notFound();
+
+        if ($post->getWallOwner()->isBanned())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
         
         $where = $this->postParam("type") ?? "wall";
         $groupId = NULL;
@@ -444,6 +456,9 @@ final class WallPresenter extends OpenVKPresenter
         $wallOwner = ($wall > 0 ? (new Users)->get($wall) : (new Clubs)->get($wall * -1))
                      ?? $this->flashFail("err", tr("failed_to_delete_post"), tr("error_4"));
 
+        if ($wallOwner->isBanned())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+
         if($wall < 0) $canBeDeletedByOtherUser = $wallOwner->canBeModifiedBy($this->user->identity);
             else $canBeDeletedByOtherUser = false;
 
@@ -467,6 +482,9 @@ final class WallPresenter extends OpenVKPresenter
         $post = $this->posts->getPostById($wall, $post_id);
         if(!$post)
             $this->notFound();
+
+        if ($post->getWallOwner()->isBanned())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
         
         if(!$post->canBePinnedBy($this->user->identity))
             $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
