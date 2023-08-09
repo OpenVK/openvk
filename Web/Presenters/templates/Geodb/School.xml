@@ -1,0 +1,96 @@
+{extends "../@layout.xml"}
+
+{block title}{$title}{/block}
+{block header}{include title}{/block}
+
+{block content}
+{include "./tabs.xml", mode => $mode, country => $country}
+<br />
+<div">
+<h4><a href="/editdb?act=country&id={$country->getId()}&edu=1&city={$school->getCity()->getId()}{if $mode === 'university'}&view=universities{/if}">{$school->getCity()->getNativeName()}</a> → {$school->getName()}</h4>
+<form id="add-country-form" method="post">
+    <div id="cities-list-td-input">
+        <td width="120" valign="top">
+            <span class="nobold">Город: </span>
+        </td>
+        <td>
+            <input type="text" name="city" placeholder="Начните вводить название" id="city"
+                   onInput="onChangeCityInput()" value="{$school->getCity()->getCanonicalName()}"/>
+        </td>
+    </div>
+    <div id="cities-list-td" style="display: none !important">
+        <div width="120" valign="top">
+            <span class="nobold"></span>
+        </div>
+        <td>
+            <center id="cities-not-found">Ничего не найдено</center>
+            <select id="cities-list" name="city-id" value="1">
+                <option value="{$school->getCity()->getId()}">{$school->getCity()->getNativeName()} ({$school->getCity()->getName()})</option>
+            </select>
+        </td>
+    </div>
+
+    <input type="text" name="name" placeholder="Название" value="{$school->getName()}"/>
+
+    <input type="hidden" name="hash" value="{$csrfToken}"/>
+    <div style="display: flex; justify-content: flex-end;">
+        <input type="submit" value="{_save}" class="button"/>
+    </div>
+</form>
+<div n:if="$mode === 'university'">
+    <div style="height: 1px; border-bottom: 1px solid #E8EBEE; margin: 8px 0;"/>
+        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E8EBEE; padding: 8px 0;">
+            <h4 style="border: none;">Факультеты</h4>
+            <button class="button" onClick="addFaculty()">Добавить</button>
+        </div>
+        <div n:if="$can_view_deleted" class="tabs">
+            <div n:attr="id => !$is_deleted ? 'activetabs' : 'ki'" class="tab">
+                <a n:attr="id => !$is_deleted ? 'act_tab_a' : 'ki'"
+                   href="/editdb?act=university&id={$school->getId()}">Активные</a>
+            </div>
+            <div n:attr="id => $is_deleted ? 'activetabs' : 'ki'" class="tab">
+                <a n:attr="id => $is_deleted ? 'act_tab_a' : 'ki'"
+                   href="/editdb?act=university&id={$school->getId()}&deleted=1">Удаленные
+                </a>
+            </div>
+        </div>
+        <div n:if="count($faculties) <= 0" style="padding: 8px 0;">
+            {include "../components/nothing.xml"}
+        </div>
+        <ul n:if="count($faculties) > 0" style="padding-inline-start: 18px;" id="faculties">
+            <li n:foreach="$faculties as $faculty" id="faculty-{$faculty->getId()}">
+                <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E8EBEE;">
+                    <h4 style="padding: 8px; margin-bottom: 4px; border: none;">
+                        <span style="color: inherit; font-weight: unset;" id="faculty-{$faculty->getId()}-name">[#{$faculty->getId()}] {$faculty->getName()}</span>
+                        <input type="text" value="{$faculty->getName()}" name="name" id="faculty-{$faculty->getId()}-name-input" style="display: none;" />
+                    </h4>
+                    <div style="display: flex; gap: 8px; align-self: center;">
+                        <a id="faculty-{$faculty->getId()}-edit-icon" onClick="editFaculty({$faculty->getId()})">
+                            <div class="icon edit-icon"/>
+                        </a>
+                        <a id="faculty-{$faculty->getId()}-save-icon" style="display: none;" onClick="saveFaculty({$faculty->getId()})">
+                            <div class="icon save-icon" />
+                        </a>
+                        <a n:if="!$is_deleted" onClick="deleteFaculty({$faculty->getId()}, {$faculty->getName()})">
+                            <div class="icon delete-icon"/>
+                        </a>
+                        <a n:if="$is_deleted" onClick="restoreFaculty({$faculty->getId()}, {$faculty->getName()})">
+                            <div class="icon plus-icon"/>
+                        </a>
+                        <a n:if="!$is_deleted" onClick="getSpecializations({$faculty->getId()}, 0, false, false)">
+                            <div class="icon list-icon"/>
+                        </a>
+                    </div>
+                </div>
+                <div id="faculty-{$faculty->getId()}-specializations" style="display: none;">
+                    <a onClick="getSpecializations({$faculty->getId()}, 0, true, false)">Активные</a>
+                    <span n:if="$can_view_deleted" style="color: inherit;">| <a onClick="getSpecializations({$faculty->getId()}, 1, true, true)">Удаленные</a></span>
+                    | <a onClick="addSpecialization({$faculty->getId()}, {$faculty->getName()})">Добавить</a>
+                    <ul id="faculty-{$faculty->getId()}-specializations-list"></ul>
+                </div>
+            </li>
+        </ul>
+</div>
+{include "./GeodbForAdmins.js.xml", mode => $mode}
+</div>
+{/block}

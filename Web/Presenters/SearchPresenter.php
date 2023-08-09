@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{User, Club};
-use openvk\Web\Models\Repositories\{Users, Clubs, Posts, Comments, Videos, Applications, Notes};
+use openvk\Web\Models\Repositories\{GeodbCities, Users, Clubs, Posts, Comments, Videos, Applications, Notes};
 use Chandler\Database\DatabaseConnection;
 
 final class SearchPresenter extends OpenVKPresenter
@@ -68,6 +68,7 @@ final class SearchPresenter extends OpenVKPresenter
         $parameters = [
             "type"          => $this->queryParam("type"),
             "city"          => $this->queryParam("city") != "" ? $this->queryParam("city") : NULL,
+            "country"       => $this->queryParam("country") != "" ? $this->queryParam("country") : NULL,
             "maritalstatus" => $this->queryParam("maritalstatus") != 0 ? $this->queryParam("maritalstatus") : NULL,
             "with_photo"    => $this->queryParam("with_photo"),
             "status"        => $this->queryParam("status")     != "" ? $this->queryParam("status") : NULL,

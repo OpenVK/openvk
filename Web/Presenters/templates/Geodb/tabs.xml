@@ -1,0 +1,61 @@
+{block tabs}
+<style>
+    #searchEditors {
+        height: 20px;
+        background: url("/assets/packages/static/openvk/img/search_icon.png") 3px 4px no-repeat rgb(255, 255, 255);
+        padding-left: 18px;
+        width: 200px;
+    }
+
+    #add-country-form > input {
+        margin: 8px 0;
+    }
+
+    .icon {
+        width: 12px;
+        height: 12px;
+        background: url("/assets/packages/static/openvk/img/common.png");
+    }
+
+    .delete-icon {
+        background-position: 0 -29px;
+    }
+
+    .edit-icon {
+        background-position: 0 -44px;
+    }
+
+    .plus-icon {
+        background-position: 0 0;
+    }
+
+    .save-icon {
+        background-position: 0 -15.5px;
+    }
+
+    .list-icon {
+        background-position: 0 -92.5px;
+    }
+</style>
+<div class="tabs">
+    <div n:attr="id => (($mode === 'countries' || $mode === 'country') ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => (($mode === 'countries' || $mode === 'country') ? 'act_tab_a' : 'ki')" href="/editdb?act=countries">Страны</a>
+    </div>
+    <div n:if="$isGeodbAdmin" n:attr="id => ($mode === 'editors' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($mode === 'editors' ? 'act_tab_a' : 'ki')" href="/editdb?act=editors">Редакторы</a>
+    </div>
+    <div n:if="$isGeodbAdmin" n:attr="id => ($mode === 'logs' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($mode === 'logs' ? 'act_tab_a' : 'ki')" href="/editdb?act=logs">Логи</a>
+    </div>
+    <div n:if="($mode === 'countries' || $mode === 'add_country') && $can_add_country"
+         n:attr="id => ($mode === 'add_country' ? 'activetabs' : 'ki')" style="float: right" class="tab">
+        <a n:attr="id => ($mode === 'add_country' ? 'act_tab_a' : 'ki')" href="/editdb?act=add_country">Создать</a>
+    </div>
+    <div n:if="($mode === 'country' && !$is_edu)" n:attr="id => ($mode === 'add_city' ? 'activetabs' : 'ki')" style="float: right" class="tab">
+        <a n:attr="id => ($mode === 'add_city' ? 'act_tab_a' : 'ki')" href="/editdb?act=add_city&id={$country->getId()}">Создать</a>
+    </div>
+    <div n:if="($mode === 'country' && $is_edu)" n:attr="id => ($mode === 'add_edu' ? 'activetabs' : 'ki')" style="float: right" class="tab">
+        <a n:attr="id => ($mode === 'add_edu' ? 'act_tab_a' : 'ki')" href="/editdb?act=add_edu&id={$country->getId()}&view={$view}">Создать</a>
+    </div>
+</div>
+{/block}

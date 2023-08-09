@@ -1,0 +1,153 @@
+{extends "../@layout.xml"}
+
+{block title}Редакторы базы{/block}
+{block header}{include title}{/block}
+
+{block content}
+{include "./tabs.xml", mode => $mode, country => $country}
+<div style="margin-top: 16px;">
+    <div style="border: 8px solid #D9E3EA;">
+        <center style="padding: 16px;">
+            <a style="border-bottom: 1px dotted;" onClick="$('#add-editor-form').toggle()">Добавить редактора базы</a>
+        </center>
+        <div id="add-editor-form" style="display: none; padding: 0 16px 16px 16px;">
+            <table cellspacing="7" cellpadding="0" width="60%" border="0">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <b>Ссылка на страницу: </b>
+                        </td>
+                        <td>
+                            <input type="text" name="link" id="new-editor-link"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <b>Страна: </b>
+                        </td>
+                        <td>
+                            <select name="country" id="new-editor-country">
+                                <option n:foreach="$countries as $country" value="{$country->getCode()}">
+                                    [{$country->getCode()}] {$country->getCanonicalName()}
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <b>Права: </b>
+                        </td>
+                        <td>
+                            <table cellspacing="0" cellpadding="0" width="100%" border="0">
+                                <tbody>
+                                    <tr>
+                                        <td width="" valign="top" align="left">
+                                            <input type="checkbox" name="can_access_edu" value="1" id="new-editor-edu"/>
+                                        </td>
+                                        <td style="width: 100%;">
+                                            <span class="nobold">Образование</span>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td width="120" valign="top" align="right">
+                                            <input type="checkbox" name="can_access_cities" value="1" id="new-editor-cities"/>
+                                        </td>
+                                        <td style="width: 100%;">
+                                            <span class="nobold">Города</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+
+                        </td>
+                        <td>
+                            <input type="hidden" name="hash" value="{$csrfToken}"/>
+                            <button type="submit" class="button" onClick="addNewEditor()">Добавить редактора</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <br/>
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E8EBEE; padding: 8px 0;">
+        <h4 style="border: none;">Редакторы базы</h4>
+        <div n:if="sizeof($editors) > 0">
+            <input id="searchEditors" class="sr" type="search" placeholder="Начните вводить имя редактора"/>
+        </div>
+    </div>
+    <div style="margin-top: 10px;" id="editors">
+        <div n:if="sizeof($editors) <= 0">
+            {include "../components/nothing.xml"}
+        </div>
+        <div n:if="sizeof($editors) > 0" n:foreach="$editors as $editor" id="{$editor[0]->getUser()->getId()}-editor">
+            {var $user = $editor[0]->getUser()}
+            <table cellpadding="7">
+                <tbody>
+                    <tr>
+                        <td valign="top">
+                            <a href="{$user->getURL()}">
+                                <img src="{$user->getAvatarUrl('normal')}" width="48" alt="Фотография профиля" style="border: 1px solid #EBF0F4;"/>
+                            </a>
+                        </td>
+                        <td valign="top" style="width: 100%">
+                            <div style="display: flex; flex-direction: column; justify-content: space-between; height: 48px;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <a href="{$user->getURL()}">{$user->getFullName()}</a>
+                                    <a class="link" onclick="addCountry({$editor[0]->getUser()->getId()})">Добавить страну</a>
+                                </div>
+                                <a href="/editdb?act=logs&uid={$editor[0]->getUser()->getId()}">лог действий</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div style="padding: 8px;" id="{$user->getId()}-countries">
+                <div n:foreach="$editor[1] as $country" href="/editdb?act=country&id={$country->getId()}" id="{$user->getId()}-country-{$country->getCode()}">
+                    <h4 style="padding: 8px 0;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <a href="/editdb?act=country&id={$country->getId()}" style="width: 33%;">
+                                <img src="{$country->getFlagURL()}"/>
+                                {$country->getCanonicalName()}
+                            </a>
+                            <div class="nobold" style="width: 33%;">
+                                <tr>
+                                    <td width="120" valign="top" align="right">
+                                        <input type="checkbox" name="can_edit_education"
+                                               n:attr="checked => $country->isUserCanEditEducation($user->getId())"
+                                               id="{$user->getId()}_can_edit_education_{=$country->getCode()}"
+                                               onclick="onEditorCheckboxClick({$user->getId()}, {$country->getCode()})"/>
+                                    </td>
+                                    <td>
+                                        <span class="nobold">образование</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="120" valign="top" align="right">
+                                        <input type="checkbox" name="can_edit_cities"
+                                               n:attr="checked => $country->isUserCanEditCities($user->getId())"
+                                               id="{$user->getId()}_can_edit_cities_{=$country->getCode()}"
+                                               onclick="onEditorCheckboxClick({$user->getId()}, {$country->getCode()})"/>
+                                    </td>
+                                    <td>
+                                        <span class="nobold">города</span>
+                                    </td>
+                                </tr>
+                            </div>
+                            <a class="link" style="font-weight: normal !important; width: 33%; text-align: right;"
+                               onclick="deleteEditorCountry([{$editor[0]->getUser()->getId()}, {$editor[0]->getUser()->getCanonicalName()}], [{$country->getCode()}, {$country->getCanonicalName()}])">
+                                Удалить
+                            </a>
+                        </div>
+                    </h4>
+                </div>
+            </div>
+        </div>
+    </div>
+    {include "./GeodbForAdmins.js.xml", countries => $countries, country => $country}
+</div>
+{/block}

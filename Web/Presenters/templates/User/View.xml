@@ -468,9 +468,13 @@
                                 </a>
                             </td>
                         </tr>
+                    <tr n:if="!is_null($user->getCountry())">
+                        <td class="label"><span class="nobold">Страна:</span></td>
+                        <td class="data"><a href="/search?type=users&query=&country={$user->getCountry(true)['id']}">{$user->getCountry()}</a></td>
+                    </tr>
                     <tr n:if="!is_null($user->getCity())">
                         <td class="label"><span class="nobold">{_city}:</span></td>
-                        <td class="data"><a href="/search?type=users&query=&city={$user->getCity()}">{$user->getCity()}</a></td>
+                        <td class="data"><a href="/search?type=users&query=&city={$user->getCity(true)['id']}">{$user->getCity()}</a></td>
                     </tr>
                     <tr n:if="!is_null($user->getPhysicalAddress())">
                         <td class="label"><span class="nobold">{_address}:</span></td>
@@ -544,6 +548,128 @@
                   </tbody>
                 </table>
             {/capture}
+            {capture $uInfo_Education}
+            <table class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0"
+                   cellpadding="0" n:ifcontent>
+                <tbody n:ifcontent>
+                    <tr>
+                        <tr n:if="!is_null($user->getSchool())">
+                            <td class="label">
+                                <b>Школа:</b>
+                            </td>
+                            <td>
+                                <a rel="ugc">
+                                    {$user->getSchool()->getName()}
+                                </a>
+                            </td>
+                        </tr>
+                        <tr n:if="!is_null($user->getSchoolYears()[0])">
+                            <td class="label">
+                                <span class="nobold">Год начала обучения:</span>
+                            </td>
+                            <td>
+                                <a rel="ugc">
+                                    {$user->getSchoolYears()[0]}
+                                </a>
+                            </td>
+                        </tr>
+                        <tr n:if="!is_null($user->getSchoolYears()[1])">
+                            <td class="label">
+                                <span class="nobold">Год окончания обучения:</span>
+                            </td>
+                            <td>
+                                <a rel="ugc">
+                                    {$user->getSchoolYears()[1]}
+                                </a>
+                            </td>
+                        </tr>
+                        <tr n:if="!is_null($user->getSchoolYears()[2])">
+                            <td class="label">
+                                <span class="nobold">Год выпуска:</span>
+                            </td>
+                            <td>
+                                <a rel="ugc">
+                                    {$user->getSchoolYears()[2]}
+                                </a>
+                            </td>
+                        </tr>
+                        <tr n:if="!is_null($user->getSchoolSpecialization())">
+                            <td class="label">
+                                <span class="nobold">Специализация:</span>
+                            </td>
+                            <td>
+                                <a rel="ugc">
+                                    {$user->getSchoolSpecialization()}
+                                </a>
+                            </td>
+                        </tr>
+                    </tr>
+                    <tr n:if="!is_null($user->getUniversity())">
+                        <tr>
+                            <td class="label">
+                                <b>Университет:</b>
+                            </td>
+                            <td>
+                                <a rel="ugc">
+                                    {$user->getUniversity()->getName()}
+                                </a>
+                            </td>
+                        </tr>
+                        <tr n:if="!is_null($user->getUniversityYears()[0])">
+                            <td class="label">
+                                <span class="nobold">Год начала обучения:</span>
+                            </td>
+                            <td>
+                                <a rel="ugc">
+                                    {$user->getUniversityYears()[0]}
+                                </a>
+                            </td>
+                        </tr>
+                        <tr n:if="!is_null($user->getUniversityYears()[1])">
+                            <td class="label">
+                                <span class="nobold">Год окончания обучения:</span>
+                            </td>
+                            <td>
+                                <a rel="ugc">
+                                    {$user->getUniversityYears()[1]}
+                                </a>
+                            </td>
+                        </tr>
+                        <tr n:if="!is_null($user->getUniversityYears()[2])">
+                            <td class="label">
+                                <span class="nobold">Год выпуска:</span>
+                            </td>
+                            <td>
+                                <a rel="ugc">
+                                    {$user->getUniversityYears()[2]}
+                                </a>
+                            </td>
+                        </tr>
+                        <tr n:if="!is_null($user->getUniversityFaculty())">
+                            <td class="label">
+                                <span class="nobold">Факультет:</span>
+                            </td>
+                            <td>
+                                <a rel="ugc">
+                                    {$user->getUniversityFaculty()->getName()}
+                                </a>
+                            </td>
+                        </tr>
+                        <tr n:if="!is_null($user->getUniversitySpecialization())">
+                            <td class="label">
+                                <span class="nobold">Специализация:</span>
+                            </td>
+                            <td>
+                                <a rel="ugc">
+                                    {$user->getUniversitySpecialization()->getName()}
+                                </a>
+                            </td>
+                        </tr>
+                    </tr>
+                </tbody>
+            </table>
+
+            {/capture}
             <div>
             <div style="padding: 10px 8px 15px 8px;" n:ifcontent>
                 <h4 style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">{_contact_information} {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a href="/edit?act=contacts" class="edit_link">[ {_edit} ]</a>{/if}{/ifset}</h4>
@@ -560,6 +686,17 @@
                     <div style="padding-top: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
                 {/if}
             </div>
+                <div style="padding: 10px 8px 15px 8px;" n:ifcontent>
+                    <h4 style="border-bottom: none; font-size: 11px; padding: 0; display: inline-block;">
+                        Образование {ifset $thisUser}{if $thisUser->getId() == $user->getId()}<a
+                            href="/edit?act=education" class="edit_link">[ {_edit} ]</a>{/if}{/ifset}
+                    </h4>
+                    {if !empty($uInfo_Education)}
+                        {$uInfo_Education|noescape}
+                    {else}
+                        <div style="padding: 15px;color:gray;text-align: center;">{_no_information_provided}</div>
+                    {/if}
+                </div>
             </div>
         </div>
 

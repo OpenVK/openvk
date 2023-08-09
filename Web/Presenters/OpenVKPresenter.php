@@ -7,7 +7,7 @@ use Chandler\Security\Authenticator;
 use Latte\Engine as TemplatingEngine;
 use openvk\Web\Models\Entities\IP;
 use openvk\Web\Themes\Themepacks;
-use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets};
+use openvk\Web\Models\Repositories\{GeodbRights, IPs, Users, APITokens, Tickets};
 use WhichBrowser;
 
 abstract class OpenVKPresenter extends SimplePresenter
@@ -261,6 +261,9 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->template->ticketAnsweredCount = (new Tickets)->getTicketsCountByUserId($this->user->id, 1);
             if($user->can("write")->model("openvk\Web\Models\Entities\TicketReply")->whichBelongsTo(0))
                 $this->template->helpdeskTicketNotAnsweredCount = (new Tickets)->getTicketCount(0);
+
+            if ($this->user->identity->canEditGeodb())
+                $this->template->geodbRequestsCount = (new GeodbRights)->getRequestsCount();
         }
 
         header("X-OpenVK-User-Validated: $userValidated");

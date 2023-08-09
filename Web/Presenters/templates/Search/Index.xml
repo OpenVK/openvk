@@ -51,7 +51,7 @@
                     </tr>
                 {/if}
                 {if !is_null($_GET['city']) && $_GET['city'] != "" && $x->getPrivacySetting("page.info.read") > 1}
-                    <tr>
+                    <tr n:if="$x->getCity() !== 'DELETED'">
                         <td><span class="nobold">{_city}:</span></td>
                         <td>{$x->getCity()}</td>
                     </tr>
@@ -293,6 +293,7 @@
             <div class="searchOptionName" id="n_main" onclick="hideParams('main')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{_main}</div>
             <div class="searchOptionBlock" id="s_main">
                 <input type="text" value="{if !is_null($_GET['status'])}{$_GET['status']}{/if}" form="searcher" placeholder="{_status}" name="status">
+                <input type="text" value="{if !is_null($_GET['city'])}{$_GET['country']}{/if}" form="searcher" placeholder="Страна" name="country">
                 <input type="text" value="{if !is_null($_GET['city'])}{$_GET['city']}{/if}" form="searcher" placeholder="{_city}" name="city">
                 <input type="text" value="{if !is_null($_GET['hometown'])}{$_GET['hometown']}{/if}" form="searcher" placeholder="{_hometown}" name="hometown">
                 <input name="is_online" type="checkbox" {if !is_null($_GET['is_online']) && $_GET['is_online'] == "1"}checked{/if} form="searcher" value="1">{_s_now_on_site}

@@ -3,9 +3,20 @@ namespace openvk\Web\Presenters;
 use Nette\InvalidStateException;
 use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
-use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification};
+use openvk\Web\Models\Entities\{GeodbFaculty, Photo, Post, EmailChangeVerification};
 use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
-use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications};
+use openvk\Web\Models\Repositories\{GeodbCities,
+    GeodbCountries,
+    GeodbEducation,
+    GeodbFaculties,
+    GeodbSpecializations,
+    Users,
+    Clubs,
+    Albums,
+    Videos,
+    Notes,
+    Vouchers,
+    EmailChangeVerifications};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
 use Chandler\Security\Authenticator;
@@ -202,6 +213,24 @@ final class UserPresenter extends OpenVKPresenter
                     $user->setWebsite(NULL);
                 else
                     $user->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website);
+
+                $country_id = $this->postParam("country-id") ?? 0;
+                if ($country_id) {
+                    $country = (new GeodbCountries)->get((int) $country_id);
+                    if ($country) {
+                        $user->setCountry_Id($country_id);
+
+                        $city_id = $this->postParam("city-id") ?? 0;
+                        if ($city_id) {
+                            $city = (new GeodbCities)->get((int) $city_id);
+                            if ($city) {
+                                if ($city->getCountry()->getId() === $country->getId()) {
+                                    $user->setCity_Id($city->getId());
+                                }
+                            }
+                        }
+                    }
+                }
             } elseif($_GET['act'] === "interests") {
                 $user->setInterests(empty($this->postParam("interests")) ? NULL : ovk_proc_strtr($this->postParam("interests"), 300));
                 $user->setFav_Music(empty($this->postParam("fav_music")) ? NULL : ovk_proc_strtr($this->postParam("fav_music"), 300));
@@ -246,6 +275,51 @@ final class UserPresenter extends OpenVKPresenter
                 $this->returnJson([
                     "success" => true
                 ]);
+            } elseif($_GET['act'] === "education") {
+                if ($this->requestParam("school-id")) {
+                    $school = (new GeodbEducation)->getSchool((int) $this->postParam("school-id"));
+                    if ($school) {
+                        $user->setSchool_Id($school->getId());
+                    }
+
+                    $years = implode("**", [
+                        ((int)$this->postParam("edu_start")) ?? NULL,
+                        ((int)$this->postParam("edu_end")) ?? NULL,
+                        ((int)$this->postParam("edu_graduation")) ?? NULL,
+                    ]);
+
+                    $user->setSchool_Years($years);
+                    $user->setSchool_Specialization(mb_strlen(trim($this->postParam("edu_specialization"))) > 0 ? $this->postParam("edu_specialization") : NULL);
+                } else if ($this->requestParam("university-id")) {
+                    $university = (new GeodbEducation)->getUniversity((int) $this->postParam("university-id"));
+                    if ($university) {
+                        $user->setUniversity($university->getId());
+
+                        if ($this->postParam("faculty-id")) {
+                            $faculty = (new GeodbFaculties)->get((int)$this->postParam("faculty-id"));
+                            if ($faculty && ($faculty->getUniversity()->getId() === $university->getId())) {
+                                $user->setUniversity_Faculty($faculty->getId());
+
+                                if ($this->postParam("specialization-id")) {
+                                    $specialization = (new GeodbSpecializations)->get((int) $this->postParam("specialization-id"));
+                                    if ($specialization && ($specialization->getFaculty()->getId() === $faculty->getId()) && ($specialization->getUniversity()->getId() === $university->getId())) {
+                                        $user->setUniversity_Specialization($specialization->getId());
+                                    }
+                                }
+                            }
+                        }
+
+                        $years = implode("**", [
+                            ((int)$this->postParam("edu_university_start")) ?? NULL,
+                            ((int)$this->postParam("edu_university_end")) ?? NULL,
+                            ((int)$this->postParam("edu_university_graduation")) ?? NULL,
+                        ]);
+
+                        $user->setUniversity_Years($years);
+                    }
+                } else {
+                    $this->flashFail("err", tr("error"), "Вы не выбрали школу или университет");
+                }
             }
             
             try {
@@ -261,7 +335,7 @@ final class UserPresenter extends OpenVKPresenter
         }
         
         $this->template->mode = in_array($this->queryParam("act"), [
-            "main", "contacts", "interests", "avatar", "backdrop"
+            "main", "contacts", "education", "interests", "avatar", "backdrop"
         ]) ? $this->queryParam("act")
             : "main";
         

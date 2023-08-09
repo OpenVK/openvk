@@ -1,0 +1,63 @@
+{extends "../@layout.xml"}
+
+{block title}Страны{/block}
+{block header}{include title}{/block}
+
+{block content}
+{include "./tabs.xml", mode => $mode, country => $country}
+<div>
+    <div n:if="$can_view_deleted">
+        <br />
+        <div class="tabs">
+            <div n:attr="id => (!$is_deleted ? 'activetabs' : 'ki')" class="tab">
+                <a n:attr="id => (!$is_deleted ? 'act_tab_a' : 'ki')" href="/editdb?act=countries">Активные</a>
+            </div>
+            <div n:attr="id => ($is_deleted ? 'activetabs' : 'ki')" class="tab">
+                <a n:attr="id => ($is_deleted ? 'act_tab_a' : 'ki')" href="/editdb?act=countries&deleted=1">Удаленные</a>
+            </div>
+        </div>
+        <br />
+    </div>
+    <div style="margin-top: 10px;">
+        <div n:if="sizeof($countries) <= 0">
+            {include "../components/nothing.xml"}
+        </div>
+        <div n:if="sizeof($countries) > 0">
+            <div n:foreach="$countries as $country" style="display: flex; border-bottom: 1px solid #E8EBEE; justify-content: space-between; align-items: center;" id="country-{$country->getId()}">
+                <a style="cursor: pointer; flex: 1 1 0; text-align: left;" href="/editdb?act=country&id={$country->getId()}">
+                    <h4 style="padding: 8px; border: none;">
+                        <img src="{$country->getFlagURL()}"/>
+                        [#{$country->getId()}] {$country->getCanonicalName()}
+                    </h4>
+                </a>
+                <div style="flex: 1 1 0; display: flex; justify-content: space-between;">
+                    <div style="flex: 1 1 0; text-align: center;">
+                        <a href="/editdb?act=country&id={$country->getId()}">{tr("geodb_cities",
+                            $country->getCitiesCount())}
+                        </a>
+                    </div>
+                    <div>|</div>
+                    <div style="flex: 1 1 0; text-align: center;">
+                        <a href="/editdb?act=country&id={$country->getId()}&edu=1">{tr("geodb_schools",
+                            $country->getSchoolsCount())}
+                        </a>
+                    </div>
+                    <div>|</div>
+                    <div style="flex: 1 1 0; text-align: center;">
+                        <a href="/editdb?act=country&id={$country->getId()}&edu=1">{tr("geodb_schools",
+                            $country->getSchoolsCount())}
+                        </a>
+                    </div>
+                </div>
+                <div style="flex: 1 1 0; display: flex; justify-content: flex-end; gap: 8px;">
+                    <a n:if="!$is_deleted && $can_view_deleted" onClick="deleteCountry({$country->getId()})"><div class="icon delete-icon"/></a>
+                    <a n:if="$is_deleted && $can_view_deleted" onClick="deleteCountry({$country->getId()}, true)"><div class="icon plus-icon"/></a>
+                    <a n:if="!$is_deleted && $can_view_deleted" href="/editdb?act=add_country&id={$country->getId()}"><div class="icon edit-icon"/></a>
+                    <a n:if="!$is_deleted" href="/editdb?act=requests&cid={$country->getId()}"><div class="icon list-icon" /></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {include "./GeodbForAdmins.js.xml", countries => $countries}
+</div>
+{/block}

@@ -1431,3 +1431,22 @@
 "mobile_like" = "Нравится";
 "mobile_user_info_hide" = "Скрыть";
 "mobile_user_info_show_details" = "Показать подробнее";
+
+/* Geodb */
+"geodb_cities_zero" = "нет городов";
+"geodb_cities_one" = "$1 город";
+"geodb_cities_few" = "$1 города";
+"geodb_cities_many" = "$1 городов";
+"geodb_cities_other" = "$1 городов";
+
+"geodb_schools_zero" = "нет школ";
+"geodb_schools_one" = "$1 школа";
+"geodb_schools_few" = "$1 школы";
+"geodb_schools_many" = "$1 школ";
+"geodb_schools_other" = "$1 школ";
+
+"geodb_university_zero" = "нет вузов";
+"geodb_university_one" = "$1 вуз";
+"geodb_university_few" = "$1 вуза";
+"geodb_university_many" = "$1 вузов";
+"geodb_university_other" = "$1 вузов";

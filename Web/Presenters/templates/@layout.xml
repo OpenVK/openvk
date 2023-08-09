@@ -201,9 +201,17 @@
                             
                             {var $canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
                             {var $canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
+                            {var $canEditGeodb        = $thisUser->canEditGeodb()}
                             {var $menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
                             <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $menuLinksAvaiable" class="menu_divider"></div>
                             <a href="/admin" class="link" n:if="$canAccessAdminPanel" title="{_admin} [Alt+Shift+A]" accesskey="a">{_admin}</a>
+                            <a href="/editdb?act=requests" class="link" n:if="$canEditGeodb">
+                                Заявки Геодб
+                                {if $geodbRequestsCount > 0}
+                                    (<b>{$geodbRequestsCount}</b>)
+                                {/if}
+                            </a>
+                            <a href="/editdb?act=countries" class="link" n:if="$canEditGeodb">Страны</a>
                             <a href="/support/tickets" class="link" n:if="$canAccessHelpdesk">{_helpdesk}
                                 {if $helpdeskTicketNotAnsweredCount > 0}
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)

@@ -1,0 +1,199 @@
+{extends "../@layout.xml"}
+
+{block title}Страна{/block}
+{block header}{include title}{/block}
+
+{block content}
+{include "./tabs.xml", mode => $mode, country => $country}
+<br />
+<div>
+    <h4 style="padding: 8px;">
+        <a href="/editdb?act=countries">{$country->getCanonicalName()}</a>
+        <span id="current-city-block" style="color: inherit; font-weight: unset; {if !$city}display: none;{/if}">
+            →
+            <a id="current-city-name">
+                {if $city}{$city->getName()}{/if}
+            </a>
+        </span>
+    </h4>
+    <div>
+        <br />
+        <div class="tabs">
+            <div n:if="$can_edit_cities" n:attr="id => (!$is_edu ? 'activetabs' : 'ki')" class="tab">
+                <a n:attr="id => (!$is_edu ? 'act_tab_a' : 'ki')" href="/editdb?act=country&id={$country->getId()}">Города</a>
+            </div>
+            <div n:if="$can_edit_edu" n:attr="id => ($is_edu ? 'activetabs' : 'ki')" class="tab">
+                <a n:attr="id => ($is_edu ? 'act_tab_a' : 'ki')" href="/editdb?act=country&id={$country->getId()}&edu=1">Образование</a>
+            </div>
+        </div>
+        <br />
+    </div>
+    <div n:if="$is_edu">
+        <br />
+        <div class="tabs">
+            <div n:attr="id => ($view === 'schools' ? 'activetabs' : 'ki')" class="tab">
+                <a n:attr="id => ($view === 'schools' ? 'act_tab_a' : 'ki')" href="/editdb?act=country&id={$country->getId()}&edu=1">Школы</a>
+            </div>
+            <div n:attr="id => ($view === 'universities' ? 'activetabs' : 'ki')" class="tab">
+                <a n:attr="id => ($view === 'universities' ? 'act_tab_a' : 'ki')" href="/editdb?act=country&id={$country->getId()}&edu=1&view=universities">Вузы</a>
+            </div>
+        </div>
+        <br />
+    </div>
+    <div n:if="$can_view_deleted">
+        <br />
+        <div class="tabs">
+            <div n:attr="id => (!$is_deleted ? 'activetabs' : 'ki')" class="tab">
+                <a n:attr="id => (!$is_deleted ? 'act_tab_a' : 'ki')" href="/editdb?act=country&id={$country->getId()}{if $is_edu}&edu=1&view={$view}{/if}">Активные</a>
+            </div>
+            <div n:attr="id => ($is_deleted ? 'activetabs' : 'ki')" class="tab">
+                <a n:attr="id => ($is_deleted ? 'act_tab_a' : 'ki')" href="/editdb?act=country&id={$country->getId()}&deleted=1{if $is_edu}&edu=1&view={$view}{/if}">Удаленные</a>
+            </div>
+        </div>
+        <br />
+    </div>
+    <div n:if="$is_edu">
+        <div id="cities-list-td-input">
+            <td width="120" valign="top">
+                <span class="nobold">Город: </span>
+            </td>
+            <td>
+                <input type="text" name="city" placeholder="Начните вводить название" id="city"
+                       onInput="onChangeCityInput()" {if $city}value="{$city->getCanonicalName()}"{/if}/>
+            </td>
+        </div>
+        <div id="cities-list-td" style="display: none">
+            <d width="120" valign="top">
+                <span class="nobold"></span>
+            </d>
+            <td>
+                <center id="cities-not-found">Ничего не найдено</center>
+                <select id="cities-list" name="city-id" value="1" onChange="onChangeCitySelect()">
+                    {if $city}
+                    <option value="{$city->getId()}">{$city->getNativeName()} ({$city->getName()})</option>
+                    {/if}
+                </select>
+            </td>
+        </div>
+    </div>
+    <div style="margin-top: 10px;" n:if="!$is_edu">
+        <div n:if="sizeof($cities) <= 0">
+            {include "../components/nothing.xml"}
+        </div>
+        <ul n:if="sizeof($cities) > 0" style="padding-inline-start: 18px;">
+            <li n:foreach="$cities as $city">
+                <a n:if="sizeof($cities) > 0" style="cursor: pointer;" href="/editdb?act=city&id={$city->getId()}">
+                    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E8EBEE;">
+                        <h4 style="padding: 8px; margin-bottom: 4px; border: none;">
+                            [#{$city->getId()}] {$city->getCanonicalName()}
+                        </h4>
+                        <div style="display: flex; gap: 8px; align-self: center;">
+                            <a href="/editdb?act=city&id={$city->getId()}"><div class="icon edit-icon"/></a>
+                            <a n:if="!$is_deleted" onClick="deleteCity({$city->getId()}, {$city->getCanonicalName()})"><div class="icon delete-icon"/></a>
+                            <a n:if="$is_deleted" onClick="restoreCity({$city->getId()}, {$city->getCanonicalName()})"><div class="icon plus-icon"/></a>
+                        </div>
+                    </div>
+                </a>
+            </li>
+        </ul>
+        <script>
+            function deleteCity(id, name) {
+                DelCityMsgTxt = "Вы собираетесь удалить город <b>" + name + "</b>";
+
+                MessageBox("Вы уверены?", DelCityMsgTxt, ["Подтвердить", "Отмена"], [
+                    (function () {
+                        $.ajax({
+                        type: "POST",
+                        url: "/editdb?act=city&id=" + id + "&delete=1",
+                        data: {
+                            hash: {=$csrfToken}
+                        },
+                        success: (response) => {
+                            if (response.success) {
+                                NewNotification("Успех", "Город удален", "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                                setTimeout(() => { window.location.href = "/editdb?act=country&id={$country->getId()}&deleted=1" }, 500);
+                            } else {
+                                NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                            }
+                        },
+                        fail: () => NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png")
+                        });
+                    }),
+                    Function.noop
+                ]);
+            }
+
+            function restoreCity(id, name) {
+                DelCityMsgTxt = "Вы собираетесь восстановить город <b>" + name + "</b>";
+
+                MessageBox("Вы уверены?", DelCityMsgTxt, ["Подтвердить", "Отмена"], [
+                    (function () {
+                        $.ajax({
+                        type: "POST",
+                        url: "/editdb?act=city&id=" + id + "&restore=1",
+                        data: {
+                            hash: {=$csrfToken}
+                        },
+                        success: (response) => {
+                            if (response.success) {
+                                NewNotification("Успех", "Город восстановлен", "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                                setTimeout(() => { window.location.href = "/editdb?act=country&id={$country->getId()}" }, 500);
+                            } else {
+                                NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                            }
+                        },
+                        fail: () => NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png")
+                        });
+                    }),
+                    Function.noop
+                ])
+            }
+        </script>
+    </div>
+    <div style="margin-top: 10px;" n:if="$is_edu">
+        <div n:if="$view === 'schools'">
+            <div n:if="sizeof($schools) <= 0">
+                {include "../components/nothing.xml"}
+            </div>
+            <ul n:if="sizeof($schools) > 0" style="padding-inline-start: 18px;" id="schools">
+                <li n:foreach="$schools as $school" id="school-{$school->getId()}">
+                    <a n:if="sizeof($schools) > 0" style="cursor: pointer;" href="/editdb?act=school&id={$school->getId()}">
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E8EBEE;">
+                            <h4 style="padding: 8px; margin-bottom: 4px; border: none;">
+                                [#{$school->getId()}] {$school->getName()}
+                            </h4>
+                            <div style="display: flex; gap: 8px; align-self: center;">
+                                <a href="/editdb?act=school&id={$school->getId()}"><div class="icon edit-icon"/></a>
+                                <a n:if="!$is_deleted" onClick="deleteSchool({$school->getId()}, {$school->getName()})"><div class="icon delete-icon"/></a>
+                                <a n:if="$is_deleted" onClick="deleteSchool({$school->getId()}, {$school->getName()}, true)"><div class="icon plus-icon"/></a>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div n:if="$view === 'universities'">
+            <div n:if="sizeof($universities) <= 0">
+                {include "../components/nothing.xml"}
+            </div>
+            <ul n:if="sizeof($universities) > 0" style="padding-inline-start: 18px;" id="universities">
+                <li n:foreach="$universities as $university" id="university-{$university->getId()}">
+                    <a n:if="sizeof($universities) > 0" style="cursor: pointer;" href="/editdb?act=university&id={$university->getId()}">
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #E8EBEE;">
+                            <h4 style="padding: 8px; margin-bottom: 4px; border: none;">
+                                [#{$university->getId()}] {$university->getName()}
+                            </h4>
+                            <div style="display: flex; gap: 8px; align-self: center;">
+                                <a href="/editdb?act=university&id={$university->getId()}"><div class="icon edit-icon"/></a>
+                                <a n:if="!$is_deleted" onClick="deleteUniversity({$university->getId()}, {$university->getName()})"><div class="icon delete-icon"/></a>
+                                <a n:if="$is_deleted" onClick="deleteUniversity({$university->getId()}, {$university->getName()}, true)"><div class="icon plus-icon"/></a>
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        {include "./GeodbForAdmins.js.xml", country => $country, city => $city}
+    </div>
+</div>
+{/block}

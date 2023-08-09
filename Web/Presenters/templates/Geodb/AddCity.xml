@@ -1,0 +1,19 @@
+{extends "../@layout.xml"}
+
+{block title}Добавить город{/block}
+{block header}{include title}{/block}
+
+{block content}
+    {include "./tabs.xml", mode => $mode, country => $country}
+    <br />
+    <div>
+    <h4><a href="/editdb?act=country&id={$country->getId()}">{$country->getCanonicalName()}</a> → Добавить город</h4>
+    <form id="add-country-form" method="post">
+        <input type="text" name="name" placeholder="Название на английском"/>
+        <input type="text" name="native_name" placeholder="Родное название"/>
+
+        <input type="hidden" name="hash" value="{$csrfToken}"/>
+        <input type="submit" value="{_create}" class="button" style="float: right;"/>
+    </form>
+    </div>
+{/block}

@@ -1,0 +1,591 @@
+{block content}
+    <script>
+        let change_country_input_timeout = 0;
+        let change_city_select_timeout = 0;
+
+        {if $user->getCountry()}
+            $("#countries-not-found").hide();
+            $("#countries-list-td").show();
+            {if $user->getCity()}
+                $("#cities-not-found").hide();
+                $("#cities-list-td-input").show();
+                $("#cities-list-td").show();
+            {/if}
+        {/if}
+
+        function onChangeCountryInput() {
+            clearTimeout(change_country_input_timeout);
+
+            change_country_input_timeout = setTimeout(() => {
+                let q = $("#country").val();
+                $.ajax({
+                    type: "POST",
+                    url: "/geodb?act=countries",
+                    data: {
+                        q: q,
+                        hash: {=$csrfToken}
+                    },
+                    success: (response) => {
+                        $("#countries-not-found").hide();
+                        $("#countries-list").empty();
+                        console.log(response.list.length);
+                        if (response.list.length > 0) {
+                            response.list.forEach((country) => {
+                                $("#countries-list").append(`<option value="${  country.id}">${  country.native_name} (${  country.name})</option>`);
+                            });
+                            $("#countries-list").show();
+                            $("#cities-list-td-input").show();
+                            $("#city").val("");
+                            $("#cities-list-td").hide();
+                        } else {
+                            $("#countries-not-found").show();
+                            $("#countries-list").hide();
+                        }
+                        $("#countries-list-td").show();
+                    }
+                });
+            }, 500);
+        }
+
+        function onChangeCityInput() {
+            clearTimeout(change_country_input_timeout);
+
+            change_country_input_timeout = setTimeout(() => {
+                let q = $("#city").val();
+                $.ajax({
+                    type: "POST",
+                    url: "/geodb?act=cities",
+                    data: {
+                        country: $("#countries-list").val(),
+                        q: q,
+                        hash: {=$csrfToken}
+                    },
+                    success: (response) => {
+                        $("#cities-not-found").hide();
+                        $("#cities-list").empty();
+                        console.log(response, response.list, response.list.length);
+                        if (response.list.length > 0) {
+                            response.list.forEach((city) => {
+                                $("#cities-list").append(`<option value="${  city.id}">${  city.native_name} (${  city.name})</option>`);
+                            });
+                            $("#cities-list").show();
+                        } else {
+                            $("#cities-not-found").show();
+                            $("#cities-list").hide();
+                        }
+                        $("#cities-list-td").show();
+                    }
+                });
+            }, 500);
+        }
+
+        function getSchoolDiv(id, title) {
+            return `<option value='${ id}'>${ title}</option>`;
+        }
+
+        function getUniversityDiv(id, title) {
+            return `<option value='${ id}'>${ title}</option>`;
+        }
+
+        function hideAndShowElements(hideElement, showElement) {
+            $(hideElement).hide();
+            $(showElement).show();
+        }
+
+        {if $user->getSchool()}
+            hideAndShowElements("#school-cities-not-found", "#school-cities-list-td");
+            $("#school-cities-list").append(getSchoolDiv({$user->getSchool()->getCity()->getId()}, {$user->getSchool()->getCity()->getNativeName()}));
+            hideAndShowElements("#schools-not-found", "#school-info, #schools-list-td");
+            $("#schools-list").append(getSchoolDiv({$user->getSchool()->getId()}, {$user->getSchool()->getName()}));
+            $("#schools").show();
+            $(".school-additional").show();
+        {/if}
+
+        {if $user->getUniversity()}
+            hideAndShowElements("#university-cities-not-found", "#university-cities-list-td");
+            $("#university-cities-list").append(getUniversityDiv({$user->getUniversity()->getCity()->getId()}, {$user->getUniversity()->getCity()->getNativeName()}));
+            hideAndShowElements("#universities-not-found", "#university-info, #universities-list-td");
+            $("#universities-list").append(getUniversityDiv({$user->getUniversity()->getId()}, {$user->getUniversity()->getName()}));
+            $("#universities").show();
+
+            {if $user->getUniversityFaculty()}
+                hideAndShowElements("#faculties-not-found", "#faculty-info, #faculties-list-td");
+                $("#faculties-list").append(getUniversityDiv({$user->getUniversityFaculty()->getId()}, {$user->getUniversityFaculty()->getName()}));
+                $("#faculties").show();
+            {/if}
+
+            {if $user->getUniversitySpecialization()}
+                hideAndShowElements("#specializations-not-found", "#specializations-list-td");
+                $("#specializations-list").append(getUniversityDiv({$user->getUniversitySpecialization()->getId()}, {$user->getUniversitySpecialization()->getName()}));
+                $("#specializations").show();
+            {/if}
+
+            $(".university-additional").show();
+        {/if}
+
+        function onChangeSchoolCityInput(prefix) {
+            clearTimeout(change_country_input_timeout);
+
+            change_country_input_timeout = setTimeout(() => {
+                let q = $("#city").val();
+                $.ajax({
+                    type: "POST",
+                    url: "/geodb?act=cities",
+                    data: {
+                        country: {$user->getCountry(true)["id"]},
+                        q: q,
+                        hash: {=$csrfToken}
+                    },
+                    success: (response) => {
+                        if (response.success) {
+                            hideAndShowElements("#school-cities-not-found", "#school-cities-list-td");
+                            $("#school-cities-list").empty();
+                            if (response.list.length > 0) {
+                                console.log('ok');
+                                response.list.forEach((city) => {
+                                    $("#school-cities-list").append(`<option value="${ city.id}">${ city.native_name} (${ city.name})</option>`);
+                                });
+                                $("#school-cities-list").show();
+                                onChangeCitySelect($("#school-cities-list").val());
+                            } else {
+                                hideAndShowElements("#school-cities-list", "#school-cities-not-found");
+                            }
+                        } else {
+                            $("#school-cities-list").hide();
+                            $("#school-cities-not-found").text(response.error);
+                            $("#school-cities-list-td").show();
+                        }
+                    }
+                });
+            }, 500);
+        }
+
+        function searchSchools(city) {
+            console.log("s", city);
+            $.ajax({
+                type: "POST",
+                url: "/geodb?act=country&id={$user->getCountry(true)["id"]}&edu=1&city=" + city,
+                data: {
+                    hash: {=$csrfToken}
+                },
+                success: (response) => {
+                    console.log(response);
+                    $("#schools").show();
+                    $("#schools-list").hide();
+                    $("#schools-not-found").hide();
+                    $("#schools-list").empty();
+                    if (response.success) {
+                        if (response.list.length > 0) {
+                            response.list.forEach((school) => {
+                                $("#schools-list").append(getSchoolDiv(school.id, school.name));
+                            });
+                            $("#schools-list").show();
+                            $("#schools-not-found").hide();
+                            $(".school-additional").show();
+                        } else {
+                            $("#schools-not-found").text("Ничего не найдено :(");
+                            $("#schools-not-found").show();
+                            $(".school-additional").hide();
+                        }
+                    } else {
+                        $("#schools-not-found").text(tr("error"));
+                        $("#schools-not-found").show();
+                    }
+                }
+            });
+        }
+
+        function onChangeCitySelect(cityOverride) {
+            clearTimeout(change_city_select_timeout);
+            change_city_select_timeout = setTimeout(() => {
+                searchSchools($("#school-cities-list").val());
+            }, 500)
+        }
+
+        function onChangeUniversityCityInput() {
+            clearTimeout(change_country_input_timeout);
+
+            change_country_input_timeout = setTimeout(() => {
+                let q = $("#university-city").val();
+                $.ajax({
+                    type: "POST",
+                    url: "/geodb?act=cities",
+                    data: {
+                        country: {$user->getCountry(true)["id"]},
+                        q: q,
+                        hash: {=$csrfToken}
+                    },
+                    success: (response) => {
+                        if (response.success) {
+                            hideAndShowElements("#university-cities-not-found", "#university-cities-list-td");
+                            $("#university-cities-list").empty();
+                            if (response.list.length > 0) {
+                                response.list.forEach((city) => {
+                                    $("#university-cities-list").append(`<option value="${ city.id}">${ city.native_name} (${ city.name})</option>`);
+                                });
+                                $("#university-cities-list").show();
+                                onChangeUniversityCitySelect($("#university-cities-list").val());
+                            } else {
+                                hideAndShowElements("#university-cities-list", "#university-cities-not-found");
+                            }
+                        } else {
+                            $("#university-cities-list").hide();
+                            $("#university-cities-not-found").text(response.error);
+                            $("#university-cities-list-td").show();
+                        }
+                    }
+                });
+            }, 500);
+        }
+
+        function searchUniversities(city) {
+            $.ajax({
+                type: "POST",
+                url: "/geodb?act=country&id={$user->getCountry(true)["id"]}&edu=1&city=" + city + "&view=universities",
+                data: {
+                    hash: {=$csrfToken}
+                },
+                success: (response) => {
+                    console.log(response);
+                    $("#universities").show();
+                    $("#universities-list").hide();
+                    $("#universities-not-found").hide();
+                    $("#universities-list").empty();
+                    if (response.success) {
+                        if (response.list.length > 0) {
+                            $("#faculties-list").empty();
+                            $("#specializations-list").empty();
+                            response.list.forEach((university) => {
+                                $("#universities-list").append(getUniversityDiv(university.id, university.name));
+                            });
+
+                            response.list[0].faculties.forEach((faculty) => {
+                                $("#faculties-list").append(getUniversityDiv(faculty.id, faculty.name));
+                                faculty.specializations.forEach((specialization) => {
+                                    $("#specializations-list").append(getUniversityDiv(specialization.id, specialization.name));
+                                });
+                            });
+
+                            $("#universities-list").show();
+                            $("#universities-not-found").hide();
+                            $(".university-additional").show();
+
+                            $("#faculties-not-found").hide();
+                            $("#faculties").show();
+
+                            $("#specializations-not-found").hide();
+                            $("#specializations").show();
+                        } else {
+                            $("#universities-not-found").text("Ничего не найдено :(");
+                            $("#universities-not-found").show();
+                            $(".university-additional").hide();
+                            $("#faculties").hide();
+                            $("#specializations").hide();
+                        }
+                    } else {
+                        $("#universities-not-found").text(tr("error"));
+                        $("#universities-not-found").show();
+                    }
+                }
+            });
+        }
+
+        function onChangeUniversityCitySelect(cityOverride) {
+            clearTimeout(change_city_select_timeout);
+            change_city_select_timeout = setTimeout(() => {
+                searchUniversities($("#university-cities-list").val());
+            }, 500)
+        }
+
+        $("#universities-list").on('change', (e) => {
+            $.ajax({
+                type: "POST",
+                url: "/geodb?act=country&id={$user->getCountry(true)["id"]}&edu=1&view=universities&uid=" + e.target.value + "&n=faculties",
+                data: {
+                    hash: {=$csrfToken}
+                },
+                success: (response) => {
+                    $("#faculties-not-found").hide();
+                    $("#faculties-list").show();
+                    console.log(response);
+                    if (response.success) {
+                        $("#faculties-list").empty();
+                        $("#specializations-list").empty();
+                        if (response.list.length > 0) {
+                            response.list.forEach((faculty) => {
+                                $("#faculties-list").append(getUniversityDiv(faculty.id, faculty.name));
+                                faculty.specializations.forEach((specialization) => {
+                                    $("#specializations-list").append(getUniversityDiv(specialization.id, specialization.name));
+                                });
+                            });
+                        } else {
+                            $("#faculties-list").hide();
+                            $("#faculties-not-found").show();
+                        }
+                    } else {
+                        $("#faculties-list").hide();
+                        $("#faculties-not-found").text(tr("error"));
+                        $("#faculties-not-found").show();
+                    }
+                }
+            });
+        });
+
+        $("#faculties-list").on('change', (e) => {
+            $.ajax({
+                type: "POST",
+                url: "/geodb?act=country&id={$user->getCountry(true)["id"]}&edu=1&view=universities&fid=" + e.target.value + "&n=specializations",
+                data: {
+                    hash: {=$csrfToken}
+                },
+                success: (response) => {
+                    $("#specializations-not-found").hide();
+                    $("#specializations-list").show();
+                    console.log(response);
+                    if (response.success) {
+                        $("#specializations-list").empty();
+                        if (response.list.length > 0) {
+                            response.list.forEach((specialization) => {
+                                $("#specializations-list").append(getUniversityDiv(specialization.id, specialization.name));
+                            });
+                        } else {
+                            $("#specializations-list").hide();
+                            $("#specializations-not-found").show();
+                        }
+                    } else {
+                        $("#specializations-list").hide();
+                        $("#specializations-not-found").text(tr("error"));
+                        $("#specializations-not-found").show();
+                    }
+                }
+            });
+        });
+
+        function onChangeAddItemCountryInput(type) {
+            clearTimeout(change_country_input_timeout);
+
+            change_country_input_timeout = setTimeout(() => {
+                let q = $("#geodb-country").val();
+                $.ajax({
+                    type: "POST",
+                    url: "/geodb?act=countries",
+                    data: {
+                        q: q,
+                        hash: {=$csrfToken}
+                    },
+                    success: (response) => {
+                        $("#geodb-countries-not-found").hide();
+                        $("#geodb-countries-list").empty();
+                        console.log(response.list.length);
+                        if (response.list.length > 0) {
+                            response.list.forEach((country) => {
+                                $("#geodb-countries-list").append(`<option value="${ country.id}">${ country.native_name} (${ country.name})</option>`);
+                            });
+                            $("#geodb-countries-list").show();
+                            if (type !== "cities")
+                                $("#geodb-city-div").show();
+                        } else {
+                            $("#geodb-countries-not-found").show();
+                            $("#geodb-countries-list").hide();
+                        }
+                        $("#geodb-countries-list-td").show();
+                    }
+                });
+            }, 500);
+        }
+
+        function getFaculties(country) {
+            let _country = country ?? $("#geodb-countries-list").val() ?? {$user->getCountry(true)["id"]};
+            let city = $("#geodb-cities-list").val() ?? {$user->getCity(true)["id"]};
+            let university = $("#geodb-universities-list").val();
+            $.ajax({
+                type: "POST",
+                url: "/geodb?act=country&id=" + _country + "&edu=1&view=faculties&n=faculties" + (city ? ("&city=" + city) : "") + "&uid=" + university,
+                data: {
+                    hash: {=$csrfToken}
+                },
+                success: (response) => {
+                    hideAndShowElements("#geodb-faculties-not-found", "#geodb-faculties-list-td");
+                    $("#geodb-faculties-list").empty();
+                    if (response.success) {
+                        if (response.list.length > 0) {
+                            response.list.forEach((faculty) => {
+                                $("#geodb-faculties-list").append(`<option value="${ faculty.id}">${ faculty.name}</option>`);
+                            });
+                            $("#geodb-faculties-list-td").show();
+                            $("#geodb-faculties-list").show();
+                        } else {
+                            $("#geodb-faculties-not-found").text("Ничего не найдено :(");
+                            $("#geodb-faculties-not-found").show();
+                            $("#geodb-faculties-list").hide();
+                        }
+                    } else {
+                        $("#geodb-faculties-not-found").text(tr("error"));
+                        $("#geodb-faculties-not-found").show();
+                        $("#geodb-faculties-list").hide();
+                    }
+                }
+            });
+        }
+
+        function getUniversities(country, _getFaculties) {
+            let _country = country ?? $("#geodb-countries-list").val() ?? {$user->getCountry(true)["id"]};
+            let city = $("#geodb-cities-list").val() ?? {$user->getCity(true)["id"]};
+            $.ajax({
+                type: "POST",
+                url: "/geodb?act=country&id=" + _country + "&edu=1&city=" + city + "&view=universities" + (city ? ("&city=" + city) : ""),
+                data: {
+                    hash: {=$csrfToken}
+                },
+                success: (response) => {
+                    hideAndShowElements("#geodb-universities-not-found", "#geodb-universities-list-td");
+                    $("#geodb-universities-list").empty();
+                    if (response.success) {
+                        if (response.list.length > 0) {
+                            response.list.forEach((university) => {
+                                $("#geodb-universities-list").append(`<option value="${ university.id}">${ university.name}</option>`);
+                            });
+                            $("#geodb-universities-list").show();
+                        } else {
+                            $("#geodb-universities-not-found").text("Ничего не найдено :(");
+                            $("#geodb-universities-not-found").show();
+                            $("#geodb-universities-list").hide();
+                        }
+                    } else {
+                        $("#geodb-universities-not-found").text(tr("error"));
+                        $("#geodb-universities-not-found").show();
+                    }
+                    if (_getFaculties) {
+                        getFaculties(_country);
+                    }
+                }
+            });
+        }
+
+        function onCountryChange(e) {
+            console.log($(e).val());
+            onChangeAddItemCityInput($(e).val(), true)
+        }
+
+        function onChangeAddItemCityInput(country, _getUniversities) {
+            clearTimeout(change_country_input_timeout);
+            let city = $("#geodb-cities-list").val();
+            change_country_input_timeout = setTimeout(() => {
+                let q = $("#geodb-city").val();
+                $.ajax({
+                    type: "POST",
+                    url: "/geodb?act=cities",
+                    data: {
+                        country: (country ?? $("#geodb-countries-list").val() ?? {$user->getCountry(true)['name']}),
+                        q: q,
+                        hash: {=$csrfToken}
+                    },
+                    success: (response) => {
+                        hideAndShowElements("#geodb-cities-not-found", "#geodb-cities-list-td");
+                        $("#geodb-cities-list").empty();
+                        if (response.list.length > 0) {
+                            response.list.forEach((city) => {
+                                $("#geodb-cities-list").append(`<option value="${ city.id}">${ city.native_name} (${ city.name})</option>`);
+                            });
+                            $("#geodb-cities-list").show();
+                            $("#geodb-universities-list-td").show();
+                        } else {
+                            hideAndShowElements("#geodb-cities-list", "#geodb-cities-not-found");
+                        }
+                        if (_getUniversities && response.list.length > 0) {
+                            getUniversities(country ?? $("#geodb-countries-list").val(), true);
+                            getFaculties(country ?? $("#geodb-countries-list").val());
+                        }
+                    }
+                });
+            }, 500);
+        }
+
+        function geodbRequest(type) {
+            GeodbReqMsgTxt = "Здесь вы можете подать заявку на добавление в базу данных школы, вуза, факультета, специальности и улицы.";
+            GeodbReqMsgTxt += "";
+            GeodbReqMsgTxt += "<br/><br/><input id='geodb-name' type='text' placeholder='" + (type === "cities" ? "Название на английском" : "Название") + "' name='name' />";
+
+            if (type === "cities") {
+                GeodbReqMsgTxt += "<br/><br/><input id='geodb-native_name' type='text' placeholder='Родное название' name='native_name' />";
+            }
+
+                GeodbReqMsgTxt += "<br/><br/><b>Страна</b><br/><input type='text' name='country-input' placeholder='Начните вводить название' id='geodb-country' onInput='onChangeAddItemCountryInput(`" + type + "`)' n:attr='value => ($user->getCountry()->getNativeName() ?? NULL)'/>";
+                GeodbReqMsgTxt += "<div id='geodb-countries-list-td'></div><center id='geodb-countries-not-found' style='display: none;'>Ничего не найдено</center>\
+                                <select style='display: none;' id='geodb-countries-list' name='country' value='1' onchange='onCountryChange(this)'>\
+                                    {if $user->getCountry()}\
+                                        <option selected value='" + {$user->getCountry(true)['id']} + "'>" + {$user->getCountry(true)['native_name']} + "\
+                                            (" + {$user->getCountry(true)['name']} + ")\
+                                        </option>\
+                                    {/if}\
+                                </select>";
+
+                GeodbReqMsgTxt += "<div style='display: none;' id='geodb-city-div'><br/><br/><b>Город</b><br/><input type='text' name='city' placeholder='Начните вводить название' id='geodb-city' onInput='onChangeAddItemCityInput(null, true)' n:attr='value => ($user->getCity()->getNativeName() ?? NULL)'/>";
+                GeodbReqMsgTxt += "<div id='geodb-cities-list-td'></div><center id='geodb-cities-not-found' style='display: none;'>Ничего не найдено</center>\
+                                <select style='display: none;' id='geodb-cities-list' name='city-id' value='1' onchange='getUniversities(null, true); getFaculties();'>\
+                                    {if $user->getCity()}\
+                                        <option value='" + {$user->getCity(true)['id']} + "'>" + {$user->getCity(true)['native_name']} + "\
+                                            (" + {$user->getCity(true)['name']} + ")\
+                                        </option>\
+                                    {/if}\
+                                </select></div>";
+
+                if (type === 'faculties' || type === "specializations") {
+                    if ($("#geodb-universities-list").val()) {
+                        getUniversities();
+                    }
+                    GeodbReqMsgTxt += "<div id='geodb-universities-list-td' style='display: none;'><br/><br/><b>Университет</b><br/>";
+                    GeodbReqMsgTxt += "<center id='geodb-universities-not-found' style='display: none;'>Ничего не найдено</center>\
+                                    <select id='geodb-universities-list' onchange='getFaculties();' name='university-id' value='1'>\
+                                        {if $user->getUniversity()}\
+                                            <option value='" + {$user->getUniversity()->getId()} + "'>" + {$user->getUniversity()->getName()} + "\
+                                                (" + {$user->getUniversity()->getName()} + ")\
+                                            </option>\
+                                        {/if}\
+                                    </select></div>";
+                }
+
+                if (type === "specializations") {
+                    if ($("#geodb-universities-list").val()) {
+                        getUniversities();
+                    }
+                    GeodbReqMsgTxt += "<div id='geodb-faculties-list-td' style='display: none;'><br/><br/><b>Факультет</b><br/>";
+                    GeodbReqMsgTxt += "<center id='geodb-faculties-not-found' style='display: none;'>Ничего не найдено</center>\
+                                    <select id='geodb-faculties-list' name='faculty-id' value='1'>\
+                                        {if $user->getUniversityFaculty()}\
+                                            <option value='" + {$user->getUniversityFaculty()->getId()} + "'>" + {$user->getUniversityFaculty()->getName()} + "\
+                                                (" + {$user->getUniversityFaculty()->getName()} + ")\
+                                            </option>\
+                                        {/if}\
+                                    </select></div>";
+                }
+
+
+            MessageBox("Добавить", GeodbReqMsgTxt, ["Подтвердить", "Отмена"], [
+                (function () {
+                    $.ajax({
+                        type: "POST",
+                        url: "/geodb?act=new_request&tab=" + type,
+                        data: {
+                            country: $("#geodb-countries-list").val() ?? {$user->getCountry(true)["id"]},
+                            city: $("#geodb-cities-list").val(),
+                            name: $("#geodb-name").val(),
+                            native_name: $("#geodb-native_name").val(),
+                            uid: $("#geodb-universities-list").val(),
+                            fid: $("#geodb-faculties-list").val(),
+                            hash: {=$csrfToken}
+                        },
+                        success: (response) => {
+                            if (response.success) {
+                                NewNotification("Успех", "Запрос отправлен. Вы получите оповещение при изменении статуса.", "/assets/packages/static/openvk/img/oxygen-icons/64x64/actions/dialog-ok.png");
+                            } else {
+                                NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
+                            }
+                        }
+                    });
+                }),
+                Function.noop
+            ])
+        }
+    </script>
+{/block}
