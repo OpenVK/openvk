@@ -344,6 +344,57 @@ function supportFastAnswerDialogOnClick(answer) {
     answerInput.focus();
 }
 
+function getTemplatesDirs(tid) {
+    $.ajax("/al_helpdesk/get_templates_dirs").done((response) => {
+        console.log(response, response.success);
+
+        if (response.success) {
+            const dirsHtml = response.dirs.length > 0 ? response.dirs.map((dir) => `
+                <li style="cursor: pointer;" onclick="getTemplatesInDir(${dir.id}, ${tid})">
+                    <h4 style="padding: 8px;">${dir.title}</h4>
+                </li>
+            `).join("") : `<center>${tr("no_data_description")}</center>`;
+
+            const managementLink = `<a href="/support/templates" target="_blank" class="button">${tr("edit")}</a>`;
+            if (document.getElementsByClassName('ovk-diag-body').length === 0) {
+                MessageBox(tr("fast_answers"), `${managementLink}<ul style="padding-inline-start: 8px; overflow-y: auto; max-height: 70vh;">${dirsHtml}</ul>`, [tr("close")], [
+                    Function.noop
+                ]);
+            } else {
+                document.getElementsByClassName('ovk-diag-body')[0].innerHTML = `${managementLink}<ul style="padding-inline-start: 8px; overflow-y: auto; max-height: 70vh;">${dirsHtml}</ul>`;
+            }
+        }
+    });
+}
+
+function getTemplatesInDir(dir, ticket) {
+    $.ajax(`/al_helpdesk/td${dir}/templates?tid=${ticket}`).done((response) => {
+        console.log(response, response.success);
+
+        if (response.success) {
+            let html = "";
+
+            response.templates.forEach((template) => {
+                html += '\
+                    <li onclick="toggleTemplateTextShow(' + template.id + ')" style="cursor: pointer;" onclick="toggleTemplateTextShow(' + template.id + ')">\
+                        <h4 style="padding: 8px;">' + template.title + '</h4>\
+                        <div id="template-text-' + template.id +'" style="color: #000; white-space: pre-wrap; display: none;">\
+' + template.text + '\
+                            <br/><br/><button class="button" onclick="document.getElementById(`answer_text`).value=`' + template.text.replaceAll("\"", "&quot;") + '`">' + tr("support_apply_template") + '</button>\
+                        </div>\
+                    </li>';
+            });
+
+            const templatesListHtml = response.templates.length > 0
+                ? `<a href="javascript:getTemplatesDirs(${ticket}, false)">< ${tr("paginator_back")}</a><ul style="padding-inline-start: 8px; overflow-y: auto; max-height: 70vh;">${html}</ul>`
+                : `<center>${tr("no_data_description")}</center>`;
+
+            document.getElementsByClassName("ovk-diag-body")[0].innerHTML = templatesListHtml;
+        }
+    });
+}
+
+
 function ovk_proc_strtr(string, length = 0) {
     const newString = string.substring(0, length);
     return newString + (string !== newString ? "…" : "");
