@@ -39,11 +39,14 @@ class User extends RowModel
         $query  = "SELECT id FROM\n" . file_get_contents(__DIR__ . "/../sql/$filename.tsql");
         $query .= "\n LIMIT " . $limit . " OFFSET " . ( ($page - 1) * $limit );
         
+        $ids = [];
         $rels = DatabaseConnection::i()->getConnection()->query($query, $id, $id);
         foreach($rels as $rel) {
             $rel = (new Users)->get($rel->id);
             if(!$rel) continue;
-            
+            if(in_array($rel->getId(), $ids)) continue;
+            $ids[] = $rel->getId();
+
             yield $rel;
         }
     }
