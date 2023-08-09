@@ -49,4 +49,3 @@ services:
     - openvk\Web\Models\Repositories\BannedLinks
     - openvk\Web\Models\Repositories\ChandlerGroups
     - openvk\Web\Presenters\MaintenancePresenter
-    - openvk\Web\Models\Repositories\Logs
