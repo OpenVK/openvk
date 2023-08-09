@@ -23,8 +23,13 @@ final class CommentPresenter extends OpenVKPresenter
         $comment = (new Comments)->get($id);
         if(!$comment || $comment->isDeleted()) $this->notFound();
 
-        if (!($comment->getTarget() instanceof Post && $comment->getTarget()->getOwner() instanceof User && $comment->getTarget()->getOwner()->isServiceAccount()))
+        if (!($comment->getTarget() instanceof Post && $comment->getTarget()->getOwner() instanceof User && ($comment->getTarget()->getOwner()->isServiceAccount()))
             if(!is_null($this->user)) $comment->toggleLike($this->user->identity);
+
+        if ($comment->getTarget() instanceof Post && $comment->getTarget()->getWallOwner()->isBanned())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        
+        if(!is_null($this->user)) $comment->toggleLike($this->user->identity);
         
         $this->redirect($_SERVER["HTTP_REFERER"]);
     }
@@ -49,7 +54,7 @@ final class CommentPresenter extends OpenVKPresenter
         else if($entity instanceof Topic)
             $club = $entity->getClub();
 
-        if ($entity instanceof Post && $entity->getOwner()->isServiceAccount())
+        if ($entity instanceof Post && ($entity->getOwner()->isServiceAccount() || $entity->getWallOwner()->isBanned()))
             $this->flashFail("err", tr("error"), tr("forbidden"));
 
         if($_FILES["_vid_attachment"] && OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading'])
@@ -134,7 +139,9 @@ final class CommentPresenter extends OpenVKPresenter
         if(!$comment) $this->notFound();
         if(!$comment->canBeDeletedBy($this->user->identity) || ($comment->getTarget() instanceof Post && $comment->getTarget()->getOwner() instanceof User && $comment->getTarget()->getOwner()->isServiceAccount()))
             $this->throwError(403, "Forbidden", "У вас недостаточно прав чтобы редактировать этот ресурс.");
-        
+        if ($comment->getTarget() instanceof Post && $comment->getTarget()->getWallOwner()->isBanned())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+
         $comment->delete();
         $this->flashFail(
             "succ",

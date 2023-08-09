@@ -24,10 +24,14 @@ final class GroupPresenter extends OpenVKPresenter
         if(!$club) {
             $this->notFound();
         } else {
-            $this->template->albums      = (new Albums)->getClubAlbums($club, 1, 3);
-            $this->template->albumsCount = (new Albums)->getClubAlbumsCount($club);
-            $this->template->topics      = (new Topics)->getLastTopics($club, 3);
-            $this->template->topicsCount = (new Topics)->getClubTopicsCount($club);
+            if ($club->isBanned()) {
+                $this->template->_template = "Group/Banned.xml";
+            } else {
+                $this->template->albums = (new Albums)->getClubAlbums($club, 1, 3);
+                $this->template->albumsCount = (new Albums)->getClubAlbumsCount($club);
+                $this->template->topics = (new Topics)->getLastTopics($club, 3);
+                $this->template->topicsCount = (new Topics)->getClubTopicsCount($club);
+            }
 
             $this->template->club = $club;
         }
@@ -39,7 +43,7 @@ final class GroupPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
-            if(!empty($this->postParam("name")))
+            if(!empty($this->postParam("name")) && mb_strlen(trim($this->postParam("name"))) > 0)
             {
                 $club = new Club;
                 $club->setName($this->postParam("name"));
@@ -72,6 +76,7 @@ final class GroupPresenter extends OpenVKPresenter
         
         $club = $this->clubs->get((int) $this->postParam("id"));
         if(!$club) exit("Invalid state");
+        if ($club->isBanned()) $this->flashFail("err", tr("error"), tr("forbidden"));
         
         $club->toggleSubscription($this->user->identity);
         
@@ -83,6 +88,8 @@ final class GroupPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $this->template->club              = $this->clubs->get($id);
+        if ($this->template->club->isBanned()) $this->flashFail("err", tr("error"), tr("forbidden"));
+
         $this->template->onlyShowManagers  = $this->queryParam("onlyAdmins") == "1";
         if($this->template->onlyShowManagers) {
             $this->template->followers     = NULL;
@@ -118,6 +125,8 @@ final class GroupPresenter extends OpenVKPresenter
             $this->badRequest();
         
         $club = $this->clubs->get($id);
+        if ($club->isBanned()) $this->flashFail("err", tr("error"), tr("forbidden"));
+
         $user = (new Users)->get((int) $user);
         if(!$user || !$club)
             $this->notFound();
@@ -194,6 +203,8 @@ final class GroupPresenter extends OpenVKPresenter
         $club = $this->clubs->get($id);
         if(!$club || !$club->canBeModifiedBy($this->user->identity))
             $this->notFound();
+        else if ($club->isBanned())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
         else
             $this->template->club = $club;
             
@@ -201,7 +212,7 @@ final class GroupPresenter extends OpenVKPresenter
 	    if(!$club->setShortcode( empty($this->postParam("shortcode")) ? NULL : $this->postParam("shortcode") ))
                 $this->flashFail("err", tr("error"), tr("error_shorturl_incorrect"));
             
-            $club->setName(empty($this->postParam("name")) ? $club->getName() : $this->postParam("name"));
+            $club->setName((empty($this->postParam("name")) || mb_strlen(trim($this->postParam("name"))) === 0) ? $club->getName() : $this->postParam("name"));
             $club->setAbout(empty($this->postParam("about")) ? NULL : $this->postParam("about"));
 	    $club->setWall(empty($this->postParam("wall")) ? 0 : 1);
             $club->setAdministrators_List_Display(empty($this->postParam("administrators_list_display")) ? 0 : $this->postParam("administrators_list_display"));
@@ -255,6 +266,7 @@ final class GroupPresenter extends OpenVKPresenter
     {
         $photo = new Photo;
         $club = $this->clubs->get($id);
+        if ($club->isBanned()) $this->flashFail("err", tr("error"), tr("forbidden"));
         if($_SERVER["REQUEST_METHOD"] === "POST" && $_FILES["ava"]["error"] === UPLOAD_ERR_OK) {
             try {
                 $anon = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"];
@@ -343,6 +355,8 @@ final class GroupPresenter extends OpenVKPresenter
         $club = $this->clubs->get($id);
         if(!$club->canBeModifiedBy($this->user->identity))
             $this->notFound();
+        else if ($club->isBanned())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
         else
             $this->template->club = $club;
         
@@ -375,6 +389,7 @@ final class GroupPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("incorrect_password"));
 
         $club = $this->clubs->get($id);
+        if ($club->isBanned()) $this->flashFail("err", tr("error"), tr("forbidden"));
         $newOwner = (new Users)->get($newOwnerId);
         if($this->user->id !== $club->getOwner()->getId())
             $this->flashFail("err", tr("error"), tr("forbidden"));
