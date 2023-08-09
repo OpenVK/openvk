@@ -4,7 +4,7 @@ use openvk\Web\Util\DateTime;
 use Nette\Database\Table\ActiveRow;
 use openvk\Web\Models\RowModel;
 use Chandler\Database\DatabaseConnection;
-use openvk\Web\Models\Repositories\{Applications, Comments, Notes, Users, Posts, Photos, Videos, Clubs};
+use openvk\Web\Models\Repositories\{Applications, Comments, Notes, Reports, Users, Posts, Photos, Videos, Clubs};
 use Chandler\Database\DatabaseConnection as DB;
 use Nette\InvalidStateException as ISE;
 use Nette\Database\Table\Selection;
@@ -81,6 +81,11 @@ class Report extends RowModel
         return (new Posts)->get($this->getContentId())->getOwner();
     }
 
+    function getReportAuthor(): User
+    {
+        return (new Users)->get($this->getRecord()->user_id);
+    }
+
     function banUser($initiator)
     {
         $reason = $this->getContentType() !== "user" ? ("**content-" . $this->getContentType() . "-" . $this->getContentId() . "**") : ("Подозрительная активность");
@@ -95,6 +100,42 @@ class Report extends RowModel
             $this->getAuthor()->adminNotify("Ваш контент, который вы опубликовали $pubTime ($name) был удалён модераторами инстанса. За повторные или серьёзные нарушения вас могут заблокировать.");
             $this->getContentObject()->delete($this->getContentType() !== "app");
         }
+
+        $this->delete();
+    }
+
+    function getDuplicates(): \Traversable
+    {
+        return (new Reports)->getDuplicates($this->getContentType(), $this->getContentId(), $this->getId());
+    }
+
+    function getDuplicatesCount(): int
+    {
+        return count(iterator_to_array($this->getDuplicates()));
+    }
+
+    function hasDuplicates(): bool
+    {
+        return $this->getDuplicatesCount() > 0;
+    }
+
+    function getContentName(): string
+    {
+        if (method_exists($this->getContentObject(), "getCanonicalName"))
+            return $this->getContentObject()->getCanonicalName();
+
+        return $this->getContentType() . " #" . $this->getContentId();
+    }
+
+    public function delete(bool $softly = true): void
+    {
+        if ($this->hasDuplicates()) {
+            foreach ($this->getDuplicates() as $duplicate) {
+                $duplicate->setDeleted(1);
+                $duplicate->save();
+            }
+        }
+
         $this->setDeleted(1);
         $this->save();
     }

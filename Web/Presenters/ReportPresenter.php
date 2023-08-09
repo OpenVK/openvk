@@ -20,15 +20,52 @@ final class ReportPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
         $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
+        if ($_SERVER["REQUEST_METHOD"] === "POST")
+            $this->assertNoCSRF();
 
-        $this->template->reports = $this->reports->getReports(0, (int)($this->queryParam("p") ?? 1));
-        $this->template->count = $this->reports->getReportsCount();
+        $act = in_array($this->queryParam("act"), ["post", "photo", "video", "group", "comment", "note", "app", "user"]) ? $this->queryParam("act") : NULL;
+
+        if (!$this->queryParam("orig")) {
+            $this->template->reports = $this->reports->getReports(0, (int)($this->queryParam("p") ?? 1), $act, $_SERVER["REQUEST_METHOD"] !== "POST");
+            $this->template->count = $this->reports->getReportsCount();
+        } else {
+            $orig = $this->reports->get((int) $this->queryParam("orig"));
+            if (!$orig) $this->redirect("/scumfeed");
+
+            $this->template->reports = $orig->getDuplicates();
+            $this->template->count = $orig->getDuplicatesCount();
+            $this->template->orig = $orig->getId();
+        }
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
             "page"    => $this->queryParam("p") ?? 1,
             "amount"  => NULL,
             "perPage" => 15,
         ];
+        $this->template->mode = $act ?? "all";
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $reports = [];
+            foreach ($this->reports->getReports(0, 0, $act, false) as $report) {
+                $reports[] = [
+                    "id" => $report->getId(),
+                    "author" => [
+                        "id" => $report->getReportAuthor()->getId(),
+                        "url" => $report->getReportAuthor()->getURL(),
+                        "name" => $report->getReportAuthor()->getCanonicalName(),
+                        "is_female" => $report->getReportAuthor()->isFemale()
+                    ],
+                    "content" => [
+                        "name" => $report->getContentName(),
+                        "type" => $report->getContentType(),
+                        "id" => $report->getContentId(),
+                        "url" => $report->getContentType() === "user" ? (new Users)->get((int) $report->getContentId())->getURL() : NULL
+                    ],
+                    "duplicates" => $report->getDuplicatesCount(),
+                ];
+            }
+            $this->returnJson(["reports" => $reports]);
+        }
     }
     
     function renderView(int $id): void
@@ -52,13 +89,15 @@ final class ReportPresenter extends OpenVKPresenter
             exit(json_encode([ "error" => tr("error_segmentation") ]));
 
         if(in_array($this->queryParam("type"), ["post", "photo", "video", "group", "comment", "note", "app", "user"])) {
-            $report = new Report;
-            $report->setUser_id($this->user->id);
-            $report->setTarget_id($id);
-            $report->setType($this->queryParam("type"));
-            $report->setReason($this->queryParam("reason"));
-            $report->setCreated(time());
-            $report->save();
+            if (count(iterator_to_array($this->reports->getDuplicates($this->queryParam("type"), $id, NULL, $this->user->id))) <= 0) {
+                $report = new Report;
+                $report->setUser_id($this->user->id);
+                $report->setTarget_id($id);
+                $report->setType($this->queryParam("type"));
+                $report->setReason($this->queryParam("reason"));
+                $report->setCreated(time());
+                $report->save();
+            }
             
             exit(json_encode([ "reason" => $this->queryParam("reason") ]));
         } else {

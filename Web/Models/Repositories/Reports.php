@@ -20,15 +20,22 @@ class Reports
         return is_null($ar) ? NULL : new Report($ar);
     }
     
-    function getReports(int $state = 0, int $page = 1): \Traversable
+    function getReports(int $state = 0, int $page = 1, ?string $type = NULL, ?bool $pagination = true): \Traversable
     {
-        foreach($this->reports->where(["deleted" => 0])->order("created DESC")->page($page, 15) as $t)
+        $filter = ["deleted" => 0];
+        if ($type) $filter["type"] = $type;
+
+        $reports = $this->reports->where($filter)->order("created DESC")->group("target_id, type");
+        if ($pagination)
+            $reports = $reports->page($page, 15);
+
+        foreach($reports as $t)
             yield new Report($t);
     }
     
     function getReportsCount(int $state = 0): int
     {
-        return sizeof($this->reports->where(["deleted" => 0, "type" => $state]));
+        return sizeof($this->reports->where(["deleted" => 0, "type" => $state])->group("target_id, type"));
     }
     
     function get(int $id): ?Report
@@ -45,6 +52,16 @@ class Reports
         else
             return null; 
     }
-   
+
+    function getDuplicates(string $type, int $target_id, ?int $orig = NULL, ?int $user_id = NULL): \Traversable
+    {
+        $filter = ["deleted" => 0, "type" => $type, "target_id" => $target_id];
+        if ($orig) $filter[] = "id != $orig";
+        if ($user_id) $filter["user_id"] = $user_id;
+
+        foreach ($this->reports->where($filter) as $report)
+            yield new Report($report);
+    }
+
     use \Nette\SmartObject;
 }

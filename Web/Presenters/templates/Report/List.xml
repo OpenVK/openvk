@@ -1,8 +1,12 @@
 {extends "../@listView.xml"}
 {var iterator = iterator_to_array($reports)}
 {var page     = $paginatorConf->page}
+{var table_body_id = "reports"}
 
 {block tabs}{include "../NoSpam/Tabs.xml", mode => "reports"}{/block}
+{block before_content}
+    {include "./Tabs.xml", mode => $mode}
+{/block}
 
 {block title}{_list_of_reports}{/block}
 
@@ -12,6 +16,12 @@
 
 {block actions}
     
+{/block}
+
+{block top}
+    {if !is_null($orig)}
+        <h4>Дубликаты жалобы №{$orig}</h4>
+    {/if}
 {/block}
 
 {* BEGIN ELEMENTS DESCRIPTION *}
@@ -25,25 +35,26 @@
 {/block}
 
 {block name}
-    {$x->getAuthor()->getCanonicalName()}
+    Жалоба №{$x->getId()}
 {/block}
 
 {block description}
-    {if $x->getContentType() == "post"}
-        {_text_of_the_post}: {$x->getContentObject()->getText()}
-    {elseif $x->getContentType() == "photo"}
-        {_photo}
-    {elseif $x->getContentType() == "video"}
-        {_video}
-    {elseif $x->getContentType() == "group"}
-        {_groups}
-    {elseif $x->getContentType() == "comment"}
-        {_comment}
-    {elseif $x->getContentType() == "app"}
-        {_app}
-    {elseif $x->getContentType() == "user"}
-        {_users}
-    {else}
-        Unknown
+    <a href="{$x->getReportAuthor()->getURL()}">
+        {$x->getReportAuthor()->getCanonicalName()}
+    </a>
+    пожаловал{!$x->getReportAuthor()->isFemale() ? 'ся' : 'ась'} на
+        {if $x->getContentType() === "user"}<a href="{$x->getContentObject()->getURL()}">{/if}
+            {$x->getContentName()}
+        {if $x->getContentType() === "user"}</a>{/if}
+
+    {if $x->hasDuplicates() && !$orig}
+    <br />
+    <b>Другие жалобы на этот контент: <a href="/scumfeed?orig={$x->getId()}">{$x->getDuplicatesCount()} шт.</a></b>
     {/if}
+{/block}
+
+{block bottom}
+    <center id="reports-loader" style="display: none; padding: 64px;">
+        <img src="/assets/packages/static/openvk/img/loading_mini.gif" style="width: 40px;">
+    </center>
 {/block}
