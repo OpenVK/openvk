@@ -8,9 +8,16 @@
 {block content}
     <div class="post-author">
         <a href="#" style="font-size: 13px;"><b>{$ticket->getName()}</b></a><br />
-        {_author}: <a href="/id{$ticket->getUser()->getId()}">{$ticket->getUser()->getFullName()}</a> | {$ticket->getUser()->getRegistrationIP()} | {_status}: {$ticket->getStatus()}.
+        {$ticket->isFromSupport() ? tr("user") : tr("author")}: <a href="/id{$ticket->getUser()->getId()}">{$ticket->getUser()->getFullName()}</a>
+        {if $ticket->isFromSupport()}
+            | {_author}:
+            <a href="{$ticket->getSupportSender()->getUser()->getURL()}">
+                {$ticket->getSupportSender()->getUser()->getCanonicalName()}
+            </a>
+        {/if}
+        | {$ticket->getUser()->getRegistrationIP()} | {_status}: {$ticket->getStatus()}.
     </div>
-    <div class="text" style="padding-top: 10px; border-bottom: #ECECEC solid 1px;">
+    <div class="text" style="padding-top: 10px; border-bottom: #ECECEC solid 1px;" n:if="!$ticket->isFromSupport()">
         {$ticket->getText()|noescape}
         <br /><br />
     </div>

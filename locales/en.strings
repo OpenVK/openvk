@@ -915,6 +915,8 @@
 "banned_in_support_1" = "Sorry, <b>$1</b>, but now you can't create tickets.";
 "banned_in_support_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to take away this opportunity from you forever.";
 
+"user" = "User";
+
 /* Invite */
 
 "invite" = "Invite";

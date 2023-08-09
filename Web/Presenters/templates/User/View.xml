@@ -128,6 +128,9 @@
                             {_ban_in_support_user_action}
                         {/if}
                     </a>
+                    <a href="javascript:newSupportTicketToUser()" class="profile_link" style="width: 194px;">
+                        Вопрос от Поддержки
+                    </a>
                 {/if}
                 
                 <a style="width: 194px;" n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() == 0" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
@@ -688,6 +691,40 @@
                     ]);
                 }
             {/if}
+
+            function newSupportTicketToUser() {
+                uTicketMsgTxt = "Вы собираетесь связаться с пользователем <b>" + {$user->getCanonicalName()} + "</b> от имени Поддержки. Он получит об этом оповещение от имени служебного аккаунта.";
+                uTicketMsgTxt += "<br/><br/><b>Название</b>: <input type='text' id='uTicketTitle' placeholder='В начале будет добавлено \"[Вопрос от Поддержки]\"' />";
+                uTicketMsgTxt += "<br/><br/><b>Текст</b>: <textarea type='text' id='uTicketText' placeholder='Текст без приветствия и завершения' style='resize: vertical; height: 185px;'></textarea>";
+
+                MessageBox("Отправить вопрос", uTicketMsgTxt, ["Отправить", "Отмена"], [
+                    (function () {
+                        title = $("#uTicketTitle").val();
+                        text = $("#uTicketText").val()
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/al_helpdesk/sendTicket",
+                            data: {
+                                uid: {$user->getId()},
+                                title: title,
+                                text: text,
+                                hash: {=$csrfToken}
+                            },
+                            success: (response) => {
+                                if (response.success) {
+                                    MessageBox("Успех", "Пользователь получил вопрос и оповещения<br/><br/><a href='/support/reply/" + response.payload + "' target='_blank'>Перейти к вопросу</a>", ["OK"], [Function.noop]);
+                                } else {
+                                    MessageBox("Ошибка", "При отправке запроса произошла ошибка: " + (response?.error ?? "Неизвестная ошибка"), ["OK"], [Function.noop]);
+                                }
+                            }
+                        })
+                    }),
+                    Function.noop
+                ])
+
+                $(".ovk-diag-cont").width("650px");
+            }
         </script>
 
         <script n:if="isset($thisUser) && $user->getId() == $thisUser->getId()" n:syntax="off">

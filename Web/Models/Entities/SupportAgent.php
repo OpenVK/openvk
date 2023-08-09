@@ -32,8 +32,13 @@ class SupportAgent extends RowModel
         return $this->getRecord()->numerate;
     }
 
+    function getUser(): User
+    {
+        return (new Users)->get((int) $this->getAgentId());
+    }
+
     function getRealName(): string
     {
-        return (new Users)->get($this->getAgentId())->getCanonicalName();
+        return $this->getUser()->getCanonicalName();
     }
 }
