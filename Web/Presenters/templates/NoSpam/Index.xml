@@ -58,7 +58,7 @@
                             <span class="nobold">Пользователь:</span>
                         </td>
                         <td>
-                            <input type="text" name="user" placeholder="ID" id="user">
+                            <input type="text" name="user" placeholder="Ссылка на страницу" id="user">
                         </td>
                     </tr>
                     <tr style="width: 129px">

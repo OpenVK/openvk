@@ -3,7 +3,7 @@ namespace openvk\Web\Presenters;
 use Chandler\Database\Log;
 use Chandler\Database\Logs;
 use openvk\Web\Models\Entities\{Voucher, Gift, GiftCategory, User, BannedLink};
-use openvk\Web\Models\Repositories\{Bans, ChandlerGroups, ChandlerUsers, Photos, Posts, Users, Clubs, Videos, Vouchers, Gifts, BannedLinks, Logs};
+use openvk\Web\Models\Repositories\{Bans, ChandlerGroups, ChandlerUsers, Photos, Posts, Users, Clubs, Videos, Vouchers, Gifts, BannedLinks};
 use Chandler\Database\DatabaseConnection;
 
 final class AdminPresenter extends OpenVKPresenter
