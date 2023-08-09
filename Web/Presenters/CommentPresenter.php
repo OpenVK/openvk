@@ -22,6 +22,9 @@ final class CommentPresenter extends OpenVKPresenter
         
         $comment = (new Comments)->get($id);
         if(!$comment || $comment->isDeleted()) $this->notFound();
+
+        if ($comment->getTarget() instanceof Post && $comment->getTarget()->getWallOwner()->isBanned())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
         
         if(!is_null($this->user)) $comment->toggleLike($this->user->identity);
         
@@ -47,6 +50,9 @@ final class CommentPresenter extends OpenVKPresenter
             $club = (new Clubs)->get(abs($entity->getTargetWall()));
         else if($entity instanceof Topic)
             $club = $entity->getClub();
+
+        if ($entity instanceof Post && $entity->getWallOwner()->isBanned())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
 
         if($_FILES["_vid_attachment"] && OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading'])
             $this->flashFail("err", tr("error"), "Video uploads are disabled by the system administrator.");
@@ -130,7 +136,9 @@ final class CommentPresenter extends OpenVKPresenter
         if(!$comment) $this->notFound();
         if(!$comment->canBeDeletedBy($this->user->identity))
             $this->throwError(403, "Forbidden", "У вас недостаточно прав чтобы редактировать этот ресурс.");
-        
+        if ($comment->getTarget() instanceof Post && $comment->getTarget()->getWallOwner()->isBanned())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+
         $comment->delete();
         $this->flashFail(
             "succ",

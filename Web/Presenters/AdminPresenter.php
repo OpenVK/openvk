@@ -128,7 +128,8 @@ final class AdminPresenter extends OpenVKPresenter
                 $club->save();
                 break;
             case "ban":
-                $club->setBlock_reason($this->postParam("ban_reason"));
+                $reason = mb_strlen(trim($this->postParam("ban_reason"))) > 0 ? $this->postParam("ban_reason") : NULL;
+                $club->setBlock_reason($reason);
                 $club->save();
                 break;
         }

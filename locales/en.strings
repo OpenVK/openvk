@@ -389,6 +389,8 @@
 "error_suggestions_open" = "This group has open wall.";
 "error_suggestions_access" = "Only group's administrators can view all suggested posts.";
 
+"group_banned" = "Unfortunately, we had to block the <b>$1</b> group.";
+
 /* Albums */
 
 "create" = "Create";

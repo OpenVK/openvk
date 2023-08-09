@@ -84,7 +84,7 @@ abstract class Postable extends Attachable
         return sizeof(DB::i()->getContext()->table("likes")->where([
             "model"  => static::class,
             "target" => $this->getRecord()->id,
-        ]));
+        ])->group("origin"));
     }
     
     # TODO add pagination
