@@ -77,7 +77,7 @@
                     {/foreach}
                 </td>
                 <td>
-                    {$change["ts"]}
+                    {=new openvk\Web\Util\DateTime($change["ts"])}
                 </td>
             </tr>
         </tbody>
