@@ -915,6 +915,13 @@
 "banned_in_support_1" = "Sorry, <b>$1</b>, but now you can't create tickets.";
 "banned_in_support_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to take away this opportunity from you forever.";
 
+"you_can_close_this_ticket_1" = "If you have no more questions, you can ";
+"you_can_close_this_ticket_2" = "close this ticket";
+"agent_profile_created_1" = "Profile created";
+"agent_profile_created_2" = "Now users see your customized name and avatar instead of the default ones.";
+"agent_profile_edited" = "Profile edited";
+"agent_profile" = "My Agent Card";
+
 /* Invite */
 
 "invite" = "Invite";
