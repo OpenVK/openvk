@@ -308,9 +308,22 @@ $(document).on("click", "#publish_post", async (e) => {
 
         NewNotification(tr("suggestion_succefully_published"), tr("suggestion_press_to_go"), null, () => {window.location.assign("/wall" + post.id)});
         document.getElementById("cound").innerHTML = tr("suggested_posts_in_group", post.new_count)
-        e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
+
+        if(document.querySelector("object a[href='"+location.pathname+"'] b") != null) {
+            document.querySelector("object a[href='"+location.pathname+"'] b").innerHTML = post.new_count
+
+            if(post.new_count < 1) {
+                u("object a[href='"+location.pathname+"']").remove()
+            }
+        }
+
+        if(e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.tagName == "TABLE") {
+            e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
+        } else {
+            e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
+        }
     
-        if(document.querySelectorAll(".post.post-divider").length < 1 && post.new_count > 0) {
+        if(document.querySelectorAll(".post").length < 1 && post.new_count > 0) {
             loadMoreSuggestedPosts()
         }
     }), Function.noop]);
@@ -351,15 +364,27 @@ $(document).on("click", "#decline_post", async (e) => {
         e.currentTarget.setAttribute("id", "decline_post")
         e.currentTarget.classList.remove("loaded")
         return 0;
-    } finally {
-        u("#deleteMe").remove()
     }
     
-    NewNotification(tr("suggestion_succefully_declined"), "", null);
-    e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
+    //NewNotification(tr("suggestion_succefully_declined"), "", null);
+
+    if(e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.tagName == "TABLE") {
+        e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
+    } else {
+        e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
+    }
+
     document.getElementById("cound").innerHTML = tr("suggested_posts_in_group", post)
 
-    if(document.querySelectorAll(".post.post-divider").length < 1 && post > 0) {
+    if(document.querySelector("object a[href='"+location.pathname+"'] b") != null) {
+        document.querySelector("object a[href='"+location.pathname+"'] b").innerHTML = post
+
+        if(post < 1) {
+            u("object a[href='"+location.pathname+"']").remove()
+        }
+    }
+
+    if(document.querySelectorAll(".post").length < 1 && post > 0) {
         loadMoreSuggestedPosts()
     }
 })
@@ -376,6 +401,20 @@ function loadMoreSuggestedPosts()
     xhr.onload = () => {
         let parser = new DOMParser()
         let body   = parser.parseFromString(xhr.responseText, "text/html").getElementById("postz")
+
+        if(body.querySelectorAll(".post").length < 1) {
+            let url = new URL(location.href)
+            url.searchParams.set("p", url.searchParams.get("p") - 1)
+
+            if(url.searchParams.get("p") < 1) {
+                return 0;
+            }
+
+            // OVK AJAX ROUTING ??????????
+            history.pushState({}, "", url)
+
+            loadMoreSuggestedPosts()
+        }
 
         document.getElementById("postz").innerHTML = body.innerHTML
     }

@@ -472,7 +472,9 @@ final class Wall extends VKAPIRequestHandler
                 $post->setContent($message);
 
             $post->save();
-            (new PostAcceptedNotification($author, $post, $post->getWallOwner()))->emit();
+
+            if($author->getId() != $this->getUser()->getId())
+                (new PostAcceptedNotification($author, $post, $post->getWallOwner()))->emit();
 
             return (object)["post_id" => $post->getVirtualId()];
         }
