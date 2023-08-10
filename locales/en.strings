@@ -1201,6 +1201,15 @@
 "admin_banned_link_not_specified" = "The link is not specified";
 "admin_banned_link_not_found" = "Link not found";
 
+"logs_adding" = "Creation";
+"logs_editing" = "Editing";
+"logs_removing" = "Deletion";
+"logs_restoring" = "Restoring";
+"logs_added" = "created";
+"logs_edited" = "edited";
+"logs_removed" = "removed";
+"logs_restored" = "restored";
+
 /* Paginator (deprecated) */
 
 "paginator_back" = "Back";
