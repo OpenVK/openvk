@@ -347,11 +347,18 @@ final class NoSpamPresenter extends OpenVKPresenter
                     }
 
                     if (in_array((int)$this->postParam("ban"), [2, 3])) {
+                        $reason = mb_strlen(trim($this->postParam("ban_reason"))) > 0 ? $this->postParam("ban_reason") : ("**content-noSpamTemplate-" . $log->getId() . "**");
+                        $is_forever = (string) $this->postParam("is_forever") === "true";
+                        $unban_time = $is_forever ? 0 : (int) $this->postParam("unban_time") ?? NULL;
+
                         if ($owner) {
                             $_id = ($owner instanceof Club ? $owner->getId() * -1 : $owner->getId());
                             if (!in_array($_id, $banned_ids)) {
                                 if ($owner instanceof User) {
-                                    $owner->ban("**content-noSpamTemplate-" . $log->getId() . "**", false, time() + $owner->getNewBanTime(), $this->user->id);
+                                    if (!$unban_time && !$is_forever)
+                                        $unban_time = time() + $owner->getNewBanTime();
+
+                                    $owner->ban($reason, false, $unban_time, $this->user->id);
                                 } else {
                                     $owner->ban("Подозрительная активность");
                                 }

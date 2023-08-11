@@ -106,11 +106,29 @@
                             <span class="nobold">Параметры блокировки:</span>
                         </td>
                         <td>
-                            <select name="ban_type" id="noSpam-ban-type">
+                            <select name="ban_type" id="noSpam-ban-type" style="width: 140px;">
                                 <option value="1">Только откат</option>
                                 <option value="2">Только блокировка</option>
                                 <option value="3">Откат и блокировка</option>
                             </select>
+                        </td>
+                    </tr>
+                    <tr class="banSettings" style="width: 129px; border-top: 1px solid #ECECEC; display: none;">
+                        <td>
+                            <span class="nobold">Причина:</span>
+                        </td>
+                        <td>
+                            <input type="text" name="ban-reason" id="ban-reason" style="width: 140px;" />
+                        </td>
+                    </tr>
+                    <tr class="banSettings" style="width: 129px; border-top: 1px solid #ECECEC; display: none;">
+                        <td>
+                            <span class="nobold">До:</span>
+                        </td>
+                        <td>
+                            <input type="datetime-local" name="unban-time" id="unban-time" style="width: 140px;" />
+                            <br />
+                            <input type="checkbox" name="is_forever" id="is-forever" /> навсегда
                         </td>
                     </tr>
                 </tbody>
@@ -158,7 +176,6 @@
             $("#noSpam-results-loader").show();
             $("#noSpam-loader").show();
 
-
             let models = [];
             $(".model").each(function (i) {
                 let name = $(this).val();
@@ -178,6 +195,10 @@
             let ts = $("#ts").val() ? Math.floor(new Date($("#ts").val()).getTime() / 1000) : null;
             let te = $("#te").val() ? Math.floor(new Date($("#te").val()).getTime() / 1000) : null;
             let user = $("#user").val();
+            let ban_reason = $("#ban-reason").val();
+            let unban_time = $("#unban-time").val() ? Math.floor(new Date($("#unban-time").val()).getTime() / 1000) : null;
+            let is_forever = $("#is-forever").prop('checked');
+            console.log(ban_reason, unban_time, is_forever);
 
             await $.ajax({
                 type: "POST",
@@ -193,6 +214,9 @@
                     ts: ts,
                     te: te,
                     user: user,
+                    ban_reason: ban_reason,
+                    unban_time: unban_time,
+                    is_forever: is_forever,
                     hash: {=$csrfToken}
                 },
                 success: (response) => {
@@ -276,6 +300,17 @@
         $(".model").change(async (e) => {
             selectChange(e.target.value);
         })
+
+        $("#noSpam-ban-type").change(async (e) => {
+            if (e.target.value > 1) {
+                $(".banSettings").show();
+            } else {
+                $("#ban-reason").val(null);
+                $("#unban-time").val(null);
+                $("#is-forever").prop('checked', false);
+                $(".banSettings").hide();
+            }
+        });
 
         $("#add-model").on("click", () => {
             console.log($(".model").length);
