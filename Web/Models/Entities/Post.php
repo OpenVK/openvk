@@ -245,16 +245,6 @@ class Post extends Postable
         $this->unwire();
         $this->save();
     }
-
-    function getChangeId(): int
-    {
-        return $this->getRecord()->change_id;
-    }
-
-    function getChangeType(): string
-    {
-        return $this->getRecord()->change_type == 2 ? "new" : "old";
-    }
     
     use Traits\TRichText;
 }

@@ -66,7 +66,7 @@
                         <span id="text{$post->getPrettyId()}">{$post->getText()|noescape}</span>
 
                         <div class="edit" id="text_edit{$post->getPrettyId()}" style="display: none;">
-                            {include "../textArea.xml", route => "/wall$owner/makePost/{$post->getVirtualId()}"}
+                            {include "../textArea.xml", route => "/wall$owner/makePost/{$post->getVirtualId()}", value => $post->getText()}
                         </div>
 
                         <div n:ifcontent class="attachments_b">
