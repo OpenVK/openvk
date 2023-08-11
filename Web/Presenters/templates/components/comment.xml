@@ -38,7 +38,7 @@
                             <a class="comment-reply">{_reply}</a>
                             {if $thisUser->getId() != $comment->getOwner()->getId()}
                                 {var $canReport = true}
-                                | <a href="javascript:reportComment()">Пожаловаться</a>
+                                | <a href="javascript:reportComment()">{_report}</a>
                             {/if}
                             <div style="float: right; font-size: .7rem;">
                                 <a class="post-like-button" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}">

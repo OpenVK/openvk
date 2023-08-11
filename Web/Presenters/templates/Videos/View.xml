@@ -19,7 +19,7 @@
         {else}
             {var $driver = $video->getVideoDriver()}
             {if !$driver}
-                Эта видеозапись не поддерживается в вашей версии OpenVK.
+                {_unknown_video}
             {else}
                 {$driver->getEmbed()|noescape}
             {/if}

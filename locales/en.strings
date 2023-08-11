@@ -149,6 +149,10 @@
 
 "user_banned" = "Unfortunately, we had to block the <b>$1</b> user page.";
 "user_banned_comment" = "Moderator's comment:";
+"verified_page" = "Verified page";
+"user_is_blocked" = "User is blocked";
+"before" = "before";
+"forever" = "forever";
 
 /* Wall */
 
@@ -213,6 +217,7 @@
 "graffiti" = "Graffiti";
 
 "reply" = "Reply";
+"post_is_ad" = "This post is sponsored.";
 
 /* Friends */
 
@@ -337,9 +342,14 @@
 
 "create" = "Create";
 "albums" = "Albums";
+"album" = "Album";
+"photos" = "photos";
 "create_album" = "Create album";
 "edit_album" = "Edit album";
+"edit_photo" = "Edit photo";
 "creating_album" = "Creating album";
+"delete_photo" = "Delete photo";
+"sure_deleting_photo" = "Do you really want to delete this picture?";
 "upload_photo" = "Upload photo";
 "photo" = "Photo";
 "upload_button" = "Upload";
@@ -415,6 +425,8 @@
 
 "notes_closed" = "You can't attach note to post, because only you can see them.<br> You can change it in <a href=\"/settings?act=privacy\">settings</a>.";
 "do_not_attach_note" = "Do not attach note";
+"something" = "Something";
+"supports_xhtml" = "from (X)HTML supported.";
 
 /* Notes: Article Viewer */
 "aw_legacy_ui" = "Legacy interface";
@@ -656,6 +668,8 @@
 "videos_other" = "$1 videos";
 
 "view_video" = "View";
+"change_video" = "Change video";
+"unknown_video" = "This video is not supported in your version of OpenVK.";
 
 /* Notifications */
 
@@ -695,6 +709,7 @@
 "nt_mention_in_video" = "in discussion of this video";
 "nt_mention_in_note" = "in discussion of this note";
 "nt_mention_in_topic" = "in the discussion";
+"nt_sent_gift" = "sent you a gift";
 
 /* Time */
 
@@ -909,6 +924,14 @@
 "text_of_the_post" = "Text of the post";
 "today" = "today";
 
+"will_be_watched" = "It will be reviewed by the moderators soon";
+
+"report_question" = "Report?";
+"report_question_text" = "What exactly do you find unacceptable about this material?";
+"report_reason" = "Report reason";
+"reason" = "Reason";
+"going_to_report_app" = "You are about to complain to this application.";
+
 "comment" = "Comment";
 "sender" = "Sender";
 
@@ -1117,6 +1140,7 @@
 "media_file_corrupted_or_too_large" = "The media content file is corrupted or too large.";
 "post_is_empty_or_too_big" = "The post is empty or too big.";
 "post_is_too_big" = "The post is too big.";
+"error_sending_report" = "Failed to make a report...";
 
 /* Admin actions */
 
@@ -1124,6 +1148,8 @@
 "manage_user_action" = "Manage user";
 "manage_group_action" = "Manage group";
 "ban_user_action" = "Ban user";
+"blocks" = "Blocks";
+"last_actions" = "Last actions";
 "unban_user_action" = "Unban user";
 "warn_user_action" = "Warn user";
 "ban_in_support_user_action" = "Ban in support";
@@ -1133,6 +1159,7 @@
 
 "admin" = "Admin panel";
 
+"sandbox_for_developers" = "Sandbox for developers";
 "admin_ownerid" = "Owner ID";
 "admin_author" = "Author";
 "admin_name" = "Name";
@@ -1218,6 +1245,8 @@
 "admin_banned_link_not_specified" = "The link is not specified";
 "admin_banned_link_not_found" = "Link not found";
 
+"logs" = "Logs";
+"logs_anything" = "Anything";
 "logs_adding" = "Creation";
 "logs_editing" = "Editing";
 "logs_removing" = "Deletion";
@@ -1226,6 +1255,28 @@
 "logs_edited" = "edited";
 "logs_removed" = "removed";
 "logs_restored" = "restored";
+"logs_id_post" = "ID записи";
+"logs_id_object" = "ID объекта";
+"logs_uuid_user" = "UUID пользователя";
+"logs_change_type" = "Тип изменения";
+"logs_change_object" = "Тип объекта";
+
+"logs_user" = "User";
+"logs_object" = "Object";
+"logs_type" = "Type";
+"logs_changes" = "Changes";
+"logs_time" = "Time";
+
+"bans_history" = "Blocks history";
+"bans_history_blocked" = "Blocked";
+"bans_history_initiator" = "Initiator";
+"bans_history_start" = "Start";
+"bans_history_end" = "End";
+"bans_history_time" = "Time";
+"bans_history_reason" = "Reason";
+"bans_history_start" = "Start";
+"bans_history_removed" = "Removed";
+"bans_history_active" = "Active block";
 
 /* Paginator (deprecated) */
 
@@ -1273,6 +1324,8 @@
 
 "warning" = "Warning";
 "question_confirm" = "This action can't be undone. Do you really wanna do it?";
+"confirm_m" = "Confirm";
+"action_successfully" = "Success";
 
 /* User alerts */
 
@@ -1286,6 +1339,8 @@
 
 /* Away */
 
+"transition_is_blocked" = "Transition is blocked";
+"caution" = "Caution";
 "url_is_banned" = "Link is not allowed";
 "url_is_banned_comment" = "The <b>$1</b> administration recommends not to follow this link.";
 "url_is_banned_comment_r" = "The <b>$1</b> administration recommends not to follow this link.<br><br>The reason is: <b>$2</b>";
@@ -1549,6 +1604,32 @@
 "deleted_target_comment" = "This comment belongs to deleted post";
 
 "no_results" = "No results";
+
+/* BadBrowser */
+
+"deprecated_browser" = "Deprecated browser";
+"deprecated_browser_description" = "To view this content, you will need Firefox ESR 52+ or an equivalent World Wide Web navigator. Sorry about that.";
+
+/* Statistics */
+
+"coverage" = "Coverage";
+"coverage_this_week" = "This graph shows the coverage over the last 7 days.";
+"views" = "Views";
+"views_this_week" = "This graph shows the views of community posts over the last 7 days.";
+
+/* Sudo */
+
+"you_entered_as" = "You logged as";
+"please_rights" = "please respect the right to privacy of other people's correspondence and do not abuse user swapping.";
+"click_on" = "Click";
+"there" = "there";
+"to_leave" = "to logout";
+
+/* Phone number */
+
+"verify_phone_number" = "Confirm phone number";
+"we_sended_first" = "We sended SMS with code on number";
+"we_sended_end" = "enter it here";
 
 /* Mobile */
 "mobile_friends" = "Friends";

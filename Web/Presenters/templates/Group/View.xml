@@ -9,7 +9,7 @@
     <img n:if="$club->isVerified()"
          class="name-checkmark"
          src="/assets/packages/static/openvk/img/checkmark.png"
-         alt="Подтверждённая страница"
+         alt="{_verified_page}"
          />
 {/block}
 

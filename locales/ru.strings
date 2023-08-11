@@ -132,6 +132,10 @@
 "updated_at" = "Обновлено $1";
 "user_banned" = "К сожалению, нам пришлось заблокировать страницу пользователя <b>$1</b>.";
 "user_banned_comment" = "Комментарий модератора:";
+"verified_page" = "Подтверждённая страница";
+"user_is_blocked" = "Пользователь заблокирован";
+"before" = "до";
+"forever" = "навсегда";
 
 /* Wall */
 
@@ -191,6 +195,7 @@
 "version_incompatibility" = "Не удалось отобразить это вложение. Возможно, база данных несовместима с текущей версией OpenVK.";
 "graffiti" = "Граффити";
 "reply" = "Ответить";
+"post_is_ad" = "Этот пост был размещён за взятку.";
 
 /* Friends */
 
@@ -319,10 +324,15 @@
 /* Albums */
 
 "create" = "Создать";
+"album" = "Альбом";
 "albums" = "Альбомы";
+"photos" = "фотографий";
 "create_album" = "Создать альбом";
 "edit_album" = "Редактировать альбом";
+"edit_photo" = "Изменить фотографию";
 "creating_album" = "Создание альбома";
+"delete_photo" = "Удалить фотографию";
+"sure_deleting_photo" = "Вы уверены, что хотите удалить эту фотографию?";
 "upload_photo" = "Загрузить фотографию";
 "photo" = "Фотография";
 "upload_button" = "Загрузить";
@@ -399,6 +409,8 @@
 
 "notes_closed" = "Вы не можете прикрепить заметку к записи, так как ваши заметки видны только вам.<br><br> Вы можете поменять это в <a href=\"/settings?act=privacy\">настройках</a>.";
 "do_not_attach_note" = "Не прикреплять заметку";
+"something" = "Кое-что";
+"supports_xhtml" = "из (X)HTML поддерживается.";
 
 /* Notes: Article Viewer */
 "aw_legacy_ui" = "Старый интерфейс";
@@ -614,6 +626,8 @@
 "videos_many" = "$1 видеозаписей";
 "videos_other" = "$1 видеозаписей";
 "view_video" = "Просмотр";
+"change_video" = "Изменить видеозапись";
+"unknown_video" = "Эта видеозапись не поддерживается в вашей версии OpenVK.";
 
 /* Notifications */
 
@@ -650,6 +664,7 @@
 "nt_mention_in_video" = "в обсуждении видеозаписи";
 "nt_mention_in_note" = "в обсуждении заметки";
 "nt_mention_in_topic" = "в обсуждении";
+"nt_sent_gift" = "отправил вам подарок";
 
 /* Time */
 
@@ -843,6 +858,14 @@
 "text_of_the_post" = "Текст записи";
 "today" = "сегодня";
 
+"will_be_watched" = "Скоро её рассмотрят модераторы";
+
+"report_question" = "Пожаловаться?";
+"report_question_text" = "Что именно вам кажется недопустимым в этом материале?";
+"report_reason" = "Причина жалобы";
+"reason" = "Причина";
+"going_to_report_app" = "Вы собираетесь пожаловаться на данное приложение.";
+
 "comment" = "Комментарий";
 "sender" = "Отправитель";
 "author" = "Автор";
@@ -1017,6 +1040,7 @@
 "media_file_corrupted_or_too_large" = "Файл медиаконтента повреждён или слишком велик.";
 "post_is_empty_or_too_big" = "Пост пустой или слишком большой.";
 "post_is_too_big" = "Пост слишком большой.";
+"error_sending_report" = "Не удалось подать жалобу...";
 
 /* Admin actions */
 
@@ -1024,6 +1048,8 @@
 "manage_user_action" = "Управление пользователем";
 "manage_group_action" = "Управление группой";
 "ban_user_action" = "Заблокировать пользователя";
+"blocks" = "Блокировки";
+"last_actions" = "Последние действия";
 "unban_user_action" = "Разблокировать пользователя";
 "warn_user_action" = "Предупредить пользователя";
 "ban_in_support_user_action" = "Заблокировать в поддержке";
@@ -1032,6 +1058,7 @@
 /* Admin panel */
 
 "admin" = "Админ-панель";
+"sandbox_for_developers" = "Sandbox для разработчиков";
 "admin_ownerid" = "ID владельца";
 "admin_author" = "Автор";
 "admin_name" = "Имя";
@@ -1106,6 +1133,8 @@
 "admin_banned_link_initiator" = "Инициатор";
 "admin_banned_link_not_specified" = "Ссылка не указана";
 "admin_banned_link_not_found" = "Ссылка не найдена";
+"logs" = "Логи";
+"logs_anything" = "Любое";
 "logs_adding" = "Создание";
 "logs_editing" = "Редактирование";
 "logs_removing" = "Удаление";
@@ -1114,6 +1143,28 @@
 "logs_edited" = "отредактировал";
 "logs_removed" = "удалил";
 "logs_restored" = "восстановил";
+"logs_id_post" = "ID записи";
+"logs_id_object" = "ID объекта";
+"logs_uuid_user" = "UUID пользователя";
+"logs_change_type" = "Тип изменения";
+"logs_change_object" = "Тип объекта";
+
+"logs_user" = "Пользователь";
+"logs_object" = "Объект";
+"logs_type" = "Тип";
+"logs_changes" = "Изменения";
+"logs_time" = "Время";
+
+"bans_history" = "История блокировок";
+"bans_history_blocked" = "Забаненный";
+"bans_history_initiator" = "Инициатор";
+"bans_history_start" = "Начало";
+"bans_history_end" = "Конец";
+"bans_history_time" = "Время";
+"bans_history_reason" = "Причина";
+"bans_history_start" = "Начало";
+"bans_history_removed" = "Снята";
+"bans_history_active" = "Активная блокировка";
 
 /* Paginator (deprecated) */
 
@@ -1163,6 +1214,8 @@
 "close" = "Закрыть";
 "warning" = "Внимание";
 "question_confirm" = "Это действие нельзя отменить. Вы действительно уверены в том что хотите сделать?";
+"confirm_m" = "Подтвердить";
+"action_successfully" = "Операция успешна";
 
 /* User alerts */
 
@@ -1176,6 +1229,8 @@
 
 /* Away */
 
+"transition_is_blocked" = "Переход по ссылке заблокирован";
+"caution" = "Предупреждение";
 "url_is_banned" = "Переход невозможен";
 "url_is_banned_comment" = "Администрация <b>$1</b> не рекомендует переходить по этой ссылке.";
 "url_is_banned_comment_r" = "Администрация <b>$1</b> не рекомендует переходить по этой ссылке.<br><br>Причина: <b>$2</b>";
@@ -1441,6 +1496,32 @@
 "deleted_target_comment" = "Этот комментарий принадлежит к удалённой записи";
 
 "no_results" = "Результатов нет";
+
+/* BadBrowser */
+
+"deprecated_browser" = "Устаревший браузер";
+"deprecated_browser_description" = "Для просмотра этого контента вам понадобится Firefox ESR 52+ или эквивалентный по функционалу навигатор по всемирной сети интернет. Сожалеем об этом.";
+
+/* Statistics */
+
+"coverage" = "Охват";
+"coverage_this_week" = "Этот график отображает охват за последние 7 дней.";
+"views" = "Просмотры";
+"views_this_week" = "Этот график отображает просмотры постов сообщества за последние 7 дней.";
+
+/* Sudo */
+
+"you_entered_as" = "Вы вошли как";
+"please_rights" = "пожалуйста, уважайте право на тайну переписки других людей и не злоупотребляйте подменой пользователя.";
+"click_on" = "Нажмите";
+"there" = "здесь";
+"to_leave" = "чтобы выйти";
+
+/* Phone number */
+
+"verify_phone_number" = "Подтвердить номер телефона";
+"we_sended_first" = "Мы отправили SMS с кодом на номер";
+"we_sended_end" = "введите его сюда";
 
 /* Mobile */
 "mobile_friends" = "Друзья";
