@@ -691,8 +691,4 @@ $(document).on("scroll", () => {
             $(".floating_sidebar")[0].classList.remove("hide_anim");
         }, 250);
     }
-
-    if($(window).scrollTop() == $(document).height() - $(window).height() && document.querySelector(".showMore") != null) {
-        $(".showMore").click()
-    }
 })

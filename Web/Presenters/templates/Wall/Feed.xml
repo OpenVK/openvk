@@ -51,7 +51,7 @@
         {include "../components/paginator.xml", conf => $paginatorConf}
     {/if}
 
-    <script>
+    <script n:if="$thisUser->getPaginatorType() == 0">
         u("#pageSelect").nodes[0].value = {$paginatorConf->perPage};
         
         u("#pageSelect").on("change", function(e) {

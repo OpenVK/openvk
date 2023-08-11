@@ -272,9 +272,11 @@ async function showArticle(note_id) {
 
 $(document).on("click", ".showMore", async (e) => {
     e.currentTarget.innerHTML = `<img id="loader" src="/assets/packages/static/openvk/img/loading_mini.gif">`
+
     let url = new URL(location.href)
     let newPage = Number(e.currentTarget.dataset.page) + 1
     url.searchParams.set("p", newPage)
+    url.searchParams.set("posts", 10)
 
     let xhr = new XMLHttpRequest
     xhr.open("GET", url)
@@ -328,3 +330,20 @@ $(document).on("click", ".showMore", async (e) => {
 
     xhr.send()
 })
+
+let showMoreObserver = new IntersectionObserver(entries => {
+    entries.forEach(x => {
+        if(x.isIntersecting) {
+            $(".showMore").click()
+        }
+    })
+}, {
+    root: null,
+    rootMargin: "0px",
+    threshold: 0
+})
+
+let showMore = document.querySelector('.showMore');
+
+if(showMore != null)
+    showMoreObserver.observe(showMore);
