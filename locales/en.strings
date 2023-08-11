@@ -952,6 +952,8 @@
 "support_new_title" = "Enter the topic of your ticket";
 "support_new_content" = "Describe the issue or suggestion";
 
+"reports" = "Reports";
+
 "support_rate_good_answer" = "This is good answer";
 "support_rate_bad_answer" = "This is bad answer";
 "support_good_answer_user" = "You left a positive feedback.";
@@ -963,6 +965,12 @@
 "wrong_parameters" = "Invalid request parameters.";
 
 "fast_answers" = "Fast answers";
+
+"ignore_report" = "Ignore report";
+"report_number" = "Report #";
+"list_of_reports" = "List of reports";
+"text_of_the_post" = "Text of the post";
+"today" = "today";
 
 "comment" = "Comment";
 "sender" = "Sender";
@@ -977,6 +985,13 @@
 
 "banned_in_support_1" = "Sorry, <b>$1</b>, but now you can't create tickets.";
 "banned_in_support_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to take away this opportunity from you forever.";
+
+"you_can_close_this_ticket_1" = "If you have no more questions, you can ";
+"you_can_close_this_ticket_2" = "close this ticket";
+"agent_profile_created_1" = "Profile created";
+"agent_profile_created_2" = "Now users see your customized name and avatar instead of the default ones.";
+"agent_profile_edited" = "Profile edited";
+"agent_profile" = "My Agent Card";
 
 /* Invite */
 
@@ -1266,6 +1281,15 @@
 "admin_banned_link_not_specified" = "The link is not specified";
 "admin_banned_link_not_found" = "Link not found";
 
+"logs_adding" = "Creation";
+"logs_editing" = "Editing";
+"logs_removing" = "Deletion";
+"logs_restoring" = "Restoring";
+"logs_added" = "created";
+"logs_edited" = "edited";
+"logs_removed" = "removed";
+"logs_restored" = "restored";
+
 /* Paginator (deprecated) */
 
 "paginator_back" = "Back";
@@ -1331,6 +1355,8 @@
 "url_is_banned_default_reason" = "The link you are trying to open may lead you to a site that was created for the purpose of deceiving users with the intention of gaining profit.";
 "url_is_banned_title" = "Link to a suspicious site";
 "url_is_banned_proceed" = "Follow the link";
+
+"recently" = "Recently";
 
 /* Helpdesk */
 "helpdesk" = "Support";

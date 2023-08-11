@@ -209,8 +209,23 @@
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
                                 {/if}
                             </a>
-
-                            <a n:if="$thisUser->getLeftMenuItemStatus('links')" n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem" href="{$menuItem['url']}" target="_blank" class="link">{strpos($menuItem["name"], "@") === 0 ? tr(substr($menuItem["name"], 1)) : $menuItem["name"]}</a>
+                            <a n:if="$canAccessHelpdesk" href="/scumfeed" class="link">{tr("reports")}
+                                {if $reportNotAnsweredCount > 0}
+                                    (<b>{$reportNotAnsweredCount}</b>)
+                                {/if}
+                            </a>
+                            <a n:if="$canAccessHelpdesk" href="/noSpam" class="link">
+                                noSpam
+                            </a>
+                        <a
+                          n:if="$thisUser->getLeftMenuItemStatus('links')"
+                          n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem"
+                          href="{$menuItem['url']}"
+                          target="_blank"
+                          class="link">
+                            {strpos($menuItem["name"], "@") === 0 ? tr(substr($menuItem["name"], 1)) : $menuItem["name"]}
+                        </a>
+                        <div id="_groupListPinnedGroups">
 
                             <div id="_groupListPinnedGroups">
                                 <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
@@ -292,8 +307,13 @@
                             {if !OPENVK_ROOT_CONF['openvk']['preferences']['security']['disablePasswordRestoring']}<a href="/restore">{_forgot_password}</a>{/if}
                         </form>
                     {/ifset}
+                    </div>
                 </div>
-            </div>
+                {ifset $thisUser}
+                    {if !$thisUser->isBanned()}
+                        </div>
+                    {/if}
+                {/ifset}
 
             <div class="page_body">
                 <div id="wrapH">

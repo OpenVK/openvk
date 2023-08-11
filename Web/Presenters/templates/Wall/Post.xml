@@ -28,8 +28,35 @@
         <h4>{_actions}</h4>
         {if isset($thisUser)}
             {var $canDelete = $post->canBeDeletedBy($thisUser)}
+            {if $thisUser->getId() != $post->getOwner()->getId()}
+                {var $canReport = true}
+            {/if}
         {/if}
         
         <a n:if="$canDelete ?? false" class="profile_link" style="display:block;width:96%;" href="/wall{$post->getPrettyId()}/delete">{_delete}</a>
+        <a n:if="$canReport ?? false" class="profile_link" style="display:block;width:96%;" href="javascript:reportPost()">{_report}</a>
     </div>
+    <script n:if="$canReport ?? false">
+        function reportPost() {
+            uReportMsgTxt  = "Вы собираетесь пожаловаться на данную запись.";
+            uReportMsgTxt += "<br/>Что именно вам кажется недопустимым в этом материале?";
+            uReportMsgTxt += "<br/><br/><b>Причина жалобы</b>: <input type='text' id='uReportMsgInput' placeholder='Причина' />"
+
+            MessageBox("Пожаловаться?", uReportMsgTxt, ["Подтвердить", "Отмена"], [
+                (function() {
+                    res = document.querySelector("#uReportMsgInput").value;
+                    xhr = new XMLHttpRequest();
+                    xhr.open("GET", "/report/" + {$post->getId()} + "?reason=" + res + "&type=post", true);
+                    xhr.onload = (function() {
+                        if(xhr.responseText.indexOf("reason") === -1)
+                            MessageBox("Ошибка", "Не удалось подать жалобу...", ["OK"], [Function.noop]);
+                        else
+                            MessageBox("Операция успешна", "Скоро её рассмотрят модераторы", ["OK"], [Function.noop]);
+                    });
+                    xhr.send(null);
+                }),
+                Function.noop
+            ]);
+        }
+    </script>
 {/block}

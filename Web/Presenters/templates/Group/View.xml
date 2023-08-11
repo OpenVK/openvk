@@ -136,6 +136,7 @@
         {/if}
         {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
             <a href="/admin/clubs/id{$club->getId()}" id="profile_link">{_manage_group_action}</a>
+            <a href="/admin/logs?obj_id={$club->getId()}&obj_type=Club" class="profile_link">Последние действия</a>
         {/if}
         {if $club->getSubscriptionStatus($thisUser) == false}
             <form action="/setSub/club" method="post">
@@ -151,6 +152,34 @@
                 <input type="hidden" name="hash" value="{$csrfToken}" />
                 <input type="submit" id="profile_link" value="{_leave_community}" />
             </form>
+        {/if}
+        {var $canReport = $thisUser->getId() != $club->getOwner()->getId()}
+        {if $canReport}
+        <a class="profile_link" style="display:block;width:96%;" href="javascript:reportVideo()">{_report}</a>
+
+        <script>
+            function reportVideo() {
+            uReportMsgTxt  = "Вы собираетесь пожаловаться на данное сообщество.";
+            uReportMsgTxt += "<br/>Что именно вам кажется недопустимым в этом материале?";
+            uReportMsgTxt += "<br/><br/><b>Причина жалобы</b>: <input type='text' id='uReportMsgInput' placeholder='Причина' />"
+
+            MessageBox("Пожаловаться?", uReportMsgTxt, ["Подтвердить", "Отмена"], [
+                (function() {
+                    res = document.querySelector("#uReportMsgInput").value;
+                    xhr = new XMLHttpRequest();
+                    xhr.open("GET", "/report/" + {$club->getId()} + "?reason=" + res + "&type=group", true);
+                    xhr.onload = (function() {
+                    if(xhr.responseText.indexOf("reason") === -1)
+                        MessageBox("Ошибка", "Не удалось подать жалобу...", ["OK"], [Function.noop]);
+                    else
+                        MessageBox("Операция успешна", "Скоро её рассмотрят модераторы", ["OK"], [Function.noop]);
+                    });
+                    xhr.send(null);
+                    }),
+                Function.noop
+                ]);
+            }
+        </script>
         {/if}
     </div>
     <div>

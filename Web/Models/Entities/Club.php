@@ -375,9 +375,21 @@ class Club extends RowModel
     }
 
     function getWebsite(): ?string
-	{
-		return $this->getRecord()->website;
-	}
+	  {
+		  return $this->getRecord()->website;
+	  }
+
+    function ban(string $reason): void
+    {
+        $this->setBlock_Reason($reason);
+        $this->save();
+    }
+
+    function unban(): void
+    {
+        $this->setBlock_Reason(null);
+        $this->save();
+    }
 
     function getAlert(): ?string
     {
