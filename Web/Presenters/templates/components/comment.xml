@@ -61,6 +61,7 @@
                             {php $target = "topic"}
                         {/if}
 
+                        <span n:if="$compact ?? false">
                         |&nbsp;<a
                             {if is_null($linkW)}
                                 href="#_comment{$comment->getId()}"
@@ -69,6 +70,7 @@
                             {/if}
                             class="date"
                         >{$comment->getPublicationTime()}</a>
+                        </span>
                     </div>
                 </div>
             </td>
