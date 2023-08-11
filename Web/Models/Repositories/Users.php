@@ -48,6 +48,11 @@ class Users
     {
         return $user ? $this->toUser($this->users->where("user", $user->getId())->fetch()) : NULL;
     }
+
+    function getByChandlerGUID(string $GUID): ?User
+    {
+        return $this->toUser($this->users->where("user", $GUID)->fetch());
+    }
     
     function find(string $query, array $pars = [], string $sort = "id DESC"): Util\EntityStream
     {

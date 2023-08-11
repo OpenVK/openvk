@@ -93,4 +93,9 @@ class Album extends MediaCollection
 
         return $res;
     }
+
+    function getURL(): string
+    {
+        return "/album" . $this->getPrettyId();
+    }
 }

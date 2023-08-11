@@ -53,7 +53,14 @@
             <tr n:foreach="$logs as $log">
                 <td>{$log->getId()}</td>
                 <td>
-                    <a href="/admin/chandler/user/{$log->getUser()}" target="_blank">{$log->getUser()}</a>
+                    {var $_user = (new openvk\Web\Models\Repositories\Users)->getByChandlerGUID($log->getUser())}
+                    <span n:if="$_user->getAvatarURL('miniscule')" class="aui-avatar aui-avatar-xsmall">
+                        <span class="aui-avatar-inner">
+                            <img src="{$_user->getAvatarURL()}" alt="{$_user->getCanonicalName()}"
+                                 style="object-fit: cover;" role="presentation"/>
+                        </span>
+                    </span>
+                    <a href="/admin/users/id{$_user->getId()}">{$_user->getCanonicalName()}</a>
                 </td>
                 <td>
                     <span n:if="$log->getObjectAvatar()" class="aui-avatar aui-avatar-xsmall">
@@ -61,7 +68,11 @@
                             <img src="{$log->getObjectAvatar()}" alt="{$log->getObjectName()}" style="object-fit: cover;" role="presentation" />
                         </span>
                     </span>
-                    <a href="{$log->getObjectURL()}">{$log->getObjectName()}</a>
+                    <a
+                        n:attr="href => ($log->getObjectURL()) . (($log->getTypeRaw() === 2 && $log->getObjectURL() !== '#') ? '?del=1' : '')"
+                    >
+                        {$log->getObjectName()}
+                    </a>
                 </td>
                 <td>{_$log->getTypeNom()}</td>
                 <td>

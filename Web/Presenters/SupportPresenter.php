@@ -203,8 +203,10 @@ final class SupportPresenter extends OpenVKPresenter
         $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
         $ticket = $this->tickets->get($id);
 
-        if(!$ticket || $ticket->isDeleted() != 0)
+        if(!$ticket)
             $this->notFound();
+
+        $this->assertCanViewDeleted($ticket);
 
         $ticketComments = $this->comments->getCommentsById($id);
         $this->template->ticket      = $ticket;

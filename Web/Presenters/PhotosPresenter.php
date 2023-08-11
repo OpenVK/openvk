@@ -134,8 +134,10 @@ final class PhotosPresenter extends OpenVKPresenter
     {
         $album = $this->albums->get($id);
         if(!$album) $this->notFound();
-        if($album->getPrettyId() !== $owner . "_" . $id || $album->isDeleted())
+        if($album->getPrettyId() !== $owner . "_" . $id)
             $this->notFound();
+
+        $this->assertCanViewDeleted($album);
         
         if($owner > 0 /* bc we currently don't have perms for clubs */) {
             $ownerObject = (new Users)->get($owner);
