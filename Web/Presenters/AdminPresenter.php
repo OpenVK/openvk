@@ -602,7 +602,7 @@ final class AdminPresenter extends OpenVKPresenter
             $this->template->obj_id = $obj_id;
         }
         if ($this->queryParam("obj_type") !== NULL && $this->queryParam("obj_type") !== "any") {
-            $obj_type = CHANDLER_ROOT_CONF["preferences"]["logs"]["entitiesNamespace"] . $this->queryParam("obj_type");
+            $obj_type = "openvk\\Web\\Models\\Entities\\" . $this->queryParam("obj_type");
             $filter["object_model"] = $obj_type;
             $this->template->obj_type = $obj_type;
         }
