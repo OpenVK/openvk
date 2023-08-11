@@ -360,13 +360,19 @@ final class AdminPresenter extends OpenVKPresenter
     {
         $this->assertNoCSRF();
 
+        if (str_contains($this->queryParam("reason"), "*"))
+            exit(json_encode([ "error" => "Incorrect reason" ]));
+
         $unban_time = strtotime($this->queryParam("date")) ?: NULL;
 
         $user = $this->users->get($id);
         if(!$user)
             exit(json_encode([ "error" => "User does not exist" ]));
-        
-        $user->ban($this->queryParam("reason"), true, $unban_time);
+
+        if ($this->queryParam("incr"))
+            $unban_time = time() + $user->getNewBanTime();
+
+        $user->ban($this->queryParam("reason"), true, $unban_time, $this->user->identity->getId());
         exit(json_encode([ "success" => true, "reason" => $this->queryParam("reason") ]));
     }
 
@@ -377,9 +383,17 @@ final class AdminPresenter extends OpenVKPresenter
         $user = $this->users->get($id);
         if(!$user)
             exit(json_encode([ "error" => "User does not exist" ]));
-        
+
+        $ban = (new Bans)->get((int)$user->getRawBanReason());
+        if (!$ban || $ban->isOver())
+            exit(json_encode([ "error" => "User is not banned" ]));
+
+        $ban->setRemoved_Manually(true);
+        $ban->setRemoved_By($this->user->identity->getId());
+        $ban->save();
+
         $user->setBlock_Reason(NULL);
-        $user->setUnblock_time(NULL);
+        // $user->setUnblock_time(NULL);
         $user->save();
         exit(json_encode([ "success" => true ]));
     }
@@ -463,6 +477,14 @@ final class AdminPresenter extends OpenVKPresenter
         $link->delete(false);
 
         $this->redirect("/admin/bannedLinks");
+    }
+
+    function renderBansHistory(int $user_id) :void
+    {
+        $user = (new Users)->get($user_id);
+        if (!$user) $this->notFound();
+
+        $this->template->bans = (new Bans)->getByUser($user_id);
     }
 
     function renderChandlerGroups(): void

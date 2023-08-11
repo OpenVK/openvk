@@ -59,6 +59,38 @@
                     {_delete}
                 </a>
             </div>
+
+            {if isset($thisUser)}
+                {if $thisUser->getId() != $video->getOwner()->getId()}
+                    {var canReport = true}
+                {/if}
+            {/if}
+
+            <a n:if="$canReport ?? false" class="profile_link" style="display:block;width:96%;" href="javascript:reportVideo()">{_report}</a>
+
+            <script n:if="$canReport ?? false">
+                function reportVideo() {
+                uReportMsgTxt  = "Вы собираетесь пожаловаться на данную видеозапись.";
+                uReportMsgTxt += "<br/>Что именно вам кажется недопустимым в этом материале?";
+                uReportMsgTxt += "<br/><br/><b>Причина жалобы</b>: <input type='text' id='uReportMsgInput' placeholder='Причина' />"
+
+                MessageBox("Пожаловаться?", uReportMsgTxt, ["Подтвердить", "Отмена"], [
+                    (function() {
+                        res = document.querySelector("#uReportMsgInput").value;
+                        xhr = new XMLHttpRequest();
+                        xhr.open("GET", "/report/" + {$video->getId()} + "?reason=" + res + "&type=video", true);
+                        xhr.onload = (function() {
+                        if(xhr.responseText.indexOf("reason") === -1)
+                            MessageBox("Ошибка", "Не удалось подать жалобу...", ["OK"], [Function.noop]);
+                        else
+                            MessageBox("Операция успешна", "Скоро её рассмотрят модераторы", ["OK"], [Function.noop]);
+                        });
+                        xhr.send(null);
+                    }),
+                    Function.noop
+                ]);
+                }
+            </script>
         </div>
     </div>
 {/block}

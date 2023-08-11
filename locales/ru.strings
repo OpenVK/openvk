@@ -823,6 +823,8 @@
 "support_new" = "Новое обращение";
 "support_new_title" = "Введите тему вашего обращения";
 "support_new_content" = "Опишите проблему или предложение";
+
+
 "support_rate_good_answer" = "Это хороший ответ";
 "support_rate_bad_answer" = "Это плохой ответ";
 "support_good_answer_user" = "Вы оставили положительный отзыв.";
@@ -833,6 +835,14 @@
 "support_rated_bad" = "Вы оставили негативный отзыв об ответе.";
 "wrong_parameters" = "Неверные параметры запроса.";
 "fast_answers" = "Быстрые ответы";
+
+"reports" = "Жалобы";
+"ignore_report" = "Игнорировать жалобу";
+"report_number" = "Жалоба №";
+"list_of_reports" = "Список жалоб";
+"text_of_the_post" = "Текст записи";
+"today" = "сегодня";
+
 "comment" = "Комментарий";
 "sender" = "Отправитель";
 "author" = "Автор";
@@ -1172,6 +1182,8 @@
 "url_is_banned_default_reason" = "Ссылка, по которой вы попытались перейти, может вести на сайт, который был создан с целью обмана пользователей и получения за счёт этого прибыли.";
 "url_is_banned_title" = "Ссылка на подозрительный сайт";
 "url_is_banned_proceed" = "Перейти по ссылке";
+
+"recently" = "Недавно";
 
 /* Helpdesk */
 "helpdesk" = "Поддержка";

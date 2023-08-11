@@ -889,6 +889,8 @@
 "support_new_title" = "Enter the topic of your ticket";
 "support_new_content" = "Describe the issue or suggestion";
 
+"reports" = "Reports";
+
 "support_rate_good_answer" = "This is good answer";
 "support_rate_bad_answer" = "This is bad answer";
 "support_good_answer_user" = "You left a positive feedback.";
@@ -900,6 +902,12 @@
 "wrong_parameters" = "Invalid request parameters.";
 
 "fast_answers" = "Fast answers";
+
+"ignore_report" = "Ignore report";
+"report_number" = "Report #";
+"list_of_reports" = "List of reports";
+"text_of_the_post" = "Text of the post";
+"today" = "today";
 
 "comment" = "Comment";
 "sender" = "Sender";
@@ -1284,6 +1292,8 @@
 "url_is_banned_default_reason" = "The link you are trying to open may lead you to a site that was created for the purpose of deceiving users with the intention of gaining profit.";
 "url_is_banned_title" = "Link to a suspicious site";
 "url_is_banned_proceed" = "Follow the link";
+
+"recently" = "Recently";
 
 /* Helpdesk */
 "helpdesk" = "Support";
