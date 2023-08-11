@@ -8,6 +8,6 @@ final class CommentNotification extends Notification
     
     function __construct(User $recipient, Comment $comment, $postable, User $commenter)
     {
-        parent::__construct($recipient, $postable, $commenter, time(), ovk_proc_strtr($comment->getText(), 10));
+        parent::__construct($recipient, $postable, $commenter, time(), ovk_proc_strtr(strip_tags($comment->getText()), 400));
     }
 }

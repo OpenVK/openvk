@@ -66,7 +66,7 @@ final class PhotosPresenter extends OpenVKPresenter
         }
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
-            if(empty($this->postParam("name")))
+            if(empty($this->postParam("name")) || mb_strlen(trim($this->postParam("name"))) === 0)
                 $this->flashFail("err", tr("error"), tr("error_segmentation")); 
             else if(strlen($this->postParam("name")) > 36)
                 $this->flashFail("err", tr("error"), tr("error_data_too_big", "name", 36, "bytes")); 
@@ -101,7 +101,7 @@ final class PhotosPresenter extends OpenVKPresenter
             if(strlen($this->postParam("name")) > 36)
                 $this->flashFail("err", tr("error"), tr("error_data_too_big", "name", 36, "bytes"));
             
-            $album->setName(empty($this->postParam("name")) ? $album->getName() : $this->postParam("name"));
+            $album->setName((empty($this->postParam("name")) || mb_strlen(trim($this->postParam("name"))) === 0) ? $album->getName() : $this->postParam("name"));
             $album->setDescription(empty($this->postParam("desc")) ? NULL : $this->postParam("desc"));
             $album->setEdited(time());
             $album->save();
@@ -183,6 +183,18 @@ final class PhotosPresenter extends OpenVKPresenter
         
         $this->template->_template = "Photos/Photo.xml";
         $this->renderPhoto($photo->getOwner(true)->getId(), $photo->getVirtualId());
+    }
+    
+    function renderThumbnail($id, $size): void
+    {
+        $photo = $this->photos->get($id);
+        if(!$photo || $photo->isDeleted())
+            $this->notFound();
+        
+        if(!$photo->forceSize($size))
+            chandler_http_panic(588, "Gone", "This thumbnail cannot be generated due to server misconfiguration");
+        
+        $this->redirect($photo->getURLBySizeId($size), 8);
     }
     
     function renderEditPhoto(int $ownerId, int $photoId): void

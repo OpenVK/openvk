@@ -16,6 +16,7 @@ services:
     - openvk\Web\Presenters\UnknownTextRouteStrategyPresenter
     - openvk\Web\Presenters\NotificationPresenter
     - openvk\Web\Presenters\SupportPresenter
+    - openvk\Web\Presenters\ReportPresenter
     - openvk\Web\Presenters\AdminPresenter
     - openvk\Web\Presenters\GiftsPresenter
     - openvk\Web\Presenters\MessengerPresenter
@@ -23,9 +24,11 @@ services:
     - openvk\Web\Presenters\AppsPresenter
     - openvk\Web\Presenters\ThemepacksPresenter
     - openvk\Web\Presenters\VKAPIPresenter
+    - openvk\Web\Presenters\PollPresenter
     - openvk\Web\Presenters\BannedLinkPresenter
     - openvk\Web\Models\Repositories\Users
     - openvk\Web\Models\Repositories\Posts
+    - openvk\Web\Models\Repositories\Polls
     - openvk\Web\Models\Repositories\Photos
     - openvk\Web\Models\Repositories\Albums
     - openvk\Web\Models\Repositories\Clubs
@@ -33,7 +36,8 @@ services:
     - openvk\Web\Models\Repositories\Notes
     - openvk\Web\Models\Repositories\Tickets
     - openvk\Web\Models\Repositories\Messages
-    - openvk\Web\Models\Repositories\Restores   
+    - openvk\Web\Models\Repositories\Restores
+    - openvk\Web\Models\Repositories\Reports
     - openvk\Web\Models\Repositories\Verifications
     - openvk\Web\Models\Repositories\Notifications
     - openvk\Web\Models\Repositories\TicketComments
@@ -46,4 +50,6 @@ services:
     - openvk\Web\Models\Repositories\PostsChanges
     - openvk\Web\Models\Repositories\Aliases
     - openvk\Web\Models\Repositories\BannedLinks
+    - openvk\Web\Models\Repositories\ChandlerGroups
     - openvk\Web\Presenters\MaintenancePresenter
+    - openvk\Web\Presenters\NoSpamPresenter

@@ -1,5 +1,9 @@
 {extends "../@layout.xml"}
 
+{if !$user->isBanned()}
+    {var $backdrops = $user->getBackDropPictureURLs()}
+{/if}
+
 {block title}{$user->getCanonicalName()}{/block} 
 
 {block headIncludes}
@@ -43,6 +47,11 @@
         {else}
             <span>{$user->isFemale() ? tr("was_online_f") : tr("was_online_m")} {$user->getOnline()}</span>
         {/if}
+        {var $platform = $user->getOnlinePlatform()}
+        {var $platformDetails = $user->getOnlinePlatformDetails()}
+        <a n:if="!empty($platform)" class="client_app client_app_titlebar" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
+            <img src="/assets/packages/static/openvk/img/app_icons_mini/{$user->getOnlinePlatform(this)}.svg">
+        </a>
     </div>
     <div n:if="$user->onlineStatus() == 2" style="float:right;">
         <span><b>{_deceased_person}</b></span>
@@ -60,10 +69,27 @@
     {else}
     
     <div class="left_small_block">
-        <div>
+        <div style="margin-left: auto;margin-right: auto;display: table;position:relative;" class="avatar_block" id="av">
+            {var $hasAvatar = !str_contains($user->getAvatarUrl('miniscule'), "/assets/packages/static/openvk/img/camera_200.png")}
+            {if !is_null($thisUser) && $hasAvatar == false && $user->getId() == $thisUser->getId()}
+                <a href="javascript:addAvatarImage(false)" class="text_add_image">{_add_image}</a>
+            {elseif !is_null($thisUser) && $user && $hasAvatar == true && $user->getId() == $thisUser->getId()}
+                <div class="avatar_controls">
+                    <div class="avatarDelete">
+                        <a id="upl" href="javascript:deleteAvatar('{$user->getAvatarPhoto()->getPrettyId()}')"><img src="/assets/packages/static/openvk/img/delete.png"/></a>
+                    </div>
+                    <div class="avatar_variants">
+                        <div class="variant">
+                            <img src="/assets/packages/static/openvk/img/upload.png" style="margin-left:15px;height: 10px;">
+                            <a href="javascript:addAvatarImage(false)"><p>{_upload_new_picture}</p></a>
+                        </div>
+                    </div>
+                </div>
+            {/if}
             <a href="{$user->getAvatarLink()|nocheck}">
                 <img src="{$user->getAvatarUrl('normal')}"
                      alt="{$user->getCanonicalName()}"
+                     id="thisUserAvatar"
                      style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
             </a>
         </div>
@@ -77,25 +103,31 @@
                 </div>
             {else}
                 {if $thisUser->getChandlerUser()->can("substitute")->model('openvk\Web\Models\Entities\User')->whichBelongsTo(0)}
-                    <a href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}" class="profile_link">
+                    <a href="/setSID/{$user->getChandlerUser()->getId()}?hash={rawurlencode($csrfToken)}" class="profile_link" style="width: 194px;">
                         {tr("login_as", $user->getFirstName())}
                     </a>
                 {/if}
                 
                 {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
-                    <a href="/admin/users/id{$user->getId()}" class="profile_link">
+                    <a href="/admin/users/id{$user->getId()}" class="profile_link" style="width: 194px;">
                         {_manage_user_action}
                     </a>
-                    <a href="javascript:banUser()" class="profile_link">
+                    <a href="javascript:banUser()" class="profile_link" style="width: 194px;">
                         {_ban_user_action}
                     </a>
-                    <a href="javascript:warnUser()" class="profile_link">
+                    <a href="javascript:warnUser()" class="profile_link" style="width: 194px;">
                         {_warn_user_action}
+                    </a>
+                    <a href="/admin/user{$user->getId()}/bans" class="profile_link">
+                        Блокировки
+                    </a>
+                    <a href="/admin/logs?uid={$user->getId()}" class="profile_link" style="width: 194px;">
+                        Последние действия
                     </a>
                 {/if}
 
                 {if $thisUser->getChandlerUser()->can('write')->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
-                    <a href="javascript:toggleBanInSupport()" class="profile_link">
+                    <a href="javascript:toggleBanInSupport()" class="profile_link" style="width: 194px;">
                         {if $user->isBannedInSupport()}
                             {_unban_in_support_user_action}
                         {else}
@@ -104,8 +136,8 @@
                     </a>
                 {/if}
                 
-                <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() == 0" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
-                <a n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" class="profile_link">{_send_message}</a>
+                <a style="width: 194px;" n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() == 0" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
+                <a style="width: 194px;" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" class="profile_link">{_send_message}</a>
 
                 {var $subStatus = $user->getSubscriptionStatus($thisUser)}
                 {if $subStatus === 0}
@@ -113,32 +145,57 @@
                         <input type="hidden" name="act" value="add" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" class="profile_link" value="{_friends_add}" />
+                        <input type="submit" class="profile_link" value="{_friends_add}" style="width: 194px;" />
                     </form>
                 {elseif $subStatus === 1}
                     <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="add" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" class="profile_link" value="{_friends_accept}" />
+                        <input type="submit" class="profile_link" value="{_friends_accept}" style="width: 194px;" />
                     </form>
                 {elseif $subStatus === 2}
                     <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="rem" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" class="profile_link" value="{_friends_reject}" />
+                        <input type="submit" class="profile_link" value="{_friends_reject}" style="width: 194px;" />
                     </form>
                 {elseif $subStatus === 3}
                     <form action="/setSub/user" method="post" class="profile_link_form">
                         <input type="hidden" name="act" value="rem" />
                         <input type="hidden" name="id"  value="{$user->getId()}" />
                         <input type="hidden" name="hash" value="{$csrfToken}" />
-                        <input type="submit" class="profile_link" value="{_friends_delete}" />
+                        <input type="submit" class="profile_link" value="{_friends_delete}" style="width: 194px;" />
                     </form>
                 {/if}
+
+                <a class="profile_link" style="display:block;width:96%;" href="javascript:reportUser()">{_report}</a>
+                <script>
+                    function reportUser() {
+                        uReportMsgTxt  = "Вы собираетесь пожаловаться на данного пользователя.";
+                        uReportMsgTxt += "<br/>Что именно вам кажется недопустимым в этом материале?";
+                        uReportMsgTxt += "<br/><br/><b>Причина жалобы</b>: <input type='text' id='uReportMsgInput' placeholder='Причина' />"
+
+                        MessageBox("Пожаловаться?", uReportMsgTxt, ["Подтвердить", "Отмена"], [
+                            (function() {
+                                res = document.querySelector("#uReportMsgInput").value;
+                                xhr = new XMLHttpRequest();
+                                xhr.open("GET", "/report/" + {$user->getId()} + "?reason=" + res + "&type=user", true);
+                                xhr.onload = (function() {
+                                    if(xhr.responseText.indexOf("reason") === -1)
+                                        MessageBox("Ошибка", "Не удалось подать жалобу...", ["OK"], [Function.noop]);
+                                    else
+                                        MessageBox("Операция успешна", "Скоро её рассмотрят модераторы", ["OK"], [Function.noop]);
+                                });
+                                xhr.send(null);
+                            }),
+                            Function.noop
+                        ]);
+                    }
+                </script>
             {/if}
-            <a n:if="$user->getFollowersCount() > 0" href="/friends{$user->getId()}?act=incoming" class="profile_link">{tr("followers", $user->getFollowersCount())}</a>
+            <a style="width: 194px;" n:if="$user->getFollowersCount() > 0" href="/friends{$user->getId()}?act=incoming" class="profile_link">{tr("followers", $user->getFollowersCount())}</a>
         </div>
         <div n:if="isset($thisUser) && !$thisUser->prefersNotToSeeRating()" class="profile-hints">
             {var $completeness = $user->getProfileCompletenessReport()}
@@ -394,11 +451,11 @@
                         </tr>
                         <tr n:if="!is_null($user->getHometown())">
                             <td class="label"><span class="nobold">{_hometown}:</span></td>
-                            <td class="data">{$user->getHometown()}</td>
+                            <td class="data"><a href="/search?type=users&query=&hometown={urlencode($user->getHometown())}">{$user->getHometown()}</a></td>
                         </tr>
                         <tr>
                             <td class="label"><span class="nobold">{_politViews}:</span></td>
-                            <td class="data">{var $pviews = $user->getPoliticalViews()}{_"politViews_$pviews"}</td>
+                            <td class="data"><a {if $user->getPoliticalViews() != 0}href="/search?type=users&query=&politViews={$user->getPoliticalViews()}"{/if}>{var $pviews = $user->getPoliticalViews()}{_"politViews_$pviews"}</a></td>
                         </tr>
                         <tr n:if="!is_null($user->getBirthday())">
                             <td class="label"><span class="nobold">{_birth_date}:</span></td>
@@ -444,7 +501,7 @@
                         </tr>
                     <tr n:if="!is_null($user->getCity())">
                         <td class="label"><span class="nobold">{_city}:</span></td>
-                        <td class="data">{$user->getCity()}</td>
+                        <td class="data"><a href="/search?type=users&query=&city={$user->getCity()}">{$user->getCity()}</a></td>
                     </tr>
                     <tr n:if="!is_null($user->getPhysicalAddress())">
                         <td class="label"><span class="nobold">{_address}:</span></td>
@@ -458,30 +515,61 @@
                   <tbody n:ifcontent>
                     <tr n:if="!is_null($user->getInterests())">
                         <td class="label"><span class="nobold">{_interests}: </span></td>
-                        <td class="data">{$user->getInterests()}</td>
+                        <td class="data">
+                            {var $interests = explode(", ", $user->getInterests())}
+                            
+                            {foreach $interests as $interest}
+                                <a href="/search?type=users&query=&interests={urlencode($interest)}">{$interest}</a>{if $interest != end($interests)},{/if}
+                            {/foreach}
+                        </td>
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteMusic())">
+
                         <td class="label"><span class="nobold">{_favorite_music}: </span></td>
-                        <td class="data">{$user->getFavoriteMusic()}</td>
+                        <td class="data">
+                            {var $musics = explode(", ", $user->getFavoriteMusic())}
+
+                            {foreach $musics as $music}
+                                <a href="/search?type=users&query=&fav_mus={urlencode($music)}">{$music}</a>{if $music != end($musics)},{/if}
+                            {/foreach}
+                        </td>
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteFilms())">
                         <td class="label"><span class="nobold">{_favorite_films}: </span></td>
-                        <td class="data">{$user->getFavoriteFilms()}</td>
+                        <td class="data">
+                            {var $films = explode(", ", $user->getFavoriteFilms())}
+
+                            {foreach $films as $film}
+                                <a href="/search?type=users&query=&fav_films={urlencode($film)}">{$film}</a>{if $film != end($films)},{/if}
+                            {/foreach}
+                        </td>
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteShows())">
                         <td class="label"><span class="nobold">{_favorite_shows}: </span></td>
-                        <td class="data">{$user->getFavoriteShows()}</td>
+                        <td class="data">                        
+                            {var $shows = explode(", ", $user->getFavoriteShows())}
+
+                            {foreach $shows as $show}
+                                <a href="/search?type=users&query=&fav_shows={urlencode($show)}">{$show}</a>{if $show != end($shows)},{/if}
+                            {/foreach}
+                        </td>
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteBooks())">
                         <td class="label"><span class="nobold">{_favorite_books}: </span></td>
-                        <td class="data">{$user->getFavoriteBooks()}</td>
+                        <td class="data">
+                            {var $books = explode(", ", $user->getFavoriteBooks())}
+
+                            {foreach $books as $book}
+                                <a href="/search?type=users&query=&fav_books={urlencode($book)}">{$book}</a>{if $book != end($books)},{/if}
+                            {/foreach}
+                        </td>
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteQuote())">
                         <td class="label"><span class="nobold">{_favorite_quotes}: </span></td>
                         <td class="data">{$user->getFavoriteQuote()}</td>
                     </tr>
                     <tr n:if="!is_null($user->getDescription())">
-                        <td class="label"><span class="nobold">О себе: </span></td>
+                        <td class="label"><span class="nobold">{_information_about}: </span></td>
                         <td class="data">{$user->getDescription()}</td>
                     </tr>
                   </tbody>
@@ -544,13 +632,15 @@
                 uBanMsgTxt += "<br/><b>Предупреждение</b>: Это действие удалит все подписки пользователя и отпишет всех от него.";
                 uBanMsgTxt += "<br/><br/><b>Причина бана</b>: <input type='text' id='uBanMsgInput' placeholder='придумайте что-нибудь крутое' />"
                 uBanMsgTxt += "<br/><br/><b>Заблокировать до</b>: <input type='date' id='uBanMsgDate' />";
+                uBanMsgTxt += "<br/><br/><input id='uBanMsgIncr' type='checkbox' checked='1'/>Автоматически <b>(до " + {date('d.m.Y H\h', time() + $user->getNewBanTime())} + ")</b>";
 
                 MessageBox("Забанить " + {$user->getFirstName()}, uBanMsgTxt, ["Подтвердить", "Отмена"], [
                     (function() {
                         res = document.querySelector("#uBanMsgInput").value;
                         date = document.querySelector("#uBanMsgDate").value;
+                        incr = document.querySelector("#uBanMsgIncr").checked ? '1' : '0';
                         xhr = new XMLHttpRequest();
-                        xhr.open("GET", "/admin/ban/" + {$user->getId()} + "?reason=" + res + "&date=" + date + "&hash=" + {rawurlencode($csrfToken)}, true);
+                        xhr.open("GET", "/admin/ban/" + {$user->getId()} + "?reason=" + res + "&incr=" + incr + "&date=" + date + "&hash=" + {rawurlencode($csrfToken)}, true);
                         xhr.onload = (function() {
                             if(xhr.responseText.indexOf("success") === -1)
                                 MessageBox("Ошибка", "Не удалось забанить пользователя...", ["OK"], [Function.noop]);
@@ -684,4 +774,8 @@
     {else} {* isBanned() *}
         {include "banned.xml"}
     {/if}
+{/block}
+
+{block bodyScripts}
+    {script "js/al_despacito_wall.js"}
 {/block}

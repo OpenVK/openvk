@@ -7,7 +7,7 @@ use Chandler\Security\Authenticator;
 use Latte\Engine as TemplatingEngine;
 use openvk\Web\Models\Entities\IP;
 use openvk\Web\Themes\Themepacks;
-use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets};
+use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets, Reports, CurrentUser};
 use WhichBrowser;
 
 abstract class OpenVKPresenter extends SimplePresenter
@@ -211,6 +211,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             $this->user->id              = $this->user->identity->getId();
             $this->template->thisUser    = $this->user->identity;
             $this->template->userTainted = $user->isTainted();
+            CurrentUser::get($this->user->identity, $_SERVER["REMOTE_ADDR"], $_SERVER["HTTP_USER_AGENT"]);
 
             if($this->user->identity->isDeleted() && !$this->deactivationTolerant) {
                 if($this->user->identity->isDeactivated()) {
@@ -254,12 +255,15 @@ abstract class OpenVKPresenter extends SimplePresenter
             $cacheTime     = 0; # Force no cache
             if($this->user->identity->onlineStatus() == 0 && !($this->user->identity->isDeleted() || $this->user->identity->isBanned())) {
                 $this->user->identity->setOnline(time());
-                $this->user->identity->save();
+                $this->user->identity->setClient_name(NULL);
+                $this->user->identity->save(false);
             }
 
             $this->template->ticketAnsweredCount = (new Tickets)->getTicketsCountByUserId($this->user->id, 1);
-            if($user->can("write")->model("openvk\Web\Models\Entities\TicketReply")->whichBelongsTo(0))
+            if($user->can("write")->model("openvk\Web\Models\Entities\TicketReply")->whichBelongsTo(0)) {
                 $this->template->helpdeskTicketNotAnsweredCount = (new Tickets)->getTicketCount(0);
+                $this->template->reportNotAnsweredCount = (new Reports)->getReportsCount(0);
+            }
         }
 
         header("X-OpenVK-User-Validated: $userValidated");
@@ -284,10 +288,14 @@ abstract class OpenVKPresenter extends SimplePresenter
         parent::onBeforeRender();
         
         $whichbrowser = new WhichBrowser\Parser(getallheaders());
+        $featurephonetheme = OPENVK_ROOT_CONF["openvk"]["preferences"]["defaultFeaturePhoneTheme"];
         $mobiletheme = OPENVK_ROOT_CONF["openvk"]["preferences"]["defaultMobileTheme"];
-        if($mobiletheme && $whichbrowser->isType('mobile') && Session::i()->get("_tempTheme") == NULL)
+        
+        if($featurephonetheme && $this->isOldThing($whichbrowser) && Session::i()->get("_tempTheme") == NULL) {
+            $this->setSessionTheme($featurephonetheme);
+        } elseif($mobiletheme && $whichbrowser->isType('mobile') && Session::i()->get("_tempTheme") == NULL)
             $this->setSessionTheme($mobiletheme);
-
+    
         $theme = NULL;
         if(Session::i()->get("_tempTheme")) {
             $theme = Themepacks::i()[Session::i()->get("_tempTheme", "ovk")];
@@ -317,5 +325,34 @@ abstract class OpenVKPresenter extends SimplePresenter
         header("Content-Type: application/json");
         header("Content-Length: $size");
         exit($payload);
+    }
+
+    protected function isOldThing($whichbrowser) {
+        if($whichbrowser->isOs('Series60') || 
+           $whichbrowser->isOs('Series40') || 
+           $whichbrowser->isOs('Series80') || 
+           $whichbrowser->isOs('Windows CE') || 
+           $whichbrowser->isOs('Windows Mobile') || 
+           $whichbrowser->isOs('Nokia Asha Platform') || 
+           $whichbrowser->isOs('UIQ') || 
+           $whichbrowser->isEngine('NetFront') || // PSP and other japanese portable systems
+           $whichbrowser->isOs('Android') || 
+           $whichbrowser->isOs('iOS') ||
+           $whichbrowser->isBrowser('Internet Explorer', '<=', '8')) {
+            // yeah, it's old, but ios and android are?
+            if($whichbrowser->isOs('iOS') && $whichbrowser->isOs('iOS', '<=', '9'))
+                return true;
+            elseif($whichbrowser->isOs('iOS') && $whichbrowser->isOs('iOS', '>', '9'))
+                return false;
+            
+            if($whichbrowser->isOs('Android') && $whichbrowser->isOs('Android', '<=', '5'))
+                return true;
+            elseif($whichbrowser->isOs('Android') && $whichbrowser->isOs('Android', '>', '5'))
+                return false;
+
+            return true;
+        } else {
+            return false;
+        }
     }
 } 

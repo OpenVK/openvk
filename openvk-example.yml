@@ -18,7 +18,10 @@ openvk:
             forbiddenNames:
                 - "index.php"
         photos:
-            upgradeStructure: true
+            upgradeStructure: false
+            photoSaving: "quick"
+        videos:
+            disableUploading: false
         apps:
             withdrawTax: 8
         security:
@@ -26,6 +29,8 @@ openvk:
             requirePhone: false
             forcePhoneVerification: false
             forceEmailVerification: false
+            forceStrongPassword: false
+            disablePasswordRestoring: true # turn this off if you have configured e-mail sending correctly
             enableSu: true
             rateLimits:
                 actions: 5
@@ -35,9 +40,9 @@ openvk:
                 autoban: true
         registration:
             enable: true
-            reason: "" # reason for disabling registration
+            disablingReason: ""
         support:
-            supportName: "Moderator"
+            supportName: "Agent"
             adminAccount: 1 # Change this ok
             fastAnswers:
                 - "This is a list of quick answers to common questions for support. Post your responses here and agents can send it quickly with just 3 clicks"
@@ -98,6 +103,7 @@ openvk:
             fartscroll: false
             testLabel: false
         defaultMobileTheme: ""
+        logs: true
     
     telemetry:
         plausible:
@@ -124,9 +130,9 @@ openvk:
             token: "TOKEN_HERE"
             helpdeskChat: ""
         eventDB:
-            enable: false # Better enable this
+            enable: true
             database:
-                dsn: "mysql:unix_socket=/tmp/mysql.sock;dbname=openvk-eventdb"
+                dsn: "mysql:unix_host=localhost;dbname=openvk-eventdb" # or unix_socket=/tmp/mysql.sock
                 user: "root"
                 password: "DATABASE_PASSWORD"
         notificationsBroker:

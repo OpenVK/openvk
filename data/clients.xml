@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Clients name="standard">
+    <Client tag="vk4me" name="VK4ME" url="http://vk4me.crx.moe/" img="/assets/packages/static/openvk/img/app_icons/vk4me.png" />
+    <Client tag="openvk_legacy_android" name="OpenVK Legacy" url="https://f-droid.org/packages/uk.openvk.android.legacy/" img="/assets/packages/static/openvk/img/app_icons/openvk_legacy.png" />
+    <Client tag="openvk_refresh_android" name="OpenVK Refresh" url="https://github.com/openvk/mobile-android-refresh" img="/assets/packages/static/openvk/img/app_icons/openvk_refresh.png" />
+</Clients>

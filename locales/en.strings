@@ -1,5 +1,5 @@
 "__locale" = "en_US.UTF-8;Eng";
-"__transNames" = "Russian-Latin/BGN; Any-Latin";
+"__transNames" = "[\P{script=Han}]; Russian-Latin/BGN; Any-Latin";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 
@@ -15,6 +15,9 @@
 "password" = "Password";
 "registration" = "Registration";
 "forgot_password" = "Forgot your password?";
+
+"checkbox_in_registration" = "I agree to the <a href='/privacy'>privacy policy</a> and <a href='/terms'>site policies</a>";
+"checkbox_in_registration_unchecked" = "You must agree to the privacy policy and rules in order to register.";
 
 "login_failed" = "Login failed";
 "invalid_username_or_password" = "The username or password you entered is incorrect. <a href='/restore'>Forgot your password?</a>";
@@ -50,8 +53,11 @@
 "register_meta_desc" = "Register in $1 now!";
 "register_referer_meta_title" = "$1 invites you to $2!";
 "register_referer_meta_desc" = "Join $1 and many other users at $2!";
+"registration_welcome_1" = "is a universal colleague search tool based on the VKontakte structure.";
+"registration_welcome_2" = "We want friends, classmates, neighbors and colleagues to always be in touch.";
 
 "users" = "Users";
+"other_fields" = "Other fields";
 
 /* Profile information */
 
@@ -60,7 +66,7 @@
 "birth_date" = "Birth date";
 "registration_date" = "Registration date";
 "hometown" = "Hometown";
-"this_is_you" = "that is You";
+"this_is_you" = "it's you";
 "edit_page" = "Edit page";
 "edit_group" = "Edit group";
 "change_status" = "change status";
@@ -85,6 +91,7 @@
 "no_information_provided" = "No information provided.";
 "deceased_person" = "Deceased person";
 "none" = "none";
+"desc_none" = "no description";
 "send" = "Send";
 
 "years_zero" = "0 year old";
@@ -154,6 +161,9 @@
 "post_deact_f" = "deleted her profile saying:";
 "post_deact_silent_m" = "silently deleted his profile.";
 "post_deact_silent_f" = "silently deleted her profile.";
+"post_on_your_wall" = "on your wall";
+"post_on_group_wall" = "in $1";
+"post_on_user_wall" = "on $1's wall";
 "wall" = "Wall";
 "post" = "Post";
 "write" = "Write";
@@ -166,6 +176,9 @@
 "pinned" = "pinned";
 "comments_tip" = "Be first, who leaves a comment at this post!";
 "your_comment" = "Your comment";
+"auditory" = "Auditory";
+"in_wall" = "to user's wall";
+"in_group" = "to group";
 "shown" = "Shown";
 "x_out_of" = "$1 of";
 "wall_zero" = "no posts";
@@ -318,6 +331,8 @@
 "search_by_groups" = "Search by groups";
 "search_group_desc" = "Here you can browse through the existing groups and choose a group to suit your needs...";
 
+"group_banned" = "Unfortunately, we had to block the <b>$1</b> group.";
+
 /* Albums */
 
 "create" = "Create";
@@ -341,6 +356,30 @@
 "albums_list_zero" = "You don't have any albums";
 "albums_list_one" = "You have one album";
 "albums_list_other" = "You have $1 albums";
+
+"add_image" = "Add image";
+"add_image_group" = "Upload image";
+"upload_new_picture" = "Upload new photo";
+"uploading_new_image" = "Uploading new photo";
+"friends_avatar" = "It will be easier for friends to recognize you if you upload your real picture.";
+"groups_avatar" = "Good photo can make your group more recognizable.";
+"formats_avatar" = "You can upload an image in JPG, GIF or PNG format.";
+"troubles_avatar" = "If you're having trouble uploading, try selecting a smaller photo.";
+"webcam_avatar" = "If your computer is equipped with a webcam, you can <a href='javascript:'>take a snapshot</a>.";
+
+"update_avatar_notification" = "Profile photo was updated";
+"update_avatar_description" = "Click to watch";
+
+"deleting_avatar" = "Deleting photo";
+"deleting_avatar_sure" = "Do you sure you want to delete avatar?";
+
+"deleted_avatar_notification" = "Picture successfully deleted";
+
+"save_changes" = "Save changes";
+
+"upd_m" = "updated his profile picture";
+"upd_f" = "updated her profile picture";
+"upd_g" = "updated group's picture";
 
 /* Notes */
 
@@ -367,6 +406,19 @@
 "notes_list_one" = "$1 note found";
 "notes_list_other" = "$1 notes found";
 
+"select_note" = "Selecting note";
+"no_notes" = "You don't have any notes";
+
+"error_attaching_note" = "Error when attaching note";
+
+"select_or_create_new" = "Select existing note or <a href='/notes/create'>create new one</a>";
+
+"notes_closed" = "You can't attach note to post, because only you can see them.<br> You can change it in <a href=\"/settings?act=privacy\">settings</a>.";
+"do_not_attach_note" = "Do not attach note";
+
+/* Notes: Article Viewer */
+"aw_legacy_ui" = "Legacy interface";
+
 /* Menus */
 
 /* Note that is string need to fit into the "My Page" link */
@@ -384,8 +436,10 @@
 "my_settings" = "My Settings";
 "bug_tracker" = "Bug-tracker";
 
+"menu_settings" = "Settings";
 "menu_login" = "Login";
 "menu_registration" = "Registration";
+
 "menu_help" = "Help";
 
 "menu_logout" = "Logout";
@@ -405,6 +459,7 @@
 "left_menu_donate" = "Donate";
 
 "footer_about_instance" = "about instance";
+"footer_rules" = "rules";
 "footer_blog" = "blog";
 "footer_help" = "help";
 "footer_developers" = "developers";
@@ -441,7 +496,13 @@
 "apply_style_for_this_device" = "Apply style only for this device";
 
 "search_for_groups" = "Search for groups";
-"search_for_people" = "Search for people";
+"search_for_users" = "Search for people";
+"search_for_posts" = "Search for posts";
+"search_for_comments" = "Search for comments";
+"search_for_videos" = "Search for videos";
+"search_for_apps" = "Search for apps";
+"search_for_notes" = "Search for notes";
+"search_for_audios" = "Search for music";
 "search_button" = "Find";
 "search_placeholder" = "Start typing any name, title or word";
 "results_zero" = "No results";
@@ -525,6 +586,20 @@
 
 "end_all_sessions_done" = "All sessions was ended, including mobile apps";
 
+"backdrop_short" = "Backdrop";
+"backdrop" = "Page backdrop";
+"backdrop_desc" = "You can set two pictures as your profile or group backdrop. They will be displayed on left and right edges of page. With this feature, you can add more personality to your profile.";
+"backdrop_warn" = "The images will be arranged as in the layout above. Their height will be automatically increased so that they occupy 100% of the screen height, there will be a blur in the middle. It is not possible to replace the background of the main OpenVK interface or add audio.";
+"backdrop_about_adding" = "You can upload only one picture, although depending on design, the ending result may look ugly. You can also change only one pic: if you already have two images set up and you want to change one - upload only one, the other won't be removed. To remove both images press the button below, you can't remove pictures individually.";
+"backdrop_save" = "Save backdrop picture(s)";
+"backdrop_remove" = "Remove all backdrop pictures";
+"backdrop_error_title" = "Error saving backdrop settings";
+"backdrop_error_no_media" = "Images are corrupted or haven't been uploaded in their entirety";
+"backdrop_succ" = "Backdrop settings saved";
+"backdrop_succ_rem" = "Backdrop images have been removed";
+"backdrop_succ_desc" = "Users will start seeing changes in 5 minutes.";
+"browse" = "Browse";
+
 /* Two-factor authentication */
 
 "two_factor_authentication" = "Two-factor authentication";
@@ -598,20 +673,28 @@
 "notifications_post" = "$1 published $2a post$3 on your wall: $4";
 "notifications_appoint" = "$1 appointed you as community manager $2";
 
-"nt_liked_yours" = "liked yours";
-"nt_shared_yours" = "shared yours";
+"nt_liked_yours" = "liked your";
+"nt_shared_yours" = "shared your";
 "nt_commented_yours" = "commented";
 "nt_written_on_your_wall" = "wrote on your wall";
 "nt_made_you_admin" = "appointed you in the community";
 
 "nt_from" = "from";
-"nt_yours_adjective" = "yours";
-"nt_yours_feminitive_adjective" = "yours";
+"nt_yours_adjective" = "your";
+"nt_yours_feminitive_adjective" = "your";
 "nt_post_nominative" = "post";
 "nt_post_instrumental" = "post";
 "nt_note_instrumental" = "note";
 "nt_photo_instrumental" = "photo";
 "nt_topic_instrumental" = "topic";
+
+"nt_you_were_mentioned_u" = "You were mentioned by user";
+"nt_you_were_mentioned_g" = "You were mentioned by group";
+"nt_mention_in_post_or_comms" = "in post or one of its discussion threads";
+"nt_mention_in_photo" = "in discussion of this photo";
+"nt_mention_in_video" = "in discussion of this video";
+"nt_mention_in_note" = "in discussion of this note";
+"nt_mention_in_topic" = "in the discussion";
 
 /* Time */
 
@@ -755,22 +838,22 @@
 "appjs_wall_post" = "Publish a post";
 "appjs_wall_post_desc" = "wants to publish a post on your wall";
 
-"appjs_sperm_friends" = "your Friends";
-"appjs_sperm_friends_desc" = "add users as friends and read your friends list";
-"appjs_sperm_wall" = "your Wall";
-"appjs_sperm_wall_desc" = "see your news, your wall and create posts on it";
-"appjs_sperm_messages" = "your Messages";
-"appjs_sperm_messages_desc" = "read and write messages on your behalf";
-"appjs_sperm_groups" = "your Groups";
-"appjs_sperm_groups_desc" = "see a list of your groups and subscribe you to other";
-"appjs_sperm_likes" = "Likes feature";
-"appjs_sperm_likes_desc" = "give and take away likes to posts";
+"appjs_act_friends" = "your Friends";
+"appjs_act_friends_desc" = "add users as friends and read your friends list";
+"appjs_act_wall" = "your Wall";
+"appjs_act_wall_desc" = "see your news, your wall and create posts on it";
+"appjs_act_messages" = "your Messages";
+"appjs_act_messages_desc" = "read and write messages on your behalf";
+"appjs_act_groups" = "your Groups";
+"appjs_act_groups_desc" = "see a list of your groups and subscribe you to other";
+"appjs_act_likes" = "Likes feature";
+"appjs_act_likes_desc" = "give and take away likes to posts";
 
-"appjs_sperm_request" = "Access request";
-"appjs_sperm_requests" = "requests access to";
-"appjs_sperm_can" = "The app will be able to";
-"appjs_sperm_allow" = "Allow";
-"appjs_sperm_disallow" = "Disallow";
+"appjs_act_request" = "Access request";
+"appjs_act_requests" = "requests access to";
+"appjs_act_can" = "The app will be able to";
+"appjs_act_allow" = "Allow";
+"appjs_act_disallow" = "Disallow";
 
 "app_uninstalled" = "Application is disabled";
 "app_uninstalled_desc" = "It will no longer be able to perform actions on your behalf.";
@@ -783,6 +866,8 @@
 "app_err_ava_desc" = "Avatar too big or wrong: general error #$res.";
 "app_err_note" = "Failed to attach a news note";
 "app_err_note_desc" = "Make sure the link is correct and the note belongs to you.";
+
+"learn_more" = "Learn more";
 
 /* Support */
 
@@ -804,6 +889,8 @@
 "support_new_title" = "Enter the topic of your ticket";
 "support_new_content" = "Describe the issue or suggestion";
 
+"reports" = "Reports";
+
 "support_rate_good_answer" = "This is good answer";
 "support_rate_bad_answer" = "This is bad answer";
 "support_good_answer_user" = "You left a positive feedback.";
@@ -815,6 +902,12 @@
 "wrong_parameters" = "Invalid request parameters.";
 
 "fast_answers" = "Fast answers";
+
+"ignore_report" = "Ignore report";
+"report_number" = "Report #";
+"list_of_reports" = "List of reports";
+"text_of_the_post" = "Text of the post";
+"today" = "today";
 
 "comment" = "Comment";
 "sender" = "Sender";
@@ -829,6 +922,13 @@
 
 "banned_in_support_1" = "Sorry, <b>$1</b>, but now you can't create tickets.";
 "banned_in_support_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to take away this opportunity from you forever.";
+
+"you_can_close_this_ticket_1" = "If you have no more questions, you can ";
+"you_can_close_this_ticket_2" = "close this ticket";
+"agent_profile_created_1" = "Profile created";
+"agent_profile_created_2" = "Now users see your customized name and avatar instead of the default ones.";
+"agent_profile_edited" = "Profile edited";
+"agent_profile" = "My Agent Card";
 
 /* Invite */
 
@@ -869,6 +969,38 @@
 
 "messages_error_1" = "Message not delivered";
 "messages_error_1_description" = "There was a general error in sending this message...";
+
+/* Polls */
+"poll" = "Poll";
+"create_poll" = "Create poll";
+"poll_title" = "Ask a question";
+"poll_add_option" = "Add an option...";
+"poll_anonymous" = "Anonymous votes";
+"poll_multiple" = "Multiple answers";
+"poll_locked" = "Quiz mode (no retraction)";
+"poll_edit_expires" = "Expires in: ";
+"poll_edit_expires_days" = "days";
+"poll_editor_tips" = "Pressing backspace in empty option will remove it. Use Tab/Enter (in last option) to create new options faster.";
+"poll_embed" = "Embed code";
+
+"poll_voter_count_zero" = "Be <b>the first one</b> to vote!";
+"poll_voter_count_one" = "<b>Only one</b> user voted.";
+"poll_voter_count_few" = "<b>$1</b> users voted.";
+"poll_voter_count_many" = "<b>$1</b> users voted.";
+"poll_voter_count_other" = "<b>$1</b> users voted.";
+
+"poll_voters_list" = "Voters";
+
+"poll_anon" = "Anonymous";
+"poll_public" = "Public";
+"poll_multi" = "multiple choice";
+"poll_lock" = "can't revoke";
+"poll_until" = "until $1";
+
+"poll_err_to_much_options" = "Too much options supplied.";
+"poll_err_anonymous" = "Can't access voters list: poll is anonymous.";
+"cast_vote" = "Vote!";
+"retract_vote" = "Cancel my vote";
 
 /* Discussions */
 
@@ -928,6 +1060,7 @@
 "error_upload_failed" = "Failed to upload a photo";
 "error_old_password" = "Old password does not match";
 "error_new_password" = "New password does not match";
+"error_weak_password" = "Password isn't strong enough. It should has at least 8 symbols, at least one capital letter and at least one digit.";
 "error_shorturl_incorrect" = "The short address has an incorrect format.";
 "error_repost_fail" = "Failed to share post";
 "error_data_too_big" = "Attribute '$1' must be at most $2 $3 long";
@@ -1054,7 +1187,7 @@
 "admin_voucher_serial" = "Serial number";
 "admin_voucher_serial_desc" = "The number consists of 24 characters. If the format is incorrect or the field is not filled in, it will be assigned automatically.";
 "admin_voucher_coins" = "Number of votes";
-"admin_voucher_rating" = "Number of rating";
+"admin_voucher_rating_number" = "Number of rating";
 "admin_voucher_usages_desc" = "The number of accounts that can use the voucher. If you type -1, it will be infinity.";
 "admin_voucher_status" = "Status";
 "admin_voucher_status_opened" = "active";
@@ -1084,6 +1217,15 @@
 "admin_banned_link_initiator" = "Initiator";
 "admin_banned_link_not_specified" = "The link is not specified";
 "admin_banned_link_not_found" = "Link not found";
+
+"logs_adding" = "Creation";
+"logs_editing" = "Editing";
+"logs_removing" = "Deletion";
+"logs_restoring" = "Restoring";
+"logs_added" = "created";
+"logs_edited" = "edited";
+"logs_removed" = "removed";
+"logs_restored" = "restored";
 
 /* Paginator (deprecated) */
 
@@ -1117,6 +1259,8 @@
 "about_wall_posts_one" = "<b>1</b> wall post";
 "about_wall_posts_other" = "<b>$1</b> wall posts";
 
+"about_watch_rules" = "Watch <a href='$1'>here</a>.";
+
 /* Dialogs */
 
 "ok" = "OK";
@@ -1133,6 +1277,7 @@
 /* User alerts */
 
 "user_alert_scam" = "This account has been reported a lot for scam. Please be careful, especially if he asked for money.";
+"user_may_not_reply" = "This user may not reply to you because of your privacy settings. <a href='/settings?act=privacy'>Open privacy settings</a>";
 
 /* Cookies pop-up */
 
@@ -1148,6 +1293,40 @@
 "url_is_banned_title" = "Link to a suspicious site";
 "url_is_banned_proceed" = "Follow the link";
 
+"recently" = "Recently";
+
+/* Helpdesk */
+"helpdesk" = "Support";
+"helpdesk_agent" = "Support Agent";
+"helpdesk_agent_card" = "Agent Card";
+"helpdesk_positive_answers" = "positive answers";
+"helpdesk_negative_answers" = "negative answers";
+"helpdesk_all_answers" = "all answers";
+"helpdesk_showing_name" = "Display name";
+"helpdesk_show_number" = "Show the number";
+"helpdesk_avatar_url" = "Link to the avatar";
+
+/* Chandler */
+"c_user_removed_from_group" = "The user has been removed from the group";
+"c_permission_removed_from_group" = "The permission has been removed from the group";
+"c_group_removed" = "The group has been deleted.";
+"c_groups" = "Chandler Groups";
+"c_users" = "Chandler Users";
+"c_group_permissions" = "Permissions";
+"c_group_members" = "Members";
+"c_model" = "Model";
+"c_permission" = "Permission";
+"c_permissions" = "Permissions";
+"c_color" = "Color";
+"add" = "Add";
+"c_edit_groups" = "Edit Groups";
+"c_user_is_not_in_group" = "The relationship between the user and the group was not found.";
+"c_permission_not_found" = "The relationship between the permission and the group was not found.";
+"c_group_not_found" = "The group was not found.";
+"c_user_is_already_in_group" = "This user is already a member of this group.";
+"c_add_to_group" = "Add to group";
+"c_remove_from_group" = "Remove from group";
+
 /* Maintenance */
 
 "global_maintenance" = "Undergoing maintenance";
@@ -1156,3 +1335,233 @@
 "undergoing_section_maintenance" = "Unfortunately, the <b>$1</b> section is temporarily unavailable. We are already working on troubleshooting. Please try to come back later.";
 
 "topics" = "Topics";
+
+
+/* Tutorial */
+
+"tour_title" = "Site Tour";
+"reg_title" = "Registration";
+"ifnotlike_title" = " &quot;And what if I don't like this site?&quot; ";
+"tour_promo" = "About what awaits you after registration";
+
+"reg_text" = "<a href='/reg'>Registering</a> an account is absolutely free and takes no more than two minutes";
+"ifnotlike_text" = "You can always delete your account";
+
+
+"tour_next" = "Next →";
+"tour_reg" = "Registration →";
+
+
+"tour_section_1" = "Start";
+"tour_section_2" = "Profile";
+"tour_section_3" = "Photos";
+"tour_section_4" = "Search";
+"tour_section_5" = "Videos";
+"tour_section_6" = "Audios";
+"tour_section_7" = "Local news feed";
+"tour_section_8" = "Global news feed";
+"tour_section_9" = "Groups";
+"tour_section_10" = "Events";
+"tour_section_11" = "Themes";
+"tour_section_12" = "Customization";
+"tour_section_13" = "Promocodes";
+"tour_section_14" = "Mobile version";
+
+
+"tour_section_1_title_1" = "Where to start?";
+"tour_section_1_text_1" = "Registering an account is the very first and most basic step in beginning your journey on this site.";
+"tour_section_1_text_2" = "To register you will need to enter your name, E-mail and password.";
+"tour_section_1_text_3" = "<b>Remember:</b> Your E-mail will be used as your login to the site. You also have the full right not to specify your last name when signing up. In case you lost your password to enter the site, use the <a href='/restore'>recovery page</a>";
+"tour_section_1_bottom_text_1" = "By registering on the site, you agree to <a href='/terms'>site rules</a> and <a href='/privacy'>privacy policy</a>";
+
+
+"tour_section_2_title_1" = "Your Profile";
+"tour_section_2_text_1_1" = "After registering, you will automatically be redirected to <b>your</b> profile.";
+"tour_section_2_text_1_2" = "You can edit it anywhere and anytime you want.";
+"tour_section_2_text_1_3" = "<b>Hint:</b> To make your profile look nice and presentable, you can fill it with information or upload a photo that highlights, for example, your deep inner world.";
+"tour_section_2_bottom_text_1" = "You are the one who decides how much information your friends need to know about you.";
+"tour_section_2_title_2" = "Set your own privacy settings";
+"tour_section_2_text_2_1" = "You can define exactly who can access certain types of information and sections on your page.";
+"tour_section_2_text_2_2" = "You have the right to block access to your page from search engines and unregistered users.";
+"tour_section_2_text_2_3" = "<b>Remember:</b> privacy settings will be expanded in the future.";
+"tour_section_2_title_3" = "Profile URL";
+"tour_section_2_text_3_1" = "After registering your page, you get a personal ID like <b>@id12345</b>";
+"tour_section_2_text_3_2" = "The <b>default ID</b>, which was obtained after registration, <b>cannot be changed</b>";
+"tour_section_2_text_3_3" = "But in the settings of your page you can bind your personal address and this address <b>can be changed</b> at any time";
+"tour_section_2_text_3_4" = "<b>Hint:</b> You can take any address that is at least 5 characters long. Try to get a cool URL :)";
+"tour_section_2_bottom_text_2" = "<i>Any short address in Latin small letters is supported; the address may contain numbers (not at the beginning), periods, and underscores (not at the beginning or end)</i>";
+"tour_section_2_title_4" = "Wall";
+
+
+"tour_section_3_title_1" = "Share your photo moments";
+"tour_section_3_text_1" = "The &quot;Photos&quot; section is available in your profile as soon as you sign up";
+"tour_section_3_text_2" = "You can browse user photo albums and create your own";
+"tour_section_3_text_3" = "Access to all your photo albums for other users is controlled in the page privacy settings";
+"tour_section_3_bottom_text_1" = "You can create an unlimited number of photo albums from your travels or events, or just to store memes";
+
+
+"tour_section_4_title_1" = "Search";
+"tour_section_4_text_1" = "The &quot;Search&quot; section allows you to search for users and groups.";
+"tour_section_4_text_2" = "This section of the site will be improved over time.";
+"tour_section_4_text_3" = "To start a search, you need to know the user's first (or last) name; and if you're looking for a group, you need to know its name.";
+"tour_section_4_title_2" = "Quick Search";
+"tour_section_4_text_4" = "If you want to save time in any way, the search bar is also available in the header of the site";
+
+
+"tour_section_5_title_1" = "Upload and share videos with your friends!";
+"tour_section_5_text_1" = "You can upload an unlimited number of videos and clips";
+"tour_section_5_text_2" = "The &quot;Videos&quot; section is controlled by the privacy settings";
+"tour_section_5_bottom_text_1" = "Videos can be uploaded bypassing the &quot;Videos&quot; section by simply attaching them to a new entry on the wall:";
+"tour_section_5_title_2" = "Importing videos from YouTube";
+"tour_section_5_text_3" = "In addition to uploading videos directly, the site also supports embedding videos from YouTube";
+
+
+"tour_section_6_title_1" = "Audios section, which doesn't exist yet xdddd";
+"tour_section_6_text_1" = "I would love to do a tutorial on this section, but sunshine Vriska didn't make the music :c";
+
+
+"tour_section_7_title_1" = "Follow what your friends write";
+"tour_section_7_text_1" = "The &quot;My News&quot; section is divided into two types: local feed and global feed";
+"tour_section_7_text_2" = "The local feed will only show news from your friends and groups";
+"tour_section_7_bottom_text_1" = "No recommendation system. <b>It's up to you to create your own news feed</b>";
+
+
+"tour_section_8_title_1" = "Follow what topics are discussed on the site";
+"tour_section_8_text_1" = "The global newsfeed will show entries of all site users and groups";
+"tour_section_8_text_2" = "Viewing this section may not be recommended for sensitive or fragile people";
+"tour_section_8_bottom_text_1" = "The design of the global feed does not differ in any way from the local feed";
+"tour_section_8_bottom_text_2" = "The feed has many types of content, from regular photos and videos to anonymous posts and polls";
+
+
+"tour_section_9_title_1" = "Create groups!";
+"tour_section_9_text_1" = "The site already has thousands of groups devoted to various topics and fan associations";
+"tour_section_9_text_2" = "You can join any group you want. And if you haven't found a matching one, you can create your own";
+"tour_section_9_text_3" = "Each group has its own section of wiki pages, photo albums, block of links and discussions";
+"tour_section_9_title_2" = "Manage your group with a friend";
+"tour_section_9_text_2_1" = "Manage the group in the &quot;Edit Group&quot; section under the community avatar";
+"tour_section_9_text_2_2" = "Create a team of administrators from the usual participants or those whom you trust";
+"tour_section_9_text_2_3" = "You can hide the administrator you want, so he will not appear anywhere within your group";
+"tour_section_9_bottom_text_1" = "The &quot;My Groups&quot; section is on the left menu of the site";
+"tour_section_9_bottom_text_2" = "Group example";
+"tour_section_9_bottom_text_3" = "Groups are often real organizations whose members want to stay in touch with their audiences";
+
+
+"tour_section_10_title_1" = "Oops";
+"tour_section_10_text_1" = "I would be very happy to do a tutorial on this section, but it's still under development. For now, let's skip it and move on...";
+
+
+"tour_section_11_title_1" = "Themes";
+"tour_section_11_text_1" = "After registering, you will have the default theme installed as your appearance";
+"tour_section_11_text_2" = "Some new users may be a bit intimidated by the current default theme, which reeks of quite antiquity";
+"tour_section_11_text_3" = "<b>But no worries:</b> You can create your own theme for the site by reading the <a href='https://docs.openvk.uk/'>documentation</a> or choose an existing one from the catalog";
+"tour_section_11_bottom_text_1" = "A catalog of themes is available under &quot;My Settings&quot;, in the &quot;Interface&quot; tab;";
+"tour_section_11_wordart" = "<img src='https://openvk.uk/assets/packages/static/openvk/img/tour/wordart_en.png' width='65%'>";
+
+"tour_section_12_title_1" = "Profile and group backgrounds";
+"tour_section_12_text_1" = "You can set two images as the background of your page";
+"tour_section_12_text_2" = "They will be displayed on the sides of those who come to your page";
+"tour_section_12_text_3" = "<b>Hint:</b> before setting the background, try to experiment with the layout: try to mirror the future background image, or even just create a nice gradient";
+"tour_section_12_title_2" = "Avatars";
+"tour_section_12_text_2_1" = "You can set the option to show the user's avatar: standard, rounded and square (1:1)";
+"tour_section_12_text_2_2" = "These settings will only be visible to you";
+"tour_section_12_title_3" = "Editing the left menu";
+"tour_section_12_text_3_1" = "If necessary, you can hide unnecessary sections of the site";
+"tour_section_12_text_3_2" = "<b>Remember: </b>The essential sections (My Page; My Friends; My Answers; My Settings) cannot be hidden";
+"tour_section_12_title_4" = "View of posts";
+"tour_section_12_text_4_1" = "If you're tired of the old wall design that was in the once-popular original VKontakte, you can always change the look of the posts to Microblog";
+"tour_section_12_text_4_2" = "The view of the posts can be changed between the two options at any time";
+"tour_section_12_text_4_3" = "<b>Note that</b> if you selected the old view of the posts, the latest comments will not be loaded";
+"tour_section_12_bottom_text_1" = "Background setup page";
+"tour_section_12_bottom_text_2" = "Examples of pages with set backgrounds";
+"tour_section_12_bottom_text_3" = "With this feature you can add more personality to your profile";
+"tour_section_12_bottom_text_4" = "Old post view";
+"tour_section_12_bottom_text_5" = "Microblog";
+
+
+"tour_section_13_title_1" = "Promocodes";
+"tour_section_13_text_1" = "OpenVK has a promo code system that aims to add some currency (rating percentages, votes, and so on)";
+"tour_section_13_text_2" = "Such coupons are created for some significant events and holidays. Follow the <a href='https://t.me/openvk'>OpenVK Telegram channel</a>";
+"tour_section_13_text_3" = "After activating a promocode, the currency set by the administrators will be transferred to you";
+"tour_section_13_text_4" = "<b>Remember: </b>All promocodes have a limited activation period";
+"tour_section_13_bottom_text_1" = "Promocodes consist of 24 digits and letters";
+"tour_section_13_bottom_text_2" = "Successful activation (for example, we were credited with 100 votes)";
+"tour_section_13_bottom_text_3" = "<b>Attention: </b>Once a promocode is activated on your page, the same promocode cannot be reactivated";
+
+"tour_section_14_title_1" = "Mobile version";
+"tour_section_14_text_1" = "At the moment there is no mobile web version of the site yet, but there is a mobile app for Android";
+"tour_section_14_text_2" = "OpenVK Legacy is an OpenVK mobile app for retro Android devices with the design of the original VKontakte 3.0 app from 2013";
+"tour_section_14_text_3" = "The minimum supported version is Android 2.1 Eclair, which means devices from the early 2010s will be quite useful";
+
+"tour_section_14_title_2" = "Where can I download this?";
+"tour_section_14_text_2_1" = "Release versions are downloaded through the official F-Droid repository";
+"tour_section_14_text_2_2" = "If you are a beta tester, new versions of the app are posted to a separate update channel";
+"tour_section_14_text_2_3" = "<b>Note: </b>The app may have various bugs and problems, if you encounter a mistake, please report it to the <a href='/app'>official app group</a>";
+
+"tour_section_14_bottom_text_1" = "Screenshots";
+"tour_section_14_bottom_text_2" = "This concludes the tour of the site. If you want to try our mobile app, create your own group here, invite your friends or find new ones, or just have some fun in general, you can do it right now with a small <a href='/reg'>registration</a>";
+"tour_section_14_bottom_text_3" = "This concludes the tour of the site";
+
+/* Search */
+
+"s_people" = "People";
+"s_groups" = "Clubs";
+"s_events" = "Events";
+"s_apps" = "Applications";
+"s_questions" = "Questions";
+"s_notes" = "Notes";
+"s_themes" = "Themes";
+"s_posts" = "Posts";
+"s_comments" = "Comments";
+"s_videos" = "Videos";
+"s_audios" = "Music";
+"s_by_people" = "for people";
+"s_by_groups" = "for groups";
+"s_by_posts" = "for posts";
+"s_by_comments" = "for comments";
+"s_by_videos" = "for videos";
+"s_by_apps" = "for apps";
+"s_by_audios" = "for musics";
+
+"s_order_by" = "Order by...";
+
+"s_order_by_id" = "By id";
+"s_order_by_name" = "By name";
+"s_order_by_random" = "By random";
+"s_order_by_rating" = "By rating";
+"s_order_invert" = "Invert";
+
+"s_by_date" = "By date";
+"s_registered_before" = "Registered before";
+"s_registered_after" = "Registered after";
+"s_date_before" = "Before";
+"s_date_after" = "After";
+
+"s_main" = "Main";
+
+"s_now_on_site" = "now on site";
+"s_with_photo" = "with photo";
+"s_only_in_names" = "only in names";
+
+"s_any" = "any";
+"reset" = "Reset";
+
+"closed_group_post" = "This is a post from private group";
+"deleted_target_comment" = "This comment belongs to deleted post";
+
+"no_results" = "No results";
+
+/* Mobile */
+"mobile_friends" = "Friends";
+"mobile_photos" = "Photos";
+"mobile_videos" = "Videos";
+"mobile_messages" = "Messages";
+"mobile_notes" = "Notes";
+"mobile_groups" = "Groups";
+"mobile_search" = "Search";
+"mobile_settings" = "Settings";
+"mobile_desktop_version" = "Desktop version";
+"mobile_log_out" = "Log out";
+"mobile_menu" = "Menu";
+"mobile_like" = "Like";
+"mobile_user_info_hide" = "Hide";
+"mobile_user_info_show_details" = "Show details";

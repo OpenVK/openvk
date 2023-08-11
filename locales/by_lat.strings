@@ -9,6 +9,7 @@
 
 "home" = "Hałoŭnaja";
 "welcome" = "Sardečna zaprašajem";
+"to_top" = "Uvierch";
 
 /* Login */
 
@@ -44,6 +45,17 @@
 "information" = "Infarmacyja";
 "status" = "Status";
 "no_information_provided" = "Niama infarmacyi.";
+"deceased_person" = "Staronka pamierlaha čalavieka";
+"none" = "adsutničaje";
+"desc_none" = "niama apisannia";
+"send" = "Adpravić";
+"years_zero" = "0 hadoŭ";
+"years_one" = "1 hod";
+"years_few" = "$1 hod";
+"years_many" = "$1 hod";
+"years_other" = "$1 hod";
+"show_my_birthday" = "Pakazać datu naradžennia";
+"show_only_month_and_day" = "Pakazać toĺki dzień i miesiac";
 
 "relationship" = "Siamiejnaje stanovišča";
 
@@ -295,7 +307,13 @@
 "round_avatars" = "Kruhły avatar";
 
 "search_for_groups" = "Pošuk hurtoŭ";
-"search_for_people" = "Pošuk ludziaŭ";
+"search_for_users" = "Šukać karystaĺnikaŭ";
+"search_for_posts" = "Pošuk pastoŭ";
+"search_for_comments" = "Pošuk kamentaryjaŭ";
+"search_for_videos" = "Šukać videa";
+"search_for_apps" = "Šukać prahramy";
+"search_for_notes" = "Šukać natatki";
+"search_for_audios" = "Pošuk muzyki";
 "search_button" = "Znajści";
 
 "privacy_setting_access_page" = "Kamu ŭ interniecie vidać maju staronku";
@@ -455,3 +473,50 @@
 "paginator_back" = "Nazad";
 "paginator_page" = "Staronka $1";
 "paginator_next" = "Dalej";
+
+/* Пошук */
+
+"s_people" = "Liudzi";
+"s_groups" = "Supolnasci";
+"s_events" = "Padziei";
+"s_apps" = "Prylady";
+"s_questions" = "Pytanni";
+"s_notes" = "Natatki";
+"s_themes" = "Temy";
+"s_posts" = "Pasty";
+"s_comments" = "Kamentaryi";
+"s_videos" = "Videa";
+"s_audios" = "Muzyka";
+"s_by_people" = "pa liudziam";
+"s_by_groups" = "pa supolkach";
+"s_by_posts" = "pa paviedamlienniach";
+"s_by_comments" = "pa kamentaryjach";
+"s_by_videos" = "pa videa";
+"s_by_apps" = "pa pryladam";
+"s_by_audios" = "pa muzycy";
+
+"s_order_by" = "Sartavać pa...";
+
+"s_order_by_id" = "ID";
+"s_order_by_name" = "Imieni";
+"s_order_by_random" = "Vypadkova";
+"s_order_by_rating" = "Pa rejtynhu";
+"s_order_invert" = "Invertavać";
+
+"s_by_date" = "Pa dacie";
+"s_registered_before" = "Zarehistravana da";
+"s_registered_after" = "Zarehistravana paslia";
+"s_date_before" = "Da";
+"s_date_after" = "Paslia";
+
+"s_main" = "Asnoŭny";
+
+"s_now_on_site" = "zaraz na sajcie";
+"s_with_photo" = "z fota";
+"s_only_in_names" = "toĺki ŭ imionach";
+
+"s_any" = "liuby";
+"reset" = "Ačyscić";
+
+"closed_group_post" = "Heta paviedamliennie z pryvatnaj hrupy";
+"deleted_target_comment" = "Heta paviedamliennie z pryvatnaj hrupy";

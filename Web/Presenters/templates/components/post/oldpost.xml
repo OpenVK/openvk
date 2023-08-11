@@ -1,4 +1,6 @@
 {var $author = $post->getOwner()}
+{var $platform = $post->getPlatform()}
+{var $platformDetails = $post->getPlatformDetails()}
 {if $post->isDeactivationMessage() && $post->getText()}
     {var $deac = "post_deact"}
 {else}
@@ -20,19 +22,31 @@
                 <div class="post-author">
                     <a href="{$author->getURL()}"><b>{$author->getCanonicalName()}</b></a>
                     <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
-                    {$post->isDeactivationMessage() ? ($author->isFemale() ? tr($deac . "_f") : tr($deac . "_m")) : ($post->isPostedOnBehalfOfGroup() ? tr("post_writes_g") : ($author->isFemale() ? tr("post_writes_f") : tr("post_writes_m")))}
+                    {if $post->isDeactivationMessage()}
+                        {$author->isFemale() ? tr($deac . "_f") : tr($deac . "_m")}
+                    {elseif $post->isUpdateAvatarMessage() && !$post->isPostedOnBehalfOfGroup()}
+                        {$author->isFemale() ? tr("upd_f") : tr("upd_m")}
+                    {elseif $post->isUpdateAvatarMessage() && $post->isPostedOnBehalfOfGroup()}
+                        {tr("upd_g")}
+                    {elseif $post->isPostedOnBehalfOfGroup()}
+                        {_post_writes_g}
+                    {else}
+                        {if $author->isFemale()}
+                            {_post_writes_f}
+                        {else}
+                            {_post_writes_m}
+                        {/if}
+                    {/if}
                     {if ($onWallOf ?? false) &&!$post->isPostedOnBehalfOfGroup() && $post->getOwnerPost() !== $post->getTargetWall()}
-                        {var $wallId  = $post->getTargetWall()}
-                        {var $wallURL = $wallId > -1 ? "/id$wallId" : "/club" . abs($wallId)}
-                        на
-                        <a href="{$wallURL}">
+                        {var $wallOwner = $post->getWallOwner()}
+                        <a href="{$wallOwner->getURL()}" class="mention" data-mention-ref="{$post->getTargetWall()}">
                             <b>
-                                {if isset($thisUser) && $thisUser->getId() === $wallId}
-                                    вашей
-                                {/if}
-                                стене
-                                {if $wallId < 0}
-                                    группы
+                                {if isset($thisUser) && $thisUser->getId() === $post->getTargetWall()}
+                                    {_post_on_your_wall}
+                                {elseif $wallOwner instanceof \openvk\Web\Models\Entities\Club}
+                                    {tr("post_on_group_wall", ovk_proc_strtr($wallOwner->getName(), 52))}
+                                {else}
+                                    {tr("post_on_user_wall", $wallOwner->getMorphedName("genitive", false))}
                                 {/if}
                             </b>
                         </a>
@@ -40,6 +54,9 @@
                     <br/>
                     <a href="/wall{$post->getPrettyId()}" class="date">
                         {$post->getPublicationTime()}{if $post->isPinned()}, {_pinned}{/if}
+                        <a n:if="!empty($platform)" class="client_app" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
+                            <img src="/assets/packages/static/openvk/img/app_icons_mini/{$post->getPlatform(this)}.svg">
+                        </a>
                     </a>
                 </div>
                 <div class="post-content" id="{$post->getPrettyId()}">
@@ -69,7 +86,7 @@
                         {var $actualAuthor = $post->getOwner(false)}
                         <span>
                             {_author}:
-                            <a href="{$actualAuthor->getURL()}">
+                            <a href="{$actualAuthor->getURL()}" class="mention" data-mention-ref="{$actualAuthor->getId()}">
                                {$actualAuthor->getCanonicalName()}
                             </a>
                         </span>
@@ -109,10 +126,10 @@
                         &nbsp;|&nbsp;
                     {/if}
                     
-                    <a n:if="!($forceNoShareLink ?? false)" class="post-share-button" {ifset $thisUser} href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')"{/ifset}>
+                    <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button" {ifset $thisUser} href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')"{/ifset}>
                         {_share}
                         {if $post->getRepostCount() > 0}
-                            (<b>{$post->getRepostCount()}</b>)
+                            (<b id="repostsCount{$post->getPrettyId()}">{$post->getRepostCount()}</b>)
                         {/if}
                     </a>
 

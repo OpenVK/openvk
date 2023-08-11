@@ -68,6 +68,12 @@ class Topic extends Postable
         return isset($array[0]) ? $array[0] : NULL;
     }
 
+    function getFirstComment(): ?Comment
+    {
+        $array = iterator_to_array($this->getComments(1));
+        return $array[0] ?? NULL;
+    }
+
     function getUpdateTime(): DateTime
     {
         $lastComment = $this->getLastComment();
@@ -82,5 +88,41 @@ class Topic extends Postable
         $this->setDeleted(1);
         $this->unwire();
         $this->save();
+    }
+
+    function toVkApiStruct(int $preview = 0, int $preview_length = 90): object
+    {
+        $res = (object)[];
+
+        $res->id         = $this->getId();
+        $res->title      = $this->getTitle();
+        $res->created    = $this->getPublicationTime()->timestamp();
+
+        if($this->getOwner() instanceof User) {
+            $res->created_by = $this->getOwner()->getId();
+        } else {
+            $res->created_by = $this->getOwner()->getId() * -1;
+        }
+        
+        $res->updated    = $this->getUpdateTime()->timestamp();
+
+        if($this->getLastComment()) {
+            if($this->getLastComment()->getOwner() instanceof User) {
+                $res->updated_by = $this->getLastComment()->getOwner()->getId();
+            } else {
+                $res->updated_by = $this->getLastComment()->getOwner()->getId() * -1;
+            }
+        }
+
+        $res->is_closed  = (int)$this->isClosed();
+        $res->is_fixed   = (int)$this->isPinned();
+        $res->comments   = $this->getCommentsCount();
+
+        if($preview == 1) {
+            $res->first_comment = $this->getFirstComment() ? ovk_proc_strtr($this->getFirstComment()->getText(false), $preview_length) : NULL;
+            $res->last_comment  = $this->getLastComment()  ? ovk_proc_strtr($this->getLastComment()->getText(false), $preview_length)  : NULL;
+        }
+
+        return $res;
     }
 }

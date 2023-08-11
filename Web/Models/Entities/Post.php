@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
 use Chandler\Database\DatabaseConnection as DB;
-use openvk\Web\Models\Repositories\Clubs;
+use openvk\Web\Models\Repositories\{Clubs, Users};
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\Notifications\LikeNotification;
 
@@ -55,6 +55,15 @@ class Post extends Postable
     {
         return $this->getRecord()->wall;
     }
+
+    function getWallOwner()
+    {
+        $w = $this->getRecord()->wall;
+        if($w < 0)
+            return (new Clubs)->get(abs($w));
+
+        return (new Users)->get($w);
+    }
     
     function getRepostCount(): int
     {
@@ -87,9 +96,14 @@ class Post extends Postable
 
     function isDeactivationMessage(): bool
     {
-        return ($this->getRecord()->flags & 0b00100000) > 0;
+        return (($this->getRecord()->flags & 0b00100000) > 0) && ($this->getRecord()->owner > 0);
     }
     
+    function isUpdateAvatarMessage(): bool
+    {
+        return (($this->getRecord()->flags & 0b00010000) > 0) && ($this->getRecord()->owner > 0);
+    }
+
     function isExplicit(): bool
     {
         return (bool) $this->getRecord()->nsfw;
@@ -103,6 +117,63 @@ class Post extends Postable
     function getOwnerPost(): int
     {
         return $this->getOwner(false)->getId();
+    }
+
+    function getPlatform(bool $forAPI = false): ?string
+    {
+        $platform = $this->getRecord()->api_source_name;
+        if($forAPI) {
+            switch ($platform) {
+                case 'openvk_refresh_android':
+                case 'openvk_legacy_android':
+                    return 'android';
+                    break;
+
+                case 'openvk_ios':
+                case 'openvk_legacy_ios':
+                    return 'iphone';
+                    break;
+                
+                case 'vika_touch': // кика хохотач ахахахаххахахахахах
+                case 'vk4me':
+                    return 'mobile';
+                    break;
+
+                case NULL:
+                    return NULL;
+                    break;
+                
+                default:
+                    return 'api';
+                    break;
+            }
+        } else {
+            return $platform;
+        }
+    }
+
+    function getPlatformDetails(): array
+    {
+        $clients = simplexml_load_file(OPENVK_ROOT . "/data/clients.xml");
+
+        foreach($clients as $client) {
+            if($client['tag'] == $this->getPlatform()) {
+                return [
+                    "tag"  => $client['tag'],
+                    "name" => $client['name'],
+                    "url"  => $client['url'],
+                    "img"  => $client['img']
+                ];
+                break;
+            }
+        }
+
+        return [
+            "tag"  => $this->getPlatform(),
+            "name" => NULL,
+            "url"  => NULL,
+            "img"  => NULL
+        ];
     }
     
     function pin(): void

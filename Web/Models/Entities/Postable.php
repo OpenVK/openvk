@@ -34,7 +34,8 @@ abstract class Postable extends Attachable
         $oid = (int) $this->getRecord()->owner;
         if(!$real && $this->isAnonymous())
             $oid = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["account"];
-        
+
+        $oid = abs($oid);
         if($oid > 0)
             return (new Users)->get($oid);
         else
@@ -84,7 +85,7 @@ abstract class Postable extends Attachable
         return sizeof(DB::i()->getContext()->table("likes")->where([
             "model"  => static::class,
             "target" => $this->getRecord()->id,
-        ]));
+        ])->group("origin"));
     }
     
     # TODO add pagination
