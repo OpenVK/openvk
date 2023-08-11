@@ -2697,19 +2697,6 @@ body.article .floating_sidebar, body.article .page_content {
     font-size: 12px;
 }
 
-.small_red_button {
-    float: right;
-    font-weight: bold;
-}
-
-.small_red_button a {
-    color: #B0B0B0;
-}
-
-.small_red_button a:hover {
-    color: #a7a7a7;
-}
-
 .showMore {
     text-align: center;
     padding-top: 10px;

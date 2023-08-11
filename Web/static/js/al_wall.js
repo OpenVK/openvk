@@ -305,6 +305,16 @@ $(document).on("click", ".showMore", async (e) => {
         for(const obj of objects) {
             container.insertAdjacentHTML("beforeend", obj.outerHTML)
         }
+        
+        if(result.querySelectorAll("textarea").length > 0) {
+            for(const trea of result.querySelectorAll("textarea")) {
+                setupWallPostInputHandlers(trea.dataset.id)
+
+                u("#post-buttons" + trea.dataset.id + " .postFileSel").on("change", function() {
+                    handleUpload.bind(this, trea.dataset.id)();
+                });
+            }
+        }
 
         bsdnHydrate()
 
