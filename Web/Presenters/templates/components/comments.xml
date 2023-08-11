@@ -8,6 +8,7 @@
     {/if}
 </div>
 
+<div class="infContainer">
 {if sizeof($comments) > 0}
     {foreach $comments as $comment}
         {include "comment.xml", comment => $comment}
@@ -18,5 +19,6 @@
 {else}
     {_comments_tip}
 {/if}
+</div>
 
 {script "js/al_comments.js"}

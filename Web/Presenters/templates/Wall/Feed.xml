@@ -19,12 +19,14 @@
         {include "../components/textArea.xml", route => "/wall" . $thisUser->getId() . "/makePost", graffiti => true, polls => true, notes => true}
     </div>
     
+    <div class="infContainer">
     {foreach $posts as $post}
         <a name="postGarter={$post->getId()}"></a>
         {include "../components/post.xml", post => $post, onWallOf => true, commentSection => true}
     {/foreach}
+    </div>
 
-    <div class="postFeedBottom">
+    <div class="postFeedBottom" n:if="$thisUser->getPaginatorType() == 0">
         <div class="postFeedPaginator">
             {include "../components/paginator.xml", conf => $paginatorConf}
         </div>
@@ -42,6 +44,10 @@
             </select>
         </div>
     </div>
+
+    {if $thisUser->getPaginatorType() == 1}
+        {include "../components/paginator.xml", conf => $paginatorConf}
+    {/if}
 
     <script>
         u("#pageSelect").nodes[0].value = {$paginatorConf->perPage};
