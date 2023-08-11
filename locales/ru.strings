@@ -1096,6 +1096,14 @@
 "admin_banned_link_initiator" = "Инициатор";
 "admin_banned_link_not_specified" = "Ссылка не указана";
 "admin_banned_link_not_found" = "Ссылка не найдена";
+"logs_adding" = "Создание";
+"logs_editing" = "Редактирование";
+"logs_removing" = "Удаление";
+"logs_restoring" = "Восстановление";
+"logs_added" = "добавил";
+"logs_edited" = "отредактировал";
+"logs_removed" = "удалил";
+"logs_restored" = "восстановил";
 
 /* Paginator (deprecated) */
 

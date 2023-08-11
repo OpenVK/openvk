@@ -85,4 +85,9 @@ class Comment extends Post
         }
         return $res;
     }
+
+    function getURL(): string
+    {
+        return "/wall" . $this->getTarget()->getPrettyId() . "#_comment" . $this->getId();
+    }
 }
