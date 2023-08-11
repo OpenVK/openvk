@@ -63,7 +63,7 @@
                     </span>
                     <a href="{$log->getObjectURL()}">{$log->getObjectName()}</a>
                 </td>
-                <td>{$log->getTypeNom()}</td>
+                <td>{_$log->getTypeNom()}</td>
                 <td>
                     {foreach $log->getChanges() as $change}
                         <div>
