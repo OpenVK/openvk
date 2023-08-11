@@ -4,7 +4,9 @@
     <html>
         <head>
             <meta n:ifset="$csrfToken" name="csrf" value="{$csrfToken}" />
-            <title>{include title}</title>
+            {ifset block title}
+                <title>{include title}</title>
+            {/ifset}
 
             {if $isTimezoned == NULL}
                 {script "js/timezone.js"}
