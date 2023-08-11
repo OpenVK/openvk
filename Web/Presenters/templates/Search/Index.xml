@@ -149,11 +149,10 @@
             ]}
         {/if}
     </div>
-    <p style="margin-left: 15px; margin-top: 0;">
+    <p style="margin-left: 15px; {if $thisUser->getPaginatorType() == 1}margin-top: 14px;{/if}">
         <b>{tr("results", $count)}</b>
     </p>
-    <div>
-    {include searchOptions}
+    <div style="display: flex;flex-direction: row;">
 
     {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
     <div class="container_gray borderup infContainer" style="float:left;width:73.3%;">
@@ -231,12 +230,7 @@
             ]}
         {/if}
     </div>
-    <script>
-        window.addEventListener("load", (event) => {
-        document.getElementsByClassName("container_gray")[0].style.minHeight = document.getElementsByClassName("searchOptions")[0].clientHeight+"px";
-        document.getElementsByClassName("searchOptions")[0].style.minHeight = document.getElementsByClassName("container_gray")[0].clientHeight-3+"px";
-        })
-    </script>
+    {include searchOptions}
 {/block}
 
 {block searchOptions}
