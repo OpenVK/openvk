@@ -3,7 +3,7 @@
 {var $postId = $comment->getTarget() instanceof \openvk\Web\Models\Entities\Post ? $comment->getTarget()->getId() : NULL}
 
 <a name="cid={$comment->getId()}"></a>
-<table border="0" style="font-size: 11px;" class="post comment infObj" id="_comment{$comment->getId()}" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}" data-from-group="{$comment->getOwner() instanceof $Club}" n:attr="data-post-id => $postId">
+<table border="0" style="font-size: 11px;" class="post comment" id="_comment{$comment->getId()}" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}" data-from-group="{$comment->getOwner() instanceof $Club}" n:attr="data-post-id => $postId">
     <tbody>
         <tr>
             <td width="30" valign="top">

@@ -20,10 +20,12 @@
     </div>
     
     <div class="infContainer">
-    {foreach $posts as $post}
-        <a name="postGarter={$post->getId()}"></a>
-        {include "../components/post.xml", post => $post, onWallOf => true, commentSection => true}
-    {/foreach}
+        {foreach $posts as $post}
+            <div class="infObj">
+                <a name="postGarter={$post->getId()}"></a>
+                {include "../components/post.xml", post => $post, onWallOf => true, commentSection => true}
+            </div>
+        {/foreach}
     </div>
 
     <div class="postFeedBottom" n:if="$thisUser->getPaginatorType() == 0">

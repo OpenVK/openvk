@@ -10,9 +10,11 @@
 
 <div class="infContainer">
 {if sizeof($comments) > 0}
+    <div class="{if ($fromPost ?? false)}infObj{/if}">
     {foreach $comments as $comment}
         {include "comment.xml", comment => $comment}
     {/foreach}
+    </div>
     <div style="margin-top: 11px;">
         {include "paginator.xml", conf => (object) ["page" => $page, "count" => $count, "amount" => sizeof($comments), "perPage" => 10]}
     </div>

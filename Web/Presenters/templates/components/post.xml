@@ -1,9 +1,7 @@
 {var $microblogEnabled = isset($thisUser) ? $thisUser->hasMicroblogEnabled() : false}
 
-<div class="infObj">
 {if $microblogEnabled}
     {include "post/microblogpost.xml", post => $post, commentSection => $commentSection}
 {else}
     {include "post/oldpost.xml", post => $post}
 {/if}
-</div>

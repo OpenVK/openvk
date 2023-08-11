@@ -306,6 +306,8 @@ $(document).on("click", ".showMore", async (e) => {
             container.insertAdjacentHTML("beforeend", obj.outerHTML)
         }
 
+        bsdnHydrate()
+
         initMentions()
         initTooltips()
         _updateButton()
