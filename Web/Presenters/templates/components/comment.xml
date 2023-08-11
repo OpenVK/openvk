@@ -61,18 +61,14 @@
                             {php $target = "topic"}
                         {/if}
 
-                        <a {if is_null($linkW)}href="#_comment{$comment->getId()}"{else}href="{$target}{!is_null($comment->getTarget()) ? $comment->getTarget()->getPrettyId() : $comment->getOwner()->getId()}#_comment{$comment->getId()}"{/if} class="date">{$comment->getPublicationTime()}</a>&nbsp;|
-                        {if $comment->canBeDeletedBy($thisUser)}
-                            <a href="/comment{$comment->getId()}/delete">{_delete}</a>&nbsp;|
-                        {/if}
-                        {if is_null($linkW)}
-                        <a class="comment-reply">{_reply}</a>{/if}
-                        <div style="float: right; font-size: .7rem;">
-                            <a class="post-like-button" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}">
-                                <div class="heart" style="{if $comment->hasLikeFrom($thisUser)}opacity: 1;{else}opacity: 0.4;{/if}"></div>
-                                <span class="likeCnt">{if $comment->getLikesCount() > 0}{$comment->getLikesCount()}{/if}</span>
-                            </a>
-                        </div>
+                        |&nbsp;<a
+                            {if is_null($linkW)}
+                                href="#_comment{$comment->getId()}"
+                            {else}
+                                href="{$target}{!is_null($comment->getTarget()) ? $comment->getTarget()->getPrettyId() : $comment->getOwner()->getId()}#_comment{$comment->getId()}"
+                            {/if}
+                            class="date"
+                        >{$comment->getPublicationTime()}</a>
                     </div>
                 </div>
             </td>

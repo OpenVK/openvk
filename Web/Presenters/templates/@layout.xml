@@ -218,18 +218,19 @@
                                 noSpam
                             </a>
                         <a
+                          n:if="$thisUser->getLeftMenuItemStatus('links')"
                           n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem"
                           href="{$menuItem['url']}"
                           target="_blank"
-                          class="link">{$menuItem["name"]}</a>
+                          class="link">
+                            {strpos($menuItem["name"], "@") === 0 ? tr(substr($menuItem["name"], 1)) : $menuItem["name"]}
+                        </a>
                         <div id="_groupListPinnedGroups">
                             <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
                             <a
                             n:foreach="$thisUser->getPinnedClubs() as $club"
                             href="{$club->getURL()}"
                             class="link group_link">{$club->getName()}</a>
-
-                            <a n:if="$thisUser->getLeftMenuItemStatus('links')" n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem" href="{$menuItem['url']}" target="_blank" class="link">{strpos($menuItem["name"], "@") === 0 ? tr(substr($menuItem["name"], 1)) : $menuItem["name"]}</a>
 
                             <div id="_groupListPinnedGroups">
                                 <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
