@@ -1,6 +1,6 @@
 {extends "../@layout.xml"}
 
-{block title}Шаблоны{/block}
+{block title}{_templates}{/block}
 {block header}{include title}{/block}
 
 {block content}
@@ -44,14 +44,14 @@
         <table n:if="count($templates) > 0" cellspacing="0" cellpadding="7" width="100%">
             <tr>
                 <th style="text-align: center;">ID</th>
-                <th>Пользователь</th>
-                <th style="text-align: center;">Раздел</th>
-                <th>Подстрока</th>
+                <th>{_n_user}</th>
+                <th style="text-align: center;">{_section}</th>
+                <th>{_substring}</th>
                 <th>Where</th>
-                <th style="text-align: center;">Тип</th>
-                <th style="text-align: center;">Количество</th>
-                <th>Время</th>
-                <th style="text-align: center;">Действия</th>
+                <th style="text-align: center;">{_type}</th>
+                <th style="text-align: center;">{_count}</th>
+                <th>{_time}</th>
+                <th style="text-align: center;">{_actions}</th>
             </tr>
             <tr n:foreach="$templates as $template">
                 <td id="id-{$template->getId()}" onClick="openTableField('id', {$template->getId()})" style="text-align: center;"><b>{$template->getId()}</b></td>
@@ -75,8 +75,8 @@
                         <div id="noSpam-rollback-loader-{$template->getId()}" style="display: none;">
                             <img src="/assets/packages/static/openvk/img/loading_mini.gif" style="width: 40px;">
                         </div>
-                        <a n:if="!$template->isRollbacked()" id="noSpam-rollback-template-link-{$template->getId()}" onClick="rollbackTemplate({$template->getId()})">откатить</a>
-                        <span n:attr="style => $template->isRollbacked() ? '' : 'display: none;'" id="noSpam-rollback-template-rollbacked-{$template->getId()}">откачен</span>
+                        <a n:if="!$template->isRollbacked()" id="noSpam-rollback-template-link-{$template->getId()}" onClick="rollbackTemplate({$template->getId()})">{_roll_back}</a>
+                        <span n:attr="style => $template->isRollbacked() ? '' : 'display: none;'" id="noSpam-rollback-template-rollbacked-{$template->getId()}">{roll_backed}</span>
                     </div>
                 </td>
             </tr>

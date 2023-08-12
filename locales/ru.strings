@@ -601,6 +601,9 @@
 "two_factor_authentication_backup_codes_1" = "Резервные коды позволяют подтверждать вход, когда у вас нет доступа к телефону, например, в путешествии.";
 "two_factor_authentication_backup_codes_2" = "У вас есть ещё <b>10 кодов</b>, каждым кодом можно воспользоваться только один раз. Распечатайте их, уберите в надежное место и используйте, когда потребуются коды для подтверждения входа.";
 "two_factor_authentication_backup_codes_3" = "Вы можете получить новые коды, если они заканчиваются. Действительны только последние созданные резервные коды.";
+"viewing_backup_codes" = "Просмотр резервных кодов";
+"disable_2fa" = "Отключить 2FA";
+"viewing" = "Просмотреть";
 
 /* Sorting */
 
@@ -865,6 +868,11 @@
 "report_reason" = "Причина жалобы";
 "reason" = "Причина";
 "going_to_report_app" = "Вы собираетесь пожаловаться на данное приложение.";
+"going_to_report_club" = "Вы собираетесь пожаловаться на данное сообщество.";
+"going_to_report_photo" = "Вы собираетесь пожаловаться на данную фотографию.";
+"going_to_report_user" = "Вы собираетесь пожаловаться на данного пользователя.";
+"going_to_report_video" = "Вы собираетесь пожаловаться на данную видеозапись.";
+"going_to_report_post" = "Вы собираетесь пожаловаться на данную запись.";
 
 "comment" = "Комментарий";
 "sender" = "Отправитель";
@@ -1221,7 +1229,7 @@
 "admin_banned_link_not_found" = "Ссылка не найдена";
 
 "admin_gift_moved_successfully" = "Подарок успешно перемещён";
-"admin_gift_moved_to_recycle" = "This gift will now be in <b>Recycle Bin</b>.";
+"admin_gift_moved_to_recycle" = "Теперь подарок находится в <b>корзине</b>.";
 
 "logs" = "Логи";
 "logs_anything" = "Любое";
@@ -1637,3 +1645,40 @@
 "mobile_like" = "Нравится";
 "mobile_user_info_hide" = "Скрыть";
 "mobile_user_info_show_details" = "Показать подробнее";
+
+/* Moderation */
+
+"section" = "Раздел";
+"template_ban" = "Бан по шаблону";
+"active_templates" = "Действующие шаблоны";
+"users_reports" = "Жалобы пользователей";
+"substring" = "Подстрока";
+"n_user" = "Пользователь";
+"time_before" = "Время раньше, чем";
+"time_after" = "Время позже, чем";
+"where_for_search" = "WHERE для поиска по разделу";
+"block_params" = "Параметры блокировки";
+"only_rollback" = "Только откат";
+"only_block" = "Только блокировка";
+"rollback_and_block" = "Откат и блокировка";
+"subm" = "Применить";
+
+"select_section_for_start" = "Выберите раздел для начала работы";
+"results_will_be_there" = "Здесь будут отображаться результаты поиска";
+"search_results" = "Результаты поиска";
+"cnt" = "шт";
+
+"link_to_page" = "Ссылка на страницу";
+"or_subnet" = "или подсеть";
+"error_when_searching" = "Ошибка при выполнении запроса";
+"no_found" = "Ничего не найдено";
+"operation_successfully" = "Операция завершена успешно";
+
+"unknown_error" = "Неизвестная ошибка";
+"templates" = "Шаблоны";
+"type" = "Тип";
+"count" = "Количество";
+"time" = "Время";
+
+"roll_back" = "откатить";
+"roll_backed" = "откачено";

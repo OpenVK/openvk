@@ -642,6 +642,9 @@
 "two_factor_authentication_backup_codes_1" = "Backup codes allow you to validate your login when you don't have access to your phone, for example, while traveling.";
 "two_factor_authentication_backup_codes_2" = "You have <b>10 more codes</b>, each code can only be used once. Print them out, put them away in a safe place and use them when you need codes to validate your login.";
 "two_factor_authentication_backup_codes_3" = "You can get new codes if they run out. Only the last created backup codes are valid.";
+"viewing_backup_codes" = "View backup codes";
+"disable_2fa" = "Disable 2FA";
+"viewing" = "View";
 
 /* Sorting */
 
@@ -930,7 +933,12 @@
 "report_question_text" = "What exactly do you find unacceptable about this material?";
 "report_reason" = "Report reason";
 "reason" = "Reason";
-"going_to_report_app" = "You are about to complain to this application.";
+"going_to_report_app" = "You are about to report this application.";
+"going_to_report_club" = "You are about to report this club.";
+"going_to_report_photo" = "You are about to report this photo.";
+"going_to_report_user" = "You are about to report this user.";
+"going_to_report_video" = "You are about to report this video.";
+"going_to_report_post" = "You are about to report this post.";
 
 "comment" = "Comment";
 "sender" = "Sender";
@@ -1745,3 +1753,40 @@
 "mobile_like" = "Like";
 "mobile_user_info_hide" = "Hide";
 "mobile_user_info_show_details" = "Show details";
+
+/* Moderation */
+
+"section" = "Section";
+"template_ban" = "Ban by template";
+"active_templates" = "Active templates";
+"users_reports" = "Users reports";
+"substring" = "Substring";
+"n_user" = "User";
+"time_before" = "Time earlier than";
+"time_after" = "Time later than";
+"where_for_search" = "WHERE for search by section";
+"block_params" = "Block params";
+"only_rollback" = "Only rollback";
+"only_block" = "Only blocking";
+"rollback_and_block" = "Rollback and blocking";
+"subm" = "Apply";
+
+"select_section_for_start" = "Choose a section to get started";
+"results_will_be_there" = "Search results will be displayed here";
+"search_results" = "Search results";
+"cnt" = "pcs";
+
+"link_to_page" = "Link on page";
+"or_subnet" = "or subnet";
+"error_when_searching" = "Error while executing request";
+"no_found" = "No found";
+"operation_successfully" = "Operation completed successfully";
+
+"unknown_error" = "Unknown error";
+"templates" = "Template";
+"type" = "Type";
+"count" = "Count";
+"time" = "Time";
+
+"roll_back" = "rollback";
+"roll_backed" = "rollbacked";
