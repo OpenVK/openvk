@@ -323,7 +323,7 @@ $(document).on("click", "#publish_post", async (e) => {
             e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
         }
     
-        if(document.querySelectorAll(".post").length < 1 && post.new_count > 0) {
+        if(document.querySelectorAll(".post").length < 1 && post.new_count > 0 && document.querySelector(".paginator") != null) {
             loadMoreSuggestedPosts()
         }
     }), Function.noop]);
@@ -384,7 +384,7 @@ $(document).on("click", "#decline_post", async (e) => {
         }
     }
 
-    if(document.querySelectorAll(".post").length < 1 && post > 0) {
+    if(document.querySelectorAll(".post").length < 1 && post > 0 && document.querySelector(".paginator") != null) {
         loadMoreSuggestedPosts()
     }
 })

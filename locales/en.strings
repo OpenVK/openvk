@@ -1180,6 +1180,7 @@
 "media_file_corrupted_or_too_large" = "The media content file is corrupted or too large.";
 "post_is_empty_or_too_big" = "The post is empty or too big.";
 "post_is_too_big" = "The post is too big.";
+"error_deleting_suggested" = "You can't delete your accepted post";
 
 /* Admin actions */
 

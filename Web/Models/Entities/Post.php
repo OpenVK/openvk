@@ -207,6 +207,9 @@ class Post extends Postable
     
     function canBeDeletedBy(User $user): bool
     {
+        if($this->getTargetWall() < 0 && !$this->getWallOwner()->canBeModifiedBy($user) && $this->getWallOwner()->getWallType() != 1)
+            return false;
+        
         return $this->getOwnerPost() === $user->getId() || $this->canBePinnedBy($user);
     }
     

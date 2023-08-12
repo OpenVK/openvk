@@ -1080,6 +1080,7 @@
 "media_file_corrupted_or_too_large" = "Файл медиаконтента повреждён или слишком велик.";
 "post_is_empty_or_too_big" = "Пост пустой или слишком большой.";
 "post_is_too_big" = "Пост слишком большой.";
+"error_deleting_suggested" = "Вы не можете удалить ваш принятый пост";
 
 /* Admin actions */
 
