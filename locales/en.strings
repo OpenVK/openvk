@@ -1142,6 +1142,93 @@
 "post_is_too_big" = "The post is too big.";
 "error_sending_report" = "Failed to make a report...";
 
+"error_when_saving_gift" = "Error when saving gift";
+"error_when_saving_gift_bad_image" = "Gift image is crooked.";
+"error_when_saving_gift_no_image" = "Please, upload gift's image.";
+"video_uploads_disabled" = "Video uploads are disabled by the system administrator.";
+
+"error_when_publishing_comment" = "Error when publishing comment";
+"error_when_publishing_comment_description" = "Image is corrupted, too big or one side is many times larger than the other.";
+"error_comment_empty" = "Comment is empty or too big.";
+"error_comment_too_big" = "Comment is too big.";
+"error_comment_file_too_big" = "Media file is corrupted or too big.";
+
+"comment_is_added" = "Comment has been added";
+"comment_is_added_desc" = "Your comment will appear on page.";
+
+"error_access_denied_short" = "Access denied";
+"error_access_denied" = "You don't have rights to edit this resource";
+"success" = "Success";
+"comment_will_not_appear" = "This comment will no longer appear.";
+
+"error_when_gifting" = "Failed to gift";
+"error_user_not_exists" = "User or pack does not exist.";
+"error_no_rights_gifts" = "Failed to check rights on gift.";
+"error_no_more_gifts" = "You no longer have such gifts.";
+"error_no_money" = "Shout out to a beggar.";
+
+"gift_sent" = "Gift sent";
+"gift_sent_desc" = "You sent a gift to $1 for $2 votes";
+
+"error_on_server_side" = "An error occurred on the server side. Contact your system administrator.";
+"error_no_group_name" = "You did not enter a group name.";
+
+"success_action" = "Action successful";
+"connection_error" = "Connection error";
+"connection_error_desc" = "Failed to connect to telemetry service.";
+
+"error_when_uploading_photo" = "Failed to save photo";
+
+"new_changes_desc" = "New data will appear in your group.";
+"comment_is_changed" = "Admin comment changed";
+"comment_is_deleted" = "Admin comment deleted";
+"comment_is_too_long" = "Comment is too long ($1 symbols instead 36)";
+"x_no_more_admin" = "$1 no longer an administrator.";
+"x_is_admin" = "$1 appointed as an administrator.";
+
+"x_is_now_hidden" = "Now $1 will be shown as a normal subscriber to everyone except other admins";
+"x_is_now_showed" = "Now everyone will know that $1 is an administrator.";
+
+"note_is_deleted" = "Note was deleted";
+"note_x_is_now_deleted" = "Note \"$1\" was successfully deleted.";
+"new_data_accepted" = "New data accepted.";
+
+"album_is_deleted" = "Album was deleted";
+"album_x_is_deleted" = "Album $1 was successfully deleted.";
+
+"error_adding_to_deleted" = "Failed to save photo to <b>DELETED</b>.";
+"error_adding_to_x" = "Failed to save photo to <b>$1</b>.";
+"no_photo" = "No photo";
+
+"select_file" = "Select file";
+"new_description_will_appear" = "The updated description will appear on the photo page..";
+"photo_is_deleted" = "Photo was deleted";
+"photo_is_deleted_desc" = "This photo has been successfully deleted.";
+
+"no_video" = "No video";
+"no_video_desc" = "Select a file or provide a link.";
+"error_occured" = "Error occured";
+"error_video_damaged_file" = "The file is corrupted or does not contain video.";
+"error_video_incorrect_link" = "Perhaps the link is incorrect.";
+"error_video_no_title" = "Video can't be published without title.";
+
+"new_data_video" = "The updated description will appear on the video page.";
+"error_deleting_video" = "Failed to delete video";
+"login_please" = "You are not signed in.";
+"invalid_code" = "Failed to verify phone number: Invalid code.";
+
+"error_max_pinned_clubs" = "Maximum count of the pinned groups is 10.";
+"error_viewing_subs" = "You cannot view the full list of subscriptions $1.";
+"error_status_too_long" = "Status is too long ($1 instead 255)";
+"death" = "Death...";
+"nehay" = "Live long!";
+"user_successfully_banned" = "User was successfully banned.";
+
+"content_is_deleted" = "The content has been removed and the user has received a warning.";
+"report_is_ignored" = "Report was ignored.";
+"group_owner_is_banned" = "Group's owner was successfully banned";
+"group_is_banned" = "Group was successfully banned";
+
 /* Admin actions */
 
 "login_as" = "Login as $1";
@@ -1244,6 +1331,9 @@
 "admin_banned_link_initiator" = "Initiator";
 "admin_banned_link_not_specified" = "The link is not specified";
 "admin_banned_link_not_found" = "Link not found";
+
+"admin_gift_moved_successfully" = "Gift moved successfully";
+"admin_gift_moved_to_recycle" = "This gift will now be in <b>Recycle Bin</b>.";
 
 "logs" = "Logs";
 "logs_anything" = "Anything";
@@ -1616,6 +1706,15 @@
 "coverage_this_week" = "This graph shows the coverage over the last 7 days.";
 "views" = "Views";
 "views_this_week" = "This graph shows the views of community posts over the last 7 days.";
+
+"full_coverage" = "Full coverage";
+"all_views" = "All views";
+
+"subs_coverage" = "Subscribers coverage";
+"subs_views" = "Subscribers views";
+
+"viral_coverage" = "Viral coverage";
+"viral_views" = "Viral views";
 
 /* Sudo */
 

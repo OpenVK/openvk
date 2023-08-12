@@ -1041,6 +1041,92 @@
 "post_is_empty_or_too_big" = "Пост пустой или слишком большой.";
 "post_is_too_big" = "Пост слишком большой.";
 "error_sending_report" = "Не удалось подать жалобу...";
+"error_when_saving_gift" = "Не удалось сохранить подарок";
+"error_when_saving_gift_bad_image" = "Изображение подарка кривое.";
+"error_when_saving_gift_no_image" = "Пожалуйста, загрузите изображение подарка.";
+"video_uploads_disabled" = "Загрузки видео отключены администратором.";
+
+"error_when_publishing_comment" = "Не удалось опубликовать комментарий";
+"error_when_publishing_comment_description" = "Файл изображения повреждён, слишком велик или одна сторона изображения в разы больше другой.";
+"error_comment_empty" = "Комментарий пустой или слишком большой.";
+"error_comment_too_big" = "Комментарий слишком большой.";
+"error_comment_file_too_big" = "Файл медиаконтента повреждён или слишком велик.";
+
+"comment_is_added" = "Комментарий добавлен";
+"comment_is_added_desc" = "Ваш комментарий появится на странице.";
+
+"error_access_denied_short" = "Ошибка доступа";
+"error_access_denied" = "У вас недостаточно прав, чтобы редактировать этот ресурс";
+"success" = "Успешно";
+"comment_will_not_appear" = "Этот комментарий больше не будет показыватся.";
+
+"error_when_gifting" = "Не удалось подарить";
+"error_user_not_exists" = "Пользователь или набор не существуют.";
+"error_no_rights_gifts" = "Не удалось подтвердить права на подарок.";
+"error_no_more_gifts" = "У вас больше не осталось таких подарков.";
+"error_no_money" = "Ору нищ не пук.";
+
+"gift_sent" = "Подарок отправлен";
+"gift_sent_desc" = "Вы отправили подарок <b>$1</b> за $2 голосов";
+
+"error_on_server_side" = "Произошла ошибка на стороне сервера. Обратитесь к системному администратору.";
+"error_no_group_name" = "Вы не ввели название группы.";
+
+"success_action" = "Операция успешна";
+"connection_error" = "Ошибка подключения";
+"connection_error_desc" = "Не удалось подключится к службе телеметрии.";
+
+"error_when_uploading_photo" = "Не удалось сохранить фотографию.";
+
+"new_changes_desc" = "Новые данные появятся в вашей группе.";
+"comment_is_changed" = "Комментарий к администратору изменён";
+"comment_is_deleted" = "Комментарий к администратору удален";
+"comment_is_too_long" = "Комментарий слишком длинный ($1 символов вместо 36 символов)";
+"x_no_more_admin" = "$1 больше не администратор.";
+"x_is_admin" = "$1 назначен(а) администратором.";
+
+"x_is_now_hidden" = "Теперь $1 будет показываться как обычный подписчик всем, кроме других администраторов";
+"x_is_now_showed" = "Теперь все будут знать, что $1 — администратор.";
+
+"note_is_deleted" = "Заметка удалена";
+"note_x_is_now_deleted" = "Заметка \"$1\" была успешно удалена.";
+"new_data_accepted" = "Новые данные приняты.";
+
+"album_is_deleted" = "Альбом удалён";
+"album_x_is_deleted" = "Альбом $1 был успешно удалён.";
+
+"error_adding_to_deleted" = "Не удалось сохранить фотографию в <b>DELETED</b>.";
+"error_adding_to_x" = "Не удалось сохранить фотографию в <b>$1</b>.";
+"no_photo" = "Нету фотографии";
+
+"select_file" = "Выберите файл";
+"new_description_will_appear" = "Обновлённое описание появится на странице с фоткой.";
+"photo_is_deleted" = "Фотография удалена";
+"photo_is_deleted_desc" = "Эта фотография была успешно удалена.";
+
+"no_video" = "Нет видеозаписи";
+"no_video_desc" = "Выберите файл или укажите ссылку.";
+"error_occured" = "Произошла ошибка";
+"error_video_damaged_file" = "Файл повреждён или не содержит видео.";
+"error_video_incorrect_link" = "Возможно, ссылка некорректна.";
+"error_video_no_title" = "Видео не может быть опубликовано без названия.";
+
+"new_data_video" = "Обновлённое описание появится на странице с видео.";
+"error_deleting_video" = "Не удалось удалить видео";
+"login_please" = "Вы не вошли в аккаунт.";
+"invalid_code" = "Не удалось подтвердить номер телефона: неверный код.";
+
+"error_max_pinned_clubs" = "Находится в левом меню могут максимум 10 групп";
+"error_viewing_subs" = "Вы не можете просматривать полный список подписок $1.";
+"error_status_too_long" = "Статус слишком длинный ($1 символов вместо 255 символов)";
+"death" = "Смэрть...";
+"nehay" = "Нехай живе!";
+"user_successfully_banned" = "Пользователь успешно забанен.";
+
+"content_is_deleted" = "Контент удалён, а пользователю прилетело предупреждение.";
+"report_is_ignored" = "Жалоба проигнорирована.";
+"group_owner_is_banned" = "Создатель сообщества успешно забанен.";
+"group_is_banned" = "Сообщество успешно забанено";
 
 /* Admin actions */
 
@@ -1133,6 +1219,10 @@
 "admin_banned_link_initiator" = "Инициатор";
 "admin_banned_link_not_specified" = "Ссылка не указана";
 "admin_banned_link_not_found" = "Ссылка не найдена";
+
+"admin_gift_moved_successfully" = "Подарок успешно перемещён";
+"admin_gift_moved_to_recycle" = "This gift will now be in <b>Recycle Bin</b>.";
+
 "logs" = "Логи";
 "logs_anything" = "Любое";
 "logs_adding" = "Создание";
@@ -1508,6 +1598,15 @@
 "coverage_this_week" = "Этот график отображает охват за последние 7 дней.";
 "views" = "Просмотры";
 "views_this_week" = "Этот график отображает просмотры постов сообщества за последние 7 дней.";
+
+"full_coverage" = "Полный охват";
+"all_views" = "Все просмотры";
+
+"subs_coverage" = "Охват подписчиков";
+"subs_views" = "Просмотры подписчиков";
+
+"viral_coverage" = "Виральный охват";
+"viral_views" = "Виральные просмотры";
 
 /* Sudo */
 

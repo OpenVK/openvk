@@ -283,7 +283,7 @@ final class AdminPresenter extends OpenVKPresenter
                     $this->notFound();
                 
                 $gift->delete();
-                $this->flashFail("succ", "Gift moved successfully", "This gift will now be in <b>Recycle Bin</b>.");
+                $this->flashFail("succ", tr("admin_gift_moved_successfully"), tr("admin_gift_moved_to_recycle"));
                 break;
             case "copy":
             case "move":
@@ -302,7 +302,7 @@ final class AdminPresenter extends OpenVKPresenter
                 $catTo->addGift($gift);
                 
                 $name = $catTo->getName();
-                $this->flash("succ", "Gift moved successfully", "This gift will now be in <b>$name</b>.");
+                $this->flash("succ", tr("admin_gift_moved_successfully"), "This gift will now be in <b>$name</b>.");
                 $this->redirect("/admin/gifts/" . $catTo->getSlug() . "." . $catTo->getId() . "/");
                 break;
             default:
@@ -333,10 +333,10 @@ final class AdminPresenter extends OpenVKPresenter
                 $gift->setUsages((int) $this->postParam("usages"));
                 if(isset($_FILES["pic"]) && $_FILES["pic"]["error"] === UPLOAD_ERR_OK) {
                     if(!$gift->setImage($_FILES["pic"]["tmp_name"]))
-                        $this->flashFail("err", "Не удалось сохранить подарок", "Изображение подарка кривое.");
+                        $this->flashFail("err", tr("error_when_saving_gift"), tr("error_when_saving_gift_bad_image"));
                 } else if($gen) {
                     # If there's no gift pic but it's newly created
-                    $this->flashFail("err", "Не удалось сохранить подарок", "Пожалуйста, загрузите изображение подарка.");
+                    $this->flashFail("err", tr("error_when_saving_gift"), tr("error_when_saving_gift_no_image"));
                 }
                 
                 $gift->save();
