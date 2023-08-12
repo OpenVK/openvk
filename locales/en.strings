@@ -939,6 +939,7 @@
 "going_to_report_user" = "You are about to report this user.";
 "going_to_report_video" = "You are about to report this video.";
 "going_to_report_post" = "You are about to report this post.";
+"going_to_report_comment" = "You are about to report this comment.";
 
 "comment" = "Comment";
 "sender" = "Sender";
