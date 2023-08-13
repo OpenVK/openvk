@@ -887,7 +887,7 @@ final class Wall extends VKAPIRequestHandler
 
         $wallOwner = $post->getWallOwner();
         
-        if($post->getTargetWall() < 0 && !$post->getWallOwner()->canBeModifiedBy($this->getUser()) && $post->getWallOwner()->getWallType() != 1)
+        if($post->getTargetWall() < 0 && !$post->getWallOwner()->canBeModifiedBy($this->getUser()) && $post->getWallOwner()->getWallType() != 1 && $post->getSuggestionType() == 0)
             $this->fail(12, "Access denied: you can't delete your accepted post.");
 
         if($post->getOwnerPost() == $this->getUser()->getId() || $post->getTargetWall() == $this->getUser()->getId() || $owner_id < 0 && $wallOwner->canBeModifiedBy($this->getUser())) {

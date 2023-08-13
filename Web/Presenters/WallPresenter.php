@@ -492,7 +492,7 @@ final class WallPresenter extends OpenVKPresenter
             else $canBeDeletedByOtherUser = false;
 
         if(!is_null($user)) {
-            if($post->getTargetWall() < 0 && !$post->getWallOwner()->canBeModifiedBy($this->user->identity) && $post->getWallOwner()->getWallType() != 1)
+            if($post->getTargetWall() < 0 && !$post->getWallOwner()->canBeModifiedBy($this->user->identity) && $post->getWallOwner()->getWallType() != 1 && $post->getSuggestionType() == 0)
                 $this->flashFail("err", tr("failed_to_delete_post"), tr("error_deleting_suggested"));
             
             if($post->getOwnerPost() == $user || $post->getTargetWall() == $user || $canBeDeletedByOtherUser) {
