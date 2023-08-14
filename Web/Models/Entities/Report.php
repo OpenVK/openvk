@@ -3,6 +3,7 @@ namespace openvk\Web\Models\Entities;
 use openvk\Web\Util\DateTime;
 use Nette\Database\Table\ActiveRow;
 use openvk\Web\Models\RowModel;
+use openvk\Web\Models\Entities\Club;
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Repositories\{Applications, Comments, Notes, Reports, Users, Posts, Photos, Videos, Clubs};
 use Chandler\Database\DatabaseConnection as DB;
@@ -102,7 +103,13 @@ class Report extends RowModel
             } else {
                 $placeholder = "$pubTime";
             }
-            $this->getAuthor()->adminNotify("Ваш контент, который вы опубликовали $placeholder был удалён модераторами инстанса. За повторные или серьёзные нарушения вас могут заблокировать.");
+
+            if ($this->getAuthor() instanceof Club) {
+                $name = $this->getAuthor()->getName();
+                $this->getAuthor()->getOwner()->adminNotify("Ваш контент, который опубликовали $placeholder в созданной вами группе \"$name\" был удалён модераторами инстанса. За повторные или серьёзные нарушения группу могут заблокировать.");
+            } else {
+                $this->getAuthor()->adminNotify("Ваш контент, который вы опубликовали $placeholder был удалён модераторами инстанса. За повторные или серьёзные нарушения вас могут заблокировать.");
+            }
             $this->getContentObject()->delete($this->getContentType() !== "app");
         }
 
