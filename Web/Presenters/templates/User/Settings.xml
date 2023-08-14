@@ -598,6 +598,17 @@
                             <span class="nobold">{_my_photos}</span>
                         </td>
                     </tr>
+                     <tr>
+                        <td width="120" valign="top" align="right">
+                            <input
+                                  n:attr="checked => $user->getLeftMenuItemStatus('audios')"
+                                  type="checkbox"
+                                  name="menu_muziko" />
+                        </td>
+                        <td>
+                            <span class="nobold">Мои Аудиозаписи</span>
+                        </td>
+                    </tr>
                     <tr>
                         <td width="120" valign="top" align="right">
                             <input

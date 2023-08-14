@@ -3,6 +3,7 @@ namespace openvk\Web\Models\Entities;
 use Chandler\Database\DatabaseConnection;
 use Nette\Database\Table\ActiveRow;
 use openvk\Web\Models\Repositories\Audios;
+use openvk\Web\Models\Repositories\Photos;
 use openvk\Web\Models\RowModel;
 
 /**
@@ -31,7 +32,8 @@ class Playlist extends MediaCollection
 
     function getCoverURL(): ?string
     {
-        return NULL;
+        $photo = (new Photos)->get((int) $this->getRecord()->cover_photo_id);
+        return is_null($photo) ? "/assets/packages/static/openvk/img/song.jpg" : $photo->getURL();
     }
 
     function getLength(): int
@@ -157,5 +159,19 @@ class Playlist extends MediaCollection
             ->delete();
 
         parent::delete($softly);
+    }
+
+    function hasAudio(Audio $audio): bool
+    {
+        $ctx = DatabaseConnection::i()->getContext();
+        return !is_null($ctx->table("playlist_relations")->where([
+            "collection" => $this->getId(),
+            "media"      => $audio->getId()
+        ])->fetch());
+    }
+
+    function getCoverPhotoId(): ?int
+    {
+        return $this->getRecord()->cover_photo_id;
     }
 }

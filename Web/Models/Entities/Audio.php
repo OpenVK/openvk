@@ -14,6 +14,7 @@ class Audio extends Media
 {
     protected $tableName     = "audios";
     protected $fileExtension = "mpd";
+    // protected $fileExtension = "mp3";
 
     # Taken from winamp :D
     const genres = [
@@ -100,10 +101,10 @@ class Audio extends Media
         $this->stateChanges("segment_size", $ss);
         $this->stateChanges("length", $duration);
 
-        try {
+         try {
             $args = [
-                OPENVK_ROOT,
-                $this->getBaseDir(),
+                str_replace("enabled", "available", OPENVK_ROOT),
+                str_replace("enabled", "available", $this->getBaseDir()),
                 $hash,
                 $filename,
 
@@ -113,21 +114,27 @@ class Audio extends Media
                 $ss,
             ];
 
-            if(Shell::isPowershell())
+
+            if(Shell::isPowershell()) {
                 Shell::powershell("-executionpolicy bypass", "-File", __DIR__ . "/../shell/processAudio.ps1", ...$args)
                     ->start();
-            else
+            } else {
                 Shell::bash(__DIR__ . "/../shell/processAudio.sh", ...$args)->start();
+                // Shell::bash(__DIR__ . "/../shell/processAudio.sh", ...$args)->start();
+                // exit("pwsh /opt/chandler/extensions/available/openvk/Web/Models/shell/processAudio.ps1 " . implode(" ", $args) . ' *> /opt/chandler/extensions/available/openvk/storage/log.log');
+                // exit("pwsh /opt/chandler/extensions/available/openvk/Web/Models/shell/processAudio.ps1 " . implode(" ", $args) . ' *> /opt/chandler/extensions/available/openvk/storage/log.log');
+                // Shell::bash("pwsh /opt/chandler/extensions/available/openvk/Web/Models/shell/processAudio.ps1 " . implode(" ", $args) . ' *> /opt/chandler/extensions/available/openvk/storage/log.log');
+            }
 
             # Wait until processAudio will consume the file
-            $start = time();
-            while(file_exists($filename))
-                if(time() - $start > 5)
-                    exit("Timed out waiting for ffmpeg"); // TODO replace with exception
+//             $start = time();
+//             while(file_exists($filename))
+//                 if(time() - $start > 5)
+//                     exit("Timed out waiting for ffmpeg"); // TODO replace with exception
 
-        } catch(UnknownCommandException $ucex) {
-            exit(OPENVK_ROOT_CONF["openvk"]["debug"] ? "bash/pwsh is not installed" : VIDEOS_FRIENDLY_ERROR);
-        }
+         } catch(UnknownCommandException $ucex) {
+             exit(OPENVK_ROOT_CONF["openvk"]["debug"] ? "bash/pwsh is not installed" : VIDEOS_FRIENDLY_ERROR);
+         }
 
         return true;
     }
@@ -197,6 +204,13 @@ class Audio extends Media
         $key = bin2hex($this->getRecord()->token);
 
         return str_replace(".mpd", "_fragments", $this->getURL()) . "/original_$key.mp3";
+    }
+
+    function getURL(?bool $force = false): string
+    {
+        if ($this->isWithdrawn()) return "";
+
+        return parent::getURL();
     }
 
     function getKeys(): array
@@ -312,7 +326,7 @@ class Audio extends Media
             ]);
 
             if($entity instanceof User) {
-                $this->stateChanges("listens", $this->getListens() + 1);
+                $this->stateChanges("listens", ($this->getListens() + 1));
                 $this->save();
             }
 

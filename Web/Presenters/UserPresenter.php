@@ -455,6 +455,7 @@ final class UserPresenter extends OpenVKPresenter
             } else if($_GET['act'] === "lMenu") {
                 $settings = [
                     "menu_bildoj"    => "photos",
+                    "menu_muziko"    => "audios",
                     "menu_filmetoj"  => "videos",
                     "menu_mesagoj"   => "messages",
                     "menu_notatoj"   => "notes",

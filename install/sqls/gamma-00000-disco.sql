@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS `playlists` (
   `owner` bigint NOT NULL,
   `name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,
   `description` varchar(2048) DEFAULT NULL,
+  `cover_photo_id` bigint unsigned DEFAULT NULL,
   `length` int unsigned NOT NULL DEFAULT '0',
   `special_type` tinyint unsigned NOT NULL DEFAULT '0',
   `created` bigint unsigned DEFAULT NULL,

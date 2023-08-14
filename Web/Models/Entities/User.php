@@ -403,6 +403,7 @@ class User extends RowModel
             "length"   => 1,
             "mappings" => [
                 "photos",
+                "audios",
                 "videos",
                 "messages",
                 "notes",

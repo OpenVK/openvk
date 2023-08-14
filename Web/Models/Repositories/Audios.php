@@ -14,6 +14,7 @@ class Audios
     private $rels;
     private $playlists;
     private $playlistImports;
+    private $playlistRels;
 
     const ORDER_NEW     = 0;
     const ORDER_POPULAR = 1;
@@ -30,6 +31,7 @@ class Audios
 
         $this->playlists       = $this->context->table("playlists");
         $this->playlistImports = $this->context->table("playlist_imports");
+        $this->playlistRels    = $this->context->table("playlist_relations");
     }
 
     function get(int $id): ?Audio
@@ -59,6 +61,17 @@ class Audios
         if(!$audio) return NULL;
 
         return new Audio($audio);
+    }
+
+    function getPlaylistByOwnerAndVID(int $owner, int $vId): ?Playlist
+    {
+        $playlist = $this->playlists->where([
+            "owner" => $owner,
+            "id"    => $vId,
+        ])->fetch();
+        if(!$playlist) return NULL;
+
+        return new Playlist($playlist);
     }
 
     function getByEntityID(int $entity, int $offset = 0, ?int $limit = NULL, ?int& $deleted = nullptr): \Traversable
@@ -158,7 +171,7 @@ class Audios
     function search(string $query, int $sortMode = 0, bool $performerOnly = false, bool $withLyrics = false): EntityStream
     {
         $columns = $performerOnly ? "performer" : "performer, name";
-        $order   = (["created", "length", "listens"][$sortMode] ?? "") . "DESC";
+        $order   = (["created", "length", "listens"][$sortMode] ?? "") . " DESC";
 
         $search = $this->audios->where([
             "unlisted" => 0,
@@ -173,10 +186,44 @@ class Audios
 
     function searchPlaylists(string $query): EntityStream
     {
-        $search = $this->audios->where([
+        $search = $this->playlists->where([
             "deleted" => 0,
-        ])->where("MATCH (title, description) AGAINST (? IN BOOLEAN MODE)", $query);
+        ])->where("MATCH (`name`, `description`) AGAINST (? IN BOOLEAN MODE)", $query);
 
         return new EntityStream("Playlist", $search);
+    }
+
+    function getNew(): EntityStream
+    {
+        return new EntityStream("Audio", $this->audios->where("created >= " . (time() - 259200))->order("created DESC")->limit(25));
+    }
+
+    function getPopular(): EntityStream
+    {
+        return new EntityStream("Audio", $this->audios->where("listens > 0")->order("listens DESC")->limit(25));
+    }
+
+    function isAdded(int $user_id, int $audio_id): bool
+    {
+        return !is_null($this->rels->where([
+            "entity" => $user_id,
+            "audio"  => $audio_id
+        ])->fetch());
+    }
+
+    function find(string $query, int $page = 1, ?int $perPage = NULL): \Traversable
+    {
+        $query  = "%$query%";
+        $result = $this->audios->where("name LIKE ? OR performer LIKE ?", $query, $query);
+
+        return new Util\EntityStream("Audio", $result);
+    }
+
+    function findPlaylists(string $query, int $page = 1, ?int $perPage = NULL): \Traversable
+    {
+        $query  = "%$query%";
+        $result = $this->playlists->where("name LIKE ?", $query);
+
+        return new Util\EntityStream("Playlist", $result);
     }
 }
