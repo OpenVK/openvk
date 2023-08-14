@@ -29,7 +29,12 @@
                         </div>
                     </div>
                     <div n:if="isset($thisUser) &&! ($compact ?? false)" class="post-menu">
-                        <a href="#_comment{$comment->getId()}" class="date">{$comment->getPublicationTime()}</a>
+                        <a
+                            href="{=$linkWithPost && get_class($comment->getTarget()) == 'openvk\Web\Models\Entities\Post' ? '/wall' . $comment->getTarget()->getPrettyId() : ''}#_comment{$comment->getId()}"
+                            class="date"
+                        >
+                            {$comment->getPublicationTime()}
+                        </a>
                         {if !$timeOnly}
                             &nbsp;|
                             {if $comment->canBeDeletedBy($thisUser)}
