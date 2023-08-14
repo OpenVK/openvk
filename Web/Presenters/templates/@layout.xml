@@ -301,7 +301,7 @@
                     </div>
                 </div>
                 {ifset $thisUser}
-                    {if !$thisUser->isBanned()}
+                    {if !$thisUser->isBanned() && !$thisUser->isDeleted()}
                         </div>
                     {/if}
                 {/ifset}
