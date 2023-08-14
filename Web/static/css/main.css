@@ -29,6 +29,10 @@ a {
     cursor: pointer;
 }
 
+.linkunderline:hover {
+    text-decoration: underline;
+}
+
 p {
     margin: 5px 0;
 }

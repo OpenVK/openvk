@@ -176,7 +176,7 @@
                             <a href="{$thisUser->getURL()}" class="link" title="{_my_page} [Alt+Shift+.]" accesskey=".">{_my_page}</a>
                             <a href="/friends{$thisUser->getId()}" class="link">{_my_friends}
                                 <object type="internal/link" n:if="$thisUser->getFollowersCount() > 0">
-                                    <a href="/friends{$thisUser->getId()}?act=incoming">
+                                    <a href="/friends{$thisUser->getId()}?act=incoming" class="linkunderline">
                                        (<b>{$thisUser->getFollowersCount()}</b>)
                                     </a>
                                 </object>
