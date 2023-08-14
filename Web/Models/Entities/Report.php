@@ -96,8 +96,13 @@ class Report extends RowModel
     {
         if ($this->getContentType() !== "user") {
             $pubTime = $this->getContentObject()->getPublicationTime();
-            $name = $this->getContentObject()->getName();
-            $this->getAuthor()->adminNotify("Ваш контент, который вы опубликовали $pubTime ($name) был удалён модераторами инстанса. За повторные или серьёзные нарушения вас могут заблокировать.");
+            if (method_exists($this->getContentObject(), "getName")) {
+                $name = $this->getContentObject()->getName();
+                $placeholder = "$pubTime ($name)";
+            } else {
+                $placeholder = "$pubTime";
+            }
+            $this->getAuthor()->adminNotify("Ваш контент, который вы опубликовали $placeholder был удалён модераторами инстанса. За повторные или серьёзные нарушения вас могут заблокировать.");
             $this->getContentObject()->delete($this->getContentType() !== "app");
         }
 
