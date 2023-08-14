@@ -105,11 +105,11 @@ class IP extends RowModel
         $this->stateChanges("ip", $ip);
     }
     
-    function save(): void
+    function save(?bool $log = false): void
     {
         if(is_null($this->getRecord()))
             $this->stateChanges("first_seen", time());
         
-        parent::save();
+        parent::save($log);
     }
 }

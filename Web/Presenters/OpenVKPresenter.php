@@ -197,19 +197,23 @@ abstract class OpenVKPresenter extends SimplePresenter
     {
         $user = Authenticator::i()->getUser();
 
-        $this->template->isXmas = intval(date('d')) >= 1 && date('m') == 12 || intval(date('d')) <= 15 && date('m') == 1 ? true : false;
-        $this->template->isTimezoned = Session::i()->get("_timezoneOffset");
+        if(!is_null($this->template)) {    
+            $this->template->isXmas = intval(date('d')) >= 1 && date('m') == 12 || intval(date('d')) <= 15 && date('m') == 1 ? true : false;
+            $this->template->isTimezoned = Session::i()->get("_timezoneOffset");
+        }
 
         $userValidated = 0;
         $cacheTime     = OPENVK_ROOT_CONF["openvk"]["preferences"]["nginxCacheTime"] ?? 0;
-
+        
         if(!is_null($user)) {
             $this->user = (object) [];
             $this->user->raw             = $user;
             $this->user->identity        = (new Users)->getByChandlerUser($user);
             $this->user->id              = $this->user->identity->getId();
-            $this->template->thisUser    = $this->user->identity;
-            $this->template->userTainted = $user->isTainted();
+            if(!is_null($this->template)) {    
+                $this->template->thisUser    = $this->user->identity;
+                $this->template->userTainted = $user->isTainted();
+            }
 
             if($this->user->identity->isDeleted() && !$this->deactivationTolerant) {
                 if($this->user->identity->isDeactivated()) {
@@ -227,7 +231,7 @@ abstract class OpenVKPresenter extends SimplePresenter
                 }
                 exit;
             }
-
+            
             if($this->user->identity->isBanned() && !$this->banTolerant) {
                 header("HTTP/1.1 403 Forbidden");
                 $this->getTemplatingEngine()->render(__DIR__ . "/templates/@banned.xml", [
@@ -237,7 +241,7 @@ abstract class OpenVKPresenter extends SimplePresenter
                 ]);
                 exit;
             }
-
+            
             # ето для емейл уже надо (и по хорошему надо бы избавится от повторяющегося кода мда)
             if(!$this->user->identity->isActivated() && !$this->activationTolerant) {
                 header("HTTP/1.1 403 Forbidden");
@@ -248,7 +252,7 @@ abstract class OpenVKPresenter extends SimplePresenter
                 ]);
                 exit;
             }
-
+            
             $userValidated = 1;
             $cacheTime     = 0; # Force no cache
             if($this->user->identity->onlineStatus() == 0 && !($this->user->identity->isDeleted() || $this->user->identity->isBanned())) {
@@ -256,9 +260,10 @@ abstract class OpenVKPresenter extends SimplePresenter
                 $this->user->identity->setClient_name(NULL);
                 $this->user->identity->save();
             }
-
-            $this->template->ticketAnsweredCount = (new Tickets)->getTicketsCountByUserId($this->user->id, 1);
-            if($user->can("write")->model("openvk\Web\Models\Entities\TicketReply")->whichBelongsTo(0))
+            
+            if(!is_null($this->template))    
+                $this->template->ticketAnsweredCount = (new Tickets)->getTicketsCountByUserId($this->user->id, 1);
+            if(!is_null($this->template) && $user->can("write")->model("openvk\Web\Models\Entities\TicketReply")->whichBelongsTo(0))
                 $this->template->helpdeskTicketNotAnsweredCount = (new Tickets)->getTicketCount(0);
         }
 
@@ -275,8 +280,8 @@ abstract class OpenVKPresenter extends SimplePresenter
                 $this->redirect("/maintenances/");
             }
         }
-
-        $this->template->__isAjax= $this->requestParam("al");
+        if(!is_null($this->template))
+            $this->template->__isAjax= $this->requestParam("al");
         parent::onStartup();
     }
     

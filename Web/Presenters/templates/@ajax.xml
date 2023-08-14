@@ -23,7 +23,7 @@
                      style="position: absolute; top: 40%; left: 50%; background: #4C4C4C; padding: 20px 30px; border-radius: 3px; opacity: 0.8;"/>
             </div>
 
-            <input type="hidden" id="__current_url" value="{=$_SERVER[REQUEST_URI]}" />
+            <input type="hidden" id="__current_url" value="{=$_SERVER['REQUEST_URI']}" />
             <div id="sudo-banner" n:if="isset($thisUser) && $userTainted">
                 <p>
                     Вы вошли как <b>{$thisUser->getCanonicalName()}</b>. Пожалуйста, уважайте
