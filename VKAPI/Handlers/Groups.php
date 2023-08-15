@@ -2,6 +2,7 @@
 namespace openvk\VKAPI\Handlers;
 use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
 use openvk\Web\Models\Repositories\Users as UsersRepo;
+use openvk\Web\Models\Repositories\Posts as PostsRepo;
 use openvk\Web\Models\Entities\Club;
 
 final class Groups extends VKAPIRequestHandler
@@ -80,6 +81,22 @@ final class Groups extends VKAPIRequestHandler
                                 break;
                             case "members_count":
                                 $rClubs[$i]->members_count = $usr->getFollowersCount();
+                                break;
+                            case "can_suggest":
+                                $rClubs[$i]->can_suggest = !$usr->canBeModifiedBy($this->getUser()) && $usr->getWallType() == 2;
+                                break;
+                            # unstandard feild
+                            case "suggested_count":
+                                if($usr->getWallType() != 2) {
+                                    $rClubs[$i]->suggested_count = NULL;
+                                    break;
+                                }
+        
+                                if($usr->canBeModifiedBy($this->getUser())) 
+                                    $rClubs[$i]->suggested_count = $usr->getSuggestedPostsCount();
+                                else 
+                                    $rClubs[$i]->suggested_count = (new PostsRepo)->getSuggestedPostsCountByUser($usr->getId(), $this->getUser()->getId());
+                                    
                                 break;
                         }
                     }
@@ -188,7 +205,23 @@ final class Groups extends VKAPIRequestHandler
                         case "description":
 			                $response[$i]->description = $clb->getDescription();
                             break;
-			            case "contacts":
+                        case "can_suggest":
+                            $response[$i]->can_suggest = !$clb->canBeModifiedBy($this->getUser()) && $clb->getWallType() == 2;
+                            break;
+                        # unstandard feild
+                        case "suggested_count":
+                            if($clb->getWallType() != 2) {
+                                $response[$i]->suggested_count = NULL;
+                                break;
+                            }
+
+                            if($clb->canBeModifiedBy($this->getUser())) 
+                                $response[$i]->suggested_count = $clb->getSuggestedPostsCount();
+                            else 
+                                $response[$i]->suggested_count = (new PostsRepo)->getSuggestedPostsCountByUser($clb->getId(), $this->getUser()->getId());
+
+                            break;
+                        case "contacts":
                             $contacts;
                             $contactTmp = $clb->getManagers(1, true);
 
