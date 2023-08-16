@@ -118,6 +118,15 @@ class Note extends Postable
     {
         return $this->getRecord()->source;
     }
+    
+    function canBeViewedBy(?User $user = NULL): bool
+    {
+        if($this->isDeleted() || $this->getOwner()->isDeleted()) {
+            return false;
+        }
+
+        return $this->getOwner()->getPrivacyPermission('notes.read', $user) && $this->getOwner()->canBeViewedBy($user);
+    }
 
     function toVkApiStruct(): object
     {

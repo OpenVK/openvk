@@ -1221,7 +1221,54 @@ class User extends RowModel
         return $response;
     }
 
-    function toVkApiStruct(): object
+    function getProfileType(): int
+    {
+        # 0 — открытый профиль, 1 — закрытый
+        return $this->getRecord()->profile_type;
+    }
+
+    function canBeViewedBy(?User $user = NULL): bool
+    {
+        if(!is_null($user)) {
+            if($this->getId() == $user->getId()) {
+                return true;
+            }
+
+            if($user->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)) {
+                return true;
+            }
+
+            if($this->getProfileType() == 0) {
+                return true;
+            } else {
+                if($user->getSubscriptionStatus($this) == User::SUBSCRIPTION_MUTUAL) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
+
+        } else {
+            if($this->getProfileType() == 0) {
+                if($this->getPrivacySetting("page.read") == 3) {
+                    return true;
+                } else {
+                    return false;
+                }
+            } else {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    function isClosed()
+    {
+        return (bool) $this->getProfileType();
+    }
+
+    function toVkApiStruct(?User $user = NULL): object
     {
         $res = (object) [];
 
@@ -1234,6 +1281,12 @@ class User extends RowModel
         $res->photo_200   = $this->getAvatarURL("normal");
         $res->photo_id    = !is_null($this->getAvatarPhoto()) ? $this->getAvatarPhoto()->getPrettyId() : NULL;
         # TODO: Perenesti syuda vsyo ostalnoyie
+
+        $res->is_closed   = $this->isClosed();
+
+        if(!is_null($user)) {
+            $res->can_access_closed  = (bool)$this->canBeViewedBy($user);
+        }
 
         return $res;
     }

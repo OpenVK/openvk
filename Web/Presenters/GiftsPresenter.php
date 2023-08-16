@@ -20,9 +20,12 @@ final class GiftsPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         
         $user = $this->users->get($user);
-        if(!$user)
+        if(!$user || $user->isDeleted())
             $this->notFound();
         
+        if(!$user->canBeViewedBy($this->user->identity ?? NULL))
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+
         $this->template->user     = $user;
         $this->template->page     = $page = (int) ($this->queryParam("p") ?? 1);
         $this->template->count    = $user->getGiftCount();
@@ -50,7 +53,10 @@ final class GiftsPresenter extends OpenVKPresenter
         $cat  = $this->gifts->getCat((int) ($this->queryParam("pack") ?? 0));
         if(!$user || !$cat)
             $this->flashFail("err", "Не удалось подарить", "Пользователь или набор не существуют.");
-        
+
+        if(!$user->canBeViewedBy($this->user->identity))
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+
         $this->template->page = $page = (int) ($this->queryParam("p") ?? 1);
         $gifts = $cat->getGifts($page, null, $this->template->count);
         
@@ -71,6 +77,9 @@ final class GiftsPresenter extends OpenVKPresenter
         if(!$gift->canUse($this->user->identity))
             $this->flashFail("err", "Не удалось подарить", "У вас больше не осталось таких подарков.");
         
+        if(!$user->canBeViewedBy($this->user->identity ?? NULL))
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+
         $coinsLeft = $this->user->identity->getCoins() - $gift->getPrice();
         if($coinsLeft < 0)
             $this->flashFail("err", "Не удалось подарить", "Ору нищ не пук.");
