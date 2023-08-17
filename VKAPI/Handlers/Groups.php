@@ -91,11 +91,8 @@ final class Groups extends VKAPIRequestHandler
                                     $rClubs[$i]->suggested_count = NULL;
                                     break;
                                 }
-        
-                                if($usr->canBeModifiedBy($this->getUser())) 
-                                    $rClubs[$i]->suggested_count = $usr->getSuggestedPostsCount();
-                                else 
-                                    $rClubs[$i]->suggested_count = (new PostsRepo)->getSuggestedPostsCountByUser($usr->getId(), $this->getUser()->getId());
+                                
+                                $rClubs[$i]->suggested_count = $usr->getSuggestedPostsCount($this->getUser());
                                     
                                 break;
                         }
@@ -215,11 +212,7 @@ final class Groups extends VKAPIRequestHandler
                                 break;
                             }
 
-                            if($clb->canBeModifiedBy($this->getUser())) 
-                                $response[$i]->suggested_count = $clb->getSuggestedPostsCount();
-                            else 
-                                $response[$i]->suggested_count = (new PostsRepo)->getSuggestedPostsCountByUser($clb->getId(), $this->getUser()->getId());
-
+                            $response[$i]->suggested_count = $clb->getSuggestedPostsCount($this->getUser());
                             break;
                         case "contacts":
                             $contacts;

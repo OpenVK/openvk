@@ -225,7 +225,7 @@ final class GroupPresenter extends OpenVKPresenter
             try {
                 $club->setWall(empty($this->postParam("wall")) ? 0 : (int)$this->postParam("wall"));
             } catch(\Exception $e) {
-                $this->flashFail("err", "Fuck you", "");
+                $this->flashFail("err", tr("error"), tr("error_invalid_wall_value"));
             }
             
             $club->setAdministrators_List_Display(empty($this->postParam("administrators_list_display")) ? 0 : $this->postParam("administrators_list_display"));

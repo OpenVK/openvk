@@ -242,3 +242,16 @@ input[type="radio"] {
     background-image: url("/themepack/midnight/0.0.2.8/resource/backdrop-editor.gif") !important;
     border-color: #473e66 !important;
 }
+
+.sugglist {
+    background-color: #231e33;
+    border-color: #2c2640 !important;
+}
+
+.sugglist a {
+    color: #7c94c5;
+}
+
+.button.loaded {
+    background: #383052 url("/assets/packages/static/openvk/img/loading_mini.gif") no-repeat 50% 50% !important;
+}

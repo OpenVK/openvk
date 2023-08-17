@@ -194,7 +194,7 @@ class Club extends RowModel
 
     function setWall(int $type)
     {
-        if($type > 3 || $type < 0)
+        if($type > 2 || $type < 0)
             throw new \LogicException("Invalid wall");
 
         $this->stateChanges("wall", $type);
@@ -309,9 +309,19 @@ class Club extends RowModel
         }
     }
 
-    function getSuggestedPostsCount()
+    function getSuggestedPostsCount(User $user = NULL)
     {
-        $count = (new Posts)->getSuggestedPostsCount($this->getId());
+        $count = 0;
+
+        if(is_null($user)) {
+            return NULL;
+        }
+
+        if($this->canBeModifiedBy($user)) {
+            $count = (new Posts)->getSuggestedPostsCount($this->getId());
+        } else {
+            $count = (new Posts)->getSuggestedPostsCountByUser($this->getId(), $user->getId());
+        }
 
         return $count;
     }

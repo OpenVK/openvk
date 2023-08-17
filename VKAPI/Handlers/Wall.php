@@ -49,13 +49,13 @@ final class Wall extends VKAPIRequestHandler
                 $cnt       = $posts->getPostCountOnUserWall($owner_id);
                 break;
             case "owner":
-                $this->fail(66666, "Not implemented");
+                $this->fail(42, "Not implemented");
                 break;
             case "others":
-                $this->fail(66666, "Not implemented");
+                $this->fail(42, "Not implemented");
                 break; 
             case "postponed":
-                $this->fail(66666, "Postponed posts are not implemented.");
+                $this->fail(42, "Postponed posts are not implemented.");
                 break;
             case "suggests":
                 if($owner_id < 0) {

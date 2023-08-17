@@ -1081,6 +1081,7 @@
 "post_is_empty_or_too_big" = "Пост пустой или слишком большой.";
 "post_is_too_big" = "Пост слишком большой.";
 "error_deleting_suggested" = "Вы не можете удалить ваш принятый пост";
+"error_invalid_wall_value" = "Некорректное значение стены";
 
 /* Admin actions */
 

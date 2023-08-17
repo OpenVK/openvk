@@ -1181,6 +1181,7 @@
 "post_is_empty_or_too_big" = "The post is empty or too big.";
 "post_is_too_big" = "The post is too big.";
 "error_deleting_suggested" = "You can't delete your accepted post";
+"error_invalid_wall_value" = "Invalid wall value";
 
 /* Admin actions */
 
