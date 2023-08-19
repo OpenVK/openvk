@@ -300,10 +300,9 @@ class Poll extends Attachable
                 ["attachable_type" => static::class, 
                 "attachable_id"    => $this->getId()])->fetch();
 
-        if(!is_null($post->target_id)) {
+        if(!is_null($post->target_id))
             return (new Posts)->get($post->target_id);
-        } else {
+        else
             return NULL;
-        }
     }
 }

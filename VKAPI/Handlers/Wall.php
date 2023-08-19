@@ -151,9 +151,9 @@ final class Wall extends VKAPIRequestHandler
 
             $postType = "post";
             $signerId = NULL;
-            if($post->getSuggestionType() != 0) {
+            if($post->getSuggestionType() != 0)
                 $postType = "suggest";
-            }
+            
 
             if($post->isSigned()) {
                 $actualAuthor = $post->getOwner(false);
@@ -342,9 +342,9 @@ final class Wall extends VKAPIRequestHandler
                 # TODO: $post->getVkApiType()
                 $postType = "post";
                 $signerId = NULL;
-                if($post->getSuggestionType() != 0) {
+                if($post->getSuggestionType() != 0)
                     $postType = "suggest";
-                }
+                
 
                 if($post->isSigned()) {
                     $actualAuthor = $post->getOwner(false);
@@ -470,9 +470,8 @@ final class Wall extends VKAPIRequestHandler
         if($canPost == false) $this->fail(15, "Access denied");
 
         if($post_id > 0) {
-            if($owner_id > 0) {
+            if($owner_id > 0)
                 $this->fail(62, "Suggested posts available only at groups");
-            }
 
             $post = (new PostsRepo)->getPostById($owner_id, $post_id, true);
 
@@ -539,9 +538,8 @@ final class Wall extends VKAPIRequestHandler
             $post->setFlags($flags);
             $post->setApi_Source_Name($this->getPlatform());
 
-            if($owner_id < 0 && !$wallOwner->canBeModifiedBy($this->getUser()) && $wallOwner->getWallType() == 2) {
+            if($owner_id < 0 && !$wallOwner->canBeModifiedBy($this->getUser()) && $wallOwner->getWallType() == 2)
                 $post->setSuggested(1);
-            }
 
             $post->save();
         } catch(\LogicException $ex) {

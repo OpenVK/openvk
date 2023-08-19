@@ -313,15 +313,13 @@ class Club extends RowModel
     {
         $count = 0;
 
-        if(is_null($user)) {
+        if(is_null($user))
             return NULL;
-        }
 
-        if($this->canBeModifiedBy($user)) {
+        if($this->canBeModifiedBy($user))
             $count = (new Posts)->getSuggestedPostsCount($this->getId());
-        } else {
+        else
             $count = (new Posts)->getSuggestedPostsCountByUser($this->getId(), $user->getId());
-        }
 
         return $count;
     }

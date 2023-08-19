@@ -33,12 +33,11 @@ final class GroupPresenter extends OpenVKPresenter
                 $this->template->topicsCount = (new Topics)->getClubTopicsCount($club);
             }
 
-            if(!is_null($this->user->identity) && !$club->canBeModifiedBy($this->user->identity) && $club->getWallType() == 2) {
-                $this->template->suggestedPostsCountByUser = (new Posts)->getSuggestedPostsCountByUser($club->getId(), $this->user->id);
-            }
-
-            if(!is_null($this->user->identity) && $club->canBeModifiedBy($this->user->identity) && $club->getWallType() == 2) {
-                $this->template->suggestedPostsCountByEveryone = (new Posts)->getSuggestedPostsCount($club->getId());
+            if(!is_null($this->user->identity) && $club->getWallType() == 2) {
+                if(!$club->canBeModifiedBy($this->user->identity))
+                    $this->template->suggestedPostsCountByUser = (new Posts)->getSuggestedPostsCountByUser($club->getId(), $this->user->id);
+                else
+                    $this->template->suggestedPostsCountByEveryone = (new Posts)->getSuggestedPostsCount($club->getId());
             }
 
             $this->template->club = $club;

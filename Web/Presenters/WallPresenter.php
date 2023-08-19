@@ -310,9 +310,8 @@ final class WallPresenter extends OpenVKPresenter
             $post->setFlags($flags);
             $post->setNsfw($this->postParam("nsfw") === "on");
 
-            if($wall < 0 && !$wallOwner->canBeModifiedBy($this->user->identity) && $wallOwner->getWallType() == 2) {
+            if($wall < 0 && !$wallOwner->canBeModifiedBy($this->user->identity) && $wallOwner->getWallType() == 2)
                 $post->setSuggested(1);
-            }
             
             $post->save();
         } catch (\LengthException $ex) {
@@ -351,16 +350,13 @@ final class WallPresenter extends OpenVKPresenter
         if($wall < 0 && !$wallOwner->canBeModifiedBy($this->user->identity) && $wallOwner->getWallType() == 2) {
             $suggsCount = $this->posts->getSuggestedPostsCount($wallOwner->getId());
 
-            # Возможно, это заебёт админов групп, но так они хотя бы про паблик вспомнят
-            # Мб рандома добавить?
             if($suggsCount % 10 == 0) {
                 $managers = $wallOwner->getManagers();
                 $owner = $wallOwner->getOwner();
                 (new NewSuggestedPostsNotification($owner, $wallOwner))->emit();
 
-                foreach($managers as $manager) {
+                foreach($managers as $manager)
                     (new NewSuggestedPostsNotification($manager->getUser(), $wallOwner))->emit();
-                }
             }
 
             $this->redirect("/club".$wallOwner->getId()."/suggested");
