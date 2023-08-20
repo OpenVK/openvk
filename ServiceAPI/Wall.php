@@ -146,6 +146,7 @@ class Wall implements Handler
         
         $post->setSuggested(0);
         $post->setCreated(time());
+        $post->setApi_Source_Name(NULL);
         $post->setFlags($flags);
 
         if(mb_strlen($content) > 0)

@@ -231,7 +231,7 @@
                                 <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
 
                                 <a n:foreach="$thisUser->getPinnedClubs() as $club" href="{$club->getURL()}" class="link group_link">
-                                    {$club->getName()}
+                                    {ovk_proc_strtr($club->getName(), 14)}
 
                                     <object type="internal/link" style="white-space: normal;" id="sug{$club->getId()}" n:if="$club->getSuggestedPostsCount($thisUser) > 0 && $club->getWallType() == 2">
                                         <a href="/club{$club->getId()}/suggested" class="linkunderline">

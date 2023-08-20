@@ -307,7 +307,12 @@ $(document).on("click", "#publish_post", async (e) => {
         }
 
         NewNotification(tr("suggestion_succefully_published"), tr("suggestion_press_to_go"), null, () => {window.location.assign("/wall" + post.id)});
-        document.getElementById("cound").innerHTML = tr("suggested_posts_in_group", post.new_count)
+        
+        if(document.getElementById("cound") != null) {
+            document.getElementById("cound").innerHTML = tr("suggested_posts_in_group", post.new_count)
+        } else {
+            document.getElementById("cound_r").innerHTML = tr("suggested_by_everyone", post.new_count)
+        }
 
         if(document.querySelector("object a[href='"+location.pathname+"'] b") != null) {
             document.querySelector("object a[href='"+location.pathname+"'] b").innerHTML = post.new_count
@@ -323,7 +328,7 @@ $(document).on("click", "#publish_post", async (e) => {
             e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
         }
     
-        if(document.querySelectorAll(".post").length < 1 && post.new_count > 0 && document.querySelector(".paginator") != null) {
+        if(document.querySelectorAll("#postz .post").length < 1 && post.new_count > 0 && document.querySelector(".paginator") != null) {
             loadMoreSuggestedPosts()
         }
     }), Function.noop]);
@@ -374,7 +379,11 @@ $(document).on("click", "#decline_post", async (e) => {
         e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
     }
 
-    document.getElementById("cound").innerHTML = tr("suggested_posts_in_group", post)
+    if(document.getElementById("cound") != null) {
+        document.getElementById("cound").innerHTML = tr("suggested_posts_in_group", post)
+    } else {
+        document.getElementById("cound_r").innerHTML = tr("suggested_by_everyone", post)
+    }
 
     if(document.querySelector("object a[href='"+location.pathname+"'] b") != null) {
         document.querySelector("object a[href='"+location.pathname+"'] b").innerHTML = post
@@ -384,7 +393,7 @@ $(document).on("click", "#decline_post", async (e) => {
         }
     }
 
-    if(document.querySelectorAll(".post").length < 1 && post > 0 && document.querySelector(".paginator") != null) {
+    if(document.querySelectorAll("#postz .post").length < 1 && post > 0 && document.querySelector(".paginator") != null) {
         loadMoreSuggestedPosts()
     }
 })
@@ -392,7 +401,13 @@ $(document).on("click", "#decline_post", async (e) => {
 function loadMoreSuggestedPosts()
 {
     let xhr = new XMLHttpRequest
-    xhr.open("GET", location.href)
+    let link = location.href
+
+    if(!link.includes("/suggested")) {
+        link += "/suggested"
+    }
+
+    xhr.open("GET", link)
 
     xhr.onloadstart = () => {
         document.getElementById("postz").innerHTML = `<img src="/assets/packages/static/openvk/img/loading_mini.gif">`
@@ -425,3 +440,65 @@ function loadMoreSuggestedPosts()
 
     xhr.send()
 }
+
+// нажатие на "x предложенных записей"
+$(document).on("click", ".sugglist a", (e) => {
+    e.preventDefault()
+    
+    if(e.currentTarget.getAttribute("data-toogled") == null || e.currentTarget.getAttribute("data-toogled") == "false") {
+        e.currentTarget.setAttribute("data-toogled", "true")
+        document.getElementById("underHeader").style.display = "none"
+        document.querySelector(".insertThere").style.display = "block"
+        history.pushState({}, "", e.currentTarget.href)
+
+        // если ещё ничего не подгружалось
+        if(document.querySelector(".insertThere").innerHTML == "") {
+            let xhr = new XMLHttpRequest
+            xhr.open("GET", e.currentTarget.href)
+            
+            xhr.onloadstart = () => {
+                // лоадер
+                document.querySelector(".insertThere").insertAdjacentHTML("afterbegin", `<img src="/assets/packages/static/openvk/img/loading_mini.gif">`)
+            }
+
+            xhr.onload = () => {
+                let parser = new DOMParser
+                let result = parser.parseFromString(xhr.responseText, 'text/html').querySelector(".infContainer")
+                // парсинг результата и вставка постов
+                document.querySelector(".insertThere").innerHTML = result.innerHTML
+            }
+            
+            xhr.send()
+        }
+    } else {
+        // переключение на нормальную стену
+        e.currentTarget.setAttribute("data-toogled", "false")
+        document.getElementById("underHeader").style.display = "block"
+        document.querySelector(".insertThere").style.display = "none"
+        history.pushState({}, "", e.currentTarget.href.replace("/suggested", ""))
+    }
+})
+
+// нажатие на пагинатор у постов пъедложки
+$(document).on("click", "#postz .paginator a", (e) => {
+    e.preventDefault()
+    
+    let xhr = new XMLHttpRequest
+    xhr.open("GET", e.currentTarget.href)
+
+    xhr.onloadstart = () => {
+        window.scrollTo({top: 0,behavior: "smooth"})
+        // после того как долистали наверх, добавляем лоадер
+        setTimeout(() => {document.querySelector("#postz").innerHTML = `<img src="/assets/packages/static/openvk/img/loading_mini.gif">`}, 500)
+    }
+
+    xhr.onload = () => {
+        // опять парс
+        let result = (new DOMParser).parseFromString(xhr.responseText, "text/html").querySelector(".infContainer")
+        // опять вставка
+        document.getElementById("postz").innerHTML = result.innerHTML
+        history.pushState({}, "", e.currentTarget.href)
+    }
+
+    xhr.send()
+})
