@@ -2733,5 +2733,6 @@ body.article .floating_sidebar, body.article .page_content {
 }
 
 .sugglist a[data-toogled="true"] {
-    color:black;
+    text-decoration: underline;
+    color:#4a4a4a;
 }

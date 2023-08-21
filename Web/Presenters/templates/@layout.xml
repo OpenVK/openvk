@@ -389,6 +389,7 @@
         {script "js/al_api.js"}
         {script "js/al_mentions.js"}
         {script "js/al_polls.js"}
+        {script "js/al_suggestions.js"}
 
         {ifset $thisUser}
             {script "js/al_notifs.js"}
