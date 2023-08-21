@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Entities\{Club, Photo, Album};
+use openvk\Web\Models\Entities\{Club, Photo, Album, User};
 use openvk\Web\Models\Repositories\{Photos, Albums, Users, Clubs};
 use Nette\InvalidStateException as ISE;
 
@@ -292,11 +292,13 @@ final class PhotosPresenter extends OpenVKPresenter
         if(!$photo) $this->notFound();
         if(is_null($this->user) || $this->user->id != $ownerId)
             $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
-        
+
+        $redirect = $photo->getAlbum()->getOwner() instanceof User ? "/id0" : "/club" . $ownerId;
+
         $photo->isolate();
         $photo->delete();
         
         $this->flash("succ", "Фотография удалена", "Эта фотография была успешно удалена.");
-        $this->redirect("/id0");
+        $this->redirect($redirect);
     }
 }
