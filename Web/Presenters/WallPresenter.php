@@ -17,7 +17,7 @@ final class WallPresenter extends OpenVKPresenter
     function __construct(Posts $posts)
     {
         $this->posts = $posts;
-        
+
         parent::__construct();
     }
     
@@ -207,7 +207,7 @@ final class WallPresenter extends OpenVKPresenter
         ];
     }
     
-    function renderMakePost(int $wall): void
+    function renderMakePost(int $wall, ?int $editTarget = 0): void
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
@@ -298,17 +298,28 @@ final class WallPresenter extends OpenVKPresenter
         
         if(empty($this->postParam("text")) && !$photo && !$video && !$poll && !$note)
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"));
-        
+
         try {
-            $post = new Post;
-            $post->setOwner($this->user->id);
-            $post->setWall($wall);
-            $post->setCreated(time());
-            $post->setContent($this->postParam("text"));
-            $post->setAnonymous($anon);
-            $post->setFlags($flags);
-            $post->setNsfw($this->postParam("nsfw") === "on");
-            $post->save();
+            if ($editTarget) {
+                $post = $this->posts->getPostById($this->user->id, $editTarget);
+
+                $post->setEdited(time());
+                $post->setContent($this->postParam("text"));
+                $post->setFlags($flags);
+                $post->setNsfw($this->postParam("nsfw") === "on");
+                $post->save();
+            } else {
+                $post = new Post;
+                $post->setOwner($this->user->id);
+                $post->setWall($wall);
+                $post->setCreated(time());
+                $post->setContent($this->postParam("text"));
+                $post->setAnonymous($anon);
+                $post->setFlags($flags);
+                $post->setNsfw($this->postParam("nsfw") === "on");
+                $post->save();
+            }
+
         } catch (\LengthException $ex) {
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_too_big"));
         }

@@ -7,6 +7,8 @@
     {var $deac = "post_deact_silent"}
 {/if}
 
+
+
 <table border="0" style="font-size: 11px;" n:class="post, $post->isExplicit() ? post-nsfw">
     <tbody>
         <tr>
@@ -58,9 +60,15 @@
                     </a>
                 </div>
                 <div class="post-content" id="{$post->getPrettyId()}">
-                    <div class="text" id="text{$post->getPrettyId()}">
-                        {$post->getText()|noescape}
-                        
+                    <div class="text">
+                        {var $owner = $author->getId()}
+
+                        <span id="text{$post->getPrettyId()}">{$post->getText()|noescape}</span>
+
+                        <div class="edit" id="text_edit{$post->getPrettyId()}" style="display: none;">
+                            {include "../textArea.xml", route => "/wall$owner/makePost/{$post->getVirtualId()}", value => $post->getText()}
+                        </div>
+
                         <div n:ifcontent class="attachments_b">
                             <div class="attachment" n:foreach="$post->getChildren() as $attachment" data-localized-nsfw-text="{_nsfw_warning}">
                                 {include "../attachment.xml", attachment => $attachment}
@@ -70,6 +78,9 @@
                     <div n:if="$post->isAd()" style="color:grey;">
                         <br/>
                         &nbsp;! Этот пост был размещён за взятку.
+                    </div>
+                    <div n:if="$post->getEditTime()" style="color:grey;">
+                        &nbsp; ред. {$post->getEditTime()}
                     </div>
                     <div n:if="$post->isSigned()" class="post-signature">
                         {var $actualAuthor = $post->getOwner(false)}
@@ -85,6 +96,10 @@
                     {if is_null($thisUser)}
                         {var $forceNoDeleteLink = true}
                         {var $forceNoPinLink = true}
+                    {/if}
+
+                    {if !($forceNoEditLink ?? false) && $post->canBePinnedBy($thisUser)}
+                        <a onClick="edit_post({$author->getId()}, {$post->getVirtualId()})">Редактировать</a> &nbsp;|&nbsp;
                     {/if}
 
                     {if !($forceNoDeleteLink ?? false) && $post->canBeDeletedBy($thisUser)}
