@@ -203,6 +203,44 @@ function ovk_is_ssl(): bool
     return $GLOBALS["requestIsSSL"];
 }
 
+function parseAttachments(string $attachments)
+{
+    $attachmentsArr = explode(",", $attachments);
+    $returnArr      = [];
+
+    foreach($attachmentsArr as $attachment) {
+        $attachmentType = NULL;
+
+        if(str_contains($attachment, "photo"))
+            $attachmentType = "photo";
+        elseif(str_contains($attachment, "video"))
+            $attachmentType = "video";
+        elseif(str_contains($attachment, "note"))
+            $attachmentType = "note";
+
+        $attachmentIds = str_replace($attachmentType, "", $attachment);
+        $attachmentOwner = (int)explode("_", $attachmentIds)[0];
+        $attachmentId    = (int)end(explode("_", $attachmentIds));
+
+        switch($attachmentType) {
+            case "photo":
+                $attachmentObj = (new openvk\Web\Models\Repositories\Photos)->getByOwnerAndVID($attachmentOwner, $attachmentId);
+                $returnArr[]   = $attachmentObj;
+                break;
+            case "video":
+                $attachmentObj = (new openvk\Web\Models\Repositories\Videos)->getByOwnerAndVID($attachmentOwner, $attachmentId);
+                $returnArr[]   = $attachmentObj;
+                break;
+            case "note":
+                $attachmentObj = (new openvk\Web\Models\Repositories\Notes)->getNoteById($attachmentOwner, $attachmentId);
+                $returnArr[]   = $attachmentObj;
+                break;
+        }
+    }
+
+    return $returnArr;
+}
+
 function ovk_scheme(bool $with_slashes = false): string
 {
     $scheme = ovk_is_ssl() ? "https" : "http";

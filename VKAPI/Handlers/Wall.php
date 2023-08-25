@@ -433,6 +433,7 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(100, "One of the parameters specified was missing or invalid");
         }
 
+        # TODO use parseAttachments
         if(!empty($attachments)) {
             $attachmentsArr = explode(",", $attachments);
             # Аттачи такого вида: [тип][id владельца]_[id вложения]
@@ -772,6 +773,94 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(7, "Access denied");
 
         $comment->delete();
+
+        return 1;
+    }
+
+    function edit(int $owner_id, int $post_id, string $message = "", string $attachments = "") {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $post = (new PostsRepo)->getPostById($owner_id, $post_id);
+
+        if(!$post || $post->isDeleted())
+            $this->fail(102, "Invalid post");
+
+        if(empty($message) && empty($attachments))
+            $this->fail(100, "Required parameter 'message' missing.");
+
+        if($post->getOwner(false)->getId() != $this->getUser()->getId())
+            $this->fail(7, "Access to editing denied");
+
+        if(!empty($message))
+            $post->setContent($message);
+        
+        $post->setEdited(time());
+        $post->save(true);
+
+        if(!empty($attachments)) {
+            $attachs = parseAttachments($attachments);
+            $newAttachmentsCount = sizeof($attachs);
+
+            $postsAttachments = iterator_to_array($post->getChildren());
+
+            if(sizeof($postsAttachments) >= 10)
+                $this->fail(15, "Post have too many attachments");
+
+            if(($newAttachmentsCount + sizeof($postsAttachments)) > 10)
+                $this->fail(158, "Post will have too many attachments");
+
+            foreach($attachs as $attach) {
+                if($attach && !$attach->isDeleted() && $attach->getOwner()->getId() == $this->getUser()->getId())
+                    $post->attach($attach);
+                else
+                    $this->fail(52, "One of the attachments is invalid");
+            }
+        }
+
+        return ["post_id" => $post->getVirtualId()];
+    }
+
+    function editComment(int $comment_id, int $owner_id = 0, string $message = "", string $attachments = "") {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $comment = (new CommentsRepo)->get($comment_id);
+
+        if(empty($message) && empty($attachments))
+            $this->fail(100, "Required parameter 'message' missing.");
+
+        if(!$comment || $comment->isDeleted())
+            $this->fail(102, "Invalid comment");
+
+        if($comment->getOwner()->getId() != $this->getUser()->getId())
+            $this->fail(15, "Access to comment denied");
+        
+        if(!empty($message))
+            $comment->setContent($message);
+        
+        $comment->setEdited(time());
+        $comment->save(true);
+        
+        if(!empty($attachments)) {
+            $attachs = parseAttachments($attachments);
+            $newAttachmentsCount = sizeof($attachs);
+
+            $postsAttachments = iterator_to_array($comment->getChildren());
+
+            if(sizeof($postsAttachments) >= 10)
+                $this->fail(15, "Post have too many attachments");
+
+            if(($newAttachmentsCount + sizeof($postsAttachments)) > 10)
+                $this->fail(158, "Post will have too many attachments");
+
+            foreach($attachs as $attach) {
+                if($attach && !$attach->isDeleted() && $attach->getOwner()->getId() == $this->getUser()->getId())
+                    $comment->attach($attach);
+                else
+                    $this->fail(52, "One of the attachments is invalid");
+            }
+        }
 
         return 1;
     }

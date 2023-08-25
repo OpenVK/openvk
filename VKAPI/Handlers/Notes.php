@@ -161,19 +161,17 @@ final class Notes extends VKAPIRequestHandler
 
     function editComment(int $comment_id, string $message, int $owner_id = NULL)
     {
-        /*
         $this->requireUser();
         $this->willExecuteWriteAction();
 
         $comment = (new CommentsRepo)->get($comment_id);
 
-        if($comment->getOwner() != $this->getUser()->getId())
+        if($comment->getOwner()->getId() != $this->getUser()->getId())
             $this->fail(15, "Access to comment denied");
         
         $comment->setContent($message);
         $comment->setEdited(time());
-        $comment->save();
-        */
+        $comment->save(true);
         
         return 1;
     }
