@@ -374,7 +374,7 @@ class Club extends RowModel
     
     function toVkApiStruct(?User $user = NULL): object
     {
-        $res = [];
+        $res = (object) [];
 
         $res->id          = $this->getId();
         $res->name        = $this->getName();
@@ -398,7 +398,7 @@ class Club extends RowModel
 
         $res->can_post         = $this->canBeModifiedBy($user) ? 1 : ($this->canPost() ? 1 : 0);
 
-        return (object) $res;
+        return $res;
     }
 
     use Traits\TBackDrops;

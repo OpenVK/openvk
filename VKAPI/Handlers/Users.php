@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
-use openvk\Web\Models\Entities\User;
+use openvk\Web\Models\Entities\{User, Report};
 use openvk\Web\Models\Repositories\Users as UsersRepo;
+use openvk\Web\Models\Repositories\Reports;
 
 final class Users extends VKAPIRequestHandler
 {
@@ -289,4 +290,26 @@ final class Users extends VKAPIRequestHandler
         	"items" => $this->get(implode(',', $array), $nfilds, $offset, $count)
         ];
     }
+
+	function report(int $user_id, string $type = "spam", string $comment = "")
+	{
+		$this->requireUser();
+		$this->willExecuteWriteAction();
+
+		if($user_id == $this->getUser()->getId())
+			$this->fail(12, "Can't report yourself.");
+
+		if(sizeof(iterator_to_array((new Reports)->getDuplicates("user", $user_id, NULL, $this->getUser()->getId()))) > 0)
+			return 1;
+
+		$report = new Report;
+		$report->setUser_id($this->getUser()->getId());
+		$report->setTarget_id($user_id);
+		$report->setType("user");
+		$report->setReason($comment);
+		$report->setCreated(time());
+		$report->save();
+
+		return 1;
+	}
 }
