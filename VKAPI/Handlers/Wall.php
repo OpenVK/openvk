@@ -15,6 +15,7 @@ use openvk\Web\Models\Entities\Video;
 use openvk\Web\Models\Repositories\Videos as VideosRepo;
 use openvk\Web\Models\Entities\Note;
 use openvk\Web\Models\Repositories\Notes as NotesRepo;
+use openvk\Web\Models\Repositories\Polls as PollsRepo;
 
 final class Wall extends VKAPIRequestHandler
 {
@@ -441,6 +442,10 @@ final class Wall extends VKAPIRequestHandler
 
             if(sizeof($attachmentsArr) > 10)
                 $this->fail(50, "Error: too many attachments");
+
+            preg_match_all("/poll/m", $attachments, $matches, PREG_SET_ORDER, 0);
+            if(sizeof($matches) > 1)
+                $this->fail(85, "Error: too many polls");
             
             foreach($attachmentsArr as $attac) {
                 $attachmentType = NULL;
@@ -451,6 +456,8 @@ final class Wall extends VKAPIRequestHandler
                     $attachmentType = "video";
                 elseif(str_contains($attac, "note"))
                     $attachmentType = "note";
+                elseif(str_contains($attac, "poll"))
+                    $attachmentType = "poll";
                 else
                     $this->fail(205, "Unknown attachment type");
 
@@ -486,6 +493,15 @@ final class Wall extends VKAPIRequestHandler
                     
                     if($attacc->getOwner()->getPrivacySetting("notes.read") < 1)
                         $this->fail(11, "You can't attach note to post, because your notes list is closed. Change it in privacy settings in web-version.");
+
+                    $post->attach($attacc);
+                } elseif($attachmentType == "poll") {
+                    $attacc = (new PollsRepo)->get($attachmentId);
+
+                    if(!$attacc || $attacc->isDeleted())
+                        $this->fail(100, "Poll does not exist");
+                    if($attacc->getOwner()->getId() != $this->getUser()->getId())
+                        $this->fail(43, "You do not have access to this poll");
 
                     $post->attach($attacc);
                 }
