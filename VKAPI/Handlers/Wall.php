@@ -120,7 +120,7 @@ final class Wall extends VKAPIRequestHandler
                 "post_type"    => "post",
                 "text"         => $post->getText(false),
                 "copy_history" => $repost,
-                "can_edit"     => 0, # TODO
+                "can_edit"     => $post->getOwner(false)->getId() == $this->getUser()->getId(),
                 "can_delete"   => $post->canBeDeletedBy($this->getUser()),
                 "can_pin"      => $post->canBePinnedBy($this->getUser()),
                 "can_archive"  => false, # TODO MAYBE
@@ -295,7 +295,7 @@ final class Wall extends VKAPIRequestHandler
                     "post_type"    => "post",
                     "text"         => $post->getText(false),
                     "copy_history" => $repost,
-                    "can_edit"     => 0, # TODO
+                    "can_edit"     => $post->getOwner(false)->getId() == $this->getUser()->getId(),
                     "can_delete"   => $post->canBeDeletedBy($user),
                     "can_pin"      => $post->canBePinnedBy($user),
                     "can_archive"  => false, # TODO MAYBE
