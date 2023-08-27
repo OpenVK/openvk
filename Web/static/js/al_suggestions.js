@@ -19,13 +19,13 @@ $(document).on("click", "#publish_post", async (e) => {
         } catch(ex) {
             switch(ex.code) {
                 case 11:
-                    MessageBox(tr("error"), tr("error_declining_invalid_post"), [tr("ok")], [Function.noop]);
+                    MessageBox(tr("error"), tr("error_accepting_invalid_post"), [tr("ok")], [Function.noop]);
                     break;
                 case 19:
-                    MessageBox(tr("error"), tr("error_declining_not_suggested_post"), [tr("ok")], [Function.noop]);
+                    MessageBox(tr("error"), tr("error_accepting_not_suggested_post"), [tr("ok")], [Function.noop]);
                     break;
                 case 10:
-                    MessageBox(tr("error"), tr("error_declining_declined_post"), [tr("ok")], [Function.noop]);
+                    MessageBox(tr("error"), tr("error_accepting_declined_post"), [tr("ok")], [Function.noop]);
                     break;
                 case 22:
                     MessageBox(tr("error"), "Access denied", [tr("ok")], [Function.noop]);
@@ -43,11 +43,10 @@ $(document).on("click", "#publish_post", async (e) => {
 
         NewNotification(tr("suggestion_succefully_published"), tr("suggestion_press_to_go"), null, () => {window.location.assign("/wall" + post.id)});
         
-        if(document.getElementById("cound") != null) {
+        if(document.getElementById("cound") != null)
             document.getElementById("cound").innerHTML = tr("suggested_posts_in_group", post.new_count)
-        } else {
+        else
             document.getElementById("cound_r").innerHTML = tr("suggested_by_everyone", post.new_count)
-        }
 
         if(document.querySelector("object a[href='"+location.pathname+"'] b") != null) {
             document.querySelector("object a[href='"+location.pathname+"'] b").innerHTML = post.new_count
@@ -62,18 +61,18 @@ $(document).on("click", "#publish_post", async (e) => {
             $(".sugglist").remove()
         }
 
-        if(e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.tagName == "TABLE") {
-            e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
-        } else {
-            e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
-        }
-    
-        if(document.querySelectorAll("#postz .post").length < 1 && post.new_count > 0 && document.querySelector(".paginator") != null) {
+        let post_node = e.currentTarget.closest("table")
+        post_node.style.transition = "opacity 300ms ease-in-out";
+        post_node.style.opacity = "0";
+        post_node.classList.remove("post")
+
+        setTimeout(() => {post_node.outerHTML = ""}, 300)
+
+        if(document.querySelectorAll("#postz .post").length < 1 && post.new_count > 0 && document.querySelector(".paginator") != null)
             loadMoreSuggestedPosts()
-        }
     }), Function.noop]);
 
-    document.getElementById("pooblish").innerHTML = e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.querySelector(".really_text").innerHTML.replace(/(<([^>]+)>)/gi, '')
+    document.getElementById("pooblish").innerHTML = e.currentTarget.closest("table").querySelector(".really_text").innerHTML.replace(/(<([^>]+)>)/gi, '')
     document.querySelector(".ovk-diag-body").style.padding = "9px";
 })
 
@@ -114,18 +113,18 @@ $(document).on("click", "#decline_post", async (e) => {
     
     //NewNotification(tr("suggestion_succefully_declined"), "", null);
 
-    if(e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.tagName == "TABLE") {
-        e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
-    } else {
-        e.currentTarget.parentNode.parentNode.parentNode.parentNode.parentNode.parentNode.outerHTML = ""
-    }
+    let post_node = e.currentTarget.closest("table")
+    post_node.style.transition = "opacity 300ms ease-in-out";
+    post_node.style.opacity = "0";
+    post_node.classList.remove("post")
 
-    if(document.getElementById("cound") != null) {
+    setTimeout(() => {post_node.outerHTML = ""}, 300)
+
+    if(document.getElementById("cound") != null)
         document.getElementById("cound").innerHTML = tr("suggested_posts_in_group", post)
-    } else {
+    else
         document.getElementById("cound_r").innerHTML = tr("suggested_by_everyone", post)
-    }
-
+    
     if(document.querySelector("object a[href='"+location.pathname+"'] b") != null) {
         document.querySelector("object a[href='"+location.pathname+"'] b").innerHTML = post
 
@@ -138,10 +137,9 @@ $(document).on("click", "#decline_post", async (e) => {
         $(".sugglist a").click()
         $(".sugglist").remove()
     }
-
-    if(document.querySelectorAll("#postz .post").length < 1 && post > 0 && document.querySelector(".paginator") != null) {
+    
+    if(document.querySelectorAll("#postz .post").length < 1 && post > 0 && document.querySelector(".paginator") != null)
         loadMoreSuggestedPosts()
-    }
 })
 
 function loadMoreSuggestedPosts()
