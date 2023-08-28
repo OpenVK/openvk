@@ -192,6 +192,11 @@
 "graffiti" = "Граффити";
 "reply" = "Ответить";
 
+"all_posts" = "Все записи";
+"users_posts" = "Записи $1";
+"clubs_posts" = "Записи сообщества";
+"others_posts" = "Чужие записи";
+
 /* Friends */
 
 "friends" = "Друзья";

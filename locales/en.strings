@@ -214,6 +214,11 @@
 
 "reply" = "Reply";
 
+"all_posts" = "All posts";
+"users_posts" = "Posts by $1";
+"clubs_posts" = "Group's posts";
+"others_posts" = "Others posts";
+
 /* Friends */
 
 "friends" = "Friends";

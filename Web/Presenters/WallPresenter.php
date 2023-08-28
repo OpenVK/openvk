@@ -66,11 +66,32 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->oObj = $owner;
         if($user < 0)
             $this->template->club = $owner;
+
+        $iterator = NULL;
+        $count = 0;
+        $type = $this->queryParam("type") ?? "all";
+
+        switch($type) {
+            default:
+            case "all":
+                $iterator = $this->posts->getPostsFromUsersWall($user, (int) ($_GET["p"] ?? 1));
+                $count = $this->posts->getPostCountOnUserWall($user);
+                break;
+            case "owners":
+                $iterator = $this->posts->getOwnersPostsFromWall($user, (int) ($_GET["p"] ?? 1));
+                $count = $this->posts->getOwnersCountOnUserWall($user);
+                break;
+            case "others":
+                $iterator = $this->posts->getOthersPostsFromWall($user, (int) ($_GET["p"] ?? 1));
+                $count = $this->posts->getOthersCountOnUserWall($user);
+                break;
+        }
         
         $this->template->owner   = $user;
         $this->template->canPost = $canPost;
-        $this->template->count   = $this->posts->getPostCountOnUserWall($user);
-        $this->template->posts   = iterator_to_array($this->posts->getPostsFromUsersWall($user, (int) ($_GET["p"] ?? 1)));
+        $this->template->count   = $count;
+        $this->template->type    = $type;
+        $this->template->posts   = iterator_to_array($iterator);
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
             "page"    => (int) ($_GET["p"] ?? 1),

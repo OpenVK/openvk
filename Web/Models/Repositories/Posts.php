@@ -67,6 +67,50 @@ class Posts
         foreach($sel as $post)
             yield new Post($post);
     }
+
+    function getOwnersPostsFromWall(int $user, int $page = 1, ?int $perPage = NULL, ?int $offset = NULL): \Traversable
+    {
+        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
+        $offset ??= $perPage * ($page - 1);
+
+        $sel = $this->posts->where([
+            "wall"      => $user,
+            "deleted"   => false,
+            "suggested" => 0,
+        ]);
+        
+        if($user > 0)
+            $sel->where("owner", $user);
+        else
+            $sel->where("flags !=", 0);
+
+        $sel->order("created DESC")->limit($perPage, $offset);
+        
+        foreach($sel as $post)
+            yield new Post($post);
+    }
+
+    function getOthersPostsFromWall(int $user, int $page = 1, ?int $perPage = NULL, ?int $offset = NULL): \Traversable
+    {
+        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
+        $offset ??= $perPage * ($page - 1);
+
+        $sel = $this->posts->where([
+            "wall"      => $user,
+            "deleted"   => false,
+            "suggested" => 0,
+        ]);
+        
+        if($user > 0)
+            $sel->where("owner !=", $user);
+        else
+            $sel->where("flags", 0);
+        
+        $sel->order("created DESC")->limit($perPage, $offset);
+        
+        foreach($sel as $post)
+            yield new Post($post);
+    }
     
     function getPostsByHashtag(string $hashtag, int $page = 1, ?int $perPage = NULL): \Traversable
     {
@@ -145,6 +189,22 @@ class Posts
     function getPostCountOnUserWall(int $user): int
     {
         return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "suggested" => 0]));
+    }
+
+    function getOwnersCountOnUserWall(int $user): int
+    {
+        if($user > 0)
+            return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "owner" => $user]));
+        else
+            return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "suggested" => 0])->where("flags !=", 0));
+    }
+
+    function getOthersCountOnUserWall(int $user): int
+    {
+        if($user > 0)
+            return sizeof($this->posts->where(["wall" => $user, "deleted" => 0])->where("owner !=", $user));
+        else
+            return sizeof($this->posts->where(["wall" => $user, "deleted" => 0, "suggested" => 0])->where("flags", 0));
     }
 
     function getSuggestedPosts(int $club, int $page = 1, ?int $perPage = NULL, ?int $offset = NULL): \Traversable
