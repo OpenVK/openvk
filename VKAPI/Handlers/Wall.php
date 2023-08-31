@@ -37,6 +37,9 @@ final class Wall extends VKAPIRequestHandler
         if ($owner_id > 0)
             if(!$wallOnwer || $wallOnwer->isDeleted())
                 $this->fail(18, "User was deleted or banned");
+
+            if(!$wallOnwer->canBeViewedBy($this->getUser()))
+                $this->fail(15, "Access denied");
         else
             if(!$wallOnwer)
                 $this->fail(15, "Access denied: wall is disabled"); // Don't search for logic here pls
@@ -220,7 +223,11 @@ final class Wall extends VKAPIRequestHandler
         foreach($psts as $pst) {
             $id   = explode("_", $pst);
             $post = (new PostsRepo)->getPostById(intval($id[0]), intval($id[1]));
+
             if($post && !$post->isDeleted()) {
+                if(!$post->canBeViewedBy($this->getUser()))
+                    continue;
+
                 $from_id = get_class($post->getOwner()) == "openvk\Web\Models\Entities\Club" ? $post->getOwner()->getId() * (-1) : $post->getOwner()->getId();
                 $attachments = [];
                 $repost = []; // чел высрал семь сигарет 😳 помянем 🕯
@@ -389,7 +396,7 @@ final class Wall extends VKAPIRequestHandler
         $wallOwner = ($owner_id > 0 ? (new UsersRepo)->get($owner_id) : (new ClubsRepo)->get($owner_id * -1))
                      ?? $this->fail(18, "User was deleted or banned");
         if($owner_id > 0)
-            $canPost = $wallOwner->getPrivacyPermission("wall.write", $this->getUser());
+            $canPost = $wallOwner->getPrivacyPermission("wall.write", $this->getUser()) && $wallOwner->canBeViewedBy($this->getUser());
         else if($owner_id < 0)
             if($wallOwner->canBeModifiedBy($this->getUser()))
                 $canPost = true;
@@ -508,6 +515,9 @@ final class Wall extends VKAPIRequestHandler
         $post = (new PostsRepo)->getPostById((int) $postArray[1], (int) $postArray[2]);
         if(!$post || $post->isDeleted()) $this->fail(100, "One of the parameters specified was missing or invalid");
         
+        if(!$post->canBeViewedBy($this->getUser()))
+            $this->fail(15, "Access denied");
+
         $nPost = new Post;
         $nPost->setOwner($this->user->getId());
         
@@ -546,6 +556,9 @@ final class Wall extends VKAPIRequestHandler
 
         $post = (new PostsRepo)->getPostById($owner_id, $post_id);
         if(!$post || $post->isDeleted()) $this->fail(100, "One of the parameters specified was missing or invalid");
+        
+        if(!$post->canBeViewedBy($this->getUser()))
+            $this->fail(15, "Access denied");
 
         $comments = (new CommentsRepo)->getCommentsByTarget($post, $offset+1, $count, $sort == "desc" ? "DESC" : "ASC");
 
@@ -624,6 +637,12 @@ final class Wall extends VKAPIRequestHandler
 
         $comment = (new CommentsRepo)->get($comment_id); # один хуй айди всех комментов общий
         
+        if(!$comment || $comment->isDeleted())
+            $this->fail(100, "Invalid comment");
+    
+        if(!$comment->canBeViewedBy($this->getUser()))
+            $this->fail(15, "Access denied");
+
         $profiles = [];
 
         $attachments = [];
@@ -684,6 +703,9 @@ final class Wall extends VKAPIRequestHandler
 
         $post = (new PostsRepo)->getPostById($owner_id, $post_id);
         if(!$post || $post->isDeleted()) $this->fail(100, "Invalid post");
+
+        if(!$post->canBeViewedBy($this->getUser()))
+            $this->fail(15, "Access denied");
 
         if($post->getTargetWall() < 0)
             $club = (new ClubsRepo)->get(abs($post->getTargetWall()));

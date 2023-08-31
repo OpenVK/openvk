@@ -150,6 +150,18 @@
 "user_banned" = "Unfortunately, we had to block the <b>$1</b> user page.";
 "user_banned_comment" = "Moderator's comment:";
 
+"closed_page" = "Closed page";
+
+"limited_access_to_page_m" = "$1 limited access to his page.";
+"limited_access_to_page_f" = "$1 limited access to her page.";
+
+"you_can_add" = "You can";
+"add_to_friends_m" = "add him to friends.";
+"add_to_friends_f" = "add her to friends.";
+
+"register_to_access_page_m" = "Sign up to get access to his page.";
+"register_to_access_page_f" = "Sign up to get access to her page.";
+
 /* Wall */
 
 "feed" = "News";
@@ -527,6 +539,10 @@
 "privacy_value_only_me" = "Only me";
 "privacy_value_only_me_dative" = "Only me";
 "privacy_value_nobody" = "Nobody";
+
+"profile_type" = "Profile type";
+"profile_type_open" = "Open";
+"profile_type_closed" = "Closed";
 
 "your_email_address" = "Your Email address";
 "your_page_address" = "Your address page";

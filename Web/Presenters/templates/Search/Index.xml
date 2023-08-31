@@ -188,7 +188,7 @@
                 </div>
             {elseif $type == "posts"}
                 <div n:foreach="$data as $dat" class="content">
-                    {if !$dat || $dat->getTargetWall() < 0 && $dat->getWallOwner()->isHideFromGlobalFeedEnabled()}
+                    {if !$dat || $dat->getTargetWall() < 0 && $dat->getWallOwner()->isHideFromGlobalFeedEnabled() || !$dat->canBeViewedBy($thisUser)}
                         {_closed_group_post}.
                     {else}
                         {include "../components/post.xml", post => $dat, commentSection => true, onWallOf => true}

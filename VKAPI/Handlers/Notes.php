@@ -40,6 +40,9 @@ final class Notes extends VKAPIRequestHandler
         if($note->getOwner()->isDeleted())
             $this->fail(403, "Owner is deleted");
 
+        if(!$note->canBeViewedBy($this->getUser()))
+            $this->fail(15, "Access denied");
+        
         if(!$note->getOwner()->getPrivacyPermission('notes.read', $this->getUser()))
             $this->fail(43, "No access");
 
@@ -187,7 +190,10 @@ final class Notes extends VKAPIRequestHandler
             $this->fail(15, "Invalid user");
         
         if(!$user->getPrivacyPermission('notes.read', $this->getUser()))
-            $this->fail(43, "Access denied: this user chose to hide his notes");
+            $this->fail(15, "Access denied: this user chose to hide his notes");
+
+        if(!$user->canBeViewedBy($this->getUser()))
+            $this->fail(15, "Access denied");
         
         if(empty($note_ids)) {
             $notes = array_slice(iterator_to_array((new NotesRepo)->getUserNotes($user, 1, $count + $offset, $sort == 0 ? "ASC" : "DESC")), $offset);
@@ -238,6 +244,9 @@ final class Notes extends VKAPIRequestHandler
         if(!$note->getOwner()->getPrivacyPermission('notes.read', $this->getUser()))
             $this->fail(40, "Access denied: this user chose to hide his notes");
 
+        if(!$note->canBeViewedBy($this->getUser()))
+            $this->fail(15, "Access to note denied");
+
         return $note->toVkApiStruct();
     }
 
@@ -258,6 +267,9 @@ final class Notes extends VKAPIRequestHandler
 
         if(!$note->getOwner()->getPrivacyPermission('notes.read', $this->getUser()))
             $this->fail(14, "No access");
+
+        if(!$note->canBeViewedBy($this->getUser()))
+            $this->fail(15, "Access to note denied");
         
         $arr = (object) [
             "count" => $note->getCommentsCount(), 

@@ -18,8 +18,14 @@ final class Groups extends VKAPIRequestHandler
         	$users = new UsersRepo;
         	$user  = $users->get($user_id);
 
-        	if(is_null($user))
+        	if(is_null($user) || $user->isDeleted())
         		$this->fail(15, "Access denied");
+
+            if(!$user->canBeViewedBy($this->getUser()))
+                $this->fail(15, "Access denied");
+
+            if(!$user->getPrivacyPermission('groups.read', $this->getUser()))
+                $this->fail(15, "Access denied: this user chose to hide his groups.");
 
         	foreach($user->getClubs($offset, false, $count, true) as $club)
         		$clbs[] = $club;

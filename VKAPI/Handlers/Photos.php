@@ -304,9 +304,11 @@ final class Photos extends VKAPIRequestHandler
                 if(!$user || $user->isDeleted())
                     $this->fail(2, "Invalid user");
                 
-
                 if(!$user->getPrivacyPermission('photos.read', $this->getUser()))
                     $this->fail(21, "This user chose to hide his albums.");
+
+                if(!$user->canBeViewedBy($this->getUser()))
+                    $this->fail(15, "Access denied");
 
                 $albums = array_slice(iterator_to_array((new Albums)->getUserAlbums($user, 1, $count + $offset)), $offset);
 
@@ -368,15 +370,15 @@ final class Photos extends VKAPIRequestHandler
         }
 
         if($user_id > 0) {
-
             $us = (new UsersRepo)->get($user_id);
-            if(!$us || $us->isDeleted()) {
+            if(!$us || $us->isDeleted())
                 $this->fail(21, "Invalid user");
-            }
             
-            if(!$us->getPrivacyPermission('photos.read', $this->getUser())) {
+            if(!$us->getPrivacyPermission('photos.read', $this->getUser()))
                 $this->fail(21, "This user chose to hide his albums.");
-            }
+        
+            if(!$us->canBeViewedBy($this->getUser()))
+                $this->fail(15, "Access dennieeeddd");
 
             return (new Albums)->getUserAlbumsCount($us);
         }
@@ -404,17 +406,17 @@ final class Photos extends VKAPIRequestHandler
             $ph    = explode("_", $phota);
             $photo = (new PhotosRepo)->getByOwnerAndVID((int)$ph[0], (int)$ph[1]);
             
-            if(!$photo || $photo->isDeleted()) {
+            if(!$photo || $photo->isDeleted())
                 $this->fail(21, "Invalid photo");
-            }
 
-            if($photo->getOwner()->isDeleted()) {
+            if($photo->getOwner()->isDeleted())
                 $this->fail(21, "Owner of this photo is deleted");
-            }
 
-            if(!$photo->getOwner()->getPrivacyPermission('photos.read', $this->getUser())) {
+            if(!$photo->getOwner()->getPrivacyPermission('photos.read', $this->getUser()))
                 $this->fail(21, "This user chose to hide his photos.");
-            }
+
+            if(!$photo->canBeViewedBy($this->getUser()))
+                $this->fail(15, "Access denied...");
 
             $res[] = $photo->toVkApiStruct($photo_sizes, $extended);
         }
@@ -432,13 +434,11 @@ final class Photos extends VKAPIRequestHandler
         if(empty($photo_ids)) {
             $album = (new Albums)->getAlbumByOwnerAndId($owner_id, $album_id);
 
-            if(!$album->getOwner()->getPrivacyPermission('photos.read', $this->getUser())) {
-                $this->fail(21, "This user chose to hide his albums.");
-            }
-
-            if(!$album || $album->isDeleted()) {
+            if(!$album || $album->isDeleted())
                 $this->fail(21, "Invalid album");
-            }
+
+            if(!$album->canBeViewedBy($this->getUser())) 
+                $this->fail(15, "Access denied");
             
             $photos = array_slice(iterator_to_array($album->getPhotos(1, $count + $offset)), $offset);
             $res["count"] = sizeof($photos);
@@ -456,12 +456,11 @@ final class Photos extends VKAPIRequestHandler
                 "items" => []
             ];
 
-            foreach($photos as $photo)
-            {
+            foreach($photos as $photo) {
                 $id = explode("_", $photo);
     
                 $phot = (new PhotosRepo)->getByOwnerAndVID((int)$id[0], (int)$id[1]);
-                if($phot && !$phot->isDeleted()) {
+                if($phot && !$phot->isDeleted() && $phot->canBeViewedBy($this->getUser())) {
                     $res["items"][] = $phot->toVkApiStruct($photo_sizes, $extended);
                 }
             }
@@ -477,13 +476,11 @@ final class Photos extends VKAPIRequestHandler
 
         $album = (new Albums)->get($album_id);
 
-        if(!$album || $album->canBeModifiedBy($this->getUser())) {
+        if(!$album || $album->canBeModifiedBy($this->getUser()))
             $this->fail(21, "Invalid album");
-        }
 
-        if($album->isDeleted()) {
+        if($album->isDeleted())
             $this->fail(22, "Album already deleted");
-        }
 
         $album->delete();
 
@@ -497,13 +494,11 @@ final class Photos extends VKAPIRequestHandler
 
         $photo = (new PhotosRepo)->getByOwnerAndVID($owner_id, $photo_id);
 
-        if(!$photo) {
+        if(!$photo)
             $this->fail(21, "Invalid photo");
-        }
 
-        if($photo->isDeleted()) {
+        if($photo->isDeleted())
             $this->fail(21, "Photo is deleted");
-        }
 
         if(!empty($caption)) {
             $photo->setDescription($caption);
@@ -521,17 +516,14 @@ final class Photos extends VKAPIRequestHandler
         if(empty($photos)) {
             $photo = (new PhotosRepo)->getByOwnerAndVID($owner_id, $photo_id);
 
-            if($this->getUser()->getId() !== $photo->getOwner()->getId()) {
+            if($this->getUser()->getId() !== $photo->getOwner()->getId())
                 $this->fail(21, "You can't delete another's photo");
-            }
 
-            if(!$photo) {
+            if(!$photo)
                 $this->fail(21, "Invalid photo");
-            }
 
-            if($photo->isDeleted()) {
+            if($photo->isDeleted())
                 $this->fail(21, "Photo already deleted");
-            }
 
             $photo->delete();
         } else {
@@ -595,20 +587,19 @@ final class Photos extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        if(empty($message) && empty($attachments)) {
+        if(empty($message) && empty($attachments))
             $this->fail(100, "Required parameter 'message' missing.");
-        }
 
         $photo = (new PhotosRepo)->getByOwnerAndVID($owner_id, $photo_id);
 
-        if(!$photo->getAlbum()->getOwner()->getPrivacyPermission('photos.read', $this->getUser())) {
-            $this->fail(21, "This user chose to hide his albums.");
-        }
-
         if(!$photo)
             $this->fail(180, "Photo not found");
+
         if($photo->isDeleted())
             $this->fail(189, "Photo is deleted");
+
+        if(!$photo->canBeViewedBy($this->getUser()))
+            $this->fail(15, "Access to photo denied.");
 
         $comment = new Comment;
         $comment->setOwner($this->getUser()->getId());
@@ -669,19 +660,19 @@ final class Photos extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        if($owner_id < 0) {
+        if($owner_id < 0)
             $this->fail(4, "This method doesn't works with clubs");
-        }
 
         $user = (new UsersRepo)->get($owner_id);
 
-        if(!$user) {
+        if(!$user)
             $this->fail(4, "Invalid user");
-        }
         
-        if(!$user->getPrivacyPermission('photos.read', $this->getUser())) {
+        if(!$user->getPrivacyPermission('photos.read', $this->getUser()))
             $this->fail(21, "This user chose to hide his albums.");
-        }
+
+        if(!$user->canBeViewedBy($this->getUser()))
+            $this->fail(15, "Access denied");
 
         $photos = array_slice(iterator_to_array((new PhotosRepo)->getEveryUserPhoto($user, 1, $count + $offset)), $offset);
         $res = [];
@@ -702,17 +693,11 @@ final class Photos extends VKAPIRequestHandler
         $photo = (new PhotosRepo)->getByOwnerAndVID($owner_id, $photo_id);
         $comms = array_slice(iterator_to_array($photo->getComments(1, $offset + $count)), $offset);
 
-        if(!$photo) {
+        if(!$photo || $photo->isDeleted())
             $this->fail(4, "Invalid photo");
-        }
 
-        if(!$photo->getAlbum()->getOwner()->getPrivacyPermission('photos.read', $this->getUser())) {
-            $this->fail(21, "This user chose to hide his photos.");
-        }
-
-        if($photo->isDeleted()) {
-            $this->fail(4, "Photo is deleted");
-        }
+        if(!$photo->canBeViewedBy($this->getUser()))
+            $this->fail(21, "Access denied");
 
         $res = [
             "count" => sizeof($comms),

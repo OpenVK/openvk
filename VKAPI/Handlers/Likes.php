@@ -16,6 +16,9 @@ final class Likes extends VKAPIRequestHandler
                 if(is_null($post))
                     $this->fail(100, "One of the parameters specified was missing or invalid: object not found");
 
+                if(!$post->canBeViewedBy($this->getUser()))
+                    $this->fail(15, "Access denied");
+                
                 $post->setLike(true, $this->getUser());
 
                 return (object) [
@@ -36,6 +39,9 @@ final class Likes extends VKAPIRequestHandler
                 $post = (new PostsRepo)->getPostById($owner_id, $item_id);
                 if (is_null($post))
                     $this->fail(100, "One of the parameters specified was missing or invalid: object not found");
+
+                if(!$post->canBeViewedBy($this->getUser()))
+                    $this->fail(15, "Access denied");
 
                 $post->setLike(false, $this->getUser());
                 return (object) [
@@ -60,6 +66,9 @@ final class Likes extends VKAPIRequestHandler
                 if (is_null($post))
                     $this->fail(100, "One of the parameters specified was missing or invalid: object not found");
                 
+                if(!$post->canBeViewedBy($this->getUser()))
+                    $this->fail(15, "Access denied");
+
                 return (object) [
                     "liked"  => (int) $post->hasLikeFrom($user),
                     "copied" => 0 # TODO: handle this

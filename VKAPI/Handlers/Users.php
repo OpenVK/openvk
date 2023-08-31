@@ -142,21 +142,51 @@ final class Users extends VKAPIRequestHandler
 									];
 								}
 							case "music":
+								if(!$usr->canBeViewedBy($this->getUser())) {
+									$response[$i]->music = "secret";
+									break;
+								}
+
 								$response[$i]->music = $usr->getFavoriteMusic();
 								break;
 							case "movies":
+								if(!$usr->canBeViewedBy($this->getUser())) {
+									$response[$i]->movies = "secret";
+									break;
+								}
+
 								$response[$i]->movies = $usr->getFavoriteFilms();
 								break;
 							case "tv":
+								if(!$usr->canBeViewedBy($this->getUser())) {
+									$response[$i]->tv = "secret";
+									break;
+								}
+
 								$response[$i]->tv = $usr->getFavoriteShows();
 								break;
 							case "books":
+								if(!$usr->canBeViewedBy($this->getUser())) {
+									$response[$i]->books = "secret";
+									break;
+								}
+
 								$response[$i]->books = $usr->getFavoriteBooks();
 								break;
 							case "city":
+								if(!$usr->canBeViewedBy($this->getUser())) {
+									$response[$i]->city = "Воскресенск";
+									break;
+								}
+
 								$response[$i]->city = $usr->getCity();
 								break;
 							case "interests":
+								if(!$usr->canBeViewedBy($this->getUser())) {
+									$response[$i]->interests = "secret";
+									break;
+								}
+
 								$response[$i]->interests = $usr->getInterests();
 								break;
 							case "rating":
@@ -185,6 +215,14 @@ final class Users extends VKAPIRequestHandler
 
         $this->requireUser();
         
+        $user = $users->get($user_id);
+		
+        if(!$user || $user->isDeleted())
+            $this->fail(14, "Invalid user");
+
+        if(!$user->canBeViewedBy($this->getUser()))
+            $this->fail(15, "Access denied");
+
         foreach($users->get($user_id)->getFollowers($offset, $count) as $follower)
             $followers[] = $follower->getId();
 
@@ -277,6 +315,7 @@ final class Users extends VKAPIRequestHandler
             "fav_shows"       => !empty($fav_shows) ? $fav_shows : NULL,
             "fav_books"       => !empty($fav_books) ? $fav_books : NULL,
             "fav_quotes"      => !empty($fav_quotes) ? $fav_quotes : NULL,
+			"doNotSearchPrivate" => true,
         ];
 
         $find  = $users->find($q, $parameters, $sortg);
