@@ -24,7 +24,7 @@ class Wall implements Handler
             $reject("No post with id=$id");
         
         if(!$post->canBeViewedBy($this->user))
-            $reject(12, "Aces denid,");
+            $reject(12, "Access denied");
 
         $res = (object) [];
         $res->id     = $post->getId();

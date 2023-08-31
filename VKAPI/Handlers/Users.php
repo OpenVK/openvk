@@ -48,8 +48,8 @@ final class Users extends VKAPIRequestHandler
 						"id"                => $usr->getId(),
 						"first_name"        => $usr->getFirstName(),
 						"last_name"         => $usr->getLastName(),
-						"is_closed"         => false,
-						"can_access_closed" => true,
+						"is_closed"         => $usr->isClosed(),
+						"can_access_closed" => (bool)$usr->canBeViewedBy($this->getUser()),
 					];
 
 					$flds = explode(',', $fields);
@@ -315,7 +315,7 @@ final class Users extends VKAPIRequestHandler
             "fav_shows"       => !empty($fav_shows) ? $fav_shows : NULL,
             "fav_books"       => !empty($fav_books) ? $fav_books : NULL,
             "fav_quotes"      => !empty($fav_quotes) ? $fav_quotes : NULL,
-			"doNotSearchPrivate" => true,
+            "doNotSearchPrivate" => true,
         ];
 
         $find  = $users->find($q, $parameters, $sortg);

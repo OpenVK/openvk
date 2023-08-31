@@ -27,7 +27,7 @@ class Notes implements Handler
             $reject(160, "You don't have permission to access this note");
 
         if(!$note->canBeViewedBy($this->user))
-            $reject(15, "Happy new year");
+            $reject(15, "Access to note denied");
         
         $resolve([
             "title"   => $note->getName(),

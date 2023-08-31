@@ -442,7 +442,6 @@ final class UserPresenter extends OpenVKPresenter
 
                 $prof = $this->postParam("profile_type") == 1 || $this->postParam("profile_type") == 0 ? (int)$this->postParam("profile_type") : 0;
                 $user->setProfile_type($prof);
-                $user->save();
                 
             } else if($_GET['act'] === "finance.top-up") {
                 $token   = $this->postParam("key0") . $this->postParam("key1") . $this->postParam("key2") . $this->postParam("key3");
