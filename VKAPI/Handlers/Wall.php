@@ -201,8 +201,8 @@ final class Wall extends VKAPIRequestHandler
             else
                 $groups[]   = $from_id * -1;
 
-                /*if($post->isSigned())
-                    $profiles[] = $post->getOwner(false)->getId();*/
+                if($post->isSigned())
+                    $profiles[] = $post->getOwner(false)->getId();
 
             $attachments = NULL; # free attachments so it will not clone everythingg
         }
@@ -392,8 +392,8 @@ final class Wall extends VKAPIRequestHandler
                 else
                     $groups[]   = $from_id * -1;
 
-                    /*if($post->isSigned())
-                        $profiles[] = $post->getOwner(false)->getId();*/
+                    if($post->isSigned())
+                        $profiles[] = $post->getOwner(false)->getId();
 
                 $attachments = NULL; # free attachments so it will not clone everything
                 $repost = NULL;      # same

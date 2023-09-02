@@ -2736,3 +2736,17 @@ body.article .floating_sidebar, body.article .page_content {
     text-decoration: underline;
     color:#4a4a4a;
 }
+
+.authorIcon {
+    height: 11px;
+    margin-top: 1px;
+    width: 10px;
+    float: left;
+    background: url("/assets/packages/static/openvk/img/person.png") no-repeat 0 0;
+}
+
+.authorName {
+    margin-left: 4px;
+    font-weight: normal !important;
+    font-size: 11px;
+}
