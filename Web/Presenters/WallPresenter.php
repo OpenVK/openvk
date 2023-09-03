@@ -90,6 +90,9 @@ final class WallPresenter extends OpenVKPresenter
     function renderRSS(int $user): void
     {
         $owner = ($user < 0 ? (new Clubs) : (new Users))->get(abs($user));
+        if ($owner instanceof User && $owner->isServiceAccount())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+
         if(is_null($this->user)) {
             $canPost = false;
         } else if($user > 0) {
@@ -215,7 +218,7 @@ final class WallPresenter extends OpenVKPresenter
         $wallOwner = ($wall > 0 ? (new Users)->get($wall) : (new Clubs)->get($wall * -1))
                      ?? $this->flashFail("err", tr("failed_to_publish_post"), tr("error_4"));
 
-        if ($wallOwner->isBanned())
+        if ($wallOwner instanceof User && ($wallOwner->isServiceAccount() || $wallOwner->isBanned()))
             $this->flashFail("err", tr("error"), tr("forbidden"));
 
         if($wall > 0) {
@@ -345,7 +348,10 @@ final class WallPresenter extends OpenVKPresenter
         $post = $this->posts->getPostById($wall, $post_id);
         if(!$post || $post->isDeleted())
             $this->notFound();
-        
+
+        if ($post->getOwner() instanceof User && $post->getOwner()->isServiceAccount())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+
         $this->logPostView($post, $wall);
         
         $this->template->post     = $post;
@@ -373,8 +379,9 @@ final class WallPresenter extends OpenVKPresenter
         $this->assertNoCSRF();
         
         $post = $this->posts->getPostById($wall, $post_id);
-        if(!$post || $post->isDeleted()) $this->notFound();
 
+        if(!$post || $post->isDeleted() || ($post->getOwner() instanceof User && $post->getOwner()->isServiceAccount())) $this->notFound();
+       
         if ($post->getWallOwner()->isBanned())
             $this->flashFail("err", tr("error"), tr("forbidden"));
 
@@ -393,7 +400,7 @@ final class WallPresenter extends OpenVKPresenter
         
         $post = $this->posts->getPostById($wall, $post_id);
 
-        if(!$post || $post->isDeleted()) 
+        if(!$post || $post->isDeleted() || ($post->getOwner() instanceof User && $post->getOwner()->isServiceAccount()))
             $this->notFound();
 
         if ($post->getWallOwner()->isBanned())

@@ -296,6 +296,8 @@ final class UserPresenter extends OpenVKPresenter
         
         $user = $this->users->get((int) $this->postParam("id"));
         if(!$user) exit("Invalid state");
+        if ($user->isServiceAccount())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
         
         $user->toggleSubscription($this->user->identity);
         
@@ -654,6 +656,9 @@ final class UserPresenter extends OpenVKPresenter
         if($this->user->identity->getCoins() < $value)
             $this->flashFail("err", tr("failed_to_tranfer_points"), tr("you_dont_have_enough_points"));
 
+        if ($receiver->isServiceAccount())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+
         if($this->user->id !== $receiver->getId()) {
             $this->user->identity->setCoins($this->user->identity->getCoins() - $value);
             $this->user->identity->save();
@@ -694,6 +699,9 @@ final class UserPresenter extends OpenVKPresenter
 
         if($this->user->identity->getCoins() < $value)
             $this->flashFail("err", tr("failed_to_increase_rating"), tr("you_dont_have_enough_points"));
+
+        if ($receiver->isServiceAccount())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
 
         $this->user->identity->setCoins($this->user->identity->getCoins() - $value);
         $this->user->identity->save();

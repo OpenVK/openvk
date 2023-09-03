@@ -158,7 +158,10 @@ final class PhotosPresenter extends OpenVKPresenter
     {
         $photo = $this->photos->getByOwnerAndVID($ownerId, $photoId);
         if(!$photo || $photo->isDeleted()) $this->notFound();
-        
+
+        if ($photo->getOwner() instanceof User && $photo->getOwner()->isServiceAccount())
+            $this->notFound();
+
         if(!is_null($this->queryParam("from"))) {
             if(preg_match("%^album([0-9]++)$%", $this->queryParam("from"), $matches) === 1) {
                 $album = $this->albums->get((int) $matches[1]);

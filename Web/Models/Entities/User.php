@@ -487,6 +487,8 @@ class User extends RowModel
 
     function getPrivacyPermission(string $permission, ?User $user = NULL): bool
     {
+        if ($this->isServiceAccount() && $permission !== "page.read" && ($user !== NULL && $user->getId() !== $this->getId())) return false;
+
         $permStatus = $this->getPrivacySetting($permission);
         if(!$user)
             return $permStatus === User::PRIVACY_EVERYONE;
@@ -1219,6 +1221,16 @@ class User extends RowModel
             }
         }
         return $response;
+    }
+
+    function getServiceAccountNotify(): ?string
+    {
+        return $this->getRecord()->service_account_notify;
+    }
+
+    function isServiceAccount(): bool
+    {
+        return !is_null($this->getServiceAccountNotify());
     }
 
     function toVkApiStruct(): object
