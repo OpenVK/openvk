@@ -263,3 +263,67 @@ async function showArticle(note_id) {
     u("body").removeClass("dimmed");
     u("body").addClass("article");
 }
+
+$(document).on("click", "#editPost", (e) => {
+    let post = e.currentTarget.closest("table")
+    let content = post.querySelector(".text")
+    let text = content.querySelector(".really_text")
+
+    if(content.querySelector("textarea") == null) {
+        content.insertAdjacentHTML("afterbegin", `
+            <div id="wall-post-input999" class="editMenu">
+                <textarea id="new_content">${text.innerHTML.replace(/(<([^>]+)>)/gi, '')}</textarea>
+                <input type="button" class="button" value="${tr("save")}" id="endEditing">
+                <input type="button" class="button" value="${tr("cancel")}" id="cancelEditing">
+            </div>
+        `)
+
+        u(content.querySelector("#cancelEditing")).on("click", () => {post.querySelector("#editPost").click()})
+        u(content.querySelector("#endEditing")).on("click", () => {
+            let nwcntnt = content.querySelector("#new_content").value
+            let type = "post"
+
+            if(post.classList.contains("comment")) {
+                type = "comment"
+            }
+
+            let xhr = new XMLHttpRequest()
+            xhr.open("POST", "/wall/edit")
+
+            xhr.onloadstart = () => {
+                content.querySelector(".editMenu").classList.add("loading")
+            }
+
+            xhr.onerror = () => {
+                MessageBox(tr("error"), "unknown error occured", tr("ok"), (() => {Function.noop}))
+            }
+
+            xhr.onload = () => {
+                let result = JSON.parse(xhr.responseText)
+
+                if(result.error == "no") {
+                    post.querySelector("#editPost").click()
+                    content.querySelector(".really_text").innerHTML = result.new_content
+    
+                    if(post.querySelector(".editedMark") == null) {
+                        post.querySelector(".date").insertAdjacentHTML("beforeend", `
+                            <span class="edited editedMark">(${tr("edited_short")})</span>
+                        `)
+                    }
+                } else {
+                    MessageBox(tr("error"), result.error, [tr("ok")], [Function.noop])
+                    post.querySelector("#editPost").click()
+                }
+            }
+
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.send("postid="+e.currentTarget.dataset.id+"&newContent="+nwcntnt+"&hash="+encodeURIComponent(u("meta[name=csrf]").attr("value"))+"&type="+type)
+        })
+
+        text.style.display = "none"
+        setupWallPostInputHandlers(999)
+    } else {
+        u(content.querySelector(".editMenu")).remove()
+        text.style.display = "block"
+    }
+})

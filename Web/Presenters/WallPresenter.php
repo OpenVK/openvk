@@ -3,7 +3,7 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Models\Exceptions\TooMuchOptionsException;
 use openvk\Web\Models\Entities\{Poll, Post, Photo, Video, Club, User};
 use openvk\Web\Models\Entities\Notifications\{MentionNotification, RepostNotification, WallPostNotification};
-use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums, Notes};
+use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums, Notes, Comments};
 use Chandler\Database\DatabaseConnection;
 use Nette\InvalidStateException as ISE;
 use Bhaktaraz\RSSGenerator\Item;
@@ -497,5 +497,32 @@ final class WallPresenter extends OpenVKPresenter
         
         # TODO localize message based on language and ?act=(un)pin
         $this->flashFail("succ", tr("information_-1"), tr("changes_saved_comment"));
+    }
+
+    function renderEdit()
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        if($_SERVER["REQUEST_METHOD"] !== "POST")
+            $this->redirect("/id0");
+
+        if($this->postParam("type") == "post") {
+            $post = $this->posts->get((int)$this->postParam("postid"));
+        } else {
+            $post = (new Comments)->get((int)$this->postParam("postid"));
+        }
+
+        if(!$post || $post->isDeleted())
+            $this->returnJson(["error" => "Invalid post"]);
+
+        if(!$post->canBeEditedBy($this->user->identity))
+            $this->returnJson(["error" => "Access denied"]);
+
+        $post->setEdited(time());
+        $post->setContent($this->postParam("newContent"));
+        $post->save(true);
+
+        $this->returnJson(["error" => "no", "new_content" => $post->getText(), "new_edited" => (string)$post->getEditTime()]);
     }
 }

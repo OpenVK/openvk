@@ -2701,3 +2701,17 @@ body.article .floating_sidebar, body.article .page_content {
     right: 22px;
     font-size: 12px;
 }
+
+.edited {
+    color: #9b9b9b;
+}
+
+.editMenu.loading {
+    filter: opacity(0.5);
+    cursor: progress;
+    user-select: none;
+}
+
+.editMenu.loading * {
+    pointer-events: none;
+}

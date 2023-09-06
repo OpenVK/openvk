@@ -90,4 +90,12 @@ class Comment extends Post
     {
         return "/wall" . $this->getTarget()->getPrettyId() . "#_comment" . $this->getId();
     }
+
+    function canBeEditedBy(?User $user = NULL): bool
+    {
+        if(!$user)
+            return false;
+        
+        return $user->getId() == $this->getOwner(false)->getId();
+    }
 }

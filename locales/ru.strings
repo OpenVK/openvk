@@ -191,6 +191,7 @@
 "version_incompatibility" = "Не удалось отобразить это вложение. Возможно, база данных несовместима с текущей версией OpenVK.";
 "graffiti" = "Граффити";
 "reply" = "Ответить";
+"edited_short" = "ред.";
 
 /* Friends */
 
@@ -1028,6 +1029,7 @@
 "warn_user_action" = "Предупредить пользователя";
 "ban_in_support_user_action" = "Заблокировать в поддержке";
 "unban_in_support_user_action" = "Разблокировать в поддержке";
+"changes_history" = "История редактирования";
 
 /* Admin panel */
 

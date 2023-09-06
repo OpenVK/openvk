@@ -20,7 +20,7 @@
                 </div>
                 <div class="post-content" id="{$comment->getId()}">
                     <div class="text" id="text{$comment->getId()}">
-                        {$comment->getText()|noescape}
+                        <span class="really_text">{$comment->getText()|noescape}</span>
                         
                         <div n:ifcontent class="attachments_b">
                             <div class="attachment" n:foreach="$comment->getChildren() as $attachment" data-localized-nsfw-text="{_nsfw_warning}">
@@ -29,16 +29,14 @@
                         </div>
                     </div>
                     <div n:if="isset($thisUser) &&! ($compact ?? false)" class="post-menu">
-                        <a
-                            href="{=$linkWithPost && get_class($comment->getTarget()) == 'openvk\Web\Models\Entities\Post' ? '/wall' . $comment->getTarget()->getPrettyId() : ''}#_comment{$comment->getId()}"
-                            class="date"
-                        >
-                            {$comment->getPublicationTime()}
-                        </a>
+                        <a href="#_comment{$comment->getId()}" class="date">{$comment->getPublicationTime()} <span n:if="$post->getEditTime()" class="edited editedMark">({_edited_short})</span></a>
                         {if !$timeOnly}
                             &nbsp;|
                             {if $comment->canBeDeletedBy($thisUser)}
                                 <a href="/comment{$comment->getId()}/delete">{_delete}</a>&nbsp;|
+                            {/if}
+                            {if $comment->canBeEditedBy($thisUser)}
+                                <a id="editPost" data-id="{$comment->getId()}">{_edit}</a>&nbsp;|
                             {/if}
                             <a class="comment-reply">{_reply}</a>
                             {if $thisUser->getId() != $comment->getOwner()->getId()}

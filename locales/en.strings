@@ -214,6 +214,8 @@
 
 "reply" = "Reply";
 
+"edited_short" = "edited";
+
 /* Friends */
 
 "friends" = "Friends";
@@ -1128,6 +1130,7 @@
 "warn_user_action" = "Warn user";
 "ban_in_support_user_action" = "Ban in support";
 "unban_in_support_user_action" = "Unban in support";
+"changes_history" = "Editing history";
 
 /* Admin panel */
 
