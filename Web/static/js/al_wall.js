@@ -358,6 +358,11 @@ $(document).on("click", "#editPost", (e) => {
                     "&fromgroup="+(content.querySelector("#fromgroup") != null ? content.querySelector("#fromgroup").checked : 0))
         })
 
+        u(".editMenu").on("keydown", (e) => {
+            if(e.ctrlKey && e.keyCode === 13)
+                content.querySelector("#endEditing").click()
+        });
+
         text.style.display = "none"
         setupWallPostInputHandlers(999)
     } else {

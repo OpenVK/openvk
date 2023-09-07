@@ -507,11 +507,10 @@ final class WallPresenter extends OpenVKPresenter
         if($_SERVER["REQUEST_METHOD"] !== "POST")
             $this->redirect("/id0");
 
-        if($this->postParam("type") == "post") {
+        if($this->postParam("type") == "post")
             $post = $this->posts->get((int)$this->postParam("postid"));
-        } else {
+        else
             $post = (new Comments)->get((int)$this->postParam("postid"));
-        }
 
         if(!$post || $post->isDeleted())
             $this->returnJson(["error" => "Invalid post"]);
@@ -519,8 +518,18 @@ final class WallPresenter extends OpenVKPresenter
         if(!$post->canBeEditedBy($this->user->identity))
             $this->returnJson(["error" => "Access denied"]);
 
+        $attachmentsCount = sizeof(iterator_to_array($post->getChildren()));
+
+        if(empty($this->postParam("newContent")) && $attachmentsCount < 1)
+            $this->returnJson(["error" => "Empty post"]);
+
         $post->setEdited(time());
-        $post->setContent($this->postParam("newContent"));
+
+        try {
+            $post->setContent($this->postParam("newContent"));
+        } catch(\LengthException $e) {
+            $this->returnJson(["error" => $e->getMessage()]);
+        }
 
         if($this->postParam("type") === "post") {
             $post->setNsfw($this->postParam("nsfw") == "true");
