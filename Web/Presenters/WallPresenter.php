@@ -535,7 +535,7 @@ final class WallPresenter extends OpenVKPresenter
             $post->setNsfw($this->postParam("nsfw") == "true");
             $flags = 0;
 
-            if($post->getTargetWall() < 0) {
+            if($post->getTargetWall() < 0 && $post->getWallOwner()->canBeModifiedBy($this->user->identity)) {
                 if($this->postParam("fromgroup") == "true") {
                     $flags |= 0b10000000;
                     $post->setFlags($flags);

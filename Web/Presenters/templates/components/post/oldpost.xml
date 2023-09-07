@@ -95,7 +95,7 @@
                         <a id="editPost" 
                            data-id="{$post->getId()}"
                            data-nsfw="{(int)$post->isExplicit()}"
-                           {if $post->getTargetWall() < 0}data-fromgroup="{(int)$post->isPostedOnBehalfOfGroup()}"{/if}>{_edit}</a> &nbsp;|&nbsp;
+                           {if $post->getTargetWall() < 0 && $post->getWallOwner()->canBeModifiedBy($thisUser)}data-fromgroup="{(int)$post->isPostedOnBehalfOfGroup()}"{/if}>{_edit}</a> &nbsp;|&nbsp;
                     {/if}
 
                     {if !($forceNoDeleteLink ?? false) && $post->canBeDeletedBy($thisUser)}

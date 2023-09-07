@@ -67,7 +67,7 @@
                         <a class="edit" id="editPost" 
                                         data-id="{$post->getId()}" 
                                         data-nsfw="{(int)$post->isExplicit()}"
-                                        {if $post->getTargetWall() < 0}data-fromgroup="{(int)$post->isPostedOnBehalfOfGroup()}"{/if}></a>
+                                        {if $post->getTargetWall() < 0 && $post->getWallOwner()->canBeModifiedBy($thisUser)}data-fromgroup="{(int)$post->isPostedOnBehalfOfGroup()}"{/if}></a>
                     {/if}
                 </div>
                 <div class="post-content" id="{$post->getPrettyId()}">
