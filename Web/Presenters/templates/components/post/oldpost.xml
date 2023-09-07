@@ -14,13 +14,13 @@
         <tr>
             <td width="54" valign="top">
                 <a href="{$author->getURL()}">
-                    <img src="{$author->getAvatarURL('miniscule')}" width="50" />
+                    <img src="{$author->getAvatarURL('miniscule')}" class="post-avatar" width="50" />
                     <span n:if="!$post->isPostedOnBehalfOfGroup() && !($compact ?? false) && $author->isOnline()" class="post-online">{_online}</span>
                 </a>
             </td>
             <td width="100%" valign="top">
                 <div class="post-author">
-                    <a href="{$author->getURL()}"><b>{$author->getCanonicalName()}</b></a>
+                    <a href="{$author->getURL()}"><b class="post-author-name">{$author->getCanonicalName()}</b></a>
                     <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
                     {if $post->isDeactivationMessage()}
                         {$author->isFemale() ? tr($deac . "_f") : tr($deac . "_m")}
@@ -92,7 +92,10 @@
                     {/if}
 
                     {if !($forceNoEditLink ?? false) && $post->canBeEditedBy($thisUser)}
-                        <a id="editPost" data-id="{$post->getId()}">{_edit}</a> &nbsp;|&nbsp;
+                        <a id="editPost" 
+                           data-id="{$post->getId()}"
+                           data-nsfw="{(int)$post->isExplicit()}"
+                           {if $post->getTargetWall() < 0}data-fromgroup="{(int)$post->isPostedOnBehalfOfGroup()}"{/if}>{_edit}</a> &nbsp;|&nbsp;
                     {/if}
 
                     {if !($forceNoDeleteLink ?? false) && $post->canBeDeletedBy($thisUser)}

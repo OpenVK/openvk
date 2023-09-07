@@ -271,10 +271,22 @@ $(document).on("click", "#editPost", (e) => {
 
     if(content.querySelector("textarea") == null) {
         content.insertAdjacentHTML("afterbegin", `
-            <div id="wall-post-input999" class="editMenu">
-                <textarea id="new_content">${text.innerHTML.replace(/(<([^>]+)>)/gi, '')}</textarea>
-                <input type="button" class="button" value="${tr("save")}" id="endEditing">
-                <input type="button" class="button" value="${tr("cancel")}" id="cancelEditing">
+            <div class="editMenu">
+                <div id="wall-post-input999"> 
+                    <textarea id="new_content">${text.innerHTML.replace(/(<([^>]+)>)/gi, '')}</textarea>
+                    <input type="button" class="button" value="${tr("save")}" id="endEditing">
+                    <input type="button" class="button" value="${tr("cancel")}" id="cancelEditing">
+                </div>
+                ${e.currentTarget.dataset.nsfw != null ? `
+                    <div class="postOptions">
+                        <label><input type="checkbox" id="nswfw" ${e.currentTarget.dataset.nsfw == 1 ? `checked` : ``}>${tr("contains_nsfw")}</label>
+                    </div>
+                ` : ``}
+                ${e.currentTarget.dataset.fromgroup != null ? `
+                <div class="postOptions">
+                    <label><input type="checkbox" id="fromgroup" ${e.currentTarget.dataset.fromgroup == 1 ? `checked` : ``}>${tr("post_as_group")}</label>
+                </div>
+            ` : ``}
             </div>
         `)
 
@@ -295,7 +307,11 @@ $(document).on("click", "#editPost", (e) => {
             }
 
             xhr.onerror = () => {
-                MessageBox(tr("error"), "unknown error occured", tr("ok"), (() => {Function.noop}))
+                MessageBox(tr("error"), "unknown error occured", [tr("ok")], [() => {Function.noop}])
+            }
+
+            xhr.ontimeout = () => {
+                MessageBox(tr("error"), "Try to refresh page", [tr("ok")], [() => {Function.noop}])
             }
 
             xhr.onload = () => {
@@ -310,6 +326,23 @@ $(document).on("click", "#editPost", (e) => {
                             <span class="edited editedMark">(${tr("edited_short")})</span>
                         `)
                     }
+
+                    if(e.currentTarget.dataset.nsfw != null) {
+                        e.currentTarget.setAttribute("data-nsfw", result.nsfw)
+
+                        if(result.nsfw == 0) {
+                            post.classList.remove("post-nsfw")
+                        } else {
+                            post.classList.add("post-nsfw")
+                        }
+                    }
+
+                    if(e.currentTarget.dataset.fromgroup != null) {
+                        e.currentTarget.setAttribute("data-fromgroup", result.from_group)
+                    }
+
+                    post.querySelector(".post-avatar").setAttribute("src", result.author.avatar)
+                    post.querySelector(".post-author-name").innerHTML = result.author.name
                 } else {
                     MessageBox(tr("error"), result.error, [tr("ok")], [Function.noop])
                     post.querySelector("#editPost").click()
@@ -317,7 +350,12 @@ $(document).on("click", "#editPost", (e) => {
             }
 
             xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-            xhr.send("postid="+e.currentTarget.dataset.id+"&newContent="+nwcntnt+"&hash="+encodeURIComponent(u("meta[name=csrf]").attr("value"))+"&type="+type)
+            xhr.send("postid="+e.currentTarget.dataset.id+
+                    "&newContent="+nwcntnt+
+                    "&hash="+encodeURIComponent(u("meta[name=csrf]").attr("value"))+
+                    "&type="+type+
+                    "&nsfw="+(content.querySelector("#nswfw") != null ? content.querySelector("#nswfw").checked : 0)+
+                    "&fromgroup="+(content.querySelector("#fromgroup") != null ? content.querySelector("#fromgroup").checked : 0))
         })
 
         text.style.display = "none"

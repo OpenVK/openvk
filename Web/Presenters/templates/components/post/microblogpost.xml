@@ -18,13 +18,13 @@
         <tr>
             <td width="54" valign="top">
                 <a href="{$author->getURL()}">
-                    <img src="{$author->getAvatarURL('miniscule')}" width="{if $compact}25{else}50{/if}" {if $compact}class="cCompactAvatars"{/if} />
+                    <img src="{$author->getAvatarURL('miniscule')}" width="{if $compact}25{else}50{/if}" class="post-avatar {if $compact}cCompactAvatars{/if}" />
                     <span n:if="!$post->isPostedOnBehalfOfGroup() && !$compact && $author->isOnline()" class="post-online">{_online}</span>
                 </a>
             </td>
             <td width="100%" valign="top">
                 <div class="post-author">
-                    <a href="{$author->getURL()}"><b>{$author->getCanonicalName()}</b></a>
+                    <a href="{$author->getURL()}"><b class="post-author-name">{$author->getCanonicalName()}</b></a>
                     <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
                     {$post->isDeactivationMessage() ? ($author->isFemale() ? tr($deac . "_f") : tr($deac . "_m"))}
                     {$post->isUpdateAvatarMessage() && !$post->isPostedOnBehalfOfGroup() ? ($author->isFemale() ? tr("upd_f") : tr("upd_m"))}
@@ -64,7 +64,10 @@
                     {/if}
 
                     {if $post->canBeEditedBy($thisUser) && !($forceNoEditLink ?? false) && $compact == false}
-                        <a class="edit" id="editPost" data-id="{$post->getId()}"></a>
+                        <a class="edit" id="editPost" 
+                                        data-id="{$post->getId()}" 
+                                        data-nsfw="{(int)$post->isExplicit()}"
+                                        {if $post->getTargetWall() < 0}data-fromgroup="{(int)$post->isPostedOnBehalfOfGroup()}"{/if}></a>
                     {/if}
                 </div>
                 <div class="post-content" id="{$post->getPrettyId()}">

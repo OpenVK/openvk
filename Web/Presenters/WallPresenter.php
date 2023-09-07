@@ -521,8 +521,31 @@ final class WallPresenter extends OpenVKPresenter
 
         $post->setEdited(time());
         $post->setContent($this->postParam("newContent"));
+
+        if($this->postParam("type") === "post") {
+            $post->setNsfw($this->postParam("nsfw") == "true");
+            $flags = 0;
+
+            if($post->getTargetWall() < 0) {
+                if($this->postParam("fromgroup") == "true") {
+                    $flags |= 0b10000000;
+                    $post->setFlags($flags);
+                } else
+                    $post->setFlags($flags);
+            }
+        }
+
         $post->save(true);
 
-        $this->returnJson(["error" => "no", "new_content" => $post->getText(), "new_edited" => (string)$post->getEditTime()]);
+        $this->returnJson(["error"    => "no", 
+                        "new_content" => $post->getText(), 
+                        "new_edited"  => (string)$post->getEditTime(),
+                        "nsfw"        => $this->postParam("type") === "post" ? (int)$post->isExplicit() : 0,
+                        "from_group"  => $this->postParam("type") === "post" && $post->getTargetWall() < 0 ?
+                        ((int)$post->isPostedOnBehalfOfGroup()) : "false",
+                        "author"      => [
+                            "name"    => $post->getOwner()->getCanonicalName(),
+                            "avatar"  => $post->getOwner()->getAvatarUrl()
+                        ]]);
     }
 }
