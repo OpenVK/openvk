@@ -221,39 +221,71 @@ final class PhotosPresenter extends OpenVKPresenter
     function renderUploadPhoto(): void
     {
         $this->assertUserLoggedIn();
-        $this->willExecuteWriteAction();
+        $this->willExecuteWriteAction(true);
         
         if(is_null($this->queryParam("album")))
-            $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в <b>DELETED</b>.");
+            $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в <b>DELETED</b>.", 500, true);
         
         [$owner, $id] = explode("_", $this->queryParam("album"));
         $album = $this->albums->get((int) $id);
         if(!$album)
-            $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в <b>DELETED</b>.");
+            $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в <b>DELETED</b>.", 500, true);
         if(is_null($this->user) || !$album->canBeModifiedBy($this->user->identity))
-            $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+            $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.", 500, true);
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
-            if(!isset($_FILES["blob"]))
-                $this->flashFail("err", "Нету фотографии", "Выберите файл.");
-            
-            try {
-                $photo = new Photo;
-                $photo->setOwner($this->user->id);
-                $photo->setDescription($this->postParam("desc"));
-                $photo->setFile($_FILES["blob"]);
-                $photo->setCreated(time());
-                $photo->save();
-            } catch(ISE $ex) {
-                $name = $album->getName();
-                $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в <b>$name</b>.");
-            }
-            
-            $album->addPhoto($photo);
-            $album->setEdited(time());
-            $album->save();
+            if($this->queryParam("act") == "finish") {
+                $result = json_decode($this->postParam("photos"), true);
+                
+                foreach($result as $photoId => $description) {
+                    $phot = $this->photos->get($photoId);
 
-            $this->redirect("/photo" . $photo->getPrettyId() . "?from=album" . $album->getId());
+                    if(!$phot || $phot->isDeleted() || $phot->getOwner()->getId() != $this->user->id)
+                        continue;
+
+                    $phot->setDescription($description);
+                    $phot->save();
+
+                    $album = $phot->getAlbum();
+                }
+
+                $this->returnJson(["success" => true,
+                                    "album"  => $album->getId(),
+                                    "owner"  => $album->getOwner() instanceof User ? $album->getOwner()->getId() : $album->getOwner()->getId() * -1]);
+            }
+
+            if(!isset($_FILES))
+                $this->flashFail("err", "Нету фотографии", "Выберите файл.", 500, true);
+            
+            $photos = [];
+            for($i = 0; $i < $this->postParam("count"); $i++) {
+                try {
+                    $photo = new Photo;
+                    $photo->setOwner($this->user->id);
+                    $photo->setDescription("");
+                    $photo->setFile($_FILES["photo_".$i]);
+                    $photo->setCreated(time());
+                    $photo->save();
+
+                    $photos[] = [
+                        "url"   => $photo->getURLBySizeId("tiny"),
+                        "id"    => $photo->getId(),
+                        "vid"   => $photo->getVirtualId(),
+                        "owner" => $photo->getOwner()->getId(),
+                        "link"  => $photo->getURL()
+                    ];
+                } catch(ISE $ex) {
+                    $name = $album->getName();
+                    $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в <b>$name</b>.", 500, true);
+                }
+
+                $album->addPhoto($photo);
+                $album->setEdited(time());
+                $album->save();
+            }
+
+            $this->returnJson(["success" => true,
+                "photos" => $photos]);
         } else {
             $this->template->album = $album;
         }
@@ -285,7 +317,7 @@ final class PhotosPresenter extends OpenVKPresenter
     function renderDeletePhoto(int $ownerId, int $photoId): void
     {
         $this->assertUserLoggedIn();
-        $this->willExecuteWriteAction();
+        $this->willExecuteWriteAction($_SERVER["REQUEST_METHOD"] === "POST");
         $this->assertNoCSRF();
         
         $photo = $this->photos->getByOwnerAndVID($ownerId, $photoId);
@@ -298,6 +330,9 @@ final class PhotosPresenter extends OpenVKPresenter
         $photo->isolate();
         $photo->delete();
         
+        if($_SERVER["REQUEST_METHOD"] === "POST")
+            $this->returnJson(["success" => true]);
+
         $this->flash("succ", "Фотография удалена", "Эта фотография была успешно удалена.");
         $this->redirect($redirect);
     }

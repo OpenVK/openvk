@@ -381,6 +381,13 @@
 "upd_f" = "updated her profile picture";
 "upd_g" = "updated group's picture";
 
+"upload_picts" = "Upload photos";
+"end_uploading" = "Finish uploading";
+"photos_successfully_uploaded" = "Photos successfully uploaded";
+"click_to_go_to_album" = "Click here to go to album.";
+"error_uploading_photo" = "Error when uploading photo";
+"too_many_pictures" = "No more than 10 pictures";
+
 /* Notes */
 
 "notes" = "Notes";
@@ -1066,6 +1073,7 @@
 "error_data_too_big" = "Attribute '$1' must be at most $2 $3 long";
 
 "forbidden" = "Access error";
+"unknown_error" = "Unknown error";
 "forbidden_comment" = "This user's privacy settings do not allow you to look at his page.";
 
 "changes_saved" = "Changes saved";

@@ -2701,3 +2701,18 @@ body.article .floating_sidebar, body.article .page_content {
     right: 22px;
     font-size: 12px;
 }
+
+.uploadedImage img {
+    max-height: 76px;
+    object-fit: cover;
+}
+
+.lagged {
+    filter: opacity(0.5);
+    cursor: progress;
+    user-select: none;
+}
+
+.lagged * {
+    pointer-events: none;
+}
