@@ -224,12 +224,12 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction(true);
         
         if(is_null($this->queryParam("album")))
-            $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в <b>DELETED</b>.", 500, true);
+            $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в DELETED.", 500, true);
         
         [$owner, $id] = explode("_", $this->queryParam("album"));
         $album = $this->albums->get((int) $id);
         if(!$album)
-            $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в <b>DELETED</b>.", 500, true);
+            $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в DELETED.", 500, true);
         if(is_null($this->user) || !$album->canBeModifiedBy($this->user->identity))
             $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.", 500, true);
         
@@ -242,6 +242,9 @@ final class PhotosPresenter extends OpenVKPresenter
 
                     if(!$phot || $phot->isDeleted() || $phot->getOwner()->getId() != $this->user->id)
                         continue;
+                    
+                    if(iconv_strlen($description) > 255)
+                        $this->flashFail("err", tr("error"), tr("description_too_long"), 500, true);
 
                     $phot->setDescription($description);
                     $phot->save();
@@ -276,7 +279,7 @@ final class PhotosPresenter extends OpenVKPresenter
                     ];
                 } catch(ISE $ex) {
                     $name = $album->getName();
-                    $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в <b>$name</b>.", 500, true);
+                    $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в $name.", 500, true);
                 }
 
                 $album->addPhoto($photo);

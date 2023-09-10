@@ -6,6 +6,11 @@ $(document).on("change", "#uploadButton", (e) => {
         return;
     }
 
+    if(document.querySelector(".whiteBox").style.display == "block") {
+        document.querySelector(".whiteBox").style.display = "none"
+        document.querySelector(".insertThere").append(document.getElementById("fakeButton"));
+    }
+
     let photos = new FormData()
     for(file of e.currentTarget.files) {
         photos.append("photo_"+iterator, file)
@@ -19,7 +24,7 @@ $(document).on("change", "#uploadButton", (e) => {
     xhr.open("POST", "/photos/upload?album="+document.getElementById("album").value)
 
     xhr.onloadstart = () => {
-        document.getElementById("photos").insertAdjacentHTML("beforeend", `<img id="loader" src="/assets/packages/static/openvk/img/loading_mini.gif">`)
+        document.querySelector(".insertPhotos").insertAdjacentHTML("beforeend", `<img id="loader" src="/assets/packages/static/openvk/img/loading_mini.gif">`)
     }
 
     xhr.onload = () => {
@@ -30,27 +35,29 @@ $(document).on("change", "#uploadButton", (e) => {
             let photosArr = result.photos
 
             for(photo of photosArr) {
-                let table = document.querySelector("#photos")
+                let table = document.querySelector(".insertPhotos")
 
                 table.insertAdjacentHTML("beforeend", `
-                <tr id="photo" data-id="${photo.id}">
-                    <td width="120" valign="top">
-                        <div class="uploadedImage">
-                            <a href="${photo.link}" target="_blank"><img width="125" src="${photo.url}"></a>
-                        </div>
-                        <a style="float:right" id="deletePhoto" data-id="${photo.vid}" data-owner="${photo.owner}">${tr("delete")}</a>
-                    </td>
-                    <td>
-                        <textarea style="margin: 0px; height: 50px; width: 259px; resize: none;" maxlength="255"></textarea>
-                    </td>
-                </tr>
+                <div id="photo" class="insertedPhoto" data-id="${photo.id}">
+                    <div class="uploadedImageDescription" style="float: left;">
+                        <span style="color: #464646;position: absolute;">${tr("description")}:</span>
+                        <textarea style="margin-left: 62px; resize: none;" maxlength="255"></textarea>
+                    </div>
+                    <div class="uploadedImage">
+                        <a href="${photo.link}" target="_blank"><img width="125" src="${photo.url}"></a>
+                        <a class="profile_link" style="width: 125px;" id="deletePhoto" data-id="${photo.vid}" data-owner="${photo.owner}">${tr("delete")}</a>
+                        <!--<div class="smallFrame" style="margin-top: 6px;">
+                            <div class="smallBtn">${tr("album_poster")}</div>
+                        </div>-->
+                    </div>
+                </div>
                 `)
             }
 
             document.getElementById("endUploading").style.display = "block"
         } else {
             u("#loader").remove()
-            MessageBox(tr("error"), result.flash.message ?? tr("error_uploading_photo"), [tr("ok")], [() => {Function.noop}])
+            MessageBox(tr("error"), escapeHtml(result.flash.message) ?? tr("error_uploading_photo"), [tr("ok")], [() => {Function.noop}])
         }
     }
 
@@ -61,7 +68,7 @@ $(document).on("click", "#endUploading", (e) => {
     let table = document.querySelector("#photos")
     let data  = new FormData()
     let arr   = new Map();
-    for(el of table.querySelectorAll("tr#photo")) {
+    for(el of table.querySelectorAll("div#photo")) {
         arr.set(el.dataset.id, el.querySelector("textarea").value)
     }
 
@@ -83,11 +90,19 @@ $(document).on("click", "#endUploading", (e) => {
     xhr.onload = () => {
         let result = JSON.parse(xhr.responseText)
 
-        e.currentTarget.removeAttribute("disabled")
-        document.querySelector(".page_content tbody").innerHTML = ""
-        document.getElementById("endUploading").style.display = "none"
+        if(!result.success) {
+            MessageBox(tr("error"), escapeHtml(result.flash.message), [tr("ok")], [() => {Function.noop}])
+        } else {
+            document.querySelector(".page_content .insertPhotos").innerHTML = ""
+            document.getElementById("endUploading").style.display = "none"
+    
+            NewNotification(tr("photos_successfully_uploaded"), tr("click_to_go_to_album"), null, () => {window.location.assign(`/album${result.owner}_${result.album}`)})
+            
+            document.querySelector(".whiteBox").style.display = "block"
+            document.querySelector(".insertAgain").append(document.getElementById("fakeButton"))
+        }
 
-        NewNotification(tr("photos_successfully_uploaded"), tr("click_to_go_to_album"), null, () => {window.location.assign(`/album${result.owner}_${result.album}`)})
+        e.currentTarget.removeAttribute("disabled")
     }
 
     xhr.send(data)
@@ -101,7 +116,7 @@ $(document).on("click", "#deletePhoto", (e) => {
     xhr.open("POST", `/photo${e.currentTarget.dataset.owner}_${e.currentTarget.dataset.id}/delete`)
 
     xhr.onloadstart = () => {
-        e.currentTarget.closest("tr#photo").classList.add("lagged")
+        e.currentTarget.closest("div#photo").classList.add("lagged")
     }
 
     xhr.onerror = () => {
@@ -109,10 +124,12 @@ $(document).on("click", "#deletePhoto", (e) => {
     }
 
     xhr.onload = () => {
-        u(e.currentTarget.closest("tr#photo")).remove()
+        u(e.currentTarget.closest("div#photo")).remove()
 
-        if(document.querySelectorAll("tr#photo").length < 1) {
+        if(document.querySelectorAll("div#photo").length < 1) {
             document.getElementById("endUploading").style.display = "none"
+            document.querySelector(".whiteBox").style.display = "block"
+            document.querySelector(".insertAgain").append(document.getElementById("fakeButton"))
         }
     }
 
@@ -129,16 +146,12 @@ $(document).on("dragover", (e) => {
     e.preventDefault()
     document.querySelector("#fakeButton").classList.add("dragged")
     document.querySelector("#fakeButton").value = tr("drag_files_here")
-    document.querySelector("#fakeButton").style.width = "100%";
-    document.querySelector("#fakeButton").style.height = "196px";
 })
 
 $(document).on("dragleave", (e) => {
     e.preventDefault()
     document.querySelector("#fakeButton").classList.remove("dragged")
     document.querySelector("#fakeButton").value = tr("upload_picts")
-    document.querySelector("#fakeButton").style.width = "max-content";
-    document.querySelector("#fakeButton").style.height = "max-content";
 })
 
 $("#fakeButton").on("drop", (e) => {

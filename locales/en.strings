@@ -381,6 +381,7 @@
 "upd_f" = "updated her profile picture";
 "upd_g" = "updated group's picture";
 
+"add_photos" = "Add photos";
 "upload_picts" = "Upload photos";
 "end_uploading" = "Finish uploading";
 "photos_successfully_uploaded" = "Photos successfully uploaded";
@@ -391,6 +392,13 @@
 "drag_files_here" = "Drag files here";
 "only_images_accepted" = "File \"$1\" is not an image";
 "max_filesize" = "Max filesize is $1 MB";
+
+"uploading_photos_from_computer" = "Uploading photos from Your computer";
+"supported_formats" = "Supported file formats: JPG, PNG and GIF.";
+"max_load_photos" = "You can upload up to 10 photos at a time.";
+"tip" = "Tip";
+"tip_ctrl" = "to select multiple photos at once, hold down the Ctrl key when selecting files in Windows or the CMD key in Mac OS.";
+"album_poster" = "Album poster";
 
 /* Notes */
 
@@ -1129,6 +1137,7 @@
 "media_file_corrupted_or_too_large" = "The media content file is corrupted or too large.";
 "post_is_empty_or_too_big" = "The post is empty or too big.";
 "post_is_too_big" = "The post is too big.";
+"description_too_long" = "Description is too long.";
 
 /* Admin actions */
 

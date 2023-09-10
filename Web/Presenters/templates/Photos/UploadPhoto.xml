@@ -12,17 +12,48 @@
 {/block}
 
 {block content}
-    <div class="uploadPhotos">
-        <input type="file" accept=".jpg,.png,.gif" name="files[]" multiple class="button" id="uploadButton" style="display:none">
-        <input type="button" class="button" id="fakeButton" onclick="uploadButton.click()" value="{_upload_picts}">
+    <div class="tabs">
+        <div class="tab">
+            <a href="/album{$album->getPrettyId()}/edit">{_edit_album}</a>
+        </div>
+        <div id="activetabs" class="tab">
+            <a id="act_tab_a" href="#">{_add_photos}</a>
+        </div>
     </div>
 
-    <table style="border-spacing: 6px 10px;">
-        <tbody id="photos"></tbody>
-    </table>
+    <input type="file" accept=".jpg,.png,.gif" name="files[]" multiple class="button" id="uploadButton" style="display:none">
+
+    <div class="container_gray" style="height: 344px;">
+        <div class="insertThere"></div>
+        <div class="whiteBox" style="display: block;">
+            <div class="boxContent">
+                <h4>{_uploading_photos_from_computer}</h4>
+
+                <div class="limits" style="margin-top:17px">
+                    <b style="color:#45688E">{_admin_limits}</b>
+                    <ul class="blueList" style="margin-left: -25px;margin-top: 1px;">
+                        <li>{_supported_formats}</li>
+                        <li>{_max_load_photos}</li>
+                    </ul>
+
+                    <div style="text-align: center;padding-top: 4px;" class="insertAgain">
+                        <input type="button" class="button" id="fakeButton" onclick="uploadButton.click()" value="{_upload_picts}">
+                    </div>
+
+                    <div class="tipping" style="margin-top: 19px;">
+                        <span style="line-height: 15px"><b>{_tip}</b>: {_tip_ctrl}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="insertPhotos" id="photos" style="margin-top: 9px;padding-bottom: 12px;"></div>
+
+        <input type="button" class="button" style="display:none;margin-left: auto;margin-right: auto;" id="endUploading" value="{_end_uploading}">
+    </div>
+
     <input n:ifset="$_GET['album']" type="hidden" id="album" value="{$_GET['album']}" />
-    
-    <input type="button" class="button" style="display:none;" id="endUploading" value="{_end_uploading}">
+
     <script>
         uploadButton.value = ''
     </script>
