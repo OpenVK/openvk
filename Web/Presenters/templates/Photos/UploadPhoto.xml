@@ -14,7 +14,7 @@
 {block content}
     <div class="uploadPhotos">
         <input type="file" accept=".jpg,.png,.gif" name="files[]" multiple class="button" id="uploadButton" style="display:none">
-        <input type="button" class="button" onclick="uploadButton.click()" value="{_upload_picts}">
+        <input type="button" class="button" id="fakeButton" onclick="uploadButton.click()" value="{_upload_picts}">
     </div>
 
     <table style="border-spacing: 6px 10px;">

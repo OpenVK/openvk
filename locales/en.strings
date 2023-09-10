@@ -388,6 +388,10 @@
 "error_uploading_photo" = "Error when uploading photo";
 "too_many_pictures" = "No more than 10 pictures";
 
+"drag_files_here" = "Drag files here";
+"only_images_accepted" = "File \"$1\" is not an image";
+"max_filesize" = "Max filesize is $1 MB";
+
 /* Notes */
 
 "notes" = "Notes";

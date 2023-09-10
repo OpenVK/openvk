@@ -118,3 +118,49 @@ $(document).on("click", "#deletePhoto", (e) => {
 
     xhr.send(data)
 })
+
+$(document).on("dragover drop", (e) => {
+    e.preventDefault()
+
+    return false;
+})
+
+$(document).on("dragover", (e) => {
+    e.preventDefault()
+    document.querySelector("#fakeButton").classList.add("dragged")
+    document.querySelector("#fakeButton").value = tr("drag_files_here")
+    document.querySelector("#fakeButton").style.width = "100%";
+    document.querySelector("#fakeButton").style.height = "196px";
+})
+
+$(document).on("dragleave", (e) => {
+    e.preventDefault()
+    document.querySelector("#fakeButton").classList.remove("dragged")
+    document.querySelector("#fakeButton").value = tr("upload_picts")
+    document.querySelector("#fakeButton").style.width = "max-content";
+    document.querySelector("#fakeButton").style.height = "max-content";
+})
+
+$("#fakeButton").on("drop", (e) => {
+    e.originalEvent.dataTransfer.dropEffect = 'move';
+    e.preventDefault()
+
+    $(document).trigger("dragleave")
+
+    let files = e.originalEvent.dataTransfer.files
+
+    for(const file of files) {
+        if(!file.type.startsWith('image/')) {
+            MessageBox(tr("error"), tr("only_images_accepted", escapeHtml(file.name)), [tr("ok")], [() => {Function.noop}])
+            return;
+        }
+
+        if(file.size > 5 * 1024 * 1024) {
+            MessageBox(tr("error"), tr("max_filesize", 5), [tr("ok")], [() => {Function.noop}])
+            return;
+        }
+    }
+
+    document.getElementById("uploadButton").files = files
+    u("#uploadButton").trigger("change")
+})
