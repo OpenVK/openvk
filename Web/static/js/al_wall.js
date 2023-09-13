@@ -275,7 +275,7 @@ $(document).on("click", "#videoAttachment", async (e) => {
             </div>
         </div>
 
-        <div class="videosInsert" style="padding: 5px;height: 194px;overflow-y: scroll;"></div>
+        <div class="videosInsert" style="padding: 5px;height: 287px;overflow-y: scroll;"></div>
     `
 
     let form = e.currentTarget.closest("form")
@@ -285,7 +285,7 @@ $(document).on("click", "#videoAttachment", async (e) => {
     // styles for messageboxx
     document.querySelector(".ovk-diag-body").style.padding = "0"
     document.querySelector(".ovk-diag-cont").style.width = "580px"
-    document.querySelector(".ovk-diag-body").style.height = "241px"
+    document.querySelector(".ovk-diag-body").style.height = "335px"
 
     async function insertVideos(page, query = "") {
         document.querySelector(".videosInsert").insertAdjacentHTML("beforeend", `<img id="loader" src="/assets/packages/static/openvk/img/loading_mini.gif">`)
