@@ -182,6 +182,7 @@
 "nsfw_warning" = "Данный пост может содержать 18+ контент";
 "report" = "Пожаловаться";
 "attach" = "Прикрепить";
+"detach" = "Открепить";
 "attach_photo" = "Прикрепить фото";
 "attach_video" = "Прикрепить видео";
 "draw_graffiti" = "Нарисовать граффити";
@@ -614,6 +615,12 @@
 "videos_many" = "$1 видеозаписей";
 "videos_other" = "$1 видеозаписей";
 "view_video" = "Просмотр";
+
+"selecting_video" = "Выбор видеозаписей";
+"upload_new_video" = "Загрузить новое видео";
+"max_attached_videos" = "Максимум 10 видеозаписей";
+"no_videos" = "У вас нет видео.";
+"no_videos_results" = "Нет результатов.";
 
 /* Notifications */
 
