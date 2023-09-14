@@ -245,6 +245,17 @@ class Post extends Postable
         $this->unwire();
         $this->save();
     }
+
+    function canBeEditedBy(?User $user = NULL): bool
+    {
+        if(!$user)
+            return false;
+
+        if($this->isDeactivationMessage() || $this->isUpdateAvatarMessage())
+            return false;
+
+        return $user->getId() == $this->getOwner(false)->getId();
+    }
     
     use Traits\TRichText;
 }

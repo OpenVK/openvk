@@ -2702,6 +2702,10 @@ body.article .floating_sidebar, body.article .page_content {
     font-size: 12px;
 }
 
+.edited {
+    color: #9b9b9b;
+}
+
 .uploadedImage img {
     max-height: 76px;
     object-fit: cover;
@@ -2711,6 +2715,16 @@ body.article .floating_sidebar, body.article .page_content {
     filter: opacity(0.5);
     cursor: progress;
     user-select: none;
+}
+
+.editMenu.loading {
+    filter: opacity(0.5);
+    cursor: progress;
+    user-select: none;
+}
+
+.editMenu.loading * {
+    pointer-events: none;
 }
 
 .lagged * {
@@ -2797,3 +2811,4 @@ body.article .floating_sidebar, body.article .page_content {
 .smallFrame:hover {
     background: #E9F0F1 !important;
 }
+
