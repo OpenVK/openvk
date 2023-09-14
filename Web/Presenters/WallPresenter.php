@@ -299,14 +299,16 @@ final class WallPresenter extends OpenVKPresenter
             $un  = rtrim($this->postParam("videos"), ",");
             $arr = explode(",", $un);
 
-            foreach($arr as $dat) {
-                $ids = explode("_", $dat);
-                $video = (new Videos)->getByOwnerAndVID((int)$ids[0], (int)$ids[1]);
-
-                if(!$video || $video->isDeleted())
-                    continue;
-
-                $videos[] = $video;
+            if(sizeof($arr) < 11) {
+                foreach($arr as $dat) {
+                    $ids = explode("_", $dat);
+                    $video = (new Videos)->getByOwnerAndVID((int)$ids[0], (int)$ids[1]);
+    
+                    if(!$video || $video->isDeleted())
+                        continue;
+    
+                    $videos[] = $video;
+                }
             }
         }
         
