@@ -2701,3 +2701,99 @@ body.article .floating_sidebar, body.article .page_content {
     right: 22px;
     font-size: 12px;
 }
+
+.uploadedImage img {
+    max-height: 76px;
+    object-fit: cover;
+}
+
+.lagged {
+    filter: opacity(0.5);
+    cursor: progress;
+    user-select: none;
+}
+
+.lagged * {
+    pointer-events: none;
+}
+
+.button.dragged {
+    background: #c4c4c4 !important;
+    border-color: #c4c4c4 !important;
+    color: black !important;
+}
+
+.whiteBox {
+    background: white;
+    width: 421px;
+    margin-left: auto;
+    margin-right: auto;
+    border: 1px solid #E8E8E8;
+    margin-top: 7%;
+    height: 231px;
+}
+
+.boxContent {
+    padding: 24px 38px;
+}
+
+.blueList {
+    list-style-type: none;
+}
+
+.blueList li {
+    color: black;
+    font-size: 11px;
+    padding-top: 7px;
+}
+
+.blueList li::before {
+    content: " ";
+    width: 5px;
+    height: 5px;
+    display: inline-block;
+    vertical-align: bottom;
+    background-color: #73889C;
+    margin: 3px;
+    margin-left: 2px;
+    margin-right: 7px;
+}
+
+.insertedPhoto {
+    background: white;
+    border: 1px solid #E8E7EA;
+    padding: 10px;
+    height: 100px;
+    margin-top: 6px;
+}
+
+.uploadedImage {
+    float: right;
+    display: flex;
+    flex-direction: column;
+}
+
+.uploadedImageDescription {
+    width: 449px;
+}
+
+.uploadedImageDescription textarea {
+    width: 84%;
+    height: 86px;
+}
+
+.smallFrame {
+    border: 1px solid #E1E3E5;
+    background: #F0F0F0;
+    height: 33px;
+    text-align: center;
+    cursor: pointer;
+}
+
+.smallFrame .smallBtn {
+    margin-top: 10px;
+}
+
+.smallFrame:hover {
+    background: #E9F0F1 !important;
+}
