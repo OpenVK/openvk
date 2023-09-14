@@ -354,7 +354,7 @@ $(document).on("click", "#videoAttachment", async (e) => {
 
     $(".videosInsert").on("click", "#showMoreVideos", (e) => {
         u(e.currentTarget).remove()
-        insertVideos(Number(e.currentTarget.dataset.page))
+        insertVideos(Number(e.currentTarget.dataset.page), document.querySelector(".topGrayBlock #vquery").value)
     })
 
     $(".topGrayBlock #vquery").on("change", async (e) => {
