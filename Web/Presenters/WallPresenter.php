@@ -552,6 +552,7 @@ final class WallPresenter extends OpenVKPresenter
                         "nsfw"        => $this->postParam("type") === "post" ? (int)$post->isExplicit() : 0,
                         "from_group"  => $this->postParam("type") === "post" && $post->getTargetWall() < 0 ?
                         ((int)$post->isPostedOnBehalfOfGroup()) : "false",
+                        "new_text"    => $post->getText(false),
                         "author"      => [
                             "name"    => $post->getOwner()->getCanonicalName(),
                             "avatar"  => $post->getOwner()->getAvatarUrl()

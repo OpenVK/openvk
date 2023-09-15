@@ -63,7 +63,7 @@
                     <div class="text">
                         {var $owner = $author->getId()}
 
-                        <span class="really_text">{$post->getText()|noescape}</span>
+                        <span data-text="{$post->getText(false)}" class="really_text">{$post->getText()|noescape}</span>
 
                         <div n:ifcontent class="attachments_b">
                             <div class="attachment" n:foreach="$post->getChildren() as $attachment" data-localized-nsfw-text="{_nsfw_warning}">

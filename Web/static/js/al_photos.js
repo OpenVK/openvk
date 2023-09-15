@@ -142,23 +142,23 @@ $(document).on("dragover drop", (e) => {
     return false;
 })
 
-$(document).on("dragover", (e) => {
+$(".container_gray").on("dragover", (e) => {
     e.preventDefault()
     document.querySelector("#fakeButton").classList.add("dragged")
     document.querySelector("#fakeButton").value = tr("drag_files_here")
 })
 
-$(document).on("dragleave", (e) => {
+$(".container_gray").on("dragleave", (e) => {
     e.preventDefault()
     document.querySelector("#fakeButton").classList.remove("dragged")
     document.querySelector("#fakeButton").value = tr("upload_picts")
 })
 
-$("#fakeButton").on("drop", (e) => {
+$(".container_gray").on("drop", (e) => {
     e.originalEvent.dataTransfer.dropEffect = 'move';
     e.preventDefault()
 
-    $(document).trigger("dragleave")
+    $(".container_gray").trigger("dragleave")
 
     let files = e.originalEvent.dataTransfer.files
 

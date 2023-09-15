@@ -273,7 +273,7 @@ $(document).on("click", "#editPost", (e) => {
         content.insertAdjacentHTML("afterbegin", `
             <div class="editMenu">
                 <div id="wall-post-input999"> 
-                    <textarea id="new_content">${text.innerHTML.replace(/(<([^>]+)>)/gi, '')}</textarea>
+                    <textarea id="new_content">${text.dataset.text}</textarea>
                     <input type="button" class="button" value="${tr("save")}" id="endEditing">
                     <input type="button" class="button" value="${tr("cancel")}" id="cancelEditing">
                 </div>
@@ -343,6 +343,7 @@ $(document).on("click", "#editPost", (e) => {
 
                     post.querySelector(".post-avatar").setAttribute("src", result.author.avatar)
                     post.querySelector(".post-author-name").innerHTML = result.author.name
+                    post.querySelector(".really_text").setAttribute("data-text", result.new_text)
                 } else {
                     MessageBox(tr("error"), result.error, [tr("ok")], [Function.noop])
                     post.querySelector("#editPost").click()
