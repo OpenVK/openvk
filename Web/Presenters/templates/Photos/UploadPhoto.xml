@@ -2,9 +2,13 @@
 {block title}{_upload_photo}{/block}
 
 {block header}
-    <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
+    <a href="{$album->getOwner()->getURL()}">{$album->getOwner()->getCanonicalName()}</a>
     » 
-    <a href="/albums{$thisUser->getId()}">{_albums}</a>
+    {if $album->getOwner() instanceof openvk\Web\Models\Entities\Club}
+        <a href="/albums{$album->getOwner()->getId() * -1}">{_albums}</a>
+    {else}
+        <a href="/albums{$album->getOwner()->getId()}">{_albums}</a>
+    {/if}
     » 
     <a href="/album{$album->getPrettyId()}">{$album->getName()}</a>
     » 
@@ -23,7 +27,7 @@
 
     <input type="file" accept=".jpg,.png,.gif" name="files[]" multiple class="button" id="uploadButton" style="display:none">
 
-    <div class="container_gray" style="height: 344px;">
+    <div class="container_gray" style="min-height: 344px;">
         <div class="insertThere"></div>
         <div class="whiteBox" style="display: block;">
             <div class="boxContent">

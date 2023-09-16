@@ -8,19 +8,19 @@
         <tr>
             <td width="30" valign="top">
                 <a href="{$author->getURL()}">
-                    <img src="{$author->getAvatarURL('miniscule')}" width="30" class="cCompactAvatars" />
+                    <img src="{$author->getAvatarURL('miniscule')}" width="30" class="cCompactAvatars post-avatar" />
                 </a>
             </td>
             <td width="100%" valign="top">
                 <div class="post-author">
-                    <a href="{$author->getURL()}"><b>
+                    <a href="{$author->getURL()}"><b class="post-author-name">
                         {$author->getCanonicalName()}
                     </b></a>
                     <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png"><br/>
                 </div>
                 <div class="post-content" id="{$comment->getId()}">
                     <div class="text" id="text{$comment->getId()}">
-                        <span class="really_text">{$comment->getText()|noescape}</span>
+                        <span data-text="{$comment->getText(false)}" class="really_text">{$comment->getText()|noescape}</span>
                         
                         <div n:ifcontent class="attachments_b">
                             <div class="attachment" n:foreach="$comment->getChildren() as $attachment" data-localized-nsfw-text="{_nsfw_warning}">

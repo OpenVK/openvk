@@ -6,6 +6,18 @@ $(document).on("change", "#uploadButton", (e) => {
         return;
     }
 
+    for(const file of e.currentTarget.files) {
+        if(!file.type.startsWith('image/')) {
+            MessageBox(tr("error"), tr("only_images_accepted", escapeHtml(file.name)), [tr("ok")], [() => {Function.noop}])
+            return;
+        }
+
+        if(file.size > 5 * 1024 * 1024) {
+            MessageBox(tr("error"), tr("max_filesize", 5), [tr("ok")], [() => {Function.noop}])
+            return;
+        }
+    }
+
     if(document.querySelector(".whiteBox").style.display == "block") {
         document.querySelector(".whiteBox").style.display = "none"
         document.querySelector(".insertThere").append(document.getElementById("fakeButton"));
@@ -142,23 +154,23 @@ $(document).on("dragover drop", (e) => {
     return false;
 })
 
-$(document).on("dragover", (e) => {
+$(".container_gray").on("dragover", (e) => {
     e.preventDefault()
     document.querySelector("#fakeButton").classList.add("dragged")
     document.querySelector("#fakeButton").value = tr("drag_files_here")
 })
 
-$(document).on("dragleave", (e) => {
+$(".container_gray").on("dragleave", (e) => {
     e.preventDefault()
     document.querySelector("#fakeButton").classList.remove("dragged")
     document.querySelector("#fakeButton").value = tr("upload_picts")
 })
 
-$("#fakeButton").on("drop", (e) => {
+$(".container_gray").on("drop", (e) => {
     e.originalEvent.dataTransfer.dropEffect = 'move';
     e.preventDefault()
 
-    $(document).trigger("dragleave")
+    $(".container_gray").trigger("dragleave")
 
     let files = e.originalEvent.dataTransfer.files
 
@@ -176,4 +188,11 @@ $("#fakeButton").on("drop", (e) => {
 
     document.getElementById("uploadButton").files = files
     u("#uploadButton").trigger("change")
+})
+
+u(".container_gray").on("paste", (e) => {
+    if(e.clipboardData.files.length > 0 && e.clipboardData.files.length < 10) {
+        document.getElementById("uploadButton").files = e.clipboardData.files;
+        u("#uploadButton").trigger("change")
+    }
 })

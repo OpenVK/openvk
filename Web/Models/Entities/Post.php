@@ -254,6 +254,9 @@ class Post extends Postable
         if($this->isDeactivationMessage() || $this->isUpdateAvatarMessage())
             return false;
 
+        if($this->getTargetWall() > 0)
+            return $this->getPublicationTime()->timestamp() + WEEK > time();
+
         return $user->getId() == $this->getOwner(false)->getId();
     }
     
