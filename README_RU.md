@@ -66,7 +66,7 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 * **Пароль**: `admin`
   * Перед использованием встроенной учетной записи рекомендуется сменить пароль или отключить её.
 
-💡Запутались? Полное руководство по установке доступно [здесь](https://docs.openvk.su/openvk_engine/centos8_installation/) (CentOS 8 [и](https://almalinux.org/ru/) [семейство](https://yum.oracle.com/oracle-linux-isos.html)).
+💡Запутались? Полное руководство по установке доступно [здесь](https://docs.openvk.uk/openvk_engine/centos8_installation/) (CentOS 8 [и](https://almalinux.org/ru/) [семейство](https://yum.oracle.com/oracle-linux-isos.html)).
 
 # Установка в Docker/Kubernetes
 Подробные иструкции можно найти в `install/automated/docker/README.md` и `install/automated/kubernetes/README.md` соответственно.

@@ -160,7 +160,7 @@ class Club extends RowModel
 
     function canPost(): bool
     {
-	return (bool) $this->getRecord()->wall;
+	    return (bool) $this->getRecord()->wall;
     }
 
     
@@ -224,7 +224,7 @@ class Club extends RowModel
                     "shape" => "spline",
                     "color" => "#597da3",
                 ],
-                "name" => $unique ? "Полный охват" : "Все просмотры",
+                "name" => $unique ? tr("full_coverage") : tr("all_views"),
             ],
             "subs"  => [
                 "x" => array_reverse(range(1, 7)),
@@ -235,7 +235,7 @@ class Club extends RowModel
                     "color" => "#b05c91",
                 ],
                 "fill" => "tozeroy",
-                "name" => $unique ? "Охват подписчиков" : "Просмотры подписчиков",
+                "name" => $unique ? tr("subs_coverage") : tr("subs_views"),
             ],
             "viral" => [
                 "x" => array_reverse(range(1, 7)),
@@ -246,7 +246,7 @@ class Club extends RowModel
                     "color" => "#4d9fab",
                 ],
                 "fill" => "tozeroy",
-                "name" => $unique ? "Виральный охват" : "Виральные просмотры",
+                "name" => $unique ? tr("viral_coverage") : tr("viral_views"),
             ],
         ];
     }
@@ -262,17 +262,17 @@ class Club extends RowModel
         return $subbed && ($this->getOpennesStatus() === static::CLOSED ? $this->isSubscriptionAccepted($user) : true);
     }
     
-    function getFollowersQuery(): GroupedSelection
+    function getFollowersQuery(string $sort = "follower ASC"): GroupedSelection
     {
         $query = $this->getRecord()->related("subscriptions.target");
         
         if($this->getOpennesStatus() === static::OPEN) {
-            $query = $query->where("model", "openvk\\Web\\Models\\Entities\\Club");
+            $query = $query->where("model", "openvk\\Web\\Models\\Entities\\Club")->order($sort);
         } else {
             return false;
         }
         
-        return $query;
+        return $query->group("follower");
     }
     
     function getFollowersCount(): int
@@ -280,9 +280,9 @@ class Club extends RowModel
         return sizeof($this->getFollowersQuery());
     }
     
-    function getFollowers(int $page = 1): \Traversable
+    function getFollowers(int $page = 1, int $perPage = 6, string $sort = "follower ASC"): \Traversable
     {
-        $rels = $this->getFollowersQuery()->page($page, 6);
+        $rels = $this->getFollowersQuery($sort)->page($page, $perPage);
         
         foreach($rels as $rel) {
             $rel = (new Users)->get($rel->follower);
@@ -351,15 +351,56 @@ class Club extends RowModel
     }
 
     function getWebsite(): ?string
-	{
-		return $this->getRecord()->website;
-	}
+	  {
+		  return $this->getRecord()->website;
+	  }
+
+    function ban(string $reason): void
+    {
+        $this->setBlock_Reason($reason);
+        $this->save();
+    }
+
+    function unban(): void
+    {
+        $this->setBlock_Reason(null);
+        $this->save();
+    }
 
     function getAlert(): ?string
     {
         return $this->getRecord()->alert;
     }
     
+    function toVkApiStruct(?User $user = NULL): object
+    {
+        $res = [];
+
+        $res->id          = $this->getId();
+        $res->name        = $this->getName();
+        $res->screen_name = $this->getShortCode();
+        $res->is_closed   = 0;
+        $res->deactivated = NULL;
+        $res->is_admin    = $this->canBeModifiedBy($user);
+
+        if($this->canBeModifiedBy($user)) {
+            $res->admin_level = 3;
+        }
+
+        $res->is_member  = $this->getSubscriptionStatus($user) ? 1 : 0;
+
+        $res->type       = "group";
+        $res->photo_50   = $this->getAvatarUrl("miniscule");
+        $res->photo_100  = $this->getAvatarUrl("tiny");
+        $res->photo_200  = $this->getAvatarUrl("normal");
+
+        $res->can_create_topic = $this->canBeModifiedBy($user) ? 1 : ($this->isEveryoneCanCreateTopics() ? 1 : 0);
+
+        $res->can_post         = $this->canBeModifiedBy($user) ? 1 : ($this->canPost() ? 1 : 0);
+
+        return (object) $res;
+    }
+
     use Traits\TBackDrops;
     use Traits\TSubscribable;
 }

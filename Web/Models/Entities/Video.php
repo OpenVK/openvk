@@ -117,6 +117,7 @@ class Video extends Media
 
     function getApiStructure(): object
     {
+        $fromYoutube = $this->getType() == Video::TYPE_EMBED;
         return (object)[
             "type" => "video",
             "video" => [
@@ -145,10 +146,11 @@ class Video extends Media
                 "user_id" => $this->getOwner()->getId(),
                 "title" => $this->getName(),
                 "is_favorite" => false,
-                "player" => $this->getURL(),
-                "files" => [
+                "player" => !$fromYoutube ? $this->getURL() : $this->getVideoDriver()->getURL(),
+                "files" => !$fromYoutube ? [
                     "mp4_480" => $this->getURL()	
-                ],
+                ] : NULL,
+                "platform" => $fromYoutube ? "youtube" : NULL,
                 "added" => 0,
                 "repeat" => 0,
                 "type" => "video",
@@ -165,6 +167,11 @@ class Video extends Media
         ];
     }
     
+    function toVkApiStruct(): object
+    {
+        return $this->getApiStructure();
+    }
+
     function setLink(string $link): string
     {
         if(preg_match(file_get_contents(__DIR__ . "/../VideoDrivers/regex/youtube.txt"), $link, $matches)) {
@@ -195,11 +202,14 @@ class Video extends Media
         $this->save();
     }
     
-    static function fastMake(int $owner, string $description = "", array $file, bool $unlisted = true, bool $anon = false): Video
+    static function fastMake(int $owner, string $name = "Unnamed Video.ogv", string $description = "", array $file, bool $unlisted = true, bool $anon = false): Video
     {
+        if(OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading'])
+            exit(VIDEOS_FRIENDLY_ERROR);
+
         $video = new Video;
         $video->setOwner($owner);
-        $video->setName("Unnamed Video.ogv");
+        $video->setName(ovk_proc_strtr($name, 61));
         $video->setDescription(ovk_proc_strtr($description, 300));
         $video->setAnonymous($anon);
         $video->setCreated(time());

@@ -11,7 +11,7 @@
             <tbody>
                 <tr>
                     <td>
-                    {_two_factor_authentication_login}
+                        {_two_factor_authentication_login}
                     </td>
                 </tr>
             </tbody>
@@ -25,7 +25,7 @@
                         <span class="nobold">{_code}: </span>
                     </td>
                     <td>
-                        <input type="text" name="code" autocomplete="off" required />
+                        <input type="text" name="code" autocomplete="off" required autofocus />
                     </td>
                 </tr>
                 <tr>

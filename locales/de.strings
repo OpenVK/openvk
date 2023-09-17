@@ -503,5 +503,5 @@
 "invalid_username_or_password" = "Der von Ihnen eingegebene Benutzername oder das Passwort ist falsch. <a href=\"/restore\">Kennen Sie Ihr Passwort nicht?</a>";
 "failed_to_register" = "Registrierung fehlgeschlagen";
 "to_top" = "Nach oben";
-"checkbox_in_registration" = "Ich stimme der <a href=\"/privacy\">Datenschutzpolitik</a> und der <a href=\"/about\">Seitenpolitik</a> zu.";
+"checkbox_in_registration" = "Ich stimme der <a href=\"/privacy\">Datenschutzpolitik</a> und der <a href=\"/terms\">Seitenpolitik</a> zu.";
 "access_recovery_info" = "Haben Sie Ihr Passwort vergessen? Kein Problem, geben Sie Ihre Daten ein und wir senden Ihnen eine E-Mail mit Anweisungen, wie Sie Ihr Konto wiederherstellen können.";

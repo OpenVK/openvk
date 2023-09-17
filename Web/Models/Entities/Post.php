@@ -99,6 +99,11 @@ class Post extends Postable
         return (($this->getRecord()->flags & 0b00100000) > 0) && ($this->getRecord()->owner > 0);
     }
     
+    function isUpdateAvatarMessage(): bool
+    {
+        return (($this->getRecord()->flags & 0b00010000) > 0) && ($this->getRecord()->owner > 0);
+    }
+
     function isExplicit(): bool
     {
         return (bool) $this->getRecord()->nsfw;
@@ -239,6 +244,20 @@ class Post extends Postable
         $this->setDeleted(1);
         $this->unwire();
         $this->save();
+    }
+
+    function canBeEditedBy(?User $user = NULL): bool
+    {
+        if(!$user)
+            return false;
+
+        if($this->isDeactivationMessage() || $this->isUpdateAvatarMessage())
+            return false;
+
+        if($this->getTargetWall() > 0)
+            return $this->getPublicationTime()->timestamp() + WEEK > time() && $user->getId() == $this->getOwner(false)->getId();
+
+        return $user->getId() == $this->getOwner(false)->getId();
     }
     
     use Traits\TRichText;

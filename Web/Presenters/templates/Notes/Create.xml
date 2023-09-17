@@ -13,7 +13,7 @@
         <textarea name="html" style="display:none;"></textarea>
         <div id="editor" style="width:600px;height:300px;border:1px solid grey"></div>
         
-        <p><i><a href="/kb/notes">Кое-что</a> из (X)HTML поддерживается.</i></p>
+        <p><i><a href="/kb/notes">{_something}</a> {_supports_xhtml}</i></p>
         
         <input type="hidden" name="hash" value="{$csrfToken}" />
         <button class="button">{_save}</button>
@@ -47,7 +47,7 @@
                 window._preview = undefined;
             }
 
-            window._preview = window.open("data:text/html,", "_blank", { popup: true });
+            window._preview = window.open("about:blank", "_blank", { popup: true });
             window._preview.document.write(`<style>form { display: none; }</style><form action="${ location.origin }/notes/prerender" method="POST" enctype="multipart/form-data"><input name="title" /><input name="html" /><input name="hash" /></form>`);
             window._preview.document.querySelector("input[name=title]").value = document.querySelector("input[name=name]").value;
             window._preview.document.querySelector("input[name=html]").value = window._editor.getValue();

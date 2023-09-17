@@ -9,7 +9,7 @@
     <img n:if="$club->isVerified()"
          class="name-checkmark"
          src="/assets/packages/static/openvk/img/checkmark.png"
-         alt="Подтверждённая страница"
+         alt="{_verified_page}"
          />
 {/block}
 
@@ -96,15 +96,35 @@
 <div class="right_small_block">
     {var $avatarPhoto = $club->getAvatarPhoto()}
     {var $avatarLink = ((is_null($avatarPhoto) ? FALSE : $avatarPhoto->isAnonymous()) ? "/photo" . ("s/" . base_convert((string) $avatarPhoto->getId(), 10, 32)) : $club->getAvatarLink())}
-    <a href="{$avatarLink|nocheck}">
-        <img src="{$club->getAvatarUrl('normal')}" style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
-    </a>
+    <div class="avatar_block" style="position:relative;">
+        {var $hasAvatar = !str_contains($club->getAvatarUrl('miniscule'), "/assets/packages/static/openvk/img/camera_200.png")}
+        {if !is_null($thisUser) && $hasAvatar == false && $club->canBeModifiedBy($thisUser)}
+            <a href="javascript:addAvatarImage(true, {$club->getId()})" class="text_add_image">{_add_image_group}</a>
+        {elseif !is_null($thisUser) && $hasAvatar == true && $club->canBeModifiedBy($thisUser)}
+            <div class="avatar_controls">
+                <div class="avatarDelete">
+                    <a id="upl" href="javascript:deleteAvatar('{$club->getAvatarPhoto()->getPrettyId()}')"><img src="/assets/packages/static/openvk/img/delete.png"/></a>
+                </div>
+                <div class="avatar_variants">
+                    <div class="variant">
+                        <img src="/assets/packages/static/openvk/img/upload.png" style="margin-left:15px;height: 10px;">
+                        <a href="javascript:addAvatarImage(true, {$club->getId()})"><p>{_upload_new_picture}</p></a>
+                    </div>
+                </div>
+            </div>
+        {/if}
+        <a href="{$avatarLink|nocheck}">
+            <img src="{$club->getAvatarUrl('normal')}" id="thisGroupAvatar" style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
+        </a>
+    </div>
     <div n:ifset="$thisUser" id="profile_links">
         {if $club->canBeModifiedBy($thisUser)}
             <a href="/club{$club->getId()}/edit" id="profile_link">{_edit_group}</a>
+            <a href="/club{$club->getId()}/stats" id="profile_link">{_statistics}</a>
         {/if}
         {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
             <a href="/admin/clubs/id{$club->getId()}" id="profile_link">{_manage_group_action}</a>
+            <a href="/admin/logs?obj_id={$club->getId()}&obj_type=Club" class="profile_link">Последние действия</a>
         {/if}
         {if $club->getSubscriptionStatus($thisUser) == false}
             <form action="/setSub/club" method="post">
@@ -120,6 +140,34 @@
                 <input type="hidden" name="hash" value="{$csrfToken}" />
                 <input type="submit" id="profile_link" value="{_leave_community}" />
             </form>
+        {/if}
+        {var $canReport = $thisUser->getId() != $club->getOwner()->getId()}
+        {if $canReport}
+        <a class="profile_link" style="display:block;" href="javascript:reportVideo()">{_report}</a>
+
+        <script>
+            function reportVideo() {
+            uReportMsgTxt  = tr("going_to_report_club");
+            uReportMsgTxt += "<br/>"+tr("report_question_text");
+            uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
+
+            MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
+                (function() {
+                    res = document.querySelector("#uReportMsgInput").value;
+                    xhr = new XMLHttpRequest();
+                    xhr.open("GET", "/report/" + {$club->getId()} + "?reason=" + res + "&type=group", true);
+                    xhr.onload = (function() {
+                    if(xhr.responseText.indexOf("reason") === -1)
+                        MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
+                    else
+                        MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
+                    });
+                    xhr.send(null);
+                    }),
+                Function.noop
+                ]);
+            }
+        </script>
         {/if}
     </div>
     <div>
@@ -241,4 +289,8 @@
     </div>
 </div>
 
+{/block}
+
+{block bodyScripts}
+    {script "js/al_despacito_wall.js"}
 {/block}

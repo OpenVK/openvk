@@ -2,34 +2,29 @@
 # yarn lockfile v1
 
 
-"@atlassian/aui@^8.5.1":
-  version "8.5.1"
-  resolved "https://registry.yarnpkg.com/@atlassian/aui/-/aui-8.5.1.tgz#6c585674240621a007e59b6ca8c79f45a335738d"
-  integrity sha512-u+cWuOTpDyNod5B1SZnDCa57ruad54jQ/4vUd2VGDdp8qqiYLeuEush1deuKejvFFWSS6zd7KhkzmO/m0tm1aw==
+"@atlassian/aui@^9.6.0":
+  version "9.6.0"
+  resolved "https://registry.yarnpkg.com/@atlassian/aui/-/aui-9.6.0.tgz#9f35e67359022f1e6d5efa2653e79aeec95b9e77"
+  integrity sha512-o/bCufj0tUU6pRk3AWoXlcyVMTMx4QswB1UY5oJWSjopA+z/QUx0fhc4rRIIbxP0MrJMNRDpgPyuzkoPb7Z7ow==
   dependencies:
-    "@atlassian/brand-logos" "^1.2.0"
-    "@atlassian/tipsy" "^1.3.1"
-    backbone "^1.3.3"
-    css.escape "1.5.0"
-    fancy-file-input "~2.0.4"
-    jquery-ui "^1.12.1"
-    popper.js "^1.14.5"
+    "@atlassian/tipsy" "1.3.3"
+    "@popperjs/core" "2.11.6"
+    backbone "1.4.1"
+    css.escape "1.5.1"
+    dompurify "2.4.5"
+    fancy-file-input "2.0.4"
+    jquery-ui "1.13.2"
     skatejs "0.13.17"
     skatejs-template-html "0.0.0"
     trim-extra-html-whitespace "1.3.0"
-    underscore "^1.9.1"
+    underscore "1.13.6"
 
-"@atlassian/brand-logos@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@atlassian/brand-logos/-/brand-logos-1.2.0.tgz#2110dba6ca49acaf1c51b15420a4567b01b4b4bd"
-  integrity sha512-rtTIQqvZO6Tr7+oNWvtED7xMpuE1NQoNF5vA1d+8ym3wTANvgbKxyHK2pj5jTW3dMoEE2Qac8YMebtN46B/mQg==
+"@atlassian/tipsy@1.3.3":
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/@atlassian/tipsy/-/tipsy-1.3.3.tgz#3f77754c4c70324c5c938e41abaa2ca682f22036"
+  integrity sha512-6jd9wdoiPdCbwsNi1Xrn/oMdGz22dKPeCoZ/cCGKqjnh+UYkBKb5W3spW+WNqRSxGvVtfUEEg6TXotRK/FPDaw==
 
-"@atlassian/tipsy@^1.3.1":
-  version "1.3.2"
-  resolved "https://registry.yarnpkg.com/@atlassian/tipsy/-/tipsy-1.3.2.tgz#ab759d461670d712425b2dac7573b79575a10502"
-  integrity sha512-H7qWMs66bztELt2QpOCLYDU9ZM3VZfE0knbRHHLBukH7v9dMkIS5ZwqcGREjWnVt0KNETaBeXxj0FD88TEOGVw==
-
-"@popperjs/core@^2.9.0":
+"@popperjs/core@2.11.6", "@popperjs/core@^2.9.0":
   version "2.11.6"
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.6.tgz#cee20bd55e68a1720bdab363ecf0c821ded4cd45"
   integrity sha512-50/17A98tWUfQ176raKiOGXuYpLyyVMkxxG6oylzL3BPOlA6ADGdK7EYunSa4I064xerltq9TGXs8HmOk5E+vw==
@@ -39,10 +34,10 @@ asap@~2.0.3:
   resolved "https://registry.yarnpkg.com/asap/-/asap-2.0.6.tgz#e50347611d7e690943208bbdafebcbc2fb866d46"
   integrity sha1-5QNHYR1+aQlDIIu9r+vLwvuGbUY=
 
-backbone@^1.3.3:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/backbone/-/backbone-1.4.0.tgz#54db4de9df7c3811c3f032f34749a4cd27f3bd12"
-  integrity sha512-RLmDrRXkVdouTg38jcgHhyQ/2zjg7a8E6sz2zxfz21Hh17xDJYUHBZimVIt5fUyS8vbfpeSmTL3gUjTEvUV3qQ==
+backbone@1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/backbone/-/backbone-1.4.1.tgz#099a78184bc07b034048a8332229c2ccca1e3e62"
+  integrity sha512-ADy1ztN074YkWbHi8ojJVFe3vAanO/lrzMGZWUClIP7oDD/Pjy2vrASraUP+2EVCfIiTtCW4FChVow01XneivA==
   dependencies:
     underscore ">=1.8.3"
 
@@ -59,10 +54,15 @@ create-react-class@^15.7.0:
     loose-envify "^1.3.1"
     object-assign "^4.1.1"
 
-css.escape@1.5.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/css.escape/-/css.escape-1.5.0.tgz#95984d7887ce4ca90684e813966f42d1ef87ecea"
-  integrity sha1-lZhNeIfOTKkGhOgTlm9C0e+H7Oo=
+css.escape@1.5.1:
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/css.escape/-/css.escape-1.5.1.tgz#42e27d4fa04ae32f931a4b4d4191fa9cddee97cb"
+  integrity sha512-YUifsXXuknHlUsmlgyY0PKzgPOr7/FjCePfHNt0jxm83wHZi44VDMQ7/fGNkjY3/jV1MC+1CmZbaHzugyeRtpg==
+
+dompurify@2.4.5:
+  version "2.4.5"
+  resolved "https://registry.yarnpkg.com/dompurify/-/dompurify-2.4.5.tgz#0e89a27601f0bad978f9a924e7a05d5d2cccdd87"
+  integrity sha512-jggCCd+8Iqp4Tsz0nIvpcb22InKEBrGz5dw3EQJMs8HPJDsKbFIO3STYtAvCfDx26Muevn1MHVI0XxjgFfmiSA==
 
 encoding@^0.1.11:
   version "0.1.13"
@@ -76,7 +76,7 @@ event-lite@^0.1.1:
   resolved "https://registry.yarnpkg.com/event-lite/-/event-lite-0.1.2.tgz#838a3e0fdddef8cc90f128006c8e55a4e4e4c11b"
   integrity sha512-HnSYx1BsJ87/p6swwzv+2v6B4X+uxUteoDfRxsAb1S1BePzQqOLevVmkdA15GHJVd9A9Ok6wygUR18Hu0YeV9g==
 
-fancy-file-input@~2.0.4:
+fancy-file-input@2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/fancy-file-input/-/fancy-file-input-2.0.4.tgz#698c216482e07649a827681c4db3054fddc9a32b"
   integrity sha512-l+J0WwDl4nM/zMJ/C8qleYnXMUJKsLng7c5uWH/miAiHoTvPDtEoLW1tmVO6Cy2O8i/1VfA+2YOwg/Q3+kgO6w==
@@ -141,7 +141,7 @@ isomorphic-fetch@^2.1.1:
     node-fetch "^1.0.1"
     whatwg-fetch ">=0.10.0"
 
-jquery-ui@^1.12.1:
+jquery-ui@1.13.2:
   version "1.13.2"
   resolved "https://registry.yarnpkg.com/jquery-ui/-/jquery-ui-1.13.2.tgz#de03580ae6604773602f8d786ad1abfb75232034"
   integrity sha512-wBZPnqWs5GaYJmo1Jj0k/mrSkzdQzKDwhXNtHKcBdAcKVxMM3KNYFq+iJ2i1rwiG53Z8M4mTn3Qxrm17uH1D4Q==
@@ -153,10 +153,10 @@ jquery-ui@^1.12.1:
   resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.6.0.tgz#c72a09f15c1bdce142f49dbf1170bdf8adac2470"
   integrity sha512-JVzAR/AjBvVt2BmYhxRCSYysDsPcssdmTFnzyLEts9qNwmjmu4JTAMYubEfwVOSwpQ1I1sKKFcxhZCI2buerfw==
 
-jquery@^2.1.0:
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/jquery/-/jquery-2.2.4.tgz#2c89d6889b5eac522a7eea32c14521559c6cbf02"
-  integrity sha1-LInWiJterFIqfuoywUUhVZxsvwI=
+jquery@^3.0.0:
+  version "3.7.0"
+  resolved "https://registry.yarnpkg.com/jquery/-/jquery-3.7.0.tgz#fe2c01a05da500709006d8790fe21c8a39d75612"
+  integrity sha512-umpJ0/k8X0MvD1ds0P9SfowREz2LenHsQaxSohMZ5OMNEU2r0tf8pdeEFTHMFxWVxKNyU9rTtK3CWzUCTKJUeQ==
 
 "js-tokens@^3.0.0 || ^4.0.0":
   version "4.0.0"
@@ -229,11 +229,6 @@ plotly.js-dist@^1.52.3:
   version "1.52.3"
   resolved "https://registry.yarnpkg.com/plotly.js-dist/-/plotly.js-dist-1.52.3.tgz#4c16c6da6adab6cdba169087b5005bdddbf10834"
   integrity sha512-kpuNwveRk6M/5cCW1ZgJTbMLD0bRZhJlLK0cUHVkTsP/PWKCVJqO3QiiqrypFGE/xEhWfHCY+YKAKjMmEbo4Gw==
-
-popper.js@^1.14.5:
-  version "1.16.1"
-  resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.16.1.tgz#2a223cb3dc7b6213d740e40372be40de43e65b1b"
-  integrity sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==
 
 promise@^7.1.1:
   version "7.3.1"
@@ -335,7 +330,12 @@ umbrellajs@^3.1.0:
   resolved "https://registry.yarnpkg.com/umbrellajs/-/umbrellajs-3.1.0.tgz#a4e6f0f6381f9d93110b5eee962e0e0864b10bd0"
   integrity sha512-3qichMg1Q6EetLweBAT0L55O2W6CJe9qyiSt1RBnf+bcOqwJ4R7e2PDcoIUrCsg+uRo3DXOvurWdklBu0ia7fg==
 
-underscore@>=1.8.3, underscore@^1.9.1:
+underscore@1.13.6:
+  version "1.13.6"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.13.6.tgz#04786a1f589dc6c09f761fc5f45b89e935136441"
+  integrity sha512-+A5Sja4HP1M08MaXya7p5LvjuM7K6q/2EaC0+iovj/wOcMsTzMvDFbasi/oSapiwOlt252IqsKqPjCl7huKS0A==
+
+underscore@>=1.8.3:
   version "1.13.1"
   resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.13.1.tgz#0c1c6bd2df54b6b69f2314066d65b6cde6fcf9d1"
   integrity sha512-hzSoAVtJF+3ZtiFX0VgfFPHEDRm7Y/QPjGyNo4TVdnDTdft3tr8hEkD25a1jC+TjTuE7tkHGKkhwCgs9dgBB2g==
