@@ -55,7 +55,7 @@ final class CommentPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
 
         if($_FILES["_vid_attachment"] && OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading'])
-            $this->flashFail("err", tr("error"), "Video uploads are disabled by the system administrator.");
+            $this->flashFail("err", tr("error"), tr("video_uploads_disabled"));
         
         $flags = 0;
         if($this->postParam("as_group") === "on" && !is_null($club) && $club->canBeModifiedBy($this->user->identity))
@@ -66,7 +66,7 @@ final class CommentPresenter extends OpenVKPresenter
             try {
                 $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"]);
             } catch(ISE $ex) {
-                $this->flashFail("err", "Не удалось опубликовать пост", "Файл изображения повреждён, слишком велик или одна сторона изображения в разы больше другой.");
+                $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_when_publishing_comment_description"));
             }
         }
         
@@ -81,7 +81,7 @@ final class CommentPresenter extends OpenVKPresenter
                 $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album);
             }
         } catch(ISE $ex) {
-            $this->flashFail("err", "Не удалось опубликовать комментарий", "Файл медиаконтента повреждён или слишком велик.");
+            $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_file_too_big"));
         }
 
         $videos = [];
@@ -104,7 +104,7 @@ final class CommentPresenter extends OpenVKPresenter
         }
         
         if(empty($this->postParam("text")) && !$photo && !$video)
-            $this->flashFail("err", "Не удалось опубликовать комментарий", "Комментарий пустой или слишком большой.");
+            $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_empty"));
         
         try {
             $comment = new Comment;
@@ -116,7 +116,7 @@ final class CommentPresenter extends OpenVKPresenter
             $comment->setFlags($flags);
             $comment->save();
         } catch (\LengthException $ex) {
-            $this->flashFail("err", "Не удалось опубликовать комментарий", "Комментарий слишком большой.");
+            $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_too_big"));
         }
         
         if(!is_null($photo))
@@ -139,7 +139,7 @@ final class CommentPresenter extends OpenVKPresenter
             if($mentionee instanceof User)
                 (new MentionNotification($mentionee, $entity, $comment->getOwner(), strip_tags($comment->getText())))->emit();
         
-        $this->flashFail("succ", "Комментарий добавлен", "Ваш комментарий появится на странице.");
+        $this->flashFail("succ", tr("comment_is_added"), tr("comment_is_added_desc"));
     }
     
     function renderDeleteComment(int $id): void
@@ -150,15 +150,15 @@ final class CommentPresenter extends OpenVKPresenter
         $comment = (new Comments)->get($id);
         if(!$comment) $this->notFound();
         if(!$comment->canBeDeletedBy($this->user->identity))
-            $this->throwError(403, "Forbidden", "У вас недостаточно прав чтобы редактировать этот ресурс.");
+            $this->throwError(403, "Forbidden", tr("error_access_denied"));
         if ($comment->getTarget() instanceof Post && $comment->getTarget()->getWallOwner()->isBanned())
             $this->flashFail("err", tr("error"), tr("forbidden"));
 
         $comment->delete();
         $this->flashFail(
             "succ",
-            "Успешно",
-            "Этот комментарий больше не будет показыватся.<br/><a href='/al_comments/spam?$id'>Отметить как спам</a>?"
+            tr("success"),
+            tr("comment_will_not_appear")
         );
     }
 }

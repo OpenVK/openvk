@@ -118,22 +118,22 @@ final class ReportPresenter extends OpenVKPresenter
             $report->deleteContent();
             $report->banUser($this->user->identity->getId());
 
-            $this->flash("suc", "Смэрть...", "Пользователь успешно забанен.");
+            $this->flash("suc", tr("death"), tr("user_successfully_banned"));
         } else if ($this->postParam("delete")) {
             $report->deleteContent();
 
-            $this->flash("suc", "Нехай живе!", "Контент удалён, а пользователю прилетело предупреждение.");
+            $this->flash("suc", tr("nehay"), tr("content_is_deleted"));
         } else if ($this->postParam("ignore")) {
             $report->delete();
 
-            $this->flash("suc", "Нехай живе!", "Жалоба проигнорирована.");
+            $this->flash("suc", tr("nehay"), tr("report_is_ignored"));
         } else if ($this->postParam("banClubOwner") || $this->postParam("banClub")) {
             if ($report->getContentType() !== "group")
-                $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+                $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
 
             $club = $report->getContentObject();
             if (!$club || $club->isBanned())
-                $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+                $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
 
             if ($this->postParam("banClubOwner")) {
                 $club->getOwner()->ban("**content-" . $report->getContentType() . "-" . $report->getContentId() . "**", false, $club->getOwner()->getNewBanTime(), $this->user->identity->getId());
@@ -143,7 +143,7 @@ final class ReportPresenter extends OpenVKPresenter
 
             $report->delete();
 
-            $this->flash("suc", "Смэрть...", ($this->postParam("banClubOwner") ? "Создатель сообщества успешно забанен." : "Сообщество успешно забанено"));
+            $this->flash("suc", tr("death"), ($this->postParam("banClubOwner") ? tr("group_owner_is_banned") : tr("group_is_banned")));
         }
 
         $this->redirect("/scumfeed");

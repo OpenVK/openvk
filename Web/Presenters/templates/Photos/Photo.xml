@@ -53,20 +53,20 @@
             <a n:if="$canReport ?? false" class="profile_link" style="display:block;width:96%;" href="javascript:reportPhoto()">{_report}</a>
             <script n:if="$canReport ?? false">
                 function reportPhoto() {
-                uReportMsgTxt  = "Вы собираетесь пожаловаться на данную фотографию.";
-                uReportMsgTxt += "<br/>Что именно вам кажется недопустимым в этом материале?";
-                uReportMsgTxt += "<br/><br/><b>Причина жалобы</b>: <input type='text' id='uReportMsgInput' placeholder='Причина' />"
+                uReportMsgTxt  = tr("going_to_report_photo");
+                uReportMsgTxt += "<br/>"+tr("report_question_text");
+                uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
 
-                MessageBox("Пожаловаться?", uReportMsgTxt, ["Подтвердить", "Отмена"], [
+                MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
                     (function() {
                         res = document.querySelector("#uReportMsgInput").value;
                         xhr = new XMLHttpRequest();
                         xhr.open("GET", "/report/" + {$photo->getId()} + "?reason=" + res + "&type=photo", true);
                         xhr.onload = (function() {
                         if(xhr.responseText.indexOf("reason") === -1)
-                            MessageBox("Ошибка", "Не удалось подать жалобу...", ["OK"], [Function.noop]);
+                            MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
                         else
-                            MessageBox("Операция успешна", "Скоро её рассмотрят модераторы", ["OK"], [Function.noop]);
+                            MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
                         });
                         xhr.send(null);
                         }),
@@ -74,7 +74,6 @@
                 ]);
                 }
             </script>
-            <a href="{$photo->getURL()}" class="profile_link" target="_blank" style="display:block;width:96%;">{_open_original}</a>
         </div>
     </div>
 {/block}

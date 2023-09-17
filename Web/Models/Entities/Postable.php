@@ -167,9 +167,9 @@ abstract class Postable extends Attachable
                 $this->stateChanges("created", time());
             
             $this->stateChanges("virtual_id", $pCount + 1);
-        } else {
+        } /*else {
             $this->stateChanges("edited", time());
-        }
+        }*/
         
         parent::save();
     }

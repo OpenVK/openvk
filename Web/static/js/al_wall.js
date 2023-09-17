@@ -417,3 +417,111 @@ $(document).on("click", "#videoAttachment", async (e) => {
         }
     })
 })
+
+$(document).on("click", "#editPost", (e) => {
+    let post = e.currentTarget.closest("table")
+    let content = post.querySelector(".text")
+    let text = content.querySelector(".really_text")
+
+    if(content.querySelector("textarea") == null) {
+        content.insertAdjacentHTML("afterbegin", `
+            <div class="editMenu">
+                <div id="wall-post-input999"> 
+                    <textarea id="new_content">${text.dataset.text}</textarea>
+                    <input type="button" class="button" value="${tr("save")}" id="endEditing">
+                    <input type="button" class="button" value="${tr("cancel")}" id="cancelEditing">
+                </div>
+                ${e.currentTarget.dataset.nsfw != null ? `
+                    <div class="postOptions">
+                        <label><input type="checkbox" id="nswfw" ${e.currentTarget.dataset.nsfw == 1 ? `checked` : ``}>${tr("contains_nsfw")}</label>
+                    </div>
+                ` : ``}
+                ${e.currentTarget.dataset.fromgroup != null ? `
+                <div class="postOptions">
+                    <label><input type="checkbox" id="fromgroup" ${e.currentTarget.dataset.fromgroup == 1 ? `checked` : ``}>${tr("post_as_group")}</label>
+                </div>
+            ` : ``}
+            </div>
+        `)
+
+        u(content.querySelector("#cancelEditing")).on("click", () => {post.querySelector("#editPost").click()})
+        u(content.querySelector("#endEditing")).on("click", () => {
+            let nwcntnt = content.querySelector("#new_content").value
+            let type = "post"
+
+            if(post.classList.contains("comment")) {
+                type = "comment"
+            }
+
+            let xhr = new XMLHttpRequest()
+            xhr.open("POST", "/wall/edit")
+
+            xhr.onloadstart = () => {
+                content.querySelector(".editMenu").classList.add("loading")
+            }
+
+            xhr.onerror = () => {
+                MessageBox(tr("error"), "unknown error occured", [tr("ok")], [() => {Function.noop}])
+            }
+
+            xhr.ontimeout = () => {
+                MessageBox(tr("error"), "Try to refresh page", [tr("ok")], [() => {Function.noop}])
+            }
+
+            xhr.onload = () => {
+                let result = JSON.parse(xhr.responseText)
+
+                if(result.error == "no") {
+                    post.querySelector("#editPost").click()
+                    content.querySelector(".really_text").innerHTML = result.new_content
+    
+                    if(post.querySelector(".editedMark") == null) {
+                        post.querySelector(".date").insertAdjacentHTML("beforeend", `
+                            <span class="edited editedMark">(${tr("edited_short")})</span>
+                        `)
+                    }
+
+                    if(e.currentTarget.dataset.nsfw != null) {
+                        e.currentTarget.setAttribute("data-nsfw", result.nsfw)
+
+                        if(result.nsfw == 0) {
+                            post.classList.remove("post-nsfw")
+                        } else {
+                            post.classList.add("post-nsfw")
+                        }
+                    }
+
+                    if(e.currentTarget.dataset.fromgroup != null) {
+                        e.currentTarget.setAttribute("data-fromgroup", result.from_group)
+                    }
+
+                    post.querySelector(".post-avatar").setAttribute("src", result.author.avatar)
+                    post.querySelector(".post-author-name").innerHTML = result.author.name
+                    post.querySelector(".really_text").setAttribute("data-text", result.new_text)
+                } else {
+                    MessageBox(tr("error"), result.error, [tr("ok")], [Function.noop])
+                    post.querySelector("#editPost").click()
+                }
+            }
+
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.send("postid="+e.currentTarget.dataset.id+
+                    "&newContent="+nwcntnt+
+                    "&hash="+encodeURIComponent(u("meta[name=csrf]").attr("value"))+
+                    "&type="+type+
+                    "&nsfw="+(content.querySelector("#nswfw") != null ? content.querySelector("#nswfw").checked : 0)+
+                    "&fromgroup="+(content.querySelector("#fromgroup") != null ? content.querySelector("#fromgroup").checked : 0))
+        })
+
+        u(".editMenu").on("keydown", (e) => {
+            if(e.ctrlKey && e.keyCode === 13)
+                content.querySelector("#endEditing").click()
+        });
+
+        text.style.display = "none"
+        setupWallPostInputHandlers(999)
+    } else {
+        u(content.querySelector(".editMenu")).remove()
+        text.style.display = "block"
+    }
+})

@@ -38,9 +38,8 @@
     <body>
         <div id="sudo-banner" n:if="isset($thisUser) && $userTainted">
             <p>
-                Вы вошли как <b>{$thisUser->getCanonicalName()}</b>. Пожалуйста, уважайте
-                право на тайну переписки других людей и не злоупотребляйте подменой пользователя.
-                Нажмите <a href="/setSID/unset?hash={rawurlencode($csrfToken)}">здесь</a>, чтобы выйти.
+                {_you_entered_as} <b>{$thisUser->getCanonicalName()}</b>. {_please_rights}
+                {_click_on} <a href="/setSID/unset?hash={rawurlencode($csrfToken)}">{_there}</a>, {_to_leave}.
             </p>
         </div>
 
@@ -196,7 +195,7 @@
                                     (<b>{$thisUser->getNotificationsCount()}</b>)
                                 {/if}
                             </a>
-                            <a href="/apps?act=installed" class="link">{_my_apps}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link">{_my_apps}</a>
                             <a href="/settings" class="link">{_my_settings}</a>
                             
                             {var $canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
