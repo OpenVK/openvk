@@ -2,7 +2,7 @@
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Comment, Notifications\MentionNotification, Photo, Video, User, Topic, Post};
 use openvk\Web\Models\Entities\Notifications\CommentNotification;
-use openvk\Web\Models\Repositories\{Comments, Clubs};
+use openvk\Web\Models\Repositories\{Comments, Clubs, Videos};
 
 final class CommentPresenter extends OpenVKPresenter
 {
@@ -73,7 +73,6 @@ final class CommentPresenter extends OpenVKPresenter
         # TODO move to trait
         try {
             $photo = NULL;
-            $video = NULL;
             if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
                 $album = NULL;
                 if($wall > 0 && $wall === $this->user->id)
@@ -81,12 +80,27 @@ final class CommentPresenter extends OpenVKPresenter
                 
                 $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album);
             }
-            
-            if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK) {
-                $video = Video::fastMake($this->user->id, $_FILES["_vid_attachment"]["name"], $this->postParam("text"), $_FILES["_vid_attachment"]);
-            }
         } catch(ISE $ex) {
             $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_file_too_big"));
+        }
+
+        $videos = [];
+
+        if(!empty($this->postParam("videos"))) {
+            $un  = rtrim($this->postParam("videos"), ",");
+            $arr = explode(",", $un);
+            
+            if(sizeof($arr) < 11) {
+                foreach($arr as $dat) {
+                    $ids = explode("_", $dat);
+                    $video = (new Videos)->getByOwnerAndVID((int)$ids[0], (int)$ids[1]);
+    
+                    if(!$video || $video->isDeleted())
+                        continue;
+    
+                    $videos[] = $video;
+                }
+            }
         }
         
         if(empty($this->postParam("text")) && !$photo && !$video)
@@ -108,8 +122,9 @@ final class CommentPresenter extends OpenVKPresenter
         if(!is_null($photo))
             $comment->attach($photo);
         
-        if(!is_null($video))
-            $comment->attach($video);
+        if(sizeof($videos) > 0)
+            foreach($videos as $vid)
+                $comment->attach($vid);
         
         if($entity->getOwner()->getId() !== $this->user->identity->getId())
             if(($owner = $entity->getOwner()) instanceof User)

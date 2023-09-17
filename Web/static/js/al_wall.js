@@ -264,6 +264,160 @@ async function showArticle(note_id) {
     u("body").addClass("article");
 }
 
+$(document).on("click", "#videoAttachment", async (e) => {
+    e.preventDefault()
+    
+    let body = `
+        <div class="topGrayBlock">
+            <div style="padding-top: 11px;padding-left: 12px;">
+                <a href="/videos/upload">${tr("upload_new_video")}</a>
+                <input type="text" id="vquery" maxlength="20" placeholder="${tr("header_search")}" style="float: right;width: 160px;margin-right: 17px;margin-top: -2px;">
+            </div>
+        </div>
+
+        <div class="videosInsert" style="padding: 5px;height: 287px;overflow-y: scroll;"></div>
+    `
+
+    let form = e.currentTarget.closest("form")
+
+    MessageBox(tr("selecting_video"), body, [tr("close")], [Function.noop]);
+
+    // styles for messageboxx
+    document.querySelector(".ovk-diag-body").style.padding = "0"
+    document.querySelector(".ovk-diag-cont").style.width = "580px"
+    document.querySelector(".ovk-diag-body").style.height = "335px"
+
+    async function insertVideos(page, query = "") {
+        document.querySelector(".videosInsert").insertAdjacentHTML("beforeend", `<img id="loader" src="/assets/packages/static/openvk/img/loading_mini.gif">`)
+
+        let vidoses
+        let noVideosText = tr("no_videos")
+        if(query == "") {
+            vidoses = await API.Wall.getVideos(page)
+        } else {
+            vidoses = await API.Wall.searchVideos(page, query)
+            noVideosText = tr("no_videos_results")
+        }
+        
+        if(vidoses.count < 1) {
+            document.querySelector(".videosInsert").innerHTML = `<span>${noVideosText}</span>`
+        }
+
+        let pagesCount = Math.ceil(Number(vidoses.count) / 8)
+        u("#loader").remove()
+        let insert = document.querySelector(".videosInsert")
+
+        for(const vid of vidoses.items) {
+            let isAttached = (form.querySelector("input[name='videos']").value.includes(`${vid.video.owner_id}_${vid.video.id},`))
+
+            insert.insertAdjacentHTML("beforeend", `
+            <div class="content" style="padding: unset;">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td valign="top">
+                                <a href="/video${vid.video.owner_id}_${vid.video.id}">
+                                    <div class="video-preview" style="height: 75px;width: 133px;overflow: hidden;">
+                                        <img src="${vid.video.image[0].url}" alt="${escapeHtml(vid.video.title)}" style="max-width: 133px; height: 75px; margin: auto;">
+                                    </div>
+                                </a>
+                            </td>
+                            <td valign="top" style="width: 100%">
+                                <a href="/video${vid.video.owner_id}_${vid.video.id}">
+                                    <b>
+                                        ${ovk_proc_strtr(escapeHtml(vid.video.title), 30)}
+                                    </b>
+                                </a>
+                                <br>
+                                <p>
+                                    <span>${ovk_proc_strtr(escapeHtml(vid.video.description ?? ""), 140)}</span>
+                                </p>
+                                <span><a href="/id${vid.video.owner_id}" target="_blank">${escapeHtml(vid.video.author_name ?? "")}</a></span>
+                            </td>
+                            <td valign="top" class="action_links" style="width: 150px;">
+                                <a class="profile_link" id="attachvid" data-name="${escapeHtml(vid.video.title)}" data-attachmentData="${vid.video.owner_id}_${vid.video.id}">${!isAttached ? tr("attach") : tr("detach")}</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            `)
+        }
+
+        if(page < pagesCount) {
+            document.querySelector(".videosInsert").insertAdjacentHTML("beforeend", `
+            <div id="showMoreVideos" data-pagesCount="${pagesCount}" data-page="${page + 1}" style="width: 100%;text-align: center;background: #d5d5d5;height: 22px;padding-top: 9px;cursor:pointer;">
+                <span>more...</span>
+            </div>`)
+        }
+    }
+
+    $(".videosInsert").on("click", "#showMoreVideos", (e) => {
+        u(e.currentTarget).remove()
+        insertVideos(Number(e.currentTarget.dataset.page), document.querySelector(".topGrayBlock #vquery").value)
+    })
+
+    $(".topGrayBlock #vquery").on("change", async (e) => {
+        await new Promise(r => setTimeout(r, 1000));
+
+        if(e.currentTarget.value === document.querySelector(".topGrayBlock #vquery").value) {
+            document.querySelector(".videosInsert").innerHTML = ""
+            insertVideos(1, e.currentTarget.value)
+            return;
+        } else {
+            console.info("skipping")
+        }
+    })
+
+    insertVideos(1)
+
+    function insertAttachment(id) {
+        let videos = form.querySelector("input[name='videos']") 
+
+        if(!videos.value.includes(id + ",")) {
+            if(videos.value.split(",").length > 10) {
+                NewNotification(tr("error"), tr("max_attached_videos"))
+                return false
+            }
+
+            form.querySelector("input[name='videos']").value += (id + ",")
+
+            console.info(id + " attached")
+            return true
+        } else {
+            form.querySelector("input[name='videos']").value = form.querySelector("input[name='videos']").value.replace(id + ",", "")
+
+            console.info(id + " detached")
+            return false
+        }
+    }
+
+    $(".videosInsert").on("click", "#attachvid", (ev) => {
+        // откреплено от псто
+        if(!insertAttachment(ev.currentTarget.dataset.attachmentdata)) {
+            u(`.post-has-videos .post-has-video[data-id='${ev.currentTarget.dataset.attachmentdata}']`).remove()
+            ev.currentTarget.innerHTML = tr("attach")
+        } else {
+            ev.currentTarget.innerHTML = tr("detach")
+
+            form.querySelector(".post-has-videos").insertAdjacentHTML("beforeend", `
+                <div class="post-has-video" id="unattachVideo" data-id="${ev.currentTarget.dataset.attachmentdata}">
+                    <span>${tr("video")} <b>"${ovk_proc_strtr(escapeHtml(ev.currentTarget.dataset.name), 20)}"</b></span>
+                </div>
+            `)
+
+            u(`#unattachVideo[data-id='${ev.currentTarget.dataset.attachmentdata}']`).on("click", (e) => {
+                let id = ev.currentTarget.dataset.attachmentdata
+                form.querySelector("input[name='videos']").value = form.querySelector("input[name='videos']").value.replace(id + ",", "")
+                
+                console.info(id + " detached")
+               
+                u(e.currentTarget).remove()
+            })
+        }
+    })
+})
+
 $(document).on("click", "#editPost", (e) => {
     let post = e.currentTarget.closest("table")
     let content = post.querySelector(".text")

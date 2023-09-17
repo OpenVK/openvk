@@ -1466,6 +1466,12 @@ body.scrolled .toTop:hover {
     display: none;
 }
 
+.post-has-videos {
+    margin-top: 11px;
+    margin-left: 3px;
+    color: #3c3c3c;
+}
+
 .post-upload::before, .post-has-poll::before, .post-has-note::before {
     content: " ";
     width: 8px;
@@ -1475,6 +1481,28 @@ body.scrolled .toTop:hover {
     background-color: #4f4f4f;
     margin: 3px;
     margin-left: 2px;
+}
+
+.post-has-video {
+    padding-bottom: 4px;
+    cursor: pointer;
+}
+
+.post-has-video:hover span {
+    text-decoration: underline;
+}
+
+.post-has-video::before {
+    content: " ";
+    width: 14px;
+    height: 15px;
+    display: inline-block;
+    vertical-align: bottom;
+    background-image: url("/assets/packages/static/openvk/img/video.png");
+    background-repeat: no-repeat;
+    margin: 3px;
+    margin-left: 2px;
+    margin-bottom: -1px;
 }
 
 .post-opts {
@@ -2700,6 +2728,12 @@ body.article .floating_sidebar, body.article .page_content {
     position: absolute;
     right: 22px;
     font-size: 12px;
+}
+
+.topGrayBlock {
+    background: #F0F0F0;
+    height: 37px;
+    border-bottom: 1px solid #C7C7C7;
 }
 
 .edited {

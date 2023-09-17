@@ -206,6 +206,7 @@
 "nsfw_warning" = "This post may have NSFW-content";
 "report" = "Report";
 "attach" = "Attach";
+"detach" = "Detach";
 "attach_photo" = "Attach photo";
 "attach_video" = "Attach video";
 "draw_graffiti" = "Draw graffiti";
@@ -692,6 +693,13 @@
 "videos_other" = "$1 videos";
 
 "view_video" = "View";
+
+"selecting_video" = "Selecting videos";
+"upload_new_video" = "Upload new video";
+"max_attached_videos" = "Max is 10 videos";
+"no_videos" = "You don't have uploaded videos.";
+"no_videos_results" = "No results.";
+
 "change_video" = "Change video";
 "unknown_video" = "This video is not supported in your version of OpenVK.";
 
