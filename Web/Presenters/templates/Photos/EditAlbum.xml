@@ -1,5 +1,5 @@
 {extends "../@layout.xml"}
-{block title}Изменить альбом{/block}
+{block title}{_edit_album}{/block}
 
 {block header}
     <a href="{$album->getOwner()->getURL()}">{$album->getOwner()->getCanonicalName()}</a>

@@ -119,10 +119,10 @@
                         {_warn_user_action}
                     </a>
                     <a href="/admin/user{$user->getId()}/bans" class="profile_link">
-                        Блокировки
+                        {_blocks}
                     </a>
                     <a href="/admin/logs?uid={$user->getId()}" class="profile_link" style="width: 194px;">
-                        Последние действия
+                        {_last_actions}
                     </a>
                 {/if}
 
@@ -173,20 +173,20 @@
                 <a class="profile_link" style="display:block;width:96%;" href="javascript:reportUser()">{_report}</a>
                 <script>
                     function reportUser() {
-                        uReportMsgTxt  = "Вы собираетесь пожаловаться на данного пользователя.";
-                        uReportMsgTxt += "<br/>Что именно вам кажется недопустимым в этом материале?";
-                        uReportMsgTxt += "<br/><br/><b>Причина жалобы</b>: <input type='text' id='uReportMsgInput' placeholder='Причина' />"
+                        uReportMsgTxt  = tr("going_to_report_user");
+                        uReportMsgTxt += "<br/>"+tr("report_question_text");
+                        uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
 
-                        MessageBox("Пожаловаться?", uReportMsgTxt, ["Подтвердить", "Отмена"], [
+                        MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
                             (function() {
                                 res = document.querySelector("#uReportMsgInput").value;
                                 xhr = new XMLHttpRequest();
                                 xhr.open("GET", "/report/" + {$user->getId()} + "?reason=" + res + "&type=user", true);
                                 xhr.onload = (function() {
                                     if(xhr.responseText.indexOf("reason") === -1)
-                                        MessageBox("Ошибка", "Не удалось подать жалобу...", ["OK"], [Function.noop]);
+                                        MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
                                     else
-                                        MessageBox("Операция успешна", "Скоро её рассмотрят модераторы", ["OK"], [Function.noop]);
+                                        MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
                                 });
                                 xhr.send(null);
                             }),

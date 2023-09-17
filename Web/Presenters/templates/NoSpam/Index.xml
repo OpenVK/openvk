@@ -27,13 +27,13 @@
             <tbody id="models-list">
                 <tr id="0-model">
                     <td width="83px">
-                        <span class="nobold">Раздел:</span>
+                        <span class="nobold">{_section}:</span>
                     </td>
                     <td>
                         <div style="display: flex; gap: 8px; justify-content: space-between;">
                             <div id="add-model" class="noSpamIcon noSpamIcon-Add" style="display: none;" />
                             <select name="model" id="model" class="model initialModel" style="margin-left: -2px;">
-                                <option selected value="none">Не выбрано</option>
+                                <option selected value="none">{_relationship_0}</option>
                                 <option n:foreach="$models as $model" value="{$model}">{$model}</option>
                             </select>
                         </div>
@@ -47,7 +47,7 @@
                 <tbody>
                     <tr style="width: 129px; border-top: 1px solid #ECECEC;">
                         <td>
-                            <span class="nobold">Подстрока:</span>
+                            <span class="nobold">{_substring}:</span>
                         </td>
                         <td>
                             <input type="text" name="regex" placeholder="Regex" id="regex">
@@ -55,10 +55,10 @@
                     </tr>
                     <tr style="width: 129px; border-top: 1px solid #ECECEC;">
                         <td>
-                            <span class="nobold">Пользователь:</span>
+                            <span class="nobold">{_n_user}:</span>
                         </td>
                         <td>
-                            <input type="text" name="user" placeholder="Ссылка на страницу" id="user">
+                            <input type="text" name="user" placeholder="{_link_to_page}" id="user">
                         </td>
                     </tr>
                     <tr style="width: 129px">
@@ -66,12 +66,12 @@
                             <span class="nobold">IP:</span>
                         </td>
                         <td>
-                            <input type="text" name="ip" id="ip" placeholder="или подсеть">
+                            <input type="text" name="ip" id="ip" placeholder="{_or_subnet}">
                         </td>
                     </tr>
                     <tr style="width: 129px">
                         <td>
-                            <span class="nobold">Юзер-агент:</span>
+                            <span class="nobold">User-Agent:</span>
                         </td>
                         <td>
                             <input type="text" name="useragent" id="useragent" placeholder="Mozila 1.0 Blablabla/test">
@@ -79,7 +79,7 @@
                     </tr>
                     <tr style="width: 129px">
                         <td>
-                            <span class="nobold">Время раньше, чем:</span>
+                            <span class="nobold">{_time_before}:</span>
                         </td>
                         <td>
                             <input type="datetime-local" name="ts" id="ts">
@@ -87,7 +87,7 @@
                     </tr>
                     <tr style="width: 129px">
                         <td>
-                            <span class="nobold">Время позже, чем:</span>
+                            <span class="nobold">{_time_after}:</span>
                         </td>
                         <td>
                             <input type="datetime-local" name="te" id="te">
@@ -97,19 +97,19 @@
             </table>
             <textarea style="resize: vertical; width: calc(100% - 6px)" placeholder='city = "Воскресенск" && id = 1'
                       name="where" id="where"/>
-            <span style="color: grey; font-size: 8px;">WHERE для поиска по разделу</span>
+            <span style="color: grey; font-size: 8px;">{_where_for_search}</span>
             <div style="border-top: 1px solid #ECECEC; margin: 8px 0;"/>
             <table cellspacing="7" cellpadding="0" width="100%" border="0">
                 <tbody>
                     <tr style="width: 129px; border-top: 1px solid #ECECEC;">
                         <td>
-                            <span class="nobold">Параметры блокировки:</span>
+                            <span class="nobold">{_block_params}:</span>
                         </td>
                         <td>
-                            <select name="ban_type" id="noSpam-ban-type" style="width: 140px;">
-                                <option value="1">Только откат</option>
-                                <option value="2">Только блокировка</option>
-                                <option value="3">Откат и блокировка</option>
+                            <select name="ban_type" id="noSpam-ban-type" style="width: 140px;"
+                                <option value="1">{_only_rollback}</option>
+                                <option value="2">{_only_block}</option>
+                                <option value="3">{_rollback_and_block}</option>
                             </select>
                         </td>
                     </tr>
@@ -136,8 +136,8 @@
             <div style="border-top: 1px solid #ECECEC; margin: 8px 0;"/>
             <center>
                 <div id="noSpam-buttons">
-                    <input id="search" type="submit" value="Поиск" class="button"/>
-                    <input id="apply" type="submit" value="Применить" class="button" style="display: none;"/>
+                    <input id="search" type="submit" value="{_header_search}" class="button"/>
+                    <input id="apply" type="submit" value="{_subm}" class="button" style="display: none;"/>
                 </div>
                 <div id="noSpam-loader" style="display: none;">
                     <img src="/assets/packages/static/openvk/img/loading_mini.gif" style="width: 40px;">
@@ -145,7 +145,7 @@
             </center>
         </div>
         <div id="noSpam-model-not-selected">
-            <center id="noSpam-model-not-selected-text" style="padding: 71px 25px;">Выберите раздел для начала работы</center>
+            <center id="noSpam-model-not-selected-text" style="padding: 71px 25px;">{_select_section_for_start}</center>
             <center id="noSpam-model-not-selected-loader" style="display: none;">
                 <img src="/assets/packages/static/openvk/img/loading_mini.gif" style="width: 40px; margin: 125px 0;">
             </center>
@@ -155,11 +155,11 @@
         <center id="noSpam-results-loader" style="display: none;">
             <img src="/assets/packages/static/openvk/img/loading_mini.gif" style="width: 40px; margin: 125px 0;">
         </center>
-        <center id="noSpam-results-text" style="margin: 125px 25px;">Здесь будут отображаться результаты поиска</center>
+        <center id="noSpam-results-text" style="margin: 125px 25px;">{_results_will_be_there}</center>
         <div id="noSpam-results-block" style="display: none;">
-            <h4 style="padding: 8px;">Результаты поиска
+            <h4 style="padding: 8px;">{_search_results}
                 <span style="color: #a2a2a2; font-weight: inherit">
-                    (<span id="noSpam-results-count" style="color: #a2a2a2; font-weight: inherit;"></span> шт.)
+                    (<span id="noSpam-results-count" style="color: #a2a2a2; font-weight: inherit;"></span> {_cnt}.)
                 </span>
             </h4>
             <ul style="padding-inline-start:18px;" id="noSpam-results-list"></ul>
@@ -242,17 +242,17 @@
                             $("#noSpam-results-block").show();
                             $("#apply").show();
                         } else {
-                            $("#noSpam-results-text").text(ban ? "Операция завершена успешно" : "Ничего не найдено :(");
+                            $("#noSpam-results-text").text(ban ? tr("operation_successfully") : tr("no_found"));
                             $("#noSpam-results-text").show();
                         }
                     } else {
-                        $("#noSpam-results-text").text(response?.error ?? "Неизвестная ошибка");
+                        $("#noSpam-results-text").text(response?.error ?? tr("unknown_error"));
                         $("#noSpam-results-text").show();
                     }
                 },
                 error: (error) => {
                     console.error("Error while searching noSpam:", error);
-                    $("#noSpam-results-text").text("Ошибка при выполнении запроса");
+                    $("#noSpam-results-text").text(tr("error_when_searching"));
                     $("#noSpam-results-text").show();
                 }
             });
@@ -323,7 +323,7 @@
                         <div style="display: flex; gap: 8px; justify-content: space-between;">
                             <div class="noSpamIcon noSpamIcon-Delete" onClick="deleteModelSelect(${ $('.model').length});"></div>
                             <select name="model" class="model" style="margin-left: -2px;" onChange="selectChange($(this).val())">
-                                <option selected value="none">Не выбрано</option>
+                                <option selected value="none">{_relationship_0}</option>
                                 {foreach $models as $model}
                                     <option value={$model}>{$model|noescape}</option>
                                 {/foreach}

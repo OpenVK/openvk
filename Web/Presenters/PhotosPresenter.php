@@ -94,7 +94,7 @@ final class PhotosPresenter extends OpenVKPresenter
         if(!$album) $this->notFound();
         if($album->getPrettyId() !== $owner . "_" . $id || $album->isDeleted()) $this->notFound();
         if(is_null($this->user) || !$album->canBeModifiedBy($this->user->identity) || $album->isDeleted())
-            $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+            $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
         $this->template->album = $album;
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -106,7 +106,7 @@ final class PhotosPresenter extends OpenVKPresenter
             $album->setEdited(time());
             $album->save();
             
-            $this->flash("succ", "Изменения сохранены", "Новые данные приняты.");
+            $this->flash("succ", tr("changes_saved"), tr("new_data_accepted"));
         }
     }
     
@@ -120,13 +120,13 @@ final class PhotosPresenter extends OpenVKPresenter
         if(!$album) $this->notFound();
         if($album->getPrettyId() !== $owner . "_" . $id || $album->isDeleted()) $this->notFound();
         if(is_null($this->user) || !$album->canBeModifiedBy($this->user->identity))
-            $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+            $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
         
         $name  = $album->getName();
         $owner = $album->getOwner();
         $album->delete();
 
-        $this->flash("succ", "Альбом удалён", "Альбом $name был успешно удалён.");
+        $this->flash("succ", tr("album_is_deleted"), tr("album_x_is_deleted", $name));
         $this->redirect("/albums" . ($owner instanceof Club ? "-" : "") . $owner->getId());
     }
     
@@ -205,13 +205,13 @@ final class PhotosPresenter extends OpenVKPresenter
         $photo = $this->photos->getByOwnerAndVID($ownerId, $photoId);
         if(!$photo) $this->notFound();
         if(is_null($this->user) || $this->user->id != $ownerId)
-            $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+            $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             $photo->setDescription(empty($this->postParam("desc")) ? NULL : $this->postParam("desc"));
             $photo->save();
             
-            $this->flash("succ", "Изменения сохранены", "Обновлённое описание появится на странице с фоткой.");
+            $this->flash("succ", tr("changes_saved"), tr("new_description_will_appear"));
             $this->redirect("/photo" . $photo->getPrettyId());
         } 
         
@@ -224,14 +224,14 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction(true);
         
         if(is_null($this->queryParam("album")))
-            $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в DELETED.", 500, true);
+            $this->flashFail("err", tr("error"), tr("error_adding_to_deleted"), 500, true);
         
         [$owner, $id] = explode("_", $this->queryParam("album"));
         $album = $this->albums->get((int) $id);
         if(!$album)
-            $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в DELETED.", 500, true);
+            $this->flashFail("err", tr("error"), tr("error_adding_to_deleted"), 500, true);
         if(is_null($this->user) || !$album->canBeModifiedBy($this->user->identity))
-            $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.", 500, true);
+            $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"), 500, true);
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             if($this->queryParam("act") == "finish") {
@@ -258,7 +258,7 @@ final class PhotosPresenter extends OpenVKPresenter
             }
 
             if(!isset($_FILES))
-                $this->flashFail("err", "Нету фотографии", "Выберите файл.", 500, true);
+                $this->flashFail("err", tr("no_photo"), tr("select_file"), 500, true);
             
             $photos = [];
             for($i = 0; $i < $this->postParam("count"); $i++) {
@@ -304,7 +304,7 @@ final class PhotosPresenter extends OpenVKPresenter
         if(!$album || !$photo) $this->notFound();
         if(!$album->hasPhoto($photo)) $this->notFound();
         if(is_null($this->user) || !$album->canBeModifiedBy($this->user->identity))
-            $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+            $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->assertNoCSRF();
@@ -312,7 +312,7 @@ final class PhotosPresenter extends OpenVKPresenter
             $album->setEdited(time());
             $album->save();
             
-            $this->flash("succ", "Фотография удалена", "Эта фотография была успешно удалена.");
+            $this->flash("succ", tr("photo_is_deleted"), tr("photo_is_deleted_desc"));
             $this->redirect("/album" . $album->getPrettyId());
         }
     }
@@ -326,7 +326,7 @@ final class PhotosPresenter extends OpenVKPresenter
         $photo = $this->photos->getByOwnerAndVID($ownerId, $photoId);
         if(!$photo) $this->notFound();
         if(is_null($this->user) || $this->user->id != $ownerId)
-            $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+            $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
 
         $redirect = $photo->getAlbum()->getOwner() instanceof User ? "/id0" : "/club" . $ownerId;
 
@@ -336,7 +336,7 @@ final class PhotosPresenter extends OpenVKPresenter
         if($_SERVER["REQUEST_METHOD"] === "POST")
             $this->returnJson(["success" => true]);
 
-        $this->flash("succ", "Фотография удалена", "Эта фотография была успешно удалена.");
+        $this->flash("succ", tr("photo_is_deleted"), tr("photo_is_deleted_desc"));
         $this->redirect($redirect);
     }
 }
