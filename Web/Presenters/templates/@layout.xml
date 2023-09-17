@@ -175,7 +175,7 @@
                             <a href="{$thisUser->getURL()}" class="link" title="{_my_page} [Alt+Shift+.]" accesskey=".">{_my_page}</a>
                             <a href="/friends{$thisUser->getId()}" class="link">{_my_friends}
                                 <object type="internal/link" n:if="$thisUser->getFollowersCount() > 0">
-                                    <a href="/friends{$thisUser->getId()}?act=incoming">
+                                    <a href="/friends{$thisUser->getId()}?act=incoming" class="linkunderline">
                                        (<b>{$thisUser->getFollowersCount()}</b>)
                                     </a>
                                 </object>
@@ -195,7 +195,7 @@
                                     (<b>{$thisUser->getNotificationsCount()}</b>)
                                 {/if}
                             </a>
-                            <a href="/apps?act=installed" class="link">{_my_apps}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link">{_my_apps}</a>
                             <a href="/settings" class="link">{_my_settings}</a>
                             
                             {var $canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
@@ -300,7 +300,7 @@
                     </div>
                 </div>
                 {ifset $thisUser}
-                    {if !$thisUser->isBanned()}
+                    {if !$thisUser->isBanned() && !$thisUser->isDeleted()}
                         </div>
                     {/if}
                 {/ifset}

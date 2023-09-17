@@ -363,7 +363,7 @@ final class AdminPresenter extends OpenVKPresenter
         if (str_contains($this->queryParam("reason"), "*"))
             exit(json_encode([ "error" => "Incorrect reason" ]));
 
-        $unban_time = strtotime($this->queryParam("date")) ?: NULL;
+        $unban_time = strtotime($this->queryParam("date")) ?: "permanent";
 
         $user = $this->users->get($id);
         if(!$user)

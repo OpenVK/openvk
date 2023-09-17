@@ -219,6 +219,8 @@
 "reply" = "Reply";
 "post_is_ad" = "This post is sponsored.";
 
+"edited_short" = "edited";
+
 /* Friends */
 
 "friends" = "Friends";
@@ -390,6 +392,25 @@
 "upd_m" = "updated his profile picture";
 "upd_f" = "updated her profile picture";
 "upd_g" = "updated group's picture";
+
+"add_photos" = "Add photos";
+"upload_picts" = "Upload photos";
+"end_uploading" = "Finish uploading";
+"photos_successfully_uploaded" = "Photos successfully uploaded";
+"click_to_go_to_album" = "Click here to go to album.";
+"error_uploading_photo" = "Error when uploading photo";
+"too_many_pictures" = "No more than 10 pictures";
+
+"drag_files_here" = "Drag files here";
+"only_images_accepted" = "File \"$1\" is not an image";
+"max_filesize" = "Max filesize is $1 MB";
+
+"uploading_photos_from_computer" = "Uploading photos from Your computer";
+"supported_formats" = "Supported file formats: JPG, PNG and GIF.";
+"max_load_photos" = "You can upload up to 10 photos at a time.";
+"tip" = "Tip";
+"tip_ctrl" = "to select multiple photos at once, hold down the Ctrl key when selecting files in Windows or the CMD key in Mac OS.";
+"album_poster" = "Album poster";
 
 /* Notes */
 
@@ -1098,6 +1119,7 @@
 "error_data_too_big" = "Attribute '$1' must be at most $2 $3 long";
 
 "forbidden" = "Access error";
+"unknown_error" = "Unknown error";
 "forbidden_comment" = "This user's privacy settings do not allow you to look at his page.";
 
 "changes_saved" = "Changes saved";
@@ -1149,6 +1171,7 @@
 "media_file_corrupted_or_too_large" = "The media content file is corrupted or too large.";
 "post_is_empty_or_too_big" = "The post is empty or too big.";
 "post_is_too_big" = "The post is too big.";
+
 "error_sending_report" = "Failed to make a report...";
 
 "error_when_saving_gift" = "Error when saving gift";
@@ -1238,6 +1261,8 @@
 "group_owner_is_banned" = "Group's owner was successfully banned";
 "group_is_banned" = "Group was successfully banned";
 
+"description_too_long" = "Description is too long.";
+
 /* Admin actions */
 
 "login_as" = "Login as $1";
@@ -1250,6 +1275,7 @@
 "warn_user_action" = "Warn user";
 "ban_in_support_user_action" = "Ban in support";
 "unban_in_support_user_action" = "Unban in support";
+"changes_history" = "Editing history";
 
 /* Admin panel */
 
