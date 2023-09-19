@@ -11,7 +11,7 @@ class Comment extends Post
     
     function getPrettyId(): string
     {
-        return $this->getRecord()->id;
+        return (string)$this->getRecord()->id;
     }
     
     function getVirtualId(): int

@@ -158,7 +158,7 @@ function removePicture(idA) {
     u(`div#aP${idA}`).nodes[0].remove();
 }
 
-function OpenMiniature(e, photo, post, photo_id) {
+function OpenMiniature(e, photo, post, photo_id, type = "post") {
     /*
     костыли но смешные однако
     */
@@ -275,7 +275,9 @@ function OpenMiniature(e, photo, post, photo_id) {
         __slidePhoto(1);
     });
 
-    ky.post("/iapi/getPhotosFromPost/" + post, {
+    let data = new FormData()
+    data.append('parentType', type);
+    ky.post("/iapi/getPhotosFromPost/" + (type == "post" ? post : "1_"+post), {
         hooks: {
             afterResponse: [
                 async (_request, _options, response) => {
@@ -297,7 +299,8 @@ function OpenMiniature(e, photo, post, photo_id) {
                     __reloadTitleBar();
                     __loadDetails(json.body[imagesIndex - 1].id, imagesIndex);                }
             ]
-        }
+        },
+        body: data
     });
 
     return u(".ovk-photo-view-dimmer");
@@ -753,7 +756,6 @@ $(document).on("click", "#photosAttachments", async (e) => {
         }
 
         document.querySelector(".photosInsert h4").innerHTML = tr("is_x_photos", photos.count)
-        console.log(photos)
 
         let pagesCount = Math.ceil(Number(photos.count) / 24)
         u("#loader").remove()
@@ -772,7 +774,7 @@ $(document).on("click", "#photosAttachments", async (e) => {
 
         if(page < pagesCount) {
             insertPlace.insertAdjacentHTML("beforeend", `
-            <div id="showMorePhotos" data-pagesCount="${pagesCount}" data-page="${page + 1}" style="width: 100%;text-align: center;background: #d5d5d5;height: 22px;padding-top: 9px;cursor:pointer;">
+            <div id="showMorePhotos" data-pagesCount="${pagesCount}" data-page="${page + 1}" style="width: 100%;text-align: center;background: #f0f0f0;height: 22px;padding-top: 9px;cursor:pointer;">
                 <span>more...</span>
             </div>`)
         }
@@ -790,7 +792,7 @@ $(document).on("click", "#photosAttachments", async (e) => {
 
     $(".photosInsert").on("click", "#showMorePhotos", (e) => {
         u(e.currentTarget).remove()
-        insertPhotos(Number(e.currentTarget.dataset.page))
+        insertPhotos(Number(e.currentTarget.dataset.page), document.querySelector(".topGrayBlock #albumSelect").value)
     })
 
     $(".topGrayBlock #albumSelect").on("change", (evv) => {
