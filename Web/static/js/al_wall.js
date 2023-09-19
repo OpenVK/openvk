@@ -92,8 +92,6 @@ u(".post-like-button").on("click", function(e) {
     return false;
 });
 
-let picCount = 0;
-
 function setupWallPostInputHandlers(id) {
     /* u("#wall-post-input" + id).on("paste", function(e) {
         if(e.clipboardData.files.length === 1) {
@@ -117,25 +115,26 @@ function setupWallPostInputHandlers(id) {
     });
 
     u(`#wall-post-input${id}`).on("paste", function(e) {
+        let xhr = new XMLHttpRequest()
+        let formdat = new FormData()
+        let iterator = 0
+
         for (let i = 0; i < e.clipboardData.files.length; i++) {
-            console.log(e.clipboardData.files[i]);
+            if(getMediaCount() >= 10) {
+                alert('Не больше 10 пикч');
+            }
+
             if(e.clipboardData.files[i].type.match('^image/')) {
-                let blobURL = URL.createObjectURL(e.clipboardData.files[i]);
-                addPhotoMedia(e.clipboardData.files, blobURL, id);
+                addPhotoMedia(e.clipboardData.files[i])
             }
         }
-    });
-
-    u(`#post-buttons${id} input[name=_pic_attachment]`).on("change", function(e) {
-        let blobURL = URL.createObjectURL(e.target.files[0]);
-        addPhotoMedia(e.target.files, blobURL, id);
+        console.log(formdat)
     });
 
     function addPhotoMedia(files, preview, id) {
         if(getMediaCount() >= 10) {
             alert('Не больше 10 пикч');
         } else {
-            picCount++;
             u(`#post-buttons${id} .upload`).append(u(`
                 <div class="upload-item" id="aP${picCount}">
                     <a href="javascript:removePicture(${picCount})" class="upload-delete">×</a>
@@ -190,7 +189,7 @@ function OpenMiniature(e, photo, post, photo_id) {
             <center style="margin-bottom: 8pt;">
                 <div class="ovk-photo-slide-left"></div>
                 <div class="ovk-photo-slide-right"></div>
-                <img src="${photo}" style="max-width: 100%; max-height: 60vh;" id="ovk-photo-img">
+                <img src="${photo}" style="max-width: 100%; max-height: 60vh; user-select:none;" id="ovk-photo-img">
             </center>
             <div class="ovk-photo-details">
                 <img src="/assets/packages/static/openvk/img/loading_mini.gif">
@@ -396,6 +395,7 @@ function addNote(textareaId, nid)
 
     u("body").removeClass("dimmed");
     u(".ovk-diag-cont").remove();
+    document.querySelector("html").style.overflowY = "scroll"
 }
 
 async function attachNote(id)
@@ -710,4 +710,200 @@ $(document).on("click", "#editPost", (e) => {
         u(content.querySelector(".editMenu")).remove()
         text.style.display = "block"
     }
+})
+
+// copypaste from videos picker
+$(document).on("click", "#photosAttachments", async (e) => {
+    let body = `
+        <div class="topGrayBlock">
+            <div style="padding-top: 7px;padding-left: 12px;">
+                ${tr("upload_new_photo")}:
+                <input type="file" multiple accept="image/*" id="fastFotosUplod" style="display:none">
+                <input type="button" class="button" value="${tr("upload_button")}" onclick="fastFotosUplod.click()">
+                <select id="albumSelect" style="width: 154px;float: right;margin-right: 17px;">
+                    <option value="0">${tr("all_photos")}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="photosInsert" style="padding: 5px;height: 287px;overflow-y: scroll;">
+            <div style="position: fixed;z-index: 1007;width: 92%;background: white;margin-top: -5px;padding-top: 6px;"><h4>${tr("is_x_photos", 0)}</h4></div>
+            <div class="photosList album-flex" style="margin-top: 20px;"></div>
+        </div>
+    `
+
+    let form = e.currentTarget.closest("form")
+
+    MessageBox(tr("select_photo"), body, [tr("close")], [Function.noop]);
+
+    document.querySelector(".ovk-diag-body").style.padding = "0"
+    document.querySelector(".ovk-diag-cont").style.width = "630px"
+    document.querySelector(".ovk-diag-body").style.height = "335px"
+
+    async function insertPhotos(page, album = 0) {
+        let insertPlace = document.querySelector(".photosInsert .photosList")
+        document.querySelector(".photosInsert").insertAdjacentHTML("beforeend", `<img id="loader" style="max-height: 8px;max-width: 36px;" src="/assets/packages/static/openvk/img/loading_mini.gif">`)
+        
+        let photos;
+
+        if(album == 0) {
+            photos = await API.Photos.getPhotos(page, 0)
+        } else {
+            photos = await API.Photos.getPhotos(page, Number(album))
+        }
+
+        document.querySelector(".photosInsert h4").innerHTML = tr("is_x_photos", photos.count)
+        console.log(photos)
+
+        let pagesCount = Math.ceil(Number(photos.count) / 24)
+        u("#loader").remove()
+
+        for(const photo of photos.items) {
+            let isAttached = (form.querySelector("input[name='photos']").value.includes(`${photo.owner_id}_${photo.id},`))
+
+            insertPlace.insertAdjacentHTML("beforeend", `
+            <div style="width: 14%;margin-bottom: 7px;margin-left: 13px;" class="album-photo" data-attachmentdata="${photo.owner_id}_${photo.id}" data-preview="${photo.photo_130}">          
+                <a href="/photo${photo.owner_id}_${photo.id}">
+                    <img class="album-photo--image" src="${photo.photo_130}" alt="..." style="${isAttached ? "background-color: #646464" : ""}">
+                </a>
+            </div>
+            `)
+        }
+
+        if(page < pagesCount) {
+            insertPlace.insertAdjacentHTML("beforeend", `
+            <div id="showMorePhotos" data-pagesCount="${pagesCount}" data-page="${page + 1}" style="width: 100%;text-align: center;background: #d5d5d5;height: 22px;padding-top: 9px;cursor:pointer;">
+                <span>more...</span>
+            </div>`)
+        }
+    }
+
+    insertPhotos(1)
+
+    let albums = await API.Photos.getAlbums()
+    
+    for(const alb of albums.items) {
+        let sel = document.querySelector(".ovk-diag-body #albumSelect")
+
+        sel.insertAdjacentHTML("beforeend", `<option value="${alb.id}">${escapeHtml(alb.name)}</option>`)
+    }
+
+    $(".photosInsert").on("click", "#showMorePhotos", (e) => {
+        u(e.currentTarget).remove()
+        insertPhotos(Number(e.currentTarget.dataset.page))
+    })
+
+    $(".topGrayBlock #albumSelect").on("change", (evv) => {
+        document.querySelector(".photosInsert .photosList").innerHTML = ""
+        insertPhotos(1, evv.currentTarget.value)
+    })
+
+    function insertAttachment(id) {
+        let photos = form.querySelector("input[name='photos']") 
+
+        if(!photos.value.includes(id + ",")) {
+            if(photos.value.split(",").length > 10) {
+                NewNotification(tr("error"), tr("max_attached_photos"))
+                return false
+            }
+
+            form.querySelector("input[name='photos']").value += (id + ",")
+
+            console.info(id + " attached")
+            return true
+        } else {
+            form.querySelector("input[name='photos']").value = form.querySelector("input[name='photos']").value.replace(id + ",", "")
+
+            console.info(id + " detached")
+            return false
+        }
+    }
+
+    $(".photosList").on("click", ".album-photo", (ev) => {
+        ev.preventDefault()
+
+        if(!insertAttachment(ev.currentTarget.dataset.attachmentdata)) {
+            u(form.querySelector(`.upload #aP[data-id='${ev.currentTarget.dataset.attachmentdata}']`)).remove()
+            ev.currentTarget.querySelector("img").style.backgroundColor = "white"
+        } else {
+            ev.currentTarget.querySelector("img").style.backgroundColor = "#646464"
+            let id = ev.currentTarget.dataset.attachmentdata
+
+            u(form.querySelector(`.upload`)).append(u(`
+                <div class="upload-item" id="aP" data-id="${ev.currentTarget.dataset.attachmentdata}">
+                    <a class="upload-delete">×</a>
+                    <img src="${ev.currentTarget.dataset.preview}">
+                </div>
+            `));
+
+            u(`.upload #aP[data-id='${ev.currentTarget.dataset.attachmentdata}'] .upload-delete`).on("click", () => {
+                form.querySelector("input[name='photos']").value = form.querySelector("input[name='photos']").value.replace(id + ",", "")
+                u(form.querySelector(`.upload #aP[data-id='${ev.currentTarget.dataset.attachmentdata}']`)).remove()
+            })
+        }
+    })
+
+    u("#fastFotosUplod").on("change", (evn) => {
+        let xhr = new XMLHttpRequest()
+        xhr.open("POST", "/photos/upload")
+
+        let formdata = new FormData()
+        let iterator = 0
+
+        for(const fille of evn.currentTarget.files) {
+            if(!fille.type.startsWith('image/')) {
+                continue;
+            }
+
+            if(fille.size > 5 * 1024 * 1024) {
+                continue;
+            }
+
+            if(evn.currentTarget.files.length >= 10) {
+                NewNotification(tr("error"), tr("max_attached_photos"))
+                return;
+            }
+
+            formdata.append("photo_"+iterator, fille)
+            iterator += 1
+        }
+        
+        xhr.onloadstart = () => {
+            evn.currentTarget.parentNode.insertAdjacentHTML("beforeend", `<img id="loader" style="max-height: 8px;max-width: 36px;" src="/assets/packages/static/openvk/img/loading_mini.gif">`)
+        }
+
+        xhr.onload = () => {
+            let result = JSON.parse(xhr.responseText)
+
+            u("#loader").remove()
+            if(result.success) {
+                for(const pht of result.photos) {
+                    let id = pht.owner + "_" + pht.vid
+
+                    insertAttachment(id)
+                    
+                    u(form.querySelector(`.upload`)).append(u(`
+                        <div class="upload-item" id="aP" data-id="${pht.owner + "_" + pht.vid}">
+                            <a class="upload-delete">×</a>
+                            <img src="${pht.url}">
+                        </div>
+                    `));
+
+                    u(`.upload #aP[data-id='${pht.owner + "_" + pht.vid}'] .upload-delete`).on("click", () => {
+                        form.querySelector("input[name='photos']").value = form.querySelector("input[name='photos']").value.replace(id + ",", "")
+                        u(form.querySelector(`.upload #aP[data-id='${id}']`)).remove()
+                    })
+                }
+
+                u("body").removeClass("dimmed");
+                u(".ovk-diag-cont").remove();
+                document.querySelector("html").style.overflowY = "scroll"
+            }
+        }
+
+        formdata.append("hash", u("meta[name=csrf]").attr("value"))
+        formdata.append("count", iterator)
+        
+        xhr.send(formdata)
+    })
 })

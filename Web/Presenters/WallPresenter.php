@@ -3,7 +3,7 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Models\Exceptions\TooMuchOptionsException;
 use openvk\Web\Models\Entities\{Poll, Post, Photo, Video, Club, User};
 use openvk\Web\Models\Entities\Notifications\{MentionNotification, RepostNotification, WallPostNotification};
-use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums, Notes, Videos, Comments};
+use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums, Notes, Videos, Comments, Photos};
 use Chandler\Database\DatabaseConnection;
 use Nette\InvalidStateException as ISE;
 use Bhaktaraz\RSSGenerator\Item;
@@ -249,35 +249,23 @@ final class WallPresenter extends OpenVKPresenter
         if($this->postParam("force_sign") === "on")
             $flags |= 0b01000000;
         
-        try {
-            $photos = [];
-            $video = NULL;
-            /* if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
-                $album = NULL;
-                if(!$anon && $wall > 0 && $wall === $this->user->id)
-                    $album = (new Albums)->getUserWallAlbum($wallOwner);
-                
-                $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album, $anon);
-            } */
+        $photos = [];
 
-            $album = NULL;
-            if(!$anon && $wall > 0 && $wall === $this->user->id)
-                $album = (new Albums)->getUserWallAlbum($wallOwner);
+        if(!empty($this->postParam("photos"))) {
+            $un  = rtrim($this->postParam("photos"), ",");
+            $arr = explode(",", $un);
 
-            foreach($_FILES as $fileId => $file) {
-                bdump([$fileId, $file, $file["error"] !== UPLOAD_ERR_OK, strncmp($fileId, "attachPic", 9) !== 0]);
-                if($file["error"] !== UPLOAD_ERR_OK || strncmp($fileId, "attachPic", 9) !== 0)
-                    continue;
-
-                $photos[] = Photo::fastMake($this->user->id, $this->postParam("text"), $file, $album, $anon);
+            if(sizeof($arr) < 11) {
+                foreach($arr as $dat) {
+                    $ids = explode("_", $dat);
+                    $photo = (new Photos)->getByOwnerAndVID((int)$ids[0], (int)$ids[1]);
+    
+                    if(!$photo || $photo->isDeleted())
+                        continue;
+    
+                    $photos[] = $photo;
+                }
             }
-            
-            /*if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK)
-                $video = Video::fastMake($this->user->id, $_FILES["_vid_attachment"]["name"], $this->postParam("text"), $_FILES["_vid_attachment"], $anon);*/
-        } catch(\DomainException $ex) {
-            $this->flashFail("err", tr("failed_to_publish_post"), tr("media_file_corrupted"));
-        } catch(ISE $ex) {
-            $this->flashFail("err", tr("failed_to_publish_post"), tr("media_file_corrupted_or_too_large"));
         }
         
         try {
@@ -324,7 +312,7 @@ final class WallPresenter extends OpenVKPresenter
             }
         }
         
-        if(empty($this->postParam("text")) && !$photos && sizeof($videos) < 1 && !$poll && !$note)
+        if(empty($this->postParam("text")) && sizeof($photos) < 1 && sizeof($videos) < 1 && !$poll && !$note)
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"));
         
         try {

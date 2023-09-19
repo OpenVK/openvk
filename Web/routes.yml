@@ -371,7 +371,7 @@ routes:
       handler: "About->humansTxt"
     - url: "/dev"
       handler: "About->dev"
-    - url: "/iapi/getPhotosFromPost/{text}"
+    - url: "/iapi/getPhotosFromPost/{num}_{num}"
       handler: "InternalAPI->getPhotosFromPost"
     - url: "/tour"
       handler: "About->tour"
