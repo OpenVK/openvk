@@ -77,7 +77,7 @@
                     <a class="header" href="javascript:toggleMenu({$textAreaId});">
                         {_attach}
                     </a>
-                    <a id="photosAttachments">
+                    <a id="photosAttachments" {if !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}data-club="{$club->getId()}"{/if}>
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
                         {_photo}
                     </a>

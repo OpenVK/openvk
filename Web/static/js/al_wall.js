@@ -42,9 +42,12 @@ function initGraffiti(id) {
         canvas.getImage({includeWatermark: false}).toBlob(blob => {
             let fName = "Graffiti-" + Math.ceil(performance.now()).toString() + ".jpeg";
             let image = new File([blob], fName, {type: "image/jpeg", lastModified: new Date().getTime()});
-            let trans = new DataTransfer();
-            trans.items.add(image);
             
+            let formdata = new FormData()
+            formdata.append("hash", u("meta[name=csrf]").attr("value"))
+            formdata.append("count", 1)
+            
+            //ky.post("/photos/upload", {body:})
             let fileSelect = document.querySelector("#post-buttons" + id + " input[name='_pic_attachment']");
             fileSelect.files = trans.files;
             
@@ -115,43 +118,20 @@ function setupWallPostInputHandlers(id) {
     });
 
     u(`#wall-post-input${id}`).on("paste", function(e) {
-        let xhr = new XMLHttpRequest()
-        let formdat = new FormData()
-        let iterator = 0
+        if(e.clipboardData.files.length === 1) {
+            let xhr = new XMLHttpRequest()
+            let formdat = new FormData()
+            formdat.append("photo_0", e.clipboardData.files[0])
+            formdat.append("count", 1)
+            formdat.append("hash", u("meta[name=csrf]").attr("value"))
 
-        for (let i = 0; i < e.clipboardData.files.length; i++) {
-            if(getMediaCount() >= 10) {
-                alert('Не больше 10 пикч');
-            }
 
-            if(e.clipboardData.files[i].type.match('^image/')) {
-                addPhotoMedia(e.clipboardData.files[i])
-            }
+            xhr.open("POST", "/photos/upload")
+
+            xhr.send(formdat)
+            console.log(e.clipboardData.files);
         }
-        console.log(formdat)
     });
-
-    function addPhotoMedia(files, preview, id) {
-        if(getMediaCount() >= 10) {
-            alert('Не больше 10 пикч');
-        } else {
-            u(`#post-buttons${id} .upload`).append(u(`
-                <div class="upload-item" id="aP${picCount}">
-                    <a href="javascript:removePicture(${picCount})" class="upload-delete">×</a>
-                    <img src="${preview}">
-                </div>
-            `));
-            u(`div#aP${picCount}`).nodes[0].append(u(`<input type="file" accept="image/*" name="attachPic${picCount}" id="attachPic${picCount}" style="display: none;">`).first());
-            let input = u(`#attachPic${picCount}`).nodes[0];
-            input.files = files; // нужен рефактор, но щас не
-            console.log(input);
-            u(input).trigger("change");
-        }
-    }
-
-    function getMediaCount() {
-        return u(`#post-buttons${id} .upload`).nodes[0].children.length;
-    }
 }
 
 function removePicture(idA) {
@@ -744,15 +724,21 @@ $(document).on("click", "#photosAttachments", async (e) => {
     document.querySelector(".ovk-diag-body").style.height = "335px"
 
     async function insertPhotos(page, album = 0) {
+        u("#loader").remove()
+
         let insertPlace = document.querySelector(".photosInsert .photosList")
         document.querySelector(".photosInsert").insertAdjacentHTML("beforeend", `<img id="loader" style="max-height: 8px;max-width: 36px;" src="/assets/packages/static/openvk/img/loading_mini.gif">`)
         
         let photos;
 
-        if(album == 0) {
-            photos = await API.Photos.getPhotos(page, 0)
-        } else {
+        try {
             photos = await API.Photos.getPhotos(page, Number(album))
+        } catch(e) {
+            document.querySelector(".photosInsert h4").innerHTML = tr("is_x_photos", -1)
+            insertPlace.innerHTML = "Invalid album"
+            console.error(e)
+            u("#loader").remove()
+            return;
         }
 
         document.querySelector(".photosInsert h4").innerHTML = tr("is_x_photos", photos.count)
@@ -782,12 +768,12 @@ $(document).on("click", "#photosAttachments", async (e) => {
 
     insertPhotos(1)
 
-    let albums = await API.Photos.getAlbums()
+    let albums = await API.Photos.getAlbums(Number(e.currentTarget.dataset.club ?? 0))
     
     for(const alb of albums.items) {
         let sel = document.querySelector(".ovk-diag-body #albumSelect")
 
-        sel.insertAdjacentHTML("beforeend", `<option value="${alb.id}">${escapeHtml(alb.name)}</option>`)
+        sel.insertAdjacentHTML("beforeend", `<option value="${alb.id}">${ovk_proc_strtr(escapeHtml(alb.name), 20)}</option>`)
     }
 
     $(".photosInsert").on("click", "#showMorePhotos", (e) => {
@@ -797,6 +783,7 @@ $(document).on("click", "#photosAttachments", async (e) => {
 
     $(".topGrayBlock #albumSelect").on("change", (evv) => {
         document.querySelector(".photosInsert .photosList").innerHTML = ""
+
         insertPhotos(1, evv.currentTarget.value)
     })
 
@@ -900,6 +887,9 @@ $(document).on("click", "#photosAttachments", async (e) => {
                 u("body").removeClass("dimmed");
                 u(".ovk-diag-cont").remove();
                 document.querySelector("html").style.overflowY = "scroll"
+            } else {
+                // todo: https://vk.com/wall-32295218_78593
+                alert(result.flash.message)
             }
         }
 
