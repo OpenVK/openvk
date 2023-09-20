@@ -423,6 +423,7 @@
 
 "all_photos" = "All photos";
 "error_uploading_photo" = "Error when uploading photo. Error text: ";
+"too_many_photos" = "Too many photos.";
 
 /* Notes */
 

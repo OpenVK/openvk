@@ -69,6 +69,24 @@ function initGraffiti(id) {
 function fastUploadImage(textareaId, file) {
     // uploading images
 
+    if(!file.type.startsWith('image/')) {
+        MessageBox(tr("error"), tr("only_images_accepted", escapeHtml(file.name)), [tr("ok")], [() => {Function.noop}])
+        return;
+    }
+
+    // 🤓🤓🤓
+    if(file.size > 5 * 1024 * 1024) {
+        MessageBox(tr("error"), tr("max_filesize", 5), [tr("ok")], [() => {Function.noop}])
+        return;
+    }
+
+    let imagesCount = document.querySelector("#post-buttons" + textareaId + " input[name='photos']").value.split(",").length
+
+    if(imagesCount > 10) {
+        MessageBox(tr("error"), tr("too_many_photos"), [tr("ok")], [() => {Function.noop}])
+        return
+    }
+
     let xhr = new XMLHttpRequest
     let data = new FormData
 
@@ -143,7 +161,8 @@ u(".post-like-button").on("click", function(e) {
 
 function setupWallPostInputHandlers(id) {
     u("#wall-post-input" + id).on("paste", function(e) {
-        // Вставка из буфера проходит джва раза да хуй его знает почему так, в комментах такого нет.
+        // Если вы находитесь на странице с постом с id 11, то копирование произойдёт джва раза.
+        // Оч ржачный баг, но вот как его исправить, я, если честно, не знаю.
 
         if(e.clipboardData.files.length === 1) {
             fastUploadImage(id, e.clipboardData.files[0])
@@ -895,7 +914,9 @@ $(document).on("click", "#photosAttachments", async (e) => {
                 for(const pht of result.photos) {
                     let id = pht.owner + "_" + pht.vid
 
-                    insertAttachment(id)
+                    if(!insertAttachment(id)) {
+                        return
+                    }
                     
                     u(form.querySelector(`.upload`)).append(u(`
                         <div class="upload-item" id="aP" data-id="${pht.owner + "_" + pht.vid}">
