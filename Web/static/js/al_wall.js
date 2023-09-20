@@ -22,7 +22,7 @@ function trim(string) {
     return newStr;
 }
 
-function handleVideoTAreaUpdate(event, id) {
+/*function handleVideoTAreaUpdate(event, id) {
     console.log(event, id);
     let indicator = u("#post-buttons" + id + " .post-upload");
     let file      = event.target.files[0];
@@ -34,7 +34,7 @@ function handleVideoTAreaUpdate(event, id) {
     }
 
     document.querySelector("#post-buttons" + id + " #wallAttachmentMenu").classList.add("hidden");
-}
+}*/
 
 function initGraffiti(id) {
     let canvas = null;
@@ -43,16 +43,7 @@ function initGraffiti(id) {
             let fName = "Graffiti-" + Math.ceil(performance.now()).toString() + ".jpeg";
             let image = new File([blob], fName, {type: "image/jpeg", lastModified: new Date().getTime()});
             
-            let formdata = new FormData()
-            formdata.append("hash", u("meta[name=csrf]").attr("value"))
-            formdata.append("count", 1)
-            
-            //ky.post("/photos/upload", {body:})
-            let fileSelect = document.querySelector("#post-buttons" + id + " input[name='_pic_attachment']");
-            fileSelect.files = trans.files;
-            
-            u(fileSelect).trigger("change");
-            u("#post-buttons" + id + " #write textarea").trigger("focusin");
+            fastUploadImage(id, image)
         }, "image/jpeg", 0.92);
         
         canvas.teardown();
@@ -73,6 +64,61 @@ function initGraffiti(id) {
             height: 480
         }
     });
+}
+
+function fastUploadImage(textareaId, file) {
+    // uploading images
+
+    let xhr = new XMLHttpRequest
+    let data = new FormData
+
+    data.append("photo_0", file)
+    data.append("count", 1)
+    data.append("hash", u("meta[name=csrf]").attr("value"))
+
+    xhr.open("POST", "/photos/upload")
+
+    xhr.onloadstart = () => {
+        document.querySelector("#post-buttons"+textareaId+" .upload").insertAdjacentHTML("beforeend", `<img id="loader" src="/assets/packages/static/openvk/img/loading_mini.gif">`)
+    }
+
+    xhr.onload = () => {
+        let response = JSON.parse(xhr.responseText)
+
+        appendImage(response, textareaId)
+    }
+
+    xhr.send(data)
+}
+
+// append image after uploading via /photos/upload
+function appendImage(response, textareaId) {
+    if(!response.success) {
+        MessageBox(tr("error"), (tr("error_uploading_photo") + response.flash.message), [tr("ok")], [() => {Function.noop}])
+    } else {
+        let form        = document.querySelector("#post-buttons"+textareaId)
+        let photosInput = form.querySelector("input[name='photos']")
+        let photosIndicator = form.querySelector(".upload")
+        
+        for(const phot of response.photos) {
+            let id = phot.owner + "_" + phot.vid
+
+            photosInput.value += (id + ",")
+
+            u(photosIndicator).append(u(`
+                <div class="upload-item" id="aP" data-id="${id}">
+                    <a class="upload-delete">×</a>
+                    <img src="${phot.url}">
+                </div>
+            `))
+
+            u(photosIndicator.querySelector(`.upload #aP[data-id='${id}'] .upload-delete`)).on("click", () => {
+                photosInput.value = photosInput.value.replace(id + ",", "")
+                u(form.querySelector(`.upload #aP[data-id='${id}']`)).remove()
+            })
+        }
+    }
+    u(`#post-buttons${textareaId} .upload #loader`).remove()
 }
 
 u(".post-like-button").on("click", function(e) {
@@ -96,14 +142,14 @@ u(".post-like-button").on("click", function(e) {
 });
 
 function setupWallPostInputHandlers(id) {
-    /* u("#wall-post-input" + id).on("paste", function(e) {
+    u("#wall-post-input" + id).on("paste", function(e) {
+        // Вставка из буфера проходит джва раза да хуй его знает почему так, в комментах такого нет.
+
         if(e.clipboardData.files.length === 1) {
-            var input = u("#post-buttons" + id + " input[name=_pic_attachment]").nodes[0];
-            input.files = e.clipboardData.files;
-            
-            u(input).trigger("change");
+            fastUploadImage(id, e.clipboardData.files[0])
+            return;
         }
-    }); */
+    });
     
     u("#wall-post-input" + id).on("input", function(e) {
         var boost             = 5;
@@ -116,26 +162,6 @@ function setupWallPostInputHandlers(id) {
         // revert to original size if it is larger (possibly changed by user)
         // textArea.style.height = (newHeight > originalHeight ? (newHeight + boost) : originalHeight) + "px";
     });
-
-    u(`#wall-post-input${id}`).on("paste", function(e) {
-        if(e.clipboardData.files.length === 1) {
-            let xhr = new XMLHttpRequest()
-            let formdat = new FormData()
-            formdat.append("photo_0", e.clipboardData.files[0])
-            formdat.append("count", 1)
-            formdat.append("hash", u("meta[name=csrf]").attr("value"))
-
-
-            xhr.open("POST", "/photos/upload")
-
-            xhr.send(formdat)
-            console.log(e.clipboardData.files);
-        }
-    });
-}
-
-function removePicture(idA) {
-    u(`div#aP${idA}`).nodes[0].remove();
 }
 
 function OpenMiniature(e, photo, post, photo_id, type = "post") {

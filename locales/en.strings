@@ -422,6 +422,7 @@
 "is_x_photos_other" = "Just $1 photos.";
 
 "all_photos" = "All photos";
+"error_uploading_photo" = "Error when uploading photo. Error text: ";
 
 /* Notes */
 
