@@ -181,6 +181,19 @@ function setupWallPostInputHandlers(id) {
         // revert to original size if it is larger (possibly changed by user)
         // textArea.style.height = (newHeight > originalHeight ? (newHeight + boost) : originalHeight) + "px";
     });
+
+    u("#wall-post-input" + id).on("dragover", function(e) {
+        e.preventDefault()
+
+        // todo add animation
+        return;
+    });
+
+    $("#wall-post-input" + id).on("drop", function(e) {
+        e.originalEvent.dataTransfer.dropEffect = 'move';
+        fastUploadImage(id, e.originalEvent.dataTransfer.files[0])
+        return;
+    });
 }
 
 function OpenMiniature(e, photo, post, photo_id, type = "post") {
