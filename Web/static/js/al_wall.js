@@ -22,7 +22,7 @@ function trim(string) {
     return newStr;
 }
 
-function handleVideoTAreaUpdate(event, id) {
+/*function handleVideoTAreaUpdate(event, id) {
     console.log(event, id);
     let indicator = u("#post-buttons" + id + " .post-upload");
     let file      = event.target.files[0];
@@ -34,7 +34,7 @@ function handleVideoTAreaUpdate(event, id) {
     }
 
     document.querySelector("#post-buttons" + id + " #wallAttachmentMenu").classList.add("hidden");
-}
+}*/
 
 function initGraffiti(id) {
     let canvas = null;
@@ -42,14 +42,8 @@ function initGraffiti(id) {
         canvas.getImage({includeWatermark: false}).toBlob(blob => {
             let fName = "Graffiti-" + Math.ceil(performance.now()).toString() + ".jpeg";
             let image = new File([blob], fName, {type: "image/jpeg", lastModified: new Date().getTime()});
-            let trans = new DataTransfer();
-            trans.items.add(image);
             
-            let fileSelect = document.querySelector("#post-buttons" + id + " input[name='_pic_attachment']");
-            fileSelect.files = trans.files;
-            
-            u(fileSelect).trigger("change");
-            u("#post-buttons" + id + " #write textarea").trigger("focusin");
+            fastUploadImage(id, image)
         }, "image/jpeg", 0.92);
         
         canvas.teardown();
@@ -72,6 +66,79 @@ function initGraffiti(id) {
     });
 }
 
+function fastUploadImage(textareaId, file) {
+    // uploading images
+
+    if(!file.type.startsWith('image/')) {
+        MessageBox(tr("error"), tr("only_images_accepted", escapeHtml(file.name)), [tr("ok")], [() => {Function.noop}])
+        return;
+    }
+
+    // 🤓🤓🤓
+    if(file.size > 5 * 1024 * 1024) {
+        MessageBox(tr("error"), tr("max_filesize", 5), [tr("ok")], [() => {Function.noop}])
+        return;
+    }
+
+    let imagesCount = document.querySelector("#post-buttons" + textareaId + " input[name='photos']").value.split(",").length
+
+    if(imagesCount > 10) {
+        MessageBox(tr("error"), tr("too_many_photos"), [tr("ok")], [() => {Function.noop}])
+        return
+    }
+
+    let xhr = new XMLHttpRequest
+    let data = new FormData
+
+    data.append("photo_0", file)
+    data.append("count", 1)
+    data.append("hash", u("meta[name=csrf]").attr("value"))
+
+    xhr.open("POST", "/photos/upload")
+
+    xhr.onloadstart = () => {
+        document.querySelector("#post-buttons"+textareaId+" .upload").insertAdjacentHTML("beforeend", `<img id="loader" src="/assets/packages/static/openvk/img/loading_mini.gif">`)
+    }
+
+    xhr.onload = () => {
+        let response = JSON.parse(xhr.responseText)
+
+        appendImage(response, textareaId)
+    }
+
+    xhr.send(data)
+}
+
+// append image after uploading via /photos/upload
+function appendImage(response, textareaId) {
+    if(!response.success) {
+        MessageBox(tr("error"), (tr("error_uploading_photo") + response.flash.message), [tr("ok")], [() => {Function.noop}])
+    } else {
+        let form        = document.querySelector("#post-buttons"+textareaId)
+        let photosInput = form.querySelector("input[name='photos']")
+        let photosIndicator = form.querySelector(".upload")
+        
+        for(const phot of response.photos) {
+            let id = phot.owner + "_" + phot.vid
+
+            photosInput.value += (id + ",")
+
+            u(photosIndicator).append(u(`
+                <div class="upload-item" id="aP" data-id="${id}">
+                    <a class="upload-delete">×</a>
+                    <img src="${phot.url}">
+                </div>
+            `))
+
+            u(photosIndicator.querySelector(`.upload #aP[data-id='${id}'] .upload-delete`)).on("click", () => {
+                photosInput.value = photosInput.value.replace(id + ",", "")
+                u(form.querySelector(`.upload #aP[data-id='${id}']`)).remove()
+            })
+        }
+    }
+    u(`#post-buttons${textareaId} .upload #loader`).remove()
+}
+
 u(".post-like-button").on("click", function(e) {
     e.preventDefault();
     
@@ -92,17 +159,16 @@ u(".post-like-button").on("click", function(e) {
     return false;
 });
 
-let picCount = 0;
-
 function setupWallPostInputHandlers(id) {
-    /* u("#wall-post-input" + id).on("paste", function(e) {
+    u("#wall-post-input" + id).on("paste", function(e) {
+        // Если вы находитесь на странице с постом с id 11, то копирование произойдёт джва раза.
+        // Оч ржачный баг, но вот как его исправить, я, если честно, не знаю.
+
         if(e.clipboardData.files.length === 1) {
-            var input = u("#post-buttons" + id + " input[name=_pic_attachment]").nodes[0];
-            input.files = e.clipboardData.files;
-            
-            u(input).trigger("change");
+            fastUploadImage(id, e.clipboardData.files[0])
+            return;
         }
-    }); */
+    });
     
     u("#wall-post-input" + id).on("input", function(e) {
         var boost             = 5;
@@ -116,50 +182,21 @@ function setupWallPostInputHandlers(id) {
         // textArea.style.height = (newHeight > originalHeight ? (newHeight + boost) : originalHeight) + "px";
     });
 
-    u(`#wall-post-input${id}`).on("paste", function(e) {
-        for (let i = 0; i < e.clipboardData.files.length; i++) {
-            console.log(e.clipboardData.files[i]);
-            if(e.clipboardData.files[i].type.match('^image/')) {
-                let blobURL = URL.createObjectURL(e.clipboardData.files[i]);
-                addPhotoMedia(e.clipboardData.files, blobURL, id);
-            }
-        }
+    u("#wall-post-input" + id).on("dragover", function(e) {
+        e.preventDefault()
+
+        // todo add animation
+        return;
     });
 
-    u(`#post-buttons${id} input[name=_pic_attachment]`).on("change", function(e) {
-        let blobURL = URL.createObjectURL(e.target.files[0]);
-        addPhotoMedia(e.target.files, blobURL, id);
+    $("#wall-post-input" + id).on("drop", function(e) {
+        e.originalEvent.dataTransfer.dropEffect = 'move';
+        fastUploadImage(id, e.originalEvent.dataTransfer.files[0])
+        return;
     });
-
-    function addPhotoMedia(files, preview, id) {
-        if(getMediaCount() >= 10) {
-            alert('Не больше 10 пикч');
-        } else {
-            picCount++;
-            u(`#post-buttons${id} .upload`).append(u(`
-                <div class="upload-item" id="aP${picCount}">
-                    <a href="javascript:removePicture(${picCount})" class="upload-delete">×</a>
-                    <img src="${preview}">
-                </div>
-            `));
-            u(`div#aP${picCount}`).nodes[0].append(u(`<input type="file" accept="image/*" name="attachPic${picCount}" id="attachPic${picCount}" style="display: none;">`).first());
-            let input = u(`#attachPic${picCount}`).nodes[0];
-            input.files = files; // нужен рефактор, но щас не
-            console.log(input);
-            u(input).trigger("change");
-        }
-    }
-
-    function getMediaCount() {
-        return u(`#post-buttons${id} .upload`).nodes[0].children.length;
-    }
 }
 
-function removePicture(idA) {
-    u(`div#aP${idA}`).nodes[0].remove();
-}
-
-function OpenMiniature(e, photo, post, photo_id) {
+function OpenMiniature(e, photo, post, photo_id, type = "post") {
     /*
     костыли но смешные однако
     */
@@ -190,7 +227,7 @@ function OpenMiniature(e, photo, post, photo_id) {
             <center style="margin-bottom: 8pt;">
                 <div class="ovk-photo-slide-left"></div>
                 <div class="ovk-photo-slide-right"></div>
-                <img src="${photo}" style="max-width: 100%; max-height: 60vh;" id="ovk-photo-img">
+                <img src="${photo}" style="max-width: 100%; max-height: 60vh; user-select:none;" id="ovk-photo-img">
             </center>
             <div class="ovk-photo-details">
                 <img src="/assets/packages/static/openvk/img/loading_mini.gif">
@@ -276,7 +313,9 @@ function OpenMiniature(e, photo, post, photo_id) {
         __slidePhoto(1);
     });
 
-    ky.post("/iapi/getPhotosFromPost/" + post, {
+    let data = new FormData()
+    data.append('parentType', type);
+    ky.post("/iapi/getPhotosFromPost/" + (type == "post" ? post : "1_"+post), {
         hooks: {
             afterResponse: [
                 async (_request, _options, response) => {
@@ -298,7 +337,8 @@ function OpenMiniature(e, photo, post, photo_id) {
                     __reloadTitleBar();
                     __loadDetails(json.body[imagesIndex - 1].id, imagesIndex);                }
             ]
-        }
+        },
+        body: data
     });
 
     return u(".ovk-photo-view-dimmer");
@@ -396,6 +436,7 @@ function addNote(textareaId, nid)
 
     u("body").removeClass("dimmed");
     u(".ovk-diag-cont").remove();
+    document.querySelector("html").style.overflowY = "scroll"
 }
 
 async function attachNote(id)
@@ -710,4 +751,211 @@ $(document).on("click", "#editPost", (e) => {
         u(content.querySelector(".editMenu")).remove()
         text.style.display = "block"
     }
+})
+
+// copypaste from videos picker
+$(document).on("click", "#photosAttachments", async (e) => {
+    let body = `
+        <div class="topGrayBlock">
+            <div style="padding-top: 7px;padding-left: 12px;">
+                ${tr("upload_new_photo")}:
+                <input type="file" multiple accept="image/*" id="fastFotosUplod" style="display:none">
+                <input type="button" class="button" value="${tr("upload_button")}" onclick="fastFotosUplod.click()">
+                <select id="albumSelect" style="width: 154px;float: right;margin-right: 17px;">
+                    <option value="0">${tr("all_photos")}</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="photosInsert" style="padding: 5px;height: 287px;overflow-y: scroll;">
+            <div style="position: fixed;z-index: 1007;width: 92%;background: white;margin-top: -5px;padding-top: 6px;"><h4>${tr("is_x_photos", 0)}</h4></div>
+            <div class="photosList album-flex" style="margin-top: 20px;"></div>
+        </div>
+    `
+
+    let form = e.currentTarget.closest("form")
+
+    MessageBox(tr("select_photo"), body, [tr("close")], [Function.noop]);
+
+    document.querySelector(".ovk-diag-body").style.padding = "0"
+    document.querySelector(".ovk-diag-cont").style.width = "630px"
+    document.querySelector(".ovk-diag-body").style.height = "335px"
+
+    async function insertPhotos(page, album = 0) {
+        u("#loader").remove()
+
+        let insertPlace = document.querySelector(".photosInsert .photosList")
+        document.querySelector(".photosInsert").insertAdjacentHTML("beforeend", `<img id="loader" style="max-height: 8px;max-width: 36px;" src="/assets/packages/static/openvk/img/loading_mini.gif">`)
+        
+        let photos;
+
+        try {
+            photos = await API.Photos.getPhotos(page, Number(album))
+        } catch(e) {
+            document.querySelector(".photosInsert h4").innerHTML = tr("is_x_photos", -1)
+            insertPlace.innerHTML = "Invalid album"
+            console.error(e)
+            u("#loader").remove()
+            return;
+        }
+
+        document.querySelector(".photosInsert h4").innerHTML = tr("is_x_photos", photos.count)
+
+        let pagesCount = Math.ceil(Number(photos.count) / 24)
+        u("#loader").remove()
+
+        for(const photo of photos.items) {
+            let isAttached = (form.querySelector("input[name='photos']").value.includes(`${photo.owner_id}_${photo.id},`))
+
+            insertPlace.insertAdjacentHTML("beforeend", `
+            <div style="width: 14%;margin-bottom: 7px;margin-left: 13px;" class="album-photo" data-attachmentdata="${photo.owner_id}_${photo.id}" data-preview="${photo.photo_130}">          
+                <a href="/photo${photo.owner_id}_${photo.id}">
+                    <img class="album-photo--image" src="${photo.photo_130}" alt="..." style="${isAttached ? "background-color: #646464" : ""}">
+                </a>
+            </div>
+            `)
+        }
+
+        if(page < pagesCount) {
+            insertPlace.insertAdjacentHTML("beforeend", `
+            <div id="showMorePhotos" data-pagesCount="${pagesCount}" data-page="${page + 1}" style="width: 100%;text-align: center;background: #f0f0f0;height: 22px;padding-top: 9px;cursor:pointer;">
+                <span>more...</span>
+            </div>`)
+        }
+    }
+
+    insertPhotos(1)
+
+    let albums = await API.Photos.getAlbums(Number(e.currentTarget.dataset.club ?? 0))
+    
+    for(const alb of albums.items) {
+        let sel = document.querySelector(".ovk-diag-body #albumSelect")
+
+        sel.insertAdjacentHTML("beforeend", `<option value="${alb.id}">${ovk_proc_strtr(escapeHtml(alb.name), 20)}</option>`)
+    }
+
+    $(".photosInsert").on("click", "#showMorePhotos", (e) => {
+        u(e.currentTarget).remove()
+        insertPhotos(Number(e.currentTarget.dataset.page), document.querySelector(".topGrayBlock #albumSelect").value)
+    })
+
+    $(".topGrayBlock #albumSelect").on("change", (evv) => {
+        document.querySelector(".photosInsert .photosList").innerHTML = ""
+
+        insertPhotos(1, evv.currentTarget.value)
+    })
+
+    function insertAttachment(id) {
+        let photos = form.querySelector("input[name='photos']") 
+
+        if(!photos.value.includes(id + ",")) {
+            if(photos.value.split(",").length > 10) {
+                NewNotification(tr("error"), tr("max_attached_photos"))
+                return false
+            }
+
+            form.querySelector("input[name='photos']").value += (id + ",")
+
+            console.info(id + " attached")
+            return true
+        } else {
+            form.querySelector("input[name='photos']").value = form.querySelector("input[name='photos']").value.replace(id + ",", "")
+
+            console.info(id + " detached")
+            return false
+        }
+    }
+
+    $(".photosList").on("click", ".album-photo", (ev) => {
+        ev.preventDefault()
+
+        if(!insertAttachment(ev.currentTarget.dataset.attachmentdata)) {
+            u(form.querySelector(`.upload #aP[data-id='${ev.currentTarget.dataset.attachmentdata}']`)).remove()
+            ev.currentTarget.querySelector("img").style.backgroundColor = "white"
+        } else {
+            ev.currentTarget.querySelector("img").style.backgroundColor = "#646464"
+            let id = ev.currentTarget.dataset.attachmentdata
+
+            u(form.querySelector(`.upload`)).append(u(`
+                <div class="upload-item" id="aP" data-id="${ev.currentTarget.dataset.attachmentdata}">
+                    <a class="upload-delete">×</a>
+                    <img src="${ev.currentTarget.dataset.preview}">
+                </div>
+            `));
+
+            u(`.upload #aP[data-id='${ev.currentTarget.dataset.attachmentdata}'] .upload-delete`).on("click", () => {
+                form.querySelector("input[name='photos']").value = form.querySelector("input[name='photos']").value.replace(id + ",", "")
+                u(form.querySelector(`.upload #aP[data-id='${ev.currentTarget.dataset.attachmentdata}']`)).remove()
+            })
+        }
+    })
+
+    u("#fastFotosUplod").on("change", (evn) => {
+        let xhr = new XMLHttpRequest()
+        xhr.open("POST", "/photos/upload")
+
+        let formdata = new FormData()
+        let iterator = 0
+
+        for(const fille of evn.currentTarget.files) {
+            if(!fille.type.startsWith('image/')) {
+                continue;
+            }
+
+            if(fille.size > 5 * 1024 * 1024) {
+                continue;
+            }
+
+            if(evn.currentTarget.files.length >= 10) {
+                NewNotification(tr("error"), tr("max_attached_photos"))
+                return;
+            }
+
+            formdata.append("photo_"+iterator, fille)
+            iterator += 1
+        }
+        
+        xhr.onloadstart = () => {
+            evn.currentTarget.parentNode.insertAdjacentHTML("beforeend", `<img id="loader" style="max-height: 8px;max-width: 36px;" src="/assets/packages/static/openvk/img/loading_mini.gif">`)
+        }
+
+        xhr.onload = () => {
+            let result = JSON.parse(xhr.responseText)
+
+            u("#loader").remove()
+            if(result.success) {
+                for(const pht of result.photos) {
+                    let id = pht.owner + "_" + pht.vid
+
+                    if(!insertAttachment(id)) {
+                        return
+                    }
+                    
+                    u(form.querySelector(`.upload`)).append(u(`
+                        <div class="upload-item" id="aP" data-id="${pht.owner + "_" + pht.vid}">
+                            <a class="upload-delete">×</a>
+                            <img src="${pht.url}">
+                        </div>
+                    `));
+
+                    u(`.upload #aP[data-id='${pht.owner + "_" + pht.vid}'] .upload-delete`).on("click", () => {
+                        form.querySelector("input[name='photos']").value = form.querySelector("input[name='photos']").value.replace(id + ",", "")
+                        u(form.querySelector(`.upload #aP[data-id='${id}']`)).remove()
+                    })
+                }
+
+                u("body").removeClass("dimmed");
+                u(".ovk-diag-cont").remove();
+                document.querySelector("html").style.overflowY = "scroll"
+            } else {
+                // todo: https://vk.com/wall-32295218_78593
+                alert(result.flash.message)
+            }
+        }
+
+        formdata.append("hash", u("meta[name=csrf]").attr("value"))
+        formdata.append("count", iterator)
+        
+        xhr.send(formdata)
+    })
 })

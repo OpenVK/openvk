@@ -2,7 +2,7 @@
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Comment, Notifications\MentionNotification, Photo, Video, User, Topic, Post};
 use openvk\Web\Models\Entities\Notifications\CommentNotification;
-use openvk\Web\Models\Repositories\{Comments, Clubs, Videos};
+use openvk\Web\Models\Repositories\{Comments, Clubs, Videos, Photos};
 
 final class CommentPresenter extends OpenVKPresenter
 {
@@ -54,9 +54,6 @@ final class CommentPresenter extends OpenVKPresenter
         if ($entity instanceof Post && $entity->getWallOwner()->isBanned())
             $this->flashFail("err", tr("error"), tr("forbidden"));
 
-        if($_FILES["_vid_attachment"] && OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading'])
-            $this->flashFail("err", tr("error"), tr("video_uploads_disabled"));
-        
         $flags = 0;
         if($this->postParam("as_group") === "on" && !is_null($club) && $club->canBeModifiedBy($this->user->identity))
             $flags |= 0b10000000;
@@ -70,18 +67,22 @@ final class CommentPresenter extends OpenVKPresenter
             }
         }
         
-        # TODO move to trait
-        try {
-            $photo = NULL;
-            if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
-                $album = NULL;
-                if($wall > 0 && $wall === $this->user->id)
-                    $album = (new Albums)->getUserWallAlbum($wallOwner);
-                
-                $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album);
+        $photos = [];
+        if(!empty($this->postParam("photos"))) {
+            $un  = rtrim($this->postParam("photos"), ",");
+            $arr = explode(",", $un);
+
+            if(sizeof($arr) < 11) {
+                foreach($arr as $dat) {
+                    $ids = explode("_", $dat);
+                    $photo = (new Photos)->getByOwnerAndVID((int)$ids[0], (int)$ids[1]);
+    
+                    if(!$photo || $photo->isDeleted())
+                        continue;
+    
+                    $photos[] = $photo;
+                }
             }
-        } catch(ISE $ex) {
-            $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_file_too_big"));
         }
 
         $videos = [];
@@ -103,7 +104,7 @@ final class CommentPresenter extends OpenVKPresenter
             }
         }
         
-        if(empty($this->postParam("text")) && !$photo && !$video)
+        if(empty($this->postParam("text")) && sizeof($photos) < 1 && sizeof($videos) < 1)
             $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_empty"));
         
         try {
@@ -119,8 +120,8 @@ final class CommentPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_too_big"));
         }
         
-        if(!is_null($photo))
-            $comment->attach($photo);
+        foreach($photos as $photo)
+        	$comment->attach($photo);
         
         if(sizeof($videos) > 0)
             foreach($videos as $vid)

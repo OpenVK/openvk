@@ -222,15 +222,20 @@ final class PhotosPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction(true);
-        
-        if(is_null($this->queryParam("album")))
-            $this->flashFail("err", tr("error"), tr("error_adding_to_deleted"), 500, true);
-        
-        [$owner, $id] = explode("_", $this->queryParam("album"));
-        $album = $this->albums->get((int) $id);
+
+        if(is_null($this->queryParam("album"))) {
+            $album = $this->albums->getUserWallAlbum($this->user->identity);
+        } else {
+            [$owner, $id] = explode("_", $this->queryParam("album"));
+            $album = $this->albums->get((int) $id);
+        }
+
         if(!$album)
             $this->flashFail("err", tr("error"), tr("error_adding_to_deleted"), 500, true);
-        if(is_null($this->user) || !$album->canBeModifiedBy($this->user->identity))
+
+        # Для быстрой загрузки фоток из пикера фотографий нужен альбом, но юзер не может загружать фото
+        # в системные альбомы, так что так.
+        if(is_null($this->user) || !is_null($this->queryParam("album")) && !$album->canBeModifiedBy($this->user->identity))
             $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"), 500, true);
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -261,6 +266,9 @@ final class PhotosPresenter extends OpenVKPresenter
                 $this->flashFail("err", tr("no_photo"), tr("select_file"), 500, true);
             
             $photos = [];
+            if((int)$this->postParam("count") > 10)
+                $this->flashFail("err", tr("no_photo"), "ты еблан", 500, true);
+
             for($i = 0; $i < $this->postParam("count"); $i++) {
                 try {
                     $photo = new Photo;

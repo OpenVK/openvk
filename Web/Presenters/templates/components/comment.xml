@@ -24,7 +24,7 @@
                         
                         <div n:ifcontent class="attachments_b">
                             <div class="attachment" n:foreach="$comment->getChildren() as $attachment" data-localized-nsfw-text="{_nsfw_warning}">
-                                {include "attachment.xml", attachment => $attachment}
+                                {include "attachment.xml", attachment => $attachment, parent => $comment, parentType => "comment"}
                             </div>
                         </div>
                     </div>
