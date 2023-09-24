@@ -22,20 +22,6 @@ function trim(string) {
     return newStr;
 }
 
-/*function handleVideoTAreaUpdate(event, id) {
-    console.log(event, id);
-    let indicator = u("#post-buttons" + id + " .post-upload");
-    let file      = event.target.files[0];
-    if(typeof file === "undefined") {
-        indicator.attr("style", "display: none;");
-    } else {
-        u("span", indicator.nodes[0]).text("Видеолента: " + trim(file.name) + " (" + humanFileSize(file.size, false) + ")");
-        indicator.attr("style", "display: block;");
-    }
-
-    document.querySelector("#post-buttons" + id + " #wallAttachmentMenu").classList.add("hidden");
-}*/
-
 function initGraffiti(id) {
     let canvas = null;
     let msgbox = MessageBox(tr("draw_graffiti"), "<div id='ovkDraw'></div>", [tr("save"), tr("cancel")], [function() {
@@ -202,7 +188,7 @@ function OpenMiniature(e, photo, post, photo_id, type = "post") {
     */
     e.preventDefault();
 
-    if(u(".ovk-photo-view").length > 0) return false;
+    if(u(".ovk-photo-view").length > 0) u(".ovk-photo-view-dimmer").remove();
 
     // Значения для переключения фоток
 
@@ -221,7 +207,7 @@ function OpenMiniature(e, photo, post, photo_id, type = "post") {
                     <img src="/assets/packages/static/openvk/img/loading_mini.gif">
                 </text>
                 <div>
-                    <a id="ovk-photo-close">Закрыть</a>
+                    <a id="ovk-photo-close">${tr("close")}</a>
                 </div>
             </div>
             <center style="margin-bottom: 8pt;">
@@ -235,6 +221,7 @@ function OpenMiniature(e, photo, post, photo_id, type = "post") {
         </div>
     </div>`);
     u("body").addClass("dimmed").append(dialog);
+    document.querySelector("html").style.overflowY = "hidden"
     
     let button = u("#ovk-photo-close");
 
@@ -242,13 +229,14 @@ function OpenMiniature(e, photo, post, photo_id, type = "post") {
         let __closeDialog = () => {
             u("body").removeClass("dimmed");
             u(".ovk-photo-view-dimmer").remove();
+            document.querySelector("html").style.overflowY = "scroll"
         };
         
         __closeDialog();
     });
 
     function __reloadTitleBar() {
-        u("#photo_com_title_photos").last().innerHTML = "Фотография " + imagesIndex + " из " + imagesCount;
+        u("#photo_com_title_photos").last().innerHTML = imagesCount > 1 ? tr("photo_x_from_y", imagesIndex, imagesCount) : tr("photo");
     }
 
     function __loadDetails(photo_id, index) {
@@ -268,6 +256,20 @@ function OpenMiniature(e, photo, post, photo_id, type = "post") {
                             if(index == imagesIndex) {
                                 u(".ovk-photo-details").last().innerHTML = element.innerHTML;
                             }
+
+                            document.querySelectorAll(".ovk-photo-details .bsdn").forEach(bsdnInitElement)
+                            document.querySelectorAll(".ovk-photo-details script").forEach(scr => {
+                                // stolen from #953
+                                let newScr = document.createElement('script')
+
+                                if(scr.src) {
+                                    newScr.src = scr.src
+                                } else {
+                                    newScr.textContent = scr.textContent
+                                }
+
+                                document.querySelector(".ovk-photo-details").appendChild(newScr);
+                            })
                         }
                     ]
                 }

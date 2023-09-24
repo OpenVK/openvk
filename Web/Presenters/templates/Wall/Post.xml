@@ -35,7 +35,7 @@
         
         <a n:if="$canDelete ?? false" class="profile_link" style="display:block;width:96%;" href="/wall{$post->getPrettyId()}/delete">{_delete}</a>
         <a
-            n:if="$thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL) AND $post->getEditTime()"
+            n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL) AND $post->getEditTime()"
             style="display:block;width:96%;"
             class="profile_link"
             href="/admin/logs?type=1&obj_type=Post&obj_id={$post->getId()}"
