@@ -103,4 +103,12 @@ class Comment extends Post
 
         return $res;
     }
+
+    function canBeEditedBy(?User $user = NULL): bool
+    {
+        if(!$user)
+            return false;
+        
+        return $user->getId() == $this->getOwner(false)->getId();
+    }
 }

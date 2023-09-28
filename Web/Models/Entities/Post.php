@@ -262,6 +262,20 @@ class Post extends Postable
 
         return $res;
     }
+
+    function canBeEditedBy(?User $user = NULL): bool
+    {
+        if(!$user)
+            return false;
+
+        if($this->isDeactivationMessage() || $this->isUpdateAvatarMessage())
+            return false;
+
+        if($this->getTargetWall() > 0)
+            return $this->getPublicationTime()->timestamp() + WEEK > time() && $user->getId() == $this->getOwner(false)->getId();
+
+        return $user->getId() == $this->getOwner(false)->getId();
+    }
     
     use Traits\TRichText;
 }

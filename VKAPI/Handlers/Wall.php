@@ -120,7 +120,7 @@ final class Wall extends VKAPIRequestHandler
                 "post_type"    => "post",
                 "text"         => $post->getText(false),
                 "copy_history" => $repost,
-                "can_edit"     => $post->getOwner(false)->getId() == $this->getUser()->getId(),
+                "can_edit"     => $post->canBeEditedBy($this->getUser()),
                 "can_delete"   => $post->canBeDeletedBy($this->getUser()),
                 "can_pin"      => $post->canBePinnedBy($this->getUser()),
                 "can_archive"  => false, # TODO MAYBE
@@ -295,7 +295,7 @@ final class Wall extends VKAPIRequestHandler
                     "post_type"    => "post",
                     "text"         => $post->getText(false),
                     "copy_history" => $repost,
-                    "can_edit"     => $post->getOwner(false)->getId() == $this->getUser()->getId(),
+                    "can_edit"     => $post->canBeEditedBy($this->getUser()),
                     "can_delete"   => $post->canBeDeletedBy($user),
                     "can_pin"      => $post->canBePinnedBy($user),
                     "can_archive"  => false, # TODO MAYBE
@@ -805,7 +805,7 @@ final class Wall extends VKAPIRequestHandler
         if(empty($message) && empty($attachments))
             $this->fail(100, "Required parameter 'message' missing.");
 
-        if($post->getOwner(false)->getId() != $this->getUser()->getId())
+        if(!$post->canBeEditedBy($this->getUser()))
             $this->fail(7, "Access to editing denied");
 
         if(!empty($message))
@@ -814,6 +814,7 @@ final class Wall extends VKAPIRequestHandler
         $post->setEdited(time());
         $post->save(true);
 
+        # todo добавить такое в веб версию
         if(!empty($attachments)) {
             $attachs = parseAttachments($attachments);
             $newAttachmentsCount = sizeof($attachs);
@@ -849,8 +850,8 @@ final class Wall extends VKAPIRequestHandler
         if(!$comment || $comment->isDeleted())
             $this->fail(102, "Invalid comment");
 
-        if($comment->getOwner()->getId() != $this->getUser()->getId())
-            $this->fail(15, "Access to comment denied");
+        if(!$comment->canBeEditedBy($this->getUser()))
+            $this->fail(15, "Access to editing comment denied");
         
         if(!empty($message))
             $comment->setContent($message);

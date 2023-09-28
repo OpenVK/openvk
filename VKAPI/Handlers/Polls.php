@@ -114,6 +114,9 @@ final class Polls extends VKAPIRequestHandler
         if(!$poll)
             $this->fail(251, "Invalid poll");
 
+        if($poll->isAnonymous())
+            $this->fail(251, "Access denied: poll is anonymous.");
+
         $voters = array_slice($poll->getVoters($answer_ids, 1, $offset + $count), $offset);
         $res = (object)[
             "answer_id" => $answer_ids,
