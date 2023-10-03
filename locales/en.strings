@@ -347,6 +347,7 @@
 "albums" = "Albums";
 "album" = "Album";
 "photos" = "photos";
+"photo" = "Photo";
 "create_album" = "Create album";
 "edit_album" = "Edit album";
 "edit_photo" = "Edit photo";
@@ -412,6 +413,20 @@
 "tip" = "Tip";
 "tip_ctrl" = "to select multiple photos at once, hold down the Ctrl key when selecting files in Windows or the CMD key in Mac OS.";
 "album_poster" = "Album poster";
+"select_photo" = "Select photos";
+"upload_new_photo" = "Upload new photo";
+
+"is_x_photos_zero" = "Just zero photos.";
+"is_x_photos_one" = "Just one photo.";
+"is_x_photos_few" = "Just $1 photos.";
+"is_x_photos_many" = "Just $1 photos.";
+"is_x_photos_other" = "Just $1 photos.";
+
+"all_photos" = "All photos";
+"error_uploading_photo" = "Error when uploading photo. Error text: ";
+"too_many_photos" = "Too many photos.";
+
+"photo_x_from_y" = "Photo $1 from $2";
 
 /* Notes */
 
@@ -697,6 +712,7 @@
 "selecting_video" = "Selecting videos";
 "upload_new_video" = "Upload new video";
 "max_attached_videos" = "Max is 10 videos";
+"max_attached_photos" = "Max is 10 photos";
 "no_videos" = "You don't have uploaded videos.";
 "no_videos_results" = "No results.";
 

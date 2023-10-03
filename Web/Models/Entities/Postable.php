@@ -152,7 +152,7 @@ abstract class Postable extends Attachable
         throw new ISE("Setting virtual id manually is forbidden");
     }
     
-    function save(): void
+    function save(?bool $log = false): void
     {
         $vref = $this->upperNodeReferenceColumnName;
         
@@ -171,7 +171,7 @@ abstract class Postable extends Attachable
             $this->stateChanges("edited", time());
         }*/
         
-        parent::save();
+        parent::save($log);
     }
     
     use Traits\TAttachmentHost;
