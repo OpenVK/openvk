@@ -54,7 +54,7 @@ final class GroupPresenter extends OpenVKPresenter
                     $club->save();
                 } catch(\PDOException $ex) {
                     if($ex->getCode() == 23000)
-                        $this->flashFail("err", "Ошибка", "Произошла ошибка на стороне сервера. Обратитесь к системному администратору.");
+                        $this->flashFail("err", tr("error"), tr("error_on_server_side"));
                     else
                         throw $ex;
                 }
@@ -62,7 +62,7 @@ final class GroupPresenter extends OpenVKPresenter
                 $club->toggleSubscription($this->user->identity);
                 $this->redirect("/club" . $club->getId());
             }else{
-                $this->flashFail("err", "Ошибка", "Вы не ввели название группы.");
+                $this->flashFail("err", tr("error"), tr("error_no_group_name"));
             }
         }
     }
@@ -132,7 +132,7 @@ final class GroupPresenter extends OpenVKPresenter
             $this->notFound();
         
         if(!$club->canBeModifiedBy($this->user->identity ?? NULL))
-            $this->flashFail("err", "Ошибка доступа", "У вас недостаточно прав, чтобы изменять этот ресурс.");
+            $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
 
         if(!is_null($hidden)) {
             if($club->getOwner()->getId() == $user->getId()) {
@@ -150,9 +150,9 @@ final class GroupPresenter extends OpenVKPresenter
             }
 
             if($hidden) {
-                $this->flashFail("succ", "Операция успешна", "Теперь " . $user->getCanonicalName() . " будет показываться как обычный подписчик всем кроме других администраторов");
+                $this->flashFail("succ", tr("success_action"), tr("x_is_now_hidden", $user->getCanonicalName()));
             } else {
-                $this->flashFail("succ", "Операция успешна", "Теперь все будут знать про то что " . $user->getCanonicalName() . " - администратор");
+                $this->flashFail("succ", tr("success_action"), tr("x_is_now_showed", $user->getCanonicalName()));
             }
         } elseif($removeComment) {
             if($club->getOwner()->getId() == $user->getId()) {
@@ -164,11 +164,11 @@ final class GroupPresenter extends OpenVKPresenter
                 $manager->save();
             }
 
-            $this->flashFail("succ", "Операция успешна", "Комментарий к администратору удален");
+            $this->flashFail("succ", tr("success_action"), tr("comment_is_deleted"));
         } elseif($comment) {
             if(mb_strlen($comment) > 36) {
                 $commentLength = (string) mb_strlen($comment);
-                $this->flashFail("err", "Ошибка", "Комментарий слишком длинный ($commentLength символов вместо 36 символов)");
+                $this->flashFail("err", tr("error"), tr("comment_is_too_long", $commentLength));
             }
 
             if($club->getOwner()->getId() == $user->getId()) {
@@ -180,16 +180,16 @@ final class GroupPresenter extends OpenVKPresenter
                 $manager->save();
             }
 
-            $this->flashFail("succ", "Операция успешна", "Комментарий к администратору изменён");
+            $this->flashFail("succ", tr("success_action"), tr("comment_is_changed"));
         }else{
             if($club->canBeModifiedBy($user)) {
                 $club->removeManager($user);
-                $this->flashFail("succ", "Операция успешна", $user->getCanonicalName() . " более не администратор.");
+                $this->flashFail("succ", tr("success_action"), tr("x_no_more_admin", $user->getCanonicalName()));
             } else {
                 $club->addManager($user);
                 
                 (new ClubModeratorNotification($user, $club, $this->user->identity))->emit();
-                $this->flashFail("succ", "Операция успешна", $user->getCanonicalName() . " назначен(а) администратором.");
+                $this->flashFail("succ", tr("success_action"), tr("x_is_admin", $user->getCanonicalName()));
             }
         }
         
@@ -245,7 +245,7 @@ final class GroupPresenter extends OpenVKPresenter
                     (new Albums)->getClubAvatarAlbum($club)->addPhoto($photo);
                 } catch(ISE $ex) {
                     $name = $album->getName();
-                    $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию.");
+                    $this->flashFail("err", tr("error"), tr("error_when_uploading_photo"));
                 }
             }
             
@@ -253,12 +253,12 @@ final class GroupPresenter extends OpenVKPresenter
                 $club->save();
             } catch(\PDOException $ex) {
                 if($ex->getCode() == 23000)
-                    $this->flashFail("err", "Ошибка", "Произошла ошибка на стороне сервера. Обратитесь к системному администратору.");
+                    $this->flashFail("err", tr("error"), tr("error_on_server_side"));
                 else
                     throw $ex;
             }
             
-            $this->flash("succ", "Изменения сохранены", "Новые данные появятся в вашей группе.");
+            $this->flash("succ", tr("changes_saved"), tr("new_changes_desc"));
         }
     }
     
@@ -298,7 +298,7 @@ final class GroupPresenter extends OpenVKPresenter
 
             } catch(ISE $ex) {
                 $name = $album->getName();
-                $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию.");
+                $this->flashFail("err", tr("error"), tr("error_when_uploading_photo"));
             }
         }
         $this->returnJson([
@@ -350,7 +350,7 @@ final class GroupPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         
         if(!eventdb())
-            $this->flashFail("err", "Ошибка подключения", "Не удалось подключится к службе телеметрии.");
+            $this->flashFail("err", tr("connection_error"), tr("connection_error_desc"));
         
         $club = $this->clubs->get($id);
         if(!$club->canBeModifiedBy($this->user->identity))

@@ -245,7 +245,7 @@ class Post extends Postable
         $this->unwire();
         $this->save();
     }
-
+  
     function toNotifApiStruct()
     {
         $res = (object)[];
@@ -262,7 +262,7 @@ class Post extends Postable
 
         return $res;
     }
-
+    
     function canBeEditedBy(?User $user = NULL): bool
     {
         if(!$user)

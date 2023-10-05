@@ -11,7 +11,7 @@ class Comment extends Post
     
     function getPrettyId(): string
     {
-        return $this->getRecord()->id;
+        return (string)$this->getRecord()->id;
     }
     
     function getVirtualId(): int
@@ -90,7 +90,7 @@ class Comment extends Post
     {
         return "/wall" . $this->getTarget()->getPrettyId() . "#_comment" . $this->getId();
     }
-
+  
     function toNotifApiStruct()
     {
         $res = (object)[];
@@ -103,7 +103,7 @@ class Comment extends Post
 
         return $res;
     }
-
+  
     function canBeEditedBy(?User $user = NULL): bool
     {
         if(!$user)
