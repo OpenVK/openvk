@@ -5,8 +5,10 @@
             <td valign="top">
                 <div class="video-preview">
                     <a href="/video{$video->getPrettyId()}">
-                        <img src="{$video->getThumbnailURL()}"
-                        style="max-width: 170px; max-height: 127px; margin: auto;" >
+                        <div class="video-preview">
+                            <img src="{$video->getThumbnailURL()}"
+                            style="max-width: 170px; max-height: 127px; margin: auto;" >
+                        </div>
                     </a>
                 </div>
             </td>
@@ -33,5 +35,5 @@
             </td>
         </tr>
     </tbody>
-    </table
+</table>
 {/block}
