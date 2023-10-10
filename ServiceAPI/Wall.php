@@ -2,8 +2,6 @@
 namespace openvk\ServiceAPI;
 use openvk\Web\Models\Entities\Post;
 use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Entities\Notifications\PostAcceptedNotification;
-use openvk\Web\Models\Repositories\{Posts, Notes};
 use openvk\Web\Models\Repositories\{Posts, Notes, Videos};
 
 class Wall implements Handler
@@ -101,67 +99,7 @@ class Wall implements Handler
 
         $resolve($arr);
     }
-  
-    function declinePost(int $id, callable $resolve, callable $reject)
-    {
-        $post = $this->posts->get($id);
-        if(!$post || $post->isDeleted())
-            $reject(11, "No post with id=$id");
-        
-        if($post->getSuggestionType() == 0)
-            $reject(19, "Post is not suggested");
-
-        if($post->getSuggestionType() == 2)
-            $reject(10, "Post is already declined");
-
-        if(!$post->canBePinnedBy($this->user))
-            $reject(22, "Access to post denied");
-
-        $post->setSuggested(2);
-        $post->setDeleted(1);
-        $post->save();
-
-        $resolve($this->posts->getSuggestedPostsCount($post->getWallOwner()->getId()));
-    }
-
-    function acceptPost(int $id, bool $sign, string $content, callable $resolve, callable $reject)
-    {
-        $post = $this->posts->get($id);
-        if(!$post || $post->isDeleted())
-            $reject(11, "No post with id=$id");
-        
-        if($post->getSuggestionType() == 0)
-            $reject(19, "Post is not suggested");
-
-        if($post->getSuggestionType() == 2)
-            $reject(10, "Post is declined");
-
-        if(!$post->canBePinnedBy($this->user))
-            $reject(22, "Access to post denied");
-
-        $author = $post->getOwner();
-        $flags = 0;
-        $flags |= 0b10000000;
-
-        if($sign)
-            $flags |= 0b01000000;
-        
-        $post->setSuggested(0);
-        $post->setCreated(time());
-        $post->setApi_Source_Name(NULL);
-        $post->setFlags($flags);
-
-        if(mb_strlen($content) > 0)
-            $post->setContent($content);
-        
-        $post->save();
-
-        if($author->getId() != $this->user->getId())
-            (new PostAcceptedNotification($author, $post, $post->getWallOwner()))->emit();
     
-        $resolve(["id" => $post->getPrettyId(), "new_count" => $this->posts->getSuggestedPostsCount($post->getWallOwner()->getId())]);
-    }
-  
     function getVideos(int $page = 1, callable $resolve, callable $reject)
     {
         $videos = $this->videos->getByUser($this->user, $page, 8);

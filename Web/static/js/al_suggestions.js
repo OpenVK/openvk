@@ -1,3 +1,32 @@
+function endSuggestAction(new_count, post_node) {
+    if(document.getElementById("cound") != null)
+        document.getElementById("cound").innerHTML = tr("suggested_posts_in_group", new_count)
+    else
+        document.getElementById("cound_r").innerHTML = tr("suggested_by_everyone", new_count)
+        
+    if(document.querySelector("object a[href='"+location.pathname+"'] b") != null) {
+        document.querySelector("object a[href='"+location.pathname+"'] b").innerHTML = new_count
+        
+        if(new_count < 1) {
+            u("object a[href='"+location.pathname+"']").remove()
+        }
+    }
+
+    if(new_count < 1 && document.querySelector(".sugglist") != null) {
+        $(".sugglist a").click()
+        $(".sugglist").remove()
+    }
+
+    post_node.style.transition = "opacity 300ms ease-in-out";
+    post_node.style.opacity = "0";
+    post_node.classList.remove("post")
+
+    setTimeout(() => {post_node.outerHTML = ""}, 300)
+
+    if(document.querySelectorAll("#postz .post").length < 1 && new_count > 0 && document.querySelector(".paginator") != null)
+        loadMoreSuggestedPosts()
+}
+
 // "Опубликовать запись"
 $(document).on("click", "#publish_post", async (e) => {
     let id = Number(e.currentTarget.dataset.id)
@@ -11,178 +40,122 @@ $(document).on("click", "#publish_post", async (e) => {
         let id = Number(e.currentTarget.dataset.id)
         let post;
 
-        try {
-            e.currentTarget.classList.add("loaded")
-            e.currentTarget.setAttribute("value", "")
-            e.currentTarget.setAttribute("id", "")
-            post = await API.Wall.acceptPost(id, document.getElementById("signatr").checked, document.getElementById("pooblish").value)
-        } catch(ex) {
-            switch(ex.code) {
-                case 11:
-                    MessageBox(tr("error"), tr("error_accepting_invalid_post"), [tr("ok")], [Function.noop]);
-                    break;
-                case 19:
-                    MessageBox(tr("error"), tr("error_accepting_not_suggested_post"), [tr("ok")], [Function.noop]);
-                    break;
-                case 10:
-                    MessageBox(tr("error"), tr("error_accepting_declined_post"), [tr("ok")], [Function.noop]);
-                    break;
-                case 22:
-                    MessageBox(tr("error"), "Access denied", [tr("ok")], [Function.noop]);
-                    break;
-                default:
-                    MessageBox(tr("error"), "Unknown error "+ex.code+": "+ex.message, [tr("ok")], [Function.noop]);
-                    break;
-            }
+        let formData = new FormData()
+        formData.append("id", id)
+        formData.append("sign", document.getElementById("signatr").checked ? 1 : 0)
+        formData.append("new_content", document.getElementById("pooblish").value)
+        formData.append("hash", u("meta[name=csrf]").attr("value"))
 
-            e.currentTarget.setAttribute("value", tr("publish_suggested"))
-            e.currentTarget.classList.remove("loaded")
-            e.currentTarget.setAttribute("id", "publish_post")
-            return 0;
-        }
+        ky.post("/wall/accept", {
+            hooks: {
+                beforeRequest: [
+                    (_request) => {
+                        e.currentTarget.classList.add("loaded")
+                        e.currentTarget.setAttribute("value", "")
+                        e.currentTarget.setAttribute("id", "")
+                    }
+                ],
+                afterResponse: [
+                    async (_request, _options, response) => {
+                        json = await response.json()
 
-        NewNotification(tr("suggestion_succefully_published"), tr("suggestion_press_to_go"), null, () => {window.location.assign("/wall" + post.id)});
-        
-        if(document.getElementById("cound") != null)
-            document.getElementById("cound").innerHTML = tr("suggested_posts_in_group", post.new_count)
-        else
-            document.getElementById("cound_r").innerHTML = tr("suggested_by_everyone", post.new_count)
+                        if(json.success) {
+                            NewNotification(tr("suggestion_succefully_published"), tr("suggestion_press_to_go"), null, () => {window.location.assign("/wall" + json.id)});
+                            endSuggestAction(json.new_count, e.currentTarget.closest("table"))
+                        } else {
+                            MessageBox(tr("error"), json.flash.message, [tr("ok")], [Function.noop]);
+                        }
 
-        if(document.querySelector("object a[href='"+location.pathname+"'] b") != null) {
-            document.querySelector("object a[href='"+location.pathname+"'] b").innerHTML = post.new_count
-
-            if(post.new_count < 1) {
-                u("object a[href='"+location.pathname+"']").remove()
-            }
-        }
-
-        if(post.new_count < 1 && document.querySelector(".sugglist") != null) {
-            $(".sugglist a").click()
-            $(".sugglist").remove()
-        }
-
-        let post_node = e.currentTarget.closest("table")
-        post_node.style.transition = "opacity 300ms ease-in-out";
-        post_node.style.opacity = "0";
-        post_node.classList.remove("post")
-
-        setTimeout(() => {post_node.outerHTML = ""}, 300)
-
-        if(document.querySelectorAll("#postz .post").length < 1 && post.new_count > 0 && document.querySelector(".paginator") != null)
-            loadMoreSuggestedPosts()
+                        e.currentTarget.setAttribute("value", tr("publish_suggested"))
+                        e.currentTarget.classList.remove("loaded")
+                        e.currentTarget.setAttribute("id", "publish_post")
+                    }
+                ]
+            },
+            body: formData
+        })
     }), Function.noop]);
 
-    document.getElementById("pooblish").innerHTML = e.currentTarget.closest("table").querySelector(".really_text").innerHTML.replace(/(<([^>]+)>)/gi, '')
+    document.getElementById("pooblish").innerHTML = e.currentTarget.closest("table").querySelector(".really_text").dataset.text
     document.querySelector(".ovk-diag-body").style.padding = "9px";
 })
 
 // "Отклонить"
 $(document).on("click", "#decline_post", async (e) => {
     let id = Number(e.currentTarget.dataset.id)
-    let post;
 
-    try {
-        e.currentTarget.classList.add("loaded")
-        e.currentTarget.setAttribute("value", "")
-        e.currentTarget.setAttribute("id", "")
-        post = await API.Wall.declinePost(id)
-    } catch(ex) {
-        switch(ex.code) {
-            case 11:
-                MessageBox(tr("error"), tr("error_declining_invalid_post"), [tr("ok")], [Function.noop]);
-                break;
-            case 19:
-                MessageBox(tr("error"), tr("error_declining_not_suggested_post"), [tr("ok")], [Function.noop]);
-                break;
-            case 10:
-                MessageBox(tr("error"), tr("error_declining_declined_post"), [tr("ok")], [Function.noop]);
-                break;
-            case 22:
-                MessageBox(tr("error"), "Access denied", [tr("ok")], [Function.noop]);
-                break;
-            default:
-                MessageBox(tr("error"), "Unknown error "+ex.code+": "+ex.message, [tr("ok")], [Function.noop]);
-                break;
-        }
+    let formData = new FormData()
+    formData.append("id", id)
+    formData.append("hash", u("meta[name=csrf]").attr("value"))
 
-        e.currentTarget.setAttribute("value", tr("decline_suggested"))
-        e.currentTarget.setAttribute("id", "decline_post")
-        e.currentTarget.classList.remove("loaded")
-        return 0;
-    }
-    
-    //NewNotification(tr("suggestion_succefully_declined"), "", null);
+    ky.post("/wall/decline", {
+        hooks: {
+            beforeRequest: [
+                (_request) => {
+                    e.currentTarget.classList.add("loaded")
+                    e.currentTarget.setAttribute("value", "")
+                    e.currentTarget.setAttribute("id", "")
+                }
+            ],
+            afterResponse: [
+                async (_request, _options, response) => {
+                    json = await response.json()
 
-    let post_node = e.currentTarget.closest("table")
-    post_node.style.transition = "opacity 300ms ease-in-out";
-    post_node.style.opacity = "0";
-    post_node.classList.remove("post")
+                    if(json.success) {
+                        endSuggestAction(json.new_count, e.currentTarget.closest("table"))
+                    } else {
+                        MessageBox(tr("error"), json.flash.message, [tr("ok")], [Function.noop]);
+                    }
 
-    setTimeout(() => {post_node.outerHTML = ""}, 300)
-
-    if(document.getElementById("cound") != null)
-        document.getElementById("cound").innerHTML = tr("suggested_posts_in_group", post)
-    else
-        document.getElementById("cound_r").innerHTML = tr("suggested_by_everyone", post)
-    
-    if(document.querySelector("object a[href='"+location.pathname+"'] b") != null) {
-        document.querySelector("object a[href='"+location.pathname+"'] b").innerHTML = post
-
-        if(post < 1) {
-            u("object a[href='"+location.pathname+"']").remove()
-        }
-    }
-
-    if(post < 1 && document.querySelector(".sugglist") != null) {
-        $(".sugglist a").click()
-        $(".sugglist").remove()
-    }
-    
-    if(document.querySelectorAll("#postz .post").length < 1 && post > 0 && document.querySelector(".paginator") != null)
-        loadMoreSuggestedPosts()
+                    e.currentTarget.setAttribute("value", tr("decline_suggested"))
+                    e.currentTarget.setAttribute("id", "decline_post")
+                    e.currentTarget.classList.remove("loaded")
+                }
+            ]
+        },
+        body: formData
+    })
 })
 
-function loadMoreSuggestedPosts()
-{
-    let xhr = new XMLHttpRequest
+function loadMoreSuggestedPosts() {
     let link = location.href
 
     if(!link.includes("/suggested")) {
         link += "/suggested"
     }
 
-    xhr.open("GET", link)
+    ky.get(link, {
+        hooks: {
+            beforeRequest: [
+                (_request) => {
+                    document.getElementById("postz").innerHTML = `<img src="/assets/packages/static/openvk/img/loading_mini.gif">`
+                }
+            ],
+            afterResponse: [
+                async (_request, _options, response) => {
+                    let text = await response.text()
+                    let parser = new DOMParser()
+                    let body = parser.parseFromString(text, "text/html")
 
-    xhr.onloadstart = () => {
-        document.getElementById("postz").innerHTML = `<img src="/assets/packages/static/openvk/img/loading_mini.gif">`
-    }
+                    if(body.querySelectorAll(".post").length < 1) {
+                        let url = new URL(location.href)
+                        url.searchParams.set("p", url.searchParams.get("p") - 1)
+            
+                        if(url.searchParams.get("p") < 1) {
+                            return 0;
+                        }
 
-    xhr.onload = () => {
-        let parser = new DOMParser()
-        let body   = parser.parseFromString(xhr.responseText, "text/html").getElementById("postz")
+                        history.pushState({}, "", url)
+            
+                        loadMoreSuggestedPosts()
+                    }
 
-        if(body.querySelectorAll(".post").length < 1) {
-            let url = new URL(location.href)
-            url.searchParams.set("p", url.searchParams.get("p") - 1)
-
-            if(url.searchParams.get("p") < 1) {
-                return 0;
-            }
-
-            // OVK AJAX ROUTING ??????????
-            history.pushState({}, "", url)
-
-            loadMoreSuggestedPosts()
+                    body.querySelectorAll(".bsdn").forEach(bsdnInitElement)
+                    document.getElementById("postz").innerHTML = body.getElementById("postz").innerHTML
+                }
+            ]
         }
-
-        document.getElementById("postz").innerHTML = body.innerHTML
-    }
-
-    xhr.onerror = () => {
-        document.getElementById("postz").innerHTML = tr("error_loading_suggest")
-    }
-
-    xhr.send()
+    })
 }
 
 // нажатие на "x предложенных записей"
@@ -198,29 +171,24 @@ $(document).on("click", ".sugglist a", (e) => {
 
         // если ещё ничего не подгружалось
         if(document.querySelector(".insertThere").innerHTML == "") {
-            let xhr = new XMLHttpRequest
-            xhr.open("GET", e.currentTarget.href)
-            
-            xhr.onloadstart = () => {
-                // лоадер
-                document.querySelector(".insertThere").insertAdjacentHTML("afterbegin", `<img src="/assets/packages/static/openvk/img/loading_mini.gif">`)
-            }
-
-            xhr.onload = () => {
-                let parser = new DOMParser
-                let result = parser.parseFromString(xhr.responseText, 'text/html').querySelector(".infContainer")
-                // парсинг результата и вставка постов
-                document.querySelector(".insertThere").innerHTML = result.innerHTML
-            }
-
-            function errorl() {
-                document.getElementById("postz").innerHTML = tr("error_loading_suggest")
-            }
-        
-            xhr.onerror = () => {errorl()}
-            xhr.ontimeout = () => {errorl()}
-            
-            xhr.send()
+            ky(e.currentTarget.href, {
+                hooks: {
+                    beforeRequest: [
+                        (_request) => {
+                            document.querySelector(".insertThere").insertAdjacentHTML("afterbegin", `<img src="/assets/packages/static/openvk/img/loading_mini.gif">`)
+                        }
+                    ],
+                    afterResponse: [
+                        async (_request, _options, response) => {
+                            let parser = new DOMParser
+                            let result = parser.parseFromString(await response.text(), 'text/html').querySelector(".infContainer")
+                            
+                            result.querySelectorAll(".bsdn").forEach(bsdnInitElement)
+                            document.querySelector(".insertThere").innerHTML = result.innerHTML
+                        }
+                    ]
+                }
+            })
         }
     } else {
         // переключение на нормальную стену
@@ -232,37 +200,32 @@ $(document).on("click", ".sugglist a", (e) => {
     }
 })
 
-// нажатие на пагинатор у постов пъедложки
+// нажатие на пагинатор у постов предложки
 $(document).on("click", "#postz .paginator a", (e) => {
     e.preventDefault()
     
-    let xhr = new XMLHttpRequest
-    xhr.open("GET", e.currentTarget.href)
-
-    xhr.onloadstart = () => {
-        if(document.querySelector(".sugglist") != null) {
-            document.querySelector(".sugglist").scrollIntoView({behavior: "smooth"})
-        } else {
-            document.querySelector(".infContainer").scrollIntoView({behavior: "smooth"})
+    ky(e.currentTarget.href, {
+        hooks: {
+            beforeRequest: [
+                (_request) => {
+                    if(document.querySelector(".sugglist") != null) {
+                        document.querySelector(".sugglist").scrollIntoView({behavior: "smooth"})
+                    } else {
+                        document.querySelector(".infContainer").scrollIntoView({behavior: "smooth"})
+                    }
+            
+                    setTimeout(() => {document.getElementById("postz").innerHTML = `<img src="/assets/packages/static/openvk/img/loading_mini.gif">`}, 500)
+                }
+            ],
+            afterResponse: [
+                async (_request, _options, response) => {
+                    let result = (new DOMParser).parseFromString(await response.text(), "text/html").querySelector(".infContainer")
+                    result.querySelectorAll(".bsdn").forEach(bsdnInitElement)
+            
+                    document.getElementById("postz").innerHTML = result.innerHTML
+                    history.pushState({}, "", e.currentTarget.href)
+                }
+            ]
         }
-        // после того как долистали наверх, добавляем лоадер
-        setTimeout(() => {document.getElementById("postz").innerHTML = `<img src="/assets/packages/static/openvk/img/loading_mini.gif">`}, 500)
-    }
-
-    xhr.onload = () => {
-        // опять парс
-        let result = (new DOMParser).parseFromString(xhr.responseText, "text/html").querySelector(".infContainer")
-        // опять вставка
-        document.getElementById("postz").innerHTML = result.innerHTML
-        history.pushState({}, "", e.currentTarget.href)
-    }
-
-    function errorl() {
-        document.getElementById("postz").innerHTML = tr("error_loading_suggest")
-    }
-
-    xhr.onerror = () => {errorl()}
-    xhr.ontimeout = () => {errorl()}
-
-    xhr.send()
+    })
 })

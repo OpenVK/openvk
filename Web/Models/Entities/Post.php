@@ -264,6 +264,12 @@ class Post extends Postable
 
         if($this->getTargetWall() > 0)
             return $this->getPublicationTime()->timestamp() + WEEK > time() && $user->getId() == $this->getOwner(false)->getId();
+        else {
+            if($this->isPostedOnBehalfOfGroup())
+                return $this->getWallOwner()->canBeModifiedBy($user);
+            else
+                return $user->getId() == $this->getOwner(false)->getId();
+        }
 
         return $user->getId() == $this->getOwner(false)->getId();
     }

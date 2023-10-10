@@ -141,6 +141,10 @@ routes:
       handler: "Wall->delete"
     - url: "/wall{num}_{num}/pin"
       handler: "Wall->pin"
+    - url: "/wall/accept"
+      handler: "Wall->accept"
+    - url: "/wall/decline"
+      handler: "Wall->decline"
     - url: "/blob_{text}/{?path}.{text}"
       handler: "Blob->file"
       placeholders:
