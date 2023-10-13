@@ -1737,11 +1737,11 @@
 "no_found" = "Нічого не знайдено";
 "operation_successfully" = "Операцію успішно виконано";
 
-"unknown_error" = "Неизвестная ошибка";
-"templates" = "Шаблоны";
+"unknown_error" = "Невідома помилка";
+"templates" = "Шаблони";
 "type" = "Тип";
-"count" = "Количество";
-"time" = "Время";
+"count" = "Кількість";
+"time" = "Час";
 
 "roll_back" = "откатить";
 "roll_backed" = "откачено";
