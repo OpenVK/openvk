@@ -35,6 +35,11 @@
     {* ref: https://archive.li/P32em *}
     
     {include "bigplayer.xml"}
+
+    <input n:if="$mode == 'list'" type="hidden" name="bigplayer_context" data-type="entity_audios" data-entity="{$ownerId}" data-page="{$page}">
+    <input n:if="$mode == 'new'" type="hidden" name="bigplayer_context" data-type="new_audios" data-entity="0" data-page="1">
+    <input n:if="$mode == 'popular'" type="hidden" name="bigplayer_context" data-type="popular_audios" data-entity="0" data-page="1">
+    
     <div style="width: 100%;display: flex;margin-bottom: -10px;">
         <div style="width: 74%;" n:if="$mode != 'playlists'">
             <div style="padding: 8px;">
@@ -47,7 +52,7 @@
                     </div>
                 </div>
 
-                <div>
+                <div n:if="$mode != 'new' && $mode != 'popular'">
                     {include "../components/paginator.xml", conf => (object) [
                         "page"     => $page,
                         "count"    => $audiosCount,

@@ -12,12 +12,16 @@
     {include "bigplayer.xml"}
 
     {php $count = $playlist->size()}
+    
+    <input type="hidden" name="bigplayer_context" data-type="playlist_context" data-entity="{$playlist->getId()}" data-page="{$page}">
     <div class="playlistBlock">
         <div class="playlistCover" style="float: left;">
             <img src="{$playlist->getCoverURL()}">
 
-            <div class="profile_links">
-                <a id="profile_link">{_edit_playlist}</a>
+            <div class="profile_links" style="width: 139px;">
+                <a id="profile_link" style="width: 98%;" n:if="$canEdit">{_edit_playlist}</a>
+                <a id="profile_link" style="width: 98%;" id="bookmarkPlaylist" n:if="$isBookmarked">{_unbookmark}</a>
+                <a id="profile_link" style="width: 98%;" id="unbookmarkPlaylist" n:if="!$isBookmarked">{_bookmark}</a>
             </div>
         </div>
 

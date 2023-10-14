@@ -298,7 +298,9 @@ final class AudioPresenter extends OpenVKPresenter
             $this->notFound();
 
         $this->template->playlist = $playlist;
+        $this->template->page = (int)($this->queryParam("p") ?? 0);
         $this->template->audios = iterator_to_array($playlist->getAudios());
+        $this->template->isBookmarked = $playlist->isBookmarkedBy($this->user->identity);
         $this->template->isMy = $playlist->getOwner()->getId() === $this->user->id;
         $this->template->canEdit = ($this->template->isMy || ($playlist->getOwner() instanceof Club && $playlist->getOwner()->canBeModifiedBy($this->user->identity)));
         $this->template->edit = $this->queryParam("act") === "edit";
@@ -452,5 +454,87 @@ final class AudioPresenter extends OpenVKPresenter
     function renderPlaylists(int $owner)
     {
         $this->renderList($owner, "playlists");
+    }
+
+    function renderApiGetContext()
+    {
+        $this->assertUserLoggedIn();
+
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+            header("HTTP/1.1 405 Method Not Allowed");
+            exit("<select><select><select><select>");
+        }
+
+        $ctx_type = $this->postParam("context");
+        $ctx_id = (int)($this->postParam("context_entity"));
+        $page = (int)($this->postParam("page") ?? 1);
+        $perPage = 10;
+
+        switch($ctx_type) {
+            default:
+            case "entity_audios":
+                if($ctx_id > 0) {
+                    $entity = (new Users)->get($ctx_id);
+
+                    if(!$entity || !$entity->getPrivacyPermission("audios.read", $this->user->identity))
+                        $this->flashFail("err", "Error", "Can't get queue", 80, true);
+
+                    $audios = $this->audios->getByUser($entity, $page, $perPage);
+                    $audiosCount = $this->audios->getUserCollectionSize($entity);
+                } else {
+                    $entity = (new Clubs)->get(abs($ctx_id));
+
+                    if(!$entity || $entity->isBanned())
+                        $this->flashFail("err", "Error", "Can't get queue", 80, true);
+
+                    $audios = $this->audios->getByClub($entity, $page, $perPage);
+                    $audiosCount = $this->audios->getClubCollectionSize($entity);
+                }
+                break;
+            case "new_audios":
+                $audios = $this->audios->getNew();
+                $audiosCount = $audios->size();
+                break;
+            case "popular_audios":
+                $audios = $this->audios->getPopular();
+                $audiosCount = $audios->size();
+                break;
+            case "playlist_context":
+                $playlist = $this->audios->getPlaylist($ctx_id);
+
+                if (!$playlist || $playlist->isDeleted())
+                    $this->flashFail("err", "Error", "Can't get queue", 80, true);
+
+                $audios = $playlist->getAudios($page, 10);
+                $audiosCount = $playlist->size();
+                break;
+        }
+
+        $pagesCount = ceil($audiosCount / $perPage);
+
+        $audiosArr = [];
+
+        foreach($audios as $audio) {
+            $audiosArr[] = [
+                "id" => $audio->getId(),
+                "name" => $audio->getTitle(),
+                "performer" => $audio->getPerformer(),
+                "keys" => $audio->getKeys(),
+                "url" => $audio->getUrl(),
+                "length" => $audio->getLength(),
+                "available" => $audio->isAvailable(),
+                "withdrawn" => $audio->isWithdrawn(),
+            ];
+        }
+
+        $resultArr = [
+            "page" => $page,
+            "perPage" => $perPage,
+            "pagesCount" => $pagesCount,
+            "count" => $audiosCount,
+            "items" => $audiosArr,
+        ];
+
+        $this->returnJson($resultArr);
     }
 }

@@ -207,6 +207,8 @@ routes:
       handler: "Audio->search"
     - url: "/audios/newPlaylist"
       handler: "Audio->newPlaylist"
+    - url: "/audios/context"
+      handler: "Audio->apiGetContext"
     - url: "/playlist{num}_{num}"
       handler: "Audio->playlist"
     - url: "/playlists{num}"

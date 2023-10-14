@@ -12,15 +12,13 @@
             <div class="playIcon"></div>
         </div>
 
-        <div class="status" style="margin-top: 9px;">
+        <div class="status" style="margin-top: 11px;">
             <div class="mediaInfo" style="margin-bottom: -8px; cursor: pointer;">
                 <strong class="performer">
-                    <a style="color: unset !important;" href="/search?query=&type=audios&sort=id&only_performers=on&query={$audio->getPerformer()}">{ovk_proc_strtr($audio->getPerformer(), 50)}</a>
+                    <a style="color: unset" href="/search?query=&type=audios&sort=id&only_performers=on&query={$audio->getPerformer()}">{ovk_proc_strtr($audio->getPerformer(), 50)}</a>
                 </strong>
                 —
-                <span class="title {if !empty($audio->getLyrics())}withLyrics{/if}">
-                    {ovk_proc_strtr($audio->getTitle(), 50)}
-                </span>
+                <span class="title {if !empty($audio->getLyrics())}withLyrics{/if}">{ovk_proc_strtr($audio->getTitle(), 50)}</span>
                 <svg n:if="$audio->isExplicit()" xmlns="http://www.w3.org/2000/svg" height="11" viewBox="0 0 11 11" width="11">
                     <path d="m1 2.506v5.988a1.5 1.5 0 0 0 1.491 1.506h6.019c.827 0 1.49-.674 1.49-1.506v-5.988a1.5 1.5 0 0 0 -1.491-1.506h-6.019c-.827 0-1.49.674-1.49 1.506zm4 2.494v-1h2v-1h-3v5h3v-1h-2v-1h2v-1zm-5-2.494a2.496 2.496 0 0 1 2.491-2.506h6.019a2.5 2.5 0 0 1 2.49 2.506v5.988a2.496 2.496 0 0 1 -2.491 2.506h-6.019a2.5 2.5 0 0 1 -2.49-2.506z"
                         fill="#828a99" fill-opacity=".7"/>
@@ -40,9 +38,7 @@
         </div>
 
         <div class="volume" style="display: flex; flex-direction: column;width:14%;">
-            <span class="nobold" style="text-align: center;margin-top: 12px;">
-                {$audio->getFormattedLength()}
-            </span>
+            <span class="nobold" data-unformatted="{$audio->getLength()}" style="text-align: center;margin-top: 12px;">{$audio->getFormattedLength()}</span>
             <div class="buttons" style="margin-top: 8px;">
                 {php $hasAudio = $audio->isInLibraryOf($thisUser)}
 

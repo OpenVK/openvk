@@ -4,6 +4,10 @@
     cursor: pointer;
 }
 
+.musicIcon.pressed {
+    filter: brightness(59%);
+}
+
 .bigPlayer {
     background-color: rgb(240, 241, 242);
     margin-left: -10px;
@@ -26,6 +30,10 @@
     width: 22px;
     height: 22px;
     float: left;
+}
+
+.bigPlayer .paddingLayer .playButtons .playButton.pause {
+    background-position-x: -144px;
 }
 
 .bigPlayer .paddingLayer .playButtons .nextButton {
@@ -194,6 +202,35 @@
     transform: translate(-50%, -50%);
     overflow: hidden;
     border: 1px solid #8B8B8B;
+}
+
+.audioEntry.nowPlaying {
+    background: #787878;
+    border: 1px solid #4f4f4f;
+}
+
+.audioEntry.nowPlaying:hover {
+    background: rgb(100, 100, 100) !important;
+}
+
+.audioEntry.nowPlaying .performer a {
+    color: #f4f4f4 !important;
+}
+
+.audioEntry.nowPlaying .title {
+    color: #fff;
+}
+
+.audioEntry.nowPlaying .status {
+    color: white;
+}
+
+.audioEntry.nowPlaying .volume .nobold {
+    color: white !important;
+}
+
+.audioEntry.nowPlaying .buttons .musicIcon {
+    filter: brightness(187%) opacity(72%);
 }
 
 .audioEntry {

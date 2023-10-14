@@ -2,7 +2,7 @@
     <ul class="searchList">
         <a n:attr="id => $mode === 'list' && $isMy ? 'used' : 'ki'" href="/audios{$thisUser->getId()}">{_my_music}</a>
 
-        <a n:if="!$isMy" n:attr="id => $mode === 'list' ? 'used' : 'ki'" href="/audios{$ownerId}">{if $ownerId > 0}{_music_user}{else}{_music_club}{/if}</a>
+        <a n:if="!$isMy && $mode === 'list'" id="used" href="/audios{$ownerId}">{if $ownerId > 0}{_music_user}{else}{_music_club}{/if}</a>
         
         <a href="/player/upload{if $isMyClub}?gid={abs($ownerId)}{/if}">{_upload_audio}</a>
 

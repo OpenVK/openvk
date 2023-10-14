@@ -4,6 +4,286 @@ function fmtTime(time) {
     return `${ mins}:${ secs}`;
 }
 
+// нихуя я тут насрал
+class bigPlayer {
+    contextObject = []
+    player = null
+    currentTrack = null
+    dashPlayer = null
+
+    constructor(context, context_id, page = 1) {
+        this.context = context
+        this.context_id = context_id
+        this.playerNode = document.querySelector(".bigPlayer")
+        this.performer = this.playerNode.querySelector(".trackInfo b")
+        this.name = this.playerNode.querySelector(".trackInfo span")
+        this.time = this.playerNode.querySelector(".trackInfo .time")
+        this.player = () => { return this.playerNode.querySelector("audio.audio") }
+        this.playButtons = this.playerNode.querySelector(".playButtons")
+
+        this.dashPlayer = dashjs.MediaPlayer().create()
+
+        let formdata = new FormData()
+        formdata.append("context", context)
+        formdata.append("context_entity", context_id)
+        formdata.append("hash", u("meta[name=csrf]").attr("value"))
+        formdata.append("page", page)
+    
+        ky.post("/audios/context", {
+            hooks: {
+                afterResponse: [
+                    async (_request, _options, response) => {
+                        this.contextObject = await response.json()
+                        console.info("Context is successfully loaded")
+                    }
+                ]
+            }, 
+            body: formdata
+        })
+
+        u(this.playButtons.querySelector(".playButton")).on("click", (e) => {
+            if(this.player().paused) {
+                this.play()
+            } else {
+                this.pause()
+            }
+        })
+
+        u(this.player()).on("timeupdate", (e) => {
+            const time = this.player().currentTime;
+            const ps = Math.ceil((time * 100) / this.currentTrack.length);
+            this.time.innerHTML = fmtTime(time)
+
+            if (ps <= 100)
+                this.playerNode.querySelector(".selectableTrack .slider").style.left = `${ ps}%`;
+        })
+
+        u(this.player()).on("volumechange", (e) => {
+            const volume = this.player().volume;
+            const ps = Math.ceil((volume * 100) / 1);
+
+            if (ps <= 100)
+                this.playerNode.querySelector(".volumePanel .selectableTrack .slider").style.left = `${ ps}%`;
+        })
+
+        u(".bigPlayer .track > div").on("click mouseup", (e) => {
+            if(this.currentTrack == null) {
+                return
+            }
+
+            let rect  = this.playerNode.querySelector(".selectableTrack").getBoundingClientRect();
+            
+            const width = e.clientX - rect.left;
+            const time = Math.ceil((width * this.currentTrack.length) / (rect.right - rect.left));
+
+            this.player().currentTime = time;
+        })
+
+        u(".bigPlayer .volumePanel > div").on("click mouseup", (e) => {
+            if(this.currentTrack == null) {
+                return
+            }
+
+            let rect  = this.playerNode.querySelector(".volumePanel .selectableTrack").getBoundingClientRect();
+            
+            const width = e.clientX - rect.left;
+            const volume = (width * 1) / (rect.right - rect.left);
+
+            this.player().volume = volume;
+        })
+
+        u(".bigPlayer .additionalButtons .repeatButton").on("click", (e) => {
+            if(this.currentTrack == null) {
+                return
+            }
+
+            e.currentTarget.classList.toggle("pressed")
+        })
+
+        u(".bigPlayer .arrowsButtons .nextButton").on("click", (e) => {
+            this.showPreviousTrack()
+        })
+
+        u(".bigPlayer .arrowsButtons .backButton").on("click", (e) => {
+            this.showNextTrack()
+        })
+
+        u(this.player()).on("ended", (e) => {
+            e.preventDefault()
+
+            // код не работает, как я понял, оно не хочет нажимать потому что это не действие пользователя
+            if(this.playerNode.querySelector(".repeatButton").classList.contains("pressed")) {
+                this.player().currentTime = 0
+
+                this.player().play()
+            } else {
+                this.showNextTrack()
+            }
+        })
+
+        this.player().volume = 0.75
+    }
+
+    play() {
+        if(this.currentTrack == null) {
+            return
+        }
+
+        document.querySelectorAll('audio').forEach(el => el.pause());
+        document.querySelector(`.audioEmbed[data-realid='${this.currentTrack.id}'] .audioEntry .playerButton .playIcon`) != null ? document.querySelector(`.audioEmbed[data-realid='${this.currentTrack.id}'] .audioEntry .playerButton .playIcon`).classList.add("paused") : void(0)
+        this.player().play()
+        this.playButtons.querySelector(".playButton").classList.add("pause")
+    }
+    
+    pause() {
+        if(this.currentTrack == null) {
+            return
+        }
+
+        document.querySelector(`.audioEmbed[data-realid='${this.currentTrack.id}'] .audioEntry .playerButton .playIcon`) != null ? document.querySelector(`.audioEmbed[data-realid='${this.currentTrack.id}'] .audioEntry .playerButton .playIcon`).classList.remove("paused") : void(0)
+        this.player().pause()
+        this.playButtons.querySelector(".playButton").classList.remove("pause")
+    }
+
+    showPreviousTrack() {
+        if(this.currentTrack == null || this.previousTrack == null) {
+            return
+        }
+
+        this.setTrack(this.previousTrack)
+    }
+
+    showNextTrack() {
+        if(this.currentTrack == null || this.nextTrack == null) {
+            return
+        }
+        
+        this.setTrack(this.nextTrack)
+    }
+
+    updateButtons() {
+        // перепутал некст и бек.
+        let prevButton = this.playerNode.querySelector(".nextButton")
+        let nextButton = this.playerNode.querySelector(".backButton")
+
+        if(this.previousTrack == null) {
+            prevButton.classList.add("lagged")
+        } else {
+            prevButton.classList.remove("lagged")
+        }
+
+        if(this.nextTrack == null) {
+            nextButton.classList.add("lagged")
+        } else {
+            nextButton.classList.remove("lagged")
+        }
+    }
+
+    setTrack(id) {
+        if(this.contextObject["items"] == null) {
+            console.info("Context is not loaded yet. Wait please")
+            return 0;
+        }
+
+        document.querySelectorAll(".audioEntry.nowPlaying").forEach(el => el.classList.remove("nowPlaying"))
+        let obj = this.contextObject["items"].find(item => item.id == id)
+
+        this.name.innerHTML = obj.name 
+        this.performer.innerHTML = obj.performer
+        this.time.innerHTML = fmtTime(obj.length)
+        this.currentTrack = obj
+
+        let indexOfCurrentTrack = this.contextObject["items"].indexOf(obj) ?? 0
+        this.nextTrack = this.contextObject["items"].at(indexOfCurrentTrack + 1) != null ? this.contextObject["items"].at(indexOfCurrentTrack + 1).id : null
+
+        if(indexOfCurrentTrack - 1 >= 0) {
+            this.previousTrack = this.contextObject["items"].at(indexOfCurrentTrack - 1).id
+        } else {
+            this.previousTrack = null
+        }
+
+        // todo поменьше копипастить код
+        if(this.nextTrack == null && this.contextObject.page < this.contextObject.pagesCount
+            || this.previousTrack == null && (this.contextObject.page > 1)) {
+            let formdata = new FormData()
+            formdata.append("context", this.context)
+            formdata.append("context_entity", this.context_id)
+            formdata.append("hash", u("meta[name=csrf]").attr("value"))
+
+            let lesser = this.contextObject.page > 1
+            if(lesser) {
+                formdata.append("page", Number(this.contextObject["page"]) - 1)
+            } else {
+                formdata.append("page", Number(this.contextObject["page"]) + 1)
+            }
+
+            ky.post("/audios/context", {
+                hooks: {
+                    afterResponse: [
+                        async (_request, _options, response) => {
+                            let newArr = await response.json()
+
+                            if(lesser) {
+                                this.contextObject["items"] = newArr["items"].concat(this.contextObject["items"])
+                            } else {
+                                this.contextObject["items"] = this.contextObject["items"].concat(newArr["items"])
+                            }
+
+                            this.contextObject["page"] = newArr["page"]
+
+                            if(lesser) {
+                                this.previousTrack = this.contextObject["items"].at(this.contextObject["items"].indexOf(obj) - 1).id
+                            } else {
+                                this.nextTrack = this.contextObject["items"].at(indexOfCurrentTrack + 1) != null ? this.contextObject["items"].at(indexOfCurrentTrack + 1).id : null
+                            }
+
+                            this.updateButtons()
+                            console.info("Context is successfully loaded")
+                        }
+                    ]
+                }, 
+                body: formdata
+            })
+        }
+
+        if(this.currentTrack.available == false || this.currentTrack.withdrawn) {
+            this.showNextTrack()
+        }
+
+        this.updateButtons()
+
+        const protData = {
+            "org.w3.clearkey": {
+                "clearkeys": obj.keys
+            }
+        };
+
+        this.dashPlayer.initialize(this.player(), obj.url, false);
+        this.dashPlayer.setProtectionData(protData);
+
+        this.play()
+
+        document.querySelector(`.audioEmbed[data-realid='${this.currentTrack.id}'] .audioEntry`) != null ? 
+            document.querySelector(`.audioEmbed[data-realid='${this.currentTrack.id}'] .audioEntry`).classList.add("nowPlaying") :
+            null
+
+        document.querySelectorAll(`.audioEntry .playerButton .playIcon.paused`).forEach(el => el.classList.remove("paused"))
+    }
+
+    getCurrentTrack() {
+        return this.currentTrack
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function() {
+    if(document.querySelector(".bigPlayer") != null) {
+        let context = document.querySelector("input[name='bigplayer_context']")
+        let type = context.dataset.type
+        let entity = context.dataset.entity
+        
+        window.player = new bigPlayer(type, entity, context.dataset.page)
+}})
+
 function initPlayer(id, keys, url, length) {
     document.querySelector(`#audioEmbed-${ id}`).classList.add("inited")
     const audio = document.querySelector(`#audioEmbed-${ id} .audio`);
@@ -11,7 +291,25 @@ function initPlayer(id, keys, url, length) {
     const trackDiv = u(`#audioEmbed-${ id} .track > div > div`);
     const volumeSpan = u(`#audioEmbed-${ id} .volume span`);
     const rect = document.querySelector(`#audioEmbed-${ id} .selectableTrack`).getBoundingClientRect();
+    
+    const playerObject = document.querySelector(`#audioEmbed-${ id}`)
 
+    if(document.querySelector(".bigPlayer") != null) {
+        playButton.on("click", () => {
+            if(window.player.contextObject == null) {
+                return
+            }
+
+            if(window.player.getCurrentTrack() == null || window.player.getCurrentTrack().id != playerObject.dataset.realid) {
+                window.player.setTrack(playerObject.dataset.realid)
+            } else {
+                document.querySelector(".bigPlayer .playButton").click()
+            }
+        })
+
+        return
+    }
+    
     const protData = {
         "org.w3.clearkey": {
             "clearkeys": keys
@@ -44,15 +342,11 @@ function initPlayer(id, keys, url, length) {
     });
 
     const playButtonImageUpdate = () => {
-        if ($(`#audioEmbed-${ id} .claimed`).length === 0) {
-            console.log(id);
-        }
-
         if (!audio.paused) {
             playButton.addClass("paused")
-            $.post(`/audio${ id}/listen`, {
+            /*$.post(`/audio${ id}/listen`, {
                 hash: u("meta[name=csrf]").attr("value")
-            });
+            });*/
         } else {
             playButton.removeClass("paused")
         }
@@ -71,7 +365,7 @@ function initPlayer(id, keys, url, length) {
         let rect  = document.querySelector("#audioEmbed-" + id + " .selectableTrack").getBoundingClientRect();
         const width = e.clientX - rect.left;
         const time = Math.ceil((width * length) / (rect.right - rect.left));
-        console.log(width, length, rect.right, rect.left, time);
+
         audio.currentTime = time;
     });
 }
@@ -274,4 +568,12 @@ $(document).on("click", ".musicIcon.report-icon", (e) => {
     }),
 
     Function.noop])
+})
+
+$(document).on("click", "#bookmarkPlaylist", (e) => {
+
+})
+
+$(document).on("click", "#unbookmarkPlaylist", (e) => {
+    
 })
