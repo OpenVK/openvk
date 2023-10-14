@@ -98,6 +98,12 @@ class bigPlayer {
             }
 
             e.currentTarget.classList.toggle("pressed")
+
+            if(e.currentTarget.classList.contains("pressed")) {
+                this.player().loop = true
+            } else {
+                this.player().loop = false
+            }
         })
 
         u(".bigPlayer .arrowsButtons .nextButton").on("click", (e) => {
@@ -111,14 +117,7 @@ class bigPlayer {
         u(this.player()).on("ended", (e) => {
             e.preventDefault()
 
-            // код не работает, как я понял, оно не хочет нажимать потому что это не действие пользователя
-            if(this.playerNode.querySelector(".repeatButton").classList.contains("pressed")) {
-                this.player().currentTime = 0
-
-                this.player().play()
-            } else {
-                this.showNextTrack()
-            }
+            this.showNextTrack()
         })
 
         this.player().volume = 0.75
