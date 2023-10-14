@@ -18,6 +18,7 @@ function _ovk_check_environment(): void
     
     $requiredExtensions = [
         "gd",
+        "imagick",
         "fileinfo",
         "PDO",
         "pdo_mysql",

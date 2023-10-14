@@ -13,7 +13,7 @@ class Video extends Media
     const TYPE_EMBED  = 1;
     
     protected $tableName     = "videos";
-    protected $fileExtension = "ogv";
+    protected $fileExtension = "mp4";
 
     protected $processingPlaceholder = "video/rendering";
     
@@ -30,7 +30,7 @@ class Video extends Media
             throw new \DomainException("$filename does not contain any video streams");
         
         $durations = [];
-        preg_match('%duration=([0-9\.]++)%', $streams, $durations);
+        preg_match_all('%duration=([0-9\.]++)%', $streams, $durations);
         if(sizeof($durations[1]) === 0)
             throw new \DomainException("$filename does not contain any meaningful video streams");
         
@@ -104,7 +104,7 @@ class Video extends Media
             if(!$this->isProcessed())
                 return "/assets/packages/static/openvk/video/rendering.apng";
 
-            return preg_replace("%\.[A-z]++$%", ".gif", $this->getURL());
+            return preg_replace("%\.[A-z0-9]++$%", ".gif", $this->getURL());
         } else {
             return $this->getVideoDriver()->getThumbnailURL();
         }
@@ -114,7 +114,64 @@ class Video extends Media
     {
         return $this->getRecord()->owner;
     }
+
+    function getApiStructure(): object
+    {
+        $fromYoutube = $this->getType() == Video::TYPE_EMBED;
+        return (object)[
+            "type" => "video",
+            "video" => [
+                "can_comment" => 1,
+                "can_like" => 0,  // we don't h-have wikes in videos
+                "can_repost" => 0,
+                "can_subscribe" => 1,
+                "can_add_to_faves" => 0,
+                "can_add" => 0,
+                "comments" => $this->getCommentsCount(),
+                "date" => $this->getPublicationTime()->timestamp(),
+                "description" => $this->getDescription(),
+                "duration" => 0, // я хуй знает как получить длину видео
+                "image" => [
+                    [
+                        "url" => $this->getThumbnailURL(),
+                        "width" => 320,
+                        "height" => 240,
+                        "with_padding" => 1
+                    ]
+                ],
+                "width" => 640,
+                "height" => 480,
+                "id" => $this->getVirtualId(),
+                "owner_id" => $this->getOwner()->getId(),
+                "user_id" => $this->getOwner()->getId(),
+                "title" => $this->getName(),
+                "is_favorite" => false,
+                "player" => !$fromYoutube ? $this->getURL() : $this->getVideoDriver()->getURL(),
+                "files" => !$fromYoutube ? [
+                    "mp4_480" => $this->getURL()	
+                ] : NULL,
+                "platform" => $fromYoutube ? "youtube" : NULL,
+                "added" => 0,
+                "repeat" => 0,
+                "type" => "video",
+                "views" => 0,
+                "likes" => [
+                    "count" => 0,
+                    "user_likes" => 0
+                ],
+                "reposts" => [
+                    "count" => 0,
+                    "user_reposted" => 0
+                ]
+            ]
+        ];
+    }
     
+    function toVkApiStruct(): object
+    {
+        return $this->getApiStructure();
+    }
+
     function setLink(string $link): string
     {
         if(preg_match(file_get_contents(__DIR__ . "/../VideoDrivers/regex/youtube.txt"), $link, $matches)) {
@@ -145,11 +202,14 @@ class Video extends Media
         $this->save();
     }
     
-    static function fastMake(int $owner, string $description = "", array $file, bool $unlisted = true, bool $anon = false): Video
+    static function fastMake(int $owner, string $name = "Unnamed Video.ogv", string $description = "", array $file, bool $unlisted = true, bool $anon = false): Video
     {
+        if(OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading'])
+            exit(VIDEOS_FRIENDLY_ERROR);
+
         $video = new Video;
         $video->setOwner($owner);
-        $video->setName("Unnamed Video.ogv");
+        $video->setName(ovk_proc_strtr($name, 61));
         $video->setDescription(ovk_proc_strtr($description, 300));
         $video->setAnonymous($anon);
         $video->setCreated(time());

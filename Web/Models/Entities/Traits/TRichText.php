@@ -36,9 +36,9 @@ trait TRichText
             "%(([A-z]++):\/\/(\S*?\.\S*?))([\s)\[\]{},\"\'<]|\.\s|$)%",
             (function (array $matches): string {
                 $href = str_replace("#", "&num;", $matches[1]);
-                $href = rawurlencode(str_replace(";", "&#59;", $matches[1]));
+                $href = rawurlencode(str_replace(";", "&#59;", $href));
                 $link = str_replace("#", "&num;", $matches[3]);
-                $link = str_replace(";", "&#59;", $matches[3]);
+                $link = str_replace(";", "&#59;", $link);
                 $rel  = $this->isAd() ? "sponsored" : "ugc";
                 
                 return "<a href='/away.php?to=$href' rel='$rel' target='_blank'>$link</a>" . htmlentities($matches[4]);
@@ -49,7 +49,7 @@ trait TRichText
     
     private function removeZalgo(string $text): string
     {
-        return preg_replace("%[\x{0300}-\x{036F}]{3,}%Xu", "�", $text);
+        return preg_replace("%\p{M}{3,}%Xu", "", $text);
     }
     
     function resolveMentions(array $skipUsers = []): \Traversable

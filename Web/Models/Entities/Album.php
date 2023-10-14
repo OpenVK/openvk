@@ -66,4 +66,31 @@ class Album extends MediaCollection
     {
         return $this->has($photo);
     }
+
+    function toVkApiStruct(?User $user = NULL, bool $need_covers = false, bool $photo_sizes = false): object
+    {
+        $res = (object) [];
+
+        $res->id              = $this->getPrettyId();
+        $res->thumb_id        = !is_null($this->getCoverPhoto()) ? $this->getCoverPhoto()->getPrettyId() : 0;
+        $res->owner_id        = $this->getOwner()->getId();
+        $res->title           = $this->getName();
+        $res->description     = $this->getDescription();
+        $res->created         = $this->getCreationTime()->timestamp();
+        $res->updated         = $this->getEditTime() ? $this->getEditTime()->timestamp() : NULL;
+        $res->size            = $this->size();
+        $res->privacy_comment = 1;
+        $res->upload_by_admins_only = 1;
+        $res->comments_disabled = 0;
+        $res->can_upload      = $this->canBeModifiedBy($user); # thisUser недоступен в entities
+        if($need_covers) {
+            $res->thumb_src   = $this->getCoverURL();
+
+            if($photo_sizes) {
+                $res->sizes   = !is_null($this->getCoverPhoto()) ? $this->getCoverPhoto()->getVkApiSizes() : NULL;
+            }
+        }
+
+        return $res;
+    }
 }

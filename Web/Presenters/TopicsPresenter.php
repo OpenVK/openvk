@@ -84,6 +84,9 @@ final class TopicsPresenter extends OpenVKPresenter
             if($this->postParam("as_group") === "on" && $club->canBeModifiedBy($this->user->identity))
                 $flags |= 0b10000000;
 
+            if($_FILES["_vid_attachment"] && OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading'])
+                $this->flashFail("err", tr("error"), "Video uploads are disabled by the system administrator.");
+
             $topic = new Topic;
             $topic->setGroup($club->getId());
             $topic->setOwner($this->user->id);
@@ -105,10 +108,10 @@ final class TopicsPresenter extends OpenVKPresenter
                 }
                 
                 if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK) {
-                    $video = Video::fastMake($this->user->id, $this->postParam("text"), $_FILES["_vid_attachment"]);
+                    $video = Video::fastMake($this->user->id, $_FILES["_vid_attachment"]["name"], $this->postParam("text"), $_FILES["_vid_attachment"]);
                 }
             } catch(ISE $ex) {
-                $this->flash("err", "Не удалось опубликовать комментарий", "Файл медиаконтента повреждён или слишком велик.");
+                $this->flash("err", tr("error_when_publishing_comment"), tr("error_comment_file_too_big"));
                 $this->redirect("/topic" . $topic->getPrettyId());
             }
             
@@ -123,7 +126,7 @@ final class TopicsPresenter extends OpenVKPresenter
                     $comment->setFlags($flags);
                     $comment->save();
                 } catch (\LengthException $ex) {
-                    $this->flash("err", "Не удалось опубликовать комментарий", "Комментарий слишком большой.");
+                    $this->flash("err", tr("error_when_publishing_comment"), tr("error_comment_too_big"));
                     $this->redirect("/topic" . $topic->getPrettyId());
                 }
                 

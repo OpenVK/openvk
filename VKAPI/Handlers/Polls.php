@@ -66,6 +66,7 @@ final class Polls extends VKAPIRequestHandler
     function addVote(int $poll_id, string $answers_ids) 
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $poll = (new PollsRepo)->get($poll_id);
 
@@ -74,7 +75,7 @@ final class Polls extends VKAPIRequestHandler
 
         try {
             $poll->vote($this->getUser(), explode(",", $answers_ids));
-            return 0;
+            return 1;
         } catch(AlreadyVotedException $ex) {
             return 0;
         } catch(PollLockedException $ex) {
@@ -87,6 +88,7 @@ final class Polls extends VKAPIRequestHandler
     function deleteVote(int $poll_id) 
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $poll = (new PollsRepo)->get($poll_id);
 
@@ -95,7 +97,7 @@ final class Polls extends VKAPIRequestHandler
 
         try {
             $poll->revokeVote($this->getUser());
-            return 0;
+            return 1;
         } catch(PollLockedException $ex) {
             $this->fail(15, "Access denied: Poll is locked or isn't revotable");
         } catch(InvalidOptionException $ex) {

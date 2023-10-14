@@ -1,3 +1,4 @@
+﻿
 function expand_wall_textarea(id) {
     var el = document.getElementById('post-buttons'+id);
     var wi = document.getElementById('wall-post-input'+id);
@@ -65,10 +66,9 @@ function toggleMenu(id) {
         });
     }
 }
-
 document.addEventListener("DOMContentLoaded", function() { //BEGIN
 
-    u("#_photoDelete").on("click", function(e) {
+    $(document).on("click", "#_photoDelete", function(e) {
         var formHtml = "<form id='tmpPhDelF' action='" + u(this).attr("href") + "' >";
         formHtml    += "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />";
         formHtml    += "</form>";
@@ -88,7 +88,6 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
         
         return e.preventDefault();
     });
-
     /* @rem-pai why this func wasn't named as "#_deleteDialog"? It looks universal IMO */
 
     u("#_noteDelete").on("click", function(e) {
@@ -170,28 +169,72 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
 
 }); //END ONREADY DECLS
 
-function repostPost(id, hash) {
-	uRepostMsgTxt  = tr('your_comment') + ": <textarea id='uRepostMsgInput_"+id+"'></textarea><br/><br/>";
-	
-	MessageBox(tr('share'), uRepostMsgTxt, [tr('send'), tr('cancel')], [
-		(function() {
-			text = document.querySelector("#uRepostMsgInput_"+id).value;
-			hash = encodeURIComponent(hash);
-			xhr = new XMLHttpRequest();
-			xhr.open("POST", "/wall"+id+"/repost?hash="+hash, true);
-			xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-			xhr.onload = (function() {
+async function repostPost(id, hash) {
+    uRepostMsgTxt  = `
+    <b>${tr('auditory')}:</b> <br/>
+    <input type="radio" name="type" onchange="signs.setAttribute('hidden', 'hidden');document.getElementById('groupId').setAttribute('hidden', 'hidden')" value="wall" checked>${tr("in_wall")}<br/>
+    <input type="radio" name="type" onchange="signs.removeAttribute('hidden');document.getElementById('groupId').removeAttribute('hidden')" value="group" id="group">${tr("in_group")}<br/>
+    <select style="width:50%;" id="groupId" name="groupId" hidden>
+    </select><br/>
+    <b>${tr('your_comment')}:</b> 
+    <textarea id='uRepostMsgInput_${id}'></textarea>
+    <div id="signs" hidden>
+    <label><input onchange="signed.checked ? signed.checked = false : null" type="checkbox" id="asgroup" name="asGroup">${tr('post_as_group')}</label><br>
+    <label><input onchange="asgroup.checked = true" type="checkbox" id="signed" name="signed">${tr('add_signature')}</label>
+    </div>
+    <br/><br/>`;
+    let clubs = [];
+    repostsCount = document.getElementById("repostsCount"+id)
+    prevVal = repostsCount != null ? Number(repostsCount.innerHTML) : 0;
+
+    MessageBox(tr('share'), uRepostMsgTxt, [tr('send'), tr('cancel')], [
+        (function() {
+            text = document.querySelector("#uRepostMsgInput_"+id).value;
+            type = "user";
+            radios = document.querySelectorAll('input[name="type"]')
+            for(const r of radios)
+            {
+                if(r.checked)
+                {
+                    type = r.value;
+                    break;
+                }
+            }
+            groupId = document.querySelector("#groupId").value;
+            asGroup = asgroup.checked == true ? 1 : 0;
+            signed  = signed.checked == true ? 1 : 0;
+            hash = encodeURIComponent(hash);
+            
+            xhr = new XMLHttpRequest();
+            xhr.open("POST", "/wall"+id+"/repost?hash="+hash, true);
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.onload = (function() {
                 if(xhr.responseText.indexOf("wall_owner") === -1)
-					MessageBox(tr('error'), tr('error_repost_fail'), [tr('ok')], [Function.noop]);
-				else {
-					let jsonR = JSON.parse(xhr.responseText);
+                    MessageBox(tr('error'), tr('error_repost_fail'), [tr('ok')], [Function.noop]);
+                else {
+                    let jsonR = JSON.parse(xhr.responseText);
                     NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.location.href = "/wall" + jsonR.wall_owner});
-				}
-			});
-			xhr.send('text=' + encodeURI(text));
-		}),
-		Function.noop
-	]);
+                    repostsCount != null ?
+                    repostsCount.innerHTML = prevVal+1 :
+                    document.getElementById("reposts"+id).insertAdjacentHTML("beforeend", "(<b id='repostsCount"+id+"'>1</b>)") //для старого вида постов
+                }
+                });
+            xhr.send('text='+encodeURI(text) + '&type='+type + '&groupId='+groupId + "&asGroup="+asGroup + "&signed="+signed);
+        }),
+        Function.noop
+    ]);
+    
+    try
+    {
+        clubs = await API.Groups.getWriteableClubs();
+        for(const el of clubs) {
+            document.getElementById("groupId").insertAdjacentHTML("beforeend", `<option value="${el.id}">${escapeHtml(el.name)}</option>`)
+        }
+
+    } catch(rejection) {
+        console.error(rejection)
+        document.getElementById("group").setAttribute("disabled", "disabled")
+    }
 }
 
 function setClubAdminComment(clubId, adminId, hash) {
@@ -426,6 +469,216 @@ function showIncreaseRatingDialog(coinsCount, userUrl, hash) {
         else
             document.querySelector("#rating_price").innerHTML = value + " " + tr("points_amount_other").replace("$1 ", "");
     };
+}
+
+function escapeHtml(text) {
+    var map = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#039;'
+    };
+    
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
+
+function addAvatarImage(groupStrings = false, groupId = 0)
+{
+    let inputname = groupStrings == true ? 'ava' : 'blob';
+    let body = `
+    <div id="avatarUpload">
+        <p>${groupStrings == true ? tr('groups_avatar') : tr('friends_avatar')}</p>
+        <p>${tr('formats_avatar')}</p><br>
+        <img style="margin-left:46.3%;display:none" id="loader" src="/assets/packages/static/openvk/img/loading_mini.gif">
+        <label class="button" style="margin-left:45%;user-select:none" id="uploadbtn">${tr("browse")}
+        <input accept="image/*" type="file" name="${inputname}" hidden id="${inputname}" style="display: none;" onchange="uploadAvatar(${groupStrings}, ${groupStrings == true ? groupId : null})">
+        </label><br><br>
+        <p>${tr('troubles_avatar')}</p>
+    </div>
+    `
+    let msg = MessageBox(tr('uploading_new_image'), body, [
+        tr('cancel')
+    ], [
+        (function() {
+            u("#tmpPhDelF").remove();
+        }),
+    ]);
+    msg.attr("style", "width: 600px;");
+}
+
+function uploadAvatar(group = false, group_id = 0)
+{
+    loader.style.display = "block";
+    uploadbtn.setAttribute("hidden", "hidden")
+    let xhr = new XMLHttpRequest();
+    let formData = new FormData();
+    let bloborava = group == false ? "blob" : "ava"
+    formData.append(bloborava, document.getElementById(bloborava).files[0]);
+    formData.append("ava", 1)
+    formData.append("hash", u("meta[name=csrf]").attr("value"))
+    xhr.open("POST", group == true ? "/club"+group_id+"/al_avatar" : "/al_avatars")
+    xhr.onload = () => {
+        let json = JSON.parse(xhr.responseText);
+        document.getElementById(group == false ? "thisUserAvatar" : "thisGroupAvatar").src = json["url"];
+        u("body").removeClass("dimmed");
+        u(".ovk-diag-cont").remove();
+        if(document.getElementsByClassName("text_add_image")[0] == undefined)
+        {
+            document.getElementById("upl").href = "javascript:deleteAvatar('"+json["id"]+"', '"+u("meta[name=csrf]").attr("value")+"')"
+        }
+        //console.log(json["id"])
+        NewNotification(tr("update_avatar_notification"), tr("update_avatar_description"), json["url"], () => {window.location.href = "/photo" + json["id"]});
+        if(document.getElementsByClassName("text_add_image")[0] != undefined)
+        {
+            //ожидание чтобы в уведомлении была аватарка
+            let promise = new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    location.reload()
+                }, 500);
+              });
+        }
+    }
+    xhr.send(formData)
+}
+
+function deleteAvatar(avatar)
+{
+    let body = `
+        <p>${tr("deleting_avatar_sure")}</p>
+    `
+    let msg = MessageBox(tr('deleting_avatar'), body, [
+        tr('yes'),
+        tr('cancel')
+    ], [
+        (function() {
+            let xhr = new XMLHttpRequest();
+            xhr.open("POST", "/photo"+avatar+"/delete")
+            xhr.onload = () => {
+                //не люблю формы
+                NewNotification(tr("deleted_avatar_notification"), "");
+                location.reload()
+            }
+            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+            xhr.send("hash="+u("meta[name=csrf]").attr("value"))
+        }),
+        (function() {
+            u("#tmpPhDelF").remove();
+        }),
+    ]);
+}
+
+function expandSearch()
+{
+    // console.log("search expanded")
+    let els = document.querySelectorAll("div.dec")
+    for(const element of els)
+    {
+        element.style.display = "none"
+    }
+    
+    document.querySelector(".whatFind").style.display = "block";
+    document.querySelector(".whatFind").style.marginRight = "-80px";
+    document.getElementById("searchInput").style.width = "627px";
+    document.getElementById("searchInput").style.background = "none";
+    document.getElementById("searchInput").style.backgroundColor = "#fff";
+    document.getElementById("searchInput").style.paddingLeft = "6px";
+    srch.classList.add("nodivider")
+}
+
+async function decreaseSearch()
+{
+    // чтобы люди успели выбрать что искать и поиск не скрывался сразу
+    await new Promise(r => setTimeout(r, 4000));
+
+    // console.log("search decreased")
+    if(document.activeElement !== searchInput && document.activeElement !== typer)
+    {
+        srcht.setAttribute("hidden", "hidden")
+        document.getElementById("searchInput").style.background = "url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px";
+        document.getElementById("searchInput").style.backgroundColor = "#fff";
+        document.getElementById("searchInput").style.paddingLeft = "18px";
+        document.getElementById("searchInput").style.width = "120px";
+        document.querySelector(".whatFind").style.display = "none";
+
+        await new Promise(r => setTimeout(r, 300));
+        srch.classList.remove("nodivider")
+
+        let els = document.querySelectorAll("div.dec")
+        for(const element of els)
+        {
+            element.style.display = "inline-block"
+        }
+    }
+}
+
+function hideParams(name)
+{
+    $("#s_"+name).slideToggle(250, "swing");
+
+    if($(`#n_${name} img`).attr("src") == "/assets/packages/static/openvk/img/hide.png")
+    {
+        $("#n_"+name+" img").attr("src", "/assets/packages/static/openvk/img/show.png");
+    } else {
+        $("#n_"+name+" img").attr("src", "/assets/packages/static/openvk/img/hide.png");
+    }
+}
+
+function resetSearch()
+{
+    let inputs = document.querySelectorAll("input")
+    let selects = document.querySelectorAll("select")
+
+    for(const input of inputs)
+    {
+        if(input != dnt && input != gend && input != gend1 && input != gend2) {
+            input.value = ""
+        }
+    }
+
+    for(const select of selects)
+    {
+        if(select != sortyor && select != document.querySelector(".whatFind")) {
+            select.value = 0
+        }
+    }
+}
+
+async function checkSearchTips()
+{
+    let query = searchInput.value;
+
+    await new Promise(r => setTimeout(r, 1000));
+
+    let type = typer.value;
+    let smt  = type == "users" || type == "groups" || type == "videos";
+
+    if(query.length > 3 && query == searchInput.value && smt) {
+        srcht.removeAttribute("hidden")
+        let etype = type
+
+        try {
+            let results = await API.Search.fastSearch(escapeHtml(query), etype)
+            
+            srchrr.innerHTML = ""
+
+            for(const el of results["items"]) {
+                srchrr.insertAdjacentHTML("beforeend", `
+                    <tr class="restip" onmouseup="if (event.which === 2) { window.open('${el.url}', '_blank'); } else {location.href='${el.url}'}">
+                        <td>
+                            <img src="${el.avatar}" width="30">
+                        </td>
+                        <td valign="top">
+                            <p class="nameq" style="margin-top: -2px;text-transform:none;">${escapeHtml(el.name)}</p>
+                            <p class="desq" style="text-transform:none;">${escapeHtml(el.description)}</p>
+                        </td>
+                    </tr>
+                    `)
+            }
+        } catch(rejection) {
+            srchrr.innerHTML = tr("no_results")
+        }
+    }
 }
 
 $(document).on("scroll", () => {
