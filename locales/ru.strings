@@ -541,6 +541,7 @@
 "privacy_setting_add_to_friends" = "Кто может называть меня другом";
 "privacy_setting_write_wall" = "Кто может писать у меня на стене";
 "privacy_setting_write_messages" = "Кто может писать мне сообщения";
+"privacy_setting_view_audio" = "Кто может видеть мои аудиозаписи";
 "privacy_value_anybody" = "Все желающие";
 "privacy_value_anybody_dative" = "Всем желающим";
 "privacy_value_users" = "Пользователям OpenVK";
@@ -680,6 +681,7 @@
 
 "audios" = "Аудиозаписи";
 "audio" = "Аудиозапись";
+"playlist" = "Плейлист";
 "upload_audio" = "Загрузить аудио";
 
 "performer" = "Исполнитель";
@@ -711,6 +713,8 @@
 "track_noname" = "Без названия";
 
 "my_music" = "Моя музыка";
+"music_user" = "Музыка пользователя";
+"music_club" = "Музыка группы";
 "audio_new" = "Новое";
 "audio_popular" = "Популярное";
 "audio_search" = "Поиск";
@@ -724,6 +728,16 @@
 "owner" = "Владелец";
 
 "select_audio" = "Выбрать аудиозаписи";
+"no_playlists_thisuser" = "Вы ещё не добавляли плейлистов.";
+"no_playlists_user" = "Этот пользователь ещё не добавлял плейлистов.";
+"no_playlists_club" = "Эта группа ещё не добавляла плейлистов.";
+
+"new_playlist" = "Новый плейлист";
+"created_playlist" = "создан";
+"bookmark" = "Добавить в коллекцию";
+"unbookmark" = "Убрать из коллекции";
+"empty_playlist" = "В этом плейлисте нет аудиозаписей.";
+"edit_playlist" = "Редактировать плейлист";
 
 /* Notifications */
 

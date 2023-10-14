@@ -23,54 +23,20 @@
         »
         {_audio_popular}
     </div>
+
+    <div n:if="$mode == 'playlists'">
+        {_audios}
+        »
+        {_audio_popular}
+    </div>
 {/block}
 
 {block content}
     {* ref: https://archive.li/P32em *}
-    <div class="bigPlayer">
-        <div class="paddingLayer">
-            <div class="playButtons">
-                <div class="playButton musicIcon"></div>
-                
-                <div class="arrowsButtons">
-                    <div class="nextButton musicIcon"></div>
-                    <div class="backButton musicIcon"></div>
-                </div>
-            </div>
-
-            <div class="trackPanel">
-                <div class="trackInfo">
-                    <b>{_track_unknown}</b> —
-                    <span>{_track_noname}</span>
-
-                    <span class="time">00:00</span>
-                </div>
-
-                <div class="selectableTrack">
-                    <div>&nbsp;
-                        <div class="slider"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="volumePanel">
-                <div class="selectableTrack">
-                    <div>&nbsp;
-                        <div class="slider"></div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="additionalButtons">
-                <div class="repeatButton musicIcon"></div>
-                <div class="shuffleButton musicIcon"></div>
-                <div class="deviceButton musicIcon"></div>
-            </div>
-        </div>
-    </div>
-
+    
+    {include "bigplayer.xml"}
     <div style="width: 100%;display: flex;margin-bottom: -10px;">
-        <div style="width: 74%;">
+        <div style="width: 74%;" n:if="$mode != 'playlists'">
             <div style="padding: 8px;">
                 <div n:if="$audiosCount <= 0">
                     {include "../components/nothing.xml"}
@@ -86,6 +52,38 @@
                         "page"     => $page,
                         "count"    => $audiosCount,
                         "amount"   => sizeof($audios),
+                        "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+                        "atBottom" => true,
+                    ]}
+                </div>
+            </div>
+        </div>
+        
+        <div style="width: 74%;" n:if="$mode == 'playlists'">
+            <div style="padding: 8px;">
+                <div n:if="$playlistsCount <= 0">
+                    {include "../components/error.xml", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_playlists_thisuser") : tr("no_playlists_user")) : tr("no_playlists_club")}
+                </div>
+
+                <div class="infContainer playlistContainer" style="display: flex;" n:if="$playlistsCount > 0">
+                    <div class="infObj" n:foreach="$playlists as $playlist">
+                        <a href="/playlist{$playlist->getPrettyId()}">
+                            <div class="playlistCover">
+                                <img src="{$playlist->getCoverURL()}">
+                            </div>
+
+                            <div class="playlistInfo">
+                                <span>{$playlist->getName()}</span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+                    {include "../components/paginator.xml", conf => (object) [
+                        "page"     => $page,
+                        "count"    => $playlistsCount,
+                        "amount"   => sizeof($playlists),
                         "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
                         "atBottom" => true,
                     ]}

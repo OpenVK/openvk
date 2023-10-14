@@ -277,6 +277,15 @@
     margin-top: 3px;
 }
 
+.audioEntry .buttons .report-icon {
+    width: 12px;
+    height: 11px;
+    float: right;
+    background-position: -67px -51px;
+    margin-top: 3px;
+    margin-right: 3px;
+}
+
 .add-icon-noaction {
     background-image: url('/assets/packages/static/openvk/img/audios_controls.png');
     width: 11px;
@@ -319,4 +328,30 @@
 
 .audioEmbed.withdrawn {
     filter: opacity(0.8);
+}
+
+.playlistCover img {
+    width: 135px;
+    height: 135px;
+}
+
+.playlistBlock {
+    margin-top: 14px;
+}
+
+.playlistContainer {
+    display: flex;
+}
+
+.playlistContainer  .playlistCover img {
+    width:111px;
+    height:111px;
+}
+
+.playlistContainer .infObj {
+    margin-left: 15px;
+}
+
+.playlistContainer .infObj:first-of-type {
+    margin-left: 0px;
 }

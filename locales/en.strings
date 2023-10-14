@@ -347,7 +347,6 @@
 "albums" = "Albums";
 "album" = "Album";
 "photos" = "photos";
-"photo" = "Photo";
 "create_album" = "Create album";
 "edit_album" = "Edit album";
 "edit_photo" = "Edit photo";
@@ -569,6 +568,7 @@
 "privacy_setting_add_to_friends" = "Who can add me to friends";
 "privacy_setting_write_wall" = "Who can publish post on my wall";
 "privacy_setting_write_messages" = "Who can write messages to me";
+"privacy_setting_view_audio" = "Who can view my audios";
 "privacy_value_anybody" = "Anybody";
 "privacy_value_anybody_dative" = "Anybody";
 "privacy_value_users" = "OpenVK users";
@@ -725,6 +725,7 @@
 
 "audios" = "Audios";
 "audio" = "Audio";
+"playlist" = "Playlist";
 "upload_audio" = "Upload audio";
 
 "performer" = "Performer";
@@ -756,6 +757,8 @@
 "track_noname" = "Without name";
 
 "my_music" = "My music";
+"music_user" = "User's music";
+"music_club" = "Club's music";
 "audio_new" = "New";
 "audio_popular" = "Popular";
 "audio_search" = "Search";
@@ -769,6 +772,16 @@
 "owner" = "Owner";
 
 "select_audio" = "Select audios";
+"no_playlists_thisuser" = "You haven't added any playlists yet.";
+"no_playlists_user" = "This user has not added any playlists yet.";
+"no_playlists_club" = "This group hasn't added playlists yet.";
+
+"new_playlist" = "New playlist";
+"created_playlist" = "created";
+"bookmark" = "Add to collection";
+"unbookmark" = "Remove from collection";
+"empty_playlist" = "There are no audios in this playlist.";
+"edit_playlist" = "Edit playlist";
 
 /* Notifications */
 

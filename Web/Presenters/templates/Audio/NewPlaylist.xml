@@ -1,81 +1,46 @@
 {extends "../@layout.xml"}
 
 {block title}
-    Создать плейлист
+    {_new_playlist}
 {/block}
 
 {block header}
-    {include title}
+    {if !$_GET["owner"]}
+        <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
+        »
+        <a href="/audios{$thisUser->getId()}">{_audios}</a>
+    {else}
+        <a href="{$club->getURL()}">{$club->getCanonicalName()}</a>
+        »
+        <a href="/audios-{$club->getId()}">{_audios}</a>
+    {/if}
+    »
+    {_new_playlist}
 {/block}
 
 {block content}
-    {include "tabs.xml", mode => "list"}
-    <br />
-
     <style>
         textarea[name='description'] {
             padding: 4px;
             resize: vertical;
             min-height: 150px;
+            max-height: 300px;
         }
     </style>
 
     <form method="post" id="newPlaylistForm">
-        <input type="text" name="title" placeholder="Название" maxlength="128" />
+        <input type="text" name="title" placeholder="{_title}" maxlength="128" />
         <br /><br />
-        <textarea placeholder="Описание" name="description" maxlength="2048" />
+        <textarea placeholder="{_description}" name="description" maxlength="2048" />
         <br /><br />
 
-        <div n:if="count($audios) > 0">
+        <div n:if="sizeof($audios) > 0">
             <div id="newPlaylistAudios" n:foreach="$audios as $audio">
-                    {include "player.xml", audio => $audio, canAdd => true, addOnClick => "addToPlaylist({$audio->getId()})"}
-                <br/>
+                {include "player.xml", audio => $audio, addToPlaylistButton => true}
             </div>
         </div>
 
+        <input type="hidden" name="hash" value="{$csrfToken}" />
         <button class="button" style="float: right;">{_create}</button>
     </form>
-
-    <script n:if="count($audios) > 0">
-        function addToPlaylist(id) {
-            $(`#audioEmbed-${ id} .buttons`).html(`<div class="icon delete-icon" onClick="removeFromPlaylist(${ id})" />`);
-        }
-
-        function removeFromPlaylist(id) {
-            $(`#audioEmbed-${ id} .buttons`).html(`<div class="icon add-icon" onClick="addToPlaylist(${ id})" />`);
-        }
-
-        function create() {
-            let ids = [];
-            $("#newPlaylistAudios .delete-icon").each(function () {
-                ids.push($(this).parents("#miniplayer").first().parent().attr("id").replace("audioEmbed-", ""));
-            });
-
-            $.ajax(`/audios/newPlaylist`, {
-                type: "POST",
-                data: {
-                    title: $("input[name='title']").val(),
-                    description: $("textarea[name='description']").val(),
-                    audios: ids.join(","),
-                    owner: {$owner},
-                    hash: {$csrfToken}
-                },
-                success: (response) => {
-                    if (response.success) {
-                        window.location.href = response.payload;
-                    } else {
-                        NewNotification("Ошибка", (response?.error ?? "Неизвестная ошибка"), "/assets/packages/static/openvk/img/error.png");
-                    }
-                }
-            });
-
-
-            console.log(ids.join(","));
-        }
-
-        $("#newPlaylistForm").submit(function (event) {
-            event.preventDefault();
-            create();
-        });
-    </script>
 {/block}

@@ -103,12 +103,17 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
             ${tr("lyrics")}
             <textarea name="lyrics" maxlength="500">${lyrics ?? ""}</textarea>
         </div>
+
+        <div style="margin-top: 11px">
+            <label><input type="checkbox" name="explicit" ${e.currentTarget.dataset.explicit == 1 ? "checked" : ""} maxlength="500">${tr("audios_explicit")}</label>
+        </div>
     `, [tr("ok"), tr("cancel")], [
         function() {
             let t_name   = $(".ovk-diag-body input[name=name]").val();
             let t_perf   = $(".ovk-diag-body input[name=performer]").val();
             let t_genre  = $(".ovk-diag-body select[name=genre]").val();
             let t_lyrics = $(".ovk-diag-body textarea[name=lyrics]").val();
+            let t_explicit = document.querySelector(".ovk-diag-body input[name=explicit]").checked;
 
             $.ajax({
                 type: "POST",
@@ -118,6 +123,7 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
                     performer: t_perf,
                     genre: t_genre,
                     lyrics: t_lyrics,
+                    explicit: Number(t_explicit),
                     hash: u("meta[name=csrf]").attr("value")
                 },
                 success: (response) => {
@@ -144,8 +150,8 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
                         }
 
                         e.currentTarget.setAttribute("data-lyrics", response.new_info.lyrics_unformatted)
+                        e.currentTarget.setAttribute("data-explicit", Number(response.new_info.explicit))
                         player.setAttribute("data-genre", response.new_info.genre)
-                        console.log(response)
                     } else {
                         MessageBox(tr("error"), response.flash.message, [tr("ok")], [Function.noop])
                     }
@@ -247,4 +253,25 @@ $(document).on("click", ".audioEmbed.lagged", (e) => {
 
 $(document).on("click", ".audioEmbed.withdrawn", (e) => {
     MessageBox(tr("error"), tr("audio_embed_withdrawn"), [tr("ok")], [Function.noop])
+})
+
+$(document).on("click", ".musicIcon.report-icon", (e) => {
+    MessageBox(tr("report_question"), `
+        ${tr("going_to_report_video")}
+        <br/>${tr("report_question_text")}
+        <br/><br/><b> ${tr("report_reason")}</b>: <input type='text' id='uReportMsgInput' placeholder='${tr("reason")}' />`, [tr("confirm_m"), tr("cancel")], [(function() {
+        
+        res = document.querySelector("#uReportMsgInput").value;
+        xhr = new XMLHttpRequest();
+        xhr.open("GET", "/report/" + e.currentTarget.dataset.id + "?reason=" + res + "&type=audio", true);
+        xhr.onload = (function() {
+        if(xhr.responseText.indexOf("reason") === -1)
+            MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
+        else
+           MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
+        });
+        xhr.send(null)
+    }),
+
+    Function.noop])
 })

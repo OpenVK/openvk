@@ -1,8 +1,15 @@
 <div class="searchOptions newer">
     <ul class="searchList">
-        <a n:attr="id => $mode === 'list' ? 'used' : 'ki'" href="/audios{$thisUser->getId()}">{_my_music}</a>
-        <a href="/player/upload">{_upload_audio}</a>
+        <a n:attr="id => $mode === 'list' && $isMy ? 'used' : 'ki'" href="/audios{$thisUser->getId()}">{_my_music}</a>
+
+        <a n:if="!$isMy" n:attr="id => $mode === 'list' ? 'used' : 'ki'" href="/audios{$ownerId}">{if $ownerId > 0}{_music_user}{else}{_music_club}{/if}</a>
+        
+        <a href="/player/upload{if $isMyClub}?gid={abs($ownerId)}{/if}">{_upload_audio}</a>
+
         <a n:attr="id => $mode === 'playlists' ? 'used' : 'ki'" href="/playlists{$thisUser->getId()}">{_my_playlists}</a>
+
+        <a n:if="$mode === 'playlists'" href="/audios/newPlaylist{if $isMyClub}?owner={abs($ownerId)}{/if}">{_new_playlist}</a>
+
         <a n:attr="id => $mode === 'new' ? 'used' : 'ki'" href="/audios/new">{_audio_new}</a>
         <a n:attr="id => $mode === 'popular' ? 'used' : 'ki'" href="/audios/popular">{_audio_popular}</a>
         <a href="/search?type=audios">{_audio_search}</a>

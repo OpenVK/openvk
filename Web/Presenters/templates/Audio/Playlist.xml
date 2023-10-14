@@ -1,110 +1,46 @@
 {extends "../@layout.xml"}
 
-{block title}Плейлист{/block}
+{block title}{_playlist}{/block}
 
 {block header}
-    {include title}
+    <a href="/audios{$thisUser->getId()}">{_audios}</a>
+    »
+    {_playlist}
 {/block}
 
 {block content}
-    {include "tabs.xml"}
-    <style>
-        .playlist-descr > * { padding: 8px 0; }
-        .playlist-dates {
-            margin-top: -8px;
-            display: flex;
-            gap: 5px;
-        }
-        .playlist-dates > * { color: #818C99; }
-        .dvd { padding: .5px 2px }
-        textarea[name='description'] {
-            padding: 4px;
-            resize: vertical;
-            min-height: 150px;
-        }
-    </style>
-    <br />
-    <div style="display: flex; gap: 16px;">
-    {if $edit}<form id="editPlaylistForm" method="POST" style="display: flex; gap: 16px; width: 100%;" enctype="multipart/form-data">{/if}
-        <div style="width: 120px;">
-            <img src="{$playlist->getCoverURL()}" width="110" height="110" style="border-radius: 8px;" />
-            {if $edit}
-                <br /><br />
-                <label for="file-upload" class="button">
-                    Обновить обложку
-                </label>
-                <input style="display: none;" type="file" name="cover" accept="image/*" id="file-upload" />
-            {/if}
+    {include "bigplayer.xml"}
+
+    {php $count = $playlist->size()}
+    <div class="playlistBlock">
+        <div class="playlistCover" style="float: left;">
+            <img src="{$playlist->getCoverURL()}">
+
+            <div class="profile_links">
+                <a id="profile_link">{_edit_playlist}</a>
+            </div>
         </div>
-        <div style="width: -webkit-fill-available;">
-            <div class="playlist-descr">
-                {if !$edit}
-                    <h4 style="display: flex; justify-content: space-between">
-                        <div style="max-width: 90%;">{$playlist->getName()}</div>
-                        <a n:if="$canEdit" class="icon edit-icon" href="/playlist{$playlist->getOwner()->getId()}_{$playlist->getId()}?act=edit" />
-                    </h4>
-                    <div n:if="$playlist->getDescription()">{$playlist->getDescription()}</div>
+
+        <div style="float: left;padding-left: 13px;width:75%">
+            <div class="playlistInfo">
+                <h4 style="border-bottom:unset;">{$playlist->getName()}</h4>
+
+                <div class="moreInfo">
+                    <span>{tr("audios_count", $count)}</span> • <span>{_created_playlist}</span> {$playlist->getPublicationTime()}
+                    
+                    <div style="margin-top: 11px;">
+                        <span>{$playlist->getDescription()}</span>
+                    </div>
+                    <hr style="color: #f7f7f7;">
+                </div>
+            </div>
+            <div class="audios" style="margin-top: 14px;">
+                {if $count < 1}
+                    {_empty_playlist}
                 {else}
-                    <input type="text" name="title" placeholder="Название" value="{$playlist->getName()}" maxlength="128" />
-                    <br /><br />
-                    <textarea name="description" placeholder="Описание" maxlength="2048">{$playlist->getDescription()}</textarea>
+                    й йбй бй дй д яюдюяд ю бяб бля лбябл бялб я бля бляб ля я не сделал....
                 {/if}
-                <div class="playlist-dates" n:attr="style => $playlist->getDescription() ? '' : 'margin-top: 0;'">
-                    <span>создан {$playlist->getCreationTime()}</span>
-                    {if $playlist->getEditTime()}
-                        <span class="dvd">·</span>
-                        <span>обновлен {$playlist->getEditTime()}</span>
-                    {/if}
-                </div>
             </div>
-            <h4 />
-            <div style="margin-top: 8px; margin-left: -8px;">
-                <div n:if="count($audios) <= 0">
-                    {include "../components/nothing.xml"}
-                </div>
-                <div id="playlistAudios" n:if="count($audios) > 0" n:foreach="$audios as $audio">
-                    {include "player.xml",
-                        audio         => $audio,
-                        canAdd        => $edit && !$playlist->hasAudio($audio),
-                        canRemove     => $edit && $playlist->hasAudio($audio),
-                        addOnClick    => "addToPlaylist({$audio->getId()})",
-                        deleteOnClick => "removeFromPlaylist({$audio->getId()})"
-                    }
-                </div>
-
-                <div n:if="count($audios) > 0">
-                    {script "js/node_modules/umbrellajs/umbrella.min.js"}
-                    {script "js/node_modules/dashjs/dist/dash.all.min.js"}
-
-                    {include "player.js.xml", audios => $audios}
-                </div>
-            </div>
-            {if $edit}
-                <h4 />
-                <br />
-                <input type="hidden" name="hash" value="{$csrfToken}" />
-                <input type="hidden" name="audios" value="" />
-                <button class="button" style="float: right;">{_save}</button>
-            {/if}
         </div>
     </div>
-    {if $edit}</form>{/if}
-    <script n:if="count($audios) > 0 && $edit">
-        function addToPlaylist(id) {
-            $(`#audioEmbed-${ id} .buttons`).html(`<div class="icon delete-icon" onClick="removeFromPlaylist(${ id})" />`);
-        }
-
-        function removeFromPlaylist(id) {
-            $(`#audioEmbed-${ id} .buttons`).html(`<div class="icon add-icon" onClick="addToPlaylist(${ id})" />`);
-        }
-
-        $("#editPlaylistForm").submit(() => {
-            let ids = [];
-            $("#playlistAudios .delete-icon").each(function () {
-                ids.push($(this).parents("#miniplayer").first().parent().attr("id").replace("audioEmbed-", ""));
-            });
-            $("input[name='audios']").val(ids.join(","));
-            $("#editPlaylistForm").submit();
-        })
-    </script>
 {/block}

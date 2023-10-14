@@ -145,7 +145,7 @@
             perf_.value = document.querySelector("#lastStep input[name=performer]").value
             genre_.value = document.querySelector("#lastStep select[name=genre]").value
             lyrics_.value = document.querySelector("#lastStep textarea[name=lyrics]").value
-            explicit_.value = document.querySelector("#lastStep input[name=explicit]").value
+            explicit_.value = document.querySelector("#lastStep input[name=explicit]").checked ? "on" : "off"
 
             document.querySelector("#audio_upload > form").submit();
         })

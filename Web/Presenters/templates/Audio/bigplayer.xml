@@ -1,0 +1,41 @@
+<div class="bigPlayer">
+    <div class="paddingLayer">
+        <div class="playButtons">
+            <div class="playButton musicIcon"></div>
+                
+            <div class="arrowsButtons">
+                <div class="nextButton musicIcon"></div>
+                <div class="backButton musicIcon"></div>
+            </div>
+        </div>
+
+        <div class="trackPanel">
+            <div class="trackInfo">
+                <b>{_track_unknown}</b> —
+                <span>{_track_noname}</span>
+
+                <span class="time">00:00</span>
+            </div>
+
+            <div class="selectableTrack">
+                <div>&nbsp;
+                    <div class="slider"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="volumePanel">
+            <div class="selectableTrack">
+                <div>&nbsp;
+                    <div class="slider"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="additionalButtons">
+            <div class="repeatButton musicIcon"></div>
+            <div class="shuffleButton musicIcon"></div>
+            <div class="deviceButton musicIcon"></div>
+        </div>
+    </div>
+</div>

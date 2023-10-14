@@ -4,7 +4,7 @@ use morphos\Gender;
 use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
-use openvk\Web\Models\Entities\{Photo, Message, Correspondence, Gift};
+use openvk\Web\Models\Entities\{Photo, Message, Correspondence, Gift, Audio};
 use openvk\Web\Models\Repositories\{Applications, Bans, Comments, Notes, Posts,   Users, Clubs, Albums, Gifts, Notifications, Videos, Photos};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use Nette\Database\Table\ActiveRow;
@@ -463,7 +463,8 @@ class User extends RowModel
                 "news",
                 "links",
                 "poster",
-                "apps"
+                "apps",
+                "audios",
             ],
         ])->get($id);
     }
@@ -483,6 +484,7 @@ class User extends RowModel
                 "friends.add",
                 "wall.write",
                 "messages.write",
+                "audios.read",
             ],
         ])->get($id);
     }
@@ -1011,6 +1013,7 @@ class User extends RowModel
                 "friends.add",
                 "wall.write",
                 "messages.write",
+                "audios.read",
             ],
         ])->set($id, $status)->toInteger());
     }
@@ -1021,6 +1024,7 @@ class User extends RowModel
             "length"   => 1,
             "mappings" => [
                 "photos",
+                "audios",
                 "videos",
                 "messages",
                 "notes",
@@ -1028,7 +1032,7 @@ class User extends RowModel
                 "news",
                 "links",
                 "poster",
-                "apps"
+                "apps",
             ],
         ])->set($id, (int) $status)->toInteger();
 
