@@ -16,19 +16,19 @@
                 <input class="text medium-field" type="number" id="id" disabled value="{$audio->getId()}" />
             </div>
             <div class="field-group">
-                <label for="name">Название</label>
+                <label for="name">{_name}</label>
                 <input class="text medium-field" type="text" id="name" name="name" value="{$audio->getTitle()}" />
             </div>
             <div class="field-group">
-                <label for="performer">Исполнитель</label>
+                <label for="performer">{_performer}</label>
                 <input class="text medium-field" type="text" id="performer" name="performer" value="{$audio->getPerformer()}" />
             </div>
             <div class="field-group">
-                <label for="ext">Текст</label>
+                <label for="ext">{_lyrics}</label>
                 <textarea class="text medium-field" type="text" id="text" name="text" style="resize: vertical;">{$audio->getLyrics()}</textarea>
             </div>
             <div class="field-group">
-                <label for="ext">Жанр</label>
+                <label for="ext">{_genre}</label>
                 <select class="select medium-field" name="genre">
                     <option n:foreach='\openvk\Web\Models\Entities\Audio::genres as $genre'
                             n:attr="selected: $genre == $audio->getGenre()" value="{$genre}">
@@ -38,7 +38,7 @@
             </div>
             <hr />
             <div class="field-group">
-                <label for="owner">Владелец</label>
+                <label for="owner">{_owner}</label>
                 <input class="text medium-field" type="number" id="owner_id" name="owner" value="{$audio->getOwner()->getId()}" />
             </div>
             <div class="field-group">
@@ -46,11 +46,11 @@
                 <input class="toggle-large" type="checkbox" id="explicit" name="explicit" value="1" {if $audio->isExplicit()} checked {/if} />
             </div>
             <div class="field-group">
-                <label for="deleted">Удалено</label>
+                <label for="deleted">{_deleted}</label>
                 <input class="toggle-large" type="checkbox" id="deleted" name="deleted" value="1" {if $audio->isDeleted()} checked {/if} />
             </div>
             <div class="field-group">
-                <label for="withdrawn">Изъято</label>
+                <label for="withdrawn">{_withdrawn}</label>
                 <input class="toggle-large" type="checkbox" id="withdrawn" name="withdrawn" value="1" {if $audio->isWithdrawn()} checked {/if} />
             </div>
             <hr />

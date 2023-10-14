@@ -10,6 +10,7 @@
             {css "css/dialog.css"}
             {css "css/notifications.css"}
             {css "css/avataredit.css"}
+            {css "css/audios.css"}
 
             {if $isXmas}
                 {css "css/xmas.css"}
@@ -27,6 +28,7 @@
         {css "css/dialog.css"}
         {css "css/notifications.css"}
         {css "css/avataredit.css"}
+        {css "css/audios.css"}
 
         {if $isXmas}
             {css "css/xmas.css"}

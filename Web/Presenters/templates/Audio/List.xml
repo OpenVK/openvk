@@ -1,86 +1,97 @@
 {extends "../@layout.xml"}
 
-{block title}Аудиозаписи{/block}
+{block title}{_audios}{/block}
 
 {block header}
-        <div>
-            <div n:if="$isMy">Мои аудиозаписи</div>
-            <div n:if="!$isMy">
-                <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
-                »
-                Аудиозаписи
-            </div>
+    <div n:if="$mode == 'list'">
+        <div n:if="$isMy">{_my_audios_small}</div>
+        <div n:if="!$isMy">
+            <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
+            »
+            {_audios}
         </div>
+    </div>
+
+    <div n:if="$mode == 'new'">
+        {_audios}
+        »
+        {_audio_new}
+    </div>
+
+    <div n:if="$mode == 'popular'">
+        {_audios}
+        »
+        {_audio_popular}
+    </div>
 {/block}
 
 {block content}
-    {include "tabs.xml", mode => "list", listText => ($isMy ? "Моя музыка" : $owner->getCanonicalName())}
-
-    <style>
-        .playlist-name {
-            max-width: 100px;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-            overflow: hidden;
-            font-family: -apple-system, system-ui, "Helvetica Neue", Roboto, sans-serif;
-            font-weight: 500;
-        }
-
-        .playlist-name:hover { text-decoration: underline; }
-    </style>
-    <div n:if="count($playlists) > 0 || count($audios) > 0 || ($isMy || $isMyClub)">
-        <h4 style="padding: 8px; display: flex; justify-content: space-between;">
-            <div>Плейлисты</div>
-            <div n:if="$isMy || $isMyClub">
-                <div class="icon add-icon" onClick="window.location.href = '/audios/newPlaylist'" />
+    {* ref: https://archive.li/P32em *}
+    <div class="bigPlayer">
+        <div class="paddingLayer">
+            <div class="playButtons">
+                <div class="playButton musicIcon"></div>
+                
+                <div class="arrowsButtons">
+                    <div class="nextButton musicIcon"></div>
+                    <div class="backButton musicIcon"></div>
+                </div>
             </div>
-        </h4>
-        <div style="padding: 8px;">
-            <div n:if="count($playlists) <= 0">
-                {include "../components/nothing.xml"}
-            </div>
-            <div n:if="count($playlists) > 0" style="display: flex; gap: 8px; overflow-x: auto;">
-                <div n:foreach="$playlists as $playlist">
-                    <div style="cursor: pointer;" onClick="window.location.href = '/playlist{$playlist->getOwner()->getId()}_{$playlist->getId()}'">
-                        <div><img src="{$playlist->getCoverURL()}" width="100" height="100" style="border-radius: 8px;" /></div>
-                        <div class="playlist-name">{$playlist->getName()}</div>
+
+            <div class="trackPanel">
+                <div class="trackInfo">
+                    <b>{_track_unknown}</b> —
+                    <span>{_track_noname}</span>
+
+                    <span class="time">00:00</span>
+                </div>
+
+                <div class="selectableTrack">
+                    <div>&nbsp;
+                        <div class="slider"></div>
                     </div>
                 </div>
             </div>
-        </div>
 
-         <h4 style="padding: 8px; display: flex; justify-content: space-between;">
-            <div>Музыка</div>
-            <div n:if="$isMy || $isMyClub">
-                <div class="icon add-icon" onClick="window.location.href = '/player/upload'" />
-            </div>
-        </h4>
-        <div style="padding: 8px;">
-            <div n:if="count($audios) <= 0">
-                {include "../components/nothing.xml"}
-            </div>
-            <div n:if="count($audios) > 0">
-                {foreach $audios as $audio}
-                    {include "player.xml",
-                        audio         => $audio,
-                        canAdd        => !$isMy && !isMyClub,
-                        canRemove     => $isMy || !isMyClub,
-                        canEdit       => $audio->getOwner()->getId() === $thisUser->getId() || !isMyClub,
-                        deleteOnClick => "removeAudio({$audio->getId()})",
-                        editOnClick   => "editAudio({$audio->getId()}, `{$audio->getTitle()}`, `{$audio->getPerformer()}`, `{$audio->getGenre()}`, `{$audio->getLyrics()}`)"
-                    }
-                {/foreach}
+            <div class="volumePanel">
+                <div class="selectableTrack">
+                    <div>&nbsp;
+                        <div class="slider"></div>
+                    </div>
+                </div>
             </div>
 
-            <div n:if="count($audios) > 0">
-                {script "js/node_modules/umbrellajs/umbrella.min.js"}
-                {script "js/node_modules/dashjs/dist/dash.all.min.js"}
-
-                {include "player.js.xml", audios => $audios}
+            <div class="additionalButtons">
+                <div class="repeatButton musicIcon"></div>
+                <div class="shuffleButton musicIcon"></div>
+                <div class="deviceButton musicIcon"></div>
             </div>
         </div>
     </div>
-    <div n:if="count($playlists) === 0 && count($audios) === 0 && !($isMy || $isMyClub)" style="padding: 8px;">
-        {include "../components/nothing.xml"}
+
+    <div style="width: 100%;display: flex;margin-bottom: -10px;">
+        <div style="width: 74%;">
+            <div style="padding: 8px;">
+                <div n:if="$audiosCount <= 0">
+                    {include "../components/nothing.xml"}
+                </div>
+                <div n:if="$audiosCount > 0" class="infContainer">
+                    <div class="infObj" n:foreach="$audios as $audio">
+                        {include "player.xml", audio => $audio}
+                    </div>
+                </div>
+
+                <div>
+                    {include "../components/paginator.xml", conf => (object) [
+                        "page"     => $page,
+                        "count"    => $audiosCount,
+                        "amount"   => sizeof($audios),
+                        "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+                        "atBottom" => true,
+                    ]}
+                </div>
+            </div>
+        </div>
+        {include "tabs.xml"}
     </div>
 {/block}

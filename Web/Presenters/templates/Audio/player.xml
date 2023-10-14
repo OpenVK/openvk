@@ -1,35 +1,36 @@
-<div
-    id="audioEmbed-{$audio->getId()}"
-    {if $canAdd || $canRemove || $canEdit}
-        onmouseenter="$('#audioEmbed-{$audio->getId()} .track-additional-info').css('display', 'none'); $('#audioEmbed-{$audio->getId()} .buttons').css('display', 'flex');"
-        onmouseleave="$('#audioEmbed-{$audio->getId()} .track-additional-info').css('display', 'flex'); $('#audioEmbed-{$audio->getId()} .buttons').css('display', 'none')"
-    {/if}
->
+{* На одной странице может оказаться несколько одинаковых аудиозаписей, и если запустить
+одну, то начнут проигрываться все остальные. Поэтому тут мы добавляем рандомное число*}
+
+{php $id = $audio->getId() . rand(0, 1000)}
+{php $isWithdrawn = $audio->isWithdrawn()}
+<div id="audioEmbed-{$id}" data-realid="{$audio->getId()}" data-genre="{$audio->getGenre()}" class="audioEmbed {if !$audio->isAvailable()}lagged{/if} {if $isWithdrawn}withdrawn{/if}" onmouseenter="!this.classList.contains('inited') ? initPlayer({$id}, {$audio->getKeys()}, {$audio->getURL()}, {$audio->getLength()}) : console.log('Player already inited.')">
     <audio class="audio" />
 
-    <div id="miniplayer" class="audioEntry" style="min-height: 55px;">
+    <div id="miniplayer" class="audioEntry" style="min-height: 37px;">
         <div class="playerButton">
-            <img src="/assets/packages/static/openvk/img/play.jpg" />
+            <div class="playIcon"></div>
         </div>
 
-        <div class="status" style="margin-top: 6px;">
-            <div class="mediaInfo" style="margin-bottom: -8px; cursor: pointer;" onClick="window.location.href = '/audios/search?q=' + {$audio->getTitle()}"">
-                <strong>
-                    {$audio->getTitle()}
+        <div class="status" style="margin-top: 9px;">
+            <div class="mediaInfo" style="margin-bottom: -8px; cursor: pointer;">
+                <strong class="performer">
+                    <a style="color: unset !important;" href="/search?query=&type=audios&sort=id&only_performers=on&query={$audio->getPerformer()}">{ovk_proc_strtr($audio->getPerformer(), 50)}</a>
                 </strong>
-            </div>
-
-            <div class="performer" style="cursor: pointer;" onClick="window.location.href = '/audios/search?q=' + {$audio->getPerformer()} + '&by_performer=on'">
-                <span class="nobold">
-                    {$audio->getPerformer()}
+                —
+                <span class="title {if !empty($audio->getLyrics())}withLyrics{/if}">
+                    {ovk_proc_strtr($audio->getTitle(), 50)}
                 </span>
+                <svg n:if="$audio->isExplicit()" xmlns="http://www.w3.org/2000/svg" height="11" viewBox="0 0 11 11" width="11">
+                    <path d="m1 2.506v5.988a1.5 1.5 0 0 0 1.491 1.506h6.019c.827 0 1.49-.674 1.49-1.506v-5.988a1.5 1.5 0 0 0 -1.491-1.506h-6.019c-.827 0-1.49.674-1.49 1.506zm4 2.494v-1h2v-1h-3v5h3v-1h-2v-1h2v-1zm-5-2.494a2.496 2.496 0 0 1 2.491-2.506h6.019a2.5 2.5 0 0 1 2.49 2.506v5.988a2.496 2.496 0 0 1 -2.491 2.506h-6.019a2.5 2.5 0 0 1 -2.49-2.506z"
+                        fill="#828a99" fill-opacity=".7"/>
+                </svg>
             </div>
 
-            <div class="track">
-                <center class="claimed" style="width: 100%; padding: 4px; color: #45688E; font-weight: bold;" n:if="$audio->isWithdrawn()">
-                        {_audio_embed_withdrawn}
+            <div class="track" style="margin-top: 3px">
+                <center class="claimed" style="width: 100%; padding: 4px; color: #45688E; font-weight: bold;" n:if="$isWithdrawn">
+                    {_audio_embed_withdrawn}
                 </center>
-                <div class="selectableTrack" n:attr="style => $audio->isWithdrawn() ? 'display: none;' : 'border: #707070 1px solid;'">
+                <div class="selectableTrack" n:attr="style => $isWithdrawn ? 'display: none;' : ''">
                     <div>&nbsp;
                         <!-- actual track -->
                     </div>
@@ -37,21 +38,20 @@
             </div>
         </div>
 
-        <div class="volume" style="display: flex; flex-direction: column;">
-            <span class="nobold" style="text-align: right;">
+        <div class="volume" style="display: flex; flex-direction: column;width:14%;">
+            <span class="nobold" style="text-align: center;margin-top: 12px;">
                 {$audio->getFormattedLength()}
             </span>
-            <div class="track-additional-info" style="margin-top: 8px; align-self: flex-end;">
-                <svg n:if="$audio->isExplicit()" xmlns="http://www.w3.org/2000/svg" height="11" viewBox="0 0 11 11" width="11">
-                    <path d="m1 2.506v5.988a1.5 1.5 0 0 0 1.491 1.506h6.019c.827 0 1.49-.674 1.49-1.506v-5.988a1.5 1.5 0 0 0 -1.491-1.506h-6.019c-.827 0-1.49.674-1.49 1.506zm4 2.494v-1h2v-1h-3v5h3v-1h-2v-1h2v-1zm-5-2.494a2.496 2.496 0 0 1 2.491-2.506h6.019a2.5 2.5 0 0 1 2.49 2.506v5.988a2.496 2.496 0 0 1 -2.491 2.506h-6.019a2.5 2.5 0 0 1 -2.49-2.506z"
-                          fill="#828a99" fill-opacity=".7"/>
-                </svg>
-            </div>
-            <div class="buttons" style="margin-top: 8px; display: none; justify-content: space-between; gap: 8px; align-self: flex-end;">
-                <div n:if="$canAdd ?? true" class="icon add-icon" n:attr="onClick => $addOnClick ?? ''" />
-                <div n:if="$canRemove" class="icon delete-icon" n:attr="onClick => $deleteOnClick ?? ''" />
-                <div n:if="$canEdit" class="icon edit-icon" n:attr="onClick => $editOnClick ?? ''" />
+            <div class="buttons" style="margin-top: 8px;">
+                {php $hasAudio = $audio->isInLibraryOf($thisUser)}
+                <div class="remove-icon musicIcon" data-id="{$audio->getId()}" n:if="$hasAudio" ></div>
+                <div class="add-icon musicIcon" data-id="{$audio->getId()}" n:if="!$hasAudio" ></div>
+                <div class="edit-icon musicIcon" data-lyrics="{$audio->getLyrics()}" data-title="{$audio->getTitle()}" data-performer="{$audio->getPerformer()}" n:if="$audio->canBeModifiedBy($thisUser) && !$isWithdrawn" ></div>
             </div>
         </div>
+    </div>
+
+    <div class="lyrics" n:if="!empty($audio->getLyrics())">
+        {nl2br($audio->getLyrics())|noescape}
     </div>
 </div>

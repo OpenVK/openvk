@@ -479,6 +479,7 @@
 "my_videos" = "My Videos";
 "my_messages" = "My Messages";
 "my_notes" = "My Notes";
+"my_audios" = "My Audios";
 "my_groups" = "My Groups";
 "my_feed" = "My Feed";
 "my_feedback" = "My Feedback";
@@ -718,6 +719,56 @@
 
 "change_video" = "Change video";
 "unknown_video" = "This video is not supported in your version of OpenVK.";
+
+
+/* Audios */
+
+"audios" = "Audios";
+"audio" = "Audio";
+"upload_audio" = "Upload audio";
+
+"performer" = "Performer";
+"audio_name" = "Name";
+"genre" = "Genre";
+"lyrics" = "Lyrics";
+
+"select_another_file" = "Select another file";
+
+"limits" = "Limits";
+"select_audio" = "Select audio from your computer";
+"audio_requirements" = "Audio must be between $1s to $2 minutes, weights to $3MB, contain audio stream must not infringe on the copyright";
+"you_can_also_add_audio_using" = "You can also add audio from among the files you have already downloaded using";
+"search_audio_inst" = "audios search";
+
+"audio_embed_not_found" = "Audio not found";
+"audio_embed_deleted" = "Audio was deleted";
+"audio_embed_withdrawn" = "The audio was withdrawn at the request of the copyright holder";
+"audio_embed_forbidden" = "The user's privacy settings do not allow this embed this audio";
+"audio_embed_processing" = "Audio is still being processed, or has not been processed correctly.";
+
+"audios_count_zero" = "No audios";
+"audios_count_one" = "One audio";
+"audios_count_few" = "$1 audios";
+"audios_count_many" = "$1 audios";
+"audios_count_other" = "$1 audios";
+
+"track_unknown" = "Unknown";
+"track_noname" = "Without name";
+
+"my_music" = "My music";
+"audio_new" = "New";
+"audio_popular" = "Popular";
+"audio_search" = "Search";
+
+"my_audios_small" = "My audios";
+"my_playlists" = "My playlists";
+"playlists" = "Playlists";
+"audios_explicit" = "Contains obscene language";
+"withdrawn" = "Withdrawn";
+"deleted" = "Deleted";
+"owner" = "Owner";
+
+"select_audio" = "Select audios";
 
 /* Notifications */
 
@@ -1287,6 +1338,10 @@
 
 "description_too_long" = "Description is too long.";
 
+"invalid_audio" = "Invalid audio.";
+"do_not_have_audio" = "You don't have this audio.";
+"do_have_audio" = "You already have this audio.";
+
 /* Admin actions */
 
 "login_as" = "Login as $1";
@@ -1732,6 +1787,8 @@
 "s_order_by_name" = "By name";
 "s_order_by_random" = "By random";
 "s_order_by_rating" = "By rating";
+"s_order_by_length" = "By length";
+"s_order_by_listens" = "By listens count";
 "s_order_invert" = "Invert";
 
 "s_by_date" = "By date";
@@ -1753,6 +1810,8 @@
 "deleted_target_comment" = "This comment belongs to deleted post";
 
 "no_results" = "No results";
+"s_only_performers" = "Performers only";
+"s_with_lyrics" = "With lyrics";
 
 /* BadBrowser */
 

@@ -2,11 +2,11 @@
 {var $search = $mode === "audios"}
 
 {block title}
-    Поиск музыки
+    {_audios}
 {/block}
 
 {block heading}
-    Музыка
+    {_audios}
 {/block}
 
 {block searchTitle}
@@ -19,10 +19,10 @@
             <div class="aui-navgroup-primary">
                 <ul class="aui-nav" resolved="">
                     <li n:attr="class => $mode === 'audios' ? 'aui-nav-selected' : ''">
-                        <a href="?act=audios">Аудиозаписи</a>
+                        <a href="?act=audios">{_audios}</a>
                     </li>
                     <li n:attr="class => $mode === 'playlists' ? 'aui-nav-selected' : ''">
-                        <a href="?act=playlists">Плейлисты</a>
+                        <a href="?act=playlists">{_playlists}</a>
                     </li>
                 </ul>
             </div>
@@ -39,12 +39,12 @@
                     <th>{_admin_author}</th>
                     <th>Исполнитель</th>
                     <th>{_admin_title}</th>
-                    <th>Жанр</th>
+                    <th>{_genre}</th>
                     <th>Explicit</th>
-                    <th>Изъято</th>
-                    <th>Удалено</th>
-                    <th>Создан</th>
-                    <th>Действия</th>
+                    <th>{_withdrawn}</th>
+                    <th>{_deleted}</th>
+                    <th>{_created}</th>
+                    <th>{_actions}</th>
                 </tr>
             </thead>
             <tbody>
@@ -87,7 +87,7 @@
                 <tr>
                     <th>ID</th>
                     <th>{_admin_author}</th>
-                    <th>Название</th>
+                    <th>{_name}</th>
                     <th>Создан</th>
                     <th>Действия</th>
                 </tr>

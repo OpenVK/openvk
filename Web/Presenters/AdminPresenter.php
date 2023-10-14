@@ -4,18 +4,18 @@ use Chandler\Database\Log;
 use Chandler\Database\Logs;
 use openvk\Web\Models\Entities\{Voucher, Gift, GiftCategory, User, BannedLink};
 use openvk\Web\Models\Repositories\{Audios,
-    Bans,
     ChandlerGroups,
     ChandlerUsers,
-    Photos, 
-    Posts,
     Users,
     Clubs,
-    Videos,
     Util\EntityStream,
     Vouchers,
     Gifts,
-    BannedLinks};
+    BannedLinks,
+    Bans,
+    Photos, 
+    Posts, 
+    Videos};
 use Chandler\Database\DatabaseConnection;
 
 final class AdminPresenter extends OpenVKPresenter
@@ -39,7 +39,7 @@ final class AdminPresenter extends OpenVKPresenter
         $this->chandlerGroups = $chandlerGroups;
         $this->audios = $audios;
         $this->logs = DatabaseConnection::i()->getContext()->table("ChandlerLogs");
-        
+
         parent::__construct();
     }
     

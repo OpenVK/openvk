@@ -209,6 +209,8 @@ routes:
       handler: "Audio->newPlaylist"
     - url: "/playlist{num}_{num}"
       handler: "Audio->playlist"
+    - url: "/playlists{num}"
+      handler: "Audio->playlists"
     - url: "/audio{num}/action"
       handler: "Audio->action"
     - url: "/{?!club}{num}"

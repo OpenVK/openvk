@@ -15,6 +15,7 @@ use openvk\Web\Models\Entities\Video;
 use openvk\Web\Models\Repositories\Videos as VideosRepo;
 use openvk\Web\Models\Entities\Note;
 use openvk\Web\Models\Repositories\Notes as NotesRepo;
+use openvk\Web\Models\Repositories\Audios as AudiosRepo;
 
 final class Wall extends VKAPIRequestHandler
 {
@@ -450,6 +451,8 @@ final class Wall extends VKAPIRequestHandler
                     $attachmentType = "video";
                 elseif(str_contains($attac, "note"))
                     $attachmentType = "note";
+                elseif(str_contains($attac, "audio"))
+                    $attachmentType = "audio";
                 else
                     $this->fail(205, "Unknown attachment type");
 
@@ -482,6 +485,12 @@ final class Wall extends VKAPIRequestHandler
                         $this->fail(100, "Note does not exist");
                     if(!$attacc->getOwner()->getPrivacyPermission('notes.read', $this->getUser()))
                         $this->fail(11, "Access to note denied");
+
+                    $post->attach($attacc);
+                } elseif($attachmentType == "audio") {
+                    $attacc = (new AudiosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
+                    if(!$attacc || $attacc->isDeleted())
+                        $this->fail(100, "Audio does not exist");
 
                     $post->attach($attacc);
                 }

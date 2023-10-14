@@ -195,12 +195,12 @@ class Audios
 
     function getNew(): EntityStream
     {
-        return new EntityStream("Audio", $this->audios->where("created >= " . (time() - 259200))->order("created DESC")->limit(25));
+        return new EntityStream("Audio", $this->audios->where("created >= " . (time() - 259200))->where(["withdrawn" => 0, "deleted" => 0, "unlisted" => 0])->order("created DESC")->limit(25));
     }
 
     function getPopular(): EntityStream
     {
-        return new EntityStream("Audio", $this->audios->where("listens > 0")->order("listens DESC")->limit(25));
+        return new EntityStream("Audio", $this->audios->where("listens > 0")->where(["withdrawn" => 0, "deleted" => 0, "unlisted" => 0])->order("listens DESC")->limit(25));
     }
 
     function isAdded(int $user_id, int $audio_id): bool
@@ -211,12 +211,47 @@ class Audios
         ])->fetch());
     }
 
-    function find(string $query, int $page = 1, ?int $perPage = NULL): \Traversable
+    function find(string $query, array $pars = [], string $sort = "id DESC", int $page = 1, ?int $perPage = NULL): \Traversable
     {
         $query  = "%$query%";
-        $result = $this->audios->where("name LIKE ? OR performer LIKE ?", $query, $query);
+        $result = $this->audios->where([
+            "unlisted" => 0,
+            "deleted"  => 0,
+        ]);
 
-        return new Util\EntityStream("Audio", $result);
+        $notNullParams = [];
+
+        foreach($pars as $paramName => $paramValue)
+            if($paramName != "before" && $paramName != "after" && $paramName != "only_performers")
+                $paramValue != NULL ? $notNullParams+=["$paramName" => "%$paramValue%"]   : NULL;
+            else
+                $paramValue != NULL ? $notNullParams+=["$paramName" => "$paramValue"]     : NULL;
+        
+        $nnparamsCount = sizeof($notNullParams);
+
+        if($notNullParams["only_performers"] == "1") {
+            $result->where("performer LIKE ?", $query);
+        } else {
+            $result->where("name LIKE ? OR performer LIKE ?", $query, $query);
+        }
+
+        if($nnparamsCount > 0) {
+            foreach($notNullParams as $paramName => $paramValue) {
+                switch($paramName) {
+                    case "before":
+                        $result->where("created < ?", $paramValue);
+                        break;
+                    case "after":
+                        $result->where("created > ?", $paramValue);
+                        break;
+                    case "with_lyrics":
+                        $result->where("lyrics IS NOT NULL");
+                        break;
+                }
+            }
+        }
+
+        return new Util\EntityStream("Audio", $result->order($sort));
     }
 
     function findPlaylists(string $query, int $page = 1, ?int $perPage = NULL): \Traversable

@@ -1,73 +1,10 @@
-<style>
-    .icon {
-        width: 12px;
-        height: 12px;
-        background: url("/assets/packages/static/openvk/img/common.png");
-        cursor: pointer;
-    }
-
-    .delete-icon { background-position: 0 -28.5px; }
-    .edit-icon { background-position: 0 -44px; }
-    .plus-icon { background-position: 0 0; }
-    .save-icon { background-position: 0 -15.5px; }
-    .list-icon { background-position: 0 -92.5px; }
-</style>
-
-<div class="tabs">
-    <div class="tab" n:attr="id => $mode === 'list' ? 'activetabs' : 'ki'">
-        <a href="/audios{$thisUser->getId()}" n:attr="id => $mode === 'list' ? 'act_tab_a' : 'ki'">{$listText ?? "Моя музыка"}</a>
-    </div>
-    <div class="tab" n:attr="id => $mode === 'new' ? 'activetabs' : 'ki'">
-        <a href="/audios/new" n:attr="id => $mode === 'new' ? 'act_tab_a' : 'ki'">Новое</a>
-    </div>
-    <div class="tab" n:attr="id => $mode === 'popular' ? 'activetabs' : 'ki'">
-        <a href="/audios/popular" n:attr="id => $mode === 'popular' ? 'act_tab_a' : 'ki'">Популярное</a>
-    </div>
-    <div class="tab" n:attr="id => $mode === 'search' ? 'activetabs' : 'ki'">
-        <a href="/audios/search" n:attr="id => $mode === 'search' ? 'act_tab_a' : 'ki'">Поиск</a>
-    </div>
-</div>
-
-<div id="editAudioDialogBoxHtml" style="display: none;">
-<table cellspacing="7" cellpadding="0" border="0" align="center">
-    <tbody>
-        <tr>
-            <td width="120" valign="top">
-                <span class="nobold">Имя:</span>
-            </td>
-            <td>
-                <input type="text" name="name" autocomplete="off"/>
-            </td>
-        </tr>
-        <tr>
-            <td width="120" valign="top">
-                <span class="nobold">Исполнитель:</span>
-            </td>
-            <td>
-                <input name="performer" autocomplete="off"/>
-            </td>
-        </tr>
-        <tr>
-            <td width="120" valign="top">
-                <span class="nobold">Жанр:</span>
-            </td>
-            <td>
-                <select name="genre">
-                    <option n:foreach='\openvk\Web\Models\Entities\Audio::genres as $genre'
-                            n:attr="selected: $genre == 'Other'" value="{$genre}">
-                        {$genre}
-                    </option>
-                </select>
-            </td>
-        </tr>
-        <tr>
-            <td width="120" valign="top">
-                <span class="nobold">Текст:</span>
-            </td>
-            <td>
-                <textarea name="lyrics"></textarea>
-            </td>
-        </tr>
-    </tbody>
-</table>
+<div class="searchOptions newer">
+    <ul class="searchList">
+        <a n:attr="id => $mode === 'list' ? 'used' : 'ki'" href="/audios{$thisUser->getId()}">{_my_music}</a>
+        <a href="/player/upload">{_upload_audio}</a>
+        <a n:attr="id => $mode === 'playlists' ? 'used' : 'ki'" href="/playlists{$thisUser->getId()}">{_my_playlists}</a>
+        <a n:attr="id => $mode === 'new' ? 'used' : 'ki'" href="/audios/new">{_audio_new}</a>
+        <a n:attr="id => $mode === 'popular' ? 'used' : 'ki'" href="/audios/popular">{_audio_popular}</a>
+        <a href="/search?type=audios">{_audio_search}</a>
+    </ul>
 </div>

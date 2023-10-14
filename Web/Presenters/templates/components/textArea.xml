@@ -22,6 +22,7 @@
                 
             </div>
             <div class="post-has-videos"></div>
+            <div class="post-has-audio"></div>
 
             <div n:if="$postOpts ?? true" class="post-opts">
                 {var $anonEnabled = OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
@@ -88,6 +89,10 @@
                     <a n:if="$notes ?? false" href="javascript:attachNote({$textAreaId})">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-srt.png" />
                         {_note}
+                    </a>
+                    <a id="_audioAttachment">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
+                        {_audio}
                     </a>
                     <a n:if="$graffiti ?? false" href="javascript:initGraffiti({$textAreaId});">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />

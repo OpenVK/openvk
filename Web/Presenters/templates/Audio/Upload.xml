@@ -20,106 +20,134 @@
 {/block}
 
 {block content}
-    <div class="container_gray" style="background: white; border: 0;">
+    <div class="container_gray" style="border: 0;margin-top: -10px;">
         <div id="upload_container">
-            <h4>{_select_audio}</h4><br/>
-            <b><a href="javascript:false">{_limits}</a></b>
-            <ul>
-                <li>{tr("audio_requirements", 1, 30, 25)}</li>
-            </ul>
-            <div id="audio_upload">
-                <form enctype="multipart/form-data" method="POST">
-                    <input type="hidden" name="name" />
-                    <input type="hidden" name="performer" />
-                    <input type="hidden" name="lyrics" />
-                    <input type="hidden" name="genre" />
-                    
-                    <input type="hidden" name="hash" value="{$csrfToken}" />
-                    <input id="audio_input" type="file" name="blob" accept="audio/*" />
-                </form>
-            </div><br/>
-        
-            <span>{_you_can_also_add_audio_using} <b><a href="/player">{_search_audio_inst}</a></b>.<span>
+            <div id="firstStep">
+                <h4>{_select_audio}</h4><br/>
+                <b><a href="javascript:false">{_limits}</a></b>
+                <ul>
+                    <li>{tr("audio_requirements", 1, 30, 25)}</li>
+                </ul>
+                <div id="audio_upload">
+                    <form enctype="multipart/form-data" method="POST">
+                        <input type="hidden" name="name" />
+                        <input type="hidden" name="performer" />
+                        <input type="hidden" name="lyrics" />
+                        <input type="hidden" name="genre" />
+                        <input type="hidden" name="explicit" />
+                        
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input id="audio_input" type="file" name="blob" accept="audio/*" style="display:none" />
+                        <input value="{_upload_button}" class="button" type="button" onclick="document.querySelector('#audio_input').click()">
+                    </form>
+                </div><br/>
+            
+                <span>{_you_can_also_add_audio_using} <b><a href="/player">{_search_audio_inst}</a></b>.<span>
+            </div>
+
+            <div id="lastStep" style="display:none;">
+                <table cellspacing="7" cellpadding="0" border="0" align="center">
+                    <tbody>
+                        <tr>
+                            <td width="120" valign="top"><span class="nobold">{_audio_name}:</span></td>
+                            <td><input type="text" name="name" autocomplete="off" /></td>
+                        </tr>
+                        <tr>
+                            <td width="120" valign="top"><span class="nobold">{_performer}:</span></td>
+                            <td><input name="performer" type="text" autocomplete="off" /></td>
+                        </tr>
+                        <tr>
+                            <td width="120" valign="top"><span class="nobold">{_genre}:</span></td>
+                            <td>
+                                <select name="genre">
+                                    <option n:foreach='\openvk\Web\Models\Entities\Audio::genres as $genre' n:attr="selected: $genre == 'Other'" value="{$genre}">
+                                        {$genre}
+                                    </option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="120" valign="top"><span class="nobold">{_lyrics}:</span></td>
+                            <td><textarea name="lyrics" style="resize: vertical;max-height: 300px;"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td width="120" valign="top"></td>
+                            <td>
+                                <label><input type="checkbox" name="explicit">{_audios_explicit}</label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td width="120" valign="top"></td>
+                            <td>
+                                <input class="button" type="button" id="uploadMuziko" value="{_upload_button}">
+                                <input class="button" type="button" id="backToUpload" value="{_select_another_file}">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-    
-    <div id="dialogBoxHtml" style="display: none;">
-        <table cellspacing="7" cellpadding="0" border="0" align="center">
-            <tbody>
-                <tr>
-                    <td width="120" valign="top"><span class="nobold">Имя:</span></td>
-                    <td><input type="text" name="name" autocomplete="off" /></td>
-                </tr>
-                <tr>
-                    <td width="120" valign="top"><span class="nobold">Исполнитель:</span></td>
-                    <td><input name="performer" autocomplete="off" /></td>
-                </tr>
-                <tr>
-                    <td width="120" valign="top"><span class="nobold">Жанр:</span></td>
-                    <td>
-                        <select name="genre">
-                            <option n:foreach='\openvk\Web\Models\Entities\Audio::genres as $genre' n:attr="selected: $genre == 'Other'" value="{$genre}">
-                                {$genre}
-                            </option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td width="120" valign="top"><span class="nobold">Текст:</span></td>
-                    <td><textarea name="lyrics"></textarea></td>
-                </tr>
-            </tbody>
-        </table>
     </div>
     
     <script type="module">
         import * as id3 from "/assets/packages/static/openvk/js/node_modules/id3js/lib/id3.js";
         
         u("#audio_input").on("change", async function(e) {
-            if(e.currentTarget.files.length <= 0)
+            let files = e.currentTarget.files
+            if(files.length <= 0)
                 return;
             
-            var name_   = document.querySelector("#audio_upload input[name=name]");
-            var perf_   = document.querySelector("#audio_upload input[name=performer]");
-            var genre_  = document.querySelector("#audio_upload input[name=genre]");
-            var lyrics_ = document.querySelector("#audio_upload input[name=lyrics]");
+            document.querySelector("#firstStep").style.display = "none"
+            document.querySelector("#lastStep").style.display = "block"
             
-            MessageBox({_upload_audio}, document.querySelector("#dialogBoxHtml").innerHTML, [{_ok}, {_cancel}], [
-                function() {
-                    var name   = u("input[name=name]", this.$dialog().nodes[0]).nodes[0].value;
-                    var perf   = u("input[name=performer]", this.$dialog().nodes[0]).nodes[0].value;
-                    var genre  = u("select[name=genre]", this.$dialog().nodes[0]).nodes[0].value;
-                    var lyrics = u("textarea[name=lyrics]", this.$dialog().nodes[0]).nodes[0].value;
-                    
-                    name_.value   = name;
-                    perf_.value   = perf;
-                    genre_.value  = genre;
-                    lyrics_.value = lyrics;
-                    
-                    document.querySelector("#audio_upload > form").submit();
-                },
-                
-                Function.noop
-            ]);
-            
-            let tags = await id3.fromFile(e.currentTarget.files[0]);
+            let tags = await id3.fromFile(files[0]);
             if(tags != null) {
                 console.log("ID" + tags.kind + " detected, setting values...");
                 
                 if(tags.title != null)
-                    document.querySelector(".ovk-diag input[name=name]").value = tags.title;
+                    document.querySelector("#lastStep input[name=name]").value = tags.title;
                 
                 if(tags.artist != null)
-                    document.querySelector(".ovk-diag input[name=performer]").value = tags.artist;
+                    document.querySelector("#lastStep input[name=performer]").value = tags.artist;
                 
                 if(tags.genre != null) {
-                    if(document.querySelector(".ovk-diag select[name=genre] > option[value='" + tags.genre + "']") != null) {
-                        document.querySelector(".ovk-diag select[name=genre]").value = tags.genre;
+                    if(document.querySelector("#lastStep select[name=genre] > option[value='" + tags.genre + "']") != null) {
+                        document.querySelector("#lastStep select[name=genre]").value = tags.genre;
                     } else {
                         console.warn("Unknown genre: " + tags.genre);
                     }
                 }
+            } else {
+                document.querySelector("#lastStep input[name=name]").value = files[0].name
+                document.querySelector("#lastStep select[name=genre]").value = "Other"
             }
         });
+
+        u("#backToUpload").on("click", (e) => {
+            document.querySelector("#firstStep").style.display = "block"
+            document.querySelector("#lastStep").style.display = "none"
+
+            document.querySelector("#lastStep input[name=name]").value = ""
+            document.querySelector("#lastStep input[name=performer]").value = ""
+            document.querySelector("#lastStep select[name=genre]").value = ""
+            document.querySelector("#lastStep textarea[name=lyrics]").value = ""
+            document.querySelector("#audio_input").value = ""
+        })
+
+        u("#uploadMuziko").on("click", (e) => {
+            var name_   = document.querySelector("#audio_upload input[name=name]");
+            var perf_   = document.querySelector("#audio_upload input[name=performer]");
+            var genre_  = document.querySelector("#audio_upload input[name=genre]");
+            var lyrics_ = document.querySelector("#audio_upload input[name=lyrics]");
+            var explicit_ = document.querySelector("#audio_upload input[name=explicit]");
+
+            name_.value = document.querySelector("#lastStep input[name=name]").value
+            perf_.value = document.querySelector("#lastStep input[name=performer]").value
+            genre_.value = document.querySelector("#lastStep select[name=genre]").value
+            lyrics_.value = document.querySelector("#lastStep textarea[name=lyrics]").value
+            explicit_.value = document.querySelector("#lastStep input[name=explicit]").value
+
+            document.querySelector("#audio_upload > form").submit();
+        })
     </script>
 {/block}

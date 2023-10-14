@@ -594,6 +594,25 @@
             </div>
         </div>
 
+        <div n:if="$audiosCount > 0">
+            <div class="content_title_expanded" onclick="hidePanel(this, {$audiosCount});">
+                {_audios}
+            </div>
+            <div>
+                <div class="content_subtitle">
+                    {tr("audios_count", $audiosCount)}
+                    <div style="float:right;">
+                        <a href="/audios{$user->getId()}">{_all_title}</a>
+                    </div>
+                </div>
+                <div class="content_list long">
+                    <div class="audio" n:foreach="$audios as $audio" style="width: 100%;">
+                        {include "../Audio/player.xml", audio => $audio}
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0">
             <div class="content_title_expanded" onclick="hidePanel(this, {$giftCount});">
                 {_gifts}

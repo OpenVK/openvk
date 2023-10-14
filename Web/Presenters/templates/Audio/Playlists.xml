@@ -1,0 +1,15 @@
+{extends "../@layout.xml"}
+
+{block title}{_audios}{/block}
+
+{block header}
+    
+{/block}
+
+{block content}
+    {script "js/node_modules/umbrellajs/umbrella.min.js"}
+    
+    <div style="width: 100%;display: flex;margin-bottom: -10px;">
+        {include "tabs.xml"}
+    </div>
+{/block}

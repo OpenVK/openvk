@@ -1242,64 +1242,6 @@ table.User {
     border-bottom: 1px solid #c3cad2;
 }
 
-.music-app {
-    display: grid;
-}
-
-.music-app--player {
-    display: grid;
-    grid-template-columns: 32px 32px 32px 1fr;
-    padding: 8px;
-    border-bottom: 1px solid #c1c1c1;
-    border-bottom-style: solid;
-    border-bottom-style: dashed;
-}
-
-.music-app--player .play,
-.music-app--player .perv,
-.music-app--player .next {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-color: #507597;
-    color: #fff;
-    height: 20px;
-    margin: 5px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    padding: 0;
-    font-size: 10px;
-}
-
-.music-app--player .info {
-    margin-left: 10px;
-    width: 550px;
-}
-
-.music-app--player .info .song-name * {
-    color: black;
-}
-
-.music-app--player .info .song-name time {
-    float: right;
-}
-
-.music-app--player .info .track {
-    margin-top: 8px;
-    height: 5px;
-    width: 70%;
-    background-color: #fff;
-    border-top: 1px solid #507597;
-    float: left;
-}
-
-.music-app--player .info .track .inner-track {
-    background-color: #507597;
-    height: inherit;
-    width: 15px;
-    opacity: .7;
-}
-
 .settings_delete {
     margin: -12px;
     padding: 12px;
@@ -2161,77 +2103,6 @@ li {
     padding-left: 15px;
 }
 
-#audioEmbed {
-    user-select: none;
-    background: #eee;
-    height: 40px;
-    width: 486px;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-    overflow: hidden;
-    border: 1px solid #8B8B8B;
-}
-
-.audioEntry {
-    display: grid;
-    grid-template-columns: 1fr 10fr 1fr;
-    height: 100%;
-    width: 100%;
-}
-
-.audioEntry > * {
-    padding: 5px;
-}
-
-.audioEntry .playerButton {
-    position: relative;
-}
-
-.audioEntry .playerButton img {
-    position: absolute;
-    max-width: 50%;
-    top: 50%;
-    left: 50%;
-    margin-right: -50%;
-    transform: translate(-50%, -50%);
-    cursor: pointer;
-}
-
-.audioEntry .status {
-    display: grid;
-    grid-template-columns: 1fr;
-}
-
-.audioEntry .status strong {
-    color: #4C4C4C;
-}
-
-.audioEntry .status .track {
-    display: none;
-    padding: 4px 0;
-}
-
-#audioEmbed .audioEntry .status .track, .audioEntry.playing .status .track {
-    display: unset;
-}
-
-.audioEntry .status .track > .selectableTrack {
-    margin-top: 3px;
-    width: calc(100% - 8px);
-    border-top: #707070 1px solid;
-    height: 6px;
-    cursor: text;
-}
-
-.audioEntry .status .track > div > div {
-    height: 100%;
-    width: 0%;
-    background-color: #BFBFBF;
-}
-
 #votesBalance {
     margin-top: 10px;
     padding: 7px;
@@ -2582,8 +2453,7 @@ a.poll-retract-vote {
     display: none;
 }
 
-.searchOptions
-{
+.searchOptions {
     overflow: hidden;
     width:25.5%;
     border-top:1px solid #E5E7E6;
@@ -2594,8 +2464,7 @@ a.poll-retract-vote {
     margin-right: -7px;
 }
 
-.searchBtn
-{
+.searchBtn {
     border: solid 1px #575757;
     background-color: #696969;
     color:white;
@@ -2607,25 +2476,22 @@ a.poll-retract-vote {
     margin-top: 1px;
 }
 
-.searchBtn:active
-{
+.searchBtn:active {
     border: solid 1px #666666;
     background-color: #696969;
     color:white;
     box-shadow: 0px -2px 0px 0px rgba(255, 255, 255, 0.18) inset;
 }
 
-.searchList
-{
+.searchList {
     list-style: none;
     user-select: none;
     padding-left:0px;
 }
 
-.searchList #used
-{
+.searchList #used {
     margin-left:0px;
-    color: white;
+    color: white !important;
     padding:2px;
     padding-top:5px;
     padding-bottom:5px;
@@ -2636,23 +2502,21 @@ a.poll-retract-vote {
     width:87%;
 }
 
-.searchList #used a
-{
+.searchList #used a {
     color: white;
 }
 
-.sr:focus
-{
+.sr:focus {
     outline:none;
 }
 
-.searchHide
-{
+.searchHide {
     padding-right: 5px;
 }
 
-.searchList li
+.searchList li, .searchList a
 {
+    display: block;
     margin-left:0px;
     color: #2B587A !important;
     cursor:pointer;
@@ -2663,13 +2527,15 @@ a.poll-retract-vote {
     padding-left:9px;
 }
 
-.searchList li a
-{
+.searchList li a {
     min-width:100%;
 }
 
-.searchList li:hover
-{
+.searchList a {
+    min-width: 88%;
+}
+
+.searchList li:hover, .searchList a:hover {
     margin-left:0px;
     color: #2B587A !important;
     background:#ebebeb;
@@ -2681,8 +2547,7 @@ a.poll-retract-vote {
     width:91%;
 }
 
-.whatFind
-{
+.whatFind {
     color:rgb(128, 128, 128);
     background:none;
     border:none;
@@ -3084,3 +2949,10 @@ body.article .floating_sidebar, body.article .page_content {
     background: #E9F0F1 !important;
 }
 
+.searchOptions.newer {
+    padding-left: 6px;
+    border-top: unset !important;
+    height: unset !important;
+    border-left: 1px solid #d8d8d8;
+    width: 26% !important;
+}

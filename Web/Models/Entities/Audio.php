@@ -101,7 +101,7 @@ class Audio extends Media
         $this->stateChanges("segment_size", $ss);
         $this->stateChanges("length", $duration);
 
-         try {
+        try {
             $args = [
                 str_replace("enabled", "available", OPENVK_ROOT),
                 str_replace("enabled", "available", $this->getBaseDir()),
@@ -114,23 +114,18 @@ class Audio extends Media
                 $ss,
             ];
 
-
             if(Shell::isPowershell()) {
                 Shell::powershell("-executionpolicy bypass", "-File", __DIR__ . "/../shell/processAudio.ps1", ...$args)
-                    ->start();
+                ->start();
             } else {
-                Shell::bash(__DIR__ . "/../shell/processAudio.sh", ...$args)->start();
-                // Shell::bash(__DIR__ . "/../shell/processAudio.sh", ...$args)->start();
-                // exit("pwsh /opt/chandler/extensions/available/openvk/Web/Models/shell/processAudio.ps1 " . implode(" ", $args) . ' *> /opt/chandler/extensions/available/openvk/storage/log.log');
-                // exit("pwsh /opt/chandler/extensions/available/openvk/Web/Models/shell/processAudio.ps1 " . implode(" ", $args) . ' *> /opt/chandler/extensions/available/openvk/storage/log.log');
-                // Shell::bash("pwsh /opt/chandler/extensions/available/openvk/Web/Models/shell/processAudio.ps1 " . implode(" ", $args) . ' *> /opt/chandler/extensions/available/openvk/storage/log.log');
+                exit("Linux uploads are not implemented");
             }
 
             # Wait until processAudio will consume the file
-//             $start = time();
-//             while(file_exists($filename))
-//                 if(time() - $start > 5)
-//                     exit("Timed out waiting for ffmpeg"); // TODO replace with exception
+            $start = time();
+            while(file_exists($filename))
+                if(time() - $start > 5)
+                    exit("Timed out waiting for ffmpeg"); // TODO replace with exception
 
          } catch(UnknownCommandException $ucex) {
              exit(OPENVK_ROOT_CONF["openvk"]["debug"] ? "bash/pwsh is not installed" : VIDEOS_FRIENDLY_ERROR);
@@ -161,7 +156,7 @@ class Audio extends Media
 
     function getLyrics(): ?string
     {
-        return $this->getRecord()->lyrics ?? NULL;
+        return !is_null($this->getRecord()->lyrics) ? htmlspecialchars($this->getRecord()->lyrics, ENT_DISALLOWED | ENT_XHTML) : NULL;
     }
 
     function getLength(): int

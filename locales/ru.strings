@@ -461,6 +461,7 @@
 "my_videos" = "Мои Видеозаписи";
 "my_messages" = "Мои Сообщения";
 "my_notes" = "Мои Заметки";
+"my_audios" = "Мои Аудиозаписи";
 "my_groups" = "Мои Группы";
 "my_feed" = "Мои Новости";
 "my_feedback" = "Мои Ответы";
@@ -682,9 +683,11 @@
 "upload_audio" = "Загрузить аудио";
 
 "performer" = "Исполнитель";
-"audio_name" = "Имя композиции";
+"audio_name" = "Название";
 "genre" = "Жанр";
 "lyrics" = "Текст";
+
+"select_another_file" = "Выбрать другой файл";
 
 "limits" = "Ограничения";
 "select_audio" = "Выберите аудиозапись на Вашем компьютере";
@@ -696,7 +699,31 @@
 "audio_embed_deleted" = "Аудиозапись была удалена";
 "audio_embed_withdrawn" = "Аудиозапись была изъята по обращению правообладателя";
 "audio_embed_forbidden" = "Настройки приватности пользователя не позволяют встраивать эту композицию";
-"audio_embed_processing" = "Композиция ещё обрабатывается";
+"audio_embed_processing" = "Аудио ещё обрабатывается, либо обработалось неправильно.";
+
+"audios_count_zero" = "Нет аудиозаписей";
+"audios_count_one" = "Одна аудиозапись";
+"audios_count_few" = "$1 аудиозаписи";
+"audios_count_many" = "$1 аудиозаписей";
+"audios_count_other" = "$1 аудиозаписей";
+
+"track_unknown" = "Неизвестен";
+"track_noname" = "Без названия";
+
+"my_music" = "Моя музыка";
+"audio_new" = "Новое";
+"audio_popular" = "Популярное";
+"audio_search" = "Поиск";
+
+"my_audios_small" = "Мои аудиозаписи";
+"my_playlists" = "Мои плейлисты";
+"playlists" = "Плейлисты";
+"audios_explicit" = "Содержит нецензурную лексику";
+"withdrawn" = "Изъято";
+"deleted" = "Удалено";
+"owner" = "Владелец";
+
+"select_audio" = "Выбрать аудиозаписи";
 
 /* Notifications */
 
@@ -1207,6 +1234,9 @@
 "group_owner_is_banned" = "Создатель сообщества успешно забанен.";
 "group_is_banned" = "Сообщество успешно забанено";
 "description_too_long" = "Описание слишком длинное.";
+"invalid_audio" = "Такой аудиозаписи не существует.";
+"do_not_have_audio" = "У вас нет этой аудиозаписи.";
+"do_have_audio" = "У вас уже есть эта аудиозапись.";
 
 /* Admin actions */
 
@@ -1646,6 +1676,8 @@
 "s_order_by_name" = "По имени";
 "s_order_by_random" = "По случайности";
 "s_order_by_rating" = "По рейтингу";
+"s_order_by_length" = "По длине";
+"s_order_by_listens" = "По числу прослушиваний";
 "s_order_invert" = "Инвертировать";
 
 "s_by_date" = "По дате";
@@ -1667,6 +1699,8 @@
 "deleted_target_comment" = "Этот комментарий принадлежит к удалённой записи";
 
 "no_results" = "Результатов нет";
+"s_only_performers" = "Только исполнители";
+"s_with_lyrics" = "С текстом";
 
 /* BadBrowser */
 
