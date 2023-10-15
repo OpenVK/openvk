@@ -8,27 +8,46 @@ function fastError(message) {
     MessageBox(tr("error"), message, [tr("ok")], [Function.noop])
 }
 
-// нихуя я тут насрал
+function getElapsedTime(fullTime, time) {
+    let timer = fullTime - time
+
+    return "-" + fmtTime(timer)
+}
+
 class bigPlayer {
-    contextObject = []
-    player = null
-    currentTrack = null
-    dashPlayer = null
+    tracks = {
+        currentTrack: null,
+        nextTrack: null,
+        previousTrack: null,
+        tracks: []
+    }
+
+    context = {
+        context_type: null,
+        context_id: 0,
+        pagesCount: 0,
+        playedPages: [],
+        object: [],
+    }
+
+    nodes = {
+        dashPlayer: null,
+        audioPlayer: null,
+        thisPlayer: null,
+        playButtons: null,
+    }
 
     constructor(context, context_id, page = 1) {
-        this.context = context
-        this.context_id = context_id
-        this.playerNode = document.querySelector(".bigPlayer")
+        this.context["context_type"] = context
+        this.context["context_id"] = context_id
+        this.context["playedPages"].push(page)
 
-        this.playerNode.classList.add("lagged")
+        this.nodes["thisPlayer"] = document.querySelector(".bigPlayer")
+        this.nodes["thisPlayer"].classList.add("lagged")
 
-        this.performer = this.playerNode.querySelector(".trackInfo b")
-        this.name = this.playerNode.querySelector(".trackInfo span")
-        this.time = this.playerNode.querySelector(".trackInfo .time")
-        this.player = () => { return this.playerNode.querySelector("audio.audio") }
-        this.playButtons = this.playerNode.querySelector(".playButtons")
-
-        this.dashPlayer = dashjs.MediaPlayer().create()
+        this.player = () => { return this.nodes["thisPlayer"].querySelector("audio.audio") }
+        this.nodes["playButtons"] = this.nodes["thisPlayer"].querySelector(".playButtons")
+        this.nodes["dashPlayer"] = dashjs.MediaPlayer().create()
 
         let formdata = new FormData()
         formdata.append("context", context)
@@ -40,8 +59,21 @@ class bigPlayer {
             hooks: {
                 afterResponse: [
                     async (_request, _options, response) => {
-                        this.contextObject = await response.json()
-                        this.playerNode.classList.remove("lagged")
+                        if(response.status !== 200) {
+                            fastError(tr("unable_to_load_queue"))
+                            return
+                        }
+
+                        let contextObject = await response.json()
+
+                        if(!contextObject.success) {
+                            fastError(tr("unable_to_load_queue"))
+                            return
+                        }
+
+                        this.nodes["thisPlayer"].classList.remove("lagged")
+                        this.tracks["tracks"] = contextObject["items"]
+                        this.context["pagesCount"] = contextObject["pagesCount"]
                         console.info("Context is successfully loaded")
                     }
                 ]
@@ -49,7 +81,7 @@ class bigPlayer {
             body: formdata
         })
 
-        u(this.playButtons.querySelector(".playButton")).on("click", (e) => {
+        u(this.nodes["playButtons"].querySelector(".playButton")).on("click", (e) => {
             if(this.player().paused) {
                 this.play()
             } else {
@@ -59,11 +91,12 @@ class bigPlayer {
 
         u(this.player()).on("timeupdate", (e) => {
             const time = this.player().currentTime;
-            const ps = Math.ceil((time * 100) / this.currentTrack.length);
-            this.time.innerHTML = fmtTime(time)
+            const ps = Math.ceil((time * 100) / this.tracks["currentTrack"].length);
+            this.nodes["thisPlayer"].querySelector(".time").innerHTML = fmtTime(time)
+            this.nodes["thisPlayer"].querySelector(".elapsedTime").innerHTML = getElapsedTime(this.tracks["currentTrack"].length, time)
 
             if (ps <= 100)
-                this.playerNode.querySelector(".selectableTrack .slider").style.left = `${ ps}%`;
+                this.nodes["thisPlayer"].querySelector(".selectableTrack .slider").style.left = `${ ps}%`;
 
         })
 
@@ -72,28 +105,28 @@ class bigPlayer {
             const ps = Math.ceil((volume * 100) / 1);
 
             if (ps <= 100)
-                this.playerNode.querySelector(".volumePanel .selectableTrack .slider").style.left = `${ ps}%`;
+                this.nodes["thisPlayer"].querySelector(".volumePanel .selectableTrack .slider").style.left = `${ ps}%`;
         })
 
         u(".bigPlayer .track > div").on("click mouseup", (e) => {
-            if(this.currentTrack == null) {
+            if(this.tracks["currentTrack"] == null) {
                 return
             }
 
-            let rect  = this.playerNode.querySelector(".selectableTrack").getBoundingClientRect();
+            let rect  = this.nodes["thisPlayer"].querySelector(".selectableTrack").getBoundingClientRect();
             
             const width = e.clientX - rect.left;
-            const time = Math.ceil((width * this.currentTrack.length) / (rect.right - rect.left));
+            const time = Math.ceil((width * this.tracks["currentTrack"].length) / (rect.right - rect.left));
 
             this.player().currentTime = time;
         })
 
         u(".bigPlayer .volumePanel > div").on("click mouseup", (e) => {
-            if(this.currentTrack == null) {
+            if(this.tracks["currentTrack"] == null) {
                 return
             }
 
-            let rect  = this.playerNode.querySelector(".volumePanel .selectableTrack").getBoundingClientRect();
+            let rect  = this.nodes["thisPlayer"].querySelector(".volumePanel .selectableTrack").getBoundingClientRect();
             
             const width = e.clientX - rect.left;
             const volume = (width * 1) / (rect.right - rect.left);
@@ -102,7 +135,7 @@ class bigPlayer {
         })
 
         u(".bigPlayer .additionalButtons .repeatButton").on("click", (e) => {
-            if(this.currentTrack == null) {
+            if(this.tracks["currentTrack"] == null) {
                 return
             }
 
@@ -123,6 +156,48 @@ class bigPlayer {
             this.showNextTrack()
         })
 
+        u(document).on("keydown", (e) => {
+            switch(e.key) {
+                case "ArrowUp":
+                    e.preventDefault()
+                    this.player().volume = Math.min(0.99, this.player().volume + 0.1)
+                    break
+                case "ArrowDown":
+                    e.preventDefault()
+                    this.player().volume = Math.max(0, this.player().volume - 0.1)
+                    break
+                case "ArrowLeft":
+                    this.player().currentTime = this.player().currentTime - 3
+                    break
+                case "ArrowRight":
+                    this.player().currentTime = this.player().currentTime + 3
+                    break
+            }
+        })
+
+        u(document).on("keyup", (e) => {
+            switch(e.keyCode) {
+                case 32:
+                    e.preventDefault()
+                    if(this.player().paused)
+                        this.play()
+                    else 
+                        this.pause()
+
+                    break
+                case 87:
+                case 65:
+                    e.preventDefault()
+                    this.showPreviousTrack()
+                    break
+                case 83:
+                case 68:
+                    e.preventDefault()
+                    this.showNextTrack()
+                    break
+            }
+        })
+
         u(this.player()).on("ended", (e) => {
             e.preventDefault()
 
@@ -133,54 +208,54 @@ class bigPlayer {
     }
 
     play() {
-        if(this.currentTrack == null) {
+        if(this.tracks["currentTrack"] == null) {
             return
         }
 
         document.querySelectorAll('audio').forEach(el => el.pause());
-        document.querySelector(`.audioEmbed[data-realid='${this.currentTrack.id}'] .audioEntry .playerButton .playIcon`) != null ? document.querySelector(`.audioEmbed[data-realid='${this.currentTrack.id}'] .audioEntry .playerButton .playIcon`).classList.add("paused") : void(0)
+        document.querySelector(`.audioEmbed[data-realid='${this.tracks["currentTrack"].id}'] .audioEntry .playerButton .playIcon`) != null ? document.querySelector(`.audioEmbed[data-realid='${this.tracks["currentTrack"].id}'] .audioEntry .playerButton .playIcon`).classList.add("paused") : void(0)
         this.player().play()
-        this.playButtons.querySelector(".playButton").classList.add("pause")
+        this.nodes["playButtons"].querySelector(".playButton").classList.add("pause")
     }
     
     pause() {
-        if(this.currentTrack == null) {
+        if(this.tracks["currentTrack"] == null) {
             return
         }
 
-        document.querySelector(`.audioEmbed[data-realid='${this.currentTrack.id}'] .audioEntry .playerButton .playIcon`) != null ? document.querySelector(`.audioEmbed[data-realid='${this.currentTrack.id}'] .audioEntry .playerButton .playIcon`).classList.remove("paused") : void(0)
+        document.querySelector(`.audioEmbed[data-realid='${this.tracks["currentTrack"].id}'] .audioEntry .playerButton .playIcon`) != null ? document.querySelector(`.audioEmbed[data-realid='${this.tracks["currentTrack"].id}'] .audioEntry .playerButton .playIcon`).classList.remove("paused") : void(0)
         this.player().pause()
-        this.playButtons.querySelector(".playButton").classList.remove("pause")
+        this.nodes["playButtons"].querySelector(".playButton").classList.remove("pause")
     }
 
     showPreviousTrack() {
-        if(this.currentTrack == null || this.previousTrack == null) {
+        if(this.tracks["currentTrack"] == null || this.tracks["previousTrack"] == null) {
             return
         }
 
-        this.setTrack(this.previousTrack)
+        this.setTrack(this.tracks["previousTrack"])
     }
 
     showNextTrack() {
-        if(this.currentTrack == null || this.nextTrack == null) {
+        if(this.tracks["currentTrack"] == null || this.tracks["nextTrack"] == null) {
             return
         }
         
-        this.setTrack(this.nextTrack)
+        this.setTrack(this.tracks["nextTrack"])
     }
 
     updateButtons() {
         // перепутал некст и бек.
-        let prevButton = this.playerNode.querySelector(".nextButton")
-        let nextButton = this.playerNode.querySelector(".backButton")
+        let prevButton = this.nodes["thisPlayer"].querySelector(".nextButton")
+        let nextButton = this.nodes["thisPlayer"].querySelector(".backButton")
 
-        if(this.previousTrack == null) {
+        if(this.tracks["previousTrack"] == null) {
             prevButton.classList.add("lagged")
         } else {
             prevButton.classList.remove("lagged")
         }
 
-        if(this.nextTrack == null) {
+        if(this.tracks["nextTrack"] == null) {
             nextButton.classList.add("lagged")
         } else {
             nextButton.classList.remove("lagged")
@@ -188,45 +263,45 @@ class bigPlayer {
     }
 
     setTrack(id) {
-        if(this.contextObject["items"] == null) {
+        if(this.tracks["tracks"] == null) {
             console.info("Context is not loaded yet. Wait please")
             return 0;
         }
 
         document.querySelectorAll(".audioEntry.nowPlaying").forEach(el => el.classList.remove("nowPlaying"))
-        let obj = this.contextObject["items"].find(item => item.id == id)
+        let obj = this.tracks["tracks"].find(item => item.id == id)
 
         if(obj == null) {
             fastError("No audio in context")
             return
         }
 
-        this.name.innerHTML = escapeHtml(obj.name) 
-        this.performer.innerHTML = escapeHtml(obj.performer)
-        this.time.innerHTML = fmtTime(obj.length)
-        this.currentTrack = obj
+        this.nodes["thisPlayer"].querySelector(".trackInfo span").innerHTML = escapeHtml(obj.name) 
+        this.nodes["thisPlayer"].querySelector(".trackInfo b").innerHTML = escapeHtml(obj.performer)
+        this.nodes["thisPlayer"].querySelector(".trackInfo .time").innerHTML = fmtTime(obj.length)
+        this.tracks["currentTrack"] = obj
 
-        let indexOfCurrentTrack = this.contextObject["items"].indexOf(obj) ?? 0
-        this.nextTrack = this.contextObject["items"].at(indexOfCurrentTrack + 1) != null ? this.contextObject["items"].at(indexOfCurrentTrack + 1).id : null
+        let indexOfCurrentTrack = this.tracks["tracks"].indexOf(obj) ?? 0
+        this.tracks["nextTrack"] = this.tracks["tracks"].at(indexOfCurrentTrack + 1) != null ? this.tracks["tracks"].at(indexOfCurrentTrack + 1).id : null
 
         if(indexOfCurrentTrack - 1 >= 0) {
-            this.previousTrack = this.contextObject["items"].at(indexOfCurrentTrack - 1).id
+            this.tracks["previousTrack"] = this.tracks["tracks"].at(indexOfCurrentTrack - 1).id
         } else {
-            this.previousTrack = null
+            this.tracks["previousTrack"] = null
         }
 
-        if(this.nextTrack == null && this.contextObject.page < this.contextObject.pagesCount
-            || this.previousTrack == null && (this.contextObject.page > 1)) {
+        if(this.tracks["nextTrack"] == null && Math.max(this.context["playedPages"]) < this.context["pagesCount"]
+            || this.tracks["previousTrack"] == null && (Math.min(this.context["playedPages"]) > 1)) {
             let formdata = new FormData()
-            formdata.append("context", this.context)
-            formdata.append("context_entity", this.context_id)
+            formdata.append("context", this.context["context_type"])
+            formdata.append("context_entity", this.context["context_id"])
             formdata.append("hash", u("meta[name=csrf]").attr("value"))
 
-            let lesser = this.contextObject.page > 1
+            let lesser = Math.max(this.context["playedPages"]) > 1
             if(lesser) {
-                formdata.append("page", Number(this.contextObject["page"]) - 1)
+                formdata.append("page", Number(Math.min(this.context["playedPages"])) - 1)
             } else {
-                formdata.append("page", Number(this.contextObject["page"]) + 1)
+                formdata.append("page", Number(Math.max(this.context["playedPages"])) + 1)
             }
 
             ky.post("/audios/context", {
@@ -236,17 +311,17 @@ class bigPlayer {
                             let newArr = await response.json()
 
                             if(lesser) {
-                                this.contextObject["items"] = newArr["items"].concat(this.contextObject["items"])
+                                this.tracks["tracks"] = newArr["items"].concat(this.tracks["tracks"])
                             } else {
-                                this.contextObject["items"] = this.contextObject["items"].concat(newArr["items"])
+                                this.tracks["tracks"] = this.tracks["tracks"].concat(newArr["items"])
                             }
 
-                            this.contextObject["page"] = newArr["page"]
+                            this.context["playedPages"].push(newArr["page"])
 
                             if(lesser) {
-                                this.previousTrack = this.contextObject["items"].at(this.contextObject["items"].indexOf(obj) - 1).id
+                                this.tracks["previousTrack"] = this.tracks["tracks"].at(this.tracks["tracks"].indexOf(obj) - 1).id
                             } else {
-                                this.nextTrack = this.contextObject["items"].at(indexOfCurrentTrack + 1) != null ? this.contextObject["items"].at(indexOfCurrentTrack + 1).id : null
+                                this.tracks["nextTrack"] = this.tracks["tracks"].at(indexOfCurrentTrack + 1) != null ? this.tracks["tracks"].at(indexOfCurrentTrack + 1).id : null
                             }
 
                             this.updateButtons()
@@ -258,7 +333,7 @@ class bigPlayer {
             })
         }
 
-        if(this.currentTrack.available == false || this.currentTrack.withdrawn) {
+        if(this.tracks["currentTrack"].available == false || this.tracks["currentTrack"].withdrawn) {
             this.showNextTrack()
         }
 
@@ -270,20 +345,16 @@ class bigPlayer {
             }
         };
 
-        this.dashPlayer.initialize(this.player(), obj.url, false);
-        this.dashPlayer.setProtectionData(protData);
+        this.nodes["dashPlayer"].initialize(this.player(), obj.url, false);
+        this.nodes["dashPlayer"].setProtectionData(protData);
 
         this.play()
 
-        document.querySelector(`.audioEmbed[data-realid='${this.currentTrack.id}'] .audioEntry`) != null ? 
-            document.querySelector(`.audioEmbed[data-realid='${this.currentTrack.id}'] .audioEntry`).classList.add("nowPlaying") :
+        document.querySelector(`.audioEmbed[data-realid='${this.tracks["currentTrack"].id}'] .audioEntry`) != null ? 
+            document.querySelector(`.audioEmbed[data-realid='${this.tracks["currentTrack"].id}'] .audioEntry`).classList.add("nowPlaying") :
             null
 
         document.querySelectorAll(`.audioEntry .playerButton .playIcon.paused`).forEach(el => el.classList.remove("paused"))
-    }
-
-    getCurrentTrack() {
-        return this.currentTrack
     }
 }
 
@@ -308,11 +379,11 @@ function initPlayer(id, keys, url, length) {
 
     if(document.querySelector(".bigPlayer") != null) {
         playButton.on("click", () => {
-            if(window.player.contextObject == null) {
+            if(window.player.tracks["tracks"] == null) {
                 return
             }
 
-            if(window.player.getCurrentTrack() == null || window.player.getCurrentTrack().id != playerObject.dataset.realid) {
+            if(window.player.tracks["currentTrack"] == null || window.player.tracks["currentTrack"].id != playerObject.dataset.realid) {
                 window.player.setTrack(playerObject.dataset.realid)
             } else {
                 document.querySelector(".bigPlayer .playButton").click()
@@ -563,7 +634,7 @@ $(document).on("click", ".audioEmbed.withdrawn", (e) => {
 
 $(document).on("click", ".musicIcon.report-icon", (e) => {
     MessageBox(tr("report_question"), `
-        ${tr("going_to_report_video")}
+        ${tr("going_to_report_audio")}
         <br/>${tr("report_question_text")}
         <br/><br/><b> ${tr("report_reason")}</b>: <input type='text' id='uReportMsgInput' placeholder='${tr("reason")}' />`, [tr("confirm_m"), tr("cancel")], [(function() {
         
@@ -588,70 +659,4 @@ $(document).on("click", "#bookmarkPlaylist", (e) => {
 
 $(document).on("click", "#unbookmarkPlaylist", (e) => {
     
-})
-
-$(document).on("click", ".audiosContainer .paginator a", (e) => {
-    e.preventDefault()
-
-    e.currentTarget.parentNode.classList.add("lagged")
-
-    ky(e.currentTarget.href, {
-        hooks: {
-            afterResponse: [
-                async (_request, _options, response) => {
-                    let text = await response.text()
-                    let domparse = (new DOMParser()).parseFromString(text, "text/html")
-
-                    document.querySelector(".audiosContainer").innerHTML = domparse.querySelector(".audiosContainer").innerHTML
-                    history.pushState(null, null, e.currentTarget.href)
-
-                    let playingId = window.player.currentTrack["id"] ?? 0
-                    let maybePlayer = document.querySelector(`.audioEmbed[data-realid='${playingId}'] .audioEntry`)
-                    console.log(playingId)
-
-                    if(maybePlayer != null) {
-                        maybePlayer.classList.add("nowPlaying")
-                    }
-                }
-            ]
-        }
-    })
-
-    let url = new URL(location.href)
-    let lesser = Number(url.searchParams.get("p")) < window.player.contextObject["page"]
-
-    let formdata = new FormData()
-    formdata.append("context", window.player.context)
-    formdata.append("context_entity", window.player.context_id)
-    formdata.append("hash", u("meta[name=csrf]").attr("value"))
-    formdata.append("page", Number(url.searchParams.get("p")) + (lesser ? -1 : 1))
-
-    ky.post("/audios/context", {
-        hooks: {
-            afterResponse: [
-                async (_request, _options, response) => {
-                    let newArr = await response.json()
-                    let indexOfCurrentTrack = window.player.contextObject["items"].indexOf(window.player.currentTrack) ?? 0
-
-                    if(lesser) {
-                        window.player.contextObject["items"] = newArr["items"].concat(window.player.contextObject["items"])
-                    } else {
-                        window.player.contextObject["items"] = window.player.contextObject["items"].concat(newArr["items"])
-                    }
-
-                    window.player.contextObject["page"] = newArr["page"]
-                    
-                    if(lesser) {
-                        window.player.previousTrack = window.player.contextObject["items"].at(window.player.contextObject["items"].indexOf(obj) - 1).id
-                     } else {
-                        window.player.nextTrack = window.player.contextObject["items"].at(indexOfCurrentTrack + 1) != null ? window.player.contextObject["items"].at(indexOfCurrentTrack + 1).id : null
-                    }
-                    
-                    window.player.updateButtons()
-                    console.info("Context is successfully loaded")
-                }
-            ]
-        }, 
-        body: formdata
-    })
 })

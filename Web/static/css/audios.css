@@ -111,10 +111,14 @@
     pointer-events: none;
 }
 
-.bigPlayer .paddingLayer .trackInfo .time {
+.bigPlayer .paddingLayer .trackInfo .timer {
     float: right;
-    font-size: 10px;
     margin-right: 8px;
+    font-size: 10px;
+}
+
+.bigPlayer .paddingLayer .trackInfo .timer span {
+    font-size: 10px;
 }
 
 .music-app {

@@ -15,7 +15,10 @@
                 <b>{_track_unknown}</b> —
                 <span>{_track_noname}</span>
 
-                <span class="time">00:00</span>
+                <div class="timer" style="float:right">
+                    <span class="time">00:00</span>
+                    <span class="elapsedTime">-00:00</span>
+                </div>
             </div>
 
             <div class="track">

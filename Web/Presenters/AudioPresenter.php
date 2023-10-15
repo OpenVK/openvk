@@ -528,6 +528,7 @@ final class AudioPresenter extends OpenVKPresenter
         }
 
         $resultArr = [
+            "success" => true,
             "page" => $page,
             "perPage" => $perPage,
             "pagesCount" => $pagesCount,

@@ -782,6 +782,7 @@
 "unbookmark" = "Remove from collection";
 "empty_playlist" = "There are no audios in this playlist.";
 "edit_playlist" = "Edit playlist";
+"unable_to_load_queue" = "Error when loading queue.";
 
 /* Notifications */
 
@@ -1047,6 +1048,7 @@
 "going_to_report_photo" = "You are about to report this photo.";
 "going_to_report_user" = "You are about to report this user.";
 "going_to_report_video" = "You are about to report this video.";
+"going_to_report_audio" = "You are about to report this audio.";
 "going_to_report_post" = "You are about to report this post.";
 "going_to_report_comment" = "You are about to report this comment.";
 
