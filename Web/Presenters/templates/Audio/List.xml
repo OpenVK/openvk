@@ -41,7 +41,7 @@
     <input n:if="$mode == 'popular'" type="hidden" name="bigplayer_context" data-type="popular_audios" data-entity="0" data-page="1">
     
     <div style="width: 100%;display: flex;margin-bottom: -10px;">
-        <div style="width: 74%;" n:if="$mode != 'playlists'">
+        <div style="width: 74%;" class="audiosContainer" n:if="$mode != 'playlists'">
             <div style="padding: 8px;">
                 <div n:if="$audiosCount <= 0">
                     {include "../components/nothing.xml"}

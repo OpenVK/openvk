@@ -5,7 +5,7 @@
 }
 
 .musicIcon.pressed {
-    filter: brightness(59%);
+    filter: brightness(0%);
 }
 
 .bigPlayer {
@@ -229,7 +229,7 @@
     color: white !important;
 }
 
-.audioEntry.nowPlaying .buttons .musicIcon {
+.audioEntry.nowPlaying .buttons .musicIcon, .audioEntry.nowPlaying svg {
     filter: brightness(187%) opacity(72%);
 }
 

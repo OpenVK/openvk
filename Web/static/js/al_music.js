@@ -4,6 +4,10 @@ function fmtTime(time) {
     return `${ mins}:${ secs}`;
 }
 
+function fastError(message) {
+    MessageBox(tr("error"), message, [tr("ok")], [Function.noop])
+}
+
 // нихуя я тут насрал
 class bigPlayer {
     contextObject = []
@@ -15,6 +19,9 @@ class bigPlayer {
         this.context = context
         this.context_id = context_id
         this.playerNode = document.querySelector(".bigPlayer")
+
+        this.playerNode.classList.add("lagged")
+
         this.performer = this.playerNode.querySelector(".trackInfo b")
         this.name = this.playerNode.querySelector(".trackInfo span")
         this.time = this.playerNode.querySelector(".trackInfo .time")
@@ -34,6 +41,7 @@ class bigPlayer {
                 afterResponse: [
                     async (_request, _options, response) => {
                         this.contextObject = await response.json()
+                        this.playerNode.classList.remove("lagged")
                         console.info("Context is successfully loaded")
                     }
                 ]
@@ -56,6 +64,7 @@ class bigPlayer {
 
             if (ps <= 100)
                 this.playerNode.querySelector(".selectableTrack .slider").style.left = `${ ps}%`;
+
         })
 
         u(this.player()).on("volumechange", (e) => {
@@ -187,8 +196,13 @@ class bigPlayer {
         document.querySelectorAll(".audioEntry.nowPlaying").forEach(el => el.classList.remove("nowPlaying"))
         let obj = this.contextObject["items"].find(item => item.id == id)
 
-        this.name.innerHTML = obj.name 
-        this.performer.innerHTML = obj.performer
+        if(obj == null) {
+            fastError("No audio in context")
+            return
+        }
+
+        this.name.innerHTML = escapeHtml(obj.name) 
+        this.performer.innerHTML = escapeHtml(obj.performer)
         this.time.innerHTML = fmtTime(obj.length)
         this.currentTrack = obj
 
@@ -201,7 +215,6 @@ class bigPlayer {
             this.previousTrack = null
         }
 
-        // todo поменьше копипастить код
         if(this.nextTrack == null && this.contextObject.page < this.contextObject.pagesCount
             || this.previousTrack == null && (this.contextObject.page > 1)) {
             let formdata = new FormData()
@@ -422,14 +435,14 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
                 success: (response) => {
                     if(response.success) {
                         let perf = player.querySelector(".performer a")
-                        perf.innerHTML = response.new_info.performer
+                        perf.innerHTML = escapeHtml(response.new_info.performer)
                         perf.setAttribute("href", "/search?query=&type=audios&sort=id&only_performers=on&query="+response.new_info.performer)
                         
-                        e.currentTarget.setAttribute("data-performer", response.new_info.performer)
+                        e.currentTarget.setAttribute("data-performer", escapeHtml(response.new_info.performer))
                         let name = player.querySelector(".title")
                         name.innerHTML = escapeHtml(response.new_info.name)
 
-                        e.currentTarget.setAttribute("data-title", response.new_info.name)
+                        e.currentTarget.setAttribute("data-title", escapeHtml(response.new_info.name))
                         
                         if(player.querySelector(".lyrics") != null) {
                             player.querySelector(".lyrics").innerHTML = response.new_info.lyrics
@@ -575,4 +588,70 @@ $(document).on("click", "#bookmarkPlaylist", (e) => {
 
 $(document).on("click", "#unbookmarkPlaylist", (e) => {
     
+})
+
+$(document).on("click", ".audiosContainer .paginator a", (e) => {
+    e.preventDefault()
+
+    e.currentTarget.parentNode.classList.add("lagged")
+
+    ky(e.currentTarget.href, {
+        hooks: {
+            afterResponse: [
+                async (_request, _options, response) => {
+                    let text = await response.text()
+                    let domparse = (new DOMParser()).parseFromString(text, "text/html")
+
+                    document.querySelector(".audiosContainer").innerHTML = domparse.querySelector(".audiosContainer").innerHTML
+                    history.pushState(null, null, e.currentTarget.href)
+
+                    let playingId = window.player.currentTrack["id"] ?? 0
+                    let maybePlayer = document.querySelector(`.audioEmbed[data-realid='${playingId}'] .audioEntry`)
+                    console.log(playingId)
+
+                    if(maybePlayer != null) {
+                        maybePlayer.classList.add("nowPlaying")
+                    }
+                }
+            ]
+        }
+    })
+
+    let url = new URL(location.href)
+    let lesser = Number(url.searchParams.get("p")) < window.player.contextObject["page"]
+
+    let formdata = new FormData()
+    formdata.append("context", window.player.context)
+    formdata.append("context_entity", window.player.context_id)
+    formdata.append("hash", u("meta[name=csrf]").attr("value"))
+    formdata.append("page", Number(url.searchParams.get("p")) + (lesser ? -1 : 1))
+
+    ky.post("/audios/context", {
+        hooks: {
+            afterResponse: [
+                async (_request, _options, response) => {
+                    let newArr = await response.json()
+                    let indexOfCurrentTrack = window.player.contextObject["items"].indexOf(window.player.currentTrack) ?? 0
+
+                    if(lesser) {
+                        window.player.contextObject["items"] = newArr["items"].concat(window.player.contextObject["items"])
+                    } else {
+                        window.player.contextObject["items"] = window.player.contextObject["items"].concat(newArr["items"])
+                    }
+
+                    window.player.contextObject["page"] = newArr["page"]
+                    
+                    if(lesser) {
+                        window.player.previousTrack = window.player.contextObject["items"].at(window.player.contextObject["items"].indexOf(obj) - 1).id
+                     } else {
+                        window.player.nextTrack = window.player.contextObject["items"].at(indexOfCurrentTrack + 1) != null ? window.player.contextObject["items"].at(indexOfCurrentTrack + 1).id : null
+                    }
+                    
+                    window.player.updateButtons()
+                    console.info("Context is successfully loaded")
+                }
+            ]
+        }, 
+        body: formdata
+    })
 })
