@@ -132,6 +132,29 @@ class bigPlayer {
             this.player().currentTime = time;
         })
 
+        u(".bigPlayer .trackPanel .track").on("mousemove", (e) => {
+            if(this.tracks["currentTrack"] == null) {
+                return
+            }
+
+            let rect  = this.nodes["thisPlayer"].querySelector(".selectableTrack").getBoundingClientRect();
+            
+            const width = e.clientX - rect.left;
+            const time = Math.ceil((width * this.tracks["currentTrack"].length) / (rect.right - rect.left));
+
+            document.querySelector(".bigPlayer .track .timeTip").style.display = "block"
+            document.querySelector(".bigPlayer .track .timeTip").innerHTML = fmtTime(time)
+            document.querySelector(".bigPlayer .track .timeTip").style.left = `min(${width - 15}px, 317.5px)`
+        })
+
+        u(".bigPlayer .trackPanel .track").on("mouseleave", (e) => {
+            if(this.tracks["currentTrack"] == null) {
+                return
+            }
+
+            document.querySelector(".bigPlayer .track .timeTip").style.display = "none"
+        })
+
         u(".bigPlayer .volumePanel > div").on("click mouseup", (e) => {
             if(this.tracks["currentTrack"] == null) {
                 return

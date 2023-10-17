@@ -23,6 +23,7 @@
             </div>
 
             <div class="track">
+                <div class="timeTip">00:00</div>
                 <div class="selectableTrack">
                     <div style="width: 95%;position: relative;">&nbsp;
                         <div class="slider"></div>

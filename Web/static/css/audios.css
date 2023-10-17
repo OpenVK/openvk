@@ -93,6 +93,18 @@
     margin-top: -13px;
     margin-left: 13px;
     width: 386px;
+    position: relative;
+}
+
+.bigPlayer .paddingLayer .trackPanel .track .timeTip {
+    display: none;
+    z-index: 999;
+    background: #cecece;
+    padding: 3px;
+    top: -3px;
+    position: absolute;
+    transition: all .1s ease-out;
+    user-select: none;
 }
 
 .bigPlayer .paddingLayer .volumePanel {
