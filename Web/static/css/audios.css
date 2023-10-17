@@ -74,7 +74,7 @@
 }
 
 .bigPlayer .paddingLayer .additionalButtons .deviceButton {
-    width: 16px;
+    width: 12px;
     height: 16px;
     background-position: -202px -51px;
     margin-left: 6px;
@@ -82,7 +82,6 @@
 }
 
 .bigPlayer .paddingLayer .playButtons .arrowsButtons {
-    /* скибиди пидорас */
     float: left;
     display: flex;
     padding-left: 4px;
@@ -363,7 +362,7 @@
     text-decoration: underline;
 }
 
-.audioEmbed.withdrawn .status > *, .audioEmbed.withdrawn .playerButton > * {
+.audioEmbed.withdrawn .status > *, .audioEmbed.processed .status > *, .audioEmbed.withdrawn .playerButton > *, .audioEmbed.processed .playerButton > * {
     pointer-events: none;
 }
 

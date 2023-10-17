@@ -149,5 +149,26 @@
 
             document.querySelector("#audio_upload > form").submit();
         })
+
+        $(document).on("dragover drop", (e) => {
+            e.preventDefault()
+
+            return false;
+        })
+
+        $(".container_gray").on("drop", (e) => {
+            e.originalEvent.dataTransfer.dropEffect = 'move';
+            e.preventDefault()
+
+            let file = e.originalEvent.dataTransfer.files[0]
+
+            if(!file.type.startsWith('audio/')) {
+                MessageBox(tr("error"), tr("only_audios_accepted", escapeHtml(file.name)), [tr("ok")], [() => Function.noop])
+                return;
+            }
+
+            document.getElementById("audio_input").files = e.originalEvent.dataTransfer.files
+            u("#audio_input").trigger("change")
+        })
     </script>
 {/block}

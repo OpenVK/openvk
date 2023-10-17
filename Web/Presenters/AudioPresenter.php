@@ -236,10 +236,9 @@ final class AudioPresenter extends OpenVKPresenter
             $audio = $this->audios->get($id);
 
             if ($audio && !$audio->isDeleted() && !$audio->isWithdrawn()) {
-                $audio->listen($this->user->identity);
+                $listen = $audio->listen($this->user->identity);
+                $this->returnJson(["success" => $listen]);
             }
-
-            $this->returnJson(["response" => true]);
         }
     }
 
@@ -458,8 +457,6 @@ final class AudioPresenter extends OpenVKPresenter
 
     function renderApiGetContext()
     {
-        $this->assertUserLoggedIn();
-
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             header("HTTP/1.1 405 Method Not Allowed");
             exit("<select><select><select><select>");

@@ -17,7 +17,8 @@
 
                 <div class="timer" style="float:right">
                     <span class="time">00:00</span>
-                    <span class="elapsedTime">-00:00</span>
+                    <span>/</span>
+                    <span class="elapsedTime" style="cursor:pointer">-00:00</span>
                 </div>
             </div>
 

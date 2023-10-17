@@ -14,7 +14,6 @@ class Audio extends Media
 {
     protected $tableName     = "audios";
     protected $fileExtension = "mpd";
-    // protected $fileExtension = "mp3";
 
     # Taken from winamp :D
     const genres = [
@@ -63,7 +62,10 @@ class Audio extends Media
             throw new \DomainException("$filename does not contain any audio streams");
 
         $vstreams = Shell::ffprobe("-i", $filename, "-show_streams", "-select_streams v", "-loglevel error")->execute($error);
-        if(!empty($vstreams) && !ctype_space($vstreams))
+        
+        # check if audio has cover (attached_pic)
+        preg_match("%attached_pic=([0-1])%", $vstreams, $hasCover);
+        if(!empty($vstreams) && !ctype_space($vstreams) && ((int)($hasCover[1]) !== 1))
             throw new \DomainException("$filename is a video");
 
         $durations = [];
