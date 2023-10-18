@@ -786,6 +786,8 @@
 "unable_to_load_queue" = "Error when loading queue.";
 
 "fully_delete_audio" = "Fully delete audio";
+"attach_audio" = "Attach audio";
+"detach_audio" = "Detach audio";
 
 /* Notifications */
 

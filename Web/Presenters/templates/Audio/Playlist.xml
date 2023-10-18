@@ -16,7 +16,9 @@
     <input type="hidden" name="bigplayer_context" data-type="playlist_context" data-entity="{$playlist->getId()}" data-page="{$page}">
     <div class="playlistBlock">
         <div class="playlistCover" style="float: left;">
-            <img src="{$playlist->getCoverURL()}">
+            <a href="{$playlist->getCoverURL()}" target="_blank">
+                <img src="{$playlist->getCoverURL('normal')}">
+            </a>
 
             <div class="profile_links" style="width: 139px;">
                 <a id="profile_link" style="width: 98%;" n:if="$canEdit">{_edit_playlist}</a>
@@ -30,7 +32,8 @@
                 <h4 style="border-bottom:unset;">{$playlist->getName()}</h4>
 
                 <div class="moreInfo">
-                    <span>{tr("audios_count", $count)}</span> • <span>{_created_playlist}</span> {$playlist->getPublicationTime()}
+                    <span>{tr("audios_count", $count)}</span> • 
+                    <span>{_created_playlist}</span> {$playlist->getPublicationTime()}
                     
                     <div style="margin-top: 11px;">
                         <span>{$playlist->getDescription()}</span>
@@ -38,11 +41,21 @@
                     <hr style="color: #f7f7f7;">
                 </div>
             </div>
-            <div class="audios" style="margin-top: 14px;">
+            <div class="audiosContainer infContainer" style="margin-top: 14px;">
                 {if $count < 1}
                     {_empty_playlist}
-                {else}
-                    й йбй бй дй д яюдюяд ю бяб бля лбябл бялб я бля бляб ля я не сделал....
+                {else}  
+                    <div class="infObj" n:foreach="$audios as $audio">
+                        {include "player.xml", audio => $audio}
+                    </div>
+
+                    {include "../components/paginator.xml", conf => (object) [
+                        "page"     => $page,
+                        "count"    => $count,
+                        "amount"   => sizeof($audios),
+                        "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+                        "atBottom" => true,
+                    ]}
                 {/if}
             </div>
         </div>

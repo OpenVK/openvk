@@ -285,46 +285,23 @@ final class AudioPresenter extends OpenVKPresenter
 
             $this->redirect("/playlist" . $owner . "_" . $playlist->getId());
         } else {
-            $this->template->audios = iterator_to_array($this->audios->getByUser($this->user->identity));
+            $this->template->audios = iterator_to_array($this->audios->getByUser($this->user->identity, 1, 10));
         }
     }
 
     function renderPlaylist(int $owner_id, int $virtual_id): void
     {
         $playlist = $this->audios->getPlaylistByOwnerAndVID($owner_id, $virtual_id);
-
+        $page = (int)($this->queryParam("p") ?? 1);
         if (!$playlist || $playlist->isDeleted())
             $this->notFound();
 
         $this->template->playlist = $playlist;
-        $this->template->page = (int)($this->queryParam("p") ?? 0);
-        $this->template->audios = iterator_to_array($playlist->getAudios());
+        $this->template->page = $page;
+        $this->template->audios = iterator_to_array($playlist->fetch($page, 10));
         $this->template->isBookmarked = $playlist->isBookmarkedBy($this->user->identity);
         $this->template->isMy = $playlist->getOwner()->getId() === $this->user->id;
         $this->template->canEdit = ($this->template->isMy || ($playlist->getOwner() instanceof Club && $playlist->getOwner()->canBeModifiedBy($this->user->identity)));
-        $this->template->edit = $this->queryParam("act") === "edit";
-
-        if ($this->template->edit) {
-            if (!$this->template->canEdit) {
-                $this->flashFail("err", tr("error"), tr("forbidden"));
-            }
-
-            $_ids = [];
-            $audios = iterator_to_array($playlist->getAudios());
-            foreach ($audios as $audio) {
-                $_ids[] = $audio->getId();
-            }
-
-            foreach ($this->audios->getByUser($this->user->identity) as $audio) {
-                if (!in_array($audio->getId(), $_ids)) {
-                    $audios[] = $audio;
-                }
-            }
-
-            $this->template->audios = $audios;
-        } else {
-            $this->template->audios = iterator_to_array($playlist->getAudios());
-        }
 
         /*if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if (!$this->template->canEdit) {
@@ -473,8 +450,8 @@ final class AudioPresenter extends OpenVKPresenter
         switch($ctx_type) {
             default:
             case "entity_audios":
-                if($ctx_id > 0) {
-                    $entity = (new Users)->get($ctx_id);
+                if($ctx_id >= 0) {
+                    $entity = $ctx_id != 0 ? (new Users)->get($ctx_id) : $this->user->identity;
 
                     if(!$entity || !$entity->getPrivacyPermission("audios.read", $this->user->identity))
                         $this->flashFail("err", "Error", "Can't get queue", 80, true);
@@ -505,12 +482,27 @@ final class AudioPresenter extends OpenVKPresenter
                 if (!$playlist || $playlist->isDeleted())
                     $this->flashFail("err", "Error", "Can't get queue", 80, true);
 
-                $audios = $playlist->getAudios($page, 10);
+                $audios = $playlist->fetch($page, 10);
                 $audiosCount = $playlist->size();
+                break;
+            case "search_context":
+                $stream = $this->audios->search($this->postParam("query"), 2);
+                $audios = $stream->page($page, 10);
+                $audiosCount = $stream->size();
                 break;
         }
 
         $pagesCount = ceil($audiosCount / $perPage);
+
+        # костылёк для получения плееров в пикере аудиозаписей
+        if((int)($this->postParam("returnPlayers")) === 1) {
+            $this->template->audios = $audios;
+            $this->template->page = $page;
+            $this->template->pagesCount = $pagesCount;
+            $this->template->count = $audiosCount;
+
+            return 0;
+        }
 
         $audiosArr = [];
 

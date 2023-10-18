@@ -1418,7 +1418,7 @@ body.scrolled .toTop:hover {
     display: none;
 }
 
-.post-has-videos {
+.post-has-videos, .post-has-audios {
     margin-top: 11px;
     margin-left: 3px;
     color: #3c3c3c;
@@ -1435,12 +1435,16 @@ body.scrolled .toTop:hover {
     margin-left: 2px;
 }
 
-.post-has-video {
+.post-has-video, .post-has-audio {
     padding-bottom: 4px;
     cursor: pointer;
 }
 
 .post-has-video:hover span {
+    text-decoration: underline;
+}
+
+.post-has-audio:hover span {
     text-decoration: underline;
 }
 
@@ -1451,6 +1455,19 @@ body.scrolled .toTop:hover {
     display: inline-block;
     vertical-align: bottom;
     background-image: url("/assets/packages/static/openvk/img/video.png");
+    background-repeat: no-repeat;
+    margin: 3px;
+    margin-left: 2px;
+    margin-bottom: -1px;
+}
+
+.post-has-audio::before {
+    content: " ";
+    width: 14px;
+    height: 15px;
+    display: inline-block;
+    vertical-align: bottom;
+    background-image: url("/assets/packages/static/openvk/img/audio.png");
     background-repeat: no-repeat;
     margin: 3px;
     margin-left: 2px;

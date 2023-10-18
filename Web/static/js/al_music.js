@@ -484,7 +484,7 @@ class bigPlayer {
             title: obj.name,
             artist: obj.performer,
             album: album == null ? "OpenVK Audios" : album.querySelector(".playlistInfo h4").innerHTML,
-            artwork: [{ src: album == null ? "/assets/packages/static/openvk/img/song.jpg" : album.querySelector(".playlistCover img") }],
+            artwork: [{ src: album == null ? "/assets/packages/static/openvk/img/song.jpg" : album.querySelector(".playlistCover img").src }],
         });
     }
 }
@@ -756,10 +756,135 @@ $(document).on("click", ".musicIcon.add-icon", (e) => {
 })
 
 $(document).on("click", "#_audioAttachment", (e) => {
+    let form = e.currentTarget.closest("form")
     let body = `
-        я ещё не сделал
+        <div class="searchBox">
+            <input name="query" type="text" placeholder="${tr("header_search")}">
+        </div>
+
+        <div class="audiosInsert"></div>
     `
     MessageBox(tr("select_audio"), body, [tr("ok")], [Function.noop])
+
+    document.querySelector(".ovk-diag-body").style.padding = "0"
+    document.querySelector(".ovk-diag-cont").style.width = "580px"
+    document.querySelector(".ovk-diag-body").style.height = "335px"
+
+    async function insertAudios(page, query = "") {
+        document.querySelector(".audiosInsert").insertAdjacentHTML("beforeend", `<img id="loader" src="/assets/packages/static/openvk/img/loading_mini.gif">`)
+
+        $.ajax({
+            type: "POST",
+            url: "/audios/context",
+            data: {
+                context: query == "" ? "entity_audios" : "search_context",
+                hash: u("meta[name=csrf]").attr("value"),
+                page: page,
+                query: query == "" ? null : query,
+                context_entity: 0,
+                returnPlayers: 1,
+            },
+            success: (response) => {
+                let domparser = new DOMParser()
+                let result = domparser.parseFromString(response, "text/html")
+
+                let pagesCount = result.querySelector("input[name='pagesCount']").value
+                let count = Number(result.querySelector("input[name='count']").value)
+
+                if(count < 1) {
+                    document.querySelector(".audiosInsert").innerHTML = tr("no_results")
+                    return
+                }
+
+                result.querySelectorAll(".audioEmbed").forEach(el => {
+                    let id = el.dataset.prettyid
+                    let name = el.dataset.name
+                    let isAttached = (form.querySelector("input[name='audios']").value.includes(`${id},`))
+                    document.querySelector(".audiosInsert").insertAdjacentHTML("beforeend", `
+                        <div style="display: table;width: 100%;clear: both;">
+                            <div style="width: 72%;float: left;">${el.outerHTML}</div>
+                            <div class="attachAudio" data-attachmentdata="${id}" data-name="${name}">
+                                <span>${isAttached ? tr("detach_audio") : tr("attach_audio")}</span>
+                            </div>
+                        </div>
+                    `)
+                })
+
+                u("#loader").remove()
+
+                if(page < pagesCount) {
+                    document.querySelector(".audiosInsert").insertAdjacentHTML("beforeend", `
+                    <div id="showMoreAudios" data-pagesCount="${pagesCount}" data-page="${page + 1}" style="width: 100%;text-align: center;background: #d5d5d5;height: 22px;padding-top: 9px;cursor:pointer;">
+                        <span>more...</span>
+                    </div>`)
+                }
+            }
+        })
+    }
+
+    insertAudios(1)
+
+    $(".audiosInsert").on("click", "#showMoreAudios", (e) => {
+        u(e.currentTarget).remove()
+        insertAudios(Number(e.currentTarget.dataset.page))
+    })
+
+    $(".searchBox input").on("change", async (e) => {
+        await new Promise(r => setTimeout(r, 1000));
+
+        if(e.currentTarget.value === document.querySelector(".searchBox input").value) {
+            document.querySelector(".audiosInsert").innerHTML = ""
+            insertAudios(1, e.currentTarget.value)
+            return;
+        } else {
+            console.info("skipping")
+        }
+    })
+
+    function insertAttachment(id) {
+        let audios = form.querySelector("input[name='audios']") 
+
+        if(!audios.value.includes(id + ",")) {
+            if(audios.value.split(",").length > 10) {
+                NewNotification(tr("error"), tr("max_attached_audios"))
+                return false
+            }
+
+            form.querySelector("input[name='audios']").value += (id + ",")
+
+            console.info(id + " attached")
+            return true
+        } else {
+            form.querySelector("input[name='audios']").value = form.querySelector("input[name='audios']").value.replace(id + ",", "")
+
+            console.info(id + " detached")
+            return false
+        }
+    }
+
+    $(".audiosInsert").on("click", ".attachAudio", (ev) => {
+        if(!insertAttachment(ev.currentTarget.dataset.attachmentdata)) {
+            u(`.post-has-audios .post-has-audio[data-id='${ev.currentTarget.dataset.attachmentdata}']`).remove()
+            ev.currentTarget.querySelector("span").innerHTML = tr("attach_audio")
+        } else {
+            ev.currentTarget.querySelector("span").innerHTML = tr("detach_audio")
+
+            form.querySelector(".post-has-audios").insertAdjacentHTML("beforeend", `
+                <div class="post-has-audio" id="unattachAudio" data-id="${ev.currentTarget.dataset.attachmentdata}">
+                    <span>${ovk_proc_strtr(escapeHtml(ev.currentTarget.dataset.name), 40)}</span>
+                </div>
+            `)
+
+            u(`#unattachAudio[data-id='${ev.currentTarget.dataset.attachmentdata}']`).on("click", (e) => {
+                let id = ev.currentTarget.dataset.attachmentdata
+                form.querySelector("input[name='audios']").value = form.querySelector("input[name='audios']").value.replace(id + ",", "")
+                
+                console.info(id + " detached")
+               
+                u(e.currentTarget).remove()
+            })
+        }
+    })
 })
 
 $(document).on("click", ".audioEmbed.processed", (e) => {

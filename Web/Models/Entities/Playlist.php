@@ -30,10 +30,10 @@ class Playlist extends MediaCollection
         $this->importTable = DatabaseConnection::i()->getContext()->table("playlist_imports");
     }
 
-    function getCoverURL(): ?string
+    function getCoverURL(string $size = "normal"): ?string
     {
         $photo = (new Photos)->get((int) $this->getRecord()->cover_photo_id);
-        return is_null($photo) ? "/assets/packages/static/openvk/img/song.jpg" : $photo->getURL();
+        return is_null($photo) ? "/assets/packages/static/openvk/img/song.jpg" : $photo->getURLBySizeId($size);
     }
 
     function getLength(): int

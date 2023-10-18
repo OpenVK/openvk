@@ -5,7 +5,7 @@
 }
 
 .musicIcon.pressed {
-    filter: brightness(0%);
+    filter: brightness(150%);
 }
 
 .bigPlayer {
@@ -190,7 +190,7 @@
     opacity: .7;
 }
 
-.audioEntry .status .track > .selectableTrack, .bigPlayer .selectableTrack {
+.audioEmbed .track > .selectableTrack, .bigPlayer .selectableTrack {
     margin-top: 3px;
     width: calc(100% - 8px);
     border-top: #707070 1px solid;
@@ -199,7 +199,7 @@
     user-select: none;
 }
 
-.audioEntry .status .track > div > div {
+.audioEmbed .track > div > div {
     height: 100%;
     width: 0%;
     background-color: #BFBFBF;
@@ -275,6 +275,7 @@
 }
 
 .audioEntry .status {
+    overflow: hidden;
     display: grid;
     grid-template-columns: 1fr;
     width: 85%;
@@ -285,12 +286,12 @@
     color: #4C4C4C;
 }
 
-.audioEntry .status .track {
+.audioEmbed .track {
     display: none;
     padding: 4px 0;
 }
 
-#audioEmbed .audioEntry .status .track, .audioEntry.playing .status .track {
+.audioEmbed .track, .audioEmbed.playing .track {
     display: unset;
 }
 
@@ -308,7 +309,7 @@
     width: 62px;
     height: 20px;
     position: absolute;
-    right: 46px;
+    right: 10%;
     top: 2px;
 }
 
@@ -406,4 +407,39 @@
 
 .playlistContainer .infObj:first-of-type {
     margin-left: 0px;
+}
+
+.ovk-diag-body .searchBox {
+    background: #e6e6e6;
+    padding-top: 10px;
+    height: 35px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.ovk-diag-body .searchBox input {
+    height: 24px;
+}
+
+.ovk-diag-body .audiosInsert {
+    height: 82%;
+    padding: 9px 5px 9px 9px;
+    overflow-y: auto;
+}
+
+.ovk-diag-body .attachAudio {
+    float: left;
+    width: 28%;
+    height: 26px;
+    padding-top: 11px;
+    text-align: center;
+}
+
+.ovk-diag-body .attachAudio span {
+    user-select: none;
+}
+
+.ovk-diag-body .attachAudio:hover {
+    background: rgb(236, 236, 236);
+    cursor: pointer;
 }

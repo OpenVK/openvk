@@ -742,6 +742,8 @@
 "unable_to_load_queue" = "Не удалось загрузить очередь.";
 
 "fully_delete_audio" = "Полностью удалить аудиозапись";
+"attach_audio" = "Прикрепить аудиозапись";
+"detach_audio" = "Открепить аудиозапись";
 
 /* Notifications */
 

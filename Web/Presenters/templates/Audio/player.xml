@@ -1,10 +1,7 @@
-{* На одной странице может оказаться несколько одинаковых аудиозаписей, и если запустить
-одну, то начнут проигрываться все остальные. Поэтому тут мы добавляем рандомное число*}
-
 {php $id = $audio->getId() . rand(0, 1000)}
 {php $isWithdrawn = $audio->isWithdrawn()}
 {php $editable = isset($thisUser) && $audio->canBeModifiedBy($thisUser)}
-<div id="audioEmbed-{$id}" data-realid="{$audio->getId()}" data-genre="{$audio->getGenre()}" class="audioEmbed {if !$audio->isAvailable()}processed{/if} {if $isWithdrawn}withdrawn{/if}" onmouseenter="!this.classList.contains('inited') ? initPlayer({$id}, {$audio->getKeys()}, {$audio->getURL()}, {$audio->getLength()}) : void(0)">
+<div id="audioEmbed-{$id}" data-realid="{$audio->getId()}" {if $hideButtons}data-prettyid="{$audio->getPrettyId()}" data-name="{$audio->getName()}"{/if} data-genre="{$audio->getGenre()}" class="audioEmbed {if !$audio->isAvailable()}processed{/if} {if $isWithdrawn}withdrawn{/if}" onmouseenter="!this.classList.contains('inited') ? initPlayer({$id}, {$audio->getKeys()}, {$audio->getURL()}, {$audio->getLength()}) : void(0)">
     <audio class="audio" />
 
     <div id="miniplayer" class="audioEntry" style="min-height: 37px;">
@@ -24,17 +21,6 @@
                         fill="#828a99" fill-opacity=".7"/>
                 </svg>
             </div>
-
-            <div class="track" style="margin-top: 3px">
-                <center class="claimed" style="width: 100%; padding: 4px; color: #45688E; font-weight: bold;" n:if="$isWithdrawn">
-                    {_audio_embed_withdrawn}
-                </center>
-                <div class="selectableTrack" n:attr="style => $isWithdrawn ? 'display: none;' : ''">
-                    <div>&nbsp;
-                        <!-- actual track -->
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div class="volume" style="display: flex; flex-direction: column;width:14%;">
@@ -42,14 +28,22 @@
             <div class="buttons" style="margin-top: 8px;">
                 {php $hasAudio = isset($thisUser) && $audio->isInLibraryOf($thisUser)}
 
-                {if !$addToPlaylistButton}
+                {if !$hideButtons}
                     <div class="remove-icon musicIcon" data-id="{$audio->getId()}" n:if="isset($thisUser) && $hasAudio" ></div>
                     <div class="add-icon musicIcon" data-id="{$audio->getId()}" n:if="isset($thisUser) && !$hasAudio && !$isWithdrawn" ></div>
                     <div class="edit-icon musicIcon" data-lyrics="{$audio->getLyrics()}" data-title="{$audio->getTitle()}" data-performer="{$audio->getPerformer()}" data-explicit="{(int)$audio->isExplicit()}" data-searchable="{(int)!$audio->isUnlisted()}" n:if="isset($thisUser) && $editable && !$isWithdrawn" ></div>
                     <div class="report-icon musicIcon" data-id="{$audio->getId()}" n:if="isset($thisUser) && !$editable && !$isWithdrawn" ></div>
-                {else}
-                    jrgnwighweif
                 {/if}
+            </div>
+        </div>
+    </div>
+
+    <div class="tracks">
+        <div class="track" style="margin-top: 3px;display:none">
+            <div class="selectableTrack" n:attr="style => $isWithdrawn ? 'display: none;' : ''">
+                <div>&nbsp;
+                    <!-- actual track -->
+                </div>
             </div>
         </div>
     </div>
