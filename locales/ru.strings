@@ -726,6 +726,7 @@
 "withdrawn" = "Изъято";
 "deleted" = "Удалено";
 "owner" = "Владелец";
+"searchable" = "Доступно в поиске";
 
 "select_audio" = "Выбрать аудиозаписи";
 "no_playlists_thisuser" = "Вы ещё не добавляли плейлистов.";
@@ -739,6 +740,8 @@
 "empty_playlist" = "В этом плейлисте нет аудиозаписей.";
 "edit_playlist" = "Редактировать плейлист";
 "unable_to_load_queue" = "Не удалось загрузить очередь.";
+
+"fully_delete_audio" = "Полностью удалить аудиозапись";
 
 /* Notifications */
 

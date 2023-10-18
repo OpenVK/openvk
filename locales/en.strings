@@ -770,6 +770,7 @@
 "withdrawn" = "Withdrawn";
 "deleted" = "Deleted";
 "owner" = "Owner";
+"searchable" = "Searchable";
 
 "select_audio" = "Select audios";
 "no_playlists_thisuser" = "You haven't added any playlists yet.";
@@ -783,6 +784,8 @@
 "empty_playlist" = "There are no audios in this playlist.";
 "edit_playlist" = "Edit playlist";
 "unable_to_load_queue" = "Error when loading queue.";
+
+"fully_delete_audio" = "Fully delete audio";
 
 /* Notifications */
 

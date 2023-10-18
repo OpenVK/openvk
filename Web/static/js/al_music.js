@@ -155,9 +155,15 @@ class bigPlayer {
             document.querySelector(".bigPlayer .track .timeTip").style.display = "none"
         })
 
-        u(".bigPlayer .volumePanel > div").on("click mouseup", (e) => {
+        u(".bigPlayer .volumePanel > div").on("click mouseup mousemove", (e) => {
             if(this.tracks["currentTrack"] == null) {
                 return
+            }
+
+            if(e.type == "mousemove") {
+                let buttonsPresseed = _bsdnUnwrapBitMask(e.buttons)
+                if(!buttonsPresseed[0])
+                    return;
             }
 
             let rect  = this.nodes["thisPlayer"].querySelector(".volumePanel .selectableTrack").getBoundingClientRect();
@@ -471,6 +477,15 @@ class bigPlayer {
                 }
             })
         }, "10000")
+
+        let album = document.querySelector(".playlistBlock")
+
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: obj.name,
+            artist: obj.performer,
+            album: album == null ? "OpenVK Audios" : album.querySelector(".playlistInfo h4").innerHTML,
+            artwork: [{ src: album == null ? "/assets/packages/static/openvk/img/song.jpg" : album.querySelector(".playlistCover img") }],
+        });
     }
 }
 
@@ -599,7 +614,10 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
         </div>
 
         <div style="margin-top: 11px">
-            <label><input type="checkbox" name="explicit" ${e.currentTarget.dataset.explicit == 1 ? "checked" : ""} maxlength="500">${tr("audios_explicit")}</label>
+            <label><input type="checkbox" name="explicit" ${e.currentTarget.dataset.explicit == 1 ? "checked" : ""}>${tr("audios_explicit")}</label><br>
+            <label><input type="checkbox" name="searchable" ${e.currentTarget.dataset.searchable == 1 ? "checked" : ""}>${tr("searchable")}</label>
+            <hr>
+            <a id="_fullyDeleteAudio">${tr("fully_delete_audio")}</a>
         </div>
     `, [tr("ok"), tr("cancel")], [
         function() {
@@ -608,6 +626,7 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
             let t_genre  = $(".ovk-diag-body select[name=genre]").val();
             let t_lyrics = $(".ovk-diag-body textarea[name=lyrics]").val();
             let t_explicit = document.querySelector(".ovk-diag-body input[name=explicit]").checked;
+            let t_unlisted = document.querySelector(".ovk-diag-body input[name=searchable]").checked;
 
             $.ajax({
                 type: "POST",
@@ -617,6 +636,7 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
                     performer: t_perf,
                     genre: t_genre,
                     lyrics: t_lyrics,
+                    unlisted: Number(t_unlisted),
                     explicit: Number(t_explicit),
                     hash: u("meta[name=csrf]").attr("value")
                 },
@@ -645,6 +665,7 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
 
                         e.currentTarget.setAttribute("data-lyrics", response.new_info.lyrics_unformatted)
                         e.currentTarget.setAttribute("data-explicit", Number(response.new_info.explicit))
+                        e.currentTarget.setAttribute("data-searchable", Number(response.new_info.unlisted))
                         player.setAttribute("data-genre", response.new_info.genre)
                     } else {
                         MessageBox(tr("error"), response.flash.message, [tr("ok")], [Function.noop])

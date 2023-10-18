@@ -45,7 +45,7 @@
                 {if !$addToPlaylistButton}
                     <div class="remove-icon musicIcon" data-id="{$audio->getId()}" n:if="isset($thisUser) && $hasAudio" ></div>
                     <div class="add-icon musicIcon" data-id="{$audio->getId()}" n:if="isset($thisUser) && !$hasAudio && !$isWithdrawn" ></div>
-                    <div class="edit-icon musicIcon" data-lyrics="{$audio->getLyrics()}" data-title="{$audio->getTitle()}" data-performer="{$audio->getPerformer()}" data-explicit="{(int)$audio->isExplicit()}" n:if="isset($thisUser) && $editable && !$isWithdrawn" ></div>
+                    <div class="edit-icon musicIcon" data-lyrics="{$audio->getLyrics()}" data-title="{$audio->getTitle()}" data-performer="{$audio->getPerformer()}" data-explicit="{(int)$audio->isExplicit()}" data-searchable="{(int)!$audio->isUnlisted()}" n:if="isset($thisUser) && $editable && !$isWithdrawn" ></div>
                     <div class="report-icon musicIcon" data-id="{$audio->getId()}" n:if="isset($thisUser) && !$editable && !$isWithdrawn" ></div>
                 {else}
                     jrgnwighweif

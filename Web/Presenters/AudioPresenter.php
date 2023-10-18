@@ -412,7 +412,7 @@ final class AudioPresenter extends OpenVKPresenter
                 break;
             case "edit":
                 $audio = $this->audios->get($audio_id);
-                if (!$audio || $audio->isDeleted() || $audio->isWithdrawn() || $audio->isUnlisted())
+                if (!$audio || $audio->isDeleted() || $audio->isWithdrawn())
                     $this->flashFail("err", "error", tr("invalid_audio"), null, true);
 
                 if ($audio->getOwner()->getId() !== $this->user->id)
@@ -423,6 +423,7 @@ final class AudioPresenter extends OpenVKPresenter
                 $lyrics    = $this->postParam("lyrics");
                 $genre     = empty($this->postParam("genre")) ? "undefined" : $this->postParam("genre");
                 $nsfw      = (int)($this->postParam("explicit") ?? 0) === 1;
+                $unlisted  = (int)($this->postParam("unlisted") ?? 0) === 1;
                 if(empty($performer) || empty($name) || iconv_strlen($performer . $name) > 128) # FQN of audio must not be more than 128 chars
                     $this->flashFail("err", tr("error"), tr("error_insufficient_info"), null, true);
 
@@ -431,6 +432,7 @@ final class AudioPresenter extends OpenVKPresenter
                 $audio->setLyrics(empty($lyrics) ? NULL : $lyrics);
                 $audio->setGenre($genre);
                 $audio->setExplicit($nsfw);
+                $audio->setSearchability($unlisted);
                 $audio->save();
 
                 $this->returnJson(["success" => true, "new_info" => [
@@ -440,6 +442,7 @@ final class AudioPresenter extends OpenVKPresenter
                     "lyrics_unformatted" => $audio->getLyrics() ?? "",
                     "explicit" => $audio->isExplicit(),
                     "genre" => $audio->getGenre(),
+                    "unlisted" => $audio->isUnlisted(),
                 ]]);
                 break;
 
