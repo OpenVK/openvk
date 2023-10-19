@@ -714,6 +714,7 @@
 "upload_new_video" = "Upload new video";
 "max_attached_videos" = "Max is 10 videos";
 "max_attached_photos" = "Max is 10 photos";
+"max_attached_audios" = "Max is 10 audios";
 "no_videos" = "You don't have uploaded videos.";
 "no_videos_results" = "No results.";
 
@@ -788,6 +789,23 @@
 "fully_delete_audio" = "Fully delete audio";
 "attach_audio" = "Attach audio";
 "detach_audio" = "Detach audio";
+
+"show_more_audios" = "Show more audios";
+"add_to_playlist" = "Add to playlist";
+"remove_from_playlist" = "Remove from playlist";
+"delete_playlist" = "Delete playlist";
+"playlist_cover" = "Playlist cover";
+
+"playlists_user" = "Users playlists";
+"playlists_club" = "Groups playlists";
+"change_cover" = "Change cover";
+"playlist_cover" = "Playlist's cover";
+
+"minutes_count_zero" = "lasts no minutes";
+"minutes_count_one" = "lasts one minute";
+"minutes_count_few" = "lasts $1 minutes";
+"minutes_count_many" = "lasts $1 minutes";
+"minutes_count_other" = "lasts $1 minutes";
 
 /* Notifications */
 
@@ -1361,6 +1379,12 @@
 "invalid_audio" = "Invalid audio.";
 "do_not_have_audio" = "You don't have this audio.";
 "do_have_audio" = "You already have this audio.";
+
+"set_playlist_name" = "Enter the playlist name.";
+"playlist_already_bookmarked" = "This playlist is already in your collection.";
+"playlist_not_bookmarked" = "This playlist is not in your collection.";
+"invalid_cover_photo" = "Error when loading cover photo.";
+"not_a_photo" = "Uploaded file doesn't look like a photo.";
 
 /* Admin actions */
 

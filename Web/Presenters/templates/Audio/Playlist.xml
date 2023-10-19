@@ -3,7 +3,9 @@
 {block title}{_playlist}{/block}
 
 {block header}
-    <a href="/audios{$thisUser->getId()}">{_audios}</a>
+    <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
+    »
+    <a href="/audios{$ownerId}">{_audios}</a>
     »
     {_playlist}
 {/block}
@@ -17,13 +19,13 @@
     <div class="playlistBlock">
         <div class="playlistCover" style="float: left;">
             <a href="{$playlist->getCoverURL()}" target="_blank">
-                <img src="{$playlist->getCoverURL('normal')}">
+                <img src="{$playlist->getCoverURL('normal')}" alt="{_playlist_cover}">
             </a>
 
             <div class="profile_links" style="width: 139px;">
-                <a id="profile_link" style="width: 98%;" n:if="$canEdit">{_edit_playlist}</a>
-                <a id="profile_link" style="width: 98%;" id="bookmarkPlaylist" n:if="$isBookmarked">{_unbookmark}</a>
-                <a id="profile_link" style="width: 98%;" id="unbookmarkPlaylist" n:if="!$isBookmarked">{_bookmark}</a>
+                <a class="profile_link" style="width: 98%;" href="/playlist{$playlist->getPrettyId()}/edit" n:if="$playlist->canBeModifiedBy($thisUser)">{_edit_playlist}</a>
+                <a class="profile_link" style="width: 98%;" id="bookmarkPlaylist" data-id="{$playlist->getId()}" n:if="!$isBookmarked">{_bookmark}</a>
+                <a class="profile_link" style="width: 98%;" id="unbookmarkPlaylist" data-id="{$playlist->getId()}" n:if="$isBookmarked">{_unbookmark}</a>
             </div>
         </div>
 
@@ -32,11 +34,15 @@
                 <h4 style="border-bottom:unset;">{$playlist->getName()}</h4>
 
                 <div class="moreInfo">
+                    {php $length = $playlist->getLengthInMinutes()}
                     <span>{tr("audios_count", $count)}</span> • 
                     <span>{_created_playlist}</span> {$playlist->getPublicationTime()}
-                    
+                    {if $length > 0} •
+                        <span>{tr("minutes_count", $length)}</span>
+                    {/if}
+
                     <div style="margin-top: 11px;">
-                        <span>{$playlist->getDescription()}</span>
+                        <span>{nl2br($playlist->getDescriptionHTML())|noescape}</span>
                     </div>
                     <hr style="color: #f7f7f7;">
                 </div>

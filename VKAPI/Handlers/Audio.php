@@ -310,6 +310,17 @@ final class Audio extends VKAPIRequestHandler
         }
 
         $items  = [];
+
+        if($owner_id > 0) {
+            $user = (new \openvk\Web\Models\Repositories\Users)->get($owner_id);
+
+            if(!$user)
+                $this->fail(50, "Invalid user");
+
+            if(!$user->getPrivacyPermission("audios.read", $this->getUser()))
+                $this->fail(15, "Access denied: this user chose to hide his audios");
+        }
+
         $audios = (new Audios)->getByEntityID($owner_id, $offset, $count);
         foreach($audios as $audio)
             $items[] = $this->toSafeAudioStruct($audio, $hash, $need_user == 1);

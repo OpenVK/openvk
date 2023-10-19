@@ -371,6 +371,11 @@ class Club extends RowModel
     {
         return $this->getRecord()->alert;
     }
+
+    function getRealId()
+    {
+        return $this->getId() * -1;
+    }
     
     function toVkApiStruct(?User $user = NULL): object
     {

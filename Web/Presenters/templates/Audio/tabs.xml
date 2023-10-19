@@ -1,17 +1,17 @@
 <div class="searchOptions newer">
-    <ul class="searchList">
+    <div class="searchList" style="margin-top:10px">
         <a n:attr="id => $mode === 'list' && $isMy ? 'used' : 'ki'" href="/audios{$thisUser->getId()}" n:if="isset($thisUser)">{_my_music}</a>
-
-        <a n:if="!$isMy && $mode === 'list'" id="used" href="/audios{$ownerId}">{if $ownerId > 0}{_music_user}{else}{_music_club}{/if}</a>
-        
         <a href="/player/upload{if $isMyClub}?gid={abs($ownerId)}{/if}" n:if="isset($thisUser)">{_upload_audio}</a>
-
-        <a n:attr="id => $mode === 'playlists' ? 'used' : 'ki'" href="/playlists{$thisUser->getId()}" n:if="isset($thisUser)">{_my_playlists}</a>
-
-        <a n:if="$mode === 'playlists' && isset($thisUser)" href="/audios/newPlaylist{if $isMyClub}?owner={abs($ownerId)}{/if}">{_new_playlist}</a>
-
         <a n:attr="id => $mode === 'new' ? 'used' : 'ki'" href="/audios/new">{_audio_new}</a>
         <a n:attr="id => $mode === 'popular' ? 'used' : 'ki'" href="/audios/popular">{_audio_popular}</a>
         <a href="/search?type=audios" n:if="isset($thisUser)">{_audio_search}</a>
-    </ul>
+        <a n:if="!$isMy && $mode === 'list'" id="used" href="/audios{$ownerId}">{if $ownerId > 0}{_music_user}{else}{_music_club}{/if}</a>
+
+        <hr>
+
+        <a n:attr="id => $mode === 'playlists' && $ownerId == $thisUser->getId() ? 'used' : 'ki'" href="/playlists{$thisUser->getId()}" n:if="isset($thisUser)">{_my_playlists}</a>
+        <a n:attr="id => $mode === 'playlists' && $ownerId != $thisUser->getId() ? 'used' : 'ki'" href="/playlists{$ownerId}"  n:if="isset($ownerId) && !$isMy">{if $ownerId > 0}{_playlists_user}{else}{_playlists_club}{/if}</a>
+
+        <a n:if="isset($thisUser)" href="/audios/newPlaylist{if $isMyClub}?owner={abs($ownerId)}{/if}">{_new_playlist}</a>
+    </div>
 </div>

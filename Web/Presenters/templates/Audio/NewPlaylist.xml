@@ -28,19 +28,72 @@
         }
     </style>
 
-    <form method="post" id="newPlaylistForm">
+    <div class="playlistInfo">
         <input type="text" name="title" placeholder="{_title}" maxlength="128" />
         <br /><br />
         <textarea placeholder="{_description}" name="description" maxlength="2048" />
         <br /><br />
 
-        <div n:if="sizeof($audios) > 0">
-            <div id="newPlaylistAudios" n:foreach="$audios as $audio">
-                {include "player.xml", audio => $audio, addToPlaylistButton => true}
-            </div>
+        {_playlist_cover}: <input type="button" class="button" value="{_upload_button}" onclick="document.querySelector(`#newPlaylistForm input[name='cover']`).click()">
+        
+        <div class="playlistCover" style="margin-top: 6px;">
+            <img style="display:none">
         </div>
 
+        <hr />
+
+        <div style="margin-top: 19px;">
+            <input id="playlist_query" type="text" style="height: 26px;" placeholder="{_header_search}">
+            <div class="playlistAudiosContainer" style="display:table;clear:both;width:100%;margin-top: 10px;">
+                <div id="newPlaylistAudios" n:foreach="$audios as $audio">
+                    <div style="width: 78%;float: left;">
+                        {include "player.xml", audio => $audio, hideButtons => true}
+                    </div>
+                    <div class="attachAudio addToPlaylist" data-id="{$audio->getId()}" style="width: 22%;">
+                        <span>{_add_to_playlist}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="showMoreAudiosPlaylist" data-page="2" n:if="$pagesCount > 1">
+                {_show_more_audios}
+            </div>
+        </div>
+    </div>
+
+    <form method="post" id="newPlaylistForm" enctype="multipart/form-data">
+        <input type="hidden" name="title" maxlength="128" />
         <input type="hidden" name="hash" value="{$csrfToken}" />
-        <button class="button" style="float: right;">{_create}</button>
+        <textarea style="display:none;" name="description" maxlength="2048" />
+        <input type="hidden" name="audios">
+        <input type="file" style="display:none;" name="cover" accept=".jpg,.png">
+
+        <div style="float: right;margin-top: 9px;">
+            <button class="button" type="submit">{_create}</button>
+        </div>
     </form>
+
+    <script>
+        document.querySelector("input[name='audios']").value = ""
+
+        u("#newPlaylistForm").on("submit", (e) => {
+            document.querySelector("#newPlaylistForm input[name='title']").value = document.querySelector(".playlistInfo input[name='title']").value
+            document.querySelector("#newPlaylistForm textarea[name='description']").value = document.querySelector(".playlistInfo textarea[name='description']").value
+        })
+
+        u("#newPlaylistForm input[name='cover']").on("change", (e) => {
+            let image = URL.createObjectURL(e.currentTarget.files[0])
+
+            document.querySelector(".playlistCover img").src = image
+            document.querySelector(".playlistCover img").style.display = "block"
+        })
+
+        u(".playlistCover img").on("click", (e) => {
+            document.querySelector("#newPlaylistForm input[name='cover']").value = ""
+            e.currentTarget.href = ""
+            e.currentTarget.style.display = "none"
+        })
+
+        document.querySelector("#newPlaylistForm input[name='cover']").value = ""
+    </script>
 {/block}

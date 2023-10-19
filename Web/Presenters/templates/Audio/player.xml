@@ -4,22 +4,22 @@
 <div id="audioEmbed-{$id}" data-realid="{$audio->getId()}" {if $hideButtons}data-prettyid="{$audio->getPrettyId()}" data-name="{$audio->getName()}"{/if} data-genre="{$audio->getGenre()}" class="audioEmbed {if !$audio->isAvailable()}processed{/if} {if $isWithdrawn}withdrawn{/if}" onmouseenter="!this.classList.contains('inited') ? initPlayer({$id}, {$audio->getKeys()}, {$audio->getURL()}, {$audio->getLength()}) : void(0)">
     <audio class="audio" />
 
-    <div id="miniplayer" class="audioEntry" style="min-height: 37px;">
+    <div id="miniplayer" class="audioEntry" style="min-height: 39px;">
         <div class="playerButton">
             <div class="playIcon"></div>
         </div>
 
-        <div class="status" style="margin-top: 11px;">
-            <div class="mediaInfo" style="margin-bottom: -8px; cursor: pointer;">
-                <strong class="performer">
-                    <a style="color: unset" href="/search?query=&type=audios&sort=id&only_performers=on&query={$audio->getPerformer()}">{ovk_proc_strtr($audio->getPerformer(), 50)}</a>
-                </strong>
-                —
-                <span class="title {if !empty($audio->getLyrics())}withLyrics{/if}">{ovk_proc_strtr($audio->getTitle(), 50)}</span>
-                <svg n:if="$audio->isExplicit()" xmlns="http://www.w3.org/2000/svg" height="11" viewBox="0 0 11 11" width="11">
-                    <path d="m1 2.506v5.988a1.5 1.5 0 0 0 1.491 1.506h6.019c.827 0 1.49-.674 1.49-1.506v-5.988a1.5 1.5 0 0 0 -1.491-1.506h-6.019c-.827 0-1.49.674-1.49 1.506zm4 2.494v-1h2v-1h-3v5h3v-1h-2v-1h2v-1zm-5-2.494a2.496 2.496 0 0 1 2.491-2.506h6.019a2.5 2.5 0 0 1 2.49 2.506v5.988a2.496 2.496 0 0 1 -2.491 2.506h-6.019a2.5 2.5 0 0 1 -2.49-2.506z"
-                        fill="#828a99" fill-opacity=".7"/>
-                </svg>
+        <div class="status" style="margin-top: 12px;">
+            <div class="mediaInfo" style="margin-bottom: -8px; cursor: pointer;display:flex;width: 85%;">
+                <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+                    <strong class="performer">
+                        <a style="color: unset" href="/search?query=&type=audios&sort=id&only_performers=on&query={$audio->getPerformer()}">{ovk_proc_strtr($audio->getPerformer(), 50)}</a>
+                    </strong>
+                    —
+                    <span class="title {if !empty($audio->getLyrics())}withLyrics{/if}">{ovk_proc_strtr($audio->getTitle(), 50)}</span>
+                </div>
+
+                <div class="explicitMark" n:if="$audio->isExplicit()"></div>
             </div>
         </div>
 

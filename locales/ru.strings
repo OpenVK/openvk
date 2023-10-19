@@ -674,6 +674,7 @@
 "upload_new_video" = "Загрузить новое видео";
 "max_attached_videos" = "Максимум 10 видеозаписей";
 "max_attached_photos" = "Максимум 10 фотографий";
+"max_attached_audios" = "Максимум 10 аудиозаписей";
 "no_videos" = "У вас нет видео.";
 "no_videos_results" = "Нет результатов.";
 
@@ -704,7 +705,7 @@
 "audio_embed_processing" = "Аудио ещё обрабатывается, либо обработалось неправильно.";
 
 "audios_count_zero" = "Нет аудиозаписей";
-"audios_count_one" = "Одна аудиозапись";
+"audios_count_one" = "Одна аудиозапись"; /* сингл */
 "audios_count_few" = "$1 аудиозаписи";
 "audios_count_many" = "$1 аудиозаписей";
 "audios_count_other" = "$1 аудиозаписей";
@@ -744,6 +745,22 @@
 "fully_delete_audio" = "Полностью удалить аудиозапись";
 "attach_audio" = "Прикрепить аудиозапись";
 "detach_audio" = "Открепить аудиозапись";
+
+"show_more_audios" = "Показать больше аудиозаписей";
+"add_to_playlist" = "Добавить в плейлист";
+"remove_from_playlist" = "Удалить из плейлиста";
+"delete_playlist" = "Удалить плейлист";
+"playlist_cover" = "Обложка плейлиста";
+"playlists_user" = "Плейлисты польз.";
+"playlists_club" = "Плейлисты группы";
+"change_cover" = "Сменить обложку";
+"playlist_cover" = "Обложка плейлиста";
+
+"minutes_count_zero" = "длится ноль минут";
+"minutes_count_one" = "длится одну минуту";
+"minutes_count_few" = "длится $1 минуты";
+"minutes_count_many" = "длится $1 минут";
+"minutes_count_other" = "длится $1 минут";
 
 /* Notifications */
 
@@ -1258,6 +1275,12 @@
 "invalid_audio" = "Такой аудиозаписи не существует.";
 "do_not_have_audio" = "У вас нет этой аудиозаписи.";
 "do_have_audio" = "У вас уже есть эта аудиозапись.";
+
+"set_playlist_name" = "Укажите название плейлиста.";
+"playlist_already_bookmarked" = "Плейлист уже есть в вашей коллекции.";
+"playlist_not_bookmarked" = "Плейлиста нет в вашей коллекции.";
+"invalid_cover_photo" = "Не удалось сохранить обложку плейлиста.";
+"not_a_photo" = "Загруженный файл не похож на фотографию.";
 
 /* Admin actions */
 

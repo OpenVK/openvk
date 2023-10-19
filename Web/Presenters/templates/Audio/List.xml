@@ -1,6 +1,16 @@
 {extends "../@layout.xml"}
 
-{block title}{_audios}{/block}
+{block title}
+    {if $mode == 'list'}
+        {_audios}
+    {elseif $mode == 'new'}
+        {_audio_new}
+    {elseif $mode == 'popular'}
+        {_audio_popular}
+    {else}
+        {_playlists}
+    {/if}
+{/block}
 
 {block header}
     <div n:if="$mode == 'list'">
@@ -27,7 +37,7 @@
     <div n:if="$mode == 'playlists'">
         {_audios}
         »
-        {_audio_popular}
+        {if $isMy}{_my_playlists}{else}{_playlists}{/if}
     </div>
 {/block}
 
@@ -39,8 +49,9 @@
     <input n:if="$mode == 'list'" type="hidden" name="bigplayer_context" data-type="entity_audios" data-entity="{$ownerId}" data-page="{$page}">
     <input n:if="$mode == 'new'" type="hidden" name="bigplayer_context" data-type="new_audios" data-entity="0" data-page="1">
     <input n:if="$mode == 'popular'" type="hidden" name="bigplayer_context" data-type="popular_audios" data-entity="0" data-page="1">
-    
-    <div style="width: 100%;display: flex;margin-bottom: -10px;">
+    <div class="bigPlayerDetector"></div>
+
+    <div style="width: 100%;display: flex;margin-bottom: -10px;" class="audiosDiv">
         <div style="width: 74%;" class="audiosContainer" n:if="$mode != 'playlists'">
             <div style="padding: 8px;">
                 <div n:if="$audiosCount <= 0">
@@ -70,7 +81,7 @@
                     {include "../components/error.xml", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_playlists_thisuser") : tr("no_playlists_user")) : tr("no_playlists_club")}
                 </div>
 
-                <div class="infContainer playlistContainer" style="display: flex;" n:if="$playlistsCount > 0">
+                <div class="infContainer playlistContainer" n:if="$playlistsCount > 0">
                     <div class="infObj" n:foreach="$playlists as $playlist">
                         <a href="/playlist{$playlist->getPrettyId()}">
                             <div class="playlistCover">
@@ -78,7 +89,9 @@
                             </div>
 
                             <div class="playlistInfo">
-                                <span>{$playlist->getName()}</span>
+                                <span style="font-size: 12px">
+                                    {ovk_proc_strtr($playlist->getName(), 12)}
+                                </span>
                             </div>
                         </a>
                     </div>

@@ -365,7 +365,7 @@
         <div class="searchOption">
         <div class="searchOptionName" id="n_main_audio" onclick="hideParams('main_audio')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{_s_main}</div>
             <div class="searchOptionBlock" id="s_main_audio">
-                <label><input type="checkbox" name="only_performers" n:attr="checked => !empty($_GET['only_performers'])" form="searcher">{_s_only_performers}</label>
+                <label><input type="checkbox" name="only_performers" n:attr="checked => !empty($_GET['only_performers'])" form="searcher">{_s_only_performers}</label><br>
                 <label><input type="checkbox" name="with_lyrics" n:attr="checked => !empty($_GET['with_lyrics'])" form="searcher">{_s_with_lyrics}</label>
             </div>
         </div>

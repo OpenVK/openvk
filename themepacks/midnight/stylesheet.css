@@ -242,3 +242,41 @@ input[type="radio"] {
     background-image: url("/themepack/midnight/0.0.2.8/resource/backdrop-editor.gif") !important;
     border-color: #473e66 !important;
 }
+
+.bigPlayer {
+    background-color: rgb(30, 26, 43) !important;
+}
+
+.bigPlayer .selectableTrack {
+    border-top: #b9b9b9 1px solid !important;
+}
+
+.bigPlayer .paddingLayer .slider {
+    background: #b9b9b9 !important;
+}
+
+.musicIcon {
+    filter: invert(81%) !important;
+}
+
+.audioEntry.nowPlaying {
+    background: #463f60 !important;
+    border: 1px solid #645a86 !important;
+}
+
+.preformer {
+    color: #b7b7b7 !important;
+}
+
+.bigPlayer .paddingLayer .trackPanel .track .timeTip {
+    background: #b9b9b9 !important;
+    color: black !important;
+}
+
+.audioEntry.nowPlaying:hover {
+    background: #50486f !important;
+}
+
+.audioEntry:hover {
+    background: #19142D !important;
+}

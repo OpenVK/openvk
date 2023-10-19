@@ -2512,8 +2512,8 @@ a.poll-retract-vote {
     padding:2px;
     padding-top:5px;
     padding-bottom:5px;
-    border: solid 0.125rem #696969;
-    background:linear-gradient(#888888,#858585);
+    border: solid 0.125rem #4F4F4F;
+    background: #787878;
     margin-bottom:2px;
     padding-left:9px;
     width:87%;
@@ -2552,16 +2552,16 @@ a.poll-retract-vote {
     min-width: 88%;
 }
 
-.searchList li:hover, .searchList a:hover {
-    margin-left:0px;
+.searchList a:hover {
+    margin-left: 0px;
     color: #2B587A !important;
-    background:#ebebeb;
-    padding:2px;
-    padding-top:5px;
-    padding-bottom:5px;
-    margin-bottom:2px;
-    padding-left:9px;
-    width:91%;
+    background: #ebebeb;
+    padding: 2px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 2px;
+    padding-left: 9px;
+    width: 89.9%;
 }
 
 .whatFind {
@@ -2576,8 +2576,7 @@ a.poll-retract-vote {
     margin-top: 0.5px;
 }
 
-.searchOptionName
-{
+.searchOptionName {
     cursor:pointer;
     background-color: #EAEAEA;
     padding-left:5px;
@@ -2589,8 +2588,7 @@ a.poll-retract-vote {
     border-bottom: 2px solid #E4E4E4;
 }
 
-.searchOption
-{
+.searchOption {
     user-select: none;
 }
 
@@ -2972,4 +2970,23 @@ body.article .floating_sidebar, body.article .page_content {
     height: unset !important;
     border-left: 1px solid #d8d8d8;
     width: 26% !important;
+}
+
+hr {
+    color: #d0cdcd;
+}
+
+.searchList hr {
+    width: 153px;
+    margin-left: 0px;
+    margin-top: 6px;
+}
+
+.showMore, .showMoreAudiosPlaylist {
+    width: 100%;
+    text-align: center;
+    background: #d5d5d5;
+    height: 22px;
+    padding-top: 9px;
+    cursor: pointer;
 }

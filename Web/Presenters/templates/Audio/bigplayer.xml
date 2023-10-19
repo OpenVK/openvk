@@ -34,7 +34,7 @@
 
         <div class="volumePanel">
             <div class="selectableTrack">
-                <div style="position: relative;width:74%">&nbsp;
+                <div style="position: relative;width:73%">&nbsp;
                     <div class="slider"></div>
                 </div>
             </div>

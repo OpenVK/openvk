@@ -1228,6 +1228,11 @@ class User extends RowModel
         return $response;
     }
 
+    function getRealId()
+    {
+        return $this->getId();
+    }
+
     function toVkApiStruct(): object
     {
         $res = (object) [];

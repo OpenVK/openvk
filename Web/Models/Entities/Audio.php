@@ -148,7 +148,7 @@ class Audio extends Media
 
     function getName(): string
     {
-        return $this->getTitle() . " - " . $this->getPerformer();
+        return $this->getPerformer() . " — " . $this->getTitle();
     }
 
     function getGenre(): ?string

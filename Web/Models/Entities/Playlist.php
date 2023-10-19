@@ -5,6 +5,7 @@ use Nette\Database\Table\ActiveRow;
 use openvk\Web\Models\Repositories\Audios;
 use openvk\Web\Models\Repositories\Photos;
 use openvk\Web\Models\RowModel;
+use openvk\Web\Models\Entities\Photo;
 
 /**
  * @method setName(string $name)
@@ -125,6 +126,16 @@ class Playlist extends MediaCollection
 
         return $count > 0;
     }
+    
+    function getDescription(): ?string
+    {
+        return $this->getRecord()->description;
+    }
+
+    function getDescriptionHTML(): ?string
+    {
+        return htmlspecialchars($this->getRecord()->description, ENT_DISALLOWED | ENT_XHTML);
+    }
 
     function toVkApiStruct(?User $user = NULL): object
     {
@@ -152,6 +163,13 @@ class Playlist extends MediaCollection
         throw new \LogicException("Can't set length of playlist manually");
     }
 
+    function resetLength(): bool
+    {
+        $this->stateChanges("length", 0);
+
+        return true;
+    }
+
     function delete(bool $softly = true): void
     {
         $ctx = DatabaseConnection::i()->getContext();
@@ -173,5 +191,35 @@ class Playlist extends MediaCollection
     function getCoverPhotoId(): ?int
     {
         return $this->getRecord()->cover_photo_id;
+    }
+
+    function canBeModifiedBy(User $user): bool
+    {
+        if(!$user)
+            return false;
+
+        if($this->getOwner() instanceof User)
+            return $user->getId() == $this->getOwner()->getId();
+        else
+            return $this->getOwner()->canBeModifiedBy($user);
+    }
+
+    function getLengthInMinutes(): int
+    {
+        return (int)round($this->getLength() / 60, PHP_ROUND_HALF_DOWN);
+    }
+
+    function fastMakeCover(int $owner, array $file)
+    {
+        $cover = new Photo;
+        $cover->setOwner($owner);
+        $cover->setDescription("Playlist cover image");
+        $cover->setFile($file);
+        $cover->setCreated(time());
+        $cover->save();
+
+        $this->setCover_photo_id($cover->getId());
+
+        return $cover;
     }
 }
