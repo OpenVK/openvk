@@ -336,10 +336,7 @@ final class PhotosPresenter extends OpenVKPresenter
         if(is_null($this->user) || $this->user->id != $ownerId)
             $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
 
-        if(!is_null($album = $photo->getAlbum()))
-            $redirect = $album->getOwner() instanceof User ? "/id0" : "/club" . $ownerId;
-        else
-            $redirect = "/id0";
+        $redirect = $photo->getAlbum()->getOwner() instanceof User ? "/id0" : "/club" . $ownerId;
 
         $photo->isolate();
         $photo->delete();
