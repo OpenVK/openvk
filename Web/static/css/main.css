@@ -405,6 +405,7 @@ h1 {
     width: 200px;
     text-align: left;
     cursor: pointer;
+    font-family: tahoma, verdana, arial, sans-serif;
 }
 
 .profile_link_form {
