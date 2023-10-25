@@ -9,7 +9,7 @@
 {/block}
 
 {block content}
-    {var $amount = $logs->getRowCount()}
+    {var $amount = sizeof($logs)}
 
     <style>
         del, ins { text-decoration: none; color: #000; }
