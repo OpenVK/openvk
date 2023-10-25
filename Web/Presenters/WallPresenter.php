@@ -154,7 +154,7 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->paginatorConf = (object) [
             "count"   => sizeof($posts),
             "page"    => (int) ($_GET["p"] ?? 1),
-            "amount"  => $posts->page((int) ($_GET["p"] ?? 1), $perPage)->getRowCount(),
+            "amount"  => $posts->page((int) ($_GET["p"] ?? 1), $perPage)->count(),
             "perPage" => $perPage,
         ];
         $this->template->posts = [];
