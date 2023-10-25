@@ -152,7 +152,7 @@ final class WallPresenter extends OpenVKPresenter
                    ->where("deleted", 0)
                    ->order("created DESC");
         $this->template->paginatorConf = (object) [
-            "count"   => sizeof((array)$posts),
+            "count"   => $posts->count(),
             "page"    => (int) ($_GET["p"] ?? 1),
             "amount"  => sizeof($posts->page((int) ($_GET["p"] ?? 1), $perPage)),
             "perPage" => $perPage,
@@ -182,7 +182,7 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->paginatorConf = (object) [
             "count"   => $count,
             "page"    => (int) ($_GET["p"] ?? 1),
-            "amount"  => sizeof((array)$posts),
+            "amount"  => $posts->count(),
             "perPage" => $pPage,
         ];
         foreach($posts as $post)
