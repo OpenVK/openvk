@@ -74,7 +74,7 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
             "page"    => (int) ($_GET["p"] ?? 1),
-            "amount"  => sizeof($this->template->posts),
+            "amount"  => $this->template->posts->getRowCount(),
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
         ];
 
@@ -152,9 +152,9 @@ final class WallPresenter extends OpenVKPresenter
                    ->where("deleted", 0)
                    ->order("created DESC");
         $this->template->paginatorConf = (object) [
-            "count"   => sizeof($posts),
+            "count"   => $posts->getRowCount(),
             "page"    => (int) ($_GET["p"] ?? 1),
-            "amount"  => sizeof($posts->page((int) ($_GET["p"] ?? 1), $perPage)),
+            "amount"  => $posts->page((int) ($_GET["p"] ?? 1), $perPage)->getRowCount(),
             "perPage" => $perPage,
         ];
         $this->template->posts = [];
@@ -182,7 +182,7 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->paginatorConf = (object) [
             "count"   => $count,
             "page"    => (int) ($_GET["p"] ?? 1),
-            "amount"  => sizeof($posts),
+            "amount"  => $posts->getRowCount(),
             "perPage" => $pPage,
         ];
         foreach($posts as $post)
@@ -332,7 +332,7 @@ final class WallPresenter extends OpenVKPresenter
         foreach($photos as $photo)
         	$post->attach($photo);
         
-        if(sizeof($videos) > 0)
+        if($videos->count() > 0)
             foreach($videos as $vid)
                 $post->attach($vid);
         
