@@ -74,7 +74,7 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
             "page"    => (int) ($_GET["p"] ?? 1),
-            "amount"  => sizeof((array)$this->template->posts),
+            "amount"  => $this->template->posts->count(),
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
         ];
 
@@ -332,7 +332,7 @@ final class WallPresenter extends OpenVKPresenter
         foreach($photos as $photo)
         	$post->attach($photo);
         
-        if(sizeof($videos) > 0)
+        if($videos->count() > 0)
             foreach($videos as $vid)
                 $post->attach($vid);
         

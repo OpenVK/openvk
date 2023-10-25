@@ -142,7 +142,7 @@
     {include "../components/paginator.xml", conf => (object) [
         "page"     => $page,
         "count"    => $count,
-        "amount"   => sizeof((array)$data),
+        "amount"   => $data->count(),
         "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
         "atBottom" => false,
     ]}
