@@ -9,7 +9,7 @@
 {/block}
 
 {block content}
-    {var $amount = sizeof($logs)}
+    {var $amount = sizeof((array)$logs)}
 
     <style>
         del, ins { text-decoration: none; color: #000; }
