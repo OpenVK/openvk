@@ -332,7 +332,7 @@ final class WallPresenter extends OpenVKPresenter
         foreach($photos as $photo)
         	$post->attach($photo);
         
-        if($videos->getRowCount() > 0)
+        if(sizeof($videos) > 0)
             foreach($videos as $vid)
                 $post->attach($vid);
         
