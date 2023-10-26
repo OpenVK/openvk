@@ -63,6 +63,7 @@ final class AudioPresenter extends OpenVKPresenter
 
             $this->template->owner = $entity;
             $this->template->ownerId = $owner;
+            $this->template->club = $owner < 0 ? $entity : NULL;
             $this->template->isMy = ($owner > 0 && ($entity->getId() === $this->user->id));
             $this->template->isMyClub = ($owner < 0 && $entity->canBeModifiedBy($this->user->identity));
         } else if ($mode === "new") {
@@ -252,7 +253,7 @@ final class AudioPresenter extends OpenVKPresenter
 
                 try {
                     $playlist->fastMakeCover($this->user->id, $_FILES["cover"]);
-                } catch(\ImagickException $e) {
+                } catch(\Throwable $e) {
                     $this->flashFail("err", tr("error"), tr("invalid_cover_photo"));
                 }
             }
@@ -342,7 +343,7 @@ final class AudioPresenter extends OpenVKPresenter
         $this->template->playlist = $playlist;
         $this->template->page = $page;
         
-        $audios = iterator_to_array($playlist->getAudios());
+        $audios = iterator_to_array($playlist->fetch(1, $playlist->size()));
         $this->template->audios = array_slice($audios, 0, 10);
         $audiosIds = [];
 
@@ -448,6 +449,30 @@ final class AudioPresenter extends OpenVKPresenter
                 else
                     $this->flashFail("err", "error", tr("do_not_have_audio"), null, true);
 
+                break;
+            case "remove_club":
+                $club = (new Clubs)->get((int)$this->postParam("club"));
+                
+                if(!$club || !$club->canBeModifiedBy($this->user->identity))
+                    $this->flashFail("err", "error", tr("access_denied"), null, true);
+                
+                if($audio->isInLibraryOf($club))
+                    $audio->remove($club);
+                else
+                    $this->flashFail("err", "error", tr("group_hasnt_audio"), null, true);
+
+                break;
+            case "add_to_club":
+                $club = (new Clubs)->get((int)$this->postParam("club"));
+                    
+                if(!$club || !$club->canBeModifiedBy($this->user->identity))
+                    $this->flashFail("err", "error", tr("access_denied"), null, true);
+                    
+                if(!$audio->isInLibraryOf($club))
+                    $audio->add($club);
+                else
+                    $this->flashFail("err", "error", tr("group_has_audio"), null, true);
+    
                 break;
             case "delete":
                 if($audio->canBeModifiedBy($this->user->identity))
@@ -555,7 +580,7 @@ final class AudioPresenter extends OpenVKPresenter
                 $audiosCount = $playlist->size();
                 break;
             case "search_context":
-                $stream = $this->audios->search($this->postParam("query"), 2);
+                $stream = $this->audios->search($this->postParam("query"), 2, $this->postParam("type") === "by_performer");
                 $audios = $stream->page($page, 10);
                 $audiosCount = $stream->size();
                 break;

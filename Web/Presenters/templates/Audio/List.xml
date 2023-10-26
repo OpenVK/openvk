@@ -55,11 +55,11 @@
         <div style="width: 74%;" class="audiosContainer" n:if="$mode != 'playlists'">
             <div style="padding: 8px;">
                 <div n:if="$audiosCount <= 0">
-                    {include "../components/nothing.xml"}
+                    {include "../components/error.xml", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_audios_thisuser") : tr("no_audios_user")) : tr("no_audios_club")}
                 </div>
                 <div n:if="$audiosCount > 0" class="infContainer">
                     <div class="infObj" n:foreach="$audios as $audio">
-                        {include "player.xml", audio => $audio}
+                        {include "player.xml", audio => $audio, club => $club}
                     </div>
                 </div>
 
@@ -89,8 +89,12 @@
                             </div>
 
                             <div class="playlistInfo">
-                                <span style="font-size: 12px">
+                                <span style="font-size: 12px" class="playlistName">
                                     {ovk_proc_strtr($playlist->getName(), 12)}
+                                </span>
+
+                                <span style="font-size: 12px" class="playlistAuthor">
+                                    <a href="{$playlist->getOwner()->getURL()}">{ovk_proc_strtr($playlist->getOwner()->getCanonicalName(), 15)}</a>
                                 </span>
                             </div>
                         </a>

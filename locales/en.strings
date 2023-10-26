@@ -728,6 +728,7 @@
 "audio" = "Audio";
 "playlist" = "Playlist";
 "upload_audio" = "Upload audio";
+"upload_audio_to_group" = "Upload audio to group";
 
 "performer" = "Performer";
 "audio_name" = "Name";
@@ -778,6 +779,10 @@
 "no_playlists_user" = "This user has not added any playlists yet.";
 "no_playlists_club" = "This group hasn't added playlists yet.";
 
+"no_audios_thisuser" = "You haven't added any audios yet.";
+"no_audios_user" = "This user has not added any audios yet.";
+"no_audios_club" = "This group has not added any audios yet.";
+
 "new_playlist" = "New playlist";
 "created_playlist" = "created";
 "bookmark" = "Add to collection";
@@ -806,6 +811,15 @@
 "minutes_count_few" = "lasts $1 minutes";
 "minutes_count_many" = "lasts $1 minutes";
 "minutes_count_other" = "lasts $1 minutes";
+
+"add_audio_to_club" = "Add audio to group";
+"what_club_add" = "Which group do you want to add the song to?";
+"group_has_audio" = "This group already has this song.";
+"group_hasnt_audio" = "This group doesn't have this song.";
+
+"by_name" = "by name";
+"by_performer" = "by performer";
+"no_access_clubs" = "There are no groups where you are an administrator.";
 
 /* Notifications */
 

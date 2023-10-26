@@ -5,8 +5,13 @@
             <div class="playButton musicIcon"></div>
                 
             <div class="arrowsButtons">
-                <div class="nextButton musicIcon"></div>
-                <div class="backButton musicIcon"></div>
+                <div>
+                    <div class="nextButton musicIcon"></div>
+                </div>
+
+                <div>
+                    <div class="backButton musicIcon"></div>
+                </div>
             </div>
         </div>
 
@@ -23,7 +28,7 @@
             </div>
 
             <div class="track">
-                <div class="timeTip">00:00</div>
+                <div class="bigPlayerTip">00:00</div>
                 <div class="selectableTrack">
                     <div style="width: 95%;position: relative;">&nbsp;
                         <div class="slider"></div>
