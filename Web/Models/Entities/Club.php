@@ -372,9 +372,22 @@ class Club extends RowModel
         return $this->getRecord()->alert;
     }
 
-    function getRealId()
+    function getRealId(): int
     {
         return $this->getId() * -1;
+    }
+
+    function isEveryoneCanUploadAudios(): bool
+    {
+        return (bool) $this->getRecord()->everyone_can_upload_audios;
+    }
+
+    function canUploadAudio(?User $user): bool
+    {
+        if(!$user)
+            return NULL;
+
+        return $this->isEveryoneCanUploadAudios() || $this->canBeModifiedBy($user);
     }
     
     function toVkApiStruct(?User $user = NULL): object

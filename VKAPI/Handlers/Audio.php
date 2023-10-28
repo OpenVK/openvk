@@ -487,6 +487,7 @@ final class Audio extends VKAPIRequestHandler
             $audio->setName($title);
 
         $audio->setSearchability(!((bool) $no_search));
+        $audio->setEdited(time());
         $audio->save();
 
         return $lyrics;
@@ -653,6 +654,9 @@ final class Audio extends VKAPIRequestHandler
 
         if(!is_null($description))
             $album->setDescription($description);
+
+        $album->setEdited(time());
+        $album->save();
 
         return (int) !(!$title && !$description);
     }

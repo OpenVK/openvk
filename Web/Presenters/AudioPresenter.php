@@ -93,6 +93,7 @@ final class AudioPresenter extends OpenVKPresenter
             $this->template->playlistsCount = $playlistsCount;
             $this->template->owner = $entity;
             $this->template->ownerId = $owner;
+            $this->template->club = $owner < 0 ? $entity : NULL;
             $this->template->isMy = ($owner > 0 && ($entity->getId() === $this->user->id));
             $this->template->isMyClub = ($owner < 0 && $entity->canBeModifiedBy($this->user->identity));
         } else {
@@ -138,15 +139,15 @@ final class AudioPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $group = NULL;
+        $isAjax = $this->postParam("ajax", false) == 1;
         if(!is_null($this->queryParam("gid"))) {
             $gid   = (int) $this->queryParam("gid");
             $group = (new Clubs)->get($gid);
             if(!$group)
-                $this->flashFail("err", tr("forbidden"), tr("not_enough_permissions_comment"));
+                $this->flashFail("err", tr("forbidden"), tr("not_enough_permissions_comment"), null, $isAjax);
 
-            // TODO check if group allows uploads to anyone
-            if(!$group->canBeModifiedBy($this->user->identity))
-                $this->flashFail("err", tr("forbidden"), tr("not_enough_permissions_comment"));
+            if(!$group->canUploadAudio($this->user->identity))
+                $this->flashFail("err", tr("forbidden"), tr("not_enough_permissions_comment"), null, $isAjax);
         }
 
         $this->template->group = $group;
@@ -157,20 +158,20 @@ final class AudioPresenter extends OpenVKPresenter
         $upload = $_FILES["blob"];
         if(isset($upload) && file_exists($upload["tmp_name"])) {
             if($upload["size"] > self::MAX_AUDIO_SIZE)
-                $this->flashFail("err", tr("error"), tr("media_file_corrupted_or_too_large"));
+                $this->flashFail("err", tr("error"), tr("media_file_corrupted_or_too_large"), null, $isAjax);
         } else {
             $err = !isset($upload) ? 65536 : $upload["error"];
             $err = str_pad(dechex($err), 9, "0", STR_PAD_LEFT);
-            $this->flashFail("err", tr("error"), tr("error_generic") . "Upload error: 0x$err");
+            $this->flashFail("err", tr("error"), tr("error_generic") . "Upload error: 0x$err", null, $isAjax);
         }
 
         $performer = $this->postParam("performer");
         $name      = $this->postParam("name");
         $lyrics    = $this->postParam("lyrics");
-        $genre     = empty($this->postParam("genre")) ? "undefined" : $this->postParam("genre");
+        $genre     = empty($this->postParam("genre")) ? "Other" : $this->postParam("genre");
         $nsfw      = ($this->postParam("explicit") ?? "off") === "on";
         if(empty($performer) || empty($name) || iconv_strlen($performer . $name) > 128) # FQN of audio must not be more than 128 chars
-            $this->flashFail("err", tr("error"), tr("error_insufficient_info"));
+            $this->flashFail("err", tr("error"), tr("error_insufficient_info"), null, $isAjax);
 
         $audio = new Audio;
         $audio->setOwner($this->user->id);
@@ -184,13 +185,30 @@ final class AudioPresenter extends OpenVKPresenter
             $audio->setFile($upload);
         } catch(\DomainException $ex) {
             $e = $ex->getMessage();
-            $this->flashFail("err", tr("error"), tr("media_file_corrupted_or_too_large") . " $e.");
+            $this->flashFail("err", tr("error"), tr("media_file_corrupted_or_too_large") . " $e.", null, $isAjax);
         }
 
         $audio->save();
         $audio->add($group ?? $this->user->identity);
 
-        $this->redirect(is_null($group) ? "/audios" . $this->user->id : "/audios-" . $group->getId());
+        if(!$isAjax)
+            $this->redirect(is_null($group) ? "/audios" . $this->user->id : "/audios-" . $group->getId());
+        else {
+            $redirectLink = "/audios";
+
+            if(!is_null($group))
+                $redirectLink .= $group->getRealId();
+            else
+                $redirectLink .= $this->user->id;
+
+            $pagesCount = (int)ceil((new Audios)->getCollectionSizeByEntityId(isset($group) ? $group->getRealId() : $this->user->id) / 10);
+            $redirectLink .= "?p=".$pagesCount;
+
+            $this->returnJson([
+                "success" => true,
+                "redirect_link" => $redirectLink,
+            ]);
+        }
     }
 
     function renderListen(int $id): void
@@ -222,8 +240,8 @@ final class AudioPresenter extends OpenVKPresenter
 
         $owner = $this->user->id;
 
-        if ($this->requestParam("owner")) {
-            $club = (new Clubs)->get((int) abs($this->requestParam("owner")));
+        if ($this->requestParam("gid")) {
+            $club = (new Clubs)->get((int) abs((int)$this->requestParam("gid")));
             if (!$club || $club->isBanned() || !$club->canBeModifiedBy($this->user->identity))
                 $this->redirect("/audios" . $this->user->id);
 
@@ -367,6 +385,7 @@ final class AudioPresenter extends OpenVKPresenter
         
         $playlist->setName(ovk_proc_strtr($title, 128));
         $playlist->setDescription(ovk_proc_strtr($description, 2048));
+        $playlist->setEdited(time());
         $playlist->resetLength();
 
         if($_FILES["new_cover"]["error"] === UPLOAD_ERR_OK) {
@@ -504,6 +523,7 @@ final class AudioPresenter extends OpenVKPresenter
                 $audio->setGenre($genre);
                 $audio->setExplicit($nsfw);
                 $audio->setSearchability($unlisted);
+                $audio->setEdited(time());
                 $audio->save();
 
                 $this->returnJson(["success" => true, "new_info" => [

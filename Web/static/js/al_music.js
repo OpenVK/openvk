@@ -48,7 +48,7 @@ class bigPlayer {
     constructor(context, context_id, page = 1) {
         this.context["context_type"] = context
         this.context["context_id"] = context_id
-        this.context["playedPages"].push(Number(page))
+        this.context["playedPages"].push(String(page))
 
         this.nodes["thisPlayer"] = document.querySelector(".bigPlayer")
         this.nodes["thisPlayer"].classList.add("lagged")
@@ -160,7 +160,7 @@ class bigPlayer {
             }
 
             e.currentTarget.parentNode.insertAdjacentHTML("afterbegin", `
-                <div class="bigPlayerTip nextTrackTip" style="left: 7%;">
+                <div class="bigPlayerTip nextTrackTip" style="left: 5%;">
                     ${ovk_proc_strtr(escapeHtml(this.findTrack(this.tracks["previousTrack"]).name), 20) ?? ""}
                 </div>
             `)
@@ -178,7 +178,7 @@ class bigPlayer {
             }
 
             e.currentTarget.parentNode.insertAdjacentHTML("afterbegin", `
-                <div class="bigPlayerTip previousTrackTip" style="left: 10%;">
+                <div class="bigPlayerTip previousTrackTip" style="left: 8%;">
                     ${ovk_proc_strtr(escapeHtml(this.findTrack(this.tracks["nextTrack"]).name), 20) ?? ""}
                 </div>
             `)
@@ -189,7 +189,7 @@ class bigPlayer {
         u(".bigPlayer .trackPanel .track").on("mouseleave", (e) => {
             if(this.tracks["currentTrack"] == null)
                 return
-
+            
             document.querySelector(".bigPlayer .track .bigPlayerTip").style.display = "none"
         })
 
@@ -265,6 +265,10 @@ class bigPlayer {
             this.showNextTrack()
         })
 
+        u(".bigPlayer .trackInfo b").on("click", (e) => {
+            window.location.assign(`/search?query=${e.currentTarget.innerHTML}&type=audios&only_performers=on`)
+        })
+
         u(document).on("keydown", (e) => {
             if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
                 e.preventDefault()
@@ -332,7 +336,6 @@ class bigPlayer {
         else
             this.timeType = localStorage.playerTimeType
 
-        
         navigator.mediaSession.setActionHandler('play', () => { this.play() });
         navigator.mediaSession.setActionHandler('pause', () => { this.pause() });
         navigator.mediaSession.setActionHandler('previoustrack', () => { this.showPreviousTrack() });
@@ -1158,9 +1161,19 @@ $(document).on("click", ".audiosContainer .paginator a", (e) => {
     let url = new URL(e.currentTarget.href)
     let page = url.searchParams.get("p")
 
+    function searchNode(id) {
+        let node = document.querySelector(`.audioEmbed[data-realid='${id}'] .audioEntry`)
+
+        if(node != null) {
+            node.classList.add("nowPlaying")
+        }
+    }
+
     if(window.savedAudiosPages[page] != null) {
         history.pushState({}, "", e.currentTarget.href)
         document.querySelector(".audiosContainer").innerHTML = window.savedAudiosPages[page].innerHTML
+        searchNode(window.player["tracks"].currentTrack != null ? window.player["tracks"].currentTrack.id : 0)
+
         return
     }
 
@@ -1175,8 +1188,9 @@ $(document).on("click", ".audiosContainer .paginator a", (e) => {
             document.querySelector(".audiosContainer").innerHTML = result.querySelector(".audiosContainer").innerHTML
             history.pushState({}, "", e.currentTarget.href)
             window.savedAudiosPages[page] = result.querySelector(".audiosContainer")
+            searchNode(window.player["tracks"].currentTrack != null ? window.player["tracks"].currentTrack.id : 0)
 
-            if(window.player.context["playedPages"].indexOf(page) == -1) {
+            if(!window.player.context["playedPages"].includes(page)) {
                 $.ajax({
                     type: "POST",
                     url: "/audios/context",
@@ -1195,12 +1209,6 @@ $(document).on("click", ".audiosContainer .paginator a", (e) => {
             }
         }
     })
-
-    let node = document.querySelector(`.audioEmbed[data-realid='${window.player["tracks"].currentTrack != null ? window.player["tracks"].currentTrack.id : 0}'] .audioEntry`)
-                
-    if(node != null) {
-        node.classList.add("nowPlaying")
-    }
 })
 
 $(document).on("click", ".addToPlaylist", (e) => {
@@ -1293,10 +1301,18 @@ function getPlayers(page = 1, query = "", playlist = 0, club = 0) {
             else {
                 if(document.querySelector(".showMoreAudiosPlaylist") != null) {
                     document.querySelector(".showMoreAudiosPlaylist").setAttribute("data-page", page + 1)
+
+                    if(query != "") {
+                        document.querySelector(".showMoreAudiosPlaylist").setAttribute("data-query", query)
+                    }
+
                     document.querySelector(".showMoreAudiosPlaylist").style.display = "block"
                 } else {
                     document.querySelector(".playlistAudiosContainer").parentNode.insertAdjacentHTML("beforeend", `
-                        <div class="showMoreAudiosPlaylist" data-page="2">
+                        <div class="showMoreAudiosPlaylist" data-page="2" 
+                        ${query != "" ? `"data-query="${query}"` : ""} 
+                        ${playlist != 0 ? `"data-playlist="${playlist}"` : ""}
+                        ${club != 0 ? `"data-club="${club}"` : ""}>
                             ${tr("show_more_audios")}
                         </div>
                     `)
@@ -1309,7 +1325,8 @@ function getPlayers(page = 1, query = "", playlist = 0, club = 0) {
 }
 
 $(document).on("click", ".showMoreAudiosPlaylist", (e) => {
-    getPlayers(Number(e.currentTarget.dataset.page), "", 
+    getPlayers(Number(e.currentTarget.dataset.page), 
+        e.currentTarget.dataset.query != null ? e.currentTarget.dataset.query : "", 
         e.currentTarget.dataset.playlist != null ? Number(e.currentTarget.dataset.playlist) : 0,
         e.currentTarget.dataset.club != null ? Number(e.currentTarget.dataset.club) : 0,
     )

@@ -24,9 +24,10 @@
         <div id="upload_container">
             <div id="firstStep">
                 <h4>{_select_audio}</h4><br/>
-                <b><a href="javascript:false">{_limits}</a></b>
+                <b><a href="javascript:void(0)">{_limits}</a></b>
                 <ul>
                     <li>{tr("audio_requirements", 1, 30, 25)}</li>
+                    <li>{tr("audio_requirements_2")}</li>
                 </ul>
                 <div id="audio_upload">
                     <form enctype="multipart/form-data" method="POST">
@@ -106,20 +107,26 @@
                 
                 if(tags.title != null)
                     document.querySelector("#lastStep input[name=name]").value = tags.title;
+                else
+                    document.querySelector("#lastStep input[name=name]").value = files[0].name
                 
                 if(tags.artist != null)
                     document.querySelector("#lastStep input[name=performer]").value = tags.artist;
+                else
+                    document.querySelector("#lastStep input[name=performer]").value = tr("track_unknown");
                 
                 if(tags.genre != null) {
                     if(document.querySelector("#lastStep select[name=genre] > option[value='" + tags.genre + "']") != null) {
                         document.querySelector("#lastStep select[name=genre]").value = tags.genre;
                     } else {
                         console.warn("Unknown genre: " + tags.genre);
+                        document.querySelector("#lastStep select[name=genre]").value = "Other"
                     }
                 }
             } else {
                 document.querySelector("#lastStep input[name=name]").value = files[0].name
                 document.querySelector("#lastStep select[name=genre]").value = "Other"
+                document.querySelector("#lastStep input[name=performer]").value = tr("track_unknown");
             }
         });
 
@@ -147,7 +154,7 @@
             lyrics_.value = document.querySelector("#lastStep textarea[name=lyrics]").value
             explicit_.value = document.querySelector("#lastStep input[name=explicit]").checked ? "on" : "off"
 
-            document.querySelector("#audio_upload > form").submit();
+            $("#audio_upload > form").trigger("submit");
         })
 
         $(document).on("dragover drop", (e) => {
@@ -169,6 +176,37 @@
 
             document.getElementById("audio_input").files = e.originalEvent.dataTransfer.files
             u("#audio_input").trigger("change")
+        })
+        
+        $("#audio_upload").on("submit", "form", (e) => {
+            e.preventDefault()
+
+            let fd = new FormData(e.currentTarget)
+            fd.append("ajax", 1)
+
+            $.ajax({
+                type: "POST",
+                url: location.href,
+                contentType: false,
+                processData: false,
+                data: fd,
+                beforeSend: function() {
+                    document.querySelector("#lastStep").classList.add("lagged")
+                    document.querySelector("#upload_container").classList.add("uploading")
+                },
+                success: (response) => {
+                    document.querySelector("#lastStep").classList.remove("lagged")
+                    document.querySelector("#upload_container").classList.remove("uploading")
+                    if(response.success) {
+                        u("#backToUpload").trigger("click")
+                        NewNotification(tr("success"), tr("audio_successfully_uploaded"), null, () => {
+                            window.location.assign(response.redirect_link)
+                        })
+                    } else {
+                        fastError(response.flash.message)
+                    }
+                }
+            })
         })
     </script>
 {/block}

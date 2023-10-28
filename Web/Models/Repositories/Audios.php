@@ -123,6 +123,11 @@ class Audios
     {
         return $this->getPlaylistsByEntityId($club->getId() * -1, ($perPage * ($page - 1)), $perPage, $deleted);
     }
+    
+    function getCollectionSizeByEntityId(int $id): int
+    {
+        return sizeof($this->rels->where("entity", $id));
+    }
 
     function getUserCollectionSize(User $user): int
     {

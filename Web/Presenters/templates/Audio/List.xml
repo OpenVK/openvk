@@ -94,7 +94,7 @@
                                 </span>
 
                                 <span style="font-size: 12px" class="playlistAuthor">
-                                    <a href="{$playlist->getOwner()->getURL()}">{ovk_proc_strtr($playlist->getOwner()->getCanonicalName(), 15)}</a>
+                                    <a href="{$playlist->getOwner()->getURL()}">{ovk_proc_strtr($playlist->getOwner()->getCanonicalName(), 20)}</a>
                                 </span>
                             </div>
                         </a>

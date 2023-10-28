@@ -2990,3 +2990,12 @@ hr {
     padding-top: 9px;
     cursor: pointer;
 }
+
+#upload_container.uploading {
+    background: white url('/assets/packages/static/openvk/img/progressbar.gif') !important;
+    background-position-x: 0% !important;
+    background-position-y: 0% !important;
+    background-repeat: repeat !important;
+    background-repeat: no-repeat !important;
+    background-position: 50% !important;
+}

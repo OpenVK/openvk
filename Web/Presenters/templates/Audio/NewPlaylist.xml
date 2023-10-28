@@ -5,7 +5,7 @@
 {/block}
 
 {block header}
-    {if !$_GET["owner"]}
+    {if !$_GET["gid"]}
         <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
         »
         <a href="/audios{$thisUser->getId()}">{_audios}</a>
@@ -37,15 +37,16 @@
             </a>
         </div>
 
-        <div class="playlistInfo">
-            <input type="text" name="title" placeholder="{_title}" maxlength="128" />
-            <br /><br />
-            <textarea placeholder="{_description}" name="description" maxlength="2048" />
-            <br /><br />
+        <div style="padding-left: 17px;width: 75%;" class="plinfo">
+            <div>
+                <input type="text" name="title" placeholder="{_title}" maxlength="128" />
+            </div>
+            <div class="moreInfo" style="margin-top: 11px;">
+                <textarea placeholder="{_description}" name="description" maxlength="2048" />
+            </div>
         </div>
     </div>
 
-    <hr />
     <div style="margin-top: 19px;">
         <input id="playlist_query" type="text" style="height: 26px;" placeholder="{_header_search}">
         <div class="playlistAudiosContainer" style="display:table;clear:both;width:100%;margin-top: 10px;">
@@ -80,8 +81,8 @@
         document.querySelector("input[name='audios']").value = ""
 
         u("#newPlaylistForm").on("submit", (e) => {
-            document.querySelector("#newPlaylistForm input[name='title']").value = document.querySelector(".playlistInfo input[name='title']").value
-            document.querySelector("#newPlaylistForm textarea[name='description']").value = document.querySelector(".playlistInfo textarea[name='description']").value
+            document.querySelector("#newPlaylistForm input[name='title']").value = document.querySelector(".plinfo input[name='title']").value
+            document.querySelector("#newPlaylistForm textarea[name='description']").value = document.querySelector(".plinfo textarea[name='description']").value
         })
 
         u("#newPlaylistForm input[name='cover']").on("change", (e) => {

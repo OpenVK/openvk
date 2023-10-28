@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `audios` (
   FULLTEXT KEY `performer_name` (`performer`,`name`),
   FULLTEXT KEY `lyrics` (`lyrics`),
   FULLTEXT KEY `performer` (`performer`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 CREATE TABLE IF NOT EXISTS `audio_listens` (
   `entity` bigint NOT NULL,
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `audio_listens` (
   KEY `audio` (`audio`),
   KEY `user` (`entity`) USING BTREE,
   KEY `user_time` (`entity`,`time`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 CREATE TABLE IF NOT EXISTS `audio_relations` (
   `entity` bigint NOT NULL,
@@ -88,3 +88,5 @@ CREATE TABLE IF NOT EXISTS `playlist_relations` (
   KEY `playlist` (`collection`) USING BTREE,
   KEY `audio` (`media`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
+
+ALTER TABLE `groups` ADD `everyone_can_upload_audios` TINYINT(1) NOT NULL DEFAULT '0' AFTER `backdrop_2`; 
