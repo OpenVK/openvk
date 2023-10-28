@@ -13,6 +13,10 @@ final class Friends extends VKAPIRequestHandler
 		$users = new UsersRepo;
 
 		$this->requireUser();
+
+		if (is_null($users->get($user_id))) {
+			$this->fail(100, "One of the parameters specified was missing or invalid");
+		}
 		
 		foreach($users->get($user_id)->getFriends($offset, $count) as $friend) {
 			$friends[$i] = $friend->getId();
