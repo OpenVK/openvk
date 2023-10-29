@@ -35,18 +35,18 @@
 "2fa_code_2" = "Two-factor authentication code";
 
 "password_successfully_reset" = "Your password has been successfully reset.";
-"password_reset_email_sent" = "If you are registered, you will receive instructions by email.";
+"password_reset_email_sent" = "If you are registered, you will receive instructions via email.";
 "password_reset_error" = "An unexpected error occurred while resetting the password.";
 "password_reset_rate_limit_error" = "You can't do it that often, sorry.";
 
-"email_sent" = "Mail has been successfully sent.";
-"email_sent_desc" = "If your email addess exists, you will receive instructions.";
+"email_sent" = "Email has been successfully sent.";
+"email_sent_desc" = "If this email address exists, you will receive instructions.";
 "email_error" = "An unexpected error occurred while sending the email.";
 "email_rate_limit_error" = "You can't do it that often, sorry.";
 
-"email_verify_success" = "Your Email has been verified. Have a great time!";
+"email_verify_success" = "Your email has been verified. Have a great time!";
 
-"registration_disabled_info" = "Registration has been disabled by the system administrator. If possible, ask for an invitation from your friend, if he is registered on this site.";
+"registration_disabled_info" = "Registration has been disabled by the system administrator. If possible, request an invitation from your friend if they are registered on this site.";
 "registration_closed" = "Registration is closed.";
 "invites_you_to" = "<strong>$1</strong> invites you to $2";
 
@@ -66,7 +66,7 @@
 "birth_date" = "Birth date";
 "registration_date" = "Registration date";
 "hometown" = "Hometown";
-"this_is_you" = "it's you";
+"this_is_you" = "that's you";
 "edit_page" = "Edit page";
 "edit_group" = "Edit group";
 "change_status" = "change status";
@@ -94,7 +94,7 @@
 "desc_none" = "no description";
 "send" = "Send";
 
-"years_zero" = "0 year old";
+"years_zero" = "0 years old";
 "years_one" = "1 year old";
 "years_other" = "$1 years old";
 
@@ -313,9 +313,9 @@
 "group_display_all_administrators" = "Display all administrators";
 "group_dont_display_administrators_list" = "Display nothing";
 
-"group_changeowner_modal_title" = "Owner's permissions transfer";
-"group_changeowner_modal_text" = "Attention! You are transferring owner rights to user $1. This action is irreversible. After the transfer, you will remain an administrator, but you can easily stop being one.";
-"group_owner_setted" = "The new owner ($1) has been successfully assigned to the community $2. You have been granted administrator rights in the community. If you want to return the owner role, contact <a href='/support?act=new'>site technical support</a>.";
+"group_changeowner_modal_title" = "Transfer Owner's Permissions";
+"group_changeowner_modal_text" = "Attention! You are transferring ownership rights to user $1. This action is irreversible. After the transfer, you will remain an administrator, but you can easily step down from this role.";
+"group_owner_setted" = "The new owner ($1) has been successfully assigned to the community $2. You have been granted administrator rights in the community. If you wish to revert to the owner role, please contact <a href='/support?act=new'>site technical support</a>.";
 
 "participants_zero" = "No participants";
 "participants_one" = "$1 participant";
@@ -333,11 +333,11 @@
 "meetings_one" = "$1 meeting";
 "meetings_other" = "$1 meetings";
 
-"open_new_group" = "Open a new group";
-"open_group_desc" = "Can't find the right group? Open your own...";
-"search_group" = "Search group";
-"search_by_groups" = "Search by groups";
-"search_group_desc" = "Here you can browse through the existing groups and choose a group to suit your needs...";
+"open_new_group" = "Start a New Group";
+"open_group_desc" = "Unable to find the perfect group? Start your own...";
+"search_group" = "Search for a Group";
+"search_by_groups" = "Explore Groups";
+"search_group_desc" = "Browse through existing groups and find the one that suits your needs...";
 
 "group_banned" = "Unfortunately, we had to block the <b>$1</b> group.";
 
@@ -408,13 +408,13 @@
 "max_filesize" = "Max filesize is $1 MB";
 
 "uploading_photos_from_computer" = "Uploading photos from Your computer";
-"supported_formats" = "Supported file formats: JPG, PNG and GIF.";
+"supported_formats" = "Supported file formats: JPG, PNG, and GIF.";
 "max_load_photos" = "You can upload up to 10 photos at a time.";
 "tip" = "Tip";
-"tip_ctrl" = "to select multiple photos at once, hold down the Ctrl key when selecting files in Windows or the CMD key in Mac OS.";
-"album_poster" = "Album poster";
-"select_photo" = "Select photos";
-"upload_new_photo" = "Upload new photo";
+"tip_ctrl" = "To select multiple photos at once, hold down the Ctrl key when selecting files in Windows or the CMD key in Mac OS.";
+"album_poster" = "Album Poster";
+"select_photo" = "Select Photos";
+"upload_new_photo" = "Upload New Photo";
 
 "is_x_photos_zero" = "Just zero photos.";
 "is_x_photos_one" = "Just one photo.";
@@ -443,11 +443,11 @@
 "notes_zero" = "No notes";
 "notes_one" = "$1 note";
 "notes_other" = "$1 notes";
-"notes_start_screen" = "With notes, you can share your events with friends and see what's going on with them.";
-"note_preview" = "Preview draft";
-"note_preview_warn" = "Preview mode active";
-"note_preview_warn_details" = "Notes may change their behaviour or looks after being saved. Also, try not to use preview very often.";
-"note_preview_empty_err" = "Preview of empty or nameless note? Why, Mr. White?";
+"notes_start_screen" = "Use notes to share your events with friends and stay updated on theirs.";
+"note_preview" = "Preview Draft";
+"note_preview_warn" = "Preview Mode Activated";
+"note_preview_warn_details" = "Note behavior or appearance may change after saving. Avoid excessive use of preview.";
+"note_preview_empty_err" = "Previewing an empty or nameless note? Why, Mr. White?";
 
 "notes_list_zero" = "No notes found";
 "notes_list_one" = "$1 note found";
@@ -559,14 +559,14 @@
 "results_other" = "$1 results";
 
 "privacy_setting_access_page" = "Who can view my page";
-"privacy_setting_read_info" = "Who can see main information of my page";
+"privacy_setting_read_info" = "Who can see the main information on my page";
 "privacy_setting_see_groups" = "Who can see my groups and meetings";
 "privacy_setting_see_photos" = "Who can see my photos";
 "privacy_setting_see_videos" = "Who can see my videos";
 "privacy_setting_see_notes" = "Who can see my notes";
 "privacy_setting_see_friends" = "Who can see my friends";
 "privacy_setting_add_to_friends" = "Who can add me to friends";
-"privacy_setting_write_wall" = "Who can publish post on my wall";
+"privacy_setting_write_wall" = "Who can publish posts on my wall";
 "privacy_setting_write_messages" = "Who can write messages to me";
 "privacy_value_anybody" = "Anybody";
 "privacy_value_anybody_dative" = "Anybody";
@@ -608,20 +608,20 @@
 
 "email_change_confirm_message" = "Please confirm your new email address for the change to take effect. We have sent instructions to it.";
 
-"profile_deactivate" = "Delete account";
-"profile_deactivate_button" = "Delete account";
-"profile_deactivate_header" = "We are sorry that you want to delete your page. Therefore, you can specify the reason for deletion and your message about it. We read your feedback and try to make the site better!";
-"profile_deactivate_reason_header" = "Please select a reason why you are leaving";
+"profile_deactivate" = "Delete Account";
+"profile_deactivate_button" = "Delete Account";
+"profile_deactivate_header" = "We're sorry to see you go. Please share the reason for deleting your account and any feedback you have. Your input helps us improve the site!";
+"profile_deactivate_reason_header" = "Please select a reason for leaving";
 "profile_deactivate_reason_1" = "I have another profile and don't need this one";
 "profile_deactivate_reason_1_text" = "I created a new page and now I want to wipe my past.";
-"profile_deactivate_reason_2" = "Website takes away too much of my time";
-"profile_deactivate_reason_2_text" = "Even though this site is nice and beautiful, it takes away my time that I need for work and life.";
-"profile_deactivate_reason_3" = "Website harbors too much inappropriate content";
+"profile_deactivate_reason_2" = "The website consumes too much of my time";
+"profile_deactivate_reason_2_text" = "While the site is nice, it's taking away time I need for work and life.";
+"profile_deactivate_reason_3" = "The website has inappropriate content";
 "profile_deactivate_reason_3_text" = "I have found enough porn and pirated content to last me a lifetime, I'm leaving now.";
-"profile_deactivate_reason_4" = "I am worried about the safety of my data";
-"profile_deactivate_reason_4_text" = "I'm being watched and I'm scared to be here. I'm sorry, I have to leave.";
+"profile_deactivate_reason_4" = "I am concerned about the safety of my data";
+"profile_deactivate_reason_4_text" = "I feel uneasy about my privacy here. I have to leave.";
 "profile_deactivate_reason_5" = "No one comments on my posts";
-"profile_deactivate_reason_5_text" = "No one watches me here and it's sad. You will regret that I left.";
+"profile_deactivate_reason_5_text" = "This lack of engagement is disheartening. You'll regret losing me.";
 "profile_deactivate_reason_6" = "Other reason";
 
 "profile_deactivated_msg" = "Your account has been <b>deleted</b>.<br/><br/>If you would like to start using the site again, you can <a href='/settings/reactivate'>restore your account</a> until $1.";
@@ -636,30 +636,30 @@
 "end_all_sessions_done" = "All sessions was ended, including mobile apps";
 
 "backdrop_short" = "Backdrop";
-"backdrop" = "Page backdrop";
-"backdrop_desc" = "You can set two pictures as your profile or group backdrop. They will be displayed on left and right edges of page. With this feature, you can add more personality to your profile.";
-"backdrop_warn" = "The images will be arranged as in the layout above. Their height will be automatically increased so that they occupy 100% of the screen height, there will be a blur in the middle. It is not possible to replace the background of the main OpenVK interface or add audio.";
-"backdrop_about_adding" = "You can upload only one picture, although depending on design, the ending result may look ugly. You can also change only one pic: if you already have two images set up and you want to change one - upload only one, the other won't be removed. To remove both images press the button below, you can't remove pictures individually.";
-"backdrop_save" = "Save backdrop picture(s)";
-"backdrop_remove" = "Remove all backdrop pictures";
-"backdrop_error_title" = "Error saving backdrop settings";
-"backdrop_error_no_media" = "Images are corrupted or haven't been uploaded in their entirety";
-"backdrop_succ" = "Backdrop settings saved";
-"backdrop_succ_rem" = "Backdrop images have been removed";
+"backdrop" = "Page Backdrop";
+"backdrop_desc" = "You can set two pictures as the backdrop for your profile or group. They will be displayed on the left and right edges of the page, adding personality to your profile.";
+"backdrop_warn" = "The images will be arranged as shown in the layout above. Their height will be automatically increased to occupy 100% of the screen height, with a blur in the middle. You cannot replace the background of the main OpenVK interface or add audio.";
+"backdrop_about_adding" = "You can upload only one picture, although depending on the design, the end result may look imperfect. You can also change only one picture: if you already have two images set up and you want to change one, upload only one, and the other won't be removed. To remove both images, press the button below; you can't remove pictures individually.";
+"backdrop_save" = "Save Backdrop Picture(s)";
+"backdrop_remove" = "Remove All Backdrop Pictures";
+"backdrop_error_title" = "Error Saving Backdrop Settings";
+"backdrop_error_no_media" = "Images are corrupted or haven't been uploaded in their entirety.";
+"backdrop_succ" = "Backdrop settings saved successfully";
+"backdrop_succ_rem" = "Backdrop images have been successfully removed";
 "backdrop_succ_desc" = "Users will start seeing changes in 5 minutes.";
 "browse" = "Browse";
 
 /* Two-factor authentication */
 
-"two_factor_authentication" = "Two-factor authentication";
-"two_factor_authentication_disabled" = "Provides reliable protection against hacking: to enter the page, you must enter the code obtained in the 2FA application.";
-"two_factor_authentication_enabled" = "Two-factor authentication is enabled. Your page is protected.";
-"two_factor_authentication_login" = "You have two-factor authentication enabled. To login, enter the code received in the application.";
+"two_factor_authentication" = "Two-Factor Authentication";
+"two_factor_authentication_disabled" = "Enhances security by requiring a code from the 2FA app to access your account, providing reliable protection against hacking.";
+"two_factor_authentication_enabled" = "Two-Factor Authentication is active. Your account is securely protected.";
+"two_factor_authentication_login" = "Two-Factor Authentication is enabled. Enter the code received in the application to log in.";
 
-"two_factor_authentication_settings_1" = "Two-factor authentication via TOTP can be used even without internet. To do this, you need a code generation app. For example, <b>Google Authenticator</b> for Android and iOS or <b>FOSS Aegis and andOTP</b> for Android. Make sure the date and time is set correctly on your phone.";
+"two_factor_authentication_settings_1" = "Two-Factor Authentication via TOTP can be used even without an internet connection. You'll need a code generation app such as <b>Google Authenticator</b> for Android and iOS or <b>FOSS Aegis and andOTP</b> for Android. Ensure your phone's date and time are set correctly.";
 "two_factor_authentication_settings_2" = "Using the app for two-factor authentication, scan the QR code below:";
-"two_factor_authentication_settings_3" = "or manually enter the given secret key: <b>$1</b>.";
-"two_factor_authentication_settings_4" = "Now enter the code that the application gave you and the password for your page so that we can confirm that you really are.";
+"two_factor_authentication_settings_3" = "Alternatively, manually enter the provided secret key: <b>$1</b>.";
+"two_factor_authentication_settings_4" = "Now, enter the code generated by the app and your account password to confirm your identity.";
 
 "connect" = "Connect";
 "enable" = "Enable";
@@ -667,20 +667,20 @@
 "code" = "Code";
 "2fa_code" = "2FA code";
 
-"incorrect_password" = "Incorrect password";
-"incorrect_code" = "Incorrect code";
-"incorrect_2fa_code" = "Incorrect two-factor authentication code";
-"two_factor_authentication_enabled_message" = "Two-factor authentication enabled";
-"two_factor_authentication_enabled_message_description" = "Your page has become more difficult to hack. We recommend that you download <a href='javascript:viewBackupCodes()'>backup codes</a>";
-"two_factor_authentication_disabled_message" = "Two-factor authentication disabled";
+"incorrect_password" = "Password is incorrect";
+"incorrect_code" = "Code is incorrect";
+"incorrect_2fa_code" = "Two-factor authentication code is incorrect";
+"two_factor_authentication_enabled_message" = "Two-factor authentication is now enabled";
+"two_factor_authentication_enabled_message_description" = "Your account is now more secure. We recommend downloading <a href='javascript:viewBackupCodes()'>backup codes</a>.";
+"two_factor_authentication_disabled_message" = "Two-factor authentication has been disabled";
 
-"view_backup_codes" = "View backup codes";
-"backup_codes" = "Backup codes for login confirmation";
-"two_factor_authentication_backup_codes_1" = "Backup codes allow you to validate your login when you don't have access to your phone, for example, while traveling.";
-"two_factor_authentication_backup_codes_2" = "You have <b>10 more codes</b>, each code can only be used once. Print them out, put them away in a safe place and use them when you need codes to validate your login.";
-"two_factor_authentication_backup_codes_3" = "You can get new codes if they run out. Only the last created backup codes are valid.";
+"view_backup_codes" = "See backup codes";
+"backup_codes" = "Backup codes for login verification";
+"two_factor_authentication_backup_codes_1" = "Backup codes enable you to confirm your login when you can't access your phone, such as when traveling.";
+"two_factor_authentication_backup_codes_2" = "You have <b>10 more codes</b>, and each code can only be used once. Print them, store them securely, and use when needed for login verification.";
+"two_factor_authentication_backup_codes_3" = "You can request new codes if needed. Only the latest set of backup codes generated is valid.";
 "viewing_backup_codes" = "View backup codes";
-"disable_2fa" = "Disable 2FA";
+"disable_2fa" = "Turn off 2FA";
 "viewing" = "View";
 
 /* Sorting */
@@ -775,19 +775,19 @@
 "you_still_have_x_points" = "You have <b>$1</b> unused votes.";
 
 "vouchers" = "Vouchers";
-"have_voucher" = "Have voucher";
+"have_voucher" = "Have a voucher";
 "voucher_token" = "Voucher token";
 "voucher_activators" = "Users";
-"voucher_explanation" = "Enter the voucher serial number. It is usually listed on the receipt or in the message.";
-"voucher_explanation_ex" = "Note that vouchers can expire and can only be used once.";
-"invalid_voucher" = "Voucher is invalid";
-"voucher_bad" = "You may have entered the wrong serial number, already used voucher, or the voucher has simply expired.";
+"voucher_explanation" = "Enter the voucher serial number, usually found on the receipt or in the message.";
+"voucher_explanation_ex" = "Note that vouchers can expire and are valid for a single use only.";
+"invalid_voucher" = "Invalid voucher";
+"voucher_bad" = "You may have entered the wrong serial number, used a voucher already, or the voucher has expired.";
 "voucher_good" = "Voucher activated";
-"voucher_redeemed" = "The voucher has been successfully activated. You will receive points, but you will no longer be able to activate it with this code.";
+"voucher_redeemed" = "The voucher has been successfully activated. You will receive points, but this code can no longer be used.";
 "redeem" = "Redeem voucher";
 "deactivate" = "Deactivate";
-"usages_total" = "Number of uses";
-"usages_left" = "Uses left";
+"usages_total" = "Total uses";
+"usages_left" = "Uses remaining";
 
 "points_transfer_dialog_header_1" = "You can send as a gift or transfer part of the votes to another person.";
 "points_transfer_dialog_header_2" = "Your current balance:";
@@ -882,13 +882,13 @@
 "app_news" = "A news note";
 "app_state" = "Status";
 "app_enabled" = "Enabled";
-"app_creation_hint_url" = "Specify in the URL the exact address together with the scheme (https), the port (80) and the required request parameters.";
-"app_creation_hint_iframe" = "Your application will be opened in an iframe.";
-"app_balance" = "Your application has <b>$1</b> votes to its credit.";
-"app_users" = "Your application is used by <b>$1</b> people.";
-"app_withdrawal_q" = "withdraw?";
-"app_withdrawal" = "Withdrawal";
-"app_withdrawal_empty" = "Couldn't withdraw emptiness, sorry.";
+"app_creation_hint_url" = "Specify the exact address in the URL, including the scheme (https), port (80), and required request parameters.";
+"app_creation_hint_iframe" = "Your application will open in an iframe.";
+"app_balance" = "Your application has <b>$1</b> votes credited to it.";
+"app_users" = "Your application is being used by <b>$1</b> people.";
+"app_withdrawal_q" = "Do you want to withdraw?";
+"app_withdrawal" = "Withdraw";
+"app_withdrawal_empty" = "Sorry, withdrawal of emptiness is not possible.";
 "app_withdrawal_created" = "A request to withdraw $1 votes has been created. Awaiting crediting.";
 
 "appjs_payment" = "Purchase payment";
@@ -991,14 +991,11 @@
 
 "author" = "Author";
 
-"you_have_not_entered_text" = "You have not entered any text";
-"you_have_not_entered_name_or_text" = "You did not enter a name or text";
+"ticket_changed" = "Ticket Updated";
+"ticket_changed_comment" = "Changes will be applied in a few seconds.";
 
-"ticket_changed" = "Ticket changed";
-"ticket_changed_comment" = "The changes will take effect in a few seconds.";
-
-"banned_in_support_1" = "Sorry, <b>$1</b>, but now you can't create tickets.";
-"banned_in_support_2" = "And the reason for this is simple: <b>$1</b>. Unfortunately, this time we had to take away this opportunity from you forever.";
+"banned_in_support_1" = "Apologies, <b>$1</b>, but you're currently banned from creating tickets.";
+"banned_in_support_2" = "The reason is straightforward: <b>$1</b>. Unfortunately, this privilege has been permanently revoked this time."
 
 "you_can_close_this_ticket_1" = "If you have no more questions, you can ";
 "you_can_close_this_ticket_2" = "close this ticket";
@@ -1018,22 +1015,22 @@
 "banned_title" = "You are banned";
 "banned_header" = "You are banned";
 "banned_alt" = "The user is blocked.";
-"banned_1" = "Sorry <b>$1</b>, but you have been banned.";
-"banned_2" = "And the reason for this is simple: <b>$1</b>.";
-"banned_perm" = "Unfortunately, this time we had to block you forever.";
-"banned_until_time" = "This time we had to block you until <b>$1</b>";
-"banned_3" = "You can still <a href=\"/support?act=new\">write to the support</a> if you think there was an error or <a href=\"/logout?hash=$1\">logout</a>.";
+"banned_1" = "Apologies, <b>$1</b>, but you have been banned.";
+"banned_2" = "The reason for this action is simple: <b>$1</b>.";
+"banned_perm" = "Regrettably, this time the ban is permanent.";
+"banned_until_time" = "This time, the ban extends until <b>$1</b>";
+"banned_3" = "You can still <a href="/support?act=new">reach out to support</a> if you believe there was an error or <a href="/logout?hash=$1">logout</a>.";
 "banned_unban_myself" = "Unban myself";
 "banned_unban_title" = "Your account has been unbanned";
-"banned_unban_description" = "Try not to break the rules anymore.";
+"banned_unban_description" = "Kindly refrain from violating the rules in the future.";
 
 /* Registration confirm */
 
-"ec_header" = "Registration confirmation";
-"ec_title" = "Thanks!";
-"ec_1" = "<b>$1</b>, your registration is almost done. In a few minutes you should receive an mail with a link to confirm your email address.";
-"ec_2" = "If for some reason you don't get the mail, check your spam folder. If you don't find the email there, you can resend it.";
-"ec_resend" = "Resend mail";
+"ec_header" = "Confirm Registration";
+"ec_title" = "Thank You!";
+"ec_1" = "<b>$1</b>, your registration is nearly complete. In a few minutes, you should receive an email with a link to verify your email address.";
+"ec_2" = "If, for any reason, you don't receive the email, please check your spam folder. If it's not there, you can request a resend.";
+"ec_resend" = "Resend Email";
 
 /* Messages */
 
@@ -1129,7 +1126,7 @@
 "information_-2" = "Login success";
 
 "no_data" = "No data";
-"no_data_description" = "There is nothing here... yet...";
+"no_data_description" = "There is nothing here... yet.";
 
 "error" = "Error";
 "error_shorturl" = "This short address is already owned.";
@@ -1137,7 +1134,7 @@
 "error_upload_failed" = "Failed to upload a photo";
 "error_old_password" = "Old password does not match";
 "error_new_password" = "New password does not match";
-"error_weak_password" = "Password isn't strong enough. It should has at least 8 symbols, at least one capital letter and at least one digit.";
+"error_weak_password" = "Your password isn't strong enough. It should be at least 8 characters long, include at least one capital letter, and contain at least one digit.";
 "error_shorturl_incorrect" = "The short address has an incorrect format.";
 "error_repost_fail" = "Failed to share post";
 "error_data_too_big" = "Attribute '$1' must be at most $2 $3 long";
@@ -1157,7 +1154,7 @@
 "invalid_email_address" = "Invalid Email address";
 "invalid_email_address_comment" = "The Email you entered is not correct.";
 
-"invalid_real_name" = "Please, enter your real name. It'll be easier for your friends to find you like this.";
+"invalid_real_name" = "Kindly input your actual name. It will make it simpler for your friends to find you in this way.";
 
 "invalid_birth_date" = "Invalid date of birth";
 "invalid_birth_date_comment" = "The date of birth you entered is not correct.";
@@ -1170,8 +1167,8 @@
 
 "profile_changed" = "Profile changed";
 "profile_changed_comment" = "Your active profile has been changed.";
-"profile_not_found" = "User is not found.";
-"profile_not_found_text" = "This profile has either been deleted or not been created yet.";
+"profile_not_found" = "User was not found.";
+"profile_not_found_text" = "Either this profile has been deleted, or it hasn't been created yet.";
 
 "suspicious_registration_attempt" = "Suspicious registration attempt";
 "suspicious_registration_attempt_comment" = "You tried to register from a suspicious location.";
@@ -1210,10 +1207,10 @@
 "error_comment_file_too_big" = "Media file is corrupted or too big.";
 
 "comment_is_added" = "Comment has been added";
-"comment_is_added_desc" = "Your comment will appear on page.";
+"comment_is_added_desc" = "Your comment will appear on the page.";
 
 "error_access_denied_short" = "Access denied";
-"error_access_denied" = "You don't have rights to edit this resource";
+"error_access_denied" = "You don't have permission to edit this resource";
 "success" = "Success";
 "comment_will_not_appear" = "This comment will no longer appear.";
 
@@ -1238,7 +1235,7 @@
 "new_changes_desc" = "New data will appear in your group.";
 "comment_is_changed" = "Admin comment changed";
 "comment_is_deleted" = "Admin comment deleted";
-"comment_is_too_long" = "Comment is too long ($1 symbols instead 36)";
+"comment_is_too_long" = "Comment is too long ($1 characters instead of 36)";
 "x_no_more_admin" = "$1 no longer an administrator.";
 "x_is_admin" = "$1 appointed as an administrator.";
 
@@ -1257,7 +1254,7 @@
 "no_photo" = "No photo";
 
 "select_file" = "Select file";
-"new_description_will_appear" = "The updated description will appear on the photo page..";
+"new_description_will_appear" = "The updated description will appear on the photo page.";
 "photo_is_deleted" = "Photo was deleted";
 "photo_is_deleted_desc" = "This photo has been successfully deleted.";
 
@@ -1266,7 +1263,7 @@
 "error_occured" = "Error occured";
 "error_video_damaged_file" = "The file is corrupted or does not contain video.";
 "error_video_incorrect_link" = "Perhaps the link is incorrect.";
-"error_video_no_title" = "Video can't be published without title.";
+"error_video_no_title" = "Video can't be published without a title.";
 
 "new_data_video" = "The updated description will appear on the video page.";
 "error_deleting_video" = "Failed to delete video";
@@ -1275,9 +1272,9 @@
 
 "error_max_pinned_clubs" = "Maximum count of the pinned groups is 10.";
 "error_viewing_subs" = "You cannot view the full list of subscriptions $1.";
-"error_status_too_long" = "Status is too long ($1 instead 255)";
+"error_status_too_long" = "Status is too long ($1 characters instead of 255)";
 "death" = "Death...";
-"nehay" = "Live long!";
+"nehay" = "Let 'em live!";
 "user_successfully_banned" = "User was successfully banned.";
 
 "content_is_deleted" = "The content has been removed and the user has received a warning.";
@@ -1361,7 +1358,7 @@
 "admin_voucher_serial_desc" = "The number consists of 24 characters. If the format is incorrect or the field is not filled in, it will be assigned automatically.";
 "admin_voucher_coins" = "Number of votes";
 "admin_voucher_rating_number" = "Number of rating";
-"admin_voucher_usages_desc" = "The number of accounts that can use the voucher. If you type -1, it will be infinity.";
+"admin_voucher_usages_desc" = "The number of users that can use the voucher. If you type -1, it will be infinity.";
 "admin_voucher_status" = "Status";
 "admin_voucher_status_opened" = "active";
 "admin_voucher_status_closed" = "closed";
@@ -1392,7 +1389,7 @@
 "admin_banned_link_not_found" = "Link not found";
 
 "admin_gift_moved_successfully" = "Gift moved successfully";
-"admin_gift_moved_to_recycle" = "This gift will now be in <b>Recycle Bin</b>.";
+"admin_gift_moved_to_recycle" = "This gift was moved to <b>Recycle Bin</b>.";
 
 "logs" = "Logs";
 "logs_anything" = "Anything";
@@ -1404,11 +1401,11 @@
 "logs_edited" = "edited";
 "logs_removed" = "removed";
 "logs_restored" = "restored";
-"logs_id_post" = "ID записи";
-"logs_id_object" = "ID объекта";
-"logs_uuid_user" = "UUID пользователя";
-"logs_change_type" = "Тип изменения";
-"logs_change_object" = "Тип объекта";
+"logs_id_post" = "Post ID";
+"logs_id_object" = "Object ID";
+"logs_uuid_user" = "User UUID";
+"logs_change_type" = "Change Type";
+"logs_change_object" = "Object Type";
 
 "logs_user" = "User";
 "logs_object" = "Object";
@@ -1535,8 +1532,8 @@
 
 "global_maintenance" = "Undergoing maintenance";
 "section_maintenance" = "The section is not available";
-"undergoing_global_maintenance" = "Unfortunately, the instance is now closed for technical work. We are already working on troubleshooting. Please try to come back later.";
-"undergoing_section_maintenance" = "Unfortunately, the <b>$1</b> section is temporarily unavailable. We are already working on troubleshooting. Please try to come back later.";
+"undergoing_global_maintenance" = "Unfortunately, the instance is now closed for technical work. We are already working on troubleshooting. Please come back later.";
+"undergoing_section_maintenance" = "Unfortunately, the <b>$1</b> section is temporarily unavailable. We are already working on troubleshooting. Please come back later.";
 
 "topics" = "Topics";
 
@@ -1777,16 +1774,16 @@
 
 /* Sudo */
 
-"you_entered_as" = "You logged as";
+"you_entered_as" = "You are logged in as";
 "please_rights" = "please respect the right to privacy of other people's correspondence and do not abuse user swapping.";
 "click_on" = "Click";
-"there" = "there";
-"to_leave" = "to logout";
+"there" = "here";
+"to_leave" = "to log out";
 
 /* Phone number */
 
 "verify_phone_number" = "Confirm phone number";
-"we_sended_first" = "We sended SMS with code on number";
+"we_sended_first" = "We sent an SMS with code to the given number";
 "we_sended_end" = "enter it here";
 
 /* Mobile */
