@@ -1476,18 +1476,18 @@
 /* User Alerts */
 
 "user_alert_scam" = "This account has received numerous reports for scams. Please exercise caution, especially if they request money.";
-"user_may_not_reply" = "This user may be unable to reply to you due to their privacy settings. <a href='/settings?act=privacy'>Open privacy settings</a>";
+"user_may_not_reply" = "This user may be unable to reply to you due to your privacy settings. <a href='/settings?act=privacy'>Open privacy settings</a>";
 
 /* Cookies Pop-up */
 
-"cookies_popup_content" = "Just like kids love cookies, this website uses Cookies to identify your session and nothing more. Check <a href='/privacy'>our privacy policy</a> for more information.";
+"cookies_popup_content" = "Just like how kids love cookies, this website uses Cookies to identify your session and nothing more. Check <a href='/privacy'>our privacy policy</a> for more information.";
 "cookies_popup_agree" = "Accept";
 
 /* Away */
 
 "transition_is_blocked" = "Transition is blocked";
 "caution" = "Caution";
-"url_is_banned" = "Link is not allowed";
+"url_is_banned" = "This link is banned";
 "url_is_banned_comment" = "The <b>$1</b> administration advises against following this link.";
 "url_is_banned_comment_r" = "The <b>$1</b> administration advises against following this link.<br><br>Reason: <b>$2</b>";
 "url_is_banned_default_reason" = "The link you are attempting to open may lead to a site designed to deceive users for profit.";
