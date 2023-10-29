@@ -55,7 +55,7 @@ final class UserPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         
         $user = $this->users->get($id);
-        $page = abs($this->queryParam("p") ?? 1);
+        $page = abs((int)($this->queryParam("p") ?? 1));
         if(!$user)
             $this->notFound();
         elseif (!$user->getPrivacyPermission('friends.read', $this->user->identity ?? NULL))
@@ -433,7 +433,7 @@ final class UserPresenter extends OpenVKPresenter
                 ];
                 foreach($settings as $setting) {
                     $input = $this->postParam(str_replace(".", "_", $setting));
-                    $user->setPrivacySetting($setting, min(3, abs($input ?? $user->getPrivacySetting($setting))));
+                    $user->setPrivacySetting($setting, min(3, (int)abs((int)$input ?? $user->getPrivacySetting($setting))));
                 }
             } else if($_GET['act'] === "finance.top-up") {
                 $token   = $this->postParam("key0") . $this->postParam("key1") . $this->postParam("key2") . $this->postParam("key3");
