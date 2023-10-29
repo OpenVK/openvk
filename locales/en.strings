@@ -626,14 +626,14 @@
 
 "profile_deactivated_msg" = "Your account has been <b>deleted</b>.<br/><br/>If you would like to start using the site again, you can <a href='/settings/reactivate'>restore your account</a> until $1.";
 "profile_deactivated_status" = "Account deleted";
-"profile_deactivated_info" = "The account has been deleted.<br/>The information is not available.";
+"profile_deactivated_info" = "This account has been deleted.<br/>No further information available.";
 
 "share_with_friends" = "Share with friends";
 
 "end_all_sessions" = "End all sessions";
-"end_all_sessions_description" = "If you wanna logout from $1 on all devices, click on button below";
+"end_all_sessions_description" = "If you wish to log out of $1 on all devices, click the button below.";
 
-"end_all_sessions_done" = "All sessions was ended, including mobile apps";
+"end_all_sessions_done" = "All sessions have been terminated, including mobile apps.
 
 "backdrop_short" = "Backdrop";
 "backdrop" = "Page Backdrop";
@@ -727,13 +727,13 @@
 
 "notifications_like" = "$1 liked your $2post$3 from $4";
 "notifications_repost" = "$1 shared your $2post$3 from $4";
-"notifications_comment_under" = "$1 leaved a comment on $2";
+"notifications_comment_under" = "$1 left a comment on $2";
 "notifications_under_note" = "your $3note$4";
 "notifications_under_photo" = "your $3photo$4";
 "notifications_under_post" = "your $3post$4 from $5";
 "notifications_under_video" = "your $3video$4";
 "notifications_post" = "$1 published $2a post$3 on your wall: $4";
-"notifications_appoint" = "$1 appointed you as community manager $2";
+"notifications_appoint" = "$1 appointed you as community manager of $2";
 
 "nt_liked_yours" = "liked your";
 "nt_shared_yours" = "shared your";
@@ -1473,14 +1473,14 @@
 "confirm_m" = "Confirm";
 "action_successfully" = "Success";
 
-/* User alerts */
+/* User Alerts */
 
-"user_alert_scam" = "This account has been reported a lot for scam. Please be careful, especially if he asked for money.";
-"user_may_not_reply" = "This user may not reply to you because of your privacy settings. <a href='/settings?act=privacy'>Open privacy settings</a>";
+"user_alert_scam" = "This account has received numerous reports for scams. Please exercise caution, especially if they request money.";
+"user_may_not_reply" = "This user may be unable to reply to you due to their privacy settings. <a href='/settings?act=privacy'>Open privacy settings</a>";
 
-/* Cookies pop-up */
+/* Cookies Pop-up */
 
-"cookies_popup_content" = "All kids love cookie, so this website uses Cookies to identify your session and nothing more. Check <a href='/privacy'>our privacy policy</a> for more information.";
+"cookies_popup_content" = "Just like kids love cookies, this website uses Cookies to identify your session and nothing more. Check <a href='/privacy'>our privacy policy</a> for more information.";
 "cookies_popup_agree" = "Accept";
 
 /* Away */
@@ -1488,11 +1488,11 @@
 "transition_is_blocked" = "Transition is blocked";
 "caution" = "Caution";
 "url_is_banned" = "Link is not allowed";
-"url_is_banned_comment" = "The <b>$1</b> administration recommends not to follow this link.";
-"url_is_banned_comment_r" = "The <b>$1</b> administration recommends not to follow this link.<br><br>The reason is: <b>$2</b>";
-"url_is_banned_default_reason" = "The link you are trying to open may lead you to a site that was created for the purpose of deceiving users with the intention of gaining profit.";
+"url_is_banned_comment" = "The <b>$1</b> administration advises against following this link.";
+"url_is_banned_comment_r" = "The <b>$1</b> administration advises against following this link.<br><br>Reason: <b>$2</b>";
+"url_is_banned_default_reason" = "The link you are attempting to open may lead to a site designed to deceive users for profit.";
 "url_is_banned_title" = "Link to a suspicious site";
-"url_is_banned_proceed" = "Follow the link";
+"url_is_banned_proceed" = "Proceed to the link";
 
 "recently" = "Recently";
 
@@ -1513,17 +1513,17 @@
 "c_group_removed" = "The group has been deleted.";
 "c_groups" = "Chandler Groups";
 "c_users" = "Chandler Users";
-"c_group_permissions" = "Permissions";
-"c_group_members" = "Members";
+"c_group_permissions" = "Group Permissions";
+"c_group_members" = "Group Members";
 "c_model" = "Model";
 "c_permission" = "Permission";
 "c_permissions" = "Permissions";
 "c_color" = "Color";
 "add" = "Add";
 "c_edit_groups" = "Edit Groups";
-"c_user_is_not_in_group" = "The relationship between the user and the group was not found.";
-"c_permission_not_found" = "The relationship between the permission and the group was not found.";
-"c_group_not_found" = "The group was not found.";
+"c_user_is_not_in_group" = "No relationship found between the user and the group.";
+"c_permission_not_found" = "No relationship found between the permission and the group.";
+"c_group_not_found" = "Group not found.";
 "c_user_is_already_in_group" = "This user is already a member of this group.";
 "c_add_to_group" = "Add to group";
 "c_remove_from_group" = "Remove from group";
@@ -1577,130 +1577,128 @@
 
 
 "tour_section_2_title_1" = "Your Profile";
-"tour_section_2_text_1_1" = "After registering, you will automatically be redirected to <b>your</b> profile.";
-"tour_section_2_text_1_2" = "You can edit it anywhere and anytime you want.";
-"tour_section_2_text_1_3" = "<b>Hint:</b> To make your profile look nice and presentable, you can fill it with information or upload a photo that highlights, for example, your deep inner world.";
-"tour_section_2_bottom_text_1" = "You are the one who decides how much information your friends need to know about you.";
-"tour_section_2_title_2" = "Set your own privacy settings";
-"tour_section_2_text_2_1" = "You can define exactly who can access certain types of information and sections on your page.";
-"tour_section_2_text_2_2" = "You have the right to block access to your page from search engines and unregistered users.";
-"tour_section_2_text_2_3" = "<b>Remember:</b> privacy settings will be expanded in the future.";
+"tour_section_2_text_1_1" = "Upon registration, you'll be redirected to <b>your</b> profile automatically.";
+"tour_section_2_text_1_2" = "You have the flexibility to edit it at any time and from anywhere.";
+"tour_section_2_text_1_3" = "<b>Hint:</b> To enhance your profile's appearance, consider filling it with information or uploading a photo that reflects your inner world.";
+"tour_section_2_bottom_text_1" = "You decide how much information you want to share with your friends.";
+"tour_section_2_title_2" = "Set Your Privacy Settings";
+"tour_section_2_text_2_1" = "Define who can access specific types of information and sections on your page.";
+"tour_section_2_text_2_2" = "You can block access to your page from search engines and unregistered users.";
+"tour_section_2_text_2_3" = "<b>Remember:</b> Privacy settings will be expanded in the future.";
 "tour_section_2_title_3" = "Profile URL";
-"tour_section_2_text_3_1" = "After registering your page, you get a personal ID like <b>@id12345</b>";
-"tour_section_2_text_3_2" = "The <b>default ID</b>, which was obtained after registration, <b>cannot be changed</b>";
-"tour_section_2_text_3_3" = "But in the settings of your page you can bind your personal address and this address <b>can be changed</b> at any time";
-"tour_section_2_text_3_4" = "<b>Hint:</b> You can take any address that is at least 5 characters long. Try to get a cool URL :)";
-"tour_section_2_bottom_text_2" = "<i>Any short address in Latin small letters is supported; the address may contain numbers (not at the beginning), periods, and underscores (not at the beginning or end)</i>";
+"tour_section_2_text_3_1" = "After registering, your page is assigned a personal ID like <b>@id12345</b>.";
+"tour_section_2_text_3_2" = "The <b>default ID</b> obtained at registration <b>cannot be changed</b>.";
+"tour_section_2_text_3_3" = "However, in your page settings, you can link a personal address that <b>can be changed</b> at any time.";
+"tour_section_2_text_3_4" = "<b>Hint:</b> Choose an address that's at least 5 characters long for a cool URL :)";
+"tour_section_2_bottom_text_2" = "<i>Supports any short address in lowercase Latin letters; the address may contain numbers (not at the beginning), periods, and underscores (not at the beginning or end)</i>";
 "tour_section_2_title_4" = "Wall";
 
 
-"tour_section_3_title_1" = "Share your photo moments";
-"tour_section_3_text_1" = "The &quot;Photos&quot; section is available in your profile as soon as you sign up";
-"tour_section_3_text_2" = "You can browse user photo albums and create your own";
-"tour_section_3_text_3" = "Access to all your photo albums for other users is controlled in the page privacy settings";
-"tour_section_3_bottom_text_1" = "You can create an unlimited number of photo albums from your travels or events, or just to store memes";
+"tour_section_3_title_1" = "Share Your Photo Moments";
+"tour_section_3_text_1" = "The \"Photos\" section becomes available in your profile as soon as you sign up.";
+"tour_section_3_text_2" = "Explore user photo albums and create your own.";
+"tour_section_3_text_3" = "Control access to all your photo albums for other users in the page privacy settings.";
+"tour_section_3_bottom_text_1" = "Create an unlimited number of photo albums for your travels, events, or just to store memes.";
 
 
 "tour_section_4_title_1" = "Search";
-"tour_section_4_text_1" = "The &quot;Search&quot; section allows you to search for users and groups.";
-"tour_section_4_text_2" = "This section of the site will be improved over time.";
-"tour_section_4_text_3" = "To start a search, you need to know the user's first (or last) name; and if you're looking for a group, you need to know its name.";
+"tour_section_4_text_1" = "The \"Search\" section allows you to search for users and groups.";
+"tour_section_4_text_2" = "This section of the site will continue to improve over time.";
+"tour_section_4_text_3" = "To start a search, you need to know the user's first (or last) name. For groups, you need to know the group's name.";
 "tour_section_4_title_2" = "Quick Search";
-"tour_section_4_text_4" = "If you want to save time in any way, the search bar is also available in the header of the site";
+"tour_section_4_text_4" = "To save time, use the search bar in the site header.";
 
 
-"tour_section_5_title_1" = "Upload and share videos with your friends!";
-"tour_section_5_text_1" = "You can upload an unlimited number of videos and clips";
-"tour_section_5_text_2" = "The &quot;Videos&quot; section is controlled by the privacy settings";
-"tour_section_5_bottom_text_1" = "Videos can be uploaded bypassing the &quot;Videos&quot; section by simply attaching them to a new entry on the wall:";
-"tour_section_5_title_2" = "Importing videos from YouTube";
-"tour_section_5_text_3" = "In addition to uploading videos directly, the site also supports embedding videos from YouTube";
+"tour_section_5_title_1" = "Upload and Share Videos with Your Friends!";
+"tour_section_5_text_1" = "You can upload an unlimited number of videos and clips.";
+"tour_section_5_text_2" = "Control the \"Videos\" section through privacy settings.";
+"tour_section_5_bottom_text_1" = "Upload videos directly to the wall, bypassing the \"Videos\" section:";
+"tour_section_5_title_2" = "Importing Videos from YouTube";
+"tour_section_5_text_3" = "In addition to direct uploads, the site also supports embedding videos from YouTube.";
 
 
 "tour_section_6_title_1" = "Audios section, which doesn't exist yet xdddd";
-"tour_section_6_text_1" = "I would love to do a tutorial on this section, but sunshine Vriska didn't make the music :c";
+"tour_section_6_text_1" = "I would love to do a tutorial on this section, but our sunshine Vriska didn't implement this feature yet :c";
 
 
-"tour_section_7_title_1" = "Follow what your friends write";
-"tour_section_7_text_1" = "The &quot;My News&quot; section is divided into two types: local feed and global feed";
-"tour_section_7_text_2" = "The local feed will only show news from your friends and groups";
-"tour_section_7_bottom_text_1" = "No recommendation system. <b>It's up to you to create your own news feed</b>";
+"tour_section_7_title_1" = "Stay Updated with Your Friends' Updates";
+"tour_section_7_text_1" = "The 'My News' section is divided into two types: local feed and global feed.";
+"tour_section_7_text_2" = "The local feed exclusively displays updates from your friends and groups.";
+"tour_section_7_bottom_text_1" = "No recommendation system. <b>You have the power to curate your own news feed</b>.";
+
+"tour_section_8_title_1" = "Explore Site-wide Discussions";
+"tour_section_8_text_1" = "The global newsfeed showcases posts from all site users and groups.";
+"tour_section_8_text_2" = "Note: Viewer discretion is advised, as this section may contain content not suitable for sensitive individuals.";
+"tour_section_8_bottom_text_1" = "The design of the global feed is identical to the local feed.";
+"tour_section_8_bottom_text_2" = "The feed encompasses various content types, including regular photos, videos, anonymous posts, and polls.";
 
 
-"tour_section_8_title_1" = "Follow what topics are discussed on the site";
-"tour_section_8_text_1" = "The global newsfeed will show entries of all site users and groups";
-"tour_section_8_text_2" = "Viewing this section may not be recommended for sensitive or fragile people";
-"tour_section_8_bottom_text_1" = "The design of the global feed does not differ in any way from the local feed";
-"tour_section_8_bottom_text_2" = "The feed has many types of content, from regular photos and videos to anonymous posts and polls";
-
-
-"tour_section_9_title_1" = "Create groups!";
-"tour_section_9_text_1" = "The site already has thousands of groups devoted to various topics and fan associations";
-"tour_section_9_text_2" = "You can join any group you want. And if you haven't found a matching one, you can create your own";
-"tour_section_9_text_3" = "Each group has its own section of wiki pages, photo albums, block of links and discussions";
-"tour_section_9_title_2" = "Manage your group with a friend";
-"tour_section_9_text_2_1" = "Manage the group in the &quot;Edit Group&quot; section under the community avatar";
-"tour_section_9_text_2_2" = "Create a team of administrators from the usual participants or those whom you trust";
-"tour_section_9_text_2_3" = "You can hide the administrator you want, so he will not appear anywhere within your group";
-"tour_section_9_bottom_text_1" = "The &quot;My Groups&quot; section is on the left menu of the site";
-"tour_section_9_bottom_text_2" = "Group example";
-"tour_section_9_bottom_text_3" = "Groups are often real organizations whose members want to stay in touch with their audiences";
-
+"tour_section_9_title_1" = "Create Groups!";
+"tour_section_9_text_1" = "Explore thousands of groups on the site covering diverse topics and fan communities.";
+"tour_section_9_text_2" = "Join any group that interests you, and if you can't find one, feel free to create your own.";
+"tour_section_9_text_3" = "Each group comes with its dedicated section of wiki pages, photo albums, a block of links, and discussion forums.";
+"tour_section_9_title_2" = "Manage Your Group with a Friend";
+"tour_section_9_text_2_1" = "Navigate to the &quot;Edit Group&quot; section under the community avatar to manage your group.";
+"tour_section_9_text_2_2" = "Build a team of administrators from regular participants or individuals you trust.";
+"tour_section_9_text_2_3" = "You have the option to hide specific administrators, ensuring they remain discreet within your group.";
+"tour_section_9_bottom_text_1" = "Find the &quot;My Groups&quot; section in the left menu of the site.";
+"tour_section_9_bottom_text_2" = "Example Group";
+"tour_section_9_bottom_text_3" = "Groups often represent real organizations, with members wanting to stay connected with their audiences.";
 
 "tour_section_10_title_1" = "Oops";
 "tour_section_10_text_1" = "I would be very happy to do a tutorial on this section, but it's still under development. For now, let's skip it and move on...";
 
 
 "tour_section_11_title_1" = "Themes";
-"tour_section_11_text_1" = "After registering, you will have the default theme installed as your appearance";
-"tour_section_11_text_2" = "Some new users may be a bit intimidated by the current default theme, which reeks of quite antiquity";
-"tour_section_11_text_3" = "<b>But no worries:</b> You can create your own theme for the site by reading the <a href='https://docs.openvk.uk/'>documentation</a> or choose an existing one from the catalog";
-"tour_section_11_bottom_text_1" = "A catalog of themes is available under &quot;My Settings&quot;, in the &quot;Interface&quot; tab;";
+"tour_section_11_text_1" = "Upon registration, the default theme will be set as your appearance.";
+"tour_section_11_text_2" = "Some new users might find the current default theme a bit dated.";
+"tour_section_11_text_3" = "<b>No worries:</b> You can create your own theme by reading the <a href='https://docs.openvk.uk/'>documentation</a> or choose one from the catalog.";
+"tour_section_11_bottom_text_1" = "A catalog of themes is available under \"My Settings\" in the \"Interface\" tab.";
 "tour_section_11_wordart" = "<img src='https://openvk.uk/assets/packages/static/openvk/img/tour/wordart_en.png' width='65%'>";
 
-"tour_section_12_title_1" = "Profile and group backgrounds";
-"tour_section_12_text_1" = "You can set two images as the background of your page";
-"tour_section_12_text_2" = "They will be displayed on the sides of those who come to your page";
-"tour_section_12_text_3" = "<b>Hint:</b> before setting the background, try to experiment with the layout: try to mirror the future background image, or even just create a nice gradient";
+"tour_section_12_title_1" = "Profile and Group Backgrounds";
+"tour_section_12_text_1" = "You can set two images as the background of your page.";
+"tour_section_12_text_2" = "They will be displayed on the sides for those who visit your page.";
+"tour_section_12_text_3" = "<b>Hint:</b> Before setting the background, experiment with the layout—try mirroring the future background image or creating a nice gradient.";
 "tour_section_12_title_2" = "Avatars";
-"tour_section_12_text_2_1" = "You can set the option to show the user's avatar: standard, rounded and square (1:1)";
-"tour_section_12_text_2_2" = "These settings will only be visible to you";
-"tour_section_12_title_3" = "Editing the left menu";
-"tour_section_12_text_3_1" = "If necessary, you can hide unnecessary sections of the site";
-"tour_section_12_text_3_2" = "<b>Remember: </b>The essential sections (My Page; My Friends; My Answers; My Settings) cannot be hidden";
-"tour_section_12_title_4" = "View of posts";
-"tour_section_12_text_4_1" = "If you're tired of the old wall design that was in the once-popular original VKontakte, you can always change the look of the posts to Microblog";
-"tour_section_12_text_4_2" = "The view of the posts can be changed between the two options at any time";
-"tour_section_12_text_4_3" = "<b>Note that</b> if you selected the old view of the posts, the latest comments will not be loaded";
-"tour_section_12_bottom_text_1" = "Background setup page";
-"tour_section_12_bottom_text_2" = "Examples of pages with set backgrounds";
-"tour_section_12_bottom_text_3" = "With this feature you can add more personality to your profile";
-"tour_section_12_bottom_text_4" = "Old post view";
+"tour_section_12_text_2_1" = "You can choose to display the user's avatar in standard, rounded, or square (1:1) styles.";
+"tour_section_12_text_2_2" = "These settings are visible only to you.";
+"tour_section_12_title_3" = "Editing the Left Menu";
+"tour_section_12_text_3_1" = "Hide unnecessary sections of the site if needed.";
+"tour_section_12_text_3_2" = "<b>Remember:</b> Essential sections like My Page, My Friends, My Answers, and My Settings cannot be hidden.";
+"tour_section_12_title_4" = "View of Posts";
+"tour_section_12_text_4_1" = "If you're tired of the old wall design from the once-popular original VKontakte, change the post look to Microblog.";
+"tour_section_12_text_4_2" = "You can switch between the two post views at any time.";
+"tour_section_12_text_4_3" = "<b>Note:</b> If you choose the old post view, the latest comments will not be loaded.";
+"tour_section_12_bottom_text_1" = "Background Setup Page";
+"tour_section_12_bottom_text_2" = "Examples of Pages with Set Backgrounds";
+"tour_section_12_bottom_text_3" = "Add more personality to your profile with this feature.";
+"tour_section_12_bottom_text_4" = "Old Post View";
 "tour_section_12_bottom_text_5" = "Microblog";
 
 
 "tour_section_13_title_1" = "Promocodes";
-"tour_section_13_text_1" = "OpenVK has a promo code system that aims to add some currency (rating percentages, votes, and so on)";
-"tour_section_13_text_2" = "Such coupons are created for some significant events and holidays. Follow the <a href='https://t.me/openvk'>OpenVK Telegram channel</a>";
-"tour_section_13_text_3" = "After activating a promocode, the currency set by the administrators will be transferred to you";
-"tour_section_13_text_4" = "<b>Remember: </b>All promocodes have a limited activation period";
-"tour_section_13_bottom_text_1" = "Promocodes consist of 24 digits and letters";
-"tour_section_13_bottom_text_2" = "Successful activation (for example, we were credited with 100 votes)";
-"tour_section_13_bottom_text_3" = "<b>Attention: </b>Once a promocode is activated on your page, the same promocode cannot be reactivated";
+"tour_section_13_text_1" = "OpenVK features a promo code system designed to add various currencies such as rating percentages, votes, and more.";
+"tour_section_13_text_2" = "These coupons are created for significant events and holidays. Stay updated on the latest by following the <a href='https://t.me/openvk'>OpenVK Telegram channel</a>.";
+"tour_section_13_text_3" = "Upon activating a promo code, the currency determined by administrators will be transferred to your account.";
+"tour_section_13_text_4" = "<b>Remember:</b> All promo codes have a limited activation period.";
+"tour_section_13_bottom_text_1" = "Promo codes consist of 24 digits and letters.";
+"tour_section_13_bottom_text_2" = "Successful activation, for example, results in the crediting of 100 votes.";
+"tour_section_13_bottom_text_3" = "<b>Attention:</b> Once a promo code is activated on your page, the same code cannot be reactivated.";
 
-"tour_section_14_title_1" = "Mobile version";
-"tour_section_14_text_1" = "At the moment there is no mobile web version of the site yet, but there is a mobile app for Android";
-"tour_section_14_text_2" = "OpenVK Legacy is an OpenVK mobile app for retro Android devices with the design of the original VKontakte 3.0 app from 2013";
-"tour_section_14_text_3" = "The minimum supported version is Android 2.1 Eclair, which means devices from the early 2010s will be quite useful";
+"tour_section_14_title_1" = "Mobile Version";
+"tour_section_14_text_1" = "Currently, there is no mobile web version of the site, but there is an Android mobile app.";
+"tour_section_14_text_2" = "OpenVK Legacy is an OpenVK mobile app designed for retro Android devices, featuring the design of the original VKontakte 3.0 app from 2013.";
+"tour_section_14_text_3" = "The minimum supported version is Android 2.1 Eclair, making devices from the early 2010s quite useful.";
 
-"tour_section_14_title_2" = "Where can I download this?";
-"tour_section_14_text_2_1" = "Release versions are downloaded through the official F-Droid repository";
-"tour_section_14_text_2_2" = "If you are a beta tester, new versions of the app are posted to a separate update channel";
-"tour_section_14_text_2_3" = "<b>Note: </b>The app may have various bugs and problems, if you encounter a mistake, please report it to the <a href='/app'>official app group</a>";
+"tour_section_14_title_2" = "Where to Download?";
+"tour_section_14_text_2_1" = "Release versions can be downloaded through the official F-Droid repository.";
+"tour_section_14_text_2_2" = "If you're a beta tester, new app versions are posted to a separate update channel.";
+"tour_section_14_text_2_3" = "<b>Note:</b> The app may have various bugs and issues. If you encounter an error, please report it to the <a href='/app'>official app group</a>.";
 
 "tour_section_14_bottom_text_1" = "Screenshots";
-"tour_section_14_bottom_text_2" = "This concludes the tour of the site. If you want to try our mobile app, create your own group here, invite your friends or find new ones, or just have some fun in general, you can do it right now with a small <a href='/reg'>registration</a>";
-"tour_section_14_bottom_text_3" = "This concludes the tour of the site";
+"tour_section_14_bottom_text_2" = "That concludes the tour of the site. If you're interested in trying our mobile app, creating your group, inviting friends, or just having fun in general, you can do it now with a quick <a href='/reg'>registration</a>.";
+"tour_section_14_bottom_text_3" = "This concludes the site tour.";
 
 /* Search */
 
@@ -1746,14 +1744,14 @@
 "s_any" = "any";
 "reset" = "Reset";
 
-"closed_group_post" = "This is a post from private group";
+"closed_group_post" = "This post was published in a private group";
 "deleted_target_comment" = "This comment belongs to deleted post";
 
 "no_results" = "No results";
 
 /* BadBrowser */
 
-"deprecated_browser" = "Deprecated browser";
+"deprecated_browser" = "Deprecated Browser";
 "deprecated_browser_description" = "To view this content, you will need Firefox ESR 52+ or an equivalent World Wide Web navigator. Sorry about that.";
 
 /* Statistics */
