@@ -30,7 +30,7 @@ _[English](README.md)_
 
 1. Установите PHP 7.4, веб-сервер, Composer, Node.js, Yarn и [Chandler](https://github.com/openvk/chandler)
 
-* PHP 8 еще **не** тестировался, поэтому не стоит ожидать, что он будет работать (UPD: он не работает).
+* PHP 8 is still being tested; performance on this version of PHP is not yet guaranteed.
 
 2. Установите MySQL-совместимую базу данных.
 
