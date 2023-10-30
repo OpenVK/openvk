@@ -303,7 +303,7 @@ class Audio extends Media
         return true;
     }
 
-    function listen($entity): bool
+    function listen($entity, Playlist $playlist = NULL): bool
     {
         $entityId = $entity->getId();
         if($entity instanceof Club)
@@ -320,11 +320,17 @@ class Audio extends Media
                 "entity" => $entityId,
                 "audio"  => $this->getId(),
                 "time"   => time(),
+                "playlist" => $playlist ? $playlist->getId() : NULL,
             ]);
 
             if($entity instanceof User) {
                 $this->stateChanges("listens", ($this->getListens() + 1));
                 $this->save();
+
+                if($playlist) {
+                    $playlist->incrementListens();
+                    $playlist->save();
+                }
             }
 
             return true;

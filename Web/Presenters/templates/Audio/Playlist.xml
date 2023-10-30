@@ -51,12 +51,7 @@
                 <h4 style="border-bottom:unset;">{$playlist->getName()}</h4>
 
                 <div class="moreInfo">
-                    {php $length = $playlist->getLengthInMinutes()}
-                    <span>{tr("audios_count", $count)}</span> • 
-                    <span>{_created_playlist}</span> {$playlist->getPublicationTime()}
-                    {if $length > 0} •
-                        <span>{tr("minutes_count", $length)}</span>
-                    {/if}
+                    {$playlist->getMetaDescription()|noescape}
 
                     <div style="margin-top: 11px;">
                         <span>{nl2br($playlist->getDescriptionHTML())|noescape}</span>

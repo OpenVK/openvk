@@ -60,7 +60,7 @@
             </div>
         </div>
 
-        <div class="showMoreAudiosPlaylist" data-page="2" {if !is_null($_GET["owner"])}data-club="{abs($_GET['owner'])}"{/if} n:if="$pagesCount > 1">
+        <div class="showMoreAudiosPlaylist" data-page="2" {if !is_null($_GET["gid"])}data-club="{abs($_GET['gid'])}"{/if} n:if="$pagesCount > 1">
             {_show_more_audios}
         </div>
     </div>
@@ -104,4 +104,6 @@
 
         document.querySelector("#newPlaylistForm input[name='cover']").value = ""
     </script>
+
+    {script "js/al_playlists.js"}
 {/block}

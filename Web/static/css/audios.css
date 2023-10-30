@@ -42,10 +42,11 @@
     width: 22px;
     height: 22px;
     float: left;
+    background-position-x: -72px;
 }
 
 .bigPlayer .paddingLayer .playButtons .playButton.pause {
-    background-position-x: -144px;
+    background-position-x: -168px;
 }
 
 .bigPlayer .paddingLayer .playButtons .nextButton {
@@ -146,7 +147,7 @@
 .bigPlayer .paddingLayer .slider, .audioEmbed .track .slider {
     width: 18px;
     height: 7px;
-    background: #707070;
+    background: #606060;
     position: absolute;
     bottom: 0;
     top: 0px;
@@ -229,7 +230,7 @@
 .audioEmbed .track > .selectableTrack, .bigPlayer .selectableTrack {
     margin-top: 3px;
     width: calc(100% - 8px);
-    border-top: #707070 1px solid;
+    border-top: #606060 1px solid;
     height: 6px;
     position: relative;
     user-select: none;

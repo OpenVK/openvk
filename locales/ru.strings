@@ -742,6 +742,7 @@
 
 "new_playlist" = "Новый плейлист";
 "created_playlist" = "создан";
+"updated_playlist" = "обновлён";
 "bookmark" = "Добавить в коллекцию";
 "unbookmark" = "Убрать из коллекции";
 "empty_playlist" = "В этом плейлисте нет аудиозаписей.";
@@ -767,6 +768,12 @@
 "minutes_count_few" = "длится $1 минуты";
 "minutes_count_many" = "длится $1 минут";
 "minutes_count_other" = "длится $1 минут";
+
+"listens_count_zero" = "нет прослушиваний";
+"listens_count_one" = "одно прослушивание";
+"listens_count_few" = "$1 прослушивания";
+"listens_count_many" = "$1 прослушиваний";
+"listens_count_other" = "$1 прослушиваний";
 
 "add_audio_to_club" = "Добавить аудио в группу";
 "what_club_add" = "В какую группу вы хотите добавить песню?";

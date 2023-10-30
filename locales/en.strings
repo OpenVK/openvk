@@ -786,6 +786,7 @@
 
 "new_playlist" = "New playlist";
 "created_playlist" = "created";
+"updated_playlist" = "updated";
 "bookmark" = "Add to collection";
 "unbookmark" = "Remove from collection";
 "empty_playlist" = "There are no audios in this playlist.";
@@ -812,6 +813,12 @@
 "minutes_count_few" = "lasts $1 minutes";
 "minutes_count_many" = "lasts $1 minutes";
 "minutes_count_other" = "lasts $1 minutes";
+
+"listens_count_zero" = "no listens";
+"listens_count_one" = "one listen";
+"listens_count_few" = "$1 listens";
+"listens_count_many" = "$1 listens";
+"listens_count_other" = "$1 listens";
 
 "add_audio_to_club" = "Add audio to group";
 "what_club_add" = "Which group do you want to add the song to?";

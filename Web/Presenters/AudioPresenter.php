@@ -249,11 +249,26 @@ final class AudioPresenter extends OpenVKPresenter
             $audio = $this->audios->get($id);
 
             if ($audio && !$audio->isDeleted() && !$audio->isWithdrawn()) {
-                $listen = $audio->listen($this->user->identity);
-                $this->returnJson(["success" => $listen]);
+                if(!empty($this->postParam("playlist"))) {
+                    $playlist = (new Audios)->getPlaylist((int)$this->postParam("playlist"));
+
+                    if(!$playlist || $playlist->isDeleted() || !$playlist->canBeViewedBy($this->user->identity) || !$playlist->hasAudio($audio))
+                        $playlist = NULL;
+                }
+
+                $listen = $audio->listen($this->user->identity, $playlist);
+
+                $returnArr = ["success" => $listen];
+                
+                if($playlist)
+                    $returnArr["new_playlists_listens"] = $playlist->getListens();
+
+                $this->returnJson($returnArr);
             }
 
             $this->returnJson(["success" => false]);
+        } else {
+            $this->redirect("/");
         }
     }
 
@@ -338,7 +353,7 @@ final class AudioPresenter extends OpenVKPresenter
 
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             header("HTTP/1.1 405 Method Not Allowed");
-            exit(",");
+            $this->redirect("/");
         }
 
         $playlist = $this->audios->getPlaylist($id);
@@ -471,7 +486,7 @@ final class AudioPresenter extends OpenVKPresenter
 
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             header("HTTP/1.1 405 Method Not Allowed");
-            exit(":)");
+            $this->redirect("/");
         }
 
         $audio = $this->audios->get($audio_id);
@@ -582,7 +597,7 @@ final class AudioPresenter extends OpenVKPresenter
     {
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             header("HTTP/1.1 405 Method Not Allowed");
-            exit("<select><select><select><select>");
+            $this->redirect("/");
         }
 
         $ctx_type = $this->postParam("context");

@@ -137,6 +137,11 @@ class Playlist extends MediaCollection
         return htmlspecialchars($this->getRecord()->description, ENT_DISALLOWED | ENT_XHTML);
     }
 
+    function getListens()
+    {
+        return $this->getRecord()->listens;
+    }
+
     function toVkApiStruct(?User $user = NULL): object
     {
         $oid = $this->getOwner()->getId();
@@ -155,6 +160,8 @@ class Playlist extends MediaCollection
             "accessible"  => $this->canBeViewedBy($user),
             "editable"    => $this->canBeModifiedBy($user),
             "bookmarked"  => $this->isBookmarkedBy($user),
+            "listens"     => $this->getListens(),
+            "cover_url"   => $this->getCoverURL(),
         ];
     }
 
@@ -226,5 +233,24 @@ class Playlist extends MediaCollection
     function getURL(): string
     {
         return "/playlist" . $this->getOwner()->getRealId() . "_" . $this->getId();
+    }
+
+    function incrementListens()
+    {
+        $this->stateChanges("listens", ($this->getListens() + 1));
+    }
+
+    function getMetaDescription(): string
+    {
+        $length = $this->getLengthInMinutes();
+
+        $props = [];
+        $props[] = tr("audios_count", $this->size());
+        $props[] = "<span id='listensCount'>" . tr("listens_count", $this->getListens()) . "</span>";
+        if($length > 0) $props[] = tr("minutes_count", $length);
+        $props[] = tr("created_playlist") . " " . $this->getPublicationTime();
+        # if($this->getEditTime()) $props[] = tr("updated_playlist") . " " . $this->getEditTime();
+        
+        return implode(" • ", $props);
     }
 }

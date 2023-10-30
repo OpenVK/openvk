@@ -53,7 +53,7 @@
         </div>
     </div>
 
-    <form method="post" id="editPlaylistForm" enctype="multipart/form-data">
+    <form method="post" id="editPlaylistForm" data-id="{$playlist->getId()}" enctype="multipart/form-data">
         <input type="hidden" name="title" maxlength="128" />
         <input type="hidden" name="hash" value="{$csrfToken}" />
         <textarea style="display:none;" name="description" maxlength="2048" />
@@ -90,4 +90,6 @@
 
         document.querySelector("#editPlaylistForm input[name='new_cover']").value = ""
     </script>
+
+    {script "js/al_playlists.js"}
 {/block}

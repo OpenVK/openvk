@@ -16,6 +16,50 @@ function getElapsedTime(fullTime, time) {
 
 window.savedAudiosPages = {}
 
+class playersSearcher {
+    constructor(context_type, context_id) {
+        this.context_type = context_type
+        this.context_id = context_id
+        this.searchType = "by_name"
+        this.query = ""
+        this.page = 1
+        this.successCallback = () => {}
+        this.errorCallback = () => {}
+        this.beforesendCallback = () => {}
+        this.clearContainer = () => {}
+    }
+
+    execute() {
+        $.ajax({
+            type: "POST",
+            url: "/audios/context",
+            data: {
+                context: this.context_type,
+                hash: u("meta[name=csrf]").attr("value"),
+                page: this.page,
+                query: this.query,
+                context_entity: this.context_id,
+                type: this.searchType,
+                returnPlayers: 1,
+            },
+            beforeSend: () => {
+                this.beforesendCallback()
+            },
+            error: () => {
+                this.errorCallback()
+            },
+            success: (response) => {
+                this.successCallback(response, this)
+            }
+        })
+    }
+
+    movePage(page) {
+        this.page = page
+        this.execute()
+    }
+}
+
 class bigPlayer {
     tracks = {
         currentTrack: null,
@@ -60,6 +104,7 @@ class bigPlayer {
         let formdata = new FormData()
         formdata.append("context", context)
         formdata.append("context_entity", context_id)
+        formdata.append("query", context_id)
         formdata.append("hash", u("meta[name=csrf]").attr("value"))
         formdata.append("page", page)
     
@@ -251,10 +296,7 @@ class bigPlayer {
 
             e.currentTarget.classList.toggle("pressed")
 
-            if(e.currentTarget.classList.contains("pressed"))
-                this.player().muted = true
-            else
-                this.player().muted = false
+            this.player().muted = e.currentTarget.classList.contains("pressed")
         })
 
         u(".bigPlayer .arrowsButtons .nextButton").on("click", (e) => {
@@ -323,6 +365,31 @@ class bigPlayer {
 
         u(this.player()).on("ended", (e) => {
             e.preventDefault()
+
+            let playlist = this.context.context_type == "playlist_context" ? this.context.context_id : null
+    
+            $.ajax({
+                type: "POST",
+                url: `/audio${this.tracks["currentTrack"].id}/listen`,
+                data: {
+                    hash: u("meta[name=csrf]").attr("value"),
+                    playlist: playlist
+                },
+                success: (response) => {
+                    if(response.success) {
+                        console.info("Listen is counted.")
+    
+                        if(response.new_playlists_listens)
+                            document.querySelector("#listensCount").innerHTML = tr("listens_count", response.new_playlists_listens)
+                    } else
+                        console.info("Listen is not counted.")
+                }
+            })
+            
+            if(!this.tracks.nextTrack) {
+                this.setTrack(this.tracks.tracks[0].id)
+                return
+            }
 
             this.showNextTrack()
         })
@@ -512,27 +579,6 @@ class bigPlayer {
 
         if(this.timeType == 1)
             this.nodes["thisPlayer"].querySelector(".elapsedTime").innerHTML = fmtTime(this.tracks["currentTrack"].length)
-
-        let tempThisTrack = this.tracks["currentTrack"]
-        // если трек слушали больше 10 сек.
-        setTimeout(() => {
-            if(tempThisTrack.id != this.tracks["currentTrack"].id)
-                return;
-
-            $.ajax({
-                type: "POST",
-                url: `/audio${id}/listen`,
-                data: {
-                    hash: u("meta[name=csrf]").attr("value"),
-                },
-                success: (response) => {
-                    if(response.success)
-                        console.info("Listen is counted.")
-                    else
-                        console.info("Listen is not counted.")
-                }
-            })
-        }, "10000")
 
         let album = document.querySelector(".playlistBlock")
 
@@ -1058,79 +1104,92 @@ $(document).on("click", "#_audioAttachment", (e) => {
     document.querySelector(".ovk-diag-cont").style.width = "580px"
     document.querySelector(".ovk-diag-body").style.height = "335px"
 
-    async function insertAudios(page, query = "", type = "by_name") {
-        document.querySelector(".audiosInsert").insertAdjacentHTML("beforeend", `<img id="loader" src="/assets/packages/static/openvk/img/loading_mini.gif">`)
+    let searcher = new playersSearcher("entity_audios", 0)
+    searcher.successCallback = (response, page) => {
+        let domparser = new DOMParser()
+        let result = domparser.parseFromString(response, "text/html")
 
-        $.ajax({
-            type: "POST",
-            url: "/audios/context",
-            data: {
-                context: query == "" ? "entity_audios" : "search_context",
-                hash: u("meta[name=csrf]").attr("value"),
-                page: page,
-                query: query == "" ? null : query,
-                context_entity: 0,
-                type: type,
-                returnPlayers: 1,
-            },
-            success: (response) => {
-                let domparser = new DOMParser()
-                let result = domparser.parseFromString(response, "text/html")
+        let pagesCount = result.querySelector("input[name='pagesCount']").value
+        let count = Number(result.querySelector("input[name='count']").value)
 
-                let pagesCount = result.querySelector("input[name='pagesCount']").value
-                let count = Number(result.querySelector("input[name='count']").value)
+        if(count < 1) {
+            document.querySelector(".audiosInsert").innerHTML = tr("no_results")
+            return
+        }
 
-                if(count < 1) {
-                    document.querySelector(".audiosInsert").innerHTML = tr("no_results")
-                    return
-                }
-
-                result.querySelectorAll(".audioEmbed").forEach(el => {
-                    let id = el.dataset.prettyid
-                    let name = el.dataset.name
-                    let isAttached = (form.querySelector("input[name='audios']").value.includes(`${id},`))
-                    document.querySelector(".audiosInsert").insertAdjacentHTML("beforeend", `
-                        <div style="display: table;width: 100%;clear: both;">
-                            <div style="width: 72%;float: left;">${el.outerHTML}</div>
-                            <div class="attachAudio" data-attachmentdata="${id}" data-name="${name}">
-                                <span>${isAttached ? tr("detach_audio") : tr("attach_audio")}</span>
-                            </div>
-                        </div>
-                    `)
-                })
-
-                u("#loader").remove()
-
-                if(page < pagesCount) {
-                    document.querySelector(".audiosInsert").insertAdjacentHTML("beforeend", `
-                    <div id="showMoreAudios" data-pagesCount="${pagesCount}" data-page="${page + 1}" style="width: 100%;text-align: center;background: #d5d5d5;height: 22px;padding-top: 9px;cursor:pointer;">
-                        <span>more...</span>
-                    </div>`)
-                }
-            }
+        result.querySelectorAll(".audioEmbed").forEach(el => {
+            let id = el.dataset.prettyid
+            let name = el.dataset.name
+            let isAttached = (form.querySelector("input[name='audios']").value.includes(`${id},`))
+            document.querySelector(".audiosInsert").insertAdjacentHTML("beforeend", `
+                <div style="display: table;width: 100%;clear: both;">
+                    <div style="width: 72%;float: left;">${el.outerHTML}</div>
+                    <div class="attachAudio" data-attachmentdata="${id}" data-name="${name}">
+                        <span>${isAttached ? tr("detach_audio") : tr("attach_audio")}</span>
+                    </div>
+                </div>
+            `)
         })
+
+        u("#loader").remove()
+
+        if(this.page < pagesCount) {
+            document.querySelector(".audiosInsert").insertAdjacentHTML("beforeend", `
+            <div id="showMoreAudios" data-pagesCount="${pagesCount}" data-page="${this.page + 1}" style="width: 100%;text-align: center;background: #d5d5d5;height: 22px;padding-top: 9px;cursor:pointer;">
+                <span>more...</span>
+            </div>`)
+        }
     }
 
-    insertAudios(1)
+    searcher.errorCallback = () => {
+        fastError("Error when loading players.")
+    }
+
+    searcher.beforesendCallback = () => {
+        document.querySelector(".audiosInsert").insertAdjacentHTML("beforeend", `<img id="loader" src="/assets/packages/static/openvk/img/loading_mini.gif">`)
+    }
+
+    searcher.clearContainer = () => {
+        document.querySelector(".audiosInsert").innerHTML = ""
+    }
+
+    searcher.movePage(1)
 
     $(".audiosInsert").on("click", "#showMoreAudios", (e) => {
         u(e.currentTarget).remove()
-        insertAudios(Number(e.currentTarget.dataset.page))
+        searcher.movePage(Number(e.currentTarget.dataset.page))
     })
 
     $(".searchBox input").on("change", async (e) => {
-        await new Promise(r => setTimeout(r, 1000));
+        await new Promise(r => setTimeout(r, 500));
 
         if(e.currentTarget.value === document.querySelector(".searchBox input").value) {
-            document.querySelector(".audiosInsert").innerHTML = ""
-            insertAudios(1, e.currentTarget.value, document.querySelector(".searchBox select").value)
+            searcher.clearContainer()
+
+            if(e.currentTarget.value == "") {
+                searcher.context_type = "entity_audios"
+                searcher.context_id = 0
+                searcher.query = ""
+
+                searcher.movePage(1)
+
+                return
+            }
+
+            searcher.context_type = "search_context"
+            searcher.context_id = 0
+            searcher.query = e.currentTarget.value
+
+            searcher.movePage(1)
             return;
         }
     })
 
     $(".searchBox select").on("change", async (e) => {
-        document.querySelector(".audiosInsert").innerHTML = ""
-        insertAudios(1, document.querySelector(".searchBox input").value, e.currentTarget.value)
+        searcher.clearContainer()
+        searcher.searchType = e.currentTarget.value
+
+        $(".searchBox input").trigger("change")
         return;
     })
 
@@ -1295,100 +1354,4 @@ $(document).on("click", "#bookmarkPlaylist, #unbookmarkPlaylist", (e) => {
                 fastError(response.flash.message)
         }
     })
-})
-
-function getPlayers(page = 1, query = "", playlist = 0, club = 0) {
-    $.ajax({
-        type: "POST",
-        url: "/audios/context",
-        data: {
-            context: query == "" ? (playlist == 0 ? "entity_audios" : "playlist_context") : "search_context",
-            hash: u("meta[name=csrf]").attr("value"),
-            page: page,
-            context_entity: playlist == 0 ? club * -1 : playlist,
-            query: query,
-            returnPlayers: 1,
-        },
-        beforeSend: () => {
-            document.querySelector(".playlistAudiosContainer").parentNode.insertAdjacentHTML("beforeend", `<img id="loader" src="/assets/packages/static/openvk/img/loading_mini.gif">`)
-            
-            if(document.querySelector(".showMoreAudiosPlaylist") != null)
-                document.querySelector(".showMoreAudiosPlaylist").style.display = "none"
-        },
-        error: () => {
-            fastError("Error when loading players")
-        },
-        success: (response) => {
-            let domparser = new DOMParser()
-            let result = domparser.parseFromString(response, "text/html")
-            let pagesCount = Number(result.querySelector("input[name='pagesCount']").value)
-            let count = Number(result.querySelector("input[name='count']").value)
-
-            result.querySelectorAll(".audioEmbed").forEach(el => {
-                let id = Number(el.dataset.realid)
-                let isAttached = (document.querySelector("input[name='audios']").value.includes(`${id},`))
-
-                document.querySelector(".playlistAudiosContainer").insertAdjacentHTML("beforeend", `
-                    <div id="newPlaylistAudios">
-                        <div style="width: 78%;float: left;">
-                            ${el.outerHTML}
-                        </div>
-                        <div class="attachAudio addToPlaylist" data-id="${id}" style="width: 22%;">
-                            <span>${isAttached ? tr("remove_from_playlist") : tr("add_to_playlist")}</span>
-                        </div>
-                    </div>
-                `)
-            })
-
-            if(count < 1)
-                document.querySelector(".playlistAudiosContainer").insertAdjacentHTML("beforeend", `
-                    ${tr("no_results")}
-                `)
-
-            if(Number(page) >= pagesCount)
-                u(".showMoreAudiosPlaylist").remove()
-            else {
-                if(document.querySelector(".showMoreAudiosPlaylist") != null) {
-                    document.querySelector(".showMoreAudiosPlaylist").setAttribute("data-page", page + 1)
-
-                    if(query != "") {
-                        document.querySelector(".showMoreAudiosPlaylist").setAttribute("data-query", query)
-                    }
-
-                    document.querySelector(".showMoreAudiosPlaylist").style.display = "block"
-                } else {
-                    document.querySelector(".playlistAudiosContainer").parentNode.insertAdjacentHTML("beforeend", `
-                        <div class="showMoreAudiosPlaylist" data-page="2" 
-                        ${query != "" ? `"data-query="${query}"` : ""} 
-                        ${playlist != 0 ? `"data-playlist="${playlist}"` : ""}
-                        ${club != 0 ? `"data-club="${club}"` : ""}>
-                            ${tr("show_more_audios")}
-                        </div>
-                    `)
-                }
-            }
-
-            u("#loader").remove()
-        }
-    })
-}
-
-$(document).on("click", ".showMoreAudiosPlaylist", (e) => {
-    getPlayers(Number(e.currentTarget.dataset.page), 
-        e.currentTarget.dataset.query != null ? e.currentTarget.dataset.query : "", 
-        e.currentTarget.dataset.playlist != null ? Number(e.currentTarget.dataset.playlist) : 0,
-        e.currentTarget.dataset.club != null ? Number(e.currentTarget.dataset.club) : 0,
-    )
-})
-
-$(document).on("change", "input#playlist_query", async (e) => {
-    e.preventDefault()
-    await new Promise(r => setTimeout(r, 500));
-
-    if(e.currentTarget.value === document.querySelector("input#playlist_query").value) {
-        document.querySelector(".playlistAudiosContainer").innerHTML = ""
-        getPlayers(1, e.currentTarget.value)
-        return
-    } else
-        return
 })
