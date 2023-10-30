@@ -270,7 +270,7 @@ class bigPlayer {
         })
 
         u(document).on("keydown", (e) => {
-            if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+            if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)) {
                 e.preventDefault()
 
                 if(document.querySelector(".ovk-diag-cont") != null)
@@ -290,11 +290,19 @@ class bigPlayer {
                 case "ArrowRight":
                     this.player().currentTime = this.player().currentTime + 3
                     break
+                // буквально
+                case " ":
+                    if(this.player().paused)
+                        this.play()
+                    else 
+                        this.pause()
+
+                    break;
             }
         })
 
         u(document).on("keyup", (e) => {
-            if([32, 87, 65, 83, 68].includes(e.keyCode)) {
+            if([87, 65, 83, 68].includes(e.keyCode)) {
                 e.preventDefault()
                 
                 if(document.querySelector(".ovk-diag-cont") != null)
@@ -302,13 +310,6 @@ class bigPlayer {
             }
 
             switch(e.keyCode) {
-                case 32:
-                    if(this.player().paused)
-                        this.play()
-                    else 
-                        this.pause()
-
-                    break
                 case 87:
                 case 65:
                     this.showPreviousTrack()
@@ -565,8 +566,10 @@ document.addEventListener("DOMContentLoaded", function() {
             entries.forEach(x => {
                 if(x.isIntersecting) {
                     document.querySelector('.bigPlayer').classList.remove("floating")
+                    document.querySelector('.searchOptions .searchList').classList.remove("floating")
                     document.querySelector('.bigPlayerDetector').style.marginTop = "0px"
                 } else {
+                    document.querySelector('.searchOptions .searchList').classList.add("floating")
                     document.querySelector('.bigPlayer').classList.add("floating")
                     document.querySelector('.bigPlayerDetector').style.marginTop = "46px"
                 }
@@ -580,6 +583,20 @@ document.addEventListener("DOMContentLoaded", function() {
         if(bigplayer != null)
             bigPlayerObserver.observe(bigplayer);
 }})
+
+$(document).on("click", ".audioEmbed > *", (e) => {
+    const player = e.currentTarget.closest(".audioEmbed")
+
+    if(player.classList.contains("inited")) return
+
+    initPlayer(player.id.replace("audioEmbed-", ""), 
+    JSON.parse(player.dataset.keys), 
+    player.dataset.url, 
+    player.dataset.length)
+
+    if(e.target.classList.contains("playIcon"))
+        e.target.click()
+})
 
 function initPlayer(id, keys, url, length) {
     document.querySelector(`#audioEmbed-${ id}`).classList.add("inited")
@@ -661,8 +678,40 @@ function initPlayer(id, keys, url, length) {
         }
     };
 
+    const hideTracks = () => {
+        $(`#audioEmbed-${ id} .track`).toggle()
+        $(`#audioEmbed-${ id}`).removeClass("havePlayed")
+    }
+
     u(audio).on("play", playButtonImageUpdate);
-    u(audio).on(["pause", "ended", "suspended"], playButtonImageUpdate);
+    u(audio).on(["pause", "suspended"], playButtonImageUpdate);
+    u(audio).on("ended", (e) => {
+        let thisPlayer = e.target.closest(".audioEmbed")
+        let nextPlayer = null
+        if(thisPlayer.closest(".attachment") != null) {
+            try {
+                nextPlayer = thisPlayer.closest(".attachment").nextElementSibling.querySelector(".audioEmbed")
+            } catch(e) {return}
+        } else if(thisPlayer.closest(".audio") != null) {
+            try {
+                nextPlayer = thisPlayer.closest(".audio").nextElementSibling.querySelector(".audioEmbed")
+            } catch(e) {return}
+        } else {
+            nextPlayer = thisPlayer.nextElementSibling
+        }
+
+        playButtonImageUpdate()
+
+        if(!nextPlayer) return
+
+        initPlayer(nextPlayer.id.replace("audioEmbed-", ""), 
+            JSON.parse(nextPlayer.dataset.keys), 
+            nextPlayer.dataset.url, 
+            nextPlayer.dataset.length)
+        
+        nextPlayer.querySelector(".playIcon").click()
+        hideTracks()
+    })
 
     u(`#audioEmbed-${ id} .lengthTrack > div`).on("click", (e) => {
         let rect  = document.querySelector("#audioEmbed-" + id + " .selectableTrack").getBoundingClientRect();
@@ -835,7 +884,7 @@ $(document).on("click", ".musicIcon.remove-icon", (e) => {
         hooks: {
             beforeRequest: [
                 (_request) => {
-                    e.currentTarget.classList.add("lagged")
+                    e.target.classList.add("lagged")
                 }
             ],
             afterResponse: [
@@ -843,11 +892,11 @@ $(document).on("click", ".musicIcon.remove-icon", (e) => {
                     let json = await response.json()
 
                     if(json.success) {
-                        e.currentTarget.classList.remove("remove-icon")
-                        e.currentTarget.classList.add("add-icon")
-                        e.currentTarget.classList.remove("lagged")
+                        e.target.classList.remove("remove-icon")
+                        e.target.classList.add("add-icon")
+                        e.target.classList.remove("lagged")
 
-                        let withd = e.currentTarget.closest(".audioEmbed.withdrawn")
+                        let withd = e.target.closest(".audioEmbed.withdrawn")
 
                         if(withd != null)
                             u(withd).remove()
@@ -920,13 +969,13 @@ $(document).on("click", ".musicIcon.add-icon-group", async (ev) => {
     $(".ovk-diag-body").on("click", "input[name='addButton']", (e) => {
         $.ajax({
             type: "POST",
-            url: `/audio${ev.currentTarget.dataset.id}/action?act=add_to_club`,
+            url: `/audio${ev.target.dataset.id}/action?act=add_to_club`,
             data: {
                 hash: u("meta[name=csrf]").attr("value"),
                 club: document.querySelector("#addIconsWindow").value
             },
             beforeSend: () => {
-                e.currentTarget.classList.add("lagged")
+                e.target.classList.add("lagged")
                 document.querySelector(".errorPlace").innerHTML = ""
             },
             success: (response) => {
@@ -949,7 +998,7 @@ $(document).on("click", ".musicIcon.add-icon", (e) => {
         hooks: {
             beforeRequest: [
                 (_request) => {
-                    e.currentTarget.classList.add("lagged")
+                    e.target.classList.add("lagged")
                 }
             ],
             afterResponse: [
@@ -957,9 +1006,9 @@ $(document).on("click", ".musicIcon.add-icon", (e) => {
                     let json = await response.json()
 
                     if(json.success) {
-                        e.currentTarget.classList.remove("add-icon")
-                        e.currentTarget.classList.add("remove-icon")
-                        e.currentTarget.classList.remove("lagged")
+                        e.target.classList.remove("add-icon")
+                        e.target.classList.add("remove-icon")
+                        e.target.classList.remove("lagged")
                     } else
                        fastError(json.flash.message)
                 }

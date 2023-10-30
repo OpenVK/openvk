@@ -530,7 +530,7 @@
                             {var $musics = explode(", ", $user->getFavoriteMusic())}
 
                             {foreach $musics as $music}
-                                <a href="/search?type=users&query=&fav_mus={urlencode($music)}">{$music}</a>{if $music != end($musics)},{/if}
+                                <a href="/search?type=audios&query={urlencode($music)}">{$music}</a>{if $music != end($musics)},{/if}
                             {/foreach}
                         </td>
                     </tr>

@@ -222,4 +222,9 @@ class Playlist extends MediaCollection
 
         return $cover;
     }
+
+    function getURL(): string
+    {
+        return "/playlist" . $this->getOwner()->getRealId() . "_" . $this->getId();
+    }
 }

@@ -120,14 +120,14 @@ class Audio extends Media
                 Shell::powershell("-executionpolicy bypass", "-File", __DIR__ . "/../shell/processAudio.ps1", ...$args)
                 ->start();
             } else {
-                exit("Linux uploads are not implemented");
+                throw new \BadMethodCallException("Linux uploads are not implemented");
             }
 
             # Wait until processAudio will consume the file
             $start = time();
             while(file_exists($filename))
                 if(time() - $start > 5)
-                    exit("Timed out waiting for ffmpeg"); // TODO replace with exception
+                    throw new \RuntimeException("Timed out waiting FFMPEG");
 
          } catch(UnknownCommandException $ucex) {
              exit(OPENVK_ROOT_CONF["openvk"]["debug"] ? "bash/pwsh is not installed" : VIDEOS_FRIENDLY_ERROR);

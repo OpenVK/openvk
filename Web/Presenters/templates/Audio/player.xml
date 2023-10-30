@@ -1,7 +1,7 @@
 {php $id = $audio->getId() . rand(0, 1000)}
 {php $isWithdrawn = $audio->isWithdrawn()}
 {php $editable = isset($thisUser) && $audio->canBeModifiedBy($thisUser)}
-<div id="audioEmbed-{$id}" data-realid="{$audio->getId()}" {if $hideButtons}data-prettyid="{$audio->getPrettyId()}" data-name="{$audio->getName()}"{/if} data-genre="{$audio->getGenre()}" class="audioEmbed {if !$audio->isAvailable()}processed{/if} {if $isWithdrawn}withdrawn{/if}" onmouseenter="!this.classList.contains('inited') ? initPlayer({$id}, {$audio->getKeys()}, {$audio->getURL()}, {$audio->getLength()}) : void(0)">
+<div id="audioEmbed-{$id}" data-realid="{$audio->getId()}" {if $hideButtons}data-prettyid="{$audio->getPrettyId()}" data-name="{$audio->getName()}"{/if} data-genre="{$audio->getGenre()}" class="audioEmbed {if !$audio->isAvailable()}processed{/if} {if $isWithdrawn}withdrawn{/if}" data-length="{$audio->getLength()}" data-keys="{json_encode($audio->getKeys())}" data-url="{$audio->getURL()}">
     <audio class="audio" />
 
     <div id="miniplayer" class="audioEntry" style="min-height: 39px;">

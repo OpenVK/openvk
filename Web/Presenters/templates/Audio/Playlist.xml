@@ -2,6 +2,23 @@
 
 {block title}{_playlist}{/block}
 
+{block headIncludes}
+    <meta property="og:type" content="music.album">
+    <meta property="og:title" content="{$playlist->getName()}">
+    <meta property="og:url" content="{$playlist->getURL()}">
+    <meta property="og:description" content="{$playlist->getDescription()}">
+    <meta property="og:image" content="{$playlist->getCoverURL()}">
+    
+    <script type="application/ld+json">
+        {
+            "@context": "http://schema.org/",
+            "type": "MusicAlbum",
+            "name": {$playlist->getName()},
+            "url": {$playlist->getURL()}
+        }
+    </script>
+{/block}
+
 {block header}
     <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
     »

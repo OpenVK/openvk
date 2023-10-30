@@ -559,3 +559,10 @@
 .playlistInfo .playlistName {
     font-weight: 600;
 }
+
+.searchList.floating {
+    position: fixed;
+    z-index: 199;
+    width: 156px;
+    margin-top: -65px !important;
+}

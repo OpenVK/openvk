@@ -109,6 +109,33 @@ class Audios
         return $this->getByEntityID($user->getId(), ($perPage * ($page - 1)), $perPage, $deleted);
     }
 
+    function getRandomThreeAudiosByEntityId(int $id): Array
+    {
+        $iter = $this->rels->where("entity", $id);
+        $ids = [];
+
+        foreach($iter as $it)
+            $ids[] = $it->audio;
+
+        $shuffleSeed    = openssl_random_pseudo_bytes(6);
+        $shuffleSeed    = hexdec(bin2hex($shuffleSeed));
+
+        $ids = knuth_shuffle($ids, $shuffleSeed);
+        $ids = array_slice($ids, 0, 3);
+        $audios = [];
+
+        foreach($ids as $id) {
+            $audio = $this->get((int)$id);
+
+            if(!$audio || $audio->isDeleted())
+                continue;
+
+            $audios[] = $audio;
+        }
+
+        return $audios;
+    }
+
     function getByClub(Club $club, int $page = 1, ?int $perPage = NULL, ?int& $deleted = nullptr): \Traversable
     {
         return $this->getByEntityID($club->getId() * -1, ($perPage * ($page - 1)), $perPage, $deleted);

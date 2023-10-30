@@ -104,12 +104,13 @@ final class SearchPresenter extends OpenVKPresenter
         $repo  = $repos[$type] or $this->throwError(400, "Bad Request", "Invalid search entity $type.");
         
         $results  = $this->{$repo}->find($query, $parameters, $sort);
-        $iterator = $results->page($page);
+        $iterator = $results->page($page, 14);
         $count    = $results->size();
         
         $this->template->iterator = iterator_to_array($iterator);
         $this->template->count    = $count;
         $this->template->type     = $type;
         $this->template->page     = $page;
+        $this->template->perPage  = 14;
     }
 }

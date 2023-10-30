@@ -1402,6 +1402,12 @@
 "playlist_not_bookmarked" = "This playlist is not in your collection.";
 "invalid_cover_photo" = "Error when loading cover photo.";
 "not_a_photo" = "Uploaded file doesn't look like a photo.";
+"file_too_big" = "File is too big.";
+"file_loaded_partially" = "The file has been uploaded partially.";
+"file_not_uploaded" = "Failed to upload the file.";
+"error_code" = "Error code: $1.";
+"ffmpeg_timeout" = "Timed out waiting ffmpeg. Try to upload file again.";
+"ffmpeg_not_installed" = "Failed to proccess the file. It looks like ffmpeg is not installed on this server.";
 
 /* Admin actions */
 
@@ -1736,8 +1742,17 @@
 "tour_section_5_text_3" = "In addition to uploading videos directly, the site also supports embedding videos from YouTube";
 
 
-"tour_section_6_title_1" = "Audios section, which doesn't exist yet xdddd";
-"tour_section_6_text_1" = "I would love to do a tutorial on this section, but sunshine Vriska didn't make the music :c";
+"tour_section_6_title_1" = "Listen to audios";
+"tour_section_6_text_1" = "Вы можете слушать аудиозаписи в разделе \"Мои Аудиозаписи\".";
+"tour_section_6_text_2" = "Этот раздел также регулируется настройками приватности.";
+"tour_section_6_text_3" = "Самые прослушиваемые песни находятся во вкладке \"Популярное\", а недавно загруженные — во вкладке \"Новое\"";
+"tour_section_6_text_4" = "Найти нужную песню можно в поиске.";
+"tour_section_6_text_5" = "Чтобы добавить песню в свою коллекцию, наведите на неё и нажмите на плюс.";
+"tour_section_6_text_6" = "Если вы не можете найти нужную песню, вы можете загрузить её самостоятельно.";
+"tour_section_6_bottom_text_1" = "<b>Важно:</b> песня не должна нарушать авторские права";
+"tour_section_6_title_1" = "Создавайте плейлисты";
+"tour_section_6_text_7" = "Вы можете создавать сборники треков во вкладке \"Мои плейлисты\".";
+"tour_section_6_text_8" = "Можно также добавлять чужие плейлисты в свою коллекцию.";
 
 
 "tour_section_7_title_1" = "Follow what your friends write";

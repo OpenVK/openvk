@@ -162,7 +162,30 @@ final class AudioPresenter extends OpenVKPresenter
         } else {
             $err = !isset($upload) ? 65536 : $upload["error"];
             $err = str_pad(dechex($err), 9, "0", STR_PAD_LEFT);
-            $this->flashFail("err", tr("error"), tr("error_generic") . "Upload error: 0x$err", null, $isAjax);
+            $readableError = tr("error_generic");
+
+            switch($upload["error"]) {
+                default:
+                case UPLOAD_ERR_INI_SIZE:
+                case UPLOAD_ERR_FORM_SIZE:
+                    $readableError = tr("file_too_big");
+                    break;
+                case UPLOAD_ERR_PARTIAL:
+                    $readableError = tr("file_loaded_partially");
+                    break;
+                case UPLOAD_ERR_NO_FILE:
+                    $readableError = tr("file_not_uploaded");
+                    break;
+                case UPLOAD_ERR_NO_TMP_DIR:
+                    $readableError = "Missing a temporary folder.";
+                    break;
+                case UPLOAD_ERR_CANT_WRITE:
+                case UPLOAD_ERR_EXTENSION:
+                    $readableError = "Failed to write file to disk. ";
+                    break;
+            }
+
+            $this->flashFail("err", tr("error"), $readableError . " " . tr("error_code", $err), null, $isAjax);
         }
 
         $performer = $this->postParam("performer");
@@ -186,6 +209,12 @@ final class AudioPresenter extends OpenVKPresenter
         } catch(\DomainException $ex) {
             $e = $ex->getMessage();
             $this->flashFail("err", tr("error"), tr("media_file_corrupted_or_too_large") . " $e.", null, $isAjax);
+        } catch(\RuntimeException $ex) {
+            $this->flashFail("err", tr("error"), tr("ffmpeg_timeout"), null, $isAjax);
+        } catch(\BadMethodCallException $ex) {
+            $this->flashFail("err", tr("error"), "Загрузка аудио под Linux на данный момент не реализована. Следите за обновлениями: <a href='https://github.com/openvk/openvk/pull/512/commits'>https://github.com/openvk/openvk/pull/512/commits</a>", null, $isAjax);
+        } catch(\Exception $ex) {
+            $this->flashFail("err", tr("error"), tr("ffmpeg_not_installed"), null, $isAjax);
         }
 
         $audio->save();

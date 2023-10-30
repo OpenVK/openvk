@@ -31,7 +31,7 @@ final class GroupPresenter extends OpenVKPresenter
                 $this->template->albumsCount = (new Albums)->getClubAlbumsCount($club);
                 $this->template->topics = (new Topics)->getLastTopics($club, 3);
                 $this->template->topicsCount = (new Topics)->getClubTopicsCount($club);
-                $this->template->audios      = (new Audios)->getByClub($club, 1, 3);
+                $this->template->audios      = (new Audios)->getRandomThreeAudiosByEntityId($club->getRealId());
                 $this->template->audiosCount = (new Audios)->getClubCollectionSize($club);
             }
 
