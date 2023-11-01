@@ -139,6 +139,8 @@
     }
     </style>
     <div style="margin-top:-7px">
+    {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+
     {include "../components/paginator.xml", conf => (object) [
         "page"     => $page,
         "count"    => $count,
@@ -153,7 +155,6 @@
     <div>
     {include searchOptions}
 
-    {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
     <div class="container_gray borderup" style="float:left;width:73.3%;">
         {if sizeof($data) > 0}
             {if $type == "users" || $type == "groups" || $type == "apps"}
