@@ -161,6 +161,13 @@
                         </td>
                     </tr>
                     <tr>
+                        <td width="120" valign="top">
+                        </td>
+                        <td>
+                            <label><input type="checkbox" name="broadcast_music" n:attr="checked => $user->isBroadcastEnabled()">{_broadcast_audio}</label>
+                        </td>
+                    </tr>
+                    <tr>
                         <td>
 
                         </td>

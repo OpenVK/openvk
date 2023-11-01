@@ -92,3 +92,4 @@ CREATE TABLE IF NOT EXISTS `playlist_relations` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci;
 
 ALTER TABLE `groups` ADD `everyone_can_upload_audios` TINYINT(1) NOT NULL DEFAULT '0' AFTER `backdrop_2`; 
+ALTER TABLE `profiles` ADD `last_played_track` BIGINT(20) UNSIGNED NULL DEFAULT NULL AFTER `client_name`, ADD `audio_broadcast_enabled` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0' AFTER `last_played_track`; 

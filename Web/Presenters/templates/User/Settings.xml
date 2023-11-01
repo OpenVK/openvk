@@ -390,9 +390,10 @@
                     </td>
                     <td>
                         <select name="audios.read" style="width: 164px;">
-                            <option value="2" {if $user->getPrivacySetting('audios.read') == 2}selected{/if}>{_privacy_value_anybody}</option>
-                            <option value="1" {if $user->getPrivacySetting('audios.read') == 1}selected{/if}>{_privacy_value_friends}</option>
-                            <option value="0" {if $user->getPrivacySetting('audios.read') == 0}selected{/if}>{_privacy_value_nobody}</option>
+                            <option value="3" {if $user->getPrivacySetting('audios.read') == 3}selected{/if}>{_privacy_value_anybody_dative}</option>
+                            <option value="2" {if $user->getPrivacySetting('audios.read') == 2}selected{/if}>{_privacy_value_users}</option>
+                            <option value="1" {if $user->getPrivacySetting('audios.read') == 1}selected{/if}>{_privacy_value_friends_dative}</option>
+                            <option value="0" {if $user->getPrivacySetting('audios.read') == 0}selected{/if}>{_privacy_value_only_me_dative}</option>
                         </select>
                     </td>
                 </tr>

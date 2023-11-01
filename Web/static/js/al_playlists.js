@@ -6,7 +6,7 @@ if(document.querySelector("#editPlaylistForm")) {
     context_id = document.querySelector("#editPlaylistForm").dataset.id
 }
 
-if(document.querySelector(".showMoreAudiosPlaylist").dataset.club != null) {
+if(document.querySelector(".showMoreAudiosPlaylist") && document.querySelector(".showMoreAudiosPlaylist").dataset.club != null) {
     context_type = "entity_audios"
     context_id = Number(document.querySelector(".showMoreAudiosPlaylist").dataset.club) * -1
 }

@@ -96,8 +96,9 @@ class bigPlayer {
 
         this.nodes["thisPlayer"] = document.querySelector(".bigPlayer")
         this.nodes["thisPlayer"].classList.add("lagged")
+        this.nodes["audioPlayer"] = document.createElement("audio")
 
-        this.player = () => { return this.nodes["thisPlayer"].querySelector("audio.audio") }
+        this.player = () => { return this.nodes["audioPlayer"] }
         this.nodes["playButtons"] = this.nodes["thisPlayer"].querySelector(".playButtons")
         this.nodes["dashPlayer"] = dashjs.MediaPlayer().create()
 
@@ -365,33 +366,61 @@ class bigPlayer {
 
         u(this.player()).on("ended", (e) => {
             e.preventDefault()
-
-            let playlist = this.context.context_type == "playlist_context" ? this.context.context_id : null
-    
-            $.ajax({
-                type: "POST",
-                url: `/audio${this.tracks["currentTrack"].id}/listen`,
-                data: {
-                    hash: u("meta[name=csrf]").attr("value"),
-                    playlist: playlist
-                },
-                success: (response) => {
-                    if(response.success) {
-                        console.info("Listen is counted.")
-    
-                        if(response.new_playlists_listens)
-                            document.querySelector("#listensCount").innerHTML = tr("listens_count", response.new_playlists_listens)
-                    } else
-                        console.info("Listen is not counted.")
-                }
-            })
             
+            // в начало очереди
             if(!this.tracks.nextTrack) {
-                this.setTrack(this.tracks.tracks[0].id)
+                if(!this.context["playedPages"].includes("1")) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/audios/context",
+                        data: {
+                            context: this["context"].context_type,
+                            context_entity: this["context"].context_id,
+                            hash: u("meta[name=csrf]").attr("value"),
+                            page: 1
+                        },
+                        success: (response_2) => {
+                            this.tracks["tracks"] = response_2["items"].concat(this.tracks["tracks"])
+                            this.context["playedPages"].push(String(1))
+
+                            this.setTrack(this.tracks["tracks"][0].id)
+                        }
+                    })
+                } else {
+                    this.setTrack(this.tracks.tracks[0].id)
+                }
+                
                 return
             }
 
             this.showNextTrack()
+        })
+        
+        u(this.player()).on("loadstart", (e) => {
+            let playlist = this.context.context_type == "playlist_context" ? this.context.context_id : null
+
+            let tempThisId = this.tracks.currentTrack.id
+            setTimeout(() => {
+                if(tempThisId != this.tracks.currentTrack.id) return
+
+                $.ajax({
+                    type: "POST",
+                    url: `/audio${this.tracks["currentTrack"].id}/listen`,
+                    data: {
+                        hash: u("meta[name=csrf]").attr("value"),
+                        playlist: playlist
+                    },
+                    success: (response) => {
+                        if(response.success) {
+                            console.info("Listen is counted.")
+        
+                            if(response.new_playlists_listens)
+                                document.querySelector("#listensCount").innerHTML = tr("listens_count", response.new_playlists_listens)
+                        } else
+                            console.info("Listen is not counted.")
+                    }
+                })
+            }, 2000)
         })
 
         if(localStorage.volume != null && localStorage.volume < 1 && localStorage.volume > 0)
@@ -537,7 +566,7 @@ class bigPlayer {
                             else
                                 this.tracks["tracks"] = this.tracks["tracks"].concat(newArr["items"])
 
-                            this.context["playedPages"].push(Number(newArr["page"]))
+                            this.context["playedPages"].push(String(newArr["page"]))
 
                             if(lesser)
                                 this.tracks["previousTrack"] = this.tracks["tracks"].at(this.tracks["tracks"].indexOf(obj) - 1).id
@@ -1310,7 +1339,7 @@ $(document).on("click", ".audiosContainer .paginator a", (e) => {
                     },
                     success: (response_2) => {
                         window.player.tracks["tracks"] = window.player.tracks["tracks"].concat(response_2["items"])
-                        window.player.context["playedPages"].push(page)
+                        window.player.context["playedPages"].push(String(page))
                         console.info("Page is switched")
                     }
                 })

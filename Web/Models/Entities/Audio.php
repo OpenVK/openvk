@@ -313,8 +313,8 @@ class Audio extends Media
         $lastListen   = $listensTable->where([
             "entity" => $entityId,
             "audio"  => $this->getId(),
-        ])->fetch();
-
+        ])->order("index DESC")->fetch();
+        
         if(!$lastListen || (time() - $lastListen->time >= $this->getLength())) {
             $listensTable->insert([
                 "entity" => $entityId,
@@ -331,6 +331,9 @@ class Audio extends Media
                     $playlist->incrementListens();
                     $playlist->save();
                 }
+
+                $entity->setLast_played_track($this->getId());
+                $entity->save();
             }
 
             return true;

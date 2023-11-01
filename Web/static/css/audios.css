@@ -567,3 +567,85 @@
     width: 156px;
     margin-top: -65px !important;
 }
+
+.audiosSearchBox input[type='search'] {
+    height: 25px;
+    width: 77%;
+    padding-left: 21px;
+    padding-top: 4px;
+    background: rgb(255, 255, 255) url("/assets/packages/static/openvk/img/search_icon.png") 5px 6px no-repeat;
+}
+
+.audiosSearchBox {
+    padding-bottom: 10px;
+    padding-top: 7px;
+    display: flex;
+}
+
+.audiosSearchBox select {
+    width: 30%;
+    padding-left: 7px;
+    margin-left: -2px;
+}
+
+.audioStatus {
+    color: #2B587A;
+    margin-top: -3px;
+}
+
+.audioStatus::before {
+    background-image: url('/assets/packages/static/openvk/img/audios_controls.png');
+    background-repeat: no-repeat;
+    width: 11px;
+    height: 11px;
+    background-position: -66px -51px;
+    margin-top: 1px;
+    display: inline-block;
+    vertical-align: bottom;
+    content: "";
+    padding-right: 2px;
+}
+
+.friendsAudiosList {
+    margin-left: -7px;
+    margin-top: 8px;
+}
+
+.friendsAudiosList .elem {
+    display: flex;
+    padding: 1px 1px;
+    width: 100%;
+}
+
+.friendsAudiosList .elem img {
+    width: 30px;
+    border-radius: 2px;
+}
+
+.friendsAudiosList .elem .additionalInfo {
+    margin-left: 7px;
+    padding-top: 1px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.friendsAudiosList .elem .additionalInfo .name {
+    color: #2B587A;
+}
+
+.friendsAudiosList .elem .additionalInfo .desc {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    color: #878A8F;
+    font-size: 11px;
+}
+
+.friendsAudiosList .elem:hover {
+    background: #E8EBF0;
+    cursor: pointer;
+}

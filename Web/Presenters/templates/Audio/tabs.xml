@@ -20,5 +20,20 @@
             <a n:attr="id => $mode === 'playlists' && $ownerId != $thisUser->getId() ? 'used' : 'ki'" href="/playlists{$ownerId}"  n:if="isset($ownerId) && !$isMy">{if $ownerId > 0}{_playlists_user}{else}{_playlists_club}{/if}</a>
             <a href="/audios/newPlaylist{if $isMyClub}?gid={abs($ownerId)}{/if}" n:if="isset($thisUser) && $isMyClub">{_new_playlist}</a>
         {/if}
+
+        {if $friendsAudios}
+            <div class="friendsAudiosList">
+                <a href="/audios{$fr['id']}" style="width: 94%;padding-left: 10px;" n:foreach="$friendsAudios as $fr">
+                    <div class="elem">
+                        <img src="{$fr['avatar']}" />
+
+                        <div class="additionalInfo">
+                            <span class="name">{$fr["name"]}</span>
+                            <span class="desc">{$fr["nowListening"] ? $fr["nowListening"]->getName() : tr("audios_count", $fr["tracksCount"])}</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {/if}
     </div>
 </div>

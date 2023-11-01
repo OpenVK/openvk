@@ -109,6 +109,9 @@ final class AudioPresenter extends OpenVKPresenter
 
         $this->template->mode = $mode;
         $this->template->page = $page;
+
+        if(in_array($mode, ["list", "new", "popular"]))
+            $this->template->friendsAudios = $this->user->identity->getFriendsAudios();
     }
 
     function renderEmbed(int $owner, int $id): void

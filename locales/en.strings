@@ -568,7 +568,7 @@
 "privacy_setting_add_to_friends" = "Who can add me to friends";
 "privacy_setting_write_wall" = "Who can publish post on my wall";
 "privacy_setting_write_messages" = "Who can write messages to me";
-"privacy_setting_view_audio" = "Who can view my audios";
+"privacy_setting_view_audio" = "Who can see my audios";
 "privacy_value_anybody" = "Anybody";
 "privacy_value_anybody_dative" = "Anybody";
 "privacy_value_users" = "OpenVK users";
@@ -829,6 +829,8 @@
 "by_performer" = "by performer";
 "no_access_clubs" = "There are no groups where you are an administrator.";
 "audio_successfully_uploaded" = "Audio has been successfully uploaded and is currently being processed.";
+
+"broadcast_audio" = "Broadcast audio to status";
 
 /* Notifications */
 

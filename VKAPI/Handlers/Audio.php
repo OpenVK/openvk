@@ -566,6 +566,14 @@ final class Audio extends VKAPIRequestHandler
 
         $owner_id  = $owner_id == 0 ? $this->getUser()->getId() : $owner_id;
         $playlists = [];
+
+        if($owner_id > 0 && $owner_id != $this->getUser()->getId()) {
+            $user = (new \openvk\Web\Models\Repositories\Users)->get($owner_id);
+
+            if(!$user->getPrivacyPermission("audios.read", $this->getUser()))
+                $this->fail(50, "Access to playlists denied");
+        }
+
         foreach((new Audios)->getPlaylistsByEntityId($owner_id, $offset, $count) as $playlist) {
             if(!$playlist->canBeViewedBy($this->getUser())) {
                 if($drop_private == 1)

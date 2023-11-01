@@ -417,6 +417,10 @@
                 <form name="status_popup_form" onsubmit="changeStatus(); return false;">
                     <div style="margin-bottom: 10px;">
                         <input type="text" name="status" size="50" value="{$user->getStatus()}" />
+                        <label style="width: 316px;display: block;">
+                            <input type="checkbox" name="broadcast" n:attr="checked => $user->isBroadcastEnabled()" />
+                            {_broadcast_audio}
+                        </label>
                     </div>
                     <input type="hidden" name="hash" value="{$csrfToken}" />
                     <button type="submit" name="submit" class="button" style="height: 22px;">{_send}</button>
@@ -425,11 +429,20 @@
 			<div class="accountInfo clearFix">
                 <div class="profileName">
                     <h2>{$user->getFullName()}</h2>
-                    {if !is_null($user->getStatus())}
-                        <div n:class="page_status, $thatIsThisUser ? page_status_edit_button" n:attr="id => $thatIsThisUser ? page_status_text : NULL">{$user->getStatus()}</div>
-                    {elseif $thatIsThisUser}
-                        <div class="page_status">
-                            <div n:class="edit_link, $thatIsThisUser ? page_status_edit_button" id="page_status_text">[ {_change_status} ]</div>
+
+                    {if !$audioStatus}
+                        {if !is_null($user->getStatus())}
+                            <div n:class="page_status, $thatIsThisUser ? page_status_edit_button" n:attr="id => $thatIsThisUser ? page_status_text : NULL">{$user->getStatus()}</div>
+                        {elseif $thatIsThisUser}
+                            <div class="page_status">
+                                <div n:class="edit_link, $thatIsThisUser ? page_status_edit_button" id="page_status_text">[ {_change_status} ]</div>
+                            </div>
+                        {/if}
+                    {else}
+                        <div class="page_status" style="display: flex;">
+                            <div n:class="audioStatus, $thatIsThisUser ? page_status_edit_button" id="page_status_text">
+                                {$audioStatus->getName()}
+                            </div>
                         </div>
                     {/if}
                 </div>
@@ -594,7 +607,7 @@
             </div>
         </div>
 
-        <div n:if="$audiosCount > 0">
+        <div n:if="$audiosCount > 0 && $user->getPrivacyPermission('audios.read', $thisUser ?? NULL)">
             <div class="content_title_expanded" onclick="hidePanel(this, {$audiosCount});">
                 {_audios}
             </div>
@@ -758,12 +771,14 @@
 
             async function changeStatus() {
                 const status = document.status_popup_form.status.value;
+                const broadcast = document.status_popup_form.broadcast.checked;
 
                 document.status_popup_form.submit.innerHTML = "<div class=\"button-loading\"></div>";
                 document.status_popup_form.submit.disabled = true;
 
                 const formData = new FormData();
                 formData.append("status", status);
+                formData.append("broadcast", Number(broadcast));
                 formData.append("hash", document.status_popup_form.hash.value);
                 const response = await ky.post("/edit?act=status", {body: formData});
 

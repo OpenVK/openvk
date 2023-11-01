@@ -541,7 +541,7 @@
 "privacy_setting_add_to_friends" = "Кто может называть меня другом";
 "privacy_setting_write_wall" = "Кто может писать у меня на стене";
 "privacy_setting_write_messages" = "Кто может писать мне сообщения";
-"privacy_setting_view_audio" = "Кто может видеть мои аудиозаписи";
+"privacy_setting_view_audio" = "Кому видно мои аудиозаписи";
 "privacy_value_anybody" = "Все желающие";
 "privacy_value_anybody_dative" = "Всем желающим";
 "privacy_value_users" = "Пользователям OpenVK";
@@ -784,6 +784,8 @@
 "by_performer" = "по исполнителю";
 "no_access_clubs" = "Нет групп, где вы являетесь администратором.";
 "audio_successfully_uploaded" = "Аудио успешно загружено и на данный момент обрабатывается.";
+
+"broadcast_audio" = "Транслировать аудио в статус";
 
 /* Notifications */
 

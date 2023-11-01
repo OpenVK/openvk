@@ -47,7 +47,8 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->notesCount  = (new Notes)->getUserNotesCount($user);
             $this->template->audios      = (new Audios)->getRandomThreeAudiosByEntityId($user->getId());
             $this->template->audiosCount = (new Audios)->getUserCollectionSize($user);
-            
+            $this->template->audioStatus = $user->getCurrentAudioStatus();
+
             $this->template->user = $user;
         }
     }
@@ -171,6 +172,7 @@ final class UserPresenter extends OpenVKPresenter
                 
                 if ($this->postParam("gender") <= 1 && $this->postParam("gender") >= 0)
                 $user->setSex($this->postParam("gender"));
+                $user->setAudio_broadcast_enabled($this->checkbox("broadcast_music"));
                 
                 if(!empty($this->postParam("phone")) && $this->postParam("phone") !== $user->getPhone()) {
                     if(!OPENVK_ROOT_CONF["openvk"]["credentials"]["smsc"]["enable"])
@@ -243,6 +245,7 @@ final class UserPresenter extends OpenVKPresenter
                 }
 
                 $user->setStatus(empty($this->postParam("status")) ? NULL : $this->postParam("status"));
+                $user->setAudio_broadcast_enabled($this->postParam("broadcast") == 1);
                 $user->save();
 
                 $this->returnJson([

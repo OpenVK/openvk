@@ -95,6 +95,12 @@ final class Users extends VKAPIRequestHandler
 							case "status":
 								if($usr->getStatus() != NULL)
 									$response[$i]->status = $usr->getStatus();
+								
+								$audioStatus = $usr->getCurrentAudioStatus();
+
+								if($audioStatus)
+									$response[$i]->status_audio = $audioStatus->toVkApiStruct();
+
 								break;
 							case "screen_name":
 								if($usr->getShortCode() != NULL)
