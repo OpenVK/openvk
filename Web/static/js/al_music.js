@@ -8,6 +8,7 @@ function fastError(message) {
     MessageBox(tr("error"), message, [tr("ok")], [Function.noop])
 }
 
+// elapsed это вроде прошедшие, а оставшееся это remaining но ладно уже
 function getElapsedTime(fullTime, time) {
     let timer = fullTime - time
 
@@ -150,7 +151,7 @@ class bigPlayer {
 
         u(this.player()).on("timeupdate", (e) => {
             const time = this.player().currentTime;
-            const ps = Math.ceil((time * 100) / this.tracks["currentTrack"].length);
+            const ps = ((time * 100) / this.tracks["currentTrack"].length).toFixed(3)
             this.nodes["thisPlayer"].querySelector(".time").innerHTML = fmtTime(time)
             this.timeType == 0 ? this.nodes["thisPlayer"].querySelector(".elapsedTime").innerHTML = getElapsedTime(this.tracks["currentTrack"].length, time)
                 : null
@@ -182,7 +183,7 @@ class bigPlayer {
             this.player().currentTime = time;
         })
 
-        u(".bigPlayer .trackPanel .track").on("mousemove", (e) => {
+        u(".bigPlayer .trackPanel .selectableTrack").on("mousemove", (e) => {
             if(this.tracks["currentTrack"] == null)
                 return
 
@@ -232,7 +233,7 @@ class bigPlayer {
             document.querySelector(".previousTrackTip").style.display = "block"
         })
 
-        u(".bigPlayer .trackPanel .track").on("mouseleave", (e) => {
+        u(".bigPlayer .trackPanel .selectableTrack").on("mouseleave", (e) => {
             if(this.tracks["currentTrack"] == null)
                 return
             
@@ -252,7 +253,7 @@ class bigPlayer {
             let rect  = this.nodes["thisPlayer"].querySelector(".volumePanel .selectableTrack").getBoundingClientRect();
             
             const width = e.clientX - rect.left;
-            const volume = (width * 1) / (rect.right - rect.left);
+            const volume = Math.max(0, (width * 1) / (rect.right - rect.left));
 
             this.player().volume = volume;
         })
@@ -314,10 +315,10 @@ class bigPlayer {
 
         u(document).on("keydown", (e) => {
             if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)) {
-                e.preventDefault()
-
                 if(document.querySelector(".ovk-diag-cont") != null)
                     return
+
+                e.preventDefault()
             }
 
             switch(e.key) {
@@ -345,11 +346,11 @@ class bigPlayer {
         })
 
         u(document).on("keyup", (e) => {
-            if([87, 65, 83, 68].includes(e.keyCode)) {
-                e.preventDefault()
-                
+            if([87, 65, 83, 68, 82].includes(e.keyCode)) {
                 if(document.querySelector(".ovk-diag-cont") != null)
                     return
+
+                e.preventDefault()
             }
 
             switch(e.keyCode) {
@@ -360,6 +361,9 @@ class bigPlayer {
                 case 83:
                 case 68:
                     this.showNextTrack()
+                    break
+                case 82:
+                    document.querySelector(".bigPlayer .additionalButtons .repeatButton").click()
                     break
             }
         })
@@ -718,7 +722,7 @@ function initPlayer(id, keys, url, length) {
 
     u(audio).on("timeupdate", () => {
         const time = audio.currentTime;
-        const ps = Math.ceil((time * 100) / length);
+        const ps = ((time * 100) / length).toFixed(3);
         volumeSpan.html(fmtTime(Math.floor(time)));
 
         if (ps <= 100)
@@ -811,6 +815,7 @@ function initPlayer(id, keys, url, length) {
         audio.volume = volume;
     });
 
+    audio.volume = localStorage.volume ?? 0.75
     u(audio).trigger("volumechange")
 }
 
@@ -876,27 +881,44 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
                         perf.innerHTML = escapeHtml(response.new_info.performer)
                         perf.setAttribute("href", "/search?query=&type=audios&sort=id&only_performers=on&query="+response.new_info.performer)
                         
-                        e.currentTarget.setAttribute("data-performer", escapeHtml(response.new_info.performer))
+                        e.target.setAttribute("data-performer", escapeHtml(response.new_info.performer))
                         
                         let name = player.querySelector(".title")
                         name.innerHTML = escapeHtml(response.new_info.name)
 
-                        e.currentTarget.setAttribute("data-title", escapeHtml(response.new_info.name))
+                        e.target.setAttribute("data-title", escapeHtml(response.new_info.name))
                         
-                        if(player.querySelector(".lyrics") != null) {
-                            player.querySelector(".lyrics").innerHTML = response.new_info.lyrics
-                            player.querySelector(".title").classList.ad
+                        if(response.new_info.lyrics_unformatted != "") {
+                            if(player.querySelector(".lyrics") != null) {
+                                player.querySelector(".lyrics").innerHTML = response.new_info.lyrics
+                                player.querySelector(".title").classList.add("withLyrics")
+                            } else {
+                                player.insertAdjacentHTML("beforeend", `
+                                    <div class="lyrics" n:if="!empty($audio->getLyrics())">
+                                        ${response.new_info.lyrics}
+                                    </div>
+                                `)
+    
+                                player.querySelector(".title").classList.add("withLyrics")
+                            }
                         } else {
-                            player.insertAdjacentHTML("beforeend", `
-                                <div class="lyrics" n:if="!empty($audio->getLyrics())">
-                                    ${response.new_info.lyrics}
-                                </div>
-                            `)
+                            $(player.querySelector(".lyrics")).remove()
+                            player.querySelector(".title").classList.remove("withLyrics")
                         }
 
-                        e.currentTarget.setAttribute("data-lyrics", response.new_info.lyrics_unformatted)
-                        e.currentTarget.setAttribute("data-explicit", Number(response.new_info.explicit))
-                        e.currentTarget.setAttribute("data-searchable", Number(!response.new_info.unlisted))
+                        e.target.setAttribute("data-lyrics", response.new_info.lyrics_unformatted)
+                        e.target.setAttribute("data-explicit", Number(response.new_info.explicit))
+
+                        if(Number(response.new_info.explicit) == 1) {
+                            if(!player.querySelector(".mediaInfo .explicitMark"))
+                                player.querySelector(".mediaInfo").insertAdjacentHTML("beforeend", `
+                                    <div class="explicitMark"></div>
+                                `)
+                        } else {
+                            $(player.querySelector(".mediaInfo .explicitMark")).remove()
+                        }
+
+                        e.target.setAttribute("data-searchable", Number(!response.new_info.unlisted))
                         player.setAttribute("data-genre", response.new_info.genre)
 
                         let url = new URL(location.href)
@@ -1134,7 +1156,7 @@ $(document).on("click", "#_audioAttachment", (e) => {
     document.querySelector(".ovk-diag-body").style.height = "335px"
 
     let searcher = new playersSearcher("entity_audios", 0)
-    searcher.successCallback = (response, page) => {
+    searcher.successCallback = (response, thisc) => {
         let domparser = new DOMParser()
         let result = domparser.parseFromString(response, "text/html")
 
@@ -1162,9 +1184,9 @@ $(document).on("click", "#_audioAttachment", (e) => {
 
         u("#loader").remove()
 
-        if(this.page < pagesCount) {
+        if(thisc.page < pagesCount) {
             document.querySelector(".audiosInsert").insertAdjacentHTML("beforeend", `
-            <div id="showMoreAudios" data-pagesCount="${pagesCount}" data-page="${this.page + 1}" style="width: 100%;text-align: center;background: #d5d5d5;height: 22px;padding-top: 9px;cursor:pointer;">
+            <div id="showMoreAudios" data-pagesCount="${pagesCount}" data-page="${thisc.page + 1}" class="showMore">
                 <span>more...</span>
             </div>`)
         }
@@ -1280,7 +1302,7 @@ $(document).on("click", ".musicIcon.report-icon", (e) => {
         
         res = document.querySelector("#uReportMsgInput").value;
         xhr = new XMLHttpRequest();
-        xhr.open("GET", "/report/" + e.currentTarget.dataset.id + "?reason=" + res + "&type=audio", true);
+        xhr.open("GET", "/report/" + e.target.dataset.id + "?reason=" + res + "&type=audio", true);
         xhr.onload = (function() {
         if(xhr.responseText.indexOf("reason") === -1)
             MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);

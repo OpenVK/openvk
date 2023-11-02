@@ -305,19 +305,15 @@ class Audio extends Media
 
     function listen($entity, Playlist $playlist = NULL): bool
     {
-        $entityId = $entity->getId();
-        if($entity instanceof Club)
-            $entityId *= -1;
-
         $listensTable = DatabaseConnection::i()->getContext()->table("audio_listens");
         $lastListen   = $listensTable->where([
-            "entity" => $entityId,
+            "entity" => $entity->getRealId(),
             "audio"  => $this->getId(),
         ])->order("index DESC")->fetch();
         
         if(!$lastListen || (time() - $lastListen->time >= $this->getLength())) {
             $listensTable->insert([
-                "entity" => $entityId,
+                "entity" => $entity->getRealId(),
                 "audio"  => $this->getId(),
                 "time"   => time(),
                 "playlist" => $playlist ? $playlist->getId() : NULL,
@@ -331,10 +327,10 @@ class Audio extends Media
                     $playlist->incrementListens();
                     $playlist->save();
                 }
-
-                $entity->setLast_played_track($this->getId());
-                $entity->save();
             }
+
+            $entity->setLast_played_track($this->getId());
+            $entity->save();
 
             return true;
         }

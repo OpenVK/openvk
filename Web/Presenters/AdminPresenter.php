@@ -615,6 +615,12 @@ final class AdminPresenter extends OpenVKPresenter
         $audio = $this->audios->get($audio_id);
         $this->template->audio = $audio;
 
+        try {
+            $this->template->owner = $audio->getOwner()->getId();
+        } catch(\Throwable $e) {
+            $this->template->owner = 1;
+        }
+
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $audio->setName($this->postParam("name"));
             $audio->setPerformer($this->postParam("performer"));

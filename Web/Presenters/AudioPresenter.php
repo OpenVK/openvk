@@ -110,8 +110,8 @@ final class AudioPresenter extends OpenVKPresenter
         $this->template->mode = $mode;
         $this->template->page = $page;
 
-        if(in_array($mode, ["list", "new", "popular"]))
-            $this->template->friendsAudios = $this->user->identity->getFriendsAudios();
+        if(in_array($mode, ["list", "new", "popular"]) && $this->user->identity)
+            $this->template->friendsAudios = $this->user->identity->getBroadcastList("all", true);
     }
 
     function renderEmbed(int $owner, int $id): void
@@ -246,8 +246,10 @@ final class AudioPresenter extends OpenVKPresenter
     function renderListen(int $id): void
     {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $this->assertUserLoggedIn();
             $this->assertNoCSRF();
+
+            if(is_null($this->user))
+                $this->returnJson(["success" => false]);
 
             $audio = $this->audios->get($id);
 

@@ -359,7 +359,7 @@ final class Audio extends VKAPIRequestHandler
             $this->fail(201, "Insufficient permissions to listen this audio");
 
         $group = NULL;
-        if(!is_null($group)) {
+        if(!is_null($gid)) {
             $group = (new Clubs)->get($gid);
             if(!$group)
                 $this->fail(0404, "Not Found");
@@ -396,7 +396,7 @@ final class Audio extends VKAPIRequestHandler
                 $this->fail(203,"Insufficient rights to this group");
 
             $ids[] = $id;
-            $this->beacon($song->getId(), $id * -1);
+            $this->beacon($song ? $song->getId() : 0, $id * -1);
         }
 
         return $ids;
@@ -409,40 +409,14 @@ final class Audio extends VKAPIRequestHandler
         if(!in_array($filter, ["all", "friends", "groups"]))
             $this->fail(8, "Invalid filter $filter");
 
-        $dbContext = DatabaseConnection::i()->getContext();
-        $entityIds = [];
-        $query     = $dbContext->table("subscriptions")->select("model, target")
-            ->where("follower", $this->getUser()->getId());
-
-        if($filter != "all")
-            $query = $query->where("model = ?", "openvk\\Web\\Models\\Entities\\" . ($filter == "groups" ? "Club" : "User"));
-
-        foreach($query as $_rel) {
-            $id = $_rel->target;
-            if($_rel->model === "openvk\\Web\\Models\\Entities\\Club")
-                $id *= -1;
-
-            $entityIds[] = $id;
-        }
-
-        $audioIds  = [];
-        $threshold = $active === 0 ? 3600 : 120;
-        foreach($entityIds as $ent) {
-            $lastListen = $dbContext->table("audio_listens")->where("entity", $ent)
-                ->where("time >= ?", time() - $threshold)->fetch();
-            if(!$lastListen)
-                continue;
-
-            $audio          = (new Audios)->get($lastListen->audio);
-            $audioIds[$ent] = $this->toSafeAudioStruct($audio, $hash);
-        }
-
+        $broadcastList = $this->getUser()->getBroadcastList($filter);
         $items = [];
-        foreach($audioIds as $ent => $audio) {
-            $entity = ($ent < 0 ? (new Groups($this->getUser())) : (new Users($this->getUser())))
-                ->get((string) abs($ent));
+        foreach($broadcastList as $res) {
+            $struct = $res->toVkApiStruct();
+            $status = $res->getCurrentAudioStatus();
 
-            $entity->status_audio = $audio;
+            $struct->status_audio = $status ? $this->toSafeAudioStruct($status) : NULL;
+            $items[] = $struct;
         }
 
         return (object) [

@@ -1409,6 +1409,8 @@
 
 "admin_gift_moved_successfully" = "Подарок успешно перемещён";
 "admin_gift_moved_to_recycle" = "Теперь подарок находится в <b>корзине</b>.";
+"admin_original_file" = "Оригинальный файл";
+"admin_audio_length" = "Длина";
 
 "logs" = "Логи";
 "logs_anything" = "Любое";

@@ -160,6 +160,14 @@
     font-size: 10px;
 }
 
+.bigPlayer .paddingLayer .trackInfo .trackName {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 81%;
+    display: inline-block;
+}
+
 .bigPlayer .paddingLayer .trackInfo .timer span {
     font-size: 10px;
 }
@@ -167,64 +175,6 @@
 .bigPlayer .paddingLayer .trackInfo b:hover {
     text-decoration: underline;
     cursor: pointer;
-}
-
-.music-app {
-    display: grid;
-}
-
-.music-app--player {
-    display: grid;
-    grid-template-columns: 32px 32px 32px 1fr;
-    padding: 8px;
-    border-bottom: 1px solid #c1c1c1;
-    border-bottom-style: solid;
-    border-bottom-style: dashed;
-}
-
-.music-app--player .play,
-.music-app--player .perv,
-.music-app--player .next {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-color: #507597;
-    color: #fff;
-    height: 20px;
-    margin: 5px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    padding: 0;
-    font-size: 10px;
-}
-
-.music-app--player .info {
-    margin-left: 10px;
-    width: 550px;
-}
-
-.music-app--player .info .song-name * {
-    color: black;
-}
-
-.music-app--player .info .song-name time {
-    float: right;
-}
-
-.music-app--player .info .track {
-    margin-top: 8px;
-    height: 5px;
-    width: 70%;
-    background-color: #fff;
-    border-top: 1px solid #507597;
-    float: left;
-}
-
-.music-app--player .info .track .inner-track {
-    background-color: #507597;
-    height: inherit;
-    width: 15px;
-    opacity: .7;
 }
 
 .audioEmbed .track > .selectableTrack, .bigPlayer .selectableTrack {
@@ -237,6 +187,7 @@
 }
 
 #audioEmbed {
+    cursor: pointer;
     user-select: none;
     background: #eee;
     height: 40px;
@@ -251,7 +202,7 @@
 }
 
 .audioEntry.nowPlaying {
-    background: #787878;
+    background: #606060;
     border: 1px solid #4f4f4f;
     box-sizing: border-box;
 }
@@ -261,11 +212,15 @@
 }
 
 .audioEntry.nowPlaying:hover {
-    background: rgb(100, 100, 100) !important;
+    background: #4e4e4e !important;
 }
 
 .audioEntry.nowPlaying .performer a {
     color: #f4f4f4 !important;
+}
+
+.audioEntry .performer a {
+    color: #4C4C4C;
 }
 
 .audioEntry.nowPlaying .title {
@@ -285,7 +240,6 @@
 }
 
 .audioEntry {
-    display: flex;
     height: 100%;
     position: relative;
     width: 100%;
@@ -296,6 +250,13 @@
     padding: 10px 9px 9px 9px;
     width: 16px;
     height: 16px;
+}
+
+.audioEntry .subTracks {
+    display: flex;
+    padding-bottom: 5px;
+    padding-left: 8px;
+    padding-right: 12px;
 }
 
 .audioEntry .playerButton .playIcon {
@@ -340,12 +301,16 @@
     display: block;
 }
 
+.audioEntry:hover .volume span {
+    display: none;
+}
+
 .audioEntry .buttons {
     display: none;
     width: 62px;
     height: 20px;
     position: absolute;
-    right: 11%;
+    right: 3%;
     top: 2px;
     /* чтоб избежать заедания во время ховера кнопки добавления */
     clip-path: inset(0 0 0 0);
@@ -542,13 +507,13 @@
 }
 
 /* <center> 🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣*/
-.audiosContainer center span {
+.audiosDiv center span {
     color: #707070;
     margin: 120px 0px !important;
     display: block;
 }
 
-.audiosContainer center {
+.audiosDiv center {
     margin-left: -10px;
 }
 
@@ -614,12 +579,15 @@
 .friendsAudiosList .elem {
     display: flex;
     padding: 1px 1px;
-    width: 100%;
+    width: 148px;
 }
 
 .friendsAudiosList .elem img {
     width: 30px;
     border-radius: 2px;
+    object-fit: cover;
+    height: 31px;
+    min-width: 30px;
 }
 
 .friendsAudiosList .elem .additionalInfo {
@@ -637,6 +605,10 @@
     color: #2B587A;
 }
 
+.friendsAudiosList #used .elem .additionalInfo .name {
+    color: #F4F4F4;
+}
+
 .friendsAudiosList .elem .additionalInfo .desc {
     text-overflow: ellipsis;
     overflow: hidden;
@@ -645,7 +617,16 @@
     font-size: 11px;
 }
 
+.friendsAudiosList #used .elem .additionalInfo .desc {
+    color: #F4F4F4;
+}
+
 .friendsAudiosList .elem:hover {
     background: #E8EBF0;
+    cursor: pointer;
+}
+
+.friendsAudiosList #used .elem:hover {
+    background: #787878;
     cursor: pointer;
 }

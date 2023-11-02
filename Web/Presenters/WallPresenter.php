@@ -331,7 +331,7 @@ final class WallPresenter extends OpenVKPresenter
             }
         }
         
-        if(empty($this->postParam("text")) && sizeof($photos) < 1 && sizeof($videos) && sizeof($audios) < 1 && !$poll && !$note)
+        if(empty($this->postParam("text")) && sizeof($photos) < 1 && sizeof($videos) < 1 && sizeof($audios) < 1 && !$poll && !$note)
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"));
         
         try {

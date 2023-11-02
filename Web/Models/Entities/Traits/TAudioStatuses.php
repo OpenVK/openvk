@@ -7,6 +7,7 @@ trait TAudioStatuses
 {
     function isBroadcastEnabled(): bool
     {
+        if($this->getRealId() < 0) return true;
         return (bool) $this->getRecord()->audio_broadcast_enabled;
     }
 

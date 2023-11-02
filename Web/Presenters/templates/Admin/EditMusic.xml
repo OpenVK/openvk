@@ -16,6 +16,14 @@
                 <input class="text medium-field" type="number" id="id" disabled value="{$audio->getId()}" />
             </div>
             <div class="field-group">
+                <label>{_created}</label>
+                {$audio->getPublicationTime()}
+            </div>
+            <div class="field-group">
+                <label>{_edited}</label>
+                {$audio->getEditTime() ?? "never"}
+            </div>
+            <div class="field-group">
                 <label for="name">{_name}</label>
                 <input class="text medium-field" type="text" id="name" name="name" value="{$audio->getTitle()}" />
             </div>
@@ -28,6 +36,10 @@
                 <textarea class="text medium-field" type="text" id="text" name="text" style="resize: vertical;">{$audio->getLyrics()}</textarea>
             </div>
             <div class="field-group">
+                <label>{_admin_audio_length}</label>
+                {$audio->getFormattedLength()}
+            </div>
+            <div class="field-group">
                 <label for="ext">{_genre}</label>
                 <select class="select medium-field" name="genre">
                     <option n:foreach='\openvk\Web\Models\Entities\Audio::genres as $genre'
@@ -36,10 +48,14 @@
                     </option>
                 </select>
             </div>
+            <div class="field-group">
+                <label>{_admin_original_file}</label>
+                <audio controls src="{$audio->getOriginalURL(true)}">
+            </div>
             <hr />
             <div class="field-group">
                 <label for="owner">{_owner}</label>
-                <input class="text medium-field" type="number" id="owner_id" name="owner" value="{$audio->getOwner()->getId()}" />
+                <input class="text medium-field" type="number" id="owner_id" name="owner" value="{$owner}" />
             </div>
             <div class="field-group">
                 <label for="explicit">Explicit</label>

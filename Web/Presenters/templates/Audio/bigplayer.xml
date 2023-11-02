@@ -17,8 +17,10 @@
 
         <div class="trackPanel">
             <div class="trackInfo">
-                <b>{_track_unknown}</b> —
-                <span>{_track_noname}</span>
+                <div class="trackName">
+                    <b>{_track_unknown}</b> —
+                    <span>{_track_noname}</span>
+                </div>
 
                 <div class="timer" style="float:right">
                     <span class="time">00:00</span>
@@ -27,7 +29,7 @@
                 </div>
             </div>
 
-            <div class="track">
+            <div class="track" style="margin-top: -2px;">
                 <div class="bigPlayerTip">00:00</div>
                 <div class="selectableTrack">
                     <div style="width: 95%;position: relative;">&nbsp;
@@ -39,7 +41,7 @@
 
         <div class="volumePanel">
             <div class="selectableTrack">
-                <div style="position: relative;width:73%">&nbsp;
+                <div style="position: relative;width:72%">&nbsp;
                     <div class="slider"></div>
                 </div>
             </div>

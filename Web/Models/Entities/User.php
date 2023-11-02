@@ -1250,25 +1250,38 @@ class User extends RowModel
         return $res;
     }
 
-    function getFriendsAudios()
+    function getAudiosCollectionSize()
     {
-        $friendsCount = $this->getFriendsCount();
-        $friends = $this->getFriends(max(rand(1, (int)ceil($friendsCount / 6)), 1), 6);
+        return (new \openvk\Web\Models\Repositories\Audios)->getUserCollectionSize($this);
+    }
 
-        $shuffleSeed    = openssl_random_pseudo_bytes(6);
-        $shuffleSeed    = hexdec(bin2hex($shuffleSeed));
+    function getBroadcastList(string $filter = "friends", bool $shuffle = false)
+    {
+        $dbContext = DatabaseConnection::i()->getContext();
+        $entityIds = [];
+        $query     = $dbContext->table("subscriptions")->where("follower", $this->getRealId());
 
-        $friends = knuth_shuffle($friends, $shuffleSeed);
+        if($filter != "all")
+            $query = $query->where("model = ?", "openvk\\Web\\Models\\Entities\\" . ($filter == "groups" ? "Club" : "User"));
+
+        foreach($query as $_rel) {
+            $entityIds[] = $_rel->model == "openvk\\Web\\Models\\Entities\\Club" ? $_rel->target * -1 : $_rel->target;
+        }
+
+        if($shuffle) {
+            $shuffleSeed    = openssl_random_pseudo_bytes(6);
+            $shuffleSeed    = hexdec(bin2hex($shuffleSeed));
+    
+            $entityIds = knuth_shuffle($entityIds, $shuffleSeed);
+        }
+
         $returnArr = [];
         
-        foreach($friends as $friend) {
-            $returnArr[] = [
-                "id"   => $friend->getRealId(),
-                "name" => $friend->getCanonicalName(),
-                "avatar" => $friend->getAvatarURL("miniscule"),
-                "tracksCount" => (new \openvk\Web\Models\Repositories\Audios)->getUserCollectionSize($friend),
-                "nowListening" => $friend->getCurrentAudioStatus(),
-            ];
+        foreach($entityIds as $id) {
+            $entit = $id > 0 ? (new Users)->get($id) : (new Clubs)->get(abs($id));
+
+            if($id > 0 && $entit->isDeleted()) return;
+            $returnArr[] = $entit;
         }
 
         return $returnArr;
