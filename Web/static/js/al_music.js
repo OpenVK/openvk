@@ -346,7 +346,7 @@ class bigPlayer {
         })
 
         u(document).on("keyup", (e) => {
-            if([87, 65, 83, 68, 82].includes(e.keyCode)) {
+            if([87, 65, 83, 68, 82, 77].includes(e.keyCode)) {
                 if(document.querySelector(".ovk-diag-cont") != null)
                     return
 
@@ -364,6 +364,9 @@ class bigPlayer {
                     break
                 case 82:
                     document.querySelector(".bigPlayer .additionalButtons .repeatButton").click()
+                    break
+                case 77:
+                    document.querySelector(".bigPlayer .additionalButtons .deviceButton").click()
                     break
             }
         })
@@ -661,7 +664,21 @@ document.addEventListener("DOMContentLoaded", function() {
 
         if(bigplayer != null)
             bigPlayerObserver.observe(bigplayer);
-}})
+    }
+
+    $(`.audioEntry .mediaInfo`).on("mouseover mouseleave", (e) => {
+        const info = e.currentTarget.closest(".mediaInfo")
+        const overfl = info.querySelector(".info")
+
+        if(e.originalEvent.type == "mouseleave" || e.originalEvent.type == "mouseout") {
+            overfl.classList.add("noOverflow")
+            overfl.classList.remove("overflowedName")
+        } else {
+            overfl.classList.remove("noOverflow")
+            overfl.classList.add("overflowedName")
+        }
+    })
+})
 
 $(document).on("click", ".audioEmbed > *", (e) => {
     const player = e.currentTarget.closest(".audioEmbed")
@@ -827,7 +844,7 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
     let genre = player.dataset.genre
     let lyrics = e.currentTarget.dataset.lyrics
     
-    MessageBox(tr("edit"), `
+    MessageBox(tr("edit_audio"), `
         <div>
             ${tr("performer")}
             <input name="performer" maxlength="40" type="text" value="${performer}">
@@ -854,7 +871,7 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
             <hr>
             <a id="_fullyDeleteAudio">${tr("fully_delete_audio")}</a>
         </div>
-    `, [tr("ok"), tr("cancel")], [
+    `, [tr("save"), tr("cancel")], [
         function() {
             let t_name   = $(".ovk-diag-body input[name=name]").val();
             let t_perf   = $(".ovk-diag-body input[name=performer]").val();
@@ -894,7 +911,7 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
                                 player.querySelector(".title").classList.add("withLyrics")
                             } else {
                                 player.insertAdjacentHTML("beforeend", `
-                                    <div class="lyrics" n:if="!empty($audio->getLyrics())">
+                                    <div class="lyrics">
                                         ${response.new_info.lyrics}
                                     </div>
                                 `)
@@ -1037,7 +1054,7 @@ $(document).on("click", ".musicIcon.add-icon-group", async (ev) => {
     let body = `
         ${tr("what_club_add")}
         <div style="margin-top: 4px;">
-            <select id="addIconsWindow" style="width: 36%;"></select>
+            <select id="addIconsWindow" style="width: 59%;"></select>
             <input name="addButton" type="button" class="button" value="${tr("add")}">
         </div>
         <span class="errorPlace"></span>
@@ -1117,23 +1134,25 @@ $(document).on("click", ".musicIcon.add-icon", (e) => {
 $(document).on("click", "#_deletePlaylist", (e) => {
     let id = e.currentTarget.dataset.id
 
-    $.ajax({
-        type: "POST",
-        url: `/playlist${id}/action?act=delete`,
-        data: {
-            hash: u("meta[name=csrf]").attr("value"),
-        },
-        beforeSend: () => {
-            e.currentTarget.classList.add("lagged")
-        },
-        success: (response) => {
-            if(response.success) {
-                window.location.assign("/playlists" + response.id)
-            } else {
-                fastError(response.flash.message)
+    MessageBox(tr("warning"), tr("sure_delete_playlist"), [tr("yes"), tr("no")], [() => {
+        $.ajax({
+            type: "POST",
+            url: `/playlist${id}/action?act=delete`,
+            data: {
+                hash: u("meta[name=csrf]").attr("value"),
+            },
+            beforeSend: () => {
+                e.currentTarget.classList.add("lagged")
+            },
+            success: (response) => {
+                if(response.success) {
+                    window.location.assign("/playlists" + response.id)
+                } else {
+                    fastError(response.flash.message)
+                }
             }
-        }
-    })
+        })
+    }, Function.noop])
 })
 
 $(document).on("click", "#_audioAttachment", (e) => {

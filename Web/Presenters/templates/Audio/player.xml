@@ -12,7 +12,7 @@
 
             <div class="status" style="margin-top: 12px;">
                 <div class="mediaInfo" style="margin-bottom: -8px; cursor: pointer;display:flex;width: 85%;">
-                    <div style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;">
+                    <div class="info noOverflow">
                         <strong class="performer">
                             <a href="/search?query=&type=audios&sort=id&only_performers=on&query={$audio->getPerformer()}">{ovk_proc_strtr($audio->getPerformer(), 50)}</a>
                         </strong>

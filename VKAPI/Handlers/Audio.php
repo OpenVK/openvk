@@ -184,6 +184,9 @@ final class Audio extends VKAPIRequestHandler
         if(!$user)
             $this->fail(0404, "User not found");
 
+        if(!$user->getPrivacyPermission("audios.read", $this->getUser()))
+            $this->fail(15, "Access denied");
+
         if($uploaded_only) {
             return DatabaseConnection::i()->getContext()->table("audios")
                 ->where([
@@ -263,6 +266,14 @@ final class Audio extends VKAPIRequestHandler
         if($uploaded_only == 1) {
             if($owner_id <= 0)
                 $this->fail(8, "uploaded_only can only be used with owner_id > 0");
+
+            $user = (new \openvk\Web\Models\Repositories\Users)->get($owner_id);
+
+            if(!$user) 
+                $this->fail(0602, "Invalid user");
+
+            if(!$user->getPrivacyPermission("audios.read", $this->getUser()))
+                $this->fail(15, "Access denied: this user chose to hide his audios");
 
             if(!is_null($shuffleSeed)) {
                 $audio_ids = [];
@@ -351,6 +362,7 @@ final class Audio extends VKAPIRequestHandler
     function beacon(int $aid, ?int $gid = NULL): int
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $audio = (new Audios)->get($aid);
         if(!$audio)
@@ -428,6 +440,7 @@ final class Audio extends VKAPIRequestHandler
     function edit(int $owner_id, int $audio_id, ?string $artist = NULL, ?string $title = NULL, ?string $text = NULL, ?int $genre_id = NULL, ?string $genre_str = NULL, int $no_search = 0): int
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $audio = (new Audios)->getByOwnerAndVID($owner_id, $audio_id);
         if(!$audio)
@@ -470,6 +483,7 @@ final class Audio extends VKAPIRequestHandler
     function add(int $audio_id, int $owner_id, ?int $group_id = NULL, ?int $album_id = NULL): string
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         if(!is_null($album_id))
             $this->fail(10, "album_id not implemented");
@@ -504,6 +518,7 @@ final class Audio extends VKAPIRequestHandler
     function delete(int $audio_id, int $owner_id, ?int $group_id = NULL): int
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $from = $this->getUser();
         if(!is_null($group_id)) {
@@ -592,6 +607,7 @@ final class Audio extends VKAPIRequestHandler
     function addAlbum(string $title, ?string $description = NULL, int $group_id = 0): int
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $group = NULL;
         if($group_id != 0) {
@@ -624,6 +640,7 @@ final class Audio extends VKAPIRequestHandler
     function editAlbum(int $album_id, ?string $title = NULL, ?string $description = NULL): int
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $album = (new Audios)->getPlaylist($album_id);
         if(!$album)
@@ -646,6 +663,7 @@ final class Audio extends VKAPIRequestHandler
     function deleteAlbum(int $album_id): int
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $album = (new Audios)->getPlaylist($album_id);
         if(!$album)
@@ -661,6 +679,7 @@ final class Audio extends VKAPIRequestHandler
     function moveToAlbum(int $album_id, string $audio_ids): int
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $album = (new Audios)->getPlaylist($album_id);
         if(!$album)
@@ -700,6 +719,7 @@ final class Audio extends VKAPIRequestHandler
     function removeFromAlbum(int $album_id, string $audio_ids): int
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $album = (new Audios)->getPlaylist($album_id);
         if(!$album)
@@ -739,6 +759,7 @@ final class Audio extends VKAPIRequestHandler
     function bookmarkAlbum(int $id): int
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $album = (new Audios)->getPlaylist($id);
         if(!$album)
@@ -753,6 +774,7 @@ final class Audio extends VKAPIRequestHandler
     function unBookmarkAlbum(int $id): int
     {
         $this->requireUser();
+        $this->willExecuteWriteAction();
 
         $album = (new Audios)->getPlaylist($id);
         if(!$album)

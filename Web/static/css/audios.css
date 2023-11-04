@@ -1,3 +1,14 @@
+.noOverflow {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.overflowedName {
+    position: absolute;
+    z-index: 99;
+}
+
 .musicIcon {
     background-image: url('/assets/packages/static/openvk/img/audios_controls.png');
     background-repeat: no-repeat;

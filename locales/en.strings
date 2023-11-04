@@ -831,6 +831,8 @@
 "audio_successfully_uploaded" = "Audio has been successfully uploaded and is currently being processed.";
 
 "broadcast_audio" = "Broadcast audio to status";
+"sure_delete_playlist" = "Do you sure want to delete this playlist?";
+"edit_audio" = "Edit audio";
 
 /* Notifications */
 
@@ -1938,6 +1940,7 @@
 /* Mobile */
 "mobile_friends" = "Friends";
 "mobile_photos" = "Photos";
+"mobile_audios" = "Audios";
 "mobile_videos" = "Videos";
 "mobile_messages" = "Messages";
 "mobile_notes" = "Notes";
@@ -1950,6 +1953,9 @@
 "mobile_like" = "Like";
 "mobile_user_info_hide" = "Hide";
 "mobile_user_info_show_details" = "Show details";
+
+"my" = "My";
+"enter_a_name_or_artist" = "Enter a name or artist...";
 
 /* Moderation */
 

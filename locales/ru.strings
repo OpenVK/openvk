@@ -786,6 +786,8 @@
 "audio_successfully_uploaded" = "Аудио успешно загружено и на данный момент обрабатывается.";
 
 "broadcast_audio" = "Транслировать аудио в статус";
+"sure_delete_playlist" = "Вы действительно хотите удалить этот плейлист?";
+"edit_audio" = "Редактировать аудиозапись";
 
 /* Notifications */
 
@@ -1827,6 +1829,7 @@
 /* Mobile */
 "mobile_friends" = "Друзья";
 "mobile_photos" = "Фотографии";
+"mobile_audios" = "Аудиозаписи";
 "mobile_videos" = "Видеозаписи";
 "mobile_messages" = "Сообщения";
 "mobile_notes" = "Заметки";
@@ -1839,6 +1842,9 @@
 "mobile_like" = "Нравится";
 "mobile_user_info_hide" = "Скрыть";
 "mobile_user_info_show_details" = "Показать подробнее";
+
+"my" = "Мои";
+"enter_a_name_or_artist" = "Введите название или автора...";
 
 /* Moderation */
 
