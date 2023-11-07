@@ -720,8 +720,8 @@ class User extends RowModel
 
         for($i = 0; $i < 10 - $this->get2faBackupCodeCount(); $i++) {
             $codes[] = [
-                owner => $this->getId(),
-                code => random_int(10000000, 99999999)
+                "owner" => $this->getId(),
+                "code" => random_int(10000000, 99999999)
             ];
         }
 
