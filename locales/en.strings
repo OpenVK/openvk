@@ -833,6 +833,8 @@
 "broadcast_audio" = "Broadcast audio to status";
 "sure_delete_playlist" = "Do you sure want to delete this playlist?";
 "edit_audio" = "Edit audio";
+"audios_group" = "Audios from group";
+"playlists_group" = "Playlists from group";
 
 /* Notifications */
 
@@ -1755,17 +1757,16 @@
 "tour_section_5_text_3" = "In addition to uploading videos directly, the site also supports embedding videos from YouTube";
 
 
-"tour_section_6_title_1" = "Listen to audios";
-"tour_section_6_text_1" = "Вы можете слушать аудиозаписи в разделе \"Мои Аудиозаписи\".";
-"tour_section_6_text_2" = "Этот раздел также регулируется настройками приватности.";
-"tour_section_6_text_3" = "Самые прослушиваемые песни находятся во вкладке \"Популярное\", а недавно загруженные — во вкладке \"Новое\"";
-"tour_section_6_text_4" = "Найти нужную песню можно в поиске.";
-"tour_section_6_text_5" = "Чтобы добавить песню в свою коллекцию, наведите на неё и нажмите на плюс.";
-"tour_section_6_text_6" = "Если вы не можете найти нужную песню, вы можете загрузить её самостоятельно.";
-"tour_section_6_bottom_text_1" = "<b>Важно:</b> песня не должна нарушать авторские права";
-"tour_section_6_title_1" = "Создавайте плейлисты";
-"tour_section_6_text_7" = "Вы можете создавать сборники треков во вкладке \"Мои плейлисты\".";
-"tour_section_6_text_8" = "Можно также добавлять чужие плейлисты в свою коллекцию.";
+"tour_section_6_title_1" = "Listen to music";
+"tour_section_6_text_1" = "You can listen to music in \"My Audios\"";
+"tour_section_6_text_2" = "This section is also controlled by the privacy settings.";
+"tour_section_6_text_3" = "The most listened songs are in \"Popular\", and recently uploaded songs are in \"New\"";
+"tour_section_6_text_4" = "To add a song to your collection, hover over it and click on the \"plus\". You can search for the song you want.";
+"tour_section_6_text_5" = "If you can't find the song you want, you can upload it yourself";
+"tour_section_6_bottom_text_1" = "<b>Important:</b> the song must not infringe copyright";
+"tour_section_6_title_2" = "Create playlists";
+"tour_section_6_text_6" = "You can create playlists in the \"My Playlists\" tab";
+"tour_section_6_text_7" = "You can also add another's playlists to your collection";
 
 
 "tour_section_7_title_1" = "Follow what your friends write";

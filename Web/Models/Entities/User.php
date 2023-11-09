@@ -190,7 +190,7 @@ class User extends RowModel
     function getMorphedName(string $case = "genitive", bool $fullName = true): string
     {
         $name = $fullName ? ($this->getLastName() . " " . $this->getFirstName()) : $this->getFirstName();
-        if(!preg_match("%^[А-яё\-]+$%", $name))
+        if(!preg_match("%[А-яё\-]+$%", $name))
             return $name; # name is probably not russian
 
         $inflected = inflectName($name, $case, $this->isFemale() ? Gender::FEMALE : Gender::MALE);

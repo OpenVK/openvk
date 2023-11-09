@@ -184,8 +184,8 @@
                                 </object>
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('photos')" href="/albums{$thisUser->getId()}" class="link">{_my_photos}</a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('audios')" href="/audios{$thisUser->getId()}" class="link">{_my_audios}</a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('videos')" href="/videos{$thisUser->getId()}" class="link">{_my_videos}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('audios')" href="/audios{$thisUser->getId()}" class="link">{_my_audios}</a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link">{_my_messages}
                                 <object type="internal/link" n:if="$thisUser->getUnreadMessagesCount() > 0">
                                     (<b>{$thisUser->getUnreadMessagesCount()}</b>)

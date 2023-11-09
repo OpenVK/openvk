@@ -671,11 +671,11 @@ document.addEventListener("DOMContentLoaded", function() {
         const overfl = info.querySelector(".info")
 
         if(e.originalEvent.type == "mouseleave" || e.originalEvent.type == "mouseout") {
-            overfl.classList.add("noOverflow")
-            overfl.classList.remove("overflowedName")
+            info.classList.add("noOverflow")
+            info.classList.remove("overflowedName")
         } else {
-            overfl.classList.remove("noOverflow")
-            overfl.classList.add("overflowedName")
+            info.classList.remove("noOverflow")
+            info.classList.add("overflowedName")
         }
     })
 })
@@ -847,12 +847,12 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
     MessageBox(tr("edit_audio"), `
         <div>
             ${tr("performer")}
-            <input name="performer" maxlength="40" type="text" value="${performer}">
+            <input name="performer" maxlength="256" type="text" value="${performer}">
         </div>
 
         <div style="margin-top: 11px">
             ${tr("audio_name")}
-            <input name="name" maxlength="40" type="text" value="${name}">
+            <input name="name" maxlength="256" type="text" value="${name}">
         </div>
 
         <div style="margin-top: 11px">

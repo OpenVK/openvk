@@ -51,11 +51,11 @@
                     <tbody>
                         <tr>
                             <td width="120" valign="top"><span class="nobold">{_audio_name}:</span></td>
-                            <td><input type="text" name="name" autocomplete="off" /></td>
+                            <td><input type="text" name="name" autocomplete="off" maxlength="80" /></td>
                         </tr>
                         <tr>
                             <td width="120" valign="top"><span class="nobold">{_performer}:</span></td>
-                            <td><input name="performer" type="text" autocomplete="off" /></td>
+                            <td><input name="performer" type="text" autocomplete="off" maxlength="80" /></td>
                         </tr>
                         <tr>
                             <td width="120" valign="top"><span class="nobold">{_genre}:</span></td>

@@ -39,10 +39,10 @@
 
         <div style="padding-left: 17px;width: 75%;" class="plinfo">
             <div>
-                <input type="text" name="title" placeholder="{_title}" maxlength="128" />
+                <input type="text" name="title" placeholder="{_title}" maxlength="125" />
             </div>
             <div class="moreInfo" style="margin-top: 11px;">
-                <textarea placeholder="{_description}" name="description" maxlength="2048" />
+                <textarea placeholder="{_description}" name="description" maxlength="2045" />
             </div>
         </div>
     </div>

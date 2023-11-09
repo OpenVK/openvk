@@ -311,8 +311,8 @@ final class AudioPresenter extends OpenVKPresenter
 
             $playlist = new Playlist;
             $playlist->setOwner($owner);
-            $playlist->setName(substr($title, 0, 128));
-            $playlist->setDescription(substr($description, 0, 2048));
+            $playlist->setName(substr($title, 0, 125));
+            $playlist->setDescription(substr($description, 0, 2045));
 
             if($_FILES["cover"]["error"] === UPLOAD_ERR_OK) {
                 if(!str_starts_with($_FILES["cover"]["type"], "image"))
@@ -432,8 +432,8 @@ final class AudioPresenter extends OpenVKPresenter
         if(empty($title) || iconv_strlen($title) < 1)
             $this->flashFail("err", tr("error"), tr("set_playlist_name"));
         
-        $playlist->setName(ovk_proc_strtr($title, 128));
-        $playlist->setDescription(ovk_proc_strtr($description, 2048));
+        $playlist->setName(ovk_proc_strtr($title, 125));
+        $playlist->setDescription(ovk_proc_strtr($description, 2045));
         $playlist->setEdited(time());
         $playlist->resetLength();
 

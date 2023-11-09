@@ -26,11 +26,11 @@
 
         <div style="padding-left: 13px;width:75%">
             <div class="playlistInfo">
-                <input value="{$playlist->getName()}" type="text" name="title">
+                <input value="{$playlist->getName()}" type="text" name="title" maxlength="125">
             </div>
 
             <div class="moreInfo">
-                <textarea name="description" style="margin-top: 11px;">{$playlist->getDescription()}</textarea>
+                <textarea name="description" maxlength="2045" style="margin-top: 11px;">{$playlist->getDescription()}</textarea>
             </div>
         </div>
     </div>
