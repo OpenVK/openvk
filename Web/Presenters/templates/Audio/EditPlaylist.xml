@@ -37,12 +37,12 @@
 
     <div style="margin-top: 19px;">
         <input id="playlist_query" type="text" style="height: 26px;" placeholder="{_header_search}">
-        <div class="playlistAudiosContainer" style="display:table;clear:both;width:100%;margin-top: 10px;">
+        <div class="playlistAudiosContainer editContainer">
             <div id="newPlaylistAudios" n:foreach="$audios as $audio">
-                <div style="width: 78%;float: left;">
+                <div class="playerContainer">
                     {include "player.xml", audio => $audio, hideButtons => true}
                 </div>
-                <div class="attachAudio addToPlaylist" data-id="{$audio->getId()}" style="width: 22%;">
+                <div class="attachAudio addToPlaylist" data-id="{$audio->getId()}">
                     <span>{_remove_from_playlist}</span>
                 </div>
             </div>

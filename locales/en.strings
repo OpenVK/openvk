@@ -347,6 +347,7 @@
 "albums" = "Albums";
 "album" = "Album";
 "photos" = "photos";
+"photo" = "Photo";
 "create_album" = "Create album";
 "edit_album" = "Edit album";
 "edit_photo" = "Edit photo";
@@ -1530,6 +1531,8 @@
 "admin_gift_moved_to_recycle" = "This gift will now be in <b>Recycle Bin</b>.";
 "admin_original_file" = "Original file";
 "admin_audio_length" = "Length";
+"admin_cover_id" = "Cover (photo ID)";
+"admin_music" = "Music";
 
 "logs" = "Logs";
 "logs_anything" = "Anything";

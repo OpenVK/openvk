@@ -14,10 +14,10 @@
                 <div class="mediaInfo" style="margin-bottom: -8px; cursor: pointer;display:flex;width: 85%;">
                     <div class="info noOverflow">
                         <strong class="performer">
-                            <a href="/search?query=&type=audios&sort=id&only_performers=on&query={$audio->getPerformer()}">{$audio->getPerformer()}</a>
+                            <a href="/search?query=&type=audios&sort=id&only_performers=on&query={$audio->getPerformer()}">{ovk_proc_strtr($audio->getPerformer(), 30)}</a>
                         </strong>
                         —
-                        <span class="title {if !empty($audio->getLyrics())}withLyrics{/if}">{$audio->getTitle()}</span>
+                        <span class="title {if !empty($audio->getLyrics())}withLyrics{/if}">{ovk_proc_strtr($audio->getTitle(), 30)}</span>
                     </div>
 
                     <div class="explicitMark" n:if="$audio->isExplicit()"></div>
@@ -25,7 +25,7 @@
             </div>
 
             <div class="volume" style="display: flex; flex-direction: column;width:14%;">
-                <span class="nobold" data-unformatted="{$audio->getLength()}" style="text-align: center;margin-top: 12px;">{$audio->getFormattedLength()}</span>
+                <span class="nobold {if !$hideButtons}hideOnHover{/if}" data-unformatted="{$audio->getLength()}" style="text-align: center;margin-top: 12px;">{$audio->getFormattedLength()}</span>
                 <div class="buttons" style="margin-top: 8px;">
                     {php $hasAudio = isset($thisUser) && $audio->isInLibraryOf($thisUser)}
 

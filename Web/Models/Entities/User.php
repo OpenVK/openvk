@@ -464,7 +464,6 @@ class User extends RowModel
                 "links",
                 "poster",
                 "apps",
-                "audios",
             ],
         ])->get($id);
     }

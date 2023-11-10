@@ -1415,6 +1415,8 @@
 "admin_gift_moved_to_recycle" = "Теперь подарок находится в <b>корзине</b>.";
 "admin_original_file" = "Оригинальный файл";
 "admin_audio_length" = "Длина";
+"admin_cover_id" = "Обложка (ID фото)";
+"admin_music" = "Музыка";
 
 "logs" = "Логи";
 "logs_anything" = "Любое";

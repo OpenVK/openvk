@@ -312,7 +312,7 @@
     display: block;
 }
 
-.audioEntry:hover .volume span {
+.audioEntry:hover .volume .hideOnHover {
     display: none;
 }
 
@@ -640,4 +640,22 @@
 .friendsAudiosList #used .elem:hover {
     background: #787878;
     cursor: pointer;
+}
+
+.editContainer {
+    display:table;
+    clear:both;
+    width:100%;
+    margin-top: 10px;
+}
+
+.editContainer .playerContainer {
+    width: 78%;
+    float: left;
+    max-width: 78%;
+    min-width: 68%;
+}
+
+.addToPlaylist {
+    width: 22%;
 }

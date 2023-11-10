@@ -25,10 +25,10 @@ searcher.successCallback = (response, thisc) => {
 
         document.querySelector(".playlistAudiosContainer").insertAdjacentHTML("beforeend", `
             <div id="newPlaylistAudios">
-                <div style="width: 78%;float: left;">
+                <div class="playerContainer">
                     ${el.outerHTML}
                 </div>
-                <div class="attachAudio addToPlaylist" data-id="${id}" style="width: 22%;">
+                <div class="attachAudio addToPlaylist" data-id="${id}">
                     <span>${isAttached ? tr("remove_from_playlist") : tr("add_to_playlist")}</span>
                 </div>
             </div>

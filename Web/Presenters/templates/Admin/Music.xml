@@ -37,7 +37,7 @@
                 <tr>
                     <th>ID</th>
                     <th>{_admin_author}</th>
-                    <th>Исполнитель</th>
+                    <th>{_peformer}</th>
                     <th>{_admin_title}</th>
                     <th>{_genre}</th>
                     <th>Explicit</th>
@@ -88,8 +88,8 @@
                     <th>ID</th>
                     <th>{_admin_author}</th>
                     <th>{_name}</th>
-                    <th>Создан</th>
-                    <th>Действия</th>
+                    <th>{_created_playlist}</th>
+                    <th>{_actions}</th>
                 </tr>
             </thead>
             <tbody>
@@ -113,12 +113,12 @@
                                 <img src="{$playlist->getCoverURL()}" alt="{$owner->getCanonicalName()}" style="object-fit: cover;" role="presentation" />
                             </span>
                         </span>
-                        {$playlist->getName()}
+                        {ovk_proc_strtr($playlist->getName(), 30)}
                     </td>
                     <td>{$playlist->getCreationTime()}</td>
                     <td>
                         <a class="aui-button aui-button-primary" href="/admin/playlist/{$playlist->getId()}/edit">
-                            <span class="aui-icon aui-icon-small aui-iconfont-new-edit">Редактировать</span>
+                            <span class="aui-icon aui-icon-small aui-iconfont-new-edit">{_edit}</span>
                         </a>
                     </td>
                 </tr>

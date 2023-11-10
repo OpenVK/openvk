@@ -16,15 +16,15 @@
                 <input class="text medium-field" type="number" id="id" disabled value="{$playlist->getId()}" />
             </div>
             <div class="field-group">
-                <label for="name">Название</label>
+                <label for="name">{_name}</label>
                 <input class="text medium-field" type="text" id="name" name="name" value="{$playlist->getName()}" />
             </div>
             <div class="field-group">
-                <label for="ext">Описание</label>
+                <label for="ext">{_description}</label>
                 <textarea class="text medium-field" type="text" id="description" name="description" style="resize: vertical;">{$playlist->getDescription()}</textarea>
             </div>
             <div class="field-group">
-                <label for="ext">Обложка (ID фото)</label>
+                <label for="ext">{_admin_cover_id}</label>
                 <span id="avatar" class="aui-avatar aui-avatar-project aui-avatar-xlarge">
                     <span class="aui-avatar-inner">
                         <img src="{$playlist->getCoverUrl()}" style="object-fit: cover;"></img>
@@ -35,11 +35,11 @@
             </div>
             <hr />
             <div class="field-group">
-                <label for="owner">Владелец</label>
+                <label for="owner">{_owner}</label>
                 <input class="text medium-field" type="number" id="owner_id" name="owner" value="{$playlist->getOwner()->getId()}" />
             </div>
             <div class="field-group">
-                <label for="deleted">Удален</label>
+                <label for="deleted">{_deleted}</label>
                 <input class="toggle-large" type="checkbox" id="deleted" name="deleted" value="1" {if $playlist->isDeleted()} checked {/if} />
             </div>
             <hr />

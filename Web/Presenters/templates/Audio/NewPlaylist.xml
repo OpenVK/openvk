@@ -49,12 +49,12 @@
 
     <div style="margin-top: 19px;">
         <input id="playlist_query" type="text" style="height: 26px;" placeholder="{_header_search}">
-        <div class="playlistAudiosContainer" style="display:table;clear:both;width:100%;margin-top: 10px;">
+        <div class="playlistAudiosContainer editContainer">
             <div id="newPlaylistAudios" n:foreach="$audios as $audio">
                 <div style="width: 78%;float: left;">
                     {include "player.xml", audio => $audio, hideButtons => true}
                 </div>
-                <div class="attachAudio addToPlaylist" data-id="{$audio->getId()}" style="width: 22%;">
+                <div class="attachAudio addToPlaylist" data-id="{$audio->getId()}">
                     <span>{_add_to_playlist}</span>
                 </div>
             </div>
@@ -66,9 +66,9 @@
     </div>
 
     <form method="post" id="newPlaylistForm" enctype="multipart/form-data">
-        <input type="hidden" name="title" maxlength="128" />
+        <input type="hidden" name="title" maxlength="125" />
         <input type="hidden" name="hash" value="{$csrfToken}" />
-        <textarea style="display:none;" name="description" maxlength="2048" />
+        <textarea style="display:none;" name="description" maxlength="2045" />
         <input type="hidden" name="audios">
         <input type="file" style="display:none;" name="cover" accept=".jpg,.png">
 
