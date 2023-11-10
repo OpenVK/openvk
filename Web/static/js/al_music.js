@@ -989,6 +989,8 @@ $(document).on("click", ".title.withLyrics", (e) => {
 })
 
 $(document).on("click", ".musicIcon.remove-icon", (e) => {
+    e.stopImmediatePropagation()
+
     let id = e.currentTarget.dataset.id
 
     let formdata = new FormData()
@@ -1023,6 +1025,8 @@ $(document).on("click", ".musicIcon.remove-icon", (e) => {
 })
 
 $(document).on("click", ".musicIcon.remove-icon-group", (e) => {
+    e.stopImmediatePropagation()
+    
     let id = e.currentTarget.dataset.id
 
     let formdata = new FormData()
