@@ -1,6 +1,6 @@
--- Remote line 2 on 3 if it causes errors
-DROP TABLE `audios`;
-DROP TABLE `audio_relations`;
+-- Apply these two commands if you installed OpenVK before 12th November 2023 OR if it's just doesn't work out of box, then apply this file again
+-- DROP TABLE `audios`;
+-- DROP TABLE `audio_relations`;
 
 CREATE TABLE IF NOT EXISTS `audios` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
