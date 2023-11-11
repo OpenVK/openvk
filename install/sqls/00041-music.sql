@@ -1,3 +1,7 @@
+-- Remote line 2 on 3 if it causes errors
+DROP TABLE `audios`;
+DROP TABLE `audio_relations`;
+
 CREATE TABLE IF NOT EXISTS `audios` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `owner` bigint unsigned NOT NULL,
