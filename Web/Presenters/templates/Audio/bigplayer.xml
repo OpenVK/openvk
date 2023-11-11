@@ -2,7 +2,7 @@
     <audio class="audio" />
     <div class="paddingLayer">
         <div class="playButtons">
-            <div class="playButton musicIcon"></div>
+            <div class="playButton musicIcon" title="{_play_tip} [Space]"></div>
                 
             <div class="arrowsButtons">
                 <div>
@@ -48,9 +48,9 @@
         </div>
 
         <div class="additionalButtons">
-            <div class="repeatButton musicIcon"></div>
-            <div class="shuffleButton musicIcon"></div>
-            <div class="deviceButton musicIcon"></div>
+            <div class="repeatButton musicIcon" title="{_repeat_tip} [R]" ></div>
+            <div class="shuffleButton musicIcon" title="{_shuffle_tip}"></div>
+            <div class="deviceButton musicIcon" title="{_mute_tip} [M]"></div>
         </div>
     </div>
 </div>

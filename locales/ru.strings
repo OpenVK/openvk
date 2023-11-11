@@ -791,6 +791,11 @@
 "audios_group" = "Аудиозаписи группы";
 "playlists_group" = "Плейлисты группы";
 
+"play_tip" = "Проигрывание/пауза";
+"repeat_tip" = "Повторение";
+"shuffle_tip" = "Перемешать";
+"mute_tip" = "Заглушить";
+
 /* Notifications */
 
 "feedback" = "Ответы";

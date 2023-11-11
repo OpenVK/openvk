@@ -93,7 +93,7 @@
                     <div class="infObj" n:foreach="$playlists as $playlist">
                         <a href="/playlist{$playlist->getPrettyId()}">
                             <div class="playlistCover">
-                                <img src="{$playlist->getCoverURL()}">
+                                <img src="{$playlist->getCoverURL()}" alt="{_playlist_cover}">
                             </div>
                         </a>
 

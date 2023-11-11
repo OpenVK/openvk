@@ -16,7 +16,7 @@
     <div class="playlistBlock" style="display: flex;margin-top: 0px;">
         <div class="playlistCover">
             <a>
-                <img src="{$playlist->getCoverURL('normal')}">
+                <img src="{$playlist->getCoverURL('normal')}" alt="{_playlist_cover}">
             </a>
 
             <div class="profile_links" style="width: 139px;">

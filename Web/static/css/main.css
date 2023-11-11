@@ -2974,7 +2974,9 @@ body.article .floating_sidebar, body.article .page_content {
 }
 
 hr {
-    color: #d0cdcd;
+    background-color: #d8d8d8;
+    border: none;
+    height: 1px;
 }
 
 .searchList hr {

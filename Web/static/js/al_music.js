@@ -12,6 +12,8 @@ function fastError(message) {
 function getElapsedTime(fullTime, time) {
     let timer = fullTime - time
 
+    if(timer < 0) return "-00:00"
+
     return "-" + fmtTime(timer)
 }
 
@@ -1187,7 +1189,7 @@ $(document).on("click", "#_audioAttachment", (e) => {
         let count = Number(result.querySelector("input[name='count']").value)
 
         if(count < 1) {
-            document.querySelector(".audiosInsert").innerHTML = tr("no_results")
+            document.querySelector(".audiosInsert").innerHTML = thisc.context_type == "entity_audios" ? tr("no_audios_thisuser") : tr("no_results")
             return
         }
 
@@ -1210,7 +1212,7 @@ $(document).on("click", "#_audioAttachment", (e) => {
         if(thisc.page < pagesCount) {
             document.querySelector(".audiosInsert").insertAdjacentHTML("beforeend", `
             <div id="showMoreAudios" data-pagesCount="${pagesCount}" data-page="${thisc.page + 1}" class="showMore">
-                <span>more...</span>
+                <span>${tr("show_more_audios")}</span>
             </div>`)
         }
     }

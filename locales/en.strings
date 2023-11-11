@@ -837,6 +837,11 @@
 "audios_group" = "Audios from group";
 "playlists_group" = "Playlists from group";
 
+"play_tip" = "Play/pause";
+"repeat_tip" = "Repeat";
+"shuffle_tip" = "Shuffle";
+"mute_tip" = "Mute";
+
 /* Notifications */
 
 "feedback" = "Feedback";
