@@ -120,7 +120,7 @@ class Audio extends Media
                 Shell::powershell("-executionpolicy bypass", "-File", __DIR__ . "/../shell/processAudio.ps1", ...$args)
                 ->start();
             } else {
-                Shell::bash(__DIR__ . "/../shell/processAudio.ps1", ...$args) // Pls workkkkk
+                Shell::bash(__DIR__ . "/../shell/processAudio.sh", ...$args) // Pls workkkkk
                 ->start();                                                    // idk, not tested :")
             }
 
