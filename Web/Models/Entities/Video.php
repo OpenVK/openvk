@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
 use openvk\Web\Util\Shell\Shell;
-use openvk\Web\Util\Shell\Shell\Exceptions\{ShellUnavailableException, UnknownCommandException};
+use openvk\Web\Util\Shell\Exceptions\{ShellUnavailableException, UnknownCommandException};
 use openvk\Web\Models\VideoDrivers\VideoDriver;
 use Nette\InvalidStateException as ISE;
 

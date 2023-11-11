@@ -3,7 +3,7 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Club, Photo, Post};
 use Nette\InvalidStateException;
 use openvk\Web\Models\Entities\Notifications\ClubModeratorNotification;
-use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers, Topics};
+use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers, Topics, Audios};
 use Chandler\Security\Authenticator;
 
 final class GroupPresenter extends OpenVKPresenter
@@ -31,6 +31,8 @@ final class GroupPresenter extends OpenVKPresenter
                 $this->template->albumsCount = (new Albums)->getClubAlbumsCount($club);
                 $this->template->topics = (new Topics)->getLastTopics($club, 3);
                 $this->template->topicsCount = (new Topics)->getClubTopicsCount($club);
+                $this->template->audios      = (new Audios)->getRandomThreeAudiosByEntityId($club->getRealId());
+                $this->template->audiosCount = (new Audios)->getClubCollectionSize($club);
             }
 
             $this->template->club = $club;
@@ -218,6 +220,7 @@ final class GroupPresenter extends OpenVKPresenter
             $club->setAdministrators_List_Display(empty($this->postParam("administrators_list_display")) ? 0 : $this->postParam("administrators_list_display"));
 	    $club->setEveryone_Can_Create_Topics(empty($this->postParam("everyone_can_create_topics")) ? 0 : 1);
             $club->setDisplay_Topics_Above_Wall(empty($this->postParam("display_topics_above_wall")) ? 0 : 1);
+            $club->setEveryone_can_upload_audios(empty($this->postParam("upload_audios")) ? 0 : 1);
             $club->setHide_From_Global_Feed(empty($this->postParam("hide_from_global_feed")) ? 0 : 1);
             
             $website = $this->postParam("website") ?? "";

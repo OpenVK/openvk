@@ -15,6 +15,7 @@ use openvk\Web\Models\Entities\Video;
 use openvk\Web\Models\Repositories\Videos as VideosRepo;
 use openvk\Web\Models\Entities\Note;
 use openvk\Web\Models\Repositories\Notes as NotesRepo;
+use openvk\Web\Models\Repositories\Audios as AudiosRepo;
 
 final class Wall extends VKAPIRequestHandler
 {
@@ -58,6 +59,8 @@ final class Wall extends VKAPIRequestHandler
                     $attachments[] = $attachment->getApiStructure();
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Note) {
                     $attachments[] = $attachment->toVkApiStruct();
+                } else if ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
+                    $attachments[] = $attachment->toVkApiStruct($this->getUser());
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Post) {
                     $repostAttachments = [];
 
@@ -233,6 +236,8 @@ final class Wall extends VKAPIRequestHandler
                         $attachments[] = $attachment->getApiStructure();
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Note) {
                         $attachments[] = $attachment->toVkApiStruct();
+                    } else if ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
+                        $attachments[] = $attachment->toVkApiStruct($this->getUser());
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Post) {
                         $repostAttachments = [];
 
@@ -450,6 +455,8 @@ final class Wall extends VKAPIRequestHandler
                     $attachmentType = "video";
                 elseif(str_contains($attac, "note"))
                     $attachmentType = "note";
+                elseif(str_contains($attac, "audio"))
+                    $attachmentType = "audio";
                 else
                     $this->fail(205, "Unknown attachment type");
 
@@ -482,6 +489,12 @@ final class Wall extends VKAPIRequestHandler
                         $this->fail(100, "Note does not exist");
                     if(!$attacc->getOwner()->getPrivacyPermission('notes.read', $this->getUser()))
                         $this->fail(11, "Access to note denied");
+
+                    $post->attach($attacc);
+                } elseif($attachmentType == "audio") {
+                    $attacc = (new AudiosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
+                    if(!$attacc || $attacc->isDeleted())
+                        $this->fail(100, "Audio does not exist");
 
                     $post->attach($attacc);
                 }
@@ -562,6 +575,8 @@ final class Wall extends VKAPIRequestHandler
                     $attachments[] = $this->getApiPhoto($attachment);
                 } elseif($attachment instanceof \openvk\Web\Models\Entities\Note) {
                     $attachments[] = $attachment->toVkApiStruct();
+                } elseif($attachment instanceof \openvk\Web\Models\Entities\Audio) {
+                    $attachments[] = $attachment->toVkApiStruct($this->getUser());
                 }
             }
 
@@ -628,6 +643,8 @@ final class Wall extends VKAPIRequestHandler
         foreach($comment->getChildren() as $attachment) {
             if($attachment instanceof \openvk\Web\Models\Entities\Photo) {
                 $attachments[] = $this->getApiPhoto($attachment);
+            } elseif($attachment instanceof \openvk\Web\Models\Entities\Audio) {
+                $attachments[] = $attachment->toVkApiStruct($this->getUser());
             }
         }
 
@@ -719,6 +736,8 @@ final class Wall extends VKAPIRequestHandler
                     $attachmentType = "photo";
                 elseif(str_contains($attac, "video"))
                     $attachmentType = "video";
+                elseif(str_contains($attac, "audio"))
+                    $attachmentType = "audio";
                 else
                     $this->fail(205, "Unknown attachment type");
 
@@ -743,6 +762,12 @@ final class Wall extends VKAPIRequestHandler
                         $this->fail(100, "Video does not exists");
                     if(!$attacc->getOwner()->getPrivacyPermission('videos.read', $this->getUser()))
                         $this->fail(11, "Access to video denied");
+
+                    $comment->attach($attacc);
+                } elseif($attachmentType == "audio") {
+                    $attacc = (new AudiosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
+                    if(!$attacc || $attacc->isDeleted())
+                        $this->fail(100, "Audio does not exist");
 
                     $comment->attach($attacc);
                 }

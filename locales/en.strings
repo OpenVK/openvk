@@ -479,6 +479,7 @@
 "my_videos" = "My Videos";
 "my_messages" = "My Messages";
 "my_notes" = "My Notes";
+"my_audios" = "My Audios";
 "my_groups" = "My Groups";
 "my_feed" = "My Feed";
 "my_feedback" = "My Feedback";
@@ -568,6 +569,7 @@
 "privacy_setting_add_to_friends" = "Who can add me to friends";
 "privacy_setting_write_wall" = "Who can publish post on my wall";
 "privacy_setting_write_messages" = "Who can write messages to me";
+"privacy_setting_view_audio" = "Who can see my audios";
 "privacy_value_anybody" = "Anybody";
 "privacy_value_anybody_dative" = "Anybody";
 "privacy_value_users" = "OpenVK users";
@@ -713,11 +715,132 @@
 "upload_new_video" = "Upload new video";
 "max_attached_videos" = "Max is 10 videos";
 "max_attached_photos" = "Max is 10 photos";
+"max_attached_audios" = "Max is 10 audios";
 "no_videos" = "You don't have uploaded videos.";
 "no_videos_results" = "No results.";
 
 "change_video" = "Change video";
 "unknown_video" = "This video is not supported in your version of OpenVK.";
+
+
+/* Audios */
+
+"audios" = "Audios";
+"audio" = "Audio";
+"playlist" = "Playlist";
+"upload_audio" = "Upload audio";
+"upload_audio_to_group" = "Upload audio to group";
+
+"performer" = "Performer";
+"audio_name" = "Name";
+"genre" = "Genre";
+"lyrics" = "Lyrics";
+
+"select_another_file" = "Select another file";
+
+"limits" = "Limits";
+"select_audio" = "Select audio from your computer";
+"audio_requirements" = "Audio must be between $1s to $2 minutes, weights to $3MB and contain audio stream.";
+"audio_requirements_2" = "Audio must not infringe copyright and related rights";
+"you_can_also_add_audio_using" = "You can also add audio from among the files you have already downloaded using";
+"search_audio_inst" = "audios search";
+
+"audio_embed_not_found" = "Audio not found";
+"audio_embed_deleted" = "Audio was deleted";
+"audio_embed_withdrawn" = "The audio was withdrawn at the request of the copyright holder";
+"audio_embed_forbidden" = "The user's privacy settings do not allow this embed this audio";
+"audio_embed_processing" = "Audio is still being processed, or has not been processed correctly.";
+
+"audios_count_zero" = "No audios";
+"audios_count_one" = "One audio";
+"audios_count_few" = "$1 audios";
+"audios_count_many" = "$1 audios";
+"audios_count_other" = "$1 audios";
+
+"track_unknown" = "Unknown";
+"track_noname" = "Without name";
+
+"my_music" = "My music";
+"music_user" = "User's music";
+"music_club" = "Club's music";
+"audio_new" = "New";
+"audio_popular" = "Popular";
+"audio_search" = "Search";
+
+"my_audios_small" = "My audios";
+"my_playlists" = "My playlists";
+"playlists" = "Playlists";
+"audios_explicit" = "Contains obscene language";
+"withdrawn" = "Withdrawn";
+"deleted" = "Deleted";
+"owner" = "Owner";
+"searchable" = "Searchable";
+
+"select_audio" = "Select audios";
+"no_playlists_thisuser" = "You haven't added any playlists yet.";
+"no_playlists_user" = "This user has not added any playlists yet.";
+"no_playlists_club" = "This group hasn't added playlists yet.";
+
+"no_audios_thisuser" = "You haven't added any audios yet.";
+"no_audios_user" = "This user has not added any audios yet.";
+"no_audios_club" = "This group has not added any audios yet.";
+
+"new_playlist" = "New playlist";
+"created_playlist" = "created";
+"updated_playlist" = "updated";
+"bookmark" = "Add to collection";
+"unbookmark" = "Remove from collection";
+"empty_playlist" = "There are no audios in this playlist.";
+"edit_playlist" = "Edit playlist";
+"unable_to_load_queue" = "Error when loading queue.";
+
+"fully_delete_audio" = "Fully delete audio";
+"attach_audio" = "Attach audio";
+"detach_audio" = "Detach audio";
+
+"show_more_audios" = "Show more audios";
+"add_to_playlist" = "Add to playlist";
+"remove_from_playlist" = "Remove from playlist";
+"delete_playlist" = "Delete playlist";
+"playlist_cover" = "Playlist cover";
+
+"playlists_user" = "Users playlists";
+"playlists_club" = "Groups playlists";
+"change_cover" = "Change cover";
+"playlist_cover" = "Playlist's cover";
+
+"minutes_count_zero" = "lasts no minutes";
+"minutes_count_one" = "lasts one minute";
+"minutes_count_few" = "lasts $1 minutes";
+"minutes_count_many" = "lasts $1 minutes";
+"minutes_count_other" = "lasts $1 minutes";
+
+"listens_count_zero" = "no listens";
+"listens_count_one" = "one listen";
+"listens_count_few" = "$1 listens";
+"listens_count_many" = "$1 listens";
+"listens_count_other" = "$1 listens";
+
+"add_audio_to_club" = "Add audio to group";
+"what_club_add" = "Which group do you want to add the song to?";
+"group_has_audio" = "This group already has this song.";
+"group_hasnt_audio" = "This group doesn't have this song.";
+
+"by_name" = "by name";
+"by_performer" = "by performer";
+"no_access_clubs" = "There are no groups where you are an administrator.";
+"audio_successfully_uploaded" = "Audio has been successfully uploaded and is currently being processed.";
+
+"broadcast_audio" = "Broadcast audio to status";
+"sure_delete_playlist" = "Do you sure want to delete this playlist?";
+"edit_audio" = "Edit audio";
+"audios_group" = "Audios from group";
+"playlists_group" = "Playlists from group";
+
+"play_tip" = "Play/pause";
+"repeat_tip" = "Repeat";
+"shuffle_tip" = "Shuffle";
+"mute_tip" = "Mute";
 
 /* Notifications */
 
@@ -983,6 +1106,7 @@
 "going_to_report_photo" = "You are about to report this photo.";
 "going_to_report_user" = "You are about to report this user.";
 "going_to_report_video" = "You are about to report this video.";
+"going_to_report_audio" = "You are about to report this audio.";
 "going_to_report_post" = "You are about to report this post.";
 "going_to_report_comment" = "You are about to report this comment.";
 
@@ -1111,6 +1235,7 @@
 "created" = "Created";
 
 "everyone_can_create_topics" = "Everyone can create topics";
+"everyone_can_upload_audios" = "Everyone can upload audios";
 "display_list_of_topics_above_wall" = "Display a list of topics above the wall";
 
 "topic_changes_saved_comment" = "The updated title and settings will appear on the topic page.";
@@ -1287,6 +1412,22 @@
 
 "description_too_long" = "Description is too long.";
 
+"invalid_audio" = "Invalid audio.";
+"do_not_have_audio" = "You don't have this audio.";
+"do_have_audio" = "You already have this audio.";
+
+"set_playlist_name" = "Enter the playlist name.";
+"playlist_already_bookmarked" = "This playlist is already in your collection.";
+"playlist_not_bookmarked" = "This playlist is not in your collection.";
+"invalid_cover_photo" = "Error when loading cover photo.";
+"not_a_photo" = "Uploaded file doesn't look like a photo.";
+"file_too_big" = "File is too big.";
+"file_loaded_partially" = "The file has been uploaded partially.";
+"file_not_uploaded" = "Failed to upload the file.";
+"error_code" = "Error code: $1.";
+"ffmpeg_timeout" = "Timed out waiting ffmpeg. Try to upload file again.";
+"ffmpeg_not_installed" = "Failed to proccess the file. It looks like ffmpeg is not installed on this server.";
+
 /* Admin actions */
 
 "login_as" = "Login as $1";
@@ -1393,6 +1534,10 @@
 
 "admin_gift_moved_successfully" = "Gift moved successfully";
 "admin_gift_moved_to_recycle" = "This gift will now be in <b>Recycle Bin</b>.";
+"admin_original_file" = "Original file";
+"admin_audio_length" = "Length";
+"admin_cover_id" = "Cover (photo ID)";
+"admin_music" = "Music";
 
 "logs" = "Logs";
 "logs_anything" = "Anything";
@@ -1620,8 +1765,16 @@
 "tour_section_5_text_3" = "In addition to uploading videos directly, the site also supports embedding videos from YouTube";
 
 
-"tour_section_6_title_1" = "Audios section, which doesn't exist yet xdddd";
-"tour_section_6_text_1" = "I would love to do a tutorial on this section, but sunshine Vriska didn't make the music :c";
+"tour_section_6_title_1" = "Listen to music";
+"tour_section_6_text_1" = "You can listen to music in \"My Audios\"";
+"tour_section_6_text_2" = "This section is also controlled by the privacy settings.";
+"tour_section_6_text_3" = "The most listened songs are in \"Popular\", and recently uploaded songs are in \"New\"";
+"tour_section_6_text_4" = "To add a song to your collection, hover over it and click on the \"plus\". You can search for the song you want.";
+"tour_section_6_text_5" = "If you can't find the song you want, you can upload it yourself";
+"tour_section_6_bottom_text_1" = "<b>Important:</b> the song must not infringe copyright";
+"tour_section_6_title_2" = "Create playlists";
+"tour_section_6_text_6" = "You can create playlists in the \"My Playlists\" tab";
+"tour_section_6_text_7" = "You can also add another's playlists to your collection";
 
 
 "tour_section_7_title_1" = "Follow what your friends write";
@@ -1732,6 +1885,8 @@
 "s_order_by_name" = "By name";
 "s_order_by_random" = "By random";
 "s_order_by_rating" = "By rating";
+"s_order_by_length" = "By length";
+"s_order_by_listens" = "By listens count";
 "s_order_invert" = "Invert";
 
 "s_by_date" = "By date";
@@ -1753,6 +1908,8 @@
 "deleted_target_comment" = "This comment belongs to deleted post";
 
 "no_results" = "No results";
+"s_only_performers" = "Performers only";
+"s_with_lyrics" = "With lyrics";
 
 /* BadBrowser */
 
@@ -1792,6 +1949,7 @@
 /* Mobile */
 "mobile_friends" = "Friends";
 "mobile_photos" = "Photos";
+"mobile_audios" = "Audios";
 "mobile_videos" = "Videos";
 "mobile_messages" = "Messages";
 "mobile_notes" = "Notes";
@@ -1804,6 +1962,9 @@
 "mobile_like" = "Like";
 "mobile_user_info_hide" = "Hide";
 "mobile_user_info_show_details" = "Show details";
+
+"my" = "My";
+"enter_a_name_or_artist" = "Enter a name or artist...";
 
 /* Moderation */
 

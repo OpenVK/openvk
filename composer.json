@@ -16,6 +16,7 @@
         "vearutop/php-obscene-censor-rus": "dev-master",
         "erusev/parsedown": "dev-master",
         "bhaktaraz/php-rss-generator": "dev-master",
+        "ext-openssl": "*",
         "ext-simplexml": "*",
         "symfony/console": "5.4.x-dev",
         "wapmorgan/morphos": "dev-master",

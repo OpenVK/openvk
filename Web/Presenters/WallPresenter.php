@@ -3,7 +3,7 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Models\Exceptions\TooMuchOptionsException;
 use openvk\Web\Models\Entities\{Poll, Post, Photo, Video, Club, User};
 use openvk\Web\Models\Entities\Notifications\{MentionNotification, RepostNotification, WallPostNotification};
-use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums, Notes, Videos, Comments, Photos};
+use openvk\Web\Models\Repositories\{Posts, Users, Clubs, Albums, Notes, Videos, Comments, Photos, Audios};
 use Chandler\Database\DatabaseConnection;
 use Nette\InvalidStateException as ISE;
 use Bhaktaraz\RSSGenerator\Item;
@@ -311,8 +311,27 @@ final class WallPresenter extends OpenVKPresenter
                 }
             }
         }
+
+        $audios = [];
+
+        if(!empty($this->postParam("audios"))) {
+            $un  = rtrim($this->postParam("audios"), ",");
+            $arr = explode(",", $un);
+
+            if(sizeof($arr) < 11) {
+                foreach($arr as $dat) {
+                    $ids = explode("_", $dat);
+                    $audio = (new Audios)->getByOwnerAndVID((int)$ids[0], (int)$ids[1]);
+    
+                    if(!$audio || $audio->isDeleted())
+                        continue;
+    
+                    $audios[] = $audio;
+                }
+            }
+        }
         
-        if(empty($this->postParam("text")) && sizeof($photos) < 1 && sizeof($videos) < 1 && !$poll && !$note)
+        if(empty($this->postParam("text")) && sizeof($photos) < 1 && sizeof($videos) < 1 && sizeof($audios) < 1 && !$poll && !$note)
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"));
         
         try {
@@ -341,6 +360,9 @@ final class WallPresenter extends OpenVKPresenter
 
         if(!is_null($note))
             $post->attach($note);
+
+        foreach($audios as $audio)
+        	$post->attach($audio);
         
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
