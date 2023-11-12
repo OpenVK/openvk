@@ -1279,7 +1279,7 @@ class User extends RowModel
         foreach($entityIds as $id) {
             $entit = $id > 0 ? (new Users)->get($id) : (new Clubs)->get(abs($id));
 
-            if($id > 0 && $entit->isDeleted()) return;
+            if($id > 0 && $entit->isDeleted()) continue;
             $returnArr[] = $entit;
         }
 

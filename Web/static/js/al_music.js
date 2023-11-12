@@ -141,7 +141,8 @@ class bigPlayer {
                     }
                 ]
             }, 
-            body: formdata
+            body: formdata,
+            timeout: 20000,
         })
 
         u(this.nodes["playButtons"].querySelector(".playButton")).on("click", (e) => {
