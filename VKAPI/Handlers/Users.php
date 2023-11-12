@@ -165,6 +165,18 @@ final class Users extends VKAPIRequestHandler
 							case "interests":
 								$response[$i]->interests = $usr->getInterests();
 								break;
+							case "quotes":
+								$response[$i]->interests = $usr->getFavoriteQuote();
+								break;
+							case "email":
+								$response[$i]->interests = $usr->getEmail();
+								break;
+							case "telegram":
+								$response[$i]->interests = $usr->getTelegram();
+								break;
+							case "about":
+								$response[$i]->interests = $usr->getDescription();
+								break;
 							case "rating":
 								$response[$i]->rating = $usr->getRating();
 								break;	 
