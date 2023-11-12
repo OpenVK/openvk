@@ -1267,6 +1267,8 @@ class User extends RowModel
             $entityIds[] = $_rel->model == "openvk\\Web\\Models\\Entities\\Club" ? $_rel->target * -1 : $_rel->target;
         }
 
+        $entityIds = array_slice($entityIds, 0, 10);
+
         if($shuffle) {
             $shuffleSeed    = openssl_random_pseudo_bytes(6);
             $shuffleSeed    = hexdec(bin2hex($shuffleSeed));
