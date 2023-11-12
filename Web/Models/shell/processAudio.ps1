@@ -23,7 +23,7 @@ Set-Location -Path $temp
 
 Move-Item $filename $audioFile
 ffmpeg -i $audioFile -f dash -encryption_scheme cenc-aes-ctr -encryption_key $key `
-    -encryption_kid $keyID -map 0:a -c:a aac -ar 44100 -seg_duration $seg `
+    -encryption_kid $keyID -map 0:a -vn -c:a aac -ar 44100 -seg_duration $seg `
     -use_timeline 1 -use_template 1 -init_seg_name ($fileHash + '_fragments/0_0.$ext$') `
     -media_seg_name ($fileHash + '_fragments/chunk$Number%06d$_$RepresentationID$.$ext$') -adaptation_sets 'id=0,streams=a' `
     "$fileHash.mpd"
