@@ -24,7 +24,7 @@ class ProcessDDEXCommand extends Command
     protected function configure(): void
     {
         $this->setDescription("Process DDEX ERN packages for music uploading")
-            ->setHelp("This command allows you to process all DDEX ERN packages for music uploading");
+            ->setHelp("This command allows you to process all DDEX ERN packages");
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
