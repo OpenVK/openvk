@@ -20,7 +20,8 @@
         "ext-simplexml": "*",
         "symfony/console": "5.4.x-dev",
         "wapmorgan/morphos": "dev-master",
-        "ext-sodium": "*"
+        "ext-sodium": "*",
+        "miqwit/dedex": "2.0.6"
     },
     "minimum-stability": "dev"
 }
