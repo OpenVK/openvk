@@ -651,10 +651,10 @@ document.addEventListener("DOMContentLoaded", function() {
             entries.forEach(x => {
                 if(x.isIntersecting) {
                     document.querySelector('.bigPlayer').classList.remove("floating")
-                    document.querySelector('.searchOptions .searchList').classList.remove("floating")
+                    //document.querySelector('.searchOptions .searchList').classList.remove("floating")
                     document.querySelector('.bigPlayerDetector').style.marginTop = "0px"
                 } else {
-                    document.querySelector('.searchOptions .searchList').classList.add("floating")
+                    //document.querySelector('.searchOptions .searchList').classList.add("floating")
                     document.querySelector('.bigPlayer').classList.add("floating")
                     document.querySelector('.bigPlayerDetector').style.marginTop = "46px"
                 }
