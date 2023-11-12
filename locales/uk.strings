@@ -64,9 +64,10 @@
 "change_status" = "змінити статус";
 "name" = "Ім’я";
 "surname" = "Прізвище";
-"gender" = "Стать";
-"male" = "Чоловіча";
-"female" = "Жіноча";
+"pronouns" = "Займенники";
+"male" = "він/його";
+"female" = "вона/її";
+"neutral" = "вони/їх";
 "description" = "Опис";
 "save" = "Зберегти";
 "main_information" = "Основна інформація";

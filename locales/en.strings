@@ -72,9 +72,10 @@
 "change_status" = "change status";
 "name" = "Name";
 "surname" = "Surname";
-"gender" = "Sex";
-"male" = "male";
-"female" = "female";
+"pronouns" = "Pronouns";
+"male" = "he/him";
+"female" = "she/her";
+"neutral" = "they/them";
 "description" = "Description";
 "save" = "Save";
 "main_information" = "Main information";

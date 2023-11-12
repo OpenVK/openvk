@@ -62,9 +62,10 @@
 "change_status" = "изменить статус";
 "name" = "Имя";
 "surname" = "Фамилия";
-"gender" = "Пол";
-"male" = "мужской";
-"female" = "женский";
+"pronouns" = "Местоимения";
+"male" = "он/его";
+"female" = "она/её";
+"neutral" = "они/их";
 "description" = "Описание";
 "save" = "Сохранить";
 "main_information" = "Основная информация";

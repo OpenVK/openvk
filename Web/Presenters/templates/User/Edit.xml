@@ -139,12 +139,13 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
-                            <span class="nobold">{_gender}: </span>
+                            <span class="nobold">{_pronouns}: </span>
                         </td>
                         <td>
-                            <select name="gender">
-                                <option value="1" {if $user->isFemale() == true}selected{/if}>{_female}</option>
-                                <option value="0" {if $user->isFemale() == false}selected{/if}>{_male}</option>
+                            <select name="pronouns">
+                                <option value="0" {if $user->getPronouns() == 0}selected{/if}>{_male}</option>
+                                <option value="1" {if $user->getPronouns() == 1}selected{/if}>{_female}</option>
+                                <option value="2" {if $user->getPronouns() == 2}selected{/if}>{_neutral}</option>
                             </select>
                         </td>
                     </tr>
