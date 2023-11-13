@@ -1143,7 +1143,7 @@
 "banned_2" = "The reason for this action is simple: <b>$1</b>.";
 "banned_perm" = "Regrettably, this time the ban is permanent.";
 "banned_until_time" = "This time, the ban extends until <b>$1</b>";
-"banned_3" = "You can still <a href="/support?act=new">reach out to support</a> if you believe there was an error or <a href="/logout?hash=$1">logout</a>.";
+"banned_3" = "You can still <a href="/support?act%3Dnew">reach out to support</a> if you believe there was an error or <a href="/logout?hash%3D$1">logout</a>.";
 "banned_unban_myself" = "Unban myself";
 "banned_unban_title" = "Your account has been unbanned";
 "banned_unban_description" = "Kindly refrain from violating the rules in the future.";
