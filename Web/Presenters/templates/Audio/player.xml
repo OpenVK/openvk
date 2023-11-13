@@ -11,13 +11,13 @@
             </div>
 
             <div class="status" style="margin-top: 12px;">
-                <div class="mediaInfo" style="margin-bottom: -8px; cursor: pointer;display:flex;width: 85%;">
-                    <div class="info noOverflow">
+                <div class="mediaInfo noOverflow" style="margin-bottom: -8px; cursor: pointer;display:flex;width: 85%;">
+                    <div class="info">
                         <strong class="performer">
-                            <a href="/search?query=&type=audios&sort=id&only_performers=on&query={$audio->getPerformer()}">{ovk_proc_strtr($audio->getPerformer(), 30)}</a>
+                            <a href="/search?query=&type=audios&sort=id&only_performers=on&query={$audio->getPerformer()}">{$audio->getPerformer()}</a>
                         </strong>
                         —
-                        <span class="title {if !empty($audio->getLyrics())}withLyrics{/if}">{ovk_proc_strtr($audio->getTitle(), 30)}</span>
+                        <span class="title {if !empty($audio->getLyrics())}withLyrics{/if}">{$audio->getTitle()}</span>
                     </div>
 
                     <div class="explicitMark" n:if="$audio->isExplicit()"></div>

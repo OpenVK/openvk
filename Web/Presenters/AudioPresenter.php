@@ -304,7 +304,7 @@ final class AudioPresenter extends OpenVKPresenter
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $title = $this->postParam("title");
             $description = $this->postParam("description");
-            $audios = !empty($this->postParam("audios")) ? array_slice(explode(",", $this->postParam("audios")), 0, 100) : [];
+            $audios = !empty($this->postParam("audios")) ? array_slice(explode(",", $this->postParam("audios")), 0, 1000) : [];
 
             if(empty($title) || iconv_strlen($title) < 1)
                 $this->flashFail("err", tr("error"), tr("set_playlist_name"));
@@ -478,9 +478,9 @@ final class AudioPresenter extends OpenVKPresenter
         $this->template->audios = iterator_to_array($playlist->fetch($page, 10));
         $this->template->ownerId = $owner_id;
         $this->template->owner = $playlist->getOwner();
-        $this->template->isBookmarked = $playlist->isBookmarkedBy($this->user->identity);
-        $this->template->isMy = $playlist->getOwner()->getId() === $this->user->id;
-        $this->template->canEdit = $playlist->canBeModifiedBy($this->user->identity);
+        $this->template->isBookmarked = $this->user->identity && $playlist->isBookmarkedBy($this->user->identity);
+        $this->template->isMy = $this->user->identity &&  $playlist->getOwner()->getId() === $this->user->id;
+        $this->template->canEdit = $this->user->identity &&  $playlist->canBeModifiedBy($this->user->identity);
     }
 
     function renderAction(int $audio_id): void

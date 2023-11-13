@@ -669,7 +669,7 @@ document.addEventListener("DOMContentLoaded", function() {
             bigPlayerObserver.observe(bigplayer);
     }
 
-    $(`.audioEntry .mediaInfo`).on("mouseover mouseleave", (e) => {
+    $(document).on("mouseover mouseleave", `.audioEntry .mediaInfo`, (e) => {
         const info = e.currentTarget.closest(".mediaInfo")
         const overfl = info.querySelector(".info")
 

@@ -39,7 +39,7 @@
                 <img src="{$playlist->getCoverURL('normal')}" alt="{_playlist_cover}">
             </a>
 
-            <div class="profile_links" style="width: 139px;">
+            <div class="profile_links" style="width: 139px;" n:if="isset($thisUser)">
                 <a class="profile_link" style="width: 98%;" href="/playlist{$playlist->getPrettyId()}/edit" n:if="$playlist->canBeModifiedBy($thisUser)">{_edit_playlist}</a>
                 <a class="profile_link" style="width: 98%;" id="bookmarkPlaylist" data-id="{$playlist->getId()}" n:if="!$isBookmarked">{_bookmark}</a>
                 <a class="profile_link" style="width: 98%;" id="unbookmarkPlaylist" data-id="{$playlist->getId()}" n:if="$isBookmarked">{_unbookmark}</a>

@@ -60,7 +60,10 @@ final class Wall extends VKAPIRequestHandler
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Note) {
                     $attachments[] = $attachment->toVkApiStruct();
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
-                    $attachments[] = $attachment->toVkApiStruct($this->getUser());
+                    $attachments[] = [
+                        "type" => "audio",
+                        "audio" => $attachment->toVkApiStruct($this->getUser()),
+                    ];
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Post) {
                     $repostAttachments = [];
 
@@ -237,7 +240,10 @@ final class Wall extends VKAPIRequestHandler
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Note) {
                         $attachments[] = $attachment->toVkApiStruct();
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
-                        $attachments[] = $attachment->toVkApiStruct($this->getUser());
+                        $attachments[] = [
+                            "type" => "audio",
+                            "audio" => $attachment->toVkApiStruct($this->getUser())
+                        ];
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Post) {
                         $repostAttachments = [];
 
@@ -576,7 +582,10 @@ final class Wall extends VKAPIRequestHandler
                 } elseif($attachment instanceof \openvk\Web\Models\Entities\Note) {
                     $attachments[] = $attachment->toVkApiStruct();
                 } elseif($attachment instanceof \openvk\Web\Models\Entities\Audio) {
-                    $attachments[] = $attachment->toVkApiStruct($this->getUser());
+                    $attachments[] = [
+                        "type"  => "audio", 
+                        "audio" => $attachment->toVkApiStruct($this->getUser()),
+                    ];
                 }
             }
 
@@ -636,6 +645,9 @@ final class Wall extends VKAPIRequestHandler
 
         $comment = (new CommentsRepo)->get($comment_id); # один хуй айди всех комментов общий
         
+        if(!$comment || $comment->isDeleted()) 
+            $this->fail(100, "Invalid comment");
+
         $profiles = [];
 
         $attachments = [];
@@ -644,7 +656,10 @@ final class Wall extends VKAPIRequestHandler
             if($attachment instanceof \openvk\Web\Models\Entities\Photo) {
                 $attachments[] = $this->getApiPhoto($attachment);
             } elseif($attachment instanceof \openvk\Web\Models\Entities\Audio) {
-                $attachments[] = $attachment->toVkApiStruct($this->getUser());
+                $attachments[] = [
+                    "type" => "audio",
+                    "audio" => $attachment->toVkApiStruct($this->getUser()),
+                ];
             }
         }
 
