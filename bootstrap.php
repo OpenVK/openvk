@@ -64,6 +64,33 @@ function ovk_proc_strtr(string $string, int $length = 0): string
     return $newString . ($string !== $newString ? "…" : ""); #if cut hasn't happened, don't append "..."
 }
 
+function knuth_shuffle(iterable $arr, int $seed): array
+{
+    $data   = is_array($arr) ? $arr : iterator_to_array($arr);
+    $retVal = [];
+    $ind    = [];
+    $count  = sizeof($data);
+
+    srand($seed, MT_RAND_PHP);
+
+    for($i = 0; $i < $count; ++$i)
+        $ind[$i] = 0;
+
+    for($i = 0; $i < $count; ++$i) {
+        do {
+            $index = rand() % $count;
+        } while($ind[$index] != 0);
+
+        $ind[$index] = 1;
+        $retVal[$i] = $data[$index];
+    }
+
+    # Reseed
+    srand(hexdec(bin2hex(openssl_random_pseudo_bytes(4))));
+
+    return $retVal;
+}
+
 function bmask(int $input, array $options = []): Bitmask
 {
     return new Bitmask($input, $options["length"] ?? 1, $options["mappings"] ?? []);

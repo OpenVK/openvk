@@ -103,6 +103,15 @@
                     </tr>
 
                     <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_audios}: </span>
+                        </td>
+                        <td>
+                            <label><input type="checkbox" name="upload_audios" value="1" n:attr="checked => $club->isEveryoneCanUploadAudios()" /> {_everyone_can_upload_audios}</label>
+                        </td>
+                    </tr>
+
+                    <tr>
                         <td>
                             
                         </td>

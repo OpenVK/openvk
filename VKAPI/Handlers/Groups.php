@@ -292,7 +292,8 @@ final class Groups extends VKAPIRequestHandler
                 int    $topics = NULL, 
                 int    $adminlist = NULL,
                 int    $topicsAboveWall = NULL,
-                int    $hideFromGlobalFeed = NULL)
+                int    $hideFromGlobalFeed = NULL,
+                int    $audio = NULL)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -303,17 +304,22 @@ final class Groups extends VKAPIRequestHandler
         if(!$club || !$club->canBeModifiedBy($this->getUser())) $this->fail(15, "You can't modify this group.");
         if(!empty($screen_name) && !$club->setShortcode($screen_name)) $this->fail(103, "Invalid shortcode.");
 
-        !is_null($title)              ? $club->setName($title) : NULL;
-        !is_null($description)        ? $club->setAbout($description) : NULL;
-        !is_null($screen_name)        ? $club->setShortcode($screen_name) : NULL;
-        !is_null($website)            ? $club->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website) : NULL;
-        !is_null($wall)               ? $club->setWall($wall) : NULL;
-        !is_null($topics)             ? $club->setEveryone_Can_Create_Topics($topics) : NULL;
-        !is_null($adminlist)          ? $club->setAdministrators_List_Display($adminlist) : NULL;
-        !is_null($topicsAboveWall)    ? $club->setDisplay_Topics_Above_Wall($topicsAboveWall) : NULL;
-        !is_null($hideFromGlobalFeed) ? $club->setHide_From_Global_Feed($hideFromGlobalFeed) : NULL;
+        !empty($title)              ? $club->setName($title) : NULL;
+        !empty($description)        ? $club->setAbout($description) : NULL;
+        !empty($screen_name)        ? $club->setShortcode($screen_name) : NULL;
+        !empty($website)            ? $club->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website) : NULL;
+        !empty($wall)               ? $club->setWall($wall) : NULL;
+        !empty($topics)             ? $club->setEveryone_Can_Create_Topics($topics) : NULL;
+        !empty($adminlist)          ? $club->setAdministrators_List_Display($adminlist) : NULL;
+        !empty($topicsAboveWall)    ? $club->setDisplay_Topics_Above_Wall($topicsAboveWall) : NULL;
+        !empty($hideFromGlobalFeed) ? $club->setHide_From_Global_Feed($hideFromGlobalFeed) : NULL;
+        in_array($audio, [0, 1]) ? $club->setEveryone_can_upload_audios($audio) : NULL;
 
-        $club->save();
+        try {
+            $club->save();
+        } catch(\TypeError $e) {
+            $this->fail(8, "Nothing changed");
+        }
 
         return 1;
     }
@@ -370,7 +376,7 @@ final class Groups extends VKAPIRequestHandler
                         $arr->items[$i]->can_see_all_posts = 1;
                         break;
                     case "can_see_audio":
-                        $arr->items[$i]->can_see_audio = 0;
+                        $arr->items[$i]->can_see_audio = 1;
                         break;
                     case "can_write_private_message":
                         $arr->items[$i]->can_write_private_message = 0;
@@ -469,7 +475,7 @@ final class Groups extends VKAPIRequestHandler
             "wall"           => $club->canPost() == true ? 1 : 0,
             "photos"         => 1,
             "video"          => 0,
-            "audio"          => 0,
+            "audio"          => $club->isEveryoneCanUploadAudios() ? 1 : 0,
             "docs"           => 0,
             "topics"         => $club->isEveryoneCanCreateTopics() == true ? 1 : 0,
             "wiki"           => 0,

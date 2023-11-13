@@ -151,7 +151,7 @@
 "post_deact_silent_m" = "molča udalil svoju stranicu.";
 "post_deact_silent_f" = "molča udalila svoju stranicu.";
 "post_on_your_wall" = "na vašej stene";
-"post_on_group_wall" = "v $1";
+"post_on_group_wall" = "в $1";
 "post_on_user_wall" = "na stene $1";
 "wall" = "Stena";
 "post" = "Zapisí";
@@ -464,6 +464,7 @@
 "my_videos" = "Moi Videozapisi";
 "my_messages" = "Moi Soobsčenija";
 "my_notes" = "Moi Zametki";
+"my_audios" = "Moi Audiozapisi";
 "my_groups" = "Moi Gruppy";
 "my_feed" = "Moi Novosti";
 "my_feedback" = "Moi Otvety";
@@ -543,6 +544,7 @@
 "privacy_setting_add_to_friends" = "Kto možet nazyvatí menja drugom";
 "privacy_setting_write_wall" = "Kto možet pisatí u menja na stene";
 "privacy_setting_write_messages" = "Kto možet pisatí mne soobsčenija";
+"privacy_setting_view_audio" = "Komu vidno moi audiozapisi";
 "privacy_value_anybody" = "Vse želajusčie";
 "privacy_value_anybody_dative" = "Vsem želajusčim";
 "privacy_value_users" = "Polízovateljam OpenVK";
@@ -675,8 +677,127 @@
 "upload_new_video" = "Zagruzití novoe video";
 "max_attached_videos" = "Maksimum 10 videozapisej";
 "max_attached_photos" = "Maksimum 10 fotografij";
+"max_attached_audios" = "Maksimum 10 audiozapisej";
 "no_videos" = "U vas net video.";
 "no_videos_results" = "Net rezulítatov.";
+
+/* Audios */
+
+"audios" = "Audiozapisi";
+"audio" = "Audiozapisí";
+"playlist" = "Plejlist";
+"upload_audio" = "Zagruzití audio";
+"upload_audio_to_group" = "Zagruzití audio v gruppu";
+
+"performer" = "Ispolnitelí";
+"audio_name" = "Nazvanie";
+"genre" = "Žanr";
+"lyrics" = "Tekst";
+
+"select_another_file" = "Vybratí drugoj fajl";
+
+"limits" = "Ograničenija";
+"select_audio" = "Vyberite audiozapisí na Vašem kompíjutere";
+"audio_requirements" = "Audiozapisí dolžna bytí dlinnoj ot $1c do $2 minut, vesití do $3mb i soderžatí audiopotok.";
+"audio_requirements_2" = "Audiozapisí ne dolžna narušatí avtorskie i smežnye prava.";
+"you_can_also_add_audio_using" = "Vy takže možete dobavití audiozapisí iz čisla uže zagružennyh fajlov, vospolízovavšisí";
+"search_audio_inst" = "poiskom po audio";
+
+"audio_embed_not_found" = "Audiozapisí ne najdena";
+"audio_embed_deleted" = "Audiozapisí byla udalena";
+"audio_embed_withdrawn" = "Audiozapisí byla izjjata po obrasčeniju pravoobladatelja.";
+"audio_embed_forbidden" = "Nastrojki privatnosti polízovatelja ne pozvoljajut vstraivatí etu kompoziciju";
+"audio_embed_processing" = "Audio esčjo obrabatyvaetsja, libo obrabotalosí nepravilíno.";
+
+"audios_count_zero" = "Net audiozapisej";
+"audios_count_one" = "Odna audiozapisí";
+"audios_count_few" = "$1 audiozapisi";
+"audios_count_many" = "$1 audiozapisej";
+"audios_count_other" = "$1 audiozapisej";
+
+"track_unknown" = "Neizvesten";
+"track_noname" = "Bez nazvanija";
+
+"my_music" = "Moja muzyka";
+"music_user" = "Muzyka polízovatelja";
+"music_club" = "Muzyka gruppy";
+"audio_new" = "Novoe";
+"audio_popular" = "Populjarnoe";
+"audio_search" = "Poisk";
+
+"my_audios_small" = "Moi audiozapisi";
+"my_playlists" = "Moi plejlisty";
+"playlists" = "Plejlisty";
+"audios_explicit" = "Soderžit necenzurnuju leksiku";
+"withdrawn" = "Izjjato";
+"deleted" = "Udaleno";
+"owner" = "Vladelec";
+"searchable" = "Dostupno v poiske";
+
+"select_audio" = "Vybratí audiozapisi";
+"no_playlists_thisuser" = "Vy esčjo ne dobavljali plejlistov.";
+"no_playlists_user" = "Etot polízovatelí esčjo ne dobavljal plejlistov.";
+"no_playlists_club" = "Eta gruppa esčjo ne dobavljala plejlistov.";
+
+"no_audios_thisuser" = "Vy esčjo ne dobavljali audiozapisej.";
+"no_audios_user" = "Etot polízovatelí esčjo ne dobavljal audiozapisej.";
+"no_audios_club" = "Eta gruppa esčjo ne dobavljala audiozapisej.";
+
+"new_playlist" = "Novyj plejlist";
+"created_playlist" = "sozdan";
+"updated_playlist" = "obnovljon";
+"bookmark" = "Dobavití v kollekciju";
+"unbookmark" = "Ubratí iz kollekcii";
+"empty_playlist" = "V etom plejliste net audiozapisej.";
+"edit_playlist" = "Redaktirovatí plejlist";
+"unable_to_load_queue" = "Ne udalosí zagruzití očeredí.";
+
+"fully_delete_audio" = "Polnostíju udalití audiozapisí";
+"attach_audio" = "Prikrepití audiozapisí";
+"detach_audio" = "Otkrepití audiozapisí";
+
+"show_more_audios" = "Pokazatí bolíše audiozapisej";
+"add_to_playlist" = "Dobavití v plejlist";
+"remove_from_playlist" = "Udalití iz plejlista";
+"delete_playlist" = "Udalití plejlist";
+"playlist_cover" = "Obložka plejlista";
+"playlists_user" = "Plejlisty políz.";
+"playlists_club" = "Plejlisty gruppy";
+"change_cover" = "Smenití obložku";
+"playlist_cover" = "Obložka plejlista";
+
+"minutes_count_zero" = "dlitsja nolí minut";
+"minutes_count_one" = "dlitsja odnu minutu";
+"minutes_count_few" = "dlitsja $1 minuty";
+"minutes_count_many" = "dlitsja $1 minut";
+"minutes_count_other" = "dlitsja $1 minut";
+
+"listens_count_zero" = "net proslušivanij";
+"listens_count_one" = "odno proslušivanie";
+"listens_count_few" = "$1 proslušivanija";
+"listens_count_many" = "$1 proslušivanij";
+"listens_count_other" = "$1 proslušivanij";
+
+"add_audio_to_club" = "Dobavití audio v gruppu";
+"what_club_add" = "V kakuju gruppu vy hotite dobavití pesnju?";
+"group_has_audio" = "U gruppy uže estí eta pesnja.";
+"group_hasnt_audio" = "U gruppy net etoj pesni.";
+
+"by_name" = "po kompozicijam";
+"by_performer" = "po ispolnitelju";
+"no_access_clubs" = "Net grupp, gde vy javljaetesí administratorom.";
+"audio_successfully_uploaded" = "Audio uspešno zagruženo i na dannyj moment obrabatyvaetsja.";
+
+"broadcast_audio" = "Translirovatí audio v status";
+"sure_delete_playlist" = "Vy dejstvitelíno hotite udalití etot plejlist?";
+"edit_audio" = "Redaktirovatí audiozapisí";
+"audios_group" = "Audiozapisi gruppy";
+"playlists_group" = "Plejlisty gruppy";
+
+"play_tip" = "Proigryvanie/pauza";
+"repeat_tip" = "Povtorenie";
+"shuffle_tip" = "Peremešatí";
+"mute_tip" = "Zaglušití";
 
 /* Notifications */
 

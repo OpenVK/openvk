@@ -2,7 +2,7 @@
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Comment, Notifications\MentionNotification, Photo, Video, User, Topic, Post};
 use openvk\Web\Models\Entities\Notifications\CommentNotification;
-use openvk\Web\Models\Repositories\{Comments, Clubs, Videos, Photos};
+use openvk\Web\Models\Repositories\{Comments, Clubs, Videos, Photos, Audios};
 
 final class CommentPresenter extends OpenVKPresenter
 {
@@ -103,8 +103,27 @@ final class CommentPresenter extends OpenVKPresenter
                 }
             }
         }
+
+        $audios = [];
+
+        if(!empty($this->postParam("audios"))) {
+            $un  = rtrim($this->postParam("audios"), ",");
+            $arr = explode(",", $un);
+
+            if(sizeof($arr) < 11) {
+                foreach($arr as $dat) {
+                    $ids = explode("_", $dat);
+                    $audio = (new Audios)->getByOwnerAndVID((int)$ids[0], (int)$ids[1]);
+    
+                    if(!$audio || $audio->isDeleted())
+                        continue;
+    
+                    $audios[] = $audio;
+                }
+            }
+        }
         
-        if(empty($this->postParam("text")) && sizeof($photos) < 1 && sizeof($videos) < 1)
+        if(empty($this->postParam("text")) && sizeof($photos) < 1 && sizeof($videos) < 1 && sizeof($audios) < 1)
             $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_empty"));
         
         try {
@@ -126,6 +145,9 @@ final class CommentPresenter extends OpenVKPresenter
         if(sizeof($videos) > 0)
             foreach($videos as $vid)
                 $comment->attach($vid);
+
+        foreach($audios as $audio)
+            $comment->attach($audio);
         
         if($entity->getOwner()->getId() !== $this->user->identity->getId())
             if(($owner = $entity->getOwner()) instanceof User)

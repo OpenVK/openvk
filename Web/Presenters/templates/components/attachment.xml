@@ -50,6 +50,10 @@
     {else}
         {include "post.xml", post => $attachment, compact => true}
     {/if}
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Audio}
+    <div style="width:100%;">
+        {include "../Audio/player.xml", audio => $attachment}
+    </div>
 {else}
     <span style="color:red;">{_version_incompatibility}</span>
 {/if}

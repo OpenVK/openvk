@@ -4,7 +4,7 @@ use openvk\Web\Models\Repositories\Users as UsersRepo;
 
 final class Friends extends VKAPIRequestHandler
 {
-	function get(int $user_id, string $fields = "", int $offset = 0, int $count = 100): object
+	function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 100): object
 	{
 		$i = 0;
 		$offset++;
@@ -13,6 +13,10 @@ final class Friends extends VKAPIRequestHandler
 		$users = new UsersRepo;
 
 		$this->requireUser();
+
+		if ($user_id == 0) {
+			$user_id = $this->getUser()->getId();
+		}
 
 		if (is_null($users->get($user_id))) {
 			$this->fail(100, "One of the parameters specified was missing or invalid");

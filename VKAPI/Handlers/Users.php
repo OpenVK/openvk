@@ -12,6 +12,9 @@ final class Users extends VKAPIRequestHandler
         $users = new UsersRepo;
 		if($user_ids == "0")
 			$user_ids = (string) $authuser->getId();
+
+		if($user_ids == "")
+			return array();
 		
         $usrs = explode(',', $user_ids);
         $response = array();
@@ -95,6 +98,12 @@ final class Users extends VKAPIRequestHandler
 							case "status":
 								if($usr->getStatus() != NULL)
 									$response[$i]->status = $usr->getStatus();
+								
+								$audioStatus = $usr->getCurrentAudioStatus();
+
+								if($audioStatus)
+									$response[$i]->status_audio = $audioStatus->toVkApiStruct();
+
 								break;
 							case "screen_name":
 								if($usr->getShortCode() != NULL)
@@ -158,6 +167,18 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "interests":
 								$response[$i]->interests = $usr->getInterests();
+								break;
+							case "quotes":
+								$response[$i]->interests = $usr->getFavoriteQuote();
+								break;
+							case "email":
+								$response[$i]->interests = $usr->getEmail();
+								break;
+							case "telegram":
+								$response[$i]->interests = $usr->getTelegram();
+								break;
+							case "about":
+								$response[$i]->interests = $usr->getDescription();
 								break;
 							case "rating":
 								$response[$i]->rating = $usr->getRating();
