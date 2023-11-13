@@ -635,7 +635,7 @@
 "end_all_sessions" = "End all sessions";
 "end_all_sessions_description" = "If you wish to log out of $1 on all devices, click the button below.";
 
-"end_all_sessions_done" = "All sessions have been terminated, including mobile apps.
+"end_all_sessions_done" = "All sessions have been terminated, including mobile apps.";
 
 "backdrop_short" = "Backdrop";
 "backdrop" = "Page Backdrop";
