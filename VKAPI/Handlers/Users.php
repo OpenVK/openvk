@@ -12,9 +12,6 @@ final class Users extends VKAPIRequestHandler
         $users = new UsersRepo;
 		if($user_ids == "0")
 			$user_ids = (string) $authuser->getId();
-
-		if($user_ids == "")
-			return array();
 		
         $usrs = explode(',', $user_ids);
         $response = array();
@@ -39,8 +36,8 @@ final class Users extends VKAPIRequestHandler
 				} else if($usr->isBanned()) {
 					$response[$i] = (object)[
 						"id"          => $usr->getId(),
-						"first_name"  => $usr->getFirstName(),
-						"last_name"   => $usr->getLastName(),
+						"first_name"  => $usr->getFirstName(true),
+						"last_name"   => $usr->getLastName(true),
 						"deactivated" => "banned",
 						"ban_reason"  => $usr->getBanReason()
 					];
@@ -49,8 +46,8 @@ final class Users extends VKAPIRequestHandler
 				} else {
 					$response[$i] = (object)[
 						"id"                => $usr->getId(),
-						"first_name"        => $usr->getFirstName(),
-						"last_name"         => $usr->getLastName(),
+						"first_name"        => $usr->getFirstName(true),
+						"last_name"         => $usr->getLastName(true),
 						"is_closed"         => false,
 						"can_access_closed" => true,
 					];
