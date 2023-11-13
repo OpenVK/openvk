@@ -1243,6 +1243,22 @@
 
 "description_too_long" = "Опис надто довгий.";
 
+"invalid_audio" = "Пошкоджене аудіо.";
+"do_not_have_audio" = "У вас немає цього аудіо";
+"do_have_audio" = "Ви вже маєте цей аудіозапис.";
+
+"set_playlist_name" = "Введіть назву плейліста.";
+"playlist_already_bookmarked" = "Цей плейліст вже є у вашій збірці.";
+"playlist_not_bookmarked" = "Цього плейліст немає у вашій збірці.";
+"invalid_cover_photo" = "Помилка при завантаженні фото обкладинки.";
+"not_a_photo" = "Завантажений файл не схожий на фотографію.";
+"file_too_big" = "Файл занадто великий.";
+"file_loaded_partially" = "Файл завантажено частково.";
+"file_not_uploaded" = "Не вдалося завантажити файл.";
+"error_code" = "Код помилки: $1.";
+"ffmpeg_timeout" = "Тайм-аут очікування ffmpeg. Спробуйте завантажити файл ще раз.";
+"ffmpeg_not_installed" = "Не вдалося отримати доступ до файлу. Схоже, що ffmpeg не встановлено на цьому сервері.";
+
 "gift_sent" = "Подарунок відправлено";
 "gift_sent_desc" = "Ви відправили <b>$1</b> за $2 голосів";
 
@@ -1399,6 +1415,10 @@
 "admin_banned_link_not_found" = "Посилання не знайдено";
 "admin_gift_moved_successfully" = "Подарунок успішно переміщено";
 "admin_gift_moved_to_recycle" = "Тепер подарунок у <b>кошику</b>.";
+"admin_original_file" = "Оригінальний файл";
+"admin_audio_length" = "Довжина";
+"admin_cover_id" = "Обкладинка (ідентифікатор фото)";
+"admin_music" = "Музика";
 "logs" = "Логи";
 "logs_anything" = "Будь-яке";
 "logs_adding" = "Створення";
@@ -1757,6 +1777,8 @@
 "s_order_by_name" = "Назвою";
 "s_order_by_random" = "Випадковістю";
 "s_order_by_rating" = "Рейтингом";
+"s_order_by_length" = "Жовжиною";
+"s_order_by_listens" = "Кількістю прослуховувань";
 "s_order_invert" = "Інвертувати";
 
 "s_by_date" = "За датою";
@@ -1819,6 +1841,7 @@
 "mobile_friends" = "Друзі";
 "mobile_photos" = "Фотографії";
 "mobile_videos" = "Відеозаписи";
+"mobile_audios" = "Аудіо";
 "mobile_messages" = "Повідомлення";
 "mobile_notes" = "Нотатки";
 "mobile_groups" = "Групи";
@@ -1830,6 +1853,8 @@
 "mobile_like" = "Подобається";
 "mobile_user_info_hide" = "Приховувати";
 "mobile_user_info_show_details" = "Показати докладніше";
+"my" = "Мої";
+"введіть_назву_або_виконавця" = "Введіть назву або виконавця...";
 
 /* Moderation */
 
