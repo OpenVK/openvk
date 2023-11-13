@@ -12,6 +12,9 @@ final class Users extends VKAPIRequestHandler
         $users = new UsersRepo;
 		if($user_ids == "0")
 			$user_ids = (string) $authuser->getId();
+
+		if($user_ids == "")
+			return array();
 		
         $usrs = explode(',', $user_ids);
         $response = array();
