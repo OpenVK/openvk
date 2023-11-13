@@ -461,11 +461,13 @@
 "my_friends" = "Мої Друзі";
 "my_photos" = "Мої Фотографії";
 "my_videos" = "Мої Відеозаписи";
+"audios" = "Мої Аудіозаписи"
 "my_messages" = "Мої Повідомлення";
 "my_notes" = "Мої Нотатки";
 "my_groups" = "Мої Групи";
 "my_feed" = "Мої Новини";
 "my_feedback" = "Мої Відповіді";
+"my_apps" = "Застосунки";
 "my_settings" = "Мої Налаштування";
 "bug_tracker" = "Баг-трекер";
 
@@ -542,6 +544,7 @@
 "privacy_setting_add_to_friends" = "Хто може називати мене другом";
 "privacy_setting_write_wall" = "Хто може писати у мене на стіні";
 "privacy_setting_write_messages" = "Хто може писати мені повідомлення";
+"privacy_setting_view_audio" = "Хто може переглядати мої аудіо";
 "privacy_value_anybody" = "Всі охочий";
 "privacy_value_anybody_dative" = "Усім охочим";
 "privacy_value_users" = "Користувачам OpenVK";
@@ -674,8 +677,128 @@
 "upload_new_video" = "Завантажити нове відео";
 "max_attached_videos" = "Максимум 10 відеозаписів";
 "max_attached_photos" = "Максимум 10 фотографій";
+"max_attached_audios" = "Максимум 10 аудіо";
 "no_videos" = "Ви не маєте відео.";
 "no_videos_results" = "Немає результатів.";
+
+/* Audios */
+
+"audios" = "Аудіозаписи";
+"audio" = "Аудіо";
+"playlist" = "Плейлист";
+"upload_audio" = "Завантажити аудіо";
+"upload_audio_to_group" = "Завантажити аудіо у групу";
+
+"performer" = "Виконавець";
+"audio_name" = "Назва";
+"genre" = "Жанр";
+"lyrics" = "Текст";
+
+"select_another_file" = "Оберіть інший файл";
+
+"limits" = "Ліміти";
+"select_audio" = "Оберіть аудіо з вашого пристрою";
+"audio_requirements" = "Аудіо має тривати від $1s до $2 minutes, важити дло $3MB та мати аудіопотік.";
+"audio_requirements_2" = "Аудіо не має порушувати авторські права";
+"you_can_also_add_audio_using" = "Ви також можете додати аудіо з числа вже завантажених файлів за допомогою";
+"search_audio_inst" = "пошуку аудіо";
+
+"audio_embed_not_found" = "Аудіозапис не знайдено";
+"audio_embed_deleted" = "Аудіозапис видалено";
+"audio_embed_withdrawn" = "Аудіо було вилучено на вимогу правовласника";
+"audio_embed_forbidden" = "Налаштування конфіденційності користувача не дозволяють вбудовувати це аудіо";
+"audio_embed_processing" = "Аудіо ще обробляється або було оброблено неправильно.";
+
+"audios_count_zero" = "Немає аудіозаписів";
+"audios_count_one" = "Один аудіозапис";
+"audios_count_few" = "$1 аудіозаписів";
+"audios_count_many" = "$1 аудиозаписів";
+"audios_count_other" = "$1 аудиозапис";
+
+"track_unknown" = "Невідомий";
+"track_noname" = "Без назви";
+
+"my_music" = "Моя музика";
+"music_user" = "Музика користувача";
+"music_club" = "Аудіозапис спільноти";
+"audio_new" = "Новий";
+"audio_popular" = "Популярні";
+"audio_search" = "Пошук";
+
+"my_audios_small" = "Мої аудіозаписи";
+"my_playlists" = "Мій плейлист";
+"playlists" = "Плейлист";
+"audios_explicit" = "Має нецензурну лексику";
+"withdrawn" = "Вилучено";
+"deleted" = "Видалено";
+"owner" = "Власник";
+"searchable" = "Доступно у пошуку";
+
+"select_audio" = "Оберіть аудіо";
+"no_playlists_thisuser" = "Ви ще не додали жодного плейлиста.";
+"no_playlists_user" = "Цей користувач ще не додав жодного плейлиста.";
+"no_playlists_club" = "Ця група не додала жодного плейлиста.";
+
+"no_audios_thisuser" = "Ви ще не додали жодного аудіо.";
+"no_audios_user" = "Цей користувач не додав жодного аудіо.";
+"no_audios_club" = "Ця група не додала жодного аудіо.";
+
+"new_playlist" = "Новий плейлист";
+"created_playlist" = "створений";
+"updated_playlist" = "оновлений";
+"bookmark" = "Додати до колекції";
+"unbookmark" = "Видалити з колекції";
+"empty_playlist" = "У цьому списку відтворення немає аудіозаписів.";
+"edit_playlist" = "Редагувати список відтворення";
+"unable_to_load_queue" = "Помилка при завантаженні черги.";
+
+"fully_delete_audio" = "Повністю видалити аудіо";
+"attach_audio" = "Прикріпити аудіо";
+"detach_audio" = "Відкріпити аудіо";
+
+"show_more_audios" = "Показати більше аудіо";
+"add_to_playlist" = "Додати до списку відтворення";
+"remove_from_playlist" = "Видалити зі списку відтворення";
+"delete_playlist" = "Видалити плейлист";
+"playlist_cover" = "Обкладинка плейлиста";
+
+"playlists_user" = "Плейлисти користувачів";
+"playlists_club" = "Списки відтворення груп";
+"change_cover" = "Змінити обкладинку";
+"playlist_cover" = "Обкладинка плейлиста";
+
+"minutes_count_zero" = "триває менше хвилини";
+"minutes_count_one" = "триває одну хвилину";
+"minutes_count_few" = "триває 1 хвилину";
+"minutes_count_many" = "триває $1 хвилину";
+"minutes_count_other" = "триває $1 хвилину";
+
+"listens_count_zero" = "жодного прослуховування";
+"listens_count_one" = "одне прослуховування";
+"listens_count_few" = "1 прослуховування";
+"listens_count_many" = "$1 прослуховувань";
+"listens_count_other" = "$1 слухає";
+
+"add_audio_to_club" = "Додати аудіо до групи";
+"який_клуб_додати" = "До якої групи ви хочете додати пісню?";
+"group_has_audio" = "Ця група вже має цю пісню.";
+"group_hasnt_audio" = "Ця група не має цієї пісні.";
+
+"by_name" = "за назвою";
+"by_performer" = "за виконавцем";
+"no_access_clubs" = "Немає груп, де ви є адміністратором.";
+"audio_successfully_uploaded" = "Аудіо було успішно завантажено і наразі обробляється.";
+
+"broadcast_audio" = "Трансляція аудіо до статусу";
+"sure_delete_playlist" = "Ви дійсно хочете видалити цей список відтворення?";
+"edit_audio" = "Редагувати аудіо";
+"audios_group" = "Аудіо з групи";
+"playlists_group" = "Списки відтворення з групи";
+
+"play_tip" = "Відтворення/пауза";
+"repeat_tip" = "Повтор";
+"shuffle_tip" = "Перемішати";
+"mute_tip" = "Вимкнути звук";
 
 /* Notifications */
 
@@ -809,7 +932,6 @@
 /* Apps */
 "app" = "Застосунок";
 "apps" = "Застосунки";
-"my_apps" = "Мої Застосунки";
 "all_apps" = "Всі застосунки";
 "installed_apps" = "Мої застосунки";
 "own_apps" = "Керування";
