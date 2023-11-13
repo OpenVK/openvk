@@ -802,7 +802,7 @@ final class Wall extends VKAPIRequestHandler
         return [
             "type"  => "photo",
             "photo" => [
-                "album_id" => $attachment->getAlbum() ? $attachment->getAlbum()->getId() : NULL,
+                "album_id" => $attachment->getAlbum() ? $attachment->getAlbum()->getId() : 0,
                 "date"     => $attachment->getPublicationTime()->timestamp(),
                 "id"       => $attachment->getVirtualId(),
                 "owner_id" => $attachment->getOwner()->getId(),
