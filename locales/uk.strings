@@ -698,7 +698,7 @@
 
 "limits" = "Ліміти";
 "select_audio" = "Оберіть аудіо з вашого пристрою";
-"audio_requirements" = "Аудіо має тривати від $1s до $2 minutes, важити дло $3MB та мати аудіопотік.";
+"audio_requirements" = "Аудіо має тривати від $1s до $2 minutes, важити до $3MB та мати аудіопотік.";
 "audio_requirements_2" = "Аудіо не має порушувати авторські права";
 "you_can_also_add_audio_using" = "Ви також можете додати аудіо з числа вже завантажених файлів за допомогою";
 "search_audio_inst" = "пошуку аудіо";
@@ -712,8 +712,8 @@
 "audios_count_zero" = "Немає аудіозаписів";
 "audios_count_one" = "Один аудіозапис";
 "audios_count_few" = "$1 аудіозаписів";
-"audios_count_many" = "$1 аудиозаписів";
-"audios_count_other" = "$1 аудиозапис";
+"audios_count_many" = "$1 аудіозаписів";
+"audios_count_other" = "$1 аудіозапис";
 
 "track_unknown" = "Невідомий";
 "track_noname" = "Без назви";
@@ -767,7 +767,7 @@
 "change_cover" = "Змінити обкладинку";
 "playlist_cover" = "Обкладинка плейлиста";
 
-"minutes_count_zero" = "триває менше хвилини";
+"minutes_count_zero" = "триває менше ніж хвилину";
 "minutes_count_one" = "триває одну хвилину";
 "minutes_count_few" = "триває 1 хвилину";
 "minutes_count_many" = "триває $1 хвилину";
@@ -780,7 +780,7 @@
 "listens_count_other" = "$1 слухає";
 
 "add_audio_to_club" = "Додати аудіо до групи";
-"який_клуб_додати" = "До якої групи ви хочете додати пісню?";
+"what_club_add" = "До якої групи ви хочете додати пісню?";
 "group_has_audio" = "Ця група вже має цю пісню.";
 "group_hasnt_audio" = "Ця група не має цієї пісні.";
 
