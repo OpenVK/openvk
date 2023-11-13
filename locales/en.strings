@@ -1119,7 +1119,7 @@
 "ticket_changed_comment" = "Changes will be applied in a few seconds.";
 
 "banned_in_support_1" = "Apologies, <b>$1</b>, but you're currently banned from creating tickets.";
-"banned_in_support_2" = "The reason is straightforward: <b>$1</b>. Unfortunately, this privilege has been permanently revoked this time."
+"banned_in_support_2" = "The reason is straightforward: <b>$1</b>. Unfortunately, this privilege has been permanently revoked this time.";
 
 "you_can_close_this_ticket_1" = "If you have no more questions, you can ";
 "you_can_close_this_ticket_2" = "close this ticket";
