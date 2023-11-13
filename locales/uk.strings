@@ -1777,7 +1777,7 @@
 "s_order_by_name" = "Назвою";
 "s_order_by_random" = "Випадковістю";
 "s_order_by_rating" = "Рейтингом";
-"s_order_by_length" = "Жовжиною";
+"s_order_by_length" = "Довжиною";
 "s_order_by_listens" = "Кількістю прослуховувань";
 "s_order_invert" = "Інвертувати";
 
