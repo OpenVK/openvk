@@ -77,7 +77,7 @@ class Audios
     function getByEntityID(int $entity, int $offset = 0, ?int $limit = NULL, ?int& $deleted = nullptr): \Traversable
     {
         $limit ??= OPENVK_DEFAULT_PER_PAGE;
-        $iter = $this->rels->where("entity", $entity)->limit($limit, $offset);
+        $iter = $this->rels->where("entity", $entity)->limit($limit, $offset)->order("index DESC");
         foreach($iter as $rel) {
             $audio = $this->get($rel->audio);
             if(!$audio || $audio->isDeleted()) {
