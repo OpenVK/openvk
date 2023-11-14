@@ -713,7 +713,7 @@
 "audios_count_one" = "Один аудіозапис";
 "audios_count_few" = "$1 аудіозаписів";
 "audios_count_many" = "$1 аудіозаписів";
-"audios_count_other" = "$1 аудіозапис";
+"audios_count_other" = "$1 аудіозаписів";
 
 "track_unknown" = "Невідомий";
 "track_noname" = "Без назви";
