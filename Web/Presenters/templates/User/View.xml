@@ -456,7 +456,15 @@
                         </tr>
                         <tr>
                             <td class="label"><span class="nobold">{_relationship}:</span></td>
-                            <td class="data">{$user->getLocalizedMaritalStatus()}</td>
+                            <td class="data">
+                                {$user->getLocalizedMaritalStatus()}
+                                {if $user->getMaritalStatusUser()}
+                                    {$user->getMaritalStatusUserPrefix()}
+                                    <a href="{$user->getMaritalStatusUser()->getURL()}" target="_blank">
+                                        {$user->getMaritalStatusUser()->getCanonicalName()}
+                                    </a>
+                                {/if}
+                            </td>
                         </tr>
                         <tr>
                             <td class="label"><span class="nobold">{_registration_date}: </span></td>
