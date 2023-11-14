@@ -6,12 +6,12 @@ use openvk\Web\Models\Entities\Club;
 
 final class Groups extends VKAPIRequestHandler
 {
-    function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 6, bool $online = false): object 
+    function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 6, bool $online = false, string $filter = "groups"): object 
     {
         $this->requireUser();
 
         if($user_id == 0) {
-        	foreach($this->getUser()->getClubs($offset, false, $count, true) as $club)
+        	foreach($this->getUser()->getClubs($offset, $filter == "admin", $count, true) as $club)
         		$clbs[] = $club;
         	$clbsCount = $this->getUser()->getClubCount();
         } else {
@@ -21,7 +21,7 @@ final class Groups extends VKAPIRequestHandler
         	if(is_null($user))
         		$this->fail(15, "Access denied");
 
-        	foreach($user->getClubs($offset, false, $count, true) as $club)
+        	foreach($user->getClubs($offset, $filter == "admin", $count, true) as $club)
         		$clbs[] = $club;
 
         	$clbsCount = $user->getClubCount();

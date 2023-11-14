@@ -88,13 +88,14 @@ abstract class Postable extends Attachable
         ])->group("origin"));
     }
     
-    # TODO add pagination
-    function getLikers(): \Traversable
+    function getLikers(int $page = 1, ?int $perPage = NULL): \Traversable
     {
+        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
+
         $sel = DB::i()->getContext()->table("likes")->where([
             "model"  => static::class,
             "target" => $this->getRecord()->id,
-        ]);
+        ])->page($page, $perPage);
         
         foreach($sel as $like)
             yield (new Users)->get($like->origin);
