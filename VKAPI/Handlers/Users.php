@@ -37,8 +37,8 @@ final class Users extends VKAPIRequestHandler
 				} else if($usr->isBanned()) {
 					$response[$i] = (object)[
 						"id"          => $usr->getId(),
-						"first_name"  => $usr->getFirstName(),
-						"last_name"   => $usr->getLastName(),
+						"first_name"  => $usr->getFirstName(true),
+						"last_name"   => $usr->getLastName(true),
 						"deactivated" => "banned",
 						"ban_reason"  => $usr->getBanReason()
 					];
@@ -47,8 +47,8 @@ final class Users extends VKAPIRequestHandler
 				} else {
 					$response[$i] = (object)[
 						"id"                => $usr->getId(),
-						"first_name"        => $usr->getFirstName(),
-						"last_name"         => $usr->getLastName(),
+						"first_name"        => $usr->getFirstName(true),
+						"last_name"         => $usr->getLastName(true),
 						"is_closed"         => false,
 						"can_access_closed" => true,
 					];
@@ -96,6 +96,12 @@ final class Users extends VKAPIRequestHandler
 							case "status":
 								if($usr->getStatus() != NULL)
 									$response[$i]->status = $usr->getStatus();
+								
+								$audioStatus = $usr->getCurrentAudioStatus();
+
+								if($audioStatus)
+									$response[$i]->status_audio = $audioStatus->toVkApiStruct();
+
 								break;
 							case "screen_name":
 								if($usr->getShortCode() != NULL)
@@ -159,6 +165,18 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "interests":
 								$response[$i]->interests = $usr->getInterests();
+								break;
+							case "quotes":
+								$response[$i]->interests = $usr->getFavoriteQuote();
+								break;
+							case "email":
+								$response[$i]->interests = $usr->getEmail();
+								break;
+							case "telegram":
+								$response[$i]->interests = $usr->getTelegram();
+								break;
+							case "about":
+								$response[$i]->interests = $usr->getDescription();
 								break;
 							case "rating":
 								$response[$i]->rating = $usr->getRating();

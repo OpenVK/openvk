@@ -5,7 +5,7 @@ use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification};
 use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
-use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications};
+use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications, Audios};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
 use Chandler\Security\Authenticator;
@@ -45,7 +45,10 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->videosCount = (new Videos)->getUserVideosCount($user);
             $this->template->notes       = (new Notes)->getUserNotes($user, 1, 4);
             $this->template->notesCount  = (new Notes)->getUserNotesCount($user);
-            
+            $this->template->audios      = (new Audios)->getRandomThreeAudiosByEntityId($user->getId());
+            $this->template->audiosCount = (new Audios)->getUserCollectionSize($user);
+            $this->template->audioStatus = $user->getCurrentAudioStatus();
+
             $this->template->user = $user;
         }
     }
@@ -55,7 +58,7 @@ final class UserPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         
         $user = $this->users->get($id);
-        $page = abs($this->queryParam("p") ?? 1);
+        $page = abs((int)($this->queryParam("p") ?? 1));
         if(!$user)
             $this->notFound();
         elseif (!$user->getPrivacyPermission('friends.read', $this->user->identity ?? NULL))
@@ -169,6 +172,7 @@ final class UserPresenter extends OpenVKPresenter
                 
                 if ($this->postParam("gender") <= 1 && $this->postParam("gender") >= 0)
                 $user->setSex($this->postParam("gender"));
+                $user->setAudio_broadcast_enabled($this->checkbox("broadcast_music"));
                 
                 if(!empty($this->postParam("phone")) && $this->postParam("phone") !== $user->getPhone()) {
                     if(!OPENVK_ROOT_CONF["openvk"]["credentials"]["smsc"]["enable"])
@@ -241,6 +245,7 @@ final class UserPresenter extends OpenVKPresenter
                 }
 
                 $user->setStatus(empty($this->postParam("status")) ? NULL : $this->postParam("status"));
+                $user->setAudio_broadcast_enabled($this->postParam("broadcast") == 1);
                 $user->save();
 
                 $this->returnJson([
@@ -430,10 +435,11 @@ final class UserPresenter extends OpenVKPresenter
                     "friends.add",
                     "wall.write",
                     "messages.write",
+                    "audios.read",
                 ];
                 foreach($settings as $setting) {
                     $input = $this->postParam(str_replace(".", "_", $setting));
-                    $user->setPrivacySetting($setting, min(3, abs($input ?? $user->getPrivacySetting($setting))));
+                    $user->setPrivacySetting($setting, min(3, (int)abs((int)$input ?? $user->getPrivacySetting($setting))));
                 }
             } else if($_GET['act'] === "finance.top-up") {
                 $token   = $this->postParam("key0") . $this->postParam("key1") . $this->postParam("key2") . $this->postParam("key3");
@@ -474,6 +480,7 @@ final class UserPresenter extends OpenVKPresenter
             } else if($_GET['act'] === "lMenu") {
                 $settings = [
                     "menu_bildoj"    => "photos",
+                    "menu_muziko"    => "audios",
                     "menu_filmetoj"  => "videos",
                     "menu_mesagoj"   => "messages",
                     "menu_notatoj"   => "notes",
