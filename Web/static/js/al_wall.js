@@ -77,7 +77,6 @@ function initGraffiti(id) {
     });
 }
 
-$(document).on("click", ".post-like-button", function(e) {
 function fastUploadImage(textareaId, file) {
     // uploading images
 
@@ -151,7 +150,7 @@ function appendImage(response, textareaId) {
     u(`#post-buttons${textareaId} .upload #loader`).remove()
 }
 
-u(".post-like-button").on("click", function(e) {
+$(document).on("click", ".post-like-button", function(e) {
     e.preventDefault();
     
     var thisBtn = u(this).first();
@@ -907,7 +906,8 @@ $(document).on("click", "#shareVideo", async (e) => {
         console.error(rejection)
         document.getElementById("group").setAttribute("disabled", "disabled")
     }
-  
+})
+
 $(document).on("click", "#videoAttachment", async (e) => {
     e.preventDefault()
     
