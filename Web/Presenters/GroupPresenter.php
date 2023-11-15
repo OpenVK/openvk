@@ -448,11 +448,11 @@ final class GroupPresenter extends OpenVKPresenter
         }
         
         if(!$club->canBeModifiedBy($this->user->identity)) {
-            $this->template->posts = (new Posts)->getSuggestedPostsByUser($club->getId(), $this->user->id, (int) ($this->queryParam("p") ?? 1));
+            $this->template->posts = iterator_to_array((new Posts)->getSuggestedPostsByUser($club->getId(), $this->user->id, (int) ($this->queryParam("p") ?? 1)));
             $this->template->count = (new Posts)->getSuggestedPostsCountByUser($club->getId(), $this->user->id);
             $this->template->type  = "my";
         } else {
-            $this->template->posts = (new Posts)->getSuggestedPosts($club->getId(), (int) ($this->queryParam("p") ?? 1));
+            $this->template->posts = iterator_to_array((new Posts)->getSuggestedPosts($club->getId(), (int) ($this->queryParam("p") ?? 1)));
             $this->template->count = (new Posts)->getSuggestedPostsCount($club->getId());
             $this->template->type  = "everyone";
         }
