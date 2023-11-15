@@ -3,6 +3,7 @@ Function.noop = () => {};
 function MessageBox(title, body, buttons, callbacks, removeDimmedOnExit = true) {
     if(u(".ovk-diag-cont").length > 0) return false;
     
+    document.querySelector("html").style.overflowY = "hidden"
     let dialog = u(
     `<div class="ovk-diag-cont">
         <div class="ovk-diag">
@@ -19,6 +20,7 @@ function MessageBox(title, body, buttons, callbacks, removeDimmedOnExit = true) 
         
         button.on("click", function(e) {
             let __closeDialog = () => {
+              
                 if(removeDimmedOnExit) {
                     u("body").removeClass("dimmed");
                 }

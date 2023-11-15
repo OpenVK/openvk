@@ -34,7 +34,8 @@ abstract class Postable extends Attachable
         $oid = (int) $this->getRecord()->owner;
         if(!$real && $this->isAnonymous())
             $oid = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["account"];
-        
+
+        $oid = abs($oid);
         if($oid > 0)
             return (new Users)->get($oid);
         else
@@ -87,13 +88,14 @@ abstract class Postable extends Attachable
         ])->group("origin"));
     }
     
-    # TODO add pagination
-    function getLikers(): \Traversable
+    function getLikers(int $page = 1, ?int $perPage = NULL): \Traversable
     {
+        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
+
         $sel = DB::i()->getContext()->table("likes")->where([
             "model"  => static::class,
             "target" => $this->getRecord()->id,
-        ]);
+        ])->page($page, $perPage);
         
         foreach($sel as $like)
             yield (new Users)->get($like->origin);
@@ -156,7 +158,7 @@ abstract class Postable extends Attachable
         throw new ISE("Setting virtual id manually is forbidden");
     }
     
-    function save(): void
+    function save(?bool $log = false): void
     {
         $vref = $this->upperNodeReferenceColumnName;
         
@@ -171,11 +173,11 @@ abstract class Postable extends Attachable
                 $this->stateChanges("created", time());
             
             $this->stateChanges("virtual_id", $pCount + 1);
-        } else {
+        } /*else {
             $this->stateChanges("edited", time());
-        }
+        }*/
         
-        parent::save();
+        parent::save($log);
     }
     
     use Traits\TAttachmentHost;

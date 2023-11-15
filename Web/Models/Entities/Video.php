@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
 use openvk\Web\Util\Shell\Shell;
-use openvk\Web\Util\Shell\Shell\Exceptions\{ShellUnavailableException, UnknownCommandException};
+use openvk\Web\Util\Shell\Exceptions\{ShellUnavailableException, UnknownCommandException};
 use openvk\Web\Models\VideoDrivers\VideoDriver;
 use Nette\InvalidStateException as ISE;
 
@@ -223,5 +223,24 @@ class Video extends Media
         $video->save();
         
         return $video;
+    }
+
+    function toNotifApiStruct()
+    {
+        $fromYoutube = $this->getType() == Video::TYPE_EMBED;
+        $res = (object)[];
+        
+        $res->id          = $this->getVirtualId();
+        $res->owner_id    = $this->getOwner()->getId();
+        $res->title       = $this->getName();
+        $res->description = $this->getDescription();
+        $res->duration    = "22";
+        $res->link        = "/video".$this->getOwner()->getId()."_".$this->getVirtualId();
+        $res->image       = $this->getThumbnailURL();
+        $res->date        = $this->getPublicationTime()->timestamp();
+        $res->views       = 0;
+        $res->player      = !$fromYoutube ? $this->getURL() : $this->getVideoDriver()->getURL();
+
+        return $res;
     }
 }

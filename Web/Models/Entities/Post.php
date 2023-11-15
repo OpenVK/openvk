@@ -245,6 +245,37 @@ class Post extends Postable
         $this->unwire();
         $this->save();
     }
+  
+    function toNotifApiStruct()
+    {
+        $res = (object)[];
+        
+        $res->id      = $this->getVirtualId();
+        $res->to_id   = $this->getOwner() instanceof Club ? $this->getOwner()->getId() * -1 : $this->getOwner()->getId();
+        $res->from_id = $res->to_id;
+        $res->date    = $this->getPublicationTime()->timestamp();
+        $res->text    = $this->getText(false);
+        $res->attachments = []; # todo
+
+        $res->copy_owner_id = NULL; # todo
+        $res->copy_post_id  = NULL; # todo
+
+        return $res;
+    }
+    
+    function canBeEditedBy(?User $user = NULL): bool
+    {
+        if(!$user)
+            return false;
+
+        if($this->isDeactivationMessage() || $this->isUpdateAvatarMessage())
+            return false;
+
+        if($this->getTargetWall() > 0)
+            return $this->getPublicationTime()->timestamp() + WEEK > time() && $user->getId() == $this->getOwner(false)->getId();
+
+        return $user->getId() == $this->getOwner(false)->getId();
+    }
     
     use Traits\TRichText;
 }

@@ -224,7 +224,7 @@ class Club extends RowModel
                     "shape" => "spline",
                     "color" => "#597da3",
                 ],
-                "name" => $unique ? "Полный охват" : "Все просмотры",
+                "name" => $unique ? tr("full_coverage") : tr("all_views"),
             ],
             "subs"  => [
                 "x" => array_reverse(range(1, 7)),
@@ -235,7 +235,7 @@ class Club extends RowModel
                     "color" => "#b05c91",
                 ],
                 "fill" => "tozeroy",
-                "name" => $unique ? "Охват подписчиков" : "Просмотры подписчиков",
+                "name" => $unique ? tr("subs_coverage") : tr("subs_views"),
             ],
             "viral" => [
                 "x" => array_reverse(range(1, 7)),
@@ -246,7 +246,7 @@ class Club extends RowModel
                     "color" => "#4d9fab",
                 ],
                 "fill" => "tozeroy",
-                "name" => $unique ? "Виральный охват" : "Виральные просмотры",
+                "name" => $unique ? tr("viral_coverage") : tr("viral_views"),
             ],
         ];
     }
@@ -351,44 +351,80 @@ class Club extends RowModel
     }
 
     function getWebsite(): ?string
-	{
-		return $this->getRecord()->website;
-	}
+	  {
+		  return $this->getRecord()->website;
+	  }
+
+    function ban(string $reason): void
+    {
+        $this->setBlock_Reason($reason);
+        $this->save();
+    }
+
+    function unban(): void
+    {
+        $this->setBlock_Reason(null);
+        $this->save();
+    }
 
     function getAlert(): ?string
     {
         return $this->getRecord()->alert;
     }
+
+    function getRealId(): int
+    {
+        return $this->getId() * -1;
+    }
+
+    function isEveryoneCanUploadAudios(): bool
+    {
+        return (bool) $this->getRecord()->everyone_can_upload_audios;
+    }
+
+    function canUploadAudio(?User $user): bool
+    {
+        if(!$user)
+            return NULL;
+
+        return $this->isEveryoneCanUploadAudios() || $this->canBeModifiedBy($user);
+    }
+
+    function getAudiosCollectionSize()
+    {
+        return (new \openvk\Web\Models\Repositories\Audios)->getClubCollectionSize($this);
+    }
     
     function toVkApiStruct(?User $user = NULL): object
     {
-        $res = [];
+        $res = (object) [];
 
         $res->id          = $this->getId();
         $res->name        = $this->getName();
         $res->screen_name = $this->getShortCode();
         $res->is_closed   = 0;
         $res->deactivated = NULL;
-        $res->is_admin    = $this->canBeModifiedBy($user);
+        $res->is_admin    = $user && $this->canBeModifiedBy($user);
 
-        if($this->canBeModifiedBy($user)) {
+        if($user && $this->canBeModifiedBy($user)) {
             $res->admin_level = 3;
         }
 
-        $res->is_member  = $this->getSubscriptionStatus($user) ? 1 : 0;
+        $res->is_member  = $user && $this->getSubscriptionStatus($user) ? 1 : 0;
 
         $res->type       = "group";
         $res->photo_50   = $this->getAvatarUrl("miniscule");
         $res->photo_100  = $this->getAvatarUrl("tiny");
         $res->photo_200  = $this->getAvatarUrl("normal");
 
-        $res->can_create_topic = $this->canBeModifiedBy($user) ? 1 : ($this->isEveryoneCanCreateTopics() ? 1 : 0);
+        $res->can_create_topic = $user && $this->canBeModifiedBy($user) ? 1 : ($this->isEveryoneCanCreateTopics() ? 1 : 0);
 
-        $res->can_post         = $this->canBeModifiedBy($user) ? 1 : ($this->canPost() ? 1 : 0);
+        $res->can_post         = $user && $this->canBeModifiedBy($user) ? 1 : ($this->canPost() ? 1 : 0);
 
-        return (object) $res;
+        return $res;
     }
 
     use Traits\TBackDrops;
     use Traits\TSubscribable;
+    use Traits\TAudioStatuses;
 }

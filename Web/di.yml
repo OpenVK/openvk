@@ -7,6 +7,7 @@ services:
     - openvk\Web\Presenters\CommentPresenter
     - openvk\Web\Presenters\PhotosPresenter
     - openvk\Web\Presenters\VideosPresenter
+    - openvk\Web\Presenters\AudioPresenter
     - openvk\Web\Presenters\BlobPresenter
     - openvk\Web\Presenters\GroupPresenter
     - openvk\Web\Presenters\SearchPresenter
@@ -16,6 +17,7 @@ services:
     - openvk\Web\Presenters\UnknownTextRouteStrategyPresenter
     - openvk\Web\Presenters\NotificationPresenter
     - openvk\Web\Presenters\SupportPresenter
+    - openvk\Web\Presenters\ReportPresenter
     - openvk\Web\Presenters\AdminPresenter
     - openvk\Web\Presenters\GiftsPresenter
     - openvk\Web\Presenters\MessengerPresenter
@@ -32,10 +34,12 @@ services:
     - openvk\Web\Models\Repositories\Albums
     - openvk\Web\Models\Repositories\Clubs
     - openvk\Web\Models\Repositories\Videos
+    - openvk\Web\Models\Repositories\Audios
     - openvk\Web\Models\Repositories\Notes
     - openvk\Web\Models\Repositories\Tickets
     - openvk\Web\Models\Repositories\Messages
-    - openvk\Web\Models\Repositories\Restores   
+    - openvk\Web\Models\Repositories\Restores
+    - openvk\Web\Models\Repositories\Reports
     - openvk\Web\Models\Repositories\Verifications
     - openvk\Web\Models\Repositories\Notifications
     - openvk\Web\Models\Repositories\TicketComments
@@ -49,3 +53,4 @@ services:
     - openvk\Web\Models\Repositories\BannedLinks
     - openvk\Web\Models\Repositories\ChandlerGroups
     - openvk\Web\Presenters\MaintenancePresenter
+    - openvk\Web\Presenters\NoSpamPresenter

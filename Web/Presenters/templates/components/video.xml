@@ -1,3 +1,4 @@
+{block content}
 <table>
 <tbody>
     <tr>
@@ -33,3 +34,4 @@
     </tr>
 </tbody>
 </table>
+{/block}

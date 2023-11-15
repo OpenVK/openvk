@@ -11,11 +11,11 @@ use openvk\Web\Models\Repositories\Comments as CommentsRepo;
 
 final class Video extends VKAPIRequestHandler
 {
-    function get(int $owner_id, string $videos, int $offset = 0, int $count = 30, int $extended = 0): object
+    function get(int $owner_id, string $videos = "", int $offset = 0, int $count = 30, int $extended = 0): object
     {
         $this->requireUser();
 
-        if ($videos) {
+        if(!empty($videos)) {
             $vids = explode(',', $videos);
     
             foreach($vids as $vid)

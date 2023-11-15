@@ -7,6 +7,7 @@ use openvk\Web\Models\Repositories\Videos as VideosRepo;
 use openvk\Web\Models\Repositories\Photos as PhotosRepo;
 use openvk\Web\Models\Repositories\Notes as NotesRepo;
 
+
 final class Likes extends VKAPIRequestHandler
 {
     function add(string $type, int $owner_id, int $item_id): object
@@ -151,5 +152,52 @@ final class Likes extends VKAPIRequestHandler
             "liked"  => (int) $postable->hasLikeFrom($user),
             "copied" => 0
         ];
+	}
+
+    function getList(string $type, int $owner_id, int $item_id, bool $extended = false, int $offset = 0, int $count = 10, bool $skip_own = false)
+    {
+        $this->requireUser();
+
+        $object = NULL;
+
+        switch($type) {
+            case "post":
+                $object = (new PostsRepo)->getPostById($owner_id, $item_id);
+                break;
+            case "comment":
+                $object = (new CommentsRepo)->get($item_id);
+                break;
+            case "photo":
+                $object = (new PhotosRepo)->getByOwnerAndVID($owner_id, $item_id);
+                break;
+            case "video":
+                $object = (new VideosRepo)->getByOwnerAndVID($owner_id, $item_id);
+                break;
+            default:
+                $this->fail(58, "Invalid type");
+                break;
+        }
+
+        if(!$object || $object->isDeleted())
+            $this->fail(56, "Invalid postable");
+
+        $res = (object)[
+            "count" => $object->getLikesCount(),
+            "items" => []
+        ];
+
+        $likers = array_slice(iterator_to_array($object->getLikers(1, $offset + $count)), $offset);
+        
+        foreach($likers as $liker) {
+            if($skip_own && $liker->getId() == $this->getUser()->getId())
+                continue;
+
+            if(!$extended)
+                $res->items[] = $liker->getId();
+            else
+                $res->items[] = $liker->toVkApiStruct();
+        }
+
+        return $res;
     }
 }

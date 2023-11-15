@@ -17,6 +17,8 @@
         {script "js/node_modules/umbrellajs/umbrella.min.js"}
         {script "js/l10n.js"}
         {script "js/openvk.cls.js"}
+        {script "js/node_modules/dashjs/dist/dash.all.min.js"}
+        {script "js/al_music.js"}
 
         {css "js/node_modules/tippy.js/dist/backdrop.css"}
         {css "js/node_modules/tippy.js/dist/border.css"}
@@ -39,9 +41,8 @@
     <body>
         <div id="sudo-banner" n:if="isset($thisUser) && $userTainted">
             <p>
-                Вы вошли как <b>{$thisUser->getCanonicalName()}</b>. Пожалуйста, уважайте
-                право на тайну переписки других людей и не злоупотребляйте подменой пользователя.
-                Нажмите <a href="/setSID/unset?hash={rawurlencode($csrfToken)}">здесь</a>, чтобы выйти.
+                {_you_entered_as} <b>{$thisUser->getCanonicalName()}</b>. {_please_rights}
+                {_click_on} <a href="/setSID/unset?hash={rawurlencode($csrfToken)}">{_there}</a>, {_to_leave}.
             </p>
         </div>
 
@@ -124,6 +125,7 @@
                                             <option value="comments">{_s_by_comments}</option>
                                             <option value="videos">{_s_by_videos}</option>
                                             <option value="apps">{_s_by_apps}</option>
+                                            <option value="audios">{_s_by_audios}</option>
                                         </select>
                                     </form>
                                     <div class="searchTips" id="srcht" hidden>
@@ -142,13 +144,13 @@
                                             <option value="comments" {if str_contains($_SERVER['REQUEST_URI'], "type=comments")}selected{/if}>{_s_by_comments}</option>
                                             <option value="videos"   {if str_contains($_SERVER['REQUEST_URI'], "type=videos")}selected{/if}>{_s_by_videos}</option>
                                             <option value="apps"     {if str_contains($_SERVER['REQUEST_URI'], "type=apps")}selected{/if}>{_s_by_apps}</option>
+                                            <option value="audios"   {if str_contains($_SERVER['REQUEST_URI'], "type=audios")}selected{/if}>{_s_by_audios}</option>
                                         </select>
                                         <button class="searchBtn"><span style="color:white;font-weight: 600;font-size:12px;">{_header_search}</span></button>
                                     </form>
                                     <script>
                                         let els = document.querySelectorAll("div.dec")
-                                        for(const element of els)
-                                        {
+                                        for(const element of els) {
                                             element.style.display = "none"
                                         }
                                     </script>
@@ -177,13 +179,14 @@
                             <a href="{$thisUser->getURL()}" class="link" title="{_my_page} [Alt+Shift+.]" accesskey=".">{_my_page}</a>
                             <a href="/friends{$thisUser->getId()}" class="link">{_my_friends}
                                 <object type="internal/link" n:if="$thisUser->getFollowersCount() > 0">
-                                    <a href="/friends{$thisUser->getId()}?act=incoming">
+                                    <a href="/friends{$thisUser->getId()}?act=incoming" class="linkunderline">
                                        (<b>{$thisUser->getFollowersCount()}</b>)
                                     </a>
                                 </object>
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('photos')" href="/albums{$thisUser->getId()}" class="link">{_my_photos}</a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('videos')" href="/videos{$thisUser->getId()}" class="link">{_my_videos}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('audios')" href="/audios{$thisUser->getId()}" class="link">{_my_audios}</a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link">{_my_messages}
                                 <object type="internal/link" n:if="$thisUser->getUnreadMessagesCount() > 0">
                                     (<b>{$thisUser->getUnreadMessagesCount()}</b>)
@@ -197,7 +200,7 @@
                                     (<b>{$thisUser->getNotificationsCount()}</b>)
                                 {/if}
                             </a>
-                            <a href="/apps?act=installed" class="link">{_my_apps}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link">{_my_apps}</a>
                             <a href="/settings" class="link">{_my_settings}</a>
                             
                             {var $canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
@@ -210,8 +213,23 @@
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
                                 {/if}
                             </a>
-
-                            <a n:if="$thisUser->getLeftMenuItemStatus('links')" n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem" href="{$menuItem['url']}" target="_blank" class="link">{strpos($menuItem["name"], "@") === 0 ? tr(substr($menuItem["name"], 1)) : $menuItem["name"]}</a>
+                            <a n:if="$canAccessHelpdesk" href="/scumfeed" class="link">{tr("reports")}
+                                {if $reportNotAnsweredCount > 0}
+                                    (<b>{$reportNotAnsweredCount}</b>)
+                                {/if}
+                            </a>
+                            <a n:if="$canAccessHelpdesk" href="/noSpam" class="link">
+                                noSpam
+                            </a>
+                        <a
+                          n:if="$thisUser->getLeftMenuItemStatus('links')"
+                          n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem"
+                          href="{$menuItem['url']}"
+                          target="_blank"
+                          class="link">
+                            {strpos($menuItem["name"], "@") === 0 ? tr(substr($menuItem["name"], 1)) : $menuItem["name"]}
+                        </a>
+                        <div id="_groupListPinnedGroups">
 
                             <div id="_groupListPinnedGroups">
                                 <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
@@ -284,8 +302,13 @@
                             {if !OPENVK_ROOT_CONF['openvk']['preferences']['security']['disablePasswordRestoring']}<a href="/restore">{_forgot_password}</a>{/if}
                         </form>
                     {/ifset}
+                    </div>
                 </div>
-            </div>
+                {ifset $thisUser}
+                    {if !$thisUser->isBanned() && !$thisUser->isDeleted()}
+                        </div>
+                    {/if}
+                {/ifset}
 
             <div class="page_body">
                 <div id="wrapH">
@@ -410,6 +433,12 @@
                 g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
             })();
             //]]>
+        </script>
+
+        <script>
+            window.openvk = {
+                "audio_genres": {\openvk\Web\Models\Entities\Audio::genres}
+            }
         </script>
 
         {ifset bodyScripts}
