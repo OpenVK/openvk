@@ -57,7 +57,7 @@ final class Wall extends VKAPIRequestHandler
                 } else if($attachment instanceof \openvk\Web\Models\Entities\Poll) {
                     $attachments[] = $this->getApiPoll($attachment, $this->getUser());
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Video) {
-                    $attachments[] = $attachment->getApiStructure();
+                    $attachments[] = $attachment->getApiStructure($this->getUser());
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Note) {
                     $attachments[] = $attachment->toVkApiStruct();
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
@@ -237,7 +237,7 @@ final class Wall extends VKAPIRequestHandler
                     } else if($attachment instanceof \openvk\Web\Models\Entities\Poll) {
                         $attachments[] = $this->getApiPoll($attachment, $user);
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Video) {
-                        $attachments[] = $attachment->getApiStructure();
+                        $attachments[] = $attachment->getApiStructure($this->getUser());
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Note) {
                         $attachments[] = $attachment->toVkApiStruct();
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Audio) {

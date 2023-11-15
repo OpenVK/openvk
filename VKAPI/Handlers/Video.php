@@ -26,7 +26,7 @@ final class Video extends VKAPIRequestHandler
     
                 $video = (new VideosRepo)->getByOwnerAndVID(intval($id[0]), intval($id[1]));
                 if($video) {
-                    $items[] = $video->getApiStructure();
+                    $items[] = $video->getApiStructure($this->getUser());
                 }
             }
     
@@ -38,14 +38,18 @@ final class Video extends VKAPIRequestHandler
             if ($owner_id > 0) 
             $user = (new UsersRepo)->get($owner_id);
             else
-            $this->fail(1, "Not implemented");
+                $this->fail(1, "Not implemented");
+            
+            if(!$user->getPrivacyPermission('videos.read', $this->getUser())) {
+                $this->fail(20, "Access denied: this user chose to hide his videos");
+            }
             
             $videos = (new VideosRepo)->getByUser($user, $offset + 1, $count);
             $videosCount = (new VideosRepo)->getUserVideosCount($user);
             
             $items = [];
             foreach ($videos as $video) {
-                $items[] = $video->getApiStructure();
+                $items[] = $video->getApiStructure($this->getUser());
             }
     
             return (object) [

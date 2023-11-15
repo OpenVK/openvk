@@ -187,6 +187,8 @@ routes:
       handler: "Videos->edit"
     - url: "/video{num}_{num}/remove"
       handler: "Videos->remove"
+    - url: "/video{num}_{num}/like"
+      handler: "Videos->like"
     - url: "/player/upload"
       handler: "Audio->upload"
     - url: "/audios{num}"

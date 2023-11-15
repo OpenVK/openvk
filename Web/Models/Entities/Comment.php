@@ -74,8 +74,12 @@ class Comment extends Post
         foreach($this->getChildren() as $attachment) {
             if($attachment->isDeleted())
                 continue;
-                
-            $res->attachments[] = $attachment->toVkApiStruct();
+            
+            if($attachment instanceof \openvk\Web\Models\Entities\Photo) {
+                $res->attachments[] = $attachment->toVkApiStruct();
+            } else if($attachment instanceof \openvk\Web\Models\Entities\Video) {
+                $res->attachments[] = $attachment->toVkApiStruct($this->getUser());
+            }
         }
 
         if($need_likes) {

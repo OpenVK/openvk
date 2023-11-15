@@ -1,6 +1,6 @@
 Function.noop = () => {};
 
-function MessageBox(title, body, buttons, callbacks) {
+function MessageBox(title, body, buttons, callbacks, removeDimmedOnExit = true) {
     if(u(".ovk-diag-cont").length > 0) return false;
     
     document.querySelector("html").style.overflowY = "hidden"
@@ -20,11 +20,11 @@ function MessageBox(title, body, buttons, callbacks) {
         
         button.on("click", function(e) {
             let __closeDialog = () => {
-                if(document.querySelector(".ovk-photo-view-dimmer") == null) {
+              
+                if(removeDimmedOnExit) {
                     u("body").removeClass("dimmed");
-                    document.querySelector("html").style.overflowY = "scroll"
                 }
-
+                
                 u(".ovk-diag-cont").remove();
             };
             
