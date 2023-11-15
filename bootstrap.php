@@ -244,6 +244,8 @@ function parseAttachments(string $attachments)
             $attachmentType = "video";
         elseif(str_contains($attachment, "note"))
             $attachmentType = "note";
+        elseif(str_contains($attachment, "audio"))
+            $attachmentType = "audio";
 
         $attachmentIds = str_replace($attachmentType, "", $attachment);
         $attachmentOwner = (int)explode("_", $attachmentIds)[0];
@@ -260,6 +262,10 @@ function parseAttachments(string $attachments)
                 break;
             case "note":
                 $attachmentObj = (new openvk\Web\Models\Repositories\Notes)->getNoteById($attachmentOwner, $attachmentId);
+                $returnArr[]   = $attachmentObj;
+                break;
+            case "audio":
+                $attachmentObj = (new openvk\Web\Models\Repositories\Audios)->getByOwnerAndVID($attachmentOwner, $attachmentId);
                 $returnArr[]   = $attachmentObj;
                 break;
         }

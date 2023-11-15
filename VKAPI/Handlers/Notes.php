@@ -118,21 +118,6 @@ final class Notes extends VKAPIRequestHandler
         return 1;
     }
 
-    function deleteComment(int $comment_id, int $owner_id = 0)
-    {
-        $this->requireUser();
-        $this->willExecuteWriteAction();
-
-        $comment = (new CommentsRepo)->get($comment_id);
-
-        if(!$comment || !$comment->canBeDeletedBy($this->getUser()))
-            $this->fail(403, "Access to comment denied");
-
-        $comment->delete();
-
-        return 1;
-    }
-
     function edit(string $note_id, string $title = "", string $text = "", int $privacy = 0, int $comment_privacy = 0, string $privacy_view  = "", string $privacy_comment  = "")
     {
         $this->requireUser();
@@ -156,23 +141,6 @@ final class Notes extends VKAPIRequestHandler
         $note->setEdited(time());
         $note->save();
 
-        return 1;
-    }
-
-    function editComment(int $comment_id, string $message, int $owner_id = NULL)
-    {
-        $this->requireUser();
-        $this->willExecuteWriteAction();
-
-        $comment = (new CommentsRepo)->get($comment_id);
-
-        if($comment->getOwner()->getId() != $this->getUser()->getId())
-            $this->fail(15, "Access to comment denied");
-        
-        $comment->setContent($message);
-        $comment->setEdited(time());
-        $comment->save(true);
-        
         return 1;
     }
 

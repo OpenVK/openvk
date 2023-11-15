@@ -558,7 +558,7 @@ $(document).on("click", "#videoOpen", async (e) => {
                 `
             } else {
                 player = `
-                <div class="bsdn media" data-name="${videoObj.title}" data-author="${videoObj.name}">
+                <div class="bsdn media" data-name="${escapeHtml(videoObj.title)}" data-author="${escapeHtml(videoObj.name)}">
                     <video class="media" src="${videoObj.url}"></video>
                 </div>`
             }
@@ -586,7 +586,7 @@ $(document).on("click", "#videoOpen", async (e) => {
                     <div class="top-part">
                         <span class="top-part-name">${escapeHtml(videoObj.title)}</span>
                         <div class="top-part-buttons">
-                            <span class="clickable" id="minimizePlayer" data-name="${videoObj.title}" data-id="${videoObj.id}">${tr("hide_player")}</span>
+                            <span class="clickable" id="minimizePlayer" data-name="${escapeHtml(videoObj.title)}" data-id="${videoObj.id}">${tr("hide_player")}</span>
                             <span>|</span>
                             <span class="clickable" id="closeFplayer">${tr("close_player")}</span>
                         </div>
@@ -654,8 +654,6 @@ $(document).on("click", "#videoOpen", async (e) => {
     if(target.dataset.dontload != null) {
         let oldPlayer = document.querySelector(".miniplayer-video .fplayer")
         let newPlayer = document.querySelector(".top-part-player-subdiv")
-
-        document.querySelector(".top-part-player-subdiv")
 
         newPlayer.append(oldPlayer)
     }

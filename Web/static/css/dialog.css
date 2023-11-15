@@ -154,12 +154,7 @@ body.dimmed > .dimmer {
     background: white;
     padding-right: 6px;
     max-height: 400px;
-    overflow-y: scroll;
-}
-
-/* Работает только в хроме, потому что в фурифоксе до сих пор нет кастомных скроллбаров лул */
-.left_block::-webkit-scrollbar {
-    width: 0;
+    overflow-y: auto;
 }
 
 .right_block {

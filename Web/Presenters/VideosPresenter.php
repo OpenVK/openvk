@@ -151,6 +151,6 @@ final class VideosPresenter extends OpenVKPresenter
             $video->toggleLike($this->user->identity);
         }
 
-        $this->redirect("$_SERVER[HTTP_REFERER]");
+        $this->returnJson(["success" => true]);
     }
 }

@@ -513,6 +513,8 @@ final class Wall extends VKAPIRequestHandler
                         $this->fail(100, "Poll does not exist");
                     if($attacc->getOwner()->getId() != $this->getUser()->getId())
                         $this->fail(43, "You do not have access to this poll");
+
+                    $post->attach($attacc);
                 } elseif($attachmentType == "audio") {
                     $attacc = (new AudiosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
                     if(!$attacc || $attacc->isDeleted())
@@ -864,7 +866,7 @@ final class Wall extends VKAPIRequestHandler
                 $this->fail(158, "Post will have too many attachments");
 
             foreach($attachs as $attach) {
-                if($attach && !$attach->isDeleted() && $attach->getOwner()->getId() == $this->getUser()->getId())
+                if($attach && !$attach->isDeleted())
                     $post->attach($attach);
                 else
                     $this->fail(52, "One of the attachments is invalid");
@@ -908,7 +910,7 @@ final class Wall extends VKAPIRequestHandler
                 $this->fail(158, "Post will have too many attachments");
 
             foreach($attachs as $attach) {
-                if($attach && !$attach->isDeleted() && $attach->getOwner()->getId() == $this->getUser()->getId())
+                if($attach && !$attach->isDeleted())
                     $comment->attach($attach);
                 else
                     $this->fail(52, "One of the attachments is invalid");
