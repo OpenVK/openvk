@@ -74,8 +74,12 @@ class Comment extends Post
         foreach($this->getChildren() as $attachment) {
             if($attachment->isDeleted())
                 continue;
-                
-            $res->attachments[] = $attachment->toVkApiStruct();
+            
+            if($attachment instanceof \openvk\Web\Models\Entities\Photo) {
+                $res->attachments[] = $attachment->toVkApiStruct();
+            } else if($attachment instanceof \openvk\Web\Models\Entities\Video) {
+                $res->attachments[] = $attachment->toVkApiStruct($this->getUser());
+            }
         }
 
         if($need_likes) {
@@ -90,7 +94,20 @@ class Comment extends Post
     {
         return "/wall" . $this->getTarget()->getPrettyId() . "#_comment" . $this->getId();
     }
+  
+    function toNotifApiStruct()
+    {
+        $res = (object)[];
+        
+        $res->id       = $this->getId();
+        $res->owner_id = $this->getOwner()->getId();
+        $res->date     = $this->getPublicationTime()->timestamp();
+        $res->text     = $this->getText(false);
+        $res->post     = NULL; # todo
 
+        return $res;
+    }
+  
     function canBeEditedBy(?User $user = NULL): bool
     {
         if(!$user)

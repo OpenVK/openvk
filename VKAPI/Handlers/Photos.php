@@ -432,13 +432,11 @@ final class Photos extends VKAPIRequestHandler
         if(empty($photo_ids)) {
             $album = (new Albums)->getAlbumByOwnerAndId($owner_id, $album_id);
 
-            if(!$album->getOwner()->getPrivacyPermission('photos.read', $this->getUser())) {
-                $this->fail(21, "This user chose to hide his albums.");
-            }
-
-            if(!$album || $album->isDeleted()) {
+            if(!$album || $album->isDeleted())
                 $this->fail(21, "Invalid album");
-            }
+
+            if(!$album->getOwner()->getPrivacyPermission('photos.read', $this->getUser()))
+                $this->fail(21, "This user chose to hide his albums.");
             
             $photos = array_slice(iterator_to_array($album->getPhotos(1, $count + $offset)), $offset);
             $res["count"] = sizeof($photos);
@@ -456,8 +454,7 @@ final class Photos extends VKAPIRequestHandler
                 "items" => []
             ];
 
-            foreach($photos as $photo)
-            {
+            foreach($photos as $photo) {
                 $id = explode("_", $photo);
     
                 $phot = (new PhotosRepo)->getByOwnerAndVID((int)$id[0], (int)$id[1]);

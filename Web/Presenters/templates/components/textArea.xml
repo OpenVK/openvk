@@ -22,6 +22,7 @@
                 
             </div>
             <div class="post-has-videos"></div>
+            <div class="post-has-audios"></div>
 
             <div n:if="$postOpts ?? true" class="post-opts">
                 {var $anonEnabled = OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
@@ -62,6 +63,7 @@
             </div>
             <input type="hidden" name="photos" value="" />
             <input type="hidden" name="videos" value="" />
+            <input type="hidden" name="audios" value="" />
             <input type="hidden" name="poll" value="none" />
             <input type="hidden" id="note" name="note" value="none" />
             <input type="hidden" name="type" value="1" />
@@ -84,6 +86,10 @@
                     <a id="videoAttachment">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
                         {_video}
+                    </a>
+                    <a id="_audioAttachment">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
+                        {_audio}
                     </a>
                     <a n:if="$notes ?? false" href="javascript:attachNote({$textAreaId})">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-srt.png" />
@@ -110,6 +116,7 @@
 
     u("#post-buttons{$textAreaId} input[name='videos']")["nodes"].at(0).value = ""
     u("#post-buttons{$textAreaId} input[name='photos']")["nodes"].at(0).value = ""
+    u("#post-buttons{$textAreaId} input[name='audios']")["nodes"].at(0).value = ""
 </script>
 
 {if $graffiti}

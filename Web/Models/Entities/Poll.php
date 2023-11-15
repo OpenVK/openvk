@@ -279,12 +279,12 @@ class Poll extends Attachable
         return $poll;
     }
     
-    function save(): void
+    function save(?bool $log = false): void
     {
         if(empty($this->choicesToPersist))
             throw new InvalidStateException;
     
-        parent::save();
+        parent::save($log);
         foreach($this->choicesToPersist as $option) {
             DatabaseConnection::i()->getContext()->table("poll_options")->insert([
                 "poll" => $this->getId(),

@@ -7,12 +7,12 @@ use openvk\Web\Models\Entities\Club;
 
 final class Groups extends VKAPIRequestHandler
 {
-    function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 6, bool $online = false): object 
+    function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 6, bool $online = false, string $filter = "groups"): object 
     {
         $this->requireUser();
 
         if($user_id == 0) {
-        	foreach($this->getUser()->getClubs($offset, false, $count, true) as $club)
+        	foreach($this->getUser()->getClubs($offset, $filter == "admin", $count, true) as $club)
         		$clbs[] = $club;
         	$clbsCount = $this->getUser()->getClubCount();
         } else {
@@ -22,7 +22,7 @@ final class Groups extends VKAPIRequestHandler
         	if(is_null($user))
         		$this->fail(15, "Access denied");
 
-        	foreach($user->getClubs($offset, false, $count, true) as $club)
+        	foreach($user->getClubs($offset, $filter == "admin", $count, true) as $club)
         		$clbs[] = $club;
 
         	$clbsCount = $user->getClubCount();
@@ -318,7 +318,8 @@ final class Groups extends VKAPIRequestHandler
                 int    $topics = NULL, 
                 int    $adminlist = NULL,
                 int    $topicsAboveWall = NULL,
-                int    $hideFromGlobalFeed = NULL)
+                int    $hideFromGlobalFeed = NULL,
+                int    $audio = NULL)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -339,11 +340,13 @@ final class Groups extends VKAPIRequestHandler
         } catch(\Exception $e) {
             $this->fail(50, "Invalid wall value");
         }
-
+        
         !empty($topics)             ? $club->setEveryone_Can_Create_Topics($topics) : NULL;
         !empty($adminlist)          ? $club->setAdministrators_List_Display($adminlist) : NULL;
         !empty($topicsAboveWall)    ? $club->setDisplay_Topics_Above_Wall($topicsAboveWall) : NULL;
         !empty($hideFromGlobalFeed) ? $club->setHide_From_Global_Feed($hideFromGlobalFeed) : NULL;
+        
+        in_array($audio, [0, 1]) ? $club->setEveryone_can_upload_audios($audio) : NULL;
 
         try {
             $club->save();
@@ -408,7 +411,7 @@ final class Groups extends VKAPIRequestHandler
                         $arr->items[$i]->can_see_all_posts = 1;
                         break;
                     case "can_see_audio":
-                        $arr->items[$i]->can_see_audio = 0;
+                        $arr->items[$i]->can_see_audio = 1;
                         break;
                     case "can_write_private_message":
                         $arr->items[$i]->can_write_private_message = 0;
@@ -507,7 +510,7 @@ final class Groups extends VKAPIRequestHandler
             "wall"           => $club->getWallType(), # отличается от вкшных но да ладно
             "photos"         => 1,
             "video"          => 0,
-            "audio"          => 0,
+            "audio"          => $club->isEveryoneCanUploadAudios() ? 1 : 0,
             "docs"           => 0,
             "topics"         => $club->isEveryoneCanCreateTopics() == true ? 1 : 0,
             "wiki"           => 0,
