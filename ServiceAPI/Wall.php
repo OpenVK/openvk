@@ -108,7 +108,7 @@ class Wall implements Handler
         ];
 
         foreach($videos as $video) {
-            $res = json_decode(json_encode($video->toVkApiStruct()), true);
+            $res = json_decode(json_encode($video->toVkApiStruct($this->user)), true);
             $res["video"]["author_name"] = $video->getOwner()->getCanonicalName();
 
             $arr["items"][] = $res;
