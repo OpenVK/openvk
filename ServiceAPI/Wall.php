@@ -22,7 +22,10 @@ class Wall implements Handler
     {
         $post = $this->posts->get($id);
         if(!$post || $post->isDeleted())
-            $reject("No post with id=$id");
+            $reject(53, "No post with id=$id");
+
+        if($post->getSuggestionType() != 0)
+            $reject(25, "Can't get suggested post");
         
         $res = (object) [];
         $res->id     = $post->getId();
@@ -96,7 +99,7 @@ class Wall implements Handler
 
         $resolve($arr);
     }
-
+    
     function getVideos(int $page = 1, callable $resolve, callable $reject)
     {
         $videos = $this->videos->getByUser($this->user, $page, 8);
@@ -129,7 +132,7 @@ class Wall implements Handler
         ];
 
         foreach($videos as $video) {
-            $res = json_decode(json_encode($video->toVkApiStruct()), true);
+            $res = json_decode(json_encode($video->toVkApiStruct($this->user)), true);
             $res["video"]["author_name"] = $video->getOwner()->getCanonicalName();
             
             $arr["items"][] = $res;

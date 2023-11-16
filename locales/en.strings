@@ -230,6 +230,11 @@
 
 "edited_short" = "edited";
 
+"all_posts" = "All posts";
+"users_posts" = "Posts by $1";
+"clubs_posts" = "Group's posts";
+"others_posts" = "Others posts";
+
 /* Friends */
 
 "friends" = "Friends";
@@ -276,6 +281,7 @@
 
 /* Group */
 
+"group" = "Group";
 "name_group" = "Name";
 "subscribe" = "Subscribe";
 "unsubscribe" = "Unsubscribe";
@@ -313,8 +319,60 @@
 "set_comment" = "Set comment";
 "hidden_yes" = "Hidden: Yes";
 "hidden_no" = "Hidden: No";
-"group_allow_post_for_everyone" = "Allow posting for everyone";
+"group_allow_post_for_everyone" = "Open";
+"group_limited_post" = "Suggestions";
+"group_closed_post" = "Closed";
+"suggest_new" = "Suggest post";
+
+"suggested_by_you_zero" = "$1 suggested posts by you";
+"suggested_by_you_one" = "One suggested post by you";
+"suggested_by_you_few" = "$1 suggested posts by you";
+"suggested_by_you_many" = "$1 suggested posts by you";
+"suggested_by_you_other" = "$1 suggested posts by you";
+
+"suggested_by_everyone_zero" = "$1 suggested posts";
+"suggested_by_everyone_one" = "One suggested post";
+"suggested_by_everyone_few" = "$1 suggested posts";
+"suggested_by_everyone_many" = "$1 suggested posts";
+"suggested_by_everyone_other" = "$1 suggested posts";
+
 "group_hide_from_global_feed" = "Don't display posts in the global feed";
+"suggested_posts_by_you" = "Suggested posts by you";
+"suggested_posts_by_everyone" = "Suggested posts";
+"suggested" = "Suggested";
+"suggested_posts_everyone" = "Suggested by users posts";
+"no_suggested_posts_by_you" = "You haven't suggested posts to this group yet.";
+"no_suggested_posts_by_people" = "No posts have been suggested to this group yet.";
+
+"publish_suggested" = "Accept";
+"decline_suggested" = "Decline";
+
+"error_loading_suggest" = "Error when loading new posts";
+
+"publishing_suggested_post" = "Publishing suggested post";
+"suggested_posts_in_group_zero" = "You've looked at all the suggested posts, congratulations!";
+"suggested_posts_in_group_one" = "This group has one suggested post";
+"suggested_posts_in_group_few" = "This group has $1 suggested posts";
+"suggested_posts_in_group_many" = "This group has $1 suggested posts";
+"suggested_posts_in_group_other" = "This group has $1 suggested posts";
+
+"suggested_posts_in_group_by_you_zero" = "You haven't suggested any posts to this group";
+"suggested_posts_in_group_by_you_one" = "You suggested one post to this group";
+"suggested_posts_in_group_by_you_few" = "You suggested $1 posts to this group";
+"suggested_posts_in_group_by_you_many" = "You suggested $1 posts to this group";
+"suggested_posts_in_group_by_you_other" = "You suggested $1 posts to this group";
+
+"suggestion_succefully_published" = "Post successfully published";
+"suggestion_succefully_declined" = "Post successfully declined";
+"suggestion_press_to_go" = "Click to show it";
+
+"error_declining_invalid_post" = "Error when declining post: post does not exists";
+"error_declining_not_suggested_post" = "Error when declining post: post is not suggested";
+"error_declining_declined_post" = "Error when declining post: post is already declined";
+
+"error_accepting_invalid_post" = "Error when accepting post: post does not exists";
+"error_accepting_not_suggested_post" = "Error when accepting post: post is not suggested";
+"error_accepting_declined_post" = "Error when accepting post: cant accept declined post";
 "statistics" = "Statistics";
 "group_administrators_list" = "Admins list";
 "group_display_only_creator" = "Display only group creator";
@@ -346,6 +404,11 @@
 "search_group" = "Search for a Group";
 "search_by_groups" = "Explore Groups";
 "search_group_desc" = "Browse through existing groups and find the one that suits your needs...";
+
+"error_suggestions" = "Error accessing to suggestions";
+"error_suggestions_closed" = "This group has closed wall.";
+"error_suggestions_open" = "This group has open wall.";
+"error_suggestions_access" = "Only group's administrators can view all suggested posts.";
 
 "group_banned" = "Unfortunately, we had to block the <b>$1</b> group.";
 
@@ -870,6 +933,9 @@
 "nt_shared_yours" = "shared your";
 "nt_commented_yours" = "commented";
 "nt_written_on_your_wall" = "wrote on your wall";
+"nt_accepted_your_post" = "accepted your suggested";
+"nt_in_club" = "In group";
+"nt_new_suggested_posts" = "new posts in suggestions";
 "nt_made_you_admin" = "appointed you in the community";
 
 "nt_from" = "from";
@@ -889,6 +955,8 @@
 "nt_mention_in_note" = "in discussion of this note";
 "nt_mention_in_topic" = "in the discussion";
 "nt_sent_gift" = "sent you a gift";
+
+"nt_post_small" = "post";
 
 /* Time */
 
@@ -1325,6 +1393,8 @@
 "media_file_corrupted_or_too_large" = "The media content file is corrupted or too large.";
 "post_is_empty_or_too_big" = "The post is empty or too big.";
 "post_is_too_big" = "The post is too big.";
+"error_deleting_suggested" = "You can't delete your accepted post";
+"error_invalid_wall_value" = "Invalid wall value";
 
 "error_sending_report" = "Failed to make a report...";
 

@@ -110,7 +110,19 @@
         </div>
     </div>
     
+    <div n:if="!is_null($suggestedPostsCountByUser) && $suggestedPostsCountByUser > 0" class="sugglist">
+        <a href="/club{$club->getId()}/suggested" id="cound_r">{tr("suggested_by_you", $suggestedPostsCountByUser)}</a>
+    </div>
+
+    <div n:if="!is_null($suggestedPostsCountByEveryone) && $suggestedPostsCountByEveryone > 0" class="sugglist">
+        <a href="/club{$club->getId()}/suggested" id="cound_r">{tr("suggested_by_everyone", $suggestedPostsCountByEveryone)}</a>
+    </div>
+
     {presenter "openvk!Wall->wallEmbedded", -$club->getId()}
+
+    <script n:if="isset($thisUser) && $club->getWallType() == 2 && !$club->canBeModifiedBy($thisUser)">
+        document.querySelector("textarea").setAttribute("placeholder", tr("suggest_new"))
+    </script>
 </div>
 <div class="right_small_block">
     {var $avatarPhoto = $club->getAvatarPhoto()}

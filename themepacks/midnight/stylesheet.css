@@ -243,6 +243,19 @@ input[type="radio"] {
     border-color: #473e66 !important;
 }
 
+.sugglist {
+    background-color: #231e33;
+    border-color: #2c2640 !important;
+}
+
+.sugglist a {
+    color: #7c94c5;
+}
+
+.button.loaded {
+    background: #383052 url("/assets/packages/static/openvk/img/loading_mini.gif") no-repeat 50% 50% !important;
+}
+
 .bigPlayer {
     background-color: rgb(30, 26, 43) !important;
 }

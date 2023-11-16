@@ -51,7 +51,7 @@ final class Newsfeed extends VKAPIRequestHandler
     {
         $this->requireUser();
         
-        $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND `posts`.`deleted` = 0";
+        $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
 
         if($this->getUser()->getNsfwTolerance() === User::NSFW_INTOLERANT)
             $queryBase .= " AND `nsfw` = 0";

@@ -104,7 +104,7 @@ final class InternalAPIPresenter extends OpenVKPresenter
         }
 
         if($this->postParam("parentType", false) == "post") {
-            $post = (new Posts)->getPostById($owner_id, $post_id);
+            $post = (new Posts)->getPostById($owner_id, $post_id, true);
         } else {
             $post = (new Comments)->get($post_id);
         }

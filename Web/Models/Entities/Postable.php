@@ -33,7 +33,7 @@ abstract class Postable extends Attachable
     {
         $oid = (int) $this->getRecord()->owner;
         if(!$real && $this->isAnonymous())
-            $oid = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["account"];
+            $oid = (int) OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["account"];
 
         $oid = abs($oid);
         if($oid > 0)

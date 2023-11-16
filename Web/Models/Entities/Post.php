@@ -207,6 +207,9 @@ class Post extends Postable
     
     function canBeDeletedBy(User $user): bool
     {
+        if($this->getTargetWall() < 0 && !$this->getWallOwner()->canBeModifiedBy($user) && $this->getWallOwner()->getWallType() != 1 && $this->getSuggestionType() == 0)
+            return false;
+        
         return $this->getOwnerPost() === $user->getId() || $this->canBePinnedBy($user);
     }
     
@@ -245,6 +248,11 @@ class Post extends Postable
         $this->unwire();
         $this->save();
     }
+    
+    function getSuggestionType()
+    {
+        return $this->getRecord()->suggested;
+    }
   
     function toNotifApiStruct()
     {
@@ -273,6 +281,12 @@ class Post extends Postable
 
         if($this->getTargetWall() > 0)
             return $this->getPublicationTime()->timestamp() + WEEK > time() && $user->getId() == $this->getOwner(false)->getId();
+        else {
+            if($this->isPostedOnBehalfOfGroup())
+                return $this->getWallOwner()->canBeModifiedBy($user);
+            else
+                return $user->getId() == $this->getOwner(false)->getId();
+        }
 
         return $user->getId() == $this->getOwner(false)->getId();
     }

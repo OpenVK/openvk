@@ -2,6 +2,7 @@
 namespace openvk\VKAPI\Handlers;
 use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
 use openvk\Web\Models\Repositories\Users as UsersRepo;
+use openvk\Web\Models\Repositories\Posts as PostsRepo;
 use openvk\Web\Models\Entities\Club;
 
 final class Groups extends VKAPIRequestHandler
@@ -80,6 +81,19 @@ final class Groups extends VKAPIRequestHandler
                                 break;
                             case "members_count":
                                 $rClubs[$i]->members_count = $usr->getFollowersCount();
+                                break;
+                            case "can_suggest":
+                                $rClubs[$i]->can_suggest = !$usr->canBeModifiedBy($this->getUser()) && $usr->getWallType() == 2;
+                                break;
+                            # unstandard feild
+                            case "suggested_count":
+                                if($usr->getWallType() != 2) {
+                                    $rClubs[$i]->suggested_count = NULL;
+                                    break;
+                                }
+                                
+                                $rClubs[$i]->suggested_count = $usr->getSuggestedPostsCount($this->getUser());
+                                    
                                 break;
                         }
                     }
@@ -188,7 +202,19 @@ final class Groups extends VKAPIRequestHandler
                         case "description":
 			                $response[$i]->description = $clb->getDescription();
                             break;
-			            case "contacts":
+                        case "can_suggest":
+                            $response[$i]->can_suggest = !$clb->canBeModifiedBy($this->getUser()) && $clb->getWallType() == 2;
+                            break;
+                        # unstandard feild
+                        case "suggested_count":
+                            if($clb->getWallType() != 2) {
+                                $response[$i]->suggested_count = NULL;
+                                break;
+                            }
+
+                            $response[$i]->suggested_count = $clb->getSuggestedPostsCount($this->getUser());
+                            break;
+                        case "contacts":
                             $contacts;
                             $contactTmp = $clb->getManagers(1, true);
 
@@ -288,7 +314,7 @@ final class Groups extends VKAPIRequestHandler
                 string $description = NULL, 
                 string $screen_name = NULL, 
                 string $website = NULL, 
-                int    $wall = NULL, 
+                int    $wall = -1, 
                 int    $topics = NULL, 
                 int    $adminlist = NULL,
                 int    $topicsAboveWall = NULL,
@@ -308,17 +334,26 @@ final class Groups extends VKAPIRequestHandler
         !empty($description)        ? $club->setAbout($description) : NULL;
         !empty($screen_name)        ? $club->setShortcode($screen_name) : NULL;
         !empty($website)            ? $club->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website) : NULL;
-        !empty($wall)               ? $club->setWall($wall) : NULL;
+        
+        try {
+            $wall != -1 ? $club->setWall($wall) : NULL;
+        } catch(\Exception $e) {
+            $this->fail(50, "Invalid wall value");
+        }
+        
         !empty($topics)             ? $club->setEveryone_Can_Create_Topics($topics) : NULL;
         !empty($adminlist)          ? $club->setAdministrators_List_Display($adminlist) : NULL;
         !empty($topicsAboveWall)    ? $club->setDisplay_Topics_Above_Wall($topicsAboveWall) : NULL;
         !empty($hideFromGlobalFeed) ? $club->setHide_From_Global_Feed($hideFromGlobalFeed) : NULL;
+        
         in_array($audio, [0, 1]) ? $club->setEveryone_can_upload_audios($audio) : NULL;
 
         try {
             $club->save();
         } catch(\TypeError $e) {
-            $this->fail(8, "Nothing changed");
+            $this->fail(15, "Nothing changed");
+        } catch(\Exception $e) {
+            $this->fail(18, "An unknown error occurred: maybe you set an incorrect value?");
         }
 
         return 1;
@@ -472,7 +507,7 @@ final class Groups extends VKAPIRequestHandler
             "title"          => $club->getName(),
             "description"    => $club->getDescription() != NULL ? $club->getDescription() : "",
             "address"        => $club->getShortcode(),
-            "wall"           => $club->canPost() == true ? 1 : 0,
+            "wall"           => $club->getWallType(), # отличается от вкшных но да ладно
             "photos"         => 1,
             "video"          => 0,
             "audio"          => $club->isEveryoneCanUploadAudios() ? 1 : 0,

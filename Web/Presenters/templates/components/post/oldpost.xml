@@ -52,15 +52,16 @@
                         </a>
                     {/if}
                     <br/>
-                    <a href="/wall{$post->getPrettyId()}" class="date">
+                    <a href="{if !$suggestion}/wall{$post->getPrettyId()}{else}javascript:void(0){/if}" class="date">
                         {$post->getPublicationTime()} <span n:if="$post->getEditTime()" class="editedMark">({_edited_short})</span>{if $post->isPinned()}, {_pinned}{/if}
+                        
                         <a n:if="!empty($platform)" class="client_app" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
                             <img src="/assets/packages/static/openvk/img/app_icons_mini/{$post->getPlatform(this)}.svg">
                         </a>
                     </a>
                 </div>
                 <div class="post-content" id="{$post->getPrettyId()}">
-                    <div class="text">
+                    <div class="text" id="text{$post->getPrettyId()}">
                         {var $owner = $author->getId()}
 
                         <span data-text="{$post->getText(false)}" class="really_text">{$post->getText()|noescape}</span>
@@ -81,6 +82,10 @@
                                 {include "../attachment.xml", attachment => $attachment}
                             </div>
                         </div>
+                    </div>
+                    <div n:if="$suggestion && $post->canBePinnedBy($thisUser ?? NULL)" class="suggestionControls" style="margin-bottom: 7px;">
+                        <input type="button" class="button" id="publish_post" data-id="{$post->getId()}" value="{_publish_suggested}">
+                        <input type="button" class="button" id="decline_post" data-id="{$post->getId()}" value="{_decline_suggested}">
                     </div>
                     <div n:if="$post->isAd()" style="color:grey;">
                         <br/>

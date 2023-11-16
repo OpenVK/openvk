@@ -47,13 +47,13 @@ body {
 
 .content_title_expanded {
     cursor: pointer;
-    background-image: unset;
+    background-image: unset !important;
     padding: 3px 10px;
     border-top: #e6e6e6 solid 1px;
 }
 
 .content_title_unexpanded {
-    background-image: unset;
+    background-image: unset !important;
     padding: 3px 10px;
     border-top: #eee solid 1px;
 }
@@ -327,6 +327,11 @@ input[type=checkbox] {
 .borderup
 {
     border-top: 1px solid #2f2f2f;
+}
+
+.sugglist {
+    border-top: unset;
+    border-bottom: 1px solid gray;
 }
 
 .musicIcon {

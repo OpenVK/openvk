@@ -206,6 +206,11 @@
 "post_is_ad" = "Этот пост был размещён за взятку.";
 "edited_short" = "ред.";
 
+"all_posts" = "Все записи";
+"users_posts" = "Записи $1";
+"clubs_posts" = "Записи сообщества";
+"others_posts" = "Чужие записи";
+
 /* Friends */
 
 "friends" = "Друзья";
@@ -259,6 +264,7 @@
 
 /* Group */
 
+"group" = "Сообщество";
 "name_group" = "Название";
 "subscribe" = "Подписаться";
 "unsubscribe" = "Отписаться";
@@ -295,8 +301,61 @@
 "set_comment" = "Изменить комментарий";
 "hidden_yes" = "Скрыт: Да";
 "hidden_no" = "Скрыт: Нет";
-"group_allow_post_for_everyone" = "Разрешить публиковать записи всем";
+
+"group_allow_post_for_everyone" = "Открытая";
+"group_limited_post" = "Предложка";
+"group_closed_post" = "Закрытая";
+"suggest_new" = "Предложить новость";
+"suggested_by_you_zero" = "$1 предложенных вами записей";
+"suggested_by_you_one" = "Одна предложенная вами запись";
+"suggested_by_you_few" = "$1 предложенные вами записи";
+"suggested_by_you_many" = "$1 предложенных вами записей";
+"suggested_by_you_other" = "$1 предложенных вами записей";
+
+"suggested_by_everyone_zero" = "$1 предложенных записей";
+"suggested_by_everyone_one" = "Одна предложенная запись";
+"suggested_by_everyone_few" = "$1 предложенные записи";
+"suggested_by_everyone_many" = "$1 предложенных записей";
+"suggested_by_everyone_other" = "$1 предложенных записей";
+
 "group_hide_from_global_feed" = "Не отображать публикации в глобальной ленте";
+"suggested_posts_by_you" = "Предложенные вами записи";
+"suggested_posts_by_everyone" = "Предложенные записи";
+"suggested" = "Предложено";
+"suggested_posts_everyone" = "Предложенные пользователями записи";
+"no_suggested_posts_by_you" = "Вы ещё не предлагали записей в эту группу.";
+"no_suggested_posts_by_people" = "В эту группу ещё не предлагали записей.";
+
+"publish_suggested" = "Опубликовать запись";
+"decline_suggested" = "Отклонить";
+
+"error_loading_suggest" = "Не удалось подгрузить новые посты";
+
+"publishing_suggested_post" = "Публикация предложенной записи";
+"suggested_posts_in_group_zero" = "Вы посмотрели всю предложку, поздравляю!";
+"suggested_posts_in_group_one" = "В эту группу предложили одну запись";
+"suggested_posts_in_group_few" = "В эту группу предложили $1 записи";
+"suggested_posts_in_group_many" = "В эту группу предложили $1 записей";
+"suggested_posts_in_group_other" = "В эту группу предложили $1 записей";
+
+"suggested_posts_in_group_by_you_zero" = "Вы не предлагали в эту группу никаких записей";
+"suggested_posts_in_group_by_you_one" = "Вы предложили в эту группу одну запись";
+"suggested_posts_in_group_by_you_few" = "Вы предложили в эту группу $1 записи";
+"suggested_posts_in_group_by_you_many" = "Вы предложили в эту группу $1 записей";
+"suggested_posts_in_group_by_you_other" = "Вы предложили в эту группу $1 записей";
+
+"suggestion_succefully_published" = "Запись успешно опубликована";
+"suggestion_succefully_declined" = "Запись успешно отклонена";
+"suggestion_press_to_go" = "Нажмите, чтобы перейти к ней";
+
+"error_declining_invalid_post" = "Не удалость отклонить пост: поста не существует";
+"error_declining_not_suggested_post" = "Не удалость отклонить пост: пост не из предложки";
+"error_declining_declined_post" = "Не удалость отклонить пост: пост уже отклонён";
+
+"error_accepting_invalid_post" = "Не удалость принять пост: поста не существует";
+"error_accepting_not_suggested_post" = "Не удалость принять пост: пост не из предложки";
+"error_accepting_declined_post" = "Не удалость принять пост: пост отклонён";
+
 "statistics" = "Статистика";
 "group_administrators_list" = "Список админов";
 "group_display_only_creator" = "Отображать только создателя группы";
@@ -329,6 +388,11 @@
 "search_by_groups" = "Поиск по группам";
 "search_group_desc" = "Здесь Вы можете просмотреть существующие группы и выбрать группу себе по вкусу...";
 "group_banned" = "К сожалению, нам пришлось заблокировать сообщество <b>$1</b>.";
+
+"error_suggestions" = "Ошибка доступа к предложенным";
+"error_suggestions_closed" = "У этой группы закрытая стена.";
+"error_suggestions_open" = "У этой группы открытая стена.";
+"error_suggestions_access" = "Просматривать все предложенные записи могут только администраторы группы.";
 
 /* Albums */
 
@@ -821,6 +885,9 @@
 "nt_shared_yours" = "поделился(-ась) вашим";
 "nt_commented_yours" = "оставил(а) комментарий под";
 "nt_written_on_your_wall" = "написал(а) на вашей стене";
+"nt_accepted_your_post" = "опубликовало вашу предложенную";
+"nt_in_club" = "В сообществе";
+"nt_new_suggested_posts" = "новые записи в предложке";
 "nt_made_you_admin" = "назначил(а) вас руководителем сообщества";
 "nt_from" = "от";
 "nt_yours_adjective" = "вашим";
@@ -838,6 +905,7 @@
 "nt_mention_in_video" = "в обсуждении видеозаписи";
 "nt_mention_in_note" = "в обсуждении заметки";
 "nt_mention_in_topic" = "в обсуждении";
+"nt_post_small" = "запись";
 "nt_sent_gift" = "отправил вам подарок";
 
 /* Time */
@@ -1226,6 +1294,10 @@
 "media_file_corrupted_or_too_large" = "Файл медиаконтента повреждён или слишком велик.";
 "post_is_empty_or_too_big" = "Пост пустой или слишком большой.";
 "post_is_too_big" = "Пост слишком большой.";
+
+"error_deleting_suggested" = "Вы не можете удалить ваш принятый пост";
+"error_invalid_wall_value" = "Некорректное значение стены";
+
 "error_sending_report" = "Не удалось подать жалобу...";
 "error_when_saving_gift" = "Не удалось сохранить подарок";
 "error_when_saving_gift_bad_image" = "Изображение подарка кривое.";
