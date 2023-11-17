@@ -333,12 +333,6 @@ ALTER TABLE `approval_queue`
 ALTER TABLE `attachments`
   ADD PRIMARY KEY (`index`);
 
-ALTER TABLE `audios`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `audio_relations`
-  ADD UNIQUE KEY `index` (`index`);
-
 ALTER TABLE `comments`
   ADD PRIMARY KEY (`id`);
 
@@ -429,12 +423,6 @@ ALTER TABLE `approval_queue`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `attachments`
-  MODIFY `index` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE `audios`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
-
-ALTER TABLE `audio_relations`
   MODIFY `index` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 ALTER TABLE `comments`
