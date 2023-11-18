@@ -144,6 +144,13 @@ final class Wall extends VKAPIRequestHandler
                         "attachments" => $repostAttachments,
                         "post_source" => $post_source,
                     ];
+
+                    if ($attachment->getVirtualId() > 0)
+                        $profiles[] = $attachment->getVirtualId();
+                    else
+                        $groups[]   = $attachment->getVirtualId();
+                        if($post->isSigned())
+                            $profiles[] = $attachment->getOwner()->getId();
                 }
             }
 
@@ -339,6 +346,13 @@ final class Wall extends VKAPIRequestHandler
                             "attachments" => $repostAttachments,
                             "post_source" => $post_source,
                         ];
+
+                        if ($attachment->getVirtualId() > 0)
+                            $profiles[] = $attachment->getVirtualId();
+                        else
+                            $groups[]   = $attachment->getVirtualId();
+                            if($post->isSigned())
+                                $profiles[] = $attachment->getOwner()->getId();
                     }
                 }
 
