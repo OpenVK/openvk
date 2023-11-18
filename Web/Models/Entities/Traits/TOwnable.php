@@ -10,7 +10,7 @@ trait TOwnable
         if($this->isDeleted())  {
             return false;
         }
-
+        
         return true;
     }
 

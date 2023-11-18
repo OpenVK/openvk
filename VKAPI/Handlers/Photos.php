@@ -436,7 +436,7 @@ final class Photos extends VKAPIRequestHandler
 
             if(!$album || $album->isDeleted())
                 $this->fail(21, "Invalid album");
-
+            
             if(!$album->canBeViewedBy($this->getUser())) 
                 $this->fail(15, "Access denied");
             

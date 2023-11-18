@@ -47,13 +47,13 @@ body {
 
 .content_title_expanded {
     cursor: pointer;
-    background-image: unset;
+    background-image: unset !important;
     padding: 3px 10px;
     border-top: #e6e6e6 solid 1px;
 }
 
 .content_title_unexpanded {
-    background-image: unset;
+    background-image: unset !important;
     padding: 3px 10px;
     border-top: #eee solid 1px;
 }
@@ -279,18 +279,9 @@ input[type=checkbox] {
     box-shadow: none;
 }
 
-.searchList #used
-{
-    margin-left:0px;
-    color: white;
-    padding: 2px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    border: none;
-    background: #a4a4a4;
-    margin-bottom: 2px;
-    padding-left: 5px;
-    width: 90%;
+.searchList #used {
+    background: #3c3c3c !important;
+    border: unset !important;
 }
 
 .searchList #used a
@@ -336,4 +327,41 @@ input[type=checkbox] {
 .borderup
 {
     border-top: 1px solid #2f2f2f;
+}
+
+.sugglist {
+    border-top: unset;
+    border-bottom: 1px solid gray;
+}
+
+.musicIcon {
+    filter: contrast(202%) !important;
+}
+
+.audioEntry .playerButton .playIcon {
+    filter: contrast(7) !important;
+}
+
+.audioEmbed .track > .selectableTrack, .bigPlayer .selectableTrack {
+    border-top: #404040 1px solid !important;
+} 
+
+.bigPlayer .paddingLayer .slider, .audioEmbed .track .slider {
+    background: #3c3c3c !important;
+}
+
+.audioEntry.nowPlaying {
+    background: #4b4b4b !important;
+}
+
+.audioEntry.nowPlaying:hover {
+    background: #373737 !important;
+}
+
+.musicIcon.pressed {
+    filter: brightness(150%) !important;
+}
+
+.musicIcon.lagged {
+    opacity: 50%;
 }

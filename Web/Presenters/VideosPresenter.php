@@ -59,7 +59,7 @@ final class VideosPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
 
         if(OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading'])
-            $this->flashFail("err", tr("error"), "Video uploads are disabled by the system administrator.");
+            $this->flashFail("err", tr("error"), tr("video_uploads_disabled"));
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             if(!empty($this->postParam("name"))) {
@@ -75,18 +75,18 @@ final class VideosPresenter extends OpenVKPresenter
                     else if(!empty($this->postParam("link")))
                         $video->setLink($this->postParam("link"));
                     else
-                        $this->flashFail("err", "Нету видеозаписи", "Выберите файл или укажите ссылку.");
+                        $this->flashFail("err", tr("no_video_error"), tr("no_video_description"));
                 } catch(\DomainException $ex) {
-                    $this->flashFail("err", "Произошла ошибка", "Файл повреждён или не содержит видео." );
+                    $this->flashFail("err", tr("error_video"), tr("file_corrupted"));
                 } catch(ISE $ex) {
-                    $this->flashFail("err", "Произошла ошибка", "Возможно, ссылка некорректна.");
+                    $this->flashFail("err", tr("error_video"), tr("link_incorrect"));
                 }
                 
                 $video->save();
                 
                 $this->redirect("/video" . $video->getPrettyId());
             } else {
-                $this->flashFail("err", "Произошла ошибка", "Видео не может быть опубликовано без названия.");
+                $this->flashFail("err", tr("error_video"), tr("no_name_error"));
             }
         }
     }
@@ -100,14 +100,14 @@ final class VideosPresenter extends OpenVKPresenter
         if(!$video)
             $this->notFound();
         if(is_null($this->user) || $this->user->id !== $owner)
-            $this->flashFail("err", "Ошибка доступа", "Вы не имеете права редактировать этот ресурс.");
+            $this->flashFail("err", tr("access_denied_error"), tr("access_denied_error_description"));
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             $video->setName(empty($this->postParam("name")) ? NULL : $this->postParam("name"));
             $video->setDescription(empty($this->postParam("desc")) ? NULL : $this->postParam("desc"));
             $video->save();
             
-            $this->flash("succ", "Изменения сохранены", "Обновлённое описание появится на странице с видосиком.");
+            $this->flash("succ", tr("changes_saved"), tr("changes_saved_video_comment"));
             $this->redirect("/video" . $video->getPrettyId());
         } 
         
@@ -129,9 +129,29 @@ final class VideosPresenter extends OpenVKPresenter
                 $video->deleteVideo($owner, $vid);
             }
         } else {
-            $this->flashFail("err", "Не удалось удалить пост", "Вы не вошли в аккаунт.");
+            $this->flashFail("err", tr("cant_delete_video"), tr("cant_delete_video_comment"));
         }
         
         $this->redirect("/videos" . $owner);
+    }
+
+    function renderLike(int $owner, int $video_id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+        $this->assertNoCSRF();
+
+        $video = $this->videos->getByOwnerAndVID($owner, $video_id);
+        if(!$video || $video->isDeleted() || $video->getOwner()->isDeleted()) $this->notFound();
+
+        if(method_exists($video, "canBeViewedBy") && !$video->canBeViewedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        if(!is_null($this->user)) {
+            $video->toggleLike($this->user->identity);
+        }
+
+        $this->returnJson(["success" => true]);
     }
 }

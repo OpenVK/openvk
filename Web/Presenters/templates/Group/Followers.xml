@@ -55,7 +55,7 @@
         <tbody>
             <tr>
                 <td width="120" valign="top"><span class="nobold">{_gender}: </span></td>
-                <td>{$user->isFemale() ? "женский" : "мужской"}</td>
+                <td>{$user->isFemale() ? tr("female"): tr("male")}</td>
             </tr>
             <tr>
                 <td width="120" valign="top"><span class="nobold">{_registration_date}: </span></td>
@@ -64,7 +64,7 @@
             <tr>
                 <td width="120" valign="top"><span class="nobold">{_role}: </span></td>
                 <td>
-                    {$club->getOwner()->getId() == $user->getId() ? !$club->isOwnerHidden() || $club->canBeModifiedBy($thisUser) : !is_null($manager) ? tr("administrator") : tr("follower")}
+                    {($club->getOwner()->getId() == $user->getId() ? !$club->isOwnerHidden() || $club->canBeModifiedBy($thisUser) : !is_null($manager)) ? tr("administrator") : tr("follower")}
                 </td>
             </tr>
             <tr n:if="$manager && !empty($manager->getComment()) || $club->getOwner()->getId() === $user->getId() && !empty($club->getOwnerComment()) && (!$club->isOwnerHidden() || $club->canBeModifiedBy($thisUser))">
@@ -82,8 +82,6 @@
     </table>
 
     <script n:if="$club->getOwner()->getId() != $user->getId() && $manager && $thisUser->getId() == $club->getOwner()->getId()">
-        console.log("gayshit");
-        console.log("сам такой");
         function changeOwner(club, newOwner) {
             const action = "/groups/" + club + "/setNewOwner/" + newOwner;
 

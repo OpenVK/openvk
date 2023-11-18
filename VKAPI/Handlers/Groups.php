@@ -2,16 +2,17 @@
 namespace openvk\VKAPI\Handlers;
 use openvk\Web\Models\Repositories\Clubs as ClubsRepo;
 use openvk\Web\Models\Repositories\Users as UsersRepo;
+use openvk\Web\Models\Repositories\Posts as PostsRepo;
 use openvk\Web\Models\Entities\Club;
 
 final class Groups extends VKAPIRequestHandler
 {
-    function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 6, bool $online = false): object 
+    function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 6, bool $online = false, string $filter = "groups"): object 
     {
         $this->requireUser();
 
         if($user_id == 0) {
-        	foreach($this->getUser()->getClubs($offset, false, $count, true) as $club)
+        	foreach($this->getUser()->getClubs($offset, $filter == "admin", $count, true) as $club)
         		$clbs[] = $club;
         	$clbsCount = $this->getUser()->getClubCount();
         } else {
@@ -20,14 +21,14 @@ final class Groups extends VKAPIRequestHandler
 
         	if(is_null($user) || $user->isDeleted())
         		$this->fail(15, "Access denied");
+          
+          if(!$user->canBeViewedBy($this->getUser()))
+              $this->fail(15, "Access denied");
 
-            if(!$user->canBeViewedBy($this->getUser()))
-                $this->fail(15, "Access denied");
-
-            if(!$user->getPrivacyPermission('groups.read', $this->getUser()))
-                $this->fail(15, "Access denied: this user chose to hide his groups.");
-
-        	foreach($user->getClubs($offset, false, $count, true) as $club)
+          if(!$user->getPrivacyPermission('groups.read', $this->getUser()))
+              $this->fail(15, "Access denied: this user chose to hide his groups.");
+          
+        	foreach($user->getClubs($offset, $filter == "admin", $count, true) as $club)
         		$clbs[] = $club;
 
         	$clbsCount = $user->getClubCount();
@@ -86,6 +87,19 @@ final class Groups extends VKAPIRequestHandler
                                 break;
                             case "members_count":
                                 $rClubs[$i]->members_count = $usr->getFollowersCount();
+                                break;
+                            case "can_suggest":
+                                $rClubs[$i]->can_suggest = !$usr->canBeModifiedBy($this->getUser()) && $usr->getWallType() == 2;
+                                break;
+                            # unstandard feild
+                            case "suggested_count":
+                                if($usr->getWallType() != 2) {
+                                    $rClubs[$i]->suggested_count = NULL;
+                                    break;
+                                }
+                                
+                                $rClubs[$i]->suggested_count = $usr->getSuggestedPostsCount($this->getUser());
+                                    
                                 break;
                         }
                     }
@@ -194,7 +208,19 @@ final class Groups extends VKAPIRequestHandler
                         case "description":
 			                $response[$i]->description = $clb->getDescription();
                             break;
-			            case "contacts":
+                        case "can_suggest":
+                            $response[$i]->can_suggest = !$clb->canBeModifiedBy($this->getUser()) && $clb->getWallType() == 2;
+                            break;
+                        # unstandard feild
+                        case "suggested_count":
+                            if($clb->getWallType() != 2) {
+                                $response[$i]->suggested_count = NULL;
+                                break;
+                            }
+
+                            $response[$i]->suggested_count = $clb->getSuggestedPostsCount($this->getUser());
+                            break;
+                        case "contacts":
                             $contacts;
                             $contactTmp = $clb->getManagers(1, true);
 
@@ -294,11 +320,12 @@ final class Groups extends VKAPIRequestHandler
                 string $description = NULL, 
                 string $screen_name = NULL, 
                 string $website = NULL, 
-                int    $wall = NULL, 
+                int    $wall = -1, 
                 int    $topics = NULL, 
                 int    $adminlist = NULL,
                 int    $topicsAboveWall = NULL,
-                int    $hideFromGlobalFeed = NULL)
+                int    $hideFromGlobalFeed = NULL,
+                int    $audio = NULL)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -309,17 +336,31 @@ final class Groups extends VKAPIRequestHandler
         if(!$club || !$club->canBeModifiedBy($this->getUser())) $this->fail(15, "You can't modify this group.");
         if(!empty($screen_name) && !$club->setShortcode($screen_name)) $this->fail(103, "Invalid shortcode.");
 
-        !is_null($title)              ? $club->setName($title) : NULL;
-        !is_null($description)        ? $club->setAbout($description) : NULL;
-        !is_null($screen_name)        ? $club->setShortcode($screen_name) : NULL;
-        !is_null($website)            ? $club->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website) : NULL;
-        !is_null($wall)               ? $club->setWall($wall) : NULL;
-        !is_null($topics)             ? $club->setEveryone_Can_Create_Topics($topics) : NULL;
-        !is_null($adminlist)          ? $club->setAdministrators_List_Display($adminlist) : NULL;
-        !is_null($topicsAboveWall)    ? $club->setDisplay_Topics_Above_Wall($topicsAboveWall) : NULL;
-        !is_null($hideFromGlobalFeed) ? $club->setHide_From_Global_Feed($hideFromGlobalFeed) : NULL;
+        !empty($title)              ? $club->setName($title) : NULL;
+        !empty($description)        ? $club->setAbout($description) : NULL;
+        !empty($screen_name)        ? $club->setShortcode($screen_name) : NULL;
+        !empty($website)            ? $club->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website) : NULL;
+        
+        try {
+            $wall != -1 ? $club->setWall($wall) : NULL;
+        } catch(\Exception $e) {
+            $this->fail(50, "Invalid wall value");
+        }
+        
+        !empty($topics)             ? $club->setEveryone_Can_Create_Topics($topics) : NULL;
+        !empty($adminlist)          ? $club->setAdministrators_List_Display($adminlist) : NULL;
+        !empty($topicsAboveWall)    ? $club->setDisplay_Topics_Above_Wall($topicsAboveWall) : NULL;
+        !empty($hideFromGlobalFeed) ? $club->setHide_From_Global_Feed($hideFromGlobalFeed) : NULL;
+        
+        in_array($audio, [0, 1]) ? $club->setEveryone_can_upload_audios($audio) : NULL;
 
-        $club->save();
+        try {
+            $club->save();
+        } catch(\TypeError $e) {
+            $this->fail(15, "Nothing changed");
+        } catch(\Exception $e) {
+            $this->fail(18, "An unknown error occurred: maybe you set an incorrect value?");
+        }
 
         return 1;
     }
@@ -376,7 +417,7 @@ final class Groups extends VKAPIRequestHandler
                         $arr->items[$i]->can_see_all_posts = 1;
                         break;
                     case "can_see_audio":
-                        $arr->items[$i]->can_see_audio = 0;
+                        $arr->items[$i]->can_see_audio = 1;
                         break;
                     case "can_write_private_message":
                         $arr->items[$i]->can_write_private_message = 0;
@@ -472,10 +513,10 @@ final class Groups extends VKAPIRequestHandler
             "title"          => $club->getName(),
             "description"    => $club->getDescription() != NULL ? $club->getDescription() : "",
             "address"        => $club->getShortcode(),
-            "wall"           => $club->canPost() == true ? 1 : 0,
+            "wall"           => $club->getWallType(), # отличается от вкшных но да ладно
             "photos"         => 1,
             "video"          => 0,
-            "audio"          => 0,
+            "audio"          => $club->isEveryoneCanUploadAudios() ? 1 : 0,
             "docs"           => 0,
             "topics"         => $club->isEveryoneCanCreateTopics() == true ? 1 : 0,
             "wiki"           => 0,

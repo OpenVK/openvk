@@ -1,7 +1,8 @@
 <?php declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
-use openvk\Web\Models\Entities\User;
+use openvk\Web\Models\Entities\{User, Report};
 use openvk\Web\Models\Repositories\Users as UsersRepo;
+use openvk\Web\Models\Repositories\Reports;
 
 final class Users extends VKAPIRequestHandler
 {
@@ -36,8 +37,8 @@ final class Users extends VKAPIRequestHandler
 				} else if($usr->isBanned()) {
 					$response[$i] = (object)[
 						"id"          => $usr->getId(),
-						"first_name"  => $usr->getFirstName(),
-						"last_name"   => $usr->getLastName(),
+						"first_name"  => $usr->getFirstName(true),
+						"last_name"   => $usr->getLastName(true),
 						"deactivated" => "banned",
 						"ban_reason"  => $usr->getBanReason()
 					];
@@ -46,8 +47,8 @@ final class Users extends VKAPIRequestHandler
 				} else {
 					$response[$i] = (object)[
 						"id"                => $usr->getId(),
-						"first_name"        => $usr->getFirstName(),
-						"last_name"         => $usr->getLastName(),
+						"first_name"        => $usr->getFirstName(true),
+						"last_name"         => $usr->getLastName(true),
 						"is_closed"         => $usr->isClosed(),
 						"can_access_closed" => (bool)$usr->canBeViewedBy($this->getUser()),
 					];
@@ -95,6 +96,12 @@ final class Users extends VKAPIRequestHandler
 							case "status":
 								if($usr->getStatus() != NULL)
 									$response[$i]->status = $usr->getStatus();
+								
+								$audioStatus = $usr->getCurrentAudioStatus();
+
+								if($audioStatus)
+									$response[$i]->status_audio = $audioStatus->toVkApiStruct();
+
 								break;
 							case "screen_name":
 								if($usr->getShortCode() != NULL)
@@ -188,6 +195,18 @@ final class Users extends VKAPIRequestHandler
 								}
 
 								$response[$i]->interests = $usr->getInterests();
+								break;
+							case "quotes":
+								$response[$i]->interests = $usr->getFavoriteQuote();
+								break;
+							case "email":
+								$response[$i]->interests = $usr->getEmail();
+								break;
+							case "telegram":
+								$response[$i]->interests = $usr->getTelegram();
+								break;
+							case "about":
+								$response[$i]->interests = $usr->getDescription();
 								break;
 							case "rating":
 								$response[$i]->rating = $usr->getRating();
@@ -328,4 +347,26 @@ final class Users extends VKAPIRequestHandler
         	"items" => $this->get(implode(',', $array), $nfilds, $offset, $count)
         ];
     }
+
+	function report(int $user_id, string $type = "spam", string $comment = "")
+	{
+		$this->requireUser();
+		$this->willExecuteWriteAction();
+
+		if($user_id == $this->getUser()->getId())
+			$this->fail(12, "Can't report yourself.");
+
+		if(sizeof(iterator_to_array((new Reports)->getDuplicates("user", $user_id, NULL, $this->getUser()->getId()))) > 0)
+			return 1;
+
+		$report = new Report;
+		$report->setUser_id($this->getUser()->getId());
+		$report->setTarget_id($user_id);
+		$report->setType("user");
+		$report->setReason($comment);
+		$report->setCreated(time());
+		$report->save();
+
+		return 1;
+	}
 }

@@ -4,7 +4,7 @@ use openvk\Web\Models\Repositories\Users as UsersRepo;
 
 final class Friends extends VKAPIRequestHandler
 {
-	function get(int $user_id, string $fields = "", int $offset = 0, int $count = 100): object
+	function get(int $user_id = 0, string $fields = "", int $offset = 0, int $count = 100): object
 	{
 		$i = 0;
 		$offset++;
@@ -13,19 +13,23 @@ final class Friends extends VKAPIRequestHandler
 		$users = new UsersRepo;
 
 		$this->requireUser();
+    
+    if ($user_id == 0) {
+			$user_id = $this->getUser()->getId();
+		}
+    
+    $user = $users->get($user_id);
+    
+    if(!$user || $user->isDeleted())
+        $this->fail(100, "Invalid user");
 
-        $user = $users->get($user_id);
+    if(!$user->getPrivacyPermission("friends.read", $this->getUser()))
+        $this->fail(15, "Access denied: this user chose to hide his friends.");
 
-        if(!$user || $user->isDeleted())
-            $this->fail(100, "Invalid user");
-
-        if(!$user->getPrivacyPermission("friends.read", $this->getUser()))
-            $this->fail(15, "Access denied: this user chose to hide his friends.");
-
-        if(!$user->canBeViewedBy($this->getUser()))
-            $this->fail(15, "Access denied");
+    if(!$user->canBeViewedBy($this->getUser()))
+        $this->fail(15, "Access denied");
 		
-		foreach($users->get($user_id)->getFriends($offset, $count) as $friend) {
+		foreach($user->getFriends($offset, $count) as $friend) {
 			$friends[$i] = $friend->getId();
 			$i++;
 		}
