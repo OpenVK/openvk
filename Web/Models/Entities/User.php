@@ -508,6 +508,9 @@ class User extends RowModel
         else if($user->getId() === $this->getId())
             return true;
 
+        if($permission != "messages.write" && !$this->canBeViewedBy($user))
+            return false;
+
         switch($permStatus) {
             case User::PRIVACY_ONLY_FRIENDS:
                 return $this->getSubscriptionStatus($user) === User::SUBSCRIPTION_MUTUAL;

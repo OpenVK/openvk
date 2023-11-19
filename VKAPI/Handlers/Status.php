@@ -16,6 +16,10 @@ final class Status extends VKAPIRequestHandler
             $this->fail(501, "Group statuses are not implemented");
         else {
             $user = (new UsersRepo)->get($user_id);
+
+            if(!$user || $user->isDeleted() || !$user->canBeViewedBy($this->getUser()))
+                $this->fail(15, "Invalid user");
+
             $audioStatus = $user->getCurrentAudioStatus();
             if($audioStatus) {
                 return [

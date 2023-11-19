@@ -14,25 +14,22 @@ final class Friends extends VKAPIRequestHandler
 
 		$this->requireUser();
     
-    if ($user_id == 0) {
+    	if ($user_id == 0) {
 			$user_id = $this->getUser()->getId();
 		}
     
-    $user = $users->get($user_id);
-    
-    if(!$user || $user->isDeleted())
-        $this->fail(100, "Invalid user");
-
-    if(!$user->getPrivacyPermission("friends.read", $this->getUser()))
-        $this->fail(15, "Access denied: this user chose to hide his friends.");
-
-    if(!$user->canBeViewedBy($this->getUser()))
-        $this->fail(15, "Access denied");
+        $user = $users->get($user_id);
 		
-		foreach($user->getFriends($offset, $count) as $friend) {
-			$friends[$i] = $friend->getId();
-			$i++;
-		}
+        if(!$user || $user->isDeleted())
+            $this->fail(100, "Invalid user");
+
+        if(!$user->getPrivacyPermission("friends.read", $this->getUser()))
+            $this->fail(15, "Access denied: this user chose to hide his friends.");
+        
+        foreach($user->getFriends($offset, $count) as $friend) {
+            $friends[$i] = $friend->getId();
+            $i++;
+        }
 
 		$response = $friends;
 

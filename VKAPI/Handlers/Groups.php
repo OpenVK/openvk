@@ -19,14 +19,11 @@ final class Groups extends VKAPIRequestHandler
         	$users = new UsersRepo;
         	$user  = $users->get($user_id);
 
-        	if(is_null($user) || $user->isDeleted())
+            if(is_null($user) || $user->isDeleted())
         		$this->fail(15, "Access denied");
-          
-          if(!$user->canBeViewedBy($this->getUser()))
-              $this->fail(15, "Access denied");
 
-          if(!$user->getPrivacyPermission('groups.read', $this->getUser()))
-              $this->fail(15, "Access denied: this user chose to hide his groups.");
+            if(!$user->getPrivacyPermission('groups.read', $this->getUser()))
+                $this->fail(15, "Access denied: this user chose to hide his groups.");
           
         	foreach($user->getClubs($offset, $filter == "admin", $count, true) as $club)
         		$clbs[] = $club;
@@ -406,9 +403,15 @@ final class Groups extends VKAPIRequestHandler
             ];
 
             foreach($filds as $fild) {
+                $canView = $member->canBeViewedBy($this->getUser());
                 switch($fild) {
                     case "bdate":
-                        $arr->items[$i]->bdate = $member->getBirthday()->format('%e.%m.%Y');
+                        if(!$canView) {
+                            $arr->items[$i]->bdate = "01.01.1970";
+                            break;
+                        }
+
+                        $arr->items[$i]->bdate = $member->getBirthday() ? $member->getBirthday()->format('%e.%m.%Y') : NULL;
                         break;
                     case "can_post":
                         $arr->items[$i]->can_post = $club->canBeModifiedBy($member);
@@ -429,6 +432,11 @@ final class Groups extends VKAPIRequestHandler
                         $arr->items[$i]->connections = 1;
                         break;
                     case "contacts":
+                        if(!$canView) {
+                            $arr->items[$i]->contacts = "secret@gmail.com";
+                            break;
+                        }
+
                         $arr->items[$i]->contacts = $member->getContactEmail();
                         break;
                     case "country":
@@ -444,15 +452,30 @@ final class Groups extends VKAPIRequestHandler
                         $arr->items[$i]->has_mobile = false;
                         break;
                     case "last_seen":
+                        if(!$canView) {
+                            $arr->items[$i]->last_seen = 0;
+                            break;
+                        }
+
                         $arr->items[$i]->last_seen = $member->getOnline()->timestamp();
                         break;
                     case "lists":
                         $arr->items[$i]->lists = "";
                         break;
                     case "online":
+                        if(!$canView) {
+                            $arr->items[$i]->online = false;
+                            break;
+                        }
+
                         $arr->items[$i]->online = $member->isOnline();
                         break;
                     case "online_mobile":
+                        if(!$canView) {
+                            $arr->items[$i]->online_mobile = false;
+                            break;
+                        }
+
                         $arr->items[$i]->online_mobile = $member->getOnlinePlatform() == "android" || $member->getOnlinePlatform() == "iphone" || $member->getOnlinePlatform() == "mobile";
                         break;
                     case "photo_100":
@@ -483,12 +506,27 @@ final class Groups extends VKAPIRequestHandler
                         $arr->items[$i]->schools = 0;
                         break;
                     case "sex":
+                        if(!$canView) {
+                            $arr->items[$i]->sex = -1;
+                            break;
+                        }
+
                         $arr->items[$i]->sex = $member->isFemale() ? 1 : 2;
                         break;
                     case "site":
+                        if(!$canView) {
+                            $arr->items[$i]->site = NULL;
+                            break;
+                        }
+
                         $arr->items[$i]->site = $member->getWebsite();
                         break;
                     case "status":
+                        if(!$canView) {
+                            $arr->items[$i]->status = "r";
+                            break;
+                        }
+
                         $arr->items[$i]->status = $member->getStatus();
                         break;
                     case "universities":

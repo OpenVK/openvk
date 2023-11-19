@@ -22,7 +22,7 @@ final class VideosPresenter extends OpenVKPresenter
     {
         $user = $this->users->get($id);
         if(!$user) $this->notFound();
-        if(!$user->getPrivacyPermission('videos.read', $this->user->identity ?? NULL) || !$user->canBeViewedBy($this->user->identity))
+        if(!$user->getPrivacyPermission('videos.read', $this->user->identity ?? NULL))
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         
         $this->template->user   = $user;
@@ -43,7 +43,7 @@ final class VideosPresenter extends OpenVKPresenter
 
         if(!$user) $this->notFound();
         if(!$video || $video->isDeleted()) $this->notFound();
-        if(!$user->getPrivacyPermission('videos.read', $this->user->identity ?? NULL) || !$video->canBeViewedBy($this->user->identity))
+        if(!$user->getPrivacyPermission('videos.read', $this->user->identity ?? NULL))
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         
         $this->template->user     = $user;

@@ -54,8 +54,8 @@ final class Users extends VKAPIRequestHandler
 					];
 
 					$flds = explode(',', $fields);
-
-					foreach($flds as $field) { 
+					$canView = $usr->canBeViewedBy($this->getUser());
+					foreach($flds as $field) {
 						switch($field) {
 							case "verified":
 								$response[$i]->verified = intval($usr->isVerified());
@@ -149,7 +149,7 @@ final class Users extends VKAPIRequestHandler
 									];
 								}
 							case "music":
-								if(!$usr->canBeViewedBy($this->getUser())) {
+								if(!$canView) {
 									$response[$i]->music = "secret";
 									break;
 								}
@@ -157,7 +157,7 @@ final class Users extends VKAPIRequestHandler
 								$response[$i]->music = $usr->getFavoriteMusic();
 								break;
 							case "movies":
-								if(!$usr->canBeViewedBy($this->getUser())) {
+								if(!$canView) {
 									$response[$i]->movies = "secret";
 									break;
 								}
@@ -165,7 +165,7 @@ final class Users extends VKAPIRequestHandler
 								$response[$i]->movies = $usr->getFavoriteFilms();
 								break;
 							case "tv":
-								if(!$usr->canBeViewedBy($this->getUser())) {
+								if(!$canView) {
 									$response[$i]->tv = "secret";
 									break;
 								}
@@ -173,7 +173,7 @@ final class Users extends VKAPIRequestHandler
 								$response[$i]->tv = $usr->getFavoriteShows();
 								break;
 							case "books":
-								if(!$usr->canBeViewedBy($this->getUser())) {
+								if(!$canView) {
 									$response[$i]->books = "secret";
 									break;
 								}
@@ -181,7 +181,7 @@ final class Users extends VKAPIRequestHandler
 								$response[$i]->books = $usr->getFavoriteBooks();
 								break;
 							case "city":
-								if(!$usr->canBeViewedBy($this->getUser())) {
+								if(!$canView) {
 									$response[$i]->city = "Воскресенск";
 									break;
 								}
@@ -189,7 +189,7 @@ final class Users extends VKAPIRequestHandler
 								$response[$i]->city = $usr->getCity();
 								break;
 							case "interests":
-								if(!$usr->canBeViewedBy($this->getUser())) {
+								if(!$canView) {
 									$response[$i]->interests = "secret";
 									break;
 								}
@@ -197,18 +197,43 @@ final class Users extends VKAPIRequestHandler
 								$response[$i]->interests = $usr->getInterests();
 								break;
 							case "quotes":
-								$response[$i]->interests = $usr->getFavoriteQuote();
+								if(!$canView) {
+									$response[$i]->quotes = "secret";
+									break;
+								}
+
+								$response[$i]->quotes = $usr->getFavoriteQuote();
 								break;
 							case "email":
-								$response[$i]->interests = $usr->getEmail();
+								if(!$canView) {
+									$response[$i]->email = "secret@gmail.com";
+									break;
+								}
+
+								$response[$i]->email = $usr->getContactEmail();
 								break;
 							case "telegram":
-								$response[$i]->interests = $usr->getTelegram();
+								if(!$canView) {
+									$response[$i]->telegram = "@secret";
+									break;
+								}
+
+								$response[$i]->telegram = $usr->getTelegram();
 								break;
 							case "about":
-								$response[$i]->interests = $usr->getDescription();
+								if(!$canView) {
+									$response[$i]->about = "secret";
+									break;
+								}
+								
+								$response[$i]->about = $usr->getDescription();
 								break;
 							case "rating":
+								if(!$canView) {
+									$response[$i]->rating = 22;
+									break;
+								}
+
 								$response[$i]->rating = $usr->getRating();
 								break;	 
 						}

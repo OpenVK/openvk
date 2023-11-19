@@ -307,9 +307,6 @@ final class Photos extends VKAPIRequestHandler
                 if(!$user->getPrivacyPermission('photos.read', $this->getUser()))
                     $this->fail(21, "This user chose to hide his albums.");
 
-                if(!$user->canBeViewedBy($this->getUser()))
-                    $this->fail(15, "Access denied");
-
                 $albums = array_slice(iterator_to_array((new Albums)->getUserAlbums($user, 1, $count + $offset)), $offset);
 
                 foreach($albums as $album) {
@@ -365,9 +362,8 @@ final class Photos extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        if($user_id == 0 && $group_id == 0 || $user_id > 0 && $group_id > 0) {
+        if($user_id == 0 && $group_id == 0 || $user_id > 0 && $group_id > 0)
             $this->fail(21, "Select user_id or group_id");
-        }
 
         if($user_id > 0) {
             $us = (new UsersRepo)->get($user_id);
@@ -376,15 +372,11 @@ final class Photos extends VKAPIRequestHandler
             
             if(!$us->getPrivacyPermission('photos.read', $this->getUser()))
                 $this->fail(21, "This user chose to hide his albums.");
-        
-            if(!$us->canBeViewedBy($this->getUser()))
-                $this->fail(15, "Access dennieeeddd");
 
             return (new Albums)->getUserAlbumsCount($us);
         }
 
-        if($group_id > 0)
-        {
+        if($group_id > 0) {
             $cl = (new Clubs)->get($group_id);
             if(!$cl) {
                 $this->fail(21, "Invalid club");
@@ -409,14 +401,8 @@ final class Photos extends VKAPIRequestHandler
             if(!$photo || $photo->isDeleted())
                 $this->fail(21, "Invalid photo");
 
-            if($photo->getOwner()->isDeleted())
-                $this->fail(21, "Owner of this photo is deleted");
-
-            if(!$photo->getOwner()->getPrivacyPermission('photos.read', $this->getUser()))
-                $this->fail(21, "This user chose to hide his photos.");
-
             if(!$photo->canBeViewedBy($this->getUser()))
-                $this->fail(15, "Access denied...");
+                $this->fail(15, "Access denied");
 
             $res[] = $photo->toVkApiStruct($photo_sizes, $extended);
         }
@@ -523,7 +509,7 @@ final class Photos extends VKAPIRequestHandler
                 $this->fail(21, "Invalid photo");
 
             if($photo->isDeleted())
-                $this->fail(21, "Photo already deleted");
+                $this->fail(21, "Photo is already deleted");
 
             $photo->delete();
         } else {
@@ -535,17 +521,14 @@ final class Photos extends VKAPIRequestHandler
     
                 $phot = (new PhotosRepo)->getByOwnerAndVID((int)$id[0], (int)$id[1]);
 
-                if($this->getUser()->getId() !== $phot->getOwner()->getId()) {
+                if($this->getUser()->getId() !== $phot->getOwner()->getId())
                     $this->fail(21, "You can't delete another's photo");
-                }
 
-                if(!$phot) {
+                if(!$phot)
                     $this->fail(21, "Invalid photo");
-                }
     
-                if($phot->isDeleted()) {
+                if($phot->isDeleted())
                     $this->fail(21, "Photo already deleted");
-                }
 
                 $phot->delete();
             }
@@ -565,17 +548,11 @@ final class Photos extends VKAPIRequestHandler
         $this->willExecuteWriteAction();
 
         $comment = (new CommentsRepo)->get($comment_id);
-        if(!$comment) {
+        if(!$comment)
             $this->fail(21, "Invalid comment");
-        }
 
-        if(!$comment->canBeModifiedBy($this->getUser())) {
-            $this->fail(21, "Forbidden");
-        }
-
-        if($comment->isDeleted()) {
-            $this->fail(4, "Comment already deleted");
-        }
+        if(!$comment->canBeModifiedBy($this->getUser()))
+            $this->fail(21, "Access denied");
 
         $comment->delete();
 
@@ -592,14 +569,11 @@ final class Photos extends VKAPIRequestHandler
 
         $photo = (new PhotosRepo)->getByOwnerAndVID($owner_id, $photo_id);
 
-        if(!$photo)
-            $this->fail(180, "Photo not found");
-
-        if($photo->isDeleted())
-            $this->fail(189, "Photo is deleted");
+        if(!$photo || $photo->isDeleted())
+            $this->fail(180, "Invalid photo");
 
         if(!$photo->canBeViewedBy($this->getUser()))
-            $this->fail(15, "Access to photo denied.");
+            $this->fail(15, "Access to photo denied");
 
         $comment = new Comment;
         $comment->setOwner($this->getUser()->getId());
@@ -671,11 +645,10 @@ final class Photos extends VKAPIRequestHandler
         if(!$user->getPrivacyPermission('photos.read', $this->getUser()))
             $this->fail(21, "This user chose to hide his albums.");
 
-        if(!$user->canBeViewedBy($this->getUser()))
-            $this->fail(15, "Access denied");
-
         $photos = array_slice(iterator_to_array((new PhotosRepo)->getEveryUserPhoto($user, 1, $count + $offset)), $offset);
-        $res = [];
+        $res = [
+            "items" => [],
+        ];
 
         foreach($photos as $photo) {
             if(!$photo || $photo->isDeleted()) continue;

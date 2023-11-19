@@ -10,7 +10,6 @@
         </a>
     {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Video}
-    {if !$attachment->isDeleted()}
     {if $attachment->getType() === 0}
         <div class="bsdn media" data-name="{$attachment->getName()}" data-author="{$attachment->getOwner()->getCanonicalName()}">
             <video class="media" src="{$attachment->getURL()}"></video>
@@ -28,10 +27,6 @@
         <img src="/assets/packages/static/openvk/img/videoico.png" />
         <a href="/video{$attachment->getPrettyId()}" id="videoOpen" data-id="{$attachment->getId()}">{$attachment->getName()}</a>
     </div>
-    
-    {else}
-        <span style="color:gray;">{_video_is_deleted}</span>
-    {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Poll}
     {presenter "openvk!Poll->view", $attachment->getId()}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Note}

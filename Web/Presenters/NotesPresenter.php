@@ -19,7 +19,7 @@ final class NotesPresenter extends OpenVKPresenter
     {
         $user = (new Users)->get($owner);
         if(!$user) $this->notFound();
-        if(!$user->getPrivacyPermission('notes.read', $this->user->identity ?? NULL) || !$user->canBeViewedBy($this->user->identity))
+        if(!$user->getPrivacyPermission('notes.read', $this->user->identity ?? NULL))
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         
         $this->template->notes = $this->notes->getUserNotes($user, (int)($this->queryParam("p") ?? 1));

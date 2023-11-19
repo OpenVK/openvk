@@ -65,7 +65,7 @@ final class UserPresenter extends OpenVKPresenter
         $page = abs((int)($this->queryParam("p") ?? 1));
         if(!$user)
             $this->notFound();
-        elseif (!$user->getPrivacyPermission('friends.read', $this->user->identity ?? NULL) || !$user->canBeViewedBy($this->user->identity))
+        elseif (!$user->getPrivacyPermission('friends.read', $this->user->identity ?? NULL))
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         else
             $this->template->user = $user;
@@ -93,7 +93,7 @@ final class UserPresenter extends OpenVKPresenter
         $user = $this->users->get($id);
         if(!$user)
             $this->notFound();
-        elseif (!$user->getPrivacyPermission('groups.read', $this->user->identity ?? NULL) || !$user->canBeViewedBy($this->user->identity))
+        elseif (!$user->getPrivacyPermission('groups.read', $this->user->identity ?? NULL))
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         else {
             if($this->queryParam("act") === "managed" && $this->user->id !== $user->getId())

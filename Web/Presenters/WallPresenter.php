@@ -238,7 +238,7 @@ final class WallPresenter extends OpenVKPresenter
         $wallOwner = ($wall > 0 ? (new Users)->get($wall) : (new Clubs)->get($wall * -1))
                      ?? $this->flashFail("err", tr("failed_to_publish_post"), tr("error_4"));
 
-        if ($wallOwner->isBanned() || !$wallOwner->canBeViewedBy($this->user->identity))
+        if ($wallOwner->isBanned())
             $this->flashFail("err", tr("error"), tr("forbidden"));
 
         if($wall > 0) {

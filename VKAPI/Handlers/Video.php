@@ -36,22 +36,15 @@ final class Video extends VKAPIRequestHandler
             ];
         } else {
             if ($owner_id > 0) 
-            $user = (new UsersRepo)->get($owner_id);
+                $user = (new UsersRepo)->get($owner_id);
             else
                 $this->fail(1, "Not implemented");
-            
-            if(!$user->getPrivacyPermission('videos.read', $this->getUser())) {
-                $this->fail(20, "Access denied: this user chose to hide his videos");
-            }
             
             if(!$user || $user->isDeleted())
                 $this->fail(14, "Invalid user");
 
             if(!$user->getPrivacyPermission('videos.read', $this->getUser()))
                 $this->fail(21, "This user chose to hide his videos.");
-
-            if(!$user->canBeViewedBy($this->getUser()))
-                $this->fail(15, "Access denied");
 
             $videos = (new VideosRepo)->getByUser($user, $offset + 1, $count);
             $videosCount = (new VideosRepo)->getUserVideosCount($user);
