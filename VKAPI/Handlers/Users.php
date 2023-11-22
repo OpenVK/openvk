@@ -188,7 +188,7 @@ final class Users extends VKAPIRequestHandler
 									"photos_count" => (new Albums)->getUserPhotosCount($usr),
 									"videos_count" => (new Videos)->getUserVideosCount($usr),
 									"audios_count" => (new Audios)->getUserCollectionSize($usr),
-									"notes_count" => (new Notes)->getUserNotesCount($usr),
+									"notes_count" => (new Notes)->getUserNotesCount($usr)
 								];
 								break;
 						}
