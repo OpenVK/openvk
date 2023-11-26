@@ -783,7 +783,7 @@ class User extends RowModel
 
     function isFemale(): bool
     {
-        return (bool) $this->getRecord()->sex == 1;
+        return $this->getRecord()->sex == 1;
     }
 
     function isNeutral(): bool
