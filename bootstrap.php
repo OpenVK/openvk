@@ -22,6 +22,7 @@ function _ovk_check_environment(): void
         "fileinfo",
         "PDO",
         "pdo_mysql",
+        "pdo_sqlite",
         "pcre",
         "hash",
         "curl",
