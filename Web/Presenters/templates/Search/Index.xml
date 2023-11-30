@@ -308,14 +308,14 @@
             </div>
         </div>
 
-        <div class="searchOption">
+        <!-- <div class="searchOption">
             <div class="searchOptionName" id="n_gender" onclick="hideParams('gender')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{_gender}</div>
             <div class="searchOptionBlock" id="s_gender">
                 <p><input type="radio" form="searcher" id="gend" {if $_GET['gender'] == 0}checked{/if} name="gender" value="0">{_male}</p>
                 <p><input type="radio" form="searcher" id="gend1"{if $_GET['gender'] == 1}checked{/if} name="gender" value="1">{_female}</p>
                 <p><input type="radio" form="searcher" id="gend2"{if $_GET['gender'] == 2 || is_null($_GET['gender'])}checked{/if} name="gender" value="2">{_s_any}</p>
             </div>
-        </div>
+        </div> -->
 
         <div class="searchOption">
             <div class="searchOptionName" id="n_relationship" onclick="hideParams('relationship')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{ovk_proc_strtr(tr("relationship"), 14)}</div>
