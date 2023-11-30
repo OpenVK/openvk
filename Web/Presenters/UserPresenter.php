@@ -170,7 +170,6 @@ final class UserPresenter extends OpenVKPresenter
                 if ($this->postParam("politViews") <= 9 && $this->postParam("politViews") >= 0)
                 $user->setPolit_Views($this->postParam("politViews"));
                 
-                bdump($this->postParam("pronouns"));
                 if ($this->postParam("pronouns") <= 2 && $this->postParam("pronouns") >= 0)
                 switch ($this->postParam("pronouns")) {
                     case '0':
