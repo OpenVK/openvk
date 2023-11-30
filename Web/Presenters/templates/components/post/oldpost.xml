@@ -33,6 +33,8 @@
                     {else}
                         {if $author->isFemale()}
                             {_post_writes_f}
+                        {elseif $author->isNeutral()}
+                            {_post_writes_g}
                         {else}
                             {_post_writes_m}
                         {/if}

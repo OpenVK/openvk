@@ -183,8 +183,18 @@ final class UserPresenter extends OpenVKPresenter
                 if ($this->postParam("politViews") <= 9 && $this->postParam("politViews") >= 0)
                 $user->setPolit_Views($this->postParam("politViews"));
                 
-                if ($this->postParam("gender") <= 1 && $this->postParam("gender") >= 0)
-                $user->setSex($this->postParam("gender"));
+                if ($this->postParam("pronouns") <= 2 && $this->postParam("pronouns") >= 0)
+                switch ($this->postParam("pronouns")) {
+                    case '0':
+                        $user->setSex(0);
+                        break;
+                    case '1':
+                        $user->setSex(1);
+                        break;
+                    case '2':
+                        $user->setSex(2);
+                        break;
+                }
                 $user->setAudio_broadcast_enabled($this->checkbox("broadcast_music"));
                 
                 if(!empty($this->postParam("phone")) && $this->postParam("phone") !== $user->getPhone()) {

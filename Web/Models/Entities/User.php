@@ -795,7 +795,29 @@ class User extends RowModel
 
     function isFemale(): bool
     {
-        return (bool) $this->getRecord()->sex;
+        return $this->getRecord()->sex == 1;
+    }
+
+    function isNeutral(): bool
+    {
+        return (bool) $this->getRecord()->sex == 2;
+    }
+
+    function getLocalizedPronouns(): string
+    {
+        switch ($this->getRecord()->sex) {
+            case 0:
+                return tr('male');
+            case 1:
+                return tr('female');
+            case 2:
+                return tr('neutral');
+        }
+    }
+
+    function getPronouns(): int
+    {
+        return $this->getRecord()->sex;
     }
 
     function isVerified(): bool
