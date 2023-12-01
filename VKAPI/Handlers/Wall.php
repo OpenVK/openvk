@@ -435,19 +435,28 @@ final class Wall extends VKAPIRequestHandler
 
             foreach($profiles as $prof) {
                 $user                = (new UsersRepo)->get($prof);
-                $profilesFormatted[] = (object)[
-                    "first_name"        => $user->getFirstName(),
-                    "id"                => $user->getId(),
-                    "last_name"         => $user->getLastName(),
-                    "can_access_closed" => false,
-                    "is_closed"         => false,
-                    "sex"               => $user->isFemale() ? 1 : ($user->isNeutral() ? 0 : 2),
-                    "screen_name"       => $user->getShortCode(),
-                    "photo_50"          => $user->getAvatarUrl(),
-                    "photo_100"         => $user->getAvatarUrl(),
-                    "online"            => $user->isOnline(),
-                    "verified"          => $user->isVerified()
-                ];
+                if($user) {
+                    $profilesFormatted[] = (object)[
+                        "first_name"        => $user->getFirstName(),
+                        "id"                => $user->getId(),
+                        "last_name"         => $user->getLastName(),
+                        "can_access_closed" => false,
+                        "is_closed"         => false,
+                        "sex"               => $user->isFemale() ? 1 : 2,
+                        "screen_name"       => $user->getShortCode(),
+                        "photo_50"          => $user->getAvatarUrl(),
+                        "photo_100"         => $user->getAvatarUrl(),
+                        "online"            => $user->isOnline(),
+                        "verified"          => $user->isVerified()
+                    ];
+                } else {
+                    $profilesFormatted[] = (object)[
+                        "id" 		  => (int) $prof,
+                        "first_name"  => "DELETED",
+                        "last_name"   => "",
+                        "deactivated" => "deleted"
+                    ];
+                }
             }
 
             foreach($groups as $g) {
