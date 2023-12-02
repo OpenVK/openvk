@@ -248,6 +248,15 @@ class Post extends Postable
         $this->unwire();
         $this->save();
     }
+
+    function canBeViewedBy(?User $user = NULL): bool
+    {
+        if($this->isDeleted()) {
+            return false;
+        }
+        
+        return $this->getWallOwner()->canBeViewedBy($user);
+    }
     
     function getSuggestionType()
     {

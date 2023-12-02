@@ -27,6 +27,9 @@ class Wall implements Handler
         if($post->getSuggestionType() != 0)
             $reject(25, "Can't get suggested post");
         
+        if(!$post->canBeViewedBy($this->user))
+            $reject(12, "Access denied");
+
         $res = (object) [];
         $res->id     = $post->getId();
         $res->wall   = $post->getTargetWall();

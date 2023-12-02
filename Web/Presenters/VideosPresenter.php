@@ -39,11 +39,12 @@ final class VideosPresenter extends OpenVKPresenter
     function renderView(int $owner, int $vId): void
     {
         $user = $this->users->get($owner);
+        $video = $this->videos->getByOwnerAndVID($owner, $vId);
+
         if(!$user) $this->notFound();
+        if(!$video || $video->isDeleted()) $this->notFound();
         if(!$user->getPrivacyPermission('videos.read', $this->user->identity ?? NULL))
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
-
-        if($this->videos->getByOwnerAndVID($owner, $vId)->isDeleted()) $this->notFound();
         
         $this->template->user     = $user;
         $this->template->video    = $this->videos->getByOwnerAndVID($owner, $vId);

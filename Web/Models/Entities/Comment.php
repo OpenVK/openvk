@@ -94,6 +94,15 @@ class Comment extends Post
     {
         return "/wall" . $this->getTarget()->getPrettyId() . "#_comment" . $this->getId();
     }
+
+    function canBeViewedBy(?User $user = NULL): bool
+    {
+        if($this->isDeleted() || $this->getTarget()->isDeleted()) {
+            return false;
+        }
+
+        return $this->getTarget()->canBeViewedBy($user);
+    }
   
     function toNotifApiStruct()
     {

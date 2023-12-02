@@ -399,6 +399,11 @@ class Club extends RowModel
         $this->save();
     }
 
+    function canBeViewedBy(?User $user = NULL)
+    {
+        return is_null($this->getBanReason());
+    }
+
     function getAlert(): ?string
     {
         return $this->getRecord()->alert;

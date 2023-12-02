@@ -278,6 +278,17 @@ class Poll extends Attachable
         
         return $poll;
     }
+
+    function canBeViewedBy(?User $user = NULL): bool
+    {
+        # waiting for #935 :(
+        /*if(!is_null($this->getAttachedPost())) {
+            return $this->getAttachedPost()->canBeViewedBy($user);
+        } else {*/
+            return true;
+        #}
+
+    }
     
     function save(?bool $log = false): void
     {

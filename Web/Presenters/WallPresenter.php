@@ -46,7 +46,7 @@ final class WallPresenter extends OpenVKPresenter
     function renderWall(int $user, bool $embedded = false): void
     {
         $owner = ($user < 0 ? (new Clubs) : (new Users))->get(abs($user));
-        if ($owner->isBanned())
+        if ($owner->isBanned() || !$owner->canBeViewedBy($this->user->identity))
             $this->flashFail("err", tr("error"), tr("forbidden"));
 
         if(is_null($this->user)) {
@@ -114,7 +114,7 @@ final class WallPresenter extends OpenVKPresenter
         if(is_null($this->user)) {
             $canPost = false;
         } else if($user > 0) {
-            if(!$owner->isBanned())
+            if(!$owner->isBanned() && $owner->canBeViewedBy($this->user->identity))
                 $canPost = $owner->getPrivacyPermission("wall.write", $this->user->identity);
             else
                 $this->flashFail("err", tr("error"), tr("forbidden"));
@@ -190,8 +190,9 @@ final class WallPresenter extends OpenVKPresenter
         
         $page  = (int) ($_GET["p"] ?? 1);
         $pPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
-
-        $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
+        
+        $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
+        $queryBase .= "WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND (`profiles`.`profile_type` = 0 OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
 
         if($this->user->identity->getNsfwTolerance() === User::NSFW_INTOLERANT)
             $queryBase .= " AND `nsfw` = 0";
@@ -430,22 +431,25 @@ final class WallPresenter extends OpenVKPresenter
         $post = $this->posts->getPostById($wall, $post_id);
         if(!$post || $post->isDeleted())
             $this->notFound();
+
+        if(!$post->canBeViewedBy($this->user->identity))
+            $this->flashFail("err", tr("error"), tr("forbidden"));
         
         $this->logPostView($post, $wall);
         
         $this->template->post     = $post;
         if ($post->getTargetWall() > 0) {
-        	$this->template->wallOwner = (new Users)->get($post->getTargetWall());
-			$this->template->isWallOfGroup = false;
+            $this->template->wallOwner = (new Users)->get($post->getTargetWall());
+            $this->template->isWallOfGroup = false;
             if($this->template->wallOwner->isBanned())
                 $this->flashFail("err", tr("error"), tr("forbidden"));
-		} else {
-			$this->template->wallOwner = (new Clubs)->get(abs($post->getTargetWall()));
-			$this->template->isWallOfGroup = true;
+        } else {
+            $this->template->wallOwner = (new Clubs)->get(abs($post->getTargetWall()));
+            $this->template->isWallOfGroup = true;
 
             if ($this->template->wallOwner->isBanned())
                 $this->flashFail("err", tr("error"), tr("forbidden"));
-		}
+        }
         $this->template->cCount   = $post->getCommentsCount();
         $this->template->cPage    = (int) ($_GET["p"] ?? 1);
         $this->template->comments = iterator_to_array($post->getComments($this->template->cPage));

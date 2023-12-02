@@ -50,13 +50,13 @@ final class Users extends VKAPIRequestHandler
 						"id"                => $usr->getId(),
 						"first_name"        => $usr->getFirstName(true),
 						"last_name"         => $usr->getLastName(true),
-						"is_closed"         => false,
-						"can_access_closed" => true,
+						"is_closed"         => $usr->isClosed(),
+						"can_access_closed" => (bool)$usr->canBeViewedBy($this->getUser()),
 					];
 
 					$flds = explode(',', $fields);
-
-					foreach($flds as $field) { 
+					$canView = $usr->canBeViewedBy($this->getUser());
+					foreach($flds as $field) {
 						switch($field) {
 							case "verified":
 								$response[$i]->verified = intval($usr->isVerified());
@@ -150,36 +150,91 @@ final class Users extends VKAPIRequestHandler
 									];
 								}
 							case "music":
+								if(!$canView) {
+									$response[$i]->music = "secret";
+									break;
+								}
+
 								$response[$i]->music = $usr->getFavoriteMusic();
 								break;
 							case "movies":
+								if(!$canView) {
+									$response[$i]->movies = "secret";
+									break;
+								}
+
 								$response[$i]->movies = $usr->getFavoriteFilms();
 								break;
 							case "tv":
+								if(!$canView) {
+									$response[$i]->tv = "secret";
+									break;
+								}
+
 								$response[$i]->tv = $usr->getFavoriteShows();
 								break;
 							case "books":
+								if(!$canView) {
+									$response[$i]->books = "secret";
+									break;
+								}
+
 								$response[$i]->books = $usr->getFavoriteBooks();
 								break;
 							case "city":
+								if(!$canView) {
+									$response[$i]->city = "Воскресенск";
+									break;
+								}
+
 								$response[$i]->city = $usr->getCity();
 								break;
 							case "interests":
+								if(!$canView) {
+									$response[$i]->interests = "secret";
+									break;
+								}
+
 								$response[$i]->interests = $usr->getInterests();
 								break;
 							case "quotes":
-								$response[$i]->interests = $usr->getFavoriteQuote();
+								if(!$canView) {
+									$response[$i]->quotes = "secret";
+									break;
+								}
+
+								$response[$i]->quotes = $usr->getFavoriteQuote();
 								break;
 							case "email":
-								$response[$i]->interests = $usr->getEmail();
+								if(!$canView) {
+									$response[$i]->email = "secret@gmail.com";
+									break;
+								}
+
+								$response[$i]->email = $usr->getContactEmail();
 								break;
 							case "telegram":
-								$response[$i]->interests = $usr->getTelegram();
+								if(!$canView) {
+									$response[$i]->telegram = "@secret";
+									break;
+								}
+
+								$response[$i]->telegram = $usr->getTelegram();
 								break;
 							case "about":
-								$response[$i]->interests = $usr->getDescription();
+								if(!$canView) {
+									$response[$i]->about = "secret";
+									break;
+								}
+								
+								$response[$i]->about = $usr->getDescription();
 								break;
 							case "rating":
+								if(!$canView) {
+									$response[$i]->rating = 22;
+									break;
+								}
+
 								$response[$i]->rating = $usr->getRating();
 								break;
 							case "counters":
@@ -214,6 +269,14 @@ final class Users extends VKAPIRequestHandler
 
         $this->requireUser();
         
+        $user = $users->get($user_id);
+		
+        if(!$user || $user->isDeleted())
+            $this->fail(14, "Invalid user");
+
+        if(!$user->canBeViewedBy($this->getUser()))
+            $this->fail(15, "Access denied");
+
         foreach($users->get($user_id)->getFollowers($offset, $count) as $follower)
             $followers[] = $follower->getId();
 
@@ -306,6 +369,7 @@ final class Users extends VKAPIRequestHandler
             "fav_shows"       => !empty($fav_shows) ? $fav_shows : NULL,
             "fav_books"       => !empty($fav_books) ? $fav_books : NULL,
             "fav_quotes"      => !empty($fav_quotes) ? $fav_quotes : NULL,
+            "doNotSearchPrivate" => true,
         ];
 
         $find  = $users->find($q, $parameters, $sortg);

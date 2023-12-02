@@ -136,6 +136,9 @@ final class PhotosPresenter extends OpenVKPresenter
         if(!$album) $this->notFound();
         if($album->getPrettyId() !== $owner . "_" . $id || $album->isDeleted())
             $this->notFound();
+
+        if(!$album->canBeViewedBy($this->user->identity))
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         
         if($owner > 0 /* bc we currently don't have perms for clubs */) {
             $ownerObject = (new Users)->get($owner);
@@ -158,7 +161,8 @@ final class PhotosPresenter extends OpenVKPresenter
     {
         $photo = $this->photos->getByOwnerAndVID($ownerId, $photoId);
         if(!$photo || $photo->isDeleted()) $this->notFound();
-        
+        if(!$photo->canBeViewedBy($this->user->identity))
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         if(!is_null($this->queryParam("from"))) {
             if(preg_match("%^album([0-9]++)$%", $this->queryParam("from"), $matches) === 1) {
                 $album = $this->albums->get((int) $matches[1]);

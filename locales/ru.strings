@@ -140,6 +140,22 @@
 "updated_at" = "Обновлено $1";
 "user_banned" = "К сожалению, нам пришлось заблокировать страницу пользователя <b>$1</b>.";
 "user_banned_comment" = "Комментарий модератора:";
+
+"closed_page" = "Закрытая страница";
+
+"limited_access_to_page_m" = "$1 ограничил доступ к своей странице.";
+"limited_access_to_page_f" = "$1 ограничила доступ к своей странице.";
+
+"you_can_add" = "Вы можете";
+"add_to_friends_m" = "добавить его в друзья.";
+"add_to_friends_f" = "добавить её в друзья.";
+
+"register_to_access_page_m" = "Зарегистрируйтесь, чтобы получить доступ к его странице.";
+"register_to_access_page_f" = "Зарегистрируйтесь, чтобы получить доступ к её странице.";
+
+"private_profile_warning" = "Этот профиль закрытый, но вы имеете к нему доступ, потому что вы — администратор.";
+"private_profile_warning_desc" = "Пожалуйста, уважайте право на личную жизнь и не злоупотребляйте этой возможностью.";
+
 "verified_page" = "Подтверждённая страница";
 "user_is_blocked" = "Пользователь заблокирован";
 "before" = "до";
@@ -625,6 +641,9 @@
 "privacy_value_only_me" = "Только я";
 "privacy_value_only_me_dative" = "Только мне";
 "privacy_value_nobody" = "Никто";
+"profile_type" = "Тип профиля";
+"profile_type_open" = "Открытый";
+"profile_type_closed" = "Закрытый";
 "your_email_address" = "Адрес Вашей электронной почты";
 "your_page_address" = "Адрес Вашей страницы";
 "page_address" = "Адрес страницы";

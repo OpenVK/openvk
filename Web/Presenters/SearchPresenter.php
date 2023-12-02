@@ -97,6 +97,7 @@ final class SearchPresenter extends OpenVKPresenter
             "before"        => $this->queryParam("datebefore") != "" ? strtotime($this->queryParam("datebefore")) : NULL,
             "after"         => $this->queryParam("dateafter")  != "" ? strtotime($this->queryParam("dateafter")) : NULL,
             "gender"        => $this->queryParam("gender")     != "" && $this->queryParam("gender") != 2 ? $this->queryParam("gender") : NULL,
+            "doNotSearchPrivate" => true,
             "only_performers" => $this->queryParam("only_performers") == "on" ? "1" : NULL,
             "with_lyrics" => $this->queryParam("with_lyrics") == "on" ? true : NULL,
         ];

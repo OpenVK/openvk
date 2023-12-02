@@ -224,7 +224,21 @@ class Video extends Media
         
         return $video;
     }
+    
+    function canBeViewedBy(?User $user = NULL): bool
+    {
+        if($this->isDeleted() || $this->getOwner()->isDeleted()) {
+            return false;
+        }
 
+        if(get_class($this->getOwner()) == "openvk\\Web\\Models\\Entities\\User") {
+            return $this->getOwner()->canBeViewedBy($user) && $this->getOwner()->getPrivacyPermission('videos.read', $user);
+        } else {
+            # Groups doesn't have videos but ok
+            return $this->getOwner()->canBeViewedBy($user);
+        }
+    }
+    
     function toNotifApiStruct()
     {
         $fromYoutube = $this->getType() == Video::TYPE_EMBED;

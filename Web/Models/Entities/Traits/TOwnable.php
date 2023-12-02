@@ -4,9 +4,13 @@ use openvk\Web\Models\Entities\User;
 
 trait TOwnable
 {
-    function canBeViewedBy(?User $user): bool
+    function canBeViewedBy(?User $user = NULL): bool
     {
-        // TODO implement normal check in master
+        # TODO: #950
+        if($this->isDeleted())  {
+            return false;
+        }
+        
         return true;
     }
 

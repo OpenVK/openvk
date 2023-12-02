@@ -1013,6 +1013,11 @@ table.User {
     background-color: #f5e9ec;
 }
 
+.msg.msg_yellow {
+    border-color:#D4BC4C;
+    background-color:#F9F6E7;
+}
+
 .edit_link {
     color: #c5c5c5;
     font-family: verdana, arial, sans-serif;
