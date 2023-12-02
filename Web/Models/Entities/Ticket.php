@@ -64,5 +64,10 @@ class Ticket extends RowModel
     	return false;
     }
 
+    function getURL(): string
+    {
+        return "/support/reply/" . $this->getId();
+    }
+
     use Traits\TRichText;
 }

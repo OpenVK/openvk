@@ -138,4 +138,9 @@ class Note extends Postable
 
         return $res;
     }
+
+    function getURL(): string
+    {
+        return "/note" . $this->getPrettyId();
+    }
 }

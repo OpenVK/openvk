@@ -132,5 +132,10 @@ class TicketComment extends RowModel
         return (bool) $this->getRecord()->deleted;
     }
 
+    function getURL(): string
+    {
+        return "/support/reply/" . $this->getTicket()->getId();
+    }
+
     use Traits\TRichText;
 }

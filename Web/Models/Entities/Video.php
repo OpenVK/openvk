@@ -1,5 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Models\Entities;
+use Chandler\Database\Logs;
+use openvk\Web\Models\Repositories\CurrentUser;
 use openvk\Web\Util\Shell\Shell;
 use openvk\Web\Util\Shell\Exceptions\{ShellUnavailableException, UnknownCommandException};
 use openvk\Web\Models\VideoDrivers\VideoDriver;
@@ -202,6 +204,7 @@ class Video extends Media
 
     function deleteVideo(): void 
     {
+        (new Logs)->create(CurrentUser::i()->getUser()->getChandlerGUID(), "videos", get_class($this), 2, $this, ["deleted" => 1]);
         $this->setDeleted(1);
         $this->unwire();
         $this->save();

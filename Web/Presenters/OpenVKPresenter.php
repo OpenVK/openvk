@@ -6,6 +6,7 @@ use Chandler\Session\Session;
 use Chandler\Security\Authenticator;
 use Latte\Engine as TemplatingEngine;
 use openvk\Web\Models\Entities\IP;
+use openvk\Web\Models\RowModel;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets, Reports, CurrentUser};
 use WhichBrowser;
@@ -146,6 +147,19 @@ abstract class OpenVKPresenter extends SimplePresenter
             }
             
             $this->flashFail("err", tr("rate_limit_error"), tr("rate_limit_error_comment", OPENVK_ROOT_CONF["openvk"]["appearance"]["name"], $res), NULL, $json);
+        }
+    }
+
+    protected function assertCanViewDeleted(RowModel $object): void
+    {
+        if ($object->isDeleted()) {
+            if ($this->queryParam("del")) {
+                if ($this->assertPermission("admin", "access", -1)) {
+                    $this->flash("warn", "Обратите внимание", "Вы просматриваете удаленный контент. Его видят только администраторы");
+                }
+            } else {
+                $this->notFound();
+            }
         }
     }
     

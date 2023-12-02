@@ -248,6 +248,11 @@ class Post extends Postable
         $this->unwire();
         $this->save();
     }
+
+    function getURL(): string
+    {
+        return "/wall" . $this->getPrettyId();
+    }
     
     function getSuggestionType()
     {
