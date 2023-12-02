@@ -2,6 +2,7 @@
 namespace openvk\VKAPI\Handlers;
 use openvk\Web\Models\Entities\{User, Report};
 use openvk\Web\Models\Repositories\Users as UsersRepo;
+use openvk\Web\Models\Repositories\{Photos, Clubs, Albums, Videos, Notes, Audios};
 use openvk\Web\Models\Repositories\Reports;
 
 final class Users extends VKAPIRequestHandler
@@ -61,7 +62,7 @@ final class Users extends VKAPIRequestHandler
 								$response[$i]->verified = intval($usr->isVerified());
 								break;
 							case "sex":
-								$response[$i]->sex = $usr->isFemale() ? 1 : 2;
+								$response[$i]->sex = $usr->isFemale() ? 1 : ($usr->isNeutral() ? 0 : 2);
 								break;
 							case "has_photo":
 								$response[$i]->has_photo = is_null($usr->getAvatarPhoto()) ? 0 : 1;
@@ -235,7 +236,16 @@ final class Users extends VKAPIRequestHandler
 								}
 
 								$response[$i]->rating = $usr->getRating();
-								break;	 
+								break;
+							case "counters":
+								$response[$i]->counters = (object) [
+									"friends_count" => $usr->getFriendsCount(),
+									"photos_count" => (new Albums)->getUserPhotosCount($usr),
+									"videos_count" => (new Videos)->getUserVideosCount($usr),
+									"audios_count" => (new Audios)->getUserCollectionSize($usr),
+									"notes_count" => (new Notes)->getUserNotesCount($usr)
+								];
+								break;
 						}
 					}
 

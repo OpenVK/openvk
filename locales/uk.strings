@@ -64,9 +64,10 @@
 "change_status" = "змінити статус";
 "name" = "Ім’я";
 "surname" = "Прізвище";
-"gender" = "Стать";
-"male" = "Чоловіча";
-"female" = "Жіноча";
+"pronouns" = "Займенники";
+"male" = "він/його";
+"female" = "вона/її";
+"neutral" = "вони/їх";
 "description" = "Опис";
 "save" = "Зберегти";
 "main_information" = "Основна інформація";
@@ -147,8 +148,10 @@
 "post_writes_g" = "опублікували";
 "post_deact_m" = "видалив сторінку зі словами:";
 "post_deact_f" = "видалила сторінку зі словами:";
+"post_deact_g" = "видалили сторінку зі словами:";
 "post_deact_silent_m" = "мовчки видалив свою сторінку.";
 "post_deact_silent_f" = "мовчки видалила свою сторінку.";
+"post_deact_silent_g" = "мовчки видалили свою сторінку.";
 "post_on_your_wall" = "на вашій стіні";
 "post_on_group_wall" = "в $1";
 "post_on_user_wall" = "на стіні $1";

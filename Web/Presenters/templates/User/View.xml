@@ -451,8 +451,8 @@
                 <table id="basicInfo" class="ugc-table" border="0" cellspacing="0" cellpadding="0" border="0" cellspacing="0" cellpadding="0" n:if=" $user->getPrivacyPermission('page.info.read', $thisUser ?? NULL)">
                     <tbody>
                         <tr>
-                            <td class="label"><span class="nobold">{_gender}: </span></td>
-                            <td class="data">{$user->isFemale() ? tr("female") : tr("male")}</td>
+                            <td class="label"><span class="nobold">{_pronouns}: </span></td>
+                            <td class="data">{$user->isFemale() ? tr("female") : ($user->isNeutral() ? tr("neutral") : tr("male"))}</td>
                         </tr>
                         <tr>
                             <td class="label"><span class="nobold">{_relationship}:</span></td>

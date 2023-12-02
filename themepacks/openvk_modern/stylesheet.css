@@ -13,14 +13,14 @@ body {
     background: #3C3C3C url("/themepack/openvk_modern/0.0.1.0/resource/2.png") no-repeat;
     background-size: 80%;
     background-position-y: 0px;
-    background-position-x: 2px;
+    background-position-x: 1px;
 }
 
 .home_button_custom {
     background: #3C3C3C url("/themepack/openvk_modern/0.0.1.0/resource/4.png") no-repeat;
     background-size: 80%;
     background-position-y: 0px;
-    background-position-x: 2px;
+    background-position-x: 1px;
     text-shadow: none;
 }
 
@@ -160,13 +160,19 @@ body {
 
 input[type="text"], input[type="password"], input[type~="text"],
 input[type~="password"], input[type="email"], input[type="phone"],
-input[type~="email"], input[type~="phone"], input[type="search"],
-input[type~="search"], textarea, select {
+input[type~="email"], input[type~="phone"], input[type="date"],
+input[type~="date"], input[type="search"], input[type~="search"],
+textarea, select {
     border: 1px solid #E5E5E5;
 }
 
 input[type=checkbox] {
 	background-image: url("/themepack/openvk_modern/0.0.1.0/resource/6.png")
+}
+
+ul {
+	list-style: none;
+	list-style-type: disc;
 }
 
 .mb_tab#active div {
@@ -335,11 +341,11 @@ input[type=checkbox] {
 }
 
 .musicIcon {
-    filter: contrast(202%) !important;
+    filter: contrast(200%) !important;
 }
 
 .audioEntry .playerButton .playIcon {
-    filter: contrast(7) !important;
+    filter: contrast(2) !important;
 }
 
 .audioEmbed .track > .selectableTrack, .bigPlayer .selectableTrack {
