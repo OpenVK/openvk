@@ -1,4 +1,4 @@
-ARG VERSION=8.1
+ARG VERSION=8.2
 FROM docker.io/php:${VERSION}-apache
 
 COPY --from=mlocati/php-extension-installer /usr/bin/install-php-extensions /usr/local/bin/

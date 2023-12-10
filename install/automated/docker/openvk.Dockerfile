@@ -1,5 +1,5 @@
 ARG GITREPO=openvk/openvk
-FROM ghcr.io/${GITREPO}/php:8.1-cli as builder
+FROM ghcr.io/${GITREPO}/php:8.2-cli as builder
 
 WORKDIR /opt
 
@@ -38,7 +38,7 @@ RUN yarn install
 WORKDIR /opt/chandler/extensions/available/openvk
 
 ARG GITREPO=openvk/openvk
-FROM ghcr.io/${GITREPO}/php:8.1-apache
+FROM ghcr.io/${GITREPO}/php:8.2-apache
 
 COPY --from=nodejs --chown=www-data:www-data /opt/chandler /opt/chandler
 
