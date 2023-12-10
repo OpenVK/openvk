@@ -252,6 +252,6 @@ class Posts
 
     function getCount(): int
     {
-        return sizeof(clone $this->posts);
+        return (clone $this->posts)->count('*');
     }
 }

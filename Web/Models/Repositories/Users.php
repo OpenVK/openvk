@@ -142,9 +142,9 @@ class Users
     function getStatistics(): object
     {
         return (object) [
-            "all"    => sizeof(clone $this->users),
-            "active" => sizeof((clone $this->users)->where("online > 0")),
-            "online" => sizeof((clone $this->users)->where("online >= ?", time() - 900)),
+            "all"    => (clone $this->users)->count('*'),
+            "active" => (clone $this->users)->where("online > 0")->count('*'),
+            "online" => (clone $this->users)->where("online >= ?", time() - 900)->count('*'),
         ];
     }
 
