@@ -6,7 +6,7 @@ on:
 
 env:
   BASE_IMAGE_NAME: php
-  BASE_IMAGE_VERSION: "8.1"
+  BASE_IMAGE_VERSION: "8.2"
 
 jobs:
   build-cli:
