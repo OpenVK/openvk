@@ -62,7 +62,7 @@ class Themepacks implements \ArrayAccess
         return $offset === Themepacks::DEFAULT_THEME_ID ? false : isset($this->loadedThemepacks[$offset]);
     }
     
-    function offsetGet($offset)
+    function offsetGet($offset) : mixed
     {
         return $this->loadedThemepacks[$offset];
     }
