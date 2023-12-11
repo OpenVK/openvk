@@ -4,7 +4,6 @@
         "guzzlehttp/guzzle": "^6.5",
         "komeiji-satori/curl": "dev-master",
         "whichbrowser/parser": "dev-master",
-        "zadarma/user-api-v1": "dev-master",
         "james-heinrich/getid3": "^1.9@dev",
         "rybakit/msgpack": "dev-master",
         "wapmorgan/binary-stream": "dev-master",

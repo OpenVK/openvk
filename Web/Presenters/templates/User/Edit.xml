@@ -70,7 +70,7 @@
                             <input type="text" name="pseudo" value="{$user->getPseudo()}" />
                         </td>
                     </tr>
-                    {if OPENVK_ROOT_CONF['openvk']['credentials']['zadarma']['enable']}
+                    {if OPENVK_ROOT_CONF['openvk']['credentials']['smsc']['enable']}
                     <tr>
                         <td width="120" valign="top">
                             <span class="nobold">{_phone}: </span>

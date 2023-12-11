@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "74fb28e354c833498ae89dd108eb1d76",
+    "content-hash": "636b9c2de242c3485ec3924bc662629e",
     "packages": [
         {
             "name": "al/emoji-detector",
@@ -2713,56 +2713,6 @@
                 "source": "https://github.com/WhichBrowser/Parser-PHP/tree/v2.1.7"
             },
             "time": "2022-04-19T20:14:54+00:00"
-        },
-        {
-            "name": "zadarma/user-api-v1",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/zadarma/user-api-v1.git",
-                "reference": "bfdb7550b8f17e49b2928a84bfa0ec8587838806"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/zadarma/user-api-v1/zipball/bfdb7550b8f17e49b2928a84bfa0ec8587838806",
-                "reference": "bfdb7550b8f17e49b2928a84bfa0ec8587838806",
-                "shasum": ""
-            },
-            "require": {
-                "ext-curl": "*",
-                "php": ">=5.5.0"
-            },
-            "default-branch": true,
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "Zadarma_API\\": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Zadarma",
-                    "email": "github@zadarma.com"
-                }
-            ],
-            "description": "PHP class for Zadarma API",
-            "homepage": "https://github.com/zadarma/user-api-v1",
-            "keywords": [
-                "api",
-                "free calls",
-                "pbx",
-                "sip",
-                "zadarma"
-            ],
-            "support": {
-                "issues": "https://github.com/zadarma/user-api-v1/issues",
-                "source": "https://github.com/zadarma/user-api-v1/tree/v1.1.9"
-            },
-            "time": "2023-01-17T09:52:53+00:00"
         }
     ],
     "packages-dev": [],
@@ -2771,7 +2721,6 @@
     "stability-flags": {
         "komeiji-satori/curl": 20,
         "whichbrowser/parser": 20,
-        "zadarma/user-api-v1": 20,
         "james-heinrich/getid3": 20,
         "rybakit/msgpack": 20,
         "wapmorgan/binary-stream": 20,
