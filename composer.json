@@ -19,7 +19,8 @@
         "ext-simplexml": "*",
         "symfony/console": "5.4.x-dev",
         "wapmorgan/morphos": "dev-master",
-        "ext-sodium": "*"
+        "ext-sodium": "*",
+        "php81_bc/strftime": "^0.0.2"
     },
     "minimum-stability": "dev"
 }
