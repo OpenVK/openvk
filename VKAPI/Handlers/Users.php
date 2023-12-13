@@ -240,7 +240,7 @@ final class Users extends VKAPIRequestHandler
 							case "counters":
 								$response[$i]->counters = (object) [
 									"friends_count" => $usr->getFriendsCount(),
-									"photos_count" => (new Albums)->getUserPhotosCount($usr),
+									"photos_count" => (new Photos)->getUserPhotosCount($usr),
 									"videos_count" => (new Videos)->getUserVideosCount($usr),
 									"audios_count" => (new Audios)->getUserCollectionSize($usr),
 									"notes_count" => (new Notes)->getUserNotesCount($usr)
