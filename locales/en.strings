@@ -848,7 +848,7 @@
 "audios_count_other" = "$1 audios";
 
 "track_unknown" = "Unknown";
-"track_noname" = "Without name";
+"track_noname" = "Untitled";
 
 "my_music" = "My music";
 "music_user" = "User's music";
