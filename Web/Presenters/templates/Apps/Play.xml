@@ -12,7 +12,8 @@
 
 {block content}
     <center>
-        <iframe id="appFrame" referrerpolicy="unsafe-url" sandbox="allow-scripts" frameBorder="0" src="{$url}" height="600" width="600"></iframe>
+        <iframe id="appFrame" referrerpolicy="unsafe-url" frameBorder="0" src="{$url}" height="600" width="600"
+            sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-downloads-without-user-activation"></iframe>
     </center>
 
     <div n:if="!is_null($news)" id="news">
