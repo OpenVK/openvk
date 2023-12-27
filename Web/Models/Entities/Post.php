@@ -133,6 +133,10 @@ class Post extends Postable
                 case 'openvk_legacy_ios':
                     return 'iphone';
                     break;
+
+                case 'windows_phone':
+                    return 'wphone';
+                    break;
                 
                 case 'vika_touch': // кика хохотач ахахахаххахахахахах
                 case 'vk4me':
