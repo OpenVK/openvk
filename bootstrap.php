@@ -3,6 +3,7 @@ use Chandler\Database\DatabaseConnection;
 use Chandler\Session\Session;
 use openvk\Web\Util\Localizator;
 use openvk\Web\Util\Bitmask;
+use function PHP81_BC\strftime;
 
 function _ovk_check_environment(): void
 {
@@ -198,7 +199,7 @@ function ovk_proc_strtrim(string $string, int $length = 0): string
 function ovk_strftime_safe(string $format, ?int $timestamp = NULL): string
 {
     $sessionOffset = intval(Session::i()->get("_timezoneOffset"));
-    $str = strftime($format, $timestamp + ($sessionOffset * MINUTE) * -1 ?? time() + ($sessionOffset * MINUTE) * -1);
+    $str = strftime($format, $timestamp + ($sessionOffset * MINUTE) * -1 ?? time() + ($sessionOffset * MINUTE) * -1, tr("__locale") !== '@__locale' ? tr("__locale") : NULL);
     if(PHP_SHLIB_SUFFIX === "dll") {
         $enc = tr("__WinEncoding");
         if($enc === "@__WinEncoding")
