@@ -1,7 +1,21 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
+use Chandler\Database\Log;
+use Chandler\Database\Logs;
 use openvk\Web\Models\Entities\{Voucher, Gift, GiftCategory, User, BannedLink};
-use openvk\Web\Models\Repositories\{ChandlerGroups, ChandlerUsers, Users, Clubs, Vouchers, Gifts, BannedLinks};
+use openvk\Web\Models\Repositories\{Audios,
+    ChandlerGroups,
+    ChandlerUsers,
+    Users,
+    Clubs,
+    Util\EntityStream,
+    Vouchers,
+    Gifts,
+    BannedLinks,
+    Bans,
+    Photos, 
+    Posts, 
+    Videos};
 use Chandler\Database\DatabaseConnection;
 
 final class AdminPresenter extends OpenVKPresenter
@@ -12,8 +26,10 @@ final class AdminPresenter extends OpenVKPresenter
     private $gifts;
     private $bannedLinks;
     private $chandlerGroups;
+    private $audios;
+    private $logs;
 
-    function __construct(Users $users, Clubs $clubs, Vouchers $vouchers, Gifts $gifts, BannedLinks $bannedLinks, ChandlerGroups $chandlerGroups)
+    function __construct(Users $users, Clubs $clubs, Vouchers $vouchers, Gifts $gifts, BannedLinks $bannedLinks, ChandlerGroups $chandlerGroups, Audios $audios)
     {
         $this->users    = $users;
         $this->clubs    = $clubs;
@@ -21,7 +37,9 @@ final class AdminPresenter extends OpenVKPresenter
         $this->gifts    = $gifts;
         $this->bannedLinks = $bannedLinks;
         $this->chandlerGroups = $chandlerGroups;
-        
+        $this->audios = $audios;
+        $this->logs = DatabaseConnection::i()->getContext()->table("ChandlerLogs");
+
         parent::__construct();
     }
     
@@ -38,6 +56,15 @@ final class AdminPresenter extends OpenVKPresenter
         
         $count = $repo->find($query)->size();
         return $repo->find($query)->page($page, 20);
+    }
+
+    private function searchPlaylists(&$count)
+    {
+        $query = $this->queryParam("q") ?? "";
+        $page  = (int) ($this->queryParam("p") ?? 1);
+
+        $count = $this->audios->findPlaylists($query)->size();
+        return $this->audios->findPlaylists($query)->page($page, 20);
     }
     
     function onStartup(): void
@@ -83,8 +110,10 @@ final class AdminPresenter extends OpenVKPresenter
                 if($user->onlineStatus() != $this->postParam("online")) $user->setOnline(intval($this->postParam("online")));
                 $user->setVerified(empty($this->postParam("verify") ? 0 : 1));
                 if($this->postParam("add-to-group")) {
-                    $query = "INSERT INTO `ChandlerACLRelations` (`user`, `group`) VALUES ('" . $user->getChandlerGUID() . "', '" . $this->postParam("add-to-group") . "')";
-                    DatabaseConnection::i()->getConnection()->query($query);
+                    if (!(new ChandlerGroups)->isUserAMember($user->getChandlerGUID(), $this->postParam("add-to-group"))) {
+                        $query = "INSERT INTO `ChandlerACLRelations` (`user`, `group`) VALUES ('" . $user->getChandlerGUID() . "', '" . $this->postParam("add-to-group") . "')";
+                        DatabaseConnection::i()->getConnection()->query($query);
+                    }
                 }
                 if($this->postParam("password")) {
                     $user->getChandlerUser()->updatePassword($this->postParam("password"));
@@ -128,7 +157,8 @@ final class AdminPresenter extends OpenVKPresenter
                 $club->save();
                 break;
             case "ban":
-                $club->setBlock_reason($this->postParam("ban_reason"));
+                $reason = mb_strlen(trim($this->postParam("ban_reason"))) > 0 ? $this->postParam("ban_reason") : NULL;
+                $club->setBlock_reason($reason);
                 $club->save();
                 break;
         }
@@ -278,7 +308,7 @@ final class AdminPresenter extends OpenVKPresenter
                     $this->notFound();
                 
                 $gift->delete();
-                $this->flashFail("succ", "Gift moved successfully", "This gift will now be in <b>Recycle Bin</b>.");
+                $this->flashFail("succ", tr("admin_gift_moved_successfully"), tr("admin_gift_moved_to_recycle"));
                 break;
             case "copy":
             case "move":
@@ -297,7 +327,7 @@ final class AdminPresenter extends OpenVKPresenter
                 $catTo->addGift($gift);
                 
                 $name = $catTo->getName();
-                $this->flash("succ", "Gift moved successfully", "This gift will now be in <b>$name</b>.");
+                $this->flash("succ", tr("admin_gift_moved_successfully"), "This gift will now be in <b>$name</b>.");
                 $this->redirect("/admin/gifts/" . $catTo->getSlug() . "." . $catTo->getId() . "/");
                 break;
             default:
@@ -328,10 +358,10 @@ final class AdminPresenter extends OpenVKPresenter
                 $gift->setUsages((int) $this->postParam("usages"));
                 if(isset($_FILES["pic"]) && $_FILES["pic"]["error"] === UPLOAD_ERR_OK) {
                     if(!$gift->setImage($_FILES["pic"]["tmp_name"]))
-                        $this->flashFail("err", "Не удалось сохранить подарок", "Изображение подарка кривое.");
+                        $this->flashFail("err", tr("error_when_saving_gift"), tr("error_when_saving_gift_bad_image"));
                 } else if($gen) {
                     # If there's no gift pic but it's newly created
-                    $this->flashFail("err", "Не удалось сохранить подарок", "Пожалуйста, загрузите изображение подарка.");
+                    $this->flashFail("err", tr("error_when_saving_gift"), tr("error_when_saving_gift_no_image"));
                 }
                 
                 $gift->save();
@@ -355,13 +385,19 @@ final class AdminPresenter extends OpenVKPresenter
     {
         $this->assertNoCSRF();
 
-        $unban_time = strtotime($this->queryParam("date")) ?: NULL;
+        if (str_contains($this->queryParam("reason"), "*"))
+            exit(json_encode([ "error" => "Incorrect reason" ]));
+
+        $unban_time = strtotime($this->queryParam("date")) ?: "permanent";
 
         $user = $this->users->get($id);
         if(!$user)
             exit(json_encode([ "error" => "User does not exist" ]));
-        
-        $user->ban($this->queryParam("reason"), true, $unban_time);
+
+        if ($this->queryParam("incr"))
+            $unban_time = time() + $user->getNewBanTime();
+
+        $user->ban($this->queryParam("reason"), true, $unban_time, $this->user->identity->getId());
         exit(json_encode([ "success" => true, "reason" => $this->queryParam("reason") ]));
     }
 
@@ -372,9 +408,17 @@ final class AdminPresenter extends OpenVKPresenter
         $user = $this->users->get($id);
         if(!$user)
             exit(json_encode([ "error" => "User does not exist" ]));
-        
+
+        $ban = (new Bans)->get((int)$user->getRawBanReason());
+        if (!$ban || $ban->isOver())
+            exit(json_encode([ "error" => "User is not banned" ]));
+
+        $ban->setRemoved_Manually(true);
+        $ban->setRemoved_By($this->user->identity->getId());
+        $ban->save();
+
         $user->setBlock_Reason(NULL);
-        $user->setUnblock_time(NULL);
+        // $user->setUnblock_time(NULL);
         $user->save();
         exit(json_encode([ "success" => true ]));
     }
@@ -458,6 +502,14 @@ final class AdminPresenter extends OpenVKPresenter
         $link->delete(false);
 
         $this->redirect("/admin/bannedLinks");
+    }
+
+    function renderBansHistory(int $user_id) :void
+    {
+        $user = (new Users)->get($user_id);
+        if (!$user) $this->notFound();
+
+        $this->template->bans = (new Bans)->getByUser($user_id);
     }
 
     function renderChandlerGroups(): void
@@ -549,5 +601,87 @@ final class AdminPresenter extends OpenVKPresenter
         if(!$user) $this->notFound();
 
         $this->redirect("/admin/users/id" . $user->getId());
+    }
+
+    function renderMusic(): void
+    {
+        $this->template->mode = in_array($this->queryParam("act"), ["audios", "playlists"]) ? $this->queryParam("act") : "audios";
+        if ($this->template->mode === "audios")
+            $this->template->audios = $this->searchResults($this->audios, $this->template->count);
+        else
+            $this->template->playlists = $this->searchPlaylists($this->template->count);
+    }
+
+    function renderEditMusic(int $audio_id): void
+    {
+        $audio = $this->audios->get($audio_id);
+        $this->template->audio = $audio;
+
+        try {
+            $this->template->owner = $audio->getOwner()->getId();
+        } catch(\Throwable $e) {
+            $this->template->owner = 1;
+        }
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $audio->setName($this->postParam("name"));
+            $audio->setPerformer($this->postParam("performer"));
+            $audio->setLyrics($this->postParam("text"));
+            $audio->setGenre($this->postParam("genre"));
+            $audio->setOwner((int) $this->postParam("owner"));
+            $audio->setExplicit(!empty($this->postParam("explicit")));
+            $audio->setDeleted(!empty($this->postParam("deleted")));
+            $audio->setWithdrawn(!empty($this->postParam("withdrawn")));
+            $audio->save();
+        }
+    }
+
+    function renderEditPlaylist(int $playlist_id): void
+    {
+        $playlist = $this->audios->getPlaylist($playlist_id);
+        $this->template->playlist = $playlist;
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $playlist->setName($this->postParam("name"));
+            $playlist->setDescription($this->postParam("description"));
+            $playlist->setCover_Photo_Id((int) $this->postParam("photo"));
+            $playlist->setOwner((int) $this->postParam("owner"));
+            $playlist->setDeleted(!empty($this->postParam("deleted")));
+            $playlist->save();
+        }
+    }
+
+    function renderLogs(): void
+    {
+        $filter = [];
+
+        if ($this->queryParam("id")) {
+            $id = (int) $this->queryParam("id");
+            $filter["id"] = $id;
+            $this->template->id = $id;
+        }
+        if ($this->queryParam("type") !== NULL && $this->queryParam("type") !== "any") {
+            $type = in_array($this->queryParam("type"), [0, 1, 2, 3]) ? (int) $this->queryParam("type") : 0;
+            $filter["type"] = $type;
+            $this->template->type = $type;
+        }
+        if ($this->queryParam("uid")) {
+            $user = $this->queryParam("uid");
+            $filter["user"] = $user;
+            $this->template->user = $user;
+        }
+        if ($this->queryParam("obj_id")) {
+            $obj_id = (int) $this->queryParam("obj_id");
+            $filter["object_id"] = $obj_id;
+            $this->template->obj_id = $obj_id;
+        }
+        if ($this->queryParam("obj_type") !== NULL && $this->queryParam("obj_type") !== "any") {
+            $obj_type = "openvk\\Web\\Models\\Entities\\" . $this->queryParam("obj_type");
+            $filter["object_model"] = $obj_type;
+            $this->template->obj_type = $obj_type;
+        }
+
+        $this->template->logs = (new Logs)->search($filter);
+        $this->template->object_types = (new Logs)->getTypes();
     }
 }

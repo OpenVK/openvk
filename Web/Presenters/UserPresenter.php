@@ -5,7 +5,7 @@ use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification};
 use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
-use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications};
+use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications, Audios};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
 use Chandler\Security\Authenticator;
@@ -29,9 +29,13 @@ final class UserPresenter extends OpenVKPresenter
     function renderView(int $id): void
     {
         $user = $this->users->get($id);
-        if(!$user || $user->isDeleted()) {
+        if(!$user || $user->isDeleted() || !$user->canBeViewedBy($this->user->identity)) {
             if(!is_null($user) && $user->isDeactivated()) {
                 $this->template->_template = "User/deactivated.xml";
+                
+                $this->template->user = $user;
+            } else if(!$user->canBeViewedBy($this->user->identity)) {
+                $this->template->_template = "User/private.xml";
                 
                 $this->template->user = $user;
             } else {
@@ -45,7 +49,10 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->videosCount = (new Videos)->getUserVideosCount($user);
             $this->template->notes       = (new Notes)->getUserNotes($user, 1, 4);
             $this->template->notesCount  = (new Notes)->getUserNotesCount($user);
-            
+            $this->template->audios      = (new Audios)->getRandomThreeAudiosByEntityId($user->getId());
+            $this->template->audiosCount = (new Audios)->getUserCollectionSize($user);
+            $this->template->audioStatus = $user->getCurrentAudioStatus();
+
             $this->template->user = $user;
         }
     }
@@ -55,7 +62,7 @@ final class UserPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         
         $user = $this->users->get($id);
-        $page = abs($this->queryParam("p") ?? 1);
+        $page = abs((int)($this->queryParam("p") ?? 1));
         if(!$user)
             $this->notFound();
         elseif (!$user->getPrivacyPermission('friends.read', $this->user->identity ?? NULL))
@@ -72,7 +79,7 @@ final class UserPresenter extends OpenVKPresenter
         if(!is_null($this->user)) {
             if($this->template->mode !== "friends" && $this->user->id !== $id) {
                 $name = $user->getFullName();
-                $this->flash("err", "Ошибка доступа", "Вы не можете просматривать полный список подписок $name.");
+                $this->flash("err", tr("error_access_denied_short"), tr("error_viewing_subs", $name));
                 
                 $this->redirect($user->getURL());
             }
@@ -107,11 +114,11 @@ final class UserPresenter extends OpenVKPresenter
             $this->notFound();
 
         if(!$club->canBeModifiedBy($this->user->identity ?? NULL))
-            $this->flashFail("err", "Ошибка доступа", "У вас недостаточно прав, чтобы изменять этот ресурс.", NULL, true);
+            $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"), NULL, true);
 
         $isClubPinned = $this->user->identity->isClubPinned($club);
         if(!$isClubPinned && $this->user->identity->getPinnedClubCount() > 10)
-            $this->flashFail("err", "Ошибка", "Находится в левом меню могут максимум 10 групп", NULL, true);
+            $this->flashFail("err", tr("error"), tr("error_max_pinned_clubs"), NULL, true);
 
         if($club->getOwner()->getId() === $this->user->identity->getId()) {
             $club->setOwner_Club_Pinned(!$isClubPinned);
@@ -163,12 +170,36 @@ final class UserPresenter extends OpenVKPresenter
 
                 if ($this->postParam("marialstatus") <= 8 && $this->postParam("marialstatus") >= 0)
                 $user->setMarital_Status($this->postParam("marialstatus"));
+
+                if ($this->postParam("maritalstatus-user")) {
+                    if (in_array((int) $this->postParam("marialstatus"), [0, 1, 8])) {
+                        $user->setMarital_Status_User(NULL);
+                    } else {
+                        $mUser = (new Users)->getByAddress($this->postParam("maritalstatus-user"));
+                        if ($mUser) {
+                            if ($mUser->getId() !== $this->user->id) {
+                                $user->setMarital_Status_User($mUser->getId());
+                            }
+                        }
+                    }
+                }
                 
                 if ($this->postParam("politViews") <= 9 && $this->postParam("politViews") >= 0)
                 $user->setPolit_Views($this->postParam("politViews"));
                 
-                if ($this->postParam("gender") <= 1 && $this->postParam("gender") >= 0)
-                $user->setSex($this->postParam("gender"));
+                if ($this->postParam("pronouns") <= 2 && $this->postParam("pronouns") >= 0)
+                switch ($this->postParam("pronouns")) {
+                    case '0':
+                        $user->setSex(0);
+                        break;
+                    case '1':
+                        $user->setSex(1);
+                        break;
+                    case '2':
+                        $user->setSex(2);
+                        break;
+                }
+                $user->setAudio_broadcast_enabled($this->checkbox("broadcast_music"));
                 
                 if(!empty($this->postParam("phone")) && $this->postParam("phone") !== $user->getPhone()) {
                     if(!OPENVK_ROOT_CONF["openvk"]["credentials"]["smsc"]["enable"])
@@ -237,10 +268,11 @@ final class UserPresenter extends OpenVKPresenter
             } elseif($_GET['act'] === "status") {
                 if(mb_strlen($this->postParam("status")) > 255) {
                     $statusLength = (string) mb_strlen($this->postParam("status"));
-                    $this->flashFail("err", "Ошибка", "Статус слишком длинный ($statusLength символов вместо 255 символов)", NULL, true);
+                    $this->flashFail("err", tr("error"), tr("error_status_too_long", $statusLength), NULL, true);
                 }
 
                 $user->setStatus(empty($this->postParam("status")) ? NULL : $this->postParam("status"));
+                $user->setAudio_broadcast_enabled($this->postParam("broadcast") == 1);
                 $user->save();
 
                 $this->returnJson([
@@ -281,7 +313,7 @@ final class UserPresenter extends OpenVKPresenter
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
             if(!$user->verifyNumber($this->postParam("code") ?? 0))
-                $this->flashFail("err", "Ошибка", "Не удалось подтвердить номер телефона: неверный код.");
+                $this->flashFail("err", tr("error"), tr("invalid_code"));
         
             $this->flash("succ", tr("changes_saved"), tr("changes_saved_comment"));
         }
@@ -430,11 +462,16 @@ final class UserPresenter extends OpenVKPresenter
                     "friends.add",
                     "wall.write",
                     "messages.write",
+                    "audios.read",
                 ];
                 foreach($settings as $setting) {
                     $input = $this->postParam(str_replace(".", "_", $setting));
-                    $user->setPrivacySetting($setting, min(3, abs($input ?? $user->getPrivacySetting($setting))));
+                    $user->setPrivacySetting($setting, min(3, (int)abs((int)$input ?? $user->getPrivacySetting($setting))));
                 }
+
+                $prof = $this->postParam("profile_type") == 1 || $this->postParam("profile_type") == 0 ? (int)$this->postParam("profile_type") : 0;
+                $user->setProfile_type($prof);
+                
             } else if($_GET['act'] === "finance.top-up") {
                 $token   = $this->postParam("key0") . $this->postParam("key1") . $this->postParam("key2") . $this->postParam("key3");
                 $voucher = (new Vouchers)->getByToken($token);
@@ -474,6 +511,7 @@ final class UserPresenter extends OpenVKPresenter
             } else if($_GET['act'] === "lMenu") {
                 $settings = [
                     "menu_bildoj"    => "photos",
+                    "menu_muziko"    => "audios",
                     "menu_filmetoj"  => "videos",
                     "menu_mesagoj"   => "messages",
                     "menu_notatoj"   => "notes",
@@ -481,6 +519,7 @@ final class UserPresenter extends OpenVKPresenter
                     "menu_novajoj"   => "news",
                     "menu_ligiloj"   => "links",
                     "menu_standardo" => "poster",
+                    "menu_aplikoj"   => "apps"
                 ];
                 foreach($settings as $checkbox => $setting)
                     $user->setLeftMenuItemStatus($setting, $this->checkbox($checkbox));

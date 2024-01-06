@@ -53,7 +53,7 @@ class Clubs
 
     function getCount(): int
     {
-        return sizeof(clone $this->clubs);
+        return (clone $this->clubs)->count('*');
     }
 
     function getPopularClubs(): \Traversable

@@ -30,7 +30,7 @@ If you want, you can add your instance to the list above so that people can regi
 
 1. Install PHP 7.4, web-server, Composer, Node.js, Yarn and [Chandler](https://github.com/openvk/chandler)
 
-* PHP 8.1 is supported too, however it was not tested carefully, so be aware.
+* PHP 8 is still being tested; the functionality of the engine on this version of PHP is not yet guaranteed.
 
 2. Install MySQL-compatible database.
 
@@ -66,12 +66,12 @@ Once you are done, you can login as a system administrator on the network itself
 * **Password**: `admin`
   * It is recommended to change the password of the built-in account or disable it.
 
-💡Confused? Full installation walkthrough is available [here](https://docs.openvk.uk/openvk_engine/centos8_installation/) (CentOS 8 [and](https://almalinux.org/) [family](https://yum.oracle.com/oracle-linux-isos.html)).
+💡 Confused? Full installation walkthrough is available [here](https://docs.openvk.uk/openvk_engine/centos8_installation/) (CentOS 8 [and](https://almalinux.org/) [family](https://yum.oracle.com/oracle-linux-isos.html)).
 
 ### Looking for Docker or Kubernetes deployment?
 See `install/automated/docker/README.md` and `install/automated/kubernetes/README.md` for Docker and Kubernetes deployment instructions.
 
-### If my website uses OpenVK, should I release it's sources?
+### If my website uses OpenVK, should I release its sources?
 
 It depends. You can keep the sources to yourself if you do not plan to distribute your website binaries. If your website software must be distributed, it can stay non-OSS provided the OpenVK is not used as a primary application and is not modified. If you modified OpenVK for your needs or your work is based on it and you are planning to redistribute this, then you should license it under terms of any LGPL-compatible license (like OSL, GPL, LGPL etc).
 

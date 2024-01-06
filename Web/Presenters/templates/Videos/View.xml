@@ -19,7 +19,7 @@
         {else}
             {var $driver = $video->getVideoDriver()}
             {if !$driver}
-                Эта видеозапись не поддерживается в вашей версии OpenVK.
+                {_unknown_video}
             {else}
                 {$driver->getEmbed()|noescape}
             {/if}
@@ -29,7 +29,7 @@
     <hr/>
     
     <div style="width: 100%; min-height: 100px;">
-        <div style="float: left; min-height: 100px; width: 68%; margin-right: 2%;">
+        <div style="float: left; min-height: 100px; width: 68%; margin-right: 2%;" id="comments">
             {include "../components/comments.xml",
                      comments => $comments,
                      count => $cCount,
@@ -50,15 +50,52 @@
                 {$video->getPublicationTime()}
             </div>
             <br/>
-            <div n:if="isset($thisUser) && $thisUser->getId() === $user->getId()">
-                <h4>{_actions}</h4>
-                <a href="/video{$video->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">
-                    {_edit}
-                </a>
-                <a href="/video{$video->getPrettyId()}/remove" class="profile_link" style="display:block;width:96%;">
-                    {_delete}
+            <div>
+                <div n:if="isset($thisUser) && $thisUser->getId() === $user->getId()">
+                    <h4>{_actions}</h4>
+                    <a href="/video{$video->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">
+                        {_edit}
+                    </a>
+                    <a href="/video{$video->getPrettyId()}/remove" class="profile_link" style="display:block;width:96%;">
+                        {_delete}
+                    </a>
+                </div>
+                <a href="/video{$video->getPrettyId()}" class="profile_link" id="videoOpen" data-id="{$video->getId()}" style="display:block;width:96%;">
+                    {_watch_in_window}
                 </a>
             </div>
+
+            {if isset($thisUser)}
+                {if $thisUser->getId() != $video->getOwner()->getId()}
+                    {var canReport = true}
+                {/if}
+            {/if}
+
+            <a n:if="$canReport ?? false" class="profile_link" style="display:block;width:96%;" href="javascript:reportVideo()">{_report}</a>
+
+            <script n:if="$canReport ?? false">
+                function reportVideo() {
+                uReportMsgTxt  = tr("going_to_report_video");
+                uReportMsgTxt += "<br/>"+tr("report_question_text");
+                uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
+
+                MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
+                    (function() {
+                        res = document.querySelector("#uReportMsgInput").value;
+                        xhr = new XMLHttpRequest();
+                        xhr.open("GET", "/report/" + {$video->getId()} + "?reason=" + res + "&type=video", true);
+                        xhr.onload = (function() {
+                        if(xhr.responseText.indexOf("reason") === -1)
+                            MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
+                        else
+                           MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
+                        });
+                        xhr.send(null);
+                    }),
+                    Function.noop
+                ]);
+                }
+            </script>
         </div>
     </div>
 {/block}

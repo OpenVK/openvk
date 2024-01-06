@@ -44,9 +44,9 @@ class Users
         return $alias->getUser();
     }
     
-    function getByChandlerUser(ChandlerUser $user): ?User
+    function getByChandlerUser(?ChandlerUser $user): ?User
     {
-        return $this->toUser($this->users->where("user", $user->getId())->fetch());
+        return $user ? $this->toUser($this->users->where("user", $user->getId())->fetch()) : NULL;
     }
     
     function find(string $query, array $pars = [], string $sort = "id DESC"): Util\EntityStream
@@ -128,6 +128,9 @@ class Users
                     case "doNotSearchMe":
                         $result->where("id !=", $paramValue);
                         break;
+                    case "doNotSearchPrivate":
+                        $result->where("profile_type", 0);
+                        break;
                 }
             }
         }
@@ -139,9 +142,9 @@ class Users
     function getStatistics(): object
     {
         return (object) [
-            "all"    => sizeof(clone $this->users),
-            "active" => sizeof((clone $this->users)->where("online > 0")),
-            "online" => sizeof((clone $this->users)->where("online >= ?", time() - 900)),
+            "all"    => (clone $this->users)->count('*'),
+            "active" => (clone $this->users)->where("online > 0")->count('*'),
+            "online" => (clone $this->users)->where("online >= ?", time() - 900)->count('*'),
         ];
     }
 

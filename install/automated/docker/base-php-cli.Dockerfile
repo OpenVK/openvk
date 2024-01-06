@@ -1,4 +1,4 @@
-ARG VERSION=8.1
+ARG VERSION=8.2
 FROM docker.io/php:$VERSION-cli
 
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
