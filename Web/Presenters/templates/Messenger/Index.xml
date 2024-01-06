@@ -9,13 +9,13 @@
             <a id="act_tab_a" href="javascript:false">{_all_messages}</a>
         </div>
     </div>
-    
+
     <div class="container_gray">
         <form action="/im/search" method="POST" style="margin: 0;">
             <input type="text" name="pattern" placeholder="{_search_messages}" required />
         </form>
     </div>
-    
+
     {if sizeof($corresps) > 0}
         <div class="crp-list">
             <div n:foreach="$corresps as $coresp"
@@ -23,10 +23,10 @@
                  onmousedown="window.location.href = {$coresp->getURL()};" >
                 {var $recipient = $coresp->getCorrespondents()[1]}
                 {var $lastMsg   = $coresp->getPreviewMessage()}
-                
+
                 <div class="crp-entry--image">
                     <img src="{$recipient->getAvatarURL('miniscule')}"
-                    alt="Фотография пользователя" />
+                    alt="Фотография пользователя" loading=lazy />
                 </div>
                 <div class="crp-entry--info">
                     <a href="{$recipient->getURL()}">{$recipient->getCanonicalName()}</a><br/>
@@ -34,7 +34,7 @@
                 </div>
                 <div n:class="crp-entry--message, $lastMsg->getUnreadState() ? unread">
                     {var $_author = $lastMsg->getSender()}
-                    
+
                     <div class="crp-entry--message---av" n:if="$_author->getId() === $thisUser->getId()">
                         <img src="{$_author->getAvatarURL('miniscule')}"
                         alt="Фотография пользователя" />

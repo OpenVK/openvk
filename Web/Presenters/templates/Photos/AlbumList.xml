@@ -23,7 +23,7 @@
             {else}
                 {tr("albums", $count)}
             {/if}
-            
+
             <span n:if="$canEdit" style="float: right;">
                 &nbsp;|&nbsp;
                 {var $isClub = ($owner instanceof \openvk\Web\Models\Entities\Club)}
@@ -34,7 +34,7 @@
 {/block}
 
 {block actions}
-    
+
 {/block}
 
 {* BEGIN ELEMENTS DESCRIPTION *}
@@ -46,9 +46,9 @@
 {block preview}
     {var $cover   = $x->getCoverPhoto()}
     {var $preview = is_null($cover) ? "/assets/packages/static/openvk/img/camera_200.png" : $cover->getURLBySizeId("normal")}
-    
+
     <a href="/album{$x->getPrettyId()}">
-        <img src="{$preview}" alt="{$x->getName()}" style="height: 130px; width: 170px; object-fit: cover" />
+        <img src="{$preview}" alt="{$x->getName()}" style="height: 130px; width: 170px; object-fit: cover" loading=lazy />
     </a>
 {/block}
 

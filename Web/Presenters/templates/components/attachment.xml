@@ -2,7 +2,7 @@
     {if !$attachment->isDeleted()}
         {var $link = "/photo" . ($attachment->isAnonymous() ? ("s/" . base_convert((string) $attachment->getId(), 10, 32)) : $attachment->getPrettyId())}
         <a href="{$link}" onclick="OpenMiniature(event, {$attachment->getURLBySizeId('normal')}, {$parent->getPrettyId()}, {$attachment->getPrettyId()}, {$parentType})">
-            <img class="media media_makima" src="{$attachment->getURLBySizeId('normal')}" alt="{$attachment->getDescription()}" />
+            <img class="media media_makima" src="{$attachment->getURLBySizeId('normal')}" alt="{$attachment->getDescription()}" loading=lazy />
         </a>
     {else}
         <a href="javascript:alert('{_attach_no_longer_available}');">

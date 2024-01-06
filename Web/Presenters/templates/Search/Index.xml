@@ -23,7 +23,7 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="{_photo}" />
+    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="{_photo}" loading=lazy />
 {/block}
 
 {block name}

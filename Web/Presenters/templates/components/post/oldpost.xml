@@ -14,7 +14,7 @@
         <tr>
             <td width="54" valign="top">
                 <a href="{$author->getURL()}">
-                    <img src="{$author->getAvatarURL('miniscule')}" class="post-avatar" width="50" />
+                    <img src="{$author->getAvatarURL('miniscule')}" class="post-avatar" width="50" loading=lazy />
                     <span n:if="!$post->isPostedOnBehalfOfGroup() && !($compact ?? false) && $author->isOnline()" class="post-online">{_online}</span>
                 </a>
             </td>
