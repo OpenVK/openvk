@@ -235,7 +235,7 @@ function OpenMiniature(e, photo, post, photo_id, type = "post") {
                     <a id="ovk-photo-close">${tr("close")}</a>
                 </div>
             </div>
-            <center style="margin-bottom: 8pt;">
+            <center style="margin-bottom: 8pt; position: relative;">
                 <div class="ovk-photo-slide-left"></div>
                 <div class="ovk-photo-slide-right"></div>
                 <img src="${photo}" style="max-width: 100%; max-height: 60vh; user-select:none;" id="ovk-photo-img">
