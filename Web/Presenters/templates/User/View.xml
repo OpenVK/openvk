@@ -766,8 +766,6 @@
         <script n:if="isset($thisUser) && $user->getId() == $thisUser->getId()" n:syntax="off">
             function setStatusEditorShown(shown) {
                 document.getElementById("status_editor").style.display = shown ? "block" : "none";
-                if(!document.status_popup_form.submit.style.width)
-                    document.status_popup_form.submit.style.width = document.status_popup_form.submit.offsetWidth + 4 + "px"
             }
 
             document.addEventListener("click", event => {
