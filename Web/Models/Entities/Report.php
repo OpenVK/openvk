@@ -80,7 +80,7 @@ class Report extends RowModel
 
     function getAuthor(): RowModel
     {
-        return (new Posts)->get($this->getContentId())->getOwner();
+        return $this->getContentObject()->getOwner();
     }
 
     function getReportAuthor(): User
