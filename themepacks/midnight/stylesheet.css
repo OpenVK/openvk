@@ -35,7 +35,7 @@ span, .post-author .date, .crp-entry--message---text, .messenger-app--messages--
     border-color: #1c202f;
 }
 
-.accountInfo, .left_small_block, #profile_link, .profile_link, .navigation .link, .navigation .link:hover, .navigation_footer .link, .navigation_footer .link:hover, .completeness-gauge, input[type="text"], input[type="password"], input[type~="text"], input[type~="password"], input[type="email"], input[type="phone"], input[type~="email"], input[type~="phone"], input[type="search"], input[type~="search"], input[type~="date"], select, .content_title_expanded, .content_title_unexpanded, .content_subtitle, textarea, .post-content, .post-author, hr, h4, .postFeedWrapper, .tabs, #wallAttachmentMenu, .ovk-diag, .ovk-diag-head, #ovkDraw, #ovkDraw .literally .lc-picker, .literally .lc-options.horz-toolbar, .page_wrap, .container_gray .content, .summaryBar, .groups_options, form[action="/search"] > input, .header_search_input, .header_search_inputbt, .accent-box, .page_status_popup, .messenger-app--input, .messenger-app, .crp-entry:first-of-type, .crp-list, .crp-entry, .note_footer, .page_content > div, #editor, .note_header, center[style="background: white;border: #DEDEDE solid 1px;"], .album-photo img, .mb_tabs, .mb_tab#active div, .navigation-lang .link_new, #faqhead, #faqcontent, .post-divider, .comment, .commentsTextFieldWrap, tr, td, th, #votesBalance, .paginator a.active, .paginator a:hover, .topic-list-item, #userContent blockquote, .tippy-box[data-theme~="vk"], .poll, #standaloneCommentBox, .searchBtn, .searchList #used, .searchOptionName, .borderup, .searchOptions {
+.accountInfo, .left_small_block, #profile_link, .profile_link, .navigation .link, .navigation .link:hover, .navigation_footer .link, .navigation_footer .link:hover, .completeness-gauge, input[type="text"], input[type="password"], input[type~="text"], input[type~="password"], input[type="email"], input[type="phone"], input[type~="email"], input[type~="phone"], input[type="search"], input[type~="search"], input[type~="date"], select, .content_title_expanded, .content_title_unexpanded, .content_subtitle, textarea, .post-content, .post-author, hr, h4, .postFeedWrapper, .tabs, #wallAttachmentMenu, .ovk-diag, .ovk-diag-head, #ovkDraw, #ovkDraw .literally .lc-picker, .literally .lc-options.horz-toolbar, .page_wrap, .container_gray .content, .summaryBar, .groups_options, form[action="/search"] > input, .header_search_input, .header_search_inputbt, .accent-box, .page_status_popup, .messenger-app--input, .messenger-app, .crp-entry:first-of-type, .crp-list, .crp-entry, .note_footer, .page_content > div, #editor, .note_header, center[style="background: white;border: #DEDEDE solid 1px;"], .album-photo img, .mb_tabs, .mb_tab#active div, .navigation-lang .link_new, #faqhead, #faqcontent, .post-divider, .comment, .commentsTextFieldWrap, tr, td, th, #votesBalance, .paginator a.active, .paginator a:hover, .topic-list-item, #userContent blockquote, .tippy-box[data-theme~="vk"], .poll, #standaloneCommentBox, .searchBtn, .searchList #used, .searchOptionName, .borderup, #tour, #auth, .ovk-photo-view, .searchOptions {
     border-color: #2c2640 !important;
 }
 
@@ -377,4 +377,12 @@ ul {
 
 .showMore, .showMoreAudiosPlaylist {
     background: #181826 !important;
+}
+
+/* Tour */
+.rightNav h1{
+    background: #000;
+}
+.tabcontent{
+    background: #2c2640 !important;
 }
