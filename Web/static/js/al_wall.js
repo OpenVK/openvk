@@ -1386,12 +1386,13 @@ $(document).on("click", "#add_image", (e) => {
 
         <label class="button" style="margin-left:45%;user-select:none" id="uploadbtn">
             ${tr("browse")}
-            <input accept="image/*" type="file" name="blob" hidden style="display: none;">
+            <input accept="image/*" type="file" id="_avaInput" name="blob" hidden style="display: none;">
         </label>
 
         <br><br>
 
         <p>${tr('troubles_avatar')}</p>
+        <p>${tr('webcam_avatar')}</p>
     </div>
     `
 
@@ -1503,6 +1504,80 @@ $(document).on("click", "#add_image", (e) => {
         $(".ovk-diag-body ._rotateRight").on("click", (e) => {
             cropper.rotate(-90)
         })
+    })
+
+    $(".ovk-diag-body #_takeSelfie").on("click", (e) => {
+        $("#avatarUpload")[0].style.display = "none"
+
+        $(".ovk-diag-body")[0].insertAdjacentHTML("beforeend", `
+            <div id="_takeSelfieFrame" style="text-align: center;">
+                <video style="max-width: 100%;max-height: 479px;"></video>
+                <canvas id="_tempCanvas" style="position: absolute;">
+            </div>
+        `)
+
+        let video = document.querySelector("#_takeSelfieFrame video")
+
+        if(!navigator.mediaDevices) {
+            // ех вот бы месседжбоксы были бы классами
+            u("body").removeClass("dimmed");
+            document.querySelector("html").style.overflowY = "scroll"
+            u(".ovk-diag-cont").remove();
+
+            fastError(tr("your_browser_doesnt_support_webcam"))
+
+            return
+        }
+
+        navigator.mediaDevices
+        .getUserMedia({ video: true, audio: false })
+        .then((stream) => {
+            video.srcObject = stream;
+            video.play()
+
+            window._cameraStream = stream
+        })
+        .catch((err) => {
+            u("body").removeClass("dimmed");
+            document.querySelector("html").style.overflowY = "scroll"
+            u(".ovk-diag-cont").remove();
+
+            fastError(err)
+        });
+        
+        function __closeConnection() {
+            window._cameraStream.getTracks().forEach(track => track.stop())
+        }
+
+        document.querySelector(".ovk-diag-action").insertAdjacentHTML("beforeend", `
+            <button class="button" style="margin-left: 4px;" id="_takeSnap">${tr("take_snapshot")}</button>
+        `)
+
+        document.querySelector(".ovk-diag-action button").onclick = (evv) => {
+            __closeConnection()
+        }
+
+        document.querySelector("#_takeSnap").onclick = (evv) => {
+            let canvas = document.getElementById('_tempCanvas')
+            let context = canvas.getContext('2d')
+
+            canvas.setAttribute("width", video.clientWidth)
+            canvas.setAttribute("height", video.clientHeight)
+            context.drawImage(video, 0, 0, video.clientWidth, video.clientHeight);
+            canvas.toBlob((blob) => {
+                $("#_takeSnap").remove()
+                
+                let file = new File([blob], "snapshot.jpg", {type: "image/jpeg", lastModified: new Date().getTime()})
+                let dt = new DataTransfer();
+                dt.items.add(file);
+
+                $("#_avaInput")[0].files = dt.files
+                $("#_avaInput").trigger("change")
+                $("#_takeSelfieFrame").remove()
+
+                __closeConnection()
+            })
+        }
     })
 })
 
