@@ -184,10 +184,10 @@
 "post_writes_g" = "published";
 "post_deact_m" = "deleted his profile saying:";
 "post_deact_f" = "deleted her profile saying:";
-"post_deact_g" = "deleted they profile saying:";
+"post_deact_g" = "deleted their profile saying:";
 "post_deact_silent_m" = "silently deleted his profile.";
 "post_deact_silent_f" = "silently deleted her profile.";
-"post_deact_silent_f" = "silently deleted they profile.";
+"post_deact_silent_f" = "silently deleted their profile.";
 "post_on_your_wall" = "on your wall";
 "post_on_group_wall" = "in $1";
 "post_on_user_wall" = "on $1's wall";
@@ -830,7 +830,7 @@
 
 "limits" = "Limits";
 "select_audio" = "Select audio from your computer";
-"audio_requirements" = "Audio must be between $1s to $2 minutes, weights to $3MB and contain audio stream.";
+"audio_requirements" = "Audio must be between $1 seconds to $2 minutes, weights to $3 MB and contain audio stream.";
 "audio_requirements_2" = "Audio must not infringe copyright and related rights";
 "you_can_also_add_audio_using" = "You can also add audio from among the files you have already downloaded using";
 "search_audio_inst" = "audios search";
@@ -838,7 +838,7 @@
 "audio_embed_not_found" = "Audio not found";
 "audio_embed_deleted" = "Audio was deleted";
 "audio_embed_withdrawn" = "The audio was withdrawn at the request of the copyright holder";
-"audio_embed_forbidden" = "The user's privacy settings do not allow this embed this audio";
+"audio_embed_forbidden" = "The user's privacy settings do not allow this audio to be embedded";
 "audio_embed_processing" = "Audio is still being processed, or has not been processed correctly.";
 
 "audios_count_zero" = "No audios";
@@ -1698,7 +1698,7 @@
 "about_wall_posts_one" = "<b>1</b> wall post";
 "about_wall_posts_other" = "<b>$1</b> wall posts";
 
-"about_watch_rules" = "Watch <a href='$1'>here</a>.";
+"about_watch_rules" = "See <a href='$1'>here</a>.";
 
 /* Dialogs */
 
