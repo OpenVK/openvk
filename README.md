@@ -26,6 +26,14 @@ However, OVK makes use of Chandler Application Server. This software requires ex
 
 If you want, you can add your instance to the list above so that people can register there.
 
+### System requirements
+
+Here is our minimum hardware recommendation:
+
+* **CPU: Recent** (AMD Zen2 or equivalent) quad-core 2GHz+ CPU
+* **RAM:** At least 2GB RAM (we recommend 6GB or 8GB for OpenVK with Kafka)
+* **Minimum database space:** 10GB
+
 ### Installation procedure
 
 1. Install PHP 7.4, web-server, Composer, Node.js, Yarn and [Chandler](https://github.com/openvk/chandler)
