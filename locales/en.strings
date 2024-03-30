@@ -775,6 +775,15 @@
 "disable_2fa" = "Turn off 2FA";
 "viewing" = "View";
 
+/* OAuth */
+"identifies_itself_as" = "that identifies itself as $1";
+"located_at_url" = "located at $1";
+"wants_your_token" = "wants to access your account";
+"app_will_have_access_to" = "App will have access to:";
+"oauth_scope_all" = "profile information, status, list of friends, photos, wall posts, audios, videos, notifications, fishing rod handle, messages, gifts, <b>your e-mail</b>, polls, communities, discussions, notes, <b>payment method</b>, likes and comments";
+"oauth_grant" = "Allow";
+"oauth_deny" = "Deny";
+
 /* Sorting */
 
 "sort_randomly" = "Sort randomly";

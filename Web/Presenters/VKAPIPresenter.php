@@ -318,4 +318,42 @@ final class VKAPIPresenter extends OpenVKPresenter
         header("Content-Length: $size");
         exit($payload);
     }
+    
+    function renderOAuthLogin() {
+        $this->assertUserLoggedIn();
+        
+        $client  = $this->queryParam("client_name");
+        $postmsg = $this->queryParam("prefers_postMessage") ?? '0';
+        $stale   = $this->queryParam("accepts_stale") ?? '0';
+        $origin  = NULL;
+        $url     = $this->queryParam("redirect_uri");
+        if(is_null($url) || is_null($client))
+            exit("<b>Error:</b> redirect_uri and client_name params are required.");
+        
+        if($url != "about:blank") {
+            if(!filter_var($url, FILTER_VALIDATE_URL))
+                exit("<b>Error:</b> Invalid URL passed to redirect_uri.");
+            
+            $parsedUrl = (object) parse_url($url);
+            if($parsedUrl->scheme != 'https' && $parsedUrl->scheme != 'http')
+                exit("<b>Error:</b> redirect_uri should either point to about:blank or to a web resource.");
+            
+            $origin = "$parsedUrl->scheme://$parsedUrl->host";
+            if(!is_null($parsedUrl->port ?? NULL))
+                $origin .= ":$parsedUrl->port";
+            
+            $url .= strpos($url, '?') === false ? '?' : '&';
+        } else {
+            $url .= "#";
+            if($postmsg == '1') {
+                exit("<b>Error:</b> prefers_postMessage can only be set if redirect_uri is not about:blank");
+            }
+        }
+        
+        $this->template->clientName     = $client;
+        $this->template->usePostMessage = $postmsg == '1';
+        $this->template->acceptsStale   = $stale == '1';
+        $this->template->origin         = $origin;
+        $this->template->redirectUri    = $url;
+    }
 }
