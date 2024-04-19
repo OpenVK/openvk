@@ -8,7 +8,8 @@ html {
 
 body,
 #backdropDripper,
-#standaloneCommentBox {
+#standaloneCommentBox,
+.ovk-photo-view {
     background-color: #0e0b1a;
     color: #c6d2e8;
 }
@@ -567,9 +568,4 @@ ul {
 
 .tabcontent {
     background: #2c2640 !important;
-}
-
-/* @FEAT(marshallovski): пофиксил цвет фона (раньше был просто белый фон) */ 
-.ovk-photo-view {
-    background-color: #0e0b1a;
 }
