@@ -196,9 +196,9 @@
                             <a n:if="$thisUser->getLeftMenuItemStatus('groups')" href="/groups{$thisUser->getId()}" class="link">{_my_groups}</a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link" title="{_my_feed} [Alt+Shift+,]" accesskey=",">{_my_feed}</a>
                             <a href="/notifications" class="link" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">{_my_feedback}
-                                {if $thisUser->getNotificationsCount() > 0}
+                                <object type="internal/link" n:if="$thisUser->getNotificationsCount() > 0">
                                     (<b>{$thisUser->getNotificationsCount()}</b>)
-                                {/if}
+                                </object>
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link">{_my_apps}</a>
                             <a href="/settings" class="link">{_my_settings}</a>
