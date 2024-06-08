@@ -1708,7 +1708,7 @@
 "tour_section_11_text_2" = "Деяких нових користувачів може налякати чинна класична тема, яка виглядає дуже архаїчно";
 "tour_section_11_text_3" = "<b>Але не біда:</b> Ви можете обрати іншу тему з каталогу, або створити свою, ознаомившись з <a href='https://docs.ovk.to/'>документацією</a>";
 "tour_section_11_bottom_text_1" = "Каталог тем доступний в розділі &quot;Мої Налаштування&quot; в вкладці &quot;Інтерфейс&quot; ";
-"tour_section_11_wordart" = "<img src='https://ovk.to/assets/packages/static/openvk/img/tour/wordart.png' width='65%'>";
+"tour_section_11_wordart" = "<img src='/assets/packages/static/openvk/img/tour/wordart.png' width='65%'>";
 
 "tour_section_12_title_1" = "Фон профілю та групи";
 "tour_section_12_text_1" = "Ви можете встановити одну чи два зображення як фон вашої сторінки";
