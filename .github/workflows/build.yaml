@@ -55,7 +55,7 @@ jobs:
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
 
-          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_ID:$VERSION . --push -f install/automated/docker/openvk.Dockerfile --build-arg GITREPO=${{ github.repository }}
+          docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_ID:$VERSION . --push -f install/automated/docker/openvk.Dockerfile --build-arg GITREPO=${{ steps.repositorystring.outputs.lowercase }}
       
       - name: Build MariaDB primary image
         run: |
