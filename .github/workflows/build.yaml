@@ -38,7 +38,7 @@ jobs:
 
       - name: Change repository string to lowercase
         id: repositorystring
-        uses: Entepotenz/change-string-case-action@v1
+        uses: Entepotenz/change-string-case-action-min-dependencies@v1.1.0
         with:
           string: ${{ github.repository }}
 
