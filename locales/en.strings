@@ -479,6 +479,7 @@
 
 "upd_m" = "updated his profile picture";
 "upd_f" = "updated her profile picture";
+"upd_n" = "updated their profile picture";
 "upd_g" = "updated group's picture";
 
 "add_photos" = "Add photos";

@@ -54,8 +54,8 @@
     <table>
         <tbody>
             <tr>
-                <td width="120" valign="top"><span class="nobold">{_gender}: </span></td>
-                <td>{$user->isFemale() ? tr("female"): tr("male")}</td>
+                <td width="120" valign="top"><span class="nobold">{_pronouns}: </span></td>
+                <td>{$x->isFemale() ? tr("female") : ($x->isNeutral() ? tr("neutral") : tr("male"))}</td>
             </tr>
             <tr>
                 <td width="120" valign="top"><span class="nobold">{_registration_date}: </span></td>
