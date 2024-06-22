@@ -1130,6 +1130,7 @@
 "report_number" = "Жалоба №";
 "list_of_reports" = "Список жалоб";
 "text_of_the_post" = "Текст записи";
+"delete_content" = "Удалить контент";
 "today" = "сегодня";
 
 "will_be_watched" = "Скоро её рассмотрят модераторы";
@@ -1516,6 +1517,8 @@
 "admin_about_instance" = "Инстанция";
 "admin_commerce_disabled" = "Коммерция отключена системным администратором";
 "admin_commerce_disabled_desc" = "Настройки ваучеров и подарков будут сохранены, но не будут оказывать никакого влияния.";
+"admin_longpool_broken" = "Longpool сломан!";
+"admin_longpool_broken_desc" = "Проверьте, существует ли файл по пути <code>$1</code> и выданы ли у него правильные права на запись.";
 "admin_banned_links" = "Заблокированные ссылки";
 "admin_banned_link" = "Ссылка";
 "admin_banned_domain" = "Домен";

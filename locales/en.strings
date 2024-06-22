@@ -1198,6 +1198,7 @@
 "report_number" = "Report #";
 "list_of_reports" = "List of reports";
 "text_of_the_post" = "Text of the post";
+"delete_content" = "Delete content";
 "today" = "today";
 
 "will_be_watched" = "It will be reviewed by the moderators soon";
@@ -1624,6 +1625,9 @@
 
 "admin_commerce_disabled" = "Commerce has been disabled by the system administrator";
 "admin_commerce_disabled_desc" = "The voucher and gift settings will be saved, but will have no effect.";
+
+"admin_longpool_broken" = "Longpool is broken and will not work!";
+"admin_longpool_broken_desc" = "Make sure file at the path <code>$1</code> exist and have correct rights and ownership.";
 
 "admin_banned_links" = "Blocked links";
 "admin_banned_link" = "Link";
