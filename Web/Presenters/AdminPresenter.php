@@ -688,7 +688,8 @@ final class AdminPresenter extends OpenVKPresenter
             $this->template->obj_type = $obj_type;
         }
 
-        $this->template->logs = (new Logs)->search($filter);
+        $logs = iterator_to_array((new Logs)->search($filter));
+        $this->template->logs = $logs;
         $this->template->object_types = (new Logs)->getTypes();
     }
 }
