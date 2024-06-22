@@ -48,6 +48,13 @@ final class AdminPresenter extends OpenVKPresenter
         if(!OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"])
             $this->flash("warn", tr("admin_commerce_disabled"), tr("admin_commerce_disabled_desc"));
     }
+
+    private function warnIfLongpoolBroken(): void
+    {
+        bdump(is_writable(CHANDLER_ROOT . '/tmp/events.bin'));
+        if(file_exists(CHANDLER_ROOT . '/tmp/events.bin') == false || is_writable(CHANDLER_ROOT . '/tmp/events.bin') == false)
+            $this->flash("warn", tr("admin_longpool_broken"), tr("admin_longpool_broken_desc", CHANDLER_ROOT . '/tmp/events.bin'));
+    }
     
     private function searchResults(object $repo, &$count)
     {
@@ -76,7 +83,7 @@ final class AdminPresenter extends OpenVKPresenter
     
     function renderIndex(): void
     {
-        
+        $this->warnIfLongpoolBroken();
     }
     
     function renderUsers(): void
