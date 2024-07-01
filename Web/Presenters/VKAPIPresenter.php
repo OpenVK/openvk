@@ -234,8 +234,14 @@ final class VKAPIPresenter extends OpenVKPresenter
             }
             
             try {
-                settype($val, $parameter->getType()->getName());
-                $params[] = $val;
+                // Проверка типа параметра
+                $type = $parameter->getType();
+                if (($type && !$type->isBuiltin()) || is_null($val)) {
+                    $params[] = $val; 
+                } else {
+                    settype($val, $parameter->getType()->getName());
+                    $params[] = $val;
+                }
             } catch (\Throwable $e) {
                 // Just ignore the exception, since
                 // some args are intended for internal use
