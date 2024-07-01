@@ -236,30 +236,10 @@ final class VKAPIPresenter extends OpenVKPresenter
             try {
                 // Проверка типа параметра
                 $type = $parameter->getType();
-                if ($type && !$type->isBuiltin()) {
-                    $params[] = $val; // Пользовательские типы оставляем как есть
-                } else if (is_null($val)) {
-                    $params[] = $val; // Если значение NULL, то оставляем его NULL
-                } else {
-                    switch ($type->getName()) {
-                        case 'int':
-                            $val = (int)$val;
-                            break;
-                        case 'float':
-                            $val = (float)$val;
-                            break;
-                        case 'bool':
-                            $val = (bool)$val;
-                            break;
-                        case 'string':
-                            $val = (string)$val;
-                            break;
-                        // Добавить другие типы при необходимости
-                        default:
-                            settype($val, $type->getName());
-                    }
-                    $params[] = $val;
-                }
+                if (($type && !$type->isBuiltin()) || is_null($val)) 
+                    $params[] = $val; 
+                else 
+                    $params[] = settype($val, $type->getName());
             } catch (\Throwable $e) {
                 // Just ignore the exception, since
                 // some args are intended for internal use
