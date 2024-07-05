@@ -347,7 +347,10 @@ final class Groups extends VKAPIRequestHandler
         !empty($topics)             ? $club->setEveryone_Can_Create_Topics($topics) : NULL;
         !empty($adminlist)          ? $club->setAdministrators_List_Display($adminlist) : NULL;
         !empty($topicsAboveWall)    ? $club->setDisplay_Topics_Above_Wall($topicsAboveWall) : NULL;
-        !empty($hideFromGlobalFeed) ? $club->setHide_From_Global_Feed($hideFromGlobalFeed) : NULL;
+
+        if (!$club->isHidingFromGlobalFeedEnforced()) {
+            !empty($hideFromGlobalFeed) ? $club->setHide_From_Global_Feed($hideFromGlobalFeed) : NULL;
+        }
         
         in_array($audio, [0, 1]) ? $club->setEveryone_can_upload_audios($audio) : NULL;
 

@@ -83,7 +83,7 @@
                                 <option value="0" n:attr="selected => $club->getWallType() == 0" /> {_group_closed_post}</option>
                             <select>
 
-                            <input type="checkbox" name="hide_from_global_feed" value="1" n:attr="checked => $club->isHideFromGlobalFeedEnabled()" /> {_group_hide_from_global_feed}
+                            <input type="checkbox" name="hide_from_global_feed" value="1" n:attr="checked => $club->isHideFromGlobalFeedEnabled(), disabled => $club->isHidingFromGlobalFeedEnforced()" /> {_group_hide_from_global_feed}
                         </td>
                     </tr>
                     <tr>

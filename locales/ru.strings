@@ -1487,6 +1487,7 @@
 "admin_user_online_deceased" = "Покойник";
 "admin_club_search" = "Поиск групп";
 "admin_club_excludeglobalfeed" = "Не отображать записи в глобальной ленте";
+"admin_club_enforceexcludeglobalfeed" = "Запретить руководству группы изменять отображение в глобальной ленте";
 "admin_services" = "Платные услуги";
 "admin_newgift" = "Новый подарок";
 "admin_price" = "Цена";
