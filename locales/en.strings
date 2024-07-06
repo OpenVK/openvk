@@ -1591,6 +1591,7 @@
 "admin_user_online_deceased" = "Deceased";
 "admin_club_search" = "Search for groups";
 "admin_club_excludeglobalfeed" = "Do not display posts in the global feed";
+"admin_club_enforceexcludeglobalfeed" = "Disallow group staff from changing global feed status";
 
 "admin_services" = "Paid services";
 "admin_newgift" = "New gift";

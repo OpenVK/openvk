@@ -65,6 +65,10 @@
                     <input class="toggle-large" type="checkbox" id="hide_from_global_feed" name="hide_from_global_feed" value="1" {if $club->isHideFromGlobalFeedEnabled()} checked {/if} />
                     <label for="hide_from_global_feed">{_admin_club_excludeglobalfeed}</label>
                 </div>
+                <div class="group">
+                    <input class="toggle-large" type="checkbox" id="enforce_hiding_from_global_feed" name="enforce_hiding_from_global_feed" value="1" {if $club->isHideFromGlobalFeedEnabled()} checked {/if} />
+                    <label for="enforce_hiding_from_global_feed">{_admin_club_enforceexcludeglobalfeed}</label>
+                </div>
                 <hr/>
                 <div class="buttons-container">
                     <div class="buttons">

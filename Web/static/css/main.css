@@ -587,6 +587,11 @@ input[type=radio]:hover {
     background-position: 0 -28px;
 }
 
+input[type=checkbox]:disabled {
+    background-position: 0 -28px;
+    cursor: initial;
+}
+
 input[type=checkbox]:checked,
 input[type=radio]:checked {
     background-position: 0 -14px;
@@ -594,6 +599,10 @@ input[type=radio]:checked {
 
 input[type=checkbox]:checked:hover,
 input[type=radio]:checked:hover {
+    background-position: 0 -42px;
+}
+
+input[type=checkbox]:checked:disabled {
     background-position: 0 -42px;
 }
 
