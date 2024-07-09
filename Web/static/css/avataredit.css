@@ -20,10 +20,11 @@
 }
 .avatar_controls
 {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    position: absolute;
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    position:absolute;
+	pointer-events:none;
 }
 .avatarDelete
 {
@@ -34,6 +35,7 @@
     border-radius: 0px 0px 0px 5px;
     opacity:0;
     cursor:pointer;
+    pointer-events:all;
 }
 .avatarDelete img
 {
@@ -68,6 +70,7 @@ div.avatar_block:hover .avatar_variants
     color:white;
     padding-top: 2px;
     padding-bottom: 2px;
+    pointer-events:all;
 }
 
 .variant
