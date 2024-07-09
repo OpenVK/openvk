@@ -18,6 +18,13 @@
     -o-transition: all 200ms ease-in-out;
     transition: all 200ms ease-in-out;
 }
+.avatar_controls
+{
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: absolute;
+}
 .avatarDelete
 {
     position:absolute;
