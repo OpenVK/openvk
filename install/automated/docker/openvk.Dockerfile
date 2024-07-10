@@ -23,7 +23,7 @@ RUN mkdir openvk
 
 WORKDIR /opt/chandler/extensions/available/openvk
 
-ADD . .
+ADD composer.* .
 
 RUN composer install
 
@@ -33,9 +33,13 @@ COPY --from=builder /opt/chandler /opt/chandler
 
 WORKDIR /opt/chandler/extensions/available/openvk/Web/static/js
 
+ADD Web/static/js/package.json Web/static/js/package-lock.json Web/static/js/yarn.lock ./
+
 RUN yarn install
 
 WORKDIR /opt/chandler/extensions/available/openvk
+
+ADD . .
 
 ARG GITREPO=openvk/openvk
 FROM ghcr.io/${GITREPO}/php:8.2-apache
