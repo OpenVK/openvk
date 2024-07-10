@@ -114,7 +114,7 @@ class Photo extends Media
         return true;
     }
     
-    function crop(real $left, real $top, real $width, real $height): void
+    function crop(float $left, float $top, float $width, float $height): void
     {
         if(isset($this->changes["hash"]))
             $hash = $this->changes["hash"];
