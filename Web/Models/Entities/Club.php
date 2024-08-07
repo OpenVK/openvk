@@ -469,4 +469,5 @@ class Club extends RowModel
     use Traits\TBackDrops;
     use Traits\TSubscribable;
     use Traits\TAudioStatuses;
+    use Traits\TIgnorable;
 }
