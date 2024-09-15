@@ -178,9 +178,9 @@
                             <a href="/edit" class="link edit-button">{_edit_button}</a>
                             <a href="{$thisUser->getURL()}" class="link" title="{_my_page} [Alt+Shift+.]" accesskey=".">{_my_page}</a>
                             <a href="/friends{$thisUser->getId()}" class="link">{_my_friends}
-                                <object type="internal/link" n:if="$thisUser->getFollowersCount() > 0">
+                                <object type="internal/link" n:if="$thisUser->getRequestsCount() > 0">
                                     <a href="/friends{$thisUser->getId()}?act=incoming" class="linkunderline">
-                                       (<b>{$thisUser->getFollowersCount()}</b>)
+                                       (<b>{$thisUser->getRequestsCount()}</b>)
                                     </a>
                                 </object>
                             </a>

@@ -213,6 +213,7 @@
 "friends_delete" = "Видалити з друзів";
 "friends_reject" = "Скасувати заявку";
 "friends_accept" = "Прийняти заявку";
+"friends_leave_in_flw" = "Залишити у підписниках";
 "send_message" = "Відправити повідомлення";
 "incoming_req" = "Підписники";
 "outcoming_req" = "Вихідні";

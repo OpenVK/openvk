@@ -259,6 +259,7 @@
 "friends_delete" = "Remove from friends";
 "friends_reject" = "Reject request";
 "friends_accept" = "Accept request";
+"friends_leave_in_flw" = "Leave in followers";
 "send_message" = "Send a message";
 "incoming_req" = "Pending";
 "outcoming_req" = "Outgoing";

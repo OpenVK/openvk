@@ -329,9 +329,12 @@ final class UserPresenter extends OpenVKPresenter
         $user = $this->users->get((int) $this->postParam("id"));
         if(!$user) exit("Invalid state");
         
-        $user->toggleSubscription($this->user->identity);
+        if ($this->postParam("act") == "rej")
+            $user->changeFlags($this->user->identity, 0b10000000, true);
+        else
+            $user->toggleSubscription($this->user->identity);
         
-        $this->redirect($user->getURL());
+        $this->redirect($_SERVER['HTTP_REFERER']);
     }
     
     function renderSetAvatar()

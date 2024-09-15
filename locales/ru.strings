@@ -239,6 +239,7 @@
 "friends_delete" = "Удалить из друзей";
 "friends_reject" = "Отменить заявку";
 "friends_accept" = "Принять заявку";
+"friends_leave_in_flw" = "Оставить в подписчиках";
 "send_message" = "Отправить сообщение";
 "incoming_req" = "Входящие";
 "outcoming_req" = "Исходящие";
