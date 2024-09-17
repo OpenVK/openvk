@@ -240,6 +240,9 @@
 "friends_reject" = "Отменить заявку";
 "friends_accept" = "Принять заявку";
 "friends_leave_in_flw" = "Оставить в подписчиках";
+"friends_add_msg" = "Теперь вы друзья.";
+"friends_rej_msg" = "Вы оставили пользователя в подписчиках.";
+"friends_rem_msg" = "Вы удалили пользователя из списка своих друзей.";
 "send_message" = "Отправить сообщение";
 "incoming_req" = "Входящие";
 "outcoming_req" = "Исходящие";

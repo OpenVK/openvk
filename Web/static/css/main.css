@@ -427,6 +427,22 @@ h1 {
     text-transform: lowercase;
 }
 
+.action_links.disable>a,
+.action_links.disable>form>input,
+.action_links.disable {
+    cursor: not-allowed;
+    color: grey;
+}
+
+.action_links.loading::after {
+	content: "";
+	display: inline-block;
+	background-image: url('/assets/packages/static/openvk/img/loading_mini.gif');
+	width: 30px;
+	height: 7px;
+	margin-left: 5px;
+}
+
 .profile_link.disable>a,
 .profile_link.disable {
     cursor: not-allowed;

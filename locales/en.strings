@@ -260,6 +260,9 @@
 "friends_reject" = "Reject request";
 "friends_accept" = "Accept request";
 "friends_leave_in_flw" = "Leave in followers";
+"friends_add_msg" = "Now you're friends.";
+"friends_rej_msg" = "You left this user as subscriber.";
+"friends_rem_msg" = "You deleted this user from your friend list.";
 "send_message" = "Send a message";
 "incoming_req" = "Pending";
 "outcoming_req" = "Outgoing";
