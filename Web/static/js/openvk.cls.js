@@ -184,27 +184,6 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
             }
         }
     })
-
-    /*
-    
-
-    <script>
-        $("form").on("submit", function (e) {
-            var dataString = $(this).serialize();
-            
-            $.ajax({
-            type: "POST",
-            url: "/setSub/user",
-            data: dataString,
-            success: function () {
-                console.log("penis");
-            }
-            });
-            e.preventDefault();
-        });
-    </script>
-    */
-
 }); //END ONREADY DECLS
 
 async function repostPost(id, hash) {
