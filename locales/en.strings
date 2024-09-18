@@ -66,7 +66,7 @@
 "birth_date" = "Birth date";
 "registration_date" = "Registration date";
 "hometown" = "Hometown";
-"this_is_you" = "that's you";
+"this_is_you" = "it's you";
 "edit_page" = "Edit page";
 "edit_group" = "Edit group";
 "change_status" = "change status";
@@ -165,13 +165,16 @@
 
 "closed_page" = "Closed page";
 
-"limited_access_to_page_m" = "$1 limited access to his page.";
-"limited_access_to_page_f" = "$1 limited access to her page.";
+"limited_access_to_page" = "$1 has limited access to their page.";
+"limited_access_to_page_m" = "$1 has limited access to his page.";
+"limited_access_to_page_f" = "$1 has limited access to her page.";
 
 "you_can_add" = "You can";
+"add_to_friends" = "add them to friends.";
 "add_to_friends_m" = "add him to friends.";
 "add_to_friends_f" = "add her to friends.";
 
+"register_to_access_page" = "Sign up to get access to their page.";
 "register_to_access_page_m" = "Sign up to get access to his page.";
 "register_to_access_page_f" = "Sign up to get access to her page.";
 
@@ -201,7 +204,7 @@
 "pin" = "Pin";
 "unpin" = "Unpin";
 "pinned" = "pinned";
-"comments_tip" = "Be first, who leaves a comment at this post!";
+"comments_tip" = "Be the first to leave a comment on this post!";
 "your_comment" = "Your comment";
 "auditory" = "Auditory";
 "in_wall" = "to user's wall";
@@ -248,7 +251,7 @@
 "all_posts" = "All posts";
 "users_posts" = "Posts by $1";
 "clubs_posts" = "Group's posts";
-"others_posts" = "Others posts";
+"others_posts" = "Others' posts";
 
 /* Friends */
 
@@ -308,21 +311,21 @@
 "join_community" = "Join community";
 "leave_community" = "Leave community";
 "check_community" = "View community";
-"min_6_community" = "Name of the group must have more that 6 characters";
+"min_6_community" = "Name of the group must have more than 6 characters";
 "participants" = "Participants";
 "groups" = "Groups";
 "meetings" = "Meetings";
 "create_group" = "Create group";
 "group_managers" = "Managers";
 "group_type" = "Group type";
-"group_type_open" = "This is an open group, anyone can enter it.";
-"group_type_closed" = "This is an closed group. To enter, you must submit an request.";
+"group_type_open" = "This is an open group, anyone can join it.";
+"group_type_closed" = "This is a closed group. To join, you must submit a request.";
 "creator" = "Creator";
 "administrators" = "Administrators";
 "add_to_left_menu" = "Add to left menu";
 "remove_from_left_menu" = "Remove from left menu";
 "all_followers" = "All followers";
-"only_administrators" = "Only administrators";
+"only_administrators" = "Administrators";
 "website" = "Website";
 "managed" = "Managed";
 "size" = "Size";
@@ -334,7 +337,7 @@
 "administrator" = "Administrator";
 "promote_to_admin" = "Promote to admin";
 "promote_to_owner" = "Promote to owner";
-"devote" = "Devote";
+"devote" = "Demote";
 "set_comment" = "Set comment";
 "hidden_yes" = "Hidden: Yes";
 "hidden_no" = "Hidden: No";
@@ -343,13 +346,13 @@
 "group_closed_post" = "Closed";
 "suggest_new" = "Suggest post";
 
-"suggested_by_you_zero" = "$1 suggested posts by you";
+"suggested_by_you_zero" = "No suggested posts by you";
 "suggested_by_you_one" = "One suggested post by you";
 "suggested_by_you_few" = "$1 suggested posts by you";
 "suggested_by_you_many" = "$1 suggested posts by you";
 "suggested_by_you_other" = "$1 suggested posts by you";
 
-"suggested_by_everyone_zero" = "$1 suggested posts";
+"suggested_by_everyone_zero" = "No suggested posts";
 "suggested_by_everyone_one" = "One suggested post";
 "suggested_by_everyone_few" = "$1 suggested posts";
 "suggested_by_everyone_many" = "$1 suggested posts";
@@ -366,10 +369,10 @@
 "publish_suggested" = "Accept";
 "decline_suggested" = "Decline";
 
-"error_loading_suggest" = "Error when loading new posts";
+"error_loading_suggest" = "Error loading new posts";
 
 "publishing_suggested_post" = "Publishing suggested post";
-"suggested_posts_in_group_zero" = "You've looked at all the suggested posts, congratulations!";
+"suggested_posts_in_group_zero" = "You've looked through all the suggested posts, congratulations!";
 "suggested_posts_in_group_one" = "This group has one suggested post";
 "suggested_posts_in_group_few" = "This group has $1 suggested posts";
 "suggested_posts_in_group_many" = "This group has $1 suggested posts";
@@ -381,15 +384,15 @@
 "suggested_posts_in_group_by_you_many" = "You suggested $1 posts to this group";
 "suggested_posts_in_group_by_you_other" = "You suggested $1 posts to this group";
 
-"suggestion_succefully_published" = "Post successfully published";
-"suggestion_succefully_declined" = "Post successfully declined";
+"suggestion_succefully_published" = "Post published successfully";
+"suggestion_succefully_declined" = "Post declined successfully";
 "suggestion_press_to_go" = "Click to show it";
 
-"error_declining_invalid_post" = "Error when declining post: post does not exists";
+"error_declining_invalid_post" = "Error when declining post: post does not exist";
 "error_declining_not_suggested_post" = "Error when declining post: post is not suggested";
 "error_declining_declined_post" = "Error when declining post: post is already declined";
 
-"error_accepting_invalid_post" = "Error when accepting post: post does not exists";
+"error_accepting_invalid_post" = "Error when accepting post: post does not exist";
 "error_accepting_not_suggested_post" = "Error when accepting post: post is not suggested";
 "error_accepting_declined_post" = "Error when accepting post: cant accept declined post";
 "statistics" = "Statistics";
@@ -404,13 +407,13 @@
 
 "participants_zero" = "No participants";
 "participants_one" = "$1 participant";
-"participants_other" = "$1 participant";
+"participants_other" = "$1 participants";
 
 "groups_zero" = "No groups";
 "groups_one" = "$1 group";
 "groups_other" = "$1 groups";
 
-"groups_list_zero" = "You are not a participant in any group";
+"groups_list_zero" = "You are not participating in any groups";
 "groups_list_one" = "You are participating in one group";
 "groups_list_other" = "You are a participant of $1 groups";
 
@@ -419,17 +422,17 @@
 "meetings_other" = "$1 meetings";
 
 "open_new_group" = "Start a New Group";
-"open_group_desc" = "Unable to find the perfect group? Start your own...";
+"open_group_desc" = "Can't find the perfect group? Start your own...";
 "search_group" = "Search for a Group";
 "search_by_groups" = "Explore Groups";
 "search_group_desc" = "Browse through existing groups and find the one that suits your needs...";
 
-"error_suggestions" = "Error accessing to suggestions";
-"error_suggestions_closed" = "This group has closed wall.";
+"error_suggestions" = "Error accessing suggestions";
+"error_suggestions_closed" = "This group has closed the wall.";
 "error_suggestions_open" = "This group has open wall.";
 "error_suggestions_access" = "Only group's administrators can view all suggested posts.";
 
-"group_banned" = "Unfortunately, we had to block the <b>$1</b> group.";
+"group_banned" = "Unfortunately, we had to block the group <b>$1</b>.";
 
 /* Albums */
 
@@ -466,13 +469,13 @@
 "upload_new_picture" = "Upload new photo";
 "uploading_new_image" = "Uploading new photo";
 "friends_avatar" = "It will be easier for friends to recognize you if you upload your real picture.";
-"groups_avatar" = "Good photo can make your group more recognizable.";
+"groups_avatar" = "A good photo can make your group more recognizable.";
 "formats_avatar" = "You can upload an image in JPG, GIF or PNG format.";
 "troubles_avatar" = "If you're having trouble uploading, try selecting a smaller photo.";
 "webcam_avatar" = "If your computer is equipped with a webcam, you can <a href='javascript:'>take a snapshot</a>.";
 
 "update_avatar_notification" = "Profile photo was updated";
-"update_avatar_description" = "Click to watch";
+"update_avatar_description" = "Click to see";
 
 "deleting_avatar" = "Deleting photo";
 "deleting_avatar_sure" = "Do you sure you want to delete avatar?";
@@ -498,7 +501,7 @@
 "only_images_accepted" = "File \"$1\" is not an image";
 "max_filesize" = "Max filesize is $1 MB";
 
-"uploading_photos_from_computer" = "Uploading photos from Your computer";
+"uploading_photos_from_computer" = "Uploading photos from your computer";
 "supported_formats" = "Supported file formats: JPG, PNG, and GIF.";
 "max_load_photos" = "You can upload up to 10 photos at a time.";
 "tip" = "Tip";
@@ -507,11 +510,11 @@
 "select_photo" = "Select Photos";
 "upload_new_photo" = "Upload New Photo";
 
-"is_x_photos_zero" = "Just zero photos.";
+"is_x_photos_zero" = "No photos.";
 "is_x_photos_one" = "Just one photo.";
-"is_x_photos_few" = "Just $1 photos.";
-"is_x_photos_many" = "Just $1 photos.";
-"is_x_photos_other" = "Just $1 photos.";
+"is_x_photos_few" = "$1 photos.";
+"is_x_photos_many" = "$1 photos.";
+"is_x_photos_other" = "$1 photos.";
 
 "all_photos" = "All photos";
 "error_uploading_photo" = "Error when uploading photo. Error text: ";
@@ -549,9 +552,9 @@
 
 "error_attaching_note" = "Error when attaching note";
 
-"select_or_create_new" = "Select existing note or <a href='/notes/create'>create new one</a>";
+"select_or_create_new" = "Select existing note or <a href='/notes/create'>create a new one</a>";
 
-"notes_closed" = "You can't attach note to post, because only you can see them.<br> You can change it in <a href=\"/settings?act=privacy\">settings</a>.";
+"notes_closed" = "You can't attach note to post, because only you can see your notes.<br> You can change it in <a href=\"/settings?act=privacy\">settings</a>.";
 "do_not_attach_note" = "Do not attach note";
 "something" = "Something";
 "supports_xhtml" = "from (X)HTML supported.";
@@ -575,7 +578,7 @@
 "my_feed" = "My Feed";
 "my_feedback" = "My Feedback";
 "my_settings" = "My Settings";
-"bug_tracker" = "Bug-tracker";
+"bug_tracker" = "Bug tracker";
 
 "menu_settings" = "Settings";
 "menu_login" = "Login";
@@ -600,7 +603,7 @@
 "left_menu_donate" = "Donate";
 
 "footer_about_instance" = "about instance";
-"footer_rules" = "rules";
+"footer_rules" = "terms";
 "footer_blog" = "blog";
 "footer_help" = "help";
 "footer_developers" = "developers";
@@ -694,8 +697,8 @@
 "ui_settings_nsfw_content_dont_show" = "Don't show in global feed";
 "ui_settings_nsfw_content_blur" = "Just blur";
 "ui_settings_nsfw_content_show" = "Show";
-"ui_settings_view_of_posts" = "View of posts";
-"ui_settings_view_of_posts_old" = "Old";
+"ui_settings_view_of_posts" = "Style of posts";
+"ui_settings_view_of_posts_old" = "Classic";
 "ui_settings_view_of_posts_microblog" = "Microblog";
 "ui_settings_main_page" = "Main page";
 "ui_settings_sessions" = "Sessions";
@@ -732,6 +735,7 @@
 
 "end_all_sessions_done" = "All sessions have been terminated, including mobile apps.";
 
+/* backdrop uploads are broken on en locale and I don't understand why (yet) */
 "backdrop_short" = "Backdrop";
 "backdrop" = "Page Backdrop";
 "backdrop_desc" = "You can set two pictures as the backdrop for your profile or group. They will be displayed on the left and right edges of the page, adding personality to your profile.";
@@ -743,13 +747,13 @@
 "backdrop_error_no_media" = "Images are corrupted or haven't been uploaded in their entirety.";
 "backdrop_succ" = "Backdrop settings saved successfully";
 "backdrop_succ_rem" = "Backdrop images have been successfully removed";
-"backdrop_succ_desc" = "Users will start seeing changes in 5 minutes.";
+"backdrop_succ_desc" = "Users will start seeing changes within 5 minutes.";
 "browse" = "Browse";
 
 /* Two-factor authentication */
 
 "two_factor_authentication" = "Two-Factor Authentication";
-"two_factor_authentication_disabled" = "Enhances security by requiring a code from the 2FA app to access your account, providing reliable protection against hacking.";
+"two_factor_authentication_disabled" = "Enhances security by requiring a code from a 2FA app to access your account, providing reliable protection against hacking.";
 "two_factor_authentication_enabled" = "Two-Factor Authentication is active. Your account is securely protected.";
 "two_factor_authentication_login" = "Two-Factor Authentication is enabled. Enter the code received in the application to log in.";
 
@@ -913,11 +917,11 @@
 "change_cover" = "Change cover";
 "playlist_cover" = "Playlist's cover";
 
-"minutes_count_zero" = "lasts no minutes";
-"minutes_count_one" = "lasts one minute";
-"minutes_count_few" = "lasts $1 minutes";
-"minutes_count_many" = "lasts $1 minutes";
-"minutes_count_other" = "lasts $1 minutes";
+"minutes_count_zero" = "less than a minute";
+"minutes_count_one" = "one minute";
+"minutes_count_few" = "$1 minutes";
+"minutes_count_many" = "$1 minutes";
+"minutes_count_other" = "$1 minutes";
 
 "listens_count_zero" = "no listens";
 "listens_count_one" = "one listen";
@@ -960,7 +964,7 @@
 "notifications_under_post" = "your $3post$4 from $5";
 "notifications_under_video" = "your $3video$4";
 "notifications_post" = "$1 published $2a post$3 on your wall: $4";
-"notifications_appoint" = "$1 appointed you as community manager of $2";
+"notifications_appoint" = "$1 appointed you as a community manager of $2";
 
 "nt_liked_yours" = "liked your";
 "nt_shared_yours" = "shared your";
@@ -995,6 +999,7 @@
 
 "time_at_sp" = " at ";
 "time_just_now" = "just now";
+/* dead meme smh */
 "time_exactly_five_minutes_ago" = "5 minutes ago";
 "time_minutes_ago" = "$1 minutes ago";
 "time_today" = "today";
@@ -1074,7 +1079,7 @@
 "gifts_one" = "One gift";
 "gifts_other" = "$1 gifts";
 "gifts_left" = "Gifts left: $1";
-"gifts_left_zero" = "Zero gifts left";
+"gifts_left_zero" = "No gifts left";
 "gifts_left_one" = "One gift left";
 "gifts_left_other" = "$1 gifts left";
 
@@ -1088,7 +1093,7 @@
 
 "free_gift" = "Free";
 "coins" = "Votes";
-"coins_zero" = "0 vote";
+"coins_zero" = "0 votes";
 "coins_one" = "One vote";
 "coins_other" = "$1 votes";
 
@@ -1186,8 +1191,8 @@
 
 "reports" = "Reports";
 
-"support_rate_good_answer" = "This is good answer";
-"support_rate_bad_answer" = "This is bad answer";
+"support_rate_good_answer" = "This is a good answer";
+"support_rate_bad_answer" = "This is a bad answer";
 "support_good_answer_user" = "You left a positive feedback.";
 "support_bad_answer_user" = "You left a negative feedback.";
 "support_good_answer_agent" = "User left a positive feedback.";
@@ -1196,7 +1201,7 @@
 "support_rated_bad" = "You left a negative feedback about the answer.";
 "wrong_parameters" = "Invalid request parameters.";
 
-"fast_answers" = "Fast answers";
+"fast_answers" = "Quick answers";
 
 "ignore_report" = "Ignore report";
 "report_number" = "Report #";
@@ -1242,7 +1247,7 @@
 
 "invite" = "Invite";
 "you_can_invite" = "You can invite your friends or acquaintances to the network using an individual link:";
-"you_can_invite_2" = "Attach this link to your post. When the user signs up, he will immediately appear in your friends.";
+"you_can_invite_2" = "Attach this link to your post. When the user signs up, they will immediately appear in your friends.";
 
 /* Banned */
 
@@ -1280,7 +1285,7 @@
 
 /* Polls */
 "poll" = "Poll";
-"create_poll" = "Create poll";
+"create_poll" = "Create a poll";
 "poll_title" = "Ask a question";
 "poll_add_option" = "Add an option...";
 "poll_anonymous" = "Anonymous votes";
@@ -1355,7 +1360,7 @@
 
 "error_1" = "Incorrect query";
 "error_2" = "Incorrect login and password";
-"error_3" = "Non authorized";
+"error_3" = "Not authorized";
 "error_4" = "User does not exist";
 "information_-1" = "Success";
 "information_-2" = "Login success";
@@ -1376,15 +1381,15 @@
 
 "forbidden" = "Access error";
 "unknown_error" = "Unknown error";
-"forbidden_comment" = "This user's privacy settings do not allow you to look at his page.";
+"forbidden_comment" = "This user's privacy settings do not allow you to see their page.";
 
 "changes_saved" = "Changes saved";
-"changes_saved_comment" = "New data will appear on your page";
+"changes_saved_comment" = "New information will appear on your page";
 
 "photo_saved" = "Photo saved";
 "photo_saved_comment" = "New profile picture will appear on your page";
 
-"shared_succ" = "The post will appear on your wall. Click on the notification to go to your wall.";
+"shared_succ" = "The post will appear on your wall. Click the notification to go to your wall.";
 
 "invalid_email_address" = "Invalid Email address";
 "invalid_email_address_comment" = "The Email you entered is not correct.";
@@ -1409,7 +1414,8 @@
 "suspicious_registration_attempt_comment" = "You tried to register from a suspicious location.";
 
 "rate_limit_error" = "Hey, slow down!";
-"rate_limit_error_comment" = "Daniel Myslivets dispises you. In $1, you cannot send requests as often. Exception code: $2.";
+/* no easy way to translate the Myslivets string without it looking too aggressive so removed it altogether */
+"rate_limit_error_comment" = "Rate limit exceeded. Please wait a bit and try again. Exception code: $2.";
 
 "not_enough_permissions" = "Not enough permissions";
 "not_enough_permissions_comment" = "You do not have sufficient permissions to perform this action.";
@@ -1438,7 +1444,7 @@
 "video_uploads_disabled" = "Video uploads are disabled by the system administrator.";
 
 "error_when_publishing_comment" = "Error when publishing comment";
-"error_when_publishing_comment_description" = "Image is corrupted, too big or one side is many times larger than the other.";
+"error_when_publishing_comment_description" = "Image is corrupted, too big or one side (in pixels) is much larger than the other.";
 "error_comment_empty" = "Comment is empty or too big.";
 "error_comment_too_big" = "Comment is too big.";
 "error_comment_file_too_big" = "Media file is corrupted or too big.";
@@ -1469,11 +1475,11 @@
 
 "error_when_uploading_photo" = "Failed to save photo";
 
-"new_changes_desc" = "New data will appear in your group.";
+"new_changes_desc" = "New information will appear in your group.";
 "comment_is_changed" = "Admin comment changed";
 "comment_is_deleted" = "Admin comment deleted";
 "comment_is_too_long" = "Comment is too long ($1 characters instead of 36)";
-"x_no_more_admin" = "$1 no longer an administrator.";
+"x_no_more_admin" = "$1 is no longer an administrator.";
 "x_is_admin" = "$1 appointed as an administrator.";
 
 "x_is_now_hidden" = "Now $1 will be shown as a normal subscriber to everyone except other admins";
@@ -1534,7 +1540,7 @@
 "file_loaded_partially" = "The file has been uploaded partially.";
 "file_not_uploaded" = "Failed to upload the file.";
 "error_code" = "Error code: $1.";
-"ffmpeg_timeout" = "Timed out waiting ffmpeg. Try to upload file again.";
+"ffmpeg_timeout" = "Timed out waiting for ffmpeg. Try to upload file again.";
 "ffmpeg_not_installed" = "Failed to proccess the file. It looks like ffmpeg is not installed on this server.";
 
 /* Admin actions */
@@ -1612,7 +1618,7 @@
 "admin_voucher_serial_desc" = "The number consists of 24 characters. If the format is incorrect or the field is not filled in, it will be assigned automatically.";
 "admin_voucher_coins" = "Number of votes";
 "admin_voucher_rating_number" = "Number of rating";
-"admin_voucher_usages_desc" = "The number of users that can use the voucher. If you type -1, it will be infinity.";
+"admin_voucher_usages_desc" = "The number of users that can use the voucher. If you input -1, it will be infinity.";
 "admin_voucher_status" = "Status";
 "admin_voucher_status_opened" = "active";
 "admin_voucher_status_closed" = "closed";
@@ -1741,7 +1747,7 @@
 
 /* Cookies Pop-up */
 
-"cookies_popup_content" = "Just like how kids love cookies, this website uses Cookies to identify your session and nothing more. Check <a href='/privacy'>our privacy policy</a> for more information.";
+"cookies_popup_content" = "Just like how kids love cookies, this website uses Cookies to identify your session and nothing more. See our <a href='/privacy'>privacy policy</a> for more information.";
 "cookies_popup_agree" = "Accept";
 
 /* Away */
@@ -1942,13 +1948,13 @@
 "tour_section_12_text_3_1" = "Hide unnecessary sections of the site if needed.";
 "tour_section_12_text_3_2" = "<b>Remember:</b> Essential sections like My Page, My Friends, My Answers, and My Settings cannot be hidden.";
 "tour_section_12_title_4" = "View of Posts";
-"tour_section_12_text_4_1" = "If you're tired of the old wall design from the once-popular original VKontakte, change the post look to Microblog.";
-"tour_section_12_text_4_2" = "You can switch between the two post views at any time.";
-"tour_section_12_text_4_3" = "<b>Note:</b> If you choose the old post view, the latest comments will not be loaded.";
+"tour_section_12_text_4_1" = "If you're tired of the classic wall design from the once-popular original VKontakte, change the post style to Microblog.";
+"tour_section_12_text_4_2" = "You can switch between the two post styles at any time.";
+"tour_section_12_text_4_3" = "<b>Note:</b> If you choose the classic post view, the latest comments will not be loaded.";
 "tour_section_12_bottom_text_1" = "Background Setup Page";
 "tour_section_12_bottom_text_2" = "Examples of Pages with Set Backgrounds";
 "tour_section_12_bottom_text_3" = "Add more personality to your profile with this feature.";
-"tour_section_12_bottom_text_4" = "Old Post View";
+"tour_section_12_bottom_text_4" = "Classic Post Style";
 "tour_section_12_bottom_text_5" = "Microblog";
 
 
@@ -1961,6 +1967,7 @@
 "tour_section_13_bottom_text_2" = "Successful activation, for example, results in the crediting of 100 votes.";
 "tour_section_13_bottom_text_3" = "<b>Attention:</b> Once a promo code is activated on your page, the same code cannot be reactivated.";
 
+/* outdated */
 "tour_section_14_title_1" = "Mobile Version";
 "tour_section_14_text_1" = "Currently, there is no mobile web version of the site, but there is an Android mobile app.";
 "tour_section_14_text_2" = "OpenVK Legacy is an OpenVK mobile app designed for retro Android devices, featuring the design of the original VKontakte 3.0 app from 2013.";
@@ -1988,13 +1995,13 @@
 "s_comments" = "Comments";
 "s_videos" = "Videos";
 "s_audios" = "Music";
-"s_by_people" = "for people";
-"s_by_groups" = "for groups";
-"s_by_posts" = "for posts";
-"s_by_comments" = "for comments";
-"s_by_videos" = "for videos";
-"s_by_apps" = "for apps";
-"s_by_audios" = "for musics";
+"s_by_people" = "people";
+"s_by_groups" = "groups";
+"s_by_posts" = "posts";
+"s_by_comments" = "comments";
+"s_by_videos" = "videos";
+"s_by_apps" = "apps";
+"s_by_audios" = "audios";
 
 "s_order_by" = "Order by...";
 
@@ -2022,7 +2029,7 @@
 "reset" = "Reset";
 
 "closed_group_post" = "This post was published in a private group";
-"deleted_target_comment" = "This comment belongs to deleted post";
+"deleted_target_comment" = "This comment belongs to a deleted post";
 
 "no_results" = "No results";
 "s_only_performers" = "Performers only";
@@ -2105,7 +2112,7 @@
 
 "error_video" = "An error has occurred";
 "file_corrupted" = "File is corrupted or does not have video.";
-"link_incorrect" = "Maybe, the link is wrong.";
+"link_incorrect" = "Perhaps the link is wrong.";
 
 "no_name_error" = "Video can't be published without name";
 "access_denied_error" = "Access denied";
@@ -2119,7 +2126,7 @@
 
 "video_is_deleted" = "Video was deleted.";
 "share_video" = "Share video";
-"shared_succ_video" = "Video will appear at your wall. Click on this notification to move to post.";
+"shared_succ_video" = "Video will appear on your wall. Click this notification to see the post.";
 "watch_in_window" = "Watch in window";
 
 "comments_load_timeout" = "The instance may have fallen";
@@ -2152,7 +2159,7 @@
 "link_to_page" = "Link on page";
 "or_subnet" = "or subnet";
 "error_when_searching" = "Error while executing request";
-"no_found" = "No found";
+"no_found" = "Not found";
 "operation_successfully" = "Operation completed successfully";
 
 "unknown_error" = "Unknown error";
