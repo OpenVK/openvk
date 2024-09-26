@@ -178,9 +178,9 @@
                             <a href="/edit" class="link edit-button">{_edit_button}</a>
                             <a href="{$thisUser->getURL()}" class="link" title="{_my_page} [Alt+Shift+.]" accesskey=".">{_my_page}</a>
                             <a href="/friends{$thisUser->getId()}" class="link">{_my_friends}
-                                <object type="internal/link" n:if="$thisUser->getFollowersCount() > 0">
+                                <object type="internal/link" n:if="$thisUser->getRequestsCount() > 0">
                                     <a href="/friends{$thisUser->getId()}?act=incoming" class="linkunderline">
-                                       (<b>{$thisUser->getFollowersCount()}</b>)
+                                       (<b>{$thisUser->getRequestsCount()}</b>)
                                     </a>
                                 </object>
                             </a>
@@ -196,9 +196,9 @@
                             <a n:if="$thisUser->getLeftMenuItemStatus('groups')" href="/groups{$thisUser->getId()}" class="link">{_my_groups}</a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link" title="{_my_feed} [Alt+Shift+,]" accesskey=",">{_my_feed}</a>
                             <a href="/notifications" class="link" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">{_my_feedback}
-                                {if $thisUser->getNotificationsCount() > 0}
+                                <object type="internal/link" n:if="$thisUser->getNotificationsCount() > 0">
                                     (<b>{$thisUser->getNotificationsCount()}</b>)
-                                {/if}
+                                </object>
                             </a>
                             <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link">{_my_apps}</a>
                             <a href="/settings" class="link">{_my_settings}</a>
@@ -402,13 +402,6 @@
         {ifset $thisUser}
             {script "js/al_notifs.js"}
         {/ifset}
-
-        {if OPENVK_ROOT_CONF['openvk']['preferences']['bellsAndWhistles']['fartscroll']}
-            <script src="https://unpkg.com/fartscroll@1.0.0/fartscroll.js"></script>
-            <script>
-                fartscroll(400);
-            </script>
-        {/if}
 
         <script>bsdnHydrate();</script>
 

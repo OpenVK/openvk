@@ -1,4 +1,4 @@
-# <img align="right" src="https://github.com/openvk/openvk/raw/master/Web/static/img/logo_shadow.png" alt="openvk" title="openvk" width="15%">OpenVK
+# <img align="right" src="/Web/static/img/logo_shadow.png" alt="openvk" title="openvk" width="15%">OpenVK
 
 _[English](README.md)_
 
@@ -6,7 +6,7 @@ _[English](README.md)_
 
 ВКонтакте принадлежит Павлу Дурову и VK Group.
 
-Честно говоря, мы даже не знаем, работает ли она вообще. Однако, эта версия поддерживается, и мы будем рады принять ваши сообщения об ошибках [в нашем баг-трекере](https://github.com/openvk/openvk/projects/1). Вы также можете отправлять их через [вкладку "Помощь"](https://openvk.su/support?act=new) (для этого вам понадобится учетная запись OpenVK).
+Честно говоря, мы даже не знаем, работает ли она вообще. Однако, эта версия поддерживается, и мы будем рады принять ваши сообщения об ошибках [в нашем баг-трекере](https://github.com/openvk/openvk/projects/1). Вы также можете отправлять их через [вкладку "Помощь"](https://ovk.to/support?act=new) (для этого вам понадобится учетная запись OpenVK).
 
 ## Когда выйдет релизная версия?
 
@@ -66,7 +66,7 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 * **Пароль**: `admin`
   * Перед использованием встроенной учетной записи рекомендуется сменить пароль или отключить её.
 
-💡Запутались? Полное руководство по установке доступно [здесь](https://docs.openvk.uk/openvk_engine/centos8_installation/) (CentOS 8 [и](https://almalinux.org/ru/) [семейство](https://yum.oracle.com/oracle-linux-isos.html)).
+💡Запутались? Полное руководство по установке доступно [здесь](https://docs.ovk.to/openvk_engine/centos8_installation/) (CentOS 8 [и](https://almalinux.org/ru/) [семейство](https://yum.oracle.com/oracle-linux-isos.html)).
 
 # Установка в Docker/Kubernetes
 Подробные иструкции можно найти в `install/automated/docker/README.md` и `install/automated/kubernetes/README.md` соответственно.
@@ -80,7 +80,7 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 Вы можете связаться с нами через:
 
 * [Баг-трекер](https://github.com/openvk/openvk/projects/1)
-* [Помощь в OVK](https://openvk.su/support?act=new)
+* [Помощь в OVK](https://ovk.to/support?act=new)
 * Telegram-чат: Перейдите на [наш канал](https://t.me/openvk) и откройте обсуждение в меню нашего канала.
 * [Reddit](https://www.reddit.com/r/openvk/)
 * [GitHub Discussions](https://github.com/openvk/openvk/discussions)

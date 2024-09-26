@@ -49,7 +49,7 @@
                                                 {include description, x => $dat}
                                             {/ifset}
                                         </td>
-                                        <td n:ifset="actions" valign="top" class="action_links" style="width: 150px;">
+                                        <td n:ifset="actions" valign="top" class="action_links" style="min-width: 150px;">
                                             {include actions, x => $dat}
                                         </td>
                                     </tr>

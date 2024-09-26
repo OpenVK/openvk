@@ -246,6 +246,9 @@ final class Users extends VKAPIRequestHandler
 									"notes_count" => (new Notes)->getUserNotesCount($usr)
 								];
 								break;
+                            case "guid":
+                                $response[$i]->guid = $usr->getChandlerGUID();
+                                break;
 						}
 					}
 

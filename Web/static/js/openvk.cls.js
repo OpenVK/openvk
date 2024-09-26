@@ -167,6 +167,23 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
         return false;
     });
 
+    u("#_submitUserSubscriptionAction").handle("submit", async function(e) {
+        u(this).nodes[0].parentElement.classList.add('loading');
+        u(this).nodes[0].parentElement.classList.add('disable');
+        console.log(e.target);
+        const data = await fetch(u(this).attr('action'), { method: 'POST', body: new FormData(e.target) });
+        if (data.ok) {
+            u(this).nodes[0].parentElement.classList.remove('loading');
+            u(this).nodes[0].parentElement.classList.remove('disable');
+            if (e.target[0].value == "add") {
+                u(this).nodes[0].parentElement.innerHTML = tr("friends_add_msg");
+            } else if (e.target[0].value == "rej") {
+                u(this).nodes[0].parentElement.innerHTML = tr("friends_rej_msg");
+            } else if (e.target[0].value == "rem") {
+                u(this).nodes[0].parentElement.innerHTML = tr("friends_rem_msg");
+            }
+        }
+    })
 }); //END ONREADY DECLS
 
 async function repostPost(id, hash) {

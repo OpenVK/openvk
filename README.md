@@ -1,4 +1,4 @@
-# <img align="right" src="https://github.com/openvk/openvk/raw/master/Web/static/img/logo_shadow.png" alt="openvk" title="openvk" width="15%">OpenVK
+# <img align="right" src="/Web/static/img/logo_shadow.png" alt="openvk" title="openvk" width="15%">OpenVK
 
 _[Русский](README_RU.md)_
 
@@ -6,7 +6,7 @@ _[Русский](README_RU.md)_
 
 VKontakte belongs to Pavel Durov and VK Group.
 
-To be honest, we don't know whether if it even works. However, this version is maintained and we will be happy to accept your bugreports [in our bug tracker](https://github.com/openvk/openvk/projects/1). You should also be able to submit them using [ticketing system](https://openvk.su/support?act=new) (you will need an OpenVK account for this).
+To be honest, we don't know whether if it even works. However, this version is maintained and we will be happy to accept your bugreports [in our bug tracker](https://github.com/openvk/openvk/projects/1). You should also be able to submit them using [ticketing system](https://ovk.to/support?act=new) (you will need an OpenVK account for this).
 
 ## When's the release?
 
@@ -74,7 +74,7 @@ Once you are done, you can login as a system administrator on the network itself
 * **Password**: `admin`
   * It is recommended to change the password of the built-in account or disable it.
 
-💡 Confused? Full installation walkthrough is available [here](https://docs.openvk.uk/openvk_engine/centos8_installation/) (CentOS 8 [and](https://almalinux.org/) [family](https://yum.oracle.com/oracle-linux-isos.html)).
+💡 Confused? Full installation walkthrough is available [here](https://docs.ovk.to/openvk_engine/centos8_installation/) (CentOS 8 [and](https://almalinux.org/) [family](https://yum.oracle.com/oracle-linux-isos.html)).
 
 ### Looking for Docker or Kubernetes deployment?
 See `install/automated/docker/README.md` and `install/automated/kubernetes/README.md` for Docker and Kubernetes deployment instructions.
@@ -88,7 +88,7 @@ It depends. You can keep the sources to yourself if you do not plan to distribut
 You may reach out to us via:
 
 * [Bug Tracker](https://github.com/openvk/openvk/projects/1)
-* [Ticketing System](https://openvk.su/support?act=new)
+* [Ticketing System](https://ovk.to/support?act=new)
 * Telegram Chat: Go to [our channel](https://t.me/openvkenglish) and open discussion in our channel menu.
 * [Reddit](https://www.reddit.com/r/openvk/)
 * [GitHub Discussions](https://github.com/openvk/openvk/discussions)

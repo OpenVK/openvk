@@ -259,6 +259,10 @@
 "friends_delete" = "Remove from friends";
 "friends_reject" = "Reject request";
 "friends_accept" = "Accept request";
+"friends_leave_in_flw" = "Leave in followers";
+"friends_add_msg" = "Now you're friends.";
+"friends_rej_msg" = "You left this user as subscriber.";
+"friends_rem_msg" = "You deleted this user from your friend list.";
 "send_message" = "Send a message";
 "incoming_req" = "Pending";
 "outcoming_req" = "Outgoing";
@@ -480,6 +484,7 @@
 
 "upd_m" = "updated his profile picture";
 "upd_f" = "updated her profile picture";
+"upd_n" = "updated their profile picture";
 "upd_g" = "updated group's picture";
 
 "add_photos" = "Add photos";
@@ -775,6 +780,15 @@
 "viewing_backup_codes" = "View backup codes";
 "disable_2fa" = "Turn off 2FA";
 "viewing" = "View";
+
+/* OAuth */
+"identifies_itself_as" = "that identifies itself as $1";
+"located_at_url" = "located at $1";
+"wants_your_token" = "wants to access your account";
+"app_will_have_access_to" = "App will have access to:";
+"oauth_scope_all" = "profile information, status, list of friends, photos, wall posts, audios, videos, notifications, fishing rod handle, messages, gifts, <b>your e-mail</b>, polls, communities, discussions, notes, <b>payment method</b>, likes and comments";
+"oauth_grant" = "Allow";
+"oauth_deny" = "Deny";
 
 /* Sorting */
 
@@ -1189,6 +1203,7 @@
 "report_number" = "Report #";
 "list_of_reports" = "List of reports";
 "text_of_the_post" = "Text of the post";
+"delete_content" = "Delete content";
 "today" = "today";
 
 "will_be_watched" = "It will be reviewed by the moderators soon";
@@ -1581,6 +1596,7 @@
 "admin_user_online_deceased" = "Deceased";
 "admin_club_search" = "Search for groups";
 "admin_club_excludeglobalfeed" = "Do not display posts in the global feed";
+"admin_club_enforceexcludeglobalfeed" = "Disallow group staff from changing global feed status";
 
 "admin_services" = "Paid services";
 "admin_newgift" = "New gift";
@@ -1615,6 +1631,9 @@
 
 "admin_commerce_disabled" = "Commerce has been disabled by the system administrator";
 "admin_commerce_disabled_desc" = "The voucher and gift settings will be saved, but will have no effect.";
+
+"admin_longpool_broken" = "Longpool is broken and will not work!";
+"admin_longpool_broken_desc" = "Make sure file at the path <code>$1</code> exist and have correct rights and ownership.";
 
 "admin_banned_links" = "Blocked links";
 "admin_banned_link" = "Link";
@@ -1909,9 +1928,9 @@
 "tour_section_11_title_1" = "Themes";
 "tour_section_11_text_1" = "Upon registration, the default theme will be set as your appearance.";
 "tour_section_11_text_2" = "Some new users might find the current default theme a bit dated.";
-"tour_section_11_text_3" = "<b>No worries:</b> You can create your own theme by reading the <a href='https://docs.openvk.uk/'>documentation</a> or choose one from the catalog.";
+"tour_section_11_text_3" = "<b>No worries:</b> You can create your own theme by reading the <a href='https://docs.ovk.to/'>documentation</a> or choose one from the catalog.";
 "tour_section_11_bottom_text_1" = "A catalog of themes is available under \"My Settings\" in the \"Interface\" tab.";
-"tour_section_11_wordart" = "<img src='https://openvk.uk/assets/packages/static/openvk/img/tour/wordart_en.png' width='65%'>";
+"tour_section_11_wordart" = "<img src='/assets/packages/static/openvk/img/tour/wordart_en.png' width='65%'>";
 
 "tour_section_12_title_1" = "Profile and Group Backgrounds";
 "tour_section_12_text_1" = "You can set two images as the background of your page.";

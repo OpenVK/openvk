@@ -5,7 +5,7 @@ exceptions. It is still a work-in-progress functionality.
 **Note**: requests to API are routed through
 openvk.Web.Presenters.VKAPIPresenter, this dir contains only handlers.
 
-[Documentation for API clients](https://docs.openvk.uk/openvk_engine/api/description/)
+[Documentation for API clients](https://docs.ovk.to/openvk_engine/api/description/)
 
 ## Implementing API methods
 
