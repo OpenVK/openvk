@@ -204,8 +204,8 @@
 "comments_tip" = "Be the first to leave a comment on this post!";
 "your_comment" = "Your comment";
 "auditory" = "Auditory";
-"in_wall" = "to user's wall";
-"in_group" = "to group";
+"in_wall" = "to my wall";
+"in_group" = "to a group";
 "shown" = "Shown";
 "x_out_of" = "$1 of";
 "wall_zero" = "no posts";
