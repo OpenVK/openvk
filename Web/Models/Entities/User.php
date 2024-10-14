@@ -592,6 +592,16 @@ class User extends RowModel
         return $this->_abstractRelationCount("get-followers");
     }
 
+    function getRequests(int $page = 1, int $limit = 6): \Traversable
+    {
+        return $this->_abstractRelationGenerator("get-requests", $page, $limit);
+    }
+
+    function getRequestsCount(): int
+    {
+        return $this->_abstractRelationCount("get-requests");
+    }
+
     function getSubscriptions(int $page = 1, int $limit = 6): \Traversable
     {
         return $this->_abstractRelationGenerator("get-subscriptions-user", $page, $limit);

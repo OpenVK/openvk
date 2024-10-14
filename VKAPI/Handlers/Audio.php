@@ -485,7 +485,7 @@ final class Audio extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        if(!is_null($album_id))
+        if(!is_null($album_id)) 
             $this->fail(10, "album_id not implemented");
 
         // TODO get rid of dups

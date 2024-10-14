@@ -257,17 +257,6 @@
                 </tr>
                 <tr>
                     <td class="e">
-                        Fartscroll
-                    </td>
-                    <td class="v">
-                        {php echo OPENVK_ROOT_CONF["openvk"]["preferences"]["bellsAndWhistles"]["fartscroll"] ? "Enabled" : "Disabled"}
-                    </td>
-                    <td class="v">
-                        Disabled
-                    </td>
-                </tr>
-                <tr>
-                    <td class="e">
                         NDA Test Label
                     </td>
                     <td class="v">

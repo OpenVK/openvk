@@ -377,6 +377,8 @@ routes:
       handler: "VKAPI->route"
     - url: "/token"
       handler: "VKAPI->tokenLogin"
+    - url: "/authorize"
+      handler: "VKAPI->OAuthLogin"
     - url: "/admin/sandbox"
       handler: "About->sandbox"
     - url: "/admin/chandler/groups"

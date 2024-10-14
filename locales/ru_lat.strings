@@ -1669,9 +1669,9 @@
 "tour_section_11_title_1" = "Temy oformlenija";
 "tour_section_11_text_1" = "Posle registracii, v kačestve oformlenija u vas budet ustanovlena standartnaja tema";
 "tour_section_11_text_2" = "Nekotoryh novyh polízovatelej možet slegka otpugnutí nynešnjaja stokovaja tema, kotoraja veet sovsem už drevnostíju";
-"tour_section_11_text_3" = "<b>No ne beda:</b> Vy možete sozdatí svoju temu dlja sajta, oznakomivšisí s <a href='https://docs.openvk.uk/'>dokumentaciej</a> ili vybratí uže susčestvujusčuju iz kataloga";
+"tour_section_11_text_3" = "<b>No ne beda:</b> Vy možete sozdatí svoju temu dlja sajta, oznakomivšisí s <a href='https://docs.ovk.to/'>dokumentaciej</a> ili vybratí uže susčestvujusčuju iz kataloga";
 "tour_section_11_bottom_text_1" = "Katalog tem dostupen v razdele &quot;Moi Nastrojki&quot; vo vkladke &quot;Interfejs&quot; ";
-"tour_section_11_wordart" = "<img src='https://openvk.uk/assets/packages/static/openvk/img/tour/wordart.png' width='65%'>";
+"tour_section_11_wordart" = "<img src='/assets/packages/static/openvk/img/tour/wordart.png' width='65%'>";
 
 "tour_section_12_title_1" = "Fon profilja i gruppy";
 "tour_section_12_text_1" = "Vy možete ustanovití dva izobraženija v kačestve fona vašej stranicy";

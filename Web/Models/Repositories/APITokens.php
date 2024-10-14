@@ -23,4 +23,13 @@ class APITokens extends Repository
         
         return $token;
     }
+    
+    function getStaleByUser(int $userId, string $platform, bool $withRevoked = false): ?APIToken
+    {
+        return $this->toEntity($this->table->where([
+            'user'     => $userId,
+            'platform' => $platform,
+            'deleted'  => $withRevoked,
+        ])->fetch());
+    }
 }

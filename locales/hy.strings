@@ -1447,9 +1447,9 @@
 "tour_section_11_title_1" = "Տեսքեր";
 "tour_section_11_text_1" = "Գրանցվելուց հետո Ձեր էջում կիրառվում է սովորական տեսքը";
 "tour_section_11_text_2" = "Որոշ նորեկները կարող է չսիրեն լռելյայն տեսքը, քանի որ այն անգամ հնության զգացում է տալիս";
-"tour_section_11_text_3" = "<b>Բայց հլը հո՛պ.</b> Դուք կարող եք անգամ ստեղծել Ձեր տեսքը ՝ կարդալով <a href='https://docs.openvk.uk/'>դոկումենտացիան</a>, կամ էլ ընտրել եղածներից մեկը";
+"tour_section_11_text_3" = "<b>Բայց հլը հո՛պ.</b> Դուք կարող եք անգամ ստեղծել Ձեր տեսքը ՝ կարդալով <a href='https://docs.ovk.to/'>դոկումենտացիան</a>, կամ էլ ընտրել եղածներից մեկը";
 "tour_section_11_bottom_text_1" = "Տեսքերի ցանկը հասանելի է &quot;Իմ Կարգավորումներ&quot; –ի &quot;Ինտերֆեյս&quot; բաժնում;";
-"tour_section_11_wordart" = "<img src='https://openvk.uk/assets/packages/static/openvk/img/tour/wordart_en.png' width='65%'>";
+"tour_section_11_wordart" = "<img src='/assets/packages/static/openvk/img/tour/wordart_en.png' width='65%'>";
 
 "tour_section_12_title_1" = "Պրոֆիլ և խմբի ետնապատկերներ";
 "tour_section_12_text_1" = "Դուք կարող եք երկու ետնապատկեր տեղադրել";
