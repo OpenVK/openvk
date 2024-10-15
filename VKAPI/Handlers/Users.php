@@ -151,7 +151,6 @@ final class Users extends VKAPIRequestHandler
 								}
 							case "music":
 								if(!$canView) {
-									$response[$i]->music = "secret";
 									break;
 								}
 
@@ -159,7 +158,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "movies":
 								if(!$canView) {
-									$response[$i]->movies = "secret";
 									break;
 								}
 
@@ -167,7 +165,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "tv":
 								if(!$canView) {
-									$response[$i]->tv = "secret";
 									break;
 								}
 
@@ -175,7 +172,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "books":
 								if(!$canView) {
-									$response[$i]->books = "secret";
 									break;
 								}
 
@@ -183,7 +179,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "city":
 								if(!$canView) {
-									$response[$i]->city = "Воскресенск";
 									break;
 								}
 
@@ -191,7 +186,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "interests":
 								if(!$canView) {
-									$response[$i]->interests = "secret";
 									break;
 								}
 
@@ -199,7 +193,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "quotes":
 								if(!$canView) {
-									$response[$i]->quotes = "secret";
 									break;
 								}
 
@@ -207,7 +200,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "email":
 								if(!$canView) {
-									$response[$i]->email = "secret@gmail.com";
 									break;
 								}
 
@@ -215,7 +207,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "telegram":
 								if(!$canView) {
-									$response[$i]->telegram = "@secret";
 									break;
 								}
 
@@ -223,7 +214,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "about":
 								if(!$canView) {
-									$response[$i]->about = "secret";
 									break;
 								}
 								
@@ -231,7 +221,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "rating":
 								if(!$canView) {
-									$response[$i]->rating = 22;
 									break;
 								}
 
@@ -246,9 +235,34 @@ final class Users extends VKAPIRequestHandler
 									"notes_count" => (new Notes)->getUserNotesCount($usr)
 								];
 								break;
+							case "correct_counters":
+								$response[$i]->counters = (object) [
+									"friends" => $usr->getFriendsCount(),
+									"photos"  => (new Photos)->getUserPhotosCount($usr),
+									"videos"  => (new Videos)->getUserVideosCount($usr),
+									"audios"  => (new Audios)->getUserCollectionSize($usr),
+									"notes"   => (new Notes)->getUserNotesCount($usr),
+									"groups"  => $usr->getClubCount(),
+									"online_friends" => $usr->getFriendsOnlineCount(),
+								];
+								break;
                             case "guid":
                                 $response[$i]->guid = $usr->getChandlerGUID();
                                 break;
+							case 'background':
+								$backgrounds = $usr->getBackDropPictureURLs();
+								$response[$i]->background = $backgrounds;
+								break;
+							case 'reg_date':
+								if(!$canView) {
+									break;
+								}
+								
+								$response[$i]->reg_date = $usr->getRegistrationTime()->timestamp();
+								break;
+							case 'is_dead':
+								$response[$i]->is_dead = $usr->isDead();
+								break;
 						}
 					}
 

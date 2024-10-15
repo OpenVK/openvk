@@ -179,6 +179,31 @@ class Post extends Postable
             "img"  => NULL
         ];
     }
+
+    function getPostSourceInfo(): array
+    {
+        $post_source = ["type" => "vk"];
+        if($this->getPlatform(true) !== NULL) {
+            $post_source = [
+                "type" => "api",
+                "platform" => $this->getPlatform(true)
+            ];
+        }
+
+        if($this->isUpdateAvatarMessage())
+            $post_source['data'] = 'profile_photo';
+        
+        return $post_source;
+    }
+
+    function getVkApiType(): string
+    {
+        $type = 'post';
+        if($this->getSuggestionType() != 0)
+            $type = 'suggest';
+
+        return $type;
+    }
     
     function pin(): void
     {

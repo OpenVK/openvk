@@ -1224,6 +1224,11 @@ class User extends RowModel
         return (bool) $this->getRecord()->activated;
     }
 
+    function isDead(): bool
+    {
+        return $this->onlineStatus() == 2;
+    }
+
     function getUnbanTime(): ?string
     {
         $ban = (new Bans)->get((int) $this->getRecord()->block_reason);
@@ -1338,13 +1343,14 @@ class User extends RowModel
         $res->photo_100   = $this->getAvatarURL("tiny");
         $res->photo_200   = $this->getAvatarURL("normal");
         $res->photo_id    = !is_null($this->getAvatarPhoto()) ? $this->getAvatarPhoto()->getPrettyId() : NULL;
-        # TODO: Perenesti syuda vsyo ostalnoyie
 
         $res->is_closed   = $this->isClosed();
 
-        if(!is_null($user)) {
+        if(!is_null($user))
             $res->can_access_closed  = (bool)$this->canBeViewedBy($user);
-        }
+
+        if($user->isDead())
+            $res->is_dead = 1;
 
         return $res;
     }

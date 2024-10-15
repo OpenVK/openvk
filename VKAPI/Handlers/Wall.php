@@ -126,65 +126,41 @@ final class Wall extends VKAPIRequestHandler
                     else
                         $profiles[] = $attachment->getOwner()->getId();
 
-                    $post_source = [];
-
-                    if($attachment->getPlatform(true) === NULL) {
-                        $post_source = (object)["type" => "vk"];
-                    } else {
-                        $post_source = (object)[
-                            "type" => "api",
-                            "platform" => $attachment->getPlatform(true)
-                        ];
-                    }
-
                     $repost[] = [
                         "id" => $attachment->getVirtualId(),
                         "owner_id" => $attachment->isPostedOnBehalfOfGroup() ? $attachment->getOwner()->getId() * -1 : $attachment->getOwner()->getId(),
                         "from_id" => $attachment->isPostedOnBehalfOfGroup() ? $attachment->getOwner()->getId() * -1 : $attachment->getOwner()->getId(),
                         "date" => $attachment->getPublicationTime()->timestamp(),
-                        "post_type" => "post",
+                        "post_type" => $attachment->getVkApiType(),
                         "text" => $attachment->getText(false),
                         "attachments" => $repostAttachments,
-                        "post_source" => $post_source,
+                        "post_source" => $attachment->getPostSourceInfo(),
                     ];
 
-                    if ($attachment->getVirtualId() > 0)
-                        $profiles[] = $attachment->getVirtualId();
+                    if ($attachment->getTargetWall() > 0)
+                        $profiles[] = $attachment->getTargetWall();
                     else
-                        $groups[]   = $attachment->getVirtualId();
+                        $groups[] = abs($attachment->getTargetWall());
                         if($post->isSigned())
                             $profiles[] = $attachment->getOwner()->getId();
                 }
             }
 
-            $post_source = [];
-
-            if($post->getPlatform(true) === NULL) {
-                $post_source = (object)["type" => "vk"];
-            } else {
-                $post_source = (object)[
-                    "type" => "api",
-                    "platform" => $post->getPlatform(true)
-                ];
-            }
-
-            $postType = "post";
             $signerId = NULL;
-            if($post->getSuggestionType() != 0)
-                $postType = "suggest";
-            
-
             if($post->isSigned()) {
                 $actualAuthor = $post->getOwner(false);
                 $signerId     = $actualAuthor->getId();
             }
 
-            $items[] = (object)[
+            # TODO "can_pin", "copy_history" и прочее не должны возвращаться, если равны null или false
+            # Ну и ещё всё надо перенести в toVkApiStruct, а то слишком много дублированного кода
+
+            $post_temp_obj = (object)[
                 "id"           => $post->getVirtualId(),
                 "from_id"      => $from_id,
                 "owner_id"     => $post->getTargetWall(),
                 "date"         => $post->getPublicationTime()->timestamp(),
-                "post_type"    => $postType,
+                "post_type"    => $post->getVkApiType(),
                 "text"         => $post->getText(false),
                 "copy_history" => $repost,
                 "can_edit"     => $post->canBeEditedBy($this->getUser()),
@@ -195,8 +171,7 @@ final class Wall extends VKAPIRequestHandler
                 "is_pinned"    => $post->isPinned(),
                 "is_explicit"  => $post->isExplicit(),
                 "attachments"  => $attachments,
-                "post_source"  => $post_source,
-                "signer_id"    => $signerId,
+                "post_source"  => $post->getPostSourceInfo(),
                 "comments"     => (object)[
                     "count"    => $post->getCommentsCount(),
                     "can_post" => 1
@@ -212,6 +187,14 @@ final class Wall extends VKAPIRequestHandler
                     "user_reposted" => 0
                 ]
             ];
+
+            if($signerId) 
+                $post_temp_obj->signer_id = $signerId;
+
+            if($post->isDeactivationMessage())
+                $post_temp_obj->final_post = 1;
+
+            $items[] = $post_temp_obj;
 
             if ($from_id > 0)
                 $profiles[] = $from_id;
@@ -332,17 +315,6 @@ final class Wall extends VKAPIRequestHandler
                         else
                             $profiles[] = $attachment->getOwner()->getId();
 
-                        $post_source = [];
-
-                        if($attachment->getPlatform(true) === NULL) {
-                            $post_source = (object)["type" => "vk"];
-                        } else {
-                            $post_source = (object)[
-                                "type" => "api",
-                                "platform" => $attachment->getPlatform(true)
-                            ];
-                        }
-
                         $repost[] = [
                             "id" => $attachment->getVirtualId(),
                             "owner_id" => $attachment->isPostedOnBehalfOfGroup() ? $attachment->getOwner()->getId() * -1 : $attachment->getOwner()->getId(),
@@ -351,47 +323,29 @@ final class Wall extends VKAPIRequestHandler
                             "post_type" => "post",
                             "text" => $attachment->getText(false),
                             "attachments" => $repostAttachments,
-                            "post_source" => $post_source,
+                            "post_source" => $attachment->getPostSourceInfo(),
                         ];
 
-                        if ($attachment->getVirtualId() > 0)
-                            $profiles[] = $attachment->getVirtualId();
+                        if ($attachment->getTargetWall() > 0)
+                            $profiles[] = $attachment->getTargetWall();
                         else
-                            $groups[]   = $attachment->getVirtualId();
+                            $groups[] = abs($attachment->getTargetWall());
                             if($post->isSigned())
                                 $profiles[] = $attachment->getOwner()->getId();
                     }
                 }
-
-                $post_source = [];
-
-                if($post->getPlatform(true) === NULL) {
-                    $post_source = (object)["type" => "vk"];
-                } else {
-                    $post_source = (object)[
-                        "type" => "api",
-                        "platform" => $post->getPlatform(true)
-                    ];
-                }
-
-                # TODO: $post->getVkApiType()
-                $postType = "post";
-                $signerId = NULL;
-                if($post->getSuggestionType() != 0)
-                    $postType = "suggest";
-                
 
                 if($post->isSigned()) {
                     $actualAuthor = $post->getOwner(false);
                     $signerId     = $actualAuthor->getId();
                 }
 
-                $items[] = (object)[
+                $post_temp_obj = (object)[
                     "id"           => $post->getVirtualId(),
                     "from_id"      => $from_id,
                     "owner_id"     => $post->getTargetWall(),
                     "date"         => $post->getPublicationTime()->timestamp(),
-                    "post_type"    => $postType,
+                    "post_type"    => $post->getVkApiType(),
                     "text"         => $post->getText(false),
                     "copy_history" => $repost,
                     "can_edit"     => $post->canBeEditedBy($this->getUser()),
@@ -401,8 +355,7 @@ final class Wall extends VKAPIRequestHandler
                     "is_archived"  => false,
                     "is_pinned"    => $post->isPinned(),
                     "is_explicit"  => $post->isExplicit(),
-                    "post_source"  => $post_source,
-                    "signer_id"    => $signerId,
+                    "post_source"  => $post->getPostSourceInfo(),
                     "attachments"  => $attachments,
                     "comments"     => (object)[
                         "count"    => $post->getCommentsCount(),
@@ -419,6 +372,14 @@ final class Wall extends VKAPIRequestHandler
                         "user_reposted" => 0
                     ]
                 ];
+
+                if($signerId) 
+                    $post_temp_obj->signer_id = $signerId;
+
+                if($post->isDeactivationMessage())
+                    $post_temp_obj->final_post = 1;
+
+                $items[] = $post_temp_obj;
 
                 if ($from_id > 0)
                     $profiles[] = $from_id;
@@ -792,6 +753,9 @@ final class Wall extends VKAPIRequestHandler
                 ]
             ];
 
+            if($comment->isFromPostAuthor($post))
+                $item['is_from_post_author'] = true;
+
             if($need_likes == true)
                 $item['likes'] = [
                     "can_like"    => 1,
@@ -875,6 +839,9 @@ final class Wall extends VKAPIRequestHandler
             ]
         ];
 
+        if($comment->isFromPostAuthor())
+            $item['is_from_post_author'] = true;
+
         if($extended == true)
             $profiles[] = $comment->getOwner()->getId();
 
@@ -889,8 +856,6 @@ final class Wall extends VKAPIRequestHandler
             $profiles = array_unique($profiles);
             $response['profiles'] = (!empty($profiles) ? (new Users)->get(implode(',', $profiles), $fields) : []);
         }
-
-
 
         return $response;
     }

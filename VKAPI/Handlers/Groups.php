@@ -88,6 +88,10 @@ final class Groups extends VKAPIRequestHandler
                             case "can_suggest":
                                 $rClubs[$i]->can_suggest = !$usr->canBeModifiedBy($this->getUser()) && $usr->getWallType() == 2;
                                 break;
+                            case "background":
+                                $backgrounds = $usr->getBackDropPictureURLs();
+                                $rClubs[$i]->background = $backgrounds;
+                                break;
                             # unstandard feild
                             case "suggested_count":
                                 if($usr->getWallType() != 2) {
@@ -207,6 +211,10 @@ final class Groups extends VKAPIRequestHandler
                             break;
                         case "can_suggest":
                             $response[$i]->can_suggest = !$clb->canBeModifiedBy($this->getUser()) && $clb->getWallType() == 2;
+                            break;
+                        case "background":
+                            $backgrounds = $clb->getBackDropPictureURLs();
+                            $response[$i]->background = $backgrounds;
                             break;
                         # unstandard feild
                         case "suggested_count":

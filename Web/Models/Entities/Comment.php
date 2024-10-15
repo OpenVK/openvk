@@ -103,6 +103,22 @@ class Comment extends Post
 
         return $this->getTarget()->canBeViewedBy($user);
     }
+
+    function isFromPostAuthor($target = NULL)
+    {
+        if(!$target)
+            $target = $this->getTarget();
+
+        $target_owner = $target->getOwner();
+        $comment_owner = $this->getOwner();
+        
+        if($target_owner->getRealId() === $comment_owner->getRealId())
+            return true;
+
+        # TODO: make it work with signer_id
+
+        return false;
+    }
   
     function toNotifApiStruct()
     {
