@@ -279,7 +279,7 @@ final class AudioPresenter extends OpenVKPresenter
 
     function renderSearch(): void
     {
-        $this->redirect("/search?type=audios");
+        $this->redirect("/search?section=audios");
     }
 
     function renderNewPlaylist(): void
@@ -475,6 +475,7 @@ final class AudioPresenter extends OpenVKPresenter
 
         $this->template->playlist = $playlist;
         $this->template->page = $page;
+        $this->template->cover = $playlist->getCoverPhoto();
         $this->template->audios = iterator_to_array($playlist->fetch($page, 10));
         $this->template->ownerId = $owner_id;
         $this->template->owner = $playlist->getOwner();

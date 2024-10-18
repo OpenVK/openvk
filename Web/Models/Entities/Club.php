@@ -437,7 +437,7 @@ class Club extends RowModel
         return (new \openvk\Web\Models\Repositories\Audios)->getClubCollectionSize($this);
     }
     
-    function toVkApiStruct(?User $user = NULL): object
+    function toVkApiStruct(?User $user = NULL, string $fields = ''): object
     {
         $res = (object) [];
 

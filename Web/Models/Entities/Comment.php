@@ -140,4 +140,31 @@ class Comment extends Post
         
         return $user->getId() == $this->getOwner(false)->getId();
     }
+
+    function getTargetURL(): string
+    {
+        $target = $this->getTarget();
+        $target_name = 'wall';
+
+        if(!$target) {
+            return '/404';
+        }
+
+        switch(get_class($target)) {
+            case 'openvk\Web\Models\Entities\Note':
+                $target_name = 'note';
+                break;
+            case 'openvk\Web\Models\Entities\Photo':
+                $target_name = 'photo';
+                break;
+            case 'openvk\Web\Models\Entities\Video':
+                $target_name = 'video';
+                break;
+            case 'openvk\Web\Models\Entities\Topic':
+                $target_name = 'topic';
+                break;
+        }
+
+        return $target_name . $target->getPrettyId();
+    }
 }

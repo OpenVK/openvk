@@ -199,6 +199,11 @@ class Playlist extends MediaCollection
     {
         return $this->getRecord()->cover_photo_id;
     }
+    
+    function getCoverPhoto(): ?Photo
+    {
+        return (new Photos)->get((int) $this->getRecord()->cover_photo_id);
+    }
 
     function canBeModifiedBy(User $user): bool
     {

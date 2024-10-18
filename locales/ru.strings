@@ -1405,7 +1405,7 @@
 "no_video_desc" = "Выберите файл или укажите ссылку.";
 "error_occured" = "Произошла ошибка";
 "error_video_damaged_file" = "Файл повреждён или не содержит видео.";
-"error_video_incorrect_link" = "Возможно, ссылка некорректна.";
+"error_video_incorrect_link" = "Возможно, ссылка некорректна";
 "error_video_no_title" = "Видео не может быть опубликовано без названия.";
 
 "new_data_video" = "Обновлённое описание появится на странице с видео.";
@@ -1871,22 +1871,21 @@
 
 "s_people" = "Люди";
 "s_groups" = "Группы";
-"s_events" = "События";
 "s_apps" = "Приложения";
-"s_questions" = "Вопросы";
-"s_notes" = "Заметки";
-"s_themes" = "Темы";
 "s_posts" = "Записи";
 "s_comments" = "Комментарии";
 "s_videos" = "Видео";
 "s_audios" = "Аудио";
+"s_audios_playlists" = "Плейлисты";
+
 "s_by_people" = "по людям";
 "s_by_groups" = "по группам";
 "s_by_posts" = "по записям";
 "s_by_comments" = "по комментариям";
 "s_by_videos" = "по видео";
 "s_by_apps" = "по приложениям";
-"s_by_audios" = "по музыке";
+"s_by_audios" = "по аудиозаписям";
+"s_by_audios_playlists" = "по плейлистам";
 
 "s_order_by" = "Порядок";
 
@@ -1897,6 +1896,10 @@
 "s_order_by_length" = "По длине";
 "s_order_by_listens" = "По числу прослушиваний";
 "s_order_invert" = "Инвертировать";
+"s_order_by_reg_date" = "По дате регистрации";
+"s_order_by_creation_date" = "По дате создания";
+"s_order_by_publishing_date" = "По дате публикации";
+"s_order_by_upload_date" = "По дате загрузки";
 
 "s_by_date" = "По дате";
 "s_registered_before" = "Зарегистрирован до";
@@ -1909,16 +1912,23 @@
 "s_now_on_site" = "cейчас на сайте";
 "s_with_photo" = "с фото";
 "s_only_in_names" = "только в именах";
+"s_only_youtube" = "только с YouTube";
 
-"s_any" = "любой";
+"s_any" = "любые";
+"s_any_single" = "любой";
 "reset" = "Сброс";
 
 "closed_group_post" = "Эта запись из закрытой группы";
 "deleted_target_comment" = "Этот комментарий принадлежит к удалённой записи";
 
 "no_results" = "Результатов нет";
-"s_only_performers" = "Только исполнители";
+"s_only_performers" = "По исполнителям";
 "s_with_lyrics" = "С текстом";
+
+"showing_x_y" = "(показывается $1—$2)";
+"no_results_by_this_query" = "По данному запросу ничего не найдено.";
+"s_additional" = "Дополнительно";
+"s_it_is_you" = "это вы";
 
 /* BadBrowser */
 
@@ -1997,7 +2007,7 @@
 
 "error_video" = "Произошла ошибка";
 "file_corrupted" = "Файл повреждён или не содержит видео.";
-"link_incorrect" = "Возможно, ссылка некорректна.";
+"link_incorrect" = "Возможно, ссылка некорректна (попробуй убрать параметры по типу &t= или &si=)";
 
 "no_name_error" = "Видео не может быть опубликовано без названия";
 "access_denied_error" = "Ошибка доступа";

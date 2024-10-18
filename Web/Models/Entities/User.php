@@ -1331,7 +1331,7 @@ class User extends RowModel
         return $this->getId();
     }
 
-    function toVkApiStruct(?User $user = NULL): object
+    function toVkApiStruct(?User $user = NULL, string $fields = ''): object
     {
         $res = (object) [];
 
@@ -1349,8 +1349,16 @@ class User extends RowModel
         if(!is_null($user))
             $res->can_access_closed  = (bool)$this->canBeViewedBy($user);
 
-        if($user->isDead())
-            $res->is_dead = 1;
+        if(!is_array($fields))
+            $fields = explode(',', $fields);
+        
+        foreach($fields as $field) {
+            switch($field) {
+                case 'is_dead':
+                    $res->is_dead = $user->isDead();
+                    break;
+            }
+        }
 
         return $res;
     }

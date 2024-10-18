@@ -208,7 +208,7 @@ class Audios
         $search = $this->audios->where([
             "unlisted" => 0,
             "deleted"  => 0,
-        ])->where("MATCH ($columns) AGAINST (? WITH QUERY EXPANSION)", $query)->order($order);
+        ])->where("MATCH ($columns) AGAINST (? IN BOOLEAN MODE)", "%$query%")->order($order);
 
         if($withLyrics)
             $search = $search->where("lyrics IS NOT NULL");
@@ -243,53 +243,62 @@ class Audios
         ])->fetch());
     }
 
-    function find(string $query, array $pars = [], string $sort = "id DESC", int $page = 1, ?int $perPage = NULL): \Traversable
+    function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false], int $page = 1, ?int $perPage = NULL): \Traversable
     {
-        $query  = "%$query%";
         $result = $this->audios->where([
             "unlisted" => 0,
             "deleted"  => 0,
         ]);
+        $order_str = 'id';
 
-        $notNullParams = [];
-
-        foreach($pars as $paramName => $paramValue)
-            if($paramName != "before" && $paramName != "after" && $paramName != "only_performers")
-                $paramValue != NULL ? $notNullParams+=["$paramName" => "%$paramValue%"]   : NULL;
-            else
-                $paramValue != NULL ? $notNullParams+=["$paramName" => "$paramValue"]     : NULL;
-        
-        $nnparamsCount = sizeof($notNullParams);
-
-        if($notNullParams["only_performers"] == "1") {
-            $result->where("performer LIKE ?", $query);
-        } else {
-            $result->where("name LIKE ? OR performer LIKE ?", $query, $query);
+        switch($order['type']) {
+            case 'id':
+                $order_str = 'id ' . ($order['invert'] ? 'ASC' : 'DESC');
+                break;
+            case 'length':
+                $order_str = 'length ' . ($order['invert'] ? 'ASC' : 'DESC');
+                break;
+            case 'listens':
+                $order_str = 'listens ' . ($order['invert'] ? 'ASC' : 'DESC');
+                break;
         }
 
-        if($nnparamsCount > 0) {
-            foreach($notNullParams as $paramName => $paramValue) {
-                switch($paramName) {
-                    case "before":
-                        $result->where("created < ?", $paramValue);
-                        break;
-                    case "after":
-                        $result->where("created > ?", $paramValue);
-                        break;
-                    case "with_lyrics":
-                        $result->where("lyrics IS NOT NULL");
-                        break;
-                }
+        if($params["only_performers"] == "1") {
+            $result->where("performer LIKE ?", "%$query%");
+        } else {
+            $result->where("name LIKE ? OR performer LIKE ?", "%$query%", "%$query%");
+        }
+
+        foreach($params as $paramName => $paramValue) {
+            if(is_null($paramValue) || $paramValue == '') continue;
+
+            switch($paramName) {
+                case "before":
+                    $result->where("created < ?", $paramValue);
+                    break;
+                case "after":
+                    $result->where("created > ?", $paramValue);
+                    break;
+                case "with_lyrics":
+                    $result->where("lyrics IS NOT NULL");
+                    break;
+                case 'genre':
+                    if($paramValue == 'any') break;
+
+                    $result->where("genre", $paramValue);
+                    break;
             }
         }
 
-        return new Util\EntityStream("Audio", $result->order($sort));
+        if($order_str)
+            $result->order($order_str);
+        
+        return new Util\EntityStream("Audio", $result);
     }
 
     function findPlaylists(string $query, int $page = 1, ?int $perPage = NULL): \Traversable
     {
-        $query  = "%$query%";
-        $result = $this->playlists->where("name LIKE ?", $query);
+        $result = $this->playlists->where("name LIKE ?", "%$query%");
 
         return new Util\EntityStream("Playlist", $result);
     }

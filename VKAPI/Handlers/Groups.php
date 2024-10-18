@@ -252,7 +252,7 @@ final class Groups extends VKAPIRequestHandler
         return $response;
     }
 
-    function search(string $q, int $offset = 0, int $count = 100)
+    function search(string $q, int $offset = 0, int $count = 100, string $fields = "screen_name,is_admin,is_member,is_advertiser,photo_50,photo_100,photo_200")
     {
         $clubs = new ClubsRepo;
         
@@ -264,11 +264,7 @@ final class Groups extends VKAPIRequestHandler
 
         return (object) [
         	"count" => $find->size(),
-        	"items" => $this->getById(implode(',', $array), "", "is_admin,is_member,is_advertiser,photo_50,photo_100,photo_200", $offset, $count)
-            /*
-             * As there is no thing as "fields" by the original documentation
-             * i'll just bake this param by the example shown here: https://dev.vk.com/method/groups.search 
-             */
+        	"items" => $this->getById(implode(',', $array), "", $fields, $offset, $count)
         ];
     }
 

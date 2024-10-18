@@ -313,10 +313,14 @@ class bigPlayer {
         })
 
         u(".bigPlayer .trackInfo b").on("click", (e) => {
-            window.location.assign(`/search?query=${e.currentTarget.innerHTML}&type=audios&only_performers=on`)
+            window.location.assign(`/search?q=${e.currentTarget.innerHTML}&section=audios&only_performers=on`)
         })
 
         u(document).on("keydown", (e) => {
+            if(document.activeElement.closest('.page_header')) {
+                return
+            }
+            
             if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)) {
                 if(document.querySelector(".ovk-diag-cont") != null)
                     return
@@ -644,29 +648,6 @@ document.addEventListener("DOMContentLoaded", function() {
         let type = context.dataset.type
         let entity = context.dataset.entity
         window.player = new bigPlayer(type, entity, context.dataset.page)
-
-        let bigplayer = document.querySelector('.bigPlayerDetector')
-
-        let bigPlayerObserver = new IntersectionObserver(entries => {
-            entries.forEach(x => {
-                if(x.isIntersecting) {
-                    document.querySelector('.bigPlayer').classList.remove("floating")
-                    //document.querySelector('.searchOptions .searchList').classList.remove("floating")
-                    document.querySelector('.bigPlayerDetector').style.marginTop = "0px"
-                } else {
-                    //document.querySelector('.searchOptions .searchList').classList.add("floating")
-                    document.querySelector('.bigPlayer').classList.add("floating")
-                    document.querySelector('.bigPlayerDetector').style.marginTop = "46px"
-                }
-            });
-        }, {
-            root: null,
-            rootMargin: "0px",
-            threshold: 0
-        });
-
-        if(bigplayer != null)
-            bigPlayerObserver.observe(bigplayer);
     }
 
     $(document).on("mouseover mouseleave", `.audioEntry .mediaInfo`, (e) => {
@@ -795,6 +776,10 @@ function initPlayer(id, keys, url, length) {
             try {
                 nextPlayer = thisPlayer.closest(".audio").nextElementSibling.querySelector(".audioEmbed")
             } catch(e) {return}
+        } else if(thisPlayer.closest(".search_content") != null) {
+            try {
+                nextPlayer = thisPlayer.closest(".search_content").nextElementSibling.querySelector(".audioEmbed")
+            } catch(e) {return}
         } else {
             nextPlayer = thisPlayer.nextElementSibling
         }
@@ -899,7 +884,7 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
                     if(response.success) {
                         let perf = player.querySelector(".performer a")
                         perf.innerHTML = escapeHtml(response.new_info.performer)
-                        perf.setAttribute("href", "/search?query=&type=audios&sort=id&only_performers=on&query="+response.new_info.performer)
+                        perf.setAttribute("href", "/search?q=&section=audios&order=listens&only_performers=on&q="+response.new_info.performer)
                         
                         e.target.setAttribute("data-performer", escapeHtml(response.new_info.performer))
                         

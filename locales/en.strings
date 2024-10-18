@@ -1981,22 +1981,21 @@
 
 "s_people" = "People";
 "s_groups" = "Clubs";
-"s_events" = "Events";
 "s_apps" = "Applications";
-"s_questions" = "Questions";
-"s_notes" = "Notes";
-"s_themes" = "Themes";
 "s_posts" = "Posts";
 "s_comments" = "Comments";
 "s_videos" = "Videos";
 "s_audios" = "Music";
+"s_audios_playlists" = "Playlists";
+
 "s_by_people" = "for people";
 "s_by_groups" = "for groups";
 "s_by_posts" = "for posts";
 "s_by_comments" = "for comments";
 "s_by_videos" = "for videos";
 "s_by_apps" = "for apps";
-"s_by_audios" = "for musics";
+"s_by_audios" = "for audios";
+"s_by_audios_playlists" = "for playlists";
 
 "s_order_by" = "Order by...";
 
@@ -2007,6 +2006,10 @@
 "s_order_by_length" = "By length";
 "s_order_by_listens" = "By listens count";
 "s_order_invert" = "Invert";
+"s_order_by_reg_date" = "By reg date";
+"s_order_by_creation_date" = "By creation date";
+"s_order_by_publishing_date" = "By publication date;
+"s_order_by_upload_date" = "By upload date";
 
 "s_by_date" = "By date";
 "s_registered_before" = "Registered before";
@@ -2019,16 +2022,23 @@
 "s_now_on_site" = "now on site";
 "s_with_photo" = "with photo";
 "s_only_in_names" = "only in names";
+"s_only_youtube" = "only from YouTube";
 
 "s_any" = "any";
+"s_any_single" = "any";
 "reset" = "Reset";
 
 "closed_group_post" = "This post was published in a private group";
 "deleted_target_comment" = "This comment belongs to deleted post";
 
 "no_results" = "No results";
-"s_only_performers" = "Performers only";
+"s_only_performers" = "By performers";
 "s_with_lyrics" = "With lyrics";
+
+"showing_x_y" = "(showing $1—$2)";
+"no_results_by_this_query" = "Nothing was found by this query.";
+"s_additional" = "Additional";
+"s_it_is_you" = "it is you";
 
 /* BadBrowser */
 

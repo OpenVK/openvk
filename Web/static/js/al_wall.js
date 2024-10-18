@@ -342,31 +342,38 @@ function OpenMiniature(e, photo, post, photo_id, type = "post") {
 
     let data = new FormData()
     data.append('parentType', type);
-    ky.post("/iapi/getPhotosFromPost/" + (type == "post" ? post : "1_"+post), {
-        hooks: {
-            afterResponse: [
-                async (_request, _options, response) => {
-                    json = await response.json();
-
-                    imagesCount = json.body.length;
-                    imagesIndex = 0;
-                    // Это всё придётся правда на 1 прибавлять
-                    
-                    json.body.every(element => {
-                        imagesIndex++;
-                        if(element.id == photo_id) {
-                            return false;
-                        } else {
-                            return true;
-                        }
-                    });
-
-                    __reloadTitleBar();
-                    __loadDetails(json.body[imagesIndex - 1].id, imagesIndex);                }
-            ]
-        },
-        body: data
-    });
+    
+    if(type) {
+        ky.post("/iapi/getPhotosFromPost/" + (type == "post" ? post : "1_"+post), {
+            hooks: {
+                afterResponse: [
+                    async (_request, _options, response) => {
+                        json = await response.json();
+    
+                        imagesCount = json.body.length;
+                        imagesIndex = 0;
+                        // Это всё придётся правда на 1 прибавлять
+                        
+                        json.body.every(element => {
+                            imagesIndex++;
+                            if(element.id == photo_id) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        });
+    
+                        __reloadTitleBar();
+                        __loadDetails(json.body[imagesIndex - 1].id, imagesIndex);                }
+                ]
+            },
+            body: data
+        });
+    } else {
+        imagesCount = 1
+        __reloadTitleBar()
+        __loadDetails(photo_id, imagesIndex)
+    }
 
     return u(".ovk-photo-view-dimmer");
 }

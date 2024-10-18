@@ -35,8 +35,8 @@
     <input type="hidden" name="bigplayer_context" data-type="playlist_context" data-entity="{$playlist->getId()}" data-page="{$page}">
     <div class="playlistBlock">
         <div class="playlistCover" style="float: left;">
-            <a href="{$playlist->getCoverURL()}" target="_blank">
-                <img src="{$playlist->getCoverURL('normal')}" alt="{_playlist_cover}">
+            <a href="{$cover->getURL()}" target="_blank">
+                <img onclick="OpenMiniature(event, {$cover->getURL()}, null, {$cover->getPrettyId()}, null)" src="{$playlist->getCoverURL('normal')}" alt="{_playlist_cover}">
             </a>
 
             <div class="profile_links" style="width: 139px;" n:if="isset($thisUser)">

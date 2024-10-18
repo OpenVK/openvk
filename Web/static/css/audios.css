@@ -4,6 +4,10 @@
     white-space: nowrap;
 }
 
+.audiosPaddingContainer {
+    padding: 8px;
+}
+
 .overflowedName {
     position: absolute;
     z-index: 99;
@@ -31,7 +35,9 @@
     height: 46px;
     border-bottom: 1px solid #d8d8d8;
     box-shadow: 1px 0px 8px 0px rgba(34, 60, 80, 0.2);
-    position: relative;
+    position: sticky;
+    top: 0px;
+    z-index: 1;
 }
 
 .bigPlayer.floating {
@@ -517,8 +523,14 @@
     padding-bottom: 3px;
 }
 
+.audiosDiv {
+    width: 103.1%;
+    display: flex;
+    margin: 0px 0px -10px -12px;
+}
+
 /* <center> 🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣*/
-.audiosDiv center span {
+.audiosDiv center span, .error_full_wrapper center span {
     color: #707070;
     margin: 120px 0px !important;
     display: block;
@@ -583,8 +595,11 @@
 }
 
 .friendsAudiosList {
-    margin-left: -7px;
     margin-top: 8px;
+}
+
+.friendsAudiosList > a {
+    padding-left: 8px;
 }
 
 .friendsAudiosList .elem {
