@@ -48,7 +48,8 @@ final class SearchPresenter extends OpenVKPresenter
             "comments" => "comments",
             "videos"   => "videos",
             "audios"   => "audios",
-            "apps"     => "apps"
+            "apps"     => "apps",
+            "audios_playlists" => "audios"
         ];
         $parameters = [
             "ignore_private" => true,
@@ -92,7 +93,16 @@ final class SearchPresenter extends OpenVKPresenter
 
         $repo = $repos[$section] or $this->throwError(400, "Bad Request", "Invalid search entity $section.");
         
-        $results  = $this->{$repo}->find($query, $parameters, ['type' => $order, 'invert' => $invert]);
+        $results = NULL;
+        switch($section) {
+            default:
+                $results  = $this->{$repo}->find($query, $parameters, ['type' => $order, 'invert' => $invert]);
+                break;
+            case 'audios_playlists':
+                $results  = $this->{$repo}->findPlaylists($query, $parameters, ['type' => $order, 'invert' => $invert]);
+                break;
+        }
+        
         $iterator = $results->page($page, OPENVK_DEFAULT_PER_PAGE);
         $count    = $results->size();
         

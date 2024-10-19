@@ -162,6 +162,7 @@ class Playlist extends MediaCollection
             "bookmarked"  => $this->isBookmarkedBy($user),
             "listens"     => $this->getListens(),
             "cover_url"   => $this->getCoverURL(),
+            "searchable"  => !$this->isUnlisted(),
         ];
     }
 
@@ -257,5 +258,10 @@ class Playlist extends MediaCollection
         # if($this->getEditTime()) $props[] = tr("updated_playlist") . " " . $this->getEditTime();
         
         return implode(" • ", $props);
+    }
+
+    function isUnlisted(): bool
+    {
+        return (bool)$this->getRecord()->unlisted;
     }
 }

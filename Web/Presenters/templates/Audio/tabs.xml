@@ -31,7 +31,7 @@
 
                         <div class="additionalInfo">
                             {php $audioStatus = $fr->getCurrentAudioStatus()}
-                            <span class="name">{$fr->getCanonicalName()}</span>
+                            <span class="name noOverflow">{$fr->getCanonicalName()}</span>
                             <span class="desc">{$audioStatus ? $audioStatus->getName() : tr("audios_count", $fr->getAudiosCollectionSize())}</span>
                         </div>
                     </div>

@@ -646,6 +646,7 @@
 "search_for_apps" = "Search for apps";
 "search_for_notes" = "Search for notes";
 "search_for_audios" = "Search for music";
+"search_for_audios_playlists" = "Search for playlists";
 "search_button" = "Find";
 "search_placeholder" = "Start typing any name, title or word";
 "results_zero" = "No results";

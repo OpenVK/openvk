@@ -746,7 +746,20 @@ function initPlayer(id, keys, url, length) {
             playButton.removeClass("paused")
             document.querySelector('link[rel="icon"], link[rel="shortcut icon"]').setAttribute("href", "/assets/packages/static/openvk/img/favicons/favicon24_playing.png")
         }
-        
+
+        u('.subTracks .lengthTrack').nodes.forEach(el => {
+            if(el && (el.style.display == 'block' || el.style.display == '')) {
+                const audioEmbed = el.closest('.audioEmbed')
+                
+                if(audioEmbed.dataset && Number(audioEmbed.dataset.realid) == Number(playerObject.dataset.realid)) {
+                    return
+                }
+
+                el.style.display = 'none'
+                audioEmbed.querySelector('.volumeTrack').style.display = 'none'
+            }
+        })
+
         if(!$(`#audioEmbed-${ id}`).hasClass("havePlayed")) {
             $(`#audioEmbed-${ id}`).addClass("havePlayed")
 
@@ -766,7 +779,7 @@ function initPlayer(id, keys, url, length) {
     u(audio).on("play", playButtonImageUpdate);
     u(audio).on(["pause", "suspended"], playButtonImageUpdate);
     u(audio).on("ended", (e) => {
-        let thisPlayer = e.target.closest(".audioEmbed")
+        let thisPlayer = playerObject
         let nextPlayer = null
         if(thisPlayer.closest(".attachment") != null) {
             try {

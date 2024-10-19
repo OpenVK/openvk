@@ -75,7 +75,7 @@ final class AudioPresenter extends OpenVKPresenter
                 if (!$entity || $entity->isBanned())
                     $this->redirect("/playlists" . $this->user->id);
 
-                $playlists = $this->audios->getPlaylistsByClub($entity, $page, 10);
+                $playlists = $this->audios->getPlaylistsByClub($entity, $page, OPENVK_DEFAULT_PER_PAGE);
                 $playlistsCount = $this->audios->getClubPlaylistsCount($entity);
             } else {
                 $entity = (new Users)->get($owner);
@@ -85,7 +85,7 @@ final class AudioPresenter extends OpenVKPresenter
                 if(!$entity->getPrivacyPermission("audios.read", $this->user->identity))
                     $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
 
-                $playlists = $this->audios->getPlaylistsByUser($entity, $page, 9);
+                $playlists = $this->audios->getPlaylistsByUser($entity, $page, OPENVK_DEFAULT_PER_PAGE);
                 $playlistsCount = $this->audios->getUserPlaylistsCount($entity);
             }
 
@@ -304,6 +304,8 @@ final class AudioPresenter extends OpenVKPresenter
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $title = $this->postParam("title");
             $description = $this->postParam("description");
+            $is_unlisted = (int)$this->postParam('is_unlisted');
+
             $audios = !empty($this->postParam("audios")) ? array_slice(explode(",", $this->postParam("audios")), 0, 1000) : [];
 
             if(empty($title) || iconv_strlen($title) < 1)
@@ -313,7 +315,9 @@ final class AudioPresenter extends OpenVKPresenter
             $playlist->setOwner($owner);
             $playlist->setName(substr($title, 0, 125));
             $playlist->setDescription(substr($description, 0, 2045));
-
+            if($is_unlisted == 1)
+                $playlist->setUnlisted(true);
+            
             if($_FILES["cover"]["error"] === UPLOAD_ERR_OK) {
                 if(!str_starts_with($_FILES["cover"]["type"], "image"))
                     $this->flashFail("err", tr("error"), tr("not_a_photo"));
@@ -427,6 +431,7 @@ final class AudioPresenter extends OpenVKPresenter
 
         $title = $this->postParam("title");
         $description = $this->postParam("description");
+        $is_unlisted = (int)$this->postParam('is_unlisted');
         $new_audios = !empty($this->postParam("audios")) ? explode(",", rtrim($this->postParam("audios"), ",")) : [];
 
         if(empty($title) || iconv_strlen($title) < 1)
@@ -436,6 +441,7 @@ final class AudioPresenter extends OpenVKPresenter
         $playlist->setDescription(ovk_proc_strtr($description, 2045));
         $playlist->setEdited(time());
         $playlist->resetLength();
+        $playlist->setUnlisted((bool)$is_unlisted);
 
         if($_FILES["new_cover"]["error"] === UPLOAD_ERR_OK) {
             if(!str_starts_with($_FILES["new_cover"]["type"], "image"))
@@ -476,12 +482,14 @@ final class AudioPresenter extends OpenVKPresenter
         $this->template->playlist = $playlist;
         $this->template->page = $page;
         $this->template->cover = $playlist->getCoverPhoto();
+        $this->template->cover_url = $this->template->cover ? $this->template->cover->getURL() : "/assets/packages/static/openvk/img/song.jpg";
         $this->template->audios = iterator_to_array($playlist->fetch($page, 10));
         $this->template->ownerId = $owner_id;
         $this->template->owner = $playlist->getOwner();
         $this->template->isBookmarked = $this->user->identity && $playlist->isBookmarkedBy($this->user->identity);
         $this->template->isMy = $this->user->identity &&  $playlist->getOwner()->getId() === $this->user->id;
         $this->template->canEdit = $this->user->identity &&  $playlist->canBeModifiedBy($this->user->identity);
+        $this->template->count = $playlist->size();
     }
 
     function renderAction(int $audio_id): void

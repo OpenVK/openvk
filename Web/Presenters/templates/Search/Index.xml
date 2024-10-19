@@ -220,6 +220,10 @@
                                 <div class='search_content' n:foreach="$data as $dat">
                                     {include "../Audio/player.xml", audio => $dat}
                                 </div>
+                            {elseif $section === 'audios_playlists'}
+                                <div class='search_content' n:foreach="$data as $dat">
+                                    {include "../Audio/playlistListView.xml", playlist => $dat}
+                                </div>
                             {/if}
                         {else}
                             {include "../components/content_error.xml", description => tr("no_results_by_this_query")}
@@ -234,7 +238,7 @@
                             <a n:attr="id => $section === 'videos' ? 'used'"   href="/search?section=videos&q={$query}">   {_s_videos}</a>
                             <a n:attr="id => $section === 'apps' ? 'used'"     href="/search?section=apps&q={$query}">     {_s_apps}</a>
                             <a n:attr="id => $section === 'audios' ? 'used'"   href="/search?section=audios&q={$query}">   {_s_audios}</a>
-                            <a n:attr="id => $section === 'playlists' ? 'used'"   href="/search?section=playlists&q={$query}">{_s_audios_playlists}</a>
+                            <a n:attr="id => $section === 'audios_playlists' ? 'used'" href="/search?section=audios_playlists&q={$query}">{_s_audios_playlists}</a>
                         </div>
 
                         <div class='page_search_options'>
@@ -273,7 +277,7 @@
                     <option value="id" n:attr="selected => $order == 'id'">{_s_order_by_creation_date}</option>
                 {/if}
 
-                {if $section == "audios"}
+                {if $section == "audios" || $section == "audios_playlists"}
                     <option value="length" n:attr="selected  => $order == 'length'">{_s_order_by_length}</option>
                     <option value="listens" n:attr="selected => $order == 'listens'">{_s_order_by_listens}</option>
                 {/if}

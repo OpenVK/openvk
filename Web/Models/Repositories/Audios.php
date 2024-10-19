@@ -219,6 +219,7 @@ class Audios
     function searchPlaylists(string $query): EntityStream
     {
         $search = $this->playlists->where([
+            "unlisted" => 0,
             "deleted" => 0,
         ])->where("MATCH (`name`, `description`) AGAINST (? IN BOOLEAN MODE)", $query);
 
@@ -296,9 +297,28 @@ class Audios
         return new Util\EntityStream("Audio", $result);
     }
 
-    function findPlaylists(string $query, int $page = 1, ?int $perPage = NULL): \Traversable
+    function findPlaylists(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false]): \Traversable
     {
-        $result = $this->playlists->where("name LIKE ?", "%$query%");
+        $result = $this->playlists->where([
+            "unlisted" => 0,
+            "deleted"  => 0,
+        ])->where("CONCAT_WS(' ', name, description) LIKE ?", "%$query%");
+        $order_str = 'id';
+
+        switch($order['type']) {
+            case 'id':
+                $order_str = 'id ' . ($order['invert'] ? 'ASC' : 'DESC');
+                break;
+            case 'length':
+                $order_str = 'length ' . ($order['invert'] ? 'ASC' : 'DESC');
+                break;
+            case 'listens':
+                $order_str = 'listens ' . ($order['invert'] ? 'ASC' : 'DESC');
+                break;
+        }
+
+        if($order_str)
+            $result->order($order_str);
 
         return new Util\EntityStream("Playlist", $result);
     }

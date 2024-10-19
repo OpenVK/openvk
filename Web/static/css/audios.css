@@ -433,24 +433,54 @@
     margin-top: 14px;
 }
 
-.playlistContainer {
-    display: grid;
-    grid-template-columns: repeat(3, 146px);
-    gap: 18px 10px;
+.playlistBlock .playlistWrapper {
+    float: left;
+    padding-left: 13px;
+    width:75%
 }
 
-.playlistContainer .playlistCover {
-    width: 111px;
-    height: 111px;
+.playlistCover .profile_links .profile_link {
+    width: 100%;
+}
+
+/* playlist listview */
+
+.playlistListView {
     display: flex;
-    background: #c4c4c4;
+    padding: 7px;
+    gap: 9px;
+    cursor: pointer;
 }
 
-.playlistContainer  .playlistCover img {
-    max-width: 111px;
-    max-height: 111px;
-    margin: auto;
+.playlistListView:hover, .playlistListView .playlistCover {
+    background: #ebebeb;
 }
+
+.playlistListView .playlistCover img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.playlistListView .playlistInfo, .playlistListView .playlistInfo .playlistInfoTopPart {
+    display: flex;
+    flex-direction: column;
+}
+
+.playlistListView .playlistInfo {
+    gap: 2px;
+    overflow: hidden;
+}
+
+.playlistListView .playlistInfo .playlistName {
+    font-weight: 600;
+}
+
+.playlistListView .playlistInfo .playlistMeta, .playlistListView .playlistInfo .playlistMeta span {
+    color: #676767;
+}
+
+/* other */
 
 .ovk-diag-body .searchBox {
     background: #e6e6e6;
@@ -496,10 +526,6 @@
     cursor: pointer;
 }
 
-.playlistCover img {
-    cursor: pointer;
-}
-
 .explicitMark {
     margin-top: 2px;
     margin-left: 3px;
@@ -538,15 +564,6 @@
 
 .audiosDiv center {
     margin-left: -10px;
-}
-
-.playlistInfo {
-    display: flex;
-    flex-direction: column;
-}
-
-.playlistInfo .playlistName {
-    font-weight: 600;
 }
 
 .searchList.floating {

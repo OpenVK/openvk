@@ -2625,6 +2625,7 @@ a.poll-retract-vote {
     right: 0;
     text-align: right;
     border-left: 0px;
+    background: transparent;
 }
 
 .header_navigation #search_box .search_box_button {

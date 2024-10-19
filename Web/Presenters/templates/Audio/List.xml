@@ -81,30 +81,15 @@
             </div>
         </div>
         
-        <div style="width: 74%;" class="audiosPaddingContainer" n:if="$mode == 'playlists'">
+        <div style="width: 71.8%;" class="audiosPaddingContainer audiosPaddingContainer" n:if="$mode == 'playlists'">
             <div n:if="$playlistsCount <= 0" style='height: 100%;'>
                 {include "../components/content_error.xml", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_playlists_thisuser") : tr("no_playlists_user")) : tr("no_playlists_club")}
             </div>
 
             <div class="infContainer playlistContainer" n:if="$playlistsCount > 0">
-                <div n:foreach="$playlists as $playlist">
-                    <a href="/playlist{$playlist->getPrettyId()}">
-                        <div class="playlistCover">
-                            <img src="{$playlist->getCoverURL()}" alt="{_playlist_cover}">
-                        </div>
-                    </a>
-
-
-                    <div class="playlistInfo">
-                        <a href="/playlist{$playlist->getPrettyId()}">
-                            <span style="font-size: 12px" class="playlistName">
-                                {ovk_proc_strtr($playlist->getName(), 15)}
-                            </span>
-                        </a>
-
-                        <a href="{$playlist->getOwner()->getURL()}">{ovk_proc_strtr($playlist->getOwner()->getCanonicalName(), 20)}</a>
-                    </div>
-                </div>
+                {foreach $playlists as $playlist}
+                    {include 'playlistListView.xml', playlist => $playlist}
+                {/foreach}
             </div>
 
             <div>

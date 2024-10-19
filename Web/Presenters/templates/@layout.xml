@@ -127,7 +127,7 @@
                                                 <option n:attr="selected => $_REQUEST['section'] == 'videos'" value="videos">{_s_by_videos}</option>
                                                 <option n:attr="selected => $_REQUEST['section'] == 'apps'" value="apps">{_s_by_apps}</option>
                                                 <option n:attr="selected => $_REQUEST['section'] == 'audios'" value="audios">{_s_by_audios}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] == 'playlists'" value="playlists">{_s_by_audios_playlists}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] == 'audios_playlists'" value="audios_playlists">{_s_by_audios_playlists}</option>
                                             </select>
                                         </div>
                                         <button class="search_box_button">
