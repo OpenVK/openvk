@@ -58,7 +58,7 @@ u(`#search_box input[type='search']`).on('input', async (e) => {
     const current_query = u(`#search_box input[type='search']`).nodes[0].value
     const section = u(`#search_box select[name='section']`).nodes[0].value
     let results = null
-    if(/*query.length < 2 || */query != current_query || ['users', 'groups', 'videos'].indexOf(section) == -1) {
+    if(/*query.length < 2 || */query != current_query || ['users', 'groups', 'videos', 'audios_playlists'].indexOf(section) == -1) {
         return
     }
 
@@ -73,6 +73,9 @@ u(`#search_box input[type='search']`).on('input', async (e) => {
             break
         case 'videos':
             results = await fetch(`/method/video.search?auth_mechanism=roaming&q=${query}&count=10&sort=4&extended=1`)
+            break
+        case 'audios_playlists':
+            results = await fetch(`/method/audio.searchAlbums?auth_mechanism=roaming&query=${query}&count=10`)
             break
     }
 
@@ -103,6 +106,13 @@ u(`#search_box input[type='search']`).on('input', async (e) => {
                 item['preview'] = item['photo_50']
             })
             break
+        case 'audios_playlists':
+            json_result['items'].forEach(item => {
+                item['name'] = item['title']
+                item['url'] = '/playlist' + item['owner_id'] + '_' + item['id']
+                item['preview'] = item['cover_url']
+            })
+            break
         case 'videos':
             const profiles = json_result['profiles']
             const groups = json_result['groups']
@@ -126,7 +136,6 @@ u(`#search_box input[type='search']`).on('input', async (e) => {
 
     u('#searchBoxFastTips').addClass('shown')
     u('#searchBoxFastTips').html('')
-    console.log(json_result)
     json_result.items.forEach(item => {
         u('#searchBoxFastTips').append(`
             <a href='${item['url']}'>

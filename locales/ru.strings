@@ -836,6 +836,7 @@
 "my_playlists" = "Мои плейлисты";
 "playlists" = "Плейлисты";
 "audios_explicit" = "Содержит нецензурную лексику";
+"audios_unlisted" = "Скрыто из поиска";
 "withdrawn" = "Изъято";
 "deleted" = "Удалено";
 "owner" = "Владелец";
@@ -906,6 +907,7 @@
 "shuffle_tip" = "Перемешать";
 "mute_tip" = "Заглушить";
 "playlist_hide_from_search" = "Не показывать в поиске";
+"confirm_deleting_audio" = "Вы действительно хотите полностью удалить аудиозапись?";
 
 /* Notifications */
 

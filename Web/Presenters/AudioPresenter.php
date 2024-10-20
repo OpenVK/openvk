@@ -142,7 +142,13 @@ final class AudioPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $group = NULL;
+        $playlist = NULL;
         $isAjax = $this->postParam("ajax", false) == 1;
+
+        if(!is_null($this->queryParam("gid")) && !is_null($this->queryParam("playlist"))) {
+            exit('ты тупой еблан');
+        }
+
         if(!is_null($this->queryParam("gid"))) {
             $gid   = (int) $this->queryParam("gid");
             $group = (new Clubs)->get($gid);
@@ -151,6 +157,19 @@ final class AudioPresenter extends OpenVKPresenter
 
             if(!$group->canUploadAudio($this->user->identity))
                 $this->flashFail("err", tr("forbidden"), tr("not_enough_permissions_comment"), null, $isAjax);
+        }
+
+        if(!is_null($this->queryParam("playlist"))) {
+            $playlist_id = (int)$this->queryParam("playlist");
+            $playlist = (new Audios)->getPlaylist($playlist_id);
+            if(!$playlist || $playlist->isDeleted())
+                $this->flashFail("err", tr("forbidden"), tr("not_enough_permissions_comment"), null, $isAjax);
+
+            if(!$playlist->canBeModifiedBy($this->user->identity))
+                $this->flashFail("err", tr("forbidden"), tr("not_enough_permissions_comment"), null, $isAjax);
+        
+            $this->template->playlist = $playlist;
+            $this->template->owner = $playlist->getOwner();
         }
 
         $this->template->group = $group;
@@ -196,6 +215,8 @@ final class AudioPresenter extends OpenVKPresenter
         $lyrics    = $this->postParam("lyrics");
         $genre     = empty($this->postParam("genre")) ? "Other" : $this->postParam("genre");
         $nsfw      = ($this->postParam("explicit") ?? "off") === "on";
+        $is_unlisted = ($this->postParam("unlisted") ?? "off") === "on";
+
         if(empty($performer) || empty($name) || iconv_strlen($performer . $name) > 128) # FQN of audio must not be more than 128 chars
             $this->flashFail("err", tr("error"), tr("error_insufficient_info"), null, $isAjax);
 
@@ -206,6 +227,7 @@ final class AudioPresenter extends OpenVKPresenter
         $audio->setLyrics(empty($lyrics) ? NULL : $lyrics);
         $audio->setGenre($genre);
         $audio->setExplicit($nsfw);
+        $audio->setUnlisted($is_unlisted);
 
         try {
             $audio->setFile($upload);
@@ -215,13 +237,18 @@ final class AudioPresenter extends OpenVKPresenter
         } catch(\RuntimeException $ex) {
             $this->flashFail("err", tr("error"), tr("ffmpeg_timeout"), null, $isAjax);
         } catch(\BadMethodCallException $ex) {
-            $this->flashFail("err", tr("error"), "Загрузка аудио под Linux на данный момент не реализована. Следите за обновлениями: <a href='https://github.com/openvk/openvk/pull/512/commits'>https://github.com/openvk/openvk/pull/512/commits</a>", null, $isAjax);
+            $this->flashFail("err", tr("error"), "хз", null, $isAjax);
         } catch(\Exception $ex) {
             $this->flashFail("err", tr("error"), tr("ffmpeg_not_installed"), null, $isAjax);
         }
 
         $audio->save();
-        $audio->add($group ?? $this->user->identity);
+
+        if($playlist) {
+            $playlist->add($audio);
+        } else {
+            $audio->add($group ?? $this->user->identity);
+        }
 
         if(!$isAjax)
             $this->redirect(is_null($group) ? "/audios" . $this->user->id : "/audios-" . $group->getId());
@@ -233,9 +260,9 @@ final class AudioPresenter extends OpenVKPresenter
             else
                 $redirectLink .= $this->user->id;
 
-            $pagesCount = (int)ceil((new Audios)->getCollectionSizeByEntityId(isset($group) ? $group->getRealId() : $this->user->id) / 10);
-            $redirectLink .= "?p=".$pagesCount;
-
+            if($playlist)
+                $redirectLink = "/playlist" . $playlist->getPrettyId();
+            
             $this->returnJson([
                 "success" => true,
                 "redirect_link" => $redirectLink,
@@ -488,7 +515,7 @@ final class AudioPresenter extends OpenVKPresenter
         $this->template->owner = $playlist->getOwner();
         $this->template->isBookmarked = $this->user->identity && $playlist->isBookmarkedBy($this->user->identity);
         $this->template->isMy = $this->user->identity &&  $playlist->getOwner()->getId() === $this->user->id;
-        $this->template->canEdit = $this->user->identity &&  $playlist->canBeModifiedBy($this->user->identity);
+        $this->template->canEdit = $this->user->identity && $playlist->canBeModifiedBy($this->user->identity);
         $this->template->count = $playlist->size();
     }
 

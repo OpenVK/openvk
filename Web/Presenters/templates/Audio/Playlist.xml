@@ -47,7 +47,8 @@
             {/if}
 
             <div class="profile_links" n:if="isset($thisUser)">
-                <a class="profile_link" href="/playlist{$playlist->getPrettyId()}/edit" n:if="$playlist->canBeModifiedBy($thisUser)">{_edit_playlist}</a>
+                <a class="profile_link" href="/player/upload?playlist={$playlist->getId()}" n:if="$canEdit">{_upload_audio}</a>
+                <a class="profile_link" href="/playlist{$playlist->getPrettyId()}/edit" n:if="$canEdit">{_edit_playlist}</a>
                 <a class="profile_link" id="bookmarkPlaylist" data-id="{$playlist->getId()}" n:if="!$isBookmarked">{_bookmark}</a>
                 <a class="profile_link" id="unbookmarkPlaylist" data-id="{$playlist->getId()}" n:if="$isBookmarked">{_unbookmark}</a>
             </div>

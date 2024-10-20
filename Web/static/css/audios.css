@@ -8,19 +8,10 @@
     padding: 8px;
 }
 
-.overflowedName {
-    position: absolute;
-    z-index: 99;
-}
-
 .musicIcon {
     background-image: url('/assets/packages/static/openvk/img/audios_controls.png');
     background-repeat: no-repeat;
     cursor: pointer;
-}
-
-.musicIcon:hover {
-    filter: brightness(99%);
 }
 
 .musicIcon.pressed {
@@ -177,6 +168,10 @@
     font-size: 10px;
 }
 
+.bigPlayer .paddingLayer .trackInfo .timer .elapsedTime {
+    cursor: pointer;
+}
+
 .bigPlayer .paddingLayer .trackInfo .trackName {
     overflow: hidden;
     text-overflow: ellipsis;
@@ -192,6 +187,16 @@
 .bigPlayer .paddingLayer .trackInfo b:hover {
     text-decoration: underline;
     cursor: pointer;
+}
+
+.bigPlayer .paddingLayer .trackPanel .track .selectableTrack > div {
+    width: 95%;
+    position: relative;
+}
+
+.bigPlayer .paddingLayer .volumePanel .selectableTrack > div {
+    position: relative;
+    width:72%
 }
 
 .audioEmbed .track > .selectableTrack, .bigPlayer .selectableTrack {
@@ -220,7 +225,7 @@
 
 .audioEntry.nowPlaying {
     background: #606060;
-    border: 1px solid #4f4f4f;
+    outline: 1px solid #4f4f4f;
     box-sizing: border-box;
 }
 
@@ -230,6 +235,7 @@
 
 .audioEntry.nowPlaying:hover {
     background: #4e4e4e !important;
+    border-radius: inherit !important;
 }
 
 .audioEntry.nowPlaying .performer a {
@@ -252,8 +258,28 @@
     color: white !important;
 }
 
-.audioEntry.nowPlaying .buttons .musicIcon, .audioEntry.nowPlaying .explicitMark {
-    filter: brightness(187%) opacity(72%);
+.audioEntry.nowPlaying .explicitMark path {
+    fill: #ffffff;
+}
+
+.audioEntry.nowPlaying .buttons .musicIcon.edit-icon {
+    background-position: -152px -51px;
+}
+
+.audioEntry.nowPlaying .buttons .musicIcon.add-icon {
+    background-position: -94px -52px;
+}
+
+.audioEntry.nowPlaying .buttons .musicIcon.report-icon {
+    background-position: -66px -67px;
+}
+
+.audioEntry.nowPlaying .buttons .musicIcon.remove-icon-group {
+    background-position: -122px -67px;
+}
+
+.audioEntry.nowPlaying .buttons .musicIcon.remove-icon {
+    background-position: -108px -67px;
 }
 
 .audioEntry {
@@ -270,10 +296,14 @@
 }
 
 .audioEntry .subTracks {
-    display: flex;
+    display: none;
     padding-bottom: 5px;
     padding-left: 8px;
     padding-right: 12px;
+}
+
+.audioEntry .subTracks.shown {
+    display: flex;
 }
 
 .audioEntry .playerButton .playIcon {
@@ -296,16 +326,45 @@
     height: 23px;
 }
 
+.audioEntry .status .mediaInfo {
+    cursor: pointer;
+    display: flex;
+    width: 100%;
+}
+
+.overflowedName {
+    position: absolute;
+    z-index: 99;
+    width: 85% !important;
+}
+
 .audioEntry .status strong {
     color: #4C4C4C;
 }
 
 .audioEmbed .track {
-    display: none;
-    padding: 4px 0;
+    padding: 0px 0;
 }
 
-.audioEmbed .track, .audioEmbed.playing .track {
+.audioEmbed .track .selectableTrack {
+    width: 100%;
+}
+
+.audioEmbed .track .selectableTrack .selectableTrackSlider {
+    position: relative;
+    width: calc(100% - 18px);
+}
+
+.audioEmbed .subTracks .lengthTrackWrapper {
+    width: 100%;
+}
+
+.audioEmbed .subTracks .volumeTrackWrapper {
+    width: 81px;
+    margin-left: 16px;
+}
+
+.audioEmbed.playing .track {
     display: unset;
 }
 
@@ -364,7 +423,7 @@
     width: 12px;
     height: 11px;
     float: right;
-    background-position: -67px -51px;
+    background-position: -50px -67px;
     margin-top: 3px;
     margin-right: 3px;
 }
@@ -394,8 +453,6 @@
     height: 11px;
     float: right;
     background-position: -122px -52px;
-    margin-left: 3px;
-    margin-right: 3px;
 }
 
 .audioEmbed .lyrics {
@@ -416,12 +473,12 @@
     text-decoration: underline;
 }
 
-.audioEmbed.withdrawn .status > *, .audioEmbed.processed .status > *, .audioEmbed.withdrawn .playerButton > *, .audioEmbed.processed .playerButton > * {
+.audioEmbed.withdrawn .status > *, .audioEmbed.processed .playerButton > *, .audioEmbed.withdrawn .playerButton > * {
     pointer-events: none;
 }
 
 .audioEmbed.withdrawn {
-    filter: opacity(0.8);
+    opacity: 0.8;
 }
 
 .playlistCover img {
@@ -533,6 +590,11 @@
     height: 11px;
     background: url('/assets/packages/static/openvk/img/explicit.svg');
     background-repeat: no-repeat;
+}
+
+.explicitMark path {
+    fill: #828a99;
+    fill-opacity: .7;
 }
 
 .audioStatus span {

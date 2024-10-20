@@ -74,8 +74,8 @@ final class SearchPresenter extends OpenVKPresenter
                     
                     break;
                 case 'only_performers':
-                    if((int) $param_value != 1 || $param_value != 'on') continue;
-                    $parameters['only_performers'] = true;
+                    if((int) $param_value == 1 || $param_value == 'on')
+                        $parameters['only_performers'] = true;
 
                     break;
                 case 'with_lyrics':
