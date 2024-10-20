@@ -146,7 +146,7 @@ final class AudioPresenter extends OpenVKPresenter
         $isAjax = $this->postParam("ajax", false) == 1;
 
         if(!is_null($this->queryParam("gid")) && !is_null($this->queryParam("playlist"))) {
-            exit('ты тупой еблан');
+            $this->flashFail("err", tr("forbidden"), tr("not_enough_permissions_comment"), null, $isAjax);
         }
 
         if(!is_null($this->queryParam("gid"))) {
@@ -686,6 +686,28 @@ final class AudioPresenter extends OpenVKPresenter
                 break;
             case "search_context":
                 $stream = $this->audios->search($this->postParam("query"), 2, $this->postParam("type") === "by_performer");
+                $audios = $stream->page($page, 10);
+                $audiosCount = $stream->size();
+                break;
+            case "classic_search_context":
+                $data = json_decode($this->postParam("context_entity"), true);
+
+                $params = [];
+                $order = [
+                    "type" => $data['order'] ?? 'id',
+                    "invert" => (int)$data['invert'] == 1 ? true : false
+                ];
+
+                if($data['genre'] && $data['genre'] != 'any')
+                    $params['genre'] = $data['genre'];
+
+                if($data['only_performers'] && (int)$data['only_performers'] == 1)
+                    $params['only_performers'] = '1';
+            
+                if($data['with_lyrics'] && (int)$data['with_lyrics'] == 1)
+                    $params['with_lyrics'] = '1';
+
+                $stream = $this->audios->find($data['query'], $params, $order);
                 $audios = $stream->page($page, 10);
                 $audiosCount = $stream->size();
                 break;

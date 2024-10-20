@@ -500,15 +500,35 @@ function escapeHtml(text) {
     return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
-function highlightText(selector, searchText) {
-    const container = u(selector)
-    let innerHTML = container.html()
-    const index = innerHTML.indexOf(searchText)
+function highlightText(searchText, container_selector, selectors = []) {
+    const container = u(container_selector)
+    const regexp = new RegExp(`(${searchText})`, 'gi')
 
-    if(index >= 0) {
-        innerHTML = innerHTML.substring(0, index) + "<span class='highlight'>" + innerHTML.substring(index, index + searchText.length) + "</span>" + innerHTML.substring(index + searchText.length)
-        container.html(innerHTML)
+    function highlightNode(node) {
+        if(node.nodeType == 3) {
+            let newNode = escapeHtml(node.nodeValue)
+            newNode = newNode.replace(regexp, (match, ...args) => {
+                return `<span class='highlight'>${escapeHtml(match)}</span>`
+            })
+            
+            const tempDiv = document.createElement('div')
+            tempDiv.innerHTML = newNode
+
+            while(tempDiv.firstChild) {
+                node.parentNode.insertBefore(tempDiv.firstChild, node)
+            }
+            node.parentNode.removeChild(node)
+        } else if(node.nodeType === 1 && node.tagName !== 'SCRIPT' && node.tagName !== 'BR' && node.tagName !== 'STYLE') {
+            Array.from(node.childNodes).forEach(highlightNode);
+        }
     }
+
+    selectors.forEach(selector => {
+        elements = container.find(selector)
+        if(!elements || elements.length < 1) return;
+
+        elements.nodes.forEach(highlightNode)
+    })
 }
 
 String.prototype.escapeHtml = function() {

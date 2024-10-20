@@ -15,6 +15,11 @@
     <div class="wrap2">
         <div class="wrap1">
             <div class="page_wrap">
+                {if $section == 'audios' && $count > 1}
+                    {include "../Audio/bigplayer.xml", tidy => true}
+
+                    <input type="hidden" name="bigplayer_context" data-type="classic_search_context" data-entity='{"order":"{$order}","query":"{$query}","invert":{$invert ? 1 : 0},"only_performers":{$_REQUEST['only_performers'] ? 1 : 0},"genre":"{$_REQUEST['genre']}","with_lyrics":"{$_REQUEST['with_lyrics'] ? 1 : 0}"}' data-page="{$page}">
+                {/if}
                 <div class='summaryBar summaryBarFlex padding'>
                     <div class='summary'>
                         <b>{tr("results", $count)} {tr("showing_x_y", $page, $count)}</b>
@@ -24,7 +29,7 @@
                 </div>
 
                 <div class='page_wrap_content' id='search_page'>
-                    <div class='page_wrap_content_main'>
+                    <div n:class='page_wrap_content_main, $section == "audios" ? audios_padding'>
                         {if $count > 0}
                             {if $section === 'users'}
                                 <div class='search_content def_row_content' n:foreach="$data as $dat">
@@ -118,6 +123,10 @@
                                         </tbody>
                                     </table>
                                 </div>
+
+                                <script n:if='$count > 0 && !empty($query)'>
+                                    highlightText({$query}, '.page_wrap_content_main', ['text'])
+                                </script>
                             {elseif $section === 'groups'}
                                 <div class='search_content def_row_content' n:foreach="$data as $dat">
                                     <table>
@@ -150,7 +159,7 @@
                                                                     <td>
                                                                         <span class="nobold">{_description}:</span>
                                                                     </td>
-                                                                    <td>
+                                                                    <td data-highlight='_clubDesc'>
                                                                         {$dat->getDescription() ?? '(' . tr("none") . ')'}
                                                                     </td>
                                                                 </tr>
@@ -169,6 +178,10 @@
                                         </tbody>
                                     </table>
                                 </div>
+
+                                <script n:if='$count > 0 && !empty($query)'>
+                                    highlightText({$query}, '.page_wrap_content_main', ['text', "td[data-highlight='_clubDesc']"])
+                                </script>
                             {elseif $section === 'apps'}
                                 <div class='search_content def_row_content' n:foreach="$data as $dat">
                                     <table>
@@ -186,44 +199,64 @@
                                                                 &nbsp;{$dat->getName()}
                                                             </text>
                                                         </b>
-                                                    </a>
-
-                                                    <table class="ugc-table">
-                                                        <tbody>
-                                                            <tr>
-                                                                <td>
-                                                                    {$dat->getDescription() ?? '(' . tr("none") . ')'}
-                                                                </td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                    <br/>
+                                                    </a><br/>
+                                                    <span style='margin-left: 2px;' data-highlight='_appDesc'>
+                                                        {$dat->getDescription() ?? '(' . tr("none") . ')'}
+                                                    </span>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </div>
+
+                                <script n:if='$count > 0 && !empty($query)'>
+                                    highlightText({$query}, '.page_wrap_content_main', ['text', "span[data-highlight='_appDesc']"])
+                                </script>
                             {elseif $section === 'posts'}
                                 {* шмалим дурь курим шмаль дуем коку пиво пьём *}
                                 <div class='search_content' n:foreach="$data as $dat">
-                                    {include "../components/post.xml", post => $dat, commentSection => true, onWallOf => true}
+                                    {if !$dat || $dat->getWallOwner()->isHideFromGlobalFeedEnabled()}
+                                        {_closed_group_post}.
+                                    {else}
+                                        {include "../components/post.xml", post => $dat, commentSection => true, onWallOf => true}
+                                    {/if}
                                 </div>
+
+                                <script n:if='$count > 0 && !empty($query)'>
+                                    highlightText({$query}, '.page_wrap_content_main', [".post:not(.comment) > tbody > tr > td > .post-content > .text .really_text"])
+                                </script>
                             {elseif $section === 'comments'}
                                 <div class='search_content' n:foreach="$data as $dat">
                                     {include "../components/comment.xml", no_reply_button => true, comment => $dat, correctLink => true}
                                 </div>
+
+                                <script n:if='$count > 0 && !empty($query)'>
+                                    highlightText({$query}, '.page_wrap_content_main', [".text .really_text"])
+                                </script>
                             {elseif $section === 'videos'}
                                 <div class='search_content' n:foreach="$data as $dat">
                                     {include "../components/video.xml", video => $dat}
-                                </div>
+                                </div>    
+
+                                <script n:if='$count > 0 && !empty($query)'>
+                                    highlightText({$query}, '.page_wrap_content_main', [".video_name", ".video_description"])
+                                </script>
                             {elseif $section === 'audios'}
                                 <div class='search_content' n:foreach="$data as $dat">
                                     {include "../Audio/player.xml", audio => $dat}
                                 </div>
+                                
+                                <script n:if="$count > 0 && !empty($query) && empty($_REQUEST['only_performers'])">
+                                    highlightText({$query}, '.page_wrap_content_main', [".mediaInfo .performer a", ".mediaInfo .title"])
+                                </script>
                             {elseif $section === 'audios_playlists'}
                                 <div class='search_content' n:foreach="$data as $dat">
                                     {include "../Audio/playlistListView.xml", playlist => $dat}
                                 </div>
+
+                                <script n:if="$count > 0 && !empty($query) && empty($_REQUEST['only_performers'])">
+                                    highlightText({$query}, '.page_wrap_content_main', [".playlistName", ".playlistDesc"])
+                                </script>
                             {/if}
                         {else}
                             {include "../components/content_error.xml", description => tr("no_results_by_this_query")}
@@ -231,14 +264,14 @@
                     </div>
                     <div class='page_wrap_content_options verticalGrayTabsWrapper'>
                         <div class="page_wrap_content_options_list verticalGrayTabs with_padding">
-                            <a n:attr="id => $section === 'users' ? 'used'"    href="/search?section=users&q={$query}">    {_s_people}</a>
-                            <a n:attr="id => $section === 'groups' ? 'used'"   href="/search?section=groups&q={$query}">   {_s_groups}</a>
-                            <a n:attr="id => $section === 'posts' ? 'used'"    href="/search?section=posts&q={$query}">    {_s_posts}</a>
-                            <a n:attr="id => $section === 'comments' ? 'used'" href="/search?section=comments&q={$query}"> {_s_comments}</a>
-                            <a n:attr="id => $section === 'videos' ? 'used'"   href="/search?section=videos&q={$query}">   {_s_videos}</a>
-                            <a n:attr="id => $section === 'apps' ? 'used'"     href="/search?section=apps&q={$query}">     {_s_apps}</a>
-                            <a n:attr="id => $section === 'audios' ? 'used'"   href="/search?section=audios&q={$query}">   {_s_audios}</a>
-                            <a n:attr="id => $section === 'audios_playlists' ? 'used'" href="/search?section=audios_playlists&q={$query}">{_s_audios_playlists}</a>
+                            <a n:attr="id => $section === 'users' ? 'used'"    href="/search?section=users&q={urlencode($query)}">    {_s_people}</a>
+                            <a n:attr="id => $section === 'groups' ? 'used'"   href="/search?section=groups&q={urlencode($query)}">   {_s_groups}</a>
+                            <a n:attr="id => $section === 'posts' ? 'used'"    href="/search?section=posts&q={urlencode($query)}">    {_s_posts}</a>
+                            <a n:attr="id => $section === 'comments' ? 'used'" href="/search?section=comments&q={urlencode($query)}"> {_s_comments}</a>
+                            <a n:attr="id => $section === 'videos' ? 'used'"   href="/search?section=videos&q={urlencode($query)}">   {_s_videos}</a>
+                            <a n:attr="id => $section === 'apps' ? 'used'"     href="/search?section=apps&q={urlencode($query)}">     {_s_apps}</a>
+                            <a n:attr="id => $section === 'audios' ? 'used'"   href="/search?section=audios&q={urlencode($query)}">   {_s_audios}</a>
+                            <a n:attr="id => $section === 'audios_playlists' ? 'used'" href="/search?section=audios_playlists&q={urlencode($query)}">{_s_audios_playlists}</a>
                         </div>
 
                         <div class='page_search_options'>

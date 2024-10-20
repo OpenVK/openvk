@@ -31,6 +31,12 @@
     z-index: 1;
 }
 
+.bigPlayer.tidy {
+    width: 100%;
+    margin-left: unset;
+    margin-top: unset;
+}
+
 .bigPlayer.floating {
     position: fixed;
     z-index: 199;
@@ -177,6 +183,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 81%;
+    height: 13px;
     display: inline-block;
 }
 
@@ -588,8 +595,6 @@
     margin-left: 3px;
     width: 11px;
     height: 11px;
-    background: url('/assets/packages/static/openvk/img/explicit.svg');
-    background-repeat: no-repeat;
 }
 
 .explicitMark path {

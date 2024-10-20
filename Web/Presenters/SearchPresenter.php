@@ -107,6 +107,7 @@ final class SearchPresenter extends OpenVKPresenter
         $count    = $results->size();
         
         $this->template->order    = $order;
+        $this->template->invert   = $invert;
         $this->template->data     = $this->template->iterator = iterator_to_array($iterator);
         $this->template->count    = $count;
         $this->template->section  = $section;

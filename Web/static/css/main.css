@@ -2675,6 +2675,10 @@ a.poll-retract-vote {
     width: 74%;
 }
 
+.page_wrap_content_main.audios_padding {
+    padding: 8px 8px;
+}
+
 .page_wrap_content_main .def_row_content {
     border-bottom: #ECECEC solid 1px;
     padding: 3px 1px;
@@ -2745,6 +2749,13 @@ a.poll-retract-vote {
     margin-left: 0px;
     color: #2B587A !important;
     background: #ebebeb;
+}
+
+.highlight {
+    background: #ffea6d;
+    border-bottom: 1px solid #c7c727;
+    font-weight: bolder;
+    padding: 0px 1px;
 }
 
 /* Options */

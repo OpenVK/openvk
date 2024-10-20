@@ -62,7 +62,7 @@ class Users
         switch($order['type']) {
             case 'id':
             case 'reg_date':
-                $order_str = 'since ' . ($order['invert'] ? 'ASC' : 'DESC');
+                $order_str = 'id ' . ($order['invert'] ? 'ASC' : 'DESC');
                 break;
             case 'rating':
                 $order_str = 'rating DESC';

@@ -1321,9 +1321,14 @@ class User extends RowModel
         return true;
     }
 
-    function isClosed()
+    function isClosed(): bool
     {
         return (bool) $this->getProfileType();
+    }
+
+    function isHideFromGlobalFeedEnabled(): bool
+    {
+        return $this->isClosed();
     }
     
     function getRealId()

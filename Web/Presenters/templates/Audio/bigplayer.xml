@@ -1,4 +1,4 @@
-<div class="bigPlayer">
+<div n:class="bigPlayer, $tidy ? tidy">
     <audio class="audio" />
     <div class="paddingLayer">
         <div class="playButtons">

@@ -42,17 +42,20 @@
                         {if !$timeOnly}
                             &nbsp;|
                             {if $comment->canBeDeletedBy($thisUser)}
-                                <a href="/comment{$comment->getId()}/delete">{_delete}</a>&nbsp;|
+                                <a href="/comment{$comment->getId()}/delete">{_delete}</a>
                             {/if}
                             {if $comment->canBeEditedBy($thisUser)}
-                                <a id="editPost" data-id="{$comment->getId()}">{_edit}</a>&nbsp;|
+                                |
+                                <a id="editPost" data-id="{$comment->getId()}">{_edit}</a>
                             {/if}
                             {if !$no_reply_button}
+                                |
                                 <a class="comment-reply">{_reply}</a>
                             {/if}
-                            {if $thisUser->getId() != $comment->getOwner()->getId()}
+                            {if $thisUser->getId() != $author->getRealId()}
+                                |
                                 {var $canReport = true}
-                                | <a href="javascript:reportComment()">{_report}</a>
+                                <a href="javascript:reportComment()">{_report}</a>
                             {/if}
                             <div style="float: right; font-size: .7rem;">
                                 <a class="post-like-button" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}">
