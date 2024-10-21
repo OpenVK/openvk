@@ -83,6 +83,7 @@ final class SearchPresenter extends OpenVKPresenter
                         $parameters['with_lyrics'] = true;
 
                     break;
+                # дай бог работал этот case
                 case 'from_me':
                     if((int) $param_value != 1) continue;
                     $parameters['from_me'] = $this->user->id;

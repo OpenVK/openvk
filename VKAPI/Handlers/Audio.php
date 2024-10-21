@@ -581,13 +581,31 @@ final class Audio extends VKAPIRequestHandler
         ];
     }
 
-    function searchAlbums(string $query, int $offset = 0, int $limit = 25, int $drop_private = 0): object
+    function searchAlbums(string $query = '', int $offset = 0, int $limit = 25, int $drop_private = 0, int $order = 0, int $from_me = 0): object
     {
         $this->requireUser();
 
         $playlists = [];
-        $search    = (new Audios)->searchPlaylists($query)->offsetLimit($offset, $limit);
-        foreach($search as $playlist) {
+        $params = [];
+        $order_str = 'id';
+        switch($order) {
+            default:
+            case 0:
+                $order_str = 'id';
+                break;
+            case 1:
+                $order_str = 'length';
+                break; 
+            case 2:
+                $order_str = 'listens';
+                break; 
+        }
+
+        if($from_me === 1)
+            $params['from_me'] = $this->getUser()->getId();
+
+        $search    = (new Audios)->findPlaylists($query, $params, ['type' => $order_str, 'invert' => false]);
+        foreach($search->offsetLimit($offset, $limit) as $playlist) {
             if(!$playlist->canBeViewedBy($this->getUser())) {
                 if($drop_private == 0)
                     $playlists[] = NULL;
@@ -599,7 +617,7 @@ final class Audio extends VKAPIRequestHandler
         }
 
         return (object) [
-            "count" => sizeof($playlists),
+            "count" => $search->size(),
             "items" => $playlists,
         ];
     }

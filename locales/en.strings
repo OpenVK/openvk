@@ -250,6 +250,8 @@
 "clubs_posts" = "Group's posts";
 "others_posts" = "Others posts";
 
+"show_more" = "Show more";
+
 /* Friends */
 
 "friends" = "Friends";
@@ -878,6 +880,7 @@
 "my_playlists" = "My playlists";
 "playlists" = "Playlists";
 "audios_explicit" = "Contains obscene language";
+"audios_unlisted" = "Unlisted";
 "withdrawn" = "Withdrawn";
 "deleted" = "Deleted";
 "owner" = "Owner";
@@ -901,7 +904,7 @@
 "edit_playlist" = "Edit playlist";
 "unable_to_load_queue" = "Error when loading queue.";
 
-"fully_delete_audio" = "Fully delete audio";
+"fully_delete_audio" = "Delete audio";
 "attach_audio" = "Attach audio";
 "detach_audio" = "Detach audio";
 
@@ -929,6 +932,12 @@
 "listens_count_other" = "$1 listens";
 
 "add_audio_to_club" = "Add audio to group";
+"add_audio" = "Adding audio";
+"add_audio_limitations" = "You can select up to 10 groups/playlists.";
+"to_club" = "To club";
+"to_playlist" = "To playlist";
+
+"audio_was_successfully_added" = "Audios was successfully added.";
 "what_club_add" = "Which group do you want to add the song to?";
 "group_has_audio" = "This group already has this song.";
 "group_hasnt_audio" = "This group doesn't have this song.";
@@ -936,6 +945,7 @@
 "by_name" = "by name";
 "by_performer" = "by performer";
 "no_access_clubs" = "There are no groups where you are an administrator.";
+"no_access_playlists" = "You haven't created any playlists.";
 "audio_successfully_uploaded" = "Audio has been successfully uploaded and is currently being processed.";
 
 "broadcast_audio" = "Broadcast audio to status";
@@ -948,6 +958,8 @@
 "repeat_tip" = "Repeat";
 "shuffle_tip" = "Shuffle";
 "mute_tip" = "Mute";
+"playlist_hide_from_search" = "Unlisted";
+"confirm_deleting_audio" = "Do you sure want to delete this audio?";
 
 /* Notifications */
 
@@ -1539,6 +1551,7 @@
 "error_code" = "Error code: $1.";
 "ffmpeg_timeout" = "Timed out waiting ffmpeg. Try to upload file again.";
 "ffmpeg_not_installed" = "Failed to proccess the file. It looks like ffmpeg is not installed on this server.";
+"too_many_or_to_lack" = "Too few or too many sources.";
 
 /* Admin actions */
 
@@ -2009,7 +2022,7 @@
 "s_order_invert" = "Invert";
 "s_order_by_reg_date" = "By reg date";
 "s_order_by_creation_date" = "By creation date";
-"s_order_by_publishing_date" = "By publication date;
+"s_order_by_publishing_date" = "By publication date";
 "s_order_by_upload_date" = "By upload date";
 
 "s_by_date" = "By date";

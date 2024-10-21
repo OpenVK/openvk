@@ -300,10 +300,12 @@ class Audios
     function findPlaylists(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false]): \Traversable
     {
         $result = $this->playlists->where([
-            "unlisted" => 0,
             "deleted"  => 0,
         ])->where("CONCAT_WS(' ', name, description) LIKE ?", "%$query%");
         $order_str = 'id';
+
+        if(is_null($params['from_me']) || empty($params['from_me']))
+            $result->where(["unlisted" => 0]);
 
         switch($order['type']) {
             case 'id':
@@ -315,6 +317,17 @@ class Audios
             case 'listens':
                 $order_str = 'listens ' . ($order['invert'] ? 'ASC' : 'DESC');
                 break;
+        }
+
+        foreach($params as $paramName => $paramValue) {
+            if(is_null($paramValue) || $paramValue == '') continue;
+
+            switch($paramName) {
+                # БУДЬ МАКСИМАЛЬНО АККУРАТЕН С ДАННЫМ ПАРАМЕТРОМ
+                case "from_me":
+                    $result->where("owner", $paramValue);
+                    break;
+            }
         }
 
         if($order_str)

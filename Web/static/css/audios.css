@@ -764,3 +764,27 @@
 .addToPlaylist {
     width: 22%;
 }
+
+#_addAudioAdditional {
+    padding: 6px;
+}
+
+#_addAudioAdditional #_tabs {
+    margin: 0px -6px;
+}
+
+#_addAudioAdditional #_tabs .mb_tabs {
+    background-color: unset;
+    border-bottom: unset;
+    padding: 0px 5px;
+}
+
+#_addAudioAdditional #_tip {
+    margin: 5px 0px;
+    display: block;
+}
+
+#_addAudioAdditional #_content {
+    margin-top: 6px;
+    padding: 1px;
+}

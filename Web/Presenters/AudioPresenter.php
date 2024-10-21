@@ -567,16 +567,65 @@ final class AudioPresenter extends OpenVKPresenter
 
                 break;
             case "add_to_club":
-                $club = (new Clubs)->get((int)$this->postParam("club"));
-                    
-                if(!$club || !$club->canBeModifiedBy($this->user->identity))
-                    $this->flashFail("err", "error", tr("access_denied"), null, true);
-                    
-                if(!$audio->isInLibraryOf($club))
-                    $audio->add($club);
-                else
-                    $this->flashFail("err", "error", tr("group_has_audio"), null, true);
-    
+                $detailed = [];
+                if($audio->isWithdrawn())
+                    $this->flashFail("err", "error", tr("invalid_audio"), null, true);
+                
+                if(empty($this->postParam("clubs")))
+                    $this->flashFail("err", "error", 'clubs not passed', null, true);
+                
+                $clubs_arr = explode(',', $this->postParam("clubs"));
+                $count     = sizeof($clubs_arr);
+                if($count < 1 || $count > 10) {
+                    $this->flashFail("err", "error", tr('too_many_or_to_lack'), null, true);
+                }
+
+                foreach($clubs_arr as $club_id) {
+                    $club = (new Clubs)->get((int)$club_id);
+                    if(!$club || !$club->canBeModifiedBy($this->user->identity))
+                        continue;
+                        
+                    if(!$audio->isInLibraryOf($club)) {
+                        $detailed[$club_id] = true;
+                        $audio->add($club);
+                    } else {
+                        $detailed[$club_id] = false;
+                        continue;
+                    }
+                }
+                
+                $this->returnJson(["success" => true, 'detailed' => $detailed]);
+                break;
+            case "add_to_playlist":
+                $detailed = [];
+                if($audio->isWithdrawn())
+                    $this->flashFail("err", "error", tr("invalid_audio"), null, true);
+                
+                if(empty($this->postParam("playlists")))
+                    $this->flashFail("err", "error", 'playlists not passed', null, true);
+                
+                $playlists_arr = explode(',', $this->postParam("playlists"));
+                $count = sizeof($playlists_arr);
+                if($count < 1 || $count > 10) {
+                    $this->flashFail("err", "error", tr('too_many_or_to_lack'), null, true);
+                }
+
+                foreach($playlists_arr as $playlist_id) {
+                    $pid = explode('_', $playlist_id);
+                    $playlist = (new Audios)->getPlaylistByOwnerAndVID((int)$pid[0], (int)$pid[1]);
+                    if(!$playlist || !$playlist->canBeModifiedBy($this->user->identity))
+                        continue;
+                        
+                    if(!$playlist->hasAudio($audio)) {
+                        $playlist->add($audio);
+                        $detailed[$playlist_id] = true;
+                    } else {
+                        $detailed[$playlist_id] = false;
+                        continue;
+                    }
+                }
+
+                $this->returnJson(["success" => true, 'detailed' => $detailed]);
                 break;
             case "delete":
                 if($audio->canBeModifiedBy($this->user->identity))

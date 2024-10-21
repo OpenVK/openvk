@@ -213,7 +213,6 @@
                                     highlightText({$query}, '.page_wrap_content_main', ['text', "span[data-highlight='_appDesc']"])
                                 </script>
                             {elseif $section === 'posts'}
-                                {* шмалим дурь курим шмаль дуем коку пиво пьём *}
                                 <div class='search_content' n:foreach="$data as $dat">
                                     {if !$dat || $dat->getWallOwner()->isHideFromGlobalFeedEnabled()}
                                         {_closed_group_post}.

@@ -181,6 +181,7 @@ class Posts
                 case 'ads':
                     $result->where("ad", 1);
                     break;*/
+                # БУДЬ МАКСИМАЛЬНО АККУРАТЕН С ДАННЫМ ПАРАМЕТРОМ
                 case 'from_me':
                     $result->where("owner", $paramValue);
                     break;

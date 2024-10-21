@@ -110,8 +110,24 @@
             
             document.querySelector("#firstStep").style.display = "none"
             document.querySelector("#lastStep").style.display = "block"
+
+            function fallback() {
+                console.info('Tags not found, setting default values.')
+
+                document.querySelector("#lastStep input[name=name]").value = files[0].name
+                document.querySelector("#lastStep select[name=genre]").value = "Other"
+                document.querySelector("#lastStep input[name=performer]").value = tr("track_unknown");
+            }
             
-            const tags = await id3.fromFile(files[0]);
+            let tags = null
+
+            try {
+                tags = await id3.fromFile(files[0]);
+            } catch(e) {
+                console.error(e)
+            }
+            
+            console.log(tags)
             if(tags != null) {
                 console.log("ID" + tags.kind + " detected, setting values...");
                 
@@ -126,11 +142,22 @@
                     document.querySelector("#lastStep input[name=performer]").value = tr("track_unknown");
                 
                 if(tags.genre != null) {
-                    if(document.querySelector("#lastStep select[name=genre] > option[value='" + tags.genre + "']") != null) {
-                        document.querySelector("#lastStep select[name=genre]").value = tags.genre;
+                    // if there are more than one genre
+                    if(tags.genre.split(', ').length > 1) {
+                        const genres = tags.genre.split(', ')
+
+                        genres.forEach(genre => {
+                            if(document.querySelector("#lastStep select[name=genre] > option[value='" + genre + "']") != null) {
+                                document.querySelector("#lastStep select[name=genre]").value = genre;
+                            }
+                        })
                     } else {
-                        console.warn("Unknown genre: " + tags.genre);
-                        document.querySelector("#lastStep select[name=genre]").value = "Other"
+                        if(document.querySelector("#lastStep select[name=genre] > option[value='" + tags.genre + "']") != null) {
+                            document.querySelector("#lastStep select[name=genre]").value = tags.genre;
+                        } else {
+                            console.warn("Unknown genre: " + tags.genre);
+                            document.querySelector("#lastStep select[name=genre]").value = "Other"
+                        }
                     }
                 } else {
                     document.querySelector("#lastStep select[name=genre]").value = "Other"
@@ -139,9 +166,7 @@
                 if(tags.comments != null)
                     document.querySelector("#lastStep textarea[name=lyrics]").value = tags.comments
             } else {
-                document.querySelector("#lastStep input[name=name]").value = files[0].name
-                document.querySelector("#lastStep select[name=genre]").value = "Other"
-                document.querySelector("#lastStep input[name=performer]").value = tr("track_unknown");
+                fallback()
             }
         });
 

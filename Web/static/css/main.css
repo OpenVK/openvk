@@ -2102,12 +2102,13 @@ table td[width="120"] {
     border-radius: 2px;
 }
 
-.mb_tab div {
+.mb_tab div, .mb_tab > a {
     padding: 5px 9px;
+    display: block;
 }
 
 .mb_tab#active {
-    background-color: #898989;
+    background-color: #606060;
 }
 
 .mb_tab#active a {
@@ -2584,7 +2585,7 @@ a.poll-retract-vote {
 .page_header.search_expanded .header_navigation #search_box #searchBoxFastTips.shown {
     display: flex;
     flex-direction: column;
-    z-index: 1;
+    z-index: 2;
 }
 
 .page_header.search_expanded .link {
@@ -3211,3 +3212,53 @@ hr {
     background-position: 50% !important;
 }
 
+.entity_vertical_list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    height: 197px;
+    overflow-y: auto;
+}
+
+.entity_vertical_list .entity_vertical_list_item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+.entity_vertical_list .entity_vertical_list_item .first_column {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+}
+
+.entity_vertical_list .entity_vertical_list_item .avatar {
+    display: block;
+}
+
+.entity_vertical_list .entity_vertical_list_item img {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+}
+
+.entity_vertical_list .entity_vertical_list_item .info {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.entity_vertical_list.mini .entity_vertical_list_item img {
+    width: 35px;
+    height: 35px; 
+}
+
+#gif_loader {
+    content: "";
+    display: inline-block;
+    background-image: url('/assets/packages/static/openvk/img/loading_mini.gif');
+    width: 30px;
+    height: 7px;
+}

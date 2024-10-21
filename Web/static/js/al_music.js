@@ -993,7 +993,7 @@ $(document).on("click", ".musicIcon.remove-icon", (e) => {
     e.stopImmediatePropagation()
 
     const id = e.currentTarget.dataset.id
-    if(e.altKey) {
+    if(e.detail > 1 || e.altKey) {
         const player = e.target.closest('.audioEmbed')
         player.querySelector('.add-icon-group').click()
         return
@@ -1061,60 +1061,214 @@ $(document).on("click", ".musicIcon.remove-icon-group", (e) => {
 })
 
 $(document).on("click", ".musicIcon.add-icon-group", async (ev) => {
-    let body = `
-        ${tr("what_club_add")}
-        <div style="margin-top: 4px;">
-            <select id="addIconsWindow" style="width: 59%;"></select>
-            <input name="addButton" type="button" class="button" value="${tr("add")}">
+    let   current_tab = 'club';
+    const id = Number(ev.target.dataset.id)
+    const body = `
+        <div id='_addAudioAdditional'>
+            <div id='_tabs'>
+                <div class="mb_tabs">
+                    <div class="mb_tab" data-name='club'>
+                        <a>
+                            ${tr('to_club')}
+                        </a>
+                    </div>
+                    <div class="mb_tab" data-name='playlist'>
+                        <a>
+                            ${tr('to_playlist')}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <span id='_tip'>${tr('add_audio_limitations')}</span>
+            <div id='_content'></div>
         </div>
-        <span class="errorPlace"></span>
     `
-    MessageBox(tr("add_audio_to_club"), body, [tr("close")], [Function.noop])
 
-    document.querySelector(".ovk-diag-body").style.padding = "11px"
+    MessageBox(tr("add_audio"), body, [tr("cancel"), tr("add")], [Function.noop, () => {
+        const ids = []
+        u('#_content .entity_vertical_list_item').nodes.forEach(item => {
+            const _checkbox = item.querySelector(`input[type='checkbox'][name='add_to']`)
+            if(_checkbox.checked) {
+                ids.push(item.dataset.id)
+            }
+        })
 
-    if(window.openvk.writeableClubs == null) {
-        try {
-            window.openvk.writeableClubs = await API.Groups.getWriteableClubs()
-        } catch (e) {
-            document.querySelector(".errorPlace").innerHTML = tr("no_access_clubs")
-            document.querySelector(".ovk-diag-body input[name='addButton']").classList.add("lagged")
-
+        if(ids.length < 1 || ids.length > 10) {
             return
+        }
+
+        console.log(ids)
+
+        switch(current_tab) {
+            case 'club':
+                $.ajax({
+                    type: "POST",
+                    url: `/audio${id}/action?act=add_to_club`,
+                    data: {
+                        hash: u("meta[name=csrf]").attr("value"),
+                        clubs: ids.join(',')
+                    },
+                    success: (response) => {
+                        if(!response.success)
+                            fastError(response.flash.message)
+                        else
+                            NewNotification(tr("audio_was_successfully_added"), '')
+                    }
+                })
+
+                break
+            case 'playlist':
+                $.ajax({
+                    type: "POST",
+                    url: `/audio${id}/action?act=add_to_playlist`,
+                    data: {
+                        hash: u("meta[name=csrf]").attr("value"),
+                        playlists: ids.join(',')
+                    },
+                    success: (response) => {
+                        if(!response.success)
+                            fastError(response.flash.message)
+                        else
+                            NewNotification(tr("audio_was_successfully_added"), '')
+                    }
+                })
+
+                break
+        }
+    }])
+
+    u(".ovk-diag-body").attr('style', 'padding:0px;height: 260px;')
+
+    async function switchTab(tab = 'club') {
+        current_tab = tab
+        u(`#_addAudioAdditional .mb_tab`).attr('id', 'ki')
+        u(`#_addAudioAdditional .mb_tab[data-name='${tab}']`).attr('id', 'active')
+
+        switch(tab) {
+            case 'club':
+                u("#_content").html(`<div class='entity_vertical_list mini'></div>`)
+                if(window.openvk.writeableClubs == null) {
+                    u('.entity_vertical_list').append(`<div id='gif_loader'></div>`)
+
+                    try {
+                        window.openvk.writeableClubs = await API.Groups.getWriteableClubs()
+                    } catch (e) {
+                        u("#_content").html(tr("no_access_clubs"))
+            
+                        return
+                    }
+
+                    u('.entity_vertical_list #gif_loader').remove()
+                }
+                
+                window.openvk.writeableClubs.forEach(el => {
+                    u("#_content .entity_vertical_list").append(`
+                    <label class='entity_vertical_list_item with_third_column' data-id='${el.id}'>
+                        <div class='first_column'>
+                            <a href='/club${el.id}' class='avatar'>
+                                <img src='${el.avatar}' alt='avatar'>
+                            </a>
+
+                            <div class='info'>
+                                <b class='noOverflow' value="${el.id}">${ovk_proc_strtr(escapeHtml(el.name), 100)}</b>
+                            </div>
+                        </div>
+
+                        <div class='third_column'>
+                            <input type='checkbox' name='add_to'>
+                        </div>
+                    </label>
+                    `)
+                })
+                break
+            case 'playlist':
+                const per_page = 10
+                let page = 0
+                u("#_content").html(`<div class='entity_vertical_list mini'></div>`)
+
+                async function recievePlaylists(s_page) {
+                    res = await fetch(`/method/audio.searchAlbums?auth_mechanism=roaming&query=&limit=10&offset=${s_page * per_page}&from_me=1`)
+                    res = await res.json()
+
+                    return res
+                }
+
+                function appendPlaylists(response) {
+                    response.items.forEach(el => {
+                        u("#_content .entity_vertical_list").append(`
+                        <label class='entity_vertical_list_item with_third_column' data-id='${el.owner_id}_${el.id}'>
+                            <div class='first_column'>
+                                <a href='/playlist${el.owner_id}_${el.id}' class='avatar'>
+                                    <img src='${el.cover_url}' alt='cover'>
+                                </a>
+    
+                                <div class='info'>
+                                    <b class='noOverflow' value="${el.owner_id}_${el.id}">${ovk_proc_strtr(escapeHtml(el.title), 100)}</b>
+                                </div>
+                            </div>
+    
+                            <div class='third_column'>
+                                <input type='checkbox' name='add_to'>
+                            </div>
+                        </label>
+                        `)
+                    })
+
+                    if(response.count > per_page * page) {
+                        u("#_content .entity_vertical_list").append(`<a id='_pladdwinshowmore'>${tr('show_more')}</a>`)
+                    }
+                }
+
+                if(window.openvk.writeablePlaylists == null) {
+                    u('.entity_vertical_list').append(`<div id='gif_loader'></div>`)
+
+                    try {
+                        res = await recievePlaylists(page)
+                        page += 1
+                        window.openvk.writeablePlaylists = res.response
+
+                        if(!window.openvk.writeablePlaylists || window.openvk.writeablePlaylists.count < 1) {
+                            throw new Error
+                        }
+                    } catch (e) {
+                        u("#_content").html(tr("no_access_playlists"))
+            
+                        return
+                    }
+
+                    u('.entity_vertical_list #gif_loader').remove()
+                }
+
+                appendPlaylists(window.openvk.writeablePlaylists)
+                
+                u('#_addAudioAdditional').on('click', '#_pladdwinshowmore', async (e) => {
+                    e.target.outerHTML = ''
+
+                    res = await recievePlaylists(page)
+                    page += 1
+
+                    appendPlaylists(res.response)
+                })
+                break
         }
     }
 
-    window.openvk.writeableClubs.forEach(el => {
-        document.querySelector("#addIconsWindow").insertAdjacentHTML("beforeend", `
-            <option value="${el.id}">${ovk_proc_strtr(escapeHtml(el.name), 50)}</option>
-        `)
+    switchTab(current_tab)
+
+    u("#_addAudioAdditional").on("click", ".mb_tab a", async (e) => {
+        await switchTab(u(e.target).closest('.mb_tab').attr('data-name'))
     })
-
-    $(".ovk-diag-body").on("click", "input[name='addButton']", (e) => {
-        $.ajax({
-            type: "POST",
-            url: `/audio${ev.target.dataset.id}/action?act=add_to_club`,
-            data: {
-                hash: u("meta[name=csrf]").attr("value"),
-                club: document.querySelector("#addIconsWindow").value
-            },
-            beforeSend: () => {
-                e.target.classList.add("lagged")
-                document.querySelector(".errorPlace").innerHTML = ""
-            },
-            success: (response) => {
-                if(!response.success)
-                    document.querySelector(".errorPlace").innerHTML = response.flash.message
-
-                e.currentTarget.classList.remove("lagged")
-            }
-        })
+    
+    u("#_addAudioAdditional").on("click", "input[name='add_to']", async (e) => {
+        if(u(`input[name='add_to']:checked`).length > 10) {
+            e.preventDefault()
+        }
     })
 })
 
 $(document).on("click", ".musicIcon.add-icon", (e) => {
     const id = e.currentTarget.dataset.id
-    if(e.altKey) {
+    if(e.detail > 1 || e.altKey) {
         const player = e.target.closest('.audioEmbed')
         player.querySelector('.add-icon-group').click()
         return
