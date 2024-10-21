@@ -273,6 +273,10 @@
     background-position: -152px -51px;
 }
 
+.audioEntry.nowPlaying .buttons .musicIcon.download-icon {
+    background-position: -151px -67px;
+}
+
 .audioEntry.nowPlaying .buttons .musicIcon.add-icon {
     background-position: -94px -52px;
 }
@@ -381,7 +385,7 @@
 }
 
 .audioEntry:hover .buttons {
-    display: block;
+    display: flex;
 }
 
 .audioEntry:hover .volume .hideOnHover {
@@ -390,11 +394,16 @@
 
 .audioEntry .buttons {
     display: none;
+    flex-direction: row-reverse;
+    gap: 5px;
+    align-items: center;
+    justify-content: flex-start;
     width: 62px;
     height: 20px;
     position: absolute;
     right: 3%;
     top: 2px;
+    margin-top: 7px;
     /* чтоб избежать заедания во время ховера кнопки добавления */
     clip-path: inset(0 0 0 0);
 }
@@ -403,9 +412,14 @@
     width: 11px;
     height: 11px;
     float: right;
-    margin-right: 4px;
-    margin-top: 3px;
     background-position: -137px -51px;
+}
+
+.audioEntry .buttons .download-icon {
+    width: 11px;
+    height: 11px;
+    float: right;
+    background-position: -136px -67px;
 }
 
 .audioEntry .buttons .add-icon {
@@ -413,8 +427,6 @@
     height: 11px;
     float: right;
     background-position: -80px -52px;
-    margin-top: 3px;
-    margin-left: 2px;
 }
 
 .audioEntry .buttons .add-icon-group {
@@ -422,7 +434,6 @@
     height: 11px;
     float: right;
     background-position: -94px -52px;
-    margin-top: 3px;
     transition: margin-right 0.1s ease-out, opacity 0.1s ease-out;
 }
 
@@ -431,8 +442,6 @@
     height: 11px;
     float: right;
     background-position: -50px -67px;
-    margin-top: 3px;
-    margin-right: 3px;
 }
 
 .add-icon-noaction {
@@ -446,16 +455,13 @@
 }
 
 .audioEntry .buttons .remove-icon {
-    margin-top: 3px;
     width: 11px;
     height: 11px;
-    margin-left: 2px;
     float: right;
     background-position: -108px -52px;
 }
 
 .audioEntry .buttons .remove-icon-group {
-    margin-top: 3px;
     width: 13px;
     height: 11px;
     float: right;

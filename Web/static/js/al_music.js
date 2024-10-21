@@ -353,6 +353,10 @@ class bigPlayer {
         })
 
         u(document).on("keyup", (e) => {
+            if(document.activeElement.closest('.page_header')) {
+                return
+            }
+            
             if([87, 65, 83, 68, 82, 77].includes(e.keyCode)) {
                 if(document.querySelector(".ovk-diag-cont") != null)
                     return
@@ -652,7 +656,6 @@ document.addEventListener("DOMContentLoaded", function() {
 
     $(document).on("mouseover mouseleave", `.audioEntry .mediaInfo`, (e) => {
         const info = e.currentTarget.closest(".mediaInfo")
-        const overfl = info.querySelector(".info")
 
         if(e.originalEvent.type == "mouseleave" || e.originalEvent.type == "mouseout") {
             info.classList.add("noOverflow")
@@ -981,7 +984,7 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
 })
 
 $(document).on("click", ".title.withLyrics", (e) => {
-    let parent = e.currentTarget.closest(".audioEmbed")
+    const parent = e.currentTarget.closest(".audioEmbed")
 
     parent.querySelector(".lyrics").classList.toggle("showed")
 })
