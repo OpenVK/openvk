@@ -2564,7 +2564,7 @@ a.poll-retract-vote {
     line-height: 12px;
 }
 
-.header_navigation #search_box #searchBoxFastTips a:hover {
+.header_navigation #search_box #searchBoxFastTips a:hover, .header_navigation #search_box #searchBoxFastTips a:focus {
     background: #f3f3f3;
 }
 

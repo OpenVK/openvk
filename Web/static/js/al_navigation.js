@@ -75,7 +75,7 @@ u(`#search_box input[type='search']`).on('input', async (e) => {
             results = await fetch(`/method/video.search?auth_mechanism=roaming&q=${query}&count=10&sort=4&extended=1`)
             break
         case 'audios_playlists':
-            results = await fetch(`/method/audio.searchAlbums?auth_mechanism=roaming&query=${query}&count=10`)
+            results = await fetch(`/method/audio.searchAlbums?auth_mechanism=roaming&query=${query}&limit=10`)
             break
     }
 
@@ -147,4 +147,44 @@ u(`#search_box input[type='search']`).on('input', async (e) => {
             </a>
         `)
     })
+})
+
+u(document).on('keydown', `#search_box input[type='search'], #searchBoxFastTips a`, (e) => {
+    const u_tips = u('#searchBoxFastTips a')
+    if(u_tips.length < 1) {
+        return
+    }
+
+    const focused = u('#searchBoxFastTips a:focus').nodes[0]
+
+    // up
+    switch(e.keyCode) {
+        case 38:
+            e.preventDefault()
+            if(!focused) {
+                u_tips.nodes[0].focus()
+                return
+            }
+
+            if(focused.previousSibling) {
+                focused.previousSibling.focus()
+            }
+
+            break
+        // down
+        case 40:
+            e.preventDefault()
+            if(!focused) {
+                u_tips.nodes[0].focus()
+                return
+            }
+
+            if(focused.nextSibling) {
+                focused.nextSibling.focus()
+            } else {
+                u_tips.nodes[0].focus()
+            }
+
+            break
+    }
 })

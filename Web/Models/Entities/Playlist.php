@@ -41,6 +41,21 @@ class Playlist extends MediaCollection
     {
         return $this->getRecord()->length;
     }
+    
+    function fetchClassic(int $offset = 0, ?int $limit = NULL): \Traversable
+    {
+        $related = $this->getRecord()->related("$this->relTableName.collection")
+            ->limit($limit ?? OPENVK_DEFAULT_PER_PAGE, $offset)
+            ->order("index ASC");
+
+        foreach($related as $rel) {
+            $media = $rel->ref($this->entityTableName, "media");
+            if(!$media)
+                continue;
+
+            yield new $this->entityClassName($media);
+        }
+    }
 
     function getAudios(int $offset = 0, ?int $limit = NULL, ?int $shuffleSeed = NULL): \Traversable
     {

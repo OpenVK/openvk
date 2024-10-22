@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{User, Club};
-use openvk\Web\Models\Repositories\{Users, Clubs, Posts, Comments, Videos, Applications, Audios};
+use openvk\Web\Models\Repositories\{Users, Clubs, Posts, Videos, Applications, Audios};
 use Chandler\Database\DatabaseConnection;
 
 final class SearchPresenter extends OpenVKPresenter
@@ -9,10 +9,8 @@ final class SearchPresenter extends OpenVKPresenter
     private $users;
     private $clubs;
     private $posts;
-    private $comments;
     private $videos;
     private $apps;
-    private $notes;
     private $audios;
     
     function __construct()
@@ -20,7 +18,6 @@ final class SearchPresenter extends OpenVKPresenter
         $this->users    = new Users;
         $this->clubs    = new Clubs;
         $this->posts    = new Posts;
-        $this->comments = new Comments;
         $this->videos   = new Videos;
         $this->apps     = new Applications;
         $this->audios   = new Audios;
@@ -45,7 +42,6 @@ final class SearchPresenter extends OpenVKPresenter
             "groups"   => "clubs", 
             "users"    => "users",
             "posts"    => "posts",
-            "comments" => "comments",
             "videos"   => "videos",
             "audios"   => "audios",
             "apps"     => "apps",

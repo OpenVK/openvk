@@ -123,7 +123,6 @@
                                                 <option n:attr="selected => $_REQUEST['section'] == 'users'" value="users">{_s_by_people}</option>
                                                 <option n:attr="selected => $_REQUEST['section'] == 'groups'" value="groups">{_s_by_groups}</option>
                                                 <option n:attr="selected => $_REQUEST['section'] == 'posts'" value="posts">{_s_by_posts}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] == 'comments'" value="comments">{_s_by_comments}</option>
                                                 <option n:attr="selected => $_REQUEST['section'] == 'videos'" value="videos">{_s_by_videos}</option>
                                                 <option n:attr="selected => $_REQUEST['section'] == 'apps'" value="apps">{_s_by_apps}</option>
                                                 <option n:attr="selected => $_REQUEST['section'] == 'audios'" value="audios">{_s_by_audios}</option>

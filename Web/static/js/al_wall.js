@@ -279,7 +279,7 @@ function OpenMiniature(e, photo, post, photo_id, type = "post") {
                             tempDetailsSection[index] = element.innerHTML;
 
                             if(index == imagesIndex) {
-                                u(".ovk-photo-details").last().innerHTML = element.innerHTML;
+                                u(".ovk-photo-details").last().innerHTML = element.innerHTML ?? '';
                             }
 
                             document.querySelectorAll(".ovk-photo-details .bsdn").forEach(bsdnInitElement)

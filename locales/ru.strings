@@ -1883,7 +1883,7 @@
 
 /* Search */
 
-"s_people" = "Люди";
+"s_people" = "Пользователи";
 "s_groups" = "Группы";
 "s_apps" = "Приложения";
 "s_posts" = "Записи";
@@ -1892,7 +1892,7 @@
 "s_audios" = "Аудио";
 "s_audios_playlists" = "Плейлисты";
 
-"s_by_people" = "по людям";
+"s_by_people" = "по пользователям";
 "s_by_groups" = "по группам";
 "s_by_posts" = "по записям";
 "s_by_comments" = "по комментариям";

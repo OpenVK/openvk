@@ -224,14 +224,6 @@
                                 <script n:if='$count > 0 && !empty($query)'>
                                     highlightText({$query}, '.page_wrap_content_main', [".post:not(.comment) > tbody > tr > td > .post-content > .text .really_text"])
                                 </script>
-                            {elseif $section === 'comments'}
-                                <div class='search_content' n:foreach="$data as $dat">
-                                    {include "../components/comment.xml", no_reply_button => true, comment => $dat, correctLink => true}
-                                </div>
-
-                                <script n:if='$count > 0 && !empty($query)'>
-                                    highlightText({$query}, '.page_wrap_content_main', [".text .really_text"])
-                                </script>
                             {elseif $section === 'videos'}
                                 <div class='search_content' n:foreach="$data as $dat">
                                     {include "../components/video.xml", video => $dat}
@@ -266,7 +258,6 @@
                             <a n:attr="id => $section === 'users' ? 'used'"    href="/search?section=users&q={urlencode($query)}">    {_s_people}</a>
                             <a n:attr="id => $section === 'groups' ? 'used'"   href="/search?section=groups&q={urlencode($query)}">   {_s_groups}</a>
                             <a n:attr="id => $section === 'posts' ? 'used'"    href="/search?section=posts&q={urlencode($query)}">    {_s_posts}</a>
-                            <a n:attr="id => $section === 'comments' ? 'used'" href="/search?section=comments&q={urlencode($query)}"> {_s_comments}</a>
                             <a n:attr="id => $section === 'videos' ? 'used'"   href="/search?section=videos&q={urlencode($query)}">   {_s_videos}</a>
                             <a n:attr="id => $section === 'apps' ? 'used'"     href="/search?section=apps&q={urlencode($query)}">     {_s_apps}</a>
                             <a n:attr="id => $section === 'audios' ? 'used'"   href="/search?section=audios&q={urlencode($query)}">   {_s_audios}</a>
@@ -400,7 +391,7 @@
             </label>
             <label>
                 {_genre}
-                <select name='genre' form="search_form">
+                <select name='genre' form="search_form" data-default='any'>
                     <option n:attr="selected: empty($_REQUEST['genre'])" value="any">{_s_any_single}</option>
                     <option n:foreach='\openvk\Web\Models\Entities\Audio::genres as $genre' n:attr="selected: $_REQUEST['genre'] == $genre" value="{$genre}">
                         {$genre}
