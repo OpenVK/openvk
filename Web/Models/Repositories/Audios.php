@@ -246,6 +246,7 @@ class Audios
 
     function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false], int $page = 1, ?int $perPage = NULL): \Traversable
     {
+        $query = "%$query%";
         $result = $this->audios->where([
             "unlisted" => 0,
             "deleted"  => 0,
@@ -265,9 +266,9 @@ class Audios
         }
 
         if($params["only_performers"] == "1") {
-            $result->where("performer LIKE ?", "%$query%");
+            $result->where("performer LIKE ?", $query);
         } else {
-            $result->where("name LIKE ? OR performer LIKE ?", "%$query%", "%$query%");
+            $result->where("name LIKE ? OR performer LIKE ?", $query, $query);
         }
 
         foreach($params as $paramName => $paramValue) {
@@ -299,25 +300,14 @@ class Audios
 
     function findPlaylists(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false]): \Traversable
     {
+        $query = "%$query%";
         $result = $this->playlists->where([
             "deleted"  => 0,
-        ])->where("CONCAT_WS(' ', name, description) LIKE ?", "%$query%");
-        $order_str = 'id';
+        ])->where("CONCAT_WS(' ', name, description) LIKE ?", $query);
+        $order_str = (['id', 'length', 'listens'][$order['type']] ?? 'id') . ' ' . ($order['invert'] ? 'ASC' : 'DESC');
 
         if(is_null($params['from_me']) || empty($params['from_me']))
             $result->where(["unlisted" => 0]);
-
-        switch($order['type']) {
-            case 'id':
-                $order_str = 'id ' . ($order['invert'] ? 'ASC' : 'DESC');
-                break;
-            case 'length':
-                $order_str = 'length ' . ($order['invert'] ? 'ASC' : 'DESC');
-                break;
-            case 'listens':
-                $order_str = 'listens ' . ($order['invert'] ? 'ASC' : 'DESC');
-                break;
-        }
 
         foreach($params as $paramName => $paramValue) {
             if(is_null($paramValue) || $paramValue == '') continue;

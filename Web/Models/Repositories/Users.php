@@ -56,7 +56,8 @@ class Users
     
     function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false]): Util\EntityStream
     {
-        $result = $this->users->where("CONCAT_WS(' ', first_name, last_name, pseudo, shortcode) LIKE ?", "%$query%")->where("deleted", 0);
+        $query = "%$query%";
+        $result = $this->users->where("CONCAT_WS(' ', first_name, last_name, pseudo, shortcode) LIKE ?", $query)->where("deleted", 0);
         $order_str = 'id';
 
         switch($order['type']) {

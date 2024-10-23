@@ -69,7 +69,8 @@ class Applications
 
     function find(string $query = "", array $params = [], array $order = ['type' => 'id', 'invert' => false]): Util\EntityStream
     {
-        $result = $this->apps->where("CONCAT_WS(' ', name, description) LIKE ?", "%$query%")->where("enabled", 1);
+        $query = "%$query%";
+        $result = $this->apps->where("CONCAT_WS(' ', name, description) LIKE ?", $query)->where("enabled", 1);
         $order_str = 'id';
 
         switch($order['type']) {

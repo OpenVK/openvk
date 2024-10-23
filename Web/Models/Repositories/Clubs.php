@@ -45,6 +45,7 @@ class Clubs
 
     function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false], int $page = 1, ?int $perPage = NULL): \Traversable
     {
+        $query = "%$query%";
         $result = $this->clubs;
         $order_str = 'id';
 
@@ -54,7 +55,7 @@ class Clubs
                 break;
         }
 
-        $result = $result->where("name LIKE ? OR about LIKE ?", "%$query%", "%$query%");
+        $result = $result->where("name LIKE ? OR about LIKE ?", $query, $query);
 
         if($order_str)
             $result->order($order_str);

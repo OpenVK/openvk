@@ -29,7 +29,7 @@
                 </div>
 
                 <div class='page_wrap_content' id='search_page'>
-                    <div n:class='page_wrap_content_main, $section == "audios" ? audios_padding'>
+                    <div n:class='page_wrap_content_main, $section == "audios" && $count > 0 ? audios_padding'>
                         {if $count > 0}
                             {if $section === 'users'}
                                 <div class='search_content def_row_content' n:foreach="$data as $dat">

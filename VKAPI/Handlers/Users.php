@@ -329,6 +329,10 @@ final class Users extends VKAPIRequestHandler
                     string $fav_books = ""
                     )
     {
+        if($count > 100) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: count should be less or equal to 100");
+        }
+
         $users = new UsersRepo;
         $output_sort = ['type' => 'id', 'invert' => false];
 		$output_params = [
@@ -384,12 +388,19 @@ final class Users extends VKAPIRequestHandler
         $array = [];
         $find  = $users->find($q, $output_params, $output_sort);
 
-        foreach ($find as $user)
+        foreach ($find->offsetLimit($offset, $count) as $user)
             $array[] = $user->getId();
 
+        if(!$array || sizeof($array) < 1) {
+            return (object) [
+                "count" => 0,
+                "items" => [],
+            ];
+        }
+
         return (object) [
-        	"count" => $find->size(),
-        	"items" => $this->get(implode(',', $array), $fields, $offset, $count)
+            "count" => $find->size(),
+            "items" => $this->get(implode(',', $array), $fields)
         ];
     }
 

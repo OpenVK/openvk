@@ -6,7 +6,7 @@
     <div class="playlistInfo">
         <div class="playlistInfoTopPart">
             <span class="playlistName noOverflow">
-                {$playlist->getName(), 15}
+                {$playlist->getName()}
             </span>
             <span n:if='!empty($playlist->getDescription())' class="playlistDesc noOverflow">
                 {$playlist->getDescription()}

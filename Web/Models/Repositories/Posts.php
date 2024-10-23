@@ -156,7 +156,8 @@ class Posts
 
     function find(string $query = "", array $params = [], array $order = ['type' => 'id', 'invert' => false]): Util\EntityStream
     {
-        $result = $this->posts->where("content LIKE ?", "%$query%")->where("deleted", 0)->where("suggested", 0);
+        $query = "%$query%";
+        $result = $this->posts->where("content LIKE ?", $query)->where("deleted", 0)->where("suggested", 0);
         $order_str = 'id';
 
         switch($order['type']) {

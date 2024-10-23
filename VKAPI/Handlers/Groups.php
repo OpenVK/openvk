@@ -254,17 +254,28 @@ final class Groups extends VKAPIRequestHandler
 
     function search(string $q, int $offset = 0, int $count = 100, string $fields = "screen_name,is_admin,is_member,is_advertiser,photo_50,photo_100,photo_200")
     {
+        if($count > 100) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: count should be less or equal to 100");
+        }
+
         $clubs = new ClubsRepo;
         
         $array = [];
 		$find  = $clubs->find($q);
 
-        foreach ($find as $group)
+        foreach ($find->offsetLimit($offset, $count) as $group)
             $array[] = $group->getId();
+            
+        if(!$array || sizeof($array) < 1) {
+            return (object) [
+                "count" => 0,
+                "items" => [],
+            ];
+        }
 
         return (object) [
         	"count" => $find->size(),
-        	"items" => $this->getById(implode(',', $array), "", $fields, $offset, $count)
+        	"items" => $this->getById(implode(',', $array), "", $fields)
         ];
     }
 

@@ -48,7 +48,8 @@ class Videos
 
     function find(string $query = "", array $params = [], array $order = ['type' => 'id', 'invert' => false]): Util\EntityStream
     {
-        $result = $this->videos->where("CONCAT_WS(' ', name, description) LIKE ?", "%$query%")->where("deleted", 0);
+        $query = "%$query%";
+        $result = $this->videos->where("CONCAT_WS(' ', name, description) LIKE ?", $query)->where("deleted", 0);
         $order_str = 'id';
 
         switch($order['type']) {
