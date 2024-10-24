@@ -587,20 +587,7 @@ final class Audio extends VKAPIRequestHandler
 
         $playlists = [];
         $params = [];
-        $order_str = 'id';
-        switch($order) {
-            default:
-            case 0:
-                $order_str = 'id';
-                break;
-            case 1:
-                $order_str = 'length';
-                break; 
-            case 2:
-                $order_str = 'listens';
-                break; 
-        }
-
+        $order_str = (['id', 'length', 'listens'][$order] ?? 'id');
         if($from_me === 1)
             $params['from_me'] = $this->getUser()->getId();
 

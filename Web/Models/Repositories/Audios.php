@@ -251,19 +251,7 @@ class Audios
             "unlisted" => 0,
             "deleted"  => 0,
         ]);
-        $order_str = 'id';
-
-        switch($order['type']) {
-            case 'id':
-                $order_str = 'id ' . ($order['invert'] ? 'ASC' : 'DESC');
-                break;
-            case 'length':
-                $order_str = 'length ' . ($order['invert'] ? 'ASC' : 'DESC');
-                break;
-            case 'listens':
-                $order_str = 'listens ' . ($order['invert'] ? 'ASC' : 'DESC');
-                break;
-        }
+        $order_str = (in_array($order['type'], ['id', 'length', 'listens']) ? $order['type'] : 'id') . ' ' . ($order['invert'] ? 'ASC' : 'DESC');;
 
         if($params["only_performers"] == "1") {
             $result->where("performer LIKE ?", $query);
@@ -304,7 +292,7 @@ class Audios
         $result = $this->playlists->where([
             "deleted"  => 0,
         ])->where("CONCAT_WS(' ', name, description) LIKE ?", $query);
-        $order_str = (['id', 'length', 'listens'][$order['type']] ?? 'id') . ' ' . ($order['invert'] ? 'ASC' : 'DESC');
+        $order_str = (in_array($order['type'], ['id', 'length', 'listens']) ? $order['type'] : 'id') . ' ' . ($order['invert'] ? 'ASC' : 'DESC');
 
         if(is_null($params['from_me']) || empty($params['from_me']))
             $result->where(["unlisted" => 0]);

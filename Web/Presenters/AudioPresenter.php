@@ -109,8 +109,8 @@ final class AudioPresenter extends OpenVKPresenter
 
         $this->template->mode = $mode;
         $this->template->page = $page;
-
-        if(in_array($mode, ["list", "new", "popular"]) && $this->user->identity)
+        
+        if(in_array($mode, ["list", "new", "popular"]) && $this->user->identity && $page < 2)
             $this->template->friendsAudios = $this->user->identity->getBroadcastList("all", true);
     }
 

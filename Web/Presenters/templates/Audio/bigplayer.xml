@@ -18,7 +18,7 @@
         <div class="trackPanel">
             <div class="trackInfo">
                 <div class="trackName">
-                    <b>{_track_unknown}</b> —
+                    <a>{_track_unknown}</a> —
                     <span>{_track_noname}</span>
                 </div>
 

@@ -1,11 +1,10 @@
 <div class='verticalGrayTabsWrapper'>
     <div class="verticalGrayTabs">
         <div class='with_padding'>
-            <a n:attr="id => $mode === 'list' && $isMy ? 'used' : 'ki'" href="/audios{$thisUser->getId()}" n:if="isset($thisUser)">{_my_music}</a>
-            <a href="/player/upload{if $isMyClub}?gid={abs($ownerId)}{/if}" n:if="isset($thisUser)">{_upload_audio}</a>
-            <a n:attr="id => $mode === 'new' ? 'used' : 'ki'" href="/audios/new">{_audio_new}</a>
-            <a n:attr="id => $mode === 'popular' ? 'used' : 'ki'" href="/audios/popular">{_audio_popular}</a>
-            <a href="/search?section=audios" n:if="isset($thisUser)">{_audio_search}</a>
+            <a n:if="isset($thisUser)" n:attr="id => $mode === 'list' && $isMy ? 'used' : 'ki'" href="/audios{$thisUser->getId()}">{_my_music}</a>
+            <a n:if="isset($thisUser)" href="/player/upload{if $isMyClub}?gid={abs($ownerId)}{/if}">{_upload_audio}</a>
+            <a n:if="isset($thisUser)" n:attr="id => $mode === 'new' ? 'used' : 'ki'" href="/search?section=audios">{_audio_new}</a>
+            <a n:if="isset($thisUser)" n:attr="id => $mode === 'popular' ? 'used' : 'ki'" href="/search?section=audios&order=listens">{_audio_popular}</a>
 
             <hr n:if="isset($thisUser)">
 

@@ -544,7 +544,8 @@ class bigPlayer {
         }
 
         this.nodes["thisPlayer"].querySelector(".trackInfo span").innerHTML = escapeHtml(obj.name) 
-        this.nodes["thisPlayer"].querySelector(".trackInfo b").innerHTML = escapeHtml(obj.performer)
+        this.nodes["thisPlayer"].querySelector(".trackInfo a").innerHTML = escapeHtml(obj.performer)
+        this.nodes["thisPlayer"].querySelector(".trackInfo a").href = `/search?query=&section=audios&order=listens&only_performers=on&q=${encodeURIComponent(obj.performer.escapeHtml())}`
         this.nodes["thisPlayer"].querySelector(".trackInfo .time").innerHTML = fmtTime(obj.length)
         this.tracks["currentTrack"] = obj
 

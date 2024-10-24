@@ -191,7 +191,12 @@
     font-size: 10px;
 }
 
-.bigPlayer .paddingLayer .trackInfo b:hover {
+.bigPlayer .paddingLayer .trackInfo a {
+    font-weight: bold;
+    color: black;
+}
+
+.bigPlayer .paddingLayer .trackInfo a:hover {
     text-decoration: underline;
     cursor: pointer;
 }
@@ -346,7 +351,7 @@
 .overflowedName {
     position: absolute;
     z-index: 99;
-    width: 85% !important;
+    width: 80% !important;
 }
 
 .audioEntry .status strong {
