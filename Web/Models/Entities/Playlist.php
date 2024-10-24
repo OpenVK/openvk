@@ -41,6 +41,21 @@ class Playlist extends MediaCollection
     {
         return $this->getRecord()->length;
     }
+    
+    function fetchClassic(int $offset = 0, ?int $limit = NULL): \Traversable
+    {
+        $related = $this->getRecord()->related("$this->relTableName.collection")
+            ->limit($limit ?? OPENVK_DEFAULT_PER_PAGE, $offset)
+            ->order("index ASC");
+
+        foreach($related as $rel) {
+            $media = $rel->ref($this->entityTableName, "media");
+            if(!$media)
+                continue;
+
+            yield new $this->entityClassName($media);
+        }
+    }
 
     function getAudios(int $offset = 0, ?int $limit = NULL, ?int $shuffleSeed = NULL): \Traversable
     {
@@ -162,6 +177,7 @@ class Playlist extends MediaCollection
             "bookmarked"  => $this->isBookmarkedBy($user),
             "listens"     => $this->getListens(),
             "cover_url"   => $this->getCoverURL(),
+            "searchable"  => !$this->isUnlisted(),
         ];
     }
 
@@ -198,6 +214,11 @@ class Playlist extends MediaCollection
     function getCoverPhotoId(): ?int
     {
         return $this->getRecord()->cover_photo_id;
+    }
+    
+    function getCoverPhoto(): ?Photo
+    {
+        return (new Photos)->get((int) $this->getRecord()->cover_photo_id);
     }
 
     function canBeModifiedBy(User $user): bool
@@ -252,5 +273,10 @@ class Playlist extends MediaCollection
         # if($this->getEditTime()) $props[] = tr("updated_playlist") . " " . $this->getEditTime();
         
         return implode(" • ", $props);
+    }
+
+    function isUnlisted(): bool
+    {
+        return (bool)$this->getRecord()->unlisted;
     }
 }

@@ -36,21 +36,26 @@
                         </div>
                     </div>
                     <div n:if="isset($thisUser) &&! ($compact ?? false)" class="post-menu">
-                        <a href="#_comment{$comment->getId()}" class="date">{$comment->getPublicationTime()} 
+                        <a href="{if $correctLink}{$comment->getTargetURL()}{/if}#_comment{$comment->getId()}" class="date">{$comment->getPublicationTime()} 
                             <span n:if="$comment->getEditTime()" class="edited editedMark">({_edited_short})</span>
                         </a>
                         {if !$timeOnly}
                             &nbsp;|
                             {if $comment->canBeDeletedBy($thisUser)}
-                                <a href="/comment{$comment->getId()}/delete">{_delete}</a>&nbsp;|
+                                <a href="/comment{$comment->getId()}/delete">{_delete}</a>
                             {/if}
                             {if $comment->canBeEditedBy($thisUser)}
-                                <a id="editPost" data-id="{$comment->getId()}">{_edit}</a>&nbsp;|
+                                |
+                                <a id="editPost" data-id="{$comment->getId()}">{_edit}</a>
                             {/if}
-                            <a class="comment-reply">{_reply}</a>
-                            {if $thisUser->getId() != $comment->getOwner()->getId()}
+                            {if !$no_reply_button}
+                                |
+                                <a class="comment-reply">{_reply}</a>
+                            {/if}
+                            {if $thisUser->getId() != $author->getRealId()}
+                                |
                                 {var $canReport = true}
-                                | <a href="javascript:reportComment()">{_report}</a>
+                                <a href="javascript:reportComment()">{_report}</a>
                             {/if}
                             <div style="float: right; font-size: .7rem;">
                                 <a class="post-like-button" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}">
@@ -59,29 +64,11 @@
                                 </a>
                             </div>
                         {/if}
-                        {var $target = "wall"}
-
-                        {if get_class($comment->getTarget()) == "openvk\Web\Models\Entities\Note"}
-                            {php $target = "note"}
-                        {elseif get_class($comment->getTarget()) == "openvk\Web\Models\Entities\Post"}
-                            {php $target = "wall"}
-                        {elseif get_class($comment->getTarget()) == "openvk\Web\Models\Entities\Photo"}
-                            {php $target = "photo"}
-                        {elseif get_class($comment->getTarget()) == "openvk\Web\Models\Entities\Video"}
-                            {php $target = "video"}
-                        {elseif get_class($comment->getTarget()) == "openvk\Web\Models\Entities\Topic"}
-                            {php $target = "topic"}
-                        {/if}
-
 
                         <span n:if="$compact ?? false">
 
                         |&nbsp;<a
-                            {if is_null($linkW)}
-                                href="#_comment{$comment->getId()}"
-                            {else}
-                                href="{$target}{!is_null($comment->getTarget()) ? $comment->getTarget()->getPrettyId() : $comment->getOwner()->getId()}#_comment{$comment->getId()}"
-                            {/if}
+                            href="#_comment{$comment->getId()}"
                             class="date"
                         >{$comment->getPublicationTime()}</a>
                           

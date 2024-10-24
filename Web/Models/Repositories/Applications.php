@@ -67,11 +67,21 @@ class Applications
         return sizeof($this->appRels->where("user", $user->getId()));
     }
 
-    function find(string $query, array $pars = [], string $sort = "id"): Util\EntityStream
+    function find(string $query = "", array $params = [], array $order = ['type' => 'id', 'invert' => false]): Util\EntityStream
     {
-        $query  = "%$query%";
+        $query = "%$query%";
         $result = $this->apps->where("CONCAT_WS(' ', name, description) LIKE ?", $query)->where("enabled", 1);
+        $order_str = 'id';
+
+        switch($order['type']) {
+            case 'id':
+                $order_str = 'id ' . ($order['invert'] ? 'ASC' : 'DESC');
+                break;
+        }
+
+        if($order_str)
+            $result->order($order_str);
         
-        return new Util\EntityStream("Application", $result->order("$sort"));
+        return new Util\EntityStream("Application", $result);
     }
 }

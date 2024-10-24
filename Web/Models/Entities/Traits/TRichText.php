@@ -123,7 +123,7 @@ trait TRichText
                 $text = preg_replace_callback("%([\n\r\s]|^)(\#([\p{L}_0-9][\p{L}_0-9\(\)\-\']+[\p{L}_0-9\(\)]|[\p{L}_0-9]{1,2}))%Xu", function($m) {
                     $slug = rawurlencode($m[3]);
                     
-                    return "$m[1]<a href='/feed/hashtag/$slug'>$m[2]</a>";
+                    return "$m[1]<a href='/search?section=posts&q=%23$slug'>$m[2]</a>";
                 }, $text);
                 
                 $text = $this->formatEmojis($text);

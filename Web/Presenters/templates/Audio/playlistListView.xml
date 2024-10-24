@@ -1,0 +1,20 @@
+<a href="/playlist{$playlist->getPrettyId()}" class='playlistListView'>
+    <div class="playlistCover">
+        <img src="{$playlist->getCoverURL('normal')}" alt="{_playlist_cover}">
+    </div>
+
+    <div class="playlistInfo">
+        <div class="playlistInfoTopPart">
+            <span class="playlistName noOverflow">
+                {$playlist->getName()}
+            </span>
+            <span n:if='!empty($playlist->getDescription())' class="playlistDesc noOverflow">
+                {$playlist->getDescription()}
+            </span>
+        </div>
+
+        <span class="playlistMeta">
+            {$playlist->getMetaDescription()|noescape}
+        </span>
+    </div>
+</a>

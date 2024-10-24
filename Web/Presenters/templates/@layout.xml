@@ -87,7 +87,7 @@
 
         <div class="layout">
             <div id="xhead" class="dm"></div>
-            <div class="page_header{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME} page_custom_header{/if}">
+            <div class="page_header{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME} page_custom_header{/if}{if $atSearch} search_expanded search_expanded_at_all{/if}">
                 <a href="/" class="home_button{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME} home_button_custom{/if}" title="{$instance_name}">{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME}{$instance_name}{/if}</a>
                 <div n:if="isset($thisUser) ? (!$thisUser->isBanned() XOR !$thisUser->isActivated()) : true" class="header_navigation">
                     {ifset $thisUser}
@@ -96,67 +96,45 @@
                                 <a href="/logout?hash={urlencode($csrfToken)}">{_header_log_out}</a>
                             </div>
                         {else}
-                            <div class="link dec">
+                            <div class="link">
                                 <a href="/">{_header_home}</a>
                             </div>
-                            <div class="link dec">
-                                <a href="/search?type=groups">{_header_groups}</a>
+                            <div class="link">
+                                <a href="/search?section=groups">{_header_groups}</a>
                             </div>
-                            <div class="link dec">
-                                <a href="/search">{_header_search}</a>
+                            <div class="link">
+                                <a href="/search?q=&section=users&order=rating">{_header_search}</a>
                             </div>
-                            <div class="link dec">
+                            <div class="link">
                                 <a href="/invite">{_header_invite}</a>
                             </div>
-                            <div class="link dec">
+                            <div class="link">
                                 <a href="/support">{_header_help} <b n:if="$ticketAnsweredCount > 0">({$ticketAnsweredCount})</b></a>
                             </div>
-                            <div class="link dec">
+                            <div class="link">
                                 <a href="/logout?hash={urlencode($csrfToken)}">{_header_log_out}</a>
                             </div>
-                            {var $atSearch = str_contains($_SERVER['REQUEST_URI'], "/search")}
-                            <div id="srch" class="{if $atSearch}nodivider{else}link{/if}">
-
-                                {if !$atSearch}
-                                    <form action="/search" method="get" id="searcher" style="position:relative;">
-                                        <input autocomplete="off" id="searchInput" oninput="checkSearchTips()" onfocus="expandSearch()" onblur="decreaseSearch()" class="sr" type="search" name="query" placeholder="{_header_search}" style="height: 20px;background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; background-color: #fff; padding-left: 18px;width: 120px;" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
-                                        <select onchange="checkSearchTips()" id="typer" name="type" class="whatFind" style="display:none;top: 0px;">
-                                            <option value="users">{_s_by_people}</option>
-                                            <option value="groups">{_s_by_groups}</option>
-                                            <option value="posts">{_s_by_posts}</option>
-                                            <option value="comments">{_s_by_comments}</option>
-                                            <option value="videos">{_s_by_videos}</option>
-                                            <option value="apps">{_s_by_apps}</option>
-                                            <option value="audios">{_s_by_audios}</option>
-                                        </select>
+                            <div id="search_box" class='header_divider_stick'>
+                                <div id="search_box_fr">
+                                    <form id='search_form' action="/search" method="get">
+                                        <div id='search_and_one_more_wrapper'>
+                                            <input n:attr="value => $_REQUEST['q'] ? $_REQUEST['q'] : NULL" autocomplete="off" type="search" maxlength="79" name="q" placeholder="{_header_search}" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
+                                            <select name="section">
+                                                <option n:attr="selected => $_REQUEST['section'] == 'users'" value="users">{_s_by_people}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] == 'groups'" value="groups">{_s_by_groups}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] == 'posts'" value="posts">{_s_by_posts}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] == 'videos'" value="videos">{_s_by_videos}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] == 'apps'" value="apps">{_s_by_apps}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] == 'audios'" value="audios">{_s_by_audios}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] == 'audios_playlists'" value="audios_playlists">{_s_by_audios_playlists}</option>
+                                            </select>
+                                        </div>
+                                        <button class="search_box_button">
+                                            <span>{_header_search}</span>
+                                        </button>
                                     </form>
-                                    <div class="searchTips" id="srcht" hidden>
-                                        <table style="border:none;border-spacing: 0;">
-                                            <tbody id="srchrr">
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                {else}
-                                    <form action="/search" method="get" id="searcher" style="margin-top: -1px;position:relative;">
-                                        <input id="searchInput" value="{$_GET['query'] ?? ''}" type="search" class="sr" name="query" placeholder="{_header_search}" style="height: 20px; background-color: #fff; padding-left: 6px;width: 555px;" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
-                                        <select name="type" class="whatFind">
-                                            <option value="users"    {if str_contains($_SERVER['REQUEST_URI'], "type=users")}selected{/if}>{_s_by_people}</option>
-                                            <option value="groups"   {if str_contains($_SERVER['REQUEST_URI'], "type=groups")}selected{/if}>{_s_by_groups}</option>
-                                            <option value="posts"    {if str_contains($_SERVER['REQUEST_URI'], "type=posts")}selected{/if}>{_s_by_posts}</option>
-                                            <option value="comments" {if str_contains($_SERVER['REQUEST_URI'], "type=comments")}selected{/if}>{_s_by_comments}</option>
-                                            <option value="videos"   {if str_contains($_SERVER['REQUEST_URI'], "type=videos")}selected{/if}>{_s_by_videos}</option>
-                                            <option value="apps"     {if str_contains($_SERVER['REQUEST_URI'], "type=apps")}selected{/if}>{_s_by_apps}</option>
-                                            <option value="audios"   {if str_contains($_SERVER['REQUEST_URI'], "type=audios")}selected{/if}>{_s_by_audios}</option>
-                                        </select>
-                                        <button class="searchBtn"><span style="color:white;font-weight: 600;font-size:12px;">{_header_search}</span></button>
-                                    </form>
-                                    <script>
-                                        let els = document.querySelectorAll("div.dec")
-                                        for(const element of els) {
-                                            element.style.display = "none"
-                                        }
-                                    </script>
-                                {/if}
+                                </div>
+                                <div id="searchBoxFastTips"></div>
                             </div>
                         {/if}
                     {else}
@@ -400,6 +378,7 @@
         {script "js/al_mentions.js"}
         {script "js/al_polls.js"}
         {script "js/al_suggestions.js"}
+        {script "js/al_navigation.js"}
 
         {ifset $thisUser}
             {script "js/al_notifs.js"}
@@ -442,7 +421,8 @@
 
         <script>
             window.openvk = {
-                "audio_genres": {\openvk\Web\Models\Entities\Audio::genres}
+                "audio_genres": {\openvk\Web\Models\Entities\Audio::genres},
+                "at_search": {$atSearch ?? false},
             }
         </script>
 

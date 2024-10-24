@@ -124,14 +124,13 @@ th,
 .tippy-box[data-theme~="vk"],
 .poll,
 #standaloneCommentBox,
-.searchBtn,
-.searchList #used,
-.searchOptionName,
+#search_box_button,
+.verticalGrayTabs #used,
+.search_option_name,
 .borderup,
 #tour,
 #auth,
-.ovk-photo-view,
-.searchOptions {
+.ovk-photo-view {
     border-color: #2c2640 !important;
 }
 
@@ -155,9 +154,13 @@ hr {
 .messagebox-content-header,
 .accent-box,
 .button_search,
-.searchBtn,
-.searchOptionName {
+.search_box_button {
     background-color: #383052;
+}
+
+.search_option_name {
+    background-color: #383052 !important;
+    color: lightgrey !important;
 }
 
 .tab:hover {
@@ -176,7 +179,7 @@ hr {
 }
 
 .bsdn_contextMenuElement:hover,
-.searchList li:hover {
+.verticalGrayTabs li:hover {
     background-color: #29223a;
 }
 
@@ -208,7 +211,7 @@ a,
 .paginator a:hover,
 .post-share-button:hover,
 .post-like-button:hover,
-.searchBtn:active {
+#search_box_button:active {
     background-color: #272138 !important;
 }
 
@@ -261,7 +264,9 @@ center[style="background: white;border: #DEDEDE solid 1px;"],
 .album-photo img,
 #faqhead,
 td.e,
-tr.e {
+tr.e,
+.playlistListView:hover, 
+.playlistListView .playlistCover {
     background-color: #231e33 !important;
 }
 
@@ -376,7 +381,7 @@ input[type="radio"] {
     background-image: url("/themepack/midnight/0.0.2.9/resource/radio.png") !important;
 }
 
-.header_navigation .link {
+.header_navigation .link, .header_navigation .header_divider_stick {
     background: unset;
 }
 
@@ -403,15 +408,26 @@ input[type="radio"] {
     border-color: #514534;
 }
 
-.searchBtn {
+#search_box_button {
     box-shadow: 0px 2px 0px 0px rgba(111, 111, 111, 0.18) inset;
 }
 
-.searchBtn:active {
+#search_box_button:active {
     box-shadow: 0px -2px 0px 0px rgba(255, 255, 255, 0.18) inset;
 }
 
-.searchList #used {
+.verticalGrayTabsWrapper {
+    background: #1e1a2b;
+    border-top: 1px solid #2c2640;
+    border-left: 1px solid #2a2841;
+}
+
+.page_content_paginator_bottom {
+    background: #1e1a2b;
+    border-top: 1px solid #2c2640;
+}
+
+.verticalGrayTabs #used {
     background: #463f60 !important;
 }
 
@@ -447,13 +463,9 @@ input[type="radio"] {
     background: #b9b9b9 !important;
 }
 
-.musicIcon {
-    filter: invert(81%) !important;
-}
-
 .audioEntry.nowPlaying {
     background: #463f60 !important;
-    border: 1px solid #645a86 !important;
+    outline: 1px solid #645a86 !important;
 }
 
 .preformer {
@@ -485,11 +497,11 @@ input[type="radio"] {
     color: black !important;
 }
 
-.searchList a {
+.verticalGrayTabs a {
     color: #bbb !important;
 }
 
-.searchList a:hover {
+.verticalGrayTabs a:hover {
     color: #eeeeee !important;
     background: #332d46 !important;
 }
@@ -512,7 +524,7 @@ img[src$='/assets/packages/static/openvk/img/song.jpg'] {
 }
 
 .audioEntry .withLyrics {
-    color: #6f6497 !important;
+    color: #9481d9 !important;
 }
 
 #listensCount {
@@ -536,7 +548,8 @@ ul {
 
 /* вот бы css в овк был бы написан на var()'ах( */
 #upload_container.uploading {
-    background: #121017 url('/assets/packages/static/openvk/img/progressbar.gif') !important;
+    background-color: #312b3f !important;
+    background-image: url('/assets/packages/static/openvk/img/progressbar.gif') !important;
 }
 
 .musicIcon.pressed {
@@ -572,4 +585,9 @@ ul {
 
 .add_image_text {
     z-index: 999;
+}
+
+.content_page_error {
+    background: #28223a;
+    border: #2c2640 solid 1px;
 }

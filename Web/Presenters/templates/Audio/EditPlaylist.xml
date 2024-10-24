@@ -5,7 +5,7 @@
 {block header}
     <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
     »
-    <a href="/audios{$ownerId}">{_audios}</a>
+    <a href="/playlists{$ownerId}">{_playlists}</a>
     »
     <a href="/playlist{$playlist->getPrettyId()}">{_playlist}</a>
     »
@@ -30,8 +30,13 @@
             </div>
 
             <div class="moreInfo">
-                <textarea name="description" maxlength="2045" style="margin-top: 11px;">{$playlist->getDescription()}</textarea>
+                <textarea placeholder="{_description}" name="description" maxlength="2045" style="margin-top: 11px;">{$playlist->getDescription()}</textarea>
             </div>
+
+            <label>
+                <input type='checkbox' name='is_unlisted' n:attr='checked => $playlist->isUnlisted()'>
+                {_playlist_hide_from_search}
+            </label>
         </div>
     </div>
 
@@ -56,6 +61,7 @@
     <form method="post" id="editPlaylistForm" data-id="{$playlist->getId()}" enctype="multipart/form-data">
         <input type="hidden" name="title" maxlength="128" />
         <input type="hidden" name="hash" value="{$csrfToken}" />
+        <input type="hidden" name="is_unlisted" value="0" />
         <textarea style="display:none;" name="description" maxlength="2048" />
         <input type="hidden" name="audios">
         <input type="file" style="display:none;" name="new_cover" accept=".jpg,.png">
@@ -71,6 +77,7 @@
         u("#editPlaylistForm").on("submit", (e) => {
             document.querySelector("#editPlaylistForm input[name='title']").value = document.querySelector(".playlistInfo input[name='title']").value
             document.querySelector("#editPlaylistForm textarea[name='description']").value = document.querySelector(".playlistBlock textarea[name='description']").value
+            document.querySelector("#editPlaylistForm input[name='is_unlisted']").value = document.querySelector("input[name='is_unlisted']").checked ? 1 : 0
         })
 
         u("#editPlaylistForm input[name='new_cover']").on("change", (e) => {

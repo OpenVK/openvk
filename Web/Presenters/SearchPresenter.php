@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{User, Club};
-use openvk\Web\Models\Repositories\{Users, Clubs, Posts, Comments, Videos, Applications, Notes, Audios};
+use openvk\Web\Models\Repositories\{Users, Clubs, Posts, Videos, Applications, Audios};
 use Chandler\Database\DatabaseConnection;
 
 final class SearchPresenter extends OpenVKPresenter
@@ -9,21 +9,17 @@ final class SearchPresenter extends OpenVKPresenter
     private $users;
     private $clubs;
     private $posts;
-    private $comments;
     private $videos;
     private $apps;
-    private $notes;
     private $audios;
     
-    function __construct(Users $users, Clubs $clubs)
+    function __construct()
     {
-        $this->users    = $users;
-        $this->clubs    = $clubs;
+        $this->users    = new Users;
+        $this->clubs    = new Clubs;
         $this->posts    = new Posts;
-        $this->comments = new Comments;
         $this->videos   = new Videos;
         $this->apps     = new Applications;
-        $this->notes    = new Notes;
         $this->audios   = new Audios;
         
         parent::__construct();
@@ -33,85 +29,101 @@ final class SearchPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
 
-        $query = $this->queryParam("query") ?? "";
-        $type  = $this->queryParam("type") ?? "users";
-        $sorter = $this->queryParam("sort") ?? "id";
-        $invert = $this->queryParam("invert") == 1 ? "ASC" : "DESC";
-        $page  = (int) ($this->queryParam("p") ?? 1);
-        
+        $query     = $this->queryParam("q") ?? "";
+        $section   = $this->queryParam("section") ?? "users";
+        $order     = $this->queryParam("order") ?? "id";
+        $invert    = (int) ($this->queryParam("invert") ?? 0) == 1;
+        $page      = (int) ($this->queryParam("p") ?? 1);
+
         # https://youtu.be/pSAWM5YuXx8
+        # https://youtu.be/FfNZRhIn2Vk
 
         $repos = [ 
             "groups"   => "clubs", 
             "users"    => "users",
             "posts"    => "posts",
-            "comments" => "comments",
             "videos"   => "videos",
             "audios"   => "audios",
             "apps"     => "apps",
-            "notes"    => "notes"
+            "audios_playlists" => "audios"
+        ];
+        $parameters = [
+            "ignore_private" => true,
         ];
 
-        switch($sorter) {
-            default:
-            case "id":
-                $sort = "id " . $invert;
-                break;
-            case "name":
-                $sort = "first_name " . $invert;
-                break;   
-            case "rating":
-                $sort = "rating " . $invert;
-                break;
-            case "length":
-                if($type != "audios") break;
-                
-                $sort = "length " . $invert;
-                break;
-            case "listens":
-                if($type != "audios") break;
-    
-                $sort = "listens " . $invert;
-                break;  
+        foreach($_REQUEST as $param_name => $param_value) {
+            if(is_null($param_value)) continue;
+            
+            switch($param_name) {
+                default:
+                    $parameters[$param_name] = $param_value;
+                    break;
+                case 'marital_status':
+                case 'polit_views':
+                    if((int) $param_value == 0) continue;
+                    $parameters[$param_name] = $param_value;
+
+                    break;
+                case 'is_online':
+                    if((int) $param_value == 1)
+                        $parameters['is_online'] = 1;
+                    
+                    break;
+                case 'only_performers':
+                    if((int) $param_value == 1 || $param_value == 'on')
+                        $parameters['only_performers'] = true;
+
+                    break;
+                case 'with_lyrics':
+                    if($param_value == 'on' || $param_value == '1')
+                        $parameters['with_lyrics'] = true;
+
+                    break;
+                # дай бог работал этот case
+                case 'from_me':
+                    if((int) $param_value != 1) continue;
+                    $parameters['from_me'] = $this->user->id;
+
+                    break;
+            }
         }
 
-        $parameters = [
-            "type"          => $this->queryParam("type"),
-            "city"          => $this->queryParam("city") != "" ? $this->queryParam("city") : NULL,
-            "maritalstatus" => $this->queryParam("maritalstatus") != 0 ? $this->queryParam("maritalstatus") : NULL,
-            "with_photo"    => $this->queryParam("with_photo"),
-            "status"        => $this->queryParam("status")     != "" ? $this->queryParam("status") : NULL,
-            "politViews"    => $this->queryParam("politViews") != 0 ? $this->queryParam("politViews") : NULL,
-            "email"         => $this->queryParam("email"),
-            "telegram"      => $this->queryParam("telegram"),
-            "site"          => $this->queryParam("site")      != "" ? "https://".$this->queryParam("site") : NULL,
-            "address"       => $this->queryParam("address"),
-            "is_online"     => $this->queryParam("is_online") == 1 ? 1 : NULL,
-            "interests"     => $this->queryParam("interests")  != "" ? $this->queryParam("interests") : NULL,
-            "fav_mus"       => $this->queryParam("fav_mus")    != "" ? $this->queryParam("fav_mus") : NULL,
-            "fav_films"     => $this->queryParam("fav_films")  != "" ? $this->queryParam("fav_films") : NULL,
-            "fav_shows"     => $this->queryParam("fav_shows")  != "" ? $this->queryParam("fav_shows") : NULL,
-            "fav_books"     => $this->queryParam("fav_books")  != "" ? $this->queryParam("fav_books") : NULL,
-            "fav_quote"     => $this->queryParam("fav_quote")  != "" ? $this->queryParam("fav_quote") : NULL,
-            "hometown"      => $this->queryParam("hometown")   != "" ? $this->queryParam("hometown") : NULL,
-            "before"        => $this->queryParam("datebefore") != "" ? strtotime($this->queryParam("datebefore")) : NULL,
-            "after"         => $this->queryParam("dateafter")  != "" ? strtotime($this->queryParam("dateafter")) : NULL,
-            "gender"        => $this->queryParam("gender")     != "" && $this->queryParam("gender") != 2 ? $this->queryParam("gender") : NULL,
-            "doNotSearchPrivate" => true,
-            "only_performers" => $this->queryParam("only_performers") == "on" ? "1" : NULL,
-            "with_lyrics" => $this->queryParam("with_lyrics") == "on" ? true : NULL,
-        ];
-
-        $repo  = $repos[$type] or $this->throwError(400, "Bad Request", "Invalid search entity $type.");
+        $repo = $repos[$section] or $this->throwError(400, "Bad Request", "Invalid search entity $section.");
         
-        $results  = $this->{$repo}->find($query, $parameters, $sort);
-        $iterator = $results->page($page, 14);
+        $results = NULL;
+        switch($section) {
+            default:
+                $results  = $this->{$repo}->find($query, $parameters, ['type' => $order, 'invert' => $invert]);
+                break;
+            case 'audios_playlists':
+                $results  = $this->{$repo}->findPlaylists($query, $parameters, ['type' => $order, 'invert' => $invert]);
+                break;
+        }
+        
+        $iterator = $results->page($page, OPENVK_DEFAULT_PER_PAGE);
         $count    = $results->size();
         
-        $this->template->iterator = iterator_to_array($iterator);
+        $this->template->order    = $order;
+        $this->template->invert   = $invert;
+        $this->template->data     = $this->template->iterator = iterator_to_array($iterator);
         $this->template->count    = $count;
-        $this->template->type     = $type;
+        $this->template->section  = $section;
         $this->template->page     = $page;
-        $this->template->perPage  = 14;
+        $this->template->perPage  = OPENVK_DEFAULT_PER_PAGE;
+        $this->template->query    = $query;
+        $this->template->atSearch = true;
+
+        $this->template->paginatorConf = (object) [
+            "page"      => $page,
+            "count"     => $count,
+            "amount"    => sizeof($this->template->data),
+            "perPage"   => $this->template->perPage,
+            "atBottom"  => false,
+            "tidy"      => true,
+            "space"     => 6,
+            'pageCount' => ceil($count / $this->template->perPage),
+        ];
+        $this->template->extendedPaginatorConf = clone $this->template->paginatorConf;
+        $this->template->extendedPaginatorConf->space = 12;
     }
 }

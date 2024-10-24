@@ -60,34 +60,31 @@ class Comments
         ]));
     }
 
-    function find(string $query = "", array $pars = [], string $sort = "id"): Util\EntityStream
+    function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false]): Util\EntityStream
     {
-        $query  = "%$query%";
+        $result = $this->comments->where("content LIKE ?", "%$query%")->where("deleted", 0);
+        $order_str = 'id';
 
-        $notNullParams = [];
+        switch($order['type']) {
+            case 'id':
+                $order_str = 'created ' . ($order['invert'] ? 'ASC' : 'DESC');
+                break;
+        }
 
-        foreach($pars as $paramName => $paramValue)
-            if($paramName != "before" && $paramName != "after")
-                $paramValue != NULL ? $notNullParams+=["$paramName" => "%$paramValue%"]   : NULL;
-            else
-                $paramValue != NULL ? $notNullParams+=["$paramName" => "$paramValue"]     : NULL;
-
-        $result = $this->comments->where("content LIKE ?", $query)->where("deleted", 0);
-        $nnparamsCount = sizeof($notNullParams);
-
-        if($nnparamsCount > 0) {
-            foreach($notNullParams as $paramName => $paramValue) {
-                switch($paramName) {
-                    case "before":
-                        $result->where("created < ?", $paramValue);
-                        break;
-                    case "after":
-                        $result->where("created > ?", $paramValue);
-                        break;
-                }
+        foreach($params as $paramName => $paramValue) {
+            switch($paramName) {
+                case "before":
+                    $result->where("created < ?", $paramValue);
+                    break;
+                case "after":
+                    $result->where("created > ?", $paramValue);
+                    break;
             }
         }
 
-        return new Util\EntityStream("Comment", $result->order("$sort"));
+        if($order_str)
+            $result->order($order_str);
+
+        return new Util\EntityStream("Comment", $result);
     }
 }

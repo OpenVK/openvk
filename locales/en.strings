@@ -250,6 +250,8 @@
 "clubs_posts" = "Group's posts";
 "others_posts" = "Others posts";
 
+"show_more" = "Show more";
+
 /* Friends */
 
 "friends" = "Friends";
@@ -639,13 +641,14 @@
 "apply_style_for_this_device" = "Apply style only for this device";
 
 "search_for_groups" = "Search for groups";
-"search_for_users" = "Search for people";
+"search_for_users" = "Search for users";
 "search_for_posts" = "Search for posts";
 "search_for_comments" = "Search for comments";
 "search_for_videos" = "Search for videos";
 "search_for_apps" = "Search for apps";
 "search_for_notes" = "Search for notes";
 "search_for_audios" = "Search for music";
+"search_for_audios_playlists" = "Search for playlists";
 "search_button" = "Find";
 "search_placeholder" = "Start typing any name, title or word";
 "results_zero" = "No results";
@@ -877,6 +880,7 @@
 "my_playlists" = "My playlists";
 "playlists" = "Playlists";
 "audios_explicit" = "Contains obscene language";
+"audios_unlisted" = "Unlisted";
 "withdrawn" = "Withdrawn";
 "deleted" = "Deleted";
 "owner" = "Owner";
@@ -900,7 +904,7 @@
 "edit_playlist" = "Edit playlist";
 "unable_to_load_queue" = "Error when loading queue.";
 
-"fully_delete_audio" = "Fully delete audio";
+"fully_delete_audio" = "Delete audio";
 "attach_audio" = "Attach audio";
 "detach_audio" = "Detach audio";
 
@@ -928,6 +932,12 @@
 "listens_count_other" = "$1 listens";
 
 "add_audio_to_club" = "Add audio to group";
+"add_audio" = "Adding audio";
+"add_audio_limitations" = "You can select up to 10 groups/playlists.";
+"to_club" = "To club";
+"to_playlist" = "To playlist";
+
+"audio_was_successfully_added" = "Audios was successfully added.";
 "what_club_add" = "Which group do you want to add the song to?";
 "group_has_audio" = "This group already has this song.";
 "group_hasnt_audio" = "This group doesn't have this song.";
@@ -935,6 +945,7 @@
 "by_name" = "by name";
 "by_performer" = "by performer";
 "no_access_clubs" = "There are no groups where you are an administrator.";
+"no_access_playlists" = "You haven't created any playlists.";
 "audio_successfully_uploaded" = "Audio has been successfully uploaded and is currently being processed.";
 
 "broadcast_audio" = "Broadcast audio to status";
@@ -947,6 +958,8 @@
 "repeat_tip" = "Repeat";
 "shuffle_tip" = "Shuffle";
 "mute_tip" = "Mute";
+"playlist_hide_from_search" = "Unlisted";
+"confirm_deleting_audio" = "Do you sure want to delete this audio?";
 
 /* Notifications */
 
@@ -1538,6 +1551,7 @@
 "error_code" = "Error code: $1.";
 "ffmpeg_timeout" = "Timed out waiting ffmpeg. Try to upload file again.";
 "ffmpeg_not_installed" = "Failed to proccess the file. It looks like ffmpeg is not installed on this server.";
+"too_many_or_to_lack" = "Too few or too many sources.";
 
 /* Admin actions */
 
@@ -1979,24 +1993,23 @@
 
 /* Search */
 
-"s_people" = "People";
+"s_people" = "Users";
 "s_groups" = "Clubs";
-"s_events" = "Events";
 "s_apps" = "Applications";
-"s_questions" = "Questions";
-"s_notes" = "Notes";
-"s_themes" = "Themes";
 "s_posts" = "Posts";
 "s_comments" = "Comments";
 "s_videos" = "Videos";
 "s_audios" = "Music";
-"s_by_people" = "for people";
+"s_audios_playlists" = "Playlists";
+
+"s_by_people" = "for users";
 "s_by_groups" = "for groups";
 "s_by_posts" = "for posts";
 "s_by_comments" = "for comments";
 "s_by_videos" = "for videos";
 "s_by_apps" = "for apps";
-"s_by_audios" = "for musics";
+"s_by_audios" = "for audios";
+"s_by_audios_playlists" = "for playlists";
 
 "s_order_by" = "Order by...";
 
@@ -2007,6 +2020,10 @@
 "s_order_by_length" = "By length";
 "s_order_by_listens" = "By listens count";
 "s_order_invert" = "Invert";
+"s_order_by_reg_date" = "By reg date";
+"s_order_by_creation_date" = "By creation date";
+"s_order_by_publishing_date" = "By publication date";
+"s_order_by_upload_date" = "By upload date";
 
 "s_by_date" = "By date";
 "s_registered_before" = "Registered before";
@@ -2019,16 +2036,23 @@
 "s_now_on_site" = "now on site";
 "s_with_photo" = "with photo";
 "s_only_in_names" = "only in names";
+"s_only_youtube" = "only from YouTube";
 
 "s_any" = "any";
+"s_any_single" = "any";
 "reset" = "Reset";
 
 "closed_group_post" = "This post was published in a private group";
 "deleted_target_comment" = "This comment belongs to deleted post";
 
 "no_results" = "No results";
-"s_only_performers" = "Performers only";
+"s_only_performers" = "By performers";
 "s_with_lyrics" = "With lyrics";
+
+"showing_x_y" = "(showing $1—$2)";
+"no_results_by_this_query" = "Nothing was found by this query.";
+"s_additional" = "Additional";
+"s_it_is_you" = "it is you";
 
 /* BadBrowser */
 

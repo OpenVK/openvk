@@ -4,7 +4,7 @@
     <tr>
         <td valign="top">
             <div class="video-preview">
-                <a href="/video{$video->getPrettyId()}" id="videoOpen" data-id="{$video->getId()}">
+                <a href="/video{$video->getPrettyId()}" {$videoModal ? "id='videoOpen'" : ''} data-id="{$video->getId()}">
                     <img src="{$video->getThumbnailURL()}"
                     style="max-width: 170px; max-height: 127px; margin: auto;" >
                 </a>
@@ -15,18 +15,18 @@
                 {include infotable, x => $dat}
             {else}
         <a href="/video{$video->getPrettyId()}">
-            <b id="videoOpen" data-id="{$video->getId()}">
+            <b class='video_name' {$videoModal ? "id='videoOpen'" : ''} data-id="{$video->getId()}">
             {$video->getName()}
             </b>
         </a>
         <br/>
             <p>
-                <span>{$video->getDescription() ?? ""}</span>
+                <span class='video_description'>{$video->getDescription() ?? ""}</span>
             </p>
             <span style="color: grey;">{_video_uploaded} {$video->getPublicationTime()}</span><br/>
             
             <p>
-                <a href="/video{$video->getPrettyId()}" id="videoOpen" data-id="{$video->getId()}">{_view_video}</a>
+                <a href="/video{$video->getPrettyId()}" {$videoModal ? "id='videoOpen'" : ''} data-id="{$video->getId()}">{_view_video}</a>
                 {if $video->getCommentsCount() > 0}| <a href="/video{$video->getPrettyId()}#comments">{_comments} ({$video->getCommentsCount()})</a>{/if}
             </p>
             {/ifset}

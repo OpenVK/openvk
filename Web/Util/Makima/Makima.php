@@ -162,7 +162,7 @@ class Makima
                     $result->tiles    = [
                         new ThumbTile(1, 3, $wCover, $maxHeight), new ThumbTile(1, 1, $w, $h0),
                                                                   new ThumbTile(1, 1, $w, $h1),
-                                                                  new ThumbTile(1, 1, $w, $h1),
+                                                                  new ThumbTile(1, 1, $w, $h2),
                     ];
                 }
             break;

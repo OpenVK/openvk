@@ -1758,11 +1758,7 @@
 
 "s_people" = "Люди";
 "s_groups" = "Спільноти";
-"s_events" = "Події";
 "s_apps" = "Застосунки";
-"s_questions" = "Запитання";
-"s_notes" = "Нотатки";
-"s_themes" = "Теми";
 "s_posts" = "Дописи";
 "s_comments" = "Коментарі";
 "s_videos" = "Відео";

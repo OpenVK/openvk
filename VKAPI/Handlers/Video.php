@@ -60,4 +60,60 @@ final class Video extends VKAPIRequestHandler
             ];
         }
     }
+
+    function search(string $q = '', int $sort = 0, int $offset = 0, int $count = 10, bool $extended = false, string $fields = ''): object 
+    {
+        $this->requireUser();
+
+        $params = [];
+        $db_sort = ['type' => 'id', 'invert' => false];
+        $videos = (new VideosRepo)->find($q, $params, $db_sort);
+        $items  = iterator_to_array($videos->offsetLimit($offset, $count));
+        $count  = $videos->size();
+
+        $return_items = [];
+        $profiles = [];
+        $groups = [];
+        foreach($items as $item)
+            $return_item = $item->getApiStructure($this->getUser());
+            $return_item = $return_item->video;
+            $return_items[] = $return_item;
+
+            if($return_item['owner_id']) {
+                if($return_item['owner_id'] > 0) 
+                    $profiles[] = $return_item['owner_id'];
+                else
+                    $groups[] = abs($return_item['owner_id']);
+            }
+
+        if($extended) {
+            $profiles = array_unique($profiles);
+            $groups   = array_unique($groups);
+
+            $profilesFormatted = [];
+            $groupsFormatted   = [];
+
+            foreach($profiles as $prof) {
+                $profile = (new UsersRepo)->get($prof);
+                $profilesFormatted[] = $profile->toVkApiStruct($this->getUser(), $fields);
+            }
+
+            foreach($groups as $gr) {
+                $group = (new ClubsRepo)->get($gr);
+                $groupsFormatted[] = $group->toVkApiStruct($this->getUser(), $fields);
+            }
+
+            return (object) [
+                "count" => $count,
+                "items" => $return_items,
+                "profiles" => $profilesFormatted,
+                "groups" => $groupsFormatted,
+            ];
+        }
+
+        return (object) [
+            "count" => $count,
+            "items" => $return_items,
+        ];
+    }
 }

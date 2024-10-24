@@ -5,14 +5,22 @@
 {/block}
 
 {block header}
-    {if !is_null($group)}
-        <a href="{$group->getURL()}">{$group->getCanonicalName()}</a>
-        »
-        <a href="/audios-{$group->getId()}">{_audios}</a>
+    {if !$playlist}
+        {if !is_null($group)}
+            <a href="{$group->getURL()}">{$group->getCanonicalName()}</a>
+            »
+            <a href="/audios-{$group->getId()}">{_audios}</a>
+        {else}
+            <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
+            »
+            <a href="/audios{$thisUser->getId()}">{_audios}</a>
+        {/if}
     {else}
-        <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
+        <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
         »
-        <a href="/audios{$thisUser->getId()}">{_audios}</a>
+        <a href="/playlists{$ownerId}">{_playlists}</a>
+        »
+        <a href="/playlist{$playlist->getPrettyId()}">{_playlist}</a>
     {/if}
 
     »
@@ -36,6 +44,7 @@
                         <input type="hidden" name="lyrics" />
                         <input type="hidden" name="genre" />
                         <input type="hidden" name="explicit" />
+                        <input type="hidden" name="unlisted" />
                         
                         <input type="hidden" name="hash" value="{$csrfToken}" />
                         <input id="audio_input" type="file" name="blob" accept="audio/*" style="display:none" />
@@ -43,19 +52,19 @@
                     </form>
                 </div><br/>
             
-                <span>{_you_can_also_add_audio_using} <b><a href="/search?type=audios">{_search_audio_inst}</a></b>.<span>
+                <span>{_you_can_also_add_audio_using} <b><a href="/search?section=audios">{_search_audio_inst}</a></b>.<span>
             </div>
 
             <div id="lastStep" style="display:none;">
                 <table cellspacing="7" cellpadding="0" border="0" align="center">
                     <tbody>
                         <tr>
-                            <td width="120" valign="top"><span class="nobold">{_audio_name}:</span></td>
-                            <td><input type="text" name="name" autocomplete="off" maxlength="80" /></td>
-                        </tr>
-                        <tr>
                             <td width="120" valign="top"><span class="nobold">{_performer}:</span></td>
                             <td><input name="performer" type="text" autocomplete="off" maxlength="80" /></td>
+                        </tr>
+                        <tr>
+                            <td width="120" valign="top"><span class="nobold">{_audio_name}:</span></td>
+                            <td><input type="text" name="name" autocomplete="off" maxlength="80" /></td>
                         </tr>
                         <tr>
                             <td width="120" valign="top"><span class="nobold">{_genre}:</span></td>
@@ -74,7 +83,8 @@
                         <tr>
                             <td width="120" valign="top"></td>
                             <td>
-                                <label><input type="checkbox" name="explicit">{_audios_explicit}</label>
+                                <label style='display:block'><input type="checkbox" name="explicit">{_audios_explicit}</label>
+                                <label><input type="checkbox" name="unlisted">{_audios_unlisted}</label>
                             </td>
                         </tr>
                         <tr>
@@ -100,8 +110,24 @@
             
             document.querySelector("#firstStep").style.display = "none"
             document.querySelector("#lastStep").style.display = "block"
+
+            function fallback() {
+                console.info('Tags not found, setting default values.')
+
+                document.querySelector("#lastStep input[name=name]").value = files[0].name
+                document.querySelector("#lastStep select[name=genre]").value = "Other"
+                document.querySelector("#lastStep input[name=performer]").value = tr("track_unknown");
+            }
             
-            let tags = await id3.fromFile(files[0]);
+            let tags = null
+
+            try {
+                tags = await id3.fromFile(files[0]);
+            } catch(e) {
+                console.error(e)
+            }
+            
+            console.log(tags)
             if(tags != null) {
                 console.log("ID" + tags.kind + " detected, setting values...");
                 
@@ -116,17 +142,31 @@
                     document.querySelector("#lastStep input[name=performer]").value = tr("track_unknown");
                 
                 if(tags.genre != null) {
-                    if(document.querySelector("#lastStep select[name=genre] > option[value='" + tags.genre + "']") != null) {
-                        document.querySelector("#lastStep select[name=genre]").value = tags.genre;
+                    // if there are more than one genre
+                    if(tags.genre.split(', ').length > 1) {
+                        const genres = tags.genre.split(', ')
+
+                        genres.forEach(genre => {
+                            if(document.querySelector("#lastStep select[name=genre] > option[value='" + genre + "']") != null) {
+                                document.querySelector("#lastStep select[name=genre]").value = genre;
+                            }
+                        })
                     } else {
-                        console.warn("Unknown genre: " + tags.genre);
-                        document.querySelector("#lastStep select[name=genre]").value = "Other"
+                        if(document.querySelector("#lastStep select[name=genre] > option[value='" + tags.genre + "']") != null) {
+                            document.querySelector("#lastStep select[name=genre]").value = tags.genre;
+                        } else {
+                            console.warn("Unknown genre: " + tags.genre);
+                            document.querySelector("#lastStep select[name=genre]").value = "Other"
+                        }
                     }
+                } else {
+                    document.querySelector("#lastStep select[name=genre]").value = "Other"
                 }
+
+                if(tags.comments != null)
+                    document.querySelector("#lastStep textarea[name=lyrics]").value = tags.comments
             } else {
-                document.querySelector("#lastStep input[name=name]").value = files[0].name
-                document.querySelector("#lastStep select[name=genre]").value = "Other"
-                document.querySelector("#lastStep input[name=performer]").value = tr("track_unknown");
+                fallback()
             }
         });
 
@@ -147,12 +187,14 @@
             var genre_  = document.querySelector("#audio_upload input[name=genre]");
             var lyrics_ = document.querySelector("#audio_upload input[name=lyrics]");
             var explicit_ = document.querySelector("#audio_upload input[name=explicit]");
+            var unlisted_ = document.querySelector("#audio_upload input[name=unlisted]");
 
             name_.value = document.querySelector("#lastStep input[name=name]").value
             perf_.value = document.querySelector("#lastStep input[name=performer]").value
             genre_.value = document.querySelector("#lastStep select[name=genre]").value
             lyrics_.value = document.querySelector("#lastStep textarea[name=lyrics]").value
             explicit_.value = document.querySelector("#lastStep input[name=explicit]").checked ? "on" : "off"
+            unlisted_.value = document.querySelector("#lastStep input[name=unlisted]").checked ? "on" : "off"
 
             $("#audio_upload > form").trigger("submit");
         })
