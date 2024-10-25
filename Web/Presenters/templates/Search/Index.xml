@@ -32,13 +32,13 @@
                     <div n:class='page_wrap_content_main, $section == "audios" && $count > 0 ? audios_padding'>
                         {if $count > 0}
                             {if $section === 'users'}
-                                <div class='search_content def_row_content' n:foreach="$data as $dat">
+                                <div class='search_content content def_row_content' n:foreach="$data as $dat">
                                     <table>
                                         <tbody>
                                             <tr>
                                                 <td valign="top">
                                                     <a href="{$dat->getURL()}">
-                                                        <img src="{$dat->getAvatarUrl('miniscule')}" width="75" alt="{_photo}" loading='lazy' />
+                                                        <img src="{$dat->getAvatarUrl('tiny')}" width="75" alt="{_photo}" loading='lazy' />
                                                     </a>
                                                 </td>
                                                 <td valign="top" style="width: 100%">
@@ -128,13 +128,13 @@
                                     highlightText({$query}, '.page_wrap_content_main', ['text'])
                                 </script>
                             {elseif $section === 'groups'}
-                                <div class='search_content def_row_content' n:foreach="$data as $dat">
+                                <div class='search_content content def_row_content' n:foreach="$data as $dat">
                                     <table>
                                         <tbody>
                                             <tr>
                                                 <td valign="top">
                                                     <a href="{$dat->getURL()}">
-                                                        <img src="{$dat->getAvatarUrl('miniscule')}" width="75" alt="{_photo}" loading='lazy' />
+                                                        <img src="{$dat->getAvatarUrl('tiny')}" width="75" alt="{_photo}" loading='lazy' />
                                                     </a>
                                                 </td>
                                                 <td valign="top" style="width: 100%">
@@ -183,7 +183,7 @@
                                     highlightText({$query}, '.page_wrap_content_main', ['text', "td[data-highlight='_clubDesc']"])
                                 </script>
                             {elseif $section === 'apps'}
-                                <div class='search_content def_row_content' n:foreach="$data as $dat">
+                                <div class='search_content content def_row_content' n:foreach="$data as $dat">
                                     <table>
                                         <tbody>
                                             <tr>
