@@ -4,19 +4,14 @@
     white-space: nowrap;
 }
 
-.overflowedName {
-    position: absolute;
-    z-index: 99;
+.audiosPaddingContainer {
+    padding: 8px;
 }
 
 .musicIcon {
     background-image: url('/assets/packages/static/openvk/img/audios_controls.png');
     background-repeat: no-repeat;
     cursor: pointer;
-}
-
-.musicIcon:hover {
-    filter: brightness(99%);
 }
 
 .musicIcon.pressed {
@@ -31,7 +26,15 @@
     height: 46px;
     border-bottom: 1px solid #d8d8d8;
     box-shadow: 1px 0px 8px 0px rgba(34, 60, 80, 0.2);
-    position: relative;
+    position: sticky;
+    top: 0px;
+    z-index: 1;
+}
+
+.bigPlayer.tidy {
+    width: 100%;
+    margin-left: unset;
+    margin-top: unset;
 }
 
 .bigPlayer.floating {
@@ -171,11 +174,16 @@
     font-size: 10px;
 }
 
+.bigPlayer .paddingLayer .trackInfo .timer .elapsedTime {
+    cursor: pointer;
+}
+
 .bigPlayer .paddingLayer .trackInfo .trackName {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     width: 81%;
+    height: 13px;
     display: inline-block;
 }
 
@@ -183,9 +191,24 @@
     font-size: 10px;
 }
 
-.bigPlayer .paddingLayer .trackInfo b:hover {
+.bigPlayer .paddingLayer .trackInfo a {
+    font-weight: bold;
+    color: black;
+}
+
+.bigPlayer .paddingLayer .trackInfo a:hover {
     text-decoration: underline;
     cursor: pointer;
+}
+
+.bigPlayer .paddingLayer .trackPanel .track .selectableTrack > div {
+    width: 95%;
+    position: relative;
+}
+
+.bigPlayer .paddingLayer .volumePanel .selectableTrack > div {
+    position: relative;
+    width:72%
 }
 
 .audioEmbed .track > .selectableTrack, .bigPlayer .selectableTrack {
@@ -214,7 +237,7 @@
 
 .audioEntry.nowPlaying {
     background: #606060;
-    border: 1px solid #4f4f4f;
+    outline: 1px solid #4f4f4f;
     box-sizing: border-box;
 }
 
@@ -224,6 +247,7 @@
 
 .audioEntry.nowPlaying:hover {
     background: #4e4e4e !important;
+    border-radius: inherit !important;
 }
 
 .audioEntry.nowPlaying .performer a {
@@ -246,8 +270,32 @@
     color: white !important;
 }
 
-.audioEntry.nowPlaying .buttons .musicIcon, .audioEntry.nowPlaying .explicitMark {
-    filter: brightness(187%) opacity(72%);
+.audioEntry.nowPlaying .explicitMark path {
+    fill: #ffffff;
+}
+
+.audioEntry.nowPlaying .buttons .musicIcon.edit-icon {
+    background-position: -152px -51px;
+}
+
+.audioEntry.nowPlaying .buttons .musicIcon.download-icon {
+    background-position: -151px -67px;
+}
+
+.audioEntry.nowPlaying .buttons .musicIcon.add-icon {
+    background-position: -94px -52px;
+}
+
+.audioEntry.nowPlaying .buttons .musicIcon.report-icon {
+    background-position: -66px -67px;
+}
+
+.audioEntry.nowPlaying .buttons .musicIcon.remove-icon-group {
+    background-position: -122px -67px;
+}
+
+.audioEntry.nowPlaying .buttons .musicIcon.remove-icon {
+    background-position: -108px -67px;
 }
 
 .audioEntry {
@@ -264,10 +312,14 @@
 }
 
 .audioEntry .subTracks {
-    display: flex;
+    display: none;
     padding-bottom: 5px;
     padding-left: 8px;
     padding-right: 12px;
+}
+
+.audioEntry .subTracks.shown {
+    display: flex;
 }
 
 .audioEntry .playerButton .playIcon {
@@ -290,16 +342,45 @@
     height: 23px;
 }
 
+.audioEntry .status .mediaInfo {
+    cursor: pointer;
+    display: flex;
+    width: 100%;
+}
+
+.overflowedName {
+    position: absolute;
+    z-index: 99;
+    width: 80% !important;
+}
+
 .audioEntry .status strong {
     color: #4C4C4C;
 }
 
 .audioEmbed .track {
-    display: none;
-    padding: 4px 0;
+    padding: 0px 0;
 }
 
-.audioEmbed .track, .audioEmbed.playing .track {
+.audioEmbed .track .selectableTrack {
+    width: 100%;
+}
+
+.audioEmbed .track .selectableTrack .selectableTrackSlider {
+    position: relative;
+    width: calc(100% - 18px);
+}
+
+.audioEmbed .subTracks .lengthTrackWrapper {
+    width: 100%;
+}
+
+.audioEmbed .subTracks .volumeTrackWrapper {
+    width: 81px;
+    margin-left: 16px;
+}
+
+.audioEmbed.playing .track {
     display: unset;
 }
 
@@ -309,7 +390,7 @@
 }
 
 .audioEntry:hover .buttons {
-    display: block;
+    display: flex;
 }
 
 .audioEntry:hover .volume .hideOnHover {
@@ -318,11 +399,16 @@
 
 .audioEntry .buttons {
     display: none;
+    flex-direction: row-reverse;
+    gap: 5px;
+    align-items: center;
+    justify-content: flex-start;
     width: 62px;
     height: 20px;
     position: absolute;
     right: 3%;
     top: 2px;
+    margin-top: 7px;
     /* чтоб избежать заедания во время ховера кнопки добавления */
     clip-path: inset(0 0 0 0);
 }
@@ -331,9 +417,14 @@
     width: 11px;
     height: 11px;
     float: right;
-    margin-right: 4px;
-    margin-top: 3px;
     background-position: -137px -51px;
+}
+
+.audioEntry .buttons .download-icon {
+    width: 11px;
+    height: 11px;
+    float: right;
+    background-position: -136px -67px;
 }
 
 .audioEntry .buttons .add-icon {
@@ -341,8 +432,6 @@
     height: 11px;
     float: right;
     background-position: -80px -52px;
-    margin-top: 3px;
-    margin-left: 2px;
 }
 
 .audioEntry .buttons .add-icon-group {
@@ -350,7 +439,6 @@
     height: 11px;
     float: right;
     background-position: -94px -52px;
-    margin-top: 3px;
     transition: margin-right 0.1s ease-out, opacity 0.1s ease-out;
 }
 
@@ -358,9 +446,7 @@
     width: 12px;
     height: 11px;
     float: right;
-    background-position: -67px -51px;
-    margin-top: 3px;
-    margin-right: 3px;
+    background-position: -50px -67px;
 }
 
 .add-icon-noaction {
@@ -374,22 +460,17 @@
 }
 
 .audioEntry .buttons .remove-icon {
-    margin-top: 3px;
     width: 11px;
     height: 11px;
-    margin-left: 2px;
     float: right;
     background-position: -108px -52px;
 }
 
 .audioEntry .buttons .remove-icon-group {
-    margin-top: 3px;
     width: 13px;
     height: 11px;
     float: right;
     background-position: -122px -52px;
-    margin-left: 3px;
-    margin-right: 3px;
 }
 
 .audioEmbed .lyrics {
@@ -410,12 +491,12 @@
     text-decoration: underline;
 }
 
-.audioEmbed.withdrawn .status > *, .audioEmbed.processed .status > *, .audioEmbed.withdrawn .playerButton > *, .audioEmbed.processed .playerButton > * {
+.audioEmbed.withdrawn .status > *, .audioEmbed.processed .playerButton > *, .audioEmbed.withdrawn .playerButton > * {
     pointer-events: none;
 }
 
 .audioEmbed.withdrawn {
-    filter: opacity(0.8);
+    opacity: 0.8;
 }
 
 .playlistCover img {
@@ -427,24 +508,54 @@
     margin-top: 14px;
 }
 
-.playlistContainer {
-    display: grid;
-    grid-template-columns: repeat(3, 146px);
-    gap: 18px 10px;
+.playlistBlock .playlistWrapper {
+    float: left;
+    padding-left: 13px;
+    width:75%
 }
 
-.playlistContainer .playlistCover {
-    width: 111px;
-    height: 111px;
+.playlistCover .profile_links .profile_link {
+    width: 100%;
+}
+
+/* playlist listview */
+
+.playlistListView {
     display: flex;
-    background: #c4c4c4;
+    padding: 7px;
+    gap: 9px;
+    cursor: pointer;
 }
 
-.playlistContainer  .playlistCover img {
-    max-width: 111px;
-    max-height: 111px;
-    margin: auto;
+.playlistListView:hover, .playlistListView .playlistCover {
+    background: #ebebeb;
 }
+
+.playlistListView .playlistCover img {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.playlistListView .playlistInfo, .playlistListView .playlistInfo .playlistInfoTopPart {
+    display: flex;
+    flex-direction: column;
+}
+
+.playlistListView .playlistInfo {
+    gap: 2px;
+    overflow: hidden;
+}
+
+.playlistListView .playlistInfo .playlistName {
+    font-weight: 600;
+}
+
+.playlistListView .playlistInfo .playlistMeta, .playlistListView .playlistInfo .playlistMeta span {
+    color: #676767;
+}
+
+/* other */
 
 .ovk-diag-body .searchBox {
     background: #e6e6e6;
@@ -490,17 +601,16 @@
     cursor: pointer;
 }
 
-.playlistCover img {
-    cursor: pointer;
-}
-
 .explicitMark {
     margin-top: 2px;
     margin-left: 3px;
     width: 11px;
     height: 11px;
-    background: url('/assets/packages/static/openvk/img/explicit.svg');
-    background-repeat: no-repeat;
+}
+
+.explicitMark path {
+    fill: #828a99;
+    fill-opacity: .7;
 }
 
 .audioStatus span {
@@ -517,8 +627,14 @@
     padding-bottom: 3px;
 }
 
+.audiosDiv {
+    width: 103.1%;
+    display: flex;
+    margin: 0px 0px -10px -12px;
+}
+
 /* <center> 🤣🤣🤣🤣🤣🤣🤣🤣🤣🤣*/
-.audiosDiv center span {
+.audiosDiv center span, .error_full_wrapper center span {
     color: #707070;
     margin: 120px 0px !important;
     display: block;
@@ -526,15 +642,6 @@
 
 .audiosDiv center {
     margin-left: -10px;
-}
-
-.playlistInfo {
-    display: flex;
-    flex-direction: column;
-}
-
-.playlistInfo .playlistName {
-    font-weight: 600;
 }
 
 .searchList.floating {
@@ -583,8 +690,11 @@
 }
 
 .friendsAudiosList {
-    margin-left: -7px;
     margin-top: 8px;
+}
+
+.friendsAudiosList > a {
+    padding-left: 8px;
 }
 
 .friendsAudiosList .elem {
@@ -658,4 +768,28 @@
 
 .addToPlaylist {
     width: 22%;
+}
+
+#_addAudioAdditional {
+    padding: 6px;
+}
+
+#_addAudioAdditional #_tabs {
+    margin: 0px -6px;
+}
+
+#_addAudioAdditional #_tabs .mb_tabs {
+    background-color: unset;
+    border-bottom: unset;
+    padding: 0px 5px;
+}
+
+#_addAudioAdditional #_tip {
+    margin: 5px 0px;
+    display: block;
+}
+
+#_addAudioAdditional #_content {
+    margin-top: 6px;
+    padding: 1px;
 }

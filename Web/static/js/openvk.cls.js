@@ -500,116 +500,42 @@ function escapeHtml(text) {
     return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
-function expandSearch()
-{
-    // console.log("search expanded")
-    let els = document.querySelectorAll("div.dec")
-    for(const element of els)
-    {
-        element.style.display = "none"
-    }
-    
-    document.querySelector(".whatFind").style.display = "block";
-    document.querySelector(".whatFind").style.marginRight = "-80px";
-    document.getElementById("searchInput").style.width = "627px";
-    document.getElementById("searchInput").style.background = "none";
-    document.getElementById("searchInput").style.backgroundColor = "#fff";
-    document.getElementById("searchInput").style.paddingLeft = "6px";
-    srch.classList.add("nodivider")
-}
+function highlightText(searchText, container_selector, selectors = []) {
+    const container = u(container_selector)
+    const regexp = new RegExp(`(${searchText})`, 'gi')
 
-async function decreaseSearch()
-{
-    // чтобы люди успели выбрать что искать и поиск не скрывался сразу
-    await new Promise(r => setTimeout(r, 4000));
-
-    // console.log("search decreased")
-    if(document.activeElement !== searchInput && document.activeElement !== typer)
-    {
-        srcht.setAttribute("hidden", "hidden")
-        document.getElementById("searchInput").style.background = "url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px";
-        document.getElementById("searchInput").style.backgroundColor = "#fff";
-        document.getElementById("searchInput").style.paddingLeft = "18px";
-        document.getElementById("searchInput").style.width = "120px";
-        document.querySelector(".whatFind").style.display = "none";
-
-        await new Promise(r => setTimeout(r, 300));
-        srch.classList.remove("nodivider")
-
-        let els = document.querySelectorAll("div.dec")
-        for(const element of els)
-        {
-            element.style.display = "inline-block"
-        }
-    }
-}
-
-function hideParams(name)
-{
-    $("#s_"+name).slideToggle(250, "swing");
-
-    if($(`#n_${name} img`).attr("src") == "/assets/packages/static/openvk/img/hide.png")
-    {
-        $("#n_"+name+" img").attr("src", "/assets/packages/static/openvk/img/show.png");
-    } else {
-        $("#n_"+name+" img").attr("src", "/assets/packages/static/openvk/img/hide.png");
-    }
-}
-
-function resetSearch()
-{
-    let inputs = document.querySelectorAll("input")
-    let selects = document.querySelectorAll("select")
-
-    for(const input of inputs)
-    {
-        if(input != dnt && input != gend && input != gend1 && input != gend2) {
-            input.value = ""
-        }
-    }
-
-    for(const select of selects)
-    {
-        if(select != sortyor && select != document.querySelector(".whatFind")) {
-            select.value = 0
-        }
-    }
-}
-
-async function checkSearchTips()
-{
-    let query = searchInput.value;
-
-    await new Promise(r => setTimeout(r, 1000));
-
-    let type = typer.value;
-    let smt  = type == "users" || type == "groups" || type == "videos";
-
-    if(query.length > 3 && query == searchInput.value && smt) {
-        srcht.removeAttribute("hidden")
-        let etype = type
-
-        try {
-            let results = await API.Search.fastSearch(escapeHtml(query), etype)
+    function highlightNode(node) {
+        if(node.nodeType == 3) {
+            let newNode = escapeHtml(node.nodeValue)
+            newNode = newNode.replace(regexp, (match, ...args) => {
+                return `<span class='highlight'>${escapeHtml(match)}</span>`
+            })
             
-            srchrr.innerHTML = ""
+            const tempDiv = document.createElement('div')
+            tempDiv.innerHTML = newNode
 
-            for(const el of results["items"]) {
-                srchrr.insertAdjacentHTML("beforeend", `
-                    <tr class="restip" onmouseup="if (event.which === 2) { window.open('${el.url}', '_blank'); } else {location.href='${el.url}'}">
-                        <td>
-                            <img src="${el.avatar}" width="30">
-                        </td>
-                        <td valign="top">
-                            <p class="nameq" style="margin-top: -2px;text-transform:none;">${escapeHtml(el.name)}</p>
-                            <p class="desq" style="text-transform:none;">${escapeHtml(el.description)}</p>
-                        </td>
-                    </tr>
-                    `)
+            while(tempDiv.firstChild) {
+                node.parentNode.insertBefore(tempDiv.firstChild, node)
             }
-        } catch(rejection) {
-            srchrr.innerHTML = tr("no_results")
+            node.parentNode.removeChild(node)
+        } else if(node.nodeType === 1 && node.tagName !== 'SCRIPT' && node.tagName !== 'BR' && node.tagName !== 'STYLE') {
+            Array.from(node.childNodes).forEach(highlightNode);
         }
+    }
+
+    selectors.forEach(selector => {
+        elements = container.find(selector)
+        if(!elements || elements.length < 1) return;
+
+        elements.nodes.forEach(highlightNode)
+    })
+}
+
+String.prototype.escapeHtml = function() {
+    try {
+        return escapeHtml(this)
+    } catch(e) {
+        return ''
     }
 }
 

@@ -1,4 +1,4 @@
-<div class="bigPlayer">
+<div n:class="bigPlayer, $tidy ? tidy">
     <audio class="audio" />
     <div class="paddingLayer">
         <div class="playButtons">
@@ -18,21 +18,21 @@
         <div class="trackPanel">
             <div class="trackInfo">
                 <div class="trackName">
-                    <b>{_track_unknown}</b> —
+                    <a>{_track_unknown}</a> —
                     <span>{_track_noname}</span>
                 </div>
 
                 <div class="timer" style="float:right">
                     <span class="time">00:00</span>
                     <span>/</span>
-                    <span class="elapsedTime" style="cursor:pointer">-00:00</span>
+                    <span class="elapsedTime">-00:00</span>
                 </div>
             </div>
 
             <div class="track" style="margin-top: -2px;">
                 <div class="bigPlayerTip">00:00</div>
                 <div class="selectableTrack">
-                    <div style="width: 95%;position: relative;">&nbsp;
+                    <div id='bigPlayerLengthSliderWrapper'>&nbsp;
                         <div class="slider"></div>
                     </div>
                 </div>
@@ -41,7 +41,7 @@
 
         <div class="volumePanel">
             <div class="selectableTrack">
-                <div style="position: relative;width:72%">&nbsp;
+                <div id='bigPlayerVolumeSliderWrapper'>&nbsp;
                     <div class="slider"></div>
                 </div>
             </div>

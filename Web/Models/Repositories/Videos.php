@@ -46,36 +46,37 @@ class Videos
         return sizeof($this->videos->where("owner", $user->getId())->where(["deleted" => 0, "unlisted" => 0]));
     }
 
-    function find(string $query = "", array $pars = [], string $sort = "id"): Util\EntityStream
+    function find(string $query = "", array $params = [], array $order = ['type' => 'id', 'invert' => false]): Util\EntityStream
     {
-        $query  = "%$query%";
-
-        $notNullParams = [];
-
-        foreach($pars as $paramName => $paramValue)
-            if($paramName != "before" && $paramName != "after")
-                $paramValue != NULL ? $notNullParams+=["$paramName" => "%$paramValue%"]   : NULL;
-            else
-                $paramValue != NULL ? $notNullParams+=["$paramName" => "$paramValue"]     : NULL;
-        
+        $query = "%$query%";
         $result = $this->videos->where("CONCAT_WS(' ', name, description) LIKE ?", $query)->where("deleted", 0);
-        $nnparamsCount = sizeof($notNullParams);
+        $order_str = 'id';
 
-        if($nnparamsCount > 0) {
-            foreach($notNullParams as $paramName => $paramValue) {
-                switch($paramName) {
-                    case "before":
-                        $result->where("created < ?", $paramValue);
-                        break;
-                    case "after":
-                        $result->where("created > ?", $paramValue);
-                        break;
-                }
+        switch($order['type']) {
+            case 'id':
+                $order_str = 'id ' . ($order['invert'] ? 'ASC' : 'DESC');
+                break;
+        }
+
+        foreach($params as $paramName => $paramValue) {
+            switch($paramName) {
+                case "before":
+                    $result->where("created < ?", $paramValue);
+                    break;
+                case "after":
+                    $result->where("created > ?", $paramValue);
+                    break;
+                case 'only_youtube':
+                    if((int) $paramValue != 1) break;
+                    $result->where("link != ?", 'NULL');
+                    break;
             }
         }
 
+        if($order_str)
+            $result->order($order_str);
 
-        return new Util\EntityStream("Video", $result->order("$sort"));
+        return new Util\EntityStream("Video", $result);
     }
 
     function getLastVideo(User $user)

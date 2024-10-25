@@ -467,11 +467,11 @@
                         </tr>
                         <tr n:if="!is_null($user->getHometown())">
                             <td class="label"><span class="nobold">{_hometown}:</span></td>
-                            <td class="data"><a href="/search?type=users&query=&hometown={urlencode($user->getHometown())}">{$user->getHometown()}</a></td>
+                            <td class="data"><a href="/search?section=users&q=&hometown={urlencode($user->getHometown())}">{$user->getHometown()}</a></td>
                         </tr>
                         <tr>
                             <td class="label"><span class="nobold">{_politViews}:</span></td>
-                            <td class="data"><a {if $user->getPoliticalViews() != 0}href="/search?type=users&query=&politViews={$user->getPoliticalViews()}"{/if}>{var $pviews = $user->getPoliticalViews()}{_"politViews_$pviews"}</a></td>
+                            <td class="data">{var $pviews = $user->getPoliticalViews()}{_"politViews_$pviews"}</td>
                         </tr>
                         <tr n:if="!is_null($user->getBirthday())">
                             <td class="label"><span class="nobold">{_birth_date}:</span></td>
@@ -517,7 +517,7 @@
                         </tr>
                     <tr n:if="!is_null($user->getCity())">
                         <td class="label"><span class="nobold">{_city}:</span></td>
-                        <td class="data"><a href="/search?type=users&query=&city={$user->getCity()}">{$user->getCity()}</a></td>
+                        <td class="data"><a href="/search?type=section&q=&city={$user->getCity()}">{$user->getCity()}</a></td>
                     </tr>
                     <tr n:if="!is_null($user->getPhysicalAddress())">
                         <td class="label"><span class="nobold">{_address}:</span></td>
@@ -535,7 +535,7 @@
                             {var $interests = explode(", ", $user->getInterests())}
                             
                             {foreach $interests as $interest}
-                                <a href="/search?type=users&query=&interests={urlencode($interest)}">{$interest}</a>{if $interest != end($interests)},{/if}
+                                <span>{$interest}</span>{if $interest != end($interests)},{/if}
                             {/foreach}
                         </td>
                     </tr>
@@ -546,7 +546,7 @@
                             {var $musics = explode(", ", $user->getFavoriteMusic())}
 
                             {foreach $musics as $music}
-                                <a href="/search?type=audios&query={urlencode($music)}">{$music}</a>{if $music != end($musics)},{/if}
+                                <a href="/search?section=audios&q={urlencode($music)}">{$music}</a>{if $music != end($musics)},{/if}
                             {/foreach}
                         </td>
                     </tr>
@@ -556,7 +556,7 @@
                             {var $films = explode(", ", $user->getFavoriteFilms())}
 
                             {foreach $films as $film}
-                                <a href="/search?type=users&query=&fav_films={urlencode($film)}">{$film}</a>{if $film != end($films)},{/if}
+                                <a href="/search?section=users&q=&fav_films={urlencode($film)}">{$film}</a>{if $film != end($films)},{/if}
                             {/foreach}
                         </td>
                     </tr>
@@ -566,7 +566,7 @@
                             {var $shows = explode(", ", $user->getFavoriteShows())}
 
                             {foreach $shows as $show}
-                                <a href="/search?type=users&query=&fav_shows={urlencode($show)}">{$show}</a>{if $show != end($shows)},{/if}
+                                <a href="/search?section=users&q=&fav_shows={urlencode($show)}">{$show}</a>{if $show != end($shows)},{/if}
                             {/foreach}
                         </td>
                     </tr>
@@ -576,7 +576,7 @@
                             {var $books = explode(", ", $user->getFavoriteBooks())}
 
                             {foreach $books as $book}
-                                <a href="/search?type=users&query=&fav_books={urlencode($book)}">{$book}</a>{if $book != end($books)},{/if}
+                                <a href="/search?section=users&q=&fav_books={urlencode($book)}">{$book}</a>{if $book != end($books)},{/if}
                             {/foreach}
                         </td>
                     </tr>

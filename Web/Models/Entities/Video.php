@@ -181,8 +181,8 @@ class Video extends Media
     {
         if(preg_match(file_get_contents(__DIR__ . "/../VideoDrivers/regex/youtube.txt"), $link, $matches)) {
             $pointer = "YouTube:$matches[1]";
-        } else if(preg_match(file_get_contents(__DIR__ . "/../VideoDrivers/regex/vimeo.txt"), $link, $matches)) {
-            $pointer = "Vimeo:$matches[1]";
+        /*} else if(preg_match(file_get_contents(__DIR__ . "/../VideoDrivers/regex/vimeo.txt"), $link, $matches)) {
+            $pointer = "Vimeo:$matches[1]";*/
         } else {
             throw new ISE("Invalid link");
         }
