@@ -74,7 +74,7 @@ final class Video extends VKAPIRequestHandler
         $return_items = [];
         $profiles = [];
         $groups = [];
-        foreach($items as $item)
+        foreach($items as $item) {
             $return_item = $item->getApiStructure($this->getUser());
             $return_item = $return_item->video;
             $return_items[] = $return_item;
@@ -85,6 +85,7 @@ final class Video extends VKAPIRequestHandler
                 else
                     $groups[] = abs($return_item['owner_id']);
             }
+        }
 
         if($extended) {
             $profiles = array_unique($profiles);

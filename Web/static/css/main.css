@@ -1454,6 +1454,24 @@ body.scrolled .toTop:hover {
     color: #3c3c3c;
 }
 
+.post-source #remove_source_button {
+    display: inline-block;
+    background-repeat: no-repeat;
+    background: url('/assets/packages/static/openvk/img/arrows.png?v=2');
+
+    margin-bottom: -2px;
+    background-position: -18px 0px;
+    height: 11px;
+    width: 11px;
+    opacity: 0.6;
+    transition-duration: 0.3s;
+    cursor: pointer;
+}
+
+.post-source #remove_source_button:hover {
+    opacity: 0.8;
+}
+
 .post-upload::before, .post-has-poll::before, .post-has-note::before {
     content: " ";
     width: 8px;
@@ -3017,6 +3035,26 @@ body.article .floating_sidebar, body.article .page_content {
     position: absolute;
     right: 22px;
     font-size: 12px;
+}
+
+.post .sourceDiv {
+    margin-top: 3px;
+    margin-left: 4px;
+}
+
+.post .sourceDiv span {
+    color: grey;
+    font-size: 10px;
+}
+
+.post .sourceDiv a:hover {
+    text-decoration: underline;
+}
+
+#source_flex_kunteynir {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
 }
 
 .sugglist {

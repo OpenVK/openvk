@@ -3,6 +3,11 @@
 {var $commentsCount = $post->getCommentsCount()}
 {var $platform = $post->getPlatform()}
 {var $platformDetails = $post->getPlatformDetails()}
+{var $likesCount = $post->getLikesCount()}
+{var $repostsCount = $post->getRepostCount()}
+{var $canBePinned = $post->canBePinnedBy($thisUser ?? NULL)}
+{var $canBeDeleted = $post->canBeDeletedBy($thisUser)}
+{var $wallOwner = $post->getWallOwner()}
 {if $post->isDeactivationMessage() && $post->getText()}
     {var $deac = "post_deact"}
 {else}
@@ -30,7 +35,6 @@
                     {$post->isUpdateAvatarMessage() && !$post->isPostedOnBehalfOfGroup() ? ($author->isFemale() ? tr("upd_f") : ($author->isNeutral() ? tr("upd_n") : tr("upd_m")))}
                     {$post->isUpdateAvatarMessage() && $post->isPostedOnBehalfOfGroup() ? tr("upd_g") : ""}
                     {if ($onWallOf ?? false) &&!$post->isPostedOnBehalfOfGroup() && $post->getOwnerPost() !== $post->getTargetWall()}
-                        {var $wallOwner = $post->getWallOwner()}
                         <a href="{$wallOwner->getURL()}" class="mention" data-mention-ref="{$post->getTargetWall()}">
                             <b>
                                 {if isset($thisUser) && $thisUser->getId() === $post->getTargetWall()}
@@ -53,9 +57,9 @@
 
                     <span n:if="$post->isPinned()" class="nobold">{_pinned}</span>
 
-                    <a n:if="$post->canBeDeletedBy($thisUser) && !($forceNoDeleteLink ?? false) && $compact == false" class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
+                    <a n:if="$canBeDeleted && !($forceNoDeleteLink ?? false) && $compact == false" class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
                     
-                    {if $post->canBePinnedBy($thisUser) && !($forceNoPinLink ?? false) && $compact == false}
+                    {if $canBePinned && !($forceNoPinLink ?? false) && $compact == false}
                         {if $post->isPinned()}
                             <a class="pin" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}"></a>
                         {else}
@@ -67,7 +71,7 @@
                         <a class="edit" id="editPost" 
                                         data-id="{$post->getId()}" 
                                         data-nsfw="{(int)$post->isExplicit()}"
-                                        {if $post->getTargetWall() < 0 && $post->getWallOwner()->canBeModifiedBy($thisUser)}data-fromgroup="{(int)$post->isPostedOnBehalfOfGroup()}"{/if}></a>
+                                        {if $post->getTargetWall() < 0 && $wallOwner->canBeModifiedBy($thisUser)}data-fromgroup="{(int)$post->isPostedOnBehalfOfGroup()}"{/if}></a>
                     {/if}
                 </div>
                 <div class="post-content" id="{$post->getPrettyId()}">
@@ -95,6 +99,9 @@
                         <br/>
                         &nbsp;! {_post_is_ad}
                     </div>
+                    <div n:if="$post->hasSource()" class="sourceDiv">
+                        <span>{_source}: {$post->getSource(true)|noescape}</span>
+                    </div>
                     <div n:if="$post->isSigned()" class="post-signature">
                         {var $actualAuthor = $post->getOwner(false)}
                         <span>
@@ -121,14 +128,14 @@
                         <div class="like_wrap">
                             <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button" href="javascript:repostPost('{$post->getPrettyId()}', '{rawurlencode($csrfToken)}')">
                                 <div class="repost-icon" style="opacity: 0.4;"></div>
-                                <span class="likeCnt" id="repostsCount{$post->getPrettyId()}">{if $post->getRepostCount() > 0}{$post->getRepostCount()}{/if}</span>
+                                <span class="likeCnt" id="repostsCount{$post->getPrettyId()}">{if $repostsCount > 0}{$repostsCount}{/if}</span>
                             </a>
 
                             {if !($forceNoLike ?? false)}
                                 {var $liked = $post->hasLikeFrom($thisUser)}
-                                <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$post->getLikesCount()}">
+                                <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$likesCount}">
                                     <div class="heart" id="{if $liked}liked{/if}"></div>
-                                    <span class="likeCnt">{if $post->getLikesCount() > 0}{$post->getLikesCount()}{/if}</span>
+                                    <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
                                 </a>
                             {/if}
                         </div>
@@ -145,7 +152,7 @@
                         {include "../textArea.xml", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), post => $post, club => $club}
                     </div>
                 </div>
-                <div n:if="$suggestion && $post->canBePinnedBy($thisUser ?? NULL)" class="suggestionControls">
+                <div n:if="$suggestion && $canBePinned" class="suggestionControls">
                     <input type="button" class="button" id="publish_post" data-id="{$post->getId()}" value="{_publish_suggested}">
                     <input type="button" class="button" id="decline_post" data-id="{$post->getId()}" value="{_decline_suggested}">
                 </div>

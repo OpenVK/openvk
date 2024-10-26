@@ -1,9 +1,11 @@
 {var $author = $comment->getOwner()}
 {var $Club  = openvk\Web\Models\Entities\Club::class}
-{var $postId = $comment->getTarget() instanceof \openvk\Web\Models\Entities\Post ? $comment->getTarget()->getId() : NULL}
+{var $likesCount = $comment->getLikesCount()}
+{var $target = $comment->getTarget()}
+{var $postId = $target instanceof \openvk\Web\Models\Entities\Post ? $target->getId() : NULL}
 
 <a name="cid={$comment->getId()}"></a>
-<table border="0" style="font-size: 11px;" class="post comment" id="_comment{$comment->getId()}" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}" data-from-group="{$comment->getOwner() instanceof $Club}" n:attr="data-post-id => $postId">
+<table border="0" style="font-size: 11px;" class="post comment" id="_comment{$comment->getId()}" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}" data-from-group="{$author instanceof $Club}" n:attr="data-post-id => $postId">
     <tbody>
         <tr>
             <td width="30" valign="top">
@@ -40,8 +42,8 @@
                             <span n:if="$comment->getEditTime()" class="edited editedMark">({_edited_short})</span>
                         </a>
                         {if !$timeOnly}
-                            &nbsp;|
                             {if $comment->canBeDeletedBy($thisUser)}
+                                |
                                 <a href="/comment{$comment->getId()}/delete">{_delete}</a>
                             {/if}
                             {if $comment->canBeEditedBy($thisUser)}
@@ -60,7 +62,7 @@
                             <div style="float: right; font-size: .7rem;">
                                 <a class="post-like-button" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}">
                                     <div class="heart" style="{if $comment->hasLikeFrom($thisUser)}opacity: 1;{else}opacity: 0.4;{/if}"></div>
-                                    <span class="likeCnt">{if $comment->getLikesCount() > 0}{$comment->getLikesCount()}{/if}</span>
+                                    <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
                                 </a>
                             </div>
                         {/if}

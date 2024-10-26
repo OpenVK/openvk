@@ -78,6 +78,40 @@ class Post extends Postable
     {
         return (bool) $this->getRecord()->pinned;
     }
+
+    function hasSource(): bool
+    {
+        return $this->getRecord()->source != NULL;
+    }
+
+    function getSource(bool $format = false)
+    {
+        $orig_source = $this->getRecord()->source;
+        if(!str_contains($orig_source, "https://") && !str_contains($orig_source, "http://"))
+            $orig_source = "https://" . $orig_source;
+
+        if(!$format)
+            return $orig_source;
+        
+        return $this->formatLinks($orig_source);
+    }
+
+    function setSource(string $source)
+    {
+        $result = check_copyright_link($source);
+
+        $this->stateChanges("source", $source);
+    }
+
+    function getVkApiCopyright(): object
+    {
+        return (object)[
+            'id'   => 0,
+            'link' => $this->getSource(false),
+            'name' => $this->getSource(false),
+            'type' => 'link',
+        ];
+    }
     
     function isAd(): bool
     {

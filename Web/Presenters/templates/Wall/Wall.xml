@@ -28,7 +28,7 @@
             </div>
 
             <div n:if="$canPost && $type == 'all'" class="content_subtitle">
-                {include "../components/textArea.xml", route => "/wall$owner/makePost"}
+                {include "../components/textArea.xml", route => "/wall$owner/makePost", hasSource => true}
             </div>
             
             <div class="content">
