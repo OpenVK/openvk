@@ -227,7 +227,7 @@
 "add_source" = "Add source";
 "set_source" = "Apply source";
 "source" = "Source";
-"set_source_tip" = "If you are using content from other authors, it is important to provide a source to the original. You can do this below.";
+"set_source_tip" = "If you are using content from other authors, it is important to provide a source to the original.<br>You can do it below.";
 
 "add_signature" = "Add signature";
 /* ^ can be translated as "author's signature". ^ */
