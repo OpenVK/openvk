@@ -47,3 +47,9 @@ Start is simple as `docker compose up -d`. You can also use `docker compose up` 
 - OpenVK will be available at `http://localhost:8080/`.
 - PHPMyAdmin will be available at `http://localhost:8081/`.
 - Adminer will be available at `http://localhost:8082/`.
+
+### Running in development environment
+By using additional `docker-compose.dev.yml` file you can develop OpenVK in Docker with automatic updates as you edit and save your code. Simply run:
+```
+docker compose -f docker-compose.yml -f docker-compose.dev.yml up --watch
+```
