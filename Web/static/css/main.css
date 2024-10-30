@@ -621,6 +621,16 @@ input[type=checkbox]:checked:disabled {
     background-position: 0 -42px;
 }
 
+input[type="number"] {
+    border: 1px solid #C0CAD5;
+    padding: 3px;
+    font-size: 11px;
+    font-family: tahoma, verdana, arial, sans-serif;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+}
+
 #auth {
     padding: 10px;
 }
@@ -2102,6 +2112,10 @@ table td[width="120"] {
     border-radius: 2px;
 }
 
+.mb_tab:hover {
+    background: #e2e0e0;
+}
+
 .mb_tab div, .mb_tab > a {
     padding: 5px 9px;
     display: block;
@@ -3261,4 +3275,45 @@ hr {
     background-image: url('/assets/packages/static/openvk/img/loading_mini.gif');
     width: 30px;
     height: 7px;
+}
+
+#__feed_settings_link {
+    float: right;
+    margin-right: 3px;
+    margin-top: 2px;
+}
+
+#__feed_settings_link:hover {
+    text-decoration: underline;
+}
+
+#_feed_settings_container {
+    height: 100%;
+}
+
+#_feed_settings_container #__content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 5px;
+    height: 100%;
+}
+
+#_feed_settings_container #__content .settings_item {
+    display: flex;
+    flex-direction: column;
+}
+
+#_feed_settings_container #__content .final_settings_item {
+    align-self: end;
+    margin-top: 74px;
+}
+
+#_feed_settings_container #pageNumber {
+    width: 70px;
+}
+
+#_feed_settings_container .entity_vertical_list {
+    height: 206px;
+    overflow-x: hidden;
 }

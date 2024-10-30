@@ -42,10 +42,11 @@ class Club extends RowModel
         return iterator_to_array($avPhotos)[0] ?? NULL;
     }
     
-    function getAvatarUrl(string $size = "miniscule"): string
+    function getAvatarUrl(string $size = "miniscule", $avPhoto = NULL): string
     {
         $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
-        $avPhoto   = $this->getAvatarPhoto();
+        if(!$avPhoto)
+            $avPhoto = $this->getAvatarPhoto();
         
         return is_null($avPhoto) ? "$serverUrl/assets/packages/static/openvk/img/camera_200.png" : $avPhoto->getURLBySizeId($size);
     }
@@ -443,25 +444,51 @@ class Club extends RowModel
 
         $res->id          = $this->getId();
         $res->name        = $this->getName();
-        $res->screen_name = $this->getShortCode();
-        $res->is_closed   = 0;
+        $res->screen_name = $this->getShortCode() ?? "club".$this->getId();
+        $res->is_closed   = false;
+        $res->type        = 'group';
+        $res->is_member   = $user ? (int)$this->getSubscriptionStatus($user) : 0;
         $res->deactivated = NULL;
-        $res->is_admin    = $user && $this->canBeModifiedBy($user);
+        $res->can_access_closed = true;
 
-        if($user && $this->canBeModifiedBy($user)) {
-            $res->admin_level = 3;
+        if(!is_array($fields))
+            $fields = explode(',', $fields);
+        
+        $avatar_photo  = $this->getAvatarPhoto();
+        foreach($fields as $field) {
+            switch($field) {
+                case 'verified':
+                    $res->verified = (int)$this->isVerified();
+                    break;
+                case 'site':
+                    $res->site = $this->getWebsite();
+                    break;
+                case 'description':
+                    $res->description = $this->getDescription();
+                    break;
+                case 'background':
+                    $res->background = $this->getBackDropPictureURLs();
+                    break;
+                case 'photo_50':
+                    $res->photo_50 = $this->getAvatarUrl('miniscule', $avatar_photo);
+                    break;
+                case 'photo_100':
+                    $res->photo_100 = $this->getAvatarUrl('tiny', $avatar_photo);
+                    break;
+                case 'photo_200':
+                    $res->photo_200 = $this->getAvatarUrl('normal', $avatar_photo);
+                    break;
+                case 'photo_max':
+                    $res->photo_max = $this->getAvatarUrl('original', $avatar_photo);
+                    break;
+                case 'members_count':
+                    $res->members_count = $this->getFollowersCount();
+                    break;
+                case 'real_id':
+                    $res->real_id = $this->getRealId();
+                    break;
+            }
         }
-
-        $res->is_member  = $user && $this->getSubscriptionStatus($user) ? 1 : 0;
-
-        $res->type       = "group";
-        $res->photo_50   = $this->getAvatarUrl("miniscule");
-        $res->photo_100  = $this->getAvatarUrl("tiny");
-        $res->photo_200  = $this->getAvatarUrl("normal");
-
-        $res->can_create_topic = $user && $this->canBeModifiedBy($user) ? 1 : ($this->isEveryoneCanCreateTopics() ? 1 : 0);
-
-        $res->can_post         = $user && $this->canBeModifiedBy($user) ? 1 : ($this->canPost() ? 1 : 0);
 
         return $res;
     }
@@ -469,4 +496,5 @@ class Club extends RowModel
     use Traits\TBackDrops;
     use Traits\TSubscribable;
     use Traits\TAudioStatuses;
+    use Traits\TIgnorable;
 }

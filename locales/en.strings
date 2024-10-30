@@ -219,6 +219,7 @@
 "my_news" = "My news";
 "all_news" = "All news";
 "posts_per_page" = "Number of posts per page";
+"show_ignored_sources" = "Show ignored sources";
 
 "attachment" = "Attachment";
 "post_as_group" = "Post as group";
@@ -244,6 +245,17 @@
 "post_is_ad" = "This post is sponsored.";
 
 "edited_short" = "edited";
+
+"feed_settings" = "Feed settings";
+"ignored_sources" = "Ignored sources";
+"ignore_user" = "Ignore user";
+"unignore_user" = "Unignore user";
+
+"ignore_club" = "Ignore club";
+"unignore_club" = "Unignore club";
+"no_ignores_count" = "No ignored sources.";
+"stop_ignore" = "Unignore";
+"start_from_page" = "Start from page";
 
 "all_posts" = "All posts";
 "users_posts" = "Posts by $1";
@@ -1535,6 +1547,9 @@
 "group_is_banned" = "Group was successfully banned";
 
 "description_too_long" = "Description is too long.";
+"invalid_club" = "This group does not exists.";
+"invalid_user" = "This user does not exists.";
+"ignored_sources_limit" = "Limit of ignored sources has exceed";
 
 "invalid_audio" = "Invalid audio.";
 "do_not_have_audio" = "You don't have this audio.";
@@ -1749,6 +1764,7 @@
 "question_confirm" = "This action can't be undone. Do you really wanna do it?";
 "confirm_m" = "Confirm";
 "action_successfully" = "Success";
+"apply" = "Apply";
 
 /* User Alerts */
 

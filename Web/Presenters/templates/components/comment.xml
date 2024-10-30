@@ -40,8 +40,8 @@
                             <span n:if="$comment->getEditTime()" class="edited editedMark">({_edited_short})</span>
                         </a>
                         {if !$timeOnly}
-                            &nbsp;|
                             {if $comment->canBeDeletedBy($thisUser)}
+                                |
                                 <a href="/comment{$comment->getId()}/delete">{_delete}</a>
                             {/if}
                             {if $comment->canBeEditedBy($thisUser)}
