@@ -9,7 +9,8 @@ html {
 body,
 #backdropDripper,
 #standaloneCommentBox,
-.ovk-photo-view {
+.ovk-photo-view,
+.articleView {
     background-color: #0e0b1a;
     color: #c6d2e8;
 }
@@ -23,7 +24,8 @@ span,
 .crp-entry--message---text,
 .messenger-app--messages---message .time,
 .navigation-lang .link_new,
-.tippy-box text {
+.tippy-box text,
+.articleView_author > div > span > a {
     color: #8b9ab5 !important;
 }
 
@@ -130,8 +132,17 @@ th,
 .borderup,
 #tour,
 #auth,
-.ovk-photo-view {
+.ovk-photo-view,
+.page_wrap_content_main .def_row_content,
+.topGrayBlock,
+.bigPlayer {
     border-color: #2c2640 !important;
+}
+
+.post-upload,
+.post-has-poll,
+.post-has-note {
+    color: #777;
 }
 
 .tippy-box[data-theme~="vk"][data-placement^='top']>.tippy-arrow::before,
@@ -154,8 +165,12 @@ hr {
 .messagebox-content-header,
 .accent-box,
 .button_search,
-.search_box_button {
+.header_navigation #search_box .search_box_button {
     background-color: #383052;
+}
+
+.header_navigation #search_box .search_box_button {
+    box-shadow: 0px 2px 0px 0px rgb(70, 63, 96) inset;
 }
 
 .search_option_name {
@@ -163,13 +178,15 @@ hr {
     color: lightgrey !important;
 }
 
-.tab:hover {
+.tab:hover,
+.ntSelect:hover {
     background-color: #40375e;
 }
 
 .menu_divider,
 .ovk-diag-action,
-.minilink .counter {
+.minilink .counter,
+.topGrayBlock {
     background-color: #2c2640;
 }
 
@@ -266,7 +283,8 @@ center[style="background: white;border: #DEDEDE solid 1px;"],
 td.e,
 tr.e,
 .playlistListView:hover, 
-.playlistListView .playlistCover {
+.playlistListView .playlistCover,
+.photosInsert > div {
     background-color: #231e33 !important;
 }
 
@@ -295,11 +313,11 @@ tr.v,
 }
 
 .content_title_expanded {
-    background-image: url("/themepack/midnight/0.0.2.9/resource/flex_arrow_open.png") !important;
+    background-image: url("/themepack/midnight/0.0.3.0/resource/flex_arrow_open.png") !important;
 }
 
 .content_title_unexpanded {
-    background-image: url("/themepack/midnight/0.0.2.9/resource/flex_arrow_shut.gif") !important;
+    background-image: url("/themepack/midnight/0.0.3.0/resource/flex_arrow_shut.gif") !important;
 }
 
 .ovk-video>.preview,
@@ -326,17 +344,17 @@ tr.h {
 
 .page_yellowheader {
     color: #c6d2e8;
-    background-image: url("/themepack/midnight/0.0.2.9/resource/header_purple.png") !important;
+    background-image: url("/themepack/midnight/0.0.3.0/resource/header_purple.png") !important;
     background-color: #231f34;
     border-color: #231f34;
 }
 
 .page_header {
-    background-image: url("/themepack/midnight/0.0.2.9/resource/header.png") !important;
+    background-image: url("/themepack/midnight/0.0.3.0/resource/header.png") !important;
 }
 
 .page_custom_header {
-    background-image: url("/themepack/midnight/0.0.2.9/resource/header_custom.png") !important;
+    background-image: url("/themepack/midnight/0.0.3.0/resource/header_custom.png") !important;
 }
 
 .page_yellowheader span,
@@ -374,11 +392,11 @@ select,
 }
 
 input[type="checkbox"] {
-    background-image: url("/themepack/midnight/0.0.2.9/resource/checkbox.png") !important;
+    background-image: url("/themepack/midnight/0.0.3.0/resource/checkbox.png") !important;
 }
 
 input[type="radio"] {
-    background-image: url("/themepack/midnight/0.0.2.9/resource/radio.png") !important;
+    background-image: url("/themepack/midnight/0.0.3.0/resource/radio.png") !important;
 }
 
 .header_navigation .link, .header_navigation .header_divider_stick {
@@ -386,20 +404,20 @@ input[type="radio"] {
 }
 
 .heart {
-    background-image: url("/themepack/midnight/0.0.2.9/resource/like.gif") !important;
+    background-image: url("/themepack/midnight/0.0.3.0/resource/like.gif") !important;
 }
 
 .pinned-mark,
 .post-author .pin {
-    background-image: url("/themepack/midnight/0.0.2.9/resource/pin.png") !important;
+    background-image: url("/themepack/midnight/0.0.3.0/resource/pin.png") !important;
 }
 
 .repost-icon {
-    background-image: url("/themepack/midnight/0.0.2.9/resource/published.gif") !important;
+    background-image: url("/themepack/midnight/0.0.3.0/resource/published.gif") !important;
 }
 
 .post-author .delete {
-    background-image: url("/themepack/midnight/0.0.2.9/resource/input_clear.gif") !important;
+    background-image: url("/themepack/midnight/0.0.3.0/resource/input_clear.gif") !important;
 }
 
 .user-alert {
@@ -432,7 +450,7 @@ input[type="radio"] {
 }
 
 #backdropEditor {
-    background-image: url("/themepack/midnight/0.0.2.9/resource/backdrop-editor.gif") !important;
+    background-image: url("/themepack/midnight/0.0.3.0/resource/backdrop-editor.gif") !important;
     border-color: #473e66 !important;
 }
 
@@ -485,7 +503,8 @@ input[type="radio"] {
     background: #19142D !important;
 }
 
-.audioEntry .performer a {
+.audioEntry .performer a,
+.bigPlayer .paddingLayer .trackInfo a {
     color: #a2a1a1 !important;
 }
 
@@ -590,4 +609,8 @@ ul {
 .content_page_error {
     background: #28223a;
     border: #2c2640 solid 1px;
+}
+
+#backdropFilePicker {
+    margin: 15px !important;
 }
