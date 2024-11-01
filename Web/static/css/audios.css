@@ -9,7 +9,7 @@
 }
 
 .musicIcon {
-    background-image: url('/assets/packages/static/openvk/img/audios_controls.png');
+    background-image: url('/assets/packages/static/openvk/img/audios_controls.png?v=2');
     background-repeat: no-repeat;
     cursor: pointer;
 }
@@ -185,6 +185,7 @@
     width: 81%;
     height: 13px;
     display: inline-block;
+    line-height: 14px;
 }
 
 .bigPlayer .paddingLayer .trackInfo .timer span {
@@ -345,6 +346,7 @@
 .audioEntry .status .mediaInfo {
     cursor: pointer;
     display: flex;
+    line-height: 14px;
     width: 100%;
 }
 

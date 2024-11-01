@@ -70,7 +70,7 @@ class Makima
                     $result->colSizes = [1];
                     $result->rowSizes = [1, 1];
                     $result->width    = ceil($maxWidth);
-                    $result->height   = $computedHeight;
+                    $result->height   = $computedHeight * 2;
                     $result->tiles    = [new ThumbTile(1, 1, $maxWidth, $computedHeight), new ThumbTile(1, 1, $maxWidth, $computedHeight)];
                 } else if(
                     $orients == [Makima::ORIENT_WIDE, Makima::ORIENT_WIDE]

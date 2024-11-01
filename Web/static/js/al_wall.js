@@ -1145,7 +1145,7 @@ $(document).on("click", "#editPost", (e) => {
                     }
 
                     post.querySelector(".post-avatar").setAttribute("src", result.author.avatar)
-                    post.querySelector(".post-author-name").innerHTML = result.author.name
+                    post.querySelector(".post-author-name").innerHTML = result.author.name.escapeHtml()
                     post.querySelector(".really_text").setAttribute("data-text", result.new_text)
                 } else {
                     MessageBox(tr("error"), result.error, [tr("ok")], [Function.noop])
@@ -1626,7 +1626,7 @@ $(document).on("click", ".avatarDelete", (e) => {
                     
                     u("body").removeClass("dimmed");
                     document.querySelector("html").style.overflowY = "scroll"
-                    u(".ovk-diag-cont").remove();
+                    u(".ovk-diag-cont").remove()
 
                     document.querySelector("#bigAvatar").src = response.url
                     document.querySelector("#bigAvatar").parentNode.href = response.new_photo ? ("/photo" + response.new_photo) : "javascript:void(0)"
@@ -1642,4 +1642,78 @@ $(document).on("click", ".avatarDelete", (e) => {
             u("#tmpPhDelF").remove();
         }),
     ]);
+})
+
+u(document).on('click', '#__sourceAttacher', (e) => {
+    MessageBox(tr('add_source'), `
+        <div id='source_flex_kunteynir'>
+            <span>${tr('set_source_tip')}</span>
+            <!-- давай, копируй ссылку и переходи по ней -->
+            <input type='text' maxlength='400' placeholder='https://www.youtube.com/watch?v=lkWuk_nzzVA'>
+        </div>
+    `, [tr('cancel')], [
+        () => {Function.noop}
+    ])
+
+    __removeDialog = () => {
+        u("body").removeClass("dimmed");
+        document.querySelector("html").style.overflowY = "scroll"
+        u(".ovk-diag-cont").remove()
+    }
+
+    u('.ovk-diag-action').append(`
+        <button class='button' id='__setsrcbutton'>${tr('set_source')}</button>
+    `)
+
+    u('.ovk-diag-action #__setsrcbutton').on('click', async (ev) => {
+        // Consts
+        const _u_target        = u(e.target)
+        const nearest_textarea = _u_target.closest('#write')
+        const source_output    = nearest_textarea.find(`input[name='source']`)
+        const source_input     = u(`#source_flex_kunteynir input[type='text']`)
+        const source_value     = source_input.nodes[0].value ?? ''
+        if(source_value.length < 1) {
+            return
+        }
+
+        ev.target.classList.add('lagged')
+
+        // Checking link
+        const __checkCopyrightLinkRes = await fetch(`/method/wall.checkCopyrightLink?auth_mechanism=roaming&link=${encodeURIComponent(source_value)}`)
+        const checkCopyrightLink = await __checkCopyrightLinkRes.json()
+        
+        // todo переписать блять мессенджбоксы чтоб они классами были
+        if(checkCopyrightLink.error_code) {
+            __removeDialog()
+            switch(checkCopyrightLink.error_code) {
+                default:
+                case 3102:
+                    fastError(tr('error_adding_source_regex'))
+                    return
+                case 3103:
+                    fastError(tr('error_adding_source_long'))
+                    return
+                case 3104:
+                    fastError(tr('error_adding_source_sus'))
+                    return
+            }
+        }
+
+        // Making indicator
+        __removeDialog()
+        source_output.attr('value', source_value)
+        nearest_textarea.find('.post-source').html(`
+            <span>${tr('source')}: <a target='_blank' href='${source_value.escapeHtml()}'>${ovk_proc_strtr(source_value.escapeHtml(), 50)}</a></span>
+            <div id='remove_source_button'></div>
+        `)
+
+        nearest_textarea.find('.post-source #remove_source_button').on('click', () => {
+            nearest_textarea.find('.post-source').html('')
+            source_output.attr('value', 'none')
+        })
+    })
+
+    u('.ovk-diag-body').attr('style', `padding:8px;`)
+    u('.ovk-diag-cont').attr('style', 'width: 325px;')
+    u('#source_flex_kunteynir input').nodes[0].focus()
 })

@@ -44,7 +44,7 @@
 ._add_image::before {
     margin-top: 2px;
     content: ' ';
-    background: url('/assets/packages/static/openvk/img/upload.png');
+    background: url('/assets/packages/static/openvk/img/upload.png?v=2');
     width: 10px;
     height: 10px;
     display: inline-block;
@@ -65,7 +65,7 @@
 
 .avatarDelete::before {
     content: ' ';
-    background: url('/assets/packages/static/openvk/img/upload.png');
+    background: url('/assets/packages/static/openvk/img/upload.png?v=2');
     background-position: -10px 2px;
     background-repeat: no-repeat;
     width: 12px;

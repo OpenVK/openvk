@@ -224,6 +224,12 @@
 "attachment" = "Attachment";
 "post_as_group" = "Post as group";
 "comment_as_group" = "Comment as group";
+
+"add_source" = "Add source";
+"set_source" = "Apply source";
+"source" = "Source";
+"set_source_tip" = "If you are using content from other authors, it is important to provide a source to the original.<br>You can do it below.";
+
 "add_signature" = "Add signature";
 /* ^ can be translated as "author's signature". ^ */
 "contains_nsfw" = "Contains NSFW content";
@@ -848,6 +854,7 @@
 
 /* Audios */
 
+"my" = "My";
 "audios" = "Audios";
 "audio" = "Audio";
 "playlist" = "Playlist";
@@ -1570,6 +1577,10 @@
 "ffmpeg_not_installed" = "Failed to proccess the file. It looks like ffmpeg is not installed on this server.";
 "too_many_or_to_lack" = "Too few or too many sources.";
 
+"error_adding_source_regex" = "Error adding source: incorrect link.";
+"error_adding_source_long" = "Error adding source: link is too long.";
+"error_adding_source_sus" = "Error adding source: suspicious link.";
+
 /* Admin actions */
 
 "login_as" = "Login as $1";
@@ -2011,6 +2022,7 @@
 
 /* Search */
 
+"s_params" = "Search params";
 "s_people" = "Users";
 "s_groups" = "Clubs";
 "s_apps" = "Applications";
