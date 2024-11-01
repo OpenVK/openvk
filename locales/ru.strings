@@ -229,6 +229,7 @@
 "users_posts" = "Записи $1";
 "clubs_posts" = "Записи сообщества";
 "others_posts" = "Чужие записи";
+"show_more" = "Показать больше";
 
 /* Friends */
 
@@ -455,15 +456,17 @@
 "groups_avatar" = "Хорошее фото сделает Ваше сообщество более узнаваемым.";
 "formats_avatar" = "Вы можете загрузить изображение в формате JPG, GIF или PNG.";
 "troubles_avatar" = "Если возникают проблемы с загрузкой, попробуйте выбрать фотографию меньшего размера.";
-"webcam_avatar" = "Если ваш компьютер оснащён веб-камерой, Вы можете <a href='javascript:'>сделать моментальную фотографию »</a>";
+"webcam_avatar" = "Если ваш компьютер оснащён веб-камерой, Вы можете <a id='_takeSelfie'>сделать моментальную фотографию »</a>";
+"publish_on_wall" = "Опубликовать запись на стене";
+"take_snapshot" = "Сделать снимок";
+"your_browser_doesnt_support_webcam" = "Ваш браузер не поддерживает съёмку видео с веб-камеры.";
 
-"update_avatar_notification" = "Фотография профиля обновлена";
-"update_avatar_description" = "Нажмите сюда, чтобы перейти к просмотру";
+"selected_area_user" = "Выбранная область будет показываться на вашей странице.";
+"selected_area_club" = "Выбранная область будет показываться на странице сообщества.";
+"selected_area_rotate" = "Если изображение ориентировано неправильно, фотографию можно повернуть.";
 
 "deleting_avatar" = "Удаление фотографии";
 "deleting_avatar_sure" = "Вы действительно хотите удалить аватар?";
-
-"deleted_avatar_notification" = "Фотография успешно удалена";
 
 "save_changes" = "Сохранить изменения";
 
@@ -619,6 +622,7 @@
 "search_for_apps" = "Поиск приложений";
 "search_for_notes" = "Поиск записок";
 "search_for_audios" = "Поиск музыки";
+"search_for_audios_playlists" = "Поиск плейлистов";
 "search_button" = "Найти";
 "search_placeholder" = "Начните вводить любое имя, название или слово";
 "results_zero" = "Ни одного результата";
@@ -833,6 +837,7 @@
 "my_playlists" = "Мои плейлисты";
 "playlists" = "Плейлисты";
 "audios_explicit" = "Содержит нецензурную лексику";
+"audios_unlisted" = "Скрыто из поиска";
 "withdrawn" = "Изъято";
 "deleted" = "Удалено";
 "owner" = "Владелец";
@@ -883,6 +888,13 @@
 "listens_count_other" = "$1 прослушиваний";
 
 "add_audio_to_club" = "Добавить аудио в группу";
+"add_audio" = "Добавление аудио";
+"add_audio_limitations" = "Можно выбрать до 10 групп/плейлистов.";
+"to_club" = "В группу";
+"to_playlist" = "В плейлист";
+
+"audio_was_successfully_added" = "Аудио были успешно добавлены.";
+
 "what_club_add" = "В какую группу вы хотите добавить песню?";
 "group_has_audio" = "У группы уже есть эта песня.";
 "group_hasnt_audio" = "У группы нет этой песни.";
@@ -890,6 +902,7 @@
 "by_name" = "по композициям";
 "by_performer" = "по исполнителю";
 "no_access_clubs" = "Нет групп, где вы являетесь администратором.";
+"no_access_playlists" = "Вы ещё не создавали плейлистов.";
 "audio_successfully_uploaded" = "Аудио успешно загружено и на данный момент обрабатывается.";
 
 "broadcast_audio" = "Транслировать аудио в статус";
@@ -902,6 +915,8 @@
 "repeat_tip" = "Повторение";
 "shuffle_tip" = "Перемешать";
 "mute_tip" = "Заглушить";
+"playlist_hide_from_search" = "Не показывать в поиске";
+"confirm_deleting_audio" = "Вы действительно хотите полностью удалить аудиозапись?";
 
 /* Notifications */
 
@@ -1403,7 +1418,7 @@
 "no_video_desc" = "Выберите файл или укажите ссылку.";
 "error_occured" = "Произошла ошибка";
 "error_video_damaged_file" = "Файл повреждён или не содержит видео.";
-"error_video_incorrect_link" = "Возможно, ссылка некорректна.";
+"error_video_incorrect_link" = "Возможно, ссылка некорректна";
 "error_video_no_title" = "Видео не может быть опубликовано без названия.";
 
 "new_data_video" = "Обновлённое описание появится на странице с видео.";
@@ -1438,6 +1453,7 @@
 "error_code" = "Код ошибки: $1.";
 "ffmpeg_timeout" = "Превышено время ожидания обработки ffmpeg. Попробуйте загрузить файл снова.";
 "ffmpeg_not_installed" = "Не удалось обработать файл. Похоже, на сервере не установлен ffmpeg.";
+"too_many_or_to_lack" = "Слишком мало либо слишком много источников.";
 
 /* Admin actions */
 
@@ -1867,24 +1883,23 @@
 
 /* Search */
 
-"s_people" = "Люди";
+"s_people" = "Пользователи";
 "s_groups" = "Группы";
-"s_events" = "События";
 "s_apps" = "Приложения";
-"s_questions" = "Вопросы";
-"s_notes" = "Заметки";
-"s_themes" = "Темы";
 "s_posts" = "Записи";
 "s_comments" = "Комментарии";
 "s_videos" = "Видео";
 "s_audios" = "Аудио";
-"s_by_people" = "по людям";
+"s_audios_playlists" = "Плейлисты";
+
+"s_by_people" = "по пользователям";
 "s_by_groups" = "по группам";
 "s_by_posts" = "по записям";
 "s_by_comments" = "по комментариям";
 "s_by_videos" = "по видео";
 "s_by_apps" = "по приложениям";
-"s_by_audios" = "по музыке";
+"s_by_audios" = "по аудиозаписям";
+"s_by_audios_playlists" = "по плейлистам";
 
 "s_order_by" = "Порядок";
 
@@ -1895,6 +1910,10 @@
 "s_order_by_length" = "По длине";
 "s_order_by_listens" = "По числу прослушиваний";
 "s_order_invert" = "Инвертировать";
+"s_order_by_reg_date" = "По дате регистрации";
+"s_order_by_creation_date" = "По дате создания";
+"s_order_by_publishing_date" = "По дате публикации";
+"s_order_by_upload_date" = "По дате загрузки";
 
 "s_by_date" = "По дате";
 "s_registered_before" = "Зарегистрирован до";
@@ -1907,16 +1926,23 @@
 "s_now_on_site" = "cейчас на сайте";
 "s_with_photo" = "с фото";
 "s_only_in_names" = "только в именах";
+"s_only_youtube" = "только с YouTube";
 
-"s_any" = "любой";
+"s_any" = "любые";
+"s_any_single" = "любой";
 "reset" = "Сброс";
 
-"closed_group_post" = "Эта запись из закрытой группы";
+"closed_group_post" = "Запись с закрытой стены";
 "deleted_target_comment" = "Этот комментарий принадлежит к удалённой записи";
 
 "no_results" = "Результатов нет";
-"s_only_performers" = "Только исполнители";
+"s_only_performers" = "По исполнителям";
 "s_with_lyrics" = "С текстом";
+
+"showing_x_y" = "(показывается $1—$2)";
+"no_results_by_this_query" = "По данному запросу ничего не найдено.";
+"s_additional" = "Дополнительно";
+"s_it_is_you" = "это вы";
 
 /* BadBrowser */
 
@@ -1995,7 +2021,7 @@
 
 "error_video" = "Произошла ошибка";
 "file_corrupted" = "Файл повреждён или не содержит видео.";
-"link_incorrect" = "Возможно, ссылка некорректна.";
+"link_incorrect" = "Возможно, ссылка некорректна (попробуй убрать параметры по типу &t= или &si=)";
 
 "no_name_error" = "Видео не может быть опубликовано без названия";
 "access_denied_error" = "Ошибка доступа";

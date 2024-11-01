@@ -186,8 +186,12 @@ final class VKAPIPresenter extends OpenVKPresenter
     
     function renderRoute(string $object, string $method): void
     {
+        $callback = $this->queryParam("callback");
         $authMechanism = $this->queryParam("auth_mechanism") ?? "token";
         if($authMechanism === "roaming") {
+            if($callback)
+                $this->fail(-1, "User authorization failed: roaming mechanism is unavailable with jsonp.", $object, $method);
+
             if(!$this->user->identity)
                 $this->fail(5, "User authorization failed: roaming mechanism is selected, but user is not logged in.", $object, $method);
             else
@@ -259,10 +263,16 @@ final class VKAPIPresenter extends OpenVKPresenter
         $result = json_encode([
             "response" => $res,
         ]);
+
+        if($callback) {
+            $result = $callback . '(' . $result . ')';
+            header('Content-Type: application/javascript');
+        } else
+            header("Content-Type: application/json");
         
         $size = strlen($result);
-        header("Content-Type: application/json");
         header("Content-Length: $size");
+
         exit($result);
     }
     

@@ -151,7 +151,6 @@ final class Users extends VKAPIRequestHandler
 								}
 							case "music":
 								if(!$canView) {
-									$response[$i]->music = "secret";
 									break;
 								}
 
@@ -159,7 +158,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "movies":
 								if(!$canView) {
-									$response[$i]->movies = "secret";
 									break;
 								}
 
@@ -167,7 +165,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "tv":
 								if(!$canView) {
-									$response[$i]->tv = "secret";
 									break;
 								}
 
@@ -175,7 +172,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "books":
 								if(!$canView) {
-									$response[$i]->books = "secret";
 									break;
 								}
 
@@ -183,7 +179,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "city":
 								if(!$canView) {
-									$response[$i]->city = "Воскресенск";
 									break;
 								}
 
@@ -191,7 +186,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "interests":
 								if(!$canView) {
-									$response[$i]->interests = "secret";
 									break;
 								}
 
@@ -199,7 +193,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "quotes":
 								if(!$canView) {
-									$response[$i]->quotes = "secret";
 									break;
 								}
 
@@ -207,7 +200,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "email":
 								if(!$canView) {
-									$response[$i]->email = "secret@gmail.com";
 									break;
 								}
 
@@ -215,7 +207,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "telegram":
 								if(!$canView) {
-									$response[$i]->telegram = "@secret";
 									break;
 								}
 
@@ -223,7 +214,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "about":
 								if(!$canView) {
-									$response[$i]->about = "secret";
 									break;
 								}
 								
@@ -231,7 +221,6 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case "rating":
 								if(!$canView) {
-									$response[$i]->rating = 22;
 									break;
 								}
 
@@ -246,9 +235,37 @@ final class Users extends VKAPIRequestHandler
 									"notes_count" => (new Notes)->getUserNotesCount($usr)
 								];
 								break;
+							case "correct_counters":
+								$response[$i]->counters = (object) [
+									"friends" => $usr->getFriendsCount(),
+									"photos"  => (new Photos)->getUserPhotosCount($usr),
+									"videos"  => (new Videos)->getUserVideosCount($usr),
+									"audios"  => (new Audios)->getUserCollectionSize($usr),
+									"notes"   => (new Notes)->getUserNotesCount($usr),
+									"groups"  => $usr->getClubCount(),
+									"online_friends" => $usr->getFriendsOnlineCount(),
+								];
+								break;
                             case "guid":
                                 $response[$i]->guid = $usr->getChandlerGUID();
                                 break;
+							case 'background':
+								$backgrounds = $usr->getBackDropPictureURLs();
+								$response[$i]->background = $backgrounds;
+								break;
+							case 'reg_date':
+								if(!$canView) {
+									break;
+								}
+								
+								$response[$i]->reg_date = $usr->getRegistrationTime()->timestamp();
+								break;
+							case 'is_dead':
+								$response[$i]->is_dead = $usr->isDead();
+								break;
+							case 'nickname':
+								$response[$i]->nickname = $usr->getPseudo();
+								break;
 						}
 					}
 
@@ -300,89 +317,90 @@ final class Users extends VKAPIRequestHandler
                     int $count = 100,
                     string $city = "",
                     string $hometown = "",
-                    int $sex = 2,
-                    int $status = 0, # это про marital status
+                    int $sex = 3,
+                    int $status = 0, # marital_status
                     bool $online = false,
-                    # дальше идут параметры которых нету в vkapi но есть на сайте
-                    string $profileStatus = "", # а это уже нормальный статус
+                    # non standart params:
                     int $sort = 0,
-                    int $before = 0,
-                    int $politViews = 0,
-                    int $after = 0,
-                    string $interests = "",
+                    int $polit_views = 0,
                     string $fav_music = "",
                     string $fav_films = "",
                     string $fav_shows = "",
-                    string $fav_books = "",
-                    string $fav_quotes = ""
+                    string $fav_books = ""
                     )
     {
-        $users = new UsersRepo;
-        
-        $sortg = "id ASC";
+        if($count > 100) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: count should be less or equal to 100");
+        }
 
-        $nfilds = $fields;
+        $users = new UsersRepo;
+        $output_sort = ['type' => 'id', 'invert' => false];
+		$output_params = [
+			"ignore_private" => true,
+		];
 
         switch($sort) {
+			default:
             case 0:
-                $sortg = "id DESC";
+                $output_sort = ['type' => 'id', 'invert' => false];
                 break;
             case 1:
-                $sortg = "id ASC";
-                break;
-            case 2:
-                $sortg = "first_name DESC";
-                break;
-            case 3:
-                $sortg = "first_name ASC";
+                $output_sort = ['type' => 'id', 'invert' => true];
                 break;
             case 4:
-                $sortg = "rating DESC";
-
-                if(!str_contains($nfilds, "rating")) {
-                    $nfilds .= "rating";
-                }
-
-                break;
-            case 5:
-                $sortg = "rating DESC";
-
-                if(!str_contains($nfilds, "rating")) {
-                    $nfilds .= "rating";
-                }
-
+				$output_sort = ['type' => 'rating', 'invert' => false];
                 break;
         }
 
+        if(!empty($city))
+            $output_params['city'] = $city;
+
+        if(!empty($hometown))
+            $output_params['hometown'] = $hometown;
+
+        if($sex != 3)
+           $output_params['gender'] = $sex;
+
+        if($status != 0)
+            $output_params['marital_status'] = $status;
+        
+        if($polit_views != 0)
+            $output_params['polit_views'] = $polit_views;     
+
+        if(!empty($interests))
+            $output_params['interests'] = $interests;
+
+        if(!empty($fav_music))
+            $output_params['fav_music'] = $fav_music;
+
+        if(!empty($fav_films))
+            $output_params['fav_films'] = $fav_films;
+
+        if(!empty($fav_shows))
+            $output_params['fav_shows'] = $fav_shows;
+    
+        if(!empty($fav_books))
+            $output_params['fav_books'] = $fav_books;
+
+        if($online)
+            $output_params['is_online'] = 1;
+
         $array = [];
+        $find  = $users->find($q, $output_params, $output_sort);
 
-        $parameters = [
-            "city"            => !empty($city) ? $city : NULL,
-            "hometown"        => !empty($hometown) ? $hometown : NULL,
-            "gender"          => $sex < 2 ? $sex : NULL,
-            "maritalstatus"   => (bool)$status ? $status : NULL,
-            "politViews"      => (bool)$politViews ? $politViews : NULL,
-            "is_online"       => $online ? 1 : NULL,
-            "status"          => !empty($profileStatus) ? $profileStatus : NULL,
-            "before"          => $before != 0 ? $before : NULL,
-            "after"           => $after  != 0 ? $after : NULL,
-            "interests"       => !empty($interests) ? $interests : NULL,
-            "fav_music"       => !empty($fav_music) ? $fav_music : NULL,
-            "fav_films"       => !empty($fav_films) ? $fav_films : NULL,
-            "fav_shows"       => !empty($fav_shows) ? $fav_shows : NULL,
-            "fav_books"       => !empty($fav_books) ? $fav_books : NULL,
-            "fav_quotes"      => !empty($fav_quotes) ? $fav_quotes : NULL,
-            "doNotSearchPrivate" => true,
-        ];
-
-        $find  = $users->find($q, $parameters, $sortg);
-
-        foreach ($find as $user)
+        foreach ($find->offsetLimit($offset, $count) as $user)
             $array[] = $user->getId();
 
+        if(!$array || sizeof($array) < 1) {
+            return (object) [
+                "count" => 0,
+                "items" => [],
+            ];
+        }
+
         return (object) [
-        	"count" => $find->size(),
-        	"items" => $this->get(implode(',', $array), $nfilds, $offset, $count)
+            "count" => $find->size(),
+            "items" => $this->get(implode(',', $array), $fields)
         ];
     }
 

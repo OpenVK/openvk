@@ -6,15 +6,18 @@ use openvk\Web\Models\Entities\Notifications\GiftNotification;
 
 final class Gifts extends VKAPIRequestHandler
 {
-    function get(int $user_id, int $count = 10, int $offset = 0)
+    function get(int $user_id = NULL, int $count = 10, int $offset = 0)
     {
         $this->requireUser();
 
         $i = 0;
-
         $i += $offset;
+        $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
 
-        $user = (new UsersRepo)->get($user_id);
+        if($user_id)
+            $user = (new UsersRepo)->get($user_id);
+        else 
+            $user = $this->getUser();
 
         if(!$user || $user->isDeleted())
             $this->fail(177, "Invalid user");
@@ -47,9 +50,9 @@ final class Gifts extends VKAPIRequestHandler
                     "date"      => $gift->sent->timestamp(),
                     "gift"      => [
                         "id"          => $gift->gift->getId(),
-                        "thumb_256"   => $gift->gift->getImage(2),
-                        "thumb_96"    => $gift->gift->getImage(2),
-                        "thumb_48"    => $gift->gift->getImage(2)
+                        "thumb_256"   => $server_url. $gift->gift->getImage(2),
+                        "thumb_96"    => $server_url . $gift->gift->getImage(2),
+                        "thumb_48"    => $server_url . $gift->gift->getImage(2)
                     ],
                     "privacy"   => 0
                 ];
@@ -125,12 +128,13 @@ final class Gifts extends VKAPIRequestHandler
         $this->fail(501, "Not implemented");
     }
 
-    # этих методов не было в ВК, но я их добавил чтобы можно было отобразить список подарков
+    # в vk кстати называется gifts.getCatalog
     function getCategories(bool $extended = false, int $page = 1)
     {
         $cats = (new GiftsRepo)->getCategories($page);
         $categ = [];
         $i = 0;
+        $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
 
         if(!OPENVK_ROOT_CONF['openvk']['preferences']['commerce'])
             $this->fail(105, "Commerce is disabled on this instance");
@@ -140,8 +144,8 @@ final class Gifts extends VKAPIRequestHandler
                 "name"        => $cat->getName(),
                 "description" => $cat->getDescription(),
                 "id"          => $cat->getId(),
-                "thumbnail"   => $cat->getThumbnailURL(),
-                ];
+                "thumbnail"   => $server_url . $cat->getThumbnailURL(),
+            ];
             
             if($extended == true) {
                 $categ[$i]["localizations"] = [];
@@ -178,7 +182,7 @@ final class Gifts extends VKAPIRequestHandler
                 "name"         => $gift->getName(),
                 "image"        => $gift->getImage(2),
                 "usages_left"  => (int)$gift->getUsagesLeft($this->getUser()),
-                "price"        => $gift->getPrice(), # голосов
+                "price"        => $gift->getPrice(),
                 "is_free"      => $gift->isFree()
             ];
         }

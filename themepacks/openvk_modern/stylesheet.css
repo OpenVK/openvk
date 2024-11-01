@@ -24,8 +24,8 @@ body {
     text-shadow: none;
 }
 
-.header_navigation .link {
-    background: unset;
+.header_navigation .link, .header_navigation .header_divider_stick {
+    background: unset !important;
 }
 
 .header_navigation .link a:hover {
@@ -252,87 +252,30 @@ ul {
     background-color:#3c3c3c
 }
 
-.searchOptions
-{
-    overflow-y: hidden;
-    overflow-x:hidden;
-    width:25.5%;
-    border-top:1px solid #2B2B2B;
-    float:right;
-    scrollbar-width: none;
-    font-size:12px;
-    background-color:#F6F6F6;
-    margin-right: -7px;
-}
-
-.searchBtn
-{
-    border: none;
-    background-color: #555555;
-    color: #ffffff;
-    margin-left: -3px;
-    padding-bottom: 2px;
-    width: 80px;
-    cursor: pointer;
+.search_box_button {
     box-shadow: none;
 }
 
-.searchBtn:active
-{
-    border: none;
-    background-color: rgb(77, 77, 77);
-    color: white;
+.search_box_button:active {
     box-shadow: none;
 }
 
-.searchList #used {
+.verticalGrayTabs #used {
     background: #3c3c3c !important;
-    border: unset !important;
+    border: 1px solid #3c3c3c;
 }
 
-.searchList #used a
-{
+.verticalGrayTabs #used a {
     color: white;
 }
 
-.searchHide
-{
-    padding-right: 5px;
-}
-
-.searchList li:hover
-{
-    margin-left: 0px;
-    color: #2B587A !important;
-    background: #eeeeee;
-    padding: 2px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    margin-bottom: 2px;
-    padding-left: 5px;
-    width: 91%;
-}
-
-.searchOptionName
-{
-    cursor: pointer;
+.search_option_name {
     background-color: #a4a4a4;
-    padding-left: 5px;
-    padding-top: 5px;
-    padding-bottom: 5px;
-    width: 90%;
-    font-weight: 600;
-    color: #fff;
+    border-bottom: unset;
 }
 
-.searchOptionName img
-{
-    display: none;
-}
-
-.borderup
-{
-    border-top: 1px solid #2f2f2f;
+.verticalGrayTabsWrapper {
+    border-top: unset;
 }
 
 .sugglist {
@@ -370,4 +313,9 @@ ul {
 
 .musicIcon.lagged {
     opacity: 50%;
+}
+
+.bigPlayer {
+    position: sticky;
+    top: 42px;
 }

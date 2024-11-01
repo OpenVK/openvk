@@ -152,6 +152,11 @@ class Audio extends Media
         return $this->getPerformer() . " — " . $this->getTitle();
     }
 
+    function getDownloadName(): string
+    {
+        return preg_replace('/[\\/:*?"<>|]/', '_', str_replace(' ', '_', $this->getName()));
+    }
+
     function getGenre(): ?string
     {
         return $this->getRecord()->genre;

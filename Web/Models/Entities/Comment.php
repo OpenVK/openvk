@@ -103,6 +103,22 @@ class Comment extends Post
 
         return $this->getTarget()->canBeViewedBy($user);
     }
+
+    function isFromPostAuthor($target = NULL)
+    {
+        if(!$target)
+            $target = $this->getTarget();
+
+        $target_owner = $target->getOwner();
+        $comment_owner = $this->getOwner();
+        
+        if($target_owner->getRealId() === $comment_owner->getRealId())
+            return true;
+
+        # TODO: make it work with signer_id
+
+        return false;
+    }
   
     function toNotifApiStruct()
     {
@@ -123,5 +139,32 @@ class Comment extends Post
             return false;
         
         return $user->getId() == $this->getOwner(false)->getId();
+    }
+
+    function getTargetURL(): string
+    {
+        $target = $this->getTarget();
+        $target_name = 'wall';
+
+        if(!$target) {
+            return '/404';
+        }
+
+        switch(get_class($target)) {
+            case 'openvk\Web\Models\Entities\Note':
+                $target_name = 'note';
+                break;
+            case 'openvk\Web\Models\Entities\Photo':
+                $target_name = 'photo';
+                break;
+            case 'openvk\Web\Models\Entities\Video':
+                $target_name = 'video';
+                break;
+            case 'openvk\Web\Models\Entities\Topic':
+                $target_name = 'topic';
+                break;
+        }
+
+        return $target_name . $target->getPrettyId();
     }
 }

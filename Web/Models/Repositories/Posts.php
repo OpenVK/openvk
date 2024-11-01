@@ -154,36 +154,45 @@ class Posts
         
     }
 
-    function find(string $query = "", array $pars = [], string $sort = "id"): Util\EntityStream
+    function find(string $query = "", array $params = [], array $order = ['type' => 'id', 'invert' => false]): Util\EntityStream
     {
-        $query  = "%$query%";
-
-        $notNullParams = [];
-
-        foreach($pars as $paramName => $paramValue)
-            if($paramName != "before" && $paramName != "after")
-                $paramValue != NULL ? $notNullParams+=["$paramName" => "%$paramValue%"]   : NULL;
-            else
-                $paramValue != NULL ? $notNullParams+=["$paramName" => "$paramValue"]     : NULL;
-
+        $query = "%$query%";
         $result = $this->posts->where("content LIKE ?", $query)->where("deleted", 0)->where("suggested", 0);
-        $nnparamsCount = sizeof($notNullParams);
+        $order_str = 'id';
 
-        if($nnparamsCount > 0) {
-            foreach($notNullParams as $paramName => $paramValue) {
-                switch($paramName) {
-                    case "before":
-                        $result->where("created < ?", $paramValue);
-                        break;
-                    case "after":
-                        $result->where("created > ?", $paramValue);
-                        break;
-                }
+        switch($order['type']) {
+            case 'id':
+                $order_str = 'created ' . ($order['invert'] ? 'ASC' : 'DESC');
+                break;
+        }
+
+        foreach($params as $paramName => $paramValue) {
+            if(is_null($paramValue) || $paramValue == '') continue;
+
+            switch($paramName) {
+                case "before":
+                    $result->where("created < ?", $paramValue);
+                    break;
+                case "after":
+                    $result->where("created > ?", $paramValue);
+                    break;
+                /*case 'die_in_agony':
+                    $result->where("nsfw", 1);
+                    break;
+                case 'ads':
+                    $result->where("ad", 1);
+                    break;*/
+                # БУДЬ МАКСИМАЛЬНО АККУРАТЕН С ДАННЫМ ПАРАМЕТРОМ
+                case 'from_me':
+                    $result->where("owner", $paramValue);
+                    break;
             }
         }
 
+        if($order_str)
+            $result->order($order_str);
 
-        return new Util\EntityStream("Post", $result->order("$sort"));
+        return new Util\EntityStream("Post", $result);
     }
 
     function getPostCountOnUserWall(int $user): int

@@ -313,10 +313,14 @@ class bigPlayer {
         })
 
         u(".bigPlayer .trackInfo b").on("click", (e) => {
-            window.location.assign(`/search?query=${e.currentTarget.innerHTML}&type=audios&only_performers=on`)
+            window.location.assign(`/search?q=${e.currentTarget.innerHTML}&section=audios&only_performers=on`)
         })
 
         u(document).on("keydown", (e) => {
+            if(document.activeElement.closest('.page_header')) {
+                return
+            }
+            
             if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)) {
                 if(document.querySelector(".ovk-diag-cont") != null)
                     return
@@ -349,6 +353,10 @@ class bigPlayer {
         })
 
         u(document).on("keyup", (e) => {
+            if(document.activeElement.closest('.page_header')) {
+                return
+            }
+            
             if([87, 65, 83, 68, 82, 77].includes(e.keyCode)) {
                 if(document.querySelector(".ovk-diag-cont") != null)
                     return
@@ -536,7 +544,8 @@ class bigPlayer {
         }
 
         this.nodes["thisPlayer"].querySelector(".trackInfo span").innerHTML = escapeHtml(obj.name) 
-        this.nodes["thisPlayer"].querySelector(".trackInfo b").innerHTML = escapeHtml(obj.performer)
+        this.nodes["thisPlayer"].querySelector(".trackInfo a").innerHTML = escapeHtml(obj.performer)
+        this.nodes["thisPlayer"].querySelector(".trackInfo a").href = `/search?query=&section=audios&order=listens&only_performers=on&q=${encodeURIComponent(obj.performer.escapeHtml())}`
         this.nodes["thisPlayer"].querySelector(".trackInfo .time").innerHTML = fmtTime(obj.length)
         this.tracks["currentTrack"] = obj
 
@@ -644,34 +653,10 @@ document.addEventListener("DOMContentLoaded", function() {
         let type = context.dataset.type
         let entity = context.dataset.entity
         window.player = new bigPlayer(type, entity, context.dataset.page)
-
-        let bigplayer = document.querySelector('.bigPlayerDetector')
-
-        let bigPlayerObserver = new IntersectionObserver(entries => {
-            entries.forEach(x => {
-                if(x.isIntersecting) {
-                    document.querySelector('.bigPlayer').classList.remove("floating")
-                    //document.querySelector('.searchOptions .searchList').classList.remove("floating")
-                    document.querySelector('.bigPlayerDetector').style.marginTop = "0px"
-                } else {
-                    //document.querySelector('.searchOptions .searchList').classList.add("floating")
-                    document.querySelector('.bigPlayer').classList.add("floating")
-                    document.querySelector('.bigPlayerDetector').style.marginTop = "46px"
-                }
-            });
-        }, {
-            root: null,
-            rootMargin: "0px",
-            threshold: 0
-        });
-
-        if(bigplayer != null)
-            bigPlayerObserver.observe(bigplayer);
     }
 
     $(document).on("mouseover mouseleave", `.audioEntry .mediaInfo`, (e) => {
         const info = e.currentTarget.closest(".mediaInfo")
-        const overfl = info.querySelector(".info")
 
         if(e.originalEvent.type == "mouseleave" || e.originalEvent.type == "mouseout") {
             info.classList.add("noOverflow")
@@ -765,11 +750,14 @@ function initPlayer(id, keys, url, length) {
             playButton.removeClass("paused")
             document.querySelector('link[rel="icon"], link[rel="shortcut icon"]').setAttribute("href", "/assets/packages/static/openvk/img/favicons/favicon24_playing.png")
         }
-        
+
+        u('.subTracks').nodes.forEach(el => {
+            el.classList.remove('shown')
+        })
+
+        u(`#audioEmbed-${ id} .subTracks`).addClass('shown')
         if(!$(`#audioEmbed-${ id}`).hasClass("havePlayed")) {
             $(`#audioEmbed-${ id}`).addClass("havePlayed")
-
-            $(`#audioEmbed-${ id} .track`).toggle()
 
             $.post(`/audio${playerObject.dataset.realid}/listen`, {
                 hash: u("meta[name=csrf]").attr("value")
@@ -778,14 +766,14 @@ function initPlayer(id, keys, url, length) {
     };
 
     const hideTracks = () => {
-        $(`#audioEmbed-${ id} .track`).toggle()
+        $(`#audioEmbed-${ id} .track`).removeClass('shown')
         $(`#audioEmbed-${ id}`).removeClass("havePlayed")
     }
 
     u(audio).on("play", playButtonImageUpdate);
     u(audio).on(["pause", "suspended"], playButtonImageUpdate);
     u(audio).on("ended", (e) => {
-        let thisPlayer = e.target.closest(".audioEmbed")
+        let thisPlayer = playerObject
         let nextPlayer = null
         if(thisPlayer.closest(".attachment") != null) {
             try {
@@ -794,6 +782,10 @@ function initPlayer(id, keys, url, length) {
         } else if(thisPlayer.closest(".audio") != null) {
             try {
                 nextPlayer = thisPlayer.closest(".audio").nextElementSibling.querySelector(".audioEmbed")
+            } catch(e) {return}
+        } else if(thisPlayer.closest(".search_content") != null) {
+            try {
+                nextPlayer = thisPlayer.closest(".search_content").nextElementSibling.querySelector(".audioEmbed")
             } catch(e) {return}
         } else {
             nextPlayer = thisPlayer.nextElementSibling
@@ -812,7 +804,13 @@ function initPlayer(id, keys, url, length) {
         hideTracks()
     })
 
-    u(`#audioEmbed-${ id} .lengthTrack > div`).on("click", (e) => {
+    u(`#audioEmbed-${ id} .lengthTrack > div`).on("click mouseup mousemove", (e) => {
+        if(e.type == "mousemove") {
+            let buttonsPresseed = _bsdnUnwrapBitMask(e.buttons)
+            if(!buttonsPresseed[0])
+                return;
+        }
+
         let rect  = document.querySelector("#audioEmbed-" + id + " .selectableTrack").getBoundingClientRect();
         const width = e.clientX - rect.left;
         const time = Math.ceil((width * length) / (rect.right - rect.left));
@@ -832,7 +830,7 @@ function initPlayer(id, keys, url, length) {
         const width = e.clientX - rect.left;
         const volume = (width * 1) / (rect.right - rect.left);
 
-        audio.volume = volume;
+        audio.volume = Math.max(0, volume);
     });
 
     audio.volume = localStorage.volume ?? 0.75
@@ -899,7 +897,7 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
                     if(response.success) {
                         let perf = player.querySelector(".performer a")
                         perf.innerHTML = escapeHtml(response.new_info.performer)
-                        perf.setAttribute("href", "/search?query=&type=audios&sort=id&only_performers=on&query="+response.new_info.performer)
+                        perf.setAttribute("href", "/search?q=&section=audios&order=listens&only_performers=on&q="+response.new_info.performer)
                         
                         e.target.setAttribute("data-performer", escapeHtml(response.new_info.performer))
                         
@@ -965,28 +963,29 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
 
     u(".ovk-diag-body #_fullyDeleteAudio").on("click", (e) => {
         u("body").removeClass("dimmed");
+        u(".ovk-diag-cont").remove();
         document.querySelector("html").style.overflowY = "scroll"
 
-        u(".ovk-diag-cont").remove();
-
-        $.ajax({
-            type: "POST",
-            url: `/audio${id}/action?act=delete`,
-            data: {
-                hash: u("meta[name=csrf]").attr("value")
-            },
-            success: (response) => {
-                if(response.success)
-                    u(player).remove()
-                else
-                    fastError(response.flash.message)
-            }
-        });
+        MessageBox(tr('confirm'), tr('confirm_deleting_audio'), [tr('yes'), tr('no')], [() => {
+            $.ajax({
+                type: "POST",
+                url: `/audio${id}/action?act=delete`,
+                data: {
+                    hash: u("meta[name=csrf]").attr("value")
+                },
+                success: (response) => {
+                    if(response.success)
+                        u(player).remove()
+                    else
+                        fastError(response.flash.message)
+                }
+            });
+        }, () => {Function.noop}])
     })
 })
 
 $(document).on("click", ".title.withLyrics", (e) => {
-    let parent = e.currentTarget.closest(".audioEmbed")
+    const parent = e.currentTarget.closest(".audioEmbed")
 
     parent.querySelector(".lyrics").classList.toggle("showed")
 })
@@ -994,7 +993,12 @@ $(document).on("click", ".title.withLyrics", (e) => {
 $(document).on("click", ".musicIcon.remove-icon", (e) => {
     e.stopImmediatePropagation()
 
-    let id = e.currentTarget.dataset.id
+    const id = e.currentTarget.dataset.id
+    if(e.detail > 1 || e.altKey) {
+        const player = e.target.closest('.audioEmbed')
+        player.querySelector('.add-icon-group').click()
+        return
+    }
 
     let formdata = new FormData()
     formdata.append("hash", u("meta[name=csrf]").attr("value"))
@@ -1031,7 +1035,7 @@ $(document).on("click", ".musicIcon.remove-icon-group", (e) => {
     e.stopImmediatePropagation()
     
     let id = e.currentTarget.dataset.id
-
+    
     let formdata = new FormData()
     formdata.append("hash", u("meta[name=csrf]").attr("value"))
     formdata.append("club", e.currentTarget.dataset.club)
@@ -1058,59 +1062,218 @@ $(document).on("click", ".musicIcon.remove-icon-group", (e) => {
 })
 
 $(document).on("click", ".musicIcon.add-icon-group", async (ev) => {
-    let body = `
-        ${tr("what_club_add")}
-        <div style="margin-top: 4px;">
-            <select id="addIconsWindow" style="width: 59%;"></select>
-            <input name="addButton" type="button" class="button" value="${tr("add")}">
+    let   current_tab = 'club';
+    const id = Number(ev.target.dataset.id)
+    const body = `
+        <div id='_addAudioAdditional'>
+            <div id='_tabs'>
+                <div class="mb_tabs">
+                    <div class="mb_tab" data-name='club'>
+                        <a>
+                            ${tr('to_club')}
+                        </a>
+                    </div>
+                    <div class="mb_tab" data-name='playlist'>
+                        <a>
+                            ${tr('to_playlist')}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <span id='_tip'>${tr('add_audio_limitations')}</span>
+            <div id='_content'></div>
         </div>
-        <span class="errorPlace"></span>
     `
-    MessageBox(tr("add_audio_to_club"), body, [tr("close")], [Function.noop])
 
-    document.querySelector(".ovk-diag-body").style.padding = "11px"
+    MessageBox(tr("add_audio"), body, [tr("cancel"), tr("add")], [Function.noop, () => {
+        const ids = []
+        u('#_content .entity_vertical_list_item').nodes.forEach(item => {
+            const _checkbox = item.querySelector(`input[type='checkbox'][name='add_to']`)
+            if(_checkbox.checked) {
+                ids.push(item.dataset.id)
+            }
+        })
 
-    if(window.openvk.writeableClubs == null) {
-        try {
-            window.openvk.writeableClubs = await API.Groups.getWriteableClubs()
-        } catch (e) {
-            document.querySelector(".errorPlace").innerHTML = tr("no_access_clubs")
-            document.querySelector(".ovk-diag-body input[name='addButton']").classList.add("lagged")
-
+        if(ids.length < 1 || ids.length > 10) {
             return
+        }
+
+        console.log(ids)
+
+        switch(current_tab) {
+            case 'club':
+                $.ajax({
+                    type: "POST",
+                    url: `/audio${id}/action?act=add_to_club`,
+                    data: {
+                        hash: u("meta[name=csrf]").attr("value"),
+                        clubs: ids.join(',')
+                    },
+                    success: (response) => {
+                        if(!response.success)
+                            fastError(response.flash.message)
+                        else
+                            NewNotification(tr("audio_was_successfully_added"), '')
+                    }
+                })
+
+                break
+            case 'playlist':
+                $.ajax({
+                    type: "POST",
+                    url: `/audio${id}/action?act=add_to_playlist`,
+                    data: {
+                        hash: u("meta[name=csrf]").attr("value"),
+                        playlists: ids.join(',')
+                    },
+                    success: (response) => {
+                        if(!response.success)
+                            fastError(response.flash.message)
+                        else
+                            NewNotification(tr("audio_was_successfully_added"), '')
+                    }
+                })
+
+                break
+        }
+    }])
+
+    u(".ovk-diag-body").attr('style', 'padding:0px;height: 260px;')
+
+    async function switchTab(tab = 'club') {
+        current_tab = tab
+        u(`#_addAudioAdditional .mb_tab`).attr('id', 'ki')
+        u(`#_addAudioAdditional .mb_tab[data-name='${tab}']`).attr('id', 'active')
+
+        switch(tab) {
+            case 'club':
+                u("#_content").html(`<div class='entity_vertical_list mini'></div>`)
+                if(window.openvk.writeableClubs == null) {
+                    u('.entity_vertical_list').append(`<div id='gif_loader'></div>`)
+
+                    try {
+                        window.openvk.writeableClubs = await API.Groups.getWriteableClubs()
+                    } catch (e) {
+                        u("#_content").html(tr("no_access_clubs"))
+            
+                        return
+                    }
+
+                    u('.entity_vertical_list #gif_loader').remove()
+                }
+                
+                window.openvk.writeableClubs.forEach(el => {
+                    u("#_content .entity_vertical_list").append(`
+                    <label class='entity_vertical_list_item with_third_column' data-id='${el.id}'>
+                        <div class='first_column'>
+                            <a href='/club${el.id}' class='avatar'>
+                                <img src='${el.avatar}' alt='avatar'>
+                            </a>
+
+                            <div class='info'>
+                                <b class='noOverflow' value="${el.id}">${ovk_proc_strtr(escapeHtml(el.name), 100)}</b>
+                            </div>
+                        </div>
+
+                        <div class='third_column'>
+                            <input type='checkbox' name='add_to'>
+                        </div>
+                    </label>
+                    `)
+                })
+                break
+            case 'playlist':
+                const per_page = 10
+                let page = 0
+                u("#_content").html(`<div class='entity_vertical_list mini'></div>`)
+
+                async function recievePlaylists(s_page) {
+                    res = await fetch(`/method/audio.searchAlbums?auth_mechanism=roaming&query=&limit=10&offset=${s_page * per_page}&from_me=1`)
+                    res = await res.json()
+
+                    return res
+                }
+
+                function appendPlaylists(response) {
+                    response.items.forEach(el => {
+                        u("#_content .entity_vertical_list").append(`
+                        <label class='entity_vertical_list_item with_third_column' data-id='${el.owner_id}_${el.id}'>
+                            <div class='first_column'>
+                                <a href='/playlist${el.owner_id}_${el.id}' class='avatar'>
+                                    <img src='${el.cover_url}' alt='cover'>
+                                </a>
+    
+                                <div class='info'>
+                                    <b class='noOverflow' value="${el.owner_id}_${el.id}">${ovk_proc_strtr(escapeHtml(el.title), 100)}</b>
+                                </div>
+                            </div>
+    
+                            <div class='third_column'>
+                                <input type='checkbox' name='add_to'>
+                            </div>
+                        </label>
+                        `)
+                    })
+
+                    if(response.count > per_page * page) {
+                        u("#_content .entity_vertical_list").append(`<a id='_pladdwinshowmore'>${tr('show_more')}</a>`)
+                    }
+                }
+
+                if(window.openvk.writeablePlaylists == null) {
+                    u('.entity_vertical_list').append(`<div id='gif_loader'></div>`)
+
+                    try {
+                        res = await recievePlaylists(page)
+                        page += 1
+                        window.openvk.writeablePlaylists = res.response
+
+                        if(!window.openvk.writeablePlaylists || window.openvk.writeablePlaylists.count < 1) {
+                            throw new Error
+                        }
+                    } catch (e) {
+                        u("#_content").html(tr("no_access_playlists"))
+            
+                        return
+                    }
+
+                    u('.entity_vertical_list #gif_loader').remove()
+                }
+
+                appendPlaylists(window.openvk.writeablePlaylists)
+                
+                u('#_addAudioAdditional').on('click', '#_pladdwinshowmore', async (e) => {
+                    e.target.outerHTML = ''
+
+                    res = await recievePlaylists(page)
+                    page += 1
+
+                    appendPlaylists(res.response)
+                })
+                break
         }
     }
 
-    window.openvk.writeableClubs.forEach(el => {
-        document.querySelector("#addIconsWindow").insertAdjacentHTML("beforeend", `
-            <option value="${el.id}">${ovk_proc_strtr(el.name, 20)}</option>
-        `)
+    switchTab(current_tab)
+
+    u("#_addAudioAdditional").on("click", ".mb_tab a", async (e) => {
+        await switchTab(u(e.target).closest('.mb_tab').attr('data-name'))
     })
-
-    $(".ovk-diag-body").on("click", "input[name='addButton']", (e) => {
-        $.ajax({
-            type: "POST",
-            url: `/audio${ev.target.dataset.id}/action?act=add_to_club`,
-            data: {
-                hash: u("meta[name=csrf]").attr("value"),
-                club: document.querySelector("#addIconsWindow").value
-            },
-            beforeSend: () => {
-                e.target.classList.add("lagged")
-                document.querySelector(".errorPlace").innerHTML = ""
-            },
-            success: (response) => {
-                if(!response.success)
-                    document.querySelector(".errorPlace").innerHTML = response.flash.message
-
-                e.currentTarget.classList.remove("lagged")
-            }
-        })
+    
+    u("#_addAudioAdditional").on("click", "input[name='add_to']", async (e) => {
+        if(u(`input[name='add_to']:checked`).length > 10) {
+            e.preventDefault()
+        }
     })
 })
 
 $(document).on("click", ".musicIcon.add-icon", (e) => {
-    let id = e.currentTarget.dataset.id
+    const id = e.currentTarget.dataset.id
+    if(e.detail > 1 || e.altKey) {
+        const player = e.target.closest('.audioEmbed')
+        player.querySelector('.add-icon-group').click()
+        return
+    }
 
     let formdata = new FormData()
     formdata.append("hash", u("meta[name=csrf]").attr("value"))
@@ -1312,7 +1475,7 @@ $(document).on("click", "#_audioAttachment", (e) => {
     })
 })
 
-$(document).on("click", ".audioEmbed.processed", (e) => {
+$(document).on("click", ".audioEmbed.processed .playerButton", (e) => {
     MessageBox(tr("error"), tr("audio_embed_processing"), [tr("ok")], [Function.noop])
 })
 

@@ -8,11 +8,11 @@
     {if !$_GET["gid"]}
         <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
         »
-        <a href="/audios{$thisUser->getId()}">{_audios}</a>
+        <a href="/playlists{$thisUser->getId()}">{_playlists}</a>
     {else}
         <a href="{$club->getURL()}">{$club->getCanonicalName()}</a>
         »
-        <a href="/audios-{$club->getId()}">{_audios}</a>
+        <a href="/playlists-{$club->getId()}">{_playlists}</a>
     {/if}
     »
     {_new_playlist}
@@ -44,6 +44,10 @@
             <div class="moreInfo" style="margin-top: 11px;">
                 <textarea placeholder="{_description}" name="description" maxlength="2045" />
             </div>
+            <label>
+                <input type='checkbox' name='is_unlisted'>
+                {_playlist_hide_from_search}
+            </label>
         </div>
     </div>
 
@@ -68,6 +72,7 @@
     <form method="post" id="newPlaylistForm" enctype="multipart/form-data">
         <input type="hidden" name="title" maxlength="125" />
         <input type="hidden" name="hash" value="{$csrfToken}" />
+        <input type="hidden" name="is_unlisted" value="0" />
         <textarea style="display:none;" name="description" maxlength="2045" />
         <input type="hidden" name="audios">
         <input type="file" style="display:none;" name="cover" accept=".jpg,.png">
@@ -83,6 +88,7 @@
         u("#newPlaylistForm").on("submit", (e) => {
             document.querySelector("#newPlaylistForm input[name='title']").value = document.querySelector(".plinfo input[name='title']").value
             document.querySelector("#newPlaylistForm textarea[name='description']").value = document.querySelector(".plinfo textarea[name='description']").value
+            document.querySelector("#newPlaylistForm input[name='is_unlisted']").value = document.querySelector(".plinfo input[name='is_unlisted']").checked ? 1 : 0
         })
 
         u("#newPlaylistForm input[name='cover']").on("change", (e) => {
