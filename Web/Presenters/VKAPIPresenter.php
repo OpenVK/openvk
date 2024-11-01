@@ -186,8 +186,12 @@ final class VKAPIPresenter extends OpenVKPresenter
     
     function renderRoute(string $object, string $method): void
     {
+        $callback = $this->queryParam("callback");
         $authMechanism = $this->queryParam("auth_mechanism") ?? "token";
         if($authMechanism === "roaming") {
+            if($callback)
+                $this->fail(-1, "User authorization failed: roaming mechanism is unavailable with jsonp.", $object, $method);
+
             if(!$this->user->identity)
                 $this->fail(5, "User authorization failed: roaming mechanism is selected, but user is not logged in.", $object, $method);
             else
@@ -233,8 +237,19 @@ final class VKAPIPresenter extends OpenVKPresenter
                     $this->badMethodCall($object, $method, $parameter->getName());
             }
             
-            settype($val, $parameter->getType()->getName());
-            $params[] = $val;
+            try {
+                // Проверка типа параметра
+                $type = $parameter->getType();
+                if (($type && !$type->isBuiltin()) || is_null($val)) {
+                    $params[] = $val; 
+                } else {
+                    settype($val, $parameter->getType()->getName());
+                    $params[] = $val;
+                }
+            } catch (\Throwable $e) {
+                // Just ignore the exception, since
+                // some args are intended for internal use
+            }
         }
         
         define("VKAPI_DECL_VER", $this->requestParam("v") ?? "4.100", false);
@@ -248,10 +263,16 @@ final class VKAPIPresenter extends OpenVKPresenter
         $result = json_encode([
             "response" => $res,
         ]);
+
+        if($callback) {
+            $result = $callback . '(' . $result . ')';
+            header('Content-Type: application/javascript');
+        } else
+            header("Content-Type: application/json");
         
         $size = strlen($result);
-        header("Content-Type: application/json");
         header("Content-Length: $size");
+
         exit($result);
     }
     
@@ -281,22 +302,74 @@ final class VKAPIPresenter extends OpenVKPresenter
                 $this->fail(28, "Invalid 2FA code", "internal", "acquireToken");
         }
         
-        $platform = $this->requestParam("client_name");
-
-        $token = new APIToken;
-        $token->setUser($user);
-        $token->setPlatform($platform ?? (new WhichBrowser\Parser(getallheaders()))->toString());
-        $token->save();
+        $token        = NULL;
+        $tokenIsStale = true;
+        $platform     = $this->requestParam("client_name");
+        $acceptsStale = $this->requestParam("accepts_stale");
+        if($acceptsStale == "1") {
+            if(is_null($platform))
+                $this->fail(101, "accepts_stale can only be used with explicitly set client_name", "internal", "acquireToken");
+            
+            $token = (new APITokens)->getStaleByUser($uId, $platform);
+        }
+        
+        if(is_null($token)) {
+            $tokenIsStale = false;
+            
+            $token = new APIToken;
+            $token->setUser($user);
+            $token->setPlatform($platform ?? (new WhichBrowser\Parser(getallheaders()))->toString());
+            $token->save();
+        }
         
         $payload = json_encode([
             "access_token" => $token->getFormattedToken(),
             "expires_in"   => 0,
             "user_id"      => $uId,
+            "is_stale"     => $tokenIsStale,
         ]);
         
         $size = strlen($payload);
         header("Content-Type: application/json");
         header("Content-Length: $size");
         exit($payload);
+    }
+    
+    function renderOAuthLogin() {
+        $this->assertUserLoggedIn();
+        
+        $client  = $this->queryParam("client_name");
+        $postmsg = $this->queryParam("prefers_postMessage") ?? '0';
+        $stale   = $this->queryParam("accepts_stale") ?? '0';
+        $origin  = NULL;
+        $url     = $this->queryParam("redirect_uri");
+        if(is_null($url) || is_null($client))
+            exit("<b>Error:</b> redirect_uri and client_name params are required.");
+        
+        if($url != "about:blank") {
+            if(!filter_var($url, FILTER_VALIDATE_URL))
+                exit("<b>Error:</b> Invalid URL passed to redirect_uri.");
+            
+            $parsedUrl = (object) parse_url($url);
+            if($parsedUrl->scheme != 'https' && $parsedUrl->scheme != 'http')
+                exit("<b>Error:</b> redirect_uri should either point to about:blank or to a web resource.");
+            
+            $origin = "$parsedUrl->scheme://$parsedUrl->host";
+            if(!is_null($parsedUrl->port ?? NULL))
+                $origin .= ":$parsedUrl->port";
+            
+            $url .= strpos($url, '?') === false ? '?' : '&';
+        } else {
+            $url .= "#";
+            if($postmsg == '1') {
+                exit("<b>Error:</b> prefers_postMessage can only be set if redirect_uri is not about:blank");
+            }
+        }
+        
+        $this->template->clientName     = $client;
+        $this->template->usePostMessage = $postmsg == '1';
+        $this->template->acceptsStale   = $stale == '1';
+        $this->template->origin         = $origin;
+        $this->template->redirectUri    = $url;
     }
 }

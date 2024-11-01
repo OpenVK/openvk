@@ -1,0 +1,27 @@
+chandler:
+    debug: true
+    websiteUrl: null
+    rootApp:    "openvk"
+    
+    preferences:
+        appendExtension: "xhtml"
+        adminUrl: "/chandlerd"
+        exposeChandler: true
+        logs:
+            enabled: true
+            entitiesNamespace: "openvk\\Web\\Models\\Entities\\"
+    
+    extensions:
+        path: null
+        allEnabled: false
+    
+    database:
+        dsn: "mysql:host=mariadb-primary;dbname=db"
+        user: "openvk"
+        password: "openvk"
+    
+    security:
+        secret: "e7oltodd7kx2ifgxcfractxp8pq4ffd1ktkxrjpv80hsqe4t6josth9znuznhpvedd32bo0msj4l6ycjx2fj8f77hnpfcejsxjgfbs2k0lpqpb9dkf0txkwtmh4j3tvs"
+        csrfProtection: "permissive"
+        extendedValidation: false
+        sessionDuration: 14

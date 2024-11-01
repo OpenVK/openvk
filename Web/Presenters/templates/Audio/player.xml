@@ -1,0 +1,73 @@
+{php $id = $audio->getId() . rand(0, 1000)}
+{php $isWithdrawn = $audio->isWithdrawn()}
+{php $isAvailable = $audio->isAvailable()}
+{php $editable = isset($thisUser) && $audio->canBeModifiedBy($thisUser)}
+<div id="audioEmbed-{$id}" data-realid="{$audio->getId()}" {if $hideButtons}data-prettyid="{$audio->getPrettyId()}" data-name="{$audio->getName()}"{/if} data-genre="{$audio->getGenre()}" class="audioEmbed {if !$isAvailable}processed{/if} {if $isWithdrawn}withdrawn{/if}" data-length="{$audio->getLength()}" data-keys="{json_encode($audio->getKeys())}" data-url="{$audio->getURL()}">
+    <audio class="audio" />
+
+    <div id="miniplayer" class="audioEntry" style="min-height: 39px;">
+        <div style="display: flex;">
+            <div class="playerButton">
+                <div class="playIcon"></div>
+            </div>
+
+            <div class="status" style="margin-top: 12px;">
+                <div class="mediaInfo noOverflow">
+                    <div class="info">
+                        <strong class="performer">
+                            <a href="/search?query=&section=audios&order=listens&only_performers=on&q={$audio->getPerformer()}">{$audio->getPerformer()}</a>
+                        </strong>
+                        —
+                        <span class="title {if !empty($audio->getLyrics())}withLyrics{/if}">{$audio->getTitle()}</span>
+                    </div>
+
+                    <svg n:if="$audio->isExplicit()" class="explicitMark" xmlns="http://www.w3.org/2000/svg" height="11" viewBox="0 0 11 11" width="11">
+                        <path d="m1 2.506v5.988a1.5 1.5 0 0 0 1.491 1.506h6.019c.827 0 1.49-.674 1.49-1.506v-5.988a1.5 1.5 0 0 0 -1.491-1.506h-6.019c-.827 0-1.49.674-1.49 1.506zm4 2.494v-1h2v-1h-3v5h3v-1h-2v-1h2v-1zm-5-2.494a2.496 2.496 0 0 1 2.491-2.506h6.019a2.5 2.5 0 0 1 2.49 2.506v5.988a2.496 2.496 0 0 1 -2.491 2.506h-6.019a2.5 2.5 0 0 1 -2.49-2.506z" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="volume" style="display: flex; flex-direction: column;width:14%;">
+                <span class="nobold {if !$hideButtons}hideOnHover{/if}" data-unformatted="{$audio->getLength()}" style="text-align: center;margin-top: 12px;">{$audio->getFormattedLength()}</span>
+                <div class="buttons">
+                    {php $hasAudio = isset($thisUser) && $audio->isInLibraryOf($thisUser)}
+
+                    {if !$hideButtons}
+                        <div class="remove-icon musicIcon" data-id="{$audio->getId()}" n:if="isset($thisUser) && $hasAudio" ></div>
+                        <div class="add-icon musicIcon hovermeicon" data-id="{$audio->getId()}" n:if="isset($thisUser) && !$hasAudio && !$isWithdrawn" ></div>
+                        <div class="remove-icon-group musicIcon" data-id="{$audio->getId()}" data-club="{$club->getId()}" n:if="isset($thisUser) && isset($club) && $club->canBeModifiedBy($thisUser)" ></div>
+                        <div class="add-icon-group musicIcon hidden" data-id="{$audio->getId()}" n:if="isset($thisUser) && !$isWithdrawn" ></div>
+                        <a class="download-icon musicIcon" n:if='isset($thisUser) && !$isWithdrawn && $isAvailable && OPENVK_ROOT_CONF["openvk"]["preferences"]["music"]["exposeOriginalURLs"]' href="{$audio->getOriginalURL()}" download="{$audio->getDownloadName()}"></a>
+                        <div class="edit-icon musicIcon" data-lyrics="{$audio->getLyrics()}" data-title="{$audio->getTitle()}" data-performer="{$audio->getPerformer()}" data-explicit="{(int)$audio->isExplicit()}" data-searchable="{(int)!$audio->isUnlisted()}" n:if="isset($thisUser) && $editable && !$isWithdrawn" ></div>
+                        <div class="report-icon musicIcon" data-id="{$audio->getId()}" n:if="isset($thisUser) && !$editable && !$isWithdrawn" ></div>
+                    {/if}
+                </div>
+            </div>
+        </div>
+        <div class="subTracks">
+            <div class="lengthTrackWrapper">
+                <div class="track lengthTrack">
+                    <div class="selectableTrack" n:attr="style => $isWithdrawn ? 'display: none;' : ''">
+                        <div class="selectableTrackSlider">
+                            <div class="slider"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="volumeTrackWrapper">
+                <div class="track volumeTrack">
+                    <div class="selectableTrack" n:attr="style => $isWithdrawn ? 'display: none;' : ''">
+                        <div class="selectableTrackSlider">
+                            <div class="slider"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="lyrics" n:if="!empty($audio->getLyrics())">
+        {nl2br($audio->getLyrics())|noescape}
+    </div>
+</div>

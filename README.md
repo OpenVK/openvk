@@ -1,4 +1,4 @@
-# <img align="right" src="https://github.com/openvk/openvk/raw/master/Web/static/img/logo_shadow.png" alt="openvk" title="openvk" width="15%">OpenVK
+# <img align="right" src="/Web/static/img/logo_shadow.png" alt="openvk" title="openvk" width="15%">OpenVK
 
 _[Русский](README_RU.md)_
 
@@ -6,7 +6,7 @@ _[Русский](README_RU.md)_
 
 VKontakte belongs to Pavel Durov and VK Group.
 
-To be honest, we don't know whether if it even works. However, this version is maintained and we will be happy to accept your bugreports [in our bug tracker](https://github.com/openvk/openvk/projects/1). You should also be able to submit them using [ticketing system](https://openvk.su/support?act=new) (you will need an OpenVK account for this).
+To be honest, we don't know whether if it even works. However, this version is maintained and we will be happy to accept your bugreports [in our bug tracker](https://github.com/openvk/openvk/projects/1). You should also be able to submit them using [ticketing system](https://ovk.to/support?act=new) (you will need an OpenVK account for this).
 
 ## When's the release?
 
@@ -26,11 +26,19 @@ However, OVK makes use of Chandler Application Server. This software requires ex
 
 If you want, you can add your instance to the list above so that people can register there.
 
+### System requirements
+
+Here is our minimum hardware recommendation:
+
+* **CPU: Recent** (AMD Zen2 or equivalent) quad-core 2GHz+ CPU
+* **RAM:** At least 2GB RAM (we recommend 6GB or 8GB for OpenVK with Kafka)
+* **Minimum database space:** 10GB
+
 ### Installation procedure
 
 1. Install PHP 7.4, web-server, Composer, Node.js, Yarn and [Chandler](https://github.com/openvk/chandler)
 
-* PHP 8.1 is supported too, however it was not tested carefully, so be aware.
+* PHP 8 is still being tested; the functionality of the engine on this version of PHP is not yet guaranteed.
 
 2. Install MySQL-compatible database.
 
@@ -66,12 +74,12 @@ Once you are done, you can login as a system administrator on the network itself
 * **Password**: `admin`
   * It is recommended to change the password of the built-in account or disable it.
 
-💡Confused? Full installation walkthrough is available [here](https://docs.openvk.uk/openvk_engine/centos8_installation/) (CentOS 8 [and](https://almalinux.org/) [family](https://yum.oracle.com/oracle-linux-isos.html)).
+💡 Confused? Full installation walkthrough is available [here](https://docs.ovk.to/openvk_engine/centos8_installation/) (CentOS 8 [and](https://almalinux.org/) [family](https://yum.oracle.com/oracle-linux-isos.html)).
 
 ### Looking for Docker or Kubernetes deployment?
 See `install/automated/docker/README.md` and `install/automated/kubernetes/README.md` for Docker and Kubernetes deployment instructions.
 
-### If my website uses OpenVK, should I release it's sources?
+### If my website uses OpenVK, should I release its sources?
 
 It depends. You can keep the sources to yourself if you do not plan to distribute your website binaries. If your website software must be distributed, it can stay non-OSS provided the OpenVK is not used as a primary application and is not modified. If you modified OpenVK for your needs or your work is based on it and you are planning to redistribute this, then you should license it under terms of any LGPL-compatible license (like OSL, GPL, LGPL etc).
 
@@ -80,7 +88,7 @@ It depends. You can keep the sources to yourself if you do not plan to distribut
 You may reach out to us via:
 
 * [Bug Tracker](https://github.com/openvk/openvk/projects/1)
-* [Ticketing System](https://openvk.su/support?act=new)
+* [Ticketing System](https://ovk.to/support?act=new)
 * Telegram Chat: Go to [our channel](https://t.me/openvkenglish) and open discussion in our channel menu.
 * [Reddit](https://www.reddit.com/r/openvk/)
 * [GitHub Discussions](https://github.com/openvk/openvk/discussions)

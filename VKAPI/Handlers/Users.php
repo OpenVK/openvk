@@ -1,7 +1,9 @@
 <?php declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
-use openvk\Web\Models\Entities\User;
+use openvk\Web\Models\Entities\{User, Report};
 use openvk\Web\Models\Repositories\Users as UsersRepo;
+use openvk\Web\Models\Repositories\{Photos, Clubs, Albums, Videos, Notes, Audios};
+use openvk\Web\Models\Repositories\Reports;
 
 final class Users extends VKAPIRequestHandler
 {
@@ -36,8 +38,8 @@ final class Users extends VKAPIRequestHandler
 				} else if($usr->isBanned()) {
 					$response[$i] = (object)[
 						"id"          => $usr->getId(),
-						"first_name"  => $usr->getFirstName(),
-						"last_name"   => $usr->getLastName(),
+						"first_name"  => $usr->getFirstName(true),
+						"last_name"   => $usr->getLastName(true),
 						"deactivated" => "banned",
 						"ban_reason"  => $usr->getBanReason()
 					];
@@ -46,21 +48,21 @@ final class Users extends VKAPIRequestHandler
 				} else {
 					$response[$i] = (object)[
 						"id"                => $usr->getId(),
-						"first_name"        => $usr->getFirstName(),
-						"last_name"         => $usr->getLastName(),
-						"is_closed"         => false,
-						"can_access_closed" => true,
+						"first_name"        => $usr->getFirstName(true),
+						"last_name"         => $usr->getLastName(true),
+						"is_closed"         => $usr->isClosed(),
+						"can_access_closed" => (bool)$usr->canBeViewedBy($this->getUser()),
 					];
 
 					$flds = explode(',', $fields);
-
-					foreach($flds as $field) { 
+					$canView = $usr->canBeViewedBy($this->getUser());
+					foreach($flds as $field) {
 						switch($field) {
 							case "verified":
 								$response[$i]->verified = intval($usr->isVerified());
 								break;
 							case "sex":
-								$response[$i]->sex = $usr->isFemale() ? 1 : 2;
+								$response[$i]->sex = $usr->isFemale() ? 1 : ($usr->isNeutral() ? 0 : 2);
 								break;
 							case "has_photo":
 								$response[$i]->has_photo = is_null($usr->getAvatarPhoto()) ? 0 : 1;
@@ -95,6 +97,12 @@ final class Users extends VKAPIRequestHandler
 							case "status":
 								if($usr->getStatus() != NULL)
 									$response[$i]->status = $usr->getStatus();
+								
+								$audioStatus = $usr->getCurrentAudioStatus();
+
+								if($audioStatus)
+									$response[$i]->status_audio = $audioStatus->toVkApiStruct();
+
 								break;
 							case "screen_name":
 								if($usr->getShortCode() != NULL)
@@ -142,26 +150,122 @@ final class Users extends VKAPIRequestHandler
 									];
 								}
 							case "music":
+								if(!$canView) {
+									break;
+								}
+
 								$response[$i]->music = $usr->getFavoriteMusic();
 								break;
 							case "movies":
+								if(!$canView) {
+									break;
+								}
+
 								$response[$i]->movies = $usr->getFavoriteFilms();
 								break;
 							case "tv":
+								if(!$canView) {
+									break;
+								}
+
 								$response[$i]->tv = $usr->getFavoriteShows();
 								break;
 							case "books":
+								if(!$canView) {
+									break;
+								}
+
 								$response[$i]->books = $usr->getFavoriteBooks();
 								break;
 							case "city":
+								if(!$canView) {
+									break;
+								}
+
 								$response[$i]->city = $usr->getCity();
 								break;
 							case "interests":
+								if(!$canView) {
+									break;
+								}
+
 								$response[$i]->interests = $usr->getInterests();
 								break;
+							case "quotes":
+								if(!$canView) {
+									break;
+								}
+
+								$response[$i]->quotes = $usr->getFavoriteQuote();
+								break;
+							case "email":
+								if(!$canView) {
+									break;
+								}
+
+								$response[$i]->email = $usr->getContactEmail();
+								break;
+							case "telegram":
+								if(!$canView) {
+									break;
+								}
+
+								$response[$i]->telegram = $usr->getTelegram();
+								break;
+							case "about":
+								if(!$canView) {
+									break;
+								}
+								
+								$response[$i]->about = $usr->getDescription();
+								break;
 							case "rating":
+								if(!$canView) {
+									break;
+								}
+
 								$response[$i]->rating = $usr->getRating();
-								break;	 
+								break;
+							case "counters":
+								$response[$i]->counters = (object) [
+									"friends_count" => $usr->getFriendsCount(),
+									"photos_count" => (new Photos)->getUserPhotosCount($usr),
+									"videos_count" => (new Videos)->getUserVideosCount($usr),
+									"audios_count" => (new Audios)->getUserCollectionSize($usr),
+									"notes_count" => (new Notes)->getUserNotesCount($usr)
+								];
+								break;
+							case "correct_counters":
+								$response[$i]->counters = (object) [
+									"friends" => $usr->getFriendsCount(),
+									"photos"  => (new Photos)->getUserPhotosCount($usr),
+									"videos"  => (new Videos)->getUserVideosCount($usr),
+									"audios"  => (new Audios)->getUserCollectionSize($usr),
+									"notes"   => (new Notes)->getUserNotesCount($usr),
+									"groups"  => $usr->getClubCount(),
+									"online_friends" => $usr->getFriendsOnlineCount(),
+								];
+								break;
+                            case "guid":
+                                $response[$i]->guid = $usr->getChandlerGUID();
+                                break;
+							case 'background':
+								$backgrounds = $usr->getBackDropPictureURLs();
+								$response[$i]->background = $backgrounds;
+								break;
+							case 'reg_date':
+								if(!$canView) {
+									break;
+								}
+								
+								$response[$i]->reg_date = $usr->getRegistrationTime()->timestamp();
+								break;
+							case 'is_dead':
+								$response[$i]->is_dead = $usr->isDead();
+								break;
+							case 'nickname':
+								$response[$i]->nickname = $usr->getPseudo();
+								break;
 						}
 					}
 
@@ -185,6 +289,14 @@ final class Users extends VKAPIRequestHandler
 
         $this->requireUser();
         
+        $user = $users->get($user_id);
+		
+        if(!$user || $user->isDeleted())
+            $this->fail(14, "Invalid user");
+
+        if(!$user->canBeViewedBy($this->getUser()))
+            $this->fail(15, "Access denied");
+
         foreach($users->get($user_id)->getFollowers($offset, $count) as $follower)
             $followers[] = $follower->getId();
 
@@ -205,88 +317,112 @@ final class Users extends VKAPIRequestHandler
                     int $count = 100,
                     string $city = "",
                     string $hometown = "",
-                    int $sex = 2,
-                    int $status = 0, # это про marital status
+                    int $sex = 3,
+                    int $status = 0, # marital_status
                     bool $online = false,
-                    # дальше идут параметры которых нету в vkapi но есть на сайте
-                    string $profileStatus = "", # а это уже нормальный статус
+                    # non standart params:
                     int $sort = 0,
-                    int $before = 0,
-                    int $politViews = 0,
-                    int $after = 0,
-                    string $interests = "",
+                    int $polit_views = 0,
                     string $fav_music = "",
                     string $fav_films = "",
                     string $fav_shows = "",
-                    string $fav_books = "",
-                    string $fav_quotes = ""
+                    string $fav_books = ""
                     )
     {
-        $users = new UsersRepo;
-        
-        $sortg = "id ASC";
+        if($count > 100) {
+            $this->fail(100, "One of the parameters specified was missing or invalid: count should be less or equal to 100");
+        }
 
-        $nfilds = $fields;
+        $users = new UsersRepo;
+        $output_sort = ['type' => 'id', 'invert' => false];
+		$output_params = [
+			"ignore_private" => true,
+		];
 
         switch($sort) {
+			default:
             case 0:
-                $sortg = "id DESC";
+                $output_sort = ['type' => 'id', 'invert' => false];
                 break;
             case 1:
-                $sortg = "id ASC";
-                break;
-            case 2:
-                $sortg = "first_name DESC";
-                break;
-            case 3:
-                $sortg = "first_name ASC";
+                $output_sort = ['type' => 'id', 'invert' => true];
                 break;
             case 4:
-                $sortg = "rating DESC";
-
-                if(!str_contains($nfilds, "rating")) {
-                    $nfilds .= "rating";
-                }
-
-                break;
-            case 5:
-                $sortg = "rating DESC";
-
-                if(!str_contains($nfilds, "rating")) {
-                    $nfilds .= "rating";
-                }
-
+				$output_sort = ['type' => 'rating', 'invert' => false];
                 break;
         }
 
+        if(!empty($city))
+            $output_params['city'] = $city;
+
+        if(!empty($hometown))
+            $output_params['hometown'] = $hometown;
+
+        if($sex != 3)
+           $output_params['gender'] = $sex;
+
+        if($status != 0)
+            $output_params['marital_status'] = $status;
+        
+        if($polit_views != 0)
+            $output_params['polit_views'] = $polit_views;     
+
+        if(!empty($interests))
+            $output_params['interests'] = $interests;
+
+        if(!empty($fav_music))
+            $output_params['fav_music'] = $fav_music;
+
+        if(!empty($fav_films))
+            $output_params['fav_films'] = $fav_films;
+
+        if(!empty($fav_shows))
+            $output_params['fav_shows'] = $fav_shows;
+    
+        if(!empty($fav_books))
+            $output_params['fav_books'] = $fav_books;
+
+        if($online)
+            $output_params['is_online'] = 1;
+
         $array = [];
+        $find  = $users->find($q, $output_params, $output_sort);
 
-        $parameters = [
-            "city"            => !empty($city) ? $city : NULL,
-            "hometown"        => !empty($hometown) ? $hometown : NULL,
-            "gender"          => $sex < 2 ? $sex : NULL,
-            "maritalstatus"   => (bool)$status ? $status : NULL,
-            "politViews"      => (bool)$politViews ? $politViews : NULL,
-            "is_online"       => $online ? 1 : NULL,
-            "status"          => !empty($profileStatus) ? $profileStatus : NULL,
-            "before"          => $before != 0 ? $before : NULL,
-            "after"           => $after  != 0 ? $after : NULL,
-            "interests"       => !empty($interests) ? $interests : NULL,
-            "fav_music"       => !empty($fav_music) ? $fav_music : NULL,
-            "fav_films"       => !empty($fav_films) ? $fav_films : NULL,
-            "fav_shows"       => !empty($fav_shows) ? $fav_shows : NULL,
-            "fav_books"       => !empty($fav_books) ? $fav_books : NULL,
-            "fav_quotes"      => !empty($fav_quotes) ? $fav_quotes : NULL,
-        ];
-
-        $find  = $users->find($q, $parameters, $sortg);
-
-        foreach ($find as $user)
+        foreach ($find->offsetLimit($offset, $count) as $user)
             $array[] = $user->getId();
 
+        if(!$array || sizeof($array) < 1) {
+            return (object) [
+                "count" => 0,
+                "items" => [],
+            ];
+        }
+
         return (object) [
-        	"count" => $find->size(),
-        	"items" => $this->get(implode(',', $array), $nfilds, $offset, $count)
+            "count" => $find->size(),
+            "items" => $this->get(implode(',', $array), $fields)
         ];
     }
+
+	function report(int $user_id, string $type = "spam", string $comment = "")
+	{
+		$this->requireUser();
+		$this->willExecuteWriteAction();
+
+		if($user_id == $this->getUser()->getId())
+			$this->fail(12, "Can't report yourself.");
+
+		if(sizeof(iterator_to_array((new Reports)->getDuplicates("user", $user_id, NULL, $this->getUser()->getId()))) > 0)
+			return 1;
+
+		$report = new Report;
+		$report->setUser_id($this->getUser()->getId());
+		$report->setTarget_id($user_id);
+		$report->setType("user");
+		$report->setReason($comment);
+		$report->setCreated(time());
+		$report->save();
+
+		return 1;
+	}
 }

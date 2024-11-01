@@ -7,8 +7,10 @@
         </nobold>
     </div>
     <div>
+    <div class="insertThere" id="postz"></div>
+    <div id="underHeader">
         <div n:if="$canPost" class="content_subtitle">
-            {include "../components/textArea.xml", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true}
+            {include "../components/textArea.xml", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true}
         </div>
         
         <div class="content infContainer">
@@ -25,6 +27,7 @@
                 {_no_posts_abstract}
             {/if}
         </div>
+    </div>
     </div>
 </div>
 

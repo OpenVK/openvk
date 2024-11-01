@@ -14,8 +14,8 @@
 {block content}
     <div class="gift_grid">
         <div n:foreach="$gifts as $gift" n:class="gift_sel, !$gift->canUse($thisUser) ? disabled" data-gift="{$gift->getId()}">
-            <img class="gift_pic" src="{$gift->getImage(2)}" alt="{_gift}" />
-            
+            <img class="gift_pic" src="{$gift->getImage(2)}" alt="{_gift}" loading=lazy />
+
             <strong class="gift_price">
                 {if $gift->isFree()}
                     {_free_gift}
@@ -23,7 +23,7 @@
                     {tr('coins', $gift->getPrice())}
                 {/if}
             </strong>
-            
+
             <strong class="gift_limit">
                 {if $gift->getUsagesLeft($thisUser) !== INF}
                     {tr("gifts_left", $gift->getUsagesLeft($thisUser))}
@@ -31,7 +31,7 @@
             </strong>
         </div>
     </div>
-    
+
     <div style="padding: 8px;">
         {include "../components/paginator.xml", conf => (object) [
             "page"    => $page,
@@ -48,10 +48,10 @@
             let el = $(this);
             if(el.hasClass("disabled"))
                 return false;
-            
+
             let link = "/gifts?act=confirm&user={$user->getId()}&pack={$cat->getId()}&elid=";
             let gift = el.data("gift");
-            
+
             window.location.assign(link + gift);
         });
     </script>

@@ -109,6 +109,10 @@ final class AboutPresenter extends OpenVKPresenter
         . "# lack of rights to access the admin panel)\n\n"
         . "User-Agent: *\n"
         . "Disallow: /albums/create\n"
+        . "Disallow: /assets/packages/static/openvk/img/banned.jpg\n"   
+        . "Disallow: /assets/packages/static/openvk/img/camera_200.png\n"   
+        . "Disallow: /assets/packages/static/openvk/img/flags/\n"   
+        . "Disallow: /assets/packages/static/openvk/img/oof.apng\n"  
         . "Disallow: /videos/upload\n"
         . "Disallow: /invite\n"
         . "Disallow: /groups_create\n"
@@ -141,6 +145,6 @@ final class AboutPresenter extends OpenVKPresenter
 
     function renderDev(): void
     {
-        $this->redirect("https://docs.openvk.uk/");
+        $this->redirect("https://docs.ovk.to/");
     }
 }

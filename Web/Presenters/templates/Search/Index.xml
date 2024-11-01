@@ -1,365 +1,350 @@
 {extends "../@layout.xml"}
 
 {block title}
-    {tr("search_for_$type")}
-    {if $_GET['query']}
-        - {$_GET['query']}
+    {tr("search_for_$section")}
+    {if $_REQUEST['q']}
+        - {$_REQUEST['q']}
     {/if}
 {/block}
 
 {block header}
-    {=OPENVK_ROOT_CONF["openvk"]["appearance"]["name"]} »
-    {tr("search_for_$type")}
+    {tr("search_for_$section")}
 {/block}
 
-{* BEGIN ELEMENTS DESCRIPTION *}
+{block wrap}
+    <div class="wrap2">
+        <div class="wrap1">
+            <div class="page_wrap">
+                {if $section == 'audios' && $count > 1}
+                    {include "../Audio/bigplayer.xml", tidy => true}
 
-{block link|strip|stripHtml}
-    {if $type != "apps"}
-        {$x->getURL()}
-    {else}
-        /app{$x->getId()}
-    {/if}
-{/block}
-
-{block preview}
-    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="{_photo}" />
-{/block}
-
-{block name}
-    {if $type != "apps"}
-        <text style="overflow: hidden;">&nbsp;{$x->getCanonicalName()}        
-        {if $_GET['sort'] == "rating"}({$x->getRating()}%)
-        {elseif $_GET['sort'] == "id"}(id{$x->getId()}){/if}</text>
-        <img n:if="$x->isVerified()" 
-            class="name-checkmark"
-            src="/assets/packages/static/openvk/img/checkmark.png"
-        />
-    {else}
-        {$x->getName()}
-    {/if}
-{/block}
-
-{block description}
-    <table class="ugc-table">
-        <tbody>
-            {if $type === "users"}
-                {if !is_null($_GET['status']) && $_GET['status'] != ""}
-                    <tr>
-                        <td><span class="nobold">{_status}:</span></td>
-                        <td>{$x->getStatus()}</td>
-                    </tr>
+                    <input type="hidden" name="bigplayer_context" data-type="classic_search_context" data-entity='{"order":"{$order}","query":"{$query}","invert":{$invert ? 1 : 0},"only_performers":{$_REQUEST['only_performers'] ? 1 : 0},"genre":"{$_REQUEST['genre']}","with_lyrics":"{$_REQUEST['with_lyrics'] ? 1 : 0}"}' data-page="{$page}">
                 {/if}
-                {if !is_null($_GET['city']) && $_GET['city'] != "" && $x->getPrivacySetting("page.info.read") > 1}
-                    <tr>
-                        <td><span class="nobold">{_city}:</span></td>
-                        <td>{$x->getCity()}</td>
-                    </tr>
-                {/if}
-                {if !is_null($_GET['city']) && $_GET['hometown'] != "" && $x->getPrivacySetting("page.info.read") > 1}
-                    <tr>
-                        <td><span class="nobold">{_hometown}:</span></td>
-                        <td>{$x->getHometown()}</td>
-                    </tr>
-                {/if}
-                {if !is_null($_GET['politViews']) && $_GET['politViews'] != 0 && $x->getPrivacySetting("page.info.read") > 1}
-                    <tr>
-                        <td><span class="nobold">{_politViews}:</span></td>
-                        <td>{tr("politViews_".$x->getPoliticalViews())}</td>
-                    </tr>
-                {/if}
-                {if !is_null($_GET['email']) && $_GET['email'] != "" && $x->getPrivacySetting("page.info.read") > 1}
-                    <tr>
-                        <td><span class="nobold">{_email}:</span></td>
-                        <td>{$x->getContactEmail()}</td>
-                    </tr>
-                {/if}
-                {if !is_null($_GET['telegram']) && $_GET['telegram'] != "" && $x->getPrivacySetting("page.info.read") > 1}
-                    <tr>
-                        <td><span class="nobold">{_telegram}:</span></td>
-                        <td><a href="tg://resolve?domain={$x->getTelegram()}">@{$x->getTelegram()}</a></td>
-                    </tr>
-                {/if}
-                {if !is_null($_GET['site']) && $_GET['site'] != "" && $x->getPrivacySetting("page.info.read") > 1}
-                    <tr>
-                        <td><span class="nobold">{_personal_website}:</span></td>
-                        <td><a href="{$x->getWebsite()}">{$x->getWebsite()}</a></td>
-                    </tr>
-                {/if}
-                {if !is_null($_GET['address']) && $_GET['address'] != "" && $x->getPrivacySetting("page.info.read") > 1}
-                    <tr>
-                        <td><span class="nobold">{_address}:</span></td>
-                        <td>{$x->getPhysicalAddress()}</td>
-                    </tr>
-                {/if}    
-                {if $x->getPrivacySetting("page.info.read") > 1}        
-                <tr>
-                    <td><span class="nobold">{_gender}: </span></td>
-                    <td>{$x->isFemale() ? tr("female") : tr("male")}</td>
-                </tr>
-                <tr>
-                    <td><span class="nobold">{_relationship}:</span></td>
-                    <td>{$x->getLocalizedMaritalStatus()}</td>
-                </tr>
-                <tr>
-                    <td><span class="nobold">{_registration_date}: </span></td>
-                    <td>{$x->getRegistrationTime()}</td>
-                </tr>
-                {/if}
-            {/if}
-            <tr>
-            {if !empty($x->getDescription())}
-                {if $type != "apps"}
-                <td>
-                    <span class="nobold">{_description}:</span>
-                </td>
-                {/if}
-                <td {if $type == "apps"}style="width:400px"{/if}>
-                    {$x->getDescription() ?? '(' . tr("none") . ')'}
-                </td>
-            </tr>
-            {/if}
-            {if $type == "groups"}
-                <td>
-                    <span class="nobold">{_size}:</span>
-                </td>
-                <td>
-                    {tr("participants", $x->getFollowersCount())}
-                </td>
-            {/if}
-        </tbody>
-    </table>
-{/block}
-
-{block content}
-    <style>
-    .comment, .post-divider 
-    {
-        border:none;
-    }
-    </style>
-    <div style="margin-top:-7px">
-        {if isset($thisUser) && $thisUser->getPaginatorType() == 0}
-            {include "../components/paginator.xml", conf => (object) [
-                "page"     => $page,
-                "count"    => $count,
-                "amount"   => sizeof($data),
-                "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
-                "atBottom" => false,
-            ]}
-        {/if}
-    </div>
-    <p style="margin-left: 15px; {if $thisUser->getPaginatorType() == 1}margin-top: 14px;{/if}">
-        <b>{tr("results", $count)}</b>
-    </p>
-    <div style="display: flex;flex-direction: row;">
-
-    {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
-    <div class="container_gray borderup infContainer" style="float:left;width:73.3%;">
-        {if sizeof($data) > 0}
-            {if $type == "users" || $type == "groups" || $type == "apps"}
-                <div class="content infObj" n:foreach="$data as $dat">
-                    <table>
-                    <tbody>
-                        <tr>
-                            <td valign="top">
-                                <a href="{include link, x => $dat}">
-                                {include preview, x => $dat}
-                                </a>
-                            </td>
-                            <td valign="top" style="width: 100%">
-                                {ifset infotable}
-                                    {include infotable, x => $dat}
-                                {else}
-                                    <a href="{include link, x => $dat}">
-                                    <b>
-                                        {include name, x => $dat}
-                                    </b>
-                                    </a>
-                                    <br/>
-                                    {include description, x => $dat}
-                                    {/ifset}
-                            </td>
-                            <td n:ifset="actions" valign="top" class="action_links" style="width: 150px;">
-                                {include actions, x => $dat}
-                            </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            {elseif $type == "posts"}
-                <div n:foreach="$data as $dat" class="content infObj">
-                    {if !$dat || $dat->getTargetWall() < 0 && $dat->getWallOwner()->isHideFromGlobalFeedEnabled()}
-                        {_closed_group_post}.
-                    {else}
-                        {include "../components/post.xml", post => $dat, commentSection => true, onWallOf => true}
-                    {/if}
-                </div>
-            {elseif $type == "comments"}
-                <div n:foreach="$data as $dat" class="content infObj">
-                    {if !$dat->getTarget() || $dat->getTarget()->isDeleted()}
-                        {_deleted_target_comment}.
-                    {else}
-                        {include "../components/comment.xml", comment => $dat, linkW => true}
-                    {/if}
-                </div>
-            {elseif $type == "videos"}
-                {foreach $data as $dat}
-                    <div class="content infObj">
-                        {include "../components/video.xml", video => $dat}
+                <div class='summaryBar summaryBarFlex padding'>
+                    <div class='summary'>
+                        <b>{tr("results", $count)} {tr("showing_x_y", $page, $count)}</b>
                     </div>
-                {/foreach}
-            {elseif $type == "audios"}
-                хуй
-            {/if}
-        {else}
-            {ifset customErrorMessage}
-                {include customErrorMessage}
-            {else}
-                {include "../components/nothing.xml"}
-            {/ifset}
-        {/if}
 
-        {if isset($thisUser) && $thisUser->getPaginatorType() == 1}
-            {include "../components/paginator.xml", conf => (object) [
-                "page"     => $page,
-                "count"    => $count,
-                "amount"   => sizeof($data),
-                "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
-                "atBottom" => false,
-            ]}
-        {/if}
+                    {include "../components/paginator.xml", conf => $paginatorConf}
+                </div>
+
+                <div class='page_wrap_content' id='search_page'>
+                    <div n:class='page_wrap_content_main, $section == "audios" && $count > 0 ? audios_padding'>
+                        {if $count > 0}
+                            {if $section === 'users'}
+                                <div class='search_content content def_row_content' n:foreach="$data as $dat">
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td valign="top">
+                                                    <a href="{$dat->getURL()}">
+                                                        <img src="{$dat->getAvatarUrl('tiny')}" width="75" alt="{_photo}" loading='lazy' />
+                                                    </a>
+                                                </td>
+                                                <td valign="top" style="width: 100%">
+                                                    <a href="{$dat->getURL()}">
+                                                        <b>
+                                                            <text style="overflow: hidden;">&nbsp;{$dat->getCanonicalName()}  
+                                                                {if $order     == "rating"}
+                                                                    ({$dat->getProfileCompletenessReport()->total}%)
+                                                                {/if}
+                                                            </text>
+                                                            <img n:if="$dat->isVerified()" 
+                                                                class="name-checkmark"
+                                                                src="/assets/packages/static/openvk/img/checkmark.png"
+                                                            />
+                                                        </b>
+                                                        {if $dat->getId() == $thisUser->getId()}
+                                                            ({_s_it_is_you})
+                                                        {/if}
+                                                    </a>
+
+                                                    <table class="ugc-table">
+                                                        <tbody>
+                                                            {if $_REQUEST["order"] == "id"}
+                                                                <tr>
+                                                                    <td><span class="nobold">ID:</span></td>
+                                                                    <td>{$dat->getId()}</td>
+                                                                </tr>
+                                                            {/if}
+                                                            {if $dat->getPrivacySetting("page.info.read") > 1}        
+                                                                <tr>
+                                                                    <td><span class="nobold">{_pronouns}: </span></td>
+                                                                    <td>{$dat->isFemale() ? tr("female") : ($dat->isNeutral() ? tr("neutral") : tr("male"))}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><span class="nobold">{_relationship}:</span></td>
+                                                                    <td>{$dat->getLocalizedMaritalStatus()}</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td><span class="nobold">{_registration_date}: </span></td>
+                                                                    <td>{$dat->getRegistrationTime()}</td>
+                                                                </tr>
+                                                                {if !empty($dat->getDescription())}
+                                                                <tr>
+                                                                    <td>
+                                                                        <span class="nobold">{_description}:</span>
+                                                                    </td>
+                                                                    <td>
+                                                                        {$dat->getDescription() ?? '(' . tr("none") . ')'}
+                                                                    </td>
+                                                                </tr>
+                                                                {/if}
+                                                                {if !empty($_REQUEST["fav_mus"])}
+                                                                    <tr>
+                                                                        <td><span class="nobold">{_favorite_music}:</span></td>
+                                                                        <td>{$dat->getFavoriteMusic()}</td>
+                                                                    </tr>
+                                                                {/if}
+                                                                {if !empty($_REQUEST["fav_films"])}
+                                                                    <tr>
+                                                                        <td><span class="nobold">{_favorite_films}:</span></td>
+                                                                        <td>{$dat->getFavoriteFilms()}</td>
+                                                                    </tr>
+                                                                {/if}
+                                                                {if !empty($_REQUEST["fav_shows"])}
+                                                                    <tr>
+                                                                        <td><span class="nobold">{_favorite_shows}:</span></td>
+                                                                        <td>{$dat->getFavoriteShows()}</td>
+                                                                    </tr>
+                                                                {/if}
+                                                                {if !empty($_REQUEST["fav_books"])}
+                                                                    <tr>
+                                                                        <td><span class="nobold">{_favorite_books}:</span></td>
+                                                                        <td>{$dat->getFavoriteBooks()}</td>
+                                                                    </tr>
+                                                                {/if}
+                                                            {/if}
+                                                        </tbody>
+                                                    </table>
+                                                    <br/>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div
+
+                                <script n:if='$count > 0 && !empty($query)'>
+                                    highlightText({$query}, '.page_wrap_content_main', ['text', "td[data-highlight='_clubDesc']"])
+                                </script>
+                            {elseif $section === 'apps'}
+                                <div class='search_content content def_row_content' n:foreach="$data as $dat">
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td valign="top">
+                                                    <a href="/app{$dat->getId()}">
+                                                        <img src="{$dat->getAvatarUrl('miniscule')}" width="75" alt="{_photo}" loading='lazy' />
+                                                    </a>
+                                                </td>
+                                                <td valign="top" style="width: 100%">
+                                                    <a href="/app{$dat->getId()}">
+                                                        <b>
+                                                            <text style="overflow: hidden;">
+                                                                &nbsp;{$dat->getName()}
+                                                            </text>
+                                                        </b>
+                                                    </a><br/>
+                                                    <span style='margin-left: 2px;' data-highlight='_appDesc'>
+                                                        {$dat->getDescription() ?? '(' . tr("none") . ')'}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <script n:if='$count > 0 && !empty($query)'>
+                                    highlightText({$query}, '.page_wrap_content_main', ['text', "span[data-highlight='_appDesc']"])
+                                </script>
+                            {elseif $section === 'posts'}
+                                <div class='search_content' n:foreach="$data as $dat">
+                                    {if !$dat || $dat->getWallOwner()->isHideFromGlobalFeedEnabled()}
+                                        {_closed_group_post}.
+                                    {else}
+                                        {include "../components/post.xml", post => $dat, commentSection => true, onWallOf => true}
+                                    {/if}
+                                </div>
+
+                                <script n:if='$count > 0 && !empty($query)'>
+                                    highlightText({$query}, '.page_wrap_content_main', [".post:not(.comment) > tbody > tr > td > .post-content > .text .really_text"])
+                                </script>
+                            {elseif $section === 'videos'}
+                                <div class='search_content' n:foreach="$data as $dat">
+                                    {include "../components/video.xml", video => $dat}
+                                </div>    
+
+                                <script n:if='$count > 0 && !empty($query)'>
+                                    highlightText({$query}, '.page_wrap_content_main', [".video_name", ".video_description"])
+                                </script>
+                            {elseif $section === 'audios'}
+                                <div class='search_content' n:foreach="$data as $dat">
+                                    {include "../Audio/player.xml", audio => $dat}
+                                </div>
+                                
+                                <script n:if="$count > 0 && !empty($query) && empty($_REQUEST['only_performers'])">
+                                    highlightText({$query}, '.page_wrap_content_main', [".mediaInfo .performer a", ".mediaInfo .title"])
+                                </script>
+                            {elseif $section === 'audios_playlists'}
+                                <div class='search_content' n:foreach="$data as $dat">
+                                    {include "../Audio/playlistListView.xml", playlist => $dat}
+                                </div>
+
+                                <script n:if="$count > 0 && !empty($query) && empty($_REQUEST['only_performers'])">
+                                    highlightText({$query}, '.page_wrap_content_main', [".playlistName", ".playlistDesc"])
+                                </script>
+                            {/if}
+                        {else}
+                            {include "../components/content_error.xml", description => tr("no_results_by_this_query")}
+                        {/if}
+                    </div>
+                    <div class='page_wrap_content_options verticalGrayTabsWrapper'>
+                        <div class="page_wrap_content_options_list verticalGrayTabs with_padding">
+                            <a n:attr="id => $section === 'users' ? 'used'"    href="/search?section=users&q={urlencode($query)}">    {_s_people}</a>
+                            <a n:attr="id => $section === 'groups' ? 'used'"   href="/search?section=groups&q={urlencode($query)}">   {_s_groups}</a>
+                            <a n:attr="id => $section === 'posts' ? 'used'"    href="/search?section=posts&q={urlencode($query)}">    {_s_posts}</a>
+                            <a n:attr="id => $section === 'videos' ? 'used'"   href="/search?section=videos&q={urlencode($query)}">   {_s_videos}</a>
+                            <a n:attr="id => $section === 'apps' ? 'used'"     href="/search?section=apps&q={urlencode($query)}">     {_s_apps}</a>
+                            <a n:attr="id => $section === 'audios' ? 'used'"   href="/search?section=audios&q={urlencode($query)}">   {_s_audios}</a>
+                            <a n:attr="id => $section === 'audios_playlists' ? 'used'" href="/search?section=audios_playlists&q={urlencode($query)}">{_s_audios_playlists}</a>
+                        </div>
+
+                        <div class='page_search_options'>
+                            {include searchOptions}
+                        </div>
+                    </div>
+                </div>
+
+                <div n:if='$paginatorConf->pageCount > 1' class='page_content_paginator_bottom'>
+                    {include "../components/paginator.xml", conf => $extendedPaginatorConf}
+                </div>
+            </div>
+        </div>
     </div>
-    {include searchOptions}
 {/block}
 
 {block searchOptions}
-    <div class="searchOptions">
-        <ul class="searchList">
-            <li {if $type === "users"}   id="used"{/if}><a href="/search?type=users{if $_GET['query']}&query={urlencode($_GET['query'])}{/if}&sort=id">   {_s_people}   {if $type === "users"}   ({$count}){/if}</a></li>
-            <li {if $type === "groups"}  id="used"{/if}><a href="/search?type=groups{if $_GET['query']}&query={urlencode($_GET['query'])}{/if}&sort=id">  {_s_groups}   {if $type === "groups"}  ({$count}){/if}</a></li>
-            <li {if $type === "comments"}id="used"{/if}><a href="/search?type=comments{if $_GET['query']}&query={urlencode($_GET['query'])}{/if}&sort=id">{_s_comments} {if $type === "comments"}({$count}){/if}</a></li>
-            <li {if $type === "posts"}   id="used"{/if}><a href="/search?type=posts{if $_GET['query']}&query={urlencode($_GET['query'])}{/if}&sort=id">   {_s_posts}    {if $type === "posts"}   ({$count}){/if}</a></li>
-            <li {if $type === "videos"}  id="used"{/if}><a href="/search?type=videos{if $_GET['query']}&query={urlencode($_GET['query'])}{/if}&sort=id">  {_s_videos}   {if $type === "videos"}  ({$count}){/if}</a></li>
-            <li {if $type === "apps"}    id="used"{/if}><a href="/search?type=apps{if $_GET['query']}&query={urlencode($_GET['query'])}{/if}&sort=id">    {_s_apps}     {if $type === "apps"}    ({$count}){/if}</a></li>
-        </ul>
-
-        <div class="searchOption">
-            <div class="searchOptionName" id="n_sort" onclick="hideParams('sort')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{_s_order_by}</div>
-            <div class="searchOptionBlock" id="s_sort">
-                <select name="sort" form="searcher" id="sortyor">
-                    <option value="id" {if $_GET["sort"] == "name"}selected{/if}>{_s_order_by_id}</option>
-                    {if $type == "users"}
-                        <option value="name" {if $_GET["sort"] == "name"}selected{/if}>{_s_order_by_name}</option>
-                        {if OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"]}
-                            <option value="rating" {if $_GET["sort"] == "rating"}selected{/if}>{_s_order_by_rating}</option>
-                        {/if}
+    <div class="search_option">
+        <div class="search_option_name">
+            <div class='search_option_name_ico'></div>
+            {_s_order_by}
+        </div>
+        <div class="search_option_content">
+            <select name="order" form="search_form" data-default='id'>
+                {if $section == "users"}
+                    <option value="id" n:attr="selected => $order == 'id'">{_s_order_by_reg_date}</option>
+                    
+                    {if OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"]}
+                        <option value="rating" n:attr="selected => $order == 'rating'">{_s_order_by_rating}</option>
                     {/if}
-                </select>
-                <div id="invertor">
-                <input type="checkbox" name="invert" value="1" form="searcher" {if !is_null($_GET['invert']) && $_GET['invert'] == "1"}checked{/if}>{_s_order_invert}
-                </div>
-            </div>
-        </div>
-
-    {if $type !== "groups" && $type !== "apps"} {* В OpenVK не сохраняется дата создания групп и приложений *}
-        <div class="searchOption">
-            <div class="searchOptionName" id="n_dates" onclick="hideParams('dates')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{_s_by_date}</div>
-            <div class="searchOptionBlock" id="s_dates">
-                {if $type != "users"}
-                    <p id="bydate">{_s_date_before}:<br>
+                {elseif $section == "posts"}
+                    <option value="id" n:attr="selected => $order == 'id'">{_s_order_by_publishing_date}</option>
+                {elseif $section == "audios"}
+                    <option value="id" n:attr="selected => $order == 'id'">{_s_order_by_upload_date}</option>
                 {else}
-                    <p id="bydate">{_s_registered_before}:<br>
+                    <option value="id" n:attr="selected => $order == 'id'">{_s_order_by_creation_date}</option>
                 {/if}
-                <input type="date" name="datebefore" 
-                    form="searcher"
-                    id="bydate"
-                    style="width:100%"
-                    value="{if !is_null($_GET['datebefore'])}{$_GET['datebefore']}{/if}"
-                    min="2019-11-19"
-                    max={date('Y-m-d')}></p>
-                {if $type != "users"}
-                    <p id="bydate">{_s_date_after}:<br>
-                {else}
-                    <p id="bydate">{_s_registered_after}:<br>
+
+                {if $section == "audios" || $section == "audios_playlists"}
+                    <option value="length" n:attr="selected  => $order == 'length'">{_s_order_by_length}</option>
+                    <option value="listens" n:attr="selected => $order == 'listens'">{_s_order_by_listens}</option>
                 {/if}
-                <input type="date" name="dateafter" 
-                    form="searcher"
-                    style="width:100%"
-                    id="bydate"
-                    value="{if !is_null($_GET['dateafter'])}{$_GET['dateafter']}{/if}"
-                    min="2019-11-18"
-                    max={date('Y-m-d')}></p>
-            </div>
-        </div>
-    {/if}
+            </select>
 
-    {if $type === "users"}
-        <div class="searchOption">
-            <div class="searchOptionName" id="n_main" onclick="hideParams('main')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{_main}</div>
-            <div class="searchOptionBlock" id="s_main">
-                <input type="text" value="{if !is_null($_GET['status'])}{$_GET['status']}{/if}" form="searcher" placeholder="{_status}" name="status">
-                <input type="text" value="{if !is_null($_GET['city'])}{$_GET['city']}{/if}" form="searcher" placeholder="{_city}" name="city">
-                <input type="text" value="{if !is_null($_GET['hometown'])}{$_GET['hometown']}{/if}" form="searcher" placeholder="{_hometown}" name="hometown">
-                <input name="is_online" type="checkbox" {if !is_null($_GET['is_online']) && $_GET['is_online'] == "1"}checked{/if} form="searcher" value="1">{_s_now_on_site}
-            </div>
+            <label n:if="$order != 'rating'">
+                <input type="checkbox" name="invert" value="1" form="search_form" n:attr="checked => $_REQUEST['invert'] == '1'">
+                {_s_order_invert}
+            </label>
         </div>
+    </div>
 
-        <div class="searchOption">
-            <div class="searchOptionName" id="n_gender" onclick="hideParams('gender')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{_gender}</div>
-            <div class="searchOptionBlock" id="s_gender">
-                <p><input type="radio" form="searcher" id="gend" {if $_GET['gender'] == 0}checked{/if} name="gender" value="0">{_male}</p>
-                <p><input type="radio" form="searcher" id="gend1"{if $_GET['gender'] == 1}checked{/if} name="gender" value="1">{_female}</p>
-                <p><input type="radio" form="searcher" id="gend2"{if $_GET['gender'] == 2 || is_null($_GET['gender'])}checked{/if} name="gender" value="2">{_s_any}</p>
-            </div>
+    <div n:if="$section == 'users'" class="search_option">
+        <div class="search_option_name">
+            <div class='search_option_name_ico'></div>
+            {_main}
         </div>
-
-        <div class="searchOption">
-            <div class="searchOptionName" id="n_relationship" onclick="hideParams('relationship')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{ovk_proc_strtr(tr("relationship"), 14)}</div>
-            <div class="searchOptionBlock" id="s_relationship">
-                <select name="maritalstatus" form="searcher">
-                    <option n:foreach="range(0, 8) as $i" value="{$i}" {if $_GET['maritalstatus'] == $i}selected{/if} form="searcher">
-                        {tr("relationship_".$i)}
-                    </option>
-                </select>
-            </div>
+        <div class="search_option_content">
+            <input type="text" n:attr="value => $_REQUEST['city']" form="search_form" placeholder="{_city}" name="city">
+            <input type="text" n:attr="value => $_REQUEST['hometown']" form="search_form" placeholder="{_hometown}" name="hometown">
+            
+            <label>
+                <input name="is_online" type="checkbox" n:attr="checked => $_REQUEST['is_online'] == '1'" form="search_form" value="1">
+                {_s_now_on_site}
+            </label>
         </div>
+    </div>
 
-        <div class="searchOption">
-            <div class="searchOptionName" id="n_politViews" onclick="hideParams('politViews')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{_politViews}</div>
-            <div class="searchOptionBlock" id="s_politViews">
-                <select name="politViews" form="searcher">
-                    <option n:foreach="range(0, 9) as $i" value="{$i}" {if $_GET['politViews'] == $i}selected{/if} form="searcher">
+    <div n:if="$section == 'users'" class="search_option">
+        <div class="search_option_name">
+            <div class='search_option_name_ico'></div>
+            {_pronouns}
+        </div>
+        <div class="search_option_content">
+            <label><input type="radio" form="search_form" n:attr="checked => $_REQUEST['gender'] == 0" name="gender" value="0">{_male}</label>
+            <label><input type="radio" form="search_form" n:attr="checked => $_REQUEST['gender'] == 1" name="gender" value="1">{_female}</label>
+            <label><input type="radio" form="search_form" n:attr="checked => $_REQUEST['gender'] == 2" name="gender" value="2">{_neutral}</label>
+            <label><input type="radio" form="search_form" n:attr="checked => is_null($_REQUEST['gender']) || $_REQUEST['gender'] == 3" name="gender" data-default='1' value="3">{_s_any}</label>
+        </div>
+    </div>
+    <div n:if="$section == 'users'" n:class="search_option, !isset($_REQUEST['polit_views']) && !isset($_REQUEST['marital_status']) ? search_option_hidden">
+        <div class="search_option_name">
+            <div class='search_option_name_ico'></div>
+            {_s_additional}
+        </div>
+        <div class="search_option_content">
+            <label>
+                {_politViews}
+                <select name="polit_views" form="search_form" data-default='0'>
+                    <option n:foreach="range(0, 9) as $i" value="{$i}" n:attr="selected => $_REQUEST['polit_views'] == $i">
                         {tr("politViews_".$i)}
                     </option>
                 </select>
-            </div>
-        </div>
+            </label>
 
-        <div class="searchOption">
-            <div class="searchOptionName" id="n_contacts" onclick="hideParams('contacts')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{_contacts}</div>
-            <div class="searchOptionBlock" id="s_contacts">
-                <input type="text" name="email"    value="{if !is_null($_GET['email'])}{$_GET['email']}{/if}" form="searcher" placeholder="{_email}">
-                <input type="text" name="telegram" value="{if !is_null($_GET['telegram'])}{$_GET['telegram']}{/if}" form="searcher" placeholder="{_telegram}"><br id="contacts">
-                <input type="text" name="site"     value="{if !is_null($_GET['site'])}{$_GET['site']}{/if}" form="searcher" placeholder="{_personal_website}"><br id="contacts">
-                <input type="text" name="address"  value="{if !is_null($_GET['address'])}{$_GET['address']}{/if}" form="searcher" placeholder="{_address}">
-            </div>
+            <label>
+                {_relationship}
+                <select name="marital_status" form="search_form" data-default='0'>
+                    <option n:foreach="range(0, 8) as $i" value="{$i}" n:attr="selected => $_REQUEST['marital_status'] == $i">
+                        {tr("relationship_".$i)}
+                    </option>
+                </select>
+            </label>
         </div>
-
-        <div class="searchOption">
-            <div class="searchOptionName" id="n_interests" onclick="hideParams('interests')"><img src="/assets/packages/static/openvk/img/hide.png" class="searchHide">{_interests}</div>
-            <div class="searchOptionBlock" id="s_interests">
-                <input type="text" value="{if !is_null($_GET['interests'])}{$_GET['interests']}{/if}" form="searcher" placeholder="{_interests}" name="interests">
-                <input type="text" value="{if !is_null($_GET['fav_mus'])}{$_GET['fav_mus']}{/if}"     form="searcher" placeholder="{_favorite_music}" name="fav_mus">
-                <input type="text" value="{if !is_null($_GET['fav_films'])}{$_GET['fav_films']}{/if}" form="searcher" placeholder="{_favorite_films}" name="fav_films">
-                <input type="text" value="{if !is_null($_GET['fav_shows'])}{$_GET['fav_shows']}{/if}" form="searcher" placeholder="{_favorite_shows}" name="fav_shows">
-                <input type="text" value="{if !is_null($_GET['fav_books'])}{$_GET['fav_books']}{/if}" form="searcher" placeholder="{_favorite_books}" name="fav_books">
-                <input type="text" value="{if !is_null($_GET['fav_quote'])}{$_GET['fav_quote']}{/if}" form="searcher" placeholder="{_favorite_quotes}"  name="fav_quote">
-            </div>
+    </div>
+    <div n:if="$section == 'videos'" class="search_option">
+        <div class="search_option_name">
+            <div class='search_option_name_ico'></div>
+            {_s_main}
         </div>
-        <!--<input name="with_photo" type="checkbox" {if !is_null($_GET['with_photo']) && $_GET['with_photo'] == "on"}checked{/if} form="searcher">{_s_with_photo}-->
-    {/if}
-        <input class="button" type="button" id="dnt" value="{_reset}" onclick="resetSearch()">
+        <div class="search_option_content">
+            <label>
+                <input type="checkbox" value='1' name="only_youtube" n:attr="checked => !empty($_REQUEST['only_youtube'])" form="search_form">{_s_only_youtube}
+            </label>
+        </div>
+    </div>
+    <div n:if="$section == 'audios'" class="search_option">
+        <div class="search_option_name">
+            <div class='search_option_name_ico'></div>
+            {_s_main}
+        </div>
+        <div class="search_option_content">
+            <label>
+                <input type="checkbox" name="only_performers" n:attr="checked => !empty($_REQUEST['only_performers'])" form="search_form">{_s_only_performers}
+            </label>
+            <label>
+                <input type="checkbox" name="with_lyrics" n:attr="checked => !empty($_REQUEST['with_lyrics'])" form="search_form">{_s_with_lyrics}
+            </label>
+            <label>
+                {_genre}
+                <select name='genre' form="search_form" data-default='any'>
+                    <option n:attr="selected: empty($_REQUEST['genre'])" value="any">{_s_any_single}</option>
+                    <option n:foreach='\openvk\Web\Models\Entities\Audio::genres as $genre' n:attr="selected: $_REQUEST['genre'] == $genre" value="{$genre}">
+                        {$genre}
+                    </option>
+                </select>
+            </label>
+        </div>
     </div>
 
+    <input class="button" id="search_reset" type="button" value="{_reset}">
 {/block}

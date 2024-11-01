@@ -1,0 +1,144 @@
+openvk:
+    debug: true
+    appearance:
+        name: "OpenVK"
+        motd: "Yet another OpenVK instance"
+    
+    preferences:
+        femaleGenderPriority: true
+        nginxCacheTime: null
+        uploads:
+            disableLargeUploads: false
+            mode: "basic"
+            api:
+                maxFilesPerDomain: 10
+                maxFileSize: 25000000
+        shortcodes:
+            minLength: 3 # won't affect existing short urls or the ones set via admin panel
+            forbiddenNames:
+                - "index.php"
+        photos:
+            upgradeStructure: false
+            photoSaving: "quick"
+        videos:
+            disableUploading: false
+        apps:
+            withdrawTax: 8
+        security:
+            requireEmail: false
+            requirePhone: false
+            forcePhoneVerification: false
+            forceEmailVerification: false
+            forceStrongPassword: false
+            disablePasswordRestoring: true # turn this off if you have configured e-mail sending correctly
+            enableSu: true
+            rateLimits:
+                actions: 5
+                time: 20
+                maxViolations: 50
+                maxViolationsAge: 120
+                autoban: true
+        registration:
+            enable: true
+            disablingReason: ""
+        support:
+            supportName: "Agent"
+            adminAccount: 1 # Change this ok
+            fastAnswers:
+                - "This is a list of quick answers to common questions for support. Post your responses here and agents can send it quickly with just 3 clicks"
+                - "There can be as many answers as you want, but it is best to have a maximum of 10.\n\nYou can also remove all answers from the list to disable this feature"
+                - "Good luck filling! If you are a regular support agent, inform the administrator that he forgot to fill the config"
+        messages:
+            strict: false
+        music:
+            exposeOriginalURLs: true
+        wall:
+            christian: false
+            anonymousPosting:
+                enable: false
+                account: 100
+            postSizes:
+                maxSize: 60000
+                processingLimit: 3000
+                emojiProcessingLimit: 1000
+        commerce: false
+        susLinks:
+            warnings: true
+            showReason: true
+        maintenanceMode:
+            all: false
+            photos: false
+            videos: false
+            messenger: false
+            user: false
+            group: false
+            comment: false
+            gifts: false
+            apps: false
+            notes: false
+            notification: false
+            support: false
+            topics: false
+        ton:
+            enabled: false
+            address: "🅿"
+            testnet: false # Only for testing purposes.
+            rate: 0.02     # TONs per 1 coin
+            regex: "ovk=([0-9]+)"
+            hint: "ovk=$1"
+            # Please read docs to understand how to turn on automatic checking for new translations
+        menu:
+            links:
+                - name: "@left_menu_donate"
+                  url: "/donate"
+        about:
+            links:
+                - name: "Link caption"
+                  url: "https://example.org/"
+        adPoster:
+            enable: false
+            src: "https://example.org/ad_poster.jpeg"
+            caption: "Ad caption"
+            link: "https://example.org/product.aspx?id=10&from=ovk"
+        bellsAndWhistles:
+            testLabel: false
+        defaultMobileTheme: ""
+        defaultFeaturePhoneTheme: ""
+        logs: true
+    
+    telemetry:
+        plausible:
+            enable: false
+            domain: ""
+            server: ""
+        piwik:
+            enable: false
+            container: ""
+            site: ""
+            layer: "dataLayer"
+        matomo:
+            enable: false
+            container: ""
+            site: ""
+    
+    credentials:
+        smsc:
+            enable: false
+            client: ""
+            secret: "SECRET_KEY_HERE"
+        telegram:
+            enable: false
+            token: "TOKEN_HERE"
+            helpdeskChat: ""
+        eventDB:
+            enable: true
+            database:
+                dsn: "mysql:host=mariadb-eventdb;dbname=openvk_eventdb" # or unix_socket=/tmp/mysql.sock
+                user: "openvk"
+                password: "openvk"
+        notificationsBroker:
+            enable: true
+            kafka:
+                addr: "kafka"
+                port: 9092
+                topic: "OvkEvents"

@@ -257,17 +257,6 @@
                 </tr>
                 <tr>
                     <td class="e">
-                        Fartscroll
-                    </td>
-                    <td class="v">
-                        {php echo OPENVK_ROOT_CONF["openvk"]["preferences"]["bellsAndWhistles"]["fartscroll"] ? "Enabled" : "Disabled"}
-                    </td>
-                    <td class="v">
-                        Disabled
-                    </td>
-                </tr>
-                <tr>
-                    <td class="e">
                         NDA Test Label
                     </td>
                     <td class="v">
@@ -282,7 +271,7 @@
                         Number verification
                     </td>
                     <td class="v">
-                        {php echo OPENVK_ROOT_CONF["openvk"]["credentials"]["zadarma"]["enable"] ? "SMS (Zadarma)" : "Disabled"}
+                        {php echo OPENVK_ROOT_CONF["openvk"]["credentials"]["smsc"]["enable"] ? "SMS" : "Disabled"}
                     </td>
                     <td class="v">
                         Disabled
@@ -364,21 +353,21 @@
                         Vladimir Barinov, Konstantin Kichulkin and Daniel Myslivets
                     </td>
                 </tr>
-                <tr n:foreach="$themes as $theme">
+                <tr n:foreach="$themes as $themeEntry">
                     <td class="e">
-                        {$theme->getName()}
+                        {$themeEntry->getName()}
                     </td>
                     <td class="v">
-                        {$theme->isEnabled() ? "Enabled" : "Installed"}
+                        {$themeEntry->isEnabled() ? "Enabled" : "Installed"}
                     </td>
                     <td class="v">
-                        {$theme->getVersion()}
+                        {$themeEntry->getVersion()}
                     </td>
                     <td class="v">
-                        {$theme->getDescription()|truncate:20}
+                        {$themeEntry->getDescription()|truncate:20}
                     </td>
                     <td class="v">
-                        {$theme->getAuthor()}
+                        {$themeEntry->getAuthor()}
                     </td>
                 </tr>
             </tbody>

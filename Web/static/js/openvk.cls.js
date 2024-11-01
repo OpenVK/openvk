@@ -167,6 +167,23 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
         return false;
     });
 
+    u("#_submitUserSubscriptionAction").handle("submit", async function(e) {
+        u(this).nodes[0].parentElement.classList.add('loading');
+        u(this).nodes[0].parentElement.classList.add('disable');
+        console.log(e.target);
+        const data = await fetch(u(this).attr('action'), { method: 'POST', body: new FormData(e.target) });
+        if (data.ok) {
+            u(this).nodes[0].parentElement.classList.remove('loading');
+            u(this).nodes[0].parentElement.classList.remove('disable');
+            if (e.target[0].value == "add") {
+                u(this).nodes[0].parentElement.innerHTML = tr("friends_add_msg");
+            } else if (e.target[0].value == "rej") {
+                u(this).nodes[0].parentElement.innerHTML = tr("friends_rej_msg");
+            } else if (e.target[0].value == "rem") {
+                u(this).nodes[0].parentElement.innerHTML = tr("friends_rem_msg");
+            }
+        }
+    })
 }); //END ONREADY DECLS
 
 async function repostPost(id, hash) {
@@ -483,201 +500,42 @@ function escapeHtml(text) {
     return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
-function addAvatarImage(groupStrings = false, groupId = 0)
-{
-    let inputname = groupStrings == true ? 'ava' : 'blob';
-    let body = `
-    <div id="avatarUpload">
-        <p>${groupStrings == true ? tr('groups_avatar') : tr('friends_avatar')}</p>
-        <p>${tr('formats_avatar')}</p><br>
-        <img style="margin-left:46.3%;display:none" id="loader" src="/assets/packages/static/openvk/img/loading_mini.gif">
-        <label class="button" style="margin-left:45%;user-select:none" id="uploadbtn">${tr("browse")}
-        <input accept="image/*" type="file" name="${inputname}" hidden id="${inputname}" style="display: none;" onchange="uploadAvatar(${groupStrings}, ${groupStrings == true ? groupId : null})">
-        </label><br><br>
-        <p>${tr('troubles_avatar')}</p>
-    </div>
-    `
-    let msg = MessageBox(tr('uploading_new_image'), body, [
-        tr('cancel')
-    ], [
-        (function() {
-            u("#tmpPhDelF").remove();
-        }),
-    ]);
-    msg.attr("style", "width: 600px;");
-}
+function highlightText(searchText, container_selector, selectors = []) {
+    const container = u(container_selector)
+    const regexp = new RegExp(`(${searchText})`, 'gi')
 
-function uploadAvatar(group = false, group_id = 0)
-{
-    loader.style.display = "block";
-    uploadbtn.setAttribute("hidden", "hidden")
-    let xhr = new XMLHttpRequest();
-    let formData = new FormData();
-    let bloborava = group == false ? "blob" : "ava"
-    formData.append(bloborava, document.getElementById(bloborava).files[0]);
-    formData.append("ava", 1)
-    formData.append("hash", u("meta[name=csrf]").attr("value"))
-    xhr.open("POST", group == true ? "/club"+group_id+"/al_avatar" : "/al_avatars")
-    xhr.onload = () => {
-        let json = JSON.parse(xhr.responseText);
-        document.getElementById(group == false ? "thisUserAvatar" : "thisGroupAvatar").src = json["url"];
-        u("body").removeClass("dimmed");
-        u(".ovk-diag-cont").remove();
-        if(document.getElementsByClassName("text_add_image")[0] == undefined)
-        {
-            document.getElementById("upl").href = "javascript:deleteAvatar('"+json["id"]+"', '"+u("meta[name=csrf]").attr("value")+"')"
-        }
-        //console.log(json["id"])
-        NewNotification(tr("update_avatar_notification"), tr("update_avatar_description"), json["url"], () => {window.location.href = "/photo" + json["id"]});
-        if(document.getElementsByClassName("text_add_image")[0] != undefined)
-        {
-            //ожидание чтобы в уведомлении была аватарка
-            let promise = new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    location.reload()
-                }, 500);
-              });
-        }
-    }
-    xhr.send(formData)
-}
-
-function deleteAvatar(avatar)
-{
-    let body = `
-        <p>${tr("deleting_avatar_sure")}</p>
-    `
-    let msg = MessageBox(tr('deleting_avatar'), body, [
-        tr('yes'),
-        tr('cancel')
-    ], [
-        (function() {
-            let xhr = new XMLHttpRequest();
-            xhr.open("POST", "/photo"+avatar+"/delete")
-            xhr.onload = () => {
-                //не люблю формы
-                NewNotification(tr("deleted_avatar_notification"), "");
-                location.reload()
-            }
-            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-            xhr.send("hash="+u("meta[name=csrf]").attr("value"))
-        }),
-        (function() {
-            u("#tmpPhDelF").remove();
-        }),
-    ]);
-}
-
-function expandSearch()
-{
-    // console.log("search expanded")
-    let els = document.querySelectorAll("div.dec")
-    for(const element of els)
-    {
-        element.style.display = "none"
-    }
-    
-    document.querySelector(".whatFind").style.display = "block";
-    document.querySelector(".whatFind").style.marginRight = "-80px";
-    document.getElementById("searchInput").style.width = "627px";
-    document.getElementById("searchInput").style.background = "none";
-    document.getElementById("searchInput").style.backgroundColor = "#fff";
-    document.getElementById("searchInput").style.paddingLeft = "6px";
-    srch.classList.add("nodivider")
-}
-
-async function decreaseSearch()
-{
-    // чтобы люди успели выбрать что искать и поиск не скрывался сразу
-    await new Promise(r => setTimeout(r, 4000));
-
-    // console.log("search decreased")
-    if(document.activeElement !== searchInput && document.activeElement !== typer)
-    {
-        srcht.setAttribute("hidden", "hidden")
-        document.getElementById("searchInput").style.background = "url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px";
-        document.getElementById("searchInput").style.backgroundColor = "#fff";
-        document.getElementById("searchInput").style.paddingLeft = "18px";
-        document.getElementById("searchInput").style.width = "120px";
-        document.querySelector(".whatFind").style.display = "none";
-
-        await new Promise(r => setTimeout(r, 300));
-        srch.classList.remove("nodivider")
-
-        let els = document.querySelectorAll("div.dec")
-        for(const element of els)
-        {
-            element.style.display = "inline-block"
-        }
-    }
-}
-
-function hideParams(name)
-{
-    $("#s_"+name).slideToggle(250, "swing");
-
-    if($(`#n_${name} img`).attr("src") == "/assets/packages/static/openvk/img/hide.png")
-    {
-        $("#n_"+name+" img").attr("src", "/assets/packages/static/openvk/img/show.png");
-    } else {
-        $("#n_"+name+" img").attr("src", "/assets/packages/static/openvk/img/hide.png");
-    }
-}
-
-function resetSearch()
-{
-    let inputs = document.querySelectorAll("input")
-    let selects = document.querySelectorAll("select")
-
-    for(const input of inputs)
-    {
-        if(input != dnt && input != gend && input != gend1 && input != gend2) {
-            input.value = ""
-        }
-    }
-
-    for(const select of selects)
-    {
-        if(select != sortyor && select != document.querySelector(".whatFind")) {
-            select.value = 0
-        }
-    }
-}
-
-async function checkSearchTips()
-{
-    let query = searchInput.value;
-
-    await new Promise(r => setTimeout(r, 1000));
-
-    let type = typer.value;
-    let smt  = type == "users" || type == "groups" || type == "videos";
-
-    if(query.length > 3 && query == searchInput.value && smt) {
-        srcht.removeAttribute("hidden")
-        let etype = type
-
-        try {
-            let results = await API.Search.fastSearch(escapeHtml(query), etype)
+    function highlightNode(node) {
+        if(node.nodeType == 3) {
+            let newNode = escapeHtml(node.nodeValue)
+            newNode = newNode.replace(regexp, (match, ...args) => {
+                return `<span class='highlight'>${escapeHtml(match)}</span>`
+            })
             
-            srchrr.innerHTML = ""
+            const tempDiv = document.createElement('div')
+            tempDiv.innerHTML = newNode
 
-            for(const el of results["items"]) {
-                srchrr.insertAdjacentHTML("beforeend", `
-                    <tr class="restip" onmouseup="if (event.which === 2) { window.open('${el.url}', '_blank'); } else {location.href='${el.url}'}">
-                        <td>
-                            <img src="${el.avatar}" width="30">
-                        </td>
-                        <td valign="top">
-                            <p class="nameq" style="margin-top: -2px;text-transform:none;">${escapeHtml(el.name)}</p>
-                            <p class="desq" style="text-transform:none;">${escapeHtml(el.description)}</p>
-                        </td>
-                    </tr>
-                    `)
+            while(tempDiv.firstChild) {
+                node.parentNode.insertBefore(tempDiv.firstChild, node)
             }
-        } catch(rejection) {
-            srchrr.innerHTML = tr("no_results")
+            node.parentNode.removeChild(node)
+        } else if(node.nodeType === 1 && node.tagName !== 'SCRIPT' && node.tagName !== 'BR' && node.tagName !== 'STYLE') {
+            Array.from(node.childNodes).forEach(highlightNode);
         }
+    }
+
+    selectors.forEach(selector => {
+        elements = container.find(selector)
+        if(!elements || elements.length < 1) return;
+
+        elements.nodes.forEach(highlightNode)
+    })
+}
+
+String.prototype.escapeHtml = function() {
+    try {
+        return escapeHtml(this)
+    } catch(e) {
+        return ''
     }
 }
 

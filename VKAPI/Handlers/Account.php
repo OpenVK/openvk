@@ -7,19 +7,32 @@ final class Account extends VKAPIRequestHandler
     function getProfileInfo(): object
     {
         $this->requireUser();
-
-        return (object) [
-            "first_name"       => $this->getUser()->getFirstName(),
-            "id"               => $this->getUser()->getId(),
-            "last_name"        => $this->getUser()->getLastName(),
-            "home_town"        => $this->getUser()->getHometown(),
-            "status"           => $this->getUser()->getStatus(),
-            "bdate"            => is_null($this->getUser()->getBirthday()) ? '01.01.1970' : $this->getUser()->getBirthday()->format('%e.%m.%Y'),
-            "bdate_visibility" => $this->getUser()->getBirthdayPrivacy(),
+        $user = $this->getUser();
+        $return_object = (object) [
+            "first_name"       => $user->getFirstName(),
+            "photo_200"        => $user->getAvatarURL("normal"),
+            "nickname"         => $user->getPseudo(),
+            "is_service_account" => false,
+            "id"               => $user->getId(),
+            "is_verified"      => $user->isVerified(),
+            "verification_status" => $user->isVerified() ? 'verified' : 'unverified',
+            "last_name"        => $user->getLastName(),
+            "home_town"        => $user->getHometown(),
+            "status"           => $user->getStatus(),
+            "bdate"            => is_null($user->getBirthday()) ? '01.01.1970' : $user->getBirthday()->format('%e.%m.%Y'),
+            "bdate_visibility" => $user->getBirthdayPrivacy(),
             "phone"            => "+420 ** *** 228",                       # TODO
-            "relation"         => $this->getUser()->getMaritalStatus(),
-            "sex"              => $this->getUser()->isFemale() ? 1 : 2
+            "relation"         => $user->getMaritalStatus(),
+            "screen_name"      => $user->getShortCode(),
+            "sex"              => $user->isFemale() ? 1 : 2,
+            #"email"            => $user->getEmail(),
         ];
+
+        $audio_status = $user->getCurrentAudioStatus();
+        if(!is_null($audio_status)) 
+            $return_object->audio_status = $audio_status->toVkApiStruct($user);
+
+        return $return_object;
     }
 
     function getInfo(): object
@@ -150,5 +163,31 @@ final class Account extends VKAPIRequestHandler
         }
 
         return (object) $output;
+    }
+
+    function getBalance(): object
+    {
+        $this->requireUser();
+        if(!OPENVK_ROOT_CONF['openvk']['preferences']['commerce'])
+            $this->fail(105, "Commerce is disabled on this instance");
+        
+        return (object) ['votes' => $this->getUser()->getCoins()];
+    }
+
+    function getOvkSettings(): object
+    {
+        $this->requireUser();
+        $user = $this->getUser();
+
+        $settings_list = (object)[
+            'avatar_style' => $user->getStyleAvatar(),
+            'style'        => $user->getStyle(),
+            'show_rating'  => !$user->prefersNotToSeeRating(),
+            'nsfw_tolerance' => $user->getNsfwTolerance(),
+            'post_view'    => $user->hasMicroblogEnabled() ? 'microblog' : 'old',
+            'main_page'    => $user->getMainPage() == 0 ? 'my_page' : 'news',
+        ];
+
+        return $settings_list;
     }
 }

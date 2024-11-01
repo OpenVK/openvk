@@ -4,11 +4,14 @@
 {var $act = $_GET["act"] ?? "friends"}
 
 {if $act == "incoming"}
-    {var $iterator = iterator_to_array($user->getFollowers($page))}
-    {var $count    = $user->getFollowersCount()}
+    {var $iterator = iterator_to_array($user->getRequests($page))}
+    {var $count    = $user->getRequestsCount()}
 {elseif $act == "outcoming"}
     {var $iterator = iterator_to_array($user->getSubscriptions($page))}
     {var $count    = $user->getSubscriptionsCount()}
+{elseif $act == "followers"}
+    {var $iterator = iterator_to_array($user->getFollowers($page))}
+    {var $count    = $user->getFollowersCount()}
 {elseif $act == "online"}
     {var $iterator = iterator_to_array($user->getFriendsOnline($page))}
     {var $count    = $user->getFriendsOnlineCount()}
@@ -22,6 +25,8 @@
         {_incoming_req}
     {elseif $act == "outcoming"}
         {_outcoming_req}
+    {elseif $act == "followers"}
+        {_followers}
     {elseif $act == "online"}
         {_friends_online}
     {else}
@@ -38,6 +43,8 @@
             {_incoming_req}
         {elseif $act == "outcoming"}
             {_outcoming_req}
+        {elseif $act == "followers"}
+            {_followers}
         {elseif $act == "online"}
             {_friends_online}
         {else}
@@ -53,16 +60,21 @@
     <div n:attr="id => ($act === 'online' ? 'activetabs' : 'ki')" class="tab">
         <a n:attr="id => ($act === 'online' ? 'act_tab_a' : 'ki')" href="?act=online">{_online}</a>
     </div>
-    <div n:if="!is_null($thisUser) && $user->getId() === $thisUser->getId()" n:attr="id => ($act === 'incoming' || $act === 'outcoming' ? 'activetabs' : 'ki')" class="tab">
-        <a n:attr="id => ($act === 'incoming' || $act === 'outcoming' ? 'act_tab_a' : 'ki')" href="?act=incoming">{_req}</a>
+    <div n:if="!is_null($thisUser) && $user->getId() === $thisUser->getId()" n:attr="id => ($act === 'incoming' || $act === 'followers' || $act === 'outcoming' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($act === 'incoming' || $act === 'followers' || $act === 'outcoming' ? 'act_tab_a' : 'ki')" href="?act=incoming">{_req}</a>
     </div>
 {/block}
 
 {block size}
-    <div n:if="$act === 'incoming' || $act === 'outcoming'" class="mb_tabs">
+    <div n:if="$act === 'incoming' || $act === 'followers' || $act === 'outcoming'" class="mb_tabs">
         <div n:attr="id => ($act === 'incoming' ? 'active' : 'ki')" class="mb_tab">
             <div>
                 <a href="?act=incoming">{_incoming_req}</a>
+            </div>
+        </div>
+        <div n:attr="id => ($act === 'followers' ? 'active' : 'ki')" class="mb_tab">
+            <div>
+                <a href="?act=followers">{_followers}</a>
             </div>
         </div>
         <div n:attr="id => ($act === 'outcoming' ? 'active' : 'ki')" class="mb_tab">
@@ -78,6 +90,8 @@
                     {tr("req", $count)}
                 {elseif $act == "outcoming"}
                     {tr("req", $count)}
+                {elseif $act == "followers"}
+                    {tr("followers", $count)}
                 {elseif $act == "online"}
                     {tr("friends_list_online", $count)}
                 {else}
@@ -97,7 +111,7 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="Фотография пользователя" />
+    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="Фотография пользователя" loading=lazy />
 {/block}
 
 {block name}
@@ -112,8 +126,8 @@
     <table>
         <tbody>
             <tr>
-                <td width="120" valign="top"><span class="nobold">{_gender}: </span></td>
-                <td>{$x->isFemale() ? tr("female") : tr("male")}</td>
+                <td width="120" valign="top"><span class="nobold">{_pronouns}: </span></td>
+                <td>{$x->isFemale() ? tr("female") : ($x->isNeutral() ? tr("neutral") : tr("male"))}</td>
             </tr>
             <tr>
                 <td width="120" valign="top"><span class="nobold">{_relationship}:</span></td>
@@ -131,21 +145,29 @@
     {if ($x->getId() !== $thisUser->getId()) && ($thisUser->getId() === $user->getId())}
         {var $subStatus = $x->getSubscriptionStatus($thisUser)}
         {if $subStatus === 0}
-            <form action="/setSub/user" method="post" class="profile_link_form">
+            <form action="/setSub/user" method="post" class="profile_link_form" id="_submitUserSubscriptionAction">
                 <input type="hidden" name="act" value="add" />
                 <input type="hidden" name="id"  value="{$x->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
                 <input type="submit" class="profile_link" value="{_friends_add}" />
             </form>
         {elseif $subStatus === 1}
-            <form action="/setSub/user" method="post" class="profile_link_form">
+            <form action="/setSub/user" method="post" class="profile_link_form" id="_submitUserSubscriptionAction">
                 <input type="hidden" name="act" value="add" />
                 <input type="hidden" name="id"  value="{$x->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
                 <input type="submit" class="profile_link" value="{_friends_accept}" />
             </form>
+            {if $act !== 'followers'}
+                <form action="/setSub/user" method="post" class="profile_link_form" id="_submitUserSubscriptionAction">
+                    <input type="hidden" name="act" value="rej" />
+                    <input type="hidden" name="id"  value="{$x->getId()}" />
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    <input type="submit" class="profile_link" value="{_friends_leave_in_flw}" />
+                </form>
+            {/if}
         {elseif $subStatus === 2}
-            <form action="/setSub/user" method="post" class="profile_link_form">
+            <form action="/setSub/user" method="post" class="profile_link_form" id="_submitUserSubscriptionAction">
                 <input type="hidden" name="act" value="rem" />
                 <input type="hidden" name="id"  value="{$x->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />
@@ -153,7 +175,7 @@
             </form>
         {elseif $subStatus === 3}
             <a href="/im?sel={$x->getId()}" class="profile_link">{_send_message}</a>
-            <form action="/setSub/user" method="post" class="profile_link_form">
+            <form action="/setSub/user" method="post" class="profile_link_form" id="_submitUserSubscriptionAction">
                 <input type="hidden" name="act" value="rem" />
                 <input type="hidden" name="id"  value="{$x->getId()}" />
                 <input type="hidden" name="hash" value="{$csrfToken}" />

@@ -58,12 +58,16 @@
                 </div>
                 <br/>
                 <div class="group">
-                    <input class="toggle-large" type="checkbox" id="verify" name="verify" value="1" {if $club->isVerified()} checked {/if} />
+                    <input class="toggle-large" type="checkbox" id="verify" name="verify" value="1" n:attr="checked => $club->isVerified()" />
                     <label for="verify">{_admin_verification}</label>
                 </div>
                 <div class="group">
-                    <input class="toggle-large" type="checkbox" id="hide_from_global_feed" name="hide_from_global_feed" value="1" {if $club->isHideFromGlobalFeedEnabled()} checked {/if} />
+                    <input class="toggle-large" type="checkbox" id="hide_from_global_feed" name="hide_from_global_feed" value="1" n:attr="checked => $club->isHideFromGlobalFeedEnabled()" />
                     <label for="hide_from_global_feed">{_admin_club_excludeglobalfeed}</label>
+                </div>
+                <div class="group">
+                    <input class="toggle-large" type="checkbox" id="enforce_hiding_from_global_feed" name="enforce_hiding_from_global_feed" value="1" n:attr="checked => $club->isHidingFromGlobalFeedEnforced()" />
+                    <label for="enforce_hiding_from_global_feed">{_admin_club_enforceexcludeglobalfeed}</label>
                 </div>
                 <hr/>
                 <div class="buttons-container">

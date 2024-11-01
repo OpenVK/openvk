@@ -40,6 +40,8 @@ final class NotesPresenter extends OpenVKPresenter
             $this->notFound();
         if(!$note->getOwner()->getPrivacyPermission('notes.read', $this->user->identity ?? NULL))
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
+        if(!$note->canBeViewedBy($this->user->identity))
+            $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         
         $this->template->cCount   = $note->getCommentsCount();
         $this->template->cPage    = (int) ($this->queryParam("p") ?? 1);
@@ -107,7 +109,7 @@ final class NotesPresenter extends OpenVKPresenter
         if(!$note || $note->getOwner()->getId() !== $owner || $note->isDeleted())
             $this->notFound();
         if(is_null($this->user) || !$note->canBeModifiedBy($this->user->identity))
-            $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+            $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
         $this->template->note = $note;
             
         if($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -135,11 +137,11 @@ final class NotesPresenter extends OpenVKPresenter
         if(!$note) $this->notFound();
         if($note->getOwner()->getId() . "_" . $note->getId() !== $owner . "_" . $id || $note->isDeleted()) $this->notFound();
         if(is_null($this->user) || !$note->canBeModifiedBy($this->user->identity))
-            $this->flashFail("err", "Ошибка доступа", "Недостаточно прав для модификации данного ресурса.");
+            $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
         
         $name = $note->getName();
         $note->delete();
-        $this->flash("succ", "Заметка удалена", "Заметка \"$name\" была успешно удалена.");
+        $this->flash("succ", tr("note_is_deleted"), tr("note_x_is_now_deleted", $name));
         $this->redirect("/notes" . $this->user->id);
     }
 }

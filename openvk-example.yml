@@ -50,6 +50,8 @@ openvk:
                 - "Good luck filling! If you are a regular support agent, inform the administrator that he forgot to fill the config"
         messages:
             strict: false
+        music:
+            exposeOriginalURLs: true
         wall:
             christian: false
             anonymousPosting:
@@ -99,9 +101,10 @@ openvk:
             caption: "Ad caption"
             link: "https://example.org/product.aspx?id=10&from=ovk"
         bellsAndWhistles:
-            fartscroll: false
             testLabel: false
         defaultMobileTheme: ""
+        defaultFeaturePhoneTheme: ""
+        logs: true
     
     telemetry:
         plausible:
