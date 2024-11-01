@@ -18,7 +18,7 @@
     {else}
         <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
         »
-        <a href="/playlists{$ownerId}">{_playlists}</a>
+        <a href="/playlists{$owner->getRealId()}">{_playlists}</a>
         »
         <a href="/playlist{$playlist->getPrettyId()}">{_playlist}</a>
     {/if}

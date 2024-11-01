@@ -286,6 +286,31 @@ function ovk_scheme(bool $with_slashes = false): string
     return $scheme;
 }
 
+function check_copyright_link(string $link = ''): bool
+{
+    if(!str_contains($link, "https://") && !str_contains($link, "http://"))
+        $link = "https://" . $link;
+    
+    # Existability
+    if(is_null($link) || empty($link))
+        throw new \InvalidArgumentException("Empty link");
+
+    # Length
+    if(iconv_strlen($link) < 2 || iconv_strlen($link) > 400)
+        throw new \LengthException("Link is too long");
+
+    # Match URL regex
+    # stolen from http://urlregex.com/
+    if (!preg_match("%^(?:(?:https?|ftp)://)(?:\S+(?::\S*)?@|\d{1,3}(?:\.\d{1,3}){3}|(?:(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+|xn--[a-z\d-]+)(?:\.(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)*(?:\.(?:xn--[a-z\d-]+|[a-z\x{00a1}-\x{ffff}]{2,6})))(?::\d+)?(?:[^\s]*)?$%iu", $link))
+        throw new \InvalidArgumentException("Invalid link format");
+
+    $banEntries = (new openvk\Web\Models\Repositories\BannedLinks)->check($link);
+    if(sizeof($banEntries) > 0)
+        throw new \LogicException("Suspicious link");
+
+    return true;
+}
+
 return (function() {
     _ovk_check_environment();
     require __DIR__ . "/vendor/autoload.php";

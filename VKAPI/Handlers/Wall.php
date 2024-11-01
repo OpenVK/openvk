@@ -102,7 +102,14 @@ final class Wall extends VKAPIRequestHandler
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Video) {
                     $attachments[] = $attachment->getApiStructure($this->getUser());
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Note) {
-                    $attachments[] = $attachment->toVkApiStruct();
+                    if(VKAPI_DECL_VER === '4.100') {
+                        $attachments[] = $attachment->toVkApiStruct();
+                    } else {
+                        $attachments[] = [
+                            'type' => 'note',
+                            'note' => $attachment->toVkApiStruct()
+                        ];
+                    }
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
                     $attachments[] = [
                         "type" => "audio",
@@ -187,6 +194,9 @@ final class Wall extends VKAPIRequestHandler
                     "user_reposted" => 0
                 ]
             ];
+
+            if($post->hasSource())
+                $post_temp_obj->copyright = $post->getVkApiCopyright();
 
             if($signerId) 
                 $post_temp_obj->signer_id = $signerId;
@@ -291,7 +301,14 @@ final class Wall extends VKAPIRequestHandler
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Video) {
                         $attachments[] = $attachment->getApiStructure($this->getUser());
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Note) {
-                        $attachments[] = $attachment->toVkApiStruct();
+                        if(VKAPI_DECL_VER === '4.100') {
+                            $attachments[] = $attachment->toVkApiStruct();
+                        } else {
+                            $attachments[] = [
+                                'type' => 'note',
+                                'note' => $attachment->toVkApiStruct()
+                            ];
+                        }
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
                         $attachments[] = [
                             "type" => "audio",
@@ -372,6 +389,9 @@ final class Wall extends VKAPIRequestHandler
                         "user_reposted" => 0
                     ]
                 ];
+
+                if($post->hasSource())
+                    $post_temp_obj->copyright = $post->getVkApiCopyright();
 
                 if($signerId) 
                     $post_temp_obj->signer_id = $signerId;
@@ -543,6 +563,12 @@ final class Wall extends VKAPIRequestHandler
             $post->setFlags($flags);
             $post->setApi_Source_Name($this->getPlatform());
 
+            if(!is_null($copyright) && !empty($copyright)) {
+                try {
+                    $post->setSource($copyright);
+                } catch(\Throwable) {}
+            }
+          
             if($owner_id < 0 && !$wallOwner->canBeModifiedBy($this->getUser()) && $wallOwner->getWallType() == 2)
                 $post->setSuggested(1);
 
@@ -558,11 +584,11 @@ final class Wall extends VKAPIRequestHandler
             # Пример: photo1_1
 
             if(sizeof($attachmentsArr) > 10)
-                $this->fail(50, "Error: too many attachments");
+                $this->fail(50, "Too many attachments");
 
             preg_match_all("/poll/m", $attachments, $matches, PREG_SET_ORDER, 0);
             if(sizeof($matches) > 1)
-                $this->fail(85, "Error: too many polls");
+                $this->fail(85, "Too many polls");
             
             foreach($attachmentsArr as $attac) {
                 $attachmentType = NULL;
@@ -993,7 +1019,7 @@ final class Wall extends VKAPIRequestHandler
         }
     }
     
-    function edit(int $owner_id, int $post_id, string $message = "", string $attachments = "") {
+    function edit(int $owner_id, int $post_id, string $message = "", string $attachments = "", string $copyright = NULL) {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
@@ -1002,9 +1028,6 @@ final class Wall extends VKAPIRequestHandler
         if(!$post || $post->isDeleted())
             $this->fail(102, "Invalid post");
 
-        if(empty($message) && empty($attachments))
-            $this->fail(100, "Required parameter 'message' missing.");
-
         if(!$post->canBeEditedBy($this->getUser()))
             $this->fail(7, "Access to editing denied");
 
@@ -1012,6 +1035,12 @@ final class Wall extends VKAPIRequestHandler
             $post->setContent($message);
         
         $post->setEdited(time());
+        if(!is_null($copyright) && !empty($copyright)) {
+            try {
+                $post->setSource($copyright);
+            } catch(\Throwable) {}
+        }
+
         $post->save(true);
 
         # todo добавить такое в веб версию
@@ -1079,6 +1108,63 @@ final class Wall extends VKAPIRequestHandler
             }
         }
 
+        return 1;
+    }
+
+    function checkCopyrightLink(string $link): int
+    {
+        $this->requireUser();
+
+        try {
+            $result = check_copyright_link($link); 
+        } catch(\InvalidArgumentException $e) {
+            $this->fail(3102, "Specified link is incorrect (can't find source)");
+        } catch(\LengthException $e) {
+            $this->fail(3103, "Specified link is incorrect (too long)");
+        } catch(\LogicException $e) {
+            $this->fail(3104, "Link is suspicious");
+        } catch(\Throwable $e) {
+            $this->fail(3102, "Specified link is incorrect");
+        }
+
+        return 1;
+    }
+
+    function pin(int $owner_id, int $post_id) 
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $post = (new PostsRepo)->getPostById($owner_id, $post_id);
+        if(!$post || $post->isDeleted())
+            $this->fail(100, "One of the parameters specified was missing or invalid: post_id is undefined");
+
+        if(!$post->canBePinnedBy($this->getUser()))
+            return 0;
+        
+        if($post->isPinned())
+            return 1;
+        
+        $post->pin();
+        return 1;
+    }
+
+    function unpin(int $owner_id, int $post_id) 
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $post = (new PostsRepo)->getPostById($owner_id, $post_id);
+        if(!$post || $post->isDeleted())
+            $this->fail(100, "One of the parameters specified was missing or invalid: post_id is undefined");
+
+        if(!$post->canBePinnedBy($this->getUser()))
+            return 0;
+        
+        if(!$post->isPinned())
+            return 1;
+        
+        $post->unpin();
         return 1;
     }
 
