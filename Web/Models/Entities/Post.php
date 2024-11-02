@@ -260,16 +260,22 @@ class Post extends Postable
         $this->save();
     }
     
-    function canBePinnedBy(User $user): bool
+    function canBePinnedBy(User $user = NULL): bool
     {
+        if(!$user)
+            return false;
+
         if($this->getTargetWall() < 0)
             return (new Clubs)->get(abs($this->getTargetWall()))->canBeModifiedBy($user);
         
         return $this->getTargetWall() === $user->getId();
     }
     
-    function canBeDeletedBy(User $user): bool
+    function canBeDeletedBy(User $user = NULL): bool
     {
+        if(!$user)
+            return false;
+        
         if($this->getTargetWall() < 0 && !$this->getWallOwner()->canBeModifiedBy($user) && $this->getWallOwner()->getWallType() != 1 && $this->getSuggestionType() == 0)
             return false;
         
