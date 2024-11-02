@@ -1381,7 +1381,7 @@ textarea {
 
 .toTop {
     position: fixed;
-    padding: 20px;
+    padding: 12px;
     width: 100px;
     height: 100%;
     background-color: #f3f3f3;
@@ -1391,9 +1391,34 @@ textarea {
     opacity: 0;
     transition: .1s all;
     z-index: 129;
+    user-select: none;
 }
 
-body.scrolled .toTop:hover {
+.toTop > div svg {
+    display: inline-block;
+    margin-right: 2px;
+    width: 8px;
+    height: 7px;
+    fill: #3f3f3f;
+}
+
+.toTop > div span {
+    font-weight: bold;
+}
+
+.toTop.has_down #to_up, .toTop #to_back {
+    display: none;
+}
+
+.toTop.has_down #to_back {
+    display: block;
+}
+
+.toTop.has_down {
+    opacity: .3;
+}
+
+body.scrolled .toTop:hover, .toTop.has_down:hover {
     opacity: .5;
     cursor: pointer;
 }
