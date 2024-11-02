@@ -58,3 +58,5 @@ VOLUME [ "/opt/chandler/extensions/available/openvk/tmp/api-storage/photos" ]
 VOLUME [ "/opt/chandler/extensions/available/openvk/tmp/api-storage/videos" ]
 
 USER www-data
+
+WORKDIR /opt/chandler/extensions/available/openvk
