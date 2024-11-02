@@ -46,8 +46,11 @@ class Comment extends Post
         return parent::getOwner($honourFlags, $real);
     }
 
-    function canBeDeletedBy(User $user): bool
+    function canBeDeletedBy(User $user = NULL): bool
     {
+        if(!$user)
+            return false;
+
         return $this->getOwner()->getId() == $user->getId() ||
                $this->getTarget()->getOwner()->getId() == $user->getId() ||
                $this->getTarget() instanceof Post && $this->getTarget()->getTargetWall() < 0 && (new Clubs)->get(abs($this->getTarget()->getTargetWall()))->canBeModifiedBy($user) ||
