@@ -2,7 +2,8 @@ name: Build base images
 
 on:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
+  workflow_dispatch:
 
 env:
   BASE_IMAGE_NAME: php
@@ -16,10 +17,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           lfs: false
-      
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
-      
+
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v2
@@ -38,7 +39,7 @@ jobs:
           IMAGE_NAME=ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/$BASE_IMAGE_NAME:$BASE_IMAGE_VERSION-cli
 
           docker buildx build --platform linux/amd64,linux/arm64 -t $IMAGE_NAME . --push -f install/automated/docker/base-php-cli.Dockerfile --build-arg VERSION=$BASE_IMAGE_VERSION
-  
+
   build-apache:
     runs-on: ubuntu-latest
 
@@ -46,14 +47,14 @@ jobs:
       - uses: actions/checkout@v3
         with:
           lfs: false
-      
+
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
-      
+
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v2
-     
+
       - name: Change repository string to lowercase
         id: repositorystring
         uses: Entepotenz/change-string-case-action-min-dependencies@v1.1.0
