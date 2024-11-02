@@ -33,9 +33,9 @@ COPY --from=builder /opt/chandler /opt/chandler
 
 WORKDIR /opt/chandler/extensions/available/openvk/Web/static/js
 
-ADD Web/static/js/package.json Web/static/js/package-lock.json Web/static/js/yarn.lock ./
+ADD Web/static/js/package.json Web/static/js/package-lock.json ./
 
-RUN yarn install
+RUN npm install
 
 WORKDIR /opt/chandler/extensions/available/openvk
 
