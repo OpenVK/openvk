@@ -22,15 +22,10 @@ final class NotesPresenter extends OpenVKPresenter
         if(!$user->getPrivacyPermission('notes.read', $this->user->identity ?? NULL))
             $this->flashFail("err", tr("forbidden"), tr("forbidden_comment"));
         
-        $this->template->notes = $this->notes->getUserNotes($user, (int)($this->queryParam("p") ?? 1));
+        $this->template->page  = (int)($this->queryParam("p") ?? 1);
+        $this->template->notes = $this->notes->getUserNotes($user, $this->template->page);
         $this->template->count = $this->notes->getUserNotesCount($user);
         $this->template->owner = $user;
-        $this->template->paginatorConf = (object) [
-            "count"   => $this->template->count,
-            "page"    => $this->queryParam("p") ?? 1,
-            "amount"  => NULL,
-            "perPage" => OPENVK_DEFAULT_PER_PAGE,
-        ];
     }
     
     function renderView(int $owner, int $note_id): void

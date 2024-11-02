@@ -125,5 +125,6 @@ final class SearchPresenter extends OpenVKPresenter
         ];
         $this->template->extendedPaginatorConf = clone $this->template->paginatorConf;
         $this->template->extendedPaginatorConf->space = 11;
+        $this->template->paginatorConf->atTop = true;
     }
 }

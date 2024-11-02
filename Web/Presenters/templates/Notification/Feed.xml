@@ -21,8 +21,8 @@
 </div>
 {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
 {if sizeof($data) > 0}
-<div>
-    <table class="post post-divider" border="0" style="font-size: 11px;" n:foreach="$data as $dat">
+<div n:class="$mode !== 'new' ? scroll_container">
+    <table class="scroll_node post post-divider" border="0" style="font-size: 11px;" n:foreach="$data as $dat">
         <tbody>
             <tr>
                 {var $sxModel = $dat->getModel(1)}

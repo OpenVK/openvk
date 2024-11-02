@@ -64,8 +64,8 @@
             <div n:if="$audiosCount <= 0" style='height: 50%;'>
                 {include "../components/content_error.xml", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_audios_thisuser") : tr("no_audios_user")) : tr("no_audios_club")}
             </div>
-            <div n:if="$audiosCount > 0" class="infContainer">
-                <div class="infObj" n:foreach="$audios as $audio">
+            <div n:if="$audiosCount > 0" class="scroll_container infContainer">
+                <div class="scroll_node infObj" n:foreach="$audios as $audio">
                     {include "player.xml", audio => $audio, club => $club}
                 </div>
             </div>
@@ -86,10 +86,10 @@
                 {include "../components/content_error.xml", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_playlists_thisuser") : tr("no_playlists_user")) : tr("no_playlists_club")}
             </div>
 
-            <div class="infContainer playlistContainer" n:if="$playlistsCount > 0">
-                {foreach $playlists as $playlist}
+            <div class="scroll_container infContainer playlistContainer" n:if="$playlistsCount > 0">
+                <div class='scroll_node' n:foreach='$playlists as $playlist'>
                     {include 'playlistListView.xml', playlist => $playlist}
-                {/foreach}
+                </div>
             </div>
 
             <div>
