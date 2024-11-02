@@ -367,6 +367,12 @@ final class WallPresenter extends OpenVKPresenter
             $post->setFlags($flags);
             $post->setNsfw($this->postParam("nsfw") === "on");
 
+            if(!empty($this->postParam("source")) && $this->postParam("source") != 'none') {
+                try {
+                    $post->setSource($this->postParam("source"));
+                } catch(\Throwable) {}
+            }
+
             if($wall < 0 && !$wallOwner->canBeModifiedBy($this->user->identity) && $wallOwner->getWallType() == 2)
                 $post->setSuggested(1);
             

@@ -17,7 +17,7 @@
                 
                 <a n:if="!$isMy" n:attr="id => $mode === 'list' ? 'used' : 'ki'" href="/audios{$ownerId}">{if $ownerId > 0}{_music_user}{else}{_music_club}{/if}</a>
                 <a href="/player/upload?gid={abs($ownerId)}" n:if="isset($thisUser) && isset($club) && $club->canUploadAudio($thisUser)">{_upload_audio}</a>
-                <a n:attr="id => $mode === 'playlists' && $ownerId != $thisUser->getId() ? 'used' : 'ki'" href="/playlists{$ownerId}"  n:if="isset($thisUser) && isset($ownerId) && !$isMy">{if $ownerId > 0}{_playlists_user}{else}{_playlists_club}{/if}</a>
+                <a n:attr="id => $mode === 'playlists' && $ownerId != $thisUser->getId() ? 'used' : 'ki'" class='noOverflow' href="/playlists{$ownerId}"  n:if="isset($thisUser) && isset($ownerId) && !$isMy">{if $ownerId > 0}{_playlists_user}{else}{_playlists_club}{/if}</a>
                 <a href="/audios/newPlaylist{if $isMyClub}?gid={abs($ownerId)}{/if}" n:if="isset($thisUser) && $isMyClub">{_new_playlist}</a>
             {/if}
         </div>

@@ -66,16 +66,16 @@ u(`#search_box input[type='search']`).on('input', async (e) => {
 
     switch(section) {
         case 'users':
-            results = await fetch(`/method/users.search?auth_mechanism=roaming&q=${query}&count=10&sort=4&fields=photo_50,status,nickname`)
+            results = await fetch(`/method/users.search?auth_mechanism=roaming&q=${encodeURIComponent(query)}&count=10&sort=4&fields=photo_50,status,nickname`)
             break
         case 'groups':
-            results = await fetch(`/method/groups.search?auth_mechanism=roaming&q=${query}&count=10&sort=4&fields=photo_50,description`)
+            results = await fetch(`/method/groups.search?auth_mechanism=roaming&q=${encodeURIComponent(query)}&count=10&sort=4&fields=photo_50,description`)
             break
         case 'videos':
-            results = await fetch(`/method/video.search?auth_mechanism=roaming&q=${query}&count=10&sort=4&extended=1`)
+            results = await fetch(`/method/video.search?auth_mechanism=roaming&q=${encodeURIComponent(query)}&count=10&sort=4&extended=1`)
             break
         case 'audios_playlists':
-            results = await fetch(`/method/audio.searchAlbums?auth_mechanism=roaming&query=${query}&limit=10`)
+            results = await fetch(`/method/audio.searchAlbums?auth_mechanism=roaming&query=${encodeURIComponent(query)}&limit=10`)
             break
     }
 
