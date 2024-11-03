@@ -37,7 +37,7 @@ jobs:
           tags: ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.BASE_IMAGE_NAME}}:test
           platforms: linux/amd64,linux/arm64
           file: install/automated/docker/openvk.Dockerfile
-          load: true
+          outputs: type=docker,dest=/tmp/openvk.tar
           build-args: |
             GITREPO=${{ steps.repositorystring.outputs.lowercase }}
       
@@ -47,7 +47,7 @@ jobs:
           tags: ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}:${{env.DB_VERSION}}-primary
           platforms: linux/amd64,linux/arm64
           file: install/automated/docker/mariadb-primary.Dockerfile
-          load: true
+          outputs: type=docker,dest=/tmp/mariadb-primary.tar
           build-args: |
             VERSION=${{env.DB_VERSION}}
       
@@ -57,6 +57,24 @@ jobs:
           tags: ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}:${{env.DB_VERSION}}-eventdb
           platforms: linux/amd64,linux/arm64
           file: install/automated/docker/mariadb-eventdb.Dockerfile
-          load: true
+          outputs: type=docker,dest=/tmp/mariadb-eventdb.tar
           build-args: |
             VERSION=${{env.DB_VERSION}}
+      
+      - name: Upload base image as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: openvk
+          path: /tmp/openvk.tar
+      
+      - name: Upload MariaDB primary as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mariadb-primary
+          path: /tmp/mariadb-primary.tar
+      
+      - name: Upload MariaDB event as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mariadb-eventdb
+          path: /tmp/mariadb-eventdb.tar
