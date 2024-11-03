@@ -37,6 +37,7 @@ jobs:
           tags: ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.BASE_IMAGE_NAME}}:test
           platforms: linux/amd64,linux/arm64
           file: install/automated/docker/openvk.Dockerfile
+          load: true
           build-args: |
             GITREPO=${{ steps.repositorystring.outputs.lowercase }}
       
@@ -46,6 +47,7 @@ jobs:
           tags: ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}:${{env.DB_VERSION}}-primary
           platforms: linux/amd64,linux/arm64
           file: install/automated/docker/mariadb-primary.Dockerfile
+          load: true
           build-args: |
             VERSION=${{env.DB_VERSION}}
       
@@ -55,5 +57,6 @@ jobs:
           tags: ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}:${{env.DB_VERSION}}-eventdb
           platforms: linux/amd64,linux/arm64
           file: install/automated/docker/mariadb-eventdb.Dockerfile
+          load: true
           build-args: |
             VERSION=${{env.DB_VERSION}}
