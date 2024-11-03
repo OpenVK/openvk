@@ -3277,6 +3277,7 @@ hr {
     flex-direction: row;
     justify-content: space-between;
     gap: 4px;
+    cursor: pointer;
 }
 
 .entity_vertical_list .entity_vertical_list_item .first_column {

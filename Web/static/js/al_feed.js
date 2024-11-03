@@ -202,11 +202,15 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                                 </a>
     
                                 <div class='info'>
-                                    <b class='noOverflow'>${ovk_proc_strtr(escapeHtml(name), 100)}</b>
+                                    <b class='noOverflow'>
+                                        <a href="/${ignore_item.screen_name}">
+                                            ${ovk_proc_strtr(escapeHtml(name), 100)}
+                                        </a>
+                                    </b>
                                 </div>
                             </div>
     
-                            <div class='third_column'>
+                            <div class='third_column' style="display: grid; align-items: center;">
                                 <input type='checkbox' name='remove_me'>
                             </div>
                         </label>
