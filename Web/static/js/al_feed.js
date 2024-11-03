@@ -86,7 +86,7 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                 const CURRENT_RETURN_BANNED = Number(__temp_url.searchParams.get('return_banned') ?? 0)
                 const COUNT = [1, 5, 10, 20, 30, 40, 50]
                 u('#_feed_settings_container #__content').html(`
-                                        <table cellspacing="7" cellpadding="0" border="0" align="center">
+                    <table cellspacing="7" cellpadding="0" border="0" align="center">
                         <tbody>
                             <tr>
                                 <td width="120" valign="top">
@@ -125,8 +125,8 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                     </table>
                 `)
 
-                u('#_feed_settings_container').on('click', '.final_settings_item input', (e) => {
-                    const INPUT_PAGES_COUNT = parseInt(u('#_feed_settings_container #pageSelect').nodes[0].selectedOptions[0].value ?? '10')
+                u(`#__content input[type="button"]`).on('click', '.final_settings_item input', (e) => {
+                    const INPUT_PAGES_COUNT = parseInt(u('#pageSelect').nodes[0].selectedOptions[0].value ?? '10')
                     const INPUT_PAGE        = parseInt(u('#pageNumber').nodes[0].value ?? '1')
                     const INPUT_IGNORED     = Number(u('#showIgnored').nodes[0].checked ?? false)
 
