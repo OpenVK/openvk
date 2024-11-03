@@ -86,23 +86,43 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                 const CURRENT_RETURN_BANNED = Number(__temp_url.searchParams.get('return_banned') ?? 0)
                 const COUNT = [1, 5, 10, 20, 30, 40, 50]
                 u('#_feed_settings_container #__content').html(`
-                    <div class='settings_item'>
-                        ${tr('posts_per_page')}:
-                        <select id="pageSelect"></select>
-                    </div>
-                    <div class='settings_item'>
-                        ${tr('start_from_page')}
-                        <input type='number' min='1' max='${PAGES_COUNT}' id='pageNumber' value='${CURRENT_PAGE}' placeholder='${CURRENT_PAGE}'>
-                    </div>
-                    <div class='settings_item'>
-                        <label>
-                            <input type='checkbox' id="showIgnored" ${CURRENT_RETURN_BANNED == 1 ? 'checked' : ''}>
-                            ${tr('show_ignored_sources')}
-                        </label>
-                    </div>
-                    <div class='final_settings_item'>
-                        <input class='button' type='button' value='${tr('apply')}'>
-                    </div>
+                                        <table cellspacing="7" cellpadding="0" border="0" align="center">
+                        <tbody>
+                            <tr>
+                                <td width="120" valign="top">
+                                    <span class="nobold">${tr('posts_per_page')}</span>
+                                </td>
+                                <td>
+                                    <select id="pageSelect"></select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="120" valign="top">
+                                    <span class="nobold">${tr('start_from_page')}</span>
+                                </td>
+                                <td>
+                                    <input type='number' min='1' max='${PAGES_COUNT}' id='pageNumber' value='${CURRENT_PAGE}' placeholder='${CURRENT_PAGE}'>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="120" valign="top">
+                                    <span class="nobold">
+                                        <input type='checkbox' id="showIgnored" ${CURRENT_RETURN_BANNED == 1 ? 'checked' : ''}>
+                                    </span>
+                                </td>
+                                <td>
+                                ${tr('show_ignored_sources')}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="120" valign="top">
+                                </td>
+                                <td>
+                                    <input class='button' type='button' value='${tr('apply')}'>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 `)
 
                 u('#_feed_settings_container').on('click', '.final_settings_item input', (e) => {
@@ -161,7 +181,10 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                 }
 
                 if(window.openvk.ignored_list.response.items.length < 1) {
-                    u('#_feed_settings_container #__content').html(tr('no_ignores_count'))
+                    u('#_feed_settings_container #__content').html(`
+                        <div class="information">
+                            ${tr('no_ignores_count')}
+                        </div>`)
                     u('#_remove_ignores').remove()
                 }
 
