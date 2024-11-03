@@ -385,8 +385,8 @@
                 <tr>
                     <td class="e">
                         Vladimir Barinov (veselcraft), Celestora, Konstantin Kichulkin (kosfurler),
-                        Nikita Volkov (sup_ban), Daniel Myslivets, Maxim Leshchenko (maksales / maksalees)
-                        and n1rwana
+                        Daniel Myslivets, Maxim Leshchenko (maksales / maksalees), n1rwana and
+                        Jillian Österreich (Lumaeris)
                     </td>
                 </tr>
             </tbody>
@@ -400,7 +400,7 @@
                 <tr>
                     <td class="e">
                         Vladimir Barinov (veselcraft) and Konstantin Kichulkin (kosfurler)<br/>
-                        OpenVK is a free open source software that "cosplays" (or imitates) older versions of a Russian social network called VKontakte. VKontakte belongs to Pavel Durov and VK Group.
+                        OpenVK is a free open source software that "cosplays" (or imitates) older versions of a Russian social network called VKontakte. VKontakte belongs to VK (formerly Mail.ru Group).
                     </td>
                 </tr>
             </tbody>
@@ -447,7 +447,7 @@
                 </tr>
                 <tr>
                     <td class="e">Initial hosting</td>
-                    <td class="v">Lumaeris and Celestora</td>
+                    <td class="v">Jillian Österreich (Lumaeris) and Celestora</td>
                 </tr>
                 <tr>
                     <td class="e">Initial bug-tracker hosting</td>
@@ -459,7 +459,7 @@
                 </tr>
                 <tr>
                     <td class="e">Illustrations</td>
-                    <td class="v">Ash Defenders, Polina Katunina (RousPhaul)</td>
+                    <td class="v">Ash Defenders, Polina Katunina (ktp0li)</td>
                 </tr>
                 <tr>
                     <td class="e">Best barmaid</td>
@@ -479,9 +479,9 @@
                 </tr>
                 <tr class="e">
                     <td>
-                        kovaltim, Vladimir Lapskiy (0x7d5), Alexander Minkin (WerySkok), Polina Katunina (RousPhaul), veth,
+                        kovaltim, Vladimir Lapskiy (0x7d5), Alexander Minkin (WerySkok), Polina Katunina (ktp0li), veth,
                         Egor Shevchenko, Vadim Korovin (yuni), Ash Defenders,
-                        Pavel Silaev, Dmitriy Daemon, Lumaeris,
+                        Pavel Silaev, Dmitriy Daemon, Jillian Österreich (Lumaeris),
                         cmed404 and unknown tester, who disappeared shortly after trying to upload post with cat.
                     </td>
                 </tr>
