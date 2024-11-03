@@ -661,25 +661,13 @@ final class Wall extends VKAPIRequestHandler
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
 
         if($owner_id < 0 && !$wallOwner->canBeModifiedBy($this->getUser()) && $wallOwner->getWallType() == 2) {
-            $suggsCount = (new PostsRepo)->getSuggestedPostsCount($wallOwner->getId());
-
-            if($suggsCount % 10 == 0) {
-                $managers = $wallOwner->getManagers();
-                $owner = $wallOwner->getOwner();
-                (new NewSuggestedPostsNotification($owner, $wallOwner))->emit();
-
-                foreach($managers as $manager) {
-                    (new NewSuggestedPostsNotification($manager->getUser(), $wallOwner))->emit();
-                }
-            }
-
             return (object)["post_id" => "on_view"];
         }
 
         return (object)["post_id" => $post->getVirtualId()];
     }
 
-    function repost(string $object, string $message = "", int $group_id = 0) {
+    function repost(string $object, string $message = "", string $attachments = "", int $group_id = 0, int $as_group = 0, int $signed = 0) {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
@@ -697,14 +685,22 @@ final class Wall extends VKAPIRequestHandler
         $nPost->setOwner($this->user->getId());
         
         if($group_id > 0) {
-            $club  = (new ClubsRepo)->get($group_id);
+            $club = (new ClubsRepo)->get($group_id);
             if(!$club)
                 $this->fail(42, "Invalid group");
             
             if(!$club->canBeModifiedBy($this->user))
                 $this->fail(16, "Access to group denied");
             
-            $nPost->setWall($group_id * -1);
+            $nPost->setWall($club->getRealId());
+            $flags = 0;
+            if($as_group === 1 || $signed === 1)
+                $flags |= 0b10000000;
+
+            if($signed === 1)
+                $flags |= 0b01000000;
+
+            $nPost->setFlags($flags);
         } else {
             $nPost->setWall($this->user->getId());
         }
@@ -712,14 +708,24 @@ final class Wall extends VKAPIRequestHandler
         $nPost->setContent($message);
         $nPost->setApi_Source_Name($this->getPlatform());
         $nPost->save();
+
         $nPost->attach($post);
-        
+        $attachments_arr = parseAttachments($attachments, ['photo', 'video', 'audio']);
+        foreach($attachments_arr as $attachment) {
+            if(!$attachment || $attachment->isDeleted() || !$attachment->canBeViewedBy($this->getUser())) {
+                continue;
+            }
+
+            $nPost->attach($attachment);
+        }
+
         if($post->getOwner(false)->getId() !== $this->user->getId() && !($post->getOwner() instanceof Club))
             (new RepostNotification($post->getOwner(false), $post, $this->user))->emit();
 
         return (object) [
             "success" => 1, // 👍
             "post_id" => $nPost->getVirtualId(),
+            "pretty_id" => $nPost->getPrettyId(),
             "reposts_count" => $post->getRepostCount(),
             "likes_count" => $post->getLikesCount()
         ];

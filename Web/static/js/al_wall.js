@@ -1,35 +1,3 @@
-function humanFileSize(bytes, si) {
-    var thresh = si ? 1000 : 1024;
-    if(Math.abs(bytes) < thresh) {
-        return bytes + ' B';
-    }
-    var units = si
-        ? ['kB','MB','GB','TB','PB','EB','ZB','YB']
-        : ['KiB','MiB','GiB','TiB','PiB','EiB','ZiB','YiB'];
-    var u = -1;
-    do {
-        bytes /= thresh;
-        ++u;
-    } while(Math.abs(bytes) >= thresh && u < units.length - 1);
-    return bytes.toFixed(1)+' '+units[u];
-}
-
-function trim(string) {
-    var newStr = string.substring(0, 10);
-    if(newStr.length !== string.length)
-        newStr += "…";
-    
-    return newStr;
-}
-
-function trimNum(string, num) {
-    var newStr = string.substring(0, num);
-    if(newStr.length !== string.length)
-        newStr += "…";
-
-    return newStr;
-}
-
 function handleUpload(id) {
     console.warn("блять...");
     
@@ -49,23 +17,34 @@ function handleUpload(id) {
 
 function initGraffiti(id) {
     let canvas = null;
-    let msgbox = MessageBox(tr("draw_graffiti"), "<div id='ovkDraw'></div>", [tr("save"), tr("cancel")], [function() {
-        canvas.getImage({includeWatermark: false}).toBlob(blob => {
-            let fName = "Graffiti-" + Math.ceil(performance.now()).toString() + ".jpeg";
-            let image = new File([blob], fName, {type: "image/jpeg", lastModified: new Date().getTime()});
+    const msgbox = new CMessageBox({
+        title: tr("draw_graffiti"),
+        body: "<div id='ovkDraw'></div>",
+        close_on_buttons: false,
+        buttons: [tr("save"), tr("cancel")],
+        callbacks: [function() {
+            canvas.getImage({includeWatermark: false}).toBlob(blob => {
+                let fName = "Graffiti-" + Math.ceil(performance.now()).toString() + ".jpeg";
+                let image = new File([blob], fName, {type: "image/jpeg", lastModified: new Date().getTime()});
+                
+                fastUploadImage(id, image)
+            }, "image/jpeg", 0.92);
             
-            fastUploadImage(id, image)
-        }, "image/jpeg", 0.92);
-        
-        canvas.teardown();
-    }, function() {
-        canvas.teardown();
-    }]);
+            canvas.teardown();
+            msgbox.close()
+        }, async function() {
+            const res = await msgbox.__showCloseConfirmationDialog()
+            if(res === true) {
+                canvas.teardown()
+                msgbox.close()
+            }
+        }]
+    })
     
     let watermarkImage = new Image();
     watermarkImage.src = "/assets/packages/static/openvk/img/logo_watermark.gif";
     
-    msgbox.attr("style", "width: 750px;");
+    msgbox.getNode().attr("style", "width: 750px;");
     canvas = LC.init(document.querySelector("#ovkDraw"), {
         backgroundColor: "#fff",
         imageURLPrefix: "/assets/packages/static/openvk/js/node_modules/literallycanvas/lib/img",
@@ -1381,6 +1360,124 @@ $(document).on("click", "#photosAttachments", async (e) => {
         xhr.send(formdata)
     })
 })
+
+async function repost(id, repost_type = 'post') {
+    const repostsCount = u(`#repostsCount${id}`)
+    const previousVal  = repostsCount.length > 0 ? Number(repostsCount.html()) : 0;
+
+    MessageBox(tr('share'), `
+        <div class='display_flex_column' style='gap: 1px;'>
+            <b>${tr('auditory')}</b>
+            
+            <div class='display_flex_column'>
+                <label>
+                    <input type="radio" name="repost_type" value="wall" checked>
+                    ${tr("in_wall")}
+                </label>
+                
+                <label>
+                    <input type="radio" name="repost_type" value="group">
+                    ${tr("in_group")}
+                </label>
+
+                <select name="selected_repost_club" style='display:none;'></select>
+            </div>
+
+            <b>${tr('your_comment')}</b>
+
+            <input type='hidden' id='repost_attachments'>
+            <textarea id='repostMsgInput' placeholder='...'></textarea>
+
+            <div id="repost_signs" class='display_flex_column' style='display:none;'>
+                <label><input type='checkbox' name="asGroup">${tr('post_as_group')}</label>
+                <label><input type='checkbox' name="signed">${tr('add_signature')}</label>
+            </div>
+        </div>
+    `, [tr('send'), tr('cancel')], [
+        async () => {
+            const message  = u('#repostMsgInput').nodes[0].value
+            const type     = u(`input[name='repost_type']:checked`).nodes[0].value
+            const club_id  = parseInt(u(`select[name='selected_repost_club']`).nodes[0].selectedOptions[0].value)
+            const as_group = u(`input[name='asGroup']`).nodes[0].checked
+            const signed   = u(`input[name='signed']`).nodes[0].checked
+            const attachments = u(`#repost_attachments`).nodes[0].value
+
+            const params = {}
+            switch(repost_type) {
+                case 'post':
+                    params.object = `wall${id}`
+                    break
+                case 'video':
+                    params.object = `video${id}`
+                    break
+            }
+
+            params.message = message
+            if(type == 'group' && club_id != 0) {
+                params.group_id = club_id
+            }
+
+            if(as_group) {
+                params.as_group = Number(as_group)
+            }
+            
+            if(signed) {
+                params.signed = Number(signed)
+            }
+
+            if(attachments != '') {
+                params.attachments = attachments
+            }
+
+            try {
+                res = await window.OVKAPI.call('wall.repost', params)
+                if(repostsCount.length > 0) {
+                    repostsCount.html(previousVal + 1)
+                } else {
+                    u('#reposts' + id).append(`(<b id='repostsCount${id}'>1</b>)`)
+                }
+
+                NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.location.assign(`/wall${res.pretty_id}`)});
+            } catch(e) {
+                console.error(e)
+                fastError(e.message)
+            }
+            
+            xhr = new XMLHttpRequest();
+            xhr.onload = (function() {
+                if(xhr.responseText.indexOf("wall_owner") === -1) {
+                    let jsonR = JSON.parse(xhr.responseText);
+                    
+                    repostsCount != null ?
+                    repostsCount.innerHTML = prevVal+1 :
+                    document.getElementById("reposts"+id).insertAdjacentHTML("beforeend", "(<b id='repostsCount"+id+"'>1</b>)") //для старого вида постов
+                }
+                });
+        },
+        Function.noop
+    ]);
+    
+    u('.ovk-diag-body').attr('style', 'padding: 14px;')
+    u('.ovk-diag-body').on('change', `input[name='repost_type']`, (e) => {
+        const value = e.target.value
+
+        switch(value) {
+            case 'wall':
+                u('#repost_signs').attr('style', 'display:none')
+                u(`select[name='selected_repost_club']`).attr('style', 'display:none')
+                break
+            case 'group':
+                u('#repost_signs').attr('style', 'display:flex')
+                u(`select[name='selected_repost_club']`).attr('style', 'display:block')
+                break
+        }
+    })
+    
+    const clubs = await window.OVKAPI.call('groups.get', {'filter': 'admin', 'count': 100})
+    clubs.items.forEach(club => {
+        u(`select[name='selected_repost_club']`).append(`<option value='${club.id}'>${ovk_proc_strtr(escapeHtml(club.name), 100)}</option>`)
+    })
+}
 
 $(document).on("click", "#add_image", (e) => {
     let isGroup = e.currentTarget.closest(".avatar_block").dataset.club != null

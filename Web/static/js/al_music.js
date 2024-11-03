@@ -1,13 +1,3 @@
-function fmtTime(time) {
-    const mins = String(Math.floor(time / 60)).padStart(2, '0');
-    const secs = String(Math.floor(time % 60)).padStart(2, '0');
-    return `${ mins}:${ secs}`;
-}
-
-function fastError(message) {
-    MessageBox(tr("error"), message, [tr("ok")], [Function.noop])
-}
-
 // elapsed это вроде прошедшие, а оставшееся это remaining но ладно уже
 function getElapsedTime(fullTime, time) {
     let timer = fullTime - time

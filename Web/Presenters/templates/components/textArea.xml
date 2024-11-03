@@ -114,9 +114,8 @@
         setupWallPostInputHandlers({$textAreaId});
     });
 
-    u("#post-buttons{$textAreaId} input[name='videos']")["nodes"].at(0).value = ""
-    u("#post-buttons{$textAreaId} input[name='photos']")["nodes"].at(0).value = ""
-    u("#post-buttons{$textAreaId} input[name='audios']")["nodes"].at(0).value = ""
+    u("#post-buttons{$textAreaId} input[name='horizontal_attachments']")["nodes"].at(0).value = ""
+    u("#post-buttons{$textAreaId} input[name='vertical_attachments']")["nodes"].at(0).value = ""
 </script>
 
 {if $graffiti}

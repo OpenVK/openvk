@@ -17,6 +17,7 @@
         {script "js/node_modules/umbrellajs/umbrella.min.js"}
         {script "js/l10n.js"}
         {script "js/openvk.cls.js"}
+        {script "js/utils.js"}
         {script "js/node_modules/dashjs/dist/dash.all.min.js"}
         <script src="/assets/packages/static/openvk/js/node_modules/cropperjs/dist/cropper.js" type="module"></script>
         {script "js/al_music.js"}
@@ -51,7 +52,10 @@
         <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['bellsAndWhistles']['testLabel']" id="test-label">FOR TESTING PURPOSES ONLY</div>
 
         <div class="notifications_global_wrap"></div>
-        <div class="dimmer"></div>
+        <div class="dimmer">
+            <div id='absolute_territory'></div>
+        </div>
+        <div class="upLeftErrors"></div>
 
         <div class="articleView">
             <a id="articleCloseButton" class="button" href="javascript:void(u('body').removeClass('article'));">{_close}</a>

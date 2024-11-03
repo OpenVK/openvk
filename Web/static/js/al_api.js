@@ -35,3 +35,21 @@ window.API.Types = {};
 window.API.Types.Message = (class Message {
     
 });
+
+window.OVKAPI = new class {
+    async call(method, params) {
+        if(!method) {
+            return
+        }
+
+        const url = `/method/${method}?auth_mechanism=roaming&${new URLSearchParams(params).toString()}`
+        const res = await fetch(url)
+        const json_response = await res.json()
+
+        if(json_response.response) {
+            return json_response.response
+        } else {
+            throw new Exception(json_response.error_msg)
+        }
+    }
+}

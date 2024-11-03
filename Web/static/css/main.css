@@ -13,6 +13,10 @@ body {
     word-wrap: break-word;
 }
 
+body, .ovk-fullscreen-dimmer {
+    scrollbar-gutter: stable both-edges;
+}
+
 .nobold,
 nobold {
     font-weight: normal;
@@ -39,6 +43,11 @@ p {
 
 h1 {
     margin-top: 0;
+}
+
+.display_flex_column {
+    display: flex;
+    flex-direction: column;
 }
 
 .layout {
@@ -252,6 +261,28 @@ h1 {
 #backdropFilePicker > #spacer {
     display: inline-block;
     width: calc(550px - 16px - 38px - 171px);
+}
+
+.upLeftErrors {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    z-index: 1025;
+}
+
+.upLeftErrors .upLeftError {
+    padding: 2px 2px 2px 2px;
+    display: inline-block;
+    border-radius: 0px 0px 5px 0px;
+    font-size: 15px;
+}
+
+.upLeftErrors .upLeftError.upLeftErrorRed {
+    background: #ff7474;
+}
+
+.upLeftErrors .upLeftError.upLeftErrorGreen {
+    background: #74ff92;
 }
 
 .page_body {

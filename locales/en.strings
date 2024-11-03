@@ -1762,6 +1762,8 @@
 "question_confirm" = "This action can't be undone. Do you really wanna do it?";
 "confirm_m" = "Confirm";
 "action_successfully" = "Success";
+"exit_noun" = "Exit";
+"exit_confirmation" = "Are you sure want to exit?";
 
 /* User Alerts */
 

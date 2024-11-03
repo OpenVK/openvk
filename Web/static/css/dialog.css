@@ -7,6 +7,11 @@ body.dimmed > .dimmer {
     opacity: .5;
 }
 
+body.dimmed > .dimmer #absolute_territory {
+    margin: 100px;
+    height: 100%;
+}
+
 .ovk-diag-cont {
     z-index: 1024;
     position: fixed;
