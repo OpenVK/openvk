@@ -35,7 +35,7 @@ WORKDIR /opt/chandler/extensions/available/openvk/Web/static/js
 
 ADD Web/static/js/package.json Web/static/js/package-lock.json ./
 
-RUN npm install
+RUN npm ci
 
 WORKDIR /opt/chandler/extensions/available/openvk
 
