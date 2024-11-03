@@ -36,7 +36,7 @@ Here is our minimum hardware recommendation:
 
 ### Installation procedure
 
-1. Install PHP 7.4, web-server, Composer, Node.js, Yarn and [Chandler](https://github.com/openvk/chandler)
+1. Install PHP 7.4, web-server, Composer, Node.js, NPM and [Chandler](https://github.com/openvk/chandler)
 
 * PHP 8 is still being tested; the functionality of the engine on this version of PHP is not yet guaranteed.
 
@@ -65,7 +65,7 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 7. Copy `openvk-example.yml` to `openvk.yml` and change options to your liking
 8. Run `composer install` in OpenVK directory
 9. Run `composer install` in commitcaptcha directory
-10. Move to `Web/static/js` and execute `yarn install`
+10. Move to `Web/static/js` and execute `npm install`
 11. Set `openvk` as your root app in `chandler.yml`
 
 Once you are done, you can login as a system administrator on the network itself (no registration required):

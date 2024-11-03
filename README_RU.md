@@ -28,7 +28,7 @@ _[English](README.md)_
 
 ### Процедура установки
 
-1. Установите PHP 7.4, веб-сервер, Composer, Node.js, Yarn и [Chandler](https://github.com/openvk/chandler)
+1. Установите PHP 7.4, веб-сервер, Composer, Node.js, NPM и [Chandler](https://github.com/openvk/chandler)
 
 * PHP 8 пока ещё тестируется, работоспособность движка на этой версии PHP пока не гарантируется.
 
@@ -57,7 +57,7 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 7. Скопируйте `openvk-example.yml` в `openvk.yml` и измените параметры под свои нужды
 8. Запустите `composer install` в директории OpenVK
 9. Запустите `composer install` в директории commitcaptcha
-10. Перейдите в `Web/static/js` и выполните `yarn install`
+10. Перейдите в `Web/static/js` и выполните `npm install`
 11. Установите `openvk` в качестве корневого приложения в файле `chandler.yml`
 
 После этого вы можете войти как системный администратор в саму сеть (регистрация не требуется):
