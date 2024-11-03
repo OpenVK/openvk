@@ -27,7 +27,7 @@ ADD composer.* .
 
 RUN composer install
 
-FROM docker.io/node:14 as nodejs
+FROM docker.io/node:20 as nodejs
 
 COPY --from=builder /opt/chandler /opt/chandler
 
