@@ -125,10 +125,10 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                     </table>
                 `)
 
-                u(`#__content input[type="button"]`).on('click', '.final_settings_item input', (e) => {
-                    const INPUT_PAGES_COUNT = parseInt(u('#pageSelect').nodes[0].selectedOptions[0].value ?? '10')
-                    const INPUT_PAGE        = parseInt(u('#pageNumber').nodes[0].value ?? '1')
-                    const INPUT_IGNORED     = Number(u('#showIgnored').nodes[0].checked ?? false)
+                u(`#_feed_settings_container #__content input[type='button']`).on('click', (e) => {
+                    const INPUT_PAGES_COUNT = parseInt(u('#_feed_settings_container #__content #pageSelect').nodes[0].selectedOptions[0].value ?? '10')
+                    const INPUT_PAGE        = parseInt(u('#_feed_settings_container #__content #pageNumber').nodes[0].value ?? '1')
+                    const INPUT_IGNORED     = Number(u('#_feed_settings_container #__content #showIgnored').nodes[0].checked ?? false)
 
                     const FINAL_URL = new URL(location.href)
 
