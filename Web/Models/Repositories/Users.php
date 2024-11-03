@@ -28,6 +28,18 @@ class Users
     {
         return $this->toUser($this->users->get($id));
     }
+
+    function getByIds(array $ids = []): array
+    {
+        $users = $this->users->select('*')->where('id IN (?)', $ids);
+        $users_array = [];
+
+        foreach($users as $user) {
+            $users_array[] = $this->toUser($user);
+        }
+
+        return $users_array;
+    }
     
     function getByShortURL(string $url): ?User
     {

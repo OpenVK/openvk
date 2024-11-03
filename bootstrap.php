@@ -277,6 +277,45 @@ function parseAttachments(string $attachments): array
     return $returnArr;
 }
 
+function get_entity_by_id(int $id) 
+{
+    if($id > 0)
+        return (new openvk\Web\Models\Repositories\Users)->get($id);
+    
+    return (new openvk\Web\Models\Repositories\Clubs)->get(abs($id));
+}
+
+function get_entities(array $ids = []): array
+{
+    $main_result = [];
+    $users = [];
+    $clubs = [];
+    foreach($ids as $id) {
+        $id = (int)$id;
+        if($id < 0) 
+            $clubs[] = abs($id);
+        
+        if($id > 0)
+            $users[] = $id;
+    }
+
+    if(sizeof($users) > 0) {
+        $users_tmp = (new openvk\Web\Models\Repositories\Users)->getByIds($users);
+        foreach($users_tmp as $user) {
+            $main_result[] = $user;
+        }
+    }
+    
+    if(sizeof($clubs) > 0) {
+        $clubs_tmp = (new openvk\Web\Models\Repositories\Clubs)->getByIds($clubs);
+        foreach($clubs_tmp as $club) {
+            $main_result[] = $club;
+        }
+    }
+    
+    return $main_result;
+}
+
 function ovk_scheme(bool $with_slashes = false): string
 {
     $scheme = ovk_is_ssl() ? "https" : "http";
