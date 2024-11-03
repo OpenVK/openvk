@@ -1,4 +1,7 @@
-﻿
+﻿if(typeof u == 'undefined') {
+    console.error('!!! You forgot to install NPM packages !!!')
+}
+
 function expand_wall_textarea(id) {
     var el = document.getElementById('post-buttons'+id);
     var wi = document.getElementById('wall-post-input'+id);

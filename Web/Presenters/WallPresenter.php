@@ -272,25 +272,22 @@ final class WallPresenter extends OpenVKPresenter
         if($this->postParam("force_sign") === "on")
             $flags |= 0b01000000;
         
-        $photos = [];
-
-        if(!empty($this->postParam("photos"))) {
-            $un  = rtrim($this->postParam("photos"), ",");
-            $arr = explode(",", $un);
-
-            if(sizeof($arr) < 11) {
-                foreach($arr as $dat) {
-                    $ids = explode("_", $dat);
-                    $photo = (new Photos)->getByOwnerAndVID((int)$ids[0], (int)$ids[1]);
-    
-                    if(!$photo || $photo->isDeleted())
-                        continue;
-    
-                    $photos[] = $photo;
-                }
+        $horizontal_attachments = [];
+        $vertical_attachments = [];
+        if(!empty($this->postParam("horizontal_attachments"))) {
+            $horizontal_attachments_array = explode(",", $this->postParam("horizontal_attachments"));
+            if(sizeof($horizontal_attachments_array) <= OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"]) {
+                $horizontal_attachments = parseAttachments($horizontal_attachments_array, ['photo', 'video']);
             }
         }
-        
+
+        if(!empty($this->postParam("vertical_attachments"))) {
+            $vertical_attachments_array = explode(",", $this->postParam("vertical_attachments"));
+            if(sizeof($vertical_attachments_array) <= OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"]) {
+                $vertical_attachments = parseAttachments($vertical_attachments_array, ['audio', 'note']);
+            }
+        }
+
         try {
             $poll = NULL;
             $xml = $this->postParam("poll");
@@ -302,61 +299,10 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("failed_to_publish_post"), "Poll format invalid");
         }
 
-        $note = NULL;
-
-        if(!is_null($this->postParam("note")) && $this->postParam("note") != "none") {
-            $note = (new Notes)->get((int)$this->postParam("note"));
-
-            if(!$note || $note->isDeleted() || $note->getOwner()->getId() != $this->user->id) {
-                $this->flashFail("err", tr("error"), tr("error_attaching_note"));
-            }
-            
-            if($note->getOwner()->getPrivacySetting("notes.read") < 1) {
-                $this->flashFail("err", " ");
-            }
-        }
-
-        $videos = [];
-
-        if(!empty($this->postParam("videos"))) {
-            $un  = rtrim($this->postParam("videos"), ",");
-            $arr = explode(",", $un);
-
-            if(sizeof($arr) < 11) {
-                foreach($arr as $dat) {
-                    $ids = explode("_", $dat);
-                    $video = (new Videos)->getByOwnerAndVID((int)$ids[0], (int)$ids[1]);
-    
-                    if(!$video || $video->isDeleted())
-                        continue;
-    
-                    $videos[] = $video;
-                }
-            }
-        }
-
-        $audios = [];
-
-        if(!empty($this->postParam("audios"))) {
-            $un  = rtrim($this->postParam("audios"), ",");
-            $arr = explode(",", $un);
-
-            if(sizeof($arr) < 11) {
-                foreach($arr as $dat) {
-                    $ids = explode("_", $dat);
-                    $audio = (new Audios)->getByOwnerAndVID((int)$ids[0], (int)$ids[1]);
-    
-                    if(!$audio || $audio->isDeleted())
-                        continue;
-    
-                    $audios[] = $audio;
-                }
-            }
-        }
-        
-        if(empty($this->postParam("text")) && sizeof($photos) < 1 && sizeof($videos) < 1 && sizeof($audios) < 1 && !$poll && !$note)
+        if(empty($this->postParam("text")) && sizeof($horizontal_attachments) < 1 && sizeof($vertical_attachments) < 1 && !$poll)
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"));
         
+        $should_be_suggested = $wall < 0 && !$wallOwner->canBeModifiedBy($this->user->identity) && $wallOwner->getWallType() == 2;
         try {
             $post = new Post;
             $post->setOwner($this->user->id);
@@ -373,7 +319,7 @@ final class WallPresenter extends OpenVKPresenter
                 } catch(\Throwable) {}
             }
 
-            if($wall < 0 && !$wallOwner->canBeModifiedBy($this->user->identity) && $wallOwner->getWallType() == 2)
+            if($should_be_suggested)
                 $post->setSuggested(1);
             
             $post->save();
@@ -381,21 +327,24 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_too_big"));
         }
         
-        foreach($photos as $photo)
-        	$post->attach($photo);
-        
-        if(sizeof($videos) > 0)
-            foreach($videos as $vid)
-                $post->attach($vid);
+        foreach($horizontal_attachments as $horizontal_attachment) {
+            if(!$horizontal_attachment || $horizontal_attachment->isDeleted() || !$horizontal_attachment->canBeViewedBy($this->user->identity)) {
+                continue;
+            }
+
+            $post->attach($horizontal_attachment);
+        }
+
+        foreach($vertical_attachments as $vertical_attachment) {
+            if(!$vertical_attachment || $vertical_attachment->isDeleted() || !$vertical_attachment->canBeViewedBy($this->user->identity)) {
+                continue;
+            }
+
+            $post->attach($vertical_attachment);
+        }
         
         if(!is_null($poll))
             $post->attach($poll);
-
-        if(!is_null($note))
-            $post->attach($note);
-
-        foreach($audios as $audio)
-        	$post->attach($audio);
         
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
@@ -404,9 +353,7 @@ final class WallPresenter extends OpenVKPresenter
         if($wall > 0)
             $excludeMentions[] = $wall;
 
-        if($wall < 0 && !$wallOwner->canBeModifiedBy($this->user->identity) && $wallOwner->getWallType() == 2) {
-            # Чтобы не было упоминаний из предложки
-        } else {
+        if(!$should_be_suggested) {
             $mentions = iterator_to_array($post->resolveMentions($excludeMentions));
 
             foreach($mentions as $mentionee)
@@ -414,18 +361,7 @@ final class WallPresenter extends OpenVKPresenter
                     (new MentionNotification($mentionee, $post, $post->getOwner(), strip_tags($post->getText())))->emit();
         }
         
-        if($wall < 0 && !$wallOwner->canBeModifiedBy($this->user->identity) && $wallOwner->getWallType() == 2) {
-            $suggsCount = $this->posts->getSuggestedPostsCount($wallOwner->getId());
-
-            if($suggsCount % 10 == 0) {
-                $managers = $wallOwner->getManagers();
-                $owner = $wallOwner->getOwner();
-                (new NewSuggestedPostsNotification($owner, $wallOwner))->emit();
-
-                foreach($managers as $manager)
-                    (new NewSuggestedPostsNotification($manager->getUser(), $wallOwner))->emit();
-            }
-
+        if($should_be_suggested) {
             $this->redirect("/club".$wallOwner->getId()."/suggested");
         } else {
             $this->redirect($wallOwner->getURL());

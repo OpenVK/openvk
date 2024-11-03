@@ -58,6 +58,7 @@ openvk:
                 enable: false
                 account: 100
             postSizes:
+                maxAttachments: 10
                 maxSize: 60000
                 processingLimit: 3000
                 emojiProcessingLimit: 1000

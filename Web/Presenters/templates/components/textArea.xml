@@ -62,11 +62,9 @@
                     <input type="checkbox" name="as_group" /> {_comment_as_group}
                 </label>
             </div>
-            <input type="hidden" name="photos" value="" />
-            <input type="hidden" name="videos" value="" />
-            <input type="hidden" name="audios" value="" />
+            <input type="text" name="horizontal_attachments" value="" />
+            <input type="text" name="vertical_attachments" value="" />
             <input type="hidden" name="poll" value="none" />
-            <input type="hidden" id="note" name="note" value="none" />
             <input type="hidden" id="source" name="source" value="none" />
             <input type="hidden" name="type" value="1" />
             <input type="hidden" name="hash" value="{$csrfToken}" />

@@ -232,49 +232,47 @@ function ovk_is_ssl(): bool
     return $GLOBALS["requestIsSSL"];
 }
 
-function parseAttachments(string $attachments): array
+function parseAttachments($attachments, array $allow_types = ['photo', 'video', 'note', 'audio']): array
 {
-    $attachmentsArr = explode(",", $attachments);
-    $returnArr      = [];
+    $exploded_attachments = is_array($attachments) ? $attachments : explode(",", $attachments);
+    $imploded_types = implode('|', $allow_types);
+    $output_attachments = [];
+    $repositories = [
+        'photo' => [
+            'repo'   => 'openvk\Web\Models\Repositories\Photos',
+            'method' => 'getByOwnerAndVID',
+        ],
+        'video' => [
+            'repo' => 'openvk\Web\Models\Repositories\Videos',
+            'method' => 'getByOwnerAndVID',
+        ],
+        'audio' => [
+            'repo' => 'openvk\Web\Models\Repositories\Audios',
+            'method' => 'getByOwnerAndVID',
+        ],
+        'note'  => [
+            'repo' => 'openvk\Web\Models\Repositories\Notes',
+            'method' => 'getNoteById',
+        ],
+    ];
 
-    foreach($attachmentsArr as $attachment) {
-        $attachmentType = NULL;
+    foreach($exploded_attachments as $attachment_string) {
+        if(preg_match("/$imploded_types/", $attachment_string, $matches) == 1) {
+            $attachment_type = $matches[0];
+            if(!$repositories[$attachment_type])
+                continue;
 
-        if(str_contains($attachment, "photo"))
-            $attachmentType = "photo";
-        elseif(str_contains($attachment, "video"))
-            $attachmentType = "video";
-        elseif(str_contains($attachment, "note"))
-            $attachmentType = "note";
-        elseif(str_contains($attachment, "audio"))
-            $attachmentType = "audio";
+            $attachment_ids  = str_replace($attachment_type, '', $attachment_string);
+            [$attachment_owner, $attachment_id] = array_map('intval', explode('_', $attachment_ids));
 
-        $attachmentIds   = str_replace($attachmentType, "", $attachment);
-        $attachmentOwner = (int) explode("_", $attachmentIds)[0];
-        $gatoExplotano   = explode("_", $attachmentIds);
-        $attachmentId    = (int) end($gatoExplotano);
-
-        switch($attachmentType) {
-            case "photo":
-                $attachmentObj = (new openvk\Web\Models\Repositories\Photos)->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                $returnArr[]   = $attachmentObj;
-                break;
-            case "video":
-                $attachmentObj = (new openvk\Web\Models\Repositories\Videos)->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                $returnArr[]   = $attachmentObj;
-                break;
-            case "note":
-                $attachmentObj = (new openvk\Web\Models\Repositories\Notes)->getNoteById($attachmentOwner, $attachmentId);
-                $returnArr[]   = $attachmentObj;
-                break;
-            case "audio":
-                $attachmentObj = (new openvk\Web\Models\Repositories\Audios)->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                $returnArr[]   = $attachmentObj;
-                break;
+            $repository_class = $repositories[$attachment_type]['repo'];
+            if(!$repository_class) continue;
+            $attachment_model = (new $repository_class)->{$repositories[$attachment_type]['method']}($attachment_owner, $attachment_id);
+            $output_attachments[] = $attachment_model;
         }
     }
 
-    return $returnArr;
+    return $output_attachments;
 }
 
 function ovk_scheme(bool $with_slashes = false): string
