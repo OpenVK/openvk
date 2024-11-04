@@ -48,9 +48,9 @@ jobs:
           images: |
             ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}
           tags: |
-            type=sha,prefix=${{env.DB_VERSION}}-primary-
+            type=sha,prefix=${{env.DB_VERSION}}-primary-sha-
             type=ref,event=branch,prefix=${{env.DB_VERSION}}-primary-
-            type=ref,event=pr,prefix=${{env.DB_VERSION}}-primary-
+            type=ref,event=pr,prefix=${{env.DB_VERSION}}-primary-pr-
             type=ref,event=tag,prefix=${{env.DB_VERSION}}-primary-
             type=raw,value=${{env.DB_VERSION}}-primary,enable={{is_default_branch}}
 
@@ -61,9 +61,9 @@ jobs:
           images: |
             ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}
           tags: |
-            type=sha,prefix=${{env.DB_VERSION}}-eventdb-
+            type=sha,prefix=${{env.DB_VERSION}}-eventdb-sha-
             type=ref,event=branch,prefix=${{env.DB_VERSION}}-eventdb-
-            type=ref,event=pr,prefix=${{env.DB_VERSION}}-eventdb-
+            type=ref,event=pr,prefix=${{env.DB_VERSION}}-eventdb-pr-
             type=ref,event=tag,prefix=${{env.DB_VERSION}}-eventdb-
             type=raw,value=${{env.DB_VERSION}}-eventdb,enable={{is_default_branch}}
 
