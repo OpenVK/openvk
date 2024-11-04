@@ -46,8 +46,9 @@ jobs:
             type=ref,event=tag
             type=raw,value=latest,enable={{is_default_branch}}
 
-      # - name: Log into registry
-      #   run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Log into registry
+        if: github.event_name != 'pull_request'
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build base image
         uses: docker/build-push-action@v6
@@ -56,6 +57,7 @@ jobs:
           file: install/automated/docker/openvk.Dockerfile
           tags: ${{ steps.basemeta.outputs.tags }}
           labels: ${{ steps.basemeta.outputs.labels }}
+          push: ${{ github.event_name != 'pull_request' }}
           build-args: |
             GITREPO=${{ steps.repositorystring.outputs.lowercase }}
 
@@ -115,12 +117,14 @@ jobs:
             type=ref,event=tag,prefix=${{env.DB_VERSION}}-eventdb-
             type=raw,value=${{env.DB_VERSION}}-eventdb,enable={{is_default_branch}}
 
-      # - name: Log into registry
-      #   run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Log into registry
+        if: github.event_name != 'pull_request'
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       
       - name: Build MariaDB primary image
         uses: docker/build-push-action@v6
         with:
+          push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/${{matrix.platform}}
           file: install/automated/docker/mariadb-primary.Dockerfile
           tags: ${{ steps.db-primarymeta.outputs.tags }}
@@ -131,6 +135,7 @@ jobs:
       - name: Build MariaDB event image
         uses: docker/build-push-action@v6
         with:
+          push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/${{matrix.platform}}
           file: install/automated/docker/mariadb-eventdb.Dockerfile
           tags: ${{ steps.db-eventmeta.outputs.tags }}
