@@ -48,14 +48,11 @@ jobs:
           images: |
             ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}
           tags: |
-            type=sha
-            type=ref,event=branch
-            type=ref,event=pr
-            type=ref,event=tag
-            type=raw,value=,enable={{is_default_branch}}
-          flavor: |
-            latest=auto
-            prefix=${{env.DB_VERSION}}-primary
+            type=sha,prefix=${{env.DB_VERSION}}-primary-
+            type=ref,event=branch,prefix=${{env.DB_VERSION}}-primary-
+            type=ref,event=pr,prefix=${{env.DB_VERSION}}-primary-
+            type=ref,event=tag,prefix=${{env.DB_VERSION}}-primary-
+            type=raw,value=${{env.DB_VERSION}}-primary,enable={{is_default_branch}}
 
       - name: MariaDB event meta
         id: db-eventmeta
@@ -64,14 +61,11 @@ jobs:
           images: |
             ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}
           tags: |
-            type=sha
-            type=ref,event=branch
-            type=ref,event=pr
-            type=ref,event=tag
-            type=raw,value=,enable={{is_default_branch}}
-          flavor: |
-            latest=auto
-            prefix=${{env.DB_VERSION}}-eventdb-
+            type=sha,prefix=${{env.DB_VERSION}}-eventdb-
+            type=ref,event=branch,prefix=${{env.DB_VERSION}}-eventdb-
+            type=ref,event=pr,prefix=${{env.DB_VERSION}}-eventdb-
+            type=ref,event=tag,prefix=${{env.DB_VERSION}}-eventdb-
+            type=raw,value=${{env.DB_VERSION}}-eventdb,enable={{is_default_branch}}
 
       # - name: Log into registry
       #   run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
