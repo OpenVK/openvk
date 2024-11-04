@@ -50,6 +50,11 @@ h1 {
     flex-direction: column;
 }
 
+.display_flex_row {
+    display: flex;
+    flex-direction: row;
+}
+
 .layout {
     width: 791px;
     margin: 0 auto;
@@ -264,7 +269,7 @@ h1 {
 }
 
 .upLeftErrors {
-    position: absolute;
+    position: fixed;
     display: flex;
     flex-direction: column;
     z-index: 1025;
@@ -1747,12 +1752,14 @@ body.scrolled .toTop:hover {
 
 #wallAttachmentMenu {
     position: absolute;
+    min-width: 94px;
     border: 1px solid darkgrey;
     background-color: white;
     z-index: 32;
     margin-top: -7px;
     margin-left: -16px;
     box-shadow: 0 1px 3px -1px;
+    user-select: none;
 }
 
 #wallAttachmentMenu>a {
@@ -2406,16 +2413,27 @@ a.poll-retract-vote {
     }
 }
 
-.upload {
+.post-horizontal {
     margin-top: 8px;
 }
 
-.upload .upload-item {
-    width: 75px;
-    height: 60px;
+.post-horizontal {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+
+.post-horizontal .upload-item {
+    /*width: 75px;
+    height: 60px;*/
     overflow: hidden;
     display: inline-block;
-    margin-right: 3px;
+    position: relative;
+}
+
+.post-horizontal .upload-item.dragged {
+    filter: contrast(0.5);
 }
 
 .upload-item .upload-delete {
@@ -2425,7 +2443,7 @@ a.poll-retract-vote {
     text-decoration: none;
     color: #fff;
     font-size: 11px;
-    margin-left: 57px; /* мне лень переделывать :DDDD */
+    right: 0px;
     opacity: 0;
     transition: 0.25s;
 }
@@ -3141,10 +3159,61 @@ body.article .floating_sidebar, body.article .page_content {
     font-size: 11px;
 }
 
-.topGrayBlock {
+.attachment_selector .topGrayBlock {
     background: #F0F0F0;
     height: 37px;
     border-bottom: 1px solid #C7C7C7;
+    padding: 3px 10px;
+    align-items: center;
+    justify-content: center;
+    justify-content: space-between;
+}
+
+.attachment_selector .topGrayBlock #albumSelect {
+    width: 150px;
+}
+
+.attachment_selector #attachment_insert {
+    padding: 5px;
+    height: 281px;
+    overflow-y: scroll;
+}
+
+.attachment_selector #attachment_insert #attachment_insert_count {
+    position: fixed;
+    z-index: 1007;
+    width: 92%;
+    background: white;
+    margin-top: -5px;
+    padding-top: 6px;
+}
+
+#show_more {
+    width: 100%;
+    text-align: center;
+    background: #f0f0f0;
+    height: 22px;
+    padding-top: 9px;
+    cursor: pointer;
+    margin-top: 4px;
+}
+
+#show_more:hover {
+    background: #f2f2f2;
+}
+
+.attachment_selector #attachment_insert .photosList {
+    margin-top: 20px;
+    gap: 3px 6px;
+}
+
+.attachment_selector #attachment_insert .photosList .album-photo.selected img {
+    background-color: #646464;
+}
+
+.attachment_selector #attachment_insert .photosList .album-photo {
+    width: 15.8%;
+    margin: unset;
 }
 
 .edited {

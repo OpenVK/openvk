@@ -46,16 +46,6 @@ function parseAjaxResponse(responseString) {
     }
 }
 
-function toggleMenu(id) {
-    if($(`#post-buttons${id} #wallAttachmentMenu`).is('.hidden')) {
-        $(`#post-buttons${id} #wallAttachmentMenu`).css({ opacity: 0 });
-        $(`#post-buttons${id} #wallAttachmentMenu`).toggleClass('hidden').fadeTo(250, 1);
-    } else {
-        $(`#post-buttons${id} #wallAttachmentMenu`).fadeTo(250, 0, function () {
-            $(this).toggleClass('hidden');
-        });
-    }
-}
 document.addEventListener("DOMContentLoaded", function() { //BEGIN
 
     $(document).on("click", "#_photoDelete", function(e) {

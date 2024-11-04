@@ -27,7 +27,12 @@ final class CommentPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         
         if(!is_null($this->user)) $comment->toggleLike($this->user->identity);
-        
+        if($_SERVER["REQUEST_METHOD"] === "POST") {
+            $this->returnJson([
+                'success' => true,
+            ]);
+        }
+
         $this->redirect($_SERVER["HTTP_REFERER"]);
     }
     
@@ -108,7 +113,7 @@ final class CommentPresenter extends OpenVKPresenter
                 continue;
             }
 
-            $post->attach($horizontal_attachment);
+            $comment->attach($horizontal_attachment);
         }
 
         foreach($vertical_attachments as $vertical_attachment) {
@@ -116,7 +121,7 @@ final class CommentPresenter extends OpenVKPresenter
                 continue;
             }
 
-            $post->attach($vertical_attachment);
+            $comment->attach($vertical_attachment);
         }
         
         if($entity->getOwner()->getId() !== $this->user->identity->getId())

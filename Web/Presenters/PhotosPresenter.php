@@ -287,7 +287,8 @@ final class PhotosPresenter extends OpenVKPresenter
                         "id"    => $photo->getId(),
                         "vid"   => $photo->getVirtualId(),
                         "owner" => $photo->getOwner()->getId(),
-                        "link"  => $photo->getURL()
+                        "link"  => $photo->getURL(),
+                        "pretty_id" => $photo->getPrettyId(),
                     ];
                 } catch(ISE $ex) {
                     $name = $album->getName();

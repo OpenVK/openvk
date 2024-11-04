@@ -412,6 +412,12 @@ final class WallPresenter extends OpenVKPresenter
         if(!is_null($this->user)) {
             $post->toggleLike($this->user->identity);
         }
+
+        if($_SERVER["REQUEST_METHOD"] === "POST") {
+            $this->returnJson([
+                'success' => true,
+            ]);
+        }
         
         $this->redirect("$_SERVER[HTTP_REFERER]#postGarter=" . $post->getId());
     }

@@ -107,8 +107,12 @@ function random_int(min, max) {
     return Math.round(Math.random() * (max - min) + min)
 }
 
-function makeError(text, color = 'Red', timeout = 10000) {
-    const rand_id = random_int(0, 10000)
+function makeError(text, color = 'Red', timeout = 10000, uid = 0) {
+    const rand_id = uid != 0 ? uid : random_int(0, 10000)
+
+    if(uid != 0 && u(`.upLeftErrors .upLeftError[data-id='${uid}']`).length > 0) {
+        return
+    }
 
     u('.upLeftErrors').append(`
         <div class='upLeftError upLeftError${color}' data-id='${rand_id}'>${escapeHtml(text)}</div>

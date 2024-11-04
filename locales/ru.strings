@@ -488,9 +488,10 @@
 "click_to_go_to_album" = "Нажмите, чтобы перейти к альбому.";
 "error_uploading_photo" = "Не удалось загрузить фотографию";
 "too_many_pictures" = "Не больше 10 фотографий";
+"too_many_attachments" = "Слишком много вложений.";
 
 "drag_files_here" = "Перетащите файлы сюда";
-"only_images_accepted" = "Файл \"$1\" не является изображением";
+"only_images_accepted" = "Файл \"$1\" не является изображением или видео.";
 "max_filesize" = "Максимальный размер файла — $1 мегабайт";
 
 "uploading_photos_from_computer" = "Загрузка фотографий с Вашего компьютера";
