@@ -28,53 +28,80 @@ jobs:
         with:
           string: ${{ github.repository }}
 
+      - name: Base image meta
+        id: basemeta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.BASE_IMAGE_NAME}}
+          tags: |
+            type=sha
+            type=ref,event=branch
+            type=ref,event=pr
+            type=ref,event=tag
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: MariaDB primary meta
+        id: db-primarymeta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}
+          tags: |
+            type=sha
+            type=ref,event=branch
+            type=ref,event=pr
+            type=ref,event=tag
+            type=raw,value=,enable={{is_default_branch}}
+          flavor: |
+            latest=auto
+            prefix=${{env.DB_VERSION}}-primary
+
+      - name: MariaDB event meta
+        id: db-eventmeta
+        uses: docker/metadata-action@v5
+        with:
+          images: |
+            ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}
+          tags: |
+            type=sha
+            type=ref,event=branch
+            type=ref,event=pr
+            type=ref,event=tag
+            type=raw,value=,enable={{is_default_branch}}
+          flavor: |
+            latest=auto
+            prefix=${{env.DB_VERSION}}-eventdb-
+
       # - name: Log into registry
       #   run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build base image
         uses: docker/build-push-action@v6
         with:
-          tags: ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.BASE_IMAGE_NAME}}:test
           platforms: linux/amd64,linux/arm64
           file: install/automated/docker/openvk.Dockerfile
-          outputs: type=oci,dest=/tmp/openvk.tar
+          tags: ${{ steps.basemeta.outputs.tags }}
+          labels: ${{ steps.basemeta.outputs.labels }}
           build-args: |
             GITREPO=${{ steps.repositorystring.outputs.lowercase }}
       
       - name: Build MariaDB primary image
         uses: docker/build-push-action@v6
         with:
-          tags: ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}:${{env.DB_VERSION}}-primary
           platforms: linux/amd64,linux/arm64
           file: install/automated/docker/mariadb-primary.Dockerfile
-          outputs: type=oci,dest=/tmp/mariadb-primary.tar
+          tags: ${{ steps.db-primarymeta.outputs.tags }}
+          labels: ${{ steps.db-primarymeta.outputs.labels }}
           build-args: |
             VERSION=${{env.DB_VERSION}}
       
       - name: Build MariaDB event image
         uses: docker/build-push-action@v6
         with:
-          tags: ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}:${{env.DB_VERSION}}-eventdb
           platforms: linux/amd64,linux/arm64
           file: install/automated/docker/mariadb-eventdb.Dockerfile
-          outputs: type=oci,dest=/tmp/mariadb-eventdb.tar
+          tags: ${{ steps.db-eventmeta.outputs.tags }}
+          labels: ${{ steps.db-eventmeta.outputs.labels }}
           build-args: |
             VERSION=${{env.DB_VERSION}}
-      
-      - name: Upload base image as an artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: openvk
-          path: /tmp/openvk.tar
-      
-      - name: Upload MariaDB primary as an artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: mariadb-primary
-          path: /tmp/mariadb-primary.tar
-      
-      - name: Upload MariaDB event as an artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: mariadb-eventdb
-          path: /tmp/mariadb-eventdb.tar
