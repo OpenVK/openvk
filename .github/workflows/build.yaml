@@ -10,14 +10,14 @@ env:
   DB_VERSION: "10.9"
 
 jobs:
-  build:
+  buildbase:
+    name: Build base images
     strategy:
       matrix:
         platform: [amd64, arm64]
 
     runs-on: ubuntu-latest
 
-    if: github.event_name == 'push'
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -44,6 +44,41 @@ jobs:
             type=ref,event=pr
             type=ref,event=tag
             type=raw,value=latest,enable={{is_default_branch}}
+
+      # - name: Log into registry
+      #   run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Build base image
+        uses: docker/build-push-action@v6
+        with:
+          platforms: linux/${{matrix.platform}}
+          file: install/automated/docker/openvk.Dockerfile
+          tags: ${{ steps.basemeta.outputs.tags }}
+          labels: ${{ steps.basemeta.outputs.labels }}
+          build-args: |
+            GITREPO=${{ steps.repositorystring.outputs.lowercase }}
+            
+  builddb:
+    name: Build DB images
+    strategy:
+      matrix:
+        platform: [amd64, arm64]
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Change repository string to lowercase
+        id: repositorystring
+        uses: Entepotenz/change-string-case-action-min-dependencies@v1.1.0
+        with:
+          string: ${{ github.repository }}
 
       - name: MariaDB primary meta
         id: db-primarymeta
@@ -73,16 +108,6 @@ jobs:
 
       # - name: Log into registry
       #   run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-
-      - name: Build base image
-        uses: docker/build-push-action@v6
-        with:
-          platforms: linux/${{matrix.platform}}
-          file: install/automated/docker/openvk.Dockerfile
-          tags: ${{ steps.basemeta.outputs.tags }}
-          labels: ${{ steps.basemeta.outputs.labels }}
-          build-args: |
-            GITREPO=${{ steps.repositorystring.outputs.lowercase }}
       
       - name: Build MariaDB primary image
         uses: docker/build-push-action@v6
