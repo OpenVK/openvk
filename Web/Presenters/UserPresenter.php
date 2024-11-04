@@ -54,6 +54,10 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->audioStatus = $user->getCurrentAudioStatus();
 
             $this->template->user = $user;
+
+            if($id !== $this->user->id) {
+                $this->template->ignore_status = $user->isIgnoredBy($this->user->identity);
+            }
         }
     }
     

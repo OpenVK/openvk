@@ -238,9 +238,9 @@
 
                             <div class="floating_sidebar">
                                 <a id="minilink-friends" class="minilink" href="/friends{$thisUser->getId()}">
-                                    <object type="internal/link" n:if="$thisUser->getFollowersCount() > 0">
+                                    <object type="internal/link" n:if="$thisUser->getRequestsCount() > 0">
                                         <div class="counter">
-                                            +{$thisUser->getFollowersCount()}
+                                            +{$thisUser->getRequestsCount()}
                                         </div>
                                     </object>
                                     <img src="/assets/packages/static/openvk/img/friends.svg">
@@ -382,6 +382,7 @@
 
         {ifset $thisUser}
             {script "js/al_notifs.js"}
+            {script "js/al_feed.js"}
         {/ifset}
 
         <script>bsdnHydrate();</script>

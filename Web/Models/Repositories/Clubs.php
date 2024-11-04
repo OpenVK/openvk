@@ -43,6 +43,18 @@ class Clubs
         return $this->toClub($this->clubs->get($id));
     }
 
+    function getByIds(array $ids = []): array
+    {
+        $clubs = $this->clubs->select('*')->where('id IN (?)', $ids);
+        $clubs_array = [];
+
+        foreach($clubs as $club) {
+            $clubs_array[] =  $this->toClub($club);
+        }
+
+        return $clubs_array;
+    }
+
     function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false], int $page = 1, ?int $perPage = NULL): \Traversable
     {
         $query = "%$query%";

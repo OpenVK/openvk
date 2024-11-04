@@ -197,6 +197,16 @@ final class WallPresenter extends OpenVKPresenter
         if($this->user->identity->getNsfwTolerance() === User::NSFW_INTOLERANT)
             $queryBase .= " AND `nsfw` = 0";
 
+        if(((int)$this->queryParam('return_banned')) == 0) {
+            $ignored_sources_ids = $this->user->identity->getIgnoredSources(0, OPENVK_ROOT_CONF['openvk']['preferences']['newsfeed']['ignoredSourcesLimit'] ?? 50, true);
+            
+            if(sizeof($ignored_sources_ids) > 0) {
+                $imploded_ids = implode("', '", $ignored_sources_ids);
+                
+                $queryBase .= " AND `posts`.`wall` NOT IN ('$imploded_ids')";
+            }
+        }
+
         $posts = DatabaseConnection::i()->getConnection()->query("SELECT `posts`.`id` " . $queryBase . " ORDER BY `created` DESC LIMIT " . $pPage . " OFFSET " . ($page - 1) * $pPage);
         $count = DatabaseConnection::i()->getConnection()->query("SELECT COUNT(*) " . $queryBase)->fetch()->{"COUNT(*)"};
         
