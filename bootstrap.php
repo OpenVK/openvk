@@ -235,6 +235,7 @@ function ovk_is_ssl(): bool
 function parseAttachments($attachments, array $allow_types = ['photo', 'video', 'note', 'audio']): array
 {
     $exploded_attachments = is_array($attachments) ? $attachments : explode(",", $attachments);
+    $exploded_attachments = array_slice($exploded_attachments, 0, OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"]);
     $imploded_types = implode('|', $allow_types);
     $output_attachments = [];
     $repositories = [
@@ -254,21 +255,37 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
             'repo' => 'openvk\Web\Models\Repositories\Notes',
             'method' => 'getNoteById',
         ],
+        'poll'  => [
+            'repo' => 'openvk\Web\Models\Repositories\Polls',
+            'method' => 'get',
+            'onlyId' => true,
+        ],
     ];
 
     foreach($exploded_attachments as $attachment_string) {
         if(preg_match("/$imploded_types/", $attachment_string, $matches) == 1) {
-            $attachment_type = $matches[0];
-            if(!$repositories[$attachment_type])
-                continue;
-
-            $attachment_ids  = str_replace($attachment_type, '', $attachment_string);
-            [$attachment_owner, $attachment_id] = array_map('intval', explode('_', $attachment_ids));
-
-            $repository_class = $repositories[$attachment_type]['repo'];
-            if(!$repository_class) continue;
-            $attachment_model = (new $repository_class)->{$repositories[$attachment_type]['method']}($attachment_owner, $attachment_id);
-            $output_attachments[] = $attachment_model;
+            try {
+                $attachment_type = $matches[0];
+                if(!$repositories[$attachment_type])
+                    continue;
+    
+                $attachment_ids  = str_replace($attachment_type, '', $attachment_string);
+                if($repositories[$attachment_type]['onlyId']) {
+                    [$attachment_id] = array_map('intval', explode('_', $attachment_ids));
+    
+                    $repository_class = $repositories[$attachment_type]['repo'];
+                    if(!$repository_class) continue;
+                    $attachment_model = (new $repository_class)->{$repositories[$attachment_type]['method']}($attachment_id);
+                    $output_attachments[] = $attachment_model;
+                } else {
+                    [$attachment_owner, $attachment_id] = array_map('intval', explode('_', $attachment_ids));
+    
+                    $repository_class = $repositories[$attachment_type]['repo'];
+                    if(!$repository_class) continue;
+                    $attachment_model = (new $repository_class)->{$repositories[$attachment_type]['method']}($attachment_owner, $attachment_id);
+                    $output_attachments[] = $attachment_model;
+                }
+            } catch(\Throwable) {continue;}
         }
     }
 

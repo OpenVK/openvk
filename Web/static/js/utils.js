@@ -28,7 +28,7 @@ function highlightText(searchText, container_selector, selectors = []) {
                 node.parentNode.insertBefore(tempDiv.firstChild, node)
             }
             node.parentNode.removeChild(node)
-        } else if(node.nodeType === 1 && node.tagName !== 'SCRIPT' && node.tagName !== 'BR' && node.tagName !== 'STYLE') {
+        } else if(node.nodeType === 1 && node.tagName !== 'SCRIPT' && node.tagName !== 'BR' && node.tagName !== 'STYLE' && !node.classList.contains('highlight')) {
             Array.from(node.childNodes).forEach(highlightNode);
         }
     }

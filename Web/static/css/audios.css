@@ -267,6 +267,17 @@
     color: white;
 }
 
+.audioEntry .volume {
+    display: flex; 
+    flex-direction: column;
+    width: 14%;
+}
+
+.audioEntry .nobold {
+    text-align: center;
+    margin-top: 12px;
+}
+
 .audioEntry.nowPlaying .volume .nobold {
     color: white !important;
 }
@@ -303,6 +314,7 @@
     height: 100%;
     position: relative;
     width: 100%;
+    min-height: 39px;
 }
 
 .audioEntry .playerButton {
@@ -341,6 +353,7 @@
     grid-template-columns: 1fr;
     width: 85%;
     height: 23px;
+    margin-top: 12px;
 }
 
 .audioEntry .status .mediaInfo {
@@ -588,7 +601,6 @@
 }
 
 .attachAudio {
-    float: left;
     width: 28%;
     height: 26px;
     padding-top: 11px;

@@ -1490,7 +1490,7 @@ body.scrolled .toTop:hover {
     color: #3c3c3c;
 }
 
-.post-source #remove_source_button {
+.post-source #remove_source_button, #small_remove_button {
     display: inline-block;
     background-repeat: no-repeat;
     background: url('/assets/packages/static/openvk/img/arrows.png?v=2');
@@ -1504,7 +1504,7 @@ body.scrolled .toTop:hover {
     cursor: pointer;
 }
 
-.post-source #remove_source_button:hover {
+.post-source #remove_source_button:hover, #small_remove_button:hover {
     opacity: 0.8;
 }
 
@@ -2413,8 +2413,8 @@ a.poll-retract-vote {
     }
 }
 
-.post-horizontal {
-    margin-top: 8px;
+.post-horizontal, .post-vertical {
+    margin-top: 0px;
 }
 
 .post-horizontal {
@@ -2424,19 +2424,46 @@ a.poll-retract-vote {
     gap: 3px;
 }
 
+.post-vertical {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    gap: 3px;
+}
+
 .post-horizontal .upload-item {
     /*width: 75px;
     height: 60px;*/
     overflow: hidden;
-    display: inline-block;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
     position: relative;
 }
 
-.post-horizontal .upload-item.dragged {
+.post-horizontal .upload-item .play-button {
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    background: rgba(0, 0, 0, 0.8);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.post-horizontal .upload-item .play-button .play-button-ico {
+    background: url(/assets/packages/static/openvk/img/wall.png) no-repeat 1px 0;
+    display: inline-block;
+    height: 15px;
+    width: 12px;
+}
+
+.upload-item.dragged {
     filter: contrast(0.5);
 }
 
-.upload-item .upload-delete {
+.post-horizontal .upload-item .upload-delete {
     position: absolute;
     background: rgba(0,0,0,0.5);
     padding: 2px 5px;
@@ -2444,6 +2471,7 @@ a.poll-retract-vote {
     color: #fff;
     font-size: 11px;
     right: 0px;
+    top: 0px;
     opacity: 0;
     transition: 0.25s;
 }
@@ -2452,11 +2480,58 @@ a.poll-retract-vote {
     opacity: 1;
 }
 
-.upload-item img {
+.post-horizontal .upload-item img {
     width: 100%;
     max-height: 60px;
     object-fit: cover;
     border-radius: 3px;
+}
+
+.post-vertical .vertical-attachment {
+    display: grid;
+    grid-template-columns: 1fr 0fr;
+}
+
+.post-vertical .vertical-attachment:first-of-type {
+    margin-top: 7px;
+}
+
+.post-vertical .vertical-attachment .audioEntry {
+    max-height: 28px;
+    min-height: 18px;
+}
+
+.post-vertical .vertical-attachment .audioEntry .playerButton {
+    padding: 0px 3px 0px 3px;
+}
+
+.post-vertical .vertical-attachment .audioEntry .status {
+    margin-top: 1px;
+    margin-left: 2px;
+    height: 15px;
+}
+
+.post-vertical .vertical-attachment .audioEntry .nobold {
+    margin-top: 1px;
+}
+
+.post-vertical .vertical-attachment .audioEntry .subTracks {
+    padding-bottom: 2px;
+    padding-left: 3px;
+    padding-right: 0px;
+}
+
+.post-vertical .vertical-attachment .audioEntry .audioEntryWrapper {
+    height: 18px;
+}
+
+.post-vertical .vertical-attachment .vertical-attachment-content { 
+    max-height: 27px;
+}
+
+.post-vertical .vertical-attachment .vertical-attachment-content .overflowedName {
+    position: initial;
+    width: 100% !important;
 }
 
 /* https://imgur.com/a/ihB3JZ4 */
@@ -3169,6 +3244,10 @@ body.article .floating_sidebar, body.article .page_content {
     justify-content: space-between;
 }
 
+.attachment_selector .topGrayBlock #video_query {
+    width: 160px;
+}
+
 .attachment_selector .topGrayBlock #albumSelect {
     width: 150px;
 }
@@ -3214,6 +3293,22 @@ body.article .floating_sidebar, body.article .page_content {
 .attachment_selector #attachment_insert .photosList .album-photo {
     width: 15.8%;
     margin: unset;
+}
+
+.attachment_selector #attachment_insert .videosInsert .video_list .video-preview {
+    height: 75px;
+    width: 133px;
+    overflow: hidden;
+}
+
+.attachment_selector #attachment_insert .videosInsert .video_list .video-preview img {
+    max-width: 133px; 
+    height: 75px; 
+    margin: auto;
+}
+
+.attachment_selector #attachment_insert .videosInsert .video_list .action_links {
+    width: 150px;
 }
 
 .edited {

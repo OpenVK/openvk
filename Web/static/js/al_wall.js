@@ -512,14 +512,10 @@ async function __appendToTextarea(attachment_obj, textareaNode) {
     indicator.append(`
         <a draggable="true" href='/${attachment_obj.type}${attachment_obj.id}' class="upload-item" data-type='${attachment_obj.type}' data-id="${attachment_obj.id}">
             <span class="upload-delete">×</span>
+            ${attachment_obj.type == 'video' ? `<div class='play-button'><div class='play-button-ico'></div></div>` : ''}
             <img draggable="false" src="${attachment_obj.preview}" alt='...'>
         </a>      
     `)
-
-    u(document).on('click', `.post-horizontal .upload-item[data-id='${attachment_obj.id}'] .upload-delete`, (e) => {
-        e.preventDefault()
-        indicator.find(`.upload-item[data-id='${attachment_obj.id}']`).remove()
-    })
 }
 
 // ajax не буде работать
@@ -531,13 +527,14 @@ u('#write .small-textarea').on('paste', (e) => {
     }
 })
 
-u('#write').on('dragstart', '.post-horizontal .upload-item', (e) => {
+u('#write').on('dragstart', '.post-horizontal .upload-item, .post-vertical .upload-item > *', (e) => {
     //e.preventDefault()
-    u(e.target).addClass('currently_dragging')
+    //console.log(e)
+    u(e.target).closest('.upload-item').addClass('currently_dragging')
     return
 })
 
-u('#write').on('dragover', '.post-horizontal .upload-item', (e) => {
+u('#write').on('dragover', '.post-horizontal .upload-item, .post-vertical .upload-item > *', (e) => {
     e.preventDefault()
 
     const target = u(e.target).closest('.upload-item')
@@ -550,23 +547,31 @@ u('#write').on('dragover', '.post-horizontal .upload-item', (e) => {
     return
 })
 
-u('#write').on('dragleave dragend', '.post-horizontal .upload-item', (e) => {
+u('#write').on('dragleave dragend', '.post-horizontal .upload-item, .post-vertical .upload-item > *', (e) => {
+    //console.log(e)
     u(e.target).closest('.upload-item').removeClass('dragged')
     return
 })
 
 u('#write').on("drop", function(e) {
-    e.preventDefault()
-
     const current = u('.upload-item.currently_dragging')
-
+    //console.log(e)
     if(e.dataTransfer.types.includes('Files')) {
+        e.preventDefault()
+
         e.dataTransfer.dropEffect = 'move'
         __uploadToTextarea(e.dataTransfer.files[0], u(e.target).closest('#write'))
-    } else {
+    } else if(e.dataTransfer.types.length < 1 || e.dataTransfer.types.includes('text/uri-list')) { 
+        e.preventDefault()
+
         const target = u(e.target).closest('.upload-item')
-        target.removeClass('dragged')
+        u('.dragged').removeClass('dragged')
         current.removeClass('currently_dragging')
+        //console.log(target)
+        if(!current.closest('.vertical-attachment').length < 1 && target.closest('.vertical-attachment').length < 1
+         || current.closest('.vertical-attachment').length < 1 && !target.closest('.vertical-attachment').length < 1) {
+            return
+        }
 
         const first_html = target.nodes[0].outerHTML
         const second_html = current.nodes[0].outerHTML
@@ -581,14 +586,14 @@ u('#write > form').on('submit', (e) => {
     const horizontal_array = []
     const horizontal_input = target.find(`input[name='horizontal_attachments']`)
     const horizontal_attachments = target.find(`.post-horizontal > a`)
-    horizontal_attachments.nodes.slice(0, window.openvk.max_attachments).forEach(_node => {
+    horizontal_attachments.nodes.forEach(_node => {
         horizontal_array.push(`${_node.dataset.type}${_node.dataset.id}`)
     })
     horizontal_input.nodes[0].value = horizontal_array.join(',')
 
     const vertical_array = []
     const vertical_input = target.find(`input[name='vertical_attachments']`)
-    const vertical_attachments = target.find(`.post-vertical > a`)
+    const vertical_attachments = target.find(`.post-vertical > .vertical-attachment`)
     vertical_attachments.nodes.forEach(_node => {
         vertical_array.push(`${_node.dataset.type}${_node.dataset.id}`)
     })
@@ -730,6 +735,171 @@ u(document).on("click", "#__photoAttachment", async (e) => {
     window.openvk.photoalbums.items.forEach(item => {
         u('.ovk-diag-body #albumSelect').append(`<option value="${item.vid}">${ovk_proc_strtr(escapeHtml(item.title), 20)}</option>`)
     })
+})
+
+u(document).on('click', '#__videoAttachment', async (e) => {
+    const per_page = 10
+    const form = u(e.target).closest('form') 
+    const msg = new CMessageBox({
+        title: tr('selecting_video'),
+        body: `
+        <div class='attachment_selector'>
+            <div class="topGrayBlock display_flex_row">
+                <a href="/videos/upload">${tr("upload_new_video")}</a>
+                
+                <input type="search" id="video_query" maxlength="20" placeholder="${tr("header_search")}">
+            </div>
+            <div id='attachment_insert'>
+                <div class="videosInsert"></div>
+            </div>
+        </div>
+        `,
+        buttons: [tr('close')],
+        callbacks: [Function.noop]
+    })
+
+    msg.getNode().attr('style', 'width: 630px;')
+    msg.getNode().find('.ovk-diag-body').attr('style', 'height:335px;padding:0px;')
+    
+    async function __recieveVideos(page, query = '') {
+        u('#gif_loader').remove()
+        u('#attachment_insert').append(`<div id='gif_loader'></div>`)
+        const insert_place = u('#attachment_insert .videosInsert')
+        let videos = null
+
+        try {
+            if(query == '') {
+                videos = await window.OVKAPI.call('video.get', {'owner_id': window.openvk.current_id, 'extended': 1, 'count': per_page, 'offset': page * per_page})
+            } else {
+                videos = await window.OVKAPI.call('video.search', {'q': escapeHtml(query), 'extended': 1, 'count': per_page, 'offset': page * per_page})
+            }
+        } catch(e) {
+            u("#gif_loader").remove()
+            insert_place.html("Err")
+            return
+        }
+
+        u("#gif_loader").remove()
+        const pages_count = Math.ceil(Number(videos.count) / per_page)
+        videos.items.forEach(video => {
+            const pretty_id = `${video.owner_id}_${video.id}`
+            const is_attached = (form.find(`.upload-item[data-type='video'][data-id='${video.owner_id}_${video.id}']`)).length > 0
+            let author_name = ''
+
+            const profiles = videos.profiles
+            const groups = videos.groups
+
+            if(video['owner_id'] > 0) {
+                const profile = profiles.find(prof => prof.id == video['owner_id'])
+                if(profile) {  
+                    author_name = profile['first_name'] + ' ' + profile['last_name']
+                }
+            } else {
+                const group = groups.find(grou => grou.id == Math.abs(video['owner_id']))
+                if(group) {
+                    author_name = group['name']
+                }
+            }
+
+            insert_place.append(`
+            <div class="content video_list" style="padding: unset;" data-preview='${video.image[0].url}' data-attachmentdata="${pretty_id}">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td valign="top">
+                                <a href="/video${pretty_id}">
+                                    <div class="video-preview">
+                                        <img src="${video.image[0].url}" alt="${escapeHtml(video.title)}">
+                                    </div>
+                                </a>
+                            </td>
+                            <td valign="top" style="width: 100%">
+                                <a href="/video${pretty_id}">
+                                    <b class='video-name'>
+                                        ${ovk_proc_strtr(escapeHtml(video.title), 50)}
+                                    </b>
+                                </a>
+                                <br>
+                                <p>
+                                    <span class='video-desc'>${ovk_proc_strtr(escapeHtml(video.description ?? ""), 140)}</span>
+                                </p>
+                                <span><a href="/id${video.owner_id}" target="_blank">${ovk_proc_strtr(escapeHtml(author_name ?? ""), 100)}</a></span>
+                            </td>
+                            <td valign="top" class="action_links">
+                                <a class="profile_link" id="__attach_vid">${!is_attached ? tr("attach") : tr("detach")}</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            `)
+        })
+
+        if(page < pages_count - 1) {
+            insert_place.append(`
+            <div id="show_more" data-pagesCount="${pages_count}" data-page="${page + 1}">
+                <span>${tr('show_more')}</span>
+            </div>`)
+        }
+
+        if(query != '') {
+            highlightText(query, '.videosInsert', ['.video-name', '.video-desc'])
+        }
+    }
+
+    u(".ovk-diag-body #video_query").on('change', (ev) => {
+        if(ev.target.value == u(".ovk-diag-body #video_query").nodes[0].value) {
+            u('#attachment_insert .videosInsert').html('')
+            __recieveVideos(0, u(".ovk-diag-body #video_query").nodes[0].value)
+        }
+    })
+
+    // next page
+    u(".ovk-diag-body .attachment_selector").on("click", "#show_more", async (ev) => {
+        const target = u(ev.target).closest('#show_more')
+        target.addClass('lagged')
+        await __recieveVideos(Number(target.nodes[0].dataset.page), u(".topGrayBlock #video_query").nodes[0].value)
+        target.remove()
+    })
+
+    // add video
+    u(".ovk-diag-body .attachment_selector").on("click", "#__attach_vid", async (ev) => {
+        ev.preventDefault()
+        
+        const target = u(ev.target).closest('.content')
+        const button = target.find('#__attach_vid')
+        const dataset = target.nodes[0].dataset
+        const is_attached = (form.find(`.upload-item[data-type='video'][data-id='${dataset.attachmentdata}']`)).length > 0
+        if(is_attached) {
+            (form.find(`.upload-item[data-type='video'][data-id='${dataset.attachmentdata}']`)).remove()
+            button.html(tr('attach'))
+        } else {
+            if(form.find(`.upload-item`).length + 1 > window.openvk.max_attachments) {
+                makeError(tr('too_many_attachments'), 'Red', 10000, 1)
+                return
+            }
+
+            button.html(tr('detach'))
+            __appendToTextarea({
+                'type': 'video',
+                'preview': dataset.preview,
+                'id': dataset.attachmentdata,
+                'fullsize_url': dataset.preview,
+            }, form)
+        }
+    })
+
+    __recieveVideos(0)
+})
+
+u(document).on('click', `.post-horizontal .upload-item .upload-delete`, (e) => {
+    e.preventDefault()
+    u(e.target).closest('.upload-item').remove()
+})
+
+u(document).on('click', `.post-vertical .vertical-attachment #small_remove_button`, (e) => {
+    e.preventDefault()
+    u(e.target).closest('.vertical-attachment').remove()
 })
 
 u(document).on('click', '.post-buttons .upload-item', (e) => {

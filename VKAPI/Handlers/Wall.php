@@ -473,7 +473,7 @@ final class Wall extends VKAPIRequestHandler
             ];
     }
 
-    function post(string $owner_id, string $message = "", int $from_group = 0, int $signed = 0, string $attachments = "", int $post_id = 0): object
+    function post(string $owner_id, string $message = "", string $copyright = "", int $from_group = 0, int $signed = 0, string $attachments = "", int $post_id = 0): object
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -551,7 +551,17 @@ final class Wall extends VKAPIRequestHandler
         if($signed == 1)
             $flags |= 0b01000000;
 
-        if(empty($message) && empty($attachments))
+        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'poll', 'audio']);
+        $final_attachments   = [];
+        $should_be_suggested = $owner_id < 0 && !$wallOwner->canBeModifiedBy($this->getUser()) && $wallOwner->getWallType() == 2;
+        foreach($parsed_attachments as $attachment) {
+            if($attachment && !$attachment->isDeleted() && $attachment->canBeViewedBy($this->getUser()) &&
+            !(method_exists($attachment, 'getVoters') && $attachment->getOwner()->getId() != $this->getUser()->getId())) {
+                $final_attachments[] = $attachment;
+            }
+        }
+
+        if((empty($message) && (empty($attachments) || sizeof($final_attachments) < 1)))
             $this->fail(100, "Required parameter 'message' missing.");
 
         try {
@@ -569,7 +579,7 @@ final class Wall extends VKAPIRequestHandler
                 } catch(\Throwable) {}
             }
           
-            if($owner_id < 0 && !$wallOwner->canBeModifiedBy($this->getUser()) && $wallOwner->getWallType() == 2)
+            if($should_be_suggested)
                 $post->setSuggested(1);
 
             $post->save();
@@ -577,90 +587,14 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(100, "One of the parameters specified was missing or invalid");
         }
 
-        # TODO use parseAttachments
-        if(!empty($attachments)) {
-            $attachmentsArr = explode(",", $attachments);
-            # Аттачи такого вида: [тип][id владельца]_[id вложения]
-            # Пример: photo1_1
-
-            if(sizeof($attachmentsArr) > 10)
-                $this->fail(50, "Too many attachments");
-
-            preg_match_all("/poll/m", $attachments, $matches, PREG_SET_ORDER, 0);
-            if(sizeof($matches) > 1)
-                $this->fail(85, "Too many polls");
-            
-            foreach($attachmentsArr as $attac) {
-                $attachmentType = NULL;
-
-                if(str_contains($attac, "photo"))
-                    $attachmentType = "photo";
-                elseif(str_contains($attac, "video"))
-                    $attachmentType = "video";
-                elseif(str_contains($attac, "note"))
-                    $attachmentType = "note";
-                elseif(str_contains($attac, "poll"))
-                    $attachmentType = "poll";
-                elseif(str_contains($attac, "audio"))
-                    $attachmentType = "audio";
-                
-                else
-                    $this->fail(205, "Unknown attachment type");
-
-                $attachment = str_replace($attachmentType, "", $attac);
-
-                $attachmentOwner = (int)explode("_", $attachment)[0];
-                $attachmentId    = (int)end(explode("_", $attachment));
-
-                $attacc = NULL;
-
-                if($attachmentType == "photo") {
-                    $attacc = (new PhotosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                    if(!$attacc || $attacc->isDeleted())
-                        $this->fail(100, "Invalid photo");
-                    if(!$attacc->getOwner()->getPrivacyPermission('photos.read', $this->getUser()))
-                        $this->fail(43, "Access to photo denied");
-                    
-                    $post->attach($attacc);
-                } elseif($attachmentType == "video") {
-                    $attacc = (new VideosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                    if(!$attacc || $attacc->isDeleted())
-                        $this->fail(100, "Video does not exists");
-                    if(!$attacc->getOwner()->getPrivacyPermission('videos.read', $this->getUser()))
-                        $this->fail(43, "Access to video denied");
-
-                    $post->attach($attacc);
-                } elseif($attachmentType == "note") {
-                    $attacc = (new NotesRepo)->getNoteById($attachmentOwner, $attachmentId);
-                    if(!$attacc || $attacc->isDeleted())
-                        $this->fail(100, "Note does not exist");
-                    if(!$attacc->getOwner()->getPrivacyPermission('notes.read', $this->getUser()))
-                        $this->fail(11, "Access to note denied");
-
-                    $post->attach($attacc);
-                } elseif($attachmentType == "poll") {
-                    $attacc = (new PollsRepo)->get($attachmentId);
-
-                    if(!$attacc || $attacc->isDeleted())
-                        $this->fail(100, "Poll does not exist");
-                    if($attacc->getOwner()->getId() != $this->getUser()->getId())
-                        $this->fail(43, "You do not have access to this poll");
-
-                    $post->attach($attacc);
-                } elseif($attachmentType == "audio") {
-                    $attacc = (new AudiosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                    if(!$attacc || $attacc->isDeleted())
-                        $this->fail(100, "Audio does not exist");
-
-                    $post->attach($attacc);
-                }
-            }
+        foreach($final_attachments as $attachment) {
+            $post->attach($attachment);
         }
 
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
 
-        if($owner_id < 0 && !$wallOwner->canBeModifiedBy($this->getUser()) && $wallOwner->getWallType() == 2) {
+        if($should_be_suggested) {
             return (object)["post_id" => "on_view"];
         }
 
@@ -675,6 +609,15 @@ final class Wall extends VKAPIRequestHandler
         if(preg_match('/wall((?:-?)[0-9]+)_([0-9]+)/', $object, $postArray) == 0)
             $this->fail(100, "One of the parameters specified was missing or invalid: object is incorrect");
         
+        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio']);
+        $final_attachments   = [];
+        foreach($parsed_attachments as $attachment) {
+            if($attachment && !$attachment->isDeleted() && $attachment->canBeViewedBy($this->getUser()) &&
+            !(method_exists($attachment, 'getVoters') && $attachment->getOwner()->getId() != $this->getUser()->getId())) {
+                $final_attachments[] = $attachment;
+            }
+        }
+
         $post = (new PostsRepo)->getPostById((int) $postArray[1], (int) $postArray[2]);
         if(!$post || $post->isDeleted()) $this->fail(100, "One of the parameters specified was missing or invalid");
         
@@ -710,12 +653,8 @@ final class Wall extends VKAPIRequestHandler
         $nPost->save();
 
         $nPost->attach($post);
-        $attachments_arr = parseAttachments($attachments, ['photo', 'video', 'audio']);
-        foreach($attachments_arr as $attachment) {
-            if(!$attachment || $attachment->isDeleted() || !$attachment->canBeViewedBy($this->getUser())) {
-                continue;
-            }
 
+        foreach($parsed_attachments as $attachment) {
             $nPost->attach($attachment);
         }
 
@@ -905,7 +844,16 @@ final class Wall extends VKAPIRequestHandler
         if($post->getTargetWall() < 0)
             $club = (new ClubsRepo)->get(abs($post->getTargetWall()));
 
-        if(empty($message) && empty($attachments)) {
+        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio']);
+        $final_attachments   = [];
+        foreach($parsed_attachments as $attachment) {
+            if($attachment && !$attachment->isDeleted() && $attachment->canBeViewedBy($this->getUser()) &&
+            !(method_exists($attachment, 'getVoters') && $attachment->getOwner()->getId() != $this->getUser()->getId())) {
+                $final_attachments[] = $attachment;
+            }
+        }
+
+        if((empty($message) && (empty($attachments) || sizeof($final_attachments) < 1))) {
             $this->fail(100, "Required parameter 'message' missing.");
         }
 
@@ -926,55 +874,8 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(1, "ошибка про то что коммент большой слишком");
         }
 
-        if(!empty($attachments)) {
-            $attachmentsArr = explode(",", $attachments);
-
-            if(sizeof($attachmentsArr) > 10)
-                $this->fail(50, "Error: too many attachments");
-            
-            foreach($attachmentsArr as $attac) {
-                $attachmentType = NULL;
-
-                if(str_contains($attac, "photo"))
-                    $attachmentType = "photo";
-                elseif(str_contains($attac, "video"))
-                    $attachmentType = "video";
-                elseif(str_contains($attac, "audio"))
-                    $attachmentType = "audio";
-                else
-                    $this->fail(205, "Unknown attachment type");
-
-                $attachment = str_replace($attachmentType, "", $attac);
-
-                $attachmentOwner = (int)explode("_", $attachment)[0];
-                $attachmentId    = (int)end(explode("_", $attachment));
-
-                $attacc = NULL;
-
-                if($attachmentType == "photo") {
-                    $attacc = (new PhotosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                    if(!$attacc || $attacc->isDeleted())
-                        $this->fail(100, "Photo does not exists");
-                    if(!$attacc->getOwner()->getPrivacyPermission('photos.read', $this->getUser()))
-                        $this->fail(11, "Access to photo denied");
-                    
-                    $comment->attach($attacc);
-                } elseif($attachmentType == "video") {
-                    $attacc = (new VideosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                    if(!$attacc || $attacc->isDeleted())
-                        $this->fail(100, "Video does not exists");
-                    if(!$attacc->getOwner()->getPrivacyPermission('videos.read', $this->getUser()))
-                        $this->fail(11, "Access to video denied");
-
-                    $comment->attach($attacc);
-                } elseif($attachmentType == "audio") {
-                    $attacc = (new AudiosRepo)->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                    if(!$attacc || $attacc->isDeleted())
-                        $this->fail(100, "Audio does not exist");
-
-                    $comment->attach($attacc);
-                }
-            }
+        foreach($final_attachments as $attachment) {
+            $comment->attach($attachment);
         }
 
         if($post->getOwner()->getId() !== $this->user->getId())
@@ -1048,25 +949,20 @@ final class Wall extends VKAPIRequestHandler
         }
 
         $post->save(true);
+        
+        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio']);
+        $final_attachments   = [];
+        foreach($parsed_attachments as $attachment) {
+            if($attachment && !$attachment->isDeleted() && $attachment->canBeViewedBy($this->getUser()) &&
+            !(method_exists($attachment, 'getVoters') && $attachment->getOwner()->getId() != $this->getUser()->getId())) {
+                $final_attachments[] = $attachment;
+            }
+        }
 
-        # todo добавить такое в веб версию
-        if(!empty($attachments)) {
-            $attachs = parseAttachments($attachments);
-            $newAttachmentsCount = sizeof($attachs);
-
-            $postsAttachments = iterator_to_array($post->getChildren());
-
-            if(sizeof($postsAttachments) >= 10)
-                $this->fail(15, "Post have too many attachments");
-
-            if(($newAttachmentsCount + sizeof($postsAttachments)) > 10)
-                $this->fail(158, "Post will have too many attachments");
-
-            foreach($attachs as $attach) {
-                if($attach && !$attach->isDeleted())
-                    $post->attach($attach);
-                else
-                    $this->fail(52, "One of the attachments is invalid");
+        if(sizeof($final_attachments) > 0) {
+            $post->unwire();
+            foreach($final_attachments as $attachment) {
+                $post->attach($attachment);
             }
         }
 
@@ -1093,24 +989,20 @@ final class Wall extends VKAPIRequestHandler
         
         $comment->setEdited(time());
         $comment->save(true);
-        
-        if(!empty($attachments)) {
-            $attachs = parseAttachments($attachments);
-            $newAttachmentsCount = sizeof($attachs);
 
-            $postsAttachments = iterator_to_array($comment->getChildren());
+        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio']);
+        $final_attachments   = [];
+        foreach($parsed_attachments as $attachment) {
+            if($attachment && !$attachment->isDeleted() && $attachment->canBeViewedBy($this->getUser()) &&
+            !(method_exists($attachment, 'getVoters') && $attachment->getOwner()->getId() != $this->getUser()->getId())) {
+                $final_attachments[] = $attachment;
+            }
+        }
 
-            if(sizeof($postsAttachments) >= 10)
-                $this->fail(15, "Post have too many attachments");
-
-            if(($newAttachmentsCount + sizeof($postsAttachments)) > 10)
-                $this->fail(158, "Post will have too many attachments");
-
-            foreach($attachs as $attach) {
-                if($attach && !$attach->isDeleted())
-                    $comment->attach($attach);
-                else
-                    $this->fail(52, "One of the attachments is invalid");
+        if(sizeof($final_attachments) > 0) {
+            $comment->unwire();
+            foreach($final_attachments as $attachment) {
+                $comment->attach($attachment);
             }
         }
 

@@ -54,8 +54,8 @@
                     <input type="checkbox" name="as_group" /> {_comment_as_group}
                 </label>
             </div>
-            <input type="text" name="horizontal_attachments" value="" />
-            <input type="text" name="vertical_attachments" value="" />
+            <input type="hidden" name="horizontal_attachments" value="" />
+            <input type="hidden" name="vertical_attachments" value="" />
             <input type="hidden" name="poll" value="none" />
             <input type="hidden" id="source" name="source" value="none" />
             <input type="hidden" name="type" value="1" />
@@ -75,11 +75,11 @@
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
                         {_photo}
                     </a>
-                    <a id="videoAttachment">
+                    <a id="__videoAttachment">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
                         {_video}
                     </a>
-                    <a id="_audioAttachment">
+                    <a id="__audioAttachment">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
                         {_audio}
                     </a>

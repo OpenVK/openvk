@@ -275,15 +275,15 @@ final class WallPresenter extends OpenVKPresenter
         $horizontal_attachments = [];
         $vertical_attachments = [];
         if(!empty($this->postParam("horizontal_attachments"))) {
-            $horizontal_attachments_array = explode(",", $this->postParam("horizontal_attachments"));
-            if(sizeof($horizontal_attachments_array) <= OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"]) {
+            $horizontal_attachments_array = array_slice(explode(",", $this->postParam("horizontal_attachments")), 0, OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"]);
+            if(sizeof($horizontal_attachments_array) > 0) {
                 $horizontal_attachments = parseAttachments($horizontal_attachments_array, ['photo', 'video']);
             }
         }
 
         if(!empty($this->postParam("vertical_attachments"))) {
-            $vertical_attachments_array = explode(",", $this->postParam("vertical_attachments"));
-            if(sizeof($vertical_attachments_array) <= OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"]) {
+            $vertical_attachments_array = array_slice(explode(",", $this->postParam("vertical_attachments")), 0, OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"]);
+            if(sizeof($vertical_attachments_array) > 0) {
                 $vertical_attachments = parseAttachments($vertical_attachments_array, ['audio', 'note']);
             }
         }
