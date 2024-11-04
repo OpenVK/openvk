@@ -11,6 +11,10 @@ env:
 
 jobs:
   build:
+    strategy:
+      matrix:
+        platform: [amd64, arm64]
+
     runs-on: ubuntu-latest
 
     if: github.event_name == 'push'
@@ -73,7 +77,7 @@ jobs:
       - name: Build base image
         uses: docker/build-push-action@v6
         with:
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/${{matrix.platform}}
           file: install/automated/docker/openvk.Dockerfile
           tags: ${{ steps.basemeta.outputs.tags }}
           labels: ${{ steps.basemeta.outputs.labels }}
@@ -83,7 +87,7 @@ jobs:
       - name: Build MariaDB primary image
         uses: docker/build-push-action@v6
         with:
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/${{matrix.platform}}
           file: install/automated/docker/mariadb-primary.Dockerfile
           tags: ${{ steps.db-primarymeta.outputs.tags }}
           labels: ${{ steps.db-primarymeta.outputs.labels }}
@@ -93,7 +97,7 @@ jobs:
       - name: Build MariaDB event image
         uses: docker/build-push-action@v6
         with:
-          platforms: linux/amd64,linux/arm64
+          platforms: linux/${{matrix.platform}}
           file: install/automated/docker/mariadb-eventdb.Dockerfile
           tags: ${{ steps.db-eventmeta.outputs.tags }}
           labels: ${{ steps.db-eventmeta.outputs.labels }}
