@@ -1,5 +1,5 @@
 ARG GITREPO=openvk/openvk
-FROM ghcr.io/${GITREPO}/php:8.2-cli as builder
+FROM ghcr.io/${GITREPO}/php:8.2-cli AS builder
 
 WORKDIR /opt
 
@@ -27,7 +27,7 @@ ADD composer.* .
 
 RUN composer install
 
-FROM docker.io/node:20 as nodejs
+FROM docker.io/node:20 AS nodejs
 
 COPY --from=builder /opt/chandler /opt/chandler
 
