@@ -1,7 +1,6 @@
 name: Build images
 
-on:
-  push:
+on: [push, pull_request]
 
 env:
   BASE_IMAGE_NAME: openvk
