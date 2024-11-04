@@ -38,6 +38,8 @@ jobs:
         with:
           images: |
             ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.BASE_IMAGE_NAME}}
+          labels: |
+            org.opencontainers.image.documentation=https://github.com/OpenVK/openvk/blob/master/install/automated/docker/Readme.md
           tags: |
             type=sha
             type=ref,event=branch
@@ -57,7 +59,7 @@ jobs:
           labels: ${{ steps.basemeta.outputs.labels }}
           build-args: |
             GITREPO=${{ steps.repositorystring.outputs.lowercase }}
-            
+
   builddb:
     name: Build DB images
     strategy:
@@ -86,6 +88,10 @@ jobs:
         with:
           images: |
             ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}
+          labels: |
+            org.opencontainers.image.title=OpenVK MariaDB (Primary)
+            org.opencontainers.image.description=OpenVK's image for MariaDB for primary database.
+            org.opencontainers.image.documentation=https://github.com/OpenVK/openvk/blob/master/install/automated/docker/Readme.md
           tags: |
             type=sha,prefix=${{env.DB_VERSION}}-primary-sha-
             type=ref,event=branch,prefix=${{env.DB_VERSION}}-primary-
@@ -99,6 +105,10 @@ jobs:
         with:
           images: |
             ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}
+          labels: |
+            org.opencontainers.image.title=OpenVK MariaDB (EventDB)
+            org.opencontainers.image.description=OpenVK's image for MariaDB for event database.
+            org.opencontainers.image.documentation=https://github.com/OpenVK/openvk/blob/master/install/automated/docker/Readme.md
           tags: |
             type=sha,prefix=${{env.DB_VERSION}}-eventdb-sha-
             type=ref,event=branch,prefix=${{env.DB_VERSION}}-eventdb-
