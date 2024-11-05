@@ -486,6 +486,7 @@ async function __uploadToTextarea(file, textareaNode) {
         })
         const json_response = await res.json()
         if(!json_response.success) {
+            u(`#temp_filler${rand}`).remove()
             fastError((tr("error_uploading_photo") + json_response.flash.message))
             return
         }
@@ -1023,6 +1024,13 @@ u(document).on('click', `.post-vertical .vertical-attachment #small_remove_butto
 
 u(document).on('click', '.post-buttons .upload-item', (e) => {
     e.preventDefault()
+})
+
+u(document).on('click', '.post.post-nsfw .post-content', (e) => {
+    e.preventDefault()
+    e.stopPropagation()
+    
+    u(e.target).closest('.post-nsfw').removeClass('post-nsfw')
 })
 
 async function repost(id, repost_type = 'post') {

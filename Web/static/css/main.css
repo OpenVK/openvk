@@ -2441,7 +2441,7 @@ a.poll-retract-vote {
     position: relative;
 }
 
-.post-horizontal .upload-item .play-button {
+.post-horizontal .upload-item .play-button, .compact_video .play-button {
     position: absolute;
     height: 30px;
     width: 30px;
@@ -2452,7 +2452,7 @@ a.poll-retract-vote {
     align-items: center;
 }
 
-.post-horizontal .upload-item .play-button .play-button-ico {
+.post-horizontal .upload-item .play-button .play-button-ico, .compact_video .play-button .play-button-ico {
     background: url(/assets/packages/static/openvk/img/wall.png) no-repeat 1px 0;
     display: inline-block;
     height: 15px;
@@ -2648,12 +2648,13 @@ a.poll-retract-vote {
     padding: 3px 0;
 }
 
-.video-wowzer a::before {
-    content: "b";
-    color: transparent;
-    width: 12px;
-    background-image: url(/assets/packages/static/openvk/img/videoico.png);
-    display: none;
+.video-wowzer .small-video-ico {
+    vertical-align: bottom;
+    display: inline-block;
+    width: 11px;
+    height: 14px;
+    background: url(/assets/packages/static/openvk/img/wall.png?v=2);
+    background-position: -87px 0px;
 }
 
 /* Da search */
@@ -3511,3 +3512,26 @@ hr {
     width: 30px;
     height: 7px;
 }
+
+.compact_video {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+
+    position: relative;
+}
+
+.compact_video .video-length {
+    text-align: center;
+    position: absolute;
+    width: 34px;
+    height: 14px;
+    bottom: 5px;
+    right: 5px;
+    background: rgba(0,0,0,0.5);
+    color: white;
+}
+

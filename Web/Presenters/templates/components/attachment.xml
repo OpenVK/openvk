@@ -10,23 +10,37 @@
         </a>
     {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Video}
-    {if $attachment->getType() === 0}
-        <div class="bsdn media" data-name="{$attachment->getName()}" data-author="{$attachment->getOwner()->getCanonicalName()}">
-            <video class="media" src="{$attachment->getURL()}"></video>
+    {if $tilesCount <= 1}
+        {if $attachment->getType() === 0}
+            <div class="bsdn media" data-name="{$attachment->getName()}" data-author="{$attachment->getOwner()->getCanonicalName()}">
+                <video class="media" src="{$attachment->getURL()}"></video>
+            </div>
+        {else}
+            {var $driver = $attachment->getVideoDriver()}
+            {if !$driver}
+                <span style="color:red;">{_version_incompatibility}</span>
+            {else}
+                {$driver->getEmbed("100%")|noescape}
+            {/if}
+        {/if}
+
+        <div class="video-wowzer">
+            <div class="small-video-ico"></div>
+            <a href="/video{$attachment->getPrettyId()}" id="videoOpen" data-id="{$attachment->getId()}">{$attachment->getName()}</a>
+            <span class="video-wowzer-length" n:if="$attachment->getLength() != NULL">({$attachment->getFormattedLength()})</span>
         </div>
     {else}
-        {var $driver = $attachment->getVideoDriver()}
-        {if !$driver}
-            <span style="color:red;">{_version_incompatibility}</span>
-        {else}
-            {$driver->getEmbed("100%")|noescape}
-        {/if}
-    {/if}
+        <a class='compact_video' id='videoOpen' data-id='{$attachment->getId()}' href="/video{$attachment->getPrettyId()}">
+            <div class='play-button'>
+                <div class='play-button-ico'></div>
+            </div>
+            <div class='video-length' n:if="$attachment->getLength() != NULL">
+                {$attachment->getFormattedLength()}
+            </div>
 
-    <div class="video-wowzer">
-        <img src="/assets/packages/static/openvk/img/videoico.png" />
-        <a href="/video{$attachment->getPrettyId()}" id="videoOpen" data-id="{$attachment->getId()}">{$attachment->getName()}</a>
-    </div>
+            <img class="media media_makima" src="{$attachment->getThumbnailURL()}" loading=lazy />
+        </a>
+    {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Poll}
     {presenter "openvk!Poll->view", $attachment->getId()}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Note}
