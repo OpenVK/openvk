@@ -5,8 +5,11 @@ use openvk\Web\Models\Entities\User;
 
 trait TIgnorable 
 {
-    function isIgnoredBy(User $user): bool
+    function isIgnoredBy(User $user = NULL): bool
     {
+        if(!$user)
+            return false;
+        
         $ctx  = DatabaseConnection::i()->getContext();
         $data = [
             "owner"  => $user->getId(),
