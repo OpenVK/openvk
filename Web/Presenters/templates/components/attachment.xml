@@ -30,19 +30,14 @@
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Poll}
     {presenter "openvk!Poll->view", $attachment->getId()}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Note}
-    {if !$attachment->isDeleted()}
-        <div class="attachment_note">
-            <img class="attachment_note_icon" src="/assets/packages/static/openvk/img/note.svg">
+    <div class="attachment_note">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
+        
+        <div class='attachment_note_content'>
             <span class="attachment_note_text">{_note}</span>
             <span class="attachment_note_name"><a href="javascript:void(showArticle({$attachment->getId()}));">{ovk_proc_strtr($attachment->getName(), 66)}</a></span>
         </div>
-    {else}
-        <div class="attachment_note">
-            <img class="attachment_note_icon" src="/assets/packages/static/openvk/img/note.svg">
-            <span class="attachment_note_text">{_note}</span>
-            <span class="attachment_note_name">{_deleted}</span>
-        </div>
-    {/if}
+    </div>
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Post}
     {php $GLOBALS["_nesAttGloCou"] = (isset($GLOBALS["_nesAttGloCou"]) ? $GLOBALS["_nesAttGloCou"] : 0) + 1}
     {if $GLOBALS["_nesAttGloCou"] > 2}

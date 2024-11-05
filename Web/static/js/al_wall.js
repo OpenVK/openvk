@@ -527,14 +527,14 @@ u('#write .small-textarea').on('paste', (e) => {
     }
 })
 
-u('#write').on('dragstart', '.post-horizontal .upload-item, .post-vertical .upload-item > *', (e) => {
+u('#write').on('dragstart', '.post-horizontal .upload-item, .post-vertical .upload-item', (e) => {
     //e.preventDefault()
     //console.log(e)
     u(e.target).closest('.upload-item').addClass('currently_dragging')
     return
 })
 
-u('#write').on('dragover', '.post-horizontal .upload-item, .post-vertical .upload-item > *', (e) => {
+u('#write').on('dragover', '.post-horizontal .upload-item, .post-vertical .upload-item', (e) => {
     e.preventDefault()
 
     const target = u(e.target).closest('.upload-item')
@@ -547,7 +547,7 @@ u('#write').on('dragover', '.post-horizontal .upload-item, .post-vertical .uploa
     return
 })
 
-u('#write').on('dragleave dragend', '.post-horizontal .upload-item, .post-vertical .upload-item > *', (e) => {
+u('#write').on('dragleave dragend', '.post-horizontal .upload-item, .post-vertical .upload-item', (e) => {
     //console.log(e)
     u(e.target).closest('.upload-item').removeClass('dragged')
     return
@@ -890,6 +890,125 @@ u(document).on('click', '#__videoAttachment', async (e) => {
     })
 
     __recieveVideos(0)
+})
+
+// __audioAttachment -> al_music.js, 1318
+
+u(document).on('click', '#__notesAttachment', async (e) => {
+    const per_page = 10
+    const form = u(e.target).closest('form') 
+    const msg = new CMessageBox({
+        title: tr('select_note'),
+        body: `
+        <div class='attachment_selector'>
+            <div id='attachment_insert' style='height: 325px;'>
+                <div class="notesInsert"></div>
+            </div>
+        </div>
+        `,
+        buttons: [tr("create_note"), tr('close')],
+        callbacks: [() => {
+            window.location.assign('/notes/create')
+        }, Function.noop]
+    })
+
+    msg.getNode().attr('style', 'width: 340px;')
+    msg.getNode().find('.ovk-diag-body').attr('style', 'height:335px;padding:0px;')
+    
+    async function __recieveNotes(page) {
+        u('#gif_loader').remove()
+        u('#attachment_insert').append(`<div id='gif_loader'></div>`)
+        const insert_place = u('#attachment_insert .notesInsert')
+        let notes = null
+
+        try {
+            notes = await window.OVKAPI.call('notes.get', {'user_id': window.openvk.current_id, 'count': per_page, 'offset': per_page * page})
+        } catch(e) {
+            u("#gif_loader").remove()
+            insert_place.html("Err")
+            return
+        }
+
+        u("#gif_loader").remove()
+        const pages_count = Math.ceil(Number(notes.count) / per_page)
+        notes.notes.forEach(note => {
+            is_attached = (form.find(`.upload-item[data-type='note'][data-id='${note.owner_id}_${note.id}']`)).length > 0
+            insert_place.append(`
+                <div class='display_flex_row _content' data-attachmentdata="${note.owner_id}_${note.id}" data-name='${escapeHtml(note.title)}'>
+                    <div class="notes_titles" style='width: 73%;'>
+                        <div class="written">
+                            <a href="${note.view_url}">${escapeHtml(note.title)}</a>
+
+                            <small>
+                                <span>${ovk_proc_strtr(escapeHtml(strip_tags(note.text)), 100)}</span>
+                            </small>
+                        </div>
+                    </div>
+                    <div class="attachAudio" id='__attach_note'>
+                        <span>${is_attached ? tr("detach") : tr("attach")}</span>
+                    </div>
+                </div>
+            `)
+        })
+
+        if(page < pages_count - 1) {
+            insert_place.append(`
+            <div id="show_more" data-pagesCount="${pages_count}" data-page="${page + 1}">
+                <span>${tr('show_more')}</span>
+            </div>`)
+        }
+    }
+
+    // next page
+    u(".ovk-diag-body .attachment_selector").on("click", "#show_more", async (ev) => {
+        const target = u(ev.target).closest('#show_more')
+        target.addClass('lagged')
+        await __recieveNotes(Number(target.nodes[0].dataset.page))
+        target.remove()
+    })
+
+    // add note
+    u(".ovk-diag-body .attachment_selector").on("click", "#__attach_note", async (ev) => {
+        if(u(form).find(`.upload-item`).length > window.openvk.max_attachments) {
+            makeError(tr('too_many_attachments'), 'Red', 10000, 1)
+            return    
+        }
+
+        const target = u(ev.target).closest('._content')
+        const button = target.find('#__attach_note')
+        const dataset = target.nodes[0].dataset
+        const is_attached = (form.find(`.upload-item[data-type='note'][data-id='${dataset.attachmentdata}']`)).length > 0
+        if(is_attached) {
+            (form.find(`.upload-item[data-type='note'][data-id='${dataset.attachmentdata}']`)).remove()
+            button.html(tr('attach'))
+        } else {
+            if(form.find(`.upload-item`).length + 1 > window.openvk.max_attachments) {
+                makeError(tr('too_many_attachments'), 'Red', 10000, 1)
+                return
+            }
+
+            button.html(tr('detach'))
+            form.find('.post-vertical').append(`
+                <div class="vertical-attachment upload-item" draggable="true" data-type='note' data-id="${dataset.attachmentdata}">
+                    <div class='vertical-attachment-content' draggable="false">
+                        <div class="attachment_note">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
+                            
+                            <div class='attachment_note_content'>
+                                <span class="attachment_note_text">${tr('note')}</span>
+                                <span class="attachment_note_name">${ovk_proc_strtr(dataset.name, 66)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='vertical-attachment-remove'>
+                        <div id='small_remove_button'></div>
+                    </div>
+                </div>
+            `)
+        }
+    })
+
+    __recieveNotes(0)
 })
 
 u(document).on('click', `.post-horizontal .upload-item .upload-delete`, (e) => {

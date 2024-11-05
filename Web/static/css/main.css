@@ -2502,7 +2502,7 @@ a.poll-retract-vote {
 }
 
 .post-vertical .vertical-attachment .audioEntry .playerButton {
-    padding: 0px 3px 0px 3px;
+    padding: 0px 3px 0px 0px;
 }
 
 .post-vertical .vertical-attachment .audioEntry .status {
@@ -2999,17 +2999,33 @@ a.poll-retract-vote {
     width: 100%;
 }
 
-.attachment_note_icon {
+.attachment_note .attachment_note_icon {
     max-width: 9px;
 }
 
-.attachment_note_text {
+.attachment_note .attachment_note_text {
     color: #605F63;
     margin-left: 2px;
 }
 
 .attachment_note {
     user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 1px;
+}
+
+.attachment_note svg {
+    width: 8px;
+    height: 10px;
+    fill: #605f63;
+    margin-top: 2px;
+}
+
+.attachment_note .attachment_note_content {
+    display: flex;
+    gap: 4px;
+    height: 12px;
 }
 
 #notesList

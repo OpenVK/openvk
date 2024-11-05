@@ -83,6 +83,10 @@
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
                         {_audio}
                     </a>
+                    <a n:if="$notes ?? false" id="__notesAttachment">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-srt.png" />
+                        {_note}
+                    </a>
                     <a n:if="$graffiti ?? false" onclick="initGraffiti(event);">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
                         {_graffiti}

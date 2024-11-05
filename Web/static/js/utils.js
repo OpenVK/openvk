@@ -135,3 +135,8 @@ function array_splice(array, key)
 
     return resultArray;
 }
+
+function strip_tags(text) 
+{
+    return text.replace(/(<([^>]+)>)/gi, "")
+}

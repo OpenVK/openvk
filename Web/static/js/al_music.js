@@ -1431,7 +1431,7 @@ $(document).on("click", "#__audioAttachment", (e) => {
             u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`).remove()
             u(ev.currentTarget).find("span").html(tr("attach_audio"))
         } else {
-            if(u(form).find(`.vertical-attachment`).length > window.openvk.max_attachments) {
+            if(u(form).find(`.upload-item`).length > window.openvk.max_attachments) {
                 makeError(tr('too_many_attachments'), 'Red', 10000, 1)
                 return    
             }
