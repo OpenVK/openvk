@@ -4,6 +4,7 @@ function initGraffiti(event) {
         title: tr("draw_graffiti"),
         body: "<div id='ovkDraw'></div>",
         close_on_buttons: false,
+        warn_on_exit: true,
         buttons: [tr("save"), tr("cancel")],
         callbacks: [function() {
             canvas.getImage({includeWatermark: false}).toBlob(blob => {
@@ -746,7 +747,7 @@ u(document).on('click', '#__videoAttachment', async (e) => {
         body: `
         <div class='attachment_selector'>
             <div class="topGrayBlock display_flex_row">
-                <a href="/videos/upload">${tr("upload_new_video")}</a>
+                <a id='__fast_video_upload' href="/videos/upload"><input class='button' type='button' value='${tr("upload_button")}'></a>
                 
                 <input type="search" id="video_query" maxlength="20" placeholder="${tr("header_search")}">
             </div>
@@ -890,6 +891,11 @@ u(document).on('click', '#__videoAttachment', async (e) => {
         }
     })
 
+    u(".ovk-diag-body .attachment_selector").on('click', '#__fast_video_upload', (ev) => {
+        ev.preventDefault()
+        showFastVideoUpload(form)
+    })
+
     __recieveVideos(0)
 })
 
@@ -1011,6 +1017,184 @@ u(document).on('click', '#__notesAttachment', async (e) => {
 
     __recieveNotes(0)
 })
+
+function showFastVideoUpload(node) {
+    let current_tab = 'file'
+    const msg = new CMessageBox({
+        title: tr('upload_video'),
+        close_on_buttons: false,
+        unique_name: 'video_uploader',
+        body: `
+        <div id='_fast_video_upload'>
+            <div id='_tabs'>
+                <div class="mb_tabs">
+                    <div class="mb_tab" data-name='file'>
+                        <a>
+                            ${tr('video_file_upload')}
+                        </a>
+                    </div>
+                    <div class="mb_tab" data-name='youtube'>
+                        <a>
+                            ${tr('video_youtube_upload')}
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div id='__content'></div>
+        </div>
+        `,
+        buttons: [tr('close'), tr('upload_button')],
+        callbacks: [() => {msg.close()}, async () => {
+            const video_name = u(`#_fast_video_upload input[name='name']`).nodes[0].value
+            const video_desc = u(`#_fast_video_upload textarea[name='desc']`).nodes[0].value
+            let   append_result = null
+
+            if(video_name.length < 1) {
+                u(`#_fast_video_upload input[name='name']`).nodes[0].focus()
+                return
+            }
+
+            const form_data  = new FormData
+            switch(current_tab) {
+                default:
+                case 'file':
+                    const video_file = u(`#_fast_video_upload input[name='blob']`).nodes[0]
+                    if(video_file.files.length < 1) {
+                        return
+                    }
+
+                    const video_blob = video_file.files[0]
+                    form_data.append('ajax', '1')
+                    form_data.append('name', video_name)
+                    form_data.append('desc', video_desc)
+                    form_data.append('blob', video_blob)
+                    form_data.append('unlisted', 1)
+                    form_data.append("hash", u("meta[name=csrf]").attr("value"))
+
+                    window.messagebox_stack[1].getNode().find('.ovk-diag-action button').nodes[1].classList.add('lagged')
+                    const fetcher = await fetch(`/videos/upload`, {
+                        method: 'POST',
+                        body: form_data
+                    })
+                    const fetcher_results = await fetcher.json()
+                    append_result = fetcher_results
+
+                    break
+                case 'youtube':
+                    const video_url = u(`#_fast_video_upload input[name='link']`).nodes[0]
+                    const video_link = video_url.value
+                    if(video_link.length < 1) {
+                        u(`#_fast_video_upload input[name='link']`).nodes[0].focus()
+                        return
+                    }
+
+                    form_data.append('ajax', '1')
+                    form_data.append('name', video_name)
+                    form_data.append('desc', video_desc)
+                    form_data.append('link', video_link)
+                    form_data.append('unlisted', 1)
+                    form_data.append("hash", u("meta[name=csrf]").attr("value"))
+
+                    window.messagebox_stack[1].getNode().find('.ovk-diag-action button').nodes[1].classList.add('lagged')
+                    const fetcher_yt = await fetch(`/videos/upload`, {
+                        method: 'POST',
+                        body: form_data
+                    })
+                    const fetcher_yt_results = await fetcher_yt.json()
+                    append_result = fetcher_yt_results
+
+                    break
+            }
+
+            if(append_result.payload) {
+                append_result = append_result.payload
+                const preview = append_result.image[0]
+                __appendToTextarea({
+                    'type': 'video',
+                    'preview': preview.url,
+                    'id': append_result.owner_id + '_' + append_result.id,
+                    'fullsize_preview': preview.url,
+                }, node)
+
+                window.messagebox_stack.forEach(msg_ => {
+                    msg_.close()
+                })
+            } else {
+                fastError(append_result.flash.message)
+                msg.close()
+            }
+        }]
+    })
+
+    msg.getNode().find('.ovk-diag-body').attr('style', 'padding:0px;height: 161px;')
+    async function __switchTab(tab_name) {
+        current_tab = tab_name
+        u(`#_fast_video_upload .mb_tab`).attr('id', 'ki')
+        u(`#_fast_video_upload .mb_tab[data-name='${current_tab}']`).attr('id', 'active')
+        
+        switch(current_tab) {
+            case 'file':
+                msg.getNode().find('#__content').html(`
+                    <table cellspacing="7" cellpadding="0" width="80%" border="0" align="center">
+                        <tbody>
+                            <tr>
+                                <td width="120" valign="top"><span class="nobold">${tr('info_name')}:</span></td>
+                                <td><input type="text" name="name" /></td>
+                            </tr>
+                            <tr>
+                                <td width="120" valign="top"><span class="nobold">${tr('description')}:</span></td>
+                                <td><textarea name="desc"></textarea></td>
+                            </tr>
+                            <tr>
+                                <td width="120" valign="top"><span class="nobold">${tr('video')}:</span></td>
+                                <td>
+                                    <label class="button" style="">
+                                        ${tr('browse')}
+                                        <input type="file" id="blob" name="blob" style="display: none;" accept="video/*" />
+                                    </label>
+                                    <span id="filename" style="margin-left: 7px;"></span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `)
+                break
+            case 'youtube':
+                msg.getNode().find('#__content').html(`
+                    <table cellspacing="7" cellpadding="0" width="80%" border="0" align="center">
+                        <tbody>
+                            <tr>
+                                <td width="120" valign="top"><span class="nobold">${tr('info_name')}:</span></td>
+                                <td><input type="text" name="name" /></td>
+                            </tr>
+                            <tr>
+                                <td width="120" valign="top"><span class="nobold">${tr('description')}:</span></td>
+                                <td><textarea name="desc"></textarea></td>
+                            </tr>
+                            <tr>
+                                <td width="120" valign="top"><span class="nobold">${tr('video_link_to_yt')}:</span></td>
+                                <td>
+                                    <input type="text" name="link" placeholder="https://www.youtube.com/watch?v=9FWSRQEqhKE" />
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                `)
+                break
+        }
+    }
+
+    u('#_fast_video_upload').on('click', '.mb_tab', (e) => {
+        __switchTab(u(e.target).closest('.mb_tab').nodes[0].dataset.name)
+    })
+
+    u('#_fast_video_upload').on('change', '#blob', (e) => {
+        u('#_fast_video_upload #filename').html(escapeHtml(e.target.files[0].name))
+        u(`#_fast_video_upload input[name='name']`).nodes[0].value = escapeHtml(e.target.files[0].name)
+    })
+
+    __switchTab('file')
+}
 
 u(document).on('click', `.post-horizontal .upload-item .upload-delete`, (e) => {
     e.preventDefault()

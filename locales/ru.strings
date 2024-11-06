@@ -796,6 +796,9 @@
 "no_videos" = "У вас нет видео.";
 "no_videos_results" = "Нет результатов.";
 
+"video_file_upload" = "Загрузить файл";
+"video_youtube_upload" = "Добавить с YouTube";
+
 /* Audios */
 
 "my" = "Моё";

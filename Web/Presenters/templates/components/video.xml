@@ -19,6 +19,9 @@
             {$video->getName()}
             </b>
         </a>
+        {if $video->getLength()}
+            ({$video->getFormattedLength()})
+        {/if}
         <br/>
             <p>
                 <span class='video_description'>{$video->getDescription() ?? ""}</span>

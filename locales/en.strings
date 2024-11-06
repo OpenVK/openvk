@@ -836,6 +836,9 @@
 "no_videos" = "You don't have uploaded videos.";
 "no_videos_results" = "No results.";
 
+"video_file_upload" = "Upload file";
+"video_youtube_upload" = "Add from YouTube";
+
 "change_video" = "Change video";
 "unknown_video" = "This video is not supported in your version of OpenVK.";
 

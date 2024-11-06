@@ -8,12 +8,17 @@ class CMessageBox {
         const callbacks = options.callbacks ?? []
         const close_on_buttons = options.close_on_buttons ?? true
         const unique_name = options.unique_name ?? null
+        const warn_on_exit = options.warn_on_exit ?? false
+        if(unique_name && window.messagebox_stack.find(item => item.unique_name == unique_name) != null) {
+            return
+        }
 
         this.title = title
         this.body  = body
         this.id    = random_int(0, 10000)
         this.close_on_buttons = close_on_buttons
         this.unique_name = unique_name
+        this.warn_on_exit = warn_on_exit
 
         u('body').addClass('dimmed').append(this.__getTemplate())
         u('html').attr('style', 'overflow-y:hidden')
@@ -49,10 +54,6 @@ class CMessageBox {
     }
 
     async __showCloseConfirmationDialog() {
-        if(window.messagebox_stack.find(item => item.unique_name == 'close_confirmation') != null) {
-            return
-        }
-
         return new Promise((resolve, reject) => {
             const msg = new CMessageBox({
                 title: tr('exit_noun'),
@@ -120,9 +121,11 @@ u(document).on('keyup', async (e) => {
             return
         }
 
-        const res = await msg.__showCloseConfirmationDialog()
-        if(res === true) {
-            msg.close()
+        if(msg.warn_on_exit) {
+            const res = await msg.__showCloseConfirmationDialog()
+            if(res === true) {
+                msg.close()
+            }
         }
     }
 })
@@ -140,9 +143,11 @@ u(document).on('click', 'body.dimmed .dimmer', async (e) => {
             return
         }
 
-        const res = await msg.__showCloseConfirmationDialog()
-        if(res === true) {
-            msg.close()
+        if(msg.warn_on_exit) {
+            const res = await msg.__showCloseConfirmationDialog()
+            if(res === true) {
+                msg.close()
+            }
         }
     }
 })

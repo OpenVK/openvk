@@ -1459,7 +1459,13 @@ $(document).on("click", ".audioEmbed.processed .playerButton", (e) => {
 })
 
 $(document).on("click", ".audioEmbed.withdrawn", (e) => {
-    MessageBox(tr("error"), tr("audio_embed_withdrawn"), [tr("ok")], [Function.noop])
+    const msg = new CMessageBox({
+        title: tr('error'),
+        body: tr('audio_embed_withdrawn'),
+        unique_name: 'withdrawn_notify',
+        buttons: [tr('ok')],
+        callbacks: [Function.noop]
+    })
 })
 
 $(document).on("click", ".musicIcon.report-icon", (e) => {
