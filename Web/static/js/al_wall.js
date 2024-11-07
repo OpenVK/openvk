@@ -154,9 +154,9 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
             const parser        = new DOMParser
             const body          = parser.parseFromString(photo_text, "text/html")
             const details       = body.querySelector('.ovk-photo-details')
-            json.body[photo_id].cached = details.innerHTML ?? ''
+            json.body[photo_id].cached = details ? details.innerHTML : ''
             if(photo_id == currentImageid) {
-                photo_viewer.getNode().find(".ovk-photo-details").last().innerHTML = details.innerHTML ?? '';
+                photo_viewer.getNode().find(".ovk-photo-details").last().innerHTML = details ? details.innerHTML : ''
             }
 
             photo_viewer.getNode().find(".ovk-photo-details .bsdn").nodes.forEach(bsdnInitElement)
@@ -1321,6 +1321,9 @@ async function repost(id, repost_type = 'post') {
                 case 'post':
                     params.object = `wall${id}`
                     break
+                case 'photo':
+                    params.object = `photo${id}`
+                    break
                 case 'video':
                     params.object = `video${id}`
                     break
@@ -1345,10 +1348,13 @@ async function repost(id, repost_type = 'post') {
 
             try {
                 res = await window.OVKAPI.call('wall.repost', params)
-                if(repostsCount.length > 0) {
-                    repostsCount.html(previousVal + 1)
-                } else {
-                    u('#reposts' + id).nodes[0].insertAdjacentHTML('beforeend', `(<b id='repostsCount${id}'>1</b>)`)
+
+                if(u('#reposts' + id).length > 0) {
+                    if(repostsCount.length > 0) {
+                        repostsCount.html(previousVal + 1)
+                    } else {
+                        u('#reposts' + id).nodes[0].insertAdjacentHTML('beforeend', `(<b id='repostsCount${id}'>1</b>)`)
+                    }
                 }
 
                 NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.location.assign(`/wall${res.pretty_id}`)});

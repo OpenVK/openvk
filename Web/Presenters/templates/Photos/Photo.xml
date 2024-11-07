@@ -65,6 +65,9 @@
                     </div>
                     <a href="{$photo->getURL()}" class="profile_link" target="_blank" style="display:block;width:96%;">{_"open_original"}</a>
                     <a n:if="isset($thisUser) && $thisUser->getId() != $photo->getOwner()->getId()" class="profile_link" style="display:block;width:96%;" href="javascript:reportPhoto({$photo->getId()})">{_report}</a>
+                    <a onclick="javascript:repost({$photo->getPrettyId()}, 'photo')" class="profile_link" style="display:block;width:96%;">
+                        {_share}
+                    </a>
                 </div>
             </div>
         </div>

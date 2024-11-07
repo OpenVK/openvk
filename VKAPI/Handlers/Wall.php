@@ -606,9 +606,9 @@ final class Wall extends VKAPIRequestHandler
         $this->willExecuteWriteAction();
 
         $postArray;
-        if(preg_match('/wall((?:-?)[0-9]+)_([0-9]+)/', $object, $postArray) == 0)
+        if(preg_match('/(wall|video|photo)((?:-?)[0-9]+)_([0-9]+)/', $object, $postArray) == 0)
             $this->fail(100, "One of the parameters specified was missing or invalid: object is incorrect");
-        
+
         $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio']);
         $final_attachments   = [];
         foreach($parsed_attachments as $attachment) {
@@ -618,11 +618,22 @@ final class Wall extends VKAPIRequestHandler
             }
         }
 
-        $post = (new PostsRepo)->getPostById((int) $postArray[1], (int) $postArray[2]);
-        if(!$post || $post->isDeleted()) $this->fail(100, "One of the parameters specified was missing or invalid");
-        
-        if(!$post->canBeViewedBy($this->getUser()))
-            $this->fail(15, "Access denied");
+        $repost_entity = NULL;
+        $repost_type   = $postArray[1];
+        switch($repost_type) {
+            default:
+            case 'wall':
+                $repost_entity = (new PostsRepo)->getPostById((int) $postArray[2], (int) $postArray[3]);
+                break;
+            case 'photo':
+                $repost_entity = (new PhotosRepo)->getByOwnerAndVID((int) $postArray[2], (int) $postArray[3]);
+                break;
+            case 'video':
+                $repost_entity = (new VideosRepo)->getByOwnerAndVID((int) $postArray[2], (int) $postArray[3]);
+                break;
+        }
+
+        if(!$repost_entity || $repost_entity->isDeleted() || !$repost_entity->canBeViewedBy($this->getUser())) $this->fail(100, "One of the parameters specified was missing or invalid");
 
         $nPost = new Post;
         $nPost->setOwner($this->user->getId());
@@ -652,21 +663,26 @@ final class Wall extends VKAPIRequestHandler
         $nPost->setApi_Source_Name($this->getPlatform());
         $nPost->save();
 
-        $nPost->attach($post);
+        $nPost->attach($repost_entity);
 
         foreach($parsed_attachments as $attachment) {
             $nPost->attach($attachment);
         }
 
-        if($post->getOwner(false)->getId() !== $this->user->getId() && !($post->getOwner() instanceof Club))
-            (new RepostNotification($post->getOwner(false), $post, $this->user))->emit();
+        if($repost_type == 'wall' && $repost_entity->getOwner(false)->getId() !== $this->user->getId() && !($repost_entity->getOwner() instanceof Club))
+            (new RepostNotification($repost_entity->getOwner(false), $repost_entity, $this->user))->emit();
+
+        $repost_count = 1;
+        if($repost_type == 'wall') {
+            $repost_count = $repost_entity->getRepostCount();
+        }
 
         return (object) [
             "success" => 1, // 👍
             "post_id" => $nPost->getVirtualId(),
             "pretty_id" => $nPost->getPrettyId(),
-            "reposts_count" => $post->getRepostCount(),
-            "likes_count" => $post->getLikesCount()
+            "reposts_count" => $repost_count,
+            "likes_count" => $repost_entity->getLikesCount()
         ];
     }
 

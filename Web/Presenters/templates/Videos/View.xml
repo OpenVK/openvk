@@ -75,6 +75,9 @@
                             <a id='_videoDelete' href="/video{$video->getPrettyId()}/remove" class="profile_link" style="display:block;width:96%;">
                                 {_delete}
                             </a>
+                            <a onclick="javascript:repost({$video->getPrettyId()}, 'video')" class="profile_link" style="display:block;width:96%;">
+                                {_share}
+                            </a>
                         </div>
                     </div>
 
