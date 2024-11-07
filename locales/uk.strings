@@ -114,7 +114,6 @@
 "relationship_7_prefix" = "з";
 "relationship_8" = "В активному пошуку";
 
-
 "politViews" = "Політ. погляди";
 "politViews_0" = "Не вибрано";
 "politViews_1" = "Індиферентні";
@@ -155,9 +154,9 @@
 "post_writes_m" = "написав";
 "post_writes_f" = "написала";
 "post_writes_g" = "опублікували";
-"post_deact_m" = "видалив сторінку зі слоВами:";
-"post_deact_f" = "видалила сторінку зі слоВами:";
-"post_deact_g" = "видалили сторінку зі слоВами:";
+"post_deact_m" = "видалив сторінку зі словами:";
+"post_deact_f" = "видалила сторінку зі словами:";
+"post_deact_g" = "видалили сторінку зі словами:";
 "post_deact_silent_m" = "мовчки видалив свою сторінку.";
 "post_deact_silent_f" = "мовчки видалила свою сторінку.";
 "post_deact_silent_g" = "мовчки видалили свою сторінку.";
@@ -210,8 +209,12 @@
 "version_incompatibility" = "Не вдалося показати це вкладення. Можливо, база даних несумісна з поточною версією OpenVK.";
 "graffiti" = "Графіті";
 "reply" = "Відповісти";
-"post_is_ad" = "Цей пост було проплачено Держдепом США";
+"post_is_ad" = "За цей допис заплатили";
 "edited_short" = "ред.";
+"all_posts" = "Всі дописи";
+"users_posts" = "Дописи $1";
+"clubs_posts" = "Дописи суспільства";
+"others_posts" = "Чужі дописи";
 
 /* Friends */
 
@@ -268,6 +271,7 @@
 
 /* Group */
 
+"group" = "Спільнота";
 "name_group" = "Назва";
 "subscribe" = "Підписатися";
 "unsubscribe" = "Відписатися";
@@ -304,8 +308,47 @@
 "set_comment" = "Змінити коментар";
 "hidden_yes" = "Прихований: Так";
 "hidden_no" = "Прихований: Ні";
-"group_allow_post_for_everyone" = "Дозволити публікувати записи всім";
-"group_hide_from_global_feed" = "Не показувати публікації у глобальній стрічці";
+
+"group_allow_post_for_everyone" = "Відкрита";
+"group_limited_post" = "Пропозиційна";
+"group_closed_post" = "Закрита";
+"suggest_new" = "Запропонувати новину";
+"suggested_by_you_zero" = "$1 запропонованих вами дописів";
+"suggested_by_you_one" = "Один запропонований вами допис";
+"suggested_by_you_few" = $1 запропоновані вами дописи”;
+"suggested_by_you_many" = "$1 запропонованих вами дописів”;
+"suggested_by_you_other" = "$1 запропонованих вами дописів”;
+"suggested_by_everyone_zero" = "$1 запропонованих дописів”;
+"suggested_by_everyone_one" = "Один запропонований допис”;
+"suggested_by_everyone_few" = "$1 запропоновані дописи”;
+"suggested_by_everyone_many" = "$1 запропонованих дописів”;
+"suggested_by_everyone_other" = "$1 запропонованих дописів”;
+"group_hide_from_global_feed" = "Не відображати дописи в глобальній стрічці";
+"suggested_posts_by_you" = "Запропоновані вами дописи";
+"suggested_posts_by_everyone" = "Запропоновані дописи";
+"suggested" = "Запропоновано";
+"suggested_posts_everyone" = "Запропоновані користувачами дописи";
+"no_suggested_posts_by_you" = "Ви ще не пропонували дописів у цю спільноту.";
+"no_suggested_posts_by_people" = "В цю групу ще не пропонували дописів.";
+"publish_suggested" = "Опублікувати допис";
+"decline_suggested" = "Відхилити";
+"error_loading_suggest" = "Не вдалося завантажити нові дописи";
+"publishing_suggested_post" = "Публікація запропонованого допису";
+"suggested_posts_in_group_zero" = "Ви переглянули всю пропозиційну!";
+"suggested_posts_in_group_one" = "В цю групу запропонували один допис";
+"suggested_posts_in_group_few" = "В цю групу запропонували $1 записи";
+"suggested_posts_in_group_many" = "В цю групу запропонували $1 дописів";
+"suggested_posts_in_group_other" = "В цю групу запропонували $1 дописів";
+"suggestion_succefully_published" = "Допис опубліковано";
+"suggestion_succefully_declined" = "Допис відхилено";
+"suggestion_press_to_go" = "Натисніть, щоби перейти";
+"error_declining_invalid_post" = "Помилка відхилення допису: допис не існує";
+"error_declining_not_suggested_post" = "Помилка відхилення допису: допис не пропозиційний";
+"error_declining_declined_post" = "Помилка відхилення допису: допис уже відхилено";
+"error_accepting_invalid_post" = "Помилка схвалення дописа: допис не існує";
+"error_accepting_not_suggested_post" = "Помилка схвалення дописа: допис не пропозиційний";
+"error_accepting_declined_post" = "Помилка схвалення дописа: допис відхилено";
+
 "statistics" = "Статистика";
 "group_administrators_list" = "Список адмінів";
 "group_display_only_creator" = "Показувати лише автора групи";
@@ -338,6 +381,10 @@
 "search_by_groups" = "Пошук за групами";
 "search_group_desc" = "Тут Ви можете переглянути існуючи групи та обрати групу до вподоби.";
 "group_banned" = "Спільнота <b>$1</b> заблокована.";
+"error_suggestions" = "Помилка доступу к пропозиційній";
+"error_suggestions_closed" = "Ця спільнота має закриту стіну.";
+"error_suggestions_open" = "Ця спільнота має відкриту стіну.";
+"error_suggestions_access" = "Переглядати запропоновані дописи можуть тільки адміністратори спільноти.";
 
 /* Albums */
 
@@ -831,6 +878,9 @@
 "nt_shared_yours" = "поділився(-ась) вашим";
 "nt_commented_yours" = "залишив(-ла) коментар під";
 "nt_written_on_your_wall" = "написав(-ла) на вашій стіні";
+"nt_accepted_your_post" = "«опублікувала Вашу пропозиційний";
+"nt_in_club" = "У спільноті";
+"nt_new_suggested_posts" = "нові дописи в пропозиційні";
 "nt_made_you_admin" = "призначив (-ла) вас керівником групи";
 "nt_from" = "від";
 "nt_yours_adjective" = "вашим";
@@ -848,6 +898,7 @@
 "nt_mention_in_video" = "в обговоренні відеозапису";
 "nt_mention_in_note" = "в обговоренні під";
 "nt_mention_in_topic" = "в обговоренні";
+"nt_post_small" = "допис";
 "nt_sent_gift" = "відправив Вам подарунок";
 
 /* Time */
@@ -1226,7 +1277,9 @@
 "media_file_corrupted" = "Файл медіаконтенту пошкоджено.";
 "media_file_corrupted_or_too_large" = "Файл медіаконтенту пошкоджений або файл занадто великий.";
 "post_is_empty_or_too_big" = "Пост порожній чи надто великий.";
-"post_is_too_big" = "Пост надто великий.";
+"post_is_too_big" = "Допис надто великий.";
+"error_deleting_suggested" = "Ви не можете видалити Ваш прийнятий допис";
+"error_invalid_wall_value" = "Неправильне значення стіни";
 "error_sending_report" = "Не вдалося подати скаргу...";
 "error_when_saving_gift" = "Не вдалося зберегти подарунок";
 "error_when_saving_gift_bad_image" = "Зображення подарунка пошкоджене.";
