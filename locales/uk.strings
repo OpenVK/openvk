@@ -60,7 +60,7 @@
 "hometown" = "Рідне місто";
 "this_is_you" = "це Ви";
 "edit_page" = "Редагувати сторінку";
-"edit_group" = "Редагувати групу";
+"edit_group" = "Редагувати спільноту";
 "change_status" = "змінити статус";
 "name" = "Ім’я";
 "surname" = "Прізвище";
@@ -187,7 +187,7 @@
 "your_comment" = "Ваш коментар";
 "auditory" = "Аудиторія";
 "in_wall" = "на стіну";
-"in_group" = "у групу";
+"in_group" = "у спільноту";
 "shown" = "Показано";
 "x_out_of" = "$1 з";
 "wall_zero" = "немає записів";
@@ -230,8 +230,8 @@
 "ignored_sources" = "Ігноровані джерела";
 "ignore_user" = "Ігнорувати користувача";
 "unignore_user" = "Не ігнорувати користувача";
-"ignore_club" = "Ігнорувати групу";
-"unignore_club" = "Не ігнорувати групу";
+"ignore_club" = "Ігнорувати спільноту";
+"unignore_club" = "Не ігнорувати спільноту";
 "no_ignores_count" = "Ігнорованих джерел немає.";
 "stop_ignore" = "Не ігнорувати";
 "start_from_page" = "Починати зі сторінки";
@@ -261,7 +261,7 @@
 "outcoming_req" = "Заявки";
 "friends_online" = "Друзі онлайн";
 "all_friends" = "Усі друзі";
-"req_zero" = "Не знайдено жодної заявки...";
+"req_zero" = "Немає заявок...";
 "req_one" = "Знайдена $1 заявка";
 "req_few" = "Знайдено $1 заявки";
 "req_many" = "Знайдено $1 заявки";
@@ -291,7 +291,7 @@
 "subscriptions_few" = "$1 підписки";
 "subscriptions_many" = "$1 підписок";
 "subscriptions_other" = "$1 підписок";
-"friends_list_online_zero" = "У Вас поки немає друзів, що в онлайн";
+"friends_list_online_zero" = "Немає друзів в онлайні";
 "friends_list_online_one" = "У Вас $1 друг онлайн";
 "friends_list_online_few" = "У Вас $1 друга онлайн";
 "friends_list_online_many" = "У Вас $1 друзів онлайн";
@@ -304,18 +304,18 @@
 "subscribe" = "Підписатися";
 "unsubscribe" = "Відписатися";
 "subscriptions" = "Підписки";
-"join_community" = "Вступити в групу";
-"leave_community" = "Вийти з групи";
-"check_community" = "Перегляд групи";
+"join_community" = "Вступити в спільноту";
+"leave_community" = "Вийти зі спільноти";
+"check_community" = "Перегляд спільноти";
 "min_6_community" = "Назва повинна містити не менше 6 символів";
 "participants" = "Учасники";
-"groups" = "Групи";
+"groups" = "Спільноти";
 "meetings" = "Зустрічі";
-"create_group" = "Створити групу";
+"create_group" = "Створити спільноту";
 "group_managers" = "Керівництво";
-"group_type" = "Тип групи";
-"group_type_open" = "Це відкрита група. В неї може вступити будь-хто бажаючий.";
-"group_type_closed" = "Це закрита група. Для вступу необхідно подати заявку.";
+"group_type" = "Тип спільноти";
+"group_type_open" = "Це відкрита спільнота. В неї може вступити будь-хто бажаючий.";
+"group_type_closed" = "Це закрита спільноа. Для вступу необхідно подати заявку.";
 "creator" = "Автор";
 "administrators" = "Адміністратори";
 "add_to_left_menu" = "Додати до лівого меню";
@@ -357,16 +357,16 @@
 "suggested" = "Запропоновано";
 "suggested_posts_everyone" = "Запропоновані користувачами дописи";
 "no_suggested_posts_by_you" = "Ви ще не пропонували дописів у цю спільноту.";
-"no_suggested_posts_by_people" = "В цю групу ще не пропонували дописів.";
+"no_suggested_posts_by_people" = "В цю спільноту ще не пропонували дописів.";
 "publish_suggested" = "Опублікувати допис";
 "decline_suggested" = "Відхилити";
 "error_loading_suggest" = "Не вдалося завантажити нові дописи";
 "publishing_suggested_post" = "Публікація запропонованого допису";
 "suggested_posts_in_group_zero" = "Ви переглянули всю пропозиційну!";
-"suggested_posts_in_group_one" = "В цю групу запропонували один допис";
-"suggested_posts_in_group_few" = "В цю групу запропонували $1 записи";
-"suggested_posts_in_group_many" = "В цю групу запропонували $1 дописів";
-"suggested_posts_in_group_other" = "В цю групу запропонували $1 дописів";
+"suggested_posts_in_group_one" = "В цю спільноту запропонували один допис";
+"suggested_posts_in_group_few" = "В цю спільноту запропонували $1 записи";
+"suggested_posts_in_group_many" = "В цю спільноту запропонували $1 дописів";
+"suggested_posts_in_group_other" = "В цю спільноту запропонували $1 дописів";
 "suggestion_succefully_published" = "Допис опубліковано";
 "suggestion_succefully_declined" = "Допис відхилено";
 "suggestion_press_to_go" = "Натисніть, щоби перейти";
@@ -379,7 +379,7 @@
 
 "statistics" = "Статистика";
 "group_administrators_list" = "Список адмінів";
-"group_display_only_creator" = "Показувати лише автора групи";
+"group_display_only_creator" = "Показувати лише автора спільноти";
 "group_display_all_administrators" = "Показувати всіх адміністраторів";
 "group_dont_display_administrators_list" = "Нічого не показувати";
 "group_changeowner_modal_title" = "Передача прав власника";
@@ -390,24 +390,24 @@
 "participants_few" = "$1 учасника";
 "participants_many" = "$1 учасників";
 "participants_other" = "$1 учасників";
-"groups_zero" = "Жодної групи";
-"groups_one" = "Одна група";
-"groups_few" = "$1 групи";
-"groups_many" = "$1 груп";
-"groups_other" = "$1 груп";
-"groups_list_zero" = "Ви не перебуваєте в жодній групі";
-"groups_list_one" = "Ви перебуваєте в одній групі";
-"groups_list_other" = "Ви перебуваєте в $1 групах";
+"groups_zero" = "Жодної спільноти";
+"groups_one" = "Одна спільнота";
+"groups_few" = "$1 спільноти";
+"groups_many" = "$1 спільнот";
+"groups_other" = "$1 спільнот";
+"groups_list_zero" = "Ви не перебуваєте в жодній спільноті";
+"groups_list_one" = "Ви перебуваєте в одній спільноті";
+"groups_list_other" = "Ви перебуваєте в $1 спільноті";
 "meetings_zero" = "Жодної зустрічі";
 "meetings_one" = "Одна зустріч";
 "meetings_few" = "$1 зустріч";
 "meetings_many" = "$1 зустрічей";
 "meetings_other" = "$1 зустрічей";
-"open_new_group" = "Створити нову групу";
-"open_group_desc" = "Не можете знайти потрібну групу? Відкрийте свою...";
-"search_group" = "Пошук групи";
-"search_by_groups" = "Пошук за групами";
-"search_group_desc" = "Тут Ви можете переглянути існуючи групи та обрати групу до вподоби.";
+"open_new_group" = "Створити нову спільноту";
+"open_group_desc" = "Не можете знайти потрібну спільноту? Відкрийте свою!";
+"search_group" = "Пошук спільнот";
+"search_by_groups" = "Пошук за спільнотами";
+"search_group_desc" = "Тут Ви можете переглянути існуючі спільноти та обрати спільноту до вподоби.";
 "group_banned" = "Спільнота <b>$1</b> заблокована.";
 "error_suggestions" = "Помилка доступу к пропозиційній";
 "error_suggestions_closed" = "Ця спільнота має закриту стіну.";
@@ -467,7 +467,7 @@
 
 "upd_m" = "оновив фотографію на своїй сторінці";
 "upd_f" = "оновила фотографію на своїй сторінці";
-"upd_g" = "оновило фотографію групи";
+"upd_g" = "оновило фотографію спільноти";
 
 "add_photos" = "Додати фотографії";
 "upload_picts" = "Завантажити фотографії";
@@ -553,7 +553,7 @@
 "my_audios" = "Мої Аудіозаписи";
 "my_messages" = "Мої Повідомлення";
 "my_notes" = "Мої Нотатки";
-"my_groups" = "Мої Групи";
+"my_groups" = "Мої Спільноти";
 "my_feed" = "Мої Новини";
 "my_feedback" = "Мої Відповіді";
 "my_apps" = "Застосунки";
@@ -568,7 +568,7 @@
 "menu_support" = "Підтримка";
 
 "header_home" = "головна";
-"header_groups" = "групи";
+"header_groups" = "спільноти";
 "header_people" = "люди";
 "header_invite" = "запросити";
 "header_help" = "допомога";
@@ -608,7 +608,7 @@
 "cut" = "Квадратні";
 "round avatars" = "Круглі";
 "apply_style_for_this_device" = "Застосувати стиль лише для цього пристрою";
-"search_for_groups" = "Пошук груп";
+"search_for_groups" = "Пошук спільнот";
 "search_for_users" = "Пошук користувачів";
 "search_for_posts" = "Пошук дописів";
 "search_for_comments" = "Пошук коментарів";
@@ -626,7 +626,7 @@
 "results_other" = "$1 результатів";
 "privacy_setting_access_page" = "Кому в інтернеті видно мою сторінку";
 "privacy_setting_read_info" = "Кому видно основну інформацію моєї сторінки";
-"privacy_setting_see_groups" = "Кому видно мої групи й зустрічі";
+"privacy_setting_see_groups" = "Кому видно мої спільноти й зустрічі";
 "privacy_setting_see_photos" = "Кому видно мої фотографії";
 "privacy_setting_see_videos" = "Кому видно мої відеозаписи";
 "privacy_setting_see_notes" = "Кому видно мої нотатки";
@@ -635,13 +635,13 @@
 "privacy_setting_write_wall" = "Хто може писати у мене на стіні";
 "privacy_setting_write_messages" = "Хто може писати мені повідомлення";
 "privacy_setting_view_audio" = "Хто може переглядати мої аудіо";
-"privacy_value_anybody" = "Всі охочий";
+"privacy_value_anybody" = "Усі охочі";
 "privacy_value_anybody_dative" = "Усім охочим";
 "privacy_value_users" = "Користувачам OpenVK";
 "privacy_value_friends" = "Друзі";
 "privacy_value_friends_dative" = "Друзям";
 "privacy_value_only_me" = "Тільки я";
-"privacy_value_only_me_dative" = "Тільки мені та Кирилу Буданову";
+"privacy_value_only_me_dative" = "Тільки мені";
 "privacy_value_nobody" = "Ніхто";
 "profile_type" = "Тип профіля";
 "profile_type_open" = "Відкритий";
@@ -649,7 +649,7 @@
 "your_email_address" = "Адрес Вашої електронної пошти";
 "your_page_address" = "Адрес Вашої сторінки";
 "page_address" = "Адрес сторінки";
-"current_email_address" = "Поточний адрес";
+"current_email_address" = "Поточний адреса";
 "new_email_address" = "Нова адреса";
 "save_email_address" = "Зберегти адресу";
 "page_id" = "ID сторінки";
@@ -663,7 +663,7 @@
 "ui_settings_rating_hide" = "Приховувати";
 "ui_settings_nsfw_content" = "NSFW-контент";
 "ui_settings_nsfw_content_dont_show" = "Не показувати у глобальній стрічці";
-"ui_settings_nsfw_content_blur" = "Тільки замазувати";
+"ui_settings_nsfw_content_blur" = "Тільки розмазувати";
 "ui_settings_nsfw_content_show" = "Показувати";
 "ui_settings_view_of_posts" = "Вигляд дописів";
 "ui_settings_view_of_posts_old" = "Старий";
@@ -745,7 +745,7 @@
 "located_at_url" = "розміщене за адресою $1";
 "wants_your_token" = "запитує доступ до вашого акаунта";
 "app_will_have_access_to" = "Застосунку буде доступно:";
-"oauth_scope_all" = "інформація сторінки, оновлення статусу, список друзів, фотографії, публікація дописів, аудіозаписи, відео, повідомлення, повідомлення, подарунки, <b>ваша адреса електронної пошти</b>, опитування, групи, обговорення, нотатки, <b>голоси</b>, лайки та коментарі";
+"oauth_scope_all" = "інформація сторінки, оновлення статусу, список друзів, фотографії, публікація дописів, аудіозаписи, відео, повідомлення, повідомлення, подарунки, <b>ваша адреса електронної пошти</b>, опитування, спільноти, обговорення, нотатки, <b>голоси</b>, лайки та коментарі";
 "oauth_grant" = "Дозволити";
 "oauth_deny" = "Скасувати";
 
@@ -774,7 +774,7 @@
 "videos_other" = "$1 відеозаписів";
 "view_video" = "Перегляд";
 "change_video" = "Редагувати відеозапис";
-"unknown_video" = "ЦЕЙ ВІДЕОЗАПИС НЕ ПІДТРИМУЄТЬСЯ В ЦІЙ ВЕРСІЇ OPENVK.";
+"unknown_video" = "Цей відеозапис не підтримується у цій версії OpenVK.";
 "selecting_video" = "Вибір відеозаписів";
 "upload_new_video" = "Завантажити нове відео";
 "max_attached_videos" = "Максимум 10 відеозаписів";
@@ -790,7 +790,7 @@
 "audio" = "Аудіо";
 "playlist" = "Список відтворення";
 "upload_audio" = "Завантажити аудіо";
-"upload_audio_to_group" = "Завантажити аудіо у групу";
+"upload_audio_to_group" = "Завантажити аудіо у спільноту";
 
 "performer" = "Виконавець";
 "audio_name" = "Назва";
@@ -841,11 +841,11 @@
 "select_audio" = "Оберіть аудіо";
 "no_playlists_thisuser" = "Ви ще не додали жодного списку відтворення.";
 "no_playlists_user" = "Цей користувач ще не додав жодного списка відтворення.";
-"no_playlists_club" = "Ця група не додала жодного списку відтворення.";
+"no_playlists_club" = "Ця спільнота не додала жодного списку відтворення.";
 
 "no_audios_thisuser" = "Ви ще не додали жодного аудіо.";
 "no_audios_user" = "Цей користувач не додав жодного аудіо.";
-"no_audios_club" = "Ця група не додала жодного аудіо.";
+"no_audios_club" = "Ця спільнота не додала жодного аудіо.";
 
 "new_playlist" = "Створити список відтворення";
 "created_playlist" = "створений";
@@ -867,7 +867,7 @@
 "playlist_cover" = "Обкладинка списку відтворення";
 
 "playlists_user" = "Список відтворення користувача";
-"playlists_club" = "Списки відтворення груп";
+"playlists_club" = "Списки відтворення спільнот";
 "change_cover" = "Змінити обкладинку";
 "playlist_cover" = "Обкладинка списку відтворення";
 
@@ -889,21 +889,21 @@
 "to_club" = "В спільноту";
 "to_playlist" = "В список відтворення";
 "audio_was_successfully_added" = "Аудіозапис було додано.";
-"what_club_add" = "До якої групи ви хочете додати пісню?";
-"group_has_audio" = "Ця група вже має цю пісню.";
-"group_hasnt_audio" = "Ця група не має цієї пісні.";
+"what_club_add" = "До якої спільноти ви хочете додати пісню?";
+"group_has_audio" = "Ця спільнота вже має цю пісню.";
+"group_hasnt_audio" = "Ця спільнота не має цієї пісні.";
 
 "by_name" = "за назвою";
 "by_performer" = "за виконавцем";
-"no_access_clubs" = "Немає груп, де ви є адміністратором.";
+"no_access_clubs" = "Немає спільнот, де ви є адміністратором.";
 "no_access_playlists" = "Ви ще не створювали списки відтворюванн.";
 "audio_successfully_uploaded" = "Аудіо було успішно завантажено і наразі обробляється.";
 
 "broadcast_audio" = "Трансляція аудіо до статусу";
 "sure_delete_playlist" = "Ви дійсно хочете видалити цей список відтворення?";
 "edit_audio" = "Редагувати аудіо";
-"audios_group" = "Аудіо з групи";
-"playlists_group" = "Списки відтворення з групи";
+"audios_group" = "Аудіо зі спільноти";
+"playlists_group" = "Списки відтворення зі спільноти";
 
 "play_tip" = "Відтворення/пауза";
 "repeat_tip" = "Повтор";
@@ -925,7 +925,7 @@
 "notifications_under_post" = "вашим $3записом$4 від $5";
 "notifications_under_video" = "вашим $3відео$4";
 "notifications_post" = "$1 написав(-ла) $2записом$3 на вашій стіні: $4";
-"notifications_appoint" = "$1 призначив вас керівником групи $2";
+"notifications_appoint" = "$1 призначив вас керівником спільноти $2";
 "nt_liked_yours" = "сподобався ваш";
 "nt_shared_yours" = "поділився(-ась) вашим";
 "nt_commented_yours" = "залишив(-ла) коментар під";
@@ -933,7 +933,7 @@
 "nt_accepted_your_post" = "«опублікувала Вашу пропозиційний";
 "nt_in_club" = "У спільноті";
 "nt_new_suggested_posts" = "нові дописи в пропозиційні";
-"nt_made_you_admin" = "призначив (-ла) вас керівником групи";
+"nt_made_you_admin" = "призначив (-ла) вас керівником спільноти";
 "nt_from" = "від";
 "nt_yours_adjective" = "вашим";
 "nt_yours_feminitive_adjective" = "вашою";
@@ -944,7 +944,7 @@
 "nt_topic_instrumental" = "темою";
 
 "nt_you_were_mentioned_u" = "Вас згадав користувач";
-"nt_you_were_mentioned_g" = "Вас згадала група";
+"nt_you_were_mentioned_g" = "Вас згадала спільнота";
 "nt_mention_in_post_or_comms" = "у дописі або під коментарями дописа";
 "nt_mention_in_photo" = "в обговоренні фотографії";
 "nt_mention_in_video" = "в обговоренні відеозапису";
@@ -1085,7 +1085,7 @@
 "appjs_act_messages" = "вашим повідомленням";
 "appjs_act_messages_desc" = "читати та писати від вашого імені повідомлення";
 "appjs_act_groups" = "вашим Спільнотам";
-"appjs_act_groups_desc" = "дивитися список ваших груп та підписувати вас на інші";
+"appjs_act_groups_desc" = "дивитися список ваших спільнот та підписувати вас на інші";
 "appjs_act_likes" = "функціоналу Лайків";
 "appjs_act_likes_desc" = "ставити та прибирати позначки \"мені подобається\" із записів";
 "appjs_act_request" = "Запит доступу";
@@ -1283,7 +1283,7 @@
 "information_-1" = "Операція успішно завершена";
 "information_-2" = "Вхід виконано успішно";
 "no_data" = "Немає даних";
-"no_data_description" = "Тут нічого немає... Поки що...";
+"no_data_description" = "Поки що, тут нічого немає.";
 "error" = "Помилка";
 "error_shorturl" = "Ця коротка адреса вже зайнята.";
 "error_segmentation" = "Помилка сегментації";
@@ -1361,7 +1361,7 @@
 
 "description_too_long" = "Опис надто довгий.";
 
-"invalid_club" = "Ця група не існує.";
+"invalid_club" = "Ця спільнота не існує.";
 "invalid_user" = "Цього користувача не існує.";
 "ignored_sources_limit" = "Перевищено ліміт ігнорованих джерел.";
 
@@ -1390,7 +1390,7 @@
 "gift_sent_desc" = "Ви відправили <b>$1</b> за $2 голосів";
 
 "error_on_server_side" = "Виникла помилка на боці сервера. Зверніться до системного адміністратора.";
-"error_no_group_name" = "Ви не ввели назву групи.";
+"error_no_group_name" = "Ви не ввели назву спільноти.";
 
 "success_action" = "Операція пройшла успішно";
 "connection_error" = "Помилка з'єднання";
@@ -1398,7 +1398,7 @@
 
 "error_when_uploading_photo" = "Не вдалося зберегти фотографію.";
 
-"new_changes_desc" = "Нові дані з'являться у вашій групі.";
+"new_changes_desc" = "Нові дані з'являться у вашій спільноті.";
 "comment_is_changed" = "Коментар до адміністратора змінено";
 "comment_is_deleted" = "Коментар до адміністратора видалено";
 "comment_is_too_long" = "Коментар надто довгий ($1 символів замість 36 символів)";
@@ -1452,7 +1452,7 @@
 
 "login_as" = "Увійти як $1";
 "manage_user_action" = "Керування користувачем";
-"manage_group_action" = "Керування групою";
+"manage_group_action" = "Керування спільнотою";
 "ban_user_action" = "Заблокувати користувача";
 "blocks" = "Блокування";
 "last_actions" = "Останні дії";
@@ -1498,9 +1498,9 @@
 "admin_user_online_default" = "За замовчуванням";
 "admin_user_online_incognito" = "Інкогніто";
 "admin_user_online_deceased" = "Небіжчик";
-"admin_club_search" = "Пошук груп";
+"admin_club_search" = "Пошук спільнот";
 "admin_club_excludeglobalfeed" = "Не показувати записи у глобальній стрічці";
-"admin_club_enforceexcludeglobalfeed" = "Заборонити керівництву групи змінювати відображення в глобальній стрічці";
+"admin_club_enforceexcludeglobalfeed" = "Заборонити керівництву спільноти змінювати відображення в глобальній стрічці";
 "admin_services" = "Платні послуги";
 "admin_newgift" = "Новий подарунок";
 "admin_price" = "Ціна";
@@ -1593,7 +1593,7 @@
 "about_openvk" = "Про OpenVK";
 "about_this_instance" = "Про цю інстанцію";
 "rules" = "Правила";
-"most_popular_groups" = "Найпопулярніші групи";
+"most_popular_groups" = "Найбільш популярні спільноти";
 "on_this_instance_are" = "На цій інстанції:";
 "about_links" = "Посилання";
 "instance_links" = "Посилання інстанції:";
@@ -1609,15 +1609,15 @@
 "about_active_users_few" = "<b>$1</b> активних користувачів";
 "about_active_users_many" = "<b>$1</b> активних користувачів";
 "about_active_users_other" = "<b>$1</b> активних користувачів";
-"about_groups_one" = "<b>1</b> група";
-"about_groups_few" = "<b>$1</b> групи";
-"about_groups_many" = "<b>$1</b> груп";
-"about_groups_other" = "<b>$1</b> груп";
-"about_wall_posts_one" = "<b>1</b> запис на стінах";
-"about_wall_posts_few" = "<b>$1</b> записи на стінах";
-"about_wall_posts_many" = "<b>$1</b> записів на стінах";
-"about_wall_posts_other" = "<b>$1</b> записів на стінах";
-"about_watch_rules" = "Перегляньте <a href='$1'>тут</a>.";
+"about_groups_one" = "<b>1</b> спільнота";
+"about_groups_few" = "<b>$1</b> спільнот";
+"about_groups_many" = "<b>$1</b> спільнот";
+"about_groups_other" = "<b>$1</b> спільнот";
+"about_wall_posts_one" = "<b>1</b> дописів на стінах";
+"about_wall_posts_few" = "<b>$1</b> дописи на стінах";
+"about_wall_posts_many" = "<b>$1</b> дописів на стінах";
+"about_wall_posts_other" = "<b>$1</b> дописів на стінах";
+"about_watch_rules" = "Щоб переглянути правила, натисніть <a href='$1'>тут</a>.";
 
 /* Dialogs */
 
@@ -1753,7 +1753,7 @@
 "tour_section_6" = "Аудіозаписи";
 "tour_section_7" = "Новинна стрічка";
 "tour_section_8" = "Глобальна стрічка";
-"tour_section_9" = "Групи";
+"tour_section_9" = "Спільноти";
 "tour_section_10" = "Події";
 "tour_section_11" = "Теми та дизайн";
 "tour_section_12" = "Стилістика";
@@ -1875,10 +1875,10 @@
 "tour_section_14_title_2" = "Де це можна завантажити?";
 "tour_section_14_text_2_1" = "Релізні версії завантажуються через офіційний репозиторій F-Droid";
 "tour_section_14_text_2_2" = "Якщо ви є бета-тестувальником програми, то нові версії програми викладаються в окремий канал оновлення";
-"tour_section_14_text_2_3" = "<b>Важливо: </b>Додаток може мати різні помилки та недоліки, про помилки повідомляйте в <a href='/app'>офіційну групу додатка</a>";
+"tour_section_14_text_2_3" = "<b>Важливо: </b>Додаток може мати різні помилки та недоліки, про помилки повідомляйте в <a href='/app'>офіційну спільноту додатка</a>";
 
 "tour_section_14_bottom_text_1" = "Скріншоти застосунку";
-"tour_section_14_bottom_text_2" = "На цьому екскурсія сайтом завершена. Якщо ви хочете спробувати наш мобільний застосунок, створити тут свою групу, покликати своїх друзів чи знайти нових, або взагалі просто якось розважитися, то це можна зробити просто зараз, пройшовши невелику <a href='/reg'>реєстрацію</a>";
+"tour_section_14_bottom_text_2" = "На цьому екскурсія сайтом завершена. Якщо ви хочете спробувати наш мобільний застосунок, створити тут свою спільноту, покликати своїх друзів чи знайти нових, або взагалі просто якось розважитися, то це можна зробити просто зараз, пройшовши невелику <a href='/reg'>реєстрацію</a>";
 "tour_section_14_bottom_text_3" = "На цьому екскурсія сайтом завершена.";
 
 /* Search */
@@ -1988,7 +1988,7 @@
 "mobile_audios" = "Аудіозаписи";
 "mobile_messages" = "Повідомлення";
 "mobile_notes" = "Нотатки";
-"mobile_groups" = "Групи";
+"mobile_groups" = "Спільноти";
 "mobile_search" = "Пошук";
 "mobile_settings" = "Налаштування";
 "mobile_desktop_version" = "Повна версія";
