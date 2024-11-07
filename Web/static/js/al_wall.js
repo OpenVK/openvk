@@ -288,6 +288,177 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
     return photo_viewer.getNode()
 }
 
+async function OpenVideo(video_arr = [], init_player = true)
+{
+    CMessageBox.toggleLoader()
+    const video_owner = video_arr[0]
+    const video_id    = video_arr[1]
+    let video_api     = null
+    try {
+        video_api   = await window.OVKAPI.call('video.get', {'videos': `${video_owner}_${video_id}`, 'extended': 1})
+    
+        if(!video_api.items || !video_api.items[0]) {
+            throw new Error('Not found')
+        }
+    } catch(e) {
+        CMessageBox.toggleLoader()
+        fastError(e.message)
+
+        return
+    }
+
+    // TODO: video lists
+    const video_object = video_api.items[0]
+    const pretty_id    = `${video_object.owner_id}_${video_object.id}`
+    const author       = find_author(video_object.owner_id, video_api.profiles, video_api.groups)
+    let player_html = ''
+    if(init_player) {
+        if(video_object.platform == 'youtube') {
+            const video_url = new URL(video_object.player)
+            const video_id = video_url.pathname.replace('/', '')
+            player_html = `
+            <iframe
+               width="600"
+               height="340"
+               src="https://www.youtube-nocookie.com/embed/${video_id}"
+               frameborder="0"
+               sandbox="allow-same-origin allow-scripts allow-popups"
+               allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+               allowfullscreen></iframe>
+            `
+        } else {
+            if(!video_object.is_processed) {
+                player_html = `<span class='gray'>${tr('video_processing')}</span>`
+            } else {
+                const author_name = `${author.first_name} ${author.last_name}`
+                player_html = `
+                    <div class='bsdn media' data-name="${escapeHtml(video_object.title)}" data-author="${escapeHtml(author_name)}">
+                        <video class='media' src='${video_object.player}'></video>
+                    </div>
+                `
+            }
+        }
+    }
+
+    const msgbox = new CMessageBox({
+        title: '...',
+        close_on_buttons: false,
+        warn_on_exit: true,
+        custom_template: u(`
+        <div class="ovk-photo-view-dimmer">
+            <div class="ovk-modal-player-window">
+                <div id="ovk-player-part">
+                    <div class='top-part'>
+                        <b>${escapeHtml(video_object.title)}</b>
+
+                        <div class='top-part-buttons'>
+                            <a id='__modal_player_minimize' class='hoverable_color'>${tr('hide_player')}</a>
+                            |
+                            <a id='__modal_player_close' class='hoverable_color'>${tr('close')}</a>
+                        </div>
+                    </div>
+                    <div class='center-part'>
+                        ${player_html}
+                    </div>
+                    <div class='bottom-part'>
+                        <a id='__toggle_comments' class='hoverable_color'>${tr('show_comments')}</a>
+                        |
+                        <a href='/video${pretty_id}' class='hoverable_color'>${tr('to_page')}</a>
+                    </div>
+                </div>
+                <div id="ovk-player-info"></div>
+            </div>
+        </div>
+        `)
+    })
+
+    if(video_object.platform != 'youtube' && video_object.is_processed) {
+        bsdnInitElement(msgbox.getNode().find('.bsdn').nodes[0])
+    }
+
+    msgbox.getNode().find('#ovk-player-part #__modal_player_close').on('click', (e) => {
+        msgbox.close()
+    })
+
+    msgbox.getNode().find('#__toggle_comments').on('click', async (e) => {
+        if(msgbox.getNode().find('#ovk-player-info').hasClass('shown')) {
+            msgbox.getNode().find('#__toggle_comments').html(tr('show_comments'))
+        } else {
+            msgbox.getNode().find('#__toggle_comments').html(tr('close_comments'))
+        }
+
+        msgbox.getNode().find('#ovk-player-info').toggleClass('shown')
+        if(msgbox.getNode().find('#ovk-player-info').html().length < 1) {
+            u('#ovk-player-info').html(`<div id='gif_loader'></div>`)
+
+            const fetcher = await fetch(`/video${pretty_id}`)
+            const fetch_r = await fetcher.text()
+            const dom_parser = new DOMParser
+            const results =  u(dom_parser.parseFromString(fetch_r, 'text/html'))
+            const details = results.find('.ovk-vid-details')
+            details.find('.media-page-wrapper-description b').remove()
+
+            u('#ovk-player-info').html(details.html())
+        }
+    })
+
+    msgbox.getNode().find('#__modal_player_minimize').on('click', (e) => {
+        e.preventDefault()
+
+        const miniplayer = u(`
+            <div class='miniplayer'>
+                <div class='miniplayer-head'>
+                    <b>${escapeHtml(video_object.title)}</b>
+                    <div class='miniplayer-head-buttons'>
+                        <div id='__miniplayer_return'></div>
+                        <div id='__miniplayer_close'></div>
+                    </div>
+                </div>
+                <div class='miniplayer-body'></div>
+            </div>
+        `)
+        msgbox.hide()
+
+        u('body').append(miniplayer)
+        miniplayer.find('.miniplayer-body').nodes[0].append(msgbox.getNode().find('.center-part > *').nodes[0])
+        miniplayer.attr('style', `left:100px;top:${scrollY}px;`)
+        miniplayer.find('#__miniplayer_return').on('click', (e) => {
+            msgbox.reveal()
+            msgbox.getNode().find('.center-part').nodes[0].append(miniplayer.find('.miniplayer-body > *').nodes[0])
+            u('.miniplayer').remove()
+        })
+
+        miniplayer.find('#__miniplayer_close').on('click', (e) => {
+            msgbox.close()
+            u('.miniplayer').remove()
+        })
+
+        $('.miniplayer').draggable({cursor: 'grabbing', containment: 'body', cancel: '.miniplayer-body'})
+        $('.miniplayer').resizable({
+            maxHeight: 2000,
+            maxWidth: 3000,
+            minHeight: 150,
+            minWidth: 200
+        })
+    })
+
+    CMessageBox.toggleLoader()
+}
+
+u(document).on('click', '#videoOpen', (e) => {
+    e.preventDefault()
+
+    try {
+        const target = e.target.closest('#videoOpen')
+        const vid = target.dataset.id
+        const split = vid.split('_')
+
+        OpenVideo(split)
+    } catch(ec) {
+        return
+    }
+})
+
 u("#write > form").on("keydown", function(event) {
     if(event.ctrlKey && event.keyCode === 13)
         this.submit();
@@ -311,6 +482,28 @@ function reportPhoto(photo_id) {
             });
             xhr.send(null);
             }),
+        Function.noop
+    ]);
+}
+
+function reportVideo(video_id) {
+    uReportMsgTxt  = tr("going_to_report_video");
+    uReportMsgTxt += "<br/>"+tr("report_question_text");
+    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
+
+    MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
+        (function() {
+            res = document.querySelector("#uReportMsgInput").value;
+            xhr = new XMLHttpRequest();
+            xhr.open("GET", "/report/" + video_id + "?reason=" + res + "&type=video", true);
+            xhr.onload = (function() {
+            if(xhr.responseText.indexOf("reason") === -1)
+                MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
+            else
+            MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
+            });
+            xhr.send(null);
+        }),
         Function.noop
     ]);
 }
@@ -637,7 +830,7 @@ u('#write').on("drop", function(e) {
     }
 })
 
-u('#write > form').on('submit', (e) => {
+u(document).on('submit', '#write > form', (e) => {
     const target = u(e.target)
     const horizontal_array = []
     const horizontal_input = target.find(`input[name='horizontal_attachments']`)
@@ -1271,6 +1464,12 @@ u(document).on('click', '.post.post-nsfw .post-content', (e) => {
     u(e.target).closest('.post-nsfw').removeClass('post-nsfw')
 })
 
+u(document).on('focusin', '#write', (e) => {
+    const target = u(e.target).closest('#write')
+    target.find('.post-buttons').attr('style', 'display:block')
+    target.find('.small-textarea').addClass('expanded-textarea')
+})
+
 async function repost(id, repost_type = 'post') {
     const repostsCount = u(`#repostsCount${id}`)
     const previousVal  = repostsCount.length > 0 ? Number(repostsCount.html()) : 0;
@@ -1729,4 +1928,20 @@ u(document).on('click', '#__sourceAttacher', (e) => {
     u('.ovk-diag-body').attr('style', `padding:8px;`)
     u('.ovk-diag-cont').attr('style', 'width: 325px;')
     u('#source_flex_kunteynir input').nodes[0].focus()
+})
+
+u(document).on('keyup', async (e) => {
+    if(u('#ovk-player-part .bsdn').length > 0) {
+        switch(e.keyCode) {
+            case 32:
+                u('#ovk-player-part .bsdn .bsdn_playButton').trigger('click')
+                break
+            case 39:
+                u('#ovk-player-part video').nodes[0].currentTime = u('#ovk-player-part video').nodes[0].currentTime + 2
+                break
+            case 37:
+                u('#ovk-player-part video').nodes[0].currentTime = u('#ovk-player-part video').nodes[0].currentTime - 2
+                break
+        }
+    }
 })

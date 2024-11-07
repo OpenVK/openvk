@@ -140,3 +140,20 @@ function strip_tags(text)
 {
     return text.replace(/(<([^>]+)>)/gi, "")
 }
+
+function find_author(id, profiles, groups) 
+{
+    if(id > 0) {
+        const profile = profiles.find(prof => prof.id == id)
+        if(profile) {
+            return profile
+        }
+    } else {
+        const group = groups.find(grou => grou.id == Math.abs(id))
+        if(group) {
+            return group
+        }
+    }
+
+    return null
+}

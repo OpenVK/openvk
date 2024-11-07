@@ -97,6 +97,22 @@ class CMessageBox {
     close() {
         this.__exitDialog()
     }
+
+    hide() {
+        u('body').removeClass('dimmed')
+        u('html').attr('style', 'overflow-y:scroll')
+        this.getNode().attr('style', 'display: none;')
+    }
+
+    reveal() {
+        u('body').addClass('dimmed')
+        u('html').attr('style', 'overflow-y:hidden')
+        this.getNode().attr('style', 'display: block;')
+    }
+
+    static toggleLoader() {
+        u('#ajloader').toggleClass('shown')
+    }
 }
 
 window.messagebox_stack = []

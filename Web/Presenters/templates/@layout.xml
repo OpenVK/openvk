@@ -27,6 +27,7 @@
         {css "js/node_modules/tippy.js/dist/border.css"}
         {css "js/node_modules/tippy.js/dist/svg-arrow.css"}
         {css "js/node_modules/tippy.js/themes/light.css"}
+        {css "js/node_modules/jquery-ui/themes/base/resizable.css"}
         {script "js/node_modules/@popperjs/core/dist/umd/popper.min.js"}
         {script "js/node_modules/tippy.js/dist/tippy-bundle.umd.min.js"}
         {script "js/node_modules/handlebars/dist/handlebars.min.js"}

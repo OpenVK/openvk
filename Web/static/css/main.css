@@ -2630,6 +2630,7 @@ a.poll-retract-vote {
     overflow-y: auto;
     overflow-x: hidden;
     min-height: 300px;
+    width: 100%;
 }
 
 .ovk-photo-view .ovk-photo-details {
@@ -3648,4 +3649,33 @@ hr {
 
 .media-page-author-block .media-page-author-block-name span {
     text-transform: lowercase;
+}
+
+#ajloader {
+    display: none;
+    position: fixed;
+    top: -10%;
+    background: rgba(26, 26, 26, 0.9);;
+    padding-top: 12px;
+    width: 91px;
+    height: 25px;
+    text-align: center;
+    border-radius: 1px;
+    margin: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 5555;
+}
+
+#ajloader.shown {
+    display: block;
+}
+
+.hoverable_color {
+    transition: all 0.17s ease-in-out;
+}
+
+.hoverable_color:hover {
+    color: white !important;
 }

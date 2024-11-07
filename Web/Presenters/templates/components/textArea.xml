@@ -2,7 +2,7 @@
 {var $textAreaId = ($post ?? NULL) === NULL ? (++$GLOBALS["textAreaCtr"]) : $post->getId()}
 {var $textAreaId = ($custom_id ?? NULL) === NULL ? $textAreaId : $custom_id}
 
-<div id="write" class='model_content_textarea' style="padding: 5px 0;" onfocusin="expand_wall_textarea({$textAreaId});">
+<div id="write" class='model_content_textarea' style="padding: 5px 0;">
     <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
         <textarea id="wall-post-input{$textAreaId}" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="small-textarea"></textarea>
         <div>

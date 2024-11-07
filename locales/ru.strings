@@ -2016,7 +2016,7 @@
 
 /* Fullscreen player */
 
-"hide_player" = "Скрыть";
+"hide_player" = "Свернуть";
 "close_player" = "Закрыть";
 "show_comments" = "Показать информацию";
 "close_comments" = "Скрыть информацию";

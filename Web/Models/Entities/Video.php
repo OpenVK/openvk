@@ -170,6 +170,7 @@ class Video extends Media
                 "repeat" => 0,
                 "type" => "video",
                 "views" => 0,
+                "is_processed" => $this->isProcessed(),
                 "reposts" => [
                     "count" => 0,
                     "user_reposted" => 0
