@@ -9,6 +9,7 @@ class CMessageBox {
         const close_on_buttons = options.close_on_buttons ?? true
         const unique_name = options.unique_name ?? null
         const warn_on_exit = options.warn_on_exit ?? false
+        const custom_template = options.custom_template ?? null
         if(unique_name && window.messagebox_stack.find(item => item.unique_name == unique_name) != null) {
             return
         }
@@ -20,7 +21,14 @@ class CMessageBox {
         this.unique_name = unique_name
         this.warn_on_exit = warn_on_exit
 
-        u('body').addClass('dimmed').append(this.__getTemplate())
+        if(!custom_template) {
+            u('body').addClass('dimmed').append(this.__getTemplate())
+        } else {
+            custom_template.addClass('ovk-msg-all')
+            custom_template.attr('data-id', this.id)
+            u('body').addClass('dimmed').append(custom_template)
+        }
+        
         u('html').attr('style', 'overflow-y:hidden')
 
         buttons.forEach((text, callback) => {
@@ -40,7 +48,7 @@ class CMessageBox {
 
     __getTemplate() {
         return u(
-        `<div class="ovk-diag-cont" data-id="${this.id}">
+        `<div class="ovk-diag-cont ovk-msg-all" data-id="${this.id}">
             <div class="ovk-diag">
                 <div class="ovk-diag-head">${this.title}</div>
                 <div class="ovk-diag-body">${this.body}</div>
@@ -50,7 +58,7 @@ class CMessageBox {
     }
 
     getNode() {
-        return u(`.ovk-diag-cont[data-id='${this.id}']`)
+        return u(`.ovk-msg-all[data-id='${this.id}']`)
     }
 
     async __showCloseConfirmationDialog() {
@@ -73,8 +81,8 @@ class CMessageBox {
     }
 
     __exitDialog() {
-        u(`.ovk-diag-cont[data-id='${this.id}']`).remove()
-        if(u('.ovk-diag-cont').length < 1) {
+        this.getNode().remove()
+        if(u('.ovk-msg-all').length < 1) {
             u('body').removeClass('dimmed')
             u('html').attr('style', 'overflow-y:scroll')
         }

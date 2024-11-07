@@ -48,7 +48,7 @@ function parseAjaxResponse(responseString) {
 
 document.addEventListener("DOMContentLoaded", function() { //BEGIN
 
-    $(document).on("click", "#_photoDelete", function(e) {
+    $(document).on("click", "#_photoDelete, #_videoDelete", function(e) {
         var formHtml = "<form id='tmpPhDelF' action='" + u(this).attr("href") + "' >";
         formHtml    += "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />";
         formHtml    += "</form>";

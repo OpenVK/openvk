@@ -783,6 +783,7 @@
 
 .addToPlaylist {
     width: 22%;
+    float: left;
 }
 
 #_addAudioAdditional {

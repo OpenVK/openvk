@@ -85,181 +85,235 @@ u(document).on("input", "textarea", function(e) {
     // textArea.style.height = (newHeight > originalHeight ? (newHeight + boost) : originalHeight) + "px";
 });
 
-function OpenMiniature(e, photo, post, photo_id, type = "post") {
+async function OpenMiniature(e, photo, post, photo_id, type = "post") {
     /*
     костыли но смешные однако
     */
     e.preventDefault();
 
-    if(u(".ovk-photo-view").length > 0) u(".ovk-photo-view-dimmer").remove();
-
     // Значения для переключения фоток
 
+    const albums_per_page = 20
     let json;
+    let offset = type == 'album' ? (Number((new URL(location.href)).searchParams.get('p') ?? 1) - 1) * albums_per_page : 0
+    let shown_offset = 0
 
     let imagesCount = 0;
-    let imagesIndex = 0;
+    let currentImageid = '0_0';
 
-    let tempDetailsSection = [];
-    
-    let dialog = u(
-    `<div class="ovk-photo-view-dimmer">
-        <div class="ovk-photo-view">
-            <div class="photo_com_title">
-                <text id="photo_com_title_photos">
+    const photo_viewer = new CMessageBox({
+        title: '',
+        custom_template: u(`
+        <div class="ovk-photo-view-dimmer">
+            <div class="ovk-photo-view">
+                <div class="photo_com_title">
+                    <text id="photo_com_title_photos">
+                        <img src="/assets/packages/static/openvk/img/loading_mini.gif">
+                    </text>
+                    <div>
+                        <a id="ovk-photo-close">${tr("close")}</a>
+                    </div>
+                </div>
+                <div class='photo_viewer_wrapper'>
+                    <div class="ovk-photo-slide-left"></div>
+                    <div class="ovk-photo-slide-right"></div>
+                    <img src="${photo}" id="ovk-photo-img">
+                </div>
+                <div class="ovk-photo-details">
                     <img src="/assets/packages/static/openvk/img/loading_mini.gif">
-                </text>
-                <div>
-                    <a id="ovk-photo-close">${tr("close")}</a>
                 </div>
             </div>
-            <center style="margin-bottom: 8pt; position: relative;">
-                <div class="ovk-photo-slide-left"></div>
-                <div class="ovk-photo-slide-right"></div>
-                <img src="${photo}" style="max-width: 100%; max-height: 60vh; user-select:none;" id="ovk-photo-img">
-            </center>
-            <div class="ovk-photo-details">
-                <img src="/assets/packages/static/openvk/img/loading_mini.gif">
-            </div>
-        </div>
-    </div>`);
-    u("body").addClass("dimmed").append(dialog);
-    document.querySelector("html").style.overflowY = "hidden"
-    
-    let button = u("#ovk-photo-close");
+        </div>`)
+    })
 
-    button.on("click", function(e) {
-        let __closeDialog = () => {
-            u("body").removeClass("dimmed");
-            u(".ovk-photo-view-dimmer").remove();
-            document.querySelector("html").style.overflowY = "scroll"
-        };
-        
-        __closeDialog();
+    photo_viewer.getNode().find("#ovk-photo-close").on("click", function(e) {
+        photo_viewer.close()
     });
 
-    function __reloadTitleBar() {
-        u("#photo_com_title_photos").last().innerHTML = imagesCount > 1 ? tr("photo_x_from_y", imagesIndex, imagesCount) : tr("photo");
+    function __getIndex(photo_id = null) {
+        return Object.keys(json.body).findIndex(item => item == (photo_id ?? currentImageid)) + 1
     }
 
-    function __loadDetails(photo_id, index) {
-        if(tempDetailsSection[index] == null) {
-            u(".ovk-photo-details").last().innerHTML = '<img src="/assets/packages/static/openvk/img/loading_mini.gif">';
-            ky("/photo" + photo_id, {
-                hooks: {
-                    afterResponse: [
-                        async (_request, _options, response) => {
-                            let parser = new DOMParser();
-                            let body = parser.parseFromString(await response.text(), "text/html");
+    function __getByIndex(id) {
+        const ids = Object.keys(json.body)
+        const _id  = ids[id - 1]
 
-                            let element = u(body.getElementsByClassName("ovk-photo-details")).last();
+        return json.body[_id]
+    }
 
-                            tempDetailsSection[index] = element.innerHTML;
+    function __reloadTitleBar() {
+        photo_viewer.getNode().find("#photo_com_title_photos").last().innerHTML = imagesCount > 1 ? tr("photo_x_from_y", shown_offset, imagesCount) : tr("photo");
+    }
 
-                            if(index == imagesIndex) {
-                                u(".ovk-photo-details").last().innerHTML = element.innerHTML ?? '';
-                            }
+    async function __loadDetails(photo_id) {
+        if(json.body[photo_id].cached == null) {
+            photo_viewer.getNode().find(".ovk-photo-details").last().innerHTML = '<img src="/assets/packages/static/openvk/img/loading_mini.gif">';
+            const photo_url     = `/photo${photo_id}`
+            const photo_page    = await fetch(photo_url)
+            const photo_text    = await photo_page.text()
+            const parser        = new DOMParser
+            const body          = parser.parseFromString(photo_text, "text/html")
+            const details       = body.querySelector('.ovk-photo-details')
+            json.body[photo_id].cached = details.innerHTML ?? ''
+            if(photo_id == currentImageid) {
+                photo_viewer.getNode().find(".ovk-photo-details").last().innerHTML = details.innerHTML ?? '';
+            }
 
-                            document.querySelectorAll(".ovk-photo-details .bsdn").forEach(bsdnInitElement)
-                            document.querySelectorAll(".ovk-photo-details script").forEach(scr => {
-                                // stolen from #953
-                                let newScr = document.createElement('script')
-
-                                if(scr.src) {
-                                    newScr.src = scr.src
-                                } else {
-                                    newScr.textContent = scr.textContent
-                                }
-
-                                document.querySelector(".ovk-photo-details").appendChild(newScr);
-                            })
-                        }
-                    ]
-                }
-            });
+            photo_viewer.getNode().find(".ovk-photo-details .bsdn").nodes.forEach(bsdnInitElement)
         } else {
-            u(".ovk-photo-details").last().innerHTML = tempDetailsSection[index];
+            photo_viewer.getNode().find(".ovk-photo-details").last().innerHTML = json.body[photo_id].cached
         }
     }
 
-    function __slidePhoto(direction) {
+    async function __slidePhoto(direction) {
         /* direction = 1 - right
            direction = 0 - left */
         if(json == undefined) {
             console.log("Да подожди ты. Куда торопишься?");
         } else {
-            if(imagesIndex >= imagesCount && direction == 1) {
-                imagesIndex = 1;
-            } else if(imagesIndex <= 1 && direction == 0) {
-                imagesIndex = imagesCount;
+            let current_index = __getIndex()
+            if(current_index >= imagesCount && direction == 1) {
+                shown_offset   = 1
+                current_index  = 1
+            } else if(current_index <= 1 && direction == 0) {
+                shown_offset   += imagesCount - 1
+                current_index  = imagesCount
             } else if(direction == 1) {
-                imagesIndex++;
+                shown_offset  += 1
+                current_index += 1
             } else if(direction == 0) {
-                imagesIndex--;
+                shown_offset -= 1
+                current_index -= 1
             }
 
-            let photoURL = json.body[imagesIndex - 1].url;
+            currentImageid = __getByIndex(current_index)
+            if(!currentImageid) {
+                if(type == 'album') {
+                    if(direction == 1) {
+                        offset += albums_per_page
+                    } else {
+                        offset -= albums_per_page
+                    }
+                    
+                    await __loadContext(type, post, true, direction == 0)
+                } else {
+                    return
+                }
+            }
+            currentImageid = currentImageid.id
+            let photoURL = json.body[currentImageid].url;
 
-            u("#ovk-photo-img").last().src = photoURL;
+            photo_viewer.getNode().find("#ovk-photo-img").last().src = ''
+            photo_viewer.getNode().find("#ovk-photo-img").last().src = photoURL;
             __reloadTitleBar();
-            __loadDetails(json.body[imagesIndex - 1].id, imagesIndex);
+            __loadDetails(json.body[currentImageid].id);
         }
     }
 
-    let slideLeft = u(".ovk-photo-slide-left");
-
-    slideLeft.on("click", (e) => {
-        __slidePhoto(0);
-    });
-
-    let slideRight = u(".ovk-photo-slide-right");
-
-    slideRight.on("click", (e) => {
-        __slidePhoto(1);
-    });
-
-    let data = new FormData()
-    data.append('parentType', type);
+    async function __loadContext(type, id, ref = false, inverse = false) {
+        if(type == 'post' || type == 'comment') {
+            const form_data = new FormData()
+            form_data.append('parentType', type);
     
-    if(type) {
-        ky.post("/iapi/getPhotosFromPost/" + (type == "post" ? post : "1_"+post), {
-            hooks: {
-                afterResponse: [
-                    async (_request, _options, response) => {
-                        json = await response.json();
-    
-                        imagesCount = json.body.length;
-                        imagesIndex = 0;
-                        // Это всё придётся правда на 1 прибавлять
-                        
-                        json.body.every(element => {
-                            imagesIndex++;
-                            if(element.id == photo_id) {
-                                return false;
-                            } else {
-                                return true;
-                            }
-                        });
-    
-                        __reloadTitleBar();
-                        __loadDetails(json.body[imagesIndex - 1].id, imagesIndex);                }
-                ]
-            },
-            body: data
-        });
-    } else {
-        imagesCount = 1
-        __reloadTitleBar()
-        __loadDetails(photo_id, imagesIndex)
+            const endpoint_url = `/iapi/getPhotosFromPost/${type == "post" ? id : "1_"+id}`
+            const fetcher = await fetch(endpoint_url, {
+                method: 'POST',
+                body: form_data,
+            })
+            json = await fetcher.json()
+            imagesCount = Object.entries(json.body).length
+        } else {
+            const params = {
+                'offset': offset,
+                'count': albums_per_page,
+                'owner_id': id.split('_')[0],
+                'album_id': id.split('_')[1],
+                'photo_sizes': 1
+            }
+
+            const result = await window.OVKAPI.call('photos.get', params)
+            const converted_items = {}
+
+            result.items.forEach(item => {
+                const id = item.owner_id + '_' + item.id
+                converted_items[id] = {
+                    'url': item.src_xbig,
+                    'id': id,
+                }
+            })
+            imagesCount = result.count
+
+            if(!json)
+                json = {'body': []}
+            
+            if(!inverse) {
+                json.body = Object.assign(converted_items, json.body)
+            } else {
+                json.body = Object.assign(json.body, converted_items)
+            }
+        }
+
+        currentImageid = photo_id
     }
 
-    return u(".ovk-photo-view-dimmer");
+    photo_viewer.getNode().find(".ovk-photo-slide-left").on("click", (e) => {
+        __slidePhoto(0);
+    })
+    photo_viewer.getNode().find(".ovk-photo-slide-right").on("click", (e) => {
+        __slidePhoto(1);
+    })
+    
+    if(!type) {
+        imagesCount = 1
+        json = {
+            'body': {}
+        }
+
+        json.body[photo_id] = {
+            'id': photo_id,
+            'url': photo
+        }
+        currentImageid = photo_id
+        
+        __reloadTitleBar()
+        __loadDetails(photo_id)
+    } else {
+        await __loadContext(type, post)
+        shown_offset = offset + __getIndex()
+
+        __reloadTitleBar();
+        __loadDetails(json.body[currentImageid].id);
+    }
+
+    return photo_viewer.getNode()
 }
 
 u("#write > form").on("keydown", function(event) {
     if(event.ctrlKey && event.keyCode === 13)
         this.submit();
 });
+
+function reportPhoto(photo_id) {
+    uReportMsgTxt  = tr("going_to_report_photo");
+    uReportMsgTxt += "<br/>"+tr("report_question_text");
+    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
+
+    MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
+        (function() {
+            res = document.querySelector("#uReportMsgInput").value;
+            xhr = new XMLHttpRequest();
+            xhr.open("GET", "/report/" + photo_id + "?reason=" + res + "&type=photo", true);
+            xhr.onload = (function() {
+            if(xhr.responseText.indexOf("reason") === -1)
+                MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
+            else
+                MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
+            });
+            xhr.send(null);
+            }),
+        Function.noop
+    ]);
+}
 
 var tooltipClientTemplate = Handlebars.compile(`
     <table>

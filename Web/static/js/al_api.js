@@ -49,7 +49,7 @@ window.OVKAPI = new class {
         if(json_response.response) {
             return json_response.response
         } else {
-            throw new Exception(json_response.error_msg)
+            throw new Error(json_response.error_msg)
         }
     }
 }
