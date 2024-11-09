@@ -157,3 +157,19 @@ function find_author(id, profiles, groups)
 
     return null
 }
+
+function collect_attachments(target) {
+    const horizontal_array = []
+    const horizontal_attachments = target.find(`.post-horizontal > a`)
+    horizontal_attachments.nodes.forEach(_node => {
+        horizontal_array.push(`${_node.dataset.type}${_node.dataset.id}`)
+    })
+
+    const vertical_array = []
+    const vertical_attachments = target.find(`.post-vertical > .vertical-attachment`)
+    vertical_attachments.nodes.forEach(_node => {
+        vertical_array.push(`${_node.dataset.type}${_node.dataset.id}`)
+    })
+
+    return horizontal_array.concat(vertical_array)
+}

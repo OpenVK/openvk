@@ -794,6 +794,13 @@ final class Wall extends VKAPIRequestHandler
         foreach($comment->getChildren() as $attachment) {
             if($attachment instanceof \openvk\Web\Models\Entities\Photo) {
                 $attachments[] = $this->getApiPhoto($attachment);
+            } elseif($attachment instanceof \openvk\Web\Models\Entities\Video) {
+                $attachments[] = $attachment->getApiStructure();
+            } elseif($attachment instanceof \openvk\Web\Models\Entities\Note) {
+                $attachments[] = [
+                    'type' => 'note',
+                    'note' => $attachment->toVkApiStruct()
+                ];
             } elseif($attachment instanceof \openvk\Web\Models\Entities\Audio) {
                 $attachments[] = [
                     "type" => "audio",
@@ -942,9 +949,22 @@ final class Wall extends VKAPIRequestHandler
         }
     }
     
-    function edit(int $owner_id, int $post_id, string $message = "", string $attachments = "", string $copyright = NULL) {
+    function edit(int $owner_id, int $post_id, string $message = "", string $attachments = "", string $copyright = NULL, int $explicit = -1, int $from_group = 0, int $signed = 0) {
         $this->requireUser();
         $this->willExecuteWriteAction();
+
+        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio']);
+        $final_attachments   = [];
+        foreach($parsed_attachments as $attachment) {
+            if($attachment && !$attachment->isDeleted() && $attachment->canBeViewedBy($this->getUser()) &&
+            !(method_exists($attachment, 'getVoters') && $attachment->getOwner()->getId() != $this->getUser()->getId())) {
+                $final_attachments[] = $attachment;
+            }
+        }
+        
+        if(empty($message) && sizeof($final_attachments) < 1) {
+            $this->fail(-66, "Post will be empty, don't saving.");
+        }
 
         $post = (new PostsRepo)->getPostById($owner_id, $post_id);
 
@@ -954,28 +974,35 @@ final class Wall extends VKAPIRequestHandler
         if(!$post->canBeEditedBy($this->getUser()))
             $this->fail(7, "Access to editing denied");
 
-        if(!empty($message))
+        if(!empty($message) || (empty($message) && sizeof($final_attachments) > 0))
             $post->setContent($message);
         
         $post->setEdited(time());
         if(!is_null($copyright) && !empty($copyright)) {
-            try {
-                $post->setSource($copyright);
-            } catch(\Throwable) {}
-        }
-
-        $post->save(true);
-        
-        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio']);
-        $final_attachments   = [];
-        foreach($parsed_attachments as $attachment) {
-            if($attachment && !$attachment->isDeleted() && $attachment->canBeViewedBy($this->getUser()) &&
-            !(method_exists($attachment, 'getVoters') && $attachment->getOwner()->getId() != $this->getUser()->getId())) {
-                $final_attachments[] = $attachment;
+            if($copyright == 'remove') {
+                $post->resetSource();
+            } else {
+                try {
+                    $post->setSource($copyright);
+                } catch(\Throwable) {}
             }
         }
 
-        if(sizeof($final_attachments) > 0) {
+        if($explicit != -1) {
+            $post->setNsfw($explicit == 1);
+        }
+
+        $wallOwner = ($owner_id > 0 ? (new UsersRepo)->get($owner_id) : (new ClubsRepo)->get($owner_id * -1));
+        $flags = 0;
+        if($from_group == 1 && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->getUser()))
+            $flags |= 0b10000000;
+        /*if($signed == 1)
+            $flags |= 0b01000000;*/
+
+        $post->setFlags($flags);
+        $post->save(true);
+
+        if($attachments == 'remove' || sizeof($final_attachments) > 0) {
             $post->unwire();
             foreach($final_attachments as $attachment) {
                 $post->attach($attachment);
@@ -990,6 +1017,14 @@ final class Wall extends VKAPIRequestHandler
         $this->willExecuteWriteAction();
 
         $comment = (new CommentsRepo)->get($comment_id);
+        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio']);
+        $final_attachments   = [];
+        foreach($parsed_attachments as $attachment) {
+            if($attachment && !$attachment->isDeleted() && $attachment->canBeViewedBy($this->getUser()) &&
+            !(method_exists($attachment, 'getVoters') && $attachment->getOwner()->getId() != $this->getUser()->getId())) {
+                $final_attachments[] = $attachment;
+            }
+        }
 
         if(empty($message) && empty($attachments))
             $this->fail(100, "Required parameter 'message' missing.");
@@ -1000,20 +1035,11 @@ final class Wall extends VKAPIRequestHandler
         if(!$comment->canBeEditedBy($this->getUser()))
             $this->fail(15, "Access to editing comment denied");
         
-        if(!empty($message))
+        if(!empty($message) || (empty($message) && sizeof($final_attachments) > 0))
             $comment->setContent($message);
         
         $comment->setEdited(time());
         $comment->save(true);
-
-        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio']);
-        $final_attachments   = [];
-        foreach($parsed_attachments as $attachment) {
-            if($attachment && !$attachment->isDeleted() && $attachment->canBeViewedBy($this->getUser()) &&
-            !(method_exists($attachment, 'getVoters') && $attachment->getOwner()->getId() != $this->getUser()->getId())) {
-                $final_attachments[] = $attachment;
-            }
-        }
 
         if(sizeof($final_attachments) > 0) {
             $comment->unwire();

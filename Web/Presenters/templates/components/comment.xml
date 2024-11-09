@@ -5,7 +5,7 @@
 {var $postId = $target instanceof \openvk\Web\Models\Entities\Post ? $target->getId() : NULL}
 
 <a name="cid={$comment->getId()}"></a>
-<table border="0" style="font-size: 11px;" class="post comment" id="_comment{$comment->getId()}" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}" data-from-group="{$author instanceof $Club}" n:attr="data-post-id => $postId">
+<table data-id="1_{$comment->getId()}" border="0" style="font-size: 11px;" class="post comment" id="_comment{$comment->getId()}" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}" data-from-group="{$author instanceof $Club}" n:attr="data-post-id => $postId">
     <tbody>
         <tr>
             <td width="30" valign="top">
@@ -22,7 +22,7 @@
                 </div>
                 <div class="post-content" id="{$comment->getId()}">
                     <div class="text" id="text{$comment->getId()}">
-                        <span data-text="{$comment->getText(false)}" class="really_text">{$comment->getText()|noescape}</span>
+                        <span class="really_text">{$comment->getText()|noescape}</span>
                         
                         {var $attachmentsLayout = $comment->getChildrenWithLayout(288)}
                         <div n:ifcontent class="attachments attachments_b" style="height: {$attachmentsLayout->height|noescape}; width: {$attachmentsLayout->width|noescape};">
@@ -77,6 +77,7 @@
                         </span>
                     </div>
                 </div>
+                <div class='post-edit'></div>
             </td>
         </tr>
     </tbody>

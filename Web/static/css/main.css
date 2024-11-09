@@ -798,6 +798,14 @@ h4 {
     font-size: 9px;
 }
 
+.editing .post-content, .post-edit {
+    display: none;
+}
+
+.editing .post-edit {
+    display: block;
+}
+
 .post-content .text {
     padding: 4px;
     font-size: 11px;
@@ -2521,8 +2529,16 @@ a.poll-retract-vote {
     min-height: 18px;
 }
 
+.post-vertical .vertical-attachment .audioEntry:hover {
+    background: unset !important;
+}
+
 .post-vertical .vertical-attachment .audioEntry .playerButton {
     padding: 0px 3px 0px 0px;
+}
+
+.post-vertical .vertical-attachment .audioEntry .buttons {
+    display: none;
 }
 
 .post-vertical .vertical-attachment .audioEntry .status {
@@ -3389,14 +3405,18 @@ body.article .floating_sidebar, body.article .page_content {
     user-select: none;
 }
 
-.editMenu.loading {
+.edit_menu.loading {
     filter: opacity(0.5);
     cursor: progress;
     user-select: none;
 }
 
-.editMenu.loading * {
+.edit_menu.loading * {
     pointer-events: none;
+}
+
+.edit_menu .edit_menu_buttons {
+    margin-top: 10px;
 }
 
 .lagged *, .lagged {
@@ -3568,6 +3588,8 @@ hr {
     width: 100%;
 
     position: relative;
+    margin-left: -2px;
+    margin-top: -2px;
 }
 
 .compact_video .video-length {

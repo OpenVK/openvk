@@ -459,10 +459,15 @@ u(document).on('click', '#videoOpen', (e) => {
     }
 })
 
-u("#write > form").on("keydown", function(event) {
+u(document).on("keydown", "#write > form", function(event) {
     if(event.ctrlKey && event.keyCode === 13)
         this.submit();
 });
+
+u(document).on('keydown', '.edit_menu #write', (e) => {
+    if(e.ctrlKey && e.keyCode === 13)
+        e.target.closest('.edit_menu').querySelector('#__edit_save').click()
+})
 
 function reportPhoto(photo_id) {
     uReportMsgTxt  = tr("going_to_report_photo");
@@ -587,112 +592,199 @@ async function showArticle(note_id) {
     u("body").addClass("article");
 }
 
-$(document).on("click", "#editPost", (e) => {
-    let post = e.currentTarget.closest("table")
-    let content = post.querySelector(".text")
-    let text = content.querySelector(".really_text")
+u(document).on("click", "#editPost", async (e) => {
+    const target = u(e.target)
+    const post = target.closest("table")
+    const content = post.find(".post-content")
+    const edit_place = post.find('.post-edit')
+    const id = post.attr('data-id').split('_')
 
-    if(content.querySelector("textarea") == null) {
-        content.insertAdjacentHTML("afterbegin", `
-            <div class="editMenu">
-                <div id="wall-post-input999"> 
-                    <textarea id="new_content">${text.dataset.text}</textarea>
-                    <input type="button" class="button" value="${tr("save")}" id="endEditing">
-                    <input type="button" class="button" value="${tr("cancel")}" id="cancelEditing">
-                </div>
-                ${e.currentTarget.dataset.nsfw != null ? `
-                    <div class="postOptions">
-                        <label><input type="checkbox" id="nswfw" ${e.currentTarget.dataset.nsfw == 1 ? `checked` : ``}>${tr("contains_nsfw")}</label>
+    let type = 'post'
+    if(post.hasClass('comment')) {
+        type = 'comment'
+    }
+
+    if(post.hasClass('editing')) {
+        post.removeClass('editing')
+        return
+    }
+
+    if(edit_place.html() == '') {
+        target.addClass('lagged')
+        const params = {}
+        if(type == 'post') {
+            params['posts'] = post.attr('data-id')
+        } else {
+            params['owner_id'] = 1
+            params['comment_id'] = id[1]
+        }
+
+        const api_req = await window.OVKAPI.call(`wall.${type == 'post' ? 'getById' : 'getComment'}`, params)
+        const api_post = api_req.items[0]
+        
+        edit_place.html(`
+            <div class='edit_menu'>
+                <form id="write">
+                    <textarea placeholder="${tr('edit')}" name="text" style="width: 100%;resize: none;" class="expanded-textarea small-textarea">${escapeHtml(api_post.text)}</textarea>
+                    
+                    <div class='post-buttons'>
+                        <div class="post-horizontal"></div>
+                        <div class="post-vertical"></div>
+                        <div class="post-source"></div>
+
+                        <div class='post-opts'>
+                            ${type == 'post' ? `<label>
+                                <input type="checkbox" name="nsfw" ${api_post.is_explicit ? 'checked' : ''} /> ${tr('contains_nsfw')}
+                            </label>` : ''}
+
+                            ${api_post.owner_id < 0 && api_post.can_pin ? `<label>
+                                <input type="checkbox" name="as_group" ${api_post.from_id < 0 ? 'checked' : ''} /> ${tr('post_as_group')}
+                            </label>` : ''}
+                        </div>
+
+                        <input type="hidden" id="source" name="source" value="none" />
+
+                        <div class='edit_menu_buttons'>
+                            <input class='button' type='button' id='__edit_save' value='${tr('save')}'>
+                            <input class='button' type='button' id='__edit_cancel' value='${tr('cancel')}'>
+
+                            <div style="float: right; display: flex; flex-direction: column;">
+                                <a class='menu_toggler'>
+                                    ${tr('attach')}
+                                </a>
+                                
+                                <div id="wallAttachmentMenu" class="hidden">
+                                    <a class="header menu_toggler">
+                                        ${tr('attach')}
+                                    </a>
+                                    <a id="__photoAttachment">
+                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
+                                        ${tr('photo')}
+                                    </a>
+                                    <a id="__videoAttachment">
+                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
+                                        ${tr('video')}
+                                    </a>
+                                    <a id="__audioAttachment">
+                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
+                                        ${tr('audio')}
+                                    </a>
+                                    ${type == 'post' ? `<a id="__notesAttachment">
+                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-srt.png" />
+                                        ${tr('note')}
+                                    </a>
+                                    <a id='__sourceAttacher'>
+                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/insert-link.png" />
+                                        ${tr('source')}
+                                    </a>` : ''}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                ` : ``}
-                ${e.currentTarget.dataset.fromgroup != null ? `
-                <div class="postOptions">
-                    <label><input type="checkbox" id="fromgroup" ${e.currentTarget.dataset.fromgroup == 1 ? `checked` : ``}>${tr("post_as_group")}</label>
-                </div>
-            ` : ``}
-            </div>
-        `)
+                </form>
+            </div>`)
 
-        u(content.querySelector("#cancelEditing")).on("click", () => {post.querySelector("#editPost").click()})
-        u(content.querySelector("#endEditing")).on("click", () => {
-            let nwcntnt = content.querySelector("#new_content").value
-            let type = "post"
+        if(api_post.copyright) {
+            edit_place.find('.post-source').html(`
+                <span>${tr('source')}: <a>${escapeHtml(api_post.copyright.link)}</a></span>
+                <div id='remove_source_button'></div>
+            `)
 
-            if(post.classList.contains("comment")) {
-                type = "comment"
-            }
+            edit_place.find('.post-source #remove_source_button').on('click', (e) => {
+                edit_place.find('.post-source').html('')
+                edit_place.find(`input[name='source']`).attr('value', 'remove')
+            })
+        }
+        // horizontal attachments
+        api_post.attachments.forEach(att => {
+            const type = att.type
+            const aid = att[type].owner_id + '_' + att[type].id
 
-            let xhr = new XMLHttpRequest()
-            xhr.open("POST", "/wall/edit")
+            if(type == 'video' || type == 'photo') {
+                let preview = ''
 
-            xhr.onloadstart = () => {
-                content.querySelector(".editMenu").classList.add("loading")
-            }
-
-            xhr.onerror = () => {
-                MessageBox(tr("error"), "unknown error occured", [tr("ok")], [() => {Function.noop}])
-            }
-
-            xhr.ontimeout = () => {
-                MessageBox(tr("error"), "Try to refresh page", [tr("ok")], [() => {Function.noop}])
-            }
-
-            xhr.onload = () => {
-                let result = JSON.parse(xhr.responseText)
-
-                if(result.error == "no") {
-                    post.querySelector("#editPost").click()
-                    content.querySelector(".really_text").innerHTML = result.new_content
-    
-                    if(post.querySelector(".editedMark") == null) {
-                        post.querySelector(".date").insertAdjacentHTML("beforeend", `
-                            <span class="edited editedMark">(${tr("edited_short")})</span>
-                        `)
-                    }
-
-                    if(e.currentTarget.dataset.nsfw != null) {
-                        e.currentTarget.setAttribute("data-nsfw", result.nsfw)
-
-                        if(result.nsfw == 0) {
-                            post.classList.remove("post-nsfw")
-                        } else {
-                            post.classList.add("post-nsfw")
-                        }
-                    }
-
-                    if(e.currentTarget.dataset.fromgroup != null) {
-                        e.currentTarget.setAttribute("data-fromgroup", result.from_group)
-                    }
-
-                    post.querySelector(".post-avatar").setAttribute("src", result.author.avatar)
-                    post.querySelector(".post-author-name").innerHTML = result.author.name.escapeHtml()
-                    post.querySelector(".really_text").setAttribute("data-text", result.new_text)
+                if(type == 'photo') {
+                    preview = att[type].sizes[1].url
                 } else {
-                    MessageBox(tr("error"), result.error, [tr("ok")], [Function.noop])
-                    post.querySelector("#editPost").click()
+                    preview = att[type].image[0].url
                 }
-            }
 
-            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-            xhr.send("postid="+e.currentTarget.dataset.id+
-                    "&newContent="+nwcntnt+
-                    "&hash="+encodeURIComponent(u("meta[name=csrf]").attr("value"))+
-                    "&type="+type+
-                    "&nsfw="+(content.querySelector("#nswfw") != null ? content.querySelector("#nswfw").checked : 0)+
-                    "&fromgroup="+(content.querySelector("#fromgroup") != null ? content.querySelector("#fromgroup").checked : 0))
+                __appendToTextarea({
+                    'type': type,
+                    'preview': preview,
+                    'id': aid
+                }, edit_place)
+            } else {
+                const found_block = post.find(`div[data-att_type='${type}'][data-att_id='${aid}']`)
+                __appendToTextarea({
+                    'type': type,
+                    'alignment': 'vertical',
+                    'html': found_block.html(),
+                    'id': aid,
+                }, edit_place)
+            }
         })
 
-        u(".editMenu").on("keydown", (e) => {
-            if(e.ctrlKey && e.keyCode === 13)
-                content.querySelector("#endEditing").click()
-        });
+        target.removeClass('lagged')
 
-        text.style.display = "none"
-        setupWallPostInputHandlers(999)
-    } else {
-        u(content.querySelector(".editMenu")).remove()
-        text.style.display = "block"
+        edit_place.find('.edit_menu #__edit_save').on('click', async (e) => {
+            const text_node = edit_place.find('.edit_menu textarea')
+            const nsfw_mark = edit_place.find(`.edit_menu input[name='nsfw']`)
+            const as_group = edit_place.find(`.edit_menu input[name='as_group']`)
+            const copyright = edit_place.find(`.edit_menu input[name='source']`)
+            const collected_attachments = collect_attachments(edit_place.find('.post-buttons')).join(',')
+            const params = {}
+            
+            params['owner_id'] = id[0]
+            params['post_id'] = id[1]
+            params['message'] = text_node.nodes[0].value
+
+            if(nsfw_mark.length > 0) {
+                params['explicit'] = Number(nsfw_mark.nodes[0].checked)
+            }
+            
+            params['attachments'] = collected_attachments
+            if(collected_attachments.length < 1) {
+                params['attachments'] = 'remove'
+            }
+
+            if(as_group.length > 0 && as_group.nodes[0].checked) {
+                params['from_group'] = 1
+            }
+
+            if(copyright.nodes[0].value != 'none') {
+                params['copyright'] = copyright.nodes[0].value
+            }
+
+            u(e.target).addClass('lagged')
+            // больше двух запросов !
+            try {
+                if(type == 'post') {
+                    await window.OVKAPI.call('wall.edit', params)
+                } else {
+                    params['comment_id'] = id[1]
+                    await window.OVKAPI.call('wall.editComment', params)
+                }
+            } catch(e) {
+                fastError(e.message)
+                u(e.target).removeClass('lagged')
+                return
+            }
+            
+            const new_post_html = await (await fetch(`/iapi/getPostTemplate/${id[0]}_${id[1]}?type=${type}`, {
+                'method': 'POST'
+            })).text()
+            u(e.target).removeClass('lagged')
+            post.removeClass('editing')
+            post.nodes[0].outerHTML = new_post_html
+        })
+    
+        edit_place.find('.edit_menu #__edit_cancel').on('click', (e) => {
+            post.removeClass('editing')
+        })
     }
+
+    post.addClass('editing')
 })
 
 async function __uploadToTextarea(file, textareaNode) {
@@ -758,6 +850,21 @@ async function __appendToTextarea(attachment_obj, textareaNode) {
     const form = textareaNode.find('.post-buttons')
     const indicator = textareaNode.find('.post-horizontal')
 
+    if(attachment_obj.alignment == 'vertical') {
+        textareaNode.find('.post-vertical').append(`
+            <div class="vertical-attachment upload-item" draggable="true" data-type='${attachment_obj.type}' data-id="${attachment_obj.id}">
+                <div class='vertical-attachment-content' draggable="false">
+                    ${attachment_obj.html}
+                </div>
+                <div class='vertical-attachment-remove'>
+                    <div id='small_remove_button'></div>
+                </div>
+            </div>
+        `)
+
+        return
+    }
+    
     indicator.append(`
         <a draggable="true" href='/${attachment_obj.type}${attachment_obj.id}' class="upload-item" data-type='${attachment_obj.type}' data-id="${attachment_obj.id}">
             <span class="upload-delete">×</span>
@@ -767,27 +874,29 @@ async function __appendToTextarea(attachment_obj, textareaNode) {
     `)
 }
 
-// ajax не буде работать
-
-u('#write .small-textarea').on('paste', (e) => {
+u(document).on('paste', '#write .small-textarea', (e) => {
     if(e.clipboardData.files.length === 1) {
         __uploadToTextarea(e.clipboardData.files[0], u(e.target).closest('#write'))
         return;
     }
 })
 
-u('#write').on('dragstart', '.post-horizontal .upload-item, .post-vertical .upload-item', (e) => {
+u(document).on('dragstart', '#write .post-horizontal .upload-item, .post-vertical .upload-item', (e) => {
     //e.preventDefault()
     //console.log(e)
     u(e.target).closest('.upload-item').addClass('currently_dragging')
     return
 })
 
-u('#write').on('dragover', '.post-horizontal .upload-item, .post-vertical .upload-item', (e) => {
+u(document).on('dragover', '#write .post-horizontal .upload-item, .post-vertical .upload-item', (e) => {
     e.preventDefault()
 
     const target = u(e.target).closest('.upload-item')
     const current = u('.upload-item.currently_dragging')
+
+    if(current.length < 1) {
+        return
+    }
 
     if(target.nodes[0].dataset.id != current.nodes[0].dataset.id) {
         target.addClass('dragged')
@@ -796,13 +905,13 @@ u('#write').on('dragover', '.post-horizontal .upload-item, .post-vertical .uploa
     return
 })
 
-u('#write').on('dragleave dragend', '.post-horizontal .upload-item, .post-vertical .upload-item', (e) => {
+u(document).on('#write dragleave dragend', '.post-horizontal .upload-item, .post-vertical .upload-item', (e) => {
     //console.log(e)
     u(e.target).closest('.upload-item').removeClass('dragged')
     return
 })
 
-u('#write').on("drop", function(e) {
+u(document).on("drop", '#write', function(e) {
     const current = u('.upload-item.currently_dragging')
     //console.log(e)
     if(e.dataTransfer.types.includes('Files')) {
@@ -1250,7 +1359,7 @@ u(document).on('click', '#__notesAttachment', async (e) => {
                             
                             <div class='attachment_note_content'>
                                 <span class="attachment_note_text">${tr('note')}</span>
-                                <span class="attachment_note_name">${ovk_proc_strtr(dataset.name, 66)}</span>
+                                <span class="attachment_note_name">${ovk_proc_strtr(escapeHtml(dataset.name), 66)}</span>
                             </div>
                         </div>
                     </div>

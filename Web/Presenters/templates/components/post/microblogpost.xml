@@ -18,7 +18,7 @@
 
 {var $commentTextAreaId = $post === NULL ? rand(1,300) : $post->getId()}
 
-<table border="0" style="font-size: 11px;" n:class="post, !$compact ? post-divider, $post->isExplicit() ? post-nsfw">
+<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, !$compact ? post-divider, $post->isExplicit() ? post-nsfw">
     <tbody>
         <tr>
             <td width="54" valign="top">
@@ -68,15 +68,12 @@
                     {/if}
 
                     {if $post->canBeEditedBy($thisUser) && !($forceNoEditLink ?? false) && $compact == false}
-                        <a class="edit" id="editPost" 
-                                        data-id="{$post->getId()}" 
-                                        data-nsfw="{(int)$post->isExplicit()}"
-                                        {if $post->getTargetWall() < 0 && $wallOwner->canBeModifiedBy($thisUser)}data-fromgroup="{(int)$post->isPostedOnBehalfOfGroup()}"{/if}></a>
+                        <a class="edit" id="editPost"></a>
                     {/if}
                 </div>
                 <div class="post-content" id="{$post->getPrettyId()}" data-localized-nsfw-text="{_nsfw_warning}">
                     <div class="text" id="text{$post->getPrettyId()}">
-                        <span data-text="{$post->getText(false)}" class="really_text">{$post->getText()|noescape}</span>
+                        <span class="really_text">{$post->getText()|noescape}</span>
                         
                         {var $width = ($GLOBALS["_bigWall"] ?? false) ? 550 : 320}
                         {if isset($GLOBALS["_nesAttGloCou"])}
@@ -112,6 +109,7 @@
                         </span>
                     </div>
                 </div>
+                <div class='post-edit'></div>
                 <div class="post-menu" n:if="$compact == false">
                     <a href="{if !$suggestion}/wall{$post->getPrettyId()}{else}javascript:void(0){/if}" class="date">{$post->getPublicationTime()}
                         <span n:if="$post->getEditTime()" class="edited editedMark">({_edited_short})</span>

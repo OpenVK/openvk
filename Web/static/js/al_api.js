@@ -42,7 +42,7 @@ window.OVKAPI = new class {
             return
         }
 
-        const url = `/method/${method}?auth_mechanism=roaming&${new URLSearchParams(params).toString()}`
+        const url = `/method/${method}?auth_mechanism=roaming&${new URLSearchParams(params).toString()}&v=5.200`
         const res = await fetch(url)
         const json_response = await res.json()
 

@@ -505,6 +505,7 @@
 "click_to_go_to_album" = "Click here to go to album.";
 "error_uploading_photo" = "Error when uploading photo";
 "too_many_pictures" = "No more than 10 pictures";
+"too_many_attachments" = "Too many attachments.";
 
 "drag_files_here" = "Drag files here";
 "only_images_accepted" = "File \"$1\" is not an image";

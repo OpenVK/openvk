@@ -44,12 +44,14 @@
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Poll}
     {presenter "openvk!Poll->view", $attachment->getId()}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Note}
-    <div class="attachment_note">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
-        
-        <div class='attachment_note_content'>
-            <span class="attachment_note_text">{_note}</span>
-            <span class="attachment_note_name"><a href="javascript:void(showArticle({$attachment->getId()}));">{ovk_proc_strtr($attachment->getName(), 66)}</a></span>
+    <div data-att_type='note' data-att_id="{$attachment->getPrettyId()}">
+        <div class="attachment_note">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
+            
+            <div class='attachment_note_content'>
+                <span class="attachment_note_text">{_note}</span>
+                <span class="attachment_note_name"><a href="javascript:void(showArticle({$attachment->getId()}));">{ovk_proc_strtr($attachment->getName(), 66)}</a></span>
+            </div>
         </div>
     </div>
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Post}
@@ -60,7 +62,7 @@
         {include "post.xml", post => $attachment, compact => true}
     {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Audio}
-    <div style="width:100%;">
+    <div style="width:100%;" data-att_type='audio' data-att_id="{$attachment->getPrettyId()}">
         {include "../Audio/player.xml", audio => $attachment}
     </div>
 {else}
