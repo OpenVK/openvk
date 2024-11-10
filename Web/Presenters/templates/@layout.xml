@@ -366,7 +366,7 @@
         </div>
 
         <div id="ajloader" class="loader">
-            <img src="/assets/packages/static/openvk/img/loading_mini.gif" style="width: 40px;">
+            <img src="/assets/packages/static/openvk/img/loading_mini.gif">
         </div>
 
         {include "components/cookies.xml"}
@@ -428,7 +428,7 @@
             window.openvk = {
                 "audio_genres": {\openvk\Web\Models\Entities\Audio::genres},
                 "at_search": {$atSearch ?? false},
-                "max_attachments": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"]},
+                "max_attachments": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"] ?? 10},
                 "max_filesize_mb": 5,
                 "current_id": {$thisUser ? $thisUser->getId() : 0},
             }

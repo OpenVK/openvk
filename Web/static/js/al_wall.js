@@ -727,7 +727,7 @@ u(document).on("click", "#editPost", async (e) => {
 
         target.removeClass('lagged')
 
-        edit_place.find('.edit_menu #__edit_save').on('click', async (e) => {
+        edit_place.find('.edit_menu #__edit_save').on('click', async (ev) => {
             const text_node = edit_place.find('.edit_menu textarea')
             const nsfw_mark = edit_place.find(`.edit_menu input[name='nsfw']`)
             const as_group = edit_place.find(`.edit_menu input[name='as_group']`)
@@ -756,7 +756,7 @@ u(document).on("click", "#editPost", async (e) => {
                 params['copyright'] = copyright.nodes[0].value
             }
 
-            u(e.target).addClass('lagged')
+            u(ev.target).addClass('lagged')
             // больше двух запросов !
             try {
                 if(type == 'post') {
@@ -767,16 +767,18 @@ u(document).on("click", "#editPost", async (e) => {
                 }
             } catch(e) {
                 fastError(e.message)
-                u(e.target).removeClass('lagged')
+                u(ev.target).removeClass('lagged')
                 return
             }
             
             const new_post_html = await (await fetch(`/iapi/getPostTemplate/${id[0]}_${id[1]}?type=${type}`, {
                 'method': 'POST'
             })).text()
-            u(e.target).removeClass('lagged')
+            u(ev.target).removeClass('lagged')
             post.removeClass('editing')
             post.nodes[0].outerHTML = new_post_html
+
+            bsdnHydrate()
         })
     
         edit_place.find('.edit_menu #__edit_cancel').on('click', (e) => {
@@ -1139,6 +1141,11 @@ u(document).on('click', '#__videoAttachment', async (e) => {
 
         u("#gif_loader").remove()
         const pages_count = Math.ceil(Number(videos.count) / per_page)
+        
+        if(pages_count < 1) {
+            insert_place.append(query == '' ? tr('no_videos') : tr('no_videos_results'))
+        }
+
         videos.items.forEach(video => {
             const pretty_id = `${video.owner_id}_${video.id}`
             const is_attached = (form.find(`.upload-item[data-type='video'][data-id='${video.owner_id}_${video.id}']`)).length > 0
@@ -1294,6 +1301,11 @@ u(document).on('click', '#__notesAttachment', async (e) => {
 
         u("#gif_loader").remove()
         const pages_count = Math.ceil(Number(notes.count) / per_page)
+
+        if(notes.count < 1) {
+            insert_place.append(tr('no_notes'))    
+        }
+
         notes.notes.forEach(note => {
             is_attached = (form.find(`.upload-item[data-type='note'][data-id='${note.owner_id}_${note.id}']`)).length > 0
             insert_place.append(`
@@ -1583,96 +1595,102 @@ async function repost(id, repost_type = 'post') {
     const repostsCount = u(`#repostsCount${id}`)
     const previousVal  = repostsCount.length > 0 ? Number(repostsCount.html()) : 0;
 
-    MessageBox(tr('share'), `
-        <div class='display_flex_column' style='gap: 1px;'>
-            <b>${tr('auditory')}</b>
-            
-            <div class='display_flex_column'>
-                <label>
-                    <input type="radio" name="repost_type" value="wall" checked>
-                    ${tr("in_wall")}
-                </label>
+    const msg = new CMessageBox({
+        title: tr('share'),
+        unique_name: 'repost_modal',
+        body: `
+            <div class='display_flex_column' style='gap: 1px;'>
+                <b>${tr('auditory')}</b>
                 
-                <label>
-                    <input type="radio" name="repost_type" value="group">
-                    ${tr("in_group")}
-                </label>
+                <div class='display_flex_column'>
+                    <label>
+                        <input type="radio" name="repost_type" value="wall" checked>
+                        ${tr("in_wall")}
+                    </label>
+                    
+                    <label>
+                        <input type="radio" name="repost_type" value="group">
+                        ${tr("in_group")}
+                    </label>
 
-                <select name="selected_repost_club" style='display:none;'></select>
+                    <select name="selected_repost_club" style='display:none;'></select>
+                </div>
+
+                <b>${tr('your_comment')}</b>
+
+                <input type='hidden' id='repost_attachments'>
+                <textarea id='repostMsgInput' placeholder='...'></textarea>
+
+                <div id="repost_signs" class='display_flex_column' style='display:none;'>
+                    <label><input type='checkbox' name="asGroup">${tr('post_as_group')}</label>
+                    <label><input type='checkbox' name="signed">${tr('add_signature')}</label>
+                </div>
             </div>
-
-            <b>${tr('your_comment')}</b>
-
-            <input type='hidden' id='repost_attachments'>
-            <textarea id='repostMsgInput' placeholder='...'></textarea>
-
-            <div id="repost_signs" class='display_flex_column' style='display:none;'>
-                <label><input type='checkbox' name="asGroup">${tr('post_as_group')}</label>
-                <label><input type='checkbox' name="signed">${tr('add_signature')}</label>
-            </div>
-        </div>
-    `, [tr('send'), tr('cancel')], [
-        async () => {
-            const message  = u('#repostMsgInput').nodes[0].value
-            const type     = u(`input[name='repost_type']:checked`).nodes[0].value
-            let club_id = 0
-            try {
-                club_id = parseInt(u(`select[name='selected_repost_club']`).nodes[0].selectedOptions[0].value)
-            } catch(e) {}
-
-            const as_group = u(`input[name='asGroup']`).nodes[0].checked
-            const signed   = u(`input[name='signed']`).nodes[0].checked
-            const attachments = u(`#repost_attachments`).nodes[0].value
-
-            const params = {}
-            switch(repost_type) {
-                case 'post':
-                    params.object = `wall${id}`
-                    break
-                case 'photo':
-                    params.object = `photo${id}`
-                    break
-                case 'video':
-                    params.object = `video${id}`
-                    break
-            }
-
-            params.message = message
-            if(type == 'group' && club_id != 0) {
-                params.group_id = club_id
-            }
-
-            if(as_group) {
-                params.as_group = Number(as_group)
-            }
-            
-            if(signed) {
-                params.signed = Number(signed)
-            }
-
-            if(attachments != '') {
-                params.attachments = attachments
-            }
-
-            try {
-                res = await window.OVKAPI.call('wall.repost', params)
-
-                if(u('#reposts' + id).length > 0) {
-                    if(repostsCount.length > 0) {
-                        repostsCount.html(previousVal + 1)
-                    } else {
-                        u('#reposts' + id).nodes[0].insertAdjacentHTML('beforeend', `(<b id='repostsCount${id}'>1</b>)`)
-                    }
+        `,
+        buttons: [tr('send'), tr('cancel')],
+        callbacks: [
+            async () => {
+                const message  = u('#repostMsgInput').nodes[0].value
+                const type     = u(`input[name='repost_type']:checked`).nodes[0].value
+                let club_id = 0
+                try {
+                    club_id = parseInt(u(`select[name='selected_repost_club']`).nodes[0].selectedOptions[0].value)
+                } catch(e) {}
+    
+                const as_group = u(`input[name='asGroup']`).nodes[0].checked
+                const signed   = u(`input[name='signed']`).nodes[0].checked
+                const attachments = u(`#repost_attachments`).nodes[0].value
+    
+                const params = {}
+                switch(repost_type) {
+                    case 'post':
+                        params.object = `wall${id}`
+                        break
+                    case 'photo':
+                        params.object = `photo${id}`
+                        break
+                    case 'video':
+                        params.object = `video${id}`
+                        break
                 }
-
-                NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.location.assign(`/wall${res.pretty_id}`)});
-            } catch(e) {
-                console.error(e)
-                fastError(e.message)
-            }
-        },
-        Function.noop
-    ]);
+    
+                params.message = message
+                if(type == 'group' && club_id != 0) {
+                    params.group_id = club_id
+                }
+    
+                if(as_group) {
+                    params.as_group = Number(as_group)
+                }
+                
+                if(signed) {
+                    params.signed = Number(signed)
+                }
+    
+                if(attachments != '') {
+                    params.attachments = attachments
+                }
+    
+                try {
+                    res = await window.OVKAPI.call('wall.repost', params)
+    
+                    if(u('#reposts' + id).length > 0) {
+                        if(repostsCount.length > 0) {
+                            repostsCount.html(previousVal + 1)
+                        } else {
+                            u('#reposts' + id).nodes[0].insertAdjacentHTML('beforeend', `(<b id='repostsCount${id}'>1</b>)`)
+                        }
+                    }
+    
+                    NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.location.assign(`/wall${res.pretty_id}`)});
+                } catch(e) {
+                    console.error(e)
+                    fastError(e.message)
+                }
+            },
+            Function.noop
+        ]
+    });
     
     u('.ovk-diag-body').attr('style', 'padding: 14px;')
     u('.ovk-diag-body').on('change', `input[name='repost_type']`, (e) => {

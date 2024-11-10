@@ -1026,7 +1026,7 @@ final class Wall extends VKAPIRequestHandler
             }
         }
 
-        if(empty($message) && empty($attachments))
+        if(empty($message) && sizeof($final_attachments) < 1)
             $this->fail(100, "Required parameter 'message' missing.");
 
         if(!$comment || $comment->isDeleted())

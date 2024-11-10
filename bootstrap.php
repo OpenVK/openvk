@@ -235,7 +235,7 @@ function ovk_is_ssl(): bool
 function parseAttachments($attachments, array $allow_types = ['photo', 'video', 'note', 'audio']): array
 {
     $exploded_attachments = is_array($attachments) ? $attachments : explode(",", $attachments);
-    $exploded_attachments = array_slice($exploded_attachments, 0, OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"]);
+    $exploded_attachments = array_slice($exploded_attachments, 0, OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"] ?? 10);
     $imploded_types = implode('|', $allow_types);
     $output_attachments = [];
     $repositories = [

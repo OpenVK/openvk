@@ -24,7 +24,7 @@ final class Video extends VKAPIRequestHandler
                 $items = [];
     
                 $video = (new VideosRepo)->getByOwnerAndVID(intval($id[0]), intval($id[1]));
-                if($video) {
+                if($video && !$video->isDeleted()) {
                     $out_video = $video->getApiStructure($this->getUser())->video;
                     $items[] = $out_video;
                     if($out_video['owner_id']) {
