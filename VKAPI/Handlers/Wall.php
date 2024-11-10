@@ -284,11 +284,15 @@ final class Wall extends VKAPIRequestHandler
 
         foreach($psts as $pst) {
             $id   = explode("_", $pst);
-            $post = (new PostsRepo)->getPostById(intval($id[0]), intval($id[1]));
+            $post = (new PostsRepo)->getPostById(intval($id[0]), intval($id[1]), true);
 
             if($post && !$post->isDeleted()) {
                 if(!$post->canBeViewedBy($this->getUser()))
                     continue;
+
+                if($post->getSuggestionType() != 0 && !$post->canBeEditedBy($this->getUser())) {
+                    continue;
+                }
 
                 $from_id = get_class($post->getOwner()) == "openvk\Web\Models\Entities\Club" ? $post->getOwner()->getId() * (-1) : $post->getOwner()->getId();
                 $attachments = [];
@@ -594,10 +598,6 @@ final class Wall extends VKAPIRequestHandler
         if($wall > 0 && $wall !== $this->user->identity->getId())
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
 
-        if($should_be_suggested) {
-            return (object)["post_id" => "on_view"];
-        }
-
         return (object)["post_id" => $post->getVirtualId()];
     }
 
@@ -728,7 +728,7 @@ final class Wall extends VKAPIRequestHandler
                 "date"          => $comment->getPublicationTime()->timestamp(),
                 "text"          => $comment->getText(false),
                 "post_id"       => $post->getVirtualId(),
-                "owner_id"      => $post->isPostedOnBehalfOfGroup() ? $post->getOwner()->getId() * -1 : $post->getOwner()->getId(),
+                "owner_id"      => method_exists($post, 'isPostedOnBehalfOfGroup') && $post->isPostedOnBehalfOfGroup() ? $post->getOwner()->getId() * -1 : $post->getOwner()->getId(),
                 "parents_stack" => [],
                 "attachments"   => $attachments,
                 "thread"        => [
@@ -815,7 +815,7 @@ final class Wall extends VKAPIRequestHandler
             "date"          => $comment->getPublicationTime()->timestamp(),
             "text"          => $comment->getText(false),
             "post_id"       => $comment->getTarget()->getVirtualId(),
-            "owner_id"      => $comment->getTarget()->isPostedOnBehalfOfGroup() ? $comment->getTarget()->getOwner()->getId() * -1 : $comment->getTarget()->getOwner()->getId(),
+            "owner_id"      => method_exists($comment->getTarget(), 'isPostedOnBehalfOfGroup') && $comment->getTarget()->isPostedOnBehalfOfGroup() ? $comment->getTarget()->getOwner()->getId() * -1 : $comment->getTarget()->getOwner()->getId(),
             "parents_stack" => [],
             "attachments"   => $attachments,
             "likes"         => [
@@ -966,7 +966,7 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(-66, "Post will be empty, don't saving.");
         }
 
-        $post = (new PostsRepo)->getPostById($owner_id, $post_id);
+        $post = (new PostsRepo)->getPostById($owner_id, $post_id, true);
 
         if(!$post || $post->isDeleted())
             $this->fail(102, "Invalid post");

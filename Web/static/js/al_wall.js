@@ -625,7 +625,7 @@ u(document).on("click", "#editPost", async (e) => {
         edit_place.html(`
             <div class='edit_menu'>
                 <form id="write">
-                    <textarea placeholder="${tr('edit')}" name="text" style="width: 100%;resize: none;" class="expanded-textarea small-textarea">${escapeHtml(api_post.text)}</textarea>
+                    <textarea placeholder="${tr('edit')}" name="text" style="width: 100%;resize: none;" class="expanded-textarea small-textarea">${api_post.text}</textarea>
                     
                     <div class='post-buttons'>
                         <div class="post-horizontal"></div>
@@ -776,7 +776,7 @@ u(document).on("click", "#editPost", async (e) => {
             })).text()
             u(ev.target).removeClass('lagged')
             post.removeClass('editing')
-            post.nodes[0].outerHTML = new_post_html
+            post.nodes[0].outerHTML = u(new_post_html).last().outerHTML
 
             bsdnHydrate()
         })
@@ -1581,6 +1581,10 @@ u(document).on('click', '.post-buttons .upload-item', (e) => {
 u(document).on('click', '.post.post-nsfw .post-content', (e) => {
     e.preventDefault()
     e.stopPropagation()
+    
+    if(window.openvk.current_id == 0) {
+        return
+    }
     
     u(e.target).closest('.post-nsfw').removeClass('post-nsfw')
 })

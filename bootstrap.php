@@ -236,6 +236,7 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
 {
     $exploded_attachments = is_array($attachments) ? $attachments : explode(",", $attachments);
     $exploded_attachments = array_slice($exploded_attachments, 0, OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"] ?? 10);
+    $exploded_attachments = array_unique($exploded_attachments);
     $imploded_types = implode('|', $allow_types);
     $output_attachments = [];
     $repositories = [

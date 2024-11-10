@@ -71,7 +71,7 @@
                     <div class="text" id="text{$post->getPrettyId()}">
                         {var $owner = $author->getId()}
 
-                        <span class="really_text">{$post->getText()|noescape}</span>
+                        <span data-text="{$post->getText(false)}" class="really_text">{$post->getText()|noescape}</span>
 
                         {var $width = ($GLOBALS["_bigWall"] ?? false) ? 550 : 320}
                         {if isset($GLOBALS["_nesAttGloCou"])}

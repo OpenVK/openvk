@@ -151,6 +151,8 @@ final class InternalAPIPresenter extends OpenVKPresenter
             exit('');
         }
 
+        header("Content-Type: text/plain");
+        
         if($type == 'post') {
             $this->template->_template = 'components/post.xml';
             $this->template->post = $post;

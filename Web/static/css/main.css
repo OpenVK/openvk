@@ -3608,8 +3608,8 @@ hr {
     text-align: center;
 }
 
-.media-page-wrapper .video-page-wrapper-video {
-    text-align: center;
+.media-page-wrapper .video-page-wrapper-video iframe {
+    width: 100%;
 }
 
 .media-page-wrapper .photo-page-wrapper-photo img {
