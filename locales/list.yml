@@ -13,7 +13,7 @@ list:
     flag: "ua"
     name: "Ukrainian"
     native_name: "Українcька"
-    author: "Aqukie (yaroslav.bielograd@ukr.net), Andrej Lenťaj, Maxim Hrabovi (dechioyo) and Kirill (mbsoft)"
+    author: "Jaroslav (ovk.to/id6908), Andrej Lenťaj, Maxim Hrabovi (dechioyo) and Kirill (mbsoft)"
   - code: "by"
     flag: "by"
     name: "Belarussian"
