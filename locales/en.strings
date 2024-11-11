@@ -2082,7 +2082,7 @@
 "showing_x_y" = "(showing $1—$2)";
 "no_results_by_this_query" = "Nothing was found by this query.";
 "s_additional" = "Additional";
-"s_it_is_you" = "it is you";
+"s_it_is_you" = "that's you";
 
 /* BadBrowser */
 
