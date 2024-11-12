@@ -1003,7 +1003,12 @@ final class Wall extends VKAPIRequestHandler
         $post->save(true);
 
         if($attachments == 'remove' || sizeof($final_attachments) > 0) {
-            $post->unwire();
+            foreach($post->getChildren() as $att) {
+                if(!($att instanceof Post)) {
+                    $post->detach($att);
+                }
+            }
+
             foreach($final_attachments as $attachment) {
                 $post->attach($attachment);
             }

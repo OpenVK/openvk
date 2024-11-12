@@ -630,6 +630,7 @@ u(document).on("click", "#editPost", async (e) => {
                     <div class='post-buttons'>
                         <div class="post-horizontal"></div>
                         <div class="post-vertical"></div>
+                        <div class="post-repost"></div>
                         <div class="post-source"></div>
 
                         <div class='post-opts'>
@@ -695,6 +696,13 @@ u(document).on("click", "#editPost", async (e) => {
                 edit_place.find(`input[name='source']`).attr('value', 'remove')
             })
         }
+
+        if(api_post.copy_history && api_post.copy_history.length > 0) {
+            edit_place.find('.post-repost').html(`
+                <span>${tr('has_repost')}.</span>
+            `)
+        }
+
         // horizontal attachments
         api_post.attachments.forEach(att => {
             const type = att.type

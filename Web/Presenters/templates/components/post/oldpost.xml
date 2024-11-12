@@ -111,7 +111,7 @@
                         </span>
                     </div>
                 </div>
-                <div class='post-edit'></div>
+                <div class='post-edit' n:if='!$compact'></div>
                 <div n:if="!($compact ?? false)" class="post-menu">
                     {if is_null($thisUser)}
                         {var $forceNoDeleteLink = true}
