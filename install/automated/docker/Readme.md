@@ -30,7 +30,7 @@ docker build -t ghcr.io/openvk/openvk/php:8.2-apache ../../.. -f base-php-apache
 DB images:
 ```
 docker build -t ghcr.io/openvk/openvk/mariadb:10.9-primary ../../.. -f mariadb-primary.Dockerfile
-docker build -t ghcr.io/openvk/openvk/mariadb:10.9-eventdb ../../.. --f mariadb-eventdb.Dockerfile
+docker build -t ghcr.io/openvk/openvk/mariadb:10.9-eventdb ../../.. -f mariadb-eventdb.Dockerfile
 ```
 OpenVK main image:
 ```
