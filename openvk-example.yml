@@ -52,6 +52,8 @@ openvk:
             strict: false
         music:
             exposeOriginalURLs: true
+        newsfeed:
+            ignoredSourcesLimit: 50
         wall:
             christian: false
             anonymousPosting:

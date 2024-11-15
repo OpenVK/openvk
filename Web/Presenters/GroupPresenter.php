@@ -43,6 +43,7 @@ final class GroupPresenter extends OpenVKPresenter
             }
 
             $this->template->club = $club;
+            $this->template->ignore_status = $club->isIgnoredBy($this->user->identity);
         }
     }
     
