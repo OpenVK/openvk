@@ -3,142 +3,140 @@ name: Build images
 on: [push, pull_request]
 
 env:
-  BASE_IMAGE_NAME: openvk
-  DB_IMAGE_NAME: mariadb
-  EVENT_IMAGE_NAME: mariadb
-  DB_VERSION: "10.9"
+    BASE_IMAGE_NAME: openvk
+    DB_IMAGE_NAME: mariadb
+    EVENT_IMAGE_NAME: mariadb
+    DB_VERSION: '10.9'
 
 jobs:
-  buildbase:
-    name: Build base images
-    strategy:
-      matrix:
-        platform: [amd64, arm64]
+    buildbase:
+        name: Build base images
 
-    runs-on: ubuntu-latest
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v3
+        steps:
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v3
 
-      - name: Change repository string to lowercase
-        id: repositorystring
-        uses: Entepotenz/change-string-case-action-min-dependencies@v1.1.0
-        with:
-          string: ${{ github.repository }}
+            - name: Set up Docker Buildx
+              id: buildx
+              uses: docker/setup-buildx-action@v3
+              with:
+                  platforms: linux/amd64,linux/arm64
 
-      - name: Base image meta
-        id: basemeta
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.BASE_IMAGE_NAME}}
-          labels: |
-            org.opencontainers.image.documentation=https://github.com/OpenVK/openvk/blob/master/install/automated/docker/Readme.md
-          tags: |
-            type=sha
-            type=ref,event=branch
-            type=ref,event=pr
-            type=ref,event=tag
-            type=raw,value=latest,enable={{is_default_branch}}
+            - name: Change repository string to lowercase
+              id: repositorystring
+              uses: Entepotenz/change-string-case-action-min-dependencies@v1.1.0
+              with:
+                  string: ${{ github.repository }}
 
-      - name: Log into registry
-        if: github.event_name != 'pull_request'
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            - name: Base image meta
+              id: basemeta
+              uses: docker/metadata-action@v5
+              with:
+                  images: |
+                      ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.BASE_IMAGE_NAME}}
+                  labels: |
+                      org.opencontainers.image.documentation=https://github.com/OpenVK/openvk/blob/master/install/automated/docker/Readme.md
+                  tags: |
+                      type=sha
+                      type=ref,event=branch
+                      type=ref,event=pr
+                      type=ref,event=tag
+                      type=raw,value=latest,enable={{is_default_branch}}
 
-      - name: Build base image
-        uses: docker/build-push-action@v6
-        with:
-          platforms: linux/${{matrix.platform}}
-          file: install/automated/docker/openvk.Dockerfile
-          tags: ${{ steps.basemeta.outputs.tags }}
-          labels: ${{ steps.basemeta.outputs.labels }}
-          push: ${{ github.event_name != 'pull_request' }}
-          build-args: |
-            GITREPO=${{ steps.repositorystring.outputs.lowercase }}
+            - name: Log into registry
+              if: github.event_name != 'pull_request'
+              run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-  builddb:
-    name: Build DB images
-    strategy:
-      matrix:
-        platform: [amd64, arm64]
+            - name: Build base image
+              uses: docker/build-push-action@v6
+              with:
+                  platforms: linux/amd64,linux/arm64
+                  file: install/automated/docker/openvk.Dockerfile
+                  tags: ${{ steps.basemeta.outputs.tags }}
+                  labels: ${{ steps.basemeta.outputs.labels }}
+                  push: ${{ github.event_name != 'pull_request' }}
+                  build-args: |
+                      GITREPO=${{ steps.repositorystring.outputs.lowercase }}
 
-    runs-on: ubuntu-latest
+    builddb:
+        name: Build DB images
 
-    steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-      
-      - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v3
+        runs-on: ubuntu-latest
 
-      - name: Change repository string to lowercase
-        id: repositorystring
-        uses: Entepotenz/change-string-case-action-min-dependencies@v1.1.0
-        with:
-          string: ${{ github.repository }}
+        steps:
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v3
 
-      - name: MariaDB primary meta
-        id: db-primarymeta
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}
-          labels: |
-            org.opencontainers.image.title=OpenVK MariaDB (Primary)
-            org.opencontainers.image.description=OpenVK's image for MariaDB for primary database.
-            org.opencontainers.image.documentation=https://github.com/OpenVK/openvk/blob/master/install/automated/docker/Readme.md
-          tags: |
-            type=sha,prefix=${{env.DB_VERSION}}-primary-sha-
-            type=ref,event=branch,prefix=${{env.DB_VERSION}}-primary-
-            type=ref,event=pr,prefix=${{env.DB_VERSION}}-primary-pr-
-            type=ref,event=tag,prefix=${{env.DB_VERSION}}-primary-
-            type=raw,value=${{env.DB_VERSION}}-primary,enable={{is_default_branch}}
+            - name: Set up Docker Buildx
+              id: buildx
+              uses: docker/setup-buildx-action@v3
+              with:
+                  platforms: linux/amd64,linux/arm64
 
-      - name: MariaDB event meta
-        id: db-eventmeta
-        uses: docker/metadata-action@v5
-        with:
-          images: |
-            ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}
-          labels: |
-            org.opencontainers.image.title=OpenVK MariaDB (EventDB)
-            org.opencontainers.image.description=OpenVK's image for MariaDB for event database.
-            org.opencontainers.image.documentation=https://github.com/OpenVK/openvk/blob/master/install/automated/docker/Readme.md
-          tags: |
-            type=sha,prefix=${{env.DB_VERSION}}-eventdb-sha-
-            type=ref,event=branch,prefix=${{env.DB_VERSION}}-eventdb-
-            type=ref,event=pr,prefix=${{env.DB_VERSION}}-eventdb-pr-
-            type=ref,event=tag,prefix=${{env.DB_VERSION}}-eventdb-
-            type=raw,value=${{env.DB_VERSION}}-eventdb,enable={{is_default_branch}}
+            - name: Change repository string to lowercase
+              id: repositorystring
+              uses: Entepotenz/change-string-case-action-min-dependencies@v1.1.0
+              with:
+                  string: ${{ github.repository }}
 
-      - name: Log into registry
-        if: github.event_name != 'pull_request'
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-      
-      - name: Build MariaDB primary image
-        uses: docker/build-push-action@v6
-        with:
-          push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/${{matrix.platform}}
-          file: install/automated/docker/mariadb-primary.Dockerfile
-          tags: ${{ steps.db-primarymeta.outputs.tags }}
-          labels: ${{ steps.db-primarymeta.outputs.labels }}
-          build-args: |
-            VERSION=${{env.DB_VERSION}}
-      
-      - name: Build MariaDB event image
-        uses: docker/build-push-action@v6
-        with:
-          push: ${{ github.event_name != 'pull_request' }}
-          platforms: linux/${{matrix.platform}}
-          file: install/automated/docker/mariadb-eventdb.Dockerfile
-          tags: ${{ steps.db-eventmeta.outputs.tags }}
-          labels: ${{ steps.db-eventmeta.outputs.labels }}
-          build-args: |
-            VERSION=${{env.DB_VERSION}}
+            - name: MariaDB primary meta
+              id: db-primarymeta
+              uses: docker/metadata-action@v5
+              with:
+                  images: |
+                      ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}
+                  labels: |
+                      org.opencontainers.image.title=OpenVK MariaDB (Primary)
+                      org.opencontainers.image.description=OpenVK's image for MariaDB for primary database.
+                      org.opencontainers.image.documentation=https://github.com/OpenVK/openvk/blob/master/install/automated/docker/Readme.md
+                  tags: |
+                      type=sha,prefix=${{env.DB_VERSION}}-primary-sha-
+                      type=ref,event=branch,prefix=${{env.DB_VERSION}}-primary-
+                      type=ref,event=pr,prefix=${{env.DB_VERSION}}-primary-pr-
+                      type=ref,event=tag,prefix=${{env.DB_VERSION}}-primary-
+                      type=raw,value=${{env.DB_VERSION}}-primary,enable={{is_default_branch}}
+
+            - name: MariaDB event meta
+              id: db-eventmeta
+              uses: docker/metadata-action@v5
+              with:
+                  images: |
+                      ghcr.io/${{ steps.repositorystring.outputs.lowercase }}/${{env.DB_IMAGE_NAME}}
+                  labels: |
+                      org.opencontainers.image.title=OpenVK MariaDB (EventDB)
+                      org.opencontainers.image.description=OpenVK's image for MariaDB for event database.
+                      org.opencontainers.image.documentation=https://github.com/OpenVK/openvk/blob/master/install/automated/docker/Readme.md
+                  tags: |
+                      type=sha,prefix=${{env.DB_VERSION}}-eventdb-sha-
+                      type=ref,event=branch,prefix=${{env.DB_VERSION}}-eventdb-
+                      type=ref,event=pr,prefix=${{env.DB_VERSION}}-eventdb-pr-
+                      type=ref,event=tag,prefix=${{env.DB_VERSION}}-eventdb-
+                      type=raw,value=${{env.DB_VERSION}}-eventdb,enable={{is_default_branch}}
+
+            - name: Log into registry
+              if: github.event_name != 'pull_request'
+              run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            - name: Build MariaDB primary image
+              uses: docker/build-push-action@v6
+              with:
+                  push: ${{ github.event_name != 'pull_request' }}
+                  platforms: linux/amd64,linux/arm64
+                  file: install/automated/docker/mariadb-primary.Dockerfile
+                  tags: ${{ steps.db-primarymeta.outputs.tags }}
+                  labels: ${{ steps.db-primarymeta.outputs.labels }}
+                  build-args: |
+                      VERSION=${{env.DB_VERSION}}
+
+            - name: Build MariaDB event image
+              uses: docker/build-push-action@v6
+              with:
+                  push: ${{ github.event_name != 'pull_request' }}
+                  platforms: linux/amd64,linux/arm64
+                  file: install/automated/docker/mariadb-eventdb.Dockerfile
+                  tags: ${{ steps.db-eventmeta.outputs.tags }}
+                  labels: ${{ steps.db-eventmeta.outputs.labels }}
+                  build-args: |
+                      VERSION=${{env.DB_VERSION}}
