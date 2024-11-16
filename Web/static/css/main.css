@@ -2661,6 +2661,7 @@ a.poll-retract-vote {
     overflow-x: hidden;
     min-height: 300px;
     width: 100%;
+    padding: 0px 2px;
 }
 
 .ovk-photo-view .ovk-photo-details {

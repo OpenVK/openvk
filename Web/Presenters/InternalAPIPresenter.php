@@ -122,7 +122,7 @@ final class InternalAPIPresenter extends OpenVKPresenter
                 if($attachment instanceof \openvk\Web\Models\Entities\Photo)
                 {
                     $response[$attachment->getPrettyId()] = [
-                        "url" => $attachment->getURLBySizeId('large'),
+                        "url" => $attachment->getURLBySizeId('larger'),
                         "id"  => $attachment->getPrettyId(),
                     ];
                 }

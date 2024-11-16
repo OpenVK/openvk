@@ -953,7 +953,7 @@ final class Wall extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio']);
+        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio', 'poll']);
         $final_attachments   = [];
         foreach($parsed_attachments as $attachment) {
             if($attachment && !$attachment->isDeleted() && $attachment->canBeViewedBy($this->getUser()) &&

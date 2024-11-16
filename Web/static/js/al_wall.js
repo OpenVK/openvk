@@ -722,6 +722,14 @@ u(document).on("click", "#editPost", async (e) => {
                     'preview': preview,
                     'id': aid
                 }, edit_place)
+            } else if(type == 'poll') {
+                __appendToTextarea({
+                    'type': type,
+                    'alignment': 'vertical',
+                    'html': tr('poll'),
+                    'id': att[type].id,
+                    'undeletable': true,
+                }, edit_place) 
             } else {
                 const found_block = post.find(`div[data-att_type='${type}'][data-att_id='${aid}']`)
                 __appendToTextarea({
@@ -866,7 +874,7 @@ async function __appendToTextarea(attachment_obj, textareaNode) {
                 <div class='vertical-attachment-content' draggable="false">
                     ${attachment_obj.html}
                 </div>
-                <div class='vertical-attachment-remove'>
+                <div class='${attachment_obj.undeletable ? 'lagged' : ''} vertical-attachment-remove'>
                     <div id='small_remove_button'></div>
                 </div>
             </div>
