@@ -88,3 +88,7 @@ div.ovk-video > div > img
     height: 31px;
     min-width: 30px;
 }
+
+.entity_vertical_list .entity_vertical_list_item img {
+    border-radius: 20px;
+}

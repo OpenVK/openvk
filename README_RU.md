@@ -4,7 +4,7 @@ _[English](README.md)_
 
 **OpenVK** — это попытка создать простую CMS, которая ~~косплеит~~ имитирует старый ВКонтакте. На данный момент, представленный здесь исходный код проекта пока не является стабильным.
 
-ВКонтакте принадлежит Павлу Дурову и VK Group.
+ВКонтакте принадлежит VK (в прошлом Mail.ru Group).
 
 Честно говоря, мы даже не знаем, работает ли она вообще. Однако, эта версия поддерживается, и мы будем рады принять ваши сообщения об ошибках [в нашем баг-трекере](https://github.com/openvk/openvk/projects/1). Вы также можете отправлять их через [вкладку "Помощь"](https://ovk.to/support?act=new) (для этого вам понадобится учетная запись OpenVK).
 
@@ -28,7 +28,7 @@ _[English](README.md)_
 
 ### Процедура установки
 
-1. Установите PHP 7.4, веб-сервер, Composer, Node.js, Yarn и [Chandler](https://github.com/openvk/chandler)
+1. Установите PHP 7.4, веб-сервер, Composer, Node.js, NPM и [Chandler](https://github.com/openvk/chandler)
 
 * PHP 8 пока ещё тестируется, работоспособность движка на этой версии PHP пока не гарантируется.
 
@@ -57,7 +57,7 @@ ln -s /path/to/chandler/extensions/available/openvk /path/to/chandler/extensions
 7. Скопируйте `openvk-example.yml` в `openvk.yml` и измените параметры под свои нужды
 8. Запустите `composer install` в директории OpenVK
 9. Запустите `composer install` в директории commitcaptcha
-10. Перейдите в `Web/static/js` и выполните `yarn install`
+10. Перейдите в `Web/static/js` и выполните `npm install`
 11. Установите `openvk` в качестве корневого приложения в файле `chandler.yml`
 
 После этого вы можете войти как системный администратор в саму сеть (регистрация не требуется):

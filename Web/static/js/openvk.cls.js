@@ -1,9 +1,5 @@
-﻿
-function expand_wall_textarea(id) {
-    var el = document.getElementById('post-buttons'+id);
-    var wi = document.getElementById('wall-post-input'+id);
-    el.style.display = "block";
-    wi.className = "expanded-textarea";
+﻿if(typeof u == 'undefined') {
+    console.error('!!! You forgot to install NPM packages !!!')
 }
 
 function expand_comment_textarea(id) {
@@ -12,19 +8,6 @@ function expand_comment_textarea(id) {
     el.style.display = "block";
     wi.focus();
 }
-
-function edit_post(id, wid) {
-    var el = document.getElementById('text'+wid+'_'+id);
-    var ed = document.getElementById('text_edit'+wid+'_'+id);
-    if (el.style.display == "none") {
-        el.style.display = "block";
-        ed.style.display = "none";
-    } else {
-        el.style.display = "none";
-        ed.style.display = "block";
-    }
-}
-
 
 function hidePanel(panel, count = 0)
 {
@@ -56,19 +39,9 @@ function parseAjaxResponse(responseString) {
     }
 }
 
-function toggleMenu(id) {
-    if($(`#post-buttons${id} #wallAttachmentMenu`).is('.hidden')) {
-        $(`#post-buttons${id} #wallAttachmentMenu`).css({ opacity: 0 });
-        $(`#post-buttons${id} #wallAttachmentMenu`).toggleClass('hidden').fadeTo(250, 1);
-    } else {
-        $(`#post-buttons${id} #wallAttachmentMenu`).fadeTo(250, 0, function () {
-            $(this).toggleClass('hidden');
-        });
-    }
-}
 document.addEventListener("DOMContentLoaded", function() { //BEGIN
 
-    $(document).on("click", "#_photoDelete", function(e) {
+    $(document).on("click", "#_photoDelete, #_videoDelete", function(e) {
         var formHtml = "<form id='tmpPhDelF' action='" + u(this).attr("href") + "' >";
         formHtml    += "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />";
         formHtml    += "</form>";
@@ -186,74 +159,6 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
     })
 }); //END ONREADY DECLS
 
-async function repostPost(id, hash) {
-    uRepostMsgTxt  = `
-    <b>${tr('auditory')}:</b> <br/>
-    <input type="radio" name="type" onchange="signs.setAttribute('hidden', 'hidden');document.getElementById('groupId').setAttribute('hidden', 'hidden')" value="wall" checked>${tr("in_wall")}<br/>
-    <input type="radio" name="type" onchange="signs.removeAttribute('hidden');document.getElementById('groupId').removeAttribute('hidden')" value="group" id="group">${tr("in_group")}<br/>
-    <select style="width:50%;" id="groupId" name="groupId" hidden>
-    </select><br/>
-    <b>${tr('your_comment')}:</b> 
-    <textarea id='uRepostMsgInput_${id}'></textarea>
-    <div id="signs" hidden>
-    <label><input onchange="signed.checked ? signed.checked = false : null" type="checkbox" id="asgroup" name="asGroup">${tr('post_as_group')}</label><br>
-    <label><input onchange="asgroup.checked = true" type="checkbox" id="signed" name="signed">${tr('add_signature')}</label>
-    </div>
-    <br/><br/>`;
-    let clubs = [];
-    repostsCount = document.getElementById("repostsCount"+id)
-    prevVal = repostsCount != null ? Number(repostsCount.innerHTML) : 0;
-
-    MessageBox(tr('share'), uRepostMsgTxt, [tr('send'), tr('cancel')], [
-        (function() {
-            text = document.querySelector("#uRepostMsgInput_"+id).value;
-            type = "user";
-            radios = document.querySelectorAll('input[name="type"]')
-            for(const r of radios)
-            {
-                if(r.checked)
-                {
-                    type = r.value;
-                    break;
-                }
-            }
-            groupId = document.querySelector("#groupId").value;
-            asGroup = asgroup.checked == true ? 1 : 0;
-            signed  = signed.checked == true ? 1 : 0;
-            hash = encodeURIComponent(hash);
-            
-            xhr = new XMLHttpRequest();
-            xhr.open("POST", "/wall"+id+"/repost?hash="+hash, true);
-            xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-            xhr.onload = (function() {
-                if(xhr.responseText.indexOf("wall_owner") === -1)
-                    MessageBox(tr('error'), tr('error_repost_fail'), [tr('ok')], [Function.noop]);
-                else {
-                    let jsonR = JSON.parse(xhr.responseText);
-                    NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.location.href = "/wall" + jsonR.wall_owner});
-                    repostsCount != null ?
-                    repostsCount.innerHTML = prevVal+1 :
-                    document.getElementById("reposts"+id).insertAdjacentHTML("beforeend", "(<b id='repostsCount"+id+"'>1</b>)") //для старого вида постов
-                }
-                });
-            xhr.send('text='+encodeURI(text) + '&type='+type + '&groupId='+groupId + "&asGroup="+asGroup + "&signed="+signed);
-        }),
-        Function.noop
-    ]);
-    
-    try
-    {
-        clubs = await API.Groups.getWriteableClubs();
-        for(const el of clubs) {
-            document.getElementById("groupId").insertAdjacentHTML("beforeend", `<option value="${el.id}">${escapeHtml(el.name)}</option>`)
-        }
-
-    } catch(rejection) {
-        console.error(rejection)
-        document.getElementById("group").setAttribute("disabled", "disabled")
-    }
-}
-
 function setClubAdminComment(clubId, adminId, hash) {
     MessageBox("Изменить комментарий к администратору", `
         <form action="/club${clubId}/setAdmin" method="post" id="uClubAdminCommentForm_${clubId}_${adminId}">
@@ -319,17 +224,6 @@ function showCoinsTransferDialog(coinsCount, hash) {
     ]);
 }
 
-function chunkSubstr(string, size) {
-    const numChunks = Math.ceil(string.length / size);
-    const chunks = new Array(numChunks);
-
-    for (let i = 0, o = 0; i < numChunks; ++i, o += size) {
-        chunks[i] = string.substr(o, size);
-    }
-
-    return chunks;
-}
-
 function autoTab(original, next, previous) {
     if(original.getAttribute && original.value.length == original.getAttribute("maxlength") && next !== undefined)
         next.focus();
@@ -359,11 +253,6 @@ function supportFastAnswerDialogOnClick(answer) {
     const answerInput = document.querySelector("#answer_text");
     answerInput.value = answer;
     answerInput.focus();
-}
-
-function ovk_proc_strtr(string, length = 0) {
-    const newString = string.substring(0, length);
-    return newString + (string !== newString ? "…" : "");
 }
 
 function showProfileDeactivateDialog(hash) {
@@ -486,57 +375,6 @@ function showIncreaseRatingDialog(coinsCount, userUrl, hash) {
         else
             document.querySelector("#rating_price").innerHTML = value + " " + tr("points_amount_other").replace("$1 ", "");
     };
-}
-
-function escapeHtml(text) {
-    var map = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#039;'
-    };
-    
-    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-}
-
-function highlightText(searchText, container_selector, selectors = []) {
-    const container = u(container_selector)
-    const regexp = new RegExp(`(${searchText})`, 'gi')
-
-    function highlightNode(node) {
-        if(node.nodeType == 3) {
-            let newNode = escapeHtml(node.nodeValue)
-            newNode = newNode.replace(regexp, (match, ...args) => {
-                return `<span class='highlight'>${escapeHtml(match)}</span>`
-            })
-            
-            const tempDiv = document.createElement('div')
-            tempDiv.innerHTML = newNode
-
-            while(tempDiv.firstChild) {
-                node.parentNode.insertBefore(tempDiv.firstChild, node)
-            }
-            node.parentNode.removeChild(node)
-        } else if(node.nodeType === 1 && node.tagName !== 'SCRIPT' && node.tagName !== 'BR' && node.tagName !== 'STYLE' && !node.classList.contains('highlight')) {
-            Array.from(node.childNodes).forEach(highlightNode);
-        }
-    }
-
-    selectors.forEach(selector => {
-        elements = container.find(selector)
-        if(!elements || elements.length < 1) return;
-
-        elements.nodes.forEach(highlightNode)
-    })
-}
-
-String.prototype.escapeHtml = function() {
-    try {
-        return escapeHtml(this)
-    } catch(e) {
-        return ''
-    }
 }
 
 $(document).on("scroll", () => {

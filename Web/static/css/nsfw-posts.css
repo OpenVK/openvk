@@ -1,28 +1,28 @@
-.post-nsfw .post-content .media {
-    filter: saturate(0.8) blur(15px);
-}
-
-.post-nsfw .post-content .attachment {
-    overflow: hidden;
+.post-nsfw .post-content {
     position: relative;
+    overflow: hidden;
+    cursor: pointer;
 }
 
-.post-nsfw .post-content .attachment:active .media {
-    filter: none;
+.post-nsfw .post-content .text {
+    filter: saturate(0.8) blur(28px);
+    pointer-events: none;
 }
 
-.post-nsfw .post-content .attachment::after {
+.post-nsfw .post-content::after {
     position: absolute;
-    top: calc(50% - 16px);
+    top: 0;
     left: 0;
     width: 100%;
-    padding: 8px 0;
-    background-color: hsla(0, 0%, 0%, .5);
+    height: 100%;
+    z-index: 1;
+    background-color: hsla(0, 0%, 0%, .7);
     color: #fff;
     text-align: center;
     content: attr(data-localized-nsfw-text);
-}
 
-.post-nsfw .post-content .attachment:active::after {
-    display: none;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 }

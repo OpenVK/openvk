@@ -166,6 +166,9 @@
                 {/if}
 
                 <a class="profile_link" style="display:block;width:96%;" href="javascript:reportUser()">{_report}</a>
+                <a n:if="!$user->isHideFromGlobalFeedEnabled()" class="profile_link" style="display:block;width:96%;" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$user->getId()}">
+                    {if !$ignore_status}{_ignore_user}{else}{_unignore_user}{/if}
+                </a>
                 <script>
                     function reportUser() {
                         uReportMsgTxt  = tr("going_to_report_user");
@@ -322,13 +325,13 @@
                 </div>
                 <div style="padding: 5px;">
                     <div class="ovk-video" n:foreach="$videos as $video">
-                        <a href="/video{$video->getPrettyId()}" class="preview" align="center" id="videoOpen" data-id="{$video->getId()}">
+                        <a href="/video{$video->getPrettyId()}" class="preview" align="center" id="videoOpen" data-id="{$video->getPrettyId()}">
                             <img
                                 src="{$video->getThumbnailURL()}"
                                 style="max-width: 170px; max-height: 127px; margin: auto;" />
                         </a>
                         <div>
-                            <b><a href="/video{$video->getPrettyId()}" id="videoOpen" data-id="{$video->getId()}">{ovk_proc_strtr($video->getName(), 30)}</a></b><br>
+                            <b><a href="/video{$video->getPrettyId()}" id="videoOpen" data-id="{$video->getPrettyId()}">{ovk_proc_strtr($video->getName(), 30)}</a></b><br>
                             <span style="font-size: 10px;">{$video->getPublicationTime()} | {_comments} ({$video->getCommentsCount()})</span>
                         </div>
                     </div>

@@ -1,13 +1,3 @@
-function fmtTime(time) {
-    const mins = String(Math.floor(time / 60)).padStart(2, '0');
-    const secs = String(Math.floor(time % 60)).padStart(2, '0');
-    return `${ mins}:${ secs}`;
-}
-
-function fastError(message) {
-    MessageBox(tr("error"), message, [tr("ok")], [Function.noop])
-}
-
 // elapsed это вроде прошедшие, а оставшееся это remaining но ладно уже
 function getElapsedTime(fullTime, time) {
     let timer = fullTime - time
@@ -1354,8 +1344,8 @@ $(document).on("click", "#_deletePlaylist", (e) => {
     }, Function.noop])
 })
 
-$(document).on("click", "#_audioAttachment", (e) => {
-    let form = e.currentTarget.closest("form")
+$(document).on("click", "#__audioAttachment", (e) => {
+    const form = e.target.closest("form")
     let body = `
         <div class="searchBox">
             <input name="query" type="text" maxlength="50" placeholder="${tr("header_search")}">
@@ -1367,7 +1357,7 @@ $(document).on("click", "#_audioAttachment", (e) => {
 
         <div class="audiosInsert"></div>
     `
-    MessageBox(tr("select_audio"), body, [tr("ok")], [Function.noop])
+    MessageBox(tr("select_audio"), body, [tr("close")], [Function.noop])
 
     document.querySelector(".ovk-diag-body").style.padding = "0"
     document.querySelector(".ovk-diag-cont").style.width = "580px"
@@ -1388,23 +1378,24 @@ $(document).on("click", "#_audioAttachment", (e) => {
 
         result.querySelectorAll(".audioEmbed").forEach(el => {
             let id = el.dataset.prettyid
-            let name = el.dataset.name
-            let isAttached = (form.querySelector("input[name='audios']").value.includes(`${id},`))
+            const is_attached = (u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`)).length > 0
+            
             document.querySelector(".audiosInsert").insertAdjacentHTML("beforeend", `
-                <div style="display: table;width: 100%;clear: both;">
-                    <div style="width: 72%;float: left;">${el.outerHTML}</div>
-                    <div class="attachAudio" data-attachmentdata="${id}" data-name="${name}">
-                        <span>${isAttached ? tr("detach_audio") : tr("attach_audio")}</span>
+                <div class='audio_attachment_header' style="display: flex;width: 100%;">
+                    <div class='player_part' style="width: 72%;">${el.outerHTML}</div>
+                    <div class="attachAudio" data-attachmentdata="${id}">
+                        <span>${is_attached ? tr("detach_audio") : tr("attach_audio")}</span>
                     </div>
                 </div>
             `)
         })
 
         u("#loader").remove()
+        u('#show_more').remove()
 
         if(thisc.page < pagesCount) {
             document.querySelector(".audiosInsert").insertAdjacentHTML("beforeend", `
-            <div id="showMoreAudios" data-pagesCount="${pagesCount}" data-page="${thisc.page + 1}" class="showMore">
+            <div id="show_more" data-pagesCount="${pagesCount}" data-page="${thisc.page + 1}" class="showMore">
                 <span>${tr("show_more_audios")}</span>
             </div>`)
         }
@@ -1424,14 +1415,12 @@ $(document).on("click", "#_audioAttachment", (e) => {
 
     searcher.movePage(1)
 
-    $(".audiosInsert").on("click", "#showMoreAudios", (e) => {
-        u(e.currentTarget).remove()
+    u(".audiosInsert").on("click", "#show_more", async (e) => {
+        u(e.target).closest('#show_more').addClass('lagged')
         searcher.movePage(Number(e.currentTarget.dataset.page))
     })
 
     $(".searchBox input").on("change", async (e) => {
-        await new Promise(r => setTimeout(r, 500));
-
         if(e.currentTarget.value === document.querySelector(".searchBox input").value) {
             searcher.clearContainer()
 
@@ -1462,44 +1451,34 @@ $(document).on("click", "#_audioAttachment", (e) => {
         return;
     })
 
-    function insertAttachment(id) {
-        let audios = form.querySelector("input[name='audios']") 
+    u(".audiosInsert").on("click", ".attachAudio", (ev) => {
+        const id = ev.currentTarget.dataset.attachmentdata
+        const is_attached = u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`).length > 0
 
-        if(!audios.value.includes(id + ",")) {
-            if(audios.value.split(",").length > 10) {
-                NewNotification(tr("error"), tr("max_attached_audios"))
-                return false
+        // 04.11.2024 19:03
+        if(is_attached) {
+            u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`).remove()
+            u(ev.currentTarget).find("span").html(tr("attach_audio"))
+        } else {
+            if(u(form).find(`.upload-item`).length > window.openvk.max_attachments) {
+                makeError(tr('too_many_attachments'), 'Red', 10000, 1)
+                return    
             }
 
-            form.querySelector("input[name='audios']").value += (id + ",")
+            u(ev.currentTarget).find("span").html(tr("detach_audio"))
 
-            return true
-        } else {
-            form.querySelector("input[name='audios']").value = form.querySelector("input[name='audios']").value.replace(id + ",", "")
-
-            return false
-        }
-    }
-
-    $(".audiosInsert").on("click", ".attachAudio", (ev) => {
-        if(!insertAttachment(ev.currentTarget.dataset.attachmentdata)) {
-            u(`.post-has-audios .post-has-audio[data-id='${ev.currentTarget.dataset.attachmentdata}']`).remove()
-            ev.currentTarget.querySelector("span").innerHTML = tr("attach_audio")
-        } else {
-            ev.currentTarget.querySelector("span").innerHTML = tr("detach_audio")
-
-            form.querySelector(".post-has-audios").insertAdjacentHTML("beforeend", `
-                <div class="post-has-audio" id="unattachAudio" data-id="${ev.currentTarget.dataset.attachmentdata}">
-                    <span>${ovk_proc_strtr(escapeHtml(ev.currentTarget.dataset.name), 40)}</span>
+            const header = u(ev.currentTarget).closest('.audio_attachment_header')
+            const player = header.find('.player_part')
+            u(form).find(".post-vertical").append(`
+                <div class="vertical-attachment upload-item" data-type='audio' data-id="${ev.currentTarget.dataset.attachmentdata}">
+                    <div class='vertical-attachment-content'>
+                        ${player.html()}
+                    </div>
+                    <div class='vertical-attachment-remove'>
+                        <div id='small_remove_button'></div>
+                    </div>
                 </div>
             `)
-
-            u(`#unattachAudio[data-id='${ev.currentTarget.dataset.attachmentdata}']`).on("click", (e) => {
-                let id = ev.currentTarget.dataset.attachmentdata
-                form.querySelector("input[name='audios']").value = form.querySelector("input[name='audios']").value.replace(id + ",", "")
-
-                u(e.currentTarget).remove()
-            })
         }
     })
 })
@@ -1509,7 +1488,13 @@ $(document).on("click", ".audioEmbed.processed .playerButton", (e) => {
 })
 
 $(document).on("click", ".audioEmbed.withdrawn", (e) => {
-    MessageBox(tr("error"), tr("audio_embed_withdrawn"), [tr("ok")], [Function.noop])
+    const msg = new CMessageBox({
+        title: tr('error'),
+        body: tr('audio_embed_withdrawn'),
+        unique_name: 'withdrawn_notify',
+        buttons: [tr('ok')],
+        callbacks: [Function.noop]
+    })
 })
 
 $(document).on("click", ".musicIcon.report-icon", (e) => {

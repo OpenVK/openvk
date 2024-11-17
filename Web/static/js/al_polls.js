@@ -64,8 +64,9 @@ function pollRadioPressed(radio) {
     form.submit();
 }
 
-function initPoll(id) {
-    let form = $(`#wall-post-input${id}`).parent();
+function initPoll(event) {
+    let form = $(event.target.closest('.post-buttons')).parent();
+    const id = random_int(0, 100)
 
     let mBody = `
         <div id="poll_editor${id}">
@@ -87,9 +88,9 @@ function initPoll(id) {
         </div>
     `;
 
-    MessageBox(tr("create_poll"), mBody, [tr("attach"), tr("cancel")], [
+    const msg = MessageBox(tr("create_poll"), mBody, [tr("attach"), tr("cancel")], [
         function() {
-            let dialog = $(this.$dialog().nodes[0]);
+            let dialog = $(msg.getNode().nodes[0]);
             $("input", dialog).unbind();
 
             let title   = $("input[name=title]", dialog).val();
@@ -117,9 +118,9 @@ function initPoll(id) {
             $(".post-has-poll", form).show();
         },
         function() {
-            $("input", $(this.$dialog().nodes[0])).unbind();
+            $("input", $(msg.getNode())).unbind();
         }
-    ]);
+    ], true);
 
     let editor = $(`#poll_editor${id}`);
     $("input[name=newOption]", editor).bind("focus", function() {

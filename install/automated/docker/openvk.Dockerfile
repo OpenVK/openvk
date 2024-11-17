@@ -1,5 +1,5 @@
 ARG GITREPO=openvk/openvk
-FROM ghcr.io/${GITREPO}/php:8.2-cli as builder
+FROM ghcr.io/${GITREPO}/php:8.2-cli AS builder
 
 WORKDIR /opt
 
@@ -27,15 +27,15 @@ ADD composer.* .
 
 RUN composer install
 
-FROM docker.io/node:14 as nodejs
+FROM docker.io/node:20 AS nodejs
 
 COPY --from=builder /opt/chandler /opt/chandler
 
 WORKDIR /opt/chandler/extensions/available/openvk/Web/static/js
 
-ADD Web/static/js/package.json Web/static/js/package-lock.json Web/static/js/yarn.lock ./
+ADD Web/static/js/package.json Web/static/js/package-lock.json ./
 
-RUN yarn install
+RUN npm ci
 
 WORKDIR /opt/chandler/extensions/available/openvk
 
@@ -58,3 +58,5 @@ VOLUME [ "/opt/chandler/extensions/available/openvk/tmp/api-storage/photos" ]
 VOLUME [ "/opt/chandler/extensions/available/openvk/tmp/api-storage/videos" ]
 
 USER www-data
+
+WORKDIR /opt/chandler/extensions/available/openvk

@@ -17,6 +17,7 @@
         {script "js/node_modules/umbrellajs/umbrella.min.js"}
         {script "js/l10n.js"}
         {script "js/openvk.cls.js"}
+        {script "js/utils.js"}
         {script "js/node_modules/dashjs/dist/dash.all.min.js"}
         <script src="/assets/packages/static/openvk/js/node_modules/cropperjs/dist/cropper.js" type="module"></script>
         {script "js/al_music.js"}
@@ -26,6 +27,7 @@
         {css "js/node_modules/tippy.js/dist/border.css"}
         {css "js/node_modules/tippy.js/dist/svg-arrow.css"}
         {css "js/node_modules/tippy.js/themes/light.css"}
+        {css "js/node_modules/jquery-ui/themes/base/resizable.css"}
         {script "js/node_modules/@popperjs/core/dist/umd/popper.min.js"}
         {script "js/node_modules/tippy.js/dist/tippy-bundle.umd.min.js"}
         {script "js/node_modules/handlebars/dist/handlebars.min.js"}
@@ -51,7 +53,10 @@
         <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['bellsAndWhistles']['testLabel']" id="test-label">FOR TESTING PURPOSES ONLY</div>
 
         <div class="notifications_global_wrap"></div>
-        <div class="dimmer"></div>
+        <div class="dimmer">
+            <div id='absolute_territory'></div>
+        </div>
+        <div class="upLeftErrors"></div>
 
         <div class="articleView">
             <a id="articleCloseButton" class="button" href="javascript:void(u('body').removeClass('article'));">{_close}</a>
@@ -245,9 +250,9 @@
 
                             <div class="floating_sidebar">
                                 <a id="minilink-friends" class="minilink" href="/friends{$thisUser->getId()}">
-                                    <object type="internal/link" n:if="$thisUser->getFollowersCount() > 0">
+                                    <object type="internal/link" n:if="$thisUser->getRequestsCount() > 0">
                                         <div class="counter">
-                                            +{$thisUser->getFollowersCount()}
+                                            +{$thisUser->getRequestsCount()}
                                         </div>
                                     </object>
                                     <img src="/assets/packages/static/openvk/img/friends.svg">
@@ -368,7 +373,7 @@
         </div>
 
         <div id="ajloader" class="loader">
-            <img src="/assets/packages/static/openvk/img/loading_mini.gif" style="width: 40px;">
+            <img src="/assets/packages/static/openvk/img/loading_mini.gif">
         </div>
 
         {include "components/cookies.xml"}
@@ -389,6 +394,7 @@
 
         {ifset $thisUser}
             {script "js/al_notifs.js"}
+            {script "js/al_feed.js"}
         {/ifset}
 
         <script>bsdnHydrate();</script>
@@ -430,6 +436,9 @@
             window.openvk = {
                 "audio_genres": {\openvk\Web\Models\Entities\Audio::genres},
                 "at_search": {$atSearch ?? false},
+                "max_attachments": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"] ?? 10},
+                "max_filesize_mb": 5,
+                "current_id": {$thisUser ? $thisUser->getId() : 0},
             }
         </script>
 

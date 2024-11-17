@@ -112,7 +112,7 @@ class User extends RowModel
             return "/id" . $this->getId();
     }
     
-    function getAvatarUrl(string $size = "miniscule"): string
+    function getAvatarUrl(string $size = "miniscule", $avPhoto = NULL): string
     {
         $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
         
@@ -121,7 +121,9 @@ class User extends RowModel
         else if($this->isBanned())
             return "$serverUrl/assets/packages/static/openvk/img/banned.jpg";
         
-        $avPhoto = $this->getAvatarPhoto();
+        if(!$avPhoto)
+            $avPhoto = $this->getAvatarPhoto();
+        
         if(is_null($avPhoto))
             return "$serverUrl/assets/packages/static/openvk/img/camera_200.png";
         else
@@ -1344,11 +1346,6 @@ class User extends RowModel
         $res->first_name = $this->getFirstName();
         $res->last_name = $this->getLastName();
         $res->deactivated = $this->isDeactivated();
-        $res->photo_50    = $this->getAvatarURL();
-        $res->photo_100   = $this->getAvatarURL("tiny");
-        $res->photo_200   = $this->getAvatarURL("normal");
-        $res->photo_id    = !is_null($this->getAvatarPhoto()) ? $this->getAvatarPhoto()->getPrettyId() : NULL;
-
         $res->is_closed   = $this->isClosed();
 
         if(!is_null($user))
@@ -1357,17 +1354,60 @@ class User extends RowModel
         if(!is_array($fields))
             $fields = explode(',', $fields);
         
+        $avatar_photo  = $this->getAvatarPhoto();
         foreach($fields as $field) {
             switch($field) {
                 case 'is_dead':
-                    $res->is_dead = $user->isDead();
+                    $res->is_dead = $this->isDead();
+                    break;
+                case 'verified':
+                    $res->verified = (int)$this->isVerified();
+                    break;
+                case 'sex':
+                    $res->sex = $this->isFemale() ? 1 : ($this->isNeutral() ? 0 : 2);
+                    break;
+                case 'photo_50':
+                    $res->photo_50 = $this->getAvatarUrl('miniscule', $avatar_photo);
+                    break;
+                case 'photo_100':
+                    $res->photo_100 = $this->getAvatarUrl('tiny', $avatar_photo);
+                    break;
+                case 'photo_200':
+                    $res->photo_200 = $this->getAvatarUrl('normal', $avatar_photo);
+                    break;
+                case 'photo_max':
+                    $res->photo_max = $this->getAvatarUrl('original', $avatar_photo);
+                    break;
+                case 'photo_id':
+                    $res->photo_id = $avatar_photo ? $avatar_photo->getPrettyId() : NULL;
+                    break;
+                case 'background':
+                    $res->background = $this->getBackDropPictureURLs();
+                    break;
+                case 'reg_date':
+                    $res->reg_date = $this->getRegistrationTime()->timestamp();
+                    break;
+                case 'nickname':
+                    $res->nickname = $this->getPseudo();
+                    break;
+                case 'rating':
+                    $res->rating = $this->getRating();
+                    break;
+                case 'status':
+                    $res->status = $this->getStatus();
+                    break;
+                case 'screen_name':
+                    $res->screen_name = $this->getShortCode() ?? "id".$this->getId();
+                    break;
+                case 'real_id':
+                    $res->real_id = $this->getRealId();
                     break;
             }
         }
 
         return $res;
     }
-
+    
     function getAudiosCollectionSize()
     {
         return (new \openvk\Web\Models\Repositories\Audios)->getUserCollectionSize($this);
@@ -1407,7 +1447,40 @@ class User extends RowModel
         return $returnArr;
     }
 
+    function getIgnoredSources(int $offset = 0, int $limit = 10, bool $onlyIds = false)
+    {
+        $sources = DatabaseConnection::i()->getContext()->table("ignored_sources")->where("owner", $this->getId())->limit($limit, $offset)->order('id DESC');
+        $output_array = [];
+
+        foreach($sources as $source) {
+            if($onlyIds) {
+                $output_array[] = (int)$source->source;
+            } else {
+                $ignored_source_model = NULL;
+                $ignored_source_id = (int)$source->source;
+
+                if($ignored_source_id > 0)
+                    $ignored_source_model = (new Users)->get($ignored_source_id);
+                else
+                    $ignored_source_model = (new Clubs)->get(abs($ignored_source_id));
+    
+                if(!$ignored_source_model)
+                    continue;
+
+                $output_array[] = $ignored_source_model;
+            }
+        }
+
+        return $output_array;
+    }
+
+    function getIgnoredSourcesCount()
+    {
+        return DatabaseConnection::i()->getContext()->table("ignored_sources")->where("owner", $this->getId())->count();
+    }
+
     use Traits\TBackDrops;
     use Traits\TSubscribable;
     use Traits\TAudioStatuses;
+    use Traits\TIgnorable;
 }

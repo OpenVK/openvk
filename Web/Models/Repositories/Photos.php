@@ -33,7 +33,7 @@ class Photos
         return new Photo($photo);
     }
 
-    function getEveryUserPhoto(User $user, int $page = 1, ?int $perPage = NULL): \Traversable
+    function getEveryUserPhoto(User $user, int $offset = 0, int $limit = 10): \Traversable
     {
         $perPage = $perPage ?? OPENVK_DEFAULT_PER_PAGE;
         $photos = $this->photos->where([
@@ -41,7 +41,7 @@ class Photos
             "deleted" => 0
         ])->order("id DESC");
 
-        foreach($photos->page($page, $perPage) as $photo) {
+        foreach($photos->limit($limit, $offset) as $photo) {
             yield new Photo($photo);
         }
     }

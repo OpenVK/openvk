@@ -427,7 +427,7 @@ final class Photos extends VKAPIRequestHandler
                 $this->fail(15, "Access denied");
             
             $photos = array_slice(iterator_to_array($album->getPhotos(1, $count + $offset)), $offset);
-            $res["count"] = sizeof($photos);
+            $res["count"] = $album->size();
 
             foreach($photos as $photo) {
                 if(!$photo || $photo->isDeleted()) continue;
@@ -638,15 +638,15 @@ final class Photos extends VKAPIRequestHandler
             $this->fail(4, "This method doesn't works with clubs");
 
         $user = (new UsersRepo)->get($owner_id);
-
         if(!$user)
             $this->fail(4, "Invalid user");
         
         if(!$user->getPrivacyPermission('photos.read', $this->getUser()))
             $this->fail(21, "This user chose to hide his albums.");
 
-        $photos = array_slice(iterator_to_array((new PhotosRepo)->getEveryUserPhoto($user, 1, $count + $offset)), $offset);
+        $photos = (new PhotosRepo)->getEveryUserPhoto($user, $offset, $count);
         $res = [
+            "count" => (new PhotosRepo)->getUserPhotosCount($user),
             "items" => [],
         ];
 

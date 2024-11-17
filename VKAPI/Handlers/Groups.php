@@ -11,6 +11,12 @@ final class Groups extends VKAPIRequestHandler
     {
         $this->requireUser();
 
+        # InfoApp fix
+        if($filter == "admin" && ($user_id != 0 && $user_id != $this->getUser()->getId())) {
+            $this->fail(15, 'Access denied: filter admin is available only for current user');
+        }
+
+        $clbs = [];
         if($user_id == 0) {
         	foreach($this->getUser()->getClubs($offset, $filter == "admin", $count, true) as $club)
         		$clbs[] = $club;

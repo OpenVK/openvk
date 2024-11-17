@@ -219,6 +219,7 @@
 "my_news" = "My news";
 "all_news" = "All news";
 "posts_per_page" = "Number of posts per page";
+"show_ignored_sources" = "Show ignored sources";
 
 "attachment" = "Attachment";
 "post_as_group" = "Post as group";
@@ -251,12 +252,24 @@
 
 "edited_short" = "edited";
 
+"feed_settings" = "Feed settings";
+"ignored_sources" = "Ignored sources";
+"ignore_user" = "Ignore user";
+"unignore_user" = "Unignore user";
+
+"ignore_club" = "Ignore club";
+"unignore_club" = "Unignore club";
+"no_ignores_count" = "No ignored sources.";
+"stop_ignore" = "Unignore";
+"start_from_page" = "Start from page";
+
 "all_posts" = "All posts";
 "users_posts" = "Posts by $1";
 "clubs_posts" = "Group's posts";
 "others_posts" = "Others posts";
 
 "show_more" = "Show more";
+"has_repost" = "Has repost";
 
 /* Friends */
 
@@ -505,6 +518,7 @@
 "click_to_go_to_album" = "Click here to go to album.";
 "error_uploading_photo" = "Error when uploading photo";
 "too_many_pictures" = "No more than 10 pictures";
+"too_many_attachments" = "Too many attachments.";
 
 "drag_files_here" = "Drag files here";
 "only_images_accepted" = "File \"$1\" is not an image";
@@ -835,6 +849,9 @@
 "max_attached_audios" = "Max is 10 audios";
 "no_videos" = "You don't have uploaded videos.";
 "no_videos_results" = "No results.";
+
+"video_file_upload" = "Upload file";
+"video_youtube_upload" = "Add from YouTube";
 
 "change_video" = "Change video";
 "unknown_video" = "This video is not supported in your version of OpenVK.";
@@ -1544,6 +1561,9 @@
 "group_is_banned" = "Group was successfully banned";
 
 "description_too_long" = "Description is too long.";
+"invalid_club" = "This group does not exists.";
+"invalid_user" = "This user does not exists.";
+"ignored_sources_limit" = "Limit of ignored sources has exceed";
 
 "invalid_audio" = "Invalid audio.";
 "do_not_have_audio" = "You don't have this audio.";
@@ -1762,6 +1782,9 @@
 "question_confirm" = "This action can't be undone. Do you really wanna do it?";
 "confirm_m" = "Confirm";
 "action_successfully" = "Success";
+"exit_noun" = "Exit";
+"exit_confirmation" = "Are you sure want to exit?";
+"apply" = "Apply";
 
 /* User Alerts */
 
@@ -2066,7 +2089,7 @@
 "showing_x_y" = "(showing $1—$2)";
 "no_results_by_this_query" = "Nothing was found by this query.";
 "s_additional" = "Additional";
-"s_it_is_you" = "it is you";
+"s_it_is_you" = "that's you";
 
 /* BadBrowser */
 
