@@ -11,23 +11,54 @@ use openvk\Web\Models\Repositories\Comments as CommentsRepo;
 
 final class Video extends VKAPIRequestHandler
 {
-    function get(int $owner_id, string $videos = "", int $offset = 0, int $count = 30, int $extended = 0): object
+    function get(int $owner_id = 0, string $videos = "", string $fields = "", int $offset = 0, int $count = 30, int $extended = 0): object
     {
         $this->requireUser();
 
         if(!empty($videos)) {
             $vids = explode(',', $videos);
-    
-            foreach($vids as $vid)
-            {
+            $profiles = [];
+            $groups = [];
+            foreach($vids as $vid) {
                 $id    = explode("_", $vid);
-    
                 $items = [];
     
                 $video = (new VideosRepo)->getByOwnerAndVID(intval($id[0]), intval($id[1]));
-                if($video) {
-                    $items[] = $video->getApiStructure($this->getUser());
+                if($video && !$video->isDeleted()) {
+                    $out_video = $video->getApiStructure($this->getUser())->video;
+                    $items[] = $out_video;
+                    if($out_video['owner_id']) {
+                        if($out_video['owner_id'] > 0) 
+                            $profiles[] = $out_video['owner_id'];
+                        else
+                            $groups[] = abs($out_video['owner_id']);
+                    }
                 }
+            }
+
+            if($extended == 1) {
+                $profiles = array_unique($profiles);
+                $groups   = array_unique($groups);
+    
+                $profilesFormatted = [];
+                $groupsFormatted   = [];
+    
+                foreach($profiles as $prof) {
+                    $profile = (new UsersRepo)->get($prof);
+                    $profilesFormatted[] = $profile->toVkApiStruct($this->getUser(), $fields);
+                }
+    
+                foreach($groups as $gr) {
+                    $group = (new ClubsRepo)->get($gr);
+                    $groupsFormatted[] = $group->toVkApiStruct($this->getUser(), $fields);
+                }
+    
+                return (object) [
+                    "count" => sizeof($items),
+                    "items" => $items,
+                    "profiles" => $profilesFormatted,
+                    "groups" => $groupsFormatted,
+                ];
             }
     
             return (object) [
@@ -46,12 +77,46 @@ final class Video extends VKAPIRequestHandler
             if(!$user->getPrivacyPermission('videos.read', $this->getUser()))
                 $this->fail(21, "This user chose to hide his videos.");
 
-            $videos = (new VideosRepo)->getByUser($user, $offset + 1, $count);
+            $videos = (new VideosRepo)->getByUserLimit($user, $offset, $count);
             $videosCount = (new VideosRepo)->getUserVideosCount($user);
             
             $items = [];
-            foreach ($videos as $video) {
-                $items[] = $video->getApiStructure($this->getUser());
+            $profiles = [];
+            $groups = [];
+            foreach($videos as $video) {
+                $video   = $video->getApiStructure($this->getUser())->video;
+                $items[] = $video;
+                if($video['owner_id']) {
+                    if($video['owner_id'] > 0) 
+                        $profiles[] = $video['owner_id'];
+                    else
+                        $groups[] = abs($video['owner_id']);
+                }
+            }
+
+            if($extended == 1) {
+                $profiles = array_unique($profiles);
+                $groups   = array_unique($groups);
+    
+                $profilesFormatted = [];
+                $groupsFormatted   = [];
+    
+                foreach($profiles as $prof) {
+                    $profile = (new UsersRepo)->get($prof);
+                    $profilesFormatted[] = $profile->toVkApiStruct($this->getUser(), $fields);
+                }
+    
+                foreach($groups as $gr) {
+                    $group = (new ClubsRepo)->get($gr);
+                    $groupsFormatted[] = $group->toVkApiStruct($this->getUser(), $fields);
+                }
+    
+                return (object) [
+                    "count" => $videosCount,
+                    "items" => $items,
+                    "profiles" => $profilesFormatted,
+                    "groups" => $groupsFormatted,
+                ];
             }
     
             return (object) [

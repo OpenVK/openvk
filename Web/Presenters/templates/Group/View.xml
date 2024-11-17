@@ -168,10 +168,10 @@
         {/if}
         {var $canReport = $thisUser->getId() != $club->getOwner()->getId()}
         {if $canReport}
-        <a class="profile_link" style="display:block;" href="javascript:reportVideo()">{_report}</a>
+        <a class="profile_link" style="display:block;" href="javascript:reportClub()">{_report}</a>
 
         <script>
-            function reportVideo() {
+            function reportClub() {
             uReportMsgTxt  = tr("going_to_report_club");
             uReportMsgTxt += "<br/>"+tr("report_question_text");
             uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"

@@ -87,6 +87,7 @@ class Album extends MediaCollection
         $res = (object) [];
 
         $res->id              = $this->getPrettyId();
+        $res->vid             = $this->getId();
         $res->thumb_id        = !is_null($this->getCoverPhoto()) ? $this->getCoverPhoto()->getPrettyId() : 0;
         $res->owner_id        = $this->getOwner()->getId();
         $res->title           = $this->getName();

@@ -308,7 +308,7 @@ class Photo extends Media
         $res->date     = $res->created = $this->getPublicationTime()->timestamp();
 
         if($photo_sizes) {
-            $res->sizes        = $this->getVkApiSizes();
+            $res->sizes = array_values($this->getVkApiSizes());
             $res->src_small    = $res->photo_75 = $this->getURLBySizeId("miniscule");
             $res->src          = $res->photo_130 = $this->getURLBySizeId("tiny");
             $res->src_big      = $res->photo_604 = $this->getURLBySizeId("normal");

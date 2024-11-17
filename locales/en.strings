@@ -269,6 +269,7 @@
 "others_posts" = "Others posts";
 
 "show_more" = "Show more";
+"has_repost" = "Has repost";
 
 /* Friends */
 
@@ -517,6 +518,7 @@
 "click_to_go_to_album" = "Click here to go to album.";
 "error_uploading_photo" = "Error when uploading photo";
 "too_many_pictures" = "No more than 10 pictures";
+"too_many_attachments" = "Too many attachments.";
 
 "drag_files_here" = "Drag files here";
 "only_images_accepted" = "File \"$1\" is not an image";
@@ -847,6 +849,9 @@
 "max_attached_audios" = "Max is 10 audios";
 "no_videos" = "You don't have uploaded videos.";
 "no_videos_results" = "No results.";
+
+"video_file_upload" = "Upload file";
+"video_youtube_upload" = "Add from YouTube";
 
 "change_video" = "Change video";
 "unknown_video" = "This video is not supported in your version of OpenVK.";
@@ -1777,6 +1782,8 @@
 "question_confirm" = "This action can't be undone. Do you really wanna do it?";
 "confirm_m" = "Confirm";
 "action_successfully" = "Success";
+"exit_noun" = "Exit";
+"exit_confirmation" = "Are you sure want to exit?";
 "apply" = "Apply";
 
 /* User Alerts */

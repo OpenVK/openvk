@@ -134,8 +134,13 @@ class Report extends RowModel
 
     function getContentName(): string
     {
-        if (method_exists($this->getContentObject(), "getCanonicalName"))
-            return $this->getContentObject()->getCanonicalName();
+        $content_object = $this->getContentObject();
+        if(!$content_object) {
+            return 'unknown';
+        }
+
+        if (method_exists($content_object, "getCanonicalName"))
+            return $content_object->getCanonicalName();
 
         return $this->getContentType() . " #" . $this->getContentId();
     }

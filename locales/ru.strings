@@ -248,6 +248,7 @@
 "clubs_posts" = "Записи сообщества";
 "others_posts" = "Чужие записи";
 "show_more" = "Показать больше";
+"has_repost" = "Содержит репост";
 
 /* Friends */
 
@@ -500,9 +501,10 @@
 "click_to_go_to_album" = "Нажмите, чтобы перейти к альбому.";
 "error_uploading_photo" = "Не удалось загрузить фотографию";
 "too_many_pictures" = "Не больше 10 фотографий";
+"too_many_attachments" = "Слишком много вложений.";
 
 "drag_files_here" = "Перетащите файлы сюда";
-"only_images_accepted" = "Файл \"$1\" не является изображением";
+"only_images_accepted" = "Файл \"$1\" не является изображением или видео.";
 "max_filesize" = "Максимальный размер файла — $1 мегабайт";
 
 "uploading_photos_from_computer" = "Загрузка фотографий с Вашего компьютера";
@@ -806,6 +808,9 @@
 "max_attached_audios" = "Максимум 10 аудиозаписей";
 "no_videos" = "У вас нет видео.";
 "no_videos_results" = "Нет результатов.";
+
+"video_file_upload" = "Загрузить файл";
+"video_youtube_upload" = "Добавить с YouTube";
 
 /* Audios */
 
@@ -1481,7 +1486,7 @@
 
 "error_adding_source_regex" = "Ошибка добавления источника: некорректная ссылка.";
 "error_adding_source_long" = "Ошибка добавления источника: слишком длинная ссылка.";
-"error_adding_source_sus" = "Ошибка добавления источника: подозрительная ссылка.";
+"error_adding_source_sus" = "Ошибка добавления источника: гиперссылка заблокирована.";
 
 /* Admin actions */
 
@@ -1669,6 +1674,8 @@
 "question_confirm" = "Это действие нельзя отменить. Вы действительно уверены в том что хотите сделать?";
 "confirm_m" = "Подтвердить";
 "action_successfully" = "Операция успешна";
+"exit_noun" = "Выход";
+"exit_confirmation" = "Уверены, что хотите выйти?";
 "apply" = "Применить";
 
 /* User alerts */
@@ -2028,7 +2035,7 @@
 
 /* Fullscreen player */
 
-"hide_player" = "Скрыть";
+"hide_player" = "Свернуть";
 "close_player" = "Закрыть";
 "show_comments" = "Показать информацию";
 "close_comments" = "Скрыть информацию";

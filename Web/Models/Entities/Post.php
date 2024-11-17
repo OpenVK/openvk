@@ -103,6 +103,11 @@ class Post extends Postable
         $this->stateChanges("source", $source);
     }
 
+    function resetSource()
+    {
+        $this->stateChanges("source", NULL);
+    }
+
     function getVkApiCopyright(): object
     {
         return (object)[

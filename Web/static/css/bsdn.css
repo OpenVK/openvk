@@ -24,6 +24,7 @@
     gap: 6px;
     z-index: 2;
     opacity: 0;
+    height: 43px;
 }
 
 .bsdn-player.bsdn-dirty > .bsdn_controls {

@@ -176,6 +176,7 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->template->cCount   = $photo->getCommentsCount();
         $this->template->cPage    = (int) ($this->queryParam("p") ?? 1);
         $this->template->comments = iterator_to_array($photo->getComments($this->template->cPage));
+        $this->template->owner    = $photo->getOwner();
     }
     
     function renderAbsolutePhoto($id): void
@@ -287,7 +288,8 @@ final class PhotosPresenter extends OpenVKPresenter
                         "id"    => $photo->getId(),
                         "vid"   => $photo->getVirtualId(),
                         "owner" => $photo->getOwner()->getId(),
-                        "link"  => $photo->getURL()
+                        "link"  => $photo->getURL(),
+                        "pretty_id" => $photo->getPrettyId(),
                     ];
                 } catch(ISE $ex) {
                     $name = $album->getName();
@@ -353,5 +355,27 @@ final class PhotosPresenter extends OpenVKPresenter
 
         $this->flash("succ", tr("photo_is_deleted"), tr("photo_is_deleted_desc"));
         $this->redirect($redirect);
+    }
+
+    function renderLike(int $wall, int $post_id): void
+    {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+        $this->assertNoCSRF();
+        
+        $photo = $this->photos->getByOwnerAndVID($wall, $post_id);
+        if(!$photo || $photo->isDeleted() || !$photo->canBeViewedBy($this->user->identity)) $this->notFound();
+
+        if(!is_null($this->user)) {
+            $photo->toggleLike($this->user->identity);
+        }
+
+        if($_SERVER["REQUEST_METHOD"] === "POST") {
+            $this->returnJson([
+                'success' => true,
+            ]);
+        }
+        
+        $this->redirect("$_SERVER[HTTP_REFERER]");
     }
 }

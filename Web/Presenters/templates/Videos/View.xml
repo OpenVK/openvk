@@ -11,91 +11,88 @@
 {/block}
 
 {block content}
-    <center style="margin-bottom: 8pt;">
-        {if $video->getType() === 0}
-            <div class="bsdn" data-name="{$video->getName()}" data-author="{$user->getCanonicalName()}">
-                <video src="{$video->getURL()}"></video>
-            </div>
-        {else}
-            {var $driver = $video->getVideoDriver()}
-            {if !$driver}
-                {_unknown_video}
-            {else}
-                {$driver->getEmbed()|noescape}
-            {/if}
-        {/if}
-    </center>
-    
-    <hr/>
-    
-    <div style="width: 100%; min-height: 100px;">
-        <div style="float: left; min-height: 100px; width: 68%; margin-right: 2%;" id="comments">
-            {include "../components/comments.xml",
-                     comments => $comments,
-                     count => $cCount,
-                     page => $cPage,
-                     model => "videos",
-                     parent => $video}
-        </div>
-        <div style="float: left; min-height: 100px; width: 30%; overflow: hidden; overflow-wrap: break-word;">
-            <div>
-                <h4>{_information}</h4>
-                <span style="color: grey;">{_info_name}:</span>
-                {$video->getName()}<br/>
-                <span style="color: grey;">{_info_description}:</span>
-                {$video->getDescription() ?? "(" . tr("none") . ")"}<br/>
-                <span style="color: grey;">{_info_uploaded_by}:</span>
-                <a href="{$user->getURL()}">{$user->getFullName()}</a><br/>
-                <span style="color: grey;">{_info_upload_date}:</span>
-                {$video->getPublicationTime()}
-            </div>
-            <br/>
-            <div>
-                <div n:if="isset($thisUser) && $thisUser->getId() === $user->getId()">
-                    <h4>{_actions}</h4>
-                    <a href="/video{$video->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">
-                        {_edit}
-                    </a>
-                    <a href="/video{$video->getPrettyId()}/remove" class="profile_link" style="display:block;width:96%;">
-                        {_delete}
-                    </a>
+    <div class='media-page-wrapper video-page-wrapper'>
+        <div class='video-page-wrapper-video'>
+            {if $video->getType() === 0}
+                <div class="bsdn" data-name="{$video->getName()}" data-author="{$user->getCanonicalName()}">
+                    <video src="{$video->getURL()}"></video>
                 </div>
-                <a href="/video{$video->getPrettyId()}" class="profile_link" id="videoOpen" data-id="{$video->getId()}" style="display:block;width:96%;">
-                    {_watch_in_window}
-                </a>
-            </div>
-
-            {if isset($thisUser)}
-                {if $thisUser->getId() != $video->getOwner()->getId()}
-                    {var canReport = true}
+            {else}
+                {var $driver = $video->getVideoDriver()}
+                {if !$driver}
+                    {_unknown_video}
+                {else}
+                    {$driver->getEmbed()|noescape}
                 {/if}
             {/if}
-
-            <a n:if="$canReport ?? false" class="profile_link" style="display:block;width:96%;" href="javascript:reportVideo()">{_report}</a>
-
-            <script n:if="$canReport ?? false">
-                function reportVideo() {
-                uReportMsgTxt  = tr("going_to_report_video");
-                uReportMsgTxt += "<br/>"+tr("report_question_text");
-                uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
-
-                MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
-                    (function() {
-                        res = document.querySelector("#uReportMsgInput").value;
-                        xhr = new XMLHttpRequest();
-                        xhr.open("GET", "/report/" + {$video->getId()} + "?reason=" + res + "&type=video", true);
-                        xhr.onload = (function() {
-                        if(xhr.responseText.indexOf("reason") === -1)
-                            MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
-                        else
-                           MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
-                        });
-                        xhr.send(null);
-                    }),
-                    Function.noop
-                ]);
-                }
-            </script>
         </div>
+
+        <div class='ovk-vid-details'>
+            <div class='media-page-wrapper-description'>
+                <p><b>{$video->getName()}</b></p>
+                <p n:if='!empty($video->getDescription())'>{$video->getDescription()}</p>
+                <div class='upload_time'>
+                    {_info_upload_date}: {$video->getPublicationTime()}
+                    {if isset($thisUser)}
+                        |
+                        {var $liked = $video->hasLikeFrom($thisUser)}
+                        {var $likesCount = $video->getLikesCount()}
+                        <div class='like_wrap tidy'>
+                            <a href="/video{$video->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$likesCount}">
+                                <div class="heart" id="{if $liked}liked{/if}"></div>
+                                <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
+                            </a>
+                        </div>
+                    {/if}
+                </div>
+            </div>
+
+            <hr/>
+        
+            <div class="media-page-wrapper-details">
+                <div class='media-page-wrapper-comments' id="comments">
+                    {include "../components/comments.xml",
+                            comments => $comments,
+                            count => $cCount,
+                            page => $cPage,
+                            model => "videos",
+                            parent => $video}
+                </div>
+                <div class='media-page-wrapper-actions'>
+                    <a href="{$user->getURL()}" class='media-page-author-block'>
+                        <img class='cCompactAvatars' src="{$user->getAvatarURL('miniscule')}">
+
+                        <div class='media-page-author-block-name'>
+                            <b>{$user->getCanonicalName()}</b>
+                        </div>
+                    </a>
+
+                    <div>
+                        <div n:if="isset($thisUser) && $thisUser->getId() === $user->getId()">
+                            <a href="/video{$video->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">
+                                {_edit}
+                            </a>
+                            <a id='_videoDelete' href="/video{$video->getPrettyId()}/remove" class="profile_link" style="display:block;width:96%;">
+                                {_delete}
+                            </a>
+                        </div>
+                        <a n:if="isset($thisUser)" onclick="javascript:repost({$video->getPrettyId()}, 'video')" class="profile_link" style="display:block;width:96%;">
+                            {_share}
+                        </a>
+                    </div>
+
+                    {if isset($thisUser)}
+                        {if $thisUser->getId() != $video->getOwner()->getId()}
+                            {var canReport = true}
+                        {/if}
+                    {/if}
+
+                    <a n:if="$canReport ?? false" class="profile_link" style="display:block;width:96%;" href="javascript:reportVideo({$video->getId()})">{_report}</a>
+                    <a n:if="$video->getType() == 0" href="{$video->getURL()}" download="" class="profile_link" style="display:block;width:96%;">{_download_video}</a>
+                </div>
+            </div>
+        </div>
+        
+        
     </div>
 {/block}

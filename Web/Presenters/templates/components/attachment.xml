@@ -1,7 +1,7 @@
 {if $attachment instanceof \openvk\Web\Models\Entities\Photo}
     {if !$attachment->isDeleted()}
         {var $link = "/photo" . ($attachment->isAnonymous() ? ("s/" . base_convert((string) $attachment->getId(), 10, 32)) : $attachment->getPrettyId())}
-        <a href="{$link}" onclick="OpenMiniature(event, {$attachment->getURLBySizeId('normal')}, {$parent->getPrettyId()}, {$attachment->getPrettyId()}, {$parentType})">
+        <a href="{$link}" onclick="OpenMiniature(event, {$attachment->getURLBySizeId('larger')}, {$parent->getPrettyId()}, {$attachment->getPrettyId()}, {$parentType})">
             <img class="media media_makima" src="{$attachment->getURLBySizeId('normal')}" alt="{$attachment->getDescription()}" loading=lazy />
         </a>
     {else}
@@ -10,39 +10,50 @@
         </a>
     {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Video}
-    {if $attachment->getType() === 0}
-        <div class="bsdn media" data-name="{$attachment->getName()}" data-author="{$attachment->getOwner()->getCanonicalName()}">
-            <video class="media" src="{$attachment->getURL()}"></video>
+    {if $tilesCount <= 1}
+        {if $attachment->getType() === 0}
+            <div class="bsdn media" data-name="{$attachment->getName()}" data-author="{$attachment->getOwner()->getCanonicalName()}">
+                <video class="media" src="{$attachment->getURL()}"></video>
+            </div>
+        {else}
+            {var $driver = $attachment->getVideoDriver()}
+            {if !$driver}
+                <span style="color:red;">{_version_incompatibility}</span>
+            {else}
+                {$driver->getEmbed("100%")|noescape}
+            {/if}
+        {/if}
+
+        <div class="video-wowzer">
+            <div class="small-video-ico"></div>
+            <a href="/video{$attachment->getPrettyId()}" id="videoOpen" data-id="{$attachment->getPrettyId()}">{$attachment->getName()}</a>
+            <span class="video-wowzer-length" n:if="$attachment->getLength() != NULL">({$attachment->getFormattedLength()})</span>
         </div>
     {else}
-        {var $driver = $attachment->getVideoDriver()}
-        {if !$driver}
-            <span style="color:red;">{_version_incompatibility}</span>
-        {else}
-            {$driver->getEmbed("100%")|noescape}
-        {/if}
-    {/if}
+        <a class='compact_video' id='videoOpen' data-id='{$attachment->getPrettyId()}' href="/video{$attachment->getPrettyId()}">
+            <div class='play-button'>
+                <div class='play-button-ico'></div>
+            </div>
+            <div class='video-length' n:if="$attachment->getLength() != NULL">
+                {$attachment->getFormattedLength()}
+            </div>
 
-    <div class="video-wowzer">
-        <img src="/assets/packages/static/openvk/img/videoico.png" />
-        <a href="/video{$attachment->getPrettyId()}" id="videoOpen" data-id="{$attachment->getId()}">{$attachment->getName()}</a>
-    </div>
+            <img class="media media_makima" src="{$attachment->getThumbnailURL()}" loading=lazy />
+        </a>
+    {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Poll}
     {presenter "openvk!Poll->view", $attachment->getId()}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Note}
-    {if !$attachment->isDeleted()}
+    <div data-att_type='note' data-att_id="{$attachment->getPrettyId()}">
         <div class="attachment_note">
-            <img class="attachment_note_icon" src="/assets/packages/static/openvk/img/note.svg">
-            <span class="attachment_note_text">{_note}</span>
-            <span class="attachment_note_name"><a href="javascript:void(showArticle({$attachment->getId()}));">{ovk_proc_strtr($attachment->getName(), 66)}</a></span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
+            
+            <div class='attachment_note_content'>
+                <span class="attachment_note_text">{_note}</span>
+                <span class="attachment_note_name"><a href="javascript:void(showArticle({$attachment->getId()}));">{ovk_proc_strtr($attachment->getName(), 66)}</a></span>
+            </div>
         </div>
-    {else}
-        <div class="attachment_note">
-            <img class="attachment_note_icon" src="/assets/packages/static/openvk/img/note.svg">
-            <span class="attachment_note_text">{_note}</span>
-            <span class="attachment_note_name">{_deleted}</span>
-        </div>
-    {/if}
+    </div>
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Post}
     {php $GLOBALS["_nesAttGloCou"] = (isset($GLOBALS["_nesAttGloCou"]) ? $GLOBALS["_nesAttGloCou"] : 0) + 1}
     {if $GLOBALS["_nesAttGloCou"] > 2}
@@ -51,7 +62,7 @@
         {include "post.xml", post => $attachment, compact => true}
     {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Audio}
-    <div style="width:100%;">
+    <div style="width:100%;" data-att_type='audio' data-att_id="{$attachment->getPrettyId()}">
         {include "../Audio/player.xml", audio => $attachment}
     </div>
 {else}

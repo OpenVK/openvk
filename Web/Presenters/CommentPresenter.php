@@ -27,7 +27,12 @@ final class CommentPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         
         if(!is_null($this->user)) $comment->toggleLike($this->user->identity);
-        
+        if($_SERVER["REQUEST_METHOD"] === "POST") {
+            $this->returnJson([
+                'success' => true,
+            ]);
+        }
+
         $this->redirect($_SERVER["HTTP_REFERER"]);
     }
     
@@ -70,64 +75,24 @@ final class CommentPresenter extends OpenVKPresenter
                 $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_when_publishing_comment_description"));
             }
         }
-        
-        $photos = [];
-        if(!empty($this->postParam("photos"))) {
-            $un  = rtrim($this->postParam("photos"), ",");
-            $arr = explode(",", $un);
 
-            if(sizeof($arr) < 11) {
-                foreach($arr as $dat) {
-                    $ids = explode("_", $dat);
-                    $photo = (new Photos)->getByOwnerAndVID((int)$ids[0], (int)$ids[1]);
-    
-                    if(!$photo || $photo->isDeleted())
-                        continue;
-    
-                    $photos[] = $photo;
-                }
+        $horizontal_attachments = [];
+        $vertical_attachments = [];
+        if(!empty($this->postParam("horizontal_attachments"))) {
+            $horizontal_attachments_array = array_slice(explode(",", $this->postParam("horizontal_attachments")), 0, OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"]);
+            if(sizeof($horizontal_attachments_array) > 0) {
+                $horizontal_attachments = parseAttachments($horizontal_attachments_array, ['photo', 'video']);
             }
         }
 
-        $videos = [];
-
-        if(!empty($this->postParam("videos"))) {
-            $un  = rtrim($this->postParam("videos"), ",");
-            $arr = explode(",", $un);
-            
-            if(sizeof($arr) < 11) {
-                foreach($arr as $dat) {
-                    $ids = explode("_", $dat);
-                    $video = (new Videos)->getByOwnerAndVID((int)$ids[0], (int)$ids[1]);
-    
-                    if(!$video || $video->isDeleted())
-                        continue;
-    
-                    $videos[] = $video;
-                }
-            }
-        }
-
-        $audios = [];
-
-        if(!empty($this->postParam("audios"))) {
-            $un  = rtrim($this->postParam("audios"), ",");
-            $arr = explode(",", $un);
-
-            if(sizeof($arr) < 11) {
-                foreach($arr as $dat) {
-                    $ids = explode("_", $dat);
-                    $audio = (new Audios)->getByOwnerAndVID((int)$ids[0], (int)$ids[1]);
-    
-                    if(!$audio || $audio->isDeleted())
-                        continue;
-    
-                    $audios[] = $audio;
-                }
+        if(!empty($this->postParam("vertical_attachments"))) {
+            $vertical_attachments_array = array_slice(explode(",", $this->postParam("vertical_attachments")), 0, OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"]);
+            if(sizeof($vertical_attachments_array) > 0) {
+                $vertical_attachments = parseAttachments($vertical_attachments_array, ['audio', 'note']);
             }
         }
         
-        if(empty($this->postParam("text")) && sizeof($photos) < 1 && sizeof($videos) < 1 && sizeof($audios) < 1)
+        if(empty($this->postParam("text")) && sizeof($horizontal_attachments) < 1 && sizeof($vertical_attachments) < 1)
             $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_empty"));
         
         try {
@@ -143,15 +108,21 @@ final class CommentPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_too_big"));
         }
         
-        foreach($photos as $photo)
-        	$comment->attach($photo);
-        
-        if(sizeof($videos) > 0)
-            foreach($videos as $vid)
-                $comment->attach($vid);
+        foreach($horizontal_attachments as $horizontal_attachment) {
+            if(!$horizontal_attachment || $horizontal_attachment->isDeleted() || !$horizontal_attachment->canBeViewedBy($this->user->identity)) {
+                continue;
+            }
 
-        foreach($audios as $audio)
-            $comment->attach($audio);
+            $comment->attach($horizontal_attachment);
+        }
+
+        foreach($vertical_attachments as $vertical_attachment) {
+            if(!$vertical_attachment || $vertical_attachment->isDeleted() || !$vertical_attachment->canBeViewedBy($this->user->identity)) {
+                continue;
+            }
+
+            $comment->attach($vertical_attachment);
+        }
         
         if($entity->getOwner()->getId() !== $this->user->identity->getId())
             if(($owner = $entity->getOwner()) instanceof User)

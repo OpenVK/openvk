@@ -62,6 +62,7 @@ final class VideosPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("video_uploads_disabled"));
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
+            $is_ajax = (int)($this->postParam('ajax') ?? '0') == 1;
             if(!empty($this->postParam("name"))) {
                 $video = new Video;
                 $video->setOwner($this->user->id);
@@ -75,18 +76,29 @@ final class VideosPresenter extends OpenVKPresenter
                     else if(!empty($this->postParam("link")))
                         $video->setLink($this->postParam("link"));
                     else
-                        $this->flashFail("err", tr("no_video_error"), tr("no_video_description"));
+                        $this->flashFail("err", tr("no_video_error"), tr("no_video_description"), 10, $is_ajax);
                 } catch(\DomainException $ex) {
-                    $this->flashFail("err", tr("error_video"), tr("file_corrupted"));
+                    $this->flashFail("err", tr("error_video"), tr("file_corrupted"), 10, $is_ajax);
                 } catch(ISE $ex) {
-                    $this->flashFail("err", tr("error_video"), tr("link_incorrect"));
+                    $this->flashFail("err", tr("error_video"), tr("link_incorrect"), 10, $is_ajax);
                 }
                 
+                if((int)($this->postParam("unlisted") ?? '0') == 1) {
+                    $video->setUnlisted(true);
+                }
+
                 $video->save();
                 
+                if($is_ajax) {
+                    $object = $video->getApiStructure();
+                    $this->returnJson([
+                        'payload' => $object->video,
+                    ]);
+                }
+
                 $this->redirect("/video" . $video->getPrettyId());
             } else {
-                $this->flashFail("err", tr("error_video"), tr("no_name_error"));
+                $this->flashFail("err", tr("error_video"), tr("no_name_error"), 10, $is_ajax);
             }
         }
     }
@@ -151,7 +163,13 @@ final class VideosPresenter extends OpenVKPresenter
         if(!is_null($this->user)) {
             $video->toggleLike($this->user->identity);
         }
-
-        $this->returnJson(["success" => true]);
+        
+        if($_SERVER["REQUEST_METHOD"] === "POST") {
+            $this->returnJson([
+                'success' => true,
+            ]);
+        }
+        
+        $this->redirect("$_SERVER[HTTP_REFERER]");
     }
 }

@@ -33,6 +33,7 @@ final class AudioPresenter extends OpenVKPresenter
 
     function renderList(?int $owner = NULL, ?string $mode = "list"): void
     {
+        $this->assertUserLoggedIn();
         $this->template->_template = "Audio/List.xml";
         $page = (int)($this->queryParam("p") ?? 1);
         $audios = [];
@@ -501,6 +502,7 @@ final class AudioPresenter extends OpenVKPresenter
 
     function renderPlaylist(int $owner_id, int $virtual_id): void
     {
+        $this->assertUserLoggedIn();
         $playlist = $this->audios->getPlaylistByOwnerAndVID($owner_id, $virtual_id);
         $page = (int)($this->queryParam("p") ?? 1);
         if (!$playlist || $playlist->isDeleted())
