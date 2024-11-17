@@ -2013,6 +2013,8 @@ async function __processPaginatorNextPage(page)
 
     const replace_url = new URL(location.href)
     replace_url.searchParams.set('p', page)
+    /*replace_url.searchParams.set('al', 1)
+    replace_url.searchParams.set('hash', u("meta[name=csrf]").attr("value"))*/
 
     const new_content = await fetch(replace_url.href)
     const new_content_response = await new_content.text()
@@ -2024,7 +2026,6 @@ async function __processPaginatorNextPage(page)
     })
 
     u(`.paginator:not(.paginator-at-top)`).html(parsed_content.querySelector('.paginator:not(.paginator-at-top)').innerHTML)
-    // fffffuck
     if(u(`.paginator:not(.paginator-at-top)`).nodes[0].closest('.scroll_container')) {
         container.nodes[0].append(u(`.paginator:not(.paginator-at-top)`).nodes[0].parentNode)
     }
