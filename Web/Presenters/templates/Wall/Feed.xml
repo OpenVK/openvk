@@ -23,10 +23,12 @@
         {include "../components/textArea.xml", route => "/wall" . $thisUser->getId() . "/makePost", graffiti => true, polls => true, notes => true, hasSource => true}
     </div>
     
-    {foreach $posts as $post}
-        <a name="postGarter={$post->getId()}"></a>
-        {include "../components/post.xml", post => $post, onWallOf => true, commentSection => true}
-    {/foreach}
+    <div class='scroll_container'>
+        <div class='scroll_node' n:foreach='$posts as $post'>
+            <a name="postGarter={$post->getId()}"></a>
+            {include "../components/post.xml", post => $post, onWallOf => true, commentSection => true}
+        </div>
+    </div>
 
     <div class="postFeedBottom">
         <div class="postFeedPaginator">

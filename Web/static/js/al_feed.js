@@ -84,6 +84,7 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                 const CURRENT_PERPAGE = Number(__temp_url.searchParams.get('posts') ?? 10)
                 const CURRENT_PAGE = Number(__temp_url.searchParams.get('p') ?? 1)
                 const CURRENT_RETURN_BANNED = Number(__temp_url.searchParams.get('return_banned') ?? 0)
+                const CURRENT_AUTO_SCROLL = Number(localStorage.getItem('ux.auto_scroll') ?? 1)
                 const COUNT = [1, 5, 10, 20, 30, 40, 50]
                 u('#_feed_settings_container #__content').html(`
                     <table cellspacing="7" cellpadding="0" border="0" align="center">
@@ -107,11 +108,21 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                             <tr>
                                 <td width="120" valign="top">
                                     <span class="nobold">
-                                        <input type='checkbox' id="showIgnored" ${CURRENT_RETURN_BANNED == 1 ? 'checked' : ''}>
+                                        <input type='checkbox' name='showIgnored' id="showIgnored" ${CURRENT_RETURN_BANNED == 1 ? 'checked' : ''}>
                                     </span>
                                 </td>
                                 <td>
-                                ${tr('show_ignored_sources')}
+                                    <label for='showIgnored'>${tr('show_ignored_sources')}</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="120" valign="top">
+                                    <span class="nobold">
+                                        <input type='checkbox' data-act='localstorage_item' name='ux.auto_scroll' id="ux.auto_scroll" ${CURRENT_AUTO_SCROLL == 1 ? 'checked' : ''}>
+                                    </span>
+                                </td>
+                                <td>
+                                    <label for='ux.auto_scroll'>${tr('auto_scroll')}</label>
                                 </td>
                             </tr>
                             <tr>
@@ -267,4 +278,8 @@ u(document).on('click', '#__feed_settings_link', (e) => {
     })
 
     __switchTab('main')
+})
+
+u(document).on('change', `input[data-act='localstorage_item']`, (e) => {
+    localStorage.setItem(e.target.name, Number(e.target.checked))
 })

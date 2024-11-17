@@ -391,6 +391,7 @@
         {script "js/al_polls.js"}
         {script "js/al_suggestions.js"}
         {script "js/al_navigation.js"}
+        {script "js/al_comments.js"}
 
         {ifset $thisUser}
             {script "js/al_notifs.js"}

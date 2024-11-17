@@ -399,6 +399,7 @@ async function OpenVideo(video_arr = [], init_player = true)
             details.find('.media-page-wrapper-description b').remove()
 
             u('#ovk-player-info').html(details.html())
+            bsdnHydrate()
         }
     })
 
@@ -542,7 +543,8 @@ var tooltipClientNoInfoTemplate = Handlebars.compile(`
     </table>
 `);
 
-tippy(".client_app", {
+tippy.delegate("body", {
+    target: '.client_app',
     theme: "light vk",
     content: "⌛",
     allowHTML: true,
@@ -2039,6 +2041,10 @@ async function __processPaginatorNextPage(page)
 const showMoreObserver = new IntersectionObserver(entries => {
     entries.forEach(async x => {
         if(x.isIntersecting) {
+            if(Number(localStorage.getItem('ux.auto_scroll') ?? 1) == 0) {
+                return
+            }
+
             if(u('.scroll_container').length < 1) {
                 return
             }
@@ -2063,6 +2069,7 @@ const showMoreObserver = new IntersectionObserver(entries => {
 
             const page_number = Number(next_page.html())
             await __processPaginatorNextPage(page_number)
+            bsdnHydrate()
             u('.paginator:not(.paginator-at-top)').removeClass('lagged')
         }
     })
