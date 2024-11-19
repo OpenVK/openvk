@@ -373,6 +373,47 @@ class Post extends Postable
 
         return $user->getId() == $this->getOwner(false)->getId();
     }
+
+    function toRss(): \Bhaktaraz\RSSGenerator\Item
+    {
+        $domain = ovk_scheme(true).$_SERVER["HTTP_HOST"];
+        $description = $this->getText(false);
+        $description_html = $description;
+        $url = $domain."/wall".$this->getPrettyId();
+
+        $author = $this->getOwner();
+        $author_name = htmlspecialchars($author->getCanonicalName(), ENT_DISALLOWED | ENT_XHTML);
+        if($this->isExplicit())
+            $description_html .= "<br /><b>".tr('contains_nsfw').".</b><br />";
+
+        foreach($this->getChildren() as $child) {
+            if($child instanceof Photo) {
+                $child_page = $domain.$child->getPageURL();
+                $child_url = $child->getURLBySizeId('large');
+                $description_html .= "<br /><a href='$child_page'><img src='$child_url'></a>";
+            } elseif($child instanceof Video) {
+                $child_page = $domain.'/video'.$child->getPrettyId();
+                $description_html .= "<br /><a href='$child_page'>Video</a>";
+            } elseif($child instanceof Audio) {
+                $description_html .= "<br />Audio";
+            }
+        }
+
+        $description_html .= "<br />".tr('author').": <img width='15px' src='".$author->getAvatarURL()."'><a href='".$author->getURL()."'>" . $author_name . "</a>"; 
+        if($this->hasSource()) {
+            $description_html .= "<br />".tr('source').": ".htmlspecialchars($this->getSource(), ENT_DISALLOWED | ENT_XHTML);
+        }
+
+        $item = new \Bhaktaraz\RSSGenerator\Item();
+        $item->title(str_replace("\n", "", ovk_proc_strtr($description, 79)))
+        ->url($url)
+        ->guid($url)
+        ->creator($author_name)
+        ->pubDate($this->getPublicationTime()->timestamp())
+        ->content(str_replace("\n", "<br />", $description_html));
+
+        return $item;
+    }
     
     use Traits\TRichText;
 }

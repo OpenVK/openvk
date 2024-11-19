@@ -20,7 +20,7 @@ use openvk\Web\Models\Repositories\Audios as AudiosRepo;
 
 final class Wall extends VKAPIRequestHandler
 {
-    function get(int $owner_id, string $domain = "", int $offset = 0, int $count = 30, int $extended = 0, string $filter = "all"): object
+    function get(int $owner_id, string $domain = "", int $offset = 0, int $count = 30, int $extended = 0, string $filter = "all", int $rss = 0): object
     {
         $this->requireUser();
 
@@ -85,6 +85,8 @@ final class Wall extends VKAPIRequestHandler
                 $this->fail(254, "Invalid filter");
                 break;
         }
+
+        $iteratorv = iterator_to_array($iteratorv);
 
         foreach($iteratorv as $post) {
             $from_id = get_class($post->getOwner()) == "openvk\Web\Models\Entities\Club" ? $post->getOwner()->getId() * (-1) : $post->getOwner()->getId();
@@ -215,6 +217,20 @@ final class Wall extends VKAPIRequestHandler
                     $profiles[] = $post->getOwner(false)->getId();
 
             $attachments = NULL; # free attachments so it will not clone everythingg
+        }
+
+        if($rss == 1) {
+            $channel = new \Bhaktaraz\RSSGenerator\Channel();
+            $channel->title($wallOnwer->getCanonicalName() . " — " . OPENVK_ROOT_CONF['openvk']['appearance']['name'])
+            ->description('Wall of ' . $wallOnwer->getCanonicalName())
+            ->url(ovk_scheme(true) . $_SERVER["HTTP_HOST"] . "/wall" . $wallOnwer->getRealId());
+
+            foreach($iteratorv as $item) {
+                $output = $item->toRss();
+                $output->appendTo($channel);
+            }
+
+            return $channel;
         }
 
         if($extended == 1) {

@@ -222,9 +222,13 @@ final class VKAPIPresenter extends OpenVKPresenter
         if(!is_callable([$handler, $method]))
             $this->badMethod($object, $method);
         
+        $has_rss = false;
         $route  = new \ReflectionMethod($handler, $method);
         $params = [];
         foreach($route->getParameters() as $parameter) {
+            if($parameter->getName() == 'rss')
+                $has_rss = true;
+
             $val = $this->requestParam($parameter->getName());
             if(is_null($val)) {
                 if($parameter->allowsNull())
@@ -260,15 +264,27 @@ final class VKAPIPresenter extends OpenVKPresenter
             $this->fail($ex->getCode(), $ex->getMessage(), $object, $method);
         }
         
-        $result = json_encode([
-            "response" => $res,
-        ]);
+        $result = NULL;
 
-        if($callback) {
-            $result = $callback . '(' . $result . ')';
-            header('Content-Type: application/javascript');
-        } else
-            header("Content-Type: application/json");
+        if($this->queryParam("rss") == '1' && $has_rss) {
+            $feed = new \Bhaktaraz\RSSGenerator\Feed();
+            $res->appendTo($feed);
+
+            $result = strval($feed);
+
+            header("Content-Type: application/rss+xml;charset=UTF-8");
+        } else {
+            $result = json_encode([
+                "response" => $res,
+            ]);
+
+            if($callback) {
+                $result = $callback . '(' . $result . ')';
+                header('Content-Type: application/javascript');
+            } else {
+                header("Content-Type: application/json");
+            }
+        }
         
         $size = strlen($result);
         header("Content-Length: $size");

@@ -48,7 +48,7 @@ final class Newsfeed extends VKAPIRequestHandler
         return $response;
     }
 
-    function getGlobal(string $fields = "", int $start_from = 0, int $start_time = 0, int $end_time = 0,  int $offset = 0, int $count = 30, int $extended = 0)
+    function getGlobal(string $fields = "", int $start_from = 0, int $start_time = 0, int $end_time = 0,  int $offset = 0, int $count = 30, int $extended = 0, int $rss = 0)
     {
         $this->requireUser();
         
@@ -74,6 +74,25 @@ final class Newsfeed extends VKAPIRequestHandler
         
         $rposts = [];
         $ids = [];
+        if($rss == 1) {
+            $channel = new \Bhaktaraz\RSSGenerator\Channel();
+            $channel->title("Global Feed — " . OPENVK_ROOT_CONF['openvk']['appearance']['name'])
+            ->description('OVK Global feed')
+            ->url(ovk_scheme(true) . $_SERVER["HTTP_HOST"] . "/feed/all");
+
+            foreach($posts as $item) {
+                $post   = (new PostsRepo)->get($item->id);
+                if(!$post || $post->isDeleted()) {
+                    continue;
+                }
+                
+                $output = $post->toRss();
+                $output->appendTo($channel);
+            }
+
+            return $channel;
+        }
+
         foreach($posts as $post) {
             $rposts[] = (new PostsRepo)->get($post->id)->getPrettyId();
             $ids[] = $post->id;
