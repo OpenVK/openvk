@@ -10,6 +10,7 @@ use WhichBrowser;
 
 final class VKAPIPresenter extends OpenVKPresenter
 {
+    protected $silent = true;
     private function logRequest(string $object, string $method): void
     {
         $date   = date(DATE_COOKIE);
