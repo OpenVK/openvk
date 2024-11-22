@@ -336,6 +336,11 @@ class Post extends Postable
     {
         return $this->getRecord()->suggested;
     }
+
+    function getPageURL(): string
+    {
+        return "/wall".$this->getPrettyId();
+    }
   
     function toNotifApiStruct()
     {

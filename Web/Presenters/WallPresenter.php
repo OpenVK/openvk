@@ -549,66 +549,6 @@ final class WallPresenter extends OpenVKPresenter
         $this->flashFail("succ", tr("information_-1"), tr("changes_saved_comment"));
     }
 
-    function renderEdit()
-    {
-        $this->assertUserLoggedIn();
-        $this->willExecuteWriteAction();
-
-        if($_SERVER["REQUEST_METHOD"] !== "POST")
-            $this->redirect("/id0");
-
-        if($this->postParam("type") == "post")
-            $post = $this->posts->get((int)$this->postParam("postid"));
-        else
-            $post = (new Comments)->get((int)$this->postParam("postid"));
-
-        if(!$post || $post->isDeleted())
-            $this->returnJson(["error" => "Invalid post"]);
-
-        if(!$post->canBeEditedBy($this->user->identity))
-            $this->returnJson(["error" => "Access denied"]);
-
-        $attachmentsCount = sizeof(iterator_to_array($post->getChildren()));
-
-        if(empty($this->postParam("newContent")) && $attachmentsCount < 1)
-            $this->returnJson(["error" => "Empty post"]);
-
-        $post->setEdited(time());
-
-        try {
-            $post->setContent($this->postParam("newContent"));
-        } catch(\LengthException $e) {
-            $this->returnJson(["error" => $e->getMessage()]);
-        }
-
-        if($this->postParam("type") === "post") {
-            $post->setNsfw($this->postParam("nsfw") == "true");
-            $flags = 0;
-
-            if($post->getTargetWall() < 0 && $post->getWallOwner()->canBeModifiedBy($this->user->identity)) {
-                if($this->postParam("fromgroup") == "true") {
-                    $flags |= 0b10000000;
-                    $post->setFlags($flags);
-                } else
-                    $post->setFlags($flags);
-            }
-        }
-
-        $post->save(true);
-
-        $this->returnJson(["error"    => "no", 
-                        "new_content" => $post->getText(), 
-                        "new_edited"  => (string)$post->getEditTime(),
-                        "nsfw"        => $this->postParam("type") === "post" ? (int)$post->isExplicit() : 0,
-                        "from_group"  => $this->postParam("type") === "post" && $post->getTargetWall() < 0 ?
-                        ((int)$post->isPostedOnBehalfOfGroup()) : "false",
-                        "new_text"    => $post->getText(false),
-                        "author"      => [
-                            "name"    => $post->getOwner()->getCanonicalName(),
-                            "avatar"  => $post->getOwner()->getAvatarUrl()
-                        ]]);
-    }
-
     function renderAccept() {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction(true);
@@ -696,5 +636,45 @@ final class WallPresenter extends OpenVKPresenter
             "success"   => true,
             "new_count" => (new Posts)->getSuggestedPostsCount($post->getWallOwner()->getId())
         ]);
+    }
+
+    function renderLikers(string $type, int $owner_id, int $item_id) 
+    {
+        $this->assertUserLoggedIn();
+
+        $item = NULL;
+        $display_name = $type;
+        switch($type) {
+            default:
+                $this->notFound();
+                break;
+            case 'wall':
+                $item = $this->posts->getPostById($owner_id, $item_id);
+                $display_name = 'post';
+                break;
+            case 'comment':
+                $item = (new \openvk\Web\Models\Repositories\Comments)->get($item_id);
+                break;
+            case 'photo':
+                $item = (new \openvk\Web\Models\Repositories\Photos)->getByOwnerAndVID($owner_id, $item_id);
+                break;
+            case 'video':
+                $item = (new \openvk\Web\Models\Repositories\Videos)->getByOwnerAndVID($owner_id, $item_id);
+                break;
+        }
+        
+        if(!$item || $item->isDeleted() || !$item->canBeViewedBy($this->user->identity))
+            $this->notFound();
+
+        $page = (int)($this->queryParam('p') ?? 1);
+        $count = $item->getLikesCount();
+        $likers = iterator_to_array($item->getLikers($page, OPENVK_DEFAULT_PER_PAGE));
+
+        $this->template->item     = $item;
+        $this->template->type     = $display_name;
+        $this->template->iterator = $likers;
+        $this->template->count    = $count;
+        $this->template->page     = $page;
+        $this->template->perPage  = OPENVK_DEFAULT_PER_PAGE;
     }
 }

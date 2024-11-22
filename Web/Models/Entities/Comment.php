@@ -28,6 +28,11 @@ class Comment extends Post
         return $entity;
     }
 
+    function getPageURL(): string
+    {
+        return '#';
+    }
+
     /**
      * May return fake owner (group), if flags are [1, (*)]
      * 

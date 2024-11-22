@@ -309,6 +309,11 @@ class Video extends Media
         );
     }
     
+    function getPageURL(): string
+    {
+        return "/video".$this->getPrettyId();
+    }
+    
     function canBeViewedBy(?User $user = NULL): bool
     {
         if($this->isDeleted() || $this->getOwner()->isDeleted()) {
