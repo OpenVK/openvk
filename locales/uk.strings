@@ -475,7 +475,8 @@
 "photos_successfully_uploaded" = "Фотографії було завантажено";
 "click_to_go_to_album" = "Натисніть, щоб перейти до альбому.";
 "error_uploading_photo" = "Помилка завантаження фотографії";
-"too_many_pictures" = "Не більше ніж 10 фотографій";
+"too_many_pictures" = "Завантажено забагато фотографій (дозволено не більше десяти)";
+"too_many_attachments" = "Завантажено забагато вкладень.";
 
 "drag_files_here" = "Перетягніть файли сюди";
 "only_images_accepted" = "Файл \"$1\" не є зображенням";
@@ -782,6 +783,8 @@
 "max_attached_audios" = "Максимум 10 аудіо";
 "no_videos" = "Ви не маєте відео.";
 "no_videos_results" = "Немає результатів.";
+"video_file_upload" = "Завантажити файл";
+"video_youtube_upload" = "Вкласти з YouTube";
 
 /* Audios */
 
@@ -1384,7 +1387,7 @@
 
 "error_adding_source_regex" = "Помилка додавання джерела: неправильне посилання.";
 "error_adding_source_long" = "Помилка додавання джерела: занадто довге посилання.";
-"error_adding_source_sus" = "Помилка додавання джерела: підозріле посилання.";
+"error_adding_source_sus" = "Помилка додавання джерела: гіперпосилання не дозволене.";
 
 "gift_sent" = "Подарунок відправлено";
 "gift_sent_desc" = "Ви відправили <b>$1</b> за $2 голосів";
@@ -1632,6 +1635,8 @@
 "question_confirm" = "Цю дію не можна скасувати. Ви переконані що хочете це зробити?";
 "confirm_m" = "Підтвердити";
 "action_successfully" = "Операція виконана успішно";
+"exit_noun" = "Вихід";
+"exit_confirmation" = "Дійсно вийти?";
 "apply" = "Застосувати";
 
 /* User alerts */
@@ -2001,7 +2006,7 @@
 "enter_a_name_or_artist" = "Введіть назву або виконавця...";
 
 /* Fullscreen player */
-"hide_player" = "Приховати";
+"hide_player" = "Згорнути";
 "close_player" = "Закрити";
 "show_comments" = "Показати коментарі";
 "close_comments" = "Приховати інформацію";
