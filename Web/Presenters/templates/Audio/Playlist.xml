@@ -67,11 +67,11 @@
                     <hr style="color: #f7f7f7;">
                 </div>
             </div>
-            <div class="audiosContainer infContainer" style="margin-top: 14px;">
+            <div class="audiosContainer scroll_container infContainer" style="margin-top: 14px;">
                 {if $count < 1}
                     {_empty_playlist}
                 {else}  
-                    <div class="infObj" n:foreach="$audios as $audio">
+                    <div class="scroll_node" n:foreach="$audios as $audio">
                         {include "player.xml", audio => $audio}
                     </div>
 

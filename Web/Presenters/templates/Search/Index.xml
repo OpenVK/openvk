@@ -29,10 +29,10 @@
                 </div>
 
                 <div class='page_wrap_content' id='search_page'>
-                    <div n:class='page_wrap_content_main, $section == "audios" && $count > 0 ? audios_padding'>
+                    <div n:class='page_wrap_content_main, scroll_container, $section == "audios" && $count > 0 ? audios_padding'>
                         {if $count > 0}
                             {if $section === 'users'}
-                                <div class='search_content content def_row_content' n:foreach="$data as $dat">
+                                <div class='scroll_node search_content content def_row_content' n:foreach="$data as $dat">
                                     <table>
                                         <tbody>
                                             <tr>
@@ -125,10 +125,14 @@
                                 </div>
 
                                 <script n:if='$count > 0 && !empty($query)'>
-                                    highlightText({$query}, '.page_wrap_content_main', ['text'])
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_wrap_content_main', ['text'])
+                                    }
+
+                                    __scrollHook()
                                 </script>
                             {elseif $section === 'groups'}
-                                <div class='search_content content def_row_content' n:foreach="$data as $dat">
+                                <div class='scroll_node search_content content def_row_content' n:foreach="$data as $dat">
                                     <table>
                                         <tbody>
                                             <tr>
@@ -180,10 +184,14 @@
                                 </div>
 
                                 <script n:if='$count > 0 && !empty($query)'>
-                                    highlightText({$query}, '.page_wrap_content_main', ['text', "td[data-highlight='_clubDesc']"])
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_wrap_content_main', ['text', "td[data-highlight='_clubDesc']"])
+                                    }
+
+                                    __scrollHook()
                                 </script>
                             {elseif $section === 'apps'}
-                                <div class='search_content content def_row_content' n:foreach="$data as $dat">
+                                <div class='scroll_node search_content content def_row_content' n:foreach="$data as $dat">
                                     <table>
                                         <tbody>
                                             <tr>
@@ -210,10 +218,14 @@
                                 </div>
 
                                 <script n:if='$count > 0 && !empty($query)'>
-                                    highlightText({$query}, '.page_wrap_content_main', ['text', "span[data-highlight='_appDesc']"])
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_wrap_content_main', ['text', "span[data-highlight='_appDesc']"])
+                                    }
+
+                                    __scrollHook()
                                 </script>
                             {elseif $section === 'posts'}
-                                <div class='search_content' n:foreach="$data as $dat">
+                                <div class='scroll_node search_content' n:foreach="$data as $dat">
                                     {if !$dat || $dat->getWallOwner()->isHideFromGlobalFeedEnabled()}
                                         {_closed_group_post}.
                                     {else}
@@ -222,31 +234,47 @@
                                 </div>
 
                                 <script n:if='$count > 0 && !empty($query)'>
-                                    highlightText({$query}, '.page_wrap_content_main', [".post:not(.comment) > tbody > tr > td > .post-content > .text .really_text"])
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_wrap_content_main', [".post:not(.comment) > tbody > tr > td > .post-content > .text .really_text"])
+                                    }
+
+                                    __scrollHook()
                                 </script>
                             {elseif $section === 'videos'}
-                                <div class='search_content' n:foreach="$data as $dat">
+                                <div class='scroll_node search_content' n:foreach="$data as $dat">
                                     {include "../components/video.xml", video => $dat}
                                 </div>    
 
                                 <script n:if='$count > 0 && !empty($query)'>
-                                    highlightText({$query}, '.page_wrap_content_main', [".video_name", ".video_description"])
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_wrap_content_main', [".video_name", ".video_description"])
+                                    }
+
+                                    __scrollHook()
                                 </script>
                             {elseif $section === 'audios'}
-                                <div class='search_content' n:foreach="$data as $dat">
+                                <div class='scroll_node search_content' n:foreach="$data as $dat">
                                     {include "../Audio/player.xml", audio => $dat}
                                 </div>
                                 
                                 <script n:if="$count > 0 && !empty($query) && empty($_REQUEST['only_performers'])">
-                                    highlightText({$query}, '.page_wrap_content_main', [".mediaInfo .performer a", ".mediaInfo .title"])
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_wrap_content_main', [".mediaInfo .performer a", ".mediaInfo .title"])
+                                    }
+
+                                    __scrollHook()
                                 </script>
                             {elseif $section === 'audios_playlists'}
-                                <div class='search_content' n:foreach="$data as $dat">
+                                <div class='scroll_node search_content' n:foreach="$data as $dat">
                                     {include "../Audio/playlistListView.xml", playlist => $dat}
                                 </div>
 
                                 <script n:if="$count > 0 && !empty($query) && empty($_REQUEST['only_performers'])">
-                                    highlightText({$query}, '.page_wrap_content_main', [".playlistName", ".playlistDesc"])
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_wrap_content_main', [".playlistName", ".playlistDesc"])
+                                    }
+
+                                    __scrollHook()
                                 </script>
                             {/if}
                         {else}

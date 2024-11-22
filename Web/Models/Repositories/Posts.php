@@ -53,9 +53,9 @@ class Posts
                     $offset--;
                 }
             }
-        } else if(!is_null($offset)) {
+        } /*else if(!is_null($offset)) {
             $offset--;
-        }
+        }*/
         
         $sel = $this->posts->where([
             "wall"      => $user,

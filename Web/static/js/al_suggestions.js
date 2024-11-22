@@ -201,7 +201,7 @@ $(document).on("click", ".sugglist a", (e) => {
 })
 
 // нажатие на пагинатор у постов предложки
-$(document).on("click", "#postz .paginator a", (e) => {
+/*$(document).on("click", "#postz .paginator a", (e) => {
     e.preventDefault()
     
     ky(e.currentTarget.href, {
@@ -228,4 +228,4 @@ $(document).on("click", "#postz .paginator a", (e) => {
             ]
         }
     })
-})
+})*/

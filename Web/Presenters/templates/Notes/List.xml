@@ -1,6 +1,5 @@
 {extends "../@listView.xml"}
 {var $iterator = iterator_to_array($notes)}
-{var $page     = $paginatorConf->page}
 
 {block title}{_notes}{/block}
 
@@ -60,12 +59,12 @@
         }
     </style>
 
-    <div class="container_gray" style="background: white; border-top: none;">
+    <div class="container_gray scroll_container" style="background: white; border-top: none;">
 
         {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
         {if sizeof($data) > 0}
 
-        <div n:foreach="$data as $dat">
+        <div class='scroll_node' n:foreach="$data as $dat">
             <div class="profile_thumb">
                 <a href="{$owner->getURL()}">
                 <img src="{$owner->getAvatarUrl('miniscule')}" style="width: 50px;">
@@ -106,7 +105,15 @@
                 </div>
             </article>    
         </div>      
-
+        
+        {include "../components/paginator.xml", conf => (object) [
+            "page"     => $page,
+            "count"    => $count,
+            "amount"   => sizeof($data),
+            "perPage"  => 10,
+            "atBottom" => true,
+        ]}
+        
         {else}
             {if isset($thisUser) && $thisUser->getId() == $owner->getId()}
 

@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
     });
     /* @rem-pai why this func wasn't named as "#_deleteDialog"? It looks universal IMO */
 
-    u("#_noteDelete").on("click", function(e) {
+    u(document).on("click", "#_noteDelete", function(e) {
         var formHtml = "<form id='tmpPhDelF' action='" + u(this).attr("href") + "' >";
         formHtml    += "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />";
         formHtml    += "</form>";
@@ -140,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
         return false;
     });
 
-    u("#_submitUserSubscriptionAction").handle("submit", async function(e) {
+    u(document).handle("submit", "#_submitUserSubscriptionAction", async function(e) {
         u(this).nodes[0].parentElement.classList.add('loading');
         u(this).nodes[0].parentElement.classList.add('disable');
         console.log(e.target);

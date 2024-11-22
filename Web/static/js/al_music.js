@@ -631,6 +631,35 @@ class bigPlayer {
             duration: this.tracks["currentTrack"].length
         })
     }
+
+    loadContextPage(page, lesser = false) {
+        const formdata = new FormData()
+        formdata.append("context", this.context["context_type"])
+        formdata.append("context_entity", this.context["context_id"])
+        formdata.append("hash", u("meta[name=csrf]").attr("value"))
+        formdata.append("page", page)
+
+        ky.post("/audios/context", {
+            hooks: {
+                afterResponse: [
+                    async (_request, _options, response) => {
+                        const newArr = await response.json()
+
+                        if(lesser)
+                            this.tracks["tracks"] = newArr["items"].concat(this.tracks["tracks"])
+                        else
+                            this.tracks["tracks"] = this.tracks["tracks"].concat(newArr["items"])
+
+                        this.context["playedPages"].push(String(newArr["page"]))
+                        
+                        this.updateButtons()
+                        console.info("Loaded context for page " + page)
+                    }
+                ]
+            }, 
+            body: formdata
+        })
+    }
 }
 
 document.addEventListener("DOMContentLoaded", function() {

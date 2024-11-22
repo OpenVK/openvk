@@ -220,6 +220,7 @@
 "all_news" = "All news";
 "posts_per_page" = "Number of posts per page";
 "show_ignored_sources" = "Show ignored sources";
+"auto_scroll" = "Autoscroll";
 
 "attachment" = "Attachment";
 "post_as_group" = "Post as group";

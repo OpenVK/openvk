@@ -12,8 +12,8 @@
 {/block}
 
 {block content}
-    <div class="gift_grid">
-        <div n:foreach="$gifts as $gift" n:class="gift_sel, !$gift->canUse($thisUser) ? disabled" data-gift="{$gift->getId()}">
+    <div class="gift_grid scroll_container">
+        <div n:foreach="$gifts as $gift" n:class="scroll_node, gift_sel, !$gift->canUse($thisUser) ? disabled" data-gift="{$gift->getId()}">
             <img class="gift_pic" src="{$gift->getImage(2)}" alt="{_gift}" loading=lazy />
 
             <strong class="gift_price">
