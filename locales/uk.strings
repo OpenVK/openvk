@@ -241,6 +241,9 @@
 "clubs_posts" = "Дописи спільноти";
 "others_posts" = "Чужі дописи";
 "show_more" = "Відобразити більше";
+"has_repost" = "Містить репост";
+"likers_list" = "Список вподобань";
+"liked_verb" = "Сподобалось";
 
 /* Friends */
 
