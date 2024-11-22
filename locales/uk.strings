@@ -245,6 +245,12 @@
 "likers_list" = "Список вподобань";
 "liked_verb" = "Сподобалось";
 
+"liked_by_x_people_one" = "Вподобав $1 користувач";
+"liked_by_x_people_few" = "Вподобали $1 користувачам";
+"liked_by_x_people_many" = "Вподобали $1 користувачів";
+"liked_by_x_people_other" = "Вподобали $1 користувачі";
+"liked_by_x_people_zero" = "Вподобань немає";
+
 /* Friends */
 
 "friends" = "Друзі";
