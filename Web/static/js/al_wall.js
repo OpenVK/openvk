@@ -461,7 +461,7 @@ u(document).on('click', '#videoOpen', (e) => {
 
 u(document).on("keydown", "#write > form", function(event) {
     if(event.ctrlKey && event.keyCode === 13)
-        this.submit();
+        u(event.target).closest('form').find(`input[type='submit']`).nodes[0].click()
 });
 
 u(document).on('keydown', '.edit_menu #write', (e) => {
