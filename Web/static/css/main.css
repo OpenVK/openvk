@@ -3143,7 +3143,7 @@ body.article .floating_sidebar, body.article .page_content {
     position: absolute;
     z-index: 128;
     width: 100%;
-    height: 100vh;
+    min-height: 100vh;
     padding: 20px;
     box-sizing: border-box;
     background-color: #fff;
