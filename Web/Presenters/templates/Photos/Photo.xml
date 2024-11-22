@@ -36,7 +36,7 @@
                         {var $liked = $photo->hasLikeFrom($thisUser)}
                         {var $likesCount = $photo->getLikesCount()}
                         <div class='like_wrap tidy'>
-                            <a href="/photo{$photo->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$likesCount}">
+                            <a href="/photo{$photo->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$photo->getPrettyId()}" data-type='photo'>
                                 <div class="heart" id="{if $liked}liked{/if}"></div>
                                 <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
                             </a>

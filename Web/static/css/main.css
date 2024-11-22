@@ -3783,3 +3783,73 @@ hr {
     height: 206px;
     overflow-x: hidden;
 }
+
+.like_tooltip_wrapper .like_tooltip_head {
+    background: linear-gradient(180deg, #595959, #515151);
+    box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.18) inset;
+    border: solid 1px #575757;
+    padding: 4px 10px;
+    width: 200px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.like_tooltip_wrapper .like_tooltip_head span, .like_tooltip_wrapper .like_tooltip_head a {
+    font-size: 12px;
+    color: white;
+    height: 14px;
+}
+
+.like_tooltip_wrapper .like_tooltip_body {
+    background: white;
+    padding: 10px;
+    border: 1px solid #878787;
+    cursor: default;
+}
+
+.like_tooltip_wrapper .like_tooltip_body .like_tooltip_body_grid {
+    display: flex;
+    gap: 6px;
+}
+
+.like_tooltip_wrapper .like_tooltip_body img {
+    width: 25px;
+    height: 25px;
+}
+
+.like_tooltip_wrapper .like_tooltip_body a {
+    height: 25px;
+}
+
+.tippy-box[data-theme~="special"] {
+    margin: 0;
+    border: unset;
+    border-radius: 0px;
+    background-color: #fff;
+}
+
+.tippy-box[data-theme~="special"] .tippy-arrow {
+    z-index: 9;
+}
+
+.tippy-box[data-theme~="special"] .tippy-arrow::before {
+    border-top-color: white;
+}
+
+.tippy-box[data-theme~="special"][data-placement^=bottom] .tippy-arrow::before {
+    border-bottom-color: #525252;
+}
+
+.tippy-box[data-animation='up_down'] {
+    transition: all 50ms;
+}
+
+.tippy-box[data-animation='up_down'][data-state='hidden'] {
+    opacity: 0;
+    inset: auto auto 10px 0px;
+}
+
+.tippy-box[data-animation='up_down'][data-state='visible'] {
+    inset: auto auto 0px 0px;
+}

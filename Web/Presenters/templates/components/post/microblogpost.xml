@@ -131,7 +131,7 @@
 
                             {if !($forceNoLike ?? false)}
                                 {var $liked = $post->hasLikeFrom($thisUser)}
-                                <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$likesCount}">
+                                <a href="/wall{$post->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$post->getPrettyId()}" data-type='post'>
                                     <div class="heart" id="{if $liked}liked{/if}"></div>
                                     <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
                                 </a>

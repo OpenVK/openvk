@@ -581,6 +581,54 @@ tippy.delegate("body", {
     }
 });
 
+tippy.delegate('body', {
+    animation: 'up_down',
+    target: `.post-like-button[data-type]:not([data-likes="0"])`,
+    theme: "special vk",
+    content: "⌛",
+    allowHTML: true,
+    interactive: true,
+    interactiveDebounce: 500,
+
+    onCreate: async function(that) {
+        that._likesList = null;
+    },
+
+    onShow: async function(that) {
+        const id  = that.reference.dataset.id
+        const type = that.reference.dataset.type
+        let final_type = type
+        if(type == 'post') {
+            final_type = 'wall'
+        }
+
+        if(!that._likesList) {
+            that._likesList = await window.OVKAPI.call('likes.getList', {'extended': 1, 'count': 6, 'type': type, 'owner_id': id.split('_')[0], 'item_id': id.split('_')[1]})
+        }
+
+        const final_template = u(`
+            <div style='margin: -6px -10px;'>
+                <div class='like_tooltip_wrapper'>
+                    <a href="/${final_type}/${id}/likes" class='like_tooltip_head'>
+                        <span>${tr('liked_by_x_people', that._likesList.count)}</span>
+                    </a>
+
+                    <div class='like_tooltip_body'>
+                        <div class='like_tooltip_body_grid'></div>
+                    </div>
+                </div>
+            </div>
+        `)
+
+        that._likesList.items.forEach(item => {
+            final_template.find('.like_tooltip_body .like_tooltip_body_grid').append(`
+                <a href='/id${item.id}'><img src='${item.photo_50}' alt='.'></a>
+            `)
+        })
+        that.setContent(final_template.nodes[0].outerHTML)
+    }
+})
+
 async function showArticle(note_id) {
     u("body").addClass("dimmed");
     let note = await API.Notes.getNote(note_id);

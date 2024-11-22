@@ -254,6 +254,12 @@
 "likers_list" = "Список лайкнувших";
 "liked_verb" = "Понравилось";
 
+"liked_by_x_people_one" = "Понравилось $1 человеку";
+"liked_by_x_people_few" = "Понравилось $1 людям";
+"liked_by_x_people_many" = "Понравилось $1 людям";
+"liked_by_x_people_other" = "Понравилось $1 людям";
+"liked_by_x_people_zero" = "Никому не понравилось";
+
 /* Friends */
 
 "friends" = "Друзья";

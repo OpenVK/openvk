@@ -275,6 +275,12 @@
 "likers_list" = "Likers list";
 "liked_verb" = "Liked by";
 
+"liked_by_x_people_one" = "Liked by $1 user";
+"liked_by_x_people_few" = "Liked by $1 users";
+"liked_by_x_people_many" = "Liked by $1 users";
+"liked_by_x_people_other" = "Liked by $1 users";
+"liked_by_x_people_zero" = "Nobody liked";
+
 /* Friends */
 
 "friends" = "Friends";

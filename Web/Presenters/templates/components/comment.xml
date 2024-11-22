@@ -60,7 +60,7 @@
                                 <a href="javascript:reportComment()">{_report}</a>
                             {/if}
                             <div style="float: right; font-size: .7rem;">
-                                <a class="post-like-button" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}">
+                                <a class="post-like-button" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}" data-likes='{$likesCount}' data-id="1_{$comment->getPrettyId()}" data-type='comment'>
                                     <div class="heart" style="{if $comment->hasLikeFrom($thisUser)}opacity: 1;{else}opacity: 0.4;{/if}"></div>
                                     <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
                                 </a>

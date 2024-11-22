@@ -38,7 +38,7 @@
                         {var $liked = $video->hasLikeFrom($thisUser)}
                         {var $likesCount = $video->getLikesCount()}
                         <div class='like_wrap tidy'>
-                            <a href="/video{$video->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$likesCount}">
+                            <a href="/video{$video->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$video->getPrettyId()}" data-type='video'>
                                 <div class="heart" id="{if $liked}liked{/if}"></div>
                                 <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
                             </a>

@@ -198,7 +198,7 @@ final class Likes extends VKAPIRequestHandler
             if(!$extended)
                 $res->items[] = $liker->getId();
             else
-                $res->items[] = $liker->toVkApiStruct();
+                $res->items[] = $liker->toVkApiStruct(NULL, 'photo_50');
         }
 
         return $res;
