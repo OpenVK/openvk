@@ -366,6 +366,11 @@ function check_copyright_link(string $link = ''): bool
     return true;
 }
 
+function escape_html(string $unsafe): string
+{
+    return htmlspecialchars($unsafe, ENT_DISALLOWED | ENT_XHTML);
+}
+
 return (function() {
     _ovk_check_environment();
     require __DIR__ . "/vendor/autoload.php";

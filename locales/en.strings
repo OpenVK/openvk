@@ -2236,3 +2236,10 @@
 
 "roll_back" = "rollback";
 "roll_backed" = "rollbacked";
+
+/* RSS */
+
+"post_deact_in_general" = "Page deletion";
+"upd_in_general" = "Avatar update";
+"on_wall" = "On wall";
+"sign_short" = "Sign";

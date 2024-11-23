@@ -2127,3 +2127,9 @@
 "roll_back" = "откатить";
 "roll_backed" = "откачено";
 
+/* RSS */
+
+"post_deact_in_general" = "Удаление страницы";
+"upd_in_general" = "Обновление фотографии страницы";
+"on_wall" = "На стене";
+"sign_short" = "Подпись";
