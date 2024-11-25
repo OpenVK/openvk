@@ -498,6 +498,7 @@ class User extends RowModel
                 "wall.write",
                 "messages.write",
                 "audios.read",
+                "likes.read",
             ],
         ])->get($id);
     }
@@ -1062,6 +1063,7 @@ class User extends RowModel
                 "wall.write",
                 "messages.write",
                 "audios.read",
+                "likes.read",
             ],
         ])->set($id, $status)->toInteger());
     }
@@ -1336,6 +1338,11 @@ class User extends RowModel
     function getRealId()
     {
         return $this->getId();
+    }
+
+    function isPrivateLikes(): bool
+    {
+        return $this->getPrivacySetting("likes.read") == User::PRIVACY_NO_ONE;
     }
 
     function toVkApiStruct(?User $user = NULL, string $fields = ''): object

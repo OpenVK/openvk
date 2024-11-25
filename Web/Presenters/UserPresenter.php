@@ -503,6 +503,7 @@ final class UserPresenter extends OpenVKPresenter
                     "wall.write",
                     "messages.write",
                     "audios.read",
+                    "likes.read",
                 ];
                 foreach($settings as $setting) {
                     $input = $this->postParam(str_replace(".", "_", $setting));

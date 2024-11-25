@@ -671,6 +671,7 @@
 "privacy_setting_write_wall" = "Кто может писать у меня на стене";
 "privacy_setting_write_messages" = "Кто может писать мне сообщения";
 "privacy_setting_view_audio" = "Кому видно мои аудиозаписи";
+"privacy_setting_see_likes" = "Кому видны мои лайки";
 "privacy_value_anybody" = "Все желающие";
 "privacy_value_anybody_dative" = "Всем желающим";
 "privacy_value_users" = "Пользователям OpenVK";
