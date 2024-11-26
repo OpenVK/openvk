@@ -656,7 +656,7 @@
 "you_can_also" = "Ви також можете";
 "delete_your_page" = "видалити свою сторінку";
 "delete_album" = "видалити альбом";
-"ui_settings_interface" = "Інтерфейс";
+"ui_settings_interface" = "Дієвидло";
 "ui_settings_sidebar" = "Ліве меню";
 "ui_settings_rating" = "Рейтинг";
 "ui_settings_rating_show" = "Показувати";
@@ -1835,7 +1835,7 @@
 "tour_section_11_text_1" = "Після реєстрації, як стандартна тема, у вас буде класична тема оформлення";
 "tour_section_11_text_2" = "Деяких нових користувачів може налякати чинна класична тема, яка виглядає дуже архаїчно";
 "tour_section_11_text_3" = "<b>Але не біда:</b> Ви можете обрати іншу тему з каталогу, або створити свою, ознайомившись з <a href='https://docs.ovk.to/'>документацією</a>";
-"tour_section_11_bottom_text_1" = "Каталог тем доступний в розділі &quot;Мої Налаштування&quot; в вкладці &quot;Інтерфейс&quot; ";
+"tour_section_11_bottom_text_1" = "Каталог тем доступний в розділі &quot;Мої Налаштування&quot; у вкладці &quot;Дієвидло&quot; ";
 "tour_section_11_wordart" = "<img src='/assets/packages/static/openvk/img/tour/wordart.png' width='65%'>";
 
 "tour_section_12_title_1" = "Фон профілю та групи";
