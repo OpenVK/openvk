@@ -2,7 +2,7 @@
 {php $isWithdrawn = $audio->isWithdrawn()}
 {php $isAvailable = $audio->isAvailable()}
 {php $editable = isset($thisUser) && $audio->canBeModifiedBy($thisUser)}
-<div id="audioEmbed-{$id}" data-realid="{$audio->getId()}" {if $hideButtons}data-prettyid="{$audio->getPrettyId()}" data-name="{$audio->getName()}"{/if} data-genre="{$audio->getGenre()}" class="audioEmbed {if !$isAvailable}processed{/if} {if $isWithdrawn}withdrawn{/if}" data-length="{$audio->getLength()}" data-keys="{json_encode($audio->getKeys())}" data-url="{$audio->getURL()}">
+<div id="audioEmbed-{$id}" data-realid="{$audio->getId()}" {if $hideButtons}data-prettyid="{$audio->getPrettyId()}" data-name="{$audio->getName()}"{/if} data-genre="{$audio->getGenre()}" class="audioEmbed {if !$isAvailable}processed{/if} {if $isWithdrawn}withdrawn{/if}" data-length="{$audio->getLength()}" data-keys="{json_encode($audio->getKeys())}" data-url="{$audio->getURL()}" {if !empty($audio->getLRC()) }data-lrc="/audio{$audio->getId()}/lrc"{/if}>
     <audio class="audio" />
 
     <div id="miniplayer" class="audioEntry">

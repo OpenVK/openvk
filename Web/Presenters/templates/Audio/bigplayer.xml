@@ -48,9 +48,11 @@
         </div>
 
         <div class="additionalButtons">
+            <div class="lyricsButton musicIcon" title="{_lyrics_tip}"></div>
             <div class="repeatButton musicIcon" title="{_repeat_tip} [R]" ></div>
             <div class="shuffleButton musicIcon" title="{_shuffle_tip}"></div>
             <div class="deviceButton musicIcon" title="{_mute_tip} [M]"></div>
         </div>
     </div>
+    <div class="lyrics"></div>
 </div>

@@ -867,6 +867,8 @@
 "audio_popular" = "Популярное";
 "audio_search" = "Поиск";
 
+"sync_lyrics_not_available" = "Синхронизированный текст песни недоступен.";
+
 "my_audios_small" = "Мои аудиозаписи";
 "my_playlists" = "Мои плейлисты";
 "playlists" = "Плейлисты";

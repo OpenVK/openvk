@@ -78,8 +78,115 @@ class bigPlayer {
 
     timeType = 0
 
+    lyricIndex = 0
+    lrcInterval = null;
+
     findTrack(id) {
         return this.tracks["tracks"].find(item => item.id == id)
+    }
+
+    
+    // LRC | Synced lyrics functionality
+    _parseTimestamp = (timestamp) => {
+        if (timestamp[2] !== ":" || timestamp[5] !== ".") return;
+
+        const minutes = +timestamp.substring(0, 2);
+        const seconds = +timestamp.substring(3, 5);
+        const hundredths = +timestamp.substring(6, 8);
+
+        return minutes * 60 + seconds + hundredths / 100;
+    };
+
+    _parseLrcLine = (line) => {
+        if (!line.startsWith("[") && line.indexOf("]") !== 9) return;
+
+        const timestamp = this._parseTimestamp(line.substring(1, 9));
+        if (!timestamp) return;
+
+        return { timestamp, textContent: line.substring(10).trim() };
+    };
+
+    _parseLrc = (textContent) => {
+        return textContent.split("\n").map(this._parseLrcLine).filter(Boolean);
+    };
+
+    _importLrc = async (path) => {
+        return await fetch(path)
+            .then((response) => response.text())
+            .then(this._parseLrc);
+    };
+
+    // NOTE: LYRICS DOM FUNCTIONS
+    _createLineElement = (timestamp, textContent) => {
+        const element = document.createElement("div");
+
+        element.classList.add("lyrics__line");
+        element.setAttribute("data-timestamp", timestamp);
+
+        element.textContent = textContent;
+        document.querySelectorAll(`.lyrics`)[0].appendChild(element);
+    };
+
+    _loadLyrics = (lyrics) => {
+        document.querySelectorAll(`.lyrics`)[0].innerHTML = "";
+        document.querySelectorAll(`.lyrics`)[0].scrollTop = 0;
+
+        lyrics.forEach(({ timestamp, textContent }) =>
+            this._createLineElement(timestamp, textContent)
+        );
+
+        if (lyrics.length == 0) 
+        {
+            document.querySelectorAll(`.lyrics`)[0].innerHTML = `<div class="lyrics__message">${tr("sync_lyrics_not_available")}</div>`
+        }
+    };
+
+    handleLyricsSync = () => {
+        let currentLyric = document.querySelectorAll(`.lyrics`)[0].children[this.lyricIndex];
+
+        if (currentLyric == undefined) return;
+
+        let timestamp = currentLyric.getAttribute("data-timestamp");
+        let isActive = currentLyric.classList.contains("lyrics__line__active");
+
+        if (!isActive && this.player().currentTime >= timestamp) {
+            document.querySelectorAll(`.lyrics`)[0].scrollTop = currentLyric.offsetTop - 55
+            return currentLyric.classList.add("lyrics__line__active");
+        }
+
+        if (document.querySelectorAll(`.lyrics`)[0].children.length === this.lyricIndex + 1) {
+            return;
+        }
+
+        let nextLyric = document.querySelectorAll(`.lyrics`)[0].children[this.lyricIndex + 1];
+        let nextTimestamp = +nextLyric.getAttribute("data-timestamp");
+
+        if (isActive && this.player().currentTime >= nextTimestamp) {
+            currentLyric.classList.remove("lyrics__line__active");
+            return this.lyricIndex++;
+        }
+    }
+
+    updateLyricIndex = () => {
+        if (this.lyricIndex < 0) {
+            this.lyricIndex = 0;
+        }
+    
+        document.querySelectorAll(`.lyrics`)[0].children[this.lyricIndex].classList.remove(
+          "lyrics__line__active"
+        );
+    
+        this.lyricIndex = [...document.querySelectorAll(`.lyrics`)[0].children].findIndex(
+          (lyric) => {
+            const timestamp = +lyric.getAttribute("data-timestamp");
+            return timestamp >= this.player().currentTime;
+          }
+        );
+    
+        let currentLyric = document.querySelectorAll(`.lyrics`)[0].children[this.lyricIndex];
+    
+        document.querySelectorAll(`.lyrics`)[0].scrollTop = currentLyric.offsetTop - 55
+        currentLyric.classList.add("lyrics__line__active");
     }
 
     constructor(context, context_id, page = 1) {
@@ -151,7 +258,6 @@ class bigPlayer {
 
             if (ps <= 100)
                 this.nodes["thisPlayer"].querySelector(".selectableTrack .slider").style.left = `${ ps}%`;
-
         })
 
         u(this.player()).on("volumechange", (e) => {
@@ -173,6 +279,7 @@ class bigPlayer {
             const width = e.clientX - rect.left;
             const time = Math.ceil((width * this.tracks["currentTrack"].length) / (rect.right - rect.left));
 
+            this.updateLyricIndex();
             this.player().currentTime = time;
         })
 
@@ -275,6 +382,22 @@ class bigPlayer {
             else
                 this.player().loop = false
         })
+        
+        u(".bigPlayer .additionalButtons .lyricsButton").on("click", (e) => {
+            if(this.tracks["currentTrack"] == null)
+                return
+
+            e.currentTarget.classList.toggle("pressed")
+
+            if (document.querySelectorAll(`.lyrics`)[0].classList.contains("shown")) {
+                document.querySelectorAll(`.lyrics`)[0].style.display = "block";
+                document.querySelectorAll(`.lyrics`)[0].classList.remove("shown");
+                setTimeout(() => {document.querySelectorAll(`.lyrics`)[0].style.display = ""}, 250);
+            } else {
+                document.querySelectorAll(`.lyrics`)[0].style.display = "block";
+                setTimeout(() => {document.querySelectorAll(`.lyrics`)[0].classList.add("shown")}, 50);
+            }
+        })
 
         u(".bigPlayer .additionalButtons .shuffleButton").on("click", (e) => {
             if(this.tracks["currentTrack"] == null)
@@ -327,9 +450,11 @@ class bigPlayer {
                     break
                 case "ArrowLeft":
                     this.player().currentTime = this.player().currentTime - 3
+                    this.updateLyricIndex();
                     break
                 case "ArrowRight":
                     this.player().currentTime = this.player().currentTime + 3
+                    this.updateLyricIndex();
                     break
                 // буквально
                 case " ":
@@ -400,7 +525,7 @@ class bigPlayer {
                 
                 return
             }
-
+            this.lrcInterval = clearInterval(this.lrcInterval);
             this.showNextTrack()
         })
         
@@ -429,6 +554,9 @@ class bigPlayer {
                     }
                 })
             }, 2000)
+
+            this.lyricIndex = 0;
+            this._importLrc(`/audio${this.tracks.currentTrack.id}/lrc`).then(this._loadLyrics)
         })
 
         if(localStorage.volume != null && localStorage.volume < 1 && localStorage.volume > 0)
@@ -447,6 +575,7 @@ class bigPlayer {
         navigator.mediaSession.setActionHandler('nexttrack', () => { this.showNextTrack() });
         navigator.mediaSession.setActionHandler("seekto", (details) => {
             this.player().currentTime = details.seekTime;
+            this.updateLyricIndex;
         });
     }
 
@@ -459,7 +588,8 @@ class bigPlayer {
         this.player().play()
         this.nodes["playButtons"].querySelector(".playButton").classList.add("pause")
         document.querySelector('link[rel="icon"], link[rel="shortcut icon"]').setAttribute("href", "/assets/packages/static/openvk/img/favicons/favicon24_paused.png")
-    
+        this.lrcInterval = setInterval(this.handleLyricsSync);
+
         navigator.mediaSession.playbackState = "playing"
     }
     
@@ -471,7 +601,8 @@ class bigPlayer {
         this.player().pause()
         this.nodes["playButtons"].querySelector(".playButton").classList.remove("pause")
         document.querySelector('link[rel="icon"], link[rel="shortcut icon"]').setAttribute("href", "/assets/packages/static/openvk/img/favicons/favicon24_playing.png")
-    
+        this.lrcInterval = clearInterval(this.lrcInterval);
+
         navigator.mediaSession.playbackState = "paused"
     }
 
@@ -788,7 +919,7 @@ function initPlayer(id, keys, url, length) {
         $(`#audioEmbed-${ id} .track`).removeClass('shown')
         $(`#audioEmbed-${ id}`).removeClass("havePlayed")
     }
-
+    
     u(audio).on("play", playButtonImageUpdate);
     u(audio).on(["pause", "suspended"], playButtonImageUpdate);
     u(audio).on("ended", (e) => {

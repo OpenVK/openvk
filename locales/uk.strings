@@ -828,6 +828,8 @@
 "audio_popular" = "Популярні";
 "audio_search" = "Пошук";
 
+"sync_lyrics_not_available" = "Синхронізований текст пісні недоступний.";
+
 "my_audios_small" = "Мої аудіозаписи";
 "my_playlists" = "Мій список відтворення";
 "playlists" = "Списки відтворення";

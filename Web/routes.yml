@@ -225,6 +225,8 @@ routes:
       handler: "Audio->playlists"
     - url: "/audio{num}/action"
       handler: "Audio->action"
+    - url: "/audio{num}/lrc"
+      handler: "Audio->lrc"
     - url: "/{?!club}{num}"
       handler: "Group->view"
       placeholders:

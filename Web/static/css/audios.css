@@ -80,7 +80,7 @@
 .bigPlayer .paddingLayer .additionalButtons {
     float: left;
     margin-top: -6px;
-    width: 11%;
+    width: 14%;
 }
 
 .bigPlayer .paddingLayer .additionalButtons .repeatButton {
@@ -88,6 +88,14 @@
     height: 16px;
     background-position-y: -49px;
     background-position-x: -31px;
+    margin-left: 7px;
+    float: left;
+}
+
+.bigPlayer .paddingLayer .additionalButtons .lyricsButton {
+    width: 12px;
+    height: 16px;
+    background-position: -79px -65px;
     margin-left: 7px;
     float: left;
 }
@@ -138,7 +146,7 @@
     float: left;
     margin-top: -13px;
     margin-left: 13px;
-    width: 63%;
+    width: 61%;
     position: relative;
 }
 
@@ -211,6 +219,47 @@
     position: relative;
     width:72%
 }
+
+.bigPlayer .lyrics {
+	width: 100%;
+	height: 400px;
+	background-color: #ffffff;
+	margin-top: 23px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scroll-behavior: smooth;
+    box-shadow: 0px 2px 3px -2px #000a;
+    transition: 250ms ease-in;
+	display: none;
+    opacity: 0;
+}
+
+.bigPlayer .lyrics.shown {
+    opacity: 1;
+}
+
+.bigPlayer .lyrics .lyrics__line {
+    font-family: Tahoma;
+    font-size: 15pt;
+    padding: 7px 20px;
+    color: gray;
+    transition: 250ms ease-out;
+}
+  
+.bigPlayer .lyrics .lyrics__line__active {
+    color:black;
+    font-size: 17pt;
+}
+
+.bigPlayer .lyrics .lyrics__message {
+    font-family: Tahoma;
+    font-size: 9pt;
+    text-align: center;
+    padding: 3px;
+    padding-top: 50px;
+    color: black;
+}
+  
 
 .audioEmbed .track > .selectableTrack, .bigPlayer .selectableTrack {
     margin-top: 3px;

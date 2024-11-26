@@ -167,6 +167,11 @@ class Audio extends Media
         return !is_null($this->getRecord()->lyrics) ? htmlspecialchars($this->getRecord()->lyrics, ENT_DISALLOWED | ENT_XHTML) : NULL;
     }
 
+    function getLRC(): ?string
+    {
+        return !is_null($this->getRecord()->lrc) ? htmlspecialchars($this->getRecord()->lrc, ENT_DISALLOWED | ENT_XHTML) : NULL;
+    }
+
     function getLength(): int
     {
         return $this->getRecord()->length;

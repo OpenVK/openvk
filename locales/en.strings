@@ -912,6 +912,8 @@
 "audio_popular" = "Popular";
 "audio_search" = "Search";
 
+"sync_lyrics_not_available" = "Syncronized lyrics are not available.";
+
 "my_audios_small" = "My audios";
 "my_playlists" = "My playlists";
 "playlists" = "Playlists";

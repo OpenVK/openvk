@@ -802,4 +802,15 @@ final class AudioPresenter extends OpenVKPresenter
 
         $this->returnJson($resultArr);
     }
+
+    function renderLRC(int $id) {
+        $audio = (new Audios)->get($id);
+        header("Content-Type: application/octet-stream");
+        
+        if ($audio->isAvailable()) {
+            exit($audio->getLRC());
+        } else {
+            exit("");
+        }
+    }
 }
