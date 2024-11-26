@@ -3784,12 +3784,16 @@ hr {
     overflow-x: hidden;
 }
 
+.like_tooltip_wrapper {
+    box-shadow: 0px 2px 6px -5px rgba(0, 0, 0, 0.8);
+}
+
 .like_tooltip_wrapper .like_tooltip_head {
     background: linear-gradient(180deg, #595959, #515151);
     box-shadow: 0px 1px 0px 0px rgba(255, 255, 255, 0.18) inset;
     border: solid 1px #575757;
     padding: 4px 10px;
-    width: 200px;
+    width: 180px;
     display: flex;
     justify-content: space-between;
     align-items: center;

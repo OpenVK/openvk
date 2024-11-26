@@ -397,6 +397,17 @@
                 </tr>
                 <tr>
                     <td width="120" valign="top">
+                        <span class="nobold">{_privacy_setting_see_likes}</span>
+                    </td>
+                    <td>
+                        <select name="likes.read", style="width: 164px;">
+                            <option value="2" {if $user->getPrivacySetting('likes.read') == 2}selected{/if}>{_privacy_value_anybody}</option>
+                            <option value="0" {if $user->getPrivacySetting('likes.read') == 0}selected{/if}>{_privacy_value_only_me_dative}</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td width="120" valign="top">
                         <span class="nobold">{_profile_type}</span>
                     </td>
                     <td>

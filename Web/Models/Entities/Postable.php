@@ -97,8 +97,14 @@ abstract class Postable extends Attachable
             "target" => $this->getRecord()->id,
         ])->page($page, $perPage);
         
-        foreach($sel as $like)
-            yield (new Users)->get($like->origin);
+        foreach($sel as $like) {
+            $user = (new Users)->get($like->origin);
+            if($user->isPrivateLikes() && OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"]) {
+                $user = (new Users)->get((int) OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["account"]);
+            }
+
+            yield $user;
+        }
     }
     
     function isAnonymous(): bool

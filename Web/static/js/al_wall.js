@@ -886,7 +886,7 @@ async function __uploadToTextarea(file, textareaNode) {
     if(filetype == 'photo') {
         const temp_url = URL.createObjectURL(file)
         const rand = random_int(0, 1000)
-        textareaNode.find('.post-horizontal').append(`<a id='temp_filler${rand}' class="upload-item"><img src='${temp_url}'></a>`)
+        textareaNode.find('.post-horizontal').append(`<a id='temp_filler${rand}' class="upload-item lagged"><img src='${temp_url}'></a>`)
         
         const res = await fetch(`/photos/upload`, {
             method: 'POST',

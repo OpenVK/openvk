@@ -301,7 +301,7 @@ class Post extends Postable
     {
         $liked = parent::toggleLike($user);
 
-        if($this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club) && !$this instanceof Comment)
+        if(!$user->isPrivateLikes() && $this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club) && !$this instanceof Comment)
             (new LikeNotification($this->getOwner(false), $this, $user))->emit();
 
         foreach($this->getChildren() as $attachment)
@@ -383,34 +383,70 @@ class Post extends Postable
     {
         $domain = ovk_scheme(true).$_SERVER["HTTP_HOST"];
         $description = $this->getText(false);
+        $title = str_replace("\n", "", ovk_proc_strtr($description, 79));
         $description_html = $description;
         $url = $domain."/wall".$this->getPrettyId();
 
+        if($this->isUpdateAvatarMessage())
+            $title = tr('upd_in_general');
+        if($this->isDeactivationMessage())
+            $title = tr('post_deact_in_general');
+
         $author = $this->getOwner();
-        $author_name = htmlspecialchars($author->getCanonicalName(), ENT_DISALLOWED | ENT_XHTML);
+        $target_wall = $this->getWallOwner();
+        $author_name = escape_html($author->getCanonicalName());
         if($this->isExplicit())
-            $description_html .= "<br /><b>".tr('contains_nsfw').".</b><br />";
+            $title = 'NSFW: ' . $title;
 
         foreach($this->getChildren() as $child) {
             if($child instanceof Photo) {
                 $child_page = $domain.$child->getPageURL();
-                $child_url = $child->getURLBySizeId('large');
-                $description_html .= "<br /><a href='$child_page'><img src='$child_url'></a>";
+                $child_url = $child->getURL();
+                $description_html .= "<br /><a href='$child_page'><img src='$child_url'></a><br />";
             } elseif($child instanceof Video) {
                 $child_page = $domain.'/video'.$child->getPrettyId();
-                $description_html .= "<br /><a href='$child_page'>Video</a>";
+
+                if($child->getType() != 1) {
+                    $description_html .= "".
+                    "<br />".
+                    "<video width=\"320\" height=\"240\" controls><source src=\"".$child->getURL()."\" type=\"video/mp4\"></video><br />".
+                    "<b>".escape_html($child->getName())."</b><br />";
+                } else {
+                    $description_html .= "".
+                    "<br />".
+                    "<a href=\"".$child->getVideoDriver()->getURL()."\"><b>".escape_html($child->getName())."</b></a><br />";
+                }
             } elseif($child instanceof Audio) {
-                $description_html .= "<br />Audio";
+                if(!$child->isWithdrawn()) {
+                    $description_html .= "<br />"
+                    ."<b>".escape_html($child->getName())."</b>:"
+                    ."<br />"
+                    ."<audio controls>"
+                    ."<source src=\"".$child->getOriginalURL()."\" type=\"audio/mpeg\"></audio>"
+                    ."<br />";
+                }
+            } elseif($child instanceof Poll) {
+                $description_html .= "<br />".tr('poll').": ".escape_html($child->getTitle());
+            } elseif($child instanceof Note) {
+                $description_html .= "<br />".tr('note').": ".escape_html($child->getName());
             }
         }
 
         $description_html .= "<br />".tr('author').": <img width='15px' src='".$author->getAvatarURL()."'><a href='".$author->getURL()."'>" . $author_name . "</a>"; 
-        if($this->hasSource()) {
-            $description_html .= "<br />".tr('source').": ".htmlspecialchars($this->getSource(), ENT_DISALLOWED | ENT_XHTML);
+        
+        if($target_wall->getRealId() != $author->getRealId())
+            $description_html .= "<br />".tr('on_wall').": <img width='15px' src='".$target_wall->getAvatarURL()."'><a href='".$target_wall->getURL()."'>" . escape_html($target_wall->getCanonicalName()) . "</a>"; 
+       
+        if($this->isSigned()) {
+            $signer = $this->getOwner(false);
+            $description_html .= "<br />".tr('sign_short').": <img width='15px' src='".$signer->getAvatarURL()."'><a href='".$signer->getURL()."'>" . escape_html($signer->getCanonicalName()) . "</a>"; 
         }
 
+        if($this->hasSource())
+            $description_html .= "<br />".tr('source').": ".escape_html($this->getSource());
+
         $item = new \Bhaktaraz\RSSGenerator\Item();
-        $item->title(str_replace("\n", "", ovk_proc_strtr($description, 79)))
+        $item->title($title)
         ->url($url)
         ->guid($url)
         ->creator($author_name)

@@ -698,6 +698,7 @@
 "privacy_setting_write_wall" = "Who can publish posts on my wall";
 "privacy_setting_write_messages" = "Who can write messages to me";
 "privacy_setting_view_audio" = "Who can see my audios";
+"privacy_setting_see_likes" = "Who can see my likes";
 "privacy_value_anybody" = "Anybody";
 "privacy_value_anybody_dative" = "Anybody";
 "privacy_value_users" = "OpenVK users";
@@ -2236,3 +2237,10 @@
 
 "roll_back" = "rollback";
 "roll_backed" = "rollbacked";
+
+/* RSS */
+
+"post_deact_in_general" = "Page deletion";
+"upd_in_general" = "Avatar update";
+"on_wall" = "On wall";
+"sign_short" = "Sign";
