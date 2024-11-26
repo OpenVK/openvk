@@ -645,6 +645,7 @@
 "privacy_setting_write_wall" = "Хто може писати у мене на стіні";
 "privacy_setting_write_messages" = "Хто може писати мені повідомлення";
 "privacy_setting_view_audio" = "Хто може переглядати мої аудіо";
+"privacy_setting_see_likes" = "Хто може переглядати мої вподобання";
 "privacy_value_anybody" = "Усі охочі";
 "privacy_value_anybody_dative" = "Усім охочим";
 "privacy_value_users" = "Користувачам OpenVK";
