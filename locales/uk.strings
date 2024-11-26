@@ -2084,3 +2084,9 @@
 
 "roll_back" = "повернути";
 "roll_backed" = "повернуто";
+
+/* RSS */
+"post_deact_in_general" = "Видалення сторінки";
+"upd_in_general" = "Оновлення фото сторінки";
+"on_wall" = "На стіні";
+"sign_short" = "Підпис";
