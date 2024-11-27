@@ -173,3 +173,11 @@ function collect_attachments(target) {
 
     return horizontal_array.concat(vertical_array)
 }
+
+function getRemainingTime(fullTime, time) {
+    let timer = fullTime - time
+
+    if(timer < 0) return "-00:00"
+
+    return "-" + fmtTime(timer)
+}

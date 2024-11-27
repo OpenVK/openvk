@@ -147,6 +147,11 @@ class Audio extends Media
         return $this->getRecord()->performer;
     }
 
+    function getPerformers(): array
+    {
+        return explode(", ", $this->getRecord()->performer);
+    }
+
     function getName(): string
     {
         return $this->getPerformer() . " — " . $this->getTitle();

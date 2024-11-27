@@ -2,6 +2,7 @@
     <div class="verticalGrayTabs">
         <div class='with_padding'>
             <a n:if="isset($thisUser)" n:attr="id => $mode === 'list' && $isMy ? 'used' : 'ki'" href="/audios{$thisUser->getId()}">{_my_music}</a>
+            {* TODO: show upload link as and plusick (little plus) in button up*}
             <a n:if="isset($thisUser)" href="/player/upload{if $isMyClub}?gid={abs($ownerId)}{/if}">{_upload_audio}</a>
             <a n:if="isset($thisUser)" n:attr="id => $mode === 'new' ? 'used' : 'ki'" href="/search?section=audios">{_audio_new}</a>
             <a n:if="isset($thisUser)" n:attr="id => $mode === 'popular' ? 'used' : 'ki'" href="/search?section=audios&order=listens">{_audio_popular}</a>
@@ -24,13 +25,13 @@
 
         {if $friendsAudios}
             <div class="friendsAudiosList">
-                <a href="/audios{$fr->getRealId()}" n:foreach="$friendsAudios as $fr">
+                <a href="/audios{$friend->getRealId()}" n:foreach="$friendsAudios as $friend">
                     <div class="elem">
-                        <img src="{$fr->getAvatarURL()}" />
+                        <img src="{$friend->getAvatarURL()}" />
 
                         <div class="additionalInfo">
-                            <span class="name noOverflow">{$fr->getCanonicalName()}</span>
-                            <span class="desc">{$audioStatus ? $audioStatus->getName() : tr("audios_count", $fr->getAudiosCollectionSize())}</span>
+                            <span class="name noOverflow">{$friend->getCanonicalName()}</span>
+                            <span class="desc">{$audioStatus ? $audioStatus->getName() : tr("audios_count", $friend->getAudiosCollectionSize())}</span>
                         </div>
                     </div>
                 </a>

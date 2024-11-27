@@ -32,8 +32,14 @@
 
 {block content}
     {include "bigplayer.xml"}
+    <script>
+        window.__current_page_audio_context = {
+            name: 'playlist_context',
+            entity_id: {$playlist->getId()},
+            page: {$page}
+        }
+    </script>
     
-    <input type="hidden" name="bigplayer_context" data-type="playlist_context" data-entity="{$playlist->getId()}" data-page="{$page}">
     <div class="playlistBlock">
         <div class="playlistCover" style="float: left;">
             {if $cover}

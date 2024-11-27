@@ -779,16 +779,21 @@ final class AudioPresenter extends OpenVKPresenter
         $audiosArr = [];
 
         foreach($audios as $audio) {
-            $audiosArr[] = [
-                "id" => $audio->getId(),
-                "name" => $audio->getTitle(),
-                "performer" => $audio->getPerformer(),
-                "keys" => $audio->getKeys(),
-                "url" => $audio->getUrl(),
-                "length" => $audio->getLength(),
-                "available" => $audio->isAvailable(),
-                "withdrawn" => $audio->isWithdrawn(),
-            ];
+            $output_array = [];
+            $output_array['id'] = $audio->getId();
+            $output_array['name'] = $audio->getTitle();
+            $output_array['performer'] = $audio->getPerformer();
+
+            if(!$audio->isWithdrawn() && $audio->isAvailable()) {
+                $output_array['keys'] = $audio->getKeys();
+                $output_array['url'] = $audio->getUrl();
+            }
+
+            $output_array['length'] = $audio->getLength();
+            $output_array['available'] = $audio->isAvailable();
+            $output_array['withdrawn'] = $audio->isWithdrawn();
+
+            $audiosArr[] = $output_array;
         }
 
         $resultArr = [

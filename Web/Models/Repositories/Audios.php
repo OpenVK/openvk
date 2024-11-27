@@ -248,15 +248,17 @@ class Audios
     {
         $query = "%$query%";
         $result = $this->audios->where([
-            "unlisted" => 0,
-            "deleted"  => 0,
+            "unlisted"  => 0,
+            "deleted"   => 0,
+            /*"withdrawn" => 0,
+            "processed" => 1,*/
         ]);
         $order_str = (in_array($order['type'], ['id', 'length', 'listens']) ? $order['type'] : 'id') . ' ' . ($order['invert'] ? 'ASC' : 'DESC');;
 
         if($params["only_performers"] == "1") {
             $result->where("performer LIKE ?", $query);
         } else {
-            $result->where("name LIKE ? OR performer LIKE ?", $query, $query);
+            $result->where("CONCAT_WS(' ', performer, name) LIKE ?", $query);
         }
 
         foreach($params as $paramName => $paramValue) {

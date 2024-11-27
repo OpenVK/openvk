@@ -973,7 +973,7 @@ u(document).on('dragover', '#write .post-horizontal .upload-item, .post-vertical
     return
 })
 
-u(document).on('#write dragleave dragend', '.post-horizontal .upload-item, .post-vertical .upload-item', (e) => {
+u(document).on('dragleave dragend', '#write .post-horizontal .upload-item, .post-vertical .upload-item', (e) => {
     //console.log(e)
     u(e.target).closest('.upload-item').removeClass('dragged')
     return
@@ -2079,8 +2079,10 @@ async function __processPaginatorNextPage(page)
     }
     
     if(window.player) {
-        window.player.loadContextPage(page)
+        window.player.loadContext(page)
     }
+
+    location.hash = 'pages/'+page
 
     if(typeof __scrollHook != 'undefined') {
         __scrollHook(page)
@@ -2220,4 +2222,27 @@ u(document).on('keyup', async (e) => {
                 break
         }
     }
+})
+
+u(document).on('mouseover mousemove mouseout', `div[data-tip='simple']`, (e) => {
+    if(e.target.dataset.allow_mousemove != '1' && e.type == 'mousemove') {
+        return
+    }
+
+    if(e.type == 'mouseout') {
+        u(`.tip_result`).remove()
+        return
+    }
+
+    const target = u(e.target).closest(`div[data-tip='simple']`)
+    const title  = target.attr('data-title')
+    if(title == '') {
+        return
+    }
+
+    target.nodes[0].parentNode.insertAdjacentHTML('afterbegin', `
+        <div class='tip_result' style='left:${e.layerX}px;'>
+            ${escapeHtml(title)}
+        </div>    
+    `)
 })

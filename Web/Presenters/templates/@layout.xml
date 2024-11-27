@@ -20,7 +20,6 @@
         {script "js/utils.js"}
         {script "js/node_modules/dashjs/dist/dash.all.min.js"}
         <script src="/assets/packages/static/openvk/js/node_modules/cropperjs/dist/cropper.js" type="module"></script>
-        {script "js/al_music.js"}
 
         {css "js/node_modules/tippy.js/dist/backdrop.css"}
         {css "js/node_modules/cropperjs/dist/cropper.css"}
@@ -392,6 +391,7 @@
         {script "js/al_suggestions.js"}
         {script "js/al_navigation.js"}
         {script "js/al_comments.js"}
+        {script "js/al_music.js"}
 
         {ifset $thisUser}
             {script "js/al_notifs.js"}

@@ -2572,10 +2572,6 @@ a.poll-retract-vote {
     background: unset !important;
 }
 
-.post-vertical .vertical-attachment .audioEntry .playerButton {
-    padding: 0px 3px 0px 0px;
-}
-
 .post-vertical .vertical-attachment .audioEntry .buttons {
     display: none;
 }
@@ -2597,7 +2593,9 @@ a.poll-retract-vote {
 }
 
 .post-vertical .vertical-attachment .audioEntry .audioEntryWrapper {
-    height: 18px;
+    height: 14px;
+    padding: 0px 4px 0px 0px;
+    gap: 2px;
 }
 
 .post-vertical .vertical-attachment .vertical-attachment-content { 

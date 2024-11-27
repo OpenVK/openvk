@@ -17,8 +17,18 @@
             <div class="page_wrap">
                 {if $section == 'audios' && $count > 1}
                     {include "../Audio/bigplayer.xml", tidy => true}
-
-                    <input type="hidden" name="bigplayer_context" data-type="classic_search_context" data-entity='{"order":"{$order}","query":"{$query}","invert":{$invert ? 1 : 0},"only_performers":{$_REQUEST['only_performers'] ? 1 : 0},"genre":"{$_REQUEST['genre']}","with_lyrics":"{$_REQUEST['with_lyrics'] ? 1 : 0}"}' data-page="{$page}">
+                    <script>
+                        window.__current_page_audio_context = {
+                            'name': 'classic_search_context',
+                            'order': {$order},
+                            'query': {$query},
+                            'genre': {$_REQUEST['genre']},
+                            'invert': {$invert ? 1 : 0},
+                            'only_performers': {$_REQUEST['only_performers'] ? 1 : 0},
+                            'with_lyrics': {$_REQUEST['with_lyrics'] ? 1 : 0},
+                            'page': {$page}
+                        }
+                    </script>
                 {/if}
                 <div class='summaryBar summaryBarFlex padding'>
                     <div class='summary'>
