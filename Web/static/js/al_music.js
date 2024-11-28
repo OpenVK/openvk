@@ -664,7 +664,7 @@ u(document).on('keyup', (e) => {
         return
     }
 
-    if(!window.player) {
+    if(!window.player || !window.player.isAtAudiosPage()) {
         return
     }
 
@@ -1294,7 +1294,7 @@ $(document).on("click", "#_deletePlaylist", (e) => {
             },
             success: (response) => {
                 if(response.success) {
-                    window.location.assign("/playlists" + response.id)
+                    window.router.route("/playlists" + response.id)
                 } else {
                     fastError(response.flash.message)
                 }

@@ -283,10 +283,11 @@ abstract class OpenVKPresenter extends SimplePresenter
             }
         }
 
-        /*if($this->queryParam('al') == '1') {
+        if($this->queryParam('al') == '1') {
+            error_reporting(0);
             $this->assertNoCSRF();
             header('Content-Type: text/plain; charset=UTF-8');
-        }*/
+        }
 
         parent::onStartup();
     }

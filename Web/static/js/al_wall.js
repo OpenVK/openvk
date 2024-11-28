@@ -53,8 +53,9 @@ u(document).on('click', '.menu_toggler', (e) => {
     }
 })
 
-$(document).on("click", ".post-like-button", function(e) {
+u(document).on("click", ".post-like-button", function(e) {
     e.preventDefault();
+    e.stopPropagation()
     
     var thisBtn = u(this).first();
     var link    = u(this).attr("href");

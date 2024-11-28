@@ -181,3 +181,37 @@ function getRemainingTime(fullTime, time) {
 
     return "-" + fmtTime(timer)
 }
+
+function serializeForm(form) 
+{
+    const u_ = u(form)
+    const inputs = u_.find('input, textarea')
+    console.log(inputs)
+    let fd = new FormData()
+    inputs.nodes.forEach(inp => {
+        if(!inp || !inp.name) {
+            return
+        }
+
+        if(inp.type == 'submit') {
+            return
+        }
+
+        switch(inp.type) {
+            case 'submit':
+                return
+            case 'hidden':
+            case 'text':
+            case 'textarea':
+                fd.append(inp.name, inp.value)
+                break
+            case 'file':
+                for(const __file of inp.files) {
+                    fd.append(inp.name, __file)
+                }
+                break
+        }
+    })
+
+    return fd
+}

@@ -242,7 +242,7 @@
                     if(response.success) {
                         u("#backToUpload").trigger("click")
                         NewNotification(tr("success"), tr("audio_successfully_uploaded"), null, () => {
-                            window.location.assign(response.redirect_link)
+                            window.router.route(response.redirect_link)
                         })
                     } else {
                         fastError(response.flash.message)

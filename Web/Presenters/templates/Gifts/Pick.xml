@@ -52,7 +52,7 @@
             let link = "/gifts?act=confirm&user={$user->getId()}&pack={$cat->getId()}&elid=";
             let gift = el.data("gift");
 
-            window.location.assign(link + gift);
+            window.router.route(link + gift);
         });
     </script>
 {/block}

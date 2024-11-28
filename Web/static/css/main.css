@@ -2831,6 +2831,10 @@ a.poll-retract-vote {
     z-index: 2;
 }
 
+.page_header.search_expanded_at_all .header_navigation #search_box #searchBoxFastTips.shown {
+    display: none;
+}
+
 .page_header.search_expanded .link {
     display: none;
 }

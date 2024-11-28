@@ -446,6 +446,7 @@
         {ifset bodyScripts}
             {include bodyScripts}
         {/ifset}
+        {script "js/router.js"}
     </body>
 </html>
 {/if}

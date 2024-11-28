@@ -108,7 +108,7 @@ $(document).on("click", "#endUploading", (e) => {
             document.querySelector(".page_content .insertPhotos").innerHTML = ""
             document.getElementById("endUploading").style.display = "none"
     
-            NewNotification(tr("photos_successfully_uploaded"), tr("click_to_go_to_album"), null, () => {window.location.assign(`/album${result.owner}_${result.album}`)})
+            NewNotification(tr("photos_successfully_uploaded"), tr("click_to_go_to_album"), null, () => {window.router.route({url:`/album${result.owner}_${result.album}`})})
             
             document.querySelector(".whiteBox").style.display = "block"
             document.querySelector(".insertAgain").append(document.getElementById("fakeButton"))
