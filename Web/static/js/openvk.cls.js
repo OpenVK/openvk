@@ -59,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
             }),
         ]);
         
+        e.stopPropagation()
         return e.preventDefault();
     });
     /* @rem-pai why this func wasn't named as "#_deleteDialog"? It looks universal IMO */
@@ -81,11 +82,14 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
             }),
         ]);
         
+        e.stopPropagation()
         return e.preventDefault();
     });
 
-    u("#_pinGroup").on("click", async function(e) {
+    // TODO REWRITE cuz its a little broken
+    u(document).on("click", "#_pinGroup", async function(e) {
         e.preventDefault();
+        e.stopPropagation()
 
         let link = u(this).attr("href");
         let thisButton = u(this);
@@ -141,6 +145,9 @@ document.addEventListener("DOMContentLoaded", function() { //BEGIN
     });
 
     u(document).handle("submit", "#_submitUserSubscriptionAction", async function(e) {
+        e.preventDefault()
+        e.stopPropagation()
+
         u(this).nodes[0].parentElement.classList.add('loading');
         u(this).nodes[0].parentElement.classList.add('disable');
         console.log(e.target);

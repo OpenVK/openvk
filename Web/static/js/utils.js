@@ -186,7 +186,7 @@ function serializeForm(form)
 {
     const u_ = u(form)
     const inputs = u_.find('input, textarea')
-    console.log(inputs)
+    
     let fd = new FormData()
     inputs.nodes.forEach(inp => {
         if(!inp || !inp.name) {
@@ -203,7 +203,14 @@ function serializeForm(form)
             case 'hidden':
             case 'text':
             case 'textarea':
+            case 'select':
                 fd.append(inp.name, inp.value)
+                break
+            case 'checkbox':
+                if(inp.checked) {
+                    fd.append(inp.name, inp.value)
+                }
+                
                 break
             case 'file':
                 for(const __file of inp.files) {

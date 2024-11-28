@@ -91,6 +91,7 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
     костыли но смешные однако
     */
     e.preventDefault();
+    e.stopPropagation()
 
     // Значения для переключения фоток
 
@@ -449,6 +450,7 @@ async function OpenVideo(video_arr = [], init_player = true)
 
 u(document).on('click', '#videoOpen', (e) => {
     e.preventDefault()
+    e.stopPropagation()
 
     try {
         const target = e.target.closest('#videoOpen')
@@ -508,6 +510,28 @@ function reportVideo(video_id) {
                 MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
             else
             MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
+            });
+            xhr.send(null);
+        }),
+        Function.noop
+    ]);
+}
+
+function reportUser(user_id) {
+    uReportMsgTxt  = tr("going_to_report_user");
+    uReportMsgTxt += "<br/>"+tr("report_question_text");
+    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
+
+    MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
+        (function() {
+            res = document.querySelector("#uReportMsgInput").value;
+            xhr = new XMLHttpRequest();
+            xhr.open("GET", "/report/" + user_id + "?reason=" + res + "&type=user", true);
+            xhr.onload = (function() {
+                if(xhr.responseText.indexOf("reason") === -1)
+                    MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
+                else
+                    MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
             });
             xhr.send(null);
         }),
@@ -2083,7 +2107,9 @@ async function __processPaginatorNextPage(page)
         window.player.loadContext(page)
     }
 
-    location.hash = 'pages/'+page
+    const new_url = new URL(location.href)
+    new_url.hash = 'pages/'+page
+    history.replaceState(null, null, new_url)
 
     if(typeof __scrollHook != 'undefined') {
         __scrollHook(page)
@@ -2247,3 +2273,52 @@ u(document).on('mouseover mousemove mouseout', `div[data-tip='simple']`, (e) => 
         </div>    
     `)
 })
+
+function setStatusEditorShown(shown) {
+    document.getElementById("status_editor").style.display = shown ? "block" : "none";
+}
+
+document.addEventListener("click", event => {
+    if(u('#status_editor').length < 1) {
+        return
+    }
+
+    if(!event.target.closest("#status_editor") && !event.target.closest("#page_status_text"))
+        setStatusEditorShown(false);
+});
+
+u(document).on('click', '#page_status_text', (e) => {
+    setStatusEditorShown(true)
+})
+
+async function changeStatus() {
+    const status = document.status_popup_form.status.value;
+    const broadcast = document.status_popup_form.broadcast.checked;
+
+    document.status_popup_form.submit.innerHTML = "<div class=\"button-loading\"></div>";
+    document.status_popup_form.submit.disabled = true;
+
+    const formData = new FormData();
+    formData.append("status", status);
+    formData.append("broadcast", Number(broadcast));
+    formData.append("hash", document.status_popup_form.hash.value);
+    const response = await ky.post("/edit?act=status", {body: formData});
+
+    if(!parseAjaxResponse(await response.text())) {
+        document.status_popup_form.submit.innerHTML = tr("send");
+        document.status_popup_form.submit.disabled = false;
+        return;
+    }
+
+    if(document.status_popup_form.status.value === "") {
+        document.querySelector("#page_status_text").innerHTML = `[ ${tr("change_status")} ]`;
+        document.querySelector("#page_status_text").className = "edit_link page_status_edit_button";
+    } else {
+        document.querySelector("#page_status_text").innerHTML = status;
+        document.querySelector("#page_status_text").className = "page_status page_status_edit_button";
+    }
+
+    setStatusEditorShown(false);
+    document.status_popup_form.submit.innerHTML = tr("send");
+    document.status_popup_form.submit.disabled = false;
+}

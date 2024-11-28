@@ -161,6 +161,7 @@ function loadMoreSuggestedPosts() {
 // нажатие на "x предложенных записей"
 $(document).on("click", ".sugglist a", (e) => {
     e.preventDefault()
+    e.stopPropagation()
     
     if(e.currentTarget.getAttribute("data-toogled") == null || e.currentTarget.getAttribute("data-toogled") == "false") {
         e.currentTarget.setAttribute("data-toogled", "true")

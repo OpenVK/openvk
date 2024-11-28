@@ -165,33 +165,10 @@
                     </form>
                 {/if}
 
-                <a class="profile_link" style="display:block;width:96%;" href="javascript:reportUser()">{_report}</a>
+                <a class="profile_link" style="display:block;width:96%;" href="javascript:reportUser({$user->getId()})">{_report}</a>
                 <a n:if="!$user->isHideFromGlobalFeedEnabled()" class="profile_link" style="display:block;width:96%;" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$user->getId()}">
                     {if !$ignore_status}{_ignore_user}{else}{_unignore_user}{/if}
                 </a>
-                <script>
-                    function reportUser() {
-                        uReportMsgTxt  = tr("going_to_report_user");
-                        uReportMsgTxt += "<br/>"+tr("report_question_text");
-                        uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
-
-                        MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
-                            (function() {
-                                res = document.querySelector("#uReportMsgInput").value;
-                                xhr = new XMLHttpRequest();
-                                xhr.open("GET", "/report/" + {$user->getId()} + "?reason=" + res + "&type=user", true);
-                                xhr.onload = (function() {
-                                    if(xhr.responseText.indexOf("reason") === -1)
-                                        MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
-                                    else
-                                        MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
-                                });
-                                xhr.send(null);
-                            }),
-                            Function.noop
-                        ]);
-                    }
-                </script>
             {/if}
             <a style="width: 194px;" n:if="$user->getFollowersCount() > 0" href="/friends{$user->getId()}?act=incoming" class="profile_link">{tr("followers", $user->getFollowersCount())}</a>
         </div>
@@ -759,51 +736,6 @@
                     ]);
                 }
             {/if}
-        </script>
-
-        <script n:if="isset($thisUser) && $user->getId() == $thisUser->getId()" n:syntax="off">
-            function setStatusEditorShown(shown) {
-                document.getElementById("status_editor").style.display = shown ? "block" : "none";
-            }
-
-            document.addEventListener("click", event => {
-                if(!event.target.closest("#status_editor") && !event.target.closest("#page_status_text"))
-                    setStatusEditorShown(false);
-            });
-
-            document.getElementById("page_status_text").onclick = setStatusEditorShown.bind(this, true);
-
-            async function changeStatus() {
-                const status = document.status_popup_form.status.value;
-                const broadcast = document.status_popup_form.broadcast.checked;
-
-                document.status_popup_form.submit.innerHTML = "<div class=\"button-loading\"></div>";
-                document.status_popup_form.submit.disabled = true;
-
-                const formData = new FormData();
-                formData.append("status", status);
-                formData.append("broadcast", Number(broadcast));
-                formData.append("hash", document.status_popup_form.hash.value);
-                const response = await ky.post("/edit?act=status", {body: formData});
-
-                if(!parseAjaxResponse(await response.text())) {
-                    document.status_popup_form.submit.innerHTML = tr("send");
-                    document.status_popup_form.submit.disabled = false;
-                    return;
-                }
-
-                if(document.status_popup_form.status.value === "") {
-                    document.querySelector("#page_status_text").innerHTML = `[ ${tr("change_status")} ]`;
-                    document.querySelector("#page_status_text").className = "edit_link page_status_edit_button";
-                } else {
-                    document.querySelector("#page_status_text").innerHTML = status;
-                    document.querySelector("#page_status_text").className = "page_status page_status_edit_button";
-                }
-
-                setStatusEditorShown(false);
-                document.status_popup_form.submit.innerHTML = tr("send");
-                document.status_popup_form.submit.disabled = false;
-            }
         </script>
     </div>
     

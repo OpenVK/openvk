@@ -433,7 +433,7 @@
             //]]>
         </script>
 
-        <script>
+        <script id='_js_ep_script'>
             window.openvk = {
                 "audio_genres": {\openvk\Web\Models\Entities\Audio::genres},
                 "at_search": {$atSearch ?? false},

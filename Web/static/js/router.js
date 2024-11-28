@@ -1,8 +1,4 @@
 window.router = new class {
-    skeletons = {
-
-    }
-
     get csrf() {
         return u("meta[name=csrf]").attr("value")
     }
@@ -20,12 +16,22 @@ window.router = new class {
 
     __appendScript(script) {
         const _t_scr = document.createElement('script')
+        _t_scr.crossorigin = 'anonymous'
+        if(script.getAttribute('integrity')) {
+            _t_scr.setAttribute('integrity', script.getAttribute('integrity'))
+        }
+
+        _t_scr.id = script.id
+        //const parent = script.parentNode
+        //const idx = Array.from(parent.children).indexOf(script)
+
         if(script.src) {
             _t_scr.src = script.src
         } else {
             _t_scr.textContent = script.textContent
         }   
 
+        //parent.children[idx].before(script)
         document.body.appendChild(_t_scr)
     }
 
@@ -33,25 +39,25 @@ window.router = new class {
         u(`script:not([src])`).remove()
     }
 
+    __closeMsgs() {
+        window.messagebox_stack.forEach(msg => msg.close())
+    }
+
     __appendPage(parsed_content) {
-        if(u('.paginator:not(.paginator-at-top)').length > 0) {
-            showMoreObserver.unobserve(u('.paginator:not(.paginator-at-top)').nodes[0])
-        }
-        
         const page_body = u(parsed_content.querySelector('.page_body'))
         const sidebar = u(parsed_content.querySelector('.sidebar'))
         const page_header = u(parsed_content.querySelector('.page_header'))
 
         if(page_body.length < 1) {
-            makeError('Err')
+            makeError('Invalid page has been loaded')
             return
         }
 
         this.__clearScripts()
-        parsed_content.querySelectorAll('script').forEach(script => {
-            console.log(script)
+        parsed_content.querySelectorAll('.page_body script, #_js_ep_script').forEach(script => {
             if(!this.__isScriptAlreadyLoaded(script)) {
                 this.__appendScript(script)
+                script.parentNode.removeChild(script)
             }
         })
         u('.page_body').html(page_body.html())
@@ -77,6 +83,20 @@ window.router = new class {
         if(u('.paginator:not(.paginator-at-top)').length > 0) {
             showMoreObserver.observe(u('.paginator:not(.paginator-at-top)').nodes[0])
         }
+
+        if(u(`div[class$="_small_block"]`).length > 0 && window.smallBlockObserver) {
+            smallBlockObserver.observe(u(`div[class$="_small_block"]`).nodes[0])
+        }
+    }
+
+    __unlinkObservers() {
+        if(u('.paginator:not(.paginator-at-top)').length > 0) {
+            showMoreObserver.unobserve(u('.paginator:not(.paginator-at-top)').nodes[0])
+        }
+
+        if(u(`div[class$="_small_block"]`).length > 0 && window.smallBlockObserver) {
+            smallBlockObserver.unobserve(u(`div[class$="_small_block"]`).nodes[0])
+        }
     }
 
     checkUrl(url) {
@@ -89,6 +109,10 @@ window.router = new class {
         }
 
         if(url.indexOf(location.origin) == -1) {
+            return false
+        }
+
+        if(url.indexOf('hash=') != -1) {
             return false
         }
 
@@ -133,6 +157,8 @@ window.router = new class {
             history.replaceState({'from_router': 1}, '', next_page_request.url)
         }
         
+        this.__closeMsgs()
+        this.__unlinkObservers()
         this.__appendPage(parsed_content)
     }
 }
@@ -144,10 +170,15 @@ u(document).on('click', 'a', async (e) => {
     let url = target.nodes[0].href
 
     if(id) {
-        if(['act_tab_a', 'ki'].indexOf(id) == -1) {
+        if(['act_tab_a', 'ki', '_pinGroup'].indexOf(id) == -1) {
             console.log('AJAX | Skipping cuz maybe its function call link.')
             return
         }
+    }
+
+    if(url.indexOf('hash=') != -1) {
+        e.preventDefault()
+        return false
     }
 
     if(!dom_url || dom_url == '#' || dom_url.indexOf('javascript:') != -1) {
@@ -188,6 +219,10 @@ u(document).on('submit', 'form', async (e) => {
     const form = e.target
     const method = form.method ?? 'get'
     const url = form.action
+    if(form.onsubmit) {
+        u('#ajloader').removeClass('shown')
+        return false
+    }
 
     const url_object = new URL(url)
     url_object.searchParams.append('al', 1)
@@ -199,6 +234,7 @@ u(document).on('submit', 'form', async (e) => {
     }
 
     if(!url) {
+        u('#ajloader').removeClass('shown')
         return
     }
 
@@ -215,6 +251,7 @@ u(document).on('submit', 'form', async (e) => {
     const form_result = await form_res.text()
     switch(form_res.status) {
         case 500:
+        case 502:
             makeError(form_res.statusText)
             break
     }
@@ -236,4 +273,12 @@ u(document).on('submit', 'form', async (e) => {
     window.router.__appendPage(parsed_content)
 
     u('#ajloader').removeClass('shown')
+})
+
+window.addEventListener('popstate', (e) => {
+    e.preventDefault();
+    window.router.route({
+        url: location.href,
+        push_state: false,
+    })
 })

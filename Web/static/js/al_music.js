@@ -621,7 +621,7 @@ u(document).on('keydown', (e) => {
         return
     }
 
-    if(!window.player) {
+    if(!window.player || !window.player.isAtAudiosPage()) {
         return
     }
 
@@ -1485,6 +1485,8 @@ $(document).on("click", ".musicIcon.report-icon", (e) => {
 
 u(document).on("click", ".audiosContainer .paginator a", (e) => {
     e.preventDefault()
+    e.stopPropagation()
+    
     let url = new URL(e.currentTarget.href)
     let page = url.searchParams.get("p")
 
