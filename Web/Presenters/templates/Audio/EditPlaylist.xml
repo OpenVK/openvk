@@ -70,33 +70,4 @@
             <button class="button" type="submit">{_save}</button>
         </div>
     </form>
-
-    <script>
-        document.querySelector("input[name='audios']").value = {$audiosIds}
-
-        u("#editPlaylistForm").on("submit", (e) => {
-            document.querySelector("#editPlaylistForm input[name='title']").value = document.querySelector(".playlistInfo input[name='title']").value
-            document.querySelector("#editPlaylistForm textarea[name='description']").value = document.querySelector(".playlistBlock textarea[name='description']").value
-            document.querySelector("#editPlaylistForm input[name='is_unlisted']").value = document.querySelector("input[name='is_unlisted']").checked ? 1 : 0
-        })
-
-        u("#editPlaylistForm input[name='new_cover']").on("change", (e) => {
-            if(!e.currentTarget.files[0].type.startsWith("image/")) {
-                fastError(tr("not_a_photo"))
-                return
-            }
-            
-            let image = URL.createObjectURL(e.currentTarget.files[0])
-
-            document.querySelector(".playlistCover img").src = image
-        })
-
-        u(".playlistCover img").on("click", (e) => {
-            document.querySelector("input[name='new_cover']").click()
-        })
-
-        document.querySelector("#editPlaylistForm input[name='new_cover']").value = ""
-    </script>
-
-    {script "js/al_playlists.js"}
 {/block}

@@ -21,13 +21,21 @@ window.router = new class {
             _t_scr.setAttribute('integrity', script.getAttribute('integrity'))
         }
 
-        _t_scr.id = script.id
+        if(script.getAttribute('id')) { 
+            _t_scr.id = script.id
+        }
+
+        if(script.getAttribute('type')) { 
+            _t_scr.type = script.type
+        }
+
         //const parent = script.parentNode
         //const idx = Array.from(parent.children).indexOf(script)
 
         if(script.src) {
             _t_scr.src = script.src
         } else {
+            _t_scr.async = false
             _t_scr.textContent = script.textContent
         }   
 
@@ -44,19 +52,20 @@ window.router = new class {
     }
 
     __appendPage(parsed_content) {
+        const scripts_to_append = []
         const page_body = u(parsed_content.querySelector('.page_body'))
         const sidebar = u(parsed_content.querySelector('.sidebar'))
         const page_header = u(parsed_content.querySelector('.page_header'))
-
         if(page_body.length < 1) {
-            makeError('Invalid page has been loaded')
+            throw new Error('Invalid page has been loaded')
             return
         }
 
+        window.__current_page_audio_context = null
         this.__clearScripts()
         parsed_content.querySelectorAll('.page_body script, #_js_ep_script').forEach(script => {
             if(!this.__isScriptAlreadyLoaded(script)) {
-                this.__appendScript(script)
+                scripts_to_append.push(script)
                 script.parentNode.removeChild(script)
             }
         })
@@ -77,6 +86,12 @@ window.router = new class {
         u("meta[name=csrf]").attr("value", u(parsed_content.querySelector('meta[name=csrf]')).attr('value'))
         
         document.title = parsed_content.title
+        scripts_to_append.forEach(append_me => {
+            this.__appendScript(append_me)
+        })
+    }
+
+    async __integratePage() {
         window.scrollTo(0, 0)
         bsdnHydrate()
 
@@ -84,8 +99,12 @@ window.router = new class {
             showMoreObserver.observe(u('.paginator:not(.paginator-at-top)').nodes[0])
         }
 
-        if(u(`div[class$="_small_block"]`).length > 0 && window.smallBlockObserver) {
+        if(u(`div[class$="_small_block"]`).length > 0 && typeof smallBlockObserver != 'undefined') {
             smallBlockObserver.observe(u(`div[class$="_small_block"]`).nodes[0])
+        }
+
+        if(window.player) {
+            await window.player._handlePageTransition()
         }
     }
 
@@ -94,12 +113,16 @@ window.router = new class {
             showMoreObserver.unobserve(u('.paginator:not(.paginator-at-top)').nodes[0])
         }
 
-        if(u(`div[class$="_small_block"]`).length > 0 && window.smallBlockObserver) {
+        if(u(`div[class$="_small_block"]`).length > 0 && typeof smallBlockObserver != 'undefined') {
             smallBlockObserver.unobserve(u(`div[class$="_small_block"]`).nodes[0])
         }
     }
 
     checkUrl(url) {
+        if(window.openvk.disable_ajax == 1) {
+            return false
+        }
+
         if((localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || window.openvk.current_id == 0) {
             return false
         }
@@ -139,8 +162,6 @@ window.router = new class {
 
         const push_url = params.push_state ?? true
         const next_page_url = new URL(url)
-        next_page_url.searchParams.append('al', 1)
-        next_page_url.searchParams.append('hash', this.csrf)
         if(push_url) {
             history.pushState({'from_router': 1}, '', url)
         } else {
@@ -149,7 +170,10 @@ window.router = new class {
 
         const parser = new DOMParser
         const next_page_request = await fetch(next_page_url, {
-            method: 'GET'
+            method: 'GET',
+            headers: {
+                'X-OpenVK-Ajax-Query': '1',
+            }
         })
         const next_page_text = await next_page_request.text()
         const parsed_content = parser.parseFromString(next_page_text, 'text/html')
@@ -159,7 +183,15 @@ window.router = new class {
         
         this.__closeMsgs()
         this.__unlinkObservers()
-        this.__appendPage(parsed_content)
+
+        try {
+            this.__appendPage(parsed_content)
+            await this.__integratePage()
+        } catch(e) {
+            console.error(e)
+            next_page_url.searchParams.delete('al', 1)
+            location.assign(next_page_url)
+        }
     }
 }
 
@@ -170,24 +202,29 @@ u(document).on('click', 'a', async (e) => {
     let url = target.nodes[0].href
 
     if(id) {
-        if(['act_tab_a', 'ki', '_pinGroup'].indexOf(id) == -1) {
+        if(['act_tab_a', 'ki', 'used', '_pinGroup', 'profile_link'].indexOf(id) == -1) {
             console.log('AJAX | Skipping cuz maybe its function call link.')
             return
         }
     }
 
-    if(url.indexOf('hash=') != -1) {
+    /*if(url.indexOf('hash=') != -1) {
         e.preventDefault()
         return false
+    }*/
+
+    if(target.rel == 'nofollow') {
+        console.log('AJAX | Skipped because its nofollow')
+        return
     }
 
     if(!dom_url || dom_url == '#' || dom_url.indexOf('javascript:') != -1) {
-        console.log('AJAX | Skipped cuz its anchor or function call')
+        console.log('AJAX | Skipped because its anchor or function call')
         return
     }
 
     if(target.attr('target') == '_blank') {
-        console.log('AJAX | Skipping cuz its _blank.')
+        console.log('AJAX | Skipping because its _blank.')
         return
     }
 
@@ -225,7 +262,6 @@ u(document).on('submit', 'form', async (e) => {
     }
 
     const url_object = new URL(url)
-    url_object.searchParams.append('al', 1)
     if(method == 'get' || method == 'GET') {
         url_object.searchParams.append('hash', window.router.csrf)
         $(form).serializeArray().forEach(param => {
@@ -240,7 +276,10 @@ u(document).on('submit', 'form', async (e) => {
 
     const form_data = serializeForm(form)
     const request_object = {
-        method: method
+        method: method,
+        headers: {
+            'X-OpenVK-Ajax-Query': '1',
+        }
     }
 
     if(method != 'GET' && method != 'get') {
@@ -271,6 +310,7 @@ u(document).on('submit', 'form', async (e) => {
 
     console.log(form_res)
     window.router.__appendPage(parsed_content)
+    await window.router.__integratePage()
 
     u('#ajloader').removeClass('shown')
 })

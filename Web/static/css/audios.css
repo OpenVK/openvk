@@ -13,7 +13,7 @@
 }
 
 .musicIcon {
-    background-image: url('/assets/packages/static/openvk/img/audios_controls.png?v=2');
+    background-image: url('/assets/packages/static/openvk/img/audios_controls.png?v=6');
     background-repeat: no-repeat;
     cursor: pointer;
 }
@@ -150,7 +150,7 @@
 }
 
 .bigPlayer .slider, .audioEmbed .track .slider {
-    width: 18px;
+    width: 15px;
     height: 7px;
     background: #606060;
     position: absolute;
@@ -231,13 +231,13 @@
 }
 
 .bigPlayer .trackPanel .track .selectableTrack > div {
-    width: 95%;
+    width: 96%;
     position: relative;
 }
 
 .bigPlayer .volumePanel .selectableTrack > div {
     position: relative;
-    width: 72%
+    width: 77%;
 }
 
 .audioEmbed .track > .selectableTrack, .bigPlayer .selectableTrack {
@@ -880,4 +880,138 @@
 #_addAudioAdditional #_content {
     margin-top: 6px;
     padding: 1px;
+}
+
+/* AJAX player */
+#ajax_audio_player {
+    transition: background .1s ease-out;
+    background: rgba(44, 44, 44, 0.7);
+    padding: 1px;
+    width: 500px;
+    height: 37px;
+    position: fixed;
+    z-index: 99;
+    border-radius: 3px;
+}
+
+#ajax_audio_player.hidden {
+    display: none;
+}
+
+#ajax_audio_player #aj_player {
+    position: relative;
+    height: 100%;
+}
+
+#ajax_audio_player #aj_player #aj_player_internal_controls {
+    padding: 7px 8px;
+    display: flex;
+    gap: 7px;
+}
+
+#ajax_audio_player.ui-draggable-dragging {
+    background: rgba(20, 20, 20, 0.9);
+}
+
+#ajax_audio_player #aj_player_close_btn, #ajax_audio_player #aj_player_play {
+    padding: 3px 0px;
+}
+
+#ajax_audio_player #aj_player_close_btn, 
+#ajax_audio_player #aj_player_play #aj_player_play_btn,
+#ajax_audio_player #aj_player_buttons > div {
+    background: url('/assets/packages/static/openvk/img/audios_controls.png?v=6');
+    background-repeat: no-repeat;
+    cursor: pointer;
+}
+
+#ajax_audio_player #aj_player_close_btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10px;
+    height: 9px;
+    background-position: 0px -77px;
+    opacity: 0.6;
+}
+
+#ajax_audio_player #aj_player_close_btn:hover {
+    opacity: 1;
+}
+
+#ajax_audio_player #aj_player_play #aj_player_play_btn {
+    width: 16px;
+    height: 16px;
+    background-position: -147px -28px;
+}
+
+#ajax_audio_player #aj_player_play #aj_player_play_btn.paused {
+    background-position: -165px -28px;
+}
+
+#ajax_audio_player #aj_player_track {
+    width: 100%;
+    position: relative;
+}
+
+#ajax_audio_player #aj_player_track #aj_player_track_name {
+    display: flex;
+    justify-content: space-between;
+}
+
+#ajax_audio_player #aj_player_track #aj_player_track_name #aj_player_track_title,
+#ajax_audio_player #aj_player_track #aj_player_track_name #aj_player_track_title b, 
+#ajax_audio_player #aj_player_track #aj_player_track_name #aj_player_track_title span,
+#ajax_audio_player #aj_player_track #aj_player_track_name span {
+    color: white;
+}
+
+#ajax_audio_player .selectableTrack {
+    width: 100%;
+    position: relative;
+    height: 6px;
+    border-top: #ffffff 1px solid;
+    user-select: none;
+}
+
+#ajax_audio_player .selectableTrack .slider {
+    width: 11px;
+    height: 6px;
+    background: #ffffff;
+    position: absolute;
+}
+
+#ajax_audio_player #aj_player_volume {
+    width: 60px;
+    padding-top: 15px;
+    position: relative;
+}
+
+#ajax_audio_player #aj_player_buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+}
+
+#ajax_audio_player #aj_player_buttons #aj_player_previous {
+    width: 14px;
+    height: 12px;
+    background-position: -194px -5px;
+}
+
+#ajax_audio_player #aj_player_buttons #aj_player_repeat {
+    width: 14px;
+    height: 13px;
+    background-position: -233px -5px;
+}
+
+#ajax_audio_player #aj_player_buttons #aj_player_repeat.pressed {
+    opacity: 0.6;
+}
+
+#ajax_audio_player #aj_player_buttons #aj_player_next {
+    width: 15px;
+    height: 12px;
+    background-position: -214px -5px;
 }

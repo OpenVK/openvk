@@ -82,23 +82,25 @@
     </table>
 
     <script n:if="$club->getOwner()->getId() != $user->getId() && $manager && $thisUser->getId() == $club->getOwner()->getId()">
-        function changeOwner(club, newOwner) {
-            const action = "/groups/" + club + "/setNewOwner/" + newOwner;
+        if(typeof changeOwner == 'undefined') {
+            function changeOwner(club, newOwner) {
+                const action = "/groups/" + club + "/setNewOwner/" + newOwner;
 
-            MessageBox({_group_changeowner_modal_title}, `
-                {tr("group_changeowner_modal_text", htmlentities($user->getFullName()))|noescape}
-                <br/><br/>
-                <form id="transfer-owner-permissions-form" method="post">
-                    <label for="password">{_password|noescape}</label>
-                    <input type="password" id="password" name="password" required />
-                    <input type="hidden" name="hash" value={$csrfToken} />
-                </form>
-            `, [{_transfer}, {_cancel}], [
-                () => {
-                    $("#transfer-owner-permissions-form").attr("action", action);
-                    document.querySelector("#transfer-owner-permissions-form").submit();
-                }, Function.noop
-            ]);
+                MessageBox({_group_changeowner_modal_title}, `
+                    {tr("group_changeowner_modal_text", htmlentities($user->getFullName()))|noescape}
+                    <br/><br/>
+                    <form id="transfer-owner-permissions-form" method="post">
+                        <label for="password">{_password|noescape}</label>
+                        <input type="password" id="password" name="password" required />
+                        <input type="hidden" name="hash" value={$csrfToken} />
+                    </form>
+                `, [{_transfer}, {_cancel}], [
+                    () => {
+                        $("#transfer-owner-permissions-form").attr("action", action);
+                        document.querySelector("#transfer-owner-permissions-form").submit();
+                    }, Function.noop
+                ]);
+            }
         }
     </script>
 {/block}

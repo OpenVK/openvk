@@ -228,6 +228,7 @@ final class AuthPresenter extends OpenVKPresenter
             return;
         }
 
+        $this->template->disable_ajax = 1;
         $this->template->is2faEnabled = $request->getUser()->is2faEnabled();
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {

@@ -198,18 +198,18 @@
                             {var $canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
                             {var $menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
                             <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $menuLinksAvaiable" class="menu_divider"></div>
-                            <a href="/admin" class="link" n:if="$canAccessAdminPanel" title="{_admin} [Alt+Shift+A]" accesskey="a">{_admin}</a>
-                            <a href="/support/tickets" class="link" n:if="$canAccessHelpdesk">{_helpdesk}
+                            <a href="/admin" class="link" n:if="$canAccessAdminPanel" title="{_admin} [Alt+Shift+A]" accesskey="a" rel="nofollow">{_admin}</a>
+                            <a href="/support/tickets" class="link" n:if="$canAccessHelpdesk" rel="nofollow">{_helpdesk}
                                 {if $helpdeskTicketNotAnsweredCount > 0}
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
                                 {/if}
                             </a>
-                            <a n:if="$canAccessHelpdesk" href="/scumfeed" class="link">{tr("reports")}
+                            <a n:if="$canAccessHelpdesk" href="/scumfeed" class="link" rel="nofollow">{tr("reports")}
                                 {if $reportNotAnsweredCount > 0}
                                     (<b>{$reportNotAnsweredCount}</b>)
                                 {/if}
                             </a>
-                            <a n:if="$canAccessHelpdesk" href="/noSpam" class="link">
+                            <a n:if="$canAccessHelpdesk" href="/noSpam" class="link" rel="nofollow">
                                 noSpam
                             </a>
                         <a
@@ -392,6 +392,7 @@
         {script "js/al_navigation.js"}
         {script "js/al_comments.js"}
         {script "js/al_music.js"}
+        {script "js/al_despacito_wall.js"}
 
         {ifset $thisUser}
             {script "js/al_notifs.js"}
@@ -440,6 +441,7 @@
                 "max_attachments": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"] ?? 10},
                 "max_filesize_mb": 5,
                 "current_id": {$thisUser ? $thisUser->getId() : 0},
+                "disable_ajax": {$disable_ajax ? $disable_ajax : 0},
             }
         </script>
 
