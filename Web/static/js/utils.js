@@ -222,3 +222,19 @@ function serializeForm(form)
 
     return fd
 }
+
+async function copyToClipboard(text) {
+    let fallback = () => {
+        prompt(text);
+    }
+
+    if(typeof navigator.clipboard == "undefined") {
+        fallback()
+    } else {
+        try {
+            await navigator.clipboard.writeText(text)
+        } catch(e) {
+            fallback()
+        }
+    }
+}

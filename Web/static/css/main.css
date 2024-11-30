@@ -3859,3 +3859,36 @@ hr {
 .tippy-box[data-animation='up_down'][data-state='visible'] {
     inset: auto auto 0px 0px;
 }
+
+.ctx_place {
+    position: relative;
+}
+
+#ctx_menu {
+    position: absolute;
+    z-index: 100;
+    background: #f7f7f7;
+    border: 1px solid #d8d8d8;
+    display: flex;
+    flex-direction: column;
+    min-width: 185px;
+}
+
+#ctx_menu a {
+    padding: 6px 6px 6px 26px;
+    color: black;
+    position: relative;
+}
+
+#ctx_menu a:hover {
+    background: #e9e9e9;
+}
+
+#ctx_menu a.pressed::before {
+    content: '✓';
+    display: inline-block;
+    position: absolute;
+    left: 9px;
+    top: 3px;
+    font-size: 15px;
+}

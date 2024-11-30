@@ -3,7 +3,7 @@
 {php $isAvailable = $audio->isAvailable()}
 {php $performers = $audio->getPerformers()}
 {php $editable = isset($thisUser) && $audio->canBeModifiedBy($thisUser)}
-<div id="audioEmbed-{$id}" data-realid="{$audio->getId()}" {if $hideButtons}data-prettyid="{$audio->getPrettyId()}"{/if} data-name="{$audio->getName()}" data-genre="{$audio->getGenre()}" n:class="audioEmbed, !$isAvailable ? processed, $isWithdrawn ? withdrawn" data-length="{$audio->getLength()}" data-keys="{json_encode($audio->getKeys())}" data-url="{$audio->getURL()}">
+<div id="audioEmbed-{$id}" data-realid="{$audio->getId()}" {if $hideButtons}data-prettyid="{$audio->getPrettyId()}"{/if} data-name="{$audio->getName()}" data-genre="{$audio->getGenre()}" n:class="audioEmbed, ctx_place, !$isAvailable ? processed, $isWithdrawn ? withdrawn" data-length="{$audio->getLength()}" data-keys="{json_encode($audio->getKeys())}" data-url="{$audio->getURL()}">
     <audio class="audio" />
 
     <div id="miniplayer" class="audioEntry">

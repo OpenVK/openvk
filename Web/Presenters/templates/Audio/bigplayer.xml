@@ -1,4 +1,4 @@
-<div n:class="bigPlayer, $tidy ? tidy">
+<div n:class="bigPlayer, ctx_place, $tidy ? tidy">
     <div class="bigPlayerWrapper">
         <div class="playButtons">
             <div class="playButton musicIcon" data-tip='simple' data-title="{_play_tip} [Space]"></div>

@@ -11,6 +11,8 @@
         {_audio_new}
     {elseif $mode == 'popular'}
         {_audio_popular}
+    {elseif $mode == 'alone_audio'}
+        {$alone_audio->getName()}
     {else}
         {if $ownerId > 0}
             {_playlists} {$owner->getMorphedName("genitive", false)}
@@ -47,6 +49,10 @@
         »
         {if $isMy}{_my_playlists}{else}{_playlists}{/if}
     </div>
+
+    <div n:if="$mode == 'alone_audio'">
+        {_my_audios_small}
+    </div>
 {/block}
 
 {block content}
@@ -61,6 +67,12 @@
                 name: 'entity_audios',
                 entity_id: {$ownerId},
                 page: {$page}
+            }
+        {elseif $mode == 'alone_audio'}
+            window.__current_page_audio_context = {
+                name: 'alone_audio',
+                entity_id: {$alone_audio->getId()},
+                page: 1
             }
         {/if}
     </script>

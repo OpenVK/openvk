@@ -203,6 +203,8 @@ routes:
       handler: "Audio->list"
     - url: "/audio{num}/listen"
       handler: "Audio->listen"
+    - url: "/audio{num}_{num}"
+      handler: "Audio->aloneAudio"
     - url: "/audios/search"
       handler: "Audio->search"
     - url: "/audios/newPlaylist"

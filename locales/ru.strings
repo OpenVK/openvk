@@ -950,8 +950,15 @@
 "repeat_tip" = "Повторение";
 "shuffle_tip" = "Перемешать";
 "mute_tip" = "Заглушить";
+"mute_tip_noun" = "Заглушено";
 "playlist_hide_from_search" = "Не показывать в поиске";
 "confirm_deleting_audio" = "Вы действительно хотите полностью удалить аудиозапись?";
+
+"copy_link_to_audio" = "Копировать ссылку на аудио";
+"copy_link_to_audio_error_not_selected_track" = "Трек не выбран";
+"audio_ctx_add_to_group" = "Добавить в группу";
+"audio_ctx_add_to_playlist" = "Добавить в плейлист";
+"audio_ctx_play_next" = "Воспроизвести следующим";
 
 /* Notifications */
 

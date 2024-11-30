@@ -97,9 +97,12 @@ final class AudioPresenter extends OpenVKPresenter
             $this->template->club = $owner < 0 ? $entity : NULL;
             $this->template->isMy = ($owner > 0 && ($entity->getId() === $this->user->id));
             $this->template->isMyClub = ($owner < 0 && $entity->canBeModifiedBy($this->user->identity));
-        } else {
-            $audios = $this->audios->getPopular();
-            $audiosCount = $audios->size();
+        } else if ($mode === 'alone_audio') {
+            $audios = [$this->template->alone_audio];
+            $audiosCount = 1;
+
+            $this->template->owner   = $this->user->identity;
+            $this->template->ownerId = $this->user->id;
         }
 
         // $this->renderApp("owner=$owner");
@@ -269,6 +272,19 @@ final class AudioPresenter extends OpenVKPresenter
                 "redirect_link" => $redirectLink,
             ]);
         }
+    }
+
+    function renderAloneAudio(int $owner_id, int $audio_id): void
+    {
+        $this->assertUserLoggedIn();
+
+        $found_audio = $this->audios->get($audio_id);
+        if(!$found_audio || $found_audio->isDeleted() || !$found_audio->canBeViewedBy($this->user->identity)) {
+            $this->notFound();
+        }
+
+        $this->template->alone_audio = $found_audio;
+        $this->renderList(NULL, 'alone_audio');
     }
 
     function renderListen(int $id): void
@@ -761,6 +777,15 @@ final class AudioPresenter extends OpenVKPresenter
                 $stream = $this->audios->find($data['query'], $params, $order);
                 $audios = $stream->page($page, 10);
                 $audiosCount = $stream->size();
+                break;
+            case 'alone_audio':
+                $found_audio = $this->audios->get($ctx_id);
+                if(!$found_audio || $found_audio->isDeleted() || !$found_audio->canBeViewedBy($this->user->identity)) {
+                    $this->flashFail("err", "Error", "Not found", 89, true);
+                }
+
+                $audios = [$found_audio];
+                $audiosCount = 1;
                 break;
         }
 

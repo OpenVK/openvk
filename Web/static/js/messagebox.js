@@ -102,12 +102,14 @@ class CMessageBox {
         u('body').removeClass('dimmed')
         u('html').attr('style', 'overflow-y:scroll')
         this.getNode().attr('style', 'display: none;')
+        this.hidden = true
     }
 
     reveal() {
         u('body').addClass('dimmed')
         u('html').attr('style', 'overflow-y:hidden')
         this.getNode().attr('style', 'display: block;')
+        this.hidden = false
     }
 
     static toggleLoader() {

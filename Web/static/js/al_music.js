@@ -217,7 +217,7 @@ window.player = new class {
                 form_data.append('context_entity', this.context.object.entity_id)
                 break
             case 'classic_search_context':
-                // todo rifictir
+                // tidi riwriti
                 form_data.append('context', this.context.object.name)
                 form_data.append('context_entity', JSON.stringify({
                     'order': this.context.object.order,
@@ -228,6 +228,9 @@ window.player = new class {
                     'query': this.context.object.query,
                 }))
                 break
+            case 'alone_audio':
+                form_data.append('context', this.context.object.name)
+                form_data.append('context_entity', this.context.object.entity_id)
         }
 
         form_data.append('page', page)
@@ -395,6 +398,7 @@ window.player = new class {
     async shuffle() {
         this.tracks.sort(() => Math.random() - 0.59)
         await this.setTrack(this.tracks.at(0).id)
+        this.play()
     }
 
     isAtAudiosPage() {
@@ -447,7 +451,7 @@ window.player = new class {
                 this.__updateFace()
             }
         } else {
-            this.ajClose()
+            this.ajClose(false)
             this.is_closed = false
             if(this.tracks.length < 1) {
                 if(window.__current_page_audio_context) {
@@ -622,9 +626,12 @@ window.player = new class {
         }
     }
 
-    ajClose() {
+    ajClose(pause = true) {
         this.is_closed = true
-        this.pause()
+        if(pause) {
+            this.pause()
+        }
+       
         u('#ajax_audio_player').addClass('hidden')
     }
 
@@ -637,7 +644,7 @@ window.player = new class {
         const previous_time_x = localStorage.getItem('audio.lastX') ?? 100
         const previous_time_y = localStorage.getItem('audio.lastY') ?? scrollY
         const miniplayer_template = u(`
-            <div id='ajax_audio_player'>
+            <div id='ajax_audio_player' class='ctx_place'>
                 <div id='aj_player'>
                     <div id='aj_player_internal_controls'>
                         <div id='aj_player_play'>
@@ -691,7 +698,7 @@ window.player = new class {
         $('#ajax_audio_player').draggable({
             cursor: 'grabbing', 
             containment: 'window',
-            cancel: '#aj_player_track .selectableTrack, #aj_player_volume .selectableTrack',
+            cancel: '#aj_player_track, #aj_player_volume, #aj_player_buttons',
             stop: function(e) {
                 if(window.player.ajaxPlayer.length > 0) {
                     const left = parseInt(window.player.ajaxPlayer.nodes[0].style.left)
@@ -1022,6 +1029,127 @@ u(document).on("drop", '.audiosContainer', function(e) {
     } 
 })
 
+u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e) => {
+    e.preventDefault()
+
+    u('#ctx_menu').remove()
+    const ctx_type = u(e.target).closest('.bigPlayer, #ajax_audio_player').length > 0 ? 'main_player' : 'mini_player'
+    const parent = e.target.closest('.ctx_place')
+    if(!parent) {
+        return
+    }
+
+    const rect = parent.getBoundingClientRect()
+    let x, y;
+    let rx = rect.x + window.scrollX, ry = rect.y + window.scrollY
+    x = e.pageX - rx
+    y = e.pageY - ry
+
+    const ctx_u = u(`
+        <div id='ctx_menu' style='top:${y}px;left:${x}px;' data-type='ctx_type'>
+            <a id='audio_ctx_copy'>${tr('copy_link_to_audio')}</a>
+            ${ctx_type == 'main_player' ? `
+            <a id='audio_ctx_repeat' ${window.player.audioPlayer.loop ? `class='pressed'` : ''}>${tr('repeat_tip')}</a>
+            <a id='audio_ctx_shuffle'>${tr('shuffle_tip')}</a>
+            <a id='audio_ctx_mute' ${window.player.audioPlayer.muted ? `class='pressed'` : ''}>${tr('mute_tip_noun')}</a>
+            ` : ''}
+            ${ctx_type == 'mini_player' ? `
+            <a id='audio_ctx_play_next'>${tr('audio_ctx_play_next')}</a>    
+            ` : ''}
+            <a id='audio_ctx_add_to_group'>${tr('audio_ctx_add_to_group')}</a>
+            <a id='audio_ctx_add_to_playlist'>${tr('audio_ctx_add_to_playlist')}</a>
+            ${ctx_type == 'main_player' ? `<a href='https://github.com/mrilyew' target='_blank'>BigPlayer v1.1 by MrIlyew</a>` : ''}
+        </div>
+    `)
+    u(parent).append(ctx_u)
+    ctx_u.find('#audio_ctx_copy').on('click', async (e) => {
+        if(ctx_type == 'main_player') {
+            if(window.player.current_track_id == 0) {
+                makeError(tr('copy_link_to_audio_error_not_selected_track'), 'Red', 4000, 80)
+                return
+            }
+
+            const url = location.origin + `/audio${window.openvk.current_id}_${window.player.current_track_id}`
+            await copyToClipboard(url)
+        } else {
+            const url = location.origin + `/audio${window.openvk.current_id}_${u(e.target).closest('.audioEmbed').attr('data-realid')}`
+            await copyToClipboard(url)
+        }
+    })
+    ctx_u.find('#audio_ctx_repeat').on('click', () => {
+        if(window.player.current_track_id == 0) {
+            return
+        }
+
+        if(!window.player.audioPlayer.loop) {
+            window.player.audioPlayer.loop = true
+            window.player.uiPlayer.find('.repeatButton').addClass('pressed')
+        } else {
+            window.player.audioPlayer.loop = false
+            window.player.uiPlayer.find('.repeatButton').removeClass('pressed')
+        }
+    })
+    ctx_u.find('#audio_ctx_shuffle').on('click', async () => {
+        if(window.player.current_track_id == 0) {
+            return
+        }
+
+        await window.player.shuffle()
+    })
+    ctx_u.find('#audio_ctx_mute').on('click', async () => {
+        if(window.player.current_track_id == 0) {
+            return
+        }
+
+        window.player.uiPlayer.find('.deviceButton').toggleClass('pressed')
+        window.player.audioPlayer.muted = window.player.uiPlayer.find('.deviceButton').hasClass('pressed')
+    })
+    ctx_u.find('#audio_ctx_add_to_group').on('click', async () => {
+        if(ctx_type == 'main_player') {
+            if(window.player.current_track_id == 0) {
+                return
+            }
+
+            __showAudioAddDialog(window.player.current_track_id)
+        } else {
+            __showAudioAddDialog(Number(u(e.target).closest('.audioEmbed').attr('data-realid')))
+        }
+    })
+    ctx_u.find('#audio_ctx_add_to_playlist').on('click', async () => {
+        if(ctx_type == 'main_player') {
+            if(window.player.current_track_id == 0) {
+                return
+            }
+            
+            __showAudioAddDialog(window.player.current_track_id, 'playlist')
+        } else {
+            __showAudioAddDialog(Number(u(e.target).closest('.audioEmbed').attr('data-realid')), 'playlist')
+        }
+    })
+    ctx_u.find('#audio_ctx_play_next').on('click', (ev) => {
+        const current_id = window.player.current_track_id
+        const move_id = Number(u(e.target).closest('.audioEmbed').attr('data-realid'))
+        if(current_id == 0) {
+            return
+        }
+        
+        if(current_id == move_id) {
+            return
+        }
+
+        const current_index = window.player.__findTrack(current_id, true)
+        const next_track = window.player.__findTrack(move_id)
+        const next_track_player = u(`.audioEmbed[data-realid='${window.player.nextTrack.id}']`)
+        const moving_track_player = u(`.audioEmbed[data-realid='${move_id}']`)
+
+        window.player.tracks.splice(current_index + 1, 0, next_track)
+        if(next_track_player.length > 0 && moving_track_player.length > 0) {
+            next_track_player.nodes[0].outerHTML = moving_track_player.nodes[0].outerHTML + next_track_player.nodes[0].outerHTML
+            moving_track_player.remove()
+        }
+    })
+})
+
 u(document).on("click", ".musicIcon.edit-icon", (e) => {
     const player = e.target.closest(".audioEmbed")
     const id = Number(player.dataset.realid)
@@ -1241,9 +1369,7 @@ $(document).on("click", ".musicIcon.remove-icon-group", (e) => {
     })
 })
 
-$(document).on("click", ".musicIcon.add-icon-group", async (ev) => {
-    let   current_tab = 'club';
-    const id = Number(ev.target.dataset.id)
+function __showAudioAddDialog(id, current_tab = 'club') {
     const body = `
         <div id='_addAudioAdditional'>
             <div id='_tabs'>
@@ -1380,12 +1506,12 @@ $(document).on("click", ".musicIcon.add-icon-group", async (ev) => {
                                 <a href='/playlist${el.owner_id}_${el.id}' class='avatar'>
                                     <img src='${el.cover_url}' alt='cover'>
                                 </a>
-    
+
                                 <div class='info'>
                                     <b class='noOverflow' value="${el.owner_id}_${el.id}">${ovk_proc_strtr(escapeHtml(el.title), 100)}</b>
                                 </div>
                             </div>
-    
+
                             <div class='third_column'>
                                 <input type='checkbox' name='add_to'>
                             </div>
@@ -1437,12 +1563,16 @@ $(document).on("click", ".musicIcon.add-icon-group", async (ev) => {
     u("#_addAudioAdditional").on("click", ".mb_tab a", async (e) => {
         await switchTab(u(e.target).closest('.mb_tab').attr('data-name'))
     })
-    
+
     u("#_addAudioAdditional").on("click", "input[name='add_to']", async (e) => {
         if(u(`input[name='add_to']:checked`).length > 10) {
             e.preventDefault()
         }
     })
+}
+$(document).on("click", ".musicIcon.add-icon-group", async (ev) => {
+    const id = Number(ev.target.dataset.id)
+    __showAudioAddDialog(id)
 })
 
 $(document).on("click", ".musicIcon.add-icon", (e) => {

@@ -436,7 +436,7 @@ async function OpenVideo(video_arr = [], init_player = true)
             u('.miniplayer').remove()
         })
 
-        $('.miniplayer').draggable({cursor: 'grabbing', containment: 'body', cancel: '.miniplayer-body'})
+        $('.miniplayer').draggable({cursor: 'grabbing', containment: 'window', cancel: '.miniplayer-body'})
         $('.miniplayer').resizable({
             maxHeight: 2000,
             maxWidth: 3000,
@@ -2405,14 +2405,15 @@ function setStatusEditorShown(shown) {
     document.getElementById("status_editor").style.display = shown ? "block" : "none";
 }
 
-document.addEventListener("click", event => {
+u(document).on('click', (event) => {
+    u('#ctx_menu').remove()
     if(u('#status_editor').length < 1) {
         return
     }
 
     if(!event.target.closest("#status_editor") && !event.target.closest("#page_status_text"))
         setStatusEditorShown(false);
-});
+})
 
 u(document).on('click', '#page_status_text', (e) => {
     setStatusEditorShown(true)

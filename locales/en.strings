@@ -995,8 +995,15 @@
 "repeat_tip" = "Repeat";
 "shuffle_tip" = "Shuffle";
 "mute_tip" = "Mute";
+"mute_tip_noun" = "Muted";
 "playlist_hide_from_search" = "Unlisted";
 "confirm_deleting_audio" = "Do you sure want to delete this audio?";
+
+"copy_link_to_audio" = "Copy link to clipboard";
+"copy_link_to_audio_error_not_selected_track" = "Track was not selected";
+"audio_ctx_add_to_group" = "Add to group";
+"audio_ctx_add_to_playlist" = "Add to playlist";
+"audio_ctx_play_next" = "Play next";
 
 /* Notifications */
 

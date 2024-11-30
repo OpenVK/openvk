@@ -48,7 +48,13 @@ window.router = new class {
     }
 
     __closeMsgs() {
-        window.messagebox_stack.forEach(msg => msg.close())
+        window.messagebox_stack.forEach(msg => {
+            if(msg.hidden) {
+                return
+            }
+
+            msg.close()
+        })
     }
 
     __appendPage(parsed_content) {
@@ -218,6 +224,11 @@ u(document).on('click', 'a', async (e) => {
         return
     }
 
+    if(target.download != null) {
+        console.log('AJAX | Skipped because its download')
+        return
+    }
+
     if(!dom_url || dom_url == '#' || dom_url.indexOf('javascript:') != -1) {
         console.log('AJAX | Skipped because its anchor or function call')
         return
@@ -307,8 +318,7 @@ u(document).on('submit', 'form', async (e) => {
 
         history.pushState({'from_router': 1}, '', __new_url)
     }
-
-    console.log(form_res)
+    
     window.router.__appendPage(parsed_content)
     await window.router.__integratePage()
 
