@@ -966,6 +966,14 @@
     color: white;
 }
 
+#ajax_audio_player #aj_time {
+    cursor: pointer;
+}
+
+#ajax_audio_player #aj_time:hover {
+    text-decoration: underline;
+}
+
 #ajax_audio_player .selectableTrack {
     width: 100%;
     position: relative;

@@ -238,3 +238,13 @@ async function copyToClipboard(text) {
         }
     }
 }
+
+function remove_file_format(text) 
+{
+    return text.replace(/\.[^.]*$/, '')
+}
+
+function sleep(time) 
+{
+    return new Promise((resolve) => setTimeout(resolve, time));
+}

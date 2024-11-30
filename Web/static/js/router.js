@@ -224,7 +224,7 @@ u(document).on('click', 'a', async (e) => {
         return
     }
 
-    if(target.download != null) {
+    if(target.nodes[0].hasAttribute('download')) {
         console.log('AJAX | Skipped because its download')
         return
     }

@@ -690,7 +690,7 @@ window.player = new class {
         miniplayer_template.find('#aj_player_close_btn').on('click', (e) => {
             this.ajClose()
         })
-        miniplayer_template.find('#aj_player_track_title').on('click', (e) => {
+        miniplayer_template.find('#aj_time').on('click', (e) => {
             if(window.player && window.player.context && window.player.context.object) {
                 window.router.route(window.player.context.object.url)
             }
@@ -698,7 +698,7 @@ window.player = new class {
         $('#ajax_audio_player').draggable({
             cursor: 'grabbing', 
             containment: 'window',
-            cancel: '#aj_player_track, #aj_player_volume, #aj_player_buttons',
+            cancel: '#aj_player_track .selectableTrack, #aj_player_volume .selectableTrack, #aj_player_buttons',
             stop: function(e) {
                 if(window.player.ajaxPlayer.length > 0) {
                     const left = parseInt(window.player.ajaxPlayer.nodes[0].style.left)
@@ -906,6 +906,10 @@ u(document).on("mousemove click mouseup", ".bigPlayer .trackPanel .selectableTra
     if(window.player.isAtAudiosPage() && window.player.current_track_id == 0)
         return
 
+    if(u('.ui-draggable-dragging').length > 0) {
+        return
+    }
+
     function __defaultAction(i_time) {
         window.player.listen_coef -= 0.5
         window.player.audioPlayer.currentTime = i_time
@@ -944,6 +948,10 @@ u(document).on("mousemove click mouseup", ".bigPlayer .volumePanelTrack .selecta
     if(window.player.isAtAudiosPage() && window.player.current_track_id == 0)
         return
     
+    if(u('.ui-draggable-dragging').length > 0) {
+        return
+    }
+
     function __defaultAction(i_volume) {
         window.player.audioPlayer.volume = i_volume
     }
@@ -1848,4 +1856,67 @@ $(document).on("click", "#bookmarkPlaylist, #unbookmarkPlaylist", (e) => {
                 fastError(response.flash.message)
         }
     })
+})
+
+u(document).on('click', '.upload_container_element #small_remove_button', (e) => {
+    if(u('.uploading').length > 0) {
+        return
+    }
+
+    const element = u(e.target).closest('.upload_container_element')
+    const element_index = Number(element.attr('data-index'))
+    
+    element.remove()
+    window.__audio_upload_page.files_list[element_index] = null
+
+    if(u('#lastStep .upload_container_element').length < 1) {
+        window.__audio_upload_page.showFirstPage()
+    }
+})
+
+u(document).on('click', `#upload_container #uploadMusic`, async (e) => {
+    const current_upload_page = location.href
+    let end_redir = ''
+    u('#lastStepButtons').addClass('lagged')
+    for(const elem of u('#lastStepContainers .upload_container_element').nodes) {
+        if(!elem) {
+            return
+        }
+        const elem_u = u(elem)
+        const index = elem.dataset.index
+        const file  = window.__audio_upload_page.files_list[index]
+        if(!file || !index) {
+            return
+        }
+
+        elem_u.addClass('lagged').find('.upload_container_name').addClass('uploading')
+        // Upload process
+        const fd = serializeForm(elem)
+        fd.append('blob', file.file)
+        fd.append('ajax', 1)
+        fd.append('hash', window.router.csrf)
+        
+        const result = await fetch(current_upload_page, {
+            method: 'POST',
+            body: fd,
+        })
+        const result_text = await result.json()
+        if(result_text.success && result_text.redirect_link) {
+            end_redir = result_text.redirect_link
+        }
+        await sleep(6000)
+        elem_u.remove()
+    }
+
+    if(current_upload_page == location.href) {
+        window.router.route(end_redir)
+    }
+})
+
+u(document).on("drop", "#upload_container", function (e) {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move';
+
+    document.getElementById("audio_input").files = e.dataTransfer.files
+    u("#audio_input").trigger("change")
 })

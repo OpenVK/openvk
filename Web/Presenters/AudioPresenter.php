@@ -809,7 +809,7 @@ final class AudioPresenter extends OpenVKPresenter
             $output_array['name'] = $audio->getTitle();
             $output_array['performer'] = $audio->getPerformer();
 
-            if(!$audio->isWithdrawn() && $audio->isAvailable()) {
+            if(!$audio->isWithdrawn()) {
                 $output_array['keys'] = $audio->getKeys();
                 $output_array['url'] = $audio->getUrl();
             }

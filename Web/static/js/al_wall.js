@@ -1125,6 +1125,11 @@ u(document).on('dragover', '#write .post-horizontal .upload-item, .post-vertical
     return
 })
 
+u(document).on("dragover drop", async (e) => {
+    e.preventDefault()
+    return false;
+})
+
 u(document).on('dragleave dragend', '#write .post-horizontal .upload-item, .post-vertical .upload-item', (e) => {
     //console.log(e)
     u(e.target).closest('.upload-item').removeClass('dragged')

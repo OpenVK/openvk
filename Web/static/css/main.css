@@ -2261,6 +2261,25 @@ table td[width="120"] {
     margin: 0;
 }
 
+#upload_container #lastStepContainers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#upload_container .upload_container_element {
+    border: 1px solid #d6d6d6;
+    background: #f6f6f6;
+}
+
+#upload_container .upload_container_element .upload_container_name {
+    padding: 5px 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
 #audio_upload {
     width: 350px;
     margin: 20px auto;
@@ -3561,7 +3580,7 @@ hr {
     cursor: pointer;
 }
 
-#upload_container.uploading {
+#upload_container .upload_container_element .upload_container_name.uploading {
     background: white url('/assets/packages/static/openvk/img/progressbar.gif') !important;
     background-position-x: 0% !important;
     background-position-y: 0% !important;
