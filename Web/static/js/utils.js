@@ -182,11 +182,10 @@ function getRemainingTime(fullTime, time) {
     return "-" + fmtTime(timer)
 }
 
-function serializeForm(form) 
+function serializeForm(form, submitter = null) 
 {
     const u_ = u(form)
-    const inputs = u_.find('input, textarea')
-    
+    const inputs = u_.find('input, textarea, button')
     let fd = new FormData()
     inputs.nodes.forEach(inp => {
         if(!inp || !inp.name) {
@@ -194,16 +193,17 @@ function serializeForm(form)
         }
 
         if(inp.type == 'submit') {
-            return
+            if(inp !== submitter) {
+                return
+            }
         }
 
         switch(inp.type) {
-            case 'submit':
-                return
             case 'hidden':
             case 'text':
             case 'textarea':
             case 'select':
+            case 'submit':
                 fd.append(inp.name, inp.value)
                 break
             case 'checkbox':
@@ -213,8 +213,13 @@ function serializeForm(form)
                 
                 break
             case 'file':
-                for(const __file of inp.files) {
-                    fd.append(inp.name, __file)
+                if(!inp.multiple) {
+                    if(inp.files[0]) {
+                        fd.append(inp.name, inp.files[0])
+                    } else {
+                        const emptyFile = new Blob([], { type: 'application/octet-stream' })
+                        fd.append(inp.name, emptyFile, '')
+                    }
                 }
                 break
         }

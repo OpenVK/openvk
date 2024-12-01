@@ -605,6 +605,28 @@
     width: 100%;
 }
 
+.PE_playlistEditPage {
+    display: flex;
+    gap: 10px;
+}
+
+.PE_playlistEditPage .PE_playlistInfo {
+    width: 76%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.PE_playlistEditPage textarea[name='description'] {
+    padding: 4px;
+    font-size: 11px;
+}
+
+.PE_end {
+    text-align: right;
+    margin-top: 10px;
+}
+
 /* playlist listview */
 
 .playlistListView {

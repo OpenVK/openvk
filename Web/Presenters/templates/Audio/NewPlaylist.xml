@@ -19,48 +19,32 @@
 {/block}
 
 {block content}
-    <style>
-        textarea[name='description'] {
-            padding: 4px;
-        }
+    <div class='PE_wrapper'>
+        <div class='PE_playlistEditPage'>
+            <div class="playlistCover" onclick="document.querySelector(`input[name='cover']`).click()">
+                <a>
+                    <input type='file' name='cover' style='display:none;' accept=".jpg,.png">
+                    <img src="/assets/packages/static/openvk/img/song.jpg" alt="{_playlist_cover}">
+                </a>
+            </div>
 
-        .playlistInfo {
-            width: 76%;
-            margin-left: 8px;
-        }
-    </style>
-
-    <div style="display:flex;">
-        <div class="playlistCover" onclick="document.querySelector(`#newPlaylistForm input[name='cover']`).click()">
-            <a>
-                <img src="/assets/packages/static/openvk/img/song.jpg" alt="{_playlist_cover}">
-            </a>
+            <div class="PE_playlistInfo">
+                <div>
+                    <input type="text" name="title" placeholder="{_title}" maxlength="125" />
+                </div>
+                <div class="moreInfo">
+                    <textarea placeholder="{_description}" name="description" maxlength="2045" />
+                </div>
+                <label>
+                    <input type='checkbox' name='is_unlisted' value='1'>
+                    {_playlist_hide_from_search}
+                </label>
+                <a id='_playlistAppendTracks'>{_add_audio_verb}</a>
+            </div>
         </div>
-
-        <div style="padding-left: 17px;width: 75%;" class="plinfo">
-            <div>
-                <input type="text" name="title" placeholder="{_title}" maxlength="125" />
-            </div>
-            <div class="moreInfo" style="margin-top: 11px;">
-                <textarea placeholder="{_description}" name="description" maxlength="2045" />
-            </div>
-            <label>
-                <input type='checkbox' name='is_unlisted'>
-                {_playlist_hide_from_search}
-            </label>
+        <div class='PE_audios generic_audio_list'></div>
+        <div class='PE_end'>
+            <input class="button" type="button" id='playlist_create' value="{_create}">
         </div>
     </div>
-
-    <form method="post" id="newPlaylistForm" enctype="multipart/form-data">
-        <input type="hidden" name="title" maxlength="125" />
-        <input type="hidden" name="hash" value="{$csrfToken}" />
-        <input type="hidden" name="is_unlisted" value="0" />
-        <textarea style="display:none;" name="description" maxlength="2045" />
-        <input type="hidden" name="audios">
-        <input type="file" style="display:none;" name="cover" accept=".jpg,.png">
-
-        <div style="float: right;margin-top: 9px;">
-            <button class="button" type="submit">{_create}</button>
-        </div>
-    </form>
 {/block}

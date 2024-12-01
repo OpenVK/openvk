@@ -7,7 +7,7 @@ window.router = new class {
         if(script.src) {
             const script_url = new URL(script.src)
             const script_main_part = script_url.pathname
-            console.log(script_main_part)
+
             return u(`script[src^='${script_main_part}']`).length > 0
         }
 
@@ -62,6 +62,7 @@ window.router = new class {
         const page_body = u(parsed_content.querySelector('.page_body'))
         const sidebar = u(parsed_content.querySelector('.sidebar'))
         const page_header = u(parsed_content.querySelector('.page_header'))
+        const backdrop = u(parsed_content.querySelector('#backdrop'))
         if(page_body.length < 1) {
             throw new Error('Invalid page has been loaded')
             return
@@ -77,6 +78,15 @@ window.router = new class {
         })
         u('.page_body').html(page_body.html())
         u('.sidebar').html(sidebar.html())
+        if(backdrop.length > 0) {
+            if(u('#backdrop').length == 0) {
+                u('body').append(`<div id="backdrop"></div>`)
+            }
+            u('#backdrop').nodes[0].outerHTML = (backdrop.nodes[0].outerHTML)
+        } else {
+            u('#backdrop').remove()
+        }
+        
         if(u('.page_header #search_box select').length > 0 && page_header.find('#search_box select').length > 0) {
             u('.page_header #search_box select').nodes[0].value = page_header.find('#search_box select').nodes[0].value
         }
@@ -285,7 +295,7 @@ u(document).on('submit', 'form', async (e) => {
         return
     }
 
-    const form_data = serializeForm(form)
+    const form_data = serializeForm(form, e.submitter)
     const request_object = {
         method: method,
         headers: {

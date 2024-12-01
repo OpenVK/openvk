@@ -336,14 +336,14 @@ window.player = new class {
         return this.__findTrack(id, true) != -1
     }
 
-    play() {
+    async play() {
         if(!this.currentTrack) {
             return
         }
 
         document.querySelectorAll('audio').forEach(el => el.pause())
 
-        this.audioPlayer.play()
+        await this.audioPlayer.play()
         this.__setFavicon()
         this.__updateFace()
         navigator.mediaSession.playbackState = "playing"
@@ -374,7 +374,7 @@ window.player = new class {
             this.playPreviousTrack()
         }
 
-        this.play()
+        await this.play()
     }
     
     async playNextTrack() {
@@ -391,14 +391,14 @@ window.player = new class {
             this.playNextTrack()
         }
 
-        this.play()
+        await this.play()
     }
 
     // fake shuffle
     async shuffle() {
         this.tracks.sort(() => Math.random() - 0.59)
         await this.setTrack(this.tracks.at(0).id)
-        this.play()
+        await this.play()
     }
 
     isAtAudiosPage() {
@@ -489,15 +489,15 @@ window.player = new class {
     }
 
     __setMediaSessionActions() {
-        navigator.mediaSession.setActionHandler('play', () => { 
-            window.player.play()
+        navigator.mediaSession.setActionHandler('play', async () => { 
+            await window.player.play()
         });
         navigator.mediaSession.setActionHandler('pause', () => { 
             window.player.pause() 
         });
-        navigator.mediaSession.setActionHandler('previoustrack', () => { window.player.playPreviousTrack() });
-        navigator.mediaSession.setActionHandler('nexttrack', () => { window.player.playNextTrack() });
-        navigator.mediaSession.setActionHandler("seekto", (details) => {
+        navigator.mediaSession.setActionHandler('previoustrack', async () => { await window.player.playPreviousTrack() });
+        navigator.mediaSession.setActionHandler('nexttrack', async () => { await window.player.playNextTrack() });
+        navigator.mediaSession.setActionHandler("seekto", async (details) => {
             window.player.audioPlayer.currentTime = details.seekTime
         });
     }
@@ -560,14 +560,19 @@ window.player = new class {
             }
         }
 
-        this.uiPlayer.find('.trackInfo .trackName span').html(escapeHtml(_c.name))
-        this.uiPlayer.find('.trackInfo .trackPerformers').html('')
-        const performers = _c.performer.split(', ')
-        const lastPerformer = performers[performers.length - 1]
-        performers.forEach(performer => {
-            this.uiPlayer.find('.trackInfo .trackPerformers').append(
-                `<a href='/search?section=audios&order=listens&only_performers=on&q=${encodeURIComponent(performer.escapeHtml())}'>${performer.escapeHtml()}${(performer != lastPerformer ? ', ' : '')}</a>`)
-        })
+        if(_c) {
+            this.uiPlayer.find('.trackInfo .trackName span').html(escapeHtml(_c.name))
+            this.uiPlayer.find('.trackInfo .trackPerformers').html('')
+            const performers = _c.performer.split(', ')
+            const lastPerformer = performers[performers.length - 1]
+            performers.forEach(performer => {
+                this.uiPlayer.find('.trackInfo .trackPerformers').append(
+                    `<a href='/search?section=audios&order=listens&only_performers=on&q=${encodeURIComponent(performer.escapeHtml())}'>${performer.escapeHtml()}${(performer != lastPerformer ? ', ' : '')}</a>`)
+            })
+        } else {
+            this.uiPlayer.find('.trackInfo .trackName span').html(tr('track_noname'))
+            this.uiPlayer.find('.trackInfo .trackPerformers').html(`<a>${tr('track_unknown')}</a>`)
+        }
 
         if(this.ajaxPlayer.length > 0) {
             this.ajaxPlayer.find('#aj_player_track_title b').html(escapeHtml(_c.performer))
@@ -637,6 +642,9 @@ window.player = new class {
 
     ajReveal() {
         this.is_closed = false
+        if(u('#ajax_audio_player').length == 0) {
+            this.ajCreate()
+        }
         u('#ajax_audio_player').removeClass('hidden')
     }
 
@@ -731,8 +739,15 @@ u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
         } else if(u(e.target).closest('.content_list').length > 0) {
             window.player.connectionType = '.content_list'
             _nodes = u(e.target).closest('.content_list').find('.audioEmbed').nodes
+        } else if(u(e.target).closest('.generic_audio_list').length > 0) {
+            window.player.connectionType = '.generic_audio_list'
+            _nodes = u(e.target).closest('.generic_audio_list').find('.audioEmbed').nodes
+        } else if(u(e.target).closest('.audiosInsert').length > 0) {
+            window.player.connectionType = '.audiosInsert'
+            _nodes = u(e.target).closest('.audiosInsert').find('.audioEmbed').nodes
         }
 
+        window.player.tracks = []
         _nodes.forEach(el => {
             const tempAudio = u(el)
             const name = tempAudio.attr('data-name').split(' — ')
@@ -753,7 +768,7 @@ u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
     }
 
     if(window.player.audioPlayer.paused) {
-        window.player.play()
+        await window.player.play()
 
         if(!window.player.isAtAudiosPage()) {
             u('.audioEntry .playerButton .playIcon.paused').removeClass('paused')
@@ -764,7 +779,7 @@ u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
     }
     
     if(window.player.isAtAudiosPage()) {
-
+        
     } else {
         window.player.linkPlayer(audioPlayer)
         u('.audioEntry .subTracks.shown').removeClass('shown')
@@ -772,9 +787,9 @@ u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
     }
 })
 
-u(document).on('click', '.bigPlayer .playButton, #ajax_audio_player #aj_player_play_btn', (e) => {
+u(document).on('click', '.bigPlayer .playButton, #ajax_audio_player #aj_player_play_btn', async (e) => {
     if(window.player.audioPlayer.paused) {
-        window.player.play()
+        await window.player.play()
     } else {
         window.player.pause()
     }
@@ -1066,6 +1081,8 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
             ` : ''}
             <a id='audio_ctx_add_to_group'>${tr('audio_ctx_add_to_group')}</a>
             <a id='audio_ctx_add_to_playlist'>${tr('audio_ctx_add_to_playlist')}</a>
+            ${ctx_type == 'main_player' ? `
+            <a id='audio_ctx_clear_context'>${tr('audio_ctx_clear_context')}</a>` : ''}
             ${ctx_type == 'main_player' ? `<a href='https://github.com/mrilyew' target='_blank'>BigPlayer v1.1 by MrIlyew</a>` : ''}
         </div>
     `)
@@ -1155,6 +1172,13 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
             next_track_player.nodes[0].outerHTML = moving_track_player.nodes[0].outerHTML + next_track_player.nodes[0].outerHTML
             moving_track_player.remove()
         }
+    })
+    ctx_u.find('#audio_ctx_clear_context').on('click', (ev) => {
+        const old_url = window.player.context.object.url
+        window.player.pause()
+        window.player.__resetContext()
+        window.player.__updateFace()
+        window.router.route(old_url)
     })
 })
 
@@ -1641,9 +1665,11 @@ $(document).on("click", "#_deletePlaylist", (e) => {
     }, Function.noop])
 })
 
-$(document).on("click", "#__audioAttachment", (e) => {
-    const form = e.target.closest("form")
-    let body = `
+function showAudioAttachment(type = 'form', form = null)
+{
+    const msg = new CMessageBox({
+        title: tr("select_audio"),
+        body: `
         <div class="searchBox">
             <input name="query" type="text" maxlength="50" placeholder="${tr("header_search")}">
             <select name="perf">
@@ -1653,13 +1679,12 @@ $(document).on("click", "#__audioAttachment", (e) => {
         </div>
 
         <div class="audiosInsert"></div>
-    `
-    MessageBox(tr("select_audio"), body, [tr("close")], [Function.noop])
-
-    document.querySelector(".ovk-diag-body").style.padding = "0"
-    document.querySelector(".ovk-diag-cont").style.width = "580px"
-    document.querySelector(".ovk-diag-body").style.height = "335px"
-
+        `,
+        buttons: [tr('close')],
+        callbacks: [Function.noop],
+    })
+    msg.getNode().find('.ovk-diag-body').attr('style', 'padding:0px;height:335px')
+    msg.getNode().attr('style', 'width:580px')
     let searcher = new playersSearcher("entity_audios", 0)
     searcher.successCallback = (response, thisc) => {
         let domparser = new DOMParser()
@@ -1674,8 +1699,18 @@ $(document).on("click", "#__audioAttachment", (e) => {
         }
 
         result.querySelectorAll(".audioEmbed").forEach(el => {
-            let id = el.dataset.prettyid
-            const is_attached = (u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`)).length > 0
+            let id = 0
+            if(type == 'form') {
+                id = el.dataset.prettyid
+            } else {
+                id = el.dataset.realid
+            }
+            let is_attached = false
+            if(type == 'form') {
+                is_attached = (u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`)).length > 0
+            } else {
+                is_attached = (u(form).find(`.PE_audios .vertical-attachment[data-id='${id}']`)).length > 0
+            }
             
             document.querySelector(".audiosInsert").insertAdjacentHTML("beforeend", `
                 <div class='audio_attachment_header' style="display: flex;width: 100%;">
@@ -1717,7 +1752,7 @@ $(document).on("click", "#__audioAttachment", (e) => {
         searcher.movePage(Number(e.currentTarget.dataset.page))
     })
 
-    $(".searchBox input").on("change", async (e) => {
+    u(".searchBox input").on("change", async (e) => {
         if(e.currentTarget.value === document.querySelector(".searchBox input").value) {
             searcher.clearContainer()
 
@@ -1740,7 +1775,7 @@ $(document).on("click", "#__audioAttachment", (e) => {
         }
     })
 
-    $(".searchBox select").on("change", async (e) => {
+    u(".searchBox select").on("change", async (e) => {
         searcher.clearContainer()
         searcher.searchType = e.currentTarget.value
 
@@ -1750,14 +1785,24 @@ $(document).on("click", "#__audioAttachment", (e) => {
 
     u(".audiosInsert").on("click", ".attachAudio", (ev) => {
         const id = ev.currentTarget.dataset.attachmentdata
-        const is_attached = u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`).length > 0
+        let is_attached = false
+        if(type == 'form') {
+            is_attached = u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`).length > 0
+        } else {
+            is_attached = u(form).find(`.PE_audios .vertical-attachment[data-id='${id}']`).length > 0
+        }
 
         // 04.11.2024 19:03
+        // 30.11.2024 19:03
         if(is_attached) {
-            u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`).remove()
+            if(type == 'form') {
+                u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`).remove()
+            } else {
+                u(form).find(`.PE_audios .vertical-attachment[data-id='${id}']`).remove()
+            }
             u(ev.currentTarget).find("span").html(tr("attach_audio"))
         } else {
-            if(u(form).find(`.upload-item`).length > window.openvk.max_attachments) {
+            if(type == 'form' && u(form).find(`.upload-item`).length > window.openvk.max_attachments) {
                 makeError(tr('too_many_attachments'), 'Red', 10000, 1)
                 return    
             }
@@ -1766,7 +1811,7 @@ $(document).on("click", "#__audioAttachment", (e) => {
 
             const header = u(ev.currentTarget).closest('.audio_attachment_header')
             const player = header.find('.player_part')
-            u(form).find(".post-vertical").append(`
+            u(form).find(type == 'form' ? ".post-vertical" : '.PE_audios').append(`
                 <div class="vertical-attachment upload-item" data-type='audio' data-id="${ev.currentTarget.dataset.attachmentdata}">
                     <div class='vertical-attachment-content'>
                         ${player.html()}
@@ -1778,6 +1823,11 @@ $(document).on("click", "#__audioAttachment", (e) => {
             `)
         }
     })
+}
+
+$(document).on("click", "#__audioAttachment", (e) => {
+    const form = e.target.closest("form")
+    showAudioAttachment('form', form)
 })
 
 $(document).on("click", ".audioEmbed.processed .playerButton", (e) => {
@@ -1876,6 +1926,7 @@ u(document).on('click', '.upload_container_element #small_remove_button', (e) =>
 
 u(document).on('click', `#upload_container #uploadMusic`, async (e) => {
     const current_upload_page = location.href
+    let error = null
     let end_redir = ''
     u('#lastStepButtons').addClass('lagged')
     for(const elem of u('#lastStepContainers .upload_container_element').nodes) {
@@ -1901,11 +1952,19 @@ u(document).on('click', `#upload_container #uploadMusic`, async (e) => {
             body: fd,
         })
         const result_text = await result.json()
-        if(result_text.success && result_text.redirect_link) {
+        if(result_text.success) {
             end_redir = result_text.redirect_link
+        } else {
+            makeError(escapeHtml(result_text.flash.message))
         }
         await sleep(6000)
         elem_u.remove()
+    }
+
+    if(!end_redir) {
+        u('#lastStepButtons').removeClass('lagged')
+        window.__audio_upload_page.showFirstPage()
+        return
     }
 
     if(current_upload_page == location.href) {
@@ -1919,4 +1978,78 @@ u(document).on("drop", "#upload_container", function (e) {
 
     document.getElementById("audio_input").files = e.dataTransfer.files
     u("#audio_input").trigger("change")
+})
+
+u(document).on('click', '#_playlistAppendTracks', (e) => {
+    // 1984
+    showAudioAttachment('playlist', u('.PE_wrapper').nodes[0])
+})
+
+u(document).on('drop', '.PE_audios .vertical-attachment', (e) => {
+    const current = u('.upload-item.currently_dragging')
+    if(e.dataTransfer.types.length < 1 || e.dataTransfer.types.includes('text/uri-list')) {
+        e.preventDefault()
+
+        const target = u(e.target).closest('.upload-item')
+        u('.dragged').removeClass('dragged')
+        current.removeClass('currently_dragging')
+
+        if(!current.closest('.vertical-attachment').length < 1 && target.closest('.vertical-attachment').length < 1
+         || current.closest('.vertical-attachment').length < 1 && !target.closest('.vertical-attachment').length < 1) {
+            return
+        }
+
+        const first_html = target.nodes[0].outerHTML
+        const second_html = current.nodes[0].outerHTML 
+
+        current.nodes[0].outerHTML = first_html
+        target.nodes[0].outerHTML = second_html
+    }
+})
+
+u(document).on("change", `input[name='cover']`, (e) => {
+    const file = e.target.files[0]
+    if(!file.type.startsWith("image/")) {
+        makeError(tr("not_a_photo"))
+        return
+    }
+
+    const image = URL.createObjectURL(file)
+    u(".playlistCover img").attr('src', image).attr('style', 'display:block')
+})
+
+u(document).on("drop", `.playlistCover`, (e) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move';
+
+    document.querySelector(`input[name='cover']`).files = e.dataTransfer.files
+    u(`input[name='cover']`).trigger("change")
+})
+
+u(document).on('click', '.PE_end #playlist_create, .PE_end #playlist_edit', async (e) => {
+    const ids = []
+    u('.PE_audios .vertical-attachment').nodes.forEach(vatch => {
+        ids.push(vatch.dataset.id)
+    })
+    if(!ids || ids.length < 1) {
+        makeError(tr('error_playlist_creating_too_small'), 'Red', 5000, 77)
+        return
+    }
+
+    u(e.target).addClass('lagged')
+    const fd = serializeForm(u('.PE_playlistEditPage').nodes[0])
+    fd.append('hash', window.router.csrf)
+    fd.append('ajax', 1)
+    fd.append('audios', ids)
+    const req = await fetch(location.href, {
+        method: 'POST',
+        body: fd,
+    })
+    const req_json = await req.json()
+    if(req_json.success) {
+        window.router.route(req_json.redirect)
+    } else {
+        makeError(req_json.flash.message)
+    }
+    u(e.target).removeClass('lagged')
 })

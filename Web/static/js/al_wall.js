@@ -1101,14 +1101,14 @@ u(document).on('paste', '#write .small-textarea', (e) => {
     }
 })
 
-u(document).on('dragstart', '#write .post-horizontal .upload-item, .post-vertical .upload-item', (e) => {
+u(document).on('dragstart', '#write .post-horizontal .upload-item, .post-vertical .upload-item, .PE_audios .vertical-attachment', (e) => {
     //e.preventDefault()
     //console.log(e)
     u(e.target).closest('.upload-item').addClass('currently_dragging')
     return
 })
 
-u(document).on('dragover', '#write .post-horizontal .upload-item, .post-vertical .upload-item', (e) => {
+u(document).on('dragover', '#write .post-horizontal .upload-item, .post-vertical .upload-item, .PE_audios .vertical-attachment', (e) => {
     e.preventDefault()
 
     const target = u(e.target).closest('.upload-item')
@@ -1130,7 +1130,7 @@ u(document).on("dragover drop", async (e) => {
     return false;
 })
 
-u(document).on('dragleave dragend', '#write .post-horizontal .upload-item, .post-vertical .upload-item', (e) => {
+u(document).on('dragleave dragend', '#write .post-horizontal .upload-item, .post-vertical .upload-item, .PE_audios .vertical-attachment', (e) => {
     //console.log(e)
     u(e.target).closest('.upload-item').removeClass('dragged')
     return
@@ -1792,7 +1792,7 @@ u(document).on('click', `.post-horizontal .upload-item .upload-delete`, (e) => {
     u(e.target).closest('.upload-item').remove()
 })
 
-u(document).on('click', `.post-vertical .vertical-attachment #small_remove_button`, (e) => {
+u(document).on('click', `.vertical-attachment #small_remove_button`, (e) => {
     e.preventDefault()
     u(e.target).closest('.vertical-attachment').remove()
 })

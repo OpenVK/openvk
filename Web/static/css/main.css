@@ -2573,55 +2573,55 @@ a.poll-retract-vote {
     border-radius: 3px;
 }
 
-.post-vertical .vertical-attachment {
+.vertical-attachment {
     display: grid;
     grid-template-columns: 1fr 0fr;
 }
 
-.post-vertical .vertical-attachment:first-of-type {
+.vertical-attachment:first-of-type {
     margin-top: 7px;
 }
 
-.post-vertical .vertical-attachment .audioEntry {
+.vertical-attachment .audioEntry {
     max-height: 28px;
     min-height: 18px;
 }
 
-.post-vertical .vertical-attachment .audioEntry:hover {
+.vertical-attachment .audioEntry:hover {
     background: unset !important;
 }
 
-.post-vertical .vertical-attachment .audioEntry .buttons {
+.vertical-attachment .audioEntry .buttons {
     display: none;
 }
 
-.post-vertical .vertical-attachment .audioEntry .status {
+.vertical-attachment .audioEntry .status {
     margin-top: 1px;
     margin-left: 2px;
     height: 15px;
 }
 
-.post-vertical .vertical-attachment .audioEntry .nobold {
+.vertical-attachment .audioEntry .nobold {
     margin-top: 1px;
 }
 
-.post-vertical .vertical-attachment .audioEntry .subTracks {
-    padding-bottom: 2px;
-    padding-left: 3px;
+.vertical-attachment .audioEntry .subTracks {
+    padding-left: 0px;
     padding-right: 0px;
+    margin-top: 2px;
 }
 
-.post-vertical .vertical-attachment .audioEntry .audioEntryWrapper {
+.vertical-attachment .audioEntry .audioEntryWrapper {
     height: 14px;
     padding: 0px 4px 0px 0px;
     gap: 2px;
 }
 
-.post-vertical .vertical-attachment .vertical-attachment-content { 
+.vertical-attachment .vertical-attachment-content { 
     max-height: 27px;
 }
 
-.post-vertical .vertical-attachment .vertical-attachment-content .overflowedName {
+.vertical-attachment .vertical-attachment-content .overflowedName {
     position: initial;
     width: 100% !important;
 }
