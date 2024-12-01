@@ -186,7 +186,8 @@ window.router = new class {
 
         const parser = new DOMParser
         const next_page_request = await fetch(next_page_url, {
-            method: 'GET',
+            method: 'AJAX',
+            referrer: old_url,
             headers: {
                 'X-OpenVK-Ajax-Query': '1',
             }
@@ -229,7 +230,7 @@ u(document).on('click', 'a', async (e) => {
         return false
     }*/
 
-    if(target.rel == 'nofollow') {
+    if(target.attr('rel') == 'nofollow') {
         console.log('AJAX | Skipped because its nofollow')
         return
     }
@@ -268,6 +269,10 @@ u(document).on('submit', 'form', async (e) => {
     }
 
     if((localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || window.openvk.current_id == 0) {
+        return false
+    }
+
+    if(window.openvk.disable_ajax == 1) {
         return false
     }
 

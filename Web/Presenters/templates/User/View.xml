@@ -113,10 +113,10 @@
                     <a href="javascript:warnUser()" class="profile_link" style="width: 194px;">
                         {_warn_user_action}
                     </a>
-                    <a href="/admin/user{$user->getId()}/bans" class="profile_link">
+                    <a href="/admin/user{$user->getId()}/bans" class="profile_link" rel="nofollow">
                         {_blocks}
                     </a>
-                    <a href="/admin/logs?uid={$user->getId()}" class="profile_link" style="width: 194px;">
+                    <a href="/admin/logs?uid={$user->getId()}" class="profile_link" style="width: 194px;" rel="nofollow">
                         {_last_actions}
                     </a>
                 {/if}

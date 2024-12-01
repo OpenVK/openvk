@@ -185,7 +185,7 @@ function getRemainingTime(fullTime, time) {
 function serializeForm(form, submitter = null) 
 {
     const u_ = u(form)
-    const inputs = u_.find('input, textarea, button')
+    const inputs = u_.find('input, textarea, button, select')
     let fd = new FormData()
     inputs.nodes.forEach(inp => {
         if(!inp || !inp.name) {
@@ -203,7 +203,14 @@ function serializeForm(form, submitter = null)
             case 'text':
             case 'textarea':
             case 'select':
+            case 'select-one':
             case 'submit':
+            case 'email':
+            case 'phone':
+            case 'search':
+            case 'password':
+            case 'date':
+            case 'datetime-local':
                 fd.append(inp.name, inp.value)
                 break
             case 'checkbox':

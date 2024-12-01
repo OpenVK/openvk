@@ -1,4 +1,4 @@
-$(document).on("change", "#uploadButton", (e) => {
+$(document).on("change", ".photo_ajax_upload_button", (e) => {
     let iterator = 0
 
     if(e.currentTarget.files.length > 10) {
@@ -56,7 +56,7 @@ $(document).on("change", "#uploadButton", (e) => {
                         <textarea style="margin-left: 62px; resize: none;" maxlength="255"></textarea>
                     </div>
                     <div class="uploadedImage">
-                        <a href="${photo.link}" target="_blank"><img width="125" src="${photo.url}"></a>
+                        <a onclick="OpenMiniature(event, '${photo.link}', null, '${photo.pretty_id}', null)"><img width="125" src="${photo.url}"></a>
                         <a class="profile_link" style="width: 125px;" id="deletePhoto" data-id="${photo.vid}" data-owner="${photo.owner}">${tr("delete")}</a>
                         <!--<div class="smallFrame" style="margin-top: 6px;">
                             <div class="smallBtn">${tr("album_poster")}</div>
@@ -76,7 +76,7 @@ $(document).on("change", "#uploadButton", (e) => {
     xhr.send(photos)
 })
 
-$(document).on("click", "#endUploading", (e) => {
+$(document).on("click", ".photo_upload_container #endUploading", (e) => {
     let table = document.querySelector("#photos")
     let data  = new FormData()
     let arr   = new Map();
@@ -120,7 +120,7 @@ $(document).on("click", "#endUploading", (e) => {
     xhr.send(data)
 })
 
-$(document).on("click", "#deletePhoto", (e) => {
+$(document).on("click", ".photo_upload_container #deletePhoto", (e) => {
     let data  = new FormData()
     data.append("hash", u("meta[name=csrf]").attr("value"))
 
@@ -154,19 +154,19 @@ $(document).on("dragover drop", (e) => {
     return false;
 })
 
-$(".container_gray").on("dragover", (e) => {
+$(document).on("dragover", ".photo_upload_container", (e) => {
     e.preventDefault()
     document.querySelector("#fakeButton").classList.add("dragged")
     document.querySelector("#fakeButton").value = tr("drag_files_here")
 })
 
-$(".container_gray").on("dragleave", (e) => {
+$(document).on("dragleave", ".photo_upload_container", (e) => {
     e.preventDefault()
     document.querySelector("#fakeButton").classList.remove("dragged")
     document.querySelector("#fakeButton").value = tr("upload_picts")
 })
 
-$(".container_gray").on("drop", (e) => {
+$(document).on("drop", ".photo_upload_container", (e) => {
     e.originalEvent.dataTransfer.dropEffect = 'move';
     e.preventDefault()
 
@@ -190,7 +190,7 @@ $(".container_gray").on("drop", (e) => {
     u("#uploadButton").trigger("change")
 })
 
-u(".container_gray").on("paste", (e) => {
+u(document).on("paste", ".photo_upload_container", (e) => {
     if(e.clipboardData.files.length > 0 && e.clipboardData.files.length < 10) {
         document.getElementById("uploadButton").files = e.clipboardData.files;
         u("#uploadButton").trigger("change")

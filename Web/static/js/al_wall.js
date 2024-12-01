@@ -540,6 +540,72 @@ function reportUser(user_id) {
     ]);
 }
 
+function reportComment(comment_id) {
+    uReportMsgTxt  = tr("going_to_report_comment");
+    uReportMsgTxt += "<br/>"+tr("report_question_text");
+    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
+
+    MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
+        (function() {
+            res = document.querySelector("#uReportMsgInput").value;
+            xhr = new XMLHttpRequest();
+            xhr.open("GET", "/report/" + comment_id + "?reason=" + res + "&type=comment", true);
+            xhr.onload = (function() {
+                if(xhr.responseText.indexOf("reason") === -1)
+                    MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
+                else
+                    MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
+                });
+            xhr.send(null);
+        }),
+        Function.noop
+    ]);
+}
+
+function reportApp(id) {
+    uReportMsgTxt  = tr('going_to_report_app');
+    uReportMsgTxt += "<br/>"+tr("report_question_text");
+    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
+
+    MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
+        (function() {
+            res = document.querySelector("#uReportMsgInput").value;
+            xhr = new XMLHttpRequest();
+            xhr.open("GET", "/report/" + id + "?reason=" + res + "&type=app", true);
+            xhr.onload = (function() {
+            if(xhr.responseText.indexOf("reason") === -1)
+                MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
+            else
+                MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
+            });
+            xhr.send(null);
+        }),
+        Function.noop
+    ]);
+}
+
+function reportClub(club_id) {
+    uReportMsgTxt  = tr("going_to_report_club");
+    uReportMsgTxt += "<br/>"+tr("report_question_text");
+    uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
+
+    MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
+        (function() {
+            res = document.querySelector("#uReportMsgInput").value;
+            xhr = new XMLHttpRequest();
+            xhr.open("GET", "/report/" + club_id + "?reason=" + res + "&type=group", true);
+            xhr.onload = (function() {
+            if(xhr.responseText.indexOf("reason") === -1)
+                MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
+            else
+                MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
+            });
+            xhr.send(null);
+            }),
+        Function.noop
+    ]);
+}
+
 $(document).on("click", "#_photoDelete, #_videoDelete", function(e) {
     var formHtml = "<form id='tmpPhDelF' action='" + u(this).attr("href") + "' >";
     formHtml    += "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />";
@@ -663,6 +729,66 @@ u(document).handle("submit", "#_submitUserSubscriptionAction", async function(e)
         }
     }
 })
+
+function changeOwner(club, newOwner, newOwnerName) {
+    const action = "/groups/" + club + "/setNewOwner/" + newOwner;
+
+    MessageBox(tr('group_changeowner_modal_title'), `
+        ${tr("group_changeowner_modal_text", escapeHtml(newOwnerName))}
+        <br/><br/>
+        <form id="transfer-owner-permissions-form" method="post">
+            <label for="password">${tr('password')}</label>
+            <input type="password" id="password" name="password" required />
+            <input type="hidden" name="hash" value='${window.router.csrf}' />
+        </form>
+    `, [tr('transfer'), tr('cancel')], [
+        () => {
+            $("#transfer-owner-permissions-form").attr("action", action);
+            document.querySelector("#transfer-owner-permissions-form").submit();
+        }, Function.noop
+    ]);
+}
+
+async function withdraw(id) {
+    let coins = await API.Apps.withdrawFunds(id);
+    if(coins == 0)
+        MessageBox(tr('app_withdrawal'), tr('app_withdrawal_empty'), ["OK"], [Function.noop]);
+    else
+        MessageBox(tr('app_withdrawal'), tr("app_withdrawal_created", window.coins), ["OK"], [Function.noop]);
+}
+
+function toggleMaritalStatus(e) {
+    let elem = $("#maritalstatus-user");
+    $("#maritalstatus-user-select").empty();
+    if ([0, 1, 8].includes(Number(e.value))) {
+        elem.hide();
+    } else {
+        elem.show();
+    }
+}
+
+u(document).on("paste", ".vouncher_input", function(event) {
+    const vouncher = event.clipboardData.getData("text");
+
+    let segments;
+    if(vouncher.length === 27) {
+        segments = vouncher.split("-");
+        if(segments.length !== 4)
+            segments = undefined;
+    } else if(vouncher.length === 24) {
+        segments = chunkSubstr(vouncher, 6);
+    }
+
+    if(segments !== undefined) {
+        document.vouncher_form.key0.value = segments[0];
+        document.vouncher_form.key1.value = segments[1];
+        document.vouncher_form.key2.value = segments[2];
+        document.vouncher_form.key3.value = segments[3];
+        document.vouncher_form.key3.focus();
+    }
+
+    event.preventDefault();
+});
 
 // Migrated from inline end
 

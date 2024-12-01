@@ -17,7 +17,7 @@
                 style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
         </div>
         <div id="profile_links" n:if="isset($thisUser)">
-            <a style="width: 194px;" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" class="profile_link">{_send_message}</a>
+            <a style="width: 194px;" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" class="profile_link" rel='nofollow'>{_send_message}</a>
             {var $subStatus = $user->getSubscriptionStatus($thisUser)}
             {if $subStatus === 0}
                 <form action="/setSub/user" method="post" class="profile_link_form" id="addToFriends">
@@ -41,30 +41,7 @@
                     <input type="submit" class="profile_link" value="{_friends_reject}" style="width: 194px;" />
                 </form>
             {/if}
-            <a class="profile_link" style="display:block;width:96%;" href="javascript:reportUser()">{_report}</a>
-            <script>
-                function reportUser() {
-                    uReportMsgTxt  = "Вы собираетесь пожаловаться на данного пользователя.";
-                    uReportMsgTxt += "<br/>Что именно вам кажется недопустимым в этом материале?";
-                    uReportMsgTxt += "<br/><br/><b>Причина жалобы</b>: <input type='text' id='uReportMsgInput' placeholder='Причина' />"
-
-                    MessageBox("Пожаловаться?", uReportMsgTxt, ["Подтвердить", "Отмена"], [
-                        (function() {
-                            res = document.querySelector("#uReportMsgInput").value;
-                            xhr = new XMLHttpRequest();
-                            xhr.open("GET", "/report/" + {$user->getId()} + "?reason=" + res + "&type=user", true);
-                            xhr.onload = (function() {
-                                if(xhr.responseText.indexOf("reason") === -1)
-                                    MessageBox("Ошибка", "Не удалось подать жалобу...", ["OK"], [Function.noop]);
-                                else
-                                    MessageBox("Операция успешна", "Скоро её рассмотрят модераторы", ["OK"], [Function.noop]);
-                            });
-                            xhr.send(null);
-                        }),
-                        Function.noop
-                    ]);
-                }
-            </script>
+            <a class="profile_link" style="display:block;width:96%;" href="javascript:reportUser({$user->getId()})">{_report}</a>
         </div>
     </div>
 

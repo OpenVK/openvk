@@ -20,7 +20,7 @@
                 {tr("notes_list", $count)}
                 <span n:if="isset($thisUser) && $thisUser->getId() == $owner->getId()">
                     &nbsp;|&nbsp;
-                    <a href="/notes/create">{_create_note}</a>
+                    <a href="/notes/create" rel='nofollow'>{_create_note}</a>
                 </span>
         </div>
     </div>
@@ -99,7 +99,7 @@
                         <span n:if="isset($thisUser) && $thisUser->getId() === $dat->getOwner()->getId()">&nbsp;|&nbsp;
                             <a id="_noteDelete" href="/note{$dat->getOwner()->getId()}_{$dat->getId()}/delete">{_delete}</a>
                             &nbsp;|&nbsp;
-                            <a href="/note{$dat->getOwner()->getId()}_{$dat->getVirtualId()}/edit">{_edit}</a>
+                            <a href="/note{$dat->getOwner()->getId()}_{$dat->getVirtualId()}/edit" rel='nofollow'>{_edit}</a>
                         </span>
                     </div>
                 </div>

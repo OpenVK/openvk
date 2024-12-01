@@ -731,6 +731,10 @@ u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
         return
     }
 
+    if(window.openvk.current_id == 0) {
+        return
+    }
+
     if(!window.player.hasTrackWithId(id) && !window.player.isAtAudiosPage()) {
         let _nodes = null
         if(u(e.target).closest('.attachments').length > 0) {
@@ -761,6 +765,16 @@ u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
                 'performer': name[0]
             })
         })
+    } else if(window.player.isAtAudiosPage()) {
+        window.player.__renewContext()
+        await window.player.loadContext(window.__current_page_audio_context.page ?? 1)
+        if(!isNaN(parseInt(location.hash.replace('#', '')))) {
+            const adp = parseInt(location.hash.replace('#', ''))
+            await window.player.loadContext(adp)
+        } else if((new URL(location.href)).searchParams.p) {
+            const adp = (new URL(location.href)).searchParams.p
+            await window.player.loadContext(adp)
+        }
     }
 
     if(window.player.current_track_id != id) {
