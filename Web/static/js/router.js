@@ -276,16 +276,16 @@ u(document).on('submit', 'form', async (e) => {
         return false
     }
 
-    e.preventDefault()
     u('#ajloader').addClass('shown')
 
     const form = e.target
     const method = form.method ?? 'get'
     const url = form.action
-    if(form.onsubmit) {
+    if(form.onsubmit || url.indexOf('/settings?act=interface') != -1) {
         u('#ajloader').removeClass('shown')
         return false
     }
+    e.preventDefault()
 
     const url_object = new URL(url)
     if(method == 'get' || method == 'GET') {

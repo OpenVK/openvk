@@ -490,7 +490,7 @@ input[type="radio"] {
     border-top: #b9b9b9 1px solid !important;
 }
 
-.bigPlayer .paddingLayer .slider,
+.bigPlayer .slider,
 .audioEmbed .track .slider {
     background: #b9b9b9 !important;
 }
@@ -500,11 +500,11 @@ input[type="radio"] {
     outline: 1px solid #645a86 !important;
 }
 
-.preformer {
+.preformer, .trackPerformers a {
     color: #b7b7b7 !important;
 }
 
-.bigPlayer .paddingLayer .trackPanel .track .timeTip {
+.tip_result {
     background: #b9b9b9 !important;
     color: black !important;
 }
@@ -518,16 +518,12 @@ input[type="radio"] {
 }
 
 .audioEntry .performer a,
-.bigPlayer .paddingLayer .trackInfo a {
+.bigPlayer .trackInfo a {
     color: #a2a1a1 !important;
 }
 
 .musicIcon.lagged {
     opacity: 49%;
-}
-
-.bigPlayer .paddingLayer .bigPlayerTip {
-    color: black !important;
 }
 
 .verticalGrayTabs a {
@@ -545,6 +541,15 @@ input[type="radio"] {
 
 .audioEntry .playerButton .playIcon {
     filter: invert(81%);
+}
+
+.load_bar {
+    background: #2c2839 !important;
+    border-bottom-color: #151418 !important;
+}
+
+#ajax_audio_player {
+    box-shadow: rgb(58 53 73) 0px 0px 2px 3px;
 }
 
 img[src$='/assets/packages/static/openvk/img/camera_200.png'],
