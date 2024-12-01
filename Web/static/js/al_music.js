@@ -765,7 +765,7 @@ u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
                 'performer': name[0]
             })
         })
-    } else if(window.player.isAtAudiosPage()) {
+    } else if(!window.player.hasTrackWithId(id) && window.player.isAtAudiosPage()) {
         window.player.__renewContext()
         await window.player.loadContext(window.__current_page_audio_context.page ?? 1)
         if(!isNaN(parseInt(location.hash.replace('#', '')))) {
