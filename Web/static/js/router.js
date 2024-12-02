@@ -107,8 +107,8 @@ window.router = new class {
         })
     }
 
-    async __integratePage() {
-        window.scrollTo(0, 0)
+    async __integratePage(scrolling = null) {
+        window.scrollTo(0, scrolling ?? 0)
         bsdnHydrate()
 
         if(u('.paginator:not(.paginator-at-top)').length > 0) {
@@ -120,6 +120,7 @@ window.router = new class {
         }
 
         if(window.player) {
+            window.player.dump()
             await window.player._handlePageTransition()
         }
     }
@@ -158,6 +159,14 @@ window.router = new class {
         return true
     }
 
+    savePreviousPage() {
+        this.prev_page_html = {
+            url: location.href,
+            pathname: location.pathname,
+            html: u('.page_body').html(),
+        }
+    }
+
     async route(params = {}) {
         if(typeof params == 'string') {
             params = {
@@ -176,6 +185,10 @@ window.router = new class {
             return
         }
 
+        if(this.prev_page_html && this.prev_page_html.pathname != location.pathname) {
+            this.prev_page_html = null
+        }
+        
         const push_url = params.push_state ?? true
         const next_page_url = new URL(url)
         if(push_url) {
@@ -342,6 +355,14 @@ u(document).on('submit', 'form', async (e) => {
 
 window.addEventListener('popstate', (e) => {
     e.preventDefault();
+    /*if(window.router.prev_page_html) {
+        u('.page_body').html(window.router.prev_page_html.html)
+        history.replaceState({'from_router': 1}, '', window.router.prev_page_html.url)
+        window.router.prev_page_html = null
+        window.router.__integratePage()
+        return
+    }*/
+
     window.router.route({
         url: location.href,
         push_state: false,

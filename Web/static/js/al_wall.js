@@ -424,7 +424,7 @@ async function OpenVideo(video_arr = [], init_player = true)
 
         u('body').append(miniplayer)
         miniplayer.find('.miniplayer-body').nodes[0].append(msgbox.getNode().find('.center-part > *').nodes[0])
-        miniplayer.attr('style', `left:100px;top:${scrollY}px;`)
+        miniplayer.attr('style', `left:100px;top:0px;`)
         miniplayer.find('#__miniplayer_return').on('click', (e) => {
             msgbox.reveal()
             msgbox.getNode().find('.center-part').nodes[0].append(miniplayer.find('.miniplayer-body > *').nodes[0])
@@ -2218,7 +2218,6 @@ $(document).on("click", "#add_image", (e) => {
         let video = document.querySelector("#_takeSelfieFrame video")
 
         if(!navigator.mediaDevices) {
-            // ех вот бы месседжбоксы были бы классами
             u("body").removeClass("dimmed");
             document.querySelector("html").style.overflowY = "scroll"
             u(".ovk-diag-cont").remove();
@@ -2364,6 +2363,10 @@ async function __processPaginatorNextPage(page)
     if(window.player) {
         window.player.loadContext(page)
     }
+
+    /*if(window.router) {
+        window.router.savePreviousPage()
+    }*/
 
     const new_url = new URL(location.href)
     new_url.hash = page

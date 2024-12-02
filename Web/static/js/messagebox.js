@@ -82,7 +82,7 @@ class CMessageBox {
 
     __exitDialog() {
         this.getNode().remove()
-        if(u('.ovk-msg-all').length < 1) {
+        if(u('.ovk-msg-all:not(.msgbox-hidden)').length < 1) {
             u('body').removeClass('dimmed')
             u('html').attr('style', 'overflow-y:scroll')
         }
@@ -101,7 +101,7 @@ class CMessageBox {
     hide() {
         u('body').removeClass('dimmed')
         u('html').attr('style', 'overflow-y:scroll')
-        this.getNode().attr('style', 'display: none;')
+        this.getNode().attr('style', 'display: none;').addClass('msgbox-hidden')
         this.hidden = true
     }
 

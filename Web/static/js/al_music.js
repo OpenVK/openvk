@@ -256,7 +256,7 @@ window.player = new class {
         u(this.audioPlayer).trigger('volumechange')
     }
 
-    async setTrack(id) {
+    async setTrack(id, ref = null) {
         if(!this.tracks || this.tracks.length < 1) {
             makeError('Context is not loaded yet', 'Red', 5000, 1489)
             return
@@ -313,6 +313,10 @@ window.player = new class {
         }
 
         this.is_closed = false
+        if(ref != 'localstorage') {
+            this.dump()
+        }
+        
         this.__updateFace()
         u(this.audioPlayer).trigger('volumechange')
     }
@@ -405,6 +409,35 @@ window.player = new class {
         return u('.bigPlayer').length > 0
     }
 
+    dump() {
+        const final = {
+            context: this.context,
+            current_track_id: this.current_track_id,
+            tracks: this.tracks,
+            time: this.audioPlayer.currentTime,
+        }
+
+        localStorage.setItem('audio.lastDump', JSON.stringify(final))
+        console.log('Audio | Tracks was dumped')
+    }
+
+    undump() {
+        localStorage.setItem('audio.lastDump', null)
+    }
+
+    async loadDump(dump_object) {
+        this.context = dump_object.context
+        this.current_track_id = dump_object.current_track_id
+        this.tracks = dump_object.tracks
+        if(this.current_track_id) {
+            await this.setTrack(this.current_track_id, 'localstorage')
+        }
+
+        if(dump_object.time) {
+            this.audioPlayer.currentTime = dump_object.time
+        }
+    }
+
     // Добавляем ощущение продуманности.
     __highlightActiveTrack() {
         u(`.audiosContainer .audioEmbed[data-realid='${this.current_track_id}'] .audioEntry, .audios_padding .audioEmbed[data-realid='${this.current_track_id}'] .audioEntry`).addClass('nowPlaying')
@@ -432,7 +465,6 @@ window.player = new class {
     }
 
     async _handlePageTransition() {
-        console.log('Audio | Switched page :3')
         const state = this.isAtAudiosPage()
         if(!state) {
             // AJAX audio player
@@ -721,7 +753,22 @@ window.player = new class {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    await window.player.init(window.__current_page_audio_context)
+    let parsed = null
+    try {
+        parsed = JSON.parse(localStorage.getItem('audio.lastDump'))
+    } catch(e) {}
+
+    if(parsed) {
+        await window.player.init(null)
+        await window.player.loadDump(parsed)
+        if(!window.player.isAtAudiosPage()) {
+            window.player.ajReveal()
+            window.player.__updateFace()
+            u(window.player.audioPlayer).trigger('timeupdate')
+        }
+    } else {
+        await window.player.init(window.__current_page_audio_context)
+    }
 })
 
 u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
@@ -1190,8 +1237,10 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
     ctx_u.find('#audio_ctx_clear_context').on('click', (ev) => {
         const old_url = window.player.context.object.url
         window.player.pause()
+        window.player.ajClose()
         window.player.__resetContext()
         window.player.__updateFace()
+        window.player.undump()
         window.router.route(old_url)
     })
 })

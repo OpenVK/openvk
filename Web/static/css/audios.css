@@ -912,7 +912,7 @@
     width: 500px;
     height: 37px;
     position: fixed;
-    z-index: 99;
+    z-index: 1025;
     border-radius: 3px;
 }
 
