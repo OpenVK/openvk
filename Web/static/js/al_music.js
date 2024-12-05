@@ -434,7 +434,9 @@ window.player = new class {
         }
 
         if(dump_object.time) {
-            this.audioPlayer.currentTime = dump_object.time
+            setTimeout(() => {
+                this.audioPlayer.currentTime = dump_object.time
+            }, 1000)
         }
     }
 
@@ -757,6 +759,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
         parsed = JSON.parse(localStorage.getItem('audio.lastDump'))
     } catch(e) {}
+    if(window.openvk.current_id == 0) {
+        return
+    }
 
     if(parsed) {
         await window.player.init(null)
@@ -1976,6 +1981,7 @@ u(document).on('click', '.upload_container_element #small_remove_button', (e) =>
         return
     }
 
+    // 1984
     const element = u(e.target).closest('.upload_container_element')
     const element_index = Number(element.attr('data-index'))
     
@@ -2044,7 +2050,6 @@ u(document).on("drop", "#upload_container", function (e) {
 })
 
 u(document).on('click', '#_playlistAppendTracks', (e) => {
-    // 1984
     showAudioAttachment('playlist', u('.PE_wrapper').nodes[0])
 })
 
