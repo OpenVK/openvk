@@ -2360,7 +2360,7 @@ async function __processPaginatorNextPage(page)
         container.nodes[0].append(u(`.paginator:not(.paginator-at-top)`).nodes[0].parentNode)
     }
     
-    if(window.player && window.player.isAtAudiosPage()) {
+    if(window.player && window.player.isAtAudiosPage() && window.player.isAtCurrentContextPage()) {
         window.player.loadContext(page)
     }
 

@@ -409,6 +409,10 @@ window.player = new class {
         return u('.bigPlayer').length > 0
     }
 
+    isAtCurrentContextPage() {
+        return this.isAtAudiosPage() && this.context.object.url == location.pathname + location.search
+    }
+
     dump() {
         const final = {
             context: this.context,
@@ -774,6 +778,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     } else {
         await window.player.init(window.__current_page_audio_context)
     }
+})
+
+window.addEventListener('beforeunload', (e) => {
+    window.player.dump()
 })
 
 u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
