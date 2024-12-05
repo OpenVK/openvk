@@ -91,6 +91,10 @@ window.router = new class {
             u('.page_header #search_box select').nodes[0].value = page_header.find('#search_box select').nodes[0].value
         }
 
+        if(u('.page_header #search_box input').length > 0 && page_header.find('#search_box input').length > 0) {
+            u('.page_header #search_box input').nodes[0].value = page_header.find('#search_box input').nodes[0].value
+        }
+
         if(page_header.hasClass('search_expanded_at_all')) {
             u('.page_header').addClass('search_expanded_at_all').addClass('search_expanded')
         } else {

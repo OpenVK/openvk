@@ -205,6 +205,9 @@ window.player = new class {
         if(!this.context.object) {
             return
         }
+        if(this.context.playedPages.indexOf(page) != -1) {
+            return
+        }
         
         const form_data = new FormData
         switch(this.context.object.name) {

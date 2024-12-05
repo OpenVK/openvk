@@ -2362,6 +2362,7 @@ async function __processPaginatorNextPage(page)
     
     if(window.player && window.player.isAtAudiosPage() && window.player.isAtCurrentContextPage()) {
         window.player.loadContext(page)
+        window.player.__highlightActiveTrack()
     }
 
     /*if(window.router) {
