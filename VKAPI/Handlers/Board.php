@@ -287,7 +287,6 @@ final class Board extends VKAPIRequestHandler
     {
         # start_comment_id ne robit
         $this->requireUser();
-        $this->willExecuteWriteAction();
         
         $topic = (new TopicsRepo)->getTopicById($group_id, $topic_id);
 
@@ -321,7 +320,6 @@ final class Board extends VKAPIRequestHandler
     {
         # order и extended ничё не делают
         $this->requireUser();
-        $this->willExecuteWriteAction();
 
         $arr = [];
         $club = (new ClubsRepo)->get($group_id);
@@ -330,7 +328,7 @@ final class Board extends VKAPIRequestHandler
         $arr["count"] = (new TopicsRepo)->getClubTopicsCount($club);
         $arr["items"] = [];
         $arr["default_order"] = $order;
-        $arr["can_add_topics"] = $club->canBeModifiedBy($this->getUser()) ? true : $club->isEveryoneCanCreateTopics() ? true : false;
+        $arr["can_add_topics"] = $club->canBeModifiedBy($this->getUser()) ? true : ($club->isEveryoneCanCreateTopics() ? true : false);
         $arr["profiles"] = [];
 
         if(empty($topic_ids)) {

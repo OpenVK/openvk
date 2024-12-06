@@ -288,7 +288,6 @@ final class Photos extends VKAPIRequestHandler
     function getAlbums(int $owner_id, string $album_ids = "", int $offset = 0, int $count = 100, bool $need_system = true, bool $need_covers = true, bool $photo_sizes = false)
     {
         $this->requireUser();
-        $this->willExecuteWriteAction();
 
         $res = [];
 
@@ -360,7 +359,6 @@ final class Photos extends VKAPIRequestHandler
     function getAlbumsCount(int $user_id = 0, int $group_id = 0)
     {
         $this->requireUser();
-        $this->willExecuteWriteAction();
 
         if($user_id == 0 && $group_id == 0 || $user_id > 0 && $group_id > 0)
             $this->fail(21, "Select user_id or group_id");
@@ -389,7 +387,6 @@ final class Photos extends VKAPIRequestHandler
     function getById(string $photos, bool $extended = false, bool $photo_sizes = false)
     {
         $this->requireUser();
-        $this->willExecuteWriteAction();
 
         $phts = explode(",", $photos);
         $res = [];
@@ -413,7 +410,6 @@ final class Photos extends VKAPIRequestHandler
     function get(int $owner_id, int $album_id, string $photo_ids = "", bool $extended = false, bool $photo_sizes = false, int $offset = 0, int $count = 10)
     {
         $this->requireUser();
-        $this->willExecuteWriteAction();
 
         $res = [];
 
@@ -632,7 +628,6 @@ final class Photos extends VKAPIRequestHandler
     function getAll(int $owner_id, bool $extended = false, int $offset = 0, int $count = 100, bool $photo_sizes = false)
     {
         $this->requireUser();
-        $this->willExecuteWriteAction();
 
         if($owner_id < 0)
             $this->fail(4, "This method doesn't works with clubs");
@@ -661,7 +656,6 @@ final class Photos extends VKAPIRequestHandler
     function getComments(int $owner_id, int $photo_id, bool $need_likes = false, int $offset = 0, int $count = 100, bool $extended = false, string $fields = "")
     {
         $this->requireUser();
-        $this->willExecuteWriteAction();
 
         $photo = (new PhotosRepo)->getByOwnerAndVID($owner_id, $photo_id);
         $comms = array_slice(iterator_to_array($photo->getComments(1, $offset + $count)), $offset);
