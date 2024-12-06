@@ -548,7 +548,7 @@ input[type="radio"] {
     border-bottom-color: #151418 !important;
 }
 
-#ajax_audio_player {
+#ajax_audio_player, #ajloader {
     box-shadow: rgb(58 53 73) 0px 0px 2px 3px;
 }
 

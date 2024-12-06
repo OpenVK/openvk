@@ -62,6 +62,7 @@ window.router = new class {
         const page_body = u(parsed_content.querySelector('.page_body'))
         const sidebar = u(parsed_content.querySelector('.sidebar'))
         const page_header = u(parsed_content.querySelector('.page_header'))
+        const page_footer = u(parsed_content.querySelector('.page_footer'))
         const backdrop = u(parsed_content.querySelector('#backdrop'))
         if(page_body.length < 1) {
             throw new Error('Invalid page has been loaded')
@@ -78,6 +79,7 @@ window.router = new class {
         })
         u('.page_body').html(page_body.html())
         u('.sidebar').html(sidebar.html())
+        u('.page_footer').html(page_footer.html())
         if(backdrop.length > 0) {
             if(u('#backdrop').length == 0) {
                 u('body').append(`<div id="backdrop"></div>`)
@@ -112,6 +114,8 @@ window.router = new class {
     }
 
     async __integratePage(scrolling = null) {
+        window.temp_y_scroll = null
+        u('.toTop').removeClass('has_down')
         window.scrollTo(0, scrolling ?? 0)
         bsdnHydrate()
 
