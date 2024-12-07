@@ -260,7 +260,7 @@ window.player = new class {
     }
 
     async setTrack(id, ref = null) {
-        if(!this.tracks || this.tracks.length < 1) {
+        if(!this.tracks/* || this.tracks.length < 1*/) {
             makeError('Context is not loaded yet', 'Red', 5000, 1489)
             return
         }
@@ -287,7 +287,7 @@ window.player = new class {
         const c_track = this.currentTrack
         if(!c_track) {
             this.current_track_id = old_id
-            makeError('Error playing audio: track not found')
+            //makeError('Error playing audio: track not found')
             return
         }
         
@@ -434,9 +434,9 @@ window.player = new class {
 
     async loadDump(dump_object) {
         this.context = dump_object.context
-        this.current_track_id = dump_object.current_track_id
         this.tracks = dump_object.tracks
-        if(this.current_track_id) {
+        if(dump_object.current_track_id && this.hasTrackWithId(dump_object.current_track_id)) {
+            this.current_track_id = dump_object.current_track_id
             await this.setTrack(this.current_track_id, 'localstorage')
         }
 
@@ -519,10 +519,18 @@ window.player = new class {
 
     __findTrack(id, return_index = false) {
         if(return_index) {
-            return this.tracks.indexOf(this.tracks.find(item => item.id == id))
+            try {
+                return this.tracks.indexOf(this.tracks.find(item => item.id == id))
+            } catch(e) {
+                return -1
+            }
         }
 
-        return this.tracks.find(item => item.id == id)
+        try {
+            return this.tracks.find(item => item.id == id)
+        } catch(e) {
+            return null
+        }
     }
 
     __findByIndex(index) {
@@ -616,8 +624,10 @@ window.player = new class {
         }
 
         if(this.ajaxPlayer.length > 0) {
-            this.ajaxPlayer.find('#aj_player_track_title b').html(escapeHtml(_c.performer))
-            this.ajaxPlayer.find('#aj_player_track_title span').html(escapeHtml(_c.name))
+            if(_c) {
+                this.ajaxPlayer.find('#aj_player_track_title b').html(escapeHtml(_c.performer))
+                this.ajaxPlayer.find('#aj_player_track_title span').html(escapeHtml(_c.name))
+            }
         }
 
         u(`.tip_result`).remove()
@@ -1113,6 +1123,9 @@ u(document).on("drop", '.audiosContainer', function(e) {
         e.dataTransfer.dropEffect = 'move'
     } else if(e.dataTransfer.types.length < 1 || e.dataTransfer.types.includes('text/uri-list')) {
         e.preventDefault()
+        if(window.player && !window.player.isAtCurrentContextPage()) {
+            return
+        }
 
         u('.audioEmbed.currently_dragging').removeClass('currently_dragging')
         const target = u(e.target).closest('.audioEmbed')
@@ -1154,7 +1167,7 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
             <a id='audio_ctx_mute' ${window.player.audioPlayer.muted ? `class='pressed'` : ''}>${tr('mute_tip_noun')}</a>
             ` : ''}
             ${ctx_type == 'mini_player' ? `
-            <a id='audio_ctx_play_next'>${tr('audio_ctx_play_next')}</a>    
+            <a style='display:none;' id='audio_ctx_play_next'>${tr('audio_ctx_play_next')}</a>    
             ` : ''}
             <a id='audio_ctx_add_to_group'>${tr('audio_ctx_add_to_group')}</a>
             <a id='audio_ctx_add_to_playlist'>${tr('audio_ctx_add_to_playlist')}</a>
@@ -1567,7 +1580,7 @@ function __showAudioAddDialog(id, current_tab = 'club') {
                     u('.entity_vertical_list').append(`<div id='gif_loader'></div>`)
 
                     try {
-                        window.openvk.writeableClubs = await API.Groups.getWriteableClubs()
+                        window.openvk.writeableClubs = await window.OVKAPI.call('groups.get', {'filter': 'admin', 'count': 100})
                     } catch (e) {
                         u("#_content").html(tr("no_access_clubs"))
             
@@ -1577,7 +1590,7 @@ function __showAudioAddDialog(id, current_tab = 'club') {
                     u('.entity_vertical_list #gif_loader').remove()
                 }
                 
-                window.openvk.writeableClubs.forEach(el => {
+                window.openvk.writeableClubs.items.forEach(el => {
                     u("#_content .entity_vertical_list").append(`
                     <label class='entity_vertical_list_item with_third_column' data-id='${el.id}'>
                         <div class='first_column'>
@@ -2110,10 +2123,10 @@ u(document).on('click', '.PE_end #playlist_create, .PE_end #playlist_edit', asyn
     u('.PE_audios .vertical-attachment').nodes.forEach(vatch => {
         ids.push(vatch.dataset.id)
     })
-    if(!ids || ids.length < 1) {
+    /*if(!ids || ids.length < 1) {
         makeError(tr('error_playlist_creating_too_small'), 'Red', 5000, 77)
         return
-    }
+    }*/
 
     u(e.target).addClass('lagged')
     const fd = serializeForm(u('.PE_playlistEditPage').nodes[0])

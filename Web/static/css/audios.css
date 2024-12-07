@@ -300,7 +300,8 @@
     border-radius: inherit !important;
 }
 
-.audioEntry.nowPlaying .performer a {
+.audioEntry.nowPlaying .performer a,
+.audioEntry.nowPlaying .performer {
     color: #f4f4f4 !important;
 }
 

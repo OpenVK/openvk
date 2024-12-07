@@ -361,6 +361,7 @@ u(document).on('submit', 'form', async (e) => {
     }
     
     window.router.__appendPage(parsed_content)
+    window.router.__closeMsgs()
     await window.router.__integratePage()
 
     u('#ajloader').removeClass('shown')
