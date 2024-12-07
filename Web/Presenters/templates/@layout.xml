@@ -20,7 +20,6 @@
         {script "js/utils.js"}
         {script "js/node_modules/dashjs/dist/dash.all.min.js"}
         <script src="/assets/packages/static/openvk/js/node_modules/cropperjs/dist/cropper.js" type="module"></script>
-        {script "js/al_music.js"}
 
         {css "js/node_modules/tippy.js/dist/backdrop.css"}
         {css "js/node_modules/cropperjs/dist/cropper.css"}
@@ -31,6 +30,10 @@
         {script "js/node_modules/@popperjs/core/dist/umd/popper.min.js"}
         {script "js/node_modules/tippy.js/dist/tippy-bundle.umd.min.js"}
         {script "js/node_modules/handlebars/dist/handlebars.min.js"}
+        {script "js/node_modules/react/dist/react-with-addons.min.js"}
+        {script "js/node_modules/react-dom/dist/react-dom.min.js"}
+        {script "js/vnd_literallycanvas.js"}
+        {css "js/node_modules/literallycanvas/lib/css/literallycanvas.css"}
 
         {if $isTimezoned == NULL}
             {script "js/timezone.js"}
@@ -199,18 +202,18 @@
                             {var $canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
                             {var $menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
                             <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $menuLinksAvaiable" class="menu_divider"></div>
-                            <a href="/admin" class="link" n:if="$canAccessAdminPanel" title="{_admin} [Alt+Shift+A]" accesskey="a">{_admin}</a>
-                            <a href="/support/tickets" class="link" n:if="$canAccessHelpdesk">{_helpdesk}
+                            <a href="/admin" class="link" n:if="$canAccessAdminPanel" title="{_admin} [Alt+Shift+A]" accesskey="a" rel="nofollow">{_admin}</a>
+                            <a href="/support/tickets" class="link" n:if="$canAccessHelpdesk" rel="nofollow">{_helpdesk}
                                 {if $helpdeskTicketNotAnsweredCount > 0}
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
                                 {/if}
                             </a>
-                            <a n:if="$canAccessHelpdesk" href="/scumfeed" class="link">{tr("reports")}
+                            <a n:if="$canAccessHelpdesk" href="/scumfeed" class="link" rel="nofollow">{tr("reports")}
                                 {if $reportNotAnsweredCount > 0}
                                     (<b>{$reportNotAnsweredCount}</b>)
                                 {/if}
                             </a>
-                            <a n:if="$canAccessHelpdesk" href="/noSpam" class="link">
+                            <a n:if="$canAccessHelpdesk" href="/noSpam" class="link" rel="nofollow">
                                 noSpam
                             </a>
                         <a
@@ -392,6 +395,9 @@
         {script "js/al_suggestions.js"}
         {script "js/al_navigation.js"}
         {script "js/al_comments.js"}
+        {script "js/al_music.js"}
+        {script "js/al_despacito_wall.js"}
+        {script "js/al_photos.js"}
 
         {ifset $thisUser}
             {script "js/al_notifs.js"}
@@ -433,19 +439,21 @@
             //]]>
         </script>
 
-        <script>
+        <script id='_js_ep_script'>
             window.openvk = {
                 "audio_genres": {\openvk\Web\Models\Entities\Audio::genres},
                 "at_search": {$atSearch ?? false},
                 "max_attachments": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"] ?? 10},
                 "max_filesize_mb": 5,
                 "current_id": {$thisUser ? $thisUser->getId() : 0},
+                "disable_ajax": {$disable_ajax ? $disable_ajax : 0},
             }
         </script>
 
         {ifset bodyScripts}
             {include bodyScripts}
         {/ifset}
+        {script "js/router.js"}
     </body>
 </html>
 {/if}

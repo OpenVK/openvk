@@ -1,14 +1,3 @@
-// elapsed это вроде прошедшие, а оставшееся это remaining но ладно уже
-function getElapsedTime(fullTime, time) {
-    let timer = fullTime - time
-
-    if(timer < 0) return "-00:00"
-
-    return "-" + fmtTime(timer)
-}
-
-window.savedAudiosPages = {}
-
 class playersSearcher {
     constructor(context_type, context_id) {
         this.context_type = context_type
@@ -53,816 +42,1232 @@ class playersSearcher {
     }
 }
 
-class bigPlayer {
-    tracks = {
-        currentTrack: null,
-        nextTrack: null,
-        previousTrack: null,
-        tracks: []
-    }
-
+window.player = new class {
     context = {
-        context_type: null,
-        context_id: 0,
+        object: {},
         pagesCount: 0,
+        count: 0,
         playedPages: [],
-        object: [],
     }
 
-    nodes = {
-        dashPlayer: null,
-        audioPlayer: null,
-        thisPlayer: null,
-        playButtons: null,
+    __linked_player_id = null
+    current_track_id = 0
+    tracks = []
+
+    get timeType() {
+        return localStorage.getItem('audio.timeType') ?? 0
     }
 
-    timeType = 0
-
-    findTrack(id) {
-        return this.tracks["tracks"].find(item => item.id == id)
+    set timeType(value) {
+        localStorage.setItem('audio.timeType', value)
     }
 
-    constructor(context, context_id, page = 1) {
-        this.context["context_type"] = context
-        this.context["context_id"] = context_id
-        this.context["playedPages"].push(String(page))
+    get audioPlayer() {
+        return this.__realAudioPlayer
+    }
 
-        this.nodes["thisPlayer"] = document.querySelector(".bigPlayer")
-        this.nodes["thisPlayer"].classList.add("lagged")
-        this.nodes["audioPlayer"] = document.createElement("audio")
+    get linkedInlinePlayer() {
+        if(!this.__linked_player_id) {
+            return null;
+        }
 
-        this.player = () => { return this.nodes["audioPlayer"] }
-        this.nodes["playButtons"] = this.nodes["thisPlayer"].querySelector(".playButtons")
-        this.nodes["dashPlayer"] = dashjs.MediaPlayer().create()
+        return u('#' + this.__linked_player_id)
+    }
 
-        let formdata = new FormData()
-        formdata.append("context", context)
-        formdata.append("context_entity", context_id)
-        formdata.append("query", context_id)
-        formdata.append("hash", u("meta[name=csrf]").attr("value"))
-        formdata.append("page", page)
-    
-        ky.post("/audios/context", {
-            hooks: {
-                afterResponse: [
-                    async (_request, _options, response) => {
-                        if(response.status !== 200) {
-                            fastError(tr("unable_to_load_queue"))
-                            return
-                        }
+    get ajaxPlayer() {
+        return u('#ajax_audio_player')
+    }
 
-                        let contextObject = await response.json()
+    get uiPlayer() {
+        return u('.bigPlayer')
+    }
 
-                        if(!contextObject.success) {
-                            fastError(tr("unable_to_load_queue"))
-                            return
-                        }
+    get currentTrack() {
+        return this.__findTrack(this.current_track_id)
+    }
 
-                        this.nodes["thisPlayer"].classList.remove("lagged")
-                        this.tracks["tracks"] = contextObject["items"]
-                        this.context["pagesCount"] = contextObject["pagesCount"]
+    get previousTrack() {
+        const current = this.__findTrack(this.current_track_id, true)
+        return this.__findByIndex(current - 1)
+    }
 
-                        if(localStorage.lastPlayedTrack != null && this.tracks["tracks"].find(item => item.id == localStorage.lastPlayedTrack) != null) {
-                            this.setTrack(localStorage.lastPlayedTrack)
-                            this.pause()
-                        }
+    get nextTrack() {
+        const current = this.__findTrack(this.current_track_id, true)
+        return this.__findByIndex(current + 1) 
+    }
 
-                        console.info("Context is successfully loaded")
-                    }
-                ]
-            }, 
-            body: formdata,
-            timeout: 20000,
-        })
+    async init(input_context) {
+        let context = Object.assign({
+            url: location.pathname + location.search
+        }, input_context)
+        this.context.object = !input_context ? null : context
+        this.__realAudioPlayer = document.createElement("audio")
+        this.dashPlayer = dashjs.MediaPlayer().create()
 
-        u(this.nodes["playButtons"].querySelector(".playButton")).on("click", (e) => {
-            if(this.player().paused)
-                this.play()
-            else
-                this.pause()
-        })
+        await this.loadContext(input_context ? context.page : 0)
+        this.initEvents()
+        this.__setMediaSessionActions()
+    }
 
-        u(this.player()).on("timeupdate", (e) => {
-            const time = this.player().currentTime;
-            const ps = ((time * 100) / this.tracks["currentTrack"].length).toFixed(3)
-            this.nodes["thisPlayer"].querySelector(".time").innerHTML = fmtTime(time)
-            this.timeType == 0 ? this.nodes["thisPlayer"].querySelector(".elapsedTime").innerHTML = getElapsedTime(this.tracks["currentTrack"].length, time)
-                : null
+    initEvents() {
+        this.audioPlayer.ontimeupdate = () => {
+            const current_track = this.currentTrack
+            if(!current_track) {
+                return
+            }
+            
+            const time = this.audioPlayer.currentTime
+            const ps = ((time * 100) / current_track.length).toFixed(3)
+            this.uiPlayer.find(".time").html(fmtTime(time))
+            this.__updateTime(time)
 
-            if (ps <= 100)
-                this.nodes["thisPlayer"].querySelector(".selectableTrack .slider").style.left = `${ ps}%`;
+            if (ps <= 100) {
+                this.uiPlayer.find(".track .selectableTrack .slider").attr('style', `left:${ ps}%`);
 
-        })
+                if(this.linkedInlinePlayer) {
+                    this.linkedInlinePlayer.find(".subTracks .lengthTrackWrapper .slider").attr('style', `left:${ ps}%`)
+                    this.linkedInlinePlayer.find('.mini_timer .nobold').html(fmtTime(time))
+                }
 
-        u(this.player()).on("volumechange", (e) => {
-            const volume = this.player().volume;
+                if(this.ajaxPlayer) {
+                    this.ajaxPlayer.find('#aj_player_track_length .slider').attr('style', `left:${ ps}%`)
+                    this.ajaxPlayer.find('#aj_player_track_name #aj_time').html(fmtTime(time))
+                }
+            }
+        }
+
+        this.audioPlayer.onvolumechange = () => {
+            const volume = this.audioPlayer.volume;
             const ps = Math.ceil((volume * 100) / 1);
 
-            if (ps <= 100)
-                this.nodes["thisPlayer"].querySelector(".volumePanel .selectableTrack .slider").style.left = `${ ps}%`;
-            
-            localStorage.volume = volume
-        })
-
-        u(".bigPlayer .track > div").on("click mouseup", (e) => {
-            if(this.tracks["currentTrack"] == null)
-                return
-
-            let rect  = this.nodes["thisPlayer"].querySelector(".selectableTrack").getBoundingClientRect();
-            
-            const width = e.clientX - rect.left;
-            const time = Math.ceil((width * this.tracks["currentTrack"].length) / (rect.right - rect.left));
-
-            this.player().currentTime = time;
-        })
-
-        u(".bigPlayer .trackPanel .selectableTrack").on("mousemove", (e) => {
-            if(this.tracks["currentTrack"] == null)
-                return
-
-            let rect  = this.nodes["thisPlayer"].querySelector(".selectableTrack").getBoundingClientRect();
-            
-            const width = e.clientX - rect.left;
-            const time = Math.ceil((width * this.tracks["currentTrack"].length) / (rect.right - rect.left));
-
-            document.querySelector(".bigPlayer .track .bigPlayerTip").style.display = "block"
-            document.querySelector(".bigPlayer .track .bigPlayerTip").innerHTML = fmtTime(time)
-            document.querySelector(".bigPlayer .track .bigPlayerTip").style.left = `min(${width - 15}px, 315.5px)`
-        })
-
-        u(".bigPlayer .nextButton").on("mouseover mouseleave", (e) => {
-            if(this.tracks["currentTrack"] == null)
-                return
-
-            if(e.type == "mouseleave") {
-                $(".nextTrackTip").remove()
-                return
-            }
-
-            e.currentTarget.parentNode.insertAdjacentHTML("afterbegin", `
-                <div class="bigPlayerTip nextTrackTip" style="left: 5%;">
-                    ${ovk_proc_strtr(escapeHtml(this.findTrack(this.tracks["previousTrack"]).name), 20) ?? ""}
-                </div>
-            `)
-
-            document.querySelector(".nextTrackTip").style.display = "block"
-        })
-
-        u(".bigPlayer .backButton").on("mouseover mouseleave", (e) => {
-            if(this.tracks["currentTrack"] == null)
-                return
-
-            if(e.type == "mouseleave") {
-                $(".previousTrackTip").remove()
-                return
-            }
-
-            e.currentTarget.parentNode.insertAdjacentHTML("afterbegin", `
-                <div class="bigPlayerTip previousTrackTip" style="left: 8%;">
-                    ${ovk_proc_strtr(escapeHtml(this.findTrack(this.tracks["nextTrack"]).name), 20) ?? ""}
-                </div>
-            `)
-
-            document.querySelector(".previousTrackTip").style.display = "block"
-        })
-
-        u(".bigPlayer .trackPanel .selectableTrack").on("mouseleave", (e) => {
-            if(this.tracks["currentTrack"] == null)
-                return
-            
-            document.querySelector(".bigPlayer .track .bigPlayerTip").style.display = "none"
-        })
-
-        u(".bigPlayer .volumePanel > div").on("click mouseup mousemove", (e) => {
-            if(this.tracks["currentTrack"] == null)
-                return
-
-            if(e.type == "mousemove") {
-                let buttonsPresseed = _bsdnUnwrapBitMask(e.buttons)
-                if(!buttonsPresseed[0])
-                    return;
-            }
-
-            let rect  = this.nodes["thisPlayer"].querySelector(".volumePanel .selectableTrack").getBoundingClientRect();
-            
-            const width = e.clientX - rect.left;
-            const volume = Math.max(0, (width * 1) / (rect.right - rect.left));
-
-            this.player().volume = volume;
-        })
-
-        u(".bigPlayer .elapsedTime").on("click", (e) => {
-            if(this.tracks["currentTrack"] == null)
-                return
-
-            this.timeType == 0 ? (this.timeType = 1) : (this.timeType = 0)
-
-            localStorage.playerTimeType = this.timeType
-
-            this.nodes["thisPlayer"].querySelector(".elapsedTime").innerHTML = this.timeType == 1 ? 
-                fmtTime(this.tracks["currentTrack"].length) 
-                : getElapsedTime(this.tracks["currentTrack"].length, this.player().currentTime)
-        })
-
-        u(".bigPlayer .additionalButtons .repeatButton").on("click", (e) => {
-            if(this.tracks["currentTrack"] == null)
-                return
-
-            e.currentTarget.classList.toggle("pressed")
-
-            if(e.currentTarget.classList.contains("pressed"))
-                this.player().loop = true
-            else
-                this.player().loop = false
-        })
-
-        u(".bigPlayer .additionalButtons .shuffleButton").on("click", (e) => {
-            if(this.tracks["currentTrack"] == null)
-                return
-
-            this.tracks["tracks"].sort(() => Math.random() - 0.59)
-            this.setTrack(this.tracks["tracks"].at(0).id)
-        })
-
-        // хз что она делала в самом вк, но тут сделаем вид что это просто мут музыки
-        u(".bigPlayer .additionalButtons .deviceButton").on("click", (e) => {
-            if(this.tracks["currentTrack"] == null)
-                return
-
-            e.currentTarget.classList.toggle("pressed")
-
-            this.player().muted = e.currentTarget.classList.contains("pressed")
-        })
-
-        u(".bigPlayer .arrowsButtons .nextButton").on("click", (e) => {
-            this.showPreviousTrack()
-        })
-
-        u(".bigPlayer .arrowsButtons .backButton").on("click", (e) => {
-            this.showNextTrack()
-        })
-
-        u(".bigPlayer .trackInfo b").on("click", (e) => {
-            window.location.assign(`/search?q=${e.currentTarget.innerHTML}&section=audios&only_performers=on`)
-        })
-
-        u(document).on("keydown", (e) => {
-            if(document.activeElement.closest('.page_header')) {
-                return
-            }
-            
-            if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)) {
-                if(document.querySelector(".ovk-diag-cont") != null)
-                    return
-
-                e.preventDefault()
-            }
-
-            switch(e.key) {
-                case "ArrowUp":
-                    this.player().volume = Math.min(0.99, this.player().volume + 0.1)
-                    break
-                case "ArrowDown":
-                    this.player().volume = Math.max(0, this.player().volume - 0.1)
-                    break
-                case "ArrowLeft":
-                    this.player().currentTime = this.player().currentTime - 3
-                    break
-                case "ArrowRight":
-                    this.player().currentTime = this.player().currentTime + 3
-                    break
-                // буквально
-                case " ":
-                    if(this.player().paused)
-                        this.play()
-                    else 
-                        this.pause()
-
-                    break;
-            }
-        })
-
-        u(document).on("keyup", (e) => {
-            if(document.activeElement.closest('.page_header')) {
-                return
-            }
-            
-            if([87, 65, 83, 68, 82, 77].includes(e.keyCode)) {
-                if(document.querySelector(".ovk-diag-cont") != null)
-                    return
-
-                e.preventDefault()
-            }
-
-            switch(e.keyCode) {
-                case 87:
-                case 65:
-                    this.showPreviousTrack()
-                    break
-                case 83:
-                case 68:
-                    this.showNextTrack()
-                    break
-                case 82:
-                    document.querySelector(".bigPlayer .additionalButtons .repeatButton").click()
-                    break
-                case 77:
-                    document.querySelector(".bigPlayer .additionalButtons .deviceButton").click()
-                    break
-            }
-        })
-
-        u(this.player()).on("ended", (e) => {
-            e.preventDefault()
-            
-            // в начало очереди
-            if(!this.tracks.nextTrack) {
-                if(!this.context["playedPages"].includes("1")) {
-                    $.ajax({
-                        type: "POST",
-                        url: "/audios/context",
-                        data: {
-                            context: this["context"].context_type,
-                            context_entity: this["context"].context_id,
-                            hash: u("meta[name=csrf]").attr("value"),
-                            page: 1
-                        },
-                        success: (response_2) => {
-                            this.tracks["tracks"] = response_2["items"].concat(this.tracks["tracks"])
-                            this.context["playedPages"].push(String(1))
-
-                            this.setTrack(this.tracks["tracks"][0].id)
-                        }
-                    })
-                } else {
-                    this.setTrack(this.tracks.tracks[0].id)
-                }
+            if (ps <= 100) {
+                this.uiPlayer.find(".volumePanel .selectableTrack .slider").attr('style', `left:${ ps}%`);
                 
-                return
+                if(this.linkedInlinePlayer) {
+                    this.linkedInlinePlayer.find(".subTracks .volumeTrackWrapper .slider").attr('style', `left:${ ps}%`)
+                }
+
+                if(this.ajaxPlayer) {
+                    this.ajaxPlayer.find('#aj_player_volume .slider').attr('style', `left:${ ps}%`)
+                }
+            }
+            
+            localStorage.setItem('audio.volume', volume)
+        }
+
+        this.audioPlayer.onprogress = (e) => {
+            u('.loaded_chunk').remove()
+
+            const buffered = this.audioPlayer.buffered
+            if (buffered.length > 0) {
+                this.listen_coef += 1.25
+                const end = buffered.end(buffered.length - 1)
+                const percentage = (end / window.player.audioPlayer.duration) * 100
+                if(this.uiPlayer.length > 0) {
+                    this.uiPlayer.find('.track .selectableTrackLoadProgress .load_bar').attr('style', `width:${percentage.toFixed(2)}%`)
+                }
+
+                if(this.linkedInlinePlayer) {
+                    this.linkedInlinePlayer.find('.lengthTrackWrapper .selectableTrackLoadProgress .load_bar').attr('style', `width:${percentage.toFixed(2)}%`)
+                }
             }
 
-            this.showNextTrack()
+            if(window.player.listen_coef > 10) {
+                this.__countListen()
+                window.player.listen_coef = -10
+            }
+        }
+        
+        this.audioPlayer.onended = async (e) => {
+            e.preventDefault()
+
+            if(!this.nextTrack && window.player.context.playedPages.indexOf(1) == -1) {
+                this.loadContext(1, false)
+                await this.setTrack(this.__findByIndex(0).id)
+            } else {
+                this.playNextTrack()
+            }
+
+            if(this.linkedInlinePlayer && this.connectionType) {
+                const parent = this.linkedInlinePlayer.closest(this.connectionType)
+                const real_current = parent.find(`.audioEmbed[data-realid='${this.current_track_id}']`)
+                u('.audioEntry .playerButton .playIcon.paused').removeClass('paused')
+                u('.audioEntry .subTracks.shown').removeClass('shown')
+                real_current.find('.subTracks').addClass('shown')
+                this.linkPlayer(real_current)
+            }
+        }
+
+        this.audioPlayer.volume = Number(localStorage.getItem('audio.volume') ?? 1)
+    }
+
+    async loadContext(page = 1, after = true) {
+        if(!this.context.object) {
+            return
+        }
+        if(this.context.playedPages.indexOf(page) != -1) {
+            return
+        }
+        
+        const form_data = new FormData
+        switch(this.context.object.name) {
+            case 'entity_audios':
+                form_data.append('context', this.context.object.name)
+                form_data.append('context_entity', this.context.object.entity_id)
+                break
+            case 'playlist_context':
+                form_data.append('context', this.context.object.name)
+                form_data.append('context_entity', this.context.object.entity_id)
+                break
+            case 'classic_search_context':
+                // tidi riwriti
+                form_data.append('context', this.context.object.name)
+                form_data.append('context_entity', JSON.stringify({
+                    'order': this.context.object.order,
+                    'invert': this.context.object.invert,
+                    'genre': this.context.object.genre,
+                    'only_performers': this.context.object.only_performers,
+                    'with_lyrics': this.context.object.with_lyrics,
+                    'query': this.context.object.query,
+                }))
+                break
+            case 'alone_audio':
+                form_data.append('context', this.context.object.name)
+                form_data.append('context_entity', this.context.object.entity_id)
+        }
+
+        form_data.append('page', page)
+        form_data.append("hash", u("meta[name=csrf]").attr("value"))
+        this.context.playedPages.push(page)
+
+        const req = await fetch('/audios/context', {
+            method: 'POST',
+            body: form_data
         })
-        
-        u(this.player()).on("loadstart", (e) => {
-            let playlist = this.context.context_type == "playlist_context" ? this.context.context_id : null
-
-            let tempThisId = this.tracks.currentTrack.id
-            setTimeout(() => {
-                if(tempThisId != this.tracks.currentTrack.id) return
-
-                $.ajax({
-                    type: "POST",
-                    url: `/audio${this.tracks["currentTrack"].id}/listen`,
-                    data: {
-                        hash: u("meta[name=csrf]").attr("value"),
-                        playlist: playlist
-                    },
-                    success: (response) => {
-                        if(response.success) {
-                            console.info("Listen is counted.")
-        
-                            if(response.new_playlists_listens)
-                                document.querySelector("#listensCount").innerHTML = tr("listens_count", response.new_playlists_listens)
-                        } else
-                            console.info("Listen is not counted.")
-                    }
-                })
-            }, 2000)
-        })
-
-        if(localStorage.volume != null && localStorage.volume < 1 && localStorage.volume > 0)
-            this.player().volume = localStorage.volume
-        else
-            this.player().volume = 0.75
-
-        if(localStorage.playerTimeType == 'null' || localStorage.playerTimeType == null)
-            this.timeType = 0
-        else
-            this.timeType = localStorage.playerTimeType
-
-        navigator.mediaSession.setActionHandler('play', () => { this.play() });
-        navigator.mediaSession.setActionHandler('pause', () => { this.pause() });
-        navigator.mediaSession.setActionHandler('previoustrack', () => { this.showPreviousTrack() });
-        navigator.mediaSession.setActionHandler('nexttrack', () => { this.showNextTrack() });
-        navigator.mediaSession.setActionHandler("seekto", (details) => {
-            this.player().currentTime = details.seekTime;
-        });
-    }
-
-    play() {
-        if(this.tracks["currentTrack"] == null)
+        const res = await req.json()
+        if(!res.success) {
+            makeError(tr("unable_to_load_queue"))
             return
-
-        document.querySelectorAll('audio').forEach(el => el.pause());
-        document.querySelector(`.audioEmbed[data-realid='${this.tracks["currentTrack"].id}'] .audioEntry .playerButton .playIcon`) != null ? document.querySelector(`.audioEmbed[data-realid='${this.tracks["currentTrack"].id}'] .audioEntry .playerButton .playIcon`).classList.add("paused") : void(0)
-        this.player().play()
-        this.nodes["playButtons"].querySelector(".playButton").classList.add("pause")
-        document.querySelector('link[rel="icon"], link[rel="shortcut icon"]').setAttribute("href", "/assets/packages/static/openvk/img/favicons/favicon24_paused.png")
-    
-        navigator.mediaSession.playbackState = "playing"
-    }
-    
-    pause() {
-        if(this.tracks["currentTrack"] == null) 
-            return
-
-        document.querySelector(`.audioEmbed[data-realid='${this.tracks["currentTrack"].id}'] .audioEntry .playerButton .playIcon`) != null ? document.querySelector(`.audioEmbed[data-realid='${this.tracks["currentTrack"].id}'] .audioEntry .playerButton .playIcon`).classList.remove("paused") : void(0)
-        this.player().pause()
-        this.nodes["playButtons"].querySelector(".playButton").classList.remove("pause")
-        document.querySelector('link[rel="icon"], link[rel="shortcut icon"]').setAttribute("href", "/assets/packages/static/openvk/img/favicons/favicon24_playing.png")
-    
-        navigator.mediaSession.playbackState = "paused"
-    }
-
-    showPreviousTrack() {
-        if(this.tracks["currentTrack"] == null || this.tracks["previousTrack"] == null)
-            return
-
-        this.setTrack(this.tracks["previousTrack"])
-    }
-
-    showNextTrack() {
-        if(this.tracks["currentTrack"] == null || this.tracks["nextTrack"] == null)
-            return
-        
-        this.setTrack(this.tracks["nextTrack"])
-    }
-
-    updateButtons() {
-        // перепутал некст и бек.
-        let prevButton = this.nodes["thisPlayer"].querySelector(".nextButton")
-        let nextButton = this.nodes["thisPlayer"].querySelector(".backButton")
-
-        if(this.tracks["previousTrack"] == null)
-            prevButton.classList.add("lagged")
-        else
-            prevButton.classList.remove("lagged")
-
-        if(this.tracks["nextTrack"] == null)
-            nextButton.classList.add("lagged")
-        else 
-            nextButton.classList.remove("lagged")
-
-        if(document.querySelector(".nextTrackTip") != null) {
-            let track = this.findTrack(this.tracks["previousTrack"])
-            document.querySelector(".nextTrackTip").innerHTML = `
-                ${track != null ? ovk_proc_strtr(escapeHtml(track.name), 20) : ""}
-            `
         }
-
-        if(document.querySelector(".previousTrackTip") != null) {
-            let track = this.findTrack(this.tracks["nextTrack"])
-            document.querySelector(".previousTrackTip").innerHTML = `
-                ${track != null ? ovk_proc_strtr(escapeHtml(track.name ?? ""), 20) : ""}
-            `
-        }
+        this.context.pagesCount = res.pagesCount
+        this.context.count = res.count
+        this.__appendTracks(res.items, after)
     }
 
-    setTrack(id) {
-        if(this.tracks["tracks"] == null) {
-            console.info("Context is not loaded yet. Wait please")
-            return 0;
-        }
+    linkPlayer(node) {
+        this.__linked_player_id = node.attr('id')
+        u(this.audioPlayer).trigger('volumechange')
+    }
 
-        document.querySelectorAll(".audioEntry.nowPlaying").forEach(el => el.classList.remove("nowPlaying"))
-        let obj = this.tracks["tracks"].find(item => item.id == id)
-
-        if(obj == null) {
-            fastError("No audio in context")
+    async setTrack(id, ref = null) {
+        if(!this.tracks || this.tracks.length < 1) {
+            makeError('Context is not loaded yet', 'Red', 5000, 1489)
             return
         }
 
-        this.nodes["thisPlayer"].querySelector(".trackInfo span").innerHTML = escapeHtml(obj.name) 
-        this.nodes["thisPlayer"].querySelector(".trackInfo a").innerHTML = escapeHtml(obj.performer)
-        this.nodes["thisPlayer"].querySelector(".trackInfo a").href = `/search?query=&section=audios&order=listens&only_performers=on&q=${encodeURIComponent(obj.performer.escapeHtml())}`
-        this.nodes["thisPlayer"].querySelector(".trackInfo .time").innerHTML = fmtTime(obj.length)
-        this.tracks["currentTrack"] = obj
-
-        let indexOfCurrentTrack = this.tracks["tracks"].indexOf(obj) ?? 0
-        this.tracks["nextTrack"] = this.tracks["tracks"].at(indexOfCurrentTrack + 1) != null ? this.tracks["tracks"].at(indexOfCurrentTrack + 1).id : null
-
-        if(indexOfCurrentTrack - 1 >= 0)
-            this.tracks["previousTrack"] = this.tracks["tracks"].at(indexOfCurrentTrack - 1).id
-        else
-            this.tracks["previousTrack"] = null
-
-        if(this.tracks["nextTrack"] == null && Math.max(...this.context["playedPages"]) < this.context["pagesCount"]
-            || this.tracks["previousTrack"] == null && (Math.min(...this.context["playedPages"]) > 1)) {
+        if(window.__current_page_audio_context && (!this.context.object || this.context.object.url != location.pathname + location.search)) {
+            console.log('Audio | Resetting context because of ajax :3')
             
-            // idk how it works
-            let lesser = this.tracks["previousTrack"] == null ? (Math.min(...this.context["playedPages"]) > 1)
-                        : Math.max(...this.context["playedPages"]) > this.context["pagesCount"]
-            
-            let formdata = new FormData()
-            formdata.append("context", this.context["context_type"])
-            formdata.append("context_entity", this.context["context_id"])
-            formdata.append("hash", u("meta[name=csrf]").attr("value"))
+            this.__renewContext()
+            await this.loadContext(window.__current_page_audio_context.page ?? 1)
+            if(!isNaN(parseInt(location.hash.replace('#', '')))) {
+                const adp = parseInt(location.hash.replace('#', ''))
+                await this.loadContext(adp)
+            } else if((new URL(location.href)).searchParams.p) {
+                const adp = (new URL(location.href)).searchParams.p
+                await this.loadContext(adp)
+            }
 
-            if(lesser)
-                formdata.append("page", Math.min(...this.context["playedPages"]) - 1)
-            else
-                formdata.append("page", Number(Math.max(...this.context["playedPages"])) + 1)
-            
-            ky.post("/audios/context", {
-                hooks: {
-                    afterResponse: [
-                        async (_request, _options, response) => {
-                            let newArr = await response.json()
-
-                            if(lesser)
-                                this.tracks["tracks"] = newArr["items"].concat(this.tracks["tracks"])
-                            else
-                                this.tracks["tracks"] = this.tracks["tracks"].concat(newArr["items"])
-
-                            this.context["playedPages"].push(String(newArr["page"]))
-
-                            if(lesser)
-                                this.tracks["previousTrack"] = this.tracks["tracks"].at(this.tracks["tracks"].indexOf(obj) - 1).id
-                            else
-                                this.tracks["nextTrack"] = this.tracks["tracks"].at(indexOfCurrentTrack + 1) != null ? this.tracks["tracks"].at(indexOfCurrentTrack + 1).id : null
-                            
-                            this.updateButtons()
-                            console.info("Context is successfully loaded")
-                        }
-                    ]
-                }, 
-                body: formdata
-            })
+            this.__updateFace()
         }
 
-        if(this.tracks["currentTrack"].available == false || this.tracks["currentTrack"].withdrawn)
-            this.showNextTrack()
-
-        this.updateButtons()
-
+        this.listen_coef = 0.0
+        const old_id = this.current_track_id
+        this.current_track_id = id
+        const c_track = this.currentTrack
+        if(!c_track) {
+            this.current_track_id = old_id
+            makeError('Error playing audio: track not found')
+            return
+        }
+        
         const protData = {
             "org.w3.clearkey": {
-                "clearkeys": obj.keys
+                "clearkeys": c_track.keys
             }
         };
 
-        this.nodes["dashPlayer"].initialize(this.player(), obj.url, false);
-        this.nodes["dashPlayer"].setProtectionData(protData);
-
-        this.play()
-
-        let playerAtPage = document.querySelector(`.audioEmbed[data-realid='${this.tracks["currentTrack"].id}'] .audioEntry`)
-        if(playerAtPage != null)
-            playerAtPage.classList.add("nowPlaying")
-
-        document.querySelectorAll(`.audioEntry .playerButton .playIcon.paused`).forEach(el => el.classList.remove("paused"))
-        
-        localStorage.lastPlayedTrack = this.tracks["currentTrack"].id
-
-        if(this.timeType == 1)
-            this.nodes["thisPlayer"].querySelector(".elapsedTime").innerHTML = fmtTime(this.tracks["currentTrack"].length)
-
-        let album = document.querySelector(".playlistBlock")
-
-        navigator.mediaSession.metadata = new MediaMetadata({
-            title: obj.name,
-            artist: obj.performer,
-            album: album == null ? "OpenVK Audios" : album.querySelector(".playlistInfo h4").innerHTML,
-            artwork: [{ src: album == null ? "/assets/packages/static/openvk/img/song.jpg" : album.querySelector(".playlistCover img").src }],
-        });
+        u('.nowPlaying').removeClass('nowPlaying')
+        this.__highlightActiveTrack()
 
         navigator.mediaSession.setPositionState({
-            duration: this.tracks["currentTrack"].length
+            duration: this.currentTrack.length
         })
-    }
+        this.__updateMediaSession()
+        this.dashPlayer.initialize(this.audioPlayer, c_track.url, false);
+        this.dashPlayer.setProtectionData(protData)
 
-    loadContextPage(page, lesser = false) {
-        const formdata = new FormData()
-        formdata.append("context", this.context["context_type"])
-        formdata.append("context_entity", this.context["context_id"])
-        formdata.append("hash", u("meta[name=csrf]").attr("value"))
-        formdata.append("page", page)
+        if(!this.nextTrack && Math.max(...this.context["playedPages"]) < this.context["pagesCount"]) {
+            await this.loadContext(Number(Math.max(...this.context["playedPages"])) + 1, true)
+        }
 
-        ky.post("/audios/context", {
-            hooks: {
-                afterResponse: [
-                    async (_request, _options, response) => {
-                        const newArr = await response.json()
+        if(!this.previousTrack && (Math.min(...this.context["playedPages"]) > 1)) {
+            await this.loadContext(Math.min(...this.context["playedPages"]) - 1, false)
+        }
 
-                        if(lesser)
-                            this.tracks["tracks"] = newArr["items"].concat(this.tracks["tracks"])
-                        else
-                            this.tracks["tracks"] = this.tracks["tracks"].concat(newArr["items"])
-
-                        this.context["playedPages"].push(String(newArr["page"]))
-                        
-                        this.updateButtons()
-                        console.info("Loaded context for page " + page)
-                    }
-                ]
-            }, 
-            body: formdata
-        })
-    }
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    if(document.querySelector(".bigPlayer") != null) {
-        let context = document.querySelector("input[name='bigplayer_context']")
-
-        if(!context)
-            return
+        this.is_closed = false
+        if(ref != 'localstorage') {
+            this.dump()
+        }
         
-        let type = context.dataset.type
-        let entity = context.dataset.entity
-        window.player = new bigPlayer(type, entity, context.dataset.page)
+        this.__updateFace()
+        u(this.audioPlayer).trigger('volumechange')
     }
 
-    $(document).on("mouseover mouseleave", `.audioEntry .mediaInfo`, (e) => {
-        const info = e.currentTarget.closest(".mediaInfo")
+    switchTracks(id1, id2) {
+        const first_audio = this.__findTrack(id1)
+        const first_audio_index = this.__findTrack(id1, true)
+        const second_audio = this.__findTrack(id2)
+        const second_audio_index = this.__findTrack(id2, true)
 
-        if(e.originalEvent.type == "mouseleave" || e.originalEvent.type == "mouseout") {
-            info.classList.add("noOverflow")
-            info.classList.remove("overflowedName")
-        } else {
-            info.classList.remove("noOverflow")
-            info.classList.add("overflowedName")
+        this.tracks[first_audio_index] = second_audio
+        this.tracks[second_audio_index] = first_audio
+        this.__updateFace()
+    }
+
+    appendTrack(object, after = true) {
+        this.__appendTracks([object], after)
+    }
+
+    hasTrackWithId(id) {
+        return this.__findTrack(id, true) != -1
+    }
+
+    async play() {
+        if(!this.currentTrack) {
+            return
         }
-    })
-})
 
-$(document).on("click", ".audioEmbed > *", (e) => {
-    const player = e.currentTarget.closest(".audioEmbed")
+        document.querySelectorAll('audio').forEach(el => el.pause())
 
-    if(player.classList.contains("inited")) return
+        await this.audioPlayer.play()
+        this.__setFavicon()
+        this.__updateFace()
+        navigator.mediaSession.playbackState = "playing"
+    }
 
-    initPlayer(player.id.replace("audioEmbed-", ""), 
-    JSON.parse(player.dataset.keys), 
-    player.dataset.url, 
-    player.dataset.length)
+    pause() {
+        if(!this.currentTrack) {
+            return
+        }
 
-    if(e.target.classList.contains("playIcon"))
-        e.target.click()
-})
+        this.audioPlayer.pause()
+        this.__setFavicon('paused')
+        this.__updateFace()
+        navigator.mediaSession.playbackState = "paused"
+    }
 
-function initPlayer(id, keys, url, length) {
-    document.querySelector(`#audioEmbed-${ id}`).classList.add("inited")
-    const audio = document.querySelector(`#audioEmbed-${ id} .audio`);
-    const playButton = u(`#audioEmbed-${ id} .playerButton > .playIcon`);
-    const trackDiv = u(`#audioEmbed-${ id} .track > div > div`);
-    const volumeSpan = u(`#audioEmbed-${ id} .volume span`);
-    const rect = document.querySelector(`#audioEmbed-${ id} .selectableTrack`).getBoundingClientRect();
-    
-    const playerObject = document.querySelector(`#audioEmbed-${ id}`)
+    async playPreviousTrack() {
+        if(!this.currentTrack || !this.previousTrack) {
+            return
+        }
 
-    if(document.querySelector(".bigPlayer") != null) {
-        playButton.on("click", () => {
-            if(window.player.tracks["tracks"] == null)
+        await this.setTrack(this.previousTrack.id)
+        if(!this.currentTrack.available || this.currentTrack.withdrawn) {
+            if(!this.previousTrack) {
                 return
+            }
+            
+            this.playPreviousTrack()
+        }
 
-            if(window.player.tracks["currentTrack"] == null || window.player.tracks["currentTrack"].id != playerObject.dataset.realid)
-                window.player.setTrack(playerObject.dataset.realid)
-            else
-                document.querySelector(".bigPlayer .playButton").click()
-        })
-
-        return
+        await this.play()
     }
     
-    const protData = {
-        "org.w3.clearkey": {
-            "clearkeys": keys
+    async playNextTrack() {
+        if(!this.currentTrack || !this.nextTrack) {
+            return
         }
-    };
 
-    const player = dashjs.MediaPlayer().create();
-    player.initialize(audio, url, false);
-    player.setProtectionData(protData);
+        await this.setTrack(this.nextTrack.id)
+        if(!this.currentTrack.available || this.currentTrack.withdrawn) {
+            if(!this.nextTrack) {
+                return
+            }
 
-    playButton.on("click", () => {
-        if (audio.paused) {
-            document.querySelectorAll('audio').forEach(el => el.pause());
-            audio.play();
+            this.playNextTrack()
+        }
+
+        await this.play()
+    }
+
+    // fake shuffle
+    async shuffle() {
+        this.tracks.sort(() => Math.random() - 0.59)
+        await this.setTrack(this.tracks.at(0).id)
+        await this.play()
+    }
+
+    isAtAudiosPage() {
+        return u('.bigPlayer').length > 0
+    }
+
+    isAtCurrentContextPage() {
+        return this.isAtAudiosPage() && this.context.object.url == location.pathname + location.search
+    }
+
+    dump() {
+        const final = {
+            context: this.context,
+            current_track_id: this.current_track_id,
+            tracks: this.tracks,
+            time: this.audioPlayer.currentTime,
+        }
+
+        localStorage.setItem('audio.lastDump', JSON.stringify(final))
+        console.log('Audio | Tracks was dumped')
+    }
+
+    undump() {
+        localStorage.setItem('audio.lastDump', null)
+    }
+
+    async loadDump(dump_object) {
+        this.context = dump_object.context
+        this.current_track_id = dump_object.current_track_id
+        this.tracks = dump_object.tracks
+        if(this.current_track_id) {
+            await this.setTrack(this.current_track_id, 'localstorage')
+        }
+
+        if(dump_object.time) {
+            setTimeout(() => {
+                this.audioPlayer.currentTime = dump_object.time
+            }, 1000)
+        }
+    }
+
+    // Добавляем ощущение продуманности.
+    __highlightActiveTrack() {
+        u(`.audiosContainer .audioEmbed[data-realid='${this.current_track_id}'] .audioEntry, .audios_padding .audioEmbed[data-realid='${this.current_track_id}'] .audioEntry`).addClass('nowPlaying')
+    }
+
+    __renewContext() {
+        let context = Object.assign({
+            url: location.pathname + location.search
+        }, window.__current_page_audio_context)
+        this.pause()
+        this.__resetContext()
+        this.context.object = context
+    }
+
+    __resetContext() {
+        this.context = {
+            object: {},
+            pagesCount: 0,
+            count: 0,
+            playedPages: [],
+        }
+        this.tracks = []
+        //this.__realAudioPlayer = document.createElement("audio")
+        this.listen_coef = 0
+    }
+
+    async _handlePageTransition() {
+        const state = this.isAtAudiosPage()
+        if(!state) {
+            // AJAX audio player
+            if(this.is_closed) {
+                return
+            }
+
+            this.ajaxPlayer.removeClass('hidden')
+            if(this.ajaxPlayer.length > 0) {
+                return
+            } else {
+                if(this.audioPlayer.paused) {
+                    return
+                }
+                this.ajCreate()
+                this.__updateFace()
+            }
         } else {
-            audio.pause();
+            this.ajClose(false)
+            this.is_closed = false
+            if(this.tracks.length < 1) {
+                if(window.__current_page_audio_context) {
+                    await this.init(window.__current_page_audio_context)
+                }
+            }
         }
-    });
+        
+        this.__linked_player_id = null
+        if(this.currentTrack) {
+            this.__updateFace()
+        }
+        this.__highlightActiveTrack()
+        u(this.audioPlayer).trigger('volumechange')
+    }
 
-    u(audio).on("timeupdate", () => {
-        const time = audio.currentTime;
-        const ps = ((time * 100) / length).toFixed(3);
-        volumeSpan.html(fmtTime(Math.floor(time)));
-
-        if (ps <= 100)
-            playerObject.querySelector(".lengthTrack .slider").style.left = `${ ps}%`;
-    });
-
-    u(audio).on("volumechange", (e) => {
-        const volume = audio.volume;
-        const ps = Math.ceil((volume * 100) / 1);
-
-        if (ps <= 100)
-            playerObject.querySelector(".volumeTrack .slider").style.left = `${ ps}%`;
-    })
-
-    const playButtonImageUpdate = () => {
-        if (!audio.paused) {
-            playButton.addClass("paused")
+    __setFavicon(state = 'playing') {
+        if(state == 'playing') {
             document.querySelector('link[rel="icon"], link[rel="shortcut icon"]').setAttribute("href", "/assets/packages/static/openvk/img/favicons/favicon24_paused.png")
         } else {
-            playButton.removeClass("paused")
             document.querySelector('link[rel="icon"], link[rel="shortcut icon"]').setAttribute("href", "/assets/packages/static/openvk/img/favicons/favicon24_playing.png")
         }
-
-        u('.subTracks').nodes.forEach(el => {
-            el.classList.remove('shown')
-        })
-
-        u(`#audioEmbed-${ id} .subTracks`).addClass('shown')
-        if(!$(`#audioEmbed-${ id}`).hasClass("havePlayed")) {
-            $(`#audioEmbed-${ id}`).addClass("havePlayed")
-
-            $.post(`/audio${playerObject.dataset.realid}/listen`, {
-                hash: u("meta[name=csrf]").attr("value")
-            });
-        }
-    };
-
-    const hideTracks = () => {
-        $(`#audioEmbed-${ id} .track`).removeClass('shown')
-        $(`#audioEmbed-${ id}`).removeClass("havePlayed")
     }
 
-    u(audio).on("play", playButtonImageUpdate);
-    u(audio).on(["pause", "suspended"], playButtonImageUpdate);
-    u(audio).on("ended", (e) => {
-        let thisPlayer = playerObject
-        let nextPlayer = null
-        if(thisPlayer.closest(".attachment") != null) {
-            try {
-                nextPlayer = thisPlayer.closest(".attachment").nextElementSibling.querySelector(".audioEmbed")
-            } catch(e) {return}
-        } else if(thisPlayer.closest(".audio") != null) {
-            try {
-                nextPlayer = thisPlayer.closest(".audio").nextElementSibling.querySelector(".audioEmbed")
-            } catch(e) {return}
-        } else if(thisPlayer.closest(".search_content") != null) {
-            try {
-                nextPlayer = thisPlayer.closest(".search_content").nextElementSibling.querySelector(".audioEmbed")
-            } catch(e) {return}
+    __findTrack(id, return_index = false) {
+        if(return_index) {
+            return this.tracks.indexOf(this.tracks.find(item => item.id == id))
+        }
+
+        return this.tracks.find(item => item.id == id)
+    }
+
+    __findByIndex(index) {
+        return this.tracks[index]
+    }
+
+    __setMediaSessionActions() {
+        navigator.mediaSession.setActionHandler('play', async () => { 
+            await window.player.play()
+        });
+        navigator.mediaSession.setActionHandler('pause', () => { 
+            window.player.pause() 
+        });
+        navigator.mediaSession.setActionHandler('previoustrack', async () => { await window.player.playPreviousTrack() });
+        navigator.mediaSession.setActionHandler('nexttrack', async () => { await window.player.playNextTrack() });
+        navigator.mediaSession.setActionHandler("seekto", async (details) => {
+            window.player.audioPlayer.currentTime = details.seekTime
+        });
+    }
+
+    __appendTracks(list, after = true) {
+        if(after) {
+            this.tracks = this.tracks.concat(list)
         } else {
-            nextPlayer = thisPlayer.nextElementSibling
+            this.tracks = list.concat(this.tracks)
+        }
+    }
+
+    __updateFace() {
+        // Во второй раз перепутал next и back, но фиксить смысла уже нет.
+        const _c = this.currentTrack
+        const prev_button = this.uiPlayer.find('.nextButton')
+        const next_button = this.uiPlayer.find('.backButton')
+
+        if(!this.previousTrack) {
+            prev_button.addClass('lagged')
+            if(this.ajaxPlayer.length > 0) {
+                this.ajaxPlayer.find('#aj_player_previous').addClass('lagged')
+            }
+        } else {
+            prev_button.removeClass('lagged')
+            prev_button.attr('data-title', ovk_proc_strtr(escapeHtml(this.previousTrack.name), 50))
+            if(this.ajaxPlayer.length > 0) {
+                this.ajaxPlayer.find('#aj_player_previous').removeClass('lagged')
+            }
         }
 
-        playButtonImageUpdate()
-
-        if(!nextPlayer) return
-
-        initPlayer(nextPlayer.id.replace("audioEmbed-", ""), 
-            JSON.parse(nextPlayer.dataset.keys), 
-            nextPlayer.dataset.url, 
-            nextPlayer.dataset.length)
-        
-        nextPlayer.querySelector(".playIcon").click()
-        hideTracks()
-    })
-
-    u(`#audioEmbed-${ id} .lengthTrack > div`).on("click mouseup mousemove", (e) => {
-        if(e.type == "mousemove") {
-            let buttonsPresseed = _bsdnUnwrapBitMask(e.buttons)
-            if(!buttonsPresseed[0])
-                return;
+        if(!this.nextTrack) {
+            next_button.addClass('lagged')
+            if(this.ajaxPlayer.length > 0) {
+                this.ajaxPlayer.find('#aj_player_next').addClass('lagged')
+            }
+        } else {
+            next_button.removeClass('lagged')
+            next_button.attr('data-title', ovk_proc_strtr(escapeHtml(this.nextTrack.name), 50))
+            if(this.ajaxPlayer.length > 0) {
+                this.ajaxPlayer.find('#aj_player_next').removeClass('lagged')
+            }
         }
 
-        let rect  = document.querySelector("#audioEmbed-" + id + " .selectableTrack").getBoundingClientRect();
-        const width = e.clientX - rect.left;
-        const time = Math.ceil((width * length) / (rect.right - rect.left));
-
-        audio.currentTime = time;
-    });
-
-    u(`#audioEmbed-${ id} .volumeTrack > div`).on("click mouseup mousemove", (e) => {
-        if(e.type == "mousemove") {
-            let buttonsPresseed = _bsdnUnwrapBitMask(e.buttons)
-            if(!buttonsPresseed[0])
-                return;
+        if(!this.audioPlayer.paused) {
+            this.uiPlayer.find('.playButton').addClass('pause')
+            if(this.linkedInlinePlayer) {
+                this.linkedInlinePlayer.find('.playerButton .playIcon').addClass('paused')
+            }
+            if(this.ajaxPlayer.length > 0) {
+                this.ajaxPlayer.find('#aj_player_play_btn').addClass('paused')
+            }
+        } else {
+            this.uiPlayer.find('.playButton').removeClass('pause')
+            if(this.linkedInlinePlayer) {
+                this.linkedInlinePlayer.find('.playerButton .playIcon').removeClass('paused')
+            }
+            if(this.ajaxPlayer.length > 0) {
+                this.ajaxPlayer.find('#aj_player_play_btn').removeClass('paused')
+            }
         }
 
-        let rect = document.querySelector("#audioEmbed-" + id + " .volumeTrack").getBoundingClientRect();
-        
-        const width = e.clientX - rect.left;
-        const volume = (width * 1) / (rect.right - rect.left);
+        if(_c) {
+            this.uiPlayer.find('.trackInfo .trackName span').html(escapeHtml(_c.name))
+            this.uiPlayer.find('.trackInfo .trackPerformers').html('')
+            const performers = _c.performer.split(', ')
+            const lastPerformer = performers[performers.length - 1]
+            performers.forEach(performer => {
+                this.uiPlayer.find('.trackInfo .trackPerformers').append(
+                    `<a href='/search?section=audios&order=listens&only_performers=on&q=${encodeURIComponent(performer.escapeHtml())}'>${performer.escapeHtml()}${(performer != lastPerformer ? ', ' : '')}</a>`)
+            })
+        } else {
+            this.uiPlayer.find('.trackInfo .trackName span').html(tr('track_noname'))
+            this.uiPlayer.find('.trackInfo .trackPerformers').html(`<a>${tr('track_unknown')}</a>`)
+        }
 
-        audio.volume = Math.max(0, volume);
-    });
+        if(this.ajaxPlayer.length > 0) {
+            this.ajaxPlayer.find('#aj_player_track_title b').html(escapeHtml(_c.performer))
+            this.ajaxPlayer.find('#aj_player_track_title span').html(escapeHtml(_c.name))
+        }
 
-    audio.volume = localStorage.volume ?? 0.75
-    u(audio).trigger("volumechange")
+        u(`.tip_result`).remove()
+    }
+
+    __updateTime(new_time) {
+        this.uiPlayer.find(".trackInfo .time").html(fmtTime(new_time))
+        if(this.timeType == 1) {
+            this.uiPlayer.find(".trackInfo .elapsedTime").html(fmtTime(this.currentTrack.length))
+        } else {
+            this.uiPlayer.find(".trackInfo .elapsedTime").html(getRemainingTime(this.currentTrack.length, new_time))
+        }
+    }
+
+    __updateMediaSession() {
+        const album = document.querySelector(".playlistBlock")
+        const cur = this.currentTrack
+        navigator.mediaSession.metadata = new MediaMetadata({
+            title: escapeHtml(cur.name),
+            artist: escapeHtml(cur.performer),
+            album: album == null ? "OpenVK Audios" : escapeHtml(album.querySelector(".playlistInfo h4").innerHTML),
+            artwork: [{ src: album == null ? "/assets/packages/static/openvk/img/song.jpg" : album.querySelector(".playlistCover img").src }],
+        })
+    }
+
+    async __countListen() {
+        let playlist = 0
+        if(!this.listen_coef) {
+            return false
+        }
+
+        if(this.context.object && this.context.object.name == 'playlist_context') {
+            playlist = this.context.object.entity_id
+        }
+
+        const form_data = new FormData
+        form_data.append('hash', u("meta[name=csrf]").attr("value"))
+        form_data.append('playlist', playlist)
+        if(this.context.object) {
+            form_data.append('listened_from', this.context.object.url)
+        }
+
+        const req = await fetch(`/audio${this.currentTrack.id}/listen`, {
+            method: 'POST',
+            body: form_data
+        })
+        const res = await req.json()
+        if(res.success) {
+            console.log('Listen is counted')
+        } else {
+            console.log('Listen is not counted ! ! !')
+        }
+    }
+
+    ajClose(pause = true) {
+        this.is_closed = true
+        if(pause) {
+            this.pause()
+        }
+       
+        u('#ajax_audio_player').addClass('hidden')
+    }
+
+    ajReveal() {
+        this.is_closed = false
+        if(u('#ajax_audio_player').length == 0) {
+            this.ajCreate()
+        }
+        u('#ajax_audio_player').removeClass('hidden')
+    }
+
+    ajCreate() {
+        const previous_time_x = localStorage.getItem('audio.lastX') ?? 100
+        const previous_time_y = localStorage.getItem('audio.lastY') ?? scrollY
+        const miniplayer_template = u(`
+            <div id='ajax_audio_player' class='ctx_place'>
+                <div id='aj_player'>
+                    <div id='aj_player_internal_controls'>
+                        <div id='aj_player_play'>
+                            <div id='aj_player_play_btn'></div>
+                        </div>
+                        <div id='aj_player_track'>
+                            <div id='aj_player_track_name'>
+                                <a id='aj_player_track_title' class='noOverflow' style='width: 300px;'>
+                                    <b>Unknown</b>
+                                    —
+                                    <span>Untitled</span>
+                                </a>
+
+                                <span id='aj_time'>00:00</span>
+                            </div>
+                            <div id='aj_player_track_length'>
+                                <div class="selectableTrack">
+                                    <div style='width: 97%;position: relative;'>
+                                        <div class="slider"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id='aj_player_volume'>
+                            <div class="selectableTrack">
+                                <div style='width: 75%;position: relative;'>
+                                    <div class="slider"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id='aj_player_buttons'>
+                            <div id='aj_player_previous'></div>
+                            <div id='aj_player_repeat'></div>
+                            <div id='aj_player_next'></div>
+                        </div>
+                    </div>
+                    <div id='aj_player_close_btn'></div>
+                </div>
+            </div>
+        `)
+        u('body').append(miniplayer_template)
+        miniplayer_template.attr('style', `left:${previous_time_x}px;top:${previous_time_y}px`)
+        miniplayer_template.find('#aj_player_close_btn').on('click', (e) => {
+            this.ajClose()
+        })
+        miniplayer_template.find('#aj_time').on('click', (e) => {
+            if(window.player && window.player.context && window.player.context.object) {
+                window.router.route(window.player.context.object.url)
+            }
+        })
+        $('#ajax_audio_player').draggable({
+            cursor: 'grabbing', 
+            containment: 'window',
+            cancel: '#aj_player_track .selectableTrack, #aj_player_volume .selectableTrack, #aj_player_buttons',
+            stop: function(e) {
+                if(window.player.ajaxPlayer.length > 0) {
+                    const left = parseInt(window.player.ajaxPlayer.nodes[0].style.left)
+                    const top  = parseInt(window.player.ajaxPlayer.nodes[0].style.top)
+
+                    localStorage.setItem('audio.lastX', left)
+                    localStorage.setItem('audio.lastY', top)
+                }
+            }
+        })
+    }
 }
 
-$(document).on("click", ".musicIcon.edit-icon", (e) => {
-    let player = e.currentTarget.closest(".audioEmbed")
-    let id = Number(player.dataset.realid)
-    let performer = e.currentTarget.dataset.performer
-    let name = e.currentTarget.dataset.title
-    let genre = player.dataset.genre
-    let lyrics = e.currentTarget.dataset.lyrics
+document.addEventListener("DOMContentLoaded", async () => {
+    let parsed = null
+    try {
+        parsed = JSON.parse(localStorage.getItem('audio.lastDump'))
+    } catch(e) {}
+    if(window.openvk.current_id == 0) {
+        return
+    }
+
+    if(parsed) {
+        await window.player.init(null)
+        await window.player.loadDump(parsed)
+        if(!window.player.isAtAudiosPage()) {
+            window.player.ajReveal()
+            window.player.__updateFace()
+            u(window.player.audioPlayer).trigger('timeupdate')
+        }
+    } else {
+        await window.player.init(window.__current_page_audio_context)
+    }
+})
+
+window.addEventListener('beforeunload', (e) => {
+    window.player.dump()
+})
+
+u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
+    const audioPlayer = u(e.target).closest('.audioEmbed')
+    const id = Number(audioPlayer.attr('data-realid'))
+    if(!window.player) {
+        return
+    }
+
+    if(window.openvk.current_id == 0) {
+        return
+    }
+
+    if(!window.player.hasTrackWithId(id) && !window.player.isAtAudiosPage()) {
+        let _nodes = null
+        if(u(e.target).closest('.attachments').length > 0) {
+            window.player.connectionType = '.attachments'
+            _nodes = u(e.target).closest('.attachments').find('.audioEmbed').nodes
+        } else if(u(e.target).closest('.content_list').length > 0) {
+            window.player.connectionType = '.content_list'
+            _nodes = u(e.target).closest('.content_list').find('.audioEmbed').nodes
+        } else if(u(e.target).closest('.generic_audio_list').length > 0) {
+            window.player.connectionType = '.generic_audio_list'
+            _nodes = u(e.target).closest('.generic_audio_list').find('.audioEmbed').nodes
+        } else if(u(e.target).closest('.audiosInsert').length > 0) {
+            window.player.connectionType = '.audiosInsert'
+            _nodes = u(e.target).closest('.audiosInsert').find('.audioEmbed').nodes
+        }
+
+        window.player.tracks = []
+        _nodes.forEach(el => {
+            const tempAudio = u(el)
+            const name = tempAudio.attr('data-name').split(' — ')
+            window.player.appendTrack({
+                'id': Number(tempAudio.attr('data-realid')),
+                'available': true, // , судя по всему
+                'keys': JSON.parse(tempAudio.attr('data-keys')),
+                'length': Number(tempAudio.attr('data-length')),
+                'url': tempAudio.attr('data-url'),
+                'name': name[1],
+                'performer': name[0]
+            })
+        })
+    } else if(!window.player.hasTrackWithId(id) && window.player.isAtAudiosPage()) {
+        window.player.__renewContext()
+        await window.player.loadContext(window.__current_page_audio_context.page ?? 1)
+        if(!isNaN(parseInt(location.hash.replace('#', '')))) {
+            const adp = parseInt(location.hash.replace('#', ''))
+            await window.player.loadContext(adp)
+        } else if((new URL(location.href)).searchParams.p) {
+            const adp = (new URL(location.href)).searchParams.p
+            await window.player.loadContext(adp)
+        }
+    }
+
+    if(window.player.current_track_id != id) {
+        await window.player.setTrack(id)
+    }
+
+    if(window.player.audioPlayer.paused) {
+        await window.player.play()
+
+        if(!window.player.isAtAudiosPage()) {
+            u('.audioEntry .playerButton .playIcon.paused').removeClass('paused')
+            u(e.target).addClass('paused')
+        }
+    } else {
+        window.player.pause()
+    }
+    
+    if(window.player.isAtAudiosPage()) {
+        
+    } else {
+        window.player.linkPlayer(audioPlayer)
+        u('.audioEntry .subTracks.shown').removeClass('shown')
+        audioPlayer.find('.subTracks').addClass('shown')
+    }
+})
+
+u(document).on('click', '.bigPlayer .playButton, #ajax_audio_player #aj_player_play_btn', async (e) => {
+    if(window.player.audioPlayer.paused) {
+        await window.player.play()
+    } else {
+        window.player.pause()
+    }
+})
+
+u(document).on('click', '.bigPlayer .backButton, #ajax_audio_player #aj_player_next', async (e) => {
+    await window.player.playNextTrack()
+})
+
+u(document).on('click', '.bigPlayer .nextButton, #ajax_audio_player #aj_player_previous', async (e) => {
+    await window.player.playPreviousTrack()
+})
+
+u(document).on("click", ".bigPlayer .elapsedTime", (e) => {
+    if(window.player.current_track_id == 0)
+        return
+
+    const res = window.player.timeType == 0 ? 1 : 0
+    window.player.timeType = res
+    window.player.__updateTime(window.player.audioPlayer.currentTime)
+})
+
+u(document).on("click", ".bigPlayer .additionalButtons .repeatButton, #ajax_audio_player #aj_player_repeat", (e) => {
+    if(window.player.current_track_id == 0)
+        return
+
+    const targ = u(e.target)
+    targ.toggleClass("pressed")
+
+    if(targ.hasClass("pressed"))
+        window.player.audioPlayer.loop = true
+    else
+        window.player.audioPlayer.loop = false
+})
+
+u(document).on("click", ".bigPlayer .additionalButtons .shuffleButton", async (e) => {
+    if(window.player.current_track_id == 0)
+        return
+
+    await window.player.shuffle()
+})
+
+u(document).on("click", ".bigPlayer .additionalButtons .deviceButton", (e) => {
+    if(window.player.current_track_id == 0)
+        return
+
+    e.target.classList.toggle("pressed")
+    window.player.audioPlayer.muted = e.target.classList.contains("pressed")
+})
+
+u(document).on('keydown', (e) => {
+    if(document.activeElement.closest('.page_header')) {
+        return
+    }
+
+    if(!window.player || !window.player.isAtAudiosPage()) {
+        return
+    }
+
+    if([32, 37, 39, 107, 109].includes(e.keyCode)) {
+        if(window.messagebox_stack.length > 0)
+            return
+
+        e.preventDefault()
+    }
+
+    const arrow_click_offset = 3
+    const volume_offset = 0.1
+    switch(e.keyCode) {
+        case 32:
+            window.player.listen_coef -= 0.1
+            window.player.uiPlayer.find('.playButton').trigger('click')
+            break
+        case 37:
+            window.player.listen_coef -= 0.5
+            window.player.audioPlayer.currentTime = window.player.audioPlayer.currentTime - arrow_click_offset
+            break
+        case 39:
+            window.player.listen_coef -= 0.5
+            window.player.audioPlayer.currentTime = window.player.audioPlayer.currentTime + arrow_click_offset
+            break
+        case 107:
+            window.player.audioPlayer.volume = Math.max(Math.min(window.player.audioPlayer.volume + volume_offset, 1), 0)
+            break
+        case 109:
+            window.player.audioPlayer.volume = Math.max(Math.min(window.player.audioPlayer.volume - volume_offset, 1), 0)
+            break
+        default:
+            //console.log(e.keyCode)
+            break
+    }
+})
+
+u(document).on('keyup', (e) => {
+    if(document.activeElement.closest('.page_header')) {
+        return
+    }
+
+    if(!window.player || !window.player.isAtAudiosPage()) {
+        return
+    }
+
+    if([87, 65, 83, 68, 82, 77].includes(e.keyCode)) {
+        if(window.messagebox_stack.length > 0)
+            return
+
+        e.preventDefault()
+    }
+
+    switch(e.keyCode) {
+        case 87:
+        case 65:
+            window.player.playPreviousTrack()
+            break
+        case 83:
+        case 68:
+            window.player.playNextTrack()
+            break
+        case 82:
+            document.querySelector(".bigPlayer .additionalButtons .repeatButton").click()
+            break
+        case 77:
+            document.querySelector(".bigPlayer .additionalButtons .deviceButton").click()
+            break
+    }
+})
+
+u(document).on("mousemove click mouseup", ".bigPlayer .trackPanel .selectableTrack, .audioEntry .subTracks .lengthTrackWrapper .selectableTrack, #aj_player_track_length .selectableTrack", (e) => {
+    if(window.player.isAtAudiosPage() && window.player.current_track_id == 0)
+        return
+
+    if(u('.ui-draggable-dragging').length > 0) {
+        return
+    }
+
+    function __defaultAction(i_time) {
+        window.player.listen_coef -= 0.5
+        window.player.audioPlayer.currentTime = i_time
+    }
+
+    const taggart = u(e.target).closest('.selectableTrack')
+    const parent  = taggart.parent()
+    const rect = taggart.nodes[0].getBoundingClientRect()
+    const width = e.clientX - rect.left
+    const time = Math.ceil((width * window.player.currentTrack.length) / (rect.right - rect.left))
+    if(e.type == "mousemove") {
+        let buttonsPresseed = _bsdnUnwrapBitMask(e.buttons)
+        if(buttonsPresseed[0])
+            __defaultAction(time)
+    }
+
+    if(e.type == 'click' || e.type == 'mouseup') {
+        __defaultAction(time)
+    }
+
+    if(parent.find('.tip_result').length < 1) {
+        parent.append(`<div class='tip_result'></div>`)
+    }
+
+    parent.find('.tip_result').html(fmtTime(time)).attr('style', `left:min(${width - 15}px, 315.5px)`)
+})
+
+u(document).on("mouseout", ".bigPlayer .trackPanel .selectableTrack, .audioEntry .subTracks .lengthTrackWrapper .selectableTrack, #aj_player_track_length .selectableTrack", (e) => {
+    if(window.player.isAtAudiosPage() && window.player.current_track_id == 0)
+        return
+
+    u(e.target).closest('.selectableTrack').parent().find('.tip_result').remove()
+})
+
+u(document).on("mousemove click mouseup", ".bigPlayer .volumePanelTrack .selectableTrack, .audioEntry .subTracks .volumeTrack .selectableTrack, #aj_player_volume .selectableTrack", (e) => {
+    if(window.player.isAtAudiosPage() && window.player.current_track_id == 0)
+        return
+    
+    if(u('.ui-draggable-dragging').length > 0) {
+        return
+    }
+
+    function __defaultAction(i_volume) {
+        window.player.audioPlayer.volume = i_volume
+    }
+
+    const rect = u(e.target).closest(".selectableTrack").nodes[0].getBoundingClientRect();
+    const taggart = u(e.target).closest('.selectableTrack')
+    const parent  = taggart.parent()
+    const width = e.clientX - rect.left
+    const volume = Math.max(0, (width * 1) / (rect.right - rect.left))
+    if(e.type == "mousemove") {
+        let buttonsPresseed = _bsdnUnwrapBitMask(e.buttons)
+        if(buttonsPresseed[0])
+            __defaultAction(volume)
+    }
+
+    if(e.type == 'click' || e.type == 'mouseup') {
+        __defaultAction(volume)
+    }
+
+    if(parent.find('.tip_result').length < 1) {
+        parent.append(`<div class='tip_result'></div>`)
+    }
+
+    parent.find('.tip_result').html((volume * 100).toFixed(0) + '%').attr('style', `left:${width - 15}px`)
+})
+
+u(document).on("mouseout", ".bigPlayer .volumePanelTrack .selectableTrack, .audioEntry .subTracks .volumeTrack .selectableTrack, #aj_player_volume .selectableTrack", (e) => {
+    if(window.player.isAtAudiosPage() && window.player.current_track_id == 0)
+        return
+    
+    u(e.target).closest('.selectableTrack').parent().find('.tip_result').remove()
+})
+
+u(document).on('dragstart', '.audiosContainer .audioEmbed', (e) => {
+    u(e.target).closest('.audioEmbed').addClass('currently_dragging')
+    return
+})
+
+u(document).on('dragover', '.audiosContainer .audioEmbed', (e) => {
+    e.preventDefault()
+
+    const target = u(e.target).closest('.audioEmbed')
+    const current = u('.audioEmbed.currently_dragging')
+
+    if(current.length < 1) {
+        return
+    }
+
+    if(target.nodes[0].dataset.id != current.nodes[0].dataset.id) {
+        target.addClass('dragged')
+    }
+    
+    return
+})
+
+u(document).on('dragend', '.audiosContainer .audioEmbed', (e) => {
+    //console.log(e)
+    u(e.target).closest('.audioEmbed').removeClass('dragged')
+    return
+})
+
+// TODO: write changes on server side (audio.reorder)
+u(document).on("drop", '.audiosContainer', function(e) {
+    const current = u('.audioEmbed.currently_dragging')
+    if(e.dataTransfer.types.includes('Files')) {
+        e.preventDefault()
+        e.dataTransfer.dropEffect = 'move'
+    } else if(e.dataTransfer.types.length < 1 || e.dataTransfer.types.includes('text/uri-list')) {
+        e.preventDefault()
+
+        u('.audioEmbed.currently_dragging').removeClass('currently_dragging')
+        const target = u(e.target).closest('.audioEmbed')
+        const first_id  = Number(current.attr('data-realid'))
+        const second_id = Number(target.attr('data-realid'))
+
+        const first_html = target.nodes[0].outerHTML
+        const second_html = current.nodes[0].outerHTML
+
+        current.nodes[0].outerHTML = first_html
+        target.nodes[0].outerHTML = second_html
+
+        window.player.switchTracks(first_id, second_id)
+    } 
+})
+
+u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e) => {
+    e.preventDefault()
+
+    u('#ctx_menu').remove()
+    const ctx_type = u(e.target).closest('.bigPlayer, #ajax_audio_player').length > 0 ? 'main_player' : 'mini_player'
+    const parent = e.target.closest('.ctx_place')
+    if(!parent) {
+        return
+    }
+
+    const rect = parent.getBoundingClientRect()
+    let x, y;
+    let rx = rect.x + window.scrollX, ry = rect.y + window.scrollY
+    x = e.pageX - rx
+    y = e.pageY - ry
+
+    const ctx_u = u(`
+        <div id='ctx_menu' style='top:${y}px;left:${x}px;' data-type='ctx_type'>
+            <a id='audio_ctx_copy'>${tr('copy_link_to_audio')}</a>
+            ${ctx_type == 'main_player' ? `
+            <a id='audio_ctx_repeat' ${window.player.audioPlayer.loop ? `class='pressed'` : ''}>${tr('repeat_tip')}</a>
+            <a id='audio_ctx_shuffle'>${tr('shuffle_tip')}</a>
+            <a id='audio_ctx_mute' ${window.player.audioPlayer.muted ? `class='pressed'` : ''}>${tr('mute_tip_noun')}</a>
+            ` : ''}
+            ${ctx_type == 'mini_player' ? `
+            <a id='audio_ctx_play_next'>${tr('audio_ctx_play_next')}</a>    
+            ` : ''}
+            <a id='audio_ctx_add_to_group'>${tr('audio_ctx_add_to_group')}</a>
+            <a id='audio_ctx_add_to_playlist'>${tr('audio_ctx_add_to_playlist')}</a>
+            ${ctx_type == 'main_player' ? `
+            <a id='audio_ctx_clear_context'>${tr('audio_ctx_clear_context')}</a>` : ''}
+            ${ctx_type == 'main_player' ? `<a href='https://github.com/mrilyew' target='_blank'>BigPlayer v1.1 by MrIlyew</a>` : ''}
+        </div>
+    `)
+    u(parent).append(ctx_u)
+    ctx_u.find('#audio_ctx_copy').on('click', async (e) => {
+        if(ctx_type == 'main_player') {
+            if(window.player.current_track_id == 0) {
+                makeError(tr('copy_link_to_audio_error_not_selected_track'), 'Red', 4000, 80)
+                return
+            }
+
+            const url = location.origin + `/audio${window.openvk.current_id}_${window.player.current_track_id}`
+            await copyToClipboard(url)
+        } else {
+            const url = location.origin + `/audio${window.openvk.current_id}_${u(e.target).closest('.audioEmbed').attr('data-realid')}`
+            await copyToClipboard(url)
+        }
+    })
+    ctx_u.find('#audio_ctx_repeat').on('click', () => {
+        if(window.player.current_track_id == 0) {
+            return
+        }
+
+        if(!window.player.audioPlayer.loop) {
+            window.player.audioPlayer.loop = true
+            window.player.uiPlayer.find('.repeatButton').addClass('pressed')
+        } else {
+            window.player.audioPlayer.loop = false
+            window.player.uiPlayer.find('.repeatButton').removeClass('pressed')
+        }
+    })
+    ctx_u.find('#audio_ctx_shuffle').on('click', async () => {
+        if(window.player.current_track_id == 0) {
+            return
+        }
+
+        await window.player.shuffle()
+    })
+    ctx_u.find('#audio_ctx_mute').on('click', async () => {
+        if(window.player.current_track_id == 0) {
+            return
+        }
+
+        window.player.uiPlayer.find('.deviceButton').toggleClass('pressed')
+        window.player.audioPlayer.muted = window.player.uiPlayer.find('.deviceButton').hasClass('pressed')
+    })
+    ctx_u.find('#audio_ctx_add_to_group').on('click', async () => {
+        if(ctx_type == 'main_player') {
+            if(window.player.current_track_id == 0) {
+                return
+            }
+
+            __showAudioAddDialog(window.player.current_track_id)
+        } else {
+            __showAudioAddDialog(Number(u(e.target).closest('.audioEmbed').attr('data-realid')))
+        }
+    })
+    ctx_u.find('#audio_ctx_add_to_playlist').on('click', async () => {
+        if(ctx_type == 'main_player') {
+            if(window.player.current_track_id == 0) {
+                return
+            }
+            
+            __showAudioAddDialog(window.player.current_track_id, 'playlist')
+        } else {
+            __showAudioAddDialog(Number(u(e.target).closest('.audioEmbed').attr('data-realid')), 'playlist')
+        }
+    })
+    ctx_u.find('#audio_ctx_play_next').on('click', (ev) => {
+        const current_id = window.player.current_track_id
+        const move_id = Number(u(e.target).closest('.audioEmbed').attr('data-realid'))
+        if(current_id == 0) {
+            return
+        }
+        
+        if(current_id == move_id) {
+            return
+        }
+
+        const current_index = window.player.__findTrack(current_id, true)
+        const next_track = window.player.__findTrack(move_id)
+        const next_track_player = u(`.audioEmbed[data-realid='${window.player.nextTrack.id}']`)
+        const moving_track_player = u(`.audioEmbed[data-realid='${move_id}']`)
+
+        window.player.tracks.splice(current_index + 1, 0, next_track)
+        if(next_track_player.length > 0 && moving_track_player.length > 0) {
+            next_track_player.nodes[0].outerHTML = moving_track_player.nodes[0].outerHTML + next_track_player.nodes[0].outerHTML
+            moving_track_player.remove()
+        }
+    })
+    ctx_u.find('#audio_ctx_clear_context').on('click', (ev) => {
+        const old_url = window.player.context.object.url
+        window.player.pause()
+        window.player.ajClose()
+        window.player.__resetContext()
+        window.player.__updateFace()
+        window.player.undump()
+        window.router.route(old_url)
+    })
+})
+
+u(document).on("click", ".musicIcon.edit-icon", (e) => {
+    const player = e.target.closest(".audioEmbed")
+    const id = Number(player.dataset.realid)
+    const performer = e.target.dataset.performer
+    const name = e.target.dataset.title
+    const genre = player.dataset.genre
+    const lyrics = e.target.dataset.lyrics
     
     MessageBox(tr("edit_audio"), `
         <div>
@@ -893,12 +1298,12 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
         </div>
     `, [tr("save"), tr("cancel")], [
         function() {
-            let t_name   = $(".ovk-diag-body input[name=name]").val();
-            let t_perf   = $(".ovk-diag-body input[name=performer]").val();
-            let t_genre  = $(".ovk-diag-body select[name=genre]").val();
-            let t_lyrics = $(".ovk-diag-body textarea[name=lyrics]").val();
-            let t_explicit = document.querySelector(".ovk-diag-body input[name=explicit]").checked;
-            let t_unlisted = document.querySelector(".ovk-diag-body input[name=searchable]").checked;
+            const t_name   = $(".ovk-diag-body input[name=name]").val();
+            const t_perf   = $(".ovk-diag-body input[name=performer]").val();
+            const t_genre  = $(".ovk-diag-body select[name=genre]").val();
+            const t_lyrics = $(".ovk-diag-body textarea[name=lyrics]").val();
+            const t_explicit = document.querySelector(".ovk-diag-body input[name=explicit]").checked;
+            const t_unlisted = document.querySelector(".ovk-diag-body input[name=searchable]").checked;
 
             $.ajax({
                 type: "POST",
@@ -914,16 +1319,19 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
                 },
                 success: (response) => {
                     if(response.success) {
-                        let perf = player.querySelector(".performer a")
+                        const perf = player.querySelector(".performer a")
                         perf.innerHTML = escapeHtml(response.new_info.performer)
                         perf.setAttribute("href", "/search?q=&section=audios&order=listens&only_performers=on&q="+response.new_info.performer)
                         
                         e.target.setAttribute("data-performer", escapeHtml(response.new_info.performer))
+                        e.target.setAttribute("data-title", escapeHtml(response.new_info.name))
+                        e.target.setAttribute("data-lyrics", response.new_info.lyrics_unformatted)
+                        e.target.setAttribute("data-explicit", Number(response.new_info.explicit))
+                        e.target.setAttribute("data-searchable", Number(!response.new_info.unlisted))
+                        player.setAttribute("data-genre", response.new_info.genre)
                         
                         let name = player.querySelector(".title")
                         name.innerHTML = escapeHtml(response.new_info.name)
-
-                        e.target.setAttribute("data-title", escapeHtml(response.new_info.name))
                         
                         if(response.new_info.lyrics_unformatted != "") {
                             if(player.querySelector(".lyrics") != null) {
@@ -943,9 +1351,6 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
                             player.querySelector(".title").classList.remove("withLyrics")
                         }
 
-                        e.target.setAttribute("data-lyrics", response.new_info.lyrics_unformatted)
-                        e.target.setAttribute("data-explicit", Number(response.new_info.explicit))
-
                         if(Number(response.new_info.explicit) == 1) {
                             if(!player.querySelector(".mediaInfo .explicitMark"))
                                 player.querySelector(".mediaInfo").insertAdjacentHTML("beforeend", `
@@ -955,16 +1360,11 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
                             $(player.querySelector(".mediaInfo .explicitMark")).remove()
                         }
 
-                        e.target.setAttribute("data-searchable", Number(!response.new_info.unlisted))
-                        player.setAttribute("data-genre", response.new_info.genre)
-
                         let url = new URL(location.href)
                         let page = "1"
 
                         if(url.searchParams.p != null)
                             page = String(url.searchParams.p)
-                        
-                        window.savedAudiosPages[page] = null
                     } else
                         fastError(response.flash.message)
                 }
@@ -981,10 +1381,6 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
     })
 
     u(".ovk-diag-body #_fullyDeleteAudio").on("click", (e) => {
-        u("body").removeClass("dimmed");
-        u(".ovk-diag-cont").remove();
-        document.querySelector("html").style.overflowY = "scroll"
-
         MessageBox(tr('confirm'), tr('confirm_deleting_audio'), [tr('yes'), tr('no')], [() => {
             $.ajax({
                 type: "POST",
@@ -993,6 +1389,10 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
                     hash: u("meta[name=csrf]").attr("value")
                 },
                 success: (response) => {
+                    u("body").removeClass("dimmed");
+                    u(".ovk-diag-cont").remove();
+                    document.querySelector("html").style.overflowY = "scroll"
+
                     if(response.success)
                         u(player).remove()
                     else
@@ -1003,7 +1403,7 @@ $(document).on("click", ".musicIcon.edit-icon", (e) => {
     })
 })
 
-$(document).on("click", ".title.withLyrics", (e) => {
+u(document).on("click", ".title.withLyrics", (e) => {
     const parent = e.currentTarget.closest(".audioEmbed")
 
     parent.querySelector(".lyrics").classList.toggle("showed")
@@ -1080,9 +1480,7 @@ $(document).on("click", ".musicIcon.remove-icon-group", (e) => {
     })
 })
 
-$(document).on("click", ".musicIcon.add-icon-group", async (ev) => {
-    let   current_tab = 'club';
-    const id = Number(ev.target.dataset.id)
+function __showAudioAddDialog(id, current_tab = 'club') {
     const body = `
         <div id='_addAudioAdditional'>
             <div id='_tabs'>
@@ -1116,8 +1514,6 @@ $(document).on("click", ".musicIcon.add-icon-group", async (ev) => {
         if(ids.length < 1 || ids.length > 10) {
             return
         }
-
-        console.log(ids)
 
         switch(current_tab) {
             case 'club':
@@ -1221,12 +1617,12 @@ $(document).on("click", ".musicIcon.add-icon-group", async (ev) => {
                                 <a href='/playlist${el.owner_id}_${el.id}' class='avatar'>
                                     <img src='${el.cover_url}' alt='cover'>
                                 </a>
-    
+
                                 <div class='info'>
                                     <b class='noOverflow' value="${el.owner_id}_${el.id}">${ovk_proc_strtr(escapeHtml(el.title), 100)}</b>
                                 </div>
                             </div>
-    
+
                             <div class='third_column'>
                                 <input type='checkbox' name='add_to'>
                             </div>
@@ -1278,12 +1674,16 @@ $(document).on("click", ".musicIcon.add-icon-group", async (ev) => {
     u("#_addAudioAdditional").on("click", ".mb_tab a", async (e) => {
         await switchTab(u(e.target).closest('.mb_tab').attr('data-name'))
     })
-    
+
     u("#_addAudioAdditional").on("click", "input[name='add_to']", async (e) => {
         if(u(`input[name='add_to']:checked`).length > 10) {
             e.preventDefault()
         }
     })
+}
+$(document).on("click", ".musicIcon.add-icon-group", async (ev) => {
+    const id = Number(ev.target.dataset.id)
+    __showAudioAddDialog(id)
 })
 
 $(document).on("click", ".musicIcon.add-icon", (e) => {
@@ -1335,7 +1735,7 @@ $(document).on("click", "#_deletePlaylist", (e) => {
             },
             success: (response) => {
                 if(response.success) {
-                    window.location.assign("/playlists" + response.id)
+                    window.router.route("/playlists" + response.id)
                 } else {
                     fastError(response.flash.message)
                 }
@@ -1344,9 +1744,11 @@ $(document).on("click", "#_deletePlaylist", (e) => {
     }, Function.noop])
 })
 
-$(document).on("click", "#__audioAttachment", (e) => {
-    const form = e.target.closest("form")
-    let body = `
+function showAudioAttachment(type = 'form', form = null)
+{
+    const msg = new CMessageBox({
+        title: tr("select_audio"),
+        body: `
         <div class="searchBox">
             <input name="query" type="text" maxlength="50" placeholder="${tr("header_search")}">
             <select name="perf">
@@ -1356,13 +1758,12 @@ $(document).on("click", "#__audioAttachment", (e) => {
         </div>
 
         <div class="audiosInsert"></div>
-    `
-    MessageBox(tr("select_audio"), body, [tr("close")], [Function.noop])
-
-    document.querySelector(".ovk-diag-body").style.padding = "0"
-    document.querySelector(".ovk-diag-cont").style.width = "580px"
-    document.querySelector(".ovk-diag-body").style.height = "335px"
-
+        `,
+        buttons: [tr('close')],
+        callbacks: [Function.noop],
+    })
+    msg.getNode().find('.ovk-diag-body').attr('style', 'padding:0px;height:335px')
+    msg.getNode().attr('style', 'width:580px')
     let searcher = new playersSearcher("entity_audios", 0)
     searcher.successCallback = (response, thisc) => {
         let domparser = new DOMParser()
@@ -1377,8 +1778,18 @@ $(document).on("click", "#__audioAttachment", (e) => {
         }
 
         result.querySelectorAll(".audioEmbed").forEach(el => {
-            let id = el.dataset.prettyid
-            const is_attached = (u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`)).length > 0
+            let id = 0
+            if(type == 'form') {
+                id = el.dataset.prettyid
+            } else {
+                id = el.dataset.realid
+            }
+            let is_attached = false
+            if(type == 'form') {
+                is_attached = (u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`)).length > 0
+            } else {
+                is_attached = (u(form).find(`.PE_audios .vertical-attachment[data-id='${id}']`)).length > 0
+            }
             
             document.querySelector(".audiosInsert").insertAdjacentHTML("beforeend", `
                 <div class='audio_attachment_header' style="display: flex;width: 100%;">
@@ -1420,7 +1831,7 @@ $(document).on("click", "#__audioAttachment", (e) => {
         searcher.movePage(Number(e.currentTarget.dataset.page))
     })
 
-    $(".searchBox input").on("change", async (e) => {
+    u(".searchBox input").on("change", async (e) => {
         if(e.currentTarget.value === document.querySelector(".searchBox input").value) {
             searcher.clearContainer()
 
@@ -1443,7 +1854,7 @@ $(document).on("click", "#__audioAttachment", (e) => {
         }
     })
 
-    $(".searchBox select").on("change", async (e) => {
+    u(".searchBox select").on("change", async (e) => {
         searcher.clearContainer()
         searcher.searchType = e.currentTarget.value
 
@@ -1453,14 +1864,24 @@ $(document).on("click", "#__audioAttachment", (e) => {
 
     u(".audiosInsert").on("click", ".attachAudio", (ev) => {
         const id = ev.currentTarget.dataset.attachmentdata
-        const is_attached = u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`).length > 0
+        let is_attached = false
+        if(type == 'form') {
+            is_attached = u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`).length > 0
+        } else {
+            is_attached = u(form).find(`.PE_audios .vertical-attachment[data-id='${id}']`).length > 0
+        }
 
         // 04.11.2024 19:03
+        // 30.11.2024 19:03
         if(is_attached) {
-            u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`).remove()
+            if(type == 'form') {
+                u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`).remove()
+            } else {
+                u(form).find(`.PE_audios .vertical-attachment[data-id='${id}']`).remove()
+            }
             u(ev.currentTarget).find("span").html(tr("attach_audio"))
         } else {
-            if(u(form).find(`.upload-item`).length > window.openvk.max_attachments) {
+            if(type == 'form' && u(form).find(`.upload-item`).length > window.openvk.max_attachments) {
                 makeError(tr('too_many_attachments'), 'Red', 10000, 1)
                 return    
             }
@@ -1469,7 +1890,7 @@ $(document).on("click", "#__audioAttachment", (e) => {
 
             const header = u(ev.currentTarget).closest('.audio_attachment_header')
             const player = header.find('.player_part')
-            u(form).find(".post-vertical").append(`
+            u(form).find(type == 'form' ? ".post-vertical" : '.PE_audios').append(`
                 <div class="vertical-attachment upload-item" data-type='audio' data-id="${ev.currentTarget.dataset.attachmentdata}">
                     <div class='vertical-attachment-content'>
                         ${player.html()}
@@ -1481,10 +1902,21 @@ $(document).on("click", "#__audioAttachment", (e) => {
             `)
         }
     })
+}
+
+$(document).on("click", "#__audioAttachment", (e) => {
+    const form = e.target.closest("form")
+    showAudioAttachment('form', form)
 })
 
 $(document).on("click", ".audioEmbed.processed .playerButton", (e) => {
-    MessageBox(tr("error"), tr("audio_embed_processing"), [tr("ok")], [Function.noop])
+    const msg = new CMessageBox({
+        title: tr('error'),
+        body: tr('audio_embed_processing'),
+        unique_name: 'processing_notify',
+        buttons: [tr('ok')],
+        callbacks: [Function.noop]
+    })
 })
 
 $(document).on("click", ".audioEmbed.withdrawn", (e) => {
@@ -1516,61 +1948,6 @@ $(document).on("click", ".musicIcon.report-icon", (e) => {
     }),
 
     Function.noop])
-})
-
-$(document).on("click", ".audiosContainer .paginator a", (e) => {
-    e.preventDefault()
-    let url = new URL(e.currentTarget.href)
-    let page = url.searchParams.get("p")
-
-    function searchNode(id) {
-        let node = document.querySelector(`.audioEmbed[data-realid='${id}'] .audioEntry`)
-
-        if(node != null) {
-            node.classList.add("nowPlaying")
-        }
-    }
-
-    if(window.savedAudiosPages[page] != null) {
-        history.pushState({}, "", e.currentTarget.href)
-        document.querySelector(".audiosContainer").innerHTML = window.savedAudiosPages[page].innerHTML
-        searchNode(window.player["tracks"].currentTrack != null ? window.player["tracks"].currentTrack.id : 0)
-
-        return
-    }
-
-    e.currentTarget.parentNode.classList.add("lagged")
-    $.ajax({
-        type: "GET",
-        url: e.currentTarget.href,
-        success: (response) => {
-            let domparser = new DOMParser()
-            let result = domparser.parseFromString(response, "text/html")
-
-            document.querySelector(".audiosContainer").innerHTML = result.querySelector(".audiosContainer").innerHTML
-            history.pushState({}, "", e.currentTarget.href)
-            window.savedAudiosPages[page] = result.querySelector(".audiosContainer")
-            searchNode(window.player["tracks"].currentTrack != null ? window.player["tracks"].currentTrack.id : 0)
-
-            if(!window.player.context["playedPages"].includes(page)) {
-                $.ajax({
-                    type: "POST",
-                    url: "/audios/context",
-                    data: {
-                        context: window.player["context"].context_type,
-                        context_entity: window.player["context"].context_id,
-                        hash: u("meta[name=csrf]").attr("value"),
-                        page: page
-                    },
-                    success: (response_2) => {
-                        window.player.tracks["tracks"] = window.player.tracks["tracks"].concat(response_2["items"])
-                        window.player.context["playedPages"].push(String(page))
-                        console.info("Page is switched")
-                    }
-                })
-            }
-        }
-    })
 })
 
 $(document).on("click", ".addToPlaylist", (e) => {
@@ -1608,4 +1985,150 @@ $(document).on("click", "#bookmarkPlaylist, #unbookmarkPlaylist", (e) => {
                 fastError(response.flash.message)
         }
     })
+})
+
+u(document).on('click', '.upload_container_element #small_remove_button', (e) => {
+    if(u('.uploading').length > 0) {
+        return
+    }
+
+    // 1984
+    const element = u(e.target).closest('.upload_container_element')
+    const element_index = Number(element.attr('data-index'))
+    
+    element.remove()
+    window.__audio_upload_page.files_list[element_index] = null
+
+    if(u('#lastStep .upload_container_element').length < 1) {
+        window.__audio_upload_page.showFirstPage()
+    }
+})
+
+u(document).on('click', `#upload_container #uploadMusic`, async (e) => {
+    const current_upload_page = location.href
+    let error = null
+    let end_redir = ''
+    u('#lastStepButtons').addClass('lagged')
+    for(const elem of u('#lastStepContainers .upload_container_element').nodes) {
+        if(!elem) {
+            return
+        }
+        const elem_u = u(elem)
+        const index = elem.dataset.index
+        const file  = window.__audio_upload_page.files_list[index]
+        if(!file || !index) {
+            return
+        }
+
+        elem_u.addClass('lagged').find('.upload_container_name').addClass('uploading')
+        // Upload process
+        const fd = serializeForm(elem)
+        fd.append('blob', file.file)
+        fd.append('ajax', 1)
+        fd.append('hash', window.router.csrf)
+        
+        const result = await fetch(current_upload_page, {
+            method: 'POST',
+            body: fd,
+        })
+        const result_text = await result.json()
+        if(result_text.success) {
+            end_redir = result_text.redirect_link
+        } else {
+            makeError(escapeHtml(result_text.flash.message))
+        }
+        await sleep(6000)
+        elem_u.remove()
+    }
+
+    if(!end_redir) {
+        u('#lastStepButtons').removeClass('lagged')
+        window.__audio_upload_page.showFirstPage()
+        return
+    }
+
+    if(current_upload_page == location.href) {
+        window.router.route(end_redir)
+    }
+})
+
+u(document).on("drop", "#upload_container", function (e) {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move';
+
+    document.getElementById("audio_input").files = e.dataTransfer.files
+    u("#audio_input").trigger("change")
+})
+
+u(document).on('click', '#_playlistAppendTracks', (e) => {
+    showAudioAttachment('playlist', u('.PE_wrapper').nodes[0])
+})
+
+u(document).on('drop', '.PE_audios .vertical-attachment', (e) => {
+    const current = u('.upload-item.currently_dragging')
+    if(e.dataTransfer.types.length < 1 || e.dataTransfer.types.includes('text/uri-list')) {
+        e.preventDefault()
+
+        const target = u(e.target).closest('.upload-item')
+        u('.dragged').removeClass('dragged')
+        current.removeClass('currently_dragging')
+
+        if(!current.closest('.vertical-attachment').length < 1 && target.closest('.vertical-attachment').length < 1
+         || current.closest('.vertical-attachment').length < 1 && !target.closest('.vertical-attachment').length < 1) {
+            return
+        }
+
+        const first_html = target.nodes[0].outerHTML
+        const second_html = current.nodes[0].outerHTML 
+
+        current.nodes[0].outerHTML = first_html
+        target.nodes[0].outerHTML = second_html
+    }
+})
+
+u(document).on("change", `input[name='cover']`, (e) => {
+    const file = e.target.files[0]
+    if(!file.type.startsWith("image/")) {
+        makeError(tr("not_a_photo"))
+        return
+    }
+
+    const image = URL.createObjectURL(file)
+    u(".playlistCover img").attr('src', image).attr('style', 'display:block')
+})
+
+u(document).on("drop", `.playlistCover`, (e) => {
+    e.preventDefault()
+    e.dataTransfer.dropEffect = 'move';
+
+    document.querySelector(`input[name='cover']`).files = e.dataTransfer.files
+    u(`input[name='cover']`).trigger("change")
+})
+
+u(document).on('click', '.PE_end #playlist_create, .PE_end #playlist_edit', async (e) => {
+    const ids = []
+    u('.PE_audios .vertical-attachment').nodes.forEach(vatch => {
+        ids.push(vatch.dataset.id)
+    })
+    if(!ids || ids.length < 1) {
+        makeError(tr('error_playlist_creating_too_small'), 'Red', 5000, 77)
+        return
+    }
+
+    u(e.target).addClass('lagged')
+    const fd = serializeForm(u('.PE_playlistEditPage').nodes[0])
+    fd.append('hash', window.router.csrf)
+    fd.append('ajax', 1)
+    fd.append('audios', ids)
+    const req = await fetch(location.href, {
+        method: 'POST',
+        body: fd,
+    })
+    const req_json = await req.json()
+    if(req_json.success) {
+        window.router.route(req_json.redirect)
+    } else {
+        makeError(req_json.flash.message)
+    }
+    u(e.target).removeClass('lagged')
 })

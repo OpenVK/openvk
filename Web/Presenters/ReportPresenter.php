@@ -43,6 +43,7 @@ final class ReportPresenter extends OpenVKPresenter
             "perPage" => 15,
         ];
         $this->template->mode = $act ?? "all";
+        $this->template->disable_ajax = 1;
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $reports = [];
@@ -78,6 +79,7 @@ final class ReportPresenter extends OpenVKPresenter
             $this->notFound();
         
         $this->template->report = $report;
+        $this->template->disable_ajax = 1;
     }
     
     function renderCreate(int $id): void

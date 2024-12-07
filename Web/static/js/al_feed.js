@@ -157,7 +157,7 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                         FINAL_URL.searchParams.delete('return_banned')
                     }
                     
-                    window.location.assign(FINAL_URL.href)
+                    window.router.route(FINAL_URL.href)
                 })
                 
                 COUNT.forEach(item => {

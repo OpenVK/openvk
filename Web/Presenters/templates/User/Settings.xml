@@ -492,30 +492,6 @@
             <input type="hidden" name="hash" value="{$csrfToken}" />
             <input type="submit" value="{_redeem}" class="button" />
         </form>
-        <script>
-            u(".vouncher_input").on("paste", function(event) {
-                const vouncher = event.clipboardData.getData("text");
-
-                let segments;
-                if(vouncher.length === 27) {
-                    segments = vouncher.split("-");
-                    if(segments.length !== 4)
-                        segments = undefined;
-                } else if(vouncher.length === 24) {
-                    segments = chunkSubstr(vouncher, 6);
-                }
-
-                if(segments !== undefined) {
-                    document.vouncher_form.key0.value = segments[0];
-                    document.vouncher_form.key1.value = segments[1];
-                    document.vouncher_form.key2.value = segments[2];
-                    document.vouncher_form.key3.value = segments[3];
-                    document.vouncher_form.key3.focus();
-                }
-
-                event.preventDefault();
-            });
-        </script>
         
         {elseif $isInterface}
         

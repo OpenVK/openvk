@@ -25,9 +25,9 @@
         </div>
     </div>
 
-    <input type="file" accept=".jpg,.png,.gif" name="files[]" multiple class="button" id="uploadButton" style="display:none">
+    <input type="file" accept=".jpg,.png,.gif" name="files[]" multiple class="button photo_ajax_upload_button" id="uploadButton" style="display:none">
 
-    <div class="container_gray" style="min-height: 344px;">
+    <div class="container_gray photo_upload_container" style="min-height: 344px;">
         <div class="insertThere"></div>
         <div class="whiteBox" style="display: block;">
             <div class="boxContent">
@@ -61,8 +61,4 @@
     <script>
         uploadButton.value = ''
     </script>
-{/block}
-
-{block bodyScripts}
-    {script "js/al_photos.js"}
 {/block}

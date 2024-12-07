@@ -38,6 +38,7 @@ final class NoSpamPresenter extends OpenVKPresenter
 
         if ($mode === "form") {
             $this->template->_template = "NoSpam/Index";
+            $this->template->disable_ajax = 1;
             $foundClasses = [];
             foreach (Finder::findFiles('*.php')->from($targetDir) as $file) {
                 $content = file_get_contents($file->getPathname());
@@ -67,6 +68,7 @@ final class NoSpamPresenter extends OpenVKPresenter
             $this->template->models = $models;
         } else if ($mode === "templates") {
             $this->template->_template = "NoSpam/Templates.xml";
+            $this->template->disable_ajax = 1;
             $filter = [];
             if ($this->queryParam("id")) {
                 $filter["id"] = (int)$this->queryParam("id");

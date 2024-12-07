@@ -882,7 +882,7 @@
 "genre" = "Genre";
 "lyrics" = "Lyrics";
 
-"select_another_file" = "Select another file";
+"select_another_file" = "Upload another file";
 
 "limits" = "Limits";
 "select_audio" = "Select audio from your computer";
@@ -949,12 +949,11 @@
 "add_to_playlist" = "Add to playlist";
 "remove_from_playlist" = "Remove from playlist";
 "delete_playlist" = "Delete playlist";
-"playlist_cover" = "Playlist cover";
 
 "playlists_user" = "User's playlists";
 "playlists_club" = "Group's playlists";
 "change_cover" = "Change cover";
-"playlist_cover" = "Playlist's cover";
+"playlist_cover" = "Playlist cover";
 
 "minutes_count_zero" = "Lasts no minutes";
 "minutes_count_one" = "Lasts one minute";
@@ -995,8 +994,16 @@
 "repeat_tip" = "Repeat";
 "shuffle_tip" = "Shuffle";
 "mute_tip" = "Mute";
+"mute_tip_noun" = "Muted";
 "playlist_hide_from_search" = "Unlisted";
 "confirm_deleting_audio" = "Do you sure want to delete this audio?";
+
+"copy_link_to_audio" = "Copy link to clipboard";
+"copy_link_to_audio_error_not_selected_track" = "Track was not selected";
+"audio_ctx_add_to_group" = "Add to group";
+"audio_ctx_add_to_playlist" = "Add to playlist";
+"audio_ctx_play_next" = "Play next";
+"audio_ctx_clear_context" = "Clear tracks list";
 
 /* Notifications */
 
@@ -1596,6 +1603,7 @@
 "error_adding_source_regex" = "Error adding source: incorrect link.";
 "error_adding_source_long" = "Error adding source: link is too long.";
 "error_adding_source_sus" = "Error adding source: suspicious link.";
+"error_playlist_creating_too_small" = "Add at least one audio";
 
 /* Admin actions */
 

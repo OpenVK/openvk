@@ -2261,6 +2261,25 @@ table td[width="120"] {
     margin: 0;
 }
 
+#upload_container #lastStepContainers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+#upload_container .upload_container_element {
+    border: 1px solid #d6d6d6;
+    background: #f6f6f6;
+}
+
+#upload_container .upload_container_element .upload_container_name {
+    padding: 5px 5px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+
 #audio_upload {
     width: 350px;
     margin: 20px auto;
@@ -2554,57 +2573,55 @@ a.poll-retract-vote {
     border-radius: 3px;
 }
 
-.post-vertical .vertical-attachment {
+.vertical-attachment {
     display: grid;
     grid-template-columns: 1fr 0fr;
 }
 
-.post-vertical .vertical-attachment:first-of-type {
+.vertical-attachment:first-of-type {
     margin-top: 7px;
 }
 
-.post-vertical .vertical-attachment .audioEntry {
+.vertical-attachment .audioEntry {
     max-height: 28px;
     min-height: 18px;
 }
 
-.post-vertical .vertical-attachment .audioEntry:hover {
+.vertical-attachment .audioEntry:hover {
     background: unset !important;
 }
 
-.post-vertical .vertical-attachment .audioEntry .playerButton {
-    padding: 0px 3px 0px 0px;
-}
-
-.post-vertical .vertical-attachment .audioEntry .buttons {
+.vertical-attachment .audioEntry .buttons {
     display: none;
 }
 
-.post-vertical .vertical-attachment .audioEntry .status {
+.vertical-attachment .audioEntry .status {
     margin-top: 1px;
     margin-left: 2px;
     height: 15px;
 }
 
-.post-vertical .vertical-attachment .audioEntry .nobold {
+.vertical-attachment .audioEntry .nobold {
     margin-top: 1px;
 }
 
-.post-vertical .vertical-attachment .audioEntry .subTracks {
-    padding-bottom: 2px;
-    padding-left: 3px;
+.vertical-attachment .audioEntry .subTracks {
+    padding-left: 0px;
     padding-right: 0px;
+    margin-top: 2px;
 }
 
-.post-vertical .vertical-attachment .audioEntry .audioEntryWrapper {
-    height: 18px;
+.vertical-attachment .audioEntry .audioEntryWrapper {
+    height: 14px;
+    padding: 0px 4px 0px 0px;
+    gap: 2px;
 }
 
-.post-vertical .vertical-attachment .vertical-attachment-content { 
+.vertical-attachment .vertical-attachment-content { 
     max-height: 27px;
 }
 
-.post-vertical .vertical-attachment .vertical-attachment-content .overflowedName {
+.vertical-attachment .vertical-attachment-content .overflowedName {
     position: initial;
     width: 100% !important;
 }
@@ -2831,6 +2848,10 @@ a.poll-retract-vote {
     display: flex;
     flex-direction: column;
     z-index: 2;
+}
+
+.page_header.search_expanded_at_all .header_navigation #search_box #searchBoxFastTips.shown {
+    display: none;
 }
 
 .page_header.search_expanded .link {
@@ -3559,7 +3580,7 @@ hr {
     cursor: pointer;
 }
 
-#upload_container.uploading {
+#upload_container .upload_container_element .upload_container_name.uploading {
     background: white url('/assets/packages/static/openvk/img/progressbar.gif') !important;
     background-position-x: 0% !important;
     background-position-y: 0% !important;
@@ -3856,4 +3877,37 @@ hr {
 
 .tippy-box[data-animation='up_down'][data-state='visible'] {
     inset: auto auto 0px 0px;
+}
+
+.ctx_place {
+    position: relative;
+}
+
+#ctx_menu {
+    position: absolute;
+    z-index: 100;
+    background: #f7f7f7;
+    border: 1px solid #d8d8d8;
+    display: flex;
+    flex-direction: column;
+    min-width: 185px;
+}
+
+#ctx_menu a {
+    padding: 6px 6px 6px 26px;
+    color: black;
+    position: relative;
+}
+
+#ctx_menu a:hover {
+    background: #e9e9e9;
+}
+
+#ctx_menu a.pressed::before {
+    content: '✓';
+    display: inline-block;
+    position: absolute;
+    left: 9px;
+    top: 3px;
+    font-size: 15px;
 }

@@ -837,7 +837,7 @@
 "genre" = "Жанр";
 "lyrics" = "Текст";
 
-"select_another_file" = "Выбрать другой файл";
+"select_another_file" = "Загрузить ещё";
 
 "limits" = "Ограничения";
 "select_audio" = "Выберите аудиозапись на Вашем компьютере";
@@ -908,7 +908,7 @@
 "playlists_user" = "Плейлисты пользователя";
 "playlists_club" = "Плейлисты группы";
 "change_cover" = "Сменить обложку";
-"playlist_cover" = "Обложка плейлиста";
+"add_audio_verb" = "Добавить аудиозаписи";
 
 "minutes_count_zero" = "длится ноль минут";
 "minutes_count_one" = "длится одну минуту";
@@ -950,8 +950,16 @@
 "repeat_tip" = "Повторение";
 "shuffle_tip" = "Перемешать";
 "mute_tip" = "Заглушить";
+"mute_tip_noun" = "Заглушено";
 "playlist_hide_from_search" = "Не показывать в поиске";
 "confirm_deleting_audio" = "Вы действительно хотите полностью удалить аудиозапись?";
+
+"copy_link_to_audio" = "Копировать ссылку на аудио";
+"copy_link_to_audio_error_not_selected_track" = "Трек не выбран";
+"audio_ctx_add_to_group" = "Добавить в группу";
+"audio_ctx_add_to_playlist" = "Добавить в плейлист";
+"audio_ctx_play_next" = "Воспроизвести следующим";
+"audio_ctx_clear_context" = "Очистить список треков";
 
 /* Notifications */
 
@@ -1498,6 +1506,7 @@
 "error_adding_source_regex" = "Ошибка добавления источника: некорректная ссылка.";
 "error_adding_source_long" = "Ошибка добавления источника: слишком длинная ссылка.";
 "error_adding_source_sus" = "Ошибка добавления источника: гиперссылка заблокирована.";
+"error_playlist_creating_too_small" = "Добавь хотя бы одну аудиозапись.";
 
 /* Admin actions */
 

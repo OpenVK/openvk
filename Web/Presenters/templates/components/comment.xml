@@ -57,7 +57,7 @@
                             {if $thisUser->getId() != $author->getRealId()}
                                 |
                                 {var $canReport = true}
-                                <a href="javascript:reportComment()">{_report}</a>
+                                <a href="javascript:reportComment({$comment->getId()})">{_report}</a>
                             {/if}
                             <div style="float: right; font-size: .7rem;">
                                 <a class="post-like-button" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}" data-likes='{$likesCount}' data-id="1_{$comment->getPrettyId()}" data-type='comment'>
@@ -82,26 +82,3 @@
         </tr>
     </tbody>
 </table>
-<script n:if="$canReport ?? false">
-    function reportComment() {
-        uReportMsgTxt  = tr("going_to_report_comment");
-        uReportMsgTxt += "<br/>"+tr("report_question_text");
-        uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
-
-        MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
-            (function() {
-                res = document.querySelector("#uReportMsgInput").value;
-                xhr = new XMLHttpRequest();
-                xhr.open("GET", "/report/" + {$comment->getId()} + "?reason=" + res + "&type=comment", true);
-                xhr.onload = (function() {
-                    if(xhr.responseText.indexOf("reason") === -1)
-                        MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
-                    else
-                        MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
-                    });
-                xhr.send(null);
-            }),
-            Function.noop
-        ]);
-    }
-</script>

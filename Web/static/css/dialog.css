@@ -139,7 +139,7 @@ body.dimmed > .dimmer #absolute_territory {
 }
 
 .miniplayer {
-    position: absolute;
+    position: fixed;
     background: rgba(54, 54, 54, 0.95);
     border-radius: 3px;
     min-width: 299px;

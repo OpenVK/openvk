@@ -63,6 +63,7 @@ final class MessengerPresenter extends OpenVKPresenter
             $this->flash("err", tr("warning"), tr("user_may_not_reply"));
         }
         
+        $this->template->disable_ajax  = 1;
         $this->template->selId         = $sel;
         $this->template->correspondent = $correspondent;
     }

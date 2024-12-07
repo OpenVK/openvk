@@ -1,56 +1,56 @@
-<div n:class="bigPlayer, $tidy ? tidy">
-    <audio class="audio" />
-    <div class="paddingLayer">
+<div n:class="bigPlayer, ctx_place, $tidy ? tidy">
+    <div class="bigPlayerWrapper">
         <div class="playButtons">
-            <div class="playButton musicIcon" title="{_play_tip} [Space]"></div>
+            <div class="playButton musicIcon" data-tip='simple' data-title="{_play_tip} [Space]"></div>
                 
             <div class="arrowsButtons">
-                <div>
-                    <div class="nextButton musicIcon"></div>
-                </div>
-
-                <div>
-                    <div class="backButton musicIcon"></div>
-                </div>
+                <div class="nextButton musicIcon" data-tip='simple' data-title=""></div>
+                <div class="backButton musicIcon" data-tip='simple' data-title=""></div>
             </div>
         </div>
 
         <div class="trackPanel">
             <div class="trackInfo">
                 <div class="trackName">
-                    <a>{_track_unknown}</a> —
+                    <span class="trackPerformers">
+                        <a>{_track_unknown}</a>
+                    </span> —
                     <span>{_track_noname}</span>
                 </div>
 
-                <div class="timer" style="float:right">
+                <div class="timer">
                     <span class="time">00:00</span>
                     <span>/</span>
                     <span class="elapsedTime">-00:00</span>
                 </div>
             </div>
 
-            <div class="track" style="margin-top: -2px;">
-                <div class="bigPlayerTip">00:00</div>
+            <div class="track">
                 <div class="selectableTrack">
                     <div id='bigPlayerLengthSliderWrapper'>&nbsp;
                         <div class="slider"></div>
+                    </div>
+                    <div class='selectableTrackLoadProgress'>
+                        <div class="load_bar"></div>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="volumePanel">
-            <div class="selectableTrack">
-                <div id='bigPlayerVolumeSliderWrapper'>&nbsp;
-                    <div class="slider"></div>
+            <div class="volumePanelTrack">
+                <div class="selectableTrack">
+                    <div id='bigPlayerVolumeSliderWrapper'>&nbsp;
+                        <div class="slider"></div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <div class="additionalButtons">
-            <div class="repeatButton musicIcon" title="{_repeat_tip} [R]" ></div>
-            <div class="shuffleButton musicIcon" title="{_shuffle_tip}"></div>
-            <div class="deviceButton musicIcon" title="{_mute_tip} [M]"></div>
+            <div class="repeatButton musicIcon" data-tip='simple' data-title="{_repeat_tip} [R]" ></div>
+            <div class="shuffleButton musicIcon" data-tip='simple' data-title="{_shuffle_tip}"></div>
+            <div class="deviceButton musicIcon" data-tip='simple' data-title="{_mute_tip} [M]"></div>
         </div>
     </div>
 </div>

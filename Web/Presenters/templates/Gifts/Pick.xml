@@ -13,7 +13,7 @@
 
 {block content}
     <div class="gift_grid scroll_container">
-        <div n:foreach="$gifts as $gift" n:class="scroll_node, gift_sel, !$gift->canUse($thisUser) ? disabled" data-gift="{$gift->getId()}">
+        <a href='/gifts?act=confirm&user={$user->getId()}&pack={$cat->getId()}&elid={$gift->getId()}' n:foreach="$gifts as $gift" n:class="scroll_node, gift_sel, !$gift->canUse($thisUser) ? disabled" data-gift="{$gift->getId()}">
             <img class="gift_pic" src="{$gift->getImage(2)}" alt="{_gift}" loading=lazy />
 
             <strong class="gift_price">
@@ -29,7 +29,7 @@
                     {tr("gifts_left", $gift->getUsagesLeft($thisUser))}
                 {/if}&nbsp;
             </strong>
-        </div>
+        </a>
     </div>
 
     <div style="padding: 8px;">
@@ -40,19 +40,4 @@
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
         ]}
     </div>
-{/block}
-
-{block bodyScripts}
-    <script>
-        $(".gift_sel").click(function() {
-            let el = $(this);
-            if(el.hasClass("disabled"))
-                return false;
-
-            let link = "/gifts?act=confirm&user={$user->getId()}&pack={$cat->getId()}&elid=";
-            let gift = el.data("gift");
-
-            window.location.assign(link + gift);
-        });
-    </script>
 {/block}

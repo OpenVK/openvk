@@ -173,3 +173,109 @@ function collect_attachments(target) {
 
     return horizontal_array.concat(vertical_array)
 }
+
+function getRemainingTime(fullTime, time) {
+    let timer = fullTime - time
+
+    if(timer < 0) return "-00:00"
+
+    return "-" + fmtTime(timer)
+}
+
+function serializeForm(form, submitter = null) 
+{
+    const u_ = u(form)
+    const inputs = u_.find('input, textarea, button, select')
+    let fd = new FormData()
+    inputs.nodes.forEach(inp => {
+        if(!inp || !inp.name) {
+            return
+        }
+
+        if(inp.type == 'submit') {
+            if(inp !== submitter) {
+                return
+            }
+        }
+
+        switch(inp.type) {
+            case 'hidden':
+            case 'text':
+            case 'textarea':
+            case 'select':
+            case 'select-one':
+            case 'submit':
+            case 'email':
+            case 'phone':
+            case 'search':
+            case 'password':
+            case 'date':
+            case 'datetime-local':
+                fd.append(inp.name, inp.value)
+                break
+            case 'checkbox':
+                if(inp.checked) {
+                    fd.append(inp.name, inp.value)
+                }
+                
+                break
+            case 'file':
+                if(!inp.multiple) {
+                    if(inp.files[0]) {
+                        fd.append(inp.name, inp.files[0])
+                    } else {
+                        const emptyFile = new Blob([], { type: 'application/octet-stream' })
+                        fd.append(inp.name, emptyFile, '')
+                    }
+                }
+                break
+        }
+    })
+
+    return fd
+}
+
+async function copyToClipboard(text) {
+    let fallback = () => {
+        prompt(text);
+    }
+
+    if(typeof navigator.clipboard == "undefined") {
+        fallback()
+    } else {
+        try {
+            await navigator.clipboard.writeText(text)
+        } catch(e) {
+            fallback()
+        }
+    }
+}
+
+function remove_file_format(text) 
+{
+    return text.replace(/\.[^.]*$/, '')
+}
+
+function sleep(time) 
+{
+    return new Promise((resolve) => setTimeout(resolve, time));
+}
+
+function collect_attachments_node(target) 
+{
+    const horizontal_array = []
+    const horizontal_input = target.find(`input[name='horizontal_attachments']`)
+    const horizontal_attachments = target.find(`.post-horizontal > a`)
+    horizontal_attachments.nodes.forEach(_node => {
+        horizontal_array.push(`${_node.dataset.type}${_node.dataset.id}`)
+    })
+    horizontal_input.nodes[0].value = horizontal_array.join(',')
+
+    const vertical_array = []
+    const vertical_input = target.find(`input[name='vertical_attachments']`)
+    const vertical_attachments = target.find(`.post-vertical > .vertical-attachment`)
+    vertical_attachments.nodes.forEach(_node => {
+        vertical_array.push(`${_node.dataset.type}${_node.dataset.id}`)
+    })
+    vertical_input.nodes[0].value = vertical_array.join(',')
+}

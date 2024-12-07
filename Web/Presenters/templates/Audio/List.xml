@@ -11,6 +11,8 @@
         {_audio_new}
     {elseif $mode == 'popular'}
         {_audio_popular}
+    {elseif $mode == 'alone_audio'}
+        {$alone_audio->getName()}
     {else}
         {if $ownerId > 0}
             {_playlists} {$owner->getMorphedName("genitive", false)}
@@ -47,6 +49,10 @@
         »
         {if $isMy}{_my_playlists}{else}{_playlists}{/if}
     </div>
+
+    <div n:if="$mode == 'alone_audio'">
+        {_my_audios_small}
+    </div>
 {/block}
 
 {block content}
@@ -54,18 +60,30 @@
     
     {include "bigplayer.xml"}
 
-    <input n:if="$mode == 'list'" type="hidden" name="bigplayer_context" data-type="entity_audios" data-entity="{$ownerId}" data-page="{$page}">
-    <input n:if="$mode == 'new'" type="hidden" name="bigplayer_context" data-type="new_audios" data-entity="0" data-page="1">
-    <input n:if="$mode == 'popular'" type="hidden" name="bigplayer_context" data-type="popular_audios" data-entity="0" data-page="1">
-    <div class="bigPlayerDetector"></div>
+    <script>
+        window.__current_page_audio_context = null
+        {if $mode == 'list'}
+            window.__current_page_audio_context = {
+                name: 'entity_audios',
+                entity_id: {$ownerId},
+                page: {$page}
+            }
+        {elseif $mode == 'alone_audio'}
+            window.__current_page_audio_context = {
+                name: 'alone_audio',
+                entity_id: {$alone_audio->getId()},
+                page: 1
+            }
+        {/if}
+    </script>
 
     <div class="audiosDiv">
-        <div style="width: 74%;" class="audiosContainer audiosPaddingContainer" n:if="$mode != 'playlists'">
-            <div n:if="$audiosCount <= 0" style='height: 50%;'>
+        <div class="audiosContainer audiosSideContainer audiosPaddingContainer" n:if="$mode != 'playlists'">
+            <div n:if="$audiosCount <= 0" style='height: 100%;'>
                 {include "../components/content_error.xml", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_audios_thisuser") : tr("no_audios_user")) : tr("no_audios_club")}
             </div>
-            <div n:if="$audiosCount > 0" class="scroll_container infContainer">
-                <div class="scroll_node infObj" n:foreach="$audios as $audio">
+            <div n:if="$audiosCount > 0" class="scroll_container">
+                <div class="scroll_node" n:foreach="$audios as $audio">
                     {include "player.xml", audio => $audio, club => $club}
                 </div>
             </div>
@@ -81,12 +99,12 @@
             </div>
         </div>
         
-        <div style="width: 71.8%;" class="audiosPaddingContainer audiosPaddingContainer" n:if="$mode == 'playlists'">
+        <div class="audiosPaddingContainer audiosSideContainer audiosPaddingContainer" n:if="$mode == 'playlists'">
             <div n:if="$playlistsCount <= 0" style='height: 100%;'>
                 {include "../components/content_error.xml", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_playlists_thisuser") : tr("no_playlists_user")) : tr("no_playlists_club")}
             </div>
 
-            <div class="scroll_container infContainer playlistContainer" n:if="$playlistsCount > 0">
+            <div class="scroll_container playlistContainer" n:if="$playlistsCount > 0">
                 <div class='scroll_node' n:foreach='$playlists as $playlist'>
                     {include 'playlistListView.xml', playlist => $playlist}
                 </div>

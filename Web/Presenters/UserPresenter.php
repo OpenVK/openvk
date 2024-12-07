@@ -34,7 +34,7 @@ final class UserPresenter extends OpenVKPresenter
                 $this->template->_template = "User/deactivated.xml";
                 
                 $this->template->user = $user;
-            } else if(!$user->canBeViewedBy($this->user->identity)) {
+            } else if(!is_null($user) && !$user->canBeViewedBy($this->user->identity)) {
                 $this->template->_template = "User/private.xml";
                 
                 $this->template->user = $user;

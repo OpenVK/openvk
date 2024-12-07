@@ -179,17 +179,6 @@
                     </tr>
                 </tbody>
             </table>
-            <script>
-                function toggleMaritalStatus(e) {
-                    let elem = $("#maritalstatus-user");
-                    $("#maritalstatus-user-select").empty();
-                    if ([0, 1, 8].includes(Number(e.value))) {
-                        elem.hide();
-                    } else {
-                        elem.show();
-                    }
-                }
-            </script>
         </form>
 
         {elseif $isContacts}

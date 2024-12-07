@@ -1,24 +1,25 @@
 {php $id = $audio->getId() . rand(0, 1000)}
 {php $isWithdrawn = $audio->isWithdrawn()}
 {php $isAvailable = $audio->isAvailable()}
+{php $performers = $audio->getPerformers()}
 {php $editable = isset($thisUser) && $audio->canBeModifiedBy($thisUser)}
-<div id="audioEmbed-{$id}" data-realid="{$audio->getId()}" {if $hideButtons}data-prettyid="{$audio->getPrettyId()}" data-name="{$audio->getName()}"{/if} data-genre="{$audio->getGenre()}" class="audioEmbed {if !$isAvailable}processed{/if} {if $isWithdrawn}withdrawn{/if}" data-length="{$audio->getLength()}" data-keys="{json_encode($audio->getKeys())}" data-url="{$audio->getURL()}">
+<div id="audioEmbed-{$id}" data-realid="{$audio->getId()}" {if $hideButtons}data-prettyid="{$audio->getPrettyId()}"{/if} data-name="{$audio->getName()}" data-genre="{$audio->getGenre()}" n:class="audioEmbed, ctx_place, !$isAvailable ? processed, $isWithdrawn ? withdrawn" data-length="{$audio->getLength()}" data-keys="{json_encode($audio->getKeys())}" data-url="{$audio->getURL()}">
     <audio class="audio" />
 
     <div id="miniplayer" class="audioEntry">
-        <div class='audioEntryWrapper' style="display: flex;" draggable='true'>
+        <div class='audioEntryWrapper' draggable='true'>
             <div class="playerButton">
                 <div class="playIcon"></div>
             </div>
 
-            <div class="status" draggable='false'>
+            <div class="status">
                 <div class="mediaInfo noOverflow">
                     <div class="info">
-                        <strong class="performer">
-                            <a href="/search?section=audios&order=listens&only_performers=on&q={$audio->getPerformer()}">{$audio->getPerformer()}</a>
+                        <strong class="performer" n:foreach='$performers as $performer'>
+                            <a draggable='false' href="/search?section=audios&order=listens&only_performers=on&q={$performer}">{$performer}</a>{if $performer != end($performers)}, {/if}
                         </strong>
                         —
-                        <span class="title {if !empty($audio->getLyrics())}withLyrics{/if}">{$audio->getTitle()}</span>
+                        <span draggable='false' class="title {if !empty($audio->getLyrics())}withLyrics{/if}">{$audio->getTitle()}</span>
                     </div>
 
                     <svg n:if="$audio->isExplicit()" class="explicitMark" xmlns="http://www.w3.org/2000/svg" height="11" viewBox="0 0 11 11" width="11">
@@ -27,7 +28,7 @@
                 </div>
             </div>
 
-            <div class="volume">
+            <div class="mini_timer">
                 <span class="nobold {if !$hideButtons}hideOnHover{/if}" data-unformatted="{$audio->getLength()}">{$audio->getFormattedLength()}</span>
                 <div class="buttons">
                     {php $hasAudio = isset($thisUser) && $audio->isInLibraryOf($thisUser)}
@@ -44,10 +45,13 @@
                 </div>
             </div>
         </div>
-        <div class="subTracks" draggable='false'>
+        <div class="subTracks" draggable='false' n:if="!$isWithdrawn">
             <div class="lengthTrackWrapper">
                 <div class="track lengthTrack">
-                    <div class="selectableTrack" n:attr="style => $isWithdrawn ? 'display: none;' : ''">
+                    <div class="selectableTrack">
+                        <div class='selectableTrackLoadProgress'>
+                            <div class="load_bar"></div>
+                        </div>
                         <div class="selectableTrackSlider">
                             <div class="slider"></div>
                         </div>

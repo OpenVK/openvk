@@ -145,7 +145,7 @@
     <div n:ifset="$thisUser" id="profile_links">
         {if $club->canBeModifiedBy($thisUser)}
             <a href="/club{$club->getId()}/edit" id="profile_link">{_edit_group}</a>
-            <a href="/club{$club->getId()}/stats" id="profile_link">{_statistics}</a>
+            <a href="/club{$club->getId()}/stats" rel="nofollow" id="profile_link">{_statistics}</a>
         {/if}
         {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
             <a href="/admin/clubs/id{$club->getId()}" id="profile_link">{_manage_group_action}</a>
@@ -168,31 +168,7 @@
         {/if}
         {var $canReport = $thisUser->getId() != $club->getOwner()->getId()}
         {if $canReport}
-        <a class="profile_link" style="display:block;" href="javascript:reportClub()">{_report}</a>
-
-        <script>
-            function reportClub() {
-            uReportMsgTxt  = tr("going_to_report_club");
-            uReportMsgTxt += "<br/>"+tr("report_question_text");
-            uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
-
-            MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
-                (function() {
-                    res = document.querySelector("#uReportMsgInput").value;
-                    xhr = new XMLHttpRequest();
-                    xhr.open("GET", "/report/" + {$club->getId()} + "?reason=" + res + "&type=group", true);
-                    xhr.onload = (function() {
-                    if(xhr.responseText.indexOf("reason") === -1)
-                        MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
-                    else
-                        MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
-                    });
-                    xhr.send(null);
-                    }),
-                Function.noop
-                ]);
-            }
-        </script>
+        <a class="profile_link" style="display:block;" href="javascript:reportClub({$club->getId()})">{_report}</a>
         {/if}
         <a n:if="!$club->isHideFromGlobalFeedEnabled()" class="profile_link" style="display:block;" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$club->getRealId()}">
             {if !$ignore_status}{_ignore_club}{else}{_unignore_club}{/if}
@@ -317,8 +293,4 @@
     </div>
 </div>
 
-{/block}
-
-{block bodyScripts}
-    {script "js/al_despacito_wall.js"}
 {/block}

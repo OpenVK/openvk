@@ -97,9 +97,12 @@ final class AudioPresenter extends OpenVKPresenter
             $this->template->club = $owner < 0 ? $entity : NULL;
             $this->template->isMy = ($owner > 0 && ($entity->getId() === $this->user->id));
             $this->template->isMyClub = ($owner < 0 && $entity->canBeModifiedBy($this->user->identity));
-        } else {
-            $audios = $this->audios->getPopular();
-            $audiosCount = $audios->size();
+        } else if ($mode === 'alone_audio') {
+            $audios = [$this->template->alone_audio];
+            $audiosCount = 1;
+
+            $this->template->owner   = $this->user->identity;
+            $this->template->ownerId = $this->user->id;
         }
 
         // $this->renderApp("owner=$owner");
@@ -271,6 +274,19 @@ final class AudioPresenter extends OpenVKPresenter
         }
     }
 
+    function renderAloneAudio(int $owner_id, int $audio_id): void
+    {
+        $this->assertUserLoggedIn();
+
+        $found_audio = $this->audios->get($audio_id);
+        if(!$found_audio || $found_audio->isDeleted() || !$found_audio->canBeViewedBy($this->user->identity)) {
+            $this->notFound();
+        }
+
+        $this->template->alone_audio = $found_audio;
+        $this->renderList(NULL, 'alone_audio');
+    }
+
     function renderListen(int $id): void
     {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -327,17 +343,15 @@ final class AudioPresenter extends OpenVKPresenter
             $this->template->club = $club;
         }
 
-        $this->template->owner = $owner;
-
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $title = $this->postParam("title");
             $description = $this->postParam("description");
             $is_unlisted = (int)$this->postParam('is_unlisted');
-
-            $audios = !empty($this->postParam("audios")) ? array_slice(explode(",", $this->postParam("audios")), 0, 1000) : [];
+            $is_ajax = (int)$this->postParam('ajax') == 1;
+            $audios = array_slice(explode(",", $this->postParam("audios")), 0, 1000);
 
             if(empty($title) || iconv_strlen($title) < 1)
-                $this->flashFail("err", tr("error"), tr("set_playlist_name"));
+                $this->flashFail("err", tr("error"), tr("set_playlist_name"), NULL, $is_ajax);
 
             $playlist = new Playlist;
             $playlist->setOwner($owner);
@@ -348,12 +362,12 @@ final class AudioPresenter extends OpenVKPresenter
             
             if($_FILES["cover"]["error"] === UPLOAD_ERR_OK) {
                 if(!str_starts_with($_FILES["cover"]["type"], "image"))
-                    $this->flashFail("err", tr("error"), tr("not_a_photo"));
+                    $this->flashFail("err", tr("error"), tr("not_a_photo"), NULL, $is_ajax);
 
                 try {
                     $playlist->fastMakeCover($this->user->id, $_FILES["cover"]);
                 } catch(\Throwable $e) {
-                    $this->flashFail("err", tr("error"), tr("invalid_cover_photo"));
+                    $this->flashFail("err", tr("error"), tr("invalid_cover_photo"), NULL, $is_ajax);
                 }
             }
 
@@ -361,25 +375,22 @@ final class AudioPresenter extends OpenVKPresenter
 
             foreach($audios as $audio) {
                 $audio = $this->audios->get((int)$audio);
-
-                if(!$audio || $audio->isDeleted() || !$audio->canBeViewedBy($this->user->identity))
+                if(!$audio || $audio->isDeleted())
                     continue;
 
                 $playlist->add($audio);
             }
 
             $playlist->bookmark(isset($club) ? $club : $this->user->identity);
+            if($is_ajax) {
+                $this->returnJson([
+                    'success' => true,
+                    'redirect' => '/playlist' . $owner . "_" . $playlist->getId()
+                ]);
+            }
             $this->redirect("/playlist" . $owner . "_" . $playlist->getId());
         } else {
-            if(isset($club)) {
-                $this->template->audios = iterator_to_array($this->audios->getByClub($club, 1, 10));
-                $count = (new Audios)->getClubCollectionSize($club); 
-            } else {
-                $this->template->audios = iterator_to_array($this->audios->getByUser($this->user->identity, 1, 10));
-                $count = (new Audios)->getUserCollectionSize($this->user->identity);
-            }
-
-            $this->template->pagesCount = ceil($count / 10);
+            $this->template->owner = $owner;
         }
     }
 
@@ -435,28 +446,20 @@ final class AudioPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
 
         $playlist = $this->audios->getPlaylistByOwnerAndVID($owner_id, $virtual_id);
-        $page = (int)($this->queryParam("p") ?? 1);
         if (!$playlist || $playlist->isDeleted() || !$playlist->canBeModifiedBy($this->user->identity))
             $this->notFound();
 
         $this->template->playlist = $playlist;
-        $this->template->page = $page;
         
         $audios = iterator_to_array($playlist->fetch(1, $playlist->size()));
-        $this->template->audios = array_slice($audios, 0, 10);
-        $audiosIds = [];
-
-        foreach($audios as $aud)
-            $audiosIds[] = $aud->getId();
-
-        $this->template->audiosIds = implode(",", array_unique($audiosIds)) . ",";
+        $this->template->audios = array_slice($audios, 0, 1000);
         $this->template->ownerId = $owner_id;
         $this->template->owner = $playlist->getOwner();
-        $this->template->pagesCount = $pagesCount = ceil($playlist->size() / 10);
 
         if($_SERVER["REQUEST_METHOD"] !== "POST")
             return;
 
+        $is_ajax = (int)$this->postParam('ajax') == 1;
         $title = $this->postParam("title");
         $description = $this->postParam("description");
         $is_unlisted = (int)$this->postParam('is_unlisted');
@@ -471,12 +474,12 @@ final class AudioPresenter extends OpenVKPresenter
         $playlist->resetLength();
         $playlist->setUnlisted((bool)$is_unlisted);
 
-        if($_FILES["new_cover"]["error"] === UPLOAD_ERR_OK) {
-            if(!str_starts_with($_FILES["new_cover"]["type"], "image"))
+        if($_FILES["cover"]["error"] === UPLOAD_ERR_OK) {
+            if(!str_starts_with($_FILES["cover"]["type"], "image"))
                 $this->flashFail("err", tr("error"), tr("not_a_photo"));
             
             try {
-                $playlist->fastMakeCover($this->user->id, $_FILES["new_cover"]);
+                $playlist->fastMakeCover($this->user->id, $_FILES["cover"]);
             } catch(\Throwable $e) {
                 $this->flashFail("err", tr("error"), tr("invalid_cover_photo"));
             }
@@ -490,13 +493,18 @@ final class AudioPresenter extends OpenVKPresenter
 
         foreach ($new_audios as $new_audio) {
             $audio = (new Audios)->get((int)$new_audio);
-
             if(!$audio || $audio->isDeleted())
                 continue;
 
             $playlist->add($audio);
         }
 
+        if($is_ajax) {
+            $this->returnJson([
+                'success' => true,
+                'redirect' => '/playlist' . $playlist->getPrettyId()
+            ]);
+        }
         $this->redirect("/playlist".$playlist->getPrettyId());
     }
 
@@ -762,6 +770,15 @@ final class AudioPresenter extends OpenVKPresenter
                 $audios = $stream->page($page, 10);
                 $audiosCount = $stream->size();
                 break;
+            case 'alone_audio':
+                $found_audio = $this->audios->get($ctx_id);
+                if(!$found_audio || $found_audio->isDeleted() || !$found_audio->canBeViewedBy($this->user->identity)) {
+                    $this->flashFail("err", "Error", "Not found", 89, true);
+                }
+
+                $audios = [$found_audio];
+                $audiosCount = 1;
+                break;
         }
 
         $pagesCount = ceil($audiosCount / $perPage);
@@ -779,16 +796,21 @@ final class AudioPresenter extends OpenVKPresenter
         $audiosArr = [];
 
         foreach($audios as $audio) {
-            $audiosArr[] = [
-                "id" => $audio->getId(),
-                "name" => $audio->getTitle(),
-                "performer" => $audio->getPerformer(),
-                "keys" => $audio->getKeys(),
-                "url" => $audio->getUrl(),
-                "length" => $audio->getLength(),
-                "available" => $audio->isAvailable(),
-                "withdrawn" => $audio->isWithdrawn(),
-            ];
+            $output_array = [];
+            $output_array['id'] = $audio->getId();
+            $output_array['name'] = $audio->getTitle();
+            $output_array['performer'] = $audio->getPerformer();
+
+            if(!$audio->isWithdrawn()) {
+                $output_array['keys'] = $audio->getKeys();
+                $output_array['url'] = $audio->getUrl();
+            }
+
+            $output_array['length'] = $audio->getLength();
+            $output_array['available'] = $audio->isAvailable();
+            $output_array['withdrawn'] = $audio->isWithdrawn();
+
+            $audiosArr[] = $output_array;
         }
 
         $resultArr = [
