@@ -729,13 +729,13 @@ window.player = new class {
                         </div>
                         <div id='aj_player_track'>
                             <div id='aj_player_track_name'>
-                                <a id='aj_player_track_title' class='noOverflow' style='width: 300px;'>
+                                <a id='aj_player_track_title' class='noOverflow' style='max-width: 300px;'>
                                     <b>Unknown</b>
                                     —
                                     <span>Untitled</span>
                                 </a>
 
-                                <span id='aj_time'>00:00</span>
+                                <span id='aj_time' style='min-width: 28px;'>00:00</span>
                             </div>
                             <div id='aj_player_track_length'>
                                 <div class="selectableTrack">
@@ -840,6 +840,9 @@ u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
         } else if(u(e.target).closest('.audiosInsert').length > 0) {
             window.player.connectionType = '.audiosInsert'
             _nodes = u(e.target).closest('.audiosInsert').find('.audioEmbed').nodes
+        } else if(u(e.target).closest('.scroll_container').length > 0) {
+            window.player.connectionType = '.scroll_container'
+            _nodes = u(e.target).closest('.scroll_container').find('.audioEmbed').nodes
         }
 
         window.player.tracks = []

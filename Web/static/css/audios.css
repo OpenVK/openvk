@@ -1023,6 +1023,7 @@
     flex-direction: row;
     align-items: center;
     gap: 10px;
+    opacity: 0.9;
 }
 
 #ajax_audio_player #aj_player_buttons #aj_player_previous {
