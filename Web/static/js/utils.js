@@ -260,3 +260,22 @@ function sleep(time)
 {
     return new Promise((resolve) => setTimeout(resolve, time));
 }
+
+function collect_attachments_node(target) 
+{
+    const horizontal_array = []
+    const horizontal_input = target.find(`input[name='horizontal_attachments']`)
+    const horizontal_attachments = target.find(`.post-horizontal > a`)
+    horizontal_attachments.nodes.forEach(_node => {
+        horizontal_array.push(`${_node.dataset.type}${_node.dataset.id}`)
+    })
+    horizontal_input.nodes[0].value = horizontal_array.join(',')
+
+    const vertical_array = []
+    const vertical_input = target.find(`input[name='vertical_attachments']`)
+    const vertical_attachments = target.find(`.post-vertical > .vertical-attachment`)
+    vertical_attachments.nodes.forEach(_node => {
+        vertical_array.push(`${_node.dataset.type}${_node.dataset.id}`)
+    })
+    vertical_input.nodes[0].value = vertical_array.join(',')
+}

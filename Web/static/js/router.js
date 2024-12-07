@@ -297,6 +297,11 @@ u(document).on('submit', 'form', async (e) => {
         return false
     }
 
+    if(e.target.closest('#write')) {
+        const target = u(e.target)
+        collect_attachments_node(target)
+    }
+
     u('#ajloader').addClass('shown')
 
     const form = e.target
