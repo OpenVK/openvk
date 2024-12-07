@@ -2371,6 +2371,10 @@ const showMoreObserver = new IntersectionObserver(entries => {
             if(u('.scroll_container').length < 1) {
                 return
             }
+
+            /*if(window.player && window.player.isAtAudiosPage() && !window.player.isAtCurrentContextPage()) {
+                return
+            }*/
             
             const target = u(x.target)
             if(target.length < 1 || target.hasClass('paginator-at-top')) {

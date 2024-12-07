@@ -307,11 +307,11 @@ window.player = new class {
         this.dashPlayer.initialize(this.audioPlayer, c_track.url, false);
         this.dashPlayer.setProtectionData(protData)
 
-        if(!this.nextTrack && Math.max(...this.context["playedPages"]) < this.context["pagesCount"]) {
+        if(!this.nextTrack && this.hasContext() && Math.max(...this.context["playedPages"]) < this.context["pagesCount"]) {
             await this.loadContext(Number(Math.max(...this.context["playedPages"])) + 1, true)
         }
 
-        if(!this.previousTrack && (Math.min(...this.context["playedPages"]) > 1)) {
+        if(!this.previousTrack && this.hasContext() && (Math.min(...this.context["playedPages"]) > 1)) {
             await this.loadContext(Math.min(...this.context["playedPages"]) - 1, false)
         }
 
@@ -322,6 +322,10 @@ window.player = new class {
         
         this.__updateFace()
         u(this.audioPlayer).trigger('volumechange')
+    }
+
+    hasContext() {
+        return this.context.object && this.context.object.url
     }
 
     switchTracks(id1, id2) {
@@ -449,6 +453,10 @@ window.player = new class {
 
     // Добавляем ощущение продуманности.
     __highlightActiveTrack() {
+        if(!this.isAtCurrentContextPage()) {
+            return
+        }
+
         u(`.audiosContainer .audioEmbed[data-realid='${this.current_track_id}'] .audioEntry, .audios_padding .audioEmbed[data-realid='${this.current_track_id}'] .audioEntry`).addClass('nowPlaying')
     }
 
@@ -488,11 +496,14 @@ window.player = new class {
                 if(this.audioPlayer.paused) {
                     return
                 }
+                if(!this.current_track_id || this.current_track_id == 0) {
+                    return
+                }
                 this.ajCreate()
                 this.__updateFace()
             }
         } else {
-            this.ajClose(false)
+            this.ajClose(false, false)
             this.is_closed = false
             if(this.tracks.length < 1) {
                 if(window.__current_page_audio_context) {
@@ -682,10 +693,17 @@ window.player = new class {
         }
     }
 
-    ajClose(pause = true) {
+    ajClose(pause = true, clearTracks = true) {
         this.is_closed = true
         if(pause) {
             this.pause()
+        }
+        if(clearTracks) {
+            this.__resetContext()
+            this.__updateFace()
+            this.current_track_id = null
+            this.audioPlayer.currentTime = 0
+            this.undump()
         }
        
         u('#ajax_audio_player').addClass('hidden')
