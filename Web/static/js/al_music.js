@@ -773,7 +773,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if(parsed) {
         await window.player.init(null)
         await window.player.loadDump(parsed)
-        if(!window.player.isAtAudiosPage()) {
+        if(!window.player.isAtAudiosPage() && parsed.current_track_id) {
             window.player.ajReveal()
             window.player.__updateFace()
             u(window.player.audioPlayer).trigger('timeupdate')
