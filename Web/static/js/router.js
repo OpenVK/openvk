@@ -152,7 +152,7 @@ window.router = new class {
             return false
         }
 
-        if(!url || url == '') {
+        if(!url || url == '' || url == '/') {
             return false
         }
 
@@ -315,7 +315,7 @@ u(document).on('submit', 'form', async (e) => {
 
     const url_object = new URL(url)
     if(method == 'get' || method == 'GET') {
-        url_object.searchParams.append('hash', window.router.csrf)
+        //url_object.searchParams.append('hash', window.router.csrf)
         $(form).serializeArray().forEach(param => {
             url_object.searchParams.append(param.name, param.value)
         })

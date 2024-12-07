@@ -1381,6 +1381,7 @@ u(document).on("click", "#__photoAttachment", async (e) => {
     // add photo
     u(".ovk-diag-body .attachment_selector").on("click", ".album-photo", async (ev) => {
         ev.preventDefault()
+        ev.stopPropagation()
         
         const target = u(ev.target).closest('.album-photo')
         const dataset = target.nodes[0].dataset
@@ -1906,6 +1907,7 @@ u(document).on('click', `.vertical-attachment #small_remove_button`, (e) => {
 
 u(document).on('click', '.post-buttons .upload-item', (e) => {
     e.preventDefault()
+    e.stopPropagation()
 })
 
 u(document).on('click', '.post.post-nsfw .post-content', (e) => {
