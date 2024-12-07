@@ -1580,7 +1580,7 @@ function __showAudioAddDialog(id, current_tab = 'club') {
                     u('.entity_vertical_list').append(`<div id='gif_loader'></div>`)
 
                     try {
-                        window.openvk.writeableClubs = await window.OVKAPI.call('groups.get', {'filter': 'admin', 'count': 100})
+                        window.openvk.writeableClubs = await window.OVKAPI.call('groups.get', {'filter': 'admin', 'count': 100, 'fields': 'photo_50'})
                     } catch (e) {
                         u("#_content").html(tr("no_access_clubs"))
             
@@ -1595,7 +1595,7 @@ function __showAudioAddDialog(id, current_tab = 'club') {
                     <label class='entity_vertical_list_item with_third_column' data-id='${el.id}'>
                         <div class='first_column'>
                             <a href='/club${el.id}' class='avatar'>
-                                <img src='${el.avatar}' alt='avatar'>
+                                <img src='${el.photo_50}' alt='avatar'>
                             </a>
 
                             <div class='info'>
