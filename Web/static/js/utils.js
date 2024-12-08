@@ -229,6 +229,11 @@ function serializeForm(form, submitter = null)
                     }
                 }
                 break
+            case 'radio':
+                if(inp.checked) {
+                    fd.append(inp.name, inp.value)
+                }
+                break
         }
     })
 

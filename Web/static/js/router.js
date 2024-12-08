@@ -152,7 +152,7 @@ window.router = new class {
             return false
         }
 
-        if(!url || url == '' || url == '/') {
+        if(!url || url == '') {
             return false
         }
 
@@ -273,6 +273,11 @@ u(document).on('click', 'a', async (e) => {
 
     if(!window.router.checkUrl(url)) {
         return
+    }
+
+    // temporary fix
+    if(dom_url == '/') {
+        url = url + 'id0'
     }
 
     e.preventDefault()
