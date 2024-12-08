@@ -2018,7 +2018,7 @@ async function repost(id, repost_type = 'post') {
                         }
                     }
     
-                    NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.location.assign(`/wall${res.pretty_id}`)});
+                    NewNotification(tr('information_-1'), tr('shared_succ'), null, () => {window.router.route(`/wall${res.pretty_id}`)});
                 } catch(e) {
                     console.error(e)
                     fastError(e.message)

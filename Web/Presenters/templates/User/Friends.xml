@@ -174,7 +174,7 @@
                 <input type="submit" class="profile_link" value="{_friends_reject}" />
             </form>
         {elseif $subStatus === 3}
-            <a href="/im?sel={$x->getId()}" class="profile_link">{_send_message}</a>
+            <a href="/im?sel={$x->getId()}" class="profile_link" rel="nofollow">{_send_message}</a>
             <form action="/setSub/user" method="post" class="profile_link_form" id="_submitUserSubscriptionAction">
                 <input type="hidden" name="act" value="rem" />
                 <input type="hidden" name="id"  value="{$x->getId()}" />

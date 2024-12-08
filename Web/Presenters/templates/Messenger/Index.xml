@@ -20,7 +20,7 @@
         <div class="crp-list scroll_container">
             <div n:foreach="$corresps as $coresp"
                  class="scroll_node crp-entry"
-                 onmousedown="window.location.href = {$coresp->getURL()};" >
+                 onmousedown="window.location.assign({$coresp->getURL()});" >
                 {var $recipient = $coresp->getCorrespondents()[1]}
                 {var $lastMsg   = $coresp->getPreviewMessage()}
 

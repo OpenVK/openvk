@@ -41,7 +41,7 @@
     </script>
     
     <div class="playlistBlock">
-        <div class="playlistCover" style="float: left;">
+        <div class="playlistCover">
             {if $cover}
             <a href="{$cover_url}" target="_blank">
                     <img onclick="OpenMiniature(event, {$cover_url}, null, {$cover->getPrettyId()}, null)" src="{$cover_url}" alt="{_playlist_cover}">
@@ -62,7 +62,7 @@
 
         <div class='playlistWrapper'>
             <div class="playlistInfo">
-                <h4 style="border-bottom:unset;">{$playlist->getName()}</h4>
+                <h4>{$playlist->getName()}</h4>
 
                 <div class="moreInfo">
                     {$playlist->getMetaDescription()|noescape}
@@ -70,7 +70,7 @@
                     <div style="margin-top: 11px;">
                         <span>{nl2br($playlist->getDescriptionHTML())|noescape}</span>
                     </div>
-                    <hr style="color: #f7f7f7;">
+                    <hr>
                 </div>
             </div>
             <div class="audiosContainer scroll_container infContainer" style="margin-top: 14px;">

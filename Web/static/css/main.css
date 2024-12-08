@@ -2617,7 +2617,7 @@ a.poll-retract-vote {
     gap: 2px;
 }
 
-.vertical-attachment .vertical-attachment-content { 
+.post-buttons .vertical-attachment .vertical-attachment-content { 
     max-height: 27px;
 }
 

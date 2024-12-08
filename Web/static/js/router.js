@@ -240,7 +240,7 @@ u(document).on('click', 'a', async (e) => {
     let url = target.nodes[0].href
 
     if(id) {
-        if(['act_tab_a', 'ki', 'used', '_pinGroup', 'profile_link'].indexOf(id) == -1) {
+        if(['act_tab_a', 'ki', 'used', '_pinGroup', 'profile_link', 'minilink-friends', 'minilink-albums', 'minilink-messenger', 'minilink-groups', 'minilink-notifications'].indexOf(id) == -1) {
             console.log('AJAX | Skipping cuz maybe its function call link.')
             return
         }

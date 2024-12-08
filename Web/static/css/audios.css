@@ -593,13 +593,25 @@
 }
 
 .playlistBlock {
+    display: flex;
+    gap: 13px;
     margin-top: 14px;
 }
 
+.playlistBlock .playlistCover {
+    max-width: 135px;
+}
+
 .playlistBlock .playlistWrapper {
-    float: left;
-    padding-left: 13px;
-    width:75%
+    width: 75%
+}
+
+.playlistBlock .playlistInfo h4 {
+    border-bottom: unset;
+}
+
+.playlistBlock .playlistInfo hr {
+    color: #f7f7f7;
 }
 
 .playlistCover .profile_links .profile_link {

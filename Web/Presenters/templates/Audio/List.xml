@@ -99,7 +99,7 @@
             </div>
         </div>
         
-        <div class="audiosPaddingContainer audiosSideContainer audiosPaddingContainer" n:if="$mode == 'playlists'">
+        <div class="audiosPaddingContainer audiosSideContainer audiosPaddingContainer" style="width: 72.2%;" n:if="$mode == 'playlists'">
             <div n:if="$playlistsCount <= 0" style='height: 100%;'>
                 {include "../components/content_error.xml", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_playlists_thisuser") : tr("no_playlists_user")) : tr("no_playlists_club")}
             </div>
