@@ -2335,6 +2335,15 @@ async function __processPaginatorNextPage(page)
 
     const nodes = parsed_content.querySelectorAll(container_node)
     nodes.forEach(node => {
+        const unique_id = node.dataset.uniqueid
+        if(unique_id) {
+            const elements_unique = u(`.scroll_node[data-uniqueid='${unique_id}']`).length
+            if(elements_unique > 0) {
+                console.info('AJAX | Found duplicates')
+                return
+            }
+        }
+
         container.append(node)
     })
 
@@ -2395,7 +2404,13 @@ const showMoreObserver = new IntersectionObserver(entries => {
             }
 
             const page_number = Number(next_page.html())
-            await __processPaginatorNextPage(page_number)
+
+            try {
+                await __processPaginatorNextPage(page_number)
+            } catch(e) {
+                console.error(e)
+            }
+            
             bsdnHydrate()
             u('.paginator:not(.paginator-at-top)').removeClass('lagged')
         }

@@ -24,7 +24,7 @@
     </div>
     
     <div class='scroll_container'>
-        <div class='scroll_node' n:foreach='$posts as $post'>
+        <div class='scroll_node' n:foreach='$posts as $post' data-uniqueid="{$post->getPrettyId()}">
             <a name="postGarter={$post->getId()}"></a>
             {include "../components/post.xml", post => $post, onWallOf => true, commentSection => true}
         </div>

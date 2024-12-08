@@ -15,7 +15,7 @@
         
         <div class="content scroll_container">
             {if sizeof($posts) > 0}
-                <div class='scroll_node' n:foreach='$posts as $post'>
+                <div class='scroll_node' n:foreach='$posts as $post' data-uniqueid="{$post->getPrettyId()}">
                     <a name="postGarter={$post->getId()}"></a>
                     
                     {include "../components/post.xml", post => $post, commentSection => true}
