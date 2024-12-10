@@ -50,12 +50,17 @@ openvk:
                 - "Good luck filling! If you are a regular support agent, inform the administrator that he forgot to fill the config"
         messages:
             strict: false
+        music:
+            exposeOriginalURLs: true
+        newsfeed:
+            ignoredSourcesLimit: 50
         wall:
             christian: false
             anonymousPosting:
                 enable: false
                 account: 100
             postSizes:
+                maxAttachments: 10
                 maxSize: 60000
                 processingLimit: 3000
                 emojiProcessingLimit: 1000
@@ -99,9 +104,10 @@ openvk:
             caption: "Ad caption"
             link: "https://example.org/product.aspx?id=10&from=ovk"
         bellsAndWhistles:
-            fartscroll: false
             testLabel: false
         defaultMobileTheme: ""
+        defaultFeaturePhoneTheme: ""
+        logs: true
     
     telemetry:
         plausible:

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <title>Получение доступа | OpenVK</title>
+        <style>
+            body {
+                margin: 0;
+                font-family: sans-serif;
+                background-color: #ebedf0;
+            }
+
+            header {
+                background-color: #fff;
+                box-shadow: 0 0 10px #d4d6d8;
+                padding: 13px 0;
+                margin-bottom: 12px;
+            }
+
+            header > div {
+                display: flex;
+                width: 100%;
+                max-width: 620px;
+                margin: auto;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            #ovkUser a:not(#pfpLink) {
+                color: #000;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 14px;
+                margin-right: 4px;
+            }
+
+            #ovkUser img {
+                width: 32px;
+                height: 32px;
+                border-radius: 100%;
+                vertical-align: middle;
+                object-fit: cover;
+            }
+
+            #ovkLogo a {
+                display: flex;
+                text-decoration: none;
+                color: #fff;
+                background: #606060;
+                width: 28px;
+                height: 28px;
+                justify-content: center;
+                align-items: center;
+                font-size: 21px;
+                font-weight: 600;
+                border-radius: 7px;
+            }
+
+            body > div {
+                width: 100%;
+                max-width: 620px;
+                margin: auto;
+            }
+
+            main {
+                border: 1px solid #e1e3e6;
+                background-color: #fff;
+                padding: 16px;
+                border-radius: 18px;
+                font-size: 15px;
+            }
+
+            #authHeading, #authExplainer {
+                color: #818c99;
+                padding-bottom: 12px;
+            }
+
+            :is(#authHeading, #authExplainer) b {
+                color: #000;
+            }
+
+            #authButtons {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+
+            #authButtons a {
+                color: #818c99;
+                text-decoration: none;
+            }
+
+            #authButtons a:hover {
+                text-decoration: underline;
+            }
+
+            #authButtons button {
+                cursor: pointer;
+                appearance: none;
+                border: none;
+                background-color: #606060;
+                color: #fff;
+                font-weight: 600;
+                padding: 7px;
+                border-radius: 7px;
+                font-size: 15px;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div>
+                <div style="width: 85px;">
+                </div>
+                <div id="ovkLogo">
+                    <a href="/" target="_blank">O</a>
+                </div>
+                <div id="ovkUser">
+                    <a href="/logout?hash={rawurlencode($csrfToken)}">{_header_log_out}</a>
+                    <a id="pfpLink" href="/id0" target="_blank">
+                        <img src="{$thisUser->getAvatarUrl('miniscule')}" />
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <div>
+            <main>
+                <div id="authHeading">
+                    {_app},
+                    <b>
+                        {if is_null($origin)}
+                            {tr("identifies_itself_as", $clientName)}{else}
+                        {tr("located_at_url", $origin)}{/if}</b>, {_wants_your_token}.
+                </div>
+
+                <div id="authExplainer">
+                    <b>{_app_will_have_access_to}</b><br/>
+                    {_oauth_scope_all|noescape}.
+                </div>
+
+                <div id="authButtons">
+                    <button id="authAllow">{_oauth_grant}</button>
+                    <a id="authDeny" href="javascript:void(0)">{_oauth_deny}</a>
+                </div>
+            </main>
+        </div>
+
+        {script "js/node_modules/msgpack-lite/dist/msgpack.min.js"}
+        {script "js/al_api.js"}
+        <script>
+            //<![CDATA[
+            let clientName     = {$clientName};
+            let usePostMessage = {$usePostMessage} && window.opener != null;
+            let acceptsStale   = {$acceptsStale};
+            let origin         = {$origin};
+            let redirectUri    = {$redirectUri};
+
+            document.querySelector("#authDeny").addEventListener("click", () => {
+                if (usePostMessage) {
+                    window.opener.postMessage({
+                        error: 'access_denied',
+                        error_reason: 'user_denied',
+                        error_description: 'User denied your request'
+                    }, origin);
+
+                    return;
+                }
+
+                window.location.href = redirectUri + 'error=access_denied&error_reason=user_denied&error_description=User%20denied%20your%20request';
+            });
+
+            document.querySelector("#authAllow").addEventListener("click", async () => {
+                let response = await API.Apps.getRegularToken(clientName, acceptsStale);
+                let ret      = {
+                    access_token: response.token,
+                    expires_in: 0,
+                    user_id: {$thisUser->getId()},
+                    is_stale: response.is_stale
+                };
+
+                if (usePostMessage) {
+                    window.opener.postMessage(ret, origin);
+
+                    return;
+                }
+
+                window.location.href = redirectUri + (new URLSearchParams(ret)).toString();
+            });
+            //]]>
+        </script>
+    </body>
+</html>

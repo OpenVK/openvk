@@ -3,6 +3,8 @@ namespace openvk\Web\Presenters;
 
 final class BlobPresenter extends OpenVKPresenter
 {
+    protected $banTolerant   = true;
+
     private function getDirName($dir): string
     {
         if(gettype($dir) === "integer") {
@@ -16,6 +18,8 @@ final class BlobPresenter extends OpenVKPresenter
     
     function renderFile(/*string*/ $dir, string $name, string $format)
     {
+        header("Access-Control-Allow-Origin: *");
+
         $dir  = $this->getDirName($dir);
         $base = realpath(OPENVK_ROOT . "/storage/$dir");
         $path = realpath(OPENVK_ROOT . "/storage/$dir/$name.$format");
@@ -35,5 +39,5 @@ final class BlobPresenter extends OpenVKPresenter
         
         readfile($path);
         exit;
-    }
+      }
 }

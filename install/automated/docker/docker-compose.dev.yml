@@ -1,0 +1,20 @@
+services:
+  openvk:
+    build:
+      context: ../../..
+      dockerfile: install/automated/docker/openvk.Dockerfile
+    develop:
+      watch:
+        - path: ../../..
+          action: sync
+          target: /opt/chandler/extensions/available/openvk
+          ignore:
+            - vendor/
+        - path: ../../../composer.json
+          action: rebuild
+        - path: ../../../composer.lock
+          action: rebuild
+        - path: ../../../Web/static/js/package-lock.json
+          action: rebuild
+        - path: ../../../Web/static/js/package.json
+          action: rebuild

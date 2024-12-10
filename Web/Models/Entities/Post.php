@@ -78,6 +78,45 @@ class Post extends Postable
     {
         return (bool) $this->getRecord()->pinned;
     }
+
+    function hasSource(): bool
+    {
+        return $this->getRecord()->source != NULL;
+    }
+
+    function getSource(bool $format = false)
+    {
+        $orig_source = $this->getRecord()->source;
+        if(!str_contains($orig_source, "https://") && !str_contains($orig_source, "http://"))
+            $orig_source = "https://" . $orig_source;
+
+        if(!$format)
+            return $orig_source;
+        
+        return $this->formatLinks($orig_source);
+    }
+
+    function setSource(string $source)
+    {
+        $result = check_copyright_link($source);
+
+        $this->stateChanges("source", $source);
+    }
+
+    function resetSource()
+    {
+        $this->stateChanges("source", NULL);
+    }
+
+    function getVkApiCopyright(): object
+    {
+        return (object)[
+            'id'   => 0,
+            'link' => $this->getSource(false),
+            'name' => $this->getSource(false),
+            'type' => 'link',
+        ];
+    }
     
     function isAd(): bool
     {
@@ -133,6 +172,10 @@ class Post extends Postable
                 case 'openvk_legacy_ios':
                     return 'iphone';
                     break;
+
+                case 'windows_phone':
+                    return 'wphone';
+                    break;
                 
                 case 'vika_touch': // кика хохотач ахахахаххахахахахах
                 case 'vk4me':
@@ -175,6 +218,31 @@ class Post extends Postable
             "img"  => NULL
         ];
     }
+
+    function getPostSourceInfo(): array
+    {
+        $post_source = ["type" => "vk"];
+        if($this->getPlatform(true) !== NULL) {
+            $post_source = [
+                "type" => "api",
+                "platform" => $this->getPlatform(true)
+            ];
+        }
+
+        if($this->isUpdateAvatarMessage())
+            $post_source['data'] = 'profile_photo';
+        
+        return $post_source;
+    }
+
+    function getVkApiType(): string
+    {
+        $type = 'post';
+        if($this->getSuggestionType() != 0)
+            $type = 'suggest';
+
+        return $type;
+    }
     
     function pin(): void
     {
@@ -197,16 +265,25 @@ class Post extends Postable
         $this->save();
     }
     
-    function canBePinnedBy(User $user): bool
+    function canBePinnedBy(User $user = NULL): bool
     {
+        if(!$user)
+            return false;
+
         if($this->getTargetWall() < 0)
             return (new Clubs)->get(abs($this->getTargetWall()))->canBeModifiedBy($user);
         
         return $this->getTargetWall() === $user->getId();
     }
     
-    function canBeDeletedBy(User $user): bool
+    function canBeDeletedBy(User $user = NULL): bool
     {
+        if(!$user)
+            return false;
+        
+        if($this->getTargetWall() < 0 && !$this->getWallOwner()->canBeModifiedBy($user) && $this->getWallOwner()->getWallType() != 1 && $this->getSuggestionType() == 0)
+            return false;
+        
         return $this->getOwnerPost() === $user->getId() || $this->canBePinnedBy($user);
     }
     
@@ -224,7 +301,7 @@ class Post extends Postable
     {
         $liked = parent::toggleLike($user);
 
-        if($this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club) && !$this instanceof Comment)
+        if(!$user->isPrivateLikes() && $this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club) && !$this instanceof Comment)
             (new LikeNotification($this->getOwner(false), $this, $user))->emit();
 
         foreach($this->getChildren() as $attachment)
@@ -244,6 +321,139 @@ class Post extends Postable
         $this->setDeleted(1);
         $this->unwire();
         $this->save();
+    }
+
+    function canBeViewedBy(?User $user = NULL): bool
+    {
+        if($this->isDeleted()) {
+            return false;
+        }
+        
+        return $this->getWallOwner()->canBeViewedBy($user);
+    }
+    
+    function getSuggestionType()
+    {
+        return $this->getRecord()->suggested;
+    }
+
+    function getPageURL(): string
+    {
+        return "/wall".$this->getPrettyId();
+    }
+  
+    function toNotifApiStruct()
+    {
+        $res = (object)[];
+        
+        $res->id      = $this->getVirtualId();
+        $res->to_id   = $this->getOwner() instanceof Club ? $this->getOwner()->getId() * -1 : $this->getOwner()->getId();
+        $res->from_id = $res->to_id;
+        $res->date    = $this->getPublicationTime()->timestamp();
+        $res->text    = $this->getText(false);
+        $res->attachments = []; # todo
+
+        $res->copy_owner_id = NULL; # todo
+        $res->copy_post_id  = NULL; # todo
+
+        return $res;
+    }
+    
+    function canBeEditedBy(?User $user = NULL): bool
+    {
+        if(!$user)
+            return false;
+
+        if($this->isDeactivationMessage() || $this->isUpdateAvatarMessage())
+            return false;
+
+        if($this->getTargetWall() > 0)
+            return $this->getPublicationTime()->timestamp() + WEEK > time() && $user->getId() == $this->getOwner(false)->getId();
+        else {
+            if($this->isPostedOnBehalfOfGroup())
+                return $this->getWallOwner()->canBeModifiedBy($user);
+            else
+                return $user->getId() == $this->getOwner(false)->getId();
+        }
+
+        return $user->getId() == $this->getOwner(false)->getId();
+    }
+
+    function toRss(): \Bhaktaraz\RSSGenerator\Item
+    {
+        $domain = ovk_scheme(true).$_SERVER["HTTP_HOST"];
+        $description = $this->getText(false);
+        $title = str_replace("\n", "", ovk_proc_strtr($description, 79));
+        $description_html = $description;
+        $url = $domain."/wall".$this->getPrettyId();
+
+        if($this->isUpdateAvatarMessage())
+            $title = tr('upd_in_general');
+        if($this->isDeactivationMessage())
+            $title = tr('post_deact_in_general');
+
+        $author = $this->getOwner();
+        $target_wall = $this->getWallOwner();
+        $author_name = escape_html($author->getCanonicalName());
+        if($this->isExplicit())
+            $title = 'NSFW: ' . $title;
+
+        foreach($this->getChildren() as $child) {
+            if($child instanceof Photo) {
+                $child_page = $domain.$child->getPageURL();
+                $child_url = $child->getURL();
+                $description_html .= "<br /><a href='$child_page'><img src='$child_url'></a><br />";
+            } elseif($child instanceof Video) {
+                $child_page = $domain.'/video'.$child->getPrettyId();
+
+                if($child->getType() != 1) {
+                    $description_html .= "".
+                    "<br />".
+                    "<video width=\"320\" height=\"240\" controls><source src=\"".$child->getURL()."\" type=\"video/mp4\"></video><br />".
+                    "<b>".escape_html($child->getName())."</b><br />";
+                } else {
+                    $description_html .= "".
+                    "<br />".
+                    "<a href=\"".$child->getVideoDriver()->getURL()."\"><b>".escape_html($child->getName())."</b></a><br />";
+                }
+            } elseif($child instanceof Audio) {
+                if(!$child->isWithdrawn()) {
+                    $description_html .= "<br />"
+                    ."<b>".escape_html($child->getName())."</b>:"
+                    ."<br />"
+                    ."<audio controls>"
+                    ."<source src=\"".$child->getOriginalURL()."\" type=\"audio/mpeg\"></audio>"
+                    ."<br />";
+                }
+            } elseif($child instanceof Poll) {
+                $description_html .= "<br />".tr('poll').": ".escape_html($child->getTitle());
+            } elseif($child instanceof Note) {
+                $description_html .= "<br />".tr('note').": ".escape_html($child->getName());
+            }
+        }
+
+        $description_html .= "<br />".tr('author').": <img width='15px' src='".$author->getAvatarURL()."'><a href='".$author->getURL()."'>" . $author_name . "</a>"; 
+        
+        if($target_wall->getRealId() != $author->getRealId())
+            $description_html .= "<br />".tr('on_wall').": <img width='15px' src='".$target_wall->getAvatarURL()."'><a href='".$target_wall->getURL()."'>" . escape_html($target_wall->getCanonicalName()) . "</a>"; 
+       
+        if($this->isSigned()) {
+            $signer = $this->getOwner(false);
+            $description_html .= "<br />".tr('sign_short').": <img width='15px' src='".$signer->getAvatarURL()."'><a href='".$signer->getURL()."'>" . escape_html($signer->getCanonicalName()) . "</a>"; 
+        }
+
+        if($this->hasSource())
+            $description_html .= "<br />".tr('source').": ".escape_html($this->getSource());
+
+        $item = new \Bhaktaraz\RSSGenerator\Item();
+        $item->title($title)
+        ->url($url)
+        ->guid($url)
+        ->creator($author_name)
+        ->pubDate($this->getPublicationTime()->timestamp())
+        ->content(str_replace("\n", "<br />", $description_html));
+
+        return $item;
     }
 
     function getGeo(): ?object

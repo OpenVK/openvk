@@ -2,7 +2,7 @@
 namespace openvk\ServiceAPI;
 use openvk\Web\Models\Entities\Post;
 use openvk\Web\Models\Entities\User;
-use openvk\Web\Models\Repositories\{Posts, Notes};
+use openvk\Web\Models\Repositories\{Posts, Notes, Videos};
 
 class Wall implements Handler
 {
@@ -15,14 +15,21 @@ class Wall implements Handler
         $this->user  = $user;
         $this->posts = new Posts;
         $this->notes = new Notes;
+        $this->videos = new Videos;
     }
     
     function getPost(int $id, callable $resolve, callable $reject): void
     {
         $post = $this->posts->get($id);
         if(!$post || $post->isDeleted())
-            $reject("No post with id=$id");
+            $reject(53, "No post with id=$id");
+
+        if($post->getSuggestionType() != 0)
+            $reject(25, "Can't get suggested post");
         
+        if(!$post->canBeViewedBy($this->user))
+            $reject(12, "Access denied");
+
         $res = (object) [];
         $res->id     = $post->getId();
         $res->wall   = $post->getTargetWall();
@@ -72,27 +79,5 @@ class Wall implements Handler
         $post->save();
         
         $resolve($post->getId());
-    }
-
-    function getMyNotes(callable $resolve, callable $reject)
-    {
-        $count   = $this->notes->getUserNotesCount($this->user);
-        $myNotes = $this->notes->getUserNotes($this->user, 1, $count);
-
-        $arr = [
-            "count"  => $count,
-            "closed" => $this->user->getPrivacySetting("notes.read"),
-            "items"  => [],
-        ];
-
-        foreach($myNotes as $note) {
-            $arr["items"][] = [
-                "id"      => $note->getId(),
-                "name"    => ovk_proc_strtr($note->getName(), 30),
-                #"preview" => $note->getPreview() 
-            ];
-        }
-
-        $resolve($arr);
     }
 }

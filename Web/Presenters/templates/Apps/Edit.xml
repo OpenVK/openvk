@@ -101,12 +101,6 @@
     </div>
 
     <script>
-        async function withdraw(id) {
-            let coins = await API.Apps.withdrawFunds(id);
-            if(coins == 0)
-                MessageBox({_app_withdrawal}, {_app_withdrawal_empty}, ["OK"], [Function.noop]);
-            else
-                MessageBox({_app_withdrawal}, {tr("app_withdrawal_created", $coins)}, ["OK"], [Function.noop]);
-        }
+        window.coins = {$coins}
     </script>
 {/block}

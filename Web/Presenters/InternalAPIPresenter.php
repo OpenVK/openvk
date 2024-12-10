@@ -1,5 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
+use openvk\Web\Models\Repositories\{Posts, Comments};
 use MessagePack\MessagePack;
 use Chandler\Session\Session;
 
@@ -93,6 +94,74 @@ final class InternalAPIPresenter extends OpenVKPresenter
             $this->returnJson([
                 "success" => 0
             ]);
+        }
+    }
+
+    function renderGetPhotosFromPost(int $owner_id, int $post_id) {
+        if($_SERVER["REQUEST_METHOD"] !== "POST") {
+            header("HTTP/1.1 405 Method Not Allowed");
+            exit("иди нахуй заебал");
+        }
+
+        if($this->postParam("parentType", false) == "post") {
+            $post = (new Posts)->getPostById($owner_id, $post_id, true);
+        } else {
+            $post = (new Comments)->get($post_id);
+        }
+    
+
+        if(is_null($post)) {
+            $this->returnJson([
+                "success" => 0
+            ]);
+        } else {
+            $response = [];
+            $attachments = $post->getChildren();
+            foreach($attachments as $attachment) 
+            {
+                if($attachment instanceof \openvk\Web\Models\Entities\Photo)
+                {
+                    $response[$attachment->getPrettyId()] = [
+                        "url" => $attachment->getURLBySizeId('larger'),
+                        "id"  => $attachment->getPrettyId(),
+                    ];
+                }
+            }
+            $this->returnJson([
+                "success" => 1,
+                "body" => $response
+            ]);
+        }
+    }
+
+    function renderGetPostTemplate(int $owner_id, int $post_id) {
+        if($_SERVER["REQUEST_METHOD"] !== "POST") {
+            header("HTTP/1.1 405 Method Not Allowed");
+            exit("ты‍ не по адресу");
+        }
+
+        $type = $this->queryParam("type", false);
+        if($type == "post") {
+            $post = (new Posts)->getPostById($owner_id, $post_id, true);
+        } else {
+            $post = (new Comments)->get($post_id);
+        }
+
+        if(!$post || !$post->canBeEditedBy($this->user->identity)) {
+            exit('');
+        }
+
+        header("Content-Type: text/plain");
+        
+        if($type == 'post') {
+            $this->template->_template = 'components/post.xml';
+            $this->template->post = $post;
+            $this->template->commentSection = false;
+        } elseif($type == 'comment') {
+            $this->template->_template = 'components/comment.xml';
+            $this->template->comment = $post;
+        } else {
+            exit('');
         }
     }
 }
