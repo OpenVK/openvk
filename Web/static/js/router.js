@@ -164,6 +164,10 @@ window.router = new class {
             return false
         }
 
+        if(url.indexOf('#close') != -1) {
+            return false
+        }
+
         return true
     }
 
@@ -234,6 +238,11 @@ window.router = new class {
 }
 
 u(document).on('click', 'a', async (e) => {
+    if(e.defaultPrevented) {
+        console.log('AJAX | Skipping because default is prevented')
+        return
+    }
+
     const target = u(e.target).closest('a')
     const dom_url = target.attr('href')
     const id = target.attr('id')
@@ -289,6 +298,10 @@ u(document).on('click', 'a', async (e) => {
 })
 
 u(document).on('submit', 'form', async (e) => {
+    if(e.defaultPrevented) {
+        return
+    }
+
     if(u('#ajloader').hasClass('shown')) {
         e.preventDefault()
         return

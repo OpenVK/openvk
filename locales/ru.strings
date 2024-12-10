@@ -223,6 +223,7 @@
 "detach" = "Открепить";
 "attach_photo" = "Прикрепить фото";
 "attach_video" = "Прикрепить видео";
+"attach_geotag" = "Прикрепить геометку";
 "draw_graffiti" = "Нарисовать граффити";
 "no_posts_abstract" = "Здесь никто ничего не написал... Пока.";
 "attach_no_longer_available" = "Это вложение больше недоступно.";
@@ -259,6 +260,15 @@
 "liked_by_x_people_many" = "Понравилось $1 людям";
 "liked_by_x_people_other" = "Понравилось $1 людям";
 "liked_by_x_people_zero" = "Никому не понравилось";
+
+"geo_place" = "Место";
+"geotag" = "Геолокация";
+"nearest_posts" = "Ближайшие посты";
+"Latitude" = "Широта";
+"longitude" = "Долгота";
+"name_of_the_place" = "Название места";
+"no_nearest_posts" = "Нет ближайших постов";
+"shown_last_nearest_posts" = "Показаны последние $1 постов за месяц";
 
 /* Friends */
 
@@ -1507,6 +1517,8 @@
 "error_adding_source_long" = "Ошибка добавления источника: слишком длинная ссылка.";
 "error_adding_source_sus" = "Ошибка добавления источника: гиперссылка заблокирована.";
 "error_playlist_creating_too_small" = "Добавь хотя бы одну аудиозапись.";
+"error_geolocation" = "Ошибка при прикреплении геометки";
+"error_no_geotag" = "У поста не указана гео-метка";
 
 /* Admin actions */
 

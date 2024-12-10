@@ -206,6 +206,9 @@ final class Wall extends VKAPIRequestHandler
             if($post->isDeactivationMessage())
                 $post_temp_obj->final_post = 1;
 
+            if($post->getGeo())
+                $post_temp_obj->geo = $post->getVkApiGeo();
+
             $items[] = $post_temp_obj;
 
             if ($from_id > 0)
@@ -321,14 +324,10 @@ final class Wall extends VKAPIRequestHandler
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Video) {
                         $attachments[] = $attachment->getApiStructure($this->getUser());
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Note) {
-                        if(VKAPI_DECL_VER === '4.100') {
-                            $attachments[] = $attachment->toVkApiStruct();
-                        } else {
-                            $attachments[] = [
-                                'type' => 'note',
-                                'note' => $attachment->toVkApiStruct()
-                            ];
-                        }
+                        $attachments[] = [
+                            'type' => 'note',
+                            'note' => $attachment->toVkApiStruct()
+                        ];
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Audio) {
                         $attachments[] = [
                             "type" => "audio",
@@ -419,6 +418,9 @@ final class Wall extends VKAPIRequestHandler
                 if($post->isDeactivationMessage())
                     $post_temp_obj->final_post = 1;
 
+                if($post->getGeo())
+                    $post_temp_obj->geo = $post->getVkApiGeo();
+
                 $items[] = $post_temp_obj;
 
                 if ($from_id > 0)
@@ -493,7 +495,11 @@ final class Wall extends VKAPIRequestHandler
             ];
     }
 
-    function post(string $owner_id, string $message = "", string $copyright = "", int $from_group = 0, int $signed = 0, string $attachments = "", int $post_id = 0): object
+    function post(string $owner_id, string $message = "", string $copyright = "", int $from_group = 0, int $signed = 0, string $attachments = "", int $post_id = 0,
+    float $lat = NULL,
+    float $long = NULL,
+    string $place_name = ''
+    ): object
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -599,6 +605,45 @@ final class Wall extends VKAPIRequestHandler
                 } catch(\Throwable) {}
             }
           
+            /*$info = file_get_contents("https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=jsonv2", false, stream_context_create([
+                'http' => [
+                    'method' => 'GET',
+                    'header' => implode("\r\n", [
+                        'User-Agent: Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.2 (KHTML, like Gecko) Chrome/22.0.1216.0 Safari/537.2',
+                        "Referer: https://$_SERVER[SERVER_NAME]/"
+                    ])
+                ]
+            ]));
+
+            if ($info) {
+                $info = json_decode($info, true, JSON_UNESCAPED_UNICODE);
+                if (key_exists("place_id", $info)) {
+                    $geo["name"] = $info["name"] ?? $info["display_name"];
+                }
+            }*/
+            if($lat && $long) {
+                if(($lat > 90 || $lat < -90) || ($long > 180 || $long < -180)) {
+                    $this->fail(-785, 'Invalid geo info');
+                }
+
+                $latitude = number_format((float) $lat, 8, ".", '');
+                $longitude = number_format((float) $long, 8, ".", '');
+
+                $res = [
+                    'lat' => $latitude,
+                    'lng' => $longitude
+                ];
+                if($place_name && mb_strlen($place_name) > 0) {
+                    $res['name'] = $place_name;
+                } else {
+                    $res['name'] = 'Geopoint';
+                }
+
+                $post->setGeo(json_encode($res));
+                $post->setGeo_Lat($latitude);
+                $post->setGeo_Lon($longitude);
+            }
+
             if($should_be_suggested)
                 $post->setSuggested(1);
 
@@ -1127,6 +1172,52 @@ final class Wall extends VKAPIRequestHandler
         
         $post->unpin();
         return 1;
+    }
+
+    function getNearby(int $owner_id, int $post_id)
+    {
+        $this->requireUser();
+
+        $post = (new PostsRepo)->getPostById($owner_id, $post_id);
+        if(!$post || $post->isDeleted())
+            $this->fail(100, "One of the parameters specified was missing or invalid: post_id is undefined");
+
+        if(!$post->canBeViewedBy($this->getUser()))
+            $this->fail(15, "Access denied");
+
+        $lat = $post->getLat();
+        $lon = $post->getLon();
+
+        if(!$lat || !$lon)
+            $this->fail(-97, "Post doesn't contains geo");
+
+        $query = file_get_contents(__DIR__ . "/../../Web/Models/sql/get-nearest-posts.tsql");
+        $_posts = \Chandler\Database\DatabaseConnection::i()->getContext()->query($query, $lat, $lon, $post->getId())->fetchAll();
+        $posts = [];
+
+        foreach($_posts as $post) {
+            $distance = $post["distance"];
+            $post = (new PostsRepo)->get($post["id"]);
+            if (!$post || $post->isDeleted() || !$post->canBeViewedBy($this->getUser())) continue;
+
+            $owner = $post->getOwner();
+            $preview = mb_substr($post->getText(), 0, 50) . (strlen($post->getText()) > 50 ? "..." : "");
+            $posts[] = [
+                "message" => strlen($preview) > 0 ? $preview : "(нет текста)",
+                "url" => "/wall" . $post->getPrettyId(),
+                "created" => $post->getPublicationTime()->html(),
+                "owner" => [
+                    "domain" => $owner->getURL(),
+                    "photo_50" => $owner->getAvatarURL(),
+                    "name" => $owner->getCanonicalName(),
+                    "verified" => $owner->isVerified(),
+                ],
+                "geo" => $post->getGeo(),
+                "distance" => $distance
+            ];
+        }
+
+        return $posts;
     }
 
     private function getApiPhoto($attachment) {
