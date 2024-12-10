@@ -90,10 +90,12 @@
                             </div>
                         </div>
                     </div>
-                    <div n:if="$post->getGeo()" style="padding: 4px;">
-                        <div style="border-bottom: #ECECEC solid 1px;" />
-                        <div style="cursor: pointer; padding: 4px;" onclick="javascript:openGeo({$post->getGeo()}, {$post->getOwner()->getId()}, {$post->getVirtualId()})">
-                            <b>{_geotag}</b>: <a>{$post->getGeo()->name ?? tr("admin_open")}</a>
+                    <div n:if="$post->getGeo()" class="post-geo">
+                        <div onclick="javascript:openGeo({$post->getGeo()}, {$post->getTargetWall()}, {$post->getVirtualId()})">
+                            <svg class="map_svg_icon" width="13" height="12" viewBox="0 0 3.4395833 3.175">
+                                <g><path d="M 1.7197917 0.0025838216 C 1.1850116 0.0049444593 0.72280427 0.4971031 0.71520182 1.0190592 C 0.70756921 1.5430869 1.7223755 3.1739665 1.7223755 3.1739665 C 1.7223755 3.1739665 2.7249195 1.5439189 2.7243815 0.99632161 C 2.7238745 0.48024825 2.2492929 0.00024648357 1.7197917 0.0025838216 z M 1.7197917 0.52606608 A 0.48526123 0.48526123 0 0 1 2.2050334 1.0113078 A 0.48526123 0.48526123 0 0 1 1.7197917 1.4965495 A 0.48526123 0.48526123 0 0 1 1.23455 1.0113078 A 0.48526123 0.48526123 0 0 1 1.7197917 0.52606608 z " /></g>
+                            </svg>
+                            <a>{$post->getGeo()->name ?? tr("admin_open")}</a>
                         </div>
                     </div>
                     <div n:if="$suggestion && $canBePinned" class="suggestionControls" style="margin-bottom: 7px;">

@@ -260,11 +260,15 @@
 "liked_by_x_people_many" = "Понравилось $1 людям";
 "liked_by_x_people_other" = "Понравилось $1 людям";
 "liked_by_x_people_zero" = "Никому не понравилось";
-"geotag" = "Геоточка";
+
+"geo_place" = "Место";
+"geotag" = "Геолокация";
 "nearest_posts" = "Ближайшие посты";
 "Latitude" = "Широта";
 "longitude" = "Долгота";
 "name_of_the_place" = "Название места";
+"no_nearest_posts" = "Нет ближайших постов";
+"shown_last_nearest_posts" = "Показаны последние $1 постов за месяц";
 
 /* Friends */
 

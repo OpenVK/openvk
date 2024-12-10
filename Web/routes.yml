@@ -145,8 +145,6 @@ routes:
       handler: "Wall->decline"
     - url: "/{text}/{num}_{num}/likes"
       handler: "Wall->likers"
-    - url: "/wall{num}_{num}/nearest"
-      handler: "Wall->nearest"
     - url: "/blob_{text}/{?path}.{text}"
       handler: "Blob->file"
       placeholders:

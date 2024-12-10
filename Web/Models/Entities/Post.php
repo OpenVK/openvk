@@ -472,6 +472,14 @@ class Post extends Postable
     {
         return (float) $this->getRecord()->geo_lon ?? NULL;
     }
+
+    function getVkApiGeo(): object
+    {
+        return (object) [
+            'type'  => 'point',
+            'coordinates' => $this->getLat() . ',' . $this->getLon(),
+        ];
+    }
     
     use Traits\TRichText;
 }

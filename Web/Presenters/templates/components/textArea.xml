@@ -60,7 +60,7 @@
             <input type="hidden" name="vertical_attachments" value="" autocomplete="off" />
             <input type="hidden" name="poll" value="none" autocomplete="off" />
             <input type="hidden" id="source" name="source" value="none" autocomplete="off" />
-            <input type="hidden" id="geo" name="geo" value="none" />
+            <input type="hidden" name="geo" value="" autocomplete="off" />
             <input type="hidden" name="type" value="1" autocomplete="off" />
             <input type="hidden" name="hash" value="{$csrfToken}" />
             <br/>
@@ -98,9 +98,9 @@
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/office-chart-bar-stacked.png" />
                         {_poll}
                     </a>
-                    <a n:if="$geo ?? false" href="javascript:initGeo({$textAreaId})">
+                    <a n:if="$geo ?? false" id="__geoAttacher">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/apps/amarok.png" />
-                        Гео-метка
+                        {_geo_place}
                     </a>
                     <a n:if="$hasSource ?? false" id='__sourceAttacher'>
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/insert-link.png" />

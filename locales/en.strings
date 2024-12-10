@@ -282,11 +282,14 @@
 "liked_by_x_people_other" = "Liked by $1 users";
 "liked_by_x_people_zero" = "Nobody liked";
 
+"geo_place" = "Place";
 "geotag" = "Geotag";
 "nearest_posts" = "Nearest posts";
 "Latitude" = "Latitude";
 "longitude" = "Longitude";
-"name_of_the_place" = "Name of the place";
+"name_of_the_place" = "Place's name";
+"no_nearest_posts" = "No nearby posts";
+"shown_last_nearest_posts" = "Showing last $1 posts per month";
 
 /* Friends */
 
