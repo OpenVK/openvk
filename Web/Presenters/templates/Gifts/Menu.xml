@@ -17,7 +17,7 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getThumbnailURL()}" width="75" alt="{$x->getName(tr('__lang'))}" />
+    <img src="{$x->getThumbnailURL()}" width="75" alt="{$x->getName(tr('__lang'))}" loading=lazy />
 {/block}
 
 {block name}

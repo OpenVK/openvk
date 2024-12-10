@@ -4,77 +4,72 @@
 
 {block header}
     {ifset $album}
-        <a href="{$album->getOwner()->getURL()}">
-            {$album->getOwner()->getCanonicalName()}
+        {var $album_owner = $album->getOwner()}
+        <a href="{$album_owner->getURL()}">
+            {$album_owner->getCanonicalName()}
         </a>
-        {if ($album->getOwner() instanceof openvk\Web\Models\Entities\Club)}
-            » <a href="/albums{$album->getOwner()->getId() * -1}">{_albums}</a>
+        {if ($album_owner instanceof openvk\Web\Models\Entities\Club)}
+            » <a href="/albums{$album_owner->getId() * -1}">{_albums}</a>
         {else}
-            » <a href="/albums{$album->getOwner()->getId()}">{_albums}</a>
+            » <a href="/albums{$album_owner->getId()}">{_albums}</a>
         {/if}
         » <a href="/album{$album->getPrettyId()}">{$album->getName()}</a>
     {else}
-        <a href="{$photo->getOwner()->getURL()}">{$photo->getOwner()->getCanonicalName()}</a>
+        <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
     {/ifset}
     » {_photo}
 {/block}
 
 {block content}
-    <center style="margin-bottom: 8pt;">
-        <img src="{$photo->getURLBySizeId('large')}" style="max-width: 80%; max-height: 60vh;" />
-    </center>
-    
-    <hr/>
-    
-    <div style="width: 100%; min-height: 100px;">
-        <div style="float: left; min-height: 100px; width: 70%;">
-            {include "../components/comments.xml", comments => $comments, count => $cCount, page => $cPage, model => "photos", parent => $photo}
+    <div class='media-page-wrapper photo-page-wrapper'>
+        <div class='photo-page-wrapper-photo'>
+            <img src="{$photo->getURLBySizeId('large')}" />
         </div>
-        <div style="float: left; min-height: 100px; width: 30%;">
-            <div>
-                <h4>{_information}</h4>
-                <span style="color: grey;">{_info_description}:</span>
-                {$photo->getDescription() ?? "(" . tr("none") . ")"}<br/>
-                <span style="color: grey;">{_info_uploaded_by}:</span>
-                <a href="{$photo->getOwner()->getURL()}">{$photo->getOwner()->getFullName()}</a><br/>
-                <span style="color: grey;">{_info_upload_date}:</span>
-                {$photo->getPublicationTime()}
+        
+        <div class='ovk-photo-details'>
+            <div class='media-page-wrapper-description'>
+                <p n:if='!empty($photo->getDescription())'>{$photo->getDescription()}</p>
+                <div class='upload_time'>
+                    {_info_upload_date}: {$photo->getPublicationTime()}
+                    {if isset($thisUser)}
+                        |
+                        {var $liked = $photo->hasLikeFrom($thisUser)}
+                        {var $likesCount = $photo->getLikesCount()}
+                        <div class='like_wrap tidy'>
+                            <a href="/photo{$photo->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$photo->getPrettyId()}" data-type='photo'>
+                                <div class="heart" id="{if $liked}liked{/if}"></div>
+                                <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
+                            </a>
+                        </div>
+                    {/if}
+                </div>
             </div>
-            <br/>
-            <h4>{_actions}</h4>
-            {if $thisUser->getId() != $photo->getOwner()->getId()}
-                {var canReport = true}
-            {/if}
-            <div n:if="isset($thisUser) && $thisUser->getId() === $photo->getOwner()->getId()">
-                <a href="/photo{$photo->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">{_edit}</a>
-                <a id="_photoDelete" href="/photo{$photo->getPrettyId()}/delete" class="profile_link" style="display:block;width:96%;">{_delete}</a>
-            </div>
-            <a href="{$photo->getURL()}" class="profile_link" target="_blank" style="display:block;width:96%;">{_"open_original"}</a>
-            <a n:if="$canReport ?? false" class="profile_link" style="display:block;width:96%;" href="javascript:reportPhoto()">{_report}</a>
-            <script n:if="$canReport ?? false">
-                function reportPhoto() {
-                uReportMsgTxt  = "Вы собираетесь пожаловаться на данную фотографию.";
-                uReportMsgTxt += "<br/>Что именно вам кажется недопустимым в этом материале?";
-                uReportMsgTxt += "<br/><br/><b>Причина жалобы</b>: <input type='text' id='uReportMsgInput' placeholder='Причина' />"
 
-                MessageBox("Пожаловаться?", uReportMsgTxt, ["Подтвердить", "Отмена"], [
-                    (function() {
-                        res = document.querySelector("#uReportMsgInput").value;
-                        xhr = new XMLHttpRequest();
-                        xhr.open("GET", "/report/" + {$photo->getId()} + "?reason=" + res + "&type=photo", true);
-                        xhr.onload = (function() {
-                        if(xhr.responseText.indexOf("reason") === -1)
-                            MessageBox("Ошибка", "Не удалось подать жалобу...", ["OK"], [Function.noop]);
-                        else
-                            MessageBox("Операция успешна", "Скоро её рассмотрят модераторы", ["OK"], [Function.noop]);
-                        });
-                        xhr.send(null);
-                        }),
-                    Function.noop
-                ]);
-                }
-            </script>
-            <a href="{$photo->getURL()}" class="profile_link" target="_blank" style="display:block;width:96%;">{_open_original}</a>
+            <hr/>
+            
+            <div class="media-page-wrapper-details">
+                <div class='media-page-wrapper-comments'>
+                    {include "../components/comments.xml", comments => $comments, count => $cCount, page => $cPage, model => "photos", parent => $photo, custom_id => 999}
+                </div>
+                <div class='media-page-wrapper-actions'>
+                    <a href="{$owner->getURL()}" class='media-page-author-block'>
+                        <img class='cCompactAvatars' src="{$owner->getAvatarURL('miniscule')}">
+
+                        <div class='media-page-author-block-name'>
+                            <b>{$owner->getCanonicalName()}</b>
+                        </div>
+                    </a>
+                    <div n:if="isset($thisUser) && $thisUser->getId() === $photo->getOwner()->getId()">
+                        <a href="/photo{$photo->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">{_edit}</a>
+                        <a id="_photoDelete" href="/photo{$photo->getPrettyId()}/delete" class="profile_link" style="display:block;width:96%;">{_delete}</a>
+                    </div>
+                    <a href="{$photo->getURL()}" class="profile_link" target="_blank" style="display:block;width:96%;">{_"open_original"}</a>
+                    <a n:if="isset($thisUser) && $thisUser->getId() != $photo->getOwner()->getId()" class="profile_link" style="display:block;width:96%;" href="javascript:reportPhoto({$photo->getId()})">{_report}</a>
+                    <a n:if="isset($thisUser)" onclick="javascript:repost({$photo->getPrettyId()}, 'photo')" class="profile_link" style="display:block;width:96%;">
+                        {_share}
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 {/block}

@@ -2,6 +2,7 @@
 {var $iterator = $user->getClubs($page, $admin)}
 {var $count    = $user->getClubCount($admin)}
 
+{block noscroll}{/block}
 {block title}
     {_groups}
 {/block} 
@@ -48,7 +49,7 @@
 {/block}
 
 {block preview}
-    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="Фотография группы" />
+    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="Фотография группы" loading=lazy />
 {/block}
 
 {block name}{/block}
@@ -121,8 +122,8 @@
                 <h4>{_search_group}</h4>
                 <span>{_search_group_desc}</span>
                 <form action="/search">
-                    <input name="type" type="hidden" value="groups">
-                    <input name="query" class="header_search_input" value="" style="background: none; width: 155px; padding-left: 3px;">
+                    <input name="section" type="hidden" value="groups">
+                    <input name="q" class="header_search_input" value="" style="background: none; width: 155px; padding-left: 3px;">
                     <button class="button">{_search_by_groups}</button>
                 </form>
             </div>

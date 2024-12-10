@@ -3,7 +3,7 @@ namespace openvk\Web\Models\Entities;
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{User, Manager};
-use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Managers};
+use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Managers, Posts};
 use Nette\Database\Table\{ActiveRow, GroupedSelection};
 use Chandler\Database\DatabaseConnection as DB;
 use Chandler\Security\User as ChandlerUser;
@@ -23,6 +23,10 @@ class Club extends RowModel
     const NOT_RELATED  = 0;
     const SUBSCRIBED   = 1;
     const REQUEST_SENT = 2;
+
+    const WALL_CLOSED   = 0;
+    const WALL_OPEN     = 1;
+    const WALL_LIMITED  = 2;
     
     function getId(): int
     {
@@ -38,12 +42,18 @@ class Club extends RowModel
         return iterator_to_array($avPhotos)[0] ?? NULL;
     }
     
-    function getAvatarUrl(string $size = "miniscule"): string
+    function getAvatarUrl(string $size = "miniscule", $avPhoto = NULL): string
     {
         $serverUrl = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
-        $avPhoto   = $this->getAvatarPhoto();
+        if(!$avPhoto)
+            $avPhoto = $this->getAvatarPhoto();
         
         return is_null($avPhoto) ? "$serverUrl/assets/packages/static/openvk/img/camera_200.png" : $avPhoto->getURLBySizeId($size);
+    }
+
+    function getWallType(): int
+    {
+        return $this->getRecord()->wall;
     }
     
     function getAvatarLink(): string
@@ -143,6 +153,11 @@ class Club extends RowModel
         return (bool) $this->getRecord()->hide_from_global_feed;
     }
 
+    function isHidingFromGlobalFeedEnforced(): bool
+    {
+        return (bool) $this->getRecord()->enforce_hiding_from_global_feed;
+    }
+
     function getType(): int
     {
         return $this->getRecord()->type;
@@ -181,6 +196,14 @@ class Club extends RowModel
         
         $this->stateChanges("shortcode", $code);
         return true;
+    }
+
+    function setWall(int $type)
+    {
+        if($type > 2 || $type < 0)
+            throw new \LogicException("Invalid wall");
+
+        $this->stateChanges("wall", $type);
     }
     
     function isSubscriptionAccepted(User $user): bool
@@ -224,7 +247,7 @@ class Club extends RowModel
                     "shape" => "spline",
                     "color" => "#597da3",
                 ],
-                "name" => $unique ? "Полный охват" : "Все просмотры",
+                "name" => $unique ? tr("full_coverage") : tr("all_views"),
             ],
             "subs"  => [
                 "x" => array_reverse(range(1, 7)),
@@ -235,7 +258,7 @@ class Club extends RowModel
                     "color" => "#b05c91",
                 ],
                 "fill" => "tozeroy",
-                "name" => $unique ? "Охват подписчиков" : "Просмотры подписчиков",
+                "name" => $unique ? tr("subs_coverage") : tr("subs_views"),
             ],
             "viral" => [
                 "x" => array_reverse(range(1, 7)),
@@ -246,7 +269,7 @@ class Club extends RowModel
                     "color" => "#4d9fab",
                 ],
                 "fill" => "tozeroy",
-                "name" => $unique ? "Виральный охват" : "Виральные просмотры",
+                "name" => $unique ? tr("viral_coverage") : tr("viral_views"),
             ],
         ];
     }
@@ -290,6 +313,21 @@ class Club extends RowModel
             
             yield $rel;
         }
+    }
+
+    function getSuggestedPostsCount(User $user = NULL)
+    {
+        $count = 0;
+
+        if(is_null($user))
+            return NULL;
+
+        if($this->canBeModifiedBy($user))
+            $count = (new Posts)->getSuggestedPostsCount($this->getId());
+        else
+            $count = (new Posts)->getSuggestedPostsCountByUser($this->getId(), $user->getId());
+
+        return $count;
     }
     
     function getManagers(int $page = 1, bool $ignoreHidden = false): \Traversable
@@ -367,40 +405,96 @@ class Club extends RowModel
         $this->save();
     }
 
+    function canBeViewedBy(?User $user = NULL)
+    {
+        return is_null($this->getBanReason());
+    }
+
     function getAlert(): ?string
     {
         return $this->getRecord()->alert;
     }
-    
-    function toVkApiStruct(?User $user = NULL): object
+
+    function getRealId(): int
     {
-        $res = [];
+        return $this->getId() * -1;
+    }
+
+    function isEveryoneCanUploadAudios(): bool
+    {
+        return (bool) $this->getRecord()->everyone_can_upload_audios;
+    }
+
+    function canUploadAudio(?User $user): bool
+    {
+        if(!$user)
+            return NULL;
+
+        return $this->isEveryoneCanUploadAudios() || $this->canBeModifiedBy($user);
+    }
+
+    function getAudiosCollectionSize()
+    {
+        return (new \openvk\Web\Models\Repositories\Audios)->getClubCollectionSize($this);
+    }
+    
+    function toVkApiStruct(?User $user = NULL, string $fields = ''): object
+    {
+        $res = (object) [];
 
         $res->id          = $this->getId();
         $res->name        = $this->getName();
-        $res->screen_name = $this->getShortCode();
-        $res->is_closed   = 0;
+        $res->screen_name = $this->getShortCode() ?? "club".$this->getId();
+        $res->is_closed   = false;
+        $res->type        = 'group';
+        $res->is_member   = $user ? (int)$this->getSubscriptionStatus($user) : 0;
         $res->deactivated = NULL;
-        $res->is_admin    = $this->canBeModifiedBy($user);
+        $res->can_access_closed = true;
 
-        if($this->canBeModifiedBy($user)) {
-            $res->admin_level = 3;
+        if(!is_array($fields))
+            $fields = explode(',', $fields);
+        
+        $avatar_photo  = $this->getAvatarPhoto();
+        foreach($fields as $field) {
+            switch($field) {
+                case 'verified':
+                    $res->verified = (int)$this->isVerified();
+                    break;
+                case 'site':
+                    $res->site = $this->getWebsite();
+                    break;
+                case 'description':
+                    $res->description = $this->getDescription();
+                    break;
+                case 'background':
+                    $res->background = $this->getBackDropPictureURLs();
+                    break;
+                case 'photo_50':
+                    $res->photo_50 = $this->getAvatarUrl('miniscule', $avatar_photo);
+                    break;
+                case 'photo_100':
+                    $res->photo_100 = $this->getAvatarUrl('tiny', $avatar_photo);
+                    break;
+                case 'photo_200':
+                    $res->photo_200 = $this->getAvatarUrl('normal', $avatar_photo);
+                    break;
+                case 'photo_max':
+                    $res->photo_max = $this->getAvatarUrl('original', $avatar_photo);
+                    break;
+                case 'members_count':
+                    $res->members_count = $this->getFollowersCount();
+                    break;
+                case 'real_id':
+                    $res->real_id = $this->getRealId();
+                    break;
+            }
         }
 
-        $res->is_member  = $this->getSubscriptionStatus($user) ? 1 : 0;
-
-        $res->type       = "group";
-        $res->photo_50   = $this->getAvatarUrl("miniscule");
-        $res->photo_100  = $this->getAvatarUrl("tiny");
-        $res->photo_200  = $this->getAvatarUrl("normal");
-
-        $res->can_create_topic = $this->canBeModifiedBy($user) ? 1 : ($this->isEveryoneCanCreateTopics() ? 1 : 0);
-
-        $res->can_post         = $this->canBeModifiedBy($user) ? 1 : ($this->canPost() ? 1 : 0);
-
-        return (object) $res;
+        return $res;
     }
 
     use Traits\TBackDrops;
     use Traits\TSubscribable;
+    use Traits\TAudioStatuses;
+    use Traits\TIgnorable;
 }

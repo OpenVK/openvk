@@ -7,12 +7,13 @@
 
 {block header}
     {$name}
-    <a style="float: right;" onClick="reportApp()" n:if="$canReport ?? false">Пожаловаться</a>
+    <a style="float: right;" onClick="reportApp({$id})" n:if="$canReport ?? false">{_report}</a>
 {/block}
 
 {block content}
     <center>
-        <iframe id="appFrame" referrerpolicy="unsafe-url" sandbox="allow-scripts" frameBorder="0" src="{$url}" height="600" width="600"></iframe>
+        <iframe id="appFrame" referrerpolicy="unsafe-url" frameBorder="0" src="{$url}" height="600" width="600"
+            sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-downloads-without-user-activation"></iframe>
     </center>
 
     <div n:if="!is_null($news)" id="news">
@@ -33,30 +34,6 @@
         window.appTitle  = {$name};
         window.appPerms  = {$perms};
         window.appOrigin = {$origin};
-    </script>
-
-    <script n:if="$canReport ?? false">
-        function reportApp() {
-            uReportMsgTxt  = "Вы собираетесь пожаловаться на данное приложение.";
-            uReportMsgTxt += "<br/>Что именно вам кажется недопустимым в этом материале?";
-            uReportMsgTxt += "<br/><br/><b>Причина жалобы</b>: <input type='text' id='uReportMsgInput' placeholder='Причина' />"
-
-            MessageBox("Пожаловаться?", uReportMsgTxt, ["Подтвердить", "Отмена"], [
-                (function() {
-                    res = document.querySelector("#uReportMsgInput").value;
-                    xhr = new XMLHttpRequest();
-                    xhr.open("GET", "/report/" + {$id} + "?reason=" + res + "&type=app", true);
-                    xhr.onload = (function() {
-                    if(xhr.responseText.indexOf("reason") === -1)
-                        MessageBox("Ошибка", "Не удалось подать жалобу...", ["OK"], [Function.noop]);
-                    else
-                        MessageBox("Операция успешна", "Скоро её рассмотрят модераторы", ["OK"], [Function.noop]);
-                    });
-                    xhr.send(null);
-                }),
-                Function.noop
-            ]);
-        }
     </script>
 
     {script "js/al_games.js"}

@@ -1,11 +1,11 @@
 {extends "@layout.xml"}
 
 {block title}
-    Логи
+    {_logs}
 {/block}
 
 {block heading}
-    Логи
+    {_logs}
 {/block}
 
 {block content}
@@ -18,23 +18,23 @@
     </style>
     <form class="aui">
     <div>
-        <select class="select medium-field" type="number" id="type" name="type" placeholder="Тип изменения">
-            <option value="any" n:attr="selected => !$type">Любое</option>
-            <option value="0" n:attr="selected => $type === 0">Создание</option>
-            <option value="1" n:attr="selected => $type === 1">Редактирование</option>
-            <option value="2" n:attr="selected => $type === 2">Удаление</option>
-            <option value="3" n:attr="selected => $type === 3">Восстановление</option>
+        <select class="select medium-field" type="number" id="type" name="type" placeholder="{_logs_change_type}">
+            <option value="any" n:attr="selected => !$type">{_logs_anything}</option>
+            <option value="0" n:attr="selected => $type === 0">{_logs_adding}</option>
+            <option value="1" n:attr="selected => $type === 1">{_logs_editing}</option>
+            <option value="2" n:attr="selected => $type === 2">{_logs_removing}</option>
+            <option value="3" n:attr="selected => $type === 3">{_logs_restoring}</option>
         </select>
-        <input class="text medium-field" type="number" id="id" name="id" placeholder="ID записи" n:attr="value => $id"/>
-        <input class="text medium-field" type="text" id="uid" name="uid" placeholder="UUID пользователя" n:attr="value => $user"/>
+        <input class="text medium-field" type="number" id="id" name="id" placeholder="{_logs_id_post}" n:attr="value => $id"/>
+        <input class="text medium-field" type="text" id="uid" name="uid" placeholder="{_logs_uuid_user}" n:attr="value => $user"/>
     </div>
     <div style="margin: 8px 0;" />
     <div>
-        <select class="select medium-field" id="obj_type" name="obj_type" placeholder="Тип объекта">
-            <option value="any" n:attr="selected => !$obj_type">Любой</option>
+        <select class="select medium-field" id="obj_type" name="obj_type" placeholder="{_logs_change_object}">
+            <option value="any" n:attr="selected => !$obj_type">{_logs_anything}</option>
             <option n:foreach="$object_types as $type" n:attr="selected => $obj_type === $type">{$type}</option>
         </select>
-        <input class="text medium-field" type="number" id="obj_id" name="obj_id" placeholder="ID объекта" n:attr="value => $obj_id"/>
+        <input class="text medium-field" type="number" id="obj_id" name="obj_id" placeholder="{_logs_id_object}" n:attr="value => $obj_id"/>
         <input type="submit" class="aui-button aui-button-primary medium-field" value="Поиск" style="width: 165px;"/>
     </div>
     </form>
@@ -42,11 +42,11 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Пользователь</th>
-                <th>Объект</th>
-                <th>Тип</th>
-                <th>Изменения</th>
-                <th>Время</th>
+                <th>{_logs_user}</th>
+                <th>{_logs_object}</th>
+                <th>{_logs_type}</th>
+                <th>{_logs_changes}</th>
+                <th>{_logs_time}</th>
             </tr>
         </thead>
         <tbody>

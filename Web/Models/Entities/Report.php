@@ -3,8 +3,9 @@ namespace openvk\Web\Models\Entities;
 use openvk\Web\Util\DateTime;
 use Nette\Database\Table\ActiveRow;
 use openvk\Web\Models\RowModel;
+use openvk\Web\Models\Entities\Club;
 use Chandler\Database\DatabaseConnection;
-use openvk\Web\Models\Repositories\{Applications, Comments, Notes, Reports, Users, Posts, Photos, Videos, Clubs};
+use openvk\Web\Models\Repositories\{Applications, Comments, Notes, Reports, Audios, Users, Posts, Photos, Videos, Clubs};
 use Chandler\Database\DatabaseConnection as DB;
 use Nette\InvalidStateException as ISE;
 use Nette\Database\Table\Selection;
@@ -73,12 +74,13 @@ class Report extends RowModel
         else if ($this->getContentType() == "note")    return (new Notes)->get($this->getContentId());
         else if ($this->getContentType() == "app")     return (new Applications)->get($this->getContentId());
         else if ($this->getContentType() == "user")    return (new Users)->get($this->getContentId());
+        else if ($this->getContentType() == "audio")   return (new Audios)->get($this->getContentId());
         else return null;
     }
 
     function getAuthor(): RowModel
     {
-        return (new Posts)->get($this->getContentId())->getOwner();
+        return $this->getContentObject()->getOwner();
     }
 
     function getReportAuthor(): User
@@ -96,8 +98,19 @@ class Report extends RowModel
     {
         if ($this->getContentType() !== "user") {
             $pubTime = $this->getContentObject()->getPublicationTime();
-            $name = $this->getContentObject()->getName();
-            $this->getAuthor()->adminNotify("Ваш контент, который вы опубликовали $pubTime ($name) был удалён модераторами инстанса. За повторные или серьёзные нарушения вас могут заблокировать.");
+            if (method_exists($this->getContentObject(), "getName")) {
+                $name = $this->getContentObject()->getName();
+                $placeholder = "$pubTime ($name)";
+            } else {
+                $placeholder = "$pubTime";
+            }
+
+            if ($this->getAuthor() instanceof Club) {
+                $name = $this->getAuthor()->getName();
+                $this->getAuthor()->getOwner()->adminNotify("Ваш контент, который опубликовали $placeholder в созданной вами группе \"$name\" был удалён модераторами инстанса. За повторные или серьёзные нарушения группу могут заблокировать.");
+            } else {
+                $this->getAuthor()->adminNotify("Ваш контент, который вы опубликовали $placeholder был удалён модераторами инстанса. За повторные или серьёзные нарушения вас могут заблокировать.");
+            }
             $this->getContentObject()->delete($this->getContentType() !== "app");
         }
 
@@ -121,8 +134,13 @@ class Report extends RowModel
 
     function getContentName(): string
     {
-        if (method_exists($this->getContentObject(), "getCanonicalName"))
-            return $this->getContentObject()->getCanonicalName();
+        $content_object = $this->getContentObject();
+        if(!$content_object) {
+            return 'unknown';
+        }
+
+        if (method_exists($content_object, "getCanonicalName"))
+            return $content_object->getCanonicalName();
 
         return $this->getContentType() . " #" . $this->getContentId();
     }

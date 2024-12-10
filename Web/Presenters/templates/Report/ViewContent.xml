@@ -16,13 +16,15 @@
         {elseif $type == "group" || $type == "user"}
             {include "../components/group.xml", group => $object, isUser => $type == "user"}
         {elseif $type == "comment"}
-            {include "../components/comment.xml", comment => $object, timeOnly => true}
+            {include "../components/comment.xml", comment => $object, timeOnly => true, linkWithPost => true}
         {elseif $type == "note"}
             {include "./content/note.xml", note => $object}
         {elseif $type == "app"}
             {if $appsSoftDeleting}
                 {include "./content/app.xml", app => $object}
             {/if}
+        {elseif $type == "audio"}
+            {include "../Audio/player.xml", audio => $object}
         {else}
             {include "../components/error.xml", description => tr("version_incompatibility")}
         {/if}

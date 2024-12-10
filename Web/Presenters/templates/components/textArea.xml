@@ -1,24 +1,24 @@
 {php if(!isset($GLOBALS["textAreaCtr"])) $GLOBALS["textAreaCtr"] = 10;}
 {var $textAreaId = ($post ?? NULL) === NULL ? (++$GLOBALS["textAreaCtr"]) : $post->getId()}
+{var $textAreaId = ($custom_id ?? NULL) === NULL ? $textAreaId : $custom_id}
 
-<div id="write" style="padding: 5px 0;" onfocusin="expand_wall_textarea({$textAreaId});">
+<div id="write" class='model_content_textarea' style="padding: 5px 0;">
     <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
         <textarea id="wall-post-input{$textAreaId}" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="small-textarea"></textarea>
         <div>
             <!-- padding to fix <br/> bug -->
         </div>
-        <div id="post-buttons{$textAreaId}" style="display: none;">
-            <div class="post-upload">
-                {_attachment}: <span>(unknown)</span>
-            </div>
+        <div id="post-buttons{$textAreaId}" class='post-buttons' style="display: none;">
+            <div class="post-horizontal"></div>
+            <div class="post-vertical"></div>
             <div class="post-has-poll">
                 {_poll}
             </div>
-            <div class="post-has-note">
-                
-            </div>
+            <div class="post-source"></div>
+
             <div n:if="$postOpts ?? true" class="post-opts">
                 {var $anonEnabled = OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
+
                 {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0}
                     {if $club->canBeModifiedBy($thisUser)}
                         <script>
@@ -54,62 +54,53 @@
                     <input type="checkbox" name="as_group" /> {_comment_as_group}
                 </label>
             </div>
-            <input type="file" class="postFileSel" id="postFilePic" name="_pic_attachment" accept="image/*" style="display:none;" />
-            <input n:if="!OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']" type="file" class="postFileSel" id="postFileVid" name="_vid_attachment" accept="video/*" style="display:none;" />
-            <input type="hidden" name="poll" value="none" />
-            <input type="hidden" id="note" name="note" value="none" />
-            <input type="hidden" name="type" value="1" />
+            <input type="hidden" name="horizontal_attachments" value="" autocomplete="off" />
+            <input type="hidden" name="vertical_attachments" value="" autocomplete="off" />
+            <input type="hidden" name="poll" value="none" autocomplete="off" />
+            <input type="hidden" id="source" name="source" value="none" autocomplete="off" />
+            <input type="hidden" name="type" value="1" autocomplete="off" />
             <input type="hidden" name="hash" value="{$csrfToken}" />
             <br/>
             <input type="submit" value="{_write}" class="button" />
             <div style="float: right; display: flex; flex-direction: column;">
-                <a href="javascript:toggleMenu({$textAreaId});">
+                <a class='menu_toggler'>
                     {_attach}
                 </a>
                 
                 <div id="wallAttachmentMenu" class="hidden">
-                    <a class="header" href="javascript:toggleMenu({$textAreaId});">
+                    <a class="header menu_toggler">
                         {_attach}
                     </a>
-                    <a href="javascript:void(document.querySelector('#post-buttons{$textAreaId} input[name=_pic_attachment]').click());">
+                    <a id="__photoAttachment" {if !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}data-club="{$club->getId()}"{/if}>
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
                         {_photo}
                     </a>
-                    <a n:if="!OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']" href="javascript:void(document.querySelector('#post-buttons{$textAreaId} input[name=_vid_attachment]').click());">
+                    <a id="__videoAttachment">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
                         {_video}
                     </a>
-                    <a n:if="$notes ?? false" href="javascript:attachNote({$textAreaId})">
+                    <a id="__audioAttachment">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
+                        {_audio}
+                    </a>
+                    <a n:if="$notes ?? false" id="__notesAttachment">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-srt.png" />
                         {_note}
                     </a>
-                    <a n:if="$graffiti ?? false" href="javascript:initGraffiti({$textAreaId});">
+                    <a n:if="$graffiti ?? false" onclick="initGraffiti(event);">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
                         {_graffiti}
                     </a>
-                    <a n:if="$polls ?? false" href="javascript:initPoll({$textAreaId})">
+                    <a n:if="$polls ?? false" onclick="initPoll(event);">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/office-chart-bar-stacked.png" />
                         {_poll}
+                    </a>
+                    <a n:if="$hasSource ?? false" id='__sourceAttacher'>
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/insert-link.png" />
+                        {_source}
                     </a>
                 </div>
             </div>
         </div>
     </form>
 </div>
-
-<script>
-    $(document).ready(() => {
-        u("#post-buttons{$textAreaId} .postFileSel").on("change", function() {
-            handleUpload.bind(this, {$textAreaId})();
-        });
-
-        setupWallPostInputHandlers({$textAreaId});
-    });
-</script>
-
-{if $graffiti}
-    {script "js/node_modules/react/dist/react-with-addons.min.js"}
-    {script "js/node_modules/react-dom/dist/react-dom.min.js"}
-    {script "js/vnd_literallycanvas.js"}
-    {css "js/node_modules/literallycanvas/lib/css/literallycanvas.css"}
-{/if}

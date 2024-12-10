@@ -66,7 +66,7 @@ class Message extends RowModel
         $dateTime = new DateTime($this->getRecord()->created);
 
         if($dateTime->format("%d.%m.%y") == ovk_strftime_safe("%d.%m.%y", time())) {
-            return $dateTime->format("%T %p");
+            return $dateTime->format("%T");
         } else {
             return $dateTime->format("%d.%m.%y");
         }
@@ -123,7 +123,11 @@ class Message extends RowModel
                     ],
                 ];
             } else {
-                throw new \Exception("Unknown attachment type: " . get_class($attachment));
+                $attachments[] = [
+                    "type"  => "unknown"
+                ];
+                
+                # throw new \Exception("Unknown attachment type: " . get_class($attachment));
             }
         }
         

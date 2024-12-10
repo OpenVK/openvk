@@ -23,7 +23,7 @@
             <form n:if="$report->getContentType() != 'group'" action="/admin/reportAction{$report->getId()}" method="post">
                 <input type="hidden" name="hash" value="{$csrfToken}"/>
                 <input type="submit" name="ban" value="{_ban_user_action}" class="button">
-                <input n:if="$report->getContentType() !== 'user'" type="submit" name="delete" value="{_delete}" class="button">
+                <input n:if="$report->getContentType() !== 'user'" type="submit" name="delete" value="{_delete_content}" class="button">
                 <input type="submit" name="ignore" value="{_ignore_report}" class="button">
             </form>
             <form n:if="$report->getContentType() == 'group'" action="/admin/reportAction{$report->getId()}" method="post">

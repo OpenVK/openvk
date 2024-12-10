@@ -42,18 +42,42 @@ class Clubs
     {
         return $this->toClub($this->clubs->get($id));
     }
-    
-    function find(string $query, array $pars = [], string $sort = "id DESC", int $page = 1, ?int $perPage = NULL): \Traversable
+
+    function getByIds(array $ids = []): array
     {
-        $query  = "%$query%";
-        $result = $this->clubs->where("name LIKE ? OR about LIKE ?", $query, $query);
-        
-        return new Util\EntityStream("Club", $result->order($sort));
+        $clubs = $this->clubs->select('*')->where('id IN (?)', $ids);
+        $clubs_array = [];
+
+        foreach($clubs as $club) {
+            $clubs_array[] =  $this->toClub($club);
+        }
+
+        return $clubs_array;
+    }
+
+    function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false], int $page = 1, ?int $perPage = NULL): \Traversable
+    {
+        $query = "%$query%";
+        $result = $this->clubs;
+        $order_str = 'id';
+
+        switch($order['type']) {
+            case 'id':
+                $order_str = 'id ' . ($order['invert'] ? 'ASC' : 'DESC');
+                break;
+        }
+
+        $result = $result->where("name LIKE ? OR about LIKE ?", $query, $query);
+
+        if($order_str)
+            $result->order($order_str);
+
+        return new Util\EntityStream("Club", $result);
     }
 
     function getCount(): int
     {
-        return sizeof(clone $this->clubs);
+        return (clone $this->clubs)->count('*');
     }
 
     function getPopularClubs(): \Traversable

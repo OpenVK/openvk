@@ -38,8 +38,19 @@ trait TRichText
                 $href = str_replace("#", "&num;", $matches[1]);
                 $href = rawurlencode(str_replace(";", "&#59;", $href));
                 $link = str_replace("#", "&num;", $matches[3]);
+                # this string breaks ampersands
                 $link = str_replace(";", "&#59;", $link);
                 $rel  = $this->isAd() ? "sponsored" : "ugc";
+
+                $server_domain = str_replace(':' . $_SERVER['SERVER_PORT'], '', $_SERVER['HTTP_HOST']);
+                if(str_contains($link, $server_domain)) {
+                    $replaced_link = str_replace(':' . $_SERVER['SERVER_PORT'], '', $link);
+                    $replaced_link = str_replace($server_domain, '', $replaced_link);
+                    
+                    return "<a href='$replaced_link' rel='$rel'>$link</a>" . htmlentities($matches[4]);
+                }
+
+                $link = htmlentities(urldecode($link));
                 
                 return "<a href='/away.php?to=$href' rel='$rel' target='_blank'>$link</a>" . htmlentities($matches[4]);
             }),
@@ -123,7 +134,7 @@ trait TRichText
                 $text = preg_replace_callback("%([\n\r\s]|^)(\#([\p{L}_0-9][\p{L}_0-9\(\)\-\']+[\p{L}_0-9\(\)]|[\p{L}_0-9]{1,2}))%Xu", function($m) {
                     $slug = rawurlencode($m[3]);
                     
-                    return "$m[1]<a href='/feed/hashtag/$slug'>$m[2]</a>";
+                    return "$m[1]<a href='/search?section=posts&q=%23$slug'>$m[2]</a>";
                 }, $text);
                 
                 $text = $this->formatEmojis($text);

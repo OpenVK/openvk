@@ -1,7 +1,7 @@
 {extends "./@layout.xml"}
 
 {block title}
-    История блокировок
+    {_bans_history}
 {/block}
 
 {block heading}
@@ -13,13 +13,13 @@
     <thead>
         <tr>
             <th>ID</th>
-            <th>Забаненный</th>
-            <th>Инициатор</th>
-            <th>Начало</th>
-            <th>Конец</th>
-            <th>Время</th>
-            <th>Причина</th>
-            <th>Снята</th>
+            <th>{_bans_history_blocked}</th>
+            <th>{_bans_history_initiator}</th>
+            <th>{_bans_history_start}</th>
+            <th>{_bans_history_end}</th>
+            <th>{_bans_history_time}</th>
+            <th>{_bans_history_reason}</th>
+            <th>{_bans_history_removed}</th>
         </tr>
     </thead>
     <tbody>
@@ -77,7 +77,7 @@
                         {_admin_banned}
                     </span>
                 {else}
-                    <b style="color: red;">Активная блокировка</b>
+                    <b style="color: red;">{_bans_history_active}</b>
                 {/if}
             </td>
         </tr>

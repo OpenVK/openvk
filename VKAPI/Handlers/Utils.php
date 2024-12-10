@@ -22,7 +22,7 @@ final class Utils extends VKAPIRequestHandler
                     "object_id" => (int) substr($screen_name, strlen("club")),
                     "type"      => "group"
                 ];
-            }
+            } else $this->fail(104, "Not found");
         } else {
             $user = (new Users)->getByShortURL($screen_name);
             if($user) {
@@ -39,8 +39,17 @@ final class Utils extends VKAPIRequestHandler
                     "type"      => "group"
                 ];
             }
-
-            return (object) [];
+    
+            $this->fail(104, "Not found");
         }
+    }
+    
+    function resolveGuid(string $guid): object
+    {
+        $user = (new Users)->getByChandlerUserId($guid);
+        if (is_null($user))
+            $this->fail(104, "Not found");
+        
+        return $user->toVkApiStruct($this->getUser());
     }
 }
