@@ -228,4 +228,72 @@ final class Account extends VKAPIRequestHandler
 
         return (object) ['votes' => $this->getUser()->getCoins()];
     }
+
+    function ban(int $owner_id): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        
+        if($owner_id < 0)
+            return 1;
+
+        if($owner_id == $this->getUser()->getId())
+            $this->fail(15, "Access denied: cannot blacklist yourself");
+
+        $config_limit = OPENVK_ROOT_CONF['openvk']['preferences']['blacklists']['limit'] ?? 100;
+        $user_blocks  = $this->getUser()->getBlacklistSize();
+        if(($user_blocks + 1) > $config_limit)
+            $this->fail(-7856, "Blacklist limit exceeded");
+
+        $entity = get_entity_by_id($owner_id);
+        if(!$entity || $entity->isDeleted())
+            return 0;
+
+        if($entity->isBlacklistedBy($this->getUser()))
+            return 1;
+
+        $this->getUser()->addToBlacklist($entity);
+
+        return 1;
+    }
+
+    function unban(int $owner_id): int
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+        
+        if($owner_id < 0)
+            return 1;
+
+        if($owner_id == $this->getUser()->getId())
+            return 1;
+
+        $entity = get_entity_by_id($owner_id);
+        if(!$entity || $entity->isDeleted())
+            return 0;
+
+        if(!$entity->isBlacklistedBy($this->getUser()))
+            return 1;
+
+        $this->getUser()->removeFromBlacklist($entity);
+
+        return 1;
+    }
+
+    function getBanned(int $offset = 0, int $count = 100, string $fields = ""): object
+    {
+        $this->requireUser();
+
+        $result = (object)[
+            'count' => $this->getUser()->getBlacklistSize(),
+            'items' => [],
+        ];
+        $banned = $this->getUser()->getBlacklist($offset, $count);
+        foreach($banned as $ban) {
+            if(!$ban) continue;
+            $result->items[] = $ban->toVkApiStruct($this->getUser(), $fields);
+        }
+        
+        return $result;
+    }
 }

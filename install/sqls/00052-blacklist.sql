@@ -5,3 +5,4 @@ CREATE TABLE `blacklist_relations` (
   `created` BIGINT UNSIGNED NOT NULL,
   PRIMARY KEY (`index`)
 ) ENGINE = InnoDB;
+ALTER TABLE `blacklist_relations` ADD INDEX(`author`, `target`);
