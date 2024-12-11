@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Club, Photo, Album, User};
-use openvk\Web\Models\Repositories\{Photos, Albums, Users, Clubs, Blacklists};
+use openvk\Web\Models\Repositories\{Photos, Albums, Users, Clubs};
 use Nette\InvalidStateException as ISE;
 
 final class PhotosPresenter extends OpenVKPresenter

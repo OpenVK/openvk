@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\Video;
-use openvk\Web\Models\Repositories\{Users, Videos, Blacklists};
+use openvk\Web\Models\Repositories\{Users, Videos};
 use Nette\InvalidStateException as ISE;
 
 final class VideosPresenter extends OpenVKPresenter

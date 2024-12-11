@@ -2,7 +2,7 @@
 namespace openvk\VKAPI\Handlers;
 use openvk\Web\Models\Entities\{User, Report};
 use openvk\Web\Models\Repositories\Users as UsersRepo;
-use openvk\Web\Models\Repositories\{Photos, Clubs, Albums, Videos, Notes, Audios, Blacklists};
+use openvk\Web\Models\Repositories\{Photos, Clubs, Albums, Videos, Notes, Audios};
 use openvk\Web\Models\Repositories\Reports;
 
 final class Users extends VKAPIRequestHandler
@@ -52,8 +52,8 @@ final class Users extends VKAPIRequestHandler
 						"last_name"         => $usr->getLastName(true),
 						"is_closed"         => $usr->isClosed(),
 						"can_access_closed" => (bool)$usr->canBeViewedBy($this->getUser()),
-						"blacklisted"       => (new Blacklists)->isBanned($usr, $authuser),
-                        "blacklisted_by_me" => (new Blacklists)->isBanned($authuser, $usr)
+						"blacklisted"       => false,
+                        "blacklisted_by_me" => false,
 					];
 
 					$flds = explode(',', $fields);
@@ -271,11 +271,10 @@ final class Users extends VKAPIRequestHandler
 						}
 					}
 
-					if (!(new Blacklists)->isBanned($usr, $authuser))
-                        if($usr->getOnline()->timestamp() + 300 > time())
-                            $response[$i]->online = 1;
-                        else
-                            $response[$i]->online = 0;
+					if($usr->getOnline()->timestamp() + 300 > time())
+						$response[$i]->online = 1;
+					else
+						$response[$i]->online = 0;
 				}
 			}
         }
@@ -309,7 +308,7 @@ final class Users extends VKAPIRequestHandler
         	$response = $this->get(implode(',', $followers), $fields, 0, $count);
 
         return (object) [
-            "count" => $target->getFollowersCount(),
+            "count" => $users->get($user_id)->getFollowersCount(),
             "items" => $response
         ];
     }

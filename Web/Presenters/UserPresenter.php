@@ -5,7 +5,7 @@ use openvk\Web\Util\Sms;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Entities\{Photo, Post, EmailChangeVerification};
 use openvk\Web\Models\Entities\Notifications\{CoinsTransferNotification, RatingUpNotification};
-use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications, Audios, Blacklists};
+use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Videos, Notes, Vouchers, EmailChangeVerifications, Audios};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use openvk\Web\Util\Validator;
 use Chandler\Security\Authenticator;
@@ -15,15 +15,13 @@ use Nette\Database\UniqueConstraintViolationException;
 
 final class UserPresenter extends OpenVKPresenter
 {
+    private $users;
     public $deactivationTolerant = false;
     protected $presenterName = "user";
-    private $users;
-    private $blacklists;
 
-    function __construct(Users $users, Blacklists $blacklists)
+    function __construct(Users $users)
     {
         $this->users = $users;
-        $this->blacklists = $blacklists;
         
         parent::__construct();
     }
@@ -581,7 +579,7 @@ final class UserPresenter extends OpenVKPresenter
 			$this->flash("succ", tr("changes_saved"), tr("changes_saved_comment"));
         }
         $this->template->mode = in_array($this->queryParam("act"), [
-            "main", "security", "privacy", "finance", "finance.top-up", "interface", "blacklist"
+            "main", "security", "privacy", "finance", "finance.top-up", "interface"
         ]) ? $this->queryParam("act")
             : "main";
 
@@ -594,11 +592,6 @@ final class UserPresenter extends OpenVKPresenter
 
             $this->template->qrCodeType = substr($qrCode[0], 5);
             $this->template->qrCodeData = $qrCode[1];
-        }
-
-        if($this->template->mode == "blacklist") {
-            $this->template->items = $this->blacklists->getList($user);
-            $this->template->count = $this->blacklists->getCount($user);
         }
         
         $this->template->user   = $user;

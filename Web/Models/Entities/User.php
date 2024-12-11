@@ -5,7 +5,7 @@ use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{Photo, Message, Correspondence, Gift, Audio};
-use openvk\Web\Models\Repositories\{Applications, Bans, Comments, Notes, Posts, Users, Clubs, Albums, Gifts, Notifications, Videos, Photos, Blacklists};
+use openvk\Web\Models\Repositories\{Applications, Bans, Comments, Notes, Posts, Users, Clubs, Albums, Gifts, Notifications, Videos, Photos};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
@@ -510,7 +510,7 @@ class User extends RowModel
             return $permStatus === User::PRIVACY_EVERYONE;
         else if($user->getId() === $this->getId())
             return true;
-        else if ((new Blacklists)->isBanned($this, $user)) {
+        else if ($this->isBlacklistedBy($user)) {
             return $user->isAdmin() && !OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["blacklists"]["applyToAdmins"];
         }
 
@@ -1492,6 +1492,11 @@ class User extends RowModel
     function getIgnoredSourcesCount()
     {
         return DatabaseConnection::i()->getContext()->table("ignored_sources")->where("owner", $this->getId())->count();
+    }
+
+    function isBlacklistedBy($user): bool
+    {
+        return false;
     }
 
     use Traits\TBackDrops;
