@@ -511,7 +511,7 @@ class User extends RowModel
         else if($user->getId() === $this->getId())
             return true;
 
-        if($permission != "messages.write" && !$this->canBeViewedBy($user))
+        if(/*$permission != "messages.write" && */!$this->canBeViewedBy($user, true))
             return false;
 
         switch($permStatus) {
@@ -1301,7 +1301,7 @@ class User extends RowModel
                 return true;
             }
 
-            if($user->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)) {
+            if($user->isAdmin() && !(OPENVK_ROOT_CONF['openvk']['preferences']['blacklists']['applyToAdmins'] ?? true)) {
                 return true;
             }
 
@@ -1517,6 +1517,18 @@ class User extends RowModel
             "target"  => $user->getRealId(),
             "created" => time(),
         ]);
+
+        DatabaseConnection::i()->getContext()->table("subscriptions")->where([
+            "follower" => $user->getId(),
+            "model"    => static::class,
+            "target"   => $this->getId(),
+        ])->delete();
+
+        DatabaseConnection::i()->getContext()->table("subscriptions")->where([
+            "follower" => $this->getId(),
+            "model"    => static::class,
+            "target"   => $user->getId(),
+        ])->delete();
         
         return true;
     }

@@ -1823,6 +1823,21 @@
 "user_blacklisted" = "$1 has been blacklisted";
 "user_removed_from_the_blacklist" = "$1 has been removed from the blacklist.";
 
+"adding_to_bl_sure" = "You sure you want to blacklist $1?";
+
+"bl_count_zero_desc" = "There are no users on your blacklist yet.";
+"bl_count_zero" = "There are no users on your blacklist";
+"bl_count_one" = "You have one user on your blacklist";
+"bl_count_few" = "You have $1 users on your blacklist";
+"bl_count_many" = "You have $1 users on your blacklist";
+"bl_count_other" = "You have $1 users on your blacklist";
+
+"you_blacklisted" = "You blacklisted $1";
+"bl_add" = "Add to blacklist";
+"bl_remove" = "Remove from blacklist";
+
+"addition_to_bl" = "Addition to blacklist";
+
 /* Away */
 
 "transition_is_blocked" = "Transition is blocked";

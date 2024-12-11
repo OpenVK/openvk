@@ -119,7 +119,7 @@ final class GroupPresenter extends OpenVKPresenter
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
             "page"    => $this->queryParam("p") ?? 1,
-            "amount"  => NULL,
+            "amount"  => 10,
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
         ];
     }

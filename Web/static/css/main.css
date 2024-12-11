@@ -3597,6 +3597,11 @@ hr {
     overflow-y: auto;
 }
 
+.entity_vertical_list.scroll_container {
+    height: unset;
+    overflow-y: unset;
+}
+
 .entity_vertical_list .entity_vertical_list_item {
     display: flex;
     flex-direction: row;
@@ -3609,6 +3614,15 @@ hr {
     display: flex;
     flex-direction: row;
     gap: 4px;
+}
+
+.entity_vertical_list.m_mini .entity_vertical_list_item .first_column {
+    gap: 10px;
+}
+
+.entity_vertical_list.m_mini .entity_vertical_list_item .first_column .avatar img {
+    width: 30px;
+    height: 30px;
 }
 
 .entity_vertical_list .entity_vertical_list_item .avatar {

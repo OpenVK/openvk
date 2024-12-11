@@ -52,8 +52,6 @@ final class Users extends VKAPIRequestHandler
 						"last_name"         => $usr->getLastName(true),
 						"is_closed"         => $usr->isClosed(),
 						"can_access_closed" => (bool)$usr->canBeViewedBy($this->getUser()),
-						"blacklisted"       => false,
-                        "blacklisted_by_me" => false,
 					];
 
 					$flds = explode(',', $fields);
@@ -267,6 +265,20 @@ final class Users extends VKAPIRequestHandler
 								break;
 							case 'nickname':
 								$response[$i]->nickname = $usr->getPseudo();
+								break;
+							case 'blacklisted_by_me':
+								if(!$authuser) {
+									continue;
+								}
+
+								$response[$i]->blacklisted_by_me = (int)$usr->isBlacklistedBy($this->getUser());
+								break;
+							case 'blacklisted':
+								if(!$authuser) {
+									continue;
+								}
+								
+								$response[$i]->blacklisted = (int)$this->getUser()->isBlacklistedBy($usr);
 								break;
 						}
 					}

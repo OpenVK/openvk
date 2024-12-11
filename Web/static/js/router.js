@@ -289,6 +289,10 @@ u(document).on('click', 'a', async (e) => {
 })
 
 u(document).on('submit', 'form', async (e) => {
+    if(e.defaultPrevented) {
+        return
+    }
+    
     if(u('#ajloader').hasClass('shown')) {
         e.preventDefault()
         return

@@ -35,6 +35,12 @@ final class UserPresenter extends OpenVKPresenter
                 $this->template->_template = "User/deactivated.xml";
                 
                 $this->template->user = $user;
+            } else if($user->isBlacklistedBy($this->user->identity)) {
+                $this->template->_template = "User/blacklisted_pov.xml";
+                $this->template->user = $user;
+            }  else if($this->user->identity->isBlacklistedBy($user)) {
+                $this->template->_template = "User/blacklisted.xml";
+                $this->template->user = $user;
             } else if(!is_null($user) && !$user->canBeViewedBy($this->user->identity)) {
                 $this->template->_template = "User/private.xml";
                 
@@ -58,6 +64,7 @@ final class UserPresenter extends OpenVKPresenter
 
             if($id !== $this->user->id) {
                 $this->template->ignore_status = $user->isIgnoredBy($this->user->identity);
+                $this->template->blacklist_status = $user->isBlacklistedBy($this->user->identity);
             }
         }
     }
@@ -579,7 +586,7 @@ final class UserPresenter extends OpenVKPresenter
 			$this->flash("succ", tr("changes_saved"), tr("changes_saved_comment"));
         }
         $this->template->mode = in_array($this->queryParam("act"), [
-            "main", "security", "privacy", "finance", "finance.top-up", "interface"
+            "main", "security", "privacy", "finance", "finance.top-up", "interface", "blacklist"
         ]) ? $this->queryParam("act")
             : "main";
 
@@ -592,6 +599,19 @@ final class UserPresenter extends OpenVKPresenter
 
             $this->template->qrCodeType = substr($qrCode[0], 5);
             $this->template->qrCodeData = $qrCode[1];
+        } else if($this->template->mode === "blacklist") {
+            $page   = (int)($this->queryParam('p') ?? 1);
+            $count  = 10;
+            $offset = ($page - 1) * $count;
+
+            $this->template->blSize  = $this->user->identity->getBlacklistSize();
+            $this->template->blItems = $this->user->identity->getBlacklist($offset, $count);
+            $this->template->paginatorConf = (object) [
+                "count"   => $this->template->blSize,
+                "page"    => $page,
+                "amount"  => sizeof($this->template->blItems),
+                "perPage" => OPENVK_DEFAULT_PER_PAGE,
+            ];
         }
         
         $this->template->user   = $user;
