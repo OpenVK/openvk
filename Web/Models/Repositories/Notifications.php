@@ -30,7 +30,7 @@ class Notifications
         return (new $repoClassName)->get($id);
     }
     
-    private function getQuery(User $user, bool $count = false, int $offset, bool $archived = false, int $page = 1, ?int $perPage = NULL): string
+    private function getQuery(User $user, bool $count, int $offset, bool $archived = false, int $page = 1, ?int $perPage = NULL): string
     {
         $query    = "SELECT " . ($count ? "COUNT(*) AS cnt" : "*") . " FROM notifications WHERE recipientType=0 ";
         $query   .= "AND timestamp " . ($archived ? "<" : ">") . "$offset AND recipientId=" . $user->getId();

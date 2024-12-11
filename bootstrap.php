@@ -3,6 +3,7 @@ use Chandler\Database\DatabaseConnection;
 use Chandler\Session\Session;
 use openvk\Web\Util\Localizator;
 use openvk\Web\Util\Bitmask;
+use function PHP81_BC\strftime;
 
 function _ovk_check_environment(): void
 {
@@ -22,6 +23,7 @@ function _ovk_check_environment(): void
         "fileinfo",
         "PDO",
         "pdo_mysql",
+        "pdo_sqlite",
         "pcre",
         "hash",
         "curl",
@@ -62,6 +64,33 @@ function ovk_proc_strtr(string $string, int $length = 0): string
     $newString = iconv_substr($string, 0, $length);
     
     return $newString . ($string !== $newString ? "…" : ""); #if cut hasn't happened, don't append "..."
+}
+
+function knuth_shuffle(iterable $arr, int $seed): array
+{
+    $data   = is_array($arr) ? $arr : iterator_to_array($arr);
+    $retVal = [];
+    $ind    = [];
+    $count  = sizeof($data);
+
+    srand($seed, MT_RAND_PHP);
+
+    for($i = 0; $i < $count; ++$i)
+        $ind[$i] = 0;
+
+    for($i = 0; $i < $count; ++$i) {
+        do {
+            $index = rand() % $count;
+        } while($ind[$index] != 0);
+
+        $ind[$index] = 1;
+        $retVal[$i] = $data[$index];
+    }
+
+    # Reseed
+    srand(hexdec(bin2hex(openssl_random_pseudo_bytes(4))));
+
+    return $retVal;
 }
 
 function bmask(int $input, array $options = []): Bitmask
@@ -170,8 +199,8 @@ function ovk_proc_strtrim(string $string, int $length = 0): string
 function ovk_strftime_safe(string $format, ?int $timestamp = NULL): string
 {
     $sessionOffset = intval(Session::i()->get("_timezoneOffset"));
-    $str = strftime($format, $timestamp + ($sessionOffset * MINUTE) * -1 ?? time() + ($sessionOffset * MINUTE) * -1);
-    if(PHP_SHLIB_SUFFIX === "dll") {
+    $str = strftime($format, $timestamp + ($sessionOffset * MINUTE) * -1 ?? time() + ($sessionOffset * MINUTE) * -1, tr("__locale") !== '@__locale' ? tr("__locale") : NULL);
+    if(PHP_SHLIB_SUFFIX === "dll" && version_compare(PHP_VERSION, "8.1.0", "<")) {
         $enc = tr("__WinEncoding");
         if($enc === "@__WinEncoding")
             $enc = "Windows-1251";
@@ -203,6 +232,106 @@ function ovk_is_ssl(): bool
     return $GLOBALS["requestIsSSL"];
 }
 
+function parseAttachments($attachments, array $allow_types = ['photo', 'video', 'note', 'audio']): array
+{
+    $exploded_attachments = is_array($attachments) ? $attachments : explode(",", $attachments);
+    $exploded_attachments = array_slice($exploded_attachments, 0, OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"] ?? 10);
+    $exploded_attachments = array_unique($exploded_attachments);
+    $imploded_types = implode('|', $allow_types);
+    $output_attachments = [];
+    $repositories = [
+        'photo' => [
+            'repo'   => 'openvk\Web\Models\Repositories\Photos',
+            'method' => 'getByOwnerAndVID',
+        ],
+        'video' => [
+            'repo' => 'openvk\Web\Models\Repositories\Videos',
+            'method' => 'getByOwnerAndVID',
+        ],
+        'audio' => [
+            'repo' => 'openvk\Web\Models\Repositories\Audios',
+            'method' => 'getByOwnerAndVID',
+        ],
+        'note'  => [
+            'repo' => 'openvk\Web\Models\Repositories\Notes',
+            'method' => 'getNoteById',
+        ],
+        'poll'  => [
+            'repo' => 'openvk\Web\Models\Repositories\Polls',
+            'method' => 'get',
+            'onlyId' => true,
+        ],
+    ];
+
+    foreach($exploded_attachments as $attachment_string) {
+        if(preg_match("/$imploded_types/", $attachment_string, $matches) == 1) {
+            try {
+                $attachment_type = $matches[0];
+                if(!$repositories[$attachment_type])
+                    continue;
+    
+                $attachment_ids  = str_replace($attachment_type, '', $attachment_string);
+                if($repositories[$attachment_type]['onlyId']) {
+                    [$attachment_id] = array_map('intval', explode('_', $attachment_ids));
+    
+                    $repository_class = $repositories[$attachment_type]['repo'];
+                    if(!$repository_class) continue;
+                    $attachment_model = (new $repository_class)->{$repositories[$attachment_type]['method']}($attachment_id);
+                    $output_attachments[] = $attachment_model;
+                } else {
+                    [$attachment_owner, $attachment_id] = array_map('intval', explode('_', $attachment_ids));
+    
+                    $repository_class = $repositories[$attachment_type]['repo'];
+                    if(!$repository_class) continue;
+                    $attachment_model = (new $repository_class)->{$repositories[$attachment_type]['method']}($attachment_owner, $attachment_id);
+                    $output_attachments[] = $attachment_model;
+                }
+            } catch(\Throwable) {continue;}
+        }
+    }
+
+    return $output_attachments;
+}
+
+function get_entity_by_id(int $id) 
+{
+    if($id > 0)
+        return (new openvk\Web\Models\Repositories\Users)->get($id);
+    
+    return (new openvk\Web\Models\Repositories\Clubs)->get(abs($id));
+}
+
+function get_entities(array $ids = []): array
+{
+    $main_result = [];
+    $users = [];
+    $clubs = [];
+    foreach($ids as $id) {
+        $id = (int)$id;
+        if($id < 0) 
+            $clubs[] = abs($id);
+        
+        if($id > 0)
+            $users[] = $id;
+    }
+
+    if(sizeof($users) > 0) {
+        $users_tmp = (new openvk\Web\Models\Repositories\Users)->getByIds($users);
+        foreach($users_tmp as $user) {
+            $main_result[] = $user;
+        }
+    }
+    
+    if(sizeof($clubs) > 0) {
+        $clubs_tmp = (new openvk\Web\Models\Repositories\Clubs)->getByIds($clubs);
+        foreach($clubs_tmp as $club) {
+            $main_result[] = $club;
+        }
+    }
+    
+    return $main_result;
+}
+
 function ovk_scheme(bool $with_slashes = false): string
 {
     $scheme = ovk_is_ssl() ? "https" : "http";
@@ -210,6 +339,36 @@ function ovk_scheme(bool $with_slashes = false): string
         $scheme .= "://";
     
     return $scheme;
+}
+
+function check_copyright_link(string $link = ''): bool
+{
+    if(!str_contains($link, "https://") && !str_contains($link, "http://"))
+        $link = "https://" . $link;
+    
+    # Existability
+    if(is_null($link) || empty($link))
+        throw new \InvalidArgumentException("Empty link");
+
+    # Length
+    if(iconv_strlen($link) < 2 || iconv_strlen($link) > 400)
+        throw new \LengthException("Link is too long");
+
+    # Match URL regex
+    # stolen from http://urlregex.com/
+    if (!preg_match("%^(?:(?:https?|ftp)://)(?:\S+(?::\S*)?@|\d{1,3}(?:\.\d{1,3}){3}|(?:(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+|xn--[a-z\d-]+)(?:\.(?:[a-z\d\x{00a1}-\x{ffff}]+-?)*[a-z\d\x{00a1}-\x{ffff}]+)*(?:\.(?:xn--[a-z\d-]+|[a-z\x{00a1}-\x{ffff}]{2,6})))(?::\d+)?(?:[^\s]*)?$%iu", $link))
+        throw new \InvalidArgumentException("Invalid link format");
+
+    $banEntries = (new openvk\Web\Models\Repositories\BannedLinks)->check($link);
+    if(sizeof($banEntries) > 0)
+        throw new \LogicException("Suspicious link");
+
+    return true;
+}
+
+function escape_html(string $unsafe): string
+{
+    return htmlspecialchars($unsafe, ENT_DISALLOWED | ENT_XHTML);
 }
 
 return (function() {

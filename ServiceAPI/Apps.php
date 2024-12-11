@@ -1,8 +1,11 @@
 <?php declare(strict_types=1);
 namespace openvk\ServiceAPI;
 
+use openvk\Web\Models\Entities\APIToken;
 use openvk\Web\Models\Entities\User;
+use openvk\Web\Models\Repositories\APITokens;
 use openvk\Web\Models\Repositories\Applications;
+use WhichBrowser;
 
 class Apps implements Handler
 {
@@ -88,5 +91,26 @@ class Apps implements Handler
         $coins = $app->getBalance();
         $app->withdrawCoins();
         $resolve($coins);
+    }
+    
+    function getRegularToken(string $clientName, bool $acceptsStale, callable $resolve, callable $reject): void
+    {
+        $token = NULL;
+        $stale = true;
+        if($acceptsStale)
+            $token = (new APITokens)->getStaleByUser($this->user->getId(), $clientName);
+        
+        if(is_null($token)) {
+            $stale = false;
+            $token = new APIToken;
+            $token->setUser($this->user);
+            $token->setPlatform($clientName ?? (new WhichBrowser\Parser(getallheaders()))->toString());
+            $token->save();
+        }
+        
+        $resolve([
+            'is_stale' => $stale,
+            'token'    => $token->getFormattedToken(),
+        ]);
     }
 }

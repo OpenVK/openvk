@@ -7,6 +7,11 @@ body.dimmed > .dimmer {
     opacity: .5;
 }
 
+body.dimmed > .dimmer #absolute_territory {
+    margin: 100px;
+    height: 100%;
+}
+
 .ovk-diag-cont {
     z-index: 1024;
     position: fixed;
@@ -57,4 +62,149 @@ body.dimmed > .dimmer {
 
 .ovk-diag-action > .button {
     margin-left: 10px;
+}
+
+/* Modal player */
+
+.ovk-modal-player-window {
+    box-shadow: 0px 0px 9px 2px rgba(0, 0, 0, 0.2);
+    width: 823px;
+    min-height: 400px;
+    margin: 9vh auto 0 auto;
+}
+
+.ovk-modal-player-window #ovk-player-part {
+    height: 70vh;
+    background: black;
+    padding: 15px 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.ovk-modal-player-window #ovk-player-part .top-part {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ovk-modal-player-window #ovk-player-part .top-part b {
+    color: #515151;
+    font-size: 12px;
+}
+
+.ovk-modal-player-window #ovk-player-part .top-part .top-part-buttons, .ovk-modal-player-window #ovk-player-part .bottom-part {
+    color: #515151;
+}
+
+.ovk-modal-player-window #ovk-player-part .top-part .top-part-buttons a, .ovk-modal-player-window #ovk-player-part .bottom-part a {
+    color: #515151;
+}
+
+.ovk-modal-player-window #ovk-player-info {
+    display: none;
+}
+
+.ovk-modal-player-window #ovk-player-info.shown {
+    display: block;
+}
+
+.ovk-modal-player-window #ovk-player-info {
+    background: white;
+    min-height: 200px;
+    padding: 5px 15px;
+}
+
+.ovk-modal-player-window .media-page-wrapper-comments {
+    width: 100%;
+}
+
+.ovk-modal-player-window .center-part {
+    text-align: center;
+    height: 90%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.ovk-modal-player-window .center-part .gray {
+    color: gray;
+}
+
+.ovk-modal-player-window .center-part .bsdn, .ovk-modal-player-window .center-part .bsdn-player {
+    height: 100%;
+    width: 100%;
+}
+
+.miniplayer {
+    position: fixed;
+    background: rgba(54, 54, 54, 0.95);
+    border-radius: 3px;
+    min-width: 299px;
+    min-height: 192px;
+    z-index: 7777;
+    padding: 2px 7px;
+    display: flex;
+    flex-direction: column;
+}
+
+.miniplayer .miniplayer-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.miniplayer .miniplayer-head b {
+    color: white;
+    user-select: none;
+}
+
+.miniplayer .miniplayer-head .miniplayer-head-buttons {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.miniplayer .miniplayer-head .miniplayer-head-buttons div {
+    width: 16px;
+    height: 16px;
+    background: url(/assets/packages/static/openvk/img/wall.png) no-repeat 1px 0;
+    background-repeat: no-repeat;
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.miniplayer .miniplayer-head .miniplayer-head-buttons div:hover {
+    opacity: 1;
+}
+
+.miniplayer .miniplayer-head .miniplayer-head-buttons #__miniplayer_return {
+    background-position: -28px 0px;
+}
+
+.miniplayer .miniplayer-head .miniplayer-head-buttons #__miniplayer_close {
+    background-position: -12px 0px;
+}
+
+.miniplayer .miniplayer-head-buttons {
+    height: 20px;
+}
+
+.miniplayer .miniplayer-body {
+    height: 100%;
+}
+
+.miniplayer .miniplayer-body .bsdn {
+    height: 100%;
+}
+
+.miniplayer .miniplayer-body .bsdn .bsdn-player {
+    height: 100%;
+}
+
+.miniplayer .miniplayer-body iframe {
+    width: 100%;
+    height: 100%;
 }

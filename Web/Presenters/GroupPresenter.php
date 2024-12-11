@@ -3,7 +3,7 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Club, Photo, Post};
 use Nette\InvalidStateException;
 use openvk\Web\Models\Entities\Notifications\ClubModeratorNotification;
-use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers, Topics};
+use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers, Topics, Audios, Posts};
 use Chandler\Security\Authenticator;
 
 final class GroupPresenter extends OpenVKPresenter
@@ -24,12 +24,26 @@ final class GroupPresenter extends OpenVKPresenter
         if(!$club) {
             $this->notFound();
         } else {
-            $this->template->albums      = (new Albums)->getClubAlbums($club, 1, 3);
-            $this->template->albumsCount = (new Albums)->getClubAlbumsCount($club);
-            $this->template->topics      = (new Topics)->getLastTopics($club, 3);
-            $this->template->topicsCount = (new Topics)->getClubTopicsCount($club);
+            if ($club->isBanned()) {
+                $this->template->_template = "Group/Banned.xml";
+            } else {
+                $this->template->albums = (new Albums)->getClubAlbums($club, 1, 3);
+                $this->template->albumsCount = (new Albums)->getClubAlbumsCount($club);
+                $this->template->topics = (new Topics)->getLastTopics($club, 3);
+                $this->template->topicsCount = (new Topics)->getClubTopicsCount($club);
+                $this->template->audios      = (new Audios)->getRandomThreeAudiosByEntityId($club->getRealId());
+                $this->template->audiosCount = (new Audios)->getClubCollectionSize($club);
+            }
+
+            if(!is_null($this->user->identity) && $club->getWallType() == 2) {
+                if(!$club->canBeModifiedBy($this->user->identity))
+                    $this->template->suggestedPostsCountByUser = (new Posts)->getSuggestedPostsCountByUser($club->getId(), $this->user->id);
+                else
+                    $this->template->suggestedPostsCountByEveryone = (new Posts)->getSuggestedPostsCount($club->getId());
+            }
 
             $this->template->club = $club;
+            $this->template->ignore_status = $club->isIgnoredBy($this->user->identity);
         }
     }
     
@@ -39,7 +53,7 @@ final class GroupPresenter extends OpenVKPresenter
         $this->willExecuteWriteAction();
         
         if($_SERVER["REQUEST_METHOD"] === "POST") {
-            if(!empty($this->postParam("name")))
+            if(!empty($this->postParam("name")) && mb_strlen(trim($this->postParam("name"))) > 0)
             {
                 $club = new Club;
                 $club->setName($this->postParam("name"));
@@ -50,7 +64,7 @@ final class GroupPresenter extends OpenVKPresenter
                     $club->save();
                 } catch(\PDOException $ex) {
                     if($ex->getCode() == 23000)
-                        $this->flashFail("err", "Ошибка", "Произошла ошибка на стороне сервера. Обратитесь к системному администратору.");
+                        $this->flashFail("err", tr("error"), tr("error_on_server_side"));
                     else
                         throw $ex;
                 }
@@ -58,7 +72,7 @@ final class GroupPresenter extends OpenVKPresenter
                 $club->toggleSubscription($this->user->identity);
                 $this->redirect("/club" . $club->getId());
             }else{
-                $this->flashFail("err", "Ошибка", "Вы не ввели название группы.");
+                $this->flashFail("err", tr("error"), tr("error_no_group_name"));
             }
         }
     }
@@ -72,6 +86,7 @@ final class GroupPresenter extends OpenVKPresenter
         
         $club = $this->clubs->get((int) $this->postParam("id"));
         if(!$club) exit("Invalid state");
+        if ($club->isBanned()) $this->flashFail("err", tr("error"), tr("forbidden"));
         
         $club->toggleSubscription($this->user->identity);
         
@@ -83,6 +98,8 @@ final class GroupPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $this->template->club              = $this->clubs->get($id);
+        if ($this->template->club->isBanned()) $this->flashFail("err", tr("error"), tr("forbidden"));
+
         $this->template->onlyShowManagers  = $this->queryParam("onlyAdmins") == "1";
         if($this->template->onlyShowManagers) {
             $this->template->followers     = NULL;
@@ -118,12 +135,14 @@ final class GroupPresenter extends OpenVKPresenter
             $this->badRequest();
         
         $club = $this->clubs->get($id);
+        if ($club->isBanned()) $this->flashFail("err", tr("error"), tr("forbidden"));
+
         $user = (new Users)->get((int) $user);
         if(!$user || !$club)
             $this->notFound();
         
         if(!$club->canBeModifiedBy($this->user->identity ?? NULL))
-            $this->flashFail("err", "Ошибка доступа", "У вас недостаточно прав, чтобы изменять этот ресурс.");
+            $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
 
         if(!is_null($hidden)) {
             if($club->getOwner()->getId() == $user->getId()) {
@@ -141,9 +160,9 @@ final class GroupPresenter extends OpenVKPresenter
             }
 
             if($hidden) {
-                $this->flashFail("succ", "Операция успешна", "Теперь " . $user->getCanonicalName() . " будет показываться как обычный подписчик всем кроме других администраторов");
+                $this->flashFail("succ", tr("success_action"), tr("x_is_now_hidden", $user->getCanonicalName()));
             } else {
-                $this->flashFail("succ", "Операция успешна", "Теперь все будут знать про то что " . $user->getCanonicalName() . " - администратор");
+                $this->flashFail("succ", tr("success_action"), tr("x_is_now_showed", $user->getCanonicalName()));
             }
         } elseif($removeComment) {
             if($club->getOwner()->getId() == $user->getId()) {
@@ -155,11 +174,11 @@ final class GroupPresenter extends OpenVKPresenter
                 $manager->save();
             }
 
-            $this->flashFail("succ", "Операция успешна", "Комментарий к администратору удален");
+            $this->flashFail("succ", tr("success_action"), tr("comment_is_deleted"));
         } elseif($comment) {
             if(mb_strlen($comment) > 36) {
                 $commentLength = (string) mb_strlen($comment);
-                $this->flashFail("err", "Ошибка", "Комментарий слишком длинный ($commentLength символов вместо 36 символов)");
+                $this->flashFail("err", tr("error"), tr("comment_is_too_long", $commentLength));
             }
 
             if($club->getOwner()->getId() == $user->getId()) {
@@ -171,16 +190,16 @@ final class GroupPresenter extends OpenVKPresenter
                 $manager->save();
             }
 
-            $this->flashFail("succ", "Операция успешна", "Комментарий к администратору изменён");
+            $this->flashFail("succ", tr("success_action"), tr("comment_is_changed"));
         }else{
             if($club->canBeModifiedBy($user)) {
                 $club->removeManager($user);
-                $this->flashFail("succ", "Операция успешна", $user->getCanonicalName() . " более не администратор.");
+                $this->flashFail("succ", tr("success_action"), tr("x_no_more_admin", $user->getCanonicalName()));
             } else {
                 $club->addManager($user);
                 
                 (new ClubModeratorNotification($user, $club, $this->user->identity))->emit();
-                $this->flashFail("succ", "Операция успешна", $user->getCanonicalName() . " назначен(а) администратором.");
+                $this->flashFail("succ", tr("success_action"), tr("x_is_admin", $user->getCanonicalName()));
             }
         }
         
@@ -194,6 +213,8 @@ final class GroupPresenter extends OpenVKPresenter
         $club = $this->clubs->get($id);
         if(!$club || !$club->canBeModifiedBy($this->user->identity))
             $this->notFound();
+        else if ($club->isBanned())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
         else
             $this->template->club = $club;
             
@@ -201,13 +222,22 @@ final class GroupPresenter extends OpenVKPresenter
 	    if(!$club->setShortcode( empty($this->postParam("shortcode")) ? NULL : $this->postParam("shortcode") ))
                 $this->flashFail("err", tr("error"), tr("error_shorturl_incorrect"));
             
-            $club->setName(empty($this->postParam("name")) ? $club->getName() : $this->postParam("name"));
+            $club->setName((empty($this->postParam("name")) || mb_strlen(trim($this->postParam("name"))) === 0) ? $club->getName() : $this->postParam("name"));
             $club->setAbout(empty($this->postParam("about")) ? NULL : $this->postParam("about"));
-	    $club->setWall(empty($this->postParam("wall")) ? 0 : 1);
+            try {
+                $club->setWall(empty($this->postParam("wall")) ? 0 : (int)$this->postParam("wall"));
+            } catch(\Exception $e) {
+                $this->flashFail("err", tr("error"), tr("error_invalid_wall_value"));
+            }
+            
             $club->setAdministrators_List_Display(empty($this->postParam("administrators_list_display")) ? 0 : $this->postParam("administrators_list_display"));
 	    $club->setEveryone_Can_Create_Topics(empty($this->postParam("everyone_can_create_topics")) ? 0 : 1);
             $club->setDisplay_Topics_Above_Wall(empty($this->postParam("display_topics_above_wall")) ? 0 : 1);
-            $club->setHide_From_Global_Feed(empty($this->postParam("hide_from_global_feed")) ? 0 : 1);
+            $club->setEveryone_can_upload_audios(empty($this->postParam("upload_audios")) ? 0 : 1);
+
+            if (!$club->isHidingFromGlobalFeedEnforced()) {
+                $club->setHide_From_Global_Feed(empty($this->postParam("hide_from_global_feed") ? 0 : 1));
+            }
             
             $website = $this->postParam("website") ?? "";
             if(empty($website))
@@ -234,7 +264,7 @@ final class GroupPresenter extends OpenVKPresenter
                     (new Albums)->getClubAvatarAlbum($club)->addPhoto($photo);
                 } catch(ISE $ex) {
                     $name = $album->getName();
-                    $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию.");
+                    $this->flashFail("err", tr("error"), tr("error_when_uploading_photo"));
                 }
             }
             
@@ -242,58 +272,110 @@ final class GroupPresenter extends OpenVKPresenter
                 $club->save();
             } catch(\PDOException $ex) {
                 if($ex->getCode() == 23000)
-                    $this->flashFail("err", "Ошибка", "Произошла ошибка на стороне сервера. Обратитесь к системному администратору.");
+                    $this->flashFail("err", tr("error"), tr("error_on_server_side"));
                 else
                     throw $ex;
             }
             
-            $this->flash("succ", "Изменения сохранены", "Новые данные появятся в вашей группе.");
+            $this->flash("succ", tr("changes_saved"), tr("new_changes_desc"));
         }
     }
     
     function renderSetAvatar(int $id)
     {
-        $photo = new Photo;
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
         $club = $this->clubs->get($id);
-        if($_SERVER["REQUEST_METHOD"] === "POST" && $_FILES["ava"]["error"] === UPLOAD_ERR_OK) {
+
+        if(!$club || $club->isBanned() || !$club->canBeModifiedBy($this->user->identity)) 
+            $this->flashFail("err", tr("error"), tr("forbidden"), NULL, true);
+
+        if($_SERVER["REQUEST_METHOD"] === "POST" && $_FILES["blob"]["error"] === UPLOAD_ERR_OK) {
             try {
+                $photo = new Photo;
+                
                 $anon = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"];
                 if($anon && $this->user->id === $club->getOwner()->getId())
                     $anon = $club->isOwnerHidden();  
                 else if($anon)
                     $anon = $club->getManager($this->user->identity)->isHidden();
+
                 $photo->setOwner($this->user->id);
                 $photo->setDescription("Club image");
-                $photo->setFile($_FILES["ava"]);
+                $photo->setFile($_FILES["blob"]);
                 $photo->setCreated(time());
                 $photo->setAnonymous($anon);
                 $photo->save();
                 
                 (new Albums)->getClubAvatarAlbum($club)->addPhoto($photo);
 
-                $flags = 0;
-                $flags |= 0b00010000;
-                $flags |= 0b10000000;
+                if($this->postParam("on_wall") == 1) {
+                    $post = new Post;
+                    
+                    $post->setOwner($this->user->id);
+                    $post->setWall($club->getId() * -1);
+                    $post->setCreated(time());
+                    $post->setContent("");
 
-                $post = new Post;
-                $post->setOwner($this->user->id);
-                $post->setWall($club->getId()*-1);
-                $post->setCreated(time());
-                $post->setContent("");
-                $post->setFlags($flags);
-                $post->save();
-                $post->attach($photo);
+                    $flags = 0;
+                    $flags |= 0b00010000;
+                    $flags |= 0b10000000;
 
-            } catch(ISE $ex) {
-                $name = $album->getName();
-                $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию.");
+                    $post->setFlags($flags);
+                    $post->save();
+
+                    $post->attach($photo);
+                }
+
+            } catch(\Throwable $ex) {
+                $this->flashFail("err", tr("error"), tr("error_when_uploading_photo"), NULL, true);
             }
+
+            $this->returnJson([
+                "success"   => true,
+                "new_photo" => $photo->getPrettyId(),
+                "url"       => $photo->getURL(),
+            ]);
+        } else {
+            return " ";
         }
-        $this->returnJson([
-            "url" => $photo->getURL(),
-            "id" => $photo->getPrettyId()
-        ]);
     }
+
+    function renderDeleteAvatar(int $id) {
+        $this->assertUserLoggedIn();
+        $this->willExecuteWriteAction();
+
+        $club = $this->clubs->get($id);
+
+        if(!$club || $club->isBanned() || !$club->canBeModifiedBy($this->user->identity)) 
+            $this->flashFail("err", tr("error"), tr("forbidden"), NULL, true);
+
+        $avatar = $club->getAvatarPhoto();
+
+        if(!$avatar)
+            $this->flashFail("succ", tr("error"), "no avatar bro", NULL, true);
+
+        $avatar->isolate();
+
+        $newAvatar = $club->getAvatarPhoto();
+
+        if(!$newAvatar)
+            $this->returnJson([
+                "success" => true,
+                "has_new_photo" => false,
+                "new_photo" => NULL,
+                "url"       => "/assets/packages/static/openvk/img/camera_200.png",
+            ]);
+        else
+            $this->returnJson([
+                "success" => true,
+                "has_new_photo" => true,
+                "new_photo" => $newAvatar->getPrettyId(),
+                "url"       => $newAvatar->getURL(),
+            ]);
+    }
+
     function renderEditBackdrop(int $id): void
     {
         $this->assertUserLoggedIn();
@@ -338,11 +420,13 @@ final class GroupPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         
         if(!eventdb())
-            $this->flashFail("err", "Ошибка подключения", "Не удалось подключится к службе телеметрии.");
+            $this->flashFail("err", tr("connection_error"), tr("connection_error_desc"));
         
         $club = $this->clubs->get($id);
         if(!$club->canBeModifiedBy($this->user->identity))
             $this->notFound();
+        else if ($club->isBanned())
+            $this->flashFail("err", tr("error"), tr("forbidden"));
         else
             $this->template->club = $club;
         
@@ -375,6 +459,7 @@ final class GroupPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("incorrect_password"));
 
         $club = $this->clubs->get($id);
+        if ($club->isBanned()) $this->flashFail("err", tr("error"), tr("forbidden"));
         $newOwner = (new Users)->get($newOwnerId);
         if($this->user->id !== $club->getOwner()->getId())
             $this->flashFail("err", tr("error"), tr("forbidden"));
@@ -395,5 +480,38 @@ final class GroupPresenter extends OpenVKPresenter
         $club->save();
 
         $this->flashFail("succ", tr("information_-1"), tr("group_owner_setted", $newOwner->getCanonicalName(), $club->getName()));
+    }
+
+    function renderSuggested(int $id): void
+    {
+        $this->assertUserLoggedIn();
+
+        $club = $this->clubs->get($id);
+        if(!$club)
+            $this->notFound();
+        else
+            $this->template->club = $club;
+
+        if($club->getWallType() == 0) {
+            $this->flash("err", tr("error_suggestions"), tr("error_suggestions_closed"));
+            $this->redirect("/club".$club->getId());
+        }
+    
+        if($club->getWallType() == 1) {
+            $this->flash("err", tr("error_suggestions"), tr("error_suggestions_open"));
+            $this->redirect("/club".$club->getId());
+        }
+        
+        if(!$club->canBeModifiedBy($this->user->identity)) {
+            $this->template->posts = iterator_to_array((new Posts)->getSuggestedPostsByUser($club->getId(), $this->user->id, (int) ($this->queryParam("p") ?? 1)));
+            $this->template->count = (new Posts)->getSuggestedPostsCountByUser($club->getId(), $this->user->id);
+            $this->template->type  = "my";
+        } else {
+            $this->template->posts = iterator_to_array((new Posts)->getSuggestedPosts($club->getId(), (int) ($this->queryParam("p") ?? 1)));
+            $this->template->count = (new Posts)->getSuggestedPostsCount($club->getId());
+            $this->template->type  = "everyone";
+        }
+
+        $this->template->page  = (int) ($this->queryParam("p") ?? 1);
     }
 }

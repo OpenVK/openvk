@@ -67,11 +67,27 @@ class Album extends MediaCollection
         return $this->has($photo);
     }
 
+    function canBeViewedBy(?User $user = NULL): bool
+    {
+        if($this->isDeleted()) {
+            return false;
+        }
+
+        $owner = $this->getOwner();
+
+        if(get_class($owner) == "openvk\\Web\\Models\\Entities\\User") {
+            return $owner->canBeViewedBy($user) && $owner->getPrivacyPermission('photos.read', $user);
+        } else {
+            return $owner->canBeViewedBy($user);
+        }
+    }
+
     function toVkApiStruct(?User $user = NULL, bool $need_covers = false, bool $photo_sizes = false): object
     {
         $res = (object) [];
 
         $res->id              = $this->getPrettyId();
+        $res->vid             = $this->getId();
         $res->thumb_id        = !is_null($this->getCoverPhoto()) ? $this->getCoverPhoto()->getPrettyId() : 0;
         $res->owner_id        = $this->getOwner()->getId();
         $res->title           = $this->getName();

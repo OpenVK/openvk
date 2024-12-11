@@ -2,24 +2,25 @@
     "require": {
         "php": "~7.3||~8.1",
         "guzzlehttp/guzzle": "^6.5",
-        "komeiji-satori/curl": "dev-master",
         "whichbrowser/parser": "dev-master",
-        "zadarma/user-api-v1": "dev-master",
         "james-heinrich/getid3": "^1.9@dev",
         "rybakit/msgpack": "dev-master",
         "wapmorgan/binary-stream": "dev-master",
         "al/emoji-detector": "dev-master",
         "ezyang/htmlpurifier": "dev-master",
-        "scssphp/scssphp": "dev-master",
+        "scssphp/scssphp": "dev-main",
         "lfkeitel/phptotp": "dev-master",
-        "chillerlan/php-qrcode": "dev-main",
+        "chillerlan/php-qrcode": "5.0.2",
         "vearutop/php-obscene-censor-rus": "dev-master",
         "erusev/parsedown": "dev-master",
         "bhaktaraz/php-rss-generator": "dev-master",
+        "ext-openssl": "*",
         "ext-simplexml": "*",
         "symfony/console": "5.4.x-dev",
         "wapmorgan/morphos": "dev-master",
-        "ext-sodium": "*"
+        "ext-sodium": "*",
+        "php81_bc/strftime": "^0.0.2",
+        "ext-iconv": "*"
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "beta"
 }

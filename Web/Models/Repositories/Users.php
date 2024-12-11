@@ -28,6 +28,18 @@ class Users
     {
         return $this->toUser($this->users->get($id));
     }
+
+    function getByIds(array $ids = []): array
+    {
+        $users = $this->users->select('*')->where('id IN (?)', $ids);
+        $users_array = [];
+
+        foreach($users as $user) {
+            $users_array[] = $this->toUser($user);
+        }
+
+        return $users_array;
+    }
     
     function getByShortURL(string $url): ?User
     {
@@ -44,101 +56,94 @@ class Users
         return $alias->getUser();
     }
     
-    function getByChandlerUser(ChandlerUser $user): ?User
+    function getByChandlerUserId(string $cid): ?User
     {
-        return $this->toUser($this->users->where("user", $user->getId())->fetch());
+        return $this->toUser($this->users->where("user", $cid)->fetch());
     }
     
-    function find(string $query, array $pars = [], string $sort = "id DESC"): Util\EntityStream
+    function getByChandlerUser(?ChandlerUser $user): ?User
     {
-        $query  = "%$query%";
+        return $user ? $this->getByChandlerUserId($user->getId()) : NULL;
+    }
+    
+    function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false]): Util\EntityStream
+    {
+        $query = "%$query%";
         $result = $this->users->where("CONCAT_WS(' ', first_name, last_name, pseudo, shortcode) LIKE ?", $query)->where("deleted", 0);
-        
-        $notNullParams = [];
-        $nnparamsCount = 0;
-        
-        foreach($pars as $paramName => $paramValue)
-            if($paramName != "before" && $paramName != "after" && $paramName != "gender" && $paramName != "maritalstatus" && $paramName != "politViews")
-                $paramValue != NULL ? $notNullParams += ["$paramName" => "%$paramValue%"] : NULL;
-            else
-                $paramValue != NULL ? $notNullParams += ["$paramName" => "$paramValue"]   : NULL;
+        $order_str = 'id';
 
-        $nnparamsCount = sizeof($notNullParams);
+        switch($order['type']) {
+            case 'id':
+            case 'reg_date':
+                $order_str = 'id ' . ($order['invert'] ? 'ASC' : 'DESC');
+                break;
+            case 'rating':
+                $order_str = 'rating DESC';
+                break;
+        }
 
-        if($nnparamsCount > 0) {
-            foreach($notNullParams as $paramName => $paramValue) {
-                switch($paramName) {
-                    case "hometown":
-                        $result->where("hometown LIKE ?", $paramValue);
-                        break;
-                    case "city":
-                        $result->where("city LIKE ?", $paramValue);
-                        break;
-                    case "maritalstatus":
-                        $result->where("marital_status ?", $paramValue);
-                        break;
-                    case "status":
-                        $result->where("status LIKE ?", $paramValue);
-                        break;
-                    case "politViews":
-                        $result->where("polit_views ?", $paramValue);
-                        break;
-                    case "email":
-                        $result->where("email_contact LIKE ?", $paramValue);
-                        break;
-                    case "telegram":
-                        $result->where("telegram LIKE ?", $paramValue);
-                        break;
-                    case "site":
-                        $result->where("telegram LIKE ?", $paramValue);
-                        break;
-                    case "address":
-                        $result->where("address LIKE ?", $paramValue);
-                        break;
-                    case "is_online":
-                        $result->where("online >= ?", time() - 900);
-                        break;
-                    case "interests":
-                        $result->where("interests LIKE ?", $paramValue);
-                        break;
-                    case "fav_mus":
-                        $result->where("fav_music LIKE ?", $paramValue);
-                        break;
-                    case "fav_films":
-                        $result->where("fav_films LIKE ?", $paramValue);
-                        break;
-                    case "fav_shows":
-                        $result->where("fav_shows LIKE ?", $paramValue);
-                        break;
-                    case "fav_books":
-                        $result->where("fav_books LIKE ?", $paramValue);
-                        break;
-                    case "fav_quote":
-                        $result->where("fav_quote LIKE ?", $paramValue);
-                        break;
-                    case "before":
-                        $result->where("UNIX_TIMESTAMP(since) < ?", $paramValue);
-                        break;
-                    case "after":
-                        $result->where("UNIX_TIMESTAMP(since) > ?", $paramValue);
-                        break;
-                    case "gender":
-                        $result->where("sex ?", $paramValue);
-                        break;
-                }
+        foreach($params as $paramName => $paramValue) {
+            if(is_null($paramValue) || $paramValue == '') continue;
+
+            switch($paramName) {
+                case "hometown":
+                    $result->where("hometown LIKE ?", "%$paramValue%");
+                    break;
+                case "city":
+                    $result->where("city LIKE ?", "%$paramValue%");
+                    break;
+                case "marital_status":
+                    $result->where("marital_status ?", $paramValue);
+                    break;
+                case "polit_views":
+                    $result->where("polit_views ?", $paramValue);
+                    break;
+                case "is_online":
+                    $result->where("online >= ?", time() - 900);
+                    break;
+                case "fav_mus":
+                    $result->where("fav_music LIKE ?", "%$paramValue%");
+                    break;
+                case "fav_films":
+                    $result->where("fav_films LIKE ?", "%$paramValue%");
+                    break;
+                case "fav_shows":
+                    $result->where("fav_shows LIKE ?", "%$paramValue%");
+                    break;
+                case "fav_books":
+                    $result->where("fav_books LIKE ?", "%$paramValue%");
+                    break;
+                case "before":
+                    $result->where("UNIX_TIMESTAMP(since) < ?", $paramValue);
+                    break;
+                case "after":
+                    $result->where("UNIX_TIMESTAMP(since) > ?", $paramValue);
+                    break;
+                case "gender":
+                    if((int) $paramValue == 3) break;
+                    $result->where("sex ?", (int) $paramValue);
+                    break;
+                case "ignore_id":
+                    $result->where("id != ?", $paramValue);
+                    break;
+                case "ignore_private":
+                    $result->where("profile_type", 0);
+                    break;
             }
         }
 
+        if($order_str)
+            $result->order($order_str);
 
-        return new Util\EntityStream("User", $result->order($sort));
+        return new Util\EntityStream("User", $result);
     }
     
     function getStatistics(): object
     {
         return (object) [
-            "all"    => sizeof(clone $this->users),
-            "active" => sizeof((clone $this->users)->where("online > 0")),
-            "online" => sizeof((clone $this->users)->where("online >= ?", time() - 900)),
+            "all"    => (clone $this->users)->count('*'),
+            "active" => (clone $this->users)->where("online > 0")->count('*'),
+            "online" => (clone $this->users)->where("online >= ?", time() - 900)->count('*'),
         ];
     }
 
