@@ -1418,6 +1418,20 @@ class User extends RowModel
                 case 'real_id':
                     $res->real_id = $this->getRealId();
                     break;
+                case "blacklisted_by_me":
+                    if(!$user) {
+                        continue;
+                    }
+
+                    $res->blacklisted_by_me = (int)$this->isBlacklistedBy($user);
+                    break;
+                case "blacklisted":
+                    if(!$user) {
+                        continue;
+                    }
+                    
+                    $res->blacklisted = (int)$user->isBlacklistedBy($this);
+                    break;
             }
         }
 
