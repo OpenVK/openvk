@@ -266,6 +266,20 @@ final class Users extends VKAPIRequestHandler
 							case 'nickname':
 								$response[$i]->nickname = $usr->getPseudo();
 								break;
+							case 'blacklisted_by_me':
+								if(!$authuser) {
+									continue;
+								}
+
+								$response[$i]->blacklisted_by_me = (int)$usr->isBlacklistedBy($this->getUser());
+								break;
+							case 'blacklisted':
+								if(!$authuser) {
+									continue;
+								}
+								
+								$response[$i]->blacklisted = (int)$this->getUser()->isBlacklistedBy($usr);
+								break;
 						}
 					}
 
