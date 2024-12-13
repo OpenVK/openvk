@@ -2856,7 +2856,7 @@ a.poll-retract-vote {
 .page_header.search_expanded .header_navigation #search_box #searchBoxFastTips.shown {
     display: flex;
     flex-direction: column;
-    z-index: 2;
+    z-index: 11;
 }
 
 .page_header.search_expanded_at_all .header_navigation #search_box #searchBoxFastTips.shown {

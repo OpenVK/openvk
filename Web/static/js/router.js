@@ -102,6 +102,8 @@ window.router = new class {
         } else {
             if(u('.page_header').hasClass('search_expanded_at_all')) {
                 u('.page_header').removeClass('search_expanded_at_all').removeClass('search_expanded')
+            } else {
+                u('.page_header').removeClass('search_expanded')
             }
         }
         
