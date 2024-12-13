@@ -5,7 +5,7 @@ use openvk\Web\Themes\{Themepack, Themepacks};
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{Photo, Message, Correspondence, Gift, Audio};
-use openvk\Web\Models\Repositories\{Applications, Bans, Comments, Notes, Posts,   Users, Clubs, Albums, Gifts, Notifications, Videos, Photos};
+use openvk\Web\Models\Repositories\{Applications, Bans, Comments, Notes, Posts, Users, Clubs, Albums, Gifts, Notifications, Videos, Photos};
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
 use Nette\Database\Table\ActiveRow;
 use Chandler\Database\DatabaseConnection;
@@ -511,7 +511,7 @@ class User extends RowModel
         else if($user->getId() === $this->getId())
             return true;
 
-        if($permission != "messages.write" && !$this->canBeViewedBy($user))
+        if(/*$permission != "messages.write" && */!$this->canBeViewedBy($user, true))
             return false;
 
         switch($permStatus) {
@@ -1228,11 +1228,16 @@ class User extends RowModel
         return (bool) $this->getRecord()->activated;
     }
 
+    function isAdmin(): bool
+    {
+        return $this->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL);
+    }
+
     function isDead(): bool
     {
         return $this->onlineStatus() == 2;
     }
-
+    
     function getUnbanTime(): ?string
     {
         $ban = (new Bans)->get((int) $this->getRecord()->block_reason);
@@ -1289,15 +1294,19 @@ class User extends RowModel
         return $this->getRecord()->profile_type;
     }
 
-    function canBeViewedBy(?User $user = NULL): bool
+    function canBeViewedBy(?User $user = NULL, bool $blacklist_check = true): bool
     {
         if(!is_null($user)) {
             if($this->getId() == $user->getId()) {
                 return true;
             }
 
-            if($user->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)) {
+            if($user->isAdmin() && !(OPENVK_ROOT_CONF['openvk']['preferences']['blacklists']['applyToAdmins'] ?? true)) {
                 return true;
+            }
+
+            if($blacklist_check && ($this->isBlacklistedBy($user) || $user->isBlacklistedBy($this))) {
+                return false;
             }
 
             if($this->getProfileType() == 0) {
@@ -1409,6 +1418,20 @@ class User extends RowModel
                 case 'real_id':
                     $res->real_id = $this->getRealId();
                     break;
+                case "blacklisted_by_me":
+                    if(!$user) {
+                        continue;
+                    }
+
+                    $res->blacklisted_by_me = (int)$this->isBlacklistedBy($user);
+                    break;
+                case "blacklisted":
+                    if(!$user) {
+                        continue;
+                    }
+                    
+                    $res->blacklisted = (int)$user->isBlacklistedBy($this);
+                    break;
             }
         }
 
@@ -1484,6 +1507,76 @@ class User extends RowModel
     function getIgnoredSourcesCount()
     {
         return DatabaseConnection::i()->getContext()->table("ignored_sources")->where("owner", $this->getId())->count();
+    }
+
+    function isBlacklistedBy(?User $user = NULL): bool
+    {
+        if(!$user)
+            return false;
+
+        $ctx  = DatabaseConnection::i()->getContext();
+        $data = [
+            "author" => $user->getId(),
+            "target" => $this->getRealId(),
+        ];
+
+        $sub = $ctx->table("blacklist_relations")->where($data);
+        return $sub->count() > 0;
+    }
+
+    function addToBlacklist(?User $user)
+    {   
+        DatabaseConnection::i()->getContext()->table("blacklist_relations")->insert([
+            "author"  => $this->getRealId(),
+            "target"  => $user->getRealId(),
+            "created" => time(),
+        ]);
+
+        DatabaseConnection::i()->getContext()->table("subscriptions")->where([
+            "follower" => $user->getId(),
+            "model"    => static::class,
+            "target"   => $this->getId(),
+        ])->delete();
+
+        DatabaseConnection::i()->getContext()->table("subscriptions")->where([
+            "follower" => $this->getId(),
+            "model"    => static::class,
+            "target"   => $user->getId(),
+        ])->delete();
+        
+        return true;
+    }
+
+    function removeFromBlacklist(?User $user): bool
+    {
+        DatabaseConnection::i()->getContext()->table("blacklist_relations")->where([
+            "author" => $this->getRealId(),
+            "target" => $user->getRealId(),
+        ])->delete();
+        
+        return true;
+    }
+
+    function getBlacklist(int $offset = 0, int $limit = 10)
+    {
+        $sources = DatabaseConnection::i()->getContext()->table("blacklist_relations")->where("author", $this->getId())->limit($limit, $offset)->order('created ASC');
+        $output_array = [];
+
+        foreach($sources as $source) {
+            $entity_id = (int)$source->target ;
+            $entity = (new Users)->get($entity_id);
+            if(!$entity)
+                continue;
+
+            $output_array[] = $entity;
+        }
+
+        return $output_array;
+    }
+
+    function getBlacklistSize()
+    {
+        return DatabaseConnection::i()->getContext()->table("blacklist_relations")->where("author", $this->getId())->count();
     }
 
     use Traits\TBackDrops;

@@ -2579,7 +2579,7 @@ async function changeStatus() {
         document.querySelector("#page_status_text").innerHTML = `[ ${tr("change_status")} ]`;
         document.querySelector("#page_status_text").className = "edit_link page_status_edit_button";
     } else {
-        document.querySelector("#page_status_text").innerHTML = status;
+        document.querySelector("#page_status_text").innerHTML = escapeHtml(status);
         document.querySelector("#page_status_text").className = "page_status page_status_edit_button";
     }
 
@@ -2828,3 +2828,42 @@ function openNearPosts(posts) {
         MessageBox(tr('nearest_posts'), `<center style='color: grey;'>${tr('no_nearest_posts')}</center>`, ["OK"], [Function.noop]);
     }
 }
+
+u(document).on('click', '#_bl_toggler', async (e) => {
+    e.preventDefault()
+
+    const target = u(e.target)
+    const val = Number(target.attr('data-val'))
+    const id  = Number(target.attr('data-id'))
+    const name = target.attr('data-name')
+
+    const fallback = (e) => {
+        fastError(e.message)
+        target.removeClass('lagged')
+    }
+
+    if(val == 1) {
+        const msg = new CMessageBox({
+            title: tr('addition_to_bl'),
+            body: `<span>${escapeHtml(tr('adding_to_bl_sure', name))}</span>`,
+            buttons: [tr('yes'), tr('no')],
+            callbacks: [async () => {
+                try {
+                    target.addClass('lagged')
+                    await window.OVKAPI.call('account.ban', {'owner_id': id})
+                    window.router.route(location.href)
+                } catch(e) {
+                    fallback(e)
+                }
+            }, () => Function.noop]
+        })
+    } else {
+        try {
+            target.addClass('lagged')
+            await window.OVKAPI.call('account.unban', {'owner_id': id})
+            window.router.route(location.href)
+        } catch(e) {
+            fallback(e)
+        }
+    }
+})

@@ -13,6 +13,7 @@
 {var $isFinance    = $mode === 'finance'}
 {var $isFinanceTU  = $mode === 'finance.top-up'}
 {var $isInterface  = $mode === 'interface'}
+{var $isBl         = $mode === 'blacklist'}
 
        <div class="tabs">
         <div n:attr="id => ($isMain ? 'activetabs' : 'ki')" class="tab">
@@ -23,6 +24,9 @@
         </div>
         <div n:attr="id => ($isPrivacy ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isPrivacy ? 'act_tab_a' : 'ki')" href="/settings?act=privacy">{_privacy}</a>
+        </div>
+        <div n:attr="id => ($isBl ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => ($isBl ? 'act_tab_a' : 'ki')" href="/settings?act=blacklist">{_blacklist}</a>
         </div>
         <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce']" n:attr="id => (($isFinance || $isFinanceTU) ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => (($isFinance || $isFinanceTU) ? 'act_tab_a' : 'ki')" href="/settings?act=finance">{_points}</a>
@@ -713,7 +717,29 @@
                 </tbody>
             </table>
         </form>
-        
+        {elseif $isBl}
+            {if $blSize < 1}
+                {include "../components/error.xml", description => tr("bl_count_zero_desc")}
+            {else}
+                <h4 style="margin-bottom: 10px;">{tr("bl_count", $blSize)}.</h4>
+                <div class='entity_vertical_list mini m_mini scroll_container'>
+                    <div n:foreach="$blItems as $item" class="entity_vertical_list_item scroll_node">
+                        <div class="first_column">
+                            <a href="{$item->getURL()}" class="avatar">
+                                <img src='{$item->getAvatarURL()}'>
+                            </a>
+                            <div class="info">
+                                <b class="noOverflow">
+                                    <a href="{$item->getURL()}">
+                                        {$item->getCanonicalName()} 
+                                    </a>
+                                </b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {include "../components/paginator.xml", conf => $paginatorConf}
+            {/if}
         {/if}
     </div>
     

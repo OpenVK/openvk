@@ -41,6 +41,7 @@
                     <input type="submit" class="profile_link" value="{_friends_reject}" style="width: 194px;" />
                 </form>
             {/if}
+            <a id="_bl_toggler" data-name="{$user->getMorphedName('genitive', false)}"  data-val="1" data-id="{$user->getRealId()}" class="profile_link" style="display:block;width:96%;">{_bl_add}</a>
             <a class="profile_link" style="display:block;width:96%;" href="javascript:reportUser({$user->getId()})">{_report}</a>
         </div>
     </div>
