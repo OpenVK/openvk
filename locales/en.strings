@@ -240,6 +240,7 @@
 "detach" = "Detach";
 "attach_photo" = "Attach photo";
 "attach_video" = "Attach video";
+"attach_geotag" = "Attach geotag";
 "draw_graffiti" = "Draw graffiti";
 "no_posts_abstract" = "Nobody wrote anything here... So far.";
 "attach_no_longer_available" = "This attachment is no longer available.";
@@ -280,6 +281,15 @@
 "liked_by_x_people_many" = "Liked by $1 users";
 "liked_by_x_people_other" = "Liked by $1 users";
 "liked_by_x_people_zero" = "Nobody liked";
+
+"geo_place" = "Place";
+"geotag" = "Geotag";
+"nearest_posts" = "Nearest posts";
+"Latitude" = "Latitude";
+"longitude" = "Longitude";
+"name_of_the_place" = "Place's name";
+"no_nearest_posts" = "No nearby posts";
+"shown_last_nearest_posts" = "Showing last $1 posts per month";
 
 /* Friends */
 
@@ -1604,6 +1614,8 @@
 "error_adding_source_long" = "Error adding source: link is too long.";
 "error_adding_source_sus" = "Error adding source: suspicious link.";
 "error_playlist_creating_too_small" = "Add at least one audio";
+"error_geolocation" = "Error while trying to pin geolocation";
+"error_no_geotag" = "There is no geo-tag pinned in this post";
 
 /* Admin actions */
 

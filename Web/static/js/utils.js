@@ -284,3 +284,30 @@ function collect_attachments_node(target)
     })
     vertical_input.nodes[0].value = vertical_array.join(',')
 }
+
+function short_geo_name(address_osm)
+{
+    let final_arr = []
+    if(address_osm.country) {
+        final_arr.push(address_osm.country)
+    }
+    if(address_osm.state) {
+        final_arr.push(address_osm.state)
+    }
+    if(address_osm.state_district) {
+        final_arr.push(address_osm.state_district)
+    }
+    if(address_osm.city) {
+        final_arr.push(address_osm.city)
+    } else if(address_osm.town) {
+        final_arr.push(address_osm.town)
+    }
+    if(address_osm.city_district) {
+        final_arr.push(address_osm.city_district)
+    }
+    if(address_osm.road) {
+        final_arr.push(address_osm.road)
+    }
+
+    return escapeHtml(final_arr.join(', '))
+}

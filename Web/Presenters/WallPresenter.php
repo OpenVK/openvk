@@ -309,6 +309,19 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("failed_to_publish_post"), "Poll format invalid");
         }
 
+        $geo = NULL;
+
+        if (!is_null($this->postParam("geo")) && $this->postParam("geo") != "") {
+            $geo = json_decode($this->postParam("geo"), true, JSON_UNESCAPED_UNICODE);
+            if($geo["lat"] && $geo["lng"] && $geo["name"]) {
+                $latitude = number_format((float) $geo["lat"], 8, ".", '');
+                $longitude = number_format((float) $geo["lng"], 8, ".", '');
+                if($latitude > 90 || $latitude < -90 || $longitude > 180 || $longitude < -180) {
+                    $this->flashFail("err", tr("error"), "Invalid latitude or longitude");
+                }
+            }
+        }
+        
         if(empty($this->postParam("text")) && sizeof($horizontal_attachments) < 1 && sizeof($vertical_attachments) < 1 && !$poll)
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"));
         
@@ -332,6 +345,11 @@ final class WallPresenter extends OpenVKPresenter
             if($should_be_suggested)
                 $post->setSuggested(1);
             
+            if ($geo) {
+                $post->setGeo(json_encode($geo));
+                $post->setGeo_Lat($latitude);
+                $post->setGeo_Lon($longitude);
+            }
             $post->save();
         } catch (\LengthException $ex) {
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_too_big"));

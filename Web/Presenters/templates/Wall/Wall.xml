@@ -28,7 +28,7 @@
             </div>
 
             <div n:if="$canPost && $type == 'all'" class="content_subtitle">
-                {include "../components/textArea.xml", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true}
+                {include "../components/textArea.xml", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true}
             </div>
             
             <div class="content scroll_container">

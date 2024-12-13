@@ -455,6 +455,31 @@ class Post extends Postable
 
         return $item;
     }
+
+    function getGeo(): ?object
+    {
+        if (!$this->getRecord()->geo) return NULL;
+
+        return (object) json_decode($this->getRecord()->geo, true, JSON_UNESCAPED_UNICODE);
+    }
+
+    function getLat(): ?float
+    {
+        return (float) $this->getRecord()->geo_lat ?? NULL;
+    }
+
+    function getLon(): ?float
+    {
+        return (float) $this->getRecord()->geo_lon ?? NULL;
+    }
+
+    function getVkApiGeo(): object
+    {
+        return (object) [
+            'type'  => 'point',
+            'coordinates' => $this->getLat() . ',' . $this->getLon(),
+        ];
+    }
     
     use Traits\TRichText;
 }

@@ -164,6 +164,10 @@ window.router = new class {
             return false
         }
 
+        if(url.indexOf('#close') != -1) {
+            return false
+        }
+
         return true
     }
 
@@ -235,6 +239,7 @@ window.router = new class {
 
 u(document).on('click', 'a', async (e) => {
     if(e.defaultPrevented) {
+        console.log('AJAX | Skipping because default is prevented')
         return
     }
     

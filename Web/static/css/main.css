@@ -851,6 +851,11 @@ h4 {
     margin-bottom: 2px;
 }
 
+.post-geo {
+    margin: 1px 0px;
+    padding: 0 4px;
+}
+
 .post-signature span {
     color: grey;
 }
@@ -3924,4 +3929,10 @@ hr {
     left: 9px;
     top: 3px;
     font-size: 15px;
+}
+
+.map_svg_icon {
+    display: inline-block;
+    margin-bottom: -2px;
+    fill: #7d7d7d;
 }
