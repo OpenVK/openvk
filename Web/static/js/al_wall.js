@@ -2579,7 +2579,7 @@ async function changeStatus() {
         document.querySelector("#page_status_text").innerHTML = `[ ${tr("change_status")} ]`;
         document.querySelector("#page_status_text").className = "edit_link page_status_edit_button";
     } else {
-        document.querySelector("#page_status_text").innerHTML = status;
+        document.querySelector("#page_status_text").innerHTML = escapeHtml(status);
         document.querySelector("#page_status_text").className = "page_status page_status_edit_button";
     }
 

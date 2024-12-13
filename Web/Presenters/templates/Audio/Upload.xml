@@ -164,11 +164,11 @@
                         <tbody>
                             <tr>
                                 <td width="120" valign="top"><span class="nobold">${tr('performer')}:</span></td>
-                                <td><input value='${audio_element.info.performer}' name="performer" type="text" autocomplete="off" maxlength="80" /></td>
+                                <td><input value='${escapeHtml(audio_element.info.performer)}' name="performer" type="text" autocomplete="off" maxlength="80" /></td>
                             </tr>
                             <tr>
                                 <td width="120" valign="top"><span class="nobold">${tr('audio_name')}:</span></td>
-                                <td><input type="text" value='${audio_element.info.name}' name="name" autocomplete="off" maxlength="80" /></td>
+                                <td><input type="text" value='${escapeHtml(audio_element.info.name)}' name="name" autocomplete="off" maxlength="80" /></td>
                             </tr>
                             <tr>
                                 <td width="120" valign="top"><span class="nobold">${tr('genre')}:</span></td>
@@ -178,7 +178,7 @@
                             </tr>
                             <tr>
                                 <td width="120" valign="top"><span class="nobold">${tr('lyrics')}:</span></td>
-                                <td><textarea name="lyrics" style="resize: vertical;max-height: 300px;">${audio_element.info.lyrics}</textarea></td>
+                                <td><textarea name="lyrics" style="resize: vertical;max-height: 300px;">${escapeHtml(audio_element.info.lyrics)}</textarea></td>
                             </tr>
                             <tr>
                                 <td width="120" valign="top"></td>

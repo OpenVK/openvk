@@ -1306,12 +1306,12 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
     MessageBox(tr("edit_audio"), `
         <div>
             ${tr("performer")}
-            <input name="performer" maxlength="256" type="text" value="${performer}">
+            <input name="performer" maxlength="256" type="text" value="${escapeHtml(performer)}">
         </div>
 
         <div style="margin-top: 11px">
             ${tr("audio_name")}
-            <input name="name" maxlength="256" type="text" value="${name}">
+            <input name="name" maxlength="256" type="text" value="${escapeHtml(name)}">
         </div>
 
         <div style="margin-top: 11px">
@@ -1359,7 +1359,7 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
                         
                         e.target.setAttribute("data-performer", escapeHtml(response.new_info.performer))
                         e.target.setAttribute("data-title", escapeHtml(response.new_info.name))
-                        e.target.setAttribute("data-lyrics", response.new_info.lyrics_unformatted)
+                        e.target.setAttribute("data-lyrics", escapeHtml(response.new_info.lyrics_unformatted))
                         e.target.setAttribute("data-explicit", Number(response.new_info.explicit))
                         e.target.setAttribute("data-searchable", Number(!response.new_info.unlisted))
                         player.setAttribute("data-genre", response.new_info.genre)
@@ -1374,7 +1374,7 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
                             } else {
                                 player.insertAdjacentHTML("beforeend", `
                                     <div class="lyrics">
-                                        ${response.new_info.lyrics}
+                                        ${escapeHtml(response.new_info.lyrics)}
                                     </div>
                                 `)
     
