@@ -2634,7 +2634,7 @@ u(document).on('click', "#__geoAttacher", async (e) => {
             const marker = {
                 lat: currentMarker._latlng.lat,
                 lng: currentMarker._latlng.lng,
-                name: escapeHtml(geo_name)
+                name: geo_name
             }
             buttons.find(`input[name='geo']`).nodes[0].value = JSON.stringify(marker)
             buttons.find(`.post-has-geo`).html(`
@@ -2710,6 +2710,25 @@ u(document).on('click', '.post-has-geo #small_remove_button', (e) => {
     const geo  = form.find('.post-has-geo')
     geo.remove()
     form.find(`input[name='geo']`).nodes[0].value = ''
+})
+
+u(document).on('click', '#geo-name', (e) => {
+    const current_value = escapeHtml(e.target.innerHTML)
+    const msg = new CMessageBox({
+        title: tr('change_geo_name'),
+        unique_name: 'geo_change_name_menu',
+        body: `
+            <div>
+                <input type="text" maxlength="255" name="final_value" placeholder="${tr('change_geo_name_new')}" value="${current_value}">
+            </div>
+        `,
+        buttons: [tr('save'), tr('cancel')],
+        callbacks: [() => {
+            const new_value = u(`input[name='final_value']`).nodes[0].value
+            u('#geo-name').html(escapeHtml(new_value))
+        }, Function.noop]
+    })
+    u(`input[name='final_value']`).nodes[0].focus()
 })
 
 function openGeo(data, owner_id, virtual_id) {

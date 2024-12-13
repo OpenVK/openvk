@@ -639,7 +639,7 @@ final class Wall extends VKAPIRequestHandler
                     $res['name'] = 'Geopoint';
                 }
 
-                $post->setGeo(json_encode($res));
+                $post->setGeo($res);
                 $post->setGeo_Lat($latitude);
                 $post->setGeo_Lon($longitude);
             }

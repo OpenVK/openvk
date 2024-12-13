@@ -298,12 +298,17 @@ function short_geo_name(address_osm)
         final_arr.push(address_osm.state_district)
     }
     if(address_osm.city) {
-        final_arr.push(address_osm.city)
+        if(address_osm.city != address_osm.state) {
+            final_arr.push(address_osm.city)
+        }
     } else if(address_osm.town) {
         final_arr.push(address_osm.town)
     }
     if(address_osm.city_district) {
         final_arr.push(address_osm.city_district)
+    }
+    if(address_osm.village) {
+        final_arr.push(address_osm.village)
     }
     if(address_osm.road) {
         final_arr.push(address_osm.road)

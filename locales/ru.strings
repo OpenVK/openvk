@@ -270,6 +270,9 @@
 "no_nearest_posts" = "Нет ближайших постов";
 "shown_last_nearest_posts" = "Показаны последние $1 постов за месяц";
 
+"change_geo_name" = "Изменить название точки";
+"change_geo_name_new" = "Новое название";
+
 /* Friends */
 
 "friends" = "Друзья";

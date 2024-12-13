@@ -291,6 +291,9 @@
 "no_nearest_posts" = "No nearby posts";
 "shown_last_nearest_posts" = "Showing last $1 posts per month";
 
+"change_geo_name" = "Change geo name";
+"change_geo_name_new" = "New name";
+
 /* Friends */
 
 "friends" = "Friends";

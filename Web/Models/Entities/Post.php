@@ -463,6 +463,21 @@ class Post extends Postable
         return (object) json_decode($this->getRecord()->geo, true, JSON_UNESCAPED_UNICODE);
     }
 
+    function setGeo($encoded_object): void
+    {
+        $final_geo = $encoded_object['name'];
+        $neutral_names = ["Россия", "Russia", "Росія", "Россія", "Украина", "Ukraine", "Україна", "Украіна"];
+        foreach($neutral_names as $name) {
+            if(str_contains($final_geo, $name.", ")) {
+                $final_geo = str_replace($name.", ", "", $final_geo);
+            }
+        }
+        
+        $encoded_object['name'] = ovk_proc_strtr($final_geo, 255);
+        $encoded = json_encode($encoded_object);
+        $this->stateChanges("geo", $encoded);
+    }
+
     function getLat(): ?float
     {
         return (float) $this->getRecord()->geo_lat ?? NULL;
@@ -478,6 +493,7 @@ class Post extends Postable
         return (object) [
             'type'  => 'point',
             'coordinates' => $this->getLat() . ',' . $this->getLon(),
+            'name' => $this->getGeo()->name,
         ];
     }
     

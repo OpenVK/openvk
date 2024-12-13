@@ -346,7 +346,7 @@ final class WallPresenter extends OpenVKPresenter
                 $post->setSuggested(1);
             
             if ($geo) {
-                $post->setGeo(json_encode($geo));
+                $post->setGeo($geo);
                 $post->setGeo_Lat($latitude);
                 $post->setGeo_Lon($longitude);
             }
