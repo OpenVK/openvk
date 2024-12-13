@@ -2305,13 +2305,19 @@ li {
     padding-left: 15px;
 }
 
-#votesBalance {
+#votesBalance, #news {
     margin-top: 10px;
     padding: 7px;
     background-color: #f6f6f6;
     border-bottom: 1.5px solid #DDDDDD;
     text-align: center;
     user-select: none;
+}
+
+#news b
+{
+    color: #8A0000;
+    font-size: 12px;
 }
 
 .cookies-popup {
