@@ -35,7 +35,7 @@ final class UserPresenter extends OpenVKPresenter
                 $this->template->_template = "User/deactivated.xml";
                 
                 $this->template->user = $user;
-            } else if($this->user->identity->isBlacklistedBy($user)) {
+            } else if($this->user->identity && $this->user->identity->isBlacklistedBy($user)) {
                 $this->template->_template = "User/blacklisted.xml";
 
                 $this->template->blacklist_status = $user->isBlacklistedBy($this->user->identity);
