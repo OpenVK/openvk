@@ -16,7 +16,6 @@ body.dimmed > .dimmer #absolute_territory {
     z-index: 1024;
     position: fixed;
     width: 420px;
-    min-height: 200px;
     top: 50%;
     left: 50%;
     margin-right: -50%;
@@ -50,7 +49,6 @@ body.dimmed > .dimmer #absolute_territory {
 
 .ovk-diag-body {
     padding: 20px;
-    min-height: 110px;
 }
 
 .ovk-diag-action {
