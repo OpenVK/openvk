@@ -296,6 +296,14 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
+                            <span class="nobold">{_favorite_games}: </span>
+                        </td>
+                        <td>
+                            <textarea type="text" name="fav_games">{$user->getFavoriteGames()}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
                             <span class="nobold">{_information_about}: </span>
                         </td>
                         <td>

@@ -415,6 +415,11 @@ class User extends RowModel
         return $this->getRecord()->fav_quote;
     }
 
+    function getFavoriteGames(): ?string
+    {
+        return $this->getRecord()->fav_games;
+    }
+
     function getCity(): ?string
     {
         return $this->getRecord()->city;
@@ -1431,6 +1436,9 @@ class User extends RowModel
                     }
                     
                     $res->blacklisted = (int)$user->isBlacklistedBy($this);
+                    break;
+                case "games":
+                    $res->games = $this->getFavoriteGames();
                     break;
             }
         }

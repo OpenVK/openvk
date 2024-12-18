@@ -924,7 +924,8 @@ u(document).on("click", "#editPost", async (e) => {
     const target = u(e.target)
     const post = target.closest("table")
     const content = post.find(".post-content")
-    const edit_place = post.find('.post-edit')
+    const edit_place_l = post.find('.post-edit')
+    const edit_place = u(edit_place_l.first())
     const id = post.attr('data-id').split('_')
 
     let type = 'post'

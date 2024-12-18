@@ -136,6 +136,7 @@
 "favorite_shows" = "Любимые ТВ-шоу";
 "favorite_books" = "Любимые книги";
 "favorite_quotes" = "Любимые цитаты";
+"favorite_games" = "Любимые игры";
 "information_about" = "О себе";
 "updated_at" = "Обновлено $1";
 "user_banned" = "К сожалению, нам пришлось заблокировать страницу пользователя <b>$1</b>.";

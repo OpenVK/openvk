@@ -567,6 +567,10 @@
                         <td class="label"><span class="nobold">{_favorite_quotes}: </span></td>
                         <td class="data">{$user->getFavoriteQuote()}</td>
                     </tr>
+                    <tr n:if="!is_null($user->getFavoriteGames())">
+                        <td class="label"><span class="nobold">{_favorite_games}: </span></td>
+                        <td class="data">{$user->getFavoriteGames()}</td>
+                    </tr>
                     <tr n:if="!is_null($user->getDescription())">
                         <td class="label"><span class="nobold">{_information_about}: </span></td>
                         <td class="data">{$user->getDescription()}</td>

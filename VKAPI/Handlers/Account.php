@@ -269,7 +269,7 @@ final class Account extends VKAPIRequestHandler
             return 1;
 
         $entity = get_entity_by_id($owner_id);
-        if(!$entity || $entity->isDeleted())
+        if(!$entity)
             return 0;
 
         if(!$entity->isBlacklistedBy($this->getUser()))

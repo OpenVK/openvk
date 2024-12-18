@@ -152,6 +152,7 @@
 "favorite_shows" = "Favorite TV-shows";
 "favorite_books" = "Favorite books";
 "favorite_quotes" = "Favorite quotes";
+"favorite_games" = "Favorite games";
 "information_about" = "About";
 
 "updated_at" = "Updated at $1";
