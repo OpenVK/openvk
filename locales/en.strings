@@ -153,6 +153,13 @@
 "favorite_books" = "Favorite books";
 "favorite_quotes" = "Favorite quotes";
 "favorite_games" = "Favorite games";
+"custom_fav_favorite_performers" = "Favourite performers";
+"custom_fav_favorite_content_makers" = "Favourite content-makers";
+"custom_fav_favorite_anime" = "Favourite anime";
+"custom_fav_favorite_manga" = "Favourite manga";
+"custom_fav_favorite_vtubers" = "Favourite vtubers";
+"custom_fav_favorite_albums" = "Favourite music albums";
+
 "information_about" = "About";
 
 "updated_at" = "Updated at $1";

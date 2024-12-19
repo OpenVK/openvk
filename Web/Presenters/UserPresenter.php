@@ -64,6 +64,7 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->audios      = (new Audios)->getRandomThreeAudiosByEntityId($user->getId());
             $this->template->audiosCount = (new Audios)->getUserCollectionSize($user);
             $this->template->audioStatus = $user->getCurrentAudioStatus();
+            $this->template->additionalFields = $user->getAdditionalFields(true);
 
             $this->template->user = $user;
 

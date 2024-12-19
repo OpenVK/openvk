@@ -137,6 +137,13 @@
 "favorite_books" = "Любимые книги";
 "favorite_quotes" = "Любимые цитаты";
 "favorite_games" = "Любимые игры";
+"custom_fav_favorite_performers" = "Любимые исполнители";
+"custom_fav_favorite_content_makers" = "Любимые контент-мейкеры";
+"custom_fav_favorite_anime" = "Любимые аниме";
+"custom_fav_favorite_manga" = "Любимая манга";
+"custom_fav_favorite_vtubers" = "Любимые витуберы";
+"custom_fav_favorite_albums" = "Любимые альбомы";
+
 "information_about" = "О себе";
 "updated_at" = "Обновлено $1";
 "user_banned" = "К сожалению, нам пришлось заблокировать страницу пользователя <b>$1</b>.";

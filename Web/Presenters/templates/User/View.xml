@@ -506,6 +506,12 @@
                         <td class="label"><span class="nobold">{_address}:</span></td>
                         <td class="data">{$user->getPhysicalAddress()}</td>
                     </tr>
+                    {if $additionalFields}
+                        <tr n:foreach="$additionalFields['contacts'] as $field">
+                            <td class="label"><span class="nobold">{$field->getName()}:</span></td>
+                            <td class="data">{$field->getContent()}</td>
+                        </tr>
+                    {/if}
                   </tbody>
                 </table>
             {/capture}
@@ -571,6 +577,12 @@
                         <td class="label"><span class="nobold">{_favorite_games}: </span></td>
                         <td class="data">{$user->getFavoriteGames()}</td>
                     </tr>
+                    {if $additionalFields}
+                        <tr n:foreach="$additionalFields['interests'] as $field">
+                            <td class="label"><span class="nobold">{$field->getName()}:</span></td>
+                            <td class="data">{$field->getContent()}</td>
+                        </tr>
+                    {/if}
                     <tr n:if="!is_null($user->getDescription())">
                         <td class="label"><span class="nobold">{_information_about}: </span></td>
                         <td class="data">{$user->getDescription()}</td>

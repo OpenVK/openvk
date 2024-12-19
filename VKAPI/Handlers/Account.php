@@ -296,4 +296,49 @@ final class Account extends VKAPIRequestHandler
         
         return $result;
     }
+
+    function saveInterestsInfo(
+    string $interests = NULL, 
+    string $fav_music = NULL,
+    string $fav_films = NULL,
+    string $fav_shows = NULL,
+    string $fav_books = NULL,
+    string $fav_quote = NULL,
+    string $fav_games = NULL,
+    string $about = NULL,
+    )
+    {
+        $this->requireUser();
+        $this->willExecuteWriteAction();
+
+        $user = $this->getUser();
+        $changes = 0;
+        $changes_array = [
+            "interests" => $interests, 
+            "fav_music" => $fav_music, 
+            "fav_films" => $fav_films, 
+            "fav_books" => $fav_books, 
+            "fav_shows" => $fav_shows, 
+            "fav_quote" => $fav_quote, 
+            "fav_games" => $fav_games, 
+            "about"     => $about,
+        ];
+
+        foreach($changes_array as $change_name => $change_value) {
+            $set_name = "set".ucfirst($change_name);
+            $get_name = "get".str_replace("Fav", "Favorite", str_replace("_", "", ucfirst($change_name)));
+            if(!is_null($change_value) && $change_value !== $user->$get_name()) {
+                $user->$set_name(ovk_proc_strtr($change_value, 1000));
+                $changes += 1;
+            }
+        }
+
+        if($changes > 0) {
+            $user->save();
+        }
+
+        return (object) [
+            "changed" => (int)($changes > 0),
+        ];
+    }
 }

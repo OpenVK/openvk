@@ -228,6 +228,11 @@ class User extends RowModel
         return $this->getRecord()->about;
     }
 
+    function getAbout(): ?string
+    {
+        return $this->getRecord()->about;
+    }
+
     function getStatus(): ?string
     {
         return $this->getRecord()->status;
@@ -428,6 +433,30 @@ class User extends RowModel
     function getPhysicalAddress(): ?string
     {
         return $this->getRecord()->address;
+    }
+
+    function getAdditionalFields(bool $split = false): array
+    {
+        $all = \openvk\Web\Models\Entities\UserInfoEntities\AdditionalField::getByOwner($this->getId());
+        $result = [
+            "interests" => [],
+            "contacts"  => [],
+        ];
+
+        if($split) {
+            foreach($all as $field) {
+                if($field->getPlace() == "contact")
+                    $result["contacts"][] = $field;
+                else if($field->getPlace() == "interest")
+                    $result["interests"][] = $field;
+            }
+        } else {
+            $result = [];
+            foreach($all as $field)
+                $result[] = $field;
+        }
+
+        return $result;
     }
 
     function getNotificationOffset(): int
