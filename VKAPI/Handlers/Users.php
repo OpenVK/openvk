@@ -12,8 +12,14 @@ final class Users extends VKAPIRequestHandler
 		if($authuser == NULL) $authuser = $this->getUser();
 
         $users = new UsersRepo;
-		if($user_ids == "0")
+		if($user_ids == "0") {
+			if(!$authuser) {
+				return [];
+			}
+			
 			$user_ids = (string) $authuser->getId();
+		}
+			
 		
         $usrs = explode(',', $user_ids);
         $response = array();
@@ -198,6 +204,13 @@ final class Users extends VKAPIRequestHandler
 
 								$response[$i]->quotes = $usr->getFavoriteQuote();
 								break;
+							case "games":
+								if(!$canView) {
+									break;
+								}
+
+								$response[$i]->games = $usr->getFavoriteGames();
+								break;
 							case "email":
 								if(!$canView) {
 									break;
@@ -279,6 +292,17 @@ final class Users extends VKAPIRequestHandler
 								}
 								
 								$response[$i]->blacklisted = (int)$this->getUser()->isBlacklistedBy($usr);
+								break;
+							case "custom_fields":
+								if(sizeof($usrs) > 1)
+									break;
+
+								$c_fields = \openvk\Web\Models\Entities\UserInfoEntities\AdditionalField::getByOwner($usr->getId());
+								$append_array = [];
+								foreach($c_fields as $c_field)
+									$append_array[] = $c_field->toVkApiStruct();
+
+								$response[$i]->custom_fields = $append_array;
 								break;
 						}
 					}

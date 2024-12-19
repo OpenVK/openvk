@@ -131,11 +131,27 @@
 "address" = "Адрес";
 "personal_information" = "Личная информация";
 "interests" = "Интересы";
+"additional" = "Дополнительно";
+"additional_fields_description" = "Здесь вы можете добавить дополнительную информацию о себе: ссылки на ваши социальные сети, либо же ваши интересы. Максимум можно добавить до $1 таких полей.";
+"additional_field_name" = "Название";
+"additional_field_text" = "Текст";
+"additional_field_place" = "Отображение";
+"additional_field_place_contacts" = "В \"контактах\"";
+"additional_field_place_interests" = "В \"интересах\"";
+
 "favorite_music" = "Любимая музыка";
 "favorite_films" = "Любимые фильмы";
 "favorite_shows" = "Любимые ТВ-шоу";
 "favorite_books" = "Любимые книги";
 "favorite_quotes" = "Любимые цитаты";
+"favorite_games" = "Любимые игры";
+"custom_field_favorite_performers" = "Любимые исполнители";
+"custom_field_favorite_content_makers" = "Любимые контент-мейкеры";
+"custom_field_favorite_anime" = "Любимые аниме";
+"custom_field_favorite_manga" = "Любимая манга";
+"custom_field_favorite_vtubers" = "Любимые витуберы";
+"custom_field_favorite_albums" = "Любимые альбомы";
+
 "information_about" = "О себе";
 "updated_at" = "Обновлено $1";
 "user_banned" = "К сожалению, нам пришлось заблокировать страницу пользователя <b>$1</b>.";
