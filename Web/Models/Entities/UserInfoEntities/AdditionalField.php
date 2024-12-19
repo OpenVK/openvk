@@ -16,14 +16,14 @@ class AdditionalField extends RowModel
         return (int) $this->getRecord()->owner;
     }
 
-    function getName(): string
+    function getName(bool $tr = true): string
     {
         $orig_name = $this->getRecord()->name;
         $name = $orig_name;
-        if($name[0] === "_")
-            $name = tr("custom_fav_" . substr($name, 1));
+        if($tr && $name[0] === "_")
+            $name = tr("custom_field_" . substr($name, 1));
 
-        if(str_contains($name, "custom_fav"))
+        if(str_contains($name, "custom_field"))
             return $orig_name;
 
         return $name;
@@ -46,6 +46,11 @@ class AdditionalField extends RowModel
         return "contact";
     }
 
+    function isContact(): bool
+    {
+        return $this->getRecord()->place == AdditionalField::PLACE_CONTACTS;
+    }
+
     function toVkApiStruct(): object
     {
         return (object) [
@@ -58,9 +63,7 @@ class AdditionalField extends RowModel
     static function getById(int $id)
     {
         $ctx = DatabaseConnection::i()->getContext();
-        $entry = $ctx->table("additional_fields")->where([
-            "id" => $id,
-        ])->fetch();
+        $entry = $ctx->table("additional_fields")->where("id", $id)->fetch();
 
         if(!$entry)
             return NULL;
@@ -71,9 +74,7 @@ class AdditionalField extends RowModel
     static function getByOwner(int $owner): \Traversable
     {
         $ctx = DatabaseConnection::i()->getContext();
-        $entries = $ctx->table("additional_fields")->where([
-            "owner" => $owner,
-        ]);
+        $entries = $ctx->table("additional_fields")->where("owner", $owner);
 
         foreach($entries as $entry) {
             yield new AdditionalField($entry);
@@ -82,8 +83,13 @@ class AdditionalField extends RowModel
 
     static function getCountByOwner(int $owner): \Traversable
     {
-        return DatabaseConnection::i()->getContext()->table("additional_fields")->where([
-            "owner" => $owner,
-        ])->count();
+        return DatabaseConnection::i()->getContext()->table("additional_fields")->where("owner", $owner)->count();
+    }
+
+    static function resetByOwner(int $owner): bool
+    {
+        DatabaseConnection::i()->getContext()->table("additional_fields")->where("owner", $owner)->delete();
+
+        return true;
     }
 }

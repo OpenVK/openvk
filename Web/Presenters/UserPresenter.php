@@ -297,10 +297,40 @@ final class UserPresenter extends OpenVKPresenter
                 $this->returnJson([
                     "success" => true
                 ]);
+            } elseif($_GET['act'] === "additional") {
+                $maxAddFields = ovkGetQuirk("users.max-fields");
+                $items = [];
+
+                for($i = 0; $i < $maxAddFields; $i++) {
+                    if(!$this->postParam("name_".$i)) {
+                        continue;
+                    }
+
+                    $items[] = [
+                        "name"  => $this->postParam("name_".$i),
+                        "text"  => $this->postParam("text_".$i),
+                        "place" => $this->postParam("place_".$i),
+                    ];
+                }
+
+                \openvk\Web\Models\Entities\UserInfoEntities\AdditionalField::resetByOwner($this->user->id);
+                foreach($items as $new_field_info) {
+                    $place = (int)($new_field_info["place"]);
+
+                    $new_field = new \openvk\Web\Models\Entities\UserInfoEntities\AdditionalField;
+                    $new_field->setOwner($this->user->id);
+                    $new_field->setName(ovk_proc_strtr($new_field_info["name"], 50));
+                    $new_field->setText(ovk_proc_strtr($new_field_info["text"], 1000));
+                    $new_field->setPlace([0, 1][$place] ? $place : 0);
+
+                    $new_field->save();
+                }
             }
             
             try {
-                $user->save();
+                if($_GET['act'] !== "additional") {
+                    $user->save();
+                }
             } catch(\PDOException $ex) {
                 if($ex->getCode() == 23000)
                     $this->flashFail("err", tr("error"), tr("error_shorturl"));
@@ -312,7 +342,7 @@ final class UserPresenter extends OpenVKPresenter
         }
         
         $this->template->mode = in_array($this->queryParam("act"), [
-            "main", "contacts", "interests", "avatar", "backdrop"
+            "main", "contacts", "interests", "avatar", "backdrop", "additional"
         ]) ? $this->queryParam("act")
             : "main";
         

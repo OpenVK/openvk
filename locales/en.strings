@@ -147,18 +147,26 @@
 "personal_information" = "Personal information";
 
 "interests" = "Interests";
+"additional" = "Additional";
+"additional_fields_description" = "There you can add additional info about you, like another profiles links or your interests. Up to a maximum of $1 such fields can be added.";
+"additional_field_name" = "Name";
+"additional_field_text" = "Text";
+"additional_field_place" = "Place";
+"additional_field_place_contacts" = "In \"contacts\"";
+"additional_field_place_interests" = "In \"interests\"";
+
 "favorite_music" = "Favorite music";
 "favorite_films" = "Favorite flims";
 "favorite_shows" = "Favorite TV-shows";
 "favorite_books" = "Favorite books";
 "favorite_quotes" = "Favorite quotes";
 "favorite_games" = "Favorite games";
-"custom_fav_favorite_performers" = "Favourite performers";
-"custom_fav_favorite_content_makers" = "Favourite content-makers";
-"custom_fav_favorite_anime" = "Favourite anime";
-"custom_fav_favorite_manga" = "Favourite manga";
-"custom_fav_favorite_vtubers" = "Favourite vtubers";
-"custom_fav_favorite_albums" = "Favourite music albums";
+"custom_field_favorite_performers" = "Favourite performers";
+"custom_field_favorite_content_makers" = "Favourite content-makers";
+"custom_field_favorite_anime" = "Favourite anime";
+"custom_field_favorite_manga" = "Favourite manga";
+"custom_field_favorite_vtubers" = "Favourite vtubers";
+"custom_field_favorite_albums" = "Favourite music albums";
 
 "information_about" = "About";
 
