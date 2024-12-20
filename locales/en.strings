@@ -1059,11 +1059,12 @@
 "time_today" = "today";
 "time_yesterday" = "yesterday";
 
+"news" = "News";
+"news_more" = "More »";
 "points" = "Votes";
 "points_count" = "votes";
 "on_your_account" = "on your account";
 "top_up_your_account" = "Get more";
-"news_more" = "More";
 "you_still_have_x_points" = "You have <b>$1</b> unused votes.";
 
 "vouchers" = "Vouchers";
