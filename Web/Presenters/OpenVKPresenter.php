@@ -210,6 +210,7 @@ abstract class OpenVKPresenter extends SimplePresenter
         if(OPENVK_ROOT_CONF['openvk']['preferences']['news']['show']) {
             $post = (new Posts)->getPostsFromUsersWall(-OPENVK_ROOT_CONF['openvk']['preferences']['news']['groupId'], 1, 1);
             $post = iterator_to_array($post)[0];
+
             $text = wordwrap($post->getText(false), 150, '\n', false);
             $text = explode('\n', $text)[0];
             
@@ -373,4 +374,4 @@ abstract class OpenVKPresenter extends SimplePresenter
             return false;
         }
     }
-} 
+}
