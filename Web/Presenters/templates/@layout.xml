@@ -245,7 +245,7 @@
                                     <hr size="1">
                                     <text>{php echo OPENVK_ROOT_CONF['openvk']['preferences']['news']['title'];}</text>
                                     <br><br>
-                                    <a href="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['news']['link'];}">Подробнее »</a>
+                                    <a href="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['news']['link'];}">{_news_more} »</a>
                             </div>
                             
                             <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $thisUser->getCoins() != 0" id="votesBalance">
