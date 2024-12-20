@@ -400,7 +400,7 @@
                                     {_additional_field_name}
                                 </td>
                                 <td>
-                                    <input name="name_{$f_iterator}" type="text" value="{$field->getName(false)}">
+                                    <input name="name_{$f_iterator}" maxlength="50" type="text" value="{$field->getName(false)}">
                                 </td>
                                 <td>
                                     <div id="small_remove_button"></div>
@@ -411,7 +411,7 @@
                                     {_additional_field_text}
                                 </td>
                                 <td>
-                                    <textarea name="text_{$f_iterator}">{$field->getContent()}</textarea>
+                                    <textarea name="text_{$f_iterator}" maxlength="1000">{$field->getContent()}</textarea>
                                 </td>
                                 <td></td>
                             </tr>

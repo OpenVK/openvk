@@ -2905,12 +2905,12 @@ u(document).on("click", "#additional_field_append", (e) => {
             <tbody>
                 <tr>
                     <td width="150">${tr("additional_field_name")}</td>
-                    <td><input name="name_${iterator}" type="text"></td>
+                    <td><input name="name_${iterator}" type="text" maxlength="50"></td>
                     <td><div id="small_remove_button"></div></td>
                 </tr>
                 <tr>
                     <td valign="top">${tr("additional_field_text")}</td>
-                    <td><textarea name="text_${iterator}"></textarea></td><td></td>
+                    <td><textarea name="text_${iterator}" maxlength="1000"></textarea></td><td></td>
                 </tr>
                 <tr>
                     <td>${tr("additional_field_place")}</td>

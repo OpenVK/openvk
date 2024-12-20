@@ -315,12 +315,18 @@ final class UserPresenter extends OpenVKPresenter
 
                 \openvk\Web\Models\Entities\UserInfoEntities\AdditionalField::resetByOwner($this->user->id);
                 foreach($items as $new_field_info) {
+                    $name = ovk_proc_strtr($new_field_info["name"], 50);
+                    $text = ovk_proc_strtr($new_field_info["text"], 1000);
+                    if(ctype_space($name) || ctype_space($text)) {
+                        continue;
+                    }
+
                     $place = (int)($new_field_info["place"]);
 
                     $new_field = new \openvk\Web\Models\Entities\UserInfoEntities\AdditionalField;
                     $new_field->setOwner($this->user->id);
-                    $new_field->setName(ovk_proc_strtr($new_field_info["name"], 50));
-                    $new_field->setText(ovk_proc_strtr($new_field_info["text"], 1000));
+                    $new_field->setName($name);
+                    $new_field->setText($text);
                     $new_field->setPlace([0, 1][$place] ? $place : 0);
 
                     $new_field->save();
