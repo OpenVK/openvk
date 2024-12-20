@@ -239,6 +239,14 @@
                                     </object>
                                 </a>
                             </div>
+
+                            <div id="news" n:if="OPENVK_ROOT_CONF['openvk']['preferences']['news']['show']">
+                                <b>{_news} </b>
+                                <hr size="1">
+                                <text>{$newsText}...</text>
+                                <br><br>
+                                <a href="{$newsLink}">{_news_more}</a>
+                            </div>
                             
                             <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $thisUser->getCoins() != 0" id="votesBalance">
                                 {tr("you_still_have_x_points", $thisUser->getCoins())|noescape}

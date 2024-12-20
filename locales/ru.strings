@@ -1023,6 +1023,9 @@
 "time_minutes_ago" = "$1 минут назад";
 "time_today" = "сегодня";
 "time_yesterday" = "вчера";
+
+"news" = "Новости";
+"news_more" = "Подробнее »";
 "points" = "Голоса";
 "points_count" = "голосов";
 "on_your_account" = "на вашем счету";

@@ -1072,6 +1072,8 @@
 "time_today" = "today";
 "time_yesterday" = "yesterday";
 
+"news" = "News";
+"news_more" = "More »";
 "points" = "Votes";
 "points_count" = "votes";
 "on_your_account" = "on your account";

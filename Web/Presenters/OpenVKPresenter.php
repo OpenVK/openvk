@@ -7,7 +7,7 @@ use Chandler\Security\Authenticator;
 use Latte\Engine as TemplatingEngine;
 use openvk\Web\Models\Entities\IP;
 use openvk\Web\Themes\Themepacks;
-use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets, Reports, CurrentUser};
+use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets, Reports, CurrentUser, Posts};
 use WhichBrowser;
 
 abstract class OpenVKPresenter extends SimplePresenter
@@ -206,6 +206,17 @@ abstract class OpenVKPresenter extends SimplePresenter
 
         $userValidated = 0;
         $cacheTime     = OPENVK_ROOT_CONF["openvk"]["preferences"]["nginxCacheTime"] ?? 0;
+
+        if(OPENVK_ROOT_CONF['openvk']['preferences']['news']['show']) {
+            $post = (new Posts)->getPostsFromUsersWall(-OPENVK_ROOT_CONF['openvk']['preferences']['news']['groupId'], 1, 1);
+            $post = iterator_to_array($post)[0];
+
+            $text = wordwrap($post->getText(false), 150, '\n', false);
+            $text = explode('\n', $text)[0];
+            
+            $this->template->newsText = $text;
+            $this->template->newsLink = '/wall' . $post->getPrettyId();
+        }
 
         if(!is_null($user)) {
             $this->user = (object) [];

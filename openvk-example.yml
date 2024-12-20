@@ -111,6 +111,9 @@ openvk:
         defaultMobileTheme: ""
         defaultFeaturePhoneTheme: ""
         logs: true
+        news:
+            show: false
+            groupId: 1
     
     telemetry:
         plausible:
