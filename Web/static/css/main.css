@@ -506,6 +506,28 @@ table {
     text-align: left;
 }
 
+.outline_table td {
+    text-align: right;
+    font-weight: normal;
+    color: gray;
+}
+
+.outline_table {
+    border-bottom: 1px solid #cbcbcb;
+    padding: 5px 0px;
+}
+
+.outline_table:last-of-type {
+    border-bottom: unset;
+}
+
+.flex_column_center_gap5px {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
 .information {
     padding: 9px;
     background-color: #c3e4ff;

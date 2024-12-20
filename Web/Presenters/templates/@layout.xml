@@ -460,6 +460,7 @@
                 "max_filesize_mb": 5,
                 "current_id": {$thisUser ? $thisUser->getId() : 0},
                 "disable_ajax": {$disable_ajax ? $disable_ajax : 0},
+                "max_add_fields": {ovkGetQuirk("users.max-fields")},
             }
         </script>
 

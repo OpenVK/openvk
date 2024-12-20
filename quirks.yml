@@ -46,3 +46,4 @@ comments.allow-graffiti: 0
 wall.repost-liking-recursion-limit: 10
 
 polls.max-opts: 10
+users.max-fields: 7

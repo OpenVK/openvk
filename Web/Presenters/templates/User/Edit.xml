@@ -13,6 +13,7 @@
     {var $isMain      = $mode === 'main'}
     {var $isContacts  = $mode === 'contacts'}
     {var $isInterests = $mode === 'interests'}
+    {var $isAdditional = $mode === 'additional'}
     {var $isAvatar    = $mode === 'avatar'}
     {var $isBackDrop  = $mode === 'backdrop'}
 
@@ -30,6 +31,9 @@
         </div>
         <div n:attr="id => ($isInterests ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isInterests ? 'act_tab_a' : 'ki')" href="/edit?act=interests">{_interests}</a>
+        </div>
+        <div n:attr="id => ($isAdditional ? 'activetabs' : 'ki')" class="tab">
+            <a n:attr="id => ($isAdditional ? 'act_tab_a' : 'ki')" href="/edit?act=additional">{_additional}</a>
         </div>
         <div n:attr="id => ($isAvatar ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isAvatar ? 'act_tab_a' : 'ki')" href="/edit?act=avatar">{_avatar}</a>
@@ -296,6 +300,14 @@
                     </tr>
                     <tr>
                         <td width="120" valign="top">
+                            <span class="nobold">{_favorite_games}: </span>
+                        </td>
+                        <td>
+                            <textarea type="text" name="fav_games">{$user->getFavoriteGames()}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
                             <span class="nobold">{_information_about}: </span>
                         </td>
                         <td>
@@ -375,7 +387,58 @@
                 </center>
             </div>
         </form>
+        {elseif $isAdditional}
+            {var $f_iterator = 0}
+            <h4>{_additional_information}</h4>
+            <p>{tr("additional_fields_description", ovkGetQuirk("users.max-fields"))}</p>
+            <form id="additional_fields_form" method="POST" enctype="multipart/form-data">
+                <div class="edit_field_container_inserts">
+                    <table data-iterator="{$f_iterator}" class="outline_table edit_field_container_item" width="80%" border="0" align="center" n:foreach="$thisUser->getAdditionalFields() as $field">
+                        <tbody>
+                            <tr>
+                                <td width="150">
+                                    {_additional_field_name}
+                                </td>
+                                <td>
+                                    <input name="name_{$f_iterator}" maxlength="50" type="text" value="{$field->getName(false)}">
+                                </td>
+                                <td>
+                                    <div id="small_remove_button"></div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td valign="top">
+                                    {_additional_field_text}
+                                </td>
+                                <td>
+                                    <textarea name="text_{$f_iterator}" maxlength="1000">{$field->getContent()}</textarea>
+                                </td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    {_additional_field_place}
+                                </td>
+                                <td>
+                                    <select name="place_{$f_iterator}">
+                                        <option value="0" n:attr="selected => $field->isContact()">{_additional_field_place_contacts}</option>
+                                        <option value="1" n:attr="selected => !$field->isContact()">{_additional_field_place_interests}</option>
+                                    </select>
+                                </td>
+                                <td></td>
+                            </tr>
+                        </tbody>
 
+                        {php $f_iterator += 1}
+                    </table>
+                </div>
+
+                <div class="flex_column_center_gap5px">
+                    <input type="button" id="additional_field_append" value="{_add}" class="button" />
+                    <input type="hidden" name="hash" value="{$csrfToken}" />
+                    <input type="submit" value="{_save}" class="button" />
+                </div>
+            </form>
         {/if}
     </div>
 
