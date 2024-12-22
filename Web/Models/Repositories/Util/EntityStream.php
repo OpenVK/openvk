@@ -27,7 +27,7 @@ class EntityStream implements \IteratorAggregate
         return new $this->entityClass($result);
     }
     
-    private function stream(\Traversable $iterator): \Traversable
+    protected function stream(\Traversable $iterator): \Traversable
     {
         foreach($iterator as $result)
             yield $this->getEntity($result);
