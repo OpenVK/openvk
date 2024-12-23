@@ -214,10 +214,10 @@
 "contains_nsfw" = "Містить NSFW-контент";
 "nsfw_warning" = "Цей допис може містити контент 18+";
 "report" = "Поскаржитися";
-"attach" = "Прикріпити";
+"attach" = "Додати";
 "detach" = "Відкріпити";
-"attach_photo" = "Прикріпити фото";
-"attach_photo" = "Прикріпити відео";
+"attach_photo" = "Додати фото";
+"attach_photo" = "Додати відео";
 "draw_graffiti" = "Намалювати графіті";
 "no_posts_abstract" = "Поки що, тут ніхто нічого не написав.";
 "attach_no_longer_available" = "Це вкладення більше недоступне.";
@@ -250,6 +250,15 @@
 "liked_by_x_people_many" = "Вподобали $1 користувачів";
 "liked_by_x_people_other" = "Вподобали $1 користувача";
 "liked_by_x_people_zero" = "Вподобань немає";
+
+"geo_place" = "Місце";
+"geotag" = "Геопозиція";
+"nearest_posts" = "Дописи неподалік";
+"Latitude" = "Широта";
+"longitude" = "Довгота";
+"name_of_the_place" = "Назва місця";
+"no_nearest_posts" = "Дописів поблизу немає";
+"shown_last_nearest_posts" = "Відображено останні $1 дописів за місяць";
 
 /* Friends */
 
@@ -1405,6 +1414,8 @@
 "error_adding_source_regex" = "Помилка додавання джерела: неправильне посилання.";
 "error_adding_source_long" = "Помилка додавання джерела: занадто довге посилання.";
 "error_adding_source_sus" = "Помилка додавання джерела: гіперпосилання не дозволене.";
+"error_geolocation" = "Помилка додавання геомітки";
+"error_no_geotag" = "До дописа не зазначена геомітка";
 
 "gift_sent" = "Подарунок відправлено";
 "gift_sent_desc" = "Ви відправили <b>$1</b> за $2 голосів";
@@ -1756,7 +1767,8 @@
 "poll_err_anonymous" = "Неможливо переглянути список тих, хто проголосував в анонімному голосуванні.";
 "cast_vote" = "Проголосувати!";
 "retract_vote" = "Скасовувати голос";
-"attach_video" = "Прикріпити відео";
+"attach_video" = "Додати відео відео";
+"attach_geotag" = "Додати геомітку";
 "friends_list_other" = "Ви маєте $1 друга";
 "round_avatars" = "Круглі";
 "admin_gender" = "Стать";
