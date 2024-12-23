@@ -993,6 +993,9 @@
 "time_minutes_ago" = "$1 хвилину тому";
 "time_today" = "сьогодні";
 "time_yesterday" = "вчора";
+
+"news" = "Остання новина інстанції";
+"news_more" = "Дізнатися більше »";
 "points" = "Голоси";
 "points_count" = "голосів";
 "on_your_account" = "на Вашому рахунку";
