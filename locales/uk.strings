@@ -134,11 +134,27 @@
 "address" = "Адреса";
 "personal_information" = "Особиста інформація";
 "interests" = "Інтереси";
+"additional" = "Додаткова інформація";
+"additional_fields_description" = "На цій сторінці, Ви можете додати більше інформації про себе, наприклад посилання на Ваші інші соціальні мережі чи зазначити більше інформації про себе, наприклад знання мов. Однак зазначте, додати можна не більше $1 рядків інформації, щоби запобігти спаму полями.";
+"additional_field_name" = "Назва зазначеної інформації";
+"additional_field_text" = "Опис зазначеної інформації";
+"additional_field_place" = "Відображення";
+"additional_field_place_contacts" = "В \"контактній інформації\"";
+"additional_field_place_interests" = "В \"особистій інформації\"";
+
 "favorite_music" = "Улюблена музика";
 "favorite_films" = "Улюблені фільми";
 "favorite_shows" = "Улюблене ТБ-шоу";
 "favorite_books" = "Улюблені книги";
 "favorite_quotes" = "Улюблені цитати";
+"favorite_games" = "Улюблені ігри";
+"custom_field_favorite_performers" = "Улюблені исполнители";
+"custom_field_favorite_content_makers" = "Улюблені контент-мейкери";
+"custom_field_favorite_anime" = "Улюблені аніме";
+"custom_field_favorite_manga" = "Улюблені манги";
+"custom_field_favorite_vtubers" = "Улюблені вітубер";
+"custom_field_favorite_albums" = "Улюблені альбоми";
+
 "information_about" = "Про себе";
 "updated_at" = "Оновлено $1";
 "user_banned" = "Ми заблокували сторінку користувача <b>$1</b>.";
