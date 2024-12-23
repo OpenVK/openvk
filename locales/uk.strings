@@ -260,6 +260,9 @@
 "no_nearest_posts" = "Дописів поблизу немає";
 "shown_last_nearest_posts" = "Відображено останні $1 дописів за місяць";
 
+"change_geo_name" = "Змінити назву розташування";
+"change_geo_name_new" = "Нова назва";
+
 /* Friends */
 
 "friends" = "Друзі";
