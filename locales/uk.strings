@@ -810,7 +810,7 @@
 "genre" = "Жанр";
 "lyrics" = "Текст";
 
-"select_another_file" = "Оберіть інший файл";
+"select_another_file" = "Завантажити ще";
 
 "limits" = "Ліміти";
 "select_audio" = "Оберіть аудіо з Вашого пристрою";
@@ -877,12 +877,11 @@
 "add_to_playlist" = "Додати до списку відтворення";
 "remove_from_playlist" = "Видалити зі списку відтворення";
 "delete_playlist" = "Видалити список відтворення";
-"playlist_cover" = "Обкладинка списку відтворення";
 
 "playlists_user" = "Список відтворення користувача";
 "playlists_club" = "Списки відтворення спільнот";
 "change_cover" = "Змінити обкладинку";
-"playlist_cover" = "Обкладинка списку відтворення";
+"add_audio_verb" = "Додати аудіозаписи";
 
 "minutes_count_zero" = "триває менше ніж хвилину";
 "minutes_count_one" = "триває одну хвилину";
@@ -922,8 +921,16 @@
 "repeat_tip" = "Повтор";
 "shuffle_tip" = "Перемішати";
 "mute_tip" = "Вимкнути звук";
+"mute_tip_noun" = "Вимкнено";
 "playlist_hide_from_search" = "Не відображати в пошуку";
 "confirm_deleting_audio" = "Ви дійсно хочете повністю видалити аудіозапис?";
+
+"copy_link_to_audio" = "Копіювати посилання на аудіозапис";
+"copy_link_to_audio_error_not_selected_track" = "Трек не обрано";
+"audio_ctx_add_to_group" = "Додати в спільноту";
+"audio_ctx_add_to_playlist" = "Додати до списку відтворення";
+"audio_ctx_play_next" = "Відтворити наступним";
+"audio_ctx_clear_context" = "Очистити список аудіозаписів";
 
 /* Notifications */
 
