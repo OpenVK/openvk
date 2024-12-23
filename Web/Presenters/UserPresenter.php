@@ -64,6 +64,7 @@ final class UserPresenter extends OpenVKPresenter
             $this->template->audios      = (new Audios)->getRandomThreeAudiosByEntityId($user->getId());
             $this->template->audiosCount = (new Audios)->getUserCollectionSize($user);
             $this->template->audioStatus = $user->getCurrentAudioStatus();
+            $this->template->additionalFields = $user->getAdditionalFields(true);
 
             $this->template->user = $user;
 
@@ -251,13 +252,14 @@ final class UserPresenter extends OpenVKPresenter
                 else
                     $user->setWebsite((!parse_url($website, PHP_URL_SCHEME) ? "https://" : "") . $website);
             } elseif($_GET['act'] === "interests") {
-                $user->setInterests(empty($this->postParam("interests")) ? NULL : ovk_proc_strtr($this->postParam("interests"), 300));
-                $user->setFav_Music(empty($this->postParam("fav_music")) ? NULL : ovk_proc_strtr($this->postParam("fav_music"), 300));
-                $user->setFav_Films(empty($this->postParam("fav_films")) ? NULL : ovk_proc_strtr($this->postParam("fav_films"), 300));
-                $user->setFav_Shows(empty($this->postParam("fav_shows")) ? NULL : ovk_proc_strtr($this->postParam("fav_shows"), 300));
-                $user->setFav_Books(empty($this->postParam("fav_books")) ? NULL : ovk_proc_strtr($this->postParam("fav_books"), 300));
-                $user->setFav_Quote(empty($this->postParam("fav_quote")) ? NULL : ovk_proc_strtr($this->postParam("fav_quote"), 300));
-                $user->setAbout(empty($this->postParam("about")) ? NULL : ovk_proc_strtr($this->postParam("about"), 300));
+                $user->setInterests(empty($this->postParam("interests")) ? NULL : ovk_proc_strtr($this->postParam("interests"), 1000));
+                $user->setFav_Music(empty($this->postParam("fav_music")) ? NULL : ovk_proc_strtr($this->postParam("fav_music"), 1000));
+                $user->setFav_Films(empty($this->postParam("fav_films")) ? NULL : ovk_proc_strtr($this->postParam("fav_films"), 1000));
+                $user->setFav_Shows(empty($this->postParam("fav_shows")) ? NULL : ovk_proc_strtr($this->postParam("fav_shows"), 1000));
+                $user->setFav_Books(empty($this->postParam("fav_books")) ? NULL : ovk_proc_strtr($this->postParam("fav_books"), 1000));
+                $user->setFav_Quote(empty($this->postParam("fav_quote")) ? NULL : ovk_proc_strtr($this->postParam("fav_quote"), 1000));
+                $user->setFav_Games(empty($this->postParam("fav_games")) ? NULL : ovk_proc_strtr($this->postParam("fav_games"), 1000));
+                $user->setAbout(empty($this->postParam("about")) ? NULL : ovk_proc_strtr($this->postParam("about"), 1000));
             } elseif($_GET["act"] === "backdrop") {
                 if($this->postParam("subact") === "remove") {
                     $user->unsetBackDropPictures();
@@ -295,10 +297,46 @@ final class UserPresenter extends OpenVKPresenter
                 $this->returnJson([
                     "success" => true
                 ]);
+            } elseif($_GET['act'] === "additional") {
+                $maxAddFields = ovkGetQuirk("users.max-fields");
+                $items = [];
+
+                for($i = 0; $i < $maxAddFields; $i++) {
+                    if(!$this->postParam("name_".$i)) {
+                        continue;
+                    }
+
+                    $items[] = [
+                        "name"  => $this->postParam("name_".$i),
+                        "text"  => $this->postParam("text_".$i),
+                        "place" => $this->postParam("place_".$i),
+                    ];
+                }
+
+                \openvk\Web\Models\Entities\UserInfoEntities\AdditionalField::resetByOwner($this->user->id);
+                foreach($items as $new_field_info) {
+                    $name = ovk_proc_strtr($new_field_info["name"], 50);
+                    $text = ovk_proc_strtr($new_field_info["text"], 1000);
+                    if(ctype_space($name) || ctype_space($text)) {
+                        continue;
+                    }
+
+                    $place = (int)($new_field_info["place"]);
+
+                    $new_field = new \openvk\Web\Models\Entities\UserInfoEntities\AdditionalField;
+                    $new_field->setOwner($this->user->id);
+                    $new_field->setName($name);
+                    $new_field->setText($text);
+                    $new_field->setPlace([0, 1][$place] ? $place : 0);
+
+                    $new_field->save();
+                }
             }
             
             try {
-                $user->save();
+                if($_GET['act'] !== "additional") {
+                    $user->save();
+                }
             } catch(\PDOException $ex) {
                 if($ex->getCode() == 23000)
                     $this->flashFail("err", tr("error"), tr("error_shorturl"));
@@ -310,7 +348,7 @@ final class UserPresenter extends OpenVKPresenter
         }
         
         $this->template->mode = in_array($this->queryParam("act"), [
-            "main", "contacts", "interests", "avatar", "backdrop"
+            "main", "contacts", "interests", "avatar", "backdrop", "additional"
         ]) ? $this->queryParam("act")
             : "main";
         

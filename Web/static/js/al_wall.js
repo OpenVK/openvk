@@ -924,7 +924,8 @@ u(document).on("click", "#editPost", async (e) => {
     const target = u(e.target)
     const post = target.closest("table")
     const content = post.find(".post-content")
-    const edit_place = post.find('.post-edit')
+    const edit_place_l = post.find('.post-edit')
+    const edit_place = u(edit_place_l.first())
     const id = post.attr('data-id').split('_')
 
     let type = 'post'
@@ -2885,4 +2886,62 @@ u(document).on('click', '#_bl_toggler', async (e) => {
             fallback(e)
         }
     }
+})
+
+/* Additional fields */
+
+u(document).on("click", "#additional_field_append", (e) => {
+    let iterator = 0
+    if(u(`table[data-iterator]`).last()) {
+        iterator = Number(u(`table[data-iterator]`).last().dataset.iterator) + 1
+    }
+
+    if(iterator >= window.openvk.max_add_fields) {
+        return
+    }
+
+    u('.edit_field_container_inserts').append(`
+        <table data-iterator="${iterator}" class="outline_table edit_field_container_item" width="80%" border="0" align="center">
+            <tbody>
+                <tr>
+                    <td width="150">${tr("additional_field_name")}</td>
+                    <td><input name="name_${iterator}" type="text" maxlength="50"></td>
+                    <td><div id="small_remove_button"></div></td>
+                </tr>
+                <tr>
+                    <td valign="top">${tr("additional_field_text")}</td>
+                    <td><textarea name="text_${iterator}" maxlength="1000"></textarea></td><td></td>
+                </tr>
+                <tr>
+                    <td>${tr("additional_field_place")}</td>
+                    <td>
+                        <select name="place_${iterator}">
+                            <option value="0">${tr("additional_field_place_contacts")}</option>
+                            <option value="1" selected>${tr("additional_field_place_interests")}</option>
+                        </select>
+                    </td><td></td>
+                </tr>
+            </tbody>
+        </table>
+    `)
+    u(`.edit_field_container_item[data-iterator='${iterator}'] input[type="text"]`).nodes[0].focus()
+})
+
+u(document).on("click", ".edit_field_container_item #small_remove_button", (e) => {
+    let iterator = 0
+    u(e.target).closest('table').remove()
+    u(".edit_field_container_inserts .edit_field_container_item").nodes.forEach(node => {
+        node.setAttribute('data-iterator', iterator)
+        iterator += 1
+    })
+})
+
+u(document).on("submit", "#additional_fields_form", (e) => {
+    u(`.edit_field_container_item input, .edit_field_container_item textarea`).nodes.forEach(node => {
+        if(node.value == "" || node.value == " ") {
+            e.preventDefault()
+            node.focus()
+            return
+        }
+    }) 
 })

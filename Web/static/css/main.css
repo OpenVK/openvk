@@ -506,6 +506,28 @@ table {
     text-align: left;
 }
 
+.outline_table td {
+    text-align: right;
+    font-weight: normal;
+    color: gray;
+}
+
+.outline_table {
+    border-bottom: 1px solid #cbcbcb;
+    padding: 5px 0px;
+}
+
+.outline_table:last-of-type {
+    border-bottom: unset;
+}
+
+.flex_column_center_gap5px {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
 .information {
     padding: 9px;
     background-color: #c3e4ff;
@@ -2314,13 +2336,18 @@ li {
     padding-left: 15px;
 }
 
-#votesBalance {
+#votesBalance, #news {
     margin-top: 10px;
     padding: 7px;
     background-color: #f6f6f6;
     border-bottom: 1.5px solid #DDDDDD;
     text-align: center;
     user-select: none;
+}
+
+#news b {
+    color: #8A0000;
+    font-size: 12px;
 }
 
 .cookies-popup {
