@@ -344,6 +344,7 @@ final class VKAPIPresenter extends OpenVKPresenter
             "expires_in"   => 0,
             "user_id"      => $uId,
             "is_stale"     => $tokenIsStale,
+            "secret"       => "super_secret_value",
         ]);
         
         $size = strlen($payload);
