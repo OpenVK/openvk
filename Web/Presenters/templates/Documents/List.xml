@@ -1,0 +1,11 @@
+{extends "../@layout.xml"}
+
+{block title}
+    
+{/block}
+
+{block header}{/block}
+
+{block content}
+    загрузить
+{/block}
