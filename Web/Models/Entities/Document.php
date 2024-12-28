@@ -111,7 +111,7 @@ class Document extends Media
             throw new \ValueError("Invalid filesize");
 
         $hash = hash_file("whirlpool", $file["tmp_name"]);
-        $this->stateChanges("original_name", $original_name);
+        $this->stateChanges("original_name", ovk_proc_strtr($original_name, 255));
         $this->tmp_format = $file_format;
         $this->stateChanges("format", $file_format);
         $this->stateChanges("filesize", $file_size);

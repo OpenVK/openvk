@@ -21,7 +21,7 @@ class Documents
         return is_null($ar) ? NULL : new Document($ar);
     }
     
-    function get(int $id): ?Comment
+    function get(int $id): ?Document
     {
         return $this->toDocument($this->documents->get($id));
     }
@@ -83,6 +83,14 @@ class Documents
                 "type"  => $res->type,
                 "name"  => $name,
             ];
+        }
+
+        if(sizeof($response) < 1) {
+            return [[
+                "count" => 0,
+                "type"  => 0,
+                "name"  => tr("document_type_0"),
+            ]];
         }
 
         return $response;

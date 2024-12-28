@@ -2206,6 +2206,10 @@
 
 /* Documents */
 
+"my_documents" = "Документы";
+"my_documents_objectively" = "Мои Документы";
+"documents_of_group" = "Документы группы";
+"search_by_documents" = "Поиск по документам...";
 "documents" = "Документы";
 "document_uploading_in_general" = "Загрузка документа";
 "file" = "Файл";
@@ -2221,3 +2225,23 @@
 "document_type_6" = "Видео";
 "document_type_7" = "Книги";
 "document_type_8" = "Остальные";
+
+"you_have_x_documents_one" = "У Вас $1 документ";
+"you_have_x_documents_few" = "У Вас $1 документа";
+"you_have_x_documents_many" = "У Вас $1 документов";
+"you_have_x_documents_other" = "У Вас $1 документов";
+"you_have_x_documents_zero" = "У Вас $1 документов";
+
+"group_has_x_documents_one" = "У этой группы $1 документ";
+"group_has_x_documents_few" = "У этой группы $1 документа";
+"group_has_x_documents_many" = "У этой группы $1 документов";
+"group_has_x_documents_other" = "У этой группы $1 документов";
+"group_has_x_documents_zero" = "У этой группы $1 документов";
+
+"x_documents_in_tab_one" = "В этой вкладке $1 документ";
+"x_documents_in_tab_few" = "В этой вкладке $1 документа";
+"x_documents_in_tab_many" = "В этой вкладке $1 документов";
+"x_documents_in_tab_other" = "В этой вкладке $1 документов";
+"x_documents_in_tab_zero" = "В этой вкладке $1 документов";
+
+"there_is_no_documents_alright" = "Здесь нет документов.";

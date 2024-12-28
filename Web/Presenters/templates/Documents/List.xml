@@ -1,11 +1,51 @@
 {extends "../@layout.xml"}
 
 {block title}
-    
+    {if !isset($group)}
+        {_my_documents_objectively}
+    {else}
+        {_documents_of_group}
+    {/if}
 {/block}
 
-{block header}{/block}
+{block header}
+    {if !isset($group)}
+        {_my_documents}
+    {else}
+        <a href="{$group->getURL()}">{$group->getCanonicalName()}</a> »
+        {_my_documents}
+    {/if}
+{/block}
 
 {block content}
-    загрузить
+    <div id="docs_page_wrapper">
+        <div class="docs_page_search">
+            <form action="/search" method="get">
+                <input type="hidden" name="section" value="docs">
+                <input type="search" name="q" class="input_with_search_icon" placeholder="{_search_by_documents}">
+            </form>
+            <input class="button" type="button" value="{_upload_button}">
+        </div>
+        <div class="docs_page_tabs">
+            <div class="mb_tabs">
+                <div n:foreach="$tabs as $tab" class="mb_tab" n:attr="id => $tab['type'] == $current_tab ? active">
+                    <a href="?tab={$tab['type']}">{$tab["name"]}</a>
+                </div>
+            </div>
+        </div>
+        <div class="docs_page_content">
+            <div class="summaryBar">
+                <div class="summary">{tr($locale_string, $count)}.</div>
+            </div>
+            <div class="container_white">
+                {if $count > 0}
+                    {foreach $docs as $doc}
+                        {include "components/doc.xml", doc => $doc}
+                    {/foreach}
+                {else}
+                    {include "../components/error.xml", description => tr("there_is_no_documents_alright")}
+                {/if}
+            </div>
+        </div>
+    </div>
 {/block}

@@ -684,7 +684,19 @@
                         <td>
                             <span class="nobold">{_my_apps}</span>
                         </td>
-                    </tr><tr n:if="sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0">
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top" align="right" align="right">
+                            <input
+                                  n:attr="checked => $user->getLeftMenuItemStatus('docs')"
+                                  type="checkbox"
+                                  name="menu_doxc" />
+                        </td>
+                        <td>
+                            <span class="nobold">{_my_documents}</span>
+                        </td>
+                    </tr>
+                    <tr n:if="sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0">
                         <td width="120" valign="top" align="right" align="right">
                             <input
                                   n:attr="checked => $user->getLeftMenuItemStatus('links')"

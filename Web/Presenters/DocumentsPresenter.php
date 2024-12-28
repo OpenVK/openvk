@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 namespace openvk\Web\Presenters;
-use openvk\Web\Models\Repositories\Documents;
+use openvk\Web\Models\Repositories\{Documents, Clubs};
 use openvk\Web\Models\Entities\Document;
 
 final class DocumentsPresenter extends OpenVKPresenter
@@ -8,9 +8,47 @@ final class DocumentsPresenter extends OpenVKPresenter
     protected $presenterName = "documents";
     protected $silent = true;
 
-    function renderList(?int $gid = NULL): void
+    function renderList(?int $owner_id = NULL): void
     {
         $this->template->_template = "Documents/List.xml";
+        if($owner_id > 0)
+            $this->notFound();
+
+        if($owner_id < 0) {
+            $owner = (new Clubs)->get(abs($owner_id));
+            if(!$owner || $owner->isBanned())
+                $this->notFound();
+            else
+                $this->template->group = $owner;
+        }
+
+        if(!$owner_id)
+            $owner_id = $this->user->id;
+
+        $current_tab   = (int)($this->queryParam("tab") ?? 0);
+        $current_order = (int)($this->queryParam("order") ?? 0);
+        $page  = (int)($this->queryParam("p") ?? 1);
+        $order = in_array($current_order, [0,1,2]) ? $current_order : 0;
+        $tab   = in_array($current_tab, [0,1,2,3,4,5,6,7,8]) ? $current_tab : 0;
+
+        $docs = (new Documents)->getDocumentsByOwner($owner_id, (int)$order, (int)$tab);
+        $this->template->tabs  = (new Documents)->getTypes($owner_id);
+        $this->template->current_tab = $tab;
+        $this->template->count = $docs->size();
+        $this->template->docs  = iterator_to_array($docs->page($page, OPENVK_DEFAULT_PER_PAGE));
+        $this->template->locale_string = "you_have_x_documents";
+        if($owner_id < 0) {
+            $this->template->locale_string = "group_has_x_documents";
+        } elseif($current_tab != 0) {
+            $this->template->locale_string = "x_documents_in_tab";
+        }
+        
+        $this->template->paginatorConf = (object) [
+            "count"   => $this->template->count,
+            "page"    => $page,
+            "amount"  => sizeof($this->template->docs),
+            "perPage" => OPENVK_DEFAULT_PER_PAGE,
+        ];
     }
 
     function renderListGroup(?int $gid)

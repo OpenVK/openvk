@@ -261,6 +261,10 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
             'method' => 'get',
             'onlyId' => true,
         ],
+        'doc'  => [
+            'repo' => 'openvk\Web\Models\Repositories\Documents',
+            'method' => 'getDocumentById',
+        ]
     ];
 
     foreach($exploded_attachments as $attachment_string) {
@@ -369,6 +373,18 @@ function check_copyright_link(string $link = ''): bool
 function escape_html(string $unsafe): string
 {
     return htmlspecialchars($unsafe, ENT_DISALLOWED | ENT_XHTML);
+}
+
+function readable_filesize($bytes, $precision = 2): string
+{
+    $units = ['B', 'Kb', 'Mb', 'Gb', 'Tb', 'Pb'];
+
+    $bytes = max($bytes, 0);
+    $power = $bytes > 0 ? floor(log($bytes, 1024)) : 0;
+    $power = min($power, count($units) - 1);
+    $bytes /= pow(1024, $power);
+
+    return round($bytes, $precision) . $units[$power];
 }
 
 return (function() {
