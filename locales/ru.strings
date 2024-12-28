@@ -2203,3 +2203,21 @@
 "upd_in_general" = "Обновление фотографии страницы";
 "on_wall" = "На стене";
 "sign_short" = "Подпись";
+
+/* Documents */
+
+"documents" = "Документы";
+"document_uploading_in_general" = "Загрузка документа";
+"file" = "Файл";
+"tags" = "Теги";
+"accessbility" = "Доступность";
+
+"document_type_0" = "Все";
+"document_type_1" = "Текстовые";
+"document_type_2" = "Архивы";
+"document_type_3" = "GIF";
+"document_type_4" = "Изображения";
+"document_type_5" = "Аудио";
+"document_type_6" = "Видео";
+"document_type_7" = "Книги";
+"document_type_8" = "Остальные";

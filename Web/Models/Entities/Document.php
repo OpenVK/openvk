@@ -2,11 +2,15 @@
 namespace openvk\Web\Models\Entities;
 use openvk\Web\Models\Repositories\{Clubs, Users, Photos};
 use openvk\Web\Models\Entities\{Photo};
+use openvk\Web\Models\RowModel;
+use Nette\InvalidStateException as ISE;
+use Chandler\Database\DatabaseConnection;
 
 class Document extends Media
 {
     protected $tableName     = "documents";
     protected $fileExtension = "gif";
+    private $tmp_format = NULL;
 
     const VKAPI_TYPE_TEXT  = 1;
     const VKAPI_TYPE_ARCHIVE = 2;
@@ -29,12 +33,6 @@ class Document extends Media
             mkdir($dir);
         
         return "$dir/$hash." . $this->getFileExtension();
-    }
-
-    protected function saveFile(string $filename, string $hash): bool
-    {
-
-        return true;
     }
 
     function getURL(): string
@@ -63,6 +61,71 @@ class Document extends Media
         }
     }
 
+    protected function saveFile(string $filename, string $hash): bool
+    {
+        move_uploaded_file($filename, $this->pathFromHash($hash));
+        return true;
+    }
+
+    protected function makePreview(string $tmp_name, string $filename, int $owner): bool
+    {
+        $preview_photo = new Photo;
+        $preview_photo->setOwner($owner);
+        $preview_photo->setDescription("internal use");
+        $preview_photo->setCreated(time());
+        $preview_photo->setSystem(1);
+        $preview_photo->setFile([
+            "tmp_name" => $tmp_name,
+            "error"    => 0,
+        ]);
+        $preview_photo->save();
+        $this->stateChanges("preview", "photo_".$preview_photo->getId());
+
+        return true;
+    }
+
+    private function updateHash(string $hash): bool
+    {
+        $this->stateChanges("hash", $hash);
+
+        return true;
+    }
+        
+    function setFile(array $file): void
+    {
+        if($file["error"] !== UPLOAD_ERR_OK)
+            throw new ISE("File uploaded is corrupted");
+        
+        $original_name = $file["name"];
+        $file_format = explode(".", $original_name)[1];
+        $file_size   = $file["size"];
+        $type        = Document::detectTypeByFormat($file_format);
+
+        if(!$file_format)
+            throw new \TypeError("No file format");
+
+        if(!in_array($file_format, OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["allowedFormats"]))
+            throw new \TypeError("Forbidden file format");
+
+        if($file_size < 1 || $file_size > (OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["maxSize"] * 1024 * 1024))
+            throw new \ValueError("Invalid filesize");
+
+        $hash = hash_file("whirlpool", $file["tmp_name"]);
+        $this->stateChanges("original_name", $original_name);
+        $this->tmp_format = $file_format;
+        $this->stateChanges("format", $file_format);
+        $this->stateChanges("filesize", $file_size);
+        $this->stateChanges("hash", $hash);
+        $this->stateChanges("access_key", bin2hex(random_bytes(9)));
+        $this->stateChanges("type", $type);
+
+        if(in_array($type, [3, 4])) {
+            $this->makePreview($file["tmp_name"], $original_name, $file["preview_owner"]);
+        }
+        
+        $this->saveFile($file["tmp_name"], $hash);
+    }
+
     function hasPreview(): bool
     {
         return $this->getRecord()->preview != NULL;
@@ -88,8 +151,47 @@ class Document extends Media
         return false;
     }
 
+    function isCopiedBy(User $user): bool
+    {
+        if($user->getId() === $this->getOwnerID())
+            return true;
+        
+        return DatabaseConnection::i()->getContext()->table("documents")->where([
+            "owner"   => $user->getId(),
+            "copy_of" => $this->getId(),
+        ])->count() > 0;
+    }
+
+    function copy(User $user): Document
+    {
+        $this_document_array = $this->getRecord()->toArray();
+
+        $new_document = new Document;
+        $new_document->setOwner($user->getId());
+        $new_document->updateHash($this_document_array["hash"]);
+        $new_document->setOwner_hidden(1);
+        $new_document->setCopy_of($this->getId());
+        $new_document->setName($this->getId());
+        $new_document->setOriginal_name($this->getOriginalName());
+        $new_document->setAccess_key(bin2hex(random_bytes(9)));
+        $new_document->setFormat($this_document_array["format"]);
+        $new_document->setType($this->getVKAPIType());
+        $new_document->setFolder_id(0);
+        $new_document->setPreview($this_document_array["preview"]);
+        $new_document->setTags($this_document_array["tags"]);
+        $new_document->setFilesize($this_document_array["filesize"]);
+
+        $new_document->save();
+
+        return $new_document;
+    }
+
     function getFileExtension(): string
     {
+        if($this->tmp_format) {
+            return $this->tmp_format;
+        }
+
         return $this->getRecord()->format;
     }
 
@@ -125,7 +227,11 @@ class Document extends Media
 
     function getTags(): array
     {
-        return explode(",", $this->getRecord()->tags);
+        $tags = $this->getRecord()->tags;
+        if(!$tags)
+            return [];
+        
+        return explode(",", $tags ?? "");
     }
 
     function getFilesize(): int
@@ -177,7 +283,7 @@ class Document extends Media
         return $this->getOwnerID() === $user->getId();
     }
 
-    function toVkApiStruct(?User $user = NULL): object 
+    function toVkApiStruct(?User $user = NULL, bool $return_tags = false): object 
     {
         $res = new \stdClass;
         $res->id = $this->getId();
@@ -191,15 +297,39 @@ class Document extends Media
         $res->is_licensed = (int) $this->isLicensed();
         $res->is_unsafe   = (int) $this->isUnsafe();
         $res->folder_id   = (int) $this->getFolder();
+        $res->access_key  = $this->getAccessKey();
         $res->private_url = "";
-        if($user) {
+        if($user)
             $res->can_manage = $this->canBeModifiedBy($user);
-        }
 
-        if($this->hasPreview()) {
+        if($this->hasPreview())
             $res->preview = $this->toApiPreview();
-        }
+
+        if($return_tags)
+            $res->tags = $this->getTags();
 
         return $res;
+    }
+
+    static function detectTypeByFormat(string $format)
+    {
+        switch($format) {
+            case "txt": case "docx": case "doc": case "odt": case "pptx": case "ppt": case "xlsx": case "xls":
+                return 1;
+            case "zip": case "rar": case "7z":
+                return 2;
+            case "gif": case "apng":
+                return 3;
+            case "jpg": case "jpeg": case "png": case "psd": case "ps":
+                return 4;
+            case "mp3":
+                return 5;
+            case "mp4": case "avi":
+                return 6;
+            case "pdf": case "djvu": case "epub": case "fb2":
+                return 7;
+            default:
+                return 8;
+        }
     }
 }

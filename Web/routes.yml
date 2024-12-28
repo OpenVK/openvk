@@ -315,6 +315,8 @@ routes:
       handler: "Documents->list"
     - url: "/docs{num}"
       handler: "Documents->listGroup"
+    - url: "/docs/upload"
+      handler: "Documents->upload"
     - url: "/admin"
       handler: "Admin->index"
     - url: "/admin/users"
