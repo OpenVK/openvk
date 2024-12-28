@@ -25,6 +25,8 @@
             {/if}
         {elseif $type == "audio"}
             {include "../Audio/player.xml", audio => $object}
+        {elseif $type == "doc"}
+            {include "../Documents/components/doc.xml", doc => $object}
         {else}
             {include "../components/error.xml", description => tr("version_incompatibility")}
         {/if}

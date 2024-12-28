@@ -24,18 +24,27 @@
                 <input type="hidden" name="section" value="docs">
                 <input type="search" name="q" class="input_with_search_icon" placeholder="{_search_by_documents}">
             </form>
-            <input class="button" type="button" value="{_upload_button}">
+            <input n:if="$canUpload" id="upload_entry_point" class="button" type="button" value="{_upload_button}" {if isset($group)}data-gid="{$group->getId()}"{/if}>
         </div>
         <div class="docs_page_tabs">
             <div class="mb_tabs">
+                <div class="mb_tab" n:attr="id => $current_tab == 0 ? active">
+                    <a href="?tab=0">{_document_type_0}</a>
+                </div>
                 <div n:foreach="$tabs as $tab" class="mb_tab" n:attr="id => $tab['type'] == $current_tab ? active">
                     <a href="?tab={$tab['type']}">{$tab["name"]}</a>
                 </div>
             </div>
         </div>
         <div class="docs_page_content">
-            <div class="summaryBar">
+            <div class="summaryBar display_flex_row display_flex_space_between">
                 <div class="summary">{tr($locale_string, $count)}.</div>
+
+                <select name="docs_sort">
+                    <option n:attr="selected => $order == 0" value="0">{_documents_sort_add}</option>
+                    <option n:attr="selected => $order == 1" value="1">{_documents_sort_alphabet}</option>
+                    <option n:attr="selected => $order == 2" value="2">{_documents_sort_size}</option>
+                </select>
             </div>
             <div class="container_white">
                 {if $count > 0}

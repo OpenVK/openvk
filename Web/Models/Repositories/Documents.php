@@ -75,7 +75,7 @@ class Documents
         $result = DatabaseConnection::i()->getConnection()->query("SELECT `type`, COUNT(*) AS `count` FROM `documents` WHERE `owner` = $owner_id GROUP BY `type` ORDER BY `type`");
         $response = [];
         foreach($result as $res) {
-            if($res->count < 1) continue;
+            if($res->count < 1 || $res->type == 0) continue;
 
             $name = tr("document_type_".$res->type);
             $response[] = [
@@ -118,7 +118,7 @@ class Documents
                 case "tags":
                     $result->where("tags", $paramValue);
                     break;
-                case "owner_id":
+                case "from_me":
                     $result->where("owner", $paramValue);
                     break;
             }

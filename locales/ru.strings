@@ -682,6 +682,7 @@
 "search_for_notes" = "Поиск записок";
 "search_for_audios" = "Поиск музыки";
 "search_for_audios_playlists" = "Поиск плейлистов";
+"search_for_docs" = "Поиск документов";
 "search_button" = "Найти";
 "search_placeholder" = "Начните вводить любое имя, название или слово";
 "results_zero" = "Ни одного результата";
@@ -1239,6 +1240,7 @@
 "going_to_report_user" = "Вы собираетесь пожаловаться на данного пользователя.";
 "going_to_report_video" = "Вы собираетесь пожаловаться на данную видеозапись.";
 "going_to_report_audio" = "Вы собираетесь пожаловаться на данную аудиозапись.";
+"going_to_report_doc" = "Вы собираетесь пожаловаться на этот документ.";
 "going_to_report_post" = "Вы собираетесь пожаловаться на данную запись.";
 "going_to_report_comment" = "Вы собираетесь пожаловаться на данный комментарий.";
 
@@ -2008,6 +2010,7 @@
 "s_videos" = "Видео";
 "s_audios" = "Аудио";
 "s_audios_playlists" = "Плейлисты";
+"s_documents" = "Документы";
 
 "s_by_people" = "по пользователям";
 "s_by_groups" = "по группам";
@@ -2017,6 +2020,7 @@
 "s_by_apps" = "по приложениям";
 "s_by_audios" = "по аудиозаписям";
 "s_by_audios_playlists" = "по плейлистам";
+"s_by_documents" = "по документам";
 
 "s_order_by" = "Порядок";
 
@@ -2039,6 +2043,7 @@
 "s_date_after" = "После";
 
 "s_main" = "Основное";
+"s_type" = "Тип";
 
 "s_now_on_site" = "cейчас на сайте";
 "s_with_photo" = "с фото";
@@ -2214,6 +2219,7 @@
 "document_uploading_in_general" = "Загрузка документа";
 "file" = "Файл";
 "tags" = "Теги";
+"owner_is_hidden" = "Автор скрыт";
 "accessbility" = "Доступность";
 
 "document_type_0" = "Все";
@@ -2245,3 +2251,16 @@
 "x_documents_in_tab_zero" = "В этой вкладке $1 документов";
 
 "there_is_no_documents_alright" = "Здесь нет документов.";
+"limitations_file_limit_size" = "Файл не должен превышать $1 МБ";
+"limitations_file_allowed_formats" = "Разрешены следующие типы файлов";
+"limitations_file_author_rights" = "Файл не должен нарушать авторские права и правила сайта";
+"select_file_fp" = "Выбрать файл";
+"error_file_too_big" = "Файл слишком большой.";
+"error_file_invalid_format" = "Формат файла не разрешён.";
+"error_file_adding_copied" = "Не удалось добавить файл; он уже добавлен.";
+
+"private_document" = "Приватный (по ссылке)";
+"public_document" = "Публичный";
+"documents_sort_add" = "По дате добавления";
+"documents_sort_alphabet" = "A-Z/А-Я";
+"documents_sort_size" = "По размеру";

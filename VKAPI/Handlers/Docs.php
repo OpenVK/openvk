@@ -36,6 +36,9 @@ final class Docs extends VKAPIRequestHandler
 
         if(!$doc->canBeModifiedBy($this->getUser()))
             $this->fail(1153, "Access to document is denied");
+
+        $doc->delete();
+        
         return 1;
     }
 
@@ -161,7 +164,7 @@ final class Docs extends VKAPIRequestHandler
             $params["tags"] = $tags;
 
         if($search_own === 1)
-            $params["owner_id"] = $this->getUser()->getId();
+            $params["from_me"] = $this->getUser()->getId();
 
         $documents = (new Documents)->find($q, $params, $o_order);
         $res = (object)[

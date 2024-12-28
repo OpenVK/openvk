@@ -1,6 +1,6 @@
 CREATE TABLE `documents` (
     `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT, 
-    `owner` BIGINT(20) UNSIGNED NOT NULL, 
+    `owner` BIGINT(20) NOT NULL, 
     `virtual_id` BIGINT(20) UNSIGNED NOT NULL, 
     `hash` CHAR(128) NOT NULL, 
     `owner_hidden` TINYINT(1) UNSIGNED NOT NULL DEFAULT '1', 

@@ -55,6 +55,10 @@ h1 {
     flex-direction: row;
 }
 
+.display_flex_space_between {
+    justify-content: space-between;
+}
+
 .layout {
     width: 791px;
     margin: 0 auto;
@@ -4006,6 +4010,10 @@ hr {
     padding: 5px 10px;
 }
 
+#docs_page_wrapper select {
+    width: 150px;
+}
+
 .docListViewItem {
     max-height: 52px;
     height: 38px;
@@ -4068,17 +4076,39 @@ hr {
 }
 
 .docListViewItem .doc_volume {
-    display: none;
+    display: flex;
     align-items: center;
     gap: 5px;
+    visibility: hidden;
 }
 
 .docListViewItem .doc_volume > div {
     width: 20px;
     height: 20px;
-    background-color: gray;
+    background: url('/assets/packages/static/openvk/img/docs_controls.png?v=3');
 }
 
 .docListViewItem:hover .doc_volume {
-    display: flex;
+    visibility: visible;
+}
+
+.docListViewItem .doc_volume > div:hover {
+    cursor: pointer;
+    background-position-y: -21px;
+}
+
+.docListViewItem .doc_volume #report_icon {
+    background-position-x: -40px;
+}
+
+.docListViewItem .doc_volume #edit_icon {
+    background-position-x: -20px;
+}
+
+.docListViewItem .doc_volume #add_icon {
+    background-position-x: -60px;
+}
+
+.docListViewItem .doc_volume #mark_icon {
+    background-position-x: -80px;
 }

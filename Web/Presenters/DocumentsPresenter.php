@@ -34,6 +34,7 @@ final class DocumentsPresenter extends OpenVKPresenter
         $docs = (new Documents)->getDocumentsByOwner($owner_id, (int)$order, (int)$tab);
         $this->template->tabs  = (new Documents)->getTypes($owner_id);
         $this->template->current_tab = $tab;
+        $this->template->order = $order;
         $this->template->count = $docs->size();
         $this->template->docs  = iterator_to_array($docs->page($page, OPENVK_DEFAULT_PER_PAGE));
         $this->template->locale_string = "you_have_x_documents";
@@ -42,7 +43,8 @@ final class DocumentsPresenter extends OpenVKPresenter
         } elseif($current_tab != 0) {
             $this->template->locale_string = "x_documents_in_tab";
         }
-        
+
+        $this->template->canUpload = $owner_id == $this->user->id || $this->template->group->canBeModifiedBy($this->user->identity);
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
             "page"    => $page,
@@ -68,7 +70,7 @@ final class DocumentsPresenter extends OpenVKPresenter
         if(!is_null($this->queryParam("gid"))) {
             $gid   = (int) $this->queryParam("gid");
             $group = (new Clubs)->get($gid);
-            if(!$group)
+            if(!$group || $group->isBanned())
                 $this->flashFail("err", tr("forbidden"), tr("not_enough_permissions_comment"), null, $isAjax);
 
             if(!$group->canUploadDocs($this->user->identity))
@@ -105,5 +107,14 @@ final class DocumentsPresenter extends OpenVKPresenter
         ]);
 
         $document->save();
+
+        if(!$isAjax) {
+            $this->redirect("/docs" . (isset($group) ? $group->getRealId() : ""));
+        } else {
+            $this->returnJson([
+                "success"  => true,
+                "redirect" => "/docs" . (isset($group) ? $group->getRealId() : ""),
+            ]);
+        }
     }
 }

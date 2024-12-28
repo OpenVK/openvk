@@ -151,6 +151,11 @@ class Document extends Media
         return false;
     }
 
+    function isAnonymous(): bool
+    {
+        return false;
+    }
+
     function isCopiedBy(User $user): bool
     {
         if($user->getId() === $this->getOwnerID())
@@ -159,11 +164,20 @@ class Document extends Media
         return DatabaseConnection::i()->getContext()->table("documents")->where([
             "owner"   => $user->getId(),
             "copy_of" => $this->getId(),
+            "deleted" => 0,
         ])->count() > 0;
     }
 
     function copy(User $user): Document
     {
+        $item = DatabaseConnection::i()->getContext()->table("documents")->where([
+            "owner"   => $user->getId(),
+            "copy_of" => $this->getId(),
+        ]);
+        if($item->count() > 0) {
+            $older = new Document($item->fetch());
+        }
+
         $this_document_array = $this->getRecord()->toArray();
 
         $new_document = new Document;
@@ -186,6 +200,22 @@ class Document extends Media
         return $new_document;
     }
 
+    function setTags(?string $tags): bool
+    {
+        if(!$tags) {
+            return false;
+        }
+
+        $parsed = explode(",", $tags);
+        $result = "";
+        foreach($parsed as $tag) {
+            $result .= mb_trim($tag) . ($tag != end($parsed) ? "," : '');
+        }
+
+        $this->stateChanges("tags", $result);
+        return true;
+    }
+
     function getFileExtension(): string
     {
         if($this->tmp_format) {
@@ -198,6 +228,11 @@ class Document extends Media
     function getPrettyId(): string
     {
         return $this->getVirtualId() . "_" . $this->getId();
+    }
+
+    function getPrettiestId(): string
+    {
+        return $this->getVirtualId() . "_" . $this->getId() . "_" . $this->getAccessKey();
     }
 
     function getOriginal(): Document
