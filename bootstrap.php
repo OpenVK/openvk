@@ -264,6 +264,7 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
         'doc'  => [
             'repo' => 'openvk\Web\Models\Repositories\Documents',
             'method' => 'getDocumentById',
+            'withKey' => true,
         ]
     ];
 
@@ -281,6 +282,14 @@ function parseAttachments($attachments, array $allow_types = ['photo', 'video', 
                     $repository_class = $repositories[$attachment_type]['repo'];
                     if(!$repository_class) continue;
                     $attachment_model = (new $repository_class)->{$repositories[$attachment_type]['method']}($attachment_id);
+                    $output_attachments[] = $attachment_model;
+                } elseif($repositories[$attachment_type]['withKey']) {
+                    [$attachment_owner, $attachment_id, $access_key] = explode('_', $attachment_ids);
+    
+                    $repository_class = $repositories[$attachment_type]['repo'];
+                    if(!$repository_class) continue;
+                    $attachment_model = (new $repository_class)->{$repositories[$attachment_type]['method']}((int)$attachment_owner, (int)$attachment_id, $access_key);
+                   
                     $output_attachments[] = $attachment_model;
                 } else {
                     [$attachment_owner, $attachment_id] = array_map('intval', explode('_', $attachment_ids));

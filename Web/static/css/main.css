@@ -4074,7 +4074,10 @@ hr {
 .docGalleryItem .doc_top_panel > div {
     width: 10px;
     height: 10px;
-    background-color: white;
+    background: url('/assets/packages/static/openvk/img/docs_controls.png?v=8');
+    background-size: 57px;
+    background-position-y: -24px;
+    background-repeat: no-repeat;
 }
 
 #docs_page_wrapper select {
@@ -4151,7 +4154,7 @@ hr {
 .docListViewItem .doc_volume > div {
     width: 20px;
     height: 20px;
-    background: url('/assets/packages/static/openvk/img/docs_controls.png?v=3');
+    background: url('/assets/packages/static/openvk/img/docs_controls.png?v=8');
 }
 
 .docListViewItem:hover .doc_volume {
@@ -4163,7 +4166,7 @@ hr {
     background-position-y: -21px;
 }
 
-.docListViewItem .doc_volume #report_icon {
+.docListViewItem .doc_volume #report_icon, .docGalleryItem .doc_top_panel #report_icon {
     background-position-x: -40px;
 }
 
@@ -4175,10 +4178,27 @@ hr {
     background-position-x: -60px;
 }
 
+.docGalleryItem .doc_top_panel #add_icon {
+    background-position-x: -35px;
+}
+
+.docGalleryItem .doc_top_panel #edit_icon {
+    background-position-x: -12px;
+}
+
 .docListViewItem .doc_volume #mark_icon {
     background-position-x: -80px;
 }
 
+.docGalleryItem .doc_top_panel #mark_icon {
+    background-position-x: -46px;
+}
+
 .doc_viewer_wrapper {
     overflow: hidden;
+}
+
+.attachments .docListViewItem {
+    min-height: 30px;
+    border-bottom: unset;
 }

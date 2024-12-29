@@ -30,17 +30,19 @@ class Documents
     function getDocumentById(int $virtual_id, int $real_id, ?string $access_key = NULL): ?Document
     {
         $doc = $this->documents->where(['virtual_id' => $virtual_id, 'id' => $real_id]);
-
-        if($access_key) {
+        /*if($access_key) {
             $doc->where("access_key", $access_key);
-        }
+        }*/
 
         $doc = $doc->fetch();
-        if(!is_null($doc))
-            return new Document($doc);
-        else
+        if(is_null($doc))
             return NULL;
-        
+
+        $n_doc = new Document($doc);
+        if(!$n_doc->checkAccessKey($access_key))
+            return NULL;
+
+        return $n_doc;
     }
 
     function getDocumentsByOwner(int $owner, int $order = 0, int $type = -1): EntityStream
@@ -83,14 +85,6 @@ class Documents
                 "type"  => $res->type,
                 "name"  => $name,
             ];
-        }
-
-        if(sizeof($response) < 1) {
-            return [[
-                "count" => 0,
-                "type"  => 0,
-                "name"  => tr("document_type_0"),
-            ]];
         }
 
         return $response;

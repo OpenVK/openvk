@@ -51,18 +51,16 @@
                 {if $count > 0}
                     {foreach $docs as $doc}
                         {if $is_gallery}
-                            {include "components/image.xml", doc => $doc, scroll_context => true}
+                            {include "components/image.xml", doc => $doc, scroll_context => true, club => isset($group) ? $group : NULL}
                         {else}
-                            {include "components/doc.xml", doc => $doc, scroll_context => true}
+                            {include "components/doc.xml", doc => $doc, scroll_context => true, club => isset($group) ? $group : NULL}
                         {/if}
                     {/foreach}
                 {else}
                     {include "../components/error.xml", description => tr("there_is_no_documents_alright")}
                 {/if}
             </div>
-
             {include "../components/paginator.xml", conf => $paginatorConf}
-            
         </div>
     </div>
 {/block}

@@ -161,13 +161,16 @@ class Document extends Media
         return in_array($this->getVKAPIType(), [3, 4]);
     }
 
-    function isCopiedBy(User $user): bool
+    function isCopiedBy($user = NULL): bool
     {
-        if($user->getId() === $this->getOwnerID())
+        if(!$user)
+            return false;
+
+        if($user->getRealId() === $this->getOwnerID())
             return true;
         
         return DatabaseConnection::i()->getContext()->table("documents")->where([
-            "owner"   => $user->getId(),
+            "owner"   => $user->getRealId(),
             "copy_of" => $this->getId(),
             "deleted" => 0,
         ])->count() > 0;
@@ -219,6 +222,15 @@ class Document extends Media
 
         $this->stateChanges("tags", ovk_proc_strtr($result, 500));
         return true;
+    }
+
+    function getOwner(bool $real = false): RowModel
+    {
+        $oid = (int) $this->getRecord()->owner;
+        if($oid > 0)
+            return (new Users)->get($oid);
+        else
+            return (new Clubs)->get($oid * -1);
     }
 
     function getFileExtension(): string

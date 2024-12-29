@@ -1,6 +1,6 @@
 {var $preview = $doc->hasPreview() ? $doc->getPreview() : NULL}
 {var $tags = $doc->getTags()}
-{var $copied = $doc->isCopiedBy($thisUser)}
+{var $copied = !isset($club) ? $doc->isCopiedBy($thisUser) : $doc->isCopiedBy($club)}
 {var $modifiable = $doc->canBeModifiedBy($thisUser)}
 
 <div n:class="docMainItem, docListViewItem, $scroll_context ? scroll_node" data-id="{$doc->getPrettiestId()}">
@@ -19,7 +19,7 @@
         <div class="doc_content_info">
             <span>{$doc->getPublicationTime()}</span>,
             <span>{readable_filesize($doc->getFilesize())}</span>{if sizeof($tags) > 0} -
-            <span class="doc_tags" style="text-wrap: wrap;">
+            <span n:if="!$noTags" class="doc_tags" style="text-wrap: wrap;">
                 {foreach $tags as $tag}
                     <a href="/search?section=docs&tags={urlencode($tag)}">
                         {$tag}{if $tag != $tags[sizeof($tags) - 1]},{/if}
@@ -28,7 +28,7 @@
             </span>{/if}
         </div>
     </div>
-    <div class="doc_volume">
+    <div class="doc_volume" n:if="!$hideButtons">
         <div n:if="!$modifiable" id="report_icon"></div>
         <div n:if="$modifiable" id="edit_icon"></div>
         <div n:if="!$copied || $copied && $copyImportance" id="add_icon"></div>

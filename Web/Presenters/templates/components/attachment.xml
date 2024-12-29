@@ -65,6 +65,10 @@
     <div style="width:100%;" data-att_type='audio' data-att_id="{$attachment->getPrettyId()}">
         {include "../Audio/player.xml", audio => $attachment}
     </div>
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Document}
+    <div style="width:100%;" data-att_type='audio' data-att_id="{$attachment->getPrettyId()}">
+        {include "../Documents/components/doc.xml", doc => $attachment, copyImportance => true, noTags => true}
+    </div>
 {else}
     <span style="color:red;">{_version_incompatibility}</span>
 {/if}

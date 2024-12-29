@@ -111,6 +111,11 @@ u(document).on('click', '.docMainItem #edit_icon', async (e) => {
 
     const docs = await window.OVKAPI.call('docs.getById', {docs: id, return_tags: 1})
     const doc = docs[0]
+    if(!doc) {
+        fastError("(")
+        CMessageBox.toggleLoader()
+        return
+    }
 
     const cmsg_2 = new CMessageBox({
         title: tr("document_editing_in_general"),
@@ -248,6 +253,9 @@ u(document).on('click', '.docMainItem #report_icon', (e) => {
 
 u(document).on("click", ".docListViewItem a.viewerOpener, a.docGalleryItem", async (e) => {
     e.preventDefault()
+    if(e.target.closest('.doc_volume_action')) {
+        return
+    }
 
     const target = u(e.target)
     const link   = target.closest('a')
@@ -262,7 +270,7 @@ u(document).on("click", ".docListViewItem a.viewerOpener, a.docGalleryItem", asy
     const preview = body.querySelector('.photo-page-wrapper-photo')
     const details = body.querySelector('.ovk-photo-details')
 
-    preview.querySelector('img').setAttribute('id', 'ovk-photo-img')
+    u(preview.querySelector('img')).attr('id', 'ovk-photo-img')
 
     const photo_viewer = new CMessageBox({
         title: '',

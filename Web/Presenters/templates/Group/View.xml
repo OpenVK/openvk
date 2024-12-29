@@ -291,6 +291,24 @@
             </div>
         </div>
     </div>
+    <div n:if="($docsCount > 0 || ($thisUser && $club->canBeModifiedBy($thisUser)))">
+        <div class="content_title_expanded" onclick="hidePanel(this, {$topicsCount});">
+            {_documents}
+        </div>
+        <div>
+            <div class="content_subtitle">
+                {tr("documents", $topicsCount)}
+                <div style="float: right;">
+                    <a href="/docs{$club->getRealId()}">{_all_title}</a>
+                </div>
+            </div>
+            <div>
+                {foreach $docs as $doc}
+                    {include "../Documents/components/doc.xml", doc => $doc, hideButtons => true, noTags => true}
+                {/foreach}
+            </div>
+        </div>
+    </div>
 </div>
 
 {/block}

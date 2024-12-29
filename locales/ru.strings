@@ -2236,6 +2236,12 @@
 "document_type_7" = "Книги";
 "document_type_8" = "Остальные";
 
+"documents_one" = "$1 документ";
+"documents_few" = "$1 документа";
+"documents_many" = "$1 документов";
+"documents_other" = "$1 документов";
+"documents_zero" = "$1 документов";
+
 "you_have_x_documents_one" = "У Вас $1 документ";
 "you_have_x_documents_few" = "У Вас $1 документа";
 "you_have_x_documents_many" = "У Вас $1 документов";
