@@ -1,0 +1,19 @@
+{var $preview = $doc->hasPreview() ? $doc->getPreview() : NULL}
+{var $copied = $doc->isCopiedBy($thisUser)}
+{var $modifiable = $doc->canBeModifiedBy($thisUser)}
+
+<a href="/doc{$doc->getPrettyId()}" n:class="docMainItem, viewerOpener, docGalleryItem, $scroll_context ? scroll_node" data-id="{$doc->getPrettiestId()}">
+    <img loading="lazy" src="{$preview->getURLBySizeId('medium')}" alt="gallery photo">
+
+    <div class="doc_top_panel doc_shown_by_hover">
+        <div n:if="!$modifiable" id="report_icon"></div>
+        <div n:if="$modifiable" id="edit_icon"></div>
+        <div n:if="!$copied || $copied && $copyImportance" id="add_icon"></div>
+        <div n:if="$copied && !$copyImportance" id="remove_icon"></div>
+    </div>
+
+    <div class="doc_bottom_panel doc_shown_by_hover doc_content">
+        <span class="doc_bottom_panel_name noOverflow doc_name">{$doc->getName()}</span>
+        <span class="doc_bottom_panel_size">{readable_filesize($doc->getFilesize())}</span>
+    </div>
+</a>

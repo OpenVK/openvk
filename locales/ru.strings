@@ -2222,7 +2222,10 @@
 "tags" = "Теги";
 "owner_is_hidden" = "Автор скрыт";
 "accessbility" = "Доступность";
+"download_file" = "Скачать файл";
+"remove" = "Удалить";
 
+"document" = "Документ";
 "document_type_0" = "Все";
 "document_type_1" = "Текстовые";
 "document_type_2" = "Архивы";
@@ -2259,6 +2262,7 @@
 "error_file_too_big" = "Файл слишком большой.";
 "error_file_invalid_format" = "Формат файла не разрешён.";
 "error_file_adding_copied" = "Не удалось добавить файл; он уже добавлен.";
+"error_file_preview" = "Не удалось загрузить файл: изображение имеет странности.";
 
 "private_document" = "Приватный (по ссылке)";
 "public_document" = "Публичный";

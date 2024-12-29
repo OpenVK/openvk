@@ -387,6 +387,11 @@ function readable_filesize($bytes, $precision = 2): string
     return round($bytes, $precision) . $units[$power];
 }
 
+function downloadable_name(string $text): string
+{
+    return preg_replace('/[\\/:*?"<>|]/', '_', str_replace(' ', '_', $text));
+}
+
 return (function() {
     _ovk_check_environment();
     require __DIR__ . "/vendor/autoload.php";

@@ -156,6 +156,11 @@ class Document extends Media
         return false;
     }
 
+    function isImage(): bool
+    {
+        return in_array($this->getVKAPIType(), [3, 4]);
+    }
+
     function isCopiedBy(User $user): bool
     {
         if($user->getId() === $this->getOwnerID())

@@ -18,6 +18,7 @@
 {/block}
 
 {block content}
+    {var $is_gallery = $current_tab == 3 || $current_tab == 4}
     <div id="docs_page_wrapper">
         <div class="docs_page_search">
             <form action="/search" method="get">
@@ -36,7 +37,7 @@
                 </div>
             </div>
         </div>
-        <div class="docs_page_content">
+        <div n:class="docs_page_content, $is_gallery ? docs_page_gallery">
             <div class="summaryBar display_flex_row display_flex_space_between">
                 <div class="summary">{tr($locale_string, $count)}.</div>
 
@@ -49,16 +50,19 @@
             <div class="container_white scroll_container">
                 {if $count > 0}
                     {foreach $docs as $doc}
-                        <div class="scroll_node">
-                            {include "components/doc.xml", doc => $doc}
-                        </div>
+                        {if $is_gallery}
+                            {include "components/image.xml", doc => $doc, scroll_context => true}
+                        {else}
+                            {include "components/doc.xml", doc => $doc, scroll_context => true}
+                        {/if}
                     {/foreach}
                 {else}
                     {include "../components/error.xml", description => tr("there_is_no_documents_alright")}
                 {/if}
-
-                {include "../components/paginator.xml", conf => $paginatorConf}
             </div>
+
+            {include "../components/paginator.xml", conf => $paginatorConf}
+            
         </div>
     </div>
 {/block}

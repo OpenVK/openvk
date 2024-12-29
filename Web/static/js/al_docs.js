@@ -11,7 +11,7 @@ function showDocumentUploadDialog(target = null, append_to_url = null)
                 <li>${tr("limitations_file_author_rights")}.</li>
             </ul>
 
-            <div style="text-align:center;margin: 10px 0px 2px 0px;">
+            <div id="_document_upload_frame" style="text-align:center;margin: 10px 0px 2px 0px;">
                 <input onclick="upload_btn.click()" class="button" type="button" value="${tr("select_file_fp")}">
                 <input id="upload_btn" type="file" style="display:none;">
             </div>
@@ -92,9 +92,19 @@ function showDocumentUploadDialog(target = null, append_to_url = null)
     })
 }
 
-u(document).on('click', '.docListViewItem #edit_icon', async (e) => {
+u(document).on("drop", "#_document_upload_frame", (e) => {
+    e.dataTransfer.dropEffect = 'move';
+    e.preventDefault()
+    
+    u(`#_document_upload_frame #upload_btn`).nodes[0].files = e.dataTransfer.files
+    u("#_document_upload_frame #upload_btn").trigger("change")
+})
+
+u(document).on('click', '.docMainItem #edit_icon', async (e) => {
+    e.preventDefault()
+
     const target = u(e.target).closest("#edit_icon")
-    const item = target.closest('.docListViewItem')
+    const item = target.closest('.docMainItem')
     const id = item.nodes[0].dataset.id
 
     CMessageBox.toggleLoader()
@@ -109,7 +119,7 @@ u(document).on('click', '.docListViewItem #edit_icon', async (e) => {
             <input type="text" name="doc_name" value="${doc.title}" placeholder="...">
 
             <label>
-                <input maxlength="255" value="0" type="radio" name="doc_access" ${doc.folder_id == 0 ? "checked" : ''}>
+                <input maxlength="255" value="0" type="radio" name="doc_access" ${doc.folder_id != 3 ? "checked" : ''}>
                 ${tr("private_document")}
             </label>
             <br>
@@ -161,9 +171,12 @@ u(document).on('change', "#docs_page_wrapper select[name='docs_sort']", (e) => {
     window.router.route(new_url.href)
 })
 
-u(document).on('click', '.docListViewItem #remove_icon', async (e) => {
-    const target = u(e.target).closest("#remove_icon")
-    const item   = target.closest('.docListViewItem')
+u(document).on('click', '.docMainItem #remove_icon', async (e) => {
+    e.preventDefault()
+
+    const target  = u(e.target).closest("#remove_icon")
+    const item    = target.closest('.docMainItem')
+    const context = item.attr('data-context')
     const id = item.nodes[0].dataset.id.split("_")
 
     target.addClass('lagged')
@@ -172,13 +185,21 @@ u(document).on('click', '.docListViewItem #remove_icon', async (e) => {
 
     if(res == 1) {
         target.attr('id', 'mark_icon')
+
+        if(context == "page") {
+            target.html('✓')
+            window.router.route('/docs')
+        }
     }
 })
 
-u(document).on('click', '.docListViewItem #add_icon', async (e) => {
+u(document).on('click', '.docMainItem #add_icon', async (e) => {
+    e.preventDefault()
+
     const target = u(e.target).closest("#add_icon")
-    const item   = target.closest('.docListViewItem')
+    const item   = target.closest('.docMainItem')
     const id = item.nodes[0].dataset.id.split("_")
+    const context = item.attr('data-context')
 
     target.addClass('lagged')
 
@@ -192,11 +213,17 @@ u(document).on('click', '.docListViewItem #add_icon', async (e) => {
     
     target.removeClass('lagged')
     target.attr('id', 'mark_icon')
+
+    if(context == "page") {
+        target.html('✓')
+    }
 })
 
-u(document).on('click', '.docListViewItem #report_icon', (e) => {
+u(document).on('click', '.docMainItem #report_icon', (e) => {
+    e.preventDefault()
+    
     const target = u(e.target).closest("#report_icon")
-    const item   = target.closest('.docListViewItem')
+    const item   = target.closest('.docMainItem')
     const id = item.nodes[0].dataset.id.split("_")
 
     MessageBox(tr("report_question"), `
@@ -217,4 +244,51 @@ u(document).on('click', '.docListViewItem #report_icon', (e) => {
     }),
 
     Function.noop])
+})
+
+u(document).on("click", ".docListViewItem a.viewerOpener, a.docGalleryItem", async (e) => {
+    e.preventDefault()
+
+    const target = u(e.target)
+    const link   = target.closest('a')
+
+    CMessageBox.toggleLoader()
+    const url = link.nodes[0].href
+    const request = await fetch(url)
+    const body_html = await request.text()
+    const parser  = new DOMParser
+    const body    = parser.parseFromString(body_html, "text/html")
+
+    const preview = body.querySelector('.photo-page-wrapper-photo')
+    const details = body.querySelector('.ovk-photo-details')
+
+    preview.querySelector('img').setAttribute('id', 'ovk-photo-img')
+
+    const photo_viewer = new CMessageBox({
+        title: '',
+        custom_template: u(`
+        <div class="ovk-photo-view-dimmer">
+            <div class="ovk-photo-view">
+                <div class="photo_com_title">
+                    <text id="photo_com_title_photos">
+                        ${tr("document")}
+                    </text>
+                    <div>
+                        <a id="ovk-photo-close">${tr("close")}</a>
+                    </div>
+                </div>
+                <div class='photo_viewer_wrapper doc_viewer_wrapper'>
+                    ${preview.innerHTML}
+                </div>
+                <div class="ovk-photo-details">
+                    ${details.innerHTML}
+                </div>
+            </div>
+        </div>`)
+    })
+    photo_viewer.getNode().find("#ovk-photo-close").on("click", function(e) {
+        photo_viewer.close()
+    });
+
+    CMessageBox.toggleLoader()
 })

@@ -2,6 +2,7 @@
 namespace openvk\Web\Presenters;
 use openvk\Web\Models\Repositories\{Documents, Clubs};
 use openvk\Web\Models\Entities\Document;
+use Nette\InvalidStateException as ISE;
 
 final class DocumentsPresenter extends OpenVKPresenter
 {
@@ -10,6 +11,8 @@ final class DocumentsPresenter extends OpenVKPresenter
 
     function renderList(?int $owner_id = NULL): void
     {
+        $this->assertUserLoggedIn();
+
         $this->template->_template = "Documents/List.xml";
         if($owner_id > 0)
             $this->notFound();
@@ -110,6 +113,10 @@ final class DocumentsPresenter extends OpenVKPresenter
             $document->save();
         } catch(\TypeError $e) {
             $this->flashFail("err", tr("forbidden"), $e->getMessage(), null, $isAjax);
+        } catch(ISE $e) {
+            $this->flashFail("err", tr("forbidden"), tr("error_file_preview"), null, $isAjax);
+        } catch(\ValueError $e) {
+            $this->flashFail("err", tr("forbidden"), $e->getMessage(), null, $isAjax);
         }
 
         if(!$isAjax) {
@@ -120,5 +127,26 @@ final class DocumentsPresenter extends OpenVKPresenter
                 "redirect" => "/docs" . (isset($group) ? $group->getRealId() : ""),
             ]);
         }
+    }
+
+    function renderPage(int $virtual_id, int $real_id): void
+    {
+        $this->assertUserLoggedIn();
+
+        $access_key = $this->queryParam("key");
+        $doc = (new Documents)->getDocumentById((int)$virtual_id, (int)$real_id);
+        if(!$doc || $doc->isDeleted())
+            $this->notFound();
+
+        if(!$doc->checkAccessKey($access_key))
+            $this->notFound();
+
+        $this->template->doc        = $doc;
+        $this->template->type       = $doc->getVKAPIType();
+        $this->template->is_image   = $doc->isImage();
+        $this->template->tags       = $doc->getTags();
+        $this->template->copied     = $doc->isCopiedBy($this->user->identity);
+        $this->template->copyImportance = true;
+        $this->template->modifiable = $doc->canBeModifiedBy($this->user->identity);
     }
 }

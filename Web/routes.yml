@@ -317,6 +317,8 @@ routes:
       handler: "Documents->listGroup"
     - url: "/docs/upload"
       handler: "Documents->upload"
+    - url: "/doc{num}_{num}"
+      handler: "Documents->page"
     - url: "/admin"
       handler: "Admin->index"
     - url: "/admin/users"

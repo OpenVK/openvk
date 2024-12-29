@@ -12,14 +12,13 @@
         »
         <a href="/docs">{_documents}</a>
     {/if}
-    
     »
-    загрузка
+    Non-AJAX Document upload
 {/block}
 
 {block content}
     <form method="post" enctype="multipart/form-data">
-        <table>
+        <table width="600">
             <tbody>
                 <tr>
                     <td><span class="nobold">{_name}:</span></td>
