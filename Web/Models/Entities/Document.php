@@ -209,10 +209,10 @@ class Document extends Media
         $parsed = explode(",", $tags);
         $result = "";
         foreach($parsed as $tag) {
-            $result .= mb_trim($tag) . ($tag != end($parsed) ? "," : '');
+            $result .= trim($tag) . ($tag != end($parsed) ? "," : '');
         }
 
-        $this->stateChanges("tags", $result);
+        $this->stateChanges("tags", ovk_proc_strtr($result, 500));
         return true;
     }
 
@@ -329,6 +329,7 @@ class Document extends Media
         $res->url   = $this->getURL();
         $res->date  = $this->getPublicationTime()->timestamp();
         $res->type  = $this->getVKAPIType();
+        $res->is_hidden   = (int) $this->isOwnerHidden();
         $res->is_licensed = (int) $this->isLicensed();
         $res->is_unsafe   = (int) $this->isUnsafe();
         $res->folder_id   = (int) $this->getFolder();
@@ -346,16 +347,25 @@ class Document extends Media
         return $res;
     }
 
+    function delete(bool $softly = true, bool $all_copies = false): void
+    {
+        if($all_copies) {
+            $ctx = DatabaseConnection::i()->getContext();
+            $ctx->table("documents")->where("copy_of", $this->getId())->delete();
+        }
+        parent::delete($softly);
+    }
+
     static function detectTypeByFormat(string $format)
     {
         switch($format) {
-            case "txt": case "docx": case "doc": case "odt": case "pptx": case "ppt": case "xlsx": case "xls":
+            case "txt": case "docx": case "doc": case "odt": case "pptx": case "ppt": case "xlsx": case "xls": case "md":
                 return 1;
             case "zip": case "rar": case "7z":
                 return 2;
             case "gif": case "apng":
                 return 3;
-            case "jpg": case "jpeg": case "png": case "psd": case "ps":
+            case "jpg": case "jpeg": case "png": case "psd": case "ps": case "webp":
                 return 4;
             case "mp3":
                 return 5;

@@ -45,7 +45,7 @@ function showDocumentUploadDialog(target = null, append_to_url = null)
                 <input type="text" name="doc_name" value="${name}" placeholder="...">
 
                 <label>
-                    <input value="0" type="radio" name="doc_access" checked>
+                    <input maxlength="255" value="0" type="radio" name="doc_access" checked>
                     ${tr("private_document")}
                 </label>
                 <br>
@@ -55,7 +55,7 @@ function showDocumentUploadDialog(target = null, append_to_url = null)
                 </label>
 
                 <p><b>${tr("tags")}</b></p>
-                <input type="text" name="doc_tags" placeholder="...">
+                <input maxlength="256" type="text" name="doc_tags" placeholder="...">
                 <br>
                 <label>
                     <input type="checkbox" name="doc_owner" checked>
@@ -82,6 +82,8 @@ function showDocumentUploadDialog(target = null, append_to_url = null)
 
                 if(json.success) {
                     window.router.route(location.href)
+                } else {
+                    fastError(escapeHtml(json.flash.message))
                 }
             }, Function.noop],
         })
@@ -89,6 +91,64 @@ function showDocumentUploadDialog(target = null, append_to_url = null)
         cmsg_2.getNode().attr('style', "width: 400px;")
     })
 }
+
+u(document).on('click', '.docListViewItem #edit_icon', async (e) => {
+    const target = u(e.target).closest("#edit_icon")
+    const item = target.closest('.docListViewItem')
+    const id = item.nodes[0].dataset.id
+
+    CMessageBox.toggleLoader()
+
+    const docs = await window.OVKAPI.call('docs.getById', {docs: id, return_tags: 1})
+    const doc = docs[0]
+
+    const cmsg_2 = new CMessageBox({
+        title: tr("document_editing_in_general"),
+        body: `
+            <p><b>${tr("info_name")}</b></p>
+            <input type="text" name="doc_name" value="${doc.title}" placeholder="...">
+
+            <label>
+                <input maxlength="255" value="0" type="radio" name="doc_access" ${doc.folder_id == 0 ? "checked" : ''}>
+                ${tr("private_document")}
+            </label>
+            <br>
+            <label>
+                <input value="3" type="radio" name="doc_access" ${doc.folder_id == 3 ? "checked" : ''}>
+                ${tr("public_document")}
+            </label>
+
+            <p><b>${tr("tags")}</b></p>
+            <input maxlength="256" type="text" name="doc_tags" value="${doc.tags.join(',')}" placeholder="...">
+            <br>
+            <label>
+                <input type="checkbox" name="doc_owner" ${doc.is_hidden ? "checked" : ''}>
+                ${tr("owner_is_hidden")}
+            </label>
+        `,
+        buttons: [tr('save'), tr('cancel')],
+        callbacks: [async () => {
+            const params = {
+                owner_id: id.split('_')[0],
+                doc_id: id.split('_')[1],
+                title: u(`input[name='doc_name']`).nodes[0].value,
+                tags: u(`input[name='doc_tags']`).nodes[0].value,
+                folder_id: u(`input[name="doc_access"]:checked`).nodes[0].value,
+                owner_hidden: u(`input[name="doc_owner"]`).nodes[0].checked ? 1 : 0,
+            }
+
+            const edit = await window.OVKAPI.call('docs.edit', params)
+            if(edit == 1) {
+                item.find('.doc_content .doc_name').html(escapeHtml(params.title))
+                item.find('.doc_content .doc_tags').html(escapeHtml(params.tags))
+            }
+        }, Function.noop],
+    })
+    cmsg_2.getNode().find('.ovk-diag-body').attr('style', "padding:15px;")
+    cmsg_2.getNode().attr('style', "width: 400px;")
+
+    CMessageBox.toggleLoader()
+})
 
 u(document).on('click', '#upload_entry_point', (e) => {
     showDocumentUploadDialog(null, Number(e.target.dataset.gid))
@@ -111,7 +171,7 @@ u(document).on('click', '.docListViewItem #remove_icon', async (e) => {
     target.removeClass('lagged')
 
     if(res == 1) {
-        target.attr('id', 'add_icon')
+        target.attr('id', 'mark_icon')
     }
 })
 

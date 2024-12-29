@@ -72,7 +72,7 @@ class Documents
 
     function getTypes(int $owner_id): array
     {
-        $result = DatabaseConnection::i()->getConnection()->query("SELECT `type`, COUNT(*) AS `count` FROM `documents` WHERE `owner` = $owner_id GROUP BY `type` ORDER BY `type`");
+        $result = DatabaseConnection::i()->getConnection()->query("SELECT `type`, COUNT(*) AS `count` FROM `documents` WHERE `owner` = $owner_id AND `deleted` = 0 AND `unlisted` = 0 GROUP BY `type` ORDER BY `type`");
         $response = [];
         foreach($result as $res) {
             if($res->count < 1 || $res->type == 0) continue;
@@ -113,10 +113,11 @@ class Documents
         foreach($params as $paramName => $paramValue) {
             switch($paramName) {
                 case "type":
+                    if($paramValue < 1 || $paramValue > 8) continue;
                     $result->where("type", $paramValue);
                     break;
                 case "tags":
-                    $result->where("tags", $paramValue);
+                    $result->where("tags LIKE ?", "%$paramValue%");
                     break;
                 case "from_me":
                     $result->where("owner", $paramValue);

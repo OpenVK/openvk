@@ -50,7 +50,7 @@ final class Docs extends VKAPIRequestHandler
         return $this->add($owner_id, $doc_id, "");
     }
 
-    function edit(int $owner_id, int $doc_id, ?string $title, ?string $tags, ?int $folder_id): int
+    function edit(int $owner_id, int $doc_id, ?string $title = "", ?string $tags = "", ?int $folder_id = 0, int $owner_hidden = -1): int
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -69,16 +69,16 @@ final class Docs extends VKAPIRequestHandler
             $doc->setName($title);
         if($tags)
             $doc->setTags($tags);
-        if($folder_id) {
-            if(in_array($folder_id, [0, 4]))
-                $doc->setFolder_id($folder_id);
-        }
+        if(in_array($folder_id, [0, 3]))
+            $doc->setFolder_id($folder_id);
+        if(in_array($owner_hidden, [0, 1]))
+            $doc->setOwner_hidden($owner_hidden);
 
         try {
             $doc->setEdited(time());
             $doc->save();
         } catch(\Throwable $e) {
-            return 1;
+            return 0;
         }
 
         return 1;

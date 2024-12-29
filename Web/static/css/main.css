@@ -4015,8 +4015,7 @@ hr {
 }
 
 .docListViewItem {
-    max-height: 52px;
-    height: 38px;
+    min-height: 38px;
     display: grid;
     grid-template-columns: 0fr 1fr 0fr;
     gap: 10px;
@@ -4024,7 +4023,7 @@ hr {
     border-bottom: 1px solid #EDEDED;
 }
 
-.docListViewItem:last-of-type {
+.scroll_node:last-of-type .docListViewItem {
     border-bottom: unset !important;
 }
 

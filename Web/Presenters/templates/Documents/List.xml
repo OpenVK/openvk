@@ -46,14 +46,18 @@
                     <option n:attr="selected => $order == 2" value="2">{_documents_sort_size}</option>
                 </select>
             </div>
-            <div class="container_white">
+            <div class="container_white scroll_container">
                 {if $count > 0}
                     {foreach $docs as $doc}
-                        {include "components/doc.xml", doc => $doc}
+                        <div class="scroll_node">
+                            {include "components/doc.xml", doc => $doc}
+                        </div>
                     {/foreach}
                 {else}
                     {include "../components/error.xml", description => tr("there_is_no_documents_alright")}
                 {/if}
+
+                {include "../components/paginator.xml", conf => $paginatorConf}
             </div>
         </div>
     </div>

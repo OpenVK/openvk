@@ -24,7 +24,7 @@ openvk:
             disableUploading: false
         docs:
             maxSize: 10 # in megabytes
-            allowedFormats: ["jpg", "jpeg", "png", "gif", "psd", "aep", "docx", "doc", "odt", "txt", "pptx", "ppt", "xls", "xlsx", "pdf", "djvu", "fb2", "ps", "apk", "zip", "7z", "mp4", "avi", "mp3", "flac"]
+            allowedFormats: ["jpg", "jpeg", "png", "gif", "webp", "psd", "aep", "docx", "doc", "odt", "txt", "md", "pptx", "ppt", "xls", "xlsx", "pdf", "djvu", "fb2", "ps", "apk", "zip", "7z", "mp4", "avi", "mp3", "flac"]
         apps:
             withdrawTax: 8
         security:

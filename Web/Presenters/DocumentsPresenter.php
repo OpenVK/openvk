@@ -92,21 +92,25 @@ final class DocumentsPresenter extends OpenVKPresenter
         $folder = $this->postParam("folder");
         $owner_hidden = ($this->postParam("owner_hidden") ?? "off") === "on";
 
-        $document = new Document;
-        $document->setOwner($owner);
-        $document->setName($name);
-        $document->setFolder_id($folder);
-        $document->setTags(empty($tags) ? NULL : $tags);
-        $document->setOwner_hidden($owner_hidden);
-        $document->setFile([
-            "tmp_name" => $upload["tmp_name"],
-            "error"    => $upload["error"],
-            "name"     => $upload["name"],
-            "size"     => $upload["size"],
-            "preview_owner" => $this->user->id,
-        ]);
-
-        $document->save();
+        try {
+            $document = new Document;
+            $document->setOwner($owner);
+            $document->setName(ovk_proc_strtr($name, 255));
+            $document->setFolder_id($folder);
+            $document->setTags(empty($tags) ? NULL : $tags);
+            $document->setOwner_hidden($owner_hidden);
+            $document->setFile([
+                "tmp_name" => $upload["tmp_name"],
+                "error"    => $upload["error"],
+                "name"     => $upload["name"],
+                "size"     => $upload["size"],
+                "preview_owner" => $this->user->id,
+            ]);
+    
+            $document->save();
+        } catch(\TypeError $e) {
+            $this->flashFail("err", tr("forbidden"), $e->getMessage(), null, $isAjax);
+        }
 
         if(!$isAjax) {
             $this->redirect("/docs" . (isset($group) ? $group->getRealId() : ""));

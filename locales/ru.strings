@@ -2217,6 +2217,7 @@
 "search_by_documents" = "Поиск по документам...";
 "documents" = "Документы";
 "document_uploading_in_general" = "Загрузка документа";
+"document_editing_in_general" = "Редактирование документа";
 "file" = "Файл";
 "tags" = "Теги";
 "owner_is_hidden" = "Автор скрыт";
