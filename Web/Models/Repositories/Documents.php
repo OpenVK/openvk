@@ -27,7 +27,7 @@ class Documents
     }
     
     # By "Virtual ID" and "Absolute ID" (to not leak owner's id).
-    function getDocumentById(int $virtual_id, int $real_id, ?string $access_key = NULL): ?Document
+    function getDocumentById(int $virtual_id, int $real_id, string $access_key = NULL): ?Document
     {
         $doc = $this->documents->where(['virtual_id' => $virtual_id, 'id' => $real_id]);
         /*if($access_key) {
@@ -74,7 +74,7 @@ class Documents
 
     function getTypes(int $owner_id): array
     {
-        $result = DatabaseConnection::i()->getConnection()->query("SELECT `type`, COUNT(*) AS `count` FROM `documents` WHERE `owner` = $owner_id AND `deleted` = 0 AND `unlisted` = 0 GROUP BY `type` ORDER BY `type`");
+        $result = DatabaseConnection::i()->getConnection()->query("SELECT `type`, COUNT(*) AS `count` FROM `documents` WHERE `owner` = ? AND `deleted` = 0 AND `unlisted` = 0 GROUP BY `type` ORDER BY `type`", $owner_id);
         $response = [];
         foreach($result as $res) {
             if($res->count < 1 || $res->type == 0) continue;

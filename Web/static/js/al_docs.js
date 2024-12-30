@@ -300,3 +300,113 @@ u(document).on("click", ".docListViewItem a.viewerOpener, a.docGalleryItem", asy
 
     CMessageBox.toggleLoader()
 })
+
+u(document).on('click', '#__documentAttachment', async (e) => {
+    const per_page = 10
+    const form = u(e.target).closest('form') 
+    const msg = new CMessageBox({
+        title: tr('select_doc'),
+        body: `
+        <div class='attachment_selector'>
+            <div id='attachment_insert' style='height: 325px;'>
+                <div class="docsInsert"></div>
+            </div>
+        </div>
+        `,
+        buttons: [tr('close')],
+        callbacks: [Function.noop]
+    })
+
+    msg.getNode().attr('style', 'width: 340px;')
+    msg.getNode().find('.ovk-diag-body').attr('style', 'height:335px;padding:0px;')
+    
+    async function __recieveDocs(page) {
+        u('#gif_loader').remove()
+        u('#attachment_insert').append(`<div id='gif_loader'></div>`)
+        const insert_place = u('#attachment_insert .docsInsert')
+        let docs = null
+
+        try {
+            docs = await window.OVKAPI.call('docs.get', {'owner_id': window.openvk.current_id, 'count': per_page, 'offset': per_page * page})
+        } catch(e) {
+            u("#gif_loader").remove()
+            insert_place.html("Err")
+            return
+        }
+
+        u("#gif_loader").remove()
+        const pages_count = Math.ceil(Number(docs.count) / per_page)
+
+        if(docs.count < 1) {
+            insert_place.append(tr('no_docs'))    
+        }
+
+        docs.items.forEach(doc => {
+            is_attached = (form.find(`.upload-item[data-type='doc'][data-id='${doc.owner_id}_${doc.id}']`)).length > 0
+            insert_place.append(`
+                <div class='display_flex_row _content' data-attachmentdata="${doc.owner_id}_${doc.id}_${doc.access_key}" data-name='${escapeHtml(doc.title)}'>
+                    <div class="attachDoc" id='__attach_doc'>
+                        <span>${is_attached ? tr("detach") : tr("attach")}</span>
+                    </div>
+                </div>
+            `)
+        })
+
+        if(page < pages_count - 1) {
+            insert_place.append(`
+            <div id="show_more" data-pagesCount="${pages_count}" data-page="${page + 1}">
+                <span>${tr('show_more')}</span>
+            </div>`)
+        }
+    }
+
+    // next page
+    u(".ovk-diag-body .attachment_selector").on("click", "#show_more", async (ev) => {
+        const target = u(ev.target).closest('#show_more')
+        target.addClass('lagged')
+        await __recieveDocs(Number(target.nodes[0].dataset.page))
+        target.remove()
+    })
+
+    u(".ovk-diag-body .attachment_selector").on("click", "#__attach_doc", async (ev) => {
+        if(u(form).find(`.upload-item`).length > window.openvk.max_attachments) {
+            makeError(tr('too_many_attachments'), 'Red', 10000, 1)
+            return    
+        }
+
+        const target = u(ev.target).closest('._content')
+        const button = target.find('#__attach_doc')
+        const dataset = target.nodes[0].dataset
+        const is_attached = (form.find(`.upload-item[data-type='doc'][data-id='${dataset.attachmentdata}']`)).length > 0
+        if(is_attached) {
+            (form.find(`.upload-item[data-type='doc'][data-id='${dataset.attachmentdata}']`)).remove()
+            button.html(tr('attach'))
+        } else {
+            if(form.find(`.upload-item`).length + 1 > window.openvk.max_attachments) {
+                makeError(tr('too_many_attachments'), 'Red', 10000, 1)
+                return
+            }
+
+            button.html(tr('detach'))
+            form.find('.post-vertical').append(`
+                <div class="vertical-attachment upload-item" draggable="true" data-type='doc' data-id="${dataset.attachmentdata}">
+                    <div class='vertical-attachment-content' draggable="false">
+                        <div class="docMainItem attachment_doc attachment_note">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
+                            
+                            <div class='attachment_note_content'>
+                                <span class="attachment_note_text">${tr("document")}</span>
+                                <span class="attachment_note_name"><a href="/doc${dataset.attachmentdata}">${ovk_proc_strtr(escapeHtml(dataset.name), 66)}</a></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class='vertical-attachment-remove'>
+                        <div id='small_remove_button'></div>
+                    </div>
+                </div>
+            `)
+        }
+    })
+
+    __recieveDocs(0)
+})

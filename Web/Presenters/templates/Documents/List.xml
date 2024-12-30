@@ -27,7 +27,7 @@
             </form>
             <input n:if="$canUpload" id="upload_entry_point" class="button" type="button" value="{_upload_button}" {if isset($group)}data-gid="{$group->getId()}"{/if}>
         </div>
-        <div class="docs_page_tabs">
+        <div n:if="sizeof($tabs) > 1" class="docs_page_tabs">
             <div class="mb_tabs">
                 <div class="mb_tab" n:attr="id => $current_tab == 0 ? active">
                     <a href="?tab=0">{_document_type_0}</a>

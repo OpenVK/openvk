@@ -999,6 +999,10 @@ u(document).on("click", "#editPost", async (e) => {
                                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
                                         ${tr('audio')}
                                     </a>
+                                    <a id="__documentAttachment">
+                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
+                                        ${tr('document')}
+                                    </a>
                                     ${type == 'post' ? `<a id="__notesAttachment">
                                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-srt.png" />
                                         ${tr('note')}

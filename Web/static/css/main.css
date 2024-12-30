@@ -4017,21 +4017,21 @@ hr {
     padding: 10px 10px;
 }
 
-#docs_page_wrapper .docs_page_content.docs_page_gallery .scroll_container .docGalleryItem {
+.docGalleryItem {
     height: 200px;
     cursor: pointer;
     position: relative;
     /*width: 200px;*/
 }
 
-#docs_page_wrapper .docs_page_content.docs_page_gallery .scroll_container .docGalleryItem img {
+.docGalleryItem img {
     width: 100%;
     height: 100%;
     display: block;
     object-fit: cover;
 }
 
-#docs_page_wrapper .docs_page_content.docs_page_gallery .scroll_container .docGalleryItem .doc_bottom_panel {
+.docGalleryItem .doc_bottom_panel {
     position: absolute;
     bottom: 0px;
     background: rgba(1, 1, 1, 0.7);
@@ -4047,15 +4047,15 @@ hr {
     opacity: 0;
 }
 
-#docs_page_wrapper .docs_page_content.docs_page_gallery .scroll_container .docGalleryItem:hover .doc_shown_by_hover {
+.docGalleryItem:hover .doc_shown_by_hover, .doc_shown_by_hover.info_shown {
     opacity: 1;
 }
 
-#docs_page_wrapper .docs_page_content.docs_page_gallery .scroll_container .docGalleryItem .doc_bottom_panel span {
+.docGalleryItem .doc_bottom_panel span {
     color: white;
 }
 
-#docs_page_wrapper .docs_page_content.docs_page_gallery .scroll_container .docGalleryItem .doc_bottom_panel .doc_bottom_panel_size {
+.docGalleryItem .doc_bottom_panel .doc_bottom_panel_size {
     max-width: 49px;
     width: max-content;
 }
@@ -4201,4 +4201,11 @@ hr {
 .attachments .docListViewItem {
     min-height: 30px;
     border-bottom: unset;
+}
+
+.attachments .docGalleryItem {
+    display: block;
+    min-width: 200px;
+    width: 50%;
+    margin-bottom: 4px;
 }

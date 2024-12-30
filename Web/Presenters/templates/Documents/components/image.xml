@@ -12,7 +12,7 @@
         <div class="doc_volume_action" n:if="$copied && !$copyImportance" id="remove_icon"></div>
     </div>
 
-    <div class="doc_bottom_panel doc_shown_by_hover doc_content">
+    <div n:class="doc_bottom_panel, doc_shown_by_hover, doc_content, $showInfo ? info_shown">
         <span class="doc_bottom_panel_name noOverflow doc_name">{$doc->getName()}</span>
         <span class="doc_bottom_panel_size">{readable_filesize($doc->getFilesize())}</span>
     </div>
