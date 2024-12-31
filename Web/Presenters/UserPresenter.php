@@ -792,7 +792,7 @@ final class UserPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("failed_to_tranfer_points"), tr("message_is_too_long"));
 
         $receiver = $this->users->getByAddress($receiverAddress);
-        if(!$receiver)
+        if(!$receiver || !$receiver->canBeViewedBy($this->user->identity))
             $this->flashFail("err", tr("failed_to_tranfer_points"), tr("receiver_not_found"));
 
         if($this->user->identity->getCoins() < $value)

@@ -900,7 +900,7 @@ tippy.delegate('body', {
 
         that._likesList.items.forEach(item => {
             final_template.find('.like_tooltip_body .like_tooltip_body_grid').append(`
-                <a href='/id${item.id}'><img src='${item.photo_50}' alt='.'></a>
+                <a title="${escapeHtml(item.first_name + " " + item.last_name)}" href='/id${item.id}'><img src='${item.photo_50}' alt='.'></a>
             `)
         })
         that.setContent(final_template.nodes[0].outerHTML)

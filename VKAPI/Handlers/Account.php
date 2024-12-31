@@ -212,7 +212,7 @@ final class Account extends VKAPIRequestHandler
             $this->fail(-252, "Not enough votes");
 
         $receiver_entity = (new \openvk\Web\Models\Repositories\Users)->get($receiver);
-        if(!$receiver_entity || $receiver_entity->isDeleted())
+        if(!$receiver_entity || $receiver_entity->isDeleted() || !$receiver_entity->canBeViewedBy($this->getUser()))
             $this->fail(-250, "Invalid receiver");
 
         if($receiver_entity->getId() === $this->getUser()->getId())
