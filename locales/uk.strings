@@ -919,9 +919,9 @@
 
 "listens_count_zero" = "жодного прослуховування";
 "listens_count_one" = "одне прослуховування";
-"listens_count_few" = "більше одного прослуховувань";
+"listens_count_few" = "більше одного прослуховування";
 "listens_count_many" = "$1 прослуховувань";
-"listens_count_other" = "$1 слухає";
+"listens_count_other" = "$1 прослуховувань";
 
 "add_audio_to_club" = "Додати аудіозапис до спільноти";
 "add_audio" = "Додавання аудіозапис";
