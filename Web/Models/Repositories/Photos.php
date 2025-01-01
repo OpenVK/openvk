@@ -27,6 +27,8 @@ class Photos
         $photo = $this->photos->where([
             "owner"      => $owner,
             "virtual_id" => $vId,
+            "system"     => 0,
+            "private"    => 0,
         ])->fetch();
         if(!$photo) return NULL;
         
@@ -37,8 +39,10 @@ class Photos
     {
         $perPage = $perPage ?? OPENVK_DEFAULT_PER_PAGE;
         $photos = $this->photos->where([
-            "owner"   => $user->getId(),
-            "deleted" => 0
+            "owner"    => $user->getId(),
+            "deleted"  => 0,
+            "system"   => 0,
+            "private"  => 0,
         ])->order("id DESC");
 
         foreach($photos->limit($limit, $offset) as $photo) {
@@ -49,8 +53,10 @@ class Photos
     function getUserPhotosCount(User $user) 
     {
         $photos = $this->photos->where([
-            "owner"   => $user->getId(),
-            "deleted" => 0
+            "owner"    => $user->getId(),
+            "deleted"  => 0,
+            "system"   => 0,
+            "private"  => 0,
         ]);
 
         return sizeof($photos);

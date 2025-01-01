@@ -433,6 +433,14 @@ class Club extends RowModel
         return $this->isEveryoneCanUploadAudios() || $this->canBeModifiedBy($user);
     }
 
+    function canUploadDocs(?User $user): bool
+    {
+        if(!$user)
+            return false;
+
+        return $this->canBeModifiedBy($user);
+    }
+
     function getAudiosCollectionSize()
     {
         return (new \openvk\Web\Models\Repositories\Audios)->getClubCollectionSize($this);

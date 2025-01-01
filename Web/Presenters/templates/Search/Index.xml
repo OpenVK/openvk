@@ -286,6 +286,18 @@
 
                                     __scrollHook()
                                 </script>
+                            {elseif $section === 'docs'}
+                                <div class='scroll_node search_content' n:foreach="$data as $dat">
+                                    {include "../Documents/components/doc.xml", doc => $dat, copyImportance => true}
+                                </div>
+
+                                <script n:if="$count > 0 && !empty($query)">
+                                    function __scrollHook(page) {
+                                        highlightText({$query}, '.page_wrap_content_main', [".doc_content .noOverflow"])
+                                    }
+
+                                    __scrollHook()
+                                </script>
                             {/if}
                         {else}
                             {include "../components/content_error.xml", description => tr("no_results_by_this_query")}
@@ -300,6 +312,7 @@
                             <a n:attr="id => $section === 'apps' ? 'used'"     href="/search?section=apps&q={urlencode($query)}">     {_s_apps}</a>
                             <a n:attr="id => $section === 'audios' ? 'used'"   href="/search?section=audios&q={urlencode($query)}">   {_s_audios}</a>
                             <a n:attr="id => $section === 'audios_playlists' ? 'used'" href="/search?section=audios_playlists&q={urlencode($query)}">{_s_audios_playlists}</a>
+                            <a n:attr="id => $section === 'docs' ? 'used'" href="/search?section=docs&q={urlencode($query)}">{_s_documents}</a>
                         </div>
 
                         <div class='page_search_options'>
@@ -413,6 +426,19 @@
             <label>
                 <input type="checkbox" value='1' name="only_youtube" n:attr="checked => !empty($_REQUEST['only_youtube'])" form="search_form">{_s_only_youtube}
             </label>
+        </div>
+    </div>
+    <div n:if="$section == 'docs'" class="search_option">
+        <div class="search_option_name">
+            <div class='search_option_name_ico'></div>
+            {_s_type}
+        </div>
+        <div class="search_option_content">
+            <select name="type" form="search_form" data-default='0'>
+                <option n:foreach="range(0, 8) as $i" value="{$i}" n:attr="selected => $_REQUEST['type'] == $i">
+                    {tr("document_type_".$i)}
+                </option>
+            </select>
         </div>
     </div>
     <div n:if="$section == 'audios'" class="search_option">

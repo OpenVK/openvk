@@ -117,6 +117,11 @@ final class Wall extends VKAPIRequestHandler
                         "type" => "audio",
                         "audio" => $attachment->toVkApiStruct($this->getUser()),
                     ];
+                } else if ($attachment instanceof \openvk\Web\Models\Entities\Document) {
+                    $attachments[] = [
+                        "type" => "doc",
+                        "doc" => $attachment->toVkApiStruct($this->getUser()),
+                    ];
                 } else if ($attachment instanceof \openvk\Web\Models\Entities\Post) {
                     $repostAttachments = [];
 
@@ -332,6 +337,11 @@ final class Wall extends VKAPIRequestHandler
                         $attachments[] = [
                             "type" => "audio",
                             "audio" => $attachment->toVkApiStruct($this->getUser())
+                        ];
+                    } else if ($attachment instanceof \openvk\Web\Models\Entities\Document) {
+                        $attachments[] = [
+                            "type" => "doc",
+                            "doc" => $attachment->toVkApiStruct($this->getUser()),
                         ];
                     } else if ($attachment instanceof \openvk\Web\Models\Entities\Post) {
                         $repostAttachments = [];
@@ -577,7 +587,7 @@ final class Wall extends VKAPIRequestHandler
         if($signed == 1)
             $flags |= 0b01000000;
 
-        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'poll', 'audio']);
+        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'poll', 'audio', 'doc']);
         $final_attachments   = [];
         $should_be_suggested = $owner_id < 0 && !$wallOwner->canBeModifiedBy($this->getUser()) && $wallOwner->getWallType() == 2;
         foreach($parsed_attachments as $attachment) {
@@ -670,7 +680,7 @@ final class Wall extends VKAPIRequestHandler
         if(preg_match('/(wall|video|photo)((?:-?)[0-9]+)_([0-9]+)/', $object, $postArray) == 0)
             $this->fail(100, "One of the parameters specified was missing or invalid: object is incorrect");
 
-        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio']);
+        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio', 'doc']);
         $final_attachments   = [];
         foreach($parsed_attachments as $attachment) {
             if($attachment && !$attachment->isDeleted() && $attachment->canBeViewedBy($this->getUser()) &&
@@ -780,6 +790,11 @@ final class Wall extends VKAPIRequestHandler
                         "type"  => "audio", 
                         "audio" => $attachment->toVkApiStruct($this->getUser()),
                     ];
+                } else if ($attachment instanceof \openvk\Web\Models\Entities\Document) {
+                    $attachments[] = [
+                        "type" => "doc",
+                        "doc" => $attachment->toVkApiStruct($this->getUser()),
+                    ];
                 }
             }
 
@@ -867,6 +882,11 @@ final class Wall extends VKAPIRequestHandler
                     "type" => "audio",
                     "audio" => $attachment->toVkApiStruct($this->getUser()),
                 ];
+            } else if ($attachment instanceof \openvk\Web\Models\Entities\Document) {
+                $attachments[] = [
+                    "type" => "doc",
+                    "doc" => $attachment->toVkApiStruct($this->getUser()),
+                ];
             }
         }
 
@@ -928,7 +948,7 @@ final class Wall extends VKAPIRequestHandler
         if($post->getTargetWall() < 0)
             $club = (new ClubsRepo)->get(abs($post->getTargetWall()));
 
-        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio']);
+        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio', 'doc']);
         $final_attachments   = [];
         foreach($parsed_attachments as $attachment) {
             if($attachment && !$attachment->isDeleted() && $attachment->canBeViewedBy($this->getUser()) &&
@@ -1014,7 +1034,7 @@ final class Wall extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio', 'poll']);
+        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio', 'poll', 'doc']);
         $final_attachments   = [];
         foreach($parsed_attachments as $attachment) {
             if($attachment && !$attachment->isDeleted() && $attachment->canBeViewedBy($this->getUser()) &&
@@ -1083,7 +1103,7 @@ final class Wall extends VKAPIRequestHandler
         $this->willExecuteWriteAction();
 
         $comment = (new CommentsRepo)->get($comment_id);
-        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio']);
+        $parsed_attachments  = parseAttachments($attachments, ['photo', 'video', 'note', 'audio', 'doc']);
         $final_attachments   = [];
         foreach($parsed_attachments as $attachment) {
             if($attachment && !$attachment->isDeleted() && $attachment->canBeViewedBy($this->getUser()) &&
