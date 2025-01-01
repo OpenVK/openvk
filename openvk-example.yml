@@ -17,6 +17,10 @@ openvk:
             minLength: 3 # won't affect existing short urls or the ones set via admin panel
             forbiddenNames:
                 - "index.php"
+        news:
+            enable: false
+            link: "/link" 
+            title: "я покакал"        
         photos:
             upgradeStructure: false
             photoSaving: "quick"

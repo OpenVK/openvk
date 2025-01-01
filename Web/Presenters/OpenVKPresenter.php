@@ -374,4 +374,4 @@ abstract class OpenVKPresenter extends SimplePresenter
             return false;
         }
     }
-} 
+}
