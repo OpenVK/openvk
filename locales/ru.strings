@@ -2031,6 +2031,7 @@
 "s_order_by_creation_date" = "По дате создания";
 "s_order_by_publishing_date" = "По дате публикации";
 "s_order_by_upload_date" = "По дате загрузки";
+"s_order_by_subs" = "По подписчикам";
 
 "s_by_date" = "По дате";
 "s_registered_before" = "Зарегистрирован до";

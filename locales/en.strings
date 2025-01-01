@@ -2136,6 +2136,7 @@
 "s_order_by_creation_date" = "By creation date";
 "s_order_by_publishing_date" = "By publication date";
 "s_order_by_upload_date" = "By upload date";
+"s_order_by_subs" = "By followers";
 
 "s_by_date" = "By date";
 "s_registered_before" = "Registered before";

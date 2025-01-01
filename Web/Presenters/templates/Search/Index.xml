@@ -330,6 +330,9 @@
                     {if OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"]}
                         <option value="rating" n:attr="selected => $order == 'rating'">{_s_order_by_rating}</option>
                     {/if}
+                {elseif $section == "groups"}
+                    <option value="id" n:attr="selected => $order == 'id'">{_s_order_by_creation_date}</option>
+                    <option value="subs" n:attr="selected => $order == 'subs'">{_s_order_by_subs}</option>
                 {elseif $section == "posts"}
                     <option value="id" n:attr="selected => $order == 'id'">{_s_order_by_publishing_date}</option>
                 {elseif $section == "audios"}
@@ -344,7 +347,7 @@
                 {/if}
             </select>
 
-            <label n:if="$order != 'rating'">
+            <label n:if="$order != 'rating' && $order != 'subs'">
                 <input type="checkbox" name="invert" value="1" form="search_form" n:attr="checked => $_REQUEST['invert'] == '1'">
                 {_s_order_invert}
             </label>
