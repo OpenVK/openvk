@@ -222,6 +222,7 @@
 "posts_per_page" = "Количество записей на странице";
 "show_ignored_sources" = "Показывать игнорируемые источники";
 "auto_scroll" = "Автоматическая прокрутка";
+"ajax_routing" = "AJAX-переходы";
 "attachment" = "Вложение";
 "post_as_group" = "От имени сообщества";
 "comment_as_group" = "От имени сообщества";

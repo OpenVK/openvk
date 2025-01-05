@@ -85,6 +85,7 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                 const CURRENT_PAGE = Number(__temp_url.searchParams.get('p') ?? 1)
                 const CURRENT_RETURN_BANNED = Number(__temp_url.searchParams.get('return_banned') ?? 0)
                 const CURRENT_AUTO_SCROLL = Number(localStorage.getItem('ux.auto_scroll') ?? 1)
+                const CURRENT_DISABLE_AJAX = Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0)
                 const COUNT = [1, 5, 10, 20, 30, 40, 50]
                 u('#_feed_settings_container #__content').html(`
                     <table cellspacing="7" cellpadding="0" border="0" align="center">
@@ -113,6 +114,16 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                                 </td>
                                 <td>
                                     <label for='showIgnored'>${tr('show_ignored_sources')}</label>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td width="120" valign="top">
+                                    <span class="nobold">
+                                        <input type='checkbox' data-act='localstorage_item' data-inverse="1" name='ux.disable_ajax_routing' id="ux.disable_ajax_routing" ${CURRENT_DISABLE_AJAX == 0 ? 'checked' : ''}>
+                                    </span>
+                                </td>
+                                <td>
+                                    <label for='ux.disable_ajax_routing'>${tr('ajax_routing')}</label>
                                 </td>
                             </tr>
                             <tr>
@@ -281,5 +292,10 @@ u(document).on('click', '#__feed_settings_link', (e) => {
 })
 
 u(document).on('change', `input[data-act='localstorage_item']`, (e) => {
+    if(e.target.dataset.inverse) {
+        localStorage.setItem(e.target.name, Number(!e.target.checked))
+        return
+    }
+
     localStorage.setItem(e.target.name, Number(e.target.checked))
 })
