@@ -45,7 +45,7 @@
             {include headIncludes}
         {/ifset}
     </head>
-    <body>
+    <body data-themepack="{$thisUser->getStyle()}">
         <div id="sudo-banner" n:if="isset($thisUser) && $userTainted">
             <p>
                 {_you_entered_as} <b>{$thisUser->getCanonicalName()}</b>. {_please_rights}
@@ -129,7 +129,7 @@
                             <div class="link">
                                 <a href="/logout?hash={urlencode($csrfToken)}">{_header_log_out}</a>
                             </div>
-                            <div id="search_box" class='header_divider_stick'>
+                            <div class="link header_divider_stick" id="search_box">
                                 <div id="search_box_fr">
                                     <form id='search_form' action="/search" method="get">
                                         <div id='search_and_one_more_wrapper'>

@@ -111,9 +111,6 @@ h1 {
     display: inline-block;
     height: 29px;
     padding: 11px 4px 0 7px;
-}
-
-.header_navigation .link, .header_navigation .header_divider_stick {
     background: url('../img/divider.png') no-repeat;
     background-size: 1.5px 41px;
 }
