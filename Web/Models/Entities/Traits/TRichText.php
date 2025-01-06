@@ -42,7 +42,7 @@ trait TRichText
                 $link = str_replace(";", "&#59;", $link);
                 $rel  = $this->isAd() ? "sponsored" : "ugc";
 
-                $server_domain = str_replace(':' . $_SERVER['SERVER_PORT'], '', $_SERVER['HTTP_HOST']);
+                /*$server_domain = str_replace(':' . $_SERVER['SERVER_PORT'], '', $_SERVER['HTTP_HOST']);
                 if(str_contains($link, $server_domain)) {
                     $replaced_link = str_replace(':' . $_SERVER['SERVER_PORT'], '', $link);
                     $replaced_link = str_replace($server_domain, '', $replaced_link);
@@ -50,7 +50,7 @@ trait TRichText
                     return "<a href='$replaced_link' rel='$rel'>$link</a>" . htmlentities($matches[4]);
                 }
 
-                $link = htmlentities(urldecode($link));
+                $link = htmlentities(urldecode($link));*/
                 
                 return "<a href='/away.php?to=$href' rel='$rel' target='_blank'>$link</a>" . htmlentities($matches[4]);
             }),
