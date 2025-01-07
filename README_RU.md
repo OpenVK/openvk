@@ -28,7 +28,7 @@ _[English](README.md)_
 
 ### Процедура установки
 
-1. Установите PHP 7.4, веб-сервер, Composer, Node.js, NPM и [Chandler](https://github.com/openvk/chandler)
+1. Установите PHP 8.2, веб-сервер, Composer, Node.js, NPM и [Chandler](https://github.com/openvk/chandler)
 
 * PHP 8 пока ещё тестируется, работоспособность движка на этой версии PHP пока не гарантируется.
 
