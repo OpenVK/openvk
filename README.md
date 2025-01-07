@@ -38,7 +38,7 @@ Here is our minimum hardware recommendation:
 
 ### Installation procedure
 
-1. Install PHP 7.4, web-server, Composer, Node.js, NPM and [Chandler](https://github.com/openvk/chandler)
+1. Install PHP 8.2, web-server, Composer, Node.js, NPM and [Chandler](https://github.com/openvk/chandler)
 
 * PHP 8 is still being tested; the functionality of the engine on this version of PHP is not yet guaranteed.
 
