@@ -62,9 +62,25 @@ class Clubs
         $order_str = 'id';
 
         switch($order['type']) {
+            default:
             case 'id':
                 $order_str = 'id ' . ($order['invert'] ? 'ASC' : 'DESC');
                 break;
+            case 'subs':
+                $sql_query = <<<EOF
+                SELECT `groups`.`id`, `subs`
+                FROM `groups`
+                LEFT JOIN 
+                (SELECT `target`, COUNT(`follower`) as `subs`
+                FROM `subscriptions`
+                WHERE `model` = "openvk\\\\Web\\\\Models\\\\Entities\\\\Club"
+                GROUP BY `target`) `subscriptions` ON `subscriptions`.`target` = `groups`.`id`
+                WHERE `groups`.`name` LIKE ? OR `groups`.`about` LIKE ?
+                ORDER BY `subs` DESC
+                LIMIT ? OFFSET ?;
+                EOF;
+
+                return new Util\RawEntityStream("Club", $sql_query, $query, $query);
         }
 
         $result = $result->where("name LIKE ? OR about LIKE ?", $query, $query);
