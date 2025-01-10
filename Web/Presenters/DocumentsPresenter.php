@@ -118,6 +118,8 @@ final class DocumentsPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("forbidden"), tr("error_file_preview"), null, $isAjax);
         } catch(\ValueError $e) {
             $this->flashFail("err", tr("forbidden"), $e->getMessage(), null, $isAjax);
+        } catch(\ImagickException $e) {
+            $this->flashFail("err", tr("forbidden"), tr("error_file_preview"), null, $isAjax);
         }
 
         if(!$isAjax) {
