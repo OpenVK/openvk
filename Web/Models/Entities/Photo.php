@@ -107,6 +107,10 @@ class Photo extends Media
         $sizes = Image::calculateSize(
             $image->getImageWidth(), $image->getImageHeight(), 8192, 4320, Image::SHRINK_ONLY | Image::FIT
         );
+        # gif fix 10.01.2025
+        if($image->getImageFormat() === 'GIF')
+            $image->setIteratorIndex(0);
+
         $image->resizeImage($sizes[0], $sizes[1], \Imagick::FILTER_HERMITE, 1);
         $image->writeImage($this->pathFromHash($hash));
         $this->saveImageResizedCopies($image, $filename, $hash);
