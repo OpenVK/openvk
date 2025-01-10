@@ -36,6 +36,7 @@ final class DocumentsPresenter extends OpenVKPresenter
 
         $docs = (new Documents)->getDocumentsByOwner($owner_id, (int)$order, (int)$tab);
         $this->template->tabs  = (new Documents)->getTypes($owner_id);
+        $this->template->tags  = (new Documents)->getTags($owner_id, (int)$tab);
         $this->template->current_tab = $tab;
         $this->template->order = $order;
         $this->template->count = $docs->size();
@@ -134,10 +135,10 @@ final class DocumentsPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $access_key = $this->queryParam("key");
-        $doc = (new Documents)->getDocumentById((int)$virtual_id, (int)$real_id);
+        $doc = (new Documents)->getDocumentById((int)$virtual_id, (int)$real_id, $access_key);
         if(!$doc || $doc->isDeleted())
             $this->notFound();
-
+        
         if(!$doc->checkAccessKey($access_key))
             $this->notFound();
 

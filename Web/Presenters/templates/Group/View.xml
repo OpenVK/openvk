@@ -297,7 +297,7 @@
         </div>
         <div>
             <div class="content_subtitle">
-                {tr("documents", $topicsCount)}
+                {tr("documents", $docsCount)}
                 <div style="float: right;">
                     <a href="/docs{$club->getRealId()}">{_all_title}</a>
                 </div>

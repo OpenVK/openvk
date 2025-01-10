@@ -30,7 +30,7 @@ final class Docs extends VKAPIRequestHandler
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
-        $doc = (new Documents)->getDocumentById($owner_id, $doc_id);
+        $doc = (new Documents)->getDocumentByIdUnsafe($owner_id, $doc_id);
         if(!$doc || $doc->isDeleted())
             $this->fail(1150, "Invalid document id");
 
@@ -55,7 +55,7 @@ final class Docs extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        $doc = (new Documents)->getDocumentById($owner_id, $doc_id);
+        $doc = (new Documents)->getDocumentByIdUnsafe($owner_id, $doc_id);
         if(!$doc || $doc->isDeleted())
             $this->fail(1150, "Invalid document id");
         if(!$doc->canBeModifiedBy($this->getUser()))
@@ -67,8 +67,8 @@ final class Docs extends VKAPIRequestHandler
 
         if($title)
             $doc->setName($title);
-        if($tags)
-            $doc->setTags($tags);
+
+        $doc->setTags($tags);
         if(in_array($folder_id, [0, 3]))
             $doc->setFolder_id($folder_id);
         if(in_array($owner_hidden, [0, 1]))
@@ -118,11 +118,8 @@ final class Docs extends VKAPIRequestHandler
 
         foreach($item_ids as $id) {
             $splitted_id = explode("_", $id);
-            $doc = (new Documents)->getDocumentById((int)$splitted_id[0], (int)$splitted_id[1]);
+            $doc = (new Documents)->getDocumentById((int)$splitted_id[0], (int)$splitted_id[1], $splitted_id[2]);
             if(!$doc || $doc->isDeleted())
-                continue;
-
-            if(!$doc->checkAccessKey($splitted_id[2]))
                 continue;
 
             $response[] = $doc->toVkApiStruct($this->getUser(), $return_tags === 1);
@@ -145,6 +142,19 @@ final class Docs extends VKAPIRequestHandler
             "count" => sizeof($types),
             "items" => $types,
         ];
+    }
+
+    function getTags(?int $owner_id, ?int $type = 0)
+    {
+        $this->requireUser();
+        if(!$owner_id)
+            $owner_id = $this->getUser()->getId();
+        
+        if($owner_id > 0 && $owner_id != $this->getUser()->getId())
+            $this->fail(15, "Access denied");
+        
+        $tags = (new Documents)->getTags($owner_id, $type);
+        return $tags;
     }
 
     function search(string $q = "", int $search_own = -1, int $order = -1, int $count = 30, int $offset = 0, int $return_tags = 0, int $type = 0, ?string $tags = NULL): object

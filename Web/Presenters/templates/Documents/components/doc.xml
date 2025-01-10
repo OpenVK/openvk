@@ -4,7 +4,7 @@
 {var $modifiable = $doc->canBeModifiedBy($thisUser)}
 
 <div n:class="docMainItem, docListViewItem, $scroll_context ? scroll_node" data-id="{$doc->getPrettiestId()}">
-    <a class="viewerOpener" href="/doc{$doc->getPrettyId()}">
+    <a class="viewerOpener" href="/doc{$doc->getPrettyId()}?key={$doc->getAccessKey()}">
         {if $preview}
             <img class="doc_icon" alt="document_preview" src="{$preview->getURLBySizeId('tiny')}">
         {else}
@@ -14,7 +14,7 @@
         {/if}
     </a>
     <div class="doc_content noOverflow">
-        <a class="viewerOpener" href="/doc{$doc->getPrettyId()}"><b class="noOverflow doc_name">{$doc->getName()}</b></a>
+        <a class="viewerOpener" href="/doc{$doc->getPrettyId()}?key={$doc->getAccessKey()}"><b class="noOverflow doc_name">{$doc->getName()}</b></a>
 
         <div class="doc_content_info">
             <span>{$doc->getPublicationTime()}</span>,

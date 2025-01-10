@@ -2226,6 +2226,7 @@
 "remove" = "Удалить";
 
 "document" = "Документ";
+"documents_all" = "Все документы";
 "document_type_0" = "Все";
 "document_type_1" = "Текстовые";
 "document_type_2" = "Архивы";

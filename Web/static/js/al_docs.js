@@ -102,6 +102,9 @@ u(document).on("drop", "#_document_upload_frame", (e) => {
 
 u(document).on('click', '.docMainItem #edit_icon', async (e) => {
     e.preventDefault()
+    if(u("#ajloader").hasClass("shown")) {
+        return
+    }
 
     const target = u(e.target).closest("#edit_icon")
     const item = target.closest('.docMainItem')
@@ -121,10 +124,10 @@ u(document).on('click', '.docMainItem #edit_icon', async (e) => {
         title: tr("document_editing_in_general"),
         body: `
             <p><b>${tr("info_name")}</b></p>
-            <input type="text" name="doc_name" value="${doc.title}" placeholder="...">
+            <input maxlength="128" type="text" name="doc_name" value="${doc.title}" placeholder="...">
 
             <label>
-                <input maxlength="255" value="0" type="radio" name="doc_access" ${doc.folder_id != 3 ? "checked" : ''}>
+                <input value="0" type="radio" name="doc_access" ${doc.folder_id != 3 ? "checked" : ''}>
                 ${tr("private_document")}
             </label>
             <br>

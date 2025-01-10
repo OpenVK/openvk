@@ -155,6 +155,11 @@ class Document extends Media
     {
         return false;
     }
+    
+    function isPrivate(): bool
+    {
+        return $this->getFolder() == Document::VKAPI_FOLDER_PRIVATE;
+    }
 
     function isImage(): bool
     {
@@ -210,11 +215,17 @@ class Document extends Media
 
     function setTags(?string $tags): bool
     {
-        if(!$tags) {
-            return false;
+        if(is_null($tags)) {
+            $this->stateChanges("tags", NULL);
+            return true;
         }
 
         $parsed = explode(",", $tags);
+        if(sizeof($parsed) < 1 || $parsed[0] == "") {
+            $this->stateChanges("tags", NULL);
+            return true;
+        }
+
         $result = "";
         foreach($parsed as $tag) {
             $result .= trim($tag) . ($tag != end($parsed) ? "," : '');

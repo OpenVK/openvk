@@ -2331,6 +2331,7 @@
 "remove" = "Remove";
 
 "document" = "Document";
+"documents_all" = "All documents";
 "document_type_0" = "All";
 "document_type_1" = "Text";
 "document_type_2" = "Archives";

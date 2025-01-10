@@ -45,6 +45,19 @@ class Documents
         return $n_doc;
     }
 
+    function getDocumentByIdUnsafe(int $virtual_id, int $real_id): ?Document
+    {
+        $doc = $this->documents->where(['virtual_id' => $virtual_id, 'id' => $real_id]);
+
+        $doc = $doc->fetch();
+        if(is_null($doc))
+            return NULL;
+
+        $n_doc = new Document($doc);
+
+        return $n_doc;
+    }
+
     function getDocumentsByOwner(int $owner, int $order = 0, int $type = -1): EntityStream
     {
         $search = $this->documents->where([
@@ -88,6 +101,27 @@ class Documents
         }
 
         return $response;
+    }
+
+    function getTags(int $owner_id, ?int $type = 0): array
+    {
+        $query = "SELECT `tags` FROM `documents` WHERE `owner` = ? AND `deleted` = 0 AND `unlisted` = 0 ";
+        if($type > 0 && $type < 9) {
+            $query .= "AND `type` = $type";
+        }
+
+        $query .= " AND `tags` IS NOT NULL ORDER BY `id`";
+        $result = DatabaseConnection::i()->getConnection()->query($query, $owner_id);
+        $tags = [];
+        foreach($result as $res) {
+            $tags[] = $res->tags;
+        }
+        $imploded_tags = implode(",", $tags);
+        $exploded_tags = array_values(array_unique(explode(",", $imploded_tags)));
+        if($exploded_tags[0] == "")
+            return [];
+        
+        return array_slice($exploded_tags, 0, 50);
     }
 
     function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false]): Util\EntityStream

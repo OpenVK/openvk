@@ -4176,8 +4176,12 @@ hr {
     background-position-y: -21px;
 }
 
-.docListViewItem .doc_volume #report_icon, .docGalleryItem .doc_top_panel #report_icon {
+.docListViewItem .doc_volume #report_icon {
     background-position-x: -40px;
+}
+
+.docGalleryItem .doc_top_panel #report_icon {
+    background-position-x: -24px;
 }
 
 .docListViewItem .doc_volume #edit_icon {

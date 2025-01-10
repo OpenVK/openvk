@@ -2,7 +2,7 @@
 {var $copied = !isset($club) ? $doc->isCopiedBy($thisUser) : $doc->isCopiedBy($club)}
 {var $modifiable = $doc->canBeModifiedBy($thisUser)}
 
-<a href="/doc{$doc->getPrettyId()}" n:class="docMainItem, viewerOpener, docGalleryItem, $scroll_context ? scroll_node" data-id="{$doc->getPrettiestId()}">
+<a href="/doc{$doc->getPrettyId()}?key={$doc->getAccessKey()}" n:class="docMainItem, viewerOpener, docGalleryItem, $scroll_context ? scroll_node" data-id="{$doc->getPrettiestId()}">
     <img loading="lazy" src="{$preview->getURLBySizeId('medium')}" alt="gallery photo">
 
     <div class="doc_top_panel doc_shown_by_hover">
