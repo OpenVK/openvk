@@ -2255,6 +2255,12 @@ table td[width="120"] {
     border-radius: 2px;
 }
 
+.mb_tab .special_counter {
+    color: #595959;
+    font-weight: bold;
+    margin: 0px 1px;
+}
+
 .mb_tab:hover {
     background: #e2e0e0;
 }
@@ -2270,6 +2276,10 @@ table td[width="120"] {
 
 .mb_tab#active a {
     color: white;
+}
+
+.mb_tab#active .special_counter {
+    color: #bdbdbd;
 }
 
 .border-block {

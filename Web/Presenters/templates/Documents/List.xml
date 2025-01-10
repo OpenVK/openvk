@@ -33,7 +33,10 @@
                     <a href="?tab=0">{_document_type_0}</a>
                 </div>
                 <div n:foreach="$tabs as $tab" class="mb_tab" n:attr="id => $tab['type'] == $current_tab ? active">
-                    <a href="?tab={$tab['type']}">{$tab["name"]}</a>
+                    <a href="?tab={$tab['type']}">
+                        {$tab["name"]}
+                        <span class="special_counter">{$tab["count"]}</span>
+                    </a>
                 </div>
             </div>
         </div>
