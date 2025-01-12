@@ -34,6 +34,30 @@ final class DocumentsPresenter extends OpenVKPresenter
         $order = in_array($current_order, [0,1,2]) ? $current_order : 0;
         $tab   = in_array($current_tab, [0,1,2,3,4,5,6,7,8]) ? $current_tab : 0;
 
+        $api_request = $this->queryParam("picker") == "1";
+        if($api_request && $_SERVER["REQUEST_METHOD"] === "POST") {
+            $ctx_type = $this->postParam("context");
+            $docs = NULL;
+
+            switch($ctx_type) {
+                default:
+                case "list":
+                    $docs = (new Documents)->getDocumentsByOwner($owner_id, (int)$order, (int)$tab);
+                    break;
+                case "search":
+                    $ctx_query = $this->postParam("ctx_query");
+                    $docs = (new Documents)->find($ctx_query);
+                    break;
+            }
+
+            $this->template->docs  = $docs->page($page, OPENVK_DEFAULT_PER_PAGE);
+            $this->template->page  = $page;
+            $this->template->count = $docs->size();
+            $this->template->pagesCount = ceil($this->template->count / OPENVK_DEFAULT_PER_PAGE);
+            $this->template->_template = "Documents/ApiGetContext.xml";
+            return;
+        }
+
         $docs = (new Documents)->getDocumentsByOwner($owner_id, (int)$order, (int)$tab);
         $this->template->tabs  = (new Documents)->getTypes($owner_id);
         $this->template->tags  = (new Documents)->getTags($owner_id, (int)$tab);

@@ -1039,7 +1039,10 @@ u(document).on("click", "#editPost", async (e) => {
         // horizontal attachments
         api_post.attachments.forEach(att => {
             const type = att.type
-            const aid = att[type].owner_id + '_' + att[type].id
+            let aid = att[type].owner_id + '_' + att[type].id
+            if(att[type] && att[type].access_key) {
+                aid += "_" + att[type].access_key
+            }
 
             if(type == 'video' || type == 'photo') {
                 let preview = ''

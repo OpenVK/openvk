@@ -2276,3 +2276,6 @@
 "documents_sort_add" = "По дате добавления";
 "documents_sort_alphabet" = "A-Z/А-Я";
 "documents_sort_size" = "По размеру";
+"select_doc" = "Выбор документа";
+"no_documents" = "Документов нет";
+"go_to_my_documents" = "Перейти к своим документам";

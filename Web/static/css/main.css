@@ -2711,6 +2711,10 @@ a.poll-retract-vote {
     justify-content: center;
 }
 
+.ovk-photo-view .photo_viewer_wrapper.photo_viewer_wrapper_scrollable {
+    height: unset;
+}
+
 .ovk-photo-view #ovk-photo-img {
     max-width: 100%; 
     max-height: 80vh; 
@@ -4107,7 +4111,7 @@ hr {
     border-bottom: unset !important;
 }
 
-.docListViewItem:hover {
+.docListViewItem:hover, .attachButton:hover {
     background: #f7f7f7;
 }
 
@@ -4219,7 +4223,18 @@ hr {
 
 .attachments .docGalleryItem {
     display: block;
-    min-width: 200px;
+    min-width: 130px;
+    height: 150px;
     width: 50%;
     margin-bottom: 4px;
+}
+
+.attachButton {
+    width: 12%;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
 }

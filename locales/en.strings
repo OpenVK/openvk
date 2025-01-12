@@ -2381,3 +2381,6 @@
 "documents_sort_add" = "By date";
 "documents_sort_alphabet" = "A-Z";
 "documents_sort_size" = "By size";
+"select_doc" = "Attach document";
+"no_documents" = "No documents found";
+"go_to_my_documents" = "Go to own documents";

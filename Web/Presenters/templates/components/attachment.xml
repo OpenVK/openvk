@@ -67,8 +67,8 @@
     </div>
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Document}
     <div style="width:100%;">
-        <div style="display:none" data-att_type='doc' data-att_id="{$attachment->getPrettyId()}">
-            <div class="docMainItem attachment_doc attachment_note" data-id="{$attachment->getPrettiestId()}">
+        <div style="display:none" data-att_type="doc" data-att_id="{$attachment->getPrettiestId()}">
+            <div class="docMainItem attachment_doc attachment_note">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
                 
                 <div class='attachment_note_content'>

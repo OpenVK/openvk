@@ -304,112 +304,190 @@ u(document).on("click", ".docListViewItem a.viewerOpener, a.docGalleryItem", asy
     CMessageBox.toggleLoader()
 })
 
-u(document).on('click', '#__documentAttachment', async (e) => {
+// ctx > "wall" and maybe "messages" in future
+// source > "user" || "club" > source_id
+async function __docAttachment(form, ctx = "wall", source = "user", source_id = 0) {
     const per_page = 10
-    const form = u(e.target).closest('form') 
     const msg = new CMessageBox({
         title: tr('select_doc'),
-        body: `
-        <div class='attachment_selector'>
-            <div id='attachment_insert' style='height: 325px;'>
-                <div class="docsInsert"></div>
-            </div>
-        </div>
-        `,
-        buttons: [tr('close')],
-        callbacks: [Function.noop]
+        custom_template: u(`
+            <div class="ovk-photo-view-dimmer">
+                <div class="ovk-photo-view" style="z-index: 1025;">
+                    <div class="photo_com_title">
+                        <text id="photo_com_title_photos">
+                            ${tr("select_doc")}
+                        </text>
+                        ${source != "user" ?
+                            `
+                            <a id="_doc_picker_go_to_my">
+                                ${tr("go_to_my_documents")}
+                            </a>
+                            `    
+                        : ""}
+                        <div>
+                            <a id="ovk-photo-close">${tr("close")}</a>
+                        </div>
+                    </div>
+                    <div class='photo_viewer_wrapper photo_viewer_wrapper_scrollable doc_viewer_wrapper'>
+                        <div class='attachment_selector' style="width: 100%;">
+                            <div id='_attachment_insert'>
+                                <div class="docsInsert"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ovk-photo-details"></div>
+                </div>
+            </div>`),
     })
 
-    msg.getNode().attr('style', 'width: 340px;')
+    msg.getNode().find(".ovk-photo-view").attr('style', 'width: 400px;')
     msg.getNode().find('.ovk-diag-body').attr('style', 'height:335px;padding:0px;')
-    
-    async function __recieveDocs(page) {
-        u('#gif_loader').remove()
-        u('#attachment_insert').append(`<div id='gif_loader'></div>`)
-        const insert_place = u('#attachment_insert .docsInsert')
-        let docs = null
-
-        try {
-            docs = await window.OVKAPI.call('docs.get', {'owner_id': window.openvk.current_id, 'count': per_page, 'offset': per_page * page})
-        } catch(e) {
-            u("#gif_loader").remove()
-            insert_place.html("Err")
-            return
+    docs_reciever = new class {
+        ctx = "my"
+        ctx_id = 0
+        stat = {
+            page: 0,
+            pagesCount: 0,
+            count: 0,
         }
 
-        u("#gif_loader").remove()
-        const pages_count = Math.ceil(Number(docs.count) / per_page)
+        clean() {
+            this.stat = {
+                page: 0,
+                pagesCount: 0,
+                count: 0,
+            }
 
-        if(docs.count < 1) {
-            insert_place.append(tr('no_docs'))    
+            u('#gif_loader').remove()
         }
 
-        docs.items.forEach(doc => {
-            is_attached = (form.find(`.upload-item[data-type='doc'][data-id='${doc.owner_id}_${doc.id}']`)).length > 0
-            insert_place.append(`
-                <div class='display_flex_row _content' data-attachmentdata="${doc.owner_id}_${doc.id}_${doc.access_key}" data-name='${escapeHtml(doc.title)}'>
-                    <div class="attachDoc" id='__attach_doc'>
-                        <span>${is_attached ? tr("detach") : tr("attach")}</span>
+        async page(page = 1, perPage = 10) {
+            u('#_attachment_insert').append(`<div id='gif_loader'></div>`)
+
+            const fd = new FormData
+            fd.append("context", "list")
+            fd.append("hash", window.router.csrf)
+            const req = await fetch(`/docs${source == "club" ? source_id : ""}?picker=1&p=${page}`, {
+                method: "POST",
+                body: fd
+            })
+            const res = await req.text()
+            const dom = new DOMParser
+            const pre = dom.parseFromString(res, "text/html") 
+            const pagesCount = Number(pre.querySelector("input[name='pagesCount']").value)
+            const count = Number(pre.querySelector("input[name='count']").value)
+            if(count < 1) {
+                u('#_attachment_insert .docsInsert').append(`
+                    <div class="information">
+                        &nbsp; ${tr("no_documents")}.
                     </div>
+                `)
+            }
+            pre.querySelectorAll("._content").forEach(doc => {
+                const res = u(`${doc.outerHTML}`)
+                const id  = res.attr("data-attachmentdata")
+                
+                res.find(".docMainItem").attr("style", "width: 85%;")
+                res.append(`
+                <div class="attachButton" id='__attach_doc'>
+                    <span>${this.isDocAttached(id) ? tr("detach") : tr("attach")}</span>
                 </div>
-            `)
-        })
+                `)
+                u('#_attachment_insert .docsInsert').append(res)
+            })
 
-        if(page < pages_count - 1) {
-            insert_place.append(`
-            <div id="show_more" data-pagesCount="${pages_count}" data-page="${page + 1}">
-                <span>${tr('show_more')}</span>
-            </div>`)
+            this.stat.page = page
+            this.stat.pagesCount = pagesCount
+            this.stat.count = count
+            u('#gif_loader').remove()
+            this.showMore()
+        }
+
+        showMore() {
+            if(this.stat.page < this.stat.pagesCount) {
+                u('#_attachment_insert').append(`
+                    <div id="show_more" data-pagesCount="${this.stat.pagesCount}">
+                        <span>${tr('show_more')}</span>
+                    </div>
+                `)
+            }
+        }
+
+        maxAttachmentsCheck() {
+            if(u(form).find(`.upload-item`).length > window.openvk.max_attachments) {
+                makeError(tr('too_many_attachments'), 'Red', 10000, 1)
+                return true
+            }
+            return false
+        }
+        
+        attach(dataset, button) {
+            if(this.isDocAttached(dataset.attachmentdata)) {
+                (form.find(`.upload-item[data-type='doc'][data-id='${dataset.attachmentdata}']`)).remove()
+                button.html(tr('attach'))
+            } else {
+                const _url = dataset.attachmentdata.split("_")
+                button.html(tr('detach'))
+                form.find('.post-vertical').append(`
+                    <div class="vertical-attachment upload-item" draggable="true" data-type='doc' data-id="${dataset.attachmentdata}">
+                        <div class='vertical-attachment-content' draggable="false">
+                            <div class="docMainItem attachment_doc attachment_note">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
+                                
+                                <div class='attachment_note_content'>
+                                    <span class="attachment_note_text">${tr("document")}</span>
+                                    <span class="attachment_note_name"><a href="/doc${_url[0]}_${_url[1]}?key=${_url[2]}">${ovk_proc_strtr(escapeHtml(dataset.name), 50)}</a></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='vertical-attachment-remove'>
+                            <div id='small_remove_button'></div>
+                        </div>
+                    </div>
+                `)
+            }
+        }
+
+        isDocAttached(attachmentdata) {
+            return (form.find(`.upload-item[data-type='doc'][data-id='${attachmentdata}']`)).length > 0
         }
     }
 
-    // next page
-    u(".ovk-diag-body .attachment_selector").on("click", "#show_more", async (ev) => {
-        const target = u(ev.target).closest('#show_more')
-        target.addClass('lagged')
-        await __recieveDocs(Number(target.nodes[0].dataset.page))
-        target.remove()
+    msg.getNode().find("#ovk-photo-close").on("click", function(e) {
+        msg.close()
     })
-
-    u(".ovk-diag-body .attachment_selector").on("click", "#__attach_doc", async (ev) => {
-        if(u(form).find(`.upload-item`).length > window.openvk.max_attachments) {
-            makeError(tr('too_many_attachments'), 'Red', 10000, 1)
-            return    
+    msg.getNode().on("click", "#__attach_doc", async (ev) => {
+        if(docs_reciever.maxAttachmentsCheck() == true) {
+            return
         }
 
         const target = u(ev.target).closest('._content')
         const button = target.find('#__attach_doc')
         const dataset = target.nodes[0].dataset
-        const is_attached = (form.find(`.upload-item[data-type='doc'][data-id='${dataset.attachmentdata}']`)).length > 0
-        if(is_attached) {
-            (form.find(`.upload-item[data-type='doc'][data-id='${dataset.attachmentdata}']`)).remove()
-            button.html(tr('attach'))
-        } else {
-            if(form.find(`.upload-item`).length + 1 > window.openvk.max_attachments) {
-                makeError(tr('too_many_attachments'), 'Red', 10000, 1)
-                return
-            }
-
-            button.html(tr('detach'))
-            form.find('.post-vertical').append(`
-                <div class="vertical-attachment upload-item" draggable="true" data-type='doc' data-id="${dataset.attachmentdata}">
-                    <div class='vertical-attachment-content' draggable="false">
-                        <div class="docMainItem attachment_doc attachment_note">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
-                            
-                            <div class='attachment_note_content'>
-                                <span class="attachment_note_text">${tr("document")}</span>
-                                <span class="attachment_note_name"><a href="/doc${dataset.attachmentdata}">${ovk_proc_strtr(escapeHtml(dataset.name), 66)}</a></span>
-                            </div>
-                        </div>
-                    </div>
-                    <div class='vertical-attachment-remove'>
-                        <div id='small_remove_button'></div>
-                    </div>
-                </div>
-            `)
-        }
+        docs_reciever.attach(dataset, button)
+    })
+    msg.getNode().on("click", "#show_more", async (ev) => {
+        const target = u(ev.target).closest('#show_more')
+        target.addClass('lagged')
+        await docs_reciever.page(docs_reciever.stat.page + 1)
+        target.remove()
+    })
+    msg.getNode().on("click", "#_doc_picker_go_to_my", async (e) => {
+        msg.close()
+        await __docAttachment(form, "wall")
     })
 
-    __recieveDocs(0)
+    await docs_reciever.page(docs_reciever.stat.page + 1)
+}
+u(document).on('click', '#__documentAttachment', async (e) => {
+    const form = u(e.target).closest('form') 
+    const targ = u(e.target).closest("#__documentAttachment")
+    let entity_source = "user"
+    let entity_id = 0
+    if(targ.attr('data-club') != null) {
+        entity_source = "club"
+        entity_id = Number(targ.attr('data-club'))
+    }
+
+    await __docAttachment(form, "wall", entity_source, entity_id)
 })
