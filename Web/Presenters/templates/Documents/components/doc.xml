@@ -14,7 +14,7 @@
         {/if}
     </a>
     <div class="doc_content noOverflow">
-        <a class="viewerOpener" href="/doc{$doc->getPrettyId()}?key={$doc->getAccessKey()}"><b class="noOverflow doc_name">{$doc->getName()}</b></a>
+        <a class="viewerOpener noOverflow" href="/doc{$doc->getPrettyId()}?key={$doc->getAccessKey()}"><b class="noOverflow doc_name">{$doc->getName()}</b></a>
 
         <div class="doc_content_info">
             <span>{$doc->getPublicationTime()}</span>,

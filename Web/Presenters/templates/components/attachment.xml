@@ -73,7 +73,7 @@
                 
                 <div class='attachment_note_content'>
                     <span class="attachment_note_text">{_document}</span>
-                    <span class="attachment_note_name"><a href="/doc{$attachment->getPrettyId()}">{ovk_proc_strtr($attachment->getName(), 50)}</a></span>
+                    <span class="attachment_note_name"><a href="/doc{$attachment->getPrettyId()}">{ovk_proc_strtr($attachment->getName(), 40)}</a></span>
                 </div>
             </div>
         </div>

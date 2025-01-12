@@ -18,6 +18,7 @@ function showDocumentUploadDialog(target = null, append_to_url = null, after_upl
         `,
         buttons: [tr('close')],
         callbacks: [Function.noop],
+        unique_name: "doc_upload_dialog",
     })
 
     cmsg.getNode().find('.ovk-diag-body').attr('style', "padding:15px;")
@@ -126,6 +127,7 @@ u(document).on('click', '.docMainItem #edit_icon', async (e) => {
     }
 
     const cmsg_2 = new CMessageBox({
+        unique_name: "document_edit_modal",
         title: tr("document_editing_in_general"),
         body: `
             <p><b>${tr("info_name")}</b></p>
@@ -401,7 +403,7 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
                 res.find(".docMainItem").attr("style", "width: 85%;")
                 res.append(`
                 <div class="attachButton" id='__attach_doc'>
-                    <span>${this.isDocAttached(id) ? tr("detach") : tr("attach")}</span>
+                    ${this.isDocAttached(id) ? tr("detach") : tr("attach")}
                 </div>
                 `)
                 u('#_attachment_insert .docsInsert').append(res)
