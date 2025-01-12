@@ -8,10 +8,14 @@ html {
 
 body,
 #backdropDripper,
-#standaloneCommentBox,
+#standaloneCommentBox {
+    background-color: #0e0b1a;
+    color: #c6d2e8;
+}
+
 .ovk-photo-view,
 .articleView {
-    background-color: #0e0b1a;
+    background-color: #100539;
     color: #c6d2e8;
 }
 
@@ -634,4 +638,25 @@ ul {
 #upload_container .upload_container_element {
     border: 1px solid #383052;
     background: #1e1b2a;
+}
+
+#docs_page_wrapper .docs_page_search {
+    background: #1d1a27;
+    border-bottom: #2a2841 solid 1px;
+}
+
+.docListViewItem {
+    border-bottom-color: #2a2841;
+}
+
+.docListViewItem:hover, .attachButton:hover {
+    background: #271c48;
+}
+
+.docListViewItem .doc_icon {
+    background: #33255e;
+}
+
+.docListViewItem .doc_content b {
+    color: #7c94c5;
 }

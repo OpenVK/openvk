@@ -97,16 +97,27 @@ class Photo extends Media
 
     protected function saveFile(string $filename, string $hash): bool
     {
-        $image = new \Imagick;
-        $image->readImage($filename);
-        $h = $image->getImageHeight();
-        $w = $image->getImageWidth();
+        $input_image = new \Imagick;
+        $input_image->readImage($filename);
+        $h = $input_image->getImageHeight();
+        $w = $input_image->getImageWidth();
         if(($h >= ($w * Photo::ALLOWED_SIDE_MULTIPLIER)) || ($w >= ($h * Photo::ALLOWED_SIDE_MULTIPLIER)))
             throw new ISE("Invalid layout: image is too wide/short");
     
+        # gif fix 10.01.2025
+        if($input_image->getImageFormat() === 'GIF')
+            $input_image->setIteratorIndex(0);
+
+        # png workaround (transparency to white)
+        $image = new \Imagick();
+        $bg = new \ImagickPixel('white');
+        $image->newImage($w, $h, $bg);
+        $image->compositeImage($input_image, \Imagick::COMPOSITE_OVER, 0, 0);
+
         $sizes = Image::calculateSize(
             $image->getImageWidth(), $image->getImageHeight(), 8192, 4320, Image::SHRINK_ONLY | Image::FIT
         );
+
         $image->resizeImage($sizes[0], $sizes[1], \Imagick::FILTER_HERMITE, 1);
         $image->writeImage($this->pathFromHash($hash));
         $this->saveImageResizedCopies($image, $filename, $hash);

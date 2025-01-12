@@ -3,7 +3,7 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Club, Photo, Post};
 use Nette\InvalidStateException;
 use openvk\Web\Models\Entities\Notifications\ClubModeratorNotification;
-use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers, Topics, Audios, Posts};
+use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers, Topics, Audios, Posts, Documents};
 use Chandler\Security\Authenticator;
 
 final class GroupPresenter extends OpenVKPresenter
@@ -27,12 +27,15 @@ final class GroupPresenter extends OpenVKPresenter
             if ($club->isBanned()) {
                 $this->template->_template = "Group/Banned.xml";
             } else {
+                $docs = (new Documents)->getDocumentsByOwner($club->getRealId());
                 $this->template->albums = (new Albums)->getClubAlbums($club, 1, 3);
                 $this->template->albumsCount = (new Albums)->getClubAlbumsCount($club);
                 $this->template->topics = (new Topics)->getLastTopics($club, 3);
                 $this->template->topicsCount = (new Topics)->getClubTopicsCount($club);
                 $this->template->audios      = (new Audios)->getRandomThreeAudiosByEntityId($club->getRealId());
                 $this->template->audiosCount = (new Audios)->getClubCollectionSize($club);
+                $this->template->docsCount   = $docs->size();
+                $this->template->docs        = $docs->offsetLimit(0, 2);
             }
 
             if(!is_null($this->user->identity) && $club->getWallType() == 2) {

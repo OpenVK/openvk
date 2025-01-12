@@ -999,6 +999,10 @@ u(document).on("click", "#editPost", async (e) => {
                                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
                                         ${tr('audio')}
                                     </a>
+                                    <a id="__documentAttachment">
+                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
+                                        ${tr('document')}
+                                    </a>
                                     ${type == 'post' ? `<a id="__notesAttachment">
                                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-srt.png" />
                                         ${tr('note')}
@@ -1035,7 +1039,10 @@ u(document).on("click", "#editPost", async (e) => {
         // horizontal attachments
         api_post.attachments.forEach(att => {
             const type = att.type
-            const aid = att[type].owner_id + '_' + att[type].id
+            let aid = att[type].owner_id + '_' + att[type].id
+            if(att[type] && att[type].access_key) {
+                aid += "_" + att[type].access_key
+            }
 
             if(type == 'video' || type == 'photo') {
                 let preview = ''

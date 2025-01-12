@@ -711,6 +711,7 @@
 "search_for_notes" = "Search for notes";
 "search_for_audios" = "Search for music";
 "search_for_audios_playlists" = "Search for playlists";
+"search_for_docs" = "Search for documents";
 "search_button" = "Find";
 "search_placeholder" = "Start typing any name, title or word";
 "results_zero" = "No results";
@@ -1308,6 +1309,7 @@
 "going_to_report_user" = "You are about to report this user.";
 "going_to_report_video" = "You are about to report this video.";
 "going_to_report_audio" = "You are about to report this audio.";
+"going_to_report_doc" = "You are about to report this document.";
 "going_to_report_post" = "You are about to report this post.";
 "going_to_report_comment" = "You are about to report this comment.";
 
@@ -2114,6 +2116,7 @@
 "s_videos" = "Videos";
 "s_audios" = "Music";
 "s_audios_playlists" = "Playlists";
+"s_documents" = "Documents";
 
 "s_by_people" = "for users";
 "s_by_groups" = "for groups";
@@ -2123,6 +2126,7 @@
 "s_by_apps" = "for apps";
 "s_by_audios" = "for audios";
 "s_by_audios_playlists" = "for playlists";
+"s_by_documents" = "for documents";
 
 "s_order_by" = "Order by...";
 
@@ -2145,6 +2149,7 @@
 "s_date_after" = "After";
 
 "s_main" = "Main";
+"s_type" = "Type";
 
 "s_now_on_site" = "now on site";
 "s_with_photo" = "with photo";
@@ -2309,3 +2314,74 @@
 "upd_in_general" = "Avatar update";
 "on_wall" = "On wall";
 "sign_short" = "Sign";
+
+/* Documents */
+
+"my_documents" = "Documents";
+"my_documents_objectively" = "My Documents";
+"documents_of_group" = "Group's documents";
+"search_by_documents" = "Search for documents..";
+"documents" = "Documents";
+"document_uploading_in_general" = "Upload document";
+"document_editing_in_general" = "Edit document";
+"file" = "File";
+"tags" = "Tags";
+"owner_is_hidden" = "Hide author";
+"accessbility" = "Accessbility";
+"download_file" = "Download file";
+"remove" = "Remove";
+
+"document" = "Document";
+"documents_all" = "All documents";
+"document_type_0" = "All";
+"document_type_1" = "Text";
+"document_type_2" = "Archives";
+"document_type_3" = "GIF";
+"document_type_4" = "Images";
+"document_type_5" = "Audio";
+"document_type_6" = "Video";
+"document_type_7" = "Books";
+"document_type_8" = "Another";
+
+"documents_one" = "$1 document";
+"documents_few" = "$1 documents";
+"documents_many" = "$1 documents";
+"documents_other" = "$1 documents";
+"documents_zero" = "$1 documents";
+
+"you_have_x_documents_one" = "You have $1 document";
+"you_have_x_documents_few" = "You have $1 documents";
+"you_have_x_documents_many" = "You have $1 documents";
+"you_have_x_documents_other" = "You have $1 documents";
+"you_have_x_documents_zero" = "You have $1 documents";
+
+"group_has_x_documents_one" = "This group has $1 document";
+"group_has_x_documents_few" = "This group has $1 documents";
+"group_has_x_documents_many" = "This group has $1 documents";
+"group_has_x_documents_other" = "This group has $1 documents";
+"group_has_x_documents_zero" = "This group has $1 documents";
+
+"x_documents_in_tab_one" = "$1 document at this tab";
+"x_documents_in_tab_few" = "$1 documents at this tab";
+"x_documents_in_tab_many" = "$1 documents at this tab";
+"x_documents_in_tab_other" = "$1 documents at this tab";
+"x_documents_in_tab_zero" = "$1 documents at this tab";
+
+"there_is_no_documents_alright" = "There is no documents.";
+"limitations_file_limit_size" = "File must not exceed $1 MB";
+"limitations_file_allowed_formats" = "Allowed formats";
+"limitations_file_author_rights" = "File must not violate copyright and site rules";
+"select_file_fp" = "Select file";
+"error_file_too_big" = "File is too big.";
+"error_file_invalid_format" = "File format is not allowed.";
+"error_file_adding_copied" = "File is already added.";
+"error_file_preview" = "Error when uploading file: weird image.";
+
+"private_document" = "Private (by link)";
+"public_document" = "Public";
+"documents_sort_add" = "By date";
+"documents_sort_alphabet" = "A-Z";
+"documents_sort_size" = "By size";
+"select_doc" = "Attach document";
+"no_documents" = "No documents found";
+"go_to_my_documents" = "Go to own documents";
