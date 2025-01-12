@@ -1,4 +1,4 @@
-function showDocumentUploadDialog(target = null, append_to_url = null)
+function showDocumentUploadDialog(target = null, append_to_url = null, after_upload = null)
 {
     let file = null
     const cmsg = new CMessageBox({
@@ -13,7 +13,7 @@ function showDocumentUploadDialog(target = null, append_to_url = null)
 
             <div id="_document_upload_frame" style="text-align:center;margin: 10px 0px 2px 0px;">
                 <input onclick="upload_btn.click()" class="button" type="button" value="${tr("select_file_fp")}">
-                <input id="upload_btn" type="file" style="display:none;">
+                <input id="upload_btn" type="file" accept="${window.openvk.docs_allowed.join(",.")}" style="display:none;">
             </div>
         `,
         buttons: [tr('close')],
@@ -25,7 +25,7 @@ function showDocumentUploadDialog(target = null, append_to_url = null)
     cmsg.getNode().find('#upload_btn').on('change', (e) => {
         file = e.target.files[0]
         const name = file.name
-        const format = name.split(".")[1]
+        const format = name.split(".")[name.split(".").length - 1]
         if(window.openvk.docs_allowed.indexOf(format) == -1) {
             makeError(tr("error_file_invalid_format"))
             return
@@ -81,7 +81,12 @@ function showDocumentUploadDialog(target = null, append_to_url = null)
                 const json = await fetcher.json()
 
                 if(json.success) {
-                    window.router.route(location.href)
+                    if(target != "search") {
+                        window.router.route(location.href)
+                    } else {
+                        if(after_upload)
+                            after_upload()
+                    }
                 } else {
                     fastError(escapeHtml(json.flash.message))
                 }
@@ -317,13 +322,10 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
                         <text id="photo_com_title_photos">
                             ${tr("select_doc")}
                         </text>
-                        ${source != "user" ?
-                            `
-                            <a id="_doc_picker_go_to_my">
-                                ${tr("go_to_my_documents")}
-                            </a>
-                            `    
-                        : ""}
+                        <span style="display: inline-flex;gap: 7px;">
+                            ${source != "user" ? `<a id="_doc_picker_go_to_my">${tr("go_to_my_documents")}</a>`: ""}
+                            <a id="_doc_picker_upload">${tr("upload_button")}</a>
+                        </span>
                         <div>
                             <a id="ovk-photo-close">${tr("close")}</a>
                         </div>
@@ -495,10 +497,15 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
         msg.close()
         await __docAttachment(form, "wall")
     })
+    msg.getNode().on("click", "#_doc_picker_upload", async (e) => {
+        showDocumentUploadDialog("search", source_arg >= 0 ? NaN : Math.abs(source_arg), () => {
+            docs_reciever.clean()
+            docs_reciever.page(1)
+        })
+    })
     msg.getNode().on("change", ".attachment_search input", async (e) => {
         await docs_reciever.search(ovk_proc_strtr(e.target.value, 100))
     })
-
 
     await docs_reciever.page(docs_reciever.stat.page + 1)
 }

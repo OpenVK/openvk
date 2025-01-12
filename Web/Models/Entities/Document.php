@@ -97,7 +97,7 @@ class Document extends Media
             throw new ISE("File uploaded is corrupted");
         
         $original_name = $file["name"];
-        $file_format = explode(".", $original_name)[1];
+        $file_format = end(explode(".", $original_name));
         $file_size   = $file["size"];
         $type        = Document::detectTypeByFormat($file_format);
 
