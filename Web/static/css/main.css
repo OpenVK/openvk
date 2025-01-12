@@ -4007,7 +4007,7 @@ hr {
     background: #F0F0F0;
 }
 
-#docs_page_wrapper .docs_page_search input[type="search"] {
+#docs_page_wrapper .docs_page_search input[type="search"], .attachment_selector .attachment_search input {
     height: 23px;
     background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 5px; 
     background-color: #fff; 
@@ -4237,4 +4237,13 @@ hr {
     justify-content: center;
     cursor: pointer;
     user-select: none;
+}
+
+.attachment_selector .attachment_search {
+    margin: 6px 0px;
+}
+
+.attachment_selector .attachment_search input {
+    height: 30px;
+    background-position-y: 9px;
 }

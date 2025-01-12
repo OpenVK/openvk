@@ -305,14 +305,14 @@ u(document).on("click", ".docListViewItem a.viewerOpener, a.docGalleryItem", asy
 })
 
 // ctx > "wall" and maybe "messages" in future
-// source > "user" || "club" > source_id
-async function __docAttachment(form, ctx = "wall", source = "user", source_id = 0) {
+// source > "user" || "club" > source_arg
+async function __docAttachment(form, ctx = "wall", source = "user", source_arg = 0) {
     const per_page = 10
     const msg = new CMessageBox({
         title: tr('select_doc'),
         custom_template: u(`
             <div class="ovk-photo-view-dimmer">
-                <div class="ovk-photo-view" style="z-index: 1025;">
+                <div class="ovk-photo-view">
                     <div class="photo_com_title">
                         <text id="photo_com_title_photos">
                             ${tr("select_doc")}
@@ -330,6 +330,9 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_id = 
                     </div>
                     <div class='photo_viewer_wrapper photo_viewer_wrapper_scrollable doc_viewer_wrapper'>
                         <div class='attachment_selector' style="width: 100%;">
+                            <div class="attachment_search">
+                                <input type="search" maxlength="100" name="q" class="input_with_search_icon" placeholder="${tr("search_by_documents")}">
+                            </div>
                             <div id='_attachment_insert'>
                                 <div class="docsInsert"></div>
                             </div>
@@ -340,7 +343,7 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_id = 
             </div>`),
     })
 
-    msg.getNode().find(".ovk-photo-view").attr('style', 'width: 400px;')
+    msg.getNode().find(".ovk-photo-view").attr('style', 'width: 400px;min-height:90vh;')
     msg.getNode().find('.ovk-diag-body').attr('style', 'height:335px;padding:0px;')
     docs_reciever = new class {
         ctx = "my"
@@ -358,7 +361,8 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_id = 
                 count: 0,
             }
 
-            u('#gif_loader').remove()
+            u('#gif_loader, #_attachment_insert #show_more').remove()
+            u("#_attachment_insert .docsInsert").html("")
         }
 
         async page(page = 1, perPage = 10) {
@@ -367,7 +371,12 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_id = 
             const fd = new FormData
             fd.append("context", "list")
             fd.append("hash", window.router.csrf)
-            const req = await fetch(`/docs${source == "club" ? source_id : ""}?picker=1&p=${page}`, {
+            let url = `/docs${source == "club" ? source_arg : ""}?picker=1&p=${page}`
+            if(this.query) {
+                fd.append("context", "search")
+                fd.append("ctx_query", this.query)
+            }
+            const req = await fetch(url, {
                 method: "POST",
                 body: fd
             })
@@ -401,6 +410,16 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_id = 
             this.stat.count = count
             u('#gif_loader').remove()
             this.showMore()
+        }
+
+        async search(query_string) {
+            this.clean()
+            if(query_string == "")
+                this.query = null
+            else
+                this.query = query_string
+
+            await this.page(1)
         }
 
         showMore() {
@@ -476,6 +495,10 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_id = 
         msg.close()
         await __docAttachment(form, "wall")
     })
+    msg.getNode().on("change", ".attachment_search input", async (e) => {
+        await docs_reciever.search(ovk_proc_strtr(e.target.value, 100))
+    })
+
 
     await docs_reciever.page(docs_reciever.stat.page + 1)
 }
