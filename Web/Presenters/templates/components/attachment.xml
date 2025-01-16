@@ -78,7 +78,7 @@
             </div>
         </div>
         {if $attachment->isImage()}
-            {include "../Documents/components/image.xml", doc => $attachment, copyImportance => true, showInfo => true}
+            {include "../Documents/components/image.xml", doc => $attachment, copyImportance => true, showInfo => true, embed => $attachment->isGif()}
         {else}
             {include "../Documents/components/doc.xml", doc => $attachment, copyImportance => true, noTags => true}
         {/if}

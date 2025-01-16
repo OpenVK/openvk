@@ -269,6 +269,10 @@ u(document).on("click", ".docListViewItem a.viewerOpener, a.docGalleryItem", asy
 
     const target = u(e.target)
     const link   = target.closest('a')
+    if(target.closest(".embeddable").length > 0) {
+        target.closest(".embeddable").toggleClass("playing")
+        return
+    }
 
     CMessageBox.toggleLoader()
     const url = link.nodes[0].href

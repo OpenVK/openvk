@@ -166,6 +166,11 @@ class Document extends Media
         return in_array($this->getVKAPIType(), [3, 4]);
     }
 
+    function isGif(): bool
+    {
+        return $this->getVKAPIType() == 3;
+    }
+
     function isCopiedBy($user = NULL): bool
     {
         if(!$user)
