@@ -104,7 +104,7 @@ class Document extends Media
         if(!$file_format)
             throw new \TypeError("No file format");
 
-        if(!in_array($file_format, OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["allowedFormats"]))
+        if(!in_array(mb_strtolower($file_format), OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["allowedFormats"]))
             throw new \TypeError("Forbidden file format");
 
         if($file_size < 1 || $file_size > (OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["maxSize"] * 1024 * 1024))
@@ -112,8 +112,8 @@ class Document extends Media
 
         $hash = hash_file("whirlpool", $file["tmp_name"]);
         $this->stateChanges("original_name", ovk_proc_strtr($original_name, 255));
-        $this->tmp_format = $file_format;
-        $this->stateChanges("format", $file_format);
+        $this->tmp_format = mb_strtolower($file_format);
+        $this->stateChanges("format", mb_strtolower($file_format));
         $this->stateChanges("filesize", $file_size);
         $this->stateChanges("hash", $hash);
         $this->stateChanges("access_key", bin2hex(random_bytes(9)));
@@ -386,7 +386,7 @@ class Document extends Media
 
     static function detectTypeByFormat(string $format)
     {
-        switch($format) {
+        switch(mb_strtolower($format)) {
             case "txt": case "docx": case "doc": case "odt": case "pptx": case "ppt": case "xlsx": case "xls": case "md":
                 return 1;
             case "zip": case "rar": case "7z":

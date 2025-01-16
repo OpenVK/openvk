@@ -27,7 +27,7 @@ function showDocumentUploadDialog(target = null, append_to_url = null, after_upl
         file = e.target.files[0]
         const name = file.name
         const format = name.split(".")[name.split(".").length - 1]
-        if(window.openvk.docs_allowed.indexOf(format) == -1) {
+        if(window.openvk.docs_allowed.indexOf(format.toLowerCase()) == -1) {
             makeError(tr("error_file_invalid_format"))
             return
         }
