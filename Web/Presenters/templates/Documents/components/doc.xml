@@ -28,7 +28,7 @@
             </span>{/if}
         </div>
     </div>
-    <div class="doc_volume" n:if="!$hideButtons">
+    <div class="doc_volume" n:if="!$hideButtons && $thisUser">
         <div n:if="!$modifiable" id="report_icon"></div>
         <div n:if="$modifiable" id="edit_icon"></div>
         <div n:if="!$copied || $copied && $copyImportance" id="add_icon"></div>

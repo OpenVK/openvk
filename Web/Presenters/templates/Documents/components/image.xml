@@ -11,7 +11,7 @@
         <img class="docGalleryItem_gif_preview" loading="lazy" src="{$doc->getURL()}" alt="gif photo view">
     {/if}
 
-    <div class="doc_top_panel doc_shown_by_hover">
+    <div class="doc_top_panel doc_shown_by_hover" n:if="$thisUser">
         <div class="doc_volume_action" n:if="!$modifiable" id="report_icon"></div>
         <div class="doc_volume_action" n:if="$modifiable" id="edit_icon"></div>
         <div class="doc_volume_action" n:if="!$copied || $copied && $copyImportance" id="add_icon"></div>

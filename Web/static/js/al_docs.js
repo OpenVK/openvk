@@ -266,6 +266,9 @@ u(document).on("click", ".docListViewItem a.viewerOpener, a.docGalleryItem", asy
     if(e.target.closest('.doc_volume_action')) {
         return
     }
+    if(window.openvk.current_id == 0) {
+        return
+    }
 
     const target = u(e.target)
     const link   = target.closest('a')

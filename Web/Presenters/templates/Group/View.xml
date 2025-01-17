@@ -43,7 +43,7 @@
             </tbody>
         </table>
     </div>
-    <div n:if="$club->getFollowersCount() > 0">
+    <div n:if="$thisUser && $club->getFollowersCount() > 0">
         {var $followersCount = $club->getFollowersCount()}
         
         <div class="content_title_expanded" onclick="hidePanel(this, {$followersCount});">
@@ -91,7 +91,7 @@
         </div>
     </div>
 
-    <div>
+    <div n:if="$thisUser">
         <div class="content_title_expanded" onclick="hidePanel(this, {$audiosCount});">
             {_audios}
         </div>
@@ -291,7 +291,7 @@
             </div>
         </div>
     </div>
-    <div n:if="($docsCount > 0 || ($thisUser && $club->canBeModifiedBy($thisUser)))">
+    <div n:if="($thisUser && $docsCount > 0 || ($thisUser && $club->canBeModifiedBy($thisUser)))">
         <div class="content_title_expanded" onclick="hidePanel(this, {$topicsCount});">
             {_documents}
         </div>
