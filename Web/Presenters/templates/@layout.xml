@@ -230,8 +230,6 @@
                           class="link">
                             {strpos($menuItem["name"], "@") === 0 ? tr(substr($menuItem["name"], 1)) : $menuItem["name"]}
                         </a>
-                        <div id="_groupListPinnedGroups">
-
                             <div id="_groupListPinnedGroups">
                                 <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
 
@@ -320,7 +318,6 @@
                             {if !OPENVK_ROOT_CONF['openvk']['preferences']['security']['disablePasswordRestoring']}<a href="/restore">{_forgot_password}</a>{/if}
                         </form>
                     {/ifset}
-                    </div>
                 </div>
                 {ifset $thisUser}
                     {if !$thisUser->isBanned() && !$thisUser->isDeleted()}
