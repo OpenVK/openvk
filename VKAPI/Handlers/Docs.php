@@ -11,7 +11,7 @@ final class Docs extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        $doc = (new Documents)->getDocumentById($owner_id, $doc_id);
+        $doc = (new Documents)->getDocumentById($owner_id, $doc_id, $access_key);
         if(!$doc || $doc->isDeleted())
             $this->fail(1150, "Invalid document id");
 
