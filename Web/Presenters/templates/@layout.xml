@@ -142,6 +142,7 @@
                                                 <option n:attr="selected => $_REQUEST['section'] == 'apps'" value="apps">{_s_by_apps}</option>
                                                 <option n:attr="selected => $_REQUEST['section'] == 'audios'" value="audios">{_s_by_audios}</option>
                                                 <option n:attr="selected => $_REQUEST['section'] == 'audios_playlists'" value="audios_playlists">{_s_by_audios_playlists}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] == 'docs'" value="docs">{_s_by_documents}</option>
                                             </select>
                                         </div>
                                         <button class="search_box_button">
@@ -195,9 +196,14 @@
                                     (<b>{$thisUser->getNotificationsCount()}</b>)
                                 </object>
                             </a>
-                            <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link">{_my_apps}</a>
                             <a href="/settings" class="link">{_my_settings}</a>
                             
+                            {if $thisUser->getLeftMenuItemStatus('docs') || $thisUser->getLeftMenuItemStatus('apps')}
+                                <div class="menu_divider"></div>
+                                <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link">{_apps}</a>
+                                <a n:if="$thisUser->getLeftMenuItemStatus('docs')" href="/docs" class="link">{_my_documents}</a>
+                            {/if}
+
                             {var $canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
                             {var $canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
                             {var $menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
@@ -397,6 +403,7 @@
         {script "js/scroll.js"}
         {script "js/player.js"}
         {script "js/al_wall.js"}
+        {script "js/al_docs.js"}
         {script "js/al_api.js"}
         {script "js/al_mentions.js"}
         {script "js/al_polls.js"}
@@ -461,6 +468,8 @@
                 "current_id": {$thisUser ? $thisUser->getId() : 0},
                 "disable_ajax": {$disable_ajax ? $disable_ajax : 0},
                 "max_add_fields": {ovkGetQuirk("users.max-fields")},
+                "docs_max": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["maxSize"]},
+                "docs_allowed": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["allowedFormats"]},
             }
         </script>
 

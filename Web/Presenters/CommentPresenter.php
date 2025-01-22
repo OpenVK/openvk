@@ -88,7 +88,7 @@ final class CommentPresenter extends OpenVKPresenter
         if(!empty($this->postParam("vertical_attachments"))) {
             $vertical_attachments_array = array_slice(explode(",", $this->postParam("vertical_attachments")), 0, OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"]);
             if(sizeof($vertical_attachments_array) > 0) {
-                $vertical_attachments = parseAttachments($vertical_attachments_array, ['audio', 'note']);
+                $vertical_attachments = parseAttachments($vertical_attachments_array, ['audio', 'note', 'doc']);
             }
         }
         

@@ -43,7 +43,7 @@
             </tbody>
         </table>
     </div>
-    <div n:if="$club->getFollowersCount() > 0">
+    <div n:if="$thisUser && $club->getFollowersCount() > 0">
         {var $followersCount = $club->getFollowersCount()}
         
         <div class="content_title_expanded" onclick="hidePanel(this, {$followersCount});">
@@ -91,7 +91,7 @@
         </div>
     </div>
 
-    <div>
+    <div n:if="$thisUser">
         <div class="content_title_expanded" onclick="hidePanel(this, {$audiosCount});">
             {_audios}
         </div>
@@ -288,6 +288,24 @@
                     <b><a href="/topic{$topic->getPrettyId()}">{$topic->getTitle()}</a></b><br>
                     <span class="nobold">{tr("updated_at", $topic->getUpdateTime())}</span>
                 </div>
+            </div>
+        </div>
+    </div>
+    <div n:if="($thisUser && $docsCount > 0 || ($thisUser && $club->canBeModifiedBy($thisUser)))">
+        <div class="content_title_expanded" onclick="hidePanel(this, {$topicsCount});">
+            {_documents}
+        </div>
+        <div>
+            <div class="content_subtitle">
+                {tr("documents", $docsCount)}
+                <div style="float: right;">
+                    <a href="/docs{$club->getRealId()}">{_all_title}</a>
+                </div>
+            </div>
+            <div>
+                {foreach $docs as $doc}
+                    {include "../Documents/components/doc.xml", doc => $doc, hideButtons => true, noTags => true}
+                {/foreach}
             </div>
         </div>
     </div>

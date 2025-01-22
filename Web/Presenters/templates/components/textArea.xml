@@ -86,6 +86,10 @@
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
                         {_audio}
                     </a>
+                    <a n:if="$docs ?? true" id="__documentAttachment" {if !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}data-club="{$club->getRealId()}"{/if}>
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
+                        {_document}
+                    </a>
                     <a n:if="$notes ?? false" id="__notesAttachment">
                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-srt.png" />
                         {_note}

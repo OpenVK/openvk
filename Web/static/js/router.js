@@ -309,10 +309,6 @@ u(document).on('submit', 'form', async (e) => {
         return
     }
 
-    if((localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || window.openvk.current_id == 0) {
-        return false
-    }
-
     if(window.openvk.disable_ajax == 1) {
         return false
     }
@@ -320,6 +316,10 @@ u(document).on('submit', 'form', async (e) => {
     if(e.target.closest('#write')) {
         const target = u(e.target)
         collect_attachments_node(target)
+    }
+
+    if((localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || window.openvk.current_id == 0) {
+        return false
     }
 
     u('#ajloader').addClass('shown')
