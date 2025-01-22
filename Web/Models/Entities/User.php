@@ -1303,7 +1303,7 @@ class User extends RowModel
         $last_ban = end($bans);
         if (!$last_ban) return 0;
 
-        if ($last_ban->isPermanent()) return "permanent";
+        if ($last_ban->isPermanent()) return "0";
 
         $values = [0, 3600, 7200, 86400, 172800, 604800, 1209600, 3024000, 9072000];
         $response = 0;
@@ -1317,7 +1317,7 @@ class User extends RowModel
                 break;
             } else if ($last_ban->getTime() >= $value) {
                 if ($i < count($values)) continue;
-                $response = "permanent";
+                $response = "0";
                 break;
             }
         }
