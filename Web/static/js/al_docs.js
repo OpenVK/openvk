@@ -131,7 +131,7 @@ u(document).on('click', '.docMainItem #edit_icon', async (e) => {
         title: tr("document_editing_in_general"),
         body: `
             <p><b>${tr("info_name")}</b></p>
-            <input maxlength="128" type="text" name="doc_name" value="${doc.title}" placeholder="...">
+            <input maxlength="128" type="text" name="doc_name" value="${escapeHtml(doc.title)}" placeholder="...">
 
             <label>
                 <input value="0" type="radio" name="doc_access" ${doc.folder_id != 3 ? "checked" : ''}>
@@ -144,7 +144,7 @@ u(document).on('click', '.docMainItem #edit_icon', async (e) => {
             </label>
 
             <p><b>${tr("tags")}</b></p>
-            <input maxlength="256" type="text" name="doc_tags" value="${doc.tags.join(',')}" placeholder="...">
+            <input maxlength="256" type="text" name="doc_tags" value="${escapeHtml(doc.tags.join(','))}" placeholder="...">
             <br>
             <label>
                 <input type="checkbox" name="doc_owner" ${doc.is_hidden ? "checked" : ''}>
