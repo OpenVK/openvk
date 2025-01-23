@@ -1321,7 +1321,7 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
 
         <div style="margin-top: 11px">
             ${tr("lyrics")}
-            <textarea name="lyrics" maxlength="5000" style="resize: vertical; max-height: 200px;">${lyrics ?? ""}</textarea>
+            <textarea name="lyrics" maxlength="5000" style="resize: vertical; max-height: 285px;">${lyrics ?? ""}</textarea>
         </div>
 
         <div style="margin-top: 11px">
