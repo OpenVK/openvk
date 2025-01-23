@@ -318,12 +318,8 @@
                             {if !OPENVK_ROOT_CONF['openvk']['preferences']['security']['disablePasswordRestoring']}<a href="/restore">{_forgot_password}</a>{/if}
                         </form>
                     {/ifset}
+                    </div>
                 </div>
-                {ifset $thisUser}
-                    {if !$thisUser->isBanned() && !$thisUser->isDeleted()}
-                        </div>
-                    {/if}
-                {/ifset}
 
             <div class="page_body">
                 <div id="wrapH">
