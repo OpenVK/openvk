@@ -8,14 +8,10 @@ html {
 
 body,
 #backdropDripper,
-#standaloneCommentBox {
-    background-color: #0e0b1a;
-    color: #c6d2e8;
-}
-
+#standaloneCommentBox,
 .ovk-photo-view,
 .articleView {
-    background-color: #100539;
+    background-color: #0e0b1a;
     color: #c6d2e8;
 }
 
@@ -332,11 +328,11 @@ tr.v,
 }
 
 .content_title_expanded {
-    background-image: url("/themepack/midnight/0.0.3.3/resource/flex_arrow_open.png") !important;
+    background-image: url("/themepack/midnight/0.0.4.0/resource/flex_arrow_open.png") !important;
 }
 
 .content_title_unexpanded {
-    background-image: url("/themepack/midnight/0.0.3.3/resource/flex_arrow_shut.gif") !important;
+    background-image: url("/themepack/midnight/0.0.4.0/resource/flex_arrow_shut.gif") !important;
 }
 
 .ovk-video>.preview,
@@ -363,17 +359,17 @@ tr.h {
 
 .page_yellowheader {
     color: #c6d2e8;
-    background-image: url("/themepack/midnight/0.0.3.3/resource/header_purple.png") !important;
+    background-image: url("/themepack/midnight/0.0.4.0/resource/header_purple.png") !important;
     background-color: #231f34;
     border-color: #231f34;
 }
 
 .page_header {
-    background-image: url("/themepack/midnight/0.0.3.3/resource/header.png") !important;
+    background-image: url("/themepack/midnight/0.0.4.0/resource/header.png") !important;
 }
 
 .page_custom_header {
-    background-image: url("/themepack/midnight/0.0.3.3/resource/header_custom.png") !important;
+    background-image: url("/themepack/midnight/0.0.4.0/resource/header_custom.png") !important;
 }
 
 .page_yellowheader span,
@@ -412,11 +408,11 @@ select,
 }
 
 input[type="checkbox"] {
-    background-image: url("/themepack/midnight/0.0.3.3/resource/checkbox.png") !important;
+    background-image: url("/themepack/midnight/0.0.4.0/resource/checkbox.png") !important;
 }
 
 input[type="radio"] {
-    background-image: url("/themepack/midnight/0.0.3.3/resource/radio.png") !important;
+    background-image: url("/themepack/midnight/0.0.4.0/resource/radio.png") !important;
 }
 
 .header_navigation .link, .header_navigation .header_divider_stick {
@@ -424,20 +420,20 @@ input[type="radio"] {
 }
 
 .heart {
-    background-image: url("/themepack/midnight/0.0.3.3/resource/like.gif") !important;
+    background-image: url("/themepack/midnight/0.0.4.0/resource/like.gif") !important;
 }
 
 .pinned-mark,
 .post-author .pin {
-    background-image: url("/themepack/midnight/0.0.3.3/resource/pin.png") !important;
+    background-image: url("/themepack/midnight/0.0.4.0/resource/pin.png") !important;
 }
 
 .repost-icon {
-    background-image: url("/themepack/midnight/0.0.3.3/resource/published.gif") !important;
+    background-image: url("/themepack/midnight/0.0.4.0/resource/published.gif") !important;
 }
 
 .post-author .delete {
-    background-image: url("/themepack/midnight/0.0.3.3/resource/input_clear.gif") !important;
+    background-image: url("/themepack/midnight/0.0.4.0/resource/input_clear.gif") !important;
 }
 
 .user-alert {
@@ -470,7 +466,7 @@ input[type="radio"] {
 }
 
 #backdropEditor {
-    background-image: url("/themepack/midnight/0.0.3.3/resource/backdrop-editor.gif") !important;
+    background-image: url("/themepack/midnight/0.0.4.0/resource/backdrop-editor.gif") !important;
     border-color: #473e66 !important;
 }
 
