@@ -4173,7 +4173,7 @@ hr {
   display: inline-block;
   width: 10px;
   height: 10px;
-  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKCAYAAABmBXS+AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAABYSURBVChTY2RAAvNnzmwBUtVA3JqYnl4DFgQCJigNAyAFyDQYoCvCCohSxAh0x38oGydANwmmAUUjE9AXKD5EByB5uAIka0E0WBxmAHo4wa3BawOmRxgYAOA2GQMa5cgCAAAAAElFTkSuQmCC");;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKCAYAAABmBXS+AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsIAAA7CARUoSoAAAABYSURBVChTY2RAAvNnzmwBUtVA3JqYnl4DFgQCJigNAyAFyDQYoCvCCohSxAh0x38oGydANwmmAUUjE9AXKD5EByB5uAIka0E0WBxmAHo4wa3BawOmRxgYAOA2GQMa5cgCAAAAAElFTkSuQmCC");
   transform: translateY(2px) translateX(-3px);
   background-repeat: no-repeat;
 }
