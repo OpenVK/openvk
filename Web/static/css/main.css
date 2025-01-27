@@ -2718,6 +2718,11 @@ a.poll-retract-vote {
     user-select: none;
 }
 
+.ovk-photo-view iframe {
+    width: 90vw;
+    height: 100vh;
+}
+
 .photo_com_title {
 	font-weight: bold;
 	padding-bottom: 16px;

@@ -241,24 +241,26 @@ u(document).on('click', '.docMainItem #report_icon', (e) => {
     const item   = target.closest('.docMainItem')
     const id = item.nodes[0].dataset.id.split("_")
 
-    MessageBox(tr("report_question"), `
+    const msg = new CMessageBox({
+        title: tr("report_question"), 
+        unique_name: "report_doc",
+        body: `
         ${tr("going_to_report_doc")}
         <br/>${tr("report_question_text")}
-        <br/><br/><b> ${tr("report_reason")}</b>: <input type='text' id='uReportMsgInput' placeholder='${tr("reason")}' />`, [tr("confirm_m"), tr("cancel")], [(function() {
-        
-        res = document.querySelector("#uReportMsgInput").value;
-        xhr = new XMLHttpRequest();
-        xhr.open("GET", "/report/" + id[1] + "?reason=" + res + "&type=doc", true);
-        xhr.onload = (function() {
-        if(xhr.responseText.indexOf("reason") === -1)
-            MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
-        else
-        MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
-        });
-        xhr.send(null)
-    }),
-
-    Function.noop])
+        <br/><br/><b> ${tr("report_reason")}</b>: <input type='text' id='uReportMsgInput' placeholder='${tr("reason")}' />`, 
+        buttons: [tr("confirm_m"), tr("cancel")], 
+        callbacks: [(function() {
+            res = document.querySelector("#uReportMsgInput").value;
+            xhr = new XMLHttpRequest();
+            xhr.open("GET", "/report/" + id[1] + "?reason=" + res + "&type=doc", true);
+            xhr.onload = (function() {
+                if(xhr.responseText.indexOf("reason") === -1)
+                    MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
+                else
+                    MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
+            });
+            xhr.send(null)
+        }), Function.noop]})
 })
 
 u(document).on("click", ".docListViewItem a.viewerOpener, a.docGalleryItem", async (e) => {
@@ -287,7 +289,7 @@ u(document).on("click", ".docListViewItem a.viewerOpener, a.docGalleryItem", asy
     const preview = body.querySelector('.photo-page-wrapper-photo')
     const details = body.querySelector('.ovk-photo-details')
 
-    u(preview.querySelector('img')).attr('id', 'ovk-photo-img')
+    u(preview.querySelector('.main_doc_block')).attr('id', 'ovk-photo-img')
 
     const photo_viewer = new CMessageBox({
         title: '',

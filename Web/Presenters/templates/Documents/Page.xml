@@ -22,8 +22,12 @@
 
     <div class='media-page-wrapper photo-page-wrapper'>
         <div class='photo-page-wrapper-photo'>
-            {if $is_image}
-                <img alt="doc image" src="{$doc->getURL()}" />
+            {if $doc->isGif()}
+                <img class="main_doc_block" alt="doc image" src="{$doc->getURL()}" />
+            {elseif $doc->isImage()}
+                <img class="main_doc_block" alt="doc image" src="{$doc->getPreview()->getURLBySizeId('original')}" />
+            {elseif $doc->isAudio()}
+                <audio src="{$doc->getURL()}" controls></audio>
             {else}
                 <a href="{$doc->getURL()}" download="{downloadable_name($doc->getName())}">
                     <input class="button" type="button" value="{_download_file}">
@@ -63,7 +67,7 @@
 
                     {if isset($thisUser)}
                         <a n:if="$modifiable" class="profile_link" style="display:block;width:96%;" id="edit_icon">{_edit}</a>
-                        <a n:if="$modifiable" class="profile_link" style="display:block;width:96%;" id="report_icon">{_report}</a>
+                        <a n:if="!$modifiable" class="profile_link" style="display:block;width:96%;" id="report_icon">{_report}</a>
                         <a n:if="!$copied || $copied && $copyImportance" class="profile_link" style="display:block;width:96%;" id="add_icon">{_add}</a>
                         <a n:if="$copied && !$copyImportance" class="profile_link" style="display:block;width:96%;" id="remove_icon">{_remove}</a>
                     {/if}

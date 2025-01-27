@@ -166,6 +166,16 @@ class Document extends Media
         return in_array($this->getVKAPIType(), [3, 4]);
     }
 
+    function isBook(): bool
+    {
+        return in_array($this->getFileExtension(), ["pdf"]);
+    }
+
+    function isAudio(): bool
+    {
+        return in_array($this->getVKAPIType(), [Document::VKAPI_TYPE_AUDIO]);
+    }
+
     function isGif(): bool
     {
         return $this->getVKAPIType() == 3;
