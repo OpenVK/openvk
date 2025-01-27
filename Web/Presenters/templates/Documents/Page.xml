@@ -28,6 +28,8 @@
                 <img class="main_doc_block" alt="doc image" src="{$doc->getPreview()->getURLBySizeId('original')}" />
             {elseif $doc->isAudio()}
                 <audio src="{$doc->getURL()}" controls></audio>
+            {*{elseif $doc->isBook()}
+                <iframe src="{$doc->getURL()}" frameborder="0"></iframe>*}
             {else}
                 <a href="{$doc->getURL()}" download="{downloadable_name($doc->getName())}">
                     <input class="button" type="button" value="{_download_file}">
