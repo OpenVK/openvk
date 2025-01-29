@@ -232,7 +232,7 @@
             
             sendMessage(content) {
                 console.debug("New outcoming message. Pushing preview to local stack.");
-                let tempId = this.newMessage(content);
+                let tempId = this.newMessage(escapeHtml(content));
                 
                 let msgData = new FormData();
                 msgData.set("content", content);
