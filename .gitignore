@@ -16,3 +16,4 @@ storage/*
 !storage/.gitkeep
 
 .idea
+.php-cs-fixer.cache
