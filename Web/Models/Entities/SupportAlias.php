@@ -1,38 +1,42 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Models\Entities;
+
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Repositories\Users;
 
 class SupportAlias extends RowModel
 {
     protected $tableName = "support_names";
-    
-    function getUser(): User
+
+    public function getUser(): User
     {
-        return (new Users)->get($this->getRecord()->agent);
+        return (new Users())->get($this->getRecord()->agent);
     }
-    
-    function getName(): string
+
+    public function getName(): string
     {
         return $this->getRecord()->name;
     }
-    
-    function getIcon(): ?string
+
+    public function getIcon(): ?string
     {
         return $this->getRecord()->icon;
     }
-    
-    function shouldAppendNumber(): bool
+
+    public function shouldAppendNumber(): bool
     {
         return (bool) $this->getRecord()->numerate;
     }
-    
-    function setAgent(User $agent): void
+
+    public function setAgent(User $agent): void
     {
         $this->stateChanges("agent", $agent->getId());
     }
-    
-    function setNumeration(bool $numerate): void
+
+    public function setNumeration(bool $numerate): void
     {
         $this->stateChanges("numerate", $numerate);
     }

@@ -1,18 +1,23 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Util;
+
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Exception\ClientException as GuzzleClientException;
 
 class Telegram
 {
-    static function send(string $to, string $text, bool $webPagePreview = false): bool
+    public static function send(string $to, string $text, bool $webPagePreview = false): bool
     {
         $conf = (object) OPENVK_ROOT_CONF["openvk"]["credentials"]["telegram"];
-        if(!$conf->enable)
+        if (!$conf->enable) {
             return false;
+        }
 
         try {
-            (new GuzzleClient)->request(
+            (new GuzzleClient())->request(
                 "POST",
                 "https://api.telegram.org/bot{$conf->token}/sendMessage",
                 [
@@ -21,7 +26,7 @@ class Telegram
                         "text" => $text,
                         "disable_web_page_preview" => $webPagePreview ? "true" : "false",
                         "parse_mode" => "HTML",
-                    ]
+                    ],
                 ]
             );
         } catch (GuzzleClientException $ex) {

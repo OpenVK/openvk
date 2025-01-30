@@ -1,5 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Models\Repositories;
+
 use Chandler\Database\DatabaseConnection;
 
 class ContentSearchRepository
@@ -12,21 +16,19 @@ class ContentSearchRepository
         "photos",
         "posts",
     ];
-    
-    function __construct()
+
+    public function __construct()
     {
         $this->ctx     = DatabaseConnection::i()->getContext();
         $this->builder = $this->ctx;
     }
-    
+
     private function markParameterAsPassed(string $param): void
     {
-        if(!in_array($param, $this->passedParams))
+        if (!in_array($param, $this->passedParams)) {
             $this->passedParams[] = $param;
+        }
     }
-    
-    function setContentType()
-    {
-        
-    }
+
+    public function setContentType() {}
 }

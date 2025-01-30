@@ -1,27 +1,38 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Models\Entities\Traits;
+
 use openvk\Web\Models\Repositories\Audios;
 use Chandler\Database\DatabaseConnection;
 
-trait TAudioStatuses 
+trait TAudioStatuses
 {
-    function isBroadcastEnabled(): bool
+    public function isBroadcastEnabled(): bool
     {
-        if($this->getRealId() < 0) return true;
+        if ($this->getRealId() < 0) {
+            return true;
+        }
         return (bool) $this->getRecord()->audio_broadcast_enabled;
     }
 
-    function getCurrentAudioStatus()
+    public function getCurrentAudioStatus()
     {
-        if(!$this->isBroadcastEnabled()) return NULL;
+        if (!$this->isBroadcastEnabled()) {
+            return null;
+        }
 
         $audioId = $this->getRecord()->last_played_track;
 
-        if(!$audioId) return NULL;
-        $audio = (new Audios)->get($audioId);
+        if (!$audioId) {
+            return null;
+        }
+        $audio = (new Audios())->get($audioId);
 
-        if(!$audio || $audio->isDeleted())
-            return NULL;
+        if (!$audio || $audio->isDeleted()) {
+            return null;
+        }
 
         $listensTable = DatabaseConnection::i()->getContext()->table("audio_listens");
         $lastListen   = $listensTable->where([
@@ -30,9 +41,10 @@ trait TAudioStatuses
             "time >"   => (time() - $audio->getLength()) - 10,
         ])->fetch();
 
-        if($lastListen)
+        if ($lastListen) {
             return $audio;
+        }
 
-        return NULL;
+        return null;
     }
 }

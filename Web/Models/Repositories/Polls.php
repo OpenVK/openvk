@@ -1,23 +1,28 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Models\Repositories;
+
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Entities\Poll;
 
 class Polls
 {
     private $polls;
-    
-    function __construct()
+
+    public function __construct()
     {
         $this->polls = DatabaseConnection::i()->getContext()->table("polls");
     }
-    
-    function get(int $id): ?Poll
+
+    public function get(int $id): ?Poll
     {
         $poll = $this->polls->get($id);
-        if(!$poll)
-            return NULL;
-        
+        if (!$poll) {
+            return null;
+        }
+
         return new Poll($poll);
     }
 }

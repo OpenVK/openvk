@@ -1,5 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Models\Entities;
+
 use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\RowModel;
 
@@ -7,33 +11,33 @@ class SupportAgent extends RowModel
 {
     protected $tableName = "support_names";
 
-    function getAgentId(): int
+    public function getAgentId(): int
     {
         return $this->getRecord()->agent;
     }
 
-    function getName(): ?string
+    public function getName(): ?string
     {
         return $this->getRecord()->name;
     }
 
-    function getCanonicalName(): string
+    public function getCanonicalName(): string
     {
         return $this->getName();
     }
 
-    function getAvatarURL(): ?string
+    public function getAvatarURL(): ?string
     {
         return $this->getRecord()->icon;
     }
 
-    function isShowNumber(): int
+    public function isShowNumber(): int
     {
         return $this->getRecord()->numerate;
     }
 
-    function getRealName(): string
+    public function getRealName(): string
     {
-        return (new Users)->get($this->getAgentId())->getCanonicalName();
+        return (new Users())->get($this->getAgentId())->getCanonicalName();
     }
 }

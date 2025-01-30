@@ -1,5 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Models\Repositories;
+
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Entities\Audio;
 use openvk\Web\Models\Entities\Club;
@@ -16,14 +20,14 @@ class Audios
     private $playlistImports;
     private $playlistRels;
 
-    const ORDER_NEW     = 0;
-    const ORDER_POPULAR = 1;
+    public const ORDER_NEW     = 0;
+    public const ORDER_POPULAR = 1;
 
-    const VK_ORDER_NEW     = 0;
-    const VK_ORDER_LENGTH  = 1;
-    const VK_ORDER_POPULAR = 2;
+    public const VK_ORDER_NEW     = 0;
+    public const VK_ORDER_LENGTH  = 1;
+    public const VK_ORDER_POPULAR = 2;
 
-    function __construct()
+    public function __construct()
     {
         $this->context = DatabaseConnection::i()->getContext();
         $this->audios  = $this->context->table("audios");
@@ -34,53 +38,59 @@ class Audios
         $this->playlistRels    = $this->context->table("playlist_relations");
     }
 
-    function get(int $id): ?Audio
+    public function get(int $id): ?Audio
     {
         $audio = $this->audios->get($id);
-        if(!$audio)
-            return NULL;
+        if (!$audio) {
+            return null;
+        }
 
         return new Audio($audio);
     }
 
-    function getPlaylist(int $id): ?Playlist
+    public function getPlaylist(int $id): ?Playlist
     {
         $playlist = $this->playlists->get($id);
-        if(!$playlist)
-            return NULL;
+        if (!$playlist) {
+            return null;
+        }
 
         return new Playlist($playlist);
     }
 
-    function getByOwnerAndVID(int $owner, int $vId): ?Audio
+    public function getByOwnerAndVID(int $owner, int $vId): ?Audio
     {
         $audio = $this->audios->where([
             "owner"      => $owner,
             "virtual_id" => $vId,
         ])->fetch();
-        if(!$audio) return NULL;
+        if (!$audio) {
+            return null;
+        }
 
         return new Audio($audio);
     }
 
-    function getPlaylistByOwnerAndVID(int $owner, int $vId): ?Playlist
+    public function getPlaylistByOwnerAndVID(int $owner, int $vId): ?Playlist
     {
         $playlist = $this->playlists->where([
             "owner" => $owner,
             "id"    => $vId,
         ])->fetch();
-        if(!$playlist) return NULL;
+        if (!$playlist) {
+            return null;
+        }
 
         return new Playlist($playlist);
     }
 
-    function getByEntityID(int $entity, int $offset = 0, ?int $limit = NULL, ?int& $deleted = nullptr): \Traversable
+    public function getByEntityID(int $entity, int $offset = 0, ?int $limit = null, ?int& $deleted = nullptr): \Traversable
     {
         $limit ??= OPENVK_DEFAULT_PER_PAGE;
         $iter = $this->rels->where("entity", $entity)->limit($limit, $offset)->order("index DESC");
-        foreach($iter as $rel) {
+        foreach ($iter as $rel) {
             $audio = $this->get($rel->audio);
-            if(!$audio || $audio->isDeleted()) {
+            if (!$audio || $audio->isDeleted()) {
                 $deleted++;
                 continue;
             }
@@ -89,13 +99,13 @@ class Audios
         }
     }
 
-    function getPlaylistsByEntityId(int $entity, int $offset = 0, ?int $limit = NULL, ?int& $deleted = nullptr): \Traversable
+    public function getPlaylistsByEntityId(int $entity, int $offset = 0, ?int $limit = null, ?int& $deleted = nullptr): \Traversable
     {
         $limit ??= OPENVK_DEFAULT_PER_PAGE;
         $iter    = $this->playlistImports->where("entity", $entity)->limit($limit, $offset);
-        foreach($iter as $rel) {
+        foreach ($iter as $rel) {
             $playlist = $this->getPlaylist($rel->playlist);
-            if(!$playlist || $playlist->isDeleted()) {
+            if (!$playlist || $playlist->isDeleted()) {
                 $deleted++;
                 continue;
             }
@@ -104,18 +114,19 @@ class Audios
         }
     }
 
-    function getByUser(User $user, int $page = 1, ?int $perPage = NULL, ?int& $deleted = nullptr): \Traversable
+    public function getByUser(User $user, int $page = 1, ?int $perPage = null, ?int& $deleted = nullptr): \Traversable
     {
         return $this->getByEntityID($user->getId(), ($perPage * ($page - 1)), $perPage, $deleted);
     }
 
-    function getRandomThreeAudiosByEntityId(int $id): Array
+    public function getRandomThreeAudiosByEntityId(int $id): array
     {
         $iter = $this->rels->where("entity", $id);
         $ids = [];
 
-        foreach($iter as $it)
+        foreach ($iter as $it) {
             $ids[] = $it->audio;
+        }
 
         $shuffleSeed    = openssl_random_pseudo_bytes(6);
         $shuffleSeed    = hexdec(bin2hex($shuffleSeed));
@@ -124,11 +135,12 @@ class Audios
         $ids = array_slice($ids, 0, 3);
         $audios = [];
 
-        foreach($ids as $id) {
-            $audio = $this->get((int)$id);
+        foreach ($ids as $id) {
+            $audio = $this->get((int) $id);
 
-            if(!$audio || $audio->isDeleted())
+            if (!$audio || $audio->isDeleted()) {
                 continue;
+            }
 
             $audios[] = $audio;
         }
@@ -136,47 +148,47 @@ class Audios
         return $audios;
     }
 
-    function getByClub(Club $club, int $page = 1, ?int $perPage = NULL, ?int& $deleted = nullptr): \Traversable
+    public function getByClub(Club $club, int $page = 1, ?int $perPage = null, ?int& $deleted = nullptr): \Traversable
     {
         return $this->getByEntityID($club->getId() * -1, ($perPage * ($page - 1)), $perPage, $deleted);
     }
 
-    function getPlaylistsByUser(User $user, int $page = 1, ?int $perPage = NULL, ?int& $deleted = nullptr): \Traversable
+    public function getPlaylistsByUser(User $user, int $page = 1, ?int $perPage = null, ?int& $deleted = nullptr): \Traversable
     {
         return $this->getPlaylistsByEntityId($user->getId(), ($perPage * ($page - 1)), $perPage, $deleted);
     }
 
-    function getPlaylistsByClub(Club $club, int $page = 1, ?int $perPage = NULL, ?int& $deleted = nullptr): \Traversable
+    public function getPlaylistsByClub(Club $club, int $page = 1, ?int $perPage = null, ?int& $deleted = nullptr): \Traversable
     {
         return $this->getPlaylistsByEntityId($club->getId() * -1, ($perPage * ($page - 1)), $perPage, $deleted);
     }
-    
-    function getCollectionSizeByEntityId(int $id): int
+
+    public function getCollectionSizeByEntityId(int $id): int
     {
         return sizeof($this->rels->where("entity", $id));
     }
 
-    function getUserCollectionSize(User $user): int
+    public function getUserCollectionSize(User $user): int
     {
         return sizeof($this->rels->where("entity", $user->getId()));
     }
 
-    function getClubCollectionSize(Club $club): int
+    public function getClubCollectionSize(Club $club): int
     {
         return sizeof($this->rels->where("entity", $club->getId() * -1));
     }
 
-    function getUserPlaylistsCount(User $user): int
+    public function getUserPlaylistsCount(User $user): int
     {
         return sizeof($this->playlistImports->where("entity", $user->getId()));
     }
 
-    function getClubPlaylistsCount(Club $club): int
+    public function getClubPlaylistsCount(Club $club): int
     {
         return sizeof($this->playlistImports->where("entity", $club->getId() * -1));
     }
 
-    function getByUploader(User $user): EntityStream
+    public function getByUploader(User $user): EntityStream
     {
         $search = $this->audios->where([
             "owner"   => $user->getId(),
@@ -186,7 +198,7 @@ class Audios
         return new EntityStream("Audio", $search);
     }
 
-    function getGlobal(int $order, ?string $genreId = NULL): EntityStream
+    public function getGlobal(int $order, ?string $genreId = null): EntityStream
     {
         $search = $this->audios->where([
             "deleted"   => 0,
@@ -194,13 +206,14 @@ class Audios
             "withdrawn" => 0,
         ])->order($order == Audios::ORDER_NEW ? "created DESC" : "listens DESC");
 
-        if(!is_null($genreId))
+        if (!is_null($genreId)) {
             $search = $search->where("genre", $genreId);
+        }
 
         return new EntityStream("Audio", $search);
     }
 
-    function search(string $query, int $sortMode = 0, bool $performerOnly = false, bool $withLyrics = false): EntityStream
+    public function search(string $query, int $sortMode = 0, bool $performerOnly = false, bool $withLyrics = false): EntityStream
     {
         $columns = $performerOnly ? "performer" : "performer, name";
         $order   = (["created", "length", "listens"][$sortMode] ?? "") . " DESC";
@@ -210,13 +223,14 @@ class Audios
             "deleted"  => 0,
         ])->where("MATCH ($columns) AGAINST (? IN BOOLEAN MODE)", "%$query%")->order($order);
 
-        if($withLyrics)
+        if ($withLyrics) {
             $search = $search->where("lyrics IS NOT NULL");
+        }
 
         return new EntityStream("Audio", $search);
     }
 
-    function searchPlaylists(string $query): EntityStream
+    public function searchPlaylists(string $query): EntityStream
     {
         $search = $this->playlists->where([
             "unlisted" => 0,
@@ -226,25 +240,25 @@ class Audios
         return new EntityStream("Playlist", $search);
     }
 
-    function getNew(): EntityStream
+    public function getNew(): EntityStream
     {
         return new EntityStream("Audio", $this->audios->where("created >= " . (time() - 259200))->where(["withdrawn" => 0, "deleted" => 0, "unlisted" => 0])->order("created DESC")->limit(25));
     }
 
-    function getPopular(): EntityStream
+    public function getPopular(): EntityStream
     {
         return new EntityStream("Audio", $this->audios->where("listens > 0")->where(["withdrawn" => 0, "deleted" => 0, "unlisted" => 0])->order("listens DESC")->limit(25));
     }
 
-    function isAdded(int $user_id, int $audio_id): bool
+    public function isAdded(int $user_id, int $audio_id): bool
     {
         return !is_null($this->rels->where([
             "entity" => $user_id,
-            "audio"  => $audio_id
+            "audio"  => $audio_id,
         ])->fetch());
     }
 
-    function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false], int $page = 1, ?int $perPage = NULL): \Traversable
+    public function find(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false], int $page = 1, ?int $perPage = null): \Traversable
     {
         $query = "%$query%";
         $result = $this->audios->where([
@@ -253,18 +267,21 @@ class Audios
             /*"withdrawn" => 0,
             "processed" => 1,*/
         ]);
-        $order_str = (in_array($order['type'], ['id', 'length', 'listens']) ? $order['type'] : 'id') . ' ' . ($order['invert'] ? 'ASC' : 'DESC');;
+        $order_str = (in_array($order['type'], ['id', 'length', 'listens']) ? $order['type'] : 'id') . ' ' . ($order['invert'] ? 'ASC' : 'DESC');
+        ;
 
-        if($params["only_performers"] == "1") {
+        if ($params["only_performers"] == "1") {
             $result->where("performer LIKE ?", $query);
         } else {
             $result->where("CONCAT_WS(' ', performer, name) LIKE ?", $query);
         }
 
-        foreach($params as $paramName => $paramValue) {
-            if(is_null($paramValue) || $paramValue == '') continue;
+        foreach ($params as $paramName => $paramValue) {
+            if (is_null($paramValue) || $paramValue == '') {
+                continue;
+            }
 
-            switch($paramName) {
+            switch ($paramName) {
                 case "before":
                     $result->where("created < ?", $paramValue);
                     break;
@@ -275,20 +292,23 @@ class Audios
                     $result->where("lyrics IS NOT NULL");
                     break;
                 case 'genre':
-                    if($paramValue == 'any') break;
+                    if ($paramValue == 'any') {
+                        break;
+                    }
 
                     $result->where("genre", $paramValue);
                     break;
             }
         }
 
-        if($order_str)
+        if ($order_str) {
             $result->order($order_str);
-        
+        }
+
         return new Util\EntityStream("Audio", $result);
     }
 
-    function findPlaylists(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false]): \Traversable
+    public function findPlaylists(string $query, array $params = [], array $order = ['type' => 'id', 'invert' => false]): \Traversable
     {
         $query = "%$query%";
         $result = $this->playlists->where([
@@ -296,13 +316,16 @@ class Audios
         ])->where("CONCAT_WS(' ', name, description) LIKE ?", $query);
         $order_str = (in_array($order['type'], ['id', 'length', 'listens']) ? $order['type'] : 'id') . ' ' . ($order['invert'] ? 'ASC' : 'DESC');
 
-        if(is_null($params['from_me']) || empty($params['from_me']))
+        if (is_null($params['from_me']) || empty($params['from_me'])) {
             $result->where(["unlisted" => 0]);
+        }
 
-        foreach($params as $paramName => $paramValue) {
-            if(is_null($paramValue) || $paramValue == '') continue;
+        foreach ($params as $paramName => $paramValue) {
+            if (is_null($paramValue) || $paramValue == '') {
+                continue;
+            }
 
-            switch($paramName) {
+            switch ($paramName) {
                 # БУДЬ МАКСИМАЛЬНО АККУРАТЕН С ДАННЫМ ПАРАМЕТРОМ
                 case "from_me":
                     $result->where("owner", $paramValue);
@@ -310,8 +333,9 @@ class Audios
             }
         }
 
-        if($order_str)
+        if ($order_str) {
             $result->order($order_str);
+        }
 
         return new Util\EntityStream("Playlist", $result);
     }

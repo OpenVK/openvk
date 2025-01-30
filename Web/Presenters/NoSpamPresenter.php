@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace openvk\Web\Presenters;
 
@@ -21,14 +23,14 @@ final class NoSpamPresenter extends OpenVKPresenter
     protected $deactivationTolerant = true;
     protected $presenterName = "nospam";
 
-    const ENTITIES_NAMESPACE = "openvk\\Web\\Models\\Entities";
+    public const ENTITIES_NAMESPACE = "openvk\\Web\\Models\\Entities";
 
-    function __construct()
+    public function __construct()
     {
         parent::__construct();
     }
 
-    function renderIndex(): void
+    public function renderIndex(): void
     {
         $this->assertUserLoggedIn();
         $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
@@ -62,24 +64,26 @@ final class NoSpamPresenter extends OpenVKPresenter
 
             foreach ($foundClasses as $class) {
                 $r = new \ReflectionClass(NoSpamPresenter::ENTITIES_NAMESPACE . "\\$class");
-                if (!$r->isAbstract() && $r->getName() !== NoSpamPresenter::ENTITIES_NAMESPACE . "\\Correspondence")
+                if (!$r->isAbstract() && $r->getName() !== NoSpamPresenter::ENTITIES_NAMESPACE . "\\Correspondence") {
                     $models[] = $class;
+                }
             }
             $this->template->models = $models;
-        } else if ($mode === "templates") {
+        } elseif ($mode === "templates") {
             $this->template->_template = "NoSpam/Templates.xml";
             $this->template->disable_ajax = 1;
             $filter = [];
             if ($this->queryParam("id")) {
-                $filter["id"] = (int)$this->queryParam("id");
+                $filter["id"] = (int) $this->queryParam("id");
             }
-            $this->template->templates = iterator_to_array((new NoSpamLogs)->getList($filter));
-        } else if ($mode === "reports") {
+            $this->template->templates = iterator_to_array((new NoSpamLogs())->getList($filter));
+        } elseif ($mode === "reports") {
             $this->redirect("/scumfeed");
         } else {
-            $template = (new NoSpamLogs)->get((int)$this->postParam("id"));
-            if (!$template || $template->isRollbacked())
+            $template = (new NoSpamLogs())->get((int) $this->postParam("id"));
+            if (!$template || $template->isRollbacked()) {
                 $this->returnJson(["success" => false, "error" => "Шаблон не найден"]);
+            }
 
             $model = NoSpamPresenter::ENTITIES_NAMESPACE . "\\" . $template->getModel();
             $items = $template->getItems();
@@ -89,10 +93,12 @@ final class NoSpamPresenter extends OpenVKPresenter
                 $unbanned_ids = [];
                 foreach ($items as $_item) {
                     try {
-                        $item = new $model;
+                        $item = new $model();
                         $table_name = $item->getTableName();
-                        $item = $db->table($table_name)->get((int)$_item);
-                        if (!$item) continue;
+                        $item = $db->table($table_name)->get((int) $_item);
+                        if (!$item) {
+                            continue;
+                        }
 
                         $item = new $model($item);
 
@@ -102,7 +108,7 @@ final class NoSpamPresenter extends OpenVKPresenter
                         }
 
                         if (in_array($template->getTypeRaw(), [2, 3])) {
-                            $owner = NULL;
+                            $owner = null;
                             $methods = ["getOwner", "getUser", "getRecipient", "getInitiator"];
 
                             if (method_exists($item, "ban")) {
@@ -138,30 +144,38 @@ final class NoSpamPresenter extends OpenVKPresenter
         }
     }
 
-    function renderSearch(): void
+    public function renderSearch(): void
     {
         $this->assertUserLoggedIn();
         $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
         $this->assertNoCSRF();
         $this->willExecuteWriteAction();
 
-        function searchByAdditionalParams(?string $table = NULL, ?string $where = NULL, ?string $ip = NULL, ?string $useragent = NULL, ?int $ts = NULL, ?int $te = NULL, $user = NULL)
+        function searchByAdditionalParams(?string $table = null, ?string $where = null, ?string $ip = null, ?string $useragent = null, ?int $ts = null, ?int $te = null, $user = null)
         {
             $db = DatabaseConnection::i()->getContext();
             if ($table && ($ip || $useragent || $ts || $te || $user)) {
                 $conditions = [];
 
-                if ($ip) $conditions[] = "`ip` REGEXP '$ip'";
-                if ($useragent) $conditions[] = "`useragent` REGEXP '$useragent'";
-                if ($ts) $conditions[] = "`ts` < $ts";
-                if ($te) $conditions[] = "`ts` > $te";
+                if ($ip) {
+                    $conditions[] = "`ip` REGEXP '$ip'";
+                }
+                if ($useragent) {
+                    $conditions[] = "`useragent` REGEXP '$useragent'";
+                }
+                if ($ts) {
+                    $conditions[] = "`ts` < $ts";
+                }
+                if ($te) {
+                    $conditions[] = "`ts` > $te";
+                }
                 if ($user) {
-                    $users = new Users;
+                    $users = new Users();
 
-                    $_user = $users->getByChandlerUser((new ChandlerUsers)->getById($user))
-                        ?? $users->get((int)$user)
+                    $_user = $users->getByChandlerUser((new ChandlerUsers())->getById($user))
+                        ?? $users->get((int) $user)
                         ?? $users->getByAddress($user)
-                        ?? NULL;
+                        ?? null;
 
                     if ($_user) {
                         $conditions[] = "`user` = '" . $_user->getChandlerGUID() . "'";
@@ -180,10 +194,12 @@ final class NoSpamPresenter extends OpenVKPresenter
                     $logs = $db->query("SELECT * FROM `ChandlerLogs` $whereStart $conditions GROUP BY `object_id`, `object_model`");
 
                     foreach ($logs as $log) {
-                        $log = (new Logs)->get($log->id);
+                        $log = (new Logs())->get($log->id);
                         $object = $log->getObject()->unwrap();
 
-                        if (!$object) continue;
+                        if (!$object) {
+                            continue;
+                        }
                         if ($where) {
                             if (str_starts_with($where, " AND")) {
                                 $where = substr_replace($where, "", 0, strlen(" AND"));
@@ -214,16 +230,17 @@ final class NoSpamPresenter extends OpenVKPresenter
             $ip = addslashes($this->postParam("ip"));
             $useragent = addslashes($this->postParam("useragent"));
             $searchTerm = addslashes($this->postParam("q"));
-            $ts = (int)$this->postParam("ts");
-            $te = (int)$this->postParam("te");
+            $ts = (int) $this->postParam("ts");
+            $te = (int) $this->postParam("te");
             $user = addslashes($this->postParam("user"));
 
             if ($where) {
                 $where = explode(";", $where)[0];
             }
 
-            if (!$ip && !$useragent && !$searchTerm && !$ts && !$te && !$where && !$searchTerm && !$user)
+            if (!$ip && !$useragent && !$searchTerm && !$ts && !$te && !$where && !$searchTerm && !$user) {
                 $this->returnJson(["success" => false, "error" => "Нет запроса. Заполните поле \"подстрока\" или введите запрос \"WHERE\" в поле под ним."]);
+            }
 
             $models = explode(",", $this->postParam("models"));
 
@@ -233,7 +250,7 @@ final class NoSpamPresenter extends OpenVKPresenter
                     continue;
                 }
 
-                $model = new $model_name;
+                $model = new $model_name();
 
                 $c = new \ReflectionClass($model_name);
                 if ($c->isAbstract() || $c->getName() == NoSpamPresenter::ENTITIES_NAMESPACE . "\\Correspondence") {
@@ -257,7 +274,9 @@ final class NoSpamPresenter extends OpenVKPresenter
                     $conditions = implode(" OR ", $conditions);
 
                     $where = ($this->postParam("where") ? " AND ($conditions)" : "($conditions)");
-                    if ($need_deleted) $where .= " AND (`deleted` = 0)";
+                    if ($need_deleted) {
+                        $where .= " AND (`deleted` = 0)";
+                    }
                 }
 
                 $rows = [];
@@ -281,9 +300,9 @@ final class NoSpamPresenter extends OpenVKPresenter
                     }
                 }
 
-                if (!in_array((int)$this->postParam("ban"), [1, 2, 3])) {
+                if (!in_array((int) $this->postParam("ban"), [1, 2, 3])) {
                     foreach ($rows as $key => $object) {
-                        $object = (array)$object;
+                        $object = (array) $object;
                         $_obj = [];
                         foreach ($object as $key => $value) {
                             foreach ($columns as $column) {
@@ -303,11 +322,13 @@ final class NoSpamPresenter extends OpenVKPresenter
 
                     foreach ($rows as $object) {
                         $object = new $model_name($db->table($table)->get($object->id));
-                        if (!$object) continue;
+                        if (!$object) {
+                            continue;
+                        }
                         $ids[] = $object->getId();
                     }
 
-                    $log = new NoSpamLog;
+                    $log = new NoSpamLog();
                     $log->setUser($this->user->id);
                     $log->setModel($_model);
                     if ($searchTerm) {
@@ -315,7 +336,7 @@ final class NoSpamPresenter extends OpenVKPresenter
                     } else {
                         $log->setRequest($where);
                     }
-                    $log->setBan_Type((int)$this->postParam("ban"));
+                    $log->setBan_Type((int) $this->postParam("ban"));
                     $log->setCount(count($rows));
                     $log->setTime(time());
                     $log->setItems(implode(",", $ids));
@@ -324,9 +345,11 @@ final class NoSpamPresenter extends OpenVKPresenter
                     $banned_ids = [];
                     foreach ($rows as $object) {
                         $object = new $model_name($db->table($table)->get($object->id));
-                        if (!$object) continue;
+                        if (!$object) {
+                            continue;
+                        }
 
-                        $owner = NULL;
+                        $owner = null;
                         $methods = ["getOwner", "getUser", "getRecipient", "getInitiator"];
 
                         if (method_exists($object, "ban")) {
@@ -348,17 +371,18 @@ final class NoSpamPresenter extends OpenVKPresenter
                             }
                         }
 
-                        if (in_array((int)$this->postParam("ban"), [2, 3])) {
+                        if (in_array((int) $this->postParam("ban"), [2, 3])) {
                             $reason = mb_strlen(trim($this->postParam("ban_reason"))) > 0 ? addslashes($this->postParam("ban_reason")) : ("**content-noSpamTemplate-" . $log->getId() . "**");
-                            $is_forever = (string)$this->postParam("is_forever") === "true";
-                            $unban_time = $is_forever ? 0 : (int)$this->postParam("unban_time") ?? NULL;
+                            $is_forever = (string) $this->postParam("is_forever") === "true";
+                            $unban_time = $is_forever ? 0 : (int) $this->postParam("unban_time") ?? null;
 
                             if ($owner) {
                                 $_id = ($owner instanceof Club ? $owner->getId() * -1 : $owner->getId());
                                 if (!in_array($_id, $banned_ids)) {
                                     if ($owner instanceof User) {
-                                        if (!$unban_time && !$is_forever)
+                                        if (!$unban_time && !$is_forever) {
                                             $unban_time = time() + $owner->getNewBanTime();
+                                        }
 
                                         $owner->ban($reason, false, $unban_time, $this->user->id);
                                     } else {
@@ -370,8 +394,9 @@ final class NoSpamPresenter extends OpenVKPresenter
                             }
                         }
 
-                        if (in_array((int)$this->postParam("ban"), [1, 3]))
+                        if (in_array((int) $this->postParam("ban"), [1, 3])) {
                             $object->delete();
+                        }
                     }
 
                     $processed++;

@@ -1,5 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\ServiceAPI;
+
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\Repositories\{Users, Clubs};
 
@@ -7,16 +11,16 @@ class Mentions implements Handler
 {
     protected $user;
 
-    function __construct(?User $user)
+    public function __construct(?User $user)
     {
         $this->user = $user;
     }
 
-    function resolve(int $id, callable $resolve, callable $reject): void
+    public function resolve(int $id, callable $resolve, callable $reject): void
     {
-        if($id > 0) {
-            $user = (new Users)->get($id);
-            if(!$user) {
+        if ($id > 0) {
+            $user = (new Users())->get($id);
+            if (!$user) {
                 $reject("Not found");
                 return;
             }
@@ -32,8 +36,8 @@ class Mentions implements Handler
             return;
         }
 
-        $club = (new Clubs)->get(abs($id));
-        if(!$club) {
+        $club = (new Clubs())->get(abs($id));
+        if (!$club) {
             $reject("Not found");
             return;
         }

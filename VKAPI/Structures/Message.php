@@ -1,4 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\VKAPI\Structures;
 
 final class Message
@@ -17,5 +20,5 @@ final class Message
     public $emoji;
     public $important = true;
     public $deleted = 0;
-    public $random_id = NULL;
+    public $random_id = null;
 }
