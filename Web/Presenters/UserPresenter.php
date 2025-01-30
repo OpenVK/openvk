@@ -495,11 +495,11 @@ final class UserPresenter extends OpenVKPresenter
             ]);
         } else {
             $this->returnJson([
-                    "success" => true,
-                    "has_new_photo" => true,
-                    "new_photo" => $newAvatar->getPrettyId(),
-                    "url"       => $newAvatar->getURL(),
-                ]);
+                "success" => true,
+                "has_new_photo" => true,
+                "new_photo" => $newAvatar->getPrettyId(),
+                "url"       => $newAvatar->getURL(),
+            ]);
         }
     }
 
