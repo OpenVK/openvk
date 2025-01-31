@@ -1,5 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Models\Entities;
+
 use openvk\Web\Util\DateTime;
 use Nette\Database\Table\ActiveRow;
 use openvk\Web\Models\RowModel;
@@ -14,88 +18,99 @@ class Report extends RowModel
 {
     protected $tableName = "reports";
 
-    function getId(): int
+    public function getId(): int
     {
         return $this->getRecord()->id;
     }
-    
-    function getStatus(): int
+
+    public function getStatus(): int
     {
         return $this->getRecord()->status;
     }
-    
-    function getContentType(): string
+
+    public function getContentType(): string
     {
         return $this->getRecord()->type;
     }
-    
-    function getReason(): string
+
+    public function getReason(): string
     {
         return $this->getRecord()->reason;
     }
-    
-    function getTime(): DateTime
+
+    public function getTime(): DateTime
     {
         return new DateTime($this->getRecord()->date);
     }
-    
-    function isDeleted(): bool
+
+    public function isDeleted(): bool
     {
-        if ($this->getRecord()->deleted === 0) 
-        {
+        if ($this->getRecord()->deleted === 0) {
             return false;
         } elseif ($this->getRecord()->deleted === 1) {
             return true;
         }
     }
-    
-    function authorId(): int
+
+    public function authorId(): int
     {
         return $this->getRecord()->user_id;
     }
-    
-    function getUser(): User
+
+    public function getUser(): User
     {
-        return (new Users)->get((int) $this->getRecord()->user_id);
+        return (new Users())->get((int) $this->getRecord()->user_id);
     }
 
-    function getContentId(): int
+    public function getContentId(): int
     {
         return (int) $this->getRecord()->target_id;
     }
 
-    function getContentObject()
+    public function getContentObject()
     {
-        if ($this->getContentType() == "post")         return (new Posts)->get($this->getContentId());
-        else if ($this->getContentType() == "photo")   return (new Photos)->get($this->getContentId());
-        else if ($this->getContentType() == "video")   return (new Videos)->get($this->getContentId());
-        else if ($this->getContentType() == "group")   return (new Clubs)->get($this->getContentId());
-        else if ($this->getContentType() == "comment") return (new Comments)->get($this->getContentId());
-        else if ($this->getContentType() == "note")    return (new Notes)->get($this->getContentId());
-        else if ($this->getContentType() == "app")     return (new Applications)->get($this->getContentId());
-        else if ($this->getContentType() == "user")    return (new Users)->get($this->getContentId());
-        else if ($this->getContentType() == "audio")   return (new Audios)->get($this->getContentId());
-        else if ($this->getContentType() == "doc")     return (new Documents)->get($this->getContentId());
-        else return null;
+        if ($this->getContentType() == "post") {
+            return (new Posts())->get($this->getContentId());
+        } elseif ($this->getContentType() == "photo") {
+            return (new Photos())->get($this->getContentId());
+        } elseif ($this->getContentType() == "video") {
+            return (new Videos())->get($this->getContentId());
+        } elseif ($this->getContentType() == "group") {
+            return (new Clubs())->get($this->getContentId());
+        } elseif ($this->getContentType() == "comment") {
+            return (new Comments())->get($this->getContentId());
+        } elseif ($this->getContentType() == "note") {
+            return (new Notes())->get($this->getContentId());
+        } elseif ($this->getContentType() == "app") {
+            return (new Applications())->get($this->getContentId());
+        } elseif ($this->getContentType() == "user") {
+            return (new Users())->get($this->getContentId());
+        } elseif ($this->getContentType() == "audio") {
+            return (new Audios())->get($this->getContentId());
+        } elseif ($this->getContentType() == "doc") {
+            return (new Documents())->get($this->getContentId());
+        } else {
+            return null;
+        }
     }
 
-    function getAuthor(): RowModel
+    public function getAuthor(): RowModel
     {
         return $this->getContentObject()->getOwner();
     }
 
-    function getReportAuthor(): User
+    public function getReportAuthor(): User
     {
-        return (new Users)->get($this->getRecord()->user_id);
+        return (new Users())->get($this->getRecord()->user_id);
     }
 
-    function banUser($initiator)
+    public function banUser($initiator)
     {
         $reason = $this->getContentType() !== "user" ? ("**content-" . $this->getContentType() . "-" . $this->getContentId() . "**") : ("Подозрительная активность");
         $this->getAuthor()->ban($reason, false, time() + $this->getAuthor()->getNewBanTime(), $initiator);
     }
 
-    function deleteContent()
+    public function deleteContent()
     {
         if ($this->getContentType() !== "user") {
             $pubTime = $this->getContentObject()->getPublicationTime();
@@ -118,30 +133,31 @@ class Report extends RowModel
         $this->delete();
     }
 
-    function getDuplicates(): \Traversable
+    public function getDuplicates(): \Traversable
     {
-        return (new Reports)->getDuplicates($this->getContentType(), $this->getContentId(), $this->getId());
+        return (new Reports())->getDuplicates($this->getContentType(), $this->getContentId(), $this->getId());
     }
 
-    function getDuplicatesCount(): int
+    public function getDuplicatesCount(): int
     {
         return count(iterator_to_array($this->getDuplicates()));
     }
 
-    function hasDuplicates(): bool
+    public function hasDuplicates(): bool
     {
         return $this->getDuplicatesCount() > 0;
     }
 
-    function getContentName(): string
+    public function getContentName(): string
     {
         $content_object = $this->getContentObject();
-        if(!$content_object) {
+        if (!$content_object) {
             return 'unknown';
         }
 
-        if (method_exists($content_object, "getCanonicalName"))
+        if (method_exists($content_object, "getCanonicalName")) {
             return $content_object->getCanonicalName();
+        }
 
         return $this->getContentType() . " #" . $this->getContentId();
     }

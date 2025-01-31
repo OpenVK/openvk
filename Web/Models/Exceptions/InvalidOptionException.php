@@ -1,7 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Models\Exceptions;
 
-final class InvalidOptionException extends \UnexpectedValueException
-{
-
-}
+final class InvalidOptionException extends \UnexpectedValueException {}

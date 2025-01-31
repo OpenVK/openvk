@@ -1,5 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Models\Entities;
+
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Util\Shell\Exceptions\UnknownCommandException;
 use openvk\Web\Util\Shell\Shell;
@@ -16,12 +20,12 @@ class Audio extends Media
     protected $fileExtension = "mpd";
 
     # Taken from winamp :D
-    const genres = [
-        'A Cappella', 'Abstract', 'Acid', 'Acid Jazz', 'Acid Punk', 'Acoustic', 'AlternRock', 'Alternative', 'Ambient', 'Anime', 'Art Rock', 'Audio Theatre', 'Audiobook', 'Avantgarde', 'Ballad', 'Baroque', 'Bass', 'Beat', 'Bebob', 'Bhangra', 'Big Band', 'Big Beat', 'Black Metal', 'Bluegrass', 'Blues', 'Booty Bass', 'Breakbeat', 'BritPop', 'Cabaret', 'Celtic', 'Chamber Music', 'Chanson', 'Chillout', 'Chorus', 'Christian Gangsta Rap', 'Christian Rap', 'Christian Rock', 'Classic Rock', 'Classical', 'Club', 'Club-House', 'Comedy', 'Contemporary Christian', 'Country', 'Crossover', 'Cult', 'Dance', 'Dance Hall', 'Darkwave', 'Death Metal', 'Disco', 'Downtempo', 'Dream', 'Drum & Bass', 'Drum Solo', 'Dub', 'Dubstep', 'Duet', 'EBM', 'Easy Listening', 'Eclectic', 'Electro', 'Electroclash', 'Electronic', 'Emo', 'Ethnic', 'Euro-House', 'Euro-Techno', 'Eurodance', 'Experimental', 'Fast Fusion', 'Folk', 'Folk-Rock', 'Folklore', 'Freestyle', 'Funk', 'Fusion', 'G-Funk', 'Game', 'Gangsta Rap', 'Garage', 'Garage Rock', 'Global', 'Goa', 'Gospel', 'Gothic', 'Gothic Rock', 'Grunge', 'Hard Rock', 'Hardcore', 'Heavy Metal', 'Hip-Hop', 'House', 'Humour', 'IDM', 'Illbient', 'Indie', 'Indie Rock', 'Industrial', 'Industro-Goth', 'Instrumental', 'Instrumental Pop', 'Instrumental Rock', 'JPop', 'Jam Band', 'Jazz', 'Jazz+Funk', 'Jungle', 'Krautrock', 'Latin', 'Leftfield', 'Lo-Fi', 'Lounge', 'Math Rock', 'Meditative', 'Merengue', 'Metal', 'Musical', 'National Folk', 'Native American', 'Negerpunk', 'Neoclassical', 'Neue Deutsche Welle', 'New Age', 'New Romantic', 'New Wave', 'Noise', 'Nu-Breakz', 'Oldies', 'Opera', 'Other', 'Podcast', 'Polka', 'Polsk Punk', 'Pop', 'Pop / Funk', 'Pop-Folk', 'Porn Groove', 'Post-Punk', 'Post-Rock', 'Power Ballad', 'Pranks', 'Primus', 'Progressive Rock', 'Psybient', 'Psychedelic', 'Psychedelic Rock', 'Psychobilly', 'Psytrance', 'Punk', 'Punk Rock', 'R&B', 'Rap', 'Rave', 'Reggae', 'Retro', 'Revival', 'Rhythmic Soul', 'Rock', 'Rock & Roll', 'Salsa', 'Samba', 'Satire', 'Shoegaze', 'Showtunes', 'Ska', 'Slow Jam', 'Slow Rock', 'Sonata', 'Soul', 'Sound Clip', 'Soundtrack', 'Southern Rock', 'Space', 'Space Rock', 'Speech', 'Swing', 'Symphonic Rock', 'Symphony', 'Synthpop', 'Tango', 'Techno', 'Techno-Industrial', 'Terror', 'Thrash Metal', 'Top 40', 'Touhou', 'Trailer', 'Trance', 'Tribal', 'Trip-Hop', 'Trop Rock', 'Vocal', 'World Music'
+    public const genres = [
+        'A Cappella', 'Abstract', 'Acid', 'Acid Jazz', 'Acid Punk', 'Acoustic', 'AlternRock', 'Alternative', 'Ambient', 'Anime', 'Art Rock', 'Audio Theatre', 'Audiobook', 'Avantgarde', 'Ballad', 'Baroque', 'Bass', 'Beat', 'Bebob', 'Bhangra', 'Big Band', 'Big Beat', 'Black Metal', 'Bluegrass', 'Blues', 'Booty Bass', 'Breakbeat', 'BritPop', 'Cabaret', 'Celtic', 'Chamber Music', 'Chanson', 'Chillout', 'Chorus', 'Christian Gangsta Rap', 'Christian Rap', 'Christian Rock', 'Classic Rock', 'Classical', 'Club', 'Club-House', 'Comedy', 'Contemporary Christian', 'Country', 'Crossover', 'Cult', 'Dance', 'Dance Hall', 'Darkwave', 'Death Metal', 'Disco', 'Downtempo', 'Dream', 'Drum & Bass', 'Drum Solo', 'Dub', 'Dubstep', 'Duet', 'EBM', 'Easy Listening', 'Eclectic', 'Electro', 'Electroclash', 'Electronic', 'Emo', 'Ethnic', 'Euro-House', 'Euro-Techno', 'Eurodance', 'Experimental', 'Fast Fusion', 'Folk', 'Folk-Rock', 'Folklore', 'Freestyle', 'Funk', 'Fusion', 'G-Funk', 'Game', 'Gangsta Rap', 'Garage', 'Garage Rock', 'Global', 'Goa', 'Gospel', 'Gothic', 'Gothic Rock', 'Grunge', 'Hard Rock', 'Hardcore', 'Heavy Metal', 'Hip-Hop', 'House', 'Humour', 'IDM', 'Illbient', 'Indie', 'Indie Rock', 'Industrial', 'Industro-Goth', 'Instrumental', 'Instrumental Pop', 'Instrumental Rock', 'JPop', 'Jam Band', 'Jazz', 'Jazz+Funk', 'Jungle', 'Krautrock', 'Latin', 'Leftfield', 'Lo-Fi', 'Lounge', 'Math Rock', 'Meditative', 'Merengue', 'Metal', 'Musical', 'National Folk', 'Native American', 'Negerpunk', 'Neoclassical', 'Neue Deutsche Welle', 'New Age', 'New Romantic', 'New Wave', 'Noise', 'Nu-Breakz', 'Oldies', 'Opera', 'Other', 'Podcast', 'Polka', 'Polsk Punk', 'Pop', 'Pop / Funk', 'Pop-Folk', 'Porn Groove', 'Post-Punk', 'Post-Rock', 'Power Ballad', 'Pranks', 'Primus', 'Progressive Rock', 'Psybient', 'Psychedelic', 'Psychedelic Rock', 'Psychobilly', 'Psytrance', 'Punk', 'Punk Rock', 'R&B', 'Rap', 'Rave', 'Reggae', 'Retro', 'Revival', 'Rhythmic Soul', 'Rock', 'Rock & Roll', 'Salsa', 'Samba', 'Satire', 'Shoegaze', 'Showtunes', 'Ska', 'Slow Jam', 'Slow Rock', 'Sonata', 'Soul', 'Sound Clip', 'Soundtrack', 'Southern Rock', 'Space', 'Space Rock', 'Speech', 'Swing', 'Symphonic Rock', 'Symphony', 'Synthpop', 'Tango', 'Techno', 'Techno-Industrial', 'Terror', 'Thrash Metal', 'Top 40', 'Touhou', 'Trailer', 'Trance', 'Tribal', 'Trip-Hop', 'Trop Rock', 'Vocal', 'World Music',
     ];
 
     # Taken from: https://web.archive.org/web/20220322153107/https://dev.vk.com/reference/objects/audio-genres
-    const vkGenres = [
+    public const vkGenres = [
         "Rock"               => 1,
         "Pop"                => 2,
         "Rap"                => 3,
@@ -51,35 +55,40 @@ class Audio extends Media
 
     private function fileLength(string $filename): int
     {
-        if(!Shell::commandAvailable("ffmpeg") || !Shell::commandAvailable("ffprobe"))
+        if (!Shell::commandAvailable("ffmpeg") || !Shell::commandAvailable("ffprobe")) {
             throw new \Exception();
+        }
 
-        $error   = NULL;
+        $error   = null;
         $streams = Shell::ffprobe("-i", $filename, "-show_streams", "-select_streams a", "-loglevel error")->execute($error);
-        if($error !== 0)
+        if ($error !== 0) {
             throw new \DomainException("$filename is not recognized as media container");
-        else if(empty($streams) || ctype_space($streams))
+        } elseif (empty($streams) || ctype_space($streams)) {
             throw new \DomainException("$filename does not contain any audio streams");
+        }
 
         $vstreams = Shell::ffprobe("-i", $filename, "-show_streams", "-select_streams v", "-loglevel error")->execute($error);
-        
+
         # check if audio has cover (attached_pic)
         preg_match("%attached_pic=([0-1])%", $vstreams, $hasCover);
-        if(!empty($vstreams) && !ctype_space($vstreams) && ((int)($hasCover[1]) !== 1))
+        if (!empty($vstreams) && !ctype_space($vstreams) && ((int) ($hasCover[1]) !== 1)) {
             throw new \DomainException("$filename is a video");
+        }
 
         $durations = [];
         preg_match_all('%duration=([0-9\.]++)%', $streams, $durations);
-        if(sizeof($durations[1]) === 0)
+        if (sizeof($durations[1]) === 0) {
             throw new \DomainException("$filename does not contain any meaningful audio streams");
+        }
 
         $length = 0;
-        foreach($durations[1] as $duration) {
+        foreach ($durations[1] as $duration) {
             $duration = floatval($duration);
-            if($duration < 1.0 || $duration > 65536.0)
+            if ($duration < 1.0 || $duration > 65536.0) {
                 throw new \DomainException("$filename does not contain any meaningful audio streams");
-            else
+            } else {
                 $length = max($length, $duration);
+            }
         }
 
         return (int) round($length, 0, PHP_ROUND_HALF_EVEN);
@@ -116,7 +125,7 @@ class Audio extends Media
                 $ss,
             ];
 
-            if(Shell::isPowershell()) {
+            if (Shell::isPowershell()) {
                 Shell::powershell("-executionpolicy bypass", "-File", __DIR__ . "/../shell/processAudio.ps1", ...$args)
                 ->start();
             } else {
@@ -126,58 +135,60 @@ class Audio extends Media
 
             # Wait until processAudio will consume the file
             $start = time();
-            while(file_exists($filename))
-                if(time() - $start > 5)
+            while (file_exists($filename)) {
+                if (time() - $start > 5) {
                     throw new \RuntimeException("Timed out waiting FFMPEG");
+                }
+            }
 
-         } catch(UnknownCommandException $ucex) {
-             exit(OPENVK_ROOT_CONF["openvk"]["debug"] ? "bash/pwsh is not installed" : VIDEOS_FRIENDLY_ERROR);
-         }
+        } catch (UnknownCommandException $ucex) {
+            exit(OPENVK_ROOT_CONF["openvk"]["debug"] ? "bash/pwsh is not installed" : VIDEOS_FRIENDLY_ERROR);
+        }
 
         return true;
     }
 
-    function getTitle(): string
+    public function getTitle(): string
     {
         return $this->getRecord()->name;
     }
 
-    function getPerformer(): string
+    public function getPerformer(): string
     {
         return $this->getRecord()->performer;
     }
 
-    function getPerformers(): array
+    public function getPerformers(): array
     {
         return explode(", ", $this->getRecord()->performer);
     }
 
-    function getName(): string
+    public function getName(): string
     {
         return $this->getPerformer() . " — " . $this->getTitle();
     }
 
-    function getDownloadName(): string
+    public function getDownloadName(): string
     {
         return preg_replace('/[\\/:*?"<>|]/', '_', str_replace(' ', '_', $this->getName()));
     }
 
-    function getGenre(): ?string
+    public function getGenre(): ?string
     {
         return $this->getRecord()->genre;
     }
 
-    function getLyrics(): ?string
+    public function getLyrics(): ?string
     {
-        return !is_null($this->getRecord()->lyrics) ? htmlspecialchars($this->getRecord()->lyrics, ENT_DISALLOWED | ENT_XHTML) : NULL;
+        return !is_null($this->getRecord()->lyrics) ? htmlspecialchars($this->getRecord()->lyrics, ENT_DISALLOWED | ENT_XHTML) : null;
     }
 
-    function getLength(): int
+    public function getLength(): int
     {
         return $this->getRecord()->length;
     }
 
-    function getFormattedLength(): string
+    public function getFormattedLength(): string
     {
         $len  = $this->getLength();
         $mins = floor($len / 60);
@@ -190,78 +201,83 @@ class Audio extends Media
         );
     }
 
-    function getSegmentSize(): float
+    public function getSegmentSize(): float
     {
         return $this->getRecord()->segment_size;
     }
 
-    function getListens(): int
+    public function getListens(): int
     {
         return $this->getRecord()->listens;
     }
 
-    function getOriginalURL(bool $force = false): string
+    public function getOriginalURL(bool $force = false): string
     {
         $disallowed = !OPENVK_ROOT_CONF["openvk"]["preferences"]["music"]["exposeOriginalURLs"] && !$force;
-        if(!$this->isAvailable() || $disallowed)
+        if (!$this->isAvailable() || $disallowed) {
             return ovk_scheme(true)
                 . $_SERVER["HTTP_HOST"] . ":"
                 . $_SERVER["HTTP_PORT"]
                 . "/assets/packages/static/openvk/audio/nomusic.mp3";
+        }
 
         $key = bin2hex($this->getRecord()->token);
 
         return str_replace(".mpd", "_fragments", $this->getURL()) . "/original_$key.mp3";
     }
 
-    function getURL(?bool $force = false): string
+    public function getURL(?bool $force = false): string
     {
-        if ($this->isWithdrawn()) return "";
+        if ($this->isWithdrawn()) {
+            return "";
+        }
 
         return parent::getURL();
     }
 
-    function getKeys(): array
+    public function getKeys(): array
     {
         $keys[bin2hex($this->getRecord()->kid)] = bin2hex($this->getRecord()->key);
 
         return $keys;
     }
 
-    function isAnonymous(): bool
+    public function isAnonymous(): bool
     {
         return false;
     }
 
-    function isExplicit(): bool
+    public function isExplicit(): bool
     {
         return (bool) $this->getRecord()->explicit;
     }
 
-    function isWithdrawn(): bool
+    public function isWithdrawn(): bool
     {
         return (bool) $this->getRecord()->withdrawn;
     }
 
-    function isUnlisted(): bool
+    public function isUnlisted(): bool
     {
         return (bool) $this->getRecord()->unlisted;
     }
 
     # NOTICE may flush model to DB if it was just processed
-    function isAvailable(): bool
+    public function isAvailable(): bool
     {
-        if($this->getRecord()->processed)
+        if ($this->getRecord()->processed) {
             return true;
+        }
 
         # throttle requests to isAvailable to prevent DoS attack if filesystem is actually an S3 storage
-        if(time() - $this->getRecord()->checked < 5)
+        if (time() - $this->getRecord()->checked < 5) {
             return false;
+        }
 
         try {
             $fragments = str_replace(".mpd", "_fragments", $this->getFileName());
             $original = "original_" . bin2hex($this->getRecord()->token) . ".mp3";
-            if(file_exists("$fragments/$original")) {
+            if (file_exists("$fragments/$original")) {
                 # Original gets uploaded after fragments
                 $this->stateChanges("processed", 0x01);
 
@@ -275,7 +291,7 @@ class Audio extends Media
         return false;
     }
 
-    function isInLibraryOf($entity): bool
+    public function isInLibraryOf($entity): bool
     {
         return sizeof(DatabaseConnection::i()->getContext()->table("audio_relations")->where([
             "entity" => $entity->getId() * ($entity instanceof Club ? -1 : 1),
@@ -283,15 +299,17 @@ class Audio extends Media
         ])) != 0;
     }
 
-    function add($entity): bool
+    public function add($entity): bool
     {
-        if($this->isInLibraryOf($entity))
+        if ($this->isInLibraryOf($entity)) {
             return false;
+        }
 
         $entityId  = $entity->getId() * ($entity instanceof Club ? -1 : 1);
         $audioRels = DatabaseConnection::i()->getContext()->table("audio_relations");
-        if(sizeof($audioRels->where("entity", $entityId)) > 65536)
+        if (sizeof($audioRels->where("entity", $entityId)) > 65536) {
             throw new \OverflowException("Can't have more than 65536 audios in a playlist");
+        }
 
         $audioRels->insert([
             "entity" => $entityId,
@@ -301,10 +319,11 @@ class Audio extends Media
         return true;
     }
 
-    function remove($entity): bool
+    public function remove($entity): bool
     {
-        if(!$this->isInLibraryOf($entity))
+        if (!$this->isInLibraryOf($entity)) {
             return false;
+        }
 
         DatabaseConnection::i()->getContext()->table("audio_relations")->where([
             "entity" => $entity->getId() * ($entity instanceof Club ? -1 : 1),
@@ -314,27 +333,27 @@ class Audio extends Media
         return true;
     }
 
-    function listen($entity, Playlist $playlist = NULL): bool
+    public function listen($entity, Playlist $playlist = null): bool
     {
         $listensTable = DatabaseConnection::i()->getContext()->table("audio_listens");
         $lastListen   = $listensTable->where([
             "entity" => $entity->getRealId(),
             "audio"  => $this->getId(),
         ])->order("index DESC")->fetch();
-        
-        if(!$lastListen || (time() - $lastListen->time >= $this->getLength())) {
+
+        if (!$lastListen || (time() - $lastListen->time >= $this->getLength())) {
             $listensTable->insert([
                 "entity" => $entity->getRealId(),
                 "audio"  => $this->getId(),
                 "time"   => time(),
-                "playlist" => $playlist ? $playlist->getId() : NULL,
+                "playlist" => $playlist ? $playlist->getId() : null,
             ]);
 
-            if($entity instanceof User) {
+            if ($entity instanceof User) {
                 $this->stateChanges("listens", ($this->getListens() + 1));
                 $this->save();
 
-                if($playlist) {
+                if ($playlist) {
                     $playlist->incrementListens();
                     $playlist->save();
                 }
@@ -380,7 +399,7 @@ class Audio extends Media
      * @param ?User $user user, relative to whom "added", "editable" will be set
      * @param bool $forceURLExposure force set "url" regardless of config
      */
-    function toVkApiStruct(?User $user = NULL, bool $forceURLExposure = false): object
+    public function toVkApiStruct(?User $user = null, bool $forceURLExposure = false): object
     {
         $obj = (object) [];
         $obj->unique_id  = base64_encode((string) $this->getId());
@@ -388,19 +407,21 @@ class Audio extends Media
         $obj->artist     = $this->getPerformer();
         $obj->title      = $this->getTitle();
         $obj->duration   = $this->getLength();
-        $obj->album_id   = $obj->album = NULL; # i forgor to implement
+        $obj->album_id   = $obj->album = null; # i forgor to implement
         $obj->url        = false;
         $obj->manifest   = false;
         $obj->keys       = false;
         $obj->genre_id   = $obj->genre = self::vkGenres[$this->getGenre() ?? ""] ?? 18; # return Other if no match
         $obj->genre_str  = $this->getGenre();
         $obj->owner_id   = $this->getOwner()->getId();
-        if($this->getOwner() instanceof Club)
+        if ($this->getOwner() instanceof Club) {
             $obj->owner_id *= -1;
+        }
 
-        $obj->lyrics = NULL;
-        if(!is_null($this->getLyrics()))
+        $obj->lyrics = null;
+        if (!is_null($this->getLyrics())) {
             $obj->lyrics = $this->getId();
+        }
 
         $obj->added      = $user && $this->isInLibraryOf($user);
         $obj->editable   = $user && $this->canBeModifiedBy($user);
@@ -408,7 +429,7 @@ class Audio extends Media
         $obj->explicit   = $this->isExplicit();
         $obj->withdrawn  = $this->isWithdrawn();
         $obj->ready      = $this->isAvailable() && !$obj->withdrawn;
-        if($obj->ready) {
+        if ($obj->ready) {
             $obj->url      = $this->getOriginalURL($forceURLExposure);
             $obj->manifest = $this->getURL();
             $obj->keys     = $this->getKeys();
@@ -417,54 +438,62 @@ class Audio extends Media
         return $obj;
     }
 
-    function setOwner(int $oid): void
+    public function setOwner(int $oid): void
     {
         # WARNING: API implementation won't be able to handle groups like that, don't remove
-        if($oid <= 0)
+        if ($oid <= 0) {
             throw new \OutOfRangeException("Only users can be owners of audio!");
+        }
 
         $this->stateChanges("owner", $oid);
     }
 
-    function setGenre(string $genre): void
+    public function setGenre(string $genre): void
     {
-        if(!in_array($genre, Audio::genres)) {
-            $this->stateChanges("genre", NULL);
+        if (!in_array($genre, Audio::genres)) {
+            $this->stateChanges("genre", null);
             return;
         }
 
         $this->stateChanges("genre", $genre);
     }
 
-    function setCopyrightStatus(bool $withdrawn = true): void {
+    public function setCopyrightStatus(bool $withdrawn = true): void
+    {
         $this->stateChanges("withdrawn", $withdrawn);
     }
 
-    function setSearchability(bool $searchable = true): void {
+    public function setSearchability(bool $searchable = true): void
+    {
         $this->stateChanges("unlisted", !$searchable);
     }
 
-    function setToken(string $tok): void {
+    public function setToken(string $tok): void
+    {
         throw new \LogicException("Changing keys is not supported.");
     }
 
-    function setKid(string $kid): void {
+    public function setKid(string $kid): void
+    {
         throw new \LogicException("Changing keys is not supported.");
     }
 
-    function setKey(string $key): void {
+    public function setKey(string $key): void
+    {
         throw new \LogicException("Changing keys is not supported.");
     }
 
-    function setLength(int $len): void {
+    public function setLength(int $len): void
+    {
         throw new \LogicException("Changing length is not supported.");
     }
 
-    function setSegment_Size(int $len): void {
+    public function setSegment_Size(int $len): void
+    {
         throw new \LogicException("Changing length is not supported.");
     }
 
-    function delete(bool $softly = true): void
+    public function delete(bool $softly = true): void
     {
         $ctx = DatabaseConnection::i()->getContext();
         $ctx->table("audio_relations")->where("audio", $this->getId())

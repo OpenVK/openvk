@@ -1,5 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Models\Entities;
+
 use openvk\Web\Models\RowModel;
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\Repositories\{Users};
@@ -9,58 +13,58 @@ class Ban extends RowModel
 {
     protected $tableName = "bans";
 
-    function getId(): int
+    public function getId(): int
     {
         return $this->getRecord()->id;
     }
 
-    function getReason(): ?string
+    public function getReason(): ?string
     {
         return $this->getRecord()->reason;
     }
 
-    function getUser(): ?User
+    public function getUser(): ?User
     {
-        return (new Users)->get($this->getRecord()->user);
+        return (new Users())->get($this->getRecord()->user);
     }
 
-    function getInitiator(): ?User
+    public function getInitiator(): ?User
     {
-        return (new Users)->get($this->getRecord()->initiator);
+        return (new Users())->get($this->getRecord()->initiator);
     }
 
-    function getStartTime(): int
+    public function getStartTime(): int
     {
         return $this->getRecord()->iat;
     }
 
-    function getEndTime(): int
+    public function getEndTime(): int
     {
         return $this->getRecord()->exp;
     }
 
-    function getTime(): int
+    public function getTime(): int
     {
         return $this->getRecord()->time;
     }
 
-    function isPermanent(): bool
+    public function isPermanent(): bool
     {
         return $this->getEndTime() === 0;
     }
 
-    function isRemovedManually(): bool
+    public function isRemovedManually(): bool
     {
         return (bool) $this->getRecord()->removed_manually;
     }
 
-    function isOver(): bool
+    public function isOver(): bool
     {
         return $this->isRemovedManually();
     }
 
-    function whoRemoved(): ?User
+    public function whoRemoved(): ?User
     {
-        return (new Users)->get($this->getRecord()->removed_by);
+        return (new Users())->get($this->getRecord()->removed_by);
     }
 }

@@ -1,15 +1,20 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Models\Entities\Traits;
+
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Entities\User;
 
-trait TIgnorable 
+trait TIgnorable
 {
-    function isIgnoredBy(User $user = NULL): bool
+    public function isIgnoredBy(User $user = null): bool
     {
-        if(!$user)
+        if (!$user) {
             return false;
-        
+        }
+
         $ctx  = DatabaseConnection::i()->getContext();
         $data = [
             "owner"  => $user->getId(),
@@ -20,29 +25,29 @@ trait TIgnorable
         return $sub->count() > 0;
     }
 
-    function addIgnore(User $for_user): bool
+    public function addIgnore(User $for_user): bool
     {
         DatabaseConnection::i()->getContext()->table("ignored_sources")->insert([
             "owner"  => $for_user->getId(),
             "source" => $this->getRealId(),
         ]);
-        
+
         return true;
     }
 
-    function removeIgnore(User $for_user): bool
+    public function removeIgnore(User $for_user): bool
     {
         DatabaseConnection::i()->getContext()->table("ignored_sources")->where([
             "owner"  => $for_user->getId(),
             "source" => $this->getRealId(),
         ])->delete();
-        
+
         return true;
     }
 
-    function toggleIgnore(User $for_user): bool
+    public function toggleIgnore(User $for_user): bool
     {
-        if($this->isIgnoredBy($for_user)) {
+        if ($this->isIgnoredBy($for_user)) {
             $this->removeIgnore($for_user);
 
             return false;

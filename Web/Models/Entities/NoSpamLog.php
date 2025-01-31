@@ -1,5 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Models\Entities;
+
 use openvk\Web\Models\RowModel;
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\Repositories\{Users};
@@ -9,52 +13,52 @@ class NoSpamLog extends RowModel
 {
     protected $tableName = "noSpam_templates";
 
-    function getId(): int
+    public function getId(): int
     {
         return $this->getRecord()->id;
     }
 
-    function getUser(): ?User
+    public function getUser(): ?User
     {
-        return (new Users)->get($this->getRecord()->user);
+        return (new Users())->get($this->getRecord()->user);
     }
 
-    function getModel(): string
+    public function getModel(): string
     {
         return $this->getRecord()->model;
     }
 
-    function getRegex(): ?string
+    public function getRegex(): ?string
     {
         return $this->getRecord()->regex;
     }
 
-    function getRequest(): ?string
+    public function getRequest(): ?string
     {
         return $this->getRecord()->request;
     }
 
-    function getCount(): int
+    public function getCount(): int
     {
         return $this->getRecord()->count;
     }
 
-    function getTime(): DateTime
+    public function getTime(): DateTime
     {
         return new DateTime($this->getRecord()->time);
     }
 
-    function getItems(): ?array
+    public function getItems(): ?array
     {
         return explode(",", $this->getRecord()->items);
     }
 
-    function getTypeRaw(): int
+    public function getTypeRaw(): int
     {
         return $this->getRecord()->ban_type;
     }
 
-    function getType(): string
+    public function getType(): string
     {
         switch ($this->getTypeRaw()) {
             case 1: return "О";
@@ -64,7 +68,7 @@ class NoSpamLog extends RowModel
         }
     }
 
-    function isRollbacked(): bool
+    public function isRollbacked(): bool
     {
         return !is_null($this->getRecord()->rollback);
     }

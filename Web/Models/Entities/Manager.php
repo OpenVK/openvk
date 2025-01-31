@@ -1,5 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Models\Entities;
+
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{Photo, Message, Correspondence};
@@ -10,47 +14,46 @@ use Chandler\Security\User as ChandlerUser;
 
 class Manager extends RowModel
 {
+    use Traits\TSubscribable;
     protected $tableName = "group_coadmins";
-    
-    function getId(): int
+
+    public function getId(): int
     {
         return $this->getRecord()->id;
     }
-        
-    function getUserId(): int
+
+    public function getUserId(): int
     {
         return $this->getRecord()->user;
     }
 
-    function getUser(): ?User
+    public function getUser(): ?User
     {
-        return (new Users)->get($this->getRecord()->user);
+        return (new Users())->get($this->getRecord()->user);
     }
 
-    function getClubId(): int
+    public function getClubId(): int
     {
         return $this->getRecord()->club;
     }
 
-    function getClub(): ?Club
+    public function getClub(): ?Club
     {
-        return (new Clubs)->get($this->getRecord()->club);
+        return (new Clubs())->get($this->getRecord()->club);
     }
 
-    function getComment(): string
+    public function getComment(): string
     {
         return is_null($this->getRecord()->comment) ? "" : $this->getRecord()->comment;
     }
 
-    function isHidden(): bool
+    public function isHidden(): bool
     {
         return (bool) $this->getRecord()->hidden;
     }
 
-    function isClubPinned(): bool
+    public function isClubPinned(): bool
     {
         return (bool) $this->getRecord()->club_pinned;
     }
-        
-    use Traits\TSubscribable;
 }

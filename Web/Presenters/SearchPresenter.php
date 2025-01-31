@@ -1,5 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Presenters;
+
 use openvk\Web\Models\Entities\{User, Club};
 use openvk\Web\Models\Repositories\{Users, Clubs, Posts, Videos, Applications, Audios, Documents};
 use Chandler\Database\DatabaseConnection;
@@ -13,21 +17,21 @@ final class SearchPresenter extends OpenVKPresenter
     private $apps;
     private $audios;
     private $documents;
-    
-    function __construct()
+
+    public function __construct()
     {
-        $this->users    = new Users;
-        $this->clubs    = new Clubs;
-        $this->posts    = new Posts;
-        $this->videos   = new Videos;
-        $this->apps     = new Applications;
-        $this->audios   = new Audios;
-        $this->documents = new Documents;
-        
+        $this->users    = new Users();
+        $this->clubs    = new Clubs();
+        $this->posts    = new Posts();
+        $this->videos   = new Videos();
+        $this->apps     = new Applications();
+        $this->audios   = new Audios();
+        $this->documents = new Documents();
+
         parent::__construct();
     }
-    
-    function renderIndex(): void
+
+    public function renderIndex(): void
     {
         $this->assertUserLoggedIn();
 
@@ -40,51 +44,60 @@ final class SearchPresenter extends OpenVKPresenter
         # https://youtu.be/pSAWM5YuXx8
         # https://youtu.be/FfNZRhIn2Vk
 
-        $repos = [ 
-            "groups"   => "clubs", 
+        $repos = [
+            "groups"   => "clubs",
             "users"    => "users",
             "posts"    => "posts",
             "videos"   => "videos",
             "audios"   => "audios",
             "apps"     => "apps",
             "audios_playlists" => "audios",
-            "docs" => "documents"
+            "docs" => "documents",
         ];
         $parameters = [
             "ignore_private" => true,
         ];
 
-        foreach($_REQUEST as $param_name => $param_value) {
-            if(is_null($param_value)) continue;
-            
-            switch($param_name) {
+        foreach ($_REQUEST as $param_name => $param_value) {
+            if (is_null($param_value)) {
+                continue;
+            }
+
+            switch ($param_name) {
                 default:
                     $parameters[$param_name] = $param_value;
                     break;
                 case 'marital_status':
                 case 'polit_views':
-                    if((int) $param_value == 0) continue;
+                    if ((int) $param_value == 0) {
+                        continue;
+                    }
                     $parameters[$param_name] = $param_value;
 
                     break;
                 case 'is_online':
-                    if((int) $param_value == 1)
+                    if ((int) $param_value == 1) {
                         $parameters['is_online'] = 1;
-                    
+                    }
+
                     break;
                 case 'only_performers':
-                    if((int) $param_value == 1 || $param_value == 'on')
+                    if ((int) $param_value == 1 || $param_value == 'on') {
                         $parameters['only_performers'] = true;
+                    }
 
                     break;
                 case 'with_lyrics':
-                    if($param_value == 'on' || $param_value == '1')
+                    if ($param_value == 'on' || $param_value == '1') {
                         $parameters['with_lyrics'] = true;
+                    }
 
                     break;
-                # дай бог работал этот case
+                    # дай бог работал этот case
                 case 'from_me':
-                    if((int) $param_value != 1) continue;
+                    if ((int) $param_value != 1) {
+                        continue;
+                    }
                     $parameters['from_me'] = $this->user->id;
 
                     break;
@@ -92,9 +105,9 @@ final class SearchPresenter extends OpenVKPresenter
         }
 
         $repo = $repos[$section] or $this->throwError(400, "Bad Request", "Invalid search entity $section.");
-        
-        $results = NULL;
-        switch($section) {
+
+        $results = null;
+        switch ($section) {
             default:
                 $results  = $this->{$repo}->find($query, $parameters, ['type' => $order, 'invert' => $invert]);
                 break;
@@ -102,10 +115,10 @@ final class SearchPresenter extends OpenVKPresenter
                 $results  = $this->{$repo}->findPlaylists($query, $parameters, ['type' => $order, 'invert' => $invert]);
                 break;
         }
-        
+
         $iterator = $results->page($page, OPENVK_DEFAULT_PER_PAGE);
         $count    = $results->size();
-        
+
         $this->template->order    = $order;
         $this->template->invert   = $invert;
         $this->template->data     = $this->template->iterator = iterator_to_array($iterator);
