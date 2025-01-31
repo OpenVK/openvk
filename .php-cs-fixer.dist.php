@@ -2,6 +2,7 @@
 
 $finder = (new PhpCsFixer\Finder())
     ->in(__DIR__)
+    ->name('openvkctl')
 ;
 
 return (new PhpCsFixer\Config())
