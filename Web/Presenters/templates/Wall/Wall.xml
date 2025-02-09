@@ -15,17 +15,29 @@
 {block content}
     <div class="content_divider">
         <div>
-            <div n:if="$canPost" class="content_subtitle">
-                {include "../components/textArea.xml", route => "/wall$owner/makePost"}
+            <div class="tabs">
+                <div n:attr="id => ($type != 'all' ? 'ki' : 'activetabs')" class="tab">
+                    <a n:attr="id => ($type != 'all' ? 'ki' : 'act_tab_a')" href="/wall{$owner}">{_all_posts}</a>
+                </div>
+                <div n:attr="id => ($type != 'owners' ? 'ki' : 'activetabs')" class="tab">
+                    <a n:attr="id => ($type != 'owners' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=owners">{isset($club) ? tr("clubs_posts") : tr("users_posts", ovk_proc_strtr($oObj->getFirstName(), 20))}</a>
+                </div>
+                <div n:attr="id => ($type != 'others' ? 'ki' : 'activetabs')" class="tab">
+                    <a n:attr="id => ($type != 'others' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=others">{_others_posts}</a>
+                </div>
+            </div>
+
+            <div n:if="$canPost && $type == 'all'" class="content_subtitle">
+                {include "../components/textArea.xml", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true}
             </div>
             
-            <div class="content">
+            <div class="content scroll_container">
                 {if sizeof($posts) > 0}
-                    {foreach $posts as $post}
+                    <div class='scroll_node' n:foreach='$posts as $post'>
                         <a name="postGarter={$post->getId()}"></a>
                         
                         {include "../components/post.xml", post => $post, commentSection => true}
-                    {/foreach}
+                    </div>
                     {include "../components/paginator.xml", conf => $paginatorConf}
                 {else}
                     {_no_posts_abstract}
@@ -33,8 +45,4 @@
             </div>
         </div>
     </div>
-
-    {if isset($thisUser) && $thisUser->hasMicroblogEnabled()}
-        {script "js/al_comments.js"}
-    {/if}
 {/block}

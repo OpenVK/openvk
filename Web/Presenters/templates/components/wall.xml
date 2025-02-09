@@ -7,25 +7,24 @@
         </nobold>
     </div>
     <div>
+    <div class="insertThere" id="postz"></div>
+    <div id="underHeader">
         <div n:if="$canPost" class="content_subtitle">
-            {include "../components/textArea.xml", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true}
+            {include "../components/textArea.xml", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true, docs => true}
         </div>
         
-        <div class="content">
+        <div class="content scroll_container">
             {if sizeof($posts) > 0}
-                {foreach $posts as $post}
+                <div class='scroll_node' n:foreach='$posts as $post' data-uniqueid="{$post->getPrettyId()}">
                     <a name="postGarter={$post->getId()}"></a>
                     
                     {include "../components/post.xml", post => $post, commentSection => true}
-                {/foreach}
+                </div>
                 {include "../components/paginator.xml", conf => $paginatorConf}
             {else}
                 {_no_posts_abstract}
             {/if}
         </div>
     </div>
+    </div>
 </div>
-
-{if isset($thisUser) && $thisUser->hasMicroblogEnabled()}
-    {script "js/al_comments.js"}
-{/if}

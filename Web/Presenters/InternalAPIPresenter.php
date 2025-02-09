@@ -1,5 +1,10 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Presenters;
+
+use openvk\Web\Models\Repositories\{Posts, Comments};
 use MessagePack\MessagePack;
 use Chandler\Session\Session;
 
@@ -17,7 +22,7 @@ final class InternalAPIPresenter extends OpenVKPresenter
             "id" => hexdec(hash("crc32b", (string) time())),
         ]));
     }
-    
+
     private function succ($payload): void
     {
         exit(MessagePack::pack([
@@ -26,10 +31,10 @@ final class InternalAPIPresenter extends OpenVKPresenter
             "id"     => hexdec(hash("crc32b", (string) time())),
         ]));
     }
-    
-    function renderRoute(): void
+
+    public function renderRoute(): void
     {
-        if($_SERVER["REQUEST_METHOD"] !== "POST") {
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             header("HTTP/1.1 405 Method Not Allowed");
             exit("ты дебил это точка апи");
         }
@@ -38,61 +43,134 @@ final class InternalAPIPresenter extends OpenVKPresenter
         } catch (\Exception $ex) {
             $this->fail(-32700, "Parse error");
         }
-        
-        if(is_null($input->brpc ?? NULL) || is_null($input->method ?? NULL))
+
+        if (is_null($input->brpc ?? null) || is_null($input->method ?? null)) {
             $this->fail(-32600, "Invalid BIN-RPC");
-        else if($input->brpc !== 1)
+        } elseif ($input->brpc !== 1) {
             $this->fail(-32610, "Invalid version");
-        
+        }
+
         $method = explode(".", $input->method);
-        if(sizeof($method) !== 2)
+        if (sizeof($method) !== 2) {
             $this->fail(-32601, "Procedure not found");
-        
+        }
+
         [$class, $method] = $method;
         $class = '\openvk\ServiceAPI\\' . $class;
-        if(!class_exists($class))
+        if (!class_exists($class)) {
             $this->fail(-32601, "Procedure not found");
-        
-        $handler = new $class(is_null($this->user) ? NULL : $this->user->identity);
-        if(!is_callable([$handler, $method]))
+        }
+
+        $handler = new $class(is_null($this->user) ? null : $this->user->identity);
+        if (!is_callable([$handler, $method])) {
             $this->fail(-32601, "Procedure not found");
-        
+        }
+
         try {
-            $params = array_merge($input->params ?? [], [function($data) {
+            $params = array_merge($input->params ?? [], [function ($data) {
                 $this->succ($data);
-            }, function(int $errno, string $errstr) {
+            }, function (int $errno, string $errstr) {
                 $this->fail($errno, $errstr);
             }]);
             $handler->{$method}(...$params);
-        } catch(\TypeError $te) {
+        } catch (\TypeError $te) {
             $this->fail(-32602, "Invalid params");
-        } catch(\Exception $ex) {
+        } catch (\Exception $ex) {
             $this->fail(-32603, "Uncaught " . get_class($ex));
         }
     }
 
-    function renderTimezone() {
-        if($_SERVER["REQUEST_METHOD"] !== "POST") {
+    public function renderTimezone()
+    {
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             header("HTTP/1.1 405 Method Not Allowed");
             exit("ты дебил это метод апи");
         }
         $sessionOffset = Session::i()->get("_timezoneOffset");
-        if(is_numeric($this->postParam("timezone", false))) {
+        if (is_numeric($this->postParam("timezone", false))) {
             $postTZ = intval($this->postParam("timezone", false));
             if ($postTZ != $sessionOffset || $sessionOffset == null) {
-                Session::i()->set("_timezoneOffset", $postTZ ? $postTZ : 3 * MINUTE );
+                Session::i()->set("_timezoneOffset", $postTZ ? $postTZ : 3 * MINUTE);
                 $this->returnJson([
-                    "success" => 1 # If it's new value
+                    "success" => 1, # If it's new value
                 ]);
             } else {
                 $this->returnJson([
-                    "success" => 2 # If it's the same value (if for some reason server will call this func)
+                    "success" => 2, # If it's the same value (if for some reason server will call this func)
                 ]);
             }
         } else {
             $this->returnJson([
-                "success" => 0
+                "success" => 0,
             ]);
+        }
+    }
+
+    public function renderGetPhotosFromPost(int $owner_id, int $post_id)
+    {
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+            header("HTTP/1.1 405 Method Not Allowed");
+            exit("иди нахуй заебал");
+        }
+
+        if ($this->postParam("parentType", false) == "post") {
+            $post = (new Posts())->getPostById($owner_id, $post_id, true);
+        } else {
+            $post = (new Comments())->get($post_id);
+        }
+
+
+        if (is_null($post)) {
+            $this->returnJson([
+                "success" => 0,
+            ]);
+        } else {
+            $response = [];
+            $attachments = $post->getChildren();
+            foreach ($attachments as $attachment) {
+                if ($attachment instanceof \openvk\Web\Models\Entities\Photo) {
+                    $response[$attachment->getPrettyId()] = [
+                        "url" => $attachment->getURLBySizeId('larger'),
+                        "id"  => $attachment->getPrettyId(),
+                    ];
+                }
+            }
+            $this->returnJson([
+                "success" => 1,
+                "body" => $response,
+            ]);
+        }
+    }
+
+    public function renderGetPostTemplate(int $owner_id, int $post_id)
+    {
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+            header("HTTP/1.1 405 Method Not Allowed");
+            exit("ты‍ не по адресу");
+        }
+
+        $type = $this->queryParam("type", false);
+        if ($type == "post") {
+            $post = (new Posts())->getPostById($owner_id, $post_id, true);
+        } else {
+            $post = (new Comments())->get($post_id);
+        }
+
+        if (!$post || !$post->canBeEditedBy($this->user->identity)) {
+            exit('');
+        }
+
+        header("Content-Type: text/plain");
+
+        if ($type == 'post') {
+            $this->template->_template = 'components/post.xml';
+            $this->template->post = $post;
+            $this->template->commentSection = false;
+        } elseif ($type == 'comment') {
+            $this->template->_template = 'components/comment.xml';
+            $this->template->comment = $post;
+        } else {
+            exit('');
         }
     }
 }

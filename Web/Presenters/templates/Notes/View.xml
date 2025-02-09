@@ -66,7 +66,7 @@
             <span n:if="isset($thisUser) && $thisUser->getId() === $note->getOwner()->getId()">&nbsp;|&nbsp;
                 <a id="_noteDelete" href="/note{$note->getOwner()->getId()}_{$note->getId()}/delete">{_delete}</a>
                 &nbsp;|&nbsp;
-                <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}/edit">{_edit}</a>
+                <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}/edit" rel='nofollow'>{_edit}</a>
             </span>
         </div>
     </div>

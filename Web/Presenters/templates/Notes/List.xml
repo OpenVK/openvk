@@ -1,6 +1,5 @@
 {extends "../@listView.xml"}
 {var $iterator = iterator_to_array($notes)}
-{var $page     = $paginatorConf->page}
 
 {block title}{_notes}{/block}
 
@@ -21,7 +20,7 @@
                 {tr("notes_list", $count)}
                 <span n:if="isset($thisUser) && $thisUser->getId() == $owner->getId()">
                     &nbsp;|&nbsp;
-                    <a href="/notes/create">{_create_note}</a>
+                    <a href="/notes/create" rel='nofollow'>{_create_note}</a>
                 </span>
         </div>
     </div>
@@ -60,12 +59,12 @@
         }
     </style>
 
-    <div class="container_gray" style="background: white; border-top: none;">
+    <div class="container_gray scroll_container" style="background: white; border-top: none;">
 
         {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
         {if sizeof($data) > 0}
 
-        <div n:foreach="$data as $dat">
+        <div class='scroll_node' n:foreach="$data as $dat">
             <div class="profile_thumb">
                 <a href="{$owner->getURL()}">
                 <img src="{$owner->getAvatarUrl('miniscule')}" style="width: 50px;">
@@ -90,7 +89,7 @@
                     <div class="comments_count">
                         <a href="/note{$dat->getPrettyId()}">
 
-                            {if sizeof($dat->getCommentsCount()) > 0}
+                            {if $dat->getCommentsCount() > 0}
                                 {_comments} ({$dat->getCommentsCount()})
                             {else}
                                 {_no_comments}
@@ -100,13 +99,21 @@
                         <span n:if="isset($thisUser) && $thisUser->getId() === $dat->getOwner()->getId()">&nbsp;|&nbsp;
                             <a id="_noteDelete" href="/note{$dat->getOwner()->getId()}_{$dat->getId()}/delete">{_delete}</a>
                             &nbsp;|&nbsp;
-                            <a href="/note{$dat->getOwner()->getId()}_{$dat->getVirtualId()}/edit">{_edit}</a>
+                            <a href="/note{$dat->getOwner()->getId()}_{$dat->getVirtualId()}/edit" rel='nofollow'>{_edit}</a>
                         </span>
                     </div>
                 </div>
             </article>    
         </div>      
-
+        
+        {include "../components/paginator.xml", conf => (object) [
+            "page"     => $page,
+            "count"    => $count,
+            "amount"   => sizeof($data),
+            "perPage"  => 10,
+            "atBottom" => true,
+        ]}
+        
         {else}
             {if isset($thisUser) && $thisUser->getId() == $owner->getId()}
 

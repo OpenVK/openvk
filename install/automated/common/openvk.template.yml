@@ -63,7 +63,6 @@ openvk:
             caption: "Ad caption"
             link: "https://example.org/product.aspx?id=10&from=ovk"
         bellsAndWhistles:
-            fartscroll: false
             testLabel: false
         defaultMobileTheme: ""
 

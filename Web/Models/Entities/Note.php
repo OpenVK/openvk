@@ -1,12 +1,16 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Models\Entities;
+
 use HTMLPurifier_Config;
 use HTMLPurifier;
 
 class Note extends Postable
 {
     protected $tableName = "notes";
-    
+
     protected function renderHTML(): string
     {
         $config = HTMLPurifier_Config::createDefault();
@@ -74,64 +78,75 @@ class Note extends Postable
         $config->set("Attr.AllowedClasses", [
             "underline",
         ]);
-    
-        $source = NULL;
-        if(is_null($this->getRecord())) {
-            if(isset($this->changes["source"]))
+
+        $source = null;
+        if (is_null($this->getRecord())) {
+            if (isset($this->changes["source"])) {
                 $source = $this->changes["source"];
-            else
+            } else {
                 throw new \LogicException("Can't render note without content set.");
+            }
         } else {
             $source = $this->getRecord()->source;
         }
-        
+
         $purifier = new HTMLPurifier($config);
         return $purifier->purify($source);
     }
-    
-    function getName(): string
+
+    public function getName(): string
     {
         return $this->getRecord()->name;
     }
-    
-    function getPreview(int $length = 25): string
+
+    public function getPreview(int $length = 25): string
     {
         return ovk_proc_strtr(strip_tags($this->getRecord()->source), $length);
     }
-    
-    function getText(): string
+
+    public function getText(): string
     {
-        if(is_null($this->getRecord()))
+        if (is_null($this->getRecord())) {
             return $this->renderHTML();
-        
+        }
+
         $cached = $this->getRecord()->cached_content;
-        if(!$cached) {
+        if (!$cached) {
             $cached = $this->renderHTML();
             $this->setCached_Content($cached);
             $this->save();
         }
-        
+
         return $cached;
     }
 
-    function getSource(): string
+    public function getSource(): string
     {
         return $this->getRecord()->source;
     }
 
-    function toVkApiStruct(): object
+    public function canBeViewedBy(?User $user = null): bool
+    {
+        if ($this->isDeleted() || $this->getOwner()->isDeleted()) {
+            return false;
+        }
+
+        return $this->getOwner()->getPrivacyPermission('notes.read', $user) && $this->getOwner()->canBeViewedBy($user);
+    }
+
+    public function toVkApiStruct(): object
     {
         $res = (object) [];
 
         $res->type          = "note";
-        $res->id            = $this->getId();
+        $res->id            = $this->getVirtualId();
         $res->owner_id      = $this->getOwner()->getId();
         $res->title         = $this->getName();
         $res->text          = $this->getText();
         $res->date          = $this->getPublicationTime()->timestamp();
         $res->comments      = $this->getCommentsCount();
         $res->read_comments = $this->getCommentsCount();
-        $res->view_url      = "/note".$this->getOwner()->getId()."_".$this->getId();
+        $res->view_url      = "/note" . $this->getOwner()->getId() . "_" . $this->getVirtualId();
         $res->privacy_view  = 1;
         $res->can_comment   = 1;
         $res->text_wiki     = "r";

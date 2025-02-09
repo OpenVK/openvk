@@ -1,8 +1,12 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\Web\Presenters;
+
 use openvk\Web\Models\Entities\{Comment, Notifications\MentionNotification, Photo, Video, User, Topic, Post};
 use openvk\Web\Models\Entities\Notifications\CommentNotification;
-use openvk\Web\Models\Repositories\{Comments, Clubs};
+use openvk\Web\Models\Repositories\{Comments, Clubs, Videos, Photos, Audios};
 
 final class CommentPresenter extends OpenVKPresenter
 {
@@ -14,80 +18,103 @@ final class CommentPresenter extends OpenVKPresenter
         "notes"   => "openvk\\Web\\Models\\Repositories\\Notes",
         "topics"  => "openvk\\Web\\Models\\Repositories\\Topics",
     ];
-    
-    function renderLike(int $id): void
+
+    public function renderLike(int $id): void
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
-        
-        $comment = (new Comments)->get($id);
-        if(!$comment || $comment->isDeleted()) $this->notFound();
-        
-        if(!is_null($this->user)) $comment->toggleLike($this->user->identity);
-        
+
+        $comment = (new Comments())->get($id);
+        if (!$comment || $comment->isDeleted()) {
+            $this->notFound();
+        }
+
+        if ($comment->getTarget() instanceof Post && $comment->getTarget()->getWallOwner()->isBanned()) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        if (!is_null($this->user)) {
+            $comment->toggleLike($this->user->identity);
+        }
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            $this->returnJson([
+                'success' => true,
+            ]);
+        }
+
         $this->redirect($_SERVER["HTTP_REFERER"]);
     }
-    
-    function renderMakeComment(string $repo, int $eId): void
+
+    public function renderMakeComment(string $repo, int $eId): void
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
-        
-        $repoClass = $this->models[$repo] ?? NULL;
-        if(!$repoClass) chandler_http_panic(400, "Bad Request", "Unexpected $repo.");
-        
-        $repo   = new $repoClass;
+
+        $repoClass = $this->models[$repo] ?? null;
+        if (!$repoClass) {
+            chandler_http_panic(400, "Bad Request", "Unexpected $repo.");
+        }
+
+        $repo   = new $repoClass();
         $entity = $repo->get($eId);
-        if(!$entity) $this->notFound();
-
-        if($entity instanceof Topic && $entity->isClosed())
+        if (!$entity) {
             $this->notFound();
+        }
 
-        if($entity instanceof Post && $entity->getTargetWall() < 0)
-            $club = (new Clubs)->get(abs($entity->getTargetWall()));
-        else if($entity instanceof Topic)
+        if (!$entity->canBeViewedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        if ($entity instanceof Topic && $entity->isClosed()) {
+            $this->notFound();
+        }
+
+        if ($entity instanceof Post && $entity->getTargetWall() < 0) {
+            $club = (new Clubs())->get(abs($entity->getTargetWall()));
+        } elseif ($entity instanceof Topic) {
             $club = $entity->getClub();
+        }
 
-        if($_FILES["_vid_attachment"] && OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading'])
-            $this->flashFail("err", tr("error"), "Video uploads are disabled by the system administrator.");
-        
+        if ($entity instanceof Post && $entity->getWallOwner()->isBanned()) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
         $flags = 0;
-        if($this->postParam("as_group") === "on" && !is_null($club) && $club->canBeModifiedBy($this->user->identity))
+        if ($this->postParam("as_group") === "on" && !is_null($club) && $club->canBeModifiedBy($this->user->identity)) {
             $flags |= 0b10000000;
+        }
 
-        $photo = NULL;
-        if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
+        $photo = null;
+        if ($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
             try {
                 $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"]);
-            } catch(ISE $ex) {
-                $this->flashFail("err", "Не удалось опубликовать пост", "Файл изображения повреждён, слишком велик или одна сторона изображения в разы больше другой.");
+            } catch (ISE $ex) {
+                $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_when_publishing_comment_description"));
             }
         }
-        
-        # TODO move to trait
-        try {
-            $photo = NULL;
-            $video = NULL;
-            if($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
-                $album = NULL;
-                if($wall > 0 && $wall === $this->user->id)
-                    $album = (new Albums)->getUserWallAlbum($wallOwner);
-                
-                $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album);
+
+        $horizontal_attachments = [];
+        $vertical_attachments = [];
+        if (!empty($this->postParam("horizontal_attachments"))) {
+            $horizontal_attachments_array = array_slice(explode(",", $this->postParam("horizontal_attachments")), 0, OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"]);
+            if (sizeof($horizontal_attachments_array) > 0) {
+                $horizontal_attachments = parseAttachments($horizontal_attachments_array, ['photo', 'video']);
             }
-            
-            if($_FILES["_vid_attachment"]["error"] === UPLOAD_ERR_OK) {
-                $video = Video::fastMake($this->user->id, $_FILES["_vid_attachment"]["name"], $this->postParam("text"), $_FILES["_vid_attachment"]);
-            }
-        } catch(ISE $ex) {
-            $this->flashFail("err", "Не удалось опубликовать комментарий", "Файл медиаконтента повреждён или слишком велик.");
         }
-        
-        if(empty($this->postParam("text")) && !$photo && !$video)
-            $this->flashFail("err", "Не удалось опубликовать комментарий", "Комментарий пустой или слишком большой.");
-        
+
+        if (!empty($this->postParam("vertical_attachments"))) {
+            $vertical_attachments_array = array_slice(explode(",", $this->postParam("vertical_attachments")), 0, OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"]);
+            if (sizeof($vertical_attachments_array) > 0) {
+                $vertical_attachments = parseAttachments($vertical_attachments_array, ['audio', 'note', 'doc']);
+            }
+        }
+
+        if (empty($this->postParam("text")) && sizeof($horizontal_attachments) < 1 && sizeof($vertical_attachments) < 1) {
+            $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_empty"));
+        }
+
         try {
-            $comment = new Comment;
+            $comment = new Comment();
             $comment->setOwner($this->user->id);
             $comment->setModel(get_class($entity));
             $comment->setTarget($entity->getId());
@@ -96,46 +123,67 @@ final class CommentPresenter extends OpenVKPresenter
             $comment->setFlags($flags);
             $comment->save();
         } catch (\LengthException $ex) {
-            $this->flashFail("err", "Не удалось опубликовать комментарий", "Комментарий слишком большой.");
+            $this->flashFail("err", tr("error_when_publishing_comment"), tr("error_comment_too_big"));
         }
-        
-        if(!is_null($photo))
-            $comment->attach($photo);
-        
-        if(!is_null($video))
-            $comment->attach($video);
-        
-        if($entity->getOwner()->getId() !== $this->user->identity->getId())
-            if(($owner = $entity->getOwner()) instanceof User)
+
+        foreach ($horizontal_attachments as $horizontal_attachment) {
+            if (!$horizontal_attachment || $horizontal_attachment->isDeleted() || !$horizontal_attachment->canBeViewedBy($this->user->identity)) {
+                continue;
+            }
+
+            $comment->attach($horizontal_attachment);
+        }
+
+        foreach ($vertical_attachments as $vertical_attachment) {
+            if (!$vertical_attachment || $vertical_attachment->isDeleted() || !$vertical_attachment->canBeViewedBy($this->user->identity)) {
+                continue;
+            }
+
+            $comment->attach($vertical_attachment);
+        }
+
+        if ($entity->getOwner()->getId() !== $this->user->identity->getId()) {
+            if (($owner = $entity->getOwner()) instanceof User) {
                 (new CommentNotification($owner, $comment, $entity, $this->user->identity))->emit();
-    
+            }
+        }
+
         $excludeMentions = [$this->user->identity->getId()];
-        if(($owner = $entity->getOwner()) instanceof User)
+        if (($owner = $entity->getOwner()) instanceof User) {
             $excludeMentions[] = $owner->getId();
+        }
 
         $mentions = iterator_to_array($comment->resolveMentions($excludeMentions));
-        foreach($mentions as $mentionee)
-            if($mentionee instanceof User)
+        foreach ($mentions as $mentionee) {
+            if ($mentionee instanceof User) {
                 (new MentionNotification($mentionee, $entity, $comment->getOwner(), strip_tags($comment->getText())))->emit();
-        
-        $this->flashFail("succ", "Комментарий добавлен", "Ваш комментарий появится на странице.");
+            }
+        }
+
+        $this->flashFail("succ", tr("comment_is_added"), tr("comment_is_added_desc"));
     }
-    
-    function renderDeleteComment(int $id): void
+
+    public function renderDeleteComment(int $id): void
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
-        
-        $comment = (new Comments)->get($id);
-        if(!$comment) $this->notFound();
-        if(!$comment->canBeDeletedBy($this->user->identity))
-            $this->throwError(403, "Forbidden", "У вас недостаточно прав чтобы редактировать этот ресурс.");
-        
+
+        $comment = (new Comments())->get($id);
+        if (!$comment) {
+            $this->notFound();
+        }
+        if (!$comment->canBeDeletedBy($this->user->identity)) {
+            $this->throwError(403, "Forbidden", tr("error_access_denied"));
+        }
+        if ($comment->getTarget() instanceof Post && $comment->getTarget()->getWallOwner()->isBanned()) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
         $comment->delete();
         $this->flashFail(
             "succ",
-            "Успешно",
-            "Этот комментарий больше не будет показыватся.<br/><a href='/al_comments/spam?$id'>Отметить как спам</a>?"
+            tr("success"),
+            tr("comment_will_not_appear")
         );
     }
 }

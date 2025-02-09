@@ -1,5 +1,9 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\CLI;
+
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Repositories\Photos;
 use Symfony\Component\Console\Command\Command;
@@ -14,7 +18,7 @@ class RebuildImagesCommand extends Command
 
     protected static $defaultName = "build-images";
 
-    function __construct()
+    public function __construct()
     {
         $this->images = DatabaseConnection::i()->getContext()->table("photos");
 
@@ -40,8 +44,9 @@ class RebuildImagesCommand extends Command
         ]);
 
         $filter = ["deleted" => false];
-        if($input->getOption("upgrade-only"))
-            $filter["sizes"] = NULL;
+        if ($input->getOption("upgrade-only")) {
+            $filter["sizes"] = null;
+        }
 
         $selection = $this->images->select("id")->where($filter);
         $totalPics = $selection->count();
@@ -52,24 +57,25 @@ class RebuildImagesCommand extends Command
 
         $errors  = 0;
         $count   = 0;
-        $avgTime = NULL;
+        $avgTime = null;
         $begin   = new \DateTimeImmutable("now");
-        foreach($selection as $idHolder) {
+        foreach ($selection as $idHolder) {
             $start = microtime(true);
 
             try {
-                $photo = (new Photos)->get($idHolder->id);
+                $photo = (new Photos())->get($idHolder->id);
                 $photo->getSizes(true, true);
                 $photo->getDimensions();
-            } catch(ImageException $ex) {
+            } catch (ImageException $ex) {
                 $errors++;
             }
 
             $timeConsumed = microtime(true) - $start;
-            if(!$avgTime)
+            if (!$avgTime) {
                 $avgTime = $timeConsumed;
-            else
+            } else {
                 $avgTime = ($avgTime + $timeConsumed) / 2;
+            }
 
             $eta = $begin->getTimestamp() + ceil($totalPics * $avgTime);
             $int = (new \DateTimeImmutable("now"))->diff(new \DateTimeImmutable("@$eta"));

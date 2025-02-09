@@ -1,6 +1,10 @@
 #!/usr/bin/env php
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk;
+
 use Symfony\Component\Console\Application;
 
 $_SERVER["HTTP_ACCEPT_LANGUAGE"] = false;
@@ -8,7 +12,7 @@ $bootstrap = require(__DIR__ . "/../../../chandler/Bootstrap.php");
 $bootstrap->ignite(true);
 
 $application = new Application();
-$application->add(new CLI\RebuildImagesCommand);
-$application->add(new CLI\FetchToncoinTransactions);
+$application->add(new CLI\RebuildImagesCommand());
+$application->add(new CLI\FetchToncoinTransactions());
 
 $application->run();

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace openvk\Web\Presenters;
@@ -7,10 +8,11 @@ final class MaintenancePresenter extends OpenVKPresenter
 {
     protected $presenterName = "maintenance";
 
-    function renderSection(string $name): void
+    public function renderSection(string $name): void
     {
-        if(!OPENVK_ROOT_CONF["openvk"]["preferences"]["maintenanceMode"][$name])
+        if (!OPENVK_ROOT_CONF["openvk"]["preferences"]["maintenanceMode"][$name]) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
 
         $this->template->name = [
             "photos" => tr("my_photos"),
@@ -24,12 +26,9 @@ final class MaintenancePresenter extends OpenVKPresenter
             "notes" => tr("my_notes"),
             "notification" => tr("my_feedback"),
             "support" => tr("menu_support"),
-            "topics" => tr("topics")
+            "topics" => tr("topics"),
         ][$name] ?? $name;
     }
 
-    function renderAll(): void
-    {
-
-    }
+    public function renderAll(): void {}
 }

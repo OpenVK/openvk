@@ -4,6 +4,7 @@ table.User > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > a:nth-chil
     width: 50px;
     height: 50px;
     object-fit: cover;
+    object-position: top;
 }
 
 .post > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > a:nth-child(1) > img:nth-child(1)
@@ -11,6 +12,7 @@ table.User > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > a:nth-chil
     width: 50px;
     height: 50px;
     object-fit: cover;
+    object-position: top;
 }
 
 div.content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > a:nth-child(1) > img:nth-child(1)
@@ -18,6 +20,7 @@ div.content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth
     width: 75px;
     height: 75px;
     object-fit: cover;
+    object-position: top;
 }
 
 .crp-entry--image > img
@@ -25,6 +28,7 @@ div.content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth
     width: 48px;
     height: 48px;
     object-fit: cover;
+    object-position: top;
 }
 
 .crp-entry--message---av > img,
@@ -33,16 +37,19 @@ div.content > table:nth-child(1) > tbody:nth-child(1) > tr:nth-child(1) > td:nth
     width: 42px;
     height: 42px;
     object-fit: cover;
+    object-position: top;
 }
 
 .cCompactAvatars {
     width: 30px !important;
     height: 30px !important;
     object-fit: cover;
+    object-position: top;
 }
 
 .profile_thumb > a > img {
     width: 50px;
     height: 50px;
     object-fit: cover;
+    object-position: top;
 }

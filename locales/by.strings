@@ -131,6 +131,7 @@
 "friends_delete" = "Выдаліць з сяброў";
 "friends_reject" = "Адмяніць заяўку";
 "friends_accept" = "Прыняць заяўку";
+"friends_leave_in_flw" = "Пакінуть у падпісчыках";
 "send_message" = "Адправіць паведамленне";
 "incoming_req" = "Падпісанты";
 "outcoming_req" = "Заяўкі";
@@ -257,11 +258,13 @@
 "my_friends" = "Мае Сябры";
 "my_photos" = "Мае Фотаздымкі";
 "my_videos" = "Мае Відэазапісы";
+"my_audios" = "Мае Аўдыёзапісы";
 "my_messages" = "Мае Паведамленні";
 "my_notes" = "Мае Нататкі";
 "my_groups" = "Мае Групы";
 "my_feed" = "Мае Навіны";
 "my_feedback" = "Мае Адказы";
+"my_apps" = "Прыкладанні";
 "my_settings" = "Мае Налады";
 "bug_tracker" = "Баг-трэкер";
 

@@ -1,5 +1,7 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
+
 namespace openvk\VKAPI\Exceptions;
 
-class APIErrorException extends \Exception
-{}
+class APIErrorException extends \Exception {}

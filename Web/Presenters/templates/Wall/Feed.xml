@@ -6,6 +6,8 @@
 {/block}
 
 {block content}
+    {php $GLOBALS["_bigWall"] = 1}
+
     <div class="tabs">
         <div n:attr="id => (isset($globalFeed) ? 'ki' : 'activetabs')" class="tab">
             <a n:attr="id => (isset($globalFeed) ? 'ki' : 'act_tab_a')" href="/feed">{_my_news}</a>
@@ -13,16 +15,20 @@
         <div n:attr="id => (isset($globalFeed) ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => (isset($globalFeed) ? 'act_tab_a' : 'ki')" href="/feed/all">{_all_news}</a>
         </div>
+
+        <a href='#' id="__feed_settings_link" data-pagescount='{ceil($paginatorConf->count / $paginatorConf->perPage)}'>{_feed_settings}</a>
     </div>
 
     <div n:class="postFeedWrapper, $thisUser->hasMicroblogEnabled() ? postFeedWrapperMicroblog">
-        {include "../components/textArea.xml", route => "/wall" . $thisUser->getId() . "/makePost", graffiti => true, polls => true, notes => true}
+        {include "../components/textArea.xml", route => "/wall" . $thisUser->getId() . "/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true}
     </div>
     
-    {foreach $posts as $post}
-        <a name="postGarter={$post->getId()}"></a>
-        {include "../components/post.xml", post => $post, onWallOf => true, commentSection => true}
-    {/foreach}
+    <div class='scroll_container'>
+        <div class='scroll_node' n:foreach='$posts as $post' data-uniqueid="{$post->getPrettyId()}">
+            <a name="postGarter={$post->getId()}"></a>
+            {include "../components/post.xml", post => $post, onWallOf => true, commentSection => true}
+        </div>
+    </div>
 
     <div class="postFeedBottom">
         <div class="postFeedPaginator">
@@ -51,8 +57,4 @@
             window.location.assign(url.replace("__padding", e.target.value));
         });
     </script>
-
-    {if isset($thisUser) && $thisUser->hasMicroblogEnabled()}
-        {script "js/al_comments.js"}
-    {/if}
 {/block}
