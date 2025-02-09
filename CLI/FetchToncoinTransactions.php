@@ -18,6 +18,7 @@ define("NANOTON", 1000000000);
 class FetchToncoinTransactions extends Command
 {
     private $images;
+    private $transactions;
 
     protected static $defaultName = "fetch-ton";
 
