@@ -2216,9 +2216,9 @@
 
 "x_documents_in_tab_one" = "Ця вкладка має $1 документ";
 "x_documents_in_tab_few" = "Ця вкладка має $1 документа";
-"x_documents_in_tab_many" = "Ця вкладка має $1 документов";
-"x_documents_in_tab_other" = "Ця вкладка має $1 документов";
-"x_documents_in_tab_zero" = "Ця вкладка має $1 документов";
+"x_documents_in_tab_many" = "Ця вкладка має $1 документів";
+"x_documents_in_tab_other" = "Ця вкладка має $1 документів";
+"x_documents_in_tab_zero" = "Ця вкладка має $1 документів";
 
 "there_is_no_documents_alright" = "Тут немає документів.";
 "limitations_file_limit_size" = "Файл не може перевищувати $1 МБ";
