@@ -62,10 +62,11 @@ class BannedLinks
     public function genEntries($links, $uri): \Traversable
     {
         foreach ($links as $link) {
-            if (preg_match($link->getRegexpRule(), $uri)) {
+            if (preg_match($link->getRegexpRule(), $uri))
                 yield $link->getId();
             else if ($this->isDomainBanned($link->getDomain()))
                 yield $link->getId();
+        }
     }
 
     public function check(string $url): ?array
