@@ -515,7 +515,7 @@ final class AdminPresenter extends OpenVKPresenter
         if ($link) {
             $link->setDomain($new_domain ?? $this->postParam("link"));
             $link->setReason($new_reason);
-            $link->setRegexp_rule($this->postParam("regexp"));
+            $link->setRegexp_rule(mb_strlen(trim($this->postParam("regexp"))) > 0 ? $this->postParam("regexp") : "");
             $link->save();
         } else {
             if (!$new_domain) {
@@ -525,7 +525,7 @@ final class AdminPresenter extends OpenVKPresenter
             $link = new BannedLink();
             $link->setDomain($new_domain);
             $link->setReason($new_reason);
-            $link->setRegexp_rule($this->postParam("regexp"));
+            $link->setRegexp_rule(mb_strlen(trim($this->postParam("regexp"))) > 0 ? $this->postParam("regexp") : "");
             $link->setInitiator($this->user->identity->getId());
             $link->save();
 
