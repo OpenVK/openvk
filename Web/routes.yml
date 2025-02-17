@@ -173,8 +173,10 @@ routes:
       handler: "Photos->photo"
     - url: "/photo{num}_{num}/like"
       handler: "Photos->like"
-    - url: "/photos/thumbnails/{num}_{text}.jpeg"
+    - url: "/photos/thumbnails/{?hash}_{text}.jpeg"
       handler: "Photos->thumbnail"
+      placeholders:
+          hash: "[A-z0-9\\-_\\/]{15,}"
     - url: "/photos/{text}"
       handler: "Photos->absolutePhoto"
     - url: "/photo{num}_{num}/edit"
