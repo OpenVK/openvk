@@ -23,7 +23,9 @@ class FetchToncoinTransactions extends Command
 
     public function __construct()
     {
-        $this->transactions = DatabaseConnection::i()->getContext()->table("cryptotransactions");
+        $ctx = DatabaseConnection::i()->getContext();
+        if (in_array("cryptotransactions", $ctx->getStructure()->getTables()))
+            $this->transactions = $ctx->table("cryptotransactions");
 
         parent::__construct();
     }

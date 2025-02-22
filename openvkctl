@@ -12,6 +12,7 @@ $bootstrap = require(__DIR__ . "/../../../chandler/Bootstrap.php");
 $bootstrap->ignite(true);
 
 $application = new Application();
+$application->add(new CLI\UpgradeCommand());
 $application->add(new CLI\RebuildImagesCommand());
 $application->add(new CLI\FetchToncoinTransactions());
 
