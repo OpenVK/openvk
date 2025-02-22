@@ -21,8 +21,9 @@ class RebuildImagesCommand extends Command
     public function __construct()
     {
         $ctx = DatabaseConnection::i()->getContext();
-        if (in_array("photos", $ctx->getStructure()->getTables()))
+        if (in_array("photos", $ctx->getStructure()->getTables())) {
             $this->images = $ctx->table("photos");
+        }
 
         parent::__construct();
     }
