@@ -13,6 +13,7 @@ class Wall implements Handler
     protected $user;
     protected $posts;
     protected $notes;
+    protected $videos;
 
     public function __construct(?User $user)
     {

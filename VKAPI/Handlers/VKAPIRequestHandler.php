@@ -20,7 +20,7 @@ abstract class VKAPIRequestHandler
         $this->platform = $platform;
     }
 
-    protected function fail(int $code, string $message): void
+    protected function fail(int $code, string $message): never
     {
         throw new APIErrorException($message, $code);
     }
