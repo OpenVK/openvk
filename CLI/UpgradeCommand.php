@@ -44,6 +44,8 @@ class UpgradeCommand extends Command {
                 "Don't display warning before migrating database", false)
             ->addOption("repair", "R", InputOption::VALUE_NEGATABLE,
                 "Attempt to repair database schema if tables are missing", false)
+            ->addOption("oneshot", "O", InputOption::VALUE_NONE,
+                "Only execute one operation")
             ->addArgument("chandler", InputArgument::OPTIONAL,
                 "Location of Chandler installation");
     }
@@ -160,7 +162,7 @@ class UpgradeCommand extends Command {
         return $this->executeSqlScript(31, $installFile, $io);
     }
     
-    protected function runMigrations(SymfonyStyle $io): int
+    protected function runMigrations(SymfonyStyle $io, bool $oneshot): int
     {
         $nextLevel = $this->getNextLevel();
         $migrations = array_filter($this->getMigrationFiles(), fn ($id) => $id >= $nextLevel, ARRAY_FILTER_USE_KEY);
@@ -186,6 +188,9 @@ class UpgradeCommand extends Command {
             
             $t = time();
             $this->db->query("INSERT INTO ovk_upgrade_history VALUES ($num, $t, \"$uname\");");
+            
+            if ($oneshot)
+                return 5;
         }
         
         return 0;
@@ -193,6 +198,7 @@ class UpgradeCommand extends Command {
     
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $oneShotMode = $input->getOption("oneshot");
         $io = new SymfonyStyle($input, $output);
         
         if (!$input->getOption("quick")) {
@@ -208,7 +214,7 @@ class UpgradeCommand extends Command {
         
         $this->checkDatabaseReadiness($chandlerOk, $ovkOk, $migrationsOk);
         
-        $res = 0;
+        $res = -1;
         if ($chandlerOk === null) {
             $io->writeln("Chandler schema not detected, attempting to install...");
             
@@ -228,12 +234,16 @@ class UpgradeCommand extends Command {
         
         if ($res > 0)
             return $res;
+        else if ($res == 0 && $oneShotMode)
+            return 5;
         
         if (!$ovkOk) {
             $io->writeln("Initializing OpenVK schema...");
             $res = $this->initSchema($io);
             if ($res > 0)
                 return $res;
+            else if ($oneShotMode)
+                return 5;
         }
         
         if (!$migrationsOk) {
@@ -241,10 +251,12 @@ class UpgradeCommand extends Command {
             $res = $this->initUpgradeLog($io);
             if ($res > 0)
                 return $res;
+            else if ($oneShotMode)
+                return 5;
         }
         
         $io->writeln("Upgrading database...");
-        $res = $this->runMigrations($io);
+        $res = $this->runMigrations($io, $oneShotMode);
         
         if (!$res) {
             $io->success("Database has been upgraded!");
