@@ -17,7 +17,7 @@ define("NANOTON", 1000000000);
 
 class FetchToncoinTransactions extends Command
 {
-    private $images;
+    private $transactions;
 
     protected static $defaultName = "fetch-ton";
 
@@ -76,7 +76,6 @@ class FetchToncoinTransactions extends Command
 
         $header->writeln("Gonna up the balance of users");
         foreach ($response["result"] as $transfer) {
-            $outputArray;
             preg_match('/' . OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["regex"] . '/', $transfer["in_msg"]["message"], $outputArray);
             $userId = ctype_digit($outputArray[1]) ? intval($outputArray[1]) : null;
             if (is_null($userId)) {

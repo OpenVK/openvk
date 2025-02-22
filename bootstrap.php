@@ -443,7 +443,9 @@ function downloadable_name(string $text): string
 }
 
 return (function () {
-    _ovk_check_environment();
+    if (php_sapi_name() != "cli")
+        _ovk_check_environment();
+    
     require __DIR__ . "/vendor/autoload.php";
 
     setlocale(LC_TIME, "POSIX");
