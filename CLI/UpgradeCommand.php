@@ -18,6 +18,7 @@ class UpgradeCommand extends Command {
     protected static $defaultName = "upgrade";
     
     private Connection $db;
+    private Connection $eventDb;
     
     private array $chandlerTables = [
         "CHANDLERACLPERMISSIONALIASES",
@@ -32,6 +33,7 @@ class UpgradeCommand extends Command {
     public function __construct()
     {
         $this->db = DatabaseConnection::i()->getConnection();
+        $this->eventDb = eventdb()->getConnection();
         
         parent::__construct();
     }
@@ -50,7 +52,7 @@ class UpgradeCommand extends Command {
                 "Location of Chandler installation");
     }
     
-    protected function checkDatabaseReadiness(bool &$chandlerOk, bool &$ovkOk, bool &$migrationsOk): void
+    protected function checkDatabaseReadiness(bool &$chandlerOk, bool &$ovkOk, bool &$eventOk, bool &$migrationsOk): void
     {
         $tables = $this->db->query("SHOW TABLES")->fetchAll();
         $tables = array_map(fn ($x) => strtoupper($x->offsetGet(0)), $tables);
@@ -63,13 +65,22 @@ class UpgradeCommand extends Command {
         else
             $chandlerOk = false;
         
+        if (is_null($this->eventDb)) {
+            $eventOk = false;
+        } else if (is_null($this->eventDb->query("SHOW TABLES LIKE \"notifications\"")->fetch())) {
+            $eventOk = null;
+        } else {
+            $eventOk = true;
+        }
+        
         $ovkOk = in_array("PROFILES", $tables);
         $migrationsOk = in_array("OVK_UPGRADE_HISTORY", $tables);
     }
     
-    protected function executeSqlScript(int $errCode, string $script, SymfonyStyle $io, bool $transaction = false): int
+    protected function executeSqlScript(int $errCode, string $script, SymfonyStyle $io, bool $transaction = false,
+                                        bool $eventDb = false): int
     {
-        $pdo = $this->db->getPdo();
+        $pdo = ($eventDb ? $this->eventDb : $this->db)->getPdo();
         
         $res = false;
         try {
@@ -96,21 +107,23 @@ class UpgradeCommand extends Command {
         return $errCode;
     }
     
-    protected function getNextLevel(): int
+    protected function getNextLevel(bool $eventDb = false): int
     {
-        $record = $this->db->query("SELECT level FROM ovk_upgrade_history ORDER BY level DESC LIMIT 1");
+        $tbl = $eventDb ? "ovk_events_upgrade_history" : "ovk_upgrade_history";
+        $record = $this->db->query("SELECT level FROM $tbl ORDER BY level DESC LIMIT 1");
         if (!$record->getRowCount())
             return 0;
         
         return $record->fetchField() + 1;
     }
     
-    protected function getMigrationFiles(): array
+    protected function getMigrationFiles(bool $eventDb = false): array
     {
         $files = [];
         $root = dirname(__DIR__ . "/../install/init-static-db.sql");
+        $dir = $eventDb ? "sqls/eventdb" : "sqls";
         
-        foreach (glob("$root/sqls/*.sql") as $file)
+        foreach (glob("$root/$dir/*.sql") as $file)
             $files[(int) basename($file)] = basename($file);
         
         ksort($files);
@@ -155,31 +168,38 @@ class UpgradeCommand extends Command {
         return $this->executeSqlScript(31, $installFile, $io);
     }
     
+    protected function initEventSchema(SymfonyStyle $io): int
+    {
+        $installFile = file_get_contents(__DIR__ . "/../install/init-event-db.sql");
+        
+        return $this->executeSqlScript(31, $installFile, $io, true, true);
+    }
+    
     protected function initUpgradeLog(SymfonyStyle $io): int
     {
         $installFile = file_get_contents(__DIR__ . "/../install/init-migration-table.sql");
         
-        return $this->executeSqlScript(31, $installFile, $io);
+        return $this->executeSqlScript(31, $installFile, $io, true);
     }
     
-    protected function runMigrations(SymfonyStyle $io, bool $oneshot): int
+    protected function runMigrations(SymfonyStyle $io, bool $eventDb, bool $oneshot): int
     {
-        $nextLevel = $this->getNextLevel();
-        $migrations = array_filter($this->getMigrationFiles(), fn ($id) => $id >= $nextLevel, ARRAY_FILTER_USE_KEY);
+        $dir = $eventDb ? "sqls/eventdb" : "sqls";
+        $tbl = $eventDb ? "ovk_events_upgrade_history" : "ovk_upgrade_history";
+        $nextLevel = $this->getNextLevel($eventDb);
+        $migrations = array_filter($this->getMigrationFiles($eventDb), fn ($id) => $id >= $nextLevel,
+            ARRAY_FILTER_USE_KEY);
         
-        if (!sizeof($migrations)) {
-            $io->writeln("Database up to date. Nothing left to do.");
-            
+        if (!sizeof($migrations))
             return 24;
-        }
         
         $uname = addslashes(`whoami`);
         $bar = new ProgressBar($io, sizeof($migrations));
         $bar->setFormat("very_verbose");
         
         foreach ($bar->iterate($migrations) as $num => $migration) {
-            $script = file_get_contents(__DIR__ . "/../install/sqls/$migration");
-            $res = $this->executeSqlScript(100 + $num, $script, $io, true);
+            $script = file_get_contents(__DIR__ . "/../install/$dir/$migration");
+            $res = $this->executeSqlScript(100 + $num, $script, $io, true, $eventDb);
             if ($res != 0) {
                 $io->getErrorStyle()->error("Error while executing migration №$num");
                 
@@ -187,11 +207,13 @@ class UpgradeCommand extends Command {
             }
             
             $t = time();
-            $this->db->query("INSERT INTO ovk_upgrade_history VALUES ($num, $t, \"$uname\");");
+            $this->db->query("INSERT INTO $tbl VALUES ($num, $t, \"$uname\");");
             
             if ($oneshot)
                 return 5;
         }
+        
+        $io->newLine();
         
         return 0;
     }
@@ -210,9 +232,10 @@ class UpgradeCommand extends Command {
         
         $migrationsOk = false;
         $chandlerOk = false;
+        $eventOk = false;
         $ovkOk = false;
         
-        $this->checkDatabaseReadiness($chandlerOk, $ovkOk, $migrationsOk);
+        $this->checkDatabaseReadiness($chandlerOk, $ovkOk, $eventOk, $migrationsOk);
         
         $res = -1;
         if ($chandlerOk === null) {
@@ -255,8 +278,26 @@ class UpgradeCommand extends Command {
                 return 5;
         }
         
+        if ($eventOk !== false) {
+            if ($eventOk === null) {
+                $io->writeln("Initializing event database...");
+                $res = $this->initEventSchema($io);
+                if ($res > 0)
+                    return $res;
+                else if ($oneShotMode)
+                    return 5;
+            }
+            
+            $io->writeln("Upgrading event database...");
+            $res = $this->runMigrations($io, true, $oneShotMode);
+            if ($res == 24)
+                $output->writeln("Event database already up to date.");
+            else if ($res > 0)
+                return $res;
+        }
+        
         $io->writeln("Upgrading database...");
-        $res = $this->runMigrations($io, $oneShotMode);
+        $res = $this->runMigrations($io, false, $oneShotMode);
         
         if (!$res) {
             $io->success("Database has been upgraded!");
@@ -265,6 +306,8 @@ class UpgradeCommand extends Command {
         } else if ($res != 24) {
             return $res;
         }
+        
+        $io->writeln("Database up to date. Nothing left to do.");
         
         return 0;
     }
