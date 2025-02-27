@@ -52,7 +52,7 @@
 /* Profile information */
 
 "select_language" = "Тел сайларга";
-"edit" = "Редактировать";
+"edit" = "Редактцияләргә";
 "birth_date" = "Туган көн";
 "registration_date" = "Теркәлү датасы";
 "hometown" = "Туган шәһәр";
@@ -88,22 +88,22 @@
 "years_few" = "$1 яшь";
 "years_many" = "$1 яшь";
 "years_other" = "$1 яшь";
-"show_my_birthday" = "Показывать дату рождения";
-"show_only_month_and_day" = "Показывать только день и месяц";
-"relationship" = "Семейное положение";
-"relationship_0" = "Не выбрано";
-"relationship_1" = "Не женат";
-"relationship_2" = "Встречаюсь";
-"relationship_3" = "Помолвлен";
-"relationship_4" = "Женат";
-"relationship_5" = "В гражданском браке";
-"relationship_6" = "Влюблён";
-"relationship_7" = "Всё сложно";
-"relationship_8" = "В активном поиске";
-"relationship_1_fem" = "Не замужем";
-"relationship_3_fem" = "Помолвлена";
-"relationship_4_fem" = "Замужем";
-"relationship_6_fem" = "Влюблена";
+"show_my_birthday" = "Туган көнен күрсәтергә";
+"show_only_month_and_day" = "Көн белән айны гына күрсәтергә";
+"relationship" = "Гаилә хәле";
+"relationship_0" = "Сайланмаган";
+"relationship_1" = "Өйләнмәгән";
+"relationship_2" = "Очрашам";
+"relationship_3" = "Ярәшелгән";
+"relationship_4" = "Өйләнгән";
+"relationship_5" = "Гражданнар никахында";
+"relationship_6" = "Гашыйк";
+"relationship_7" = "Барысы да катлаулы";
+"relationship_8" = "Актив эзләүдә";
+"relationship_1_fem" = "Кияүгә чыкмабыз";
+"relationship_3_fem" = "Ярәшелгән";
+"relationship_4_fem" = "Заир";
+"relationship_6_fem" = "Гашыйк";
 "relationship_2_prefix" = "с";
 "relationship_3_prefix" = "с";
 "relationship_4_prefix" = "на";
@@ -111,69 +111,69 @@
 "relationship_5_prefix" = "с";
 "relationship_6_prefix" = "в";
 "relationship_7_prefix" = "с";
-"politViews" = "Полит. взгляды";
-"politViews_0" = "Не выбраны";
-"politViews_1" = "Индифферентные";
-"politViews_2" = "Коммунистические";
-"politViews_3" = "Социалистические";
-"politViews_4" = "Умеренные";
-"politViews_5" = "Либеральные";
-"politViews_6" = "Консервативные";
-"politViews_7" = "Монархические";
-"politViews_8" = "Ультраконсервативные";
-"politViews_9" = "Либертарианские";
-"contact_information" = "Контактная информация";
-"email" = "Электронная почта";
+"politViews" = "Сәяси карашлар";
+"politViews_0" = "Сайланмаган";
+"politViews_1" = "Индифферент";
+"politViews_2" = "Коммунистик";
+"politViews_3" = "Социалистик";
+"politViews_4" = "Уртача";
+"politViews_5" = "Либераль";
+"politViews_6" = "Консерватив";
+"politViews_7" = "Монархик";
+"politViews_8" = "Ультраконсерватив";
+"politViews_9" = "Либертариан";
+"contact_information" = "Контакт мәгълүматы";
+"email" = "Электрон почта";
 "phone" = "Телефон";
 "telegram" = "Telegram";
 "personal_website" = "Личный сайт";
-"city" = "Город";
+"city" = "Шәһәр";
 "address" = "Адрес";
-"personal_information" = "Личная информация";
-"interests" = "Интересы";
-"additional" = "Дополнительно";
-"additional_fields_description" = "Здесь вы можете добавить дополнительную информацию о себе: ссылки на ваши социальные сети, либо же ваши интересы. Максимум можно добавить до $1 таких полей.";
-"additional_field_name" = "Название";
+"personal_information" = "Шәхси мәгълүмат";
+"interests" = "Интереслар";
+"additional" = "Өстәмә";
+"additional_fields_description" = "Биредә сез үзегез турында өстәмә мәгълүмат өсти аласыз: социаль челтәрләргә сылтамалар, я сезнең мәнфәгатьләрегез. Максимумнарга шундый $1 кыр өстәргә мөмкин.";
+"additional_field_name" = "Исеме";
 "additional_field_text" = "Текст";
-"additional_field_place" = "Отображение";
-"additional_field_place_contacts" = "В \"контактах\"";
-"additional_field_place_interests" = "В \"интересах\"";
+"additional_field_place" = "Кисәтү";
+"additional_field_place_contacts" = "\"Контактларда\"";
+"additional_field_place_interests" = "\"Мәнфәгатьләрдә\"";
 
-"favorite_music" = "Любимая музыка";
-"favorite_films" = "Любимые фильмы";
-"favorite_shows" = "Любимые ТВ-шоу";
-"favorite_books" = "Любимые книги";
-"favorite_quotes" = "Любимые цитаты";
-"favorite_games" = "Любимые игры";
-"custom_field_favorite_performers" = "Любимые исполнители";
-"custom_field_favorite_content_makers" = "Любимые контент-мейкеры";
-"custom_field_favorite_anime" = "Любимые аниме";
-"custom_field_favorite_manga" = "Любимая манга";
-"custom_field_favorite_vtubers" = "Любимые витуберы";
-"custom_field_favorite_albums" = "Любимые альбомы";
+"favorite_music" = "Яраткан музыка";
+"favorite_films" = "Яраткан фильмлар";
+"favorite_shows" = "Яраткан ТВ-тамаша";
+"favorite_books" = "Яраткан китаплар";
+"favorite_quotes" = "Яраткан цитаталар";
+"favorite_games" = "Яраткан уеннар";
+"custom_field_favorite_performers" = "Яраткан башкаручылар";
+"custom_field_favorite_content_makers" = "Контентны яраткан иҗат итүчеләр";
+"custom_field_favorite_anime" = "Яраткан аниме";
+"custom_field_favorite_manga" = "Яраткан манга";
+"custom_field_favorite_vtubers" = "Яраткан витубелар";
+"custom_field_favorite_albums" = "Яраткан альбомлар";
 
-"information_about" = "О себе";
-"updated_at" = "Обновлено $1";
-"user_banned" = "К сожалению, нам пришлось заблокировать страницу пользователя <b>$1</b>.";
-"user_banned_comment" = "Комментарий модератора:";
+"information_about" = "Үзем турында";
+"updated_at" = "Яңартылды $1";
+"user_banned" = "Кызганычка каршы, безгә <b>$1</b> кулланучысы битен блокларга туры килде.";
+"user_banned_comment" = "Модератор комментарие:";
 
-"closed_page" = "Закрытая страница";
+"closed_page" = "Ябык бит";
 
-"limited_access_to_page_m" = "$1 ограничил доступ к своей странице.";
-"limited_access_to_page_f" = "$1 ограничила доступ к своей странице.";
+"limited_access_to_page_m" = "$1 үз битенә керү мөмкинлеген чикли.";
+"limited_access_to_page_f" = "$1 үз битенә керү мөмкинлеген чикли.";
 
-"you_can_add" = "Вы можете";
-"add_to_friends_m" = "добавить его в друзья.";
-"add_to_friends_f" = "добавить её в друзья.";
+"you_can_add" = "Сез";
+"add_to_friends_m" = "аны дусларга өсти аласыз.";
+"add_to_friends_f" = "аны дусларга өсти аласыз.";
 
-"register_to_access_page_m" = "Зарегистрируйтесь, чтобы получить доступ к его странице.";
-"register_to_access_page_f" = "Зарегистрируйтесь, чтобы получить доступ к её странице.";
+"register_to_access_page_m" = "Аның битенә керү мөмкинлеге алу өчен теркәлегез.";
+"register_to_access_page_f" = "Аның битенә керү мөмкинлеге алу өчен теркәлегез.";
 
-"private_profile_warning" = "Этот профиль закрытый, но вы имеете к нему доступ, потому что вы — администратор.";
-"private_profile_warning_desc" = "Пожалуйста, уважайте право на личную жизнь и не злоупотребляйте этой возможностью.";
+"private_profile_warning" = "Бу профиль ябык, ләкин сез аңа керү мөмкинлегенә ия, чөнки сез - администратор.";
+"private_profile_warning_desc" = "Зинһар, чит кешенең шәхси тормышын хөрмәт итегез һәм бу мөмкинлектән артык файдаланмагыз.";
 
-"verified_page" = "Подтверждённая страница";
-"user_is_blocked" = "Пользователь заблокирован";
+"verified_page" = "Расланган бит";
+"user_is_blocked" = "Кулланучы блокланган";
 "before" = "кә";
 "forever" = "мәңгегә";
 
@@ -1047,8 +1047,8 @@
 "points" = "Голоса";
 "points_count" = "голосов";
 "on_your_account" = "на вашем счету";
-"top_up_your_account" = "Пополнить баланс";
-"you_still_have_x_points" = "У Вас <b>$1</b> неиспользованных голосов.";
+"top_up_your_account" = "Баланс тулыландыру";
+"you_still_have_x_points" = "Сезнең файдаланылмаган <b>$1</b> тавышыгыз бар.";
 "vouchers" = "Ваучеры";
 "have_voucher" = "Есть ваучер";
 "voucher_token" = "Код ваучера";
@@ -1826,7 +1826,7 @@
 "__transNames" = "";
 "admin_registrationdate" = "Дата регистрации";
 "gifts_left_zero" = "Осталось ноль подарков";
-"admin_gender" = "Пол";
+"admin_gender" = "Җенес";
 
 /* Tutorial */
 
@@ -2002,42 +2002,42 @@
 
 /* Search */
 
-"s_params" = "Параметры поиска";
-"s_people" = "Пользователи";
-"s_groups" = "Группы";
-"s_apps" = "Приложения";
-"s_posts" = "Записи";
-"s_comments" = "Комментарии";
+"s_params" = "Эзләү параметрлары";
+"s_people" = "Кешеләр";
+"s_groups" = "Төркемнәр";
+"s_apps" = "Кушымталар";
+"s_posts" = "Язмалар";
+"s_comments" = "Комментарийлар";
 "s_videos" = "Видео";
 "s_audios" = "Аудио";
-"s_audios_playlists" = "Плейлисты";
-"s_documents" = "Документы";
+"s_audios_playlists" = "Плейлистлар";
+"s_documents" = "Документлар";
 
-"s_by_people" = "по пользователям";
-"s_by_groups" = "по группам";
-"s_by_posts" = "по записям";
-"s_by_comments" = "по комментариям";
-"s_by_videos" = "по видео";
-"s_by_apps" = "по приложениям";
-"s_by_audios" = "по аудиозаписям";
-"s_by_audios_playlists" = "по плейлистам";
-"s_by_documents" = "по документам";
+"s_by_people" = "кешеләр буенча";
+"s_by_groups" = "төркемнәр буенча";
+"s_by_posts" = "язмалар буенча";
+"s_by_comments" = "комментарийлар буенча";
+"s_by_videos" = "видеолар буенча";
+"s_by_apps" = "кушымталар буенча";
+"s_by_audios" = "аудиоязмалар буенча";
+"s_by_audios_playlists" = "плейлистлар буенча";
+"s_by_documents" = "документлар буенча";
 
-"s_order_by" = "Порядок";
+"s_order_by" = "Сортировкалар тибы";
 
-"s_order_by_id" = "По id";
-"s_order_by_name" = "По имени";
-"s_order_by_random" = "По случайности";
-"s_order_by_rating" = "По рейтингу";
-"s_order_by_length" = "По длине";
-"s_order_by_listens" = "По числу прослушиваний";
-"s_order_invert" = "Инвертировать";
-"s_order_by_reg_date" = "По дате регистрации";
-"s_order_by_creation_date" = "По дате создания";
-"s_order_by_publishing_date" = "По дате публикации";
-"s_order_by_upload_date" = "По дате загрузки";
+"s_order_by_id" = "ID буенча";
+"s_order_by_name" = "Исем буенча";
+"s_order_by_random" = "Очраклылык буенча";
+"s_order_by_rating" = "Рейтинг буенча";
+"s_order_by_length" = "Озынлыгы буенча";
+"s_order_by_listens" = "Тыңлаулар саны буенча";
+"s_order_invert" = "Инвертацияләргә";
+"s_order_by_reg_date" = "Теркәлү датасы буенча";
+"s_order_by_creation_date" = "Төзелү датасы буенча";
+"s_order_by_publishing_date" = "Бастыру датасы буенча";
+"s_order_by_upload_date" = "Ватык датасы буенча";
 
-"s_by_date" = "По дате";
+"s_by_date" = "Датасы буенча";
 "s_registered_before" = "Зарегистрирован до";
 "s_registered_after" = "Зарегистрирован после";
 "s_date_before" = "До";
@@ -2065,12 +2065,12 @@
 "showing_x_y" = "(показывается $1—$2)";
 "no_results_by_this_query" = "По данному запросу ничего не найдено.";
 "s_additional" = "Дополнительно";
-"s_it_is_you" = "это вы";
+"s_it_is_you" = "бу сез";
 
 /* BadBrowser */
 
-"deprecated_browser" = "Устаревший браузер";
-"deprecated_browser_description" = "Для просмотра этого контента вам понадобится Firefox ESR 52+ или эквивалентный по функционалу навигатор по всемирной сети интернет. Сожалеем об этом.";
+"deprecated_browser" = "Искергән браузер";
+"deprecated_browser_description" = "Бу контентны карау өчен сезгә Firefox ESR 52+ яки функционалы буенча бөтендөнья Интернет челтәре буенча эквивалентлы навигатор кирәк булачак. Бу турыда үкенәбез.";
 
 /* Statistics */
 
@@ -2212,7 +2212,7 @@
 
 /* Documents */
 
-"my_documents" = "Документы";
+"my_documents" = "Документлар";
 "my_documents_objectively" = "Мои Документы";
 "documents_of_group" = "Документы группы";
 "search_by_documents" = "Поиск по документам...";
