@@ -2038,33 +2038,33 @@
 "s_order_by_upload_date" = "Ватык датасы буенча";
 
 "s_by_date" = "Датасы буенча";
-"s_registered_before" = "Зарегистрирован до";
-"s_registered_after" = "Зарегистрирован после";
-"s_date_before" = "До";
-"s_date_after" = "После";
+"s_registered_before" = "Теркәлгән чаклы";
+"s_registered_after" = "Теркәлгән соңыннан";
+"s_date_before" = "Чаклы";
+"s_date_after" = "Соңыннан";
 
-"s_main" = "Основное";
+"s_main" = "Төп";
 "s_type" = "Тип";
 
-"s_now_on_site" = "cейчас на сайте";
-"s_with_photo" = "с фото";
-"s_only_in_names" = "только в именах";
-"s_only_youtube" = "только с YouTube";
+"s_now_on_site" = "хәзер сайтта";
+"s_with_photo" = "фотодан белән";
+"s_only_in_names" = "исемнәрдә генә";
+"s_only_youtube" = "YouTube белән генә";
 
-"s_any" = "любые";
-"s_any_single" = "любой";
-"reset" = "Сброс";
+"s_any" = "теләсә нинди";
+"s_any_single" = "теләсә кем";
+"reset" = "Ташла";
 
-"closed_group_post" = "Запись с закрытой стены";
-"deleted_target_comment" = "Этот комментарий принадлежит к удалённой записи";
+"closed_group_post" = "Ябык дивардан язылу";
+"deleted_target_comment" = "Бу комментарий бетерелгән язмага калдырылган";
 
-"no_results" = "Результатов нет";
-"s_only_performers" = "По исполнителям";
-"s_with_lyrics" = "С текстом";
+"no_results" = "Результат юк";
+"s_only_performers" = "Башкаручылар буенча";
+"s_with_lyrics" = "Текст белән";
 
-"showing_x_y" = "(показывается $1—$2)";
-"no_results_by_this_query" = "По данному запросу ничего не найдено.";
-"s_additional" = "Дополнительно";
+"showing_x_y" = "($1—$2 күрсәтелә)";
+"no_results_by_this_query" = "Бу сорау буенча берни дә табылмады.";
+"s_additional" = "Өстәмә рәвештә";
 "s_it_is_you" = "бу сез";
 
 /* BadBrowser */
