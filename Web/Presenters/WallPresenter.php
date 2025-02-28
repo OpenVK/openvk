@@ -572,7 +572,7 @@ final class WallPresenter extends OpenVKPresenter
         $user = $this->user->id;
 
         $wallOwner = ($wall > 0 ? (new Users())->get($wall) : (new Clubs())->get($wall * -1));
-        
+
         if ($wallOwner === null) {
             $this->flashFail("err", tr("failed_to_delete_post"), tr("error_4"));
         }
