@@ -317,15 +317,15 @@ final class SupportPresenter extends OpenVKPresenter
             header("HTTP/1.1 403 Forbidden");
             exit();
         }
-        
+
         if ($mark !== 1 && $mark !== 2) {
             header("HTTP/1.1 400 Bad Request");
             exit();
         }
-        
+
         $comment->setMark($mark);
         $comment->save();
-        
+
         header("HTTP/1.1 200 OK");
         exit();
     }
