@@ -18,7 +18,7 @@ final class ContentSearchPresenter extends OpenVKPresenter
     public function renderIndex(): void
     {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $this->template->results = $repo->find([
+            $this->template->results = $this->$repo->find([
                 "query" => $this->postParam("query"),
             ]);
         }

@@ -74,7 +74,6 @@ abstract class OpenVKPresenter extends SimplePresenter
     protected function logInUserWithToken(): void
     {
         $header = $_SERVER["HTTP_AUTHORIZATION"] ?? "";
-        $token;
 
         preg_match("%Bearer (.*)$%", $header, $matches);
         $token = $matches[1] ?? "";

@@ -66,6 +66,7 @@ class DateTime
             case static::RELATIVE_FORMAT_LOWER:
                 return $this->zmdate();
             case static::RELATIVE_FORMAT_SHORT:
+            default:
                 return "";
         }
     }

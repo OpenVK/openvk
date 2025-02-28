@@ -314,17 +314,20 @@ final class SupportPresenter extends OpenVKPresenter
         $comment = $this->comments->get($id);
 
         if ($this->user->id !== $comment->getTicket()->getUser()->getId()) {
-            exit(header("HTTP/1.1 403 Forbidden"));
+            header("HTTP/1.1 403 Forbidden");
+            exit();
         }
-
+        
         if ($mark !== 1 && $mark !== 2) {
-            exit(header("HTTP/1.1 400 Bad Request"));
+            header("HTTP/1.1 400 Bad Request");
+            exit();
         }
-
+        
         $comment->setMark($mark);
         $comment->save();
-
-        exit(header("HTTP/1.1 200 OK"));
+        
+        header("HTTP/1.1 200 OK");
+        exit();
     }
 
     public function renderQuickBanInSupport(int $id): void
