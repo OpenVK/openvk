@@ -11,7 +11,7 @@ use openvk\Web\Models\Entities\{User, SupportAgent};
 class SupportAgents
 {
     private $context;
-    private $tickets;
+    private $agents;
 
     public function __construct()
     {

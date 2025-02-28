@@ -13,6 +13,8 @@ class ChandlerGroups
 {
     private $context;
     private $groups;
+    private $members;
+    private $perms;
 
     public function __construct()
     {

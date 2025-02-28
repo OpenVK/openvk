@@ -152,7 +152,7 @@ class Documents
             switch ($paramName) {
                 case "type":
                     if ($paramValue < 1 || $paramValue > 8) {
-                        continue;
+                        break;
                     }
                     $result->where("type", $paramValue);
                     break;

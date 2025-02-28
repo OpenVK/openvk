@@ -255,7 +255,7 @@ final class AdminPresenter extends OpenVKPresenter
     {
         $this->warnIfNoCommerce();
 
-        $cat;
+        $cat = null;
         $gen = false;
         if ($id !== 0) {
             $cat = $this->gifts->getCat($id);

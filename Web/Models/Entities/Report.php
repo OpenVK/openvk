@@ -45,11 +45,7 @@ class Report extends RowModel
 
     public function isDeleted(): bool
     {
-        if ($this->getRecord()->deleted === 0) {
-            return false;
-        } elseif ($this->getRecord()->deleted === 1) {
-            return true;
-        }
+        return $this->getRecord()->deleted === 1;
     }
 
     public function authorId(): int

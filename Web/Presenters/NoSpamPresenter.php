@@ -151,77 +151,6 @@ final class NoSpamPresenter extends OpenVKPresenter
         $this->assertNoCSRF();
         $this->willExecuteWriteAction();
 
-        function searchByAdditionalParams(?string $table = null, ?string $where = null, ?string $ip = null, ?string $useragent = null, ?int $ts = null, ?int $te = null, $user = null)
-        {
-            $db = DatabaseConnection::i()->getContext();
-            if ($table && ($ip || $useragent || $ts || $te || $user)) {
-                $conditions = [];
-
-                if ($ip) {
-                    $conditions[] = "`ip` REGEXP '$ip'";
-                }
-                if ($useragent) {
-                    $conditions[] = "`useragent` REGEXP '$useragent'";
-                }
-                if ($ts) {
-                    $conditions[] = "`ts` < $ts";
-                }
-                if ($te) {
-                    $conditions[] = "`ts` > $te";
-                }
-                if ($user) {
-                    $users = new Users();
-
-                    $_user = $users->getByChandlerUser((new ChandlerUsers())->getById($user))
-                        ?? $users->get((int) $user)
-                        ?? $users->getByAddress($user)
-                        ?? null;
-
-                    if ($_user) {
-                        $conditions[] = "`user` = '" . $_user->getChandlerGUID() . "'";
-                    }
-                }
-
-                $whereStart = "WHERE `object_table` = '$table'";
-                if ($table === "profiles") {
-                    $whereStart .= "AND `type` = 0";
-                }
-
-                $conditions = count($conditions) > 0 ? "AND (" . implode(" AND ", $conditions) . ")" : "";
-                $response = [];
-
-                if ($conditions) {
-                    $logs = $db->query("SELECT * FROM `ChandlerLogs` $whereStart $conditions GROUP BY `object_id`, `object_model`");
-
-                    foreach ($logs as $log) {
-                        $log = (new Logs())->get($log->id);
-                        $object = $log->getObject()->unwrap();
-
-                        if (!$object) {
-                            continue;
-                        }
-                        if ($where) {
-                            if (str_starts_with($where, " AND")) {
-                                $where = substr_replace($where, "", 0, strlen(" AND"));
-                            }
-
-                            $a = $db->query("SELECT * FROM `$table` WHERE $where")->fetchAll();
-                            foreach ($a as $o) {
-                                if ($object->id == $o["id"]) {
-                                    $response[] = $object;
-                                }
-                            }
-
-                        } else {
-                            $response[] = $object;
-                        }
-                    }
-                }
-
-                return $response;
-            }
-        }
-
         try {
             $response = [];
             $processed = 0;
@@ -290,7 +219,7 @@ final class NoSpamPresenter extends OpenVKPresenter
                 }
 
                 if ($ip || $useragent || $ts || $te || $user) {
-                    $rows = searchByAdditionalParams($table, $where, $ip, $useragent, $ts, $te, $user);
+                    $rows = $this->searchByAdditionalParams($table, $where, $ip, $useragent, $ts, $te, $user);
                 } else {
                     if (!$where) {
                         $rows = [];
@@ -406,6 +335,77 @@ final class NoSpamPresenter extends OpenVKPresenter
             $this->returnJson(["success" => true, "processed" => $processed, "count" => count($response), "list" => $response]);
         } catch (\Throwable $e) {
             $this->returnJson(["success" => false, "error" => $e->getMessage()]);
+        }
+    }
+
+    private function searchByAdditionalParams(?string $table = null, ?string $where = null, ?string $ip = null, ?string $useragent = null, ?int $ts = null, ?int $te = null, $user = null)
+    {
+        $db = DatabaseConnection::i()->getContext();
+        if ($table && ($ip || $useragent || $ts || $te || $user)) {
+            $conditions = [];
+
+            if ($ip) {
+                $conditions[] = "`ip` REGEXP '$ip'";
+            }
+            if ($useragent) {
+                $conditions[] = "`useragent` REGEXP '$useragent'";
+            }
+            if ($ts) {
+                $conditions[] = "`ts` < $ts";
+            }
+            if ($te) {
+                $conditions[] = "`ts` > $te";
+            }
+            if ($user) {
+                $users = new Users();
+
+                $_user = $users->getByChandlerUser((new ChandlerUsers())->getById($user))
+                    ?? $users->get((int) $user)
+                    ?? $users->getByAddress($user)
+                    ?? null;
+
+                if ($_user) {
+                    $conditions[] = "`user` = '" . $_user->getChandlerGUID() . "'";
+                }
+            }
+
+            $whereStart = "WHERE `object_table` = '$table'";
+            if ($table === "profiles") {
+                $whereStart .= "AND `type` = 0";
+            }
+
+            $conditions = count($conditions) > 0 ? "AND (" . implode(" AND ", $conditions) . ")" : "";
+            $response = [];
+
+            if ($conditions) {
+                $logs = $db->query("SELECT * FROM `ChandlerLogs` $whereStart $conditions GROUP BY `object_id`, `object_model`");
+
+                foreach ($logs as $log) {
+                    $log = (new Logs())->get($log->id);
+                    $object = $log->getObject()->unwrap();
+
+                    if (!$object) {
+                        continue;
+                    }
+                    if ($where) {
+                        if (str_starts_with($where, " AND")) {
+                            $where = substr_replace($where, "", 0, strlen(" AND"));
+                        }
+
+                        $a = $db->query("SELECT * FROM `$table` WHERE $where")->fetchAll();
+                        foreach ($a as $o) {
+                            if ($object->id == $o["id"]) {
+                                $response[] = $object;
+                            }
+                        }
+
+                    } else {
+                        $response[] = $object;
+                    }
+                }
+            }
+
+            return $response;
         }
     }
 }

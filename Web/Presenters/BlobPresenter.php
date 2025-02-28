@@ -34,7 +34,8 @@ final class BlobPresenter extends OpenVKPresenter
         }
 
         if (isset($_SERVER["HTTP_IF_NONE_MATCH"])) {
-            exit(header("HTTP/1.1 304 Not Modified"));
+            header("HTTP/1.1 304 Not Modified");
+            exit();
         }
 
         header("Content-Type: " . mime_content_type($path));

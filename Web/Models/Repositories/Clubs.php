@@ -91,7 +91,7 @@ class Clubs
         return (clone $this->clubs)->count('*');
     }
 
-    public function getPopularClubs(): \Traversable
+    public function getPopularClubs(): ?\Traversable
     {
         // TODO rewrite
 
@@ -106,6 +106,8 @@ class Clubs
                 "subscriptions" => $entry["subscriptions"],
             ];
         */
+        trigger_error("Clubs::getPopularClubs() is currently commented out and returns null", E_USER_WARNING);
+        return null;
     }
 
     public function getWriteableClubs(int $id): \Traversable

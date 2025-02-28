@@ -112,7 +112,6 @@ class Gift extends RowModel
 
     public function setImage(string $file): bool
     {
-        $imgBlob;
         try {
             $image = Image::fromFile($file);
             $image->resize(512, 512, Image::SHRINK_ONLY);

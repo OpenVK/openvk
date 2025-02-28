@@ -248,8 +248,9 @@ final class Board extends VKAPIRequestHandler
         return 1;
     }
 
-    public function editComment(int $comment_id, int $group_id = 0, int $topic_id = 0, string $message, string $attachments)
+    public function editComment(string $message, string $attachments, int $comment_id, int $group_id = 0, int $topic_id = 0)
     {
+        # FIXME
         /*
         $this->requireUser();
         $this->willExecuteWriteAction();

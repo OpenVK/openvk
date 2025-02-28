@@ -1,7 +1,8 @@
 {
     "scripts": {
         "fix": "php-cs-fixer fix",
-        "lint": "php-cs-fixer fix --dry-run --diff --verbose"
+        "lint": "php-cs-fixer fix --dry-run --diff --verbose",
+        "analyse": "phpstan analyse --memory-limit 1G"
     },
     "require": {
         "php": "~7.3||~8.1",
@@ -28,6 +29,7 @@
     },
     "minimum-stability": "beta",
     "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.68"
+        "friendsofphp/php-cs-fixer": "^3.68",
+        "phpstan/phpstan": "^2.1"
     }
 }

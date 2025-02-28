@@ -64,13 +64,15 @@ class Notification
         return $this->recipient;
     }
 
-    public function getModel(int $index): RowModel
+    public function getModel(int $index): ?RowModel
     {
         switch ($index) {
             case 0:
                 return $this->originModel;
             case 1:
                 return $this->targetModel;
+            default:
+                return null;
         }
     }
 

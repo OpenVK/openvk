@@ -932,6 +932,7 @@ class User extends RowModel
             case 1:
                 return tr('female');
             case 2:
+            default:
                 return tr('neutral');
         }
     }
@@ -1559,14 +1560,14 @@ class User extends RowModel
                     break;
                 case "blacklisted_by_me":
                     if (!$user) {
-                        continue;
+                        break;
                     }
 
                     $res->blacklisted_by_me = (int) $this->isBlacklistedBy($user);
                     break;
                 case "blacklisted":
                     if (!$user) {
-                        continue;
+                        break;
                     }
 
                     $res->blacklisted = (int) $user->isBlacklistedBy($this);

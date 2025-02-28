@@ -292,14 +292,14 @@ final class Users extends VKAPIRequestHandler
                                 break;
                             case 'blacklisted_by_me':
                                 if (!$authuser) {
-                                    continue;
+                                    break;
                                 }
 
                                 $response[$i]->blacklisted_by_me = (int) $usr->isBlacklistedBy($this->getUser());
                                 break;
                             case 'blacklisted':
                                 if (!$authuser) {
-                                    continue;
+                                    break;
                                 }
 
                                 $response[$i]->blacklisted = (int) $this->getUser()->isBlacklistedBy($usr);
@@ -383,7 +383,8 @@ final class Users extends VKAPIRequestHandler
         string $fav_music = "",
         string $fav_films = "",
         string $fav_shows = "",
-        string $fav_books = ""
+        string $fav_books = "",
+        string $interests = ""
     ) {
         if ($count > 100) {
             $this->fail(100, "One of the parameters specified was missing or invalid: count should be less or equal to 100");

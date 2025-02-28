@@ -88,25 +88,6 @@ class Themepacks implements \ArrayAccess
 
     /* /ArrayAccess */
 
-    public function install(string $archivePath): bool
-    {
-        if (!file_exists($archivePath)) {
-            return false;
-        }
-
-        $tmpDir = mkdir(tempnam(OPENVK_ROOT . "/tmp/themepack_artifacts/", "themex_"));
-        try {
-            $archive = new \CabArchive($archivePath);
-            $archive->extract($tmpDir);
-
-            return $this->installUnpacked($tmpDir);
-        } catch (\Exception $e) {
-            return false;
-        } finally {
-            rmdir($tmpDir);
-        }
-    }
-
     public function uninstall(string $id): bool
     {
         if (!isset($loadedThemepacks[$id])) {

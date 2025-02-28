@@ -6,6 +6,7 @@ namespace openvk\Web\Presenters;
 
 use openvk\Web\Models\Entities\{Topic, Club, Comment, Photo, Video};
 use openvk\Web\Models\Repositories\{Topics, Clubs};
+use Nette\InvalidStateException as ISE;
 
 final class TopicsPresenter extends OpenVKPresenter
 {
@@ -112,9 +113,6 @@ final class TopicsPresenter extends OpenVKPresenter
                 $video = null;
                 if ($_FILES["_pic_attachment"]["error"] === UPLOAD_ERR_OK) {
                     $album = null;
-                    if ($wall > 0 && $wall === $this->user->id) {
-                        $album = (new Albums())->getUserWallAlbum($wallOwner);
-                    }
 
                     $photo = Photo::fastMake($this->user->id, $this->postParam("text"), $_FILES["_pic_attachment"], $album);
                 }

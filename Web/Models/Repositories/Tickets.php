@@ -57,7 +57,7 @@ class Tickets
     {
         $requests = $this->tickets->where(["id" => $requestId])->fetch();
         if (!is_null($requests)) {
-            return new Req($requests);
+            return new Ticket($requests);
         } else {
             return null;
         }

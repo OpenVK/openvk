@@ -385,9 +385,9 @@ class Photo extends Media
         }
     }
 
-    public static function fastMake(int $owner, string $description = "", array $file, ?Album $album = null, bool $anon = false): Photo
+    public static function fastMake(int $owner, string $description, array $file, ?Album $album = null, bool $anon = false): Photo
     {
-        $photo = new static();
+        $photo = new Photo();
         $photo->setOwner($owner);
         $photo->setDescription(iconv_substr($description, 0, 36) . "...");
         $photo->setAnonymous($anon);

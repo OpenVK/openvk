@@ -7,9 +7,7 @@ namespace openvk;
 
 use Symfony\Component\Console\Application;
 
-$_SERVER["HTTP_ACCEPT_LANGUAGE"] = false;
-$bootstrap = require(__DIR__ . "/../../../chandler/Bootstrap.php");
-$bootstrap->ignite(true);
+require(__DIR__ . "/chandler_loader.php");
 
 $application = new Application();
 $application->add(new CLI\RebuildImagesCommand());
