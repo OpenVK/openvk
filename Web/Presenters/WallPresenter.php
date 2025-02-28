@@ -265,8 +265,11 @@ final class WallPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
 
-        $wallOwner = ($wall > 0 ? (new Users())->get($wall) : (new Clubs())->get($wall * -1))
-                     ?? $this->flashFail("err", tr("failed_to_publish_post"), tr("error_4"));
+        $wallOwner = ($wall > 0 ? (new Users())->get($wall) : (new Clubs())->get($wall * -1));
+
+        if ($wallOwner === null) {
+            $this->flashFail("err", tr("failed_to_publish_post"), tr("error_4"));
+        }
 
         if ($wallOwner->isBanned()) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
@@ -568,8 +571,11 @@ final class WallPresenter extends OpenVKPresenter
         }
         $user = $this->user->id;
 
-        $wallOwner = ($wall > 0 ? (new Users())->get($wall) : (new Clubs())->get($wall * -1))
-                     ?? $this->flashFail("err", tr("failed_to_delete_post"), tr("error_4"));
+        $wallOwner = ($wall > 0 ? (new Users())->get($wall) : (new Clubs())->get($wall * -1));
+        
+        if ($wallOwner === null) {
+            $this->flashFail("err", tr("failed_to_delete_post"), tr("error_4"));
+        }
 
         if ($wallOwner->isBanned()) {
             $this->flashFail("err", tr("error"), tr("forbidden"));

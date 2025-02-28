@@ -9,6 +9,7 @@ use Chandler\MVC\SimplePresenter;
 use Chandler\Session\Session;
 use Chandler\Security\Authenticator;
 use Latte\Engine as TemplatingEngine;
+use Nette\InvalidStateException as ISE;
 use openvk\Web\Models\Entities\IP;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets, Reports, CurrentUser, Posts};
@@ -129,7 +130,7 @@ abstract class OpenVKPresenter extends SimplePresenter
         }
 
         if ($throw) {
-            throw new SecurityPolicyViolationException("Permission error");
+            throw new ISE("Permission error");
         } else {
             $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
         }

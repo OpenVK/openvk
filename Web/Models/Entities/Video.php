@@ -109,7 +109,7 @@ class Video extends Media
         } elseif (!is_null($this->getRecord()->link)) {
             return Video::TYPE_EMBED;
         }
-        return VIDEO::TYPE_UNKNOWN;
+        return Video::TYPE_UNKNOWN;
     }
 
     public function getVideoDriver(): ?VideoDriver
@@ -240,7 +240,7 @@ class Video extends Media
         $this->save();
     }
 
-    public static function fastMake(int $owner, string $name = "Unnamed Video.ogv", string $description = "", array $file, bool $unlisted = true, bool $anon = false): Video
+    public static function fastMake(int $owner, string $name, string $description, array $file, bool $unlisted = true, bool $anon = false): Video
     {
         if (OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']) {
             exit(VIDEOS_FRIENDLY_ERROR);
