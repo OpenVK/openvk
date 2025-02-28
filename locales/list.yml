@@ -89,7 +89,7 @@ list:
     name: "Indonesian"
     native_name: "Bahasa Indonesia"
     author: "loliconazter"
-  - code: "tat"
+  - code: "tt"
     flag: "tat"
     name: "Tatar"
     native_name: "Татарча"
