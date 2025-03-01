@@ -7,6 +7,7 @@ namespace openvk\Web\Models\Repositories;
 use Chandler\Database\DatabaseConnection as DB;
 use Nette\Database\Table\{ActiveRow, Selection};
 use openvk\Web\Models\Entities\BannedLink;
+
 use function Symfony\Component\Translation\t;
 
 class BannedLinks
@@ -62,10 +63,11 @@ class BannedLinks
     public function genEntries($links, $uri): \Traversable
     {
         foreach ($links as $link) {
-            if (preg_match($link->getRegexpRule(), $uri))
+            if (preg_match($link->getRegexpRule(), $uri)) {
                 yield $link->getId();
-            else if ($this->isDomainBanned($link->getDomain()))
+            } elseif ($this->isDomainBanned($link->getDomain())) {
                 yield $link->getId();
+            }
         }
     }
 
