@@ -945,43 +945,43 @@ final class UserPresenter extends OpenVKPresenter
         }
     }
 
-    function renderFave(): void
+    public function renderFave(): void
     {
         $this->assertUserLoggedIn();
 
-        $page    = (int)($this->queryParam("p") ?? 1);
+        $page    = (int) ($this->queryParam("p") ?? 1);
         $section = $this->queryParam("section") ?? "posts";
         $display_section = "posts";
-        $data    = NULL;
+        $data    = null;
         $count   = 0;
 
-        switch($section) {
+        switch ($section) {
             default:
                 $this->notFound();
                 break;
             case 'wall':
             case 'post':
             case 'posts':
-                $data = (new Faves)->fetchLikesSection($this->user->identity, 'Post', $page);
-                $count = (new Faves)->fetchLikesSectionCount($this->user->identity, 'Post');
+                $data = (new Faves())->fetchLikesSection($this->user->identity, 'Post', $page);
+                $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Post');
                 $display_section = "posts";
                 break;
             case 'comment':
             case 'comments':
-                $data = (new Faves)->fetchLikesSection($this->user->identity, 'Comment', $page);
-                $count = (new Faves)->fetchLikesSectionCount($this->user->identity, 'Comment');
+                $data = (new Faves())->fetchLikesSection($this->user->identity, 'Comment', $page);
+                $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Comment');
                 $display_section = "comments";
                 break;
             case 'photo':
             case 'photos':
-                $data = (new Faves)->fetchLikesSection($this->user->identity, 'Photo', $page);
-                $count = (new Faves)->fetchLikesSectionCount($this->user->identity, 'Photo');
+                $data = (new Faves())->fetchLikesSection($this->user->identity, 'Photo', $page);
+                $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Photo');
                 $display_section = "photos";
                 break;
             case 'video':
             case 'videos':
-                $data = (new Faves)->fetchLikesSection($this->user->identity, 'Video', $page);
-                $count = (new Faves)->fetchLikesSectionCount($this->user->identity, 'Video');
+                $data = (new Faves())->fetchLikesSection($this->user->identity, 'Video', $page);
+                $count = (new Faves())->fetchLikesSectionCount($this->user->identity, 'Video');
                 $display_section = "videos";
                 break;
         }

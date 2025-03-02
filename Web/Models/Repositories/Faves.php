@@ -1,5 +1,9 @@
-<?php declare(strict_types=1);
+<?php 
+
+declare(strict_types=1);
+
 namespace openvk\Web\Models\Repositories;
+
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Entities\User;
 use Nette\Database\Table\ActiveRow;
@@ -9,7 +13,7 @@ class Faves
     private $context;
     private $likes;
     
-    function __construct()
+    private function __construct()
     {
         $this->context  = DatabaseConnection::i()->getContext();
         $this->likes = $this->context->table("likes");
@@ -25,7 +29,7 @@ class Faves
         return $fetch;
     }
 
-    function fetchLikesSection(User $user, string $class = 'Post', int $page = 1, ?int $perPage = NULL): \Traversable
+    public function fetchLikesSection(User $user, string $class = 'Post', int $page = 1, ?int $perPage = NULL): \Traversable
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
         $fetch = $this->fetchLikes($user, $class)->page($page, $perPage)->order("index DESC");
@@ -41,7 +45,7 @@ class Faves
         }
     }
 
-    function fetchLikesSectionCount(User $user, string $class = 'Post') 
+    public function fetchLikesSectionCount(User $user, string $class = 'Post') 
     {
         return $this->fetchLikes($user, $class)->count();
     }
