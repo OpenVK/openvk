@@ -28,7 +28,7 @@ class Faves
     function fetchLikesSection(User $user, string $class = 'Post', int $page = 1, ?int $perPage = NULL): \Traversable
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
-        $fetch = $this->fetchLikes($user, $class)->page($page, $perPage);
+        $fetch = $this->fetchLikes($user, $class)->page($page, $perPage)->order("index DESC");
         foreach($fetch as $like) {
             $className = "openvk\\Web\\Models\\Repositories\\".$class."s";
             $repo = new $className;
