@@ -568,7 +568,7 @@
 "notes_list_other" = "Знайдено $1 нотаток";
 
 /* Notes: Article Viewer */
-"aw_legacy_ui" = "Класичне дієвидло";
+"aw_legacy_ui" = "Класичний інтерфейс";
 
 "select_note" = "Вибір нотатки";
 "no_notes" = "Ви не маєте жодної нотатки";
@@ -656,6 +656,7 @@
 "search_for_notes" = "Пошук нотаток";
 "search_for_audios" = "Пошук музики";
 "search_for_audios_playlists" = "Пошук списків відтворення";
+"search_for_docs" = "Пошук документів";
 "search_button" = "Знайти";
 "search_placeholder" = "Почніть вводити будь-яке ім'я, назву чи слово";
 "results_zero" = "Немає результатів";
@@ -1200,13 +1201,15 @@
 "report_question_text" = "Що саме Ви вважаєте неприпустимим у цьому матеріалі?";
 "report_reason" = "Причина скарги";
 "reason" = "Причина";
-"going_to_report_app" = "Ви збираєтеся поскаржитися на цей застосунок.";
-"going_to_report_club" = "Ви збираєтеся поскаржитися на цю спільноту.";
-"going_to_report_photo" = "Ви збираєтеся поскаржитися на цю фотографію.";
-"going_to_report_user" = "Ви збираєтеся поскаржитися на цього користувача.";
-"going_to_report_video" = "Ви збираєтеся поскаржитися на цей відеозапис.";
-"going_to_report_post" = "Ви збираєтеся поскаржитися на цей запис.";
-"going_to_report_comment" = "Ви збираєтеся поскаржитися на цей коментар.";
+"going_to_report_app" = "Ви бажаєте поскаржитися на цей застосунок.";
+"going_to_report_club" = "Ви бажаєте поскаржитися на цю спільноту.";
+"going_to_report_photo" = "Ви бажаєте поскаржитися на цю фотографію.";
+"going_to_report_user" = "Ви бажаєте поскаржитися на цього користувача.";
+"going_to_report_video" = "Ви бажаєте поскаржитися на цей відеозапис.";
+"going_to_report_audio" = "Ви бажаєте поскаржитися на цей аудіозапис.";
+"going_to_report_doc" = "Ви бажаєте поскаржитися на цей документ.";
+"going_to_report_post" = "Ви бажаєте поскаржитися на цей запис.";
+"going_to_report_comment" = "Ви бажаєте поскаржитися на цей коментар.";
 
 "comment" = "Коментар";
 "sender" = "Відправник";
@@ -1931,7 +1934,7 @@
 "tour_section_12_text_2_1" = "Ви можете задати варіант показу аватара користувача: стандартне, заокруглені та квадратні (1:1)";
 "tour_section_12_text_2_2" = "Ці налаштування буде видно тільки Вам";
 "tour_section_12_title_3" = "Редагування правого меню";
-"tour_section_12_text_3_1" = "За потреби, ви можете приховати непотрібні розділи сайту";
+"tour_section_12_text_3_1" = "Ви можете приховати непотрібні розділи сайту";
 "tour_section_12_text_3_2" = "<b>Нагадування: </b>Розділи першої потреби (Моя Сторінка; Мої Друзі; Мої Відповіді; Мої Налаштування) приховати не можна";
 "tour_section_12_title_4" = "Вид дописів";
 "tour_section_12_text_4_1" = "Якщо набрид старий дизайн стіни, який був у колись популярному оригінальному ВКонтакті, то ви завжди можете змінити вигляд дописів на Мікроблог";
@@ -1977,14 +1980,16 @@
 "s_videos" = "Відео";
 "s_audios" = "Музика";
 "s_audios_playlists" = "Списки відтворення";
-"s_by_people" = "за користувачами";
-"s_by_groups" = "за спільнотами";
-"s_by_posts" = "за дописах";
-"s_by_comments" = "за коментарями";
-"s_by_videos" = "за відео";
-"s_by_apps" = "за застосунках";
-"s_by_audios" = "за аудіозаписами";
-"s_by_audios_playlists" = "за списках відтворення";
+"s_documents" = "Документи";
+"s_by_people" = "по користувачах";
+"s_by_groups" = "по спільнотах";
+"s_by_posts" = "по дописах";
+"s_by_comments" = "по коментарях";
+"s_by_videos" = "по відео";
+"s_by_apps" = "по застосунках";
+"s_by_audios" = "по аудіозаписах";
+"s_by_audios_playlists" = "по списках відтворення";
+"s_by_documents" = "по документах";
 
 "s_order_by" = "Сортувати за...";
 
@@ -2007,6 +2012,7 @@
 "s_date_after" = "Після";
 
 "s_main" = "Основне";
+"s_type" = "Тип";
 
 "s_now_on_site" = "зараз на сайті";
 "s_with_photo" = "з фото";
@@ -2161,3 +2167,74 @@
 "upd_in_general" = "Оновлення фото сторінки";
 "on_wall" = "На стіні";
 "sign_short" = "Підпис";
+
+/* Documents */
+
+"my_documents" = "Документи";
+"my_documents_objectively" = "Мої Документи";
+"documents_of_group" = "Документи спільноти";
+"search_by_documents" = "Пошук по документах...";
+"documents" = "Документи";
+"document_uploading_in_general" = "Завантаження документа";
+"document_editing_in_general" = "Редагування документа";
+"file" = "Файл";
+"tags" = "Теги";
+"owner_is_hidden" = "Автор прихований";
+"accessbility" = "Доступність";
+"download_file" = "Завантажити файл";
+"remove" = "Видалити";
+
+"document" = "Документ";
+"documents_all" = "Всі документи";
+"document_type_0" = "Всі";
+"document_type_1" = "Текстові";
+"document_type_2" = "Архіви";
+"document_type_3" = "GIF";
+"document_type_4" = "Зображення";
+"document_type_5" = "Аудіо";
+"document_type_6" = "Відео";
+"document_type_7" = "Книги";
+"document_type_8" = "Інше";
+
+"documents_one" = "$1 документ";
+"documents_few" = "$1 документа";
+"documents_many" = "$1 документів";
+"documents_other" = "$1 документів";
+"documents_zero" = "$1 документів";
+
+"you_have_x_documents_one" = "У Вас $1 документ";
+"you_have_x_documents_few" = "У Вас $1 документа";
+"you_have_x_documents_many" = "У Вас $1 документів";
+"you_have_x_documents_other" = "У Вас $1 документів";
+"you_have_x_documents_zero" = "У Вас $1 документів";
+
+"group_has_x_documents_one" = "Ця спільнота має $1 документ";
+"group_has_x_documents_few" = "Ця спільнота має $1 документа";
+"group_has_x_documents_many" = "Ця спільнота має $1 документів";
+"group_has_x_documents_other" = "Ця спільнота має $1 документів";
+"group_has_x_documents_zero" = "Ця спільнота має $1 документів";
+
+"x_documents_in_tab_one" = "Ця вкладка має $1 документ";
+"x_documents_in_tab_few" = "Ця вкладка має $1 документа";
+"x_documents_in_tab_many" = "Ця вкладка має $1 документів";
+"x_documents_in_tab_other" = "Ця вкладка має $1 документів";
+"x_documents_in_tab_zero" = "Ця вкладка має $1 документів";
+
+"there_is_no_documents_alright" = "Тут немає документів.";
+"limitations_file_limit_size" = "Файл не може перевищувати $1 МБ";
+"limitations_file_allowed_formats" = "Дозволені наступні типи файлів";
+"limitations_file_author_rights" = "Файл не має порушувати авторські та суміжні права";
+"select_file_fp" = "Обрати файл";
+"error_file_too_big" = "Файл перевищує ліміт розміру.";
+"error_file_invalid_format" = "Файл має заборонене розширення.";
+"error_file_adding_copied" = "Не вдалося завантажити файл; його вже додано.";
+"error_file_preview" = "Не вдалося завантажити файл: файл пошкоджено.";
+
+"private_document" = "Приватний (за посиланням)";
+"public_document" = "Публічний";
+"documents_sort_add" = "За датою завантаження";
+"documents_sort_alphabet" = "A-Z/А-Я";
+"documents_sort_size" = "За розміром";
+"select_doc" = "Вибір документа";
+"no_documents" = "Документів немає";
+"go_to_my_documents" = "Перейти до моїх документів";
