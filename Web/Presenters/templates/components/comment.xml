@@ -60,8 +60,9 @@
                                 <a href="javascript:reportComment({$comment->getId()})">{_report}</a>
                             {/if}
                             <div style="float: right; font-size: .7rem;">
+                                {var $isLiked = $comment->hasLikeFrom($thisUser)}
                                 <a class="post-like-button" href="/comment{$comment->getId()}/like?hash={rawurlencode($csrfToken)}" data-likes='{$likesCount}' data-id="1_{$comment->getPrettyId()}" data-type='comment'>
-                                    <div class="heart" style="{if $comment->hasLikeFrom($thisUser)}opacity: 1;{else}opacity: 0.4;{/if}"></div>
+                                    <div class="heart" n:attr="id => $isLiked ? liked" style="{if $isLiked}opacity: 1;{else}opacity: 0.4;{/if}"></div>
                                     <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
                                 </a>
                             </div>

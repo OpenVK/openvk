@@ -696,6 +696,17 @@
                             <span class="nobold">{_my_documents}</span>
                         </td>
                     </tr>
+                    <tr>
+                        <td width="120" valign="top" align="right" align="right">
+                            <input
+                                  n:attr="checked => $user->getLeftMenuItemStatus('fave')"
+                                  type="checkbox"
+                                  name="menu_feva" />
+                        </td>
+                        <td>
+                            <span class="nobold">{_bookmarks_tab}</span>
+                        </td>
+                    </tr>
                     <tr n:if="sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0">
                         <td width="120" valign="top" align="right" align="right">
                             <input

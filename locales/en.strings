@@ -641,6 +641,8 @@
 "my_feed" = "My Feed";
 "my_feedback" = "My Feedback";
 "my_settings" = "My Settings";
+"bookmarks" = "Bookmarks";
+"bookmarks_tab" = "Saved";
 "bug_tracker" = "Bug Tracker";
 
 "menu_settings" = "Settings";
@@ -2113,6 +2115,7 @@
 "s_apps" = "Applications";
 "s_posts" = "Posts";
 "s_comments" = "Comments";
+"s_photos" = "Photos";
 "s_videos" = "Videos";
 "s_audios" = "Music";
 "s_audios_playlists" = "Playlists";
@@ -2385,3 +2388,17 @@
 "select_doc" = "Attach document";
 "no_documents" = "No documents found";
 "go_to_my_documents" = "Go to own documents";
+
+/* Fave */
+
+"faves" = "Bookmarks";
+"faves_empty_tip" = "There will be your liked content.";
+"faves_posts_empty_tip" = "There will be posts liked by you.";
+"faves_comments_empty_tip" = "There will be comments liked by you.";
+"faves_photos_empty_tip" = "There will be photos liked by you.";
+"faves_videos_empty_tip" = "There will be videos liked by you.";
+"faves_zero" = "No bookmarks";
+"faves_one" = "One bookmark";
+"faves_few" = "$1 bookmarks";
+"faves_many" = "$1 bookmarks";
+"faves_other" = "$1 bookmarks";

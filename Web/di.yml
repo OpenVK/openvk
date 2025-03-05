@@ -54,5 +54,6 @@ services:
     - openvk\Web\Models\Repositories\BannedLinks
     - openvk\Web\Models\Repositories\ChandlerGroups
     - openvk\Web\Models\Repositories\Documents
+    - openvk\Web\Models\Repositories\Faves
     - openvk\Web\Presenters\MaintenancePresenter
     - openvk\Web\Presenters\NoSpamPresenter
