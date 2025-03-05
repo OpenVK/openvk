@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 declare(strict_types=1);
 
@@ -13,7 +13,7 @@ class Faves
     private $context;
     private $likes;
     
-    private function __construct()
+    public function __construct()
     {
         $this->context  = DatabaseConnection::i()->getContext();
         $this->likes = $this->context->table("likes");
@@ -29,14 +29,14 @@ class Faves
         return $fetch;
     }
 
-    public function fetchLikesSection(User $user, string $class = 'Post', int $page = 1, ?int $perPage = NULL): \Traversable
+    public function fetchLikesSection(User $user, string $class = 'Post', int $page = 1, ?int $perPage = null): \Traversable
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
         $fetch = $this->fetchLikes($user, $class)->page($page, $perPage)->order("index DESC");
-        foreach($fetch as $like) {
-            $className = "openvk\\Web\\Models\\Repositories\\".$class."s";
-            $repo = new $className;
-            if(!$repo) {
+        foreach ($fetch as $like) {
+            $className = "openvk\\Web\\Models\\Repositories\\" . $class . "s";
+            $repo = new $className();
+            if (!$repo) {
                 continue;
             }
 
@@ -45,7 +45,7 @@ class Faves
         }
     }
 
-    public function fetchLikesSectionCount(User $user, string $class = 'Post') 
+    public function fetchLikesSectionCount(User $user, string $class = 'Post')
     {
         return $this->fetchLikes($user, $class)->count();
     }
