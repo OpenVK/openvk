@@ -12,17 +12,17 @@ class Faves
 {
     private $context;
     private $likes;
-    
+
     public function __construct()
     {
-        $this->context  = DatabaseConnection::i()->getContext();
+        $this->context = DatabaseConnection::i()->getContext();
         $this->likes = $this->context->table("likes");
     }
 
     private function fetchLikes(User $user, string $class = 'Post')
     {
         $fetch = $this->likes->where([
-            "model"  => "openvk\\Web\\Models\\Entities\\".$class,
+            "model"  => "openvk\\Web\\Models\\Entities\\" . $class,
             "origin" => $user->getRealId(),
         ]);
 
