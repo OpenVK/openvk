@@ -9,6 +9,7 @@ use Nette\InvalidStateException;
 use openvk\Web\Models\Entities\Notifications\ClubModeratorNotification;
 use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers, Topics, Audios, Posts, Documents};
 use Chandler\Security\Authenticator;
+use Nette\InvalidStateException as ISE;
 
 final class GroupPresenter extends OpenVKPresenter
 {
@@ -288,7 +289,6 @@ final class GroupPresenter extends OpenVKPresenter
 
                     (new Albums())->getClubAvatarAlbum($club)->addPhoto($photo);
                 } catch (ISE $ex) {
-                    $name = $album->getName();
                     $this->flashFail("err", tr("error"), tr("error_when_uploading_photo"));
                 }
             }

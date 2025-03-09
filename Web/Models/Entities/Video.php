@@ -9,12 +9,13 @@ use openvk\Web\Util\Shell\Exceptions\{ShellUnavailableException, UnknownCommandE
 use openvk\Web\Models\VideoDrivers\VideoDriver;
 use Nette\InvalidStateException as ISE;
 
-define("VIDEOS_FRIENDLY_ERROR", "Uploads are disabled on this instance :<", false);
+define("VIDEOS_FRIENDLY_ERROR", "Uploads are disabled on this instance :<");
 
 class Video extends Media
 {
-    public const TYPE_DIRECT = 0;
-    public const TYPE_EMBED  = 1;
+    public const TYPE_DIRECT  = 0;
+    public const TYPE_EMBED   = 1;
+    public const TYPE_UNKNOWN = -1;
 
     protected $tableName     = "videos";
     protected $fileExtension = "mp4";
@@ -108,6 +109,7 @@ class Video extends Media
         } elseif (!is_null($this->getRecord()->link)) {
             return Video::TYPE_EMBED;
         }
+        return Video::TYPE_UNKNOWN;
     }
 
     public function getVideoDriver(): ?VideoDriver
@@ -238,7 +240,7 @@ class Video extends Media
         $this->save();
     }
 
-    public static function fastMake(int $owner, string $name = "Unnamed Video.ogv", string $description = "", array $file, bool $unlisted = true, bool $anon = false): Video
+    public static function fastMake(int $owner, string $name, string $description, array $file, bool $unlisted = true, bool $anon = false): Video
     {
         if (OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']) {
             exit(VIDEOS_FRIENDLY_ERROR);
@@ -269,7 +271,7 @@ class Video extends Media
             return false;
         }
 
-        $streams   = Shell::ffprobe("-i", $path, "-show_streams", "-select_streams v", "-loglevel error")->execute($error);
+        $streams   = Shell::ffprobe("-i", $path, "-show_streams", "-select_streams v", "-loglevel error")->execute();
         $durations = [];
         preg_match_all('%duration=([0-9\.]++)%', $streams, $durations);
 

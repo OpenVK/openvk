@@ -273,7 +273,7 @@ final class VKAPIPresenter extends OpenVKPresenter
             }
         }
 
-        define("VKAPI_DECL_VER", $this->requestParam("v") ?? "4.100", false);
+        define("VKAPI_DECL_VER", $this->requestParam("v") ?? "4.100");
 
         try {
             $res = $handler->{$method}(...$params);

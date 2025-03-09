@@ -33,6 +33,8 @@ class Message extends RowModel
             return (new Users())->get($this->getRecord()->sender_id);
         } elseif ($this->getRecord()->sender_type === 'openvk\Web\Models\Entities\Club') {
             return (new Clubs())->get($this->getRecord()->sender_id);
+        } else {
+            return null;
         }
     }
 
@@ -49,6 +51,8 @@ class Message extends RowModel
             return (new Users())->get($this->getRecord()->recipient_id);
         } elseif ($this->getRecord()->recipient_type === 'openvk\Web\Models\Entities\Club') {
             return (new Clubs())->get($this->getRecord()->recipient_id);
+        } else {
+            return null;
         }
     }
 
@@ -147,7 +151,7 @@ class Message extends RowModel
                 "id"     => $author->getId(),
                 "link"   => $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST'] . $author->getURL(),
                 "avatar" => $author->getAvatarUrl(),
-                "name"   => $author->getFirstName() . $unreadmsg,
+                "name"   => $author->getFirstName(),
             ],
             "timing" => [
                 "sent"   => (string) $this->getSendTimeHumanized(),

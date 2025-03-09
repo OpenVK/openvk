@@ -8,17 +8,17 @@ use openvk\Web\Models\Repositories\ContentSearchRepository;
 
 final class ContentSearchPresenter extends OpenVKPresenter
 {
-    private $repo;
+    protected $repo;
 
-    public function __construct(ContentSearchRepository $repo)
+    public function __construct(ContentSearchRepository $repository)
     {
-        $this->repo = $repo;
+        $this->repo = $repository;
     }
 
     public function renderIndex(): void
     {
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
-            $this->template->results = $repo->find([
+            $this->template->results = $this->repo->find([
                 "query" => $this->postParam("query"),
             ]);
         }
