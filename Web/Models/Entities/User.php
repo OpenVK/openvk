@@ -558,6 +558,7 @@ class User extends RowModel
                 "poster",
                 "apps",
                 "docs",
+                "fave",
             ],
         ])->get($id);
     }
@@ -1196,6 +1197,7 @@ class User extends RowModel
                 "poster",
                 "apps",
                 "docs",
+                "fave",
             ],
         ])->set($id, (int) $status)->toInteger();
 

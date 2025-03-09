@@ -198,10 +198,11 @@
                             </a>
                             <a href="/settings" class="link">{_my_settings}</a>
                             
-                            {if $thisUser->getLeftMenuItemStatus('docs') || $thisUser->getLeftMenuItemStatus('apps')}
+                            {if $thisUser->getLeftMenuItemStatus('docs') || $thisUser->getLeftMenuItemStatus('apps') || $thisUser->getLeftMenuItemStatus('fave')}
                                 <div class="menu_divider"></div>
                                 <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link">{_apps}</a>
                                 <a n:if="$thisUser->getLeftMenuItemStatus('docs')" href="/docs" class="link">{_my_documents}</a>
+                                <a n:if="$thisUser->getLeftMenuItemStatus('fave')" href="/fave" class="link">{_bookmarks_tab}</a>
                             {/if}
 
                             {var $canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
