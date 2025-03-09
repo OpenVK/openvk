@@ -2307,17 +2307,17 @@ $(document).on("click", ".avatarDelete", (e) => {
                     }
 
                     document.querySelector(".avatarDelete").classList.remove("lagged")
-                    
+
                     u("body").removeClass("dimmed");
                     document.querySelector("html").style.overflowY = "scroll"
                     u(".ovk-diag-cont").remove()
 
                     document.querySelector("#bigAvatar").src = response.url
                     document.querySelector("#bigAvatar").parentNode.href = response.new_photo ? ("/photo" + response.new_photo) : "javascript:void(0)"
-                    
+
                     if(!response.has_new_photo) {
                         document.querySelector(".avatar_controls .set_image").style.display = "none"
-						document.querySelector(".avatar_controls .avatarDelete").style.display = "none"
+                        document.querySelector(".avatar_controls .avatarDelete").style.display = "none"
                         document.querySelector(".avatar_controls .upload_image").style.display = "block"
                     }
                 }
