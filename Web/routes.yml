@@ -413,6 +413,8 @@ routes:
       handler: "InternalAPI->getPostTemplate"
     - url: "/tour"
       handler: "About->tour"
+    - url: "/fave"
+      handler: "User->fave"
     - url: "/{?shortCode}"
       handler: "UnknownTextRouteStrategy->delegate"
       placeholders:

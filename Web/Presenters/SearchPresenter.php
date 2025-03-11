@@ -70,7 +70,7 @@ final class SearchPresenter extends OpenVKPresenter
                 case 'marital_status':
                 case 'polit_views':
                     if ((int) $param_value == 0) {
-                        continue;
+                        break;
                     }
                     $parameters[$param_name] = $param_value;
 
@@ -96,7 +96,7 @@ final class SearchPresenter extends OpenVKPresenter
                     # дай бог работал этот case
                 case 'from_me':
                     if ((int) $param_value != 1) {
-                        continue;
+                        break;
                     }
                     $parameters['from_me'] = $this->user->id;
 

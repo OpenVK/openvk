@@ -9,6 +9,7 @@ use Nette\Utils\ImageException;
 use openvk\Web\Models\Entities\{Photo, Album, Comment};
 use openvk\Web\Models\Repositories\Albums;
 use openvk\Web\Models\Repositories\Photos as PhotosRepo;
+use openvk\Web\Models\Repositories\Videos as VideosRepo;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Repositories\Comments as CommentsRepo;

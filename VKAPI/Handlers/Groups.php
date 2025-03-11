@@ -45,7 +45,7 @@ final class Groups extends VKAPIRequestHandler
             $clbsCount = $user->getClubCount();
         }
 
-        $rClubs;
+        $rClubs = [];
 
         $ic = sizeof($clbs);
         if (sizeof($clbs) > $count) {
