@@ -58,7 +58,7 @@
 {block content}
     {* ref: https://archive.li/P32em *}
     
-    {include "bigplayer.xml"}
+    {include "bigplayer.xml", buttonsShow_summary => $audiosCount > 10}
 
     <script>
         window.__current_page_audio_context = null
@@ -76,6 +76,22 @@
             }
         {/if}
     </script>
+
+    <div class='summaryBarHideable summaryBar summaryBarFlex padding' style="margin: 0px -10px;width: 99.5%;display: none;">
+        <div class='summary'>
+            <b>{tr("is_x_audio", $audiosCount)}</b>
+        </div>
+
+        {include "../components/paginator.xml", conf => (object) [
+            "page"     => $page,
+            "count"    => $audiosCount,
+            "amount"   => sizeof($audios),
+            "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+            "atTop"    => true,
+            "space"    => 6,
+            "tidy"     => true,
+        ]}
+    </div>
 
     <div class="audiosDiv">
         <div class="audiosContainer audiosSideContainer audiosPaddingContainer" n:if="$mode != 'playlists'">

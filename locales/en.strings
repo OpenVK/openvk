@@ -928,7 +928,8 @@
 "audio_embed_deleted" = "Audio has been deleted";
 "audio_embed_withdrawn" = "The audio has been withdrawn at the request of the copyright holder";
 "audio_embed_forbidden" = "The user's privacy settings do not allow this audio to be embedded";
-"audio_embed_processing" = "Audio is still being processed or has not been processed correctly.";
+"audio_embed_processing" = "Audio is processing.";
+"audio_embed_processing_bait" = "Play anyway";
 
 "audios_count_zero" = "No audios";
 "audios_count_one" = "One audio";
@@ -1037,6 +1038,12 @@
 "audio_ctx_add_to_playlist" = "Add to playlist";
 "audio_ctx_play_next" = "Play next";
 "audio_ctx_clear_context" = "Clear tracks list";
+
+"is_x_audio_zero" = "No audios";
+"is_x_audio_one" = "Just one audio.";
+"is_x_audio_few" = "Just $1 audios.";
+"is_x_audio_many" = "Just $1 audios.";
+"is_x_audio_other" = "Just $1 audios.";
 
 /* Notifications */
 

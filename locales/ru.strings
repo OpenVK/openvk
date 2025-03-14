@@ -883,7 +883,8 @@
 "audio_embed_deleted" = "Аудиозапись была удалена";
 "audio_embed_withdrawn" = "Аудиозапись была изъята по обращению правообладателя.";
 "audio_embed_forbidden" = "Настройки приватности пользователя не позволяют встраивать эту композицию";
-"audio_embed_processing" = "Аудио ещё обрабатывается, либо обработалось неправильно.";
+"audio_embed_processing" = "Аудио находится в обработке.";
+"audio_embed_processing_bait" = "Всё равно хочу воспроизвести";
 
 "audios_count_zero" = "Нет аудиозаписей";
 "audios_count_one" = "Одна аудиозапись"; /* сингл */
@@ -993,6 +994,12 @@
 "audio_ctx_add_to_playlist" = "Добавить в плейлист";
 "audio_ctx_play_next" = "Воспроизвести следующим";
 "audio_ctx_clear_context" = "Очистить список треков";
+
+"is_x_audio_zero" = "Нету аудиозаписей";
+"is_x_audio_one" = "Всего одна аудиозапись.";
+"is_x_audio_few" = "Всего $1 аудиозаписи.";
+"is_x_audio_many" = "Всего $1 аудиозаписей.";
+"is_x_audio_other" = "Всего $1 аудиозаписей.";
 
 /* Notifications */
 
