@@ -235,6 +235,9 @@ window.player = new class {
                     'query': this.context.object.query,
                 }))
                 break
+            case "uploaded":
+                form_data.append('context', this.context.object.name)
+                break
             case 'alone_audio':
                 form_data.append('context', this.context.object.name)
                 form_data.append('context_entity', this.context.object.entity_id)

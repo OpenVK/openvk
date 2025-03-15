@@ -948,6 +948,7 @@
 "audio_search" = "Search";
 
 "my_audios_small" = "My audios";
+"my_audios_small_uploaded" = "Uploaded";
 "my_playlists" = "My playlists";
 "playlists" = "Playlists";
 "audios_explicit" = "Contains obscene language";

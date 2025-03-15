@@ -3039,6 +3039,10 @@ a.poll-retract-vote {
     gap: 1px;
 }
 
+.verticalGrayTabsPad {
+    padding: 0px 0px 0px 8px;
+}
+
 .searchList hr, .verticalGrayTabs hr {
     width: 153px;
     margin-left: 0px;

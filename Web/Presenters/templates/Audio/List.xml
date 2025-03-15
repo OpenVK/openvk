@@ -9,6 +9,8 @@
         {/if}
     {elseif $mode == 'new'}
         {_audio_new}
+    {elseif $mode == 'uploaded'}
+        {_my_audios_small_uploaded}
     {elseif $mode == 'popular'}
         {_audio_popular}
     {elseif $mode == 'alone_audio'}
@@ -30,6 +32,12 @@
             »
             {_audios}
         </div>
+    </div>
+
+    <div n:if="$mode == 'uploaded'">
+        {_my_audios_small}
+        »
+        {_my_audios_small_uploaded}
     </div>
 
     <div n:if="$mode == 'new'">
@@ -66,6 +74,12 @@
             window.__current_page_audio_context = {
                 name: 'entity_audios',
                 entity_id: {$ownerId},
+                page: {$page}
+            }
+        {elseif $mode == 'uploaded'}
+            window.__current_page_audio_context = {
+                name: 'uploaded',
+                entity_id: 0,
                 page: {$page}
             }
         {elseif $mode == 'alone_audio'}

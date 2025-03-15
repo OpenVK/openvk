@@ -903,6 +903,7 @@
 "audio_search" = "Поиск";
 
 "my_audios_small" = "Мои аудиозаписи";
+"my_audios_small_uploaded" = "Загруженное";
 "my_playlists" = "Мои плейлисты";
 "playlists" = "Плейлисты";
 "audios_explicit" = "Содержит нецензурную лексику";
