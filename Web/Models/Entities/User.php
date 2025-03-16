@@ -524,7 +524,10 @@ class User extends RowModel
 
     public function getAge(): ?int
     {
-        return (int) floor((time() - $this->getBirthday()->timestamp()) / YEAR);
+        $birthday = new \DateTime();
+        $birthday->setTimestamp($this->getBirthday()->timestamp());
+        $today = new \DateTime();
+        return (int) $today->diff($birthday)->y;
     }
 
     public function get2faSecret(): ?string
