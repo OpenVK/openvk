@@ -84,7 +84,7 @@
 "desc_none" = "описание отсутствует";
 "send" = "Отправить";
 "years_zero" = "0 лет";
-"years_one" = "1 год";
+"years_one" = "$1 год";
 "years_few" = "$1 года";
 "years_many" = "$1 лет";
 "years_other" = "$1 лет";

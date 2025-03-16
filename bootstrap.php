@@ -121,15 +121,17 @@ function tr(string $stringId, ...$variables): string
         if (gettype($variables[0]) === "integer") {
             $numberedStringId = null;
             $cardinal         = $variables[0];
-            switch ($cardinal) {
-                case 0:
-                    $numberedStringId = $stringId . "_zero";
-                    break;
-                case 1:
-                    $numberedStringId = $stringId . "_one";
-                    break;
-                default:
-                    $numberedStringId = $stringId . ($cardinal < 5 ? "_few" : "_other");
+            // WARNING: Hardcoded for russian language
+            if ($cardinal == 0) {
+                $numberedStringId = $stringId . "_zero";
+            } else if ($cardinal == 1 || $cardinal % 10 == 1) {
+                $numberedStringId = $stringId . "_one";
+            } else if (($cardinal % 10 >= 2 && $cardinal % 10 <= 4) || !($cardinal % 100 >= 12 && $cardinal % 100 <= 14)) {
+                $numberedStringId = $stringId . "_few";
+            } else if ($cardinal % 10 == 0 || ($cardinal % 10 >= 5 && $cardinal % 10 <= 9) || ($cardinal % 100 >= 11 && $cardinal % 100 <= 14)) {
+                $numberedStringId = $stringId . "_many";
+            } else {
+                $numberedStringId = $stringId . "_other";
             }
 
             $newOutput = $localizer->_($numberedStringId, $lang);
