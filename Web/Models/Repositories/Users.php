@@ -157,7 +157,7 @@ class Users
     {
         return (object) [
             "all"    => (clone $this->users)->count('*'),
-            "active" => (clone $this->users)->where("online > 0")->count('*'),
+            "active" => (clone $this->users)->where("online >= ?", time() - MONTH)->count('*'),
             "online" => (clone $this->users)->where("online >= ?", time() - 900)->count('*'),
         ];
     }
