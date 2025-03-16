@@ -41,11 +41,11 @@ trait TRichText
         return preg_replace_callback(
             "%(([A-z]++):\/\/(\S*?\.\S*?))([\s)\[\]{},\"\'<]|\.\s|$)%",
             (function (array $matches): string {
-                $href = str_replace("#", "&num;", $matches[1]);
-                $href = rawurlencode(str_replace(";", "&#59;", $href));
-                $link = str_replace("#", "&num;", $matches[3]);
+                $href = rawurlencode($matches[1]);
+                $href = str_replace("%26amp%3B", "%26", $href);
+                $link = $matches[3];
                 # this string breaks ampersands
-                $link = str_replace(";", "&#59;", $link);
+                # $link = str_replace(";", "&#59;", $link);
                 $rel  = $this->isAd() ? "sponsored" : "ugc";
 
                 /*$server_domain = str_replace(':' . $_SERVER['SERVER_PORT'], '', $_SERVER['HTTP_HOST']);
