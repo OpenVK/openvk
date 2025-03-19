@@ -458,9 +458,11 @@
                         </tr>
                         <tr n:if="!is_null($user->getBirthday())">
                             <td class="label"><span class="nobold">{_birth_date}:</span></td>
-			    <td n:if="$user->getBirthdayPrivacy() == 0 && $user->onlineStatus() == 2" class="data">{$user->getBirthday()->format('%e %B %Y')}</td>
-                            <td n:if="$user->getBirthdayPrivacy() == 0 && $user->onlineStatus() != 2" class="data">{$user->getBirthday()->format('%e %B %Y')},
+			    			{if $user->onlineStatus() != 2 && $user->getBirthdayPrivacy() == 0}
+                            <td class="data">{$user->getBirthday()->format('%e %B %Y')},
                                 {tr("years", $user->getAge())}</td>
+							{/if}
+							<td n:if="$user->onlineStatus() == 2" class="data">{$user->getBirthday()->format('%e %B %Y')}</td>
                             <td n:if="$user->getBirthdayPrivacy() == 1" class="data">{$user->getBirthday()->format('%e %B')}</td>
                         </tr>
                     </tbody>
