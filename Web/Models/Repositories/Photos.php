@@ -28,6 +28,17 @@ class Photos
         return new Photo($photo);
     }
 
+    public function getByHash(string $hash): ?Photo
+    {
+        $photo = $this->photos->where("hash", $hash)->fetch();
+
+        if (!$photo) {
+            return null;
+        }
+
+        return new Photo($photo);
+    }
+
     public function getByOwnerAndVID(int $owner, int $vId): ?Photo
     {
         $photo = $this->photos->where([
