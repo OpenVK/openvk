@@ -4282,3 +4282,7 @@ hr {
     height: 30px;
     background-position-y: 9px;
 }
+
+.deleted_mark_average {
+    padding: 5px 61px;
+}
