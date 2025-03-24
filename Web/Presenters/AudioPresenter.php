@@ -80,7 +80,7 @@ final class AudioPresenter extends OpenVKPresenter
             $audiosCount = $audios->size();
         } elseif ($mode === "uploaded") {
             $stream = $this->audios->getByUploader($this->user->identity);
-            $audios = $stream->page($page, $perPage);
+            $audios = $stream->page($page, 10);
             $audiosCount = $stream->size();
         } elseif ($mode === "playlists") {
             if ($owner < 0) {
@@ -134,7 +134,7 @@ final class AudioPresenter extends OpenVKPresenter
         }
     }
 
-    function renderUploaded()
+    public function renderUploaded()
     {
         $this->renderList(null, "uploaded");
     }
