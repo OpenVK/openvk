@@ -15,25 +15,25 @@
 "log_in" = "Жүйеге кіру";
 "password" = "Құпиясөз";
 "registration" = "Тіркелу";
-"forgot_password" = "Құпиясөзіңізді ұмыттыңыз ба?";
+"forgot_password" = "Құпиясөзді ұмыттыңыз ба?";
 "checkbox_in_registration" = "Мен <a href='/privacy'>құпиялық саясаты</a> мен <a href='/terms'>сайт саясатымен</a> келісемін";
-"checkbox_in_registration_unchecked" = "Тіркелу үшін құпиялылық саясаты мен ережелерімен келісуіңіз керек.";
-"login_failed" = "Жүйеге кіру сәтті аяқталмады";
+"checkbox_in_registration_unchecked" = "Тіркелу үшін құпиялылық саясаты мен ережелермен келісуіңіз керек.";
+"login_failed" = "Жүйеге кіру сәтсіз аяқталды";
 "invalid_username_or_password" = "Пайдаланушы аты немесе құпиясөз дұрыс емес.<a href='/restore'>Құпиясөзді ұмыттыңыз ба?</a>";
-"failed_to_register" = "Жүйеге тіркелу сәтті аяқталмады";
-"referral_link_invalid" = "Реферал сілтемесі жарамсыз.";
-"registration_disabled" = "Жүйе әкімшісі тіркеуді өшірді.";
-"user_already_exists" = "Бұл Email-мекенжайы әлдеқашан басқа пайдаланушыға тіркелген.";
-"access_recovery" = "Қатынастауды қалпына келтіру";
-"page_access_recovery" = "Парақшаға қатынастауды қалпына келтіру";
-"access_recovery_info" = "Құпиясөзіңізді ұмыттыңыз ба? Уайымдамаңыз, мәліметтеріңізді енгізіңіз, содан кейін біз сізге қатынастауды қалпына келтіру туралы нұсқаулары бар электрондық хат жібереміз.";
-"access_recovery_info_2" = "Жаңа құпиясөзіңізді енгізіңіз. Барлық ағымдағы сеанстар тоқтатылады және кіру токендері жойылады.";
+"failed_to_register" = "Жүйеге тіркелу сәтсіз аяқталды";
+"referral_link_invalid" = "Рефералдық сілтеме жарамсыз.";  
+"registration_disabled" = "Тіркелу жүйе әкімшісі тарапынан өшірілген.";  
+"user_already_exists" = "Бұл Email мекенжайы басқа пайдаланушыға тіркелген.";  
+"access_recovery" = "Қатынасты қалпына келтіру";  
+"page_access_recovery" = "Парақшаға қатынасты қалпына келтіру";  
+"access_recovery_info" = "Құпиясөзіңізді ұмыттыңыз ба? Уайымдамаңыз, төменде мәліметтеріңізді енгізіңіз – сізге қатынасты қалпына келтіру нұсқаулығы бар хат жібереміз.";  
+"access_recovery_info_2" = "Жаңа құпиясөзді енгізіңіз. Барлық белсенді сеанстар аяқталып, кіру токендері жойылады.";  
 "reset_password" = "Құпиясөзді ысыру";
 "2fa_code_2" = "Екі факторлы аутентификация коды";
 "password_successfully_reset" = "Сіздің құпиясөзіңіз сәтті ысырылды.";
 "password_reset_email_sent" = "Тіркелген болсаңыз, электрондық пошта арқылы нұсқаулар аласыз.";
 "password_reset_error" = "Құпиясөзді қалпына келтіру кезінде күтпеген қате орын алды.";
-"password_reset_rate_limit_error" = "Кешіріңіз, бірақ осы әрекетті сонай жиі жасай алмайсыз.";
+"password_reset_rate_limit_error" = "Кешіріңіз, бірақ осы әрекетті сонша жиі жасай алмайсыз.";
 "email_sent" = "Хат сәтті жіберілді.";
 "email_sent_desc" = "Сіз енгізген электрондық пошта бар болса оған нұсқаулар келеді.";
 "email_error" = "Электрондық хатты жіберу кезінде күтпеген қате орын алды.";
@@ -41,7 +41,7 @@
 "email_verify_success" = "Электрондық поштаңыз расталды. Осы әлеуметтік желіде жақсы уақыт өткізуді тілейміз!";
 "registration_disabled_info" = "Жүйе әкімшісі тіркеуді өшірді. Мүмкіндігінше, егер досыңыз сайтта тіркелген болса одан шақыру сілтемесін сұраңыз.";
 "registration_closed" = "Тіркелу жабық";
-"invites_you_to" = "<strong>$1</strong> сізді $2 желіне шақырады.";
+"invites_you_to" = "<strong>$1</strong> сізді $2 желісіне шақырады.";
 "register_meta_desc" = "$1 желісіне тіркеліңіз!";
 "register_referer_meta_title" = "$1 сізді $2 желіне шақырады!";
 "register_referer_meta_desc" = "$1 және одан көп пайдаланушылармен $2 желісінде қосылыңыз!";
@@ -52,7 +52,7 @@
 
 /* Profile information */
 
-"select_language" = "Тілді таңдау";
+"select_language" = "Тіл таңдау";
 "edit" = "Өңдеу";
 "birth_date" = "Туған күні";
 "registration_date" = "Тіркелген күні";
@@ -88,6 +88,7 @@
 "no_information_provided" = "Ақпарат берілген жоқ.";
 "deceased_person" = "Қайтқан кісі";
 "none" = "ештеңе";
+"desc_none" = "сипаттама жоқ";
 "relationship" = "Отбасылық жағдай";
 "relationship_0" = "Таңдалмаған";
 "relationship_1" = "Бойдақ";
@@ -126,8 +127,12 @@
 "favorite_quotes" = "Сүйікті дәйексөздер";
 "information_about" = "Өзі туралы";
 "updated_at" = "Соңғы жаңартылған күні: $1";
-"user_banned" = "Өкінішке орай біз <b>$1</b> пайдаланушының парақшасың блоктауға мәжбүр болдық.";
+"user_banned" = "Өкінішке орай біз <b>$1</b> атты кісінің парақшасын бұғаттауға мәжбүр болдық.";
 "user_banned_comment" = "Модератордың пікірі:";
+"verified_page" = "Тексерілген парақша";
+"user_is_blocked" = "Пайдаланушы бұғатталған";
+"before" = "мына күнге дейін";
+"forever" = "мәңгілікке";
 
 /* Wall */
 
@@ -194,6 +199,9 @@
 "version_incompatibility" = "Бұл тіркемені көрсете алмадық. Мәліметтер базасы OpenVK-дің қазіргі нұсқасымен үйлеспелмеуі мүмкін.";
 "graffiti" = "Граффити";
 "reply" = "Жауап беру";
+"post_is_ad" = "Бұл жазба — жарнама.";
+
+"edited_short" = "өңдеді";
 
 /* Friends */
 
@@ -295,13 +303,20 @@
 "search_by_groups" = "Топтардан іздеу";
 "search_group_desc" = "Мұнда сіз бар топтарға шолу жасай аласыз және қажеттіліктеріңізге сай топты таңдай аласыз.";
 
+"group_banned" = "Өкінішке қарай, біз <b>$1</b> тобын бұғаттауға мәжбүр болдық.";
+
 /* Albums */
 
 "create" = "Жасау";
 "albums" = "Альбомдар";
+"album" = "Альбом";
+"photos" = "суреттер";
 "create_album" = "Альбом жасау";
 "edit_album" = "Альбомды өңдеу";
+"edit_photo" = "Суретті өңдеу";
 "creating_album" = "Альбом жасалуда";
+"delete_photo" = "Суретті жою";
+"sure_deleting_photo" = "Мына суретті шынымен жойғыңыз келе ме?";
 "upload_photo" = "Фото жүктеу";
 "photo" = "Фото";
 "upload_button" = "Жүктеу";
@@ -339,6 +354,27 @@
 "upd_f" = "өз парақша суретін өзгертті";
 "upd_g" = "топ суретін өзгертті";
 
+"add_photos" = "Суреттерді қосу";
+"upload_picts" = "Суреттерді жүктеу";
+"end_uploading" = "Жүктеуді аяқтау";
+"photos_successfully_uploaded" = "Суреттер сәтті жүктелді";
+"click_to_go_to_album" = "Альбомға өту үшін осында басыңыз.";
+"error_uploading_photo" = "Суретті жүктеу қатесі";
+"too_many_pictures" = "10 суреттен артық жүктеуге болмайды";
+
+"drag_files_here" = "Файлдарды осында сүйреңіз";
+"only_images_accepted" = "Файл \"$1\" сурет емес";
+"max_filesize" = "Максималды файл өлшемі – $1 МБ";
+
+"uploading_photos_from_computer" = "Компьютерден суреттерді жүктеу";
+"supported_formats" = "Қолдау көрсетілетін форматтар: JPG, PNG және GIF.";
+"max_load_photos" = "Бір уақытта 10 суретке дейін жүктеуге болады.";
+
+"tip" = "Кеңес";
+"tip_ctrl" = "Бірнеше суретті таңдау үшін Windows жүйесінде Ctrl, Mac OS жүйесінде CMD пернесін басып тұрып таңдаңыз.";
+
+"album_poster" = "Альбомның басты суреті";
+
 /* Notes */
 
 "notes" = "Жолжазбалар";
@@ -363,6 +399,17 @@
 "notes_list_one" = "$1 жолжазба табылды";
 "notes_list_other" = "$1 жолжазба табылды";
 
+"select_note" = "Жолжазбаны таңдау";
+"no_notes" = "Сізде жолжазбалар жоқ";
+"error_attaching_note" = "Жолжазбаны тіркеу қатесі";
+"select_or_create_new" = "Бар жолжазларыңыздан таңдаңыз немесе <a href='/notes/create'>жаңасын жазыңыз</a>";
+"notes_closed" = "Жолжазбаларды тек өзіңіз көре аласыз, сондықтан оларды жазбаға тіркей алмайсыз.<br> Мұны <a href=\"/settings?act=privacy\">баптап</a> өзгерте аласыз.";
+"do_not_attach_note" = "Жолжазбаны тіркемеу";
+"something" = "(X)HTML-дің кейбір тұстарын";
+"supports_xhtml" = "қолдаймыз.";
+/* Notes: Article Viewer */
+"aw_legacy_ui" = "Ескі көрініс";
+
 /* Menus */
 
 /* Note that is string need to fit into the "My Page" link */
@@ -378,7 +425,8 @@
 "my_feed" = "Жаңалықтар";
 "my_feedback" = "Жауаптарым";
 "my_settings" = "Баптауларым";
-"bug_tracker" = "Баг-ұстаушы";
+"bug_tracker" = "Баг ұстаушы";
+"menu_settings" = "Баптау";
 "menu_login" = "Кіру";
 "menu_registration" = "Тіркелу";
 "menu_help" = "Көмек";
@@ -421,8 +469,14 @@
 "cut" = "Шаршы";
 "round_avatars" = "Дөңгелек";
 "apply_style_for_this_device" = "Стильді тек осы девайс үшін қосу";
-"search_for_groups" = "Топтар іздеу";
-"search_for_people" = "Кісілер іздеу";
+"search_for_groups" = "Топ іздеу";
+"search_for_users" = "Кісі іздеу";
+"search_for_posts" = "Жазба іздеу";
+"search_for_comments" = "Пікір іздеу";
+"search_for_videos" = "Бейне іздеу";
+"search_for_apps" = "Қосымша іздеу";
+"search_for_notes" = "Жолжазба іздеу";
+"search_for_audios" = "Ән іздеу";
 "search_button" = "Іздеу";
 "search_placeholder" = "Кез келген атауды, тақырыпты немесе сөзді теруді бастаңыз";
 "results_zero" = "Нәтиже жоқ";
@@ -501,7 +555,50 @@
 "two_factor_authentication_backup_codes_1" = "Сақтық көшірме кодтары телефонға кіру мүмкіндігіңіз болмаған кезде, мысалы, саяхат кезінде парақшаға кіруге растауға мүмкіндік береді.";
 "two_factor_authentication_backup_codes_2" = "Сізде тағы <b>10 код</b> бар, әр кодты тек бір рет пайдалануға болады. Оларды басып шығарыңыз да қауіпсіз жерге қойыңыз. Кіруіңізді растағанда кодтар қажет болғанда пайдаланыңыз.";
 "two_factor_authentication_backup_codes_3" = "Таусылған жағдайда жаңа кодтар алуға болады. Тек соңғы жасалған сақтық көшірме кодтар жарамды.";
+"viewing_backup_codes" = "Қалпына келтіру кодтарын көру";
+"disable_2fa" = "2FA-ны өшіру";
+"viewing" = "Қарау";
 
+/* Search */
+
+"s_people" = "Адамдар";
+"s_groups" = "Топтар";
+"s_events" = "Шаралар";
+"s_apps" = "Қосымшалар";
+"s_questions" = "Сұрақтар";
+"s_notes" = "Жолжазбалар";
+"s_themes" = "Тақырыптар";
+"s_posts" = "Жазбалар";
+"s_comments" = "Пікірлер";
+"s_videos" = "Бейнелер";
+"s_audios" = "Аудио";
+"s_by_people" = "адамдар бойынша";
+"s_by_groups" = "топтар бойынша";
+"s_by_posts" = "жазбалар бойынша";
+"s_by_comments" = "пікірлер бойынша";
+"s_by_videos" = "бейнелер бойынша";
+"s_by_apps" = "қосымшалар бойынша";
+"s_by_audios" = "аудио бойынша";
+"s_order_by" = "Сұрыптау тәртібі...";
+"s_order_by_id" = "ID бойынша";
+"s_order_by_name" = "Атауы бойынша";
+"s_order_by_random" = "Кездейсоқ";
+"s_order_by_rating" = "Рейтинг бойынша";
+"s_order_invert" = "Кері реттеу";
+"s_by_date" = "Күні бойынша";
+"s_registered_before" = "Мына күннен бұрын тіркелген";
+"s_registered_after" = "Мына күннен кейін тіркелген";
+"s_date_before" = "Мына күннен бұрын";
+"s_date_after" = "Мына күннен кейін";
+"s_main" = "Басты";
+"s_now_on_site" = "Қазір сайтта";
+"s_with_photo" = "Суреті бар";
+"s_only_in_names" = "Тек атаулардан";
+"s_any" = "Кез келген";
+"reset" = "Қалпына келтіру";
+"closed_group_post" = "Бұл – жабық топтағы жазба";
+"deleted_target_comment" = "Бұл пікір жойылған жазбаға тиесілі";
+"no_results" = "Ештеңе табылған жоқ";
 
 /* Sorting */
 
@@ -524,6 +621,9 @@
 "videos_zero" = "Бейнежазбалар жоқ";
 "videos_one" = "$1 бейнежазба";
 "videos_other" = "$1 бейнежазба";
+"view_video" = "Көру";
+"change_video" = "Бейнені өзгерту";
+"unknown_video" = "Бұл бейне OpenVK-ның осы нұсқасында жұмыс істемейді.";
 
 /* Notifications */
 
@@ -544,13 +644,22 @@
 "nt_commented_yours" = "пікір жазды";
 "nt_written_on_your_wall" = "сіздің қабырғаңызға жазды";
 "nt_made_you_admin" = "сізді топта тағайындады";
-"nt_from" = "Осы арқылы:";
+"nt_from" = "";
 "nt_yours_adjective" = "сіздің";
 "nt_yours_feminitive_adjective" = "сіздің";
-"nt_post_nominative" = "жазба";
+"nt_post_nominative" = "жазбаңызды";
 "nt_post_instrumental" = "жазбаңызбен";
 "nt_note_instrumental" = "жолжазбаңызбен";
 "nt_photo_instrumental" = "фотоңызбен";
+"nt_topic_instrumental" = "тақырып";
+"nt_you_were_mentioned_u" = "Сізді осы пайдаланушы атап өтті:";
+"nt_you_were_mentioned_g" = "Сізді осы топ атап өтті:";
+"nt_mention_in_post_or_comms" = "жазбада немесе соның талқылау тақырыбының бірінде";
+"nt_mention_in_video" = "осы бейненің талқылау бетінде";
+"nt_mention_in_photo" = "осы суреттің талқылау бетінде";
+"nt_mention_in_note" = "осы жолжазбаның талқылау бетінде";
+"nt_mention_in_topic" = "осы талқылауда";
+"nt_sent_gift" = "сыйлық сыйлады";
 
 /* Time */
 
@@ -745,15 +854,42 @@
 "support_rated_bad" = "Сіз осы жауапқа теріс пікір қалдырдыңыз.";
 "wrong_parameters" = "Сұрау параметрлері жарамсыз.";
 "fast_answers" = "Тез жауаптар";
-"comment" = "Пікір";
-"sender" = "Жіберуші";
 "author" = "Автор";
 "you_have_not_entered_text" = "Cіз ешқандай мәтін енгізбедіңіз";
 "you_have_not_entered_name_or_text" = "Сіз ат немесе мәтін енгізген жоқсыз";
 "ticket_changed" = "Мәселе өзгерілді";
 "ticket_changed_comment" = "Өзгерістер бірнеше секундтан кейін күшіне енеді.";
-"banned_in_support_1" = "<b>$1</b>, өкінішке орай бұдан былай сізге мәселелер көтеруге болмайды.";
-"banned_in_support_2" = "Оған себебі: <b>$1</b>. Біз бұл мүмкіндікті сізден біржола тартып алуымызға мәжбүр болдық.";
+"banned_in_support_1" = "<b>$1</b>, өкінішке қарай, бұдан былай сізге мәселелер көтеруге болмайды.";
+"banned_in_support_2" = "Бұның себебі: <b>$1</b>. Біз бұл мүмкіндікті сізден біржола тартып алуымызға мәжбүр болдық.";
+"you_can_close_this_ticket_1" = "Тағы сұрағыңыз болмаса, ";
+"you_can_close_this_ticket_2" = "мына мәселені жапсаңыз болады.";
+"agent_profile_created_1" = "Бейін құрылды";
+"agent_profile_created_2" = "Енді пайдаланушылар сіз орнатқан аты-жөн мен суретіңізді көреді.";
+"agent_profile_edited" = "Бейін өңделді";
+"agent_profile" = "Қолдау тобындағы бейінім";
+"reports" = "Шағымдар";
+"ignore_report" = "Шағымды елемеу";
+"report_number" = "Шағым №";
+"list_of_reports" = "Шағымдар тізімі";
+"text_of_the_post" = "Жазба мәтіні";
+"today" = "бүгін";
+
+"will_be_watched" = "Бұл модераторлар тарапынан жақында тексеріледі";
+
+"report_question" = "Шағым жасайсыз ба?";
+"report_question_text" = "Бұл материалда сізге нақты не қолайсыз болып көрінді?";
+"report_reason" = "Шағым себебі";
+"reason" = "Себеп";
+"going_to_report_app" = "Сіз бұл қосымшаға шағым жасағалы тұрсыз.";
+"going_to_report_club" = "Сіз бұл топқа шағым жасағалы тұрсыз.";
+"going_to_report_photo" = "Сіз бұл суретке шағым жасағалы тұрсыз.";
+"going_to_report_user" = "Сіз бұл пайдаланушыға шағым жасағалы тұрсыз.";
+"going_to_report_video" = "Сіз бұл бейнеге шағым жасағалы тұрсыз.";
+"going_to_report_post" = "Сіз бұл жазбаға шағым жасағалы тұрсыз.";
+"going_to_report_comment" = "Сіз бұл пікірге шағым жасағалы тұрсыз.";
+
+"comment" = "Пікір";
+"sender" = "Жіберуші";
 
 /* Invite */
 
@@ -764,15 +900,15 @@
 /* Banned */
 
 "banned_title" = "Сізді верискок жазалады";
-"banned_header" = "Сіз әлеуметтік желіде блокталғансыз";
-"banned_alt" = "Бұл пайдаланушы блокталған.";
-"banned_1" = "Кешіріңіз, <b>$1</b>, бірақ сіз әлеуметтік желіден блокталған болдыңыз.";
+"banned_header" = "Сіз әлеуметтік желіде бұғатталғансыз";
+"banned_alt" = "Бұл пайдаланушы бұғатталған.";
+"banned_1" = "Кешіріңіз, <b>$1</b>, бірақ сіз әлеуметтік желіде бұғатталғансыз.";
 "banned_2" = "Мұның себебі осы: <b>$1</b>.";
-"banned_perm" = "Өкінішке орай, осы жолы сізді мәңгілікке блоктауға мәжбүр болдық.";
-"banned_until_time" = "Осы жолы сізді <b>$1</b> дейін блоктауға мәжбүр болдық.";
-"banned_3" = "Егер сізді қателесіп блоктады деп ойласаңыз, <a href=\"/support?act=new\">қолдау қызметіне жаза аласыз</a> немесе <a href=\"/logout?hash=$1\">жүйеден шыға аласыз</a>.";
-"banned_unban_myself" = "Өзімді бұғаттаудан шығару";
-"banned_unban_title" = "Сіздің парақшаңыз бұғаттаудан шығарылды";
+"banned_perm" = "Өкінішке орай, осы жолы сізді мәңгілікке бұғаттауға мәжбүр болдық.";
+"banned_until_time" = "Осы жолы сізді <b>$1</b> дейін бұғаттауға мәжбүр болдық.";
+"banned_3" = "Егер бұл бұғаттау қателік деп ойласаңыз, <a href=\"/support?act=new\">қолдау қызметіне хабарласыңыз</a> немесе <a href=\"/logout?hash=$1\">жүйеден шығыңыз</a>.";
+"banned_unban_myself" = "Өзімді бұғаттан шешу";
+"banned_unban_title" = "Сіздің парақшаңыз бұғаттан шешілді.";
 "banned_unban_description" = "Ендігәрі ереже бұзбай жүріңіз.";
 
 /* Registration confirm */
@@ -864,7 +1000,7 @@
 "error" = "Қателік";
 "error_shorturl" = "Бұл мекенжай бос емес.";
 "error_segmentation" = "Сегментация қателігі";
-"error_upload_failed" = "Фотосурет жүктелмеді";
+"error_upload_failed" = "Сурет жүктелмеді";
 "error_old_password" = "Бұрынғы құпия сөз сәйкес келмейді";
 "error_new_password" = "Жаңа құпия сөз сәйкес келмейді";
 "error_weak_password" = "Құпия сөзіңіз мықты емес. Тым болмаса ода 8 белгі, бір үлкен әріп пен бір сан болуы керек.";
@@ -873,6 +1009,7 @@
 "error_data_too_big" = "'$1' осылардан ұзағырақ болмауы керек: $2 $3";
 "forbidden" = "Рұқсат қателігі";
 "forbidden_comment" = "Бұл пайдаланушының құпиялық баптаулары сізге осы парақты қарауға рұқсат бермейді";
+"unknown_error" = "Белгісіз қателік";
 "changes_saved" = "Өзгерістер сақталды";
 "changes_saved_comment" = "Сіздің парақшаңызда жаңа деректер пайда болады";
 "photo_saved" = "Фото сақталды";
@@ -905,21 +1042,115 @@
 "media_file_corrupted_or_too_large" = "Медиа мазмұн файлы бүлінген немесе тым үлкен.";
 "post_is_empty_or_too_big" = "Жазбаңызда түк те жоқ немесе ол тым үлкен.";
 "post_is_too_big" = "Жазбаңыз тым үлкен.";
+"description_too_long" = "Сипаттамаңыз тым ұзын.";
+
+"error_sending_report" = "Шағым жіберу сәтсіз аяқталды...";
+
+"error_when_saving_gift" = "Сыйлықты сақтау қатесі";
+"error_when_saving_gift_bad_image" = "Сыйлықтың суреті дұрыс емес.";
+"error_when_saving_gift_no_image" = "Сыйлықтың суретін жүктеңіз.";
+"video_uploads_disabled" = "Бейне жүктеу жүйе әкімшісі тарапынан ажыратылған.";
+
+"error_when_publishing_comment" = "Пікір жариялау қатесі";
+"error_when_publishing_comment_description" = "Сурет бүлінген, тым үлкен немесе оның өлшемдері үйлесімсіз.";
+"error_comment_empty" = "Пікіріңізде түк жоқ немесе ол тым ұзын.";
+"error_comment_too_big" = "Пікіріңіз тым үлкен.";
+"error_comment_file_too_big" = "Медиа файлы бүлінген немесе тым үлкен.";
+
+"comment_is_added" = "Пікір қосылды";
+"comment_is_added_desc" = "Сіздің пікіріңіз бетте көрсетіледі.";
+
+"error_access_denied_short" = "Рұқсат жоқ";
+"error_access_denied" = "Бұл ресурсты өңдеуге рұқсатыңыз жоқ";
+"success" = "Сәтті орындалды";
+"comment_will_not_appear" = "Бұл пікір енді көрсетілмейді.";
+
+"error_when_gifting" = "Сыйлық жіберу сәтсіз аяқталды";
+"error_user_not_exists" = "Пайдаланушы немесе жинақ жоқ.";
+"error_no_rights_gifts" = "Сыйлық құқығын тексеру сәтсіз аяқталды.";
+"error_no_more_gifts" = "Сізде бұл сыйлықтар жоқ.";
+"error_no_money" = "Ақшаңыз жетпейді.";
+
+"gift_sent" = "Сыйлық жіберілді";
+"gift_sent_desc" = "Сіз $1 атты кісіге $2 дауыс құнына сыйлық жібердіңіз.";
+
+"error_on_server_side" = "Серверде қате орын алды. Жүйе әкімшісіне хабарласыңыз.";
+"error_no_group_name" = "Сіз топ атауын енгізбедіңіз.";
+
+"success_action" = "Әрекет сәтті орындалды";
+"connection_error" = "Қосылу қатесі";
+"connection_error_desc" = "Телеметрия қызметіне қосылу сәтсіз аяқталды.";
+
+"error_when_uploading_photo" = "Суретті сақтау сәтсіз аяқталды";
+
+"new_changes_desc" = "Жаңа деректер тобыңызда пайда болады.";
+"comment_is_changed" = "Әкімші пікірі өңделді";
+"comment_is_deleted" = "Әкімші пікірі жойылды";
+"comment_is_too_long" = "Пікір тым ұзын ($1 таңба, рұқсат етілгені – 36)";
+"x_no_more_admin" = "$1 енді әкімші емес.";
+"x_is_admin" = "$1 әкімші болып тағайындалды.";
+
+"x_is_now_hidden" = "$1 әкімші екенін тек басқа әкімшілер ғана көре алады.";
+"x_is_now_showed" = "Енді барлығы $1 әкімші екенін біледі.";
+
+"note_is_deleted" = "Жолжазба жойылды";
+"note_x_is_now_deleted" = "\"$1\" жолжазбасы сәтті жойылды.";
+"new_data_accepted" = "Жаңа деректер қабылданды.";
+
+"album_is_deleted" = "Альбом жойылды";
+"album_x_is_deleted" = "\"$1\" альбомы сәтті жойылды.";
+
+"error_adding_to_deleted" = "<b>DELETED</b>-ке сурет сақтау сәтсіз аяқталды.";
+"error_adding_to_x" = "<b>$1</b> альбомына сурет сақтау сәтсіз аяқталды.";
+"no_photo" = "Сурет жоқ";
+
+"select_file" = "Файл таңдау";
+"new_description_will_appear" = "Жаңартылған сипаттама сурет бетінде көрсетіледі.";
+"photo_is_deleted" = "Сурет жойылды";
+"photo_is_deleted_desc" = "Бұл сурет сәтті жойылды.";
+
+"no_video" = "Бейне жоқ";
+"no_video_desc" = "Файлды таңдаңыз немесе сілтеме енгізіңіз.";
+"error_occured" = "Қате орын алды";
+"error_video_damaged_file" = "Файл бүлінген немесе құрамында бейне жоқ.";
+"error_video_incorrect_link" = "Сілтемеңіз қате болуы мүмкін.";
+"error_video_no_title" = "Бейне атаусыз жариялана алмайды.";
+
+"new_data_video" = "Жаңартылған сипаттама бейне бетінде көрсетіледі.";
+"error_deleting_video" = "Бейнені жою сәтсіз аяқталды";
+"login_please" = "Сіз жүйеге кірмегенсіз.";
+"invalid_code" = "Телефон нөмірін тексеру сәтсіз аяқталды: Код қате.";
+
+"error_max_pinned_clubs" = "Бекітілген топтардың ең көп саны – 10.";
+"error_viewing_subs" = "$1 толық жазылым тізімін қарауға болмайды.";
+"error_status_too_long" = "Күй мәтініңіз тым ұзын ($1 таңба, рұқсат етілгені – 255).";
+"death" = "Өлім...";
+"nehay" = "Ұзақ ғұмыр сүр!";
+"user_successfully_banned" = "Пайдаланушы сәтті бұғатталды.";
+
+"content_is_deleted" = "Мазмұн жойылды және пайдаланушыға ескерту берілді.";
+"report_is_ignored" = "Шағым еленбеді.";
+"group_owner_is_banned" = "Топ иесі сәтті бұғатталды";
+"group_is_banned" = "Топ сәтті бұғатталды";
 
 /* Admin actions */
 
 "login_as" = "$1 ретінде кіру";
 "manage_user_action" = "Пайдаланушыны басқару";
 "manage_group_action" = "Топты басқару";
-"ban_user_action" = "Блокқа салу";
+"ban_user_action" = "Бұғаттау";
+"blocks" = "Бұғаттар";
+"last_actions" = "Соңғы әрекеттер";
 "unban_user_action" = "Блоктан шығару";
 "warn_user_action" = "Пайдаланушыны ескерту";
-"ban_in_support_user_action" = "Жәрдемде блоктау";
-"unban_in_support_user_action" = "Жәрдемде блоктан шығару";
+"ban_in_support_user_action" = "Жәрдемде бұғаттау";
+"unban_in_support_user_action" = "Жәрдемде бұғаттан шешу";
+"changes_history" = "Өңдеу тарихы";
 
 /* Admin panel */
 
 "admin" = "Админ-панель";
+"sandbox_for_developers" = "Әзірлеуші зертханасы";
 "admin_ownerid" = "Иесінің ID-сі";
 "admin_author" = "Авторы";
 "admin_name" = "Аты";
@@ -929,7 +1160,7 @@
 "admin_shortcode" = "Қысқа мекенжай";
 "admin_verification" = "Верификация";
 "admin_banreason" = "Блоктың себебі";
-"admin_banned" = "блокталды";
+"admin_banned" = "бұғатталды";
 "admin_actions" = "Әрекеттер";
 "admin_image" = "Фотобейне";
 "admin_image_replace" = "Фотобейнені ауыстыру керек пе?";
@@ -995,7 +1226,42 @@
 "admin_banned_link_not_specified" = "Сілтеме көрсетілмеген";
 "admin_banned_link_not_found" = "Сілтеме табылмады";
 
-/* Paginator */
+"admin_gift_moved_successfully" = "Сыйлық сәтті жылжытылды";
+"admin_gift_moved_to_recycle" = "Бұл сыйлық енді <b>қоқыс жәшігінде</b> болады.";
+
+"logs" = "Журнал";
+"logs_anything" = "Кез келген нәрсе";
+"logs_adding" = "Қосылды";
+"logs_editing" = "Өңделді";
+"logs_removing" = "Жойылды";
+"logs_restoring" = "Қалпына келтірілді";
+"logs_added" = "қосты";
+"logs_edited" = "өңдеді";
+"logs_removed" = "жойды";
+"logs_restored" = "қалпына келтірді";
+"logs_id_post" = "Жазба ID-сі";
+"logs_id_object" = "Нысан ID-сі";
+"logs_uuid_user" = "Пайдаланушы UUID-сі";
+"logs_change_type" = "Өзгеріс түрі";
+"logs_change_object" = "Нысан түрі";
+
+"logs_user" = "Пайдаланушы";
+"logs_object" = "Нысан";
+"logs_type" = "Түр";
+"logs_changes" = "Өзгерістер";
+"logs_time" = "Уақыт";
+
+"bans_history" = "Бұғаттау тарихы";
+"bans_history_blocked" = "Бұғатталған";
+"bans_history_initiator" = "Бастама көтерген";
+"bans_history_start" = "Басталу уақыты";
+"bans_history_end" = "Аяқталу уақыты";
+"bans_history_time" = "Уақыт";
+"bans_history_reason" = "Себеп";
+"bans_history_removed" = "Жойылды";
+"bans_history_active" = "Белсенді бұғат";
+
+/* Paginator (deprecated) */
 
 "paginator_back" = "Артқа";
 "paginator_page" = "$1 бет";
@@ -1034,6 +1300,8 @@
 "close" = "Жабу";
 "warning" = "Назар аударыңыз";
 "question_confirm" = "Бұл әрекетті қайтаруға мүмкін емес. Бәрібір орындағыңыз келе ме?";
+"confirm_m" = "Растау";
+"action_successfully" = "Сәттілік";
 
 /* User alerts */
 
@@ -1047,12 +1315,16 @@
 
 /* Away */
 
+"transition_is_blocked" = "Өткізу бұғатталған";
+"caution" = "Ескерту";
 "url_is_banned" = "Сілтеме бұғатта тұр";
 "url_is_banned_comment" = "<b>$1</b> әкімшілігі бұл сілтемеге өтпеуге кеңес береді.";
 "url_is_banned_comment_r" = "<b>$1</b> әкімшілігі бұл сілтемеге өтпеуге кеңес береді.<br><br>Себебі: <b>$2</b>";
 "url_is_banned_default_reason" = "Сіз ашпақ болған сілтеме пайда табу үшін пайдаланушыларды алдау мақсатында жасалған сайтқа апаруы мүмкін.";
 "url_is_banned_title" = "Күдікті сайтқа сілтеме";
 "url_is_banned_proceed" = "Сілтемеге өту";
+
+"recently" = "Жуырда";
 
 /* Helpdesk */
 "helpdesk" = "Жәрдем";
@@ -1087,11 +1359,99 @@
 "c_add_to_group" = "Топқа қосу";
 "c_remove_from_group" = "Топтан шығару";
 
+/* BadBrowser */
+
+"deprecated_browser" = "Браузеріңіз ескірген";
+"deprecated_browser_description" = "Бұл мазмұнды көру үшін Firefox ESR 52+ немесе басқа заманауи браузер қажет. Кешіріңіз.";
+
+/* Statistics */
+
+"coverage" = "Қамту";
+"coverage_this_week" = "Бұл график соңғы 7 күндегі қамтуды көрсетеді.";
+"views" = "Көрілімдер";
+"views_this_week" = "Бұл график соңғы 7 күндегі қауымдастық жазбаларының көрілімдерін көрсетеді.";
+
+"full_coverage" = "Толық қамту";
+"all_views" = "Барлық көрілімдер";
+
+"subs_coverage" = "Жазылушылар қамтуы";
+"subs_views" = "Жазылушылар көрілімдері";
+
+"viral_coverage" = "Вирустық қамту";
+"viral_views" = "Вирустық көрілімдер";
+
+/* Sudo */
+
+"you_entered_as" = "Мына пайдаланушы атынан кірдіңіз";
+"please_rights" = "Басқа пайдаланушылардың құпиялылығын құрметтеңіз, аккаунттарды ауыстыру қабілетін асыра пайдаланбаңыз.";
+"click_on" = "Шығу үшін";
+"there" = "мұнда";
+"to_leave" = "басыңыз.";
+
+/* Phone number */
+
+"verify_phone_number" = "Телефон нөмірін растау";
+"we_sended_first" = "Сіз енгізген нөмірге SMS-код жібердік";
+"we_sended_end" = "оны осында енгізіңіз.";
+
+/* Mobile */
+
+"mobile_friends" = "Достар";
+"mobile_photos" = "Суреттер";
+"mobile_videos" = "Бейнелер";
+"mobile_messages" = "Хабарламалар";
+"mobile_notes" = "Жолжазбалар";
+"mobile_groups" = "Топтар";
+"mobile_search" = "Іздеу";
+"mobile_desktop_version" = "Толық нұсқа";
+"mobile_log_out" = "Шығу";
+"mobile_menu" = "Мәзір";
+"mobile_like" = "Ұнату";
+"mobile_user_info_hide" = "Жасыру";
+"mobile_user_info_show_details" = "Қосымша мәліметті көру";
+
+/* Moderation */
+
+"section" = "Бөлім";
+"template_ban" = "Үлгі бойынша бұғаттау";
+"active_templates" = "Белсенді үлгілер";
+"users_reports" = "Пайдаланушы есептері";
+"substring" = "Ішкі жол";
+"n_user" = "Пайдаланушы";
+"time_before" = "Мына уақыттан бұрын";
+"time_after" = "Мына уақыттан кейін";
+"where_for_search" = "Бөлім бойынша іздеу шарты";
+"block_params" = "Бұғаттау параметрлері";
+"only_rollback" = "Тек кері қайтару";
+"only_block" = "Тек бұғаттау";
+"rollback_and_block" = "Кері қайтару және бұғаттау";
+"subm" = "Қолдану";
+
+"select_section_for_start" = "Бастау үшін бөлімді таңдаңыз";
+"results_will_be_there" = "Іздеу нәтижелері осында көрсетіледі";
+"search_results" = "Іздеу нәтижелері";
+"cnt" = "дана";
+
+"link_to_page" = "Бетке сілтеме";
+"or_subnet" = "немесе қосалқы желі";
+"error_when_searching" = "Сұранысты орындау кезінде қате орын алды";
+"no_found" = "Ештеңе табылмады";
+"operation_successfully" = "Операция сәтті аяқталды";
+
+"unknown_error" = "Белгісіз қателік";
+"templates" = "Үлгі";
+"type" = "Түрі";
+"count" = "Саны";
+"time" = "Уақыты";
+
+"roll_back" = "Кері қайтару";
+"roll_backed" = "Кері қайтарылды";
+
 /* Maintenance */
 
 "global_maintenance" = "Жөндеу жұмыстары жүргізілуде";
 "section_maintenance" = "Бөлім қолжетімді емес";
-"undergoing_global_maintenance" = "Өкінішке орай, бұл инстанция қазір техникалық жұмыс үшін жабық. Біз ақауларды жою бойынша жұмыс істеп жатырмыз. Кейінірек қайта келіп көріңіз.";
+"undergoing_global_maintenance" = "Өкінішке орай, бұл инстанция қазір техникалық жұмыс үшін жабық. Біз ақауларды жою бойынша жұмыс істеп жатырмыз. Кейінірек келіңіз.";
 "undergoing_section_maintenance" = "Өкінішке орай, <b>$1</b> бөлімі уақытша қолжетімсіз. Біз ақауларды жою бойынша жұмыс істеп жатырмыз. Кейінірек қайта келіп көріңіз.";
 "topics" = "Тақырыптар";
 "appjs_act_friends" = "сіздің Достарыңыз";
@@ -1111,16 +1471,7 @@
 "backdrop_succ_rem" = "Суреттер сәтті жойылды";
 "backdrop_succ_desc" = "Пайдаланушылар 5 минут ішінде өзгерістер көре бастайды.";
 "browse" = "Шолу";
-"view_video" = "Көру";
-"nt_topic_instrumental" = "тақырып";
-"nt_you_were_mentioned_u" = "Сізді осы пайдаланушы атап өтті:";
-"nt_mention_in_post_or_comms" = "жазбада немесе соның талқылау тақырыбының бірінде";
-"nt_mention_in_video" = "осы бейненің талқылау бетінде";
-"nt_mention_in_photo" = "осы суреттің талқылау бетінде";
-"nt_mention_in_note" = "осы жолжазбаның талқылау бетінде";
-"nt_mention_in_topic" = "осы талқылауда";
 "backdrop_desc" = "Парақша немесе топтық фон ретінде екі суретті орнатуға болады. Олар беттің сол және оң жақ шеттерінде көрсетіледі. Бұл мүмкіндіктің көмегімен парақшаңызға көбірек тұлға қосуға болады.";
 "backdrop_about_adding" = "Сіз тек бір суретті жүктей аласыз, бірақ дизайнға байланысты соңғы нәтиже жағымсыз көрінуі мүмкін. Сондай-ақ тек бір суретті өзгертуге болады: егер сізде екі сурет орнатылған болса және біреуін өзгерткіңіз келсе - тек біреуін жүктеп салыңыз, екіншісі жойылмайды. Екі суретті де жою үшін төмендегі түймені басыңыз, суреттерді жеке жою мүмкін емес.";
-"nt_you_were_mentioned_g" = "Сізді осы топ атап өтті:";
 "backdrop_warn" = "Суреттер жоғарыдағы орналасудағыдай реттеледі. Олардың биіктігі автоматты түрде ұлғайып, экран биіктігінің 100% алады, ортасында бұлыңғырлық болады. Негізгі OpenVK интерфейсінің фонын ауыстыру немесе дыбысты қосу мүмкін емес.";
 "gifts_left_zero" = "Нөл сыйлық қалды";
