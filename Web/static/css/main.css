@@ -3039,6 +3039,10 @@ a.poll-retract-vote {
     gap: 1px;
 }
 
+.verticalGrayTabsPad {
+    padding: 0px 0px 0px 8px;
+}
+
 .searchList hr, .verticalGrayTabs hr {
     width: 153px;
     margin-left: 0px;
@@ -4277,4 +4281,8 @@ hr {
 .attachment_selector .attachment_search input {
     height: 30px;
     background-position-y: 9px;
+}
+
+.deleted_mark_average {
+    padding: 5px 61px;
 }

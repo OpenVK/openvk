@@ -54,6 +54,9 @@ window.player = new class {
     current_track_id = 0
     tracks = []
 
+    // time type:
+    // 0 - shows remaining time before end
+    // 1 - shows full track time
     get timeType() {
         return localStorage.getItem('audio.timeType') ?? 0
     }
@@ -62,6 +65,7 @@ window.player = new class {
         localStorage.setItem('audio.timeType', value)
     }
 
+    // <audio> tag
     get audioPlayer() {
         return this.__realAudioPlayer
     }
@@ -231,6 +235,9 @@ window.player = new class {
                     'query': this.context.object.query,
                 }))
                 break
+            case "uploaded":
+                form_data.append('context', this.context.object.name)
+                break
             case 'alone_audio':
                 form_data.append('context', this.context.object.name)
                 form_data.append('context_entity', this.context.object.entity_id)
@@ -322,6 +329,8 @@ window.player = new class {
         
         this.__updateFace()
         u(this.audioPlayer).trigger('volumechange')
+
+        document.title = ovk_proc_strtr(escapeHtml(`${window.player.currentTrack.performer} — ${window.player.currentTrack.name}`), 255)
     }
 
     hasContext() {
@@ -377,7 +386,7 @@ window.player = new class {
         }
 
         await this.setTrack(this.previousTrack.id)
-        if(!this.currentTrack.available || this.currentTrack.withdrawn) {
+        if(/*!this.currentTrack.available || */this.currentTrack.withdrawn) {
             if(!this.previousTrack) {
                 return
             }
@@ -394,7 +403,7 @@ window.player = new class {
         }
 
         await this.setTrack(this.nextTrack.id)
-        if(!this.currentTrack.available || this.currentTrack.withdrawn) {
+        if(/*!this.currentTrack.available || */this.currentTrack.withdrawn) {
             if(!this.nextTrack) {
                 return
             }
@@ -652,7 +661,7 @@ window.player = new class {
             this.uiPlayer.find(".trackInfo .elapsedTime").html(getRemainingTime(this.currentTrack.length, new_time))
         }
     }
-
+    
     __updateMediaSession() {
         const album = document.querySelector(".playlistBlock")
         const cur = this.currentTrack
@@ -664,6 +673,8 @@ window.player = new class {
         })
     }
 
+    // the listen counts if you reach half of song
+    // but it doesnt checks on server normally so you can "накрутить" listens
     async __countListen() {
         let playlist = 0
         if(!this.listen_coef) {
@@ -786,6 +797,10 @@ window.player = new class {
                 }
             }
         })
+    }
+
+    toggleSummary() {
+        $(".summaryBarHideable").slideToggle(300, "linear")
     }
 }
 
@@ -1163,7 +1178,25 @@ u(document).on("drop", '.audiosContainer', function(e) {
     } 
 })
 
+u(document).on("click", "#summarySwitchButton", (e) => {
+    if(u(".summaryBarHideable").nodes[0].style.overflow == "hidden") {
+        return
+    }
+    
+    if(u(e.target).html() == "-") {
+        u(e.target).html("+")
+    } else {
+        u(e.target).html("-")
+    }
+
+    window.player.toggleSummary()
+})
+
 u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e) => {
+    if(e.shiftKey) {
+        return
+    }
+
     e.preventDefault()
 
     u('#ctx_menu').remove()
@@ -1178,6 +1211,10 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
     let rx = rect.x + window.scrollX, ry = rect.y + window.scrollY
     x = e.pageX - rx
     y = e.pageY - ry
+
+    if((rect.height + rect.top) + 100 > window.innerHeight) {
+        y = ((rect.height + 120) * -1)
+    }
 
     const ctx_u = u(`
         <div id='ctx_menu' style='top:${y}px;left:${x}px;' data-type='ctx_type'>
@@ -1194,7 +1231,7 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
             <a id='audio_ctx_add_to_playlist'>${tr('audio_ctx_add_to_playlist')}</a>
             ${ctx_type == 'main_player' ? `
             <a id='audio_ctx_clear_context'>${tr('audio_ctx_clear_context')}</a>` : ''}
-            ${ctx_type == 'main_player' ? `<a href='https://github.com/mrilyew' target='_blank'>BigPlayer v1.1 by MrIlyew</a>` : ''}
+            ${ctx_type == 'main_player' ? `<a href='https://github.com/mrilyew' target='_blank'>BigPlayer v1.2 by MrIlyew</a>` : ''}
         </div>
     `)
     u(parent).append(ctx_u)
@@ -1948,8 +1985,12 @@ $(document).on("click", ".audioEmbed.processed .playerButton", (e) => {
         title: tr('error'),
         body: tr('audio_embed_processing'),
         unique_name: 'processing_notify',
-        buttons: [tr('ok')],
-        callbacks: [Function.noop]
+        buttons: [tr("audio_embed_processing_bait"), tr('ok')],
+        callbacks: [() => {
+            const pl = u(e.target).closest(".audioEmbed")
+            pl.removeClass("processed")
+            pl.find(".playIcon").trigger("click")
+        }, Function.noop]
     })
 })
 
