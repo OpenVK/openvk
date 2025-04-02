@@ -2919,7 +2919,6 @@ a.poll-retract-vote {
     position: relative;
 }
 
-/* не говновёрстка, а пиксель-пёрфект) */
 .page_header.search_expanded.search_expanded_at_all #search_and_one_more_wrapper {
     width: 547px;
 }
