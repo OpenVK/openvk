@@ -660,3 +660,8 @@ ul {
 .doc_icon.no_image span::before {
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAKCAYAAABmBXS+AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsAAAA7AAWrWiQkAAABXSURBVChTY2RAAoFe9ZuEBOR93314uHn9tkY/qDADE5QGA5ACZBoGUBThAkQpYkyOmvcfysYJiDMJROAzbe6yJEZ4EGBTCFIAolHCCVkhTAFWgGkiAwMAzxkZ3qVQ7YEAAAAASUVORK5CYII=");
 }
+
+.bigPlayer .bigPlayerWrapper .absoluteButtons > div {
+    background: #1e1a2b;
+    border: 1px solid #2c2640;
+}
