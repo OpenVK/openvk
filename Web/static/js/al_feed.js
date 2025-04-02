@@ -68,7 +68,7 @@ u(document).on('click', '#__feed_settings_link', (e) => {
     `
 
     MessageBox(tr("feed_settings"), body, [tr("close")], [Function.noop])
-    u('.ovk-diag-body').attr('style', 'padding:0px;height: 255px;')
+    u('.ovk-diag-body').attr('style', 'padding:0px;height: 255px;overflow: hidden;')
 
     async function __switchTab(tab) 
     {
