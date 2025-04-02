@@ -306,10 +306,10 @@ class User extends RowModel
             $content_type = $matches[1];
             $content_id = (int) $matches[2];
             if (in_array($content_type, ["noSpamTemplate", "user"])) {
-                $reason = "Подозрительная активность";
+                $reason = $this->getRawBanReason();
             } else {
                 if ($for !== "banned") {
-                    $reason = "Подозрительная активность";
+                    $reason = $this->getRawBanReason();
                 } else {
                     $reason = [$this->getTextForContentBan($content_type), $content_type];
                     switch ($content_type) {
