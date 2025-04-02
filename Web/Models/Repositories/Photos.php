@@ -51,6 +51,7 @@ class Photos
             "deleted"  => 0,
             "system"   => 0,
             "private"  => 0,
+            "anonymous" => 0,
         ])->order("id DESC");
 
         foreach ($photos->limit($limit, $offset) as $photo) {
@@ -65,6 +66,7 @@ class Photos
             "deleted"  => 0,
             "system"   => 0,
             "private"  => 0,
+            "anonymous" => 0,
         ]);
 
         return sizeof($photos);

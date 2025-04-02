@@ -665,3 +665,8 @@ ul {
     background: #1e1a2b;
     border: 1px solid #2c2640;
 }
+
+.insertedPhoto {
+    background: #1e1a2b;
+    border: 1px solid #403a56;
+}
