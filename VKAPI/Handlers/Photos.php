@@ -285,7 +285,7 @@ final class Photos extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
-        if (!is_null($title) && !empty($title) && !ctype_space($content)) {
+        if (!is_null($title) && !empty($title) && !ctype_space($title)) {
             $album->setName($title);
         }
         if (!is_null($description)) {
@@ -335,9 +335,10 @@ final class Photos extends VKAPIRequestHandler
         } else {
             $album_ids = explode(',', $album_ids);
             foreach ($album_ids as $album_id) {
-                $album = (new Albums())->getAlbumByOwnerAndId((int)$owner_id, (int)$album_id);
-                if (!$album || $album->isDeleted() || !$album->canBeViewedBy($this->getUser()))
+                $album = (new Albums())->getAlbumByOwnerAndId((int) $owner_id, (int) $album_id);
+                if (!$album || $album->isDeleted() || !$album->canBeViewedBy($this->getUser())) {
                     continue;
+                }
 
                 $albums_list[] = $album;
             }
@@ -502,7 +503,7 @@ final class Photos extends VKAPIRequestHandler
             if (is_null($photo_id)) {
                 return 0;
             }
-            
+
             $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $photo_id);
             if (!$photo || $photo->isDeleted() || !$photo->canBeModifiedBy($this->getUser())) {
                 return 1;
@@ -514,7 +515,7 @@ final class Photos extends VKAPIRequestHandler
             if (sizeof($photos_list) > 10) {
                 $this->fail(-78, "Photos count must not exceed limit");
             }
-            
+
             foreach ($photos_list as $photo_id) {
                 $id = explode("_", $photo_id);
                 $photo = (new PhotosRepo())->getByOwnerAndVID((int) $id[0], (int) $id[1]);
