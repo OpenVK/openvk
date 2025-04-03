@@ -278,19 +278,23 @@ final class Photos extends VKAPIRequestHandler
 
         $album = (new Albums())->getAlbumByOwnerAndId($owner_id, $album_id);
 
-        if (!$album || $album->isDeleted() || $album->isCreatedBySystem())
+        if (!$album || $album->isDeleted() || $album->isCreatedBySystem()) {
             $this->fail(114, "Invalid album id");
-        if (!$album->canBeModifiedBy($this->getUser()))
+        }
+        if (!$album->canBeModifiedBy($this->getUser())) {
             $this->fail(15, "Access denied");
+        }
 
-        if (!is_null($title) && !empty($title) && !ctype_space($content))
+        if (!is_null($title) && !empty($title) && !ctype_space($content)) {
             $album->setName($title);
-        if (!is_null($description))
+        }
+        if (!is_null($description)) {
             $album->setDescription($description);
+        }
 
         try {
             $album->save();
-        } catch(\Throwable $e) {
+        } catch (\Throwable $e) {
             return 1;
         }
 
@@ -312,10 +316,12 @@ final class Photos extends VKAPIRequestHandler
 
         if (empty($album_ids)) {
             $owner = get_entity_by_id($owner_id);
-            if (!$owner || !$owner->canBeViewedBy($this->getUser()))
+            if (!$owner || !$owner->canBeViewedBy($this->getUser())) {
                 $this->fail(15, "Access denied");
-            if ($owner_id > 0 && !$owner->getPrivacyPermission('photos.read', $this->getUser()))
+            }
+            if ($owner_id > 0 && !$owner->getPrivacyPermission('photos.read', $this->getUser())) {
                 $this->fail(15, "Access denied");
+            }
 
             $albums_list = null;
             if ($owner_id > 0) {
@@ -338,8 +344,9 @@ final class Photos extends VKAPIRequestHandler
         }
 
         foreach ($albums_list as $album) {
-            if (!$need_system && $album->isCreatedBySystem()) # TODO use queries
+            if (!$need_system && $album->isCreatedBySystem()) { # TODO use queries
                 continue;
+            }
 
             $res["items"][] = $album->toVkApiStruct($this->getUser(), $need_covers, $photo_sizes);
         }
@@ -355,7 +362,7 @@ final class Photos extends VKAPIRequestHandler
             $user_id = $this->getUser()->getId();
         }
 
-        if (!is_null($user_id)){
+        if (!is_null($user_id)) {
             $__user = (new UsersRepo())->get($user_id);
             if (!$__user || $__user->isDeleted() || !$__user->getPrivacyPermission('photos.read', $this->getUser())) {
                 $this->fail(15, "Access denied");
@@ -388,8 +395,9 @@ final class Photos extends VKAPIRequestHandler
         foreach ($photos_splitted_list as $photo_id) {
             $photo_s_id = explode("_", $photo_id);
             $photo = (new PhotosRepo())->getByOwnerAndVID((int) $photo_s_id[0], (int) $photo_s_id[1]);
-            if(!$photo || $photo->isDeleted() || !$photo->canBeViewedBy($this->getUser()))
+            if (!$photo || $photo->isDeleted() || !$photo->canBeViewedBy($this->getUser())) {
                 continue;
+            }
 
             $res[] = $photo->toVkApiStruct($photo_sizes, $extended);
         }
@@ -435,8 +443,9 @@ final class Photos extends VKAPIRequestHandler
                 $id = explode("_", $photo);
 
                 $photo_entity = (new PhotosRepo())->getByOwnerAndVID((int) $id[0], (int) $id[1]);
-                if (!$photo_entity || $photo_entity->isDeleted() || !$photo_entity->canBeViewedBy($this->getUser()))
+                if (!$photo_entity || $photo_entity->isDeleted() || !$photo_entity->canBeViewedBy($this->getUser())) {
                     continue;
+                }
 
                 $res["items"][] = $photo_entity->toVkApiStruct($photo_sizes, $extended);
             }
@@ -485,13 +494,14 @@ final class Photos extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        if(!$owner_id) {
+        if (!$owner_id) {
             $owner_id = $this->getUser()->getId();
         }
 
         if (is_null($photos)) {
-            if(is_null($photo_id))
+            if (is_null($photo_id)) {
                 return 0;
+            }
             
             $photo = (new PhotosRepo())->getByOwnerAndVID($owner_id, $photo_id);
             if (!$photo || $photo->isDeleted() || !$photo->canBeModifiedBy($this->getUser())) {
@@ -508,8 +518,9 @@ final class Photos extends VKAPIRequestHandler
             foreach ($photos_list as $photo_id) {
                 $id = explode("_", $photo_id);
                 $photo = (new PhotosRepo())->getByOwnerAndVID((int) $id[0], (int) $id[1]);
-                if (!$photo || $photo->isDeleted() || !$photo->canBeModifiedBy($this->getUser()))
+                if (!$photo || $photo->isDeleted() || !$photo->canBeModifiedBy($this->getUser())) {
                     continue;
+                }
 
                 $photo->delete();
             }

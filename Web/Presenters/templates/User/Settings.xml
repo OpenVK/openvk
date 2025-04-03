@@ -595,6 +595,17 @@
                 </tbody>
             </table>
         </form>
+
+        <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center" id="_js_settings">
+            <tbody>
+                <tr>
+                    <td width="120" valign="top" align="right"></td>
+                    <td>
+                        <a href="javascript:openJsSettings()">{_ui_settings_window}</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
         
         <h4>{_ui_settings_sidebar}</h4>
         <form action="/settings?act=lMenu" method="POST" enctype="multipart/form-data">
