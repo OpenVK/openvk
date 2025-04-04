@@ -26,7 +26,9 @@ class Album extends MediaCollection
     {
         $coverPhoto = $this->getCoverPhoto();
         if (!$coverPhoto) {
-            return "/assets/packages/static/openvk/img/camera_200.png";
+            $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
+
+            return $server_url . "/assets/packages/static/openvk/img/camera_200.png";
         }
 
         return $coverPhoto->getURL();
@@ -92,14 +94,13 @@ class Album extends MediaCollection
     {
         $res = (object) [];
 
-        $res->id              = $this->getPrettyId();
-        $res->vid             = $this->getId();
+        $res->id              = $this->getId();
         $res->thumb_id        = !is_null($this->getCoverPhoto()) ? $this->getCoverPhoto()->getPrettyId() : 0;
-        $res->owner_id        = $this->getOwner()->getId();
+        $res->owner_id        = $this->getOwner()->getRealId();
         $res->title           = $this->getName();
         $res->description     = $this->getDescription();
         $res->created         = $this->getCreationTime()->timestamp();
-        $res->updated         = $this->getEditTime() ? $this->getEditTime()->timestamp() : null;
+        $res->updated         = $this->getEditTime() ? $this->getEditTime()->timestamp() : $res->created;
         $res->size            = $this->size();
         $res->privacy_comment = 1;
         $res->upload_by_admins_only = 1;

@@ -349,7 +349,6 @@ class Photo extends Media
         $res->width    = $this->getDimensions()[0];
         $res->height   = $this->getDimensions()[1];
         $res->date     = $res->created = $this->getPublicationTime()->timestamp();
-
         if ($photo_sizes) {
             $res->sizes = array_values($this->getVkApiSizes());
             $res->src_small    = $res->photo_75 = $this->getURLBySizeId("miniscule");
@@ -359,14 +358,19 @@ class Photo extends Media
             $res->src_xxbig    = $res->photo_1280 = $this->getURLBySizeId("larger");
             $res->src_xxxbig   = $res->photo_2560 = $this->getURLBySizeId("original");
             $res->src_original = $res->url = $this->getURLBySizeId("UPLOADED_MAXRES");
+            $res->orig_photo   = [
+                "height" => $res->height,
+                "width" => $res->width,
+                "type" => "base",
+                "url" => $this->getURL(),
+            ];
         }
 
         if ($extended) {
-            $res->likes       = $this->getLikesCount(); # их нету но пусть будут
+            $res->likes       = $this->getLikesCount();
             $res->comments    = $this->getCommentsCount();
-            $res->tags        = 0;
             $res->can_comment = 1;
-            $res->can_repost  = 0;
+            $res->can_repost  = 1;
         }
 
         return $res;
