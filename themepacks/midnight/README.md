@@ -5,11 +5,9 @@
 
 The key feature of the design theme is to be **as close to the standard design theme as possible**, which is why you'll not see a badass (in a good way) design of that button which does not need to be styled.
 
+Like most design themes made for OpenVK, this theme is applied on top of the default theme called "Fore".
+
 # Contributing
-If I ([Lumaeris](https://github.com/Lumaeris)) didn't manage to style a new feature in time or if you develop a new feature with styling yourself, please remember the key feature of the design theme.
+If you are going to make changes to this design theme, then you should NOT add unnecessary properties (such as `width`, `overflow-x`, `cursor`, etc). Focus on color changes and only add critical properties where needed.
 
-> _"**as close to the standard design theme as possible**"_
-
-What is meant here is that you should NOT add unnecessary properties (such as `width`, `overflow-x`, `cursor`, etc). You should only focus on color changes and only add critical properties where needed. That's it. *Keep It Simple, Silly.*
-
-When upgrading a version, you don't have to choose something specific like `0.2.64.85` or `2038-1-19.1`, just increase the number in the last part of the version line (`0.0.5.6` -> `0.0.5.7`). It is necessary to update the version constantly to avoid forced caching of the style file. Increase the version is necessary not only in `theme.yml`, but also in `stylesheet.css` ("Replace All" will help in this).
+When upgrading a version, you don't have to choose something specific like `0.2.64.85` or `2038-1-19.1`, just increase the number in the last part of the version line (`0.0.5.6` -> `0.0.5.7`). It is necessary to update the version constantly to avoid forced caching of the style file. Increase the version is necessary not only in `theme.yml`, but also in `stylesheet.css` and `res/xmas.css` ("Replace All" will help in this).
