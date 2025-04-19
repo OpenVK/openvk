@@ -2235,6 +2235,7 @@
 "mobile_like" = "Like";
 "mobile_user_info_hide" = "Hide";
 "mobile_user_info_show_details" = "Show details";
+"mobile_attachment_only_for_pc" = "This attachments is not implemented for PDA version. Please, view it on PC.";
 
 /* Fullscreen player */
 

@@ -371,7 +371,11 @@ abstract class OpenVKPresenter extends SimplePresenter
            $whichbrowser->isEngine('NetFront') || // PSP and other japanese portable systems
            $whichbrowser->isOs('Android') ||
            $whichbrowser->isOs('iOS') ||
-           $whichbrowser->isBrowser('Internet Explorer', '<=', '8')) {
+           $whichbrowser->isBrowser('BlackBerry Browser') ||
+           $whichbrowser->isBrowser('Internet Explorer', '<=', '8') ||
+           $whichbrowser->isBrowser('Firefox', '<=', '47') ||
+           $whichbrowser->isBrowser('Safari', '<=', '7') ||
+           $whichbrowser->isBrowser('Google Chrome', '<=', '35')) {
             // yeah, it's old, but ios and android are?
             if ($whichbrowser->isOs('iOS') && $whichbrowser->isOs('iOS', '<=', '9')) {
                 return true;
