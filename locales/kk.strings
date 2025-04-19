@@ -66,6 +66,7 @@
 "gender" = "Жынысы";
 "male" = "ер";
 "female" = "қыз";
+"neutral" = "бейтарап";
 "description" = "Сипаттама";
 "save" = "Сақтау";
 "main_information" = "Басты ақпарат";
@@ -90,16 +91,23 @@
 "none" = "ештеңе";
 "desc_none" = "сипаттама жоқ";
 "relationship" = "Отбасылық жағдай";
-"relationship_0" = "Таңдалмаған";
+"relationship_0" = "таңдалмаған";
 "relationship_1" = "Бойдақ";
-"relationship_2" = "Кездеседі";
-"relationship_3" = "Атастырылған";
-"relationship_4" = "Үйленген";
-"relationship_5" = "Азаматтық некеде";
-"relationship_6" = "Ғашық";
-"relationship_7" = "Барлығы күрделі";
-"relationship_8" = "Белсенді іздеуде";
 "relationship_1_fem" = "Тұрмыс құрмаған";
+"relationship_2" = "Мына кісімен";
+"relationship_2_prefix" = "кездесіп жүр:";
+"relationship_3" = "Мына кісіге";
+"relationship_3_prefix" = "атастырылған:";
+"relationship_4" = "Мына кісіге";
+"relationship_4_prefix" = "үйленген:";
+"relationship_5" = "Мына кісімен";
+"relationship_5_prefix" = "азаматтық некеде:";
+"relationship_6" = "Мына кісіге";
+"relationship_6_prefix" = "ғашық:";
+"relationship_7" = "Мына кісімен";
+"relationship_7_prefix" = "қарым-қатынасы күрделі:";
+"relationship_8" = "Белсенді іздеуде";
+
 "politViews" = "Саяси көзқарастар";
 "politViews_0" = "Таңдалмаған";
 "politViews_1" = "Бейтарап";
@@ -129,6 +137,22 @@
 "updated_at" = "Соңғы жаңартылған күні: $1";
 "user_banned" = "Өкінішке орай біз <b>$1</b> атты кісінің парақшасын бұғаттауға мәжбүр болдық.";
 "user_banned_comment" = "Модератордың пікірі:";
+
+"closed_page" = "Жабық парақша";
+
+"limited_access_to_page_m" = "$1 өз парақшасына қолжетімділікті шектеді.";
+"limited_access_to_page_f" = "$1 өз парақшасына қолжетімділікті шектеді.";
+
+"you_can_add" = "Сіз оны";
+"add_to_friends_m" = "достар қатарына қоса аласыз.";
+"add_to_friends_f" = "достар қатарына қоса аласыз.";
+
+"register_to_access_page_m" = "Оның парақшасын көру үшін тіркеліңіз.";
+"register_to_access_page_f" = "Оның парақшасын көру үшін тіркеліңіз.";
+
+"private_profile_warning" = "Бұл бейін жабық, бірақ сіз әкімші болған соң оны көре аласыз.";
+"private_profile_warning_desc" = "Жеке өмірге құрметпен қараңыз. Бұл мүмкіндікті теріс пайдаланбаңыз.";
+
 "verified_page" = "Тексерілген парақша";
 "user_is_blocked" = "Пайдаланушы бұғатталған";
 "before" = "мына күнге дейін";
@@ -139,8 +163,8 @@
 "post_writes_m" = "жазды";
 "post_writes_f" = "жазды";
 "post_writes_g" = "жариялады";
-"post_deact_m" = "осы сөзбен парақшасын жойып тастады:";
-"post_deact_f" = "осы сөзбен парақшасын жойып тастады:";
+"post_deact_m" = "бүй деп парақшасын жойып тастады:";
+"post_deact_f" = "бүй деп парақшасын жойып тастады:";
 "post_deact_silent_m" = "үндемей парақшасын жойып тастады.";
 "post_deact_silent_f" = "үндемей парақшасын жойып тастады.";
 "wall" = "Қабырға";
@@ -190,7 +214,8 @@
 "nsfw_warning" = "Бұл жазбада NSFW-контент болуы мүмкін";
 "report" = "Шағымдану";
 "attach" = "Тіркеу";
-"attach_photo" = "Фото тіркеу";
+"detach" = "Алып тастау";
+"attach_photo" = "Сурет тіркеу";
 "attach_video" = "Видео тіркеу";
 "draw_graffiti" = "Граффити салу";
 "no_posts_abstract" = "Бұл жерде әлі ешкім ештеңе жазбады.";
@@ -202,6 +227,11 @@
 "post_is_ad" = "Бұл жазба — жарнама.";
 
 "edited_short" = "өңдеді";
+
+"all_posts" = "Барлық жазба";
+"users_posts" = "$1 жазбалары";
+"clubs_posts" = "Топ жазбалары";
+"others_posts" = "Өзгелердің жазбалары";
 
 /* Friends */
 
@@ -240,6 +270,7 @@
 
 /* Group */
 
+"group" = "Топ";
 "name_group" = "Атауы";
 "subscribe" = "Жазылу";
 "unsubscribe" = "Топтан шығу";
@@ -275,8 +306,63 @@
 "set_comment" = "Пікірді өңдеу";
 "hidden_yes" = "Жасырылған: Ия";
 "hidden_no" = "Жасырылған: Жоқ";
-"group_allow_post_for_everyone" = "Бәріне жазба жазуға рұқсат ету";
+
+"group_allow_post_for_everyone" = "Ашық";
+"group_limited_post" = "Ұсынылатын жазбалар";
+"group_closed_post" = "Жабық";
+"suggest_new" = "Жаңалық ұсыну";
+"suggested_by_you_zero" = "Сіз $1 жазба ұсынғансыз";
+"suggested_by_you_one" = "Сіз бір жазба ұсынғансыз";
+"suggested_by_you_few" = "Сіз $1 жазба ұсынғансыз";
+"suggested_by_you_many" = "Сіз $1 жазба ұсынғансыз";
+"suggested_by_you_other" = "Сіз $1 жазба ұсынғансыз";
+
+"suggested_by_everyone_zero" = "$1 ұсынылған жазба";
+"suggested_by_everyone_one" = "Бір ұсынылған жазба";
+"suggested_by_everyone_few" = "$1 ұсынылған жазба";
+"suggested_by_everyone_many" = "$1 ұсынылған жазба";
+"suggested_by_everyone_other" = "$1 ұсынылған жазба";
+
+
 "group_hide_from_global_feed" = "Жаһандық арнада жазбаларды көрсетпеу";
+
+"suggested_posts_by_you" = "Сіз ұсынған жазбалар";
+"suggested_posts_by_everyone" = "Ұсынылған жазбалар";
+"suggested" = "Ұсынылды";
+"suggested_posts_everyone" = "Пайдаланушылар ұсынған жазбалар";
+"no_suggested_posts_by_you" = "Сіз бұл топқа әлі ешқандай жазба ұсынған жоқсыз.";
+"no_suggested_posts_by_people" = "Бұл топқа әлі ешкім жазба ұсынбаған.";
+
+"publish_suggested" = "Жазбаны жариялау";
+"decline_suggested" = "Қабылдамау";
+
+"error_loading_suggest" = "Жаңа жазбаларды жүктеу сәтсіз аяқталды";
+
+"publishing_suggested_post" = "Ұсынылған жазбаны жариялау";
+"suggested_posts_in_group_zero" = "Ұсынылған жазбаның барлығын қарап шықтыңыз, алақай!";
+"suggested_posts_in_group_one" = "Бұл топқа бір жазба ұсынылған";
+"suggested_posts_in_group_few" = "Бұл топқа $1 жазба ұсынылған";
+"suggested_posts_in_group_many" = "Бұл топқа $1 жазба ұсынылған";
+"suggested_posts_in_group_other" = "Бұл топқа $1 жазба ұсынылған";
+
+"suggested_posts_in_group_by_you_zero" = "Сіз бұл топқа ешбңр жазба ұсынбағансыз";
+"suggested_posts_in_group_by_you_one" = "Бұл топқа бір жазба ұсынғансыз";
+"suggested_posts_in_group_by_you_few" = "Бұл топқа $1 жазба ұсынғансыз";
+"suggested_posts_in_group_by_you_many" = "Бұл топқа $1 жазба ұсынғансыз";
+"suggested_posts_in_group_by_you_other" = "Бұл топқа $1 жазба ұсынғансыз";
+
+"suggestion_succefully_published" = "Жазба сәтті жарияланды";
+"suggestion_succefully_declined" = "Жазба сәтті қабылданбады";
+"suggestion_press_to_go" = "Өту үшін басыңыз";
+
+"error_declining_invalid_post" = "Жазбаны қабылдамау мүмкін болмады: жазба жоқ";
+"error_declining_not_suggested_post" = "Жазбаны қабылдамау мүмкін болмады: бұл ұсынылған жазба емес";
+"error_declining_declined_post" = "Жазбаны қабылдамау мүмкін болмады: жазба бұрыннан қабылданбаған";
+
+"error_accepting_invalid_post" = "Жазбаны қабылдау мүмкін болмады: жазба жоқ";
+"error_accepting_not_suggested_post" = "Жазбаны қабылдау мүмкін болмады: бұл ұсынылған жазба емес";
+"error_accepting_declined_post" = "Жазбаны қабылдау мүмкін болмады: жазба бұрын қабылданбаған";
+
 "statistics" = "Статистика";
 "group_administrators_list" = "Әкімшілер тізімі";
 "group_display_only_creator" = "Тек топты құрған кісіні көрсету";
@@ -302,8 +388,12 @@
 "search_group" = "Топ іздеу";
 "search_by_groups" = "Топтардан іздеу";
 "search_group_desc" = "Мұнда сіз бар топтарға шолу жасай аласыз және қажеттіліктеріңізге сай топты таңдай аласыз.";
-
 "group_banned" = "Өкінішке қарай, біз <b>$1</b> тобын бұғаттауға мәжбүр болдық.";
+
+"error_suggestions" = "Ұсынылған жазбаларға қол жеткізе алмадық";
+"error_suggestions_closed" = "Бұл топтың қабырғасы жабық.";
+"error_suggestions_open" = "Бұл топтың қабырғасы ашық.";
+"error_suggestions_access" = "Бүкіл ұсынылған жазбаны тек топ әкімшілері көре алады.";
 
 /* Albums */
 
@@ -317,12 +407,12 @@
 "creating_album" = "Альбом жасалуда";
 "delete_photo" = "Суретті жою";
 "sure_deleting_photo" = "Мына суретті шынымен жойғыңыз келе ме?";
-"upload_photo" = "Фото жүктеу";
-"photo" = "Фото";
+"upload_photo" = "Сурет жүктеу";
+"photo" = "Сурет";
 "upload_button" = "Жүктеу";
 "open_original" = "Түпнұсқасын ашу";
-"avatar_album" = "Парақшамдағы фотолар";
-"wall_album" = "Қабырғамдағы фотолар";
+"avatar_album" = "Парақшамдағы суреттер";
+"wall_album" = "Қабырғамдағы суреттер";
 "albums_zero" = "Альбом жоқ";
 "albums_one" = "$1 альбом";
 "albums_other" = "$1 альбом";
@@ -334,11 +424,11 @@
 "add_image_group" = "Сурет жүктеп салу";
 "upload_new_picture" = "Жаңа сурет жүктеп салу";
 "uploading_new_image" = "Жаңа суретті жүктеп салу";
-"friends_avatar" = "Шын фотоңызды жүктеп қойсаңыз достарыңыз сізді оңай таниды.";
-"groups_avatar" = "Жақсы фото бірлестігіңізді танымал етеді.";
+"friends_avatar" = "Шын суретіңізді жүктеп қойсаңыз достарыңыз сізді оңай таниды.";
+"groups_avatar" = "Жақсы сурет бірлестігіңізді танымал етеді.";
 "formats_avatar" = "JPG, GIF немесе PNG форматтағы суреттерді жүктеуге болады.";
-"troubles_avatar" = "Суреттің жүктелуімен мәселе болса, көлемі кiшiрек фотоны жүктеп көрiңiз.";
-"webcam_avatar" = "Компьютеріңізге веб-камера қосылып тұрса, лезде <a href='javascript:'>фото түсіріп көріңіз</a>";
+"troubles_avatar" = "Суреттің жүктелуімен мәселе болса, көлемін кiшiрейтіп, жүктеп көрiңiз.";
+"webcam_avatar" = "Компьютеріңізге веб-камера қосылып тұрса, лезде <a href='javascript:'>сурет түсіріп көріңіз</a>";
 
 "update_avatar_notification" = "Парақшаның суреті жаңартылды.";
 "update_avatar_description" = "Көру үшін мұнда басыңыз";
@@ -374,6 +464,21 @@
 "tip_ctrl" = "Бірнеше суретті таңдау үшін Windows жүйесінде Ctrl, Mac OS жүйесінде CMD пернесін басып тұрып таңдаңыз.";
 
 "album_poster" = "Альбомның басты суреті";
+
+"select_photo" = "Сурет таңдау";
+"upload_new_photo" = "Жаңа сурет жүктеу";
+
+"is_x_photos_zero" = "Барлығы нөл сурет.";
+"is_x_photos_one" = "Барлығы бір сурет.";
+"is_x_photos_few" = "Барлығы $1 сурет.";
+"is_x_photos_many" = "Барлығы $1 сурет.";
+"is_x_photos_other" = "Барлығы $1 сурет.";
+
+"all_photos" = "Барлық сурет";
+"error_uploading_photo" = "Суретті жүктеу сәтсіз аяқталды. Қате туралы хабарлама: ";
+"too_many_photos" = "Суреттер тым көп.";
+
+"photo_x_from_y" = "$2 ішіндегі $1 сурет";
 
 /* Notes */
 
@@ -421,6 +526,7 @@
 "my_videos" = "Бейнежазбаларым";
 "my_messages" = "Хабарламаларым";
 "my_notes" = "Жолжазбаларым";
+"my_audios" = "Әндерім";
 "my_groups" = "Топтарым";
 "my_feed" = "Жаңалықтар";
 "my_feedback" = "Жауаптарым";
@@ -584,6 +690,8 @@
 "s_order_by_name" = "Атауы бойынша";
 "s_order_by_random" = "Кездейсоқ";
 "s_order_by_rating" = "Рейтинг бойынша";
+"s_order_by_length" = "Ұзақтығы бойынша";
+"s_order_by_listens" = "Тыңдалу саны бойынша";
 "s_order_invert" = "Кері реттеу";
 "s_by_date" = "Күні бойынша";
 "s_registered_before" = "Мына күннен бұрын тіркелген";
@@ -598,7 +706,10 @@
 "reset" = "Қалпына келтіру";
 "closed_group_post" = "Бұл – жабық топтағы жазба";
 "deleted_target_comment" = "Бұл пікір жойылған жазбаға тиесілі";
+
 "no_results" = "Ештеңе табылған жоқ";
+"s_only_performers" = "Тек орындаушылар";
+"s_with_lyrics" = "Мәтіні бар";
 
 /* Sorting */
 
@@ -625,6 +736,132 @@
 "change_video" = "Бейнені өзгерту";
 "unknown_video" = "Бұл бейне OpenVK-ның осы нұсқасында жұмыс істемейді.";
 
+"selecting_video" = "Бейне таңдау";
+"upload_new_video" = "Жаңа бейнежазба жүктеу";
+"max_attached_videos" = "Максимум 10 бейнежазба";
+"max_attached_photos" = "Максимум 10 сурет";
+"max_attached_audios" = "Максимум 10 ән";
+"no_videos" = "Сізде бейнежазба жоқ.";
+"no_videos_results" = "Нәтиже жоқ.";
+
+/* Audios */
+
+"audios" = "Әндер";
+"audio" = "Ән";
+"playlist" = "Әнтізім";
+"upload_audio" = "Ән жүктеу";
+"upload_audio_to_group" = "Топқа ән жүктеу";
+
+"performer" = "Орындаушы";
+"audio_name" = "Атауы";
+"genre" = "Жанр";
+"lyrics" = "Мәтін";
+
+"select_another_file" = "Басқа файл таңдау";
+
+"limits" = "Шектеулер";
+"select_audio" = "Компьютеріңізден ән таңдаңыз";
+"audio_requirements" = "Ән ұзақтығы $1 сек. пен $2 минут аралығында болуы керек, өлшемі $3 МБ-тан аспауы тиіс және аудиожол қамтуы қажет.";
+"audio_requirements_2" = "Ән авторлық және сабақтас құқықтарды бұзбауы керек.";
+"you_can_also_add_audio_using" = "Сондай-ақ бұрын жүктелген файлдар арасынан әнді қосуға болады, ол үшін";
+"search_audio_inst" = "әндерден іздеп көріңіз";
+
+"audio_embed_not_found" = "Ән табылмады";
+"audio_embed_deleted" = "Ән жойылған";
+"audio_embed_withdrawn" = "Ән құқық иесінің сұранысы бойынша өшірілген.";
+"audio_embed_forbidden" = "Пайдаланушының құпиялылық параметрлері бұл әнді ендіруге рұқсат етпейді";
+"audio_embed_processing" = "Ән әлі өңделіп жатыр немесе дұрыс өңделмеген.";
+
+"audios_count_zero" = "Ән жоқ";
+"audios_count_one" = "Бір ән";
+"audios_count_few" = "$1 ән";
+"audios_count_many" = "$1 ән";
+"audios_count_other" = "$1 ән";
+
+"track_unknown" = "Белгісіз";
+"track_noname" = "Атауы жоқ";
+
+"my_music" = "Менің музыкам";
+"music_user" = "Пайдаланушы музыкасы";
+"music_club" = "Топ музыкасы";
+"audio_new" = "Жаңа";
+"audio_popular" = "Танымал";
+"audio_search" = "Іздеу";
+
+"my_audios_small" = "Менің әндерім";
+"my_playlists" = "Менің әнтізімдерім";
+"playlists" = "Әнтізімдер";
+"audios_explicit" = "Дөрекі сөздер бар";
+"withdrawn" = "Өшірілген";
+"deleted" = "Жойылған";
+"owner" = "Иесі";
+"searchable" = "Іздеу бетінде көрсетіледі";
+
+"select_audio" = "Ән таңдау";
+"no_playlists_thisuser" = "Сіз әлі әнтізім қоспадыңыз.";
+"no_playlists_user" = "Бұл пайдаланушы әлі әнтізім қоспаған.";
+"no_playlists_club" = "Бұл топта әнтізім жоқ.";
+
+"no_audios_thisuser" = "Сіз әлі ән қоспағансыз.";
+"no_audios_user" = "Бұл пайдаланушы әлі ән қоспаған.";
+"no_audios_club" = "Бұл топта ән қосылмаған.";
+
+"new_playlist" = "Жаңа әнтізім";
+"created_playlist" = "жасалды";
+"updated_playlist" = "жаңартылды";
+"bookmark" = "Жинаққа қосу";
+"unbookmark" = "Жинақтан жою";
+"empty_playlist" = "Бұл әнтізімде ән жоқ.";
+"edit_playlist" = "Әнтізімді өңдеу";
+"unable_to_load_queue" = "Кезекті жүктеу сәтсіз аяқталды.";
+
+"fully_delete_audio" = "Әнді әбден жою";
+"attach_audio" = "Әнді тіркеу";
+"detach_audio" = "Әнді ажырату";
+
+"show_more_audios" = "Көбірек ән көрсету";
+"add_to_playlist" = "Әнтізімге қосу";
+"remove_from_playlist" = "Әнтізімнен жою";
+"delete_playlist" = "Әнтізімді жою";
+"playlist_cover" = "Әнтізім мұқабасы";
+"playlists_user" = "Пайдаланушы әнтізімдері";
+"playlists_club" = "Топ әнтізімдері";
+"change_cover" = "Мұқабаны өзгерту";
+"playlist_cover" = "Әнтізім мұқабасы";
+
+"minutes_count_zero" = "ұзақтығы нөл минут";
+"minutes_count_one" = "ұзақтығы бір минут";
+"minutes_count_few" = "ұзақтығы $1 минут";
+"minutes_count_many" = "ұзақтығы $1 минут";
+"minutes_count_other" = "ұзақтығы $1 минут";
+
+"listens_count_zero" = "тыңдалмаған";
+"listens_count_one" = "бір рет тыңдалды";
+"listens_count_few" = "$1 рет тыңдалды";
+"listens_count_many" = "$1 рет тыңдалды";
+"listens_count_other" = "$1 рет тыңдалды";
+
+"add_audio_to_club" = "Топқа ән қосу";
+"what_club_add" = "Қай топқа ән қосқыңыз келеді?";
+"group_has_audio" = "Бұл ән топта бар.";
+"group_hasnt_audio" = "Бұл ән топта жоқ.";
+
+"by_name" = "атауы бойынша";
+"by_performer" = "орындаушы бойынша";
+"no_access_clubs" = "Сіз ешбір топта әкімші емессіз.";
+"audio_successfully_uploaded" = "Ән сәтті жүктелді және қазір өңделіп жатыр.";
+
+"broadcast_audio" = "Әнді күйіңізде көрсету";
+"sure_delete_playlist" = "Бұл әнтізімді жойғыңыз келетініне сенімдісіз бе?";
+"edit_audio" = "Әнді өңдеу";
+"audios_group" = "Топтың әндері";
+"playlists_group" = "Топтың әнтізімдері";
+
+"play_tip" = "Ойнату/кідірту";
+"repeat_tip" = "Қайталау";
+"shuffle_tip" = "Араластыру";
+"mute_tip" = "Дыбысын өшіру";
+
 /* Notifications */
 
 "feedback" = "Жауаптар";
@@ -634,7 +871,7 @@
 "notifications_repost" = "$1 сіздің $4 жазған $2жазбаңызбен$3 бөлісті";
 "notifications_comment_under" = "$1 $2 астына пікір жазды";
 "notifications_under_note" = "сіздің $3жолжазбаңызға$4";
-"notifications_under_photo" = "сіздің $3фотоңызға$4";
+"notifications_under_photo" = "сіздің $3суретіңізге$4";
 "notifications_under_post" = "сіздің $5 жазған $3жазбаңызға$4";
 "notifications_under_video" = "сіздің $3бейнеңізге$4";
 "notifications_post" = "$1 сіздің қабырғаңызға $2жазба$3 қойды: $4";
@@ -643,6 +880,10 @@
 "nt_shared_yours" = "бөлісті";
 "nt_commented_yours" = "пікір жазды";
 "nt_written_on_your_wall" = "сіздің қабырғаңызға жазды";
+"nt_accepted_your_post" = "сіз ұсынған жазбаны жариялады";
+"nt_in_club" = "Қауымдастықта";
+"nt_new_suggested_posts" = "жаңа ұсынылған жазбалар бар";
+"nt_post_small" = "жазба";
 "nt_made_you_admin" = "сізді топта тағайындады";
 "nt_from" = "";
 "nt_yours_adjective" = "сіздің";
@@ -650,7 +891,7 @@
 "nt_post_nominative" = "жазбаңызды";
 "nt_post_instrumental" = "жазбаңызбен";
 "nt_note_instrumental" = "жолжазбаңызбен";
-"nt_photo_instrumental" = "фотоңызбен";
+"nt_photo_instrumental" = "суретіңізбен";
 "nt_topic_instrumental" = "тақырып";
 "nt_you_were_mentioned_u" = "Сізді осы пайдаланушы атап өтті:";
 "nt_you_were_mentioned_g" = "Сізді осы топ атап өтті:";
@@ -670,23 +911,27 @@
 "time_today" = "бүгін";
 "time_yesterday" = "кеше";
 "privacy_setting_access_page" = "Кім менің парақшамды көре алады";
-"privacy_setting_read_info" = "Кім менің парақшамдағы басты ақпаратты көре алады";
-"privacy_setting_see_groups" = "Кім менің топтарым мен кездесулерімді көре алады";
-"privacy_setting_see_photos" = "Кім менің фотоларымды көре алады";
-"privacy_setting_see_videos" = "Кім менің бейнежазбаларымды көре алады";
-"privacy_setting_see_notes" = "Кім менің жолжазбаларымды көре алады";
-"privacy_setting_see_friends" = "Кім менің достарларымды көре алады";
-"privacy_setting_add_to_friends" = "Кім мені достарыма қоса алады";
-"privacy_setting_write_wall" = "Кім менің қабырғама жазба жаза алады";
-"privacy_setting_write_messages" = "Кім маған хабарма жібере алады";
+"privacy_setting_read_info" = "Кім парақшамдағы басты ақпаратты көре алады";
+"privacy_setting_see_groups" = "Кім топтарым мен шараларымды көре алады";
+"privacy_setting_see_photos" = "Суреттерім кімге көрінеді";
+"privacy_setting_see_videos" = "Бейнежазбаларым кімге көрінеді";
+"privacy_setting_see_notes" = "Жолжазбаларым кімге көрінеді";
+"privacy_setting_see_friends" = "Достар тізімім кімге көрінеді";
+"privacy_setting_add_to_friends" = "Мені досқа кім қоса алады";
+"privacy_setting_write_wall" = "Қабырғама кім жаза алады";
+"privacy_setting_write_messages" = "Кім маған хат жібере алады";
+"privacy_setting_view_audio" = "Әндерім кімге көрінеді";
 "privacy_value_anybody" = "Әркім";
-"privacy_value_anybody_dative" = "Әркім";
+"privacy_value_anybody_dative" = "Әркімге";
 "privacy_value_users" = "OpenVK пайдаланушылары";
 "privacy_value_friends" = "Достарым";
-"privacy_value_friends_dative" = "Достарым";
+"privacy_value_friends_dative" = "Достарыма";
 "privacy_value_only_me" = "Мен ғана";
-"privacy_value_only_me_dative" = "Мен ғана";
+"privacy_value_only_me_dative" = "Маған ғана";
 "privacy_value_nobody" = "Ешкім";
+"profile_type" = "Бейін түрі";
+"profile_type_open" = "Ашық";
+"profile_type_closed" = "Жабық";
 "points" = "Дауыс";
 "points_count" = "дауыс";
 "on_your_account" = "сіздің шотыңызда";
@@ -885,6 +1130,7 @@
 "going_to_report_photo" = "Сіз бұл суретке шағым жасағалы тұрсыз.";
 "going_to_report_user" = "Сіз бұл пайдаланушыға шағым жасағалы тұрсыз.";
 "going_to_report_video" = "Сіз бұл бейнеге шағым жасағалы тұрсыз.";
+"going_to_report_audio" = "Сіз бұл әнге шағым жасағалы тұрсыз.";
 "going_to_report_post" = "Сіз бұл жазбаға шағым жасағалы тұрсыз.";
 "going_to_report_comment" = "Сіз бұл пікірге шағым жасағалы тұрсыз.";
 
@@ -981,6 +1227,7 @@
 "topics_other" = "$1 тақырып";
 "created" = "Басталған күні";
 "everyone_can_create_topics" = "Әрбір адам тақырып бастай алады";
+"everyone_can_upload_audios" = "Әрбір адам ән жүктей алады";
 "display_list_of_topics_above_wall" = "Тақырыптар бөлімін жаңалықтардан жоғары көрсету";
 "topic_changes_saved_comment" = "Жаңартылған аты мен оның баптаулары тақырыптың бетінде пайда болады.";
 "failed_to_create_topic" = "Тақырыпты бастай алмадық";
@@ -998,6 +1245,7 @@
 "no_data" = "Деректер жоқ";
 "no_data_description" = "Мұнда деректер жоқ.";
 "error" = "Қателік";
+"error_generic" = "Жалпы қателік орын алды: ";
 "error_shorturl" = "Бұл мекенжай бос емес.";
 "error_segmentation" = "Сегментация қателігі";
 "error_upload_failed" = "Сурет жүктелмеді";
@@ -1006,13 +1254,14 @@
 "error_weak_password" = "Құпия сөзіңіз мықты емес. Тым болмаса ода 8 белгі, бір үлкен әріп пен бір сан болуы керек.";
 "error_shorturl_incorrect" = "Мекенжайдың пішімі дұрыс емес.";
 "error_repost_fail" = "Жазбаны бөлісу мүмкін болмады";
+"error_insufficient_info" = "Сіз қажетті ақпаратты толтырмадыңыз.";
 "error_data_too_big" = "'$1' осылардан ұзағырақ болмауы керек: $2 $3";
 "forbidden" = "Рұқсат қателігі";
 "forbidden_comment" = "Бұл пайдаланушының құпиялық баптаулары сізге осы парақты қарауға рұқсат бермейді";
 "unknown_error" = "Белгісіз қателік";
 "changes_saved" = "Өзгерістер сақталды";
 "changes_saved_comment" = "Сіздің парақшаңызда жаңа деректер пайда болады";
-"photo_saved" = "Фото сақталды";
+"photo_saved" = "Сурет сақталды";
 "photo_saved_comment" = "Сіздің жаңа парақша суретіңіз сіздің парақта пайда болады";
 "shared_succ" = "Жазба сіздің қабырғаңызда пайда болады. Қабырғаңызға өту үшін хабарландыруды басыңыз.";
 "invalid_email_address" = "Email-мекенжай қате";
@@ -1042,7 +1291,25 @@
 "media_file_corrupted_or_too_large" = "Медиа мазмұн файлы бүлінген немесе тым үлкен.";
 "post_is_empty_or_too_big" = "Жазбаңызда түк те жоқ немесе ол тым үлкен.";
 "post_is_too_big" = "Жазбаңыз тым үлкен.";
+"error_deleting_suggested" = "Сіз жарияланған өз жазбаңызды өшіре алмайсыз";
+"error_invalid_wall_value" = "Қабырға мәні дұрыс емес";
 "description_too_long" = "Сипаттамаңыз тым ұзын.";
+
+"invalid_audio" = "Мұндай ән жоқ.";
+"do_not_have_audio" = "Сізде бұл ән жоқ.";
+"do_have_audio" = "Бұл ән сізде бар.";
+
+"set_playlist_name" = "Әнтізім атауын көрсетіңіз.";
+"playlist_already_bookmarked" = "Бұл әнтізім жинағыңызда бар.";
+"playlist_not_bookmarked" = "Бұл әнтізім жинағыңызда жоқ.";
+"invalid_cover_photo" = "Әнтізім мұқабасын сақтау сәтсіз аяқталды.";
+"not_a_photo" = "Жүктелген файл суретке ұқсамайды.";
+"file_too_big" = "Файл өлшемі тым үлкен.";
+"file_loaded_partially" = "Файл ішінара жүктелді.";
+"file_not_uploaded" = "Файлды жүктеу мүмкін болмады.";
+"error_code" = "Қате коды: $1.";
+"ffmpeg_timeout" = "ffmpeg өңдеу уақыты шектен асты. Файлды қайта жүктеп көріңіз.";
+"ffmpeg_not_installed" = "Файлды өңдеу мүмкін емес. Серверде ffmpeg орнатылмаған сияқты.";
 
 "error_sending_report" = "Шағым жіберу сәтсіз аяқталды...";
 
@@ -1162,8 +1429,8 @@
 "admin_banreason" = "Блоктың себебі";
 "admin_banned" = "бұғатталды";
 "admin_actions" = "Әрекеттер";
-"admin_image" = "Фотобейне";
-"admin_image_replace" = "Фотобейнені ауыстыру керек пе?";
+"admin_image" = "Сурет";
+"admin_image_replace" = "Суретті ауыстыру керек пе?";
 "admin_uses" = "Қолданулар саны";
 "admin_uses_reset" = "Қолданулар санын қалпына келтіру керек пе?";
 "admin_limits" = "Шектеулер саны";
@@ -1228,6 +1495,11 @@
 
 "admin_gift_moved_successfully" = "Сыйлық сәтті жылжытылды";
 "admin_gift_moved_to_recycle" = "Бұл сыйлық енді <b>қоқыс жәшігінде</b> болады.";
+
+"admin_original_file" = "Түпнұсқа файл";
+"admin_audio_length" = "Ұзақтығы";
+"admin_cover_id" = "Мұқаба (сурет ID-сі)";
+"admin_music" = "Музыка";
 
 "logs" = "Журнал";
 "logs_anything" = "Кез келген нәрсе";
@@ -1399,6 +1671,7 @@
 "mobile_friends" = "Достар";
 "mobile_photos" = "Суреттер";
 "mobile_videos" = "Бейнелер";
+"mobile_audios" = "Әндерім";
 "mobile_messages" = "Хабарламалар";
 "mobile_notes" = "Жолжазбалар";
 "mobile_groups" = "Топтар";
@@ -1409,6 +1682,53 @@
 "mobile_like" = "Ұнату";
 "mobile_user_info_hide" = "Жасыру";
 "mobile_user_info_show_details" = "Қосымша мәліметті көру";
+
+/* Fullscreen player */
+
+"hide_player" = "Ойнатқышты жасыру";
+"close_player" = "Жабу";
+"show_comments" = "Пікірлерді көрсету";
+"close_comments" = "Пікірлерді жасыру";
+"to_page" = "Бетке өту";
+"download_video" = "Жүктеу";
+"added" = "Қосылған уақыты";
+"x_views" = "$1 қаралым";
+
+"video_author" = "Бейне авторы";
+"video_delete" = "Жою";
+"no_description" = "сипаттама жоқ";
+
+"show_more_comments" = "Көбірек пікір көрсету";
+"video_processing" = "Бейне сәтті жүктелді, қазір өңделіп жатыр.";
+"video_access_denied" = "Бейнені көруге рұқсат жоқ";
+"open_page_to_read_comms" = "Пікірлерді оқу үшін <a href=\"$1\">мына бетті</a> ашыңыз.";
+
+"no_video_error" = "Бейнежазба жоқ";
+"no_video_description" = "Файл таңдаңыз немесе сілтеме көрсетіңіз.";
+
+"error_video" = "Қате орын алды";
+"file_corrupted" = "Файл бүлінген немесе бейне жоқ.";
+"link_incorrect" = "Сілтеме дұрыс емес болуы мүмкін.";
+
+"no_name_error" = "Бейне атаусыз жариялана алмайды";
+"access_denied_error" = "Қол жеткізу қатесі";
+"access_denied_error_description" = "Бұл ресурсты өңдеуге құқыңыз жоқ";
+
+"changes_saved_video_comment" = "Жаңартылған деректер бейне бетінде көрінеді";
+"cant_delete_video" = "Бейнені жою мүмкін болмады";
+"cant_delete_video_comment" = "Аккаунтқа кірмегенсіз.";
+
+"change_video" = "Бейнежазбаны өзгерту";
+
+"video_is_deleted" = "Бейне жойылды.";
+"share_video" = "Бейнені бөлісу";
+"shared_succ_video" = "Бейне қабырғаңызда пайда болады. Жазбаға өту үшін мұнда басыңыз.";
+"watch_in_window" = "Терезеде қарау";
+
+"comments_load_timeout" = "Мүмкін, инстанция істен шықты.";
+
+"my" = "Менің";
+"enter_a_name_or_artist" = "Атауын немесе орындаушысын енгізіңіз...";
 
 /* Moderation */
 
@@ -1475,3 +1795,16 @@
 "backdrop_about_adding" = "Сіз тек бір суретті жүктей аласыз, бірақ дизайнға байланысты соңғы нәтиже жағымсыз көрінуі мүмкін. Сондай-ақ тек бір суретті өзгертуге болады: егер сізде екі сурет орнатылған болса және біреуін өзгерткіңіз келсе - тек біреуін жүктеп салыңыз, екіншісі жойылмайды. Екі суретті де жою үшін төмендегі түймені басыңыз, суреттерді жеке жою мүмкін емес.";
 "backdrop_warn" = "Суреттер жоғарыдағы орналасудағыдай реттеледі. Олардың биіктігі автоматты түрде ұлғайып, экран биіктігінің 100% алады, ортасында бұлыңғырлық болады. Негізгі OpenVK интерфейсінің фонын ауыстыру немесе дыбысты қосу мүмкін емес.";
 "gifts_left_zero" = "Нөл сыйлық қалды";
+
+/* Tutorial??? */
+
+"tour_section_6_title_1" = "Әндерді тыңдаңыз";
+"tour_section_6_text_1" = "\"Әндерім\" бөлімінде ән тыңдай аласыз";
+"tour_section_6_text_2" = "Бұл бөлім құпиялылық параметрлерімен реттеледі";
+"tour_section_6_text_3" = "Ең жиі тыңдалатын әндер \"Танымал\" қойындысында, ал жаңа жүктелгендер — \"Жаңа\" қойындысында";
+"tour_section_6_text_4" = "Әнді жинағыңызға қосу үшін, оның үстіне барып, плюс белгісін басыңыз. Қажетті әнді іздеп таба аласыз";
+"tour_section_6_text_5" = "Қажетті әнді таба алмасаңыз, оны өзіңіз жүктей аласыз";
+"tour_section_6_bottom_text_1" = "<b>Маңызды:</b> ән авторлық құқықты бұзбауы керек";
+"tour_section_6_title_2" = "Әнтізім жасаңыз";
+"tour_section_6_text_6" = "\"Әнтізімдерім\" бөлімінде тректер топтамасын жасай аласыз";
+"tour_section_6_text_7" = "Басқа әнтізімдерді де жинаққа қосуға болады";
