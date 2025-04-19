@@ -2130,6 +2130,7 @@
 "mobile_like" = "Нравится";
 "mobile_user_info_hide" = "Скрыть";
 "mobile_user_info_show_details" = "Показать подробнее";
+"mobile_attachment_only_for_pc" = "Вложение недоступно в PDA версии, его просмотр возможен только с другого устройства";
 
 /* Fullscreen player */
 
@@ -2306,3 +2307,4 @@
 "faves_few" = "$1 закладки";
 "faves_many" = "$1 закладок";
 "faves_other" = "$1 закладок";
+
