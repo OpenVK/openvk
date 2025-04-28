@@ -409,7 +409,12 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         if ($wall > 0 && $wall !== $this->user->identity->getId()) {
-            (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
+            $disturber = $this->user->identity;
+            if ($anon) {
+                $disturber = $post->getOwner();
+            }
+
+            (new WallPostNotification($wallOwner, $post, $disturber))->emit();
         }
 
         $excludeMentions = [$this->user->identity->getId()];

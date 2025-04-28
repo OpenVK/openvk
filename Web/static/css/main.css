@@ -11,6 +11,7 @@ body {
     font-size: 11px;
     word-break: break-word;
     word-wrap: break-word;
+    line-height: 1.19;
 }
 
 body, .ovk-fullscreen-dimmer, .ovk-photo-view-dimmer {

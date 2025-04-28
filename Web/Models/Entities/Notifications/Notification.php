@@ -168,14 +168,13 @@ class Notification
                     case 19:
                         $info["type"] = "comment_video";
                         $info["parent"] = $this->getModel(0)->toNotifApiStruct();
-                        $info["feedback"] = null; # айди коммента не сохраняется в бд( ну пиздец блять
+                        $info["feedback"] = null; # comment id is not saving at db
                         break;
                     case 13:
                         $info["type"] = "comment_photo";
                         $info["parent"] = $this->getModel(0)->toNotifApiStruct();
                         $info["feedback"] = null;
                         break;
-                        # unstandart (vk forgor about notes)
                     case 10:
                         $info["type"] = "comment_note";
                         $info["parent"] = $this->getModel(0)->toVkApiStruct();
