@@ -722,7 +722,7 @@ final class Wall extends VKAPIRequestHandler
             $post->attach($attachment);
         }
 
-        if ($owner_id > 0 && $owner_id !== $this->user->identity->getId()) {
+        if ($owner_id > 0 && $owner_id !== $this->getUser()->getId()) {
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
         }
 
@@ -1176,8 +1176,9 @@ final class Wall extends VKAPIRequestHandler
         if ($from_group == 1 && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->getUser())) {
             $flags |= 0b10000000;
         }
-        /*if($signed == 1)
-            $flags |= 0b01000000;*/
+        if ($post->isSigned() && $from_group == 1) {
+            $flags |= 0b01000000;
+        }
 
         $post->setFlags($flags);
         $post->save(true);

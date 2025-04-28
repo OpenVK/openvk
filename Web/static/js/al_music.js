@@ -330,7 +330,9 @@ window.player = new class {
         this.__updateFace()
         u(this.audioPlayer).trigger('volumechange')
 
-        document.title = ovk_proc_strtr(escapeHtml(`${window.player.currentTrack.performer} — ${window.player.currentTrack.name}`), 255)
+        if(this.isAtAudiosPage()) {
+            document.title = ovk_proc_strtr(escapeHtml(`${window.player.currentTrack.performer} — ${window.player.currentTrack.name}`), 255)
+        }
     }
 
     hasContext() {

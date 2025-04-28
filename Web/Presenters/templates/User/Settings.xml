@@ -120,6 +120,10 @@
 
         <br/>
         <div class="settings_delete">
+            <a href="/fave">{_bookmarks_tab}</a>
+             • 
+            <a href="/search?section=posts&from_me=1">{_s_posts}</a>
+            <br><br>
             {_you_can_also} <a onClick="showProfileDeactivateDialog({$csrfToken})">{_delete_your_page}</a>.
         </div>
 
@@ -707,7 +711,7 @@
                             <span class="nobold">{_my_documents}</span>
                         </td>
                     </tr>
-                    <tr>
+                    <tr style="display:none;">
                         <td width="120" valign="top" align="right" align="right">
                             <input
                                   n:attr="checked => $user->getLeftMenuItemStatus('fave')"

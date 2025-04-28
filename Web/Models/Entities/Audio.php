@@ -434,6 +434,10 @@ class Audio extends Media
             $obj->manifest = $this->getURL();
             $obj->keys     = $this->getKeys();
         }
+        
+        if ($obj->editable) {
+            $obj->listens = $this->getListens();
+        }
 
         return $obj;
     }

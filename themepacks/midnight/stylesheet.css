@@ -674,3 +674,12 @@ ul {
 .ovk-modal-player-window #ovk-player-info {
     background: #0e0b1a;
 }
+
+.header_navigation #search_box #searchBoxFastTips {
+    background: #181826;
+    border-color: #2c2640;
+}
+
+.header_navigation #search_box #searchBoxFastTips a:hover, .header_navigation #search_box #searchBoxFastTips a:focus {
+    background: #111322;
+}

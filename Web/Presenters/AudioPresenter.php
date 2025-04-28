@@ -508,7 +508,7 @@ final class AudioPresenter extends OpenVKPresenter
         $title = $this->postParam("title");
         $description = $this->postParam("description");
         $is_unlisted = (int) $this->postParam('is_unlisted');
-        $new_audios = !empty($this->postParam("audios")) ? explode(",", rtrim($this->postParam("audios"), ",")) : [];
+        $new_audios = !empty($this->postParam("audios")) ? explode(",", rtrim($this->postParam("audios"), ",")) : null;
 
         if (empty($title) || iconv_strlen($title) < 1) {
             $this->flashFail("err", tr("error"), tr("set_playlist_name"));
@@ -537,14 +537,16 @@ final class AudioPresenter extends OpenVKPresenter
         DatabaseConnection::i()->getContext()->table("playlist_relations")->where([
             "collection" => $playlist->getId(),
         ])->delete();
-
-        foreach ($new_audios as $new_audio) {
-            $audio = (new Audios())->get((int) $new_audio);
-            if (!$audio || $audio->isDeleted()) {
-                continue;
+        
+        if (!is_null($new_audios)) {
+            foreach ($new_audios as $new_audio) {
+                $audio = (new Audios())->get((int) $new_audio);
+                if (!$audio || $audio->isDeleted()) {
+                    continue;
+                }
+    
+                $playlist->add($audio);
             }
-
-            $playlist->add($audio);
         }
 
         if ($is_ajax) {
