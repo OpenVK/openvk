@@ -42,7 +42,6 @@ final class SearchPresenter extends OpenVKPresenter
         $page      = (int) ($this->queryParam("p") ?? 1);
 
         # https://youtu.be/pSAWM5YuXx8
-        # https://youtu.be/FfNZRhIn2Vk
 
         $repos = [
             "groups"   => "clubs",
