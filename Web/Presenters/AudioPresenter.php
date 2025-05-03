@@ -537,14 +537,14 @@ final class AudioPresenter extends OpenVKPresenter
         DatabaseConnection::i()->getContext()->table("playlist_relations")->where([
             "collection" => $playlist->getId(),
         ])->delete();
-        
+
         if (!is_null($new_audios)) {
             foreach ($new_audios as $new_audio) {
                 $audio = (new Audios())->get((int) $new_audio);
                 if (!$audio || $audio->isDeleted()) {
                     continue;
                 }
-    
+
                 $playlist->add($audio);
             }
         }
