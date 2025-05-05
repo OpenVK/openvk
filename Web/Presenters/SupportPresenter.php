@@ -169,6 +169,13 @@ final class SupportPresenter extends OpenVKPresenter
                     $_redirect = "/support?act=list";
                 }
 
+                $helpdeskChat = OPENVK_ROOT_CONF["openvk"]["credentials"]["telegram"]["helpdeskChat"];
+                if ($helpdeskChat) {
+                    $serverUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
+                    $telegramText  = "❌ <b>Тикет под названием</b> &quot;{$ticket->getName()}&quot; от <a href='$serverUrl{$ticket->getUser()->getURL()}'>{$ticket->getUser()->getCanonicalName()}</a> ({$ticket->getUser()->getRegistrationIP()}) <b>был удалён.</b>\n";
+                    Telegram::send($helpdeskChat, $telegramText);
+                }
+
                 $ticket->delete();
                 $this->redirect($_redirect);
             }
@@ -200,6 +207,16 @@ final class SupportPresenter extends OpenVKPresenter
                 $comment->setCreated(time());
                 $comment->save();
 
+                $helpdeskChat = OPENVK_ROOT_CONF["openvk"]["credentials"]["telegram"]["helpdeskChat"];
+                if ($helpdeskChat) {
+                    $serverUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
+                    $commentText   = ovk_proc_strtr($this->postParam("text"), 1500);
+                    $telegramText  = "💬 <b>Новый комментарий от автора тикета</b> &quot;{$ticket->getName()}&quot;\n";
+                    $telegramText .= "$commentText\n\n";
+                    $telegramText .= "Автор: <a href='$serverUrl{$ticket->getUser()->getURL()}'>{$ticket->getUser()->getCanonicalName()}</a> ({$ticket->getUser()->getRegistrationIP()})\n";
+                    Telegram::send($helpdeskChat, $telegramText);
+                }
+
                 $this->redirect("/support/view/" . $id);
             } else {
                 $this->flashFail("err", tr("error"), tr("you_have_not_entered_text"));
@@ -227,14 +244,32 @@ final class SupportPresenter extends OpenVKPresenter
     {
         $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
 
+        $support_names = new SupportAgents();
+        $agent = $support_names->get($this->user->id);
         $ticket = $this->tickets->get($id);
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->willExecuteWriteAction();
 
+            $helpdeskChat = OPENVK_ROOT_CONF["openvk"]["credentials"]["telegram"]["helpdeskChat"];
+
             if (!empty($this->postParam("text")) && !empty($this->postParam("status"))) {
-                $ticket->setType($this->postParam("status"));
+                $status = $this->postParam("status");
+                $ticket->setType($status);
                 $ticket->save();
+
+                switch ($status) {
+                    default:
+                        # NOTICE falling through
+                    case 0:
+                        $state = "Вопрос на рассмотрении";
+                        break;
+                    case 1:
+                        $state = "Есть ответ";
+                        break;
+                    case 2:
+                        $state = "Закрыто";
+                }
 
                 $comment = new TicketComment();
                 $comment->setUser_id($this->user->id);
@@ -243,9 +278,40 @@ final class SupportPresenter extends OpenVKPresenter
                 $comment->setTicket_Id($id);
                 $comment->setCreated(time());
                 $comment->save();
+
+                if ($helpdeskChat) {
+                    $serverUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
+                    $commentText   = ovk_proc_strtr($this->postParam("text"), 1500);
+                    $telegramText  = "💬 <b>Новый комментарий от агента к тикету</b> &quot;{$ticket->getName()}&quot;\n";
+                    $telegramText .= "Статус: {$state}\n\n";
+                    $telegramText .= "$commentText\n\n";
+                    $telegramText .= "Агент: <a href='$serverUrl{'support/agent'. $this->user->id}'>{$agent->getCanonicalName()}</a> ({$agent->getRealName()})\n";
+                    Telegram::send($helpdeskChat, $telegramText);
+                }
             } elseif (empty($this->postParam("text"))) {
-                $ticket->setType($this->postParam("status"));
+                $status = $this->postParam("status");
+                $ticket->setType($status);
                 $ticket->save();
+
+                switch ($status) {
+                    default:
+                        # NOTICE falling through
+                    case 0:
+                        $state = "Вопрос на рассмотрении";
+                        break;
+                    case 1:
+                        $state = "Есть ответ";
+                        break;
+                    case 2:
+                        $state = "Закрыто";
+                }
+
+                if ($helpdeskChat) {
+                    $serverUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
+                    $telegramText  = "🔔 <b>Изменён статус тикета</b> &quot;{$ticket->getName()}&quot;: <b>{$state}</b>\n\n";
+                    $telegramText .= "Агент: <a href='$serverUrl{'support/agent'. $this->user->id}'>{$agent->getCanonicalName()}</a> ({$agent->getRealName()})\n";
+                    Telegram::send($helpdeskChat, $telegramText);
+                }
             }
 
             $this->flashFail("succ", tr("ticket_changed"), tr("ticket_changed_comment"));
@@ -441,6 +507,13 @@ final class SupportPresenter extends OpenVKPresenter
 
         $ticket->setType(2);
         $ticket->save();
+
+        $helpdeskChat = OPENVK_ROOT_CONF["openvk"]["credentials"]["telegram"]["helpdeskChat"];
+        if ($helpdeskChat) {
+            $serverUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
+            $telegramText  = "🔒 <b>Тикет под названием</b> &quot;{$ticket->getName()}&quot; от <a href='$serverUrl{$ticket->getUser()->getURL()}'>{$ticket->getUser()->getCanonicalName()}</a> ({$ticket->getUser()->getRegistrationIP()}) <b>был закрыт автором.</b>\n";
+            Telegram::send($helpdeskChat, $telegramText);
+        }
 
         $this->flashFail("succ", tr("ticket_changed"), tr("ticket_changed_comment"));
     }
