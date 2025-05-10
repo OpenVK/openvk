@@ -172,7 +172,7 @@ final class SupportPresenter extends OpenVKPresenter
                 $helpdeskChat = OPENVK_ROOT_CONF["openvk"]["credentials"]["telegram"]["helpdeskChat"];
                 if ($helpdeskChat) {
                     $serverUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
-                    $telegramText  = "❌ <b>Тикет под названием</b> <a href='$serverUrl/support/reply/$id'>&quot;{$ticket->getName()}&quot;</a> от <a href='$serverUrl{$ticket->getUser()->getURL()}'>{$ticket->getUser()->getCanonicalName()}</a> ({$ticket->getUser()->getRegistrationIP()}) <b>был удалён.</b>\n";
+                    $telegramText  = "❌ <b>Тикет под названием</b> &quot;{$ticket->getName()}&quot; от <a href='$serverUrl{$ticket->getUser()->getURL()}'>{$ticket->getUser()->getCanonicalName()}</a> ({$ticket->getUser()->getRegistrationIP()}) <b>был удалён.</b>\n";
                     Telegram::send($helpdeskChat, $telegramText);
                 }
 
