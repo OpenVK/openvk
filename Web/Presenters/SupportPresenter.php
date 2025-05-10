@@ -309,7 +309,7 @@ final class SupportPresenter extends OpenVKPresenter
 
                 if ($helpdeskChat) {
                     $serverUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"] . "/support/agent" . $this->user->id;
-					$ticketUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"] . "/support/reply/" . $id;
+                    $ticketUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"] . "/support/reply/" . $id;
                     $telegramText  = "🔔 <b>Изменён статус тикета</b> <a href='$ticketUrl'>&quot;{$ticket->getName()}&quot;</a>: <b>{$state}</b>\n\n";
                     $telegramText .= "Агент: <a href='$serverUrl'>{$this->user->identity->getFullName()}</a>\n";
                     Telegram::send($helpdeskChat, $telegramText);
