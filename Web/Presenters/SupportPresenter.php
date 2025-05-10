@@ -172,7 +172,7 @@ final class SupportPresenter extends OpenVKPresenter
                 $helpdeskChat = OPENVK_ROOT_CONF["openvk"]["credentials"]["telegram"]["helpdeskChat"];
                 if ($helpdeskChat) {
                     $serverUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
-                    $telegramText  = "❌ <b>Тикет под названием</b> &quot;{$ticket->getName()}&quot; от <a href='$serverUrl{$ticket->getUser()->getURL()}'>{$ticket->getUser()->getCanonicalName()}</a> ({$ticket->getUser()->getRegistrationIP()}) <b>был удалён.</b>\n";
+                    $telegramText  = "❌ <b>Тикет под названием</b> <a href='$serverUrl/support/reply/$id'>&quot;{$ticket->getName()}&quot;</a> от <a href='$serverUrl{$ticket->getUser()->getURL()}'>{$ticket->getUser()->getCanonicalName()}</a> ({$ticket->getUser()->getRegistrationIP()}) <b>был удалён.</b>\n";
                     Telegram::send($helpdeskChat, $telegramText);
                 }
 
@@ -211,7 +211,7 @@ final class SupportPresenter extends OpenVKPresenter
                 if ($helpdeskChat) {
                     $serverUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
                     $commentText   = ovk_proc_strtr($this->postParam("text"), 1500);
-                    $telegramText  = "💬 <b>Новый комментарий от автора тикета</b> &quot;{$ticket->getName()}&quot;\n";
+                    $telegramText  = "💬 <b>Новый комментарий от автора тикета</b> <a href='$serverUrl/support/reply/$id'>&quot;{$ticket->getName()}&quot;</a>\n";
                     $telegramText .= "$commentText\n\n";
                     $telegramText .= "Автор: <a href='$serverUrl{$ticket->getUser()->getURL()}'>{$ticket->getUser()->getCanonicalName()}</a> ({$ticket->getUser()->getRegistrationIP()})\n";
                     Telegram::send($helpdeskChat, $telegramText);
@@ -280,12 +280,13 @@ final class SupportPresenter extends OpenVKPresenter
                 $comment->save();
 
                 if ($helpdeskChat) {
-                    $serverUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
+                    $serverUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"] . "/support/agent" . $this->user->id;
+                    $ticketUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"] . "/support/reply/" . $id;
                     $commentText   = ovk_proc_strtr($this->postParam("text"), 1500);
-                    $telegramText  = "💬 <b>Новый комментарий от агента к тикету</b> &quot;{$ticket->getName()}&quot;\n";
+                    $telegramText  = "💬 <b>Новый комментарий от агента к тикету</b> <a href='$ticketUrl'>&quot;{$ticket->getName()}&quot;</a>\n";
                     $telegramText .= "Статус: {$state}\n\n";
                     $telegramText .= "$commentText\n\n";
-                    $telegramText .= "Агент: <a href='$serverUrl{'support/agent'. $this->user->id}'>{$agent->getCanonicalName()}</a> ({$agent->getRealName()})\n";
+                    $telegramText .= "Агент: <a href='$serverUrl'>{$this->user->identity->getFullName()}</a>\n";
                     Telegram::send($helpdeskChat, $telegramText);
                 }
             } elseif (empty($this->postParam("text"))) {
@@ -307,9 +308,10 @@ final class SupportPresenter extends OpenVKPresenter
                 }
 
                 if ($helpdeskChat) {
-                    $serverUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"];
-                    $telegramText  = "🔔 <b>Изменён статус тикета</b> &quot;{$ticket->getName()}&quot;: <b>{$state}</b>\n\n";
-                    $telegramText .= "Агент: <a href='$serverUrl{'support/agent'. $this->user->id}'>{$agent->getCanonicalName()}</a> ({$agent->getRealName()})\n";
+                    $serverUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"] . "/support/agent" . $this->user->id;
+					$ticketUrl     = ovk_scheme(true) . $_SERVER["SERVER_NAME"] . "/support/reply/" . $id;
+                    $telegramText  = "🔔 <b>Изменён статус тикета</b> <a href='$ticketUrl'>&quot;{$ticket->getName()}&quot;</a>: <b>{$state}</b>\n\n";
+                    $telegramText .= "Агент: <a href='$serverUrl'>{$this->user->identity->getFullName()}</a>\n";
                     Telegram::send($helpdeskChat, $telegramText);
                 }
             }
