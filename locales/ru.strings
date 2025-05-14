@@ -1582,6 +1582,7 @@
 "admin_first_known_ip" = "Первый IP";
 "admin_shortcode" = "Короткий адрес";
 "admin_verification" = "Верификация";
+"admin_hide_global_feed" = "Не отображать в глобальной ленте";
 "admin_banreason" = "Причина блокировки";
 "admin_banned" = "заблокирован";
 "admin_actions" = "Действия";

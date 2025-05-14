@@ -61,6 +61,10 @@
                 <input class="toggle-large" type="checkbox" id="verify" name="verify" value="1" {if $user->isVerified()} checked {/if} />
             </div>
             <div class="field-group">
+             <label for="city">{_admin_hide_global_feed}</label>
+                <input class="toggle-large" type="checkbox" id="hide_global_feed" name="hide_global_feed" value="1" n:attr="checked => $user->HideGlobalFeed()" />
+            </div>
+            <div class="field-group">
                 <label for="city">{_admin_user_online}</label>
                 <select name="online" class="select">
                     <option value="0" {if $user->onlineStatus() > 2}selected{/if}>{_admin_user_online_default}</option>
