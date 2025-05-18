@@ -229,9 +229,9 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->renderPhoto($photo->getOwner(true)->getId(), $photo->getVirtualId());
     }
 
-    public function renderThumbnail($id, $size): void
+    public function renderThumbnail($hash, $size): void
     {
-        $photo = $this->photos->get($id);
+        $photo = $this->photos->getByHash((string) $hash);
         if (!$photo || $photo->isDeleted()) {
             $this->notFound();
         }
