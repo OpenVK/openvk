@@ -78,7 +78,7 @@ class Bitmask
         } elseif (gettype($key) === "int") {
             $this->setByOffset($key, $data);
         } else {
-            throw new TypeError("Key must be either offset (int) or a string index");
+            throw new \TypeError("Key must be either offset (int) or a string index");
         }
 
         return $this;
@@ -89,7 +89,7 @@ class Bitmask
         if (gettype($key) === "string") {
             $key = $this->getOffsetByKey($key);
         } elseif (gettype($key) !== "int") {
-            throw new TypeError("Key must be either offset (int) or a string index");
+            throw new \TypeError("Key must be either offset (int) or a string index");
         }
 
         return $this->length === 1 ? $this->getBoolByOffset($key) : $this->getNumberByOffset($key);

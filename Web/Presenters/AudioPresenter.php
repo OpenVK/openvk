@@ -78,6 +78,10 @@ final class AudioPresenter extends OpenVKPresenter
         } elseif ($mode === "new") {
             $audios = $this->audios->getNew();
             $audiosCount = $audios->size();
+        } elseif ($mode === "uploaded") {
+            $stream = $this->audios->getByUploader($this->user->identity);
+            $audios = $stream->page($page, 10);
+            $audiosCount = $stream->size();
         } elseif ($mode === "playlists") {
             if ($owner < 0) {
                 $entity = (new Clubs())->get(abs($owner));
@@ -128,6 +132,11 @@ final class AudioPresenter extends OpenVKPresenter
         if (in_array($mode, ["list", "new", "popular"]) && $this->user->identity && $page < 2) {
             $this->template->friendsAudios = $this->user->identity->getBroadcastList("all", true);
         }
+    }
+
+    public function renderUploaded()
+    {
+        $this->renderList(null, "uploaded");
     }
 
     public function renderEmbed(int $owner, int $id): void
@@ -499,7 +508,7 @@ final class AudioPresenter extends OpenVKPresenter
         $title = $this->postParam("title");
         $description = $this->postParam("description");
         $is_unlisted = (int) $this->postParam('is_unlisted');
-        $new_audios = !empty($this->postParam("audios")) ? explode(",", rtrim($this->postParam("audios"), ",")) : [];
+        $new_audios = !empty($this->postParam("audios")) ? explode(",", rtrim($this->postParam("audios"), ",")) : null;
 
         if (empty($title) || iconv_strlen($title) < 1) {
             $this->flashFail("err", tr("error"), tr("set_playlist_name"));
@@ -529,13 +538,15 @@ final class AudioPresenter extends OpenVKPresenter
             "collection" => $playlist->getId(),
         ])->delete();
 
-        foreach ($new_audios as $new_audio) {
-            $audio = (new Audios())->get((int) $new_audio);
-            if (!$audio || $audio->isDeleted()) {
-                continue;
-            }
+        if (!is_null($new_audios)) {
+            foreach ($new_audios as $new_audio) {
+                $audio = (new Audios())->get((int) $new_audio);
+                if (!$audio || $audio->isDeleted()) {
+                    continue;
+                }
 
-            $playlist->add($audio);
+                $playlist->add($audio);
+            }
         }
 
         if ($is_ajax) {
@@ -841,6 +852,10 @@ final class AudioPresenter extends OpenVKPresenter
                 $audios = [$found_audio];
                 $audiosCount = 1;
                 break;
+            case "uploaded":
+                $stream = $this->audios->getByUploader($this->user->identity);
+                $audios = $stream->page($page, $perPage);
+                $audiosCount = $stream->size();
         }
 
         $pagesCount = ceil($audiosCount / $perPage);

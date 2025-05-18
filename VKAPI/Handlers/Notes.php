@@ -185,12 +185,14 @@ final class Notes extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
+        $nodez = (object) [
+            "count" => 0,
+            "notes" => [],
+        ];
         if (empty($note_ids)) {
+            $nodez->count = (new NotesRepo())->getUserNotesCount($user);
+
             $notes = array_slice(iterator_to_array((new NotesRepo())->getUserNotes($user, 1, $count + $offset, $sort == 0 ? "ASC" : "DESC")), $offset);
-            $nodez = (object) [
-                "count" => (new NotesRepo())->getUserNotesCount((new UsersRepo())->get($user_id)),
-                "notes" => [],
-            ];
 
             foreach ($notes as $note) {
                 if ($note->isDeleted()) {
@@ -210,6 +212,7 @@ final class Notes extends VKAPIRequestHandler
                 $note = (new NotesRepo())->getNoteById((int) $id[0], (int) $id[1]);
                 if ($note && !$note->isDeleted()) {
                     $nodez->notes[] = $note->toVkApiStruct();
+                    $nodez->count++;
                 }
             }
         }

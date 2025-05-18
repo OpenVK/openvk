@@ -597,6 +597,8 @@
 "my_feedback" = "Мої Відповіді";
 "my_apps" = "Застосунки";
 "my_settings" = "Мої Налаштування";
+"bookmarks" = "Вподобані";
+"bookmarks_tab" = "Вподобане";
 "bug_tracker" = "Баг-трекер";
 
 "menu_settings" = "Налаштування";
@@ -647,6 +649,7 @@
 "cut" = "Квадратні";
 "round avatars" = "Круглі";
 "apply_style_for_this_device" = "Застосувати стиль лише для цього пристрою";
+"ui_settings_window" = "Додаткові налаштування";
 "search_for_groups" = "Пошук спільнот";
 "search_for_users" = "Пошук користувачів";
 "search_for_posts" = "Пошук дописів";
@@ -853,7 +856,8 @@
 "audio_embed_deleted" = "Аудіозапис видалено";
 "audio_embed_withdrawn" = "Аудіозапис було вилучено на вимогу правовласника";
 "audio_embed_forbidden" = "Налаштування конфіденційності користувача не дозволяють вбудовувати цей аудіозапис";
-"audio_embed_processing" = "Аудіозапис ще обробляється або було оброблено неправильно.";
+"audio_embed_processing" = "Аудіозапис ще обробляється або був неправильно оброблений.";
+"audio_embed_processing_bait" = "Все одно відтворити";
 
 "audios_count_zero" = "Немає аудіозаписів";
 "audios_count_one" = "Один аудіозапис";
@@ -872,6 +876,7 @@
 "audio_search" = "Пошук";
 
 "my_audios_small" = "Мої аудіозаписи";
+"my_audios_small_uploaded" = "Завантажене";
 "my_playlists" = "Мій список відтворення";
 "playlists" = "Списки відтворення";
 "audios_explicit" = "Має нецензурну лексику";
@@ -961,6 +966,12 @@
 "audio_ctx_add_to_playlist" = "Додати до списку відтворення";
 "audio_ctx_play_next" = "Відтворити наступним";
 "audio_ctx_clear_context" = "Очистити список аудіозаписів";
+
+"is_x_audio_zero" = "Немає аудіозаписів";
+"is_x_audio_one" = "Один аудіозапис.";
+"is_x_audio_few" = "Всього $1 аудіозаписа.";
+"is_x_audio_many" = "Всього $1 аудіозаписів.";
+"is_x_audio_other" = "Всього $1 аудіозаписів.";
 
 /* Notifications */
 
@@ -1977,6 +1988,7 @@
 "s_apps" = "Застосунки";
 "s_posts" = "Дописи";
 "s_comments" = "Коментарі";
+"s_photos" = "Фотографії";
 "s_videos" = "Відео";
 "s_audios" = "Музика";
 "s_audios_playlists" = "Списки відтворення";
@@ -2087,7 +2099,8 @@
 "mobile_menu" = "Меню";
 "mobile_like" = "Подобається";
 "mobile_user_info_hide" = "Приховувати";
-"mobile_user_info_show_details" = "Показати докладніше";
+"mobile_user_info_show_details" = "Відобразити докладніше";
+"mobile_attachment_only_for_pc" = "Вкладення недоступне в PDA версії, його перегляд можливий тільки з іншого пристрою";
 "my" = "Мої";
 "enter_a_name_or_artist" = "Введіть назву або виконавця...";
 
@@ -2237,4 +2250,18 @@
 "documents_sort_size" = "За розміром";
 "select_doc" = "Вибір документа";
 "no_documents" = "Документів немає";
-"go_to_my_documents" = "Перейти до моїх документів";
+"go_to_my_documents" = "Перейти до Моїх документів";
+
+/* Fave */
+
+"faves" = "Закладки";
+"faves_empty_tip" = "Тут відображатиметься вподобаний Вами контент...";
+"faves_posts_empty_tip" = "Тут відображатимуться вподобані Вами дописи.";
+"faves_comments_empty_tip" = "Тут відображатимуться вподобані Вами коментарі.";
+"faves_photos_empty_tip" = "Тут відображатимуться вподобані Вами фотографії.";
+"faves_videos_empty_tip" = "Тут відображатимуться вподобані Вами відеозаписи.";
+"faves_zero" = "Жодного вподобання";
+"faves_one" = "Одна вподобання";
+"faves_few" = "$1 вподобання";
+"faves_many" = "$1 вподобань";
+"faves_other" = "$1 вподобань";

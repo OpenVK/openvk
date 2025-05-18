@@ -351,7 +351,7 @@ class Document extends Media
         return $this->getRecord()->owner;
     }
 
-    public function toApiPreview(): object
+    public function toApiPreview(): ?object
     {
         $preview = $this->getPreview();
         if ($preview instanceof Photo) {
@@ -360,6 +360,8 @@ class Document extends Media
                     "sizes" => array_values($preview->getVkApiSizes()),
                 ],
             ];
+        } else {
+            return null;
         }
     }
 

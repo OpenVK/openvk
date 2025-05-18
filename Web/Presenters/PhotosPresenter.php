@@ -321,7 +321,7 @@ final class PhotosPresenter extends OpenVKPresenter
 
             $photos = [];
             if ((int) $this->postParam("count") > 10) {
-                $this->flashFail("err", tr("no_photo"), "ты еблан", 500, true);
+                $this->flashFail("err", tr("no_photo"), "Too many photos (max is 7-8)", 500, true);
             }
 
             for ($i = 0; $i < $this->postParam("count"); $i++) {

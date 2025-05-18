@@ -306,10 +306,10 @@ class User extends RowModel
             $content_type = $matches[1];
             $content_id = (int) $matches[2];
             if (in_array($content_type, ["noSpamTemplate", "user"])) {
-                $reason = "Подозрительная активность";
+                $reason = $this->getRawBanReason();
             } else {
                 if ($for !== "banned") {
-                    $reason = "Подозрительная активность";
+                    $reason = $this->getRawBanReason();
                 } else {
                     $reason = [$this->getTextForContentBan($content_type), $content_type];
                     switch ($content_type) {
@@ -524,7 +524,10 @@ class User extends RowModel
 
     public function getAge(): ?int
     {
-        return (int) floor((time() - $this->getBirthday()->timestamp()) / YEAR);
+        $birthday = new \DateTime();
+        $birthday->setTimestamp($this->getBirthday()->timestamp());
+        $today = new \DateTime();
+        return (int) $today->diff($birthday)->y;
     }
 
     public function get2faSecret(): ?string
@@ -558,6 +561,7 @@ class User extends RowModel
                 "poster",
                 "apps",
                 "docs",
+                "fave",
             ],
         ])->get($id);
     }
@@ -932,6 +936,7 @@ class User extends RowModel
             case 1:
                 return tr('female');
             case 2:
+            default:
                 return tr('neutral');
         }
     }
@@ -1195,6 +1200,7 @@ class User extends RowModel
                 "poster",
                 "apps",
                 "docs",
+                "fave",
             ],
         ])->set($id, (int) $status)->toInteger();
 
@@ -1559,14 +1565,14 @@ class User extends RowModel
                     break;
                 case "blacklisted_by_me":
                     if (!$user) {
-                        continue;
+                        break;
                     }
 
                     $res->blacklisted_by_me = (int) $this->isBlacklistedBy($user);
                     break;
                 case "blacklisted":
                     if (!$user) {
-                        continue;
+                        break;
                     }
 
                     $res->blacklisted = (int) $user->isBlacklistedBy($this);

@@ -18,7 +18,7 @@ final class Audio extends VKAPIRequestHandler
         if (!$audio) {
             $this->fail(0o404, "Audio not found");
         } elseif (!$audio->canBeViewedBy($this->getUser())) {
-            $this->fail(201, "Access denied to audio(" . $audio->getPrettyId() . ")");
+            $this->fail(201, "Access denied to audio(" . $audio->getId() . ")");
         }
 
         # рофлан ебало
@@ -201,7 +201,7 @@ final class Audio extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
-        if ($uploaded_only) {
+        if ($uploaded_only && $owner_id == $this->getUser()->getRealId()) {
             return DatabaseConnection::i()->getContext()->table("audios")
                 ->where([
                     "deleted" => false,
@@ -283,7 +283,7 @@ final class Audio extends VKAPIRequestHandler
         }
 
         $dbCtx = DatabaseConnection::i()->getContext();
-        if ($uploaded_only == 1) {
+        if ($uploaded_only == 1 && $owner_id == $this->getUser()->getRealId()) {
             if ($owner_id <= 0) {
                 $this->fail(8, "uploaded_only can only be used with owner_id > 0");
             }

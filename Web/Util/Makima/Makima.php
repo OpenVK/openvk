@@ -188,9 +188,9 @@ class Makima
 
                 $tries = [];
 
-                $firstLine;
-                $secondLine;
-                $thirdLine;
+                $firstLine = null;
+                $secondLine = null;
+                $thirdLine = null;
 
                 # Try one line:
                 $tries[$firstLine = $count] = [$this->calculateMultiThumbsHeight($ratiosCropped, $maxWidth, $marginWidth)];
@@ -234,7 +234,7 @@ class Makima
                         }
                     }
 
-                    if (!$optimalConfiguration || $confDigff < $optimalDifference) {
+                    if (!$optimalConfiguration || $confDiff < $optimalDifference) {
                         $optimalConfiguration = $config;
                         $optimalDifference    = $confDiff;
                     }
