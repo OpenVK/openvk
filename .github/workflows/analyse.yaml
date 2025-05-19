@@ -1,0 +1,36 @@
+name: Static analysis
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  phpstan:
+    name: PHPStan
+    runs-on: ubuntu-latest
+    
+    # 'push' runs on inner branches, 'pull_request' will run only on outer PRs
+    if: >
+      github.event_name == 'push'
+      || (github.event_name == 'pull_request'
+          && github.event.pull_request.head.repo.full_name != github.repository)
+
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and start Docker container
+        working-directory: install/automated/docker
+        run: |
+          docker build -t openvk ../../.. -f openvk.Dockerfile
+
+      - name: Run Docker container with PHPStan
+        working-directory: install/automated/docker
+        run: |
+          docker container run --rm \
+            -v ./chandler.example.yml:/opt/chandler/chandler.yml \
+            -v ./openvk.example.yml:/opt/chandler/extensions/available/openvk/openvk.yml \
+            openvk vendor/bin/phpstan analyse --memory-limit 1G

@@ -53,7 +53,7 @@ final class Wall extends VKAPIRequestHandler
             $this->fail(15, "Access denied: wall is disabled");
         } // Don't search for logic here pls
 
-        $iteratorv;
+        $iteratorv = null;
 
         switch ($filter) {
             case "all":
@@ -722,7 +722,7 @@ final class Wall extends VKAPIRequestHandler
             $post->attach($attachment);
         }
 
-        if ($wall > 0 && $wall !== $this->user->identity->getId()) {
+        if ($owner_id > 0 && $owner_id !== $this->getUser()->getId()) {
             (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
         }
 
@@ -734,7 +734,7 @@ final class Wall extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        $postArray;
+        $postArray = [];
         if (preg_match('/(wall|video|photo)((?:-?)[0-9]+)_([0-9]+)/', $object, $postArray) == 0) {
             $this->fail(100, "One of the parameters specified was missing or invalid: object is incorrect");
         }
@@ -1176,8 +1176,9 @@ final class Wall extends VKAPIRequestHandler
         if ($from_group == 1 && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->getUser())) {
             $flags |= 0b10000000;
         }
-        /*if($signed == 1)
-            $flags |= 0b01000000;*/
+        if ($post->isSigned() && $from_group == 1) {
+            $flags |= 0b01000000;
+        }
 
         $post->setFlags($flags);
         $post->save(true);

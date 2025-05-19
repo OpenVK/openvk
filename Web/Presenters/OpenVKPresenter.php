@@ -9,6 +9,7 @@ use Chandler\MVC\SimplePresenter;
 use Chandler\Session\Session;
 use Chandler\Security\Authenticator;
 use Latte\Engine as TemplatingEngine;
+use Nette\InvalidStateException as ISE;
 use openvk\Web\Models\Entities\IP;
 use openvk\Web\Themes\Themepacks;
 use openvk\Web\Models\Repositories\{IPs, Users, APITokens, Tickets, Reports, CurrentUser, Posts};
@@ -74,7 +75,6 @@ abstract class OpenVKPresenter extends SimplePresenter
     protected function logInUserWithToken(): void
     {
         $header = $_SERVER["HTTP_AUTHORIZATION"] ?? "";
-        $token;
 
         preg_match("%Bearer (.*)$%", $header, $matches);
         $token = $matches[1] ?? "";
@@ -130,7 +130,7 @@ abstract class OpenVKPresenter extends SimplePresenter
         }
 
         if ($throw) {
-            throw new SecurityPolicyViolationException("Permission error");
+            throw new ISE("Permission error");
         } else {
             $this->flashFail("err", tr("not_enough_permissions"), tr("not_enough_permissions_comment"));
         }
@@ -371,7 +371,11 @@ abstract class OpenVKPresenter extends SimplePresenter
            $whichbrowser->isEngine('NetFront') || // PSP and other japanese portable systems
            $whichbrowser->isOs('Android') ||
            $whichbrowser->isOs('iOS') ||
-           $whichbrowser->isBrowser('Internet Explorer', '<=', '8')) {
+           $whichbrowser->isBrowser('BlackBerry Browser') ||
+           $whichbrowser->isBrowser('Internet Explorer', '<=', '8') ||
+           $whichbrowser->isBrowser('Firefox', '<=', '47') ||
+           $whichbrowser->isBrowser('Safari', '<=', '7') ||
+           $whichbrowser->isBrowser('Google Chrome', '<=', '35')) {
             // yeah, it's old, but ios and android are?
             if ($whichbrowser->isOs('iOS') && $whichbrowser->isOs('iOS', '<=', '9')) {
                 return true;

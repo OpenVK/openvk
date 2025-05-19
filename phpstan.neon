@@ -1,0 +1,14 @@
+parameters:
+    level: 0
+    paths:
+        - CLI
+        - ServiceAPI
+        - VKAPI
+        - Web
+        - bootstrap.php
+        - openvkctl
+        - chandler_loader.php
+    
+    bootstrapFiles:
+        - chandler_loader.php
+        - bootstrap.php

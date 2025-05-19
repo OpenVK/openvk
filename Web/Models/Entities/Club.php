@@ -323,7 +323,7 @@ class Club extends RowModel
         return sizeof($this->getFollowersQuery());
     }
 
-    public function getFollowers(int $page = 1, int $perPage = 6, string $sort = "follower ASC"): \Traversable
+    public function getFollowers(int $page = 1, int $perPage = 6, string $sort = "target DESC"): \Traversable
     {
         $rels = $this->getFollowersQuery($sort)->page($page, $perPage);
 

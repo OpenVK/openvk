@@ -6,7 +6,7 @@ on:
 
 jobs:
   lint:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     
     # 'push' runs on inner branches, 'pull_request' will run only on outer PRs
     if: >

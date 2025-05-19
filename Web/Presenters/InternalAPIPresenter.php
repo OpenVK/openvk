@@ -165,7 +165,7 @@ final class InternalAPIPresenter extends OpenVKPresenter
         if ($type == 'post') {
             $this->template->_template = 'components/post.xml';
             $this->template->post = $post;
-            $this->template->commentSection = false;
+            $this->template->commentSection = true;
         } elseif ($type == 'comment') {
             $this->template->_template = 'components/comment.xml';
             $this->template->comment = $post;

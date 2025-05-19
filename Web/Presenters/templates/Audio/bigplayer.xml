@@ -52,5 +52,9 @@
             <div class="shuffleButton musicIcon" data-tip='simple' data-title="{_shuffle_tip}"></div>
             <div class="deviceButton musicIcon" data-tip='simple' data-title="{_mute_tip} [M]"></div>
         </div>
+
+        <div class="absoluteButtons">
+            <div n:if="$buttonsShow_summary" id="summarySwitchButton">-</div>
+        </div>
     </div>
 </div>

@@ -624,6 +624,8 @@
 "my_feed" = "Мои Новости";
 "my_feedback" = "Мои Ответы";
 "my_settings" = "Мои Настройки";
+"bookmarks" = "Закладки";
+"bookmarks_tab" = "Избранное";
 "bug_tracker" = "Баг-трекер";
 
 "menu_settings" = "Настройки";
@@ -674,6 +676,7 @@
 "cut" = "Квадратные";
 "round_avatars" = "Круглые";
 "apply_style_for_this_device" = "Применить стиль только для этого устройства";
+"ui_settings_window" = "Дополнительные настройки";
 "search_for_groups" = "Поиск групп";
 "search_for_users" = "Поиск людей";
 "search_for_posts" = "Поиск записей";
@@ -881,7 +884,8 @@
 "audio_embed_deleted" = "Аудиозапись была удалена";
 "audio_embed_withdrawn" = "Аудиозапись была изъята по обращению правообладателя.";
 "audio_embed_forbidden" = "Настройки приватности пользователя не позволяют встраивать эту композицию";
-"audio_embed_processing" = "Аудио ещё обрабатывается, либо обработалось неправильно.";
+"audio_embed_processing" = "Аудио находится в обработке.";
+"audio_embed_processing_bait" = "Всё равно хочу воспроизвести";
 
 "audios_count_zero" = "Нет аудиозаписей";
 "audios_count_one" = "Одна аудиозапись"; /* сингл */
@@ -900,6 +904,7 @@
 "audio_search" = "Поиск";
 
 "my_audios_small" = "Мои аудиозаписи";
+"my_audios_small_uploaded" = "Загруженное";
 "my_playlists" = "Мои плейлисты";
 "playlists" = "Плейлисты";
 "audios_explicit" = "Содержит нецензурную лексику";
@@ -991,6 +996,12 @@
 "audio_ctx_add_to_playlist" = "Добавить в плейлист";
 "audio_ctx_play_next" = "Воспроизвести следующим";
 "audio_ctx_clear_context" = "Очистить список треков";
+
+"is_x_audio_zero" = "Нету аудиозаписей";
+"is_x_audio_one" = "Всего одна аудиозапись.";
+"is_x_audio_few" = "Всего $1 аудиозаписи.";
+"is_x_audio_many" = "Всего $1 аудиозаписей.";
+"is_x_audio_other" = "Всего $1 аудиозаписей.";
 
 /* Notifications */
 
@@ -2008,6 +2019,7 @@
 "s_apps" = "Приложения";
 "s_posts" = "Записи";
 "s_comments" = "Комментарии";
+"s_photos" = "Фотографии";
 "s_videos" = "Видео";
 "s_audios" = "Аудио";
 "s_audios_playlists" = "Плейлисты";
@@ -2118,6 +2130,7 @@
 "mobile_like" = "Нравится";
 "mobile_user_info_hide" = "Скрыть";
 "mobile_user_info_show_details" = "Показать подробнее";
+"mobile_attachment_only_for_pc" = "Вложение недоступно в PDA версии, его просмотр возможен только с другого устройства";
 
 /* Fullscreen player */
 
@@ -2280,3 +2293,18 @@
 "select_doc" = "Выбор документа";
 "no_documents" = "Документов нет";
 "go_to_my_documents" = "Перейти к своим документам";
+
+/* Fave */
+
+"faves" = "Закладки";
+"faves_empty_tip" = "Здесь будет отображаться понравившийся Вам контент...";
+"faves_posts_empty_tip" = "Здесь будут отображаться понравившиеся Вам записи.";
+"faves_comments_empty_tip" = "Здесь будут отображаться понравившиеся Вам комментарии.";
+"faves_photos_empty_tip" = "Здесь будут отображаться понравившиеся Вам фотографии.";
+"faves_videos_empty_tip" = "Здесь будут отображаться понравившиеся Вам видео.";
+"faves_zero" = "Ни одной закладки"; /* на украинском можно как ни одной вподобайки */
+"faves_one" = "Одна закладка";
+"faves_few" = "$1 закладки";
+"faves_many" = "$1 закладок";
+"faves_other" = "$1 закладок";
+

@@ -2470,8 +2470,7 @@ u(document).on('click', '#__sourceAttacher', (e) => {
         // Checking link
         const __checkCopyrightLinkRes = await fetch(`/method/wall.checkCopyrightLink?auth_mechanism=roaming&link=${encodeURIComponent(source_value)}`)
         const checkCopyrightLink = await __checkCopyrightLinkRes.json()
-        
-        // todo переписать блять мессенджбоксы чтоб они классами были
+
         if(checkCopyrightLink.error_code) {
             __removeDialog()
             switch(checkCopyrightLink.error_code) {

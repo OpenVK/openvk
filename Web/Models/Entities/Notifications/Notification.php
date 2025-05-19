@@ -64,13 +64,15 @@ class Notification
         return $this->recipient;
     }
 
-    public function getModel(int $index): RowModel
+    public function getModel(int $index): ?RowModel
     {
         switch ($index) {
             case 0:
                 return $this->originModel;
             case 1:
                 return $this->targetModel;
+            default:
+                return null;
         }
     }
 
@@ -166,14 +168,13 @@ class Notification
                     case 19:
                         $info["type"] = "comment_video";
                         $info["parent"] = $this->getModel(0)->toNotifApiStruct();
-                        $info["feedback"] = null; # айди коммента не сохраняется в бд( ну пиздец блять
+                        $info["feedback"] = null; # comment id is not saving at db
                         break;
                     case 13:
                         $info["type"] = "comment_photo";
                         $info["parent"] = $this->getModel(0)->toNotifApiStruct();
                         $info["feedback"] = null;
                         break;
-                        # unstandart (vk forgor about notes)
                     case 10:
                         $info["type"] = "comment_note";
                         $info["parent"] = $this->getModel(0)->toVkApiStruct();

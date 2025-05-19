@@ -128,6 +128,6 @@ class Themepack
             throw new Exceptions\IncompatibleThemeException("Theme is built for newer OVK (themeEngine" . $manifest->openvk_version . ")");
         }
 
-        return new static($manifest->id, $manifest->version, (bool) ($manifest->inherit_master ?? true), (bool) ($manifest->override_templates ?? false), (bool) ($manifest->enabled ?? true), (object) $manifest->metadata);
+        return new Themepack($manifest->id, $manifest->version, (bool) ($manifest->inherit_master ?? true), (bool) ($manifest->override_templates ?? false), (bool) ($manifest->enabled ?? true), (object) $manifest->metadata);
     }
 }

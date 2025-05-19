@@ -201,6 +201,8 @@ routes:
       handler: "Audio->upload"
     - url: "/audios{num}"
       handler: "Audio->list"
+    - url: "/audios/uploaded"
+      handler: "Audio->uploaded"
     - url: "/audio{num}/listen"
       handler: "Audio->listen"
     - url: "/audio{num}_{num}"
@@ -413,6 +415,8 @@ routes:
       handler: "InternalAPI->getPostTemplate"
     - url: "/tour"
       handler: "About->tour"
+    - url: "/fave"
+      handler: "User->fave"
     - url: "/{?shortCode}"
       handler: "UnknownTextRouteStrategy->delegate"
       placeholders:

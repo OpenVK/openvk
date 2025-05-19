@@ -45,8 +45,8 @@
 "register_meta_desc" = "$1 желісіне тіркеліңіз!";
 "register_referer_meta_title" = "$1 сізді $2 желіне шақырады!";
 "register_referer_meta_desc" = "$1 және одан көп пайдаланушылармен $2 желісінде қосылыңыз!";
-"registration_welcome_1" = "is a universal colleague search tool based on the VKontakte structure. дегеніміз — VK құрылымына негізделген әмбебап әріптестерді іздеу құралы";
-"registration_welcome_2" = "Достар, сыныптастар, көршілер мен әріптестер үнемі байланыста болғанын қалаймыз.";
+"registration_welcome_1" = "дегеніміз — VK құрылымына негізделген әмбебап әріптестерді іздеу құралы";
+"registration_welcome_2" = "Біз достар, сыныптастар, көршілер мен әріптестер үнемі байланыста болғанын қалаймыз.";
 "users" = "Пайдаланушылар";
 "other_fields" = "Қалғаны";
 

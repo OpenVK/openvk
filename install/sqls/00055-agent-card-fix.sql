@@ -1,0 +1,3 @@
+ALTER TABLE `support_names`
+DROP PRIMARY KEY,
+ADD PRIMARY KEY(`id`);

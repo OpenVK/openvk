@@ -99,6 +99,7 @@ button.bsdn_playButton {
     padding-left: 0;
     font-size: 22px;
     cursor: pointer;
+    width: 22px;
 }
 
 .bsdn_fullScreenButton, .bsdn_repeatButton {

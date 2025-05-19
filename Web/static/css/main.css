@@ -11,6 +11,7 @@ body {
     font-size: 11px;
     word-break: break-word;
     word-wrap: break-word;
+    line-height: 1.19;
 }
 
 body, .ovk-fullscreen-dimmer, .ovk-photo-view-dimmer {
@@ -2919,7 +2920,6 @@ a.poll-retract-vote {
     position: relative;
 }
 
-/* не говновёрстка, а пиксель-пёрфект) */
 .page_header.search_expanded.search_expanded_at_all #search_and_one_more_wrapper {
     width: 547px;
 }
@@ -3037,6 +3037,10 @@ a.poll-retract-vote {
     display: flex;
     flex-direction: column;
     gap: 1px;
+}
+
+.verticalGrayTabsPad {
+    padding: 0px 0px 0px 8px;
 }
 
 .searchList hr, .verticalGrayTabs hr {
@@ -4277,4 +4281,8 @@ hr {
 .attachment_selector .attachment_search input {
     height: 30px;
     background-position-y: 9px;
+}
+
+.deleted_mark_average {
+    padding: 5px 61px;
 }
