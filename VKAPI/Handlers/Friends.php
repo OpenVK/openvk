@@ -110,7 +110,7 @@ final class Friends extends VKAPIRequestHandler
             $this->fail(15, "Access denied: this user chose to hide his friends.");
         }
 
-        $q = mb_strtolower($q ?? "", "UTF-8");
+        $q = mb_strtolower($q, "UTF-8");
 
         $query   = "SELECT id FROM\n" . file_get_contents(__DIR__ . "/../../Web/Models/sql/get-friends-search.tsql");
         $countQ  = "SELECT COUNT(*) AS cnt FROM\n" . file_get_contents(__DIR__ . "/../../Web/Models/sql/get-friends-search.tsql");

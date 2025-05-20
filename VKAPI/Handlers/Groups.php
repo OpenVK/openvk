@@ -98,7 +98,7 @@ final class Groups extends VKAPIRequestHandler
             $group_ids = $group_id;
         }
 
-        if (empty($group_ids) && empty($group_id)) {
+        if (empty($group_ids)) {
             $this->fail(100, "One of the parameters specified was missing or invalid: group_ids is undefined");
         }
 
@@ -370,7 +370,7 @@ final class Groups extends VKAPIRequestHandler
         }
 
         $blacklist = new Blacklist($club);
-        $blacklist->ban($user, $comment ?? null, $end_date > 0 ? $end_date : null);
+        $blacklist->ban($user, $comment, $end_date > 0 ? $end_date : null);
 
         return 1;
     }

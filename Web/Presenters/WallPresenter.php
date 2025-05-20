@@ -421,12 +421,15 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         $geo = null;
+        $latitude = null;
+        $longitude = null;
 
         if (!is_null($this->postParam("geo")) && $this->postParam("geo") != "") {
-            $geo = json_decode($this->postParam("geo"), true, JSON_UNESCAPED_UNICODE);
-            if ($geo["lat"] && $geo["lng"] && $geo["name"]) {
-                $latitude = number_format((float) $geo["lat"], 8, ".", '');
-                $longitude = number_format((float) $geo["lng"], 8, ".", '');
+            $geoData = json_decode($this->postParam("geo"), true, JSON_UNESCAPED_UNICODE);
+            if (is_array($geoData) && ($geoData["lat"] ?? null) && ($geoData["lng"] ?? null) && ($geoData["name"] ?? null)) {
+                $geo = $geoData;
+                $latitude = number_format((float) $geoData["lat"], 8, ".", '');
+                $longitude = number_format((float) $geoData["lng"], 8, ".", '');
                 if ($latitude > 90 || $latitude < -90 || $longitude > 180 || $longitude < -180) {
                     $this->flashFail("err", tr("error"), "Invalid latitude or longitude", 0, $isAjax);
                 }
@@ -463,7 +466,7 @@ final class WallPresenter extends OpenVKPresenter
                 $post->setSuggested(1);
             }
 
-            if ($geo) {
+            if ($geo && $latitude !== null && $longitude !== null) {
                 $post->setGeo($geo);
                 $post->setGeo_Lat($latitude);
                 $post->setGeo_Lon($longitude);

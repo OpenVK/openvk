@@ -11,6 +11,9 @@ use openvk\Web\Models\Entities\Messages\Chat;
 use openvk\Web\Models\Entities\User;
 use openvk\Web\Util\DateTime;
 
+/**
+ * @method void setDeleted(int|bool $deleted)
+ */
 class Topic extends Postable
 {
     protected $tableName = "topics";

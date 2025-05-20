@@ -11,6 +11,9 @@ use Nette\InvalidStateException as ISE;
 
 define("VIDEOS_FRIENDLY_ERROR", "Uploads are disabled on this instance :<");
 
+/**
+ * @method void setDeleted(int|bool $deleted)
+ */
 class Video extends Media
 {
     public const TYPE_DIRECT  = 0;

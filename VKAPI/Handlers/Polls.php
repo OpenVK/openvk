@@ -154,7 +154,7 @@ final class Polls extends VKAPIRequestHandler
 
         $options = json_decode($add_answers);
 
-        if (!$options || empty($options)) {
+        if (!$options) {
             $this->fail(62, "Invalid options");
         }
 

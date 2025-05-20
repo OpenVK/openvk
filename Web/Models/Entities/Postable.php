@@ -368,9 +368,9 @@ abstract class Postable extends Attachable
     public function setCommentPrivacy(bool $open, bool $forFriendOnly = false): void
     {
         if ($open == true) {
-            $this->setComment_status(0);
+            $this->stateChanges("comment_status", 0);
         } else {
-            $this->setComment_status(2);
+            $this->stateChanges("comment_status", 2);
         }
     }
 

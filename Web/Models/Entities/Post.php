@@ -9,6 +9,9 @@ use openvk\Web\Models\Repositories\{Clubs, Users};
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\Notifications\LikeNotification;
 
+/**
+ * @method void setDeleted(int|bool $deleted)
+ */
 class Post extends Postable
 {
     use Traits\TRichText;

@@ -2,7 +2,7 @@ includes:
     - vendor/efabrica/phpstan-latte/rules.neon
 
 parameters:
-    level: 0
+    level: 1
     paths:
         - bin
         - CLI
@@ -16,6 +16,19 @@ parameters:
     
     bootstrapFiles:
         - chandler_loader.php
+        - phpstan-bootstrap.php
+
+    # OPENVK_ROOT_CONF is a runtime config constant. Keep it generic so PHPStan
+    # does not depend on the local openvk.yml; key parity is checked by the
+    # configs sanity job.
+    dynamicConstantNames:
+        CHANDLER_ROOT_CONF: 'array<string, mixed>'
+        OPENVK_ROOT_CONF: 'array<string, mixed>'
+        CONNECTING_IP: string
+        VKAPI_DECL_VER: string
+        VKAPI_OVK_APP: string
+        VKAPI_DECL_VER_MAJOR: int
+        VKAPI_DECL_VER_MINOR: int
 
     tmpDir: tmp/phpstan
 

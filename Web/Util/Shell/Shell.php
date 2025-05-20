@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace openvk\Web\Util\Shell;
 
+/**
+ * @method static object ffprobe(string ...$arguments)
+ * @method static object bash(string ...$arguments)
+ * @method static object powershell(string ...$arguments)
+ */
 class Shell
 {
     public static function shellAvailable(): bool

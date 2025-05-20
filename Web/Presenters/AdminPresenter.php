@@ -482,7 +482,7 @@ final class AdminPresenter extends OpenVKPresenter
                 $catFrom = $this->gifts->getCat((int) ($this->queryParam("from") ?? 0));
                 $catTo   = $this->gifts->getCat((int) ($this->queryParam("to") ?? 0));
                 if (!$catFrom || !$catTo || !$catFrom->hasGift($gift)) {
-                    $this->badRequest();
+                    $this->throwError(400);
                 }
 
                 if ($act === "move") {
@@ -662,7 +662,7 @@ final class AdminPresenter extends OpenVKPresenter
 
         $link = (new BannedLinks())->get($id);
 
-        $new_domain = parse_url($this->postParam("link"))["host"];
+        $new_domain = parse_url($this->postParam("link"))["host"] ?? null;
         $new_reason = $this->postParam("reason") ?: null;
 
         $lid = $id;
@@ -1061,7 +1061,7 @@ final class AdminPresenter extends OpenVKPresenter
         }
 
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-            $this->badRequest();
+            $this->throwError(400);
         }
 
         if (!isset($_FILES["sticker"])) {
@@ -1156,7 +1156,7 @@ final class AdminPresenter extends OpenVKPresenter
         }
 
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-            $this->badRequest();
+            $this->throwError(400);
         }
 
         $this->assertNoCSRF();

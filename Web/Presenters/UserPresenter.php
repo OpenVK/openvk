@@ -93,6 +93,7 @@ final class UserPresenter extends OpenVKPresenter
 
     public function renderFOAF(): void
     {
+        $user = null;
         if ($this->queryParam("id")) {
             $user = $this->users->get(intval($this->queryParam("id")));
         }

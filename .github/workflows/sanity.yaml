@@ -23,6 +23,65 @@ jobs:
             exit 1
           fi
 
+  entity-setters:
+    name: DB entity setters
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    services:
+      mariadb:
+        image: mariadb:10.9
+        env:
+          MARIADB_DATABASE: openvk
+          MARIADB_USER: openvk
+          MARIADB_PASSWORD: openvk
+          MARIADB_RANDOM_ROOT_PASSWORD: yes
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.4"
+          extensions: pdo_mysql, yaml, intl, gd, zip
+          tools: composer:v2
+          coverage: none
+
+      - name: Install dependencies
+        run: composer install --no-dev --no-interaction --prefer-dist --no-progress
+
+      - name: Prepare config
+        run: |
+          php -r '
+          require "vendor/autoload.php";
+          $config = Symfony\Component\Yaml\Yaml::parseFile("openvk-example.yml");
+          $config["chandler"]["database"]["dsn"] = "mysql:host=127.0.0.1;dbname=openvk;charset=utf8mb4";
+          $config["chandler"]["database"]["user"] = "openvk";
+          $config["chandler"]["database"]["password"] = "openvk";
+          $config["chandler"]["security"]["secret"] = str_repeat("a", 64);
+          $config["chandler"]["security"]["csrfProtection"] = "permissive";
+          $config["openvk"]["credentials"]["eventDB"]["enable"] = false;
+          $config["openvk"]["credentials"]["redis"]["enable"] = false;
+          file_put_contents("openvk.yml", Symfony\Component\Yaml\Yaml::dump($config, 20));
+          '
+
+      - name: Apply database schema
+        run: ./openvkctl upgrade --no-interaction --quick
+
+      - name: Check entity setters
+        run: php tools/check-entity-setters.php
+
   migrations:
     name: Unique migration numbers
     runs-on: ubuntu-latest

@@ -229,7 +229,7 @@ final class GroupPresenter extends OpenVKPresenter
         $hidden = ["0" => false, "1" => true][$this->queryParam("hidden")] ?? null;
         //$index = $this->queryParam("index");
         if (!$user) {
-            $this->badRequest();
+            $this->throwError(400);
         }
 
         $club = $this->clubs->get($id);

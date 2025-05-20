@@ -36,11 +36,11 @@ final class Audio extends VKAPIRequestHandler
         return $audioObj;
     }
 
-    private function streamToResponse(EntityStream $es, int $offset, int $count, ?string $hash = null): object|array
+    private function streamToResponse(EntityStream $es, int $offset, int $count, ?string $hash = null, bool $need_user = false): object|array
     {
         $items = [];
         foreach ($es->offsetLimit($offset, $count) as $audio) {
-            $items[] = $this->toSafeAudioStruct($audio, $hash);
+            $items[] = $this->toSafeAudioStruct($audio, $hash, $need_user);
         }
 
         if (defined("VKAPI_DECL_VER_MAJOR") && VKAPI_DECL_VER_MAJOR < 5) {

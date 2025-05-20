@@ -108,7 +108,6 @@ class Videos
 
     public function getByUserLimit($user, int $offset = 0, int $limit = 10): \Traversable
     {
-        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
         $request = $this->videos;
 
         if ($user->getRealId() > 0) {
@@ -141,7 +140,6 @@ class Videos
 
     public function getByClubLimit(Club $club, int $offset = 0, int $limit = 10): \Traversable
     {
-        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
         foreach ($this->videos->where("owner", $club->getId() * -1)->where(["deleted" => 0, "unlisted" => 0])->limit($limit, $offset)->order("created DESC") as $video) {
             yield new Video($video);
         }
