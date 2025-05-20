@@ -86,6 +86,17 @@
     background-color: rgb(240, 240, 240);
 }
 
+.ignore {
+    float: right;
+    height: 16px;
+    width: 16px;
+    overflow: auto;
+    background: url("/assets/packages/static/openvk/img/audios_controls.png") no-repeat 0 0;
+    background-position: -51px -67px;
+    opacity: 0.2;
+    transition-duration: 0.3s;
+}
+
 .post-author .delete {
     float: right;
     height: 16px;

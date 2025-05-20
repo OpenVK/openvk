@@ -58,7 +58,7 @@
                     <span n:if="$post->isPinned()" class="nobold">{_pinned}</span>
 
                     <a n:if="$canBeDeleted && !($forceNoDeleteLink ?? false) && $compact == false" class="delete" href="/wall{$post->getPrettyId()}/delete"></a>  
-                    <a n:if="!$canBeDeleted" class="delete" id="__ignoreSomeone" title="{if !$ignore_status}{_ignore_user}{else}{_unignore_user}{/if}" data-val='{!$ignore_status ? 1 : 0}' data-id="{$wallOwner->getId()}"></a>
+                    <a n:if="!$canBeDeleted" class="ignore" id="__ignoreSomeone" title="{if !$ignore_status}{_ignore_user}{else}{_unignore_user}{/if}" data-val='{!$ignore_status ? 1 : 0}' data-id="{$wallOwner->getId()}"></a>
                     
                     {if $canBePinned && !($forceNoPinLink ?? false) && $compact == false}
                         {if $post->isPinned()}
