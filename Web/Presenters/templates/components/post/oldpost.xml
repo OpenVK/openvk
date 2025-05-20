@@ -133,6 +133,10 @@
 
                     {if !($forceNoDeleteLink ?? false) && $canBeDeleted}
                         <a href="/wall{$post->getPrettyId()}/delete">{_delete}</a> &nbsp;|&nbsp;
+                    {/if} 
+
+                    {if !$canBeDeleted}
+                    <a class="delete" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$wallOwner->getId()}">{if !$ignore_status}{_ignore_user}{else}{_unignore_user}{/if}</a> &nbsp;|&nbsp;
                     {/if}
                     
                     {if !($forceNoPinLink ?? false) && $canBePinned}
