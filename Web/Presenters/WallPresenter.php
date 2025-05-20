@@ -102,7 +102,7 @@ final class WallPresenter extends OpenVKPresenter
                 break;
         }
 
-        $this->template->owner   = $user; 
+        $this->template->owner   = $user;
         $this->template->canPost = $canPost;
         $this->template->count   = $count;
         $this->template->type    = $type;
