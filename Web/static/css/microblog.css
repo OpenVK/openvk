@@ -91,8 +91,7 @@
     height: 16px;
     width: 16px;
     overflow: auto;
-    background: url("/assets/packages/static/openvk/img/audios_controls.png") no-repeat 0 0;
-    background-position: -51px -67px;
+    background: url("/assets/packages/static/openvk/img/ignore.png") no-repeat 0 0;
     opacity: 0.1;
     transition-duration: 0.3s;
 }
