@@ -135,8 +135,8 @@
                         <a href="/wall{$post->getPrettyId()}/delete">{_delete}</a> &nbsp;|&nbsp;
                     {/if} 
 
-                    {if !$canBeDeleted}
-                    <a class="delete" id="__ignoreSomeone" data-val='1' data-id="{$wallOwner->getId()}">{_ignore_user}</a> &nbsp;|&nbsp;
+                    {if $feedIgnoreButton && !$canBeDeleted}
+                    <a id="__ignoreSomeoneFeed" data-val='1' data-id="{$wallOwner->getRealId()}">{_feed_ignore}</a> &nbsp;|&nbsp;
                     {/if}
                     
                     {if !($forceNoPinLink ?? false) && $canBePinned}

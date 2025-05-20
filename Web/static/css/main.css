@@ -914,6 +914,15 @@ h4 {
     }
 }
 
+.post-hidden {
+    display: none;
+}
+
+.ignore-message {
+    padding: 5px 0;
+}
+
+
 .small-textarea {
     height: 24px;
 }

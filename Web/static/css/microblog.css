@@ -100,6 +100,15 @@
     opacity: 0.4;
 }
 
+.post-hidden {
+    display: none;
+}
+
+.ignore-message {
+    padding: 5px 0;
+    border-bottom: 1px #ddd solid;
+}
+
 .post-author .delete {
     float: right;
     height: 16px;
