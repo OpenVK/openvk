@@ -113,7 +113,6 @@ final class WallPresenter extends OpenVKPresenter
             "amount"  => sizeof($this->template->posts),
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
         ];
-        $this->template->ignore_status = $owner->isIgnoredBy($this->user->identity);
 
 
         $this->logPostsViewed($this->template->posts, $user);

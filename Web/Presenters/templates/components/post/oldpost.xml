@@ -136,7 +136,7 @@
                     {/if} 
 
                     {if !$canBeDeleted}
-                    <a class="delete" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$wallOwner->getId()}">{if !$ignore_status}{_ignore_user}{else}{_unignore_user}{/if}</a> &nbsp;|&nbsp;
+                    <a class="delete" id="__ignoreSomeone" data-val='1' data-id="{$wallOwner->getId()}">{_ignore_user}</a> &nbsp;|&nbsp;
                     {/if}
                     
                     {if !($forceNoPinLink ?? false) && $canBePinned}
