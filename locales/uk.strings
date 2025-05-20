@@ -280,6 +280,11 @@
 "change_geo_name" = "Змінити назву розташування";
 "change_geo_name_new" = "Нова назва";
 
+"feed_user_ignored" = "Користувач більше не з'являтиметься у стрічці.";
+"feed_club_ignored" = "Спiльнота більше не з'являтиметься у стрічці.";
+"feed_unignore" = "Повернути.";
+"feed_ignore" = "Не цікаво";
+
 /* Friends */
 
 "friends" = "Друзі";
