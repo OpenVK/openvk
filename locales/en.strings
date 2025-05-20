@@ -1679,6 +1679,7 @@
 "admin_first_known_ip" = "First known IP";
 "admin_shortcode" = "Short code";
 "admin_verification" = "Verification";
+"admin_hide_global_feed" = "Hide global feed";
 "admin_banreason" = "Ban reason";
 "admin_banned" = "banned";
 "admin_gender" = "Sex";
