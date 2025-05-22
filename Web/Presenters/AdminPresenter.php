@@ -123,6 +123,8 @@ final class AdminPresenter extends OpenVKPresenter
                     $this->flash("err", tr("error"), tr("error_shorturl_incorrect"));
                 }
                 $user->changeEmail($this->postParam("email"));
+                $alertText = $this->postParam("alert");
+                $user->setAlert($alertText);
                 if ($user->onlineStatus() != $this->postParam("online")) {
                     $user->setOnline(intval($this->postParam("online")));
                 }
