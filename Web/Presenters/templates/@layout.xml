@@ -365,7 +365,7 @@
                 <a href="/terms" class="link">{_footer_rules}</a>
                 <a href="/blog" class="link">{_footer_blog}</a>
                 <a href="/support" class="link">{_footer_help}</a>
-                <a href="/dev" target="_blank" class="link">{_footer_developers}</a>
+                <a href="/dev" class="link">{_footer_developers}</a>
                 <a href="/privacy" class="link">{_footer_privacy}</a>
             </div>
             <p>
