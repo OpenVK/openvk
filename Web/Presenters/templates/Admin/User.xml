@@ -57,6 +57,11 @@
             </div>
             <hr>
             <div class="field-group">
+                <label for="alert">Алерт</label>
+                <textarea class="textarea medium-field" id="alert" name="alert" placeholder="">{$user->getAlert()}</textarea>
+            </div>
+            <hr>
+            <div class="field-group">
                 <label for="city">{_admin_verification}</label>
                 <input class="toggle-large" type="checkbox" id="verify" name="verify" value="1" {if $user->isVerified()} checked {/if} />
             </div>
