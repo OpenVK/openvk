@@ -13,6 +13,8 @@ final class InternalAPIPresenter extends OpenVKPresenter
     private function fail(int $code, string $message): void
     {
         header("HTTP/1.1 400 Bad Request");
+        header("Content-Type: application/x-msgpack");
+
         exit(MessagePack::pack([
             "brpc"  => 1,
             "error" => [
@@ -25,6 +27,7 @@ final class InternalAPIPresenter extends OpenVKPresenter
 
     private function succ($payload): void
     {
+        header("Content-Type: application/x-msgpack");
         exit(MessagePack::pack([
             "brpc"   => 1,
             "result" => $payload,
