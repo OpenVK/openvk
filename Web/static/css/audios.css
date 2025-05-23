@@ -763,8 +763,9 @@
     fill-opacity: .7;
 }
 
-.audioStatus span {
+.audioStatus a {
     color: #2B587A;
+    font-weight: bold;
 }
 
 .audioStatus span:hover {
