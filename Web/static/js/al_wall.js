@@ -2951,3 +2951,33 @@ u(document).on("submit", "#additional_fields_form", (e) => {
         }
     }) 
 })
+
+async function getEmbeddedPost(postId) {
+    let res = await fetch("/wall"+postId+"_e")
+    res.text().then(function (text) {
+        CMessageBox.toggleLoader()
+        let msb = new CMessageBox({
+            title: '',
+            custom_template: u(`
+            <div class="ovk-photo-view-dimmer">
+                ${text}
+            </div>
+            `)
+        })
+        CMessageBox.toggleLoader()
+    });
+    
+}
+
+u(document).on("click", "#al-post", (e) => {
+    e.preventDefault();
+    const postId = String(e.target.dataset.id);
+    getEmbeddedPost(postId)
+});
+
+const params = new URLSearchParams(window.location.search);
+
+if (params.has("w")) {
+  let post_id = params.get("w").replace("wall-", "");
+  getEmbeddedPost(post_id)
+}
