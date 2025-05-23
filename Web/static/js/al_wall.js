@@ -1434,7 +1434,7 @@ u(document).on("click", "#__photoAttachment", async (e) => {
         window.openvk.photoalbums = await window.OVKAPI.call('photos.getAlbums', {'owner_id': club != 0 ? Math.abs(club) * -1 : window.openvk.current_id})
     }
     window.openvk.photoalbums.items.forEach(item => {
-        u('.ovk-diag-body #albumSelect').append(`<option value="${item.vid}">${ovk_proc_strtr(escapeHtml(item.title), 20)}</option>`)
+        u('.ovk-diag-body #albumSelect').append(`<option value="${item.id}">${ovk_proc_strtr(escapeHtml(item.title), 20)}</option>`)
     })
 })
 
