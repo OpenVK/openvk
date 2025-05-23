@@ -4174,11 +4174,12 @@ hr {
     justify-content: center;
     border-radius: 2px;
     height: 17px;
-    padding: 2px 0px;
+    padding: 3px 0px;
 }
 
 .docListViewItem .doc_icon.no_image span {
     color: #6b6b6b;
+    font-weight: bold;
 }
 
 .doc_icon.no_image span::before {
