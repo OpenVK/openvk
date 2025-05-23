@@ -75,7 +75,7 @@ final class DocumentsPresenter extends OpenVKPresenter
         $this->template->locale_string = "you_have_x_documents";
         if ($current_tab != 0) {
             $this->template->locale_string = "x_documents_in_tab";
-        } else if ($owner_id < 0) {
+        } elseif ($owner_id < 0) {
             $this->template->locale_string = "group_has_x_documents";
         }
 

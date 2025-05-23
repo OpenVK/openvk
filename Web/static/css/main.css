@@ -3921,6 +3921,11 @@ hr {
     height: 25px;
 }
 
+.object_fit_ava {
+    object-fit: cover;
+    object-position: top;
+}
+
 .like_tooltip_wrapper .like_tooltip_body a {
     height: 25px;
 }
