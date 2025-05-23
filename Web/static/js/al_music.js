@@ -176,7 +176,7 @@ window.player = new class {
                 }
             }
 
-            if(window.player.listen_coef > 10) {
+            if(window.player.listen_coef > 5) {
                 this.__countListen()
                 window.player.listen_coef = -10
             }
