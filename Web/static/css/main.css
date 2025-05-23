@@ -14,6 +14,10 @@ body {
     line-height: 1.19;
 }
 
+body.ajax_request_made {
+    cursor: progress;
+}
+
 body, .ovk-fullscreen-dimmer, .ovk-photo-view-dimmer {
     scrollbar-gutter: stable both-edges;
 }
