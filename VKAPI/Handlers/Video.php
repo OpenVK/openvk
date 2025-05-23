@@ -20,12 +20,18 @@ final class Video extends VKAPIRequestHandler
         $this->requireUser();
 
         if (!empty($videos)) {
-            $vids = explode(',', $videos);
+            $vids = array_unique(explode(',', $videos));
+
+            if (sizeof($vids) > 100) {
+                $this->fail(15, "Too many ids given");
+            }
+
             $profiles = [];
             $groups = [];
+            $items = [];
+
             foreach ($vids as $vid) {
                 $id    = explode("_", $vid);
-                $items = [];
 
                 $video = (new VideosRepo())->getByOwnerAndVID(intval($id[0]), intval($id[1]));
                 if ($video && !$video->isDeleted()) {
