@@ -603,6 +603,7 @@
 
 "notes_closed" = "Вы не можете прикрепить заметку к записи, так как ваши заметки видны только вам.<br><br> Вы можете поменять это в <a href=\"/settings?act=privacy\">настройках</a>.";
 "do_not_attach_note" = "Не прикреплять заметку";
+"something_is_supported_from_xhtml" = "<a href='/kb/notes'>Кое-что</a> из (X)HTML поддерживается.";
 "something" = "Кое-что";
 "supports_xhtml" = "из (X)HTML поддерживается.";
 

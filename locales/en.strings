@@ -619,6 +619,7 @@
 
 "notes_closed" = "You can't attach a note to the post because only you can see them.<br> You can change this in <a href=\"/settings?act=privacy\">settings</a>.";
 "do_not_attach_note" = "Do not attach a note";
+"something_is_supported_from_xhtml" = "<a href='/kb/notes'>Something</a> from (X)HTML supported.";
 "something" = "Something";
 "supports_xhtml" = "from (X)HTML supported.";
 
