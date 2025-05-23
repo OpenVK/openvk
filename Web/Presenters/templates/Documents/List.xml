@@ -20,28 +20,25 @@
 {block content}
     {var $is_gallery = $current_tab == 3 || $current_tab == 4}
     <div id="docs_page_wrapper">
-        <div class="docs_page_search">
-            <form action="/search" method="get">
-                <input type="hidden" name="section" value="docs">
-                <input type="search" name="q" class="input_with_search_icon" placeholder="{_search_by_documents}">
-            </form>
-            <input n:if="$canUpload" id="upload_entry_point" class="button" type="button" value="{_upload_button}" {if isset($group)}data-gid="{$group->getId()}"{/if}>
-        </div>
-        <div n:if="sizeof($tabs) > 1" class="docs_page_tabs">
-            <div class="mb_tabs">
-                <div class="mb_tab" n:attr="id => $current_tab == 0 ? active">
-                    <a href="?tab=0">{_document_type_0}</a>
+        <div class="docs_page_tabs">
+            <div class="mb_tabs display_flex_row display_flex_space_between">
+                <div>
+                    <div class="mb_tab" n:attr="id => $current_tab == 0 ? active">
+                        <a href="?tab=0">{_document_type_0}</a>
+                    </div>
+                    <div n:foreach="$tabs as $tab" class="mb_tab" n:attr="id => $tab['type'] == $current_tab ? active">
+                        <a href="?tab={$tab['type']}">
+                            {$tab["name"]}
+                            <span n:if="$tab['count'] > 1" class="special_counter">{$tab["count"]}</span>
+                        </a>
+                    </div>
                 </div>
-                <div n:foreach="$tabs as $tab" class="mb_tab" n:attr="id => $tab['type'] == $current_tab ? active">
-                    <a href="?tab={$tab['type']}">
-                        {$tab["name"]}
-                        <span n:if="$tab['count'] > 1" class="special_counter">{$tab["count"]}</span>
-                    </a>
-                </div>
+
+                <input n:if="$canUpload" id="upload_entry_point" class="button" type="button" value="{_upload_button}" {if isset($group)}data-gid="{$group->getId()}"{/if}>
             </div>
         </div>
         <div n:class="docs_page_content, $is_gallery ? docs_page_gallery">
-            <div class="summaryBar display_flex_row display_flex_space_between">
+            <div n:if="$count > 0" class="summaryBar display_flex_row display_flex_space_between">
                 <div class="summary">{tr($locale_string, $count)}.</div>
 
                 <select n:if="$count > 3" name="docs_sort">
