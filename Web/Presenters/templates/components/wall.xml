@@ -1,5 +1,5 @@
 <div class="content_divider">
-    <div class="content_title_expanded" onclick="hidePanel(this);">
+    <div class="content_title_expanded">
         {_wall} 
         <nobold>
             {tr("wall", $count)}
