@@ -16,7 +16,7 @@
 
 {block tabs}
     <div n:attr="id => ($act === 'list' ? 'activetabs' : 'ki')" class="tab">
-        <a n:attr="id => ($act === 'list' ? 'act_tab_a' : 'ki')" href="?act=list">{_all_apps}</a>
+        <a n:attr="id => ($act === 'list' ? 'act_tab_a' : 'ki')" href="/search?q=&section=apps">{_all_apps}</a>
     </div>
 
     <div n:attr="id => ($act === 'installed' ? 'activetabs' : 'ki')" class="tab">
