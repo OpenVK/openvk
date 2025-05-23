@@ -2966,7 +2966,7 @@ async function getEmbeddedPost(postId) {
         })
         CMessageBox.toggleLoader()
     });
-    
+    history.replaceState(null, null, `?w=wall-${postId}`)
 }
 
 u(document).on("click", "#al-post", (e) => {
