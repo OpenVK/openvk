@@ -33,15 +33,15 @@
                         </script>
                         
                         <label>
-                            <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" /> {_post_as_group}
+                            <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" checked /> {_post_as_group}
                         </label>
-                        <label id="forceSignOpt" style="display: none;">
+                        <label id="forceSignOpt" style="display: block;">
                             <input type="checkbox" name="force_sign" /> {_add_signature}
                         </label>
                     {/if}
                 {/if}
                 
-                <label n:if="$anonEnabled" id="octoberAnonOpt">
+                <label n:if="$anonEnabled" id="octoberAnonOpt" style="display: none;">
                     <input type="checkbox" name="anon" /> {_as_anonymous}
                 </label>
                 
