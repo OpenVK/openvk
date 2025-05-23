@@ -419,7 +419,7 @@
                     {else}
                         <div class="page_status" style="display: flex;">
                             <div n:class="audioStatus, $thatIsThisUser ? page_status_edit_button" id="page_status_text">
-                                {$audioStatus->getName()}
+                                <a {if !$thatIsThisUser}href="/audio0_{$audioStatus->getId()}"{/if}>{$audioStatus->getName()}</a>
                             </div>
                         </div>
                     {/if}
