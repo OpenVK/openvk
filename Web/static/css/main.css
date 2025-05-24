@@ -1888,6 +1888,7 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
 
 #ovkDraw {
     border: 1px solid #757575;
+    min-height: 510px;
 }
 
 #ovkDraw .lc-drawing.with-gui {
@@ -1896,6 +1897,7 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
 
 #ovkDraw .literally {
     border-radius: 0;
+    height: 510px;
 }
 
 #ovkDraw .literally .lc-picker,
