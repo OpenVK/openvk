@@ -1647,7 +1647,7 @@ u(document).on('click', '#__notesAttachment', async (e) => {
             insert_place.append(tr('no_notes'))    
         }
 
-        notes.notes.forEach(note => {
+        notes.items.forEach(note => {
             is_attached = (form.find(`.upload-item[data-type='note'][data-id='${note.owner_id}_${note.id}']`)).length > 0
             insert_place.append(`
                 <div class='display_flex_row _content' data-attachmentdata="${note.owner_id}_${note.id}" data-name='${escapeHtml(note.title)}'>
