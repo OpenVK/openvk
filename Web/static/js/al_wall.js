@@ -2373,7 +2373,7 @@ async function __processPaginatorNextPage(page)
 
     const new_url = new URL(location.href)
     new_url.hash = page
-    history.replaceState(null, null, new_url)
+    //history.replaceState(null, null, new_url)
 
     if(typeof __scrollHook != 'undefined') {
         __scrollHook(page)
