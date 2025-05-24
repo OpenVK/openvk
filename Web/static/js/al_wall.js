@@ -2439,8 +2439,7 @@ u(document).on('click', '#__sourceAttacher', (e) => {
     MessageBox(tr('add_source'), `
         <div id='source_flex_kunteynir'>
             <span>${tr('set_source_tip')}</span>
-            <!-- давай, копируй ссылку и переходи по ней -->
-            <input type='text' maxlength='400' placeholder='https://www.youtube.com/watch?v=lkWuk_nzzVA'>
+            <input type='text' maxlength='400' placeholder='...'>
         </div>
     `, [tr('cancel')], [
         () => {Function.noop}
@@ -2650,7 +2649,7 @@ u(document).on('click', "#__geoAttacher", async (e) => {
                 ${tplMapIcon}
                 <span>${escapeHtml(geo_name)}</span>
                 <div id="small_remove_button"></div>
-            `)
+            `).addClass("appended-geo")
         }, () => {}]
     })
 
