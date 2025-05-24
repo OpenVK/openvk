@@ -40,7 +40,7 @@
                 </tr>
                 <tr>
                     <td>
-                        <a class="button" href="/topic{$topic->getPrettyId()}/delete?hash={urlencode($csrfToken)}">{_delete_topic}</a>
+                        <a id="_anotherDelete" class="button" href="/topic{$topic->getPrettyId()}/delete?hash={urlencode($csrfToken)}">{_delete_topic}</a>
                     </td>
                     <td>
                         <input type="hidden" name="hash" value="{$csrfToken}" />
