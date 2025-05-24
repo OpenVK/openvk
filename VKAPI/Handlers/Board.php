@@ -56,7 +56,7 @@ final class Board extends VKAPIRequestHandler
 
                 $comment->save();
             }
-        } catch(\Throwable $e) {
+        } catch (\Throwable $e) {
             return $topic->getId();
         }
 
@@ -183,7 +183,7 @@ final class Board extends VKAPIRequestHandler
         }
 
         $obj = (object) [
-            "items" => []
+            "items" => [],
         ];
 
         if ($extended) {
@@ -222,7 +222,7 @@ final class Board extends VKAPIRequestHandler
             $this->fail(4, "Invalid count");
         }
 
-        $obj = (object)[];
+        $obj = (object) [];
 
         $club = (new ClubsRepo())->get($group_id);
 

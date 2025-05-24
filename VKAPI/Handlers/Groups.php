@@ -411,7 +411,7 @@ final class Groups extends VKAPIRequestHandler
 
         $obj = (object) [
             "count" => sizeof($members),
-            "items" => []
+            "items" => [],
         ];
 
         foreach ($members as $member) {

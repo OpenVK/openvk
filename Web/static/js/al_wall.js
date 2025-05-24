@@ -2375,6 +2375,9 @@ async function __processPaginatorNextPage(page)
     new_url.hash = page
     //history.replaceState(null, null, new_url)
 
+    showMoreObserver.disconnect()
+    showMoreObserver.observe(u('.paginator:not(.paginator-at-top)').nodes[0])
+
     if(typeof __scrollHook != 'undefined') {
         __scrollHook(page)
     }
