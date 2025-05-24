@@ -4323,4 +4323,6 @@ hr {
 
 .post-modal-author {
     margin: 5px;
+    margin-top: 0px;
+    width: 100%;
 }

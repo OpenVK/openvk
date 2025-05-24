@@ -46,7 +46,6 @@
             <div width="54" valign="top" class="post-modal-header">
                 <a href="{$author->getURL()}">
                     <img src="{$author->getAvatarURL('miniscule')}" width="{if $compact}25{else}50{/if}" class="post-avatar {if $compact}cCompactAvatars{/if}" />
-                    <span n:if="!$post->isPostedOnBehalfOfGroup() && !$compact && $author->isOnline()" class="post-online">{_online}</span>
                 </a>
                 <div class="post-author post-modal-author">
                     <a href="{$author->getURL()}"><b class="post-author-name">{$author->getCanonicalName()}</b></a>
@@ -67,7 +66,7 @@
                             </b>
                         </a>
                     {/if}
-
+                    <span n:if="!$post->isPostedOnBehalfOfGroup() && !$compact && $author->isOnline()" class="post-online">{_online}</span>
                     {if $compact}
                         <br>
                         <a href="/wall{$post->getPrettyId()}" class="date">
@@ -75,25 +74,10 @@
                         </a>
                     {/if}
 
-                    <!--<span n:if="$post->isPinned()" class="nobold">{_pinned}</span>
-
-                    <a n:if="$canBeDeleted && !($forceNoDeleteLink ?? false) && $compact == false" class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
-                    
-                    {if $canBePinned && !($forceNoPinLink ?? false) && $compact == false}
-                        {if $post->isPinned()}
-                            <a class="pin" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}"></a>
-                        {else}
-                            <a class="pin" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}"></a>
-                        {/if}
-                    {/if}
-
-                    {if $post->canBeEditedBy($thisUser) && !($forceNoEditLink ?? false) && $compact == false}
-                        <a class="edit" id="editPost"></a>
-                    {/if}-->
                 </div>
             </div>
             <div width="100%" valign="top">
-                <div class="post-content" id="{$post->getPrettyId()}" data-localized-nsfw-text="{_nsfw_warning}">
+                <div class="post-content" id="{$post->getPrettyId()}" data-localized-nsfw-text="{_nsfw_warning}" style="padding: 10px">
                     <div class="text" id="text{$post->getPrettyId()}">
                         <span data-text="{$post->getText(false)}" class="really_text">{$post->getText()|noescape}</span>
                         
@@ -166,17 +150,6 @@
                         </div>
                     {/if}
                 </div>
-                <div n:if="!($forceNoCommentsLink ?? false) && $commentSection == true && $compact == false" class="post-menu-s">
-                    <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}" class="expand_button">{_view_other_comments}</a>
-                    {foreach $comments as $comment}
-                        {include "../comment.xml", comment => $comment, $compact => true}
-                    {/foreach}
-                    <div n:ifset="$thisUser" id="commentTextArea{$commentTextAreaId}" n:attr="style => ($commentsCount == 0 ? 'display: none;')" class="commentsTextFieldWrap">
-                        {var $commentsURL = "/al_comments/create/posts/" . $post->getId()}
-                        {var $club = is_null($club) ? ($post->getTargetWall() < 0 ? (new openvk\Web\Models\Repositories\Clubs)->get(abs($post->getTargetWall())) : NULL) : $club}
-                        {include "../textArea.xml", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), post => $post, club => $club}
-                    </div>
-                </div>
                 <div style="float: left; min-height: 100px; width: 100%;">
         {include "../comments.xml",
                  comments => $comments,
@@ -185,10 +158,6 @@
                  model => "posts",
                  parent => $post }
     </div>
-                <div n:if="$suggestion && $canBePinned" class="suggestionControls">
-                    <input type="button" class="button" id="publish_post" data-id="{$post->getId()}" value="{_publish_suggested}">
-                    <input type="button" class="button" id="decline_post" data-id="{$post->getId()}" value="{_decline_suggested}">
-                </div>
             </div>
         </div>
     </div>
