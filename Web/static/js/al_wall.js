@@ -1125,7 +1125,14 @@ u(document).on("click", "#editPost", async (e) => {
                 return
             }
             
-            const new_post_html = await (await fetch(`/iapi/getPostTemplate/${id[0]}_${id[1]}?type=${type}`, {
+            let is_at_post_page = false
+            try {
+                if(location.pathname.indexOf("wall") != -1 && location.pathname.split("_").length == 2) {
+                    is_at_post_page = true
+                }
+            } catch(e) {}
+
+            const new_post_html = await (await fetch(`/iapi/getPostTemplate/${id[0]}_${id[1]}?type=${type}&from_page=${is_at_post_page ? "post" : "another"}`, {
                 'method': 'POST'
             })).text()
             u(ev.target).removeClass('lagged')

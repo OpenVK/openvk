@@ -149,7 +149,7 @@ final class InternalAPIPresenter extends OpenVKPresenter
     {
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             header("HTTP/1.1 405 Method Not Allowed");
-            exit("ты‍ не по адресу");
+            $this->redirect("/");
         }
 
         $type = $this->queryParam("type", false);
@@ -168,7 +168,7 @@ final class InternalAPIPresenter extends OpenVKPresenter
         if ($type == 'post') {
             $this->template->_template = 'components/post.xml';
             $this->template->post = $post;
-            $this->template->commentSection = true;
+            $this->template->commentSection = $this->queryParam("from_page") == "another";
         } elseif ($type == 'comment') {
             $this->template->_template = 'components/comment.xml';
             $this->template->comment = $post;
