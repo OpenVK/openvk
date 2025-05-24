@@ -401,8 +401,10 @@ window.addEventListener('popstate', (e) => {
         return
     }*/
 
-    window.router.route({
-        url: location.href,
-        push_state: false,
-    })
+    if(e.state != null) {
+        window.router.route({
+            url: location.href,
+            push_state: false,
+        })
+    }
 })
