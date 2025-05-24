@@ -3656,7 +3656,7 @@ hr {
 .entity_vertical_list {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 10px;
     height: 197px;
     overflow-y: auto;
 }
@@ -3664,6 +3664,7 @@ hr {
 .entity_vertical_list.scroll_container {
     height: unset;
     overflow-y: unset;
+    padding: 5px;
 }
 
 .entity_vertical_list .entity_vertical_list_item {
@@ -3681,12 +3682,16 @@ hr {
 }
 
 .entity_vertical_list.m_mini .entity_vertical_list_item .first_column {
-    gap: 10px;
+    gap: 13px;
+}
+
+.entity_vertical_list.m_mini .entity_vertical_list_item:hover .first_column a {
+    text-decoration: underline;
 }
 
 .entity_vertical_list.m_mini .entity_vertical_list_item .first_column .avatar img {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
 }
 
 .entity_vertical_list .entity_vertical_list_item .avatar {
