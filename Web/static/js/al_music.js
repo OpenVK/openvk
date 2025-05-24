@@ -1859,7 +1859,7 @@ function showAudioAttachment(type = 'form', form = null)
             }
             let is_attached = false
             if(type == 'form') {
-                is_attached = (u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`)).length > 0
+                is_attached = (u(form).find(`.post-vertical .vertical-attachment[data-type='audio'][data-id='${id}']`)).length > 0
             } else {
                 is_attached = (u(form).find(`.PE_audios .vertical-attachment[data-id='${id}']`)).length > 0
             }
