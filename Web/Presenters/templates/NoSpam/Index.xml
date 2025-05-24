@@ -269,7 +269,13 @@
                 search();
             }
         });
-        $("#apply").on("click", () => { search(Number($("#noSpam-ban-type").val())); })
+        $("#apply").on("click", (e) => { 
+            e.preventDefault() 
+
+            MessageBox(tr("warning"), tr("nospam_prevention"), [tr("no"), tr("yes")], [Function.noop, () => {
+                search(Number($("#noSpam-ban-type").val())); 
+            }]);
+        })
 
         async function selectChange(value) {
             console.log(value);
