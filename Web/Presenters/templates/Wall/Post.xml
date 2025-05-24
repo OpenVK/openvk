@@ -38,7 +38,7 @@
                  model => "posts",
                  parent => $post }
     </div>
-    <div style="float: left; min-height: 100px; width: 32%;">
+    <div style="float: left; min-height: 100px; width: 32%;padding-left: 10px;width: 30%;">
         <h4>{_actions}</h4>
         {if isset($thisUser)}
             {var $canDelete = $post->canBeDeletedBy($thisUser)}
