@@ -131,6 +131,8 @@ routes:
       handler: "Wall->makePost"
     - url: "/wall{num}_{num}"
       handler: "Wall->post"
+    - url: "/wall{num}_{num}_e"
+      handler: "Wall->postEmbedded"
     - url: "/wall{num}_{num}/like"
       handler: "Wall->like"
     - url: "/wall{num}_{num}/repost"

@@ -123,6 +123,11 @@ final class WallPresenter extends OpenVKPresenter
         $this->renderWall($user, true);
     }
 
+    public function renderPostEmbedded(int $wall, int $post_id): void
+    {
+        $this->renderPost($wall, $post_id, true);
+    }
+
     public function renderRSS(int $user): void
     {
         $owner = ($user < 0 ? (new Clubs()) : (new Users()))->get(abs($user));
@@ -439,7 +444,7 @@ final class WallPresenter extends OpenVKPresenter
         }
     }
 
-    public function renderPost(int $wall, int $post_id): void
+    public function renderPost(int $wall, int $post_id, bool $embedded = false): void
     {
         $post = $this->posts->getPostById($wall, $post_id);
         if (!$post || $post->isDeleted()) {
@@ -470,6 +475,9 @@ final class WallPresenter extends OpenVKPresenter
         $this->template->cCount   = $post->getCommentsCount();
         $this->template->cPage    = (int) ($_GET["p"] ?? 1);
         $this->template->comments = iterator_to_array($post->getComments($this->template->cPage));
+        if ($embedded == true) {
+            $this->template->_template = "components/post/embeddedpost.xml";
+        }
     }
 
     public function renderLike(int $wall, int $post_id): void
