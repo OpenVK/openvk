@@ -3393,6 +3393,7 @@ body.article .floating_sidebar, body.article .page_content {
     display: flex;
     flex-direction: column;
     gap: 22px;
+    padding: 5px 10px;
 }
 
 .sugglist {
