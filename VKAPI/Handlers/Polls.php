@@ -120,11 +120,11 @@ final class Polls extends VKAPIRequestHandler
         $poll = (new PollsRepo())->get($poll_id);
 
         if (!$poll) {
-            $this->fail(251, "Invalid poll");
+            $this->fail(15, "Access denied");
         }
 
         if ($poll->isAnonymous()) {
-            $this->fail(251, "Access denied: poll is anonymous.");
+            $this->fail(15, "Access denied");
         }
 
         $voters = array_slice($poll->getVoters($answer_ids, 1, $offset + $count), $offset);
@@ -174,11 +174,5 @@ final class Polls extends VKAPIRequestHandler
         $poll->save();
 
         return $this->getById($poll->getId());
-    }
-
-    public function edit()
-    {
-        #todo
-        return 1;
     }
 }
