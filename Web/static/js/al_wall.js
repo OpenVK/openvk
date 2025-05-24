@@ -2962,3 +2962,28 @@ u(document).on("submit", "#additional_fields_form", (e) => {
         }
     }) 
 })
+
+if(Number(localStorage.getItem('ux.gif_autoplay') ?? 0) == 1) {
+    const showMoreObserver = new IntersectionObserver(entries => {
+        entries.forEach(async x => {
+            doc_item = x.target.closest(".docGalleryItem")
+            if(doc_item.querySelector(".play-button") != null) {
+                if(x.isIntersecting) {
+                    doc_item.classList.add("playing")
+                } else {
+                    doc_item.classList.remove("playing")
+                }
+            }
+        })
+    }, {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0,
+    })
+    
+    if(u('.docGalleryItem').length > 0) {
+        u('.docGalleryItem').nodes.forEach(item => {
+            showMoreObserver.observe(item)
+        })
+    }
+}
