@@ -183,7 +183,7 @@ final class Account extends VKAPIRequestHandler
     {
         $this->requireUser();
         if (!OPENVK_ROOT_CONF['openvk']['preferences']['commerce']) {
-            $this->fail(105, "Commerce is disabled on this instance");
+            $this->fail(-105, "Commerce is disabled on this instance");
         }
 
         return (object) ['votes' => $this->getUser()->getCoins()];

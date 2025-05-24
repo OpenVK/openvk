@@ -118,7 +118,14 @@ final class Likes extends VKAPIRequestHandler
         }
 
         if (!$user->canBeViewedBy($this->getUser())) {
-            $this->fail(1984, "Access denied: you can't see this user");
+            $this->fail(15, "Access denied");
+        }
+
+        if ($user->isPrivateLikes()) {
+            return (object) [
+                "liked"  => 1,
+                "copied" => 1,
+            ];
         }
 
         $postable = null;
