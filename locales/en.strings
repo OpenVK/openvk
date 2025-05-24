@@ -2322,6 +2322,8 @@
 "roll_back" = "rollback";
 "roll_backed" = "rollbacked";
 
+"nospam_prevention" = "This action will affect a lot of data. Are you sure you want to apply?";
+
 /* RSS */
 
 "post_deact_in_general" = "Page deletion";
