@@ -1,7 +1,7 @@
 {extends "../../@layout.xml"}
 
 {block title}
-    {_post} - OpenVK
+    {_post}
 {/block}
 
 {block header}
