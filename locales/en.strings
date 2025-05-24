@@ -868,6 +868,9 @@
 "sort_up" = "Sort by ID up";
 "sort_down" = "Sort by ID down";
 
+"new_first" = "New frist";
+"old_first" = "Old first";
+
 /* Videos */
 
 "videos" = "Videos";

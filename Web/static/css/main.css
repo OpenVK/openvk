@@ -4314,3 +4314,23 @@ hr {
 .deleted_mark_average {
     padding: 5px 61px;
 }
+
+.sort_link {
+    padding: 5px 2px;
+    display: inline-block;
+}
+
+.sort_link_icon {
+    background: url(/assets/packages/static/openvk/img/wall.png?v=3) no-repeat;
+    display: inline-block;
+    height: 11px;
+    width: 9px;
+}
+
+.sort_link_icon_desc {
+    background-position: 0px -15px;
+}
+
+.sort_link_icon_asc {
+    background-position: -11px -15px;
+}

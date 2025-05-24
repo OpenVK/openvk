@@ -469,7 +469,11 @@ final class WallPresenter extends OpenVKPresenter
         }
         $this->template->cCount   = $post->getCommentsCount();
         $this->template->cPage    = (int) ($_GET["p"] ?? 1);
-        $this->template->comments = iterator_to_array($post->getComments($this->template->cPage));
+        $this->template->sort = $this->queryParam("sort") ?? "asc";
+
+        $input_sort = $this->template->sort == "asc" ? "ASC" : "DESC";
+
+        $this->template->comments = iterator_to_array($post->getComments($this->template->cPage, null, $input_sort));
     }
 
     public function renderLike(int $wall, int $post_id): void

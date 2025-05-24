@@ -1,5 +1,18 @@
-<h4 n:if="$showTitle ?? true">{_comments} ({$count})</h4>
+<div>
+    <h4 n:if="$showTitle ?? true">{_comments} ({$count})</h4>
 
+    {if !is_null($sort) && $count > 5}
+        <a class="sort_link" n:attr="href => $sort == 'desc' ? '?sort=asc' : '?sort=desc'">
+            {if $sort == 'desc'}
+                {_new_first}
+            {else}
+                {_old_first}
+            {/if}
+
+            <div n:class="sort_link_icon, $sort == 'desc' ? sort_link_icon_desc : sort_link_icon_asc"></div>
+        </a>
+    {/if}
+</div>
 <div n:ifset="$thisUser" id="standaloneCommentBox">
     {var $commentsURL = "/al_comments/create/$model/" . $parent->getId()}
     {var $club = $parent instanceof \openvk\Web\Models\Entities\Post && $parent->getTargetWall() < 0 ? (new openvk\Web\Models\Repositories\Clubs)->get(abs($parent->getTargetWall())) : $club}
