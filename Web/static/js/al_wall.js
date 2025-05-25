@@ -606,6 +606,21 @@ function reportClub(club_id) {
     ]);
 }
 
+$(document).on("click", "#_ajaxDelete", function(e) {
+    MessageBox(tr('warning'), tr('question_confirm'), [
+        tr('yes'),
+        tr('no')
+    ], [
+        () => {
+            window.router.route(e.target.href)
+        },
+        Function.noop
+    ]);
+    
+    e.stopPropagation()
+    return e.preventDefault();
+});
+
 $(document).on("click", "#_photoDelete, #_videoDelete, #_anotherDelete", function(e) {
     var formHtml = "<form id='tmpPhDelF' action='" + u(this).attr("href") + "' >";
     formHtml    += "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />";
