@@ -42,6 +42,6 @@
 {block description}
     {var $author = $x->getUser()}
     
-    {ovk_proc_strtr($x->getContext(), 50)}<br/>
+    {ovk_proc_strtr($x->getContext(), 200)}<br/>
     <span class="nobold">{_author}: </span> <a href="{$author->getURL()}">{$author->getCanonicalName()}</a>
 {/block}
