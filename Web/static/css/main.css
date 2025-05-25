@@ -3228,6 +3228,10 @@ a.poll-retract-vote {
     height: 12px;
 }
 
+.attachments .attachment_note {
+    padding: 5px 5px;
+}
+
 #notesList
 {
     overflow-y: scroll;
@@ -3264,7 +3268,7 @@ body.article .floating_sidebar, body.article .page_content {
     display: none;
     position: absolute;
     z-index: 128;
-    width: 100%;
+    width: 98%;
     min-height: 100vh;
     padding: 20px;
     box-sizing: border-box;
@@ -3298,6 +3302,7 @@ body.article .floating_sidebar, body.article .page_content {
 .articleView_author > div {
     display: flex;
     flex-direction: column;
+    margin-top: 3px;
 }
 
 .articleView_author > div > span {
