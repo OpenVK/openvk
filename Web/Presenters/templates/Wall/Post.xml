@@ -48,7 +48,7 @@
             {/if}
         {/if}
         
-        <a n:if="$canDelete ?? false" class="profile_link" style="display:block;width:96%;" href="/wall{$post->getPrettyId()}/delete">{_delete}</a>
+        <a n:if="$canDelete ?? false" id="_ajaxDelete" class="profile_link" style="display:block;width:96%;" href="/wall{$post->getPrettyId()}/delete">{_delete}</a>
         <a
             n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL) AND $post->getEditTime()"
             style="display:block;width:96%;"
