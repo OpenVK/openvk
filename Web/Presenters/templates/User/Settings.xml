@@ -161,7 +161,7 @@
                             <span class="nobold">{_"2fa_code"}</span>
                         </td>
                         <td>
-                            <input type="text" name="password_change_code" style="width: 100%;" />
+                            <input type="number" name="password_change_code" style="width: 100%;" />
                         </td>
                     </tr>
                     <tr>
