@@ -72,7 +72,7 @@
                             <span class="nobold">{_"2fa_code"}</span>
                         </td>
                         <td>
-                            <input type="number" autocomplete="no" name="email_change_code" style="width: 100%;" />
+                            <input type="number" autocomplete="off" name="email_change_code" style="width: 100%;" />
                         </td>
                     </tr>
                     <tr>
@@ -161,7 +161,7 @@
                             <span class="nobold">{_"2fa_code"}</span>
                         </td>
                         <td>
-                            <input type="number" autocomplete="no" name="password_change_code" style="width: 100%;" />
+                            <input type="number" autocomplete="off" name="password_change_code" style="width: 100%;" />
                         </td>
                     </tr>
                     <tr>
