@@ -845,22 +845,14 @@ u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
 
     if(!window.player.hasTrackWithId(id) && !window.player.isAtAudiosPage()) {
         let _nodes = null
-        if(u(e.target).closest('.attachments').length > 0) {
-            window.player.connectionType = '.attachments'
-            _nodes = u(e.target).closest('.attachments').find('.audioEmbed').nodes
-        } else if(u(e.target).closest('.content_list').length > 0) {
-            window.player.connectionType = '.content_list'
-            _nodes = u(e.target).closest('.content_list').find('.audioEmbed').nodes
-        } else if(u(e.target).closest('.generic_audio_list').length > 0) {
-            window.player.connectionType = '.generic_audio_list'
-            _nodes = u(e.target).closest('.generic_audio_list').find('.audioEmbed').nodes
-        } else if(u(e.target).closest('.audiosInsert').length > 0) {
-            window.player.connectionType = '.audiosInsert'
-            _nodes = u(e.target).closest('.audiosInsert').find('.audioEmbed').nodes
-        } else if(u(e.target).closest('.scroll_container').length > 0) {
-            window.player.connectionType = '.scroll_container'
-            _nodes = u(e.target).closest('.scroll_container').find('.audioEmbed').nodes
-        }
+
+        try_these_containers = [".attachments", ".content_list", ".generic_audio_list", ".audiosInsert", ".scroll_container", ".container_gray"]
+        try_these_containers.forEach(__container => {
+            if(u(e.target).closest(__container).length > 0) {
+                window.player.connectionType = __container
+                _nodes = u(e.target).closest(__container).find('.audioEmbed').nodes
+            }
+        })
 
         window.player.tracks = []
         _nodes.forEach(el => {
