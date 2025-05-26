@@ -260,6 +260,7 @@ class Playlist extends MediaCollection
         $cover->setDescription("Playlist cover image");
         $cover->setFile($file);
         $cover->setCreated(time());
+        $cover->setSystem(true);
         $cover->save();
 
         $this->setCover_photo_id($cover->getId());
