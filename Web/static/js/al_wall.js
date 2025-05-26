@@ -1191,6 +1191,7 @@ async function __uploadToTextarea(file, textareaNode) {
     const form_data = new FormData
     form_data.append('photo_0', file)
     form_data.append('count', 1)
+    form_data.append('upload_context', textareaNode.nodes[0].dataset.id)
     form_data.append("hash", u("meta[name=csrf]").attr("value"))
     
     if(filetype == 'photo') {
