@@ -1191,7 +1191,6 @@ async function __uploadToTextarea(file, textareaNode) {
     const form_data = new FormData
     form_data.append('photo_0', file)
     form_data.append('count', 1)
-    form_data.append('upload_context', textareaNode.nodes[0].dataset.id)
     form_data.append("hash", u("meta[name=csrf]").attr("value"))
     
     if(filetype == 'photo') {
@@ -1199,7 +1198,7 @@ async function __uploadToTextarea(file, textareaNode) {
         const rand = random_int(0, 1000)
         textareaNode.find('.post-horizontal').append(`<a id='temp_filler${rand}' class="upload-item lagged"><img src='${temp_url}'></a>`)
         
-        const res = await fetch(`/photos/upload`, {
+        const res = await fetch(`/photos/upload?upload_context=${textareaNode.nodes[0].dataset.id}`, {
             method: 'POST',
             body: form_data
         })
