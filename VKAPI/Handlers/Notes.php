@@ -106,7 +106,7 @@ final class Notes extends VKAPIRequestHandler
         return 1;
     }
 
-    public function get(int $user_id, string $note_ids = "", int $offset = 0, int $count = 10)
+    public function get(int $user_id, string $note_ids = "", int $offset = 0, int $count = 10, int $sort = 0)
     {
         $this->requireUser();
 

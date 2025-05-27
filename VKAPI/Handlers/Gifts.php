@@ -37,7 +37,6 @@ final class Gifts extends VKAPIRequestHandler
 
         foreach ($user_gifts as $gift) {
             $gift_item[] = [
-                "id"        => $i,
                 "from_id"   => $gift->anon == true ? 0 : $gift->sender->getId(),
                 "message"   => $gift->caption == null ? "" : $gift->caption,
                 "date"      => $gift->sent->timestamp(),
