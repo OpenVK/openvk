@@ -5,7 +5,7 @@
 {block title}{_albums} {$owner->getCanonicalName()}{/block}
 
 {block header}
-    {if isset($thisUser) && $thisUser->getId() == $owner->getId()}
+    {if isset($thisUser) && $thisUser->getId() == $owner->getRealId()}
         {_my_photos}
     {else}
         <a href="{$owner->getURL()}">
