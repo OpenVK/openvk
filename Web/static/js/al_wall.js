@@ -1366,7 +1366,7 @@ u(document).on("click", "#__photoAttachment", async (e) => {
             if(album == 0) {
                 photos = await window.OVKAPI.call('photos.getAll', {'owner_id': window.openvk.current_id, 'photo_sizes': 1, 'count': photos_per_page, 'offset': page * photos_per_page})
             } else {
-                photos = await window.OVKAPI.call('photos.get', {'owner_id': window.openvk.current_id, 'album_id': album, 'photo_sizes': 1, 'count': photos_per_page, 'offset': page * photos_per_page})
+                photos = await window.OVKAPI.call('photos.get', {'owner_id': club != 0 ? Math.abs(club) * -1 : window.openvk.current_id, 'album_id': album, 'photo_sizes': 1, 'count': photos_per_page, 'offset': page * photos_per_page})
             }
         } catch(e) {
             u("#attachment_insert_count h4").html(tr("is_x_photos", -1))
