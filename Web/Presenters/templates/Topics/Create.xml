@@ -76,14 +76,4 @@
 
         <input type="hidden" name="hash" value="{$csrfToken}" />
     </form>
-
-    <script>
-        $(document).ready(() => {
-            u("#post-buttons1 .postFileSel").on("change", function() {
-                handleUpload.bind(this, 1)();
-            });
-
-            setupWallPostInputHandlers(1);
-        });
-    </script>
 {/block}
