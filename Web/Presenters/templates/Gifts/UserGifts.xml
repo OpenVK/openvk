@@ -28,7 +28,7 @@
         <tbody>
             <tr>
                 <td><span class="nobold">{_sender}: </span></td>
-                <td n:if="!$x->anon">
+                <td>
                     <a href="{$x->sender->getURL()}">
                         {$x->sender->getFullName()}
                     </a>
