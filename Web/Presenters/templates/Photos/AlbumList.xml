@@ -18,7 +18,7 @@
 {block size}
     <div style="padding-bottom: 0px; padding-top: 0;" class="summaryBar">
         <div class="summary">
-            {if !is_null($thisUser) && $owner->getId() === $thisUser->getId()}
+            {if !is_null($thisUser) && $owner->getRealId() === $thisUser->getId()}
                 {tr("albums_list", $count)}
             {else}
                 {tr("albums", $count)}
