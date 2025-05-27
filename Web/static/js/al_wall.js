@@ -2572,7 +2572,12 @@ u(document).on('mouseover mousemove mouseout', `div[data-tip='simple']`, (e) => 
 })
 
 function setStatusEditorShown(shown) {
-    document.getElementById("status_editor").style.display = shown ? "block" : "none";
+    if(shown) {
+        document.getElementById("status_editor").style.display = "block"
+        document.querySelector("#status_editor input").focus()
+    } else {
+        document.getElementById("status_editor").style.display = "none"
+    }
 }
 
 u(document).on('click', (event) => {
