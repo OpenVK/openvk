@@ -58,7 +58,7 @@
                     <span n:if="$post->isPinned()" class="nobold">{_pinned}</span>
 
                     <a n:if="$canBeDeleted && !($forceNoDeleteLink ?? false) && $compact == false" class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
-                    <a n:if="$feedIgnoreButton && !$canBeDeleted" class="ignore" id="__ignoreSomeoneFeed" title="{_feed_ignore}" data-val='1' data-id="{$wallOwner->getRealId()}"></a>
+                    <a n:if="$feedIgnoreButton && !$canBeDeleted" class="delete" id="__ignoreSomeoneFeed" title="{_feed_ignore}" data-val='1' data-id="{$wallOwner->getRealId()}"></a>
                     
                     {if $canBePinned && !($forceNoPinLink ?? false) && $compact == false}
                         {if $post->isPinned()}
