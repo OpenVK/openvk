@@ -3840,12 +3840,13 @@ hr {
     display: none;
     position: fixed;
     top: -10%;
-    background: rgba(26, 26, 26, 0.9);;
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: 0px 0px 2px 0px black;
     padding-top: 12px;
     width: 91px;
     height: 25px;
     text-align: center;
-    border-radius: 1px;
+    border-radius: 2px;
     margin: auto;
     left: 0;
     right: 0;
