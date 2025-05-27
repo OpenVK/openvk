@@ -33,9 +33,9 @@
                     </td>
                     <td>
                         {if $topic->getClub()->canBeModifiedBy($thisUser)}
-                            <input type="checkbox" name="pin" n:attr="checked => $topic->isPinned()" /> {_pin_topic}<br />
+                            <label><input type="checkbox" name="pin" n:attr="checked => $topic->isPinned()" /> {_pin_topic}</label><br />
                         {/if}
-                        <input type="checkbox" name="close" n:attr="checked => $topic->isClosed()" /> {_close_topic}
+                        <label><input type="checkbox" name="close" n:attr="checked => $topic->isClosed()" /> {_close_topic}</label>
                     </td>
                 </tr>
                 <tr>
