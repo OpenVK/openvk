@@ -138,13 +138,13 @@ final class Account extends VKAPIRequestHandler
             $user->setSex($sex == 1 ? 1 : 0);
         }
 
-        if ($relation > -1) {
+        if ($relation > -1 && $relation <= 8) {
             $user->setMarital_Status($relation);
         }
 
         if (!empty($bdate)) {
             $birthday = strtotime($bdate);
-            if (!is_int($birthday)) {
+            if (!is_int($birthday) || $birthday > time()) {
                 $this->fail(100, "invalid value of bdate.");
             }
 
@@ -173,7 +173,12 @@ final class Account extends VKAPIRequestHandler
 
         if ($sex > 0 || $relation > -1 || $bdate_visibility > 1 || !empty("$first_name$last_name$screen_name$bdate$home_town$status")) {
             $output["changed"] = 1;
-            $user->save();
+
+            try {
+                $user->save();
+            } catch(\TypeError $e) {
+                $output["changed"] = 0;
+            }
         }
 
         return (object) $output;
