@@ -505,7 +505,7 @@
 "edit_photo" = "Edit photo";
 "creating_album" = "Creating album";
 "delete_photo" = "Delete photo";
-"sure_deleting_photo" = "Do you really want to delete this picture?";
+"sure_deleting_photo" = "Do you sure you want to delete this photo from album?";
 "upload_photo" = "Upload photo";
 "photo" = "Photo";
 "upload_button" = "Upload";
