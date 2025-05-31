@@ -245,7 +245,7 @@ final class Groups extends VKAPIRequestHandler
                             $response[$i]->suggested_count = $clb->getSuggestedPostsCount($this->getUser());
                             break;
                         case "contacts":
-                            $contacts;
+                            $contacts = [];
                             $contactTmp = $clb->getManagers(1, true);
 
                             foreach ($contactTmp as $contact) {
