@@ -176,7 +176,7 @@ final class Account extends VKAPIRequestHandler
 
             try {
                 $user->save();
-            } catch(\TypeError $e) {
+            } catch (\TypeError $e) {
                 $output["changed"] = 0;
             }
         }
