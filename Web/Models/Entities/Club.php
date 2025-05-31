@@ -429,6 +429,11 @@ class Club extends RowModel
         $this->save();
     }
 
+    public function delete(bool $softly = true): void
+    {
+        $this->ban("");
+    }
+
     public function unban(): void
     {
         $this->setBlock_Reason(null);
