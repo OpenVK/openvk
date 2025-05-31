@@ -2424,6 +2424,9 @@ const showMoreObserver = new IntersectionObserver(entries => {
             if(target.length < 1 || target.hasClass('paginator-at-top')) {
                 return
             }
+            if(target.hasClass('lagged')) {
+                return
+            }
 
             const current_url = new URL(location.href)
             if(current_url.searchParams && !isNaN(parseInt(current_url.searchParams.get('p')))) {
