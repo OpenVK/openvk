@@ -1967,10 +1967,10 @@ async function repost(id, repost_type = 'post') {
         title: tr('share'),
         unique_name: 'repost_modal',
         body: `
-            <div class='display_flex_column' style='gap: 1px;'>
+            <div class='display_flex_column' style='gap: 5px;'>
                 <b>${tr('auditory')}</b>
                 
-                <div class='display_flex_column'>
+                <div class='display_flex_column' style="gap: 2px;padding-left: 1px;">
                     <label>
                         <input type="radio" name="repost_type" value="wall" checked>
                         ${tr("in_wall")}
@@ -1986,12 +1986,14 @@ async function repost(id, repost_type = 'post') {
 
                 <b>${tr('your_comment')}</b>
 
-                <input type='hidden' id='repost_attachments'>
-                <textarea id='repostMsgInput' placeholder='...'></textarea>
+                <div style="padding-left: 1px;">
+                    <input type='hidden' id='repost_attachments'>
+                    <textarea id='repostMsgInput' placeholder='...'></textarea>
 
-                <div id="repost_signs" class='display_flex_column' style='display:none;'>
-                    <label><input type='checkbox' name="asGroup">${tr('post_as_group')}</label>
-                    <label><input type='checkbox' name="signed">${tr('add_signature')}</label>
+                    <div id="repost_signs" class='display_flex_column' style='display:none;'>
+                        <label><input type='checkbox' name="asGroup">${tr('post_as_group')}</label>
+                        <label><input type='checkbox' name="signed">${tr('add_signature')}</label>
+                    </div>
                 </div>
             </div>
         `,
@@ -2060,7 +2062,7 @@ async function repost(id, repost_type = 'post') {
         ]
     });
     
-    u('.ovk-diag-body').attr('style', 'padding: 14px;')
+    u('.ovk-diag-body').attr('style', 'padding: 18px;')
     u('.ovk-diag-body').on('change', `input[name='repost_type']`, (e) => {
         const value = e.target.value
 
@@ -2086,6 +2088,7 @@ async function repost(id, repost_type = 'post') {
 
     if(window.openvk.writeableClubs.items.length < 1) {
         u(`input[name='repost_type'][value='group']`).attr('disabled', 'disabled')
+        u(`input[name='repost_type'][value='group']`).closest("label").addClass("lagged")
     }
 }
 
