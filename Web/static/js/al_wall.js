@@ -2951,3 +2951,58 @@ u(document).on("submit", "#additional_fields_form", (e) => {
         }
     }) 
 })
+
+async function getEmbeddedPost(postId) {
+    CMessageBox.toggleLoader()
+    let request = await fetch("/wall"+postId+"_e")
+    const body_html = await request.text()
+    const parser  = new DOMParser
+    const body    = parser.parseFromString(body_html, "text/html")
+
+    const preview = body.querySelector('.post')
+
+    if (request.status != 200) {
+        MessageBox("Error", "Post not found", ["Ок"], [Function.noop])
+    } else {
+        const photo_viewer = new CMessageBox({
+            title: '',
+            custom_template: u(`
+            <div class="ovk-photo-view-dimmer">
+                <div class="post-modal-view">
+                    <div class="post-modal-title">
+                        <text>
+                            ${tr("post")}
+                        </text>
+                        <div>
+                            <a id="ovk-photo-close">${tr("close")}</a>
+                        </div>
+                    </div>
+                    <div class='post-modal-wrapper'>
+                        ${preview.innerHTML}
+                    </div>
+                </div>
+            </div>`)
+        })
+        photo_viewer.getNode().find("#ovk-photo-close").on("click", function(e) {
+            photo_viewer.close()
+        });
+    }
+    
+
+    CMessageBox.toggleLoader()
+
+    history.replaceState(null, null, `?w=wall${postId}`)
+}
+
+u(document).on("click", "#al-post", (e) => {
+    e.preventDefault();
+    const postId = String(e.target.dataset.id);
+    getEmbeddedPost(postId)
+});
+
+const params = new URLSearchParams(window.location.search);
+
+if (params.has("w")) {
+  let post_id = params.get("w").replace("wall", "");
+  getEmbeddedPost(post_id)
+}

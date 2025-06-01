@@ -1,5 +1,17 @@
+{extends "../../@layout.xml"}
+
+{block title}
+    {_post}
+{/block}
+
+{block header}
+    {_post}
+{/block}
+
+
+
+{block content}
 {var $author = $post->getOwner()}
-{var $comments = $post->getLastComments(3)}
 {var $commentsCount = $post->getCommentsCount()}
 {var $platform = $post->getPlatform()}
 {var $platformDetails = $post->getPlatformDetails()}
@@ -17,18 +29,25 @@
 {var $club = isset($club) ? $club}
 
 {var $commentTextAreaId = $post === NULL ? rand(1,300) : $post->getId()}
+    <style>
+        .sidebar, .page_header, .page_footer {
+            opacity: 0;
+            pointer-events: none;
+        }
 
-<table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, !$compact ? post-divider, $post->isExplicit() ? post-nsfw">
-    <tbody>
-        <tr>
-            <td width="54" valign="top">
+        .page_body {
+            margin-top: -45px;
+        }
+    </style>
+
+    <div style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, !$compact ? post-divider, $post->isExplicit() ? post-nsfw">
+    
+        <div>
+            <div width="54" valign="top" class="post-modal-header">
                 <a href="{$author->getURL()}">
                     <img src="{$author->getAvatarURL('miniscule')}" width="{if $compact}25{else}50{/if}" class="post-avatar {if $compact}cCompactAvatars{/if}" />
-                    <span n:if="!$post->isPostedOnBehalfOfGroup() && !$compact && $author->isOnline()" class="post-online">{_online}</span>
                 </a>
-            </td>
-            <td width="100%" valign="top">
-                <div class="post-author">
+                <div class="post-author post-modal-author">
                     <a href="{$author->getURL()}"><b class="post-author-name">{$author->getCanonicalName()}</b></a>
                     <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
                     {$post->isDeactivationMessage() ? ($author->isFemale() ? tr($deac . "_f") : ($author->isNeutral() ? tr($deac . "_g") : tr($deac . "_m")))}
@@ -47,7 +66,7 @@
                             </b>
                         </a>
                     {/if}
-
+                    <span n:if="!$post->isPostedOnBehalfOfGroup() && !$compact && $author->isOnline()" class="post-online">{_online}</span>
                     {if $compact}
                         <br>
                         <a href="/wall{$post->getPrettyId()}" class="date">
@@ -55,24 +74,10 @@
                         </a>
                     {/if}
 
-                    <span n:if="$post->isPinned()" class="nobold">{_pinned}</span>
-
-                    <a n:if="$canBeDeleted && !($forceNoDeleteLink ?? false) && $compact == false" class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
-                    <a n:if="!$canBeDeleted" class="report" title="{_report}" href="javascript:reportPost({$post->getId()})"></a>
-                    
-                    {if $canBePinned && !($forceNoPinLink ?? false) && $compact == false}
-                        {if $post->isPinned()}
-                            <a class="pin" href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}"></a>
-                        {else}
-                            <a class="pin" href="/wall{$post->getPrettyId()}/pin?act=pin&hash={rawurlencode($csrfToken)}"></a>
-                        {/if}
-                    {/if}
-
-                    {if $post->canBeEditedBy($thisUser) && !($forceNoEditLink ?? false) && $compact == false}
-                        <a class="edit" id="editPost"></a>
-                    {/if}
                 </div>
-                <div class="post-content" id="{$post->getPrettyId()}" data-localized-nsfw-text="{_nsfw_warning}">
+            </div>
+            <div width="100%" valign="top">
+                <div class="post-content" id="{$post->getPrettyId()}" data-localized-nsfw-text="{_nsfw_warning}" style="padding: 10px">
                     <div class="text" id="text{$post->getPrettyId()}">
                         <span data-text="{$post->getText(false)}" class="really_text">{$post->getText()|noescape}</span>
                         
@@ -120,7 +125,7 @@
                 </div>
                 <div class='post-edit' n:if='!$compact'></div>
                 <div class="post-menu" n:if="$compact == false">
-                    <a href="{if !$suggestion}/wall{$post->getPrettyId()}{else}javascript:void(0){/if}" id="al-post" data-id="{$post->getPrettyId()}" class="date">{$post->getPublicationTime()}
+                    <a href="{if !$suggestion}/wall{$post->getPrettyId()}{else}javascript:void(0){/if}" class="date">{$post->getPublicationTime()}
                         <span n:if="$post->getEditTime()" class="edited editedMark">({_edited_short})</span>
                     </a>
                   
@@ -128,9 +133,6 @@
                         <img src="/assets/packages/static/openvk/img/app_icons_mini/{$post->getPlatform(this)}.svg">
                     </a>
                     {if isset($thisUser)}
-                        &nbsp;
-
-                        <a n:if="!($forceNoCommentsLink ?? false) && $commentsCount == 0" href="javascript:expand_comment_textarea({$commentTextAreaId})">{_comment}</a>
                         
                         <div class="like_wrap">
                             <a n:if="!($forceNoShareLink ?? false)" id="reposts{$post->getPrettyId()}" class="post-share-button" href="javascript:repost('{$post->getPrettyId()}', 'post')">
@@ -148,22 +150,16 @@
                         </div>
                     {/if}
                 </div>
-                <div n:if="!($forceNoCommentsLink ?? false) && $commentSection == true && $compact == false" class="post-menu-s">
-                    <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}" class="expand_button">{_view_other_comments}</a>
-                    {foreach $comments as $comment}
-                        {include "../comment.xml", comment => $comment, $compact => true}
-                    {/foreach}
-                    <div n:ifset="$thisUser" id="commentTextArea{$commentTextAreaId}" n:attr="style => ($commentsCount == 0 ? 'display: none;')" class="commentsTextFieldWrap">
-                        {var $commentsURL = "/al_comments/create/posts/" . $post->getId()}
-                        {var $club = is_null($club) ? ($post->getTargetWall() < 0 ? (new openvk\Web\Models\Repositories\Clubs)->get(abs($post->getTargetWall())) : NULL) : $club}
-                        {include "../textArea.xml", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), post => $post, club => $club}
-                    </div>
-                </div>
-                <div n:if="$suggestion && $canBePinned" class="suggestionControls">
-                    <input type="button" class="button" id="publish_post" data-id="{$post->getId()}" value="{_publish_suggested}">
-                    <input type="button" class="button" id="decline_post" data-id="{$post->getId()}" value="{_decline_suggested}">
-                </div>
-            </td>
-        </tr>
-    </tbody>
-</table>
+                <div style="float: left; min-height: 100px; width: 100%;">
+        {include "../comments.xml",
+                 comments => $comments,
+                 count => $cCount,
+                 page => $cPage,
+                 model => "posts",
+                 parent => $post }
+    </div>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

@@ -4286,3 +4286,43 @@ hr {
 .deleted_mark_average {
     padding: 5px 61px;
 }
+
+
+.post-modal-view {
+    position: relative;
+    z-index: 999;
+    background: #fff;
+    min-width: 600px;
+    width: fit-content;
+    padding: 25px;
+    padding-top: 15px;
+    padding-bottom: 10px;
+    box-shadow: 0px 0px 3px 1px #222;
+    margin: 20px auto 0 auto;
+}
+
+.post-modal-title {
+	font-weight: bold;
+	padding-bottom: 16px;
+}
+
+.post-modal-title div {
+	float: right;
+	font-weight: normal;
+}
+
+.post-modal-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.post-modal-header {
+    display: flex;
+}
+
+.post-modal-author {
+    margin: 5px;
+    margin-top: 0px;
+    width: 100%;
+}
