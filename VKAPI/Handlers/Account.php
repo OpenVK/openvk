@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\VKAPI\Handlers;
 
 use openvk\Web\Models\Exceptions\InvalidUserNameException;
+use openvk\Web\Util\Validator;
 
 final class Account extends VKAPIRequestHandler
 {
@@ -95,7 +96,7 @@ final class Account extends VKAPIRequestHandler
         # TODO: Filter
     }
 
-    public function saveProfileInfo(string $first_name = "", string $last_name = "", string $screen_name = "", int $sex = -1, int $relation = -1, string $bdate = "", int $bdate_visibility = -1, string $home_town = "", string $status = ""): object
+    public function saveProfileInfo(string $first_name = "", string $last_name = "", string $screen_name = "", int $sex = -1, int $relation = -1, string $bdate = "", int $bdate_visibility = -1, string $home_town = "", string $status = "", string $telegram = null): object
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -171,7 +172,19 @@ final class Account extends VKAPIRequestHandler
             $user->setStatus($status);
         }
 
-        if ($sex > 0 || $relation > -1 || $bdate_visibility > 1 || !empty("$first_name$last_name$screen_name$bdate$home_town$status")) {
+        if (!is_null($telegram)) {
+            if (empty($telegram)) {
+                $user->setTelegram(null);
+            } elseif (Validator::i()->telegramValid($telegram)) {
+                if (strpos($telegram, "t.me/") === 0) {
+                    $user->setTelegram($telegram);
+                } else {
+                    $user->setTelegram(ltrim($telegram, "@"));
+                }
+            }
+        }
+
+        if ($sex > 0 || $relation > -1 || $bdate_visibility > 1 || !is_null($telegram) || !empty("$first_name$last_name$screen_name$bdate$home_town$status")) {
             $output["changed"] = 1;
 
             try {
