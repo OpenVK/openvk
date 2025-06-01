@@ -86,6 +86,16 @@
     background-color: rgb(240, 240, 240);
 }
 
+.ignore {
+    float: right;
+    height: 16px;
+    width: 16px;
+    overflow: auto;
+    background: url("/assets/packages/static/openvk/img/ignore.png") no-repeat 0 0;
+    opacity: 0.1;
+    transition-duration: 0.3s;
+}
+
 .report {
     float: right;
     height: 16px;
@@ -94,6 +104,19 @@
     background: url("/assets/packages/static/openvk/img/report.png") no-repeat 0 0;
     opacity: 0.1;
     transition-duration: 0.3s;
+}
+
+.ignore:hover {
+    opacity: 0.4;
+}
+
+.post-hidden {
+    display: none;
+}
+
+.ignore-message {
+    padding: 5px 0;
+    border-bottom: 1px #ddd solid;
 }
 
 .report:hover {
