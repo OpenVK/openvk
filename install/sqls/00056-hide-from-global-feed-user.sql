@@ -1,0 +1,1 @@
+ALTER TABLE `profiles` ADD COLUMN `hide_global_feed` boolean DEFAULT 0 NOT NULL AFTER `deleted`;

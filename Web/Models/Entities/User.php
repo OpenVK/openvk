@@ -1487,6 +1487,11 @@ class User extends RowModel
         return $this->isClosed();
     }
 
+    public function HideGlobalFeed(): bool
+    {
+        return (bool) $this->getRecord()->hide_global_feed;
+    }
+
     public function getRealId()
     {
         return $this->getId();
