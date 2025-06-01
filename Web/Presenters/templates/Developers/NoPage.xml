@@ -1,0 +1,61 @@
+{extends "../@layout.xml"}
+
+{block title}
+    {_developers_nopage}
+{/block}
+
+{block header}
+    {_developers_nopage}
+{/block}
+
+{block content}
+{css "css/dev.css"}
+
+	<div class="knowledgeBaseArticle" style="float: left">
+		<p>братишка ты что-то попутал</p>
+	</div>
+	<!-- я сделал так, чтобы можно было сделать норм 404 для девелоперов, типа рекомендуемые функции -->
+	<!-- или ВЫ ОШИБЛИСЬ, А МОЖЕТ ВЫ ХОТЕЛИ НАПИСАТЬ ...? ну вы поняли я надеюсь -->
+
+<div id="dev_sidebar" class="dev_sidebar fl_r">
+  <div id="dev_mlist_cont">
+    <div id="dev_page_narrow">
+      <a
+        href="/dev/main"
+        class="dev_section_menu"
+      >Документация</a>
+      <a
+        href="/dev/native"
+        class="dev_section_submenu"
+      >Приложения и игры</a>
+      <a
+        href="/dev/standalone"
+        class="dev_section_submenu"
+      >Standalone/Mobile</a>
+      <a
+        href="/dev/sites"
+        class="dev_section_submenu"
+      >Сайты и виджеты</a>
+
+      <a
+        href="/dev/methods"
+        class="dev_section_menu"
+      >Список методов</a>
+      <a
+        href="/dev/datatypes"
+        class="dev_section_submenu"
+      >Типы данных</a>
+
+      <a
+        href="/dev/help"
+        class="dev_section_menu"
+      >Поддержка</a>
+      <a
+        href="/dev/rules"
+        class="dev_section_submenu"
+      >Правила платформы</a>
+    </div>
+  </div>
+</div>
+
+{/block}
