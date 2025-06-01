@@ -284,13 +284,15 @@ final class PhotosPresenter extends OpenVKPresenter
         }
 
         if ($_SERVER["REQUEST_METHOD"] == "GET" || $this->queryParam("act") == "finish") {
-            if (!$album) {
+            if (!$album || $album->isCreatedBySystem()) {
                 $this->flashFail("err", tr("error"), tr("error_adding_to_deleted"));
             }
         }
 
         if ($album && !$album->canBeModifiedBy($this->user->identity)) {
-            $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
+            if ($album->getOwnerId() != $this->user->id) {
+                $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
+            }
         }
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
