@@ -8,7 +8,9 @@
 {/block} 
 
 {block header}
-    {if is_null($thisUser) || $user->getId() !== $thisUser->getId()}
+    {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+        {_my_groups}
+    {else}
         <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> » {_groups}
     {/if}
 {/block}
@@ -19,7 +21,7 @@
     {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
         <div n:attr='id => ($admin ? false : "activetabs")' class="tab">
             <a n:attr='id => ($admin ? false : "act_tab_a")' href="/groups{$user->getId()}">
-                {_my_groups}
+                {_groups}
             </a>
         </div>
         <div n:attr='id => (!$admin ? false : "activetabs")' class="tab">
