@@ -273,6 +273,16 @@ class User extends RowModel
         return $this->getRecord()->alert;
     }
 
+    public function setAlert(?string $alert): void
+    {
+        $this->stateChanges("alert", $alert);
+    }
+
+    public function hasAlert(): bool
+    {
+        return !empty($this->getAlert());
+    }
+
     public function getTextForContentBan(string $type): string
     {
         switch ($type) {
