@@ -202,7 +202,7 @@ window.router = new class {
         if(this.prev_page_html && this.prev_page_html.pathname != location.pathname) {
             this.prev_page_html = null
         }
-        
+
         const push_url = params.push_state ?? true
         const next_page_url = new URL(url)
         if(push_url) {
@@ -210,6 +210,8 @@ window.router = new class {
         } else {
             history.replaceState({'from_router': 1}, '', url)
         }
+        
+        u('body').addClass('ajax_request_made')
 
         const parser = new DOMParser
         const next_page_request = await fetch(next_page_url, {
@@ -227,6 +229,8 @@ window.router = new class {
         
         this.__closeMsgs()
         this.__unlinkObservers()
+        
+        u('body').removeClass('ajax_request_made')
 
         try {
             this.__appendPage(parsed_content)
@@ -397,8 +401,10 @@ window.addEventListener('popstate', (e) => {
         return
     }*/
 
-    window.router.route({
-        url: location.href,
-        push_state: false,
-    })
+    if(e.state != null) {
+        window.router.route({
+            url: location.href,
+            push_state: false,
+        })
+    }
 })

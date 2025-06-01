@@ -272,21 +272,27 @@ final class PhotosPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction(true);
 
+        $upload_context = $this->queryParam("upload_context");
+
         if (is_null($this->queryParam("album"))) {
-            $album = $this->albums->getUserWallAlbum($this->user->identity);
+            if ((int) $upload_context == $this->user->id) {
+                $album = $this->albums->getUserWallAlbum($this->user->identity);
+            }
         } else {
             [$owner, $id] = explode("_", $this->queryParam("album"));
             $album = $this->albums->get((int) $id);
         }
 
-        if (!$album) {
-            $this->flashFail("err", tr("error"), tr("error_adding_to_deleted"), 500, true);
+        if ($_SERVER["REQUEST_METHOD"] == "GET" || $this->queryParam("act") == "finish") {
+            if (!$album || $album->isCreatedBySystem()) {
+                $this->flashFail("err", tr("error"), tr("error_adding_to_deleted"));
+            }
         }
 
-        # Для быстрой загрузки фоток из пикера фотографий нужен альбом, но юзер не может загружать фото
-        # в системные альбомы, так что так.
-        if (is_null($this->user) || !is_null($this->queryParam("album")) && !$album->canBeModifiedBy($this->user->identity)) {
-            $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"), 500, true);
+        if ($album && !$album->canBeModifiedBy($this->user->identity)) {
+            if ($album->getOwnerId() != $this->user->id) {
+                $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
+            }
         }
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
@@ -306,8 +312,6 @@ final class PhotosPresenter extends OpenVKPresenter
 
                     $phot->setDescription($description);
                     $phot->save();
-
-                    $album = $phot->getAlbum();
                 }
 
                 $this->returnJson(["success" => true,
@@ -346,9 +350,11 @@ final class PhotosPresenter extends OpenVKPresenter
                     $this->flashFail("err", "Неизвестная ошибка", "Не удалось сохранить фотографию в $name.", 500, true);
                 }
 
-                $album->addPhoto($photo);
-                $album->setEdited(time());
-                $album->save();
+                if ($album != null) {
+                    $album->addPhoto($photo);
+                    $album->setEdited(time());
+                    $album->save();
+                }
             }
 
             $this->returnJson(["success" => true,

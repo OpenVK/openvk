@@ -210,7 +210,7 @@
                             {var $menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
                             <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $menuLinksAvaiable" class="menu_divider"></div>
                             <a href="/admin" class="link" n:if="$canAccessAdminPanel" title="{_admin} [Alt+Shift+A]" accesskey="a" rel="nofollow">{_admin}</a>
-                            <a href="/support/tickets" class="link" n:if="$canAccessHelpdesk" rel="nofollow">{_helpdesk}
+                            <a href="/support/tickets" class="link" n:if="$canAccessHelpdesk">{_helpdesk}
                                 {if $helpdeskTicketNotAnsweredCount > 0}
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
                                 {/if}

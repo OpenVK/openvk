@@ -44,7 +44,7 @@
                         {if !$timeOnly}
                             {if $comment->canBeDeletedBy($thisUser)}
                                 |
-                                <a href="/comment{$comment->getId()}/delete">{_delete}</a>
+                                <a href="/comment{$comment->getId()}/delete" id="_ajaxDelete">{_delete}</a>
                             {/if}
                             {if $comment->canBeEditedBy($thisUser)}
                                 |

@@ -107,7 +107,6 @@ final class Groups extends VKAPIRequestHandler
                                 $backgrounds = $usr->getBackDropPictureURLs();
                                 $rClubs[$i]->background = $backgrounds;
                                 break;
-                                # unstandard feild
                             case "suggested_count":
                                 if ($usr->getWallType() != 2) {
                                     $rClubs[$i]->suggested_count = null;
@@ -246,7 +245,7 @@ final class Groups extends VKAPIRequestHandler
                             $response[$i]->suggested_count = $clb->getSuggestedPostsCount($this->getUser());
                             break;
                         case "contacts":
-                            $contacts;
+                            $contacts = [];
                             $contactTmp = $clb->getManagers(1, true);
 
                             foreach ($contactTmp as $contact) {
@@ -335,23 +334,6 @@ final class Groups extends VKAPIRequestHandler
         return 1;
     }
 
-    public function create(string $title, string $description = "", string $type = "group", int $public_category = 1, int $public_subcategory = 1, int $subtype = 1)
-    {
-        $this->requireUser();
-        $this->willExecuteWriteAction();
-
-        $club = new Club();
-
-        $club->setName($title);
-        $club->setAbout($description);
-        $club->setOwner($this->getUser()->getId());
-        $club->save();
-
-        $club->toggleSubscription($this->getUser());
-
-        return $this->getById((string) $club->getId());
-    }
-
     public function edit(
         int $group_id,
         string $title = null,
@@ -371,13 +353,15 @@ final class Groups extends VKAPIRequestHandler
         $club = (new ClubsRepo())->get($group_id);
 
         if (!$club) {
-            $this->fail(203, "Club not found");
+            $this->fail(15, "Access denied");
         }
+
         if (!$club || !$club->canBeModifiedBy($this->getUser())) {
-            $this->fail(15, "You can't modify this group.");
+            $this->fail(15, "Access denied");
         }
+
         if (!empty($screen_name) && !$club->setShortcode($screen_name)) {
-            $this->fail(103, "Invalid shortcode.");
+            $this->fail(103, "Invalid screen_name");
         }
 
         !empty($title) ? $club->setName($title) : null;
@@ -404,272 +388,91 @@ final class Groups extends VKAPIRequestHandler
         try {
             $club->save();
         } catch (\TypeError $e) {
-            $this->fail(15, "Nothing changed");
+            return 1;
         } catch (\Exception $e) {
-            $this->fail(18, "An unknown error occurred: maybe you set an incorrect value?");
+            return 0;
         }
 
         return 1;
     }
 
-    public function getMembers(string $group_id, string $sort = "id_asc", int $offset = 0, int $count = 100, string $fields = "", string $filter = "any")
+    public function getMembers(int $group_id, int $offset = 0, int $count = 10, string $fields = "")
     {
-        # bdate,can_post,can_see_all_posts,can_see_audio,can_write_private_message,city,common_count,connections,contacts,country,domain,education,has_mobile,last_seen,lists,online,online_mobile,photo_100,photo_200,photo_200_orig,photo_400_orig,photo_50,photo_max,photo_max_orig,relation,relatives,schools,sex,site,status,universities
-        $club = (new ClubsRepo())->get((int) $group_id);
-        if (!$club) {
-            $this->fail(125, "Invalid group id");
+        $this->requireUser();
+
+        $club = (new ClubsRepo())->get($group_id);
+
+        if (!$club || !$club->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
         }
 
-        $sorter = "follower ASC";
+        $sort_string = "follower ASC";
+        $members = array_slice(iterator_to_array($club->getFollowers(1, $count, $sort_string)), $offset, $count);
 
-        switch ($sort) {
-            default:
-            case "time_asc":
-            case "id_asc":
-                $sorter = "follower ASC";
-                break;
-            case "time_desc":
-            case "id_desc":
-                $sorter = "follower DESC";
-                break;
-        }
+        $obj = (object) [
+            "count" => sizeof($members),
+            "items" => [],
+        ];
 
-        $members = array_slice(iterator_to_array($club->getFollowers(1, $count, $sorter)), $offset);
-        $arr = (object) [
-            "count" => count($members),
-            "items" => []];
-
-        $filds = explode(",", $fields);
-
-        $i = 0;
         foreach ($members as $member) {
-            if ($i > $count) {
-                break;
-            }
-
-            $arr->items[] = (object) [
-                "id" => $member->getId(),
-                "first_name" => $member->getFirstName(),
-                "last_name" => $member->getLastName(),
-            ];
-
-            foreach ($filds as $fild) {
-                $canView = $member->canBeViewedBy($this->getUser());
-                switch ($fild) {
-                    case "bdate":
-                        if (!$canView) {
-                            $arr->items[$i]->bdate = "01.01.1970";
-                            break;
-                        }
-
-                        $arr->items[$i]->bdate = $member->getBirthday() ? $member->getBirthday()->format('%e.%m.%Y') : null;
-                        break;
-                    case "can_post":
-                        $arr->items[$i]->can_post = $club->canBeModifiedBy($member);
-                        break;
-                    case "can_see_all_posts":
-                        $arr->items[$i]->can_see_all_posts = 1;
-                        break;
-                    case "can_see_audio":
-                        $arr->items[$i]->can_see_audio = 1;
-                        break;
-                    case "can_write_private_message":
-                        $arr->items[$i]->can_write_private_message = 0;
-                        break;
-                    case "common_count":
-                        $arr->items[$i]->common_count = 420;
-                        break;
-                    case "connections":
-                        $arr->items[$i]->connections = 1;
-                        break;
-                    case "contacts":
-                        if (!$canView) {
-                            $arr->items[$i]->contacts = "secret@gmail.com";
-                            break;
-                        }
-
-                        $arr->items[$i]->contacts = $member->getContactEmail();
-                        break;
-                    case "country":
-                        $arr->items[$i]->country = 1;
-                        break;
-                    case "domain":
-                        $arr->items[$i]->domain = "";
-                        break;
-                    case "education":
-                        $arr->items[$i]->education = "";
-                        break;
-                    case "has_mobile":
-                        $arr->items[$i]->has_mobile = false;
-                        break;
-                    case "last_seen":
-                        if (!$canView) {
-                            $arr->items[$i]->last_seen = 0;
-                            break;
-                        }
-
-                        $arr->items[$i]->last_seen = $member->getOnline()->timestamp();
-                        break;
-                    case "lists":
-                        $arr->items[$i]->lists = "";
-                        break;
-                    case "online":
-                        if (!$canView) {
-                            $arr->items[$i]->online = false;
-                            break;
-                        }
-
-                        $arr->items[$i]->online = $member->isOnline();
-                        break;
-                    case "online_mobile":
-                        if (!$canView) {
-                            $arr->items[$i]->online_mobile = false;
-                            break;
-                        }
-
-                        $arr->items[$i]->online_mobile = $member->getOnlinePlatform() == "android" || $member->getOnlinePlatform() == "iphone" || $member->getOnlinePlatform() == "mobile";
-                        break;
-                    case "photo_100":
-                        $arr->items[$i]->photo_100 = $member->getAvatarURL("tiny");
-                        break;
-                    case "photo_200":
-                        $arr->items[$i]->photo_200 = $member->getAvatarURL("normal");
-                        break;
-                    case "photo_200_orig":
-                        $arr->items[$i]->photo_200_orig = $member->getAvatarURL("normal");
-                        break;
-                    case "photo_400_orig":
-                        $arr->items[$i]->photo_400_orig = $member->getAvatarURL("normal");
-                        break;
-                    case "photo_max":
-                        $arr->items[$i]->photo_max = $member->getAvatarURL("original");
-                        break;
-                    case "photo_max_orig":
-                        $arr->items[$i]->photo_max_orig = $member->getAvatarURL();
-                        break;
-                    case "relation":
-                        $arr->items[$i]->relation = $member->getMaritalStatus();
-                        break;
-                    case "relatives":
-                        $arr->items[$i]->relatives = 0;
-                        break;
-                    case "schools":
-                        $arr->items[$i]->schools = 0;
-                        break;
-                    case "sex":
-                        if (!$canView) {
-                            $arr->items[$i]->sex = -1;
-                            break;
-                        }
-
-                        $arr->items[$i]->sex = $member->isFemale() ? 1 : 2;
-                        break;
-                    case "site":
-                        if (!$canView) {
-                            $arr->items[$i]->site = null;
-                            break;
-                        }
-
-                        $arr->items[$i]->site = $member->getWebsite();
-                        break;
-                    case "status":
-                        if (!$canView) {
-                            $arr->items[$i]->status = "r";
-                            break;
-                        }
-
-                        $arr->items[$i]->status = $member->getStatus();
-                        break;
-                    case "universities":
-                        $arr->items[$i]->universities = 0;
-                        break;
-                }
-            }
-            $i++;
+            $obj->items[] = $member->toVkApiStruct($this->getUser(), $fields);
         }
-        return $arr;
+
+        return $obj;
     }
 
     public function getSettings(string $group_id)
     {
         $this->requireUser();
+
         $club = (new ClubsRepo())->get((int) $group_id);
 
         if (!$club || !$club->canBeModifiedBy($this->getUser())) {
-            $this->fail(15, "You can't get settings of this group.");
+            $this->fail(15, "Access denied");
         }
 
         $arr = (object) [
             "title"          => $club->getName(),
-            "description"    => $club->getDescription() != null ? $club->getDescription() : "",
+            "description"    => $club->getDescription(),
             "address"        => $club->getShortcode(),
-            "wall"           => $club->getWallType(), # отличается от вкшных но да ладно
+            "wall"           => $club->getWallType(), # is different from vk values
             "photos"         => 1,
             "video"          => 0,
             "audio"          => $club->isEveryoneCanUploadAudios() ? 1 : 0,
-            "docs"           => 0,
+            "docs"           => 1,
             "topics"         => $club->isEveryoneCanCreateTopics() == true ? 1 : 0,
-            "wiki"           => 0,
-            "messages"       => 0,
-            "obscene_filter" => 0,
-            "obscene_stopwords" => 0,
-            "obscene_words"  => "",
-            "access"         => 1,
-            "subject"        => 1,
-            "subject_list"   => [
-                0 => "в",
-                1 => "опенвк",
-                2 => "нет",
-                3 => "категорий",
-                4 => "групп",
-            ],
-            "rss"            => "/club" . $club->getId() . "/rss",
             "website"        => $club->getWebsite(),
-            "age_limits"     => 0,
-            "market"         => [],
         ];
 
         return $arr;
     }
 
-    public function isMember(string $group_id, int $user_id, string $user_ids = "", bool $extended = false)
+    public function isMember(string $group_id, int $user_id, int $extended = 0)
     {
         $this->requireUser();
-        $id = $user_id != null ? $user_id : explode(",", $user_ids);
 
-        if ($group_id < 0) {
-            $this->fail(228, "Remove the minus from group_id");
+        $input_club = (new ClubsRepo())->get(abs((int) $group_id));
+        $input_user = (new UsersRepo())->get(abs((int) $user_id));
+
+        if (!$input_club || !$input_club->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
         }
 
-        $club = (new ClubsRepo())->get((int) $group_id);
-        $usver = (new UsersRepo())->get((int) $id);
-
-        if (!$club || $group_id == 0) {
-            $this->fail(203, "Invalid club");
+        if (!$input_user || $input_user->isDeleted()) {
+            $this->fail(15, "Not found");
         }
 
-        if (!$usver || $usver->isDeleted() || $user_id == 0) {
-            $this->fail(30, "Invalid user");
-        }
-
-        if ($extended == false) {
-            return $club->getSubscriptionStatus($usver) ? 1 : 0;
+        if ($extended == 0) {
+            return $input_club->getSubscriptionStatus($input_user) ? 1 : 0;
         } else {
             return (object)
             [
-                "member"     => $club->getSubscriptionStatus($usver) ? 1 : 0,
+                "member"     => $input_club->getSubscriptionStatus($input_user) ? 1 : 0,
                 "request"    => 0,
                 "invitation" => 0,
                 "can_invite" => 0,
                 "can_recall" => 0,
             ];
         }
-    }
-
-    public function remove(int $group_id, int $user_id)
-    {
-        $this->requireUser();
-
-        $this->fail(501, "Not implemented");
     }
 }

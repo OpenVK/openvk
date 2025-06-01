@@ -33,14 +33,14 @@
                     </td>
                     <td>
                         {if $topic->getClub()->canBeModifiedBy($thisUser)}
-                            <input type="checkbox" name="pin" n:attr="checked => $topic->isPinned()" /> {_pin_topic}<br />
+                            <label><input type="checkbox" name="pin" n:attr="checked => $topic->isPinned()" /> {_pin_topic}</label><br />
                         {/if}
-                        <input type="checkbox" name="close" n:attr="checked => $topic->isClosed()" /> {_close_topic}
+                        <label><input type="checkbox" name="close" n:attr="checked => $topic->isClosed()" /> {_close_topic}</label>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <a class="button" href="/topic{$topic->getPrettyId()}/delete?hash={urlencode($csrfToken)}">{_delete_topic}</a>
+                        <a id="_anotherDelete" class="button" href="/topic{$topic->getPrettyId()}/delete?hash={urlencode($csrfToken)}">{_delete_topic}</a>
                     </td>
                     <td>
                         <input type="hidden" name="hash" value="{$csrfToken}" />

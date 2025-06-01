@@ -353,3 +353,26 @@ function openJsSettings() {
         </tr>    
     `)
 }
+
+
+function reportPost(postId) {
+            uReportMsgTxt  = tr("going_to_report_post");
+            uReportMsgTxt += "<br/>"+tr("report_question_text");
+            uReportMsgTxt += "<br/><br/><b>"+tr("report_reason")+"</b>: <input type='text' id='uReportMsgInput' placeholder='" + tr("reason") + "' />"
+
+            MessageBox(tr("report_question"), uReportMsgTxt, [tr("confirm_m"), tr("cancel")], [
+                (function() {
+                    res = document.querySelector("#uReportMsgInput").value;
+                    xhr = new XMLHttpRequest();
+                    xhr.open("GET", "/report/" + postId + "?reason=" + res + "&type=post", true);
+                    xhr.onload = (function() {
+                        if(xhr.responseText.indexOf("reason") === -1)
+                            MessageBox(tr("error"), tr("error_sending_report"), ["OK"], [Function.noop]);
+                        else
+                            MessageBox(tr("action_successfully"), tr("will_be_watched"), ["OK"], [Function.noop]);
+                    });
+                    xhr.send(null);
+                }),
+                Function.noop
+            ]);
+        }

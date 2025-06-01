@@ -333,7 +333,7 @@ async function __docAttachment(form, ctx = "wall", source = "user", source_arg =
                         <text id="photo_com_title_photos">
                             ${tr("select_doc")}
                         </text>
-                        <span style="display: inline-flex;gap: 7px;">
+                        <span style="display: inline-flex;gap: 7px;margin-left: 5px;">
                             ${source != "user" ? `<a id="_doc_picker_go_to_my">${tr("go_to_my_documents")}</a>`: ""}
                             <a id="_doc_picker_upload">${tr("upload_button")}</a>
                         </span>

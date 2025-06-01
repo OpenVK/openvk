@@ -14,6 +14,10 @@ body {
     line-height: 1.19;
 }
 
+body.ajax_request_made {
+    cursor: progress;
+}
+
 body, .ovk-fullscreen-dimmer, .ovk-photo-view-dimmer {
     scrollbar-gutter: stable both-edges;
 }
@@ -876,7 +880,7 @@ h4 {
 }
 
 .post-geo {
-    margin: 1px 0px;
+    margin: 8px 0px 2px -3px;
     padding: 0 4px;
 }
 
@@ -1575,6 +1579,10 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
     color: #3c3c3c;
 }
 
+.post-has-geo.appended-geo {
+    padding: 6px 0px;
+}
+
 .post-source #remove_source_button, #small_remove_button {
     display: inline-block;
     background-repeat: no-repeat;
@@ -1889,6 +1897,7 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
 
 #ovkDraw {
     border: 1px solid #757575;
+    min-height: 510px;
 }
 
 #ovkDraw .lc-drawing.with-gui {
@@ -1897,6 +1906,7 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
 
 #ovkDraw .literally {
     border-radius: 0;
+    height: 510px;
 }
 
 #ovkDraw .literally .lc-picker,
@@ -2675,7 +2685,8 @@ a.poll-retract-vote {
 }
 
 .post-buttons .vertical-attachment .vertical-attachment-content { 
-    max-height: 27px;
+    /*max-height: 27px;*/
+    padding: 3px 2px;
 }
 
 .vertical-attachment .vertical-attachment-content .overflowedName {
@@ -3206,6 +3217,11 @@ a.poll-retract-vote {
     display: flex;
     align-items: center;
     gap: 1px;
+    padding: 5px 9px;
+}
+
+.post-buttons .attachment_note {
+    padding: 3px 0px;
 }
 
 .attachment_note svg {
@@ -3219,6 +3235,10 @@ a.poll-retract-vote {
     display: flex;
     gap: 4px;
     height: 12px;
+}
+
+.attachments .attachment_note {
+    padding: 5px 5px;
 }
 
 #notesList
@@ -3257,7 +3277,7 @@ body.article .floating_sidebar, body.article .page_content {
     display: none;
     position: absolute;
     z-index: 128;
-    width: 100%;
+    width: 98%;
     min-height: 100vh;
     padding: 20px;
     box-sizing: border-box;
@@ -3291,6 +3311,7 @@ body.article .floating_sidebar, body.article .page_content {
 .articleView_author > div {
     display: flex;
     flex-direction: column;
+    margin-top: 3px;
 }
 
 .articleView_author > div > span {
@@ -3388,6 +3409,7 @@ body.article .floating_sidebar, body.article .page_content {
     display: flex;
     flex-direction: column;
     gap: 22px;
+    padding: 5px 10px;
 }
 
 .sugglist {
@@ -3661,7 +3683,7 @@ hr {
 .entity_vertical_list {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 10px;
     height: 197px;
     overflow-y: auto;
 }
@@ -3669,6 +3691,7 @@ hr {
 .entity_vertical_list.scroll_container {
     height: unset;
     overflow-y: unset;
+    padding: 5px;
 }
 
 .entity_vertical_list .entity_vertical_list_item {
@@ -3686,12 +3709,16 @@ hr {
 }
 
 .entity_vertical_list.m_mini .entity_vertical_list_item .first_column {
-    gap: 10px;
+    gap: 13px;
+}
+
+.entity_vertical_list.m_mini .entity_vertical_list_item:hover .first_column a {
+    text-decoration: underline;
 }
 
 .entity_vertical_list.m_mini .entity_vertical_list_item .first_column .avatar img {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
 }
 
 .entity_vertical_list .entity_vertical_list_item .avatar {
@@ -3822,12 +3849,13 @@ hr {
     display: none;
     position: fixed;
     top: -10%;
-    background: rgba(26, 26, 26, 0.9);;
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: 0px 0px 2px 0px black;
     padding-top: 12px;
     width: 91px;
     height: 25px;
     text-align: center;
-    border-radius: 1px;
+    border-radius: 2px;
     margin: auto;
     left: 0;
     right: 0;
@@ -3924,6 +3952,11 @@ hr {
 .like_tooltip_wrapper .like_tooltip_body img {
     width: 25px;
     height: 25px;
+}
+
+.object_fit_ava {
+    object-fit: cover;
+    object-position: top;
 }
 
 .like_tooltip_wrapper .like_tooltip_body a {
@@ -4036,7 +4069,7 @@ hr {
 #docs_page_wrapper .container_white {
     display: flex;
     flex-direction: column;
-    padding: 5px 10px;
+    padding: 10px 10px;
 }
 
 #docs_page_wrapper .docs_page_content.docs_page_gallery .scroll_container {
@@ -4179,11 +4212,12 @@ hr {
     justify-content: center;
     border-radius: 2px;
     height: 17px;
-    padding: 2px 0px;
+    padding: 3px 0px;
 }
 
 .docListViewItem .doc_icon.no_image span {
     color: #6b6b6b;
+    font-weight: bold;
 }
 
 .doc_icon.no_image span::before {
@@ -4268,8 +4302,8 @@ hr {
 .attachments .docGalleryItem {
     display: block;
     min-width: 170px;
-    height: 170px;
-    width: 50%;
+    min-height: 170px;
+    width: 60%;
     margin-bottom: 4px;
 }
 
@@ -4294,4 +4328,24 @@ hr {
 
 .deleted_mark_average {
     padding: 5px 61px;
+}
+
+.sort_link {
+    padding: 5px 2px;
+    display: inline-block;
+}
+
+.sort_link_icon {
+    background: url(/assets/packages/static/openvk/img/wall.png?v=3) no-repeat;
+    display: inline-block;
+    height: 11px;
+    width: 9px;
+}
+
+.sort_link_icon_desc {
+    background-position: 0px -15px;
+}
+
+.sort_link_icon_asc {
+    background-position: -11px -15px;
 }
