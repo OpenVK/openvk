@@ -73,10 +73,10 @@ final class DocumentsPresenter extends OpenVKPresenter
         $this->template->count = $docs->size();
         $this->template->docs  = iterator_to_array($docs->page($page, OPENVK_DEFAULT_PER_PAGE));
         $this->template->locale_string = "you_have_x_documents";
-        if ($owner_id < 0) {
-            $this->template->locale_string = "group_has_x_documents";
-        } elseif ($current_tab != 0) {
+        if ($current_tab != 0) {
             $this->template->locale_string = "x_documents_in_tab";
+        } elseif ($owner_id < 0) {
+            $this->template->locale_string = "group_has_x_documents";
         }
 
         $this->template->canUpload = $owner_id == $this->user->id || $this->template->group->canBeModifiedBy($this->user->identity);

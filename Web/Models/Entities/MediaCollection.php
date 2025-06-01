@@ -60,6 +60,11 @@ abstract class MediaCollection extends RowModel
         }
     }
 
+    public function getOwnerId(): int
+    {
+        return (int) $this->getRecord()->owner;
+    }
+
     public function getPrettyId(): string
     {
         return $this->getRecord()->owner . "_" . $this->getRecord()->id;

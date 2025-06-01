@@ -210,7 +210,7 @@ final class WallPresenter extends OpenVKPresenter
         $pPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
 
         $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
-        $queryBase .= "WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND (`profiles`.`profile_type` = 0 OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
+        $queryBase .= "WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND ((`profiles`.`profile_type` = 0 AND `profiles`.`hide_global_feed` = 0) OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
 
         if ($this->user->identity->getNsfwTolerance() === User::NSFW_INTOLERANT) {
             $queryBase .= " AND `nsfw` = 0";
@@ -469,7 +469,11 @@ final class WallPresenter extends OpenVKPresenter
         }
         $this->template->cCount   = $post->getCommentsCount();
         $this->template->cPage    = (int) ($_GET["p"] ?? 1);
-        $this->template->comments = iterator_to_array($post->getComments($this->template->cPage));
+        $this->template->sort = $this->queryParam("sort") ?? "asc";
+
+        $input_sort = $this->template->sort == "asc" ? "ASC" : "DESC";
+
+        $this->template->comments = iterator_to_array($post->getComments($this->template->cPage, null, $input_sort));
     }
 
     public function renderLike(int $wall, int $post_id): void

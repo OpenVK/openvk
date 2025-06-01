@@ -1104,13 +1104,18 @@ final class Wall extends VKAPIRequestHandler
 
         $post = (new PostsRepo())->getPostById($owner_id, $post_id, true);
         if (!$post || $post->isDeleted()) {
-            $this->fail(583, "Invalid post");
+            $this->fail(15, "Not found");
         }
 
         $wallOwner = $post->getWallOwner();
 
+        # trying to solve the condition below.
+        # $post->getTargetWall() < 0 - if post on wall of club
+        # !$post->getWallOwner()->canBeModifiedBy($this->getUser()) - group is cannot be modifiet by %user%
+        # $post->getWallOwner()->getWallType() != 1 - wall is not open
+        # $post->getSuggestionType() == 0 - post is not suggested
         if ($post->getTargetWall() < 0 && !$post->getWallOwner()->canBeModifiedBy($this->getUser()) && $post->getWallOwner()->getWallType() != 1 && $post->getSuggestionType() == 0) {
-            $this->fail(12, "Access denied: you can't delete your accepted post.");
+            $this->fail(15, "Access denied");
         }
 
         if ($post->getOwnerPost() == $this->getUser()->getId() || $post->getTargetWall() == $this->getUser()->getId() || $owner_id < 0 && $wallOwner->canBeModifiedBy($this->getUser())) {

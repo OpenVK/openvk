@@ -13,6 +13,8 @@ final class InternalAPIPresenter extends OpenVKPresenter
     private function fail(int $code, string $message): void
     {
         header("HTTP/1.1 400 Bad Request");
+        header("Content-Type: application/x-msgpack");
+
         exit(MessagePack::pack([
             "brpc"  => 1,
             "error" => [
@@ -25,6 +27,7 @@ final class InternalAPIPresenter extends OpenVKPresenter
 
     private function succ($payload): void
     {
+        header("Content-Type: application/x-msgpack");
         exit(MessagePack::pack([
             "brpc"   => 1,
             "result" => $payload,
@@ -146,7 +149,7 @@ final class InternalAPIPresenter extends OpenVKPresenter
     {
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             header("HTTP/1.1 405 Method Not Allowed");
-            exit("ты‍ не по адресу");
+            $this->redirect("/");
         }
 
         $type = $this->queryParam("type", false);
@@ -165,7 +168,7 @@ final class InternalAPIPresenter extends OpenVKPresenter
         if ($type == 'post') {
             $this->template->_template = 'components/post.xml';
             $this->template->post = $post;
-            $this->template->commentSection = true;
+            $this->template->commentSection = $this->queryParam("from_page") == "another";
         } elseif ($type == 'comment') {
             $this->template->_template = 'components/comment.xml';
             $this->template->comment = $post;

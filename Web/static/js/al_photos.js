@@ -12,7 +12,7 @@ $(document).on("change", ".photo_ajax_upload_button", (e) => {
             return;
         }
 
-        if(file.size > 5 * 1024 * 1024) {
+        if(file.size > window.openvk.max_filesize_mb * 1024 * 1024) {
             MessageBox(tr("error"), tr("max_filesize", 5), [tr("ok")], [() => {Function.noop}])
             return;
         }
@@ -88,7 +88,6 @@ $(document).on("click", ".photo_upload_container #endUploading", (e) => {
     data.append("hash", u("meta[name=csrf]").attr("value"))
 
     let xhr = new XMLHttpRequest()
-    // в самом вк на каждое изменение описания отправляется свой запрос, но тут мы экономим запросы
     xhr.open("POST", "/photos/upload?act=finish&album="+document.getElementById("album").value)
 
     xhr.onloadstart = () => {
@@ -108,10 +107,10 @@ $(document).on("click", ".photo_upload_container #endUploading", (e) => {
             document.querySelector(".page_content .insertPhotos").innerHTML = ""
             document.getElementById("endUploading").style.display = "none"
     
-            NewNotification(tr("photos_successfully_uploaded"), tr("click_to_go_to_album"), null, () => {window.router.route({url:`/album${result.owner}_${result.album}`})})
+            window.router.route({url:`/album${result.owner}_${result.album}`})
             
-            document.querySelector(".whiteBox").style.display = "block"
-            document.querySelector(".insertAgain").append(document.getElementById("fakeButton"))
+            /*document.querySelector(".whiteBox").style.display = "block"
+            document.querySelector(".insertAgain").append(document.getElementById("fakeButton"))*/
         }
 
         e.currentTarget.removeAttribute("disabled")

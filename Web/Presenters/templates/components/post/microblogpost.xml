@@ -58,6 +58,7 @@
                     <span n:if="$post->isPinned()" class="nobold">{_pinned}</span>
 
                     <a n:if="$canBeDeleted && !($forceNoDeleteLink ?? false) && $compact == false" class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
+                    <a n:if="!$canBeDeleted" class="report" title="{_report}" href="javascript:reportPost({$post->getId()})"></a>
                     
                     {if $canBePinned && !($forceNoPinLink ?? false) && $compact == false}
                         {if $post->isPinned()}
@@ -148,7 +149,7 @@
                     {/if}
                 </div>
                 <div n:if="!($forceNoCommentsLink ?? false) && $commentSection == true && $compact == false" class="post-menu-s">
-                    <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}" class="expand_button">{_view_other_comments}</a>
+                    <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}" class="expand_button">{_view_other_comments} ({$commentsCount - 3})</a>
                     {foreach $comments as $comment}
                         {include "../comment.xml", comment => $comment, $compact => true}
                     {/foreach}

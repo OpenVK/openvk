@@ -444,6 +444,7 @@
 
 "notes_closed" = "Vy ne možete prikrepití zametku k zapisi, tak kak vaši zametki vidny tolíko vam.<br><br> Vy možete pomenjatí eto v <a href=\"/settings?act=privacy\">nastrojkah</a>.";
 "do_not_attach_note" = "Ne prikrepljatí zametku";
+"something_is_supported_from_xhtml" = "<a href='/kb/notes'>Koe-čto</a> iz (X)HTML podderživaetsja.";
 "something" = "Koe-čto";
 "supports_xhtml" = "iz (X)HTML podderživaetsja.";
 

@@ -575,6 +575,7 @@
 
 "notes_closed" = "Ви не можете прикріпити нотатку до запису, оскільки Ваші нотатки видно тільки Вам.<br><br> Ви можете змінити це в <a href=\"/settings?act=privacy\">налаштуваннях</a>.";
 "do_not_attach_note" = "Не прикріплювати нотатку";
+"something_is_supported_from_xhtml" = "<a href='/kb/notes'>Певні</a> теги з (X)HTML підтримується.";
 "something" = "Певні";
 "supports_xhtml" = "теги з (X)HTML підтримується.";
 

@@ -501,7 +501,7 @@
 "edit_photo" = "Edit photo";
 "creating_album" = "Creating album";
 "delete_photo" = "Delete photo";
-"sure_deleting_photo" = "Do you really want to delete this picture?";
+"sure_deleting_photo" = "Do you sure you want to delete this photo from album?";
 "upload_photo" = "Upload photo";
 "photo" = "Photo";
 "upload_button" = "Upload";
@@ -615,6 +615,7 @@
 
 "notes_closed" = "You can't attach a note to the post because only you can see them.<br> You can change this in <a href=\"/settings?act=privacy\">settings</a>.";
 "do_not_attach_note" = "Do not attach a note";
+"something_is_supported_from_xhtml" = "<a href='/kb/notes'>Something</a> from (X)HTML supported.";
 "something" = "Something";
 "supports_xhtml" = "from (X)HTML supported.";
 
@@ -862,6 +863,9 @@
 "sort_randomly" = "Sort randomly";
 "sort_up" = "Sort by ID up";
 "sort_down" = "Sort by ID down";
+
+"new_first" = "New frist";
+"old_first" = "Old first";
 
 /* Videos */
 
@@ -1192,6 +1196,7 @@
 "coins_other" = "$1 votes";
 
 "users_gifts" = "Gifts";
+"sent" = "Sent";
 
 /* Apps */
 "app" = "Application";
@@ -1675,6 +1680,7 @@
 "admin_first_known_ip" = "First known IP";
 "admin_shortcode" = "Short code";
 "admin_verification" = "Verification";
+"admin_hide_global_feed" = "Hide global feed";
 "admin_banreason" = "Ban reason";
 "admin_banned" = "banned";
 "admin_gender" = "Sex";
@@ -2316,6 +2322,8 @@
 
 "roll_back" = "rollback";
 "roll_backed" = "rollbacked";
+
+"nospam_prevention" = "This action will affect a lot of data. Are you sure you want to apply?";
 
 /* RSS */
 
