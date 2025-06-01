@@ -2201,17 +2201,12 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
     border-top: #DEDEDE solid 1px;
 }
 
-#gp_container {
+#groups_graybar form {
     display: inline-block;
 }
 
-#gp_container span {
-    display: block;
-    margin: 10px 0 15px;
-}
-
-#gp_container h4 {
-    font-size: 11px;
+#groups_graybar #create_group {
+    float: right;
 }
 
 .container_gray .content:last-child {
@@ -2843,7 +2838,7 @@ a.poll-retract-vote {
     padding: 11px 4px 0 7px;
 }
 
-.header_navigation #search_box input[type='search'] {
+#search_box input[type='search'] {
     height: 20px;
     background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; 
     background-color: #fff; 
