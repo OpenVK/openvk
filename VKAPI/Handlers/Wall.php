@@ -21,6 +21,7 @@ use openvk\Web\Models\Entities\Note;
 use openvk\Web\Models\Repositories\Notes as NotesRepo;
 use openvk\Web\Models\Repositories\Polls as PollsRepo;
 use openvk\Web\Models\Repositories\Audios as AudiosRepo;
+use openvk\Web\Util\EventRateLimiter;
 
 final class Wall extends VKAPIRequestHandler
 {
@@ -723,8 +724,10 @@ final class Wall extends VKAPIRequestHandler
         }
 
         if ($owner_id > 0 && $owner_id !== $this->getUser()->getId()) {
-            (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
+            (new WallPostNotification($wallOwner, $post, $this->getUser()->getId()))->emit();
         }
+
+        EventRateLimiter::i()->writeEvent("wall.post", $this->getUser(), $wallOwner);
 
         return (object) ["post_id" => $post->getVirtualId()];
     }

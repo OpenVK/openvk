@@ -41,6 +41,15 @@ openvk:
                 maxViolations: 50
                 maxViolationsAge: 120
                 autoban: true
+                eventsLimit:
+                    enable: true
+                    restrictionTime: 86400
+                    list:
+                        groups.create: 5
+                        groups.sub: 50
+                        friends.outgoing_sub: 25
+                        wall.post: 500
+                        gifts.send: 20
         blacklists:
             limit: 100
             applyToAdmins: true
