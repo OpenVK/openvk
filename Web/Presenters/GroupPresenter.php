@@ -63,6 +63,10 @@ final class GroupPresenter extends OpenVKPresenter
 
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             if (!empty($this->postParam("name")) && mb_strlen(trim($this->postParam("name"))) > 0) {
+                if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->user->identity, "groups.create")) {
+                    $this->flashFail("err", tr("error"), tr("limit_exceed_exception"));
+                }
+
                 $club = new Club();
                 $club->setName($this->postParam("name"));
                 $club->setAbout(empty($this->postParam("about")) ? null : $this->postParam("about"));

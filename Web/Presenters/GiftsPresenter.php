@@ -106,6 +106,10 @@ final class GiftsPresenter extends OpenVKPresenter
             return;
         }
 
+        if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->user->identity, "gifts.send", false)) {
+            $this->flashFail("err", tr("error"), tr("limit_exceed_exception"));
+        }
+
         $comment      = empty($c = $this->postParam("comment")) ? null : $c;
         $notification = new GiftNotification($user, $this->user->identity, $gift, $comment);
         $notification->emit();

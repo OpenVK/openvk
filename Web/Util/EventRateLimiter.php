@@ -38,20 +38,41 @@ class EventRateLimiter
         $this->availableFields = array_keys($this->config['list']);
     }
 
-    public function tryToLimit(?User $user): bool
+    /* 
+    Checks count of actions for last x seconds, returns true if limit has exceed
+
+    x is OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["eventsLimit"]["restrictionTime"]
+    */
+    public function tryToLimit(?User $user, string $event_type, bool $distinct = true): bool
     {
         if (!$this->config['enable']) {
             return false;
         }
 
-        if ($user->isAdmin()) {
+        if (!($e = eventdb())) {
             return false;
         }
 
-        return true;
+        if ($this->config['ignoreForAdmins'] && $user->isAdmin()) {
+            return false;
+        }
+
+        $limitForThisEvent = $this->config['list'][$event_type];
+        $compareTime = time() - $this->config['restrictionTime'];
+
+        $query = "SELECT COUNT(".($distinct ? "DISTINCT(`receiverId`)" : "*").") as `cnt` FROM `user-events` WHERE `initiatorId` = ? AND `eventType` = ? AND `eventTime` > ?";
+
+        $result = $e->getConnection()->query($query, ...[$user->getId(), $event_type, $compareTime]);
+        $count = $result->fetch()->cnt;
+        #bdump($count); exit();
+
+        return $count > $limitForThisEvent;
     }
 
-    public function writeEvent(string $event_name, User $initiator, ?RowModel $reciever = null): bool
+    /*
+    Writes new event to `openvk-eventdb`.`user-events`
+    */
+    public function writeEvent(string $event_type, User $initiator, ?RowModel $reciever = null): bool
     {
         if (!$this->config['enable']) {
             return false;
@@ -65,7 +86,7 @@ class EventRateLimiter
             'initiatorId' => $initiator->getId(),
             'initiatorIp' => null,
             'receiverId' => null,
-            'eventType' => $event_name,
+            'eventType' => $event_type,
             'eventTime' => time()
         ];
 

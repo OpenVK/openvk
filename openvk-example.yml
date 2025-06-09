@@ -43,12 +43,13 @@ openvk:
                 autoban: true
                 eventsLimit:
                     enable: true
+                    ignoreForAdmins: true
                     restrictionTime: 86400
                     list:
                         groups.create: 5
                         groups.sub: 50
                         friends.outgoing_sub: 25
-                        wall.post: 500
+                        wall.post: 5000
                         gifts.send: 20
         blacklists:
             limit: 100
