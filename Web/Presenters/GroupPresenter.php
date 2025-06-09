@@ -79,6 +79,9 @@ final class GroupPresenter extends OpenVKPresenter
                 }
 
                 $club->toggleSubscription($this->user->identity);
+            
+                \openvk\Web\Util\EventRateLimiter::i()->writeEvent("groups.create", $this->user->identity, $club);
+
                 $this->redirect("/club" . $club->getId());
             } else {
                 $this->flashFail("err", tr("error"), tr("error_no_group_name"));

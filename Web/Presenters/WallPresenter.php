@@ -432,6 +432,8 @@ final class WallPresenter extends OpenVKPresenter
             }
         }
 
+        \openvk\Web\Util\EventRateLimiter::i()->writeEvent("wall.post", $this->user->identity, $wallOwner);
+
         if ($should_be_suggested) {
             $this->redirect("/club" . $wallOwner->getId() . "/suggested");
         } else {

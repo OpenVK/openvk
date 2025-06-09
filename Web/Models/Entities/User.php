@@ -114,6 +114,7 @@ class User extends RowModel
 
     public function getChandlerUser(): ChandlerUser
     {
+        # TODO cache this function
         return new ChandlerUser($this->getRecord()->ref("ChandlerUsers", "user"));
     }
 
@@ -1043,6 +1044,8 @@ class User extends RowModel
             "anonymous" => $anonymous,
             "sent"      => time(),
         ]);
+
+        \openvk\Web\Util\EventRateLimiter::i()->writeEvent("gifts.send", $sender, $this);
     }
 
     public function ban(string $reason, bool $deleteSubscriptions = true, $unban_time = null, ?int $initiator = null): void

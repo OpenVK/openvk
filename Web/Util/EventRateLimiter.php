@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace openvk\Web\Util;
 
 use openvk\Web\Models\Entities\User;
+use openvk\Web\Models\RowModel;
 use Chandler\Patterns\TSimpleSingleton;
 
 class UserEvent
@@ -28,10 +29,31 @@ class EventRateLimiter
 {
     use TSimpleSingleton;
 
-    public function writeEvent(string $event_name, User $initiator, ?User $reciever = null): bool
+    private $config;
+    private $availableFields;
+
+    public function __construct()
     {
-        $eventsConfig = OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["eventsLimit"];
-        if (!$eventsConfig['enable']) {
+        $this->config = OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["eventsLimit"];
+        $this->availableFields = array_keys($this->config['list']);
+    }
+
+    public function tryToLimit(?User $user): bool
+    {
+        if (!$this->config['enable']) {
+            return false;
+        }
+
+        if ($user->isAdmin()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public function writeEvent(string $event_name, User $initiator, ?RowModel $reciever = null): bool
+    {
+        if (!$this->config['enable']) {
             return false;
         }
 
@@ -48,7 +70,7 @@ class EventRateLimiter
         ];
 
         if ($reciever) {
-            $data['receiverId'] = $reciever->getId();
+            $data['receiverId'] = $reciever->getRealId();
         }
 
         $newEvent = new UserEvent($data);
