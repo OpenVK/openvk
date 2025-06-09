@@ -61,6 +61,10 @@ final class Gifts extends VKAPIRequestHandler
             $this->fail(-105, "Commerce is disabled on this instance");
         }
 
+        if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->getUser(), "gifts.send", false)) {
+            $this->failTooOften();
+        }
+
         $user = (new UsersRepo())->get((int) $user_ids); # FAKE прогноз погоды (в данном случае user_ids)
 
         if (!$user || $user->isDeleted()) {
