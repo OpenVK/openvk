@@ -218,7 +218,7 @@ class Audio extends Media
             return ovk_scheme(true)
                 . $_SERVER["HTTP_HOST"] . ":"
                 . $_SERVER["HTTP_PORT"]
-                . "/assets/packages/static/openvk/audio/nomusic.mp3";
+                . "/assets/packages/static/openvk/audio/api_unallowed.mp3";
         }
 
         $key = bin2hex($this->getRecord()->token);
@@ -391,7 +391,7 @@ class Audio extends Media
      * 9. searchable - Can be found via search?
      * 10. unique_id - Unique ID of audio
      *
-     * @notice that in case if exposeOriginalURLs is set to false in config, "url" will always contain link to nomusic.mp3,
+     * @notice that in case if exposeOriginalURLs is set to false in config, "url" will always contain link to api_unallowed.mp3,
      * unless $forceURLExposure is set to true.
      *
      * @notice may trigger db flush if the audio is not processed yet, use with caution on unsaved models.
