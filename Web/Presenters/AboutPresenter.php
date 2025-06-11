@@ -147,7 +147,7 @@ final class AboutPresenter extends OpenVKPresenter
         $this->redirect("https://github.com/openvk/openvk#readme");
     }
 	
-	public function renderAssetLinksJSON(): void
+    public function renderAssetLinksJSON(): void
     {
         # Необходимо любому андроид приложению для автоматического разрешения принимать ссылки с этого сайта.
         # Не шарю как писать норм на php поэтому тут чутка на вайбкодил - искренне ваш, ZAZiOs.
