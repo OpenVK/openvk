@@ -407,6 +407,8 @@ routes:
       handler: "About->robotsTxt"
     - url: "/humans.txt"
       handler: "About->humansTxt"
+    - url: "/.well-known/assetlinks.json"
+      handler: "About->AssetLinksJSON"
     - url: "/dev"
       handler: "About->dev"
     - url: "/iapi/getPhotosFromPost/{num}_{num}"
