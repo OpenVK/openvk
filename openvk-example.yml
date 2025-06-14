@@ -60,6 +60,9 @@ openvk:
             exposeOriginalURLs: true
         newsfeed:
             ignoredSourcesLimit: 50
+        notes:
+            disableHotlinking: true
+            allowedHosts: []
         wall:
             christian: false
             anonymousPosting:
