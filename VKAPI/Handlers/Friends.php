@@ -98,6 +98,10 @@ final class Friends extends VKAPIRequestHandler
 
         switch ($user->getSubscriptionStatus($this->getUser())) {
             case 0:
+                if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->getUser(), "friends.outgoing_sub")) {
+                    $this->failTooOften();
+                }
+
                 $user->toggleSubscription($this->getUser());
                 return 1;
 

@@ -312,6 +312,10 @@ final class Groups extends VKAPIRequestHandler
         $isMember = !is_null($this->getUser()) ? (int) $club->getSubscriptionStatus($this->getUser()) : 0;
 
         if ($isMember == 0) {
+            if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->getUser(), "groups.sub")) {
+                $this->failTooOften();
+            }
+
             $club->toggleSubscription($this->getUser());
         }
 

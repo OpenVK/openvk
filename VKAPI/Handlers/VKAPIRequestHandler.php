@@ -25,6 +25,11 @@ abstract class VKAPIRequestHandler
         throw new APIErrorException($message, $code);
     }
 
+    protected function failTooOften(): never
+    {
+        $this->fail(9, "Rate limited");
+    }
+
     protected function getUser(): ?User
     {
         return $this->user;

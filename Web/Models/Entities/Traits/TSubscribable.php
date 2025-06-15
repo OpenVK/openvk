@@ -37,6 +37,15 @@ trait TSubscribable
 
         if (!($sub->fetch())) {
             $ctx->table("subscriptions")->insert($data);
+            
+            # todo change
+
+            if (str_contains(static::class, "Club")) {
+                \openvk\Web\Util\EventRateLimiter::i()->writeEvent("groups.sub", $user, $this);
+            } else {
+                \openvk\Web\Util\EventRateLimiter::i()->writeEvent("friends.outgoing_sub", $user, $this);
+            }
+
             return true;
         }
 

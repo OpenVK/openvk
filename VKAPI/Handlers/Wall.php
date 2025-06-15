@@ -620,6 +620,10 @@ final class Wall extends VKAPIRequestHandler
             return (object) ["post_id" => $post->getVirtualId()];
         }
 
+        if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->getUser(), "wall.post", false)) {
+            $this->failTooOften();
+        }
+
         $anon = OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["enable"];
         if ($wallOwner instanceof Club && $from_group == 1 && $signed != 1 && $anon) {
             $manager = $wallOwner->getManager($this->getUser());
@@ -723,8 +727,10 @@ final class Wall extends VKAPIRequestHandler
         }
 
         if ($owner_id > 0 && $owner_id !== $this->getUser()->getId()) {
-            (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
+            (new WallPostNotification($wallOwner, $post, $this->getUser()))->emit();
         }
+
+        \openvk\Web\Util\EventRateLimiter::i()->writeEvent("wall.post", $this->getUser(), $wallOwner);
 
         return (object) ["post_id" => $post->getVirtualId()];
     }
