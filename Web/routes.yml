@@ -413,6 +413,8 @@ routes:
       handler: "InternalAPI->getPhotosFromPost"
     - url: "/iapi/getPostTemplate/{num}_{num}"
       handler: "InternalAPI->getPostTemplate"
+    - url: "/image.php"
+      handler: "InternalAPI->imageFilter"
     - url: "/tour"
       handler: "About->tour"
     - url: "/fave"

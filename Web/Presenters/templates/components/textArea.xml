@@ -22,6 +22,8 @@
 
                 {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0}
                     {if $club->canBeModifiedBy($thisUser)}
+                        {var $anonHide = true}
+
                         <script>
                             function onWallAsGroupClick(el) {
                                 document.querySelector("#forceSignOpt").style.display = el.checked ? "block" : "none";
@@ -41,7 +43,7 @@
                     {/if}
                 {/if}
                 
-                <label n:if="$anonEnabled" id="octoberAnonOpt" style="display: none;">
+                <label n:if="$anonEnabled" id="octoberAnonOpt" {if $anonHide}style="display: none;"{/if}>
                     <input type="checkbox" name="anon" /> {_as_anonymous}
                 </label>
                 

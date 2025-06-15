@@ -385,8 +385,8 @@
                 <tr>
                     <td class="e">
                         Vladimir Barinov (veselcraft), Celestora, Konstantin Kichulkin (kosfurler),
-                        Daniel Myslivets, Maxim Leshchenko (maksales / maksalees), n1rwana and
-                        Jillian Österreich (Lumaeris)
+                        Daniel Myslivets, Maxim Leshchenko (maksales / maksalees), n1rwana,
+                        Jillian Österreich (Lumaeris) and MrIlyew (V00d00 M4g1c)
                     </td>
                 </tr>
             </tbody>
@@ -472,7 +472,7 @@
             </tbody>
         </table>
 
-        <table>
+        {*<table>
             <tbody>
                 <tr class="h">
                     <th>OpenVK QA Team</th>
@@ -486,7 +486,7 @@
                     </td>
                 </tr>
             </tbody>
-        </table>
+        </table>*}
 
         <hr/>
 
