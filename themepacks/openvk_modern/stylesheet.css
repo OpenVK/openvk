@@ -24,6 +24,7 @@ body {
     background-size: 80%;
     background-position-y: 0px;
     background-position-x: 1px;
+    width: 145px !important;
     text-shadow: none;
 }
 
