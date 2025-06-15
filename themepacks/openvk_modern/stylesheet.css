@@ -1,30 +1,35 @@
 body {
-    background: url("/themepack/openvk_modern/0.0.1.0/resource/1.png") repeat-x fixed;
+    background: url("/themepack/openvk_modern/0.0.1.0/resource/1.png") repeat-x
+        fixed;
 }
 
 .page_header {
     position: fixed;
     height: 42px;
-    background: #3C3C3C;
+    background: #3c3c3c;
     z-index: 199;
 }
 
 .home_button {
-    background: #3C3C3C url("/themepack/openvk_modern/0.0.1.0/resource/2.png") no-repeat;
+    background: #3c3c3c url("/themepack/openvk_modern/0.0.1.0/resource/2.png")
+        no-repeat;
     background-size: 80%;
     background-position-y: 0px;
     background-position-x: 1px;
 }
 
 .home_button_custom {
-    background: #3C3C3C url("/themepack/openvk_modern/0.0.1.0/resource/4.png") no-repeat;
+    background: #3c3c3c url("/themepack/openvk_modern/0.0.1.0/resource/4.png")
+        no-repeat;
     background-size: 80%;
     background-position-y: 0px;
     background-position-x: 1px;
+    width: 145px !important;
     text-shadow: none;
 }
 
-.header_navigation .link, .header_navigation .header_divider_stick {
+.header_navigation .link,
+.header_navigation .header_divider_stick {
     background: unset !important;
 }
 
@@ -32,9 +37,21 @@ body {
     text-decoration: none;
 }
 
+.header_navigation #search_box .search_box_button {
+    border: solid 1px #606060;
+    box-shadow: unset;
+}
+
+.header_navigation #search_box .search_box_button:active {
+    background-color: #606060;
+    box-shadow: unset;
+}
+
 .sidebar {
     margin-top: 47px;
     position: fixed;
+    background-color: #fff;
+    z-index: 199;
 }
 
 .page_body {
@@ -59,15 +76,15 @@ body {
 }
 
 .content_subtitle {
-    border-top: #F0F0F0 solid 1px;
-    border-bottom: 1px solid #F0F0F0;
+    border-top: #f0f0f0 solid 1px;
+    border-bottom: 1px solid #f0f0f0;
 }
 
 .user-alert {
     border: 1px solid #f3ddbd;
 }
 
-.msg  {
+.msg {
     border: 1pt solid #e6f2f3;
 }
 
@@ -80,15 +97,18 @@ body {
 }
 
 .navigation .link:hover {
-    border-top: 1px solid #E4E4E4;
+    border-top: 1px solid #e4e4e4;
 }
 
-#profile_link, .profile_link {
+#profile_link,
+.profile_link {
     border-bottom: 1px solid transparent;
 }
 
-.completeness-gauge-gold {
-    border: 1px solid #f6ebbb;
+.completeness-gauge {
+    width: 100%;
+    border: unset;
+    border-top: unset;
 }
 
 .post-author {
@@ -103,18 +123,18 @@ body {
 }
 
 .page_yellowheader {
-    background: #E2E2E2;
-    border-right: solid 1px #E2E2E2;
-    border-left: solid 1px #E2E2E2;
-    border-bottom: solid 1px #E2E2E2;
+    background: #e2e2e2;
+    border-right: solid 1px #e2e2e2;
+    border-left: solid 1px #e2e2e2;
+    border-bottom: solid 1px #e2e2e2;
 }
 
 .page_yellowheader span {
-    color: #BBBBBB;
+    color: #bbbbbb;
 }
 
 .page_yellowheader a {
-	color: #5C5C5C;
+    color: #5c5c5c;
 }
 
 .page-wrap {
@@ -130,8 +150,8 @@ body {
 }
 
 #wrapHI {
-    border-right: solid 1px #E2E2E2;
-    border-left: solid 1px #E2E2E2;
+    border-right: solid 1px #e2e2e2;
+    border-left: solid 1px #e2e2e2;
 }
 
 .left_small_block {
@@ -139,40 +159,59 @@ body {
 }
 
 .menu_divider {
-    background: #E5E5E5;
+    background: #e5e5e5;
 }
 
 .postFeedWrapper {
-    border-bottom: 1px solid rgb(240,240,240);
+    border-bottom: 1px solid rgb(240, 240, 240);
 }
 
 .container_gray {
-    border-top: #EBEBEB solid 1px;
+    border-top: #ebebeb solid 1px;
 }
 
 .container_gray .content {
-    border: #E5E5E5 solid 1px;
+    border: #e5e5e5 solid 1px;
 }
 
 .accent-box {
     border: 1px solid white;
 }
 
-input[type="text"], input[type="password"], input[type~="text"],
-input[type~="password"], input[type="email"], input[type="phone"],
-input[type~="email"], input[type~="phone"], input[type="date"],
-input[type~="date"], input[type="search"], input[type~="search"],
-textarea, select {
-    border: 1px solid #E5E5E5;
+input[type="text"],
+input[type="password"],
+input[type~="text"],
+input[type~="password"],
+input[type="email"],
+input[type="phone"],
+input[type~="email"],
+input[type~="phone"],
+input[type="date"],
+input[type~="date"],
+input[type="search"],
+input[type~="search"],
+textarea,
+select {
+    border: 1px solid #e5e5e5;
 }
 
-input[type=checkbox] {
-	background-image: url("/themepack/openvk_modern/0.0.1.0/resource/6.png")
+input[type="checkbox"] {
+    background-image: url("/themepack/openvk_modern/0.0.1.0/resource/6.png");
 }
 
 ul {
-	list-style: none;
-	list-style-type: disc;
+    list-style: none;
+    list-style-type: disc;
+}
+
+.like_tooltip_wrapper .like_tooltip_head {
+    background: #515151;
+    box-shadow: unset;
+    border: solid 1px #515151;
+}
+
+.like_tooltip_wrapper .like_tooltip_body {
+    border: 1px solid #515151;
 }
 
 .mb_tab#active div {
@@ -197,20 +236,20 @@ ul {
 }
 
 .crp-entry:first-of-type {
-    border-color: #E5E5E5;
+    border-color: #e5e5e5;
 }
 
 .crp-entry {
     width: 593px;
-    border-color: #E5E5E5;
+    border-color: #e5e5e5;
 }
 
 #faqhead {
-    border: 1px solid #FBF3C3;
+    border: 1px solid #fbf3c3;
 }
 
 #faqcontent {
-    border: 1px solid #FAFAFA;
+    border: 1px solid #fafafa;
 }
 
 .ovk-diag {
@@ -233,23 +272,25 @@ ul {
     border-bottom-right-radius: 2px;
 }
 
-#votesBalance {
-    border-bottom: none;
+#votesBalance,
+#news {
+    border-bottom: unset;
 }
 
-.floating_sidebar,.floating_sidebar.show {
-    display:none
+.floating_sidebar,
+.floating_sidebar.show {
+    display: none;
 }
 
 #backdrop:before {
-    content:"";
-    display:block;
-    position:fixed;
-    top:0;
-    left:0;
-    height:42px;
-    width:100%;
-    background-color:#3c3c3c
+    content: "";
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 42px;
+    width: 100%;
+    background-color: #3c3c3c;
 }
 
 .search_box_button {
@@ -276,6 +317,7 @@ ul {
 
 .verticalGrayTabsWrapper {
     border-top: unset;
+    border-left: unset;
 }
 
 .sugglist {
@@ -291,11 +333,13 @@ ul {
     filter: contrast(2) !important;
 }
 
-.audioEmbed .track > .selectableTrack, .bigPlayer .selectableTrack {
+.audioEmbed .track > .selectableTrack,
+.bigPlayer .selectableTrack {
     border-top: #404040 1px solid !important;
-} 
+}
 
-.bigPlayer .paddingLayer .slider, .audioEmbed .track .slider {
+.bigPlayer .paddingLayer .slider,
+.audioEmbed .track .slider {
     background: #3c3c3c !important;
 }
 
@@ -318,4 +362,17 @@ ul {
 .bigPlayer {
     position: sticky;
     top: 42px;
+    box-shadow: unset;
+}
+
+#audio_upload {
+    border: 1px solid #ccc;
+}
+
+#wallAttachmentMenu {
+    box-shadow: unset;
+}
+
+#backdropEditor {
+    border: unset;
 }
