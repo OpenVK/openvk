@@ -212,39 +212,9 @@
                                         </div>
                                         <ul class="aui-nav">
                                             <li>
-                                                <a class="aui-nav-item" href="/admin/settings/tuning">
-                                                    <span class="aui-icon aui-icon-small aui-iconfont-configure"></span>
-                                                    <span class="aui-nav-item-label">{_admin_settings_tuning}</span>
-                                                </a>
-                                            </li>
-                                            <li>
                                                 <a class="aui-nav-item" href="/admin/logs">
                                                     <span class="aui-icon aui-icon-small aui-iconfont-list"></span>
-                                                    <span class="aui-nav-item-label">Логи</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="aui-nav-item" href="/admin/settings/appearance">
-                                                    <span class="aui-icon aui-icon-small aui-iconfont-screen"></span>
-                                                    <span class="aui-nav-item-label">{_admin_settings_appearance}</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="aui-nav-item" href="/admin/settings/security">
-                                                    <span class="aui-icon aui-icon-small aui-iconfont-locked"></span>
-                                                    <span class="aui-nav-item-label">{_admin_settings_security}</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="aui-nav-item" href="/admin/settings/integrations">
-                                                    <span class="aui-icon aui-icon-small aui-iconfont-devtools-branch"></span>
-                                                    <span class="aui-nav-item-label">{_admin_settings_integrations}</span>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a class="aui-nav-item" href="/admin/settings/system">
-                                                    <span class="aui-icon aui-icon-small aui-iconfont-component"></span>
-                                                    <span class="aui-nav-item-label">{_admin_settings_system}</span>
+                                                    <span class="aui-nav-item-label">{_logs}</span>
                                                 </a>
                                             </li>
                                         </ul>
