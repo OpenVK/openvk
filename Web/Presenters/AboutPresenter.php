@@ -166,7 +166,7 @@ final class AboutPresenter extends OpenVKPresenter
             ],
         ];
 
-        echo json_encode($data, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+        echo json_encode($data, JSON_UNESCAPED_SLASHES);
         exit;
     }
 
