@@ -21,13 +21,7 @@ final class Audio extends VKAPIRequestHandler
             $this->fail(201, "Access denied to audio(" . $audio->getId() . ")");
         }
 
-        # рофлан ебало
-        $privApi  = $hash && $GLOBALS["csrfCheck"];
         $audioObj = $audio->toVkApiStruct($this->getUser());
-        if (!$privApi) {
-            $audioObj->manifest = false;
-            $audioObj->keys     = false;
-        }
 
         if ($need_user) {
             $user = (new \openvk\Web\Models\Repositories\Users())->get($audio->getOwner()->getId());

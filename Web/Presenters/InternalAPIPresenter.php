@@ -176,4 +176,26 @@ final class InternalAPIPresenter extends OpenVKPresenter
             exit('');
         }
     }
+
+    public function renderImageFilter()
+    {
+        $is_enabled = OPENVK_ROOT_CONF["openvk"]["preferences"]["notes"]["disableHotlinking"] ?? true;
+        $allowed_hosts = OPENVK_ROOT_CONF["openvk"]["preferences"]["notes"]["allowedHosts"] ?? [];
+
+        $url = $this->requestParam("url");
+        $url = base64_decode($url);
+
+        if (!$is_enabled) {
+            $this->redirect($url);
+        }
+
+        $url_parsed = parse_url($url);
+        $host = $url_parsed['host'];
+
+        if (in_array($host, $allowed_hosts)) {
+            $this->redirect($url);
+        } else {
+            $this->redirect('/assets/packages/static/openvk/img/fn_placeholder.jpg');
+        }
+    }
 }
