@@ -1462,7 +1462,7 @@
 "error_access_denied_short" = "Ошибка доступа";
 "error_access_denied" = "У вас недостаточно прав, чтобы редактировать этот ресурс";
 "success" = "Успешно";
-"comment_will_not_appear" = "Этот комментарий больше не будет показыватся.";
+"comment_will_not_appear" = "Этот комментарий больше не будет показываться.";
 
 "error_when_gifting" = "Не удалось подарить";
 "error_user_not_exists" = "Пользователь или набор не существуют.";
