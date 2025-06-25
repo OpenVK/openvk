@@ -8,23 +8,6 @@ use openvk\Web\Models\Entities\User;
 use openvk\Web\Models\RowModel;
 use Chandler\Patterns\TSimpleSingleton;
 
-class UserEvent
-{
-    private $data;
-
-    public function __construct($data)
-    {
-        $this->data = $data;
-    }
-
-    public function write($edb): bool
-    {
-        $edb->getConnection()->query("INSERT INTO `user-events` VALUES (?, ?, ?, ?, ?)", ...array_values($this->data));
-
-        return true;
-    }
-}
-
 class EventRateLimiter
 {
     use TSimpleSingleton;
@@ -35,58 +18,105 @@ class EventRateLimiter
     public function __construct()
     {
         $this->config = OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["eventsLimit"];
+
         $this->availableFields = array_keys($this->config['list']);
     }
 
     /* 
-    Checks count of actions for last x seconds, returns true if limit has exceed
+    Checks count of actions for last hours
 
-    x is OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["eventsLimit"]["restrictionTime"]
+    Uses config path OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["eventsLimit"]
+
+    Returns:
+
+    true — limit has exceed and the action must be restricted
+
+    false — the action can be performed
     */
     public function tryToLimit(?User $user, string $event_type, bool $distinct = true): bool
     {
-        if (!$this->config['enable']) {
+        $isEnabled = $this->config['enable'];
+        $isIgnoreForAdmins = $this->config['ignoreForAdmins'];
+        $restrictionTime = $this->config['restrictionTime'];
+        $eventsList = $this->config['list'];
+
+        if (!$isEnabled) {
             return false;
         }
 
-        if ($this->config['ignoreForAdmins'] && $user->isAdmin()) {
+        if ($isIgnoreForAdmins && $user->isAdmin()) {
             return false;
         }
 
-        $limitForThisEvent = $this->config['list'][$event_type];
-        $compareTime = time() - $this->config['restrictionTime'];
+        $limitForThatEvent = $eventsList[$event_type];
+        $stat = $this->getEvent($event_type, $user);
+        bdump($stat);
 
-        $query = "SELECT COUNT(".($distinct ? "DISTINCT(`receiverId`)" : "*").") as `cnt` FROM `user-events` WHERE `initiatorId` = ? AND `eventType` = ? AND `eventTime` > ?";
-        
-        $count = $result->fetch()->cnt;
-        #bdump($count); exit();
+        $is_restrict_over = $stat["refresh_time"] < time() - $restrictionTime;
 
-        return $count > $limitForThisEvent;
+        if ($is_restrict_over) {
+            $user->resetEvents($eventsList, $restrictionTime);
+
+            return false;
+        }
+
+        $is = $stat["compared"] > $limitForThatEvent;
+
+        if ($is === false) {
+            $this->incrementEvent($event_type, $user);
+        }
+
+        return $is;
+    }
+
+    public function getEvent(string $event_type, User $by_user): array
+    {
+        $ev_data = $by_user->recieveEventsData($this->config['list']);
+        $values  = $ev_data['counters'];
+        $i = 0;
+
+        $compared = [];
+        bdump($values);
+
+        foreach ($this->config['list'] as $name => $value) {
+            bdump($value);
+            $compared[$name] = $values[$i];
+            $i += 1;
+        }
+
+        return [
+            "compared" => $compared,
+            "refresh_time" => $ev_data["refresh_time"]
+        ];
     }
 
     /*
-    Writes new event to `openvk-eventdb`.`user-events`
+    Updates counter for user
     */
-    public function writeEvent(string $event_type, User $initiator, ?RowModel $reciever = null): bool
+    public function incrementEvent(string $event_type, User $initiator): bool
     {
-        if (!$this->config['enable']) {
+        $isEnabled = $this->config['enable'];
+        $eventsList = OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["eventsLimit"];
+
+        if (!$isEnabled) {
             return false;
         }
 
-        $data = [
-            'initiatorId' => $initiator->getId(),
-            'initiatorIp' => null,
-            'receiverId' => null,
-            'eventType' => $event_type,
-            'eventTime' => time()
-        ];
+        $ev_data = $initiator->recieveEventsData($eventsList);
+        $values  = $ev_data['counters'];
+        $i = 0;
 
-        if ($reciever) {
-            $data['receiverId'] = $reciever->getRealId();
+        $compared = [];
+
+        foreach ($eventsList as $name => $value) {
+            $compared[$name] = $values[$i];
+            $i += 1;
         }
 
-        $newEvent = new UserEvent($data);
-        $newEvent->write($e);
+        $compared[$event_type] += 1;
+
+        bdump($compared);
+        $initiator->stateEvents($compared);
 
         return true;
     }

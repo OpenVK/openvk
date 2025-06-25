@@ -1044,8 +1044,6 @@ class User extends RowModel
             "anonymous" => $anonymous,
             "sent"      => time(),
         ]);
-
-        \openvk\Web\Util\EventRateLimiter::i()->writeEvent("gifts.send", $sender, $this);
     }
 
     public function ban(string $reason, bool $deleteSubscriptions = true, $unban_time = null, ?int $initiator = null): void
@@ -1740,5 +1738,43 @@ class User extends RowModel
     public function getBlacklistSize()
     {
         return DatabaseConnection::i()->getContext()->table("blacklist_relations")->where("author", $this->getId())->count();
+    }
+
+    public function recieveEventsData(array $list): array
+    {
+        $ev_str = $this->getRecord()->events_counters;
+        $values = [];
+
+        if (!$ev_str) {
+            for ($i = 0; $i < sizeof(array_keys($list)); $i++) {
+                $values[] = 0;
+            }
+        } else {
+            $keys = array_keys($list);
+            $values = unpack("S*", base64_decode($ev_str));
+        }
+
+        return [
+            'counters' => $values,
+            'refresh_time' => $this->getRecord()->events_refresh_time,
+        ];
+    }
+
+    public function stateEvents(array $list): void
+    {
+        $this->stateChanges("events_counters", base64_encode(pack("S*", array_values($list))));
+    }
+
+    public function resetEvents(array $list, int $restriction_length)
+    {
+        $values = [];
+
+        for ($i = 0; $i < sizeof(array_keys($list)); $i++) {
+            $values[] = 0;
+        }
+
+        $this->stateEvents($values);
+        $this->stateChanges("events_refresh_time", $restriction_length + time());
+        $this->save();
     }
 }
