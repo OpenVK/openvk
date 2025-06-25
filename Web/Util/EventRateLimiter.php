@@ -49,10 +49,6 @@ class EventRateLimiter
             return false;
         }
 
-        if (!($e = eventdb())) {
-            return false;
-        }
-
         if ($this->config['ignoreForAdmins'] && $user->isAdmin()) {
             return false;
         }
@@ -61,8 +57,7 @@ class EventRateLimiter
         $compareTime = time() - $this->config['restrictionTime'];
 
         $query = "SELECT COUNT(".($distinct ? "DISTINCT(`receiverId`)" : "*").") as `cnt` FROM `user-events` WHERE `initiatorId` = ? AND `eventType` = ? AND `eventTime` > ?";
-
-        $result = $e->getConnection()->query($query, ...[$user->getId(), $event_type, $compareTime]);
+        
         $count = $result->fetch()->cnt;
         #bdump($count); exit();
 
@@ -75,10 +70,6 @@ class EventRateLimiter
     public function writeEvent(string $event_type, User $initiator, ?RowModel $reciever = null): bool
     {
         if (!$this->config['enable']) {
-            return false;
-        }
-
-        if (!($e = eventdb())) {
             return false;
         }
 
