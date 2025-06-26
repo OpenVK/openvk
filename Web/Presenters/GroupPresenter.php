@@ -108,6 +108,12 @@ final class GroupPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
+        if (!$club->getSubscriptionStatus($this->user->identity)) {
+            if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->user->identity, "groups.sub")) {
+                $this->flashFail("err", tr("error"), tr("limit_exceed_exception"));
+            }
+        }
+
         $club->toggleSubscription($this->user->identity);
 
         $this->redirect($club->getURL());

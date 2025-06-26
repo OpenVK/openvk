@@ -1755,11 +1755,11 @@ class User extends RowModel
             $counters = unpack("S*", base64_decode($ev_str));
         }
 
-        $i = 1;
+        $_i = 0;
 
         foreach ($list as $name => $value) {
-            $compared_counters[$name] = $counters[$i] ?? 0;
-            $i += 1;
+            $compared_counters[$name] = $counters[$_i] ?? 0;
+            $_i += 1;
         }
 
         bdump($counters);
@@ -1773,7 +1773,7 @@ class User extends RowModel
     public function stateEvents(array $state_list): void
     {
         bdump($state_list);
-        $this->stateChanges("events_counters", base64_encode(pack("S*", ...array_values($state_list))));
+        $this->stateChanges("events_counters", base64_encode(pack("S*", array_values($state_list))));
 
         if (!$this->getRecord()->events_refresh_time) {
             $this->stateChanges("events_refresh_time", time());

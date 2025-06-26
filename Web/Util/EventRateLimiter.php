@@ -48,8 +48,8 @@ class EventRateLimiter
             return false;
         }
 
-        $limitForThatEvent = $eventsList[$event_type];
         $eventsStats = $user->getEventCounters($eventsList);
+        $limitForThatEvent = $eventsList[$event_type];
 
         $counters = $eventsStats["counters"];
         $refresh_time = $eventsStats["refresh_time"];
