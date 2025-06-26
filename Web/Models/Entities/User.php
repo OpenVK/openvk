@@ -114,7 +114,6 @@ class User extends RowModel
 
     public function getChandlerUser(): ChandlerUser
     {
-        # TODO cache this function
         return new ChandlerUser($this->getRecord()->ref("ChandlerUsers", "user"));
     }
 
@@ -1747,17 +1746,13 @@ class User extends RowModel
         $counters = [];
 
         if (!$ev_str) {
-            bdump(sizeof(array_keys($list)));
             for ($i = 0; $i < sizeof(array_keys($list)); $i++) {
                 $counters[] = 0;
             }
         } else {
-            $counters = unpack("S".$count_of_keys, base64_decode($ev_str, true));
-
+            $counters = unpack("S" . $count_of_keys, base64_decode($ev_str, true));
         }
 
-        bdump(array_keys($list));
-        bdump($counters);
         return [
             'counters' => array_combine(array_keys($list), $counters),
             'refresh_time' => $this->getRecord()->events_refresh_time,
@@ -1766,26 +1761,20 @@ class User extends RowModel
 
     public function stateEvents(array $state_list): void
     {
-        $_ = "";
-        $i = 0;
+        $pack_str = "";
 
         foreach ($state_list as $item => $id) {
-            bdump($i);
-            $_ .= "S";
-            $i += 1;
+            $pack_str .= "S";
         }
 
-        bdump($_);
-        bdump(array_values($state_list));
-
-        $this->stateChanges("events_counters", base64_encode(pack($_, ...array_values($state_list))));
+        $this->stateChanges("events_counters", base64_encode(pack($pack_str, ...array_values($state_list))));
 
         if (!$this->getRecord()->events_refresh_time) {
             $this->stateChanges("events_refresh_time", time());
         }
     }
 
-    public function resetEvents(array $list)
+    public function resetEvents(array $list): void
     {
         $values = [];
 
