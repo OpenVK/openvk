@@ -1742,9 +1742,9 @@ class User extends RowModel
 
     public function getEventCounters(array $list): array
     {
+        $count_of_keys = sizeof(array_keys($list));
         $ev_str = $this->getRecord()->events_counters;
         $counters = [];
-        $compared_counters = [];
 
         if (!$ev_str) {
             bdump(sizeof(array_keys($list)));
@@ -1752,28 +1752,33 @@ class User extends RowModel
                 $counters[] = 0;
             }
         } else {
-            $counters = unpack("S*", base64_decode($ev_str));
+            $counters = unpack("S".$count_of_keys, base64_decode($ev_str, true));
+
         }
 
-        $_i = 0;
-
-        foreach ($list as $name => $value) {
-            $compared_counters[$name] = $counters[$_i] ?? 0;
-            $_i += 1;
-        }
-
+        bdump(array_keys($list));
         bdump($counters);
-        bdump($compared_counters);
         return [
-            'counters' => $compared_counters,
+            'counters' => array_combine(array_keys($list), $counters),
             'refresh_time' => $this->getRecord()->events_refresh_time,
         ];
     }
 
     public function stateEvents(array $state_list): void
     {
-        bdump($state_list);
-        $this->stateChanges("events_counters", base64_encode(pack("S*", array_values($state_list))));
+        $_ = "";
+        $i = 0;
+
+        foreach ($state_list as $item => $id) {
+            bdump($i);
+            $_ .= "S";
+            $i += 1;
+        }
+
+        bdump($_);
+        bdump(array_values($state_list));
+
+        $this->stateChanges("events_counters", base64_encode(pack($_, ...array_values($state_list))));
 
         if (!$this->getRecord()->events_refresh_time) {
             $this->stateChanges("events_refresh_time", time());

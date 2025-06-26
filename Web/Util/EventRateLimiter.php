@@ -65,7 +65,7 @@ class EventRateLimiter
             return false;
         }
 
-        $is_limit_exceed = $event_counter > $limitForThatEvent;
+        $is_limit_exceed = $event_counter >= $limitForThatEvent;
 
         bdump($is_limit_exceed);
         if (!$is_limit_exceed && $is_update) {

@@ -50,7 +50,7 @@ openvk:
                         groups.sub: 50
                         friends.outgoing_sub: 25
                         wall.post: 5000
-                        gifts.send: 20
+                        gifts.send: 30
         blacklists:
             limit: 100
             applyToAdmins: true
