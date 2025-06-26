@@ -1740,41 +1740,56 @@ class User extends RowModel
         return DatabaseConnection::i()->getContext()->table("blacklist_relations")->where("author", $this->getId())->count();
     }
 
-    public function recieveEventsData(array $list): array
+    public function getEventCounters(array $list): array
     {
         $ev_str = $this->getRecord()->events_counters;
-        $values = [];
+        $counters = [];
+        $compared_counters = [];
 
         if (!$ev_str) {
+            bdump(sizeof(array_keys($list)));
             for ($i = 0; $i < sizeof(array_keys($list)); $i++) {
-                $values[] = 0;
+                $counters[] = 0;
             }
         } else {
-            $keys = array_keys($list);
-            $values = unpack("S*", base64_decode($ev_str));
+            $counters = unpack("S*", base64_decode($ev_str));
         }
 
+        $i = 1;
+
+        foreach ($list as $name => $value) {
+            $compared_counters[$name] = $counters[$i] ?? 0;
+            $i += 1;
+        }
+
+        bdump($counters);
+        bdump($compared_counters);
         return [
-            'counters' => $values,
+            'counters' => $compared_counters,
             'refresh_time' => $this->getRecord()->events_refresh_time,
         ];
     }
 
-    public function stateEvents(array $list): void
+    public function stateEvents(array $state_list): void
     {
-        $this->stateChanges("events_counters", base64_encode(pack("S*", array_values($list))));
+        bdump($state_list);
+        $this->stateChanges("events_counters", base64_encode(pack("S*", ...array_values($state_list))));
+
+        if (!$this->getRecord()->events_refresh_time) {
+            $this->stateChanges("events_refresh_time", time());
+        }
     }
 
-    public function resetEvents(array $list, int $restriction_length)
+    public function resetEvents(array $list)
     {
         $values = [];
 
-        for ($i = 0; $i < sizeof(array_keys($list)); $i++) {
-            $values[] = 0;
+        foreach ($list as $key => $val) {
+            $values[$key] = 0;
         }
 
         $this->stateEvents($values);
-        $this->stateChanges("events_refresh_time", $restriction_length + time());
+        $this->stateChanges("events_refresh_time", time());
         $this->save();
     }
 }

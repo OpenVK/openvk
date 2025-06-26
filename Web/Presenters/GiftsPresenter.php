@@ -106,7 +106,7 @@ final class GiftsPresenter extends OpenVKPresenter
             return;
         }
 
-        if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->user->identity, "gifts.send", false)) {
+        if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->user->identity, "gifts.send")) {
             $this->flashFail("err", tr("error"), tr("limit_exceed_exception"));
         }
 

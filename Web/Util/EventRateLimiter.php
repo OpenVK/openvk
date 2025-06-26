@@ -13,19 +13,18 @@ class EventRateLimiter
     use TSimpleSingleton;
 
     private $config;
-    private $availableFields;
 
     public function __construct()
     {
         $this->config = OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["eventsLimit"];
-
-        $this->availableFields = array_keys($this->config['list']);
     }
 
     /* 
-    Checks count of actions for last hours
+    Checks count of actions for last x seconds.
 
-    Uses config path OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["eventsLimit"]
+    Uses OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["eventsLimit"]
+
+    This check should be peformed only after checking other conditions cuz by default it increments counter
 
     Returns:
 
@@ -33,8 +32,9 @@ class EventRateLimiter
 
     false — the action can be performed
     */
-    public function tryToLimit(?User $user, string $event_type, bool $distinct = true): bool
+    public function tryToLimit(?User $user, string $event_type, bool $is_update = true): bool
     {
+        bdump("TRY TO LIMIT IS CALLLLED");
         $isEnabled = $this->config['enable'];
         $isIgnoreForAdmins = $this->config['ignoreForAdmins'];
         $restrictionTime = $this->config['restrictionTime'];
@@ -49,74 +49,51 @@ class EventRateLimiter
         }
 
         $limitForThatEvent = $eventsList[$event_type];
-        $stat = $this->getEvent($event_type, $user);
-        bdump($stat);
+        $eventsStats = $user->getEventCounters($eventsList);
 
-        $is_restrict_over = $stat["refresh_time"] < time() - $restrictionTime;
+        $counters = $eventsStats["counters"];
+        $refresh_time = $eventsStats["refresh_time"];
+        $is_restrict_over = $refresh_time < (time() - $restrictionTime);
+        bdump($refresh_time);
+        bdump("time: " . time());
+        $event_counter = $counters[$event_type];
 
-        if ($is_restrict_over) {
-            $user->resetEvents($eventsList, $restrictionTime);
+        if ($refresh_time && $is_restrict_over) {
+            bdump("RESETTING EVENT COUTNERS");
+            $user->resetEvents($eventsList);
 
             return false;
         }
 
-        $is = $stat["compared"] > $limitForThatEvent;
+        $is_limit_exceed = $event_counter > $limitForThatEvent;
 
-        if ($is === false) {
-            $this->incrementEvent($event_type, $user);
+        bdump($is_limit_exceed);
+        if (!$is_limit_exceed && $is_update) {
+            $this->incrementEvent($counters, $event_type, $user);
         }
 
-        return $is;
-    }
-
-    public function getEvent(string $event_type, User $by_user): array
-    {
-        $ev_data = $by_user->recieveEventsData($this->config['list']);
-        $values  = $ev_data['counters'];
-        $i = 0;
-
-        $compared = [];
-        bdump($values);
-
-        foreach ($this->config['list'] as $name => $value) {
-            bdump($value);
-            $compared[$name] = $values[$i];
-            $i += 1;
-        }
-
-        return [
-            "compared" => $compared,
-            "refresh_time" => $ev_data["refresh_time"]
-        ];
+        return $is_limit_exceed;
     }
 
     /*
     Updates counter for user
     */
-    public function incrementEvent(string $event_type, User $initiator): bool
+    public function incrementEvent(array $old_values, string $event_type, User $initiator): bool
     {
+        bdump("INCREMENT IS CALLED");
         $isEnabled = $this->config['enable'];
-        $eventsList = OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["eventsLimit"];
+        $eventsList = $this->config['list'];
 
         if (!$isEnabled) {
             return false;
         }
+        bdump($old_values);
 
-        $ev_data = $initiator->recieveEventsData($eventsList);
-        $values  = $ev_data['counters'];
-        $i = 0;
+        $old_values[$event_type] += 1;
 
-        $compared = [];
-
-        foreach ($eventsList as $name => $value) {
-            $compared[$name] = $values[$i];
-            $i += 1;
-        }
-
-        $compared[$event_type] += 1;
-
-        bdump($compared);
-        $initiator->stateEvents($compared);
+        bdump($old_values);
+        $initiator->stateEvents($old_values);
+        $initiator->save();
 
         return true;
     }
