@@ -877,6 +877,8 @@ final class Wall extends VKAPIRequestHandler
                 "id"            => $comment->getId(),
                 "from_id"       => $oid,
                 "date"          => $comment->getPublicationTime()->timestamp(),
+                "can_edit"      => $post->canBeEditedBy($this->getUser()),
+                "can_delete"    => $post->canBeDeletedBy($this->getUser()),
                 "text"          => $comment->getText(false),
                 "post_id"       => $post->getVirtualId(),
                 "owner_id"      => method_exists($post, 'isPostedOnBehalfOfGroup') && $post->isPostedOnBehalfOfGroup() ? $post->getOwner()->getId() * -1 : $post->getOwner()->getId(),
