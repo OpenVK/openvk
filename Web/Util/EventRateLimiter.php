@@ -21,9 +21,8 @@ class EventRateLimiter
 
     public function tryToLimit(?User $user, string $event_type, bool $is_update = true): bool
     {
-
-        /* 
-        Checks count of actions for last x seconds.
+        /*
+        Checks count of actions for last x seconds
 
         Uses OPENVK_ROOT_CONF["openvk"]["preferences"]["security"]["rateLimits"]["eventsLimit"]
 
@@ -34,6 +33,8 @@ class EventRateLimiter
         true — limit has exceed and the action must be restricted
 
         false — the action can be performed
+
+        Also returns "true" if this option is disabled
         */
 
         $isEnabled = $this->config['enable'];
