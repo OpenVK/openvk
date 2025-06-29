@@ -73,13 +73,13 @@ h1 {
     position: relative;
     width: 791px;
     height: 45px;
-    background: url('../img/header.png');
+    background: url('../img/header.svg');
     background-repeat: no-repeat;
     background-position: 0;
 }
 
 .page_custom_header {
-    background: url('../img/header_custom.png');
+    background: url('../img/header_custom.svg');
 }
 
 #page_act {
