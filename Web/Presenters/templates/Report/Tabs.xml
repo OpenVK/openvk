@@ -67,7 +67,7 @@
             },
             success: (response) => {
                 if (response?.reports?.length != _content) {
-                    NewNotification("Обратите внимание", "В списке появились новые жалобы. Работа ждёт :)");
+                    // NewNotification("Обратите внимание", "В списке появились новые жалобы. Работа ждёт :)");
                 }
 
                 if (response.reports.length > 0) {

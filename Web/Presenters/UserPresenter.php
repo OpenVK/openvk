@@ -418,6 +418,12 @@ final class UserPresenter extends OpenVKPresenter
         if ($this->postParam("act") == "rej") {
             $user->changeFlags($this->user->identity, 0b10000000, true);
         } else {
+            if ($user->getSubscriptionStatus($this->user->identity) == \openvk\Web\Models\Entities\User::SUBSCRIPTION_ABSENT) {
+                if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->user->identity, "friends.outgoing_sub")) {
+                    $this->flashFail("err", tr("error"), tr("limit_exceed_exception"));
+                }
+            }
+
             $user->toggleSubscription($this->user->identity);
         }
 

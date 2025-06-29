@@ -713,6 +713,10 @@ final class Wall extends VKAPIRequestHandler
                 $post->setSuggested(1);
             }
 
+            if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->getUser(), "wall.post")) {
+                $this->failTooOften();
+            }
+
             $post->save();
         } catch (\LogicException $ex) {
             $this->fail(100, "One of the parameters specified was missing or invalid");
@@ -723,7 +727,7 @@ final class Wall extends VKAPIRequestHandler
         }
 
         if ($owner_id > 0 && $owner_id !== $this->getUser()->getId()) {
-            (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
+            (new WallPostNotification($wallOwner, $post, $this->getUser()))->emit();
         }
 
         return (object) ["post_id" => $post->getVirtualId()];

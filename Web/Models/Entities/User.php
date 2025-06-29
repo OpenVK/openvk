@@ -1738,4 +1738,52 @@ class User extends RowModel
     {
         return DatabaseConnection::i()->getContext()->table("blacklist_relations")->where("author", $this->getId())->count();
     }
+
+    public function getEventCounters(array $list): array
+    {
+        $count_of_keys = sizeof(array_keys($list));
+        $ev_str = $this->getRecord()->events_counters;
+        $counters = [];
+
+        if (!$ev_str) {
+            for ($i = 0; $i < sizeof(array_keys($list)); $i++) {
+                $counters[] = 0;
+            }
+        } else {
+            $counters = unpack("S" . $count_of_keys, base64_decode($ev_str, true));
+        }
+
+        return [
+            'counters' => array_combine(array_keys($list), $counters),
+            'refresh_time' => $this->getRecord()->events_refresh_time,
+        ];
+    }
+
+    public function stateEvents(array $state_list): void
+    {
+        $pack_str = "";
+
+        foreach ($state_list as $item => $id) {
+            $pack_str .= "S";
+        }
+
+        $this->stateChanges("events_counters", base64_encode(pack($pack_str, ...array_values($state_list))));
+
+        if (!$this->getRecord()->events_refresh_time) {
+            $this->stateChanges("events_refresh_time", time());
+        }
+    }
+
+    public function resetEvents(array $list): void
+    {
+        $values = [];
+
+        foreach ($list as $key => $val) {
+            $values[$key] = 0;
+        }
+
+        $this->stateEvents($values);
+        $this->stateChanges("events_refresh_time", time());
+        $this->save();
+    }
 }
