@@ -25,7 +25,7 @@
                         <span class="nobold">{_code}: </span>
                     </td>
                     <td>
-                        <input type="text" name="code" autocomplete="off" required autofocus />
+                        <input type="number" name="code" autocomplete="off" required autofocus />
                     </td>
                 </tr>
                 <tr>

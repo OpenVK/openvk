@@ -1653,6 +1653,8 @@
 "error_geolocation" = "Error while trying to pin geolocation";
 "error_no_geotag" = "There is no geo-tag pinned in this post";
 
+"limit_exceed_exception" = "You're doing this action too often. Try again later.";
+
 /* Admin actions */
 
 "login_as" = "Login as $1";

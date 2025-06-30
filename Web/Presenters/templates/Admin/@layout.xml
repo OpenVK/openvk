@@ -2,15 +2,69 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
         <style>
             {var $css = file_get_contents(OPENVK_ROOT . "/Web/static/js/node_modules/@atlassian/aui/dist/aui/aui-prototyping.css")}
             {str_replace("fonts/", "/assets/packages/static/openvk/js/node_modules/@atlassian/aui/dist/aui/fonts/", $css)|noescape}
             {file_get_contents(OPENVK_ROOT . "/Web/static/js/node_modules/@atlassian/aui/dist/aui/aui-prototyping-darkmode.css")|noescape}
+
+            .fake-icon {
+                float: left;
+                width: 20px;
+                margin-right: 10px;
+            }
+            .aui-sidebar[aria-expanded="false"] .aui-sidebar-group-tier-one .aui-nav > li > .aui-nav-item .fake-icon {
+                margin-right: 0;
+                float: none;
+            }
+
+            @media (max-width: 600px) {
+                .aui-sidebar {
+                    min-width: 0px;
+                }
+                .aui-page-sidebar.aui-sidebar-collapsed {
+                    --aui-sidebar-width: 0px;
+                }
+                .aui-sidebar[aria-expanded="false"] .aui-sidebar-footer {
+                    position:fixed;
+                    background-color:var(--aui-sidebar-bg-color);
+                    bottom:0;
+                    left:0;
+                    width: 56px;
+                }
+                .aui-page-panel {
+                    overflow-x:auto;
+                    width:100vw;
+                }
+                table.aui {
+                    white-space: nowrap;
+                }
+                form.aui:not(.aui-legacy-forms) .date-select, form.aui:not(.aui-legacy-forms) .field-group, form.aui:not(.aui-legacy-forms) .group {
+                    padding-left: 0;
+                }
+                form.aui:not(.aui-legacy-forms) .field-group > aui-label, form.aui:not(.aui-legacy-forms) .field-group > label, form.aui:not(.aui-legacy-forms) legend {
+                    float: none;
+                    margin-left: 0;
+                    padding: 5px 0 5px;
+                    text-align: inherit;
+                    width: 100%;
+                    display: block;
+                }
+                form.aui:not(.aui-legacy-forms) > .field-group:has(input[type="checkbox"]) {
+                    display: flex;
+                }
+                form.aui:not(.aui-legacy-forms) .select, form.aui:not(.aui-legacy-forms) .text, form.aui:not(.aui-legacy-forms) .textarea {
+                    max-width: 100%;
+                }
+                form.aui .field-group::after, form.aui .field-group::before {
+                    display: none;
+                }
+            }
         </style>
         <title>{include title} - {_admin} {$instance_name}</title>
     </head>
-    <body>
+    <body class="aui-page aui-page-sidebar">
         <div id="page">
             <header id="header" role="banner">
                 <nav class="aui-header aui-dropdown2-trigger-group" role="navigation">
@@ -69,97 +123,135 @@
                         </div>
                     </div>
                 </nav>
-            </header>
-            <div class="aui-page-panel">
-                <div class="aui-page-panel-inner">
-                    <div class="aui-page-panel-nav">
-                        <nav class="aui-navgroup aui-navgroup-vertical">
-                            <div class="aui-navgroup-inner">
-                                <div class="aui-navgroup-primary">
-                                    <div class="aui-nav-heading">
-                                        <strong>{_admin_overview}</strong>
+            </header> 
+            <div id="content">
+                <div class="aui-sidebar" id="admin-sidebar" aria-label="Admin sidebar">
+                    <div class="aui-sidebar-wrapper" aria-expanded="true">
+                        <div class="aui-sidebar-body">
+                            <nav class="aui-navgroup aui-navgroup-vertical">
+                                <div class="aui-navgroup-inner">
+                                    <div class="aui-sidebar-group aui-sidebar-group-tier-one">
+                                        <div class="aui-nav-heading">
+                                            <strong>{_admin_overview}</strong>
+                                        </div>
+                                        <ul class="aui-nav">
+                                            <li>
+                                                <a class="aui-nav-item" href="/admin">
+                                                    <span class="aui-icon aui-icon-small aui-iconfont-dashboard"></span>
+                                                    <span class="aui-nav-item-label">{_admin_overview_summary}</span>
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </div>
-                                    <ul class="aui-nav">
-                                        <li>
-                                            <a href="/admin">{_admin_overview_summary}</a>
-                                        </li>
-                                    </ul>
-                                    <div class="aui-nav-heading">
-                                        <strong>{_admin_content}</strong>
+                                    <div class="aui-sidebar-group aui-sidebar-group-tier-one">
+                                        <div class="aui-nav-heading">
+                                            <strong>{_admin_content}</strong>
+                                        </div>
+                                        <ul class="aui-nav">
+                                            <li>
+                                                <a class="aui-nav-item" href="/admin/users">
+                                                    <span class="aui-icon aui-icon-small aui-iconfont-people"></span>
+                                                    <span class="aui-nav-item-label">{_users}</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="aui-nav-item" href="/admin/clubs">
+                                                    <span class="aui-icon aui-icon-small aui-iconfont-group"></span>
+                                                    <span class="aui-nav-item-label">{_groups}</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="aui-nav-item" href="/admin/bannedLinks">
+                                                    <span class="aui-icon aui-icon-small aui-iconfont-cross-circle"></span>
+                                                    <span class="aui-nav-item-label">{_admin_banned_links}</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="aui-nav-item" href="/admin/music">
+                                                    <span class="aui-icon aui-icon-small aui-iconfont-audio"></span>
+                                                    <span class="aui-nav-item-label">{_admin_music}</span>
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </div>
-                                    <ul class="aui-nav">
-                                        <li>
-                                            <a href="/admin/users">{_users}</a>
-                                        </li>
-                                        <li>
-                                            <a href="/admin/clubs">{_groups}</a>
-                                        </li>
-                                        <li>
-                                            <a href="/admin/bannedLinks">{_admin_banned_links}</a>
-                                        </li>
-                                        <li>
-                                            <a href="/admin/music">{_admin_music}</a>
-                                        </li>
-                                    </ul>
-                                    <div class="aui-nav-heading">
-                                        <strong>Chandler</strong>
+                                    <div class="aui-sidebar-group aui-sidebar-group-tier-one">
+                                        <div class="aui-nav-heading">
+                                            <strong>Chandler</strong>
+                                        </div>
+                                        <ul class="aui-nav">
+                                            <li>
+                                                <a class="aui-nav-item" href="/admin/chandler/groups">
+                                                    <span class="aui-icon aui-icon-small aui-iconfont-group"></span>
+                                                    <span class="aui-nav-item-label">{_c_groups}</span>
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </div>
-                                    <ul class="aui-nav">
-                                        <li>
-                                            <a href="/admin/chandler/groups">{_c_groups}</a>
-                                        </li>
-                                    </ul>
-                                    <div class="aui-nav-heading">
-                                        <strong>{_admin_services}</strong>
+                                    <div class="aui-sidebar-group aui-sidebar-group-tier-one">
+                                        <div class="aui-nav-heading">
+                                            <strong>{_admin_services}</strong>
+                                        </div>
+                                        <ul class="aui-nav">
+                                            <li>
+                                                <a class="aui-nav-item" href="/admin/vouchers">
+                                                    <span class="aui-icon aui-icon-small aui-iconfont-credit-card"></span>
+                                                    <span class="aui-nav-item-label">{_vouchers}</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="aui-nav-item" href="/admin/gifts">
+                                                    <span class="fake-icon">🎁</span>
+                                                    <span class="aui-nav-item-label">{_gifts}</span>
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </div>
-                                    <ul class="aui-nav">
-                                        <li>
-                                            <a href="/admin/vouchers">{_vouchers}</a>
-                                        </li>
-                                        <li>
-                                            <a href="/admin/gifts">{_gifts}</a>
-                                        </li>
-                                    </ul>
-                                    <div class="aui-nav-heading">
-                                        <strong>{_admin_settings}</strong>
+                                    <div class="aui-sidebar-group aui-sidebar-group-tier-one">
+                                        <div class="aui-nav-heading">
+                                            <strong>{_admin_settings}</strong>
+                                        </div>
+                                        <ul class="aui-nav">
+                                            <li>
+                                                <a class="aui-nav-item" href="/admin/logs">
+                                                    <span class="aui-icon aui-icon-small aui-iconfont-list"></span>
+                                                    <span class="aui-nav-item-label">{_logs}</span>
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </div>
-                                    <ul class="aui-nav">
-                                        <li>
-                                            <a href="/admin/settings/tuning">{_admin_settings_tuning}</a>
-                                        </li>
-                                        <li>
-                                            <a href="/admin/logs">Логи</a>
-                                        </li>
-                                        <li>
-                                            <a href="/admin/settings/appearance">{_admin_settings_appearance}</a>
-                                        </li>
-                                        <li>
-                                            <a href="/admin/settings/security">{_admin_settings_security}</a>
-                                        </li>
-                                        <li>
-                                            <a href="/admin/settings/integrations">{_admin_settings_integrations}</a>
-                                        </li>
-                                        <li>
-                                            <a href="/admin/settings/system">{_admin_settings_system}</a>
-                                        </li>
-                                    </ul>
-                                    <div class="aui-nav-heading">
-                                        <strong>{_admin_about}</strong>
+                                    <div class="aui-sidebar-group aui-sidebar-group-tier-one">
+                                        <div class="aui-nav-heading">
+                                            <strong>{_admin_about}</strong>
+                                        </div>
+                                        <ul class="aui-nav">
+                                            <li>
+                                                <a class="aui-nav-item" href="/about:openvk">
+                                                    <span class="aui-icon aui-icon-small aui-iconfont-info"></span>
+                                                    <span class="aui-nav-item-label">{_admin_about_version}</span>
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a class="aui-nav-item" href="/about">
+                                                    <span class="aui-icon aui-icon-small aui-iconfont-info-filled"></span>
+                                                    <span class="aui-nav-item-label">{_admin_about_instance}</span>
+                                                </a>
+                                            </li>
+                                        </ul>
                                     </div>
-                                    <ul class="aui-nav">
-                                        <li>
-                                            <a href="/about:openvk">{_admin_about_version}</a>
-                                        </li>
-                                        <li>
-                                            <a href="/about">{_admin_about_instance}</a>
-                                        </li>
-                                    </ul>
                                 </div>
-                            </div>
-                        </nav>
+                            </nav>
+                        </div>
+                        <div class="aui-sidebar-footer" style="padding: 10px; text-align: center;">
+                            <button type="button" id="sidebar-toggle" class="aui-button aui-button-subtle aui-sidebar-toggle aui-sidebar-footer-tipsy" aria-label="Toggle sidebar">
+                                <span class="aui-icon aui-icon-small aui-iconfont-chevron-double-left"></span>
+                            </button>
+                        </div>
                     </div>
-                    <section class="aui-page-panel-content">
-                        {ifset $flashMessage}
+                </div>
+                <main class="aui-page-panel" id="main" role="main">
+                    <div class="aui-page-panel-inner">
+                        <div class="aui-page-panel-content">
+                            {ifset $flashMessage}
                             {var $type = ["err" => "error", "warn" => "warning", "info" => "basic", "succ" => "success"][$flashMessage->type]}
                             <div class="aui-message aui-message-{$type}" style="margin-bottom: 15px;">
                                 <p class="title">
@@ -187,20 +279,43 @@
                         <main>
                             {include content}
                         </main>
-                    </section>
+                    </div>
                 </div>
-            </div>
-            <footer id="footer" role="contentinfo">
-                <section class="footer-body">
-                    OpenVK <a href="/about:openvk">{php echo OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {\Chandler\Database\DatabaseConnection::i()->getConnection()->getPdo()->getAttribute(\PDO::ATTR_SERVER_VERSION)}
-                </section>
-            </footer>
+            </main>
         </div>
-
+        <footer id="footer" role="contentinfo">
+            <section class="footer-body">
+                OpenVK <a href="/about:openvk">{php echo OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {\Chandler\Database\DatabaseConnection::i()->getConnection()->getPdo()->getAttribute(\PDO::ATTR_SERVER_VERSION)}
+            </section>
+        </footer>
         {script "js/node_modules/jquery/dist/jquery.min.js"}
         {script "js/node_modules/@atlassian/aui/dist/aui/aui-prototyping.js"}
         <script>AJS.tabs.setup();</script>
+        <script>
+        (function() {
+        function markActiveNavItems() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.aui-nav a');
+            
+            navLinks.forEach(link => {
+                const href = link.getAttribute('href');
 
+                if (currentPath === href || 
+                    (href !== '/admin' && currentPath.startsWith(href)) ||
+                    (href === '/admin' && currentPath === '/admin')) {
+                    link.parentElement.classList.add('aui-nav-selected');
+                    let parentGroup = link.closest('.aui-sidebar-group');
+                    while (parentGroup) {
+                        parentGroup.classList.add('aui-nav-child-selected');
+                        parentGroup = parentGroup.parentElement.closest('.aui-sidebar-group');
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', markActiveNavItems);
+})();
+</script>
         {ifset scripts}
             {include scripts}
         {/ifset}

@@ -1458,7 +1458,7 @@
 "error_access_denied_short" = "Ошибка доступа";
 "error_access_denied" = "У вас недостаточно прав, чтобы редактировать этот ресурс";
 "success" = "Успешно";
-"comment_will_not_appear" = "Этот комментарий больше не будет показыватся.";
+"comment_will_not_appear" = "Этот комментарий больше не будет показываться.";
 
 "error_when_gifting" = "Не удалось подарить";
 "error_user_not_exists" = "Пользователь или набор не существуют.";
@@ -1556,6 +1556,8 @@
 "error_playlist_creating_too_small" = "Добавь хотя бы одну аудиозапись.";
 "error_geolocation" = "Ошибка при прикреплении геометки";
 "error_no_geotag" = "У поста не указана гео-метка";
+
+"limit_exceed_exception" = "Вы совершаете это действие слишком часто. Повторите позже.";
 
 /* Admin actions */
 

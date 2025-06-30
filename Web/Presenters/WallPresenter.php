@@ -356,6 +356,10 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"));
         }
 
+        if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->user->identity, "wall.post")) {
+            $this->flashFail("err", tr("error"), tr("limit_exceed_exception"));
+        }
+
         $should_be_suggested = $wall < 0 && !$wallOwner->canBeModifiedBy($this->user->identity) && $wallOwner->getWallType() == 2;
         try {
             $post = new Post();

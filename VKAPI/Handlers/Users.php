@@ -317,6 +317,32 @@ final class Users extends VKAPIRequestHandler
 
                                 $response[$i]->custom_fields = $append_array;
                                 break;
+                            case "bdate":
+                                if (!$canView) {
+                                    $response[$i]->bdate = "01.01.1970";
+                                    break;
+                                }
+                                $visibility = $usr->getBirthdayPrivacy();
+                                $response[$i]->bdate_visibility = $visibility;
+
+                                $birthday = $usr->getBirthday();
+                                if ($birthday) {
+                                    switch ($visibility) {
+                                        case 1:
+                                            $response[$i]->bdate = $birthday->format('%d.%m');
+                                            break;
+                                        case 2:
+                                            $response[$i]->bdate = $birthday->format('%d.%m.%Y');
+                                            break;
+                                        case 0:
+                                        default:
+                                            $response[$i]->bdate = null;
+                                            break;
+                                    }
+                                } else {
+                                    $response[$i]->bdate = null;
+                                }
+                                break;
                         }
                     }
 
