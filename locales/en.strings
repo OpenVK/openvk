@@ -480,11 +480,7 @@
 "meetings_one" = "$1 meeting";
 "meetings_other" = "$1 meetings";
 
-"open_new_group" = "Start a New Group";
-"open_group_desc" = "Unable to find the perfect group? Start your own...";
-"search_group" = "Search for a Group";
 "search_by_groups" = "Explore Groups";
-"search_group_desc" = "Browse through existing groups and find the one that suits your needs...";
 
 "error_suggestions" = "Error accessing to suggestions";
 "error_suggestions_closed" = "This group has closed wall.";
