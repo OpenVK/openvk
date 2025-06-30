@@ -200,6 +200,7 @@ final class WallPresenter extends OpenVKPresenter
         foreach ($posts->page((int) ($_GET["p"] ?? 1), $perPage) as $post) {
             $this->template->posts[] = $this->posts->get($post->id);
         }
+        $this->template->feedIgnoreButton = true;
     }
 
     public function renderGlobalFeed(): void
@@ -240,6 +241,7 @@ final class WallPresenter extends OpenVKPresenter
         foreach ($posts as $post) {
             $this->template->posts[] = $this->posts->get($post->id);
         }
+        $this->template->feedIgnoreButton = true;
     }
 
     public function renderHashtagFeed(string $hashtag): void

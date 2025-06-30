@@ -359,6 +359,11 @@
 "subscriptions_one" = "$1 subscription";
 "subscriptions_other" = "$1 subscriptions";
 
+"feed_user_ignored" = "User will no longer appear in the feed.";
+"feed_club_ignored" = "Club will no longer appear in the feed.";
+"feed_unignore" = "Restore.";
+"feed_ignore" = "Not interested";
+
 /* Group */
 
 "group" = "Group";
