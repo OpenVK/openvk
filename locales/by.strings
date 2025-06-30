@@ -77,8 +77,8 @@
 "politViews_5" = "Ліберальныя";
 "politViews_6" = "Кансерватыўныя";
 "politViews_7" = "Манархічныя";
-"politViews_8" = "Ультраконсервативные";
-"politViews_9" = "Либертарианские";
+"politViews_8" = "Ультракансерватыўныя";
+"politViews_9" = "Лібертарыянскія";
 
 "contact_information" = "Кантактная інфармацыя";
 
@@ -93,9 +93,9 @@
 "interests" = "Інтарэсы";
 "favorite_music" = "Любімая музыка";
 "favorite_films" = "Любімыя фільмы";
-"favorite_shows" = "Любимыя ТБ-шоу";
+"favorite_shows" = "Любімыя ТБ-шоу";
 "favorite_books" = "Любімыя кнігі";
-"favorite_quotes" = "Любимыя цытаты";
+"favorite_quotes" = "Любімыя цытаты";
 "information_about" = "Пра сябе";
 
 /* Wall */
@@ -109,8 +109,8 @@
 "delete" = "Выдаліць";
 "comments" = "Каментары";
 "share" = "Падзяліцца";
-"comments_tip" = "Будзьце першым, хто пакіне каментарый!";
-"your_comment" = "Ваш каментарый";
+"comments_tip" = "Будзьце першым, хто пакіне каментар!";
+"your_comment" = "Ваш каментар";
 "comments" = "Каментары";
 "shown" = "Паказана";
 "x_out_of" = "$1 з";
@@ -325,7 +325,7 @@
 "search_for_groups" = "Пошук груп";
 "search_for_users" = "Шукаць карыстальнікаў";
 "search_for_posts" = "Пошук пастоў";
-"search_for_comments" = "Пошук каментарыяў";
+"search_for_comments" = "Пошук каментароў";
 "search_for_videos" = "Шукаць відэа";
 "search_for_apps" = "Шукаць праграмы";
 "search_for_notes" = "Шукаць нататкі";
@@ -400,7 +400,7 @@
 
 "notifications_like" = "$1 спадабалася ваша $2запіс$3 ад $4";
 "notifications_repost" = "$1 падзяліўся(-лась) вашай $2запісью$3 от $4";
-"notifications_comment_under" = "$1 пакінул(-ла) комментарый пад $2";
+"notifications_comment_under" = "$1 пакінул(-ла) каментар пад $2";
 "notifications_under_note" = "вашай $3нататкай$4";
 "notifications_under_photo" = "вашым $3фота$4";
 "notifications_under_post" = "вашай $3запісью$4 ад $5";
