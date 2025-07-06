@@ -80,7 +80,7 @@ h1 {
 }
 
 .page_custom_header {
-    background: url('../img/header_custom.svg');
+    background-image: url('../img/header_custom.svg');
     background-size: 100%;
 }
 
