@@ -713,6 +713,10 @@ final class Wall extends VKAPIRequestHandler
                 $post->setSuggested(1);
             }
 
+            if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->getUser(), "wall.post")) {
+                $this->failTooOften();
+            }
+
             $post->save();
         } catch (\LogicException $ex) {
             $this->fail(100, "One of the parameters specified was missing or invalid");
@@ -723,7 +727,7 @@ final class Wall extends VKAPIRequestHandler
         }
 
         if ($owner_id > 0 && $owner_id !== $this->getUser()->getId()) {
-            (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
+            (new WallPostNotification($wallOwner, $post, $this->getUser()))->emit();
         }
 
         return (object) ["post_id" => $post->getVirtualId()];
@@ -873,6 +877,8 @@ final class Wall extends VKAPIRequestHandler
                 "id"            => $comment->getId(),
                 "from_id"       => $oid,
                 "date"          => $comment->getPublicationTime()->timestamp(),
+                "can_edit"      => $post->canBeEditedBy($this->getUser()),
+                "can_delete"    => $post->canBeDeletedBy($this->getUser()),
                 "text"          => $comment->getText(false),
                 "post_id"       => $post->getVirtualId(),
                 "owner_id"      => method_exists($post, 'isPostedOnBehalfOfGroup') && $post->isPostedOnBehalfOfGroup() ? $post->getOwner()->getId() * -1 : $post->getOwner()->getId(),

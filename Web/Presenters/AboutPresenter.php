@@ -147,6 +147,29 @@ final class AboutPresenter extends OpenVKPresenter
         $this->redirect("https://github.com/openvk/openvk#readme");
     }
 
+    public function renderAssetLinksJSON(): void
+    {
+        # Необходимо любому андроид приложению для автоматического разрешения принимать ссылки с этого сайта.
+        # Не шарю как писать норм на php поэтому тут чутка на вайбкодил - искренне ваш, ZAZiOs.
+        header("Content-Type: application/json");
+
+        $data = [
+            [
+                "relation" => ["delegate_permission/common.handle_all_urls"],
+                "target" => [
+                    "namespace" => "android_app",
+                    "package_name" => "oss.OpenVK.Native",
+                    "sha256_cert_fingerprints" => [
+                        "79:67:14:23:DC:6E:FA:49:64:1F:F1:81:0E:B0:A3:AE:6E:88:AB:0D:CF:BC:02:96:F3:6D:76:6B:82:94:D6:9C",
+                    ],
+                ],
+            ],
+        ];
+
+        echo json_encode($data, JSON_UNESCAPED_SLASHES);
+        exit;
+    }
+
     public function renderDev(): void
     {
         $this->redirect("https://docs.ovk.to/");

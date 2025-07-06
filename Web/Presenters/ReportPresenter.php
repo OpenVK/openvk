@@ -103,6 +103,10 @@ final class ReportPresenter extends OpenVKPresenter
             exit(json_encode([ "error" => "You can't report yourself" ]));
         }
 
+        if ($this->user->identity->isBannedInSupport()) {
+            exit(json_encode([ "reason" => $this->queryParam("reason") ]));
+        }
+
         if (in_array($this->queryParam("type"), ["post", "photo", "video", "group", "comment", "note", "app", "user", "audio", "doc"])) {
             if (count(iterator_to_array($this->reports->getDuplicates($this->queryParam("type"), $id, null, $this->user->id))) <= 0) {
                 $report = new Report();
