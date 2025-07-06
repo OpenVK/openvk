@@ -74,12 +74,14 @@ h1 {
     width: 791px;
     height: 45px;
     background: url('../img/header.svg');
+    background-size: 100%;
     background-repeat: no-repeat;
     background-position: 0;
 }
 
 .page_custom_header {
     background: url('../img/header_custom.svg');
+    background-size: 100%;
 }
 
 #page_act {
