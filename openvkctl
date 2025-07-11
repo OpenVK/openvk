@@ -13,5 +13,6 @@ $application = new Application();
 $application->add(new CLI\UpgradeCommand());
 $application->add(new CLI\RebuildImagesCommand());
 $application->add(new CLI\FetchToncoinTransactions());
+$application->add(new CLI\CleanupPendingUploadsCommand());
 
 $application->run();
