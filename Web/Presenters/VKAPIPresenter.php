@@ -132,7 +132,7 @@ final class VKAPIPresenter extends OpenVKPresenter
             exit(json_encode([
                 "error" => "insufficient_storage",
                 "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
-                "pending_uploads" => $pendingInfo
+                "pending_uploads" => $pendingInfo,
             ]));
         }
 
@@ -178,7 +178,7 @@ final class VKAPIPresenter extends OpenVKPresenter
                 exit(json_encode([
                     "error" => "insufficient_storage",
                     "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
-                    "pending_uploads" => $pendingInfo
+                    "pending_uploads" => $pendingInfo,
                 ]));
             }
 
@@ -210,23 +210,23 @@ final class VKAPIPresenter extends OpenVKPresenter
     {
         $pendingFiles = glob("$folder/$userId" . "_*.oct");
         $pendingInfo = [];
-        
+
         foreach ($pendingFiles as $file) {
             $filename = basename($file);
             $uploadId = str_replace([$userId . "_", ".oct"], "", $filename);
             $fileTime = filemtime($file);
             $fileSize = filesize($file);
             $ageHours = round((time() - $fileTime) / 3600, 1);
-            
+
             $pendingInfo[] = [
                 "upload_id" => $uploadId,
                 "filename" => $filename,
                 "size" => $fileSize,
                 "age_hours" => $ageHours,
-                "uploaded_at" => date("Y-m-d H:i:s", $fileTime)
+                "uploaded_at" => date("Y-m-d H:i:s", $fileTime),
             ];
         }
-        
+
         return $pendingInfo;
     }
 
