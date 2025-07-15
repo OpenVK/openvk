@@ -126,8 +126,14 @@ final class VKAPIPresenter extends OpenVKPresenter
         $maxFiles = OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["api"]["maxFilesPerDomain"];
         $usrFiles = sizeof(glob("$folder/$data[USER]_*.oct"));
         if ($usrFiles >= $maxFiles) {
+            $pendingInfo = $this->getPendingUploadInfo($folder, $data["USER"]);
             header("HTTP/1.1 507 Insufficient Storage");
-            exit("There are $maxFiles pending already. Please save them before uploading more :3");
+            header("Content-Type: application/json");
+            exit(json_encode([
+                "error" => "insufficient_storage",
+                "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
+                "pending_uploads" => $pendingInfo,
+            ]));
         }
 
         # Not multifile
@@ -166,8 +172,14 @@ final class VKAPIPresenter extends OpenVKPresenter
                     unlink($f);
                 }
 
+                $pendingInfo = $this->getPendingUploadInfo($folder, $data["USER"]);
                 header("HTTP/1.1 507 Insufficient Storage");
-                exit("There are $maxFiles pending already. Please save them before uploading more :3");
+                header("Content-Type: application/json");
+                exit(json_encode([
+                    "error" => "insufficient_storage",
+                    "error_description" => "There are $maxFiles pending already. Please save them before uploading more :3",
+                    "pending_uploads" => $pendingInfo,
+                ]));
             }
 
             $files[++$usrFiles] = move_uploaded_file($file["tmp_name"], "$folder/$data[USER]_$usrFiles.oct");
@@ -192,6 +204,30 @@ final class VKAPIPresenter extends OpenVKPresenter
             "album_id"    => "undefined",
             "hash"        => $manifestHash,
         ]));
+    }
+
+    private function getPendingUploadInfo(string $folder, string $userId): array
+    {
+        $pendingFiles = glob("$folder/$userId" . "_*.oct");
+        $pendingInfo = [];
+
+        foreach ($pendingFiles as $file) {
+            $filename = basename($file);
+            $uploadId = str_replace([$userId . "_", ".oct"], "", $filename);
+            $fileTime = filemtime($file);
+            $fileSize = filesize($file);
+            $ageHours = round((time() - $fileTime) / 3600, 1);
+
+            $pendingInfo[] = [
+                "upload_id" => $uploadId,
+                "filename" => $filename,
+                "size" => $fileSize,
+                "age_hours" => $ageHours,
+                "uploaded_at" => date("Y-m-d H:i:s", $fileTime),
+            ];
+        }
+
+        return $pendingInfo;
     }
 
     public function renderRoute(string $object, string $method): void
