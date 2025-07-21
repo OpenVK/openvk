@@ -636,7 +636,10 @@ final class AdminPresenter extends OpenVKPresenter
 
         if ($this->template->mode == "members") {
             if ($this->postParam("uid")) {
-                if (!is_null($DB->query("SELECT * FROM `ChandlerACLRelations` WHERE `user` = '" . $this->postParam("uid") . "'"))) {
+                if ($DB->query("SELECT * FROM `Profiles` WHERE `user` = '" . $this->postParam("uid") . "'")->getRowCount() == 0){
+                    $this->flashFail("err", tr("error"), tr("profile_not_found"));
+                }
+                if ($DB->query("SELECT * FROM `ChandlerACLRelations` WHERE `user` = '" . $this->postParam("uid") . "' AND `group` = '$UUID'")->getRowCount() > 0) {
                     $this->flashFail("err", tr("error"), tr("c_user_is_already_in_group"));
                 }
             }
