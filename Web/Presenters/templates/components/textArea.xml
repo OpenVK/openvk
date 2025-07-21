@@ -4,7 +4,7 @@
 
 <div id="write" class='model_content_textarea' style="padding: 5px 0;" data-id="{is_null($owner) || gettype($owner) == 'integer' ? $owner : $owner->getId()}">
     <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
-        <textarea id="wall-post-input{$textAreaId}" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="small-textarea"></textarea>
+        <textarea id="wall-post-input{$textAreaId}" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="small-textarea" autocomplete="off"></textarea>
         <div>
             <!-- padding to fix <br/> bug -->
         </div>

@@ -125,13 +125,14 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
                     <img src="/assets/packages/static/openvk/img/loading_mini.gif">
                 </div>
             </div>
+			<div class="ovk-photo-view-overlay"></div>
         </div>`)
     })
 
-    photo_viewer.getNode().find("#ovk-photo-close").on("click", function(e) {
+    photo_viewer.getNode().find("#ovk-photo-close, .ovk-photo-view-overlay").on("click", function(e) {
         photo_viewer.close()
     });
-
+	
     function __getIndex(photo_id = null) {
         return Object.keys(json.body).findIndex(item => item == (photo_id ?? currentImageid)) + 1
     }
