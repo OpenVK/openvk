@@ -549,4 +549,10 @@
 "paginator_page" = "Sayfa $1";
 "paginator_next" = "İleri";
 
+"bday_reminder" = "Hatırlatma";
+"bday_today" = "Bugün";
+"bday_tomorrow" = "Yarın";
+"bday_reminder_text" = "$1 $2'un doğum günü.";
+"bday_and" = " ve ";
+
 /* Translated by @WindowZ414 - @WindowZ414 tarafından çevirildi */

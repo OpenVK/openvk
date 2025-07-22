@@ -563,3 +563,9 @@
 
 "closed_group_post" = "Гэта паведамленне з прыватнай групы";
 "deleted_target_comment" = "Гэты каментарый належыць да выдаленага поста";
+
+"bday_reminder" = "Напамiн";
+"bday_today" = "Сёння";
+"bday_tomorrow" = "Заўтра";
+"bday_reminder_text" = "$1 дзень нараджэння $2.";
+"bday_and" = " i ";

@@ -979,3 +979,9 @@
 
 "closed_group_post" = "Эта запись из закрытого собрания";
 "deleted_target_comment" = "Этот отзыв надлежит к удалённой записи";
+
+"bday_reminder" = "Напоминание";
+"bday_today" = "Сегодня";
+"bday_tomorrow" = "Завтра";
+"bday_reminder_text" = "$1 день рождения $2.";
+"bday_and" = " и ";

@@ -522,3 +522,9 @@
 
 "closed_group_post" = "Heta paviedamliennie z pryvatnaj hrupy";
 "deleted_target_comment" = "Heta paviedamliennie z pryvatnaj hrupy";
+
+"bday_reminder" = "Napamin";
+"bday_today" = "Sionnia";
+"bday_tomorrow" = "Zaŭtra";
+"bday_reminder_text" = "$1 dzień naradžennia $2.";
+"bday_and" = " i ";

@@ -42,10 +42,13 @@ class User extends RowModel
     public const NSFW_TOLERANT      = 1;
     public const NSFW_FULL_TOLERANT = 2;
 
-    protected function _abstractRelationGenerator(string $filename, int $page = 1, int $limit = 6): \Traversable
+    protected function _abstractRelationGenerator(string $filename, int $page = 1, int $limit = 6, string $conditions = null): \Traversable
     {
         $id     = $this->getId();
         $query  = "SELECT id FROM\n" . file_get_contents(__DIR__ . "/../sql/$filename.tsql");
+        if (!is_null($conditions)){
+            $query .= "\n WHERE $conditions";
+        }
         $query .= "\n LIMIT " . $limit . " OFFSET " . (($page - 1) * $limit);
 
         $ids = [];
@@ -64,10 +67,11 @@ class User extends RowModel
         }
     }
 
-    protected function _abstractRelationCount(string $filename): int
+    protected function _abstractRelationCount(string $filename, string $conditions = null): int
     {
         $id    = $this->getId();
         $query = "SELECT COUNT(*) AS cnt FROM\n" . file_get_contents(__DIR__ . "/../sql/$filename.tsql");
+        if (!is_null($conditions)) $query .= "\n WHERE $conditions";
 
         return (int) DatabaseConnection::i()->getConnection()->query($query, $id, $id)->fetch()->cnt;
     }
@@ -671,6 +675,32 @@ class User extends RowModel
     public function getFriendsOnlineCount(): int
     {
         return $this->_abstractRelationCount("get-online-friends");
+    }
+
+    public function getFriendsBday(): array
+    {
+        $tomorrowCond = "DATE_FORMAT(FROM_UNIXTIME(birthday), '%m-%d') IN (DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL 1 DAY), '%m-%d'))";
+        $todayCond = "DATE_FORMAT(FROM_UNIXTIME(birthday), '%m-%d') IN (DATE_FORMAT(CURDATE(), '%m-%d'))";
+
+        $todayCount = $this->_abstractRelationCount("get-friends", $todayCond);
+        $tomorrowCount = $this->_abstractRelationCount("get-friends", $tomorrowCond);
+
+        if($todayCount > 0){
+            return [
+                "isToday" => true,
+                "count" => $todayCount,
+                "users" => $this->_abstractRelationGenerator("get-friends", 1, 3000, $todayCond)
+            ];
+        } elseif ($tomorrowCount > 0){
+            return [
+                "isToday" => false,
+                "count" => $tomorrowCount,
+                "users" => $this->_abstractRelationGenerator("get-friends", 1, 3000, $tomorrowCond)
+            ];
+        }
+        return [];
+        //todo: what is the limit
+        //todo: check if user has rights to view information
     }
 
     public function getFollowers(int $page = 1, int $limit = 6): \Traversable

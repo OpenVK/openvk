@@ -252,6 +252,27 @@
                                 <br><br>
                                 <a href="{$newsLink}">{_news_more}</a>
                             </div>
+
+                            <div id="bday" n:if="$showBday">
+                                <b>{_bday_reminder}</b>
+                                <hr size="1">
+                                <text>
+                                    {var $bdayListHtml = ''}
+                                    {foreach $bdayUsers as $u}
+                                        {var $bdayListHtml .= '<a href="/id' . $u->getId() . '">' . $u->getFirstName() . ' ' . $u->getLastName() . '</a>'}
+                                        {if $bdayCount == 2}
+                                            {if $iterator->isFirst()}{var $bdayListHtml .= tr("bday_and")}{/if}
+                                        {elseif $bdayCount != 1}
+                                            {if $iterator->isLast(2) and !$iterator->isLast()}
+                                                {var $bdayListHtml .= tr("bday_and")}
+                                            {elseif !$iterator->isLast()}
+                                                {var $bdayListHtml .= ', '}
+                                            {/if}
+                                        {/if}
+                                    {/foreach}
+                                    {tr("bday_reminder_text", $isBdayToday ? tr("bday_today") : tr("bday_tomorrow"), $bdayListHtml)|noescape}
+                                </text>
+                            </div>
                             
                             <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $thisUser->getCoins() != 0" id="votesBalance">
                                 {tr("you_still_have_x_points", $thisUser->getCoins())|noescape}

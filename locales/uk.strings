@@ -1026,6 +1026,11 @@
 
 "news" = "Остання новина інстанції";
 "news_more" = "Дізнатися більше »";
+"bday_reminder" = "Нагадування";
+"bday_today" = "Сьогодні";
+"bday_tomorrow" = "Завтра";
+"bday_reminder_text" = "$1 день народження $2.";
+"bday_and" = " та ";
 "points" = "Голоси";
 "points_count" = "голосів";
 "on_your_account" = "на Вашому рахунку";

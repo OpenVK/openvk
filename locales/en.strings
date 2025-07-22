@@ -1107,6 +1107,11 @@
 
 "news" = "News";
 "news_more" = "More »";
+"bday_reminder" = "Reminder";
+"bday_today" = "Today";
+"bday_tomorrow" = "Tomorrow";
+"bday_reminder_text" = "$1 is $2's birthday.";
+"bday_and" = " and ";
 "points" = "Votes";
 "points_count" = "votes";
 "on_your_account" = "on your account";

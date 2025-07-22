@@ -1059,6 +1059,11 @@
 
 "news" = "Новости";
 "news_more" = "Подробнее »";
+"bday_reminder" = "Напоминание";
+"bday_today" = "Сегодня";
+"bday_tomorrow" = "Завтра";
+"bday_reminder_text" = "$1 день рождения $2.";
+"bday_and" = " и ";
 "points" = "Голоса";
 "points_count" = "голосов";
 "on_your_account" = "на вашем счету";
