@@ -682,12 +682,10 @@ class User extends RowModel
                 $usersFiltered[] = $u;
             }
         }
-        $count = count($usersFiltered);
 
-        if ($count > 0) {
+        if (count($usersFiltered) > 0) {
             return [
                 "isToday" => $today,
-                "count" => $count,
                 "users" => $usersFiltered,
             ];
         }

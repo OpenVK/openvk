@@ -299,7 +299,7 @@ abstract class OpenVKPresenter extends SimplePresenter
                 $this->template->showBday = true;
                 $this->template->isBdayToday = $bdays["isToday"];
                 $this->template->bdayUsers = $bdays["users"];
-                $this->template->bdayCount = $bdays["count"];
+                $this->template->bdayCount = count($bdays["users"]);
             }
         }
 
