@@ -683,7 +683,7 @@ class User extends RowModel
             }
         }
 
-        if (count($usersFiltered) > 0) {
+        if (sizeof($usersFiltered) > 0) {
             return [
                 "isToday" => $today,
                 "users" => $usersFiltered,

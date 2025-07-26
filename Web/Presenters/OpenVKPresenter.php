@@ -291,15 +291,15 @@ abstract class OpenVKPresenter extends SimplePresenter
             }
 
             $bdays = $this->user->identity->getFriendsBday(true);
-            if (count($bdays) == 0) {
+            if (sizeof($bdays) == 0) {
                 $bdays = $this->user->identity->getFriendsBday(false);
             }
 
-            if (count($bdays) > 0) {
+            if (sizeof($bdays) > 0) {
                 $this->template->showBday = true;
                 $this->template->isBdayToday = $bdays["isToday"];
                 $this->template->bdayUsers = $bdays["users"];
-                $this->template->bdayCount = count($bdays["users"]);
+                $this->template->bdayCount = sizeof($bdays["users"]);
             }
         }
 
