@@ -129,9 +129,11 @@ final class AdminPresenter extends OpenVKPresenter
                 }
                 $user->setVerified(empty($this->postParam("verify") ? 0 : 1));
                 if ($this->postParam("add-to-group")) {
-                    if (!(new ChandlerGroups())->isUserAMember($user->getChandlerGUID(), $this->postParam("add-to-group"))) {
+                    if (!(new ChandlerGroups())->isUserAMember($this->postParam("add-to-group"), $user->getChandlerGUID())) {
                         $query = "INSERT INTO `ChandlerACLRelations` (`user`, `group`) VALUES ('" . $user->getChandlerGUID() . "', '" . $this->postParam("add-to-group") . "')";
                         DatabaseConnection::i()->getConnection()->query($query);
+                    } else {
+                        $this->flash("err", tr("error"), tr("c_user_is_already_in_group"));
                     }
                 }
                 if ($this->postParam("password")) {
@@ -636,10 +638,10 @@ final class AdminPresenter extends OpenVKPresenter
 
         if ($this->template->mode == "members") {
             if ($this->postParam("uid")) {
-                if ($DB->query("SELECT * FROM `Profiles` WHERE `user` = '" . $this->postParam("uid") . "'")->getRowCount() == 0){
+                if (is_null((new ChandlerUsers())->getById($this->postParam("uid")))) {
                     $this->flashFail("err", tr("error"), tr("profile_not_found"));
                 }
-                if ($DB->query("SELECT * FROM `ChandlerACLRelations` WHERE `user` = '" . $this->postParam("uid") . "' AND `group` = '$UUID'")->getRowCount() > 0) {
+                if ((new ChandlerGroups())->isUserAMember($UUID, $this->postParam("uid"))) {
                     $this->flashFail("err", tr("error"), tr("c_user_is_already_in_group"));
                 }
             }
