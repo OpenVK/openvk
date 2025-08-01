@@ -100,6 +100,10 @@ final class WallPresenter extends OpenVKPresenter
                 $iterator = $this->posts->getOthersPostsFromWall($user, (int) ($_GET["p"] ?? 1));
                 $count = $this->posts->getOthersCountOnUserWall($user);
                 break;
+            case "search":
+                $iterator = $this->posts->find($_GET["q"] ?? "", ["wall_id" => $user]);
+                $count = $iterator->size();
+                break;
         }
 
         $this->template->owner   = $user;

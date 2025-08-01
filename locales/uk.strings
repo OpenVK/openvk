@@ -261,6 +261,7 @@
 "has_repost" = "Містить репост";
 "likers_list" = "Список вподобань";
 "liked_verb" = "Вподобали";
+"wall_search" = "Пошук";
 
 "liked_by_x_people_one" = "Вподобав $1 користувач";
 "liked_by_x_people_few" = "Вподобали $1 користувача";
