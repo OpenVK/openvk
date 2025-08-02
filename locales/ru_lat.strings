@@ -319,11 +319,7 @@
 "meetings_few" = "$1 vstreči";
 "meetings_many" = "$1 vstreč";
 "meetings_other" = "$1 vstreč";
-"open_new_group" = "Otkrytí novuju gruppu";
-"open_group_desc" = "Ne možete najti nužnuju gruppu? Otkrojte svoju...";
-"search_group" = "Poisk gruppy";
 "search_by_groups" = "Poisk po gruppam";
-"search_group_desc" = "Zdesí Vy možete prosmotretí susčestvujusčie gruppy i vybratí gruppu sebe po vkusu...";
 "group_banned" = "K sožaleniju, nam prišlosí zablokirovatí soobsčestvo <b>$1</b>.";
 
 /* Albums */
