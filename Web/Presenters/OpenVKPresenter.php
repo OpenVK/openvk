@@ -289,6 +289,18 @@ abstract class OpenVKPresenter extends SimplePresenter
                 $this->template->helpdeskTicketNotAnsweredCount = (new Tickets())->getTicketCount(0);
                 $this->template->reportNotAnsweredCount = (new Reports())->getReportsCount(0);
             }
+
+            $bdays = $this->user->identity->getFriendsBday(true);
+            if (sizeof($bdays) == 0) {
+                $bdays = $this->user->identity->getFriendsBday(false);
+            }
+
+            if (sizeof($bdays) > 0) {
+                $this->template->showBday = true;
+                $this->template->isBdayToday = $bdays["isToday"];
+                $this->template->bdayUsers = $bdays["users"];
+                $this->template->bdayCount = sizeof($bdays["users"]);
+            }
         }
 
         header("X-OpenVK-User-Validated: $userValidated");

@@ -878,3 +878,9 @@
 /* User alerts */
 
 "user_alert_scam" = "Akun ini telah banyak dilaporkan melakukan penipuan. Berhati-hatilah, terutama jika ia meminta uang.";
+
+"bday_reminder" = "Pengingat";
+"bday_today" = "Hari ini";
+"bday_tomorrow" = "Besok";
+"bday_reminder_text" = "$1 adalah hari ulang tahun $2.";
+"bday_and" = " dan ";

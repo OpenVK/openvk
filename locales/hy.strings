@@ -1559,3 +1559,9 @@
 "mobile_like" = "Հավանել";
 "mobile_user_info_hide" = "Թաքցնել";
 "mobile_user_info_show_details" = "Ցույց տալ մանրամասն";
+
+"bday_reminder" = "Հիշեցում";
+"bday_today" = "Այսօր";
+"bday_tomorrow" = "Վաղը";
+"bday_reminder_text" = "$1 $2 ծննդյան օրն է.";
+"bday_and" = " և ";

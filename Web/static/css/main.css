@@ -2358,7 +2358,7 @@ li {
     padding-left: 15px;
 }
 
-#votesBalance, #news {
+#votesBalance, #news, #bday {
     margin-top: 10px;
     padding: 7px;
     background-color: #f6f6f6;
@@ -2369,6 +2369,11 @@ li {
 
 #news b {
     color: #8A0000;
+    font-size: 12px;
+}
+
+#bday b {
+    color: #45688E;
     font-size: 12px;
 }
 

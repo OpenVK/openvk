@@ -1854,3 +1854,9 @@
 
 "roll_back" = "otkatití";
 "roll_backed" = "otkačeno";
+
+"bday_reminder" = "Napominanie";
+"bday_today" = "Segodnja";
+"bday_tomorrow" = "Zavtra";
+"bday_reminder_text" = "$1 den' rozhdenija $2.";
+"bday_and" = " i ";
