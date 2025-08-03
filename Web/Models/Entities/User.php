@@ -673,6 +673,25 @@ class User extends RowModel
         return $this->_abstractRelationCount("get-online-friends");
     }
 
+    public function getFriendsBday(bool $today): array
+    {
+        $users = $this->_abstractRelationGenerator($today ? "get-bday-today" : "get-bday-tomorrow", 1, 3000);
+        $usersFiltered = [];
+        foreach ($users as $u) {
+            if ($u->getPrivacySetting("page.info.read") != 0) {
+                $usersFiltered[] = $u;
+            }
+        }
+
+        if (sizeof($usersFiltered) > 0) {
+            return [
+                "isToday" => $today,
+                "users" => $usersFiltered,
+            ];
+        }
+        return [];
+    }
+
     public function getFollowers(int $page = 1, int $limit = 6): \Traversable
     {
         return $this->_abstractRelationGenerator("get-followers", $page, $limit);

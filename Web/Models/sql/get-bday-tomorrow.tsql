@@ -1,0 +1,6 @@
+  (SELECT DISTINCT(follower) AS __id FROM
+    (SELECT follower FROM subscriptions WHERE target=? AND model="openvk\\Web\\Models\\Entities\\User") u0
+    INNER JOIN
+    (SELECT target FROM subscriptions WHERE follower=? AND model="openvk\\Web\\Models\\Entities\\User") u1
+  ON u0.follower = u1.target) u2
+INNER JOIN profiles ON profiles.id = u2.__id WHERE DATE_FORMAT(FROM_UNIXTIME(birthday), '%m-%d') IN (DATE_FORMAT(DATE_ADD(CURDATE(), INTERVAL 1 DAY), '%m-%d'))

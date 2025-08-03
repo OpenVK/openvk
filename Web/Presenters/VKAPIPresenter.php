@@ -258,7 +258,7 @@ final class VKAPIPresenter extends OpenVKPresenter
             }
         }
 
-        if (!is_null($identity) && $identity->isBanned()) {
+        if (!is_null($identity) && ($identity->isBanned() || $identity->isDeleted())) {
             $this->fail(18, "User account is deactivated", $object, $method);
         }
 

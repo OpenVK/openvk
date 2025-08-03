@@ -470,3 +470,9 @@
 "paginator_back" = "Враћати се";
 "paginator_page" = "Страница бр. $1";
 "paginator_next" = "Следећа страница";
+
+"bday_reminder" = "Подсетник";
+"bday_today" = "Данас";
+"bday_tomorrow" = "Сутра";
+"bday_reminder_text" = "$1 је рођендан $2.";
+"bday_and" = " и ";

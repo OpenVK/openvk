@@ -849,3 +849,9 @@
 /* User alerts */
 
 "user_alert_scam" = "Wiele osób skarżyło się na to konto w związku z oszustwem. Zachowaj ostrożność, zwłaszcza jeśli zostaniesz poproszony o pieniądze.";
+
+"bday_reminder" = "Przypomnienie";
+"bday_today" = "Dzisiaj";
+"bday_tomorrow" = "Jutro";
+"bday_reminder_text" = "$1 urodziny $2.";
+"bday_and" = " i ";

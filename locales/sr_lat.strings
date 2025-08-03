@@ -471,3 +471,9 @@
 "paginator_back" = "Vraćati se";
 "paginator_page" = "Stranica br. $1";
 "paginator_next" = "Sledeća stranica";
+
+"bday_reminder" = "Podsetnik";
+"bday_today" = "Danas";
+"bday_tomorrow" = "Sutra";
+"bday_reminder_text" = "$1 je rođendan $2.";
+"bday_and" = " i ";
