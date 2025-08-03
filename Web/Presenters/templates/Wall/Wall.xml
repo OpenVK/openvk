@@ -26,7 +26,7 @@
                     <a n:attr="id => ($type != 'others' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=others">{_others_posts}</a>
                 </div>
                 <div n:attr="id => ($type != 'search' ? 'ki' : 'activetabs')" class="tab">
-                    <a n:attr="id => ($type != 'search' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=search">{_wall_search}</a>
+                    <a n:attr="id => ($type != 'search' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=search">{_header_search}</a>
                 </div>
             </div>
 
@@ -36,7 +36,7 @@
             <div n:if="$type == 'search'" class="content_subtitle">
                 <form action="/wall{$owner}?type=search" method="get" enctype="multipart/form-data" class="wall_search">
                     <input type="text" name="q" autocomplete="off" value="{$_GET['q']}" />
-                    <input type="submit" value="{_wall_search}" class="button" />
+                    <input type="submit" value="{_header_search}" class="button" />
                 </form>
             </div>
             
