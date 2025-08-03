@@ -11,11 +11,6 @@ Base images:
 docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/openvk/openvk/php:8.2-cli ../../.. --load -f base-php-cli.Dockerfile
 docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/openvk/openvk/php:8.2-apache ../../.. --load -f base-php-apache.Dockerfile
 ```
-DB images:
-```
-docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/openvk/openvk/mariadb:10.9-primary ../../.. --load -f mariadb-primary.Dockerfile
-docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/openvk/openvk/mariadb:10.9-eventdb ../../.. --load -f mariadb-eventdb.Dockerfile
-```
 OpenVK main image:
 ```
 docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/openvk/openvk/openvk:latest ../../.. --load -f openvk.Dockerfile
@@ -26,11 +21,6 @@ Base images:
 ```
 docker build -t ghcr.io/openvk/openvk/php:8.2-cli ../../.. -f base-php-cli.Dockerfile
 docker build -t ghcr.io/openvk/openvk/php:8.2-apache ../../.. -f base-php-apache.Dockerfile
-```
-DB images:
-```
-docker build -t ghcr.io/openvk/openvk/mariadb:10.9-primary ../../.. -f mariadb-primary.Dockerfile
-docker build -t ghcr.io/openvk/openvk/mariadb:10.9-eventdb ../../.. -f mariadb-eventdb.Dockerfile
 ```
 OpenVK main image:
 ```
