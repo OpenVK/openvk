@@ -25,10 +25,14 @@ services:
         bind:
           create_host_path: false
     depends_on:
-      - acl_handler
-      - mariadb-primary
-      - mariadb-eventdb
-      - kafka
+      mariadb-primary:
+          condition: service_healthy
+      mariadb-eventdb:
+          condition: service_healthy
+      acl_handler:
+          condition: service_started
+      kafka:
+          condition: service_started
 
   acl_handler:
     image: docker.io/alpine:edge
@@ -49,11 +53,17 @@ services:
           create_host_path: false
 
   mariadb-primary:
-    image: ghcr.io/openvk/openvk/mariadb:10.9-primary
+    image: mariadb:10.9
     container_name: mariadb-primary
     restart: unless-stopped
     volumes:
       - mariadb-primary:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
     environment:
       - MARIADB_DATABASE=db
       - MARIADB_USER=openvk
@@ -61,11 +71,17 @@ services:
       - MARIADB_RANDOM_ROOT_PASSWORD=yes
 
   mariadb-eventdb:
-    image: ghcr.io/openvk/openvk/mariadb:10.9-eventdb
+    image: mariadb:10.9
     container_name: mariadb-eventdb
     restart: unless-stopped
     volumes:
       - mariadb-eventdb:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
     environment:
       - MARIADB_DATABASE=openvk_eventdb
       - MARIADB_USER=openvk
