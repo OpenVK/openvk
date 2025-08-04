@@ -135,14 +135,14 @@
                                         <div id='search_and_one_more_wrapper'>
                                             <input n:attr="value => $_REQUEST['q'] ?? NULL" autocomplete="off" type="search" maxlength="79" name="q" placeholder="{_header_search}" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
                                             <select name="section">
-                                                <option n:attr="selected => $_REQUEST['section'] ?? NULL == 'users'" value="users">{_s_by_people}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] ?? NULL == 'groups'" value="groups">{_s_by_groups}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] ?? NULL == 'posts'" value="posts">{_s_by_posts}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] ?? NULL == 'videos'" value="videos">{_s_by_videos}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] ?? NULL == 'apps'" value="apps">{_s_by_apps}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] ?? NULL == 'audios'" value="audios">{_s_by_audios}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] ?? NULL == 'audios_playlists'" value="audios_playlists">{_s_by_audios_playlists}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] ?? NULL == 'docs'" value="docs">{_s_by_documents}</option>
+                                                <option n:attr="selected => ($_REQUEST['section'] ?? NULL) == 'users'" value="users">{_s_by_people}</option>
+                                                <option n:attr="selected => ($_REQUEST['section'] ?? NULL) == 'groups'" value="groups">{_s_by_groups}</option>
+                                                <option n:attr="selected => ($_REQUEST['section'] ?? NULL) == 'posts'" value="posts">{_s_by_posts}</option>
+                                                <option n:attr="selected => ($_REQUEST['section'] ?? NULL) == 'videos'" value="videos">{_s_by_videos}</option>
+                                                <option n:attr="selected => ($_REQUEST['section'] ?? NULL) == 'apps'" value="apps">{_s_by_apps}</option>
+                                                <option n:attr="selected => ($_REQUEST['section'] ?? NULL) == 'audios'" value="audios">{_s_by_audios}</option>
+                                                <option n:attr="selected => ($_REQUEST['section'] ?? NULL) == 'audios_playlists'" value="audios_playlists">{_s_by_audios_playlists}</option>
+                                                <option n:attr="selected => ($_REQUEST['section'] ?? NULL) == 'docs'" value="docs">{_s_by_documents}</option>
                                             </select>
                                         </div>
                                         <button class="search_box_button">
@@ -480,7 +480,7 @@
                 "at_search": {$atSearch ?? false},
                 "max_attachments": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"] ?? 10},
                 "max_filesize_mb": 100,
-                "current_id": {$thisUser ?? false ? $thisUser->getId() : 0},
+                "current_id": {($thisUser ?? false) ? $thisUser->getId() : 0},
                 "disable_ajax": {$disable_ajax ?? 0 },
                 "max_add_fields": {ovkGetQuirk("users.max-fields")},
                 "docs_max": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["maxSize"]},
