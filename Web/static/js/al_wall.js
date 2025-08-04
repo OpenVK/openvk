@@ -107,6 +107,10 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
         title: '',
         custom_template: u(`
         <div class="ovk-photo-view-dimmer">
+            <div class="ovk-photo-view-overlay ovk-photo-view-overlay-left"></div>
+            <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
+                <div class="ovk-photo-close-icon"></div>
+            </div>
             <div class="ovk-photo-view">
                 <div class="photo_com_title">
                     <text id="photo_com_title_photos">
@@ -125,7 +129,6 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
                     <img src="/assets/packages/static/openvk/img/loading_mini.gif">
                 </div>
             </div>
-			<div class="ovk-photo-view-overlay"></div>
         </div>`)
     })
 
@@ -166,6 +169,13 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
         } else {
             photo_viewer.getNode().find(".ovk-photo-details").last().innerHTML = json.body[photo_id].cached
         }
+
+        let modal = photo_viewer.getNode().find(".ovk-photo-view").nodes[0];
+        let style = window.getComputedStyle(modal);
+        let h = modal.offsetHeight + parseInt(style.marginBottom) + parseInt(style.marginTop);
+        let overlays = photo_viewer.getNode().find(".ovk-photo-view-overlay").nodes
+        overlays[0].style.height = h + "px";
+        overlays[1].style.height = h + "px";
     }
 
     async function __slidePhoto(direction) {
@@ -349,6 +359,10 @@ async function OpenVideo(video_arr = [], init_player = true)
         warn_on_exit: true,
         custom_template: u(`
         <div class="ovk-photo-view-dimmer">
+            <div class="ovk-photo-view-overlay ovk-photo-view-overlay-left"></div>
+            <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
+                <div class="ovk-photo-close-icon"></div>
+            </div>
             <div class="ovk-modal-player-window">
                 <div id="ovk-player-part">
                     <div class='top-part'>
@@ -379,7 +393,7 @@ async function OpenVideo(video_arr = [], init_player = true)
         bsdnInitElement(msgbox.getNode().find('.bsdn').nodes[0])
     }
 
-    msgbox.getNode().find('#ovk-player-part #__modal_player_close').on('click', (e) => {
+    msgbox.getNode().find('#ovk-player-part #__modal_player_close, .ovk-photo-view-overlay').on('click', (e) => {
         msgbox.close()
     })
 
@@ -390,6 +404,7 @@ async function OpenVideo(video_arr = [], init_player = true)
             msgbox.getNode().find('#__toggle_comments').html(tr('close_comments'))
         }
 
+        let overlays = msgbox.getNode().find(".ovk-photo-view-overlay").nodes
         msgbox.getNode().find('#ovk-player-info').toggleClass('shown')
         if(msgbox.getNode().find('#ovk-player-info').html().length < 1) {
             u('#ovk-player-info').html(`<div id='gif_loader'></div>`)
@@ -403,6 +418,16 @@ async function OpenVideo(video_arr = [], init_player = true)
 
             u('#ovk-player-info').html(details.html())
             bsdnHydrate()
+
+            let modal = msgbox.getNode().find(".ovk-modal-player-window").nodes[0];
+            let style = window.getComputedStyle(modal);
+            let h = modal.offsetHeight + parseInt(style.marginBottom) + parseInt(style.marginTop);
+
+            overlays[0].style.height = h + "px";
+            overlays[1].style.height = h + "px";
+        } else {
+            overlays[0].style.height = "100%";
+            overlays[1].style.height = "100%";
         }
     })
 

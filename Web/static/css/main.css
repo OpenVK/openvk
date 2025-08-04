@@ -2694,17 +2694,41 @@ a.poll-retract-vote {
     right: 0px;
     bottom: 0px;
     overflow: auto;
-    padding-bottom: 20px;
     z-index: 300;
 }
 
 .ovk-photo-view-overlay {
     position: absolute;
     top: 0;
-    left: 0;
-    width: 100%;
+    width: 15%;
     height: 100%;
-    z-index: 1;
+    z-index: 205;
+    cursor: pointer;
+}
+
+.ovk-photo-view-overlay-left {
+    left: 0;
+}
+
+.ovk-photo-view-overlay-right {
+    right: 0;
+    opacity: 40%;
+}
+
+.ovk-photo-view-overlay-right:hover, .ovk-photo-view-overlay-left:hover + .ovk-photo-view-overlay-right {
+    opacity: 100%;
+}
+
+.ovk-photo-close-icon {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 28px;
+    height: 28px;
+    background-image: url("data:image/svg+xml;utf8,\<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28' stroke-width='5' stroke='%23fff' fill='none'>\<line x1='21' y1='7' x2='7' y2='21'/>\<line x1='7' y1='7' x2='21' y2='21'/>\</svg>");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
 }
 
 .ovk-photo-view {
@@ -2717,7 +2741,7 @@ a.poll-retract-vote {
     padding-top: 15px;
     padding-bottom: 10px;
     box-shadow: 0px 0px 3px 1px #222;
-    margin: 10px auto 0 auto;
+    margin: 10px auto 20px auto;
 }
 
 .ovk-photo-view .photo_viewer_wrapper {
