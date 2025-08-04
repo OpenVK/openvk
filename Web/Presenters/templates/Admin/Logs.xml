@@ -19,22 +19,22 @@
     <form class="aui">
     <div>
         <select class="select medium-field" type="number" id="type" name="type" placeholder="{_logs_change_type}">
-            <option value="any" n:attr="selected => !$type">{_logs_anything}</option>
-            <option value="0" n:attr="selected => $type === 0">{_logs_adding}</option>
-            <option value="1" n:attr="selected => $type === 1">{_logs_editing}</option>
-            <option value="2" n:attr="selected => $type === 2">{_logs_removing}</option>
-            <option value="3" n:attr="selected => $type === 3">{_logs_restoring}</option>
+            <option value="any" n:attr="selected => !($type ?? NULL)">{_logs_anything}</option>
+            <option value="0" n:attr="selected => ($type ?? NULL) === 0">{_logs_adding}</option>
+            <option value="1" n:attr="selected => ($type ?? NULL) === 1">{_logs_editing}</option>
+            <option value="2" n:attr="selected => ($type ?? NULL) === 2">{_logs_removing}</option>
+            <option value="3" n:attr="selected => ($type ?? NULL) === 3">{_logs_restoring}</option>
         </select>
-        <input class="text medium-field" type="number" id="id" name="id" placeholder="{_logs_id_post}" n:attr="value => $id"/>
-        <input class="text medium-field" type="text" id="uid" name="uid" placeholder="{_logs_uuid_user}" n:attr="value => $user"/>
+        <input class="text medium-field" type="number" id="id" name="id" placeholder="{_logs_id_post}" n:attr="value => $id ?? NULL"/>
+        <input class="text medium-field" type="text" id="uid" name="uid" placeholder="{_logs_uuid_user}" n:attr="value => $user ?? NULL"/>
     </div>
     <div style="margin: 8px 0;" />
     <div>
         <select class="select medium-field" id="obj_type" name="obj_type" placeholder="{_logs_change_object}">
-            <option value="any" n:attr="selected => !$obj_type">{_logs_anything}</option>
-            <option n:foreach="$object_types as $type" n:attr="selected => $obj_type === $type">{$type}</option>
+            <option value="any" n:attr="selected => !($obj_type ?? NULL)">{_logs_anything}</option>
+            <option n:foreach="$object_types as $type" n:attr="selected => ($obj_type ?? NULL) === $type">{$type}</option>
         </select>
-        <input class="text medium-field" type="number" id="obj_id" name="obj_id" placeholder="{_logs_id_object}" n:attr="value => $obj_id"/>
+        <input class="text medium-field" type="number" id="obj_id" name="obj_id" placeholder="{_logs_id_object}" n:attr="value => $obj_id ?? NULL"/>
         <input type="submit" class="aui-button aui-button-primary medium-field" value="Поиск" style="width: 165px;"/>
     </div>
     </form>
@@ -84,7 +84,7 @@
     </table>
     <br/>
     <div align="right">
-        {var $isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + $amount) < $count}
+        {var $isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + $amount) < ($count ?? NULL)}
 
         <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">&laquo;</a>
         <a n:if="$isLast" class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">&raquo;</a>

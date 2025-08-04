@@ -102,7 +102,7 @@
 
         <div class="layout">
             <div id="xhead" class="dm"></div>
-            <div class="page_header{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME} page_custom_header{/if}{if $atSearch} search_expanded search_expanded_at_all{/if}">
+            <div class="page_header{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME} page_custom_header{/if}{if $atSearch ?? false} search_expanded search_expanded_at_all{/if}">
                 <a href="/" class="home_button{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME} home_button_custom{/if}" title="{$instance_name}">{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME}{$instance_name}{/if}</a>
                 <div n:if="isset($thisUser) ? (!$thisUser->isBanned() XOR !$thisUser->isActivated()) : true" class="header_navigation">
                     {ifset $thisUser}
@@ -133,16 +133,16 @@
                                 <div id="search_box_fr">
                                     <form id='search_form' action="/search" method="get">
                                         <div id='search_and_one_more_wrapper'>
-                                            <input n:attr="value => $_REQUEST['q'] ? $_REQUEST['q'] : NULL" autocomplete="off" type="search" maxlength="79" name="q" placeholder="{_header_search}" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
+                                            <input n:attr="value => $_REQUEST['q'] ?? NULL" autocomplete="off" type="search" maxlength="79" name="q" placeholder="{_header_search}" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
                                             <select name="section">
-                                                <option n:attr="selected => $_REQUEST['section'] == 'users'" value="users">{_s_by_people}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] == 'groups'" value="groups">{_s_by_groups}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] == 'posts'" value="posts">{_s_by_posts}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] == 'videos'" value="videos">{_s_by_videos}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] == 'apps'" value="apps">{_s_by_apps}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] == 'audios'" value="audios">{_s_by_audios}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] == 'audios_playlists'" value="audios_playlists">{_s_by_audios_playlists}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] == 'docs'" value="docs">{_s_by_documents}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] ?? NULL == 'users'" value="users">{_s_by_people}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] ?? NULL == 'groups'" value="groups">{_s_by_groups}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] ?? NULL == 'posts'" value="posts">{_s_by_posts}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] ?? NULL == 'videos'" value="videos">{_s_by_videos}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] ?? NULL == 'apps'" value="apps">{_s_by_apps}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] ?? NULL == 'audios'" value="audios">{_s_by_audios}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] ?? NULL == 'audios_playlists'" value="audios_playlists">{_s_by_audios_playlists}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] ?? NULL == 'docs'" value="docs">{_s_by_documents}</option>
                                             </select>
                                         </div>
                                         <button class="search_box_button">
@@ -234,12 +234,12 @@
                             <div id="_groupListPinnedGroups">
                                 <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
 
-                                <a n:foreach="$thisUser->getPinnedClubs() as $club" href="{$club->getURL()}" class="link group_link">
-                                    {ovk_proc_strtr($club->getName(), 14)}
+                                <a n:foreach="$thisUser->getPinnedClubs() as $pinned_club" href="{$pinned_club->getURL()}" class="link group_link">
+                                    {ovk_proc_strtr($pinned_club->getName(), 14)}
 
-                                    <object type="internal/link" style="white-space: normal;" id="sug{$club->getId()}" n:if="$club->getSuggestedPostsCount($thisUser) > 0 && $club->getWallType() == 2">
-                                        <a href="/club{$club->getId()}/suggested" class="linkunderline">
-                                            (<b>{$club->getSuggestedPostsCount($thisUser)}</b>)
+                                    <object type="internal/link" style="white-space: normal;" id="sug{$pinned_club->getId()}" n:if="$pinned_club->getSuggestedPostsCount($thisUser) > 0 && $pinned_club->getWallType() == 2">
+                                        <a href="/club{$pinned_club->getId()}/suggested" class="linkunderline">
+                                            (<b>{$pinned_club->getSuggestedPostsCount($thisUser)}</b>)
                                         </a>
                                     </object>
                                 </a>
@@ -253,7 +253,7 @@
                                 <a href="{$newsLink}">{_news_more}</a>
                             </div>
 
-                            <div id="bday" n:if="$showBday">
+                            <div id="bday" n:if="$showBday ?? false">
                                 <b>{_bday_reminder}</b>
                                 <hr size="1">
                                 <text>
@@ -480,8 +480,8 @@
                 "at_search": {$atSearch ?? false},
                 "max_attachments": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"] ?? 10},
                 "max_filesize_mb": 100,
-                "current_id": {$thisUser ? $thisUser->getId() : 0},
-                "disable_ajax": {$disable_ajax ? $disable_ajax : 0},
+                "current_id": {$thisUser ?? false ? $thisUser->getId() : 0},
+                "disable_ajax": {$disable_ajax ?? 0 },
                 "max_add_fields": {ovkGetQuirk("users.max-fields")},
                 "docs_max": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["maxSize"]},
                 "docs_allowed": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["allowedFormats"]},
