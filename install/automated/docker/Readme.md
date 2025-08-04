@@ -38,6 +38,9 @@ Start is simple as `docker compose up -d`. You can also use `docker compose up` 
 - PHPMyAdmin will be available at `http://localhost:8081/`.
 - Adminer will be available at `http://localhost:8082/`.
 
+> [!CAUTION]
+> Suggested configuration **is not ready to run** `openvk` image **in replicated containers** as, due to database migration script being run on the start, data racing condition might be achieved. If you wish to run multiple containers with `openvk` image, remove entrypoint script from them make all replicated services dependent on a oneshot service with `openvk` image that is configured to run `./openvkctl upgrade --no-interaction --quick`.
+
 ### Running in development environment
 By using additional `docker-compose.dev.yml` file you can develop OpenVK in Docker with automatic updates as you edit and save your code. Simply run:
 ```
