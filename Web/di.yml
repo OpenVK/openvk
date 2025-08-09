@@ -57,3 +57,4 @@ services:
     - openvk\Web\Models\Repositories\Faves
     - openvk\Web\Presenters\MaintenancePresenter
     - openvk\Web\Presenters\NoSpamPresenter
+    - openvk\Web\Presenters\DevelopersPresenter

@@ -1,0 +1,144 @@
+{extends "../@layout.xml"}
+
+{block title}
+    {_developers_title}
+{/block}
+
+{block header}
+    {_developers_title}
+{/block}
+
+{block content}
+{css "css/dev.css"}
+{script "js/al_dev.js"}
+
+   <div style="margin-left: 0px; width: 141.321px;" id="dev_steps_s">
+      <div class="borders">
+         <div class="content" style="margin-left: -2px;">
+            <div class="dev_step first">
+               <div>
+                  <b>Developers</b><br>Where to start
+               </div>
+            </div>
+            <div class="dev_step">
+               <div>
+                  <b>Documentation</b><br>VK API
+               </div>
+            </div>
+            <div class="dev_step last">
+               <div>
+                  <b>Integration Examples</b><br>Consider the platform advantages
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+   <div id="dev_steps">
+      <div class="dev_step first current" id="dev_step1" onclick="return dev_step(1);">
+         <div>
+            <b>Developers</b><br>Where to start
+         </div>
+      </div>
+      <div class="dev_step" id="dev_step2" onclick="return dev_step(2)">
+         <div>
+            <b>Documentation</b><br>VK API
+         </div>
+      </div>
+      <div class="dev_step last" id="dev_step3" onclick="return dev_step(3)">
+         <div>
+            <b>Integration Examples</b><br>Consider the platform advantages
+         </div>
+      </div>
+   </div>
+   <div class="dev_steps_c" id="dev_steps_c" style="height: 460px;">
+      <div class="content" style="margin-left: 0px;">
+         <div class="step" id="dev_step1_c" style="height: auto; position: static; left: auto;">
+            <div class="borders">
+               <div class="introPage">
+                  <a href="/developers.php?id=-1_27971896&amp;s=1" class="info first apps"><span class="header">VK Flash/IFrame Applications</span>
+                  Interactive appliation use <b>VK API</b> to deeply integrate with the site. You can use VK servers as well as any number of your own servers.
+                  <span class="more">More »</span>
+                  </a>
+                  <a href="/developers.php?id=-1_37230422&amp;s=1" class="info mobile"><span class="header">Standalone/Mobile Applications</span>
+                  These are launched in the same way as a regular program on a user's device, be it a desktop computer or a smartphone. All algorithms available to applications on the <b>VK API</b> platform work for desktop applications too.
+                  <span class="more">More »</span>
+                  </a>
+                  <a href="/developers.php?id=-1_27987570&amp;s=1" class="info sites"><span class="header">Widgets and External Sites</span>
+                  VK's lineup of <b>widgets</b> for external sites allows you to add a social aspect to your project. Also a deeper integration via <b>Open API</b> or <b>OAuth 2.0.</b> is available.
+                  <span class="more">More »</span>
+                  </a>
+                  <a href="/developers.php?id=-1_12904887&s=1" class="info shops"><span class="header">Stores</span>
+                     With the help of <b>Merchant API</b> you can connect your internet store or a VK API application to VK&#39;s payment system and gain full access to millions of potential customers.
+                     <span class="more">More »</span>
+                     </a>
+               </div>
+            </div>
+         </div>
+         <div class="step" id="dev_step2_c" style="position: static; left: auto; height: auto;">
+            <div class="borders">
+               <div class="introPage">
+                  <!--4-->
+                  <a name="Connect"></a>
+                  <div class="wk_header">Connect</div>
+                  <ul class="listing">
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=VK_Applications">VK Applications</a> – Where to start creating Flash and IFrame applications </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Flash_Applications">Flash Applications</a> – Interaction with API from Flash applications </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Using_the_Flash_Wrapper">Flash Applications with Wrapper</a> – Interaction with API using the Flash wrapper </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=IFrame_Applications">IFrame Applications</a> – Interaction with API from IFrame applications </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Application_Interaction_with_API">Application Interaction with API</a> – Calling API from an application or from an external server </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Authorization">Authorization</a> – Authorization from Desktop and Mobile applications </span></li>
+                  </ul>
+                  <br>
+                  <a name="VK API"></a>
+                  <div class="wk_header">VK API</div>
+                  <ul class="listing">
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=API_Method_Description">API Method Description</a> – Standard API methods </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Advanced_API_Methods">Advanced API Methods</a> – Methods for Desktop/Mobile applications </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Storing_Data_on_VK_Servers">Storing Data on VK Servers</a> </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Uploading_Files_to_the_VK_Server_Procedure">Uploading Files to the VK Server Procedure</a> </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Application_Localization">Application Localization</a> </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Ads_API">Ads API</a> <sup><b>beta</b></sup> – methods for working with advertising accounts. </span></li>
+                  </ul>
+                  <br>
+                  <a name="JS API"></a>
+                  <div class="wk_header">JS API</div>
+                  <ul class="listing">
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=IFrame_Applications">IFrame Applications</a> – Calling JS API methods from IFrame applications </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Flash_Applications">Flash Applications</a> – Calling JS API methods from Flash applications </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Using_the_Flash_Wrapper">Using the Flash Wrapper</a> – Calling JS API methods from Flash applications using a wrapper </span></li>
+                  </ul>
+                  <br>
+                  <a name="For Websites"></a>
+                  <div class="wk_header">For Websites</div>
+                  <ul class="listing">
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Comments">Comments</a> – Embed a universal comments block to an external website </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Groups">Groups</a> – Embed a community block on an external website </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Like">Like</a> – Let users "like" items on your site and share links with friends </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Poll">Polls</a> – Poll your visitors and and let them pass the poll on to their friends </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Auth">Auth</a> – Hassle-free authorization on your site </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Share">Share button</a> – Let users quickly share links to your items </span></li>
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Open_API">Open API</a> – Use VK API on external websites </span></li>
+                  </ul>
+                  <br>
+                  <a name="For Online Stores"></a>
+                  <div class="wk_header">For Online Stores</div>
+                  <ul class="listing">
+                     <li><span><a href="developers.php?oid=-17680044&amp;p=Merchant_API">Merchant API</a> – connect applications and external internet stores to the VK payment system </span></li>
+                  </ul>
+                  <!--ru:2438534--> 
+               </div>
+            </div>
+         </div>
+         <div class="step" id="dev_step3_c" style="height: auto; position: static; left: auto;">
+            <div class="borders">
+               <div class="introPage">
+                  <!--4--><b>VK</b> is the fastest growing site in Europe. Its audience is doubled every few months and now VK controls more than half of the traffic in Russian-speaking countries. If you would like to develop applications on the internet, you can become part of this success and gain access to an audience of more than <b>100 million</b> users. <br><br>
+                  It is not uncommon for an <a class="wk_vk_link" href="/apps">an application</a> created within a month to be visited by millions of people daily. Every month the most popular applications bring their creators millions of dollars. If you want to become one of them, we will give you the tools for distributing and promoting applications and also will fully take on all <b>payment</b> matters, <b>traffic</b> costs and the translation of your application into <b>all languages spoken in the world</b>. <br><br>
+                  <a href="developers.php?oid=-17680044&amp;p=Flash_Applications">VK API</a> is the most advanced platform for Flash and iFrame applications on the worldwide web. We  provide a massive field for your applications (up to <b>827x4050</b> pixels), access to the left user menu, counters, on-site and <b>SMS</b> notifications, profile, photos, friends, rating and audio files of users, and much more. <br><br>
+                  <a class="wk_vk_link" href="/apps">Applications Catalog</a> <br>
+               </div>
+            </div>
+         </div>
+      </div>
+   </div>
+{/block}
