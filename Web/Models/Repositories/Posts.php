@@ -199,6 +199,9 @@ class Posts
                 case 'from_me':
                     $result->where("owner", $paramValue);
                     break;
+                case 'wall_id':
+                    $result->where("wall", $paramValue);
+                    break;
             }
         }
 

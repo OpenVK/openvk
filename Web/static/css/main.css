@@ -763,6 +763,16 @@ input[type="number"] {
     padding-top: 0;
 }
 
+.wall_search {
+    display: flex;
+    gap: 4px;
+    margin: 6px;
+}
+
+.wall_search > input[type="text"] {
+    flex: 1;
+}
+
 input[type="text"],
 input[type="password"],
 input[type~="text"],
