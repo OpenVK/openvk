@@ -54,6 +54,14 @@
                     {_no_found}
                 {/if}
             </div>
+
+            <script n:if='$type == "search" && sizeof($posts) > 0 && !empty($_GET["q"])'>
+                function __scrollHook(page) {
+                    highlightText({$_GET["q"]}, '.content', ['.text'])
+                }
+
+                __scrollHook()
+            </script>
         </div>
     </div>
 {/block}
