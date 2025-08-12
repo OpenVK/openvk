@@ -262,6 +262,8 @@ $(document).on("scroll", () => {
     const currentScrollTop = $(document).scrollTop();
     const navigation = $(".navigation");
 
+    if(navigation.find("#fastLogin").length > 0) return;
+
     const scrollNavigation = (top) => {
         navigation.css("top", top + "px");
         navigation[0].classList.add("navigation-fixed");
