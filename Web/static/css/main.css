@@ -150,6 +150,11 @@ h1 {
     padding: 0;
 }
 
+.navigation-fixed {
+    position: fixed;
+    width: 131px;
+}
+
 .navigation .link {
     display: block;
     padding: 3px 3px 3px 6px;

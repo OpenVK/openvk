@@ -257,14 +257,59 @@ function showIncreaseRatingDialog(coinsCount, userUrl, hash) {
     };
 }
 
+let lastScrollTop = 0;
 $(document).on("scroll", () => {
-    if($(document).scrollTop() > $(".sidebar").height() + 50) {
-        $(".floating_sidebar")[0].classList.add("show");
-    } else if($(".floating_sidebar")[0].classList.contains("show")) {
-        $(".floating_sidebar")[0].classList.remove("show");
-        $(".floating_sidebar")[0].classList.add("hide_anim");
-        setTimeout(() => {
-            $(".floating_sidebar")[0].classList.remove("hide_anim");
-        }, 250);
+    const currentScrollTop = $(document).scrollTop();
+    const navigation = $(".navigation");
+
+    const scrollNavigation = (top) => {
+        navigation.css("top", top + "px");
+        navigation[0].classList.add("navigation-fixed");
     }
+
+    const hideNavigationOutbound = (height) => {
+        navigation.css("top", height + "px");
+        navigation[0].classList.remove("navigation-fixed");
+    }
+
+    const removeFixedNavigation = () => {
+        navigation.css("top", "");
+        navigation[0].classList.remove("navigation-fixed");
+    }
+
+    let top = parseInt(navigation.css("top"), 10);
+
+    if(currentScrollTop > $(".sidebar").height() + 50) {
+        if(currentScrollTop < lastScrollTop) {
+            if(top !== 5) {
+                scrollNavigation(Math.min(5, (top + (lastScrollTop - currentScrollTop))));
+            }
+
+            $(".floating_sidebar")[0].classList.remove("show");
+            $(".floating_sidebar")[0].classList.add("hide_anim");
+            setTimeout(() => {
+                $(".floating_sidebar")[0].classList.remove("hide_anim");
+            }, 250);
+        } else {
+            let h = -navigation.height();
+            if(top <= h || top === 0) {
+                hideNavigationOutbound(h);
+                $(".floating_sidebar")[0].classList.add("show");
+            } else {
+                scrollNavigation((top - (currentScrollTop - lastScrollTop)));
+            }
+        }
+    } else {
+        removeFixedNavigation();
+
+        if($(".floating_sidebar")[0].classList.contains("show")) {
+            $(".floating_sidebar")[0].classList.remove("show");
+            $(".floating_sidebar")[0].classList.add("hide_anim");
+            setTimeout(() => {
+                $(".floating_sidebar")[0].classList.remove("hide_anim");
+            }, 250);
+        }
+    }
+
+    lastScrollTop = Math.max(0, currentScrollTop);
 })
