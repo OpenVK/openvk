@@ -47,11 +47,13 @@ body {
     box-shadow: unset;
 }
 
-.sidebar {
+.navigation {
     margin-top: 47px;
-    position: fixed;
     background-color: #fff;
-    z-index: 199;
+    z-index: 198;
+}
+.navigation.navigation-fixed {
+    margin-top: 42px;
 }
 
 .page_body {
