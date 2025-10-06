@@ -259,7 +259,7 @@
                                 <text>
                                     {var $bdayListHtml = ''}
                                     {foreach $bdayUsers as $u}
-                                        {var $bdayListHtml .= '<a href="/id' . $u->getId() . '">' . $u->getFirstName() . ' ' . $u->getLastName() . '</a>'}
+                                        {var $bdayListHtml .= '<a href="/id' . $u->getId() . '">' . $u->getMorphedName(startWithLastName: false) . '</a>'}
                                         {if $bdayCount == 2}
                                             {if $iterator->isFirst()}{var $bdayListHtml .= tr("bday_and")}{/if}
                                         {elseif $bdayCount != 1}

@@ -212,10 +212,18 @@ class User extends RowModel
         return $this->getFirstName() . $pseudo . $this->getLastName();
     }
 
-    public function getMorphedName(string $case = "genitive", bool $fullName = true): string
+    public function getMorphedName(string $case = "genitive", bool $fullName = true, bool $startWithLastName = true): string
     {
-        $name = $fullName ? ($this->getLastName() . " " . $this->getFirstName()) : $this->getFirstName();
-        if (!preg_match("%[А-яё\-]+$%", $name)) {
+        if ($fullName) {
+            if ($startWithLastName) {
+                $name = $this->getLastName() . " " . $this->getFirstName();
+            } else {
+                $name = $this->getFirstName() . " " . $this->getLastName();
+            }
+        } else {
+            $name = $this->getFirstName();
+        }
+        if (!preg_match("/^[А-Яа-яЁё\s-]+$/u", $name)) {
             return $name;
         } # name is probably not russian
 
