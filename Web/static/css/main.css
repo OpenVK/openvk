@@ -2690,7 +2690,7 @@ a.poll-retract-vote {
     gap: 2px;
 }
 
-.post-buttons .vertical-attachment .vertical-attachment-content { 
+.post-buttons .vertical-attachment .vertical-attachment-content {
     /*max-height: 27px;*/
     padding: 3px 2px;
 }
@@ -2773,8 +2773,8 @@ a.poll-retract-vote {
 }
 
 .ovk-photo-view #ovk-photo-img {
-    max-width: 100%; 
-    max-height: 80vh; 
+    max-width: 100%;
+    max-height: 80vh;
     user-select: none;
 }
 
@@ -2904,8 +2904,8 @@ a.poll-retract-vote {
 
 #search_box input[type='search'] {
     height: 20px;
-    background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; 
-    background-color: #fff; 
+    background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px;
+    background-color: #fff;
     padding-left: 18px !important;
     width: 120px;
 }
@@ -3572,8 +3572,8 @@ body.article .floating_sidebar, body.article .page_content {
 }
 
 .attachment_selector #attachment_insert .videosInsert .video_list .video-preview img {
-    max-width: 133px; 
-    height: 75px; 
+    max-width: 133px;
+    height: 75px;
     margin: auto;
 }
 
@@ -3779,7 +3779,7 @@ hr {
 
 .entity_vertical_list.mini .entity_vertical_list_item img {
     width: 35px;
-    height: 35px; 
+    height: 35px;
 }
 
 #gif_loader {
@@ -3824,12 +3824,12 @@ hr {
 }
 
 .media-page-wrapper .photo-page-wrapper-photo img {
-    max-width: 85%; 
+    max-width: 85%;
     max-height: 60vh;
 }
 
 .media-page-wrapper-details {
-    width: 100%; 
+    width: 100%;
     min-height: 100px;
     display: flex;
     justify-content: space-between;
@@ -3837,7 +3837,7 @@ hr {
 }
 
 .media-page-wrapper-comments {
-    min-height: 100px; 
+    min-height: 100px;
     width: 68%;
     margin-left: 3px;
 }
@@ -4096,8 +4096,8 @@ hr {
 
 #docs_page_wrapper .docs_page_search input[type="search"], .attachment_selector .attachment_search input {
     height: 23px;
-    background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 5px; 
-    background-color: #fff; 
+    background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 5px;
+    background-color: #fff;
     padding-left: 18px !important;
 }
 
@@ -4387,4 +4387,8 @@ hr {
 
 .sort_link_icon_asc {
     background-position: -11px -15px;
+}
+
+.hidden {
+    display: none !important;
 }
