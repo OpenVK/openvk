@@ -329,7 +329,6 @@ function openJsSettings() {
     const CURRENT_AUTO_SCROLL = Number(localStorage.getItem('ux.auto_scroll') ?? 1)
     const CURRENT_DISABLE_AJAX = Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0)
 
-    u("#_js_settings td").remove()
     u("#_js_settings").append(`
         <tr>
             <td width="120" valign="top">

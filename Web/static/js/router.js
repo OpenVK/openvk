@@ -115,6 +115,21 @@ window.router = new class {
         })
     }
 
+    applyTweaks() {
+        window.tweaks.forEach(item => {
+            const name = item.name
+
+            if (item.isEnabled()) {
+                try {
+                    console.log(`Applied tweak ${name}`)
+                    item.func()
+                } catch(e) {
+                    console.error(e)
+                }
+            }
+        })
+    }
+
     async __integratePage(scrolling = null) {
         window.temp_y_scroll = null
         u('.toTop').removeClass('has_down')
@@ -133,6 +148,8 @@ window.router = new class {
             window.player.dump()
             await window.player._handlePageTransition()
         }
+
+        this.applyTweaks()
     }
 
     __unlinkObservers() {
@@ -407,4 +424,8 @@ window.addEventListener('popstate', (e) => {
             push_state: false,
         })
     }
+})
+
+window.addEventListener('DOMContentLoaded', () => {
+    window.router.applyTweaks()
 })
