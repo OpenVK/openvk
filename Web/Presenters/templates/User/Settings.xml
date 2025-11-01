@@ -605,7 +605,11 @@
                 <tr>
                     <td width="120" valign="top" align="right"></td>
                     <td>
-                        <a href="javascript:openJsSettings()">{_ui_settings_window}</a>
+                        <script>
+                        document.addEventListener('DOMContentLoaded', () => {
+                            openJsSettings()
+                        })
+                        </script>
                     </td>
                 </tr>
             </tbody>

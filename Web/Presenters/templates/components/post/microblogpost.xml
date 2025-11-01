@@ -21,8 +21,8 @@
 <table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, !$compact ? post-divider, $post->isExplicit() ? post-nsfw">
     <tbody>
         <tr>
-            <td width="54" valign="top">
-                <a href="{$author->getURL()}">
+            <td class="post-author-ava" width="54" valign="top">
+                <a class="post-author-url" href="{$author->getURL()}">
                     <img src="{$author->getAvatarURL('miniscule')}" width="{if $compact}25{else}50{/if}" class="post-avatar {if $compact}cCompactAvatars{/if}" />
                     <span n:if="!$post->isPostedOnBehalfOfGroup() && !$compact && $author->isOnline()" class="post-online">{_online}</span>
                 </a>

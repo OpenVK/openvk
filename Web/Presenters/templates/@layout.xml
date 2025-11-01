@@ -57,7 +57,7 @@
 
         <div class="notifications_global_wrap"></div>
         <div class="dimmer">
-            <div id='absolute_territory'></div>
+            <div id='clickable'></div>
         </div>
         <div class="upLeftErrors"></div>
 
@@ -428,6 +428,7 @@
         {script "js/al_music.js"}
         {script "js/al_despacito_wall.js"}
         {script "js/al_photos.js"}
+        {script "js/options.js"}
 
         {ifset $thisUser}
             {script "js/al_notifs.js"}
