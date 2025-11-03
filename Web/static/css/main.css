@@ -23,7 +23,8 @@ body, .ovk-fullscreen-dimmer, .ovk-photo-view-dimmer {
 }
 
 .nobold,
-nobold {
+nobold,
+nobold span {
     font-weight: normal;
     color: gray;
 }
@@ -612,10 +613,14 @@ table {
     background: #595959;
     background-position: 0 -16px;
     color: #fff;
-    padding: 4px 8px;
+    padding: 5px 9px;
     text-shadow: 0 1px 0 #686868;
     cursor: pointer;
     text-decoration: none;
+}
+
+.button:active {
+    background: #444444;
 }
 
 .button:hover {
@@ -2752,8 +2757,8 @@ a.poll-retract-vote {
     background: #fff;
     min-width: 600px;
     width: fit-content;
-    padding: 25px;
-    padding-top: 15px;
+    padding: 35px;
+    padding-top: 26px;
     padding-bottom: 10px;
     box-shadow: 0px 0px 3px 1px #222;
     margin: 10px auto 20px auto;
