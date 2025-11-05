@@ -38,16 +38,12 @@ body.dimmed > .dimmer #clickable {
 }
 
 .ovk-diag-head {
-    padding: 10px 12px;
+    padding: 10px 12px 9px 12px;
     background-color: #757575;
     border-bottom: 1px solid #3e3e3e;
     color: #fff;
     font-weight: 900;
     font-size: 15px;
-}
-
-.ovk-msg-all .ovk-diag-head {
-    padding: 10px 12px 9px 12px;
 }
 
 .ovk-diag-body {
