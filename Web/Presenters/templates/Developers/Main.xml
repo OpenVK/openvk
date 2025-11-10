@@ -1,0 +1,92 @@
+{extends "../@layout.xml"}
+
+{block title}
+    {_developers_title}
+{/block}
+
+{block header}
+    {_developers_title}
+{/block}
+
+{block content}
+{css "css/dev.css"}
+
+<div class="dev_head">
+  <div class="dev_main_header">Разработка приложений</div>
+  <div class="dev_main_narrow">
+    <a
+      class="button"
+      href="/editapp?act=create"
+    >&nbsp;&nbsp;Создать приложение&nbsp;&nbsp;</a>
+    <br>
+    <br>
+    <a href="/apps?act=dev">Список моих приложений »</a>
+  </div>
+  <div class="dev_main_desc">
+    <b>оупэн В контакте</b> – самый быстрорастущий сайт европейского интернета. Его аудитория удваивается каждые несколько месяцев, и сейчас на оупэн В контакте приходится более половины русскоязычного трафика. Если Вы хотите заниматься разработкой приложений в интернете, Вы можете приобщиться к этому успеху и получить доступ к аудитории свыше
+    <b>25000 (!!!)</b> пользователей.
+  </div>
+</div>
+
+<div class="dev_cont">
+	<div class="dev_main_sections">
+		<a href="/dev/native" class="dev_sect dev_sect_games">
+		  <div class="dev_sect_icon"></div>
+		  Игры и приложения ВКонтакте
+		</a>
+		<a href="/dev/standalone" class="dev_sect dev_sect_standalone">
+		  <div class="dev_sect_icon"></div>
+		  Mobile/Standalone приложения
+		</a>
+		<a href="/dev/sites" class="dev_sect dev_sect_widgets">
+		  <div class="dev_sect_icon"></div>
+		  Авторизация и виджеты для сайтов
+		</a>
+	  </div>
+	  
+
+  <div class="dev_parts_list fl_l">
+    <a href="/dev/main" class="dev_part">
+      <div class="dev_part_name">Документация платформы</div>
+      <div class="dev_part_desc">Описание возможностей платформы ВКонтакте: процедура авторизации приложения, серверные и клиентские методы API, создание приложений и подключение сайтов.</div>
+    </a>
+    <a href="/dev/help" class="dev_part">
+      <div class="dev_part_name">Поддержка</div>
+      <div class="dev_part_desc">Разрешение вопросов, связанных с платформой: инструменты для связи со службой поддержки, попадание в каталог приложений, статус работы платформы.</div>
+    </a>
+    <a href="/dev/rules" class="dev_part">
+      <div class="dev_part_name">Правила платформы</div>
+      <div class="dev_part_desc">Правила публикации приложений на площадке ВКонтакте, размещение рекламы в приложениях, прием платежей от пользователей.</div>
+    </a>
+    <a href="/bagosi" class="dev_part">
+      <div class="dev_part_name">Баг-трекер</div>
+      <div class="dev_part_desc">Инструмент для информирования разработчиков о проблемах в API и документации платформы.</div>
+    </a>
+  </div>
+  <div class="dev_right_col fl_l">
+    <a class="dev_part dev_platform_info" href="/dev/health">
+      <div class="dev_info_header">Статус платформы</div>
+      Время ответа — <span class="dev_api_status_good">{$responseTime} ms</span><br>
+      Uptime — <span class="dev_api_status_good">целестора сделай%</span><br>
+    </a>
+    <div class="dev_last_news">
+      <div class="dev_info_header">Последние новости</div>
+      <div class="dev_main_widget_cont">
+	  <ul class="notes_titles">
+						<li class="written">
+							<a href="/note1_1">
+								seks
+							</a>
+							<small>
+								только что
+								<span class="divide">|</span>
+								<a href="/note1_1">Комментарии</a>
+							</small>
+						</li>
+					</ul>
+	  </div>
+      
+    </div>
+  </div>
+</div>
+{/block}

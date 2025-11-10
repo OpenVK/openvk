@@ -1,0 +1,57 @@
+{extends "../@layout.xml"}
+
+{block title}
+    {_developers_title}
+{/block}
+
+{block header}
+    {_developers_title}
+{/block}
+
+{block content}
+{css "css/dev.css"}
+
+<div class="knowledgeBaseArticle">{$content|noescape}</div>
+<div id="dev_sidebar" class="dev_sidebar fl_r">
+  <div id="dev_mlist_cont">
+    <div id="dev_page_narrow">
+      <a
+        href="/dev/main"
+        class="dev_section_menu {if $articlename === 'main'} dev_mlist_sel{/if}"
+      >Документация</a>
+      <a
+        href="/dev/native"
+        class="dev_section_submenu {if $articlename === 'native'} dev_mlist_sel{/if}"
+      >Приложения и игры</a>
+      <a
+        href="/dev/standalone"
+        class="dev_section_submenu"
+      >Standalone/Mobile</a>
+      <a
+        href="/dev/sites"
+        class="dev_section_submenu {if $articlename === 'sites'} dev_mlist_sel{/if}"
+      >Сайты и виджеты</a>
+
+      <a
+        href="/dev/methods"
+        class="dev_section_menu {if $articlename === 'methods'} dev_mlist_sel{/if}"
+      >Список методов</a>
+      <a
+        href="/dev/datatypes"
+        class="dev_section_submenu {if $articlename === 'datatypes'} dev_mlist_sel{/if}"
+      >Типы данных</a>
+
+      <a
+        href="/dev/help"
+        class="dev_section_menu {if $articlename === 'help'} dev_mlist_sel{/if}"
+      >Поддержка</a>
+      <a
+        href="/dev/rules"
+        class="dev_section_submenu {if $articlename === 'rules'} dev_mlist_sel{/if}"
+      >Правила платформы</a>
+    </div>
+  </div>
+</div>
+
+
+{/block}
