@@ -258,8 +258,9 @@
     cursor: pointer;
 }
 
+/* we do not need to set the manual width there */
 .bigPlayer .trackPanel .track .selectableTrack > div {
-    width: 98%;
+    width: 97.4%;
     position: relative;
 }
 
@@ -1090,14 +1091,71 @@
     background-position: -214px -5px;
 }
 
+/* ajax audio player > queue */
+
+#ajax_audio_player #aj_player_tracks {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    background: rgba(44, 44, 44, 0.7);
+
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 2px;
+}
+
+#ajax_audio_player #aj_player_tracks .aj_track {
+    padding: 5px 10px;
+}
+
+#ajax_audio_player #aj_player_tracks .aj_track span,
+#ajax_audio_player #aj_player_tracks .aj_track b {
+    color: #d5d2d2;
+}
+
+#ajax_audio_player #aj_player_tracks .aj_track:hover {
+    background: #00000030;
+}
+
+#ajax_audio_player #aj_player_tracks .aj_track.selected {
+    background: #00000078;
+}
+
+#ajax_audio_player #aj_player_tracks::-webkit-scrollbar {
+    width: 2px;
+}
+
+#ajax_audio_player #aj_player_tracks .aj_track {
+    display: grid;
+    cursor: pointer;
+    grid-template-columns: 0fr 1fr;
+}
+
+#ajax_audio_player #aj_player_tracks .aj_track .num {
+    width: 12px;
+    display: block;
+    margin-right: 10px;
+    text-wrap: nowrap;
+}
+
+#ajax_audio_player #aj_player_tracks .aj_track.selected span, 
+#ajax_audio_player #aj_player_tracks .aj_track.selected b {
+    color: white;
+}
+
 /* Compact audios */
 
 .audiosContainer.winamp_mode {
     padding: 1px 0px 1px 2px;
+    margin-right: 3px;
 }
 
 .audiosContainer.winamp_mode .audioEntry .audioEntryWrapper {
     padding: 1px 14px;
     height: unset;
     margin-bottom: 1px;
+}
+
+.audiosContainer.winamp_mode .audioEntry .buttons {
+    right: 19px;
 }

@@ -840,6 +840,16 @@ window.addEventListener('beforeunload', (e) => {
     window.player.dump()
 })
 
+u(document).on("click", '.audioEntry .audioEntryWrapper .status', (e) => {
+    const target = u(e.target)
+    const wrapper = target.closest(".audioEmbed")
+    const play_button = wrapper.find(".playerButton .playIcon")
+
+    if (!e.target.matches("a, .withLyrics, .playIcon") && !wrapper.hasClass('processed')) {
+        play_button.nodes[0].click()
+    }
+})
+
 u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
     const audioPlayer = u(e.target).closest('.audioEmbed')
     const id = Number(audioPlayer.attr('data-realid'))
