@@ -42,6 +42,20 @@ class playersSearcher {
     }
 }
 
+class AudioTrack {
+    constructor(item) {
+        this.item = item
+    }
+
+    getName() {
+        return `${this.item.performer} — ${this.item.name}`
+    }
+
+    getId() {
+        return this.item.id
+    }
+}
+
 // so if something reads this. Its better to split class to AudioTrack -> AudioContext -> AudioPlayer -> AudioPlayerViewModel, AjaxPlayerViewModel and BigPlayerViewModel.
 window.player = new class {
     context = {
@@ -273,7 +287,7 @@ window.player = new class {
         }
 
         if(window.__current_page_audio_context && (!this.context.object || this.context.object.url != location.pathname + location.search)) {
-            console.log('Audio | Resetting context because of ajax :3')
+            console.log('Audio | Resetting context because of ajax')
             
             this.__renewContext()
             await this.loadContext(window.__current_page_audio_context.page ?? 1)
@@ -578,6 +592,12 @@ window.player = new class {
         } else {
             this.tracks = list.concat(this.tracks)
         }
+
+        if (this.ajaxPlayer_CheckIfBlockHasBeenShown()) {
+            list.forEach(item => {
+                this.ajaxPlayer_AddTrackBlockToTheQueueBlock(item)
+            })
+        }
     }
 
     __updateFace() {
@@ -585,6 +605,7 @@ window.player = new class {
         const prev_button = this.uiPlayer.find('.nextButton')
         const next_button = this.uiPlayer.find('.backButton')
 
+        // Wow! A lot of shitcode!
         if(!this.previousTrack) {
             prev_button.addClass('lagged')
             if(this.ajaxPlayer.length > 0) {
@@ -651,6 +672,11 @@ window.player = new class {
         }
 
         u(`.tip_result`).remove()
+
+        if (this.ajaxPlayer_CheckIfBlockHasBeenShown()) {
+            u(".aj_track.selected").removeClass("selected")
+            this.ajaxPlayer.find(`.aj_track[data-id='${window.player.current_track_id}']`).addClass("selected")
+        }
     }
 
     __updateTime(new_time) {
@@ -726,6 +752,42 @@ window.player = new class {
         u('#ajax_audio_player').removeClass('hidden')
     }
 
+    ajaxPlayer_CheckIfBlockHasBeenShown() {
+        return u('#ajax_audio_player').length > 0
+    }
+
+    ajaxPlayer_AddTrackBlockToTheQueueBlock(item) {
+        const track = new AudioTrack(item)
+
+        u("#ajax_audio_player #aj_player #aj_player_tracks").append(`
+            <div class="aj_track" data-id="${track.getId()}">
+                <span class="num">${this.tracks.findIndex(s => s.id == item.id) + 1}</span>
+                <b> ${ovk_proc_strtr(escapeHtml(track.getName()), 50)}</b>
+            </div>
+        `)
+    }
+
+    ajaxPlayer_ApplyQueueBlock() {
+        if(u("#ajax_audio_player #aj_player_tracks").length > 0) {return}
+        if(u("#ajax_audio_player").length == 0) {return}
+
+        u("#ajax_audio_player #aj_player").append(`
+            <div id="aj_player_tracks"></div>
+        `)
+
+        window.player.tracks.forEach(item => {
+            this.ajaxPlayer_AddTrackBlockToTheQueueBlock(item)
+        })
+
+        u("#aj_player_tracks").on("click", ".aj_track", async (e) => {
+            const id = e.target.closest(".aj_track").dataset.id
+
+            await window.player.setTrack(id)
+            window.player.play()
+        })
+        this.__updateFace()
+    }
+
     ajCreate() {
         const previous_time_x = localStorage.getItem('audio.lastX') ?? 100
         const previous_time_y = localStorage.getItem('audio.lastY') ?? scrollY
@@ -795,6 +857,7 @@ window.player = new class {
                 }
             }
         })
+        this.ajaxPlayer_ApplyQueueBlock()
     }
 
     bigPlayer_toggleCountBlock() {

@@ -256,6 +256,8 @@ window.tweaks = [
             }
         `)
 
+        console.info('i will hide these words (window.hidden_words): ', window.hidden_words)
+
         function hide_posts() {
             u(".post").nodes.forEach(item => {
                 const post = u(item)
