@@ -797,8 +797,17 @@ window.player = new class {
         })
     }
 
-    toggleSummary() {
+    bigPlayer_toggleCountBlock() {
         $(".summaryBarHideable").slideToggle(300, "linear")
+    }
+
+    bigPlayer_page_toggleCompactness() {
+        const btn = u('#summarySwitchButton')
+        if(btn.html() == "-") {
+            btn.html("+")
+        } else {
+            btn.html("-")
+        }
     }
 }
 
@@ -1169,19 +1178,10 @@ u(document).on("drop", '.audiosContainer', function(e) {
 })
 
 u(document).on("click", "#summarySwitchButton", (e) => {
-    if(u(".summaryBarHideable").nodes[0].style.overflow == "hidden") {
-        return
-    }
-    
-    if(u(e.target).html() == "-") {
-        u(e.target).html("+")
-    } else {
-        u(e.target).html("-")
-    }
-
-    window.player.toggleSummary()
+    window.player.bigPlayer_page_toggleCompactness()
 })
 
+// its not a good idea to put all logic into event functions, but ok.
 u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e) => {
     if(e.shiftKey) {
         return
@@ -1219,8 +1219,8 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
             ` : ''}
             <a id='audio_ctx_add_to_group'>${tr('audio_ctx_add_to_group')}</a>
             <a id='audio_ctx_add_to_playlist'>${tr('audio_ctx_add_to_playlist')}</a>
-            ${ctx_type == 'main_player' ? `
-            <a id='audio_ctx_clear_context'>${tr('audio_ctx_clear_context')}</a>` : ''}
+            ${ctx_type == 'main_player' ? `<a id='audio_ctx_clear_context'>${tr('audio_ctx_clear_context')}</a>` : ''}
+            ${ctx_type == 'main_player' ? `<a id='audio_ctx_show_count'>${tr('audio_ctx_show_count')}</a>` : ''}
             ${ctx_type == 'main_player' ? `<a>BigPlayer v1.3</a>` : ''}
         </div>
     `)
@@ -1319,6 +1319,9 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
         window.player.__updateFace()
         window.player.undump()
         window.router.route(old_url)
+    })
+    ctx_u.find('#audio_ctx_show_count').on('click', (ev) => {
+        window.player.bigPlayer_toggleCountBlock()
     })
 })
 

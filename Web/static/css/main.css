@@ -4054,13 +4054,17 @@ hr {
 }
 
 #ctx_menu a {
-    padding: 6px 6px 6px 26px;
+    padding: 5px 6px 6px 8px;
     color: black;
     position: relative;
 }
 
 #ctx_menu a:hover {
     background: #e9e9e9;
+}
+
+#ctx_menu a.pressed {
+    padding-left: 25px;
 }
 
 #ctx_menu a.pressed::before {

@@ -1040,6 +1040,7 @@
 "audio_ctx_add_to_playlist" = "Add to playlist";
 "audio_ctx_play_next" = "Play next";
 "audio_ctx_clear_context" = "Clear tracks list";
+"audio_ctx_show_count" = "Show paginator";
 
 "is_x_audio_zero" = "No audios";
 "is_x_audio_one" = "Just one audio.";

@@ -178,8 +178,8 @@
 }
 
 .bigPlayer .slider, .audioEmbed .track .slider {
-    width: 15px;
-    height: 7px;
+    width: 10px;
+    height: 6px;
     background: #606060;
     position: absolute;
     bottom: 0;
@@ -259,13 +259,13 @@
 }
 
 .bigPlayer .trackPanel .track .selectableTrack > div {
-    width: 96%;
+    width: 98%;
     position: relative;
 }
 
 .bigPlayer .volumePanel .selectableTrack > div {
     position: relative;
-    width: 77%;
+    width: 84%;
 }
 
 .audioEmbed .track > .selectableTrack, .bigPlayer .selectableTrack {
@@ -949,7 +949,7 @@
 /* AJAX player */
 #ajax_audio_player {
     transition: background .1s ease-out;
-    background: rgba(44, 44, 44, 0.7);
+    background: rgba(44, 44, 44, 0.8);
     padding: 1px;
     width: 500px;
     height: 37px;
