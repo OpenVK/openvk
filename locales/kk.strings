@@ -378,7 +378,7 @@
 "suggested_by_everyone_other" = "$1 ұсынылған жазба";
 
 
-"group_hide_from_global_feed" = "Жаһандық арнада жазбаларды көрсетпеу";
+"group_hide_from_global_feed" = "Жазбаларды жаһандық таспада көрсетпеу";
 
 "suggested_posts_by_you" = "Сіз ұсынған жазбалар";
 "suggested_posts_by_everyone" = "Ұсынылған жазбалар";
@@ -685,7 +685,7 @@
 "ui_settings_rating_show" = "Көрсету";
 "ui_settings_rating_hide" = "Жасыру";
 "ui_settings_nsfw_content" = "Ересектерге арналған материалдар";
-"ui_settings_nsfw_content_dont_show" = "Жаһанды арнада көрсетпеу";
+"ui_settings_nsfw_content_dont_show" = "Жаһандық таспада көрсетпеу";
 "ui_settings_nsfw_content_blur" = "Бұлдырату";
 "ui_settings_nsfw_content_show" = "Көрсету";
 "ui_settings_view_of_posts" = "Жазбалардың көрінісі";
@@ -818,7 +818,7 @@
 "s_only_performers" = "Орындаушылар бойынша";
 "s_with_lyrics" = "Мәтіні бар";
 
-"showing_x_y" = "($2 ішіндегі $1 көрсетілуде)";
+"showing_x_y" = "($1—$2 дейін көрсетілуде)";
 "no_results_by_this_query" = "Бұл сұрау бойынша ештеңе табылмады.";
 "s_additional" = "Қосымша";
 "s_it_is_you" = "бұл сіз";
@@ -1600,7 +1600,7 @@
 "admin_user_online_incognito" = "Инкогнито";
 "admin_user_online_deceased" = "Қайтыс болған";
 "admin_club_search" = "Топ іздеу";
-"admin_club_excludeglobalfeed" = "Жазбаларды жаһандық арнада көрсетпеу";
+"admin_club_excludeglobalfeed" = "Жазбаларды жаһандық таспада көрсетпеу";
 "admin_club_enforceexcludeglobalfeed" = "Топ әкімшілеріне жазбалардың жаһандық таспада көрінуін баптауға тыйым салу";
 "admin_services" = "Ақылы қызметтер";
 "admin_newgift" = "Жаңа сыйлық";
