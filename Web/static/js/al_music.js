@@ -42,6 +42,7 @@ class playersSearcher {
     }
 }
 
+// so if something reads this. Its better to split class to AudioTrack -> AudioContext -> AudioPlayer -> AudioPlayerViewModel, AjaxPlayerViewModel and BigPlayerViewModel.
 window.player = new class {
     context = {
         object: {},
@@ -54,7 +55,6 @@ window.player = new class {
     current_track_id = 0
     tracks = []
 
-    // time type:
     // 0 - shows remaining time before end
     // 1 - shows full track time
     get timeType() {
@@ -462,7 +462,6 @@ window.player = new class {
         }
     }
 
-    // Добавляем ощущение продуманности.
     __highlightActiveTrack() {
         if(!this.isAtCurrentContextPage()) {
             return
@@ -582,7 +581,6 @@ window.player = new class {
     }
 
     __updateFace() {
-        // Во второй раз перепутал next и back, но фиксить смысла уже нет.
         const _c = this.currentTrack
         const prev_button = this.uiPlayer.find('.nextButton')
         const next_button = this.uiPlayer.find('.backButton')
@@ -675,8 +673,6 @@ window.player = new class {
         })
     }
 
-    // the listen counts if you reach half of song
-    // but it doesnt checks on server normally so you can "накрутить" listens
     async __countListen() {
         let playlist = 0
         if(!this.listen_coef) {
@@ -1225,7 +1221,7 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
             <a id='audio_ctx_add_to_playlist'>${tr('audio_ctx_add_to_playlist')}</a>
             ${ctx_type == 'main_player' ? `
             <a id='audio_ctx_clear_context'>${tr('audio_ctx_clear_context')}</a>` : ''}
-            ${ctx_type == 'main_player' ? `<a href='https://github.com/mrilyew' target='_blank'>BigPlayer v1.2 by MrIlyew</a>` : ''}
+            ${ctx_type == 'main_player' ? `<a>BigPlayer v1.3</a>` : ''}
         </div>
     `)
     u(parent).append(ctx_u)
@@ -2061,7 +2057,6 @@ u(document).on('click', '.upload_container_element #small_remove_button', (e) =>
         return
     }
 
-    // 1984
     const element = u(e.target).closest('.upload_container_element')
     const element_index = Number(element.attr('data-index'))
     
