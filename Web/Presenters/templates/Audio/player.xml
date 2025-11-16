@@ -5,7 +5,7 @@
 {php $editable = isset($thisUser) && $audio->canBeModifiedBy($thisUser)}
 
 {* this is a bad layout. so what you can change:
-- every button must be available and toggled by class states (.audio_added, .audio_lyrics), so the edit function will be not so cancer
+- every button must be available (and hidden if not needed) and toggled by class states (.audio_added, .audio_lyrics). So the edit function will be not so cancerous
 - there is a lot of id duplications and messed data-attributes. We don't need audioEmbed-id its left from 2022 code
 - "processed" means it has been already processed. "processing" is better
 - class names are messy and illogical

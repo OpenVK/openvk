@@ -56,7 +56,7 @@ class AudioTrack {
     }
 }
 
-// so if something reads this. Its better to split class to AudioTrack -> AudioContext -> AudioPlayer -> AudioPlayerViewModel, AjaxPlayerViewModel and BigPlayerViewModel.
+// so if someone reads this. Its better to split class to AudioTrack -> AudioContext -> AudioPlayer -> AudioPlayerViewModel, AjaxPlayerViewModel and BigPlayerViewModel.
 window.player = new class {
     context = {
         object: {},
@@ -767,6 +767,7 @@ window.player = new class {
         `)
     }
 
+    // TODO: When moving block to bottom of screen, show tracks list at the top
     ajaxPlayer_ApplyQueueBlock() {
         if(u("#ajax_audio_player #aj_player_tracks").length > 0) {return}
         if(u("#ajax_audio_player").length == 0) {return}
