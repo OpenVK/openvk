@@ -353,6 +353,7 @@
 }
 
 .audioEntry .nobold {
+    font-size: 10px;
     text-align: center;
     min-width: 28px;
 }
@@ -1087,4 +1088,16 @@
     width: 15px;
     height: 12px;
     background-position: -214px -5px;
+}
+
+/* Compact audios */
+
+.audiosContainer.winamp_mode {
+    padding: 1px 0px 1px 2px;
+}
+
+.audiosContainer.winamp_mode .audioEntry .audioEntryWrapper {
+    padding: 1px 14px;
+    height: unset;
+    margin-bottom: 1px;
 }

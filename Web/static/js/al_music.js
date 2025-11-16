@@ -802,12 +802,15 @@ window.player = new class {
     }
 
     bigPlayer_page_toggleCompactness() {
+        // this state is not saving
         const btn = u('#summarySwitchButton')
         if(btn.html() == "-") {
             btn.html("+")
         } else {
             btn.html("-")
         }
+
+        u('.audiosContainer').toggleClass('winamp_mode')
     }
 }
 
