@@ -36,24 +36,30 @@
                         </style>
                         {if $count > 0}
                             {foreach $data as $dat}
-                                {if $section == "posts"}
-                                    <div class="scroll_node">
-                                        {include "../components/post.xml", post => $dat, commentSection => true}
+                                {if $dat->isDeleted()}
+                                    <div n:class="deleted_mark, $section == 'photos' ? album-photo : deleted_mark_average">
+                                        <span>[deleted]</span>
                                     </div>
-                                {elseif $section == "comments"}
-                                    <div class="scroll_node">
-                                        {include "../components/comment.xml", comment => $dat, correctLink => true, no_reply_button => true}
-                                    </div>
-                                {elseif $section == "photos"}
-                                    <div class="album-photo scroll_node" onclick="OpenMiniature(event, {$dat->getURLBySizeId('larger')}, null, {$dat->getPrettyId()}, null)">
-                                        <a href="/photo{$dat->getPrettyId()}">
-                                            <img class="album-photo--image" src="{$dat->getURLBySizeId('tinier')}" alt="{$dat->getDescription()}"  loading="lazy" />
-                                        </a>
-                                    </div>
-                                {elseif $section == "videos"}
-                                    <div class="scroll_node">
-                                        {include "../components/video.xml", video => $dat}
-                                    </div>
+                                {else}
+                                    {if $section == "posts"}
+                                        <div class="scroll_node">
+                                            {include "../components/post.xml", post => $dat, commentSection => true}
+                                        </div>
+                                    {elseif $section == "comments"}
+                                        <div class="scroll_node">
+                                            {include "../components/comment.xml", comment => $dat, correctLink => true, no_reply_button => true}
+                                        </div>
+                                    {elseif $section == "photos"}
+                                        <div class="album-photo scroll_node" onclick="OpenMiniature(event, {$dat->getURLBySizeId('larger')}, null, {$dat->getPrettyId()}, null)">
+                                            <a href="/photo{$dat->getPrettyId()}">
+                                                <img class="album-photo--image" src="{$dat->getURLBySizeId('tinier')}" alt="{$dat->getDescription()}"  loading="lazy" />
+                                            </a>
+                                        </div>
+                                    {elseif $section == "videos"}
+                                        <div class="scroll_node">
+                                            {include "../components/video.xml", video => $dat}
+                                        </div>
+                                    {/if}
                                 {/if}
                             {/foreach}
                         {else}

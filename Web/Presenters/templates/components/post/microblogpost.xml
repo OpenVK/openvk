@@ -21,8 +21,8 @@
 <table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, !$compact ? post-divider, $post->isExplicit() ? post-nsfw">
     <tbody>
         <tr>
-            <td width="54" valign="top">
-                <a href="{$author->getURL()}">
+            <td class="post-author-ava" width="54" valign="top">
+                <a class="post-author-url" href="{$author->getURL()}">
                     <img src="{$author->getAvatarURL('miniscule')}" width="{if $compact}25{else}50{/if}" class="post-avatar {if $compact}cCompactAvatars{/if}" />
                     <span n:if="!$post->isPostedOnBehalfOfGroup() && !$compact && $author->isOnline()" class="post-online">{_online}</span>
                 </a>
@@ -58,6 +58,7 @@
                     <span n:if="$post->isPinned()" class="nobold">{_pinned}</span>
 
                     <a n:if="$canBeDeleted && !($forceNoDeleteLink ?? false) && $compact == false" class="delete" href="/wall{$post->getPrettyId()}/delete"></a>
+                    <a n:if="!$canBeDeleted" class="report" title="{_report}" href="javascript:reportPost({$post->getId()})"></a>
                     
                     {if $canBePinned && !($forceNoPinLink ?? false) && $compact == false}
                         {if $post->isPinned()}
@@ -148,7 +149,7 @@
                     {/if}
                 </div>
                 <div n:if="!($forceNoCommentsLink ?? false) && $commentSection == true && $compact == false" class="post-menu-s">
-                    <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}" class="expand_button">{_view_other_comments}</a>
+                    <a n:if="$commentsCount > 3" href="/wall{$post->getPrettyId()}" class="expand_button">{_view_other_comments} ({$commentsCount - 3})</a>
                     {foreach $comments as $comment}
                         {include "../comment.xml", comment => $comment, $compact => true}
                     {/foreach}

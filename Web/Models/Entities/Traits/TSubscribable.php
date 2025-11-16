@@ -34,9 +34,9 @@ trait TSubscribable
             "target"   => $this->getId(),
         ];
         $sub  = $ctx->table("subscriptions")->where($data);
-
         if (!($sub->fetch())) {
             $ctx->table("subscriptions")->insert($data);
+
             return true;
         }
 

@@ -674,3 +674,9 @@
 
 "warning" = "Averto";
 "question_confirm" = "Ĉi tiu ago ne povas esti malfarita. Ĉu vi vere volas fari ĝin?";
+
+"bday_reminder" = "Memorigilo";
+"bday_today" = "Hodiaŭ";
+"bday_tomorrow" = "Morgaŭ";
+"bday_reminder_text" = "$1 estas la naskiĝtago de $2.";
+"bday_and" = " kaj ";

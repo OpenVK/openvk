@@ -212,10 +212,18 @@ class User extends RowModel
         return $this->getFirstName() . $pseudo . $this->getLastName();
     }
 
-    public function getMorphedName(string $case = "genitive", bool $fullName = true): string
+    public function getMorphedName(string $case = "genitive", bool $fullName = true, bool $startWithLastName = true): string
     {
-        $name = $fullName ? ($this->getLastName() . " " . $this->getFirstName()) : $this->getFirstName();
-        if (!preg_match("%[А-яё\-]+$%", $name)) {
+        if ($fullName) {
+            if ($startWithLastName) {
+                $name = $this->getLastName() . " " . $this->getFirstName();
+            } else {
+                $name = $this->getFirstName() . " " . $this->getLastName();
+            }
+        } else {
+            $name = $this->getFirstName();
+        }
+        if (!preg_match("/^[А-Яа-яЁё\s-]+$/u", $name)) {
             return $name;
         } # name is probably not russian
 
@@ -306,10 +314,10 @@ class User extends RowModel
             $content_type = $matches[1];
             $content_id = (int) $matches[2];
             if (in_array($content_type, ["noSpamTemplate", "user"])) {
-                $reason = "Подозрительная активность";
+                $reason = $this->getRawBanReason();
             } else {
                 if ($for !== "banned") {
-                    $reason = "Подозрительная активность";
+                    $reason = $this->getRawBanReason();
                 } else {
                     $reason = [$this->getTextForContentBan($content_type), $content_type];
                     switch ($content_type) {
@@ -524,7 +532,10 @@ class User extends RowModel
 
     public function getAge(): ?int
     {
-        return (int) floor((time() - $this->getBirthday()->timestamp()) / YEAR);
+        $birthday = new \DateTime();
+        $birthday->setTimestamp($this->getBirthday()->timestamp());
+        $today = new \DateTime();
+        return (int) $today->diff($birthday)->y;
     }
 
     public function get2faSecret(): ?string
@@ -668,6 +679,25 @@ class User extends RowModel
     public function getFriendsOnlineCount(): int
     {
         return $this->_abstractRelationCount("get-online-friends");
+    }
+
+    public function getFriendsBday(bool $today): array
+    {
+        $users = $this->_abstractRelationGenerator($today ? "get-bday-today" : "get-bday-tomorrow", 1, 3000);
+        $usersFiltered = [];
+        foreach ($users as $u) {
+            if ($u->getPrivacySetting("page.info.read") != 0) {
+                $usersFiltered[] = $u;
+            }
+        }
+
+        if (sizeof($usersFiltered) > 0) {
+            return [
+                "isToday" => $today,
+                "users" => $usersFiltered,
+            ];
+        }
+        return [];
     }
 
     public function getFollowers(int $page = 1, int $limit = 6): \Traversable
@@ -968,11 +998,13 @@ class User extends RowModel
         $platform = $this->getRecord()->client_name;
         if ($forAPI) {
             switch ($platform) {
+                case 'openvk_native':
                 case 'openvk_refresh_android':
                 case 'openvk_legacy_android':
                     return 'android';
                     break;
 
+                case 'openvk_native_ios':
                 case 'openvk_ios':
                 case 'openvk_legacy_ios':
                     return 'iphone';
@@ -1484,6 +1516,11 @@ class User extends RowModel
         return $this->isClosed();
     }
 
+    public function HideGlobalFeed(): bool
+    {
+        return (bool) $this->getRecord()->hide_global_feed;
+    }
+
     public function getRealId()
     {
         return $this->getId();
@@ -1494,7 +1531,7 @@ class User extends RowModel
         return $this->getPrivacySetting("likes.read") == User::PRIVACY_NO_ONE;
     }
 
-    public function toVkApiStruct(?User $user = null, string $fields = ''): object
+    public function toVkApiStruct(?User $relation_user = null, string $fields = ''): object
     {
         $res = (object) [];
 
@@ -1504,8 +1541,8 @@ class User extends RowModel
         $res->deactivated = $this->isDeactivated();
         $res->is_closed   = $this->isClosed();
 
-        if (!is_null($user)) {
-            $res->can_access_closed  = (bool) $this->canBeViewedBy($user);
+        if (!is_null($relation_user)) {
+            $res->can_access_closed  = (bool) $this->canBeViewedBy($relation_user);
         }
 
         if (!is_array($fields)) {
@@ -1561,18 +1598,18 @@ class User extends RowModel
                     $res->real_id = $this->getRealId();
                     break;
                 case "blacklisted_by_me":
-                    if (!$user) {
+                    if (!$relation_user) {
                         break;
                     }
 
-                    $res->blacklisted_by_me = (int) $this->isBlacklistedBy($user);
+                    $res->blacklisted_by_me = (int) $this->isBlacklistedBy($relation_user);
                     break;
                 case "blacklisted":
-                    if (!$user) {
+                    if (!$relation_user) {
                         break;
                     }
 
-                    $res->blacklisted = (int) $user->isBlacklistedBy($this);
+                    $res->blacklisted = (int) $relation_user->isBlacklistedBy($this);
                     break;
                 case "games":
                     $res->games = $this->getFavoriteGames();
@@ -1729,5 +1766,53 @@ class User extends RowModel
     public function getBlacklistSize()
     {
         return DatabaseConnection::i()->getContext()->table("blacklist_relations")->where("author", $this->getId())->count();
+    }
+
+    public function getEventCounters(array $list): array
+    {
+        $count_of_keys = sizeof(array_keys($list));
+        $ev_str = $this->getRecord()->events_counters;
+        $counters = [];
+
+        if (!$ev_str) {
+            for ($i = 0; $i < sizeof(array_keys($list)); $i++) {
+                $counters[] = 0;
+            }
+        } else {
+            $counters = unpack("S" . $count_of_keys, base64_decode($ev_str, true));
+        }
+
+        return [
+            'counters' => array_combine(array_keys($list), $counters),
+            'refresh_time' => $this->getRecord()->events_refresh_time,
+        ];
+    }
+
+    public function stateEvents(array $state_list): void
+    {
+        $pack_str = "";
+
+        foreach ($state_list as $item => $id) {
+            $pack_str .= "S";
+        }
+
+        $this->stateChanges("events_counters", base64_encode(pack($pack_str, ...array_values($state_list))));
+
+        if (!$this->getRecord()->events_refresh_time) {
+            $this->stateChanges("events_refresh_time", time());
+        }
+    }
+
+    public function resetEvents(array $list): void
+    {
+        $values = [];
+
+        foreach ($list as $key => $val) {
+            $values[$key] = 0;
+        }
+
+        $this->stateEvents($values);
+        $this->stateChanges("events_refresh_time", time());
+        $this->save();
     }
 }

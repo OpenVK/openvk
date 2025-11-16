@@ -319,11 +319,7 @@
 "meetings_few" = "$1 vstreči";
 "meetings_many" = "$1 vstreč";
 "meetings_other" = "$1 vstreč";
-"open_new_group" = "Otkrytí novuju gruppu";
-"open_group_desc" = "Ne možete najti nužnuju gruppu? Otkrojte svoju...";
-"search_group" = "Poisk gruppy";
 "search_by_groups" = "Poisk po gruppam";
-"search_group_desc" = "Zdesí Vy možete prosmotretí susčestvujusčie gruppy i vybratí gruppu sebe po vkusu...";
 "group_banned" = "K sožaleniju, nam prišlosí zablokirovatí soobsčestvo <b>$1</b>.";
 
 /* Albums */
@@ -448,6 +444,7 @@
 
 "notes_closed" = "Vy ne možete prikrepití zametku k zapisi, tak kak vaši zametki vidny tolíko vam.<br><br> Vy možete pomenjatí eto v <a href=\"/settings?act=privacy\">nastrojkah</a>.";
 "do_not_attach_note" = "Ne prikrepljatí zametku";
+"something_is_supported_from_xhtml" = "<a href='/kb/notes'>Koe-čto</a> iz (X)HTML podderživaetsja.";
 "something" = "Koe-čto";
 "supports_xhtml" = "iz (X)HTML podderživaetsja.";
 
@@ -1853,3 +1850,9 @@
 
 "roll_back" = "otkatití";
 "roll_backed" = "otkačeno";
+
+"bday_reminder" = "Napominanie";
+"bday_today" = "Segodnja";
+"bday_tomorrow" = "Zavtra";
+"bday_reminder_text" = "$1 den' rozhdenija $2.";
+"bday_and" = " i ";

@@ -465,11 +465,7 @@
 "meetings_few" = "$1 встречи";
 "meetings_many" = "$1 встреч";
 "meetings_other" = "$1 встреч";
-"open_new_group" = "Открыть новую группу";
-"open_group_desc" = "Не можете найти нужную группу? Откройте свою...";
-"search_group" = "Поиск группы";
 "search_by_groups" = "Поиск по группам";
-"search_group_desc" = "Здесь Вы можете просмотреть существующие группы и выбрать группу себе по вкусу...";
 "group_banned" = "К сожалению, нам пришлось заблокировать сообщество <b>$1</b>.";
 
 "error_suggestions" = "Ошибка доступа к предложенным";
@@ -489,7 +485,7 @@
 "edit_photo" = "Изменить фотографию";
 "creating_album" = "Создание альбома";
 "delete_photo" = "Удалить фотографию";
-"sure_deleting_photo" = "Вы уверены, что хотите удалить эту фотографию?";
+"sure_deleting_photo" = "Вы уверены, что хотите удалить эту фотографию из альбома?";
 "upload_photo" = "Загрузить фотографию";
 "photo" = "Фотография";
 "upload_button" = "Загрузить";
@@ -603,6 +599,7 @@
 
 "notes_closed" = "Вы не можете прикрепить заметку к записи, так как ваши заметки видны только вам.<br><br> Вы можете поменять это в <a href=\"/settings?act=privacy\">настройках</a>.";
 "do_not_attach_note" = "Не прикреплять заметку";
+"something_is_supported_from_xhtml" = "<a href='/kb/notes'>Кое-что</a> из (X)HTML поддерживается.";
 "something" = "Кое-что";
 "supports_xhtml" = "из (X)HTML поддерживается.";
 
@@ -676,6 +673,7 @@
 "cut" = "Квадратные";
 "round_avatars" = "Круглые";
 "apply_style_for_this_device" = "Применить стиль только для этого устройства";
+"ui_settings_window" = "Дополнительные настройки";
 "search_for_groups" = "Поиск групп";
 "search_for_users" = "Поиск людей";
 "search_for_posts" = "Поиск записей";
@@ -824,6 +822,9 @@
 "sort_up" = "Сортировать по дате создания вверх";
 "sort_down" = "Сортировать по дате создания вниз";
 
+"new_first" = "Сначала новые";
+"old_first" = "Сначала старые";
+
 /* Videos */
 
 "videos" = "Видеозаписи";
@@ -883,7 +884,8 @@
 "audio_embed_deleted" = "Аудиозапись была удалена";
 "audio_embed_withdrawn" = "Аудиозапись была изъята по обращению правообладателя.";
 "audio_embed_forbidden" = "Настройки приватности пользователя не позволяют встраивать эту композицию";
-"audio_embed_processing" = "Аудио ещё обрабатывается, либо обработалось неправильно.";
+"audio_embed_processing" = "Аудио находится в обработке.";
+"audio_embed_processing_bait" = "Всё равно хочу воспроизвести";
 
 "audios_count_zero" = "Нет аудиозаписей";
 "audios_count_one" = "Одна аудиозапись"; /* сингл */
@@ -902,6 +904,7 @@
 "audio_search" = "Поиск";
 
 "my_audios_small" = "Мои аудиозаписи";
+"my_audios_small_uploaded" = "Загруженное";
 "my_playlists" = "Мои плейлисты";
 "playlists" = "Плейлисты";
 "audios_explicit" = "Содержит нецензурную лексику";
@@ -994,6 +997,12 @@
 "audio_ctx_play_next" = "Воспроизвести следующим";
 "audio_ctx_clear_context" = "Очистить список треков";
 
+"is_x_audio_zero" = "Нету аудиозаписей";
+"is_x_audio_one" = "Всего одна аудиозапись.";
+"is_x_audio_few" = "Всего $1 аудиозаписи.";
+"is_x_audio_many" = "Всего $1 аудиозаписей.";
+"is_x_audio_other" = "Всего $1 аудиозаписей.";
+
 /* Notifications */
 
 "feedback" = "Ответы";
@@ -1046,6 +1055,11 @@
 
 "news" = "Новости";
 "news_more" = "Подробнее »";
+"bday_reminder" = "Напоминание";
+"bday_today" = "Сегодня";
+"bday_tomorrow" = "Завтра";
+"bday_reminder_text" = "$1 день рождения $2.";
+"bday_and" = " и ";
 "points" = "Голоса";
 "points_count" = "голосов";
 "on_your_account" = "на вашем счету";
@@ -1129,6 +1143,7 @@
 "coins_many" = "$1 голосов";
 "coins_other" = "$1 голосов";
 "users_gifts" = "Подарки";
+"sent" = "Отправлено";
 
 /* Apps */
 "app" = "Приложение";
@@ -1448,7 +1463,7 @@
 "error_access_denied_short" = "Ошибка доступа";
 "error_access_denied" = "У вас недостаточно прав, чтобы редактировать этот ресурс";
 "success" = "Успешно";
-"comment_will_not_appear" = "Этот комментарий больше не будет показыватся.";
+"comment_will_not_appear" = "Этот комментарий больше не будет показываться.";
 
 "error_when_gifting" = "Не удалось подарить";
 "error_user_not_exists" = "Пользователь или набор не существуют.";
@@ -1547,6 +1562,8 @@
 "error_geolocation" = "Ошибка при прикреплении геометки";
 "error_no_geotag" = "У поста не указана гео-метка";
 
+"limit_exceed_exception" = "Вы совершаете это действие слишком часто. Повторите позже.";
+
 /* Admin actions */
 
 "login_as" = "Войти как $1";
@@ -1573,6 +1590,7 @@
 "admin_first_known_ip" = "Первый IP";
 "admin_shortcode" = "Короткий адрес";
 "admin_verification" = "Верификация";
+"admin_hide_global_feed" = "Не отображать в глобальной ленте";
 "admin_banreason" = "Причина блокировки";
 "admin_banned" = "заблокирован";
 "admin_actions" = "Действия";
@@ -2121,6 +2139,7 @@
 "mobile_like" = "Нравится";
 "mobile_user_info_hide" = "Скрыть";
 "mobile_user_info_show_details" = "Показать подробнее";
+"mobile_attachment_only_for_pc" = "Вложение недоступно в PDA версии, его просмотр возможен только с другого устройства";
 
 /* Fullscreen player */
 
@@ -2205,6 +2224,8 @@
 
 "roll_back" = "откатить";
 "roll_backed" = "откачено";
+
+"nospam_prevention" = "Данное действие затронет множество данных. Вы действительно хотите применить?";
 
 /* RSS */
 
@@ -2297,3 +2318,4 @@
 "faves_few" = "$1 закладки";
 "faves_many" = "$1 закладок";
 "faves_other" = "$1 закладок";
+

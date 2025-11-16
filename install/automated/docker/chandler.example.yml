@@ -25,3 +25,11 @@ chandler:
         csrfProtection: "permissive"
         extendedValidation: false
         sessionDuration: 14
+
+    email:
+        host: "mail.example.com"
+        port: 465
+        user: "user"
+        pass: "word"
+        addr: "noreply@example.com"
+        ssl: true

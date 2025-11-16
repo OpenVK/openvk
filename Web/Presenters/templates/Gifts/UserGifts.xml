@@ -34,6 +34,12 @@
                     </a>
                 </td>
             </tr>
+            <tr>
+                <td><span class="nobold">{_sent}: </span></td>
+                <td>
+                    {$x->sent}
+                </td>
+            </tr>
             <tr n:if="!empty($x->caption)">
                 <td><span class="nobold">{_comment}: </span></td>
                 <td>{$x->caption}</td>

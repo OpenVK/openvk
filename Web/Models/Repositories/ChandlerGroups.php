@@ -61,6 +61,6 @@ class ChandlerGroups
 
     public function isUserAMember(string $GID, string $UID): bool
     {
-        return ($this->context->query("SELECT * FROM `ChandlerACLRelations` WHERE `group` = ? AND `user` = ?", $GID, $UID)) !== null;
+        return $this->context->query("SELECT * FROM `ChandlerACLRelations` WHERE `group` = ? AND `user` = ?", $GID, $UID)->getRowCount() > 0;
     }
 }

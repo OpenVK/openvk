@@ -713,6 +713,10 @@ final class Wall extends VKAPIRequestHandler
                 $post->setSuggested(1);
             }
 
+            if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->getUser(), "wall.post")) {
+                $this->failTooOften();
+            }
+
             $post->save();
         } catch (\LogicException $ex) {
             $this->fail(100, "One of the parameters specified was missing or invalid");
@@ -722,8 +726,8 @@ final class Wall extends VKAPIRequestHandler
             $post->attach($attachment);
         }
 
-        if ($owner_id > 0 && $owner_id !== $this->user->identity->getId()) {
-            (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
+        if ($owner_id > 0 && $owner_id !== $this->getUser()->getId()) {
+            (new WallPostNotification($wallOwner, $post, $this->getUser()))->emit();
         }
 
         return (object) ["post_id" => $post->getVirtualId()];
@@ -873,6 +877,8 @@ final class Wall extends VKAPIRequestHandler
                 "id"            => $comment->getId(),
                 "from_id"       => $oid,
                 "date"          => $comment->getPublicationTime()->timestamp(),
+                "can_edit"      => $post->canBeEditedBy($this->getUser()),
+                "can_delete"    => $post->canBeDeletedBy($this->getUser()),
                 "text"          => $comment->getText(false),
                 "post_id"       => $post->getVirtualId(),
                 "owner_id"      => method_exists($post, 'isPostedOnBehalfOfGroup') && $post->isPostedOnBehalfOfGroup() ? $post->getOwner()->getId() * -1 : $post->getOwner()->getId(),
@@ -1104,13 +1110,18 @@ final class Wall extends VKAPIRequestHandler
 
         $post = (new PostsRepo())->getPostById($owner_id, $post_id, true);
         if (!$post || $post->isDeleted()) {
-            $this->fail(583, "Invalid post");
+            $this->fail(15, "Not found");
         }
 
         $wallOwner = $post->getWallOwner();
 
+        # trying to solve the condition below.
+        # $post->getTargetWall() < 0 - if post on wall of club
+        # !$post->getWallOwner()->canBeModifiedBy($this->getUser()) - group is cannot be modifiet by %user%
+        # $post->getWallOwner()->getWallType() != 1 - wall is not open
+        # $post->getSuggestionType() == 0 - post is not suggested
         if ($post->getTargetWall() < 0 && !$post->getWallOwner()->canBeModifiedBy($this->getUser()) && $post->getWallOwner()->getWallType() != 1 && $post->getSuggestionType() == 0) {
-            $this->fail(12, "Access denied: you can't delete your accepted post.");
+            $this->fail(15, "Access denied");
         }
 
         if ($post->getOwnerPost() == $this->getUser()->getId() || $post->getTargetWall() == $this->getUser()->getId() || $owner_id < 0 && $wallOwner->canBeModifiedBy($this->getUser())) {
@@ -1176,8 +1187,9 @@ final class Wall extends VKAPIRequestHandler
         if ($from_group == 1 && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->getUser())) {
             $flags |= 0b10000000;
         }
-        /*if($signed == 1)
-            $flags |= 0b01000000;*/
+        if ($post->isSigned() && $from_group == 1) {
+            $flags |= 0b01000000;
+        }
 
         $post->setFlags($flags);
         $post->save(true);

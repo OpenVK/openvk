@@ -41,6 +41,16 @@ openvk:
                 maxViolations: 50
                 maxViolationsAge: 120
                 autoban: true
+                eventsLimit:
+                    enable: true
+                    ignoreForAdmins: true
+                    restrictionTime: 86400
+                    list:
+                        groups.create: 5
+                        groups.sub: 50
+                        friends.outgoing_sub: 25
+                        wall.post: 5000
+                        gifts.send: 30
         blacklists:
             limit: 100
             applyToAdmins: true
@@ -60,6 +70,9 @@ openvk:
             exposeOriginalURLs: true
         newsfeed:
             ignoredSourcesLimit: 50
+        notes:
+            disableHotlinking: true
+            allowedHosts: []
         wall:
             christian: false
             anonymousPosting:

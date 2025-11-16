@@ -18,8 +18,8 @@
 <table border="0" style="font-size: 11px;" data-id="{$post->getPrettyId()}" n:class="post, $post->isExplicit() ? post-nsfw">
     <tbody>
         <tr>
-            <td width="54" valign="top">
-                <a href="{$author->getURL()}">
+            <td class="post-author-ava" width="54" valign="top">
+                <a class="post-author-url" href="{$author->getURL()}">
                     <img src="{$author->getAvatarURL('miniscule')}" class="post-avatar" width="50" loading=lazy />
                     <span n:if="!$post->isPostedOnBehalfOfGroup() && !($compact ?? false) && $author->isOnline()" class="post-online">{_online}</span>
                 </a>
@@ -133,8 +133,16 @@
 
                     {if !($forceNoDeleteLink ?? false) && $canBeDeleted}
                         <a href="/wall{$post->getPrettyId()}/delete">{_delete}</a> &nbsp;|&nbsp;
+                    {/if} 
+
+                    {if $feedIgnoreButton && !$canBeDeleted}
+                    <a id="__ignoreSomeoneFeed" data-val='1' data-id="{$wallOwner->getRealId()}">{_feed_ignore}</a> &nbsp;|&nbsp;
                     {/if}
-                    
+
+                    {if !$canBeDeleted}
+                        <a href="javascript:reportPost({$post->getId()})">{_report}</a> &nbsp;|&nbsp;
+                    {/if}
+
                     {if !($forceNoPinLink ?? false) && $canBePinned}
                         {if $post->isPinned()}
                             <a href="/wall{$post->getPrettyId()}/pin?act=unpin&hash={rawurlencode($csrfToken)}">{_unpin}</a>

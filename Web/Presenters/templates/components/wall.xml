@@ -1,13 +1,13 @@
-<div class="content_divider">
-    <div class="content_title_expanded" onclick="hidePanel(this);">
+<div class="content_divider wall_block">
+    <div class="content_title_expanded">
         {_wall} 
         <nobold>
-            {tr("wall", $count)}
+            <span class='wall_block_counter'>{tr("wall", $count)}</span>
             <a href="/wall{$owner}" class="float-right lowercase">{_all_title}</a>
         </nobold>
     </div>
     <div>
-    <div class="insertThere" id="postz"></div>
+    <div class="insertThere" id="wall_block_posts"></div>
     <div id="underHeader">
         <div n:if="$canPost" class="content_subtitle">
             {include "../components/textArea.xml", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true, docs => true}

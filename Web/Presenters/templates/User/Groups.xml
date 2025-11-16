@@ -33,6 +33,18 @@
 {/block}
 
 {block size}
+    {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+        <div id="groups_graybar" class="container_gray">
+            <form action="/search" id="search_box">
+                <input name="section" type="hidden" value="groups">
+                <input name="q" class="header_search_input" value="" style="width: 320px" placeholder="{_search_by_groups}">
+            </form>
+            <form action="/groups_create" id="create_group">
+                <button class="button">{_create_group}</button>
+            </form>
+        </div>
+    {/if}
+
     <div style="padding-bottom: 0px; {if is_null($thisUser) || $user->getId() !== $thisUser->getId()}padding-top: 0px;{/if}" class="summaryBar">
         <div class="summary">
             {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
@@ -105,28 +117,5 @@
             <input type="hidden" name="hash" value="{$csrfToken}" />
             <input type="submit" class="profile_link" value="{_leave_community}" />
         </form>
-    {/if}
-{/block}
-
-{block bottom}
-    {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
-        <div class="groups_options">
-            <div id="gp_container" style="width: 200px; margin-right: 39px;">
-                <h4>{_open_new_group}</h4>
-                <span>{_open_group_desc}</span>
-                <form action="/groups_create">
-                    <button class="button">{_create_group}</button>
-                </form>
-            </div>
-            <div id="gp_container" style="width: 344px;">
-                <h4>{_search_group}</h4>
-                <span>{_search_group_desc}</span>
-                <form action="/search">
-                    <input name="section" type="hidden" value="groups">
-                    <input name="q" class="header_search_input" value="" style="background: none; width: 155px; padding-left: 3px;">
-                    <button class="button">{_search_by_groups}</button>
-                </form>
-            </div>
-        </div>
     {/if}
 {/block}

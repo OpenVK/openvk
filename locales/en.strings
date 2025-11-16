@@ -480,11 +480,7 @@
 "meetings_one" = "$1 meeting";
 "meetings_other" = "$1 meetings";
 
-"open_new_group" = "Start a New Group";
-"open_group_desc" = "Unable to find the perfect group? Start your own...";
-"search_group" = "Search for a Group";
 "search_by_groups" = "Explore Groups";
-"search_group_desc" = "Browse through existing groups and find the one that suits your needs...";
 
 "error_suggestions" = "Error accessing to suggestions";
 "error_suggestions_closed" = "This group has closed wall.";
@@ -505,7 +501,7 @@
 "edit_photo" = "Edit photo";
 "creating_album" = "Creating album";
 "delete_photo" = "Delete photo";
-"sure_deleting_photo" = "Do you really want to delete this picture?";
+"sure_deleting_photo" = "Do you sure you want to delete this photo from album?";
 "upload_photo" = "Upload photo";
 "photo" = "Photo";
 "upload_button" = "Upload";
@@ -619,6 +615,7 @@
 
 "notes_closed" = "You can't attach a note to the post because only you can see them.<br> You can change this in <a href=\"/settings?act=privacy\">settings</a>.";
 "do_not_attach_note" = "Do not attach a note";
+"something_is_supported_from_xhtml" = "<a href='/kb/notes'>Something</a> from (X)HTML supported.";
 "something" = "Something";
 "supports_xhtml" = "from (X)HTML supported.";
 
@@ -703,6 +700,7 @@
 "round_avatars" = "Round";
 
 "apply_style_for_this_device" = "Apply style only for this device";
+"ui_settings_window" = "Advanced settings";
 
 "search_for_groups" = "Search for groups";
 "search_for_users" = "Search for users";
@@ -866,6 +864,9 @@
 "sort_up" = "Sort by ID up";
 "sort_down" = "Sort by ID down";
 
+"new_first" = "New frist";
+"old_first" = "Old first";
+
 /* Videos */
 
 "videos" = "Videos";
@@ -928,7 +929,8 @@
 "audio_embed_deleted" = "Audio has been deleted";
 "audio_embed_withdrawn" = "The audio has been withdrawn at the request of the copyright holder";
 "audio_embed_forbidden" = "The user's privacy settings do not allow this audio to be embedded";
-"audio_embed_processing" = "Audio is still being processed or has not been processed correctly.";
+"audio_embed_processing" = "Audio is processing.";
+"audio_embed_processing_bait" = "Play anyway";
 
 "audios_count_zero" = "No audios";
 "audios_count_one" = "One audio";
@@ -947,6 +949,7 @@
 "audio_search" = "Search";
 
 "my_audios_small" = "My audios";
+"my_audios_small_uploaded" = "Uploaded";
 "my_playlists" = "My playlists";
 "playlists" = "Playlists";
 "audios_explicit" = "Contains obscene language";
@@ -1038,6 +1041,12 @@
 "audio_ctx_play_next" = "Play next";
 "audio_ctx_clear_context" = "Clear tracks list";
 
+"is_x_audio_zero" = "No audios";
+"is_x_audio_one" = "Just one audio.";
+"is_x_audio_few" = "Just $1 audios.";
+"is_x_audio_many" = "Just $1 audios.";
+"is_x_audio_other" = "Just $1 audios.";
+
 /* Notifications */
 
 "feedback" = "Feedback";
@@ -1094,6 +1103,11 @@
 
 "news" = "News";
 "news_more" = "More »";
+"bday_reminder" = "Reminder";
+"bday_today" = "Today";
+"bday_tomorrow" = "Tomorrow";
+"bday_reminder_text" = "$1 is $2's birthday.";
+"bday_and" = " and ";
 "points" = "Votes";
 "points_count" = "votes";
 "on_your_account" = "on your account";
@@ -1187,6 +1201,7 @@
 "coins_other" = "$1 votes";
 
 "users_gifts" = "Gifts";
+"sent" = "Sent";
 
 /* Apps */
 "app" = "Application";
@@ -1643,6 +1658,8 @@
 "error_geolocation" = "Error while trying to pin geolocation";
 "error_no_geotag" = "There is no geo-tag pinned in this post";
 
+"limit_exceed_exception" = "You're doing this action too often. Try again later.";
+
 /* Admin actions */
 
 "login_as" = "Login as $1";
@@ -1670,6 +1687,7 @@
 "admin_first_known_ip" = "First known IP";
 "admin_shortcode" = "Short code";
 "admin_verification" = "Verification";
+"admin_hide_global_feed" = "Hide global feed";
 "admin_banreason" = "Ban reason";
 "admin_banned" = "banned";
 "admin_gender" = "Sex";
@@ -2226,6 +2244,7 @@
 "mobile_like" = "Like";
 "mobile_user_info_hide" = "Hide";
 "mobile_user_info_show_details" = "Show details";
+"mobile_attachment_only_for_pc" = "This attachments is not implemented for PDA version. Please, view it on PC.";
 
 /* Fullscreen player */
 
@@ -2310,6 +2329,8 @@
 
 "roll_back" = "rollback";
 "roll_backed" = "rollbacked";
+
+"nospam_prevention" = "This action will affect a lot of data. Are you sure you want to apply?";
 
 /* RSS */
 

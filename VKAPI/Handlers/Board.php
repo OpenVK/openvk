@@ -14,8 +14,7 @@ use openvk\Web\Models\Entities\{Topic, Comment, User, Photo, Video};
 
 final class Board extends VKAPIRequestHandler
 {
-    # 13/13
-    public function addTopic(int $group_id, string $title, string $text = "", bool $from_group = true, string $attachments = "")
+    public function addTopic(int $group_id, string $title, string $text = null, bool $from_group = true)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
@@ -23,11 +22,11 @@ final class Board extends VKAPIRequestHandler
         $club = (new ClubsRepo())->get($group_id);
 
         if (!$club) {
-            $this->fail(403, "Invalid club");
+            $this->fail(15, "Access denied");
         }
 
         if (!$club->canBeModifiedBy($this->getUser()) && !$club->isEveryoneCanCreateTopics()) {
-            $this->fail(403, "Access to club denied");
+            $this->fail(15, "Access denied");
         }
 
         $flags = 0;
@@ -42,70 +41,23 @@ final class Board extends VKAPIRequestHandler
         $topic->setTitle(ovk_proc_strtr($title, 127));
         $topic->setCreated(time());
         $topic->setFlags($flags);
+
         $topic->save();
 
-        if (!empty($text)) {
-            $comment = new Comment();
-            $comment->setOwner($this->getUser()->getId());
-            $comment->setModel(get_class($topic));
-            $comment->setTarget($topic->getId());
-            $comment->setContent($text);
-            $comment->setCreated(time());
-            $comment->setFlags($flags);
-            $comment->save();
+        try {
+            if (!empty($text)) {
+                $comment = new Comment();
+                $comment->setOwner($this->getUser()->getId());
+                $comment->setModel(get_class($topic));
+                $comment->setTarget($topic->getId());
+                $comment->setContent($text);
+                $comment->setCreated(time());
+                $comment->setFlags($flags);
 
-            if (!empty($attachments)) {
-                $attachmentsArr = explode(",", $attachments);
-                # блин а мне это везде копировать типа
-
-                if (sizeof($attachmentsArr) > 10) {
-                    $this->fail(50, "Error: too many attachments");
-                }
-
-                foreach ($attachmentsArr as $attac) {
-                    $attachmentType = null;
-
-                    if (str_contains($attac, "photo")) {
-                        $attachmentType = "photo";
-                    } elseif (str_contains($attac, "video")) {
-                        $attachmentType = "video";
-                    } else {
-                        $this->fail(205, "Unknown attachment type");
-                    }
-
-                    $attachment = str_replace($attachmentType, "", $attac);
-
-                    $attachmentOwner = (int) explode("_", $attachment)[0];
-                    $attachmentId    = (int) end(explode("_", $attachment));
-
-                    $attacc = null;
-
-                    if ($attachmentType == "photo") {
-                        $attacc = (new PhotosRepo())->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                        if (!$attacc || $attacc->isDeleted()) {
-                            $this->fail(100, "Photo does not exists");
-                        }
-                        if ($attacc->getOwner()->getId() != $this->getUser()->getId()) {
-                            $this->fail(43, "You do not have access to this photo");
-                        }
-
-                        $comment->attach($attacc);
-                    } elseif ($attachmentType == "video") {
-                        $attacc = (new VideosRepo())->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                        if (!$attacc || $attacc->isDeleted()) {
-                            $this->fail(100, "Video does not exists");
-                        }
-                        if ($attacc->getOwner()->getId() != $this->getUser()->getId()) {
-                            $this->fail(43, "You do not have access to this video");
-                        }
-
-                        $comment->attach($attacc);
-                    }
-
-                }
-
+                $comment->save();
             }
-
+        } catch (\Throwable $e) {
+            return $topic->getId();
         }
 
         return $topic->getId();
@@ -118,7 +70,7 @@ final class Board extends VKAPIRequestHandler
 
         $topic = (new TopicsRepo())->getTopicById($group_id, $topic_id);
 
-        if (!$topic || !$topic->getClub() || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
+        if (!$topic || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
             return 0;
         }
 
@@ -130,106 +82,38 @@ final class Board extends VKAPIRequestHandler
         return 1;
     }
 
-    public function createComment(int $group_id, int $topic_id, string $message = "", string $attachments = "", bool $from_group = true)
+    public function createComment(int $group_id, int $topic_id, string $message = "", bool $from_group = true)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        if (empty($message) && empty($attachments)) {
+        if (empty($message)) {
             $this->fail(100, "Required parameter 'message' missing.");
         }
 
         $topic = (new TopicsRepo())->getTopicById($group_id, $topic_id);
 
         if (!$topic || $topic->isDeleted() || $topic->isClosed()) {
-            $this->fail(100, "Topic is deleted, closed or invalid.");
+            $this->fail(15, "Access denied");
         }
 
         $flags = 0;
-
-        if ($from_group != 0 && !is_null($topic->getClub()) && $topic->getClub()->canBeModifiedBy($this->user)) {
+        if ($from_group != 0 && ($topic->getClub()->canBeModifiedBy($this->user))) {
             $flags |= 0b10000000;
         }
 
-        if (strlen($message) > 300) {
-            $this->fail(20, "Comment is too long.");
-        }
-
         $comment = new Comment();
+
         $comment->setOwner($this->getUser()->getId());
         $comment->setModel(get_class($topic));
         $comment->setTarget($topic->getId());
         $comment->setContent($message);
         $comment->setCreated(time());
         $comment->setFlags($flags);
+
         $comment->save();
 
-        if (!empty($attachments)) {
-            $attachmentsArr = explode(",", $attachments);
-
-            if (sizeof($attachmentsArr) > 10) {
-                $this->fail(50, "Error: too many attachments");
-            }
-
-            foreach ($attachmentsArr as $attac) {
-                $attachmentType = null;
-
-                if (str_contains($attac, "photo")) {
-                    $attachmentType = "photo";
-                } elseif (str_contains($attac, "video")) {
-                    $attachmentType = "video";
-                } else {
-                    $this->fail(205, "Unknown attachment type");
-                }
-
-                $attachment = str_replace($attachmentType, "", $attac);
-
-                $attachmentOwner = (int) explode("_", $attachment)[0];
-                $attachmentId    = (int) end(explode("_", $attachment));
-
-                $attacc = null;
-
-                if ($attachmentType == "photo") {
-                    $attacc = (new PhotosRepo())->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                    if (!$attacc || $attacc->isDeleted()) {
-                        $this->fail(100, "Photo does not exists");
-                    }
-                    if ($attacc->getOwner()->getId() != $this->getUser()->getId()) {
-                        $this->fail(43, "You do not have access to this photo");
-                    }
-
-                    $comment->attach($attacc);
-                } elseif ($attachmentType == "video") {
-                    $attacc = (new VideosRepo())->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                    if (!$attacc || $attacc->isDeleted()) {
-                        $this->fail(100, "Video does not exists");
-                    }
-                    if ($attacc->getOwner()->getId() != $this->getUser()->getId()) {
-                        $this->fail(43, "You do not have access to this video");
-                    }
-
-                    $comment->attach($attacc);
-                }
-            }
-        }
-
         return $comment->getId();
-    }
-
-    public function deleteComment(int $comment_id, int $group_id = 0, int $topic_id = 0)
-    {
-        $this->requireUser();
-        $this->willExecuteWriteAction();
-
-        $comment = (new CommentsRepo())->get($comment_id);
-
-        if ($comment->isDeleted() || !$comment || !$comment->canBeDeletedBy($this->getUser())) {
-            $this->fail(403, "Access to comment denied");
-        }
-
-        $comment->delete();
-
-        return 1;
     }
 
     public function deleteTopic(int $group_id, int $topic_id)
@@ -239,31 +123,12 @@ final class Board extends VKAPIRequestHandler
 
         $topic = (new TopicsRepo())->getTopicById($group_id, $topic_id);
 
-        if (!$topic || !$topic->getClub() || $topic->isDeleted() || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
+        if (!$topic || $topic->isDeleted() || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
             return 0;
         }
 
         $topic->deleteTopic();
 
-        return 1;
-    }
-
-    public function editComment(string $message, string $attachments, int $comment_id, int $group_id = 0, int $topic_id = 0)
-    {
-        # FIXME
-        /*
-        $this->requireUser();
-        $this->willExecuteWriteAction();
-
-        $comment = (new CommentsRepo)->get($comment_id);
-
-        if($comment->getOwner() != $this->getUser()->getId())
-            $this->fail(15, "Access to comment denied");
-
-        $comment->setContent($message);
-        $comment->setEdited(time());
-        $comment->save();
-        */
         return 1;
     }
 
@@ -274,7 +139,7 @@ final class Board extends VKAPIRequestHandler
 
         $topic = (new TopicsRepo())->getTopicById($group_id, $topic_id);
 
-        if (!$topic || !$topic->getClub() || $topic->isDeleted() || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
+        if (!$topic || $topic->isDeleted() || !$topic->canBeModifiedBy($this->getUser())) {
             return 0;
         }
 
@@ -292,7 +157,7 @@ final class Board extends VKAPIRequestHandler
 
         $topic = (new TopicsRepo())->getTopicById($group_id, $topic_id);
 
-        if (!$topic || !$topic->getClub() || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
+        if (!$topic || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
             return 0;
         }
 
@@ -303,75 +168,92 @@ final class Board extends VKAPIRequestHandler
         return 1;
     }
 
-    public function getComments(int $group_id, int $topic_id, bool $need_likes = false, int $start_comment_id = 0, int $offset = 0, int $count = 40, bool $extended = false, string $sort = "asc")
+    public function getComments(int $group_id, int $topic_id, bool $need_likes = false, int $offset = 0, int $count = 10, bool $extended = false)
     {
-        # start_comment_id ne robit
         $this->requireUser();
+
+        if ($count < 1 || $count > 100) {
+            $this->fail(4, "Invalid count");
+        }
 
         $topic = (new TopicsRepo())->getTopicById($group_id, $topic_id);
 
-        if (!$topic || !$topic->getClub() || $topic->isDeleted()) {
-            $this->fail(5, "Invalid topic");
+        if (!$topic || $topic->isDeleted()) {
+            $this->fail(5, "Not found");
         }
 
-        $arr = [
+        $obj = (object) [
             "items" => [],
         ];
 
-        $comms = array_slice(iterator_to_array($topic->getComments(1, $count + $offset)), $offset);
-        foreach ($comms as $comm) {
-            $arr["items"][] = $this->getApiBoardComment($comm, $need_likes);
+        if ($extended) {
+            $obj->profiles = [];
+            $obj->groups = [];
+        }
+
+        $comments = array_slice(iterator_to_array($topic->getComments(1, $count + $offset)), $offset);
+
+        foreach ($comments as $comment) {
+            $obj->items[] = $comment->toVkApiStruct($this->getUser(), $need_likes);
 
             if ($extended) {
-                if ($comm->getOwner() instanceof \openvk\Web\Models\Entities\User) {
-                    $arr["profiles"][] = $comm->getOwner()->toVkApiStruct();
+                $owner = $comment->getOwner();
+
+                if ($owner instanceof \openvk\Web\Models\Entities\User) {
+                    $obj->profiles[] = $owner->toVkApiStruct();
                 }
 
-                if ($comm->getOwner() instanceof \openvk\Web\Models\Entities\Club) {
-                    $arr["groups"][] = $comm->getOwner()->toVkApiStruct();
+                if ($owner instanceof \openvk\Web\Models\Entities\Club) {
+                    $obj->groups[] = $owner->toVkApiStruct();
                 }
             }
         }
 
-        return $arr;
+        return $obj;
     }
 
-    public function getTopics(int $group_id, string $topic_ids = "", int $order = 1, int $offset = 0, int $count = 40, bool $extended = false, int $preview = 0, int $preview_length = 90)
+    public function getTopics(int $group_id, string $topic_ids = "", int $offset = 0, int $count = 10, bool $extended = false, int $preview = 0, int $preview_length = 90)
     {
-        # order и extended ничё не делают
+        # TODO: $extended
+
         $this->requireUser();
 
-        $arr = [];
+        if ($count < 1 || $count > 100) {
+            $this->fail(4, "Invalid count");
+        }
+
+        $obj = (object) [];
+
         $club = (new ClubsRepo())->get($group_id);
 
+        if (!$club || !$club->canBeViewedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        }
+
         $topics = array_slice(iterator_to_array((new TopicsRepo())->getClubTopics($club, 1, $count + $offset)), $offset);
-        $arr["count"] = (new TopicsRepo())->getClubTopicsCount($club);
-        $arr["items"] = [];
-        $arr["default_order"] = $order;
-        $arr["can_add_topics"] = $club->canBeModifiedBy($this->getUser()) ? true : ($club->isEveryoneCanCreateTopics() ? true : false);
-        $arr["profiles"] = [];
+
+        $obj->count = (new TopicsRepo())->getClubTopicsCount($club);
+        $obj->items = [];
+        $obj->profiles = [];
+        $obj->can_add_topics = $club->canBeModifiedBy($this->getUser()) ? true : ($club->isEveryoneCanCreateTopics() ? true : false);
 
         if (empty($topic_ids)) {
             foreach ($topics as $topic) {
-                if ($topic->isDeleted()) {
-                    continue;
-                }
-                $arr["items"][] = $topic->toVkApiStruct($preview, $preview_length > 1 ? $preview_length : 90);
+                $obj->items[] = $topic->toVkApiStruct($preview, $preview_length > 1 ? $preview_length : 90);
             }
         } else {
             $topics = explode(',', $topic_ids);
 
-            foreach ($topics as $topic) {
-                $id = explode("_", $topic);
-                $topicy = (new TopicsRepo())->getTopicById((int) $id[0], (int) $id[1]);
+            foreach ($topics as $topic_id) {
+                $topic = (new TopicsRepo())->getTopicById($group_id, (int) $topic_id);
 
-                if ($topicy && !$topicy->isDeleted()) {
-                    $arr["items"][] = $topicy->toVkApiStruct($preview, $preview_length > 1 ? $preview_length : 90);
+                if ($topic && !$topic->isDeleted()) {
+                    $obj->items[] = $topic->toVkApiStruct($preview, $preview_length > 1 ? $preview_length : 90);
                 }
             }
         }
 
-        return $arr;
+        return $obj;
     }
 
     public function openTopic(int $group_id, int $topic_id)
@@ -381,7 +263,7 @@ final class Board extends VKAPIRequestHandler
 
         $topic = (new TopicsRepo())->getTopicById($group_id, $topic_id);
 
-        if (!$topic || !$topic->getClub() || !$topic->isDeleted() || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
+        if (!$topic || !$topic->isDeleted() || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
             return 0;
         }
 
@@ -393,11 +275,6 @@ final class Board extends VKAPIRequestHandler
         return 1;
     }
 
-    public function restoreComment(int $group_id, int $topic_id, int $comment_id)
-    {
-        $this->fail(501, "Not implemented");
-    }
-
     public function unfixTopic(int $group_id, int $topic_id)
     {
         $this->requireUser();
@@ -405,7 +282,7 @@ final class Board extends VKAPIRequestHandler
 
         $topic = (new TopicsRepo())->getTopicById($group_id, $topic_id);
 
-        if (!$topic || !$topic->getClub() || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
+        if (!$topic || !$topic->getClub()->canBeModifiedBy($this->getUser())) {
             return 0;
         }
 
@@ -419,34 +296,5 @@ final class Board extends VKAPIRequestHandler
         $topic->save();
 
         return 1;
-    }
-
-    private function getApiBoardComment(?Comment $comment, bool $need_likes = false)
-    {
-        $res = (object) [];
-
-        $res->id            = $comment->getId();
-        $res->from_id       = $comment->getOwner()->getId();
-        $res->date          = $comment->getPublicationTime()->timestamp();
-        $res->text          = $comment->getText(false);
-        $res->attachments   = [];
-        $res->likes         = [];
-        if ($need_likes) {
-            $res->likes = [
-                "count"      => $comment->getLikesCount(),
-                "user_likes" => (int) $comment->hasLikeFrom($this->getUser()),
-                "can_like"   => 1, # а чё типо не может ахахаххахах
-            ];
-        }
-
-        foreach ($comment->getChildren() as $attachment) {
-            if ($attachment->isDeleted()) {
-                continue;
-            }
-
-            $res->attachments[] = $attachment->toVkApiStruct();
-        }
-
-        return $res;
     }
 }

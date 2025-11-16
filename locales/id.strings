@@ -290,11 +290,7 @@
 "meetings_one" = "$1 rapat/pertemuan";
 "meetings_other" = "$1 rapat/pertemuan";
 
-"open_new_group" = "Open a new group";
-"open_group_desc" = "Can't find the right group? Open your own...";
-"search_group" = "Cari grup";
-"search_by_groups" = "Search by groups";
-"search_group_desc" = "Here you can browse through the existing groups and choose a group to suit your needs...";
+"search_by_groups" = "Cari grup";
 
 /* Albums */
 
@@ -878,3 +874,9 @@
 /* User alerts */
 
 "user_alert_scam" = "Akun ini telah banyak dilaporkan melakukan penipuan. Berhati-hatilah, terutama jika ia meminta uang.";
+
+"bday_reminder" = "Pengingat";
+"bday_today" = "Hari ini";
+"bday_tomorrow" = "Besok";
+"bday_reminder_text" = "$1 adalah hari ulang tahun $2.";
+"bday_and" = " dan ";

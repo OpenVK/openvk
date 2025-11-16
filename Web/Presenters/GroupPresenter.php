@@ -68,6 +68,10 @@ final class GroupPresenter extends OpenVKPresenter
                 $club->setAbout(empty($this->postParam("about")) ? null : $this->postParam("about"));
                 $club->setOwner($this->user->id);
 
+                if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->user->identity, "groups.create")) {
+                    $this->flashFail("err", tr("error"), tr("limit_exceed_exception"));
+                }
+
                 try {
                     $club->save();
                 } catch (\PDOException $ex) {
@@ -79,6 +83,7 @@ final class GroupPresenter extends OpenVKPresenter
                 }
 
                 $club->toggleSubscription($this->user->identity);
+
                 $this->redirect("/club" . $club->getId());
             } else {
                 $this->flashFail("err", tr("error"), tr("error_no_group_name"));
@@ -101,6 +106,12 @@ final class GroupPresenter extends OpenVKPresenter
         }
         if ($club->isBanned()) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
+        if (!$club->getSubscriptionStatus($this->user->identity)) {
+            if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->user->identity, "groups.sub")) {
+                $this->flashFail("err", tr("error"), tr("limit_exceed_exception"));
+            }
         }
 
         $club->toggleSubscription($this->user->identity);
@@ -135,7 +146,7 @@ final class GroupPresenter extends OpenVKPresenter
 
         $this->template->paginatorConf = (object) [
             "count"   => $this->template->count,
-            "page"    => $this->queryParam("p") ?? 1,
+            "page"    => (int) ($this->queryParam("p") ?? 1),
             "amount"  => 10,
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
         ];

@@ -2,9 +2,9 @@
 {var $textAreaId = ($post ?? NULL) === NULL ? (++$GLOBALS["textAreaCtr"]) : $post->getId()}
 {var $textAreaId = ($custom_id ?? NULL) === NULL ? $textAreaId : $custom_id}
 
-<div id="write" class='model_content_textarea' style="padding: 5px 0;">
+<div id="write" class='model_content_textarea' style="padding: 5px 0;" data-id="{is_null($owner) || gettype($owner) == 'integer' ? $owner : $owner->getId()}">
     <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
-        <textarea id="wall-post-input{$textAreaId}" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="small-textarea"></textarea>
+        <textarea id="wall-post-input{$textAreaId}" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="small-textarea" autocomplete="off"></textarea>
         <div>
             <!-- padding to fix <br/> bug -->
         </div>
@@ -22,6 +22,8 @@
 
                 {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0}
                     {if $club->canBeModifiedBy($thisUser)}
+                        {var $anonHide = true}
+
                         <script>
                             function onWallAsGroupClick(el) {
                                 document.querySelector("#forceSignOpt").style.display = el.checked ? "block" : "none";
@@ -33,15 +35,15 @@
                         </script>
                         
                         <label>
-                            <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" /> {_post_as_group}
+                            <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" checked /> {_post_as_group}
                         </label>
-                        <label id="forceSignOpt" style="display: none;">
+                        <label id="forceSignOpt" style="display: block;">
                             <input type="checkbox" name="force_sign" /> {_add_signature}
                         </label>
                     {/if}
                 {/if}
                 
-                <label n:if="$anonEnabled" id="octoberAnonOpt">
+                <label n:if="$anonEnabled" id="octoberAnonOpt" {if $anonHide}style="display: none;"{/if}>
                     <input type="checkbox" name="anon" /> {_as_anonymous}
                 </label>
                 

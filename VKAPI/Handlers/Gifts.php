@@ -10,62 +10,43 @@ use openvk\Web\Models\Entities\Notifications\GiftNotification;
 
 final class Gifts extends VKAPIRequestHandler
 {
-    public function get(int $user_id = null, int $count = 10, int $offset = 0)
+    public function get(int $user_id = 0, int $count = 10, int $offset = 0)
     {
+        # There is no extended :)
+
         $this->requireUser();
 
-        $i = 0;
-        $i += $offset;
         $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
 
-        if ($user_id) {
-            $user = (new UsersRepo())->get($user_id);
-        } else {
-            $user = $this->getUser();
+        if ($user_id < 1) {
+            $user_id = $this->getUser()->getId();
         }
+
+        $user = (new UsersRepo())->get($user_id);
 
         if (!$user || $user->isDeleted()) {
-            $this->fail(177, "Invalid user");
-        }
-
-        if (!$user->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");
         }
-
-        /*
-        if(!$user->getPrivacyPermission('gifts.read', $this->getUser()))
-            $this->fail(15, "Access denied: this user chose to hide his gifts");*/
-
 
         if (!$user->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");
         }
 
         $gift_item = [];
+        $user_gifts = array_slice(iterator_to_array($user->getGifts(1, $count)), $offset, $count);
 
-        $userGifts = array_slice(iterator_to_array($user->getGifts(1, $count, false)), $offset);
-
-        if (sizeof($userGifts) < 0) {
-            return null;
-        }
-
-        foreach ($userGifts as $gift) {
-            if ($i < $count) {
-                $gift_item[] = [
-                    "id"        => $i,
-                    "from_id"   => $gift->anon == true ? 0 : $gift->sender->getId(),
-                    "message"   => $gift->caption == null ? "" : $gift->caption,
-                    "date"      => $gift->sent->timestamp(),
-                    "gift"      => [
-                        "id"          => $gift->gift->getId(),
-                        "thumb_256"   => $server_url . $gift->gift->getImage(2),
-                        "thumb_96"    => $server_url . $gift->gift->getImage(2),
-                        "thumb_48"    => $server_url . $gift->gift->getImage(2),
-                    ],
-                    "privacy"   => 0,
-                ];
-            }
-            $i += 1;
+        foreach ($user_gifts as $gift) {
+            $gift_item[] = [
+                "from_id"   => $gift->anon == true ? 0 : $gift->sender->getId(),
+                "message"   => $gift->caption == null ? "" : $gift->caption,
+                "date"      => $gift->sent->timestamp(),
+                "gift"      => [
+                    "id"          => $gift->gift->getId(),
+                    "thumb_256"   => $server_url . $gift->gift->getImage(2),
+                    "thumb_96"    => $server_url . $gift->gift->getImage(2),
+                    "thumb_48"    => $server_url . $gift->gift->getImage(2),
+                ],
+            ];
         }
 
         return $gift_item;
@@ -76,14 +57,18 @@ final class Gifts extends VKAPIRequestHandler
         $this->requireUser();
         $this->willExecuteWriteAction();
 
-        $user = (new UsersRepo())->get((int) $user_ids);
-
         if (!OPENVK_ROOT_CONF['openvk']['preferences']['commerce']) {
-            $this->fail(105, "Commerce is disabled on this instance");
+            $this->fail(-105, "Commerce is disabled on this instance");
         }
 
+        if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->getUser(), "gifts.send", false)) {
+            $this->failTooOften();
+        }
+
+        $user = (new UsersRepo())->get((int) $user_ids); # FAKE прогноз погоды (в данном случае user_ids)
+
         if (!$user || $user->isDeleted()) {
-            $this->fail(177, "Invalid user");
+            $this->fail(15, "Access denied");
         }
 
         if (!$user->canBeViewedBy($this->getUser())) {
@@ -93,7 +78,7 @@ final class Gifts extends VKAPIRequestHandler
         $gift  = (new GiftsRepo())->get($gift_id);
 
         if (!$gift) {
-            $this->fail(165, "Invalid gift");
+            $this->fail(15, "Invalid gift");
         }
 
         $price = $gift->getPrice();
@@ -134,24 +119,17 @@ final class Gifts extends VKAPIRequestHandler
         ];
     }
 
-    public function delete()
-    {
-        $this->requireUser();
-        $this->willExecuteWriteAction();
-
-        $this->fail(501, "Not implemented");
-    }
-
-    # в vk кстати называется gifts.getCatalog
     public function getCategories(bool $extended = false, int $page = 1)
     {
+        $this->requireUser();
+
         $cats = (new GiftsRepo())->getCategories($page);
         $categ = [];
         $i = 0;
         $server_url = ovk_scheme(true) . $_SERVER["HTTP_HOST"];
 
         if (!OPENVK_ROOT_CONF['openvk']['preferences']['commerce']) {
-            $this->fail(105, "Commerce is disabled on this instance");
+            $this->fail(-105, "Commerce is disabled on this instance");
         }
 
         foreach ($cats as $cat) {
@@ -184,17 +162,19 @@ final class Gifts extends VKAPIRequestHandler
         $this->requireUser();
 
         if (!OPENVK_ROOT_CONF['openvk']['preferences']['commerce']) {
-            $this->fail(105, "Commerce is disabled on this instance");
+            $this->fail(-105, "Commerce is disabled on this instance");
         }
 
-        if (!(new GiftsRepo())->getCat($id)) {
-            $this->fail(177, "Category not found");
+        $gift_category = (new GiftsRepo())->getCat($id);
+
+        if (!$gift_category) {
+            $this->fail(15, "Category not found");
         }
 
-        $giftz = ((new GiftsRepo())->getCat($id))->getGifts($page);
+        $gifts_list = $gift_category->getGifts($page);
         $gifts = [];
 
-        foreach ($giftz as $gift) {
+        foreach ($gifts_list as $gift) {
             $gifts[] = [
                 "name"         => $gift->getName(),
                 "image"        => $gift->getImage(2),

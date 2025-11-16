@@ -54,6 +54,9 @@ window.player = new class {
     current_track_id = 0
     tracks = []
 
+    // time type:
+    // 0 - shows remaining time before end
+    // 1 - shows full track time
     get timeType() {
         return localStorage.getItem('audio.timeType') ?? 0
     }
@@ -62,6 +65,7 @@ window.player = new class {
         localStorage.setItem('audio.timeType', value)
     }
 
+    // <audio> tag
     get audioPlayer() {
         return this.__realAudioPlayer
     }
@@ -172,7 +176,7 @@ window.player = new class {
                 }
             }
 
-            if(window.player.listen_coef > 10) {
+            if(window.player.listen_coef > 5) {
                 this.__countListen()
                 window.player.listen_coef = -10
             }
@@ -230,6 +234,9 @@ window.player = new class {
                     'with_lyrics': this.context.object.with_lyrics,
                     'query': this.context.object.query,
                 }))
+                break
+            case "uploaded":
+                form_data.append('context', this.context.object.name)
                 break
             case 'alone_audio':
                 form_data.append('context', this.context.object.name)
@@ -322,6 +329,10 @@ window.player = new class {
         
         this.__updateFace()
         u(this.audioPlayer).trigger('volumechange')
+
+        if(this.isAtAudiosPage()) {
+            document.title = ovk_proc_strtr(escapeHtml(`${window.player.currentTrack.performer} — ${window.player.currentTrack.name}`), 255)
+        }
     }
 
     hasContext() {
@@ -377,7 +388,7 @@ window.player = new class {
         }
 
         await this.setTrack(this.previousTrack.id)
-        if(!this.currentTrack.available || this.currentTrack.withdrawn) {
+        if(/*!this.currentTrack.available || */this.currentTrack.withdrawn) {
             if(!this.previousTrack) {
                 return
             }
@@ -394,7 +405,7 @@ window.player = new class {
         }
 
         await this.setTrack(this.nextTrack.id)
-        if(!this.currentTrack.available || this.currentTrack.withdrawn) {
+        if(/*!this.currentTrack.available || */this.currentTrack.withdrawn) {
             if(!this.nextTrack) {
                 return
             }
@@ -652,7 +663,7 @@ window.player = new class {
             this.uiPlayer.find(".trackInfo .elapsedTime").html(getRemainingTime(this.currentTrack.length, new_time))
         }
     }
-
+    
     __updateMediaSession() {
         const album = document.querySelector(".playlistBlock")
         const cur = this.currentTrack
@@ -664,6 +675,8 @@ window.player = new class {
         })
     }
 
+    // the listen counts if you reach half of song
+    // but it doesnt checks on server normally so you can "накрутить" listens
     async __countListen() {
         let playlist = 0
         if(!this.listen_coef) {
@@ -787,6 +800,10 @@ window.player = new class {
             }
         })
     }
+
+    toggleSummary() {
+        $(".summaryBarHideable").slideToggle(300, "linear")
+    }
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -828,22 +845,14 @@ u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
 
     if(!window.player.hasTrackWithId(id) && !window.player.isAtAudiosPage()) {
         let _nodes = null
-        if(u(e.target).closest('.attachments').length > 0) {
-            window.player.connectionType = '.attachments'
-            _nodes = u(e.target).closest('.attachments').find('.audioEmbed').nodes
-        } else if(u(e.target).closest('.content_list').length > 0) {
-            window.player.connectionType = '.content_list'
-            _nodes = u(e.target).closest('.content_list').find('.audioEmbed').nodes
-        } else if(u(e.target).closest('.generic_audio_list').length > 0) {
-            window.player.connectionType = '.generic_audio_list'
-            _nodes = u(e.target).closest('.generic_audio_list').find('.audioEmbed').nodes
-        } else if(u(e.target).closest('.audiosInsert').length > 0) {
-            window.player.connectionType = '.audiosInsert'
-            _nodes = u(e.target).closest('.audiosInsert').find('.audioEmbed').nodes
-        } else if(u(e.target).closest('.scroll_container').length > 0) {
-            window.player.connectionType = '.scroll_container'
-            _nodes = u(e.target).closest('.scroll_container').find('.audioEmbed').nodes
-        }
+
+        try_these_containers = [".attachments", ".content_list", ".generic_audio_list", ".audiosInsert", ".scroll_container", ".container_gray"]
+        try_these_containers.forEach(__container => {
+            if(u(e.target).closest(__container).length > 0) {
+                window.player.connectionType = __container
+                _nodes = u(e.target).closest(__container).find('.audioEmbed').nodes
+            }
+        })
 
         window.player.tracks = []
         _nodes.forEach(el => {
@@ -1163,7 +1172,25 @@ u(document).on("drop", '.audiosContainer', function(e) {
     } 
 })
 
+u(document).on("click", "#summarySwitchButton", (e) => {
+    if(u(".summaryBarHideable").nodes[0].style.overflow == "hidden") {
+        return
+    }
+    
+    if(u(e.target).html() == "-") {
+        u(e.target).html("+")
+    } else {
+        u(e.target).html("-")
+    }
+
+    window.player.toggleSummary()
+})
+
 u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e) => {
+    if(e.shiftKey) {
+        return
+    }
+
     e.preventDefault()
 
     u('#ctx_menu').remove()
@@ -1178,6 +1205,10 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
     let rx = rect.x + window.scrollX, ry = rect.y + window.scrollY
     x = e.pageX - rx
     y = e.pageY - ry
+
+    if((rect.height + rect.top) + 100 > window.innerHeight) {
+        y = ((rect.height + 120) * -1)
+    }
 
     const ctx_u = u(`
         <div id='ctx_menu' style='top:${y}px;left:${x}px;' data-type='ctx_type'>
@@ -1194,7 +1225,7 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
             <a id='audio_ctx_add_to_playlist'>${tr('audio_ctx_add_to_playlist')}</a>
             ${ctx_type == 'main_player' ? `
             <a id='audio_ctx_clear_context'>${tr('audio_ctx_clear_context')}</a>` : ''}
-            ${ctx_type == 'main_player' ? `<a href='https://github.com/mrilyew' target='_blank'>BigPlayer v1.1 by MrIlyew</a>` : ''}
+            ${ctx_type == 'main_player' ? `<a href='https://github.com/mrilyew' target='_blank'>BigPlayer v1.2 by MrIlyew</a>` : ''}
         </div>
     `)
     u(parent).append(ctx_u)
@@ -1820,7 +1851,7 @@ function showAudioAttachment(type = 'form', form = null)
             }
             let is_attached = false
             if(type == 'form') {
-                is_attached = (u(form).find(`.post-vertical .vertical-attachment[data-id='${id}']`)).length > 0
+                is_attached = (u(form).find(`.post-vertical .vertical-attachment[data-type='audio'][data-id='${id}']`)).length > 0
             } else {
                 is_attached = (u(form).find(`.PE_audios .vertical-attachment[data-id='${id}']`)).length > 0
             }
@@ -1948,8 +1979,12 @@ $(document).on("click", ".audioEmbed.processed .playerButton", (e) => {
         title: tr('error'),
         body: tr('audio_embed_processing'),
         unique_name: 'processing_notify',
-        buttons: [tr('ok')],
-        callbacks: [Function.noop]
+        buttons: [tr("audio_embed_processing_bait"), tr('ok')],
+        callbacks: [() => {
+            const pl = u(e.target).closest(".audioEmbed")
+            pl.removeClass("processed")
+            pl.find(".playIcon").trigger("click")
+        }, Function.noop]
     })
 })
 

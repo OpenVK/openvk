@@ -323,7 +323,7 @@ class Club extends RowModel
         return sizeof($this->getFollowersQuery());
     }
 
-    public function getFollowers(int $page = 1, int $perPage = 6, string $sort = "follower ASC"): \Traversable
+    public function getFollowers(int $page = 1, int $perPage = 6, string $sort = "target DESC"): \Traversable
     {
         $rels = $this->getFollowersQuery($sort)->page($page, $perPage);
 
@@ -427,6 +427,11 @@ class Club extends RowModel
     {
         $this->setBlock_Reason($reason);
         $this->save();
+    }
+
+    public function delete(bool $softly = true): void
+    {
+        $this->ban("");
     }
 
     public function unban(): void

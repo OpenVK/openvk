@@ -100,6 +100,10 @@ final class WallPresenter extends OpenVKPresenter
                 $iterator = $this->posts->getOthersPostsFromWall($user, (int) ($_GET["p"] ?? 1));
                 $count = $this->posts->getOthersCountOnUserWall($user);
                 break;
+            case "search":
+                $iterator = $this->posts->find($_GET["q"] ?? "", ["wall_id" => $user]);
+                $count = $iterator->size();
+                break;
         }
 
         $this->template->owner   = $user;
@@ -210,7 +214,7 @@ final class WallPresenter extends OpenVKPresenter
         $pPage = min((int) ($_GET["posts"] ?? OPENVK_DEFAULT_PER_PAGE), 50);
 
         $queryBase = "FROM `posts` LEFT JOIN `groups` ON GREATEST(`posts`.`wall`, 0) = 0 AND `groups`.`id` = ABS(`posts`.`wall`) LEFT JOIN `profiles` ON LEAST(`posts`.`wall`, 0) = 0 AND `profiles`.`id` = ABS(`posts`.`wall`)";
-        $queryBase .= "WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND (`profiles`.`profile_type` = 0 OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
+        $queryBase .= "WHERE (`groups`.`hide_from_global_feed` = 0 OR `groups`.`name` IS NULL) AND ((`profiles`.`profile_type` = 0 AND `profiles`.`hide_global_feed` = 0) OR `profiles`.`first_name` IS NULL) AND `posts`.`deleted` = 0 AND `posts`.`suggested` = 0";
 
         if ($this->user->identity->getNsfwTolerance() === User::NSFW_INTOLERANT) {
             $queryBase .= " AND `nsfw` = 0";
@@ -356,6 +360,10 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("failed_to_publish_post"), tr("post_is_empty_or_too_big"));
         }
 
+        if (\openvk\Web\Util\EventRateLimiter::i()->tryToLimit($this->user->identity, "wall.post")) {
+            $this->flashFail("err", tr("error"), tr("limit_exceed_exception"));
+        }
+
         $should_be_suggested = $wall < 0 && !$wallOwner->canBeModifiedBy($this->user->identity) && $wallOwner->getWallType() == 2;
         try {
             $post = new Post();
@@ -409,7 +417,12 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         if ($wall > 0 && $wall !== $this->user->identity->getId()) {
-            (new WallPostNotification($wallOwner, $post, $this->user->identity))->emit();
+            $disturber = $this->user->identity;
+            if ($anon) {
+                $disturber = $post->getOwner();
+            }
+
+            (new WallPostNotification($wallOwner, $post, $disturber))->emit();
         }
 
         $excludeMentions = [$this->user->identity->getId()];
@@ -464,7 +477,11 @@ final class WallPresenter extends OpenVKPresenter
         }
         $this->template->cCount   = $post->getCommentsCount();
         $this->template->cPage    = (int) ($_GET["p"] ?? 1);
-        $this->template->comments = iterator_to_array($post->getComments($this->template->cPage));
+        $this->template->sort = $this->queryParam("sort") ?? "asc";
+
+        $input_sort = $this->template->sort == "asc" ? "ASC" : "DESC";
+
+        $this->template->comments = iterator_to_array($post->getComments($this->template->cPage, null, $input_sort));
     }
 
     public function renderLike(int $wall, int $post_id): void

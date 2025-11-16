@@ -11,6 +11,11 @@ body {
     font-size: 11px;
     word-break: break-word;
     word-wrap: break-word;
+    line-height: 1.19;
+}
+
+body.ajax_request_made {
+    cursor: progress;
 }
 
 body, .ovk-fullscreen-dimmer, .ovk-photo-view-dimmer {
@@ -18,7 +23,8 @@ body, .ovk-fullscreen-dimmer, .ovk-photo-view-dimmer {
 }
 
 .nobold,
-nobold {
+nobold,
+nobold span {
     font-weight: normal;
     color: gray;
 }
@@ -143,6 +149,11 @@ h1 {
 .navigation {
     position: relative;
     padding: 0;
+}
+
+.navigation-fixed {
+    position: fixed;
+    width: 131px;
 }
 
 .navigation .link {
@@ -602,10 +613,14 @@ table {
     background: #595959;
     background-position: 0 -16px;
     color: #fff;
-    padding: 4px 8px;
+    padding: 5px 9px;
     text-shadow: 0 1px 0 #686868;
     cursor: pointer;
     text-decoration: none;
+}
+
+.button:active {
+    background: #444444;
 }
 
 .button:hover {
@@ -758,6 +773,16 @@ input[type="number"] {
     padding-top: 0;
 }
 
+.wall_search {
+    display: flex;
+    gap: 4px;
+    margin: 6px;
+}
+
+.wall_search > input[type="text"] {
+    flex: 1;
+}
+
 input[type="text"],
 input[type="password"],
 input[type~="text"],
@@ -875,7 +900,7 @@ h4 {
 }
 
 .post-geo {
-    margin: 1px 0px;
+    margin: 8px 0px 2px -3px;
     padding: 0 4px;
 }
 
@@ -1565,6 +1590,10 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
     color: #3c3c3c;
 }
 
+.post-has-geo.appended-geo {
+    padding: 6px 0px;
+}
+
 .post-source #remove_source_button, #small_remove_button {
     display: inline-block;
     background-repeat: no-repeat;
@@ -1879,6 +1908,7 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
 
 #ovkDraw {
     border: 1px solid #757575;
+    min-height: 510px;
 }
 
 #ovkDraw .lc-drawing.with-gui {
@@ -1887,6 +1917,7 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
 
 #ovkDraw .literally {
     border-radius: 0;
+    height: 510px;
 }
 
 #ovkDraw .literally .lc-picker,
@@ -2200,17 +2231,12 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
     border-top: #DEDEDE solid 1px;
 }
 
-#gp_container {
+#groups_graybar form {
     display: inline-block;
 }
 
-#gp_container span {
-    display: block;
-    margin: 10px 0 15px;
-}
-
-#gp_container h4 {
-    font-size: 11px;
+#groups_graybar #create_group {
+    float: right;
 }
 
 .container_gray .content:last-child {
@@ -2347,7 +2373,7 @@ li {
     padding-left: 15px;
 }
 
-#votesBalance, #news {
+#votesBalance, #news, #bday {
     margin-top: 10px;
     padding: 7px;
     background-color: #f6f6f6;
@@ -2358,6 +2384,11 @@ li {
 
 #news b {
     color: #8A0000;
+    font-size: 12px;
+}
+
+#bday b {
+    color: #45688E;
     font-size: 12px;
 }
 
@@ -2664,8 +2695,9 @@ a.poll-retract-vote {
     gap: 2px;
 }
 
-.post-buttons .vertical-attachment .vertical-attachment-content { 
-    max-height: 27px;
+.post-buttons .vertical-attachment .vertical-attachment-content {
+    /*max-height: 27px;*/
+    padding: 3px 2px;
 }
 
 .vertical-attachment .vertical-attachment-content .overflowedName {
@@ -2682,8 +2714,41 @@ a.poll-retract-vote {
     right: 0px;
     bottom: 0px;
     overflow: auto;
-    padding-bottom: 20px;
     z-index: 300;
+}
+
+.ovk-photo-view-overlay {
+    position: absolute;
+    top: 0;
+    width: 15%;
+    height: 100%;
+    z-index: 205;
+    cursor: pointer;
+}
+
+.ovk-photo-view-overlay-left {
+    left: 0;
+}
+
+.ovk-photo-view-overlay-right {
+    right: 0;
+    opacity: 40%;
+}
+
+.ovk-photo-view-overlay-right:hover, .ovk-photo-view-overlay-left:hover + .ovk-photo-view-overlay-right {
+    opacity: 100%;
+}
+
+.ovk-photo-close-icon {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 28px;
+    height: 28px;
+    background-image: url("data:image/svg+xml;utf8,\<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28' stroke-width='5' stroke='%23fff' fill='none'>\<line x1='21' y1='7' x2='7' y2='21'/>\<line x1='7' y1='7' x2='21' y2='21'/>\</svg>");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
 }
 
 .ovk-photo-view {
@@ -2692,11 +2757,11 @@ a.poll-retract-vote {
     background: #fff;
     min-width: 600px;
     width: fit-content;
-    padding: 25px;
-    padding-top: 15px;
+    padding: 35px;
+    padding-top: 26px;
     padding-bottom: 10px;
     box-shadow: 0px 0px 3px 1px #222;
-    margin: 10px auto 0 auto;
+    margin: 10px auto 20px auto;
 }
 
 .ovk-photo-view .photo_viewer_wrapper {
@@ -2713,8 +2778,8 @@ a.poll-retract-vote {
 }
 
 .ovk-photo-view #ovk-photo-img {
-    max-width: 100%; 
-    max-height: 80vh; 
+    max-width: 100%;
+    max-height: 80vh;
     user-select: none;
 }
 
@@ -2842,10 +2907,10 @@ a.poll-retract-vote {
     padding: 11px 4px 0 7px;
 }
 
-.header_navigation #search_box input[type='search'] {
+#search_box input[type='search'] {
     height: 20px;
-    background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px; 
-    background-color: #fff; 
+    background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 4px;
+    background-color: #fff;
     padding-left: 18px !important;
     width: 120px;
 }
@@ -2919,7 +2984,6 @@ a.poll-retract-vote {
     position: relative;
 }
 
-/* не говновёрстка, а пиксель-пёрфект) */
 .page_header.search_expanded.search_expanded_at_all #search_and_one_more_wrapper {
     width: 547px;
 }
@@ -3037,6 +3101,10 @@ a.poll-retract-vote {
     display: flex;
     flex-direction: column;
     gap: 1px;
+}
+
+.verticalGrayTabsPad {
+    padding: 0px 0px 0px 8px;
 }
 
 .searchList hr, .verticalGrayTabs hr {
@@ -3193,6 +3261,11 @@ a.poll-retract-vote {
     display: flex;
     align-items: center;
     gap: 1px;
+    padding: 5px 9px;
+}
+
+.post-buttons .attachment_note {
+    padding: 3px 0px;
 }
 
 .attachment_note svg {
@@ -3206,6 +3279,10 @@ a.poll-retract-vote {
     display: flex;
     gap: 4px;
     height: 12px;
+}
+
+.attachments .attachment_note {
+    padding: 5px 5px;
 }
 
 #notesList
@@ -3244,7 +3321,7 @@ body.article .floating_sidebar, body.article .page_content {
     display: none;
     position: absolute;
     z-index: 128;
-    width: 100%;
+    width: 98%;
     min-height: 100vh;
     padding: 20px;
     box-sizing: border-box;
@@ -3278,6 +3355,7 @@ body.article .floating_sidebar, body.article .page_content {
 .articleView_author > div {
     display: flex;
     flex-direction: column;
+    margin-top: 3px;
 }
 
 .articleView_author > div > span {
@@ -3375,6 +3453,7 @@ body.article .floating_sidebar, body.article .page_content {
     display: flex;
     flex-direction: column;
     gap: 22px;
+    padding: 5px 10px;
 }
 
 .sugglist {
@@ -3498,8 +3577,8 @@ body.article .floating_sidebar, body.article .page_content {
 }
 
 .attachment_selector #attachment_insert .videosInsert .video_list .video-preview img {
-    max-width: 133px; 
-    height: 75px; 
+    max-width: 133px;
+    height: 75px;
     margin: auto;
 }
 
@@ -3648,7 +3727,7 @@ hr {
 .entity_vertical_list {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 10px;
     height: 197px;
     overflow-y: auto;
 }
@@ -3656,6 +3735,7 @@ hr {
 .entity_vertical_list.scroll_container {
     height: unset;
     overflow-y: unset;
+    padding: 5px;
 }
 
 .entity_vertical_list .entity_vertical_list_item {
@@ -3673,12 +3753,16 @@ hr {
 }
 
 .entity_vertical_list.m_mini .entity_vertical_list_item .first_column {
-    gap: 10px;
+    gap: 13px;
+}
+
+.entity_vertical_list.m_mini .entity_vertical_list_item:hover .first_column a {
+    text-decoration: underline;
 }
 
 .entity_vertical_list.m_mini .entity_vertical_list_item .first_column .avatar img {
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
 }
 
 .entity_vertical_list .entity_vertical_list_item .avatar {
@@ -3700,7 +3784,7 @@ hr {
 
 .entity_vertical_list.mini .entity_vertical_list_item img {
     width: 35px;
-    height: 35px; 
+    height: 35px;
 }
 
 #gif_loader {
@@ -3745,12 +3829,12 @@ hr {
 }
 
 .media-page-wrapper .photo-page-wrapper-photo img {
-    max-width: 85%; 
+    max-width: 85%;
     max-height: 60vh;
 }
 
 .media-page-wrapper-details {
-    width: 100%; 
+    width: 100%;
     min-height: 100px;
     display: flex;
     justify-content: space-between;
@@ -3758,7 +3842,7 @@ hr {
 }
 
 .media-page-wrapper-comments {
-    min-height: 100px; 
+    min-height: 100px;
     width: 68%;
     margin-left: 3px;
 }
@@ -3809,12 +3893,13 @@ hr {
     display: none;
     position: fixed;
     top: -10%;
-    background: rgba(26, 26, 26, 0.9);;
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: 0px 0px 2px 0px black;
     padding-top: 12px;
     width: 91px;
     height: 25px;
     text-align: center;
-    border-radius: 1px;
+    border-radius: 2px;
     margin: auto;
     left: 0;
     right: 0;
@@ -3911,6 +3996,11 @@ hr {
 .like_tooltip_wrapper .like_tooltip_body img {
     width: 25px;
     height: 25px;
+}
+
+.object_fit_ava {
+    object-fit: cover;
+    object-position: top;
 }
 
 .like_tooltip_wrapper .like_tooltip_body a {
@@ -4011,8 +4101,8 @@ hr {
 
 #docs_page_wrapper .docs_page_search input[type="search"], .attachment_selector .attachment_search input {
     height: 23px;
-    background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 5px; 
-    background-color: #fff; 
+    background: url('/assets/packages/static/openvk/img/search_icon.png') no-repeat 3px 5px;
+    background-color: #fff;
     padding-left: 18px !important;
 }
 
@@ -4023,7 +4113,7 @@ hr {
 #docs_page_wrapper .container_white {
     display: flex;
     flex-direction: column;
-    padding: 5px 10px;
+    padding: 10px 10px;
 }
 
 #docs_page_wrapper .docs_page_content.docs_page_gallery .scroll_container {
@@ -4166,11 +4256,12 @@ hr {
     justify-content: center;
     border-radius: 2px;
     height: 17px;
-    padding: 2px 0px;
+    padding: 3px 0px;
 }
 
 .docListViewItem .doc_icon.no_image span {
     color: #6b6b6b;
+    font-weight: bold;
 }
 
 .doc_icon.no_image span::before {
@@ -4255,8 +4346,8 @@ hr {
 .attachments .docGalleryItem {
     display: block;
     min-width: 170px;
-    height: 170px;
-    width: 50%;
+    min-height: 170px;
+    width: 60%;
     margin-bottom: 4px;
 }
 
@@ -4277,4 +4368,32 @@ hr {
 .attachment_selector .attachment_search input {
     height: 30px;
     background-position-y: 9px;
+}
+
+.deleted_mark_average {
+    padding: 5px 61px;
+}
+
+.sort_link {
+    padding: 5px 2px;
+    display: inline-block;
+}
+
+.sort_link_icon {
+    background: url(/assets/packages/static/openvk/img/wall.png?v=3) no-repeat;
+    display: inline-block;
+    height: 11px;
+    width: 9px;
+}
+
+.sort_link_icon_desc {
+    background-position: 0px -15px;
+}
+
+.sort_link_icon_asc {
+    background-position: -11px -15px;
+}
+
+.hidden {
+    display: none !important;
 }

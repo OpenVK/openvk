@@ -11,11 +11,6 @@ Base images:
 docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/openvk/openvk/php:8.2-cli ../../.. --load -f base-php-cli.Dockerfile
 docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/openvk/openvk/php:8.2-apache ../../.. --load -f base-php-apache.Dockerfile
 ```
-DB images:
-```
-docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/openvk/openvk/mariadb:10.9-primary ../../.. --load -f mariadb-primary.Dockerfile
-docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/openvk/openvk/mariadb:10.9-eventdb ../../.. --load -f mariadb-eventdb.Dockerfile
-```
 OpenVK main image:
 ```
 docker buildx build --platform linux/amd64,linux/arm64 -t ghcr.io/openvk/openvk/openvk:latest ../../.. --load -f openvk.Dockerfile
@@ -26,11 +21,6 @@ Base images:
 ```
 docker build -t ghcr.io/openvk/openvk/php:8.2-cli ../../.. -f base-php-cli.Dockerfile
 docker build -t ghcr.io/openvk/openvk/php:8.2-apache ../../.. -f base-php-apache.Dockerfile
-```
-DB images:
-```
-docker build -t ghcr.io/openvk/openvk/mariadb:10.9-primary ../../.. -f mariadb-primary.Dockerfile
-docker build -t ghcr.io/openvk/openvk/mariadb:10.9-eventdb ../../.. -f mariadb-eventdb.Dockerfile
 ```
 OpenVK main image:
 ```
@@ -47,6 +37,9 @@ Start is simple as `docker compose up -d`. You can also use `docker compose up` 
 - OpenVK will be available at `http://localhost:8080/`.
 - PHPMyAdmin will be available at `http://localhost:8081/`.
 - Adminer will be available at `http://localhost:8082/`.
+
+> [!CAUTION]
+> Suggested configuration **is not ready to run** `openvk` image **in replicated containers** as, due to database migration script being run on the start, data racing condition might be achieved. If you wish to run multiple containers with `openvk` image, remove entrypoint script from them and make all replicated services dependent on a oneshot service with `openvk` image that is configured to run `./openvkctl upgrade --no-interaction --quick`.
 
 ### Running in development environment
 By using additional `docker-compose.dev.yml` file you can develop OpenVK in Docker with automatic updates as you edit and save your code. Simply run:

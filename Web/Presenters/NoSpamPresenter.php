@@ -102,7 +102,7 @@ final class NoSpamPresenter extends OpenVKPresenter
 
                         $item = new $model($item);
 
-                        if (key_exists("deleted", $item->unwrap()) && $item->isDeleted()) {
+                        if (property_exists($item->unwrap(), "deleted") && $item->isDeleted()) {
                             $item->setDeleted(0);
                             $item->save();
                         }

@@ -13,38 +13,49 @@ use openvk\Web\Models\Entities\{Note, Comment};
 
 final class Notes extends VKAPIRequestHandler
 {
-    public function add(string $title, string $text, int $privacy = 0, int $comment_privacy = 0, string $privacy_view  = "", string $privacy_comment  = "")
+    public function add(string $title, string $text)
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
 
+        if (empty($title)) {
+            $this->fail(100, "Required parameter 'title' missing.");
+        }
+
         $note = new Note();
+
         $note->setOwner($this->getUser()->getId());
         $note->setCreated(time());
         $note->setName($title);
         $note->setSource($text);
         $note->setEdited(time());
+
         $note->save();
 
         return $note->getVirtualId();
     }
 
-    public function createComment(string $note_id, int $owner_id, string $message, int $reply_to = 0, string $attachments = "")
+    public function createComment(int $note_id, int $owner_id, string $message, string $attachments = "")
     {
         $this->requireUser();
         $this->willExecuteWriteAction();
-        $note = (new NotesRepo())->getNoteById((int) $owner_id, (int) $note_id);
+
+        if (empty($message)) {
+            $this->fail(100, "Required parameter 'message' missing.");
+        }
+
+        $note = (new NotesRepo())->getNoteById($owner_id, $note_id);
 
         if (!$note) {
-            $this->fail(180, "Note not found");
+            $this->fail(15, "Access denied");
         }
 
         if ($note->isDeleted()) {
-            $this->fail(189, "Note is deleted");
+            $this->fail(15, "Access denied");
         }
 
         if ($note->getOwner()->isDeleted()) {
-            $this->fail(403, "Owner is deleted");
+            $this->fail(15, "Access denied");
         }
 
         if (!$note->canBeViewedBy($this->getUser())) {
@@ -52,11 +63,7 @@ final class Notes extends VKAPIRequestHandler
         }
 
         if (!$note->getOwner()->getPrivacyPermission('notes.read', $this->getUser())) {
-            $this->fail(43, "No access");
-        }
-
-        if (empty($message) && empty($attachments)) {
-            $this->fail(100, "Required parameter 'message' missing.");
+            $this->fail(15, "Access denied");
         }
 
         $comment = new Comment();
@@ -67,76 +74,7 @@ final class Notes extends VKAPIRequestHandler
         $comment->setCreated(time());
         $comment->save();
 
-        if (!empty($attachments)) {
-            $attachmentsArr = explode(",", $attachments);
-
-            if (sizeof($attachmentsArr) > 10) {
-                $this->fail(50, "Error: too many attachments");
-            }
-
-            foreach ($attachmentsArr as $attac) {
-                $attachmentType = null;
-
-                if (str_contains($attac, "photo")) {
-                    $attachmentType = "photo";
-                } elseif (str_contains($attac, "video")) {
-                    $attachmentType = "video";
-                } else {
-                    $this->fail(205, "Unknown attachment type");
-                }
-
-                $attachment = str_replace($attachmentType, "", $attac);
-
-                $attachmentOwner = (int) explode("_", $attachment)[0];
-                $attachmentId    = (int) end(explode("_", $attachment));
-
-                $attacc = null;
-
-                if ($attachmentType == "photo") {
-                    $attacc = (new PhotosRepo())->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                    if (!$attacc || $attacc->isDeleted()) {
-                        $this->fail(100, "Photo does not exists");
-                    }
-                    if ($attacc->getOwner()->getId() != $this->getUser()->getId()) {
-                        $this->fail(43, "You do not have access to this photo");
-                    }
-
-                    $comment->attach($attacc);
-                } elseif ($attachmentType == "video") {
-                    $attacc = (new VideosRepo())->getByOwnerAndVID($attachmentOwner, $attachmentId);
-                    if (!$attacc || $attacc->isDeleted()) {
-                        $this->fail(100, "Video does not exists");
-                    }
-                    if ($attacc->getOwner()->getId() != $this->getUser()->getId()) {
-                        $this->fail(43, "You do not have access to this video");
-                    }
-
-                    $comment->attach($attacc);
-                }
-            }
-        }
-
         return $comment->getId();
-    }
-
-    public function delete(string $note_id)
-    {
-        $this->requireUser();
-        $this->willExecuteWriteAction();
-
-        $note = (new NotesRepo())->get((int) $note_id);
-
-        if (!$note) {
-            $this->fail(180, "Note not found");
-        }
-
-        if (!$note->canBeModifiedBy($this->getUser())) {
-            $this->fail(15, "Access to note denied");
-        }
-
-        $note->delete();
-
-        return 1;
     }
 
     public function edit(string $note_id, string $title = "", string $text = "", int $privacy = 0, int $comment_privacy = 0, string $privacy_view  = "", string $privacy_comment  = "")
@@ -147,15 +85,15 @@ final class Notes extends VKAPIRequestHandler
         $note = (new NotesRepo())->getNoteById($this->getUser()->getId(), (int) $note_id);
 
         if (!$note) {
-            $this->fail(180, "Note not found");
+            $this->fail(15, "Access denied");
         }
 
         if ($note->isDeleted()) {
-            $this->fail(189, "Note is deleted");
+            $this->fail(15, "Access denied");
         }
 
         if (!$note->canBeModifiedBy($this->getUser())) {
-            $this->fail(403, "No access");
+            $this->fail(15, "Access denied");
         }
 
         !empty($title) ? $note->setName($title) : null;
@@ -171,26 +109,28 @@ final class Notes extends VKAPIRequestHandler
     public function get(int $user_id, string $note_ids = "", int $offset = 0, int $count = 10, int $sort = 0)
     {
         $this->requireUser();
+
         $user = (new UsersRepo())->get($user_id);
 
         if (!$user || $user->isDeleted()) {
-            $this->fail(15, "Invalid user");
+            $this->fail(15, "Access denied");
         }
 
         if (!$user->getPrivacyPermission('notes.read', $this->getUser())) {
-            $this->fail(15, "Access denied: this user chose to hide his notes");
+            $this->fail(15, "Access denied");
         }
 
         if (!$user->canBeViewedBy($this->getUser())) {
             $this->fail(15, "Access denied");
         }
 
-        $nodez = (object) [
+        $notes_return_object = (object) [
             "count" => 0,
-            "notes" => [],
+            "items" => [],
         ];
+
         if (empty($note_ids)) {
-            $nodez->count = (new NotesRepo())->getUserNotesCount($user);
+            $notes_return_object->count = (new NotesRepo())->getUserNotesCount($user);
 
             $notes = array_slice(iterator_to_array((new NotesRepo())->getUserNotes($user, 1, $count + $offset, $sort == 0 ? "ASC" : "DESC")), $offset);
 
@@ -199,25 +139,21 @@ final class Notes extends VKAPIRequestHandler
                     continue;
                 }
 
-                $nodez->notes[] = $note->toVkApiStruct();
+                $notes_return_object->items[] = $note->toVkApiStruct();
             }
         } else {
-            $notes = explode(',', $note_ids);
+            $notes_splitted = explode(',', $note_ids);
 
-            foreach ($notes as $note) {
-                $id    = explode("_", $note);
+            foreach ($notes_splitted as $note_id) {
+                $note = (new NotesRepo())->getNoteById($user_id, $note_id);
 
-                $items = [];
-
-                $note = (new NotesRepo())->getNoteById((int) $id[0], (int) $id[1]);
                 if ($note && !$note->isDeleted()) {
-                    $nodez->notes[] = $note->toVkApiStruct();
-                    $nodez->count++;
+                    $notes_return_object->items[] = $note->toVkApiStruct();
                 }
             }
         }
 
-        return $nodez;
+        return $notes_return_object;
     }
 
     public function getById(int $note_id, int $owner_id, bool $need_wiki = false)
@@ -227,23 +163,23 @@ final class Notes extends VKAPIRequestHandler
         $note = (new NotesRepo())->getNoteById($owner_id, $note_id);
 
         if (!$note) {
-            $this->fail(180, "Note not found");
+            $this->fail(15, "Access denied");
         }
 
         if ($note->isDeleted()) {
-            $this->fail(189, "Note is deleted");
+            $this->fail(15, "Access denied");
         }
 
         if (!$note->getOwner() || $note->getOwner()->isDeleted()) {
-            $this->fail(177, "Owner does not exists");
+            $this->fail(15, "Access denied");
         }
 
         if (!$note->getOwner()->getPrivacyPermission('notes.read', $this->getUser())) {
-            $this->fail(40, "Access denied: this user chose to hide his notes");
+            $this->fail(15, "Access denied");
         }
 
         if (!$note->canBeViewedBy($this->getUser())) {
-            $this->fail(15, "Access to note denied");
+            $this->fail(15, "Access denied");
         }
 
         return $note->toVkApiStruct();
@@ -256,23 +192,23 @@ final class Notes extends VKAPIRequestHandler
         $note = (new NotesRepo())->getNoteById($owner_id, $note_id);
 
         if (!$note) {
-            $this->fail(180, "Note not found");
+            $this->fail(15, "Access denied");
         }
 
         if ($note->isDeleted()) {
-            $this->fail(189, "Note is deleted");
+            $this->fail(15, "Access denied");
         }
 
         if (!$note->getOwner()) {
-            $this->fail(177, "Owner does not exists");
+            $this->fail(15, "Access denied");
         }
 
         if (!$note->getOwner()->getPrivacyPermission('notes.read', $this->getUser())) {
-            $this->fail(14, "No access");
+            $this->fail(15, "Access denied");
         }
 
         if (!$note->canBeViewedBy($this->getUser())) {
-            $this->fail(15, "Access to note denied");
+            $this->fail(15, "Access denied");
         }
 
         $arr = (object) [
@@ -285,15 +221,5 @@ final class Notes extends VKAPIRequestHandler
         }
 
         return $arr;
-    }
-
-    public function getFriendsNotes(int $offset = 0, int $count = 0)
-    {
-        $this->fail(501, "Not implemented");
-    }
-
-    public function restoreComment(int $comment_id = 0, int $owner_id = 0)
-    {
-        $this->fail(501, "Not implemented");
     }
 }

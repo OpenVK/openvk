@@ -505,3 +505,9 @@
 "to_top" = "Nach oben";
 "checkbox_in_registration" = "Ich stimme der <a href=\"/privacy\">Datenschutzpolitik</a> und der <a href=\"/terms\">Seitenpolitik</a> zu.";
 "access_recovery_info" = "Haben Sie Ihr Passwort vergessen? Kein Problem, geben Sie Ihre Daten ein und wir senden Ihnen eine E-Mail mit Anweisungen, wie Sie Ihr Konto wiederherstellen können.";
+
+"bday_reminder" = "Erinnerung";
+"bday_today" = "Heute";
+"bday_tomorrow" = "Morgen";
+"bday_reminder_text" = "$1 ist der Geburtstag von $2.";
+"bday_and" = " und ";

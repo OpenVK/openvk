@@ -107,6 +107,10 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
         title: '',
         custom_template: u(`
         <div class="ovk-photo-view-dimmer">
+            <div class="ovk-photo-view-overlay ovk-photo-view-overlay-left"></div>
+            <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
+                <div class="ovk-photo-close-icon"></div>
+            </div>
             <div class="ovk-photo-view">
                 <div class="photo_com_title">
                     <text id="photo_com_title_photos">
@@ -128,10 +132,10 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
         </div>`)
     })
 
-    photo_viewer.getNode().find("#ovk-photo-close").on("click", function(e) {
+    photo_viewer.getNode().find("#ovk-photo-close, .ovk-photo-view-overlay").on("click", function(e) {
         photo_viewer.close()
     });
-
+	
     function __getIndex(photo_id = null) {
         return Object.keys(json.body).findIndex(item => item == (photo_id ?? currentImageid)) + 1
     }
@@ -165,6 +169,13 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
         } else {
             photo_viewer.getNode().find(".ovk-photo-details").last().innerHTML = json.body[photo_id].cached
         }
+
+        let modal = photo_viewer.getNode().find(".ovk-photo-view").nodes[0];
+        let style = window.getComputedStyle(modal);
+        let h = modal.offsetHeight + parseInt(style.marginBottom) + parseInt(style.marginTop);
+        let overlays = photo_viewer.getNode().find(".ovk-photo-view-overlay").nodes
+        overlays[0].style.height = h + "px";
+        overlays[1].style.height = h + "px";
     }
 
     async function __slidePhoto(direction) {
@@ -348,6 +359,10 @@ async function OpenVideo(video_arr = [], init_player = true)
         warn_on_exit: true,
         custom_template: u(`
         <div class="ovk-photo-view-dimmer">
+            <div class="ovk-photo-view-overlay ovk-photo-view-overlay-left"></div>
+            <div class="ovk-photo-view-overlay ovk-photo-view-overlay-right">
+                <div class="ovk-photo-close-icon"></div>
+            </div>
             <div class="ovk-modal-player-window">
                 <div id="ovk-player-part">
                     <div class='top-part'>
@@ -378,7 +393,7 @@ async function OpenVideo(video_arr = [], init_player = true)
         bsdnInitElement(msgbox.getNode().find('.bsdn').nodes[0])
     }
 
-    msgbox.getNode().find('#ovk-player-part #__modal_player_close').on('click', (e) => {
+    msgbox.getNode().find('#ovk-player-part #__modal_player_close, .ovk-photo-view-overlay').on('click', (e) => {
         msgbox.close()
     })
 
@@ -389,6 +404,7 @@ async function OpenVideo(video_arr = [], init_player = true)
             msgbox.getNode().find('#__toggle_comments').html(tr('close_comments'))
         }
 
+        let overlays = msgbox.getNode().find(".ovk-photo-view-overlay").nodes
         msgbox.getNode().find('#ovk-player-info').toggleClass('shown')
         if(msgbox.getNode().find('#ovk-player-info').html().length < 1) {
             u('#ovk-player-info').html(`<div id='gif_loader'></div>`)
@@ -402,6 +418,16 @@ async function OpenVideo(video_arr = [], init_player = true)
 
             u('#ovk-player-info').html(details.html())
             bsdnHydrate()
+
+            let modal = msgbox.getNode().find(".ovk-modal-player-window").nodes[0];
+            let style = window.getComputedStyle(modal);
+            let h = modal.offsetHeight + parseInt(style.marginBottom) + parseInt(style.marginTop);
+
+            overlays[0].style.height = h + "px";
+            overlays[1].style.height = h + "px";
+        } else {
+            overlays[0].style.height = "100%";
+            overlays[1].style.height = "100%";
         }
     })
 
@@ -606,7 +632,22 @@ function reportClub(club_id) {
     ]);
 }
 
-$(document).on("click", "#_photoDelete, #_videoDelete", function(e) {
+$(document).on("click", "#_ajaxDelete", function(e) {
+    MessageBox(tr('warning'), tr('question_confirm'), [
+        tr('yes'),
+        tr('no')
+    ], [
+        () => {
+            window.router.route(e.target.href)
+        },
+        Function.noop
+    ]);
+    
+    e.stopPropagation()
+    return e.preventDefault();
+});
+
+$(document).on("click", "#_photoDelete, #_videoDelete, #_anotherDelete", function(e) {
     var formHtml = "<form id='tmpPhDelF' action='" + u(this).attr("href") + "' >";
     formHtml    += "<input type='hidden' name='hash' value='" + u("meta[name=csrf]").attr("value") + "' />";
     formHtml    += "</form>";
@@ -825,6 +866,7 @@ tippy.delegate("body", {
     target: '.client_app',
     theme: "light vk",
     content: "⌛",
+    delay: 400,
     allowHTML: true,
     interactive: true,
     interactiveDebounce: 500,
@@ -864,6 +906,7 @@ tippy.delegate('body', {
     target: `.post-like-button[data-type]:not([data-likes="0"])`,
     theme: "special vk",
     content: "⌛",
+    delay: 400,
     allowHTML: true,
     interactive: true,
     interactiveDebounce: 500,
@@ -900,7 +943,7 @@ tippy.delegate('body', {
 
         that._likesList.items.forEach(item => {
             final_template.find('.like_tooltip_body .like_tooltip_body_grid').append(`
-                <a title="${escapeHtml(item.first_name + " " + item.last_name)}" href='/id${item.id}'><img src='${item.photo_50}' alt='.'></a>
+                <a title="${escapeHtml(item.first_name + " " + item.last_name)}" href='/id${item.id}'><img class="object_fit_ava" src='${item.photo_50}' alt='.'></a>
             `)
         })
         that.setContent(final_template.nodes[0].outerHTML)
@@ -1123,7 +1166,14 @@ u(document).on("click", "#editPost", async (e) => {
                 return
             }
             
-            const new_post_html = await (await fetch(`/iapi/getPostTemplate/${id[0]}_${id[1]}?type=${type}`, {
+            let is_at_post_page = false
+            try {
+                if(location.pathname.indexOf("wall") != -1 && location.pathname.split("_").length == 2) {
+                    is_at_post_page = true
+                }
+            } catch(e) {}
+
+            const new_post_html = await (await fetch(`/iapi/getPostTemplate/${id[0]}_${id[1]}?type=${type}&from_page=${is_at_post_page ? "post" : "another"}`, {
                 'method': 'POST'
             })).text()
             u(ev.target).removeClass('lagged')
@@ -1174,7 +1224,7 @@ async function __uploadToTextarea(file, textareaNode) {
         const rand = random_int(0, 1000)
         textareaNode.find('.post-horizontal').append(`<a id='temp_filler${rand}' class="upload-item lagged"><img src='${temp_url}'></a>`)
         
-        const res = await fetch(`/photos/upload`, {
+        const res = await fetch(`/photos/upload?upload_context=${textareaNode.nodes[0].dataset.id}`, {
             method: 'POST',
             body: form_data
         })
@@ -1342,7 +1392,7 @@ u(document).on("click", "#__photoAttachment", async (e) => {
             if(album == 0) {
                 photos = await window.OVKAPI.call('photos.getAll', {'owner_id': window.openvk.current_id, 'photo_sizes': 1, 'count': photos_per_page, 'offset': page * photos_per_page})
             } else {
-                photos = await window.OVKAPI.call('photos.get', {'owner_id': window.openvk.current_id, 'album_id': album, 'photo_sizes': 1, 'count': photos_per_page, 'offset': page * photos_per_page})
+                photos = await window.OVKAPI.call('photos.get', {'owner_id': club != 0 ? Math.abs(club) * -1 : window.openvk.current_id, 'album_id': album, 'photo_sizes': 1, 'count': photos_per_page, 'offset': page * photos_per_page})
             }
         } catch(e) {
             u("#attachment_insert_count h4").html(tr("is_x_photos", -1))
@@ -1432,7 +1482,7 @@ u(document).on("click", "#__photoAttachment", async (e) => {
         window.openvk.photoalbums = await window.OVKAPI.call('photos.getAlbums', {'owner_id': club != 0 ? Math.abs(club) * -1 : window.openvk.current_id})
     }
     window.openvk.photoalbums.items.forEach(item => {
-        u('.ovk-diag-body #albumSelect').append(`<option value="${item.vid}">${ovk_proc_strtr(escapeHtml(item.title), 20)}</option>`)
+        u('.ovk-diag-body #albumSelect').append(`<option value="${item.id}">${ovk_proc_strtr(escapeHtml(item.title), 20)}</option>`)
     })
 })
 
@@ -1645,7 +1695,7 @@ u(document).on('click', '#__notesAttachment', async (e) => {
             insert_place.append(tr('no_notes'))    
         }
 
-        notes.notes.forEach(note => {
+        notes.items.forEach(note => {
             is_attached = (form.find(`.upload-item[data-type='note'][data-id='${note.owner_id}_${note.id}']`)).length > 0
             insert_place.append(`
                 <div class='display_flex_row _content' data-attachmentdata="${note.owner_id}_${note.id}" data-name='${escapeHtml(note.title)}'>
@@ -1943,10 +1993,10 @@ async function repost(id, repost_type = 'post') {
         title: tr('share'),
         unique_name: 'repost_modal',
         body: `
-            <div class='display_flex_column' style='gap: 1px;'>
+            <div class='display_flex_column' style='gap: 5px;'>
                 <b>${tr('auditory')}</b>
                 
-                <div class='display_flex_column'>
+                <div class='display_flex_column' style="gap: 2px;padding-left: 1px;">
                     <label>
                         <input type="radio" name="repost_type" value="wall" checked>
                         ${tr("in_wall")}
@@ -1962,12 +2012,14 @@ async function repost(id, repost_type = 'post') {
 
                 <b>${tr('your_comment')}</b>
 
-                <input type='hidden' id='repost_attachments'>
-                <textarea id='repostMsgInput' placeholder='...'></textarea>
+                <div style="padding-left: 1px;">
+                    <input type='hidden' id='repost_attachments'>
+                    <textarea id='repostMsgInput' placeholder='...'></textarea>
 
-                <div id="repost_signs" class='display_flex_column' style='display:none;'>
-                    <label><input type='checkbox' name="asGroup">${tr('post_as_group')}</label>
-                    <label><input type='checkbox' name="signed">${tr('add_signature')}</label>
+                    <div id="repost_signs" class='display_flex_column' style='display:none;'>
+                        <label><input type='checkbox' name="asGroup">${tr('post_as_group')}</label>
+                        <label><input type='checkbox' name="signed">${tr('add_signature')}</label>
+                    </div>
                 </div>
             </div>
         `,
@@ -2036,7 +2088,7 @@ async function repost(id, repost_type = 'post') {
         ]
     });
     
-    u('.ovk-diag-body').attr('style', 'padding: 14px;')
+    u('.ovk-diag-body').attr('style', 'padding: 18px;')
     u('.ovk-diag-body').on('change', `input[name='repost_type']`, (e) => {
         const value = e.target.value
 
@@ -2062,6 +2114,7 @@ async function repost(id, repost_type = 'post') {
 
     if(window.openvk.writeableClubs.items.length < 1) {
         u(`input[name='repost_type'][value='group']`).attr('disabled', 'disabled')
+        u(`input[name='repost_type'][value='group']`).closest("label").addClass("lagged")
     }
 }
 
@@ -2179,9 +2232,11 @@ $(document).on("click", "#add_image", (e) => {
                         
                         document.querySelector("#bigAvatar").src = response.url
                         document.querySelector("#bigAvatar").parentNode.href = "/photo" + response.new_photo
-                    
-                        document.querySelector(".add_image_text").style.display = "none"
+						
                         document.querySelector(".avatar_controls").style.display = "block"
+                        document.querySelector(".avatar_controls .set_image").style.display = "block"
+						document.querySelector(".avatar_controls .avatarDelete").style.display = "block"
+                        document.querySelector(".avatar_controls .upload_image").style.display = "none"
                     }
                 })
             })
@@ -2305,17 +2360,18 @@ $(document).on("click", ".avatarDelete", (e) => {
                     }
 
                     document.querySelector(".avatarDelete").classList.remove("lagged")
-                    
+
                     u("body").removeClass("dimmed");
                     document.querySelector("html").style.overflowY = "scroll"
                     u(".ovk-diag-cont").remove()
 
                     document.querySelector("#bigAvatar").src = response.url
                     document.querySelector("#bigAvatar").parentNode.href = response.new_photo ? ("/photo" + response.new_photo) : "javascript:void(0)"
-                    
+
                     if(!response.has_new_photo) {
-                        document.querySelector(".avatar_controls").style.display = "none"
-                        document.querySelector(".add_image_text").style.display = "block"
+                        document.querySelector(".avatar_controls .set_image").style.display = "none"
+                        document.querySelector(".avatar_controls .avatarDelete").style.display = "none"
+                        document.querySelector(".avatar_controls .upload_image").style.display = "block"
                     }
                 }
             })
@@ -2371,7 +2427,10 @@ async function __processPaginatorNextPage(page)
 
     const new_url = new URL(location.href)
     new_url.hash = page
-    history.replaceState(null, null, new_url)
+    //history.replaceState(null, null, new_url)
+
+    showMoreObserver.disconnect()
+    showMoreObserver.observe(u('.paginator:not(.paginator-at-top)').nodes[0])
 
     if(typeof __scrollHook != 'undefined') {
         __scrollHook(page)
@@ -2395,6 +2454,9 @@ const showMoreObserver = new IntersectionObserver(entries => {
             
             const target = u(x.target)
             if(target.length < 1 || target.hasClass('paginator-at-top')) {
+                return
+            }
+            if(target.hasClass('lagged')) {
                 return
             }
 
@@ -2437,8 +2499,7 @@ u(document).on('click', '#__sourceAttacher', (e) => {
     MessageBox(tr('add_source'), `
         <div id='source_flex_kunteynir'>
             <span>${tr('set_source_tip')}</span>
-            <!-- давай, копируй ссылку и переходи по ней -->
-            <input type='text' maxlength='400' placeholder='https://www.youtube.com/watch?v=lkWuk_nzzVA'>
+            <input type='text' maxlength='400' placeholder='...'>
         </div>
     `, [tr('cancel')], [
         () => {Function.noop}
@@ -2470,8 +2531,7 @@ u(document).on('click', '#__sourceAttacher', (e) => {
         // Checking link
         const __checkCopyrightLinkRes = await fetch(`/method/wall.checkCopyrightLink?auth_mechanism=roaming&link=${encodeURIComponent(source_value)}`)
         const checkCopyrightLink = await __checkCopyrightLinkRes.json()
-        
-        // todo переписать блять мессенджбоксы чтоб они классами были
+
         if(checkCopyrightLink.error_code) {
             __removeDialog()
             switch(checkCopyrightLink.error_code) {
@@ -2547,7 +2607,12 @@ u(document).on('mouseover mousemove mouseout', `div[data-tip='simple']`, (e) => 
 })
 
 function setStatusEditorShown(shown) {
-    document.getElementById("status_editor").style.display = shown ? "block" : "none";
+    if(shown) {
+        document.getElementById("status_editor").style.display = "block"
+        document.querySelector("#status_editor input").focus()
+    } else {
+        document.getElementById("status_editor").style.display = "none"
+    }
 }
 
 u(document).on('click', (event) => {
@@ -2649,7 +2714,7 @@ u(document).on('click', "#__geoAttacher", async (e) => {
                 ${tplMapIcon}
                 <span>${escapeHtml(geo_name)}</span>
                 <div id="small_remove_button"></div>
-            `)
+            `).addClass("appended-geo")
         }, () => {}]
     })
 
@@ -2952,3 +3017,28 @@ u(document).on("submit", "#additional_fields_form", (e) => {
         }
     }) 
 })
+
+if(Number(localStorage.getItem('ux.gif_autoplay') ?? 0) == 1) {
+    const showMoreObserver = new IntersectionObserver(entries => {
+        entries.forEach(async x => {
+            doc_item = x.target.closest(".docGalleryItem")
+            if(doc_item.querySelector(".play-button") != null) {
+                if(x.isIntersecting) {
+                    doc_item.classList.add("playing")
+                } else {
+                    doc_item.classList.remove("playing")
+                }
+            }
+        })
+    }, {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0,
+    })
+    
+    if(u('.docGalleryItem').length > 0) {
+        u('.docGalleryItem').nodes.forEach(item => {
+            showMoreObserver.observe(item)
+        })
+    }
+}

@@ -289,6 +289,18 @@ abstract class OpenVKPresenter extends SimplePresenter
                 $this->template->helpdeskTicketNotAnsweredCount = (new Tickets())->getTicketCount(0);
                 $this->template->reportNotAnsweredCount = (new Reports())->getReportsCount(0);
             }
+
+            $bdays = $this->user->identity->getFriendsBday(true);
+            if (sizeof($bdays) == 0) {
+                $bdays = $this->user->identity->getFriendsBday(false);
+            }
+
+            if (sizeof($bdays) > 0) {
+                $this->template->showBday = true;
+                $this->template->isBdayToday = $bdays["isToday"];
+                $this->template->bdayUsers = $bdays["users"];
+                $this->template->bdayCount = sizeof($bdays["users"]);
+            }
         }
 
         header("X-OpenVK-User-Validated: $userValidated");
@@ -371,7 +383,11 @@ abstract class OpenVKPresenter extends SimplePresenter
            $whichbrowser->isEngine('NetFront') || // PSP and other japanese portable systems
            $whichbrowser->isOs('Android') ||
            $whichbrowser->isOs('iOS') ||
-           $whichbrowser->isBrowser('Internet Explorer', '<=', '8')) {
+           $whichbrowser->isBrowser('BlackBerry Browser') ||
+           $whichbrowser->isBrowser('Internet Explorer', '<=', '8') ||
+           $whichbrowser->isBrowser('Firefox', '<=', '47') ||
+           $whichbrowser->isBrowser('Safari', '<=', '7') ||
+           $whichbrowser->isBrowser('Google Chrome', '<=', '35')) {
             // yeah, it's old, but ios and android are?
             if ($whichbrowser->isOs('iOS') && $whichbrowser->isOs('iOS', '<=', '9')) {
                 return true;
