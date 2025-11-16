@@ -1058,7 +1058,7 @@
 /* Time */
 
 "time_at_sp" = " сағат ";
-"time_just_now" = "жана ғана";
+"time_just_now" = "жаңа ғана";
 "time_exactly_five_minutes_ago" = "5 минут бұрын";
 "time_minutes_ago" = "$1 минут бұрын";
 "time_today" = "бүгін";
