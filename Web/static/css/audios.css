@@ -1117,7 +1117,7 @@
 
 #ajax_audio_player #aj_player_tracks .aj_track span,
 #ajax_audio_player #aj_player_tracks .aj_track b {
-    color: #b2aeae;
+    color: #bdbdbda6;
 }
 
 #ajax_audio_player #aj_player_tracks .aj_track:hover {

@@ -977,9 +977,7 @@ u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
         window.player.pause()
     }
     
-    if(window.player.isAtAudiosPage()) {
-        
-    } else {
+    if(!window.player.isAtAudiosPage()) {
         window.player.linkPlayer(audioPlayer)
         u('.audioEntry .subTracks.shown').removeClass('shown')
         audioPlayer.find('.subTracks').addClass('shown')

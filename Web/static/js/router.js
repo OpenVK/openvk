@@ -153,13 +153,10 @@ window.router = new class {
 
         this.applyTweaks()
 
-        try {
-            // calling DOMContentLoaded
-            window.document.dispatchEvent(new Event("DOMContentLoaded", {
-                bubbles: true,
-                cancelable: true
-            }))
-        } catch(e) {}
+        /*window.document.dispatchEvent(new Event("DOMContentLoaded", {
+            bubbles: true,
+            cancelable: true
+        }))*/
     }
 
     __unlinkObservers() {
