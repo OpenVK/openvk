@@ -207,20 +207,23 @@
 
                             {var $canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
                             {var $canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
+                            {var $canAccessReports    = $thisUser->getChandlerUser()->can("admin")->model('openvk\Web\Models\Entities\Report')->whichBelongsTo(0)}
+                            {var $canAccessNsp        = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\Ban')->whichBelongsTo(0)}
+
                             {var $menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
-                            <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $menuLinksAvaiable" class="menu_divider"></div>
+                            <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $canAccessReports || $canAccessNsp || $menuLinksAvaiable" class="menu_divider"></div>
                             <a href="/admin" class="link" n:if="$canAccessAdminPanel" title="{_admin} [Alt+Shift+A]" accesskey="a" rel="nofollow">{_admin}</a>
                             <a href="/support/tickets" class="link" n:if="$canAccessHelpdesk">{_helpdesk}
                                 {if $helpdeskTicketNotAnsweredCount > 0}
                                     (<b>{$helpdeskTicketNotAnsweredCount}</b>)
                                 {/if}
                             </a>
-                            <a n:if="$canAccessHelpdesk" href="/scumfeed" class="link" rel="nofollow">{tr("reports")}
+                            <a n:if="$canAccessReports" href="/scumfeed" class="link" rel="nofollow">{tr("reports")}
                                 {if $reportNotAnsweredCount > 0}
                                     (<b>{$reportNotAnsweredCount}</b>)
                                 {/if}
                             </a>
-                            <a n:if="$canAccessHelpdesk" href="/noSpam" class="link" rel="nofollow">
+                            <a n:if="$canAccessNsp" href="/noSpam" class="link" rel="nofollow">
                                 noSpam
                             </a>
                         <a

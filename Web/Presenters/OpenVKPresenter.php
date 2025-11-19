@@ -290,6 +290,10 @@ abstract class OpenVKPresenter extends SimplePresenter
                 $this->template->reportNotAnsweredCount = (new Reports())->getReportsCount(0);
             }
 
+            if ($user->can("admin")->model("openvk\Web\Models\Entities\Report")->whichBelongsTo(0)) {
+                $this->template->reportNotAnsweredCount = (new Reports())->getReportsCount(0);
+            }
+
             $bdays = $this->user->identity->getFriendsBday(true);
             if (sizeof($bdays) == 0) {
                 $bdays = $this->user->identity->getFriendsBday(false);

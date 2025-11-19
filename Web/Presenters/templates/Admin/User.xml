@@ -88,6 +88,7 @@
                 <div class="field-group">
                     <label for="add-to-group">{_c_add_to_group}</label>
                     <select class="select" name="add-to-group">
+                        <option value="">{_relationship_0}</option>
                         <option n:foreach="$c_groups_list as $group" value="{$group->id}">
                             {$group->name}
                         </option>

@@ -33,7 +33,7 @@ final class NoSpamPresenter extends OpenVKPresenter
     public function renderIndex(): void
     {
         $this->assertUserLoggedIn();
-        $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
+        $this->assertPermission('openvk\Web\Models\Entities\Ban', 'write', 0);
 
         $targetDir = __DIR__ . '/../Models/Entities/';
         $mode = in_array($this->queryParam("act"), ["form", "templates", "rollback", "reports"]) ? $this->queryParam("act") : "form";
@@ -41,6 +41,9 @@ final class NoSpamPresenter extends OpenVKPresenter
         if ($mode === "form") {
             $this->template->_template = "NoSpam/Index";
             $this->template->disable_ajax = 1;
+
+            $excludedClasses = ["Alias", "APIToken", "Ban", "BannedLink", "EmailChangeVerification", "EmailVerification", "Gift", "GiftCategory", "IP", "Manager", "NoSpamLog", "PasswordReset", "Report", "SupportAgent", "SupportAlias", "Voucher"];
+
             $foundClasses = [];
             foreach (Finder::findFiles('*.php')->from($targetDir) as $file) {
                 $content = file_get_contents($file->getPathname());
@@ -54,7 +57,7 @@ final class NoSpamPresenter extends OpenVKPresenter
                     $className = trim($classMatches[1]);
                     $fullClassName = $classNamespace . '\\' . $className;
 
-                    if ($classNamespace === NoSpamPresenter::ENTITIES_NAMESPACE && class_exists($fullClassName)) {
+                    if ($classNamespace === NoSpamPresenter::ENTITIES_NAMESPACE && class_exists($fullClassName) && !in_array($className, $excludedClasses)) {
                         $foundClasses[] = $className;
                     }
                 }
@@ -68,7 +71,17 @@ final class NoSpamPresenter extends OpenVKPresenter
                     $models[] = $class;
                 }
             }
-            $this->template->models = $models;
+
+            $sortedModels = [];
+            foreach ($models as $model) {
+                $sortedModels[] = [$model, tr("nospam_" . strtolower($model))];
+            }
+
+            usort($sortedModels, function($a, $b) {
+                return strcmp($a[1], $b[1]);
+            });
+
+            $this->template->models = $sortedModels;
         } elseif ($mode === "templates") {
             $this->template->_template = "NoSpam/Templates.xml";
             $this->template->disable_ajax = 1;
@@ -147,7 +160,7 @@ final class NoSpamPresenter extends OpenVKPresenter
     public function renderSearch(): void
     {
         $this->assertUserLoggedIn();
-        $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
+        $this->assertPermission('openvk\Web\Models\Entities\Ban', 'write', 0);
         $this->assertNoCSRF();
         $this->willExecuteWriteAction();
 

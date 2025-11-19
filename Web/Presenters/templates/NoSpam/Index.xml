@@ -34,7 +34,7 @@
                             <div id="add-model" class="noSpamIcon noSpamIcon-Add" style="display: none;" />
                             <select name="model" id="model" class="model initialModel" style="margin-left: -2px;">
                                 <option selected value="none">{_relationship_0}</option>
-                                <option n:foreach="$models as $model" value="{$model}">{$model}</option>
+                                <option n:foreach="$models as $model" value="{$model[0]}">{$model[1]}</option>
                             </select>
                         </div>
                     </td>
@@ -329,9 +329,9 @@
                         <div style="display: flex; gap: 8px; justify-content: space-between;">
                             <div class="noSpamIcon noSpamIcon-Delete" onClick="deleteModelSelect(${ $('.model').length});"></div>
                             <select name="model" class="model" style="margin-left: -2px;" onChange="selectChange($(this).val())">
-                                <option selected value="none">{_relationship_0}</option>
+                                <option selected value="none">{_relationship_0|noescape}</option>
                                 {foreach $models as $model}
-                                    <option value={$model}>{$model|noescape}</option>
+                                    <option value={$model[0]}>{$model[1]|noescape}</option>
                                 {/foreach}
                             </select>
                         </div>
@@ -342,7 +342,6 @@
         function deleteModelSelect(id) {
             $(`#${ id}-model`).remove();
             if ($(".model").length === 0) {
-                console.log("BLYAT", $(".model"));
                 $("#noSpam-fields").hide();
                     $("#noSpam-model-not-selected").show();
                     $("#noSpam-model-not-selected-loader").show();
