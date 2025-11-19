@@ -17,8 +17,19 @@
         <b>{_comment}:</b> {$report->getReason()}
     </p>
     {include "ViewContent.xml", type => $report->getContentType(), object => $report->getContentObject()}
-    <center>
     <form action="/admin/reportAction{$report->getId()}" method="post">
+        <div n:if="$report->getContentType() == 'user'">
+            <input type='checkbox' name='excludeUserFromGlobalFeed' id="excludeUserFromGlobalFeed"> {_report_force_exclude_user_from_global_feed|noescape}
+        </div>
+        <div n:if="$report->getContentType() != 'user'">
+            <input type='checkbox' name='excludeAuthorFromGlobalFeed' id="excludeAuthorFromGlobalFeed">
+            {_report_force_exclude_author_from_global_feed|noescape} (<a href="{$report->getAuthor(true)->getUrl()}" target="_blank">{$report->getAuthor(true)->getCanonicalName()}</a>)
+        </div>
+        <div n:if="$report->getAuthor()->getId() != $report->getAuthor(true)->getId() || $report->getContentType() == 'group'">
+            <input type='checkbox' name='excludeGroupFromGlobalFeed' id="excludeGroupFromGlobalFeed">
+            {_report_force_exclude_group_from_global_feed|noescape}
+            {if $report->getContentType() != 'group'}(<a href="{$report->getAuthor()->getUrl()}" target="_blank">{$report->getAuthor()->getCanonicalName()}</a>){/if}
+        </div>
         <center>
             <form n:if="$report->getContentType() != 'group'" action="/admin/reportAction{$report->getId()}" method="post">
                 <input type="hidden" name="hash" value="{$csrfToken}"/>

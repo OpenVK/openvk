@@ -2332,6 +2332,11 @@
 
 "nospam_prevention" = "This action will affect a lot of data. Are you sure you want to apply?";
 
+"report_force_exclude_author_from_global_feed" = "Exclude <b>content author</b> from global feed";
+"report_force_exclude_user_from_global_feed" = "Exclude <b>user</b> from global feed";
+"report_force_exclude_group_from_global_feed" = "Exclude <b>group</b> from global feed";
+
+
 /* RSS */
 
 "post_deact_in_general" = "Page deletion";

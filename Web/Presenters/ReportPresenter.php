@@ -134,6 +134,25 @@ final class ReportPresenter extends OpenVKPresenter
         if (!$report || $report->isDeleted()) {
             $this->notFound();
         }
+        
+        if ($report->getContentType() === "user" && $this->postParam("excludeUserFromGlobalFeed")) {
+            $reportedUser = $report->getContentObject();
+            $reportedUser->setHide_Global_Feed(1);
+            $reportedUser->save();
+        }
+
+        if ($report->getContentType() !== "user" && $this->postParam("excludeAuthorFromGlobalFeed")) {
+            $reportedContentAuthor = $report->getAuthor(true);
+            $reportedContentAuthor->setHide_Global_Feed(1);
+            $reportedContentAuthor->save();
+        }
+
+        if (($report->getContentType() === "group" || $report->getAuthor()->getId() != $report->getAuthor(true)->getId()) && $this->postParam("excludeGroupFromGlobalFeed")) {
+            $reportedGroup = $report->getContentType() === "group" ? $report->getContentObject() : $report->getAuthor();
+            $reportedGroup->setHide_From_Global_Feed(1);
+            $reportedGroup->setEnforce_Hiding_From_Global_Feed(1);
+            $reportedGroup->save();
+        }
 
         if ($this->postParam("ban")) {
             $report->deleteContent();
