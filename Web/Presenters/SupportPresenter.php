@@ -475,9 +475,10 @@ final class SupportPresenter extends OpenVKPresenter
             }
         }
 
+        $name = mb_strlen(trim($this->postParam("name"))) > 0 ? $this->postParam("name") : tr("helpdesk_agent");
         if ($support_names->isExists($id)) {
             $agent = $support_names->get($id);
-            $agent->setName($this->postParam("name") ?? tr("helpdesk_agent"));
+            $agent->setName($name);
             $agent->setNumerate((int) $this->postParam("number") ?? null);
             $agent->setIcon($this->postParam("avatar"));
             $agent->save();
@@ -485,7 +486,7 @@ final class SupportPresenter extends OpenVKPresenter
         } else {
             $agent = new SupportAgent();
             $agent->setAgent($this->user->identity->getId());
-            $agent->setName($this->postParam("name") ?? tr("helpdesk_agent"));
+            $agent->setName($name);
             $agent->setNumerate((int) $this->postParam("number") ?? null);
             $agent->setIcon($this->postParam("avatar"));
             $agent->save();
