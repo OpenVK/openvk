@@ -16,7 +16,7 @@
                 <p class="title">
                     <strong>{tr("emp_" . $group . "_one")}: {_admin_overview_chandler_group_not_found}</strong>
                 </p>
-                <input n:foreach="$groupsMissingWarnings as $group" type="hidden" name="{$group}" value="true">
+                <input type="hidden" name="{$group}" value="true">
             </div>
 
             <p>{_admin_overview_chandler_groups_missing}</p>
