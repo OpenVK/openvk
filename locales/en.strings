@@ -1917,6 +1917,7 @@
 "helpdesk_showing_name" = "Display name";
 "helpdesk_show_number" = "Show the number";
 "helpdesk_avatar_url" = "Link to the avatar";
+"helpdesk_agent_name_empty" = "The display name cannot be blank.";
 
 /* Chandler */
 "c_user_removed_from_group" = "The user has been removed from the group";

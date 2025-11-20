@@ -65,7 +65,14 @@
                 <input type="hidden" value="{$csrfToken}" name="hash" />
                 <br/><br/>
                 <input type="submit" class="button" value="{_save}" />
+                <a id="delete_card">{_delete}</a>
             </form>
+            <script>
+                $("#delete_card").click(function () {
+                    $("input[name='name']").val("");
+                    $("input[type='submit']").click();
+                })
+            </script>
         {/if}
     </div>
 </div>
