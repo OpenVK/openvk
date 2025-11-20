@@ -23,7 +23,7 @@ final class AppsPresenter extends OpenVKPresenter
         $this->assertUserLoggedIn();
 
         $app = $this->apps->get($app);
-        if (!$app || !$app->isEnabled()) {
+        if (!$app || !$app->isEnabled() || $app->isDeleted()) {
             $this->notFound();
         }
 
@@ -43,7 +43,7 @@ final class AppsPresenter extends OpenVKPresenter
         $this->assertNoCSRF();
 
         $app = $this->apps->get((int) $this->queryParam("app"));
-        if (!$app) {
+        if (!$app || $app->isDeleted()) {
             $this->flashFail("err", tr("app_err_not_found"), tr("app_err_not_found_desc"));
         }
 
@@ -62,7 +62,7 @@ final class AppsPresenter extends OpenVKPresenter
             }
 
             $app = $this->apps->get((int) $this->queryParam("app"));
-            if (!$app) {
+            if (!$app || $app->isDeleted()) {
                 $this->flashFail("err", tr("app_err_not_found"), tr("app_err_not_found_desc"));
             }
 
@@ -75,6 +75,10 @@ final class AppsPresenter extends OpenVKPresenter
             if (!$app) {
                 $app = new Application();
                 $app->setOwner($this->user->id);
+            } elseif ($this->postParam("delete_app") && $app->getOwner()->getId() === $this->user->id) {
+                $app->delete();
+                $this->redirect("/apps?act=dev");
+                return;
             }
 
             if (!filter_var($this->postParam("url"), FILTER_VALIDATE_URL)) {
@@ -118,6 +122,7 @@ final class AppsPresenter extends OpenVKPresenter
             $this->template->note   = $app->getNoteLink();
             $this->template->users  = $app->getUsersCount();
             $this->template->on     = $app->isEnabled();
+            $this->template->owner  = $app->getOwner();
         } else {
             $this->template->create = true;
         }
