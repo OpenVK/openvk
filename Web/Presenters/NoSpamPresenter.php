@@ -77,7 +77,7 @@ final class NoSpamPresenter extends OpenVKPresenter
                 $sortedModels[] = [$model, tr("nospam_" . strtolower($model))];
             }
 
-            usort($sortedModels, function($a, $b) {
+            usort($sortedModels, function ($a, $b) {
                 return strcmp($a[1], $b[1]);
             });
 

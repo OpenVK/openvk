@@ -149,7 +149,7 @@ final class AdminPresenter extends OpenVKPresenter
         // Support and Moderation: noSpam
         $nspTemplatesCount = 0;
         $nspContentCount   = 0;
-        foreach ((new NoSpamLogs)->getList() as $nsplog) {
+        foreach ((new NoSpamLogs())->getList() as $nsplog) {
             $nspTemplatesCount++;
             $nspContentCount += $nsplog->getCount();
         }
@@ -162,7 +162,7 @@ final class AdminPresenter extends OpenVKPresenter
         $this->template->groupsBannedCount   = count($this->context->table("groups")->where("block_reason !=", ""));
 
         // Content: Other
-        $this->template->postsCount     = (new Posts)->getCount();
+        $this->template->postsCount     = (new Posts())->getCount();
         $this->template->messagesCount  = count($this->context->table("messages"));
         $this->template->photosCount    = count($this->context->table("photos"));
         $this->template->videosCount    = count($this->context->table("videos"));
@@ -655,26 +655,26 @@ final class AdminPresenter extends OpenVKPresenter
             $req = "";
             if ($this->postParam("agent")) {
                 $req = $req . <<<'SQL'
-                    INSERT INTO `ChandlerGroups` VALUES (NULL, "OVK\\SupportAgents", NULL);
-                    INSERT INTO `ChandlerACLGroupsPermissions` VALUES ((SELECT id FROM ChandlerGroups WHERE name = "OVK\\SupportAgents"), "openvk\\Web\\Models\\Entities\\TicketReply", 0, "write", 1);
-                    INSERT INTO `ChandlerACLRelations` VALUES ("{GUID}", (SELECT id FROM ChandlerGroups WHERE name = "OVK\\SupportAgents"), 64);
-                SQL;
+                        INSERT INTO `ChandlerGroups` VALUES (NULL, "OVK\\SupportAgents", NULL);
+                        INSERT INTO `ChandlerACLGroupsPermissions` VALUES ((SELECT id FROM ChandlerGroups WHERE name = "OVK\\SupportAgents"), "openvk\\Web\\Models\\Entities\\TicketReply", 0, "write", 1);
+                        INSERT INTO `ChandlerACLRelations` VALUES ("{GUID}", (SELECT id FROM ChandlerGroups WHERE name = "OVK\\SupportAgents"), 64);
+                    SQL;
             }
 
             if ($this->postParam("moder")) {
                 $req = $req . <<<'SQL'
-                    INSERT INTO `ChandlerGroups` VALUES (NULL, "OVK\\Moderators", NULL);
-                    INSERT INTO `ChandlerACLGroupsPermissions` VALUES ((SELECT id FROM ChandlerGroups WHERE name = "OVK\\Moderators"), "openvk\\Web\\Models\\Entities\\Report", 0, "admin", 1);
-                    INSERT INTO `ChandlerACLRelations` VALUES ("{GUID}", (SELECT id FROM ChandlerGroups WHERE name = "OVK\\Moderators"), 64);
-                SQL;
+                        INSERT INTO `ChandlerGroups` VALUES (NULL, "OVK\\Moderators", NULL);
+                        INSERT INTO `ChandlerACLGroupsPermissions` VALUES ((SELECT id FROM ChandlerGroups WHERE name = "OVK\\Moderators"), "openvk\\Web\\Models\\Entities\\Report", 0, "admin", 1);
+                        INSERT INTO `ChandlerACLRelations` VALUES ("{GUID}", (SELECT id FROM ChandlerGroups WHERE name = "OVK\\Moderators"), 64);
+                    SQL;
             }
 
             if ($this->postParam("nsp")) {
                 $req = $req . <<<'SQL'
-                    INSERT INTO `ChandlerGroups` VALUES (NULL, "OVK\\SpamAnalysts", NULL);
-                    INSERT INTO `ChandlerACLGroupsPermissions` VALUES ((SELECT id FROM ChandlerGroups WHERE name = "OVK\\SpamAnalysts"), "openvk\\Web\\Models\\Entities\\Ban", 0, "write", 1);
-                    INSERT INTO `ChandlerACLRelations` VALUES ("{GUID}", (SELECT id FROM ChandlerGroups WHERE name = "OVK\\SpamAnalysts"), 64);
-                SQL;
+                        INSERT INTO `ChandlerGroups` VALUES (NULL, "OVK\\SpamAnalysts", NULL);
+                        INSERT INTO `ChandlerACLGroupsPermissions` VALUES ((SELECT id FROM ChandlerGroups WHERE name = "OVK\\SpamAnalysts"), "openvk\\Web\\Models\\Entities\\Ban", 0, "write", 1);
+                        INSERT INTO `ChandlerACLRelations` VALUES ("{GUID}", (SELECT id FROM ChandlerGroups WHERE name = "OVK\\SpamAnalysts"), 64);
+                    SQL;
             }
 
             if (mb_strlen($req) > 0) {
