@@ -10,6 +10,23 @@
 {/block}
 
 {block content}
+    {if count($groupsMissingWarnings) > 0}
+        <form method="post" action="/admin/chandler/groups">
+            <div n:foreach="$groupsMissingWarnings as $group" class="aui-message aui-message-warning" style="margin-bottom: 15px;">
+                <p class="title">
+                    <strong>{tr("emp_" . $group . "_one")}: {_admin_overview_chandler_group_not_found}</strong>
+                </p>
+                <input n:foreach="$groupsMissingWarnings as $group" type="hidden" name="{$group}" value="true">
+            </div>
+
+            <p>{_admin_overview_chandler_groups_missing}</p>
+            <p><input type="submit" class="aui-button aui-button-primary" href="alert()" value="{_admin_overview_chandler_groups_create_missing}"></p>
+
+            <input type="hidden" name="fixChandlerGroups" value="true">
+            <input type="hidden" name="hash" value="{$csrfToken}">
+        </form>
+        <hr />
+    {/if}
     <h1>{_s_people}</h1>
     <div class="admin-overview_cards">
         <div class="admin-overview_card">

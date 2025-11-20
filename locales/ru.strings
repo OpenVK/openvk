@@ -1779,6 +1779,9 @@
 "admin_overview_documents_one" = "документ";
 "admin_overview_documents_few" = "документа";
 "admin_overview_documents_other" = "документов";
+"admin_overview_chandler_group_not_found" = "Системная группа прав не найдена";
+"admin_overview_chandler_groups_missing" = "Группы прав необходимы для полноценного доступа к управлению инстансом (Helpdesk, модерация, noSpam)";
+"admin_overview_chandler_groups_create_missing" = "Создать отсутствующие группы прав";
 
 /* Paginator (deprecated) */
 

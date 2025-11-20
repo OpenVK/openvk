@@ -1861,6 +1861,9 @@
 "admin_overview_apps_other" = "Apps";
 "admin_overview_documents_one" = "Document";
 "admin_overview_documents_other" = "Documents";
+"admin_overview_chandler_group_not_found" = "System permissions group missing";
+"admin_overview_chandler_groups_missing" = "Permissions groups are necessary for full access to instance management (Helpdesk, moderation, noSpam)";
+"admin_overview_chandler_groups_create_missing" = "Create missing permissions groups";
 
 /* Paginator (deprecated) */
 
