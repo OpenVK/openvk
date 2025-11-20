@@ -1380,6 +1380,7 @@
 "failed_to_create_topic" = "Не удалось создать тему";
 "failed_to_change_topic" = "Не удалось изменить тему";
 "no_title_specified" = "Заголовок не указан.";
+"restrict_topic" = "Комментировать могут только администраторы";
 
 /* Errors */
 

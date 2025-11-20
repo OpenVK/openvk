@@ -181,6 +181,7 @@ final class TopicsPresenter extends OpenVKPresenter
             $topic->setClosed(empty($this->postParam("close")) ? 0 : 1);
 
             if ($topic->getClub()->canBeModifiedBy($this->user->identity)) {
+                $topic->setRestricted((empty($this->postParam("restrict")) || !$topic->isPostedOnBehalfOfGroup()) ? 0 : 1);
                 $topic->setPinned(empty($this->postParam("pin")) ? 0 : 1);
             }
 
