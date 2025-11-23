@@ -996,6 +996,7 @@
 "audio_ctx_add_to_playlist" = "Добавить в плейлист";
 "audio_ctx_play_next" = "Воспроизвести следующим";
 "audio_ctx_clear_context" = "Очистить список треков";
+"audio_ctx_show_count" = "Показать пагинатор";
 
 "is_x_audio_zero" = "Нету аудиозаписей";
 "is_x_audio_one" = "Всего одна аудиозапись.";

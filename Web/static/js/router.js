@@ -116,18 +116,20 @@ window.router = new class {
     }
 
     applyTweaks() {
-        window.tweaks.forEach(item => {
-            const name = item.name
+        if (window.tweaks != null) {
+            window.tweaks.forEach(item => {
+                const name = item.name
 
-            if (item.isEnabled()) {
-                try {
-                    console.log(`Applied tweak ${name}`)
-                    item.func()
-                } catch(e) {
-                    console.error(e)
+                if (item.isEnabled()) {
+                    try {
+                        console.log(`Applied tweak ${name}`)
+                        item.func()
+                    } catch(e) {
+                        console.error(e)
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 
     async __integratePage(scrolling = null) {
@@ -150,6 +152,11 @@ window.router = new class {
         }
 
         this.applyTweaks()
+
+        /*window.document.dispatchEvent(new Event("DOMContentLoaded", {
+            bubbles: true,
+            cancelable: true
+        }))*/
     }
 
     __unlinkObservers() {

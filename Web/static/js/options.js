@@ -165,9 +165,6 @@ window.tweaks = [
     new TweakOption('listview.hide_paginator_blinks', function () {
         this.customCSS(`.paginator:not(.paginator-at-top) {opacity:0.2}`)
     }),
-    new TweakOption('listview.hide_paginator_blinks', function () {
-        this.customCSS(`.paginator:not(.paginator-at-top) {opacity:0.2}`)
-    }),
     new TweakOption("apps.expand_iframe", function () {
         this.customCSS(`
             .app_block {
@@ -187,13 +184,7 @@ window.tweaks = [
     new TweakOption("wall.hide_edit_mark", function () {
         this.customCSS(`.editedMark {display: none;}`)
     }),
-    new TweakOption("wall.hide_edit_mark", function () {
-        this.customCSS(`.editedMark {display: none;}`)
-    }),
     new TweakOption("settings.hide_phone_number_message", function () {
-        u(`.msg a[href='/edit/verify_phone']`).closest(".msg").remove()
-    }),
-    new TweakOption("settings.hide_phone_number_message", function  () {
         u(`.msg a[href='/edit/verify_phone']`).closest(".msg").remove()
     }),
     new TweakOption("user.counters_as_links", function () {
@@ -264,6 +255,8 @@ window.tweaks = [
                 display: none;
             }
         `)
+
+        console.info('i will hide these words (window.hidden_words): ', window.hidden_words)
 
         function hide_posts() {
             u(".post").nodes.forEach(item => {

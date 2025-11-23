@@ -64,8 +64,9 @@
 {/block}
 
 {block content}
-    {* ref: https://archive.li/P32em *}
-    
+    {* Taken from: https://archive.li/P32em *}
+
+    {* Must be moved from latte to js *}
     {include "bigplayer.xml", buttonsShow_summary => $audiosCount > 10}
 
     <script>
@@ -118,6 +119,7 @@
                 </div>
             </div>
 
+            {* new and popular modes are unavailable now *}
             <div n:if="$mode != 'new' && $mode != 'popular'">
                 {include "../components/paginator.xml", conf => (object) [
                     "page"     => $page,
@@ -128,7 +130,8 @@
                 ]}
             </div>
         </div>
-        
+
+        {* For some reason, there is a playlists page in Audio List template *}
         <div class="audiosPaddingContainer audiosSideContainer audiosPaddingContainer" style="width: 72.2%;" n:if="$mode == 'playlists'">
             <div n:if="$playlistsCount <= 0" style='height: 100%;'>
                 {include "../components/content_error.xml", description => $ownerId > 0 ? ($ownerId == $thisUser->getId() ? tr("no_playlists_thisuser") : tr("no_playlists_user")) : tr("no_playlists_club")}
