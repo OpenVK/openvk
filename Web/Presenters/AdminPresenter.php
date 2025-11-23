@@ -96,9 +96,9 @@ final class AdminPresenter extends OpenVKPresenter
 
         // Users: Registered Users
         $this->template->usersStats         = $this->users->getStatistics();
-        $this->template->usersToday         = count($this->context->table("profiles")->where("UNIX_TIMESTAMP(since) >=", time() - DAY));
-        $this->template->usersVerifiedCount = count($this->context->table("profiles")->where("verified", true));
-        $this->template->usersDeletedCount  = count($this->context->table("profiles")->where("deleted", true));
+        $this->template->usersToday         = $this->context->table("profiles")->where("UNIX_TIMESTAMP(since) >=", time() - DAY)->count('*');
+        $this->template->usersVerifiedCount = $this->context->table("profiles")->where("verified", true)->count('*');
+        $this->template->usersDeletedCount  = $this->context->table("profiles")->where("deleted", true)->count('*');
 
         // Users: Instance Admins
         $admGroupUUID = $this->context->table("ChandlerACLGroupsPermissions")->where(["model" => "admin", "permission" => "access"])->fetch()->group;
@@ -118,23 +118,23 @@ final class AdminPresenter extends OpenVKPresenter
         }
         $this->template->groupsMissingWarnings = $groupsMissingWarnings;
 
-        $this->template->empCnt = count($this->context->table("ChandlerACLRelations")->where("group", [$admGroupUUID, $supGroupUUID, $modGroupUUID, $nspGroupUUID])->group('user'));
-        $this->template->admCnt = count($this->context->table("ChandlerACLRelations")->where("group", $admGroupUUID));
-        $this->template->supCnt = count($this->context->table("ChandlerACLRelations")->where("group", $supGroupUUID));
-        $this->template->modCnt = count($this->context->table("ChandlerACLRelations")->where("group", $modGroupUUID));
-        $this->template->nspCnt = count($this->context->table("ChandlerACLRelations")->where("group", $nspGroupUUID));
+        $this->template->empCnt = $this->context->table("ChandlerACLRelations")->where("group", [$admGroupUUID, $supGroupUUID, $modGroupUUID, $nspGroupUUID])->group('user')->count('*');
+        $this->template->admCnt = $this->context->table("ChandlerACLRelations")->where("group", $admGroupUUID)->count('*');
+        $this->template->supCnt = $this->context->table("ChandlerACLRelations")->where("group", $supGroupUUID)->count('*');
+        $this->template->modCnt = $this->context->table("ChandlerACLRelations")->where("group", $modGroupUUID)->count('*');
+        $this->template->nspCnt = $this->context->table("ChandlerACLRelations")->where("group", $nspGroupUUID)->count('*');
 
         // Users: Banned Users
-        $this->template->bannedCount = count($this->context->table("bans")->where("FLOOR(removed_by)", 0));
-        $this->template->bannedForeverCount = count($this->context->table("bans")->where(["FLOOR(removed_by)" => 0, "exp" => 0]));
-        $this->template->canBeUnbannedNowCount = count($this->context->table("bans")->where(["FLOOR(removed_by)" => 0, "exp <=" => time(), "exp >" => 0]));
+        $this->template->bannedCount = $this->context->table("bans")->where("FLOOR(removed_by)", 0)->count('*');
+        $this->template->bannedForeverCount = $this->context->table("bans")->where(["FLOOR(removed_by)" => 0, "exp" => 0])->count('*');
+        $this->template->canBeUnbannedNowCount = $this->context->table("bans")->where(["FLOOR(removed_by)" => 0, "exp <=" => time(), "exp >" => 0])->count('*');
 
         // Support and Moderation: Tickets
-        $ticketsCount           = count($this->context->table("tickets"));
-        $ticketsCountToday      = count($this->context->table("tickets")->where("created >= ?", time() - DAY));
-        $ticketsProcessingCount = count($this->context->table("tickets")->where("type", 0));
-        $ticketsWithAnswerCount = count($this->context->table("tickets")->where("type", 1));
-        $ticketsClosedCount     = count($this->context->table("tickets")->where("type", 2));
+        $ticketsCount           = $this->context->table("tickets")->count('*');
+        $ticketsCountToday      = $this->context->table("tickets")->where("created >= ?", time() - DAY)->count('*');
+        $ticketsProcessingCount = $this->context->table("tickets")->where("type", 0)->count('*');
+        $ticketsWithAnswerCount = $this->context->table("tickets")->where("type", 1)->count('*');
+        $ticketsClosedCount     = $this->context->table("tickets")->where("type", 2)->count('*');
 
         $this->template->ticketsCount           = $ticketsCount;
         $this->template->ticketsCountToday      = $ticketsCountToday;
@@ -143,8 +143,8 @@ final class AdminPresenter extends OpenVKPresenter
         $this->template->ticketsClosedCount     = $ticketsClosedCount;
 
         // Support and Moderation: Reports
-        $this->template->reportsCount      = count($this->context->table("reports"));
-        $this->template->reportsCountToday = count($this->context->table("reports")->where("created >=", time() - DAY));
+        $this->template->reportsCount      = $this->context->table("reports")->count('*');
+        $this->template->reportsCountToday = $this->context->table("reports")->where("created >=", time() - DAY)->count('*');
 
         // Support and Moderation: noSpam
         $nspTemplatesCount = 0;
@@ -157,19 +157,19 @@ final class AdminPresenter extends OpenVKPresenter
         $this->template->nspContentCount   = $nspContentCount;
 
         // Content: Groups
-        $this->template->groupsCount         = count($this->context->table("groups"));
-        $this->template->groupsVerifiedCount = count($this->context->table("groups")->where("verified", true));
-        $this->template->groupsBannedCount   = count($this->context->table("groups")->where("block_reason !=", ""));
+        $this->template->groupsCount         = $this->context->table("groups")->count('*');
+        $this->template->groupsVerifiedCount = $this->context->table("groups")->where("verified", true)->count('*');
+        $this->template->groupsBannedCount   = $this->context->table("groups")->where("block_reason !=", "")->count('*');
 
         // Content: Other
         $this->template->postsCount     = (new Posts())->getCount();
-        $this->template->messagesCount  = count($this->context->table("messages"));
-        $this->template->photosCount    = count($this->context->table("photos"));
-        $this->template->videosCount    = count($this->context->table("videos"));
-        $this->template->audiosCount    = count($this->context->table("audios"));
-        $this->template->notesCount     = count($this->context->table("notes"));
-        $this->template->appsCount      = count($this->context->table("apps"));
-        $this->template->documentsCount = count($this->context->table("documents"));
+        $this->template->messagesCount  = $this->context->table("messages")->count('*');
+        $this->template->photosCount    = $this->context->table("photos")->count('*');
+        $this->template->videosCount    = $this->context->table("videos")->count('*');
+        $this->template->audiosCount    = $this->context->table("audios")->count('*');
+        $this->template->notesCount     = $this->context->table("notes")->count('*');
+        $this->template->appsCount      = $this->context->table("apps")->count('*');
+        $this->template->documentsCount = $this->context->table("documents")->count('*');
     }
 
     public function renderUsers(): void
