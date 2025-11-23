@@ -873,7 +873,7 @@ final class AdminPresenter extends OpenVKPresenter
         $this->template->object_types = (new Logs())->getTypes();
     }
 
-    function renderConfig(): void
+    public function renderConfig(): void
     {
         if (!OPENVK_ROOT_CONF["openvk"]["allowEditConfig"]) {
             $this->notFound();
