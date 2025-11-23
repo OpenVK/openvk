@@ -24,6 +24,6 @@
     </div>
     <div style="margin-top: 20px;">
         <h4>{tr("topic_messages_count", $count)}</h4>
-        {include "../components/comments.xml", comments => $comments, count => $count, page => $page, model => "topics", club => $club, readOnly => $topic->isClosed(), showTitle => false, parent => $topic}
+        {include "../components/comments.xml", comments => $comments, count => $count, page => $page, model => "topics", club => $club, readOnly => $topic->isClosed() || ($topic->isRestricted() && !$topic->getClub()->canBeModifiedBy($thisUser)), showTitle => false, parent => $topic}
     </div>
 {/block}

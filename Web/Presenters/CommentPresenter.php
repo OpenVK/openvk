@@ -80,6 +80,10 @@ final class CommentPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
+        if ($entity instanceof Topic && $entity->isRestricted() && !$entity->getClub()->canBeModifiedBy($this->user->identity)) {
+            $this->flashFail("err", tr("error"), tr("forbidden"));
+        }
+
         $flags = 0;
         if ($this->postParam("as_group") === "on" && !is_null($club) && $club->canBeModifiedBy($this->user->identity)) {
             $flags |= 0b10000000;
