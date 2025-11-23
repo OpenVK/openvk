@@ -36,7 +36,7 @@ abstract class Repository
 
     public function size(bool $withDeleted = false): int
     {
-        return sizeof($this->table->where("deleted", $withDeleted));
+        return $this->table->where("deleted", $withDeleted)->count("*");
     }
 
     public function enumerate(int $page, ?int $perPage = null, bool $withDeleted = false): \Traversable
