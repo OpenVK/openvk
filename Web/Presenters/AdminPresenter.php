@@ -872,4 +872,44 @@ final class AdminPresenter extends OpenVKPresenter
         $this->template->logs = $logs;
         $this->template->object_types = (new Logs())->getTypes();
     }
+
+    function renderConfig(): void
+    {
+        if (!OPENVK_ROOT_CONF["openvk"]["allowEditConfig"]) {
+            $this->notFound();
+        }
+
+        $cfg_filepath = __DIR__ . "../../../openvk.yml";
+
+        if ($_SERVER["REQUEST_METHOD"] !== "POST") {
+            $this->template->cfg = chandler_parse_yaml($cfg_filepath);
+        } else {
+            $this->assertNoCSRF();
+
+            $yaml = $this->postParam("yaml");
+            if (!$yaml) {
+                $this->notFound();
+            }
+
+            $tmp = $cfg_filepath . ".tmp";
+
+            if (file_put_contents($tmp, $yaml) === false) {
+                $this->returnJson(["success" => false, "error" => tr("admin_tuning_cfg_file_write_err")]);
+            }
+
+            $parsed_yaml = chandler_parse_yaml($tmp);
+
+            if (!$parsed_yaml || $parsed_yaml["openvk"]["allowEditConfig"] != OPENVK_ROOT_CONF["openvk"]["allowEditConfig"]) {
+                unlink($tmp);
+                $this->returnJson(["success" => false, "error" => tr("admin_tuning_cfg_tmp_read_fail_yaml")]);
+            }
+
+            if (!rename($tmp, $cfg_filepath)) {
+                unlink($tmp);
+                $this->returnJson(["success" => false, "error" => tr("admin_tuning_cfg_write_fail")]);
+            }
+
+            $this->returnJson(["success" => true]);
+        }
+    }
 }
