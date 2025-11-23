@@ -101,10 +101,10 @@ final class AdminPresenter extends OpenVKPresenter
         $this->template->usersDeletedCount  = count($this->context->table("profiles")->where("deleted", true));
 
         // Users: Instance Admins
-        $admGroupUUID = $this->context->table("ChandlerAclGroupsPermissions")->where(["model" => "admin", "permission" => "access"])->fetch()->group;
-        $supGroupUUID = $this->context->table("ChandlerAclGroupsPermissions")->where(["model" => "openvk\\Web\\Models\\Entities\\TicketReply", "permission" => "write"])->fetch()->group;
-        $modGroupUUID = $this->context->table("ChandlerAclGroupsPermissions")->where(["model" => "openvk\\Web\\Models\\Entities\\Report", "permission" => "admin"])->fetch()->group;
-        $nspGroupUUID = $this->context->table("ChandlerAclGroupsPermissions")->where(["model" => "openvk\\Web\\Models\\Entities\\Ban", "permission" => "write"])->fetch()->group;
+        $admGroupUUID = $this->context->table("ChandlerACLGroupsPermissions")->where(["model" => "admin", "permission" => "access"])->fetch()->group;
+        $supGroupUUID = $this->context->table("ChandlerACLGroupsPermissions")->where(["model" => "openvk\\Web\\Models\\Entities\\TicketReply", "permission" => "write"])->fetch()->group;
+        $modGroupUUID = $this->context->table("ChandlerACLGroupsPermissions")->where(["model" => "openvk\\Web\\Models\\Entities\\Report", "permission" => "admin"])->fetch()->group;
+        $nspGroupUUID = $this->context->table("ChandlerACLGroupsPermissions")->where(["model" => "openvk\\Web\\Models\\Entities\\Ban", "permission" => "write"])->fetch()->group;
 
         $groupsMissingWarnings = [];
         if (!$supGroupUUID) {
@@ -118,11 +118,11 @@ final class AdminPresenter extends OpenVKPresenter
         }
         $this->template->groupsMissingWarnings = $groupsMissingWarnings;
 
-        $this->template->empCnt = count($this->context->table("ChandlerAclRelations")->where("group", [$admGroupUUID, $supGroupUUID, $modGroupUUID, $nspGroupUUID])->group('user'));
-        $this->template->admCnt = count($this->context->table("ChandlerAclRelations")->where("group", $admGroupUUID));
-        $this->template->supCnt = count($this->context->table("ChandlerAclRelations")->where("group", $supGroupUUID));
-        $this->template->modCnt = count($this->context->table("ChandlerAclRelations")->where("group", $modGroupUUID));
-        $this->template->nspCnt = count($this->context->table("ChandlerAclRelations")->where("group", $nspGroupUUID));
+        $this->template->empCnt = count($this->context->table("ChandlerACLRelations")->where("group", [$admGroupUUID, $supGroupUUID, $modGroupUUID, $nspGroupUUID])->group('user'));
+        $this->template->admCnt = count($this->context->table("ChandlerACLRelations")->where("group", $admGroupUUID));
+        $this->template->supCnt = count($this->context->table("ChandlerACLRelations")->where("group", $supGroupUUID));
+        $this->template->modCnt = count($this->context->table("ChandlerACLRelations")->where("group", $modGroupUUID));
+        $this->template->nspCnt = count($this->context->table("ChandlerACLRelations")->where("group", $nspGroupUUID));
 
         // Users: Banned Users
         $this->template->bannedCount = count($this->context->table("bans")->where("FLOOR(removed_by)", 0));
