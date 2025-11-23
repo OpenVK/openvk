@@ -1894,6 +1894,7 @@
 "helpdesk_showing_name" = "Отображаемое имя";
 "helpdesk_show_number" = "Показывать номер";
 "helpdesk_avatar_url" = "Ссылка на аватарку";
+"helpdesk_agent_name_empty" = "Отображаемое имя не может быть пустым";
 /* Chandler */
 
 "c_user_removed_from_group" = "Пользователь был удалён из группы";
