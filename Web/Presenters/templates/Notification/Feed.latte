@@ -1,0 +1,63 @@
+{extends "../@layout.latte"}
+{var $sorting = false}
+
+{block title}
+    {_feedback}
+{/block}
+
+{block header}
+    <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a> »
+    {_feedback}
+{/block}
+
+{block content}
+<div n:ifcontent class="tabs">
+    <div n:attr="id => ($mode === 'new' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($mode === 'new' ? 'act_tab_a' : 'ki')" href="?act=new">{_unread}</a>
+    </div>
+    <div n:attr="id => ($mode === 'archived' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($mode === 'archived' ? 'act_tab_a' : 'ki')" href="?act=archived">{_archive}</a>
+    </div>
+</div>
+{var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+{if sizeof($data) > 0}
+<div n:class="$mode !== 'new' ? scroll_container">
+    <table class="scroll_node post post-divider" border="0" style="font-size: 11px;" n:foreach="$data as $dat">
+        <tbody>
+            <tr>
+                {var $sxModel = $dat->getModel(1)}
+                {if !(method_exists($sxModel, "getURL") && method_exists($sxModel, "getAvatarUrl"))}
+                    {var $sxModel = $dat->getModel(0)}
+                {/if}
+
+                <td width="54" valign="top">
+                    <a href="{$sxModel->getURL()}">
+                        <img src="{$sxModel->getAvatarUrl('miniscule')}" width=50 />
+                    </a>
+                </td>
+                <td width="100%" valign="top">
+                    <div class="post-content">
+                        <div class="text" style="line-height: 12pt;">
+                            {include $dat->getTemplatePath(), notification => $dat}
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+        {include "../components/paginator.latte", conf => (object) [
+            "page"     => $page,
+            "count"    => $count,
+            "amount"   => sizeof($data),
+            "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+            "atBottom" => true,
+        ]}
+{else}
+    {ifset customErrorMessage}
+        {include customErrorMessage}
+    {else}
+        {include "../components/nothing.latte"}
+    {/ifset}
+{/if}
+{/block}

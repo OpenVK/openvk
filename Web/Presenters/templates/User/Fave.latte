@@ -1,0 +1,86 @@
+{extends "../@layout.latte"}
+
+{block title}{_bookmarks_tab}{/block}
+
+{block header}
+    {_bookmarks_tab}
+{/block}
+
+{block wrap}
+    <div class="wrap2">
+        <div class="wrap1">
+            <div class="page_wrap">
+                <div class='summaryBar summaryBarFlex padding'>
+                    <div class='summary'>
+                        <b>{tr("faves", $count)} {*tr("showing_x_y", $page, $count)*}</b>
+                    </div>
+
+                    {include "../components/paginator.latte", conf => $paginatorConf}
+                </div>
+
+                <div class='page_wrap_content' id='search_page'>
+                    <div n:class='page_wrap_content_main, scroll_container, ($section == "photos" && $count > 0) ? album-flex'>
+                        <style>
+                            .scroll_node:first-of-type .comment {
+                                border-top: unset;
+                                padding: 0px;
+                            }
+
+                            .scroll_node:last-of-type .post {
+                                border-bottom: unset;
+                            }
+
+                            .content_page_error {
+                                min-height: 400px;
+                            }
+                        </style>
+                        {if $count > 0}
+                            {foreach $data as $dat}
+                                {if $dat->isDeleted()}
+                                    <div n:class="deleted_mark, $section == 'photos' ? album-photo : deleted_mark_average">
+                                        <span>[deleted]</span>
+                                    </div>
+                                {else}
+                                    {if $section == "posts"}
+                                        <div class="scroll_node">
+                                            {include "../components/post.latte", post => $dat, commentSection => true}
+                                        </div>
+                                    {elseif $section == "comments"}
+                                        <div class="scroll_node">
+                                            {include "../components/comment.latte", comment => $dat, correctLink => true, no_reply_button => true}
+                                        </div>
+                                    {elseif $section == "photos"}
+                                        <div class="album-photo scroll_node" onclick="OpenMiniature(event, {$dat->getURLBySizeId('larger')}, null, {$dat->getPrettyId()}, null)">
+                                            <a href="/photo{$dat->getPrettyId()}">
+                                                <img class="album-photo--image" src="{$dat->getURLBySizeId('tinier')}" alt="{$dat->getDescription()}"  loading="lazy" />
+                                            </a>
+                                        </div>
+                                    {elseif $section == "videos"}
+                                        <div class="scroll_node">
+                                            {include "../components/video.latte", video => $dat}
+                                        </div>
+                                    {/if}
+                                {/if}
+                            {/foreach}
+                        {else}
+                            {include "../components/content_error.latte", description => tr("faves_".$section."_empty_tip")}
+                        {/if}
+                    </div>
+                    <div class='page_wrap_content_options verticalGrayTabsWrapper'>
+                        <div class="page_wrap_content_options_list verticalGrayTabs with_padding">
+                            <a n:attr="id => $section === 'posts' ? 'used'" href="/fave?section=posts">{_s_posts}</a>
+                            <a n:attr="id => $section === 'comments' ? 'used'" href="/fave?section=comments">{_s_comments}</a>
+                            <a n:attr="id => $section === 'photos' ? 'used'" href="/fave?section=photos">{_s_photos}</a>
+                            <a n:attr="id => $section === 'videos' ? 'used'" href="/fave?section=videos">{_s_videos}</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div n:if='$paginatorConf->pageCount > 1' class='page_content_paginator_bottom'>
+                    {include "../components/paginator.latte", conf => $extendedPaginatorConf}
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+{/block}

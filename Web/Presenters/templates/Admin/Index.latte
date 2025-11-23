@@ -1,0 +1,197 @@
+{extends "@layout.latte"}
+
+{block title}
+    {_admin_overview_summary} 
+{/block}
+
+{block heading}
+    {_admin_overview_summary}
+    <hr />
+{/block}
+
+{block content}
+    {if count($groupsMissingWarnings) > 0}
+        <form method="post" action="/admin/chandler/groups">
+            <div n:foreach="$groupsMissingWarnings as $group" class="aui-message aui-message-warning" style="margin-bottom: 15px;">
+                <p class="title">
+                    <strong>{tr("emp_" . $group . "_one")}: {_admin_overview_chandler_group_not_found}</strong>
+                </p>
+                <input type="hidden" name="{$group}" value="true">
+            </div>
+
+            <p>{_admin_overview_chandler_groups_missing}</p>
+            <p><input type="submit" class="aui-button aui-button-primary" href="alert()" value="{_admin_overview_chandler_groups_create_missing}"></p>
+
+            <input type="hidden" name="fixChandlerGroups" value="true">
+            <input type="hidden" name="hash" value="{$csrfToken}">
+        </form>
+        <hr />
+    {/if}
+    <h1>{_s_people}</h1>
+    <div class="admin-overview_cards">
+        <div class="admin-overview_card">
+            <div>
+                <div class="admin-overview_card_counter">
+                    <h1 class="admin-overview_card_counter_digit">{number_format($usersStats->all, 0, " ", " ")}</h1>
+                    <b n:if="$usersToday > 0" style="color: var(--aui-badge-added-text-color)">+{number_format($usersToday, 0, " ", " ")} {_time_today}</b>
+                </div>
+                <div>{tr("admin_overview_registrated_users", $usersStats->all)}</div>
+            </div>
+            <ul>
+                <li style="color: var(--aui-badge-added-text-color)"><b>{number_format($usersStats->online, 0, " ", " ")}</b> {_online}</li>
+                <li><b>{number_format($usersStats->active, 0, " ", " ")}</b> {tr("active", $usersStats->active)}</li>
+                <li><b>{number_format($usersVerifiedCount, 0, " ", " ")}</b> {tr("verified", $usersVerifiedCount)}</li>
+                <li><b>{number_format($usersDeletedCount, 0, " ", " ")}</b> {tr("deleted", $usersDeletedCount)}</li>
+            </ul>
+        </div>
+        <div class="admin-overview_card">
+            <div>
+                <div class="admin-overview_card_counter">
+                    <h1 class="admin-overview_card_counter_digit">{$empCnt}</h1>
+                </div>
+                <div>{tr("admin_overview_employees", $empCnt)}</div>
+            </div>
+                <ul>
+                    <li><b>{number_format($admCnt, 0, " ", " ")}</b> {tr("emp_admin", $admCnt)}</li>
+                    <li><b>{number_format($supCnt, 0, " ", " ")}</b> {tr("emp_agent", $supCnt)}</li>
+                    <li><b>{number_format($modCnt, 0, " ", " ")}</b> {tr("emp_moder", $modCnt)}</li>
+                    <li><b>{number_format($nspCnt, 0, " ", " ")}</b> {tr("emp_nsp", $nspCnt)}</li>
+                </ul>
+        </div>
+        <div class="admin-overview_card">
+            <div>
+                <div class="admin-overview_card_counter">
+                    <h1 class="admin-overview_card_counter_digit">{number_format($bannedCount, 0, " ", " ")}</h1>
+                </div>
+                <div>{tr("admin_overview_banned_users", $bannedCount)}</div>
+            </div>
+            <ul>
+                <li><b>{number_format($bannedForeverCount, 0, " ", " ")}</b> {_forever}</li>
+                <li><b>{number_format($canBeUnbannedNowCount, 0, " ", " ")}</b> {tr("can_be_unbanned_now", $canBeUnbannedNowCount)}</li>
+            </ul>
+        </div>
+    </div>
+
+    <h1>{_support_and_moderation}</h1>
+    <div class="admin-overview_cards">
+        <div class="admin-overview_card">
+            <div>
+                <div class="admin-overview_card_counter">
+                    <h1 class="admin-overview_card_counter_digit">{number_format($ticketsCount, 0, " ", " ")}</h1>
+                    <b n:if="$ticketsCountToday > 0" style="color: var(--aui-badge-added-text-color)">+{number_format($ticketsCountToday, 0, " ", " ")} {_time_today}</b>
+                </div>
+                <div>{tr("support_ticket", $ticketsCount)}</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; width: 90%;">
+                <ul>
+                    <li><b>{number_format($ticketsProcessingCount, 0, " ", " ")}</b> {_support_tickets_processing}</li>
+                    <li><b>{number_format($ticketsWithAnswerCount, 0, " ", " ")}</b> {_support_tickets_with_answer}</li>
+                    <li><b>{number_format($ticketsClosedCount, 0, " ", " ")}</b> {tr("support_tickets_closed", $ticketsClosedCount)}</li>
+                </ul>
+            </div>
+        </div>
+        <div class="admin-overview_card">
+            <div>
+                <div class="admin-overview_card_counter">
+                    <h1 class="admin-overview_card_counter_digit">{number_format($reportsCount, 0, " ", " ")}</h1>
+                    <b n:if="$reportsCountToday > 0" style="color: var(--aui-badge-added-text-color)">+{number_format($reportsCountToday, 0, " ", " ")} {_time_today}</b>
+                </div>
+                <div>{tr("new_content_reports", $reportsCount)}</div>
+            </div>
+        </div>
+        <div class="admin-overview_card">
+            <div>
+                <div class="admin-overview_card_counter">
+                    <h1 class="admin-overview_card_counter_digit">{number_format($nspTemplatesCount, 0, " ", " ")}</h1>
+                </div>
+                <div>{tr("nospam_templates", $nspTemplatesCount)}</div>
+            </div>
+            <br />
+            <div>{tr("content_entities_processed", number_format($nspContentCount, 0, " ", " "))|noescape}</div>
+        </div>
+    </div>
+
+    <h1>{_content}</h1>
+    <div class="admin-overview_cards">
+        <div class="admin-overview_card">
+            <div>
+                <div class="admin-overview_card_counter">
+                    <h1 class="admin-overview_card_counter_digit">{number_format($groupsCount, 0, " ", " ")}</h1>
+                </div>
+                <div>{tr("admin_overview_groups", $groupsCount)}</div>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; width: 90%;">
+                <ul>
+                    <li><b>{number_format($groupsVerifiedCount, 0, " ", " ")}</b> {tr("verified_groups", $groupsVerifiedCount)}</li>
+                    <li><b>{number_format($groupsBannedCount, 0, " ", " ")}</b> {tr("banned_groups", $groupsBannedCount)}</li>
+                </ul>
+            </div>
+        </div>
+    <br />
+    <div class="admin-overview_cards">
+        <div class="admin-overview_card admin-overview_card_centered">
+            <div>
+                <div class="admin-overview_card_counter">
+                    <h1 class="admin-overview_card_counter_digit">{number_format($postsCount, 0, " ", " ")}</h1>
+                </div>
+                <div>{tr("admin_overview_posts", $postsCount)}</div>
+            </div>
+        </div>
+        <div class="admin-overview_card admin-overview_card_centered">
+            <div>
+                <div class="admin-overview_card_counter">
+                    <h1 class="admin-overview_card_counter_digit">{number_format($messagesCount, 0, " ", " ")}</h1>
+                </div>
+                <div>{tr("admin_overview_messages", $messagesCount)}</div>
+            </div>
+        </div>
+        <div class="admin-overview_card admin-overview_card_centered">
+            <div>
+                <div class="admin-overview_card_counter">
+                    <h1 class="admin-overview_card_counter_digit">{number_format($photosCount, 0, " ", " ")}</h1>
+                </div>
+                <div>{tr("admin_overview_photos", $photosCount)}</div>
+            </div>
+        </div>
+        <div class="admin-overview_card admin-overview_card_centered">
+            <div>
+                <div class="admin-overview_card_counter">
+                    <h1 class="admin-overview_card_counter_digit">{number_format($videosCount, 0, " ", " ")}</h1>
+                </div>
+                <div>{tr("admin_overview_videos", $videosCount)}</div>
+            </div>
+        </div>
+        <div class="admin-overview_card admin-overview_card_centered">
+            <div>
+                <div class="admin-overview_card_counter">
+                    <h1 class="admin-overview_card_counter_digit">{number_format($audiosCount, 0, " ", " ")}</h1>
+                </div>
+                <div>{tr("admin_overview_audios", $audiosCount)}</div>
+            </div>
+        </div>
+        <div class="admin-overview_card admin-overview_card_centered">
+            <div>
+                <div class="admin-overview_card_counter">
+                    <h1 class="admin-overview_card_counter_digit">{number_format($notesCount, 0, " ", " ")}</h1>
+                </div>
+                <div>{tr("admin_overview_notes", $notesCount)}</div>
+            </div>
+        </div>
+        <div class="admin-overview_card admin-overview_card_centered">
+            <div>
+                <div class="admin-overview_card_counter">
+                    <h1 class="admin-overview_card_counter_digit">{number_format($appsCount, 0, " ", " ")}</h1>
+                </div>
+            </div>
+            <div>{tr("admin_overview_apps", $appsCount)}</div>
+        </div>
+        <div class="admin-overview_card admin-overview_card_centered">
+            <div>
+                <div class="admin-overview_card_counter">
+                    <h1 class="admin-overview_card_counter_digit">{number_format($documentsCount, 0, " ", " ")}</h1>
+                </div>
+            </div>
+            <div>{tr("admin_overview_documents", $documentsCount)}</div>
+        </div>
+    </div>
+{/block}

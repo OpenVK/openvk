@@ -1,0 +1,7 @@
+{var $microblogEnabled = isset($thisUser) ? $thisUser->hasMicroblogEnabled() : false}
+
+{if $microblogEnabled}
+    {include "post/microblogpost.latte", post => $post, commentSection => $commentSection}
+{else}
+    {include "post/oldpost.latte", post => $post}
+{/if}

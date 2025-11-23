@@ -1,0 +1,14 @@
+{extends "../@layout.latte"}
+{block title}{_invite}{/block}
+
+{block header}
+    {_invite}
+{/block}
+
+{block content}
+    {_you_can_invite}<br><br>
+    <center>
+        <input type="text" readonly value="https://{$_SERVER["HTTP_HOST"]}/reg?ref={rawurlencode($thisUser->getRefLinkId())}" size="50" />
+    </center>
+    <p>{_you_can_invite_2}</p>
+{/block}

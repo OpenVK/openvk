@@ -1,0 +1,50 @@
+<div class="page_wrap">
+    <div n:ifset="tabs" class="tabs">
+        {include tabs}
+    </div>
+    
+    <div class="container_gray">
+        {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+        
+        {if sizeof($data) > 0}
+            <div class="content" n:foreach="$data as $dat">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td valign="top">
+                                <a href="{include link, x => $dat}">
+                                    {include preview, x => $dat}
+                                </a>
+                            </td>
+                            <td valign="top" style="width: 100%">
+                                <a href="{include link, x => $dat}">
+                                    <b>
+                                        {include name, x => $dat}
+                                    </b>
+                                </a>
+                                <br/>
+                                
+                                {include description, x => $dat}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div style="padding: 8px;">
+                {include "components/paginator.latte", conf => (object) [
+                    "page"    => $page,
+                    "count"   => $count,
+                    "amount"  => sizeof($data),
+                    "perPage" => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+                ]}
+            </div>
+        {else}
+            {ifset customErrorMessage}
+                {include customErrorMessage}
+            {else}
+                {include "components/nothing.latte"}
+            {/ifset}
+        {/if}
+    </div>
+</div>

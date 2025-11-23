@@ -1,0 +1,53 @@
+{extends "../@layout.latte"}
+{block title}{_edit_album}{/block}
+
+{block header}
+    <a href="{$album->getOwner()->getURL()}">{$album->getOwner()->getCanonicalName()}</a>
+    » 
+    {if $album->getOwner() instanceof openvk\Web\Models\Entities\Club}
+        <a href="/albums{$album->getOwner()->getId() * -1}">{_albums}</a>
+    {else}
+        <a href="/albums{$album->getOwner()->getId()}">{_albums}</a>
+    {/if}
+    » 
+    {$album->getName()}
+{/block}
+
+{block content}
+    <div class="tabs">
+        <div id="activetabs" class="tab">
+            <a id="act_tab_a" href="/album{$album->getPrettyId()}/edit">{_edit_album}</a>
+        </div>
+        <div class="tab">
+            <a href="/photos/upload?album={$album->getPrettyId()}">{_add_photos}</a>
+        </div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+      <table cellspacing="6">
+        <tbody>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_name}:</span></td>
+            <td><input type="text" name="name" value="{$album->getName()}" /></td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_description}:</span></td>
+            <td>
+                <textarea style="margin: 0px; height: 50px; width: 159px; resize: none;" name="desc">{$album->getDescription()}</textarea>
+            </td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"></td>
+            <td>
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" class="button" name="submit" value="{_save}" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+    <hr/>
+    <center>
+        {_you_can_also} <a href="/album{$album->getOwner() instanceof openvk\Web\Models\Entities\Club ? '-' : ''}{$album->getOwner()->getId()}_{$album->getId()}/delete?hash={rawurlencode($csrfToken)}">{_delete_album}</a>.
+    </center>
+{/block}

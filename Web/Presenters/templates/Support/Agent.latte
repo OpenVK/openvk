@@ -1,0 +1,98 @@
+{extends "../@layout.latte"}
+
+{block header}
+    {_helpdesk_agent_card}
+{/block}
+
+{block content}
+{var $isInfo = $mode === "info"}
+{var $isEdit = $mode === "edit"}
+
+{if $agent != NULL}
+<div class="left_small_block">
+    <img src="{$agent->getAvatarURL()}" style="width:100%;" />
+    <div class="profile_links">
+        <div n:if="$agent_id == $thisUser->getId()" id="profile_link" style="width: 194px;">
+            <a href="?act=edit" class="link">{_edit_page}</a>
+        </div>
+    </div>
+</div>
+<div class="right_big_block">
+    <div class="page_info">
+        <div class="accountInfo clearFix">
+            <a href="/id{$agent->getAgentId()}">
+                <div class="profileName" style="display: flex;">
+                    <h2>{$agent->getCanonicalName()}</h2>
+                    <span class="nobold">&nbsp; ({$agent->getRealName()})</span>
+                </div>
+            </a>
+        </div>
+        <div style="display: flex; justify-content: space-between; padding: 10px; font-size: 12px;">
+            <div style="text-align: center;">
+                <div>
+                    <b style="color: green;">{$counters["good"]}</b>
+                </div>
+                <div>{_helpdesk_positive_answers}</div>
+            </div>
+            <div style="text-align: center;">
+                <div>
+                    <b style="color: red;">{$counters["bad"]}</b>
+                </div>
+                <div>{_helpdesk_negative_answers}</div>
+            </div>
+            <div style="text-align: center;">
+                <div>
+                    <b>{$counters["all"]}</b>
+                </div>
+                <div>{_helpdesk_all_answers}</div>
+            </div>
+        </div>
+        {if $isEdit}
+            <h4>{_edit}</h4>
+            <br/>
+            <form method="post" action="/support/agent{$agent_id}/edit">
+                <label for="name">{_helpdesk_showing_name}</label>
+                <input name="name" type="text" value="{$agent->getCanonicalName()}" placeholder="{_helpdesk_agent} #777" />
+                <br/><br/>
+                <label for="number">{_helpdesk_show_number}?</label>
+                <select name="number">
+                    <option value="1" n:attr="selected => $agent->isShowNumber() === 1 ? true : false">{_yes}</option>
+                    <option value="0" n:attr="selected => $agent->isShowNumber() === 0 ? true : false">{_no}</option>
+                </select>
+                <br/><br/>
+                <label for="number">{_avatar}</label>
+                <input name="avatar" type="text" value="{$agent->getAvatarURL()}" placeholder="{_helpdesk_avatar_url}" />
+                <input type="hidden" value="{$csrfToken}" name="hash" />
+                <br/><br/>
+                <input type="submit" class="button" value="{_save}" />
+                <a id="delete_card">{_delete}</a>
+            </form>
+            <script>
+                $("#delete_card").click(function () {
+                    $("input[name='name']").val("");
+                    $("input[type='submit']").click();
+                })
+            </script>
+        {/if}
+    </div>
+</div>
+{else}
+    <h4>{_create}</h4>
+    <br/>
+        <form method="post" action="/support/agent{$agent_id}/edit">
+            <label for="name">{_helpdesk_showing_name}</label>
+            <input name="name" type="text" placeholder="{_helpdesk_agent} #777" />
+            <br/><br/>
+            <label for="number">{_helpdesk_show_number}?</span></label>
+            <select name="number">
+                <option value="1">{_yes}</option>
+                <option value="0">{_no}</option>
+            </select>
+            <br/><br/>
+            <label for="number">{_avatar}</label>
+            <input name="avatar" type="text" placeholder="{_helpdesk_avatar_url}" />
+            <input type="hidden" value="{$csrfToken}" name="hash" />
+            <input type="submit" class="button" value="{_save}" />
+        </form>
+{/if}
+{/block}

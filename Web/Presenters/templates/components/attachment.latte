@@ -1,0 +1,90 @@
+{if $attachment instanceof \openvk\Web\Models\Entities\Photo}
+    {if !$attachment->isDeleted()}
+        {var $link = "/photo" . ($attachment->isAnonymous() ? ("s/" . base_convert((string) $attachment->getId(), 10, 32)) : $attachment->getPrettyId())}
+        <a href="{$link}" onclick="OpenMiniature(event, {$attachment->getURLBySizeId('larger')}, {$parent->getPrettyId()}, {$attachment->getPrettyId()}, {$parentType})">
+            <img n:class="media, $tilesCount > 1 ? media_makima" src="{$attachment->getURLBySizeId('normal')}" alt="{$attachment->getDescription()}" loading=lazy />
+        </a>
+    {else}
+        <a href="javascript:alert('{_attach_no_longer_available}');">
+            <img class="media" src="/assets/packages/static/openvk/img/camera_200.png" alt="{_attach_no_longer_available}" />
+        </a>
+    {/if}
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Video}
+    {if $tilesCount <= 1}
+        {if $attachment->getType() === 0}
+            <div class="bsdn media" data-name="{$attachment->getName()}" data-author="{$attachment->getOwner()->getCanonicalName()}">
+                <video class="media" src="{$attachment->getURL()}"></video>
+            </div>
+        {else}
+            {var $driver = $attachment->getVideoDriver()}
+            {if !$driver}
+                <span style="color:red;">{_version_incompatibility}</span>
+            {else}
+                {$driver->getEmbed("100%")|noescape}
+            {/if}
+        {/if}
+
+        <div class="video-wowzer">
+            <div class="small-video-ico"></div>
+            <a href="/video{$attachment->getPrettyId()}" id="videoOpen" data-id="{$attachment->getPrettyId()}">{$attachment->getName()}</a>
+            <span class="video-wowzer-length" n:if="$attachment->getLength() != NULL">({$attachment->getFormattedLength()})</span>
+        </div>
+    {else}
+        <a class='compact_video' id='videoOpen' data-id='{$attachment->getPrettyId()}' href="/video{$attachment->getPrettyId()}">
+            <div class='play-button'>
+                <div class='play-button-ico'></div>
+            </div>
+            <div class='video-length' n:if="$attachment->getLength() != NULL">
+                {$attachment->getFormattedLength()}
+            </div>
+
+            <img class="media media_makima" src="{$attachment->getThumbnailURL()}" loading=lazy />
+        </a>
+    {/if}
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Poll}
+    {presenter "openvk!Poll->view", $attachment->getId()}
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Note}
+    <div data-att_type='note' data-att_id="{$attachment->getPrettyId()}">
+        <div class="attachment_note">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
+            
+            <div class='attachment_note_content'>
+                <span class="attachment_note_text">{_note}</span>
+                <span class="attachment_note_name"><a href="javascript:void(showArticle({$attachment->getId()}));">{ovk_proc_strtr($attachment->getName(), 66)}</a></span>
+            </div>
+        </div>
+    </div>
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Post}
+    {php $GLOBALS["_nesAttGloCou"] = (isset($GLOBALS["_nesAttGloCou"]) ? $GLOBALS["_nesAttGloCou"] : 0) + 1}
+    {if $GLOBALS["_nesAttGloCou"] > 2}
+        <a href="/wall{$attachment->getPrettyId()}">{_open_post}</a>
+    {else}
+        {include "post.latte", post => $attachment, compact => true}
+    {/if}
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Audio}
+    <div style="width:100%;" data-att_type='audio' data-att_id="{$attachment->getPrettyId()}">
+        {include "../Audio/player.latte", audio => $attachment}
+    </div>
+{elseif $attachment instanceof \openvk\Web\Models\Entities\Document}
+    <div style="width:100%;">
+        <div style="display:none" data-att_type="doc" data-att_id="{$attachment->getPrettiestId()}">
+            <div class="docMainItem attachment_doc attachment_note">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
+                
+                <div class='attachment_note_content'>
+                    <span class="attachment_note_text">{_document}</span>
+                    <span class="attachment_note_name"><a href="/doc{$attachment->getPrettyId()}">{ovk_proc_strtr($attachment->getName(), 40)}</a></span>
+                </div>
+            </div>
+        </div>
+        {if $attachment->isImage()}
+            {include "../Documents/components/image.latte", doc => $attachment, copyImportance => true, showInfo => true, embed => $attachment->isGif()}
+        {else}
+            {include "../Documents/components/doc.latte", doc => $attachment, copyImportance => true, noTags => true}
+        {/if}
+    </div>
+{else}
+    <span style="color:red;">{_version_incompatibility}</span>
+{/if}
+
+{php $GLOBALS["_nesAttGloCou"] = NULL}

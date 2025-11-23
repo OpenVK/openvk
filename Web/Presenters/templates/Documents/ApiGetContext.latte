@@ -1,0 +1,9 @@
+<input type="hidden" name="count" value="{$count}">
+<input type="hidden" name="pagesCount" value="{$pagesCount}">
+<input type="hidden" name="page" value="{$page}">
+
+{foreach $docs as $doc} 
+    <div class='display_flex_row _content' data-attachmentdata="{$doc->getVirtualId()}_{$doc->getId()}_{$doc->getAccessKey()}" data-name='{$doc->getName()}'>
+        {include "components/doc.latte", doc => $doc, hideButtons => true}
+    </div>
+{/foreach}

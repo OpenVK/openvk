@@ -1,0 +1,132 @@
+{extends "../@layout.latte"}
+{block title}{_edit_group}{/block}
+
+{block header}
+    <a href="{$club->getURL()}">{$club->getName()}</a> » {_edit_group}
+{/block}
+
+{block content}
+    <div class="tabs">
+        <div id="activetabs" class="tab">
+            <a id="act_tab_a" href="javascript:void(0)">
+                {_main}
+            </a>
+        </div>
+        <div class="tab">
+            <a href="/club{$club->getId()}/backdrop">
+                {_backdrop_short}
+            </a>
+        </div>
+        <div class="tab">
+            <a href="/club{$club->getId()}/followers">
+                {_followers}
+            </a>
+        </div>
+    </div>
+    
+    <div class="container_gray">
+        <h4>{_main_information}</h4>
+        <form method="POST" enctype="multipart/form-data">
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_name}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="name" value="{$club->getName()}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_description}: </span>
+                        </td>
+                        <td>
+                            <textarea type="text" name="about" style="resize:vertical;">{$club->getDescription()}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_page_address}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="shortcode" value="{$club->getShortcode()}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_website}: </span>
+                        </td>
+                        <td>
+                            <input type="text" name="website" value="{$club->getWebsite()}" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_avatar}: </span>
+                        </td>
+                        <td>
+                            <label class="button" style="">{_browse}
+                                <input type="file" id="ava" name="ava" style="display: none;" onchange="filename.innerHTML=ava.files[0].name" />
+                            </label>
+                            <div id="filename" style="margin-top: 10px;"></div>
+                        </td>
+                    </tr>
+		            <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_wall}: </span>
+                        </td>
+                        <td>
+                            <select name="wall">
+                                <option value="1" n:attr="selected => $club->getWallType() == 1" /> {_group_allow_post_for_everyone}</option>
+                                <option value="2" n:attr="selected => $club->getWallType() == 2" /> {_group_limited_post}</option>
+                                <option value="0" n:attr="selected => $club->getWallType() == 0" /> {_group_closed_post}</option>
+                            <select>
+
+                            <input type="checkbox" name="hide_from_global_feed" value="1" n:attr="checked => $club->isHideFromGlobalFeedEnabled(), disabled => $club->isHidingFromGlobalFeedEnforced()" /> {_group_hide_from_global_feed}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_discussions}: </span>
+                        </td>
+                        <td>
+                            <input type="checkbox" name="everyone_can_create_topics" value="1" n:attr="checked => $club->isEveryoneCanCreateTopics()" /> {_everyone_can_create_topics}<br>
+                            <input type="checkbox" name="display_topics_above_wall" value="1" n:attr="checked => $club->isDisplayTopicsAboveWallEnabled()" /> {_display_list_of_topics_above_wall}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_group_administrators_list}: </span>
+                        </td>
+                        <td>
+                            {var $areAllAdminsHidden = $club->getManagersCount(true) == 0}
+                            <input type="radio" name="administrators_list_display" value="0" n:attr="checked => $club->getAdministratorsListDisplay() == 0, disabled => $areAllAdminsHidden" /> {_group_display_only_creator}<br>
+                            <input type="radio" name="administrators_list_display" value="1" n:attr="checked => $club->getAdministratorsListDisplay() == 1, disabled => $areAllAdminsHidden" /> {_group_display_all_administrators}<br>
+                            <input type="radio" name="administrators_list_display" value="2" n:attr="checked => $club->getAdministratorsListDisplay() == 2" /> {_group_dont_display_administrators_list}<br>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_audios}: </span>
+                        </td>
+                        <td>
+                            <label><input type="checkbox" name="upload_audios" value="1" n:attr="checked => $club->isEveryoneCanUploadAudios()" /> {_everyone_can_upload_audios}</label>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_save}" class="button" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+    </div>
+{/block}

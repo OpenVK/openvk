@@ -1,0 +1,507 @@
+{var $instance_name = OPENVK_ROOT_CONF['openvk']['appearance']['name']}
+{if !isset($parentModule) || substr($parentModule, 0, 21) === 'libchandler:absolute.'}
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            {ifset title}{include title} - {/ifset}{$instance_name}
+        </title>
+        <meta charset="utf-8" />
+        <link rel="shortcut icon" href="/assets/packages/static/openvk/img/icon.ico" />
+        <meta name="application-name" content="{$instance_name}" />
+        <meta n:ifset="$csrfToken" name="csrf" value="{$csrfToken}" />
+
+        <script src="/language/{php echo getLanguage()}.js" crossorigin="anonymous"></script>
+        {script "js/node_modules/jquery/dist/jquery.min.js"}
+        {script "js/node_modules/jquery-ui/dist/jquery-ui.min.js"}
+        {script "js/node_modules/umbrellajs/umbrella.min.js"}
+        {script "js/l10n.js"}
+        {script "js/openvk.cls.js"}
+        {script "js/utils.js"}
+        {script "js/node_modules/dashjs/dist/dash.all.min.js"}
+        <script src="/assets/packages/static/openvk/js/node_modules/cropperjs/dist/cropper.js" type="module"></script>
+
+        {css "js/node_modules/tippy.js/dist/backdrop.css"}
+        {css "js/node_modules/cropperjs/dist/cropper.css"}
+        {css "js/node_modules/tippy.js/dist/border.css"}
+        {css "js/node_modules/tippy.js/dist/svg-arrow.css"}
+        {css "js/node_modules/tippy.js/themes/light.css"}
+        {css "js/node_modules/jquery-ui/themes/base/resizable.css"}
+        {script "js/node_modules/@popperjs/core/dist/umd/popper.min.js"}
+        {script "js/node_modules/tippy.js/dist/tippy-bundle.umd.min.js"}
+        {script "js/node_modules/handlebars/dist/handlebars.min.js"}
+        {script "js/node_modules/react/dist/react-with-addons.min.js"}
+        {script "js/node_modules/react-dom/dist/react-dom.min.js"}
+        {script "js/vnd_literallycanvas.js"}
+        {css "js/node_modules/literallycanvas/lib/css/literallycanvas.css"}
+
+        {if $isTimezoned == NULL}
+            {script "js/timezone.js"}
+        {/if}
+
+        {include "_includeCSS.latte"}
+
+        {ifset headIncludes}
+            {include headIncludes}
+        {/ifset}
+    </head>
+    <body {if isset($thisUser)}data-themepack="{$thisUser->getStyle()}"{/if}>
+        <div id="sudo-banner" n:if="isset($thisUser) && $userTainted">
+            <p>
+                {_you_entered_as} <b>{$thisUser->getCanonicalName()}</b>. {_please_rights}
+                {_click_on} <a href="/setSID/unset?hash={rawurlencode($csrfToken)}">{_there}</a>, {_to_leave}.
+            </p>
+        </div>
+
+        <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['bellsAndWhistles']['testLabel']" id="test-label">FOR TESTING PURPOSES ONLY</div>
+
+        <div class="notifications_global_wrap"></div>
+        <div class="dimmer">
+            <div id='clickable'></div>
+        </div>
+        <div class="upLeftErrors"></div>
+
+        <div class="articleView">
+            <a id="articleCloseButton" class="button" href="javascript:void(u('body').removeClass('article'));">{_close}</a>
+            <div class="articleView_container">
+                <div class="articleView_info">
+                    <div class="articleView_author">
+                        <img id="articleAuthorAva" src="" />
+                        <div>
+                            <span><a id="articleAuthorName"></a></span>
+                            <time id="articleTime"></time>
+                        </div>
+                    </div>
+
+                    <div class="articleView_link">
+                        <a id="articleLink" href="/" class="button">{_aw_legacy_ui}</a>
+                    </div>
+                </div>
+
+                <div class="articleView_text" id="articleText">
+                </div>
+            </div>
+        </div>
+
+        {if isset($backdrops) && !is_null($backdrops)}
+            <div id="backdrop" style="background-image: url('{$backdrops[0]|noescape}'), url('{$backdrops[1]|noescape}');">
+                <div id="backdropDripper"></div>
+            </div>
+        {/if}
+
+        <div class="toTop hidden">
+            <div id='to_up'>
+                <svg id="to_up_icon" viewBox="0 0 10 6"><polygon points="0 6 5 0 10 6 0 6"/></svg>
+                <span>{_to_top}</span>
+            </div>
+
+            <div id='to_back'>
+                <svg id="to_back_icon" viewBox="0 0 10 6"><polygon points="0 0 5 6 10 0 0 0"/></svg>
+            </div>
+        </div>
+
+        <div class="layout">
+            <div id="xhead" class="dm"></div>
+            <div class="page_header{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME} page_custom_header{/if}{if $atSearch} search_expanded search_expanded_at_all{/if}">
+                <a href="/" class="home_button{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME} home_button_custom{/if}" title="{$instance_name}">{if $instance_name != OPENVK_DEFAULT_INSTANCE_NAME}{$instance_name}{/if}</a>
+                <div n:if="isset($thisUser) ? (!$thisUser->isBanned() XOR !$thisUser->isActivated()) : true" class="header_navigation">
+                    {ifset $thisUser}
+                        {if $thisUser->isDeactivated()}
+                            <div class="link">
+                                <a href="/logout?hash={urlencode($csrfToken)}">{_header_log_out}</a>
+                            </div>
+                        {else}
+                            <div class="link">
+                                <a href="/">{_header_home}</a>
+                            </div>
+                            <div class="link">
+                                <a href="/search?section=groups">{_header_groups}</a>
+                            </div>
+                            <div class="link">
+                                <a href="/search?q=&section=users&order=rating">{_header_search}</a>
+                            </div>
+                            <div class="link">
+                                <a href="/invite">{_header_invite}</a>
+                            </div>
+                            <div class="link">
+                                <a href="/support">{_header_help} <b n:if="$ticketAnsweredCount > 0">({$ticketAnsweredCount})</b></a>
+                            </div>
+                            <div class="link">
+                                <a href="/logout?hash={urlencode($csrfToken)}">{_header_log_out}</a>
+                            </div>
+                            <div class="link header_divider_stick" id="search_box">
+                                <div id="search_box_fr">
+                                    <form id='search_form' action="/search" method="get">
+                                        <div id='search_and_one_more_wrapper'>
+                                            <input n:attr="value => $_REQUEST['q'] ? $_REQUEST['q'] : NULL" autocomplete="off" type="search" maxlength="79" name="q" placeholder="{_header_search}" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
+                                            <select name="section">
+                                                <option n:attr="selected => $_REQUEST['section'] == 'users'" value="users">{_s_by_people}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] == 'groups'" value="groups">{_s_by_groups}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] == 'posts'" value="posts">{_s_by_posts}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] == 'videos'" value="videos">{_s_by_videos}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] == 'apps'" value="apps">{_s_by_apps}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] == 'audios'" value="audios">{_s_by_audios}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] == 'audios_playlists'" value="audios_playlists">{_s_by_audios_playlists}</option>
+                                                <option n:attr="selected => $_REQUEST['section'] == 'docs'" value="docs">{_s_by_documents}</option>
+                                            </select>
+                                        </div>
+                                        <button class="search_box_button">
+                                            <span>{_header_search}</span>
+                                        </button>
+                                    </form>
+                                </div>
+                                <div id="searchBoxFastTips"></div>
+                            </div>
+                        {/if}
+                    {else}
+                        <div class="link">
+                            <a href="/login">{_header_login}</a>
+                        </div>
+                        <div class="link">
+                            <a href="/reg">{_header_registration}</a>
+                        </div>
+                        <div class="link">
+                            <a href="/support">{_header_help}</a>
+                        </div>
+                    {/ifset}
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="navigation">
+                    {ifset $thisUser}
+                        {if !$thisUser->isBanned() XOR !$thisUser->isActivated() XOR $thisUser->isDeactivated()}
+                            <a href="/edit" class="link edit-button">{_edit_button}</a>
+                            <a href="{$thisUser->getURL()}" class="link" title="{_my_page} [Alt+Shift+.]" accesskey=".">{_my_page}</a>
+                            <a href="/friends{$thisUser->getId()}" class="link">{_my_friends}
+                                <object type="internal/link" n:if="$thisUser->getRequestsCount() > 0">
+                                    <a href="/friends{$thisUser->getId()}?act=incoming" class="linkunderline">
+                                       (<b>{$thisUser->getRequestsCount()}</b>)
+                                    </a>
+                                </object>
+                            </a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('photos')" href="/albums{$thisUser->getId()}" class="link">{_my_photos}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('videos')" href="/videos{$thisUser->getId()}" class="link">{_my_videos}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('audios')" href="/audios{$thisUser->getId()}" class="link">{_my_audios}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('messages')" href="/im" class="link">{_my_messages}
+                                <object type="internal/link" n:if="$thisUser->getUnreadMessagesCount() > 0">
+                                    (<b>{$thisUser->getUnreadMessagesCount()}</b>)
+                                </object>
+                            </a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('notes')" href="/notes{$thisUser->getId()}" class="link">{_my_notes}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('groups')" href="/groups{$thisUser->getId()}" class="link">{_my_groups}</a>
+                            <a n:if="$thisUser->getLeftMenuItemStatus('news')" href="/feed" class="link" title="{_my_feed} [Alt+Shift+,]" accesskey=",">{_my_feed}</a>
+                            <a href="/notifications" class="link" title="{_my_feedback} [Alt+Shift+N]" accesskey="n">{_my_feedback}
+                                <object type="internal/link" n:if="$thisUser->getNotificationsCount() > 0">
+                                    (<b>{$thisUser->getNotificationsCount()}</b>)
+                                </object>
+                            </a>
+                            <a href="/settings" class="link">{_my_settings}</a>
+
+                            {if $thisUser->getLeftMenuItemStatus('docs') || $thisUser->getLeftMenuItemStatus('apps')}
+                                <div class="menu_divider"></div>
+                                <a n:if="$thisUser->getLeftMenuItemStatus('apps')" href="/apps?act=installed" class="link">{_apps}</a>
+                                <a n:if="$thisUser->getLeftMenuItemStatus('docs')" href="/docs" class="link">{_my_documents}</a>
+                                {*<a n:if="$thisUser->getLeftMenuItemStatus('fave')" href="/fave" class="link">{_bookmarks_tab}</a>*}
+                            {/if}
+
+                            {var $canAccessAdminPanel = $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+                            {var $canAccessHelpdesk   = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\TicketReply')->whichBelongsTo(0)}
+                            {var $canAccessReports    = $thisUser->getChandlerUser()->can("admin")->model('openvk\Web\Models\Entities\Report')->whichBelongsTo(0)}
+                            {var $canAccessNsp        = $thisUser->getChandlerUser()->can("write")->model('openvk\Web\Models\Entities\Ban')->whichBelongsTo(0)}
+
+                            {var $menuLinksAvaiable   = sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0 && $thisUser->getLeftMenuItemStatus('links')}
+                            <div n:if="$canAccessAdminPanel || $canAccessHelpdesk || $canAccessReports || $canAccessNsp || $menuLinksAvaiable" class="menu_divider"></div>
+                            <a href="/admin" class="link" n:if="$canAccessAdminPanel" title="{_admin} [Alt+Shift+A]" accesskey="a" rel="nofollow">{_admin}</a>
+                            <a href="/support/tickets" class="link" n:if="$canAccessHelpdesk">{_helpdesk}
+                                {if $helpdeskTicketNotAnsweredCount > 0}
+                                    (<b>{$helpdeskTicketNotAnsweredCount}</b>)
+                                {/if}
+                            </a>
+                            <a n:if="$canAccessReports" href="/scumfeed" class="link" rel="nofollow">{tr("reports")}
+                                {if $reportNotAnsweredCount > 0}
+                                    (<b>{$reportNotAnsweredCount}</b>)
+                                {/if}
+                            </a>
+                            <a n:if="$canAccessNsp" href="/noSpam" class="link" rel="nofollow">
+                                noSpam
+                            </a>
+                        <a
+                          n:if="$thisUser->getLeftMenuItemStatus('links')"
+                          n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links'] as $menuItem"
+                          href="{$menuItem['url']}"
+                          target="_blank"
+                          class="link">
+                            {strpos($menuItem["name"], "@") === 0 ? tr(substr($menuItem["name"], 1)) : $menuItem["name"]}
+                        </a>
+                            <div id="_groupListPinnedGroups">
+                                <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
+
+                                <a n:foreach="$thisUser->getPinnedClubs() as $club" href="{$club->getURL()}" class="link group_link">
+                                    {ovk_proc_strtr($club->getName(), 14)}
+
+                                    <object type="internal/link" style="white-space: normal;" id="sug{$club->getId()}" n:if="$club->getSuggestedPostsCount($thisUser) > 0 && $club->getWallType() == 2">
+                                        <a href="/club{$club->getId()}/suggested" class="linkunderline">
+                                            (<b>{$club->getSuggestedPostsCount($thisUser)}</b>)
+                                        </a>
+                                    </object>
+                                </a>
+                            </div>
+
+                            <div id="news" n:if="OPENVK_ROOT_CONF['openvk']['preferences']['news']['show']">
+                                <b>{_news} </b>
+                                <hr size="1">
+                                <text>{$newsText}...</text>
+                                <br><br>
+                                <a href="{$newsLink}">{_news_more}</a>
+                            </div>
+
+                            <div id="bday" n:if="$showBday">
+                                <b>{_bday_reminder}</b>
+                                <hr size="1">
+                                <text>
+                                    {var $bdayListHtml = ''}
+                                    {foreach $bdayUsers as $u}
+                                        {var $bdayListHtml .= '<a href="/id' . $u->getId() . '">' . $u->getMorphedName(startWithLastName: false) . '</a>'}
+                                        {if $bdayCount == 2}
+                                            {if $iterator->isFirst()}{var $bdayListHtml .= tr("bday_and")}{/if}
+                                        {elseif $bdayCount != 1}
+                                            {if $iterator->isLast(2) and !$iterator->isLast()}
+                                                {var $bdayListHtml .= tr("bday_and")}
+                                            {elseif !$iterator->isLast()}
+                                                {var $bdayListHtml .= ', '}
+                                            {/if}
+                                        {/if}
+                                    {/foreach}
+                                    {tr("bday_reminder_text", $isBdayToday ? tr("bday_today") : tr("bday_tomorrow"), $bdayListHtml)|noescape}
+                                </text>
+                            </div>
+
+                            <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $thisUser->getCoins() != 0" id="votesBalance">
+                                {tr("you_still_have_x_points", $thisUser->getCoins())|noescape}
+                                <br /><br />
+
+                                <a href="/settings?act=finance">{_top_up_your_account} &#xbb;</a>
+                            </div>
+
+                            <a n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable'] && $thisUser->getLeftMenuItemStatus('poster')" href="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['link']}" >
+                                <img src="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['src']}" alt="{php echo OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['caption']}" class="psa-poster" style="max-width: 100%; margin-top: 10px;" />
+                            </a>
+
+                            <div class="floating_sidebar">
+                                <a id="minilink-friends" class="minilink" href="/friends{$thisUser->getId()}">
+                                    <object type="internal/link" n:if="$thisUser->getRequestsCount() > 0">
+                                        <div class="counter">
+                                            +{$thisUser->getRequestsCount()}
+                                        </div>
+                                    </object>
+                                    <img src="/assets/packages/static/openvk/img/friends.svg">
+                                </a>
+                                <a id="minilink-albums" class="minilink" href="/albums{$thisUser->getId()}">
+                                    <img src="/assets/packages/static/openvk/img/photos.svg">
+                                </a>
+                                <a id="minilink-messenger" class="minilink" href="/im">
+                                    <object type="internal/link" n:if="$thisUser->getUnreadMessagesCount() > 0">
+                                        <div class="counter">
+                                            +{$thisUser->getUnreadMessagesCount()}
+                                        </div>
+                                    </object>
+                                    <img src="/assets/packages/static/openvk/img/messages.svg">
+                                </a>
+                                <a id="minilink-groups" class="minilink" href="/groups{$thisUser->getId()}">
+                                    <img src="/assets/packages/static/openvk/img/groups.svg">
+                                </a>
+                                <a id="minilink-notifications" class="minilink" href="/notifications">
+                                    <object type="internal/link" n:if="$thisUser->getNotificationsCount() > 0">
+                                        <div class="counter">
+                                            +{$thisUser->getNotificationsCount()}
+                                        </div>
+                                    </object>
+                                    <img src="/assets/packages/static/openvk/img/feedback.svg">
+                                </a>
+                            </div>
+                        {elseif !$thisUser->isActivated()}
+                            <a href="/logout?hash={urlencode($csrfToken)}" class="link">{_menu_logout}</a>
+                        {else}
+                            <a href="/support" class="link">{_menu_support}
+                                {if $ticketAnsweredCount > 0}
+                                    (<b>{$ticketAnsweredCount}</b>)
+                                {/if}
+                            </a>
+                            <a href="/logout?hash={urlencode($csrfToken)}" class="link">{_menu_logout}</a>
+                        {/if}
+                    {else}
+                        <form id="fastLogin" action="/login" method="POST" enctype="multipart/form-data">
+                            <label for="login"><span>{_email}:</span></label>
+                            <input id="login" type="text" name="login" required />
+                            <label for="password"><span>{_password}:</span></label>
+                            <input id="password" type="password" name="password" required />
+                            <input type="hidden" name="jReturnTo" value="{$_SERVER['REQUEST_URI']}" />
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_log_in}" class="button" style="display: inline-block; font-family: Tahoma" />
+                            <a href="/reg"><input type="button" value="{_registration}" class="button" style="font-family: Tahoma" /></a><br><br>
+                            {if !OPENVK_ROOT_CONF['openvk']['preferences']['security']['disablePasswordRestoring']}<a href="/restore">{_forgot_password}</a>{/if}
+                        </form>
+                    {/ifset}
+                    </div>
+                </div>
+
+            <div class="page_body">
+                <div id="wrapH">
+                    <div id="wrapHI">
+                        <div n:ifcontent class="page_yellowheader">
+                           {include header}
+                        </div>
+                    </div>
+                </div>
+
+                {ifset wrap}
+                    <div class="msg msg_{$flashMessage->type}" n:ifset="$flashMessage">
+                        <b>{$flashMessage->title}</b><br/>
+                        {$flashMessage->msg|noescape}
+                    </div>
+
+                    {include wrap}
+                {else}
+                    <div class="wrap2">
+                        <div class="wrap1">
+                            <div id="auth" class="page-wrap">
+                                <div class="page_content">
+                                    <div class="msg msg_{$flashMessage->type}" n:ifset="$flashMessage">
+                                        <b>{$flashMessage->title}</b><br/>
+                                        {$flashMessage->msg|noescape}
+                                    </div>
+
+                                    {include content}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {/ifset}
+            </div>
+        </div>
+
+        <div class="page_footer">
+            {var $dbVersion = \Chandler\Database\DatabaseConnection::i()->getConnection()->getPdo()->getAttribute(\PDO::ATTR_SERVER_VERSION)}
+
+            <div class="navigation_footer">
+                <a href="/about" class="link">{_footer_about_instance}</a>
+                <a href="/terms" class="link">{_footer_rules}</a>
+                <a href="/blog" class="link">{_footer_blog}</a>
+                <a href="/support" class="link">{_footer_help}</a>
+                <a href="/dev" target="_blank" class="link">{_footer_developers}</a>
+                <a href="/privacy" class="link">{_footer_privacy}</a>
+            </div>
+            <p>
+                {var $currentUrl = $_SERVER["REQUEST_URI"]}
+                {foreach array_slice(getLanguages(), 0, 3) as $language}
+                    <a href="/language?lg={$language['code']}&hash={urlencode($csrfToken)}&jReturnTo={php echo rawurlencode($currentUrl)}" rel="nofollow" title="{$language['native_name']}" class="link">
+                        <img src="/assets/packages/static/openvk/img/flags/{$language['flag']}.gif" alt="{$language['native_name']}">
+                    </a>
+                {/foreach}
+                <a href="/language" class="link">all languages &raquo;</a>
+            </p>
+            <p>OpenVK <a href="/about:openvk">{php echo OPENVK_VERSION}</a> | PHP: {phpversion()} | DB: {$dbVersion}</p>
+            <p n:ifcontent>
+                {php echo OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]}
+            </p>
+        </div>
+
+        <div id="ajloader" class="loader">
+            <img src="/assets/packages/static/openvk/img/loading_mini.gif">
+        </div>
+
+        {include "components/cookies.latte"}
+
+        {script "js/node_modules/msgpack-lite/dist/msgpack.min.js"}
+        {script "js/node_modules/soundjs/lib/soundjs.min.js"}
+        {script "js/node_modules/ky/umd.js"}
+        {script "js/messagebox.js"}
+        {script "js/notifications.js"}
+        {script "js/scroll.js"}
+        {script "js/player.js"}
+        {script "js/al_wall.js"}
+        {script "js/al_docs.js"}
+        {script "js/al_api.js"}
+        {script "js/al_mentions.js"}
+        {script "js/al_polls.js"}
+        {script "js/al_suggestions.js"}
+        {script "js/al_navigation.js"}
+        {script "js/al_comments.js"}
+        {script "js/al_music.js"}
+        {script "js/al_despacito_wall.js"}
+        {script "js/al_photos.js"}
+        {script "js/options.js"}
+
+        {ifset $thisUser}
+            {script "js/al_notifs.js"}
+            {script "js/al_feed.js"}
+        {/ifset}
+
+        {script "js/node_modules/leaflet/dist/leaflet.js"}
+        {script "js/node_modules/leaflet-control-geocoder/dist/Control.Geocoder.js"}
+        {css "js/node_modules/leaflet/dist/leaflet.css"}
+        {css "js/node_modules/leaflet-control-geocoder/dist/Control.Geocoder.css"}
+
+        <script>bsdnHydrate();</script>
+
+        <script n:if="OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['enable']" async defer data-domain="{php echo OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['domain']}" src="{php echo OPENVK_ROOT_CONF['openvk']['telemetry']['plausible']['server']}js/plausible.js"></script>
+
+        <script n:if="OPENVK_ROOT_CONF['openvk']['telemetry']['piwik']['enable']">
+            {var $piwik = (object) OPENVK_ROOT_CONF['openvk']['telemetry']['piwik']}
+
+            //<![CDATA[
+            (function(window,document,dataLayerName,id){
+            window[dataLayerName]=window[dataLayerName]||[],window[dataLayerName].push({ start:(new Date).getTime(),event:"stg.start" });var scripts=document.getElementsByTagName('script')[0],tags=document.createElement('script');
+            function stgCreateCookie(a,b,c){ var d="";if(c){ var e=new Date;e.setTime(e.getTime()+24*c*60*60*1e3),d=";expires="+e.toUTCString() }document.cookie=a+"="+b+d+";path=/" }
+            var isStgDebug=(window.location.href.match("stg_debug")||document.cookie.match("stg_debug"))&&!window.location.href.match("stg_disable_debug");stgCreateCookie("stg_debug",isStgDebug?1:"",isStgDebug?14:-1);
+            var qP=[];dataLayerName!=="dataLayer"&&qP.push("data_layer_name="+dataLayerName),isStgDebug&&qP.push("stg_debug");var qPString=qP.length>0?("?"+qP.join("&")):"";
+            tags.async=!0,tags.src={$piwik->container . "/"}+id+".js"+qPString,scripts.parentNode.insertBefore(tags,scripts);
+            !function(a,n,i){ a[n]=a[n]||{  };for(var c=0;c<i.length;c++)!function(i){ a[n][i]=a[n][i]||{  },a[n][i].api=a[n][i].api||function(){ var a=[].slice.call(arguments,0);"string"==typeof a[0]&&window[dataLayerName].push({ event:n+"."+i+":"+a[0],parameters:[].slice.call(arguments,1) }) } }(i[c]) }(window,"ppms",["tm","cm"]);
+             })(window,document,{$piwik->layer}, {$piwik->site});
+            //]]>
+        </script>
+
+        <script n:if="OPENVK_ROOT_CONF['openvk']['telemetry']['matomo']['enable']">
+            {var $matomo = (object) OPENVK_ROOT_CONF['openvk']['telemetry']['matomo']}
+            //<![CDATA[
+            var _paq = window._paq = window._paq || [];
+            _paq.push(['trackPageView']);
+            _paq.push(['enableLinkTracking']);
+            (function() {
+                var u="//" + {$matomo->container} + "/";
+                _paq.push(['setTrackerUrl', u+'matomo.php']);
+                _paq.push(['setSiteId', {$matomo->site}]);
+                var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+                g.type='text/javascript'; g.async=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
+            })();
+            //]]>
+        </script>
+
+        <script id='_js_ep_script'>
+            window.openvk = {
+                "audio_genres": {\openvk\Web\Models\Entities\Audio::genres},
+                "at_search": {$atSearch ?? false},
+                "max_attachments": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"] ?? 10},
+                "max_filesize_mb": 100,
+                "current_id": {$thisUser ? $thisUser->getId() : 0},
+                "disable_ajax": {$disable_ajax ? $disable_ajax : 0},
+                "max_add_fields": {ovkGetQuirk("users.max-fields")},
+                "docs_max": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["maxSize"]},
+                "docs_allowed": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["allowedFormats"]},
+            }
+        </script>
+
+        {ifset bodyScripts}
+            {include bodyScripts}
+        {/ifset}
+        {script "js/router.js"}
+    </body>
+</html>
+{/if}
+
+{if isset($parentModule) && substr($parentModule, 0, 21) !== 'libchandler:absolute.'}
+    <!-- INCLUDING TEMPLATE FROM PARENTMODULE: {$parentModule} -->
+
+    {include content}
+{/if}

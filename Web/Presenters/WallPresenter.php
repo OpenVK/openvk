@@ -75,7 +75,7 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         if ($embedded == true) {
-            $this->template->_template = "components/wall.xml";
+            $this->template->_template = "components/wall.latte";
         }
         $this->template->oObj = $owner;
         if ($user < 0) {
@@ -233,7 +233,7 @@ final class WallPresenter extends OpenVKPresenter
         $posts = DatabaseConnection::i()->getConnection()->query("SELECT `posts`.`id` " . $queryBase . " ORDER BY `created` DESC LIMIT " . $pPage . " OFFSET " . ($page - 1) * $pPage);
         $count = DatabaseConnection::i()->getConnection()->query("SELECT COUNT(*) " . $queryBase)->fetch()->{"COUNT(*)"};
 
-        $this->template->_template     = "Wall/Feed.xml";
+        $this->template->_template     = "Wall/Feed.latte";
         $this->template->globalFeed    = true;
         $this->template->paginatorConf = (object) [
             "count"   => $count,

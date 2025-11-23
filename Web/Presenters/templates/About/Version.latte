@@ -1,0 +1,512 @@
+{extends "../@layout.latte"}
+
+{block title}{_about_openvk}{/block}
+
+{block header}
+    {_about_openvk}
+{/block}
+
+{block content}
+    <style>
+        table {
+            border-collapse: collapse;
+            border: 0;
+            width: 100%;
+            box-shadow: 1px 2px 3px #ccc;
+            margin-bottom: 1em;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .center table {
+            text-align: left;
+        }
+
+        .center th {
+            text-align: center !important;
+        }
+
+        td, th {
+            border: 1px solid #666;
+            vertical-align: baseline;
+            padding: 4px 5px;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            background: inherit;
+        }
+
+        h1 {
+            font-size: 150%;
+        }
+
+        h2 {
+            font-size: 125%;
+        }
+
+        .p {
+            text-align: left;
+        }
+
+        .e {
+            background-color: #b7cde2;
+            width: 300px;
+            font-weight: bold;
+        }
+
+        .h {
+            background-color: #13599f;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .v {
+            background-color: #f1f5f9;
+            max-width: 300px;
+            overflow-x: auto;
+            word-wrap: break-word;
+        }
+
+        .v i {
+            color: #999;
+        }
+
+        #ovkLogo {
+            float: right;
+            border: 0;
+            height: 30px;
+            padding-top: 6px;
+            position: relative;
+        }
+
+        hr {
+            background-color: #ccc;
+            border: 0;
+            height: 1px;
+        }
+    </style>
+
+    <div class="center">
+        <table>
+            <tbody>
+                <tr class="h">
+                    <td>
+                        <h1 class="p" style="float: left;">OpenVK {=OPENVK_VERSION}</h1>
+                        <img id="ovkLogo" src="/assets/packages/static/openvk/img/logo_full.svg" alt="OpenVK Logo" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table>
+            <tbody>
+                <tr>
+                    <td class="e">OpenVK</td>
+                    <td class="v">{=OPENVK_VERSION}</td>
+                </tr>
+                <tr>
+                    <td class="e">Chandler</td>
+                    <td class="v">{=CHANDLER_VER}</td>
+                </tr>
+                <tr>
+                    <td class="e">Configuration file path</td>
+                    <td class="v">{realpath(OPENVK_ROOT)}</td>
+                </tr>
+                <tr>
+                    <td class="e">Loaded configuration file</td>
+                    <td class="v">{realpath(OPENVK_ROOT)}/openvk.yml</td>
+                </tr>
+                <tr>
+                    <td class="e">PHP</td>
+                    <td class="v">{phpversion()}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table>
+            <tbody>
+                <tr class="v">
+                    <td>
+                        This program makes use of the Chandler open-source web application server:<br/>
+                        libchandler {=CHANDLER_VER} by Celestora
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr/>
+
+        <h1>Configuration</h1>
+
+        <table>
+            <tbody>
+                <tr class="h">
+                    <th>Name</th>
+                    <th>Instance value</th>
+                    <th>Master value</th>
+                </tr>
+                <tr>
+                    <td class="e">
+                        Instance name
+                    </td>
+                    <td class="v">
+                        {=OPENVK_ROOT_CONF["openvk"]["appearance"]["name"]}
+                    </td>
+                    <td class="v">
+                        N/A
+                    </td>
+                </tr>
+                <tr>
+                    <td class="e">
+                        MOTD
+                    </td>
+                    <td class="v">
+                        {=OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]|truncate:40}
+                    </td>
+                    <td class="v">
+                        N/A
+                    </td>
+                </tr>
+                <tr>
+                    <td class="e">
+                        <acronym title="Female appears first in gender selection dialogs">
+                            Female gender priority
+                        </acronym>
+                    </td>
+                    <td class="v">
+                        {php echo OPENVK_ROOT_CONF["openvk"]["preferences"]["femaleGenderPriority"] ? "Enabled" : "Disabled"}
+                    </td>
+                    <td class="v">
+                        Enabled
+                    </td>
+                </tr>
+                <tr>
+                    <td class="e">
+                        Complex upload processing
+                    </td>
+                    <td class="v">
+                        {php echo OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["disableLargeUploads"] ? "Disabled" : "Enabled"}
+                    </td>
+                    <td class="v">
+                        Enabled
+                    </td>
+                </tr>
+                <tr>
+                    <td class="e">
+                        Upload processing module
+                    </td>
+                    <td class="v">
+                        mup_{=OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["mode"]}
+                    </td>
+                    <td class="v">
+                        mup_basic
+                    </td>
+                </tr>
+                <tr>
+                    <td class="e">
+                        Upload processing options
+                    </td>
+                    <td class="v">
+                        {if OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["mode"] === "server"}
+                            {php echo OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["server"]["kind"] === "cdn" ? "use cdn" : "use mounted folder"},
+                            upload to remote
+                        {else}
+                            (none)
+                        {/if}
+                    </td>
+                    <td class="v">
+                        (none)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="e">
+                        Forbidden short addresses
+                    </td>
+                    <td class="v">
+                        {implode(", ", OPENVK_ROOT_CONF["openvk"]["preferences"]["shortcodes"]["forbiddenNames"])}
+                    </td>
+                    <td class="v">
+                        (none)
+                    </td>
+                </tr>
+                <tr>
+                    <td class="e">
+                        Registration
+                    </td>
+                    <td class="v">
+                        {php echo OPENVK_ROOT_CONF["openvk"]["preferences"]["registration"]["enable"] ? "Enabled" : "Disabled"}
+                    </td>
+                    <td class="v">
+                        Enabled
+                    </td>
+                </tr>
+                <tr>
+                    <td class="e">
+                        Ads
+                    </td>
+                    <td class="v">
+                        {php echo OPENVK_ROOT_CONF["openvk"]["preferences"]["adPoster"]["enable"] ? "Enabled" : "Disabled"}
+                    </td>
+                    <td class="v">
+                        Disabled
+                    </td>
+                </tr>
+                <tr>
+                    <td class="e">
+                        NDA Test Label
+                    </td>
+                    <td class="v">
+                        {php echo OPENVK_ROOT_CONF["openvk"]["preferences"]["bellsAndWhistles"]["testLabel"] ? "Enabled" : "Disabled"}
+                    </td>
+                    <td class="v">
+                        Disabled
+                    </td>
+                </tr>
+                <tr>
+                    <td class="e">
+                        Number verification
+                    </td>
+                    <td class="v">
+                        {php echo OPENVK_ROOT_CONF["openvk"]["credentials"]["smsc"]["enable"] ? "SMS" : "Disabled"}
+                    </td>
+                    <td class="v">
+                        Disabled
+                    </td>
+                </tr>
+                <tr>
+                    <td class="e">
+                        Notifications
+                    </td>
+                    <td class="v">
+                        {php echo OPENVK_ROOT_CONF["openvk"]["credentials"]["eventDB"]["enable"] ? "Enabled (Yandex Clickhouse or Percona)" : "Disabled"}
+                    </td>
+                    <td class="v">
+                        Disabled
+                    </td>
+                </tr>
+                <tr>
+                    <td class="e">
+                        Session duration
+                    </td>
+                    <td class="v">
+                        {=CHANDLER_ROOT_CONF["security"]["sessionDuration"]} days
+                    </td>
+                    <td class="v">
+                        1 day
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr/>
+
+        <h1>Extensions</h1>
+
+        <h2>Core</h2>
+
+        <table>
+            <tbody>
+                <tr>
+                    <td class="e">Themepack driver version</td>
+                    <td class="v">0 (Jesting Jill)</td>
+                </tr>
+                <tr>
+                    <td class="e">Extension driver version</td>
+                    <td class="v">N/A</td>
+                </tr>
+            </tbody>
+        </table>
+
+        {* TODO: add hook to let extensions to register themselves here *}
+
+        <hr/>
+
+        <h1>Themepacks</h1>
+
+        <table>
+            <tbody>
+                <tr class="h">
+                    <th>Name</th>
+                    <th style="width: 50px;">Status</th>
+                    <th>Version</th>
+                    <th>Description</th>
+                    <th>Author</th>
+                </tr>
+                <tr>
+                    <td class="e">
+                        Fore
+                    </td>
+                    <td class="v">
+                        Default
+                    </td>
+                    <td class="v">
+                        {=OPENVK_VERSION}
+                    </td>
+                    <td class="v">
+                        Default OpenVK look and feel.
+                    </td>
+                    <td class="v">
+                        Vladimir Barinov, Konstantin Kichulkin and Daniel Myslivets
+                    </td>
+                </tr>
+                <tr n:foreach="$themes as $themeEntry">
+                    <td class="e">
+                        {$themeEntry->getName()}
+                    </td>
+                    <td class="v">
+                        {$themeEntry->isEnabled() ? "Enabled" : "Installed"}
+                    </td>
+                    <td class="v">
+                        {$themeEntry->getVersion()}
+                    </td>
+                    <td class="v">
+                        {$themeEntry->getDescription()|truncate:20}
+                    </td>
+                    <td class="v">
+                        {$themeEntry->getAuthor()}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <hr/>
+
+        <h1>OpenVK Credits</h1>
+
+        <table>
+            <tbody>
+                <tr class="h">
+                    <th>OpenVK Development Force</th>
+                </tr>
+                <tr>
+                    <td class="e">
+                        Vladimir Barinov (veselcraft), Celestora, Konstantin Kichulkin (kosfurler),
+                        Daniel Myslivets, Maxim Leshchenko (maksales / maksalees) and n1rwana
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table>
+            <tbody>
+                <tr class="h">
+                    <th>OpenVK Design and Concept</th>
+                </tr>
+                <tr>
+                    <td class="e">
+                        Vladimir Barinov (veselcraft) and Konstantin Kichulkin (kosfurler)<br/>
+                        OpenVK is a free open source software that "cosplays" (or imitates) older versions of a Russian social network called VKontakte. VKontakte belongs to VK (formerly Mail.ru Group).
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table>
+            <tbody>
+                <tr class="h">
+                    <th colspan="3">Languagepacks</th>
+                </tr>
+                <tr class="h">
+                    <td>
+                        Language
+                    </td>
+                    <td>
+                        Native name
+                    </td>
+                    <td>
+                        Author(s)
+                    </td>
+                </tr>
+                {foreach $languages as $language}
+                    <tr>
+                        <td class="e">{$language['name']}</td>
+                        <td class="v">{$language['native_name']}</td>
+                        <td class="v">{$language['author']}</td>
+                    </tr>
+                {/foreach}
+            </tbody>
+        </table>
+
+        <table>
+            <tbody>
+                <tr class="h">
+                    <th colspan="2">Additional mentions</th>
+                </tr>
+                <tr class="h">
+                    <td>
+                        Contribution
+                    </td>
+                    <td>
+                        Author
+                    </td>
+                </tr>
+                <tr>
+                    <td class="e">Initial hosting</td>
+                    <td class="v">Jill Fiore (Lumaeris) and Celestora</td>
+                </tr>
+                <tr>
+                    <td class="e">Initial bug-tracker hosting</td>
+                    <td class="v">Alexey Assemblerov (BiosNod)</td>
+                </tr>
+                <tr>
+                    <td class="e">Images</td>
+                    <td class="v">Vladimir Barinov (veselcraft), Konstantin Kichulkin (kosfurler) and Daniel Myslivets</td>
+                </tr>
+                <tr>
+                    <td class="e">Illustrations</td>
+                    <td class="v">Ash Defenders, Polina Katunina (ktp0li)</td>
+                </tr>
+                <tr>
+                    <td class="e">Best barmaid</td>
+                    <td class="v">Jill</td>
+                </tr>
+                <tr>
+                    <td class="e">Initial Helpdesk implementation</td>
+                    <td class="v">Nikita Volkov (sup_ban)</td>
+                </tr>
+            </tbody>
+        </table>
+
+        {*<table>
+            <tbody>
+                <tr class="h">
+                    <th>OpenVK QA Team</th>
+                </tr>
+                <tr class="e">
+                    <td>
+                        kovaltim, Vladimir Lapskiy (0x7d5), Alexander Minkin (WerySkok), Polina Katunina (ktp0li), veth,
+                        Egor Shevchenko, Vadim Korovin (yuni), Ash Defenders,
+                        Pavel Silaev, Dmitriy Daemon, Jill Fiore (Lumaeris),
+                        cmed404 and unknown tester, who disappeared shortly after trying to upload post with cat.
+                    </td>
+                </tr>
+            </tbody>
+        </table>*}
+
+        <hr/>
+
+        <h1>OpenVK License</h1>
+
+        <table>
+            <tbody>
+                <tr class="v">
+                    <td>
+                        This program is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+                        License (version 2.1) as published by the Free Software Foundation.<br/>
+                        This program is distributed in the hope that it will be useful,
+                        but WITHOUT ANY WARRANTY; without even the implied warranty of
+                        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+                        Lesser General Public License 2.1 for more details.<br/>
+                        You should have received a copy of the GNU Lesser General Public
+                        License along with this program (COPYING file in extension root); if not, write to the Free Software
+                        Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+{/block}

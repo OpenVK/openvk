@@ -1,0 +1,82 @@
+{extends "@layout.latte"}
+
+{block wrap}
+<div class="wrap2">
+    <div class="wrap1">
+        <div class="page_wrap padding_top">
+            <div n:ifset="tabs" n:ifcontent class="tabs stupid-fix">
+                {include tabs}
+            </div>
+
+            {ifset size}
+                {include size, x => $dat}
+            {/ifset}
+
+            {ifset before_content}
+                {include before_content, x => $dat}
+            {/ifset}
+
+            {ifset specpage}
+                {include specpage, x => $dat}
+            {else}
+                <div class="container_gray {ifset noscroll}no_scroll_container{else}scroll_container{/ifset}">
+                    {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+
+                    {ifset top}
+                        {include top, x => $dat}
+                    {/ifset}
+
+                    {if sizeof($data) > 0}
+                        <div class="scroll_node content" n:foreach="$data as $dat">
+                            <table>
+                                <tbody n:attr="id => is_null($table_body_id) ? NULL : $table_body_id">
+                                    <tr>
+                                        <td valign="top">
+                                            <a href="{include link, x => $dat}">
+                                                {include preview, x => $dat}
+                                            </a>
+                                        </td>
+                                        <td valign="top" style="width: 100%">
+                                            {ifset infotable}
+                                                {include infotable, x => $dat}
+                                            {else}
+                                            <a href="{include link, x => $dat}">
+                                                <b>
+                                                    {include name, x => $dat}
+                                                </b>
+                                            </a>
+                                            <br/>
+                                                {include description, x => $dat}
+                                            {/ifset}
+                                        </td>
+                                        <td n:ifset="actions" valign="top" class="action_links" style="min-width: 150px;">
+                                            {include actions, x => $dat}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                            {include "components/paginator.latte", conf => (object) [
+                                "page"     => $page,
+                                "count"    => $count,
+                                "amount"   => sizeof($data),
+                                "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+                                "atBottom" => true,
+                            ]}
+                    {else}
+                        {ifset customErrorMessage}
+                            {include customErrorMessage}
+                        {else}
+                            {include "components/nothing.latte"}
+                        {/ifset}
+                    {/if}
+                </div>
+            {/ifset}
+
+            {ifset bottom}
+                {include bottom}
+            {/ifset}
+        </div>
+    </div>
+</div>
+{/block}

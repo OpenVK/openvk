@@ -60,7 +60,7 @@ class Notifications implements Handler
                         }
 
                         $tplDir = __DIR__ . "/../Web/Presenters/templates/components/notifications/";
-                        $tplId  = "$tplDir$data->actionCode/_$data->originModelType" . "_" . $data->targetModelType . "_.xml";
+                        $tplId  = "$tplDir$data->actionCode/_$data->originModelType" . "_" . $data->targetModelType . "_.latte";
                         $latte  = new TemplatingEngine();
                         $latte->setTempDirectory(CHANDLER_ROOT . "/tmp/cache/templates");
                         $latte->addFilter("translate", fn($trId) => tr($trId));

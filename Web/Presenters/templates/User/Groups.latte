@@ -1,0 +1,121 @@
+{extends "../@listView.latte"}
+{var $iterator = $user->getClubs($page, $admin)}
+{var $count    = $user->getClubCount($admin)}
+
+{block noscroll}{/block}
+{block title}
+    {_groups}
+{/block} 
+
+{block header}
+    {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+        {_my_groups}
+    {else}
+        <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> » {_groups}
+    {/if}
+{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block tabs}
+    {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+        <div n:attr='id => ($admin ? false : "activetabs")' class="tab">
+            <a n:attr='id => ($admin ? false : "act_tab_a")' href="/groups{$user->getId()}">
+                {_groups}
+            </a>
+        </div>
+        <div n:attr='id => (!$admin ? false : "activetabs")' class="tab">
+            <a n:attr='id => (!$admin ? false : "act_tab_a")' href="/groups{$user->getId()}?act=managed">
+                {_managed}
+            </a>
+        </div>
+    {/if}
+{/block}
+
+{block size}
+    {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+        <div id="groups_graybar" class="container_gray">
+            <form action="/search" id="search_box">
+                <input name="section" type="hidden" value="groups">
+                <input name="q" class="header_search_input" value="" style="width: 320px" placeholder="{_search_by_groups}">
+            </form>
+            <form action="/groups_create" id="create_group">
+                <button class="button">{_create_group}</button>
+            </form>
+        </div>
+    {/if}
+
+    <div style="padding-bottom: 0px; {if is_null($thisUser) || $user->getId() !== $thisUser->getId()}padding-top: 0px;{/if}" class="summaryBar">
+        <div class="summary">
+            {if !is_null($thisUser) && $user->getId() === $thisUser->getId()}
+                {tr("groups_list", $thisUser->getClubCount())}
+            {else}
+                {tr("groups", $user->getClubCount())}
+            {/if}
+        </div>
+    </div>
+{/block}
+
+{block link|strip|stripHtml}
+    {$x->getURL()}
+{/block}
+
+{block preview}
+    <img src="{$x->getAvatarUrl('miniscule')}" width="75" alt="Фотография группы" loading=lazy />
+{/block}
+
+{block name}{/block}
+
+{block infotable}
+    <table id="basicInfo" class="ugc-table group_info" cellspacing="0" cellpadding="0" border="0">
+        <tbody>
+            <tr>
+                <td class="label"><span class="nobold">{_name}: </span></td>
+                <td class="data">
+                    <a href="{$x->getURL()}">{$x->getName()}</a>
+                    <img n:if="$x->isVerified()"
+                         class="name-checkmark"
+                         src="/assets/packages/static/openvk/img/checkmark.png"
+                    />
+                </td>
+            </tr>
+            <tr>
+                <td class="label"><span class="nobold">{_size}:</span></td>
+                <td class="data"><a href="/club{$x->getId()}/followers">{tr("participants", $x->getFollowersCount())}</a></td>
+            </tr>
+        </tbody>
+    </table>
+{/block}
+
+{block description}
+    {$x->getDescription()}
+{/block}
+
+{block actions}
+    <a href="{$x->getURL()}" class="profile_link">{_check_community}</a>
+    {if $x->canBeModifiedBy($thisUser ?? NULL)}
+        {var $clubPinned = $thisUser->isClubPinned($x)}
+        <a href="/groups_pin?club={$x->getId()}&hash={rawurlencode($csrfToken)}" class="profile_link" n:if="$clubPinned || $thisUser->getPinnedClubCount() <= 10" id="_pinGroup" data-group-name="{$x->getName()}" data-group-url="{$x->getUrl()}">
+            {if $clubPinned}
+                {_remove_from_left_menu}
+            {else}
+                {_add_to_left_menu}
+            {/if}
+        </a>
+    {/if}
+    {if $x->getSubscriptionStatus($thisUser) == false}
+        <form class="profile_link_form" action="/setSub/club" method="post">
+            <input type="hidden" name="act" value="add" />
+            <input type="hidden" name="id" value="{$x->getId()}" />
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+            <input type="submit" class="profile_link" value="{_join_community}" />
+        </form>
+    {else}
+        <form class="profile_link_form" action="/setSub/club" method="post">
+            <input type="hidden" name="act" value="rem" />
+            <input type="hidden" name="id" value="{$x->getId()}" />
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+            <input type="submit" class="profile_link" value="{_leave_community}" />
+        </form>
+    {/if}
+{/block}

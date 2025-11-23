@@ -1,0 +1,79 @@
+{extends "../@layout.latte"}
+{block title}{_new_topic}{/block}
+
+{block header}
+    <a href="{$club->getURL()}">{$club->getCanonicalName()}</a>
+    » 
+    <a href="/board{$club->getId()}">{_discussions}</a>
+    » 
+    {_new_topic}
+{/block}
+
+{block content}
+    <form method="POST" enctype="multipart/form-data">
+        <table cellspacing="7" cellpadding="0" width="80%" border="0" align="center">
+            <tbody>
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_title}</span>
+                    </td>
+                    <td>
+                        <input type="text" name="title" style="width: 100%;" />
+                    </td>
+                </tr>
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_text}</span>
+                    </td>
+                    <td>
+                        <textarea id="wall-post-input1" name="text" style="width: 100%; resize: none;"></textarea>
+                        <div n:if="$club->canBeModifiedBy($thisUser)" class="post-opts">
+                            <label>
+                                <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" /> {_post_as_group}
+                            </label>
+                        </div>
+                        <div id="post-buttons1">
+                            <div class="post-upload">
+                                {_attachment}: <span>(unknown)</span>
+                            </div>
+                            <input type="file" class="postFileSel" id="postFilePic" name="_pic_attachment" accept="image/*" style="display: none;" />
+                            <input n:if="!OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']" type="file" class="postFileSel" id="postFileVid" name="_vid_attachment" accept="video/*" style="display: none;" />
+                            <br/>
+                            <div style="float: right; display: flex; flex-direction: column;">
+                                <a href="javascript:void(u('#post-buttons1 #wallAttachmentMenu').toggleClass('hidden'));">
+                                    {_attach}
+                                </a>
+                                
+                                <div id="wallAttachmentMenu" class="hidden">
+                                    <a href="javascript:void(document.querySelector('#post-buttons1 input[name=_pic_attachment]').click());">
+                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
+                                        {_attach_photo}
+                                    </a>
+                                    <a n:if="!OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']" href="javascript:void(document.querySelector('#post-buttons1 input[name=_vid_attachment]').click());">
+                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
+                                        {_attach_video}
+                                    </a>
+                                    <a n:if="$graffiti ?? false" href="javascript:initGraffiti(1);">
+                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
+                                        {_draw_graffiti}
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        
+                    </td>
+                    <td>
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="submit" value="{_create_topic}" class="button" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <input type="hidden" name="hash" value="{$csrfToken}" />
+    </form>
+{/block}

@@ -193,7 +193,7 @@ final class AuthPresenter extends OpenVKPresenter
             $secret = $user->related("profiles.user")->fetch()["2fa_secret"];
             $code   = $this->postParam("code");
             if (!is_null($secret)) {
-                $this->template->_template = "Auth/LoginSecondFactor.xml";
+                $this->template->_template = "Auth/LoginSecondFactor.latte";
                 $this->template->login     = $this->postParam("login");
                 $this->template->password  = $this->postParam("password");
 

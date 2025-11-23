@@ -1,0 +1,61 @@
+{extends "@layout.latte"}
+
+{block wrap}
+    <div class="ovk-lw-container">
+        <div class="ovk-lw--list">
+            {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+            
+            {if sizeof($data) > 0}
+                <table n:foreach="$data as $dat" border="0" style="font-size:11px;" class="post">
+                    <tbody>
+                        <tr>
+                            <td width="54" valign="top">
+                                {include preview, x => $dat}
+                            </td>
+                            
+                            <td width="345" valign="top">
+                                <div class="post-author">
+                                    <a href="{include link, x => $dat}">
+                                        <b>
+                                            {include name, x => $dat}
+                                        </b>
+                                    </a>
+                                </div>
+                                
+                                <div class="post-content" style="padding: 4px;font-size: 11px;">
+                                    {include description, x => $dat}
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <br/>
+                
+                <div style="padding: 8px;">
+                    {include "components/paginator.latte", conf => (object) [
+                        "page"    => $page,
+                        "count"   => $count,
+                        "amount"  => sizeof($data),
+                        "perPage" => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+                    ]}
+                </div>
+            {else}
+                {ifset customErrorMessage}
+                    {include customErrorMessage}
+                {else}
+                    {include "components/nothing.latte"}
+                {/ifset}
+            {/if}
+        </div>
+        
+        <div class="ovk-lw--actions">
+            {include actions}
+            <hr/>
+            <div n:if="$sorting ?? true" class="tile">
+                <a href="?C=I;O=R" class="profile_link">{_sort_randomly}</a>
+                <a href="?C=M;O=D" class="profile_link">{_sort_up}</a>
+                <a href="?C=M;O=A" class="profile_link">{_sort_down}</a>
+            </div>
+        </div>
+    </div>
+{/block}

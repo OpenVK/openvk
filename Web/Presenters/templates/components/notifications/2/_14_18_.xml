@@ -1,6 +1,0 @@
-{extends "@default.xml"}
-{var $post = $notification->getModel(0)}
-
-{block under}
-    {_nt_yours_adjective} <a href="/wall{$post->getPrettyId()}">{_nt_post_instrumental}</a> {_nt_from} {$post->getPublicationTime()}
-{/block}

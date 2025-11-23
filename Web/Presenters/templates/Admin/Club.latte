@@ -1,0 +1,161 @@
+{extends "@layout.latte"}
+
+{block title}
+    {_edit} {$club->getCanonicalName()}
+{/block}
+
+{block heading}
+    {$club->getCanonicalName()}
+{/block}
+
+{block content}
+
+    {var $isMain       = $mode === 'main'}
+    {var $isBan        = $mode === 'ban'}
+    {var $isFollowers  = $mode === 'followers'}
+
+    {if $isMain}
+        <div class="aui-tabs horizontal-tabs">
+            <nav class="aui-navgroup aui-navgroup-horizontal">
+                <div class="aui-navgroup-inner">
+                    <div class="aui-navgroup-primary">
+                        <ul class="aui-nav">
+                            <li class="aui-nav-selected"><a href="?act=main">{_admin_tab_main}</a></li>
+                            <li><a href="?act=ban">{_admin_tab_ban}</a></li>
+                            <li><a href="?act=followers">{_admin_tab_followers}</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <form class="aui" method="POST">
+                <div class="field-group">
+                    <label for="avatar">{_avatar}</label>
+                    <span id="avatar" class="aui-avatar aui-avatar-project aui-avatar-xlarge">
+                        <span class="aui-avatar-inner">
+                            <img src="{$club->getAvatarUrl('tiny')}" style="object-fit: cover;"></img>
+                        </span>
+                    </span>
+                </div>
+                <div class="field-group">
+                    <label for="id">ID</label>
+                    <input class="text medium-field" type="number" id="id" disabled value="{$club->getId()}" />
+                </div>
+                <div class="field-group">
+                    <label for="id_owner">{_admin_ownerid}</label>
+                    <input class="text medium-field" type="text" id="id_owner" name="id_owner" value="{$club->getOwner()->getId()}" />
+                </div>
+                <div class="field-group">
+                    <label for="name">{_admin_title}</label>
+                    <input class="text medium-field" type="text" id="name" name="name" value="{$club->getName()}" />
+                </div>
+                <div class="field-group">
+                    <label for="about">{_admin_description}</label>
+                    <input class="text medium-field" type="text" id="about" name="about" value="{$club->getDescription()}" />
+                </div>
+                <div class="field-group">
+                    <label for="shortcode">{_admin_shortcode}</label>
+                    <input class="text medium-field" type="text" id="shortcode" name="shortcode" value="{$club->getShortCode()}" />
+                </div>
+                <br/>
+                <div class="group">
+                    <input class="toggle-large" type="checkbox" id="verify" name="verify" value="1" n:attr="checked => $club->isVerified()" />
+                    <label for="verify">{_admin_verification}</label>
+                </div>
+                <div class="group">
+                    <input class="toggle-large" type="checkbox" id="hide_from_global_feed" name="hide_from_global_feed" value="1" n:attr="checked => $club->isHideFromGlobalFeedEnabled()" />
+                    <label for="hide_from_global_feed">{_admin_club_excludeglobalfeed}</label>
+                </div>
+                <div class="group">
+                    <input class="toggle-large" type="checkbox" id="enforce_hiding_from_global_feed" name="enforce_hiding_from_global_feed" value="1" n:attr="checked => $club->isHidingFromGlobalFeedEnforced()" />
+                    <label for="enforce_hiding_from_global_feed">{_admin_club_enforceexcludeglobalfeed}</label>
+                </div>
+                <hr/>
+                <div class="buttons-container">
+                    <div class="buttons">
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input class="button submit" type="submit" value="{_save}">
+                    </div>
+                </div>
+            </form>
+        </div>
+    {/if}
+
+    {if $isBan}
+        <div class="aui-tabs horizontal-tabs">
+            <nav class="aui-navgroup aui-navgroup-horizontal">
+                <div class="aui-navgroup-inner">
+                    <div class="aui-navgroup-primary">
+                        <ul class="aui-nav">
+                            <li><a href="?act=main">{_admin_tab_main}</a></li>
+                            <li class="aui-nav-selected"><a href="?act=ban">{_admin_tab_ban}</a></li>
+                            <li><a href="?act=followers">{_admin_tab_followers}</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <form class="aui" method="POST">
+                <div class="field-group">
+                    <label for="ban_reason">{_admin_banreason}</label>
+                    <input class="text" type="text" id="text-input" name="ban_reason" value="{$club->getBanReason()}" />
+                </div>
+                <hr/>
+                <div class="buttons-container">
+                    <div class="buttons">
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input class="button submit" type="submit" value="{_save}">
+                    </div>
+                </div>
+            </form>
+        </div>
+    {/if}
+
+    {if $isFollowers}
+        {var $followers  = iterator_to_array($followers)}
+
+        <div class="aui-tabs horizontal-tabs">
+            <nav class="aui-navgroup aui-navgroup-horizontal">
+                <div class="aui-navgroup-inner">
+                    <div class="aui-navgroup-primary">
+                        <ul class="aui-nav">
+                            <li><a href="?act=main">{_admin_tab_main}</a></li>
+                            <li><a href="?act=ban">{_admin_tab_ban}</a></li>
+                            <li class="aui-nav-selected"><a href="?act=followers">{_admin_tab_followers}</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            <table rules="none" class="aui aui-table-list">
+                <tbody>
+                    <tr n:foreach="$followers as $follower">
+                        <td>{$follower->getId()}</td>
+                        <td>
+                            <span class="aui-avatar aui-avatar-xsmall">
+                                <span class="aui-avatar-inner">
+                                    <img src="{$follower->getAvatarUrl()}" alt="{$follower->getCanonicalName()}" role="presentation" />
+                                </span>
+                            </span>
+                          
+                            <a href="{$follower->getURL()}">{$follower->getCanonicalName()}</a>
+
+                            <span n:if="$follower->isBanned()" class="aui-lozenge aui-lozenge-subtle aui-lozenge-removed">{_admin_banned}</span>
+                        </td>
+                        <td>{$follower->isFemale() ? tr("female") : tr("male")}</td>
+                        <td>{$follower->getShortCode() ?? "(" . tr("none") . ")"}</td>
+                        <td>{$follower->getRegistrationTime()}</td>
+                        <td>
+                            <a class="aui-button aui-button-primary" href="/admin/users/id{$follower->getId()}">
+                                <span class="aui-icon aui-icon-small aui-iconfont-new-edit">{_edit}</span>
+                            </a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div align="right">
+                {var $isLast = ((20 * (($_GET['p'] ?? 1) - 1)) + $amount) < $count}
+
+                <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">«</a>
+                <a n:if="$isLast" class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">»</a>
+            </div>
+        </div>
+    {/if}
+{/block}
