@@ -108,7 +108,7 @@ class GiftCategory extends RowModel
     {
         $rels = $this->getRecord()->related("gift_relations.category");
 
-        return $rels->where("gift", $gift->getId())->count() > 0;
+        return $rels->where("gift", $gift->getId())->count('*') > 0;
     }
 
     public function addGift(Gift $gift): void

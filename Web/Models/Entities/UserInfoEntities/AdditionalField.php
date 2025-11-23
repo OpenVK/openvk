@@ -90,7 +90,7 @@ class AdditionalField extends RowModel
 
     public static function getCountByOwner(int $owner): \Traversable
     {
-        return DatabaseConnection::i()->getContext()->table("additional_fields")->where("owner", $owner)->count();
+        return DatabaseConnection::i()->getContext()->table("additional_fields")->where("owner", $owner)->count('*');
     }
 
     public static function resetByOwner(int $owner): bool

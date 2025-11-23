@@ -97,7 +97,7 @@ class Poll extends Attachable
             return $votes->select("COUNT(DISTINCT user) AS c")->where("poll", $this->getId())->fetch()->c;
         }
 
-        return $votes->where(["poll" => $this->getId(), "option" => $optionId])->count();
+        return $votes->where(["poll" => $this->getId(), "option" => $optionId])->count('*');
     }
 
     public function getResults(?User $user = null): object

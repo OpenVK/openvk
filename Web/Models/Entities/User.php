@@ -1693,7 +1693,7 @@ class User extends RowModel
 
     public function getIgnoredSourcesCount()
     {
-        return DatabaseConnection::i()->getContext()->table("ignored_sources")->where("owner", $this->getId())->count();
+        return DatabaseConnection::i()->getContext()->table("ignored_sources")->where("owner", $this->getId())->count('*');
     }
 
     public function isBlacklistedBy(?User $user = null): bool
@@ -1709,7 +1709,7 @@ class User extends RowModel
         ];
 
         $sub = $ctx->table("blacklist_relations")->where($data);
-        return $sub->count() > 0;
+        return $sub->count('*') > 0;
     }
 
     public function addToBlacklist(?User $user)
@@ -1765,7 +1765,7 @@ class User extends RowModel
 
     public function getBlacklistSize()
     {
-        return DatabaseConnection::i()->getContext()->table("blacklist_relations")->where("author", $this->getId())->count();
+        return DatabaseConnection::i()->getContext()->table("blacklist_relations")->where("author", $this->getId())->count('*');
     }
 
     public function getEventCounters(array $list): array
