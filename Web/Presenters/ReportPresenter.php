@@ -23,7 +23,7 @@ final class ReportPresenter extends OpenVKPresenter
     public function renderList(): void
     {
         $this->assertUserLoggedIn();
-        $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
+        $this->assertPermission('openvk\Web\Models\Entities\Report', 'admin', 0);
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->assertNoCSRF();
         }
@@ -79,7 +79,7 @@ final class ReportPresenter extends OpenVKPresenter
     public function renderView(int $id): void
     {
         $this->assertUserLoggedIn();
-        $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
+        $this->assertPermission('openvk\Web\Models\Entities\Report', 'admin', 0);
 
         $report = $this->reports->get($id);
         if (!$report || $report->isDeleted()) {
@@ -128,7 +128,7 @@ final class ReportPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
         $this->willExecuteWriteAction();
-        $this->assertPermission('openvk\Web\Models\Entities\TicketReply', 'write', 0);
+        $this->assertPermission('openvk\Web\Models\Entities\Report', 'admin', 0);
 
         $report = $this->reports->get($id);
         if (!$report || $report->isDeleted()) {

@@ -61,6 +61,36 @@
                     display: none;
                 }
             }
+
+            .admin-overview_cards {
+                display: flex;
+                width: 100%;
+                flex-wrap: wrap;
+                gap: 32px;
+            }
+            .admin-overview_card {
+                width: 400px;
+                min-height: 100px;
+                border: 1px solid var(--aui-border);
+                border-radius: 10px;
+                padding: 10px;
+                justify-content: center;
+            }
+            .admin-overview_card_centered {
+                display: flex;
+                flex-direction: column;
+            }
+            .admin-overview_card_counter {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+            .admin-overview_card_counter_digit {
+                font-size: 48px;
+                white-space: pre-wrap;
+                word-break: break-all;
+            }
         </style>
         <title>{include title} - {_admin} {$instance_name}</title>
     </head>

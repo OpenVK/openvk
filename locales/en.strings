@@ -1811,6 +1811,61 @@
 "bans_history_removed" = "Removed";
 "bans_history_active" = "Active block";
 
+
+"admin_overview_registrated_users_one" = "registrated user:";
+"admin_overview_registrated_users_other" = "registrated users, of which:";
+"online" = "online";
+"active" = "active";
+"verified" = "verified";
+"admin_overview_employees_one" = "instance employee:";
+"admin_overview_employees_other" = "instance employees, of which:";
+"emp_admin_one" = "administrator";
+"emp_admin_other" = "administrators";
+"emp_agent_one" = "Support agent";
+"emp_agent_other" = "Support agents";
+"emp_moder_one" = "moderator";
+"emp_moder_other" = "moderators";
+"emp_nsp_one" = "spam-analyst";
+"emp_nsp_other" = "spam-analysts";
+"admin_overview_banned_users_one" = "banned user:";
+"admin_overview_banned_users_other" = "banned users, of which:";
+"can_be_unbanned_now" = "can be unbanned now";
+"support_and_moderation" = "Support and moderation";
+"support_ticket_one" = "Support ticket";
+"support_ticket_other" = "Support tickets";
+"support_tickets_processing" = "under consideration";
+"support_tickets_with_answer" = "with answer";
+"support_tickets_closed_one" = "closed";
+"support_tickets_closed_other" = "закрытых";
+"new_content_reports_one" = "New content report";
+"new_content_reports_other" = "New content reports";
+"nospam_templates" = "Active noSpam templates";
+"content_entities_processed" = "<b>$1</b> pcs. of content was processed!";
+"content" = "Content";
+"admin_overview_groups_one" = "group:";
+"admin_overview_groups_other" = "groups, of which:";
+"verified_groups" = "verified";
+"banned_groups" = "banned";
+"admin_overview_posts_one" = "Post";
+"admin_overview_posts_other" = "Posts";
+"admin_overview_messages_one" = "Message";
+"admin_overview_messages_other" = "Messages";
+"admin_overview_photos_one" = "Photo";
+"admin_overview_photos_other" = "Photos";
+"admin_overview_videos_one" = "Video";
+"admin_overview_videos_other" = "Videos";
+"admin_overview_audios_one" = "Audio";
+"admin_overview_audios_other" = "Audios";
+"admin_overview_notes_one" = "Note";
+"admin_overview_notes_other" = "Notes";
+"admin_overview_apps_one" = "App";
+"admin_overview_apps_other" = "Apps";
+"admin_overview_documents_one" = "Document";
+"admin_overview_documents_other" = "Documents";
+"admin_overview_chandler_group_not_found" = "System permissions group missing";
+"admin_overview_chandler_groups_missing" = "Permissions groups are necessary for full access to instance management (Helpdesk, moderation, noSpam)";
+"admin_overview_chandler_groups_create_missing" = "Create missing permissions groups";
+
 /* Paginator (deprecated) */
 
 "paginator_back" = "Back";
@@ -2332,6 +2387,23 @@
 "roll_backed" = "rollbacked";
 
 "nospam_prevention" = "This action will affect a lot of data. Are you sure you want to apply?";
+"nospam_album" = "Albums";
+"nospam_application" = "Apps";
+"nospam_audio" = "Audios";
+"nospam_club" = "Groups";
+"nospam_comment" = "Comments";
+"nospam_document" = "Documents";
+"nospam_message" = "Messages";
+"nospam_photo" = "Photos";
+"nospam_playlist" = "Playlists";
+"nospam_poll" = "Polls";
+"nospam_post" = "Posts";
+"nospam_ticket" = "Support Tickets";
+"nospam_ticketcomment" = "Support Tickets Comments";
+"nospam_topic" = "Topics";
+"nospam_user" = "Users";
+"nospam_video" = "Videos";
+"nospam_videoalbum" = "Video albums";
 
 /* RSS */
 

@@ -19,7 +19,7 @@ use openvk\Web\Models\Repositories\{Audios,
     Bans,
     Photos,
     Posts,
-    Videos};
+    NoSpamLogs};
 use Chandler\Database\DatabaseConnection;
 
 final class AdminPresenter extends OpenVKPresenter
@@ -31,6 +31,7 @@ final class AdminPresenter extends OpenVKPresenter
     private $bannedLinks;
     private $chandlerGroups;
     private $audios;
+    private $context;
     private $logs;
 
     public function __construct(Users $users, Clubs $clubs, Vouchers $vouchers, Gifts $gifts, BannedLinks $bannedLinks, ChandlerGroups $chandlerGroups, Audios $audios)
@@ -42,7 +43,9 @@ final class AdminPresenter extends OpenVKPresenter
         $this->bannedLinks = $bannedLinks;
         $this->chandlerGroups = $chandlerGroups;
         $this->audios = $audios;
-        $this->logs = DatabaseConnection::i()->getContext()->table("ChandlerLogs");
+
+        $this->context = DatabaseConnection::i()->getContext();
+        $this->logs = $this->context->table("ChandlerLogs");
 
         parent::__construct();
     }
@@ -90,6 +93,83 @@ final class AdminPresenter extends OpenVKPresenter
     public function renderIndex(): void
     {
         $this->warnIfLongpoolBroken();
+
+        // Users: Registered Users
+        $this->template->usersStats         = $this->users->getStatistics();
+        $this->template->usersToday         = count($this->context->table("profiles")->where("UNIX_TIMESTAMP(since) >=", time() - DAY));
+        $this->template->usersVerifiedCount = count($this->context->table("profiles")->where("verified", true));
+        $this->template->usersDeletedCount  = count($this->context->table("profiles")->where("deleted", true));
+
+        // Users: Instance Admins
+        $admGroupUUID = $this->context->table("ChandlerACLGroupsPermissions")->where(["model" => "admin", "permission" => "access"])->fetch()->group;
+        $supGroupUUID = $this->context->table("ChandlerACLGroupsPermissions")->where(["model" => "openvk\\Web\\Models\\Entities\\TicketReply", "permission" => "write"])->fetch()->group;
+        $modGroupUUID = $this->context->table("ChandlerACLGroupsPermissions")->where(["model" => "openvk\\Web\\Models\\Entities\\Report", "permission" => "admin"])->fetch()->group;
+        $nspGroupUUID = $this->context->table("ChandlerACLGroupsPermissions")->where(["model" => "openvk\\Web\\Models\\Entities\\Ban", "permission" => "write"])->fetch()->group;
+
+        $groupsMissingWarnings = [];
+        if (!$supGroupUUID) {
+            $groupsMissingWarnings[] = "agent";
+        }
+        if (!$modGroupUUID) {
+            $groupsMissingWarnings[] = "moder";
+        }
+        if (!$nspGroupUUID) {
+            $groupsMissingWarnings[] = "nsp";
+        }
+        $this->template->groupsMissingWarnings = $groupsMissingWarnings;
+
+        $this->template->empCnt = count($this->context->table("ChandlerACLRelations")->where("group", [$admGroupUUID, $supGroupUUID, $modGroupUUID, $nspGroupUUID])->group('user'));
+        $this->template->admCnt = count($this->context->table("ChandlerACLRelations")->where("group", $admGroupUUID));
+        $this->template->supCnt = count($this->context->table("ChandlerACLRelations")->where("group", $supGroupUUID));
+        $this->template->modCnt = count($this->context->table("ChandlerACLRelations")->where("group", $modGroupUUID));
+        $this->template->nspCnt = count($this->context->table("ChandlerACLRelations")->where("group", $nspGroupUUID));
+
+        // Users: Banned Users
+        $this->template->bannedCount = count($this->context->table("bans")->where("FLOOR(removed_by)", 0));
+        $this->template->bannedForeverCount = count($this->context->table("bans")->where(["FLOOR(removed_by)" => 0, "exp" => 0]));
+        $this->template->canBeUnbannedNowCount = count($this->context->table("bans")->where(["FLOOR(removed_by)" => 0, "exp <=" => time(), "exp >" => 0]));
+
+        // Support and Moderation: Tickets
+        $ticketsCount           = count($this->context->table("tickets"));
+        $ticketsCountToday      = count($this->context->table("tickets")->where("created >= ?", time() - DAY));
+        $ticketsProcessingCount = count($this->context->table("tickets")->where("type", 0));
+        $ticketsWithAnswerCount = count($this->context->table("tickets")->where("type", 1));
+        $ticketsClosedCount     = count($this->context->table("tickets")->where("type", 2));
+
+        $this->template->ticketsCount           = $ticketsCount;
+        $this->template->ticketsCountToday      = $ticketsCountToday;
+        $this->template->ticketsProcessingCount = $ticketsProcessingCount;
+        $this->template->ticketsWithAnswerCount = $ticketsWithAnswerCount;
+        $this->template->ticketsClosedCount     = $ticketsClosedCount;
+
+        // Support and Moderation: Reports
+        $this->template->reportsCount      = count($this->context->table("reports"));
+        $this->template->reportsCountToday = count($this->context->table("reports")->where("created >=", time() - DAY));
+
+        // Support and Moderation: noSpam
+        $nspTemplatesCount = 0;
+        $nspContentCount   = 0;
+        foreach ((new NoSpamLogs())->getList() as $nsplog) {
+            $nspTemplatesCount++;
+            $nspContentCount += $nsplog->getCount();
+        }
+        $this->template->nspTemplatesCount = $nspTemplatesCount;
+        $this->template->nspContentCount   = $nspContentCount;
+
+        // Content: Groups
+        $this->template->groupsCount         = count($this->context->table("groups"));
+        $this->template->groupsVerifiedCount = count($this->context->table("groups")->where("verified", true));
+        $this->template->groupsBannedCount   = count($this->context->table("groups")->where("block_reason !=", ""));
+
+        // Content: Other
+        $this->template->postsCount     = (new Posts())->getCount();
+        $this->template->messagesCount  = count($this->context->table("messages"));
+        $this->template->photosCount    = count($this->context->table("photos"));
+        $this->template->videosCount    = count($this->context->table("videos"));
+        $this->template->audiosCount    = count($this->context->table("audios"));
+        $this->template->notesCount     = count($this->context->table("notes"));
+        $this->template->appsCount      = count($this->context->table("apps"));
+        $this->template->documentsCount = count($this->context->table("documents"));
     }
 
     public function renderUsers(): void
@@ -569,6 +649,43 @@ final class AdminPresenter extends OpenVKPresenter
             return;
         }
 
+        if ($this->postParam("fixChandlerGroups")) {
+            $guid = $this->user->identity->getChandlerGUID();
+
+            $req = "";
+            if ($this->postParam("agent")) {
+                $req = $req . <<<'SQL'
+                        INSERT INTO `ChandlerGroups` VALUES (NULL, "OVK\\SupportAgents", NULL);
+                        INSERT INTO `ChandlerACLGroupsPermissions` VALUES ((SELECT id FROM ChandlerGroups WHERE name = "OVK\\SupportAgents"), "openvk\\Web\\Models\\Entities\\TicketReply", 0, "write", 1);
+                        INSERT INTO `ChandlerACLRelations` VALUES ("{GUID}", (SELECT id FROM ChandlerGroups WHERE name = "OVK\\SupportAgents"), 64);
+                    SQL;
+            }
+
+            if ($this->postParam("moder")) {
+                $req = $req . <<<'SQL'
+                        INSERT INTO `ChandlerGroups` VALUES (NULL, "OVK\\Moderators", NULL);
+                        INSERT INTO `ChandlerACLGroupsPermissions` VALUES ((SELECT id FROM ChandlerGroups WHERE name = "OVK\\Moderators"), "openvk\\Web\\Models\\Entities\\Report", 0, "admin", 1);
+                        INSERT INTO `ChandlerACLRelations` VALUES ("{GUID}", (SELECT id FROM ChandlerGroups WHERE name = "OVK\\Moderators"), 64);
+                    SQL;
+            }
+
+            if ($this->postParam("nsp")) {
+                $req = $req . <<<'SQL'
+                        INSERT INTO `ChandlerGroups` VALUES (NULL, "OVK\\SpamAnalysts", NULL);
+                        INSERT INTO `ChandlerACLGroupsPermissions` VALUES ((SELECT id FROM ChandlerGroups WHERE name = "OVK\\SpamAnalysts"), "openvk\\Web\\Models\\Entities\\Ban", 0, "write", 1);
+                        INSERT INTO `ChandlerACLRelations` VALUES ("{GUID}", (SELECT id FROM ChandlerGroups WHERE name = "OVK\\SpamAnalysts"), 64);
+                    SQL;
+            }
+
+            if (mb_strlen($req) > 0) {
+                $req = str_replace('{GUID}', $guid, $req);
+                DatabaseConnection::i()->getConnection()->query($req);
+                $this->flashFail("succ", tr("changes_saved"));
+            }
+
+            return;
+        }
+
         $req = "INSERT INTO `ChandlerGroups` (`name`) VALUES ('" . $this->postParam("name") . "')";
         DatabaseConnection::i()->getConnection()->query($req);
     }
@@ -608,7 +725,7 @@ final class AdminPresenter extends OpenVKPresenter
         } elseif ($this->template->mode == "removePermission") {
             $where = "`model` = '" . trim(addslashes($this->queryParam("model"))) . "' AND `permission` = '" . $this->queryParam("perm") . "' AND `group` = '$UUID'";
 
-            if (is_null($DB->query("SELECT * FROM `ChandlerACLGroupsPermissions WHERE $where`"))) {
+            if (is_null($DB->query("SELECT * FROM `ChandlerACLGroupsPermissions` WHERE $where"))) {
                 $this->flashFail("err", tr("error"), tr("c_permission_not_found"));
             }
 
