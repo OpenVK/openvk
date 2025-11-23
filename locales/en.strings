@@ -1271,6 +1271,8 @@
 "app_err_ava_desc" = "Avatar is too big or incorrect: general error #$res.";
 "app_err_note" = "Failed to Attach a News Note";
 "app_err_note_desc" = "Make sure the link is correct and the note belongs to you.";
+"app_delete_modal_desc" = "Are you sure you want to delete the app? This action cannot be undone.";
+"app_delete_succ" = "The app has been deleted";
 
 "learn_more" = "Learn more";
 

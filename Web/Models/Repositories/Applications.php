@@ -35,7 +35,7 @@ class Applications
     public function getList(int $page = 1, ?int $perPage = null): \Traversable
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
-        $apps    = $this->apps->where("enabled", 1)->page($page, $perPage);
+        $apps    = $this->apps->where(["enabled" => 1, "deleted" => 0])->page($page, $perPage);
         foreach ($apps as $app) {
             yield new Application($app);
         }
@@ -43,13 +43,13 @@ class Applications
 
     public function getListCount(): int
     {
-        return sizeof($this->apps->where("enabled", 1));
+        return sizeof($this->apps->where(["enabled" => 1, "deleted" => 0]));
     }
 
     public function getByOwner(User $owner, int $page = 1, ?int $perPage = null): \Traversable
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
-        $apps    = $this->apps->where("owner", $owner->getId())->page($page, $perPage);
+        $apps    = $this->apps->where(["owner" => $owner->getId(), "deleted" => 0])->page($page, $perPage);
         foreach ($apps as $app) {
             yield new Application($app);
         }
@@ -57,13 +57,13 @@ class Applications
 
     public function getOwnCount(User $owner): int
     {
-        return sizeof($this->apps->where("owner", $owner->getId()));
+        return sizeof($this->apps->where(["owner" => $owner->getId(), "deleted" => 0]));
     }
 
     public function getInstalled(User $user, int $page = 1, ?int $perPage = null): \Traversable
     {
         $perPage ??= OPENVK_DEFAULT_PER_PAGE;
-        $apps    = $this->appRels->where("user", $user->getId())->page($page, $perPage);
+        $apps    = $this->appRels->where(["user" => $user->getId(), "deleted" => 0])->page($page, $perPage);
         foreach ($apps as $appRel) {
             yield $this->get($appRel->app);
         }
@@ -71,13 +71,13 @@ class Applications
 
     public function getInstalledCount(User $user): int
     {
-        return sizeof($this->appRels->where("user", $user->getId()));
+        return sizeof($this->appRels->where(["user" => $user->getId(), "deleted" => 0]));
     }
 
     public function find(string $query = "", array $params = [], array $order = ['type' => 'id', 'invert' => false]): Util\EntityStream
     {
         $query = "%$query%";
-        $result = $this->apps->where("CONCAT_WS(' ', name, description) LIKE ?", $query)->where("enabled", 1);
+        $result = $this->apps->where("CONCAT_WS(' ', name, description) LIKE ?", $query)->where(["enabled" => 1, "deleted" => 0]);
         $order_str = 'id';
 
         switch ($order['type']) {
