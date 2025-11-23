@@ -392,13 +392,13 @@ function ovk_scheme(bool $with_slashes = false): string
 
 function check_copyright_link(string $link = ''): bool
 {
-    if (!str_contains($link, "https://") && !str_contains($link, "http://")) {
-        $link = "https://" . $link;
-    }
-
     # Existability
     if (is_null($link) || empty($link)) {
         throw new \InvalidArgumentException("Empty link");
+    }
+
+    if (!str_contains($link, "https://") && !str_contains($link, "http://")) {
+        $link = "https://" . $link;
     }
 
     # Length

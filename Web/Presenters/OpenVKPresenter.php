@@ -321,7 +321,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             }
         }
 
-        if ($_SERVER['HTTP_X_OPENVK_AJAX_QUERY'] == '1' && $this->user->identity) {
+        if (!empty($_SERVER['HTTP_X_OPENVK_AJAX_QUERY']) && $_SERVER['HTTP_X_OPENVK_AJAX_QUERY'] == '1' && $this->user->identity) {
             error_reporting(0);
             header('Content-Type: text/plain; charset=UTF-8');
         }
