@@ -239,6 +239,8 @@ routes:
       handler: "Group->statistics"
     - url: "/club{num}/followers"
       handler: "Group->followers"
+    - url: "/club{num}/notes"
+      handler: "Group->notes"
     - url: "/club{num}/followers/{num}"
       handler: "Group->admin"
     - url: "/club{num}/setAdmin"

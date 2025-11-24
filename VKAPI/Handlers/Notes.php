@@ -9,7 +9,7 @@ use openvk\Web\Models\Repositories\Users as UsersRepo;
 use openvk\Web\Models\Repositories\Comments as CommentsRepo;
 use openvk\Web\Models\Repositories\Photos as PhotosRepo;
 use openvk\Web\Models\Repositories\Videos as VideosRepo;
-use openvk\Web\Models\Entities\{Note, Comment};
+use openvk\Web\Models\Entities\{User, Note, Comment};
 
 final class Notes extends VKAPIRequestHandler
 {
@@ -62,7 +62,7 @@ final class Notes extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
-        if (!$note->getOwner()->getPrivacyPermission('notes.read', $this->getUser())) {
+        if ($note->getOwner() instanceof User && !$note->getOwner()->getPrivacyPermission('notes.read', $this->getUser())) {
             $this->fail(15, "Access denied");
         }
 
@@ -92,7 +92,9 @@ final class Notes extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
-        if (!$note->canBeModifiedBy($this->getUser())) {
+        if ($note->getOwner() instanceof User && !$note->canBeModifiedBy($this->getUser())) {
+            $this->fail(15, "Access denied");
+        } elseif (!$note->getOwner()->canBeModifiedBy($this->getUser()) || $note->getOwner()->isWikiPagesDisabledEnforced()) {
             $this->fail(15, "Access denied");
         }
 
@@ -174,7 +176,8 @@ final class Notes extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
-        if (!$note->getOwner()->getPrivacyPermission('notes.read', $this->getUser())) {
+
+        if ($note->getOwner() instanceof User && !$note->getOwner()->getPrivacyPermission('notes.read', $this->getUser())) {
             $this->fail(15, "Access denied");
         }
 
@@ -203,7 +206,7 @@ final class Notes extends VKAPIRequestHandler
             $this->fail(15, "Access denied");
         }
 
-        if (!$note->getOwner()->getPrivacyPermission('notes.read', $this->getUser())) {
+        if ($note->getOwner() instanceof User && !$note->getOwner()->getPrivacyPermission('notes.read', $this->getUser())) {
             $this->fail(15, "Access denied");
         }
 

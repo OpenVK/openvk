@@ -7,6 +7,7 @@ namespace openvk\Web\Models\Repositories;
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Entities\Note;
 use openvk\Web\Models\Entities\User;
+use openvk\Web\Models\Entities\Club;
 use Nette\Database\Table\ActiveRow;
 
 class Notes
@@ -38,6 +39,21 @@ class Notes
         }
     }
 
+    public function getClubNotes(Club $club, int $page = 1, ?int $perPage = null, string $sort = "DESC"): \Traversable
+    {
+        $perPage ??= OPENVK_DEFAULT_PER_PAGE;
+        foreach ($this->notes->where("owner", $club->getId() * -1)->where("deleted", 0)->order("created $sort")->page($page, $perPage) as $album) {
+            yield new Note($album);
+        }
+    }
+
+    public function getAllClubNotes(Club $club, string $sort = "DESC"): \Traversable
+    {
+        foreach ($this->notes->where("owner", $club->getId() * -1)->where("deleted", 0)->order("created $sort") as $album) {
+            yield new Note($album);
+        }
+    }
+
     public function getNoteById(int $owner, int $note): ?Note
     {
         $note = $this->notes->where(['owner' => $owner, 'virtual_id' => $note])->fetch();
@@ -51,5 +67,10 @@ class Notes
     public function getUserNotesCount(User $user): int
     {
         return sizeof($this->notes->where("owner", $user->getId())->where("deleted", 0));
+    }
+
+    public function getClubNotesCount(Club $club): int
+    {
+        return $this->notes->where("owner", $club->getId() * -1)->where("deleted", 0)->count('*');
     }
 }

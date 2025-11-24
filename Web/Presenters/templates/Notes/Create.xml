@@ -3,6 +3,10 @@
 {block title}{_create_note}{/block}
 
 {block header}
+    {if isset($club)}
+        <a href="{$club->getURL()}">{$club->getCanonicalName()}</a>
+        »
+    {/if}
     {_create_note}
 {/block}
 

@@ -473,6 +473,14 @@
 "error_suggestions_open" = "У этой группы открытая стена.";
 "error_suggestions_access" = "Просматривать все предложенные записи могут только администраторы группы.";
 
+"wiki_pages" = "Вики-страницы";
+"main_wiki_page" = "Главная вики-страница";
+"wiki_page_expanded_by_default" = "Раскрывать по умолчанию";
+"wiki_pages_show_all" = "Смотреть все $1 шт.";
+"wiki_pages_banned_by_instance_admins" = "Вашему сообществу было запрещено использовать вики-страницы. Узнать причину можно <a href='/support'>в Поддержке</a>";
+"wiki_pages_cant_remove_main" = "Нельзя удалить главную вики-страницу в сообществе. Сменить или убрать её можно <a href='$1'>в настройках группы</a>";
+"materials" = "Материалы";
+
 /* Albums */
 
 "create" = "Создать";
@@ -1622,6 +1630,8 @@
 "admin_club_search" = "Поиск групп";
 "admin_club_excludeglobalfeed" = "Не отображать записи в глобальной ленте";
 "admin_club_enforceexcludeglobalfeed" = "Запретить руководству группы изменять отображение в глобальной ленте";
+"admin_club_enforce_main_page_expanded" = " Запретить руководству группы изменять отображение главной вики-страницы";
+"admin_club_enforce_wiki_pages_disabled" = "Запретить вики-страницы";
 "admin_services" = "Платные услуги";
 "admin_newgift" = "Новый подарок";
 "admin_price" = "Цена";

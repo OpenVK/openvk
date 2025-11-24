@@ -43,6 +43,43 @@
             </tbody>
         </table>
     </div>
+
+    {if !(!$club->getMainNote() || $club->getMainNote()->isDeleted() || $club->isWikiPagesDisabledEnforced())}
+        <div n:attr="class => $club->isMainNoteExpanded() ? 'content_title_expanded' : 'content_title_unexpanded'" onclick="hidePanel(this);">
+            {_materials}
+        </div>
+        
+        <div id="userContent" style="margin-left: 6px; width: 390px; {if !$club->isMainNoteExpanded()}display: none;{/if}">
+            {$club->getMainNote()->getText()|noescape}
+        </div>
+
+        <style>
+            #userContent img {
+                max-width: 245pt;
+                max-height: 200pt;
+            }
+
+            #userContent blockquote {
+                background-color: #f3f3f3;
+                border-bottom: 5px solid #969696;
+                padding: 1;
+            }
+
+            #userContent cite {
+                margin-top: 1em;
+                display: block;
+            }
+
+            #userContent cite::before {
+                content: "— ";
+            }
+
+            #userContent .underline {
+                text-decoration: underline;
+            }
+        </style>
+    {/if}
+
     <div n:if="$thisUser && $club->getFollowersCount() > 0">
         {var $followersCount = $club->getFollowersCount()}
         

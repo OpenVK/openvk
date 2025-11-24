@@ -7,7 +7,7 @@ namespace openvk\Web\Presenters;
 use openvk\Web\Models\Entities\{Club, Photo, Post};
 use Nette\InvalidStateException;
 use openvk\Web\Models\Entities\Notifications\ClubModeratorNotification;
-use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers, Topics, Audios, Posts, Documents};
+use openvk\Web\Models\Repositories\{Clubs, Users, Albums, Managers, Notes, Topics, Audios, Posts, Documents};
 use Chandler\Security\Authenticator;
 use Nette\InvalidStateException as ISE;
 
@@ -570,5 +570,47 @@ final class GroupPresenter extends OpenVKPresenter
         }
 
         $this->template->page  = (int) ($this->queryParam("p") ?? 1);
+    }
+
+    public function renderNotes(int $id): void
+    {
+        $this->assertUserLoggedIn();
+
+        $club = $this->clubs->get($id);
+        if (!$club || $club->isBanned() || !$club->canBeModifiedBy($this->user->identity)) {
+            $this->notFound();
+        }
+
+        if ($club->isWikiPagesDisabledEnforced()) {
+            $this->flashFail("err", tr("forbidden"), tr("wiki_pages_banned_by_instance_admins"));
+        }
+
+        $this->template->club = $club;
+
+        if ($_SERVER["REQUEST_METHOD"] === "POST") {
+            if (!$club->isMainNoteExpandedEnforced()) {
+                $club->setIs_Main_Note_Expanded((bool) $this->postParam("expanded"));
+            }
+
+            $nid = (int) $this->postParam("nid");
+            if ($nid === 0) {
+                $club->setMain_Note_Id(null);
+            } else {
+                $note = (new Notes())->get($nid);
+
+                if (!$note || $note->isDeleted() || !($note->getOwner() instanceof Club && $note->getOwner()->getId() === $club->getId())) {
+                    $this->flashFail("err", tr("error"), tr("forbidden"));
+                }
+
+                $club->setMain_Note_Id($nid);
+            }
+
+            $club->save();
+
+            $this->flash("succ", tr("changes_saved"), tr("new_changes_desc"));
+        }
+
+        $this->template->notes = iterator_to_array((new Notes())->getAllClubNotes($club));
+        $this->template->count = (new Notes())->getClubNotesCount($club);
     }
 }

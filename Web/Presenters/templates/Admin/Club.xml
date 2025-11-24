@@ -69,6 +69,14 @@
                     <input class="toggle-large" type="checkbox" id="enforce_hiding_from_global_feed" name="enforce_hiding_from_global_feed" value="1" n:attr="checked => $club->isHidingFromGlobalFeedEnforced()" />
                     <label for="enforce_hiding_from_global_feed">{_admin_club_enforceexcludeglobalfeed}</label>
                 </div>
+                <div class="group">
+                    <input class="toggle-large" type="checkbox" id="enforce_main_note_expanded" name="enforce_main_note_expanded" value="1" n:attr="checked => $club->isMainNoteExpandedEnforced()" />
+                    <label for="enforce_main_note_expanded">{_admin_club_enforce_main_page_expanded}</label>
+                </div>
+                <div class="group">
+                    <input class="toggle-large" type="checkbox" id="enforce_wiki_pages_disabled" name="enforce_wiki_pages_disabled" value="1" n:attr="checked => $club->isWikiPagesDisabledEnforced()" />
+                    <label for="enforce_wiki_pages_disabled">{_admin_club_enforce_wiki_pages_disabled}</label>
+                </div>
                 <hr/>
                 <div class="buttons-container">
                     <div class="buttons">
