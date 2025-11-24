@@ -1,5 +1,5 @@
-{php if(!isset($GLOBALS["textAreaCtr"])) $GLOBALS["textAreaCtr"] = 10;}
-{var $textAreaId = ($post ?? NULL) === NULL ? (++$GLOBALS["textAreaCtr"]) : $post->getId()}
+{php if(!isset($GLOBALS["textAreaCtr"])) $GLOBALS["textAreaCtr"] = 10;} {* FIXME(WerySkok): using $GLOBALS seems to be a dirty hack, but I don't know how to replace them *}
+{php $textAreaId = ($post ?? NULL) === NULL ? (++$GLOBALS["textAreaCtr"]) : $post->getId()}
 {var $textAreaId = ($custom_id ?? NULL) === NULL ? $textAreaId : $custom_id}
 
 <div id="write" class='model_content_textarea' style="padding: 5px 0;" data-id="{is_null($owner) || gettype($owner) == 'integer' ? $owner : $owner->getId()}">

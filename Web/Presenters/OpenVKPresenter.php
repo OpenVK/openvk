@@ -197,9 +197,7 @@ abstract class OpenVKPresenter extends SimplePresenter
     public function getTemplatingEngine(): TemplatingEngine
     {
         $latte = parent::getTemplatingEngine();
-        $latte->addFilter("translate", function ($s) {
-            return tr($s);
-        });
+        $latte->addExtension(new \Latte\Essential\TranslatorExtension(tr(...)));
 
         return $latte;
     }

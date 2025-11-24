@@ -63,7 +63,7 @@ class Notifications implements Handler
                         $tplId  = "$tplDir$data->actionCode/_$data->originModelType" . "_" . $data->targetModelType . "_.latte";
                         $latte  = new TemplatingEngine();
                         $latte->setTempDirectory(CHANDLER_ROOT . "/tmp/cache/templates");
-                        $latte->addFilter("translate", fn($trId) => tr($trId));
+                        $latte->addExtension(new \Latte\Essential\TranslatorExtension(tr(...)));
                         $resolve([
                             "title"    => tr("notif_" . $data->actionCode . "_" . $data->originModelType . "_" . $data->targetModelType),
                             "body"     => trim(preg_replace('%(\s){2,}%', "$1", $latte->renderToString($tplId, ["notification" => $notification]))),
