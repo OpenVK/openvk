@@ -1,7 +1,7 @@
 {extends "../@listView.latte"}
-{var iterator = iterator_to_array($reports)}
-{var page     = $paginatorConf->page}
-{var table_body_id = "reports"}
+{var $iterator = iterator_to_array($reports)}
+{var $page     = $paginatorConf->page}
+{var $table_body_id = "reports"}
 
 {block tabs}{include "../NoSpam/Tabs.latte", mode => "reports"}{/block}
 {block before_content}

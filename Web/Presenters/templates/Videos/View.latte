@@ -83,7 +83,7 @@
 
                     {if isset($thisUser)}
                         {if $thisUser->getId() != $video->getOwner()->getId()}
-                            {var canReport = true}
+                            {var $canReport = true}
                         {/if}
                     {/if}
 
