@@ -6,7 +6,6 @@
 {/block}
 
 {block content}
-    {php $GLOBALS["_bigWall"] = 1}
 
     <div class="tabs">
         <div n:attr="id => (isset($globalFeed) ? 'ki' : 'activetabs')" class="tab">
@@ -26,7 +25,7 @@
     <div class='scroll_container'>
         <div class='scroll_node' n:foreach='$posts as $post' data-uniqueid="{$post->getPrettyId()}">
             <a name="postGarter={$post->getId()}"></a>
-            {include "../components/post.latte", post => $post, onWallOf => true, commentSection => true}
+            {include "../components/post.latte", post => $post, onWallOf => true, commentSection => true, bigWall => true}
         </div>
     </div>
 

@@ -73,9 +73,9 @@
 
                         <span data-text="{$post->getText(false)}" class="really_text">{$post->getText()|noescape}</span>
 
-                        {var $width = ($GLOBALS["_bigWall"] ?? false) ? 550 : 320}
-                        {if isset($GLOBALS["_nesAttGloCou"])}
-                            {var $width = $width - 70 * $GLOBALS["_nesAttGloCou"]}
+                        {var $width = ($bigWall ?? false) ? 550 : 320}
+                        {if isset($nestedLevel)}
+                            {var $width = $width - 70 * $nestedLevel}
                         {/if}
                         {var $attachmentsLayout = $post->getChildrenWithLayout($width)}
                         <div n:ifcontent class="attachments attachments_b" style="height: {$attachmentsLayout->height|noescape}; width: {$attachmentsLayout->width|noescape};">

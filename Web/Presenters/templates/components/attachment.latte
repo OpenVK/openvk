@@ -55,11 +55,11 @@
         </div>
     </div>
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Post}
-    {php $GLOBALS["_nesAttGloCou"] = (isset($GLOBALS["_nesAttGloCou"]) ? $GLOBALS["_nesAttGloCou"] : 0) + 1}
-    {if $GLOBALS["_nesAttGloCou"] > 2}
+    {var $nestedLevel = ($nestedLevel ?? 0) + 1}
+    {if $nestedLevel > 2}
         <a href="/wall{$attachment->getPrettyId()}">{_open_post}</a>
     {else}
-        {include "post.latte", post => $attachment, compact => true}
+        {include "post.latte", post => $attachment, compact => true, nestedLevel => $nestedLevel}
     {/if}
 {elseif $attachment instanceof \openvk\Web\Models\Entities\Audio}
     <div style="width:100%;" data-att_type='audio' data-att_id="{$attachment->getPrettyId()}">
@@ -87,4 +87,4 @@
     <span style="color:red;">{_version_incompatibility}</span>
 {/if}
 
-{php $GLOBALS["_nesAttGloCou"] = NULL}
+{php $nestedLevel = NULL}
