@@ -9,6 +9,33 @@
     {_gifts}
 {/block}
 
+{block before_content}
+    <div class="tabs stupid-fix">
+        <div id="activetabs" class="tab">
+            <span id="act_tab_a">
+                {if $thisUser->getId() !== $user->getId()}
+                    {_gifts}
+                {else}
+                    {_my_gifts}
+                {/if}
+            </span>
+        </div>
+        {if !is_null($thisUser)}
+        <div id="ki" class="tab">
+            <a href="/gifts?act=pick&user={$user->getId()}">{_send_gift}</a>
+        </div>
+        {/if}
+
+        <a href='{$user->getURL()}' class="side_link">
+            {if $thisUser->getId() !== $user->getId()}
+                {tr("back_to_user", $user->getMorphedName("genitive", false))}
+            {else}
+                {_back_to_my_page}
+            {/if}
+        </a>
+    </div>
+{/block}
+
 {* BEGIN ELEMENTS DESCRIPTION *}
 
 {block link|strip|stripHtml}
@@ -20,7 +47,11 @@
 {/block}
 
 {block name}
-    {_gift}
+    {if $x->gift->getName()}
+        {$x->gift->getName()}
+    {else}
+        {_gift}
+    {/if}
 {/block}
 
 {block description}

@@ -1,4 +1,4 @@
-{extends "../@listView.xml"}
+{extends "../@layout.xml"}
 
 {block title}
     {_gift_select}
@@ -10,7 +10,66 @@
     {_collections}
 {/block}
 
-{* BEGIN ELEMENTS DESCRIPTION *}
+{block content}
+    <div class="tabs">
+        <div id="ki" class="tab">
+            <a href="/gifts{$user->getId()}">
+                {if $thisUser->getId() !== $user->getId()}
+                    {_gifts}
+                {else}
+                    {_my_gifts}
+                {/if}
+            </a>
+        </div>
+        {if !is_null($thisUser)}
+        <div id="activetabs" class="tab">
+            <span id="act_tab_a">{_send_gift}</span>
+        </div>
+        {/if}
+
+        <a href='{$user->getURL()}' class="side_link">
+            {if $thisUser->getId() !== $user->getId()}
+                {tr("back_to_user", $user->getMorphedName("genitive", false))}
+            {else}
+                {_back_to_my_page}
+            {/if}
+        </a>
+    </div>
+    {var $cats = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+
+    {if sizeof($cats) > 0}
+        <div class="content scroll_container">
+            <div class="gift_cat_row scroll_node" n:foreach="$cats as $cat">
+                <a href="/gifts?act=menu&user={$user->getId()}&pack={$cat->getId()}" class="button float-right">{_show_more}</a>
+                <h4 class="gift_cat_header">
+                    {$cat->getName(tr("__lang"))}
+                </h4>
+                <div class="gift_cat_desc" n:ifcontent>
+                    {$cat->getDescription(tr("__lang"))|truncate:250}
+                </div>
+
+                <div class="gift_grid gift_cat_grid">
+                    {foreach $cat->getGifts(1, 5) as $gift}
+                        <a href="/gifts?act=confirm&user={$user->getId()}&pack={$cat->getId()}&elid={$gift->getId()}" n:class="gift_sel, $gift->getUsagesLeft($thisUser) !== INF ? has_limit, !$gift->canUse($thisUser) ? disabled">
+                            <img class="gift_pic" src="{$gift->getImage(2)}" alt="{_gift}" loading=lazy />
+
+                            <strong n:class="gift_price, $gift->isFree() ? gift_free">
+                                {if $gift->isFree()}
+                                    {_free_gift}
+                                {else}
+                                    {tr('coins', $gift->getPrice())}
+                                {/if}
+                            </strong>
+                            <strong n:if="$gift->getUsagesLeft($thisUser) !== INF" class="gift_limit">
+                                {tr("gifts_left", $gift->getUsagesLeft($thisUser))}
+                            </strong>
+                        </a>
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+    {/if}
+{/block}
 
 {block link|strip|stripHtml}
     /gifts?act=menu&user={$user->getId()}&pack={$x->getId()}

@@ -1118,6 +1118,7 @@
 
 /* Gifts */
 
+"my_gifts" = "Мои подарки";
 "gift" = "Подарок";
 "gifts" = "Подарки";
 "gifts_zero" = "Нет подарков";
@@ -1125,11 +1126,13 @@
 "gifts_few" = "$1 подарка";
 "gifts_many" = "$1 подарков";
 "gifts_other" = "$1 подарков";
-"gifts_left" = "Подарков осталось: $1";
+"gifts_left" = "$1 осталось";
 "gifts_left_one" = "Один подарок остался";
 "gifts_left_few" = "$1 подарка осталось";
 "gifts_left_many" = "$1 подарков осталось";
 "gifts_left_other" = "$1 подарков осталось";
+"back_to_user" = "К странице $1";
+"back_to_my_page" = "К моей странице";
 "send_gift" = "Отправить подарок";
 "gift_select" = "Выбрать подарок";
 "collections" = "Коллекции";
