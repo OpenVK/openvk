@@ -35,22 +35,27 @@
             {/if}
         </a>
     </div>
-    {var $cats = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+    {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
 
-    {if sizeof($cats) > 0}
-        <div class="content scroll_container">
-            <div class="gift_cat_row scroll_node" n:foreach="$cats as $cat">
-                <a href="/gifts?act=menu&user={$user->getId()}&pack={$cat->getId()}" class="button float-right">{_show_more}</a>
-                <h4 class="gift_cat_header">
-                    {$cat->getName(tr("__lang"))}
-                </h4>
-                <div class="gift_cat_desc" n:ifcontent>
-                    {$cat->getDescription(tr("__lang"))|truncate:250}
+    {if sizeof($data) > 0}
+        <div class="content scroll_container" style="padding-bottom: 0">
+            <div class="gift_cat_row scroll_node" n:foreach="$data as $dat">
+                
+            <div class="gift_cat_info">
+                <a href="/gifts?act=menu&user={$user->getId()}&pack={$dat->getId()}" class="button float-right">{_show_more}</a>
+                <div class="gift_cat_text">
+                    <h4 class="gift_cat_header">
+                        {$dat->getName(tr("__lang"))}
+                    </h4>
+                    <div class="gift_cat_desc" n:ifcontent>
+                        {$dat->getDescription(tr("__lang"))|truncate:250}
+                    </div>
                 </div>
+            </div>
 
                 <div class="gift_grid gift_cat_grid">
-                    {foreach $cat->getGifts(1, 5) as $gift}
-                        <a href="/gifts?act=confirm&user={$user->getId()}&pack={$cat->getId()}&elid={$gift->getId()}" n:class="gift_sel, $gift->getUsagesLeft($thisUser) !== INF ? has_limit, !$gift->canUse($thisUser) ? disabled">
+                    {foreach $dat->getGifts(1, 5) as $gift}
+                        <a href="/gifts?act=confirm&user={$user->getId()}&pack={$dat->getId()}&elid={$gift->getId()}" n:class="gift_sel, $gift->getUsagesLeft($thisUser) !== INF ? has_limit, !$gift->canUse($thisUser) ? disabled">
                             <img class="gift_pic" src="{$gift->getImage(2)}" alt="{_gift}" loading=lazy />
 
                             <strong n:class="gift_price, $gift->isFree() ? gift_free">
@@ -68,21 +73,12 @@
                 </div>
             </div>
         </div>
+        {include "../components/paginator.xml", conf => (object) [
+        "page"     => $page,
+        "count"    => $count,
+        "amount"   => sizeof($data),
+        "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+        "atBottom" => true,
+        ]}
     {/if}
-{/block}
-
-{block link|strip|stripHtml}
-    /gifts?act=menu&user={$user->getId()}&pack={$x->getId()}
-{/block}
-
-{block preview}
-    <img src="{$x->getThumbnailURL()}" width="75" alt="{$x->getName(tr('__lang'))}" loading=lazy />
-{/block}
-
-{block name}
-    {$x->getName(tr("__lang"))}
-{/block}
-
-{block description}
-    {$x->getDescription(tr("__lang"))}
 {/block}

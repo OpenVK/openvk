@@ -1817,6 +1817,21 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
     color: unset;
 }
 
+.user_gift {
+    text-align: center;
+    padding: 15px;
+}
+.user_gift .gift_pic {
+    width: 195px;
+    height: auto;
+}
+.user_gift .gift_comment {
+    margin-top: 15px;
+}
+.gifts_list {
+    padding-top: 10px;
+}
+
 .gift_cat_row:first-child {
     padding-top: 5px;
 }
@@ -1824,15 +1839,22 @@ body.scrolled .toTop:hover, .toTop.has_down:hover {
     padding-bottom: 0;
 }
 .gift_cat_row {
-    padding: 13px 0 5px;
+    padding: 10px 0;
 }
 .gift_cat_row:not(:last-child) {
     border-bottom: #dddddd 1px solid;
 }
 
+.gift_cat_info {
+    margin: 0 0 4px;
+    min-height: 23px;
+}
+.button + .gift_cat_text {
+    width: 80%;
+}
 h4.gift_cat_header {
     border-bottom: 0;
-    padding-top: 3px;
+    padding-top: 4px;
 }
 .gift_cat_desc {
     margin: 5px 0 2px;
@@ -1847,10 +1869,8 @@ h4.gift_cat_header {
 
 .gift_sel {
     width: 122px;
-    display: grid;
     box-sizing: border-box;
     padding: 8px 10px;
-    justify-items: center;
     cursor: pointer;
     border-radius: 3px;
     position: relative;

@@ -1191,6 +1191,7 @@
 "back_to_user" = "To $1's page";
 "back_to_my_page" = "To my page";
 "send_gift" = "Send gift";
+"gift_back" = "Send gift in response";
 
 "gift_select" = "Select gift";
 "collections" = "Collections";
