@@ -31,7 +31,7 @@
                 <td>{$voucher->getFormattedToken()}</td>
                 <td>{$voucher->getCoins()}&#xa2;</td>
                 <td>{$voucher->getRating()}</td>
-                <td>{$voucher->getRemainingUsages() === INF ? "∞" : $voucher->getRemainingUsages()}</td>
+                <td>{$voucher->getRemainingUsages() === \INF ? "∞" : $voucher->getRemainingUsages()}</td>
                 <td>
                     {if $voucher->isExpired()}
                         <span class="aui-lozenge aui-lozenge-subtle aui-lozenge-removed">{_admin_voucher_status_closed}</span>

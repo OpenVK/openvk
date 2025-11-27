@@ -21,12 +21,12 @@
                             <li><span>{tr("about_wall_posts", $postsCount)|noescape}</span></li>
                         </ul>
                     </div>
-                    {if OPENVK_ROOT_CONF['openvk']['preferences']['about']['links']}
+                    {if \OPENVK_ROOT_CONF['openvk']['preferences']['about']['links']}
                         <h4>{_about_links}</h4>
                         <div style="margin-top: 5px;">
                             {_instance_links}
                             <ul>
-                                <li n:foreach="OPENVK_ROOT_CONF['openvk']['preferences']['about']['links'] as $aboutLink"><a href="{$aboutLink['url']}" target="_blank" class="link">{$aboutLink["name"]}</a></li>
+                                <li n:foreach="\OPENVK_ROOT_CONF['openvk']['preferences']['about']['links'] as $aboutLink"><a href="{$aboutLink['url']}" target="_blank" class="link">{$aboutLink["name"]}</a></li>
                             </ul>
                         </div>
                     {/if}

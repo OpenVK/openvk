@@ -18,7 +18,7 @@
             <div class="post-source"></div>
 
             <div n:if="$postOpts ?? true" class="post-opts">
-                {var $anonEnabled = OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
+                {var $anonEnabled = \OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
 
                 {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0}
                     {if $club->canBeModifiedBy($thisUser)}

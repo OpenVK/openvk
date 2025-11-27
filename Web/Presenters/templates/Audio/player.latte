@@ -46,7 +46,7 @@
                         <div class="add-icon musicIcon hovermeicon" data-id="{$audio->getId()}" n:if="isset($thisUser) && !$hasAudio && !$isWithdrawn" ></div>
                         <div class="remove-icon-group musicIcon" data-id="{$audio->getId()}" data-club="{$club->getId()}" n:if="isset($thisUser) && isset($club) && $club->canBeModifiedBy($thisUser)" ></div>
                         <div class="add-icon-group musicIcon hidden" data-id="{$audio->getId()}" n:if="isset($thisUser) && !$isWithdrawn" ></div>
-                        <a class="download-icon musicIcon" n:if='isset($thisUser) && !$isWithdrawn && $isAvailable && OPENVK_ROOT_CONF["openvk"]["preferences"]["music"]["exposeOriginalURLs"]' href="{$audio->getOriginalURL()}" download="{$audio->getDownloadName()}"></a>
+                        <a class="download-icon musicIcon" n:if='isset($thisUser) && !$isWithdrawn && $isAvailable && \OPENVK_ROOT_CONF["openvk"]["preferences"]["music"]["exposeOriginalURLs"]' href="{$audio->getOriginalURL()}" download="{$audio->getDownloadName()}"></a>
                         <div class="edit-icon musicIcon" data-lyrics="{$audio->getLyrics()}" data-title="{$audio->getTitle()}" data-performer="{$audio->getPerformer()}" data-explicit="{(int)$audio->isExplicit()}" data-searchable="{(int)!$audio->isUnlisted()}" n:if="isset($thisUser) && $editable && !$isWithdrawn" ></div>
                         <div class="report-icon musicIcon" data-id="{$audio->getId()}" n:if="isset($thisUser) && !$editable && !$isWithdrawn" ></div>
                     {/if}

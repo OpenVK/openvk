@@ -37,7 +37,7 @@
                                 {_attachment}: <span>(unknown)</span>
                             </div>
                             <input type="file" class="postFileSel" id="postFilePic" name="_pic_attachment" accept="image/*" style="display: none;" />
-                            <input n:if="!OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']" type="file" class="postFileSel" id="postFileVid" name="_vid_attachment" accept="video/*" style="display: none;" />
+                            <input n:if="!\OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']" type="file" class="postFileSel" id="postFileVid" name="_vid_attachment" accept="video/*" style="display: none;" />
                             <br/>
                             <div style="float: right; display: flex; flex-direction: column;">
                                 <a href="javascript:void(u('#post-buttons1 #wallAttachmentMenu').toggleClass('hidden'));">
@@ -49,7 +49,7 @@
                                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
                                         {_attach_photo}
                                     </a>
-                                    <a n:if="!OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']" href="javascript:void(document.querySelector('#post-buttons1 input[name=_vid_attachment]').click());">
+                                    <a n:if="!\OPENVK_ROOT_CONF['openvk']['preferences']['videos']['disableUploading']" href="javascript:void(document.querySelector('#post-buttons1 input[name=_vid_attachment]').click());">
                                         <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
                                         {_attach_video}
                                     </a>

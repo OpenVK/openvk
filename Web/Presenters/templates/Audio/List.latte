@@ -101,7 +101,7 @@
             "page"     => $page,
             "count"    => $audiosCount,
             "amount"   => sizeof($audios),
-            "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+            "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
             "atTop"    => true,
             "space"    => 6,
             "tidy"     => true,
@@ -125,7 +125,7 @@
                     "page"     => $page,
                     "count"    => $audiosCount,
                     "amount"   => sizeof($audios),
-                    "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+                    "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
                     "atBottom" => true,
                 ]}
             </div>
@@ -148,7 +148,7 @@
                     "page"     => $page,
                     "count"    => $playlistsCount,
                     "amount"   => sizeof($playlists),
-                    "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+                    "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
                     "atBottom" => true,
                 ]}
             </div>

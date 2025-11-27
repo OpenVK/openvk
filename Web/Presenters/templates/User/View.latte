@@ -95,7 +95,7 @@
                 <div id="profile_link" style="width: 194px;">
                     <a href="/edit" class="link">{_edit_page}</a>
                 </div>
-                <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && !$thisUser->prefersNotToSeeRating()" id="profile_link" style="width: 194px;">
+                <div n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && !$thisUser->prefersNotToSeeRating()" id="profile_link" style="width: 194px;">
                     <a onClick="showIncreaseRatingDialog({$thisUser->getCoins()}, {ltrim($thisUser->getUrl(), '/')}, {$csrfToken})" class="link">{_increase_rating}</a>
                 </div>
             {else}
@@ -133,7 +133,7 @@
                     </a>
                 {/if}
                 
-                <a style="width: 194px;" n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() == 0" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
+                <a style="width: 194px;" n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && $user->getGiftCount() == 0" href="/gifts?act=pick&user={$user->getId()}" class="profile_link">{_send_gift}</a>
                 <a style="width: 194px;" n:if="$user->getPrivacyPermission('messages.write', $thisUser)" href="/im?sel={$user->getId()}" class="profile_link" rel="nofollow">{_send_message}</a>
 
                 {var $subStatus = $user->getSubscriptionStatus($thisUser)}
@@ -630,7 +630,7 @@
             </div>
         </div>
 
-        <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0">
+        <div n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && ($giftCount = $user->getGiftCount()) > 0">
             <div class="content_title_expanded" onclick="hidePanel(this, {$giftCount});">
                 {_gifts}
             </div>
@@ -638,7 +638,7 @@
                 <div class="content_subtitle">
                     {tr("gifts", $giftCount)}
                     <div style="float:right;">
-                        {if OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && !is_null($thisUser)}
+                        {if \OPENVK_ROOT_CONF['openvk']['preferences']['commerce'] && !is_null($thisUser)}
                             <a href="/gifts?act=pick&user={$user->getId()}">{_send_gift}</a> |
                         {/if}
                         <a href="/gifts{$user->getId()}">{_all_title}</a>

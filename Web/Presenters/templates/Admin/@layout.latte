@@ -1,13 +1,13 @@
-{var $instance_name = OPENVK_ROOT_CONF['openvk']['appearance']['name']}
+{var $instance_name = \OPENVK_ROOT_CONF['openvk']['appearance']['name']}
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=utf-8" />
         <style>
-            {var $css = file_get_contents(OPENVK_ROOT . "/Web/static/js/node_modules/@atlassian/aui/dist/aui/aui-prototyping.css")}
+            {var $css = file_get_contents(\OPENVK_ROOT . "/Web/static/js/node_modules/@atlassian/aui/dist/aui/aui-prototyping.css")}
             {str_replace("fonts/", "/assets/packages/static/openvk/js/node_modules/@atlassian/aui/dist/aui/fonts/", $css)|noescape}
-            {file_get_contents(OPENVK_ROOT . "/Web/static/js/node_modules/@atlassian/aui/dist/aui/aui-prototyping-darkmode.css")|noescape}
+            {file_get_contents(\OPENVK_ROOT . "/Web/static/js/node_modules/@atlassian/aui/dist/aui/aui-prototyping-darkmode.css")|noescape}
 
             .fake-icon {
                 float: left;

@@ -95,7 +95,7 @@
             <tbody>
                 <tr class="h">
                     <td>
-                        <h1 class="p" style="float: left;">OpenVK {=OPENVK_VERSION}</h1>
+                        <h1 class="p" style="float: left;">OpenVK {=\OPENVK_VERSION}</h1>
                         <img id="ovkLogo" src="/assets/packages/static/openvk/img/logo_full.svg" alt="OpenVK Logo" />
                     </td>
                 </tr>
@@ -106,19 +106,19 @@
             <tbody>
                 <tr>
                     <td class="e">OpenVK</td>
-                    <td class="v">{=OPENVK_VERSION}</td>
+                    <td class="v">{=\OPENVK_VERSION}</td>
                 </tr>
                 <tr>
                     <td class="e">Chandler</td>
-                    <td class="v">{=CHANDLER_VER}</td>
+                    <td class="v">{=\CHANDLER_VER}</td>
                 </tr>
                 <tr>
                     <td class="e">Configuration file path</td>
-                    <td class="v">{realpath(OPENVK_ROOT)}</td>
+                    <td class="v">{realpath(\OPENVK_ROOT)}</td>
                 </tr>
                 <tr>
                     <td class="e">Loaded configuration file</td>
-                    <td class="v">{realpath(OPENVK_ROOT)}/openvk.yml</td>
+                    <td class="v">{realpath(\OPENVK_ROOT)}/openvk.yml</td>
                 </tr>
                 <tr>
                     <td class="e">PHP</td>
@@ -132,7 +132,7 @@
                 <tr class="v">
                     <td>
                         This program makes use of the Chandler open-source web application server:<br/>
-                        libchandler {=CHANDLER_VER} by Celestora
+                        libchandler {=\CHANDLER_VER} by Celestora
                     </td>
                 </tr>
             </tbody>
@@ -154,7 +154,7 @@
                         Instance name
                     </td>
                     <td class="v">
-                        {=OPENVK_ROOT_CONF["openvk"]["appearance"]["name"]}
+                        {=\OPENVK_ROOT_CONF["openvk"]["appearance"]["name"]}
                     </td>
                     <td class="v">
                         N/A
@@ -165,7 +165,7 @@
                         MOTD
                     </td>
                     <td class="v">
-                        {=OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]|truncate:40}
+                        {=\OPENVK_ROOT_CONF["openvk"]["appearance"]["motd"]|truncate:40}
                     </td>
                     <td class="v">
                         N/A
@@ -200,7 +200,7 @@
                         Upload processing module
                     </td>
                     <td class="v">
-                        mup_{=OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["mode"]}
+                        mup_{=\OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["mode"]}
                     </td>
                     <td class="v">
                         mup_basic
@@ -211,8 +211,8 @@
                         Upload processing options
                     </td>
                     <td class="v">
-                        {if OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["mode"] === "server"}
-                            {php echo OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["server"]["kind"] === "cdn" ? "use cdn" : "use mounted folder"},
+                        {if \OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["mode"] === "server"}
+                            {php echo \OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["server"]["kind"] === "cdn" ? "use cdn" : "use mounted folder"},
                             upload to remote
                         {else}
                             (none)
@@ -227,7 +227,7 @@
                         Forbidden short addresses
                     </td>
                     <td class="v">
-                        {implode(", ", OPENVK_ROOT_CONF["openvk"]["preferences"]["shortcodes"]["forbiddenNames"])}
+                        {implode(", ", \OPENVK_ROOT_CONF["openvk"]["preferences"]["shortcodes"]["forbiddenNames"])}
                     </td>
                     <td class="v">
                         (none)
@@ -238,7 +238,7 @@
                         Registration
                     </td>
                     <td class="v">
-                        {php echo OPENVK_ROOT_CONF["openvk"]["preferences"]["registration"]["enable"] ? "Enabled" : "Disabled"}
+                        {php echo \OPENVK_ROOT_CONF["openvk"]["preferences"]["registration"]["enable"] ? "Enabled" : "Disabled"}
                     </td>
                     <td class="v">
                         Enabled
@@ -249,7 +249,7 @@
                         Ads
                     </td>
                     <td class="v">
-                        {php echo OPENVK_ROOT_CONF["openvk"]["preferences"]["adPoster"]["enable"] ? "Enabled" : "Disabled"}
+                        {php echo \OPENVK_ROOT_CONF["openvk"]["preferences"]["adPoster"]["enable"] ? "Enabled" : "Disabled"}
                     </td>
                     <td class="v">
                         Disabled
@@ -260,7 +260,7 @@
                         NDA Test Label
                     </td>
                     <td class="v">
-                        {php echo OPENVK_ROOT_CONF["openvk"]["preferences"]["bellsAndWhistles"]["testLabel"] ? "Enabled" : "Disabled"}
+                        {php echo \OPENVK_ROOT_CONF["openvk"]["preferences"]["bellsAndWhistles"]["testLabel"] ? "Enabled" : "Disabled"}
                     </td>
                     <td class="v">
                         Disabled
@@ -271,7 +271,7 @@
                         Number verification
                     </td>
                     <td class="v">
-                        {php echo OPENVK_ROOT_CONF["openvk"]["credentials"]["smsc"]["enable"] ? "SMS" : "Disabled"}
+                        {php echo \OPENVK_ROOT_CONF["openvk"]["credentials"]["smsc"]["enable"] ? "SMS" : "Disabled"}
                     </td>
                     <td class="v">
                         Disabled
@@ -282,7 +282,7 @@
                         Notifications
                     </td>
                     <td class="v">
-                        {php echo OPENVK_ROOT_CONF["openvk"]["credentials"]["eventDB"]["enable"] ? "Enabled (Yandex Clickhouse or Percona)" : "Disabled"}
+                        {php echo \OPENVK_ROOT_CONF["openvk"]["credentials"]["eventDB"]["enable"] ? "Enabled (Yandex Clickhouse or Percona)" : "Disabled"}
                     </td>
                     <td class="v">
                         Disabled
@@ -293,7 +293,7 @@
                         Session duration
                     </td>
                     <td class="v">
-                        {=CHANDLER_ROOT_CONF["security"]["sessionDuration"]} days
+                        {=\CHANDLER_ROOT_CONF["security"]["sessionDuration"]} days
                     </td>
                     <td class="v">
                         1 day
@@ -344,7 +344,7 @@
                         Default
                     </td>
                     <td class="v">
-                        {=OPENVK_VERSION}
+                        {=\OPENVK_VERSION}
                     </td>
                     <td class="v">
                         Default OpenVK look and feel.

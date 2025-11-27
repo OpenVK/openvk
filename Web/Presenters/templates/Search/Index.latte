@@ -340,7 +340,7 @@
                 {if $section == "users"}
                     <option value="id" n:attr="selected => $order == 'id'">{_s_order_by_reg_date}</option>
                     
-                    {if OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"]}
+                    {if \OPENVK_ROOT_CONF["openvk"]["preferences"]["commerce"]}
                         <option value="rating" n:attr="selected => $order == 'rating'">{_s_order_by_rating}</option>
                     {/if}
                 {elseif $section == "posts"}

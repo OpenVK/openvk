@@ -28,7 +28,7 @@
         <div n:attr="id => ($isBl ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => ($isBl ? 'act_tab_a' : 'ki')" href="/settings?act=blacklist">{_blacklist}</a>
         </div>
-        <div n:if="OPENVK_ROOT_CONF['openvk']['preferences']['commerce']" n:attr="id => (($isFinance || $isFinanceTU) ? 'activetabs' : 'ki')" class="tab">
+        <div n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['commerce']" n:attr="id => (($isFinance || $isFinanceTU) ? 'activetabs' : 'ki')" class="tab">
             <a n:attr="id => (($isFinance || $isFinanceTU) ? 'act_tab_a' : 'ki')" href="/settings?act=finance">{_points}</a>
         </div>
         <div n:attr="id => ($isInterface ? 'activetabs' : 'ki')" class="tab">
@@ -248,7 +248,7 @@
                     <tr>
                         <td>
                             <div class="accent-box">
-                                {tr("end_all_sessions_description", OPENVK_ROOT_CONF['openvk']['appearance']['name'])}
+                                {tr("end_all_sessions_description", \OPENVK_ROOT_CONF['openvk']['appearance']['name'])}
                             </div>
                         </td>
                     </tr>
@@ -451,7 +451,7 @@
                 </div>
                 {_points_count}<br/>
                 <small><a href="?act=finance.top-up">[{_have_voucher}?]</a></small><br>
-                <small n:if="OPENVK_ROOT_CONF['openvk']['preferences']['ton']['enabled']">
+                <small n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['ton']['enabled']">
                     <a href="javascript:showCoinsTopUpTroughTon()">[{_transfer_trough_ton}]</a>
                 </small>
             </div>
@@ -465,7 +465,7 @@
             textFit(balance, { alignVert: true });
 
             function convertCurrency(coin) {
-                var currencyTON = {php echo OPENVK_ROOT_CONF['openvk']['preferences']['ton']['rate']};
+                var currencyTON = {php echo \OPENVK_ROOT_CONF['openvk']['preferences']['ton']['rate']};
                 u(".coins_dialog_conv").nodes[0].innerHTML = coin * currencyTON + " TON"; 
             }
 
@@ -475,7 +475,7 @@
                         ${ tr("transfer_ton_contents") }
                     </div>
                     <div style="margin-top: 30px">` +
-                    {tr("transfer_ton_address", OPENVK_ROOT_CONF['openvk']['preferences']['ton']['address'], str_replace("$1", $thisUser->getId(), OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["hint"]))} + 
+                    {tr("transfer_ton_address", \OPENVK_ROOT_CONF['openvk']['preferences']['ton']['address'], str_replace("$1", $thisUser->getId(), \OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["hint"]))} + 
                     `<div style="text-align: center;">
                         <img width="225" height="225" src="data:` + {$qrCodeType} + `;base64,` + {$qrCodeData} + `"><br>
                         <input oninput="convertCurrency(this.value)"> = <span class="coins_dialog_conv">0 TON</span>
@@ -724,7 +724,7 @@
                             <span class="nobold">{_bookmarks_tab}</span>
                         </td>
                     </tr>
-                    <tr n:if="sizeof(OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0">
+                    <tr n:if="sizeof(\OPENVK_ROOT_CONF['openvk']['preferences']['menu']['links']) > 0">
                         <td width="120" valign="top" align="right" align="right">
                             <input
                                   n:attr="checked => $user->getLeftMenuItemStatus('links')"
@@ -734,7 +734,7 @@
                         <td>
                             <span class="nobold">{_additional_links}</span>
                         </td>
-                    </tr><tr n:if="OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable']">
+                    </tr><tr n:if="\OPENVK_ROOT_CONF['openvk']['preferences']['adPoster']['enable']">
                         <td width="120" valign="top" align="right" align="right">
                             <input
                                   n:attr="checked => $user->getLeftMenuItemStatus('poster')"

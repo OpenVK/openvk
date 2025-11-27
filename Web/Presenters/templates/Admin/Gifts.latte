@@ -42,7 +42,7 @@
                         {$gift->getUsages()} раз
                     </td>
                     <td style="vertical-align: middle;">
-                        {if $gift->getLimit() === INF}
+                        {if $gift->getLimit() === \INF}
                             Отсутствует
                         {else}
                             Не более {$gift->getLimit()} дарений
