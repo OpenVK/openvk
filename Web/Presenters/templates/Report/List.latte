@@ -43,9 +43,11 @@
         {$x->getReportAuthor()->getCanonicalName()}
     </a>
     пожаловал{!$x->getReportAuthor()->isFemale() ? 'ся' : 'ась'} на
-        {if $x->getContentType() === "user"}<a href="{$x->getContentObject()->getURL()}">{/if}
+        {if $x->getContentType() === "user"}
+            <a href="{$x->getContentObject()->getURL()}">{$x->getContentName()}</a>
+        {else}
             {$x->getContentName()}
-        {if $x->getContentType() === "user"}</a>{/if}
+        {/if}
 
     {if $x->hasDuplicates() && !$orig}
     <br />

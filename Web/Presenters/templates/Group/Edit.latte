@@ -78,10 +78,10 @@
                         </td>
                         <td>
                             <select name="wall">
-                                <option value="1" n:attr="selected => $club->getWallType() == 1" /> {_group_allow_post_for_everyone}</option>
-                                <option value="2" n:attr="selected => $club->getWallType() == 2" /> {_group_limited_post}</option>
-                                <option value="0" n:attr="selected => $club->getWallType() == 0" /> {_group_closed_post}</option>
-                            <select>
+                                <option value="1" n:attr="selected => $club->getWallType() == 1" > {_group_allow_post_for_everyone}</option>
+                                <option value="2" n:attr="selected => $club->getWallType() == 2" > {_group_limited_post}</option>
+                                <option value="0" n:attr="selected => $club->getWallType() == 0" > {_group_closed_post}</option>
+                            </select>
 
                             <input type="checkbox" name="hide_from_global_feed" value="1" n:attr="checked => $club->isHideFromGlobalFeedEnabled(), disabled => $club->isHidingFromGlobalFeedEnforced()" /> {_group_hide_from_global_feed}
                         </td>
