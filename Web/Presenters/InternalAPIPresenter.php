@@ -166,11 +166,11 @@ final class InternalAPIPresenter extends OpenVKPresenter
         header("Content-Type: text/plain");
 
         if ($type == 'post') {
-            $this->template->_template = 'components/post.xml';
+            $this->template->_template = 'components/post.latte';
             $this->template->post = $post;
             $this->template->commentSection = $this->queryParam("from_page") == "another";
         } elseif ($type == 'comment') {
-            $this->template->_template = 'components/comment.xml';
+            $this->template->_template = 'components/comment.latte';
             $this->template->comment = $post;
         } else {
             exit('');

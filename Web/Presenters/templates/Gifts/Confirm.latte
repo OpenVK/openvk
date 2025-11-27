@@ -1,0 +1,30 @@
+{extends "../@layout.latte"}
+
+{block title}
+    {_send_gift}
+{/block}
+
+{block header}
+    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> »
+    <a href="/gifts?act=pick&user={$user->getId()}">{_gift_select}</a> »
+    <a href="/gifts?act=pick&user={$user->getId()}">{_collections}</a> »
+    <a href="/gifts?act=menu&user={$user->getId()}&pack={$cat->getId()}">{$cat->getName(tr("__lang"))}</a> »
+    {_confirm}
+{/block}
+
+{block content}
+    <center>
+        <img class="gift_confirm_pic" style="max-width: 256px;" src="{$gift->getImage(2)}" alt="Подарок" />
+    
+        <form style="width: 65%;" method="POST">
+            <textarea name="comment" style="resize: vertical; height: 65px;" placeholder="{_gift_your_message}"></textarea>
+            <br/><br/>
+            
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+            <input type="submit" value="{_send}" class="button" />
+            <label>
+                <input type="checkbox" name="anonymous"> {_as_anonymous}
+            </label>
+        </form>
+    </center>
+{/block}

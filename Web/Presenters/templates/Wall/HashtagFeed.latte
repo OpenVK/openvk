@@ -1,0 +1,23 @@
+{extends "../@layout.latte"}
+{block title}#{$hashtag}{/block}
+
+{block header}
+    #{$hashtag}
+{/block}
+
+{block content}
+    <center>
+        {foreach $posts as $post}
+            <a name="postGarter={$post->getId()}"></a>
+            
+            {include "../components/post.latte", post => $post, onWallOf => true}
+            
+            {php $paginatorConf->count++}
+        {/foreach}
+        {include "../components/paginator.latte", conf => $paginatorConf}
+    </center>
+
+    {if isset($thisUser) && $thisUser->hasMicroblogEnabled()}
+        {script "js/al_comments.js"}
+    {/if}
+{/block}

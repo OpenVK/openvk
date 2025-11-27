@@ -1,0 +1,71 @@
+{extends "@layout.latte"}
+{var $search = true}
+
+{block title}
+    {_admin_club_search}
+{/block}
+
+{block heading}
+    {_groups}
+{/block}
+
+{block searchTitle}
+    {include title}
+{/block}
+
+{block content}
+    {var $clubs  = iterator_to_array($clubs)}
+    {var $amount = sizeof($clubs)}
+    
+    <table class="aui aui-table-list">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>{_admin_title}</th>
+                <th>{_admin_author}</th>
+                <th>{_admin_description}</th>
+                <th>{_admin_shortcode}</th>
+                <th>{_admin_actions}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr n:foreach="$clubs as $club">
+                <td>{$club->getId()}</td>
+                <td>
+                    <span class="aui-avatar aui-avatar-xsmall">
+                        <span class="aui-avatar-inner">
+                            <img src="{$club->getAvatarUrl('miniscule')}" alt="{$club->getCanonicalName()}" style="object-fit: cover;" role="presentation" />
+                        </span>
+                    </span>
+                    
+                    <a href="{$club->getURL()}">{$club->getCanonicalName()}</a>
+                </td>
+                <td>
+                    {var $user = $club->getOwner()}
+                    
+                    <span class="aui-avatar aui-avatar-xsmall">
+                        <span class="aui-avatar-inner">
+                            <img src="{$user->getAvatarUrl('miniscule')}" alt="{$user->getCanonicalName()}" role="presentation" />
+                        </span>
+                    </span>
+                    
+                    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a>
+                </td>
+                <td>{$club->getDescription() ?? "(" . tr("none") . ")"}</td>
+                <td>{$club->getShortCode()}</td>
+                <td>
+                    <a class="aui-button aui-button-primary" href="/admin/clubs/id{$club->getId()}">
+                        <span class="aui-icon aui-icon-small aui-iconfont-new-edit">{_edit}</span>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <br/>
+    <div align="right">
+        {var $isLast = ((10 * (($_GET['p'] ?? 1) - 1)) + $amount) < $count}
+        
+        <a n:if="($_GET['p'] ?? 1) > 1" class="aui-button" href="?p={($_GET['p'] ?? 1) - 1}">&laquo;</a>
+        <a n:if="$isLast" class="aui-button" href="?p={($_GET['p'] ?? 1) + 1}">&raquo;</a>
+    </div>
+{/block}

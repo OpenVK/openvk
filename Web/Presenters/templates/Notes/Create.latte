@@ -1,0 +1,58 @@
+{extends "../@layout.latte"}
+
+{block title}{_create_note}{/block}
+
+{block header}
+    {_create_note}
+{/block}
+
+{block content}
+    <form id="noteFactory" method="POST">
+        <input type="text" name="name" placeholder="{_name_note}" style="width:603px;" />
+        <br/><br/>
+        <textarea name="html" style="display:none;"></textarea>
+        <div id="editor" style="width:600px;height:300px;border:1px solid grey"></div>
+        
+        <p><i>{_something_is_supported_from_xhtml|noescape}</i></p>
+        
+        <input type="hidden" name="hash" value="{$csrfToken}" />
+        <button class="button">{_save}</button>
+        <a href="javascript:openPreviewWindow()" style="float: right;">{_note_preview}</a>
+    </form>
+    
+    {script "js/node_modules/monaco-editor/min/vs/loader.js"}
+    {script "js/node_modules/requirejs/bin/r.js"}
+    <script>
+        require.config({
+            paths: {
+                'vs': '/assets/packages/static/openvk/js/node_modules/monaco-editor/min/vs' 
+            }
+        });
+        require(['vs/editor/editor.main'], function() {
+            window._editor = monaco.editor.create(document.getElementById('editor'), {
+                value: "",
+                lineNumbers: "off",
+                language: "html"
+            });
+        });
+        
+        document.querySelector("#noteFactory").addEventListener("submit", function() {
+            document.querySelector("textarea").value = window._editor.getValue();
+        });
+
+        window._preview = undefined;
+        function openPreviewWindow() {
+            if(typeof window._preview != "undefined") {
+                window._preview.close();
+                window._preview = undefined;
+            }
+
+            window._preview = window.open("about:blank", "_blank", { popup: true });
+            window._preview.document.write(`<style>form { display: none; }</style><form action="${ location.origin }/notes/prerender" method="POST" enctype="multipart/form-data"><input name="title" /><input name="html" /><input name="hash" /></form>`);
+            window._preview.document.querySelector("input[name=title]").value = document.querySelector("input[name=name]").value;
+            window._preview.document.querySelector("input[name=html]").value = window._editor.getValue();
+            window._preview.document.querySelector("input[name=hash]").value = document.querySelector("meta[name=csrf]").attributes.value.value;
+            window._preview.document.querySelector("form").submit();
+        }
+    </script>
+{/block}

@@ -37,7 +37,7 @@ final class PollPresenter extends OpenVKPresenter
         if ((is_null($this->user) || $poll->canVote($this->user->identity)) && !$ended) {
             $this->template->options = $poll->getOptions();
 
-            $this->template->_template = "Poll/Poll.xml";
+            $this->template->_template = "Poll/Poll.latte";
             return;
         }
 
@@ -49,7 +49,7 @@ final class PollPresenter extends OpenVKPresenter
             $this->template->results = $poll->getResults($this->user->identity);
         }
 
-        $this->template->_template = "Poll/PollResults.xml";
+        $this->template->_template = "Poll/PollResults.latte";
     }
 
     public function renderVoters(int $pollId): void

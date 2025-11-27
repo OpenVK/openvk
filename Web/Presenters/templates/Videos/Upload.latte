@@ -1,0 +1,50 @@
+{extends "../@layout.latte"}
+{block title}{_upload_video}{/block}
+
+{block header}
+    <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
+    »
+    <a href="/videos{$thisUser->getId()}">{_videos}</a>
+    » 
+    {_upload_video}
+{/block}
+
+{block content}
+<div class="container_gray">
+    <h4>{_upload_video}</h4>
+    <form method="post" enctype="multipart/form-data">
+      <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+        <tbody>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_name}:</span></td>
+            <td><input type="text" name="name" /></td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_description}:</span></td>
+            <td><textarea name="desc"></textarea></td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_video}:</span></td>
+            <td>
+              <label class="button" style="">{_browse}
+                <input type="file" id="blob" name="blob" style="display: none;" onchange="filename.innerHTML=blob.files[0].name" accept="video/*" />
+              </label>
+              <div id="filename" style="margin-top: 10px;"></div>
+            </td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"><span class="nobold">{_video_link_to_yt}:</span></td>
+            <td><input type="text" name="link" placeholder="https://www.youtube.com/watch?v=9FWSRQEqhKE" /></td>
+          </tr>
+          <tr>
+            <td width="120" valign="top"></td>
+            <td>
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" class="button" name="submit" value="{_upload_button}" />
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </form>
+</div>
+{/block}

@@ -1,0 +1,43 @@
+{extends "../@layout.latte"}
+{block title}{_create_group}{/block}
+
+{block header}
+    {_create_group}
+{/block}
+
+{block content}
+<div class="container_gray">
+    <h4>{_create_group}</h4>
+    <form method="POST" enctype="multipart/form-data">
+        <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+            <tbody>
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_name}: </span>
+                    </td>
+                    <td>
+                        <input type="text" name="name" value="" />
+                    </td>
+                </tr>
+                <tr>
+                    <td width="120" valign="top">
+                        <span class="nobold">{_description}: </span>
+                    </td>
+                    <td>
+                        <textarea type="text" name="about"></textarea>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        
+                    </td>
+                    <td>
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="submit" value="{_create}" class="button" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+{/block}

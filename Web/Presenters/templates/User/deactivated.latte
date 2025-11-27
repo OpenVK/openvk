@@ -1,0 +1,30 @@
+{extends "../@layout.latte"}
+{block title}{$user->getCanonicalName()}{/block}
+
+{block header}
+    {$user->getCanonicalName()}
+{/block}
+
+{block content}
+    <div class="left_small_block">
+        <div>
+            <img src="{$user->getAvatarUrl('normal')}"
+                alt="{$user->getCanonicalName()}"
+                style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
+        </div>
+    </div>
+
+    <div class="right_big_block">
+        <div class="page_info">
+            <div class="accountInfo clearFix">
+                <div class="profileName">
+                    <h2>{$user->getFullName()}</h2>
+                    <div class="page_status" style="color: #AAA;">{_profile_deactivated_status}</div>
+                </div>
+            </div>
+            <center style="color: #AAA;margin: 40px 0;font-size: 13px;">
+                {_profile_deactivated_info|noescape}
+            </center>
+        </div>
+    </div>
+{/block}

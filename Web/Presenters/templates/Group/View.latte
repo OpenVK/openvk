@@ -1,0 +1,316 @@
+{extends "../@layout.latte"}
+{var $backdrops = $club->getBackDropPictureURLs()}
+
+{block title}{$club->getName()}{/block} 
+
+{block header}
+    {$club->getName()}
+    
+    <img n:if="$club->isVerified()"
+         class="name-checkmark"
+         src="/assets/packages/static/openvk/img/checkmark.png"
+         alt="{_verified_page}"
+         />
+{/block}
+
+{block content}
+<div class="left_big_block">
+    <div n:if="!is_null($alert = $club->getAlert())" class="group-alert">{strpos($alert, "@") === 0 ? tr(substr($alert, 1)) : $alert}</div>
+
+    <div class="content_title_expanded" onclick="hidePanel(this);">
+        {_information}
+    </div>
+    
+    <div class="page_info">
+        <table class="ugc-table">
+            <tbody>
+                <tr>
+                    <td><span class="nobold">{_name_group}:</span></td>
+                    <td><b>{$club->getName()}</b></td>    
+                </tr>
+                <tr>
+                    <td><span class="nobold">{_description}:</span></td>
+                    <td>{$club->getDescriptionHtml()|noescape}</td>
+                </tr>
+                <tr n:if="!is_null($club->getWebsite())">
+                    <td><span class="nobold">{_website}: </span></td>
+                    <td>
+                        <a href="{$club->getWebsite()}" rel="ugc" target="_blank">
+                            {$club->getWebsite()}
+                        </a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div n:if="$thisUser && $club->getFollowersCount() > 0">
+        {var $followersCount = $club->getFollowersCount()}
+        
+        <div class="content_title_expanded" onclick="hidePanel(this, {$followersCount});">
+            {_participants}
+        </div>
+        <div>
+            <div class="content_subtitle">
+                {tr("participants", $followersCount)}
+                <div style="float:right;">
+                    <a href="/club{$club->getId()}/followers">{_all_title}</a>
+                </div>
+            </div>
+            <div style="padding-left: 5px;" class="content_list long">
+                <div class="cl_element" n:foreach="$club->getFollowers(1) as $follower">
+                    <div class="cl_avatar">
+                        <a href="{$follower->getURL()}">
+                            <img class="ava" src="{$follower->getAvatarUrl('miniscule')}" />
+                        </a>
+                    </div>
+                    <a href="{$follower->getURL()}" class="cl_name">
+                        <text class="cl_fname">{$follower->getFirstName()}</text>
+                        <text class="cl_lname">{$follower->getLastName()}</text>
+                    </a>    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div n:if="($topicsCount > 0 || $club->isEveryoneCanCreateTopics() || ($thisUser && $club->canBeModifiedBy($thisUser))) && $club->isDisplayTopicsAboveWallEnabled()">
+        <div class="content_title_expanded" onclick="hidePanel(this, {$topicsCount});">
+            {_discussions}
+        </div>
+        <div>
+            <div class="content_subtitle">
+                {tr("topics", $topicsCount)}
+                <div style="float: right;">
+                    <a href="/board{$club->getId()}">{_all_title}</a>
+                </div>
+            </div>
+            <div>
+                <div n:foreach="$topics as $topic" class="topic-list-item" style="padding: 8px;">
+                    <b><a href="/topic{$topic->getPrettyId()}">{$topic->getTitle()}</a></b><br>
+                    <span class="nobold">{tr("updated_at", $topic->getUpdateTime())}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div n:if="$thisUser">
+        <div class="content_title_expanded" onclick="hidePanel(this, {$audiosCount});">
+            {_audios}
+        </div>
+        <div>
+            <div class="content_subtitle">
+                {tr("audios_count", $audiosCount)}
+                <div style="float:right;">
+                    <a href="/audios-{$club->getId()}">{_all_title}</a>
+                </div>
+            </div>
+            <div class="content_list long">
+                <div class="audio" n:foreach="$audios as $audio" style="width: 100%;">
+                    {include "../Audio/player.latte", audio => $audio}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div n:if="!is_null($suggestedPostsCountByUser) && $suggestedPostsCountByUser > 0" class="sugglist">
+        <a href="/club{$club->getId()}/suggested" id="cound_r">{tr("suggested_by_you", $suggestedPostsCountByUser)}</a>
+    </div>
+
+    <div n:if="!is_null($suggestedPostsCountByEveryone) && $suggestedPostsCountByEveryone > 0" class="sugglist">
+        <a href="/club{$club->getId()}/suggested" id="cound_r">{tr("suggested_by_everyone", $suggestedPostsCountByEveryone)}</a>
+    </div>
+
+    {presenter "openvk!Wall->wallEmbedded", -$club->getId()}
+
+    <script n:if="isset($thisUser) && $club->getWallType() == 2 && !$club->canBeModifiedBy($thisUser)">
+        document.querySelector("textarea").setAttribute("placeholder", tr("suggest_new"))
+    </script>
+</div>
+<div class="right_small_block">
+    {var $avatarPhoto = $club->getAvatarPhoto()}
+    {var $avatarLink = ((is_null($avatarPhoto) ? FALSE : $avatarPhoto->isAnonymous()) ? "/photo" . ("s/" . base_convert((string) $avatarPhoto->getId(), 10, 32)) : $club->getAvatarLink())}
+    <div class="avatar_block" style="position:relative;" data-club="{$club->getId()}">
+        {if $thisUser && $club->canBeModifiedBy($thisUser)}
+        <div class="avatar_controls">
+            <div {if !$hasAvatar}style="display:none"{/if} class="avatarDelete hoverable"></div>
+            <div class="avatar_variants">
+                <a {if $hasAvatar}style="display:none"{/if} class="_add_image hoverable upload_image" id="add_image">
+                <span>{_add_image}</span></a>
+                <a {if !$hasAvatar}style="display:none"{/if} class="_add_image hoverable set_image" id="add_image">
+                <span>{_upload_new_picture}</span></a>
+            </div>
+        </div>
+        {/if}
+
+        <a href="{$avatarLink|nocheck}">
+            <img src="{$club->getAvatarUrl('normal')}" id="bigAvatar" style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
+        </a>
+    </div>
+    <div n:ifset="$thisUser" id="profile_links">
+        {if $club->canBeModifiedBy($thisUser)}
+            <a href="/club{$club->getId()}/edit" id="profile_link">{_edit_group}</a>
+            <a href="/club{$club->getId()}/stats" rel="nofollow" id="profile_link">{_statistics}</a>
+        {/if}
+        {if $thisUser->getChandlerUser()->can("access")->model("admin")->whichBelongsTo(NULL)}
+            <a href="/admin/clubs/id{$club->getId()}" id="profile_link">{_manage_group_action}</a>
+            <a href="/admin/logs?obj_id={$club->getId()}&obj_type=Club" class="profile_link">Последние действия</a>
+        {/if}
+        {if $club->getSubscriptionStatus($thisUser) == false}
+            <form action="/setSub/club" method="post">
+                <input type="hidden" name="act" value="add" />
+                <input type="hidden" name="id"  value="{$club->getId()}" />
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" id="profile_link" value="{_join_community}" />
+            </form>
+        {else}
+            <form action="/setSub/club" method="post">
+                <input type="hidden" name="act" value="rem" />
+                <input type="hidden" name="id"  value="{$club->getId()}" />
+                <input type="hidden" name="hash" value="{$csrfToken}" />
+                <input type="submit" id="profile_link" value="{_leave_community}" />
+            </form>
+        {/if}
+        {var $canReport = $thisUser->getId() != $club->getOwner()->getId()}
+        {if $canReport}
+        <a class="profile_link" style="display:block;" href="javascript:reportClub({$club->getId()})">{_report}</a>
+        {/if}
+        <a n:if="!$club->isHideFromGlobalFeedEnabled()" class="profile_link" style="display:block;" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$club->getRealId()}">
+            {if !$ignore_status}{_ignore_club}{else}{_unignore_club}{/if}
+        </a>
+    </div>
+    <div>
+        <div class="content_title_expanded" onclick="hidePanel(this);">
+            {_group_type}
+        </div>
+        <div style="padding:4px">
+            {_group_type_open}
+        </div>
+    </div>
+    <div n:if="$club->getAdministratorsListDisplay() == 0">
+        <div class="content_title_expanded" onclick="hidePanel(this);">
+            {_creator}
+        </div>
+        <div class="avatar-list-item" style="padding: 8px;">
+            {var $author = $club->getOwner()}
+            <div class="avatar">
+                <a href="{$author->getURL()}">
+                    <img class="ava" src="{$author->getAvatarUrl()}" />
+                </a>
+            </div>
+            {* Это наверное костыль, ну да ладно *}
+            <div n:class="info, mb_strlen($author->getCanonicalName()) < 22 ? info-centered" n:if="empty($club->getOwnerComment())">
+                <a href="{$author->getURL()}" class="title">{$author->getCanonicalName()}</a>
+            </div>
+            <div class="info" n:if="!empty($club->getOwnerComment())">
+                <a href="{$author->getURL()}" class="title">{$author->getCanonicalName()}</a>
+                <div class="subtitle">{$club->getOwnerComment()}</div>
+            </div>
+        </div>
+    </div>
+    <div n:if="$club->getAdministratorsListDisplay() == 1">
+        {var $managersCount = $club->getManagersCount(true)}
+
+        <div class="content_title_expanded" onclick="hidePanel(this, {$managersCount});">
+            {_administrators}
+        </div>
+        <div>
+            <div class="content_subtitle">
+                {tr("administrators", $managersCount)}
+                <div style="float: right;">
+                    <a href="/club{$club->getId()}/followers?onlyAdmins=1">{_all_title}</a>
+                </div>
+            </div>
+            <div class="avatar-list">
+                <div class="avatar-list-item" n:if="!$club->isOwnerHidden()">
+                    {var $author = $club->getOwner()}
+                    <div class="avatar">
+                        <a href="{$author->getURL()}">
+                            <img class="ava" src="{$author->getAvatarUrl()}" />
+                        </a>
+                    </div>
+                    <div class="info">
+                        <a href="{$author->getURL()}" class="title">{$author->getCanonicalName()}</a>
+                        <div class="subtitle" n:if="!empty($club->getOwnerComment())">{$club->getOwnerComment()}</div>
+                    </div>
+                </div>
+                <div class="avatar-list-item" n:foreach="$club->getManagers(1, true) as $manager">
+                    {var $user = $manager->getUser()}
+                    <div class="avatar">
+                        <a href="{$user->getURL()}">
+                            <img height="32" class="ava" src="{$user->getAvatarUrl()}" />
+                        </a>
+                    </div>
+                    <div class="info">
+                        <a href="{$user->getURL()}" class="title">{$user->getCanonicalName()}</a>
+                        <div class="subtitle" n:if="!empty($manager->getComment())">{$manager->getComment()}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div n:if="$albumsCount > 0 || ($thisUser && $club->canBeModifiedBy($thisUser))">
+        <div class="content_title_expanded" onclick="hidePanel(this, {$albumsCount});">
+            {_albums}
+        </div>
+        <div>
+            <div class="content_subtitle">
+                {tr("albums", $albumsCount)}
+                <div style="float:right;">
+                    <a href="/albums{$club->getId() * -1}">{_all_title}</a>
+                </div>
+            </div>
+            <div style="padding: 5px;">
+                <div class="ovk-album" style="display: inline-block;" n:foreach="$albums as $album">
+                    <div style="text-align: center;float: left;height: 54pt;width: 100px;">
+                        {var $cover = $album->getCoverPhoto()}
+                        
+                        <img
+                            src="{is_null($cover)?'/assets/packages/static/openvk/img/camera_200.png':$cover->getURL()}"
+                            style="max-width: 80px; max-height: 54pt;" loading=lazy />
+                    </div>
+                    <div>
+                        <b><a href="/album{$album->getPrettyId()}">{$album->getName()}</a></b><br>
+                        <span class="nobold">{tr("updated_at", $album->getEditTime() ?? $album->getCreationTime())}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div n:if="($topicsCount > 0 || $club->isEveryoneCanCreateTopics() || ($thisUser && $club->canBeModifiedBy($thisUser))) && !$club->isDisplayTopicsAboveWallEnabled()">
+        <div class="content_title_expanded" onclick="hidePanel(this, {$topicsCount});">
+            {_discussions}
+        </div>
+        <div>
+            <div class="content_subtitle">
+                {tr("topics", $topicsCount)}
+                <div style="float: right;">
+                    <a href="/board{$club->getId()}">{_all_title}</a>
+                </div>
+            </div>
+            <div>
+                <div n:foreach="$topics as $topic" class="topic-list-item">
+                    <b><a href="/topic{$topic->getPrettyId()}">{$topic->getTitle()}</a></b><br>
+                    <span class="nobold">{tr("updated_at", $topic->getUpdateTime())}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div n:if="($thisUser && $docsCount > 0 || ($thisUser && $club->canBeModifiedBy($thisUser)))">
+        <div class="content_title_expanded" onclick="hidePanel(this, {$topicsCount});">
+            {_documents}
+        </div>
+        <div>
+            <div class="content_subtitle">
+                {tr("documents", $docsCount)}
+                <div style="float: right;">
+                    <a href="/docs{$club->getRealId()}">{_all_title}</a>
+                </div>
+            </div>
+            <div>
+                {foreach $docs as $doc}
+                    {include "../Documents/components/doc.latte", doc => $doc, hideButtons => true, noTags => true}
+                {/foreach}
+            </div>
+        </div>
+    </div>
+</div>
+
+{/block}

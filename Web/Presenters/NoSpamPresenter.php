@@ -83,7 +83,7 @@ final class NoSpamPresenter extends OpenVKPresenter
 
             $this->template->models = $sortedModels;
         } elseif ($mode === "templates") {
-            $this->template->_template = "NoSpam/Templates.xml";
+            $this->template->_template = "NoSpam/Templates.latte";
             $this->template->disable_ajax = 1;
             $filter = [];
             if ($this->queryParam("id")) {

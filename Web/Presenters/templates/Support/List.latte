@@ -1,0 +1,47 @@
+{extends "../@listView.latte"}
+
+{block title}
+    Helpdesk
+{/block}
+
+{block header}
+    Helpdesk » {_support_tickets}
+{/block}
+
+{block tabs}
+    <div n:attr="id => ($act === 'open' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($act === 'open' ? 'act_tab_a' : 'ki')" href="?">{_support_opened}</a>
+    </div>
+    <div n:attr="id => ($act === 'answered' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($act === 'answered' ? 'act_tab_a' : 'ki')" href="?act=answered">{_support_answered}</a>
+    </div>
+    <div n:attr="id => ($act === 'closed' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($act === 'closed' ? 'act_tab_a' : 'ki')" href="?act=closed">{_support_closed}</a>
+    </div>
+    <div class="tab">
+        <a href="/support/agent{$thisUser->getId()}">{_agent_profile}</a>
+    </div>
+{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block link|strip|stripHtml}
+    /support/reply/{$x->getId()}
+{/block}
+
+{block preview}
+    <center>
+        <img src="/assets/packages/static/openvk/img/note_icon.png" alt="{_support_ticket}" style="margin-top: 8px;">
+    </center>
+{/block}
+
+{block name}
+    {$x->getName()}
+{/block}
+
+{block description}
+    {var $author = $x->getUser()}
+    
+    {ovk_proc_strtr($x->getContext(), 200)}<br/>
+    <span class="nobold">{_author}: </span> <a href="{$author->getURL()}">{$author->getCanonicalName()}</a>
+{/block}

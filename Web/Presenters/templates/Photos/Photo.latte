@@ -1,0 +1,75 @@
+{extends "../@layout.latte"}
+
+{block title}{_photo}{/block}
+
+{block header}
+    {ifset $album}
+        {var $album_owner = $album->getOwner()}
+        <a href="{$album_owner->getURL()}">
+            {$album_owner->getCanonicalName()}
+        </a>
+        {if ($album_owner instanceof openvk\Web\Models\Entities\Club)}
+            » <a href="/albums{$album_owner->getId() * -1}">{_albums}</a>
+        {else}
+            » <a href="/albums{$album_owner->getId()}">{_albums}</a>
+        {/if}
+        » <a href="/album{$album->getPrettyId()}">{$album->getName()}</a>
+    {else}
+        <a href="{$owner->getURL()}">{$owner->getCanonicalName()}</a>
+    {/ifset}
+    » {_photo}
+{/block}
+
+{block content}
+    <div class='media-page-wrapper photo-page-wrapper'>
+        <div class='photo-page-wrapper-photo'>
+            <img src="{$photo->getURLBySizeId('large')}" />
+        </div>
+        
+        <div class='ovk-photo-details'>
+            <div class='media-page-wrapper-description'>
+                <p n:if='!empty($photo->getDescription())'>{$photo->getDescription()}</p>
+                <div class='upload_time'>
+                    {_info_upload_date}: {$photo->getPublicationTime()}
+                    {if isset($thisUser)}
+                        |
+                        {var $liked = $photo->hasLikeFrom($thisUser)}
+                        {var $likesCount = $photo->getLikesCount()}
+                        <div class='like_wrap tidy'>
+                            <a href="/photo{$photo->getPrettyId()}/like?hash={rawurlencode($csrfToken)}" class="post-like-button" data-liked="{(int) $liked}" data-likes="{$likesCount}" data-id="{$photo->getPrettyId()}" data-type='photo'>
+                                <div class="heart" id="{if $liked}liked{/if}"></div>
+                                <span class="likeCnt">{if $likesCount > 0}{$likesCount}{/if}</span>
+                            </a>
+                        </div>
+                    {/if}
+                </div>
+            </div>
+
+            <hr/>
+            
+            <div class="media-page-wrapper-details">
+                <div class='media-page-wrapper-comments'>
+                    {include "../components/comments.latte", comments => $comments, count => $cCount, page => $cPage, model => "photos", parent => $photo, custom_id => 999}
+                </div>
+                <div class='media-page-wrapper-actions'>
+                    <a href="{$owner->getURL()}" class='media-page-author-block'>
+                        <img class='cCompactAvatars' src="{$owner->getAvatarURL('miniscule')}">
+
+                        <div class='media-page-author-block-name'>
+                            <b>{$owner->getCanonicalName()}</b>
+                        </div>
+                    </a>
+                    <div n:if="isset($thisUser) && $thisUser->getId() === $photo->getOwner()->getId()">
+                        <a href="/photo{$photo->getPrettyId()}/edit" class="profile_link" style="display:block;width:96%;">{_edit}</a>
+                        <a id="_photoDelete" href="/photo{$photo->getPrettyId()}/delete" class="profile_link" style="display:block;width:96%;">{_delete}</a>
+                    </div>
+                    <a href="{$photo->getURL()}" class="profile_link" target="_blank" style="display:block;width:96%;">{_"open_original"}</a>
+                    <a n:if="isset($thisUser) && $thisUser->getId() != $photo->getOwner()->getId()" class="profile_link" style="display:block;width:96%;" href="javascript:reportPhoto({$photo->getId()})">{_report}</a>
+                    <a n:if="isset($thisUser)" onclick="javascript:repost({$photo->getPrettyId()}, 'photo')" class="profile_link" style="display:block;width:96%;">
+                        {_share}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+{/block}

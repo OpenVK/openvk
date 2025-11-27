@@ -1,0 +1,29 @@
+{extends "../@listView.latte"}
+
+{block title}
+    {_gift_select}
+{/block}
+
+{block header}
+    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> »
+    <a href="/gifts?act=pick&user={$user->getId()}">{_gift_select}</a> »
+    {_collections}
+{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block link|strip|stripHtml}
+    /gifts?act=menu&user={$user->getId()}&pack={$x->getId()}
+{/block}
+
+{block preview}
+    <img src="{$x->getThumbnailURL()}" width="75" alt="{$x->getName(tr('__lang'))}" loading=lazy />
+{/block}
+
+{block name}
+    {$x->getName(tr("__lang"))}
+{/block}
+
+{block description}
+    {$x->getDescription(tr("__lang"))}
+{/block}

@@ -1,0 +1,17 @@
+{extends "../@layout.latte"}
+{block title}{_verify_phone_number}{/block}
+
+{block header}
+    {_verify_phone_number}
+{/block}
+
+{block content}
+    <center>
+        <p>{_we_sended_first} <b>{substr_replace($change->number, "*****", 5, 5)}</b>, {_we_sended_end}:</p>
+        
+        <form method="POST">
+            <input type="text" name="code" placeholder="34156, например" required />
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+        </form>
+    </center>
+{/block}

@@ -1,0 +1,42 @@
+{extends "../@layout.latte"}
+{block title}{$user->getCanonicalName()}{/block}
+
+{block header}
+    {$user->getCanonicalName()}
+    <img n:if="$user->isVerified()"
+         class="name-checkmark"
+         src="/assets/packages/static/openvk/img/checkmark.png"
+         />
+{/block}
+
+{block content}
+    <div class="left_small_block">
+        <div>
+            <img src="{$user->getAvatarUrl('normal')}"
+                alt="{$user->getCanonicalName()}"
+                style="width: 100%; image-rendering: -webkit-optimize-contrast;" />
+        </div>
+        <div id="profile_links" n:if="isset($thisUser)">
+            <a class="profile_link" style="display:block;width:96%;" href="javascript:reportUser({$user->getId()})">{_report}</a>
+            <a n:if="!$blacklist_status" id="_bl_toggler" data-name="{$user->getMorphedName('genitive', false)}" data-val="1" data-id="{$user->getRealId()}" class="profile_link" style="display:block;width:96%;">{_bl_add}</a>
+            <a n:if="$blacklist_status" id="_bl_toggler" data-val="0" data-id="{$user->getRealId()}" class="profile_link" style="display:block;width:96%;">{_bl_remove}</a>
+            <a n:if="!$user->isHideFromGlobalFeedEnabled()" class="profile_link" style="display:block;width:96%;" id="__ignoreSomeone" data-val='{!$ignore_status ? 1 : 0}' data-id="{$user->getId()}">
+                {if !$ignore_status}{_ignore_user}{else}{_unignore_user}{/if}
+            </a>
+        </div>
+    </div>
+
+    <div class="right_big_block">
+        <div class="page_info">
+            <div class="accountInfo clearFix">
+                <div class="profileName">
+                    <h2>{$user->getFullName()}</h2>
+                </div>
+            </div>
+            <div class="msg msg_yellow" style="width: 93%;margin-top: 10px;">
+                {var $m = $user->isFemale() ? "f" : "m"}
+                {tr("limited_access_to_page_$m", $user->getFirstName())}
+            </div>
+        </div>
+    </div>
+{/block}

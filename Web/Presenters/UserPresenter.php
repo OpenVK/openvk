@@ -36,26 +36,26 @@ final class UserPresenter extends OpenVKPresenter
 
         if (!$user || $user->isDeleted() || !$user->canBeViewedBy($this->user->identity)) {
             if (!is_null($user) && $user->isDeactivated()) {
-                $this->template->_template = "User/deactivated.xml";
+                $this->template->_template = "User/deactivated.latte";
 
                 $this->template->user = $user;
             } elseif (!is_null($user) && $this->user->identity && $this->user->identity->isBlacklistedBy($user)) {
-                $this->template->_template = "User/blacklisted.xml";
+                $this->template->_template = "User/blacklisted.latte";
 
                 $this->template->blacklist_status = $user->isBlacklistedBy($this->user->identity);
                 $this->template->ignore_status = $user->isIgnoredBy($this->user->identity);
                 $this->template->user = $user;
             } elseif (!is_null($user) && $user->isBlacklistedBy($this->user->identity)) {
-                $this->template->_template = "User/blacklisted_pov.xml";
+                $this->template->_template = "User/blacklisted_pov.latte";
 
                 $this->template->ignore_status = $user->isIgnoredBy($this->user->identity);
                 $this->template->user = $user;
             } elseif (!is_null($user) && !$user->canBeViewedBy($this->user->identity)) {
-                $this->template->_template = "User/private.xml";
+                $this->template->_template = "User/private.latte";
 
                 $this->template->user = $user;
             } else {
-                $this->template->_template = "User/deleted.xml";
+                $this->template->_template = "User/deleted.latte";
             }
         } else {
             $this->template->albums      = (new Albums())->getUserAlbums($user);
@@ -762,7 +762,7 @@ final class UserPresenter extends OpenVKPresenter
                 }
 
                 $this->user->identity->generate2faBackupCodes();
-                $this->template->_template = "User/TwoFactorAuthCodes.xml";
+                $this->template->_template = "User/TwoFactorAuthCodes.latte";
                 $this->template->codes = $this->user->identity->get2faBackupCodes();
                 return;
             }

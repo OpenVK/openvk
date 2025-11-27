@@ -30,7 +30,7 @@ final class GroupPresenter extends OpenVKPresenter
             $this->notFound();
         } else {
             if ($club->isBanned()) {
-                $this->template->_template = "Group/Banned.xml";
+                $this->template->_template = "Group/Banned.latte";
             } else {
                 $docs = (new Documents())->getDocumentsByOwner($club->getRealId());
                 $this->template->albums = (new Albums())->getClubAlbums($club, 1, 3);

@@ -55,7 +55,7 @@ class Notification
             "./../components/notifications/$this->actionCode/",
             $this->encodeType($this->originModel),
             $this->encodeType($this->targetModel),
-            ".xml",
+            ".latte",
         ]);
     }
 
