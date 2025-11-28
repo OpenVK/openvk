@@ -51,7 +51,7 @@
                             <div class="post-author">
                                 <a n:if="!$dat->anon" href="{$dat->sender->getURL()}"><b class="post-author-name">{$dat->sender->getCanonicalName()}</b></a>
                                 <b n:if="$dat->anon" class="post-author-name">{_gift}</b>
-                                <img n:if="$dat->sender->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
+                                <img n:if="!$dat->anon && $dat->sender->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
                             </div>
                             <div class="post-content">
                                 <div class="text">
