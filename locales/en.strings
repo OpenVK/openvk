@@ -1177,6 +1177,7 @@
 
 /* Gifts */
 
+"my_gifts" = "My gifts";
 "gift" = "Gift";
 "gifts" = "Gifts";
 "gifts_zero" = "Zero gifts";
@@ -1187,7 +1188,10 @@
 "gifts_left_one" = "One gift left";
 "gifts_left_other" = "$1 gifts left";
 
+"back_to_user" = "To $1's page";
+"back_to_my_page" = "To my page";
 "send_gift" = "Send gift";
+"gift_back" = "Send gift in response";
 
 "gift_select" = "Select gift";
 "collections" = "Collections";

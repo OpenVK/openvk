@@ -1,4 +1,4 @@
-{extends "../@listView.xml"}
+{extends "../@layout.xml"}
 
 {block title}
     {tr("users_gifts", $user->getFirstName())}
@@ -9,41 +9,88 @@
     {_gifts}
 {/block}
 
-{* BEGIN ELEMENTS DESCRIPTION *}
+{block content}
+    <div class="tabs">
+        <div id="activetabs" class="tab">
+            <span id="act_tab_a">
+                {if $thisUser->getId() !== $user->getId()}
+                    {_gifts}
+                {else}
+                    {_my_gifts}
+                {/if}
+            </span>
+        </div>
+        {if !is_null($thisUser)}
+        <div id="ki" class="tab">
+            <a href="/gifts?act=pick&user={$user->getId()}">{_send_gift}</a>
+        </div>
+        {/if}
 
-{block link|strip|stripHtml}
-    javascript:false
-{/block}
+        <a href='{$user->getURL()}' class="side_link">
+            {if $thisUser->getId() !== $user->getId()}
+                {tr("back_to_user", $user->getMorphedName("genitive", false))}
+            {else}
+                {_back_to_my_page}
+            {/if}
+        </a>
+    </div>
+    {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+    {if sizeof($data) > 0}
+        <div class="scroll_container gifts_list">
+            <table border="0" style="font-size: 11px;" n:class="post, post-divider, gift, scroll_node" n:foreach="$data as $dat">
+                <tbody>
+                    <tr>
+                        <td class="post-author-ava" width="54" valign="top">
+                            <a class="post-author-url" href="{$dat->sender->getURL()}">
+                                <img n:if="!$dat->anon" src="{$dat->sender->getAvatarURL('miniscule')}" width="50" class="post-avatar" />
+                                <img n:if="$dat->anon" src="/assets/packages/static/openvk/img/camera_200.png" width="50" class="post-avatar" />
+                                <span n:if="!$dat->anon && $dat->sender->isOnline()" class="post-online">{_online}</span>
+                            </a>
+                        </td>
+                        <td width="100%" valign="top">
+                            <div class="post-author">
+                                <a n:if="!$dat->anon" href="{$dat->sender->getURL()}"><b class="post-author-name">{$dat->sender->getCanonicalName()}</b></a>
+                                <b n:if="$dat->anon" class="post-author-name">{_gift}</b>
+                                <img n:if="!$dat->anon && $dat->sender->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
+                            </div>
+                            <div class="post-content">
+                                <div class="text">
+                                    <div class="user_gift">
+                                        <img class="gift_pic" src="{$dat->gift->getImage(2)}" alt="{$dat->gift->getName()}" loading=lazy />
+                                        <div class="gift_comment" n:if="$dat->caption">{$dat->caption}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="post-menu">
+                                <span class="date">
+                                    {$dat->sent}
+                                </span>
 
-{block preview}
-    <img src="{$x->gift->getImage(2)}" width="75" alt="{_gift}" loading=lazy />
-{/block}
-
-{block name}
-    {_gift}
-{/block}
-
-{block description}
-    <table class="ugc-table" n:if="$hideInfo ? (!$x->anon || $x->sender->getId() === $thisUser->getId()) : true">
-        <tbody>
-            <tr>
-                <td><span class="nobold">{_sender}: </span></td>
-                <td>
-                    <a href="{$x->sender->getURL()}">
-                        {$x->sender->getFullName()}
-                    </a>
-                </td>
-            </tr>
-            <tr>
-                <td><span class="nobold">{_sent}: </span></td>
-                <td>
-                    {$x->sent}
-                </td>
-            </tr>
-            <tr n:if="!empty($x->caption)">
-                <td><span class="nobold">{_comment}: </span></td>
-                <td>{$x->caption}</td>
-            </tr>
-        </tbody>
-    </table>
+                                <a n:if="!empty($platform)" class="client_app" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
+                                    <img src="/assets/packages/static/openvk/img/app_icons_mini/{$post->getPlatform(this)}.svg">
+                                </a>
+                                {if isset($thisUser)}
+                                    &nbsp;
+                                    <a n:if="$thisUser->getId() == $user->getId()" href="/gifts?act=pick&user={$dat->sender->getId()}">{_gift_back}</a>
+                                {/if}
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    <div class="postFeedBottom">
+        <div class="postFeedPaginator">
+            {include "../components/paginator.xml", conf => (object) [
+            "page"     => $page,
+            "count"    => $count,
+            "amount"   => sizeof($data),
+            "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+            "atBottom" => true,
+            ]}
+        </div>
+    </div>
+    {else}
+        {include "../components/nothing.xml"}
+    {/if}
 {/block}

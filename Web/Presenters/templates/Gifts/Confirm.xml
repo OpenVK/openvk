@@ -13,7 +13,31 @@
 {/block}
 
 {block content}
-    <center>
+    <div class="tabs">
+        <div id="ki" class="tab">
+            <a href="/gifts{$user->getId()}">
+                {if $thisUser->getId() !== $user->getId()}
+                    {_gifts}
+                {else}
+                    {_my_gifts}
+                {/if}
+            </a>
+        </div>
+        {if !is_null($thisUser)}
+        <div id="activetabs" class="tab">
+            <a href="/gifts?act=menu&user={$user->getId()}&pack={$cat->getId()}" id="act_tab_a">{_send_gift}</a>
+        </div>
+        {/if}
+
+        <a href='{$user->getURL()}' class="side_link">
+            {if $thisUser->getId() !== $user->getId()}
+                {tr("back_to_user", $user->getMorphedName("genitive", false))}
+            {else}
+                {_back_to_my_page}
+            {/if}
+        </a>
+    </div>
+    <div class="content gift_send">
         <img class="gift_confirm_pic" style="max-width: 256px;" src="{$gift->getImage(2)}" alt="Подарок" />
     
         <form style="width: 65%;" method="POST">
