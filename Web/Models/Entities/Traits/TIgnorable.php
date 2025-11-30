@@ -22,7 +22,7 @@ trait TIgnorable
         ];
 
         $sub = $ctx->table("ignored_sources")->where($data);
-        return $sub->count() > 0;
+        return $sub->count('*') > 0;
     }
 
     public function addIgnore(User $for_user): bool

@@ -204,7 +204,7 @@ class Document extends Media
             "owner"   => $user->getRealId(),
             "copy_of" => $this->getId(),
             "deleted" => 0,
-        ])->count() > 0;
+        ])->count('*') > 0;
     }
 
     public function copy(User $user): Document

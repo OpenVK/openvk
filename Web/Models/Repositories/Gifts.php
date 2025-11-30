@@ -53,6 +53,6 @@ class Gifts
     public function getCategoriesCount(): int
     {
         $cats  = $this->cats->where("deleted", false);
-        return $cats->count();
+        return $cats->count('*');
     }
 }
