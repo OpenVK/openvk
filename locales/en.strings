@@ -489,6 +489,14 @@
 
 "group_banned" = "Unfortunately, we had to block the <b>$1</b> group.";
 
+"wiki_pages" = "Wiki pages";
+"main_wiki_page" = "Main wiki page";
+"wiki_page_expanded_by_default" = "Expanded by default";
+"wiki_pages_show_all" = "Show all $1 pcs.";
+"wiki_pages_banned_by_instance_admins" = "Your group has been banned from using wiki pages. You can ask about the reason <a href='/support'>in Support</a>";
+"wiki_pages_cant_remove_main" = "You cannot delete the main wiki page in the group. You can change or remove it <a href='$1'>in the group settings</a>";
+"materials" = "Materials";
+
 /* Albums */
 
 "create" = "Create";
@@ -1729,6 +1737,8 @@
 "admin_club_search" = "Search for groups";
 "admin_club_excludeglobalfeed" = "Do not display posts in the global feed";
 "admin_club_enforceexcludeglobalfeed" = "Disallow group staff from changing global feed status";
+"admin_club_enforce_main_page_expanded" = "Disallow group staff from changing the display of the main wiki page";
+"admin_club_enforce_wiki_pages_disabled" = "Disallow wiki pages";
 
 "admin_services" = "Paid services";
 "admin_newgift" = "New gift";

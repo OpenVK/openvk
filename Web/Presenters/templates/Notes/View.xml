@@ -4,15 +4,18 @@
 
 {block header}
     {var $author = $note->getOwner()}
-    <a href="{$author->getURL()}">{$author->getCanonicalName()}</a>
-    »
-    <a href="/notes{$author->getId()}">{_notes}</a>
-    »
+    {if $author instanceof openvk\Web\Models\Entities\User || (isset($thisUser) && $author->canBeModifiedBy($thisUser))}
+        <a href="{$author->getURL()}">{$author->getCanonicalName()}</a>
+        »
+        <a href="/notes{$author instanceof openvk\Web\Models\Entities\Club ? ($author->getId() * -1) : $author->getId()}">{_notes}</a>
+        »
+    {/if}
     {$note->getName()}
 {/block}
 
 {block content}
     {var $author = $note->getOwner()}
+    {var $isAuthorClub = $author instanceof openvk\Web\Models\Entities\Club}
     <style>
         #userContent img {
             max-width: 245pt;
@@ -40,7 +43,7 @@
     </style>
 
     <article id="userContent" style="margin: 10px 10px 0;">
-        <div class="note_header">
+        <div class="note_header" n:if="!$isAuthorClub">
             <div class="note_title">
                 <div class="note_title">
                     <a>{$note->getName()}</a>
@@ -56,27 +59,35 @@
         </div>
     </article>
 
-    <div class="note_footer" style="margin: 10px 10px 0;">
-        <div class="comments_count">
-            {if sizeof($comments) > 0}
-                {_comments} ({$note->getCommentsCount()})
-            {else}
-                {_no_comments}
-            {/if}
-            <span n:if="isset($thisUser) && $thisUser->getId() === $note->getOwner()->getId()">&nbsp;|&nbsp;
-                <a id="_noteDelete" href="/note{$note->getOwner()->getId()}_{$note->getId()}/delete">{_delete}</a>
-                &nbsp;|&nbsp;
-                <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}/edit" rel='nofollow'>{_edit}</a>
-            </span>
+    {if !$isAuthorClub}
+        <div class="note_footer" style="margin: 10px 10px 0;">
+            <div class="comments_count">
+                {if sizeof($comments) > 0}
+                    {_comments} ({$note->getCommentsCount()})
+                {else}
+                    {_no_comments}
+                {/if}
+                <span n:if="isset($thisUser) && $thisUser->getId() === $note->getOwner()->getId()">&nbsp;|&nbsp;
+                    <a id="_noteDelete" href="/note{$note->getOwner()->getId()}_{$note->getId()}/delete">{_delete}</a>
+                    &nbsp;|&nbsp;
+                    <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}/edit" rel='nofollow'>{_edit}</a>
+                </span>
+            </div>
         </div>
-    </div>
-    <div style="margin: 6px 10px 10px;border-top: 1px solid #ddd;">
-        {include "../components/comments.xml",
-            comments => $comments,
-            count => $cCount,
-            page => $cPage,
-            model => "notes",
-            parent => $note,
-            showTitle => false}
-    </div>
+        <div style="margin: 6px 10px 10px;border-top: 1px solid #ddd;">
+            {include "../components/comments.xml",
+                comments => $comments,
+                count => $cCount,
+                page => $cPage,
+                model => "notes",
+                parent => $note,
+                showTitle => false}
+        </div>
+    {elseif isset($thisUser) && $note->getOwner()->canBeModifiedBy($thisUser)}
+       <span>
+            <a id="_noteDelete" href="/note{$note->getOwner()->getId() * -1}_{$note->getId()}/delete">{_delete}</a>
+            &nbsp;|&nbsp;
+            <a href="/note{$note->getOwner()->getId() * -1}_{$note->getVirtualId()}/edit" rel='nofollow'>{_edit}</a>
+        </span>
+    {/if}
 {/block}
