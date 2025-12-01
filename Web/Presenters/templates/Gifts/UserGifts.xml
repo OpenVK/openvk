@@ -41,7 +41,7 @@
                 <tbody>
                     <tr>
                         <td class="post-author-ava" width="54" valign="top">
-                            <a class="post-author-url" href="{$dat->sender->getURL()}">
+                            <a class="post-author-url" href="{$dat->anon ? 'javascript:false' : $dat->sender->getURL()}">
                                 <img n:if="!$dat->anon" src="{$dat->sender->getAvatarURL('miniscule')}" width="50" class="post-avatar" />
                                 <img n:if="$dat->anon" src="/assets/packages/static/openvk/img/camera_200.png" width="50" class="post-avatar" />
                                 <span n:if="!$dat->anon && $dat->sender->isOnline()" class="post-online">{_online}</span>
