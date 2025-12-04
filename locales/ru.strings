@@ -290,6 +290,11 @@
 "change_geo_name" = "Изменить название точки";
 "change_geo_name_new" = "Новое название";
 
+"feed_user_ignored" = "Пользователь больше не будет появляться в ленте.";
+"feed_club_ignored" = "Группа больше не будет появляться в ленте.";
+"feed_unignore" = "Вернуть.";
+"feed_ignore" = "Не интересно";
+
 /* Friends */
 
 "friends" = "Друзья";
