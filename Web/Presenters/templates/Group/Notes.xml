@@ -1,0 +1,112 @@
+{extends "../@layout.xml"}
+{var $backdrops = $club->getBackDropPictureURLs()}
+
+{block title}{$club->getName()} | {_wiki_pages}{/block}
+
+{block header}
+<a href="{$club->getURL()}">{$club->getName()}</a> » {_wiki_pages}
+{/block}
+
+{block content}
+    <div class="tabs">
+        <div class="tab">
+            <a href="/club{$club->getId()}/edit">
+                {_main}
+            </a>
+        </div>
+        <div class="tab">
+            <a href="/club{$club->getId()}/backdrop">
+                {_backdrop_short}
+            </a>
+        </div>
+        <div class="tab">
+            <a href="/club{$club->getId()}/followers">
+                {_followers}
+            </a>
+        </div>
+        <div id="activetabs" class="tab">
+            <a id="act_tab_a" href="/club{$club->getId()}/notes">
+                {_wiki_pages}
+            </a>
+        </div>
+    </div>
+
+    <div class="container_gray">
+        <h4>{_menu_settings}</h4>
+        <form method="POST" enctype="multipart/form-data">
+            <table cellspacing="7" cellpadding="0" width="60%" border="0" align="center">
+                <tbody>
+                    <tr>
+                        <td width="120" valign="top">
+                            <span class="nobold">{_main_wiki_page}: </span>
+                        </td>
+                        <td>
+                            <select class="select" name="nid">
+                                <option value="">{_relationship_0}</option>
+                                <option n:foreach="$notes as $note" value="{$note->getId()}" {if $club->getMainNoteId() === $note->getId()}selected{/if}>
+                                    {$note->getName()}
+                                </option>
+                            </select>
+                            <div class="group">
+                                <input class="toggle-large" type="checkbox" id="expanded" name="expanded" value="1" n:attr="checked => $club->isMainNoteExpanded(), disabled => $club->isMainNoteExpandedEnforced()" />
+                                <label for="expanded">{_wiki_page_expanded_by_default}</label>
+                            </div>
+                        </td>
+                    </tr>
+                    
+
+                    <tr>
+                        <td>
+                            
+                        </td>
+                        <td>
+                            <input type="hidden" name="hash" value="{$csrfToken}" />
+                            <input type="submit" value="{_save}" class="button" />
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+        <div style="padding-bottom: 0px; padding-top: 0;" class="summaryBar">
+            <div class="summary">
+                    {_wiki_pages}
+                    <span>
+                        &nbsp;|&nbsp;
+                        <a href="/notes/create?gid={$club->getId()}">{_create_note}</a>
+                    </span>
+            </div>
+        </div>
+        {if $count > 10}
+            <br />
+            <a style="margin-left: 10px;" href="/notes-{$club->getId()}"><b>{tr("wiki_pages_show_all", $count)} »</b></a>
+        {elseif $count == 0}
+            <br />
+            {include ../components/nothing.xml}
+        {/if}
+        <br /><br />
+        <table n:foreach="array_slice($notes, 0, 10) as $note" border="0" style="font-size: 11px; width: 610px;" class="post">
+            <tbody>
+                <tr>
+                    <td width="54" valign="top">
+                        <center>
+                            <img src="/assets/packages/static/openvk/img/note_icon.png" style="margin-top: 17px;">
+                        </center>
+                    </td>
+                    <td width="345" valign="top">
+                        <div class="post-author">
+                            <a href="/note-{$club->getId()}_{$note->getVirtualId()}">
+                                <b>{$note->getName()}</b>
+                            </a>
+                        </div>
+                        <div class="post-content" style="padding: 4px; font-size: 11px;">
+                            <div class="byline">
+                                {$note->getPublicationTime()}
+                                <span n:if="$note->getEditTime() > $note->getPublicationTime()">({_edited} {$note->getEditTime()})</span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+{/block}
