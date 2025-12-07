@@ -395,6 +395,8 @@ routes:
       handler: "Admin->chandlerGroup"
     - url: "/admin/chandler/users/{slug}"
       handler: "Admin->chandlerUser"
+    - url: "/admin/config"
+      handler: "Admin->config"
     - url: "/noSpam"
       handler: "NoSpam->index"
     - url: "/al_abuse/search"
