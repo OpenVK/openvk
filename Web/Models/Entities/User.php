@@ -209,7 +209,9 @@ class User extends RowModel
             $pseudo = " ($pseudo) ";
         }
 
-        return $this->getFirstName() . $pseudo . $this->getLastName();
+        $fullName = $this->getFirstName() . $pseudo . $this->getLastName();
+
+        return strip_tags($fullName);
     }
 
     public function getMorphedName(string $case = "genitive", bool $fullName = true, bool $startWithLastName = true): string
