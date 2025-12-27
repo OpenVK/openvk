@@ -57,10 +57,18 @@ final class Ovk extends VKAPIRequestHandler
         }
 
         if (in_array("popular_groups", $fields)) {
-            $popularClubs  = iterator_to_array((new ClubsRepo())->getPopularClubs());
-            $clubsResponse = (new Groups($this->getUser()))->getById(implode(',', array_map(function ($entry) {
-                return $entry->club->getId();
-            }, $popularClubs)), "", "members_count, " . $group_fields);
+            $popularClubsRaw = (new ClubsRepo())->getPopularClubs();
+            $popularClubs = $popularClubsRaw !== null ? iterator_to_array($popularClubsRaw) : [];
+
+            $clubsResponse = [];
+
+            if (!empty($popularClubs)) {
+                $ids = implode(',', array_map(function ($entry) {
+                    return $entry->club->getId();
+                }, $popularClubs));
+
+                $clubsResponse = (new Groups($this->getUser()))->getById($ids, "", "members_count, " . $group_fields);
+            }
 
             $response->popular_groups = (object) [
                 "count" => sizeof($popularClubs),
