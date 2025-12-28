@@ -320,10 +320,11 @@ window.player = new class {
 
         u('.nowPlaying').removeClass('nowPlaying')
         this.__highlightActiveTrack()
-
-        navigator.mediaSession.setPositionState({
-            duration: this.currentTrack.length
-        })
+		if ('mediaSession' in navigator) {
+			navigator.mediaSession.setPositionState({
+				duration: this.currentTrack.length
+			})
+		}
         this.__updateMediaSession()
         this.dashPlayer.initialize(this.audioPlayer, c_track.url, false);
         this.dashPlayer.setProtectionData(protData)
@@ -382,7 +383,7 @@ window.player = new class {
         await this.audioPlayer.play()
         this.__setFavicon()
         this.__updateFace()
-        navigator.mediaSession.playbackState = "playing"
+        if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "playing"
     }
 
     pause() {
@@ -393,7 +394,7 @@ window.player = new class {
         this.audioPlayer.pause()
         this.__setFavicon('paused')
         this.__updateFace()
-        navigator.mediaSession.playbackState = "paused"
+        if ('mediaSession' in navigator) navigator.mediaSession.playbackState = "paused"
     }
 
     async playPreviousTrack() {
