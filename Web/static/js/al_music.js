@@ -72,7 +72,7 @@ window.player = new class {
     // 0 - shows remaining time before end
     // 1 - shows full track time
     get timeType() {
-        return localStorage.getItem('audio.timeType') ?? 0
+        return localStorage.getItem('audio.timeType') || 0
     }
 
     set timeType(value) {
@@ -216,7 +216,7 @@ window.player = new class {
             }
         }
 
-        this.audioPlayer.volume = Number(localStorage.getItem('audio.volume') ?? 1)
+        this.audioPlayer.volume = Number(localStorage.getItem('audio.volume') || 1)
     }
 
     async loadContext(page = 1, after = true) {
@@ -290,7 +290,7 @@ window.player = new class {
             console.log('Audio | Resetting context because of ajax')
             
             this.__renewContext()
-            await this.loadContext(window.__current_page_audio_context.page ?? 1)
+            await this.loadContext(window.__current_page_audio_context.page || 1)
             if(!isNaN(parseInt(location.hash.replace('#', '')))) {
                 const adp = parseInt(location.hash.replace('#', ''))
                 await this.loadContext(adp)
@@ -573,17 +573,19 @@ window.player = new class {
     }
 
     __setMediaSessionActions() {
-        navigator.mediaSession.setActionHandler('play', async () => { 
-            await window.player.play()
-        });
-        navigator.mediaSession.setActionHandler('pause', () => { 
-            window.player.pause() 
-        });
-        navigator.mediaSession.setActionHandler('previoustrack', async () => { await window.player.playPreviousTrack() });
-        navigator.mediaSession.setActionHandler('nexttrack', async () => { await window.player.playNextTrack() });
-        navigator.mediaSession.setActionHandler("seekto", async (details) => {
-            window.player.audioPlayer.currentTime = details.seekTime
-        });
+		if ('mediaSession' in navigator) {
+			navigator.mediaSession.setActionHandler('play', async () => { 
+				await window.player.play()
+			});
+			navigator.mediaSession.setActionHandler('pause', () => { 
+				window.player.pause() 
+			});
+			navigator.mediaSession.setActionHandler('previoustrack', async () => { await window.player.playPreviousTrack() });
+			navigator.mediaSession.setActionHandler('nexttrack', async () => { await window.player.playNextTrack() });
+			navigator.mediaSession.setActionHandler("seekto", async (details) => {
+				window.player.audioPlayer.currentTime = details.seekTime
+			});
+		}
     }
 
     __appendTracks(list, after = true) {
@@ -691,12 +693,14 @@ window.player = new class {
     __updateMediaSession() {
         const album = document.querySelector(".playlistBlock")
         const cur = this.currentTrack
-        navigator.mediaSession.metadata = new MediaMetadata({
-            title: escapeHtml(cur.name),
-            artist: escapeHtml(cur.performer),
-            album: album == null ? "OpenVK Audios" : escapeHtml(album.querySelector(".playlistInfo h4").innerHTML),
-            artwork: [{ src: album == null ? "/assets/packages/static/openvk/img/song.jpg" : album.querySelector(".playlistCover img").src }],
-        })
+		if ('mediaSession' in navigator) {
+			navigator.mediaSession.metadata = new MediaMetadata({
+				title: escapeHtml(cur.name),
+				artist: escapeHtml(cur.performer),
+				album: album == null ? "OpenVK Audios" : escapeHtml(album.querySelector(".playlistInfo h4").innerHTML),
+				artwork: [{ src: album == null ? "/assets/packages/static/openvk/img/song.jpg" : album.querySelector(".playlistCover img").src }],
+			})
+		}
     }
 
     async __countListen() {
@@ -790,8 +794,8 @@ window.player = new class {
     }
 
     ajCreate() {
-        const previous_time_x = localStorage.getItem('audio.lastX') ?? 100
-        const previous_time_y = localStorage.getItem('audio.lastY') ?? scrollY
+        const previous_time_x = localStorage.getItem('audio.lastX') || 100
+        const previous_time_y = localStorage.getItem('audio.lastY') || scrollY
         const miniplayer_template = u(`
             <div id='ajax_audio_player' class='ctx_place'>
                 <div id='aj_player'>
@@ -952,7 +956,7 @@ u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
         })
     } else if(!window.player.hasTrackWithId(id) && window.player.isAtAudiosPage()) {
         window.player.__renewContext()
-        await window.player.loadContext(window.__current_page_audio_context.page ?? 1)
+        await window.player.loadContext(window.__current_page_audio_context.page || 1)
         if(!isNaN(parseInt(location.hash.replace('#', '')))) {
             const adp = parseInt(location.hash.replace('#', ''))
             await window.player.loadContext(adp)
@@ -1426,7 +1430,7 @@ u(document).on("click", ".musicIcon.edit-icon", (e) => {
 
         <div style="margin-top: 11px">
             ${tr("lyrics")}
-            <textarea name="lyrics" maxlength="5000" style="resize: vertical; max-height: 285px;">${lyrics ?? ""}</textarea>
+            <textarea name="lyrics" maxlength="5000" style="resize: vertical; max-height: 285px;">${lyrics || ""}</textarea>
         </div>
 
         <div style="margin-top: 11px">

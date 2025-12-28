@@ -2,14 +2,14 @@ Function.noop = () => {};
 
 class CMessageBox {
     constructor(options = {}) {
-        const title = options.title ?? 'Untitled'
-        const body  = options.body ?? '<hr>'
-        const buttons = options.buttons ?? []
-        const callbacks = options.callbacks ?? []
-        const close_on_buttons = options.close_on_buttons ?? true
-        const unique_name = options.unique_name ?? null
-        const warn_on_exit = options.warn_on_exit ?? false
-        const custom_template = options.custom_template ?? null
+        const title = options.title || 'Untitled'
+        const body  = options.body || '<hr>'
+        const buttons = options.buttons || []
+        const callbacks = options.callbacks || []
+        const close_on_buttons = options.close_on_buttons || true
+        const unique_name = options.unique_name || null
+        const warn_on_exit = options.warn_on_exit || false
+        const custom_template = options.custom_template || null
         if(unique_name && window.messagebox_stack.find(item => item.unique_name == unique_name) != null) {
             return
         }

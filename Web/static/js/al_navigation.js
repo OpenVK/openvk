@@ -142,7 +142,7 @@ u(`#search_box input[type='search']`).on('input', async (e) => {
                 <img src='${item['preview']}' class='search_tip_preview_block'>
                 <div class='search_tip_info_block'>
                     <b>${ovk_proc_strtr(item['name'].escapeHtml(), 50)}</b>
-                    <span>${ovk_proc_strtr((item['description'] ?? '').escapeHtml(), 60)}</span>
+                    <span>${ovk_proc_strtr((item['description'] || '').escapeHtml(), 60)}</span>
                 </div>
             </a>
         `)

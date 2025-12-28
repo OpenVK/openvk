@@ -135,7 +135,7 @@ window.router = new class {
     async __integratePage(scrolling = null) {
         window.temp_y_scroll = null
         u('.toTop').removeClass('has_down')
-        window.scrollTo(0, scrolling ?? 0)
+        window.scrollTo(0, scrolling || 0)
         bsdnHydrate()
 
         if(u('.paginator:not(.paginator-at-top)').length > 0) {
@@ -174,7 +174,7 @@ window.router = new class {
             return false
         }
 
-        if((localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || window.openvk.current_id == 0) {
+        if((localStorage.getItem('ux.disable_ajax_routing') || 0) == 1 || window.openvk.current_id == 0) {
             return false
         }
 
@@ -218,7 +218,7 @@ window.router = new class {
             url = location.origin + url
         }
 
-        if((localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || window.openvk.current_id == 0) {
+        if((localStorage.getItem('ux.disable_ajax_routing') || 0) == 1 || window.openvk.current_id == 0) {
             window.location.assign(url)
             return
         }
@@ -227,7 +227,7 @@ window.router = new class {
             this.prev_page_html = null
         }
 
-        const push_url = params.push_state ?? true
+        const push_url = params.push_state || true
         const next_page_url = new URL(url)
         if(push_url) {
             history.pushState({'from_router': 1}, '', url)
@@ -346,14 +346,14 @@ u(document).on('submit', 'form', async (e) => {
         collect_attachments_node(target)
     }
 
-    if((localStorage.getItem('ux.disable_ajax_routing') ?? 0) == 1 || window.openvk.current_id == 0) {
+    if((localStorage.getItem('ux.disable_ajax_routing') || 0) == 1 || window.openvk.current_id == 0) {
         return false
     }
 
     u('#ajloader').addClass('shown')
 
     const form = e.target
-    const method = form.method ?? 'get'
+    const method = form.method || 'get'
     const url = form.action
     if(form.onsubmit || url.indexOf('/settings?act=interface') != -1) {
         u('#ajloader').removeClass('shown')
