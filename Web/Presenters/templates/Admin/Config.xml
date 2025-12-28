@@ -1,0 +1,25 @@
+{extends "@layout.xml"}
+
+{block title}
+    {_admin_settings_config}
+{/block}
+
+{block heading}
+    {include title}
+    <button id="save-button" class="aui-button aui-button-primary" onClick='convertFormToYAML("/admin/config", {$csrfToken});'>Сохранить все</button>
+{/block}
+
+{block content}
+    <style>
+        h1,h2,h5 {
+            margin: 5px;
+        }
+        #save-button {
+            float: right;
+        }
+    </style>
+    <form class="aui">
+        {include 'displayYamlData.xml', cfg => $cfg}
+    </form>
+    {script "js/yaml.js"}
+{/block}
