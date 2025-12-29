@@ -125,11 +125,13 @@ final class Users extends VKAPIRequestHandler
                                 }
                                 break;
                             case "friend_status":
-                                switch ($usr->getSubscriptionStatus($authuser)) {
+                                $friendStatus = $authuser ? $usr->getSubscriptionStatus($authuser) : 0;
+
+                                switch ($friendStatus) {
                                     case 3:
                                         # NOTICE falling through
                                     case 0:
-                                        $response[$i]->friend_status = $usr->getSubscriptionStatus($authuser);
+                                        $response[$i]->friend_status = $friendStatus;
                                         break;
                                     case 1:
                                         $response[$i]->friend_status = 2;
