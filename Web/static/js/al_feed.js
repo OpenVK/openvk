@@ -127,10 +127,10 @@ u(document).on('click', '#__feed_settings_link', (e) => {
         switch(current_tab) {
             case 'main':
                 const __temp_url = new URL(location.href)
-                const PAGES_COUNT = Number(e.target.dataset.pagescount ?? '10')
-                const CURRENT_PERPAGE = Number(__temp_url.searchParams.get('posts') ?? 10)
-                const CURRENT_PAGE = Number(__temp_url.searchParams.get('p') ?? 1)
-                const CURRENT_RETURN_BANNED = Number(__temp_url.searchParams.get('return_banned') ?? 0)
+                const PAGES_COUNT = Number(e.target.dataset.pagescount || '10')
+                const CURRENT_PERPAGE = Number(__temp_url.searchParams.get('posts') || 10)
+                const CURRENT_PAGE = Number(__temp_url.searchParams.get('p') || 1)
+                const CURRENT_RETURN_BANNED = Number(__temp_url.searchParams.get('return_banned') || 0)
                 const COUNT = [1, 5, 10, 20, 30, 40, 50]
                 u('#_feed_settings_container #__content').html(`
                     <table cellspacing="7" cellpadding="0" border="0" align="center">
@@ -173,9 +173,9 @@ u(document).on('click', '#__feed_settings_link', (e) => {
                 `)
 
                 u(`#_feed_settings_container #__content input[type='button']`).on('click', (e) => {
-                    const INPUT_PAGES_COUNT = parseInt(u('#_feed_settings_container #__content #pageSelect').nodes[0].selectedOptions[0].value ?? '10')
-                    const INPUT_PAGE        = parseInt(u('#_feed_settings_container #__content #pageNumber').nodes[0].value ?? '1')
-                    const INPUT_IGNORED     = Number(u('#_feed_settings_container #__content #showIgnored').nodes[0].checked ?? false)
+                    const INPUT_PAGES_COUNT = parseInt(u('#_feed_settings_container #__content #pageSelect').nodes[0].selectedOptions[0].value || '10')
+                    const INPUT_PAGE        = parseInt(u('#_feed_settings_container #__content #pageNumber').nodes[0].value || '1')
+                    const INPUT_IGNORED     = Number(u('#_feed_settings_container #__content #showIgnored').nodes[0].checked || false)
 
                     const FINAL_URL = new URL(location.href)
 
@@ -326,8 +326,8 @@ u(document).on('change', `input[data-act='localstorage_item']`, (e) => {
 })
 
 function openJsSettings() {
-    const CURRENT_AUTO_SCROLL = Number(localStorage.getItem('ux.auto_scroll') ?? 1)
-    const CURRENT_DISABLE_AJAX = Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0)
+    const CURRENT_AUTO_SCROLL = Number(localStorage.getItem('ux.auto_scroll') || 1)
+    const CURRENT_DISABLE_AJAX = Number(localStorage.getItem('ux.disable_ajax_routing') || 0)
 
     u("#_js_settings").append(`
         <tr>
