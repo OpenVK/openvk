@@ -475,19 +475,35 @@ final class SupportPresenter extends OpenVKPresenter
             }
         }
 
+
+        $isNameEmpty = mb_strlen(trim($this->postParam("name"))) === 0;
+        $avatarUrl = mb_strlen(trim($this->postParam("avatar"))) > 0 ? $this->postParam("avatar") : "/assets/packages/static/openvk/img/support.jpeg";
+
         if ($support_names->isExists($id)) {
             $agent = $support_names->get($id);
-            $agent->setName($this->postParam("name") ?? tr("helpdesk_agent"));
+
+            if ($isNameEmpty) {
+                $agent->delete(false);
+                $this->redirect("/support/tickets");
+                return;
+            }
+
+            $agent->setName($this->postParam("name"));
             $agent->setNumerate((int) $this->postParam("number") ?? null);
-            $agent->setIcon($this->postParam("avatar"));
+            $agent->setIcon($avatarUrl);
             $agent->save();
             $this->flashFail("succ", tr("agent_profile_edited"));
         } else {
+            if ($isNameEmpty) {
+                $this->flashFail("err", tr("helpdesk_agent_name_empty"));
+                return;
+            }
+
             $agent = new SupportAgent();
             $agent->setAgent($this->user->identity->getId());
-            $agent->setName($this->postParam("name") ?? tr("helpdesk_agent"));
+            $agent->setName($this->postParam("name"));
             $agent->setNumerate((int) $this->postParam("number") ?? null);
-            $agent->setIcon($this->postParam("avatar"));
+            $agent->setIcon($avatarUrl);
             $agent->save();
             $this->flashFail("succ", tr("agent_profile_created_1"), tr("agent_profile_created_2"));
         }

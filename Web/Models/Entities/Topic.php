@@ -42,6 +42,11 @@ class Topic extends Postable
         return (bool) $this->getRecord()->closed;
     }
 
+    public function isRestricted(): bool
+    {
+        return (bool) $this->getRecord()->restricted;
+    }
+
     public function isPinned(): bool
     {
         return (bool) $this->getRecord()->pinned;

@@ -606,9 +606,7 @@
                     <td width="120" valign="top" align="right"></td>
                     <td>
                         <script>
-                        document.addEventListener('DOMContentLoaded', () => {
                             openJsSettings()
-                        })
                         </script>
                     </td>
                 </tr>

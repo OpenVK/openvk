@@ -16,7 +16,7 @@
             <a n:attr="id => (isset($globalFeed) ? 'act_tab_a' : 'ki')" href="/feed/all">{_all_news}</a>
         </div>
 
-        <a href='#' id="__feed_settings_link" data-pagescount='{ceil($paginatorConf->count / $paginatorConf->perPage)}'>{_feed_settings}</a>
+        <a href='#' id="__feed_settings_link" class="side_link" data-pagescount='{ceil($paginatorConf->count / $paginatorConf->perPage)}'>{_feed_settings}</a>
     </div>
 
     <div n:class="postFeedWrapper, $thisUser->hasMicroblogEnabled() ? postFeedWrapperMicroblog">

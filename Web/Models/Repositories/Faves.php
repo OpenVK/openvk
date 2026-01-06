@@ -47,6 +47,6 @@ class Faves
 
     public function fetchLikesSectionCount(User $user, string $class = 'Post')
     {
-        return $this->fetchLikes($user, $class)->count();
+        return $this->fetchLikes($user, $class)->count('*');
     }
 }

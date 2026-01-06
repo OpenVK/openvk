@@ -200,7 +200,7 @@ final class Audio extends VKAPIRequestHandler
                 ->where([
                     "deleted" => false,
                     "owner" => $owner_id,
-                ])->count();
+                ])->count('*');
         }
 
         return (new Audios())->getUserCollectionSize($user);

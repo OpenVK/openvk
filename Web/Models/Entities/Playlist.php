@@ -128,7 +128,7 @@ class Playlist extends MediaCollection
             $id *= -1;
         }
 
-        if ($this->importTable->where("entity", $id)->count() > self::MAX_COUNT) {
+        if ($this->importTable->where("entity", $id)->count('*') > self::MAX_COUNT) {
             throw new \OutOfBoundsException("Maximum amount of playlists");
         }
 

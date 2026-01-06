@@ -996,6 +996,7 @@
 "audio_ctx_add_to_playlist" = "Добавить в плейлист";
 "audio_ctx_play_next" = "Воспроизвести следующим";
 "audio_ctx_clear_context" = "Очистить список треков";
+"audio_ctx_show_count" = "Показать пагинатор";
 
 "is_x_audio_zero" = "Нету аудиозаписей";
 "is_x_audio_one" = "Всего одна аудиозапись.";
@@ -1117,6 +1118,7 @@
 
 /* Gifts */
 
+"my_gifts" = "Мои подарки";
 "gift" = "Подарок";
 "gifts" = "Подарки";
 "gifts_zero" = "Нет подарков";
@@ -1124,12 +1126,15 @@
 "gifts_few" = "$1 подарка";
 "gifts_many" = "$1 подарков";
 "gifts_other" = "$1 подарков";
-"gifts_left" = "Подарков осталось: $1";
+"gifts_left" = "$1 осталось";
 "gifts_left_one" = "Один подарок остался";
 "gifts_left_few" = "$1 подарка осталось";
 "gifts_left_many" = "$1 подарков осталось";
 "gifts_left_other" = "$1 подарков осталось";
+"back_to_user" = "К странице $1";
+"back_to_my_page" = "К моей странице";
 "send_gift" = "Отправить подарок";
+"gift_back" = "Отправить подарок в ответ";
 "gift_select" = "Выбрать подарок";
 "collections" = "Коллекции";
 "confirm" = "Подтверждение";
@@ -1205,6 +1210,8 @@
 "app_err_ava_desc" = "Аватарка слишком большая или кривая: ошибка общего характера №$res.";
 "app_err_note" = "Не удалось прикрепить новостную заметку";
 "app_err_note_desc" = "Убедитесь, что ссылка правильная и заметка принадлежит Вам.";
+"app_delete_modal_desc" = "Вы уверены, что хотите удалить приложение? Это действие нельзя отменить.";
+"app_delete_succ" = "Приложение удалено";
 
 "learn_more" = "Подробнее";
 
@@ -1380,6 +1387,7 @@
 "failed_to_create_topic" = "Не удалось создать тему";
 "failed_to_change_topic" = "Не удалось изменить тему";
 "no_title_specified" = "Заголовок не указан.";
+"restrict_topic" = "Комментировать могут только администраторы";
 
 /* Errors */
 
@@ -1704,6 +1712,85 @@
 "bans_history_removed" = "Снята";
 "bans_history_active" = "Активная блокировка";
 
+"admin_overview_registrated_users_one" = "зарегистрированный пользователь:";
+"admin_overview_registrated_users_other" = "зарегистрированных пользователей, из них:";
+"online" = "в сети";
+"active_one" = "активный";
+"active_other" = "активных";
+"verified_one" = "верифицированный";
+"verified_other" = "верифицированных";
+"deleted_one" = "удалённый";
+"deleted_other" = "удалённых";
+"admin_overview_employees_one" = "сотрудник инстанса:";
+"admin_overview_employees_few" = "сотрудника инстанса, из них:";
+"admin_overview_employees_other" = "сотрудников инстанса, из них:";
+"emp_admin_one" = "администратор";
+"emp_admin_few" = "администратора";
+"emp_admin_other" = "администраторов";
+"emp_agent_one" = "агент Поддержки";
+"emp_agent_few" = "агента Поддержки";
+"emp_agent_other" = "агентов Поддержки";
+"emp_moder_one" = "модератор";
+"emp_moder_few" = "модератора";
+"emp_moder_other" = "модераторов";
+"emp_nsp_one" = "спам-аналитик";
+"emp_nsp_few" = "спам-аналитика";
+"emp_nsp_other" = "спам-аналитиков";
+"admin_overview_banned_users_one" = "заблокированный пользователь:";
+"admin_overview_banned_users_other" = "заблокированных пользователей, из них:";
+"can_be_unbanned_now_one" = "может быть разморожен сейчас";
+"can_be_unbanned_now_other" = "могут быть разморожены сейчас";
+"support_and_moderation" = "Поддержка и модерация";
+"support_ticket_one" = "тикет в Поддержке";
+"support_ticket_few" = "тикета в Поддержке";
+"support_ticket_other" = "тикетов в Поддержке";
+"support_tickets_processing" = "на рассмотрении";
+"support_tickets_with_answer" = "с ответом";
+"support_tickets_closed_one" = "закрытый";
+"support_tickets_closed_other" = "закрытых";
+"new_content_reports_one" = "новая жалоба на контент";
+"new_content_reports_few" = "новые жалобы на контент";
+"new_content_reports_other" = "новых жалоб на контент";
+"nospam_templates_one" = "действующий шаблон noSpam";
+"nospam_templates_few" = "действующих шаблона noSpam";
+"nospam_templates_other" = "действующих шаблонов noSpam";
+"content_entities_processed" = "Обработано <b>$1</b> шт. контента!";
+"content" = "Контент";
+"admin_overview_groups_one" = "группа:";
+"admin_overview_groups_few" = "группы, из них:";
+"admin_overview_groups_other" = "групп, из них:";
+"verified_groups_one" = "верифицированная";
+"verified_groups_other" = "верифицированных";
+"banned_groups_one" = "заблокированная";
+"banned_groups_other" = "заблокированных";
+"admin_overview_posts_one" = "пост";
+"admin_overview_posts_few" = "поста";
+"admin_overview_posts_other" = "постов";
+"admin_overview_messages_one" = "сообщение";
+"admin_overview_messages_few" = "сообщения";
+"admin_overview_messages_other" = "сообщений";
+"admin_overview_photos_one" = "фотография";
+"admin_overview_photos_few" = "фотографии";
+"admin_overview_photos_other" = "фотографий";
+"admin_overview_videos_one" = "видеозапись";
+"admin_overview_videos_few" = "видеозаписи";
+"admin_overview_videos_other" = "видеозаписей";
+"admin_overview_audios_one" = "аудиозапись";
+"admin_overview_audios_few" = "аудиозаписи";
+"admin_overview_audios_other" = "аудиозаписей";
+"admin_overview_notes_one" = "заметка";
+"admin_overview_notes_few" = "заметки";
+"admin_overview_notes_other" = "заметок";
+"admin_overview_apps_one" = "приложение";
+"admin_overview_apps_few" = "приложения";
+"admin_overview_apps_other" = "приложений";
+"admin_overview_documents_one" = "документ";
+"admin_overview_documents_few" = "документа";
+"admin_overview_documents_other" = "документов";
+"admin_overview_chandler_group_not_found" = "Системная группа прав не найдена";
+"admin_overview_chandler_groups_missing" = "Группы прав необходимы для полноценного доступа к управлению инстансом (Helpdesk, модерация, noSpam)";
+"admin_overview_chandler_groups_create_missing" = "Создать отсутствующие группы прав";
+
 /* Paginator (deprecated) */
 
 "paginator_back" = "Назад";
@@ -1814,6 +1901,7 @@
 "helpdesk_showing_name" = "Отображаемое имя";
 "helpdesk_show_number" = "Показывать номер";
 "helpdesk_avatar_url" = "Ссылка на аватарку";
+"helpdesk_agent_name_empty" = "Отображаемое имя не может быть пустым";
 /* Chandler */
 
 "c_user_removed_from_group" = "Пользователь был удалён из группы";
@@ -2226,6 +2314,23 @@
 "roll_backed" = "откачено";
 
 "nospam_prevention" = "Данное действие затронет множество данных. Вы действительно хотите применить?";
+"nospam_album" = "Альбомы";
+"nospam_application" = "Приложения";
+"nospam_audio" = "Аудиозаписи";
+"nospam_club" = "Сообщества";
+"nospam_comment" = "Комментарии";
+"nospam_document" = "Документы";
+"nospam_message" = "Сообщения";
+"nospam_photo" = "Фотографии";
+"nospam_playlist" = "Плейлисты";
+"nospam_poll" = "Опросы";
+"nospam_post" = "Записи на стене";
+"nospam_ticket" = "Вопросы в Поддержку";
+"nospam_ticketcomment" = "Комментарии к вопросам в Поддержку";
+"nospam_topic" = "Обсуждения";
+"nospam_user" = "Пользователи";
+"nospam_video" = "Видеозаписи";
+"nospam_videoalbum" = "Видео-альбомы";
 
 /* RSS */
 

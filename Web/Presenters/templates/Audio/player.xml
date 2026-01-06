@@ -3,6 +3,14 @@
 {php $isAvailable = $audio->isAvailable()}
 {php $performers = $audio->getPerformers()}
 {php $editable = isset($thisUser) && $audio->canBeModifiedBy($thisUser)}
+
+{* this is a bad layout. so what you can change:
+- every button must be available (and hidden if not needed) and toggled by class states (.audio_added, .audio_lyrics). So the edit function will be not so cancerous
+- there is a lot of id duplications and messed data-attributes. We don't need audioEmbed-id its left from 2022 code
+- "processed" means it has been already processed. "processing" is better
+- class names are messy and illogical
+- all checks may be moved to first lines (isHasLyrics, isAdded...)
+ *}
 <div id="audioEmbed-{$id}" data-realid="{$audio->getId()}" {if $hideButtons}data-prettyid="{$audio->getPrettyId()}"{/if} data-name="{$audio->getName()}" data-genre="{$audio->getGenre()}" n:class="audioEmbed, ctx_place, !$isAvailable ? processed, $isWithdrawn ? withdrawn" data-length="{$audio->getLength()}" data-keys="{json_encode($audio->getKeys())}" data-url="{$audio->getURL()}">
     <audio class="audio" />
 

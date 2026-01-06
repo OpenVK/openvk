@@ -47,7 +47,7 @@ class TicketComment extends RowModel
         }
 
         $alias = $this->getSupportAlias();
-        if (!$alias) {
+        if (!$alias || mb_strlen(trim($alias->getName())) === 0) {
             return tr("helpdesk_agent") . " #" . $this->getAgentNumber();
         }
 

@@ -42,6 +42,21 @@ class playersSearcher {
     }
 }
 
+class AudioTrack {
+    constructor(item) {
+        this.item = item
+    }
+
+    getName() {
+        return `${this.item.performer} — ${this.item.name}`
+    }
+
+    getId() {
+        return this.item.id
+    }
+}
+
+// so if someone reads this. Its better to split class to AudioTrack -> AudioContext -> AudioPlayer -> AudioPlayerViewModel, AjaxPlayerViewModel and BigPlayerViewModel.
 window.player = new class {
     context = {
         object: {},
@@ -54,7 +69,6 @@ window.player = new class {
     current_track_id = 0
     tracks = []
 
-    // time type:
     // 0 - shows remaining time before end
     // 1 - shows full track time
     get timeType() {
@@ -273,7 +287,7 @@ window.player = new class {
         }
 
         if(window.__current_page_audio_context && (!this.context.object || this.context.object.url != location.pathname + location.search)) {
-            console.log('Audio | Resetting context because of ajax :3')
+            console.log('Audio | Resetting context because of ajax')
             
             this.__renewContext()
             await this.loadContext(window.__current_page_audio_context.page ?? 1)
@@ -462,7 +476,6 @@ window.player = new class {
         }
     }
 
-    // Добавляем ощущение продуманности.
     __highlightActiveTrack() {
         if(!this.isAtCurrentContextPage()) {
             return
@@ -579,14 +592,20 @@ window.player = new class {
         } else {
             this.tracks = list.concat(this.tracks)
         }
+
+        if (this.ajaxPlayer_CheckIfBlockHasBeenShown()) {
+            list.forEach(item => {
+                this.ajaxPlayer_AddTrackBlockToTheQueueBlock(item)
+            })
+        }
     }
 
     __updateFace() {
-        // Во второй раз перепутал next и back, но фиксить смысла уже нет.
         const _c = this.currentTrack
         const prev_button = this.uiPlayer.find('.nextButton')
         const next_button = this.uiPlayer.find('.backButton')
 
+        // Wow! A lot of shitcode!
         if(!this.previousTrack) {
             prev_button.addClass('lagged')
             if(this.ajaxPlayer.length > 0) {
@@ -653,6 +672,11 @@ window.player = new class {
         }
 
         u(`.tip_result`).remove()
+
+        if (this.ajaxPlayer_CheckIfBlockHasBeenShown()) {
+            u(".aj_track.selected").removeClass("selected")
+            this.ajaxPlayer.find(`.aj_track[data-id='${window.player.current_track_id}']`).addClass("selected")
+        }
     }
 
     __updateTime(new_time) {
@@ -675,8 +699,6 @@ window.player = new class {
         })
     }
 
-    // the listen counts if you reach half of song
-    // but it doesnt checks on server normally so you can "накрутить" listens
     async __countListen() {
         let playlist = 0
         if(!this.listen_coef) {
@@ -728,6 +750,43 @@ window.player = new class {
             this.ajCreate()
         }
         u('#ajax_audio_player').removeClass('hidden')
+    }
+
+    ajaxPlayer_CheckIfBlockHasBeenShown() {
+        return u('#ajax_audio_player').length > 0
+    }
+
+    ajaxPlayer_AddTrackBlockToTheQueueBlock(item) {
+        const track = new AudioTrack(item)
+
+        u("#ajax_audio_player #aj_player #aj_player_tracks").append(`
+            <div class="aj_track" data-id="${track.getId()}">
+                <span class="num">${this.tracks.findIndex(s => s.id == item.id) + 1}</span>
+                <b> ${ovk_proc_strtr(escapeHtml(track.getName()), 50)}</b>
+            </div>
+        `)
+    }
+
+    // TODO: When moving block to bottom of screen, show tracks list at the top
+    ajaxPlayer_ApplyQueueBlock() {
+        if(u("#ajax_audio_player #aj_player_tracks").length > 0) {return}
+        if(u("#ajax_audio_player").length == 0) {return}
+
+        u("#ajax_audio_player #aj_player").append(`
+            <div id="aj_player_tracks"></div>
+        `)
+
+        window.player.tracks.forEach(item => {
+            this.ajaxPlayer_AddTrackBlockToTheQueueBlock(item)
+        })
+
+        u("#aj_player_tracks").on("click", ".aj_track", async (e) => {
+            const id = e.target.closest(".aj_track").dataset.id
+
+            await window.player.setTrack(id)
+            window.player.play()
+        })
+        this.__updateFace()
     }
 
     ajCreate() {
@@ -799,10 +858,23 @@ window.player = new class {
                 }
             }
         })
+        this.ajaxPlayer_ApplyQueueBlock()
     }
 
-    toggleSummary() {
+    bigPlayer_toggleCountBlock() {
         $(".summaryBarHideable").slideToggle(300, "linear")
+    }
+
+    bigPlayer_page_toggleCompactness() {
+        // this state is not saving
+        const btn = u('#summarySwitchButton')
+        if(btn.html() == "-") {
+            btn.html("+")
+        } else {
+            btn.html("-")
+        }
+
+        u('.audiosContainer').toggleClass('winamp_mode')
     }
 }
 
@@ -830,6 +902,16 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 window.addEventListener('beforeunload', (e) => {
     window.player.dump()
+})
+
+u(document).on("click", '.audioEntry .audioEntryWrapper .status', (e) => {
+    const target = u(e.target)
+    const wrapper = target.closest(".audioEmbed")
+    const play_button = wrapper.find(".playerButton .playIcon")
+
+    if (!e.target.matches("a, .withLyrics, .playIcon") && !wrapper.hasClass('processed')) {
+        play_button.nodes[0].click()
+    }
 })
 
 u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
@@ -895,9 +977,7 @@ u(document).on('click', '.audioEntry .playerButton > .playIcon', async (e) => {
         window.player.pause()
     }
     
-    if(window.player.isAtAudiosPage()) {
-        
-    } else {
+    if(!window.player.isAtAudiosPage()) {
         window.player.linkPlayer(audioPlayer)
         u('.audioEntry .subTracks.shown').removeClass('shown')
         audioPlayer.find('.subTracks').addClass('shown')
@@ -1173,19 +1253,10 @@ u(document).on("drop", '.audiosContainer', function(e) {
 })
 
 u(document).on("click", "#summarySwitchButton", (e) => {
-    if(u(".summaryBarHideable").nodes[0].style.overflow == "hidden") {
-        return
-    }
-    
-    if(u(e.target).html() == "-") {
-        u(e.target).html("+")
-    } else {
-        u(e.target).html("-")
-    }
-
-    window.player.toggleSummary()
+    window.player.bigPlayer_page_toggleCompactness()
 })
 
+// its not a good idea to put all logic into event functions, but ok.
 u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e) => {
     if(e.shiftKey) {
         return
@@ -1223,9 +1294,9 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
             ` : ''}
             <a id='audio_ctx_add_to_group'>${tr('audio_ctx_add_to_group')}</a>
             <a id='audio_ctx_add_to_playlist'>${tr('audio_ctx_add_to_playlist')}</a>
-            ${ctx_type == 'main_player' ? `
-            <a id='audio_ctx_clear_context'>${tr('audio_ctx_clear_context')}</a>` : ''}
-            ${ctx_type == 'main_player' ? `<a href='https://github.com/mrilyew' target='_blank'>BigPlayer v1.2 by MrIlyew</a>` : ''}
+            ${ctx_type == 'main_player' ? `<a id='audio_ctx_clear_context'>${tr('audio_ctx_clear_context')}</a>` : ''}
+            ${ctx_type == 'main_player' ? `<a id='audio_ctx_show_count'>${tr('audio_ctx_show_count')}</a>` : ''}
+            ${ctx_type == 'main_player' ? `<a>BigPlayer v1.3</a>` : ''}
         </div>
     `)
     u(parent).append(ctx_u)
@@ -1323,6 +1394,9 @@ u(document).on('contextmenu', '.bigPlayer, .audioEmbed, #ajax_audio_player', (e)
         window.player.__updateFace()
         window.player.undump()
         window.router.route(old_url)
+    })
+    ctx_u.find('#audio_ctx_show_count').on('click', (ev) => {
+        window.player.bigPlayer_toggleCountBlock()
     })
 })
 
@@ -2061,7 +2135,6 @@ u(document).on('click', '.upload_container_element #small_remove_button', (e) =>
         return
     }
 
-    // 1984
     const element = u(e.target).closest('.upload_container_element')
     const element_index = Number(element.attr('data-index'))
     

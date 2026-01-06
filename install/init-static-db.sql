@@ -493,6 +493,19 @@ START TRANSACTION;
 INSERT INTO `ChandlerGroups` VALUES (NULL, "OVK\\Subteno", NULL);
 INSERT INTO `ChandlerACLRelations` VALUES ("ffffffff-ffff-ffff-ffff-ffffffffffff", (SELECT id FROM ChandlerGroups WHERE name = "OVK\\Subteno"), 64);
 
+
+INSERT INTO `ChandlerGroups` VALUES (NULL, "OVK\\SupportAgents", NULL);
+INSERT INTO `ChandlerACLGroupsPermissions` VALUES ((SELECT id FROM ChandlerGroups WHERE name = "OVK\\SupportAgents"), "openvk\\Web\\Models\\Entities\\TicketReply", 0, "write", 1);
+INSERT INTO `ChandlerACLRelations` VALUES ("ffffffff-ffff-ffff-ffff-ffffffffffff", (SELECT id FROM ChandlerGroups WHERE name = "OVK\\SupportAgents"), 64);
+
+INSERT INTO `ChandlerGroups` VALUES (NULL, "OVK\\Moderators", NULL);
+INSERT INTO `ChandlerACLGroupsPermissions` VALUES ((SELECT id FROM ChandlerGroups WHERE name = "OVK\\Moderators"), "openvk\\Web\\Models\\Entities\\Report", 0, "admin", 1);
+INSERT INTO `ChandlerACLRelations` VALUES ("ffffffff-ffff-ffff-ffff-ffffffffffff", (SELECT id FROM ChandlerGroups WHERE name = "OVK\\Moderators"), 64);
+
+INSERT INTO `ChandlerGroups` VALUES (NULL, "OVK\\SpamAnalysts", NULL);
+INSERT INTO `ChandlerACLGroupsPermissions` VALUES ((SELECT id FROM ChandlerGroups WHERE name = "OVK\\SpamAnalysts"), "openvk\\Web\\Models\\Entities\\Ban", 0, "write", 1);
+INSERT INTO `ChandlerACLRelations` VALUES ("ffffffff-ffff-ffff-ffff-ffffffffffff", (SELECT id FROM ChandlerGroups WHERE name = "OVK\\SpamAnalysts"), 64);
+
 INSERT INTO `profiles` (`id`, `user`, `first_name`, `last_name`, `pseudo`, `info`, `about`, `status`, `privacy`, `left_menu`, `sex`, `type`, `phone`, `email`, `coins`, `since`, `block_reason`, `verified`, `reputation`, `shortcode`, `registering_ip`, `online`, `birthday`, `hometown`, `polit_views`, `marital_status`, `email_contact`, `telegram`, `interests`, `fav_music`, `fav_films`, `fav_shows`, `fav_books`, `fav_quote`, `city`, `address`, `style`, `style_avatar`, `show_rating`, `milkshake`, `nsfw_tolerance`, `notification_offset`, `deleted`, `microblog`) VALUES ('1', 'ffffffff-ffff-ffff-ffff-ffffffffffff', 'System', 'Administrator', NULL, NULL, NULL, 'Default System Administrator account', '1099511627775', '1099511627775', '0', '0', NULL, 'admin@localhost.localdomain6', '100', '2018-10-31 15:15:15', NULL, '1', '1000', 'sysop', '::1', '0', '0', NULL, '0', '0', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'Arcadia Bay', NULL, 'ovk', '0', '1', '0', '0', '0', '0', '0');
 
 COMMIT;

@@ -178,8 +178,8 @@
 }
 
 .bigPlayer .slider, .audioEmbed .track .slider {
-    width: 15px;
-    height: 7px;
+    width: 10px;
+    height: 6px;
     background: #606060;
     position: absolute;
     bottom: 0;
@@ -258,14 +258,15 @@
     cursor: pointer;
 }
 
+/* we do not need to set the manual width there */
 .bigPlayer .trackPanel .track .selectableTrack > div {
-    width: 96%;
+    width: 97.4%;
     position: relative;
 }
 
 .bigPlayer .volumePanel .selectableTrack > div {
     position: relative;
-    width: 77%;
+    width: 84%;
 }
 
 .audioEmbed .track > .selectableTrack, .bigPlayer .selectableTrack {
@@ -353,6 +354,7 @@
 }
 
 .audioEntry .nobold {
+    font-size: 10px;
     text-align: center;
     min-width: 28px;
 }
@@ -946,16 +948,20 @@
     padding: 1px;
 }
 
-/* AJAX player */
+/* mini player */
 #ajax_audio_player {
-    transition: background .1s ease-out;
-    background: rgba(44, 44, 44, 0.7);
+    background: rgba(44, 44, 44, 0.8);
     padding: 1px;
     width: 500px;
     height: 37px;
     position: fixed;
     z-index: 1025;
     border-radius: 3px;
+}
+
+#ajax_audio_player,
+#ajax_audio_player #aj_player_tracks {
+    transition: background .1s ease-out;
 }
 
 #ajax_audio_player.hidden {
@@ -973,7 +979,8 @@
     gap: 7px;
 }
 
-#ajax_audio_player.ui-draggable-dragging {
+#ajax_audio_player.ui-draggable-dragging,
+#ajax_audio_player.ui-draggable-dragging #aj_player_tracks {
     background: rgba(20, 20, 20, 0.9);
 }
 
@@ -1087,4 +1094,75 @@
     width: 15px;
     height: 12px;
     background-position: -214px -5px;
+}
+
+/* ajax audio player > queue */
+
+#ajax_audio_player #aj_player_tracks {
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+
+    background: rgba(44, 44, 44, 0.79);
+    max-height: 200px;
+    overflow-y: auto;
+    margin-top: 2px;
+    margin-left: 2px;
+    border-radius: 0px 0px 2px 2px;
+}
+
+#ajax_audio_player #aj_player_tracks .aj_track {
+    padding: 3px 10px;
+}
+
+#ajax_audio_player #aj_player_tracks .aj_track span,
+#ajax_audio_player #aj_player_tracks .aj_track b {
+    color: #bdbdbda6;
+}
+
+#ajax_audio_player #aj_player_tracks .aj_track:hover {
+    background: #00000030;
+}
+
+#ajax_audio_player #aj_player_tracks .aj_track.selected {
+    background: #00000078;
+}
+
+#ajax_audio_player #aj_player_tracks::-webkit-scrollbar {
+    width: 2px;
+}
+
+#ajax_audio_player #aj_player_tracks .aj_track {
+    display: grid;
+    cursor: pointer;
+    grid-template-columns: 0fr 1fr;
+}
+
+#ajax_audio_player #aj_player_tracks .aj_track .num {
+    width: 12px;
+    display: block;
+    margin-right: 10px;
+    text-wrap: nowrap;
+}
+
+#ajax_audio_player #aj_player_tracks .aj_track.selected span, 
+#ajax_audio_player #aj_player_tracks .aj_track.selected b {
+    color: white;
+}
+
+/* Compact audios */
+
+.audiosContainer.winamp_mode {
+    padding: 1px 0px 1px 2px;
+    margin-right: 3px;
+}
+
+.audiosContainer.winamp_mode .audioEntry .audioEntryWrapper {
+    padding: 1px 14px;
+    height: unset;
+    margin-bottom: 1px;
+}
+
+.audiosContainer.winamp_mode .audioEntry .buttons {
+    right: 19px;
 }

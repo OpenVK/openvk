@@ -19,6 +19,7 @@
 {/block}
 
 {block content}
+    {var $canDelete = !$create && $owner->getId() === $thisUser->getId()}
     <div class="container_gray">
         <h4>{_main_information}</h4>
         <form method="POST" enctype="multipart/form-data">
@@ -79,6 +80,10 @@
                         <td>
                             <input type="hidden" name="hash" value="{$csrfToken}" />
                             <input type="submit" value="{_save}" class="button" />
+                            {if $canDelete}
+                                <input type="hidden" name="delete_app" value="" />
+                                <a id="delete_app">{_delete}</a>
+                            {/if}
                         </td>
                     </tr>
                 </tbody>
@@ -102,5 +107,15 @@
 
     <script>
         window.coins = {$coins}
+        {if $canDelete}
+            $("#delete_app").on("click", (e) => { 
+                e.preventDefault() 
+
+                MessageBox(tr("warning"), tr("app_delete_modal_desc"), [tr("cancel"), tr("confirm_m")], [Function.noop, () => {
+                    $("input[name='delete_app']").val(1);
+                    $("form").submit();
+                }]);
+            })
+        {/if}
     </script>
 {/block}
