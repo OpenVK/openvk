@@ -400,7 +400,7 @@
 "suggested_posts_in_group_by_you_zero" = "Сіз бұл топқа ешбңр жазба ұсынбағансыз";
 "suggested_posts_in_group_by_you_one" = "Бұл топқа бір жазба ұсынғансыз";
 "suggested_posts_in_group_by_you_few" = "Бұл топқа $1 жазба ұсынғансыз";
-"suggested_posts_in_group_by_   you_many" = "Бұл топқа $1 жазба ұсынғансыз";
+"suggested_posts_in_group_by_you_many" = "Бұл топқа $1 жазба ұсынғансыз";
 "suggested_posts_in_group_by_you_other" = "Бұл топқа $1 жазба ұсынғансыз";
 
 "suggestion_successfully_published" = "Жазба сәтті жарияланды";
