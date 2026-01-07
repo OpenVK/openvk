@@ -873,7 +873,7 @@
 /* Audios */
 "audios" = "Әндер";
 "audio" = "Ән";
-"playlist" = "Плейлист";
+"playlist" = "Әнтізім";
 "upload_audio" = "Ән жүктеу";
 "upload_audio_to_group" = "Топқа ән жүктеу";
 
@@ -1568,9 +1568,9 @@
 "do_not_have_audio" = "Бұл ән тізіміңізде жоқ.";
 "do_have_audio" = "Бұл ән тізіміңізде әлдеқашан бар.";
 
-"set_playlist_name" = "Плейлист атауын көрсетіңіз.";
-"playlist_already_bookmarked" = "Бұл плейлист жинағыңызда бар.";
-"playlist_not_bookmarked" = "Бұл плейлист жинағыңызда жоқ.";
+"set_playlist_name" = "Әнтізім атауын көрсетіңіз.";
+"playlist_already_bookmarked" = "Бұл әнтізім жинағыңызда бар.";
+"playlist_not_bookmarked" = "Бұл әнтізім жинағыңызда жоқ.";
 "invalid_cover_photo" = "Мұқабаны сақтау мүмкін болмады.";
 "not_a_photo" = "Жүктелген файл сурет форматына сәйкес келмейді.";
 "file_too_big" = "Файл өлшемі тым үлкен.";
@@ -2295,8 +2295,8 @@
 "tour_section_11_wordart" = "<img src='/assets/packages/static/openvk/img/tour/wordart_en.png' width='65%'>";
 
 "tour_section_12_title_1" = "Фондық суреттер";
-"tour_section_12_text_1" = "Профиль фонына екі сурет қоюға болады.";
-"tour_section_12_text_2" = "Олар парақшаның оң және сол жағында көрінеді.";
+"tour_section_12_text_1" = "Парақшаның артына екі сурет қоюға болады.";
+"tour_section_12_text_2" = "Олар оң және сол жақта көрінеді.";
 "tour_section_12_text_3" = "<b>Кеңес:</b> Суреттің орналасуымен тәжірибе жасап көріңіз — градиенттер немесе әдемі панорамалар керемет көрінеді.";
 "tour_section_12_title_2" = "Аватарлар";
 "tour_section_12_text_2_1" = "Аватар стилін таңдауға болады: стандартты, дөңгелек немесе шаршы (1:1).";
