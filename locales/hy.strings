@@ -172,7 +172,7 @@
 "updated_at" = "Թարմացված է $1";
 
 "user_banned" = "Ցավո՛ք, մենք ստիպված կասեցրել ենք <b>$1</b>-ի էջը։";
-"user_banned_comment" = "Moderator's comment:";
+"user_banned_comment" = "Մոդերատորի մեկնաբանությունը.";
 "verified_page" = "Վավերացված էջ";
 "user_is_blocked" = "Օգտատերը արգելափակված է";
 "before" = "մինչև";
