@@ -146,17 +146,48 @@
 "personal_information" = "Անձնական տեղեկատվություն";
 
 "interests" = "Հետաքրքրություններ";
+"additional" = "Հավելյալ";
+"additional_fields_description" = "Այստեղ Դուք կարող եք ավելացնել հավելյալ տեղեկություն Ձեր մասին, օրինակ ՝ այլ հաշիվները, կամ Ձեր հետաքրքրությունները։ Առավելագույնը $1 նմանատիպ դաշտեր կարող են ավելացվել։";
+"additional_field_name" = "Անուն";
+"additional_field_text" = "Տեքստ";
+"additional_field_place" = "Վայր";
+"additional_field_place_contacts" = "\"contacts\"–ում";
+"additional_field_place_interests" = "\"interests\"–ում";
+
 "favorite_music" = "Սիրված երգ";
 "favorite_films" = "Սիրված ֆիլմեր";
 "favorite_shows" = "Սիրված հաղորդումներ";
 "favorite_books" = "Սիրված գրքեր";
 "favorite_quotes" = "Սիրված խոսքեր";
+"favorite_games" = "Սիրված խաղեր";
+"custom_field_favorite_performers" = "Սիրված կատարողներ";
+"custom_field_favorite_content_makers" = "Սիրված կոնտենտ ստեղծողներ";
+"custom_field_favorite_anime" = "Սիրելի անիմե";
+"custom_field_favorite_manga" = "Սիրելի մանգա";
+"custom_field_favorite_vtubers" = "Սիրելի վիթուբերներ";
+"custom_field_favorite_albums" = "Սիրելի երաժշտական ալբոմներ";
+
 "information_about" = "Տեղեկություն";
 
 "updated_at" = "Թարմացված է $1";
 
 "user_banned" = "Ցավո՛ք, մենք ստիպված կասեցրել ենք <b>$1</b>-ի էջը։";
 "user_banned_comment" = "Մոդերատորի մեկնաբանությունը.";
+"verified_page" = "Վավերացված էջ";
+"user_is_blocked" = "Օգտատերը արգելափակված է";
+"before" = "մինչև";
+"forever" = "հավերժ";
+"closed_page" = "Փակ էջ";
+
+"limited_access_to_page_m" = "$1 սահմանափակել է հասանելիությունը իր էջին։";
+"limited_access_to_page_f" = "$1 սահմանափակել է հասանելիությունը իր էջին։";
+
+"you_can_add" = "Դուք կարող եք";
+"add_to_friends_m" = "ավելացնել իրեն ընկերների ցանկում։";
+"add_to_friends_f" = "ավելացնել իրեն ընկերների ցանկում։";
+
+"register_to_access_page_m" = "Գրանցվեք իր էջին հասանելիություն ստանալու համար։";
+"register_to_access_page_f" = "Գրանցվեք իր էջին հասանելիություն ստանալու համար։";
 
 /* Wall */
 
@@ -167,7 +198,9 @@
 "post_writes_g" = "հրապարակել են";
 "post_deact_m" = "ջնջել է էջը հետևյալ բառերով.";
 "post_deact_f" = "ջնջել է էջը հետևյալ բառերով.";
+"post_deact_g" = "ջնջել է էջը հետևյալ բառերով.";
 "post_deact_silent_m" = "սուս ու փուս ջնջել է էջը։";
+"post_deact_silent_f" = "սուս ու փուս ջնջել է էջը։";
 "post_deact_silent_f" = "սուս ու փուս ջնջել է էջը։";
 "post_on_your_wall" = "Ձեր պատին";
 "post_on_group_wall" = "$1 –ին";
@@ -184,12 +217,13 @@
 "pinned" = "ամրացված";
 "comments_tip" = "Եղե՛ք առաջինը ով կթողնի իր կարծիքը։";
 "your_comment" = "Ձեր մեկնաբանությունը";
+"auditory" = "Լսարան";
+"in_wall" = "իմ պատին";
+"in_group" = "խմբում";
 "shown" = "Ցուցադրված է";
 "x_out_of" = "$1–ը";
 "wall_zero" = "գրություն չկա";
 "wall_one" = "մեկ գրություն";
-"wall_few" = "$1 գրություն";
-"wall_many" = "$1 գրություն";
 "wall_other" = "$1 գրություն";
 "publish_post" = "Ավելացնել գրություն";
 "view_other_comments" = "Կարդալ մեկնաբանությունները";
@@ -199,17 +233,29 @@
 "my_news" = "Իմ լուրերը";
 "all_news" = "Ամբողջ լուրերը";
 "posts_per_page" = "Գրությունների քանակը էջում";
+"show_ignored_sources" = "Ցուցադրել բացառված աղբյուրները";
+"auto_scroll" = "Ավտոթերթիչ";
+"ajax_routing" = "AJAX-փոխակերպումներ";
 
 "attachment" = "Հավելում";
 "post_as_group" = "Խմբի անունից";
 "comment_as_group" = "Մեկնաբանել խմբի անունից";
+
+"add_source" = "Ավելացնել աղբյուր";
+"set_source" = "Հաստատել աղբյուրը";
+"source" = "Աղբյուր";
+"set_source_tip" = "Եթե Դուք օգտագործում եք այլ հեղինակների բովանդակությունը, կարևոր է տրամադրել օրիգինալ աղբյուրը։<br>Դուք կարող եք անել դա ստորև։";
+
 "add_signature" = "Ավելացնել ստորագրություն";
+/* ^ can be translated as "author's signature". ^ */
 "contains_nsfw" = "Պարունակում է NSFW մատերիալ";
 "nsfw_warning" = "Այս գրությունը կարող է պարունակել 18+ մատերիալ";
 "report" = "Բողոքարկել";
 "attach" = "Ամրացնել";
+"detach" = "Անջատել";
 "attach_photo" = "Ամրացնել նկար";
 "attach_video" = "Ամրացնել վիդեո";
+"attach_geotag" = "Ամրագնել գեոնշում";
 "draw_graffiti" = "Նկարել գրաֆիտի";
 "no_posts_abstract" = "Այստեղ ոչ ոք, ոչինչ․․․ դեռ չի գրել․․․";
 "attach_no_longer_available" = "Այս հավելվածը այլևս հասանելի չէ";
@@ -219,6 +265,49 @@
 "graffiti" = "Գրաֆիտի";
 
 "reply" = "Պատասխանել";
+"post_is_ad" = "Այս գրառումը հովանավորված է։";
+
+"edited_short" = "խմբագրել է";
+
+"feed_settings" = "Ժապավենի կարգավորումներ";
+"ignored_sources" = "Անտեսված աղբյուրներ";
+"ignore_user" = "Անտեսել օգտատերին";
+"unignore_user" = "Չանտեսել օգտատերին";
+
+"ignore_club" = "Անտեսել ակումբը";
+"unignore_club" = "Չանտեսել ակումբը";
+"no_ignores_count" = "Չկան անտեսված աղբյուրներ։";
+"stop_ignore" = "Չանտեսել";
+"start_from_page" = "Սկսել էջից";
+
+"all_posts" = "Բոլոր գրառումները";
+"users_posts" = "$1–ի գրառումները";
+"clubs_posts" = "Խմբի գրառումները";
+"others_posts" = "Ուրիշների գրառումները";
+
+"show_more" = "Ցույց տալ ավելին";
+"has_repost" = "Ունի ռեփոստ";
+
+"likers_list" = "Լայքողների ցանկ";
+"liked_verb" = "Լայքվել է";
+
+"liked_by_x_people_one" = "Հավանել է $1 օգտատեր";
+"liked_by_x_people_few" = "Հավանել է $1 օգտատեր";
+"liked_by_x_people_many" = "Հավանել է $1 օգտատեր";
+"liked_by_x_people_other" = "Հավանել է $1 օգտատեր";
+"liked_by_x_people_zero" = "Ոչ ոք չհավանեց";
+
+"geo_place" = "Վայր";
+"geotag" = "Գեոթեգ";
+"nearest_posts" = "Մոտակա գրառումները";
+"Latitude" = "Լայնություն";
+"longitude" = "Երկայնություն";
+"name_of_the_place" = "Վայրի անունը";
+"no_nearest_posts" = "Չկան մոտակա գրառումներ";
+"shown_last_nearest_posts" = "Ցուցադրում ենք ամվա $1 գրառումները";
+
+"change_geo_name" = "Փոխել գեո–անունը";
+"change_geo_name_new" = "Նոր անուն";
 
 /* Friends */
 
@@ -229,6 +318,10 @@
 "friends_delete" = "Հեռացնել ընկերներից";
 "friends_reject" = "Չեղարկել հայտը";
 "friends_accept" = "Ընդունել հայտը";
+"friends_leave_in_flw" = "Թողնել բաժանորդներում";
+"friends_add_msg" = "Այժմ դուք ընկերներ եք։";
+"friends_rej_msg" = "Դուք թողեցիք այս օգտատերին բաժանորդների ցանկում։";
+"friends_rem_msg" = "Դուք ջնջեցիք այս օգտատերին Ձեր ընկերների ցանկից։";
 "send_message" = "Ուղարկել նամակ";
 "incoming_req" = "Սպասվող";
 "outcoming_req" = "Արտագնա";
@@ -244,9 +337,17 @@
 "friends_one" = "$1 ընկեր";
 "friends_other" = "$1 հատ ընկեր";
 
+"friends_online_zero" = "Դուք դեռ չունեք ցանցի մեջ գտնվող ընկերներ";
+"friends_online_one" = "Ձեր $1 ընկերը ցանցի մեջ է";
+"friends_online_other" = "Ձեր $1 ընկերները ցանցի մեջ են";
+
 "friends_list_zero" = "Դուք դեռ չունեք ընկերներ";
 "friends_list_one" = "Դուք ունեք մեկ ընկեր";
 "friends_list_other" = "Դուք ունեք $1 ընկեր";
+
+"friends_list_online_zero" = "Դուք դեռ չունեք ցանցի մեջ գտնվող ընկերներ";
+"friends_list_online_one" = "Ձեր $1 ընկերը ցանցի մեջ է";
+"friends_list_online_other" = "Ձեր $1 ընկերները ցանցի մեջ ենe";
 
 "followers_zero" = "Ոչ մի հետևորդ չունեք";
 "followers_one" = "$1 հետևորդ";
@@ -256,14 +357,9 @@
 "subscriptions_one" = "$1 բաժանորդագրություն";
 "subscriptions_other" = "$1 բաժանորդագրություն";
 
-"friends_list_online_zero" = "Դուք դեռ չունեք ցանցի մեջ գտնվող ընկերներ";
-"friends_list_online_one" = "Ձեր $1 ընկերը ցանցի մեջ է";
-"friends_list_online_few" = "Ձեր $1 ընկերները ցանցի մեջ են";
-"friends_list_online_many" = "Ձեր $1 ընկերները ցանցի մեջ են";
-"friends_list_online_other" = "Ձեր $1 ընկերները ցանցի մեջ են";
-
 /* Group */
 
+"group" = "Խումբ";
 "name_group" = "Անվանում";
 "subscribe" = "Բաժանորդագրվել";
 "unsubscribe" = "Հետ բաժանորդագրվել";
@@ -302,82 +398,186 @@
 "hidden_yes" = "Թաքնված է";
 "hidden_no" = "Թաքնված չէ";
 "group_allow_post_for_everyone" = "Թույլատրել հրապարակել բոլորին";
-"group_hide_from_global_feed" = "Չցույց տալ հրապարակությունները ընդհանուր լրահոսում։";
+"group_limited_post" = "Առաջարկվածներ";
+"group_closed_post" = "Փակված";
+"suggest_new" = "Առաջարկել գրառում";
+
+"suggested_by_you_zero" = "$1 առաջարկված գրառումներ Ձեզնից";
+"suggested_by_you_one" = "Մեկ առաջարկված գրառում Ձեզնից";
+"suggested_by_you_few" = "$1 առաջարկված գրառումներ Ձեզնից";
+"suggested_by_you_many" = "$1 առաջարկված գրառումներ Ձեզնից";
+"suggested_by_you_other" = "$1 առաջարկված գրառումներ Ձեզնից";
+
+"suggested_by_everyone_zero" = "$1 առաջարկված գրառումներ";
+"suggested_by_everyone_one" = "Մեկ առաջարկված գրառում";
+"suggested_by_everyone_few" = "$1 առաջարկված գրառումներ";
+"suggested_by_everyone_many" = "$1 առաջարկված գրառումներ";
+"suggested_by_everyone_other" = "$1 առաջարկված գրառումներ";
+
+"group_hide_from_global_feed" = "Չցուցադրել գրառումներ ընդհանուր ժապավենում";
+"suggested_posts_by_you" = "Ձեր առաջարկած գրառումները";
+"suggested_posts_by_everyone" = "Առաջարկած գրառումներ";
+"suggested" = "Առաջարկված";
+"suggested_posts_everyone" = "Օգտատերերից առաջարկված գրառումներ";
+"no_suggested_posts_by_you" = "Դուք դեռ չեք առաջարկել որևէ գրառում այս խմբում։";
+"no_suggested_posts_by_people" = "Դեռ որևէ գրառում չի առաջարկվել այս խմբում։";
+
+"publish_suggested" = "Ընդունել";
+"decline_suggested" = "Մերժել";
+
+"error_loading_suggest" = "Խնդիր առաջացավ նոր գրառումներ բեռնելիս";
+
+"publishing_suggested_post" = "Հրապարակում ենք առաջարկած գրառումը";
+"suggested_posts_in_group_zero" = "Շնորհավո՜ր։ Դուք վերանայել եք բոլոր առաջարկված գրառումները։";
+"suggested_posts_in_group_one" = "Այս խումբն ունի մեկ առաջարկված գրառում";
+"suggested_posts_in_group_few" = "Այս խումբն ունի $1 առաջարկված գրառում";
+"suggested_posts_in_group_many" = "Այս խումբն ունի $1 առաջարկված գրառում";
+"suggested_posts_in_group_other" = "Այս խումբն ունի $1 առաջարկված գրառում";
+
+"suggested_posts_in_group_by_you_zero" = "Դուք չեք առաջարկել որևէ գրառում այս խմբին";
+"suggested_posts_in_group_by_you_one" = "Դուք առաջարկել եք մեկ գրառում այս խմբին";
+"suggested_posts_in_group_by_you_few" = "Դուք առաջարկել եք $1 գրառում այս խմբին";
+"suggested_posts_in_group_by_you_many" = "Դուք առաջարկել եք $1 գրառում այս խմբին";
+"suggested_posts_in_group_by_you_other" = "Դուք առաջարկել եք $1 գրառում այս խմբին";
+
+"suggestion_successfully_published" = "Գրառումը հաջողությամբ հրապարակվել է";
+"suggestion_successfully_declined" = "Գրառումը հաջողությամբ մերժվել է";
+"suggestion_press_to_go" = "Դեպի գրառում";
+
+"error_declining_invalid_post" = "Առաջարկված գրառումը, որը Դուք փորձել եք մերժել, անվավեր է";
+"error_declining_not_suggested_post" = "Գրառումը, որը Դուք փորձել եք մերժել, չի առաջարկվել";
+"error_declining_declined_post" = "Առաջարկված գրառումը արդեն մերժված է";
+
+"error_accepting_invalid_post" = "Առաջարկված գրառումը, որը Դուք փորձել եք ընդունել, անվավեր է";
+"error_accepting_not_suggested_post" = "Գրառումը, որը Դուք փորձել եք ընդունել, չի առաջարկվել";
+"error_accepting_declined_post" = "Առաջարկված գրառումը արդեն մերժված է";
+
 "statistics" = "Վիճակագրություն";
-"group_administrators_list" = "Ադմինների ցուցակ";
-"group_display_only_creator" = "Ցուցադրել միայն խմբի ստեղծողին";
-"group_display_all_administrators" = "Ցուցադրել բոլոր ադմինիստրատորներին";
-"group_dont_display_administrators_list" = "Ոչ մեկին ցույց չտալ";
+"group_administrators_list" = "Ադմինիստրատորների ցանկ";
+"group_display_only_creator" = "Ցույց տալ միայն խմբի հեղինակին";
+"group_display_all_administrators" = "Ցույց տալ բոլոր ադմինիստրատորներին";
+"group_dont_display_administrators_list" = "Ոչինչ չցույց տալ";
 
-"group_changeowner_modal_title" = "Սեփականատիրոջ իրավասությունների փոխանցում";
-"group_changeowner_modal_text" = "<b>Ուշադրությու՛ն։</b> Դուք փոխանցում եք խմբի բոլոր իրավունքները $1-ին։ Այս գործողությունը անդառնալի է։ Դուք էլի կմնաք ադմինիստրատոր, բայց հեշտությամբ այդ դերը ձեզնից կարող են խլել։";
-"group_owner_setted" = "Նոր տերը ($1) նշանակված է $2 հանրությունում։ Ձեզ տրված են ադմինիստրատորի իրավասություններ։ Եթե ուզում եք հետ բերել իրավասությունները, <a href='/support?act=new'>գրե՛ք կայքի տեխնիկական աջակցությանը</a>։";
+"group_changeowner_modal_title" = "Պատվիրակել տիրոջ գործառույթները";
+"group_changeowner_modal_text" = "Ուշադրությու՜ն։ Դուք պատվիրակում եք Ձեր իրավունքները $1–ին։ Այս գործընթացը անվերադարձ է։ Պատվիրակումից հետո Դուք մնալու եք որպես ադմինիստրատոր, սակայն կարողանալու եք հրաժարվել այդ դերից։";
+"group_owner_setted" = "Նոր տերը ($1) հաջողությամբ կցվել է $2 հանրությանը։ Դուք ստանձնել եք ադմինիստրատորի դերը այս խմբում։ Եթե ցանկանում եք հետ վերադարձնել Ձեր տիրոջ պատվիրակությունները, խնդրում ենք կապ հաստատել <a href='/support?act=new'>կայքի տեխնիկական սպասարկման</a> հետ։";
 
-"participants_zero" = "Ոչ մի մասնակից";
-"participants_one" = "Միայն մեկ մասնակից";
-"participants_other" = "$1 հատ մասնակից";
+"participants_zero" = "Մասնակիցներ չկան";
+"participants_one" = "$1 մասնակից";
+"participants_other" = "$1 մասնակից";
 
-"groups_zero" = "Ոչ մի խումբ";
-"groups_one" = "Մեկ խումբ";
+"groups_zero" = "Խմբեր չկան";
+"groups_one" = "$1 խումբ";
 "groups_other" = "$1 խումբ";
 
-"groups_list_zero" = "Դուք չկաք գեթ ոչ մի խմբում";
-"groups_list_one" = "Դուք կաք միայն մեկ խմբում";
-"groups_list_other" = "Դուք կաք $1 խմբում";
+"groups_list_zero" = "Դուք որևէ խմբի մասնկից չեք";
+"groups_list_one" = "Դուք մեկ խմբի մասնակից եք";
+"groups_list_other" = "Դուք $1 խմբի մասնակից եք";
 
-"meetings_zero" = "Ոչ մի հանդիպում";
-"meetings_one" = "Մեկ հանդիպում";
+"meetings_zero" = "Հանդիպումներ չկան";
+"meetings_one" = "$1 հանդիպում";
 "meetings_other" = "$1 հանդիպում";
 
 "search_by_groups" = "Որոնում ըստ խմբերի";
+
+"error_suggestions" = "Առաջարկվածների հասանելիության խնդիր";
+"error_suggestions_closed" = "Այս խմբի պատը բաց է։";
+"error_suggestions_open" = "Այս խմբի պատը փալ է։";
+"error_suggestions_access" = "Միայն խմբի ադմինիստրատորները կարող են նայել բոլոր առաջարկված գրառումները։";
+
+"group_banned" = "Ցավոք սրտի, մենք պետք է արգելափակեյինք <b>$1</b> խումբը։";
 
 /* Albums */
 
 "create" = "Ստեղծել";
 "albums" = "Ալբոմներ";
+"album" = "Ալբոմ";
+"photos" = "պատկերներ";
+"photo" = "պատկեր";
 "create_album" = "Ստեղծել ալբոմ";
 "edit_album" = "Խմբագրել ալբոմը";
-"creating_album" = "Ալբոմը ստեղծվում է";
-"upload_photo" = "Վերբեռնել լուսանկար";
-"photo" = "Լուսանկար";
+"edit_photo" = "Խմբագրել պատկերը";
+"creating_album" = "Ստեղծում ենք ալբոմը";
+"delete_photo" = "Ջնջել պատկերը";
+"sure_deleting_photo" = "Դուք վստա՞հ եք, որ ցանկանում եք ջնջել այս պատկերը ալբոմից";
+"upload_photo" = "Վերբեռնել պատկեր";
+"photo" = "Պատկեր";
 "upload_button" = "Վերբեռնել";
 
 "open_original" = "Բացել օրիգինալը";
 
-"avatar_album" = "Էջի լուսանկարները";
-"wall_album" = "Պատի լուսանկարները";
+"avatar_album" = "Պրոֆիլի ալբոմներ";
+"wall_album" = "Պատի պատկերներ";
 
-"albums_zero" = "Ոչ մի ալբոմ չկա";
-"albums_one" = "Մեկ ալբոմ";
+"albums_zero" = "Ալբոմ չկա";
+"albums_one" = "$1 ալբոմ";
 "albums_other" = "$1 ալբոմ";
 
-"albums_list_zero" = "Դուք ոչ մի ալբոմ չունեք";
+"albums_list_zero" = "Դուք չունեք որևէ ալբոմ";
 "albums_list_one" = "Դուք ունեք մեկ ալբոմ";
 "albums_list_other" = "Դուք ունեք $1 ալբոմ";
 
-"add_image" = "Ավելացնել պատկեր";
-"add_image_group" = "Վերբեռնել պատկեր";
-"upload_new_picture" = "Ավելացնել նոր պատկեր";
-"uploading_new_image" = "Վերբեռնվում է նոր պատկերը․․․";
-"friends_avatar" = "Այն ավելի կհեշտացնի ձեր ընկերներին ճանաչել Ձեզ, եթե տեղադրեք ձեր իրական լուսանկարը։";
-"groups_avatar" = "Լավ պատկերը կարող է Ձեր խումբը ավելի ճանաչելի դարձնել։";
-"formats_avatar" = "Դուք կարող եք վերբեռնել պատկեր միայն JPG, GIF կամ PNG ֆորմատով։";
-"troubles_avatar" = "Եթե դժվարանում եք տեղադրելուց, փորձե՛ք ընտրել ավելի փոքր նկար։";
-"webcam_avatar" = "Եթե Ձեր համակարգիչը ունի վեբ–տեսախցիկ, Դուք կարող եք <a href='javascript:'>վերցնել նկար</a>։";
+"add_image" = "Ավելացնել լուսանկար";
+"add_image_group" = "Ավելացներ խմբի լուսանկար";
+"upload_new_picture" = "Վերբեռնել լուսանկար";
+"uploading_new_image" = "Վերբեռնել նոր լուսանկար";
+"friends_avatar" = "Ընկերներին ավելի հեշտ կլինի ճանաչել Ձեզ, եթե վերբեռնեք Ձեր իրական լուսանկարը։";
+"groups_avatar" = "Լավ նկարը դարձնում է Ձեր խումբը ավելի ճանաչելի։";
+"formats_avatar" = "Դուք կարող եք վերբեռնել ցանկացած նկար JPG, GIF կամ PNG ֆորմատներով։";
+"troubles_avatar" = "Եթե դժվարություններ կան, փորձե՛ք ընտրել ավելի փոքր չափերի նկար։";
+"webcam_avatar" = "Եթե Ձեր համակարգիչը վեբ տեսախցիկ ունի, <a id='_takeSelfie'>արեք նկար »</a>";
+"publish_on_wall" = "Գրառում անել պատին";
+"take_snapshot" = "Արեք նկար";
+"your_browser_doesnt_support_webcam" = "Ձեր դիտարկիչը չի սպասարկում վեբ տեսախցիկից վիդեո նկարահանում։";
 
-"update_avatar_notification" = "Պրոֆիլի պատկերը փոփոխված է";
-"update_avatar_description" = "Սեղմեք դիտելու համար";
+"selected_area_user" = "Ընտրված դաշտը կցուցադրվի Ձեր էջում։";
+"selected_area_club" = "Ընտրված դաշտը կցուցադրվի խմբի էջում։";
+"selected_area_rotate" = "Եթե նկարը սխալ է տեղակայված, այն կարելի է պտտել։";
 
-"deleting_avatar" = "Պատկերը ջնջվում է";
-"deleting_avatar_sure" = "Դուք վստա՞հ եք որ ցանկանում եք ջնջել պատկերը։";
+"deleting_avatar" = "Ջնջում ենք նկարը";
+"deleting_avatar_sure" = "Դուք վստա՞հ եք, որ ցանկանում եք ջնջել նկարը։";
 
-"deleted_avatar_notification" = "Պատկերը հաջողությամբ ջնջվել է";
-
+"deleted_avatar_notification" = "Նկարը հաջողությամբ ջնջվել է";
 "save_changes" = "Պահպանել փոփոխությունները";
 
-"upd_m" = "թարմացրել է իր պրոֆիլի պատկերը";
-"upd_f" = "թարմացրել է իր պրոֆիլի պատկերը";
-"upd_g" = "թարմացրել է իր խմբի պատկերը";
+"upd_m" = "թարմացրել է իր պրոֆիլի նկարը";
+"upd_f" = "թարմացրել է իր պրոֆիլի նկարը";
+"upd_n" = "թարմացրել է իր պրոֆիլի նկարը";
+"upd_g" = "թարմացրել է իր պրոֆիլի նկարը";
+
+"add_photos" = "Ավելացնել նկարներ";
+"upload_picts" = "Վերբեռնել նկարներ";
+"end_uploading" = "Ավարտել վերբեռնումը";
+"photos_successfully_uploaded" = "Նկարները հաջողությամբ վերբեռնվել են";
+"click_to_go_to_album" = "Սեղմեք այստեղ դեպի ալբոմ գնալու համար";
+"error_uploading_photo" = "Խնդիր նկար վերբեռնելիս";
+"too_many_pictures" = "Ոչ ավելի քան 10 նկարները";
+"too_many_attachments" = "Չափից շատ կցորդներ։";
+
+"drag_files_here" = "Քաշեք և թողեք ֆայլերը այստեղ";
+"only_images_accepted" = "\"$1\" ֆայլը նկար չէ";
+"max_filesize" = "Առավելագույն ֆայլի չափը $1 MB է";
+
+"uploading_photos_from_computer" = "Վերբեռնում ենք նկարներ Ձեր համակարգչից";
+"supported_formats" = "Սպասարկվող ֆայլերի ֆորմատներ. JPG, PNG, և GIF։";
+"max_load_photos" = "Դուք կարող եք վերբեռնել միառժամանակ 10 նկար։";
+"tip" = "Խորհուրդ";
+"tip_ctrl" = "Որպեսզի ընտրեք միառժամանակ մի քանի նկար, սեղմած պահեք Ctrl ստեղնը, երբ ընտրում եք ֆայլեր Windows-ում, կամ CMD ստեղնը macOS-ում։";
+"album_poster" = "Ալբոմի պաստառ";
+"select_photo" = "Ընտրել նկարներ";
+"upload_new_photo" = "Վերբեռնել նոր նկար";
+
+"is_x_photos_zero" = "Ուղղակի զրո նկար։";
+"is_x_photos_one" = "Ուղղակի մի նկար։";
+"is_x_photos_few" = "Ուղղակի $1 նկար։";
+"is_x_photos_many" = "Ուղղակի $1 նկար։";
+"is_x_photos_other" = "Ուղղակի $1 նկար։";
+
+"all_photos" = "Բոլոր նկարները";
+"error_uploading_photo" = "Խնդիր նկար վերբեռնելիս. ";
+"too_many_photos" = "Չափից շատ նկարներ։";
+
+"photo_x_from_y" = "Նկար $1՝ $2–ից";
 
 /* Notes */
 
@@ -413,11 +613,16 @@
 
 "notes_closed" = "Դուք չե՛ք կարող ամրացնել նշումը հրապարակությանը, քանզի միայն Դուք եք տեսնում նրանք։<br>  Դուք կարող եք փոխել դա <a href=\"/settings?act=privacy\">կարգավորումներում</a>։";
 "do_not_attach_note" = "Չամրացնել նշում";
+"something_is_supported_from_xhtml" = "<a href='/kb/notes'>Ինչ–որ բան</a> (X)HTML–ից չի սպասարկվում։";
+"something" = "Ինչ–որ բան";
+"supports_xhtml" = "(X)HTML–ից չի սպասարկվում։";
 
 /* Notes: Article Viewer */
 "aw_legacy_ui" = "Հին ինտերֆեյս";
 
 /* Menus */
+
+/* Note that is string need to fit into the "My Page" link */
 
 "edit_button" = "խմբ.";
 "my_page" = "Իմ էջը";
@@ -427,9 +632,12 @@
 "my_messages" = "Իմ նամակները";
 "my_notes" = "Իմ նշումները";
 "my_groups" = "Իմ խմբերը";
-"my_feed" = "Իմ լուրերը";
-"my_feedback" = "Իմ պատասխանները";
+"my_audios" = "Իմ երգերը";
+"my_feed" = "Իմ լրահոսը";
+"my_feedback" = "Իմ կարծիքը";
 "my_settings" = "Իմ կարգավորումները";
+"bookmarks" = "Էջանիշներ";
+"bookmarks_tab" = "Պահպանված";
 "bug_tracker" = "Բագ–թրեքեր";
 
 "menu_settings" = "Կարգավորումներ";
@@ -490,6 +698,7 @@
 "round_avatars" = "Շրջանաձև";
 
 "apply_style_for_this_device" = "Հաստատել տեսքը միայն այս սարքի համար";
+"ui_settings_window" = "Հավելյալ կարգավորումներ";
 
 "search_for_groups" = "Խմբերի որոնում";
 "search_for_users" = "Մարդկանց որոնում";
@@ -499,6 +708,8 @@
 "search_for_apps" = "Հավելվածների որոնում";
 "search_for_notes" = "Նշումների որոնում";
 "search_for_audios" = "Երաժշտության որոնում";
+"search_for_audios_playlists" = "Փլեյլիստերի որոնում";
+"search_for_docs" = "Փաստաթղթերի որոնում";
 "search_button" = "Որոնել";
 "search_placeholder" = "Գրեք ցանկացած անուն, անվանում կամ բառ";
 "results_zero" = "Ոչ մի արդյունք";
@@ -515,6 +726,8 @@
 "privacy_setting_add_to_friends" = "Ով կարող է ինձ ընկեր կոչել";
 "privacy_setting_write_wall" = "Ով կարող է գրել իմ պատին";
 "privacy_setting_write_messages" = "Ով կարող է ինձ նամակներ գրել";
+"privacy_setting_view_audio" = "Ով կարող է լսել իմ երաժշտությունը";
+"privacy_setting_see_likes" = "Ով կարող է տեսնել իմ լայքերը";
 "privacy_value_anybody" = "Բոլոր ցանկացողները";
 "privacy_value_anybody_dative" = "Բոլոր ցանկացողներին";
 "privacy_value_users" = "OpenVK–ի օգտատերերին";
@@ -523,6 +736,10 @@
 "privacy_value_only_me" = "Միայն ես";
 "privacy_value_only_me_dative" = "Միայն ինձ";
 "privacy_value_nobody" = "Ոչ ոք";
+
+"profile_type" = "Պրոֆիլի տեսակ";
+"profile_type_open" = "Բաց";
+"profile_type_closed" = "Փակ";
 
 "your_email_address" = "Ձեր էլեկտրոնային հասցեն";
 "your_page_address" = "Ձեր էջի հասցեն";
@@ -568,10 +785,10 @@
 "profile_deactivate_reason_4" = "Ինձ անհանգստացնում է իմ տվյալների անվտանգությունը";
 "profile_deactivate_reason_4_text" = "Ինձ հետևում են ու շատ վախենալու է ինձ այստեղ գտնվելը";
 "profile_deactivate_reason_5" = "Իմ էջը չեն մեկնաբանում";
-"profile_deactivate_reason_5_text" = "Ինձ այստեղ շան տեղ դնող չկա ու ես տխրում եմ։ Դուք կզղջաք որ ես հեռացա...";
+"profile_deactivate_reason_5_text" = "Ինձ այստեղ շան տեղ դնող չկա ու այս վիճակն ինձ կազմաքանդում է։ Դուք կզղջաք որ ես հեռացա։";
 "profile_deactivate_reason_6" = "Այլ պատճառ";
 
-"profile_deactivated_msg" = "Ձեր էջը <b>ջնջված է</b>։<br/><br/>Եթե Դուք ուզենաք նորից օգտվել կայքով, ապա կարող եք <a href='/settings/reactivate'>ապաակտիվացնել այն</a> մինչև $1:";
+"profile_deactivated_msg" = "Ձեր էջը <b>ջնջված է</b>։<br/><br/>Եթե Դուք ուզենաք նորից օգտվել կայքով, ապա կարող եք <a href='/settings/reactivate'>ապաակտիվացնել այն</a> մինչև $1–ը:";
 "profile_deactivated_status" = "Էջը ջնջված է";
 "profile_deactivated_info" = "Օգտատիրոջ էջը հեռացվել է։<br/>Մանրամասն տեղեկատվությունը բացակայում է։";
 
@@ -581,6 +798,7 @@
 "end_all_sessions_description" = "Եթե ցանկանում եք դուրս գալ $1–ից ամեն դեվայսից, սեղմե՛ք ներքևի կոճակը";
 
 "end_all_sessions_done" = "Բոլոր սեսսիաները նետված են, ներառյալ բջջային հավելվածները";
+
 "backdrop_short" = "Ետնապատկեր";
 "backdrop" = "Էջի ետնապատկեր";
 "backdrop_desc" = "Դուք կարող եք տեղադրել երկու նկար, որպես Ձեր պրոֆիլի կամ խմբի նախանկար։ Նրանք կցուցադրվեն էջի ձախ և աջ ծայրերում։ Այս հարմարանքի շնորհիվ Դուք կարող եք ավելացնել հավելյալ անհատականություն Ձեր պրոֆիլին։";
@@ -625,12 +843,27 @@
 "two_factor_authentication_backup_codes_1" = "Ռեզերվային կոդերը թույլ են տալիս հաստատել մուտքը, երբ դուք չունեք հասանելիություն հեռախոսին, օրինակ՝ ճանապարհորդելիս կամ աշխատանքի վայրում։";
 "two_factor_authentication_backup_codes_2" = "Դուք ունեք դեռ <b>10 կոդ</b>, որոնցից ամեն մեկը կարելի է օգտագործել միայն մեկ անգամ։ Պահե՛ք կոդերը ապահով տեղում և չկորցնե՛ք։";
 "two_factor_authentication_backup_codes_3" = "Դուք կարող եք էլի ստանալ ռեզերվային կոդեր։ Վավեր են միայն վերջերս ստեղծված ռեզերվային կոդերը։";
+"viewing_backup_codes" = "Դիտում ենք ռեզերվային կոդերը";
+"disable_2fa" = "Անջատել 2FA–ն";
+"viewing" = "Դիտել";
+
+/* OAuth */
+"identifies_itself_as" = "որն իրեն նույնականացնում է որպես $1";
+"located_at_url" = "գտնվում է $1";
+"wants_your_token" = "ցանկանում է հասանելիություն ունենալ Ձեր հաշվին";
+"app_will_have_access_to" = "Հավելվածը հասանելիություն կունենա.";
+"oauth_scope_all" = "պրոֆիլի տեղեկատվությանը, կարգավիճակին, ընկերների ցանկին, նկարներին, պատի գրառումներին, երաժշտությանը, վիդեոյին, ծանուցումներին, քեռակնոջը, նամակներին, նվերներին, <b>Ձեր էլ. փոստին</b>, հարցումներին, հանրություններին, քննարկումներին, նշումներին, <b>վճարման եղանակներին</b>, լայքերին ու մեկնաբանություններին";
+"oauth_grant" = "Թույլատրել";
+"oauth_deny" = "Մերժել";
 
 /* Sorting */
 
 "sort_randomly" = "Դասավորել պատահական";
 "sort_up" = "Դասավորել ըստ ստեղծման ամսաթվի դեպի վերև";
 "sort_down" = "Դասավորել ըստ ստեղծման ամսաթվի դեպի ներքև";
+
+"new_first" = "Սկզբից նորը";
+"old_first" = "Սկզբից հինը";
 
 /* Videos */
 
@@ -652,6 +885,167 @@
 
 "view_video" = "Դիտել";
 
+"selecting_video" = "Ընտրում ենք վիդեոներ";
+"upload_new_video" = "Վերբեռնել նոր վիդեո";
+"max_attached_videos" = "Առավելագույնը 10 վիդեո";
+"max_attached_photos" = "Առավելագույնը 10 նկար";
+"max_attached_audios" = "Առավելագույնը 10 երգ";
+"no_videos" = "Դուք չունեք վերբեռնված վիդեոներ";
+"no_videos_results" = "Արդյունքներ չկան։";
+
+"video_file_upload" = "Վերբեռնել ֆայլ";
+"video_youtube_upload" = "Ավելացնել YouTube–ից";
+
+"change_video" = "Փոխել վիդեոն";
+"unknown_video" = "Այս վիդեոն չի սպասարկվում OpenVK–ի Ձեր տարբերակով։";
+
+
+/* Audios */
+
+"my" = "Իմ";
+"audios" = "Երգերը";
+"audio" = "Երգ";
+"playlist" = "Փլեյլիստ";
+"upload_audio" = "Վերբեռնել երգ";
+"upload_audio_to_group" = "Վերբեռնել երգ դեպի խումբ";
+
+"performer" = "Կատարող";
+"audio_name" = "Անուն";
+"genre" = "Ժանր";
+"lyrics" = "Բառեր";
+
+"select_another_file" = "Վերբեռնել այլ ֆայլ";
+
+"limits" = "Սահմանափակումներ";
+"select_audio" = "Ընտրել երգ Ձեր համակարգչից";
+"audio_requirements" = "Երգը պետք է լինի $1 վայրկյան և $2 րոպե, առավելագույնը $3 MB չափով, և պարունակի աուդիո հոսք։";
+"audio_requirements_2" = "Երգը չպետք է խախտի հեղինակային և նմանատիպ իրավունքները։";
+"you_can_also_add_audio_using" = "Դուք նաև կարող եք ավելացնել երգ ֆայլերից, որոնք Դուք արդեն վերբեռնել եք, օգտագործելով";
+"search_audio_inst" = "երաժշտության որոնում";
+
+"audio_embed_not_found" = "Երգը չի գտնվել";
+"audio_embed_deleted" = "Երգը ջնջվել է";
+"audio_embed_withdrawn" = "Երգը առգրավվել է իրավատիրոջ պահանջով";
+"audio_embed_forbidden" = "Այս օգտատիրոջ անվտանգության կարգավորումները թույլ չեն տալիս այս աուդիոն ներկառուցվել";
+"audio_embed_processing" = "Աուդիոն մշակվում է։";
+"audio_embed_processing_bait" = "Միացնել ամեն դեպքում";
+
+"audios_count_zero" = "Երաժշտություն չկա";
+"audios_count_one" = "Մեկ երգ";
+"audios_count_few" = "$1 երգ";
+"audios_count_many" = "$1 երգ";
+"audios_count_other" = "$1 երգ";
+
+"track_unknown" = "Անհայտ";
+"track_noname" = "Անանուն";
+
+"my_music" = "Իմ երաժշտությունը";
+"music_user" = "Օգտատիրոջ երաժշտությունը";
+"music_club" = "Խմբի երաժշտությունը";
+"audio_new" = "Նոր";
+"audio_popular" = "Հայտնի";
+"audio_search" = "Որոնել";
+
+"my_audios_small" = "Իմ երաժշտությունը";
+"my_audios_small_uploaded" = "Վերբեռնված";
+"my_playlists" = "Իմ փլեյլիստները";
+"playlists" = "Փլեյլիստներ";
+"audios_explicit" = "Պարունակում է բաց կոնտենտ";
+"audios_unlisted" = "Չգրանցված";
+"withdrawn" = "Առգրավված";
+"deleted" = "Ջնջված";
+"owner" = "Տեր";
+"searchable" = "Որոնելի";
+
+"select_audio" = "Ընտրել երաժշտություն";
+"no_playlists_thisuser" = "Դուք դեռ չեք ավելացրել որևէ փլեյլիստ։";
+"no_playlists_user" = "Այս օգտատերը դեռ չի ավելացրել որևէ փլեյլիստ։";
+"no_playlists_club" = "Այս խումբը դեռ չի ավելացրել որևէ փլեյլիստ։";
+
+"no_audios_thisuser" = "Դուք դեռ չեք ավելացրել որևէ երգ։";
+"no_audios_user" = "Այս օգտատերը դեռ չի ավելացրել որևէ երգ։";
+"no_audios_club" = "Այս խումբը դեռ չի ավելացրել որևէ երգ։;
+
+"new_playlist" = "Նոր փլեյլիստ";
+"created_playlist" = "ստեղծվել է";
+"updated_playlist" = "թարմացվել է";
+"bookmark" = "Ավելացնել հավաքածու";
+"unbookmark" = "Հեռացնել հավաքածուից";
+"empty_playlist" = "Այս փլեյլիստում չկա երաժշտություն։";
+"edit_playlist" = "Խմբագրել փլեյլիստը";
+"unable_to_load_queue" = "Խնդիր առաջացավ հերթը բեռնելիս։";
+
+"fully_delete_audio" = "Ջնջել երաժշտությունը";
+"attach_audio" = "Կցել երաժշտությունը";
+"detach_audio" = "Հետ կցել երաժշտությունը";
+
+"show_more_audios" = "Ցույց տալ ավելի շատ երգ";
+"add_to_playlist" = "Ավելացնել փլեյլիստ";
+"remove_from_playlist" = "Հեռացնել փլեյլիստից";
+"delete_playlist" = "Ջնջել փլեյլիստը";
+
+"playlists_user" = "Օգտատիրոջ փլեյլիստները";
+"playlists_club" = "Խմբի փլեյլիստները";
+"change_cover" = "Փոխել շապիկը";
+"playlist_cover" = "Փլեյլիստի շապիկը";
+
+"minutes_count_zero" = "Տևում է զրո րոպե";
+"minutes_count_one" = "Տևում է մեկ րոպե";
+"minutes_count_few" = "Տևում է $1 րոպե";
+"minutes_count_many" = "Տևում է $1 րոպե";
+"minutes_count_other" = "Տևում է $1 րոպե";
+
+"listens_count_zero" = "Ոչ ոք չի լսել";
+"listens_count_one" = "Մեկ հոգի է լսել";
+"listens_count_few" = "$1 հոգի է լսել";
+"listens_count_many" = "$1 հոգի է լսել";
+"listens_count_other" = "$1 հոգի է լսել";
+
+"add_audio_to_club" = "Ավելացնել երգը խումբ";
+"add_audio" = "Ավելացնում ենք երգը";
+"add_audio_limitations" = "Դուք կարող եք ընտրել ընդհուպ մինչև 10 խումբ/փլեյլիստ։";
+"to_club" = "Դեպի ակումբ";
+"to_playlist" = "Դեպի փլեյլիստ";
+
+"audio_was_successfully_added" = "Երաժշտությունը հաջողությամբ ավելացվել է։";
+"what_club_add" = "Ո՞ր խմբում եք ցանկանում ավելացնել այս երգը";
+"group_has_audio" = "Այս խումբն արդեն պարունակում է այս երգը։";
+"group_hasnt_audio" = "Այս խումբը չունի այս երգը։";
+
+"by_name" = "ըստ անվան";
+"by_performer" = "ըստ կատարողի";
+"no_access_clubs" = "Այստեղ չկան խմբեր որտեղ Դուք ադմինիստրատոր եք։";
+"no_access_playlists" = "Դուք չունեք ստեղծած որևէ փլեյլիստ։";
+"audio_successfully_uploaded" = "Երգը հաջողությամբ վերբեռնվել է և այժմ մշակվում է։";
+
+"broadcast_audio" = "Երաժշությունը դարձնել կարգավիճակ";
+"sure_delete_playlist" = "Դուք վստա՞հ եք որ ցանկանում եք ջնջել այս փլեյլիստը";
+"edit_audio" = "Խմբագրել երաժշտությունը";
+"audios_group" = "Խմբի երաժշտությունը";
+"playlists_group" = "Փլեյլիստի երաժշտությունը";
+
+"play_tip" = "Միացնել/դադար";
+"repeat_tip" = "Կրկնել";
+"shuffle_tip" = "Խառնել";
+"mute_tip" = "Լռեցնել";
+"mute_tip_noun" = "Լռեցված է";
+"playlist_hide_from_search" = "Չգրանցված";
+"confirm_deleting_audio" = "Դուք վստա՞հ եք որ ցանկանում եք ջնջել այս երգը";
+
+"copy_link_to_audio" = "Պատճենել հղումը";
+"copy_link_to_audio_error_not_selected_track" = "Երաժշտությունը չի ընտրվել";
+"audio_ctx_add_to_group" = "Ավելացնել խմբում";
+"audio_ctx_add_to_playlist" = "Ավելացնել փլեյլիստում";
+"audio_ctx_play_next" = "Միացնել հաջորդը";
+"audio_ctx_clear_context" = "Մաքրել երաժշտության ցանկը";
+"audio_ctx_show_count" = "Ցուցադրել էջաբաժանը";
+
+"is_x_audio_zero" = "Երաժշտություն չկա";
+"is_x_audio_one" = "Ուղղակի մի երգ։";
+"is_x_audio_few" = "Ուղղակի $1 երգ։";
+"is_x_audio_many" = "Ուղղակի $1 երգ։";
+"is_x_audio_other" = "Ուղղակի $1 երգ։";
+
 /* Notifications */
 
 "feedback" = "Հետադարձ կապ";
@@ -672,6 +1066,9 @@
 "nt_shared_yours" = "կիսվել է ձեր";
 "nt_commented_yours" = "թողել է մեկնաբանություն";
 "nt_written_on_your_wall" = "գրել է ձեր պատին";
+"nt_accepted_your_post" = "ընդունել է ձեր առաջարկած";
+"nt_in_club" = "խմբում";
+"nt_new_suggested_posts" = "նոր գրառումներ առաջարվածներում";
 "nt_made_you_admin" = "նշանակել է ձեզ խմբի գլխավոր";
 
 "nt_from" = "ից";
@@ -690,6 +1087,9 @@
 "nt_mention_in_video" = "այս վիդեոյի քննարկմանը";
 "nt_mention_in_note" = "այս նշման քննարկմանը";
 "nt_mention_in_topic" = "այս քննարկմանը";
+"nt_sent_gift" = "ուղարկել է նվեր";
+
+"nt_post_small" = "գրառում";
 
 /* Time */
 
@@ -700,6 +1100,13 @@
 "time_today" = "այսօր";
 "time_yesterday" = "երեկ";
 
+"news" = "Նորություններ";
+"news_more" = "Ավելին »";
+"bday_reminder" = "Հիշեցում";
+"bday_today" = "Այսօր";
+"bday_tomorrow" = "Վաղը";
+"bday_reminder_text" = "$1 $2–ի ծննդյան տարեդարձն է։";
+"bday_and" = " և ";
 "points" = "Ձայներ";
 "points_count" = "ձայն";
 "on_your_account" = "ձեր հաշվում";
@@ -742,7 +1149,7 @@
 "coins_count" = "Ձայների քանակ";
 "message" = "Նամակ";
 
-"failed_to_tranfer_points" = "Չհաջողվե՛ց փոխանցել ձայները";
+"failed_to_transfer_points" = "Չհաջողվե՛ց փոխանցել ձայները";
 
 "points_transfer_successful" = "Դուք հաջողությամբ <b>$1</b>-ին փոխանցեցիք <b><a href=\"$2\">$3</a></b>.";
 "not_all_information_has_been_entered" = "Ոչ բոլոր ինֆորմացիան է ներմուծված";
@@ -768,16 +1175,21 @@
 
 /* Gifts */
 
+"my_gifts" = "Իմ նվերները";
 "gift" = "Նվեր";
 "gifts" = "Նվերներ";
 "gifts_zero" = "Նվերներ չկան";
 "gifts_one" = "Մեկ նվեր";
 "gifts_other" = "$1 նվեր";
 "gifts_left" = "Մնաց $1 նվեր";
+"gifts_left_zero" = "Մնաց զրո նվեր";
 "gifts_left_one" = "Մնաց մեկ նվեր";
 "gifts_left_other" = "$1 նվեր մնաց";
 
+"back_to_user" = "Դեպի $1–ի էջ";
+"back_to_my_page" = "Դեպի իմ էջ";
 "send_gift" = "Ուղարկել նվեր";
+"gift_back" = "Ուղարկել նվեր ի պատասխան";
 
 "gift_select" = "Ընտրել նվեր";
 "collections" = "Հավաքածուներ";
@@ -787,14 +1199,14 @@
 
 "free_gift" = "Անվճար";
 "coins" = "Ձայներ";
-"coins_zero" = "0 ձայն";
+"coins_zero" = "Զրո ձայն";
 "coins_one" = "Մեկ ձայն";
 "coins_other" = "$1 ձայն";
 
 "users_gifts" = "Նվերներ";
+"sent" = "Ուղարկված";
 
 /* Apps */
-
 "app" = "Հավելված";
 "apps" = "Հավելվածներ";
 "my_apps" = "Իմ հավելվածները";
@@ -830,7 +1242,7 @@
 "appjs_payment_confirm" = "Վճարել";
 "appjs_err_funds" = "Չհաջողվե՛ց վճարել գնումը անբավարար միջոցների համար։";
 
-"appjs_wall_post" = "Հրապարակել գրությունտը";
+"appjs_wall_post" = "Հրապարակել գրությունը";
 "appjs_wall_post_desc" = "ցանկանում է Ձեր պատին գրություն թողնել";
 
 "appjs_act_friends" = "ձեր ընկերներին";
@@ -861,6 +1273,10 @@
 "app_err_ava_desc" = "Ավատարը չափազանց մեծ և ծուռ է. ընդհանուր բնույթի սխալ №$res.";
 "app_err_note" = "Չհաջողվե՛ց ամրացնել նորությունների նիշքը";
 "app_err_note_desc" = "Համոզվե՛ք որ հղումը ճիշտ է և պատկանում է Ձեզ։";
+"app_delete_modal_desc" = "Դուք վստա՞հ եք որ ցանկանում եք ջնջել այս հավելվածը։ Այս գործողությունը հնարավոր չի լինի չեղարկել։";
+"app_delete_succ" = "Հավելվածը հեռացվել է։";
+
+"learn_more" = "Իմանալ ավելին";
 
 /* Support */
 
@@ -882,6 +1298,8 @@
 "support_new_title" = "Գրե՛ք ձեր դիմումի վերնագիրը";
 "support_new_content" = "Նկարագրե՛ք խնդիրը կամ առաջարկը";
 
+"reports" = "Զեկույցներ";
+
 "support_rate_good_answer" = "Սա լավ պատասխան է";
 "support_rate_bad_answer" = "Սա վատ պատասխան է";
 "support_good_answer_user" = "Դուք թողել եք դրական ակնարկ։";
@@ -898,15 +1316,29 @@
 "report_number" = "Զեկույց #";
 "list_of_reports" = "Զեկույցների ցանկ";
 "text_of_the_post" = "Հրապարակման տեքստ";
+"delete_content" = "ՋՆջել բովանդակությունը";
 "today" = "այսօր";
+
+"will_be_watched" = "Այն շուտով կդիտարկվի մոդերատորների կողմից";
+
+"report_question" = "Զեկուցե՞լ";
+"report_question_text" = "Կոնկրետ ի՞նչն եք անընդունելի համարում այս մատերիալի մեջ։";
+"report_reason" = "Զեկուցել պատճառը";
+"reason" = "Պատճառ";
+"going_to_report_app" = "Դուք զեկուցում եք այս հավելվածի մասին։";
+"going_to_report_club" = "Դուք զեկուցում եք այս ակումբի մասին։";
+"going_to_report_photo" = "Դուք զեկուցում եք այս նկարի մասին։";
+"going_to_report_user" = "Դուք զեկուցում եք այս օգտատիրոջ մասին։";
+"going_to_report_video" = "Դուք զեկուցում եք այս վիդեոյի մասին։";
+"going_to_report_audio" = "Դուք զեկուցում եք այս երաժշտության մասին։";
+"going_to_report_doc" = "Դուք զեկուցում եք այս փաստաթղթի մասին։";
+"going_to_report_post" = "Դուք զեկուցում եք այս գրառման մասին։";
+"going_to_report_comment" = "Դուք զեկուցում եք այս մեկնաբանության մասին։";
 
 "comment" = "Մեկնաբանություն";
 "sender" = "Ուղարկող";
 
 "author" = "Հեղինակ";
-
-"you_have_not_entered_text" = "Դուք չեք գրել տեքստ";
-"you_have_not_entered_name_or_text" = "Դուք անուն կամ տեքստ չեք գրել";
 
 "ticket_changed" = "Տոմսը փոփոխված է";
 "ticket_changed_comment" = "Փոփոխությունները ուժի մեջ կմտնեն մի քանի վայրկյանից։";
@@ -1025,6 +1457,7 @@
 "created" = "Ստեղծվել է";
 
 "everyone_can_create_topics" = "Բոլորը կարող են թեմաներ սարքել";
+"everyone_can_upload_audios" = "Բոլորը կարող են երաժշտություն վերբեռնել";
 "display_list_of_topics_above_wall" = "Ցուցադրել պատի տակ թեմաների ցուցակը";
 
 "topic_changes_saved_comment" = "Թարմացված անվանումն ու կարգավորումները կհայտնվեն թեմայի էջում։";
@@ -1032,6 +1465,8 @@
 "failed_to_create_topic" = "Չհաջողվեց թեմա ստեղծել";
 "failed_to_change_topic" = "Չհաջողվեց խմբագրել թեման";
 "no_title_specified" = "Անվանումը նշված չէ";
+
+"restrict_topic" = "Միայն ադմինիստրատորները կարող են մեկնաբանություն թողնել";
 
 /* Errors */
 
@@ -1057,6 +1492,7 @@
 "error_data_too_big" = "'$1' ատտրիբուտը պետք է առնվազն լինի $2 –ը $3 –ի չափ երկար";
 
 "forbidden" = "Հասանելիության սխալ";
+"unknown_error" = "Անհայտ սխալ";
 "forbidden_comment" = "Այս օգտատիրոջ գաղտնիության կարգավորումները ձեզ թույլ չեն տալիս դիտել օգտատերի էջը։";
 
 "changes_saved" = "Փոփոխությունները պահպանված են";
@@ -1072,12 +1508,11 @@
 
 "invalid_real_name" = "Խնդրում ենք օգտագործել իրական անուններ։ Այդպես Ձեր թայֆին ավելի հեշտ կլինի Ձեզ գտնել։";
 
-"invalid_telegram_name" = "Սխալ Telegram-ի օգտատիրոջ անուն";
-"invalid_telegram_name_comment" = "Դուք սխալ Telegram-ի օգտատեր եք նշել։";
-
 "invalid_birth_date" = "Սխալ ծննդյան ամսաթիվ";
 "invalid_birth_date_comment" = "Ծննդյան օրը, որը դուք նշել եք, ոչ կորրեկտ Է։";
 
+"invalid_telegram_name" = "Սխալ Telegram-ի օգտատիրոջ անուն";
+"invalid_telegram_name_comment" = "Դուք սխալ Telegram-ի օգտատեր եք նշել։";
 "token_manipulation_error" = "Տոկենի մանիպուլյացիայի խնդիր";
 "token_manipulation_error_comment" = "Տոկենը սպառված է կամ անվավեր։";
 
@@ -1101,29 +1536,156 @@
 "captcha_error" = "Սխալ են գրված սիմվոլները";
 "captcha_error_comment" = "Խնդրում ենք համոզվել, որ ճիշտ եք ներմուծել կապտչայի սիմվոլները։";
 
-"failed_to_publish_post" = "Չհաջողվե՛ց հրապարակել փոսթը";
-"failed_to_delete_post" = "Չհաջողվե՛ց ջնջել փոսթը";
+"failed_to_publish_post" = "Չհաջողվե՛ց հրապարակել գրառումը";
+"failed_to_delete_post" = "Չհաջողվե՛ց ջնջել գրառումը";
 
 "media_file_corrupted" = "Մեդիաֆայլը վնասված է։";
 "media_file_corrupted_or_too_large" = "Մեդիաֆայլը վնասված է կամ իր չափը շատ մեծ է։";
+
 "post_is_empty_or_too_big" = "Փոսթը դատարկ է կամ շատ մեծ։";
 "post_is_too_big" = "Փոսթը շատ մեծ է։";
+"error_deleting_suggested" = "Դուք չեք կարող ջնջել Ձեր ընդունված գրառումը";
+"error_invalid_wall_value" = "Սխալ պատի արժեք";
+
+"error_sending_report" = "Չհաջողվեց զեկույցի ստեղծումը...";
+
+"error_when_saving_gift" = "Խնդիր առաջացավ նվերը պահպանելիս";
+"error_when_saving_gift_bad_image" = "Նվերի պատկերը աղավաղված է:";
+"error_when_saving_gift_no_image" = "Խնդրում ենք տեղադրել նվերի պատկերը։";
+"video_uploads_disabled" = "Վիդեոների տեղադրումը անջատված է համակարգային ադմինիստրատորի կողմից։";
+
+"error_when_publishing_comment" = "Խնդիր առաջացավ մեկնաբանությունը հրապարակելիս";
+"error_when_publishing_comment_description" = "Նկարը վնասված է, շատ մեծ կամ միակողմանի որը շատ ավելի մեծ է մյուսից։";
+"error_comment_empty" = "Մեկնաբանությունը դատարկ է կամ մեծ։";
+"error_comment_too_big" = "Մեկնաբանությունը չափազանց մեծ է։";
+"error_comment_file_too_big" = "Մեդիա ֆայլը վնասված է կամ մեծ։";
+
+"comment_is_added" = "Մեկնաբանությունը ավելացվել է";
+"comment_is_added_desc" = "Ձեր մեկնաբանությունը կերևա էջում։";
+
+"error_access_denied_short" = "Մուտքն արգելված է";
+"error_access_denied" = "Դուք չունեք թույլատվություն այս ռեսուրսը փոխելու համար";
+"success" = "Հաջողվեց";
+"comment_will_not_appear" = "Այս մեկնաբանությունը այլևս չի հայտնվի։";
+
+"error_when_gifting" = "Չհաջողվեց նվիրել";
+"error_user_not_exists" = "Օգտատերը կամ հավաքածուն գոյություն չունեն։";
+"error_no_rights_gifts" = "Չհաջողվեց նվերի իրավունքները ստուգելը։";
+"error_no_more_gifts" = "Դուք այլևս նմանատիպ նվերներ չունեք։";
+"error_no_money" = "Կանչի մուրացկանին ձյաձ ջան։";
+
+"gift_sent" = "Նվերն ուղարկվեց";
+"gift_sent_desc" = "Դուք ուղարկեցիք նվեր $1–ին ՝ $2 ձայնով";
+
+"error_on_server_side" = "Խնդիր առաջացավ սերվերի կողմից։ Կապնվեք Ձեր համակարգային ադմինիստրատորի հետ։";
+"error_no_group_name" = "Դուք չեք մուտքագրել խմբի անունը։";
+
+"success_action" = "Գործողությունը հաջողվեց";
+"connection_error" = "Կապի խնդիր";
+"connection_error_desc" = "Չհաջողվեց կապ հաստատել տելեմետրիայի ծառայության հետ։";
+
+"error_when_uploading_photo" = "Չհաջողվեց նկարի պահպանումը";
+
+"new_changes_desc" = "Նոր տվյալները կհայտնվեն Ձեր խմբում։";
+"comment_is_changed" = "Ադմինիստրատորի մեկնաբանությունը փոխվեց";
+"comment_is_deleted" = "Ադմինիստրատորի մեկնաբանությունը ջնջվեց";
+"comment_is_too_long" = "Մեկնաբանությունը չափազանց երկար է ($1 սիմվոլ 36–ի փոխարեն)";
+"x_no_more_admin" = "$1–ը այլևս ադմինիստրատոր չէ։";
+"x_is_admin" = "$1–ը նշանակվել է որպես ադմինիստրատոր։";
+
+"x_is_now_hidden" = "Այսուհետ $1–ը բոլորին կերևա որպես սովորական բաժանորդ, բացառությամբ որոշ ադմինների";
+"x_is_now_showed" = "Այսուհետ բոլորը կիմանան, որ $1–ը ադմինիստրատոր է։";
+
+"note_is_deleted" = "Նշումը ջնջվել է";
+"note_x_is_now_deleted" = "\"$1\" նշումը հաջողությամբ ջնջվել է։";
+"new_data_accepted" = "Նոր տվյալները ընդունված են։";
+
+"album_is_deleted" = "Ալբոմը ջնջվել է";
+"album_x_is_deleted" = "$1 ալբոմը հաջողությամբ ջնջվել է։";
+
+"error_adding_to_deleted" = "Չհաջողվեց պահպանել նկարը <b>ՋՆՋՎԱԾ</b>–ում։";
+"error_adding_to_x" = "Չհաջողվեց պահպանել նկարը <b>$1</b>–ում։";
+"no_photo" = "Նկար չկա";
+
+"select_file" = "Ընտրել ֆայլ";
+"new_description_will_appear" = "Թարմացված նկարագրությունը կերևա նկարի էջում։";
+"photo_is_deleted" = "Նկարը ջնջվել է";
+"photo_is_deleted_desc" = "Այս նկարը հաջողությամբ ջնջվել է։";
+
+"no_video" = "Վիդեո չկա";
+"no_video_desc" = "Ընտրեք ֆայլ կամ տրամադրեք հղում։";
+"error_occured" = "Խնդիր առաջացավ";
+"error_video_damaged_file" = "Ֆայլը վնասվել է կամ չի պարունակում վիդեո։";
+"error_video_incorrect_link" = "Հնարավոր է, որ հղումը սխալ է:";
+"error_video_no_title" = "Վիդեոն չի կարող հրապարակվել առանց անվանման";
+
+"new_data_video" = "Թարմացված նկարագրությունը կերևա վիդեոյի էջում։";
+"error_deleting_video" = "Չհաջողվեց ջնջել վիդեոն";
+"login_please" = "Դուք մուտք չեք գործել։";
+"invalid_code" = "Չհաջողվեց վավերականացնել հեռախոսահամարը. Սխալ կոդ։";
+
+"error_max_pinned_clubs" = "Առավելագույն ամրացված խմբերի քանակը 10–ն է։";
+"error_viewing_subs" = "Դուք չեք կարող նայել $1–ի լրիվ բաժանորդագրությունների ցանկը։";
+"error_status_too_long" = "Կարգավիճակը չափազանց երկար է ($1 սիմվոլ 255–ի փոխարեն)";
+"death" = "Մեռանք ախպեր...";
+"nehay" = "Թող ապրեն արա՛";
+"user_successfully_banned" = "Օգտատերը հաջողությամբ արգելափակաված է։";
+
+"content_is_deleted" = "Բովանդակությունը հեռացվել է, և օգտատերը ստացել է զգուշացում։";
+"report_is_ignored" = "Զեկույցը առհամարվել է։";
+"group_owner_is_banned" = "Խմբի տերը հաջողությամբ արգելափակվել է";
+"group_is_banned" = "Խումբը հաջողությամբ արգելափակվել է";
+
+"description_too_long" = "Նկարագրությունը չափազանց երկար է։";
+"invalid_club" = "Այս խումբը գոյություն չունի։";
+"invalid_user" = "Այս օգտատերը գոյություն չունի։";
+"ignored_sources_limit" = "Առհամարված աղբյուրների քանակը սպառվել է";
+
+"invalid_audio" = "Անվավեր երգ։";
+"do_not_have_audio" = "Դուք չունեք այս երգը։";
+"do_have_audio" = "Դուք արդեն ունեք այս երգը։";
+
+"set_playlist_name" = "Ներմուծեք փլեյլիստի անունը։";
+"playlist_already_bookmarked" = "Այս փլեյլիստը արդեն Ձեր հավաքածուի մեջ է։";
+"playlist_not_bookmarked" = "Այս փլեյլիստը Ձեր հավաքածուի մեջ չէ։";
+"invalid_cover_photo" = "Խնդիր առաջացավ ետնապատկերը բեռնելիս։";
+"not_a_photo" = "Վերբեռնված ֆայլը նման չէ նկարի։";
+"file_too_big" = "Ֆայլը չափազանց մեծ է։";
+"file_loaded_partially" = "Ֆայլը մասնակիորեն վերբեռնվել է։";
+"file_not_uploaded" = "Չհաջողվեց վերբեռնել ֆայլը։";
+"error_code" = "Խնդրի համար. $1։";
+"ffmpeg_timeout" = "FFmpeg–ին սպասելու ժամանակը սպառվեց։ Փորձե՛ք վերբեռնել ֆայլը կրկին։";
+"ffmpeg_not_installed" = "Չհաջողվեց մշակել ֆայլը։ Երևում է, FFmpeg-ը տեղադրված չէ այս սերվերում։";
+"too_many_or_to_lack" = "Ահավոր քիչ կամ շատ են աղբյուրները։";
+
+"error_adding_source_regex" = "Չհաջողվեց ավելացնել աղբյուրը. անվավեր հղում։";
+"error_adding_source_long" = "Չհաջողվեց ավելացնել աղբյուրը. չափազանց երկար հղում։";
+"error_adding_source_sus" = "Չհաջողվեց ավելացնել աղբյուրը. կասկածելի հղում։";
+"error_playlist_creating_too_small" = "Ավելացրեք առնվազն մեկ երգ";
+"error_geolocation" = "Խնդիր առաջացավ գտնվելու վայրը ամրացնելիս";
+"error_no_geotag" = "Այս գրառման մեջ չկա ամրացված գեո–թեգ";
+
+"limit_exceed_exception" = "Դուք շատ հաճախ եք կատարում այս գործողություն։ Փորձե՛ք ավելի ուշ։";
 
 /* Admin actions */
 
-"login_as" = "Մտնել ինչպես $1";
-"manage_user_action" = "Օգտատերի կառավարում";
+"login_as" = "Մուտք գործել ինչպես $1";
+"manage_user_action" = "Օգտագործողի կառավարում";
 "manage_group_action" = "Խմբի կառավարում";
-"ban_user_action" = "Բլոկավորել օգտվողին";
-"unban_user_action" = "Հետ բլոկավորել օգտվողին";
-"warn_user_action" = "Զգուշացնել օգտվողին";
-"ban_in_support_user_action" = "Բլոկավորել սպասարկման կենտրոնում";
-"unban_in_support_user_action" = "Հետ բլոկավորել սպասարկման կենտրոնում";
+"ban_user_action" = "Արգելափակել օգտատերին";
+"blocks" = "Արգելափակումներ";
+"last_actions" = "Վերջին գործողություններ";
+"unban_user_action" = "Ապաարգելափակել օգտատերին";
+"warn_user_action" = "Զգուշացնել օգտատերին";
+"ban_in_support_user_action" = "Արգելափակել սպասարկման մեջ";
+"unban_in_support_user_action" = "Ապաարգելափակել սպասարկման մեջ";
+"changes_history" = "Խմբագրման պատմություն";
 
 /* Admin panel */
 
 "admin" = "Ադմինի վահանակ";
 
+"sandbox_for_developers" = "Ավազան մշակողների համար";
 "admin_ownerid" = "Օգտատիրոջ ID";
 "admin_author" = "Հեղինակ";
 "admin_name" = "Անուն";
@@ -1132,8 +1694,11 @@
 "admin_first_known_ip" = "Առաջին IP";
 "admin_shortcode" = "Կարճ հասցե";
 "admin_verification" = "Վերիֆիկացիա";
+"admin_hide_global_feed" = "Թաքցնել ընդհանուր ժապավենում";
 "admin_banreason" = "Արգելափակման պատճառ";
 "admin_banned" = "արգելափակված է";
+"admin_gender" = "Սեռ";
+"admin_registrationdate" = "Գրանցման ամսաթիվ";
 "admin_actions" = "Գործողություններ";
 "admin_image" = "Նկար";
 "admin_image_replace" = "Փոխե՞լ նկարը";
@@ -1160,7 +1725,8 @@
 "admin_user_online_incognito" = "Ինկոգնիտո";
 "admin_user_online_deceased" = "Հանգուցյալ";
 "admin_club_search" = "Խմբերի որոնում";
-"admin_club_excludeglobalfeed" = "Չ՛ցույց տալ գլոբալ ժապավենում";
+"admin_club_excludeglobalfeed" = "Ցույց չտալ գլոբալ ժապավենում";
+"admin_club_enforceexcludeglobalfeed" = "Թույլ չտալ խմբի անձնակազմին ընդհանուր ժապավենի կարգավիճակը փոխել";
 
 "admin_services" = "Վճարովի ծառայություններ";
 "admin_newgift" = "Նոր նվեր";
@@ -1174,13 +1740,13 @@
 "admin_price_free" = "անվճար";
 "admin_voucher_rating" = "Վարկանիշ";
 "admin_voucher_serial" = "Սերիական համար";
-"admin_voucher_serial_desc" = "Համարը բաղկացած է 24 նշից։ Եթե Դուք այն սխալ գրեք, այն կտրվի ավտոմատ։";
+"admin_voucher_serial_desc" = "Համարը բաղկացած է 24 նշից։ Եթե Դուք այն սխալ գրեք կամ դաշտը չլինի լրացված, այն ավտոմատ կերպով կտրվի։";
 "admin_voucher_coins" = "Ձայների քանակ";
 "admin_voucher_rating_number" = "Վարկանշի քանակ";
 "admin_voucher_usages_desc" = "Վաուչերը օգտագործող ակկաունտների քանակ։ Եթե գրեք -1, ապա այն կլինի օգտագործել անվերջ։";
 "admin_voucher_status" = "Կարգավիճակ";
-"admin_voucher_status_opened" = "ակտիվ է";
-"admin_voucher_status_closed" = "վերջացել է";
+"admin_voucher_status_opened" = "ակտիվ";
+"admin_voucher_status_closed" = "փակված";
 
 "admin_settings" = "Կարգավորումներ";
 "admin_settings_tuning" = "Ընդհանուր";
@@ -1207,6 +1773,15 @@
 "admin_banned_link_not_specified" = "Հղումը նշված չէ";
 "admin_banned_link_not_found" = "Հղումը չի գտնվել";
 
+"admin_gift_moved_successfully" = "Նվերը հաջողությամբ տեղափոխվել է";
+"admin_gift_moved_to_recycle" = "Այս նվերը տեղափոխվել է <b>Աղբաման</b>։";
+"admin_original_file" = "Օրիգինալ ֆայլ";
+"admin_audio_length" = "Տևողություն";
+"admin_cover_id" = "Ետնապատկեր (նկարի ID)";
+"admin_music" = "Երաժշտություն";
+
+"logs" = "Լոգեր";
+"logs_anything" = "Ամեն ինչ";
 "logs_adding" = "Ստեղծում";
 "logs_editing" = "Խմբագրում";
 "logs_removing" = "Ջնջում";
@@ -1215,6 +1790,83 @@
 "logs_edited" = "խմբագրվել է";
 "logs_removed" = "ջնջվել է";
 "logs_restored" = "վերականգնվել է";
+"logs_id_post" = "Գրառման ID";
+"logs_id_object" = "Օբյեկտի ID";
+"logs_uuid_user" = "Օգտատիրոջ UUID";
+"logs_change_type" = "Փոխել տեսակը";
+"logs_change_object" = "Օբյեկտի տեսակը";
+
+"logs_user" = "Օգտատեր";
+"logs_object" = "Օբյեկտ";
+"logs_type" = "Տեսակ";
+"logs_changes" = "Փոփոխություններ";
+"logs_time" = "Ժամանակ";
+
+"bans_history" = "Արգելափակումների պատմություն";
+"bans_history_blocked" = "Արգելափակվել է";
+"bans_history_initiator" = "Նախաձեռնող";
+"bans_history_start" = "Մեկնարկ";
+"bans_history_end" = "Ավարտ";
+"bans_history_time" = "Ժամանակ";
+"bans_history_reason" = "Պատճառ";
+"bans_history_start" = "Մեկնարկ";
+"bans_history_removed" = "Ջնջված";
+"bans_history_active" = "Գործող արգելափակում";
+
+
+"admin_overview_registrated_users_one" = "գրանցված օգտատեր.";
+"admin_overview_registrated_users_other" = "գրանցված օգտատերեր, որոնցից.";
+"online" = "oնլայն";
+"active" = "գործող";
+"verified" = "վավերացված";
+"admin_overview_employees_one" = "հոսքի աշխատակից.";
+"admin_overview_employees_other" = "հոսքի աշխատակիցներ, որոնցից.";
+"emp_admin_one" = "ադմինիստրատոր";
+"emp_admin_other" = "ադմինիստրատորներ";
+"emp_agent_one" = "Սպասարկման գործակալ";
+"emp_agent_other" = "Սպասարկման գործակալներ";
+"emp_moder_one" = "մոդերատոր";
+"emp_moder_other" = "մոդերատորներ";
+"emp_nsp_one" = "սպամ–վերլուծաբան";
+"emp_nsp_other" = "սպամ–վերլուծաբաններ";
+"admin_overview_banned_users_one" = "արգելափակված օգտատեր.";
+"admin_overview_banned_users_other" = "արգելափակված օգտատեր, որոնցից.";
+"can_be_unbanned_now" = "կարող են ապաարգելափակվել հիմա";
+"support_and_moderation" = "Սպասարկում և մոդերացիա";
+"support_ticket_one" = "Սպասարկման տոմս";
+"support_ticket_other" = "Սպասարկման տոմսեր";
+"support_tickets_processing" = "քննարկման փուլում";
+"support_tickets_with_answer" = "պատասխանով";
+"support_tickets_closed_one" = "փակված";
+"support_tickets_closed_other" = "փակված";
+"new_content_reports_one" = "Նոր բովանդակության զեկույց";
+"new_content_reports_other" = "Նոր բովանդակության զեկույցներ";
+"nospam_templates" = "Ակտիվ ոչՍպամ կաղապարներ";
+"content_entities_processed" = "<b>$1</b> հատ բովանդակություն մշակվե՜ց";
+"content" = "Բովանդակություն";
+"admin_overview_groups_one" = "խումբ.";
+"admin_overview_groups_other" = "խումբ, որոնցից.";
+"verified_groups" = "վավերացված";
+"banned_groups" = "արգելափակված";
+"admin_overview_posts_one" = "Գրառում";
+"admin_overview_posts_other" = "Գրառումներ";
+"admin_overview_messages_one" = "Նամակ";
+"admin_overview_messages_other" = "Նամակներ";
+"admin_overview_photos_one" = "Նկար";
+"admin_overview_photos_other" = "Նկարներ";
+"admin_overview_videos_one" = "Վիդեո";
+"admin_overview_videos_other" = "Վիդեոներ";
+"admin_overview_audios_one" = "Երաժշտություն";
+"admin_overview_audios_other" = "Երգեր";
+"admin_overview_notes_one" = "Նշում";
+"admin_overview_notes_other" = "Նշումներ";
+"admin_overview_apps_one" = "Հավելված";
+"admin_overview_apps_other" = "Հավելվածներ";
+"admin_overview_documents_one" = "Փաստաթուղթ";
+"admin_overview_documents_other" = "Փաստաթղթեր";
+"admin_overview_chandler_group_not_found" = "Խմբում բացակայում են համակարգի թույլատվությունները";
+"admin_overview_chandler_groups_missing" = "Խմբի թույլատվությունները անհրաժեշտ են հոսքի լրիվ կառավարման համար (Տեխնիկական աջակցություն, մոդերացիա, ոչՍպամ)";
+"admin_overview_chandler_groups_create_missing" = "Ստեղծել խմբերին պակասող թույլատվություններ";
 
 /* Paginator (deprecated) */
 
@@ -1229,15 +1881,15 @@
 "about_this_instance" = "Այս հոսքի մասին";
 "rules" = "Կանոններ";
 "most_popular_groups" = "Ամենահայտնի խմբերը";
-"on_this_instance_are" = "Այս հոսքում․";
+"on_this_instance_are" = "Այս հոսքում.";
 "about_links" = "Հղումներ";
-"instance_links" = "Հոսքերի հղումներ․";
+"instance_links" = "Հոսքերի հղումներ.";
 
 "about_users_one" = "<b>Մեկ</b> օգտատեր";
 "about_users_other" = "<b>$1</b> օգտատեր";
 
-"about_online_users_one" = "<b>Մեկ</b> օգտատեր է ցանցի մեջ";
-"about_online_users_other" = "<b>$1</b> օգտատեր է ցանցի մեջ";
+"about_online_users_one" = "<b>Մեկ</b> օգտատեր ցանցի մեջ";
+"about_online_users_other" = "<b>$1</b> օգտատեր ցանցի մեջ";
 
 "about_active_users_one" = "<b>Մեկ</b> ակտիվ օգտատեր";
 "about_active_users_other" = "<b>$1</b> ակտիվ օգտատեր";
@@ -1248,7 +1900,7 @@
 "about_wall_posts_one" = "<b>Մեկ</b> գրություն պատերի վրա";
 "about_wall_posts_other" = "<b>$1</b> գրություն պատերի վրա";
 
-"about_watch_rules" = "տես <a href='$1'>այստեղ</a>․";
+"about_watch_rules" = "տես <a href='$1'>այստեղ</a>։";
 
 /* Dialogs */
 
@@ -1263,17 +1915,49 @@
 "warning" = "Ուշադրություն";
 "question_confirm" = "Այս գործողությունը էլ երբեք հետ չի բերվի։ Դուք վստա՞հ եք որ ուզում եք շարունակել։";
 
-/* User alerts */
+"confirm_m" = "Հաստատել";
+"action_successfully" = "Հաջողված";
+"exit_noun" = "Ելք";
+"exit_confirmation" = "Դուք վստա՞հ եք որ ցանկանում եք դուրս գալ";
+"apply" = "Կիրառել";
+
+
+/* User Alerts */
 
 "user_alert_scam" = "Այս հաշվի վրա բազմաթիվ բողոքներ են եկել խարդախության հետ կապված։ Խնդրվում է զգույշ լինել, հատկապես եթե Ձեզնից փորձեն գումար խնդրել և շորթել։";
 "user_may_not_reply" = "Այս օգտատերը կարող է Ձեզ չպատասխանել, ձեր անվտանգության կարգավորումների պատճառով։  <a href='/settings?act=privacy'>Բացել անվտանգության կարգավորումները</a>";
 
-/* Cookies pop-up */
+/* Cookies Pop-up */
 
 "cookies_popup_content" = "Cookie բառը թարգմանաբար նշանակում է թխվածքաբլիթ, իսկ թխվածքաբլիթը լավ բան է։ Մեր կայքը չի ուտում թխվածք, բայց օգտագործում է այն ՝ այցելությունը կողմնորոշելու համար։ Ավելի մանրամասն կարող եք ծանոթանալ մեր <a href='/privacy'>գաղտնիության քաղաքականությանը</a> հավելյալ ինֆորմացիայի համար։";
 "cookies_popup_agree" = "Համաձայն եմ";
 
+/* Blacklist */
+
+"blacklist" = "Սև ցուցակ";
+"user_blacklisted_you" = "Այս օգտատերը Ձեզ նետել է սև ցուցակ։";
+"user_blacklisted" = "$1–ը նետվել է սև ցուցակ։";
+"user_removed_from_the_blacklist" = "$1–ը հեռացվել է սև ցուցակից։";
+
+"adding_to_bl_sure" = "Դուք արդյո՞ք ուզում եք $1–ին նետել սև ցուցակ";
+
+"bl_count_zero_desc" = "Ձեր սև ցուցակում դեռ չկան օգտատերեր։";
+"bl_count_zero" = "Ձեր սև ցուցակում չկան օգտատերեր։";
+"bl_count_one" = "Դուք ունեք մեկ օգտատեր սև ցուցակում";
+"bl_count_few" = "Դուք ունեք $1 օգտատեր սև ցուցակում";
+"bl_count_many" = "Դուք ունեք $1 օգտատեր սև ցուցակում";
+"bl_count_other" = "Դուք ունեք $1 օգտատեր սև ցուցակում";
+
+"you_blacklisted" = "Դուք սև ցուցակ նետեցիք $1–ին";
+"bl_add" = "Ավելացնել սև ցուցակ";
+"bl_remove" = "Հեռացնել սև ցուցակից";
+
+"addition_to_bl" = "Ավելացում դեպի սև ցուցակ";
+
 /* Away */
+
+"transition_is_blocked" = "Փոխակերպումը արգելափակված է";
+"caution" = "Զգուշացում";
 
 "url_is_banned" = "Անցումն անհնար է";
 "url_is_banned_comment" = "Ադմինիստրացիան <b>$1</b> խորհուրդ չի տալից անցնել այս հղումով։";
@@ -1285,7 +1969,6 @@
 "recently" = "Վերջերս";
 
 /* Helpdesk */
-
 "helpdesk" = "Աջակցում";
 "helpdesk_agent" = "Աջակցման գործակալ";
 "helpdesk_agent_card" = "Գործակալի քարտ";
@@ -1295,9 +1978,9 @@
 "helpdesk_showing_name" = "Ցուցադրվող անունը";
 "helpdesk_show_number" = "Ցույց տալ թիվը";
 "helpdesk_avatar_url" = "Ավատարի հղումը";
+"helpdesk_agent_name_empty" = "Ցուցադրվող անունը չի կարող լինել դատարկ։";
 
 /* Chandler */
-
 "c_user_removed_from_group" = "Այս օգտատերը հեռացվել է խմբից";
 "c_permission_removed_from_group" = "Թույլտվությունը հեռացվել է խմբից";
 "c_group_removed" = "Խումբը ջնջվել է";
@@ -1443,7 +2126,7 @@
 "tour_section_11_title_1" = "Տեսքեր";
 "tour_section_11_text_1" = "Գրանցվելուց հետո Ձեր էջում կիրառվում է սովորական տեսքը";
 "tour_section_11_text_2" = "Որոշ նորեկները կարող է չսիրեն լռելյայն տեսքը, քանի որ այն անգամ հնության զգացում է տալիս";
-"tour_section_11_text_3" = "<b>Բայց հլը հո՛պ.</b> Դուք կարող եք անգամ ստեղծել Ձեր տեսքը ՝ կարդալով <a href='https://docs.ovk.to/'>դոկումենտացիան</a>, կամ էլ ընտրել եղածներից մեկը";
+"tour_section_11_text_3" = "<b>Բայց հլը հո՛պ.</b> Դուք կարող եք անգամ ստեղծել Ձեր տեսքը ՝ կարդալով <a href='https://docs.ovk.to/'>գրականությունը</a>, կամ էլ ընտրել եղածներից մեկը";
 "tour_section_11_bottom_text_1" = "Տեսքերի ցանկը հասանելի է &quot;Իմ Կարգավորումներ&quot; –ի &quot;Ինտերֆեյս&quot; բաժնում;";
 "tour_section_11_wordart" = "<img src='/assets/packages/static/openvk/img/tour/wordart_en.png' width='65%'>";
 
@@ -1493,17 +2176,18 @@
 
 /* Search */
 
+"s_params" = "Որոնման կարգավորումներ";
 "s_people" = "Մարդիկ";
 "s_groups" = "Ակումբներ";
-"s_events" = "Իրադարձություններ";
 "s_apps" = "Հավելվածներ";
-"s_questions" = "Հարցեր";
-"s_notes" = "Նշումներ";
-"s_themes" = "Տեսքեր";
 "s_posts" = "Գրառումներ";
 "s_comments" = "Մեկնաբանություններ";
+"s_photos" = "Նկարներ";
 "s_videos" = "Վիդեոներ";
 "s_audios" = "Երաժշտություն";
+"s_audios_playlists" = "Փլեյլիստներ";
+"s_documents" = "Փաստաթղթեր";
+
 "s_by_people" = "մարդկանց համար";
 "s_by_groups" = "խմբերի համար";
 "s_by_posts" = "գրառումների համար";
@@ -1511,6 +2195,8 @@
 "s_by_videos" = "վիդեոների համար";
 "s_by_apps" = "հավելվածների համար";
 "s_by_audios" = "երգերի համար";
+"s_by_audios_playlists" = "փլեյլիստների համար";
+"s_by_documents" = "փաստաթղթերի համար";
 
 "s_order_by" = "Դասավորել ըստ...";
 
@@ -1518,7 +2204,13 @@
 "s_order_by_name" = "Ըստ անվան";
 "s_order_by_random" = "Ըստ պատահականության";
 "s_order_by_rating" = "Ըստ վարկանիշի";
+"s_order_by_length" = "Ըստ տևողության";
+"s_order_by_listens" = "Ըստ լսումների քանակի";
 "s_order_invert" = "Շրջել";
+"s_order_by_reg_date" = "Ըստ գրանցման ամսաթվի";
+"s_order_by_creation_date" = "Ըստ ստեղծման ամսաթվի";
+"s_order_by_publishing_date" = "Ըստ հրապարակման ամսաթվի";
+"s_order_by_upload_date" = "Ըստ տեղադրման ամսաթվի";
 
 "s_by_date" = "Ըստ ամսաթվի";
 "s_registered_before" = "Գրանցված մինչև";
@@ -1527,22 +2219,68 @@
 "s_date_after" = "Հետո";
 
 "s_main" = "Հիմնական";
+"s_type" = "Տեսակ";
 
 "s_now_on_site" = "հիմա կայքում";
 "s_with_photo" = "նկարով";
 "s_only_in_names" = "միայն անուններում";
+"s_only_youtube" = "միայն YouTube–ից";
 
 "s_any" = "ցանկացած";
+"s_any_single" = "ցանկացած";
 "reset" = "Վերականգնել";
 
 "closed_group_post" = "Սա մասնավոր խմբի գրառում է";
 "deleted_target_comment" = "Այս մեկնաբանությունը ջնջված գրառման տակ է եղել";
 
 "no_results" = "Արդյունք չկա";
+"s_only_performers" = "Ըստ կատարողների";
+"s_with_lyrics" = "Երգի բառերով";
+
+"showing_x_y" = "(ցուցադրում ենք $1—$2)";
+"no_results_by_this_query" = "Ոչինչ չի գտնվել այս հարցումով։";
+"s_additional" = "Հավելյալ";
+"s_it_is_you" = "դա դուք եք";
+
+/* BadBrowser */
+
+"deprecated_browser" = "Հնացած դիտարկիչ";
+"deprecated_browser_description" = "Որպեսզի դիտեք այս բովանդակությունը, Ձեզ անհրաժեշտ է Firefox ESR 52 կամ ավելի թարմ տարբերակ, կամ համարժեք Համացանցի դիտարկիչ։ Հայցում ենք Ձեր ներողամտությունը։";
+
+/* Statistics */
+
+"coverage" = "Ծածկույթ";
+"coverage_this_week" = "Այս գրաֆիկը ցույց է տալիս ծածկույթը վերջին 7 օրվա ընթացքում:";
+"views" = "Դիտումներ";
+"views_this_week" = "Այս գրաֆիկը ցույց է տալիս համայնքի գրառումների դիտումները վերջին 7 օրվա ընթացքում:";
+
+"full_coverage" = "Լրիվ ծածկույթ";
+"all_views" = "Բոլոր դիտումները";
+
+"subs_coverage" = "Բաժանորդների ծածկույթ";
+"subs_views" = "Բաժանորդների դիտումներ";
+
+"viral_coverage" = "Վիրուսային հասանելիություն";
+"viral_views" = "Վիրուսային դիտումներ";
+
+/* Sudo */
+
+"you_entered_as" = "Դուք մուտք եք գործել որպես";
+"please_rights" = "խնդրում ենք հարգել այլ մարդկանց նամակագրության գաղտնիության իրավունքը և չ՛չարաշահել օգտատերերի միջև տվյալների փոխանակումը:";
+"click_on" = "Սեղմել";
+"there" = "այստեղ";
+"to_leave" = "դուրս գալու համար";
+
+/* Phone number */
+
+"verify_phone_number" = "Հաստատեք հեռախոսահամարը";
+"we_sended_first" = "Մենք SMS ենք ուղարկել տվյալ հեռախոսահամարին, որը պարունակում է կոդ։";
+"we_sended_end" = "ներմուծեք այն այստեղ";
 
 /* Mobile */
 "mobile_friends" = "Ընկերներ";
 "mobile_photos" = "Նկարներ";
+"mobile_audios" = "Երգեր";
 "mobile_videos" = "Վիդեոներ";
 "mobile_messages" = "Նամակներ";
 "mobile_notes" = "Գրառումներ";
@@ -1555,9 +2293,199 @@
 "mobile_like" = "Հավանել";
 "mobile_user_info_hide" = "Թաքցնել";
 "mobile_user_info_show_details" = "Ցույց տալ մանրամասն";
+"mobile_attachment_only_for_pc" = "Այս կցորդները իրականացված չեն PDA տարբերակի համար: Խնդրում ենք դիտել նրանք համակարգչի վրա:";
 
-"bday_reminder" = "Հիշեցում";
-"bday_today" = "Այսօր";
-"bday_tomorrow" = "Վաղը";
-"bday_reminder_text" = "$1 $2 ծննդյան օրն է.";
-"bday_and" = " և ";
+/* Fullscreen player */
+
+"hide_player" = "Փոքրացնել";
+"close_player" = "Փակել";
+"show_comments" = "Ցուցադրել տեղեկությունը";
+"close_comments" = "Թաքցնել տեղեկությունը";
+"to_page" = "Գնալ դեպի էջ";
+"download_video" = "Ներբեռնել";
+"added" = "Ավելացված";
+"x_views" = "$1 դիտում";
+
+"video_author" = "Վիդեոյի հեղինակ";
+"video_delete" = "Ջնջել";
+"no_description" = "նկարագրություն չկա";
+
+"show_more_comments" = "Ցույց տալ ավելի շատ մեկնաբանություն";
+"video_processing" = "Վիդեոն հաջողությամբ տեղադրված է և հիմա մշակվում է։";
+"video_access_denied" = "Տեսանյութի մուտքն արգելված է";
+"open_page_to_read_comms" = "Որպեսզի կարդաք մեկնաբանությունները, այցելեք <a href=\"$1\">այս էջը</a>։";
+
+"no_video_error" = "Չկա վիդեո ֆայլ";
+"no_video_description" = "Ընտրեք ֆայլը կամ նշեք հղումը։";
+
+"error_video" = "Խնդիր առաջացավ";
+"file_corrupted" = "Ֆայլը վնասվել է կամ չի պարունակում վիդեո";
+"link_incorrect" = "Հնարավոր է, հղումը սխալ է։";
+
+"no_name_error" = "Վիդեոն չի կարող հրապարակվել առանց անուն";
+"access_denied_error" = "Մուտքն արգելված է";
+"access_denied_error_description" = "Դուք չեք կարող խմբագրել այս ռեսուրսը";
+
+"changes_saved_video_comment" = "Թարմացված տվյալները կերևան վիդեոյի էջում";
+"cant_delete_video" = "Չհաջողվեց ջնջել վիդեոն";
+"cant_delete_video_comment" = "Դուք մուտք չեք գործել։";
+
+"change_video" = "Փոխել վիդեոն";
+
+"video_is_deleted" = "Վիդեոն ջնջվել է։";
+"share_video" = "Կիսվել վիդեոյով";
+"shared_succ_video" = "Վիդեոն կհայտնվի Ձեր պատին։ Սեղմե՛ք այս ծանուցման վրա որպեսզի տեղափոխեք գրառումը";
+"watch_in_window" = "Նայել պատուհանում";
+
+"comments_load_timeout" = "Հնարավոր է, որ այս հոսքը ընկել է";
+
+"my" = "Իմ";
+"enter_a_name_or_artist" = "Ներմուծեք անունը կամ արտիստի...";
+
+/* Moderation */
+
+"section" = "Section";
+"template_ban" = "Արգելափակել ըստ կաղապարի";
+"active_templates" = "Գործող կաղապարներ";
+"users_reports" = "Օգտատերերի զեկույցներ";
+"substring" = "Ենթատող";
+"n_user" = "Օգտատեր";
+"time_before" = "Ավելի շուտ քան";
+"time_after" = "Ավելի ուշ քան";
+"where_for_search" = "ՈՐՏԵՂ փնտրել ըստ բաժինների";
+"block_params" = "Արգելափակել կարգավորումները";
+"only_rollback" = "Միայն հետ բերել";
+"only_block" = "Միայն արգելափակում";
+"rollback_and_block" = "Հետ բերում և արգելափակում";
+"subm" = "Կիրառել";
+
+"select_section_for_start" = "Ընտրեք բաժին որից կսկսենք";
+"results_will_be_there" = "Որոնման արդյունքները կցուցադրվեն այստեղ";
+"search_results" = "Որոնման արդյունքներ";
+"cnt" = "հատ";
+
+"link_to_page" = "Հղում էջի վրա";
+"or_subnet" = "կամ ենթացանց";
+"error_when_searching" = "Խնդիր առաջացավ հարցումը մշակելիս";
+"no_found" = "Չի գտնվել";
+"operation_successfully" = "Գործողությունը հաջողությամբ կատարվեց";
+
+"unknown_error" = "Անհայտ խնդիր";
+"templates" = "Կաղապար";
+"type" = "Տեսակ";
+"count" = "Քանակ";
+"time" = "Ժամանակ";
+
+"roll_back" = "հետ բերում";
+"roll_backed" = "հետ բերված";
+
+"nospam_prevention" = "Այս գործողությունը կազմի մեծ քանակությամբ տվյալների վրա։ Դուք վստա՞հ եք որ ուզում եք անել դա";
+"nospam_album" = "Ալբոմներ";
+"nospam_application" = "Հավելվածներ";
+"nospam_audio" = "Երաժշտություն";
+"nospam_club" = "Խմբեր";
+"nospam_comment" = "Մեկնաբանություններ";
+"nospam_document" = "Փաստաթղթեր";
+"nospam_message" = "Նամակներ";
+"nospam_photo" = "Նկարներ";
+"nospam_playlist" = "Փլեյլիստնրե";
+"nospam_poll" = "Հարցումներ";
+"nospam_post" = "Գրառումներ";
+"nospam_ticket" = "Սպասարկման տոմսեր";
+"nospam_ticketcomment" = "Սպասարկման տոմսերի մեկնաբանություններ";
+"nospam_topic" = "Թեմաներ";
+"nospam_user" = "Օգտատերեր";
+"nospam_video" = "Վիդեոներ";
+"nospam_videoalbum" = "Վիդեո ալբոմներ";
+
+/* RSS */
+
+"post_deact_in_general" = "Էջի հեռացում";
+"upd_in_general" = "Ավատարի փոփոխություն";
+"on_wall" = "Պատին";
+"sign_short" = "Ստորագրել";
+
+/* Documents */
+
+"my_documents" = "Փաստաթղթեր";
+"my_documents_objectively" = "Իմ փաստաթղթերը";
+"documents_of_group" = "Խմբի փաստաթղթերը";
+"search_by_documents" = "Որոնել փաստաթղթեր..";
+"documents" = "Փաստաթղթեր";
+"document_uploading_in_general" = "Վերբեռնել փաստաթուղթ";
+"document_editing_in_general" = "Խմբագրել փաստաթուղթը";
+"file" = "Ֆայլ";
+"tags" = "Թեգեր";
+"owner_is_hidden" = "Թաքցնել հեղինակին";
+"accessbility" = "Հասանելիություն";
+"download_file" = "Վերբեռնել ֆայլը";
+"remove" = "Հեռացնել";
+
+"document" = "Փաստաթուղթ";
+"documents_all" = "Բոլոր փաստաթղթերը";
+"document_type_0" = "Բոլորը";
+"document_type_1" = "Տեքստ";
+"document_type_2" = "Արխիվներ";
+"document_type_3" = "GIF";
+"document_type_4" = "Նկարներ";
+"document_type_5" = "Երաժշտություն";
+"document_type_6" = "Վիդեո";
+"document_type_7" = "Գրքեր";
+"document_type_8" = "Այլն";
+
+"documents_one" = "$1 փաստաթուղթ";
+"documents_few" = "$1 փաստաթուղթ";
+"documents_many" = "$1 փաստաթուղթ";
+"documents_other" = "$1 փաստաթուղթ";
+"documents_zero" = "$1 փաստաթուղթ";
+
+"you_have_x_documents_one" = "Դուք ունեք $1 փաստաթուղթ";
+"you_have_x_documents_few" = "Դուք ունեք $1 փաստաթուղթ";
+"you_have_x_documents_many" = "Դուք ունեք $1 փաստաթուղթ";
+"you_have_x_documents_other" = "Դուք ունեք $1 փաստաթուղթ";
+"you_have_x_documents_zero" = "Դուք ունեք $1 փաստաթուղթ";
+
+"group_has_x_documents_one" = "Այս խումբն ունի $1 փաստաթուղթ";
+"group_has_x_documents_few" = "Այս խումբն ունի $1 փաստաթուղթ";
+"group_has_x_documents_many" = "Այս խումբն ունի $1 փաստաթուղթ";
+"group_has_x_documents_other" = "Այս խումբն ունի $1 փաստաթուղթ";
+"group_has_x_documents_zero" = "Այս խումբն ունի $1 փաստաթուղթ";
+
+"x_documents_in_tab_one" = "$1 փաստաթուղթ այս ներդիրում";
+"x_documents_in_tab_few" = "$1 փաստաթուղթ այս ներդիրում";
+"x_documents_in_tab_many" = "$1 փաստաթուղթ այս ներդիրում";
+"x_documents_in_tab_other" = "$1 փաստաթուղթ այս ներդիրում";
+"x_documents_in_tab_zero" = "$1 փաստաթուղթ այս ներդիրում";
+
+"there_is_no_documents_alright" = "Այստեղ չկան փաստաթղթեր։";
+"limitations_file_limit_size" = "Ֆայլը չպետք է գերազանցի $1 MB–ը";
+"limitations_file_allowed_formats" = "Թույլատրված ֆորմատներ";
+"limitations_file_author_rights" = "Ֆայլը չպետք է խախտի հեղինակային իրավունքները և կայքի կանոնները";
+"select_file_fp" = "Ընտրել ֆայլ";
+"error_file_too_big" = "Ֆայլը չափազանց մեծ է։";
+"error_file_invalid_format" = "Ֆայլի ֆորմատը չի թույլատրվում։";
+"error_file_adding_copied" = "Ֆայլը արդեն ավելացված է։";
+"error_file_preview" = "Խնդիր ֆայլը վերբեռնելիս. տարօրինակ նկար։";
+
+"private_document" = "Մասնավոր (հղումով)";
+"public_document" = "Հանրային";
+"documents_sort_add" = "Ըստ ամսաթվի";
+"documents_sort_alphabet" = "Ա-Ֆ";
+"documents_sort_size" = "Ըստ չափի";
+"select_doc" = "Կցել փաստաթուղթ";
+"no_documents" = "Փաստաթղթեր չեն գտնվել";
+"go_to_my_documents" = "Անցեք ձեր սեփական փաստաթղթերին";
+
+/* Fave */
+
+"faves" = "Էջանիշեր";
+"faves_empty_tip" = "Այստեղ կերևա Ձեր լայքած բովանդակությունը։";
+"faves_posts_empty_tip" = "Այստեղ կերևա Ձեր լայքած գրառումները։";
+"faves_comments_empty_tip" = "Այստեղ կերևա Ձեր լայքած մեկնաբանությունները։";
+"faves_photos_empty_tip" = "Այստեղ կերևա Ձեր լայքած նկարները։";
+"faves_videos_empty_tip" = "Այստեղ կերևա Ձեր լայքած վիդեոները։";
+"faves_zero" = "Էջանիշներ չկան";
+"faves_one" = "Մեկ էջանիշ";
+"faves_few" = "$1 էջանիշ";
+"faves_many" = "$1 էջանիշ";
+"faves_other" = "$1 էջանիշ";
