@@ -346,8 +346,8 @@
 "friends_list_other" = "Դուք ունեք $1 ընկեր";
 
 "friends_list_online_zero" = "Դուք դեռ չունեք ցանցի մեջ գտնվող ընկերներ";
-"friends_list_online_one" = "Ձեր $1 ընկերը ցանցի մեջ է";
-"friends_list_online_other" = "Ձեր $1 ընկերները ցանցի մեջ ենe";
+"friends_list_online_one" = "Ձեր $1 ընկեր ցանցի մեջ է";
+"friends_list_online_other" = "Ձեր $1 ընկեր ցանցի մեջ է";
 
 "followers_zero" = "Ոչ մի հետևորդ չունեք";
 "followers_one" = "$1 հետևորդ";
@@ -964,7 +964,7 @@
 
 "no_audios_thisuser" = "Դուք դեռ չեք ավելացրել որևէ երգ։";
 "no_audios_user" = "Այս օգտատերը դեռ չի ավելացրել որևէ երգ։";
-"no_audios_club" = "Այս խումբը դեռ չի ավելացրել որևէ երգ։;
+"no_audios_club" = "Այս խումբը դեռ չի ավելացրել որևէ երգ։";
 
 "new_playlist" = "Նոր փլեյլիստ";
 "created_playlist" = "ստեղծվել է";
