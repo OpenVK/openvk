@@ -90,9 +90,15 @@ class Report extends RowModel
         }
     }
 
-    public function getAuthor(): RowModel
+    public function getAuthor(?bool $realPostAuthor = false): RowModel
     {
-        return $this->getContentObject()->getOwner();
+        if ($this->getContentType() == "user")
+            return $this->getContentObject();
+
+        if (!in_array($this->getContentType(), ["post", "comment", "note", "topic"]))
+            return $this->getContentObject()->getOwner();
+
+        return $this->getContentObject()->getOwner(!$realPostAuthor, $realPostAuthor);
     }
 
     public function getReportAuthor(): User
@@ -103,7 +109,7 @@ class Report extends RowModel
     public function banUser($initiator)
     {
         $reason = $this->getContentType() !== "user" ? ("**content-" . $this->getContentType() . "-" . $this->getContentId() . "**") : ("Подозрительная активность");
-        $this->getAuthor()->ban($reason, false, time() + $this->getAuthor()->getNewBanTime(), $initiator);
+        $this->getAuthor()->ban($reason, false, time() + $this->getAuthor(true)->getNewBanTime(), $initiator);
     }
 
     public function deleteContent()
