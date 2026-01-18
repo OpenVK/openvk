@@ -511,7 +511,15 @@
                     {if $additionalFields}
                         <tr n:foreach="$additionalFields['contacts'] as $field">
                             <td class="label"><span class="nobold">{$field->getName()}:</span></td>
-                            <td class="data">{$field->getContent()}</td>
+                            <td class="data">
+                                {if str_starts_with($field->getContent(), 'http')}
+                                    <a href="{$field->getContent()}" target="_blank" rel="noopener">
+                                        {$field->getContent()}
+                                    </a>
+                                {else}
+                                    {$field->getContent()}
+                                {/if}
+                            </td>
                         </tr>
                     {/if}
                   </tbody>
