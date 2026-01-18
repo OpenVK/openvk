@@ -262,7 +262,7 @@ window.tweaks = [
             u(".post").nodes.forEach(item => {
                 const post = u(item)
                 if (post.hasClass("hidden_because_of_word")) {return}
-                (window.hidden_words ?? []).forEach(word => {
+                (window.hidden_words || []).forEach(word => {
                     highlightText(word, '.scroll_container', [".post-author a", ".post:not(.comment) > tbody > tr > td > .post-content > .text .really_text"])
                 })
                 if (post.find(".highlight").length > 0) {post.addClass("hidden_because_of_word")}
