@@ -1,41 +1,38 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace Chandler\Database;
 
 use Chandler\Database\DatabaseConnection;
+use Chandler\Security\Authenticator;
+use Chandler\Security\User;
 use Nette\Database\Table\Selection;
 use Nette\Database\Table\ActiveRow;
 use Nette\InvalidStateException as ISE;
-use openvk\Web\Models\Repositories\CurrentUser;
-use openvk\Web\Models\Repositories\Logs;
+use Chandler\Database\Logs;
+
 
 abstract class DBEntity
 {
-    use \Nette\SmartObject;
     protected $record;
     protected $changes;
     protected $deleted;
-    protected $user;
+    private $user;
 
     protected $tableName;
 
-    public function __construct(?ActiveRow $row = null)
+    function __construct(?ActiveRow $row = NULL)
     {
-        if (is_null($row)) {
-            return;
-        }
+        if (is_null($row)) return;
 
         $_table = $row->getTable()->getName();
-        if ($_table !== $this->tableName) {
+        if ($_table !== $this->tableName)
             throw new ISE("Invalid data supplied for model: table $_table is not compatible with table" . $this->tableName);
-        }
 
         $this->record = $row;
+        $this->user = Authenticator::i()->getUser();
     }
 
-    public function __call(string $fName, array $args)
+    function __call(string $fName, array $args)
     {
         if (substr($fName, 0, 3) === "set") {
             $field = mb_strtolower(substr($fName, 3));
@@ -57,38 +54,55 @@ abstract class DBEntity
 
     protected function stateChanges(string $column, $value): void
     {
-        if (!is_null($this->record)) {
-            $t = $this->record->{$column};
-        } #Test if column exists
+        if (!is_null($this->record))
+            $t = $this->record->{$column}; #Test if column exists
 
         $this->changes[$column] = $value;
     }
 
-    public function getId()
+    function getId()
     {
         return $this->getRecord()->id;
     }
 
-    public function isDeleted(): bool
+    function isDeleted(): bool
     {
-        return (bool) $this->getRecord()->deleted;
+        return (bool)$this->getRecord()->deleted;
     }
 
-    public function unwrap(): object
+    function unwrap(): object
     {
-        return (object) $this->getRecord()->toArray();
+        return (object)$this->getRecord()->toArray();
     }
 
-    public function delete(bool $softly = true): void
+    protected function getContextUserId(): string
     {
-        $user = CurrentUser::i()->getUser();
-        $user_id = is_null($user) ? (int) OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"] : $user->getId();
+        $user = Authenticator::i()->getUser();
+        $id = ($user && method_exists($user, 'getId'))
+            ? $user->getId()
+            : (OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"] ?? 1);
 
-        if (is_null($this->record)) {
+        return (string) $id;
+    }
+
+    protected function log(int $type, array $extraChanges = []): void
+    {
+        (new Logs)->create(
+            $this->getContextUserId(),
+            $this->getTable()->getName(),
+            get_class($this),
+            $type,
+            $this->record ? $this->record->toArray() : [],
+            !empty($extraChanges) ? $extraChanges : $this->changes
+        );
+    }
+
+    function delete(bool $softly = true): void
+    {
+        if (is_null($this->record))
             throw new ISE("Can't delete a model, that hasn't been flushed to DB. Have you forgotten to call save() first?");
-        }
 
-        (new Logs())->create($user_id, $this->getTable()->getName(), get_class($this), 2, $this->record->toArray(), $this->changes);
+        $this->log(2);
 
         if ($softly) {
             $this->record = $this->getTable()->where("id", $this->record->id)->update(["deleted" => true]);
@@ -98,40 +112,34 @@ abstract class DBEntity
         }
     }
 
-    public function undelete(): void
+    function undelete(): void
     {
-        if (is_null($this->record)) {
+        if (is_null($this->record))
             throw new ISE("Can't undelete a model, that hasn't been flushed to DB. Have you forgotten to call save() first?");
-        }
 
-        $user = CurrentUser::i()->getUser();
-        $user_id = is_null($user) ? (int) OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"] : $user->getId();
-
-        (new Logs())->create($user_id, $this->getTable()->getName(), get_class($this), 3, $this->record->toArray(), ["deleted" => false]);
+        $this->log(3, ["deleted" => false]);
 
         $this->getTable()->where("id", $this->record->id)->update(["deleted" => false]);
     }
 
-    public function save(?bool $log = true): void
+    function save(?bool $log = false): void
     {
-        if ($log) {
-            $user = CurrentUser::i();
-            $user_id = is_null($user) ? (int) OPENVK_ROOT_CONF["openvk"]["preferences"]["support"]["adminAccount"] : $user->getUser()->getId();
-        }
+        // Записывать ли логи?
+        $shouldLog = $log && $this->getTable()->getName() !== "ChandlerLogs" && (CHANDLER_ROOT_CONF["preferences"]["logs"]["enabled"] ?? false);
 
         if (is_null($this->record)) {
             $this->record = $this->getTable()->insert($this->changes);
 
-            if ($log && $this->getTable()->getName() !== "logs") {
-                (new Logs())->create($user_id, $this->getTable()->getName(), get_class($this), 0, $this->record->toArray(), $this->changes);
+            if ($shouldLog) {
+                $this->log(0);
             }
         } else {
-            if ($log && $this->getTable()->getName() !== "logs") {
-                (new Logs())->create($user_id, $this->getTable()->getName(), get_class($this), 1, $this->record->toArray(), $this->changes);
+            if ($shouldLog) {
+                $this->log(1);
             }
 
             if ($this->deleted) {
-                $this->record = $this->getTable()->insert((array) $this->record);
+                $this->record = $this->getTable()->insert((array)$this->record);
             } else {
                 $this->getTable()->get($this->record->id)->update($this->changes);
                 $this->record = $this->getTable()->get($this->record->id);
@@ -141,7 +149,7 @@ abstract class DBEntity
         $this->changes = [];
     }
 
-    public function getTableName(): string
+    function getTableName(): string
     {
         return $this->getTable()->getName();
     }
