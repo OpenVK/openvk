@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace Chandler\Database;
 
@@ -10,7 +12,6 @@ use Nette\Database\Table\ActiveRow;
 use Nette\InvalidStateException as ISE;
 use Chandler\Database\Logs;
 
-
 abstract class DBEntity
 {
     protected $record;
@@ -20,19 +21,22 @@ abstract class DBEntity
 
     protected $tableName;
 
-    function __construct(?ActiveRow $row = NULL)
+    public function __construct(?ActiveRow $row = null)
     {
-        if (is_null($row)) return;
+        if (is_null($row)) {
+            return;
+        }
 
         $_table = $row->getTable()->getName();
-        if ($_table !== $this->tableName)
+        if ($_table !== $this->tableName) {
             throw new ISE("Invalid data supplied for model: table $_table is not compatible with table" . $this->tableName);
+        }
 
         $this->record = $row;
         $this->user = Authenticator::i()->getUser();
     }
 
-    function __call(string $fName, array $args)
+    public function __call(string $fName, array $args)
     {
         if (substr($fName, 0, 3) === "set") {
             $field = mb_strtolower(substr($fName, 3));
@@ -54,25 +58,26 @@ abstract class DBEntity
 
     protected function stateChanges(string $column, $value): void
     {
-        if (!is_null($this->record))
-            $t = $this->record->{$column}; #Test if column exists
+        if (!is_null($this->record)) {
+            $t = $this->record->{$column};
+        } #Test if column exists
 
         $this->changes[$column] = $value;
     }
 
-    function getId()
+    public function getId()
     {
         return $this->getRecord()->id;
     }
 
-    function isDeleted(): bool
+    public function isDeleted(): bool
     {
-        return (bool)$this->getRecord()->deleted;
+        return (bool) $this->getRecord()->deleted;
     }
 
-    function unwrap(): object
+    public function unwrap(): object
     {
-        return (object)$this->getRecord()->toArray();
+        return (object) $this->getRecord()->toArray();
     }
 
     protected function getContextUserId(): string
@@ -87,7 +92,7 @@ abstract class DBEntity
 
     protected function log(int $type, array $extraChanges = []): void
     {
-        (new Logs)->create(
+        (new Logs())->create(
             $this->getContextUserId(),
             $this->getTable()->getName(),
             get_class($this),
@@ -97,10 +102,11 @@ abstract class DBEntity
         );
     }
 
-    function delete(bool $softly = true): void
+    public function delete(bool $softly = true): void
     {
-        if (is_null($this->record))
+        if (is_null($this->record)) {
             throw new ISE("Can't delete a model, that hasn't been flushed to DB. Have you forgotten to call save() first?");
+        }
 
         $this->log(2);
 
@@ -112,17 +118,18 @@ abstract class DBEntity
         }
     }
 
-    function undelete(): void
+    public function undelete(): void
     {
-        if (is_null($this->record))
+        if (is_null($this->record)) {
             throw new ISE("Can't undelete a model, that hasn't been flushed to DB. Have you forgotten to call save() first?");
+        }
 
         $this->log(3, ["deleted" => false]);
 
         $this->getTable()->where("id", $this->record->id)->update(["deleted" => false]);
     }
 
-    function save(?bool $log = false): void
+    public function save(?bool $log = false): void
     {
         // Записывать ли логи?
         $shouldLog = $log && $this->getTable()->getName() !== "ChandlerLogs" && (CHANDLER_ROOT_CONF["preferences"]["logs"]["enabled"] ?? false);
@@ -139,7 +146,7 @@ abstract class DBEntity
             }
 
             if ($this->deleted) {
-                $this->record = $this->getTable()->insert((array)$this->record);
+                $this->record = $this->getTable()->insert((array) $this->record);
             } else {
                 $this->getTable()->get($this->record->id)->update($this->changes);
                 $this->record = $this->getTable()->get($this->record->id);
@@ -149,7 +156,7 @@ abstract class DBEntity
         $this->changes = [];
     }
 
-    function getTableName(): string
+    public function getTableName(): string
     {
         return $this->getTable()->getName();
     }
