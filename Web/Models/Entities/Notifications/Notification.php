@@ -183,7 +183,7 @@ class Notification
                     case 14:
                         $info["type"] = "comment_post";
                         $info["parent"] = $this->getModel(0)->toNotifApiStruct();
-                        $info["feedback"] = null;
+                        $info["feedback"] = $this->getModel(1)->toVkApiStruct();
                         break;
                         # unused (users don't have topics bruh)
                     case 21:
