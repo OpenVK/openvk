@@ -526,7 +526,7 @@
                             {var $interests = explode(", ", $user->getInterests())}
                             
                             {foreach $interests as $interest}
-                                <span>{$interest}</span>{if $interest != end($interests)},{/if}
+                                <span style="white-space: pre-line">{$interest}</span>{if $interest != end($interests)},{/if}
                             {/foreach}
                         </td>
                     </tr>
@@ -537,7 +537,7 @@
                             {var $musics = explode(", ", $user->getFavoriteMusic())}
 
                             {foreach $musics as $music}
-                                <a href="/search?section=audios&q={urlencode($music)}">{$music}</a>{if $music != end($musics)},{/if}
+                                <a href="/search?section=audios&q={urlencode($music)}" style="white-space: pre-line">{$music}</a>{if $music != end($musics)},{/if}
                             {/foreach}
                         </td>
                     </tr>
@@ -547,7 +547,7 @@
                             {var $films = explode(", ", $user->getFavoriteFilms())}
 
                             {foreach $films as $film}
-                                <a href="/search?section=users&q=&fav_films={urlencode($film)}">{$film}</a>{if $film != end($films)},{/if}
+                                <a href="/search?section=users&q=&fav_films={urlencode($film)}" style="white-space: pre-line">{$film}</a>{if $film != end($films)},{/if}
                             {/foreach}
                         </td>
                     </tr>
@@ -557,7 +557,7 @@
                             {var $shows = explode(", ", $user->getFavoriteShows())}
 
                             {foreach $shows as $show}
-                                <a href="/search?section=users&q=&fav_shows={urlencode($show)}">{$show}</a>{if $show != end($shows)},{/if}
+                                <a href="/search?section=users&q=&fav_shows={urlencode($show)}" style="white-space: pre-line">{$show}</a>{if $show != end($shows)},{/if}
                             {/foreach}
                         </td>
                     </tr>
@@ -567,13 +567,13 @@
                             {var $books = explode(", ", $user->getFavoriteBooks())}
 
                             {foreach $books as $book}
-                                <a href="/search?section=users&q=&fav_books={urlencode($book)}">{$book}</a>{if $book != end($books)},{/if}
+                                <a href="/search?section=users&q=&fav_books={urlencode($book)}" style="white-space: pre-line">{$book}</a>{if $book != end($books)},{/if}
                             {/foreach}
                         </td>
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteQuote())">
                         <td class="label"><span class="nobold">{_favorite_quotes}: </span></td>
-                        <td class="data">{$user->getFavoriteQuote()}</td>
+                        <td class="data" style="white-space: pre-line">{$user->getFavoriteQuote()}</td>
                     </tr>
                     <tr n:if="!is_null($user->getFavoriteGames())">
                         <td class="label"><span class="nobold">{_favorite_games}: </span></td>
@@ -582,12 +582,12 @@
                     {if $additionalFields}
                         <tr n:foreach="$additionalFields['interests'] as $field">
                             <td class="label"><span class="nobold">{$field->getName()}:</span></td>
-                            <td class="data">{$field->getContent()}</td>
+                            <td class="data" style="white-space: pre-line">{$field->getContent()}</td>
                         </tr>
                     {/if}
                     <tr n:if="!is_null($user->getDescription())">
                         <td class="label"><span class="nobold">{_information_about}: </span></td>
-                        <td class="data">{$user->getDescription()}</td>
+                        <td class="data" style="white-space: pre-line">{$user->getDescription()}</td>
                     </tr>
                   </tbody>
                 </table>
