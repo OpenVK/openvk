@@ -121,15 +121,24 @@ function tr(string $stringId, ...$variables): string
         if (gettype($variables[0]) === "integer") {
             $numberedStringId = null;
             $cardinal         = $variables[0];
-            switch ($cardinal) {
-                case 0:
-                    $numberedStringId = $stringId . "_zero";
-                    break;
-                case 1:
-                    $numberedStringId = $stringId . "_one";
-                    break;
-                default:
-                    $numberedStringId = $stringId . ($cardinal < 5 ? "_few" : "_other");
+            $n                = abs($cardinal);
+
+            if ($n === 0) {
+                $numberedStringId = $stringId . "_zero";
+            } else {
+                $temp = $n % 100;
+                if ($temp >= 5 && $temp <= 20) {
+                    $numberedStringId = $stringId . "_other";
+                } else {
+                    $temp = $n % 10;
+                    if ($temp === 1) {
+                        $numberedStringId = $stringId . "_one";
+                    } elseif ($temp >= 2 && $temp <= 4) {
+                        $numberedStringId = $stringId . "_few";
+                    } else {
+                        $numberedStringId = $stringId . "_other";
+                    }
+                }
             }
 
             $newOutput = $localizer->_($numberedStringId, $lang);
