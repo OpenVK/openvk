@@ -2332,6 +2332,10 @@
 "nospam_video" = "Видеозаписи";
 "nospam_videoalbum" = "Видео-альбомы";
 
+"report_force_exclude_author_from_global_feed" = "Исключить <b>автора контента</b> из глобальной ленты";
+"report_force_exclude_user_from_global_feed" = "Исключить <b>пользователя</b> из глобальной ленты";
+"report_force_exclude_group_from_global_feed" = "Исключить <b>сообщество</b> из глобальной ленты";
+
 /* RSS */
 
 "post_deact_in_general" = "Удаление страницы";
