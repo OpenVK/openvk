@@ -305,7 +305,7 @@ u(document).on('click', 'a', async (e) => {
         return
     }
 
-    if(target.attr('target') == '_blank') {
+    if(target.attr('target') == '_blank' || e.ctrlKey || e.metaKey) {
         console.log('AJAX | Skipping because its _blank.')
         return
     }
