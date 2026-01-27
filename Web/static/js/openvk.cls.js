@@ -257,6 +257,40 @@ function showIncreaseRatingDialog(coinsCount, userUrl, hash) {
     };
 }
 
+function openJsSettings() {
+    const CURRENT_AUTO_SCROLL = Number(localStorage.getItem('ux.auto_scroll') ?? 1)
+    const CURRENT_DISABLE_AJAX = Number(localStorage.getItem('ux.disable_ajax_routing') ?? 0)
+
+    u("#_js_settings").append(`
+        <tr>
+            <td width="120" valign="top">
+                <span class="nobold">
+                    <input type='checkbox' data-act='localstorage_item' data-inverse="1" name='ux.disable_ajax_routing' id="ux.disable_ajax_routing" ${CURRENT_DISABLE_AJAX == 0 ? 'checked' : ''}>
+                </span>
+            </td>
+            <td>
+                <label for='ux.disable_ajax_routing'>${tr('ajax_routing')}</label>
+            </td>
+        </tr>
+        <tr>
+            <td width="120" valign="top">
+                <span class="nobold">
+                    <input type='checkbox' data-act='localstorage_item' name='ux.auto_scroll' id="ux.auto_scroll" ${CURRENT_AUTO_SCROLL == 1 ? 'checked' : ''}>
+                </span>
+            </td>
+            <td>
+                <label for='ux.auto_scroll'>${tr('auto_scroll')}</label>
+            </td>
+        </tr>    
+        <tr>
+            <td width="120" valign="top"></td>
+            <td>
+                <a href="javascript:openPluginSettings()">${tr('ui_settings_window')}</a>
+            </td>
+        </tr>  
+    `)
+}
+
 let lastScrollTop = 0;
 $(document).on("scroll", () => {
     const currentScrollTop = $(document).scrollTop();
