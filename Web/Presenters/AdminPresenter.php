@@ -258,6 +258,8 @@ final class AdminPresenter extends OpenVKPresenter
                 $club->setVerified(empty($this->postParam("verify") ? 0 : 1));
                 $club->setHide_From_Global_Feed(empty($this->postParam("hide_from_global_feed") ? 0 : 1));
                 $club->setEnforce_Hiding_From_Global_Feed(empty($this->postParam("enforce_hiding_from_global_feed") ? 0 : 1));
+                $club->setEnforce_Main_Note_Expanded(empty($this->postParam("enforce_main_note_expanded") ? 0 : 1));
+                $club->setEnforce_Wiki_Pages_Disabled(empty($this->postParam("enforce_wiki_pages_disabled") ? 0 : 1));
                 $club->save();
                 break;
             case "ban":

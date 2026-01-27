@@ -7,6 +7,10 @@ namespace openvk\Web\Models\Entities;
 use HTMLPurifier_Config;
 use HTMLPurifier;
 use HTMLPurifier_Filter;
+use openvk\Web\Models\RowModel;
+use openvk\Web\Models\Entities\User;
+use openvk\Web\Models\Repositories\Users;
+use openvk\Web\Models\Repositories\Clubs;
 
 class SecurityFilter extends HTMLPurifier_Filter
 {
@@ -160,11 +164,19 @@ class Note extends Postable
 
     public function canBeViewedBy(?User $user = null): bool
     {
-        if ($this->isDeleted() || $this->getOwner()->isDeleted()) {
+        if ($this->isDeleted()) {
             return false;
         }
 
-        return $this->getOwner()->getPrivacyPermission('notes.read', $user) && $this->getOwner()->canBeViewedBy($user);
+        if ($this->getOwner() instanceof User) {
+            if ($this->getOwner()->isDeleted()) {
+                return false;
+            }
+
+            return $this->getOwner()->getPrivacyPermission('notes.read', $user) && $this->getOwner()->canBeViewedBy($user);
+        }
+
+        return $this->getOwner()->canBeViewedBy($user);
     }
 
     public function toVkApiStruct(): object
@@ -180,5 +192,19 @@ class Note extends Postable
         $res->view_url      = "/note" . $this->getOwner()->getId() . "_" . $this->getVirtualId();
 
         return $res;
+    }
+
+    public function getOwner(bool $real = false): RowModel
+    {
+        $oid = (int) $this->getRecord()->owner;
+        if (!$real && $this->isAnonymous()) {
+            $oid = (int) OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["anonymousPosting"]["account"];
+        }
+
+        if ($oid > 0) {
+            return (new Users())->get($oid);
+        } else {
+            return (new Clubs())->get($oid * -1);
+        }
     }
 }

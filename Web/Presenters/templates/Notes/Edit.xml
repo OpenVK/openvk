@@ -6,9 +6,9 @@
     {var $author = $note->getOwner()}
     <a href="{$author->getURL()}">{$author->getCanonicalName()}</a>
     »
-    <a href="/notes{$author->getId()}">{_notes}</a>
+    <a href="/notes{$author->getId() * ($author instanceof openvk\Web\Models\Entities\User ? 1 : -1)}">{_notes}</a>
     »
-    <a href="/note{$author->getId()}_{$note->getVirtualId()}">{$note->getName()}</a>
+    <a href="/note{$note->getPrettyId()}">{$note->getName()}</a>
 {/block}
 
 {block content}
@@ -23,7 +23,7 @@
         <input type="hidden" name="hash" value="{$csrfToken}" />
         <button class="button">{_save}</button>
         &nbsp;
-        <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}" class="button">{_cancel}</a>
+        <a href="/note{$note->getPrettyId()}" class="button">{_cancel}</a>
     </form>
     
     {script "js/node_modules/monaco-editor/min/vs/loader.js"}

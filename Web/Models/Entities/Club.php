@@ -7,7 +7,7 @@ namespace openvk\Web\Models\Entities;
 use openvk\Web\Util\DateTime;
 use openvk\Web\Models\RowModel;
 use openvk\Web\Models\Entities\{User, Manager};
-use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Managers, Posts};
+use openvk\Web\Models\Repositories\{Users, Clubs, Albums, Managers, Notes, Posts};
 use Nette\Database\Table\{ActiveRow, GroupedSelection};
 use Chandler\Database\DatabaseConnection as DB;
 use Chandler\Security\User as ChandlerUser;
@@ -537,5 +537,39 @@ class Club extends RowModel
         }
 
         return $res;
+    }
+
+    public function canCreateNote(?User $user): bool
+    {
+        return $this->canBeModifiedBy($user);
+    }
+
+    public function getMainNoteId(): ?int
+    {
+        if ($this->isWikiPagesDisabledEnforced()) {
+            return null;
+        }
+
+        return $this->getRecord()->main_note_id;
+    }
+
+    public function getMainNote(): ?Note
+    {
+        return (new Notes())->get($this->getMainNoteId() ?? 0);
+    }
+
+    public function isMainNoteExpanded(): bool
+    {
+        return (bool) $this->getRecord()->is_main_note_expanded;
+    }
+
+    public function isMainNoteExpandedEnforced(): bool
+    {
+        return (bool) $this->getRecord()->enforce_main_note_expanded;
+    }
+
+    public function isWikiPagesDisabledEnforced(): bool
+    {
+        return (bool) $this->getRecord()->enforce_wiki_pages_disabled;
     }
 }

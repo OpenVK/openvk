@@ -18,9 +18,9 @@
     <div style="padding-bottom: 0px; padding-top: 0;" class="summaryBar">
         <div class="summary">
                 {tr("notes_list", $count)}
-                <span n:if="isset($thisUser) && $thisUser->getId() == $owner->getId()">
+                <span n:if="(isset($thisUser) && $thisUser->getId() == $owner->getId()) || $canCreateNotesInThisGroup">
                     &nbsp;|&nbsp;
-                    <a href="/notes/create" rel='nofollow'>{_create_note}</a>
+                    <a href="/notes/create{if $owner instanceof \openvk\Web\Models\Entities\Club}?gid={$owner->getId()}{/if}" rel='nofollow'>{_create_note}</a>
                 </span>
         </div>
     </div>
@@ -87,19 +87,20 @@
                 </div>
                 <div class="note_footer" style="margin: 10px 0 0;">
                     <div class="comments_count">
-                        <a href="/note{$dat->getPrettyId()}">
-
-                            {if $dat->getCommentsCount() > 0}
-                                {_comments} ({$dat->getCommentsCount()})
-                            {else}
-                                {_no_comments}
-                            {/if}
-                            
-                        </a>
-                        <span n:if="isset($thisUser) && $thisUser->getId() === $dat->getOwner()->getId()">&nbsp;|&nbsp;
-                            <a id="_noteDelete" href="/note{$dat->getOwner()->getId()}_{$dat->getId()}/delete">{_delete}</a>
+                        {if !($owner instanceof openvk\Web\Models\Entities\Club)}
+                            <a href="/note{$dat->getPrettyId()}">
+                                {if $dat->getCommentsCount() > 0}
+                                    {_comments} ({$dat->getCommentsCount()})
+                                {else}
+                                    {_no_comments}
+                                {/if}                            
+                            </a>
                             &nbsp;|&nbsp;
-                            <a href="/note{$dat->getOwner()->getId()}_{$dat->getVirtualId()}/edit" rel='nofollow'>{_edit}</a>
+                        {/if}
+                        <span n:if="(isset($thisUser) && $thisUser->getId() === $dat->getOwner()->getId()) || ($owner instanceof openvk\Web\Models\Entities\Club && $owner->canBeModifiedBy($thisUser))">
+                            <a id="_noteDelete" href="/note{$dat->getPrettyId()}/delete">{_delete}</a>
+                            &nbsp;|&nbsp;
+                            <a href="/note{$dat->getPrettyId()}/edit" rel='nofollow'>{_edit}</a>
                         </span>
                     </div>
                 </div>

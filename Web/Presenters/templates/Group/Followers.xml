@@ -33,6 +33,11 @@
 				{_followers}
 			</a>
 		</div>
+        <div class="tab">
+            <a href="/club{$club->getId()}/notes">
+                {_wiki_pages}
+            </a>
+        </div>
 	{/if}
 {/block}
 
