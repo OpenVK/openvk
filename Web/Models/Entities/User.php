@@ -1001,6 +1001,7 @@ class User extends RowModel
         if ($forAPI) {
             switch ($platform) {
                 case 'openvk_native':
+                case 'openvk_flux_android':
                 case 'openvk_refresh_android':
                 case 'openvk_legacy_android':
                     return 'android';
