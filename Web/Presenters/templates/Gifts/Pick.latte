@@ -49,7 +49,7 @@
                 </div>
             </div>
             <div class="gift_grid scroll_container">
-                <a href='/gifts?act=confirm&user={$user->getId()}&pack={$cat->getId()}&elid={$gift->getId()}' n:foreach="$gifts as $gift" n:class="scroll_node, gift_sel, $gift->getUsagesLeft($thisUser) !== INF ? has_limit, !$gift->canUse($thisUser) ? disabled" data-gift="{$gift->getId()}">
+                <a href='/gifts?act=confirm&user={$user->getId()}&pack={$cat->getId()}&elid={$gift->getId()}' n:foreach="$gifts as $gift" n:class="scroll_node, gift_sel, $gift->getUsagesLeft($thisUser) !== \INF ? has_limit, !$gift->canUse($thisUser) ? disabled" data-gift="{$gift->getId()}">
                     <img class="gift_pic" src="{$gift->getImage(2)}" alt="{_gift}" loading=lazy />
 
                     <strong n:class="gift_price, $gift->isFree() ? gift_free">
@@ -60,7 +60,7 @@
                         {/if}
                     </strong>
 
-                    <strong n:if="$gift->getUsagesLeft($thisUser) !== INF" class="gift_limit">
+                    <strong n:if="$gift->getUsagesLeft($thisUser) !== \INF" class="gift_limit">
                         {tr("gifts_left", $gift->getUsagesLeft($thisUser))}
                     </strong>
                 </a>

@@ -55,7 +55,7 @@
 
                 <div class="gift_grid gift_cat_grid">
                     {foreach $dat->getGifts(1, 5) as $gift}
-                        <a href="/gifts?act=confirm&user={$user->getId()}&pack={$dat->getId()}&elid={$gift->getId()}" n:class="gift_sel, $gift->getUsagesLeft($thisUser) !== INF ? has_limit, !$gift->canUse($thisUser) ? disabled">
+                        <a href="/gifts?act=confirm&user={$user->getId()}&pack={$dat->getId()}&elid={$gift->getId()}" n:class="gift_sel, $gift->getUsagesLeft($thisUser) !== \INF ? has_limit, !$gift->canUse($thisUser) ? disabled">
                             <img class="gift_pic" src="{$gift->getImage(2)}" alt="{_gift}" loading=lazy />
 
                             <strong n:class="gift_price, $gift->isFree() ? gift_free">
@@ -65,7 +65,7 @@
                                     {tr('coins', $gift->getPrice())}
                                 {/if}
                             </strong>
-                            <strong n:if="$gift->getUsagesLeft($thisUser) !== INF" class="gift_limit">
+                            <strong n:if="$gift->getUsagesLeft($thisUser) !== \INF" class="gift_limit">
                                 {tr("gifts_left", $gift->getUsagesLeft($thisUser))}
                             </strong>
                         </a>
@@ -77,7 +77,7 @@
         "page"     => $page,
         "count"    => $count,
         "amount"   => sizeof($data),
-        "perPage"  => $perPage ?? OPENVK_DEFAULT_PER_PAGE,
+        "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
         "atBottom" => true,
         ]}
     {/if}
