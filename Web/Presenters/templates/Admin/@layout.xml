@@ -241,6 +241,12 @@
                                             <strong>{_admin_settings}</strong>
                                         </div>
                                         <ul class="aui-nav">
+                                            <li n:if='OPENVK_ROOT_CONF["openvk"]["allowEditConfig"]'>
+                                                <a class="aui-nav-item" href="/admin/config">
+                                                    <span class="aui-icon aui-icon-small aui-iconfont-settings"></span>
+                                                    <span class="aui-nav-item-label">{_admin_settings_config}</span>
+                                                </a>
+                                            </li>
                                             <li>
                                                 <a class="aui-nav-item" href="/admin/logs">
                                                     <span class="aui-icon aui-icon-small aui-iconfont-list"></span>

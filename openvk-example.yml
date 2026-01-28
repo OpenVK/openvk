@@ -1,5 +1,6 @@
 openvk:
     debug: true
+    allowEditConfig: true
     appearance:
         name: "OpenVK"
         motd: "Yet another OpenVK instance"
