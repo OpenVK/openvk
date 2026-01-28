@@ -38,7 +38,7 @@ final class AudioPresenter extends OpenVKPresenter
     public function renderList(?int $owner = null, ?string $mode = "list"): void
     {
         $this->assertUserLoggedIn();
-        $this->template->_template = "Audio/List.xml";
+        $this->template->_template = "Audio/List.latte";
         $page = (int) ($this->queryParam("p") ?? 1);
         $audios = [];
 

@@ -1,0 +1,34 @@
+{block ViewContent}
+    <div class="container_gray" style="margin-top: 16px; margin-bottom: 16px; max-width: 100%;">
+        {if $type == "post"}
+            {include "../components/post/oldpost.latte",
+                post => $object,
+                forceNoDeleteLink => true,
+                forceNoPinLink => true,
+                forceNoCommentsLink => true,
+                forceNoShareLink => true,
+                forceNoLike => true
+            }
+        {elseif $type == "photo"}
+            {include "./content/photo.latte", photo => $object}
+        {elseif $type == "video"}
+            {include "./content/video.latte", video => $object}
+        {elseif $type == "group" || $type == "user"}
+            {include "../components/group.latte", group => $object, isUser => $type == "user"}
+        {elseif $type == "comment"}
+            {include "../components/comment.latte", comment => $object, timeOnly => true, correctLink => true}
+        {elseif $type == "note"}
+            {include "./content/note.latte", note => $object}
+        {elseif $type == "app"}
+            {if $appsSoftDeleting}
+                {include "./content/app.latte", app => $object}
+            {/if}
+        {elseif $type == "audio"}
+            {include "../Audio/player.latte", audio => $object}
+        {elseif $type == "doc"}
+            {include "../Documents/components/doc.latte", doc => $object}
+        {else}
+            {include "../components/error.latte", description => tr("version_incompatibility")}
+        {/if}
+    </div>
+{/block}

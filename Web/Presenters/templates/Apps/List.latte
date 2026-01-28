@@ -1,0 +1,53 @@
+{extends "../@listView.latte"}
+
+{block title}
+    {_apps}
+{/block}
+
+{block header}
+    {_apps}
+
+    <div n:if="$act === 'dev'" style="float: right;">
+        <span><b>
+            <a href="/editapp?act=create">{_create}</a>
+        </b></span>
+    </div>
+{/block}
+
+{block tabs}
+    <div n:attr="id => ($act === 'list' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($act === 'list' ? 'act_tab_a' : 'ki')" href="/search?q=&section=apps">{_all_apps}</a>
+    </div>
+
+    <div n:attr="id => ($act === 'installed' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($act === 'installed' ? 'act_tab_a' : 'ki')" href="?act=installed">{_installed_apps}</a>
+    </div>
+
+    <div n:attr="id => ($act === 'dev' ? 'activetabs' : 'ki')" class="tab">
+        <a n:attr="id => ($act === 'dev' ? 'act_tab_a' : 'ki')" href="?act=dev">{_own_apps}</a>
+    </div>
+{/block}
+
+{* BEGIN ELEMENTS DESCRIPTION *}
+
+{block link|strip|stripHtml}
+    /app{$x->getId()}
+{/block}
+
+{block preview}
+    <img style="max-width: 75px;" src="{$x->getAvatarUrl()}" />
+{/block}
+
+{block name}
+    {$x->getName()}
+{/block}
+
+{block description}
+    {$x->getDescription()}
+{/block}
+
+{block actions}
+    <a href="/app{$x->getId()}" class="profile_link">{_app_play}</a>
+    <a n:if="$x->isInstalledBy($thisUser)" href="/apps/uninstall?hash={rawurlencode($csrfToken)}&app={$x->getId()}" class="profile_link">{_app_uninstall}</a>
+    <a n:if="$thisUser->getId() == $x->getOwner()->getId()" href="/editapp?app={$x->getId()}" class="profile_link">{_app_edit}</a>
+{/block}

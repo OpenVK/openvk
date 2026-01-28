@@ -1,0 +1,13 @@
+{extends "../@layout.latte"}
+
+{block title}{$heading}{/block}
+
+{block header}
+    {$heading}
+{/block}
+
+{block content}
+	<div class="knowledgeBaseArticle">
+		{$content|noescape}
+	</div>
+{/block}

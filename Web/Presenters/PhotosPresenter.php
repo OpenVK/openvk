@@ -225,7 +225,7 @@ final class PhotosPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        $this->template->_template = "Photos/Photo.xml";
+        $this->template->_template = "Photos/Photo.latte";
         $this->renderPhoto($photo->getOwner(true)->getId(), $photo->getVirtualId());
     }
 

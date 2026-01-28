@@ -1,6 +1,0 @@
-{extends "@default.xml"}
-{var $post = $notification->getModel(0)}
-
-{block under}
-    {_nt_yours_adjective} <a href="/video{$post->getPrettyId()}">{_video}</a>
-{/block}

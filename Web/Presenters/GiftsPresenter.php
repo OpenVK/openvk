@@ -52,7 +52,7 @@ final class GiftsPresenter extends OpenVKPresenter
         $this->template->user      = $user;
         $this->template->iterator  = $cats;
         $this->template->count     = $this->gifts->getCategoriesCount();
-        $this->template->_template = "Gifts/Menu.xml";
+        $this->template->_template = "Gifts/Menu.latte";
     }
 
     public function renderGiftList(): void
@@ -73,7 +73,7 @@ final class GiftsPresenter extends OpenVKPresenter
         $this->template->user      = $user;
         $this->template->cat       = $cat;
         $this->template->gifts     = iterator_to_array($gifts);
-        $this->template->_template = "Gifts/Pick.xml";
+        $this->template->_template = "Gifts/Pick.latte";
     }
 
     public function renderConfirmGift(): void
@@ -98,7 +98,7 @@ final class GiftsPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error_when_gifting"), tr("error_no_money"));
         }
 
-        $this->template->_template = "Gifts/Confirm.xml";
+        $this->template->_template = "Gifts/Confirm.latte";
         if ($_SERVER["REQUEST_METHOD"] !== "POST") {
             $this->template->user = $user;
             $this->template->cat  = $cat;

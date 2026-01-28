@@ -1,0 +1,50 @@
+{extends "../@layout.latte"}
+
+{block title}
+    {_new_playlist}
+{/block}
+
+{block header}
+    {if !$_GET["gid"]}
+        <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
+        »
+        <a href="/playlists{$thisUser->getId()}">{_playlists}</a>
+    {else}
+        <a href="{$club->getURL()}">{$club->getCanonicalName()}</a>
+        »
+        <a href="/playlists-{$club->getId()}">{_playlists}</a>
+    {/if}
+    »
+    {_new_playlist}
+{/block}
+
+{block content}
+    <div class='PE_wrapper'>
+        <div class='PE_playlistEditPage'>
+            <div class="playlistCover" onclick="document.querySelector(`input[name='cover']`).click()">
+                <a>
+                    <input type='file' name='cover' style='display:none;' accept=".jpg,.png">
+                    <img src="/assets/packages/static/openvk/img/song.jpg" alt="{_playlist_cover}">
+                </a>
+            </div>
+
+            <div class="PE_playlistInfo">
+                <div>
+                    <input type="text" name="title" placeholder="{_title}" maxlength="125" />
+                </div>
+                <div class="moreInfo">
+                    <textarea placeholder="{_description}" name="description" maxlength="2045" />
+                </div>
+                <label>
+                    <input type='checkbox' name='is_unlisted' value='1'>
+                    {_playlist_hide_from_search}
+                </label>
+                <a id='_playlistAppendTracks'>{_add_audio_verb}</a>
+            </div>
+        </div>
+        <div class='PE_audios generic_audio_list'></div>
+        <div class='PE_end'>
+            <input class="button" type="button" id='playlist_create' value="{_create}">
+        </div>
+    </div>
+{/block}

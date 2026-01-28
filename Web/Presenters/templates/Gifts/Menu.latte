@@ -1,0 +1,84 @@
+{extends "../@layout.latte"}
+
+{block title}
+    {_gift_select}
+{/block}
+
+{block header}
+    <a href="{$user->getURL()}">{$user->getCanonicalName()}</a> »
+    <a href="/gifts?act=pick&user={$user->getId()}">{_gift_select}</a> »
+    {_collections}
+{/block}
+
+{block content}
+    <div class="tabs">
+        <div id="ki" class="tab">
+            <a href="/gifts{$user->getId()}">
+                {if $thisUser->getId() !== $user->getId()}
+                    {_gifts}
+                {else}
+                    {_my_gifts}
+                {/if}
+            </a>
+        </div>
+        {if !is_null($thisUser)}
+        <div id="activetabs" class="tab">
+            <span id="act_tab_a">{_send_gift}</span>
+        </div>
+        {/if}
+
+        <a href='{$user->getURL()}' class="side_link">
+            {if $thisUser->getId() !== $user->getId()}
+                {tr("back_to_user", $user->getMorphedName("genitive", false))}
+            {else}
+                {_back_to_my_page}
+            {/if}
+        </a>
+    </div>
+    {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
+
+    {if sizeof($data) > 0}
+        <div class="content scroll_container" style="padding-bottom: 0">
+            <div class="gift_cat_row scroll_node" n:foreach="$data as $dat">
+                
+            <div class="gift_cat_info">
+                <a href="/gifts?act=menu&user={$user->getId()}&pack={$dat->getId()}" class="button float-right">{_show_more}</a>
+                <div class="gift_cat_text">
+                    <h4 class="gift_cat_header">
+                        {$dat->getName(tr("__lang"))}
+                    </h4>
+                    <div class="gift_cat_desc" n:ifcontent>
+                        {$dat->getDescription(tr("__lang"))|truncate:250}
+                    </div>
+                </div>
+            </div>
+
+                <div class="gift_grid gift_cat_grid">
+                    {foreach $dat->getGifts(1, 5) as $gift}
+                        <a href="/gifts?act=confirm&user={$user->getId()}&pack={$dat->getId()}&elid={$gift->getId()}" n:class="gift_sel, $gift->getUsagesLeft($thisUser) !== \INF ? has_limit, !$gift->canUse($thisUser) ? disabled">
+                            <img class="gift_pic" src="{$gift->getImage(2)}" alt="{_gift}" loading=lazy />
+
+                            <strong n:class="gift_price, $gift->isFree() ? gift_free">
+                                {if $gift->isFree()}
+                                    {_free_gift}
+                                {else}
+                                    {tr('coins', $gift->getPrice())}
+                                {/if}
+                            </strong>
+                            <strong n:if="$gift->getUsagesLeft($thisUser) !== \INF" class="gift_limit">
+                                {tr("gifts_left", $gift->getUsagesLeft($thisUser))}
+                            </strong>
+                        </a>
+                    {/foreach}
+                </div>
+            </div>
+        </div>
+        {include "../components/paginator.latte", conf => (object) [
+        "page"     => $page,
+        "count"    => $count,
+        "amount"   => sizeof($data),
+        "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
+        "atBottom" => true,
+        ]}
+    {/if}
+{/block}

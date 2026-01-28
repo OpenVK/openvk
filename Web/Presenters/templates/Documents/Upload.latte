@@ -1,0 +1,68 @@
+{extends "../@layout.latte"}
+
+{block title}{_document_uploading_in_general}{/block}
+
+{block header}
+    {if !is_null($group)}
+        <a href="{$group->getURL()}">{$group->getCanonicalName()}</a>
+        »
+        <a href="/docs-{$group->getId()}">{_documents}</a>
+    {else}
+        <a href="{$thisUser->getURL()}">{$thisUser->getCanonicalName()}</a>
+        »
+        <a href="/docs">{_documents}</a>
+    {/if}
+    »
+    Non-AJAX Document upload
+{/block}
+
+{block content}
+    <form method="post" enctype="multipart/form-data">
+        <table width="600">
+            <tbody>
+                <tr>
+                    <td><span class="nobold">{_name}:</span></td>
+                    <td><input type="text" name="name" /></td>
+                </tr>
+                <tr>
+                    <td><span class="nobold">{_tags}:</span></td>
+                    <td><textarea name="tags"></textarea></td>
+                </tr>
+                <tr>
+                    <td><span class="nobold">{_accessbility}:</span></td>
+                    <td>
+                        <select name="folder">
+                            <option value="0">Private file</option>
+                            <option value="4">Public file</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <label>
+                            <input type="checkbox" name="owner_hidden">
+                            Owner is hidden
+                        </label>
+                    </td>
+                </tr>
+                <tr>
+                    <td><span class="nobold">{_file}:</span></td>
+                    <td>
+                    <label class="button" style="">{_browse}
+                        <input type="file" id="blob" name="blob" style="display: none;" onchange="filename.innerHTML=blob.files[0].name" />
+                    </label>
+                    <div id="filename" style="margin-top: 10px;"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input type="hidden" name="hash" value="{$csrfToken}" />
+                        <input type="submit" class="button" name="submit" value="{_upload_button}" />
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+{/block}

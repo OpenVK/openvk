@@ -1,0 +1,44 @@
+{if !isset($parentModule) || substr($parentModule, 0, 21) === 'libchandler:absolute.'}
+    <link rel="shortcut icon" href="/assets/packages/static/openvk/img/icon.ico" />
+    <meta n:ifset="$csrfToken" name="csrf" value="{$csrfToken}" />
+    <script src="/language/{getLanguage()}.js" crossorigin="anonymous"></script>
+    {script "js/node_modules/jquery/dist/jquery.min.js"}
+    {script "js/node_modules/umbrellajs/umbrella.min.js"}
+    {script "js/node_modules/msgpack-lite/dist/msgpack.min.js"}
+    {script "js/messagebox.js"}
+    {script "js/l10n.js"}
+    {script "js/al_api.js"}
+    {script "js/al_polls.js"}
+    {include "../_includeCSS.latte"}
+
+    <style>body { margin: 8px; }</style>
+{/if}
+
+<div class="poll">
+    <h4>{$title}</h4>
+    <form onsubmit="pollFormSubmit(event, this)" data-multi="{$multiple ? '1' : '0'}" data-pid="{$id}">
+        <div class="poll-options">
+            <div n:foreach="$options as $oid => $option" class="poll-option">
+                <label>
+                    {if $multiple}
+                        <input n:attr="disabled => is_null($thisUser)" type="checkbox" name="option{$oid}" onclick="pollCheckBoxPressed(this)" />
+                    {else}
+                        <input n:attr="disabled => is_null($thisUser)" type="radio" value="{$oid}" name="vote" onclick="pollRadioPressed(this)" />
+                    {/if}
+
+                    {$option}
+                </label>
+            </div>
+        </div>
+
+        {if $multiple}
+            <br/>
+            <input type="submit" class="button" value="{_cast_vote}" disabled="disabled" />
+        {/if}
+    </form>
+
+    <div class="poll-meta">
+        {tr("poll_voter_count", $votes)|noescape}<br/>
+        <span class="nobold">{$meta}</span>
+    </div>
+</div>
