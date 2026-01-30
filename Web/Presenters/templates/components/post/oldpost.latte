@@ -60,7 +60,7 @@
                         </a>
                     {/if}
                     <br/>
-                    <a href="{if !$suggestion}/wall{$post->getPrettyId()}{else}javascript:void(0){/if}" class="date">
+                    <a href="{if $suggestion ?? false}javascript:void(0){else}/wall{$post->getPrettyId()}{/if}" class="date">
                         {$post->getPublicationTime()} <span n:if="$post->getEditTime()" class="editedMark">({_edited_short})</span>{if $post->isPinned()}, {_pinned}{/if}
                         
                         <a n:if="!empty($platform)" class="client_app" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">

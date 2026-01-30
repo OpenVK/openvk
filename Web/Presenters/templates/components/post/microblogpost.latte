@@ -120,7 +120,7 @@
                 </div>
                 <div class='post-edit' n:if='!$compact'></div>
                 <div class="post-menu" n:if="$compact == false">
-                    <a href="{if !$suggestion}/wall{$post->getPrettyId()}{else}javascript:void(0){/if}" class="date">{$post->getPublicationTime()}
+                    <a href="{if $suggestion ?? false}javascript:void(0){else}/wall{$post->getPrettyId()}{/if}" class="date">{$post->getPublicationTime()}
                         <span n:if="$post->getEditTime()" class="edited editedMark">({_edited_short})</span>
                     </a>
                   
