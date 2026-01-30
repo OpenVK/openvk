@@ -526,10 +526,10 @@
                         <td>
                             <select name="style">
                                 <option value="ovk" {if $user->getStyle() == 'ovk'}selected{/if}>OpenVK ({_default})</option>
-                                <option n:foreach="$themes as $id => $theme"
+                                <option n:foreach="$themes as $id => $ovktheme"
                                         n:attr="selected => $user->getStyle() === $id"
                                         value="{$id}">
-                                            {$theme}
+                                            {$ovktheme}
                                 </option>
                             </select>
                         </td>

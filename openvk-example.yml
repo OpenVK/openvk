@@ -91,6 +91,7 @@ openvk:
             all: false
             photos: false
             videos: false
+            audios: false
             messenger: false
             user: false
             group: false

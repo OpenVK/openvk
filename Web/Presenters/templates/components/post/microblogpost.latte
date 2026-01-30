@@ -159,7 +159,7 @@
                         {include "../textArea.latte", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), post => $post, club => $club}
                     </div>
                 </div>
-                <div n:if="$suggestion && $canBePinned" class="suggestionControls">
+                <div n:if="$suggestion ?? false && $canBePinned" class="suggestionControls">
                     <input type="button" class="button" id="publish_post" data-id="{$post->getId()}" value="{_publish_suggested}">
                     <input type="button" class="button" id="decline_post" data-id="{$post->getId()}" value="{_decline_suggested}">
                 </div>
