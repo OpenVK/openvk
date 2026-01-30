@@ -385,6 +385,8 @@ routes:
       handler: "VKAPI->route"
     - url: "/token"
       handler: "VKAPI->tokenLogin"
+    - url: "/oauth/token" # dublicate
+      handler: "VKAPI->tokenLogin"
     - url: "/authorize"
       handler: "VKAPI->OAuthLogin"
     - url: "/admin/sandbox"
