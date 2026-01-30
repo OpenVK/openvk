@@ -31,6 +31,7 @@
                         <img src="{$friend->getAvatarURL()}" />
 
                         <div class="additionalInfo">
+                            {var $audioStatus = $audioStatus ?? null}
                             <span class="name noOverflow">{$friend->getCanonicalName()}</span>
                             <span class="desc">{$audioStatus ? $audioStatus->getName() : tr("audios_count", $friend->getAudiosCollectionSize())}</span>
                         </div>

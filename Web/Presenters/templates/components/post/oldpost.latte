@@ -12,6 +12,7 @@
 {else}
     {var $deac = "post_deact_silent"}
 {/if}
+{var $compact = isset($compact) ? true : false}
 
 
 
@@ -59,7 +60,7 @@
                         </a>
                     {/if}
                     <br/>
-                    <a href="{if !$suggestion}/wall{$post->getPrettyId()}{else}javascript:void(0){/if}" class="date">
+                    <a href="{if $suggestion ?? false}javascript:void(0){else}/wall{$post->getPrettyId()}{/if}" class="date">
                         {$post->getPublicationTime()} <span n:if="$post->getEditTime()" class="editedMark">({_edited_short})</span>{if $post->isPinned()}, {_pinned}{/if}
                         
                         <a n:if="!empty($platform)" class="client_app" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
@@ -98,7 +99,7 @@
                             <a>{$post->getGeo()->name ?? tr("admin_open")}</a>
                         </div>
                     </div>
-                    <div n:if="$suggestion && $canBePinned" class="suggestionControls" style="margin-bottom: 7px;">
+                    <div n:if="$suggestion ?? false && $canBePinned" class="suggestionControls" style="margin-bottom: 7px;">
                         <input type="button" class="button" id="publish_post" data-id="{$post->getId()}" value="{_publish_suggested}">
                         <input type="button" class="button" id="decline_post" data-id="{$post->getId()}" value="{_decline_suggested}">
                     </div>
@@ -135,7 +136,7 @@
                         <a href="/wall{$post->getPrettyId()}/delete">{_delete}</a> &nbsp;|&nbsp;
                     {/if} 
 
-                    {if $feedIgnoreButton && !$canBeDeleted}
+                    {if $feedIgnoreButton ?? false && !$canBeDeleted}
                     <a id="__ignoreSomeoneFeed" data-val='1' data-id="{$wallOwner->getRealId()}">{_feed_ignore}</a> &nbsp;|&nbsp;
                     {/if}
 

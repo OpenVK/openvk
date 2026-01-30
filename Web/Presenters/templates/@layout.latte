@@ -102,7 +102,7 @@
 
         <div class="layout">
             <div id="xhead" class="dm"></div>
-            <div class="page_header{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME} page_custom_header{/if}{if $atSearch} search_expanded search_expanded_at_all{/if}">
+            <div class="page_header{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME} page_custom_header{/if}{if $atSearch ?? false} search_expanded search_expanded_at_all{/if}">
                 <a href="/" class="home_button{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME} home_button_custom{/if}" title="{$instance_name}">{if $instance_name != \OPENVK_DEFAULT_INSTANCE_NAME}{$instance_name}{/if}</a>
                 <div n:if="isset($thisUser) ? (!$thisUser->isBanned() XOR !$thisUser->isActivated()) : true" class="header_navigation">
                     {ifset $thisUser}
@@ -133,16 +133,17 @@
                                 <div id="search_box_fr">
                                     <form id='search_form' action="/search" method="get">
                                         <div id='search_and_one_more_wrapper'>
-                                            <input n:attr="value => $_REQUEST['q'] ? $_REQUEST['q'] : NULL" autocomplete="off" type="search" maxlength="79" name="q" placeholder="{_header_search}" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
+                                            {var $section = $_REQUEST['section'] ?? ''}
+                                            <input n:attr="value => $_REQUEST['q'] ?? NULL" autocomplete="off" type="search" maxlength="79" name="q" placeholder="{_header_search}" title="{_header_search} [Alt+Shift+F]" accesskey="f" />
                                             <select name="section">
-                                                <option n:attr="selected => $_REQUEST['section'] == 'users'" value="users">{_s_by_people}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] == 'groups'" value="groups">{_s_by_groups}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] == 'posts'" value="posts">{_s_by_posts}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] == 'videos'" value="videos">{_s_by_videos}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] == 'apps'" value="apps">{_s_by_apps}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] == 'audios'" value="audios">{_s_by_audios}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] == 'audios_playlists'" value="audios_playlists">{_s_by_audios_playlists}</option>
-                                                <option n:attr="selected => $_REQUEST['section'] == 'docs'" value="docs">{_s_by_documents}</option>
+                                                <option n:attr="selected => $section == 'users'" value="users">{_s_by_people}</option>
+                                                <option n:attr="selected => $section == 'groups'" value="groups">{_s_by_groups}</option>
+                                                <option n:attr="selected => $section == 'posts'" value="posts">{_s_by_posts}</option>
+                                                <option n:attr="selected => $section == 'videos'" value="videos">{_s_by_videos}</option>
+                                                <option n:attr="selected => $section == 'apps'" value="apps">{_s_by_apps}</option>
+                                                <option n:attr="selected => $section == 'audios'" value="audios">{_s_by_audios}</option>
+                                                <option n:attr="selected => $section == 'audios_playlists'" value="audios_playlists">{_s_by_audios_playlists}</option>
+                                                <option n:attr="selected => $section == 'docs'" value="docs">{_s_by_documents}</option>
                                             </select>
                                         </div>
                                         <button class="search_box_button">
@@ -237,11 +238,11 @@
                             <div id="_groupListPinnedGroups">
                                 <div n:if="$thisUser->getPinnedClubCount() > 0" class="menu_divider"></div>
 
-                                <a n:foreach="$thisUser->getPinnedClubs() as $club" href="{$club->getURL()}" class="link group_link">
-                                    {ovk_proc_strtr($club->getName(), 14)}
+                                <a n:foreach="$thisUser->getPinnedClubs() as $pinnedclub" href="{$pinnedclub->getURL()}" class="link group_link">
+                                    {ovk_proc_strtr($pinnedclub->getName(), 14)}
 
-                                    <object type="internal/link" style="white-space: normal;" id="sug{$club->getId()}" n:if="$club->getSuggestedPostsCount($thisUser) > 0 && $club->getWallType() == 2">
-                                        <a href="/club{$club->getId()}/suggested" class="linkunderline">
+                                    <object type="internal/link" style="white-space: normal;" id="sug{$pinnedclub->getId()}" n:if="$pinnedclub->getSuggestedPostsCount($thisUser) > 0 && $club->getWallType() == 2">
+                                        <a href="/club{$pinnedclub->getId()}/suggested" class="linkunderline">
                                             (<b>{$club->getSuggestedPostsCount($thisUser)}</b>)
                                         </a>
                                     </object>
@@ -485,7 +486,7 @@
                 "max_attachments": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"] ?? 10},
                 "max_filesize_mb": 100,
                 "current_id": {$thisUser ? $thisUser->getId() : 0},
-                "disable_ajax": {$disable_ajax ? $disable_ajax : 0},
+                "disable_ajax": {$disable_ajax ?? 0},
                 "max_add_fields": {ovkGetQuirk("users.max-fields")},
                 "docs_max": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["maxSize"]},
                 "docs_allowed": {\OPENVK_ROOT_CONF["openvk"]["preferences"]["docs"]["allowedFormats"]},
