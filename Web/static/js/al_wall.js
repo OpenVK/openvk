@@ -881,7 +881,7 @@ tippy.delegate("body", {
         let client_url = that.reference.dataset.appUrl;
         let client_img = that.reference.dataset.appImg;
         
-        if(client_name != "") {
+        if(client_name != undefined) {
             let res = {
                 'name':   client_name,
                 'url':    client_url,

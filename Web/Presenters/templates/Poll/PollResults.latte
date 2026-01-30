@@ -28,7 +28,7 @@
                     {/if}
                 </a>
             {else}
-                <a href="/poll{$id}/voters?option={base_convert($option->id, 10, 32)}">
+                <a href="/poll{$id}/voters?option={base_convert(''.$option->id, 10, 32)}">
                     {if $option->voted}
                         <b>{$option->name}</b>
                     {else}

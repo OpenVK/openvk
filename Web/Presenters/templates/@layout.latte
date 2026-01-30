@@ -262,14 +262,14 @@
                                 <text>
                                     {var $bdayListHtml = ''}
                                     {foreach $bdayUsers as $u}
-                                        {$bdayListHtml .= '<a href="/id' . $u->getId() . '">' . $u->getMorphedName(startWithLastName: false) . '</a>'}
+                                        {php $bdayListHtml .= '<a href="/id' . $u->getId() . '">' . $u->getMorphedName(startWithLastName: false) . '</a>'}
                                         {if $bdayCount == 2}
                                             {if $iterator->isFirst()}{$bdayListHtml .= tr("bday_and")}{/if}
                                         {elseif $bdayCount != 1}
                                             {if $iterator->isLast(2) and !$iterator->isLast()}
-                                                {$bdayListHtml .= tr("bday_and")}
+                                                {php $bdayListHtml .= tr("bday_and")}
                                             {elseif !$iterator->isLast()}
-                                                {$bdayListHtml .= ', '}
+                                                {php $bdayListHtml .= ', '}
                                             {/if}
                                         {/if}
                                     {/foreach}
