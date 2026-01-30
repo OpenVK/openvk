@@ -125,7 +125,7 @@
                     </a>
                   
                     <a n:if="!empty($platform)" class="client_app" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
-                        <img src="/assets/packages/static/openvk/img/app_icons_mini/{$post->getPlatform(this)}.svg">
+                        <img src="/assets/packages/static/openvk/img/app_icons_mini/{$post->getPlatform(false)}.svg">
                     </a>
                     {if isset($thisUser)}
                         &nbsp;
