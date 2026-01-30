@@ -5,4 +5,5 @@
     <Client tag="openvk_refresh_android" name="OpenVK Refresh" url="https://github.com/openvk/mobile-android-refresh" img="/assets/packages/static/openvk/img/app_icons/openvk_refresh.png" />
     <Client tag="openvk_native" name="OpenVK Native" url="https://ovk.to/club9628" img="/assets/packages/static/openvk/img/app_icons/openvk_native.png" />
     <Client tag="openvk_native_ios" name="OpenVK Native" url="https://ovk.to/club9628" img="/assets/packages/static/openvk/img/app_icons/openvk_native.png" />
+    <Client tag="renaissance" name="через Агент Mail.ru (Renaissance)" url="https://mrim.su" img="/assets/packages/static/openvk/img/app_icons/renaissance_agent.png" />
 </Clients>
