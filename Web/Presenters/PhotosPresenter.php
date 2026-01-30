@@ -407,7 +407,7 @@ final class PhotosPresenter extends OpenVKPresenter
         }
 
         if (!is_null($album = $photo->getAlbum())) {
-            $redirect = $album->getOwner() instanceof User ? "/id0" : "/club" . $ownerId;
+            $redirect = `/album{$album->getPrettyId()}`;
         } else {
             $redirect = "/id0";
         }
