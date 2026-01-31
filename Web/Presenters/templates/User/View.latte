@@ -50,7 +50,7 @@
         {var $platform = $user->getOnlinePlatform()}
         {var $platformDetails = $user->getOnlinePlatformDetails()}
         <a n:if="!empty($platform)" class="client_app client_app_titlebar" data-app-tag="{$platform}" data-app-name="{$platformDetails['name']}" data-app-url="{$platformDetails['url']}" data-app-img="{$platformDetails['img']}">
-            <img src="/assets/packages/static/openvk/img/app_icons_mini/{$user->getOnlinePlatform(this)}.svg">
+            <img src="/assets/packages/static/openvk/img/app_icons_mini/{$user->getOnlinePlatform(true)}.svg">
         </a>
     </div>
     <div n:if="$user->onlineStatus() == 2" style="float:right;">
