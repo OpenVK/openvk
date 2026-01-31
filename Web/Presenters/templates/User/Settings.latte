@@ -475,7 +475,7 @@
                         ${ tr("transfer_ton_contents") }
                     </div>
                     <div style="margin-top: 30px">` +
-                    {tr("transfer_ton_address", \OPENVK_ROOT_CONF['openvk']['preferences']['ton']['address'], str_replace("$1", $thisUser->getId(), \OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["hint"]))} + 
+                    {tr("transfer_ton_address", \OPENVK_ROOT_CONF['openvk']['preferences']['ton']['address'], str_replace("$1", (string)$thisUser->getId(), \OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["hint"]))} + 
                     `<div style="text-align: center;">
                         <img width="225" height="225" src="data:` + {$qrCodeType} + `;base64,` + {$qrCodeData} + `"><br>
                         <input oninput="convertCurrency(this.value)"> = <span class="coins_dialog_conv">0 TON</span>
