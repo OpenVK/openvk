@@ -136,7 +136,8 @@ final class AboutPresenter extends OpenVKPresenter
         . "Disallow: *hash=\n"
         . "Disallow: *?jReturnTo=\n"
         . "Disallow: /method/*\n"
-        . "Disallow: /token*";
+        . "Disallow: /token*\n"
+        . "Disallow: /oauth/token*";
         header("Content-Type: text/plain");
         exit($text);
     }

@@ -1,0 +1,19 @@
+{extends "@layout.latte"}
+{block title}{_ec_header}{/block}
+
+{block header}
+{_ec_header}
+{/block}
+
+{block content}
+    <div class="border-block center">
+        <h4>{_ec_title}</h4>
+        <p>{tr("ec_1", htmlentities($thisUser->getCanonicalName()))|noescape}<br/></p>
+        <p>{_ec_2}</p>
+        <p>
+            <form action="/reg/resend" method="post">
+                <input type="submit" class="button" value="{_ec_resend}">
+            </form>
+        </p>
+    </div>
+{/block}

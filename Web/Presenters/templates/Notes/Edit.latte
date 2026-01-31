@@ -1,0 +1,49 @@
+{extends "../@layout.latte"}
+
+{block title}{_edit_note}{/block}
+
+{block header}
+    {var $author = $note->getOwner()}
+    <a href="{$author->getURL()}">{$author->getCanonicalName()}</a>
+    »
+    <a href="/notes{$author->getId()}">{_notes}</a>
+    »
+    <a href="/note{$author->getId()}_{$note->getVirtualId()}">{$note->getName()}</a>
+{/block}
+
+{block content}
+    <form id="noteFactory" method="POST">
+        <input type="text" name="name" placeholder="{_name_note}" style="width:603px;" value="{$note->getName()}" />
+        <br/><br/>
+        <textarea name="html" style="display:none;"></textarea>
+        <div id="editor" style="width:600px;height:300px;border:1px solid grey"></div>
+        
+        <p><i>{_something_is_supported_from_xhtml|noescape}</i></p>
+        
+        <input type="hidden" name="hash" value="{$csrfToken}" />
+        <button class="button">{_save}</button>
+        &nbsp;
+        <a href="/note{$note->getOwner()->getId()}_{$note->getVirtualId()}" class="button">{_cancel}</a>
+    </form>
+    
+    {script "js/node_modules/monaco-editor/min/vs/loader.js"}
+    {script "js/node_modules/requirejs/bin/r.js"}
+    <script>
+        require.config({
+            paths: {
+                'vs': '/assets/packages/static/openvk/js/node_modules/monaco-editor/min/vs' 
+            }
+        });
+        require(['vs/editor/editor.main'], function() {
+            window._editor = monaco.editor.create(document.getElementById('editor'), {
+                value: {$note->getSource()},
+                lineNumbers: "off",
+                language: "html"
+            });
+        });
+        
+        document.querySelector("#noteFactory").addEventListener("submit", function() {
+            document.querySelector("textarea").value = window._editor.getValue();
+        });
+    </script>
+{/block}

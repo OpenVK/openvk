@@ -197,9 +197,7 @@ abstract class OpenVKPresenter extends SimplePresenter
     public function getTemplatingEngine(): TemplatingEngine
     {
         $latte = parent::getTemplatingEngine();
-        $latte->addFilter("translate", function ($s) {
-            return tr($s);
-        });
+        $latte->addExtension(new \Latte\Essential\TranslatorExtension(tr(...)));
 
         return $latte;
     }
@@ -241,7 +239,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             if ($this->user->identity->isDeleted() && !$this->deactivationTolerant) {
                 if ($this->user->identity->isDeactivated()) {
                     header("HTTP/1.1 403 Forbidden");
-                    $this->getTemplatingEngine()->render(__DIR__ . "/templates/@deactivated.xml", [
+                    $this->getTemplatingEngine()->render(__DIR__ . "/templates/@deactivated.latte", [
                         "thisUser"    => $this->user->identity,
                         "csrfToken"   => $GLOBALS["csrfToken"],
                         "isTimezoned" => Session::i()->get("_timezoneOffset"),
@@ -257,7 +255,7 @@ abstract class OpenVKPresenter extends SimplePresenter
 
             if ($this->user->identity->isBanned() && !$this->banTolerant) {
                 header("HTTP/1.1 403 Forbidden");
-                $this->getTemplatingEngine()->render(__DIR__ . "/templates/@banned.xml", [
+                $this->getTemplatingEngine()->render(__DIR__ . "/templates/@banned.latte", [
                     "thisUser"    => $this->user->identity,
                     "csrfToken"   => $GLOBALS["csrfToken"],
                     "isTimezoned" => Session::i()->get("_timezoneOffset"),
@@ -268,7 +266,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             # ето для емейл уже надо (и по хорошему надо бы избавится от повторяющегося кода мда)
             if (!$this->user->identity->isActivated() && !$this->activationTolerant) {
                 header("HTTP/1.1 403 Forbidden");
-                $this->getTemplatingEngine()->render(__DIR__ . "/templates/@email.xml", [
+                $this->getTemplatingEngine()->render(__DIR__ . "/templates/@email.latte", [
                     "thisUser"    => $this->user->identity,
                     "csrfToken"   => $GLOBALS["csrfToken"],
                     "isTimezoned" => Session::i()->get("_timezoneOffset"),
@@ -304,6 +302,8 @@ abstract class OpenVKPresenter extends SimplePresenter
                 $this->template->isBdayToday = $bdays["isToday"];
                 $this->template->bdayUsers = $bdays["users"];
                 $this->template->bdayCount = sizeof($bdays["users"]);
+            } else {
+                $this->template->showBday = false;
             }
         }
 
@@ -321,7 +321,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             }
         }
 
-        if ($_SERVER['HTTP_X_OPENVK_AJAX_QUERY'] == '1' && $this->user->identity) {
+        if (isset($_SERVER['HTTP_X_OPENVK_AJAX_QUERY']) && $_SERVER['HTTP_X_OPENVK_AJAX_QUERY'] == '1' && $this->user->identity) {
             error_reporting(0);
             header('Content-Type: text/plain; charset=UTF-8');
         }

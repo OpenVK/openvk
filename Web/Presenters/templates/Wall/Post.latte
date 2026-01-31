@@ -1,0 +1,62 @@
+{extends "../@layout.latte"}
+{block title}{_post}{/block}
+
+{block header}
+	<a href="{$wallOwner->getURL()}">
+		{$wallOwner->getCanonicalName()}
+	</a>
+	»
+	<a href="/wall{$wallOwner->getId() * ($isWallOfGroup ? -1 : 1)}">
+		{_wall}
+	</a>
+	»
+	{_post}
+{/block}
+
+{block content}
+    <div class="tabs">
+        <div class="tab">
+            <a href="/wall{$post->getTargetWall()}">{_all_posts}</a>
+        </div>
+        <div class="tab">
+            <a href="/wall{$post->getTargetWall()}?type=owners">{$post->getTargetWall() < 0 ? tr("clubs_posts") : tr("users_posts", ovk_proc_strtr($wallOwner->getFirstName(), 20))}</a>
+        </div>
+        <div class="tab">
+            <a href="/wall{$post->getTargetWall()}?type=others">{_others_posts}</a>
+        </div>
+        <div class="tab" id="activetabs">
+            <a href="" id="act_tab_a">{_post}</a>
+        </div>
+    </div>
+    {include "../components/post.latte", post => $post, forceNoCommentsLink => TRUE, forceNoDeleteLink => TRUE}
+    <hr/>
+    <div style="float: left; min-height: 100px; width: 68%;">
+        {include "../components/comments.latte",
+                 comments => $comments,
+                 count => $cCount,
+                 page => $cPage,
+                 model => "posts",
+                 parent => $post,
+                 sort => $sort}
+    </div>
+    <div style="float: left; min-height: 100px; width: 32%;padding-left: 10px;width: 30%;">
+        <h4>{_actions}</h4>
+        {if isset($thisUser)}
+            {var $canDelete = $post->canBeDeletedBy($thisUser)}
+            {if $thisUser->getId() != $post->getOwner()->getId()}
+                {var $canReport = true}
+            {/if}
+        {/if}
+        
+        <a n:if="$canDelete ?? false" id="_ajaxDelete" class="profile_link" style="display:block;width:96%;" href="/wall{$post->getPrettyId()}/delete">{_delete}</a>
+        <a
+            n:if="isset($thisUser) && $thisUser->getChandlerUser()->can('access')->model('admin')->whichBelongsTo(NULL) AND $post->getEditTime()"
+            style="display:block;width:96%;"
+            class="profile_link"
+            href="/admin/logs?type=1&obj_type=Post&obj_id={$post->getId()}"
+        >
+            {_changes_history}
+        </a>
+        <a n:if="$canReport ?? false" class="profile_link" style="display:block;width:96%;" href="javascript:reportPost({$post->getId()})">{_report}</a>
+    </div>
+{/block}

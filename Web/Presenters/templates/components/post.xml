@@ -1,7 +1,0 @@
-{var $microblogEnabled = isset($thisUser) ? $thisUser->hasMicroblogEnabled() : false}
-
-{if $microblogEnabled}
-    {include "post/microblogpost.xml", post => $post, commentSection => $commentSection}
-{else}
-    {include "post/oldpost.xml", post => $post}
-{/if}

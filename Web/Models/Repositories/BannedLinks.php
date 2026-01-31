@@ -8,8 +8,6 @@ use Chandler\Database\DatabaseConnection as DB;
 use Nette\Database\Table\{ActiveRow, Selection};
 use openvk\Web\Models\Entities\BannedLink;
 
-use function Symfony\Component\Translation\t;
-
 class BannedLinks
 {
     private $context;
