@@ -29,8 +29,10 @@
                 <div class="post-author">
                     <a href="{$author->getURL()}"><b class="post-author-name">{$author->getCanonicalName()}</b></a>
                     <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
-                    {if $post->isDeactivationMessage()}
+                    {if $post->isDeactivationMessage() && !$post->isPostedOnBehalfOfGroup()}
                         {$author->isFemale() ? tr($deac . "_f") : tr($deac . "_m")}
+                    {elseif $post->isDeactivationMessage() && $post->isPostedOnBehalfOfGroup()}
+                        {tr($deac . "_g")}
                     {elseif $post->isUpdateAvatarMessage() && !$post->isPostedOnBehalfOfGroup()}
                         {$author->isFemale() ? tr("upd_f") : tr("upd_m")}
                     {elseif $post->isUpdateAvatarMessage() && $post->isPostedOnBehalfOfGroup()}
