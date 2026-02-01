@@ -39,7 +39,7 @@ final class PhotosPresenter extends OpenVKPresenter
             $this->template->count   = $this->albums->getUserAlbumsCount($user);
             $this->template->owner   = $user;
             $this->template->canEdit = false;
-            if (!is_null($this->user)) {
+            if (!is_null($this->user->identity)) {
                 $this->template->canEdit = $this->user->id === $user->getId();
             }
         } else {
@@ -51,7 +51,7 @@ final class PhotosPresenter extends OpenVKPresenter
             $this->template->count   = $this->albums->getClubAlbumsCount($club);
             $this->template->owner   = $club;
             $this->template->canEdit = false;
-            if (!is_null($this->user)) {
+            if (!is_null($this->user->identity)) {
                 $this->template->canEdit = $club->canBeModifiedBy($this->user->identity);
             }
         }
@@ -61,6 +61,8 @@ final class PhotosPresenter extends OpenVKPresenter
             "page"    => (int) ($this->queryParam("p") ?? 1),
             "amount"  => null,
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
+            "tidy"    => false,
+            "atTop"   => false,
         ];
     }
 
@@ -112,7 +114,7 @@ final class PhotosPresenter extends OpenVKPresenter
         if ($album->getPrettyId() !== $owner . "_" . $id || $album->isDeleted()) {
             $this->notFound();
         }
-        if (is_null($this->user) || !$album->canBeModifiedBy($this->user->identity) || $album->isDeleted()) {
+        if (is_null($this->user->identity) || !$album->canBeModifiedBy($this->user->identity) || $album->isDeleted()) {
             $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
         }
         $this->template->album = $album;
@@ -144,7 +146,7 @@ final class PhotosPresenter extends OpenVKPresenter
         if ($album->getPrettyId() !== $owner . "_" . $id || $album->isDeleted()) {
             $this->notFound();
         }
-        if (is_null($this->user) || !$album->canBeModifiedBy($this->user->identity)) {
+        if (is_null($this->user->identity) || !$album->canBeModifiedBy($this->user->identity)) {
             $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
         }
 
@@ -185,6 +187,8 @@ final class PhotosPresenter extends OpenVKPresenter
             "amount"  => sizeof($this->template->photos),
             "perPage" => 20,
             "atBottom" => true,
+            "tidy"    => false,
+            "atTop"   => false,
         ];
     }
 
@@ -252,7 +256,7 @@ final class PhotosPresenter extends OpenVKPresenter
         if (!$photo) {
             $this->notFound();
         }
-        if (is_null($this->user) || $this->user->id != $ownerId) {
+        if (is_null($this->user->identity) || $this->user->id != $ownerId) {
             $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
         }
 
@@ -377,7 +381,7 @@ final class PhotosPresenter extends OpenVKPresenter
         if (!$album->hasPhoto($photo)) {
             $this->notFound();
         }
-        if (is_null($this->user) || !$album->canBeModifiedBy($this->user->identity)) {
+        if (is_null($this->user->identity) || !$album->canBeModifiedBy($this->user->identity)) {
             $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
         }
 
@@ -402,7 +406,7 @@ final class PhotosPresenter extends OpenVKPresenter
         if (!$photo) {
             $this->notFound();
         }
-        if (is_null($this->user) || $this->user->id != $ownerId) {
+        if (is_null($this->user->identity) || $this->user->id != $ownerId) {
             $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
         }
 
@@ -434,7 +438,7 @@ final class PhotosPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        if (!is_null($this->user)) {
+        if (!is_null($this->user->identity)) {
             $photo->toggleLike($this->user->identity);
         }
 

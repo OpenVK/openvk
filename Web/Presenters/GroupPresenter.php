@@ -149,6 +149,8 @@ final class GroupPresenter extends OpenVKPresenter
             "page"    => (int) ($this->queryParam("p") ?? 1),
             "amount"  => 10,
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
+            "tidy"    => false,
+            "atTop"   => false,
         ];
     }
 

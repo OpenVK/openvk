@@ -4,6 +4,10 @@
 {var $target = $comment->getTarget()}
 {var $postId = $target instanceof \openvk\Web\Models\Entities\Post ? $target->getId() : NULL}
 
+{* default variables *}
+{var $timeOnly = $timeOnly ?? false}
+{var $correctLink = $correctLink ?? false}
+
 <a name="cid={$comment->getId()}"></a>
 <table data-id="1_{$comment->getId()}" border="0" style="font-size: 11px;" class="post comment" id="_comment{$comment->getId()}" data-comment-id="{$comment->getId()}" data-owner-id="{$author->getId()}" data-from-group="{$author instanceof $Club}" n:attr="data-post-id => $postId">
     <tbody>

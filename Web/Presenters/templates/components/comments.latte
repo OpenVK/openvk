@@ -1,7 +1,13 @@
+
+{* default variables *}
+{var $sort = $sort ?? 'asc'}
+{var $readOnly = $readOnly ?? false}
+{var $custom_id = $custom_id ?? null}
+
 <div>
     <h4 n:if="$showTitle ?? true">{_comments} ({$count})</h4>
 
-    {if !is_null($sort) && $count > 5}
+    {if isset($sort) && $count > 5}
         <a class="sort_link" n:attr="href => $sort == 'desc' ? '?sort=asc' : '?sort=desc'">
             {if $sort == 'desc'}
                 {_new_first}
@@ -15,7 +21,7 @@
 </div>
 <div n:ifset="$thisUser" id="standaloneCommentBox">
     {var $commentsURL = "/al_comments/create/$model/" . $parent->getId()}
-    {var $club = $parent instanceof \openvk\Web\Models\Entities\Post && $parent->getTargetWall() < 0 ? (new openvk\Web\Models\Repositories\Clubs)->get(abs($parent->getTargetWall())) : $club}
+    {var $club = $parent instanceof \openvk\Web\Models\Entities\Post && $parent->getTargetWall() < 0 ? (new openvk\Web\Models\Repositories\Clubs)->get(abs($parent->getTargetWall())) : ($club ?? null)}
     {if !$readOnly}
         {include "textArea.latte", route => $commentsURL, postOpts => false, graffiti => (bool) ovkGetQuirk("comments.allow-graffiti"), club => $club, custom_id => $custom_id}
     {/if}

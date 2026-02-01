@@ -2,6 +2,10 @@
 {var $copied = !isset($club) ? $doc->isCopiedBy($thisUser) : $doc->isCopiedBy($club)}
 {var $modifiable = $doc->canBeModifiedBy($thisUser)}
 
+{* default variables *}
+{var $scroll_context = $scroll_context ?? false}
+{var $embed = $embed ?? false}
+
 <a href="/doc{$doc->getPrettyId()}?key={$doc->getAccessKey()}" n:class="docMainItem, viewerOpener, docGalleryItem, $scroll_context ? scroll_node, $embed ? embeddable" data-id="{$doc->getPrettiestId()}">
     <img class="docGalleryItem_main_preview" loading="lazy" src="{$preview->getURLBySizeId('medium')}" alt="gallery photo">
     {if $embed}

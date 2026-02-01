@@ -49,6 +49,8 @@ final class TopicsPresenter extends OpenVKPresenter
             "page"    => $page,
             "amount"  => null,
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
+            "tidy"    => false,
+            "atTop"   => false,
         ];
     }
 

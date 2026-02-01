@@ -34,7 +34,7 @@ final class CommentPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
-        if (!is_null($this->user)) {
+        if (!is_null($this->user->identity)) {
             $comment->toggleLike($this->user->identity);
         }
         if ($_SERVER["REQUEST_METHOD"] === "POST") {

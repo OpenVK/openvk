@@ -270,7 +270,7 @@ class Audios
         $order_str = (in_array($order['type'], ['id', 'length', 'listens']) ? $order['type'] : 'id') . ' ' . ($order['invert'] ? 'ASC' : 'DESC');
         ;
 
-        if ($params["only_performers"] == "1") {
+        if (($params["only_performers"] ?? null) == "1") {
             $result->where("performer LIKE ?", $query);
         } else {
             $result->where("CONCAT_WS(' ', performer, name) LIKE ?", $query);

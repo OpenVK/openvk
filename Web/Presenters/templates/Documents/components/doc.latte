@@ -3,6 +3,10 @@
 {var $copied = !isset($club) ? $doc->isCopiedBy($thisUser) : $doc->isCopiedBy($club)}
 {var $modifiable = $doc->canBeModifiedBy($thisUser)}
 
+{* default variables *}
+{var $scroll_context = $scroll_context ?? false}
+{var $hideButtons = $hideButtons ?? false}
+
 <div n:class="docMainItem, docListViewItem, $scroll_context ? scroll_node" data-id="{$doc->getPrettiestId()}">
     <a class="viewerOpener" href="/doc{$doc->getPrettyId()}?key={$doc->getAccessKey()}">
         {if $preview}

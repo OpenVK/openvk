@@ -133,6 +133,7 @@ final class SearchPresenter extends OpenVKPresenter
             "count"     => $count,
             "amount"    => sizeof($this->template->data),
             "perPage"   => $this->template->perPage,
+            "atTop"     => false,
             "atBottom"  => false,
             "tidy"      => true,
             "space"     => 6,

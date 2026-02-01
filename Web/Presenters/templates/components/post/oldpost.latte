@@ -6,7 +6,7 @@
 {var $repostsCount = $post->getRepostCount()}
 {var $commentsCount = $post->getCommentsCount()}
 {var $canBePinned = $post->canBePinnedBy($thisUser ?? NULL)}
-{var $canBeDeleted = $post->canBeDeletedBy($thisUser)}
+{var $canBeDeleted = $post->canBeDeletedBy($thisUser ?? NULL)}
 {if $post->isDeactivationMessage() && $post->getText()}
     {var $deac = "post_deact"}
 {else}
@@ -124,12 +124,12 @@
                 </div>
                 <div class='post-edit' n:if='!$compact'></div>
                 <div n:if="!($compact ?? false)" class="post-menu">
-                    {if is_null($thisUser)}
+                    {if !isset($thisUser)}
                         {var $forceNoDeleteLink = true}
                         {var $forceNoPinLink = true}
                     {/if}
 
-                    {if !($forceNoEditLink ?? false) && $post->canBeEditedBy($thisUser)}
+                    {if !($forceNoEditLink ?? false) && isset($thisUser) && $post->canBeEditedBy($thisUser)}
                         <a id="editPost" 
                            data-id="{$post->getPrettyId()}">{_edit}</a> &nbsp;|&nbsp;
                     {/if}

@@ -95,7 +95,7 @@ abstract class OpenVKPresenter extends SimplePresenter
 
     protected function assertUserLoggedIn(bool $returnUrl = true): void
     {
-        if (is_null($this->user)) {
+        if (is_null($this->user->identity)) {
             $loginUrl = "/login";
             if ($returnUrl && $_SERVER["REQUEST_METHOD"] === "GET") {
                 $currentUrl = function_exists("get_current_url") ? get_current_url() : $_SERVER["REQUEST_URI"];
@@ -110,7 +110,7 @@ abstract class OpenVKPresenter extends SimplePresenter
 
     protected function hasPermission(string $model, string $action, int $context): bool
     {
-        if (is_null($this->user)) {
+        if (is_null($this->user->identity)) {
             if ($model !== "user") {
                 $this->flash("info", tr("login_required_error"), tr("login_required_error_comment"));
 
@@ -305,6 +305,11 @@ abstract class OpenVKPresenter extends SimplePresenter
             } else {
                 $this->template->showBday = false;
             }
+        } else {
+            $this->user = (object) [];
+            $this->user->identity     = null;
+            $this->user->id           = null;
+            $this->template->thisUser = null;
         }
 
         header("X-OpenVK-User-Validated: $userValidated");

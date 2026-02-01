@@ -9,7 +9,7 @@
             </div>
 
             {ifset size}
-                {include size, x => $dat}
+                {include size}
             {/ifset}
 
             {ifset before_content}
@@ -17,7 +17,7 @@
             {/ifset}
 
             {ifset specpage}
-                {include specpage, x => $dat}
+                {include specpage}
             {else}
                 <div class="container_gray {ifset noscroll}no_scroll_container{else}scroll_container{/ifset}">
                     {var $data = is_array($iterator) ? $iterator : iterator_to_array($iterator)}
@@ -29,7 +29,7 @@
                     {if sizeof($data) > 0}
                         <div class="scroll_node content" n:foreach="$data as $dat">
                             <table>
-                                <tbody n:attr="id => is_null($table_body_id) ? NULL : $table_body_id">
+                                <tbody n:attr="id => $table_body_id ?? NULL">
                                     <tr>
                                         <td valign="top">
                                             <a href="{include link, x => $dat}">
@@ -62,6 +62,8 @@
                                 "amount"   => sizeof($data),
                                 "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
                                 "atBottom" => true,
+                                "atTop"   => false,
+                                "tidy"    => false
                             ]}
                     {else}
                         {ifset customErrorMessage}

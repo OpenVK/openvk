@@ -82,7 +82,7 @@ function knuth_shuffle(iterable $arr, int $seed): array
     $ind    = [];
     $count  = sizeof($data);
 
-    srand($seed, MT_RAND_PHP);
+    srand($seed);
 
     for ($i = 0; $i < $count; ++$i) {
         $ind[$i] = 0;
@@ -192,7 +192,7 @@ function isLanguageAvailable($lg): bool
 
 function getBrowsersLanguage(): array
 {
-    if ($_SERVER['HTTP_ACCEPT_LANGUAGE'] != null) {
+    if ($_SERVER['HTTP_ACCEPT_LANGUAGE'] != false) {
         return mb_split(",", mb_split(";", $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0]);
     } else {
         return [];

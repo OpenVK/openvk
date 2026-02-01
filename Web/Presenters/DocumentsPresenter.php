@@ -85,6 +85,8 @@ final class DocumentsPresenter extends OpenVKPresenter
             "page"    => $page,
             "amount"  => sizeof($this->template->docs),
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
+            "tidy"    => false,
+            "atTop"   => false,
         ];
     }
 

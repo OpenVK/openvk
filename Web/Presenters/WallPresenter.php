@@ -27,7 +27,7 @@ final class WallPresenter extends OpenVKPresenter
 
     private function logPostView(Post $post, int $wall): void
     {
-        if (is_null($this->user)) {
+        if (is_null($this->user->id)) {
             return;
         }
 
@@ -60,7 +60,7 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
-        if (is_null($this->user)) {
+        if (is_null($this->user->identity)) {
             $canPost = false;
         } elseif ($user > 0) {
             $canPost = $owner->getPrivacyPermission("wall.write", $this->user->identity);
@@ -116,6 +116,8 @@ final class WallPresenter extends OpenVKPresenter
             "page"    => (int) ($_GET["p"] ?? 1),
             "amount"  => sizeof($this->template->posts),
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
+            "tidy"    => false,
+            "atTop"   => false,
         ];
 
 
@@ -130,7 +132,7 @@ final class WallPresenter extends OpenVKPresenter
     public function renderRSS(int $user): void
     {
         $owner = ($user < 0 ? (new Clubs()) : (new Users()))->get(abs($user));
-        if (is_null($this->user)) {
+        if (is_null($this->user->identity)) {
             $canPost = false;
         } elseif ($user > 0) {
             if (!$owner->isBanned() && $owner->canBeViewedBy($this->user->identity)) {
@@ -199,6 +201,8 @@ final class WallPresenter extends OpenVKPresenter
             "page"    => (int) ($_GET["p"] ?? 1),
             "amount"  => $posts->page((int) ($_GET["p"] ?? 1), $perPage)->count(),
             "perPage" => $perPage,
+            "tidy"    => false,
+            "atTop"   => false,
         ];
         $this->template->posts = [];
         foreach ($posts->page((int) ($_GET["p"] ?? 1), $perPage) as $post) {
@@ -240,6 +244,8 @@ final class WallPresenter extends OpenVKPresenter
             "page"    => (int) ($_GET["p"] ?? 1),
             "amount"  => $posts->getRowCount(),
             "perPage" => $pPage,
+            "tidy"    => false,
+            "atTop"   => false,
         ];
         foreach ($posts as $post) {
             $this->template->posts[] = $this->posts->get($post->id);
@@ -261,6 +267,8 @@ final class WallPresenter extends OpenVKPresenter
             "page"    => $page,
             "amount"  => $count,
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
+            "tidy"    => false,
+            "atTop"   => false,
         ];
     }
 
@@ -499,7 +507,7 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
-        if (!is_null($this->user)) {
+        if (!is_null($this->user->identity)) {
             $post->toggleLike($this->user->identity);
         }
 
@@ -536,7 +544,7 @@ final class WallPresenter extends OpenVKPresenter
             $groupId = $this->postParam("groupId");
         }
 
-        if (!is_null($this->user)) {
+        if (!is_null($this->user->identity)) {
             $nPost = new Post();
 
             if ($where == "wall") {
