@@ -69,7 +69,7 @@ $(document).on("change", ".photo_ajax_upload_button", (e) => {
             document.getElementById("endUploading").style.display = "block"
         } else {
             u("#loader").remove()
-            MessageBox(tr("error"), escapeHtml(result.flash.message) ?? tr("error_uploading_photo"), [tr("ok")], [() => {Function.noop}])
+            MessageBox(tr("error"), escapeHtml(result.flash.message) || tr("error_uploading_photo"), [tr("ok")], [() => {Function.noop}])
         }
     }
 

@@ -97,7 +97,7 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
 
     const albums_per_page = 20
     let json;
-    let offset = type == 'album' ? (Number((new URL(location.href)).searchParams.get('p') ?? 1) - 1) * albums_per_page : 0
+    let offset = type == 'album' ? (Number((new URL(location.href)).searchParams.get('p') || 1) - 1) * albums_per_page : 0
     let shown_offset = 0
 
     let imagesCount = 0;
@@ -137,7 +137,7 @@ async function OpenMiniature(e, photo, post, photo_id, type = "post") {
     });
 	
     function __getIndex(photo_id = null) {
-        return Object.keys(json.body).findIndex(item => item == (photo_id ?? currentImageid)) + 1
+        return Object.keys(json.body).findIndex(item => item == (photo_id || currentImageid)) + 1
     }
 
     function __getByIndex(id) {
@@ -1352,7 +1352,7 @@ u(document).on("drop", '#write', function(e) {
 u(document).on("click", "#__photoAttachment", async (e) => {
     const photos_per_page = 23
     const form = u(e.target).closest('form') 
-    const club = Number(e.currentTarget.dataset.club ?? 0)
+    const club = Number(e.currentTarget.dataset.club || 0)
     const msg = new CMessageBox({
         title: tr('select_photo'),
         body: `
@@ -1575,9 +1575,9 @@ u(document).on('click', '#__videoAttachment', async (e) => {
                                 </a>
                                 <br>
                                 <p>
-                                    <span class='video-desc'>${ovk_proc_strtr(escapeHtml(video.description ?? ""), 140)}</span>
+                                    <span class='video-desc'>${ovk_proc_strtr(escapeHtml(video.description || ""), 140)}</span>
                                 </p>
-                                <span><a href="/id${video.owner_id}" target="_blank">${ovk_proc_strtr(escapeHtml(author_name ?? ""), 100)}</a></span>
+                                <span><a href="/id${video.owner_id}" target="_blank">${ovk_proc_strtr(escapeHtml(author_name || ""), 100)}</a></span>
                             </td>
                             <td valign="top" class="action_links">
                                 <a class="profile_link" id="__attach_vid">${!is_attached ? tr("attach") : tr("detach")}</a>
@@ -2440,7 +2440,7 @@ async function __processPaginatorNextPage(page)
 const showMoreObserver = new IntersectionObserver(entries => {
     entries.forEach(async x => {
         if(x.isIntersecting) {
-            if(Number(localStorage.getItem('ux.auto_scroll') ?? 1) == 0) {
+            if(Number(localStorage.getItem('ux.auto_scroll') || 1) == 0) {
                 return
             }
 
@@ -2521,7 +2521,7 @@ u(document).on('click', '#__sourceAttacher', (e) => {
         const nearest_textarea = _u_target.closest('#write')
         const source_output    = nearest_textarea.find(`input[name='source']`)
         const source_input     = u(`#source_flex_kunteynir input[type='text']`)
-        const source_value     = source_input.nodes[0].value ?? ''
+        const source_value     = source_input.nodes[0].value || ''
         if(source_value.length < 1) {
             return
         }
@@ -2755,7 +2755,11 @@ u(document).on('click', "#__geoAttacher", async (e) => {
         console.log(e.geocode.properties)
         const lat = e.geocode.properties.lat
         const lng = e.geocode.properties.lon
-        const name = e.geocode.properties?.display_name ? short_geo_name(e.geocode.properties?.address) : tr('geotag')
+        const name = e.geocode &&
+					 e.geocode.properties &&
+					 e.geocode.properties.display_name
+						? short_geo_name(e.geocode.properties.address)
+						: tr('geotag')
 
         if(currentMarker) map.removeLayer(currentMarker)
 
@@ -2818,7 +2822,7 @@ function openGeo(data, owner_id, virtual_id) {
     map.setView(target, 15);
 
     let marker = L.marker(target).addTo(map);
-    marker.bindPopup(escapeHtml(data.name ?? tr("geotag"))).openPopup();
+    marker.bindPopup(escapeHtml(data.name || tr("geotag"))).openPopup();
 
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -3018,7 +3022,7 @@ u(document).on("submit", "#additional_fields_form", (e) => {
     }) 
 })
 
-if(Number(localStorage.getItem('ux.gif_autoplay') ?? 0) == 1) {
+if(Number(localStorage.getItem('ux.gif_autoplay') || 0) == 1) {
     const showMoreObserver = new IntersectionObserver(entries => {
         entries.forEach(async x => {
             doc_item = x.target.closest(".docGalleryItem")

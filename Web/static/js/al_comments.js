@@ -9,7 +9,7 @@ u(document).on("click", ".comment-reply", function(e) {
     
     // Substitute pervious mention if present, prepend otherwise
     inputbox.nodes.forEach(node => {
-        node.value = node.value.replace(/(^\[([A-Za-z0-9]+)\|([\p{L} 0-9@]+)\], |^)/u, mention);
+        node.value = node.value.replace(/(^\[([A-Za-z0-9]+)\|([A-Za-zА-Яа-яЁё0-9 @]+)\], |^)/, mention);
     })
     inputbox.trigger("focusin");
 });
