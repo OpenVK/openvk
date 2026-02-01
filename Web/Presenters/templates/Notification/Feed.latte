@@ -52,6 +52,8 @@
             "amount"   => sizeof($data),
             "perPage"  => $perPage ?? \OPENVK_DEFAULT_PER_PAGE,
             "atBottom" => true,
+            "atTop"   => false,
+            "tidy"    => false
         ]}
 {else}
     {ifset customErrorMessage}

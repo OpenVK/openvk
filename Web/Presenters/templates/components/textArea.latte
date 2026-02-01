@@ -2,7 +2,10 @@
 {php $textAreaId = ($post ?? NULL) === NULL ? (++$GLOBALS["textAreaCtr"]) : $post->getId()}
 {var $textAreaId = ($custom_id ?? NULL) === NULL ? $textAreaId : $custom_id}
 
-<div id="write" class='model_content_textarea' style="padding: 5px 0;" data-id="{is_null($owner) || gettype($owner) == 'integer' ? $owner : $owner->getId()}">
+{* default variables *}
+{var $anonHide = $anonHide ?? false}
+
+<div id="write" class='model_content_textarea' style="padding: 5px 0;" data-id="{isset($owner) ? (gettype($owner) == 'integer' ? $owner : $owner->getId())}">
     <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
         <textarea id="wall-post-input{$textAreaId}" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="small-textarea" autocomplete="off"></textarea>
         <div>
@@ -20,7 +23,7 @@
             <div n:if="$postOpts ?? true" class="post-opts">
                 {var $anonEnabled = \OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
 
-                {if !is_null($thisUser) && !is_null($club ?? NULL) && $owner < 0}
+                {if !is_null($thisUser) && !is_null($club ?? NULL) && isset($owner) && $owner < 0}
                     {if $club->canBeModifiedBy($thisUser)}
                         {var $anonHide = true}
 

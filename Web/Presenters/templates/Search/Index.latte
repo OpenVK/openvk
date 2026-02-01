@@ -2,9 +2,9 @@
 
 {block title}
     {tr("search_for_$section")}
-    {if $_REQUEST['q']}
+    {ifset $_REQUEST['q']}
         - {$_REQUEST['q']}
-    {/if}
+    {/ifset}
 {/block}
 
 {block header}
@@ -12,6 +12,12 @@
 {/block}
 
 {block wrap}
+    {* default variables *}
+    {var $genre = $_REQUEST['genre'] ?? ''}
+    {var $only_performers = $_REQUEST['only_performers'] ?? false}
+    {var $with_lyrics = $_REQUEST['with_lyrics'] ?? ''}
+    {var $invert = $_REQUEST['invert'] ?? false}
+
     <div class="wrap2">
         <div class="wrap1">
             <div class="page_wrap">
@@ -22,10 +28,10 @@
                             'name': 'classic_search_context',
                             'order': {$order},
                             'query': {$query},
-                            'genre': {$_REQUEST['genre']},
+                            'genre': {$genre},
                             'invert': {$invert ? 1 : 0},
-                            'only_performers': {$_REQUEST['only_performers'] ? 1 : 0},
-                            'with_lyrics': {$_REQUEST['with_lyrics'] ? 1 : 0},
+                            'only_performers': {$only_performers ? 1 : 0},
+                            'with_lyrics': {$with_lyrics ? 1 : 0},
                             'page': {$page}
                         }
                     </script>
@@ -267,7 +273,7 @@
                                     {include "../Audio/player.latte", audio => $dat}
                                 </div>
                                 
-                                <script n:if="$count > 0 && !empty($query) && empty($_REQUEST['only_performers'])">
+                                <script n:if="$count > 0 && !empty($query) && empty($only_performers)">
                                     function __scrollHook(page) {
                                         highlightText({$query}, '.page_wrap_content_main', [".mediaInfo .performer a", ".mediaInfo .title"])
                                     }
@@ -279,7 +285,7 @@
                                     {include "../Audio/playlistListView.latte", playlist => $dat}
                                 </div>
 
-                                <script n:if="$count > 0 && !empty($query) && empty($_REQUEST['only_performers'])">
+                                <script n:if="$count > 0 && !empty($query) && empty($only_performers)">
                                     function __scrollHook(page) {
                                         highlightText({$query}, '.page_wrap_content_main', [".playlistName", ".playlistDesc"])
                                     }
@@ -358,7 +364,7 @@
             </select>
 
             <label n:if="$order != 'rating'">
-                <input type="checkbox" name="invert" value="1" form="search_form" n:attr="checked => $_REQUEST['invert'] == '1'">
+                <input type="checkbox" name="invert" value="1" form="search_form" n:attr="checked => $invert == '1'">
                 {_s_order_invert}
             </label>
         </div>
@@ -448,17 +454,17 @@
         </div>
         <div class="search_option_content">
             <label>
-                <input type="checkbox" name="only_performers" n:attr="checked => !empty($_REQUEST['only_performers'])" form="search_form">{_s_only_performers}
+                <input type="checkbox" name="only_performers" n:attr="checked => !empty($only_performers)" form="search_form">{_s_only_performers}
             </label>
             <label>
-                <input type="checkbox" name="with_lyrics" n:attr="checked => !empty($_REQUEST['with_lyrics'])" form="search_form">{_s_with_lyrics}
+                <input type="checkbox" name="with_lyrics" n:attr="checked => !empty($with_lyrics)" form="search_form">{_s_with_lyrics}
             </label>
             <label>
                 {_genre}
                 <select name='genre' form="search_form" data-default='any'>
-                    <option n:attr="selected: empty($_REQUEST['genre'])" value="any">{_s_any_single}</option>
-                    <option n:foreach='\openvk\Web\Models\Entities\Audio::genres as $genre' n:attr="selected: $_REQUEST['genre'] == $genre" value="{$genre}">
-                        {$genre}
+                    <option n:attr="selected: empty($genre)" value="any">{_s_any_single}</option>
+                    <option n:foreach='\openvk\Web\Models\Entities\Audio::genres as $musicGenre' n:attr="selected: $genre == $musicGenre" value="{$musicGenre}">
+                        {$musicGenre}
                     </option>
                 </select>
             </label>

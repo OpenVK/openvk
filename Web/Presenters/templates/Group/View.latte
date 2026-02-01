@@ -1,6 +1,9 @@
 {extends "../@layout.latte"}
 {var $backdrops = $club->getBackDropPictureURLs()}
 
+{* default variables *}
+{var $hasAvatar = $hasAvatar ?? false}
+
 {block title}{$club->getName()}{/block} 
 
 {block header}
@@ -110,11 +113,11 @@
         </div>
     </div>
     
-    <div n:if="!is_null($suggestedPostsCountByUser) && $suggestedPostsCountByUser > 0" class="sugglist">
+    <div n:if="isset($suggestedPostsCountByUser) && $suggestedPostsCountByUser > 0" class="sugglist">
         <a href="/club{$club->getId()}/suggested" id="cound_r">{tr("suggested_by_you", $suggestedPostsCountByUser)}</a>
     </div>
 
-    <div n:if="!is_null($suggestedPostsCountByEveryone) && $suggestedPostsCountByEveryone > 0" class="sugglist">
+    <div n:if="isset($suggestedPostsCountByEveryone) && $suggestedPostsCountByEveryone > 0" class="sugglist">
         <a href="/club{$club->getId()}/suggested" id="cound_r">{tr("suggested_by_everyone", $suggestedPostsCountByEveryone)}</a>
     </div>
 

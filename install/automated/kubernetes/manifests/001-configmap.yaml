@@ -66,6 +66,7 @@ data:
               photos: false
               videos: false
               audios: false
+              documents: false
               messenger: false
               user: false
               group: false

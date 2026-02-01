@@ -99,7 +99,7 @@ final class UserPresenter extends OpenVKPresenter
            : "friends";
         $this->template->page = $page;
 
-        if (!is_null($this->user)) {
+        if (!is_null($this->user->identity)) {
             if ($this->template->mode !== "friends" && $this->user->id !== $id) {
                 $name = $user->getFullName();
                 $this->flash("err", tr("error_access_denied_short"), tr("error_viewing_subs", $name));
@@ -718,6 +718,8 @@ final class UserPresenter extends OpenVKPresenter
                 "page"    => $page,
                 "amount"  => sizeof($this->template->blItems),
                 "perPage" => OPENVK_DEFAULT_PER_PAGE,
+                "tidy"    => false,
+                "atTop"   => false
             ];
         }
 
@@ -1004,6 +1006,7 @@ final class UserPresenter extends OpenVKPresenter
             "amount"    => sizeof($this->template->data),
             "perPage"   => $this->template->perPage,
             "atBottom"  => false,
+            "atTop"     => false,
             "tidy"      => true,
             'pageCount' => ceil($count / $this->template->perPage),
         ];

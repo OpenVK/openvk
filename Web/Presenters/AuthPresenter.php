@@ -48,7 +48,7 @@ final class AuthPresenter extends OpenVKPresenter
 
     public function renderRegister(): void
     {
-        if (!is_null($this->user)) {
+        if (!is_null($this->user->identity)) {
             $this->redirect($this->user->identity->getURL());
         }
 
@@ -167,7 +167,7 @@ final class AuthPresenter extends OpenVKPresenter
     {
         $redirUrl = $this->requestParam("jReturnTo");
 
-        if (!is_null($this->user)) {
+        if (!is_null($this->user->identity)) {
             $this->redirect($redirUrl ?? $this->user->identity->getURL());
         }
 
@@ -287,7 +287,7 @@ final class AuthPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        if (!is_null($this->user)) {
+        if (!is_null($this->user->identity)) {
             $this->redirect($this->user->identity->getURL());
         }
 
@@ -328,7 +328,7 @@ final class AuthPresenter extends OpenVKPresenter
 
     public function renderResendEmail(): void
     {
-        if (!is_null($this->user) && $this->user->identity->isActivated()) {
+        if (!is_null($this->user->identity) && $this->user->identity->isActivated()) {
             $this->redirect($this->user->identity->getURL());
         }
 

@@ -24,7 +24,7 @@
             {/if}
         </div>
 
-        {if $friendsAudios}
+        {ifset $friendsAudios}
             <div class="friendsAudiosList">
                 <a href="/audios{$friend->getRealId()}" n:foreach="$friendsAudios as $friend">
                     <div class="elem">
@@ -38,6 +38,6 @@
                     </div>
                 </a>
             </div>
-        {/if}
+        {/ifset}
     </div>
 </div>

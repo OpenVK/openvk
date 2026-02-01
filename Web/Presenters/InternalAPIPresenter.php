@@ -64,7 +64,7 @@ final class InternalAPIPresenter extends OpenVKPresenter
             $this->fail(-32601, "Procedure not found");
         }
 
-        $handler = new $class(is_null($this->user) ? null : $this->user->identity);
+        $handler = new $class(is_null($this->user->identity) ? null : $this->user->identity);
         if (!is_callable([$handler, $method])) {
             $this->fail(-32601, "Procedure not found");
         }

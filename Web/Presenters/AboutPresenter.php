@@ -17,7 +17,7 @@ final class AboutPresenter extends OpenVKPresenter
 
     public function renderIndex(): void
     {
-        if (!is_null($this->user)) {
+        if (!is_null($this->user->identity)) {
             if ($this->user->identity->getMainPage()) {
                 $this->redirect("/feed");
             } else {

@@ -322,7 +322,7 @@ final class AudioPresenter extends OpenVKPresenter
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->assertNoCSRF();
 
-            if (is_null($this->user)) {
+            if (is_null($this->user->identity)) {
                 $this->returnJson(["success" => false]);
             }
 
