@@ -49,7 +49,7 @@ final class ReportPresenter extends OpenVKPresenter
             "amount"  => null,
             "perPage" => 15,
             "tidy"    => false,
-            "atTop"   => false
+            "atTop"   => false,
         ];
         $this->template->mode = $act ?? "all";
         $this->template->disable_ajax = 1;

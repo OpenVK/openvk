@@ -62,7 +62,7 @@ final class PhotosPresenter extends OpenVKPresenter
             "amount"  => null,
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
             "tidy"    => false,
-            "atTop"   => false
+            "atTop"   => false,
         ];
     }
 
@@ -188,7 +188,7 @@ final class PhotosPresenter extends OpenVKPresenter
             "perPage" => 20,
             "atBottom" => true,
             "tidy"    => false,
-            "atTop"   => false
+            "atTop"   => false,
         ];
     }
 

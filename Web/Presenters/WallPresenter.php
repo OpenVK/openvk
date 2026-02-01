@@ -117,7 +117,7 @@ final class WallPresenter extends OpenVKPresenter
             "amount"  => sizeof($this->template->posts),
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
             "tidy"    => false,
-            "atTop"   => false
+            "atTop"   => false,
         ];
 
 
@@ -202,7 +202,7 @@ final class WallPresenter extends OpenVKPresenter
             "amount"  => $posts->page((int) ($_GET["p"] ?? 1), $perPage)->count(),
             "perPage" => $perPage,
             "tidy"    => false,
-            "atTop"   => false
+            "atTop"   => false,
         ];
         $this->template->posts = [];
         foreach ($posts->page((int) ($_GET["p"] ?? 1), $perPage) as $post) {
@@ -245,7 +245,7 @@ final class WallPresenter extends OpenVKPresenter
             "amount"  => $posts->getRowCount(),
             "perPage" => $pPage,
             "tidy"    => false,
-            "atTop"   => false
+            "atTop"   => false,
         ];
         foreach ($posts as $post) {
             $this->template->posts[] = $this->posts->get($post->id);
@@ -268,7 +268,7 @@ final class WallPresenter extends OpenVKPresenter
             "amount"  => $count,
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
             "tidy"    => false,
-            "atTop"   => false
+            "atTop"   => false,
         ];
     }
 

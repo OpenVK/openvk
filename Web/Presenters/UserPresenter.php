@@ -719,7 +719,7 @@ final class UserPresenter extends OpenVKPresenter
                 "amount"  => sizeof($this->template->blItems),
                 "perPage" => OPENVK_DEFAULT_PER_PAGE,
                 "tidy"    => false,
-                "atTop"   => false
+                "atTop"   => false,
             ];
         }
 

@@ -41,7 +41,7 @@ final class VideosPresenter extends OpenVKPresenter
             "amount"  => null,
             "perPage" => 7,
             "tidy"    => false,
-            "atTop"   => false
+            "atTop"   => false,
         ];
     }
 

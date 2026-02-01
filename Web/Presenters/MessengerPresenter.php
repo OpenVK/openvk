@@ -54,7 +54,7 @@ final class MessengerPresenter extends OpenVKPresenter
             "amount"  => sizeof($this->template->corresps),
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
             "tidy"    => false,
-            "atTop"   => false
+            "atTop"   => false,
         ];
     }
 

@@ -150,7 +150,7 @@ final class GroupPresenter extends OpenVKPresenter
             "amount"  => 10,
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
             "tidy"    => false,
-            "atTop"   => false
+            "atTop"   => false,
         ];
     }
 
