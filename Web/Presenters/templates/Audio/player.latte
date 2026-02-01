@@ -5,7 +5,7 @@
 {php $editable = isset($thisUser) && $audio->canBeModifiedBy($thisUser)}
 
 {* default variables *}
-{php $hideButtons = $hideButtons ?? false}
+{var $hideButtons = $hideButtons ?? false}
 
 {* this is a bad layout. so what you can change:
 - every button must be available (and hidden if not needed) and toggled by class states (.audio_added, .audio_lyrics). So the edit function will be not so cancerous
