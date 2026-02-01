@@ -183,7 +183,7 @@ function isLanguageAvailable($lg): bool
 
 function getBrowsersLanguage(): array
 {
-    if (!is_null($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? null)) {
+    if ($_SERVER['HTTP_ACCEPT_LANGUAGE'] != false) {
         return mb_split(",", mb_split(";", $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0]);
     } else {
         return [];
