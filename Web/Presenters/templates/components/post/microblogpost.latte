@@ -31,7 +31,8 @@
                 <div class="post-author">
                     <a href="{$author->getURL()}"><b class="post-author-name">{$author->getCanonicalName()}</b></a>
                     <img n:if="$author->isVerified()" class="name-checkmark" src="/assets/packages/static/openvk/img/checkmark.png">
-                    {$post->isDeactivationMessage() ? ($author->isFemale() ? tr($deac . "_f") : ($author->isNeutral() ? tr($deac . "_g") : tr($deac . "_m")))}
+                    {$post->isDeactivationMessage() && !$post->isPostedOnBehalfOfGroup() ? ($author->isFemale() ? tr($deac . "_f") : ($author->isNeutral() ? tr($deac . "_g") : tr($deac . "_m")))}
+                    {$post->isDeactivationMessage() && $post->isPostedOnBehalfOfGroup() ? tr($deac . "_g") : ""}
                     {$post->isUpdateAvatarMessage() && !$post->isPostedOnBehalfOfGroup() ? ($author->isFemale() ? tr("upd_f") : ($author->isNeutral() ? tr("upd_n") : tr("upd_m")))}
                     {$post->isUpdateAvatarMessage() && $post->isPostedOnBehalfOfGroup() ? tr("upd_g") : ""}
                     {if ($onWallOf ?? false) &&!$post->isPostedOnBehalfOfGroup() && $post->getOwnerPost() !== $post->getTargetWall()}
