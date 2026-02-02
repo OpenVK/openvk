@@ -57,6 +57,9 @@ openvk:
         registration:
             enable: true
             disablingReason: ""
+            emailWhitelist:
+                enable: false
+                allowedHosts: []
         support:
             supportName: "Agent"
             adminAccount: 1 # Change this ok

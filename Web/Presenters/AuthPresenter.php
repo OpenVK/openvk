@@ -79,6 +79,10 @@ final class AuthPresenter extends OpenVKPresenter
 
         $this->template->referer = $referer;
 
+        $this->template->emailWhitelistEnabled = OPENVK_ROOT_CONF['openvk']['preferences']['registration']['emailWhitelist']['enable'] ?? false;
+        $this->template->emailWhitelisted = implode(', ', OPENVK_ROOT_CONF['openvk']['preferences']['registration']['emailWhitelist']['allowedHosts'] ?? ['none']);
+
+
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->assertCaptchaCheckPassed();
 
@@ -88,6 +92,14 @@ final class AuthPresenter extends OpenVKPresenter
 
             if (!$this->ipValid()) {
                 $this->flashFail("err", tr("suspicious_registration_attempt"), tr("suspicious_registration_attempt_comment"));
+            }
+
+            if (OPENVK_ROOT_CONF['openvk']['preferences']['registration']['emailWhitelist']['enable'] ?? false) {
+                $domain = explode("@", $this->postParam("email"));
+
+                if (!in_array($domain[1], OPENVK_ROOT_CONF['openvk']['preferences']['registration']['emailWhitelist']['allowedHosts'])) {
+                    $this->flashFail("err", tr("failed_to_register"), tr("email_not_in_whitelist"));
+                }
             }
 
             if (!Validator::i()->emailValid($this->postParam("email"))) {
