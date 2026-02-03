@@ -318,9 +318,10 @@ final class WallPresenter extends OpenVKPresenter
         $flags = 0;
         if ($this->postParam("as_group") === "on" && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->user->identity)) {
             $flags |= 0b10000000;
-        }
-        if ($this->postParam("force_sign") === "on") {
-            $flags |= 0b01000000;
+ 
+            if ($this->postParam("force_sign") === "on") {
+                $flags |= 0b01000000;
+            }
         }
 
         $horizontal_attachments = [];
@@ -562,7 +563,7 @@ final class WallPresenter extends OpenVKPresenter
                     $flags |= 0b10000000;
                 }
 
-                if ($this->postParam("signed") == 1) {
+                if ($this->postParam("asGroup") == 1 && $this->postParam("signed") == 1) {
                     $flags |= 0b01000000;
                 }
 
