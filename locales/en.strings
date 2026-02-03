@@ -43,6 +43,8 @@
 "email_sent_desc" = "If this email address exists, you will receive instructions.";
 "email_error" = "An unexpected error occurred while sending the email.";
 "email_rate_limit_error" = "You can't do it that often, sorry.";
+"email_not_in_whitelist" = "Sorry, but at this moment your email provider is forbidden for registration.";
+"email_whitelist_desc" = "Allowed email providers: $1";
 
 "email_verify_success" = "Your email has been verified. Have a great time!";
 

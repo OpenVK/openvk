@@ -66,6 +66,10 @@
                         </td>
                         <td class="regform-right">
                             <input type="email" name="email" required />
+                            {if $emailWhitelistEnabled}
+                            <br>
+                            <small>{tr('email_whitelist_desc', $emailWhitelisted)}</small>
+                            {/if}
                         </td>
                     </tr>
                     <tr>
