@@ -67,10 +67,10 @@ abstract class Media extends Postable
             default:
             case "default":
             case "basic":
-                return "http://" . $_SERVER['HTTP_HOST'] . "/blob_" . substr($hash, 0, 2) . "/$hash.$this->fileExtension";
+                return ovk_scheme(true) . $_SERVER['HTTP_HOST'] . "/blob_" . substr($hash, 0, 2) . "/$hash.$this->fileExtension";
                 break;
             case "accelerated":
-                return "http://" . $_SERVER['HTTP_HOST'] . "/openvk-datastore/$hash.$this->fileExtension";
+                return ovk_scheme(true) . $_SERVER['HTTP_HOST'] . "/openvk-datastore/$hash.$this->fileExtension";
                 break;
             case "server":
                 $settings = (object) OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["server"];
