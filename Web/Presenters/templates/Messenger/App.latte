@@ -33,6 +33,34 @@
                                         <img data-bind="attr: { src: photo.url, alt: photo.caption  }" />
                                     </a>
                                 </div>
+                                <div data-bind="if: type === 'video'" class="msg-attach-j-video">
+                                    <a data-bind="attr: { href: link }">
+                                        <div class="video-preview">
+                                            <div class="play-button-ico"></div>
+                                            <strong data-bind="text: video.name"></strong>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div data-bind="if: type === 'audio'" class="msg-attach-j-audio">
+                                    <div class="audio-preview">
+                                        <strong data-bind="text: audio.name"></strong>
+                                        <span data-bind="text: audio.artist ? ' — ' + audio.artist() : ''"></span>
+                                    </div>
+                                </div>
+                                <div data-bind="if: type === 'note'" class="msg-attach-j-note">
+                                    <a data-bind="attr: { href: link }">
+                                        <div class="note-preview">
+                                            <strong data-bind="text: note.name"></strong>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div data-bind="if: type === 'doc'" class="msg-attach-j-doc">
+                                    <a data-bind="attr: { href: link }">
+                                        <div class="doc-preview">
+                                            <strong data-bind="text: document.name"></strong>
+                                        </div>
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -237,6 +265,22 @@
                 let msgData = new FormData();
                 msgData.set("content", content);
                 msgData.set("hash", {$csrfToken});
+                
+                let attachmentElements = document.querySelectorAll("[data-att-id]");
+                let attachmentIds = [];
+                if(attachmentElements && attachmentElements.length > 0) {
+                    attachmentElements.forEach(el => {
+                        let type = el.getAttribute("data-att-type");
+                        let id = el.getAttribute("data-att-id");
+                        if(type && id) {
+                            attachmentIds.push(type + id);
+                        }
+                    });
+                }
+                
+                if(attachmentIds.length > 0) {
+                    msgData.set("attachments", attachmentIds.join(","));
+                }
                 
                 let that = this;
                 let xhr  = new XMLHttpRequest();
