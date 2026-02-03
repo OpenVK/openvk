@@ -9,9 +9,7 @@ use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Entities\Notifications\CoinsTransferNotification;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Nette\Utils\ImageException;
 
 define("NANOTON", 1000000000);
 
@@ -23,12 +21,15 @@ class FetchToncoinTransactions extends Command
 
     public function __construct()
     {
+        parent::__construct();
+
         $ctx = DatabaseConnection::i()->getContext();
-        if (in_array("cryptotransactions", $ctx->getStructure()->getTables())) {
+        if (array_any(
+            $ctx->getStructure()->getTables(),
+            fn($value) => $value["name"] === "cryptotransactions"
+        )) {
             $this->transactions = $ctx->table("cryptotransactions");
         }
-
-        parent::__construct();
     }
 
     protected function configure(): void
@@ -48,7 +49,13 @@ class FetchToncoinTransactions extends Command
         ]);
 
         if (!OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["enabled"]) {
-            $header->writeln("Sorry, but you handn't enabled the TON support in your config file yet.");
+            $header->writeln("Sorry, but you haven't enabled the TON support in your config file yet.");
+
+            return Command::FAILURE;
+        }
+
+        if (!isset($this->transactions)) {
+            $header->writeln("The 'cryptotransactions' table can't be found in the database.");
 
             return Command::FAILURE;
         }
