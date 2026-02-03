@@ -39,7 +39,7 @@ class Localizator
         }
 
         $string = file_get_contents($file);
-        $string = preg_replace("%^\/\*.*\*\/\r?$%m", "", $string); #Remove comments
+        $string = preg_replace("%(?<!\")\/\*.*\*\/?%m", "", $string); #Remove comments
         $array  = [];
 
         foreach (preg_split("%;[\\r\\n]++%", $string) as $statement) {
