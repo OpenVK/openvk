@@ -166,10 +166,26 @@ final class MessengerPresenter extends OpenVKPresenter
             exit();
         }
 
+        $attachments = [];
+        if (!empty($this->postParam("attachments"))) {
+            $attachments_array = array_slice(explode(",", $this->postParam("attachments")), 0, OPENVK_ROOT_CONF["openvk"]["preferences"]["wall"]["postSizes"]["maxAttachments"]);
+            if (sizeof($attachments_array) > 0) {
+                $attachments = parseAttachments($attachments_array, ['photo', 'video', 'audio', 'note', 'doc']);
+            }
+        }
+
         $cor = new Correspondence($this->user->identity, $sel);
         $msg = new Message();
         $msg->setContent($this->postParam("content"));
         $cor->sendMessage($msg);
+
+        foreach ($attachments as $attachment) {
+            if (!$attachment || $attachment->isDeleted() || !$attachment->canBeViewedBy($this->user->identity)) {
+                continue;
+            }
+
+            $msg->attach($attachment);
+        }
 
         header("HTTP/1.1 202 Accepted");
         header("Content-Type: application/json");

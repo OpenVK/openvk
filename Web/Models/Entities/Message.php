@@ -7,7 +7,7 @@ namespace openvk\Web\Models\Entities;
 use Chandler\Database\DatabaseConnection;
 use openvk\Web\Models\Repositories\Clubs;
 use openvk\Web\Models\Repositories\Users;
-use openvk\Web\Models\Entities\Photo;
+use openvk\Web\Models\Entities\{Photo, Video, Audio, Note, Document};
 use openvk\Web\Models\RowModel;
 use openvk\Web\Util\DateTime;
 
@@ -136,12 +136,45 @@ class Message extends RowModel
                         "caption" => $attachment->getDescription(),
                     ],
                 ];
+            } elseif ($attachment instanceof Video) {
+                $attachments[] = [
+                    "type"  => "video",
+                    "link"  => "/video" . $attachment->getPrettyId(),
+                    "video" => [
+                        "url"    => $attachment->getURL(),
+                        "name"   => $attachment->getName(),
+                        "length" => $attachment->getLength(),
+                    ],
+                ];
+            } elseif ($attachment instanceof Audio) {
+                $attachments[] = [
+                    "type"  => "audio",
+                    "link"  => "/audio" . $attachment->getPrettyId(),
+                    "audio" => [
+                        "name"   => $attachment->getName(),
+                        "artist" => $attachment->getPerformer(),
+                    ],
+                ];
+            } elseif ($attachment instanceof Note) {
+                $attachments[] = [
+                    "type"  => "note",
+                    "link"  => "/note" . $attachment->getId(),
+                    "note"  => [
+                        "name" => $attachment->getName(),
+                    ],
+                ];
+            } elseif ($attachment instanceof Document) {
+                $attachments[] = [
+                    "type"      => "doc",
+                    "link"      => "/doc" . $attachment->getPrettyId(),
+                    "document"  => [
+                        "name" => $attachment->getName(),
+                    ],
+                ];
             } else {
                 $attachments[] = [
                     "type"  => "unknown",
                 ];
-
-                # throw new \Exception("Unknown attachment type: " . get_class($attachment));
             }
         }
 
