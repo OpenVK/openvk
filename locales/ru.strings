@@ -888,7 +888,7 @@
 "audio_embed_processing_bait" = "Всё равно хочу воспроизвести";
 
 "audios_count_zero" = "Нет аудиозаписей";
-"audios_count_one" = "Одна аудиозапись"; /* сингл */
+"audios_count_one" = "Одна аудиозапись";
 "audios_count_few" = "$1 аудиозаписи";
 "audios_count_many" = "$1 аудиозаписей";
 "audios_count_other" = "$1 аудиозаписей";
