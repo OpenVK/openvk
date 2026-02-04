@@ -1328,7 +1328,7 @@ table.User {
 }
 
 .messenger-app--messages---message ._content .attachments>.msg-attach-j * {
-    max-width: 86%;
+    max-width: 100%;
 }
 
 .messenger-app--messages---message ._content .attachments:not(:empty) {
