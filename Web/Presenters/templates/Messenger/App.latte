@@ -34,12 +34,16 @@
                                     </a>
                                 </div>
                                 <div data-bind="if: type === 'video'" class="msg-attach-j-video">
-                                    <a data-bind="attr: { href: link }">
-                                        <div class="video-preview">
-                                            <div class="play-button-ico"></div>
-                                            <strong data-bind="text: video.name"></strong>
+                                    <div style="width: 100%; max-width: 400px; background: #000;">
+                                        <div class="bsdn media" data-bind="attr: { 'data-name': video.name, 'data-author': video.author }" style="width: 100%;">
+                                            <video class="media" data-bind="attr: { src: video.url }" style="width: 100%; display: block;"></video>
                                         </div>
-                                    </a>
+                                    </div>
+                                    <div class="video-wowzer" style="margin-top: 8px;">
+                                        <div class="small-video-ico"></div>
+                                        <a href="#" data-bind="attr: { href: link }, text: video.name" id="videoOpen" style="display: inline-block; margin-left: 5px;"></a>
+                                        <span class="video-wowzer-length" data-bind="text: '(' + video.formatted_length + ')'"></span>
+                                    </div>
                                 </div>
                                 <div data-bind="if: type === 'audio'" class="msg-attach-j-audio">
                                     <div class="audio-preview">
