@@ -131,6 +131,7 @@ class Message extends RowModel
                 $attachments[] = [
                     "type"  => "photo",
                     "link"  => "/photo" . $attachment->getPrettyId(),
+                    "id"    => $attachment->getPrettyId(),
                     "photo" => [
                         "url"     => $attachment->getURL(),
                         "caption" => $attachment->getDescription(),
@@ -140,6 +141,7 @@ class Message extends RowModel
                 $attachments[] = [
                     "type"  => "video",
                     "link"  => "/video" . $attachment->getPrettyId(),
+                    "id"    => $attachment->getOwner()->getId() . "_" . $attachment->getId(),
                     "video" => [
                         "url"               => $attachment->getURL(),
                         "name"              => $attachment->getName(),

@@ -29,8 +29,8 @@
                         <div data-bind="foreach: attachments" class="attachments">
                             <div class="msg-attach-j">
                                 <div data-bind="if: type === 'photo'" class="msg-attach-j-photo">
-                                    <a data-bind="attr: { href: link }">
-                                        <img data-bind="attr: { src: photo.url, alt: photo.caption  }" />
+                                    <a data-bind="attr: { href: link, 'data-photo-id': id }" class="photoMessengerOpen">
+                                        <img data-bind="attr: { src: photo.url, alt: photo.caption }" />
                                     </a>
                                 </div>
                                 <div data-bind="if: type === 'video'" class="msg-attach-j-video">
@@ -41,7 +41,7 @@
                                     </div>
                                     <div class="video-wowzer" style="margin-top: 8px;">
                                         <div class="small-video-ico"></div>
-                                        <a href="#" data-bind="attr: { href: link }, text: video.name" id="videoOpen" style="display: inline-block; margin-left: 5px;"></a>
+                                        <a data-bind="attr: { href: link, 'data-video-id': id }, text: video.name" class="videoMessengerOpen" style="display: inline-block;"></a>
                                         <span class="video-wowzer-length" data-bind="text: '(' + video.formatted_length + ')'"></span>
                                     </div>
                                 </div>
@@ -57,29 +57,23 @@
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
                                             <div class='attachment_note_content'>
                                                 <span class="attachment_note_text">Note</span>
-                                                <span class="attachment_note_name"><a data-bind="attr: { href: link }, text: note.name"></a></span>
+                                                <span class="attachment_note_name"><a data-bind="attr: { href: link, onclick: 'showArticle(' + id + ')' }, text: note.name" href="javascript:void(0);"></a></span>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div data-bind="if: type === 'doc'" class="msg-attach-j-doc">
                                     <div style="width:100%;">
-                                        <div data-bind="attr: { 'data-att_type': 'doc', 'data-att_id': id }" style="display:none">
-                                            <div class="docMainItem attachment_doc attachment_note">
+                                        <a data-bind="attr: { href: link, 'data-att_type': 'doc', 'data-att_id': id }" style="display:none" class="docGalleryItem viewerOpener"></a>
+                                        <a data-bind="attr: { href: link }" class="docGalleryItem viewerOpener">
+                                            <div class="attachment_doc attachment_note">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
                                                 <div class='attachment_note_content'>
                                                     <span class="attachment_note_text">Document</span>
-                                                    <span class="attachment_note_name"><a data-bind="attr: { href: link }, text: document.name"></a></span>
+                                                    <span class="attachment_note_name" data-bind="text: document.name"></span>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="attachment_doc attachment_note">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
-                                            <div class='attachment_note_content'>
-                                                <span class="attachment_note_text">Document</span>
-                                                <span class="attachment_note_name"><a data-bind="attr: { href: link }, text: document.name"></a></span>
-                                            </div>
-                                        </div>
+                                        </a>
                                     </div>
                                 </div>
                             </div>
@@ -338,5 +332,29 @@
         }
         
         window.Msg = new Messenger([]);
+        
+        document.querySelector(".messenger-app--messages").addEventListener("click", (e) => {
+            if(e.target.closest(".photoMessengerOpen")) {
+                e.preventDefault();
+                e.stopPropagation();
+                const photoLink = e.target.closest(".photoMessengerOpen");
+                const photoId = photoLink.getAttribute("data-photo-id");
+                const photoImg = photoLink.querySelector("img");
+                if(photoImg && photoId) {
+                    OpenMiniature(e, photoImg.src, null, photoId, null);
+                }
+            }
+            
+            if(e.target.closest(".videoMessengerOpen")) {
+                e.preventDefault();
+                e.stopPropagation();
+                const videoLink = e.target.closest(".videoMessengerOpen");
+                const videoId = videoLink.getAttribute("data-video-id");
+                if(videoId && videoId.indexOf("_") !== -1) {
+                    const parts = videoId.split("_");
+                    OpenVideo(parts);
+                }
+            }
+        });
     </script>
 {/block}
