@@ -170,12 +170,24 @@ class Message extends RowModel
                     ],
                 ];
             } elseif ($attachment instanceof Document) {
+                $previewData = null;
+                if ($attachment->hasPreview()) {
+                    $previewData = [
+                        "tiny" => $attachment->getPreview()->getURLBySizeId('tiny'),
+                        "medium" => $attachment->getPreview()->getURLBySizeId('medium'),
+                    ];
+                }
+
                 $attachments[] = [
                     "type"      => "doc",
                     "link"      => "/doc" . $attachment->getPrettyId(),
                     "id"        => $attachment->getPrettyId(),
                     "document"  => [
                         "name" => $attachment->getName(),
+                        "ext"      => $attachment->getFileExtension(),
+                        "size_str" => readable_filesize($attachment->getFilesize()),
+                        "preview"  => $previewData,
+                        "pub_time" => (string) $attachment->getPublicationTime(),
                     ],
                 ];
             } else {
