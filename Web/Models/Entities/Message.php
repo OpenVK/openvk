@@ -141,7 +141,7 @@ class Message extends RowModel
                 $attachments[] = [
                     "type"  => "video",
                     "link"  => "/video" . $attachment->getPrettyId(),
-                    "id"    => $attachment->getOwner()->getId() . "_" . $attachment->getId(),
+                    "id"    => $attachment->getOwner()->getId() . "_" . $attachment->getVirtualId(),
                     "video" => [
                         "url"               => $attachment->getURL(),
                         "name"              => $attachment->getName(),
