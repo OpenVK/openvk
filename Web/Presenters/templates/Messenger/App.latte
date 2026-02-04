@@ -52,18 +52,35 @@
                                     </div>
                                 </div>
                                 <div data-bind="if: type === 'note'" class="msg-attach-j-note">
-                                    <a data-bind="attr: { href: link }">
-                                        <div class="note-preview">
-                                            <strong data-bind="text: note.name"></strong>
+                                    <div data-bind="attr: { 'data-att_type': 'note', 'data-att_id': id }">
+                                        <div class="attachment_note">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
+                                            <div class='attachment_note_content'>
+                                                <span class="attachment_note_text">Note</span>
+                                                <span class="attachment_note_name"><a data-bind="attr: { href: link }, text: note.name"></a></span>
+                                            </div>
                                         </div>
-                                    </a>
+                                    </div>
                                 </div>
                                 <div data-bind="if: type === 'doc'" class="msg-attach-j-doc">
-                                    <a data-bind="attr: { href: link }">
-                                        <div class="doc-preview">
-                                            <strong data-bind="text: document.name"></strong>
+                                    <div style="width:100%;">
+                                        <div data-bind="attr: { 'data-att_type': 'doc', 'data-att_id': id }" style="display:none">
+                                            <div class="docMainItem attachment_doc attachment_note">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
+                                                <div class='attachment_note_content'>
+                                                    <span class="attachment_note_text">Document</span>
+                                                    <span class="attachment_note_name"><a data-bind="attr: { href: link }, text: document.name"></a></span>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </a>
+                                        <div class="attachment_doc attachment_note">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
+                                            <div class='attachment_note_content'>
+                                                <span class="attachment_note_text">Document</span>
+                                                <span class="attachment_note_name"><a data-bind="attr: { href: link }, text: document.name"></a></span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

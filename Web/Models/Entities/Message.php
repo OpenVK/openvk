@@ -162,6 +162,7 @@ class Message extends RowModel
                 $attachments[] = [
                     "type"  => "note",
                     "link"  => "/note" . $attachment->getId(),
+                    "id"    => $attachment->getId(),
                     "note"  => [
                         "name" => $attachment->getName(),
                     ],
@@ -170,6 +171,7 @@ class Message extends RowModel
                 $attachments[] = [
                     "type"      => "doc",
                     "link"      => "/doc" . $attachment->getPrettyId(),
+                    "id"        => $attachment->getPrettyId(),
                     "document"  => [
                         "name" => $attachment->getName(),
                     ],
