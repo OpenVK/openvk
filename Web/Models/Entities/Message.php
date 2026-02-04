@@ -141,9 +141,12 @@ class Message extends RowModel
                     "type"  => "video",
                     "link"  => "/video" . $attachment->getPrettyId(),
                     "video" => [
-                        "url"    => $attachment->getURL(),
-                        "name"   => $attachment->getName(),
-                        "length" => $attachment->getLength(),
+                        "url"               => $attachment->getURL(),
+                        "name"              => $attachment->getName(),
+                        "length"            => $attachment->getLength(),
+                        "formatted_length"  => $attachment->getFormattedLength(),
+                        "thumbnail"         => $attachment->getThumbnailURL(),
+                        "author"            => $attachment->getOwner()->getCanonicalName(),
                     ],
                 ];
             } elseif ($attachment instanceof Audio) {
