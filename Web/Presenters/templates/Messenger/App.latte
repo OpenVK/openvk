@@ -56,8 +56,10 @@
                                         <div class="attachment_note">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
                                             <div class='attachment_note_content'>
-                                                <span class="attachment_note_text">Note</span>
-                                                <span class="attachment_note_name"><a data-bind="attr: { href: 'javascript:void(showArticle(' + id + '))' }, text: note.name"></a></span>
+                                                <span class="attachment_note_text">{_note}</span>
+                                                <span class="attachment_note_name">
+                                                    <a href="#" data-bind="click: function() { showArticle(id); return false; }, text: note.name"></a>
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -69,7 +71,7 @@
                                             <div class="attachment_doc attachment_note">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
                                                 <div class='attachment_note_content'>
-                                                    <span class="attachment_note_text">Document</span>
+                                                    <span class="attachment_note_text">{_document}</span>
                                                     <span class="attachment_note_name" data-bind="text: document.name"></span>
                                                 </div>
                                             </div>
