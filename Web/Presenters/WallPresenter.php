@@ -86,7 +86,9 @@ final class WallPresenter extends OpenVKPresenter
         $count = 0;
         $type = $this->queryParam("type") ?? "all";
         $page = (int) ($_GET["p"] ?? 1);
-        if ($page <= 0) $page = 1;
+        if ($page <= 0) {
+            $page = 1;
+        }
 
         switch ($type) {
             default:
