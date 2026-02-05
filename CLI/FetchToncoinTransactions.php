@@ -102,8 +102,8 @@ class FetchToncoinTransactions extends Command
                     $header->writeln($value . " coins are added to " . $user->getId() . " user id");
                     $this->transactions->insert([
                         "id"   => null,
-                        "hash" => $transfer["transaction_id"]["hash"],
-                        "lt"   => $transfer["transaction_id"]["lt"],
+                        "hash" => $transfer["hash"],
+                        "lt"   => $transfer["lt"],
                     ]);
                 }
             }
