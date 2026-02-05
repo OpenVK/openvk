@@ -148,12 +148,12 @@ class Post extends Postable
 
     public function isDeactivationMessage(): bool
     {
-        return (($this->getRecord()->flags & 0b00100000) > 0) && ($this->getRecord()->owner > 0);
+        return (($this->getRecord()->flags & 0b00100000) != 0x0) && ($this->getRecord()->wall > 0);
     }
 
     public function isUpdateAvatarMessage(): bool
     {
-        return (($this->getRecord()->flags & 0b00010000) > 0) && ($this->getRecord()->owner > 0);
+        return (($this->getRecord()->flags & 0b00010000) != 0x0) && ($this->getRecord()->wall > 0);
     }
 
     public function isExplicit(): bool

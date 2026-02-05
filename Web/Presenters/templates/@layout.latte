@@ -241,9 +241,9 @@
                                 <a n:foreach="$thisUser->getPinnedClubs() as $pinnedclub" href="{$pinnedclub->getURL()}" class="link group_link">
                                     {ovk_proc_strtr($pinnedclub->getName(), 14)}
 
-                                    <object type="internal/link" style="white-space: normal;" id="sug{$pinnedclub->getId()}" n:if="$pinnedclub->getSuggestedPostsCount($thisUser) > 0 && $club->getWallType() == 2">
+                                    <object type="internal/link" style="white-space: normal;" id="sug{$pinnedclub->getId()}" n:if="$pinnedclub->getSuggestedPostsCount($thisUser) > 0 && $pinnedclub->getWallType() == 2">
                                         <a href="/club{$pinnedclub->getId()}/suggested" class="linkunderline">
-                                            (<b>{$club->getSuggestedPostsCount($thisUser)}</b>)
+                                            (<b>{$pinnedclub->getSuggestedPostsCount($thisUser)}</b>)
                                         </a>
                                     </object>
                                 </a>

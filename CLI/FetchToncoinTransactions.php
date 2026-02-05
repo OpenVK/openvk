@@ -61,7 +61,7 @@ class FetchToncoinTransactions extends Command
         }
 
         $testnetSubdomain = OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["testnet"] ? "testnet." : "";
-        $url              = "https://" . $testnetSubdomain . "toncenter.com/api/v2/getTransactions?";
+        $url              = "https://" . $testnetSubdomain . "toncenter.com/api/v3/transactions?";
 
         $opts = [
             "http" => [
@@ -75,8 +75,9 @@ class FetchToncoinTransactions extends Command
         $trLt      = $selection->lt ?? null;
 
         $data = http_build_query([
-            "address" => OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["address"],
+            "account" => OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["address"],
             "limit"   => 100,
+            "sort"    => 'desc',
             "hash"    => $trHash,
             "to_lt"   => $trLt,
         ]);
@@ -85,8 +86,8 @@ class FetchToncoinTransactions extends Command
         $response = json_decode($response, true);
 
         $header->writeln("Gonna up the balance of users");
-        foreach ($response["result"] as $transfer) {
-            preg_match('/' . OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["regex"] . '/', $transfer["in_msg"]["message"], $outputArray);
+        foreach ($response["transactions"] as $transfer) {
+            preg_match('/' . OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["regex"] . '/', $transfer["in_msg"]["message_content"]["decoded"]["comment"], $outputArray);
             $userId = ctype_digit($outputArray[1]) ? intval($outputArray[1]) : null;
             if (is_null($userId)) {
                 $header->writeln("Well, that's a donation. Thanks! XD");

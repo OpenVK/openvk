@@ -85,24 +85,28 @@ final class WallPresenter extends OpenVKPresenter
         $iterator = null;
         $count = 0;
         $type = $this->queryParam("type") ?? "all";
+        $page = (int) ($_GET["p"] ?? 1);
+        if ($page <= 0) {
+            $page = 1;
+        }
 
         switch ($type) {
             default:
             case "all":
-                $iterator = $this->posts->getPostsFromUsersWall($user, (int) ($_GET["p"] ?? 1));
+                $iterator = $this->posts->getPostsFromUsersWall($user, $page);
                 $count = $this->posts->getPostCountOnUserWall($user);
                 break;
             case "owners":
-                $iterator = $this->posts->getOwnersPostsFromWall($user, (int) ($_GET["p"] ?? 1));
+                $iterator = $this->posts->getOwnersPostsFromWall($user, $page);
                 $count = $this->posts->getOwnersCountOnUserWall($user);
                 break;
             case "others":
-                $iterator = $this->posts->getOthersPostsFromWall($user, (int) ($_GET["p"] ?? 1));
+                $iterator = $this->posts->getOthersPostsFromWall($user, $page);
                 $count = $this->posts->getOthersCountOnUserWall($user);
                 break;
             case "search":
                 $foundPosts = $this->posts->find($_GET["q"] ?? "", ["wall_id" => $user], ['type' => 'id', 'invert' => false]);
-                $iterator = $foundPosts->page((int) ($_GET["p"] ?? 1));
+                $iterator = $foundPosts->page($page);
                 $count = $foundPosts->size();
                 break;
         }
@@ -253,9 +257,9 @@ final class WallPresenter extends OpenVKPresenter
         }
     }
 
-    public function renderHashtagFeed(string $hashtag): void
+    public function renderHashtagFeed($hashtag): void
     {
-        $hashtag = rawurldecode($hashtag);
+        $hashtag = rawurldecode('' . $hashtag); // simpler than converting it with countless ifs
 
         $page  = (int) ($_GET["p"] ?? 1);
         $posts = $this->posts->getPostsByHashtag($hashtag, $page);
