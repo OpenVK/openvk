@@ -6,7 +6,6 @@
     },
     "require": {
         "php": "~7.3||~8.1",
-        "guzzlehttp/guzzle": "^6.5",
         "whichbrowser/parser": "dev-master",
         "james-heinrich/getid3": "^1.9@dev",
         "rybakit/msgpack": "dev-master",
