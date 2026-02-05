@@ -255,9 +255,9 @@ final class WallPresenter extends OpenVKPresenter
         }
     }
 
-    public function renderHashtagFeed(string $hashtag): void
+    public function renderHashtagFeed($hashtag): void
     {
-        $hashtag = rawurldecode($hashtag);
+        $hashtag = rawurldecode(''.$hashtag); // simpler than converting it with countless ifs
 
         $page  = (int) ($_GET["p"] ?? 1);
         $posts = $this->posts->getPostsByHashtag($hashtag, $page);
