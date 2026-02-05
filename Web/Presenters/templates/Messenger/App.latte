@@ -489,6 +489,29 @@
                             }
                         });
                     }
+
+                    if(m.removedNodes && m.removedNodes.length) {
+                        const previewBox = document.querySelector('#messenger-attachment-preview');
+                        if (!previewBox) return;
+
+                        m.removedNodes.forEach(node => {
+                            if(node.nodeType === 1 && node.matches && node.matches('.upload-item')) {
+                                const type = node.getAttribute('data-att-type') || node.getAttribute('data-type');
+                                const id = node.getAttribute('data-att-id') || node.getAttribute('data-id');
+
+                                if(type && id) {
+                                    const itemToRemove = previewBox.querySelector(`[data-att-type="${ type }"][data-att-id="${ id }"], [data-type="${ type }"][data-id="${ id }"]`);
+                                    if(itemToRemove) {
+                                        itemToRemove.remove();
+                                    }
+                                }
+                            }
+                        });
+
+                        if(previewBox.querySelectorAll('.upload-item').length === 0) {
+                            previewBox.style.display = 'none';
+                        }
+                    }
                 });
             });
             if(write) observer.observe(write, { childList: true, subtree: true });
