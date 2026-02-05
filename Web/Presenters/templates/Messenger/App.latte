@@ -95,6 +95,37 @@
                             data-bind="value: messageContent, event: { keydown: onTextareaKeyPress }"
                             name="message"
                             placeholder="{_enter_message}"></textarea>
+
+                    <div style="float: right; display: flex; flex-direction: column; margin-top:6px;">
+                        <a class='menu_toggler'>
+                            {_attach}
+                        </a>
+
+                        <div id="wallAttachmentMenu" class="hidden">
+                            <a class="header menu_toggler">{_attach}</a>
+                            <a id="__photoAttachment">
+                                <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
+                                {_photo}
+                            </a>
+                            <a id="__videoAttachment">
+                                <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
+                                {_video}
+                            </a>
+                            <a id="__audioAttachment">
+                                <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
+                                {_audio}
+                            </a>
+                            <a id="__documentAttachment">
+                                <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
+                                {_document}
+                            </a>
+                            <a id="__notesAttachment">
+                                <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-srt.png" />
+                                {_note}
+                            </a>
+                        </div>
+                    </div>
+
                     <button class="button" data-bind="click: sendMessage">{_send}</button>
                 </div>
                 <img class="ava" src="{$correspondent->getAvatarUrl('miniscule')}" alt="{$correspondent->getCanonicalName()}" />
