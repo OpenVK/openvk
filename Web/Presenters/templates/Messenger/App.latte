@@ -196,6 +196,12 @@
             };
             this.loadHistory = _ => {
                 window.Msg._loadHistory();
+                document.body.querySelectorAll(".bsdn").forEach(el => {
+                    if(!el.querySelector(".bdsn-hydrated")) {
+                        bsdnInitElement(el);
+                    }
+                }
+                );
             };
             
             this.onMessagesScroll   = (model, e) => {
