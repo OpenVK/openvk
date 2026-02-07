@@ -143,7 +143,9 @@ final class MessengerPresenter extends OpenVKPresenter
         $messages       = [];
         $correspondence = new Correspondence($this->user->identity, $correspondent);
         foreach ($correspondence->getMessages(1, $lastMsg === 0 ? null : $lastMsg, null, 0) as $message) {
-            $messages[] = $message->simplify();
+            $simple = $message->simplify();
+            $this->enrichAttachmentsWithHTML($message, $simple);
+            $messages[] = $simple;
         }
 
         header("Content-Type: application/json");
@@ -189,6 +191,37 @@ final class MessengerPresenter extends OpenVKPresenter
 
         header("HTTP/1.1 202 Accepted");
         header("Content-Type: application/json");
-        exit(json_encode($msg->simplify()));
+        $simple = $msg->simplify();
+        $this->enrichAttachmentsWithHTML($msg, $simple);
+        exit(json_encode($simple));
+    }
+
+    private function enrichAttachmentsWithHTML(Message $messageObj, array &$simplifiedArray): void
+    {
+        $children = iterator_to_array($messageObj->getChildren());
+        
+        foreach ($simplifiedArray['attachments'] as $index => &$attachmentData) {
+            if (!isset($children[$index])) continue;
+            
+            $originalObj = $children[$index];
+            $html = "";
+
+            if ($attachmentData['type'] === 'audio') {
+                $html = $this->getTemplatingEngine()->renderToString(
+                    # костыль жоский
+                    dirname(__FILE__) . '/templates/Audio/player.latte',
+                    [
+                        'audio' => $originalObj,
+                        'thisUser' => $this->user->identity,
+                        'hideButtons' => false,
+                        'club' => null
+                    ]
+                );
+            }
+
+            if ($html !== "") {
+                $attachmentData['html'] = $html;
+            }
+        }
     }
 }
