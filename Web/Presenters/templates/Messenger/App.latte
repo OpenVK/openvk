@@ -46,9 +46,8 @@
                                     </div>
                                 </div>
                                 <div data-bind="if: type === 'audio'" class="msg-attach-j-audio">
-                                    <div class="audio-preview">
-                                        <strong data-bind="text: audio.name"></strong>
-                                        <span data-bind="text: audio.artist ? ' — ' + audio.artist() : ''"></span>
+                                    <div style="width:100%;">
+                                        <div data-bind="html: html"></div>
                                     </div>
                                 </div>
                                 <div data-bind="if: type === 'note'" class="msg-attach-j-note">
