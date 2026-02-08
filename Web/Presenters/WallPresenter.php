@@ -52,7 +52,7 @@ final class WallPresenter extends OpenVKPresenter
     public function renderWall(int $user, bool $embedded = false): void
     {
         $owner = ($user < 0 ? (new Clubs()) : (new Users()))->get(abs($user));
-        if ($owner->isBanned() || !$owner->canBeViewedBy($this->user->identity)) {
+        if (!$owner || $owner->isBanned() || !$owner->canBeViewedBy($this->user->identity)) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
