@@ -11,7 +11,7 @@
 
 {block tabs}
     <div n:foreach="$options as $optionId => $optionName" class="tab" id="{$optionId == $option[0] ? 'activetabs' : 'ki'}">
-        <a id="{$optionId == $option[0] ? 'act_tab_a' : ''}" href="/poll{$pollId}/voters?option={base_convert($optionId, 10, 32)}">{$optionName}</a>
+        <a id="{$optionId == $option[0] ? 'act_tab_a' : ''}" href="/poll{$pollId}/voters?option={base_convert(''.$optionId, 10, 32)}">{$optionName}</a>
     </div>
 {/block}
 
