@@ -48,7 +48,7 @@ final class AuthPresenter extends OpenVKPresenter
 
     public function renderRegister(): void
     {
-        if (!is_null($this->user)) {
+        if (!is_null($this->user->identity)) {
             $this->redirect($this->user->identity->getURL());
         }
 
@@ -79,6 +79,10 @@ final class AuthPresenter extends OpenVKPresenter
 
         $this->template->referer = $referer;
 
+        $this->template->emailWhitelistEnabled = OPENVK_ROOT_CONF['openvk']['preferences']['registration']['emailWhitelist']['enable'] ?? false;
+        $this->template->emailWhitelisted = implode(', ', OPENVK_ROOT_CONF['openvk']['preferences']['registration']['emailWhitelist']['allowedHosts'] ?? ['none']);
+
+
         if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $this->assertCaptchaCheckPassed();
 
@@ -88,6 +92,14 @@ final class AuthPresenter extends OpenVKPresenter
 
             if (!$this->ipValid()) {
                 $this->flashFail("err", tr("suspicious_registration_attempt"), tr("suspicious_registration_attempt_comment"));
+            }
+
+            if (OPENVK_ROOT_CONF['openvk']['preferences']['registration']['emailWhitelist']['enable'] ?? false) {
+                $domain = explode("@", $this->postParam("email"));
+
+                if (!in_array($domain[1], OPENVK_ROOT_CONF['openvk']['preferences']['registration']['emailWhitelist']['allowedHosts'])) {
+                    $this->flashFail("err", tr("failed_to_register"), tr("email_not_in_whitelist"));
+                }
             }
 
             if (!Validator::i()->emailValid($this->postParam("email"))) {
@@ -167,7 +179,7 @@ final class AuthPresenter extends OpenVKPresenter
     {
         $redirUrl = $this->requestParam("jReturnTo");
 
-        if (!is_null($this->user)) {
+        if (!is_null($this->user->identity)) {
             $this->redirect($redirUrl ?? $this->user->identity->getURL());
         }
 
@@ -193,7 +205,7 @@ final class AuthPresenter extends OpenVKPresenter
             $secret = $user->related("profiles.user")->fetch()["2fa_secret"];
             $code   = $this->postParam("code");
             if (!is_null($secret)) {
-                $this->template->_template = "Auth/LoginSecondFactor.xml";
+                $this->template->_template = "Auth/LoginSecondFactor.latte";
                 $this->template->login     = $this->postParam("login");
                 $this->template->password  = $this->postParam("password");
 
@@ -287,7 +299,7 @@ final class AuthPresenter extends OpenVKPresenter
             $this->notFound();
         }
 
-        if (!is_null($this->user)) {
+        if (!is_null($this->user->identity)) {
             $this->redirect($this->user->identity->getURL());
         }
 
@@ -328,7 +340,7 @@ final class AuthPresenter extends OpenVKPresenter
 
     public function renderResendEmail(): void
     {
-        if (!is_null($this->user) && $this->user->identity->isActivated()) {
+        if (!is_null($this->user->identity) && $this->user->identity->isActivated()) {
             $this->redirect($this->user->identity->getURL());
         }
 

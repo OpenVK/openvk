@@ -40,6 +40,8 @@ final class VideosPresenter extends OpenVKPresenter
             "page"    => (int) ($this->queryParam("p") ?? 1),
             "amount"  => null,
             "perPage" => 7,
+            "tidy"    => false,
+            "atTop"   => false,
         ];
     }
 
@@ -126,7 +128,7 @@ final class VideosPresenter extends OpenVKPresenter
         if (!$video) {
             $this->notFound();
         }
-        if (is_null($this->user) || $this->user->id !== $owner) {
+        if (is_null($this->user->identity) || $this->user->id !== $owner) {
             $this->flashFail("err", tr("access_denied_error"), tr("access_denied_error_description"));
         }
 
@@ -180,7 +182,7 @@ final class VideosPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
-        if (!is_null($this->user)) {
+        if (!is_null($this->user->identity)) {
             $video->toggleLike($this->user->identity);
         }
 

@@ -9,9 +9,7 @@ use openvk\Web\Models\Repositories\Users;
 use openvk\Web\Models\Entities\Notifications\CoinsTransferNotification;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Nette\Utils\ImageException;
 
 define("NANOTON", 1000000000);
 
@@ -23,12 +21,15 @@ class FetchToncoinTransactions extends Command
 
     public function __construct()
     {
+        parent::__construct();
+
         $ctx = DatabaseConnection::i()->getContext();
-        if (in_array("cryptotransactions", $ctx->getStructure()->getTables())) {
+        if (array_any(
+            $ctx->getStructure()->getTables(),
+            fn($value) => $value["name"] === "cryptotransactions"
+        )) {
             $this->transactions = $ctx->table("cryptotransactions");
         }
-
-        parent::__construct();
     }
 
     protected function configure(): void
@@ -48,13 +49,19 @@ class FetchToncoinTransactions extends Command
         ]);
 
         if (!OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["enabled"]) {
-            $header->writeln("Sorry, but you handn't enabled the TON support in your config file yet.");
+            $header->writeln("Sorry, but you haven't enabled the TON support in your config file yet.");
+
+            return Command::FAILURE;
+        }
+
+        if (!isset($this->transactions)) {
+            $header->writeln("The 'cryptotransactions' table can't be found in the database.");
 
             return Command::FAILURE;
         }
 
         $testnetSubdomain = OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["testnet"] ? "testnet." : "";
-        $url              = "https://" . $testnetSubdomain . "toncenter.com/api/v2/getTransactions?";
+        $url              = "https://" . $testnetSubdomain . "toncenter.com/api/v3/transactions?";
 
         $opts = [
             "http" => [
@@ -68,8 +75,9 @@ class FetchToncoinTransactions extends Command
         $trLt      = $selection->lt ?? null;
 
         $data = http_build_query([
-            "address" => OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["address"],
+            "account" => OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["address"],
             "limit"   => 100,
+            "sort"    => 'desc',
             "hash"    => $trHash,
             "to_lt"   => $trLt,
         ]);
@@ -78,8 +86,8 @@ class FetchToncoinTransactions extends Command
         $response = json_decode($response, true);
 
         $header->writeln("Gonna up the balance of users");
-        foreach ($response["result"] as $transfer) {
-            preg_match('/' . OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["regex"] . '/', $transfer["in_msg"]["message"], $outputArray);
+        foreach ($response["transactions"] as $transfer) {
+            preg_match('/' . OPENVK_ROOT_CONF["openvk"]["preferences"]["ton"]["regex"] . '/', $transfer["in_msg"]["message_content"]["decoded"]["comment"], $outputArray);
             $userId = ctype_digit($outputArray[1]) ? intval($outputArray[1]) : null;
             if (is_null($userId)) {
                 $header->writeln("Well, that's a donation. Thanks! XD");
@@ -95,8 +103,8 @@ class FetchToncoinTransactions extends Command
                     $header->writeln($value . " coins are added to " . $user->getId() . " user id");
                     $this->transactions->insert([
                         "id"   => null,
-                        "hash" => $transfer["transaction_id"]["hash"],
-                        "lt"   => $transfer["transaction_id"]["lt"],
+                        "hash" => $transfer["hash"],
+                        "lt"   => $transfer["lt"],
                     ]);
                 }
             }

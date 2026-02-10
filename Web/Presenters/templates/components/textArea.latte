@@ -1,0 +1,122 @@
+{php if(!isset($GLOBALS["textAreaCtr"])) $GLOBALS["textAreaCtr"] = 10;} {* FIXME(WerySkok): using $GLOBALS seems to be a dirty hack, but I don't know how to replace them *}
+{php $textAreaId = ($post ?? NULL) === NULL ? (++$GLOBALS["textAreaCtr"]) : $post->getId()}
+{var $textAreaId = ($custom_id ?? NULL) === NULL ? $textAreaId : $custom_id}
+
+{* default variables *}
+{var $anonHide = $anonHide ?? false}
+
+<div id="write" class='model_content_textarea' style="padding: 5px 0;" data-id="{isset($owner) ? (gettype($owner) == 'integer' ? $owner : $owner->getId())}">
+    <form action="{$route}" method="post" enctype="multipart/form-data" style="margin:0;">
+        <textarea id="wall-post-input{$textAreaId}" placeholder="{_write}" name="text" style="width: 100%;resize: none;" class="small-textarea" autocomplete="off"></textarea>
+        <div>
+            <!-- padding to fix <br/> bug -->
+        </div>
+        <div id="post-buttons{$textAreaId}" class='post-buttons' style="display: none;">
+            <div class="post-horizontal"></div>
+            <div class="post-vertical"></div>
+            <div class="post-has-poll">
+                {_poll}
+            </div>
+            <div class="post-has-geo"></div>
+            <div class="post-source"></div>
+
+            <div n:if="$postOpts ?? true" class="post-opts">
+                {var $anonEnabled = \OPENVK_ROOT_CONF['openvk']['preferences']['wall']['anonymousPosting']['enable']}
+
+                {if !is_null($thisUser) && !is_null($club ?? NULL) && isset($owner) && $owner < 0}
+                    {if $club->canBeModifiedBy($thisUser)}
+                        {var $anonHide = true}
+
+                        <script>
+                            function onWallAsGroupClick(el) {
+                                document.querySelector("#forceSignOpt").style.display = el.checked ? "block" : "none";
+                                
+                                {if $anonEnabled}
+                                    document.querySelector("#octoberAnonOpt").style.display = el.checked ? "none" : "block";
+                                {/if}
+                            }
+                        </script>
+                        
+                        <label>
+                            <input type="checkbox" name="as_group" onchange="onWallAsGroupClick(this)" checked /> {_post_as_group}
+                        </label>
+                        <label id="forceSignOpt" style="display: block;">
+                            <input type="checkbox" name="force_sign" /> {_add_signature}
+                        </label>
+                    {/if}
+                {/if}
+                
+                <label n:if="$anonEnabled" id="octoberAnonOpt" {if $anonHide}style="display: none;"{/if}>
+                    <input type="checkbox" name="anon" /> {_as_anonymous}
+                </label>
+                
+                <label>
+                    <input type="checkbox" name="nsfw" /> {_contains_nsfw}
+                </label>
+            </div>
+
+            <div n:if="!($postOpts ?? true) && !is_null($thisUser) && !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)" class="post-opts">
+                <label>
+                    <input type="checkbox" name="as_group" /> {_comment_as_group}
+                </label>
+            </div>
+
+            <input type="hidden" name="horizontal_attachments" value="" autocomplete="off" />
+            <input type="hidden" name="vertical_attachments" value="" autocomplete="off" />
+            <input type="hidden" name="poll" value="none" autocomplete="off" />
+            <input type="hidden" id="source" name="source" value="none" autocomplete="off" />
+            <input type="hidden" name="geo" value="" autocomplete="off" />
+            <input type="hidden" name="type" value="1" autocomplete="off" />
+            <input type="hidden" name="hash" value="{$csrfToken}" />
+            <br/>
+            <input type="submit" value="{_write}" class="button" />
+            <div style="float: right; display: flex; flex-direction: column;">
+                <a class='menu_toggler'>
+                    {_attach}
+                </a>
+                
+                <div id="wallAttachmentMenu" class="hidden">
+                    <a class="header menu_toggler">
+                        {_attach}
+                    </a>
+                    <a id="__photoAttachment" {if !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}data-club="{$club->getId()}"{/if}>
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
+                        {_photo}
+                    </a>
+                    <a id="__videoAttachment">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
+                        {_video}
+                    </a>
+                    <a id="__audioAttachment">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
+                        {_audio}
+                    </a>
+                    <a n:if="$docs ?? true" id="__documentAttachment" {if !is_null($club ?? NULL) && $club->canBeModifiedBy($thisUser)}data-club="{$club->getRealId()}"{/if}>
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
+                        {_document}
+                    </a>
+                    <a n:if="$notes ?? false" id="__notesAttachment">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-srt.png" />
+                        {_note}
+                    </a>
+                    <a n:if="$graffiti ?? false" onclick="initGraffiti(event);">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/draw-brush.png" />
+                        {_graffiti}
+                    </a>
+                    <a n:if="$polls ?? false" onclick="initPoll(event);">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/office-chart-bar-stacked.png" />
+                        {_poll}
+                    </a>
+                    <a n:if="$geo ?? false" id="__geoAttacher">
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/apps/amarok.png" />
+                        {_geo_place}
+                    </a>
+                    <a n:if="$hasSource ?? false" id='__sourceAttacher'>
+                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/actions/insert-link.png" />
+                        {_source}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

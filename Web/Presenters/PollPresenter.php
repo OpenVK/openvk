@@ -34,14 +34,14 @@ final class PollPresenter extends OpenVKPresenter
         $this->template->votes    = $poll->getVoterCount();
         $this->template->meta     = $poll->getMetaDescription();
         $this->template->ended    = $ended = $poll->hasEnded();
-        if ((is_null($this->user) || $poll->canVote($this->user->identity)) && !$ended) {
+        if ((is_null($this->user->identity) || $poll->canVote($this->user->identity)) && !$ended) {
             $this->template->options = $poll->getOptions();
 
-            $this->template->_template = "Poll/Poll.xml";
+            $this->template->_template = "Poll/Poll.latte";
             return;
         }
 
-        if (is_null($this->user)) {
+        if (is_null($this->user->identity)) {
             $this->template->voted   = false;
             $this->template->results = $poll->getResults();
         } else {
@@ -49,7 +49,7 @@ final class PollPresenter extends OpenVKPresenter
             $this->template->results = $poll->getResults($this->user->identity);
         }
 
-        $this->template->_template = "Poll/PollResults.xml";
+        $this->template->_template = "Poll/PollResults.latte";
     }
 
     public function renderVoters(int $pollId): void

@@ -73,7 +73,7 @@ class Themepacks implements \ArrayAccess
 
     public function offsetGet($offset): mixed
     {
-        return $this->loadedThemepacks[$offset];
+        return $this->loadedThemepacks[$offset] ?? null;
     }
 
     public function offsetSet($offset, $value): void

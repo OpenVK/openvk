@@ -1,6 +1,0 @@
-{extends "@default.xml"}
-{var $post = $notification->getModel(0)}
-
-{block under}
-    {_nt_yours_feminitive_adjective} <a href="/photo{$post->getPrettyId()}">{_nt_photo_instrumental}</a>
-{/block}

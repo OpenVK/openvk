@@ -17,7 +17,7 @@ final class DocumentsPresenter extends OpenVKPresenter
     {
         $this->assertUserLoggedIn();
 
-        $this->template->_template = "Documents/List.xml";
+        $this->template->_template = "Documents/List.latte";
         if ($owner_id > 0) {
             $this->notFound();
         }
@@ -61,7 +61,7 @@ final class DocumentsPresenter extends OpenVKPresenter
             $this->template->page  = $page;
             $this->template->count = $docs->size();
             $this->template->pagesCount = ceil($this->template->count / OPENVK_DEFAULT_PER_PAGE);
-            $this->template->_template = "Documents/ApiGetContext.xml";
+            $this->template->_template = "Documents/ApiGetContext.latte";
             return;
         }
 
@@ -85,6 +85,8 @@ final class DocumentsPresenter extends OpenVKPresenter
             "page"    => $page,
             "amount"  => sizeof($this->template->docs),
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
+            "tidy"    => false,
+            "atTop"   => false,
         ];
     }
 

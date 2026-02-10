@@ -27,7 +27,7 @@ final class WallPresenter extends OpenVKPresenter
 
     private function logPostView(Post $post, int $wall): void
     {
-        if (is_null($this->user)) {
+        if (is_null($this->user->id)) {
             return;
         }
 
@@ -52,7 +52,7 @@ final class WallPresenter extends OpenVKPresenter
     public function renderWall(int $user, bool $embedded = false): void
     {
         $owner = ($user < 0 ? (new Clubs()) : (new Users()))->get(abs($user));
-        if ($owner->isBanned() || !$owner->canBeViewedBy($this->user->identity)) {
+        if (!$owner || $owner->isBanned() || !$owner->canBeViewedBy($this->user->identity)) {
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
@@ -60,7 +60,7 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
-        if (is_null($this->user)) {
+        if (is_null($this->user->identity)) {
             $canPost = false;
         } elseif ($user > 0) {
             $canPost = $owner->getPrivacyPermission("wall.write", $this->user->identity);
@@ -75,7 +75,7 @@ final class WallPresenter extends OpenVKPresenter
         }
 
         if ($embedded == true) {
-            $this->template->_template = "components/wall.xml";
+            $this->template->_template = "components/wall.latte";
         }
         $this->template->oObj = $owner;
         if ($user < 0) {
@@ -85,24 +85,29 @@ final class WallPresenter extends OpenVKPresenter
         $iterator = null;
         $count = 0;
         $type = $this->queryParam("type") ?? "all";
+        $page = (int) ($_GET["p"] ?? 1);
+        if ($page <= 0) {
+            $page = 1;
+        }
 
         switch ($type) {
             default:
             case "all":
-                $iterator = $this->posts->getPostsFromUsersWall($user, (int) ($_GET["p"] ?? 1));
+                $iterator = $this->posts->getPostsFromUsersWall($user, $page);
                 $count = $this->posts->getPostCountOnUserWall($user);
                 break;
             case "owners":
-                $iterator = $this->posts->getOwnersPostsFromWall($user, (int) ($_GET["p"] ?? 1));
+                $iterator = $this->posts->getOwnersPostsFromWall($user, $page);
                 $count = $this->posts->getOwnersCountOnUserWall($user);
                 break;
             case "others":
-                $iterator = $this->posts->getOthersPostsFromWall($user, (int) ($_GET["p"] ?? 1));
+                $iterator = $this->posts->getOthersPostsFromWall($user, $page);
                 $count = $this->posts->getOthersCountOnUserWall($user);
                 break;
             case "search":
-                $iterator = $this->posts->find($_GET["q"] ?? "", ["wall_id" => $user]);
-                $count = $iterator->size();
+                $foundPosts = $this->posts->find($_GET["q"] ?? "", ["wall_id" => $user], ['type' => 'id', 'invert' => false]);
+                $iterator = $foundPosts->page($page);
+                $count = $foundPosts->size();
                 break;
         }
 
@@ -116,6 +121,8 @@ final class WallPresenter extends OpenVKPresenter
             "page"    => (int) ($_GET["p"] ?? 1),
             "amount"  => sizeof($this->template->posts),
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
+            "tidy"    => false,
+            "atTop"   => false,
         ];
 
 
@@ -130,7 +137,7 @@ final class WallPresenter extends OpenVKPresenter
     public function renderRSS(int $user): void
     {
         $owner = ($user < 0 ? (new Clubs()) : (new Users()))->get(abs($user));
-        if (is_null($this->user)) {
+        if (is_null($this->user->identity)) {
             $canPost = false;
         } elseif ($user > 0) {
             if (!$owner->isBanned() && $owner->canBeViewedBy($this->user->identity)) {
@@ -199,6 +206,8 @@ final class WallPresenter extends OpenVKPresenter
             "page"    => (int) ($_GET["p"] ?? 1),
             "amount"  => $posts->page((int) ($_GET["p"] ?? 1), $perPage)->count(),
             "perPage" => $perPage,
+            "tidy"    => false,
+            "atTop"   => false,
         ];
         $this->template->posts = [];
         foreach ($posts->page((int) ($_GET["p"] ?? 1), $perPage) as $post) {
@@ -233,22 +242,24 @@ final class WallPresenter extends OpenVKPresenter
         $posts = DatabaseConnection::i()->getConnection()->query("SELECT `posts`.`id` " . $queryBase . " ORDER BY `created` DESC LIMIT " . $pPage . " OFFSET " . ($page - 1) * $pPage);
         $count = DatabaseConnection::i()->getConnection()->query("SELECT COUNT(*) " . $queryBase)->fetch()->{"COUNT(*)"};
 
-        $this->template->_template     = "Wall/Feed.xml";
+        $this->template->_template     = "Wall/Feed.latte";
         $this->template->globalFeed    = true;
         $this->template->paginatorConf = (object) [
             "count"   => $count,
             "page"    => (int) ($_GET["p"] ?? 1),
             "amount"  => $posts->getRowCount(),
             "perPage" => $pPage,
+            "tidy"    => false,
+            "atTop"   => false,
         ];
         foreach ($posts as $post) {
             $this->template->posts[] = $this->posts->get($post->id);
         }
     }
 
-    public function renderHashtagFeed(string $hashtag): void
+    public function renderHashtagFeed($hashtag): void
     {
-        $hashtag = rawurldecode($hashtag);
+        $hashtag = rawurldecode('' . $hashtag); // simpler than converting it with countless ifs
 
         $page  = (int) ($_GET["p"] ?? 1);
         $posts = $this->posts->getPostsByHashtag($hashtag, $page);
@@ -261,6 +272,8 @@ final class WallPresenter extends OpenVKPresenter
             "page"    => $page,
             "amount"  => $count,
             "perPage" => OPENVK_DEFAULT_PER_PAGE,
+            "tidy"    => false,
+            "atTop"   => false,
         ];
     }
 
@@ -310,9 +323,10 @@ final class WallPresenter extends OpenVKPresenter
         $flags = 0;
         if ($this->postParam("as_group") === "on" && $wallOwner instanceof Club && $wallOwner->canBeModifiedBy($this->user->identity)) {
             $flags |= 0b10000000;
-        }
-        if ($this->postParam("force_sign") === "on") {
-            $flags |= 0b01000000;
+
+            if ($this->postParam("force_sign") === "on") {
+                $flags |= 0b01000000;
+            }
         }
 
         $horizontal_attachments = [];
@@ -499,7 +513,7 @@ final class WallPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("forbidden"));
         }
 
-        if (!is_null($this->user)) {
+        if (!is_null($this->user->identity)) {
             $post->toggleLike($this->user->identity);
         }
 
@@ -536,7 +550,7 @@ final class WallPresenter extends OpenVKPresenter
             $groupId = $this->postParam("groupId");
         }
 
-        if (!is_null($this->user)) {
+        if (!is_null($this->user->identity)) {
             $nPost = new Post();
 
             if ($where == "wall") {
@@ -554,7 +568,7 @@ final class WallPresenter extends OpenVKPresenter
                     $flags |= 0b10000000;
                 }
 
-                if ($this->postParam("signed") == 1) {
+                if ($this->postParam("asGroup") == 1 && $this->postParam("signed") == 1) {
                     $flags |= 0b01000000;
                 }
 

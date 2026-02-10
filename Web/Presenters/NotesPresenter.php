@@ -115,7 +115,7 @@ final class NotesPresenter extends OpenVKPresenter
         if (!$note || $note->getOwner()->getId() !== $owner || $note->isDeleted()) {
             $this->notFound();
         }
-        if (is_null($this->user) || !$note->canBeModifiedBy($this->user->identity)) {
+        if (is_null($this->user->identity) || !$note->canBeModifiedBy($this->user->identity)) {
             $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
         }
         $this->template->note = $note;
@@ -148,7 +148,7 @@ final class NotesPresenter extends OpenVKPresenter
         if ($note->getOwner()->getId() . "_" . $note->getId() !== $owner . "_" . $id || $note->isDeleted()) {
             $this->notFound();
         }
-        if (is_null($this->user) || !$note->canBeModifiedBy($this->user->identity)) {
+        if (is_null($this->user->identity) || !$note->canBeModifiedBy($this->user->identity)) {
             $this->flashFail("err", tr("error_access_denied_short"), tr("error_access_denied"));
         }
 

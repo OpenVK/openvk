@@ -1,0 +1,67 @@
+{extends "../@layout.latte"}
+{block title}{_wall}{/block}
+
+{block header}
+    <a href="{$oObj->getURL()}">{$oObj->getCanonicalName()}</a>
+    »
+    {_wall} 
+    <div style="float:right;">
+        <span>
+            <b>{tr("wall", $count)}</b>
+        </span>
+    </div>
+{/block}
+
+{block content}
+    <div class="content_divider">
+        <div>
+            <div class="tabs">
+                <div n:attr="id => ($type != 'all' ? 'ki' : 'activetabs')" class="tab">
+                    <a n:attr="id => ($type != 'all' ? 'ki' : 'act_tab_a')" href="/wall{$owner}">{_all_posts}</a>
+                </div>
+                <div n:attr="id => ($type != 'owners' ? 'ki' : 'activetabs')" class="tab">
+                    <a n:attr="id => ($type != 'owners' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=owners">{isset($club) ? tr("clubs_posts") : tr("users_posts", ovk_proc_strtr($oObj->getFirstName(), 20))}</a>
+                </div>
+                <div n:attr="id => ($type != 'others' ? 'ki' : 'activetabs')" class="tab">
+                    <a n:attr="id => ($type != 'others' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=others">{_others_posts}</a>
+                </div>
+                <div n:attr="id => ($type != 'search' ? 'ki' : 'activetabs')" class="tab">
+                    <a n:attr="id => ($type != 'search' ? 'ki' : 'act_tab_a')" href="/wall{$owner}?type=search">{_header_search}</a>
+                </div>
+            </div>
+
+            <div n:if="$canPost && $type == 'all'" class="content_subtitle">
+                {include "../components/textArea.latte", route => "/wall$owner/makePost", graffiti => true, polls => true, notes => true, hasSource => true, geo => true}
+            </div>
+            <div n:if="$type == 'search'" class="content_subtitle">
+                <form action="/wall{$owner}?type=search" method="get" enctype="multipart/form-data" class="wall_search">
+                    <input type="text" name="q" autocomplete="off" value="{$_GET['q']}" />
+                    <input type="submit" value="{_header_search}" class="button" />
+                </form>
+            </div>
+            
+            <div class="content scroll_container">
+                {if sizeof($posts) > 0}
+                    <div class='scroll_node' n:foreach='$posts as $post'>
+                        <a name="postGarter={$post->getId()}"></a>
+                        
+                        {include "../components/post.latte", post => $post, commentSection => true}
+                    </div>
+                    {include "../components/paginator.latte", conf => $paginatorConf}
+                {elseif $type != "search"}
+                    {_no_posts_abstract}
+                {else}
+                    {_no_found}
+                {/if}
+            </div>
+
+            <script n:if='$type == "search" && sizeof($posts) > 0 && !empty($_GET["q"])'>
+                function __scrollHook(page) {
+                    highlightText({$_GET["q"]}, '.content', ['.text'])
+                }
+
+                __scrollHook()
+            </script>
+        </div>
+    </div>
+{/block}

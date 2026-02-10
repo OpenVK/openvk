@@ -17,7 +17,7 @@ final class AboutPresenter extends OpenVKPresenter
 
     public function renderIndex(): void
     {
-        if (!is_null($this->user)) {
+        if (!is_null($this->user->identity)) {
             if ($this->user->identity->getMainPage()) {
                 $this->redirect("/feed");
             } else {
@@ -136,7 +136,8 @@ final class AboutPresenter extends OpenVKPresenter
         . "Disallow: *hash=\n"
         . "Disallow: *?jReturnTo=\n"
         . "Disallow: /method/*\n"
-        . "Disallow: /token*";
+        . "Disallow: /token*\n"
+        . "Disallow: /oauth/token*";
         header("Content-Type: text/plain");
         exit($text);
     }

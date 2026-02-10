@@ -120,6 +120,7 @@ td,
 th,
 #votesBalance, 
 #news,
+#bday,
 .paginator a.active,
 .paginator a:hover,
 .topic-list-item,
@@ -139,7 +140,8 @@ th,
 .bigPlayer,
 input[type="number"],
 .like_tooltip_wrapper .like_tooltip_body,
-.like_tooltip_wrapper .like_tooltip_head {
+.like_tooltip_wrapper .like_tooltip_head,
+.gift_cat_row:not(:last-child) {
     border-color: #2c2640 !important;
 }
 
@@ -188,7 +190,8 @@ hr {
 }
 
 .tab:hover,
-.ntSelect:hover {
+.ntSelect:hover,
+.button:active {
     background-color: #40375e;
 }
 
@@ -272,10 +275,17 @@ a,
     background-color: #163f13;
 }
 
+.gift_sel > .gift_price,
+.gift_sel > .gift_limit {
+    background-color: rgba(56, 48, 82, .75)
+}
+
 h4,
 .content_title_expanded,
 .summaryBar .summary,
-.content_title_unexpanded {
+.content_title_unexpanded,
+#news b,
+#bday b {
     color: #7c94c5;
 }
 
@@ -314,6 +324,7 @@ td.v,
 tr.v,
 #votesBalance,
 #news,
+#bday,
 .expand_button,
 #userContent blockquote,
 .tippy-box[data-theme~="vk"],
@@ -328,11 +339,11 @@ tr.v,
 }
 
 .content_title_expanded {
-    background-image: url("/themepack/midnight/0.0.4.0/resource/flex_arrow_open.png") !important;
+    background-image: url("/themepack/midnight/0.0.4.1/resource/flex_arrow_open.png") !important;
 }
 
 .content_title_unexpanded {
-    background-image: url("/themepack/midnight/0.0.4.0/resource/flex_arrow_shut.gif") !important;
+    background-image: url("/themepack/midnight/0.0.4.1/resource/flex_arrow_shut.gif") !important;
 }
 
 .ovk-video>.preview,
@@ -359,17 +370,17 @@ tr.h {
 
 .page_yellowheader {
     color: #c6d2e8;
-    background-image: url("/themepack/midnight/0.0.4.0/resource/header_purple.png") !important;
+    background-image: url("/themepack/midnight/0.0.4.1/resource/header_purple.png") !important;
     background-color: #231f34;
     border-color: #231f34;
 }
 
 .page_header {
-    background-image: url("/themepack/midnight/0.0.4.0/resource/header.png") !important;
+    background-image: url("/themepack/midnight/0.0.4.1/resource/header.png") !important;
 }
 
 .page_custom_header {
-    background-image: url("/themepack/midnight/0.0.4.0/resource/header_custom.png") !important;
+    background-image: url("/themepack/midnight/0.0.4.1/resource/header_custom.png") !important;
 }
 
 .page_yellowheader span,
@@ -408,11 +419,11 @@ select,
 }
 
 input[type="checkbox"] {
-    background-image: url("/themepack/midnight/0.0.4.0/resource/checkbox.png") !important;
+    background-image: url("/themepack/midnight/0.0.4.1/resource/checkbox.png") !important;
 }
 
 input[type="radio"] {
-    background-image: url("/themepack/midnight/0.0.4.0/resource/radio.png") !important;
+    background-image: url("/themepack/midnight/0.0.4.1/resource/radio.png") !important;
 }
 
 .header_navigation .link, .header_navigation .header_divider_stick {
@@ -420,20 +431,24 @@ input[type="radio"] {
 }
 
 .heart {
-    background-image: url("/themepack/midnight/0.0.4.0/resource/like.gif") !important;
+    background-image: url("/themepack/midnight/0.0.4.1/resource/like.gif") !important;
 }
 
 .pinned-mark,
 .post-author .pin {
-    background-image: url("/themepack/midnight/0.0.4.0/resource/pin.png") !important;
+    background-image: url("/themepack/midnight/0.0.4.1/resource/pin.png") !important;
 }
 
 .repost-icon {
-    background-image: url("/themepack/midnight/0.0.4.0/resource/published.gif") !important;
+    background-image: url("/themepack/midnight/0.0.4.1/resource/published.gif") !important;
 }
 
 .post-author .delete {
-    background-image: url("/themepack/midnight/0.0.4.0/resource/input_clear.gif") !important;
+    background-image: url("/themepack/midnight/0.0.4.1/resource/input_clear.gif") !important;
+}
+
+.report {
+    background-image: url("/themepack/midnight/0.0.4.1/resource/report.png") !important;
 }
 
 .user-alert {
@@ -466,7 +481,7 @@ input[type="radio"] {
 }
 
 #backdropEditor {
-    background-image: url("/themepack/midnight/0.0.4.0/resource/backdrop-editor.gif") !important;
+    background-image: url("/themepack/midnight/0.0.4.1/resource/backdrop-editor.gif") !important;
     border-color: #473e66 !important;
 }
 

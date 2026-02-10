@@ -57,6 +57,9 @@ openvk:
         registration:
             enable: true
             disablingReason: ""
+            emailWhitelist:
+                enable: false
+                allowedHosts: []
         support:
             supportName: "Agent"
             adminAccount: 1 # Change this ok
@@ -91,6 +94,8 @@ openvk:
             all: false
             photos: false
             videos: false
+            audios: false
+            documents: false
             messenger: false
             user: false
             group: false

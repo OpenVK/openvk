@@ -95,7 +95,7 @@ abstract class OpenVKPresenter extends SimplePresenter
 
     protected function assertUserLoggedIn(bool $returnUrl = true): void
     {
-        if (is_null($this->user)) {
+        if (is_null($this->user->identity)) {
             $loginUrl = "/login";
             if ($returnUrl && $_SERVER["REQUEST_METHOD"] === "GET") {
                 $currentUrl = function_exists("get_current_url") ? get_current_url() : $_SERVER["REQUEST_URI"];
@@ -110,7 +110,7 @@ abstract class OpenVKPresenter extends SimplePresenter
 
     protected function hasPermission(string $model, string $action, int $context): bool
     {
-        if (is_null($this->user)) {
+        if (is_null($this->user->identity)) {
             if ($model !== "user") {
                 $this->flash("info", tr("login_required_error"), tr("login_required_error_comment"));
 
@@ -197,9 +197,7 @@ abstract class OpenVKPresenter extends SimplePresenter
     public function getTemplatingEngine(): TemplatingEngine
     {
         $latte = parent::getTemplatingEngine();
-        $latte->addFilter("translate", function ($s) {
-            return tr($s);
-        });
+        $latte->addExtension(new \Latte\Essential\TranslatorExtension(tr(...)));
 
         return $latte;
     }
@@ -241,7 +239,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             if ($this->user->identity->isDeleted() && !$this->deactivationTolerant) {
                 if ($this->user->identity->isDeactivated()) {
                     header("HTTP/1.1 403 Forbidden");
-                    $this->getTemplatingEngine()->render(__DIR__ . "/templates/@deactivated.xml", [
+                    $this->getTemplatingEngine()->render(__DIR__ . "/templates/@deactivated.latte", [
                         "thisUser"    => $this->user->identity,
                         "csrfToken"   => $GLOBALS["csrfToken"],
                         "isTimezoned" => Session::i()->get("_timezoneOffset"),
@@ -257,7 +255,7 @@ abstract class OpenVKPresenter extends SimplePresenter
 
             if ($this->user->identity->isBanned() && !$this->banTolerant) {
                 header("HTTP/1.1 403 Forbidden");
-                $this->getTemplatingEngine()->render(__DIR__ . "/templates/@banned.xml", [
+                $this->getTemplatingEngine()->render(__DIR__ . "/templates/@banned.latte", [
                     "thisUser"    => $this->user->identity,
                     "csrfToken"   => $GLOBALS["csrfToken"],
                     "isTimezoned" => Session::i()->get("_timezoneOffset"),
@@ -268,7 +266,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             # ето для емейл уже надо (и по хорошему надо бы избавится от повторяющегося кода мда)
             if (!$this->user->identity->isActivated() && !$this->activationTolerant) {
                 header("HTTP/1.1 403 Forbidden");
-                $this->getTemplatingEngine()->render(__DIR__ . "/templates/@email.xml", [
+                $this->getTemplatingEngine()->render(__DIR__ . "/templates/@email.latte", [
                     "thisUser"    => $this->user->identity,
                     "csrfToken"   => $GLOBALS["csrfToken"],
                     "isTimezoned" => Session::i()->get("_timezoneOffset"),
@@ -304,7 +302,14 @@ abstract class OpenVKPresenter extends SimplePresenter
                 $this->template->isBdayToday = $bdays["isToday"];
                 $this->template->bdayUsers = $bdays["users"];
                 $this->template->bdayCount = sizeof($bdays["users"]);
+            } else {
+                $this->template->showBday = false;
             }
+        } else {
+            $this->user = (object) [];
+            $this->user->identity     = null;
+            $this->user->id           = null;
+            $this->template->thisUser = null;
         }
 
         header("X-OpenVK-User-Validated: $userValidated");
@@ -321,7 +326,7 @@ abstract class OpenVKPresenter extends SimplePresenter
             }
         }
 
-        if ($_SERVER['HTTP_X_OPENVK_AJAX_QUERY'] == '1' && $this->user->identity) {
+        if (isset($_SERVER['HTTP_X_OPENVK_AJAX_QUERY']) && $_SERVER['HTTP_X_OPENVK_AJAX_QUERY'] == '1' && $this->user->identity) {
             error_reporting(0);
             header('Content-Type: text/plain; charset=UTF-8');
         }

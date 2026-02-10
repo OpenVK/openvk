@@ -243,14 +243,17 @@ final class VKAPIPresenter extends OpenVKPresenter
                 $this->fail(5, "User authorization failed: roaming mechanism is selected, but user is not logged in.", $object, $method);
             } else {
                 $identity = $this->user->identity;
+                $platform = null;
             }
         } else {
             if (is_null($this->requestParam("access_token"))) {
                 $identity = null;
+                $platform = null;
             } else {
                 $token = (new APITokens())->getByCode($this->requestParam("access_token"));
                 if (!$token) {
                     $identity = null;
+                    $platform = null;
                 } else {
                     $identity = $token->getUser();
                     $platform = $token->getPlatform();

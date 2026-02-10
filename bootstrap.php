@@ -82,7 +82,7 @@ function knuth_shuffle(iterable $arr, int $seed): array
     $ind    = [];
     $count  = sizeof($data);
 
-    srand($seed, MT_RAND_PHP);
+    srand($seed);
 
     for ($i = 0; $i < $count; ++$i) {
         $ind[$i] = 0;
@@ -121,15 +121,24 @@ function tr(string $stringId, ...$variables): string
         if (gettype($variables[0]) === "integer") {
             $numberedStringId = null;
             $cardinal         = $variables[0];
-            switch ($cardinal) {
-                case 0:
-                    $numberedStringId = $stringId . "_zero";
-                    break;
-                case 1:
-                    $numberedStringId = $stringId . "_one";
-                    break;
-                default:
-                    $numberedStringId = $stringId . ($cardinal < 5 ? "_few" : "_other");
+            $n                = abs($cardinal);
+
+            if ($n === 0) {
+                $numberedStringId = $stringId . "_zero";
+            } else {
+                $temp = $n % 100;
+                if ($temp >= 5 && $temp <= 20) {
+                    $numberedStringId = $stringId . "_other";
+                } else {
+                    $temp = $n % 10;
+                    if ($temp === 1) {
+                        $numberedStringId = $stringId . "_one";
+                    } elseif ($temp >= 2 && $temp <= 4) {
+                        $numberedStringId = $stringId . "_few";
+                    } else {
+                        $numberedStringId = $stringId . "_other";
+                    }
+                }
             }
 
             $newOutput = $localizer->_($numberedStringId, $lang);
@@ -183,7 +192,7 @@ function isLanguageAvailable($lg): bool
 
 function getBrowsersLanguage(): array
 {
-    if ($_SERVER['HTTP_ACCEPT_LANGUAGE'] != null) {
+    if ($_SERVER['HTTP_ACCEPT_LANGUAGE'] != false) {
         return mb_split(",", mb_split(";", $_SERVER['HTTP_ACCEPT_LANGUAGE'])[0]);
     } else {
         return [];

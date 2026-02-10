@@ -1,0 +1,53 @@
+{extends "../@layout.latte"}
+
+{block title}{_album} {$album->getName()}{/block}
+
+{block header}
+    {var $isClub = ($album->getOwner() instanceof openvk\Web\Models\Entities\Club)}
+    
+    <a href="{$album->getOwner()->getURL()}">
+        {$album->getOwner()->getCanonicalName()}
+    </a>
+    {if $isClub}
+        » <a href="/albums{$album->getOwner()->getId() * -1}">{_albums}</a>
+    {else}
+        » <a href="/albums{$album->getOwner()->getId()}">{_albums}</a>
+    {/if}
+    » {$album->getName()}
+{/block}
+
+{block content}
+    <a href="/album{$album->getPrettyId()}">
+        {* TODO: Добавить склонения *}
+        <b>{$album->getPhotosCount()} {_photos}</b>
+    </a>
+    
+    {if !is_null($thisUser) && $album->canBeModifiedBy($thisUser) && !$album->isCreatedBySystem()}
+        &nbsp;|&nbsp;
+        <a href="/photos/upload?album={$album->getPrettyId()}">{_upload_photo}</a>
+        &nbsp;|&nbsp;
+        <a href="/album{$album->getPrettyId()}/edit">{_edit_album}</a>
+    {/if}
+    <br/><br/>
+    {if $album->getPhotosCount() > 0}
+        <div class="container_gray scroll_container album-flex">
+            {foreach $photos as $photo}
+                {php if($photo->isDeleted()) continue; }
+                <div class="album-photo scroll_node">
+                    <a
+                    n:if="!is_null($thisUser) && $album->canBeModifiedBy($thisUser)"
+                    href="/album{$album->getPrettyId()}/remove_photo/{$photo->getId()}" class="album-photo--delete">
+                        &times;
+                    </a>
+                    
+                    <a href="/photo{$photo->getPrettyId()}?from=album{$album->getId()}">
+                        <img class="album-photo--image" src="{$photo->getURLBySizeId('tinier')}" alt="{$photo->getDescription()}"  loading=lazy />
+                    </a>
+                </div>
+            {/foreach}
+        </div>
+        {include "../components/paginator.latte", conf => $paginatorConf}
+    {else}
+        {include "../components/nothing.latte"}
+    {/if}
+{/block}
