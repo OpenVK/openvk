@@ -119,7 +119,7 @@
         </div>
         <div id="messenger-attachment-preview" style="margin: 8px 12px; display: none;">
             <div class="post-horizontal" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
-            <div class="post-vertical" style="margin-top: 8px;"></div>
+            <div class="post-vertical" style="margin-top: 8px; display: flex; flex-direction: column; gap: 8px;"></div>
         </div>
         <div class="messenger-app--input">
             {if $correspondent->getId() === $thisUser->getId() || $correspondent->getPrivacyPermission('messages.write', $thisUser)}
@@ -411,6 +411,13 @@
                     console.debug("Message sent, updating view.");
                     that._patchMessage(tempId, JSON.parse(xhr.responseText));
                     
+                    document.body.querySelectorAll(".bsdn").forEach(el => {
+                        if(!el.querySelector(".bdsn-hydrated")) {
+                            bsdnInitElement(el);
+                        }
+                    }
+                    );
+                    
                     const writeBox = document.querySelector('#write');
                     if(writeBox) {
                         writeBox.querySelector('.post-horizontal').innerHTML = '';
@@ -456,29 +463,38 @@
         });
 
         (function() {
-            function normalizeUploadItem(el) {
-                if(!el) return;
-                const items = el.querySelectorAll('.upload-item');
-                items.forEach(a => {
-                    const type = a.getAttribute('data-type') || a.getAttribute('data-att-type');
-                    const id = a.getAttribute('data-id') || a.getAttribute('data-att-id') || a.getAttribute('data-prettiest-id') || a.getAttribute('data-pretty-id');
-                    if(type && id) {
-                        a.setAttribute('data-att-type', type);
-                        a.setAttribute('data-att-id', id);
-                        
-                        const previewBox = document.querySelector('#messenger-attachment-preview');
-                        if(previewBox) {
-                            const container = type === 'doc' || type === 'note' ? 
-                                previewBox.querySelector('.post-vertical') : 
-                                previewBox.querySelector('.post-horizontal');
-                            if(container && !container.querySelector(`[data-att-id="${ id }"]`)) {
-                                container.appendChild(a.cloneNode(true));
-                                previewBox.style.display = 'block';
-                            }
+            function syncItemToPreview(item) {
+                if(!item) return;
+                
+                const type = item.getAttribute('data-type') || item.getAttribute('data-att-type');
+                const id = item.getAttribute('data-id') || item.getAttribute('data-att-id') || item.getAttribute('data-prettiest-id') || item.getAttribute('data-pretty-id');
+                
+                if(type && id) {
+                    item.setAttribute('data-att-type', type);
+                    item.setAttribute('data-att-id', id);
+                    
+                    const previewBox = document.querySelector('#messenger-attachment-preview');
+                    if(previewBox) {
+                        const isVertical = type === 'doc' || type === 'note' || type === 'audio';
+                        const container = isVertical ? 
+                            previewBox.querySelector('.post-vertical') : 
+                            previewBox.querySelector('.post-horizontal');
+                        if(container && !container.querySelector(`[data-att-id="${ id }"]`)) {
+                            container.appendChild(item.cloneNode(true));
+                            previewBox.style.display = 'block';
                         }
                     }
+                }
+            }
+            
+            function normalizeUploadItem(el) {
+                if(!el) return;
+                const items = el.querySelectorAll('.upload-item, .vertical-attachment');
+                items.forEach(a => {
+                    syncItemToPreview(a);
                 });
             }
+            
             const write = document.querySelector('#write');
             if(write) normalizeUploadItem(write);
             const observer = new MutationObserver(mutations => {
@@ -486,8 +502,8 @@
                     if(m.addedNodes && m.addedNodes.length) {
                         m.addedNodes.forEach(node => {
                             if(node.nodeType === 1) {
-                                if(node.matches && node.matches('.upload-item')) {
-                                    normalizeUploadItem(node.parentNode || node);
+                                if(node.matches && (node.matches('.upload-item') || node.matches('.vertical-attachment'))) {
+                                    syncItemToPreview(node);
                                 } else {
                                     normalizeUploadItem(node);
                                 }
@@ -500,7 +516,7 @@
                         if (!previewBox) return;
 
                         m.removedNodes.forEach(node => {
-                            if(node.nodeType === 1 && node.matches && node.matches('.upload-item')) {
+                            if(node.nodeType === 1 && node.matches && (node.matches('.upload-item') || node.matches('.vertical-attachment'))) {
                                 const type = node.getAttribute('data-att-type') || node.getAttribute('data-type');
                                 const id = node.getAttribute('data-att-id') || node.getAttribute('data-id');
 
@@ -513,7 +529,7 @@
                             }
                         });
 
-                        if(previewBox.querySelectorAll('.upload-item').length === 0) {
+                        if(previewBox.querySelectorAll('.upload-item, .vertical-attachment').length === 0) {
                             previewBox.style.display = 'none';
                         }
                     }
