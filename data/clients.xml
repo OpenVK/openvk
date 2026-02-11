@@ -6,5 +6,6 @@
     <Client tag="openvk_native" name="OpenVK Native" url="https://openvk.org/club9628" img="/assets/packages/static/openvk/img/app_icons/openvk_native.png" />
     <Client tag="openvk_native_ios" name="OpenVK Native" url="https://openvk.org/club9628" img="/assets/packages/static/openvk/img/app_icons/openvk_native.png" />
     <Client tag="openvk_flux_android" name="OpenVK Flux" url="https://openvk.org/openvkflux" img="/assets/packages/static/openvk/img/app_icons/openvk_flux.png" />
+    <Client tag="OpenVK Desktop" name="OpenVK Desktop" url="https://github.com/fayzetwin1/ovkdesktop" img="/assets/packages/static/openvk/img/app_icons/openvk_desktop.png" />
     <Client tag="renaissance" name="через Агент Mail.ru (Renaissance)" url="https://mrim.su" img="/assets/packages/static/openvk/img/app_icons/renaissance_agent.png" />
 </Clients>

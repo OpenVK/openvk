@@ -198,6 +198,10 @@ class Post extends Postable
                     return 'mobile';
                     break;
 
+                case 'OpenVK Desktop':
+                    return 'desktop';
+                    break;
+
                 case null:
                     return null;
                     break;
