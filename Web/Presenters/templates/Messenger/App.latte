@@ -141,34 +141,36 @@
                                 <input type="hidden" name="type" value="1" autocomplete="off" />
                                 <input type="hidden" name="hash" value="{$csrfToken}" />
 
-                                <a class='menu_toggler'>
-                                    {_attach}
-                                </a>
-                                <div id="wallAttachmentMenu" class="hidden">
-                                    <a class="header menu_toggler">{_attach}</a>
-                                    <a id="__photoAttachment">
-                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
-                                        {_photo}
-                                    </a>
-                                    <a id="__videoAttachment">
-                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
-                                        {_video}
-                                    </a>
-                                    <a id="__audioAttachment">
-                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
-                                        {_audio}
-                                    </a>
-                                    <a id="__documentAttachment">
-                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
-                                        {_document}
-                                    </a>
-                                    <a id="__notesAttachment">
-                                        <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-srt.png" />
-                                        {_note}
-                                    </a>
-                                </div>
+                                <button class="button" data-bind="click: sendMessage">{_send}</button>
 
-                                <button class="button" data-bind="click: sendMessage" style="margin-left:8px;">{_send}</button>
+                                <div style="float: right; display: flex; flex-direction: column; padding-top: 5px;">
+                                    <a class='menu_toggler'>
+                                        {_attach}
+                                    </a>
+                                    <div id="wallAttachmentMenu" class="hidden">
+                                        <a class="header menu_toggler">{_attach}</a>
+                                        <a id="__photoAttachment">
+                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
+                                            {_photo}
+                                        </a>
+                                        <a id="__videoAttachment">
+                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
+                                            {_video}
+                                        </a>
+                                        <a id="__audioAttachment">
+                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
+                                            {_audio}
+                                        </a>
+                                        <a id="__documentAttachment">
+                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
+                                            {_document}
+                                        </a>
+                                        <a id="__notesAttachment">
+                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-srt.png" />
+                                            {_note}
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </form>
                     </div>
