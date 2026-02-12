@@ -538,6 +538,31 @@
                 });
             });
             if(write) observer.observe(write, { childList: true, subtree: true });
+
+            const previewBox = document.querySelector('#messenger-attachment-preview');
+            if(previewBox) {
+                previewBox.addEventListener('click', function(e) {
+                    const target = e.target;
+                    const deleteBtn = target.closest('.upload-delete') || target.closest('#small_remove_button') || target.closest('.vertical-attachment-remove');
+
+                    if(deleteBtn) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const item = deleteBtn.closest('.upload-item, .vertical-attachment');
+                        if(item) {
+                            const type = item.getAttribute('data-att-type') || item.getAttribute('data-type');
+                            const id = item.getAttribute('data-att-id') || item.getAttribute('data-id');
+
+                            if(type && id && write) {
+                                const sourceItem = write.querySelector(`[data-att-type="${ type }"][data-att-id="${ id }"], [data-type="${ type }"][data-id="${ id }"]`);
+                                if(sourceItem)
+                                    sourceItem.remove();
+                            }
+                        }
+                    }
+                });
+            }
         })();
     </script>
 {/block}
