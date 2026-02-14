@@ -201,7 +201,9 @@ final class MessengerPresenter extends OpenVKPresenter
         $children = iterator_to_array($messageObj->getChildren());
         
         foreach ($simplifiedArray['attachments'] as $index => &$attachmentData) {
-            if (!isset($children[$index])) continue;
+            if (!isset($children[$index])) {
+                continue;
+            }
             
             $originalObj = $children[$index];
             $html = "";
@@ -214,7 +216,7 @@ final class MessengerPresenter extends OpenVKPresenter
                         'audio' => $originalObj,
                         'thisUser' => $this->user->identity,
                         'hideButtons' => false,
-                        'club' => null
+                        'club' => null,
                     ]
                 );
             }
