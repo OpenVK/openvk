@@ -481,7 +481,7 @@
                         const container = isVertical ? 
                             previewBox.querySelector('.post-vertical') : 
                             previewBox.querySelector('.post-horizontal');
-                        if(container && !container.querySelector(`[data-att-id="${ id }"]`)) {
+                        if(container && !container.querySelector(`[data-att-type="${ type }"][data-att-id="${ id }"]`)) {
                             container.appendChild(item.cloneNode(true));
                             previewBox.style.display = 'block';
                         }
