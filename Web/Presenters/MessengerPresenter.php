@@ -199,12 +199,12 @@ final class MessengerPresenter extends OpenVKPresenter
     private function enrichAttachmentsWithHTML(Message $messageObj, array &$simplifiedArray): void
     {
         $children = iterator_to_array($messageObj->getChildren());
-        
+
         foreach ($simplifiedArray['attachments'] as $index => &$attachmentData) {
             if (!isset($children[$index])) {
                 continue;
             }
-            
+
             $originalObj = $children[$index];
             $html = "";
 
