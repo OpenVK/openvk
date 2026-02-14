@@ -141,7 +141,6 @@ final class Messages extends VKAPIRequestHandler
         } elseif (!empty($attachment)) {
             $attachs = parseAttachments($attachment);
 
-            # Работают только фотки, остальное просто не будет отображаться.
             if (sizeof($attachs) >= 10) {
                 $this->fail(15, "Too many attachments");
             }

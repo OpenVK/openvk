@@ -29,9 +29,84 @@
                         <div data-bind="foreach: attachments" class="attachments">
                             <div class="msg-attach-j">
                                 <div data-bind="if: type === 'photo'" class="msg-attach-j-photo">
-                                    <a data-bind="attr: { href: link }">
-                                        <img data-bind="attr: { src: photo.url, alt: photo.caption  }" />
+                                    <a data-bind="attr: { href: link, 'data-photo-id': id }" class="photoMessengerOpen">
+                                        <img data-bind="attr: { src: photo.url, alt: photo.caption }" />
                                     </a>
+                                </div>
+                                <div data-bind="if: type === 'video'" class="msg-attach-j-video">
+                                    <div style="width: 100%; max-width: 400px; background: #000;">
+                                        <div class="bsdn media" data-bind="attr: { 'data-name': video.name, 'data-author': video.author }" style="width: 100%;">
+                                            <video class="media" data-bind="attr: { src: video.url }" style="width: 100%; display: block;"></video>
+                                        </div>
+                                    </div>
+                                    <div class="video-wowzer" style="margin-top: 8px;">
+                                        <div class="small-video-ico"></div>
+                                        <a data-bind="attr: { href: link, 'data-video-id': id }, text: video.name" class="videoMessengerOpen" style="display: inline-block;"></a>
+                                        <span class="video-wowzer-length" data-bind="text: '(' + video.formatted_length + ')'"></span>
+                                    </div>
+                                </div>
+                                <div data-bind="if: type === 'audio'" class="msg-attach-j-audio">
+                                    <div style="width:100%;">
+                                        <div data-bind="html: html"></div>
+                                    </div>
+                                </div>
+                                <div data-bind="if: type === 'note'" class="msg-attach-j-note">
+                                    <div data-bind="attr: { 'data-att-type': 'note', 'data-att-id': id }">
+                                        <div class="attachment_note">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 10"><polygon points="0 0 0 10 8 10 8 4 4 4 4 0 0 0"/><polygon points="5 0 5 3 8 3 5 0"/></svg>
+                                            <div class='attachment_note_content' style="width: 30%">
+                                                <span class="attachment_note_text">{_note}</span>
+                                                <span class="attachment_note_name" style="white-space: nowrap">
+                                                    <a href="#" data-bind="click: function() { showArticle(id); return false; }, text: note.name"></a>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div data-bind="if: type === 'doc'" class="msg-attach-j-doc attachment">
+                                    <div style="width:100%;">
+                                        <a data-bind="attr: { href: link, 'data-att-type': 'doc', 'data-att-id': id }" style="display:none" class="docGalleryItem viewerOpener"></a>
+                                        
+                                        <a class="docMainItem viewerOpener docGalleryItem" 
+                                           data-bind="visible: document.preview && document.preview.medium, attr: { href: link, 'data-id': id }">
+                                            
+                                            <img class="docGalleryItem_main_preview" loading="lazy" 
+                                                 data-bind="attr: { src: (document.preview && document.preview.medium) ? document.preview.medium : '', alt: document.name }">
+                                            
+                                            <div class="doc_top_panel doc_shown_by_hover">
+                                                <div class="doc_volume_action" id="add_icon"></div>
+                                            </div>
+
+                                            <div class="doc_bottom_panel doc_shown_by_hover doc_content info_shown">
+                                                <span class="doc_bottom_panel_name noOverflow doc_name" data-bind="text: document.name"></span>
+                                                <span class="doc_bottom_panel_size" data-bind="text: document.size_str"></span>
+                                            </div>
+                                        </a>
+
+                                        <div class="docMainItem docListViewItem" 
+                                             data-bind="visible: !(document.preview && document.preview.medium), attr: { 'data-id': id }">
+                                            
+                                            <a class="viewerOpener" data-bind="attr: { href: link }" style="margin-left: 10%;">
+                                                <img class="doc_icon" data-bind="visible: document.preview && document.preview.tiny, attr: { src: (document.preview && document.preview.tiny) ? document.preview.tiny : '' }">
+                                                <div class="doc_icon no_image" data-bind="visible: !document.preview">
+                                                    <span data-bind="text: document.ext" style="justify-content: center; align-items: center; display:flex;"></span>
+                                                </div>
+                                            </a>
+
+                                            <div class="doc_content noOverflow">
+                                                <a class="viewerOpener noOverflow" data-bind="attr: { href: link }">
+                                                    <b class="noOverflow doc_name" data-bind="text: document.name"></b>
+                                                </a>
+                                                <div class="doc_content_info">
+                                                    <span data-bind="text: document.pub_time" style="display:inline;"></span>, <span data-bind="text: document.size_str" style="display:inline;"></span>
+                                                </div>
+                                            </div>
+
+                                            <div class="doc_volume">
+                                                <div id="add_icon"></div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -42,15 +117,63 @@
                 </div>
             </div>
         </div>
+        <div id="messenger-attachment-preview" style="margin: 8px 12px; display: none;">
+            <div class="post-horizontal" style="display: flex; flex-wrap: wrap; gap: 8px;"></div>
+            <div class="post-vertical" style="margin-top: 8px; display: flex; flex-direction: column; gap: 8px;"></div>
+        </div>
         <div class="messenger-app--input">
             {if $correspondent->getId() === $thisUser->getId() || $correspondent->getPrivacyPermission('messages.write', $thisUser)}
                 <img class="ava" src="{$thisUser->getAvatarUrl('miniscule')}" alt="{$thisUser->getCanonicalName()}" />
                 <div class="messenger-app--input---messagebox">
-                    <textarea
-                            data-bind="value: messageContent, event: { keydown: onTextareaKeyPress }"
-                            name="message"
-                            placeholder="{_enter_message}"></textarea>
-                    <button class="button" data-bind="click: sendMessage">{_send}</button>
+                    <div id="write" class='model_content_textarea' data-id="{$thisUser->getId()}">
+                        <form action="/" method="post" enctype="multipart/form-data" style="margin:0;">
+                            <textarea id="wall-post-input-messenger" placeholder="{_enter_message}" name="message" style="width: 100%;resize: none;" class="small-textarea" autocomplete="off" data-bind="value: messageContent, event: { keydown: onTextareaKeyPress }"></textarea>
+
+                            <div class="post-buttons" style="display: block; margin-top:6px;">
+                                <div class="post-horizontal" style="display: none;"></div>
+                                <div class="post-vertical" style="display: none;"></div>
+
+                                <input type="hidden" name="horizontal_attachments" value="" autocomplete="off" />
+                                <input type="hidden" name="vertical_attachments" value="" autocomplete="off" />
+                                <input type="hidden" name="poll" value="none" autocomplete="off" />
+                                <input type="hidden" id="source" name="source" value="none" autocomplete="off" />
+                                <input type="hidden" name="geo" value="" autocomplete="off" />
+                                <input type="hidden" name="type" value="1" autocomplete="off" />
+                                <input type="hidden" name="hash" value="{$csrfToken}" />
+
+                                <button class="button" data-bind="click: sendMessage">{_send}</button>
+
+                                <div style="float: right; display: flex; flex-direction: column; padding-top: 5px;">
+                                    <a class='menu_toggler'>
+                                        {_attach}
+                                    </a>
+                                    <div id="wallAttachmentMenu" class="hidden">
+                                        <a class="header menu_toggler">{_attach}</a>
+                                        <a id="__photoAttachment">
+                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-egon.png" />
+                                            {_photo}
+                                        </a>
+                                        <a id="__videoAttachment">
+                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-vnd.rn-realmedia.png" />
+                                            {_video}
+                                        </a>
+                                        <a id="__audioAttachment">
+                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/audio-ac3.png" />
+                                            {_audio}
+                                        </a>
+                                        <a id="__documentAttachment">
+                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-octet-stream.png" />
+                                            {_document}
+                                        </a>
+                                        <a id="__notesAttachment">
+                                            <img src="/assets/packages/static/openvk/img/oxygen-icons/16x16/mimetypes/application-x-srt.png" />
+                                            {_note}
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
                 <img class="ava" src="{$correspondent->getAvatarUrl('miniscule')}" alt="{$correspondent->getCanonicalName()}" />
             {else}
@@ -74,6 +197,12 @@
             };
             this.loadHistory = _ => {
                 window.Msg._loadHistory();
+                document.body.querySelectorAll(".bsdn").forEach(el => {
+                    if(!el.querySelector(".bdsn-hydrated")) {
+                        bsdnInitElement(el);
+                    }
+                }
+                );
             };
             
             this.onMessagesScroll   = (model, e) => {
@@ -238,6 +367,23 @@
                 msgData.set("content", content);
                 msgData.set("hash", {$csrfToken});
                 
+                const writeBox = document.querySelector('.messenger-app--input #write');
+                let attachmentElements = writeBox ? writeBox.querySelectorAll("[data-att-id]") : document.querySelectorAll("[data-att-id]");
+                let attachmentIds = [];
+                if(attachmentElements && attachmentElements.length > 0) {
+                    attachmentElements.forEach(el => {
+                        let type = el.getAttribute("data-att-type");
+                        let id = el.getAttribute("data-att-id");
+                        if(type && id) {
+                            attachmentIds.push(type + id);
+                        }
+                    });
+                }
+                
+                if(attachmentIds.length > 0) {
+                    msgData.set("attachments", attachmentIds.join(","));
+                }
+                
                 let that = this;
                 let xhr  = new XMLHttpRequest();
                 xhr.open("POST", "/im/api/messages" + {$correspondent->getId()} + "/create.json", true);
@@ -266,6 +412,26 @@
                     
                     console.debug("Message sent, updating view.");
                     that._patchMessage(tempId, JSON.parse(xhr.responseText));
+                    
+                    document.body.querySelectorAll(".bsdn").forEach(el => {
+                        if(!el.querySelector(".bdsn-hydrated")) {
+                            bsdnInitElement(el);
+                        }
+                    }
+                    );
+                    
+                    const writeBox = document.querySelector('#write');
+                    if(writeBox) {
+                        writeBox.querySelector('.post-horizontal').innerHTML = '';
+                        writeBox.querySelector('.post-vertical').innerHTML = '';
+                    }
+
+                    const previewBox = document.querySelector('#messenger-attachment-preview');
+                    if(previewBox) {
+                        previewBox.querySelector('.post-horizontal').innerHTML = '';
+                        previewBox.querySelector('.post-vertical').innerHTML = '';
+                        previewBox.style.display = 'none';
+                    }
                 });
                 xhr.send(msgData);
                 console.debug("Message sent, awaiting response.");
@@ -273,5 +439,130 @@
         }
         
         window.Msg = new Messenger([]);
+        
+        document.querySelector(".messenger-app--messages").addEventListener("click", (e) => {
+            if(e.target.closest(".photoMessengerOpen")) {
+                e.preventDefault();
+                e.stopPropagation();
+                const photoLink = e.target.closest(".photoMessengerOpen");
+                const photoId = photoLink.getAttribute("data-photo-id");
+                const photoImg = photoLink.querySelector("img");
+                if(photoImg && photoId) {
+                    OpenMiniature(e, photoImg.src, null, photoId, null);
+                }
+            }
+            
+            if(e.target.closest(".videoMessengerOpen")) {
+                e.preventDefault();
+                e.stopPropagation();
+                const videoLink = e.target.closest(".videoMessengerOpen");
+                const videoId = videoLink.getAttribute("data-video-id");
+                if(videoId && videoId.indexOf("_") !== -1) {
+                    const parts = videoId.split("_");
+                    OpenVideo(parts);
+                }
+            }
+        });
+
+        (function() {
+            function syncItemToPreview(item) {
+                if(!item) return;
+                
+                const type = item.getAttribute('data-type') || item.getAttribute('data-att-type');
+                const id = item.getAttribute('data-id') || item.getAttribute('data-att-id') || item.getAttribute('data-prettiest-id') || item.getAttribute('data-pretty-id');
+                
+                if(type && id) {
+                    item.setAttribute('data-att-type', type);
+                    item.setAttribute('data-att-id', id);
+                    
+                    const previewBox = document.querySelector('#messenger-attachment-preview');
+                    if(previewBox) {
+                        const isVertical = type === 'doc' || type === 'note' || type === 'audio';
+                        const container = isVertical ? 
+                            previewBox.querySelector('.post-vertical') : 
+                            previewBox.querySelector('.post-horizontal');
+                        if(container && !container.querySelector(`[data-att-type="${ type }"][data-att-id="${ id }"]`)) {
+                            container.appendChild(item.cloneNode(true));
+                            previewBox.style.display = 'block';
+                        }
+                    }
+                }
+            }
+            
+            function normalizeUploadItem(el) {
+                if(!el) return;
+                const items = el.querySelectorAll('.upload-item, .vertical-attachment');
+                items.forEach(a => {
+                    syncItemToPreview(a);
+                });
+            }
+            
+            const write = document.querySelector('#write');
+            if(write) normalizeUploadItem(write);
+            const observer = new MutationObserver(mutations => {
+                mutations.forEach(m => {
+                    if(m.addedNodes && m.addedNodes.length) {
+                        m.addedNodes.forEach(node => {
+                            if(node.nodeType === 1) {
+                                if(node.matches && (node.matches('.upload-item') || node.matches('.vertical-attachment'))) {
+                                    syncItemToPreview(node);
+                                } else {
+                                    normalizeUploadItem(node);
+                                }
+                            }
+                        });
+                    }
+
+                    if(m.removedNodes && m.removedNodes.length) {
+                        const previewBox = document.querySelector('#messenger-attachment-preview');
+                        if (!previewBox) return;
+
+                        m.removedNodes.forEach(node => {
+                            if(node.nodeType === 1 && node.matches && (node.matches('.upload-item') || node.matches('.vertical-attachment'))) {
+                                const type = node.getAttribute('data-att-type') || node.getAttribute('data-type');
+                                const id = node.getAttribute('data-att-id') || node.getAttribute('data-id');
+
+                                if(type && id) {
+                                    const itemToRemove = previewBox.querySelector(`[data-att-type="${ type }"][data-att-id="${ id }"], [data-type="${ type }"][data-id="${ id }"]`);
+                                    if(itemToRemove) {
+                                        itemToRemove.remove();
+                                    }
+                                }
+                            }
+                        });
+
+                        if(previewBox.querySelectorAll('.upload-item, .vertical-attachment').length === 0) {
+                            previewBox.style.display = 'none';
+                        }
+                    }
+                });
+            });
+            if(write) observer.observe(write, { childList: true, subtree: true });
+
+            const previewBox = document.querySelector('#messenger-attachment-preview');
+            if(previewBox) {
+                previewBox.addEventListener('click', function(e) {
+                    const target = e.target;
+                    const deleteBtn = target.closest('.upload-delete') || target.closest('#small_remove_button') || target.closest('.vertical-attachment-remove');
+
+                    if(deleteBtn) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const item = deleteBtn.closest('.upload-item, .vertical-attachment');
+                        if(item) {
+                            const type = item.getAttribute('data-att-type') || item.getAttribute('data-type');
+                            const id = item.getAttribute('data-att-id') || item.getAttribute('data-id');
+
+                            if(type && id && write) {
+                                const sourceItem = write.querySelector(`[data-att-type="${ type }"][data-att-id="${ id }"], [data-type="${ type }"][data-id="${ id }"]`);
+                                if(sourceItem)
+                                    sourceItem.remove();
+                            }
+                        }
+                    }
+                });
+            }
+        })();
     </script>
 {/block}
