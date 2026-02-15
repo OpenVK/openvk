@@ -122,9 +122,11 @@ final class Photos extends VKAPIRequestHandler
             $album = (new Albums())->getUserWallAlbum($this->getUser());
         }
 
+        $albumId = $album ? $album->getId() : null;
+
         return (object) [
             "upload_url" => $this->getPhotoUploadUrl("photo", $group_id ?? 0),
-            "album_id"   => $album,
+            "album_id"   => $albumId,
             "user_id"    => $this->getUser()->getId(),
         ];
     }
