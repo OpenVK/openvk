@@ -4,7 +4,7 @@ xhr = new XMLHttpRequest();
 xhr.open("POST", "/iapi/timezone", true);
 xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
 xhr.onload = (response) => {
-    if(JSON.parse(response.originalTarget.responseText).success == 1) {
+    if(JSON.parse(response.originalTarget.responseText).success == 1 && window.location.pathname != '/') {
         window.location.reload();
     }
 };

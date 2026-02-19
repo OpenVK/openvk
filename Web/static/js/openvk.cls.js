@@ -291,6 +291,25 @@ function openJsSettings() {
     `)
 }
 
+function saveTimezoneSettings() {
+    let tz = u('select#timezone').last().value;
+
+    xhr = new XMLHttpRequest();
+    xhr.open("POST", "/iapi/timezone", true);
+    xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    xhr.onload = (response) => {
+        if(JSON.parse(response.currentTarget.responseText).success != 0) {
+            const msg = new CMessageBox({
+                title: tr('success'),
+                body: tr('timezone_change_success'),
+                buttons: [tr('ok')],
+                callbacks: [() => {}]
+            })
+        }
+    };
+    xhr.send('timezone=' + tz);
+}
+
 let lastScrollTop = 0;
 $(document).on("scroll", () => {
     const currentScrollTop = $(document).scrollTop();
