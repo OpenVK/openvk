@@ -2511,7 +2511,7 @@
 /* Timezones */
 
 "ui_settings_timezone" = "Timezone";
-“timezone_change_success” = “The time zone setting has been successfully saved. Please note that this setting is only valid within this session.”;
+"timezone_change_success" = "The time zone setting has been successfully saved. Please note that this setting is only valid within this session.";
 
 "timezone-720" = "(GMT-12): Baker Island, Howland Island";
 "timezone-660" = "(GMT-11): Pago Pago, Niue, Midway";
