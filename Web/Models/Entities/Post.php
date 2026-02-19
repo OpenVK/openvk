@@ -148,12 +148,12 @@ class Post extends Postable
 
     public function isDeactivationMessage(): bool
     {
-        return (($this->getRecord()->flags & 0b00100000) > 0) && ($this->getRecord()->owner > 0);
+        return (($this->getRecord()->flags & 0b00100000) != 0x0) && ($this->getRecord()->wall > 0);
     }
 
     public function isUpdateAvatarMessage(): bool
     {
-        return (($this->getRecord()->flags & 0b00010000) > 0) && ($this->getRecord()->owner > 0);
+        return (($this->getRecord()->flags & 0b00010000) != 0x0) && ($this->getRecord()->wall > 0);
     }
 
     public function isExplicit(): bool
@@ -177,6 +177,7 @@ class Post extends Postable
         if ($forAPI) {
             switch ($platform) {
                 case 'openvk_native':
+                case 'openvk_flux_android':
                 case 'openvk_refresh_android':
                 case 'openvk_legacy_android':
                     return 'android';
