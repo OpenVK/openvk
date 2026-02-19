@@ -2507,3 +2507,47 @@
 "faves_few" = "$1 bookmarks";
 "faves_many" = "$1 bookmarks";
 "faves_other" = "$1 bookmarks";
+
+/* Timezones */
+
+"ui_settings_timezone" = "Timezone";
+“timezone_change_success” = “The time zone setting has been successfully saved. Please note that this setting is only valid within this session.”;
+
+"timezone-720" = "(GMT-12): Baker Island, Howland Island";
+"timezone-660" = "(GMT-11): Pago Pago, Niue, Midway";
+"timezone-600" = "(GMT-10): Honolulu, Papeete, Adak";
+"timezone-540" = "(GMT-09): Anchorage, Fairbanks, Juneau";
+"timezone-480" = "(GMT-08): Los Angeles, Vancouver, Tijuana";
+"timezone-420" = "(GMT-07): Denver, Edmonton, Phoenix";
+"timezone-360" = "(GMT-06): Mexico City, Chicago, Guatemala";
+"timezone-300" = "(GMT-05): New York, Toronto, Havana";
+"timezone-270" = "(GMT-04:30): Caracas, Maracaibo";
+"timezone-240" = "(GMT-04): Santiago, La Paz, Halifax";
+"timezone-210" = "(GMT-03:30): St. John's, Corner Brook";
+"timezone-180" = "(GMT-03): Buenos Aires, Sao Paulo, Montevideo";
+"timezone-120" = "(GMT-02): South Georgia, Sandwich Islands";
+"timezone-60" = "(GMT-01): Azores, Praia";
+"timezone-0" = "(GMT): London, Lisbon, Casablanca";
+"timezone--60" = "(GMT+1): Berlin, Paris, Rome";
+"timezone--120" = "(GMT+2): Kyiv, Cairo, Helsinki";
+"timezone--180" = "(GMT+3): Moscow, Istanbul, Riyadh";
+"timezone--210" = "(GMT+3:30): Tehran, Isfahan, Mashhad";
+"timezone--240" = "(GMT+4): Dubai, Baku, Tbilisi";
+"timezone--270" = "(GMT+4:30): Kabul, Kandahar";
+"timezone--300" = "(GMT+5): Tashkent, Karachi, Yekaterinburg";
+"timezone--330" = "(GMT+5:30): New Delhi, Mumbai, Colombo";
+"timezone--345" = "(GMT+5:45): Kathmandu, Pokhara";
+"timezone--360" = "(GMT+6): Almaty, Dhaka, Omsk";
+"timezone--390" = "(GMT+6:30): Yangon, Naypyidaw";
+"timezone--420" = "(GMT+7): Bangkok, Hanoi, Jakarta";
+"timezone--480" = "(GMT+8): Beijing, Singapore, Hong Kong";
+"timezone--510" = "(GMT+8:30): Pyongyang";
+"timezone--540" = "(GMT+9): Tokyo, Seoul, Yakutsk";
+"timezone--570" = "(GMT+9:30): Adelaide, Darwin";
+"timezone--600" = "(GMT+10): Sydney, Melbourne, Vladivostok";
+"timezone--630" = "(GMT+10:30): Lord Howe Island";
+"timezone--660" = "(GMT+11): Magadan, Sakhalin, Noumea";
+"timezone--720" = "(GMT+12): Auckland, Suva, Petropavlovsk-Kamchatsky";
+"timezone--765" = "(GMT+12:45): Chatham Islands";
+"timezone--780" = "(GMT+13): Nukualofa, Apia";
+"timezone--840" = "(GMT+14): Kiritimati, Line Islands";
