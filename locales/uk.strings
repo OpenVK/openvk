@@ -383,12 +383,12 @@
 "group_closed_post" = "Закрита";
 "suggest_new" = "Запропонувати новину";
 "suggested_by_you_zero" = "$1 запропонованих Вами дописів";
-"suggested_by_you_one" = "Один запропонований Вами допис";
+"suggested_by_you_one" = "$1 запропонований Вами допис";
 "suggested_by_you_few" = "$1 запропонованих Вами дописа";
 "suggested_by_you_many" = "$1 запропонованих Вами дописів";
 "suggested_by_you_other" = "$1 запропонованих Вами дописа";
 "suggested_by_everyone_zero" = "$1 запропонованих дописів";
-"suggested_by_everyone_one" = "Один запропонований допис";
+"suggested_by_everyone_one" = "$1 запропонований допис";
 "suggested_by_everyone_few" = "$1 запропоновані дописи";
 "suggested_by_everyone_many" = "$1 запропонованих дописів";
 "suggested_by_everyone_other" = "$1 запропонованих дописів";
@@ -404,7 +404,7 @@
 "error_loading_suggest" = "Не вдалося завантажити нові дописи";
 "publishing_suggested_post" = "Публікація запропонованого допису";
 "suggested_posts_in_group_zero" = "Ви переглянули всю пропозиційну!";
-"suggested_posts_in_group_one" = "В цю спільноту запропонували один допис";
+"suggested_posts_in_group_one" = "В цю спільноту запропонували $1 допис";
 "suggested_posts_in_group_few" = "В цю спільноту запропонували $1 дописа";
 "suggested_posts_in_group_many" = "В цю спільноту запропонували $1 дописів";
 "suggested_posts_in_group_other" = "В цю спільноту запропонували $1 дописів";
@@ -427,20 +427,20 @@
 "group_changeowner_modal_text" = "Увага! Ви передаєте права власника користувачу $1. Ця дія необоротна. Після передачі Ви залишитеся адміністратором, але Вас можуть виключити.";
 "group_owner_setted" = "Новий власник ($1) успішно призначений для спільноти $2. Вам видано права адміністратора в спільноті. Якщо Ви хочете повернути роль власника, зверніться до <a href='/support?act=new'>технічної підтримки сайта</a>.";
 "participants_zero" = "Жодного учасника";
-"participants_one" = "Один учасник";
+"participants_one" = "$1 учасник";
 "participants_few" = "$1 учасника";
 "participants_many" = "$1 учасників";
 "participants_other" = "$1 учасника";
 "groups_zero" = "Жодної спільноти";
-"groups_one" = "Одна спільнота";
+"groups_one" = "$1 спільнота";
 "groups_few" = "$1 спільноти";
 "groups_many" = "$1 спільнот";
 "groups_other" = "$1 спільнот";
 "groups_list_zero" = "Ви не перебуваєте в жодній спільноті";
-"groups_list_one" = "Ви перебуваєте в одній спільноті";
+"groups_list_one" = "Ви перебуваєте в $1 спільноті";
 "groups_list_other" = "Ви перебуваєте в $1 спільноті";
 "meetings_zero" = "Жодної зустрічі";
-"meetings_one" = "Одна зустріч";
+"meetings_one" = "$1 зустріч";
 "meetings_few" = "$1 зустрічі";
 "meetings_many" = "$1 зустрічей";
 "meetings_other" = "$1 зустрічей";
@@ -470,12 +470,12 @@
 "avatar_album" = "Фотографії зі сторінки";
 "wall_album" = "Фотографії зі стіни";
 "albums_zero" = "Жодного альбому";
-"albums_one" = "Один альбом";
+"albums_one" = "$1 альбом";
 "albums_few" = "$1 альбома";
 "albums_many" = "$1 альбомів";
 "albums_other" = "$1 альбома";
 "albums_list_zero" = "У Вас немає альбомів";
-"albums_list_one" = "У Вас є один альбом";
+"albums_list_one" = "У Вас є $1 альбом";
 "albums_list_few" = "У Вас $1 альбома";
 "albums_list_many" = "У Вас $1 альбомів";
 "albums_list_other" = "У Вас $1 альбома";
@@ -528,7 +528,7 @@
 "upload_new_photo" = "Завантажте нову світлину";
 
 "is_x_photos_zero" = "Всього 0 фотографій.";
-"is_x_photos_one" = "Всього 1 фотографія.";
+"is_x_photos_one" = "Всього $1 фотографія.";
 "is_x_photos_few" = "Всього $1 фотографій.";
 "is_x_photos_many" = "Всього $1 фотографій.";
 "is_x_photos_other" = "Всього $1 фотографій.";
@@ -555,12 +555,12 @@
 "note_preview_empty_err" = "Попередній перегляд неможливий: Немає імені чи змісту.";
 "edited" = "Відредаговано";
 "notes_zero" = "Жодної нотатки";
-"notes_one" = "Одна нотатка";
+"notes_one" = "$1 нотатка";
 "notes_few" = "$1 нотатки";
 "notes_many" = "$1 нотаток";
 "notes_other" = "$1 нотаток";
 "notes_list_zero" = "Не знайдено жодної нотатки";
-"notes_list_one" = "Знайдено одну нотатку";
+"notes_list_one" = "Знайдено $1 нотатку";
 "notes_list_few" = "Знайдено $1 нотатки";
 "notes_list_many" = "Знайдено $1 нотаток";
 "notes_list_other" = "Знайдено $1 нотаток";
@@ -662,7 +662,7 @@
 "search_button" = "Знайти";
 "search_placeholder" = "Почніть вводити будь-яке ім'я, назву чи слово";
 "results_zero" = "Немає результатів";
-"results_one" = "Один результат";
+"results_one" = "$1 результат";
 "results_few" = "$1 результата";
 "results_many" = "$1 результатів";
 "results_other" = "$1 результатів";
@@ -811,7 +811,7 @@
 "info_uploaded_by" = "Завантажив";
 "info_upload_date" = "Дата завантаження";
 "videos_zero" = "Жодного відеозапису";
-"videos_one" = "Один відеозапис";
+"videos_one" = "$1 відеозапис";
 "videos_few" = "$1 відеозаписа";
 "videos_many" = "$1 відеозаписів";
 "videos_other" = "$1 відеозаписа";
@@ -859,7 +859,7 @@
 "audio_embed_processing_bait" = "Все одно відтворити";
 
 "audios_count_zero" = "Немає аудіозаписів";
-"audios_count_one" = "Один аудіозапис";
+"audios_count_one" = "$1 аудіозапис";
 "audios_count_few" = "$1 аудіозаписа";
 "audios_count_many" = "$1 аудіозаписів";
 "audios_count_other" = "$1 аудіозаписа";
@@ -918,7 +918,7 @@
 "add_audio_verb" = "Додати аудіозаписи";
 
 "minutes_count_zero" = "триває менше ніж хвилину";
-"minutes_count_one" = "триває одну хвилину";
+"minutes_count_one" = "триває $1 хвилину";
 "minutes_count_few" = "триває більше однієї хвилини";
 "minutes_count_many" = "триває $1 хвилину";
 "minutes_count_other" = "триває $1 хвилину";
@@ -967,7 +967,7 @@
 "audio_ctx_clear_context" = "Очистити список аудіозаписів";
 
 "is_x_audio_zero" = "Немає аудіозаписів";
-"is_x_audio_one" = "Один аудіозапис.";
+"is_x_audio_one" = "$1 аудіозапис.";
 "is_x_audio_few" = "Всього $1 аудіозаписа.";
 "is_x_audio_many" = "Всього $1 аудіозаписів.";
 "is_x_audio_other" = "Всього $1 аудіозаписів.";
@@ -1050,7 +1050,7 @@
 "usages_left" = "Залишилося використань";
 "points_transfer_dialog_header_1" = "Ви можете надіслати в подарунок або передати частину голосів іншій людині.";
 "points_transfer_dialog_header_2" = "Ваш поточний баланс:";
-"points_amount_one" = "1 голос";
+"points_amount_one" = "$1 голос";
 "points_amount_few" = "$1 голоса";
 "points_amount_many" = "$1 голосів";
 "points_amount_other" = "$1 голоса";
@@ -1089,12 +1089,12 @@
 "gift" = "Подарунок";
 "gifts" = "Подарунки";
 "gifts_zero" = "Немає подарунків";
-"gifts_one" = "Один подарунок";
+"gifts_one" = "$1 подарунок";
 "gifts_few" = "$1 подарунка";
 "gifts_many" = "$1 подарунків";
 "gifts_other" = "$1 подарунка";
 "gifts_left" = "Подарунок залишилося: $1";
-"gifts_left_one" = "Залишився один подарунок";
+"gifts_left_one" = "Залишився $1 подарунок";
 "gifts_left_few" = "Залишилося $1 подарунка";
 "gifts_left_many" = "Залишилося $1 подарунків";
 "gifts_left_other" = "Залишилося $1 подарунка";
@@ -1107,7 +1107,7 @@
 "free_gift" = "Безоплатно";
 "coins" = "Голоси";
 "coins_zero" = "0 голосів";
-"coins_one" = "1 голос";
+"coins_one" = "$1 голос";
 "coins_few" = "$1 голоса";
 "coins_many" = "$1 голосів";
 "coins_other" = "$1 голоси";
@@ -1293,7 +1293,7 @@
 "poll_editor_tips" = "Натискання Backspace в порожньому варіанті призводить до його видалення. Tab чи Enter в останньому варіанті додає новий варіант.";
 "poll_embed" = "Отримати код";
 "poll_voter_count_zero" = "Будьте <b>першим</b>, хто проголосує!";
-"poll_voter_count_one" = "В опитуванні проголосував <b>одна</b> людина.";
+"poll_voter_count_one" = "В опитуванні проголосував <b>$1</b> людина.";
 "poll_voter_count_few" = "В опитуванні проголосували <b>$1</b> людини.";
 "poll_voter_count_many" = "В опитуванні проголосувало <b>$1</b> людей.";
 "poll_voter_count_other" = "В опитуванні проголосували <b>$1</b> людини.";
@@ -1311,12 +1311,12 @@
 /* Discussions */
 
 "discussions" = "Обговорення";
-"messages_one" = "Одне повідомлення";
+"messages_one" = "$1 повідомлення";
 "messages_few" = "$1 повідомлень";
 "messages_many" = "$1 повідомлень";
 "messages_other" = "$1 повідомлень";
 "topic_messages_count_zero" = "У темі немає повідомлень";
-"topic_messages_count_one" = "У темі одне повідомлення";
+"topic_messages_count_one" = "У темі $1 повідомлення";
 "topic_messages_count_few" = "У темі $1 повідомлення";
 "topic_messages_count_many" = "У темі $1 повідомлень";
 "topic_messages_count_other" = "У темі $1 повідомлень";
@@ -1332,7 +1332,7 @@
 "pin_topic" = "Закріпити тему";
 "close_topic" = "Закрити тему";
 "delete_topic" = "Видалити тему";
-"topics_one" = "Одна тема";
+"topics_one" = "$1 тема";
 "topics_few" = "$1 теми";
 "topics_many" = "$1 тема";
 "topics_other" = "$1 тем";
@@ -1671,23 +1671,23 @@
 "on_this_instance_are" = "На цій інстанції:";
 "about_links" = "Посилання";
 "instance_links" = "Посилання інстанції:";
-"about_users_one" = "<b>1</b> користувач";
+"about_users_one" = "<b>$1</b> користувач";
 "about_users_few" = "<b>$1</b> користувача";
 "about_users_many" = "<b>$1</b> користувачів";
 "about_users_other" = "<b>$1</b> користувачів";
-"about_online_users_one" = "<b>1</b> користувач у мережі";
+"about_online_users_one" = "<b>$1</b> користувач у мережі";
 "about_online_users_few" = "<b>$1</b> користувача в мережі";
 "about_online_users_many" = "<b>$1</b> користувачів у мережі";
 "about_online_users_other" = "<b>$1</b> користувачів у мережі";
-"about_active_users_one" = "<b>1</b> активний користувач";
+"about_active_users_one" = "<b>$1</b> активний користувач";
 "about_active_users_few" = "<b>$1</b> активних користувачів";
 "about_active_users_many" = "<b>$1</b> активних користувачів";
 "about_active_users_other" = "<b>$1</b> активних користувачів";
-"about_groups_one" = "<b>1</b> спільнота";
+"about_groups_one" = "<b>$1</b> спільнота";
 "about_groups_few" = "<b>$1</b> спільноти";
 "about_groups_many" = "<b>$1</b> спільнот";
 "about_groups_other" = "<b>$1</b> спільнот";
-"about_wall_posts_one" = "<b>1</b> дописів на стінах";
+"about_wall_posts_one" = "<b>$1</b> дописів на стінах";
 "about_wall_posts_few" = "<b>$1</b> дописи на стінах";
 "about_wall_posts_many" = "<b>$1</b> дописів на стінах";
 "about_wall_posts_other" = "<b>$1</b> дописів на стінах";
@@ -1729,7 +1729,7 @@
 "adding_to_bl_sure" = "Ви дійсно хочете внести $1 до чорного списку?";
 "bl_count_zero_desc" = "Ви ще не маєте користувачів у чорному списку";
 "bl_count_zero" = "Ваш чорний список пустий";
-"bl_count_one" = "Ваш чорний список має 1 користувач";
+"bl_count_one" = "Ваш чорний список має $1 користувач";
 "bl_count_few" = "Ваш чорний список має $1 користувачі";
 "bl_count_many" = "Ваш чорний список має $1 користувачів";
 "bl_count_other" = "Ваш чорний список має $1 користувачів";
@@ -1794,7 +1794,7 @@
 "poll_editor_tips" = "Натискання Backspace в пустому варіанті приведе до його видалення. Tab/Enter у останньому додає новий.";
 "poll_embed" = "Отримати код";
 "poll_voter_count_zero" = "Станьте <b>першим</b>, хто проголосує!";
-"poll_voter_count_one" = "В опитуванні проголосувала <b>одна</b> людина.";
+"poll_voter_count_one" = "В опитуванні проголосувала <b>$1</b> людина.";
 "poll_voter_count_few" = "В опитуванні проголосувало <b>$1</b> людини.";
 "poll_voter_count_many" = "В опитуванні проголосувало <b>$1</b> людей.";
 "poll_voter_count_other" = "В опитуванні проголосувало <b>$1</b> людей.";
@@ -2265,7 +2265,7 @@
 "faves_photos_empty_tip" = "Тут відображатимуться вподобані Вами фотографії.";
 "faves_videos_empty_tip" = "Тут відображатимуться вподобані Вами відеозаписи.";
 "faves_zero" = "Жодного вподобання";
-"faves_one" = "Одна вподобання";
+"faves_one" = "$1 вподобання";
 "faves_few" = "$1 вподобання";
 "faves_many" = "$1 вподобань";
 "faves_other" = "$1 вподобань";
