@@ -331,7 +331,7 @@ final class Wall extends VKAPIRequestHandler
             $post = (new PostsRepo())->getPostById(intval($id[0]), intval($id[1]), true);
 
             if ($post && !$post->isDeleted()) {
-                if (!$post->canBeViewedBy($this->getUser())) {
+                if (!$post->canBeViewedBy($user)) {
                     continue;
                 }
 
