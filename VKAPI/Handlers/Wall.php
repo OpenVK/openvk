@@ -545,6 +545,7 @@ final class Wall extends VKAPIRequestHandler
         int $signed = 0,
         string $attachments = "",
         int $post_id = 0,
+        int $explicit = 0,
         float $lat = null,
         float $long = null,
         string $place_name = ''
@@ -662,6 +663,10 @@ final class Wall extends VKAPIRequestHandler
             $post->setContent($message);
             $post->setFlags($flags);
             $post->setApi_Source_Name($this->getPlatform());
+
+            if ($explicit === 1) {
+                $post->setNsfw($explicit == 1);
+            }
 
             if (!is_null($copyright) && !empty($copyright)) {
                 try {
