@@ -84,7 +84,7 @@ class Application extends RowModel
             case "server":
                 $settings = (object) OPENVK_ROOT_CONF["openvk"]["preferences"]["uploads"]["server"];
                 return (
-                    $settings->protocol ?? ovk_scheme() .
+                    ($settings->protocol ?? ovk_scheme()) .
                     "://" . $settings->host .
                     $settings->path .
                     substr($hash, 0, 2) . "/$hash" . "_app_avatar.png"
