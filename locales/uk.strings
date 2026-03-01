@@ -998,6 +998,7 @@
 "nt_yours_adjective" = "Вашим";
 "nt_yours_feminitive_adjective" = "Вашою";
 "nt_post_nominative" = "допис";
+"nt_comment_nominative" = "коментар";
 "nt_post_instrumental" = "дописом";
 "nt_note_instrumental" = "нотаткою";
 "nt_photo_instrumental" = "фотографією";
@@ -2140,7 +2141,7 @@
 "share_video" = "Поширити відео";
 "shared_succ_video" = "Відео з'явиться на Вашій стіні. Натисніть на сповіщення, щоби перейти до запису.";
 "watch_in_window" = "Переглянути у відео";
-"comments_load_timeout" = "При отриманні коментарів сталася помилка часу очікування"; 
+"comments_load_timeout" = "При отриманні коментарів сталася помилка часу очікування";
 
 /* Moderation */
 

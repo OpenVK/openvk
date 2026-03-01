@@ -1033,6 +1033,7 @@
 "nt_yours_adjective" = "вашим";
 "nt_yours_feminitive_adjective" = "вашей";
 "nt_post_nominative" = "пост";
+"nt_comment_nominative" = "комментарий";
 "nt_post_instrumental" = "постом";
 "nt_note_instrumental" = "заметкой";
 "nt_photo_instrumental" = "фотографией";
@@ -2274,7 +2275,7 @@
 "shared_succ_video" = "Видео появится на вашей стене. Нажмите на уведомление, чтобы перейти к записи.";
 "watch_in_window" = "Смотреть в окне";
 
-"comments_load_timeout" = "Возможно, инстанция упала."; 
+"comments_load_timeout" = "Возможно, инстанция упала.";
 
 "my" = "Мои";
 "enter_a_name_or_artist" = "Введите название или автора...";

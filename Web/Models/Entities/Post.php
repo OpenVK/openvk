@@ -24,7 +24,7 @@ class Post extends Postable
         ];
 
         if ((sizeof(DB::i()->getContext()->table("likes")->where($searchData)) > 0) !== $liked) {
-            if ($this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club) && !$this instanceof Comment) {
+            if ($this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club)) {
                 (new LikeNotification($this->getOwner(false), $this, $user))->emit();
             }
 
@@ -324,7 +324,7 @@ class Post extends Postable
     {
         $liked = parent::toggleLike($user);
 
-        if (!$user->isPrivateLikes() && $this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club) && !$this instanceof Comment) {
+        if (!$user->isPrivateLikes() && $this->getOwner(false)->getId() !== $user->getId() && !($this->getOwner() instanceof Club)) {
             (new LikeNotification($this->getOwner(false), $this, $user))->emit();
         }
 

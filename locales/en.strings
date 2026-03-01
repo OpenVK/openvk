@@ -1079,6 +1079,7 @@
 "nt_yours_adjective" = "your";
 "nt_yours_feminitive_adjective" = "your";
 "nt_post_nominative" = "post";
+"nt_comment_nominative" = "comment";
 "nt_post_instrumental" = "post";
 "nt_note_instrumental" = "note";
 "nt_photo_instrumental" = "photo";
