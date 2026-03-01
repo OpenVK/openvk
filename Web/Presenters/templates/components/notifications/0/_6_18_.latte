@@ -1,0 +1,9 @@
+{var $comment = $notification->getModel(0)}
+{var $user = $notification->getModel(1)}
+
+<a href="{$user->getURL()}"><b>{$user->getCanonicalName()}</b></a>  
+{_nt_liked_yours}
+<a href="{$comment->getURL()}"><b>{_nt_comment_nominative}</b></a> {_nt_from} {$comment->getPublicationTime()}.
+<div class="nobold">
+    {$notification->getDateTime()}
+</div>
