@@ -373,8 +373,8 @@ class Post extends Postable
         $res = (object) [];
 
         $res->id      = $this->getVirtualId();
-        $res->to_id   = $this->getWallOwner() instanceof Club ? -$this->getWallOwner()->getId() : $this->getWallOwner()->getId();
-        $res->from_id = $this->getOwner() instanceof Club ? -$this->getOwner()->getId() : $this->getOwner()->getId();
+        $res->to_id   = $this->getWallOwner()->getRealId();
+        $res->from_id = $this->getOwner()->getRealId();
         $res->date    = $this->getPublicationTime()->timestamp();
         $res->text    = $this->getText(false);
         $res->attachments = []; # todo
