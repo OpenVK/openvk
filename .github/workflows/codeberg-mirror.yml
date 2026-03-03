@@ -5,6 +5,7 @@ on: push
 jobs:
   to_codeberg:
     runs-on: ubuntu-latest
+    if: github.repository_owner == 'OpenVK'
     steps:
       - uses: actions/checkout@v2
         with:
