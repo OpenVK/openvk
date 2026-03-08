@@ -1,6 +1,6 @@
 #include <en>
 
-"__locale" = "kk_KZ.UTF-8@latin;Kaz_Latn";
+"__locale" = "kk_KZ.UTF-8;Kaz";
 
 /* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
 
