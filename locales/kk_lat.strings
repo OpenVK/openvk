@@ -1,0 +1,2338 @@
+#include <en>
+
+"__locale" = "kk_KZ.UTF-8@latin;Kaz_Latn";
+
+/* Check for https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html */
+
+/* Main page */
+
+"home" = "Bastı bet";
+"welcome" = "Qoc keldińiz!";
+"to_top" = "Joğarı";
+
+/* Login */
+
+"log_in" = "Kiriw";
+"password" = "Qupıyasöz";
+"registration" = "Tirkeliw";
+"forgot_password" = "Qupıyasözdi umıttıńız ba?";
+"checkbox_in_registration" = "Men sayttıń <a href='/privacy'>qupıyalılıq sayasatı</a> men <a href='/terms'>paydalanıw erejelerimen</a> kelisemin";
+"checkbox_in_registration_unchecked" = "Tirkeliw ücin erejeler men qupıyalılıq sayasatımen kelisiwińiz kerek.";
+"login_failed" = "Kiriw sätsiz ayaqtaldı";
+"invalid_username_or_password" = "Logıyn nemese qupıyasöz qate. <a href='/restore'>Qupıyasözdi umıttıp qaldıńız ba?</a>";
+"failed_to_register" = "Tirkeliw sätsiz ayaqtaldı";
+"referral_link_invalid" = "Referaldıq silteme jaramsız.";
+"registration_disabled" = "Tirkeliw waqıtca öcirilgen.";
+"user_already_exists" = "Bul Email mekenjayı jüyede tirkelgen.";
+"access_recovery" = "Akkawntqa qatınastı qalpına keltiriw";
+"page_access_recovery" = "Paraqcağa qatınastı qalpına keltiriw";
+"access_recovery_info" = "Qupıyasözińizdi umıtıp qaldıńız ba? Wayımdamańız, tömende derekterińizdi engizseńiz, biz sizge kiriwdi qalpına keltiriw nusqawlığın jiberemiz.";
+"access_recovery_info_2" = "Jańa qupıyasözińizdi engizińiz. Sodan keyin barlıq belsendi seanstar ayaqtalıp, kiriw tokenderi joyıladı.";
+"reset_password" = "Qupıyasözdi özgertiw";
+"2fa_code_2" = "2FA kodı";
+"password_successfully_reset" = "Qupıyasözińiz sätti özgertildi.";
+"password_reset_email_sent" = "Eger bul pocta tirkelgen bolsa, oğan nusqaw hat keledi.";
+"password_reset_error" = "Qupıyasözdi qalpına keltiriw kezinde qate orın aldı.";
+"password_reset_rate_limit_error" = "Kecirińiz, bul äreketti tım jiyi qaytalawğa bolmaydı.";
+"email_sent" = "Hat jiberildi.";
+"email_sent_desc" = "Eger bul elektrondıq poctağa akkawnt tirkelgen bolsa, oğan nusqaw hat keledi.";
+"email_error" = "Hat jiberiw kezinde qate orın aldı.";
+"email_rate_limit_error" = "Bul äreketti tım jiyi orındawğa bolmaydı.";
+"email_verify_success" = "Poctańız rastaldı. Saytta köńildi waqıt ötkiziwińizge tilektespiz!";
+"registration_disabled_info" = "Äzirce jańa tirkelgi qurıwğa bolmaydı. Eger dosıńız osı saytta tirkelgen bolsa, odan caqırıw siltemesin surap körińiz.";
+"registration_closed" = "Tirkeliw jabıq";
+"invites_you_to" = "<strong>$1</strong> sizdi $2 jelisine caqıradı.";
+"register_meta_desc" = "$1 jelisine tirkelińiz!";
+"register_referer_meta_title" = "$1 sizdi $2 jelisine caqıradı!";
+"register_referer_meta_desc" = "$1 jäne basqa da paydalanıwcılarmen $2 jelisinde qosılıńız!";
+"registration_welcome_1" = "— bul VK qurılımına negizdelgen, pikirlesterdi izdewge arnalğan ämbebap qural.";
+"registration_welcome_2" = "Biz dostar, sınıptastar men äriptesterdiń ünemi baylanısta bolğanın qalaymız.";
+"users" = "Paydalanıwcılar";
+"other_fields" = "Qalğanı";
+
+/* Profile information */
+
+"select_language" = "Til tańdaw";
+"edit" = "Öńdew";
+"birth_date" = "Tuwğan küni";
+"registration_date" = "Tirkelgen küni";
+"hometown" = "Tuwğan jeri";
+"this_is_you" = "bul siz";
+"edit_page" = "Paraqcanı öńdew";
+"edit_group" = "Toptı öńdew";
+"change_status" = "Küydi özgertiw";
+"name" = "Atı";
+"surname" = "Äkesiniń atı";
+"pronouns" = "Esimdik (genderi)";
+"male" = "er";
+"female" = "qız";
+"neutral" = "beytarap";
+"description" = "Sıypattama";
+"save" = "Saqtaw";
+"main_information" = "Bastı aqparat";
+"additional_information" = "Qosımca aqparat";
+"nickname" = "Laqap at";
+"online" = "Jelide";
+"was_online" = "Jelide bolğan kezi: ";
+"was_online_m" = "Jelide bolğan kezi: ";
+/* For male and female */
+
+"years_zero" = "0 jasta";
+"years_one" = "1 jasta";
+"years_other" = "$1 jasta";
+"show_my_birthday" = "Tuwğan künimdi körsetiw";
+"show_only_month_and_day" = "Ay men kündi ğana körsetiw";
+"was_online_f" = "jelide bolğan kezi: ";
+"all_title" = "Barlığı";
+"information" = "Aqparat";
+"status" = "Küyi";
+"no_information_provided" = "Aqparat berilgen joq.";
+"deceased_person" = "Qaytqan kisi";
+"none" = "ecteńe";
+"desc_none" = "sıypattama joq";
+"relationship" = "Otbasılıq jağday";
+"relationship_0" = "tańdalmağan";
+"relationship_1" = "Boydaq";
+"relationship_1_fem" = "Turmıs qurmağan";
+"relationship_2" = "Mına kisimen";
+"relationship_2_prefix" = "kezdesip jür:";
+"relationship_3" = "Mına kisige";
+"relationship_3_prefix" = "atastırılğan:";
+"relationship_4" = "Mına kisige";
+"relationship_4_prefix" = "üylengen:";
+"relationship_5" = "Mına kisimen";
+"relationship_5_prefix" = "azamattıq nekede:";
+"relationship_6" = "Mına kisige";
+"relationship_6_prefix" = "ğacıq:";
+"relationship_7" = "Mına kisimen";
+"relationship_7_prefix" = "qarım-qatınası kürdeli:";
+"relationship_8" = "Belsendi izdewde";
+
+"politViews" = "Sayasıy közqarastar";
+"politViews_0" = "Tańdalmağan";
+"politViews_1" = "Beytarap";
+"politViews_2" = "Komiwniystik";
+"politViews_3" = "Sosıyalıystik";
+"politViews_4" = "Ustamdı";
+"politViews_5" = "Liyberaldıq";
+"politViews_6" = "Kertartpa";
+"politViews_7" = "Monarhıyalıq";
+"politViews_8" = "Äsire kertartpa";
+"politViews_9" = "Liybertariyandıq";
+"contact_information" = "Baylanıstar";
+"email" = "Email";
+"phone" = "Uyalı telefon";
+"telegram" = "Telegram";
+"personal_website" = "Jeke sayt";
+"city" = "Qala";
+"address" = "Meken-jay";
+"personal_information" = "Jeke aqparat";
+"interests" = "Müddeler";
+"additional" = "Qosımca";
+"additional_fields_description" = "Bul jerge özińiz tuwralı qosımca mälimet qosıwğa boladı. Mısalı, älewmettik jelilerdegi paraqcalarıńızğa silteme nemese qızığıwcılıqtarıńızdı jazsańız boladı. Eń köbi $1 öris qosıwğa ruqsat.";
+"additional_field_name" = "Atawı";
+"additional_field_text" = "Mätini";
+"additional_field_place" = "Qay bölimge qosıw";
+"additional_field_place_contacts" = "Baylanıs";
+"additional_field_place_interests" = "Müddeler";
+
+"favorite_music" = "Süyikti muzıka";
+"favorite_films" = "Süyikti fiylmder";
+"favorite_shows" = "Süyikti telecowlar";
+"favorite_books" = "Süyikti kitaptar";
+"favorite_quotes" = "Süyikti däyeksözder";
+"favorite_games" = "Süyikti oyındar";
+"custom_field_favorite_performers" = "Süyikti än orındawcılar";
+"custom_field_favorite_content_makers" = "Süyikti kontent-meykerler";
+"custom_field_favorite_anime" = "Süyikti anıymeler";
+"custom_field_favorite_manga" = "Süyikti mangalar";
+"custom_field_favorite_vtubers" = "Süyikti viytiwberler";
+"custom_field_favorite_albums" = "Süyikti albomdar";
+
+"information_about" = "Özi tuwralı";
+"updated_at" = "Jańartılğan küni: $1";
+"user_banned" = "Ökinicke oray biz <b>$1</b> attı kisiniń paraqcasın buğattawğa mäjbür boldıq.";
+"user_banned_comment" = "Moderatordıń pikiri:";
+
+"closed_page" = "Jabıq paraqca";
+
+"limited_access_to_page_m" = "$1 öz paraqcasına qoljetimdilikti cektedi.";
+"limited_access_to_page_f" = "$1 öz paraqcasına qoljetimdilikti cektedi.";
+
+"you_can_add" = "Siz onı";
+"add_to_friends_m" = "dostar qatarına qosa alasız.";
+"add_to_friends_f" = "dostar qatarına qosa alasız.";
+
+"register_to_access_page_m" = "Onıń paraqcasın köriw ücin tirkelińiz.";
+"register_to_access_page_f" = "Onıń paraqcasın köriw ücin tirkelińiz.";
+
+"verified_page" = "Tekserilgen paraqca";
+"user_is_blocked" = "Paydalanıwcı buğattalğan";
+"before" = "mına künge deyin";
+"forever" = "mäńgilikke";
+
+/* Wall */
+
+"post_writes_m" = "jazdı";
+"post_writes_f" = "jazdı";
+"post_writes_g" = "jarıyaladı";
+"post_deact_m" = "büy dep paraqcasın joyıp tastadı:";
+"post_deact_f" = "büy dep paraqcasın joyıp tastadı:";
+"post_deact_g" = "büy dep paraqcasın joyıp tastadı:";
+"post_deact_silent_m" = "ündemey paraqcasın joyıp tastadı.";
+"post_deact_silent_f" = "ündemey paraqcasın joyıp tastadı.";
+"wall" = "Qabırğa";
+"post_on_your_wall" = "sizdiń qabırğańızda";
+"post_on_group_wall" = "$1 tobında";
+"post_on_user_wall" = "$1 qabırğasında";
+"post" = "Jazba";
+"write" = "Jazıw";
+"publish" = "Jarıyalaw";
+"delete" = "Joyıw";
+"comments" = "Pikirler";
+"share" = "Bölisiw";
+"pin" = "Bekitiw";
+"unpin" = "Bekitpew";
+"pinned" = "bekitildi";
+"comments_tip" = "Osı jazbağa birinci bolıp pikir jazıńız!";
+"your_comment" = "Pikirińiz";
+"auditory" = "Awdıytorıya";
+"in_wall" = "qabırğağa";
+"in_group" = "topqa";
+"shown" = "Körsetilgen";
+"x_out_of" = "$1-";
+"wall_zero" = "jazbalar joq";
+"wall_one" = "$1 jazba";
+"wall_other" = "$1 jazba";
+"feed" = "Jańalıqtar";
+"publish_post" = "Jazba jarıyalaw";
+"view_other_comments" = "Basqa pikirlerdi qaraw";
+"no_comments" = "Pikirler joq";
+"my_news" = "Jańalıqtarım";
+"all_news" = "Barlıq jańalıq";
+"posts_per_page" = "Bir bettegi jazbalar sanı";
+"show_ignored_sources" = "Jasırılğan top ne kisilerdi körsetiw";
+"attachment" = "Tirkemeler";
+"post_as_group" = "Top retinde jazıw";
+"auto_scroll" = "Taspanıń jalğasın üzdiksiz jüktew";
+"ajax_routing" = "Betterdi AJAX arqılı jüktew";
+"comment_as_group" = "Top retinde pikir jazıw";
+
+"add_source" = "Derekköz qosıw";
+"set_source" = "Derekközdi körsetiw";
+"source" = "Derekköz";
+"set_source_tip" = "Basqa avtorlardıń kontentin paydalansańız, tüpnusqağa silteme beriw mańızdı.<br>Munı tömen jasay alasız.";
+
+"add_signature" = "Avtordıń qoltańbası";
+/* ^ can be translated as "author's signature". ^ */
+"contains_nsfw" = "NSFW-kontent bar";
+"nsfw_warning" = "Bul jazbada NSFW-kontent bolıwı mümkin";
+"report" = "Cağımdanıw";
+"attach" = "Tirkew";
+"detach" = "Alıp tastaw";
+"attach_photo" = "Süwret tirkew";
+"attach_video" = "Beyne tirkew";
+"attach_geotag" = "Geotańba tirkew";
+"draw_graffiti" = "Graffiti salıw";
+"no_posts_abstract" = "Bul jerde äli eckim ecteńe jazbadı.";
+"attach_no_longer_available" = "Bul tirkeme budan bılay qol jetimdi emes.";
+"open_post" = "Jazbanı acıw";
+"version_incompatibility" = "Bul tirkemeni körsete almadıq. Mälimetter bazası OpenVK-diń qazirgi nusqasımen üylespelmewi mümkin.";
+"graffiti" = "Graffiti";
+"reply" = "Jawap beriw";
+"post_is_ad" = "Bul jazba — jarnama.";
+
+"edited_short" = "öńdedi";
+
+"feed_settings" = "Taspanı baptaw";
+"ignored_sources" = "Jasırılğan toptar men kisiler";
+"ignore_user" = "Osı kisini jasırıw";
+"unignore_user" = "Osı kisini jasırmaw";
+
+"ignore_club" = "Osı toptı jasırıw";
+"unignore_club" = "Osı toptı jasırmaw";
+"no_ignores_count" = "Siz ecbir top ne kisini jasırğan joqsız.";
+"stop_ignore" = "Jasırmaw";
+"start_from_page" = "Mına bet nömirinen bastaw: ";
+
+"all_posts" = "Barlıq jazba";
+"users_posts" = "$1 jazbaları";
+"clubs_posts" = "Top jazbaları";
+"others_posts" = "Özgelerdiń jazbaları";
+"show_more" = "Tağı körsetiw";
+"has_repost" = "Repost bar";
+"likers_list" = "Unatqandar sanı";
+"liked_verb" = "Unattı";
+
+"liked_by_x_people_one" = "$1 kisi unattı";
+"liked_by_x_people_few" = "$1 kisi unattı";
+"liked_by_x_people_many" = "$1 kisi unattı";
+"liked_by_x_people_other" = "$1 kisi unattı";
+"liked_by_x_people_zero" = "Eckim unatpadı";
+
+"geo_place" = "Orın";
+"geotag" = "Geotańba";
+"nearest_posts" = "Mańaydağı jazbalar";
+"Latitude" = "Endik";
+"longitude" = "Boylıq";
+"name_of_the_place" = "Orın atawı";
+"no_nearest_posts" = "Mańayda ecbir jazba joq";
+"shown_last_nearest_posts" = "Ay boyınca sońğı $1 jazba körsetilgen";
+
+"change_geo_name" = "Geotańba atawın özgertiw";
+"change_geo_name_new" = "Jańa atawı";
+
+/* Friends */
+
+"friends" = "Dostar";
+"followers" = "Jazılmandar";
+"follower" = "Jazılman";
+"friends_delete" = "Dostarımnan joyıw";
+"friends_add" = "Dostarıma qosıw";
+"friends_reject" = "Ötinimdi qaytarıw";
+"friends_accept" = "Ötinimdi qabıldaw";
+"friends_leave_in_flw" = "Jazılıwcılarda qaldırıw";
+"friends_add_msg" = "Dostastıńız.";
+"friends_rej_msg" = "Jazıwcılar tiziminde qaldı.";
+"friends_rem_msg" = "Dostar tiziminen öcirdińiz.";
+"send_message" = "Hat jazıw";
+"incoming_req" = "Jazılıwcılar";
+"outcoming_req" = "Ötinimder";
+"req" = "Ötinimder";
+"friends_online" = "Jelidegi dostar";
+"all_friends" = "Barlıq dostar";
+"friends_zero" = "Dostarıńız joq";
+"friends_one" = "$1 dos";
+"friends_other" = "$1 dos";
+"friends_online_zero" = "Jelidege dostarıńız joq";
+"friends_online_one" = "$1 dos jelide";
+"friends_online_other" = "$1 dos jelide";
+"friends_list_zero" = "Äzirce dostarıńız joq";
+"friends_list_one" = "Sizde $1 dos";
+"friends_list_other" = "Sizde $1 dos";
+"friends_list_online_zero" = "Äzirce jelidegi dostarıńız joq";
+"friends_list_online_one" = "$1 dosıńız jelide";
+"friends_list_online_other" = "$1 dosıńız jelide";
+"followers_zero" = "Jazılmandar joq";
+"followers_one" = "$1 jazılman";
+"followers_other" = "$1 jazılman";
+"subscriptions_zero" = "Jazılım joq";
+"subscriptions_one" = "$1 jazılım";
+"subscriptions_other" = "$1 jazılım";
+
+/* Group */
+
+"group" = "Top";
+"name_group" = "Atawı";
+"subscribe" = "Jazılıw";
+"unsubscribe" = "Toptan cığıw";
+"subscriptions" = "Jazılımdar";
+"join_community" = "Topqa kiriw";
+"leave_community" = "Toptan cığıw";
+"check_community" = "Top betin acıw";
+"min_6_community" = "Toptıń atı tım bolmasa 6 äripten köp bolıw kerek";
+"participants" = "Qatısıwcılar";
+"groups" = "Toptar";
+"meetings" = "Kezdesiwler";
+"create_group" = "Top qurıw";
+"group_managers" = "Menedjerler";
+"group_type" = "Toptıń tiypi";
+"group_type_open" = "Bul acıq top, yağnıy oğan ärkim kire aladı.";
+"group_type_closed" = "Bul jabıq top, oğan kiriw ücin ötinim jazıwıńız qajet.";
+"creator" = "Qurğan";
+"administrators" = "Äkimciler";
+"add_to_left_menu" = "Sol jaq mäzirge qosıw";
+"remove_from_left_menu" = "Sol jaq mäzirden alıw";
+"all_followers" = "Barlıq jazılmandar";
+"only_administrators" = "Tek äkimciler";
+"website" = "Sayt";
+"managed" = "Basqaratın";
+"size" = "Kölemi";
+"administrators_one" = "$1 äkimci";
+"administrators_other" = "$1 äkimci";
+"role" = "Röli";
+"administrator" = "Äkimci";
+"promote_to_admin" = "Äkimci qıldırıw";
+"promote_to_owner" = "Toptıń iesi qıldırıw";
+"devote" = "Arnaw";
+"set_comment" = "Pikirdi öńdew";
+"hidden_yes" = "Jasırılğan: İya";
+"hidden_no" = "Jasırılğan: Joq";
+
+"group_allow_post_for_everyone" = "Acıq";
+"group_limited_post" = "Usınılatın jazbalar";
+"group_closed_post" = "Jabıq";
+"suggest_new" = "Jańalıq usınıw";
+"suggested_by_you_zero" = "Siz $1 jazba usınğansız";
+"suggested_by_you_one" = "Siz bir jazba usınğansız";
+"suggested_by_you_few" = "Siz $1 jazba usınğansız";
+"suggested_by_you_many" = "Siz $1 jazba usınğansız";
+"suggested_by_you_other" = "Siz $1 jazba usınğansız";
+
+"suggested_by_everyone_zero" = "$1 usınılğan jazba";
+"suggested_by_everyone_one" = "Bir usınılğan jazba";
+"suggested_by_everyone_few" = "$1 usınılğan jazba";
+"suggested_by_everyone_many" = "$1 usınılğan jazba";
+"suggested_by_everyone_other" = "$1 usınılğan jazba";
+
+
+"group_hide_from_global_feed" = "Jazbalardı jahandıq taspada körsetpew";
+
+"suggested_posts_by_you" = "Siz usınğan jazbalar";
+"suggested_posts_by_everyone" = "Usınılğan jazbalar";
+"suggested" = "Usınıldı";
+"suggested_posts_everyone" = "Paydalanıwcılar usınğan jazbalar";
+"no_suggested_posts_by_you" = "Siz bul topqa äli ecqanday jazba usınğan joqsız.";
+"no_suggested_posts_by_people" = "Bul topqa äli eckim jazba usınbağan.";
+
+"publish_suggested" = "Jazbanı jarıyalaw";
+"decline_suggested" = "Qabıldamaw";
+
+"error_loading_suggest" = "Jańa jazbalardı jüktew sätsiz ayaqtaldı";
+
+"publishing_suggested_post" = "Usınılğan jazbanı jarıyalaw";
+"suggested_posts_in_group_zero" = "Usınılğan jazbanıń barlığın qarap cıqtıńız, alaqay!";
+"suggested_posts_in_group_one" = "Bul topqa bir jazba usınılğan";
+"suggested_posts_in_group_few" = "Bul topqa $1 jazba usınılğan";
+"suggested_posts_in_group_many" = "Bul topqa $1 jazba usınılğan";
+"suggested_posts_in_group_other" = "Bul topqa $1 jazba usınılğan";
+
+"suggested_posts_in_group_by_you_zero" = "Siz bul topqa ecbńr jazba usınbağansız";
+"suggested_posts_in_group_by_you_one" = "Bul topqa bir jazba usınğansız";
+"suggested_posts_in_group_by_you_few" = "Bul topqa $1 jazba usınğansız";
+"suggested_posts_in_group_by_you_many" = "Bul topqa $1 jazba usınğansız";
+"suggested_posts_in_group_by_you_other" = "Bul topqa $1 jazba usınğansız";
+
+"suggestion_successfully_published" = "Jazba sätti jarıyalandı";
+"suggestion_successfully_declined" = "Jazba sätti qabıldanbadı";
+"suggestion_succefully_published" = "Jazba sätti jarıyalandı";
+"suggestion_succefully_declined" = "Jazba sätti qabıldanbadı";
+"suggestion_press_to_go" = "Ötiw ücin basıńız";
+
+"error_declining_invalid_post" = "Jazbanı qabıldamaw mümkin bolmadı: jazba joq";
+"error_declining_not_suggested_post" = "Jazbanı qabıldamaw mümkin bolmadı: bul usınılğan jazba emes";
+"error_declining_declined_post" = "Jazbanı qabıldamaw mümkin bolmadı: jazba burınnan qabıldanbağan";
+
+"error_accepting_invalid_post" = "Jazbanı qabıldaw mümkin bolmadı: jazba joq";
+"error_accepting_not_suggested_post" = "Jazbanı qabıldaw mümkin bolmadı: bul usınılğan jazba emes";
+"error_accepting_declined_post" = "Jazbanı qabıldaw mümkin bolmadı: jazba burın qabıldanbağan";
+
+"statistics" = "Statıystıyka";
+"group_administrators_list" = "Äkimciler tizimi";
+"group_display_only_creator" = "Tek toptı qurğan kisini körsetiw";
+"group_display_all_administrators" = "Barlıq äkimcilerdi körsetiw";
+"group_dont_display_administrators_list" = "Ecteńe körsetpew";
+"group_changeowner_modal_title" = "Top iesi quqıqtarıń beriw";
+"group_changeowner_modal_text" = "Nazar awdarıńız! Siz «$1» degen paydalanıwcığa top iesi quqıqtarın beriwdesiz. Bul äreket qaytımsız. Quqıqtar berilgennen keyin sizge top äkimci röli beriledi, biraq onıń jańa iesi sizdi ońay sol rölden alıp tastay aladı.";
+"group_owner_setted" = "Toptıń jańa iesi ($1) «$2» tobına sätti tağayındaldı. Sizge top äkimci quqıqtarı berildi. Qaytip top iesi bolğıńız kelse <a href='/support?act=new'>qoldaw körsetiw tobına</a> jazıńız.";
+"participants_zero" = "Qatısıwcılar joq";
+"participants_one" = "$1 qatısıwcı";
+"participants_other" = "$1 qatısıwcı";
+"groups_zero" = "Top joq";
+"groups_one" = "$1 top";
+"groups_other" = "$1 top";
+"groups_list_zero" = "Siz ecqanday topqa qatıspağansız.";
+"groups_list_one" = "Siz bir topqa qatısasız";
+"groups_list_other" = "Siz $1 topqa qatısasız";
+"meetings_zero" = "Kezdesiwler joq";
+"meetings_one" = "$1 kezdesiw";
+"meetings_other" = "$1 kezdesiw";
+"search_by_groups" = "Toptardan izdew";
+"group_banned" = "Ökinicke qaray, biz <b>$1</b> tobın buğattawğa mäjbür boldıq.";
+
+"error_suggestions" = "Usınılğan jazbalarğa qol jetkize almadıq";
+"error_suggestions_closed" = "Bul toptıń qabırğası jabıq.";
+"error_suggestions_open" = "Bul toptıń qabırğası acıq.";
+"error_suggestions_access" = "Bükil usınılğan jazbanı tek top äkimcileri köre aladı.";
+
+/* Albums */
+
+"create" = "Jasaw";
+"albums" = "Albomdar";
+"album" = "Albom";
+"photos" = "süwret";
+"create_album" = "Albom jasaw";
+"edit_album" = "Albomdı öńdew";
+"edit_photo" = "Süwretti öńdew";
+"creating_album" = "Albom jasalıwda";
+"delete_photo" = "Süwretti joyıw";
+"sure_deleting_photo" = "Mına süwretti cınımen albomnan öcirgińiz kele me?";
+"upload_photo" = "Süwret jüktep salıw";
+"photo" = "Süwret";
+"upload_button" = "Jüktep salıw";
+"open_original" = "Tüpnusqasın acıw";
+"avatar_album" = "Paraqcamdağı süwretter";
+"wall_album" = "Qabırğamdağı süwretter";
+"albums_zero" = "Albom joq";
+"albums_one" = "$1 albom";
+"albums_other" = "$1 albom";
+"albums_list_zero" = "Sizde ecqanday albom joq";
+"albums_list_one" = "Sizde bir albom bar";
+"albums_list_other" = "Sizde $1 albom bar";
+
+"add_image" = "Süwret qosıw";
+"add_image_group" = "Süwret jüktep salıw";
+"upload_new_picture" = "Jańa süwret jüktep salıw";
+"uploading_new_image" = "Jańa süwretti jüktep salıw";
+"friends_avatar" = "Cın süwretińizdi jüktep qoysańız dostarıńız sizdi ońay tanıydı.";
+"groups_avatar" = "Jaqsı süwret birlestigińizdi tanımal etedi.";
+"formats_avatar" = "JPG, GIF nemese PNG formattağı süwretterdi jüktep salıwğa boladı.";
+"troubles_avatar" = "Süwrettiń jükteliwimen mäsele bolsa, kölemin kicireytip, jüktep körińiz.";
+"webcam_avatar" = "Kompyiwterińizge veb-kamera qosılıp tursa, lezde <a id='_takeSelfie'>süwret tüsirip körińiz »</a>";
+"publish_on_wall" = "Qabırğada jazba jarıyalaw";
+"take_snapshot" = "Tüsiriw";
+"your_browser_doesnt_support_webcam" = "Brawzerińizde veb-kameradan süwret tüsiriwge bolmaydı.";
+
+"selected_area_user" = "Mına awmaq sizdiń paraqcańızda körsetiledi.";
+"selected_area_club" = "Mına awmaq top paraqcasında körsetiledi.";
+"selected_area_rotate" = "Süwret durıs bağıttalmağan bolsa, onı buratıwğa boladı.";
+
+"deleting_avatar" = "Süwretti joyıw";
+"deleting_avatar_sure" = "Süwretti cınımen joyğıńız kele me?";
+
+"deleted_avatar_notification" = "Süwret sätti joyıldı";
+"save_changes" = "Özgeristerdi saqtaw";
+
+"upd_m" = "öz paraqca süwretin özgertti";
+"upd_f" = "öz paraqca süwretin özgertti";
+"upd_n" = "öz paraqca süwretin özgertti";
+"upd_g" = "top süwretin özgertti";
+
+"add_photos" = "Süwretterdi qosıw";
+"upload_picts" = "Süwretterdi jüktep salıw";
+"end_uploading" = "Jüktep salıwdı ayaqtaw";
+"photos_successfully_uploaded" = "Süwretter sätti jükteldi";
+"click_to_go_to_album" = "Albomğa ötiw ücin osında basıńız.";
+"too_many_pictures" = "10 süwretten artıq jüktep salıwğa bolmaydı";
+"too_many_attachments" = "Tirkemeler tım köp.";
+
+"drag_files_here" = "Fayldardı osında süyreńiz";
+"only_images_accepted" = "\"$1\" faylı — süwret nemese beyne emes.";
+"max_filesize" = "Fayldıń eń ülken ölcemi — $1 MB";
+
+"uploading_photos_from_computer" = "Süwretterdi kompyiwterden jüktep salıw";
+"supported_formats" = "Qoldaw körsetiletin picimder: JPG, PNG jäne GIF.";
+"max_load_photos" = "Bir waqıtta 10 süwretke deyin jüktep salıwğa boladı.";
+
+"tip" = "Keńes";
+"tip_ctrl" = "Birnece süwretti tańdaw ücin Windows jüyesinde Ctrl, Mac OS jüyesinde CMD pernesin basıp turıp tańdańız.";
+
+"album_poster" = "Albomnıń bastı süwreti";
+
+"select_photo" = "Süwret tańdaw";
+"upload_new_photo" = "Jańa süwret jüktep salıw";
+
+"is_x_photos_zero" = "Barlığı nöl süwret.";
+"is_x_photos_one" = "Barlığı bir süwret.";
+"is_x_photos_few" = "Barlığı $1 süwret.";
+"is_x_photos_many" = "Barlığı $1 süwret.";
+"is_x_photos_other" = "Barlığı $1 süwret.";
+
+"all_photos" = "Barlıq süwret";
+"error_uploading_photo" = "Süwretti jüktep salıw sätsiz ayaqtaldı. Qate tuwralı habarlama: ";
+"too_many_photos" = "Süwretter tım köp.";
+
+"photo_x_from_y" = "$2 icindegi $1 süwret";
+
+/* Notes */
+
+"notes" = "Joljazbalar";
+"note" = "Joljazba";
+"name_note" = "Taqırıbı";
+"text_note" = "Mazmunı";
+"create_note" = "Joljazba jazıw";
+"edit_note" = "Joljazbanı öndew";
+"actions" = "Äreketter";
+"publish_post" = "Jazba qosıw";
+"edited" = "Öndelgen küni:";
+"notes_zero" = "Joljazba joq";
+"notes_one" = "$1 joljazba";
+"notes_other" = "$1 joljazba";
+"notes_start_screen" = "Joljazbalar arqılı oqıyğalardı dostarıńızben bölisiwge jäne olarmen ne bolıp jatqanın köriwge boladı.";
+"note_preview" = "Cıymaydı aldın-ala qaraw";
+"note_preview_warn" = "Aldın-ala qarap jatırsız";
+"note_preview_warn_details" = "Joljazba saqtalğan soń onıń äreketi nemese körinisi özgeriwi mümkin. Sondıqtan aldın-ala qarawdı jiyi qoldanbawğa tırısıńız.";
+"note_preview_empty_err" = "Bos nemese atawsız joljazbanı aldın-ala qarap körmekcisiz be? Nelikten, Wayt mırza?";
+"notes_list_zero" = "Ec joljazba tabılğan joq";
+"notes_list_one" = "$1 joljazba tabıldı";
+"notes_list_other" = "$1 joljazba tabıldı";
+
+"select_note" = "Joljazbanı tańdaw";
+"no_notes" = "Sizde joljazbalar joq";
+"error_attaching_note" = "Joljazbanı tirkew qatesi";
+"select_or_create_new" = "Bar joljazlarıńızdan tańdańız nemese <a href='/notes/create'>jańasın jazıńız</a>";
+"notes_closed" = "Joljazbalardı tek özińiz köre alasız, sondıqtan olardı jazbağa tirkey almaysız.<br> Munı <a href=\"/settings?act=privacy\">baptap</a> özgerte alasız.";
+"do_not_attach_note" = "Joljazbanı tirkemew";
+"something_is_supported_from_xhtml" = "(X)HTML-diń <a href='/kb/notes'>keybir</a> tustarı qoldaladı.";
+"something" = "(X)HTML-diń keybir tustarı";
+"supports_xhtml" = "qoldaladı.";
+/* Notes: Article Viewer */
+"aw_legacy_ui" = "Eski körinis";
+
+/* Menus */
+
+/* Note that is string need to fit into the "My Page" link */
+
+"edit_button" = "öńdew";
+"my_page" = "Paraqcam";
+"my_friends" = "Dostarım";
+"my_photos" = "Süwretterim";
+"my_videos" = "Beynelerim";
+"my_messages" = "Hattar";
+"my_notes" = "Joljazbalarım";
+"my_audios" = "Änderim";
+"my_groups" = "Toptarım";
+"my_feed" = "Jańalıqtar";
+"my_feedback" = "Jawaptar";
+"my_settings" = "Baptaw";
+"bookmarks" = "Betbelgiler";
+"bookmarks_tab" = "Qoyma";
+"bug_tracker" = "Bag ustawcı";
+"menu_settings" = "Baptaw";
+"menu_login" = "Kiriw";
+"menu_registration" = "Tirkeliw";
+"menu_help" = "Kömek";
+"header_home" = "bastı bet";
+"header_groups" = "toptar";
+"header_people" = "kisiler";
+"header_invite" = "caqırıw";
+"header_help" = "kömek";
+"header_log_out" = "cığıw";
+"header_search" = "İzdew";
+"header_login" = "kiriw";
+"header_registration" = "tirkeliw";
+"left_menu_donate" = "Donat";
+"footer_about_instance" = "instansıya tuwralı";
+"footer_rules" = "erejeler";
+"footer_blog" = "blog";
+"footer_help" = "kömek";
+"footer_developers" = "äzirlewcilerge";
+"footer_choose_language" = "til tańdaw";
+"footer_privacy" = "qupıyalıq";
+"security" = "Qawipsizdik";
+
+/* Settings */
+
+"main" = "Bastı";
+"contacts" = "Baylanıstarım";
+"avatar" = "Bastı süwret";
+"privacy" = "Qupıyalıq";
+"interface" = "İnterfeys";
+"profile_picture" = "Paraqca süwreti";
+"picture" = "Süwret";
+"change_password" = "Qupıya sözdi özgertiw";
+"old_password" = "Burınğı qupıya söz";
+"new_password" = "Jańa qupıya söz";
+"repeat_password" = "Qaytalap jazıńızcı";
+"avatars_style" = "Avatarlardıń stiyli";
+"style" = "Stiylder";
+"default" = "ädepki";
+"arbitrary_avatars" = "Erikti";
+"cut" = "Carcı";
+"round_avatars" = "Döńgelek";
+"apply_style_for_this_device" = "Stiyldi tek osı qurılğı ücin paydalanıw";
+"ui_settings_window" = "Qosımca baptaw";
+"search_for_groups" = "Top izdew";
+"search_for_users" = "Kisi izdew";
+"search_for_posts" = "Jazba izdew";
+"search_for_comments" = "Pikir izdew";
+"search_for_videos" = "Beyne izdew";
+"search_for_apps" = "Qosımca izdew";
+"search_for_notes" = "Joljazba izdew";
+"search_for_audios" = "Än izdew";
+"search_for_audios_playlists" = "Äntizim izdew";
+"search_for_docs" = "Qujat izdew";
+"search_button" = "İzdew";
+"search_placeholder" = "Kez kelgen atawdı, taqırıptı nemese sözdi teriwdi bastańız";
+"results_zero" = "Nätiyje joq";
+"results_one" = "$1 nätiyje";
+"results_other" = "$1 nätiyje";
+"privacy_setting_access_page" = "Meniń paraqcam kimge körinedi";
+"privacy_setting_read_info" = "Paraqcamdağı bastı aqparat kimge körinedi";
+"privacy_setting_see_groups" = "Jazılğan toptarım kimge körinedi";
+"privacy_setting_see_photos" = "Süwretterim kimge körinedi";
+"privacy_setting_see_videos" = "Beynelerim kimge körinedi";
+"privacy_setting_see_notes" = "Joljazbalarım kimge körinedi";
+"privacy_setting_see_friends" = "Dostar tizimim kimge körinedi";
+"privacy_setting_add_to_friends" = "Meni dosqa kim qosa aladı";
+"privacy_setting_write_wall" = "Qabırğama kim jaza aladı";
+"privacy_setting_write_messages" = "Kim mağan hat jibere aladı";
+"privacy_setting_view_audio" = "Änderim kimge körinedi";
+"privacy_setting_see_likes" = "Men birdeńe unatqanım kimge körinedi";
+"privacy_value_anybody" = "Ärkim";
+"privacy_value_anybody_dative" = "Barcağa";
+"privacy_value_users" = "OpenVK paydalanıwcılarına";
+"privacy_value_friends" = "Dostarım";
+"privacy_value_friends_dative" = "Dostarıma";
+"privacy_value_only_me" = "Men ğana";
+"privacy_value_only_me_dative" = "Mağan ğana";
+"privacy_value_nobody" = "Eckim";
+"profile_type" = "Beyin türi";
+"profile_type_open" = "Acıq";
+"profile_type_closed" = "Jabıq";
+"your_email_address" = "Sizdiń Email-mekenjayıńız";
+"your_page_address" = "Sizdiń paraqcańızdıń mekenjayı";
+"page_address" = "Paraqcańızdıń mekenjayı";
+"current_email_address" = "Qazirgi Email-mekenjayı";
+"new_email_address" = "Jańa Email-mekenjayı";
+"save_email_address" = "Email-mekenjayın saqtaw";
+"page_id" = "Paraqcanıń ID-ci";
+"you_can_also" = "Sonımen qatar siz";
+"delete_your_page" = "paraqcańızdı joya alasız";
+"delete_album" = "albomdı joya alasız";
+"ui_settings_interface" = "İnterfeys";
+"ui_settings_sidebar" = "Sol jaq mäzir";
+"ui_settings_rating" = "Reytiyng";
+"ui_settings_rating_show" = "Körsetiw";
+"ui_settings_rating_hide" = "Jasırıw";
+"ui_settings_nsfw_content" = "Eresekterge arnalğan materıyaldar";
+"ui_settings_nsfw_content_dont_show" = "Jahandıq taspada körsetpew";
+"ui_settings_nsfw_content_blur" = "Buldıratıw";
+"ui_settings_nsfw_content_show" = "Körsetiw";
+"ui_settings_view_of_posts" = "Jazbalardıń körinisi";
+"ui_settings_view_of_posts_old" = "Eski";
+"ui_settings_view_of_posts_microblog" = "Mikroblog";
+"ui_settings_main_page" = "Bastı bet";
+"ui_settings_sessions" = "Sessiyalar";
+"additional_links" = "Qosımca siltemeler";
+"ad_poster" = "Jarnama posteri";
+"email_change_confirm_message" = "Özgeris äser etiw ücin özińizdiń jańa Email-mekenjayıńızdı rastańız. Biz oğan nusqawlıq jiberdik.";
+"profile_deactivate" = "Paraqcanı joyıw";
+"profile_deactivate_button" = "Paraqcanı joyıw";
+"profile_deactivate_header" = "Paraqcańızdı joyğıńız kelgeni ücin ökinictimiz. Sondıqtan joyıw sebebin jäne osı jağday tuwralı habarlamańızdı körsete alasız. Biz sizdiń pikirińizdi oqıp, sayttı jaqsartıwğa tırısamız!";
+"profile_deactivate_reason_header" = "Paraqcanı joyıw sebebin körsetińizci";
+"profile_deactivate_reason_1" = "Munda basqa paraqcam bar";
+"profile_deactivate_reason_1_text" = "Men jańa paraqca jasadım, endi ötkenimdi öcirgim keledi.";
+"profile_deactivate_reason_2" = "Veb-sayt waqıtımdı jey beredi";
+"profile_deactivate_reason_2_text" = "Bul sayt mıqtı bolsa da, meniń jumısqa jäne ömirge qajet waqıtımdı aladı.";
+"profile_deactivate_reason_3" = "Veb-saytta orınsız materıyaldar köp";
+"profile_deactivate_reason_3_text" = "Men ömir boyına jetkilikti porno jäne qaraqcılıq materıyal taptım. Endi ketsem boladı.";
+"profile_deactivate_reason_4" = "Derekterimniń qawipsizdigine alańdaymın";
+"profile_deactivate_reason_4_text" = "Meni baqılap jatır, mına jerde otırğandı qorqamın. Ketiwim kerek.";
+"profile_deactivate_reason_5" = "Eckim jazbalarımdı qaramaydı";
+"profile_deactivate_reason_5_text" = "Mına jerde mağan eckim nazar awdarmaydı. Men ketkenime ökinesińder.";
+"profile_deactivate_reason_6" = "Basqa sebep";
+"profile_deactivated_msg" = "Paraqcańız <b>joyıldı</b>.<br/><br/>Sayttı qayta paydalanğıńız kelse $1 deyin <a href='/settings/reactivate'>paraqcańızdı qaytara alasız</a>.";
+"profile_deactivated_status" = "Paraqca joyılğan";
+"profile_deactivated_info" = "Bul paraqca joyılğan.<br/>Aqparat qoljetimsiz.";
+"share_with_friends" = "Dostarmen bölisiw";
+"end_all_sessions" = "Barlıq sessiyalardı ayaqtaw";
+"end_all_sessions_description" = "Barlıq qurılğıda $1 jelisinen cıqqıńız kelse, tömendegi tüymeni basıńız";
+"end_all_sessions_done" = "Barlıq seanstar, sonıń icinde uyalı qosımcalar ayaqtaldı";
+"backdrop_short" = "Artqı jağı";
+"backdrop" = "Paraqcanıń artqı jağı";
+"backdrop_desc" = "Paraqca nemese toptıń artqı jağına eki süwret qoyıwğa boladı. Olar bettiń sol jäne oń jaq cetinde körsetiledi. Söytip paraqcańızdı dara ete alasız.";
+"backdrop_about_adding" = "Bir süwretti ğana ornatsańız da boladı, biraq söytseńiz onca ädemi körinbewi mümkin. Sonımen qatar eki süwretti jeke-jeke almastırsańız boladı: eger sizde eki süwret ornatılğan bolıp, birewi unamay qalsa, tek sonı ğana almastırıńız — ekinci süwret joyılmaydı. Süwrettiń ekewin de joyıw ücin tömendegi tüymeni basıńız. Bir süwretti bölek joyıwğa bolmaydı.";
+"backdrop_warn" = "Süwretter joğarı körsetilgendey retteledi. Olardıń biyiktigi avtomattı türde ulğayıp, ekran biyiktiginiń 100%-ın aladı, ortasında bulıńğırlıq boladı. Bul tek sizdiń paraqcańızğa äser etedi; negizgi OpenVK interfeysiniń fonın özgertiw mümkin emes.";
+"backdrop_save" = "Süwret(ter)di saqtaw";
+"backdrop_remove" = "Süwretterdi joyıw";
+"backdrop_error_title" = "Süwretterdi saqtaw kezinde qatelikke tap boldıq";
+"backdrop_error_no_media" = "Süwretter bülingen nemese tolığımen jüktep salınbağan";
+"backdrop_succ" = "Paraqcanıń artqı jağınıń baptawları saqtaldı";
+"backdrop_succ_rem" = "Süwretter sätti joyıldı";
+"backdrop_succ_desc" = "Paydalanıwcılar 5 miyniwt icinde özgerister köre bastaydı.";
+"browse" = "Colıw";
+
+/* Two-factor authentication */
+
+"two_factor_authentication" = "Eki faktorlı awtentıyfıykasıya";
+"two_factor_authentication_disabled" = "Buzılıwdan senimdi qorğanıs qızmetin qamtamasız etedi: paraqcağa kiriw ücin 2FA qosımcasında alınğan kodtı engiziw kerek.";
+"two_factor_authentication_enabled" = "Eki faktorlı awtentıyfıykasıya qosıwlı. Paraqcańız qorğalğan.";
+"two_factor_authentication_login" = "Sizde eki faktorlı awtentıyfıykasıya qosılğan. Kiriw ücin arnayı qoldanbadağı kodtı engizińiz.";
+"two_factor_authentication_settings_1" = "TOTP arqılı eki faktorlı awtentıyfıykasıyanı internetsiz de paydalanıwğa boladı. Munı istew ücin sizge kodtı jasaw qoldanbası qajet. Mısalı Android pen iOS-ke arnalğan <b>Google Authenticator</b> nemese <b>Aegis jäne andOTP</b> - Android OJ-ne arnalğan tegin qoldanbalar. Telefonıńızda kün men waqıt durıs ornatılğanın tekserińiz.";
+"two_factor_authentication_settings_2" = "Eki faktorlı awtentıyfıykasıya qoldanbasın paydalanıp, tömendegi QR kodın skanerleńiz:";
+"two_factor_authentication_settings_3" = "nemese özińiz qupıya kiltti engizińiz: <b>$1</b>.";
+"two_factor_authentication_settings_4" = "Endi kirip otırğan kisi cınımen siz ekenińizdi rastaw ücin, arnayı qoldanbadan alınatın kodtı jäne paraqcanıń qupıyasözin engizińiz.";
+"connect" = "Qosıw";
+"enable" = "Qosıw";
+"disable" = "Söndiriw";
+"code" = "Kod";
+"2fa_code" = "2FA kodı";
+"incorrect_password" = "Qupıya söz durıs emes";
+"incorrect_code" = "Kod durıs emes";
+"incorrect_2fa_code" = "Eki faktorlı awtentıyfıykasıyanıń kodı durıs emes";
+"two_factor_authentication_enabled_message" = "Eki faktorlı awtentıyfıykasıya qosıwlı";
+"two_factor_authentication_enabled_message_description" = "Sizdiń parağıńızdı buzıw qıyınıraq boldı. <a href='javascript:viewBackupCodes()'>Saqtıq köcirme kodtarın</a> jüktep alıwdı usınamız";
+"two_factor_authentication_disabled_message" = "Eki faktorlı awtentıyfıykasıya öciriwli";
+"view_backup_codes" = "Saqtıq köcirme kodtarın köriw";
+"backup_codes" = "Kiriwdi rastawğa arnalğan saqtıq köcirme kodtarı";
+"two_factor_authentication_backup_codes_1" = "Saqtıq köcirme kodtarı telefonğa kiriw mümkindigińiz bolmağan kezde, mısalı, sayahat kezinde paraqcağa kiriwge rastawğa mümkindik beredi.";
+"two_factor_authentication_backup_codes_2" = "Sizde tağı <b>10 kod</b> bar, är kodtı tek bir ret paydalanıwğa boladı. Olardı basıp cığarıńız da qawipsiz jerge qoyıńız. Kiriwińizdi rastağanda kodtar qajet bolğanda paydalanıńız.";
+"two_factor_authentication_backup_codes_3" = "Tawsılğan jağdayda jańa kodtar alıwğa boladı. Tek sońğı jasalğan saqtıq köcirme kodtar jaramdı.";
+"viewing_backup_codes" = "Qalpına keltiriw kodtarın köriw";
+"disable_2fa" = "2FA-nı öciriw";
+"viewing" = "Qaraw";
+
+/* Search */
+
+"s_params" = "İzdew parametrleri";
+"s_people" = "Kisiler";
+"s_groups" = "Toptar";
+"s_apps" = "Qosımcalar";
+"s_posts" = "Jazbalar";
+"s_comments" = "Pikirler";
+"s_photos" = "Süwretter";
+"s_videos" = "Beyneler";
+"s_audios" = "Änder";
+"s_audios_playlists" = "Äntizimder";
+"s_documents" = "Qujattar";
+
+"s_by_people" = "adamdar boyınca";
+"s_by_groups" = "toptar boyınca";
+"s_by_posts" = "jazbalar boyınca";
+"s_by_comments" = "pikirler boyınca";
+"s_by_videos" = "beyneler boyınca";
+"s_by_apps" = "qosımcalar boyınca";
+"s_by_audios" = "änder boyınca";
+"s_by_audios_playlists" = "äntizimder boyınca";
+"s_by_documents" = "qujattar boyınca";
+"s_order_by" = "Surıptaw tärtibi...";
+"s_order_by_id" = "ID boyınca";
+"s_order_by_name" = "Atawı boyınca";
+"s_order_by_random" = "Kezdeysoq";
+"s_order_by_rating" = "Reytiyng boyınca";
+"s_order_by_length" = "Uzaqtığı boyınca";
+"s_order_by_listens" = "Tıńdalıw sanı boyınca";
+"s_order_invert" = "Keri rettew";
+"s_order_by_reg_date" = "Tirkelgen küni boyınca";
+"s_order_by_creation_date" = "Qurılğan küni boyınca";
+"s_order_by_publishing_date" = "Jarıyalanğan küni boyınaca";
+"s_order_by_upload_date" = "Salınğan küni boyınca";
+"s_by_date" = "Küni boyınca";
+"s_registered_before" = "Mına künnen burın tirkelgen";
+"s_registered_after" = "Mına künnen keyin tirkelgen";
+"s_date_before" = "Mına künnen burın";
+"s_date_after" = "Mına künnen keyin";
+"s_main" = "Bastı";
+"s_type" = "Türi";
+"s_now_on_site" = "Qazir saytta";
+"s_with_photo" = "Süwreti bar";
+"s_only_in_names" = "Atawlardan ğana";
+"s_only_youtube" = "YouTube-ten ğana";
+"s_any" = "kez kelgen";
+"s_any_single" = "kez kelgen";
+"reset" = "Qalpına keltiriw";
+"closed_group_post" = "Jabıq toptağı jazba";
+"deleted_target_comment" = "Bul pikir joyılğan jazbada tur";
+
+"no_results" = "Ecteńe tabılğan joq";
+"s_only_performers" = "Orındawcılar boyınca";
+"s_with_lyrics" = "Mätini bar";
+
+"showing_x_y" = "($1—$2 deyin körsetiliwde)";
+"no_results_by_this_query" = "Bul suraw boyınca ecteńe tabılmadı.";
+"s_additional" = "Qosımca";
+"s_it_is_you" = "bul siz";
+
+/* OAuth */
+"identifies_itself_as" = "atawı: $1";
+"located_at_url" = "(mekenjayı: $1)";
+"wants_your_token" = "sizdiń akkawntıńızğa kiriwge ruqsat suraydı";
+"app_will_have_access_to" = "Bul qoldanba kelesi derekterdi köre aladı:";
+"oauth_scope_all" = "paraqca mälimetteri, küy (statıws), dostar tizimi, fotosıwretter, jazbalar jarıyalaw, änder, beyneler, habarlamalar, sıylıqtar, <b>elektrondıq pocta</b>, sawalnamalar, toptar, talqılawlar, joljazbalar, <b>dawıstar</b>, lüpilder men pikirler";
+"oauth_grant" = "Ruqsat beriw";
+"oauth_deny" = "Bas tartıw";
+
+/* Sorting */
+"sort_randomly" = "Kezdeysoq retpen";
+"sort_up" = "ID boyınca (ösiw retimen)";
+"sort_down" = "ID boyınca (kemiw retimen)";
+
+"new_first" = "Aldımen jańa";
+"old_first" = "Aldımen eski";
+
+/* Videos */
+"videos" = "Beyneler";
+"video" = "Beyne";
+"upload_video" = "Beyne jüktew";
+"video_uploaded" = "Jüktelgen küni";
+"video_updated" = "Jańartıldı";
+"video_link_to_yt" = "YouTube siltemesi";
+"info_name" = "Atawı";
+"info_description" = "Sıypattama";
+"info_uploaded_by" = "Jüktegen:";
+"info_upload_date" = "Jüktelgen küni:";
+"videos_zero" = "Beyne joq";
+"videos_one" = "$1 beyne";
+"videos_other" = "$1 beyne";
+"view_video" = "Köriw";
+"change_video" = "Beyneni özgertiw";
+"unknown_video" = "Bul beyne OpenVK-nıń ağımdağı nusqasında oynatılmaydı.";
+
+"selecting_video" = "Beyne tańdaw";
+"upload_new_video" = "Jańa beyne jüktew";
+"max_attached_videos" = "Eń köbi 10 beyne";
+"max_attached_photos" = "Eń köbi 10 süwret";
+"max_attached_audios" = "Eń köbi 10 än";
+"no_videos" = "Beynelerińiz joq.";
+"no_videos_results" = "Ecteńe tabılmadı.";
+
+"video_file_upload" = "Fayl jüktew";
+"video_youtube_upload" = "YouTube-ten qosıw";
+
+/* Audios */
+"audios" = "Änder";
+"audio" = "Än";
+"playlist" = "Äntizim";
+"upload_audio" = "Än jüktew";
+"upload_audio_to_group" = "Topqa än jüktew";
+
+"performer" = "Orındawcı";
+"audio_name" = "Atawı";
+"genre" = "Janr";
+"lyrics" = "Än mätini";
+
+"select_another_file" = "Basqa fayl tańdaw";
+
+"limits" = "Cektewler";
+"select_audio" = "Kompyiwterden än tańdaw";
+"audio_requirements" = "Audio uzaqtığı $1 sek. pen $2 miyn. aralığında, ölcemi $3 MB-tan aspawı kerek.";
+"audio_requirements_2" = "Audio avtorlıq jäne sabaqtas quqıqtardı buzbawı tiyis.";
+"you_can_also_add_audio_using" = "Sonday-aq ändi burın jüktelgen fayldardan qosıw ücin";
+"search_audio_inst" = "izdewdi qoldanıńız";
+
+"audio_embed_not_found" = "Än tabılmadı";
+"audio_embed_deleted" = "Än joyılğan";
+"audio_embed_withdrawn" = "Än quqıq ieleniwciniń talabımen öcirilgen.";
+"audio_embed_forbidden" = "Qupıyalılıq baptawları bul ändi qosıwğa ruqsat bermeydi.";
+"audio_embed_processing" = "Audio äli öńdelip jatır.";
+"audio_embed_processing_bait" = "Bäribir tıńdaw";
+
+"audios_count_zero" = "Än joq";
+"audios_count_one" = "Bir än";
+"audios_count_few" = "$1 än";
+"audios_count_many" = "$1 än";
+"audios_count_other" = "$1 än";
+
+"track_unknown" = "Belgisiz";
+"track_noname" = "Atawı joq";
+
+"my_music" = "Meniń muzıkam";
+"music_user" = "Paydalanıwcı muzıkası";
+"music_club" = "Top muzıkası";
+"audio_new" = "Jańa";
+"audio_popular" = "Tanımal";
+"audio_search" = "İzdew";
+
+"my_audios_small" = "Muzıkam";
+"my_audios_small_uploaded" = "Jüktep salınğan";
+"my_playlists" = "Meniń äntizimderim";
+"playlists" = "Äntizimder";
+"audios_explicit" = "Döreki sözder bar";
+"audios_unlisted" = "Jasırılğan";
+"withdrawn" = "Öcirilgen";
+"deleted" = "Joyılğan";
+"owner" = "İesi";
+"searchable" = "İzdew betinde körsetiledi";
+
+"select_audio" = "Än tańdaw";
+"no_playlists_thisuser" = "Siz äli äntizim qospadıńız.";
+"no_playlists_user" = "Bul paydalanıwcı äli äntizim qospağan.";
+"no_playlists_club" = "Bul topta äntizim joq.";
+
+"no_audios_thisuser" = "Siz äli än qospağansız.";
+"no_audios_user" = "Bul paydalanıwcı äli än qospağan.";
+"no_audios_club" = "Bul topta än qosılmağan.";
+
+"new_playlist" = "Jańa äntizim";
+"created_playlist" = "jasaldı";
+"updated_playlist" = "jańartıldı";
+"bookmark" = "Jıynaqqa qosıw";
+"unbookmark" = "Jıynaqtan joyıw";
+"empty_playlist" = "Bul äntizimde än joq.";
+"edit_playlist" = "Äntizimdi öńdew";
+"unable_to_load_queue" = "Kezekti jüktew sätsiz ayaqtaldı.";
+
+"fully_delete_audio" = "Ändi joyıw";
+"attach_audio" = "Ändi tirkew";
+"detach_audio" = "Ändi ajıratıw";
+
+"show_more_audios" = "Köbirek än körsetiw";
+"add_to_playlist" = "Äntizimge qosıw";
+"remove_from_playlist" = "Äntizimnen joyıw";
+"delete_playlist" = "Äntizimdi joyıw";
+"playlist_cover" = "Äntizim muqabası";
+"playlists_user" = "Paydalanıwcı äntizimderi";
+"playlists_club" = "Top äntizimderi";
+"change_cover" = "Muqabanı özgertiw";
+
+"minutes_count_zero" = "uzaqtığı nöl miyniwt";
+"minutes_count_one" = "uzaqtığı bir miyniwt";
+"minutes_count_few" = "uzaqtığı $1 miyniwt";
+"minutes_count_many" = "uzaqtığı $1 miyniwt";
+"minutes_count_other" = "uzaqtığı $1 miyniwt";
+
+"listens_count_zero" = "tıńdalmağan";
+"listens_count_one" = "bir ret tıńdaldı";
+"listens_count_few" = "$1 ret tıńdaldı";
+"listens_count_many" = "$1 ret tıńdaldı";
+"listens_count_other" = "$1 ret tıńdaldı";
+
+"add_audio_to_club" = "Topqa än qosıw";
+"add_audio" = "Än qosıw";
+"add_audio_limitations" = "10 top/äntizimge deyin tańday alasız.";
+"to_club" = "Topqa barıw";
+"to_playlist" = "Äntizimge barıw";
+
+"audio_was_successfully_added" = "Än qosıldı.";
+"what_club_add" = "Ändi qay topqa qosqıńız keledi?";
+"group_has_audio" = "Bul än topta bar.";
+"group_hasnt_audio" = "Bul än topta joq.";
+
+"by_name" = "atawı boyınca";
+"by_performer" = "orındawcı boyınca";
+"no_access_clubs" = "Siz ecbir topta äkimci emessiz.";
+"no_access_playlists" = "Siz ecbir äntizim qurğan joqsız.";
+"audio_successfully_uploaded" = "Än sätti jükteldi jäne qazir öńdelip jatır.";
+
+"broadcast_audio" = "Ändi küyińizde körsetiw";
+"sure_delete_playlist" = "Bul äntizimdi joyğıńız keletinine senimdisiz be?";
+"edit_audio" = "Ändi öńdew";
+"audios_group" = "Toptıń änderi";
+"playlists_group" = "Toptıń äntizimderi";
+
+"play_tip" = "Oynatıw/kidirtiw";
+"repeat_tip" = "Qaytalaw";
+"shuffle_tip" = "Aralastırıw";
+"mute_tip" = "Dıbısın öciriw";
+"mute_tip_noun" = "Dıbısı öcirildi";
+"playlist_hide_from_search" = "Jasırılğan";
+"confirm_deleting_audio" = "Mına ändi cınımen joyğıńız kele me?";
+
+"copy_link_to_audio" = "Änge siltemeni köciriw";
+"copy_link_to_audio_error_not_selected_track" = "Än tańdamadıńıız";
+"audio_ctx_add_to_group" = "Topqa qosıw";
+"audio_ctx_add_to_playlist" = "Äntizimge qosıw";
+"audio_ctx_play_next" = "Kelesi oynatıw";
+"audio_ctx_clear_context" = "Oynatıw tizimin tazartıw";
+"audio_ctx_show_count" = "Bettegicti körsetiw";
+
+"is_x_audio_zero" = "Än joq";
+"is_x_audio_one" = "Barlığı $1 än.";
+"is_x_audio_few" = "Barlığı $1 än.";
+"is_x_audio_many" = "Barlığı $1 än.";
+"is_x_audio_other" = "Barlığı $1 än.";
+
+/* Notifications */
+
+"feedback" = "Jawaptar";
+"unread" = "Oqılmağan";
+"archive" = "Murağat";
+"notifications_like" = "$1 sizdiń $4 jazğan $2jazbańızdı$3 unatadı";
+"notifications_repost" = "$1 sizdiń $4 jazğan $2jazbańızdı$3 bölisti";
+"notifications_comment_under" = "$1 $2 astına pikir jazdı";
+"notifications_under_note" = "sizdiń $3joljazbańızğa$4";
+"notifications_under_photo" = "sizdiń $3süwretińizge$4";
+"notifications_under_post" = "sizdiń $5 jazğan $3jazbańızğa$4";
+"notifications_under_video" = "sizdiń $3beyneńizge$4";
+"notifications_post" = "$1 sizdiń qabırğańızğa $2jazba$3 qoydı: $4";
+"notifications_appoint" = "$1 $2 sizdi toptıń menedjeri etip tağayındadı";
+"nt_liked_yours" = "unattı";
+"nt_shared_yours" = "bölisti";
+"nt_commented_yours" = "pikir jazdı";
+"nt_written_on_your_wall" = "sizdiń qabırğańızğa jazdı";
+"nt_accepted_your_post" = "siz usınğan jazbanı jarıyaladı";
+"nt_in_club" = "Qawımdastıqta";
+"nt_new_suggested_posts" = "jańa usınılğan jazbalar bar";
+"nt_post_small" = "jazba";
+"nt_made_you_admin" = "sizdi topta tağayındadı";
+"nt_from" = "";
+"nt_yours_adjective" = "sizdiń";
+"nt_yours_feminitive_adjective" = "sizdiń";
+"nt_post_nominative" = "jazbańızdı";
+"nt_post_instrumental" = "jazbańızğa";
+"nt_note_instrumental" = "joljazbańızğa";
+"nt_photo_instrumental" = "süwretińizge";
+"nt_topic_instrumental" = "taqırıpqa";
+"nt_you_were_mentioned_u" = "Sizdi osı paydalanıwcı atap ötti:";
+"nt_you_were_mentioned_g" = "Sizdi osı top atap ötti:";
+"nt_mention_in_post_or_comms" = "jazbada nemese sonıń talqılaw taqırıbınıń birinde";
+"nt_mention_in_video" = "osı beyneniń talqılaw betinde";
+"nt_mention_in_photo" = "osı süwrettiń talqılaw betinde";
+"nt_mention_in_note" = "osı joljazbanıń talqılaw betinde";
+"nt_mention_in_topic" = "osı talqılawda";
+"nt_sent_gift" = "sıylıq sıyladı";
+
+/* Time */
+
+"time_at_sp" = " sağat ";
+"time_just_now" = "jańa ğana";
+"time_exactly_five_minutes_ago" = "5 miyniwt burın";
+"time_minutes_ago" = "$1 miyniwt burın";
+"time_today" = "bügin";
+"time_yesterday" = "kece";
+
+"news" = "Jańalıq";
+"news_more" = "Tolıq aqparat »";
+
+"points" = "Dawıs";
+"points_count" = "dawıs";
+"on_your_account" = "cotıńızda";
+"top_up_your_account" = "Teńgerimdi toltırıw";
+"you_still_have_x_points" = "Sizde <b>$1</b> paydalanılmağan dawıs bar.";
+
+"vouchers" = "Vawçerler";
+"have_voucher" = "Vawçer bar ma";
+"voucher_token" = "Vawçer kodı";
+"voucher_activators" = "Belsendiriwciler";
+"voucher_explanation" = "Vawçerdiń seriyalıq nömirin engizińiz. Ol ädette tübirtekte nemese habarlamada körsetiledi.";
+"voucher_explanation_ex" = "Vawçerlerdiń jaramdılıq merzimi cektewli bolıwı mümkin, äri olardı tek bir ret qoldanıwğa boladı.";
+
+"invalid_voucher" = "Vawçer jaramsız";
+"voucher_bad" = "Seriyalıq nömir qate engizilgen, vawçer äldeqacan qoldanılğan nemese onıń merzimi ötken bolıwı mümkin.";
+"voucher_good" = "Vawçer belsendirildi";
+"voucher_redeemed" = "Vawçer sätti qoldanıldı. Sizge dawıstar esepteldi, bul kodtı qayta paydalanıw mümkin emes.";
+
+"redeem" = "Belsendiriw";
+"deactivate" = "Öciriw";
+"usages_total" = "Jalpı qoldanılıw sanı";
+"usages_left" = "Qalğan qoldanılıw sanı";
+
+"points_transfer_dialog_header_1" = "Dawıstarıńızdı basqa paydalanıwcığa sıylıq ne awdarım retinde jibere alasız.";
+"points_transfer_dialog_header_2" = "Ağımdağı teńgerim:";
+"points_amount_one" = "1 dawıs";
+"points_amount_other" = "$1 dawıs";
+"transfer_poins" = "Dawıs awdarıw";
+"transfer_poins_button" = "Awdarıw";
+"also_you_can_transfer_points" = "Sonday-aq, basqa paydalanıwcığa <a href=\"javascript:showCoinsTransferDialog($1, '$2')\">dawıs awdara alasız</a>.";
+"transferred_to_you" = "sizge dawıs awdardı";
+
+"transfer_trough_ton" = "TON arqılı toltırıw";
+"transfer_ton_contents" = "Teńgerimińizdi TON kriyptovalyiwtasımen toltıra alasız. Tonkeeper qoldanbası arqılı QR-kodtı skanerleńiz nemese körsetilgen derekter boyınca TON-dı qolmen jiberińiz. Birnece miyniwt icinde dawıstar cotıńızğa tüsedi.";
+"transfer_ton_address" = "<b>Ämiyan mekenjayı:</b> $1<br/><b>Habarlama mazmunı (Comment):</b> $2";
+"transfer_ton_currency_per_ton" = "$1 TON";
+
+"receiver_address" = "Qabıldawcı mekenjayı";
+"coins_count" = "Dawıs sanı";
+"message" = "Habarlama";
+"failed_to_transfer_points" = "Dawıstardı awdarıw mümkin bolmadı";
+"failed_to_tranfer_points" = "Dawıstardı awdarıw mümkin bolmadı";
+"points_transfer_successful" = "Siz <b>$1</b> dawıstı <b><a href=\"$2\">$3</a></b> attı kisige sätti awdardıńız.";
+
+"not_all_information_has_been_entered" = "Barlıq mälimetter toltırılmağan";
+"negative_transfer_value" = "Kecirińiz, özge paydalanıwcıdan dawıs tartıp alıwğa bolmaydı.";
+"negative_tranfer_value" = "Kecirińiz, özge paydalanıwcıdan dawıs tartıp alıwğa bolmaydı.";
+"message_is_too_long" = "Habarlama tım uzın.";
+"receiver_not_found" = "Qabıldawcı tabılğan joq.";
+"you_dont_have_enough_points" = "Cotıńızda dawıs jetkiliksiz.";
+
+"increase_rating" = "Reytiyngti köteriw";
+"increase_rating_button" = "Köteriw";
+"to_whom" = "Kimge";
+"increase_by" = "Qancağa köteriw";
+"price" = "Bağası";
+"you_have_unused_votes" = "Cotıńızda $1 paydalanılmağan dawıs bar.";
+"apply_voucher" = "Vawçerdi qoldanıw";
+"failed_to_increase_rating" = "Reytiyngti köteriw mümkin bolmadı";
+"rating_increase_successful" = "Siz <b><a href=\"$1\">$2</a></b> paydalanıwcısınıń reytiyngin <b>$3</b> dawısqa sätti köterdińiz.";
+"negative_rating_value" = "Kecirińiz, özgeniń reytiyngin urlawğa bolmaydı.";
+"increased_your_rating_by" = "sizdiń reytiyngińizdi köterdi";
+
+/* Gifts */
+
+"my_gifts" = "Sıylıqtarım";
+"gift" = "Sıylıq";
+"gifts" = "Sıylıqtar";
+"gifts_zero" = "Nöl sıylıq";
+"gifts_one" = "Bir sıylıq";
+"gifts_other" = "$1 sıylıq";
+"gifts_left" = "Qalğan sıylıq sanı: $1";
+"gifts_left_one" = "Bir sıylıq qaldı";
+"gifts_left_other" = "$1 sıylıq qaldı";
+
+"back_to_user" = "$1 paraqcasına oralıw";
+"back_to_my_page" = "Öz paraqcama oralıw";
+"send_gift" = "Sıylıq jiberiw";
+"gift_back" = "Qarımta sıylıq jiberiw";
+
+"gift_select" = "Sıylıq tańdaw";
+"collections" = "Jıynaqtar";
+"confirm" = "Rastaw";
+"as_anonymous" = "Jasırın jazba";
+"gift_your_message" = "Habarlamańız";
+"free_gift" = "Tegin";
+"coins" = "Dawıstar";
+"coins_zero" = "Nöl dawıs";
+"coins_one" = "Bir dawıs";
+"coins_other" = "$1 dawıs";
+"users_gifts" = "Sıylıqtar";
+"sent" = "Jibergen";
+
+/* Apps */
+"app" = "Qosımca";
+"apps" = "Qosımcalar";
+"my_apps" = "Qosımcalarım";
+"all_apps" = "Barlıq qosımcalar";
+"installed_apps" = "Ornatılğan qosımcalarım";
+"own_apps" = "Özim äzirlegen qosımcalarım";
+"own_apps_alternate" = "Qosımcalarım";
+"app_play" = "bastaw";
+"app_uninstall" = "öciriw";
+"app_edit" = "öńdew";
+"app_dev" = "Äzirlewci";
+"create_app" = "Qosımca jasaw";
+"edit_app" = "Qosımca öńdew";
+"new_app" = "Jańa qosımca";
+"app_news" = "Jańalıqtar joljazbası";
+"app_state" = "Küyi";
+"app_enabled" = "Qosıwlı";
+"app_creation_hint_url" = "URL mekenjayında shemamen (https), portpen (80) jäne qajetti suraw parametrlerimen birge naqtı mekenjaydı körsetińiz.";
+"app_creation_hint_iframe" = "Qosımcańız iframe-de acılatın boladı.";
+"app_balance" = "Qosımcańızdıń cotında <b>$1</b> dawıs bar.";
+"app_users" = "Qosımcańızdı <b>$1</b> adam paydalanadı.";
+"app_withdrawal_q" = "cottan alasız ba?";
+"app_withdrawal" = "Cottan alıw";
+"app_withdrawal_empty" = "Cotıńız bos eken, ala almadıq.";
+"app_withdrawal_created" = "$1 dawıstı cottan alıw tuwralı suraw jasaldı. Nesiyelewdi kütiwde.";
+"appjs_payment" = "Satıp alıw tölemi";
+"appjs_payment_intro" = "Qosımcada tapsırıs ücin tölem jasağalı tursız";
+"appjs_order_items" = "Tapsırıs beriw";
+"appjs_payment_total" = "Tölewge jatatın jalpı soma";
+"appjs_payment_confirm" = "Tölew";
+"appjs_err_funds" = "Töley almadıq: qarajat jetkiliksiz.";
+"appjs_wall_post" = "Jazba jarıyalaw";
+"appjs_wall_post_desc" = "qabırğańızğa jazba jarıyalağısı kelip tur";
+"appjs_act_friends" = "Dostarıńız";
+"appjs_act_friends_desc" = "paydalanıwcılardı dostar retinde qosıw jäne dostar tizimin oqıw";
+"appjs_act_wall" = "Qabırğańız";
+"appjs_act_wall_desc" = "jańalıqtarıńızdı, qabırğańızdı köriw jäne oğan jazbalar jasaw";
+"appjs_act_messages" = "Hattarıńız";
+"appjs_act_messages_desc" = "sizdiń atıńızdan hat oqıw jäne jazıw";
+"appjs_act_groups" = "Toptarıńız";
+"appjs_act_groups_desc" = "toptar tizimińizdi qaraw jäne basqalarğa jazılıw";
+"appjs_act_likes" = "'Unatamın' füwnksiyası";
+"appjs_act_likes_desc" = "posttarğa unatıwlardı beriw jäne alıp tastaw";
+"appjs_act_request" = "Qol jetkiziw surawı";
+"appjs_act_requests" = "degen qosımca kelesilerge qol jetkiziwdi suraydı";
+"appjs_act_can" = "Osı qosımca kelesi äreketterdi orınday aladı:";
+"appjs_act_allow" = "Ruqsat beriw";
+"appjs_act_disallow" = "Bermew";
+"app_uninstalled" = "Qosımca öcirildi";
+"app_uninstalled_desc" = "Ol endi sizdiń atıńızdan äreketterdi orınday almaydı.";
+"app_err_not_found" = "Qosımca tabılmadı";
+"app_err_not_found_desc" = "Qate identiyfiykator nemese ol öcirilgen bolıwı mümkin.";
+"app_err_forbidden_desc" = "Bul qosımca sizdiki emes.";
+"app_err_url" = "Qate mekenjay";
+"app_err_url_desc" = "Qosımca mekenjayı tekseristen ötpedi, onıń durıstığına köz jetkizińiz.";
+"app_err_ava" = "Qosımca süwretin jüktey almadıq";
+"app_err_ava_desc" = "Süwretińiz tım ülken nemese qate: jalpı qate #$res.";
+"app_err_note" = "Jańalıqtar joljazbasın tirkey almadıq";
+"app_err_note_desc" = "Silteme durıs ekenine jäne joljazba sizdiki ekenine köz jetkizińiz.";
+"app_delete_modal_desc" = "Qosımcanı cınımen joyğıńız kele me? Bul äreketti keri qaytarıw mümkin emes.";
+"app_delete_succ" = "Qoldanba joyıldı";
+
+"learn_more" = "Tolığıraq";
+
+/* Support */
+
+"support_opened" = "Acıq";
+"support_answered" = "Jawap bar";
+"support_closed" = "Jabıq";
+"support_ticket" = "Curaq";
+"support_tickets" = "Suraqtar";
+"support_status_0" = "Qaralatın mäsele";
+"support_status_1" = "Suraqqa jawap bar";
+"support_status_2" = "Jabıq";
+"support_greeting_hi" = "Sälemetsiz be, $1!";
+"support_greeting_regards" = "Qurmetpen,<br/>$1 qoldaw körsetiw tobı.";
+"support_faq" = "Jiyi qoyılatın suraqtar";
+"support_list" = "Suraqtar tizimi";
+"support_new" = "Suraq qoyıw";
+"support_new_title" = "Mäseleni qısqaca sıypattap berińiz";
+"support_new_content" = "Mäsele tuwralı tolıq jazıp berińiz";
+"support_rate_good_answer" = "Bul jaqsı jawap";
+"support_rate_bad_answer" = "Bul jaman jawap";
+"support_good_answer_user" = "Siz oń pikir qaldırdıńız";
+"support_bad_answer_user" = "Siz teris pikir qaldırdıńız";
+"support_good_answer_agent" = "Paydalanıwcı oń pikir qaldırdı.";
+"support_bad_answer_agent" = "Paydalanıwcı teris pikir qaldırdı.";
+"support_rated_good" = "Siz osı jawapqa oń pikir qaldırdıńız.";
+"support_rated_bad" = "Siz osı jawapqa teris pikir qaldırdıńız.";
+"wrong_parameters" = "Suraw parametrleri jaramsız.";
+"fast_answers" = "Tez jawaptar";
+"author" = "Avtor";
+"you_have_not_entered_text" = "Ciz ecqanday mätin engizbedińiz";
+"you_have_not_entered_name_or_text" = "Siz at nemese mätin engizgen joqsız";
+"ticket_changed" = "Mäsele özgerildi";
+"ticket_changed_comment" = "Özgerister birnece sekiwndtan keyin kücine enedi.";
+"banned_in_support_1" = "<b>$1</b>, ökinicke qaray, budan bılay sizge mäseleler köteriwge bolmaydı.";
+"banned_in_support_2" = "Bunıń sebebi: <b>$1</b>. Biz bul mümkindikti sizden birjola tartıp alıwımızğa mäjbür boldıq.";
+"you_can_close_this_ticket_1" = "Tağı surağıńız bolmasa, ";
+"you_can_close_this_ticket_2" = "mına mäseleni japsańız boladı.";
+"agent_profile_created_1" = "Beyin qurıldı";
+"agent_profile_created_2" = "Endi paydalanıwcılar siz ornatqan atı-jön men süwretińizdi köredi.";
+"agent_profile_edited" = "Beyin öńdeldi";
+"agent_profile" = "Qoldaw tobındağı beyinim";
+"reports" = "Cağımdar";
+"ignore_report" = "Cağımdı elemew";
+"report_number" = "Cağım №";
+"list_of_reports" = "Cağımdar tizimi";
+"text_of_the_post" = "Jazba mätini";
+"delete_content" = "Mazmundı joyıw";
+"today" = "bügin";
+
+"will_be_watched" = "Bul moderatorlar tarapınan jaqında tekseriledi";
+
+"report_question" = "Cağım jasaysız ba?";
+"report_question_text" = "Bul materıyalda sizge naqtı ne qolaysız bolıp körindi?";
+"report_reason" = "Cağım sebebi";
+"reason" = "Sebep";
+"going_to_report_app" = "Siz bul qosımcağa cağım jasağalı tursız.";
+"going_to_report_club" = "Siz bul topqa cağım jasağalı tursız.";
+"going_to_report_photo" = "Siz bul süwretke cağım jasağalı tursız.";
+"going_to_report_user" = "Siz bul paydalanıwcığa cağım jasağalı tursız.";
+"going_to_report_video" = "Siz bul beynege cağım jasağalı tursız.";
+"going_to_report_audio" = "Siz bul änge cağım jasağalı tursız.";
+"going_to_report_post" = "Siz bul jazbağa cağım jasağalı tursız.";
+"going_to_report_comment" = "Siz bul pikirge cağım jasağalı tursız.";
+"going_to_report_doc" = "Siz bul qujatqa cağım jasağalı tursız.";
+
+"comment" = "Pikir";
+"sender" = "Jiberiwci";
+
+/* Invite */
+
+"invite" = "Caqırıw";
+"you_can_invite" = "Siz jelige dostarıńızdı nemese tanısqandarıńızdı osı indıyvıydıwal siltememen caqıra alasız:";
+"you_can_invite_2" = "Osı siltemeni postıńızğa tirkeńiz. Paydalanıwcı jelige tirkelgende ol birden sizdiń dostarıńızğa qosıladı.";
+
+/* Banned */
+
+"banned_title" = "Sizdi veriyskok jazaladı";
+"banned_header" = "Siz älewmettik jelide buğattalğansız";
+"banned_alt" = "Bul paydalanıwcı buğattalğan.";
+"banned_1" = "Kecirińiz, <b>$1</b>, biraq siz älewmettik jelide buğattalğansız.";
+"banned_2" = "Munıń sebebi osı: <b>$1</b>.";
+"banned_perm" = "Ökinicke oray, osı jolı sizdi mäńgilikke buğattawğa mäjbür boldıq.";
+"banned_until_time" = "Osı jolı sizdi <b>$1</b> deyin buğattawğa mäjbür boldıq.";
+"banned_3" = "Eger bul buğattaw qatelik dep oylasańız, <a href=\"/support?act=new\">qoldaw qızmetine habarlasıńız</a> nemese <a href=\"/logout?hash=$1\">jüyeden cığıńız</a>.";
+"banned_unban_myself" = "Özimdi buğattan ceciw";
+"banned_unban_title" = "Sizdiń paraqcańız buğattan cecildi.";
+"banned_unban_description" = "Endigäri ereje buzbay jürińiz.";
+
+/* Registration confirm */
+
+"ec_header" = "Tirkewdi rastaw";
+"ec_title" = "Rahmet!";
+"ec_1" = "<b>$1</b>, tirkeliwińiz ayaqtalıwğa jaqın. Birnece mıynıwttan keyin elektrondıq poctańızğa rastaw siltemesi bar hat keliwi kerek.";
+"ec_2" = "Eger qanday da bir sebeptermen hat kelmese, spam qaltasın tekserińiz. Hattı ol jerden tappasańız, onı qayta jiberiwge boladı.";
+"ec_resend" = "Qayta jiberiw";
+
+/* Messages */
+
+"all_messages" = "Barlıq hat";
+"search_messages" = "Hat izdew";
+"no_messages" = "Äzirce sizge eckim jazbadı.";
+"messages_blocked" = "Siz habarlaspaq bolğan paydalanıwcı hat jibere alatın tulğalardıń ceńberine cektew qoyğan, sondıqtan siz oğan habarlama jibere almaysız.";
+"enter_message" = "Hat jazıńız";
+"messages_error_1" = "Hat jiberilmedi";
+"messages_error_1_description" = "Hat jiberiw kezinde jalpı qate orın aldı...";
+
+/* Polls */
+"poll" = "Sawalnama";
+"create_poll" = "Sawalnama qurıw";
+"poll_title" = "Sawalnama surağı";
+"poll_add_option" = "Nusqa qosıw...";
+"poll_anonymous" = "Jabıq sawalnama";
+"poll_multiple" = "Birnece jawap";
+"poll_locked" = "Dawıstı qaytarıp alıw mümkin emes";
+"poll_edit_expires" = "Ayaqtalıw waqıtı: ";
+"poll_edit_expires_days" = "kün";
+"poll_editor_tips" = "Bos jolda Backspace pernesin bassańız, nusqa joyıladı. Jańa nusqalardı jıldam qosıw ücin Tab nemese Enter (sońğı jolda) paydalanıńız.";
+"poll_embed" = "Engiziw kodı";
+"poll_voter_count_zero" = "<b>Birinci bolıp</b> dawıs berińiz";
+"poll_voter_count_one" = "<b>1 adam</b> dawıs berdi";
+"poll_voter_count_few" = "<b>$1</b> adam dawıs berdi";
+"poll_voter_count_many" = "<b>$1</b> adam dawıs berdi";
+"poll_voter_count_other" = "<b>$1</b> adam dawıs berdi";
+"poll_voters_list" = "Dawıs bergender";
+"poll_anon" = "Jabıq";
+"poll_public" = "Acıq";
+"poll_multi" = "birnece jawap";
+"poll_lock" = "dawıstı qaytarıw mümkin emes";
+"poll_until" = "$1 deyin";
+"poll_err_to_much_options" = "Jawap nusqaları tım köp";
+"poll_err_anonymous" = "Dawıs bergender tizimin köriw mümkin emes: bul jabıq sawalnama.";
+"cast_vote" = "Dawıs beriw";
+"retract_vote" = "Dawıstı qaytarıp alıw";
+
+/* Discussions */
+
+"discussions" = "Talqılawlar";
+"messages_one" = "1 habarlama";
+"messages_other" = "$1 habarlama";
+"topic_messages_count_zero" = "Taqırıpta habarlama joq";
+"topic_messages_count_one" = "Taqırıpta 1 habarlama bar";
+"topic_messages_count_other" = "Taqırıpta $1 habarlama bar";
+"replied" = "jawap berdi";
+"create_topic" = "Taqırıp acıw";
+"new_topic" = "Jańa taqırıp";
+"title" = "Taqırıp atawı";
+"text" = "Mätin";
+"view_topic" = "Taqırıptı köriw";
+"edit_topic_action" = "Taqırıptı öńdew";
+"edit_topic" = "Taqırıptı öńdew";
+"topic_settings" = "Taqırıp baptawları";
+"pin_topic" = "Taqırıptı bekitiw";
+"close_topic" = "Taqırıptı jabıw";
+"delete_topic" = "Taqırıptı joyıw";
+"topics_one" = "1 taqırıp";
+"topics_other" = "$1 taqırıp";
+"created" = "Qurılğan küni";
+"everyone_can_create_topics" = "Taqırıptı kez kelgen paydalanıwcı aca aladı";
+"everyone_can_upload_audios" = "ändi kez kelgen paydalanıwcı jüktey aladı";
+"display_list_of_topics_above_wall" = "Taqırıptardı qabırğadan joğarı körsetiw";
+"topic_changes_saved_comment" = "Özgertilgen ataw men baptawlar taqırıp betinde körsetiledi.";
+"failed_to_create_topic" = "Taqırıptı jasaw mümkin bolmadı";
+"failed_to_change_topic" = "Taqırıptı özgertiw mümkin bolmadı";
+"no_title_specified" = "Taqırıp atawı körsetilmegen";
+"restrict_topic" = "Pikir jazıwdı tek äkimcilerge cektew";
+
+/* Errors */
+
+"error_1" = "Durıs emes suraw";
+"error_2" = "Logıyn nemese qupıya söz durıs emes";
+"error_3" = "Ruqsat etilmegen";
+"error_4" = "Paydalanıwcı joq";
+"information_-1" = "Operasıya sätti ayaqtaldı";
+"information_-2" = "Jüyege kiriw sätti ayaqtaldı";
+
+"no_data" = "Derek joq";
+"no_data_description" = "Munda derek joq.";
+
+"error" = "Qatelik";
+"error_generic" = "Jalpı qatelik orın aldı: ";
+"error_shorturl" = "Bul mekenjay bos emes.";
+"error_segmentation" = "Segmentasiya qateligi";
+"error_upload_failed" = "Süwret jüktelmedi";
+"error_old_password" = "Burınğı qupıya söz säykes kelmeydi";
+"error_new_password" = "Jańa qupıya söz säykes kelmeydi";
+"error_weak_password" = "Qupıya sözińiz mıqtı emes. Tım bolmasa oda 8 belgi, bir ülken ärip pen bir san bolıwı kerek.";
+"error_shorturl_incorrect" = "Mekenjaydıń picimi durıs emes.";
+"error_repost_fail" = "Jazbanı bölisiw mümkin bolmadı";
+"error_insufficient_info" = "Siz qajetti aqparattı toltırmadıńız.";
+"error_data_too_big" = "'$1' osılardan uzağıraq bolmawı kerek: $2 $3";
+
+"forbidden" = "Qoljetimdi emes";
+"forbidden_comment" = "Paydalanıwcınıń qupıyalılıq baptawları bul betti köriwge ruqsat bermeydi.";
+"unknown_error" = "Belgisiz qate";
+
+"changes_saved" = "Özgerister saqtaldı";
+"changes_saved_comment" = "Jańa derekter paraqcańızda körsetiledi.";
+
+"photo_saved" = "Süwret saqtaldı";
+"photo_saved_comment" = "Jańa süwret paraqcańızda payda boladı.";
+
+"shared_succ" = "Jazba qabırğańızda jarıyalandı. Onı köriw ücin habarlandırıwdı basıńız.";
+
+"invalid_email_address" = "Email mekenjayı qate";
+"invalid_email_address_comment" = "Engizilgen elektrondıq pocta mekenjayı durıs emes.";
+
+"invalid_real_name" = "Cın atıńızdı engiziwdi suraymız. Söytseńiz dostarıńız sizdi tezirek taba aladı.";
+
+"invalid_birth_date" = "Tuwğan küni qate";
+"invalid_birth_date_comment" = "Körsetilgen tuwğan kün durıs emes.";
+
+"invalid_telegram_name" = "Telegram atawı qate";
+"invalid_telegram_name_comment" = "Engizilgen Telegram paydalanıwcı atı durıs emes.";
+
+"token_manipulation_error" = "Tokendi öńdew qatesi";
+"token_manipulation_error_comment" = "Token jaramsız nemese merzimi ötip ketken.";
+
+"profile_changed" = "Beyin özgertildi";
+"profile_changed_comment" = "Belsendi beyinińiz sätti özgertildi.";
+"profile_not_found" = "Paydalanıwcı tabılmadı";
+"profile_not_found_text" = "Bul beyin äldeqacan joyılğan nemese äli jasalmağan bolıwı kerek.";
+
+"suspicious_registration_attempt" = "Küdikti tirkeliw äreketi";
+"suspicious_registration_attempt_comment" = "Jüye bul tirkeliw äreketin küdikti dep tanıdı.";
+
+"rate_limit_error" = "Sabır-sabır, asıqpa!";
+"rate_limit_error_comment" = "Memderiń ot eken, biraq olardı säl bayawıraq jiberseńci. Qate kodı: $2.";
+
+"not_enough_permissions" = "Quqıqtar jetkiliksiz";
+"not_enough_permissions_comment" = "Bul äreketti orındaw ücin ruqsatıńız joq.";
+
+"login_required_error" = "Paraqcańızğa kirińiz";
+"login_required_error_comment" = "Bul betti köriw ücin paraqcańızğa kiriwińiz kerek.";
+
+"captcha_error" = "Qate kod engizildi";
+"captcha_error_comment" = "Kapça kodın durıs engizgenińizge köz jetkizińiz.";
+
+"failed_to_publish_post" = "Jazbanı jarıyalaw mümkin bolmadı";
+"failed_to_delete_post" = "Jazbanı joyıw mümkin bolmadı";
+
+"media_file_corrupted" = "Mediya fayl bülingen.";
+"media_file_corrupted_or_too_large" = "Mediya fayl bülingen nemese ölcemi tım ülken.";
+
+"post_is_empty_or_too_big" = "Jazba bos nemese onıń kölemi cekten tıs ülken.";
+"post_is_too_big" = "Jazba tım ülken.";
+
+"error_deleting_suggested" = "Qabıldanıp qoyğan jazbańızdı öcire almaysız.";
+"error_invalid_wall_value" = "Qabırğa mäni qate.";
+
+"error_sending_report" = "Cağım jiberiw sätsiz ayaqtaldı...";
+
+"error_when_saving_gift" = "Sıylıqtı saqtaw qatesi";
+"error_when_saving_gift_bad_image" = "Sıylıqtıń süwreti durıs emes.";
+"error_when_saving_gift_no_image" = "Sıylıqtıń süwretin jükteńiz.";
+"video_uploads_disabled" = "Beyne jüktep salıw jüye äkimcisi tarapınan söndirilgen.";
+
+"error_when_publishing_comment" = "Pikir jarıyalaw qatesi";
+"error_when_publishing_comment_description" = "Süwret bülingen, tım ülken nemese onıń ölcemderi üylesimsiz.";
+"error_comment_empty" = "Pikirińizde tük joq nemese ol tım uzın.";
+"error_comment_too_big" = "Pikirińiz tım ülken.";
+"error_comment_file_too_big" = "Mediya faylı bülingen nemese tım ülken.";
+
+"comment_is_added" = "Pikir qosıldı";
+"comment_is_added_desc" = "Sizdiń pikirińiz bette körsetiledi.";
+
+"error_access_denied_short" = "Ruqsat joq";
+"error_access_denied" = "Bul resurstı öńdewge ruqsatıńız joq";
+"comment_will_not_appear" = "Endigäri bul pikir körsetilmeydi.";
+
+"error_when_gifting" = "Sıylıq jiberiw sätsiz ayaqtaldı";
+"error_user_not_exists" = "Paydalanıwcı nemese jıynaq joq.";
+"error_no_rights_gifts" = "Sıylıq quqığın tekseriw sätsiz ayaqtaldı.";
+"error_no_more_gifts" = "Sizde bul sıylıqtar joq.";
+"error_no_money" = "Aqcańız jetpeydi.";
+
+"gift_sent" = "Sıylıq jiberildi";
+"gift_sent_desc" = "Siz $1 attı kisige $2 dawıs qunına sıylıq jiberdińiz.";
+
+"error_on_server_side" = "Serverde qate orın aldı. Jüye äkimcisine habarlasıńız.";
+"error_no_group_name" = "Siz top atawın engizbedińiz.";
+
+"success_action" = "Äreket sätti orındaldı";
+"connection_error" = "Qosılıw qatesi";
+"connection_error_desc" = "Telemetriya qızmetine qosılıw sätsiz ayaqtaldı.";
+
+"error_when_uploading_photo" = "Süwretti saqtaw sätsiz ayaqtaldı";
+
+"new_changes_desc" = "Jańa derekter tobıńızda payda boladı.";
+"comment_is_changed" = "Äkimci pikiri öńdeldi";
+"comment_is_deleted" = "Äkimci pikiri joyıldı";
+"comment_is_too_long" = "Pikir tım uzın ($1 tańba, ruqsat etilgeni – 36)";
+"x_no_more_admin" = "$1 endi äkimci emes.";
+"x_is_admin" = "$1 äkimci bolıp tağayındaldı.";
+
+"x_is_now_hidden" = "$1 äkimci ekenin tek basqa äkimciler ğana köre aladı.";
+"x_is_now_showed" = "Endi barlığı $1 äkimci ekenin biledi.";
+
+"note_is_deleted" = "Joljazba joyıldı";
+"note_x_is_now_deleted" = "\"$1\" joljazbası sätti joyıldı.";
+"new_data_accepted" = "Jańa derekter qabıldandı.";
+
+"album_is_deleted" = "Albom joyıldı";
+"album_x_is_deleted" = "\"$1\" albomı sätti joyıldı.";
+
+"error_adding_to_deleted" = "<b>DELETED</b>-ke süwret saqtaw sätsiz ayaqtaldı.";
+"error_adding_to_x" = "<b>$1</b> albomına süwret saqtaw sätsiz ayaqtaldı.";
+"no_photo" = "Süwret joq";
+
+"select_file" = "Fayl tańdaw";
+"new_description_will_appear" = "Jańartılğan sıypattama süwret betinde körsetiledi.";
+"photo_is_deleted" = "Süwret joyıldı";
+"photo_is_deleted_desc" = "Bul süwret sätti joyıldı.";
+
+"no_video" = "Beyne joq";
+"no_video_desc" = "Fayldı tańdańız nemese silteme engizińiz.";
+"error_occured" = "Qate orın aldı";
+"error_video_damaged_file" = "Fayl bülingen nemese quramında beyne joq.";
+"error_video_incorrect_link" = "Siltemeńiz qate bolıwı mümkin";
+"error_video_no_title" = "Beyne atawsız jarıyalana almaydı.";
+
+"new_data_video" = "Jańartılğan sıypattama beyne betinde körsetiledi.";
+"error_deleting_video" = "Beyneni joyıw sätsiz ayaqtaldı";
+"login_please" = "Siz jüyege kirmegensiz.";
+"invalid_code" = "Telefon nömirin tekseriw sätsiz ayaqtaldı: Kod qate.";
+
+"error_max_pinned_clubs" = "Bekitilgen toptardıń eń köp sanı – 10.";
+"error_viewing_subs" = "$1 tolıq jazılım tizimin qarawğa bolmaydı.";
+"error_status_too_long" = "Küy mätinińiz tım uzın ($1 tańba, ruqsat etilgeni – 255).";
+"death" = "Ölim...";
+"nehay" = "Uzaq ğumır sür!";
+"user_successfully_banned" = "Paydalanıwcı sätti buğattaldı.";
+
+"content_is_deleted" = "Mazmun joyıldı jäne paydalanıwcığa eskertiw berildi.";
+"report_is_ignored" = "Cağım elenbedi.";
+"group_owner_is_banned" = "Top iesi sätti buğattaldı";
+"group_is_banned" = "Top sätti buğattaldı";
+
+"description_too_long" = "Sıypattama tım uzın.";
+"invalid_club" = "Top tabılmadı.";
+"invalid_user" = "Paydalanıwcı tabılmadı.";
+"ignored_sources_limit" = "Jasırıw cegine jettińiz.";
+
+"invalid_audio" = "Audiofayl tabılmadı.";
+"do_not_have_audio" = "Bul än tizimińizde joq.";
+"do_have_audio" = "Bul än tizimińizde äldeqacan bar.";
+
+"set_playlist_name" = "Äntizim atawın körsetińiz.";
+"playlist_already_bookmarked" = "Bul äntizim jıynağıńızda bar.";
+"playlist_not_bookmarked" = "Bul äntizim jıynağıńızda joq.";
+"invalid_cover_photo" = "Muqabanı saqtaw mümkin bolmadı.";
+"not_a_photo" = "Jüktelgen fayl süwret formatına säykes kelmeydi.";
+"file_too_big" = "Fayl ölcemi tım ülken.";
+"file_loaded_partially" = "Fayl tolıq jüktelmedi.";
+"file_not_uploaded" = "Fayldı jüktew mümkin bolmadı.";
+"error_code" = "Qate kodı: $1.";
+"ffmpeg_timeout" = "Öńdew waqıtı ayaqtaldı. Fayldı qayta jüktep körińiz.";
+"ffmpeg_not_installed" = "Fayldı öńdew mümkin emes (FFmpeg qatesi).";
+"too_many_or_to_lack" = "Derekközder sanı tım köp nemese tım az.";
+
+"error_adding_source_regex" = "Derekköz qosılmadı: silteme durıs emes.";
+"error_adding_source_long" = "Derekköz qosılmadı: silteme tım uzın.";
+"error_adding_source_sus" = "Derekköz qosılmadı: silteme buğattalğan.";
+"error_playlist_creating_too_small" = "Äntizimde keminde bir än bolıwı kerek.";
+"error_geolocation" = "Geotańba ornatılmadı";
+"error_no_geotag" = "Jazbanıń geotańbası körsetilmegen";
+
+"limit_exceed_exception" = "Bul äreketti tım jiyi jasap jatırsız. Keyinirek qaytalap körińiz.";
+
+/* Admin actions */
+
+"login_as" = "$1 retinde kiriw";
+"manage_user_action" = "Paydalanıwcını basqarıw";
+"manage_group_action" = "Toptı basqarıw";
+"ban_user_action" = "Buğattaw";
+"blocks" = "Buğattar";
+"last_actions" = "Sońğı äreketter";
+"unban_user_action" = "Bloktan cığarıw";
+"warn_user_action" = "Paydalanıwcını eskertiw";
+"ban_in_support_user_action" = "Järdemde buğattaw";
+"unban_in_support_user_action" = "Järdemde buğattan ceciw";
+"changes_history" = "Öńdew tarıyhı";
+
+/* Admin panel */
+
+"admin" = "Admin-panel";
+"sandbox_for_developers" = "Äzirlewci zerthanası";
+"admin_ownerid" = "İesiniń ID-si";
+"admin_author" = "Avtorı";
+"admin_name" = "Atı";
+"admin_title" = "Taqırıbı";
+"admin_description" = "Sıypattaması";
+"admin_first_known_ip" = "Birinci IP";
+"admin_shortcode" = "Qısqa mekenjay";
+"admin_verification" = "Veriyfiykasiya";
+"admin_hide_global_feed" = "Jahandıq taspadan jasırıw";
+"admin_banreason" = "Bloktıń sebebi";
+"admin_banned" = "buğattaldı";
+"admin_gender" = "Jınıs";
+"admin_registrationdate" = "Tirkelgen küni";
+"admin_actions" = "Äreketter";
+"admin_image" = "Süwret";
+"admin_image_replace" = "Süwretti awıstırıw kerek pe?";
+"admin_uses" = "Qoldanıwlar sanı";
+"admin_uses_reset" = "Qoldanıwlar sanın qalpına keltiriw kerek pe?";
+"admin_limits" = "Cektewler sanı";
+"admin_limits_reset" = "Cektewler sanın qalpına keltiriw kerek pe?";
+"admin_open" = "Acıw";
+"admin_loginas" = "Osı paydalanıwcı retinde kiriw...";
+"admin_commonsettings" = "Jalpı parametrler";
+"admin_langsettings" = "Tilge täweldi parametrler";
+"admin_tab_main" = "Bastısı";
+"admin_tab_ban" = "Blok";
+"admin_tab_followers" = "Paydalanıwcılar";
+"admin_overview" = "Colıw";
+"admin_overview_summary" = "Tüyindeme";
+"admin_content" = "Paydalanıwcı kontenti";
+"admin_user_search" = "Paydalanıwcı izdew";
+"admin_user_online" = "Onlayn statıws";
+"admin_user_online_default" = "Ädepki";
+"admin_user_online_incognito" = "İnkogniyto";
+"admin_user_online_deceased" = "Qaytıs bolğan";
+"admin_club_search" = "Top izdew";
+"admin_club_excludeglobalfeed" = "Jazbalardı jahandıq taspada körsetpew";
+"admin_club_enforceexcludeglobalfeed" = "Top äkimcilerine jazbalardıń jahandıq taspada köriniwin baptawğa tıyım salıw";
+"admin_services" = "Aqılı qızmetter";
+"admin_newgift" = "Jańa sıylıq";
+"admin_price" = "Bağası";
+"admin_giftset" = "Sıylıq jıynağı";
+"admin_giftsets" = "Sıylıq jıynaqtarı";
+"admin_giftsets_none" = "Sıylıq jıynaqtar joq. Sıylıq jasaw ücin birinci sıylıq jıynağın jasańız.";
+"admin_giftsets_create" = "Sıylıq jıynağın jasaw";
+"admin_giftsets_title" = "Paydalanıwcı tilindegi ataw tabılmasa, paydalanılatın jıynağınıń icki atawı.";
+"admin_giftsets_description" = "Paydalanıwcı tilindegi ataw tabılmasa, paydalanılatın jıynağınıń icki sıypattaması.";
+"admin_price_free" = "tegin";
+"admin_voucher_rating" = "Reytiyng";
+"admin_voucher_serial" = "Seriyalıq nömir";
+"admin_voucher_serial_desc" = "Nömir 24 belgiden turadı. Picim durıs bolmasa ya öris bos bolsa, avtomattı türde tağayındaladı.";
+"admin_voucher_coins" = "Dawıstar kölemi";
+"admin_voucher_rating_number" = "Reytiyng kölemi";
+"admin_voucher_usages_desc" = "Vawçerdi paydalana alatın akkawnttardıń sanı. -1 dep jazsańız, ceksizdik boladı.";
+"admin_voucher_status" = "Küyi";
+"admin_voucher_status_opened" = "belsendi";
+"admin_voucher_status_closed" = "bitti";
+"admin_settings" = "Parametrler";
+"admin_settings_tuning" = "Jalpı";
+"admin_settings_appearance" = "Sırtqı körinis";
+"admin_settings_security" = "Qawipsizdik";
+"admin_settings_integrations" = "İntegrasiyalar";
+"admin_settings_system" = "Jüye";
+"admin_about" = "OpenVK tuwralı";
+"admin_about_version" = "Versiya";
+"admin_about_instance" = "İnstansıya";
+"admin_commerce_disabled" = "Jüyelik äkimi kommersiyanı öcirdi";
+"admin_commerce_disabled_desc" = "Vawçer men sıylıq parametrleri saqtaladı, biraq ecqanday äser etpeydi.";
+
+"admin_privacy_warning" = "Mına aqparatpen saq bolıńız";
+"admin_longpool_broken" = "Longpool sınıq, jumıs istemeydi!";
+"admin_longpool_broken_desc" = "<code>$1</code> jolındağı fayl bar ekenine jäne onıń ruqsatı men mencik quqığı durıs ornatılğanına köz jetkizińiz.";
+"admin_banned_links" = "Buğattalğan siltemeler";
+"admin_banned_link" = "Silteme";
+"admin_banned_domain" = "Üycik";
+"admin_banned_link_description" = "Hattamamen (https://example.com/)";
+"admin_banned_link_regexp" = "Turaqtı örnek (Regex)";
+"admin_banned_link_regexp_description" = "Ol joğarıda körsetilgen üycikten keyin awıstırıladı. Bükil üycikti buğattağıńız kelse, onı toltırmańız";
+"admin_banned_link_reason" = "Sebebi";
+"admin_banned_link_initiator" = "İndiykator";
+"admin_banned_link_not_specified" = "Silteme körsetilmegen";
+"admin_banned_link_not_found" = "Silteme tabılmadı";
+
+"admin_gift_moved_successfully" = "Sıylıq sätti jıljıtıldı";
+"admin_gift_moved_to_recycle" = "Bul sıylıq endi <b>qoqıs jäciginde</b> boladı.";
+
+"admin_original_file" = "Tüpnusqa fayl";
+"admin_audio_length" = "Uzaqtığı";
+"admin_cover_id" = "Muqaba (süwret ID-si)";
+"admin_music" = "Muzıka";
+
+"logs" = "Juwrnal";
+"logs_anything" = "Kez kelgen närse";
+"logs_adding" = "Qosıldı";
+"logs_editing" = "Öńdeldi";
+"logs_removing" = "Joyıldı";
+"logs_restoring" = "Qalpına keltirildi";
+"logs_added" = "qostı";
+"logs_edited" = "öńdedi";
+"logs_removed" = "joydı";
+"logs_restored" = "qalpına keltirdi";
+"logs_id_post" = "Jazba ID-si";
+"logs_id_object" = "Nısan ID-si";
+"logs_uuid_user" = "Paydalanıwcı UUID-si";
+"logs_change_type" = "Özgeris türi";
+"logs_change_object" = "Nısan türi";
+
+"logs_user" = "Paydalanıwcı";
+"logs_object" = "Nısan";
+"logs_type" = "Tür";
+"logs_changes" = "Özgerister";
+"logs_time" = "Waqıt";
+
+"bans_history" = "Buğattaw tarıyhı";
+"bans_history_blocked" = "Buğattalğan";
+"bans_history_initiator" = "Bastama kötergen";
+"bans_history_start" = "Bastalıw waqıtı";
+"bans_history_end" = "Ayaqtalıw waqıtı";
+"bans_history_time" = "Waqıt";
+"bans_history_reason" = "Sebep";
+"bans_history_removed" = "Joyıldı";
+"bans_history_active" = "Belsendi buğat";
+
+"admin_overview_registrated_users_one" = "tirkelgen qoldanıwcı:";
+"admin_overview_registrated_users_other" = "tirkelgen qoldanıwcı, ondağı:";
+"online" = "jelide";
+"active" = "belsendi";
+"verified" = "rastalğan";
+"admin_overview_employees_one" = "instans qızmetkerleri";
+"admin_overview_employees_other" = "instans qızmetkerleri, ondağı:";
+"emp_admin_one" = "äkimci";
+"emp_admin_other" = "äkimci";
+"emp_agent_one" = "Järdem mamanı";
+"emp_agent_other" = "Järdem mamanı";
+"emp_moder_one" = "moderator";
+"emp_moder_other" = "moderator";
+"emp_nsp_one" = "spam taldawcı";
+"emp_nsp_other" = "spam taldawcı";
+"admin_overview_banned_users_one" = "buğattalğan qoldanıwcı:";
+"admin_overview_banned_users_other" = "buğattalğan qoldanıwcı, ondağı:";
+"can_be_unbanned_now" = "qazir buğattan cığarılına aladı";
+"support_and_moderation" = "Järdem jäne moderasıya";
+"support_ticket_one" = "suraq";
+"support_ticket_other" = "suraq, ondağı:";
+"support_tickets_processing" = "qarastılatın mäsele";
+"support_tickets_with_answer" = "jawabı bar";
+"support_tickets_closed_one" = "jabıq";
+"support_tickets_closed_other" = "jabıq";
+"new_content_reports_one" = "jańa cağım";
+"new_content_reports_other" = "jańa cağım";
+"nospam_templates" = "belsendi noSpam ülgi";
+"content_entities_processed" = "<b>$1</b> nısan öńdeldi!";
+"content" = "mazmun";
+"admin_overview_groups_one" = "top:";
+"admin_overview_groups_other" = "top, ondağı:";
+"verified_groups" = "rastalğan";
+"banned_groups" = "buğattalğan";
+"admin_overview_posts_one" = "Jazba";
+"admin_overview_posts_other" = "Jazba";
+"admin_overview_messages_one" = "Hat";
+"admin_overview_messages_other" = "Hat";
+"admin_overview_photos_one" = "Süwret";
+"admin_overview_photos_other" = "Süwret";
+"admin_overview_videos_one" = "Beyne";
+"admin_overview_videos_other" = "Beyne";
+"admin_overview_audios_one" = "Än";
+"admin_overview_audios_other" = "Än";
+"admin_overview_notes_one" = "Joljazba";
+"admin_overview_notes_other" = "Joljazba";
+"admin_overview_apps_one" = "Qosımca";
+"admin_overview_apps_other" = "Qosımca";
+"admin_overview_documents_one" = "Qujat";
+"admin_overview_documents_other" = "Qujat";
+"admin_overview_chandler_group_not_found" = "Jüyelik ruqsat tobı tabılmadı";
+"admin_overview_chandler_groups_missing" = "İnstanstı tolıq basqarıw ücin (Helpdesk, moderasıya, noSpam) ruqsat toptarı qajet";
+"admin_overview_chandler_groups_create_missing" = "Jetispeytin ruqsat toptarın jasaw";
+
+/* Paginator (deprecated) */
+
+"paginator_back" = "Artqa";
+"paginator_page" = "$1 bet";
+"paginator_next" = "Alğa";
+
+/* About */
+
+"about_openvk" = "OpenVK tuwralı";
+"about_this_instance" = "İnstansıya tuwralı";
+"rules" = "Erejeler";
+"most_popular_groups" = "Eń tanımal toptar";
+"on_this_instance_are" = "Osı instansıyada:";
+"about_links" = "Siltemeler";
+"instance_links" = "İnstansıya siltemeleri:";
+"about_users_one" = "<b>1</b> paydalanıwcı";
+"about_users_other" = "<b>$1</b> paydalanıwcı";
+"about_online_users_one" = "<b>1</b> jelidegi paydalanıwcı";
+"about_online_users_other" = "<b>$1</b> jelidegi paydalanıwcı";
+"about_active_users_one" = "<b>1</b> belsendi paydalanıwcı";
+"about_active_users_other" = "<b>$1</b> belsendi paydalanıwcı";
+"about_groups_one" = "<b>1</b> top";
+"about_groups_other" = "<b>$1</b> top";
+"about_wall_posts_one" = "<b>1</b> jazba bar";
+"about_wall_posts_other" = "<b>$1</b> jazba bar";
+
+"about_watch_rules" = "<a href='$1'>Munda</a> oqıńız.";
+
+/* Dialogs */
+
+"ok" = "OK";
+"yes" = "İä";
+"no" = "Joq";
+"cancel" = "Jabıw";
+"edit_action" = "Özgertiw";
+"transfer" = "Awdarıw";
+"close" = "Jabıw";
+"warning" = "Nazar awdarıńız";
+"success" = "Sätti orındaldı";
+"question_confirm" = "Bul äreketti qaytarıwğa mümkin emes. Bäribir orındağıńız kele me?";
+"confirm_m" = "Rastaw";
+"action_successfully" = "Sättilik";
+"exit_noun" = "Cığıw";
+"exit_confirmation" = "Cınımen cıqqıńız kele me?";
+"apply" = "Qoldanıw";
+
+/* User alerts */
+
+"user_alert_scam" = "Bul paydalanıwcını alayaq dep cağımdaytındar köp. Aqca surap jürse, saq bolıńız.";
+"user_may_not_reply" = "Bul paydalanıwcı sizdiń qupıyalılıq baptawıńızğa baylanıstı jawap bere almaytın sıyaqtı. <a href='/settings?act=privacy'>Qupıyalılıq baptawdı acıw</a>";
+
+/* Cookies pop-up */
+
+"cookies_popup_content" = "Balalardıń barlığı picinä jewdi unatadı, al bul sayt bolsa sizdiń sessiyańızdı anıqtaw ücin ğana cookie fayldarın paydalanadı. Qosımca aqparat alıw ücin bizdiń <a href='/privacy'>qupıyalıq sayasatımızdı</a> oqıńız.";
+"cookies_popup_agree" = "Kelisemin";
+
+/* Blacklist */
+
+"blacklist" = "Qara tizim";
+"user_blacklisted_you" = "Bul kisi sizdi qara tizimge qostı.";
+"user_blacklisted" = "$1 qara tizimge qosıldı.";
+"user_removed_from_the_blacklist" = "$1 qara tizimnen öcirildi.";
+
+"adding_to_bl_sure" = "$1 degen kisini cınımen qara tizimge qosqıńız kele me?";
+
+"bl_count_zero_desc" = "Qara tizimińizde eckim joq.";
+"bl_count_zero" = "Qara tizimińiz bos";
+"bl_count_one" = "Qara tizimińizde bir kisi tur";
+"bl_count_few" = "Qara tizimińizde $1 kisi tur";
+"bl_count_many" = "Qara tizimińizde $1 kisi tur";
+"bl_count_other" = "Qara tizimińizde $1 kisi tur";
+
+"you_blacklisted" = "$1 qara tizimge qosıldı.";
+"bl_add" = "Qara tizimge qosıw";
+"bl_remove" = "Qara tizimnen öciriw";
+
+"addition_to_bl" = "Qara tizimge qosıw";
+
+/* Away */
+
+"transition_is_blocked" = "Siltemege ötiw buğattalğan";
+"caution" = "Eskertiw";
+"url_is_banned" = "Silteme buğattalğan";
+"url_is_banned_comment" = "<b>$1</b> äkimciligi bul siltemege ötpewge keńes beredi.";
+"url_is_banned_comment_r" = "<b>$1</b> äkimciligi bul siltemege ötpewge keńes beredi.<br><br>Sebebi: <b>$2</b>";
+"url_is_banned_default_reason" = "Siz acpaq bolğan sayt paydalanıwcılardı aldaw nemese jeke derekterin urlaw maqsatında jasalğan bolıwı mümkin.";
+"url_is_banned_title" = "Küdikti saytqa silteme";
+"url_is_banned_proceed" = "Bäribir ötiw";
+
+"recently" = "Juwırda";
+
+/* Helpdesk */
+"helpdesk" = "Järdem";
+"helpdesk_agent" = "Järdem agentı";
+"helpdesk_agent_card" = "Agent kartası";
+"helpdesk_positive_answers" = "jaqsı jawap";
+"helpdesk_negative_answers" = "jaman jawap";
+"helpdesk_all_answers" = "barlıq jawap";
+"helpdesk_showing_name" = "Körinetin esimi";
+"helpdesk_show_number" = "Nömirdi körsetiw";
+"helpdesk_avatar_url" = "Agenttiń süwretine silteme";
+"helpdesk_agent_name_empty" = "Körsetiletin esimdi bos qaldırıwğa bolmaydı.";
+
+/* Chandler */
+
+"c_user_removed_from_group" = "Paydalanıwcı toptan joyıldı";
+"c_permission_removed_from_group" = "Ruqsat toptan joyıldı";
+"c_group_removed" = "Top joyıldı.";
+"c_groups" = "Chandler toptarı";
+"c_users" = "Chandler paydalanıwcıları";
+"c_group_permissions" = "Ruqsattar";
+"c_group_members" = "Müceleri";
+"c_model" = "Ülgi";
+"c_permission" = "Ruqsat";
+"c_permissions" = "Ruqsattar";
+"c_color" = "Tüsi";
+"add" = "Qosıw";
+"c_edit_groups" = "Toptardı öńdew";
+"c_user_is_not_in_group" = "Paydalanıwcı men top arasındağı baylanıs tabılmadı.";
+"c_permission_not_found" = "Ruqsat pen top arasındağı baylanıs tabılmadı.";
+"c_group_not_found" = "Top tabılmadı.";
+"c_user_is_already_in_group" = "Paydalanıwcı onsız da sol toptıń mücesi.";
+"c_add_to_group" = "Topqa qosıw";
+"c_remove_from_group" = "Toptan cığarıw";
+
+/* BadBrowser */
+
+"deprecated_browser" = "Brawzerińiz eskirgen";
+"deprecated_browser_description" = "Bul mazmundı köriw ücin Firefox ESR 52+ nemese basqa zamanawıy brawzer qajet. Kecirińiz.";
+
+/* Statistics */
+
+"coverage" = "Qamtıw";
+"coverage_this_week" = "Bul grafiyk sońğı 7 kündegi qamtıwdı körsetedi.";
+"views" = "Körilimder";
+"views_this_week" = "Bul grafiyk sońğı 7 kündegi qawımdastıq jazbalarınıń körilimderin körsetedi.";
+
+"full_coverage" = "Tolıq qamtıw";
+"all_views" = "Barlıq körilimder";
+
+"subs_coverage" = "Jazılıwcılar qamtıwı";
+"subs_views" = "Jazılıwcılar körilimderi";
+
+"viral_coverage" = "Virustıq qamtıw";
+"viral_views" = "Virustıq körilimder";
+
+/* Sudo */
+
+"you_entered_as" = "Mına paydalanıwcı atınan kirdińiz";
+"please_rights" = "Basqa paydalanıwcılardıń qupıyalılığın qurmetteńiz, akkawnttardı awıstırıw qabiletin asıra paydalanbańız.";
+"click_on" = "Cığıw ücin";
+"there" = "munda";
+"to_leave" = "basıńız.";
+
+/* Phone number */
+
+"verify_phone_number" = "Telefon nömirin rastaw";
+"we_sended_first" = "Siz engizgen nömirge SMS-kod jiberdik";
+"we_sended_end" = "onı osında engizińiz.";
+
+/* Mobile */
+
+"mobile_friends" = "Dostar";
+"mobile_photos" = "Süwretter";
+"mobile_videos" = "Beyneler";
+"mobile_audios" = "Änderim";
+"mobile_messages" = "Hattar";
+"mobile_notes" = "Joljazbalar";
+"mobile_groups" = "Toptar";
+"mobile_search" = "İzdew";
+"mobile_settings" = "Baptaw";
+"mobile_desktop_version" = "Tolıq nusqa";
+"mobile_log_out" = "Cığıw";
+"mobile_menu" = "Mäzir";
+"mobile_like" = "Unatıw";
+"mobile_user_info_hide" = "Jasırıw";
+"mobile_user_info_show_details" = "Qosımca mälimetti körsetiw";
+
+"mobile_attachment_only_for_pc" = "Bul tirkeme PDA nusqada körsetilmeydi, onı basqa qurılğıdan körińiz";
+
+/* Fullscreen player */
+
+"hide_player" = "Oynatqıctı jasırıw";
+"close_player" = "Jabıw";
+"show_comments" = "Pikirlerdi körsetiw";
+"close_comments" = "Pikirlerdi jasırıw";
+"to_page" = "Betke ötiw";
+"download_video" = "Jüktew";
+"added" = "Qosılğan waqıtı";
+"x_views" = "$1 qaralım";
+
+"video_author" = "Beyne avtorı";
+"video_delete" = "Joyıw";
+"no_description" = "sıypattama joq";
+
+"show_more_comments" = "Köbirek pikir körsetiw";
+"video_processing" = "Beyne sätti jükteldi, qazir öńdelip jatır.";
+"video_access_denied" = "Beyneni köriwge ruqsat joq";
+"open_page_to_read_comms" = "Pikirlerdi oqıw ücin <a href=\"$1\">mına betti</a> acıńız.";
+
+"no_video_error" = "Beyne joq";
+"no_video_description" = "Fayl tańdańız nemese silteme körsetińiz.";
+
+"error_video" = "Qate orın aldı";
+"file_corrupted" = "Fayl bülingen nemese beyne joq.";
+"link_incorrect" = "Silteme durıs emes bolıwı mümkin (&t= ne &si= sıyaqtı parametrlerdi öcirip körińiz).";
+
+"no_name_error" = "Beyne atawsız jarıyalana almaydı";
+"access_denied_error" = "Qol jetkiziw qatesi";
+"access_denied_error_description" = "Bul resurstı öńdewge quqıńız joq";
+
+"changes_saved_video_comment" = "Jańartılğan derekter beyne betinde körinedi";
+"cant_delete_video" = "Beyneni joyıw mümkin bolmadı";
+"cant_delete_video_comment" = "Akkawntqa kirmegensiz.";
+
+"video_is_deleted" = "Beyne joyıldı.";
+"share_video" = "Beyneni bölisiw";
+"shared_succ_video" = "Beyne qabırğańızda payda boladı. Jazbağa ötiw ücin munda basıńız.";
+"watch_in_window" = "Terezede qaraw";
+
+"comments_load_timeout" = "Mümkin, instansıya isten cıqtı.";
+
+"my" = "Meniń";
+"enter_a_name_or_artist" = "Atawın nemese orındawcısın engizińiz...";
+
+/* Moderation */
+
+"section" = "Bölim";
+"template_ban" = "Ülgi boyınca buğattaw";
+"active_templates" = "Belsendi ülgiler";
+"users_reports" = "Paydalanıwcı esepteri";
+"substring" = "İcki jol";
+"n_user" = "Paydalanıwcı";
+"time_before" = "Mına waqıttan burın";
+"time_after" = "Mına waqıttan keyin";
+"where_for_search" = "Bölim boyınca izdew cartı";
+"block_params" = "Buğattaw parametrleri";
+"only_rollback" = "Tek keri qaytarıw";
+"only_block" = "Tek buğattaw";
+"rollback_and_block" = "Keri qaytarıw jäne buğattaw";
+"subm" = "Qoldanıw";
+
+"select_section_for_start" = "Bastaw ücin bölimdi tańdańız";
+"results_will_be_there" = "İzdew nätiyjeleri osında körsetiledi";
+"search_results" = "İzdew nätiyjeleri";
+"cnt" = "dana";
+
+"link_to_page" = "Betke silteme";
+"or_subnet" = "nemese qosalqı jeli";
+"error_when_searching" = "Suranıstı orındaw kezinde qate orın aldı";
+"no_found" = "Ecteńe tabılmadı";
+"operation_successfully" = "Operasıya sätti ayaqtaldı";
+
+"templates" = "Ülgi";
+"type" = "Türi";
+"count" = "Sanı";
+"time" = "Waqıtı";
+
+"roll_back" = "Keri qaytarıw";
+"roll_backed" = "Keri qaytarıldı";
+
+"nospam_prevention" = "Bul äreket köptegen derekke äser etedi. Cınımen iske asırğıńız kele me?";
+
+"nospam_album" = "Albomdar";
+"nospam_application" = "Qosımcalar";
+"nospam_audio" = "Änder";
+"nospam_club" = "Toptar";
+"nospam_comment" = "Pikirler";
+"nospam_document" = "Qujattar";
+"nospam_message" = "Habarlamalar";
+"nospam_photo" = "Süwretter";
+"nospam_playlist" = "Äntizimder";
+"nospam_poll" = "Sawalnamalar";
+"nospam_post" = "Jazbalar";
+"nospam_ticket" = "Qoldaw suranımdarı";
+"nospam_ticketcomment" = "Suranım pikirleri";
+"nospam_topic" = "Taqırıptar";
+"nospam_user" = "Paydalanıwcılar";
+"nospam_video" = "Beyneler";
+"nospam_videoalbum" = "Oynatıw tizimderi";
+
+/* RSS */
+
+"post_deact_in_general" = "Paraqcsın joydı";
+"upd_in_general" = "Paraqcasııń süwretin jańarttı";
+"on_wall" = "Qabırğada";
+"sign_short" = "Qoltańba";
+
+/* Documents */
+
+"my_documents" = "Qujattar";
+"my_documents_objectively" = "Meniń qujattarım";
+"documents_of_group" = "Top qujattarı";
+"search_by_documents" = "Qujattar boyınca izdew...";
+"documents" = "Qujattar";
+"document_uploading_in_general" = "Qujat jüktep salıw";
+"document_editing_in_general" = "Qujattı öńdew";
+"file" = "Fayl";
+"tags" = "Tegter";
+"owner_is_hidden" = "Avtorı jasırılğan";
+"accessbility" = "Qoljetimdilik";
+"download_file" = "Fayldı jüktep alıw";
+"remove" = "Joyıw";
+
+"document" = "Qujat";
+"documents_all" = "Barlıq qujattar";
+"document_type_0" = "Barlığı";
+"document_type_1" = "Mätindik";
+"document_type_2" = "Murağattar";
+"document_type_3" = "GIF-ter";
+"document_type_4" = "Süwretter";
+"document_type_5" = "Audio";
+"document_type_6" = "Beyne";
+"document_type_7" = "Kitaptar";
+"document_type_8" = "Basqa";
+
+"documents_one" = "$1 qujat";
+"documents_few" = "$1 qujat";
+"documents_many" = "$1 qujat";
+"documents_other" = "$1 qujat";
+"documents_zero" = "$1 qujat";
+
+"you_have_x_documents_one" = "Sizde $1 qujat bar";
+"you_have_x_documents_few" = "Sizde $1 qujat bar";
+"you_have_x_documents_many" = "Sizde $1 qujat bar";
+"you_have_x_documents_other" = "Sizde $1 qujat bar";
+"you_have_x_documents_zero" = "Sizde $1 qujat bar";
+
+"group_has_x_documents_one" = "Bul topta $1 qujat bar";
+"group_has_x_documents_few" = "Bul topta $1 qujat bar";
+"group_has_x_documents_many" = "Bul topta $1 qujat bar";
+"group_has_x_documents_other" = "Bul topta $1 qujat bar";
+"group_has_x_documents_zero" = "Bul topta $1 qujat bar";
+
+"x_documents_in_tab_one" = "Bul qoyındıda $1 qujat bar";
+"x_documents_in_tab_few" = "Bul qoyındıda $1 qujat bar";
+"x_documents_in_tab_many" = "Bul qoyındıda $1 qujat bar";
+"x_documents_in_tab_other" = "Bul qoyındıda $1 qujat bar";
+"x_documents_in_tab_zero" = "Bul qoyındıda $1 qujat bar";
+
+"there_is_no_documents_alright" = "Munda qujattar joq.";
+"limitations_file_limit_size" = "Fayl $1 MB-tan aspawı kerek";
+"limitations_file_allowed_formats" = "Kelesi fayl türlerine ruqsat etilgen";
+"limitations_file_author_rights" = "Fayl avtorlıq quqıqtar men sayt erejelerin buzbawı kerek";
+"select_file_fp" = "Fayl tańdaw";
+"error_file_too_big" = "Fayl tım ülken.";
+"error_file_invalid_format" = "Fayl picimine ruqsat etilmegen.";
+"error_file_adding_copied" = "Fayldı qosıw mümkin bolmadı; ol burınnan qosılğan.";
+"error_file_preview" = "Fayldı jüktep salıw mümkin bolmadı: süwrette qatelikter bar.";
+
+"private_document" = "Jeke (silteme boyınca)";
+"public_document" = "Jalpığa ortaq";
+"documents_sort_add" = "Qosılğan küni boyınca";
+"documents_sort_alphabet" = "A-Z/A-Ya";
+"documents_sort_size" = "Ölcemi boyınca";
+"select_doc" = "Qujat tańdaw";
+"no_documents" = "Qujattar joq";
+"go_to_my_documents" = "Qujattarıma ötiw";
+
+/* Fave */
+
+"faves" = "Betbelgiler";
+"faves_empty_tip" = "Siz unatqan närseler osında qosılıp turadı...";
+"faves_posts_empty_tip" = "Siz unatqan jazbalar osında qosılıp turadı.";
+"faves_comments_empty_tip" = "Siz unatqan pikirler osında qosılıp turadı.";
+"faves_photos_empty_tip" = "Siz unatqan süwretter osında qosılıp turadı.";
+"faves_videos_empty_tip" = "Siz unatqan beyneler osında qosılıp turadı.";
+"faves_zero" = "Betbelgi joq";
+"faves_one" = "Bir betbelgi";
+"faves_few" = "$1 betbelgi";
+"faves_many" = "$1 betbelgi";
+"faves_other" = "$1 betbelgi";
+
+/* Maintenance */
+
+"global_maintenance" = "Tehniykalıq jumıstar";
+"section_maintenance" = "Bölim waqıtca qoljetimsiz";
+"undergoing_global_maintenance" = "Ökinicke oray, instansta tehniykalıq jumıstar jürgiziliwde. Biz aqawlardı joyıw üstindemiz. Keyinirek qayta kelip körińiz.";
+"undergoing_section_maintenance" = "Ökinicke oray, <b>$1</b> bölimi waqıtca jabıq. Biz onı qalpına keltiriw boyınca jumıs istep jatırmız. Keyinirek qayta bayqap körińiz.";
+"topics" = "Taqırıptar";
+"send" = "Jiberiw";
+"req_zero" = "Suranım tabılmadı...";
+"req_one" = "$1 suranım tabıldı";
+"req_other" = "$1 suranım tabıldı";
+"menu_logout" = "Cığıw";
+"menu_support" = "Qoldaw körsetiw";
+"gifts_left_zero" = "Sıylıqtar tawsıldı";
+
+"bday_reminder" = "Eske salğıc";
+"bday_today" = "Bügin";
+"bday_tomorrow" = "Erteń";
+"bday_reminder_text" = "$1 $2 tuwğan küni.";
+"bday_and" = " men ";
+
+/* Tutorial??? */
+
+"tour_title" = "Saytpen tanısıw";
+"reg_title" = "Tirkeliw";
+"ifnotlike_title" = " «Mağan bul jer unamasa ce?..»";
+"tour_promo" = "Tirkelgennen keyin sizdi ne kütip turatını jaylı";
+
+"reg_text" = "<a href='/reg'>Tirkeliw</a> müldem tegin jäne eki mıynıwttan aspaydı";
+"ifnotlike_text" = "Siz öz beyinińizdi ärqacan joya alasız";
+
+"tour_next" = "Kelesi →";
+"tour_reg" = "Tirkeliw →";
+
+"tour_section_1" = "Bastaw";
+"tour_section_2" = "Beyin";
+"tour_section_3" = "Süwretter";
+"tour_section_4" = "İzdew";
+"tour_section_5" = "Beyneler";
+"tour_section_6" = "Änder";
+"tour_section_7" = "Jańalıqtar taspaları";
+"tour_section_8" = "Jahandıq taspa";
+"tour_section_9" = "Toptar";
+"tour_section_10" = "Oqıyğalar";
+"tour_section_11" = "Sayt körinisin rettew";
+"tour_section_12" = "Baptaw";
+"tour_section_13" = "Vawçerler";
+"tour_section_14" = "Uyalı nusqa";
+
+"tour_section_1_title_1" = "Neden bastasam boladı?";
+"tour_section_1_text_1" = "Jeke beyin acıw — bul sayttağı alğacqı äri eń mańızdı qadam.";
+"tour_section_1_text_2" = "Tirkeliw ücin atıńızdı, elektrondıq poctańızdı engizip, qupıyasöz oylap tapsańız jetkilikti.";
+"tour_section_1_text_3" = "<b>Esińizde bolsın:</b> Poctańız saytqa kiriw ücin logıyn retinde qoldanıladı. Tegińizdi engiziw mindetti emes. Qupıyasözdi umıtıp qalsańız, onı <a href='/restore'>qalpına keltire alasız</a>.";
+"tour_section_1_bottom_text_1" = "Tirkeliw arqılı siz <a href='/terms'>paydalanıw erejeleri</a> jäne <a href='/privacy'>qupıyalılıq sayasatımen</a> kelisesiz.";
+
+"tour_section_2_title_1" = "Jeke paraqcańız";
+"tour_section_2_text_1_1" = "Tirkelgen soń jüye sizdi avtomattı türde <b>jeke</b> paraqcańızğa bağıttaydı.";
+"tour_section_2_text_1_2" = "Onı kez kelgen waqıtta öz qalawıńızca öńdey alasız.";
+"tour_section_2_text_1_3" = "<b>Keńes:</b> Paraqcańız tartımdı köriniwi ücin qızığıwlıqtarıńız tuwralı jazıp, icki düniyeńizdi sıypattaytın süwret jüktep qoyıńız.";
+"tour_section_2_bottom_text_1" = "Dostarıńız siz tuwralı qanday aqparattı köre alatının tek özińiz cecesiz.";
+"tour_section_2_title_2" = "Qupıyalılıqtı rettew";
+"tour_section_2_text_2_1" = "Jeke derekterińizdi kim köre alatının jäne sizge kim jaza alatının özińiz baptay alasız.";
+"tour_section_2_text_2_2" = "Paraqcańızdı izdew jüyelerinen nemese tirkelmegen paydalanıwcılardan jasırıp qoyıwğa boladı.";
+"tour_section_2_text_2_3" = "<b>Eskertiw:</b> Bolacaqta qupıyalılıq baptawları äli de jetildiriledi.";
+"tour_section_2_title_3" = "Paraqcanıń qısqa mekenjayı";
+"tour_section_2_text_3_1" = "Tirkelgen kezde sizge <b>@id12345</b> türindegi biregey nömir beriledi.";
+"tour_section_2_text_3_2" = "Bastapqıda berilgen bul <b>standarttı ID-di</b> <b>özgertiw mümkin emes</b>.";
+"tour_section_2_text_3_3" = "Alayda paraqca baptawlarında özińizge unaytın jeke mekenjaydı qosa alasız. Onı kez kelgen waqıtta <b>özgertiwge boladı</b>.";
+"tour_section_2_text_3_4" = "<b>Keńes:</b> Kem degende 5 tańbadan turatın bos mekenjaydı tańdańız. Özińizge erekce silteme alıp alıńız :)";
+"tour_section_2_bottom_text_2" = "<i>Latın äripterinen turatın qısqa silteme ornatıwğa boladı. Sonday-aq sandardı, nükteler men astın sızıw tańbaların qoldanıwğa ruqsat (basında ne sońında bolmasa).</i>";
+"tour_section_2_title_4" = "Qabırğa";
+
+"tour_section_3_title_1" = "Esteliktermen bölisińiz";
+"tour_section_3_text_1" = "«Süwretter» bölimi arqılı dostarıńızğa öz ömirińizdi körsete alasız.";
+"tour_section_3_text_2" = "Albomdarıńızdı jasap, basqalardıń süwretterin tamacalańız.";
+"tour_section_3_text_3" = "Albomdardı kim köre alatının qupıyalılıq böliminde retteńiz.";
+"tour_section_3_bottom_text_1" = "Sayahattar, merekeler nemese jay ğana qızıqtı sätter ücin ceksiz mölcerde albom jasawğa boladı.";
+
+"tour_section_4_title_1" = "İzdew jüyesi";
+"tour_section_4_text_1" = "«İzdew» bölimi arqılı dostarıńızdı nemese qızıqtı toptardı taba alasız.";
+"tour_section_4_text_2" = "Bul bölim waqıt öte kele jańa füwnksiyalarmen tolığıp otıradı.";
+"tour_section_4_text_3" = "Paydalanıwcılardı atı-jöni boyınca, al qawımdastıqtardı atawı boyınca izdeńiz.";
+"tour_section_4_title_2" = "Jıldam izdew";
+"tour_section_4_text_4" = "Waqıt ünemdew ücin sayttıń joğarğı jağındağı izdew jolağın qoldanıńız.";
+
+"tour_section_5_title_1" = "Beyne jükteńiz";
+"tour_section_5_text_1" = "Saytqa beyne men kliypterdi cektewsiz jüktey alasız.";
+"tour_section_5_text_2" = "Beynelerdi kim tamacalay alatının özińiz belgileńiz.";
+"tour_section_5_bottom_text_1" = "Beyneni arnayı bölimge ötpey-aq, tikeley qabırğadağı jazbağa tirkey salıwğa boladı:";
+"tour_section_5_title_2" = "YouTube-ten importtaw";
+"tour_section_5_text_3" = "Fayldı tikeley jüktewden bölek, YouTube-tegi beynelerdi silteme arqılı qosıwğa boladı.";
+
+"tour_section_6_title_1" = "Muzıka tıńdańız";
+"tour_section_6_text_1" = "«Änderim» böliminde süyikti änderińizdi tıńday alasız.";
+"tour_section_6_text_2" = "Bul bölimniń de qoljetimdiligi qupıyalılıq baptawlarında retteledi.";
+"tour_section_6_text_3" = "Eń tanımal änder «Tanımal» böliminde, al sońğı jüktelgender — «Jańa» qoyındısında.";
+"tour_section_6_text_4" = "Ändi öz tizimińizge qosıw ücin plyüws belgisin basıńız nemese izdewdi qoldanıńız.";
+"tour_section_6_text_5" = "Qajetti ändi taba almasańız, onı özińiz jüktey alasız.";
+"tour_section_6_bottom_text_1" = "<b>Mańızdı:</b> Audiofayldar avtorlıq quqıqtı buzbawı tiyis.";
+"tour_section_6_title_2" = "Äntizim jasańız";
+"tour_section_6_text_6" = "«Äntizimder» böliminde änderdi talğamıńızğa qaray toptastıra alasız.";
+"tour_section_6_text_7" = "Basqa paydalanıwcılardıń äntizimderin de öz jıynağıńızğa qosıwğa boladı.";
+
+"tour_section_7_title_1" = "Jańalıqtar taspası";
+"tour_section_7_text_1" = "«Jańalıqtar» bölimi ekige bölinedi: jergilikti jäne jahandıq taspa.";
+"tour_section_7_text_2" = "Jergilikti taspada tek dostarıńız ben jazılğan toptarıńızdıń jazbaları körsetiledi.";
+"tour_section_7_bottom_text_1" = "Bizde jasandı usınıstar jüyesi joq. <b>Taspańızdı tek özińiz qalıptastırasız</b>.";
+
+"tour_section_8_title_1" = "Sayt tınısı";
+"tour_section_8_text_1" = "Jahandıq taspada sayttağı barlıq paydalanıwcılar men toptardıń acıq jazbaları jıynaqtalğan.";
+"tour_section_8_text_2" = "Bul bölimde mazmun öte köp äri ärtürli, sondıqtan bärine birdey unamawı mümkin.";
+"tour_section_8_bottom_text_1" = "Jahandıq taspanıń sırtqı türi negizgi jańalıqtar taspasımen birdey.";
+"tour_section_8_bottom_text_2" = "Munda süwretterden bastap, sawalnamalar men jasırın jazbalarğa deyin bärin tabıwğa boladı.";
+
+"tour_section_9_title_1" = "Qawımdastıq qurıńız";
+"tour_section_9_text_1" = "Saytta mıńdağan qızıqtı toptar men qawımdastıqtar bar.";
+"tour_section_9_text_2" = "Özińizge unaytın toptarğa qosılıńız, bolmasa öz qawımdastığıńızdı qurıńız.";
+"tour_section_9_text_3" = "Är topta wiykiy-better, fotoalbomdar, talqılawlar men paydalı siltemeler blogı bar.";
+"tour_section_9_title_2" = "Birlese basqarıw";
+"tour_section_9_text_2_1" = "Toptı avatar astındağı «Basqarıw» mäziri arqılı basqara alasız.";
+"tour_section_9_text_2_2" = "Senimdi dostarıńızdı äkimci retinde tağayındańız.";
+"tour_section_9_text_2_3" = "Qajet bolsa, äkimciler tizimin jasırıp qoyıwğa da boladı.";
+"tour_section_9_bottom_text_1" = "«Toptar» bölimin sol jaq mäzirden taba alasız.";
+"tour_section_9_bottom_text_2" = "Top ülgisi";
+"tour_section_9_bottom_text_3" = "Toptar — bul awdıytorıyamen baylanıs ornatqısı keletin uyım men qawımdastıqtar ücin taptırmas qural.";
+
+"tour_section_10_title_1" = "Oybay!";
+"tour_section_10_text_1" = "Bul bölim tuwralı aytıp bereyin dep edik, ol äli dayın emes eken. Attap ötip, äri qaray jalğastıra bersek qaytedi?";
+
+"tour_section_11_title_1" = "Stiyl jäne dizayn";
+"tour_section_11_text_1" = "Tirkelgen kezde paraqcańızğa standarttı stiyl ornatıladı.";
+"tour_section_11_text_2" = "Eger bul stiyl sizge tım eski bolıp körinse, onı özgertiwge mümkindik bar.";
+"tour_section_11_text_3" = "<b>Wayımdamańız:</b> <a href='https://docs.ovk.to/'>qujattamanı</a> oqıp, öz dizaynıńızdı jasańız, bolmasa katalogtan dayın keyipti tańdasańız boladı.";
+"tour_section_11_bottom_text_1" = "Katalogtı «Baptaw» — «İnterfeys» böliminen taba alasız.";
+"tour_section_11_wordart" = "<img src='/assets/packages/static/openvk/img/tour/wordart_en.png' width='65%'>";
+
+"tour_section_12_title_1" = "Fondıq süwretter";
+"tour_section_12_text_1" = "Paraqcanıń artına eki süwret qoyıwğa boladı.";
+"tour_section_12_text_2" = "Olar oń jäne sol jaqta körinedi.";
+"tour_section_12_text_3" = "<b>Keńes:</b> Süwrettiń ornalasıwımen täjiriybe jasap körińiz — gradiyentter nemese ädemi panoramalar keremet körinedi.";
+"tour_section_12_title_2" = "Avatarlar";
+"tour_section_12_text_2_1" = "Avatar stiylin tańdawğa boladı: standarttı, döńgelek nemese carcı (1:1).";
+"tour_section_12_text_2_2" = "Bul baptawlar tek sizge ğana körinedi.";
+"tour_section_12_title_3" = "Mäzirdi baptaw";
+"tour_section_12_text_3_1" = "Özińiz qoldanbaytın bölimderdi sol jaq mäzirden alıp tastay alasız.";
+"tour_section_12_text_3_2" = "<b>Esińizde bolsın:</b> Paraqca, Dostar, Hattar sıyaqtı negizgi bölimderdi jasırıw mümkin emes.";
+"tour_section_12_title_4" = "Jazbalardıń körinisi";
+"tour_section_12_text_4_1" = "Eski qabırğa dizaynınan jalıqsańız, onı «Mikroblog» türine awıstırıp körińiz.";
+"tour_section_12_text_4_2" = "Dizayn türin qalağan waqıtıńızda awıstıra alasız.";
+"tour_section_12_text_4_3" = "<b>Eskertiw:</b> Eski köriniste sońğı pikirler taspada birden jüktelmewi mümkin.";
+"tour_section_12_bottom_text_1" = "Fon baptaw beti";
+"tour_section_12_bottom_text_2" = "Fondıq süwreti bar paraqcalardıń ülgisi";
+"tour_section_12_bottom_text_3" = "Osı füwnksiya arqılı paraqcańızğa erekce stiyl berińiz.";
+"tour_section_12_bottom_text_4" = "Eski qabırğa";
+"tour_section_12_bottom_text_5" = "Mikroblog";
+
+"tour_section_13_title_1" = "Promokodtar";
+"tour_section_13_text_1" = "Saytta promokodtar arqılı reytiyngińizdi köteriwge de, dawıstar alıwğa da boladı.";
+"tour_section_13_text_2" = "Munday küwpondar merekelerde nemese mańızdı oqıyğalarda beriledi. Jańalıqtardı jiberip almas ücin <a href='https://t.me/openvk'>Telegram-arnamızğa</a> jazılıńız.";
+"tour_section_13_text_3" = "Kodtı engizgen soń, dawıstar avtomattı türde cotıńızğa tüsedi.";
+"tour_section_13_text_4" = "<b>Esińizde bolsın:</b> Promokodtardıń qoldanılıw merzimi cektewli.";
+"tour_section_13_bottom_text_1" = "Promokodtar ädette 24 tańbadan turadı.";
+"tour_section_13_bottom_text_2" = "Mısalı, sätti qoldanılğan kod sizge 100 dawıs sıylawı mümkin.";
+"tour_section_13_bottom_text_3" = "<b>Nazar awdarıńız:</b> Är promokodtı bir paydalanıwcı tek bir ret qoldana aladı.";
+
+"tour_section_14_title_1" = "Telefon men gadjetterge";
+"tour_section_14_text_1" = "Qazirgi waqıtta sayttıń mobıyldi veb-nusqası joq, biraq Android-qa arnalğan qoldanba bar.";
+"tour_section_14_text_2" = "OpenVK Legacy — 2013 jılğı äwelgi dizaynğa negizdelgen, eski qurılğılarğa arnalğan qoldanba.";
+"tour_section_14_text_3" = "Qoldanba Android 2.1 Eclair nusqasınan bastap jumıs istey beredi, sondıqtan onı tipti ep-eski smartfondarğa da ornatıwğa boladı.";
+
+"tour_section_14_title_2" = "Qaydan jüktesem boladı?";
+"tour_section_14_text_2_1" = "Qoldanbanıń resmiy nusqaların F-Droid repoziytoriyinen taba alasız.";
+"tour_section_14_text_2_2" = "Beta-testerler ücin jańartıwlar bölek arnada cığadı.";
+"tour_section_14_text_2_3" = "<b>Eskertiw:</b> Qoldanbada qateler bolıwı mümkin. Mäsele tuwındasa, onı <a href='/app'>resmiy topqa</a> habarlańız.";
+
+"tour_section_14_bottom_text_1" = "Skrincottar";
+"tour_section_14_bottom_text_2" = "Osımen saytqa colıw ayatqaldı. Eger mobıyldi qoldanbanı ornatıw, öz tobıńızdı qurıw ne dostardı caqırıw sıyaqtı mümkindikter qızıqtırsa, <a href='/reg'>tirkelip</a>, birden bastap ketseńiz boladı!";
+"tour_section_14_bottom_text_3" = "Osımen saytqa colıw ayaqtaldı. Qoc keldińiz!";
