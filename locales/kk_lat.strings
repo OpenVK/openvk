@@ -137,16 +137,16 @@
 "additional_field_place_interests" = "Müddeler";
 
 "favorite_music" = "Süyikti muzıka";
-"favorite_films" = "Süyikti fiylmder";
+"favorite_films" = "Süyikti filьmder";
 "favorite_shows" = "Süyikti telecowlar";
 "favorite_books" = "Süyikti kitaptar";
 "favorite_quotes" = "Süyikti däyeksözder";
 "favorite_games" = "Süyikti oyındar";
 "custom_field_favorite_performers" = "Süyikti än orındawcılar";
 "custom_field_favorite_content_makers" = "Süyikti kontent-meykerler";
-"custom_field_favorite_anime" = "Süyikti anıymeler";
+"custom_field_favorite_anime" = "Süyikti animeler";
 "custom_field_favorite_manga" = "Süyikti mangalar";
-"custom_field_favorite_vtubers" = "Süyikti viytiwberler";
+"custom_field_favorite_vtubers" = "Süyikti vituberler";
 "custom_field_favorite_albums" = "Süyikti albomdar";
 
 "information_about" = "Özi tuwralı";
@@ -353,7 +353,7 @@
 "role" = "Röli";
 "administrator" = "Äkimci";
 "promote_to_admin" = "Äkimci qıldırıw";
-"promote_to_owner" = "Toptıń iesi qıldırıw";
+"promote_to_owner" = "Toptıń iyesi qıldırıw";
 "devote" = "Arnaw";
 "set_comment" = "Pikirdi öńdew";
 "hidden_yes" = "Jasırılğan: İya";
@@ -422,9 +422,9 @@
 "group_display_only_creator" = "Tek toptı qurğan kisini körsetiw";
 "group_display_all_administrators" = "Barlıq äkimcilerdi körsetiw";
 "group_dont_display_administrators_list" = "Ecteńe körsetpew";
-"group_changeowner_modal_title" = "Top iesi quqıqtarıń beriw";
-"group_changeowner_modal_text" = "Nazar awdarıńız! Siz «$1» degen paydalanıwcığa top iesi quqıqtarın beriwdesiz. Bul äreket qaytımsız. Quqıqtar berilgennen keyin sizge top äkimci röli beriledi, biraq onıń jańa iesi sizdi ońay sol rölden alıp tastay aladı.";
-"group_owner_setted" = "Toptıń jańa iesi ($1) «$2» tobına sätti tağayındaldı. Sizge top äkimci quqıqtarı berildi. Qaytip top iesi bolğıńız kelse <a href='/support?act=new'>qoldaw körsetiw tobına</a> jazıńız.";
+"group_changeowner_modal_title" = "Top iyesi quqıqtarıń beriw";
+"group_changeowner_modal_text" = "Nazar awdarıńız! Siz «$1» degen paydalanıwcığa top iyesi quqıqtarın beriwdesiz. Bul äreket qaytımsız. Quqıqtar berilgennen keyin sizge top äkimci röli beriledi, biraq onıń jańa iyesi sizdi ońay sol rölden alıp tastay aladı.";
+"group_owner_setted" = "Toptıń jańa iyesi ($1) «$2» tobına sätti tağayındaldı. Sizge top äkimci quqıqtarı berildi. Qaytip top iyesi bolğıńız kelse <a href='/support?act=new'>qoldaw körsetiw tobına</a> jazıńız.";
 "participants_zero" = "Qatısıwcılar joq";
 "participants_one" = "$1 qatısıwcı";
 "participants_other" = "$1 qatısıwcı";
@@ -893,7 +893,7 @@
 
 "audio_embed_not_found" = "Än tabılmadı";
 "audio_embed_deleted" = "Än joyılğan";
-"audio_embed_withdrawn" = "Än quqıq ieleniwciniń talabımen öcirilgen.";
+"audio_embed_withdrawn" = "Än quqıq iyeleniwciniń talabımen öcirilgen.";
 "audio_embed_forbidden" = "Qupıyalılıq baptawları bul ändi qosıwğa ruqsat bermeydi.";
 "audio_embed_processing" = "Audio äli öńdelip jatır.";
 "audio_embed_processing_bait" = "Bäribir tıńdaw";
@@ -922,7 +922,7 @@
 "audios_unlisted" = "Jasırılğan";
 "withdrawn" = "Öcirilgen";
 "deleted" = "Joyılğan";
-"owner" = "İesi";
+"owner" = "İyesi";
 "searchable" = "İzdew betinde körsetiledi";
 
 "select_audio" = "Än tańdaw";
@@ -1556,7 +1556,7 @@
 
 "content_is_deleted" = "Mazmun joyıldı jäne paydalanıwcığa eskertiw berildi.";
 "report_is_ignored" = "Cağım elenbedi.";
-"group_owner_is_banned" = "Top iesi sätti buğattaldı";
+"group_owner_is_banned" = "Top iyesi sätti buğattaldı";
 "group_is_banned" = "Top sätti buğattaldı";
 
 "description_too_long" = "Sıypattama tım uzın.";
@@ -1608,7 +1608,7 @@
 
 "admin" = "Admin-panel";
 "sandbox_for_developers" = "Äzirlewci zerthanası";
-"admin_ownerid" = "İesiniń ID-si";
+"admin_ownerid" = "İyesiniń ID-si";
 "admin_author" = "Avtorı";
 "admin_name" = "Atı";
 "admin_title" = "Taqırıbı";
@@ -1816,7 +1816,7 @@
 /* Dialogs */
 
 "ok" = "OK";
-"yes" = "İä";
+"yes" = "İyä";
 "no" = "Joq";
 "cancel" = "Jabıw";
 "edit_action" = "Özgertiw";
