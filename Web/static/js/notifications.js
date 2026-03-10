@@ -3,9 +3,11 @@ Function.noop = () => {};
 var _n_counter = 0;
 
 var counter = 0;
+const baseTitle = document.title;
 
 window.addEventListener("focus", () => {
-    document.title = document.title.replace(/^\([0-9]+\) /, ""); // remove notification counter xD
+    counter = 0;
+    document.title = baseTitle;
 });
 
 function NewNotification(title, body, avatar = null, callback = () => {}, time = 5000, count = true) {
@@ -51,7 +53,7 @@ function NewNotification(title, body, avatar = null, callback = () => {}, time =
 
     if(count == true) {
         counter++;
-        document.title = `(${counter}) ${document.title}`;
+        document.title = `(${counter}) ${baseTitle}`;
     }
     
     setTimeout(() => {__closeNotification()}, time);
