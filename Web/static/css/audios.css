@@ -58,8 +58,16 @@
     right: 0;
 }
 
-.bigPlayer .bigPlayerWrapper .absoluteButtons > div {
-    width: 8px;
+.bigPlayer .bigPlayerWrapper .absoluteButtons2 {
+    display: none;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.bigPlayer .bigPlayerWrapper .absoluteButtons > div,
+.bigPlayer .bigPlayerWrapper .absoluteButtons2 > div {
+    min-width: 8px;
     height: 8px;
     font-size: 9px;
 
@@ -67,9 +75,7 @@
     align-items: center;
     justify-content: center;
     background: #ebebeb;
-    border: 1px solid #c3c3c3;
-    border-bottom: unset;
-    border-right: unset;
+    outline: 1px solid #c3c3c3;
     color: #c3c3c3;
     cursor: pointer;
     user-select: none;
@@ -1103,7 +1109,7 @@
 
 #ajax_audio_player #aj_player_tracks {
     width: fit-content;
-    display: flex;
+    display: none;
     flex-direction: column;
 
     background: rgba(44, 44, 44, 0.79);
@@ -1112,6 +1118,10 @@
     margin-top: 2px;
     margin-left: 2px;
     border-radius: 0px 0px 2px 2px;
+}
+
+#ajax_audio_player:hover #aj_player_tracks {
+    display: flex;
 }
 
 #ajax_audio_player #aj_player_tracks .aj_track {

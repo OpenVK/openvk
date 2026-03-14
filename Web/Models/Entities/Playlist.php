@@ -172,14 +172,10 @@ class Playlist extends MediaCollection
 
     public function toVkApiStruct(?User $user = null): object
     {
-        $oid = $this->getOwner()->getId();
-        if ($this->getOwner() instanceof Club) {
-            $oid *= -1;
-        }
-
-        return (object) [
+        $cover = $this->getCoverPhoto();
+        $obj = (object) [
             "id"          => $this->getId(),
-            "owner_id"    => $oid,
+            "owner_id"    => $this->getOwner()->getRealId(),
             "title"       => $this->getName(),
             "description" => $this->getDescription(),
             "size"        => $this->size(),
@@ -193,6 +189,24 @@ class Playlist extends MediaCollection
             "cover_url"   => $this->getCoverURL(),
             "searchable"  => !$this->isUnlisted(),
         ];
+
+        if ($cover) {
+            $dimensions = $cover->getDimensions();
+
+            $obj->thumb = (object) [
+                "width" => $dimensions[0],
+                "height" => $dimensions[1],
+                "photo_34" => $cover->getURLBySizeId("miniscule"),
+                "photo_68" => $cover->getURLBySizeId("tiny"),
+                "photo_135" => $cover->getURLBySizeId("xsmall"),
+                "photo_270" => $cover->getURLBySizeId("small"),
+                "photo_300" => $cover->getURLBySizeId("medium"),
+                "photo_600" => $cover->getURLBySizeId("normal"),
+                "photo_1200" => $cover->getURLBySizeId("original")
+            ];
+        }
+
+        return $obj;
     }
 
     public function setLength(): void

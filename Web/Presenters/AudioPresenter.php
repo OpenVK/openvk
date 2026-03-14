@@ -274,6 +274,10 @@ final class AudioPresenter extends OpenVKPresenter
             $this->flashFail("err", tr("error"), tr("ffmpeg_not_installed"), null, $isAjax);
         }
 
+        if ($playlist) {
+            $audio->setAlbum($playlist);
+        }
+
         $audio->save();
 
         if ($playlist) {
@@ -860,7 +864,6 @@ final class AudioPresenter extends OpenVKPresenter
 
         $pagesCount = ceil($audiosCount / $perPage);
 
-        # костылёк для получения плееров в пикере аудиозаписей
         if ((int) ($this->postParam("returnPlayers")) === 1) {
             $this->template->audios = $audios;
             $this->template->page = $page;
@@ -873,21 +876,18 @@ final class AudioPresenter extends OpenVKPresenter
         $audiosArr = [];
 
         foreach ($audios as $audio) {
-            $output_array = [];
-            $output_array['id'] = $audio->getId();
-            $output_array['name'] = $audio->getTitle();
-            $output_array['performer'] = $audio->getPerformer();
+            $obj = $audio->toVkApiStruct($this->user->identity);
+            $obj->name = $audio->getTitle();
+            $obj->performer = $audio->getPerformer();
+            $obj->length = $audio->getLength();
+            $obj->available = $audio->isAvailable();
 
             if (!$audio->isWithdrawn()) {
-                $output_array['keys'] = $audio->getKeys();
-                $output_array['url'] = $audio->getUrl();
+                $obj->keys = $audio->getKeys();
+                $obj->url = $audio->getUrl();
             }
 
-            $output_array['length'] = $audio->getLength();
-            $output_array['available'] = $audio->isAvailable();
-            $output_array['withdrawn'] = $audio->isWithdrawn();
-
-            $audiosArr[] = $output_array;
+            $audiosArr[] = $obj;
         }
 
         $resultArr = [
