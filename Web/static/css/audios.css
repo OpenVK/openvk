@@ -25,7 +25,7 @@
 /* Main music player */
 
 .bigPlayer {
-    background-color: rgb(240, 241, 242);
+    background-color: var(--common-2);
     margin-left: -10px;
     margin-top: -10px;
     width: 102.8%;
@@ -58,15 +58,46 @@
     right: 0;
 }
 
-.bigPlayer .bigPlayerWrapper .absoluteButtons2 {
+.bigPlayer #album_info {
     display: none;
     position: absolute;
-    bottom: 0;
+    top: 46px;
     left: 0;
+    width: 70%;
+    background: var(--common-2);
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--brand);
+    box-shadow: 0px 5px 9px 0px #2b2b2b33;
 }
 
-.bigPlayer .bigPlayerWrapper .absoluteButtons > div,
-.bigPlayer .bigPlayerWrapper .absoluteButtons2 > div {
+.bigPlayer.album_shown #album_info {
+    display: block;
+    font-size: 10px;
+}
+
+.bigPlayer.album_shown #album_info a {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.bigPlayer.album_shown #album_info a, 
+.bigPlayer.album_shown #album_info span {
+    height: 8px;
+    font-size: 10px;
+}
+
+.bigPlayer.album_shown #album_info a span {
+    font-size: 10px;
+    font-weight: bold;
+}
+
+.bigPlayer.album_shown #album_info img {
+    width: 22px;
+    border-radius: 1px;
+}
+
+.bigPlayer .bigPlayerWrapper .absoluteButtons > div {
     min-width: 8px;
     height: 8px;
     font-size: 9px;
