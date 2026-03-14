@@ -1,3 +1,7 @@
+:root {
+    --common-hover: #f5f4f4;
+}
+
 html {
     overflow-y: scroll;
 }
@@ -3937,11 +3941,15 @@ hr {
     margin: 0px;
 }
 
+.media-page-wrapper-description {
+    padding: 5px 30px;
+}
+
 .media-page-wrapper-description .upload_time {
     color: gray;
     display: inline-flex;
     align-items: center;
-    height: 16px;
+    font-size: 10px;
 }
 
 .media-page-author-block {
