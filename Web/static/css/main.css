@@ -4244,7 +4244,7 @@ hr {
     position: absolute;
     bottom: 0px;
     background: rgba(1, 1, 1, 0.7);
-    padding: 6px 6px;
+    padding: 3px 6px;
     width: calc(100% - 12px);
 
     display: grid;
@@ -4262,6 +4262,7 @@ hr {
 
 .docGalleryItem .doc_bottom_panel span {
     color: white;
+    font-size: 10px;
 }
 
 .docGalleryItem .doc_bottom_panel .doc_bottom_panel_size {
@@ -4274,7 +4275,7 @@ hr {
     top: 5px;
     right: 5px;
     background: rgba(1, 1, 1, 0.7);
-    padding: 6px 6px;
+    padding: 3px 3px;
 
     display: flex;
     gap: 5px;
