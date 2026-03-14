@@ -450,6 +450,11 @@ class Audio extends Media
         $this->stateChanges("playlist_id", $album->getId());
     }
 
+    function setAlbumId(int $album): void 
+    {
+        $this->stateChanges("playlist_id", $album);
+    }
+
     function getAlbum(): ?Playlist
     {
         $playlist_id = $this->getRecord()->playlist_id;
@@ -464,6 +469,11 @@ class Audio extends Media
         }
 
         return $album;
+    }
+
+    function getAlbumId(): ?int
+    {
+        return $this->getRecord()->playlist_id;
     }
 
     public function setOwner(int $oid): void

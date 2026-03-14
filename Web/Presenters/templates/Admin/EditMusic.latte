@@ -58,6 +58,10 @@
                 <input class="text medium-field" type="number" id="owner_id" name="owner" value="{$owner}" />
             </div>
             <div class="field-group">
+                <label for="owner">{_playlist}</label>
+                <input class="text medium-field" type="number" id="playlist_id" name="playlist_id" value="{$audio->getAlbumId()}" />
+            </div>
+            <div class="field-group">
                 <label for="explicit">Explicit</label>
                 <input class="toggle-large" type="checkbox" id="explicit" name="explicit" value="1" {if $audio->isExplicit()} checked {/if} />
             </div>
