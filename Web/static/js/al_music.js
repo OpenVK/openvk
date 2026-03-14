@@ -69,7 +69,7 @@ class AudioTrack {
 
     getPlaylistCover() {
         if (this.item.album) {
-            return this.item.album.thumb.photo_270
+            return this.item.album.cover_url
         }
 
         return "/assets/packages/static/openvk/img/song.jpg"
