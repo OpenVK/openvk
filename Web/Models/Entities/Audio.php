@@ -445,12 +445,12 @@ class Audio extends Media
         return $obj;
     }
 
-    public function setAlbum(Playlist $album): void 
+    public function setAlbum(Playlist $album): void
     {
         $this->stateChanges("playlist_id", $album->getId());
     }
 
-    public function setAlbumId(int $album): void 
+    public function setAlbumId(int $album): void
     {
         $this->stateChanges("playlist_id", $album);
     }
