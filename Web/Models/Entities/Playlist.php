@@ -202,7 +202,7 @@ class Playlist extends MediaCollection
                 "photo_270" => $cover->getURLBySizeId("small"),
                 "photo_300" => $cover->getURLBySizeId("medium"),
                 "photo_600" => $cover->getURLBySizeId("normal"),
-                "photo_1200" => $cover->getURLBySizeId("original")
+                "photo_1200" => $cover->getURLBySizeId("original"),
             ];
         }
 

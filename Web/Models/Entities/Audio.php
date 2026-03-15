@@ -445,17 +445,17 @@ class Audio extends Media
         return $obj;
     }
 
-    function setAlbum(Playlist $album): void 
+    public function setAlbum(Playlist $album): void 
     {
         $this->stateChanges("playlist_id", $album->getId());
     }
 
-    function setAlbumId(int $album): void 
+    public function setAlbumId(int $album): void 
     {
         $this->stateChanges("playlist_id", $album);
     }
 
-    function getAlbum(): ?Playlist
+    public function getAlbum(): ?Playlist
     {
         $playlist_id = $this->getRecord()->playlist_id;
         if (!$playlist_id) {
@@ -471,7 +471,7 @@ class Audio extends Media
         return $album;
     }
 
-    function getAlbumId(): ?int
+    public function getAlbumId(): ?int
     {
         return $this->getRecord()->playlist_id;
     }

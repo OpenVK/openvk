@@ -821,7 +821,7 @@ final class AdminPresenter extends OpenVKPresenter
             $audio->setWithdrawn(!empty($this->postParam("withdrawn")));
 
             if (!empty($this->postParam("playlist_id"))) {
-                $audio->setAlbumId((int)$this->postParam("playlist_id"));
+                $audio->setAlbumId((int) $this->postParam("playlist_id"));
             }
 
             $audio->save();
